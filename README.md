@@ -2,6 +2,17 @@
 
 A fintech application built with Node.js, focused on providing Sharia-compliant financial services.
 
+## Motivation
+
+This project aims to make Sharia-compliant financial services accessible to the public audience. By creating an open-source fintech platform that adheres to Islamic financial principles, we believe:
+
+- **Financial inclusion** through technology should not exclude communities with specific religious and ethical financial requirements
+- **Transparency and openness** in the code helps build trust in Sharia-compliant fintech solutions
+- **Community collaboration** can accelerate the development of accessible and culturally sensitive financial tools
+- **Innovation** in Islamic finance should be driven by open standards and shared knowledge
+
+Our mission is to democratize access to trustworthy, Sharia-compliant financial technology for everyone, regardless of background.
+
 ## Getting Started
 
 ### Prerequisites
