@@ -1,0 +1,80 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+.gradle/
+
+# Testing
+coverage/
+.nyc_output/
+jest.config.js.bak
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Cache
+.eslintcache
+.prettierignore
+.cache/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# API keys and secrets
+.secrets/
+secrets.json
+
+# Sensitive fintech files
+*.pem
+*.key
+*.crt
+*.pfx
+
+# Claude Code settings
+.claude/settings.local.json
+.claude/settings.local.json.bkup
