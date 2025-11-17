@@ -17,12 +17,34 @@ These versions are pinned in `package.json` under the `volta` field. When you ru
 
 ## Project Structure
 
-Currently minimal - the project has:
+```
+open-sharia-fintech/
+├── docs/                 # Documentation (Diátaxis framework)
+│   ├── tutorials/       # Learning-oriented guides
+│   ├── how-to/          # Problem-oriented guides
+│   ├── reference/       # Technical reference
+│   └── explanation/     # Conceptual documentation
+├── .husky/              # Git hooks (pre-commit, commit-msg)
+├── package.json         # Node.js project manifest with Volta pinning
+├── commitlint.config.js # Commitlint configuration
+├── .gitignore          # Git ignore rules (Node.js and fintech)
+└── README.md           # Project README
+```
 
-- `package.json` - Node.js project manifest with Volta pinning
-- `README.md` - Empty, ready for documentation
-- `.gitignore` - Configured for Node.js and fintech-specific files
-- No source code yet
+## Code Quality & Git Hooks
+
+The project enforces code quality through automated git hooks:
+
+### Pre-commit Hook
+
+- Runs **Prettier** to format staged files
+- Formats: JS/TS, JSON, Markdown, YAML, CSS/SCSS, HTML
+
+### Commit-msg Hook
+
+- Runs **Commitlint** to validate commit messages
+- Enforces **Conventional Commits** format: `type(scope): description`
+- Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `revert`, `ci`
 
 ## Common Development Commands
 
@@ -34,8 +56,18 @@ As the project develops, typical commands will include:
 - `npm run lint` - Lint code (to be configured)
 - `npm run dev` - Start development server (to be configured)
 
+## Documentation Organization
+
+Documentation uses the [Diátaxis framework](https://diataxis.fr/):
+
+- **Tutorials** (`docs/tutorials/`) - Learning-oriented guides
+- **How-to Guides** (`docs/how-to/`) - Problem-solving guides
+- **Reference** (`docs/reference/`) - Technical documentation
+- **Explanation** (`docs/explanation/`) - Conceptual material
+
 ## Important Notes
 
-- Do not stage or commit changes unless explicitly instructed
+- Do not stage or commit changes unless explicitly instructed. Per-request commits are one-time only
 - The project license is MIT
 - Claude Code settings files (`.claude/settings.local.json*`) are gitignored
+- All commits must follow Conventional Commits format (enforced by commitlint)
