@@ -25,6 +25,37 @@ This project is built entirely on open-source components and is licensed under t
 
 **No restrictions.** You can use this code for anything you want, with complete freedom and flexibility. The MIT License grants you broad rights while maintaining proper attribution.
 
+## Regulatory Compliance Roadmap
+
+This project is being developed with a **phased compliance approach**:
+
+### Phase 1: Indonesian Sharia Banking Compliance
+
+As the repository owner is based in Indonesia, the initial implementation will prioritize compliance with:
+
+- **OJK (Otoritas Jasa Keuangan)** Sharia banking regulations
+- **Indonesian Sharia banking standards** and best practices
+- **DSN-MUI (Dewan Syariah Nasional - Majelis Ulama Indonesia)** guidelines
+- **Local regulatory requirements** for financial technology operations in Indonesia
+
+### Phase 2: Global Regulatory Generalization
+
+Once Phase 1 is complete, the architecture will be generalized to support:
+
+- **International Islamic finance standards** (AAOIFI, IFSB)
+- **Multi-jurisdiction compliance** for various countries and regions
+- **Regional variations** in Sharia banking requirements
+- **Cross-border compatibility** for global fintech operations
+
+### Why This Approach?
+
+- **Deep local understanding** ensures robust compliance from the start
+- **Standards-based design** makes it easier to extend to other jurisdictions
+- **Community feedback** from local users helps refine the solution
+- **Gradual expansion** reduces complexity and ensures quality
+
+**Contributors from other regions are welcome!** Help us extend compliance to your jurisdiction.
+
 ## Getting Started
 
 ### Prerequisites
