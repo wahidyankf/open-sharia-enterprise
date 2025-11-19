@@ -28,28 +28,18 @@ out/
 .gradle/
 
 # Obsidian - Vault settings and cache (docs/ folder is the vault)
+# Track: Core config files (app.json, appearance.json, etc.)
+# Ignore: Workspace state, plugins, cache
 docs/.obsidian/workspace.json
 docs/.obsidian/workspace-mobile.json
+docs/.obsidian/plugins/
 docs/.obsidian/cache/
-docs/.obsidian/plugins/*/data.json
-docs/.obsidian/plugins/*/cache/
-docs/.obsidian.json
 docs/.obsidian-git-data
 docs/.trash/
 docs/.smart-connections/
 
-# Obsidian plugins cache and temp
-docs/.obsidian/plugins/text-extractor/cache/
-docs/.obsidian/plugins/obsidian-pandoc/cache/
-docs/.obsidian/plugins/better-search-views/data/
-
 # Excalidraw files in docs
 docs/**/*.excalidraw.md
-
-# Logs and temporary content in docs
-docs/logs/
-docs/**/*.log
-docs/**/*.bak
 
 # Testing
 coverage/
