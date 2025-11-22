@@ -8,7 +8,7 @@ tags:
   - organization
   - documentation
 created: 2025-11-19
-updated: 2025-11-19
+updated: 2025-11-22
 ---
 
 # Documentation File Naming Convention
@@ -212,6 +212,7 @@ docs/tutorials/authentication/tu-au__authentication.md
 docs/how-to/ht__how-to.md
 docs/reference/re__reference.md
 docs/explanation/ex__explanation.md
+docs/explanation/conventions/ex-co__conventions.md
 ```
 
 ### Journals (Daily Notes)
@@ -278,9 +279,9 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ## Related Documentation
 
-- [Understanding the Diátaxis Framework](./ex__diataxis-framework.md)
-- [How to Create Documentation](../how-to/ht__create-documentation.md)
-- [Vault Structure Reference](../re__vault-structure.md)
+- [Understanding the Diátaxis Framework](../ex__diataxis-framework.md)
+- [How to Create Documentation](../../how-to/ht__create-documentation.md)
+- [Vault Structure Reference](../../re__vault-structure.md)
 
 ---
 
