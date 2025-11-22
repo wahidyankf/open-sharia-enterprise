@@ -170,19 +170,19 @@ Each category serves a different purpose and addresses different user needs.
 
 ```
 docs/
-├── tutorials/              # tu__ prefix - Learning-oriented
-│   ├── tu__tutorials.md   # Index file
+├── tutorials/                                # tu__ prefix - Learning-oriented
+│   ├── README.md                            # Category index
 │   └── ...
-├── how-to/                 # ht__ prefix - Problem-oriented
-│   ├── ht__how-to.md      # Index file
+├── how-to/                                   # ht__ prefix - Problem-oriented
+│   ├── README.md                            # Category index
 │   └── ...
-├── reference/              # re__ prefix - Information-oriented
-│   ├── re__reference.md   # Index file
+├── reference/                                # re__ prefix - Information-oriented
+│   ├── README.md                            # Category index
 │   └── ...
-└── explanation/            # ex__ prefix - Understanding-oriented
-    ├── ex__explanation.md  # Index file
-    └── conventions/        # ex-co__ prefix
-        ├── ex-co__conventions.md
+└── explanation/                              # ex__ prefix - Understanding-oriented
+    ├── README.md                             # Category index
+    └── conventions/                          # ex-co__ prefix
+        ├── README.md                         # Subcategory index
         ├── ex-co__file-naming-convention.md
         ├── ex-co__linking-convention.md
         └── ex-co__diataxis-framework.md (this file)
@@ -342,7 +342,7 @@ Start here
 
 ## Related Documentation
 
-- [Conventions Index](./ex-co__conventions.md) - Overview of all documentation conventions
+- [Conventions Index](./README.md) - Overview of all documentation conventions
 - [File Naming Convention](./ex-co__file-naming-convention.md) - How to name files with category prefixes
 - [Linking Convention](./ex-co__linking-convention.md) - How to link between documents
 

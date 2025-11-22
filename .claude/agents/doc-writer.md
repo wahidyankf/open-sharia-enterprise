@@ -175,20 +175,26 @@ updated: YYYY-MM-DD
 ```
 docs/
 ├── tutorials/                                # tu__ prefix
+│   ├── README.md                            # Category index (GitHub compatible)
 │   ├── tu__getting-started.md
 │   └── tu__first-deployment.md
 ├── how-to/                                   # ht__ prefix
+│   ├── README.md                            # Category index (GitHub compatible)
 │   ├── ht__configure-api.md
 │   └── ht__add-compliance-rule.md
 ├── reference/                                # re__ prefix
+│   ├── README.md                            # Category index (GitHub compatible)
 │   ├── re__api-reference.md
 │   └── re__configuration-reference.md
 ├── explanation/                              # ex__ prefix
+│   ├── README.md                            # Category index (GitHub compatible)
 │   ├── ex__architecture.md
 │   ├── ex__design-decisions.md
 │   └── conventions/                          # ex-co__ prefix
-│       ├── ex-co__conventions.md
-│       └── ex-co__file-naming-convention.md
+│       ├── README.md                         # Subcategory index (GitHub compatible)
+│       ├── ex-co__file-naming-convention.md
+│       ├── ex-co__linking-convention.md
+│       └── ex-co__diataxis-framework.md
 └── journals/                                 # YYYY-MM/YYYY-MM-DD.md format
     └── 2025-11/2025-11-22.md
 ```
@@ -274,14 +280,14 @@ You have access to the project's documentation and source code. When creating ne
 
 **Documentation Conventions (Required Reading):**
 
-- `docs/explanation/conventions/ex-co__conventions.md` - Index of all conventions
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files with hierarchical prefixes
+- `docs/explanation/conventions/README.md` - Index of all conventions
+- `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files with hierarchical prefixes (note: README.md is exempt)
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files with GitHub-compatible markdown
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation into four categories
 
 **Documentation Structure:**
 
-- `docs/explanation/ex__explanation.md` - Explanation category index
-- `docs/tutorials/tu__tutorials.md` - Tutorials category index
-- `docs/how-to/ht__how-to.md` - How-To category index
-- `docs/reference/re__reference.md` - Reference category index
+- `docs/explanation/README.md` - Explanation category index
+- `docs/tutorials/README.md` - Tutorials category index
+- `docs/how-to/README.md` - How-To category index
+- `docs/reference/README.md` - Reference category index

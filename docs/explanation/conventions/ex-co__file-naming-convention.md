@@ -180,18 +180,28 @@ ht-de__release-process-2025-11.md
 
 ## Special Cases
 
-### Index Files
+### Index Files (README.md)
 
-Each category and subcategory should have an index file:
+**GitHub Compatibility Exception:**
+
+Each category and subcategory should have an index file named `README.md`. This is a special exception to the prefix naming convention to ensure GitHub automatically displays the index when browsing directories on the web.
 
 ```
-docs/tutorials/tu__tutorials.md
-docs/tutorials/authentication/tu-au__authentication.md
-docs/how-to/ht__how-to.md
-docs/reference/re__reference.md
-docs/explanation/ex__explanation.md
-docs/explanation/conventions/ex-co__conventions.md
+docs/tutorials/README.md                          # Main category index
+docs/tutorials/authentication/README.md          # Subcategory index (follows prefix pattern)
+docs/how-to/README.md                            # Main category index
+docs/reference/README.md                         # Main category index
+docs/explanation/README.md                       # Main category index
+docs/explanation/conventions/README.md           # Subcategory index
 ```
+
+**Key Points:**
+
+- Main category indices (`tutorials/`, `how-to/`, `reference/`, `explanation/`) use `README.md`
+- Subcategory indices also use `README.md` for consistency
+- `README.md` files are **exempt from the prefix requirement**
+- This ensures GitHub web interface displays indices automatically
+- Works seamlessly with Obsidian and other markdown viewers
 
 ### Journals (Daily Notes)
 
@@ -259,7 +269,7 @@ tu-au-oa-fl__authorization-code-flow.md
 
 - [Linking Convention](./ex-co__linking-convention.md) - How to link between documentation files
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the documentation organization framework
-- [Conventions Index](./ex-co__conventions.md) - Index of all documentation conventions
+- [Conventions Index](./README.md) - Index of all documentation conventions
 
 ---
 

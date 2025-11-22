@@ -207,7 +207,7 @@ When creating documentation, verify links by:
 ## Related Documentation
 
 - [File Naming Convention](./ex-co__file-naming-convention.md) - How to name documentation files
-- [Conventions Index](./ex-co__conventions.md) - Overview of all documentation conventions
+- [Conventions Index](./README.md) - Overview of all documentation conventions
 
 ---
 

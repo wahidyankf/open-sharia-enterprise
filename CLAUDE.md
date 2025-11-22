@@ -21,10 +21,15 @@ These versions are pinned in `package.json` under the `volta` field. When you ru
 open-sharia-fintech/
 ├── docs/                      # Documentation (Diátaxis framework)
 │   ├── tutorials/            # Learning-oriented guides
+│   │   └── README.md         # Tutorials index
 │   ├── how-to/               # Problem-oriented guides
+│   │   └── README.md         # How-To index
 │   ├── reference/            # Technical reference
+│   │   └── README.md         # Reference index
 │   ├── explanation/          # Conceptual documentation
+│   │   ├── README.md         # Explanation index
 │   │   └── conventions/      # Documentation conventions and standards
+│   │       └── README.md     # Conventions index
 │   └── journals/             # Daily notes (Obsidian vault)
 ├── .husky/                    # Git hooks (pre-commit, commit-msg)
 ├── package.json              # Node.js project manifest with Volta pinning
@@ -150,7 +155,7 @@ All documentation must follow three core conventions defined in `docs/explanatio
 
 ### Key Resources
 
-- **Conventions Index:** [`docs/explanation/conventions/ex-co__conventions.md`](docs/explanation/conventions/ex-co__conventions.md)
+- **Conventions Index:** [`docs/explanation/conventions/`](docs/explanation/conventions/) (displays README.md)
 - **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
