@@ -63,6 +63,7 @@ Understanding the update hierarchy is critical. Always update in this order:
    ↓ Update CLAUDE.md SECOND - it references conventions
 
 3. Agent Files (Consumers of Rules)
+   ├─ .claude/agents/README.md
    ├─ .claude/agents/doc-writer.md
    ├─ .claude/agents/repo-rule-checker.md
    └─ .claude/agents/repo-rule-updater.md (yourself!)

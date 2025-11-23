@@ -19,6 +19,12 @@ These versions are pinned in `package.json` under the `volta` field. When you ru
 
 ```
 open-sharia-fintech/
+├── .claude/                   # Claude Code configuration
+│   └── agents/               # Specialized AI agents
+│       ├── README.md         # Agent index and workflow
+│       ├── doc-writer.md     # Documentation writer agent
+│       ├── repo-rule-checker.md  # Consistency validator agent
+│       └── repo-rule-updater.md  # Rule propagation agent
 ├── docs/                      # Documentation (Diátaxis framework)
 │   ├── tutorials/            # Learning-oriented guides
 │   │   └── README.md         # Tutorials index
@@ -161,10 +167,19 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 All agents must have `name`, `description`, `tools`, and `model` frontmatter fields. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 
+### Available Agents
+
+- **`doc-writer.md`** - Documentation creation and editing
+- **`repo-rule-checker.md`** - Consistency validation and auditing
+- **`repo-rule-updater.md`** - Rule propagation across files
+
+See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent descriptions and workflow guidance.
+
 ### Resources
 
 - **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
 - **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)
+- **Agents Index:** [`.claude/agents/README.md`](./.claude/agents/README.md)
 
 ## Important Notes
 

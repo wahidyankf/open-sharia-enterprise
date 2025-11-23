@@ -144,9 +144,10 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 
 ### Agent Definitions
 
+- `.claude/agents/README.md`
 - `.claude/agents/doc-writer.md`
 - `.claude/agents/repo-rule-checker.md` (this file)
-- Any other agents in `.claude/agents/`
+- `.claude/agents/repo-rule-updater.md`
 
 ### Convention Documents
 
@@ -216,3 +217,4 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Related Agents:**
 
 - `doc-writer.md` - Creates and edits documentation (this agent validates its output)
+- `repo-rule-updater.md` - Propagates rule changes (this agent validates the results)

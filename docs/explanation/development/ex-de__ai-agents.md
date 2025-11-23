@@ -572,9 +572,16 @@ ex-de__ai-agents.md (Agent structure standards)
 
 The `.claude/agents/` directory:
 
-- **Does NOT need** a `README.md` file (agents are self-documenting)
-- **Contains only** agent definition files (`.md` files)
+- **Contains** a `README.md` file for agent index and workflow guidance
+- **Contains** agent definition files (`.md` files)
 - **Follows** flat structure (no subdirectories)
+
+The `.claude/agents/README.md` file:
+
+- Lists all available agents with descriptions
+- Explains agent workflow and best practices
+- Provides guidance on when to use each agent
+- Follows the naming exception for README.md files (documented in [File Naming Convention](../conventions/ex-co__file-naming-convention.md))
 
 ### Agent Versioning
 
