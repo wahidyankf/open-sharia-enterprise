@@ -2,7 +2,7 @@
 name: repo-rule-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Checks for inconsistencies, incorrectness, and contradictions across the repository.
 tools: Read, Glob, Grep
-model: inherit
+model: sonnet
 ---
 
 # Repository Rule Checker Agent

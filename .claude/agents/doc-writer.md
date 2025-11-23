@@ -2,7 +2,7 @@
 name: doc-writer
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 tools: Read, Write, Edit, Glob, Grep
-model: sonnet
+model: inherit
 ---
 
 # Documentation Writer Agent
