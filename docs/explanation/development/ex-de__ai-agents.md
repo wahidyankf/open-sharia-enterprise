@@ -181,7 +181,7 @@ Tool permissions follow the **principle of least privilege**: agents should only
 
 **Default**: Use `inherit` (allows centralized control, flexibility, cost optimization)
 
-**Specific models** (e.g., `sonnet`): Only when requiring advanced reasoning, complex validation, multi-step planning, or meticulous consistency checking. Document reasoning with inline comment.
+**Specific models** (e.g., `sonnet`): Only when requiring advanced reasoning, complex validation, multi-step planning, or meticulous consistency checking.
 
 ### Model Selection Decision Tree
 
@@ -624,7 +624,7 @@ If an agent is no longer needed:
 | -------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Vague Description**            | `description: Helper agent for various tasks`                       | `description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.` |
 | **Tool Permission Creep**        | `tools: Read, Write, Edit, Glob, Grep, Bash` (for validation agent) | `tools: Read, Glob, Grep` (read-only for validation)                                                                                                                            |
-| **Model Without Justification**  | `model: sonnet` (no comment)                                        | `model: sonnet # Advanced reasoning required` or `model: inherit`                                                                                                               |
+| **Unnecessary Model Override**   | Using specific model without clear need                             | Use `model: inherit` unless advanced reasoning truly required; then `model: sonnet`                                                                                             |
 | **Duplicating CLAUDE.md**        | Repeating entire environment setup section                          | Reference: `CLAUDE.md` - Primary guidance including environment setup                                                                                                           |
 | **Missing Reference Section**    | No references to conventions or CLAUDE.md                           | Include Reference Documentation section with links to CLAUDE.md and ex-de\_\_ai-agents.md                                                                                       |
 | **Overlapping Responsibilities** | `doc-writer-and-validator` (multiple responsibilities)              | Separate `doc-writer` and `doc-validator` agents                                                                                                                                |
