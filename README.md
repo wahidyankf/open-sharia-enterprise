@@ -1,12 +1,12 @@
 # Open Sharia Fintech
 
-A fintech application built with Node.js, focused on providing Sharia-compliant financial services.
+A fintech application focused on providing Sharia-compliant financial services.
 
 ## Motivation
 
 This project aims to make Sharia-compliant financial services accessible to the public audience. By creating an open-source fintech platform that adheres to Islamic financial principles, we believe:
 
-- **Financial inclusion** through technology should not exclude communities with specific religious and ethical financial requirements
+- **Financial inclusion** through technology must serve communities with specific religious and ethical financial requirements
 - **Transparency and openness** in the code helps build trust in Sharia-compliant fintech solutions
 - **Community collaboration** can accelerate the development of accessible and culturally sensitive financial tools
 - **Innovation** in Islamic finance should be driven by open standards and shared knowledge
@@ -15,7 +15,7 @@ Our mission is to democratize access to trustworthy, Sharia-compliant financial 
 
 ## Freedom to Use
 
-This project is built entirely on open-source components and is licensed under the **MIT License**. This means you are free to use this project for:
+This project is open-source and licensed under the **MIT License**. This means you are free to use this project for:
 
 - 🎯 **Commercial projects** - Build commercial products and services
 - 🏢 **Enterprise solutions** - Deploy in enterprise environments
@@ -67,13 +67,41 @@ However, **you are welcome to fork this repository!** Feel free to:
 
 Once the core patterns are established and the project is mature enough, we will open the contribution process. We look forward to collaborating with the community in the future!
 
+## Tech Stack
+
+**Guiding Principle:**
+We prioritize open-source and vendor-neutral technologies to avoid lock-in while maintaining project quality and long-term sustainability. All technology choices are evaluated based on their benefit to the project and community.
+
+We value avoiding vendor lock-in over strict OSS-only requirements. We may use non-open-source tools if they meet these criteria:
+
+- Data is stored in transparent, portable formats (no proprietary formats)
+- No dependency on vendor-specific infrastructure
+- Easy data export and migration to alternatives
+- Community is not locked into a single vendor
+
+**Example:** We use [Obsidian](https://obsidian.md/) for documentation knowledge management (not OSS), but all documentation is stored as plain markdown files. This ensures complete portability—we can migrate to any markdown editor or documentation system anytime without vendor lock-in.
+
+**Project Tooling:**
+
+- Node.js & npm - Project management, development tools, and scripts
+- Prettier - Code formatting
+- Husky & lint-staged - Git hooks and automated checks
+- Commitlint - Commit message validation
+
+**Main Service:**
+The tech stack for the main fintech service is currently being evaluated. Updates will be provided as architectural decisions are finalized. Technology selection will follow our open-source and vendor-neutrality principles.
+
 ## Getting Started
 
 ### Prerequisites
 
+**Project Tooling & Infrastructure:**
+
 - **Node.js**: 24.11.1 LTS (pinned via Volta)
 - **npm**: 11.6.2 (pinned via Volta)
 - **Volta**: [Install Volta](https://docs.volta.sh/guide/getting-started) for automatic Node.js/npm version management
+
+> **Note:** Node.js is used for project tooling, infrastructure, and development tools. The tech stack for the main fintech service is currently being decided and may be implemented in a different technology.
 
 ### Installation
 
