@@ -255,4 +255,4 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ---
 
-**Last Updated**: November 22, 2025
+**Last Updated**: 2025-11-22

@@ -179,9 +179,7 @@ Tool permissions follow the **principle of least privilege**: agents should only
 
 ## Model Selection Guidelines
 
-**Default**: Use `inherit` (allows centralized control, flexibility, cost optimization)
-
-**Specific models** (e.g., `sonnet`): Only when requiring advanced reasoning, complex validation, multi-step planning, or meticulous consistency checking.
+**Default**: Use `inherit` unless specific model capabilities are required.
 
 ### Model Selection Decision Tree
 
@@ -264,30 +262,7 @@ Before creating a new agent, check if existing agents already cover the domain:
 
 ### Required Section: Reference Documentation
 
-**Every agent MUST include a "Reference Documentation" section** at the end:
-
-```markdown
-## Reference Documentation
-
-**Project Guidance:**
-
-- `CLAUDE.md` - Primary guidance for all agents working on this project
-
-**Agent Conventions:**
-
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
-
-**Documentation Conventions (if applicable):**
-
-- `docs/explanation/conventions/README.md` - Index of all conventions
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files
-- `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files
-- `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation
-
-**Related Agents:**
-
-- Other agents this one works with or complements
-```
+**Every agent MUST include a "Reference Documentation" section** at the end. See the [Agent Creation Template](#agent-creation-template) below for the complete format.
 
 ### Reference Categories
 
@@ -667,4 +642,4 @@ Before committing a new agent:
 
 ---
 
-**Last Updated**: November 23, 2025
+**Last Updated**: 2025-11-23

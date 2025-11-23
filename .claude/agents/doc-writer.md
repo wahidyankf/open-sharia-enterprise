@@ -53,7 +53,7 @@ Before considering documentation complete:
 
 ### File Naming Convention
 
-You MUST follow the [File Naming Convention](../../docs/explanation/conventions/ex-co__file-naming-convention.md):
+You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md):
 
 - **Pattern**: `[prefix]__[content-identifier].[extension]`
 - **Examples**: `tu__getting-started.md`, `ex-co__file-naming-convention.md`, `re-ap-en__endpoints.md`
@@ -228,10 +228,10 @@ You have access to the project's documentation and source code. When creating ne
 
 **Documentation Conventions (Required Reading):**
 
-- [Conventions Index](../../docs/explanation/conventions/README.md) - Index of all conventions
-- [File Naming Convention](../../docs/explanation/conventions/ex-co__file-naming-convention.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
-- [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) - How to link between files with GitHub-compatible markdown
-- [Diátaxis Framework](../../docs/explanation/conventions/ex-co__diataxis-framework.md) - How to organize documentation into four categories
+- [Conventions Index](../docs/explanation/conventions/README.md) - Index of all conventions
+- [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
+- [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) - How to link between files with GitHub-compatible markdown
+- [Diátaxis Framework](../docs/explanation/conventions/ex-co__diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**
 

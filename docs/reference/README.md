@@ -20,4 +20,4 @@ This section is currently empty. Reference documentation will be added as the pr
 
 ---
 
-**Last Updated**: November 22, 2025
+**Last Updated**: 2025-11-22

@@ -21,4 +21,4 @@ Conceptual documentation for the open-sharia-fintech project. These documents pr
 
 ---
 
-**Last Updated**: November 23, 2025
+**Last Updated**: 2025-11-23

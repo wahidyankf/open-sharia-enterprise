@@ -190,7 +190,7 @@ This project strictly follows [Conventional Commits](https://www.conventionalcom
 
 ## Documentation
 
-All project documentation is organized using the [Diataxis framework](https://diataxis.fr/). See [`docs/README.md`](./docs/README.md) for more information.
+All project documentation is organized using the [Diátaxis framework](https://diataxis.fr/). See [`docs/README.md`](./docs/README.md) for more information.
 
 ### Viewing Documentation with Obsidian
 

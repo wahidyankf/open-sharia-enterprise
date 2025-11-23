@@ -20,4 +20,4 @@ This section is currently empty. Tutorials will be added as the project develops
 
 ---
 
-**Last Updated**: November 22, 2025
+**Last Updated**: 2025-11-22

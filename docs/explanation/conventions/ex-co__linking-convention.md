@@ -212,4 +212,4 @@ When creating documentation, verify links by:
 
 ---
 
-**Last Updated**: November 22, 2025
+**Last Updated**: 2025-11-22

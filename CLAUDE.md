@@ -117,14 +117,12 @@ As the project develops, typical commands will include:
 
 ## Documentation Organization
 
-Documentation uses the [Diátaxis framework](https://diataxis.fr/):
+Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detailed explanation](./docs/explanation/conventions/ex-co__diataxis-framework.md):
 
-- **Tutorials** (`docs/tutorials/`) - Learning-oriented guides
-- **How-to Guides** (`docs/how-to/`) - Problem-solving guides
-- **Reference** (`docs/reference/`) - Technical documentation
-- **Explanation** (`docs/explanation/`) - Conceptual material
-
-**Note**: Directory names follow semantic conventions - `tutorials/` is plural (countable documents), while `how-to/`, `reference/`, and `explanation/` are singular/mass nouns (category names). This is intentional.
+- **Tutorials** (`docs/tutorials/`) - Learning-oriented
+- **How-to Guides** (`docs/how-to/`) - Problem-solving
+- **Reference** (`docs/reference/`) - Technical reference
+- **Explanation** (`docs/explanation/`) - Conceptual
 
 **Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily notes in Obsidian vault format (`YYYY-MM/YYYY-MM-DD.md`).
 
@@ -134,47 +132,39 @@ All documentation must follow three core conventions defined in `docs/explanatio
 
 ### File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path using 2-letter abbreviations (`tu`, `ht`, `re`, `ex` for root directories, plus subdirectory codes like `ex-co`). Index files use `README.md` (no prefix) for GitHub compatibility.
-
-**Details:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
 
 ### Linking Convention
 
-Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension, use relative paths, and avoid Obsidian wiki links (`[[filename]]`). This ensures compatibility across GitHub web interface, Obsidian, and all other markdown viewers.
-
-**Details:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
+Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
 
 ### Diátaxis Framework
 
-All documentation organized into four categories (Tutorials, How-To, Reference, Explanation), each serving different user needs. File prefixes map to categories (`tu`, `ht`, `re`, `ex`).
-
-**Details:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
+All documentation organized into four categories (Tutorials, How-To, Reference, Explanation). See [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) for complete details.
 
 ### Key Resources
 
-- **Conventions Index:** [`docs/explanation/conventions/README.md`](docs/explanation/conventions/README.md)
-- **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
-- **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
-- **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
+- **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
+- **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](./docs/explanation/conventions/ex-co__file-naming-convention.md)
+- **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](./docs/explanation/conventions/ex-co__linking-convention.md)
+- **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](./docs/explanation/conventions/ex-co__diataxis-framework.md)
 
 ## AI Agent Standards
 
 All AI agents in `.claude/agents/` must follow the convention defined in `docs/explanation/development/`:
 
-- **AI Agents Convention:** [`docs/explanation/development/ex-de__ai-agents.md`](docs/explanation/development/ex-de__ai-agents.md)
+- **AI Agents Convention:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
 - Defines agent file structure, naming, tool access patterns, and model selection
 - Required reading for all agent creators and maintainers
 
 ### Key Requirements
 
-All agents must have `name`, `description`, `tools`, and `model` frontmatter fields, reference both CLAUDE.md and the AI agents convention, and maintain single responsibility with least-privilege tool access.
-
-**Details:** [`docs/explanation/development/ex-de__ai-agents.md`](docs/explanation/development/ex-de__ai-agents.md)
+All agents must have `name`, `description`, `tools`, and `model` frontmatter fields. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 
 ### Resources
 
-- **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](docs/explanation/development/ex-de__ai-agents.md)
-- **Development Index:** [`docs/explanation/development/README.md`](docs/explanation/development/README.md)
+- **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
+- **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)
 
 ## Important Notes
 

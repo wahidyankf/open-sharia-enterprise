@@ -25,4 +25,4 @@ Development conventions and standards for the open-sharia-fintech project. These
 
 ---
 
-**Last Updated**: November 23, 2025
+**Last Updated**: 2025-11-23

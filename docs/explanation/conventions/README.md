@@ -22,4 +22,4 @@ Documentation conventions and standards for the open-sharia-fintech project. The
 
 ---
 
-**Last Updated**: November 22, 2025
+**Last Updated**: 2025-11-22

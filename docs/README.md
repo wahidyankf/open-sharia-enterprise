@@ -41,6 +41,13 @@ The Diátaxis framework provides a clear structure that:
 - Improves documentation clarity and consistency
 - Scales well as the project grows
 
+## Documentation Standards
+
+This documentation follows specific conventions for consistency and quality:
+
+- [Documentation Conventions](./explanation/conventions/README.md) - File naming, linking, and organization standards
+- [Development Conventions](./explanation/development/README.md) - Development practices, tools, and workflows
+
 ## Getting Started
 
 1. **New to the project?** Start with the [Tutorials](./tutorials/README.md)
