@@ -136,37 +136,10 @@ This project uses:
 
 #### Git Hooks & Automated Checks
 
-This project uses **Husky** and **lint-staged** to enforce code quality automatically:
+This project uses **Husky** and **lint-staged** to automatically enforce code quality:
 
-##### Pre-commit Hook
-
-Runs when you attempt to commit. It:
-
-- Automatically formats all staged files using **Prettier**
-- Supports: JS, JSX, TS, TSX, JSON, Markdown, YAML, CSS, SCSS, HTML
-- Modified files are automatically staged after formatting
-- Commit is blocked if formatting reveals issues
-
-**What it does:**
-
-```bash
-# Prettier formats these file types
-*.{js,jsx,ts,tsx,mjs,cjs}  # JavaScript/TypeScript
-*.json                      # Configuration files
-*.md                        # Documentation
-*.{yml,yaml}               # YAML configs
-*.{css,scss}               # Styles
-*.html                     # HTML files
-```
-
-##### Commit-msg Hook
-
-Runs after the pre-commit hook. It:
-
-- Validates commit message format using **Commitlint**
-- Enforces **Conventional Commits** specification
-- Rejects commits with invalid message format
-- Provides helpful error messages if validation fails
+- **Pre-commit hook**: Runs Prettier to format staged files (JS/TS, JSON, Markdown, YAML, CSS, HTML)
+- **Commit-msg hook**: Runs Commitlint to validate commit message format against Conventional Commits
 
 #### Commit Message Convention
 
@@ -219,7 +192,21 @@ For detailed explanations of each type, scope examples, validation errors, and b
 
 ## Documentation
 
-All project documentation is organized using the [Diátaxis framework](https://diataxis.fr/). See [`docs/README.md`](./docs/README.md) for more information.
+All project documentation is organized using the [Diátaxis framework](https://diataxis.fr/) - a systematic approach that divides documentation into four categories based on user needs: Tutorials (learning-oriented), How-To Guides (problem-solving), Reference (technical lookup), and Explanation (conceptual understanding).
+
+For a complete explanation of Diátaxis and how we implement it, see the [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) documentation. See also [`docs/README.md`](./docs/README.md) for documentation index.
+
+### Documentation Structure
+
+```
+docs/
+├── tutorials/         # Learning-oriented guides
+├── how-to/            # Problem-solving guides
+├── reference/         # Technical reference
+└── explanation/       # Conceptual documentation
+    ├── conventions/   # Documentation conventions
+    └── development/   # Development conventions
+```
 
 ### Viewing Documentation with Obsidian
 
