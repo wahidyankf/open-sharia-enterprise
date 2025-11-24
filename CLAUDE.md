@@ -75,41 +75,32 @@ Runs after pre-commit hook, before commit is finalized:
 3. Rejects commit if format is invalid
 4. Provides helpful error message
 
-### Conventional Commits Rules
+### Commit Message Convention
+
+All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for complete details.
 
 **Format:**
 
 ```
 <type>(<scope>): <description>
-
-[optional body]
-
-[optional footer(s)]
 ```
 
-**Validation Rules:**
+**Key Rules:**
 
 - `type` is REQUIRED and must be lowercase
 - `scope` is OPTIONAL (recommended)
 - `description` is REQUIRED (imperative mood, no period)
 - First line (header) ≤ 50 characters
-- Body lines (if present) ≤ 100 characters
-- Blank line between header and body
 
 **Valid types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `revert`
 
-**Valid examples:**
+**Quick examples:**
 
 - `feat(auth): add login functionality`
 - `fix: prevent race condition`
 - `docs: update API documentation`
-- `refactor(parser): extract common logic`
 
-**Common errors:**
-
-- Missing type: `⧗ type may not be empty`
-- Empty description: `⧗ subject may not be empty`
-- Line too long: `⧗ body's lines must not be longer than 100 characters`
+For detailed commit message rules, validation errors, best practices, and examples, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
 
 ## Common Development Commands
 
@@ -178,6 +169,7 @@ See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent 
 ### Resources
 
 - **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
+- **Commit Messages Guide:** [`docs/explanation/development/ex-de__commit-messages.md`](./docs/explanation/development/ex-de__commit-messages.md)
 - **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)
 - **Agents Index:** [`.claude/agents/README.md`](./.claude/agents/README.md)
 

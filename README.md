@@ -168,9 +168,9 @@ Runs after the pre-commit hook. It:
 - Rejects commits with invalid message format
 - Provides helpful error messages if validation fails
 
-#### Commit Message Rules
+#### Commit Message Convention
 
-This project strictly follows [Conventional Commits](https://www.conventionalcommits.org/).
+This project strictly follows [Conventional Commits](https://www.conventionalcommits.org/). For complete details on the convention, validation, best practices, and troubleshooting, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) documentation.
 
 **Format:**
 
@@ -182,14 +182,13 @@ This project strictly follows [Conventional Commits](https://www.conventionalcom
 [optional footer(s)]
 ```
 
-**Rules:**
+**Key Rules:**
 
 - `<type>` is required and must be lowercase
 - `<scope>` is optional but recommended for clarity
 - `<description>` is required and should be imperative mood (e.g., "add" not "added")
 - First line must be 50 characters or less
 - Body lines must be 100 characters or less (if present)
-- Type and description separated by colon and space
 
 **Valid types:**
 
@@ -206,7 +205,7 @@ This project strictly follows [Conventional Commits](https://www.conventionalcom
 | `ci`       | CI/CD changes            | `ci: add GitHub Actions workflow`       |
 | `revert`   | Revert previous commit   | `revert: feat(auth): remove login form` |
 
-**Examples:**
+**Quick Examples:**
 
 - ✅ `feat(auth): add two-factor authentication`
 - ✅ `fix: prevent race condition on startup`
@@ -215,6 +214,8 @@ This project strictly follows [Conventional Commits](https://www.conventionalcom
 - ❌ `Added new feature` (missing type)
 - ❌ `feat: added login` (wrong tense)
 - ❌ `FEAT(AUTH): ADD LOGIN` (wrong case)
+
+For detailed explanations of each type, scope examples, validation errors, and best practices, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
 
 ## Documentation
 
