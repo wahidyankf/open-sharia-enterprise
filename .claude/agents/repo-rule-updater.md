@@ -52,6 +52,7 @@ Understanding the update hierarchy is critical. Always update in this order:
 1. Convention Documents (Source of Truth)
    ├─ docs/explanation/conventions/ex-co__file-naming-convention.md
    ├─ docs/explanation/conventions/ex-co__linking-convention.md
+   ├─ docs/explanation/conventions/ex-co__diagrams.md
    ├─ docs/explanation/conventions/ex-co__diataxis-framework.md
    └─ docs/explanation/development/ex-de__ai-agents.md
 
@@ -622,6 +623,7 @@ If adding a completely new category of conventions:
 - `docs/explanation/conventions/README.md` - Index of all conventions
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files with hierarchical prefixes
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files with GitHub-compatible markdown
+- `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation into four categories
 
 **Related Agents:**

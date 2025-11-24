@@ -71,6 +71,12 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - This syntax works across GitHub web, Obsidian, and other markdown viewers
 - ❌ **Do NOT use** Obsidian-only wiki links like `[[filename]]`
 
+### Diagram Convention
+
+- **Inside `docs/` directory**: Use Mermaid diagrams for rich, native rendering in Obsidian
+- **Outside `docs/` directory**: Use ASCII art for universal compatibility across all platforms
+- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples
+
 ### Frontmatter Template
 
 ```yaml
@@ -231,6 +237,7 @@ You have access to the project's documentation and source code. When creating ne
 - [Conventions Index](../docs/explanation/conventions/README.md) - Index of all conventions
 - [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
 - [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) - How to link between files with GitHub-compatible markdown
+- [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) - When to use Mermaid diagrams vs ASCII art
 - [Diátaxis Framework](../docs/explanation/conventions/ex-co__diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**

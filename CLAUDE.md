@@ -125,7 +125,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 ## Documentation Standards
 
-All documentation must follow three core conventions defined in `docs/explanation/conventions/`:
+All documentation must follow core conventions defined in `docs/explanation/conventions/`:
 
 ### File Naming Convention
 
@@ -134,6 +134,10 @@ Files follow the pattern `[prefix]__[content-identifier].[extension]` where pref
 ### Linking Convention
 
 Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
+
+### Diagram and Schema Convention
+
+Use Mermaid diagrams for files inside `docs/` directory (Obsidian vault) and ASCII art for files outside `docs/` (README.md, CLAUDE.md, etc.) to ensure universal compatibility. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
 
 ### Diátaxis Framework
 
@@ -144,6 +148,7 @@ All documentation organized into four categories (Tutorials, How-To, Reference, 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
 - **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](./docs/explanation/conventions/ex-co__file-naming-convention.md)
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](./docs/explanation/conventions/ex-co__linking-convention.md)
+- **Diagram and Schema Guide:** [`docs/explanation/conventions/ex-co__diagrams.md`](./docs/explanation/conventions/ex-co__diagrams.md)
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](./docs/explanation/conventions/ex-co__diataxis-framework.md)
 
 ## AI Agent Standards

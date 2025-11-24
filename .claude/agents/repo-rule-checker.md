@@ -48,6 +48,14 @@ When running a consistency check, systematically verify:
 - [ ] No Obsidian wiki links (`[[...]]`) are used
 - [ ] All links point to files that actually exist
 
+### Diagram Convention Compliance
+
+- [ ] Files inside `docs/` directory use Mermaid diagrams (not ASCII art)
+- [ ] Files outside `docs/` directory (README.md, CLAUDE.md, etc.) use ASCII art (not Mermaid)
+- [ ] No format mixing within single file (consistent Mermaid or ASCII throughout)
+- [ ] Mermaid code blocks use proper syntax with `mermaid` language identifier
+- [ ] ASCII art uses box-drawing characters and monospace-compatible formatting
+
 ### Frontmatter Consistency
 
 - [ ] All docs have required frontmatter fields (title, description, category, tags, created, updated)
@@ -154,6 +162,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/explanation/conventions/README.md`
 - `docs/explanation/conventions/ex-co__file-naming-convention.md`
 - `docs/explanation/conventions/ex-co__linking-convention.md`
+- `docs/explanation/conventions/ex-co__diagrams.md`
 - `docs/explanation/conventions/ex-co__diataxis-framework.md`
 
 ### Development Conventions
@@ -212,6 +221,7 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 - `docs/explanation/conventions/README.md` - Index of all conventions
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files
+- `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation
 
 **Related Agents:**
