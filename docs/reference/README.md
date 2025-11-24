@@ -1,6 +1,6 @@
 ---
 title: "Reference"
-description: Technical reference documentation for open-sharia-fintech
+description: Technical reference documentation for open-sharia-enterprise
 category: reference
 tags:
   - index
@@ -12,7 +12,7 @@ updated: 2025-11-22
 
 # Reference
 
-Technical reference documentation for the open-sharia-fintech project. These documents provide detailed specifications, API documentation, and technical details.
+Technical reference documentation for the open-sharia-enterprise project. These documents provide detailed specifications, API documentation, and technical details.
 
 ## Contents
 

@@ -1,6 +1,6 @@
 ---
 title: "Diagram and Schema Convention"
-description: Standards for using Mermaid diagrams and ASCII art in markdown files
+description: Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files
 category: explanation
 tags:
   - diagrams
@@ -14,7 +14,7 @@ updated: 2025-11-24
 
 # Diagram and Schema Convention
 
-This document defines when and how to use different diagram formats in the open-sharia-fintech project. Understanding the appropriate format for each context ensures diagrams render consistently across all platforms where our documentation is viewed.
+This document defines when and how to use different diagram formats in the open-sharia-enterprise project. Understanding the appropriate format for each context ensures diagrams render consistently across all platforms where our documentation is viewed.
 
 ## The Core Principle
 
@@ -292,7 +292,7 @@ gitGraph
 Use ASCII art for **all files outside the `docs/` directory**:
 
 ```
-open-sharia-fintech/
+open-sharia-enterprise/
 ├── README.md          ← Use ASCII art
 ├── CLAUDE.md          ← Use ASCII art
 ├── CONTRIBUTING.md    ← Use ASCII art
@@ -316,7 +316,7 @@ open-sharia-fintech/
 Perfect for showing file and folder hierarchies:
 
 ```
-open-sharia-fintech/
+open-sharia-enterprise/
 ├── .claude/                   # Claude Code configuration
 │   └── agents/               # Specialized AI agents
 ├── docs/                      # Documentation (Diátaxis framework)
@@ -492,7 +492,7 @@ sequenceDiagram
 ## Project Structure
 ```
 
-open-sharia-fintech/
+open-sharia-enterprise/
 ├── .claude/ # Claude Code configuration
 ├── docs/ # Documentation
 │ ├── tutorials/ # Step-by-step guides

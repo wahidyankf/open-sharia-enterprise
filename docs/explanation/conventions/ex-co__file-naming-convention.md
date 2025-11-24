@@ -1,6 +1,6 @@
 ---
 title: "Documentation File Naming Convention"
-description: Systematic file naming for open-sharia-fintech documentation
+description: Systematic file naming for open-sharia-enterprise documentation
 category: explanation
 tags:
   - naming-convention
@@ -13,7 +13,7 @@ updated: 2025-11-22
 
 # Documentation File Naming Convention
 
-A systematic approach to naming files in the open-sharia-fintech documentation that ensures clarity, organization, and discoverability while maintaining a logical hierarchy.
+A systematic approach to naming files in the open-sharia-enterprise documentation that ensures clarity, organization, and discoverability while maintaining a logical hierarchy.
 
 ## Overview
 

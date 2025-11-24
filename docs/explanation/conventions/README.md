@@ -1,6 +1,6 @@
 ---
 title: "Conventions"
-description: Documentation conventions and standards for open-sharia-fintech
+description: Documentation conventions and standards for open-sharia-enterprise
 category: explanation
 tags:
   - index
@@ -12,7 +12,7 @@ updated: 2025-11-24
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-fintech project. These documents define how documentation should be organized, named, and linked.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked.
 
 ## Contents
 

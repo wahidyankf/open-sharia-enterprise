@@ -1,4 +1,4 @@
-# Open Sharia Fintech
+# Open Sharia Enterprise
 
 A fintech application focused on providing Sharia-compliant financial services.
 
@@ -112,7 +112,7 @@ npm install
 ### Project Structure
 
 ```
-open-sharia-fintech/
+open-sharia-enterprise/
 ├── docs/                  # Project documentation (Diataxis framework)
 │   ├── tutorials/         # Learning-oriented guides
 │   ├── how-to/            # Problem-oriented guides

@@ -1,6 +1,6 @@
 ---
 title: Explanation
-description: Conceptual documentation for open-sharia-fintech
+description: Conceptual documentation for open-sharia-enterprise
 category: explanation
 tags:
   - index
@@ -12,7 +12,7 @@ updated: 2025-11-22
 
 # Explanation
 
-Conceptual documentation for the open-sharia-fintech project. These documents provide context, deep dives, and understanding of how systems work and why design decisions were made.
+Conceptual documentation for the open-sharia-enterprise project. These documents provide context, deep dives, and understanding of how systems work and why design decisions were made.
 
 ## Contents
 

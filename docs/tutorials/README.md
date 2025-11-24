@@ -1,6 +1,6 @@
 ---
 title: "Tutorials"
-description: Learning-oriented guides for open-sharia-fintech
+description: Learning-oriented guides for open-sharia-enterprise
 category: tutorial
 tags:
   - index
@@ -12,7 +12,7 @@ updated: 2025-11-22
 
 # Tutorials
 
-Learning-oriented guides for the open-sharia-fintech project. These documents provide step-by-step tutorials that help users learn the fundamentals and get started with the system.
+Learning-oriented guides for the open-sharia-enterprise project. These documents provide step-by-step tutorials that help users learn the fundamentals and get started with the system.
 
 ## Contents
 

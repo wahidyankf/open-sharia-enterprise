@@ -1,6 +1,6 @@
 ---
 title: "Documentation Linking Convention"
-description: Standards for linking between documentation files in open-sharia-fintech
+description: Standards for linking between documentation files in open-sharia-enterprise
 category: explanation
 tags:
   - linking
@@ -13,7 +13,7 @@ updated: 2025-11-22
 
 # Documentation Linking Convention
 
-This document defines the standard syntax and practices for linking between documentation files in the open-sharia-fintech project. Following these conventions ensures links work consistently across GitHub web, Obsidian, and other markdown viewers.
+This document defines the standard syntax and practices for linking between documentation files in the open-sharia-enterprise project. Following these conventions ensures links work consistently across GitHub web, Obsidian, and other markdown viewers.
 
 ## Why GitHub-Compatible Links?
 
@@ -158,7 +158,7 @@ For links to external resources:
 
 [Diátaxis Framework](https://diataxis.fr/)
 [Obsidian](https://obsidian.md/)
-[GitHub](https://github.com/wahidyankf/open-sharia-fintech)
+[GitHub](https://github.com/wahidyankf/open-sharia-enterprise)
 ```
 
 ## Anchor Links (Same Page)

@@ -1,6 +1,6 @@
 ---
 title: "Commit Message Convention"
-description: Understanding Conventional Commits and why we use them in open-sharia-fintech
+description: Understanding Conventional Commits and why we use them in open-sharia-enterprise
 category: explanation
 tags:
   - conventional-commits
@@ -13,7 +13,7 @@ updated: 2025-11-24
 
 # Commit Message Convention
 
-This document explains the commit message convention used in the open-sharia-fintech project, why we use it, and how it's enforced. Understanding commit messages helps maintain a clean, navigable project history that benefits all contributors.
+This document explains the commit message convention used in the open-sharia-enterprise project, why we use it, and how it's enforced. Understanding commit messages helps maintain a clean, navigable project history that benefits all contributors.
 
 ## What are Conventional Commits?
 

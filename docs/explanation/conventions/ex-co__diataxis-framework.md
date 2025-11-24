@@ -1,6 +1,6 @@
 ---
 title: "Diátaxis Framework"
-description: Understanding the Diátaxis documentation framework used in open-sharia-fintech
+description: Understanding the Diátaxis documentation framework used in open-sharia-enterprise
 category: explanation
 tags:
   - diataxis
@@ -13,7 +13,7 @@ updated: 2025-11-22
 
 # Diátaxis Framework
 
-The open-sharia-fintech project uses the [Diátaxis framework](https://diataxis.fr/) to organize all documentation. This document explains what Diátaxis is, why we use it, and how it's implemented in our project.
+The open-sharia-enterprise project uses the [Diátaxis framework](https://diataxis.fr/) to organize all documentation. This document explains what Diátaxis is, why we use it, and how it's implemented in our project.
 
 ## What is Diátaxis?
 

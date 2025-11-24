@@ -1,6 +1,6 @@
 ---
 title: Development
-description: Development conventions and standards for open-sharia-fintech
+description: Development conventions and standards for open-sharia-enterprise
 category: explanation
 tags:
   - index
@@ -13,7 +13,7 @@ updated: 2025-11-24
 
 # Development
 
-Development conventions and standards for the open-sharia-fintech project. These documents define how to create and manage development practices, tools, and workflows.
+Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
 ## Contents
 

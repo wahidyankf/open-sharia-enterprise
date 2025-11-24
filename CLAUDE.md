@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **open-sharia-fintech** project - a fintech application built with Node.js. The project is in early stages with basic initialization completed.
+This is the **open-sharia-enterprise** project - a fintech application built with Node.js. The project is in early stages with basic initialization completed.
 
 ## Environment Setup
 
@@ -18,7 +18,7 @@ These versions are pinned in `package.json` under the `volta` field. When you ru
 ## Project Structure
 
 ```
-open-sharia-fintech/
+open-sharia-enterprise/
 ├── .claude/                   # Claude Code configuration
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow

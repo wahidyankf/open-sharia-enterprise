@@ -1,6 +1,6 @@
 ---
 title: "How-To Guides"
-description: Problem-solving guides for open-sharia-fintech
+description: Problem-solving guides for open-sharia-enterprise
 category: how-to
 tags:
   - index
@@ -12,7 +12,7 @@ updated: 2025-11-22
 
 # How-To Guides
 
-Problem-solving guides for common tasks in the open-sharia-fintech project. These documents provide practical, step-by-step instructions for accomplishing specific goals.
+Problem-solving guides for common tasks in the open-sharia-enterprise project. These documents provide practical, step-by-step instructions for accomplishing specific goals.
 
 ## Contents
 
