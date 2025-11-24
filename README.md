@@ -129,6 +129,10 @@ open-sharia-enterprise/
 │   ├── how-to/            # Problem-oriented guides
 │   ├── reference/         # Technical reference
 │   └── explanation/       # Conceptual documentation
+├── plans/                 # Project planning documents
+│   ├── in-progress/       # Active project plans
+│   ├── backlog/           # Planned projects for future
+│   └── done/              # Completed and archived plans
 ├── src/                   # Source code (to be created)
 ├── package.json           # Project manifest
 └── README.md              # This file

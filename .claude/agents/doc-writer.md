@@ -74,7 +74,7 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 ### Diagram Convention
 
 - **Inside `docs/` directory**: Use Mermaid diagrams for rich, native rendering in Obsidian
-- **Outside `docs/` directory**: Use ASCII art for universal compatibility across all platforms
+- **Outside `docs/` directory** (including `plans/`, `CLAUDE.md`, `README.md`, etc.): Use ASCII art for universal compatibility across all platforms
 - See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples
 
 ### Frontmatter Template
@@ -152,6 +152,26 @@ docs/
 └── journals/                                 # YYYY-MM/YYYY-MM-DD.md format
     └── 2025-11/2025-11-22.md
 ```
+
+### Plans Folder Structure
+
+The `plans/` folder at the repository root contains temporary project planning documents, separate from permanent documentation:
+
+```
+plans/
+├── in-progress/                              # Active project plans
+│   └── YYYY-MM-DD__[project-id]/            # Plan folder naming pattern
+│       ├── README.md                         # NO PREFIX - folder provides context
+│       ├── requirements.md                   # NO PREFIX
+│       ├── tech-docs.md                      # NO PREFIX
+│       └── delivery.md                       # NO PREFIX
+├── backlog/                                  # Planned projects for future
+│   └── YYYY-MM-DD__[project-id]/
+└── done/                                     # Completed and archived plans
+    └── YYYY-MM-DD__[project-id]/
+```
+
+**Important:** Files inside plan folders do NOT use naming prefixes (no `tu__`, `ex__`, etc.). The folder structure provides context.
 
 ## Writing Guidelines
 

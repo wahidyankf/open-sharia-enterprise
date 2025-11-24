@@ -38,6 +38,8 @@ When running a consistency check, systematically verify:
 - [ ] All files in `docs/` follow the prefix pattern (except README.md)
 - [ ] All `README.md` files are properly documented as exceptions
 - [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`)
+- [ ] Files inside `plans/` folders do NOT use prefixes (folder structure provides context)
+- [ ] Plan folders follow the naming pattern `YYYY-MM-DD__[project-identifier]/`
 - [ ] No files violate the naming convention
 
 ### Linking Convention Compliance
@@ -51,7 +53,8 @@ When running a consistency check, systematically verify:
 ### Diagram Convention Compliance
 
 - [ ] Files inside `docs/` directory use Mermaid diagrams (not ASCII art)
-- [ ] Files outside `docs/` directory (README.md, CLAUDE.md, etc.) use ASCII art (not Mermaid)
+- [ ] Files outside `docs/` directory (README.md, CLAUDE.md, plans/, etc.) use ASCII art (not Mermaid)
+- [ ] Files within `plans/` folder use ASCII art (not Mermaid) since it's outside the Obsidian vault
 - [ ] No format mixing within single file (consistent Mermaid or ASCII throughout)
 - [ ] Mermaid code blocks use proper syntax with `mermaid` language identifier
 - [ ] ASCII art uses box-drawing characters and monospace-compatible formatting
@@ -67,7 +70,8 @@ When running a consistency check, systematically verify:
 
 - [ ] Documentation Standards section matches actual conventions
 - [ ] File naming pattern examples are accurate
-- [ ] Directory structure shown matches reality
+- [ ] Directory structure shown matches reality (includes `plans/` folder)
+- [ ] Plans Organization section accurately describes plans/ structure
 - [ ] All convention files are referenced
 - [ ] Prefixes (`tu`, `ht`, `re`, `ex`) are correctly documented
 

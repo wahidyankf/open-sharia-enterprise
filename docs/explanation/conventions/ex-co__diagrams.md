@@ -296,6 +296,10 @@ open-sharia-enterprise/
 ├── README.md          ← Use ASCII art
 ├── CLAUDE.md          ← Use ASCII art
 ├── CONTRIBUTING.md    ← Use ASCII art
+├── plans/            ← Use ASCII art
+│   ├── in-progress/
+│   ├── backlog/
+│   └── done/
 ├── .github/
 │   └── *.md          ← Use ASCII art
 └── docs/             ← Use Mermaid (see above)
@@ -308,6 +312,20 @@ open-sharia-enterprise/
 3. **Predictable** - WYSIWYG - what you type is what everyone sees
 4. **Lightweight** - Fast to load, minimal bandwidth
 5. **Accessible** - Screen readers and text-based browsers handle it well
+
+### Important: Plans Folder
+
+The `plans/` folder is located at the repository root (NOT inside `docs/`) and contains temporary project planning documents. Since it's outside the Obsidian vault, **all files within `plans/` must use ASCII art** for any diagrams or schemas.
+
+This applies to:
+
+- `plans/in-progress/*/README.md`
+- `plans/in-progress/*/requirements.md`
+- `plans/in-progress/*/tech-docs.md`
+- `plans/in-progress/*/delivery.md`
+- And equivalent files in `plans/backlog/` and `plans/done/`
+
+**Rationale**: The `plans/` folder is a root-level working documents folder (like `.claude/`, `.husky/`). It is NOT part of the Obsidian vault (`docs/`). ASCII art ensures universal compatibility for files outside the documentation vault, maintaining consistency with other root-level files.
 
 ### ASCII Art Use Cases
 
@@ -449,6 +467,7 @@ Use this quick reference to choose the right format:
 | `docs/**/*.md`    | **Mermaid** | Native Obsidian rendering, rich visuals |
 | `README.md`       | **ASCII**   | GitHub web, terminal, universal access  |
 | `CLAUDE.md`       | **ASCII**   | AI agents, text editors, terminals      |
+| `plans/**/*.md`   | **ASCII**   | Working documents, universal access     |
 | `.github/**/*.md` | **ASCII**   | GitHub Actions logs, PR reviews         |
 | `CONTRIBUTING.md` | **ASCII**   | First-time contributors, all platforms  |
 

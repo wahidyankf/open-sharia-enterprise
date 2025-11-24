@@ -39,6 +39,20 @@ open-sharia-enterprise/
 │   │   └── development/      # Development conventions and standards
 │   │       └── README.md     # Development index
 │   └── journals/             # Daily notes (Obsidian vault)
+├── plans/                     # Project planning documents
+│   ├── README.md             # Plans index and purpose
+│   ├── in-progress/          # Active project plans
+│   │   ├── README.md         # Lists active plans
+│   │   └── [plan-name]/      # Individual plan folders
+│   │       ├── README.md     # Plan overview
+│   │       ├── requirements.md  # Requirements and objectives
+│   │       ├── tech-docs.md  # Technical documentation
+│   │       └── delivery.md   # Timeline and milestones
+│   ├── backlog/              # Planned projects for future
+│   │   ├── README.md         # Lists backlog plans
+│   │   └── [plan-name]/      # Individual plan folders
+│   └── done/                 # Completed and archived plans
+│       └── README.md         # Lists completed plans
 ├── .husky/                    # Git hooks (pre-commit, commit-msg)
 ├── package.json              # Node.js project manifest with Volta pinning
 ├── commitlint.config.js       # Commitlint configuration
@@ -122,6 +136,61 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 - **Explanation** (`docs/explanation/`) - Conceptual
 
 **Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily notes in Obsidian vault format (`YYYY-MM/YYYY-MM-DD.md`).
+
+## Plans Organization
+
+Project planning documents are organized in the `plans/` folder at the repository root. This folder contains temporary, ephemeral documents used for project planning and tracking, distinct from the permanent documentation in `docs/`.
+
+### Plans Structure
+
+```
+plans/
+├── in-progress/      # Active plans currently being worked on
+├── backlog/         # Planned projects for future implementation
+└── done/            # Completed and archived plans
+```
+
+### Plan Folder Naming
+
+Each plan folder follows the naming pattern:
+
+```
+YYYY-MM-DD__[project-identifier]/
+```
+
+Examples:
+
+- `2025-11-24__init-monorepo/`
+- `2025-12-01__auth-system/`
+
+### Plan Contents
+
+Each plan folder contains the following standard files (WITHOUT naming prefixes):
+
+- `README.md` - Plan overview and navigation
+- `requirements.md` - Detailed requirements and objectives
+- `tech-docs.md` - Technical documentation and architecture
+- `delivery.md` - Timeline and milestones
+
+### Key Differences from Documentation
+
+Plans differ from `docs/` in several important ways:
+
+1. **Location**: Root-level `plans/` folder (not inside `docs/`)
+2. **Purpose**: Temporary project planning (not permanent documentation)
+3. **File Naming**: No prefixes inside plan folders (folder structure provides context)
+4. **Lifecycle**: Plans move between in-progress, backlog, and done folders
+
+### Working with Plans
+
+- **Creating Plans**: Place new plans in `backlog/` folder
+- **Starting Work**: Move plan folder from `backlog/` to `in-progress/`
+- **Completing Work**: Move plan folder from `in-progress/` to `done/`
+- **Plan Index**: Each subfolder has a README.md listing all plans in that category
+
+### Diagrams in Plans
+
+Since `plans/` is outside the `docs/` folder (Obsidian vault), **all files in plans/ must use ASCII art** for diagrams and schemas. This ensures universal compatibility across text editors, terminals, and version control tools. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
 
 ## Documentation Standards
 
