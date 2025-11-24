@@ -1,17 +1,17 @@
 # Open Sharia Enterprise
 
-A fintech application focused on providing Sharia-compliant financial services.
+An enterprise solutions platform for Sharia-compliant business systems.
 
 ## Motivation
 
-This project aims to make Sharia-compliant financial services accessible to the public audience. By creating an open-source fintech platform that adheres to Islamic financial principles, we believe:
+This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems (fintech, ERP, and beyond) that serve communities with specific religious and ethical requirements. As the repository owner, my particular interest lies in building Sharia-compliant fintech solutions for the Indonesian market, which is why Phase 1 prioritizes this focus—but the architecture is designed to scale globally and across enterprise domains. We believe:
 
-- **Financial inclusion** through technology must serve communities with specific religious and ethical financial requirements
-- **Transparency and openness** in the code helps build trust in Sharia-compliant fintech solutions
-- **Community collaboration** can accelerate the development of accessible and culturally sensitive financial tools
-- **Innovation** in Islamic finance should be driven by open standards and shared knowledge
+- **Sharia-compliance as a foundation** should be built into enterprise solutions from the ground up, not bolted on later
+- **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
+- **Community collaboration** can accelerate the development of accessible and culturally sensitive business tools
+- **Innovation** across enterprise domains (financial services, supply chain, HR, and more) should be driven by open standards and shared knowledge
 
-Our mission is to democratize access to trustworthy, Sharia-compliant financial technology for everyone, regardless of background.
+Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
 ## Freedom to Use
 
@@ -25,34 +25,45 @@ This project is open-source and licensed under the **MIT License**. This means y
 
 **No restrictions.** You can use this code for anything you want, with complete freedom and flexibility. The MIT License grants you broad rights while maintaining proper attribution.
 
-## Regulatory Compliance Roadmap
+## Development Roadmap
 
-This project is being developed with a **phased compliance approach**:
+This project is being developed with a **phased approach** to establish strong Sharia-compliance foundations and gradually expand enterprise capabilities:
 
-### Phase 1: Indonesian Sharia Banking Compliance
+### Phase 1: Indonesian Fintech Foundation
 
-As the repository owner is based in Indonesia, the initial implementation will prioritize compliance with:
+As the repository owner is based in Indonesia, the initial implementation will establish core Sharia-compliance and fintech capabilities with Indonesian regulatory alignment:
 
-- **OJK (Otoritas Jasa Keuangan)** Sharia banking regulations
-- **Indonesian Sharia banking standards** and best practices
-- **DSN-MUI (Dewan Syariah Nasional - Majelis Ulama Indonesia)** guidelines
-- **Local regulatory requirements** for financial technology operations in Indonesia
+- **Sharia Compliance Framework** - Core architecture for Sharia-compliant business logic
+- **OJK (Otoritas Jasa Keuangan)** Sharia banking regulations compliance
+- **DSN-MUI (Dewan Syariah Nasional - Majelis Ulama Indonesia)** guidelines integration
+- **Indonesian fintech standards** and best practices
+- **Fintech domain implementation** (payments, lending, banking services)
 
-### Phase 2: Global Regulatory Generalization
+### Phase 2: Multi-Domain Enterprise Solutions
 
-Once Phase 1 is complete, the architecture will be generalized to support:
+Once the Sharia-compliance foundation is solid, expand to support diverse enterprise solutions:
+
+- **ERP systems** - Enterprise Resource Planning with Sharia-compliant accounting and operations
+- **Supply chain management** - Halal-compliant supply chain tracking
+- **HR & payroll systems** - Sharia-compliant workforce management
+- **Other enterprise domains** - Extending the framework to additional business solutions
+
+### Phase 3: Global Expansion
+
+Extend the platform to support multiple jurisdictions and regions:
 
 - **International Islamic finance standards** (AAOIFI, IFSB)
 - **Multi-jurisdiction compliance** for various countries and regions
-- **Regional variations** in Sharia banking requirements
-- **Cross-border compatibility** for global fintech operations
+- **Regional variations** in Sharia interpretations and requirements
+- **Cross-border enterprise operations** support
 
 ### Why This Approach?
 
-- **Deep local understanding** ensures robust compliance from the start
-- **Standards-based design** makes it easier to extend to other jurisdictions
+- **Strong foundation first** - Establishing robust Sharia-compliance principles from the start
+- **Deep local understanding** ensures implementation quality and trust
+- **Scalable architecture** - Standards-based design enables extension to new domains and regions
 - **Community feedback** from local users helps refine the solution
-- **Gradual expansion** reduces complexity and ensures quality
+- **Gradual expansion** reduces complexity while ensuring quality
 
 ### Contributing
 
@@ -89,7 +100,7 @@ We value avoiding vendor lock-in over strict OSS-only requirements. We may use n
 - Commitlint - Commit message validation
 
 **Main Service:**
-The tech stack for the main fintech service is currently being evaluated. Updates will be provided as architectural decisions are finalized. Technology selection will follow our open-source and vendor-neutrality principles.
+The tech stack for the main enterprise platform is currently being evaluated. Updates will be provided as architectural decisions are finalized. Technology selection will follow our open-source and vendor-neutrality principles.
 
 ## Getting Started
 
@@ -101,7 +112,7 @@ The tech stack for the main fintech service is currently being evaluated. Update
 - **npm**: 11.6.2 (pinned via Volta)
 - **Volta**: [Install Volta](https://docs.volta.sh/guide/getting-started) for automatic Node.js/npm version management
 
-> **Note:** Node.js is used for project tooling, infrastructure, and development tools. The tech stack for the main fintech service is currently being decided and may be implemented in a different technology.
+> **Note:** Node.js is used for project tooling, infrastructure, and development tools. The tech stack for the main enterprise platform is currently being decided and may be implemented in a different technology.
 
 ### Installation
 
