@@ -2,7 +2,7 @@
 
 ✨ An enterprise solutions platform for Sharia-compliant business systems.
 
-> ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly.
+> ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
 
 ## 🎯 Motivation
 
@@ -264,6 +264,7 @@ You can also view the documentation directly on GitHub or in any markdown viewer
 - ❌ No security hardening
 - ❌ No deployment infrastructure
 - ❌ No compliance certifications
+- ❌ Not accepting contributions or pull requests from public
 
 **What to Expect:**
 
