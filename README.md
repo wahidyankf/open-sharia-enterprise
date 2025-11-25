@@ -2,6 +2,8 @@
 
 ✨ An enterprise solutions platform for Sharia-compliant business systems.
 
+> ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly.
+
 ## 🎯 Motivation
 
 This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems (fintech, ERP, and beyond) that serve communities with specific religious and ethical requirements. As the repository owner, my particular interest lies in building Sharia-compliant fintech solutions for the Indonesian market, which is why Phase 1 prioritizes this focus—but the architecture is designed to scale globally and across enterprise domains. We believe:
@@ -247,4 +249,27 @@ You can also view the documentation directly on GitHub or in any markdown viewer
 
 ## 🚧 Project Status
 
-🔨 Early stage - core infrastructure setup (Volta, code formatting, commit validation, documentation structure).
+⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**.
+
+**Current Stage:**
+
+- 🔨 Core infrastructure setup (Volta, code formatting, commit validation, documentation structure)
+- 📋 Project planning and architecture design
+- 🏗️ Foundation patterns being established
+
+**Not Yet Available:**
+
+- ❌ No production code
+- ❌ No stable APIs
+- ❌ No security hardening
+- ❌ No deployment infrastructure
+- ❌ No compliance certifications
+
+**What to Expect:**
+
+- 🔄 Breaking changes without notice
+- 📐 Architecture and design still evolving
+- 🧪 Experimental implementations
+- 📚 Documentation is work-in-progress
+
+⚠️ **Do NOT use this project for production systems.** Wait for a stable release before considering production deployment.
