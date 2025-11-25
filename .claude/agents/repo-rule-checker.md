@@ -165,6 +165,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 
 - `.claude/agents/README.md`
 - `.claude/agents/doc-writer.md`
+- `.claude/agents/planner.md`
 - `.claude/agents/repo-rule-checker.md` (this file)
 - `.claude/agents/repo-rule-updater.md`
 

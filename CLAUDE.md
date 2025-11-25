@@ -23,6 +23,7 @@ open-sharia-enterprise/
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
 │       ├── doc-writer.md     # Documentation writer agent
+│       ├── planner.md        # Project planning agent
 │       ├── repo-rule-checker.md  # Consistency validator agent
 │       └── repo-rule-updater.md  # Rule propagation agent
 ├── docs/                      # Documentation (Diátaxis framework)

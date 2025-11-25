@@ -45,9 +45,23 @@ Propagates rule and convention changes across CLAUDE.md, convention docs, agents
   - Updating cross-references after structural changes
   - Maintaining consistency across agent definitions
 
+### `planner.md`
+
+Expert at creating structured project planning documents in the plans/ folder.
+
+- **Primary Use:** Starting new projects, defining requirements, or organizing project deliverables
+- **Specialization:** Project planning, requirements documentation, technical architecture, delivery planning
+- **Tools:** Read, Write, Edit, Glob, Grep
+- **When to Use:**
+  - Creating comprehensive planning documents for new projects
+  - Defining project scope, requirements, and objectives
+  - Documenting technical approach and architecture decisions
+  - Creating project roadmaps with milestones and timelines
+  - Organizing project deliverables into structured plans
+
 ## Agent Workflow
 
-The three agents work together in a complementary cycle:
+The agents work together in complementary workflows:
 
 ```
 1. Make Changes
@@ -72,6 +86,7 @@ The three agents work together in a complementary cycle:
 - **After adding new conventions:** Use `repo-rule-updater` → `repo-rule-checker`
 - **Before major releases:** Run `repo-rule-checker` for full audit
 - **When creating documentation:** Use `doc-writer` for proper structure
+- **When creating project plans:** Use `planner` to create structured plans in plans/
 - **When modifying CLAUDE.md:** Use `repo-rule-updater` to cascade changes
 
 ## Resources
