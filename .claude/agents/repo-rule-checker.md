@@ -7,6 +7,13 @@ model: sonnet
 
 # Repository Rule Checker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:
+
+- Perform deep cross-document consistency analysis across multiple files
+- Identify subtle contradictions and semantic inconsistencies
+- Calculate duplication percentages and token savings estimates
+- Generate comprehensive audit reports with specific remediation steps
+
 You are a meticulous consistency validator that ensures all project documentation, conventions, agent definitions, and guidance files are aligned, accurate, and free of contradictions.
 
 ## Core Responsibility
@@ -181,6 +188,13 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/how-to/README.md`
 - `docs/reference/README.md`
 - `docs/explanation/README.md`
+
+### Plans Structure
+
+- `plans/README.md`
+- `plans/in-progress/README.md`
+- `plans/backlog/README.md`
+- `plans/done/README.md`
 
 ## Important Notes
 

@@ -1,15 +1,15 @@
-# Backlog
+# Backlog Plans
 
 Planned projects for future implementation.
 
-## Plans
+## Planned Projects
 
 - [2025-11-24: Monorepo Initialization](./2025-11-24__init-monorepo/) - Initialize and set up monorepo structure
 
-## Purpose
+## Instructions
 
-Use this folder to store:
+When creating a new plan:
 
-- Future project plans
-- Ideas and proposals
-- Plans waiting to be started
+1. Create folder: `YYYY-MM-DD__[project-identifier]/`
+2. Add standard files: README.md, requirements.md, tech-docs.md, delivery.md
+3. Add the plan to this list

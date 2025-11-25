@@ -1,9 +1,15 @@
-# Done
+# Completed Plans
 
-This folder contains completed plans and archived planning documents.
+Archived plans and completed project planning documents.
 
-Use this folder to store:
+## Completed Projects
 
-- Finalized plans that have been executed
-- Archived planning documents
-- Historical planning records
+(Currently empty)
+
+## Instructions
+
+When archiving a plan:
+
+1. Move the plan folder from `in-progress/` to `done/`
+2. Update the plan's README.md status to "Done"
+3. Add the plan to this list with completion date
