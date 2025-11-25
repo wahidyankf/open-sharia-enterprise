@@ -16,7 +16,7 @@ Your primary job is to **create well-structured planning documents** in the `pla
 1. **Project overview** - Clear description of goals and context
 2. **Requirements** - Detailed requirements and objectives
 3. **Technical documentation** - Architecture, design decisions, and implementation approach
-4. **Delivery plan** - Timeline, milestones, and success criteria
+4. **Delivery plan** - Milestones, deliverables, and success criteria
 
 ## When to Use This Agent
 
@@ -25,7 +25,7 @@ Use this agent when:
 - ✅ **Starting a new project** - Create comprehensive planning documents
 - ✅ **Defining project scope** - Document requirements and objectives
 - ✅ **Planning technical approach** - Document architecture and design decisions
-- ✅ **Creating project roadmaps** - Define milestones and timelines
+- ✅ **Creating project roadmaps** - Define milestones and deliverables
 - ✅ **Organizing project deliverables** - Structure project phases and tasks
 
 **Do NOT use this agent for:**
@@ -82,9 +82,6 @@ The entry point and navigation hub for the plan.
 # [Project Name]
 
 **Status**: [Backlog | In Progress | Done]
-**Created**: YYYY-MM-DD
-**Started**: YYYY-MM-DD (if applicable)
-**Completed**: YYYY-MM-DD (if applicable)
 
 ## Overview
 
@@ -94,7 +91,7 @@ The entry point and navigation hub for the plan.
 
 - [Requirements](./requirements.md) - Detailed requirements and objectives
 - [Technical Documentation](./tech-docs.md) - Architecture and implementation
-- [Delivery Plan](./delivery.md) - Timeline and milestones
+- [Delivery Plan](./delivery.md) - Milestones and deliverables
 
 ## Goals
 
@@ -258,26 +255,19 @@ Architecture, design decisions, and implementation approach.
 [Describe logging, metrics, and monitoring approach]
 ```
 
-### 4. `delivery.md` - Timeline & Milestones
+### 4. `delivery.md` - Milestones & Deliverables
 
-Project timeline, milestones, and success criteria.
+Project milestones, deliverables, and success criteria.
 
 **Template:**
 
 ```markdown
 # Delivery Plan: [Project Name]
 
-## Timeline
-
-**Total Duration**: [X weeks/months]
-**Start Date**: YYYY-MM-DD
-**Target Completion**: YYYY-MM-DD
-
 ## Milestones
 
 ### Milestone 1: [Milestone Name]
 
-**Target Date**: YYYY-MM-DD
 **Status**: Not Started | In Progress | Completed
 
 **Deliverables**:
@@ -321,7 +311,7 @@ Project timeline, milestones, and success criteria.
 
 ## Resources Required
 
-- **Team Members**: [Roles and time allocation]
+- **Team Members**: [Roles and responsibilities]
 - **Tools & Services**: [Required tools, licenses, services]
 - **Budget**: [If applicable]
 
@@ -480,8 +470,7 @@ When a plan is completed:
 ```
 1. Move folder from in-progress/ to done/
 2. Update status in plan's README.md to "Done"
-3. Add completion date
-4. Update both plans/in-progress/README.md and plans/done/README.md
+3. Update both plans/in-progress/README.md and plans/done/README.md
 ```
 
 ### 4. Linking Convention
@@ -501,7 +490,6 @@ Before creating a plan, understand:
 
 - Project goals and objectives
 - Technical scope and constraints
-- Timeline expectations
 - Stakeholder requirements
 
 ### Step 2: Create Plan Folder
