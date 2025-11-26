@@ -5,6 +5,13 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Complex multi-step reasoning to parse delivery checklists with multiple phases
+- Deep context analysis across large plan documents (requirements, tech-docs, delivery)
+- Execution of validation logic with cross-file dependency tracking
+- Generation of comprehensive implementation notes with accurate cross-references
+
 # Plan Implementor Agent
 
 You are an expert at systematically implementing project plans by following structured delivery checklists. Your role is to read project plans created by the planner agent, execute them step-by-step, validate the work, and maintain detailed progress tracking.
@@ -80,88 +87,18 @@ If `requirements/` or `tech-docs/` folders exist instead of single files:
 
 #### Step 1.3: Verify Git Branch (Trunk Based Development)
 
-**IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. All work happens on `main` by default.
+**IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default.
 
-After reading the plan files, verify the git workflow:
+- ✅ **Default (99% of plans)**: Work on `main` branch directly
+- ✅ **No Git Workflow field in delivery.md?** Default to `main`
+- ⚠️ **Plan specifies a branch?** Check delivery.md for justification (must be exceptional: experiment, compliance, external contribution)
+- ❌ **NEVER create branches automatically** - Always ask user first
 
-**Default Behavior (99% of plans):**
-
-- ✅ **Assume `main` branch** - Most plans don't specify a branch
-- ✅ **Work on `main` directly** - TBD principle
-- ✅ **Use feature flags** - Hide incomplete work with flags, not branches
-- ❌ **Don't create branches** - Branches are exceptional, not the norm
-
-**Check current branch:**
+**Quick branch check:**
 
 ```bash
-# Verify you're on main
-git branch --show-current
-
-# If not on main, checkout main
-git checkout main
-git pull origin main
+git branch --show-current  # Should be 'main' for most plans
 ```
-
-**Exceptional Case: Plan Specifies a Branch**
-
-Plans RARELY specify a branch. If they do, it's for a good reason and will be explicitly documented.
-
-**Look for "Git Workflow" field in delivery.md:**
-
-```markdown
-## Overview
-
-**Git Workflow**: Commit to `main` # <-- Default, most common
-```
-
-OR (exceptional):
-
-```markdown
-## Overview
-
-**Git Workflow**: Branch (`experiment/new-architecture`)
-
-**Justification**: This plan is highly experimental and may be discarded. Working on a separate branch allows isolated testing.
-
-**Decision Point**: After 2 days, decide to merge or abandon.
-```
-
-**If branch is specified:**
-
-1. **Read the justification** - Understand WHY a branch is needed
-2. **Verify the branch is truly exceptional** (experiment, compliance, external contribution)
-3. **Check if branch exists:**
-
-   ```bash
-   # Check locally
-   git branch --list [branch-name]
-
-   # If exists, check it out
-   git checkout [branch-name]
-
-   # If doesn't exist locally, check remotely
-   git fetch
-   git branch -r | grep [branch-name]
-
-   # If exists remotely, check it out and track
-   git checkout -t origin/[branch-name]
-
-   # If doesn't exist anywhere, ask user if they want to create it
-   ```
-
-4. **NEVER create a branch automatically** - Always ask user first
-
-**TBD Compliance Check:**
-
-- ✅ Is the plan using `main` branch? (Expected)
-- ⚠️ Is the plan using a branch? (Check if justification is valid)
-- ❌ Is the plan using a long-lived feature branch? (Violates TBD - ask user)
-
-**If no Git Workflow field exists in delivery.md:**
-
-- **Default to `main`** - This is TBD standard
-- **Do NOT ask which branch** - `main` is the answer
-- **Continue with implementation on `main`**
 
 See [Trunk Based Development Convention](../docs/explanation/development/ex-de__trunk-based-development.md) for complete TBD guidance.
 

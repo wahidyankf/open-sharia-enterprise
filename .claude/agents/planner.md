@@ -735,45 +735,15 @@ This folder contains all technical architecture, design decisions, and implement
 
 ### Git Workflow: Trunk Based Development
 
-**This repository uses Trunk Based Development (TBD)**. See [Trunk Based Development Convention](../docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
+**IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default.
 
-**Default workflow**: Plans should assume work happens directly on the `main` branch.
+- ✅ **Default**: Plans assume `main` branch (don't specify a branch)
+- ✅ **Feature flags**: Hide incomplete work with flags, not branches
+- ⚠️ **Branches are exceptional**: Only for experiments, compliance, or external contributions
 
-**Do NOT specify a git branch in delivery.md unless**:
+**If a branch is truly needed**, document in delivery.md: branch name, justification, decision timeline, and expected lifespan (< 2 days).
 
-- Experimental/spike work that may be abandoned
-- External integration requiring isolated testing
-- Regulatory compliance requires branch-based review
-- Explicit requirement from user
-
-**If specifying a branch**, document:
-
-1. **Branch name** (e.g., `experiment/blockchain-integration`)
-2. **Justification** (why a branch is needed instead of `main`)
-3. **Decision timeline** (when to merge or abandon)
-4. **Expected lifespan** (must be < 2 days unless exceptional)
-
-**Example with TBD workflow (typical)**:
-
-```markdown
-## Overview
-
-**Git Workflow**: Commit to `main`
-
-All implementation happens directly on the `main` branch. Feature flags will hide incomplete work until ready for production.
-```
-
-**Example with branch (exceptional)**:
-
-```markdown
-## Overview
-
-**Git Workflow**: Branch (`experiment/ai-recommendation-engine`)
-
-**Justification**: This plan explores a new AI-based recommendation engine using an unproven third-party library. A separate branch allows isolated testing without affecting `main` until viability is proven.
-
-**Decision Point**: After 2 days of testing, decide to merge or abandon based on performance benchmarks.
-```
+See [Trunk Based Development Convention](../docs/explanation/development/ex-de__trunk-based-development.md) for complete details and examples.
 
 ### Single PR Delivery (Default)
 
