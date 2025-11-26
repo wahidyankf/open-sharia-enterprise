@@ -117,6 +117,37 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 
 For detailed commit message rules, validation errors, best practices, and examples, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
 
+## Git Workflow
+
+This repository uses **Trunk Based Development (TBD)** as its git workflow. See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
+
+### Key Principles
+
+- **Single main branch**: All development happens on `main` branch
+- **No long-lived feature branches**: Branches (if used) must be merged within 1-2 days
+- **Commit directly to main**: Default workflow for most changes
+- **Feature flags for incomplete work**: Hide unfinished features using toggles, not branches
+- **Small, frequent commits**: Break work into tiny, mergeable increments
+
+### When to Use Branches
+
+**Default**: Work directly on `main` branch.
+
+**Only use branches when**:
+
+- Code review is required by team policy (keep branch < 2 days)
+- Experimental work that may be discarded
+- External contributions via fork + PR
+- Regulatory compliance requires review trail
+
+### Implications for Agents
+
+All AI agents should assume work happens on `main` branch unless explicitly told otherwise:
+
+- **planner**: Plans should NOT specify a git branch by default (work happens on `main`)
+- **plan-implementor**: Should use `main` branch unless plan explicitly specifies a different branch
+- When creating plans: Only specify a branch if there's a documented reason (see TBD convention)
+
 ## Common Development Commands
 
 As the project develops, typical commands will include:
@@ -245,6 +276,7 @@ See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent 
 
 - **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
 - **Commit Messages Guide:** [`docs/explanation/development/ex-de__commit-messages.md`](./docs/explanation/development/ex-de__commit-messages.md)
+- **Trunk Based Development Guide:** [`docs/explanation/development/ex-de__trunk-based-development.md`](./docs/explanation/development/ex-de__trunk-based-development.md)
 - **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)
 - **Agents Index:** [`.claude/agents/README.md`](./.claude/agents/README.md)
 

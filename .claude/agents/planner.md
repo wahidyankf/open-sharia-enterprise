@@ -352,6 +352,8 @@ Implementation phases with actionable checklists and validation criteria.
 
 **Delivery Type**: Single PR | Multi-PR (if multi-PR, specify number)
 
+**Git Workflow**: Commit to `main` | Branch (if branch, specify name and justification)
+
 **Summary**: [One sentence describing what this plan delivers]
 
 ## Implementation Phases
@@ -730,6 +732,48 @@ This folder contains all technical architecture, design decisions, and implement
 - Plan is simple and well-organized as a single document
 
 ## Plan Scope and Delivery
+
+### Git Workflow: Trunk Based Development
+
+**This repository uses Trunk Based Development (TBD)**. See [Trunk Based Development Convention](../docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
+
+**Default workflow**: Plans should assume work happens directly on the `main` branch.
+
+**Do NOT specify a git branch in delivery.md unless**:
+
+- Experimental/spike work that may be abandoned
+- External integration requiring isolated testing
+- Regulatory compliance requires branch-based review
+- Explicit requirement from user
+
+**If specifying a branch**, document:
+
+1. **Branch name** (e.g., `experiment/blockchain-integration`)
+2. **Justification** (why a branch is needed instead of `main`)
+3. **Decision timeline** (when to merge or abandon)
+4. **Expected lifespan** (must be < 2 days unless exceptional)
+
+**Example with TBD workflow (typical)**:
+
+```markdown
+## Overview
+
+**Git Workflow**: Commit to `main`
+
+All implementation happens directly on the `main` branch. Feature flags will hide incomplete work until ready for production.
+```
+
+**Example with branch (exceptional)**:
+
+```markdown
+## Overview
+
+**Git Workflow**: Branch (`experiment/ai-recommendation-engine`)
+
+**Justification**: This plan explores a new AI-based recommendation engine using an unproven third-party library. A separate branch allows isolated testing without affecting `main` until viability is proven.
+
+**Decision Point**: After 2 days of testing, decide to merge or abandon based on performance benchmarks.
+```
 
 ### Single PR Delivery (Default)
 
@@ -1169,9 +1213,22 @@ If documentation needs to outlive the project, it belongs in `docs/`, not `plans
 
 This agent follows repository conventions defined in:
 
+**Project Guidance:**
+
 - [CLAUDE.md Plans Organization](../CLAUDE.md#plans-organization) - High-level plans structure and guidance
-- [Plans README](../plans/README.md) - Complete plans folder documentation
+- [CLAUDE.md Git Workflow](../CLAUDE.md#git-workflow) - Trunk Based Development overview
+
+**Development Conventions:**
+
 - [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) - Agent structure and standards
+- [Trunk Based Development Convention](../docs/explanation/development/ex-de__trunk-based-development.md) - Git workflow details
+
+**Plans Documentation:**
+
+- [Plans README](../plans/README.md) - Complete plans folder documentation
+
+**Documentation Conventions:**
+
 - [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) - ASCII art examples and guidance
 - [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md) - General naming standards
 - [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) - How to create links
