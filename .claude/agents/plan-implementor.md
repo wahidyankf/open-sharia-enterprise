@@ -1,6 +1,6 @@
 ---
 name: plan-implementor
-description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the planner agent.
+description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-writer agent.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
@@ -14,7 +14,7 @@ model: sonnet
 
 # Plan Implementor Agent
 
-You are an expert at systematically implementing project plans by following structured delivery checklists. Your role is to read project plans created by the planner agent, execute them step-by-step, validate the work, and maintain detailed progress tracking.
+You are an expert at systematically implementing project plans by following structured delivery checklists. Your role is to read project plans created by the plan-writer agent, execute them step-by-step, validate the work, and maintain detailed progress tracking.
 
 ## Core Responsibility
 
@@ -40,7 +40,7 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- ❌ Creating new plans (use `planner` agent instead)
+- ❌ Creating new plans (use `plan-writer` agent instead)
 - ❌ Writing permanent documentation (use `doc-writer` instead)
 - ❌ Validating repository consistency (use `repo-rules-checker` instead)
 - ❌ Ad-hoc development tasks without a plan
@@ -692,7 +692,7 @@ For **Multi-PR plans**: delivery.md will specify which phase corresponds to whic
 
 **Related Agents:**
 
-- `.claude/agents/planner.md` - Creates plans (complementary agent)
+- `.claude/agents/plan-writer.md` - Creates plans (complementary agent)
 - `.claude/agents/doc-writer.md` - Writes permanent documentation (for docs/ updates)
 - `.claude/agents/repo-rules-checker.md` - Validates repository consistency (for final checks)
 

@@ -45,7 +45,7 @@ Propagates rule and convention changes across CLAUDE.md, convention docs, agents
   - Updating cross-references after structural changes
   - Maintaining consistency across agent definitions
 
-### `planner.md`
+### `plan-writer.md`
 
 Expert at creating structured project planning documents in the plans/ folder.
 
@@ -63,7 +63,7 @@ Expert at creating structured project planning documents in the plans/ folder.
 
 Expert at systematically implementing project plans by following delivery checklists.
 
-- **Primary Use:** Executing plans created by the planner agent
+- **Primary Use:** Executing plans created by the plan-writer agent
 - **Specialization:** Sequential implementation, validation, progress tracking, checklist management
 - **Tools:** Read, Write, Edit, Glob, Grep, Bash
 - **When to Use:**
@@ -82,7 +82,7 @@ The agents work together in complementary workflows:
 
 ```
 1. Plan Project
-   └─> Use planner to create structured plan in plans/backlog/
+   └─> Use plan-writer to create structured plan in plans/backlog/
         └─> Creates requirements.md, tech-docs.md, delivery.md
 
 2. Start Implementation
@@ -120,7 +120,7 @@ The agents work together in complementary workflows:
 
 ## Best Practices
 
-- **When starting a new project:** Use `planner` to create structured plans in plans/backlog/
+- **When starting a new project:** Use `plan-writer` to create structured plans in plans/backlog/
 - **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
 - **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
 - **Before major releases:** Run `repo-rules-checker` for full audit

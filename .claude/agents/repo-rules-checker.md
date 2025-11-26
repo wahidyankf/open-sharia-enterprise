@@ -150,7 +150,7 @@ When running a consistency check, systematically verify:
 - [ ] CLAUDE.md "Implications for Agents" section accurately reflects TBD workflow
 - [ ] Plans in `plans/` folders correctly document git workflow (default: commit to `main`)
 - [ ] Plans only specify branches when justified per TBD convention
-- [ ] planner.md agent correctly instructs NOT to specify branches by default
+- [ ] plan-writer.md agent correctly instructs NOT to specify branches by default
 - [ ] plan-implementor.md agent correctly defaults to `main` branch
 - [ ] plan-implementor.md agent correctly checks delivery.md for branch specification
 - [ ] Agents reference TBD convention where appropriate
@@ -194,7 +194,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 
 - `.claude/agents/README.md`
 - `.claude/agents/doc-writer.md`
-- `.claude/agents/planner.md`
+- `.claude/agents/plan-writer.md`
 - `.claude/agents/plan-implementor.md`
 - `.claude/agents/repo-rules-checker.md` (this file)
 - `.claude/agents/repo-rules-updater.md`

@@ -23,7 +23,7 @@ open-sharia-enterprise/
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
 │       ├── doc-writer.md     # Documentation writer agent
-│       ├── planner.md        # Project planning agent
+│       ├── plan-writer.md        # Project planning agent
 │       ├── plan-implementor.md   # Plan execution agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
 │       └── repo-rules-updater.md  # Rule propagation agent
@@ -145,7 +145,7 @@ This repository uses **Trunk Based Development (TBD)** as its git workflow. See 
 
 All AI agents should assume work happens on `main` branch unless explicitly told otherwise:
 
-- **planner**: Plans should NOT specify a git branch by default (work happens on `main`)
+- **plan-writer**: Plans should NOT specify a git branch by default (work happens on `main`)
 - **plan-implementor**: Should use `main` branch unless plan explicitly specifies a different branch
 - When creating plans: Only specify a branch if there's a documented reason (see TBD convention)
 
@@ -268,7 +268,7 @@ All agents must have `name`, `description`, `tools`, and `model` frontmatter fie
 ### Available Agents
 
 - **`doc-writer.md`** - Documentation creation and editing
-- **`planner.md`** - Project planning and requirements documentation
+- **`plan-writer.md`** - Project planning and requirements documentation
 - **`plan-implementor.md`** - Systematic plan execution following delivery checklists
 - **`repo-rules-checker.md`** - Consistency validation and auditing
 - **`repo-rules-updater.md`** - Rule propagation across files
