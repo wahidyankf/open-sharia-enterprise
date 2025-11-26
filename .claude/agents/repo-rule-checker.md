@@ -119,7 +119,22 @@ When running a consistency check, systematically verify:
 - [ ] `docs/reference/` exists and contains `README.md`
 - [ ] `docs/explanation/` exists and contains `README.md`
 - [ ] `docs/explanation/conventions/` exists and contains convention files
+- [ ] `plans/in-progress/` exists and contains `README.md`
+- [ ] `plans/backlog/` exists and contains `README.md`
+- [ ] `plans/done/` exists and contains `README.md`
 - [ ] No unexpected directories exist
+
+### Plan Structure Compliance
+
+- [ ] Plan folders follow naming pattern `YYYY-MM-DD__[project-identifier]/`
+- [ ] Each plan folder contains standard files: `README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`
+- [ ] Plan files DON'T use prefixes (folder structure provides context)
+- [ ] Plan files correctly use ASCII art for diagrams (not Mermaid, since outside `docs/`)
+- [ ] Plans correctly specify git workflow in `delivery.md` (branch name or default `main`)
+- [ ] Plans document feature flag strategy when working on `main` branch
+- [ ] Plan folder date prefix matches creation/completion date appropriately
+- [ ] Plan status in README.md matches folder location (in-progress/backlog/done)
+- [ ] Plan index files (`plans/{in-progress,backlog,done}/README.md`) list all plans in their category
 
 ### Special Cases
 
@@ -127,6 +142,20 @@ When running a consistency check, systematically verify:
 - [ ] README.md exception is mentioned in CLAUDE.md
 - [ ] Journals pattern (`YYYY-MM/YYYY-MM-DD.md`) is documented
 - [ ] Directory naming rationale (singular vs plural) is documented
+
+### Trunk Based Development (TBD) Compliance
+
+- [ ] TBD convention comprehensively documented in `ex-de__trunk-based-development.md`
+- [ ] CLAUDE.md correctly summarizes TBD workflow (single main branch, no long-lived branches)
+- [ ] CLAUDE.md "Implications for Agents" section accurately reflects TBD workflow
+- [ ] Plans in `plans/` folders correctly document git workflow (default: commit to `main`)
+- [ ] Plans only specify branches when justified per TBD convention
+- [ ] planner.md agent correctly instructs NOT to specify branches by default
+- [ ] plan-implementor.md agent correctly defaults to `main` branch
+- [ ] plan-implementor.md agent correctly checks delivery.md for branch specification
+- [ ] Agents reference TBD convention where appropriate
+- [ ] No documentation contradicts TBD principles (e.g., suggesting long-lived feature branches)
+- [ ] Feature flag usage documented as primary mechanism for hiding incomplete work
 
 ### Duplication Detection
 
@@ -166,6 +195,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/README.md`
 - `.claude/agents/doc-writer.md`
 - `.claude/agents/planner.md`
+- `.claude/agents/plan-implementor.md`
 - `.claude/agents/repo-rule-checker.md` (this file)
 - `.claude/agents/repo-rule-updater.md`
 
@@ -181,6 +211,8 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 
 - `docs/explanation/development/README.md`
 - `docs/explanation/development/ex-de__ai-agents.md`
+- `docs/explanation/development/ex-de__commit-messages.md`
+- `docs/explanation/development/ex-de__trunk-based-development.md`
 
 ### Category READMEs
 

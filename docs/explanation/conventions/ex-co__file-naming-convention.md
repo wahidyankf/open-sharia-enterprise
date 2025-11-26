@@ -153,11 +153,26 @@ tu-qu__10-advanced-concepts.md
 
 ### Date-Based Files
 
-Use ISO 8601 format (`YYYY-MM-DD`) for date components:
+**Required Format:** All dates must use **ISO 8601 format** (`YYYY-MM-DD`):
+
+- `YYYY` = 4-digit year
+- `MM` = 2-digit month (01-12)
+- `DD` = 2-digit day (01-31)
+
+**Examples:**
 
 ```
 journals/2025-11/2025-11-19.md
 ht-de__release-process-2025-11.md
+```
+
+**Frontmatter dates:** Frontmatter fields (`created`, `updated`) also use ISO 8601 format:
+
+```yaml
+---
+created: 2025-11-19
+updated: 2025-11-22
+---
 ```
 
 ## Special Cases
