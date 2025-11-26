@@ -339,47 +339,162 @@ Architecture, design decisions, and implementation approach.
 [Describe logging, metrics, and monitoring approach]
 ````
 
-### 4. `delivery.md` - Milestones & Deliverables
+### 4. `delivery.md` - Implementation & Validation
 
-Project milestones, deliverables, and success criteria.
+Implementation phases with actionable checklists and validation criteria.
 
 **Template:**
 
 ```markdown
 # Delivery Plan: [Project Name]
 
-## Milestones
+## Overview
 
-### Milestone 1: [Milestone Name]
+**Delivery Type**: Single PR | Multi-PR (if multi-PR, specify number)
+
+**Summary**: [One sentence describing what this plan delivers]
+
+## Implementation Phases
+
+### Phase 1: [Phase Name - e.g., Foundation & Setup]
 
 **Status**: Not Started | In Progress | Completed
 
-**Deliverables**:
+**Goal**: [What this phase achieves]
 
-- [ ] Deliverable 1
-- [ ] Deliverable 2
-- [ ] Deliverable 3
+**Implementation Steps**:
 
-**Success Criteria**:
+- [ ] Create database schema for [entities]
+- [ ] Set up base models and repositories
+- [ ] Implement data access layer
+- [ ] Add database migrations
+- [ ] Configure connection strings and settings
 
-- [ ] Criterion 1
-- [ ] Criterion 2
+**Validation Checklist**:
 
-### Milestone 2: [Milestone Name]
+- [ ] All database tables created successfully
+- [ ] Database migrations run without errors
+- [ ] Connection to database verified
+- [ ] Base models include all required fields
+- [ ] Repository pattern implemented correctly
+- [ ] Unit tests for data layer pass (if applicable)
+- [ ] Code review completed for this phase
 
-[Same structure as above]
+**Acceptance Criteria**:
+
+- [ ] All user stories related to this phase have passing Gherkin tests
+- [ ] No blocking bugs or issues
+
+### Phase 2: [Phase Name - e.g., Core Business Logic]
+
+**Status**: Not Started | In Progress | Completed
+
+**Goal**: [What this phase achieves]
+
+**Implementation Steps**:
+
+- [ ] Implement authentication service
+- [ ] Add authorization rules
+- [ ] Create business logic for [feature]
+- [ ] Implement validation logic
+- [ ] Add error handling
+
+**Validation Checklist**:
+
+- [ ] All business rules implemented correctly
+- [ ] Edge cases handled appropriately
+- [ ] Error messages are clear and helpful
+- [ ] Authentication flow works end-to-end
+- [ ] Authorization rules enforce correctly
+- [ ] Unit tests for business logic pass
+- [ ] Integration tests pass
+- [ ] Code review completed for this phase
+
+**Acceptance Criteria**:
+
+- [ ] All user stories related to this phase have passing Gherkin tests
+- [ ] Security review completed (if applicable)
+- [ ] No blocking bugs or issues
+
+### Phase 3: [Phase Name - e.g., API & Integration]
+
+**Status**: Not Started | In Progress | Completed
+
+**Goal**: [What this phase achieves]
+
+**Implementation Steps**:
+
+- [ ] Create API endpoints
+- [ ] Implement request/response DTOs
+- [ ] Add API validation
+- [ ] Implement API documentation
+- [ ] Add rate limiting (if applicable)
+
+**Validation Checklist**:
+
+- [ ] All API endpoints return correct responses
+- [ ] API validation rejects invalid requests
+- [ ] API documentation is complete and accurate
+- [ ] Error responses follow standard format
+- [ ] API tests pass (unit and integration)
+- [ ] Postman/API collection created and tested
+- [ ] Code review completed for this phase
+
+**Acceptance Criteria**:
+
+- [ ] All user stories related to this phase have passing Gherkin tests
+- [ ] API security validated
+- [ ] No blocking bugs or issues
+
+### Phase 4: [Phase Name - e.g., Testing & Polish]
+
+**Status**: Not Started | In Progress | Completed
+
+**Goal**: [What this phase achieves]
+
+**Implementation Steps**:
+
+- [ ] Add comprehensive unit tests
+- [ ] Add integration tests
+- [ ] Add end-to-end tests
+- [ ] Fix any bugs discovered during testing
+- [ ] Performance testing and optimization
+- [ ] Update documentation
+
+**Validation Checklist**:
+
+- [ ] All tests pass consistently
+- [ ] Code coverage meets requirements (specify %)
+- [ ] No known bugs or issues remain
+- [ ] Performance meets requirements
+- [ ] Documentation is complete and accurate
+- [ ] Code review completed for this phase
+
+**Acceptance Criteria**:
+
+- [ ] All user stories have passing Gherkin tests
+- [ ] All acceptance criteria met
+- [ ] No blocking bugs or issues
 
 ## Dependencies
 
 ### Internal Dependencies
 
 - **Dependency 1**: [Description and impact]
+  - **Status**: Blocked | In Progress | Completed
+  - **Required by**: Phase X
 - **Dependency 2**: [Description and impact]
+  - **Status**: Blocked | In Progress | Completed
+  - **Required by**: Phase Y
 
 ### External Dependencies
 
 - **Dependency 1**: [Description and impact]
+  - **Status**: Available | Pending | Blocked
+  - **Required by**: Phase X
 - **Dependency 2**: [Description and impact]
+  - **Status**: Available | Pending | Blocked
+  - **Required by**: Phase Y
 
 ## Risks & Mitigation
 
@@ -388,18 +503,89 @@ Project milestones, deliverables, and success criteria.
 - **Probability**: High | Medium | Low
 - **Impact**: High | Medium | Low
 - **Mitigation Strategy**: [How to address or reduce this risk]
+- **Contingency Plan**: [What to do if risk occurs]
 
 ### Risk 2: [Risk Description]
 
-[Same structure as above]
+- **Probability**: High | Medium | Low
+- **Impact**: High | Medium | Low
+- **Mitigation Strategy**: [How to address or reduce this risk]
+- **Contingency Plan**: [What to do if risk occurs]
 
-## Success Criteria
+## Final Validation Checklist
 
-**The project will be considered successful when:**
+Before marking this plan as complete and ready for merge, verify ALL items below:
 
-1. [ ] Success criterion 1
-2. [ ] Success criterion 2
-3. [ ] Success criterion 3
+### Requirements Validation
+
+- [ ] All user stories from requirements have been implemented
+- [ ] All Gherkin acceptance criteria pass
+- [ ] All functional requirements met
+- [ ] All non-functional requirements met
+- [ ] No requirements marked as "out of scope" were included
+
+### Code Quality
+
+- [ ] All unit tests pass
+- [ ] All integration tests pass
+- [ ] All end-to-end tests pass
+- [ ] Code coverage meets target (specify: e.g., 80%)
+- [ ] No linting errors or warnings
+- [ ] Code follows project style guidelines
+- [ ] No code smells or technical debt introduced
+- [ ] All TODOs resolved or documented
+
+### Testing & Validation
+
+- [ ] Manual testing completed for all user flows
+- [ ] Edge cases tested and handled
+- [ ] Error scenarios tested
+- [ ] Performance testing completed (if applicable)
+- [ ] Security testing completed (if applicable)
+- [ ] Accessibility testing completed (if applicable)
+- [ ] Cross-browser/platform testing completed (if applicable)
+
+### Documentation
+
+- [ ] API documentation updated and accurate
+- [ ] README updated (if applicable)
+- [ ] Code comments added for complex logic
+- [ ] Architecture diagrams updated (if applicable)
+- [ ] User documentation created/updated (if applicable)
+- [ ] Migration guide created (if breaking changes)
+
+### Code Review & Approval
+
+- [ ] Code review completed by reviewer(s)
+- [ ] All review comments addressed
+- [ ] No blocking review comments remain
+- [ ] Approval obtained from required reviewers
+
+### Pre-Merge Checklist
+
+- [ ] All phase validation checklists completed
+- [ ] All dependencies resolved
+- [ ] No known bugs or blocking issues
+- [ ] Branch is up to date with main/target branch
+- [ ] No merge conflicts
+- [ ] CI/CD pipeline passes
+- [ ] Ready for deployment
+
+### Post-Merge Monitoring
+
+- [ ] Deployment successful to staging/production
+- [ ] No errors in logs after deployment
+- [ ] Performance metrics normal
+- [ ] User acceptance testing passed (if applicable)
+- [ ] Rollback plan documented and tested
+
+## Completion Status
+
+**Overall Status**: Not Started | In Progress | Ready for Review | Completed
+
+**Last Updated**: YYYY-MM-DD
+
+**Completion Date**: YYYY-MM-DD (when fully complete)
 ```
 
 ## Large Plan File Organization
