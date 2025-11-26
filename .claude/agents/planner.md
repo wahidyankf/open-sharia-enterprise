@@ -71,9 +71,193 @@ Examples:
 
 ## Standard Plan File Structure
 
-Every plan folder contains exactly four standard files (NO PREFIXES):
+Plans can use either a **single-file** or **multi-file** structure depending on size:
 
-**NOTE**: For large plans, `requirements.md` or `tech-docs.md` can be converted to folders when they exceed 1000 lines of content. See "Large Plan File Organization" section below.
+### Structure Decision
+
+**Single-File Structure** (≤ 1000 lines total):
+
+- Use when combined content of requirements + tech-docs + delivery ≤ 1000 lines
+- All content in a single `README.md` file
+- Simpler, easier to read and navigate for small plans
+
+**Multi-File Structure** (> 1000 lines total):
+
+- Use when combined content exceeds 1000 lines
+- Separate files: `README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`
+- Better organization for complex plans
+
+**Decision Rule**: If you estimate the plan will be ≤ 1000 lines total, use single-file. Otherwise use multi-file.
+
+---
+
+## Single-File Structure (Small Plans)
+
+For plans ≤ 1000 lines, use a single `README.md` containing all sections:
+
+```
+plans/backlog/2025-11-25__small-feature/
+└── README.md  # Contains: Overview, Requirements, Tech Docs, Delivery
+```
+
+### Single-File `README.md` Template
+
+````markdown
+# [Project Name]
+
+**Status**: [Backlog | In Progress | Done]
+
+## Overview
+
+[Brief 2-3 sentence description of what this project achieves]
+
+**Git Workflow**: Commit to `main`
+
+**Delivery Type**: Single PR
+
+---
+
+## Requirements
+
+### Objectives
+
+#### Primary Objectives
+
+1. **[Objective 1]**
+   - Description of what this achieves
+   - Success criteria
+
+2. **[Objective 2]**
+   - Description of what this achieves
+   - Success criteria
+
+#### Secondary Objectives
+
+1. **[Objective 1]**
+   - Nice-to-have features or improvements
+
+### User Stories
+
+#### Story 1: [Story Title]
+
+**As a** [type of user]
+**I want** [goal/desire]
+**So that** [benefit/value]
+
+**Acceptance Criteria** (Gherkin):
+
+```gherkin
+Scenario: [Scenario name]
+  Given [initial context]
+  When [action occurs]
+  Then [expected outcome]
+```
+
+### Functional Requirements
+
+**REQ-001**: [Requirement description]
+
+- **Priority**: High | Medium | Low
+- **User Stories**: Story 1
+- **Acceptance Criteria**: See Story 1 Gherkin scenarios
+
+### Non-Functional Requirements
+
+**REQ-NFR-001**: [Performance/Security/Scalability requirement]
+
+### Constraints
+
+- [Technical constraint 1]
+- [Business constraint 2]
+
+### Out of Scope
+
+- [Explicitly excluded item 1]
+- [Explicitly excluded item 2]
+
+---
+
+## Technical Documentation
+
+### Architecture Overview
+
+[High-level description of the system architecture]
+
+[Use ASCII art for diagrams]
+
+### Technology Stack
+
+- **Backend**: [Technologies]
+- **Database**: [Technologies]
+- **Tools**: [Technologies]
+
+### Design Decisions
+
+#### Decision 1: [Decision Title]
+
+- **Context**: [Why this decision was needed]
+- **Decision**: [What was decided]
+- **Rationale**: [Why this option was chosen]
+- **Consequences**: [Implications]
+
+### Implementation Approach
+
+1. [Step 1 - what needs to be done]
+2. [Step 2 - what needs to be done]
+3. [Step 3 - what needs to be done]
+
+### Testing Strategy
+
+- **Unit Tests**: [Approach]
+- **Integration Tests**: [Approach]
+
+---
+
+## Delivery Plan
+
+### Implementation Steps
+
+- [ ] Step 1: [Description]
+- [ ] Step 2: [Description]
+- [ ] Step 3: [Description]
+- [ ] Step 4: [Description]
+
+### Validation Checklist
+
+- [ ] All unit tests pass
+- [ ] All integration tests pass
+- [ ] Code coverage meets target (specify: e.g., 80%)
+- [ ] No linting errors or warnings
+- [ ] Manual testing completed
+
+### Acceptance Criteria
+
+- [ ] All user stories have passing Gherkin tests
+- [ ] All functional requirements met
+- [ ] All non-functional requirements met
+
+### Completion Status
+
+**Overall Status**: Not Started | In Progress | Completed
+
+**Last Updated**: YYYY-MM-DD
+````
+
+---
+
+## Multi-File Structure (Large Plans)
+
+For plans > 1000 lines, use separate files (NO PREFIXES):
+
+```
+plans/backlog/2025-11-25__complex-feature/
+├── README.md          # Plan overview and navigation
+├── requirements.md    # Detailed requirements
+├── tech-docs.md       # Technical documentation
+└── delivery.md        # Implementation and validation
+```
+
+**NOTE**: For very large plans, `requirements.md` or `tech-docs.md` can be converted to folders when they individually exceed 1000 lines. See "Large Plan File Organization" section below.
 
 ### 1. `README.md` - Plan Overview
 
@@ -826,7 +1010,14 @@ When planning, ask:
 
 **IMPORTANT**: Files inside plan folders do NOT use prefixes. The folder structure provides context.
 
-✅ Correct (Simple Plan):
+✅ Correct (Single-File Plan - ≤ 1000 lines):
+
+```
+plans/backlog/2025-11-25__small-feature/
+└── README.md  # Contains all sections: Overview, Requirements, Tech Docs, Delivery
+```
+
+✅ Correct (Multi-File Plan - > 1000 lines):
 
 ```
 plans/backlog/2025-11-25__user-auth/
@@ -836,10 +1027,10 @@ plans/backlog/2025-11-25__user-auth/
 └── delivery.md
 ```
 
-✅ Correct (Large Plan with Folders):
+✅ Correct (Large Plan with Folders - individual files > 1000 lines):
 
 ```
-plans/backlog/2025-11-25__user-auth/
+plans/backlog/2025-11-25__complex-system/
 ├── README.md
 ├── requirements/
 │   ├── README.md
@@ -1084,14 +1275,27 @@ Before creating a plan, understand:
 plans/backlog/YYYY-MM-DD__[project-identifier]/
 ```
 
-### Step 3: Create Standard Files
+### Step 3: Choose Structure and Create Files
 
-Create all four standard files using the templates above:
+**Decision: Single-File or Multi-File?**
 
-1. `README.md` - Plan overview
+Estimate the total content size:
+
+- **≤ 1000 lines total?** → Use **single-file** structure (README.md only)
+- **> 1000 lines total?** → Use **multi-file** structure (README.md + 3 separate files)
+
+**Single-File Structure** (≤ 1000 lines):
+
+1. `README.md` - Contains all sections: Overview, Requirements, Tech Docs, Delivery
+
+**Multi-File Structure** (> 1000 lines):
+
+1. `README.md` - Plan overview and navigation
 2. `requirements.md` - Requirements and objectives
 3. `tech-docs.md` - Technical documentation
 4. `delivery.md` - Milestones and deliverables
+
+Use the templates provided in the "Standard Plan File Structure" section above.
 
 ### Step 4: Customize Content
 
@@ -1118,10 +1322,12 @@ Add the new plan to `plans/backlog/README.md`:
 Before finalizing:
 
 - [ ] Folder name follows `YYYY-MM-DD__[project-identifier]/` pattern
-- [ ] All four standard files present (README.md, requirements.md, tech-docs.md, delivery.md)
+- [ ] Correct structure chosen:
+  - Single-file: Only README.md (if ≤ 1000 lines)
+  - Multi-file: README.md + requirements.md + tech-docs.md + delivery.md (if > 1000 lines)
 - [ ] No file naming prefixes used inside plan folder
 - [ ] All diagrams use ASCII art (no Mermaid)
-- [ ] All links use relative paths with `.md` extension
+- [ ] All links use relative paths with `.md` extension (multi-file structure only)
 - [ ] Status is set to "Backlog" in README.md
 - [ ] Plan is added to plans/backlog/README.md index
 - [ ] Content is complete and accurate
