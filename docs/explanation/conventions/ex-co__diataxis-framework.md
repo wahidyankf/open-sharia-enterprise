@@ -8,14 +8,14 @@ tags:
   - organization
   - conventions
 created: 2025-11-22
-updated: 2025-11-22
+updated: 2025-11-26
 ---
 
 # Diátaxis Framework
 
 The open-sharia-enterprise project uses the [Diátaxis framework](https://diataxis.fr/) to organize all documentation. This document explains what Diátaxis is, why we use it, and how it's implemented in our project.
 
-## What is Diátaxis?
+## 📋 What is Diátaxis?
 
 Diátaxis is a systematic approach to technical documentation authoring that divides documentation into four distinct categories based on user needs and context:
 
@@ -31,9 +31,9 @@ Problem-oriented    │ HOW-TO GUIDES      │ REFERENCE    │
 
 Each category serves a different purpose and addresses different user needs.
 
-## The Four Categories
+## 📚 The Four Categories
 
-### 📚 Tutorials (Learning-Oriented)
+### Tutorials (Learning-Oriented)
 
 **Purpose**: Teach newcomers through hands-on experience
 
@@ -60,7 +60,7 @@ Each category serves a different purpose and addresses different user needs.
 - Prefix: `tu__`
 - Examples: `tu__getting-started.md`, `tu__first-deployment.md`
 
-### 🔧 How-To Guides (Problem-Oriented)
+### How-To Guides (Problem-Oriented)
 
 **Purpose**: Solve specific problems and accomplish specific tasks
 
@@ -87,7 +87,7 @@ Each category serves a different purpose and addresses different user needs.
 - Prefix: `ht__`
 - Examples: `ht__configure-api.md`, `ht__deploy-docker.md`
 
-### 📖 Reference (Information-Oriented)
+### Reference (Information-Oriented)
 
 **Purpose**: Provide accurate, comprehensive technical information
 
@@ -114,7 +114,7 @@ Each category serves a different purpose and addresses different user needs.
 - Prefix: `re__`
 - Examples: `re__api-reference.md`, `re__configuration-reference.md`
 
-### 💡 Explanation (Understanding-Oriented)
+### Explanation (Understanding-Oriented)
 
 **Purpose**: Deepen understanding of concepts, design decisions, and "why"
 
@@ -141,7 +141,7 @@ Each category serves a different purpose and addresses different user needs.
 - Prefix: `ex__`
 - Examples: `ex__architecture.md`, `ex-co__file-naming-convention.md`
 
-## Why We Use Diátaxis
+## 🎯 Why We Use Diátaxis
 
 ### Benefits for Documentation Writers
 
@@ -164,7 +164,7 @@ Each category serves a different purpose and addresses different user needs.
 3. **Completeness** - Framework reveals gaps in coverage
 4. **Onboarding** - New contributors understand documentation structure
 
-## How Diátaxis is Implemented
+## 🏗️ How Diátaxis is Implemented
 
 ### Directory Structure
 
@@ -230,7 +230,7 @@ updated: YYYY-MM-DD
 ---
 ```
 
-## Choosing the Right Category
+## 🔍 Choosing the Right Category
 
 When creating new documentation, ask:
 
@@ -293,7 +293,7 @@ Start here
 - ❌ "Steps to Deploy" → Should be How-To
 - ✅ "Understanding Our Deployment Architecture" → Correct Explanation
 
-## Examples from Our Project
+## 🧪 Examples from Our Project
 
 ### Tutorial Example: Getting Started
 
@@ -351,13 +351,13 @@ Start here
 5. Decision guidance
 6. Common mistakes
 
-## Related Documentation
+## 🔗 Related Documentation
 
 - [Conventions Index](./README.md) - Overview of all documentation conventions
 - [File Naming Convention](./ex-co__file-naming-convention.md) - How to name files with category prefixes
 - [Linking Convention](./ex-co__linking-convention.md) - How to link between documents
 
-## External Resources
+## 🌐 External Resources
 
 - [Official Diátaxis Documentation](https://diataxis.fr/)
 - [Diátaxis in Practice](https://diataxis.fr/application/)
@@ -365,4 +365,4 @@ Start here
 
 ---
 
-**Last Updated**: 2025-11-22
+**Last Updated**: 2025-11-26

@@ -1,1 +1,4 @@
-{}
+{
+  "nativeMenus": true,
+  "translucency": false
+}

@@ -15,13 +15,13 @@ updated: 2025-11-26
 
 Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
-## Contents
+## 📋 Contents
 
 - [AI Agents Convention](./ex-de__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory
 - [Commit Message Convention](./ex-de__commit-messages.md) - Understanding Conventional Commits and why we use them
 - [Trunk Based Development Convention](./ex-de__trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
 
-## Related Documentation
+## 🔗 Related Documentation
 
 - [Documentation Conventions](../conventions/README.md) - File naming, linking, and Diátaxis framework standards
 

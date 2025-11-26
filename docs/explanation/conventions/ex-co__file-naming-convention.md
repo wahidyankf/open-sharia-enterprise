@@ -8,14 +8,14 @@ tags:
   - organization
   - documentation
 created: 2025-11-19
-updated: 2025-11-22
+updated: 2025-11-26
 ---
 
 # Documentation File Naming Convention
 
 A systematic approach to naming files in the open-sharia-enterprise documentation that ensures clarity, organization, and discoverability while maintaining a logical hierarchy.
 
-## Overview
+## 📋 Overview
 
 The naming convention serves three critical purposes:
 
@@ -23,7 +23,7 @@ The naming convention serves three critical purposes:
 2. **Discoverability** - Consistent prefixes make it easy to find related files across the documentation
 3. **Global Uniqueness** - Hierarchical prefixes ensure no two files have the same name, preventing ambiguity across the entire documentation vault
 
-## Scope
+## 🎯 Scope
 
 This naming convention applies to **all files in the `docs/` directory** (the Obsidian vault):
 
@@ -40,7 +40,7 @@ This naming convention applies to **all files in the `docs/` directory** (the Ob
 - Diagrams (`.excalidraw`, `.mmd`, `.drawio`)
 - Any other documentation assets
 
-## The Universal Pattern
+## 📝 The Universal Pattern
 
 All documentation files (except index files) follow this pattern:
 
@@ -63,7 +63,7 @@ By encoding the folder hierarchy in the filename, we make all files globally uni
 
 **Exception**: Index files use `README.md` for GitHub compatibility (see Special Cases below).
 
-## How to Build a Prefix
+## 🔧 How to Build a Prefix
 
 The prefix encodes the folder path using abbreviations separated by single hyphens. Each level of nesting adds another abbreviation segment.
 
@@ -110,7 +110,7 @@ The double underscore creates a critical visual boundary:
 - Distinguishes from single hyphens used in content names
 - Makes parsing trivial: split on `__` to separate structure from content
 
-## General Naming Rules
+## ✅ General Naming Rules
 
 ### Kebab-Case Format
 
@@ -175,7 +175,7 @@ updated: 2025-11-22
 ---
 ```
 
-## Special Cases
+## 🔍 Special Cases
 
 ### Index Files (README.md)
 
@@ -219,7 +219,7 @@ docs/explanation/sharia-compliance/ex-shco__murabaha-flow.md
 docs/explanation/sharia-compliance/ex-shco__murabaha-flow-diagram.png
 ```
 
-## Maintenance and Scalability
+## 🔄 Maintenance and Scalability
 
 ### Adding New Directories
 
@@ -253,7 +253,7 @@ tu-au-oa-fl__authorization-code-flow.md
    (tu+au+oa+fl)
 ```
 
-## Quick Reference
+## 📖 Quick Reference
 
 | Category    | Prefix | Example                  |
 | ----------- | ------ | ------------------------ |
@@ -262,7 +262,7 @@ tu-au-oa-fl__authorization-code-flow.md
 | Reference   | `re__` | `re__api-reference.md`   |
 | Explanation | `ex__` | `ex__architecture.md`    |
 
-## Related Documentation
+## 🔗 Related Documentation
 
 - [Linking Convention](./ex-co__linking-convention.md) - How to link between documentation files
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the documentation organization framework
@@ -270,4 +270,4 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ---
 
-**Last Updated**: 2025-11-22
+**Last Updated**: 2025-11-26

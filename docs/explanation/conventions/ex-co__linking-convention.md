@@ -8,14 +8,14 @@ tags:
   - conventions
   - github-compatibility
 created: 2025-11-22
-updated: 2025-11-22
+updated: 2025-11-26
 ---
 
 # Documentation Linking Convention
 
 This document defines the standard syntax and practices for linking between documentation files in the open-sharia-enterprise project. Following these conventions ensures links work consistently across GitHub web, Obsidian, and other markdown viewers.
 
-## Why GitHub-Compatible Links?
+## 🎯 Why GitHub-Compatible Links?
 
 We use GitHub-compatible markdown link syntax instead of Obsidian wiki links to ensure:
 
@@ -24,7 +24,7 @@ We use GitHub-compatible markdown link syntax instead of Obsidian wiki links to 
 3. **Version Control** - Easier to track changes and validate links in CI/CD
 4. **No Ambiguity** - Full paths prevent confusion when files have similar names
 
-## Link Syntax Standard
+## 📝 Link Syntax Standard
 
 ### Required Format
 
@@ -54,7 +54,7 @@ Use standard markdown link syntax with relative paths:
    - ❌ `[[filename]]`
    - ❌ `[[filename|Display Text]]`
 
-## Examples by Location
+## 🧪 Examples by Location
 
 ### Linking from Root README (`docs/README.md`)
 
@@ -149,7 +149,7 @@ For more information, refer to our [authentication tutorial](../../tutorials/aut
 [ex-co\_\_file-naming-convention.md](./ex-co__file-naming-convention.md)
 ```
 
-## External Links
+## 🌐 External Links
 
 For links to external resources:
 
@@ -184,7 +184,7 @@ For embedding images:
 ![Architecture](./images/ex-co-ar__architecture-diagram.png)
 ```
 
-## Verification Checklist
+## ✅ Verification Checklist
 
 Before committing documentation with links:
 
@@ -196,7 +196,7 @@ Before committing documentation with links:
 - [ ] Manually verified links point to existing files
 - [ ] Paths tested from the current file's location
 
-## Link Validation
+## 🔍 Link Validation
 
 When creating documentation, verify links by:
 
@@ -205,11 +205,11 @@ When creating documentation, verify links by:
 3. **Path Correctness**: Count `../` levels to ensure correct relative path
 4. **Extension Check**: Confirm `.md` is present in all internal links
 
-## Related Documentation
+## 🔗 Related Documentation
 
 - [File Naming Convention](./ex-co__file-naming-convention.md) - How to name documentation files
 - [Conventions Index](./README.md) - Overview of all documentation conventions
 
 ---
 
-**Last Updated**: 2025-11-22
+**Last Updated**: 2025-11-26

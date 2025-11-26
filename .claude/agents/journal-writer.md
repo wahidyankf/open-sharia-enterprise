@@ -21,9 +21,10 @@ Your primary job is to help users:
 
 **CRITICAL**: All journal entries use **Logseq-style outliner format** as defined in [Journals Format Convention](../../docs/explanation/conventions/ex-co__journals-format.md):
 
-- **Only ONE heading allowed**: `# YYYY-MM-DD` (for daily entries) or `# summary` (for monthly summaries)
-- **Everything else uses bullets**: All content after the date uses `-` with 2-space nesting
-- **No subheadings**: Don't use `##`, `###`, etc. Use bullet text or bold for topics
+- **No H1 heading at start**: Do NOT include `# YYYY-MM-DD` (Obsidian displays filename as page title)
+- **Start directly with content**: First line should be a bullet point (not a heading)
+- **Everything uses bullets**: All content uses `-` with 2-space nesting
+- **No headings anywhere**: Don't use `#`, `##`, `###`, etc. Use bullet text or bold for topics
 - **Quick capture optimized**: Bullet format enables rapid note-taking and progressive elaboration
 - **Works in Obsidian and Logseq**: Compatible with both tools
 
@@ -68,8 +69,6 @@ When the user wants to create or update a daily research entry:
 **Example entry (Logseq-style outliner format):**
 
 ```markdown
-# 2025-11-26
-
 - Authentication research #authentication #oauth #security
   - Explored **OAuth 2.0** implementation for authentication
   - Key findings
@@ -82,7 +81,7 @@ When the user wants to create or update a daily research entry:
   - See also: [Auth System Plan](../../plans/in-progress/2025-11-24__auth-system/README.md)
 ```
 
-**Note**: Only `# YYYY-MM-DD` heading is used. All content organized as nested bullets.
+**Note**: No heading is used. File starts directly with content bullets. Obsidian shows filename (YYYY-MM-DD.md) as the page title.
 
 ### Diagrams in Journal Entries
 
@@ -101,8 +100,6 @@ When creating daily entries, proactively:
 ### Daily Entry Template
 
 ```markdown
-# YYYY-MM-DD
-
 - [Research Topic/Area] #tag1 #tag2
   - [Research notes, findings, insights]
   - Key concepts
@@ -119,8 +116,9 @@ When creating daily entries, proactively:
 
 **Format Rules:**
 
-- Only `# YYYY-MM-DD` as H1 heading
-- All content after date uses bullets (`-`)
+- **No H1 heading** - Do NOT include `# YYYY-MM-DD` (Obsidian shows filename as title)
+- **Start with content** - First line is a bullet point (not a heading)
+- All content uses bullets (`-`)
 - Nest with 2-space indentation
 - Use bold text for emphasis, not headings
 - Tags can be inline or at end
@@ -163,8 +161,6 @@ ls -la docs/journals/YYYY-MM/
 ### Monthly Summary Template
 
 ```markdown
-# summary
-
 - Overview: [Month] YYYY #monthly-summary #YYYY-MM
   - [High-level summary of the month's work and achievements]
 
@@ -203,7 +199,8 @@ ls -la docs/journals/YYYY-MM/
 
 **Format Rules:**
 
-- Only `# summary` as H1 heading
+- **No heading** - Do NOT include `# summary` (Obsidian shows filename "summary.md" as title)
+- **Start with content** - First line is a bullet point (not a heading)
 - All content uses bullets with 2-space nesting
 - Use bold for emphasis, not headings
 - Tags both inline and at end for discoverability
@@ -296,7 +293,7 @@ for a dedicated hub note covering **Database Indexing** concepts.
 
 ### For Daily Research Notes
 
-1. **Follow outliner format** - Only `# YYYY-MM-DD` heading, all else as bullets
+1. **Follow outliner format** - No heading, start directly with bullets
 2. **Nest logically** - Use 2-space indentation to show relationships (2-4 levels ideal)
 3. **Be consistent with topic naming** - Use same terminology for same concepts
 4. **Link as you write** - Don't defer linking to later
@@ -324,8 +321,9 @@ for a dedicated hub note covering **Database Indexing** concepts.
 
 Before creating or updating journal entries:
 
-- [ ] **Format compliance**: Only `# YYYY-MM-DD` or `# summary` heading (no `##`, `###`)
-- [ ] **Bullet structure**: All content after date uses bullets (`-`) with 2-space nesting
+- [ ] **Format compliance**: No H1 heading at start - file begins directly with content
+- [ ] **Bullet structure**: All content uses bullets (`-`) with 2-space nesting
+- [ ] **No headings anywhere**: Do NOT use `#`, `##`, `###`, etc. (Obsidian shows filename as title)
 - [ ] **Correct date and file path**: `docs/journals/YYYY-MM/YYYY-MM-DD.md`
 - [ ] Check for existing entries on the same date
 - [ ] Search for related topics in previous journals
@@ -334,7 +332,6 @@ Before creating or updating journal entries:
 - [ ] Test that monthly summary git commands work as expected
 - [ ] Verify all referenced plans exist in `plans/` folder
 - [ ] Confirm tags are consistent with previous usage
-- [ ] **No traditional headings**: Use bullet text or bold instead of `##`
 
 ## User Interaction
 
@@ -384,8 +381,6 @@ Present options:
 ### Research Session Entry
 
 ```markdown
-# 2025-11-26
-
 - Deep dive: Event Sourcing #architecture #event-sourcing #microservices
   - Explored **event sourcing** pattern for microservices architecture
   - Key insights
@@ -405,8 +400,6 @@ Present options:
 ### Monthly Summary
 
 ```markdown
-# summary
-
 - Overview: November 2025 #monthly-summary #2025-11
   - November focused on authentication system design and initial implementation
   - Significant progress on **OAuth 2.0** integration and token management
