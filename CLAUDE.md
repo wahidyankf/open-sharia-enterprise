@@ -198,12 +198,20 @@ Examples:
 
 ### Plan Contents
 
-Each plan folder contains the following standard files (WITHOUT naming prefixes):
+Plans can use either **single-file** or **multi-file** structure:
+
+**Single-File Structure** (≤ 1000 lines total):
+
+- `README.md` - Contains all sections: Overview, Requirements, Tech Docs, Delivery
+
+**Multi-File Structure** (> 1000 lines total):
 
 - `README.md` - Plan overview and navigation
 - `requirements.md` - Detailed requirements and objectives
 - `tech-docs.md` - Technical documentation and architecture
 - `delivery.md` - Timeline and milestones
+
+Files inside plan folders do NOT use naming prefixes (folder structure provides context).
 
 ### Key Differences from Documentation
 

@@ -162,7 +162,7 @@ When running a consistency check, systematically verify:
 - [ ] Identify conventions/rules duplicated across CLAUDE.md, agents, and convention files
 - [ ] Check for extractable duplications (>50% overlap between files)
 - [ ] Check for condensable duplications (repetitive content within files)
-- [ ] Analyze this file (repo-rules-checker.md) for its own duplications
+- [ ] Analyze this file (repo-rules-checker.md) for its own duplications (self-audit: the checker validates itself)
 - [ ] Calculate estimated token savings for each duplication found
 - [ ] Suggest whether to extract to new file or condense existing content
 

@@ -637,7 +637,13 @@ The user will handle git operations separately.
 
 ### Large Plans
 
-Plans can have large requirements.md or tech-docs.md as folders:
+Plans can have large requirements.md or tech-docs.md as folders when those files individually exceed 1000 lines.
+
+**Detection Strategy:**
+
+1. Check if `requirements/` directory exists (instead of `requirements.md` file)
+2. Check if `tech-docs/` directory exists (instead of `tech-docs.md` file)
+3. `README.md` and `delivery.md` always remain single files
 
 **If requirements/ folder exists:**
 
