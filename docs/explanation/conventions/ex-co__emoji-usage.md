@@ -41,15 +41,15 @@ Use at the start of section headings to indicate content category:
 
 Use to indicate state, warnings, or validation:
 
-| Emoji | Meaning                         | Usage                                                |
-| ----- | ------------------------------- | ---------------------------------------------------- |
-| ✅    | **Correct/Working/Approved**    | Best practices, correct examples, completed items    |
-| ❌    | **Incorrect/Broken/Deprecated** | Anti-patterns, wrong examples, errors                |
-| ⚠️    | **Warning/Caution**             | Security concerns, breaking changes, important notes |
-| 🚧    | **Work in Progress**            | Incomplete features, under construction              |
-| 🆕    | **New/Recently Added**          | New features, recent changes                         |
-| 🔜    | **Coming Soon/Planned**         | Future features, roadmap items                       |
-| 🗑️    | **Deprecated/To Remove**        | Outdated features, planned removals                  |
+| Emoji | Meaning                                            | Usage                                                                         |
+| ----- | -------------------------------------------------- | ----------------------------------------------------------------------------- |
+| ✅    | **Correct/Working/Approved/Advantages/Pros**       | Best practices, correct examples, completed items, advantages, benefits, pros |
+| ❌    | **Incorrect/Broken/Deprecated/Disadvantages/Cons** | Anti-patterns, wrong examples, errors, disadvantages, limitations, cons       |
+| ⚠️    | **Warning/Caution**                                | Security concerns, breaking changes, important notes                          |
+| 🚧    | **Work in Progress**                               | Incomplete features, under construction                                       |
+| 🆕    | **New/Recently Added**                             | New features, recent changes                                                  |
+| 🔜    | **Coming Soon/Planned**                            | Future features, roadmap items                                                |
+| 🗑️    | **Deprecated/To Remove**                           | Outdated features, planned removals                                           |
 
 ### Action and Process Markers
 
