@@ -49,7 +49,7 @@ This convention applies to:
 
 - All agent files in `.claude/agents/`
 - References to agents in `CLAUDE.md`
-- Agent validation rules in `repo-rule-checker`
+- Agent validation rules in `repo-rules-checker`
 
 ## Agent File Structure
 
@@ -72,7 +72,7 @@ model: inherit
    - Must match the filename (without `.md` extension)
    - Use kebab-case format
    - Should be descriptive and action-oriented
-   - Examples: `doc-writer`, `repo-rule-checker`, `api-validator`
+   - Examples: `doc-writer`, `repo-rules-checker`, `api-validator`
 
 2. **`description`** (required)
    - One-line summary of when to use this agent
@@ -137,7 +137,7 @@ Agent files follow kebab-case naming:
 ```
 ✅ Good:
 - doc-writer.md
-- repo-rule-checker.md
+- repo-rules-checker.md
 - api-validator.md
 - test-runner.md
 
@@ -171,11 +171,11 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 
 Tool permissions follow the **principle of least privilege**: agents should only have access to tools they actually need.
 
-| Pattern           | Tools                               | Use For                                       | Example           | Rationale                                                     |
-| ----------------- | ----------------------------------- | --------------------------------------------- | ----------------- | ------------------------------------------------------------- |
-| **Read-Only**     | Read, Glob, Grep                    | Validation, analysis, checking, code review   | repo-rule-checker | Should never modify files; prevents accidental changes        |
-| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer        | Needs file creation/editing but no shell access               |
-| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner       | Requires command execution (⚠️ powerful, only when necessary) |
+| Pattern           | Tools                               | Use For                                       | Example            | Rationale                                                     |
+| ----------------- | ----------------------------------- | --------------------------------------------- | ------------------ | ------------------------------------------------------------- |
+| **Read-Only**     | Read, Glob, Grep                    | Validation, analysis, checking, code review   | repo-rules-checker | Should never modify files; prevents accidental changes        |
+| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer         | Needs file creation/editing but no shell access               |
+| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner        | Requires command execution (⚠️ powerful, only when necessary) |
 
 ## Model Selection Guidelines
 
@@ -249,7 +249,7 @@ Before creating a new agent, check if existing agents already cover the domain:
 **✅ Good - Specialized Agents:**
 
 - `doc-writer` - Documentation only
-- `repo-rule-checker` - Consistency validation only
+- `repo-rules-checker` - Consistency validation only
 - `test-runner` - Test execution only
 
 **❌ Bad - Over-Generalized:**
@@ -372,7 +372,7 @@ If information cannot be verified: (1) State the limitation explicitly, (2) Prov
 ### Agent-Specific Requirements
 
 - **Documentation agents (doc-writer)**: Verify code examples, file paths, project structure claims, convention references, external library docs
-- **Validation agents (repo-rule-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
+- **Validation agents (repo-rules-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
 - **Development agents**: Read test files, verify command outputs, check error messages, confirm tool availability
 
 ### Verification Checklist for Agents
@@ -615,7 +615,7 @@ If an agent is no longer needed:
 
 ### Repo-Rule-Checker Integration
 
-The `repo-rule-checker` agent validates all agents against this convention.
+The `repo-rules-checker` agent validates all agents against this convention.
 
 **Checks performed:**
 
@@ -637,7 +637,7 @@ Before committing a new agent:
 2. **Use the agent creation checklist** - Verify all items
 3. **Test the agent** - Invoke it and verify behavior
 4. **Review existing agents** - Ensure consistency
-5. **Run repo-rule-checker** - Validate compliance
+5. **Run repo-rules-checker** - Validate compliance
 
 ## Related Documentation
 

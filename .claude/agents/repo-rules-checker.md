@@ -1,5 +1,5 @@
 ---
-name: repo-rule-checker
+name: repo-rules-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep
 model: sonnet
@@ -162,7 +162,7 @@ When running a consistency check, systematically verify:
 - [ ] Identify conventions/rules duplicated across CLAUDE.md, agents, and convention files
 - [ ] Check for extractable duplications (>50% overlap between files)
 - [ ] Check for condensable duplications (repetitive content within files)
-- [ ] Analyze this file (repo-rule-checker.md) for its own duplications
+- [ ] Analyze this file (repo-rules-checker.md) for its own duplications
 - [ ] Calculate estimated token savings for each duplication found
 - [ ] Suggest whether to extract to new file or condense existing content
 
@@ -196,8 +196,8 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/doc-writer.md`
 - `.claude/agents/planner.md`
 - `.claude/agents/plan-implementor.md`
-- `.claude/agents/repo-rule-checker.md` (this file)
-- `.claude/agents/repo-rule-updater.md`
+- `.claude/agents/repo-rules-checker.md` (this file)
+- `.claude/agents/repo-rules-updater.md`
 
 ### Convention Documents
 
@@ -278,4 +278,4 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Related Agents:**
 
 - `doc-writer.md` - Creates and edits documentation (this agent validates its output)
-- `repo-rule-updater.md` - Propagates rule changes (this agent validates the results)
+- `repo-rules-updater.md` - Propagates rule changes (this agent validates the results)

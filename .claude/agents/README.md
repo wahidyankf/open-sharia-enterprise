@@ -17,7 +17,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
   - Organizing documentation according to Diátaxis framework
   - Ensuring documentation follows file naming and linking conventions
 
-### `repo-rule-checker.md`
+### `repo-rules-checker.md`
 
 Validates consistency between agents, CLAUDE.md, conventions, and documentation.
 
@@ -31,7 +31,7 @@ Validates consistency between agents, CLAUDE.md, conventions, and documentation.
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
 
-### `repo-rule-updater.md`
+### `repo-rules-updater.md`
 
 Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
 
@@ -102,15 +102,15 @@ The agents work together in complementary workflows:
 
 ```
 1. Make Changes
-   └─> Use repo-rule-updater to propagate across files
+   └─> Use repo-rules-updater to propagate across files
         └─> Ensures consistency in CLAUDE.md, conventions, agents, indices
 
 2. Validate Changes
-   └─> Use repo-rule-checker to verify consistency
+   └─> Use repo-rules-checker to verify consistency
         └─> Detects inconsistencies, contradictions, duplications
 
 3. Fix Issues (if any)
-   └─> Use repo-rule-updater to fix detected issues
+   └─> Use repo-rules-updater to fix detected issues
         └─> Return to step 2 for re-validation
 
 4. Write/Update Documentation
@@ -122,10 +122,10 @@ The agents work together in complementary workflows:
 
 - **When starting a new project:** Use `planner` to create structured plans in plans/backlog/
 - **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
-- **After adding new conventions:** Use `repo-rule-updater` → `repo-rule-checker`
-- **Before major releases:** Run `repo-rule-checker` for full audit
+- **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
+- **Before major releases:** Run `repo-rules-checker` for full audit
 - **When creating documentation:** Use `doc-writer` for proper structure
-- **When modifying CLAUDE.md:** Use `repo-rule-updater` to cascade changes
+- **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
 - **During plan implementation:** Let `plan-implementor` update delivery.md - it maintains detailed notes
 
 ## Resources
@@ -141,8 +141,8 @@ When creating new agents:
 
 1. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md)
 2. Add the agent to this README index
-3. Use `repo-rule-updater` to propagate references to CLAUDE.md and other files
-4. Use `repo-rule-checker` to validate the new agent follows all conventions
+3. Use `repo-rules-updater` to propagate references to CLAUDE.md and other files
+4. Use `repo-rules-checker` to validate the new agent follows all conventions
 5. Update CLAUDE.md if the agent should be mentioned in project guidance
 
 ---

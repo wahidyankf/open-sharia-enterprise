@@ -563,9 +563,9 @@ stateDiagram-v2
 │
 ├──▶ doc-writer.md (Documentation)
 │
-├──▶ repo-rule-checker.md (Validation)
+├──▶ repo-rules-checker.md (Validation)
 │
-└──▶ repo-rule-updater.md (Propagation)
+└──▶ repo-rules-updater.md (Propagation)
 
 ```
 

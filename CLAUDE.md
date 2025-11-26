@@ -25,8 +25,8 @@ open-sharia-enterprise/
 │       ├── doc-writer.md     # Documentation writer agent
 │       ├── planner.md        # Project planning agent
 │       ├── plan-implementor.md   # Plan execution agent
-│       ├── repo-rule-checker.md  # Consistency validator agent
-│       └── repo-rule-updater.md  # Rule propagation agent
+│       ├── repo-rules-checker.md  # Consistency validator agent
+│       └── repo-rules-updater.md  # Rule propagation agent
 ├── docs/                      # Documentation (Diátaxis framework)
 │   ├── tutorials/            # Learning-oriented guides
 │   │   └── README.md         # Tutorials index
@@ -270,8 +270,8 @@ All agents must have `name`, `description`, `tools`, and `model` frontmatter fie
 - **`doc-writer.md`** - Documentation creation and editing
 - **`planner.md`** - Project planning and requirements documentation
 - **`plan-implementor.md`** - Systematic plan execution following delivery checklists
-- **`repo-rule-checker.md`** - Consistency validation and auditing
-- **`repo-rule-updater.md`** - Rule propagation across files
+- **`repo-rules-checker.md`** - Consistency validation and auditing
+- **`repo-rules-updater.md`** - Rule propagation across files
 
 See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent descriptions and workflow guidance.
 

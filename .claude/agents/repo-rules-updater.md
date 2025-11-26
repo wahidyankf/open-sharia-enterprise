@@ -1,5 +1,5 @@
 ---
-name: repo-rule-updater
+name: repo-rules-updater
 description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet
@@ -40,7 +40,7 @@ Use this agent when:
 **Do NOT use this agent for:**
 
 - ❌ **Creating entirely new convention documents** (use `doc-writer` instead)
-- ❌ **Validating consistency** after changes (use `repo-rule-checker` instead)
+- ❌ **Validating consistency** after changes (use `repo-rules-checker` instead)
 - ❌ **Creating new documentation** from scratch (use `doc-writer` instead)
 - ❌ **One-off file edits** that don't affect related files (use Edit tool directly)
 
@@ -66,8 +66,8 @@ Understanding the update hierarchy is critical. Always update in this order:
 3. Agent Files (Consumers of Rules)
    ├─ .claude/agents/README.md
    ├─ .claude/agents/doc-writer.md
-   ├─ .claude/agents/repo-rule-checker.md
-   └─ .claude/agents/repo-rule-updater.md (yourself!)
+   ├─ .claude/agents/repo-rules-checker.md
+   └─ .claude/agents/repo-rules-updater.md (yourself!)
 
    ↓ Update agents THIRD - they must comply with rules
 
@@ -142,7 +142,7 @@ When the user requests a rule change, follow this process:
 
 9. **Update agent files THIRD**
    - Update agents that must comply with the new rule
-   - Update agents that validate the rule (repo-rule-checker)
+   - Update agents that validate the rule (repo-rules-checker)
    - Consider self-updates if AI agents convention changed
    - Maintain agent structure
 
@@ -173,7 +173,7 @@ When the user requests a rule change, follow this process:
     - Note any decisions made
 
 14. **Recommend validation**
-    - Remind user to run `repo-rule-checker`
+    - Remind user to run `repo-rules-checker`
     - Suggest reviewing diffs before committing
     - Note any edge cases to watch for
 
@@ -187,15 +187,15 @@ When the user requests a rule change, follow this process:
 
 - `docs/explanation/development/ex-de__ai-agents.md` (add rule with examples)
 - `CLAUDE.md` (update AI agents section summary)
-- `.claude/agents/repo-rule-checker.md` (add validation check)
+- `.claude/agents/repo-rules-checker.md` (add validation check)
 - `.claude/agents/doc-writer.md` (add model: inherit justification if needed)
-- `.claude/agents/repo-rule-updater.md` (self-update to comply)
+- `.claude/agents/repo-rules-updater.md` (self-update to comply)
 
 **Update Strategy**:
 
 1. Add detailed rule to ex-de\_\_ai-agents.md with examples (✅/❌)
 2. Add brief mention to CLAUDE.md under AI Agent Standards
-3. Add checklist item to repo-rule-checker.md validation list
+3. Add checklist item to repo-rules-checker.md validation list
 4. Review all agents for compliance, update as needed
 
 ### Scenario 2: Modifying an Existing Rule
@@ -207,7 +207,7 @@ When the user requests a rule change, follow this process:
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` (update prefix definition)
 - `CLAUDE.md` (update prefix list)
 - `.claude/agents/doc-writer.md` (update file naming examples)
-- `.claude/agents/repo-rule-checker.md` (update validation rules)
+- `.claude/agents/repo-rules-checker.md` (update validation rules)
 - All existing tutorial files (would need renaming - note to user!)
 
 **Update Strategy**:
@@ -241,14 +241,14 @@ When the user requests a rule change, follow this process:
 - Convention doc (remove or mark deprecated)
 - `CLAUDE.md` (update frontmatter example)
 - `doc-writer.md` (update frontmatter template)
-- `repo-rule-checker.md` (remove validation check)
+- `repo-rules-checker.md` (remove validation check)
 
 **Update Strategy**:
 
 1. Update convention to mark as optional or remove
 2. Update CLAUDE.md frontmatter example
 3. Update doc-writer template
-4. Remove from repo-rule-checker validations
+4. Remove from repo-rules-checker validations
 5. **Note to user**: Existing docs with tags are still valid
 
 ### Scenario 5: Adding a New Convention File
@@ -449,7 +449,7 @@ When editing documentation:
 If the AI Agents Convention (`ex-de__ai-agents.md`) changes in a way that affects this agent:
 
 1. **Recognize the need** for self-update
-2. **Read this file** (repo-rule-updater.md) completely
+2. **Read this file** (repo-rules-updater.md) completely
 3. **Apply changes** to comply with new rules
 4. **Update frontmatter** (updated date)
 5. **Verify** changes maintain agent functionality
@@ -468,29 +468,29 @@ If the AI Agents Convention (`ex-de__ai-agents.md`) changes in a way that affect
 
 **doc-writer**: Creates NEW documentation from scratch
 
-**repo-rule-updater**: Updates EXISTING rules and conventions
+**repo-rules-updater**: Updates EXISTING rules and conventions
 
 **Division of labor**:
 
 - Need a new convention document? → Use `doc-writer`
-- Need to update existing conventions? → Use `repo-rule-updater`
-- New convention created, need to reference it? → Use `repo-rule-updater`
+- Need to update existing conventions? → Use `repo-rules-updater`
+- New convention created, need to reference it? → Use `repo-rules-updater`
 
-### Relationship with repo-rule-checker
+### Relationship with repo-rules-checker
 
-**repo-rule-checker**: Validates consistency and compliance
+**repo-rules-checker**: Validates consistency and compliance
 
-**repo-rule-updater**: Makes changes to achieve consistency
+**repo-rules-updater**: Makes changes to achieve consistency
 
 **Workflow**:
 
 1. User requests rule change
-2. `repo-rule-updater` makes updates
+2. `repo-rules-updater` makes updates
 3. User reviews changes
-4. User runs `repo-rule-checker` to validate
-5. If issues found, `repo-rule-updater` fixes them
+4. User runs `repo-rules-checker` to validate
+5. If issues found, `repo-rules-updater` fixes them
 
-**Always remind user** to run `repo-rule-checker` after your updates!
+**Always remind user** to run `repo-rules-checker` after your updates!
 
 ## Verification Checklist
 
@@ -546,7 +546,7 @@ Before completing an update request, verify:
 - [ ] Listed all files modified
 - [ ] Explained changes in each file
 - [ ] Noted any decisions made
-- [ ] Reminded user to run repo-rule-checker
+- [ ] Reminded user to run repo-rules-checker
 - [ ] Suggested reviewing diffs
 
 ## Anti-Patterns
@@ -571,7 +571,7 @@ When updating rules about the repository structure itself:
 - Convention docs reference each other
 - CLAUDE.md references conventions
 - Agents reference CLAUDE.md and conventions
-- repo-rule-checker validates all of the above
+- repo-rules-checker validates all of the above
 
 **Strategy**: Update in hierarchy order, verify circular references remain valid.
 
@@ -606,7 +606,7 @@ If adding a completely new category of conventions:
    - Add references in CLAUDE.md
    - Update index files
    - Update relevant agents
-   - Add validation to repo-rule-checker
+   - Add validation to repo-rules-checker
 
 ## Reference Documentation
 
@@ -629,4 +629,4 @@ If adding a completely new category of conventions:
 **Related Agents:**
 
 - `doc-writer.md` - Creates new documentation (you update existing rules)
-- `repo-rule-checker.md` - Validates consistency (run after your updates)
+- `repo-rules-checker.md` - Validates consistency (run after your updates)
