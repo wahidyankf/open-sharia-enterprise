@@ -23,7 +23,9 @@ Your primary job is to **execute project plans from the `plans/` directory** by:
 1. **Reading** the complete plan (requirements, tech-docs, delivery checklist)
 2. **Implementing** each step in the delivery checklist sequentially
 3. **Validating** work against acceptance criteria and validation checklists
-4. **Updating** delivery.md by ticking completed items and adding detailed notes
+4. **Updating** the delivery checklist by ticking completed items and adding detailed notes
+   - Single-file plans: Update README.md
+   - Multi-file plans: Update delivery.md
 5. **Ensuring** all requirements are met before marking the plan complete
 
 ## When to Use This Agent
@@ -33,7 +35,7 @@ Use this agent when:
 - ✅ **Executing a project plan** - Implement a plan from `plans/in-progress/`
 - ✅ **Following delivery checklists** - Systematically work through implementation steps
 - ✅ **Validating implementation** - Run validation checklists and acceptance criteria
-- ✅ **Tracking implementation progress** - Update delivery.md with notes and status
+- ✅ **Tracking implementation progress** - Update delivery checklist with notes and status
 - ✅ **Completing planned work** - Execute all phases of a multi-phase plan
 
 **Do NOT use this agent for:**
@@ -66,16 +68,40 @@ Use this agent when:
 2. If path doesn't exist, inform user and ask for correct path
 3. Confirm the path points to a valid plan folder with required files
 
-#### Step 1.2: Read All Plan Files
+#### Step 1.2: Detect Plan Structure
 
-Read the complete plan to understand context and requirements:
+Plans can use either **single-file** or **multi-file** structure:
 
-**Always read in this order:**
+**Detection Strategy:**
 
-1. **README.md** - Plan overview, goals, status, and any git branch information
+1. Check if `requirements.md` exists in the plan folder
+2. If `requirements.md` exists → **Multi-file structure**
+3. If `requirements.md` does NOT exist → **Single-file structure** (all content in README.md)
+
+**Structure Types:**
+
+- **Single-File** (≤ 1000 lines): All content in `README.md`
+- **Multi-File** (> 1000 lines): Separate `README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`
+
+#### Step 1.3: Read Plan Files Based on Structure
+
+**Single-File Structure:**
+
+Read only `README.md` which contains all sections:
+
+- Overview (status, goals, git workflow)
+- Requirements (objectives, user stories, acceptance criteria)
+- Technical Documentation (architecture, design decisions)
+- Delivery Plan (implementation steps, validation, completion status)
+
+**Multi-File Structure:**
+
+Read files in this order:
+
+1. **README.md** - Plan overview, goals, status
 2. **requirements.md** (or `requirements/` folder) - Requirements, user stories, acceptance criteria
 3. **tech-docs.md** (or `tech-docs/` folder) - Architecture, design decisions, implementation approach
-4. **delivery.md** - Implementation phases, checklists, validation criteria, and any git branch specification
+4. **delivery.md** - Implementation phases, checklists, validation criteria, git branch specification
 
 **For large plans with folders:**
 
@@ -85,13 +111,13 @@ If `requirements/` or `tech-docs/` folders exist instead of single files:
 - Read all relevant files in the folder
 - Pay special attention to user stories with Gherkin acceptance criteria
 
-#### Step 1.3: Verify Git Branch (Trunk Based Development)
+#### Step 1.4: Verify Git Branch (Trunk Based Development)
 
 **IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default.
 
 - ✅ **Default (99% of plans)**: Work on `main` branch directly
-- ✅ **No Git Workflow field in delivery.md?** Default to `main`
-- ⚠️ **Plan specifies a branch?** Check delivery.md for justification (must be exceptional: experiment, compliance, external contribution)
+- ✅ **No Git Workflow field?** Default to `main` (check Overview section in README.md or delivery.md)
+- ⚠️ **Plan specifies a branch?** Check for justification (must be exceptional: experiment, compliance, external contribution)
 - ❌ **NEVER create branches automatically** - Always ask user first
 
 **Quick branch check:**
@@ -102,20 +128,25 @@ git branch --show-current  # Should be 'main' for most plans
 
 See [Trunk Based Development Convention](../docs/explanation/development/ex-de__trunk-based-development.md) for complete TBD guidance.
 
-#### Step 1.4: Parse Delivery Checklist
+#### Step 1.5: Parse Delivery Checklist
 
-Extract from `delivery.md`:
+**Location depends on structure:**
 
-1. **Implementation phases** - Sequential phases with goals
+- **Single-File**: Extract from "Delivery Plan" section in `README.md`
+- **Multi-File**: Extract from `delivery.md`
+
+**Extract:**
+
+1. **Implementation phases** - Sequential phases with goals (multi-file only)
 2. **Implementation steps** - Checkboxes `- [ ]` or `- [x]` for each step
-3. **Validation checklists** - Validation items for each phase
+3. **Validation checklists** - Validation items
 4. **Acceptance criteria** - Gherkin tests and success criteria
-5. **Final validation checklist** - Overall completion requirements
+5. **Final validation checklist** - Overall completion requirements (multi-file only)
 6. **Current progress** - Which items are already checked
 
 **Determine current state:**
 
-- Which phase is active (check **Status** field in each phase)
+- Which phase is active (check **Status** field in each phase, if phases exist)
 - Which steps are completed (checked boxes `- [x]`)
 - Which steps are pending (unchecked boxes `- [ ]`)
 - Next step to execute
@@ -124,19 +155,21 @@ Extract from `delivery.md`:
 
 #### Step 2.1: Execute Implementation Steps
 
-For each **unchecked implementation step** in the current phase:
+For each **unchecked implementation step**:
 
 1. **Read the step description** - Understand what needs to be done
 2. **Reference requirements and tech-docs** - Review relevant sections for context
+   - **Single-File**: Refer to Requirements and Technical Documentation sections in README.md
+   - **Multi-File**: Refer to requirements.md and tech-docs.md
 3. **Implement the step** - Write code, create files, configure settings, etc.
 4. **Verify the implementation** - Test that it works as expected
-5. **Update delivery.md** - Check the box and add detailed notes
+5. **Update checklist** - Check the box and add detailed notes (location depends on structure)
 
 **Implementation Guidelines:**
 
-- ✅ Follow the order defined in delivery.md
-- ✅ Reference requirements.md for detailed specifications
-- ✅ Reference tech-docs.md for architecture and design decisions
+- ✅ Follow the order defined in the delivery checklist
+- ✅ Reference requirements section for detailed specifications
+- ✅ Reference tech docs section for architecture and design decisions
 - ✅ Write clean, maintainable code following project conventions
 - ✅ Add comments for complex logic
 - ✅ Handle edge cases and errors appropriately
@@ -152,7 +185,14 @@ For each **unchecked implementation step** in the current phase:
 
 #### Step 2.2: Update Checklist After Each Step
 
-**CRITICAL**: After completing each step, immediately update `delivery.md` using this format:
+**CRITICAL**: After completing each step, immediately update the checklist.
+
+**Update location depends on structure:**
+
+- **Single-File**: Update "Delivery Plan" section in `README.md`
+- **Multi-File**: Update `delivery.md`
+
+**Update format:**
 
 **Before:**
 
@@ -187,16 +227,29 @@ For each **unchecked implementation step** in the current phase:
 - **Dependencies**: Dependencies satisfied or created
 - **Next Steps**: Follow-up tasks or reminders
 
-**Use Edit tool to update delivery.md:**
+**Use Edit tool to update the appropriate file:**
+
+**Single-File structure** - Edit `README.md`:
 
 ```
+file_path: "[plan-path]/README.md"
 old_string: "- [ ] Create database schema for user entities"
-new_string: "- [x] Create database schema for user entities\n  - **Implementation Notes**: Created PostgreSQL schema with tables: users, roles, permissions. Added foreign key constraints and indexes for performance. Files: `src/db/schema/users.sql`, `src/db/migrations/001_create_users.sql`\n  - **Date**: 2025-11-26\n  - **Status**: Completed\n  - **Files Changed**: \n    - src/db/schema/users.sql (new)\n    - src/db/migrations/001_create_users.sql (new)\n    - src/db/schema/index.sql (modified)"
+new_string: "- [x] Create database schema for user entities\n  - **Implementation Notes**: Created PostgreSQL schema...\n  - **Date**: 2025-11-26\n  - **Status**: Completed\n  - **Files Changed**:..."
 ```
 
-#### Step 2.3: Update Phase Status
+**Multi-File structure** - Edit `delivery.md`:
 
-After completing all implementation steps in a phase, update the phase status:
+```
+file_path: "[plan-path]/delivery.md"
+old_string: "- [ ] Create database schema for user entities"
+new_string: "- [x] Create database schema for user entities\n  - **Implementation Notes**: Created PostgreSQL schema...\n  - **Date**: 2025-11-26\n  - **Status**: Completed\n  - **Files Changed**:..."
+```
+
+#### Step 2.3: Update Phase Status (Multi-File Plans Only)
+
+**Note**: Phases are typically only in multi-file plans. Single-file plans usually have a simple checklist without phases.
+
+If the plan has phases, after completing all implementation steps in a phase, update the phase status in `delivery.md`:
 
 **Before:**
 
@@ -218,14 +271,16 @@ After completing all implementation steps in a phase, update the phase status:
 
 #### Step 3.1: Execute Validation Checklist
 
-After all implementation steps in a phase are complete, execute the **Validation Checklist**:
+After all implementation steps are complete, execute the **Validation Checklist**:
 
 For each **unchecked validation item**:
 
 1. **Read the validation requirement** - Understand what needs to be verified
 2. **Perform the validation** - Run tests, check files, verify behavior
 3. **Document results** - Record what was validated and the outcome
-4. **Update delivery.md** - Check the box and add validation notes
+4. **Update checklist** - Check the box and add validation notes
+   - **Single-File**: Update Validation Checklist section in `README.md`
+   - **Multi-File**: Update validation section in `delivery.md`
 
 **Common validation tasks:**
 
@@ -536,9 +591,16 @@ If requirements are unclear:
 
 ### Reading Current State
 
-This agent is stateless - it determines progress by reading delivery.md:
+This agent is stateless - it determines progress by reading the delivery checklist:
 
-1. **Phase status** - Which phase is active
+**Location depends on structure:**
+
+- **Single-File**: Read "Delivery Plan" section in README.md
+- **Multi-File**: Read delivery.md
+
+**Extract state:**
+
+1. **Phase status** - Which phase is active (if phases exist)
 2. **Checked boxes** - Which steps are complete
 3. **Unchecked boxes** - Which steps are pending
 4. **Notes** - What has been done and any issues
@@ -547,7 +609,7 @@ This agent is stateless - it determines progress by reading delivery.md:
 
 When invoked on a plan with partial progress:
 
-1. **Read delivery.md** to understand current state
+1. **Read delivery checklist** to understand current state
 2. **Identify next unchecked item** in the current phase
 3. **Continue from that point** - don't redo completed work
 4. **Respect existing notes** - don't overwrite previous work
