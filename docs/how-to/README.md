@@ -7,14 +7,14 @@ tags:
   - how-to
   - guides
 created: 2025-11-22
-updated: 2025-11-24
+updated: 2025-11-26
 ---
 
 # How-To Guides
 
 Problem-solving guides for common tasks in the open-sharia-enterprise project. These documents provide practical, step-by-step instructions for accomplishing specific goals.
 
-## Contents
+## 📋 Contents
 
 - [How to Organize Your Work](./ht__organize-work.md) - Choose the right folder (journals, plans, docs) for different types of work
 

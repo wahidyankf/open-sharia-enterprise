@@ -4,7 +4,7 @@ This directory contains comprehensive documentation for the open-sharia-enterpri
 
 > **💡 Tip:** This documentation folder is optimized for reading in [Obsidian](https://obsidian.md/). Open the `docs/` folder as a vault to enjoy enhanced navigation, graph view, and full-text search. However, all documentation is also readable in any markdown viewer or on GitHub.
 
-## Organization Structure
+## 📋 Organization Structure
 
 The documentation is divided into four main categories based on the Diátaxis framework:
 
@@ -32,7 +32,7 @@ Conceptual documentation that explains the "why" behind design decisions, archit
 
 **Location:** `./explanation/`
 
-## Why Diátaxis?
+## 🎯 Why Diátaxis?
 
 The Diátaxis framework provides a clear structure that:
 
@@ -41,14 +41,14 @@ The Diátaxis framework provides a clear structure that:
 - Improves documentation clarity and consistency
 - Scales well as the project grows
 
-## Documentation Standards
+## 📖 Documentation Standards
 
 This documentation follows specific conventions for consistency and quality:
 
 - [Documentation Conventions](./explanation/conventions/README.md) - File naming, linking, and organization standards
 - [Development Conventions](./explanation/development/README.md) - Development practices, tools, and workflows
 
-## Getting Started
+## 🚀 Getting Started
 
 1. **New to the project?** Start with the [Tutorials](./tutorials/README.md)
 2. **Trying to solve a problem?** Check the [How-To Guides](./how-to/README.md)

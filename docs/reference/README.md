@@ -7,14 +7,14 @@ tags:
   - reference
   - technical
 created: 2025-11-22
-updated: 2025-11-22
+updated: 2025-11-26
 ---
 
 # Reference
 
 Technical reference documentation for the open-sharia-enterprise project. These documents provide detailed specifications, API documentation, and technical details.
 
-## Contents
+## 📋 Contents
 
 This section is currently empty. Reference documentation will be added as the project develops.
 
