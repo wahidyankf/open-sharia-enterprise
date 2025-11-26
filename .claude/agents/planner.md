@@ -110,7 +110,7 @@ Detailed requirements, user stories, and acceptance criteria.
 
 **Template:**
 
-```markdown
+````markdown
 # Requirements: [Project Name]
 
 ## Objectives
@@ -130,30 +130,110 @@ Detailed requirements, user stories, and acceptance criteria.
 1. **[Objective 1]**
    - Nice-to-have features or improvements
 
+## User Stories
+
+### Story 1: [Story Title]
+
+**As a** [type of user]
+**I want** [goal/desire]
+**So that** [benefit/value]
+
+**Acceptance Criteria** (Gherkin):
+
+```gherkin
+Scenario: [Scenario name describing the context]
+  Given [initial context or precondition]
+  And [additional precondition if needed]
+  When [action or event occurs]
+  Then [expected outcome]
+  And [additional expected outcome if needed]
+
+Scenario: [Alternative scenario name]
+  Given [different initial context]
+  When [different action]
+  Then [different expected outcome]
+```
+````
+
+### Story 2: [Story Title]
+
+**As a** [type of user]
+**I want** [goal/desire]
+**So that** [benefit/value]
+
+**Acceptance Criteria** (Gherkin):
+
+```gherkin
+Scenario: [Scenario name]
+  Given [initial context]
+  When [action occurs]
+  Then [expected result]
+```
+
 ## Functional Requirements
 
 ### [Feature Area 1]
 
-- **REQ-001**: [Requirement description]
-  - Priority: High | Medium | Low
-  - Acceptance Criteria:
-    - [ ] Criterion 1
-    - [ ] Criterion 2
+**REQ-001**: [Requirement description]
+
+- **Priority**: High | Medium | Low
+- **User Stories**: Story 1, Story 2
+- **Acceptance Criteria** (Gherkin):
+
+```gherkin
+Scenario: [Specific scenario for this requirement]
+  Given [precondition]
+  When [action]
+  Then [expected behavior]
+```
 
 ### [Feature Area 2]
 
-- **REQ-002**: [Requirement description]
-  - Priority: High | Medium | Low
-  - Acceptance Criteria:
-    - [ ] Criterion 1
-    - [ ] Criterion 2
+**REQ-002**: [Requirement description]
+
+- **Priority**: High | Medium | Low
+- **User Stories**: Story 3
+- **Acceptance Criteria** (Gherkin):
+
+```gherkin
+Scenario: [Scenario name]
+  Given [initial state]
+  When [user action]
+  Then [system response]
+  And [additional system behavior]
+```
 
 ## Non-Functional Requirements
 
-- **Performance**: [Performance requirements]
-- **Security**: [Security requirements]
-- **Scalability**: [Scalability requirements]
-- **Maintainability**: [Maintainability requirements]
+### Performance
+
+- **REQ-NFR-001**: [Performance requirement]
+  - Example: System must respond to user requests within 200ms for 95% of requests
+
+**Acceptance Criteria** (Gherkin):
+
+```gherkin
+Scenario: API response time under normal load
+  Given the system is running under normal load conditions
+  When a user makes an API request
+  Then the response is returned within 200ms
+  And this is true for 95% of all requests
+```
+
+### Security
+
+- **REQ-NFR-002**: [Security requirement]
+  - Example: All user authentication must use industry-standard encryption
+
+### Scalability
+
+- **REQ-NFR-003**: [Scalability requirement]
+  - Example: System must handle 10,000 concurrent users
+
+### Maintainability
+
+- **REQ-NFR-004**: [Maintainability requirement]
+  - Example: Code coverage must be at least 80%
 
 ## Constraints
 
@@ -170,7 +250,8 @@ Detailed requirements, user stories, and acceptance criteria.
 
 - [Explicitly excluded item 1]
 - [Explicitly excluded item 2]
-```
+
+````
 
 ### 3. `tech-docs.md` - Technical Documentation
 
@@ -253,7 +334,7 @@ Architecture, design decisions, and implementation approach.
 ## Monitoring & Observability
 
 [Describe logging, metrics, and monitoring approach]
-```
+````
 
 ### 4. `delivery.md` - Milestones & Deliverables
 
@@ -439,7 +520,80 @@ Relationships:
 
 For more diagram examples and conventions, see [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md).
 
-### 3. Plan Lifecycle Management
+### 3. Acceptance Criteria: Gherkin Format
+
+All acceptance criteria in requirements.md MUST use Gherkin format for clarity and testability.
+
+**Gherkin Syntax:**
+
+```gherkin
+Scenario: [Descriptive name of the scenario]
+  Given [initial context or precondition]
+  And [additional precondition]
+  When [action or event that triggers the behavior]
+  And [additional action]
+  Then [expected outcome or result]
+  And [additional expected outcome]
+  But [exception or constraint]
+```
+
+**Key Keywords:**
+
+- **Given** - Sets up the initial context/state before the action
+- **When** - Describes the action or event being tested
+- **Then** - Specifies the expected outcome
+- **And** - Adds additional conditions to Given/When/Then
+- **But** - Similar to And, but emphasizes a contrasting condition
+
+**Best Practices:**
+
+1. **Be Specific**: Use concrete examples with actual values
+2. **One Scenario per Behavior**: Each scenario tests one specific behavior
+3. **Use Present Tense**: "user clicks" not "user clicked"
+4. **Avoid Technical Implementation**: Focus on behavior, not how it's implemented
+5. **Make it Testable**: Criteria should be verifiable
+
+**Good Example:**
+
+```gherkin
+Scenario: User successfully logs in with valid credentials
+  Given the user is on the login page
+  And the user has a valid account with email "user@example.com"
+  When the user enters email "user@example.com"
+  And the user enters password "correctPassword123"
+  And the user clicks the "Login" button
+  Then the user is redirected to the dashboard
+  And the user sees a welcome message "Welcome back!"
+  And the user's session is active
+
+Scenario: User login fails with invalid password
+  Given the user is on the login page
+  And the user has a valid account with email "user@example.com"
+  When the user enters email "user@example.com"
+  And the user enters password "wrongPassword"
+  And the user clicks the "Login" button
+  Then the user remains on the login page
+  And the user sees an error message "Invalid email or password"
+  And the login attempt is logged for security monitoring
+```
+
+**Bad Example (Too Vague):**
+
+```gherkin
+Scenario: Login works
+  Given user is logged out
+  When user logs in
+  Then user is logged in
+```
+
+**Why Use Gherkin?**
+
+- **Clear Communication**: Non-technical stakeholders can understand requirements
+- **Test Automation**: Can be directly converted to automated tests
+- **Living Documentation**: Scenarios document expected behavior
+- **Unambiguous**: Removes interpretation gaps between teams
+
+### 4. Plan Lifecycle Management
 
 When creating a new plan:
 
@@ -473,7 +627,7 @@ When a plan is completed:
 3. Update both plans/in-progress/README.md and plans/done/README.md
 ```
 
-### 4. Linking Convention
+### 5. Linking Convention
 
 When linking between plan files or to external documentation:
 
