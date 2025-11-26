@@ -62,7 +62,8 @@ Examples:
 
 **Rules**:
 
-- Date is the plan creation date (not start date)
+- Date is the **plan creation date** in `backlog/` and `in-progress/`
+- Date is **updated to completion date** when moved to `done/`
 - Use ISO format: `YYYY-MM-DD`
 - Double underscore `__` separates date from identifier
 - Project identifier uses kebab-case (lowercase with hyphens)
@@ -610,9 +611,11 @@ When a plan moves to active work:
 When a plan is completed:
 
 ```
-1. Move folder from in-progress/ to done/
-2. Update status in plan's README.md to "Done"
-3. Update both plans/in-progress/README.md and plans/done/README.md
+1. Rename folder to update date prefix to current date (completion date)
+   Example: 2025-11-25__user-auth/ → 2025-11-26__user-auth/
+2. Move renamed folder from in-progress/ to done/
+3. Update status in plan's README.md to "Done"
+4. Update both plans/in-progress/README.md and plans/done/README.md
 ```
 
 ### 5. Linking Convention
