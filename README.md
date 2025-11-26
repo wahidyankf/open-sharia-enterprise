@@ -12,6 +12,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 - 🔓 **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
 - 🤝 **Community collaboration** can accelerate the development of accessible and culturally sensitive business tools
 - 💡 **Innovation** across enterprise domains (financial services, supply chain, HR, and more) should be driven by open standards and shared knowledge
+- 🛡️ **Governance and security from day one** are essential for enterprise solutions - good governance and sound security practices must be architectural foundations, not afterthoughts
 
 🚀 Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
