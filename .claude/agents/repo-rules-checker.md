@@ -289,6 +289,7 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation
+- `docs/explanation/conventions/ex-co__journals-format.md` - Logseq-style outliner format for journals
 
 **Related Agents:**
 
