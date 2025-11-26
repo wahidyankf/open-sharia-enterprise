@@ -23,6 +23,7 @@ open-sharia-enterprise/
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
 │       ├── doc-writer.md     # Documentation writer agent
+│       ├── journal-writer.md     # Journal and research notes agent
 │       ├── plan-writer.md        # Project planning agent
 │       ├── plan-implementor.md   # Plan execution agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
@@ -276,6 +277,7 @@ All agents must have `name`, `description`, `tools`, and `model` frontmatter fie
 ### Available Agents
 
 - **`doc-writer.md`** - Documentation creation and editing
+- **`journal-writer.md`** - Daily research notes and monthly project summaries
 - **`plan-writer.md`** - Project planning and requirements documentation
 - **`plan-implementor.md`** - Systematic plan execution following delivery checklists
 - **`repo-rules-checker.md`** - Consistency validation and auditing

@@ -74,6 +74,21 @@ Expert at systematically implementing project plans by following delivery checkl
   - Completing all phases of a multi-phase plan
   - Ensuring all requirements are met before marking plan complete
 
+### `journal-writer.md`
+
+Expert journal writer specializing in Obsidian-optimized daily research notes and monthly project summaries.
+
+- **Primary Use:** Capturing research insights or creating monthly progress reports
+- **Specialization:** Knowledge graph building with markdown links, research organization, project tracking
+- **Tools:** Read, Write, Edit, Glob, Grep, Bash
+- **When to Use:**
+  - Creating daily research notes with GitHub-compatible markdown links
+  - Generating monthly project summaries (recommended second Sunday of month)
+  - Building knowledge graphs through markdown linking
+  - Suggesting link opportunities across journal entries
+  - Reorganizing and merging concepts for better knowledge retrieval
+  - Tracking research themes and project progress over time
+
 ## Agent Workflow
 
 The agents work together in complementary workflows:
