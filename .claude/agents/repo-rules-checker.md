@@ -136,11 +136,24 @@ When running a consistency check, systematically verify:
 - [ ] Plan status in README.md matches folder location (in-progress/backlog/done)
 - [ ] Plan index files (`plans/{in-progress,backlog,done}/README.md`) list all plans in their category
 
+### Journals Format Convention Compliance
+
+- [ ] All journal entries in `docs/journals/` use Logseq-style outliner format
+- [ ] Daily entries use only `# YYYY-MM-DD` heading (no `##`, `###`)
+- [ ] Monthly summaries use only `# summary` heading (no `##`, `###`)
+- [ ] All content after heading uses bullets (`-`) with 2-space nesting
+- [ ] No traditional subheadings in journal files
+- [ ] Journal files follow naming pattern: `YYYY-MM/YYYY-MM-DD.md` or `YYYY-MM/summary.md`
+- [ ] Journals use Mermaid for diagrams (inside `docs/` directory)
+- [ ] journal-writer.md agent correctly documents outliner format requirements
+- [ ] CLAUDE.md correctly describes journals as using "Logseq-style outliner format"
+
 ### Special Cases
 
 - [ ] README.md exception is documented in file naming convention
 - [ ] README.md exception is mentioned in CLAUDE.md
 - [ ] Journals pattern (`YYYY-MM/YYYY-MM-DD.md`) is documented
+- [ ] Journals format convention (`ex-co__journals-format.md`) is referenced in CLAUDE.md and conventions index
 - [ ] Directory naming rationale (singular vs plural) is documented
 
 ### Trunk Based Development (TBD) Compliance
@@ -194,6 +207,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 
 - `.claude/agents/README.md`
 - `.claude/agents/doc-writer.md`
+- `.claude/agents/journal-writer.md`
 - `.claude/agents/plan-writer.md`
 - `.claude/agents/plan-implementor.md`
 - `.claude/agents/repo-rules-checker.md` (this file)
@@ -206,6 +220,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/explanation/conventions/ex-co__linking-convention.md`
 - `docs/explanation/conventions/ex-co__diagrams.md`
 - `docs/explanation/conventions/ex-co__diataxis-framework.md`
+- `docs/explanation/conventions/ex-co__journals-format.md`
 
 ### Development Conventions
 

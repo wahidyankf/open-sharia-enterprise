@@ -8,7 +8,7 @@ tags:
   - best-practices
   - folders
 created: 2025-11-24
-updated: 2025-11-24
+updated: 2025-11-26
 ---
 
 # How to Organize Your Work
@@ -98,19 +98,23 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 
 ### docs/journals/ - Daily Notes
 
-**Purpose:** Daily scratch notes, logs, and ephemeral thoughts (Obsidian daily notes)
+**Purpose:** Daily research notes and monthly summaries using Logseq-style outliner format
 
 **Key Characteristics:**
 
 - **Lifecycle:** Ongoing, date-based, never deleted
 - **Structure:** Monthly folders with daily files (`YYYY-MM/YYYY-MM-DD.md`)
 - **File Naming:** Special date format (no prefixes)
+- **Format:** Logseq-style outliner (bullet-based, only `# YYYY-MM-DD` heading)
 - **Diagram Format:** Mermaid (inside Obsidian vault)
 - **Audience:** Personal use, team communication, temporal record
 
+**Format Details:** Unlike formal documentation which uses traditional markdown structure (multiple headings, paragraphs), journals use bullet-based outliner format optimized for quick capture and progressive thinking. See [Journals Format Convention](../explanation/conventions/ex-co__journals-format.md).
+
 **What Goes Here:**
 
-- Daily work logs
+- Daily research notes
+- Work logs and progress tracking
 - Meeting notes
 - Brainstorming sessions
 - Quick ideas and explorations
@@ -203,6 +207,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
    - Archive for historical reference
 
 5. **Document in docs/** (Optional - if creating permanent guidelines)
+
    ```
    docs/reference/re-br__brand-guidelines.md
    ```
@@ -258,6 +263,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
    - Document API for developers
 
 5. **Archive plan**
+
    ```
    plans/done/2025-11-25__auth-system/
    ```

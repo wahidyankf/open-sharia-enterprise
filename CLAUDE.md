@@ -169,7 +169,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 - **Reference** (`docs/reference/`) - Technical reference
 - **Explanation** (`docs/explanation/`) - Conceptual
 
-**Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily notes in Obsidian vault format (`YYYY-MM/YYYY-MM-DD.md`).
+**Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily research notes and monthly summaries in **Logseq-style outliner format** (`YYYY-MM/YYYY-MM-DD.md`). Unlike formal documentation which uses traditional markdown structure, journals use bullet-based format optimized for quick capture and progressive thinking. See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
 
 ## Plans Organization
 
@@ -261,6 +261,7 @@ All documentation organized into four categories (Tutorials, How-To, Reference, 
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](./docs/explanation/conventions/ex-co__linking-convention.md)
 - **Diagram and Schema Guide:** [`docs/explanation/conventions/ex-co__diagrams.md`](./docs/explanation/conventions/ex-co__diagrams.md)
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](./docs/explanation/conventions/ex-co__diataxis-framework.md)
+- **Journals Format Guide:** [`docs/explanation/conventions/ex-co__journals-format.md`](./docs/explanation/conventions/ex-co__journals-format.md)
 
 ## AI Agent Standards
 
