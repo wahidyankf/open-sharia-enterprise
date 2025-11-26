@@ -73,6 +73,8 @@ Examples:
 
 Every plan folder contains exactly four standard files (NO PREFIXES):
 
+**NOTE**: For large plans, `requirements.md` or `tech-docs.md` can be converted to folders when they exceed 1000 lines of content. See "Large Plan File Organization" section below.
+
 ### 1. `README.md` - Plan Overview
 
 The entry point and navigation hub for the plan.
@@ -400,19 +402,282 @@ Project milestones, deliverables, and success criteria.
 3. [ ] Success criterion 3
 ```
 
+## Large Plan File Organization
+
+When `requirements.md` or `tech-docs.md` exceed **1000 lines of content**, convert them to folders for better organization and maintainability.
+
+### Converting Files to Folders
+
+**Threshold**: > 1000 lines of content
+
+**Affected files**: `requirements.md`, `tech-docs.md`
+
+**Not affected**: `README.md`, `delivery.md` (these should always remain single files)
+
+### Requirements Folder Structure
+
+When `requirements.md` exceeds 1000 lines, convert to `requirements/` folder:
+
+```
+plans/backlog/2025-11-25__user-auth/
+├── README.md
+├── requirements/
+│   ├── README.md                    # Index and overview
+│   ├── objectives.md                # Primary and secondary objectives
+│   ├── functional-requirements.md   # Functional requirements
+│   ├── non-functional-requirements.md  # Non-functional requirements
+│   ├── constraints.md               # Constraints, assumptions, out of scope
+│   └── user-stories/                # User stories with Gherkin
+│       ├── story-1__user-login.md
+│       ├── story-2__user-registration.md
+│       └── story-3__password-reset.md
+├── tech-docs.md
+└── delivery.md
+```
+
+#### requirements/README.md Template
+
+```markdown
+# Requirements: [Project Name]
+
+This folder contains all project requirements, user stories, and acceptance criteria.
+
+## Contents
+
+- [Objectives](./objectives.md) - Primary and secondary objectives
+- [User Stories](./user-stories/) - User stories with Gherkin acceptance criteria
+- [Functional Requirements](./functional-requirements.md) - Feature requirements
+- [Non-Functional Requirements](./non-functional-requirements.md) - Performance, security, scalability
+- [Constraints](./constraints.md) - Constraints, assumptions, and scope
+
+## Quick Links
+
+- [Technical Documentation](../tech-docs.md) - Architecture and implementation
+- [Delivery Plan](../delivery.md) - Milestones and deliverables
+```
+
+#### User Story File Template
+
+Each user story gets its own file in `requirements/user-stories/`:
+
+**Naming**: `story-[number]__[brief-description].md`
+
+**Examples**:
+
+- `story-1__user-login.md`
+- `story-2__user-registration.md`
+- `story-3__password-reset.md`
+
+**Template**:
+
+````markdown
+# User Story: [Story Title]
+
+**Story ID**: STORY-001
+
+**As a** [type of user]
+**I want** [goal/desire]
+**So that** [benefit/value]
+
+## Acceptance Criteria
+
+```gherkin
+Scenario: [Scenario 1 name]
+  Given [initial context]
+  And [additional context]
+  When [action occurs]
+  Then [expected outcome]
+  And [additional outcome]
+
+Scenario: [Scenario 2 name]
+  Given [different context]
+  When [different action]
+  Then [different outcome]
+```
+
+## Related Requirements
+
+- REQ-001: [Related functional requirement]
+- REQ-NFR-001: [Related non-functional requirement]
+
+## Notes
+
+[Any additional context, edge cases, or implementation notes]
+````
+
+### Tech-Docs Folder Structure
+
+When `tech-docs.md` exceeds 1000 lines, convert to `tech-docs/` folder:
+
+```
+plans/backlog/2025-11-25__user-auth/
+├── README.md
+├── requirements.md
+├── tech-docs/
+│   ├── README.md                # Index and overview
+│   ├── architecture.md          # System architecture
+│   ├── design-decisions.md      # ADRs and design rationale
+│   ├── data-models.md           # Database schemas and data structures
+│   ├── api-design.md            # API endpoints and contracts
+│   ├── implementation.md        # Implementation phases and approach
+│   ├── security.md              # Security considerations
+│   ├── testing.md               # Testing strategy
+│   └── deployment.md            # Deployment and monitoring
+└── delivery.md
+```
+
+#### tech-docs/README.md Template
+
+```markdown
+# Technical Documentation: [Project Name]
+
+This folder contains all technical architecture, design decisions, and implementation details.
+
+## Contents
+
+- [Architecture](./architecture.md) - System architecture and component overview
+- [Design Decisions](./design-decisions.md) - Architectural Decision Records (ADRs)
+- [Data Models](./data-models.md) - Database schemas and data structures
+- [API Design](./api-design.md) - API endpoints and contracts
+- [Implementation](./implementation.md) - Implementation phases and approach
+- [Security](./security.md) - Security considerations and measures
+- [Testing](./testing.md) - Testing strategy and approach
+- [Deployment](./deployment.md) - Deployment strategy and monitoring
+
+## Technology Stack
+
+[List key technologies here for quick reference]
+
+## Quick Links
+
+- [Requirements](../requirements.md) - Project requirements and user stories
+- [Delivery Plan](../delivery.md) - Milestones and deliverables
+```
+
+### When to Convert
+
+**Convert to folder when**:
+
+- File exceeds 1000 lines of content
+- Content has clear logical sections that can be split
+- Plan is complex enough to benefit from organization
+
+**Keep as single file when**:
+
+- File is under 1000 lines
+- Content is cohesive and doesn't have clear split points
+- Plan is simple and well-organized as a single document
+
+## Plan Scope and Delivery
+
+### Single PR Delivery (Default)
+
+**By default, all plans should be scoped to be deliverable in a single Pull Request.**
+
+This means:
+
+- ✅ Plan contains work that can be implemented together
+- ✅ All features/requirements are cohesive and related
+- ✅ Implementation can be reviewed and merged as one unit
+- ✅ Testing can be done on the complete set of changes
+
+**Benefits of single-PR plans**:
+
+- Faster review and feedback cycles
+- Easier to reason about changes
+- Reduced merge conflicts
+- Clearer scope and boundaries
+- Simpler rollback if needed
+
+### Multi-PR Plans (Explicit Only)
+
+**Only create multi-PR plans when explicitly required or when:**
+
+- Plan is clearly too large for a single PR
+- Natural breakpoints exist for independent delivery
+- Phased rollout is required for risk management
+- Dependencies require sequential delivery
+
+**If creating a multi-PR plan**, clearly document:
+
+- Number of PRs expected
+- What each PR will deliver
+- Dependencies between PRs
+- Order of delivery
+
+**Document in delivery.md**:
+
+```markdown
+## Delivery Strategy
+
+**Type**: Multi-PR Plan (3 PRs)
+
+### PR 1: Foundation
+
+- Database schema changes
+- Core data models
+- Basic CRUD operations
+
+### PR 2: Business Logic
+
+- Authentication flow
+- Authorization rules
+- API endpoints
+
+### PR 3: UI and Integration
+
+- Frontend components
+- Integration tests
+- Documentation
+
+**Dependencies**: Each PR builds on the previous one and must be merged sequentially.
+```
+
+### Scope Guidance
+
+When planning, ask:
+
+- "Can this be implemented and reviewed in one PR?"
+- "Are all requirements tightly coupled?"
+- "Is there a natural way to break this into independent pieces?"
+
+**If yes to breaking into pieces**: Consider creating separate plans instead of a multi-PR plan.
+
+**If no clear breakpoints**: Keep as single-PR plan.
+
 ## Critical Conventions for Plans
 
 ### 1. No File Naming Prefixes
 
 **IMPORTANT**: Files inside plan folders do NOT use prefixes. The folder structure provides context.
 
-✅ Correct:
+✅ Correct (Simple Plan):
 
 ```
 plans/backlog/2025-11-25__user-auth/
 ├── README.md
 ├── requirements.md
 ├── tech-docs.md
+└── delivery.md
+```
+
+✅ Correct (Large Plan with Folders):
+
+```
+plans/backlog/2025-11-25__user-auth/
+├── README.md
+├── requirements/
+│   ├── README.md
+│   ├── objectives.md
+│   ├── user-stories/
+│   │   ├── story-1__user-login.md
+│   │   └── story-2__user-registration.md
+│   ├── functional-requirements.md
+│   └── non-functional-requirements.md
+├── tech-docs/
+│   ├── README.md
+│   ├── architecture.md
+│   └── design-decisions.md
 └── delivery.md
 ```
 
