@@ -390,12 +390,6 @@ Project milestones, deliverables, and success criteria.
 
 [Same structure as above]
 
-## Resources Required
-
-- **Team Members**: [Roles and responsibilities]
-- **Tools & Services**: [Required tools, licenses, services]
-- **Budget**: [If applicable]
-
 ## Success Criteria
 
 **The project will be considered successful when:**
@@ -403,12 +397,6 @@ Project milestones, deliverables, and success criteria.
 1. [ ] Success criterion 1
 2. [ ] Success criterion 2
 3. [ ] Success criterion 3
-
-## Approval & Sign-off
-
-- **Project Sponsor**: [Name] - [Date]
-- **Technical Lead**: [Name] - [Date]
-- **Stakeholders**: [Names] - [Date]
 ```
 
 ## Critical Conventions for Plans
@@ -644,7 +632,7 @@ Before creating a plan, understand:
 
 - Project goals and objectives
 - Technical scope and constraints
-- Stakeholder requirements
+- Business requirements and user needs
 
 ### Step 2: Create Plan Folder
 
@@ -660,7 +648,7 @@ Create all four standard files using the templates above:
 1. `README.md` - Plan overview
 2. `requirements.md` - Requirements and objectives
 3. `tech-docs.md` - Technical documentation
-4. `delivery.md` - Timeline and milestones
+4. `delivery.md` - Milestones and deliverables
 
 ### Step 4: Customize Content
 
@@ -730,8 +718,8 @@ Before finalizing:
 Plans are read by:
 
 - Future you (remembering context)
-- Team members (understanding scope)
-- Stakeholders (tracking progress)
+- Other developers (understanding scope)
+- Decision makers (evaluating feasibility)
 - New contributors (getting context)
 
 Write for all these audiences.
