@@ -7,18 +7,19 @@ tags:
   - explanation
   - concepts
 created: 2025-11-22
-updated: 2025-11-22
+updated: 2025-11-26
 ---
 
 # Explanation
 
 Conceptual documentation for the open-sharia-enterprise project. These documents provide context, deep dives, and understanding of how systems work and why design decisions were made.
 
-## Contents
+## 📋 Contents
 
 - [Conventions](./conventions/README.md) - Documentation conventions and standards
 - [Development](./development/README.md) - Development conventions and standards
+- [Security](./security/README.md) - Security concepts and practices
 
 ---
 
-**Last Updated**: 2025-11-23
+**Last Updated**: 2025-11-26

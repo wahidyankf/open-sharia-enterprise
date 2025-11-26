@@ -16,7 +16,7 @@ updated: 2025-11-26
 
 This document defines the Logseq-style outliner format used for all journal entries in the `docs/journals/` directory. Unlike formal documentation which uses traditional markdown structure, journals use a bullet-based outliner format optimized for quick capture, research notes, and progressive thinking.
 
-## Overview
+## 📋 Overview
 
 The journals format serves three critical purposes:
 
@@ -24,7 +24,7 @@ The journals format serves three critical purposes:
 2. **Progressive Elaboration** - Easily nest and reorganize ideas as understanding evolves
 3. **Knowledge Connectivity** - Build a knowledge graph through markdown links while maintaining flexibility
 
-## Scope
+## 🎯 Scope
 
 This format convention applies **exclusively to files in `docs/journals/`**:
 
@@ -37,7 +37,7 @@ This format convention applies **exclusively to files in `docs/journals/`**:
 - Plans (`plans/` folder) - Uses traditional markdown structure
 - Root-level files (`README.md`, `CLAUDE.md`, etc.) - Uses traditional markdown structure
 
-## The Core Principle
+## 💡 The Core Principle
 
 Journals use **Logseq-style outliner format** where content is structured as nested bullets rather than traditional paragraphs and sections. This format:
 
@@ -63,13 +63,11 @@ Journals use **Logseq-style outliner format** where content is structured as nes
 
 This distinction keeps journals agile and explorative while maintaining formal documentation standards elsewhere.
 
-## Basic Structure
+## 📝 Basic Structure
 
 ### Daily Entry Template
 
 ```markdown
-# YYYY-MM-DD
-
 - Research topic or area #tag1 #tag2
   - Key finding or insight
     - Supporting detail or evidence
@@ -87,20 +85,19 @@ This distinction keeps journals agile and explorative while maintaining formal d
 
 ### Core Rules
 
-1. **Date as H1** - First line is always `# YYYY-MM-DD` (the only heading)
-2. **Everything else is bullets** - All content after the date uses bullet points (`-`)
-3. **Nest freely** - Use indentation to show relationships and hierarchy
-4. **No additional headings** - Don't use `##`, `###`, etc. Use bullet text to identify topics
-5. **Tags anywhere** - Use `#tags` inline within bullets
-6. **Link liberally** - Connect to other entries and documents
+1. **No H1 heading** - Do NOT include `# YYYY-MM-DD` at the start (Obsidian displays filename as page title, creating visual duplication)
+2. **Start directly with content** - First line should be a bullet point or content (not a heading)
+3. **Everything is bullets** - All content uses bullet points (`-`)
+4. **Nest freely** - Use indentation to show relationships and hierarchy
+5. **No subheadings** - Don't use `##`, `###`, etc. Use bullet text to identify topics
+6. **Tags anywhere** - Use `#tags` inline within bullets
+7. **Link liberally** - Connect to other entries and documents
 
-## Detailed Examples
+## 🧪 Detailed Examples
 
 ### Example 1: Research Session
 
 ```markdown
-# 2025-11-26
-
 - Exploring authentication patterns for microservices #auth #microservices #research
   - OAuth 2.0 seems most suitable for our use case
     - Authorization code flow for web apps
@@ -129,8 +126,6 @@ This distinction keeps journals agile and explorative while maintaining formal d
 ### Example 2: Daily Development Log
 
 ```markdown
-# 2025-11-26
-
 - Fixed bug in transaction validation #bugfix #transactions
   - Issue: Validation was failing for edge case with zero amounts
     - Root cause: Strict inequality check `amount > 0`
@@ -163,8 +158,6 @@ This distinction keeps journals agile and explorative while maintaining formal d
 ### Example 3: Conceptual Exploration
 
 ```markdown
-# 2025-11-26
-
 - Deep dive: Event sourcing pattern #architecture #event-sourcing #learning
   - Core concept: Store all changes as immutable events
     - Events are the source of truth
@@ -216,8 +209,6 @@ This distinction keeps journals agile and explorative while maintaining formal d
 ### Example 4: Meeting Notes
 
 ```markdown
-# 2025-11-26
-
 - Architecture review meeting #meeting #architecture
   - Attendees: Alice, Bob, Carol, Dan
   - Topic: Microservices communication patterns
@@ -265,8 +256,6 @@ This distinction keeps journals agile and explorative while maintaining formal d
 ### Example 5: Monthly Summary
 
 ```markdown
-# summary
-
 - Overview: November 2025 #monthly-summary #2025-11
   - Primary focus: Authentication system design and implementation
   - Major milestone: OAuth 2.0 integration completed
@@ -470,14 +459,12 @@ This distinction keeps journals agile and explorative while maintaining formal d
 
 ### Heading Usage
 
-- **Only one heading allowed**: `# YYYY-MM-DD` (for daily entries) or `# summary` (for monthly summaries)
-- **No subheadings**: Don't use `##`, `###`, `####`
+- **No headings in journal entries**: Don't use `#`, `##`, `###`, etc.
+- **Start directly with bullets**: First line should be content (Obsidian shows filename as title)
 - **Topic identification**: Use bullet text, tags, or bold text to identify topics
 
 ```markdown
 ✅ Good:
-
-# 2025-11-26
 
 - Authentication research #auth
   - OAuth 2.0 findings
@@ -486,6 +473,11 @@ This distinction keeps journals agile and explorative while maintaining formal d
 ❌ Bad:
 
 # 2025-11-26
+
+- Authentication research #auth
+  - OAuth 2.0 findings
+
+❌ Also Bad:
 
 ## Authentication Research
 
@@ -556,8 +548,6 @@ See [Linking Convention](./ex-co__linking-convention.md) for complete linking st
 ### Example: Effective Nesting
 
 ```markdown
-# 2025-11-26
-
 - OAuth 2.0 implementation complete #auth
   - Authorization code flow tested
     - PKCE extension working correctly
@@ -581,7 +571,7 @@ See [Linking Convention](./ex-co__linking-convention.md) for complete linking st
     - Dashboard created in Grafana
 ```
 
-## Common Patterns
+## 🔄 Common Patterns
 
 ### Research Notes Pattern
 
@@ -658,8 +648,6 @@ Since `docs/journals/` is inside the `docs/` directory (Obsidian vault), use **M
 Example:
 
 ````markdown
-# 2025-11-26
-
 - System architecture exploration #architecture
   - Request flow designed
 
@@ -687,7 +675,7 @@ Journals use date-based naming, exempt from the prefix system:
 
 See [File Naming Convention](./ex-co__file-naming-convention.md#special-cases) for details.
 
-## Comparison: Journals vs Formal Documentation
+## 📊 Comparison: Journals vs Formal Documentation
 
 | Aspect        | Journals (`docs/journals/`)               | Formal Docs (`tutorials/`, `how-to/`, `reference/`, `explanation/`) |
 | ------------- | ----------------------------------------- | ------------------------------------------------------------------- |
@@ -695,7 +683,7 @@ See [File Naming Convention](./ex-co__file-naming-convention.md#special-cases) f
 | **Purpose**   | Research, exploration, daily logs         | Polished, published documentation                                   |
 | **Structure** | Flexible, nested bullets                  | Hierarchical sections with headings                                 |
 | **Style**     | Informal, first-person, stream of thought | Formal, instructional, well-organized                               |
-| **Headings**  | Only H1 date/summary                      | Multiple heading levels                                             |
+| **Headings**  | No headings (filename serves as title)    | Multiple heading levels                                             |
 | **Content**   | Temporal, evolving understanding          | Canonical, authoritative                                            |
 | **Audience**  | Self, team (internal)                     | Users, developers (internal + external)                             |
 | **Lifecycle** | Grows continuously, rarely edited         | Carefully written, maintained, versioned                            |
@@ -765,8 +753,6 @@ How should we handle token revocation?
 ### After (Logseq-Style Outliner)
 
 ```markdown
-# 2025-11-26
-
 - Authentication research #authentication #oauth
   - Explored OAuth 2.0 for our authentication system
   - Authorization code flow most appropriate
@@ -782,7 +768,7 @@ How should we handle token revocation?
 
 ### Conversion Process
 
-1. Keep only the date as H1
+1. Remove the H1 date heading (Obsidian will show filename as title)
 2. Convert all H2/H3/etc to bullets or bold text
 3. Convert paragraphs to bullets (split if needed)
 4. Nest logically based on content relationships
@@ -795,16 +781,16 @@ Before committing journal entries:
 
 - [ ] File is in `docs/journals/YYYY-MM/` folder
 - [ ] Filename is `YYYY-MM-DD.md` (for daily) or `summary.md` (for monthly)
-- [ ] First line is `# YYYY-MM-DD` or `# summary`
-- [ ] No other headings used (`##`, `###`, etc.)
-- [ ] All content after date is in bullet format
+- [ ] **No H1 heading at start** - File starts directly with content (no `# YYYY-MM-DD`)
+- [ ] No headings used anywhere (`#`, `##`, `###`, etc.)
+- [ ] All content is in bullet format
 - [ ] Nesting uses 2-space indentation
 - [ ] Tags use kebab-case (`#tag-name`)
 - [ ] All links are GitHub-compatible with `.md` extension
 - [ ] Any diagrams use Mermaid (since file is in `docs/` directory)
 - [ ] Bullets are concise and well-nested
 
-## Related Documentation
+## 🔗 Related Documentation
 
 - [Linking Convention](./ex-co__linking-convention.md) - How to create GitHub-compatible markdown links
 - [Diagram Convention](./ex-co__diagrams.md) - When to use Mermaid vs ASCII art
@@ -812,7 +798,7 @@ Before committing journal entries:
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - How formal documentation is organized (separate from journals)
 - [Conventions Index](./README.md) - Overview of all conventions
 
-## External Resources
+## 🌐 External Resources
 
 - [Logseq Documentation](https://docs.logseq.com/) - Outliner format inspiration
 - [Obsidian Outliner Plugin](https://github.com/vslinko/obsidian-outliner) - Enhanced outliner experience in Obsidian

@@ -9,21 +9,21 @@ tags:
   - visualization
   - conventions
 created: 2025-11-24
-updated: 2025-11-24
+updated: 2025-11-26
 ---
 
 # Diagram and Schema Convention
 
 This document defines when and how to use different diagram formats in the open-sharia-enterprise project. Understanding the appropriate format for each context ensures diagrams render consistently across all platforms where our documentation is viewed.
 
-## The Core Principle
+## 🎯 The Core Principle
 
 The choice between Mermaid diagrams and ASCII art depends on **where the file lives** and **who will read it**:
 
 - **Inside `docs/` directory**: Use Mermaid diagrams for rich, native rendering in Obsidian
 - **Outside `docs/` directory**: Use ASCII art for maximum compatibility across all platforms
 
-## Why This Matters
+## 💡 Why This Matters
 
 Different tools render diagrams differently. By following location-based conventions, we ensure diagrams always display correctly regardless of where they're viewed.
 
@@ -35,7 +35,7 @@ The `docs/` directory is our Obsidian vault - a rich markdown environment with n
 
 Files like `README.md`, `CLAUDE.md`, and other root-level documentation are viewed across diverse platforms: GitHub web interface, text editors, terminals, mobile apps, and CI/CD logs. ASCII art renders consistently everywhere without requiring special rendering support.
 
-## Mermaid Diagrams: For `docs/` Directory
+## 🎨 Mermaid Diagrams: For `docs/` Directory
 
 ### When to Use
 
@@ -285,7 +285,7 @@ gitGraph
 - [Mermaid Live Editor](https://mermaid.live/) - Test diagrams online
 - [Obsidian Mermaid Docs](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram)
 
-## ASCII Art: For Files Outside `docs/`
+## 📝 ASCII Art: For Files Outside `docs/`
 
 ### When to Use
 
@@ -458,7 +458,7 @@ Connectors:
 - Online generators (limited utility)
 - Terminal tools like `figlet` for text banners
 
-## Decision Matrix
+## 🔍 Decision Matrix
 
 Use this quick reference to choose the right format:
 
@@ -471,7 +471,7 @@ Use this quick reference to choose the right format:
 | `.github/**/*.md` | **ASCII**   | GitHub Actions logs, PR reviews         |
 | `CONTRIBUTING.md` | **ASCII**   | First-time contributors, all platforms  |
 
-## Examples in Context
+## 🧪 Examples in Context
 
 ### Example 1: API Flow in Documentation
 
@@ -677,14 +677,14 @@ Before committing documentation with diagrams:
 - [ ] Complex diagrams simplified where possible
 - [ ] Diagram serves the documentation purpose
 
-## Related Documentation
+## 🔗 Related Documentation
 
 - [File Naming Convention](./ex-co__file-naming-convention.md) - How to name documentation files
 - [Linking Convention](./ex-co__linking-convention.md) - How to link between files
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Documentation organization principles
 - [Conventions Index](./README.md) - Overview of all conventions
 
-## External Resources
+## 🌐 External Resources
 
 - [Mermaid Official Documentation](https://mermaid.js.org/)
 - [Mermaid Live Editor](https://mermaid.live/)
@@ -693,4 +693,4 @@ Before committing documentation with diagrams:
 
 ---
 
-**Last Updated**: 2025-11-24
+**Last Updated**: 2025-11-26

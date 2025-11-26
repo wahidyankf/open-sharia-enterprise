@@ -2,55 +2,55 @@
 
 This directory contains specialized AI agents for repository maintenance and documentation tasks. Each agent has specific responsibilities and tools to ensure consistency, quality, and adherence to project conventions.
 
-## Available Agents
+## 🤖 Available Agents
 
-### `doc-writer.md`
+### 📝 `doc-writer.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
 
 - **Primary Use:** Creating, editing, or organizing project documentation
-- **Specialization:** Markdown optimization, Diátaxis framework, convention compliance
+- **Specialization:** Markdown optimization, Diátaxis framework, convention compliance, emoji usage
 - **Tools:** Read, Write, Edit, Glob, Grep
 - **When to Use:**
-  - Creating new documentation files
+  - Creating new documentation files with proper emoji usage
   - Editing existing documentation for clarity or structure
   - Organizing documentation according to Diátaxis framework
-  - Ensuring documentation follows file naming and linking conventions
+  - Ensuring documentation follows file naming, linking, and emoji conventions
 
-### `repo-rules-checker.md`
+### ✅ `repo-rules-checker.md`
 
 Validates consistency between agents, CLAUDE.md, conventions, and documentation.
 
 - **Primary Use:** Checking for inconsistencies, contradictions, or verifying compliance
-- **Specialization:** Cross-file validation, duplication detection, convention enforcement
+- **Specialization:** Cross-file validation, duplication detection, convention enforcement, emoji consistency
 - **Tools:** Read, Glob, Grep
 - **When to Use:**
   - After making changes to conventions or CLAUDE.md
   - Periodic audits of repository consistency
-  - Validating that all files follow documented standards
+  - Validating that all files follow documented standards (including emoji usage)
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
 
-### `repo-rules-updater.md`
+### 🔄 `repo-rules-updater.md`
 
 Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
 
 - **Primary Use:** Adding/modifying rules, conventions, or standards affecting multiple files
-- **Specialization:** Systematic propagation, cascade updates, consistency maintenance
+- **Specialization:** Systematic propagation, cascade updates, consistency maintenance, emoji adoption
 - **Tools:** Read, Edit, Glob, Grep
 - **When to Use:**
-  - Adding new conventions or standards
+  - Adding new conventions or standards (including emoji vocabulary)
   - Modifying existing rules that affect multiple files
   - Ensuring changes cascade to all relevant locations
   - Updating cross-references after structural changes
   - Maintaining consistency across agent definitions
 
-### `plan-writer.md`
+### 📋 `plan-writer.md`
 
 Expert at creating structured project planning documents in the plans/ folder.
 
 - **Primary Use:** Starting new projects, defining requirements, or organizing project deliverables
-- **Specialization:** Project planning, requirements documentation, technical architecture, delivery planning
+- **Specialization:** Project planning, requirements documentation, technical architecture, delivery planning, ASCII art diagrams
 - **Tools:** Read, Write, Edit, Glob, Grep
 - **When to Use:**
   - Creating comprehensive planning documents for new projects
@@ -59,7 +59,7 @@ Expert at creating structured project planning documents in the plans/ folder.
   - Creating project roadmaps with milestones and timelines
   - Organizing project deliverables into structured plans
 
-### `plan-implementor.md`
+### 🚀 `plan-implementor.md`
 
 Expert at systematically implementing project plans by following delivery checklists.
 
@@ -74,12 +74,12 @@ Expert at systematically implementing project plans by following delivery checkl
   - Completing all phases of a multi-phase plan
   - Ensuring all requirements are met before marking plan complete
 
-### `journal-writer.md`
+### 📓 `journal-writer.md`
 
 Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries.
 
 - **Primary Use:** Capturing research insights or creating monthly progress reports
-- **Specialization:** Bullet-based quick capture, knowledge graph building with markdown links, research organization
+- **Specialization:** Bullet-based quick capture, knowledge graph building with markdown links, research organization, emoji usage in journals
 - **Tools:** Read, Write, Edit, Glob, Grep, Bash
 - **When to Use:**
   - Creating daily research notes using Logseq-style outliner format (bullet-based)
@@ -88,13 +88,13 @@ Expert journal writer specializing in Logseq-style outliner format for daily res
   - Suggesting link opportunities across journal entries
   - Reorganizing and merging concepts for better knowledge retrieval
   - Tracking research themes and project progress over time
-- **Format:** Uses only `# YYYY-MM-DD` heading, all content as bullets (see [Journals Format Convention](../docs/explanation/conventions/ex-co__journals-format.md))
+- **Format:** No headings - starts directly with bullets, uses emojis semantically (see [Journals Format Convention](../docs/explanation/conventions/ex-co__journals-format.md))
 
-## Agent Workflow
+## 🔄 Agent Workflow
 
 The agents work together in complementary workflows:
 
-### Project Planning and Implementation Workflow
+### 📋 Project Planning and Implementation Workflow
 
 ```
 1. Plan Project
@@ -114,7 +114,7 @@ The agents work together in complementary workflows:
    └─> Plan marked as complete
 ```
 
-### Repository Maintenance Workflow
+### 🔧 Repository Maintenance Workflow
 
 ```
 1. Make Changes
@@ -134,7 +134,7 @@ The agents work together in complementary workflows:
         └─> Ensures proper formatting and convention compliance
 ```
 
-## Best Practices
+## ✅ Best Practices
 
 - **When starting a new project:** Use `plan-writer` to create structured plans in plans/backlog/
 - **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
@@ -144,14 +144,14 @@ The agents work together in complementary workflows:
 - **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
 - **During plan implementation:** Let `plan-implementor` update delivery.md - it maintains detailed notes
 
-## Resources
+## 📚 Resources
 
 - [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) - Complete agent specification and standards
 - [CLAUDE.md](../CLAUDE.md) - Project guidance for all agents
 - [Documentation Conventions](../docs/explanation/conventions/README.md) - File naming, linking, and Diátaxis framework
 - [Plans Organization](../plans/README.md) - Planning document structure and conventions (use ASCII art for diagrams)
 
-## Adding New Agents
+## 🆕 Adding New Agents
 
 When creating new agents:
 
