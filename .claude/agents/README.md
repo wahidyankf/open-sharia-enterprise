@@ -59,9 +59,46 @@ Expert at creating structured project planning documents in the plans/ folder.
   - Creating project roadmaps with milestones and timelines
   - Organizing project deliverables into structured plans
 
+### `plan-implementor.md`
+
+Expert at systematically implementing project plans by following delivery checklists.
+
+- **Primary Use:** Executing plans created by the planner agent
+- **Specialization:** Sequential implementation, validation, progress tracking, checklist management
+- **Tools:** Read, Write, Edit, Glob, Grep, Bash
+- **When to Use:**
+  - Implementing a plan from plans/in-progress/
+  - Following delivery checklists step-by-step
+  - Running validation checklists and acceptance criteria
+  - Updating delivery.md with implementation progress and notes
+  - Completing all phases of a multi-phase plan
+  - Ensuring all requirements are met before marking plan complete
+
 ## Agent Workflow
 
 The agents work together in complementary workflows:
+
+### Project Planning and Implementation Workflow
+
+```
+1. Plan Project
+   └─> Use planner to create structured plan in plans/backlog/
+        └─> Creates requirements.md, tech-docs.md, delivery.md
+
+2. Start Implementation
+   └─> Move plan from backlog/ to in-progress/
+   └─> Use plan-implementor with plan path
+        └─> Executes delivery checklist step-by-step
+        └─> Updates delivery.md with progress and notes
+        └─> Validates each phase before proceeding
+
+3. Complete Implementation
+   └─> plan-implementor completes final validation
+   └─> All acceptance criteria verified
+   └─> Plan marked as complete
+```
+
+### Repository Maintenance Workflow
 
 ```
 1. Make Changes
@@ -83,11 +120,13 @@ The agents work together in complementary workflows:
 
 ## Best Practices
 
+- **When starting a new project:** Use `planner` to create structured plans in plans/backlog/
+- **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
 - **After adding new conventions:** Use `repo-rule-updater` → `repo-rule-checker`
 - **Before major releases:** Run `repo-rule-checker` for full audit
 - **When creating documentation:** Use `doc-writer` for proper structure
-- **When creating project plans:** Use `planner` to create structured plans in plans/
 - **When modifying CLAUDE.md:** Use `repo-rule-updater` to cascade changes
+- **During plan implementation:** Let `plan-implementor` update delivery.md - it maintains detailed notes
 
 ## Resources
 
