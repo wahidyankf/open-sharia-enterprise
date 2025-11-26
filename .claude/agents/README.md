@@ -76,18 +76,19 @@ Expert at systematically implementing project plans by following delivery checkl
 
 ### `journal-writer.md`
 
-Expert journal writer specializing in Obsidian-optimized daily research notes and monthly project summaries.
+Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries.
 
 - **Primary Use:** Capturing research insights or creating monthly progress reports
-- **Specialization:** Knowledge graph building with markdown links, research organization, project tracking
+- **Specialization:** Bullet-based quick capture, knowledge graph building with markdown links, research organization
 - **Tools:** Read, Write, Edit, Glob, Grep, Bash
 - **When to Use:**
-  - Creating daily research notes with GitHub-compatible markdown links
+  - Creating daily research notes using Logseq-style outliner format (bullet-based)
   - Generating monthly project summaries (recommended second Sunday of month)
   - Building knowledge graphs through markdown linking
   - Suggesting link opportunities across journal entries
   - Reorganizing and merging concepts for better knowledge retrieval
   - Tracking research themes and project progress over time
+- **Format:** Uses only `# YYYY-MM-DD` heading, all content as bullets (see [Journals Format Convention](../docs/explanation/conventions/ex-co__journals-format.md))
 
 ## Agent Workflow
 
