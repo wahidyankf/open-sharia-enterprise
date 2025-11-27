@@ -240,7 +240,7 @@ All documentation must follow core conventions defined in `docs/explanation/conv
 
 ### File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (except `docs/journals/` which uses `YYYY-MM/YYYY-MM-DD.md` format). See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
 
 ### Linking Convention
 

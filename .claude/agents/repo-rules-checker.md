@@ -47,6 +47,7 @@ When running a consistency check, systematically verify:
 - [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`)
 - [ ] Files inside `plans/` folders do NOT use prefixes (folder structure provides context)
 - [ ] Plan folders follow the naming pattern `YYYY-MM-DD__[project-identifier]/`
+- [ ] When directories are renamed, all files within have updated prefixes (except `docs/journals/`)
 - [ ] No files violate the naming convention
 
 ### Linking Convention Compliance
