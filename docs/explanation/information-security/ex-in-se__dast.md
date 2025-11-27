@@ -356,7 +356,7 @@ graph TD
 
 DAST works best when combined with:
 
-- **[SAST](./ex-se__sast.md)** - Early detection of code-level vulnerabilities
+- **[SAST](./ex-in-se__sast.md)** - Early detection of code-level vulnerabilities
 - **SCA (Software Composition Analysis)** - Checks dependencies for known CVEs
 - **Penetration Testing** - Manual testing of complex attack scenarios
 - **Bug Bounty Programs** - Crowdsourced security testing
@@ -370,6 +370,6 @@ DAST works best when combined with:
 
 ## Related Documentation
 
-- [SAST Explanation](./ex-se__sast.md)
+- [SAST Explanation](./ex-in-se__sast.md)
 - [Security Concepts Index](./README.md)
 - [Development Conventions](../development/README.md)
