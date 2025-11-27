@@ -8,7 +8,7 @@ tags:
   - conventions
   - github-compatibility
 created: 2025-11-22
-updated: 2025-11-26
+updated: 2025-11-27
 ---
 
 # Documentation Linking Convention
@@ -45,6 +45,7 @@ Use standard markdown link syntax with relative paths:
    - Parent directory: `../file.md`
    - Subdirectory: `./subdirectory/file.md`
    - Multiple levels up: `../../path/to/file.md`
+   - **Important**: The number of `../` depends on your file's nesting depth (see [Nested Directory Linking](#nested-directory-linking))
 
 3. **Use descriptive link text instead of filename identifiers**
    - ✅ `[File Naming Convention](./conventions/ex-co__file-naming-convention.md)`
@@ -111,6 +112,34 @@ Use standard markdown link syntax with relative paths:
 [Tutorials](../../tutorials/README.md)
 ```
 
+### Linking from Journal Entries (`docs/journals/2025-11/2025-11-27.md`)
+
+Journal files are nested 2 levels deep from `docs/`, so they require `../../` to reach the `docs/` root:
+
+```markdown
+<!-- Link to docs/ root (2 levels up) -->
+
+[Documentation Home](../../README.md)
+
+<!-- Link to explanation files (2 levels up, then down) -->
+
+[File Naming Convention](../../explanation/conventions/ex-co__file-naming-convention.md)
+[Information Security Overview](../../explanation/information-security/ex-in-se__infosec.md)
+
+<!-- Link to other categories (2 levels up, then down) -->
+
+[Tutorials](../../tutorials/README.md)
+[How-To Guides](../../how-to/README.md)
+
+<!-- Link to sibling journal entries (same directory) -->
+
+[Yesterday's Journal](./2025-11-26.md)
+
+<!-- Link to other months (1 level up, then down) -->
+
+[October Journal](../2025-10/2025-10-31.md)
+```
+
 ## Correct vs. Incorrect Examples
 
 ### ✅ Correct Examples
@@ -147,6 +176,16 @@ For more information, refer to our [authentication tutorial](../../tutorials/aut
 <!-- Using filename as link text -->
 
 [ex-co\_\_file-naming-convention.md](./ex-co__file-naming-convention.md)
+
+<!-- Wrong number of ../ for nesting depth -->
+<!-- From docs/journals/2025-11/2025-11-27.md (2 levels deep) -->
+
+[File Naming Convention](../explanation/conventions/ex-co__file-naming-convention.md) <!-- Only 1 ../ instead of 2 -->
+[Documentation Home](./README.md) <!-- Should be ../../README.md -->
+
+<!-- From docs/explanation/conventions/README.md (2 levels deep) -->
+
+[Documentation Home](../../../README.md) <!-- Too many ../ (3 instead of 2) -->
 ```
 
 ## 🌐 External Links
@@ -159,6 +198,103 @@ For links to external resources:
 [Diátaxis Framework](https://diataxis.fr/)
 [Obsidian](https://obsidian.md/)
 [GitHub](https://github.com/wahidyankf/open-sharia-enterprise)
+```
+
+## 📁 Nested Directory Linking
+
+Understanding relative paths is crucial when linking from files at different nesting depths. The number of `../` you need depends on how deep your current file is nested.
+
+### How to Calculate Relative Paths
+
+1. **Count how many directories deep your current file is** from the `docs/` root
+2. **Use that many `../` to reach the `docs/` root**
+3. **Then navigate down** to your target file
+
+### Nesting Depth Reference
+
+| File Location                                            | Depth from `docs/` | To reach `docs/` root |
+| -------------------------------------------------------- | ------------------ | --------------------- |
+| `docs/README.md`                                         | 0 (at root)        | `.` (current dir)     |
+| `docs/tutorials/README.md`                               | 1 level deep       | `../`                 |
+| `docs/explanation/conventions/ex-co__linking.md`         | 2 levels deep      | `../../`              |
+| `docs/journals/2025-11/2025-11-27.md`                    | 2 levels deep      | `../../`              |
+| `docs/reference/api/endpoints/re-ap-en__transactions.md` | 3 levels deep      | `../../../`           |
+
+### Common Linking Patterns
+
+#### From 1-Level Deep Files (`docs/explanation/README.md`)
+
+```markdown
+<!-- To sibling directories (same level) -->
+
+[Conventions](./conventions/README.md)
+[Development](./development/README.md)
+
+<!-- To parent (docs/ root) -->
+
+[Documentation Home](../README.md)
+
+<!-- To other categories (up 1, down 1) -->
+
+[Tutorials](../tutorials/README.md)
+[How-To](../how-to/README.md)
+```
+
+#### From 2-Level Deep Files (`docs/journals/2025-11/2025-11-27.md`)
+
+```markdown
+<!-- To docs/ root (up 2 levels) -->
+
+[Documentation Home](../../README.md)
+
+<!-- To other categories (up 2, down 1) -->
+
+[Tutorials](../../tutorials/README.md)
+[Explanation](../../explanation/README.md)
+
+<!-- To deeply nested files (up 2, down 2) -->
+
+[File Naming Convention](../../explanation/conventions/ex-co__file-naming-convention.md)
+```
+
+#### From 3-Level Deep Files (`docs/reference/api/endpoints/re-ap-en__transactions.md`)
+
+```markdown
+<!-- To docs/ root (up 3 levels) -->
+
+[Documentation Home](../../../README.md)
+
+<!-- To other categories (up 3, down 1) -->
+
+[Tutorials](../../../tutorials/README.md)
+
+<!-- To parent categories (up 1, 2, or 3) -->
+
+[Endpoints Index](../README.md) <!-- Parent directory -->
+[API Index](../../README.md) <!-- Grandparent directory -->
+[Reference Index](../../../reference/README.md) <!-- Great-grandparent -->
+```
+
+### Verification Tip
+
+To verify your relative path is correct:
+
+1. **Start at your current file's location**
+2. **Count each `../` as going up one directory level**
+3. **Count each `/dirname/` as going down one level**
+4. **Verify you end at the target file**
+
+Example from `docs/journals/2025-11/2025-11-27.md` to `docs/explanation/conventions/ex-co__linking-convention.md`:
+
+```
+Start:  docs/journals/2025-11/2025-11-27.md
+  ../   docs/journals/                      (up 1)
+  ../   docs/                               (up 2)
+  explanation/  docs/explanation/           (down 1)
+  conventions/  docs/explanation/conventions/  (down 2)
+  ex-co__linking-convention.md              (target file)
+
+Final path: ../../explanation/conventions/ex-co__linking-convention.md
 ```
 
 ## Anchor Links (Same Page)
@@ -212,4 +348,4 @@ When creating documentation, verify links by:
 
 ---
 
-**Last Updated**: 2025-11-26
+**Last Updated**: 2025-11-27
