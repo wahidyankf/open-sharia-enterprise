@@ -585,6 +585,16 @@ If a rule change requires renaming files (e.g., prefix change):
 4. **Provide exact list** of old→new mappings
 5. **Let user decide** when to rename
 
+### Renaming Directories
+
+When documenting directory renames in `docs/`:
+
+1. **Acknowledge cascading impact**: Renaming a directory requires renaming all files within (prefix must match directory path)
+2. **Document the exception**: Files in `docs/journals/` use date-based naming (`YYYY-MM/YYYY-MM-DD.md`) and are exempt
+3. **Provide concrete example**: Use real rename scenario (e.g., `security/` → `information-security/`)
+4. **Show before/after**: Illustrate directory structure, prefix changes, and file renames
+5. **List all affected components**: Directory name, file prefixes, markdown links, index files
+
 ### Breaking Changes
 
 If a rule change would break existing documents:

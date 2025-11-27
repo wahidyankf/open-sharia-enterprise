@@ -8,7 +8,7 @@ tags:
   - organization
   - documentation
 created: 2025-11-19
-updated: 2025-11-26
+updated: 2025-11-27
 ---
 
 # Documentation File Naming Convention
@@ -235,13 +235,54 @@ When creating a new subdirectory:
 - Prefix: `tu-te__` (tu = tutorials, te = testing)
 - Files: `tu-te__unit-testing.md`, `tu-te__integration-testing.md`
 
+### Renaming Directories
+
+When renaming a directory in `docs/`, you **must rename all files within that directory** to update their prefixes accordingly. This is because the file naming convention encodes the directory path in the filename prefix.
+
+**Exception**: Files in `docs/journals/` follow a different naming pattern (`YYYY-MM/YYYY-MM-DD.md`) and are exempt from this requirement.
+
+**Process**:
+
+1. Rename the directory
+2. Rename all files in that directory to update their prefix
+3. Update any markdown links that reference those files
+4. Update related index files (`README.md`)
+
+**Example**: Renaming `docs/explanation/security/` to `docs/explanation/information-security/`:
+
+**Before**:
+
+```
+docs/explanation/security/
+├── README.md
+├── ex-se__authentication.md
+└── ex-se__authorization.md
+```
+
+**After**:
+
+```
+docs/explanation/information-security/
+├── README.md
+├── ex-in-se__authentication.md
+└── ex-in-se__authorization.md
+```
+
+**Changes required**:
+
+- Directory: `security/` → `information-security/`
+- Prefix: `ex-se__` → `ex-in-se__` (se = security, in-se = information-security)
+- All files: `ex-se__*.md` → `ex-in-se__*.md`
+- Links: Update all references from `./security/ex-se__*.md` to `./information-security/ex-in-se__*.md`
+- Index: Update `docs/explanation/README.md` to reflect new directory name
+
 ### Reorganizing Directories
 
-When renaming or moving directories:
+When moving files between directories:
 
-1. Rename all files in that directory to update their prefix
-2. Update any wiki links that reference those files
-3. Update related index files
+1. Rename all moved files to update their prefix for the new location
+2. Update any markdown links that reference those files
+3. Update related index files in both source and destination directories
 
 ### Scaling to Arbitrary Depth
 
@@ -270,4 +311,4 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ---
 
-**Last Updated**: 2025-11-26
+**Last Updated**: 2025-11-27

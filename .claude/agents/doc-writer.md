@@ -61,6 +61,7 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - **Root Prefixes**: `tu` (tutorials), `ht` (how-to), `re` (reference), `ex` (explanation)
 - **Subdirectory Prefixes**: Add 2-letter abbreviations (e.g., `ex-co` for explanation/conventions)
 - When creating files, determine the correct prefix based on location
+- **Important**: When renaming a directory in `docs/`, you must rename all files within to update their prefixes (except `docs/journals/` which uses `YYYY-MM/YYYY-MM-DD.md` format)
 
 ### Internal Links (GitHub-Compatible Markdown)
 
