@@ -263,7 +263,7 @@ graph LR
 
 SAST works best when combined with other security testing methods:
 
-- **[DAST](./ex-se__dast.md)** - Tests running application for runtime vulnerabilities
+- **[DAST](./ex-in-se__dast.md)** - Tests running application for runtime vulnerabilities
 - **SCA (Software Composition Analysis)** - Scans dependencies for known vulnerabilities
 - **Manual Code Review** - Human review for business logic flaws
 - **Penetration Testing** - Simulated attacks on deployed application
@@ -272,10 +272,10 @@ SAST works best when combined with other security testing methods:
 
 - [OWASP SAST Overview](https://owasp.org/www-community/Source_Code_Analysis_Tools)
 - [NIST Guidelines on SAST](https://csrc.nist.gov/glossary/term/static_application_security_testing)
-- [SAST vs DAST Comparison](./ex-se__dast.md)
+- [SAST vs DAST Comparison](./ex-in-se__dast.md)
 
 ## Related Documentation
 
-- [DAST Explanation](./ex-se__dast.md)
+- [DAST Explanation](./ex-in-se__dast.md)
 - [Security Concepts Index](./README.md)
 - [Development Conventions](../development/README.md)

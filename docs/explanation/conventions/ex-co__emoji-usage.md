@@ -465,7 +465,7 @@ SAST analyzes code without executing it...
   - 💡 Key finding: SonarQube has better CI/CD integration
   - 🔍 Investigated Semgrep vs ESLint
   - ✅ Decision: Use SonarQube as primary tool
-  - 🔗 [SAST Explanation](../../explanation/security/ex-se__sast.md)
+  - 🔗 [SAST Explanation](../../explanation/information-security/ex-in-se__sast.md)
 ```
 
 ### Plans (`plans/`)
