@@ -7,8 +7,18 @@ This directory contains conceptual documentation about information security prac
 ### 🔒 Core Security Concepts
 
 - [Information Security (InfoSec)](./ex-in-se__infosec.md) - Overview of information security practices, domains, and the CIA triad for protecting digital assets
-- [SAST (Static Application Security Testing)](./ex-in-se__sast.md) - Understanding static security analysis and how it protects applications during development
-- [DAST (Dynamic Application Security Testing)](./ex-in-se__dast.md) - Understanding dynamic security testing in runtime environments
+- [OWASP (Open Worldwide Application Security Project)](./ex-in-se__owasp.md) - Community-driven security resources, standards, and tools including the industry-standard OWASP Top 10, testing guides, and security tools like ZAP
+
+### 🛡️ Defensive Security
+
+- [Defensive Security](./ex-in-se__defensive-security.md) - Comprehensive guide to protecting systems, networks, and data through defense-in-depth strategies, monitoring, and incident response
+- **Security Testing Approaches:**
+  - [SAST (Static Application Security Testing)](./ex-in-se__sast.md) - Understanding static security analysis and how it protects applications during development
+  - [DAST (Dynamic Application Security Testing)](./ex-in-se__dast.md) - Understanding dynamic security testing in runtime environments
+
+### ⚔️ Offensive Security Testing
+
+- [Offensive Security](./ex-in-se__offensive-security.md) - Active security testing, penetration testing, and red team exercises to validate defenses and find vulnerabilities
 
 ## 🔗 Related Documentation
 
