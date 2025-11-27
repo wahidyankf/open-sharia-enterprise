@@ -4,8 +4,9 @@ This directory contains conceptual documentation about information security prac
 
 ## 📋 Contents
 
-### 🔒 Information Security Testing
+### 🔒 Core Security Concepts
 
+- [Information Security (InfoSec)](./ex-in-se__infosec.md) - Overview of information security practices, domains, and the CIA triad for protecting digital assets
 - [SAST (Static Application Security Testing)](./ex-in-se__sast.md) - Understanding static security analysis and how it protects applications during development
 - [DAST (Dynamic Application Security Testing)](./ex-in-se__dast.md) - Understanding dynamic security testing in runtime environments
 
