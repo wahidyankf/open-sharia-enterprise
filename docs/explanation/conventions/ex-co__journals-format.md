@@ -9,7 +9,7 @@ tags:
   - research-notes
   - format-convention
 created: 2025-11-26
-updated: 2025-11-26
+updated: 2025-11-29
 ---
 
 # Journals Format Convention
@@ -437,7 +437,7 @@ This distinction keeps journals agile and explorative while maintaining formal d
 ### Bullet Style
 
 - Use single dash (`-`) followed by space for all bullets
-- Indent with 2 spaces for each nesting level
+- **Indent with TAB for each nesting level** (NOT spaces) - **Applies to files in `docs/` directory only**
 - No blank lines between bullets (unless separating major topics)
 - Keep bullet content concise - one thought per bullet
 
@@ -445,17 +445,29 @@ This distinction keeps journals agile and explorative while maintaining formal d
 ✅ Good:
 
 - Main point
-  - Nested detail
-  - Another detail
-    - Deeper elaboration
+  - Nested detail (indented with TAB)
+  - Another detail (indented with TAB)
+    - Deeper elaboration (indented with 2 TABs)
 
 ❌ Bad:
 
-- Main point (wrong bullet character)
-  - Nested detail (4 spaces instead of 2)
+- Main point
+
+* Nested detail (wrong bullet character, use dash)
+  - Another detail (spaces instead of TAB)
+    - Deeper elaboration (spaces instead of TAB)
 
   - Another detail (unnecessary blank lines)
 ```
+
+**Why TAB indentation for files in `docs/` directory?**
+
+- **Obsidian vault scope**: The `docs/` directory is the Obsidian vault, requiring Logseq/Obsidian compatibility
+- **Logseq compatibility**: Logseq requires TAB indentation for proper outliner functionality
+- **Obsidian compatibility**: Obsidian renders both tabs and spaces, but tabs align with Logseq
+- **Consistency within vault**: Using tabs ensures the same file works seamlessly in both Logseq and Obsidian
+- **Visual clarity**: Tab width is adjustable per user preference in most editors
+- **Not project-wide**: Files outside `docs/` (like root README.md, CLAUDE.md, files in `plans/`) can use standard markdown conventions (spaces are fine)
 
 ### Heading Usage
 
@@ -784,7 +796,7 @@ Before committing journal entries:
 - [ ] **No H1 heading at start** - File starts directly with content (no `# YYYY-MM-DD`)
 - [ ] No headings used anywhere (`#`, `##`, `###`, etc.)
 - [ ] All content is in bullet format
-- [ ] Nesting uses 2-space indentation
+- [ ] **Nesting uses TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
 - [ ] Tags use kebab-case (`#tag-name`)
 - [ ] All links are GitHub-compatible with `.md` extension
 - [ ] Any diagrams use Mermaid (since file is in `docs/` directory)

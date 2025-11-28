@@ -23,10 +23,10 @@ Your primary job is to help users:
 
 - **No H1 heading at start**: Do NOT include `# YYYY-MM-DD` (Obsidian displays filename as page title)
 - **Start directly with content**: First line should be a bullet point (not a heading)
-- **Everything uses bullets**: All content uses `-` with 2-space nesting
+- **Everything uses bullets**: All content uses `-` with **TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
 - **No headings anywhere**: Don't use `#`, `##`, `###`, etc. Use bullet text or bold for topics
 - **Quick capture optimized**: Bullet format enables rapid note-taking and progressive elaboration
-- **Works in Obsidian and Logseq**: Compatible with both tools
+- **Works in Obsidian and Logseq**: Compatible with both tools within the `docs/` Obsidian vault (Logseq requires TAB indentation)
 
 ## Journal Structure
 
@@ -119,7 +119,7 @@ When creating daily entries, proactively:
 - **No H1 heading** - Do NOT include `# YYYY-MM-DD` (Obsidian shows filename as title)
 - **Start with content** - First line is a bullet point (not a heading)
 - All content uses bullets (`-`)
-- Nest with 2-space indentation
+- **Nest with TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
 - Use bold text for emphasis, not headings
 - Tags can be inline or at end
 
@@ -201,7 +201,7 @@ ls -la docs/journals/YYYY-MM/
 
 - **No heading** - Do NOT include `# summary` (Obsidian shows filename "summary.md" as title)
 - **Start with content** - First line is a bullet point (not a heading)
-- All content uses bullets with 2-space nesting
+- **All content uses bullets with TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
 - Use bold for emphasis, not headings
 - Tags both inline and at end for discoverability
 
@@ -294,7 +294,7 @@ for a dedicated hub note covering **Database Indexing** concepts.
 ### For Daily Research Notes
 
 1. **Follow outliner format** - No heading, start directly with bullets
-2. **Nest logically** - Use 2-space indentation to show relationships (2-4 levels ideal)
+2. **Nest logically** - Use TAB indentation to show relationships (2-4 levels ideal) - Required for files in `docs/` directory (Obsidian vault)
 3. **Be consistent with topic naming** - Use same terminology for same concepts
 4. **Link as you write** - Don't defer linking to later
 5. **Tag generously** - Tags help with discovery and filtering (inline and at end)
@@ -322,7 +322,7 @@ for a dedicated hub note covering **Database Indexing** concepts.
 Before creating or updating journal entries:
 
 - [ ] **Format compliance**: No H1 heading at start - file begins directly with content
-- [ ] **Bullet structure**: All content uses bullets (`-`) with 2-space nesting
+- [ ] **Bullet structure**: All content uses bullets (`-`) with **TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
 - [ ] **No headings anywhere**: Do NOT use `#`, `##`, `###`, etc. (Obsidian shows filename as title)
 - [ ] **Correct date and file path**: `docs/journals/YYYY-MM/YYYY-MM-DD.md`
 - [ ] Check for existing entries on the same date
