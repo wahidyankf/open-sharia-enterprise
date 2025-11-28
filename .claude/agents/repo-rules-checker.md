@@ -143,13 +143,13 @@ When running a consistency check, systematically verify:
 - [ ] **Daily entries have NO H1 heading** - Files start directly with content (no `# YYYY-MM-DD`)
 - [ ] **Monthly summaries have NO heading** - Files start directly with content (no `# summary`)
 - [ ] No headings anywhere in journal files (`#`, `##`, `###`, etc.)
-- [ ] All content uses bullets (`-`) with 2-space nesting
+- [ ] **All content uses bullets (`-`) with TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
 - [ ] First line of journal files is a bullet point (not a heading)
 - [ ] Journal files follow naming pattern: `YYYY-MM/YYYY-MM-DD.md` or `YYYY-MM/summary.md`
 - [ ] Journals use Mermaid for diagrams (inside `docs/` directory)
-- [ ] journal-writer.md agent correctly documents "no heading" requirement
+- [ ] journal-writer.md agent correctly documents "no heading" requirement and TAB indentation scoped to `docs/` directory
 - [ ] CLAUDE.md correctly describes journals as using "Logseq-style outliner format"
-- [ ] Convention document (ex-co\_\_journals-format.md) clearly states no H1 heading rule
+- [ ] Convention document (ex-co\_\_journals-format.md) clearly states no H1 heading rule and TAB indentation requirement scoped to `docs/` directory (Obsidian vault)
 
 ### Special Cases
 
