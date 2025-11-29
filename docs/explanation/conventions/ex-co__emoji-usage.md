@@ -94,6 +94,19 @@ Use for fintech-specific content:
 | ⚖️    | **Compliance/Legal**       | Regulatory compliance, legal requirements  |
 | 🕌    | **Sharia/Islamic Finance** | Sharia-compliant features, Islamic banking |
 
+### Domain-Specific: AI Agents
+
+Use for AI agent categorization in `.claude/agents/README.md`:
+
+| Emoji | Meaning                              | Usage                                                   |
+| ----- | ------------------------------------ | ------------------------------------------------------- |
+| 🟦    | **Writer/Creator Agents (Blue)**     | Agents that create or write content (docs, plans, etc.) |
+| 🟩    | **Checker/Validator Agents (Green)** | Agents that validate or check consistency               |
+| 🟨    | **Updater/Modifier Agents (Yellow)** | Agents that update or modify existing content           |
+| 🟪    | **Implementor Agents (Purple)**      | Agents that execute or implement plans                  |
+
+**Note:** These colored square emojis are ONLY used in `.claude/agents/README.md` to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../development/ex-de__ai-agents.md) for complete details on agent color categorization.
+
 ## ✅ Usage Rules
 
 ### Rule 1: Semantic Consistency
@@ -611,6 +624,7 @@ When reviewing emoji usage, verify:
 - [Linking Convention](./ex-co__linking-convention.md)
 - [Diátaxis Framework](./ex-co__diataxis-framework.md)
 - [Journals Format](./ex-co__journals-format.md)
+- [AI Agents Convention](../development/ex-de__ai-agents.md) - For agent color categorization using colored square emojis
 
 ## 📝 Notes
 
