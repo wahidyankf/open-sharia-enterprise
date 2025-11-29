@@ -198,7 +198,7 @@ Scenario: Next.js app imports and uses library
   Given "apps/demo-ts-fe/" exists
   And "libs/ts-demo-libs/" exists
   And ts-demo-libs exports a function "greet(name: string)"
-  When I import { greet } from "@open-sharia/ts-demo-libs" in demo-ts-fe
+  When I import { greet } from "@open-sharia-enterprise/ts-demo-libs" in demo-ts-fe
   And I use greet("Next.js") in the Next.js page component
   And I run "nx build demo-ts-fe"
   Then the build succeeds without errors

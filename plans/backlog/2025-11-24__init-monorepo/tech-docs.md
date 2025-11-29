@@ -266,7 +266,7 @@ With a flat library structure using language prefixes, dependency management is 
 **For TypeScript Libraries**:
 
 - Use TypeScript path mappings in `tsconfig.base.json`
-- Import via `@open-sharia/ts-[name]` pattern
+- Import via `@open-sharia-enterprise/ts-[name]` pattern
 - Declare dependencies in `package.json` if needed
 
 **For Go Libraries**:
@@ -483,7 +483,7 @@ ts-lib-a ← ts-lib-b ← ts-lib-c ← ts-lib-d ← ts-lib-e
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@open-sharia/ts-*": ["libs/ts-*/src/index.ts"]
+      "@open-sharia-enterprise/ts-*": ["libs/ts-*/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "dist"]
@@ -492,7 +492,7 @@ ts-lib-a ← ts-lib-b ← ts-lib-c ← ts-lib-d ← ts-lib-e
 
 **Key Points**:
 
-- Path mappings enable clean imports: `import { demo } from '@open-sharia/ts-demo-libs'`
+- Path mappings enable clean imports: `import { demo } from '@open-sharia-enterprise/ts-demo-libs'`
 - TypeScript paths point to `src/index.ts` for controlled public API
 - Wildcard pattern `ts-*` matches all TypeScript libraries
 - Shared across all TypeScript projects in the workspace
@@ -746,7 +746,7 @@ coverage/
 
 3. **Update TypeScript Config**
    - Ensure `apps/demo-ts-fe/tsconfig.json` extends `../../tsconfig.base.json`
-   - This enables importing from `@open-sharia/ts-*` libraries
+   - This enables importing from `@open-sharia-enterprise/ts-*` libraries
 
 4. **Test App Dev Server**
 
@@ -804,7 +804,7 @@ coverage/
    - Update `apps/demo-ts-fe/app/page.tsx`:
 
      ```typescript
-     import { greet } from "@open-sharia/ts-demo-libs";
+     import { greet } from "@open-sharia-enterprise/ts-demo-libs";
 
      export default function Home() {
        const message = greet("Next.js");
@@ -983,7 +983,7 @@ coverage/
 - **Simple Structure** - Flat hierarchy is easier to understand and navigate
 - **No Artificial Nesting** - Avoids forcing libraries into scope categories that may not fit
 - **Future Ready** - Easy to add new languages (Java, Kotlin, Python) alongside TypeScript
-- **Wildcard Mappings** - TypeScript path mappings use simple wildcard: `@open-sharia/ts-*`
+- **Wildcard Mappings** - TypeScript path mappings use simple wildcard: `@open-sharia-enterprise/ts-*`
 - **Clear Ownership** - Language prefix shows which build tools and conventions apply
 
 **Alternatives Considered**:
@@ -1007,14 +1007,14 @@ coverage/
 
 **Context**: Need clean, consistent import paths for libs in a polyglot monorepo
 
-**Decision**: Use `@open-sharia/[language-prefix]-[name]` pattern with wildcard in tsconfig.base.json
+**Decision**: Use `@open-sharia-enterprise/[language-prefix]-[name]` pattern with wildcard in tsconfig.base.json
 
 **Rationale**:
 
-- **Clean Imports** - `import { greet } from '@open-sharia/ts-demo-libs'` is clear and readable
+- **Clean Imports** - `import { greet } from '@open-sharia-enterprise/ts-demo-libs'` is clear and readable
 - **Controlled API** - All imports go through `index.ts` barrel exports
 - **Language Clarity** - Prefix shows which language the library uses (ts-, java-, kt-, py-)
-- **Flat Structure** - Single wildcard pattern matches all libraries: `@open-sharia/ts-*`
+- **Flat Structure** - Single wildcard pattern matches all libraries: `@open-sharia-enterprise/ts-*`
 - **Refactoring** - Moving files doesn't break imports if public API stays same
 - **Consistency** - Same pattern across all TypeScript libs
 - **Scope Prefix** - Prevents conflicts with npm packages
@@ -1022,9 +1022,9 @@ coverage/
 **Alternatives Considered**:
 
 - Relative imports (`../../../libs/ts-demo-libs`) - Rejected: brittle, hard to read
-- Nested scopes (`@open-sharia/shared/utils`) - Rejected: doesn't support multiple languages well
+- Nested scopes (`@open-sharia-enterprise/shared/utils`) - Rejected: doesn't support multiple languages well
 - No path mappings - Rejected: no control over public API
-- Different prefix - Rejected: `@open-sharia` matches project name
+- Different prefix - Rejected: `@open-sharia-enterprise` matches project name
 
 **Consequences**:
 
