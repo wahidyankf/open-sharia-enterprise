@@ -314,18 +314,18 @@ If industry regulations require documented review:
 
 ## What NOT to Do
 
-| ❌ Anti-Pattern                      | ✅ TBD Approach                                    |
-| ------------------------------------ | -------------------------------------------------- |
-| Long-lived feature branches          | Commit to `main` with feature flags                |
-| Branches per developer               | All developers commit to `main`                    |
-| Delaying integration for weeks       | Integrate multiple times per day                   |
-| Large, infrequent commits            | Small, frequent commits                            |
-| Keeping branches "just in case"      | Delete branches immediately after merge            |
-| Using branches to hide WIP           | Use feature flags to hide WIP                      |
-| Merging without CI passing           | CI must be green before merge                      |
-| Creating branches for every task     | Only branch when truly necessary (rare)            |
-| Waiting for "perfect" code to commit | Commit working code, iterate in subsequent commits |
-| Feature branches lasting weeks       | Branches (if used) last < 2 days                   |
+| ❌ Anti-Pattern                      | ✅ TBD Approach                                                                                    |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Long-lived feature branches          | Commit to `main` with feature flags                                                                |
+| Branches per developer               | All developers commit to `main`                                                                    |
+| Delaying integration for weeks       | Integrate multiple times per day                                                                   |
+| Large, infrequent commits            | Small, frequent commits (see [Commit Granularity](./ex-de__commit-messages.md#commit-granularity)) |
+| Keeping branches "just in case"      | Delete branches immediately after merge                                                            |
+| Using branches to hide WIP           | Use feature flags to hide WIP                                                                      |
+| Merging without CI passing           | CI must be green before merge                                                                      |
+| Creating branches for every task     | Only branch when truly necessary (rare)                                                            |
+| Waiting for "perfect" code to commit | Commit working code, iterate in subsequent commits                                                 |
+| Feature branches lasting weeks       | Branches (if used) last < 2 days                                                                   |
 
 ## TBD and Project Planning
 
