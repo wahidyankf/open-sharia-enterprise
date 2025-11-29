@@ -4,6 +4,20 @@ This directory contains specialized AI agents for repository maintenance and doc
 
 ## Available Agents
 
+### 🟦 `agent-creator.md`
+
+Expert at creating new AI agents following all repository conventions.
+
+- **Primary Use:** Adding a new agent to .claude/agents/ directory
+- **Specialization:** Agent scaffolding, automatic README updates, convention compliance, validation integration
+- **Tools:** Read, Write, Edit, Glob, Grep
+- **When to Use:**
+  - Creating a new AI agent with proper structure and frontmatter
+  - Auto-generating agent files following all naming and format conventions
+  - Automatically assigning color based on agent role
+  - Automatically updating agents README with new agent listing
+  - Running validation via repo-rules-checker
+
 ### 🟦 `docs-writer.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
