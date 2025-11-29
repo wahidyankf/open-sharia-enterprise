@@ -10,6 +10,9 @@ build/
 .next/
 out/
 
+# Nx cache
+.nx/
+
 # Environment variables
 .env*
 

@@ -1,0 +1,21 @@
+# Documentation
+docs/
+plans/
+*.md
+
+# Git files
+.git/
+.github/
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary
+tmp/
+temp/
+.cache/
+
+# CI artifacts
+coverage/
+.nyc_output/
