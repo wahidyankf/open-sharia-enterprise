@@ -9,7 +9,7 @@ tags:
   - research-notes
   - format-convention
 created: 2025-11-26
-updated: 2025-11-28
+updated: 2025-11-29
 ---
 
 # Journals Format Convention
@@ -469,12 +469,61 @@ This distinction keeps journals agile and explorative while maintaining formal d
 - **Visual clarity**: Tab width is adjustable per user preference in most editors
 - **Not project-wide**: Files outside `docs/` (like root README.md, CLAUDE.md, files in `plans/`) can use standard markdown conventions (spaces are fine)
 
-**YAML frontmatter exception:**
+#### CRITICAL: YAML Frontmatter Exception
 
-- **YAML frontmatter MUST use spaces** (2 spaces per indentation level) for Obsidian compatibility
-- YAML spec allows both tabs and spaces, but Obsidian's frontmatter parser expects spaces
-- This is the ONLY exception to TAB indentation within `docs/` directory files
-- All content bullets after frontmatter continue to use TAB indentation
+**YAML frontmatter is the ONLY exception to TAB indentation within `docs/` directory files.**
+
+All YAML frontmatter blocks MUST use **2 spaces per indentation level** (NOT tabs):
+
+```yaml
+✅ CORRECT - Frontmatter uses 2 spaces:
+---
+title: "Document Title"
+description: Brief description
+category: explanation
+tags:
+  - primary-topic    # 2 spaces before dash
+  - secondary-topic  # 2 spaces before dash
+created: 2025-11-29
+updated: 2025-11-29
+---
+
+❌ INCORRECT - Frontmatter uses tabs:
+---
+title: "Document Title"
+description: Brief description
+category: explanation
+tags:
+	- primary-topic    # TAB before dash - WRONG!
+	- secondary-topic  # TAB before dash - WRONG!
+created: 2025-11-29
+updated: 2025-11-29
+---
+```
+
+**Why spaces in frontmatter?**
+
+- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces, not tabs
+- **YAML spec**: While YAML allows both, Obsidian tooling is stricter
+- **Critical for ALL nested frontmatter fields**: This applies to `tags`, any list fields, and any nested objects
+- **Consistency**: All frontmatter across `docs/` must use same indentation
+
+**After frontmatter, use TABs**: All content bullets after the frontmatter block MUST continue using TAB indentation
+
+#### Code Blocks
+
+**Code blocks are exempt from the markdown TAB indentation rule.**
+
+Code blocks within journal entries use language-appropriate indentation standards, not the TAB indentation required for markdown bullets:
+
+- **JavaScript/TypeScript**: 2 spaces (aligns with project Prettier configuration)
+- **Python**: 4 spaces (PEP 8 standard)
+- **YAML**: 2 spaces (YAML specification)
+- **JSON**: 2 spaces (project standard)
+- **Go**: Tabs (Go language standard)
+- **Bash/Shell**: 2 or 4 spaces (common practice)
+
+**Rationale**: Code blocks represent actual source code and must follow their language's conventions, not the markdown formatting rules. This ensures code examples are syntactically correct and can be copied directly into editors or files.
 
 ### Heading Usage
 
