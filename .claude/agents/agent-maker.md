@@ -1,5 +1,5 @@
 ---
-name: agent-creator
+name: agent-maker
 description: Expert at creating new AI agents following all repository conventions. Use when adding a new agent to .claude/agents/ directory.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet

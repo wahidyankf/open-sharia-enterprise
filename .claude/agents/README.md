@@ -4,7 +4,7 @@ This directory contains specialized AI agents for repository maintenance and doc
 
 ## Available Agents
 
-### 🟦 `agent-creator.md`
+### 🟦 `agent-maker.md`
 
 Expert at creating new AI agents following all repository conventions.
 
@@ -18,7 +18,7 @@ Expert at creating new AI agents following all repository conventions.
   - Automatically updating agents README with new agent listing
   - Running validation via repo-rules-checker
 
-### 🟦 `docs-writer.md`
+### 🟦 `docs-maker.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
 
@@ -47,7 +47,7 @@ Expert at validating both external and internal links in documentation files to 
   - After major documentation updates to ensure link integrity
   - After file renames or directory restructuring
 
-### 🟨 `docs-renamer.md`
+### 🟨 `docs-rename-executor.md`
 
 Expert at renaming/moving files and directories in docs/ directory while maintaining conventions.
 
@@ -76,7 +76,7 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
 
-### 🟨 `repo-rules-updater.md`
+### 🟨 `repo-rules-update-executor.md`
 
 Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
 
@@ -90,7 +90,7 @@ Expert at propagating rule and convention changes across CLAUDE.md, convention d
   - Updating cross-references after structural changes
   - Maintaining consistency across agent definitions
 
-### 🟦 `plan-writer.md`
+### 🟦 `plan-maker.md`
 
 Expert at creating structured project planning documents in the plans/ folder.
 
@@ -104,11 +104,11 @@ Expert at creating structured project planning documents in the plans/ folder.
   - Creating project roadmaps with milestones and timelines
   - Organizing project deliverables into structured plans
 
-### 🟪 `plan-implementor.md`
+### 🟪 `plan-executor.md`
 
 Expert at systematically implementing project plans by following delivery checklists.
 
-- **Primary Use:** Executing plans created by the plan-writer agent
+- **Primary Use:** Executing plans created by the plan-maker agent
 - **Specialization:** Sequential implementation, per-phase validation, progress tracking, checklist management
 - **Tools:** Read, Write, Edit, Glob, Grep, Bash
 - **When to Use:**
@@ -153,7 +153,7 @@ Expert at validating plans are ready for implementation by verifying completenes
   - Identifying contradictions or missing information in plan
   - Preventing implementation blockers by catching plan issues early
 
-### 🟦 `journal-writer.md`
+### 🟦 `journal-maker.md`
 
 Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries.
 
@@ -177,7 +177,7 @@ The agents work together in complementary workflows:
 
 ```
 1. Plan Creation
-   └─> Use plan-writer to create structured plan in plans/backlog/
+   └─> Use plan-maker to create structured plan in plans/backlog/
         └─> Creates requirements.md, tech-docs.md, delivery.md
 
 2. Plan Validation (Quality Gate for Plans)
@@ -187,12 +187,12 @@ The agents work together in complementary workflows:
         └─> Validates technology choices via WebSearch
         └─> Checks documentation URLs via WebFetch
         └─> Identifies contradictions or missing information
-        └─> If issues found: Returns to plan-writer for fixes
+        └─> If issues found: Returns to plan-maker for fixes
         └─> If validation passes: Plan ready for implementation
 
 3. Implementation
    └─> Move plan from backlog/ to in-progress/
-   └─> Use plan-implementor with plan path
+   └─> Use plan-executor with plan path
         └─> Executes delivery checklist step-by-step
         └─> Updates delivery.md with progress and notes
         └─> Performs per-phase validation (self-validation)
@@ -204,7 +204,7 @@ The agents work together in complementary workflows:
         └─> Runs comprehensive quality checks
         └─> Performs integration testing
         └─> Generates detailed validation report
-        └─> If issues found: Returns to plan-implementor for fixes
+        └─> If issues found: Returns to plan-executor for fixes
         └─> If validation passes: Marks plan as complete
 
 5. Complete and Archive
@@ -216,7 +216,7 @@ The agents work together in complementary workflows:
 
 ```
 1. Make Changes
-   └─> Use repo-rules-updater to propagate across files
+   └─> Use repo-rules-update-executor to propagate across files
         └─> Ensures consistency in CLAUDE.md, conventions, agents, indices
 
 2. Validate Changes
@@ -224,15 +224,15 @@ The agents work together in complementary workflows:
         └─> Detects inconsistencies, contradictions, duplications
 
 3. Fix Issues (if any)
-   └─> Use repo-rules-updater to fix detected issues
+   └─> Use repo-rules-update-executor to fix detected issues
         └─> Return to step 2 for re-validation
 
 4. Write/Update Documentation
-   └─> Use docs-writer for documentation tasks
+   └─> Use docs-maker for documentation tasks
         └─> Ensures proper formatting and convention compliance
 
 5. Rename/Move Files (if needed)
-   └─> Use docs-renamer to reorganize documentation
+   └─> Use docs-rename-executor to reorganize documentation
         └─> Renames files/directories with git mv
         └─> Recalculates file prefixes based on new location
         └─> Updates all internal links automatically
@@ -247,19 +247,19 @@ The agents work together in complementary workflows:
 
 ## ✅ Best Practices
 
-- **When starting a new project:** Use `plan-writer` to create structured plans in plans/backlog/
+- **When starting a new project:** Use `plan-maker` to create structured plans in plans/backlog/
 - **After creating a plan:** Use `plan-checker` to validate plan before implementation (prevents wasted effort)
-- **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
-- **After plan-implementor completes:** Use `plan-implementation-checker` for independent final validation
-- **Full planning workflow:** plan-writer → plan-checker → (fix if needed) → plan-implementor → plan-implementation-checker
+- **When implementing a plan:** Use `plan-executor` with the plan path to execute systematically
+- **After plan-executor completes:** Use `plan-implementation-checker` for independent final validation
+- **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-implementation-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
-- **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
+- **After adding new conventions:** Use `repo-rules-update-executor` → `repo-rules-checker`
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
-- **When creating documentation:** Use `docs-writer` for proper structure
-- **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
-- **During plan implementation:** Let `plan-implementor` update delivery.md - it maintains detailed notes
-- **When renaming/moving files in docs/:** Use `docs-renamer` to handle prefixes, links, and indices automatically
-- **After using docs-renamer:** Always run `docs-link-checker` to verify all links are valid
+- **When creating documentation:** Use `docs-maker` for proper structure
+- **When modifying CLAUDE.md:** Use `repo-rules-update-executor` to cascade changes
+- **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
+- **When renaming/moving files in docs/:** Use `docs-rename-executor` to handle prefixes, links, and indices automatically
+- **After using docs-rename-executor:** Always run `docs-link-checker` to verify all links are valid
 - **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid
 - **After major documentation updates:** Use `docs-link-checker` to verify link integrity
 
@@ -276,7 +276,7 @@ When creating new agents:
 
 1. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md)
 2. Add the agent to this README index
-3. Use `repo-rules-updater` to propagate references to CLAUDE.md and other files
+3. Use `repo-rules-update-executor` to propagate references to CLAUDE.md and other files
 4. Use `repo-rules-checker` to validate the new agent follows all conventions
 5. Update CLAUDE.md if the agent should be mentioned in project guidance
 

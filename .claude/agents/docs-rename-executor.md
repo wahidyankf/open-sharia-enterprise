@@ -1,5 +1,5 @@
 ---
-name: docs-renamer
+name: docs-rename-executor
 description: Expert at renaming/moving files and directories in docs/ directory. Use when reorganizing documentation structure, renaming directories, or moving files between locations.
 tools: Read, Edit, Glob, Grep, Bash
 model: sonnet
