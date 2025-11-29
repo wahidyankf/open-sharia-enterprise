@@ -259,8 +259,8 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/docs-rename-executor.md`
 - `.claude/agents/journal-maker.md`
 - `.claude/agents/plan-checker.md`
+- `.claude/agents/plan-execution-checker.md`
 - `.claude/agents/plan-executor.md`
-- `.claude/agents/plan-implementation-checker.md`
 - `.claude/agents/plan-maker.md`
 - `.claude/agents/repo-rules-checker.md` (this file)
 - `.claude/agents/repo-rules-update-executor.md`
