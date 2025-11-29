@@ -463,5 +463,5 @@ Present options:
 
 **Related Agents:**
 
-- [doc-writer.md](./doc-writer.md) - For permanent documentation (different from temporal journal entries)
+- [docs-writer.md](./docs-writer.md) - For permanent documentation (different from temporal journal entries)
 - [plan-writer.md](./plan-writer.md) - For project planning (often referenced in journal entries)
