@@ -32,7 +32,7 @@ This "vanilla Nx" approach provides full control and transparency while maintain
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Nx Workspace Architecture                     │
+│         Nx Polyglot Monorepo Workspace Architecture              │
 └─────────────────────────────────────────────────────────────────┘
 
                        open-sharia-enterprise/
@@ -44,59 +44,53 @@ This "vanilla Nx" approach provides full control and transparency while maintain
             │  apps/  │      │  libs/  │    │   docs/   │
             └─────────┘      └─────────┘    └───────────┘
                  │                │
-         ┌───────┼──────┐    ┌────┼────────────────────────┐
-         │       │      │    │    │      │      │     │    │
-         ▼       ▼      ▼    ▼    ▼      ▼      ▼     ▼    ▼
-      app-1  app-2  app-3  shared/ feature/ data-  ui/  util/
-                                           access/
+         ┌───────┼──────┐    ┌────┴─────────────┐
+         │       │      │    │ (Flat structure) │
+         ▼          ▼           ▼
+      demo-ts-fe  app-2  ts-demo-libs
+                         ts-utils
+                         ts-components
 
 ┌─────────────────────────────────────────────────────────────────┐
-│  Dependency Flow (Apps can use Libs, Libs can use other Libs)   │
+│  Multi-Language Support (TypeScript, Go, Python, Rust, etc.)    │
 └─────────────────────────────────────────────────────────────────┘
 
-         Apps Layer
-         ┌─────────────────────────────────┐
-         │  app-1    app-2    app-3        │
-         └──────────────┬──────────────────┘
+         Apps Layer (Any language)
+         ┌─────────────────────────────────────────┐
+         │  app-1    app-2    app-3                │
+         └──────────────┬──────────────────────────┘
                         │ imports
                         ▼
-         Feature Libs Layer
-         ┌─────────────────────────────────┐
-         │  feature/auth  feature/payments │
-         └──────────────┬──────────────────┘
-                        │ imports
-                        ▼
-         Data Access Layer
-         ┌─────────────────────────────────┐
-         │  data-access/users  data-access/│
-         │  transactions                   │
-         └──────────────┬──────────────────┘
-                        │ imports
-                        ▼
-         Shared/Util Layer
-         ┌─────────────────────────────────┐
-         │  shared/utils  util/validators  │
-         │  ui/components                  │
-         └─────────────────────────────────┘
+         Libs Layer (Flat, language-prefixed)
+         ┌─────────────────────────────────────────┐
+         │  ts-demo-libs    ts-utils               │
+         │  ts-components   ts-hooks               │
+         │  (Future: java-*, kt-*, py-*)           │
+         └─────────────────────────────────────────┘
 
 Rules:
-- Apps import from any lib scope
-- Libs can import from libs in same or lower layer
-- No circular dependencies
-- Shared/util libs have minimal dependencies
+- Apps can import from any lib
+- Libs can import from other libs (be mindful of circular deps)
+- No circular dependencies allowed
+- Each language uses its own build tools via nx:run-commands
 ```
 
 ## Technology Stack
 
 ### Core Technologies
 
-| Technology     | Version               | Purpose                               |
-| -------------- | --------------------- | ------------------------------------- |
-| **Nx**         | Latest stable (^19.x) | Monorepo build system and task runner |
-| **Node.js**    | 24.11.1 (LTS)         | JavaScript runtime (Volta-managed)    |
-| **npm**        | 11.6.2                | Package manager (Volta-managed)       |
-| **TypeScript** | ^5.x                  | Type-safe development language        |
-| **Volta**      | Current               | Node/npm version management           |
+| Technology     | Version               | Purpose                                      |
+| -------------- | --------------------- | -------------------------------------------- |
+| **Nx**         | Latest stable (^19.x) | Monorepo build system and task runner        |
+| **Node.js**    | 24.11.1 (LTS)         | JavaScript runtime (Volta-managed)           |
+| **npm**        | 11.6.2                | Package manager (Volta-managed)              |
+| **TypeScript** | ^5.x                  | Primary development language (current focus) |
+| **Next.js**    | Latest stable         | React framework for frontend applications    |
+| **React**      | Latest stable         | UI library for building interfaces           |
+| **Java**       | Latest LTS            | Future: Backend services and enterprise apps |
+| **Kotlin**     | Latest stable         | Future: Android and backend services         |
+| **Python**     | Latest stable         | Future: Data processing and ML               |
+| **Volta**      | Current               | Node/npm version management                  |
 
 ### Explicitly Excluded
 
@@ -149,199 +143,198 @@ apps/
 
 ### Libs Folder (`libs/`)
 
-**Purpose**: Contains reusable library packages
+**Purpose**: Contains reusable library packages in multiple programming languages
 
 **Location**: `libs/` at repository root
 
-**Naming Convention**: `[scope]/[name]`
+**Naming Convention**: `[lang-prefix]-[name]` (flat structure)
 
-Examples:
+**Language Prefixes**:
 
-- `shared/utils` - Common utility functions
-- `feature/auth` - Authentication feature logic
-- `data-access/users` - User data access layer
-- `ui/components` - Reusable UI components
-- `util/validators` - Pure validation functions
+- `ts-*` - TypeScript libraries (current implementation)
+- `java-*` - Java libraries (future)
+- `kt-*` - Kotlin libraries (future)
+- `py-*` - Python libraries (future)
 
-**Standard Structure**:
+**Current Scope** (TypeScript only):
+
+- `ts-demo-libs` - Demo TypeScript library consumed by Next.js app
+- `ts-utils` - TypeScript utility functions
+- `ts-components` - Reusable React components
+- `ts-hooks` - Custom React hooks
+- `ts-api` - API client libraries
+
+**Future Scope** (Planned):
+
+- `java-services` - Java backend services
+- `java-utils` - Java utility libraries
+- `kt-android` - Kotlin Android libraries
+- `kt-backend` - Kotlin backend services
+- `py-ml` - Python machine learning models
+- `py-data` - Python data processing
+
+**Standard Structure (TypeScript example)**:
 
 ```
 libs/
-└── [scope]/
-    └── [name]/
-        ├── src/
-        │   ├── index.ts         # Public API (barrel export)
-        │   ├── lib/             # Implementation
-        │   │   ├── [feature].ts
-        │   │   └── [feature].spec.ts
-        │   └── __tests__/       # Integration tests
-        ├── dist/                # Build output (gitignored)
-        ├── package.json         # Lib dependencies (if any)
-        ├── project.json         # Nx project configuration
-        ├── tsconfig.json        # TypeScript configuration
-        ├── tsconfig.build.json  # Build-specific TS config
-        └── README.md            # Library documentation
+└── ts-[name]/
+    ├── src/
+    │   ├── index.ts         # Public API (barrel export)
+    │   ├── lib/             # Implementation
+    │   │   ├── [feature].ts
+    │   │   └── [feature].spec.ts
+    │   └── __tests__/       # Integration tests
+    ├── dist/                # Build output (gitignored)
+    ├── package.json         # Lib dependencies (if any)
+    ├── project.json         # Nx project configuration
+    ├── tsconfig.json        # TypeScript configuration
+    ├── tsconfig.build.json  # Build-specific TS config
+    └── README.md            # Library documentation
+```
+
+**Standard Structure (Next.js App example)**:
+
+```
+apps/
+└── demo-ts-fe/
+    ├── app/                 # Next.js 14+ app directory
+    │   ├── page.tsx         # Home page
+    │   ├── layout.tsx       # Root layout
+    │   └── ...
+    ├── public/              # Static assets
+    ├── next.config.js       # Next.js configuration
+    ├── package.json         # App dependencies
+    ├── project.json         # Nx project configuration
+    ├── tsconfig.json        # TypeScript configuration
+    └── README.md            # App documentation
+```
+
+**Future Structure Examples** (Java, Kotlin, Python - not implemented yet):
+
+```
+# Java library (future)
+libs/java-services/
+    ├── src/main/java/
+    ├── src/test/java/
+    ├── pom.xml or build.gradle
+    ├── project.json
+    └── README.md
+
+# Kotlin library (future)
+libs/kt-backend/
+    ├── src/main/kotlin/
+    ├── src/test/kotlin/
+    ├── build.gradle.kts
+    ├── project.json
+    └── README.md
+
+# Python library (future)
+libs/py-ml/
+    ├── src/[package]/
+    ├── tests/
+    ├── requirements.txt
+    ├── project.json
+    └── README.md
 ```
 
 **Characteristics**:
 
+- **Polyglot-Ready** - Designed to support multiple languages (TypeScript now, Java/Kotlin/Python future)
+- **Flat Structure** - All libs at same level (no nested scopes)
+- **Language-Specific** - Each language uses its own conventions and tools
 - **Reusable** - Libs are designed to be imported by apps and other libs
 - **Focused** - Each lib has a single, clear purpose
-- **Public API** - Exports controlled through index.ts (barrel exports)
-- **Testable** - Can be tested independently
-- **Scoped** - Organized by scope for clarity and dependency management
+- **Public API** - Exports controlled through index.ts (TypeScript) or language-specific mechanisms
+- **Testable** - Can be tested independently using language-specific test frameworks
 
-### Library Scopes
+**Current Implementation**: TypeScript libraries only (Next.js + React ecosystem)
 
-Scopes organize libraries by their purpose and role in the architecture:
+### Dependency Guidelines for Flat Structure
 
-#### 1. `shared/` - Shared Utilities and Common Code
+With a flat library structure using language prefixes, dependency management is more flexible but requires discipline to avoid circular dependencies and maintain clean architecture.
 
-**Purpose**: Code used across multiple features and domains
+#### General Dependency Rules
 
-**Examples**:
+1. **Apps can import from any lib** - Applications are consumers and sit at the top of the dependency graph
+2. **Libs can import from other libs** - Cross-library dependencies are allowed
+3. **No circular dependencies** - Strictly prohibited (A → B → A is not allowed)
+4. **Language boundaries** - TypeScript libs can't directly import Go/Python/Rust libs (use APIs or IPC instead)
+5. **Keep dependencies minimal** - Each lib should have clear, focused dependencies
 
-- `shared/utils` - General utility functions
-- `shared/constants` - Shared constants and enums
-- `shared/types` - Shared TypeScript types
-- `shared/config` - Configuration utilities
+#### Dependency Best Practices
 
-**Characteristics**:
+**For TypeScript Libraries**:
 
-- Minimal dependencies (mostly self-contained)
-- No business logic
-- Pure functions when possible
-- Widely reusable
+- Use TypeScript path mappings in `tsconfig.base.json`
+- Import via `@open-sharia/ts-[name]` pattern
+- Declare dependencies in `package.json` if needed
 
-**Import Rules**:
+**For Go Libraries**:
 
-- Can import: Other `shared/`, `util/`
-- Should NOT import: `feature/`, `data-access/`, `ui/` (except in special cases)
+- Use Go modules (`go.mod`)
+- Import via standard Go import paths
+- Keep libraries in separate modules if they're independently versioned
 
-#### 2. `feature/` - Feature-Specific Business Logic
+**For Python Libraries**:
 
-**Purpose**: Encapsulates business logic for specific features
+- Use `requirements.txt` or `pyproject.toml`
+- Import via standard Python import mechanisms
+- Consider using namespace packages for related libs
 
-**Examples**:
+**For Rust Libraries**:
 
-- `feature/auth` - Authentication logic
-- `feature/payments` - Payment processing logic
-- `feature/transactions` - Transaction management
-- `feature/reporting` - Reporting and analytics
+- Use Cargo workspace features
+- Define dependencies in `Cargo.toml`
+- Use workspace members for shared dependencies
 
-**Characteristics**:
+#### Cross-Language Communication
 
-- Contains business rules and workflows
-- Orchestrates data access and UI components
-- Feature-focused and domain-specific
-- Provides high-level APIs for apps
+When libraries in different languages need to interact:
 
-**Import Rules**:
+1. **HTTP APIs** - Expose REST/GraphQL endpoints (most common)
+2. **gRPC** - For high-performance cross-language RPC
+3. **Message Queues** - For async communication (RabbitMQ, Kafka, etc.)
+4. **Shared Data Formats** - JSON, Protobuf, MessagePack
+5. **CLI Interfaces** - Call programs as subprocesses (least preferred)
 
-- Can import: `data-access/`, `shared/`, `util/`, `ui/`
-- Can import: Other `feature/` (with caution, avoid circular deps)
-- Should NOT be imported by: `data-access/`, `shared/`, `util/`
+#### Monitoring Dependencies
 
-#### 3. `data-access/` - Data Access Layer
+**Use Nx dependency graph**:
 
-**Purpose**: Handles database access, API clients, and data persistence
+```bash
+nx graph                    # View full dependency graph
+nx affected:graph           # View affected projects
+```
 
-**Examples**:
+**Watch for**:
 
-- `data-access/users` - User CRUD operations
-- `data-access/transactions` - Transaction database access
-- `data-access/api-client` - External API client
-- `data-access/cache` - Caching layer
+- Circular dependencies (Nx will detect these)
+- Deep dependency chains (A → B → C → D → E suggests refactoring)
+- Cross-language coupling (should be minimal and explicit)
 
-**Characteristics**:
+#### Example Dependency Patterns
 
-- Encapsulates data sources (databases, APIs, files)
-- Provides CRUD operations and queries
-- Handles data transformation and validation
-- Abstracts persistence details
-
-**Import Rules**:
-
-- Can import: `shared/`, `util/`
-- Should NOT import: `feature/`, `ui/`
-- Can import: Other `data-access/` for composition
-
-#### 4. `ui/` - Reusable UI Components
-
-**Purpose**: Presentational components and UI utilities
-
-**Examples**:
-
-- `ui/components` - Shared React/Vue components
-- `ui/styles` - Shared styles and themes
-- `ui/icons` - Icon components
-- `ui/layouts` - Layout components
-
-**Characteristics**:
-
-- Presentation-focused (no business logic)
-- Reusable across apps
-- Props-based configuration
-- Framework-specific (React, Vue, etc.)
-
-**Import Rules**:
-
-- Can import: `shared/`, `util/`
-- Should NOT import: `feature/`, `data-access/`
-- Can import: Other `ui/` components
-
-#### 5. `util/` - Pure Utility Functions
-
-**Purpose**: Framework-agnostic, pure utility functions
-
-**Examples**:
-
-- `util/validators` - Validation functions
-- `util/formatters` - String/number formatters
-- `util/parsers` - Data parsers
-- `util/math` - Mathematical utilities
-
-**Characteristics**:
-
-- Pure functions (no side effects)
-- Framework-agnostic
-- Highly testable
-- No dependencies on other libs (except other `util/`)
-
-**Import Rules**:
-
-- Can import: Other `util/` only
-- Should NOT import: Any other scope
-- Should be dependency-free when possible
-
-### Dependency Rules Summary
+**Good Patterns**:
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  Library Dependency Matrix (✓ = allowed, ✗ = prohibited) │
-├──────────────────────────────────────────────────────────┤
-│             │ shared │ feature │ data-access │ ui │ util │
-├─────────────┼────────┼─────────┼─────────────┼────┼──────┤
-│ apps        │   ✓    │    ✓    │      ✓      │ ✓  │  ✓   │
-│ feature     │   ✓    │    ⚠    │      ✓      │ ✓  │  ✓   │
-│ data-access │   ✓    │    ✗    │      ✓      │ ✗  │  ✓   │
-│ ui          │   ✓    │    ✗    │      ✗      │ ✓  │  ✓   │
-│ shared      │   ✓    │    ✗    │      ✗      │ ✗  │  ✓   │
-│ util        │   ✗    │    ✗    │      ✗      │ ✗  │  ✓   │
-└─────────────┴────────┴─────────┴─────────────┴────┴──────┘
+ts-utils ← ts-auth ← app-api
+  (Simple linear dependency chain)
 
-Legend:
-✓ = Allowed and encouraged
-⚠ = Allowed but use with caution (risk of circular dependencies)
-✗ = Prohibited (architectural violation)
+ts-components ← demo-ts-fe
+  (Direct, minimal dependency)
 
-Key Rules:
-1. Apps can import from any lib scope
-2. feature/ can import from lower layers (data-access, ui, shared, util)
-3. data-access/ can only import shared/ and util/
-4. ui/ can only import shared/ and util/
-5. util/ should be self-contained (only import other util/)
-6. No circular dependencies allowed
+ts-validators (standalone, no deps)
+  (Self-contained utility)
+```
+
+**Patterns to Avoid**:
+
+```
+ts-auth ← ts-users ← ts-auth
+  (Circular dependency - will fail)
+
+ts-lib-a ← ts-lib-b ← ts-lib-c ← ts-lib-d ← ts-lib-e
+  (Too deep, suggests poor separation of concerns)
 ```
 
 ## Configuration Files
@@ -392,7 +385,7 @@ Key Rules:
 
 - `workspaces` field enables npm workspaces for dependency hoisting
 - `apps/*` includes all apps
-- `libs/*/*` includes all scoped libs (e.g., `libs/shared/utils`)
+- `libs/*` includes all libs in flat structure (e.g., `libs/ts-demo-libs`, `libs/ts-utils`)
 - Scripts provide convenient access to common Nx commands
 - Volta pinning preserved from existing setup
 - No Nx plugins in dependencies
@@ -490,11 +483,7 @@ Key Rules:
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@open-sharia/shared/*": ["libs/shared/*/src/index.ts"],
-      "@open-sharia/feature/*": ["libs/feature/*/src/index.ts"],
-      "@open-sharia/data-access/*": ["libs/data-access/*/src/index.ts"],
-      "@open-sharia/ui/*": ["libs/ui/*/src/index.ts"],
-      "@open-sharia/util/*": ["libs/util/*/src/index.ts"]
+      "@open-sharia/ts-*": ["libs/ts-*/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "dist"]
@@ -503,48 +492,56 @@ Key Rules:
 
 **Key Points**:
 
-- Path mappings enable clean imports: `import { utils } from '@open-sharia/shared/utils'`
-- All paths point to `src/index.ts` for controlled public API
-- Shared across all projects in the workspace
+- Path mappings enable clean imports: `import { demo } from '@open-sharia/ts-demo-libs'`
+- TypeScript paths point to `src/index.ts` for controlled public API
+- Wildcard pattern `ts-*` matches all TypeScript libraries
+- Shared across all TypeScript projects in the workspace
 - Projects extend this with their own `tsconfig.json`
+- Future languages (Java, Kotlin, Python) will use their own import systems
 
-### 4. Project `project.json` (App Example)
+### 4. Project `project.json` (Next.js App Example)
 
-**Location**: `/apps/[app-name]/project.json`
+**Location**: `/apps/demo-ts-fe/project.json`
 
-**Purpose**: Nx configuration for an individual app
+**Purpose**: Nx configuration for the Next.js demo app
 
 **Configuration**:
 
 ```json
 {
-  "name": "sample-app",
-  "sourceRoot": "apps/sample-app/src",
+  "name": "demo-ts-fe",
+  "sourceRoot": "apps/demo-ts-fe",
   "projectType": "application",
   "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next dev",
+        "cwd": "apps/demo-ts-fe"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc -p apps/sample-app/tsconfig.build.json",
-        "cwd": "."
+        "command": "next build",
+        "cwd": "apps/demo-ts-fe"
       },
-      "outputs": ["{projectRoot}/dist"]
+      "outputs": ["{projectRoot}/.next"]
     },
-    "serve": {
+    "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node apps/sample-app/dist/index.js",
-        "cwd": "."
+        "command": "next start",
+        "cwd": "apps/demo-ts-fe"
       },
       "dependsOn": ["build"]
     },
-    "test": {
+    "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --test apps/sample-app/src/**/*.test.ts",
-        "cwd": "."
-      },
-      "dependsOn": ["build"]
+        "command": "next lint",
+        "cwd": "apps/demo-ts-fe"
+      }
     }
   }
 }
@@ -553,29 +550,30 @@ Key Rules:
 **Key Points**:
 
 - `executor: "nx:run-commands"` - Use run-commands (no plugins)
-- Build command runs `tsc` directly
-- Serve command runs built output
-- Test command uses Node.js built-in test runner
-- Tasks specify dependencies (test depends on build)
+- Dev command runs Next.js dev server
+- Build command runs Next.js production build
+- Start command serves production build
+- Lint command runs Next.js ESLint
+- Tasks specify dependencies (start depends on build)
 
-### 5. Project `project.json` (Lib Example)
+### 5. Project `project.json` (TypeScript Lib Example)
 
-**Location**: `/libs/[scope]/[name]/project.json`
+**Location**: `/libs/ts-[name]/project.json`
 
-**Purpose**: Nx configuration for an individual library
+**Purpose**: Nx configuration for an individual TypeScript library
 
 **Configuration**:
 
 ```json
 {
-  "name": "shared-utils",
-  "sourceRoot": "libs/shared/utils/src",
+  "name": "ts-utils",
+  "sourceRoot": "libs/ts-utils/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc -p libs/shared/utils/tsconfig.build.json",
+        "command": "tsc -p libs/ts-utils/tsconfig.build.json",
         "cwd": "."
       },
       "outputs": ["{projectRoot}/dist"]
@@ -583,7 +581,7 @@ Key Rules:
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --test libs/shared/utils/src/**/*.test.ts",
+        "command": "node --test libs/ts-utils/src/**/*.test.ts",
         "cwd": "."
       },
       "dependsOn": ["build"]
@@ -670,13 +668,13 @@ coverage/
    - Configure target defaults
 
 4. **Update `package.json`**
-   - Add `workspaces` field: `["apps/*", "libs/*/*"]`
+   - Add `workspaces` field: `["apps/*", "libs/*"]`
    - Add npm scripts for Nx commands
    - Verify Volta configuration remains intact
 
 5. **Create `tsconfig.base.json`**
    - Base TypeScript configuration
-   - Path mappings for all lib scopes
+   - Path mappings for language-prefixed libraries
 
 6. **Create `.nxignore`**
    - Exclude docs, plans, and non-code files
@@ -705,20 +703,17 @@ coverage/
    - Document structure: required files
    - Document rules: apps don't import other apps
 
-3. **Create Libs Directory with Scopes**
+3. **Create Libs Directory**
 
    ```bash
-   mkdir -p libs/shared
-   mkdir -p libs/feature
-   mkdir -p libs/data-access
-   mkdir -p libs/ui
-   mkdir -p libs/util
+   mkdir -p libs
    ```
 
 4. **Create Libs README**
    - Document purpose: reusable libraries
-   - Document scopes: shared, feature, data-access, ui, util
-   - Document naming: `[scope]/[name]`
+   - Document naming: `[language-prefix]-[name]` (e.g., ts-demo-libs)
+   - Document current language prefix: `ts-` (TypeScript)
+   - Document future language prefixes: `java-`, `kt-`, `py-`
    - Document dependency rules
    - Document structure: required files
 
@@ -728,95 +723,108 @@ coverage/
 - README files are complete and accurate
 - Folder structure is ready for projects
 
-### Phase 3: Create Sample App
+### Phase 3: Create Next.js Demo App
 
-**Goal**: Validate app structure and configuration
+**Goal**: Validate Next.js app structure and configuration
 
 **Tasks**:
 
-1. **Create App Directory**
+1. **Initialize Next.js App**
 
    ```bash
-   mkdir -p apps/sample-app/src
+   cd apps
+   npx create-next-app@latest demo-ts-fe --typescript --tailwind --eslint --app --no-src-dir
+   cd ..
    ```
 
-2. **Create App Files**
-   - `apps/sample-app/src/index.ts` - Entry point with simple console.log
-   - `apps/sample-app/package.json` - App metadata (name, version)
-   - `apps/sample-app/project.json` - Nx configuration (build, serve, test targets)
-   - `apps/sample-app/tsconfig.json` - Extends tsconfig.base.json
-   - `apps/sample-app/tsconfig.build.json` - Build-specific config
-   - `apps/sample-app/README.md` - App documentation
+2. **Create Nx Configuration**
+   - `apps/demo-ts-fe/project.json` - Nx configuration with targets:
+     - `dev`: runs `next dev`
+     - `build`: runs `next build`
+     - `start`: runs `next start`
+     - `lint`: runs `next lint`
 
-3. **Test App Build**
+3. **Update TypeScript Config**
+   - Ensure `apps/demo-ts-fe/tsconfig.json` extends `../../tsconfig.base.json`
+   - This enables importing from `@open-sharia/ts-*` libraries
+
+4. **Test App Dev Server**
 
    ```bash
-   nx build sample-app
+   nx dev demo-ts-fe
    ```
 
-4. **Test App Serve**
+5. **Test App Build**
    ```bash
-   nx serve sample-app
+   nx build demo-ts-fe
    ```
 
 **Validation**:
 
-- Build succeeds and creates `apps/sample-app/dist/`
-- Serve runs built output successfully
-- App structure follows documented standards
+- Next.js app initializes successfully
+- Dev server runs on http://localhost:3000
+- Build succeeds and creates `.next/` directory
+- App structure follows Next.js 14+ conventions (app directory)
 
-### Phase 4: Create Sample Lib
+### Phase 4: Create TypeScript Demo Library
 
-**Goal**: Validate lib structure and cross-project imports
+**Goal**: Validate TypeScript library structure and cross-project imports
 
 **Tasks**:
 
 1. **Create Lib Directory**
 
    ```bash
-   mkdir -p libs/shared/sample-lib/src/lib
+   mkdir -p libs/ts-demo-libs/src/lib
    ```
 
 2. **Create Lib Files**
-   - `libs/shared/sample-lib/src/index.ts` - Public API (barrel export)
-   - `libs/shared/sample-lib/src/lib/greet.ts` - Simple function: `export function greet(name: string) { return \`Hello, ${name}\`; }`
-   - `libs/shared/sample-lib/src/lib/greet.test.ts` - Simple test
-   - `libs/shared/sample-lib/package.json` - Lib metadata
-   - `libs/shared/sample-lib/project.json` - Nx configuration
-   - `libs/shared/sample-lib/tsconfig.json` - Extends tsconfig.base.json
-   - `libs/shared/sample-lib/tsconfig.build.json` - Build-specific config
-   - `libs/shared/sample-lib/README.md` - Lib documentation
+   - `libs/ts-demo-libs/src/index.ts` - Public API (barrel export)
+   - `libs/ts-demo-libs/src/lib/greet.ts` - Simple function: `export function greet(name: string) { return \`Hello, ${name}\`; }`
+   - `libs/ts-demo-libs/src/lib/greet.test.ts` - Simple test using Node.js test runner
+   - `libs/ts-demo-libs/package.json` - Lib metadata
+   - `libs/ts-demo-libs/project.json` - Nx configuration
+   - `libs/ts-demo-libs/tsconfig.json` - Extends tsconfig.base.json
+   - `libs/ts-demo-libs/tsconfig.build.json` - Build-specific config
+   - `libs/ts-demo-libs/README.md` - Lib documentation
 
 3. **Test Lib Build**
 
    ```bash
-   nx build shared-sample-lib
+   nx build ts-demo-libs
    ```
 
 4. **Test Lib Tests**
 
    ```bash
-   nx test shared-sample-lib
+   nx test ts-demo-libs
    ```
 
-5. **Import Lib in Sample App**
-   - Update `apps/sample-app/src/index.ts`:
+5. **Import Lib in Next.js App**
+   - Update `apps/demo-ts-fe/app/page.tsx`:
+
      ```typescript
-     import { greet } from "@open-sharia/shared/sample-lib";
-     console.log(greet("World"));
+     import { greet } from "@open-sharia/ts-demo-libs";
+
+     export default function Home() {
+       const message = greet("Next.js");
+       return <div>{message}</div>;
+     }
      ```
+
    - Rebuild and run app:
      ```bash
-     nx build sample-app
-     nx serve sample-app
+     nx build demo-ts-fe
+     nx dev demo-ts-fe
      ```
 
 **Validation**:
 
-- Lib builds successfully
+- Lib builds successfully and creates `libs/ts-demo-libs/dist/`
 - Lib tests pass
-- App successfully imports and uses lib
-- `nx graph` shows app -> lib dependency
+- Next.js app successfully imports and uses lib
+- App displays greeting message from library
+- `nx graph` shows demo-ts-fe -> ts-demo-libs dependency
 
 ### Phase 5: Test Nx Features
 
@@ -830,13 +838,13 @@ coverage/
    nx graph
    ```
 
-   - Verify graph shows sample-app depending on shared-sample-lib
+   - Verify graph shows demo-ts-fe depending on ts-demo-libs
 
 2. **Test Task Caching**
 
    ```bash
-   nx build sample-app
-   nx build sample-app  # Should use cache
+   nx build demo-ts-fe
+   nx build demo-ts-fe  # Should use cache
    ```
 
    - Second build should show "[local cache]"
@@ -844,7 +852,7 @@ coverage/
 3. **Test Affected Detection**
 
    ```bash
-   # Make a change to sample-lib
+   # Make a change to ts-demo-libs
    nx affected:build  # Should build lib and app
    # Make a change to app only
    nx affected:build  # Should build only app
@@ -899,9 +907,9 @@ coverage/
 
 **Tasks**:
 
-1. **Decide on Sample Projects**
-   - Option A: Remove sample-app and sample-lib (clean slate)
-   - Option B: Keep as reference examples (rename to `example-app`, `example-lib`)
+1. **Decide on Demo Projects**
+   - Option A: Remove demo-ts-fe and ts-demo-libs (clean slate for production)
+   - Option B: Keep as reference examples and continue using for development
 
 2. **Run Full Validation**
    - All builds pass
@@ -963,51 +971,58 @@ coverage/
 - ❌ No plugin-specific executors (must use run-commands)
 - ❌ More manual setup required
 
-### Decision 2: Scope-Based Library Organization
+### Decision 2: Flat Library Organization with Language Prefixes
 
-**Context**: Need to organize libs in a scalable, maintainable way
+**Context**: Need to organize libs for a polyglot monorepo supporting multiple programming languages
 
-**Decision**: Use scope-based folders: `shared/`, `feature/`, `data-access/`, `ui/`, `util/`
+**Decision**: Use flat structure with language prefixes: `libs/ts-[name]`, `libs/java-[name]`, `libs/kt-[name]`, `libs/py-[name]`
 
 **Rationale**:
 
-- **Clear Purpose** - Each scope has a well-defined role
-- **Dependency Rules** - Scopes enforce architectural layers
-- **Scalability** - Can grow to hundreds of libs with clear organization
-- **Discoverability** - Easy to find libs by their purpose
-- **Convention** - Widely used pattern in Nx community
+- **Polyglot Support** - Language prefix clearly identifies which language each library uses
+- **Simple Structure** - Flat hierarchy is easier to understand and navigate
+- **No Artificial Nesting** - Avoids forcing libraries into scope categories that may not fit
+- **Future Ready** - Easy to add new languages (Java, Kotlin, Python) alongside TypeScript
+- **Wildcard Mappings** - TypeScript path mappings use simple wildcard: `@open-sharia/ts-*`
+- **Clear Ownership** - Language prefix shows which build tools and conventions apply
 
 **Alternatives Considered**:
 
-- Flat structure (`libs/[name]`) - Rejected: doesn't scale, no organization
-- Domain-based (`libs/auth/`, `libs/payments/`) - Rejected: mixes concerns, unclear dependencies
-- No organization - Rejected: chaos at scale
+- Scope-based folders (`shared/`, `feature/`, `data-access/`, `ui/`, `util/`) - Rejected: doesn't support multiple languages well, forces artificial categorization
+- Domain-based (`libs/auth/`, `libs/payments/`) - Rejected: mixes languages, unclear which tools to use
+- Nested language folders (`libs/typescript/`, `libs/java/`) - Rejected: extra nesting without benefit
+- No prefix (`libs/demo-lib`) - Rejected: unclear which language, naming conflicts across languages
 
 **Consequences**:
 
-- ✅ Clear, scalable organization
-- ✅ Enforced architectural layers
-- ✅ Easy to find and understand libs
-- ❌ Slightly longer import paths
-- ❌ Requires discipline to maintain
+- ✅ Clear language identification
+- ✅ Simple, flat structure
+- ✅ Easy to add new languages
+- ✅ Scalable to hundreds of libraries
+- ✅ No forced categorization
+- ❌ Slightly longer library names (due to prefix)
+- ❌ Less architectural enforcement (no scope-based rules)
 
 ### Decision 3: TypeScript Path Mappings
 
-**Context**: Need clean, consistent import paths for libs
+**Context**: Need clean, consistent import paths for libs in a polyglot monorepo
 
-**Decision**: Use `@open-sharia/[scope]/[name]` pattern in tsconfig.base.json
+**Decision**: Use `@open-sharia/[language-prefix]-[name]` pattern with wildcard in tsconfig.base.json
 
 **Rationale**:
 
-- **Clean Imports** - `import { utils } from '@open-sharia/shared/utils'` is clear and readable
+- **Clean Imports** - `import { greet } from '@open-sharia/ts-demo-libs'` is clear and readable
 - **Controlled API** - All imports go through `index.ts` barrel exports
+- **Language Clarity** - Prefix shows which language the library uses (ts-, java-, kt-, py-)
+- **Flat Structure** - Single wildcard pattern matches all libraries: `@open-sharia/ts-*`
 - **Refactoring** - Moving files doesn't break imports if public API stays same
-- **Consistency** - Same pattern across all libs
+- **Consistency** - Same pattern across all TypeScript libs
 - **Scope Prefix** - Prevents conflicts with npm packages
 
 **Alternatives Considered**:
 
-- Relative imports (`../../../libs/shared/utils`) - Rejected: brittle, hard to read
+- Relative imports (`../../../libs/ts-demo-libs`) - Rejected: brittle, hard to read
+- Nested scopes (`@open-sharia/shared/utils`) - Rejected: doesn't support multiple languages well
 - No path mappings - Rejected: no control over public API
 - Different prefix - Rejected: `@open-sharia` matches project name
 
@@ -1075,23 +1090,24 @@ coverage/
 - ❌ Limited features (no mocking, coverage, etc.)
 - ❌ Will likely be replaced later
 
-### Decision 6: Sample Projects Strategy
+### Decision 6: Demo Projects Strategy
 
-**Context**: Need to validate setup, but should we keep samples?
+**Context**: Need to validate setup with concrete projects (demo-ts-fe, ts-demo-libs)
 
-**Decision**: Create samples for validation, then decide to keep or remove
+**Decision**: Create demo projects for validation, then decide to keep or remove
 
 **Rationale**:
 
-- **Validation** - Samples prove setup works correctly
+- **Validation** - Demo projects prove setup works correctly
 - **Examples** - Can serve as reference for new developers
+- **Working Code** - Demonstrates library consumption patterns (Next.js importing TypeScript lib)
 - **Flexibility** - Can remove if they add clutter
 - **Defer Decision** - Decide during implementation based on value
 
 **Options**:
 
-- **Option A**: Remove samples after validation (clean slate)
-- **Option B**: Keep and rename to `example-app`, `example-lib` (reference)
+- **Option A**: Remove demos after validation (clean slate for production)
+- **Option B**: Keep as reference examples (demo-ts-fe and ts-demo-libs)
 
 **Consequences**:
 
@@ -1178,11 +1194,11 @@ coverage/
 
 **Mitigation**:
 
-- Clear dependency rules by scope
-- Regular dependency graph reviews
+- Clear dependency rules and architectural guidelines
+- Regular dependency graph reviews (`nx graph`)
 - Nx can detect circular deps (configure if needed)
 - Code review focuses on import patterns
-- Documentation emphasizes layer architecture
+- Documentation emphasizes clean architecture principles
 
 **Contingency**: If circulars occur, refactor to break cycle (extract shared code)
 
@@ -1219,7 +1235,7 @@ coverage/
 **Example**:
 
 ```typescript
-// libs/shared/utils/src/lib/greet.test.ts
+// libs/ts-demo-libs/src/lib/greet.test.ts
 import { test } from "node:test";
 import assert from "node:assert";
 import { greet } from "./greet";
@@ -1242,10 +1258,10 @@ test("greet returns greeting message", () => {
 
 **Example**:
 
-- Create `libs/shared/sample-lib` with `greet()` function
-- Create `apps/sample-app` that imports and uses `greet()`
-- Build: `nx build sample-app` (builds lib first due to dependencies)
-- Verify: `nx serve sample-app` runs successfully
+- Create `libs/ts-demo-libs` with `greet()` function
+- Create `apps/demo-ts-fe` (Next.js) that imports and uses `greet()`
+- Build: `nx build demo-ts-fe` (builds lib first due to dependencies)
+- Verify: `nx dev demo-ts-fe` runs successfully and displays greeting
 
 ### System Testing
 
@@ -1273,10 +1289,10 @@ test("greet returns greeting message", () => {
 - [ ] Nx version displays correctly
 - [ ] No Nx plugins installed (`npm ls | grep @nx`)
 - [ ] Apps folder exists with documentation
-- [ ] Libs folder exists with scope structure
-- [ ] Sample app builds successfully
-- [ ] Sample lib builds successfully
-- [ ] App imports lib successfully
+- [ ] Libs folder exists with flat structure (no nested scopes)
+- [ ] Demo Next.js app (demo-ts-fe) builds successfully
+- [ ] Demo TypeScript lib (ts-demo-libs) builds successfully
+- [ ] Next.js app imports lib successfully
 - [ ] Dependency graph shows relationships
 - [ ] Task caching works (second build is fast)
 - [ ] Affected detection identifies changes
@@ -1299,40 +1315,29 @@ test("greet returns greeting message", () => {
 - [ ] Commit-msg hook validates with commitlint
 - [ ] Conventional commits enforced
 
-## Deployment Considerations
+## References and Sources
 
-**Note**: This plan focuses on workspace setup, not application deployment. However, some considerations for future deployment:
+This plan was informed by official Nx documentation and polyglot monorepo best practices:
 
-### CI/CD Integration (Future Work)
+### Nx Documentation
 
-**GitHub Actions Integration**:
+- [Nx Folder Structure Best Practices](https://nx.dev/docs/concepts/decisions/folder-structure) - Official guidance on organizing Nx workspaces
+- [Running Custom Commands with nx:run-commands](https://nx.dev/recipes/running-tasks/run-commands-executor) - Manual configuration without plugins
+- [Nx Documentation](https://nx.dev/) - Official Nx documentation
 
-- Use `nx affected` to only build/test changed projects
-- Cache Nx computation cache between runs
-- Parallelize builds where possible
+### Polyglot Monorepo Resources
 
-**Example Future Workflow**:
+- [Using Nx to build a multilang monorepo](https://sylhare.github.io/2024/10/21/Nx-multilang-monorepo.html) - Practical guide for polyglot Nx setups
+- [Managing multiple languages in a monorepo](https://graphite.dev/guides/managing-multiple-languages-in-a-monorepo) - Multi-language strategies
 
-```yaml
-# .github/workflows/ci.yml (future)
-name: CI
-on: [push, pull_request]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm ci
-      - run: npx nx affected:build --base=origin/main
-      - run: npx nx affected:test --base=origin/main
-```
+### Architecture Patterns
 
-### Build Outputs
+- [The virtuous cycle of workspace structure | Nx Blog](https://nx.dev/blog/virtuous-cycle-of-workspace-structure) - Workspace organization principles
+- [Monorepo Tools Comparison](https://monorepo.tools/) - Nx vs other monorepo tools
 
-Each project builds to its own `dist/` folder:
+**Key Takeaways**:
 
-- `apps/[app-name]/dist/` - Deployable app artifacts
-- `libs/[scope]/[name]/dist/` - Compiled library code
-
-These can be deployed, containerized, or published as needed in future plans.
+- Nx supports polyglot monorepos via `nx:run-commands` executor
+- Flat structure with clear naming (language prefixes) avoids deep nesting
+- Nx recommends not nesting more than 2-3 layers deep
+- Manual configuration without plugins provides full control and transparency

@@ -15,8 +15,10 @@
    - Document how to add new applications manually
 
 3. **Create Library Workspace Structure**
-   - Create `libs/` folder with scope-based organization
-   - Define library scopes: `shared/`, `feature/`, `data-access/`, `ui/`, `util/`
+   - Create `libs/` folder with flat organization
+   - Use language-prefix naming convention: `ts-`, `java-`, `kt-`, `py-`
+   - Design for future polyglot support (Java, Kotlin, TypeScript, Python)
+   - Current implementation: TypeScript libraries only
    - Establish dependency rules and import patterns
    - Document how to add new libraries manually
 
@@ -37,9 +39,9 @@
    - Document template usage for consistency
 
 2. **Validate Setup with Sample Projects**
-   - Create sample app demonstrating structure
-   - Create sample lib demonstrating library patterns
-   - Demonstrate cross-project imports
+   - Create Next.js app (`apps/demo-ts-fe`) demonstrating structure
+   - Create TypeScript lib (`libs/ts-demo-libs`) demonstrating library patterns
+   - Demonstrate cross-project imports (app importing lib)
 
 ## User Stories
 
@@ -86,50 +88,46 @@ Scenario: Apps folder is created and documented
   And "apps/README.md" explains how to add new applications
   And "apps/README.md" explains that apps consume libs but should not be imported by other apps
 
-Scenario: App can be added to apps folder
+Scenario: Next.js app can be added to apps folder
   Given the "apps/" directory exists
-  When I create "apps/sample-app/" directory
-  And I add "src/index.ts" entry point
+  When I create "apps/demo-ts-fe/" directory
+  And I initialize Next.js with TypeScript
   And I add "project.json" with Nx configuration
-  And I add "tsconfig.json" for TypeScript
-  And I add "package.json" for app-specific dependencies
+  And I configure TypeScript to extend workspace config
   Then the app structure is complete and documented
-  And the app can be built using "nx build sample-app"
+  And the app can be run using "nx dev demo-ts-fe"
 ```
 
-### Story 3: Create Libs Folder Structure with Scopes
+### Story 3: Create Libs Folder Structure (Flat, Multi-Language)
 
 **As a** developer
-**I want** a dedicated `libs/` folder with scope-based organization
-**So that** I can create focused, reusable libraries with clear purposes
+**I want** a dedicated `libs/` folder with flat organization and language prefixes
+**So that** I can create libraries in multiple languages with clear naming
 
 **Acceptance Criteria** (Gherkin):
 
 ```gherkin
-Scenario: Libs folder is created with scope structure
+Scenario: Libs folder is created with flat structure
   Given the workspace root directory exists
   When I create the "libs/" directory
-  And I create "libs/shared/" subdirectory
-  And I create "libs/feature/" subdirectory
-  And I create "libs/data-access/" subdirectory
-  And I create "libs/ui/" subdirectory
-  And I create "libs/util/" subdirectory
-  And I create "libs/README.md" documenting scopes and conventions
-  Then all scope directories exist under "libs/"
-  And "libs/README.md" explains each scope's purpose
-  And "libs/README.md" explains naming convention "[scope]/[name]"
-  And "libs/README.md" documents dependency rules between scopes
+  And I create "libs/README.md" documenting organization and conventions
+  Then the "libs/" directory exists at the root level
+  And "libs/README.md" explains flat organization
+  And "libs/README.md" explains naming convention "[language-prefix]-[name]"
+  And "libs/README.md" documents planned languages (TypeScript, Java, Kotlin, Python)
+  And "libs/README.md" notes current focus is TypeScript only
+  And "libs/README.md" provides examples: "ts-demo-libs", "ts-utils", "ts-components"
 
-Scenario: Library can be added to libs folder
-  Given the "libs/" directory exists with scope subdirectories
-  When I create "libs/shared/sample-lib/" directory
+Scenario: TypeScript library can be added to libs folder
+  Given the "libs/" directory exists
+  When I create "libs/ts-demo-libs/" directory
   And I add "src/index.ts" with public API exports
   And I add "src/lib/" directory for implementation
   And I add "project.json" with Nx configuration
   And I add "tsconfig.json" for TypeScript
   And I add "package.json" for lib-specific dependencies
   Then the library structure is complete and documented
-  And the library can be built using "nx build shared-sample-lib"
+  And the library can be built using "nx build ts-demo-libs"
   And the library can be imported from apps using proper path
 ```
 
@@ -196,22 +194,22 @@ Scenario: Affected graph visualizes changes
 **Acceptance Criteria** (Gherkin):
 
 ```gherkin
-Scenario: App imports and uses library
-  Given "apps/sample-app/" exists
-  And "libs/shared/sample-lib/" exists
-  And sample-lib exports a function "greet(name: string)"
-  When I import { greet } from "@open-sharia/shared/sample-lib" in sample-app
-  And I use greet("World") in sample-app code
-  And I run "nx build sample-app"
+Scenario: Next.js app imports and uses library
+  Given "apps/demo-ts-fe/" exists
+  And "libs/ts-demo-libs/" exists
+  And ts-demo-libs exports a function "greet(name: string)"
+  When I import { greet } from "@open-sharia/ts-demo-libs" in demo-ts-fe
+  And I use greet("Next.js") in the Next.js page component
+  And I run "nx build demo-ts-fe"
   Then the build succeeds without errors
   And the app can use the library function
   And the dependency is shown in "nx graph"
 
 Scenario: Circular dependencies are prevented
-  Given "libs/feature/feature-a/" exists
-  And "libs/feature/feature-b/" exists
-  When feature-a imports from feature-b
-  And I attempt to import from feature-a in feature-b
+  Given "libs/ts-auth/" exists
+  And "libs/ts-users/" exists
+  When ts-auth imports from ts-users
+  And I attempt to import from ts-auth in ts-users
   Then Nx detects the circular dependency
   And the build fails with a clear error message
   Or a warning is displayed (depending on configuration)
@@ -265,33 +263,36 @@ Scenario: Apps folder structure is complete
   And "apps/README.md" explains app characteristics
 ```
 
-### REQ-003: Libs Folder Structure with Scopes
+### REQ-003: Libs Folder Structure (Flat, Polyglot-Ready)
 
 **Priority**: High
 **User Stories**: Story 3
 
-- Create `libs/` directory at repository root
-- Create scope subdirectories:
-  - `libs/shared/` - Common utilities and helpers
-  - `libs/feature/` - Feature-specific business logic
-  - `libs/data-access/` - Database and API clients
-  - `libs/ui/` - Reusable UI components
-  - `libs/util/` - Pure utility functions
-- Create `libs/README.md` documenting library scopes
-- Document lib naming convention: `[scope]/[name]` (e.g., `shared/utils`, `feature/auth`)
-- Document required files for each lib: `src/index.ts`, `src/lib/`, `project.json`, `tsconfig.json`, `package.json`
+- Create `libs/` directory at repository root with flat structure
+- Use language-prefix naming convention:
+  - `ts-*` - TypeScript libraries (e.g., `ts-demo-libs`, `ts-utils`, `ts-components`)
+  - `java-*` - Java libraries (future, e.g., `java-api`, `java-processor`)
+  - `kt-*` - Kotlin libraries (future, e.g., `kt-services`, `kt-utils`)
+  - `py-*` - Python libraries (future, e.g., `py-ml`, `py-data`)
+- **Current scope**: TypeScript libraries only
+- **Future scope**: Java, Kotlin, Python support
+- Create `libs/README.md` documenting library organization
+- Document lib naming convention: `[lang-prefix]-[name]` (e.g., `ts-demo-libs`)
+- Document required files for TypeScript libs
+- Design structure to support multiple languages in future
 
 **Acceptance Criteria** (Gherkin):
 
 ```gherkin
-Scenario: Libs folder structure with scopes is complete
+Scenario: Libs folder structure with flat organization is complete
   Given the workspace root exists
   When the setup is complete
   Then "libs/" directory exists
-  And "libs/shared/", "libs/feature/", "libs/data-access/", "libs/ui/", "libs/util/" exist
-  And "libs/README.md" documents each scope's purpose
-  And "libs/README.md" documents naming conventions
-  And "libs/README.md" documents dependency rules
+  And "libs/README.md" documents flat organization
+  And "libs/README.md" documents language-prefix naming convention
+  And "libs/README.md" lists planned languages: TypeScript, Java, Kotlin, Python
+  And "libs/README.md" notes current implementation is TypeScript only
+  And "libs/README.md" provides TypeScript examples
 ```
 
 ### REQ-004: Manual Project Configuration
