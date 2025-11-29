@@ -356,7 +356,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 - **Reference** (`docs/reference/`) - Technical reference
 - **Explanation** (`docs/explanation/`) - Conceptual
 
-**Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily research notes and monthly summaries in **Logseq-style outliner format** (`YYYY-MM/YYYY-MM-DD.md`). Unlike formal documentation which uses traditional markdown structure, journals use bullet-based format optimized for quick capture and progressive thinking. See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
+**Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily research notes and monthly summaries in **Logseq-style outliner format** (`YYYY-MM/YYYY-MM-DD.md`). Unlike formal documentation which uses traditional markdown structure, journals use bullet-based format optimized for quick capture and progressive thinking. **Important**: Journal entries must NOT include an H1 heading at the start (Obsidian displays the filename as the page title). See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
 
 ## Plans Organization
 
