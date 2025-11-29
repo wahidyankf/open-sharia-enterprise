@@ -26,12 +26,12 @@
   - Configure `targetDefaults` for build, test, lint
   - Add empty `generators` and `plugins` arrays
 - [ ] Update `package.json`:
-  - Add `workspaces`: `["apps/*", "libs/*/*"]`
+  - Add `workspaces`: `["apps/*", "libs/*"]`
   - Add npm scripts: build, test, lint, affected:\*, graph
   - Verify Volta pinning remains: `"node": "24.11.1"`, `"npm": "11.6.2"`
 - [ ] Create `tsconfig.base.json`:
   - Base TypeScript compiler options
-  - Path mappings for all scopes: `@open-sharia/shared/*`, etc.
+  - Path mappings for language-prefixed libraries: `@open-sharia/ts-*`
   - Target ES2022, strict mode enabled
 - [ ] Create `.nxignore`:
   - Exclude `docs/`, `plans/`, `*.md`
@@ -63,126 +63,145 @@
 
 **Status**: Not Started
 
-**Goal**: Create apps/ and libs/ folders with scope structure and documentation
+**Goal**: Create apps/ and libs/ folders with flat organization and polyglot support
 
 **Implementation Steps**:
 
 - [ ] Create `apps/` directory: `mkdir -p apps`
 - [ ] Create `apps/README.md` documenting:
-  - Purpose: deployable applications
+  - Purpose: deployable applications (any language)
   - Naming convention: `[domain]-[type]`
-  - Required files: src/, project.json, tsconfig.json, package.json
+  - Required files vary by language (document for each)
   - Rule: apps don't import other apps
-  - Examples: api-gateway, admin-dashboard
-- [ ] Create `libs/` directory with scopes:
-  - `mkdir -p libs/shared`
-  - `mkdir -p libs/feature`
-  - `mkdir -p libs/data-access`
-  - `mkdir -p libs/ui`
-  - `mkdir -p libs/util`
+  - Examples: api-gateway, admin-dashboard, payment-processor
+- [ ] Create `libs/` directory: `mkdir -p libs`
 - [ ] Create `libs/README.md` documenting:
-  - Purpose: reusable libraries
-  - Naming convention: `[scope]/[name]`
-  - Scope definitions: shared, feature, data-access, ui, util
-  - Dependency rules matrix
-  - Required files: src/index.ts, src/lib/, project.json, tsconfig.json
-  - Examples: shared/utils, feature/auth
+  - Purpose: reusable libraries (polyglot-ready, TypeScript current focus)
+  - Flat structure organization (no nested scopes)
+  - Naming convention: `[lang-prefix]-[name]`
+  - Language prefixes: ts- (current), java-, kt-, py- (future)
+  - Current implementation: TypeScript libraries only
+  - Planned languages: Java, Kotlin, Python (future scope)
+  - Dependency guidelines (no circular deps)
+  - Required files for TypeScript libs:
+    - src/index.ts, src/lib/, project.json, tsconfig.json, package.json
+  - Examples: ts-demo-libs, ts-utils, ts-components, ts-hooks
 
 **Validation Checklist**:
 
 - [ ] `apps/` directory exists at repository root
 - [ ] `apps/README.md` exists and documents conventions
-- [ ] `libs/` directory exists at repository root
-- [ ] All scope directories exist: `libs/shared/`, `libs/feature/`, `libs/data-access/`, `libs/ui/`, `libs/util/`
-- [ ] `libs/README.md` exists and documents scopes
+- [ ] `libs/` directory exists at repository root (flat, no subdirectories yet)
+- [ ] `libs/README.md` documents flat organization
+- [ ] `libs/README.md` documents language prefixes (ts-, java-, kt-, py-)
+- [ ] `libs/README.md` notes current scope is TypeScript only
+- [ ] `libs/README.md` includes TypeScript examples
 - [ ] README files follow markdown best practices
 - [ ] README files include clear examples
 
 **Acceptance Criteria**:
 
 - [ ] All user stories related to folder structure pass Gherkin tests
-- [ ] Folder structure matches architecture diagrams
+- [ ] Folder structure matches architecture diagrams (flat libs/)
 - [ ] Documentation is complete and accurate
 
 ---
 
-### Phase 3: Sample App Creation
+### Phase 3: Next.js Demo App Creation
 
 **Status**: Not Started
 
-**Goal**: Create a working sample application to validate app structure
+**Goal**: Create Next.js app (`demo-ts-fe`) to validate app structure
 
 **Implementation Steps**:
 
-- [ ] Create app directory structure:
-  - `mkdir -p apps/sample-app/src`
-- [ ] Create `apps/sample-app/src/index.ts`:
-  ```typescript
-  console.log("Hello from sample-app!");
+- [ ] Create app directory: `mkdir -p apps/demo-ts-fe`
+- [ ] Initialize Next.js in `apps/demo-ts-fe`:
+  ```bash
+  cd apps/demo-ts-fe
+  npx create-next-app@latest . --typescript --app --no-src-dir --tailwind --eslint --import-alias "@/*"
+  cd ../..
   ```
-- [ ] Create `apps/sample-app/package.json`:
+- [ ] Create `apps/demo-ts-fe/project.json`:
   ```json
   {
-    "name": "sample-app",
-    "version": "0.1.0",
-    "private": true
+    "name": "demo-ts-fe",
+    "sourceRoot": "apps/demo-ts-fe",
+    "projectType": "application",
+    "targets": {
+      "dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "next dev",
+          "cwd": "apps/demo-ts-fe"
+        }
+      },
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "next build",
+          "cwd": "apps/demo-ts-fe"
+        },
+        "outputs": ["{projectRoot}/.next"]
+      },
+      "serve": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "next start",
+          "cwd": "apps/demo-ts-fe"
+        },
+        "dependsOn": ["build"]
+      }
+    }
   }
   ```
-- [ ] Create `apps/sample-app/project.json`:
-  - name: `"sample-app"`
-  - sourceRoot: `"apps/sample-app/src"`
-  - projectType: `"application"`
-  - targets: build (tsc), serve (node), test (node --test)
-- [ ] Create `apps/sample-app/tsconfig.json`:
-  - Extends `../../tsconfig.base.json`
-  - Include: `["src/**/*"]`
-- [ ] Create `apps/sample-app/tsconfig.build.json`:
-  - Extends `./tsconfig.json`
-  - compilerOptions: `outDir: "dist"`, `rootDir: "src"`
-  - Exclude tests
-- [ ] Create `apps/sample-app/README.md`:
-  - Document app purpose
-  - Document how to build and run
-- [ ] Test app build: `nx build sample-app`
-- [ ] Test app serve: `nx serve sample-app`
-- [ ] Verify build output created in `apps/sample-app/dist/`
+- [ ] Update `apps/demo-ts-fe/tsconfig.json` to extend workspace tsconfig:
+  - Add `"extends": "../../tsconfig.base.json"` at the top
+  - Keep Next.js-specific compiler options
+- [ ] Create `apps/demo-ts-fe/README.md`:
+  - Document: Next.js demo app that consumes ts-demo-libs
+  - Document: `nx dev demo-ts-fe` to start dev server
+  - Document: `nx build demo-ts-fe` to build for production
+- [ ] Test dev server: `nx dev demo-ts-fe`
+- [ ] Test build: `nx build demo-ts-fe`
+- [ ] Verify Next.js runs at http://localhost:3000
 
 **Validation Checklist**:
 
 - [ ] App directory structure is complete
-- [ ] All required files exist and are valid
-- [ ] `nx build sample-app` succeeds
-- [ ] Build creates `apps/sample-app/dist/index.js`
-- [ ] `nx serve sample-app` runs successfully
-- [ ] App outputs "Hello from sample-app!"
+- [ ] All required Next.js files exist
+- [ ] `nx dev demo-ts-fe` starts dev server
+- [ ] `nx build demo-ts-fe` succeeds
+- [ ] Build creates `.next/` directory
+- [ ] Next.js app runs without errors
 - [ ] TypeScript compiles without errors
-- [ ] No linting errors (if linter configured)
+- [ ] No Next.js warnings
 
 **Acceptance Criteria**:
 
 - [ ] All user stories related to app creation pass Gherkin tests
-- [ ] Sample app demonstrates correct structure
-- [ ] App can be built and run successfully
+- [ ] Next.js app demonstrates correct structure
+- [ ] App can be developed, built, and served successfully
 
 ---
 
-### Phase 4: Sample Lib Creation
+### Phase 4: Demo TypeScript Library Creation
 
 **Status**: Not Started
 
-**Goal**: Create a working sample library to validate lib structure
+**Goal**: Create TypeScript library (`ts-demo-libs`) to validate flat lib structure
 
 **Implementation Steps**:
 
 - [ ] Create lib directory structure:
-  - `mkdir -p libs/shared/sample-lib/src/lib`
-- [ ] Create `libs/shared/sample-lib/src/lib/greet.ts`:
+  - `mkdir -p libs/ts-demo-libs/src/lib`
+- [ ] Create `libs/ts-demo-libs/src/lib/greet.ts`:
   ```typescript
   export function greet(name: string): string {
     return `Hello, ${name}!`;
   }
   ```
-- [ ] Create `libs/shared/sample-lib/src/lib/greet.test.ts`:
+- [ ] Create `libs/ts-demo-libs/src/lib/greet.test.ts`:
 
   ```typescript
   import { test } from "node:test";
@@ -194,45 +213,45 @@
   });
   ```
 
-- [ ] Create `libs/shared/sample-lib/src/index.ts`:
+- [ ] Create `libs/ts-demo-libs/src/index.ts`:
   ```typescript
   export { greet } from "./lib/greet";
   ```
-- [ ] Create `libs/shared/sample-lib/package.json`:
+- [ ] Create `libs/ts-demo-libs/package.json`:
   ```json
   {
-    "name": "@open-sharia/shared/sample-lib",
+    "name": "@open-sharia/ts-demo-libs",
     "version": "0.1.0",
     "private": true
   }
   ```
-- [ ] Create `libs/shared/sample-lib/project.json`:
-  - name: `"shared-sample-lib"`
-  - sourceRoot: `"libs/shared/sample-lib/src"`
+- [ ] Create `libs/ts-demo-libs/project.json`:
+  - name: `"ts-demo-libs"`
+  - sourceRoot: `"libs/ts-demo-libs/src"`
   - projectType: `"library"`
   - targets: build (tsc), test (node --test)
-- [ ] Create `libs/shared/sample-lib/tsconfig.json`:
-  - Extends `../../../tsconfig.base.json`
+- [ ] Create `libs/ts-demo-libs/tsconfig.json`:
+  - Extends `../../tsconfig.base.json`
   - Include: `["src/**/*"]`
-- [ ] Create `libs/shared/sample-lib/tsconfig.build.json`:
+- [ ] Create `libs/ts-demo-libs/tsconfig.build.json`:
   - Extends `./tsconfig.json`
   - compilerOptions: `outDir: "dist"`, `rootDir: "src"`
   - Exclude tests
-- [ ] Create `libs/shared/sample-lib/README.md`:
-  - Document lib purpose
+- [ ] Create `libs/ts-demo-libs/README.md`:
+  - Document lib purpose (demo library for Next.js app)
   - Document public API
-  - Document how to use
-- [ ] Test lib build: `nx build shared-sample-lib`
-- [ ] Test lib tests: `nx test shared-sample-lib`
-- [ ] Verify build output created in `libs/shared/sample-lib/dist/`
+  - Document how to use from Next.js app
+- [ ] Test lib build: `nx build ts-demo-libs`
+- [ ] Test lib tests: `nx test ts-demo-libs`
+- [ ] Verify build output created in `libs/ts-demo-libs/dist/`
 
 **Validation Checklist**:
 
 - [ ] Lib directory structure is complete
 - [ ] All required files exist and are valid
-- [ ] `nx build shared-sample-lib` succeeds
-- [ ] Build creates `libs/shared/sample-lib/dist/`
-- [ ] `nx test shared-sample-lib` succeeds
+- [ ] `nx build ts-demo-libs` succeeds
+- [ ] Build creates `libs/ts-demo-libs/dist/`
+- [ ] `nx test ts-demo-libs` succeeds
 - [ ] All tests pass
 - [ ] TypeScript compiles without errors
 - [ ] Public API exports correctly from index.ts
@@ -240,8 +259,9 @@
 **Acceptance Criteria**:
 
 - [ ] All user stories related to lib creation pass Gherkin tests
-- [ ] Sample lib demonstrates correct structure
+- [ ] Demo lib demonstrates correct flat structure
 - [ ] Lib can be built and tested successfully
+- [ ] Lib is ready to be consumed by Next.js app
 
 ---
 
@@ -249,43 +269,49 @@
 
 **Status**: Not Started
 
-**Goal**: Validate app can import and use lib (cross-project dependencies)
+**Goal**: Validate Next.js app can import and use lib (cross-project dependencies)
 
 **Implementation Steps**:
 
-- [ ] Update `apps/sample-app/src/index.ts` to import lib:
+- [ ] Update `apps/demo-ts-fe/app/page.tsx` to import lib:
 
   ```typescript
-  import { greet } from "@open-sharia/shared/sample-lib";
+  import { greet } from "@open-sharia/ts-demo-libs";
 
-  console.log(greet("World"));
-  console.log("Sample app using sample lib!");
+  export default function Home() {
+    const message = greet("Next.js");
+    return <div>{message}</div>;
+  }
   ```
 
-- [ ] Rebuild sample-app: `nx build sample-app`
+- [ ] Restart dev server: `nx dev demo-ts-fe`
+  - Verify lib is accessible
+  - Verify page displays "Hello, Next.js!"
+- [ ] Build both projects: `nx build demo-ts-fe`
   - Verify lib is built first (dependency resolution)
-- [ ] Run sample-app: `nx serve sample-app`
-  - Verify output includes "Hello, World!"
+  - Verify Next.js build succeeds
 - [ ] Test dependency graph: `nx graph`
-  - Verify sample-app -> shared-sample-lib dependency shown
+  - Verify demo-ts-fe -> ts-demo-libs dependency shown
 - [ ] Make change to lib, rebuild app
   - Verify affected detection works
 
 **Validation Checklist**:
 
-- [ ] App successfully imports from lib using path mapping
-- [ ] TypeScript resolves import correctly
-- [ ] `nx build sample-app` builds lib first, then app
-- [ ] `nx serve sample-app` outputs expected messages
-- [ ] `nx graph` shows app -> lib dependency
+- [ ] Next.js app successfully imports from lib using path mapping
+- [ ] TypeScript resolves import correctly in Next.js
+- [ ] `nx build demo-ts-fe` builds lib first, then app
+- [ ] Next.js app displays message from lib correctly
+- [ ] `nx graph` shows demo-ts-fe -> ts-demo-libs dependency
 - [ ] Dependency graph visualizes correctly in browser
 - [ ] No import errors or TypeScript errors
+- [ ] Next.js hot reload works with lib changes
 
 **Acceptance Criteria**:
 
 - [ ] All user stories related to cross-project imports pass Gherkin tests
-- [ ] App successfully uses lib functionality
+- [ ] Next.js app successfully uses lib functionality
 - [ ] Dependency graph shows correct relationships
+- [ ] Integration between app and lib works seamlessly
 
 ---
 
@@ -298,16 +324,16 @@
 **Implementation Steps**:
 
 - [ ] **Test Task Caching**:
-  - Run `nx build sample-app` (first build)
-  - Run `nx build sample-app` again (should use cache)
+  - Run `nx build demo-ts-fe` (first build)
+  - Run `nx build demo-ts-fe` again (should use cache)
   - Verify second build shows "[local cache]"
   - Verify second build completes in < 1 second
 - [ ] **Test Affected Detection**:
-  - Make change to `libs/shared/sample-lib/src/lib/greet.ts`
+  - Make change to `libs/ts-demo-libs/src/lib/greet.ts`
   - Run `nx affected:build`
   - Verify both lib and app are built
   - Revert change
-  - Make change to `apps/sample-app/src/index.ts` only
+  - Make change to `apps/demo-ts-fe/app/page.tsx` only
   - Run `nx affected:build`
   - Verify only app is built (lib skipped)
 - [ ] **Test Affected Graph**:
@@ -354,7 +380,7 @@
 - [ ] Update `CLAUDE.md`:
   - Add "Monorepo Structure" section
   - Document apps/ and libs/ folders
-  - Document library scopes
+  - Document flat library structure with language prefixes
   - Link to how-to guides and references
 - [ ] Create `docs/how-to/ht__add-new-app.md`:
   - Step-by-step guide for creating apps
@@ -364,7 +390,7 @@
 - [ ] Create `docs/how-to/ht__add-new-lib.md`:
   - Step-by-step guide for creating libs
   - Include all required files
-  - Explain scope selection
+  - Explain language prefix selection (ts-, java-, kt-, py-)
   - Document dependency rules
   - Provide template examples
 - [ ] Create `docs/how-to/ht__run-nx-commands.md`:
@@ -420,9 +446,9 @@
 
 **Implementation Steps**:
 
-- [ ] **Decision: Sample Projects**
-  - [ ] Option A: Remove `apps/sample-app/` and `libs/shared/sample-lib/` (clean slate)
-  - [ ] Option B: Keep and rename to `apps/example-app/` and `libs/shared/example-lib/` (reference)
+- [ ] **Decision: Demo Projects**
+  - [ ] Option A: Remove `apps/demo-ts-fe/` and `libs/ts-demo-libs/` (clean slate)
+  - [ ] Option B: Keep as reference examples for Next.js + TypeScript setup
   - Document decision and rationale
 - [ ] Run full build: `npm run build`
   - Verify all projects build successfully
@@ -531,15 +557,15 @@
 
 **Mitigation Strategy**:
 
-- Test imports immediately after creating sample lib
+- Test imports immediately after creating demo lib
 - Verify tsconfig.base.json path mappings
 - Ensure IDE recognizes path mappings (may need restart)
 
 **Contingency Plan**:
 
 - If imports fail, debug path mapping configuration
-- Verify pattern matches lib structure: `libs/[scope]/[name]/src/index.ts`
-- Check for typos in scope names
+- Verify pattern matches lib structure: `libs/[language-prefix]-[name]/src/index.ts`
+- Check for typos in language prefixes (ts-, java-, kt-, py-)
 
 ---
 
@@ -616,24 +642,24 @@ Before marking this plan as complete and ready for merge, verify ALL items below
 - [ ] `nx affected:build` only builds changed projects
 - [ ] Task caching works (second build shows "[local cache]")
 - [ ] `nx run-many -t build` builds all projects
-- [ ] Path mappings work: `@open-sharia/[scope]/[name]`
+- [ ] Path mappings work: `@open-sharia/[language-prefix]-[name]`
 
 ### Folder Structure
 
 - [ ] `apps/` directory exists with README.md
 - [ ] `libs/` directory exists with README.md
-- [ ] All lib scopes exist: shared/, feature/, data-access/, ui/, util/
-- [ ] Sample app demonstrates correct structure (or removed)
-- [ ] Sample lib demonstrates correct structure (or removed)
-- [ ] All required files present in sample projects
+- [ ] Libs use flat structure (no nested scope subdirectories)
+- [ ] Demo app (demo-ts-fe) demonstrates correct structure (or removed)
+- [ ] Demo lib (ts-demo-libs) demonstrates correct structure (or removed)
+- [ ] All required files present in demo projects
 
 ### Configuration Files
 
 - [ ] `nx.json` is valid and correctly configured
-- [ ] `package.json` has workspaces field
+- [ ] `package.json` has workspaces field: `["apps/*", "libs/*"]`
 - [ ] `package.json` has Nx scripts
 - [ ] `package.json` preserves Volta pinning
-- [ ] `tsconfig.base.json` has path mappings for all scopes
+- [ ] `tsconfig.base.json` has path mappings for language-prefixed libraries
 - [ ] `.nxignore` excludes docs and non-code files
 - [ ] `.gitignore` includes `dist/` and `.nx/`
 
@@ -677,36 +703,3 @@ Before marking this plan as complete and ready for merge, verify ALL items below
 **Last Updated**: 2025-11-24
 
 **Completion Date**: _To be filled when complete_
-
----
-
-## Next Steps (Post-Delivery)
-
-After this plan is complete and merged, the following work can begin:
-
-1. **Create Real Applications**
-   - Use `docs/how-to/ht__add-new-app.md` guide
-   - Create backend API services
-   - Create frontend applications
-
-2. **Create Shared Libraries**
-   - Use `docs/how-to/ht__add-new-lib.md` guide
-   - Implement common utilities
-   - Build feature libraries
-
-3. **Configure CI/CD**
-   - Set up GitHub Actions
-   - Use `nx affected` for optimized CI
-   - Configure deployment pipelines
-
-4. **Add Build Tools**
-   - Configure bundlers (Webpack, Vite)
-   - Set up test frameworks (Jest, Vitest)
-   - Configure linting (ESLint)
-
-5. **Team Onboarding**
-   - Train team on monorepo workflows
-   - Share documentation
-   - Establish best practices
-
-This plan delivers the **foundation** for monorepo development. All future app and lib development will build on this structure.

@@ -20,9 +20,10 @@ Initialize and configure an Nx-based monorepo architecture for the open-sharia-e
 
 - Set up Nx as the monorepo build system and task runner (no plugins)
 - Create `apps/` folder structure for deployable applications
-- Create `libs/` folder structure with scope-based organization
+- Create `libs/` folder structure with flat, language-prefixed organization
 - Enable efficient builds, tests, and dependency management across the workspace
 - Establish clear conventions and documentation for adding new projects
+- Current focus: TypeScript/Next.js; Future: Java, Kotlin, Python
 
 ## Context
 
