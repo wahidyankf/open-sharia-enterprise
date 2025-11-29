@@ -505,6 +505,26 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 Use Mermaid diagrams for files inside `docs/` directory (Obsidian vault) and ASCII art for files outside `docs/` (README.md, CLAUDE.md, etc.) to ensure universal compatibility. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
 
+### Emoji Usage Convention
+
+Selective use of semantic emojis to enhance document scannability. See [Emoji Usage Convention](./docs/explanation/conventions/ex-co__emoji-usage.md) for complete details.
+
+**Where emojis are allowed:**
+
+- Documentation files in `docs/` directory (tutorials, how-to, reference, explanation)
+- README files for human readers
+- Files in `plans/` folder
+- `.claude/agents/README.md` (agent index only)
+
+**Where emojis are FORBIDDEN:**
+
+- `CLAUDE.md` (AI instructions)
+- Agent prompt files `.claude/agents/*.md` (except README.md)
+- Configuration files (.json, .yaml, .toml, .env)
+- Source code files
+
+**Why**: CLAUDE.md and agent files are AI prompts/instructions, not human documentation. Emojis in AI prompts can interfere with model processing and are unnecessary visual noise.
+
 ### Diátaxis Framework
 
 All documentation organized into four categories (Tutorials, How-To, Reference, Explanation). See [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) for complete details.
@@ -534,16 +554,16 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 ### Available Agents
 
 - **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
-- **`docs-link-checker.md`** - Expert at validating both external and internal links in documentation files to ensure they are not broken
-- **`docs-rename-executor.md`** - Expert at renaming/moving files and directories in docs/ directory while maintaining conventions
+- **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken
+- **`docs-rename-executor.md`** - Expert at renaming/moving files and directories in docs/ directory
 - **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
 - **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
 - **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
 - **`plan-implementation-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
 - **`plan-executor.md`** - Expert at systematically implementing project plans by following delivery checklists
 - **`plan-maker.md`** - Expert at creating structured project planning documents in the plans/ folder
-- **`repo-rules-checker.md`** - Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation
-- **`repo-rules-update-executor.md`** - Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices
+- **`repo-rules-checker.md`** - Validates consistency between agents, CLAUDE.md, conventions, and documentation
+- **`repo-rules-update-executor.md`** - Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices
 
 See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent descriptions and workflow guidance.
 
