@@ -33,6 +33,21 @@ Validates both external and internal links in documentation files to ensure they
   - After major documentation updates to ensure link integrity
   - After file renames or directory restructuring
 
+### 📁 `docs-renamer.md`
+
+Expert at renaming/moving files and directories in docs/ directory while maintaining conventions.
+
+- **Primary Use:** Reorganizing documentation structure, renaming directories, or moving files between locations
+- **Specialization:** File/directory renaming, prefix recalculation, link updates, index maintenance, git operations
+- **Tools:** Read, Edit, Glob, Grep, Bash
+- **When to Use:**
+  - Renaming directories in docs/ (updates all file prefixes and links)
+  - Moving files between directories (recalculates prefixes)
+  - Reorganizing documentation structure with multiple renames/moves
+  - Fixing incorrect file prefixes that don't match directory location
+  - After rename: automatically updates all internal links and indices
+  - Uses git mv to preserve file history
+
 ### ✅ `repo-rules-checker.md`
 
 Validates consistency between agents, CLAUDE.md, conventions, and documentation.
@@ -149,7 +164,14 @@ The agents work together in complementary workflows:
    └─> Use docs-writer for documentation tasks
         └─> Ensures proper formatting and convention compliance
 
-5. Verify All Links
+5. Rename/Move Files (if needed)
+   └─> Use docs-renamer to reorganize documentation
+        └─> Renames files/directories with git mv
+        └─> Recalculates file prefixes based on new location
+        └─> Updates all internal links automatically
+        └─> Updates index files (README.md)
+
+6. Verify All Links
    └─> Use docs-link-checker to audit link health
         └─> Validates all external URLs are accessible
         └─> Validates all internal markdown links exist
@@ -165,9 +187,10 @@ The agents work together in complementary workflows:
 - **When creating documentation:** Use `docs-writer` for proper structure
 - **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
 - **During plan implementation:** Let `plan-implementor` update delivery.md - it maintains detailed notes
+- **When renaming/moving files in docs/:** Use `docs-renamer` to handle prefixes, links, and indices automatically
+- **After using docs-renamer:** Always run `docs-link-checker` to verify all links are valid
 - **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid
 - **After major documentation updates:** Use `docs-link-checker` to verify link integrity
-- **After file renames or restructuring:** Use `docs-link-checker` to validate internal links
 
 ## 📚 Resources
 
