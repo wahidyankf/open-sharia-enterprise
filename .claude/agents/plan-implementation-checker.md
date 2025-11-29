@@ -414,6 +414,7 @@ Your validation protects the codebase from issues that slip through during imple
 
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming standards
 - `docs/explanation/conventions/ex-co__linking-convention.md` - Linking standards
+- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
 
 **Related Agents:**
 

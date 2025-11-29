@@ -676,6 +676,7 @@ Return report to user/plan-maker for fixes.
 
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming standards
 - `docs/explanation/conventions/ex-co__linking-convention.md` - Linking standards
+- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
 
 **Related Agents:**
 
