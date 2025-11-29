@@ -136,6 +136,23 @@ Expert at validating plan implementations against requirements, performing compr
   - Generating detailed validation reports with specific findings
   - Iterating with plan-implementor to fix issues until validation passes
 
+### 🟨 `plan-checker.md`
+
+Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification.
+
+- **Primary Use:** Pre-implementation validation of project plans
+- **Specialization:** Plan completeness verification, codebase alignment checking, external verification via web, technical accuracy validation
+- **Tools:** Read, Glob, Grep, WebSearch, WebFetch
+- **When to Use:**
+  - After plan-writer creates a plan, before implementation begins
+  - Validating plan structure and completeness (requirements, tech-docs, delivery)
+  - Verifying codebase assumptions are accurate (check package.json, directory structure)
+  - Checking technology choices are current and maintained (WebSearch verification)
+  - Validating documentation URLs are accessible (WebFetch)
+  - Ensuring requirements have testable acceptance criteria
+  - Identifying contradictions or missing information in plan
+  - Preventing implementation blockers by catching plan issues early
+
 ### 🟦 `journal-writer.md`
 
 Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries.
@@ -159,11 +176,21 @@ The agents work together in complementary workflows:
 ### 📋 Project Planning and Implementation Workflow
 
 ```
-1. Plan Project
+1. Plan Creation
    └─> Use plan-writer to create structured plan in plans/backlog/
         └─> Creates requirements.md, tech-docs.md, delivery.md
 
-2. Start Implementation
+2. Plan Validation (Quality Gate for Plans)
+   └─> Use plan-checker with plan path
+        └─> Validates plan structure and completeness
+        └─> Verifies codebase assumptions (checks package.json, directories)
+        └─> Validates technology choices via WebSearch
+        └─> Checks documentation URLs via WebFetch
+        └─> Identifies contradictions or missing information
+        └─> If issues found: Returns to plan-writer for fixes
+        └─> If validation passes: Plan ready for implementation
+
+3. Implementation
    └─> Move plan from backlog/ to in-progress/
    └─> Use plan-implementor with plan path
         └─> Executes delivery checklist step-by-step
@@ -171,7 +198,7 @@ The agents work together in complementary workflows:
         └─> Performs per-phase validation (self-validation)
         └─> Marks status as "Ready for Final Validation"
 
-3. Final Validation (Independent Quality Gate)
+4. Implementation Validation (Quality Gate for Code)
    └─> Use plan-implementation-checker with plan path
         └─> Validates all requirements are met
         └─> Runs comprehensive quality checks
@@ -180,7 +207,7 @@ The agents work together in complementary workflows:
         └─> If issues found: Returns to plan-implementor for fixes
         └─> If validation passes: Marks plan as complete
 
-4. Complete and Archive
+5. Complete and Archive
    └─> Move plan from in-progress/ to done/
    └─> Plan ready for review or deployment
 ```
@@ -221,9 +248,11 @@ The agents work together in complementary workflows:
 ## ✅ Best Practices
 
 - **When starting a new project:** Use `plan-writer` to create structured plans in plans/backlog/
+- **After creating a plan:** Use `plan-checker` to validate plan before implementation (prevents wasted effort)
 - **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
 - **After plan-implementor completes:** Use `plan-implementation-checker` for independent final validation
-- **Quality assurance workflow:** plan-implementor → plan-implementation-checker → (fix issues if needed) → repeat until validation passes
+- **Full planning workflow:** plan-writer → plan-checker → (fix if needed) → plan-implementor → plan-implementation-checker
+- **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
 - **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
 - **When creating documentation:** Use `docs-writer` for proper structure
