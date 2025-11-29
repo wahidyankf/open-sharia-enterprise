@@ -171,6 +171,17 @@ When running a consistency check, systematically verify:
 - [ ] CLAUDE.md correctly describes journals as using "Logseq-style outliner format" and explicitly states frontmatter spacing rule
 - [ ] Convention document (ex-co\_\_journals-format.md) clearly states no H1 heading rule, TAB indentation requirement scoped to `docs/` directory (Obsidian vault), and CRITICAL frontmatter spacing exception
 
+### Emoji Usage Convention Compliance
+
+- [ ] Emojis present only in human documentation (docs/, plans/, README files)
+- [ ] NO emojis in CLAUDE.md (AI instructions)
+- [ ] NO emojis in agent prompt files (.claude/agents/\*.md except README.md)
+- [ ] Colored squares (🟦🟩🟨🟪) used ONLY in .claude/agents/README.md for categorization
+- [ ] NO emojis in configuration files (.json, .yaml, .toml, .env)
+- [ ] Emoji usage follows semantic conventions (not decorative)
+- [ ] Convention document (ex-co\_\_emoji-usage.md) clearly states forbidden locations
+- [ ] CLAUDE.md correctly summarizes emoji usage rules
+
 ### Special Cases
 
 - [ ] README.md exception is documented in file naming convention
@@ -242,11 +253,15 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 ### Agent Definitions
 
 - `.claude/agents/README.md`
-- `.claude/agents/docs-maker.md`
+- `.claude/agents/agent-maker.md`
 - `.claude/agents/docs-link-checker.md`
+- `.claude/agents/docs-maker.md`
+- `.claude/agents/docs-rename-executor.md`
 - `.claude/agents/journal-maker.md`
-- `.claude/agents/plan-maker.md`
+- `.claude/agents/plan-checker.md`
 - `.claude/agents/plan-executor.md`
+- `.claude/agents/plan-implementation-checker.md`
+- `.claude/agents/plan-maker.md`
 - `.claude/agents/repo-rules-checker.md` (this file)
 - `.claude/agents/repo-rules-update-executor.md`
 
@@ -257,6 +272,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/explanation/conventions/ex-co__linking-convention.md`
 - `docs/explanation/conventions/ex-co__diagrams.md`
 - `docs/explanation/conventions/ex-co__diataxis-framework.md`
+- `docs/explanation/conventions/ex-co__emoji-usage.md`
 - `docs/explanation/conventions/ex-co__journals-format.md`
 
 ### Development Conventions
@@ -326,6 +342,7 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation
+- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
 - `docs/explanation/conventions/ex-co__journals-format.md` - Logseq-style outliner format for journals
 
 **Related Agents:**
