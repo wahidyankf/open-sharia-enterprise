@@ -556,7 +556,7 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 ### Available Agents
 
 - **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
-- **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken
+- **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks
 - **`docs-rename-executor.md`** - Expert at renaming/moving files and directories in docs/ directory
 - **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
 - **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries

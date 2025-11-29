@@ -1,9 +1,9 @@
 ---
 name: docs-link-checker
-description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links to avoid redundant checks. Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health. Note - Write tool is used exclusively for cache file management, not documentation creation.
+description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks. Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health. Note - Write tool is used exclusively for cache file management, not documentation creation.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
 model: haiku
-color: yellow
+color: green
 ---
 
 # Documentation Links Checker Agent
@@ -27,9 +27,10 @@ Your primary job is to verify that all links in documentation files are working 
 2. **Extract all links** - Identify both external HTTP/HTTPS URLs and internal markdown links
 3. **Manage external link cache** - Use `docs/metadata/external-links-status.yaml` to track verified external links
 4. **Validate each link** - Check external links for accessibility (respecting 6-month cache) and internal links for file existence
-5. **Update cache** - Add newly verified links and prune removed links from cache
-6. **Report findings** - Provide clear summary of broken links with file locations and cache statistics
-7. **Suggest fixes** - Recommend replacements or removal for broken links
+5. **Prune orphaned cache entries** - Automatically remove cached links no longer present in any documentation
+6. **Update cache** - Add newly verified links and update location metadata (usedIn) for all links
+7. **Report findings** - Provide concise summary with detailed usedIn info only for broken links
+8. **Suggest fixes** - Recommend replacements or removal for broken links
 
 ## What You Check
 
@@ -71,27 +72,34 @@ This YAML file stores validated external links to avoid redundant checks. The ca
 - **Committed to git** (shared across team)
 - **Only contains verified links** (broken links are not cached)
 - **Updated bidirectionally** (syncs with docs/ content)
-- **Rechecked every 6 months** (stale links are revalidated)
+- **Per-link expiry** (each link rechecked 6 months after its own lastChecked timestamp)
 
 ### Cache Structure
 
+The cache file maintains `usedIn` information (file paths only) for all links. This data is used for:
+
+- Cache maintenance (identifying orphaned links)
+- Cache pruning (removing links no longer in any file)
+- Reporting broken links (showing which files to fix)
+
+**Note**: Reports shown to users are concise (working links list URLs only). For broken links, line numbers are dynamically looked up when generating reports (cache stores only file paths).
+
 ```yaml
 version: 1.0.0
-lastFullScan: 2025-11-29T10:30:00Z
-description: Cache of verified external links. Rechecked every 6 months.
+lastFullScan: 2025-11-29T17:30:00+07:00
+description: Cache of verified external links. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
   - url: https://diataxis.fr/
-    lastChecked: 2025-11-29T10:30:00Z
+    lastChecked: 2025-11-29T17:30:00+07:00
     statusCode: 200
     finalUrl: https://diataxis.fr/
     redirectChain: null
     usedIn:
-      - file: docs/explanation/conventions/ex-co__diataxis-framework.md
-        line: 10
+      - docs/explanation/conventions/ex-co__diataxis-framework.md
 
   - url: https://example.com/old
-    lastChecked: 2025-11-29T10:30:00Z
+    lastChecked: 2025-11-29T17:30:00+07:00
     statusCode: 301
     finalUrl: https://example.com/new
     redirectChain:
@@ -99,8 +107,7 @@ links:
         to: https://example.com/new
         status: 301
     usedIn:
-      - file: docs/how-to/ht__guide.md
-        line: 45
+      - docs/how-to/ht__guide.md
 ```
 
 ### Cache Workflow
@@ -109,58 +116,106 @@ links:
 
 - Scan all `.md` files in `docs/`
 - Extract all `http://` and `https://` URLs
-- Build a list of current links with their locations (file:line)
+- Build a list of current links with their locations (file paths only)
+- **Track current URLs**: Create a set of all unique URLs found in this scan
 
 **STEP 2: Load existing cache**
 
 - Read `docs/metadata/external-links-status.yaml`
 - If file doesn't exist, initialize empty cache
+- **Note all cached URLs**: Track which URLs exist in cache for pruning comparison
 
-**STEP 3: Check each discovered link**
+**STEP 3: Check each discovered link (per-link expiry)**
 
-- **In cache + fresh (< 6 months)**: SKIP (use cached data)
-- **In cache + stale (≥ 6 months)**: RECHECK + UPDATE cache
+For each external URL found:
+
+- Calculate link age: `current_time - link.lastChecked`
+- **In cache + fresh (age < 6 months)**: SKIP (use cached data)
+- **In cache + stale (age ≥ 6 months)**: RECHECK + UPDATE cache
 - **NOT in cache**: CHECK + ADD to cache (if valid)
 
-**STEP 4: Prune removed links**
+**Important**: Links expire individually based on their own lastChecked timestamp, not as a group.
 
-- For each entry in cache:
-  - If link NOT found in any current doc: REMOVE from cache
-  - (link was removed from documentation)
+**STEP 4: Prune orphaned cache entries**
 
-**STEP 5: Save updated cache**
+This is the automatic cache maintenance phase:
+
+1. **Compare cached URLs vs current URLs**
+   - For each URL in cache:
+   - Check if URL exists in current scan results
+   - If URL NOT found in any current doc: Mark for removal
+
+2. **Remove orphaned entries**
+   - Delete cache entries for URLs no longer in documentation
+   - Track count of removed entries for reporting
+
+3. **Rationale**: Prevents cache from growing unbounded as documentation evolves
+
+**STEP 5: Update location metadata (usedIn)**
+
+Even for cached links that weren't rechecked:
+
+1. **Update usedIn arrays** based on current scan
+   - Files may have been renamed
+   - Links may have moved between files
+   - **Track only file paths** (no line numbers for cache stability)
+
+2. **Replace old usedIn** with current usedIn from scan
+   - Ensures cache always reflects actual current file locations
+   - **Note**: usedIn stores only file paths to prevent cache churn from doc edits
+
+**STEP 6: Save updated cache**
 
 - Write `docs/metadata/external-links-status.yaml`
+- Include full usedIn data for all links (needed for maintenance)
 - Sort links by URL for consistent git diffs
 
-**STEP 6: Report results**
+**STEP 7: Report results**
 
-- ✅ X links checked
-- ⏭️ Y links skipped (cached)
-- ➕ Z new links added to cache
-- ❌ W broken links (need fixing)
-- ⚠️ V redirects detected (suggest updating)
-- 🗑️ U orphaned links removed from cache
+**Concise format for working links** (no usedIn shown):
+
+- Working links: Just list URLs
+
+**Detailed format for broken links** (full usedIn shown):
+
+- Broken links: URL + all file:line locations
+
+**Cache maintenance summary**:
+
+- Orphaned links removed: N
+- Links with updated locations: M
+- Cache size: X links (was Y)
 
 ### Cache Behavior
+
+**Per-Link Expiry:**
+
+- Each link tracks its own lastChecked timestamp
+- Links expire individually 6 months after their lastChecked date
+- During a scan, some links may be fresh (< 6 months) while others need rechecking (> 6 months)
+- This prevents unnecessary HTTP requests while ensuring stale data gets refreshed
 
 **For working links (200, 301, 302):**
 
 - Add/update in cache with status, redirect chain, final URL
-- Track all file locations where the link appears
+- Track all file paths where the link appears (usedIn - file paths only, no line numbers)
+- Update usedIn every scan (even for cached links)
 - Report redirects (301) as warnings to user
 
 **For broken links (404, 500, timeout):**
 
-- Report to user for immediate fix
+- Report to user for immediate fix with full usedIn details
 - DO NOT add to cache (only verified links are cached)
+- If previously cached and now broken: Remove from cache
 - User fixes/removes from docs
 - Link disappears from next scan
 
-**For cache pruning:**
+**For cache pruning (automatic maintenance):**
 
-- If link exists in cache but not in any doc: REMOVE
-- Keeps cache synchronized with actual documentation
+- **Orphaned links**: If URL exists in cache but not found in any current doc → REMOVE
+- **Location updates**: If URL exists in cache and in docs → UPDATE usedIn to current locations
+- **Rationale**: Keeps cache synchronized with actual documentation state
+- **Benefit**: Prevents unbounded cache growth as docs evolve
 
 ## How to Check Links
 
@@ -200,12 +255,14 @@ Follow this systematic approach:
    - Read `docs/metadata/external-links-status.yaml`
    - Parse YAML into cache data structure
    - If file doesn't exist, initialize empty cache
+   - **Track cached URLs**: Build set of all URLs in cache for pruning
 
 2. **For each external link found:**
 
-   a. **Check cache status**
-   - If link in cache AND `lastChecked < 6 months ago`: SKIP validation (use cached data)
-   - If link in cache AND `lastChecked ≥ 6 months ago`: RECHECK (proceed to step b)
+   a. **Check cache status (per-link expiry)**
+   - Calculate link age: `current_time - link.lastChecked`
+   - If link in cache AND `age < 6 months`: SKIP validation (use cached data)
+   - If link in cache AND `age ≥ 6 months`: RECHECK (proceed to step b)
    - If link NOT in cache: CHECK (proceed to step b)
 
    b. **Validate the link** (only if checking is needed)
@@ -222,12 +279,22 @@ Follow this systematic approach:
 
    d. **Update cache based on result**
    - If successful (200, 301, 302): ADD/UPDATE cache entry with status, redirects, finalUrl
-   - If broken (404, 500, timeout): REPORT to user, DO NOT cache
-   - Record all file:line locations where link appears
+   - If broken (404, 500, timeout): REPORT to user, DO NOT cache (or REMOVE if previously cached)
+   - Record all file paths where link appears (usedIn - paths only, no line numbers)
 
 3. **Prune orphaned cache entries**
    - After checking all discovered links
-   - Remove cache entries for links not found in any current doc
+   - **Compare**: cached URLs vs current URLs found in scan
+   - **Remove**: cache entries for URLs not found in any current doc
+   - **Track count**: Number of orphaned entries removed for reporting
+
+4. **Update location metadata for all cached links**
+   - For links that were skipped (cached, fresh):
+     - Update usedIn array with current file paths
+     - Files may have been renamed or moved
+   - For links that were rechecked:
+     - Already have updated usedIn from step 2d
+   - **Result**: Cache usedIn always reflects current file locations (paths only)
 
 **For Internal Links:**
 
@@ -249,36 +316,94 @@ Follow this systematic approach:
 
 1. **Save updated cache**
    - Write `docs/metadata/external-links-status.yaml`
-   - Include schema version, lastFullScan timestamp
+   - Include schema version, lastFullScan timestamp (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
+   - Include usedIn data (file paths only) for all links (needed for maintenance)
    - Sort links by URL for consistent git diffs
    - Use 2-space YAML indentation
+   - **All timestamps must use UTC+7 (Indonesian time)** format with +07:00 offset
 
 2. **Cache should contain:**
    - Only verified working links (200, 301, 302)
    - No broken links (they get fixed/removed from docs)
-   - Current file:line locations for each link
+   - **usedIn arrays** with current file paths for each link (no line numbers)
    - Redirect chain information for 301/302 responses
+   - **Important**: Cache stores file paths only (line numbers omitted for cache stability)
 
 ### 5. Reporting Phase
 
-Create a clear report with:
+Create a clear, scannable report with different detail levels:
 
-**Broken External Links:**
+#### Dynamic Line Number Lookup
+
+**Cache storage:** usedIn contains only file paths (no line numbers)
+
+**Report generation:** For broken links, line numbers are dynamically found by scanning files
+
+**Benefits:**
+
+- Cache remains stable even when docs are frequently edited
+- Line numbers in reports are always current (not stale cached values)
+- Reduced cache churn and cleaner git diffs
+- Cache only changes when URLs are actually added/removed from files
+
+**Implementation:**
+
+When reporting broken links:
+
+1. For each file path in the usedIn array
+2. Read the file content using Read tool
+3. Search for the broken URL in the content
+4. Report the current line number where it appears
+5. Format: `- docs/path/to/file.md:123`
+
+#### Report Format
+
+**Working External Links (concise format):**
+
+- Show ONLY a clean list of URLs
+- NO usedIn information (keeps report scannable)
+- Example:
+  ```
+  ## Working External Links (26)
+  - https://diataxis.fr/
+  - https://conventionalcommits.org/
+  - https://example.com/page
+  ```
+
+**Broken External Links (detailed format):**
 
 - List each broken URL with HTTP status/error
-- Show file path and line number where it appears
+- Show FULL usedIn information (file:line for every occurrence)
+- **Line numbers are dynamically looked up** by scanning each file to find where the URL appears
 - Suggest replacement URL or recommend removal
+- Example:
+  ```
+  ## Broken External Links (2)
+  - https://example.com/broken - Returns 404
+    - docs/explanation/file.md:123
+    - docs/how-to/another.md:456
+    - Suggestion: Replace with https://example.com/new-location
+  ```
 
-**Broken Internal Links:**
+**Broken Internal Links (detailed format):**
 
 - List each broken internal link with the target path
-- Show source file path where the link appears
+- Show source file path and line number where the link appears
 - Indicate if the file doesn't exist or path is incorrect
 - Suggest corrections if the file exists elsewhere
 
-**Working Links:**
+**Cache Maintenance Summary:**
 
-- Briefly confirm how many links were validated successfully
+- Report orphaned links removed
+- Report links with updated locations (file/line changes)
+- Report cache size before and after
+- Example:
+  ```
+  ## Cache Maintenance
+  - Pruned 3 orphaned links no longer in documentation
+  - Updated 5 links with new file locations
+  - Cache size: 26 links (was 29)
+  ```
 
 ## Common Issues and Solutions
 
@@ -383,7 +508,7 @@ When you find broken internal links:
 
 ## Output Format
 
-Always provide a clear summary with cache statistics:
+Always provide a clear, scannable summary with cache statistics:
 
 ```markdown
 ## Link Check Results
@@ -397,25 +522,39 @@ Always provide a clear summary with cache statistics:
 **Links checked:** A (new or stale)
 **Links skipped:** B (cached, < 6 months)
 **New links added to cache:** C
-**Orphaned links removed:** D
-**Redirects detected:** E (recommend updating docs)
+**Redirects detected:** D (recommend updating docs)
 
 ### Link Health
 
-**Broken external links:** F
-**Broken internal links:** G
+**Broken external links:** E
+**Broken internal links:** F
+
+### Working External Links (W total)
+
+Clean list format - NO usedIn information:
+
+- https://diataxis.fr/
+- https://conventionalcommits.org/
+- https://example.com/page
+- https://another-site.org/article
+- ...
 
 ### Broken External Links
 
+Detailed format - FULL usedIn information:
+
 1. ✗ `https://example.com/broken` - Returns 404
-   - File: `docs/example/file.md:123`
+   - docs/example/file.md:123
+   - docs/reference/guide.md:89
    - Suggestion: Replace with `https://example.com/new-location`
 
 2. ✗ `https://example.org/missing` - Returns 404
-   - File: `docs/another/file.md:456`
+   - docs/another/file.md:456
    - Suggestion: Remove (no replacement found)
 
 ### Broken Internal Links
+
+Detailed format with source locations:
 
 1. ✗ `./nonexistent/file.md` - File not found
    - Source: `docs/explanation/README.md:45`
@@ -427,10 +566,15 @@ Always provide a clear summary with cache statistics:
    - Expected path: `docs/wrong/path.md`
    - Suggestion: Check if file exists at different location
 
-### Working Links
+### Working Internal Links
 
-- External: X links validated successfully
-- Internal: Y links validated successfully
+- Y links validated successfully
+
+### Cache Maintenance
+
+- Pruned N orphaned links no longer in documentation
+- Updated M links with new file locations
+- Cache size: X links (was Y before pruning)
 ```
 
 ## Best Practices
@@ -517,23 +661,43 @@ Before starting work, familiarize yourself with:
      ...
    ```
 
-6. **Update cache**:
+6. **Prune cache and update locations**:
 
    ```
+   Compare cached URLs (45) vs current URLs (67):
+   - 3 URLs in cache but not in current docs → REMOVE (orphaned)
+   - 5 URLs moved to different files → UPDATE usedIn (file paths only)
+
    Add 22 new verified links to cache
    Update 5 rechecked links with new timestamps
    Remove 3 orphaned links (no longer in docs)
+   Update usedIn arrays for all links (current file paths only)
    Write docs/metadata/external-links-status.yaml
    ```
 
 7. **Reporting**:
 
    ```
-   Present summary with cache statistics:
+   Present scannable summary:
+
+   Working External Links (65):
+   - https://diataxis.fr/
+   - https://conventionalcommits.org/
+   - ... (clean list, no usedIn)
+
+   Broken External Links (1):
+   - https://example.com/broken - 404
+     - docs/example/file.md:123 (line number dynamically found)
+     - docs/reference/guide.md:89 (line number dynamically found)
+
+   Cache Maintenance:
+   - Pruned 3 orphaned links
+   - Updated 5 links with new file locations
+   - Cache size: 65 links (was 68)
+
+   Statistics:
    - 27 links checked (5 stale, 22 new)
-   - 40 links skipped (cached)
-   - 22 new links added to cache
-   - 3 orphaned links removed
+   - 40 links skipped (cached, fresh)
    - 1 broken link found
    - 2 redirects detected
    ```
@@ -599,4 +763,4 @@ Before starting work, familiarize yourself with:
 
 ---
 
-**Last Updated**: 2025-11-29
+**Last Updated**: 2025-11-30
