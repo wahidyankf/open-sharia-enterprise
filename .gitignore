@@ -76,6 +76,9 @@ generated-reports/
 .prettierignore
 .cache/
 
+# Playwright MCP
+.playwright-mcp/
+
 # Database
 *.db
 *.sqlite
