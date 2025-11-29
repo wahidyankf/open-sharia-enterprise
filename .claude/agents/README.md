@@ -136,7 +136,7 @@ Expert at validating plan implementations against requirements, performing compr
   - Generating detailed validation reports with specific findings
   - Iterating with plan-implementor to fix issues until validation passes
 
-### 🟨 `plan-checker.md`
+### 🟩 `plan-checker.md`
 
 Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification.
 

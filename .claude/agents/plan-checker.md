@@ -8,7 +8,7 @@ tools:
   - WebSearch
   - WebFetch
 model: sonnet
-color: yellow
+color: green
 ---
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
