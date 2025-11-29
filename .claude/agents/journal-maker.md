@@ -485,5 +485,5 @@ Present options:
 
 **Related Agents:**
 
-- [docs-writer.md](./docs-writer.md) - For permanent documentation (different from temporal journal entries)
-- [plan-writer.md](./plan-writer.md) - For project planning (often referenced in journal entries)
+- [docs-maker.md](./docs-maker.md) - For permanent documentation (different from temporal journal entries)
+- [plan-maker.md](./plan-maker.md) - For project planning (often referenced in journal entries)

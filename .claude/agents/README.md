@@ -127,14 +127,14 @@ Expert at validating plan implementations against requirements, performing compr
 - **Specialization:** Requirements verification, code quality assessment, integration testing, comprehensive validation reporting
 - **Tools:** Read, Glob, Grep, Bash
 - **When to Use:**
-  - After plan-implementor completes all implementation tasks
+  - After plan-executor completes all implementation tasks
   - Validating implementation meets all requirements from requirements.md
   - Verifying technical documentation alignment (tech-docs.md)
   - Running comprehensive code quality checks (tests, lints, builds)
   - Performing end-to-end integration testing
   - Providing independent quality gate with fresh eyes
   - Generating detailed validation reports with specific findings
-  - Iterating with plan-implementor to fix issues until validation passes
+  - Iterating with plan-executor to fix issues until validation passes
 
 ### 🟩 `plan-checker.md`
 
@@ -144,7 +144,7 @@ Expert at validating plans are ready for implementation by verifying completenes
 - **Specialization:** Plan completeness verification, codebase alignment checking, external verification via web, technical accuracy validation
 - **Tools:** Read, Glob, Grep, WebSearch, WebFetch
 - **When to Use:**
-  - After plan-writer creates a plan, before implementation begins
+  - After plan-maker creates a plan, before implementation begins
   - Validating plan structure and completeness (requirements, tech-docs, delivery)
   - Verifying codebase assumptions are accurate (check package.json, directory structure)
   - Checking technology choices are current and maintained (WebSearch verification)

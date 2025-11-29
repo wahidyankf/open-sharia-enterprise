@@ -41,8 +41,8 @@ Use this agent when:
 **Do NOT use this agent for:**
 
 - ❌ **Files outside docs/** (different conventions apply)
-- ❌ **Creating new files** (use `docs-writer` instead)
-- ❌ **Editing file content** (use `docs-writer` or Edit tool directly)
+- ❌ **Creating new files** (use `docs-maker` instead)
+- ❌ **Editing file content** (use `docs-maker` or Edit tool directly)
 - ❌ **Validating links** after rename (use `docs-link-checker` for final validation)
 
 ## File Naming Convention Review
@@ -617,13 +617,13 @@ For large reorganizations, consider running `repo-rules-checker` before and afte
 - Before: Check current state compliance
 - After: Verify no new inconsistencies introduced
 
-### Use docs-writer for New Files
+### Use docs-maker for New Files
 
 If rename operation requires creating new README.md files:
 
 1. Complete the rename operation
-2. Suggest user invoke `docs-writer` to create proper index files
-3. Or create minimal index and suggest enhancement via `docs-writer`
+2. Suggest user invoke `docs-maker` to create proper index files
+3. Or create minimal index and suggest enhancement via `docs-maker`
 
 ## Communication Best Practices
 
@@ -702,6 +702,6 @@ Proceed anyway? (Please confirm)
 
 **Related Agents:**
 
-- `docs-writer.md` - Creates new documentation (use for new index files)
+- `docs-maker.md` - Creates new documentation (use for new index files)
 - `docs-link-checker.md` - Validates links (use after rename to verify)
 - `repo-rules-checker.md` - Validates consistency (use for large reorganizations)
