@@ -4,7 +4,7 @@
 
 **Delivery Type**: Single PR
 
-**Git Workflow**: Commit to `main`
+**Git Workflow**: Work on `feat/init-monorepo` branch, merge to `main` via PR
 
 **Summary**: Initialize Nx-based monorepo with apps/ and libs/ folder structure, manual project configuration (no plugins), and comprehensive documentation.
 
