@@ -8,7 +8,7 @@ tags:
   - organization
   - documentation
 created: 2025-11-19
-updated: 2025-11-27
+updated: 2025-11-29
 ---
 
 # Documentation File Naming Convention
@@ -218,6 +218,33 @@ journals/YYYY-MM/summary.md
 
 These patterns are configured in `.obsidian/daily-notes.json` and don't use the prefix system.
 
+### Metadata Files (docs/metadata/)
+
+The `docs/metadata/` directory stores operational metadata files about documentation (not documentation content itself):
+
+**Location**: `docs/metadata/` at docs root
+
+**Purpose**: Cache files, operational data, validation artifacts
+
+**Naming**: No prefix (folder provides context)
+
+**Examples**:
+
+```
+docs/metadata/external-links-status.yaml     # Link validation cache
+docs/metadata/frontmatter-validation.json    # Frontmatter check results
+docs/metadata/search-index.json              # Generated search index
+```
+
+**Rationale**: Similar to files in the `plans/` folder, the directory structure provides sufficient organizational context, making prefixes unnecessary and redundant.
+
+**Key Points:**
+
+- Metadata files are exempt from the prefix requirement
+- These are operational files, not documentation content
+- They are committed to git for sharing across the team
+- They relate to the documentation but are not part of the Diátaxis framework
+
 ### Images and Assets
 
 Images follow the same prefix pattern as their related documentation:
@@ -319,4 +346,4 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ---
 
-**Last Updated**: 2025-11-27
+**Last Updated**: 2025-11-29
