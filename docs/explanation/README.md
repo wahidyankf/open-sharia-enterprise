@@ -18,7 +18,7 @@ Conceptual documentation for the open-sharia-enterprise project. These documents
 
 - [Conventions](./conventions/README.md) - Documentation conventions and standards
 - [Development](./development/README.md) - Development conventions and standards
-- [Security](./security/README.md) - Security concepts and practices
+- [Security](./information-security/README.md) - Security concepts and practices
 
 ---
 
