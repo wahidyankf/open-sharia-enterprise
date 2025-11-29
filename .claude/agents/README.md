@@ -33,7 +33,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
 
 ### 🟩 `docs-link-checker.md`
 
-Validates both external and internal links in documentation files to ensure they are not broken.
+Expert at validating both external and internal links in documentation files to ensure they are not broken.
 
 - **Primary Use:** Checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health
 - **Specialization:** External URL validation, internal link verification, web accessibility testing, broken link detection and repair
@@ -64,7 +64,7 @@ Expert at renaming/moving files and directories in docs/ directory while maintai
 
 ### 🟩 `repo-rules-checker.md`
 
-Validates consistency between agents, CLAUDE.md, conventions, and documentation.
+Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation.
 
 - **Primary Use:** Checking for inconsistencies, contradictions, or verifying compliance
 - **Specialization:** Cross-file validation, duplication detection, convention enforcement, emoji consistency
@@ -78,7 +78,7 @@ Validates consistency between agents, CLAUDE.md, conventions, and documentation.
 
 ### 🟨 `repo-rules-updater.md`
 
-Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
+Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
 
 - **Primary Use:** Adding/modifying rules, conventions, or standards affecting multiple files
 - **Specialization:** Systematic propagation, cascade updates, consistency maintenance, emoji adoption
