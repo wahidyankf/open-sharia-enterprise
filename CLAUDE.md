@@ -532,15 +532,15 @@ All agents must have `name`, `description`, `tools`, and `model` frontmatter fie
 
 ### Available Agents
 
-- **`agent-creator.md`** - Agent creation following repository conventions
-- **`docs-link-checker.md`** - External and internal link validation
-- **`docs-renamer.md`** - File and directory renaming with prefix updates
-- **`docs-writer.md`** - Documentation creation and editing
-- **`journal-writer.md`** - Daily research notes and monthly project summaries
-- **`plan-implementor.md`** - Systematic plan execution following delivery checklists
-- **`plan-writer.md`** - Project planning and requirements documentation
-- **`repo-rules-checker.md`** - Consistency validation and auditing
-- **`repo-rules-updater.md`** - Rule propagation across files
+- **`agent-creator.md`** - Expert at creating new AI agents following all repository conventions
+- **`docs-link-checker.md`** - Expert at validating both external and internal links in documentation files to ensure they are not broken
+- **`docs-renamer.md`** - Expert at renaming/moving files and directories in docs/ directory while maintaining conventions
+- **`docs-writer.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
+- **`journal-writer.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
+- **`plan-implementor.md`** - Expert at systematically implementing project plans by following delivery checklists
+- **`plan-writer.md`** - Expert at creating structured project planning documents in the plans/ folder
+- **`repo-rules-checker.md`** - Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation
+- **`repo-rules-updater.md`** - Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices
 
 See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent descriptions and workflow guidance.
 
