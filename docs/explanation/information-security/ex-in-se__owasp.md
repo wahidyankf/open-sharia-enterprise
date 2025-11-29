@@ -362,4 +362,3 @@ Demonstrating security compliance using industry-recognized OWASP standards buil
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/) - Quick reference guides
 - [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/) - Comprehensive testing methodology
 - [OWASP Local Chapters](https://owasp.org/chapters/) - Find your local community
-- [OWASP Community](https://owasp.org/community/) - Get involved with the foundation

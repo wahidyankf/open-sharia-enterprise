@@ -689,7 +689,7 @@ Before committing documentation with diagrams:
 - [Mermaid Official Documentation](https://mermaid.js.org/)
 - [Mermaid Live Editor](https://mermaid.live/)
 - [ASCII Art Generator](https://www.asciiart.eu/)
-- [Box Drawing Unicode Characters](https://en.wikipedia.org/wiki/Box-drawing_character)
+- [Box Drawing Unicode Characters](https://en.wikipedia.org/wiki/Box-drawing_characters)
 
 ---
 

@@ -271,7 +271,7 @@ SAST works best when combined with other security testing methods:
 ## Further Reading
 
 - [OWASP SAST Overview](https://owasp.org/www-community/Source_Code_Analysis_Tools)
-- [NIST Guidelines on SAST](https://csrc.nist.gov/glossary/term/static_application_security_testing)
+- [NIST Guidelines on SAST](https://www.nist.gov/cyberframework)
 - [SAST vs DAST Comparison](./ex-in-se__dast.md)
 
 ## Related Documentation

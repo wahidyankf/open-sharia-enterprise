@@ -361,7 +361,6 @@ Start here
 
 - [Official Diátaxis Documentation](https://diataxis.fr/)
 - [Diátaxis in Practice](https://diataxis.fr/application/)
-- [Case Studies](https://diataxis.fr/adoption/)
 
 ---
 
