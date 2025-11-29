@@ -24,9 +24,11 @@ open-sharia-enterprise/
 │       ├── README.md         # Agent index and workflow
 │       ├── agent-maker.md      # Agent creation automation
 │       ├── docs-link-checker.md  # Link validation agent
-│       ├── docs-rename-executor.md       # File and directory renaming
 │       ├── docs-maker.md     # Documentation writer agent
+│       ├── docs-rename-executor.md       # File and directory renaming
 │       ├── journal-maker.md     # Journal and research notes agent
+│       ├── plan-checker.md      # Plan validation agent
+│       ├── plan-execution-checker.md  # Implementation validation agent
 │       ├── plan-executor.md   # Plan execution agent
 │       ├── plan-maker.md        # Project planning agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
