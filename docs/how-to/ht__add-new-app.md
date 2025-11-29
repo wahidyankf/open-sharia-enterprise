@@ -3,11 +3,11 @@ title: How to Add a New App
 type: how-to
 category: monorepo
 tags:
-	- nx
-	- monorepo
-	- apps
-	- typescript
-	- nextjs
+  - nx
+  - monorepo
+  - apps
+  - typescript
+  - nextjs
 date: 2025-11-29
 ---
 

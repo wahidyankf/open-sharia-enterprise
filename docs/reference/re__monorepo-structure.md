@@ -3,10 +3,10 @@ title: Monorepo Structure Reference
 type: reference
 category: monorepo
 tags:
-	- nx
-	- monorepo
-	- architecture
-	- structure
+  - nx
+  - monorepo
+  - architecture
+  - structure
 date: 2025-11-29
 ---
 

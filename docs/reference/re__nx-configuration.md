@@ -3,9 +3,9 @@ title: Nx Configuration Reference
 type: reference
 category: monorepo
 tags:
-	- nx
-	- configuration
-	- build-system
+  - nx
+  - configuration
+  - build-system
 date: 2025-11-29
 ---
 

@@ -3,10 +3,10 @@ title: How to Run Nx Commands
 type: how-to
 category: monorepo
 tags:
-	- nx
-	- monorepo
-	- commands
-	- workflows
+  - nx
+  - monorepo
+  - commands
+  - workflows
 date: 2025-11-29
 ---
 

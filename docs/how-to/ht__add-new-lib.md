@@ -3,10 +3,10 @@ title: How to Add a New Library
 type: how-to
 category: monorepo
 tags:
-	- nx
-	- monorepo
-	- libraries
-	- typescript
+  - nx
+  - monorepo
+  - libraries
+  - typescript
 date: 2025-11-29
 ---
 
