@@ -616,7 +616,7 @@ If a rule change would break existing documents:
 
 If adding a completely new category of conventions:
 
-1. **Suggest using docs-writer** for new document
+1. **Suggest using docs-maker** for new document
 2. **After creation**, offer to:
    - Add references in CLAUDE.md
    - Update index files
@@ -640,8 +640,9 @@ If adding a completely new category of conventions:
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files with GitHub-compatible markdown
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation into four categories
+- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
 
 **Related Agents:**
 
-- `docs-writer.md` - Creates new documentation (you update existing rules)
+- `docs-maker.md` - Creates new documentation (you update existing rules)
 - `repo-rules-checker.md` - Validates consistency (run after your updates)
