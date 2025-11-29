@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-11-28
+updated: 2025-11-29
 ---
 
 # AI Agents Convention
@@ -55,7 +55,7 @@ This convention applies to:
 
 ### Required Frontmatter
 
-Every agent file MUST begin with YAML frontmatter containing four required fields:
+Every agent file MUST begin with YAML frontmatter containing four required fields and one optional field:
 
 ```yaml
 ---
@@ -63,6 +63,7 @@ name: agent-name
 description: Expert in X specializing in Y. Use when Z.
 tools: Read, Glob, Grep
 model: inherit
+color: blue
 ---
 ```
 
@@ -91,6 +92,12 @@ model: inherit
    - Options: `inherit` (default) or specific model name (e.g., `sonnet`)
    - Use `inherit` unless there's a specific need
    - See "Model Selection Guidelines" below for decision criteria
+
+5. **`color`** (optional, recommended)
+   - Visual categorization based on agent role
+   - Options: `blue` (writers), `green` (checkers), `yellow` (updaters), `purple` (implementors)
+   - Helps users quickly identify agent type
+   - See "Agent Color Categorization" below for assignment guidelines
 
 ### Document Structure
 
@@ -201,6 +208,161 @@ Start: Choosing Agent Model
 ```
 
 **⚠️ Important**: Document your reasoning if using a specific model. Add a comment in the agent explaining why.
+
+## Agent Color Categorization
+
+### Color Field (Optional)
+
+The `color` frontmatter field provides visual categorization for agents based on their **primary role**. This helps users quickly identify agent types and understand their capabilities at a glance.
+
+**Format:**
+
+```yaml
+---
+name: agent-name
+description: Expert in X specializing in Y. Use when Z.
+tools: Read, Glob, Grep
+model: inherit
+color: blue
+---
+```
+
+**Field Definition:**
+
+- **`color`** (optional, recommended)
+  - Values: `blue`, `green`, `yellow`, `purple`
+  - Indicates the agent's primary role category
+  - Used for visual identification in agent listings
+  - Helps users choose the right agent type
+
+### Color-to-Role Mapping
+
+Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
+
+| Color         | Role             | Purpose                               | Tool Pattern                | Agents                                       |
+| ------------- | ---------------- | ------------------------------------- | --------------------------- | -------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool            | docs-writer<br>plan-writer<br>journal-writer |
+| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only tools             | repo-rules-checker<br>docs-link-checker      |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`  | repo-rules-updater<br>docs-renamer           |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` | plan-implementor                             |
+
+### Why This Categorization System
+
+This role-based categorization was chosen because it:
+
+1. **Aligns with naming conventions** - Role suffixes (-writer, -checker, -updater, -implementor) directly map to colors
+2. **Maps to tool permissions** - Clear security boundaries between read-only, edit-only, write-capable, and full-access agents
+3. **Provides clear user guidance** - Users can quickly identify which category of agent they need
+4. **Extensible** - New agents naturally fit into one of the four role categories
+5. **Semantic consistency** - Colored square emojis (🟦🟩🟨🟪) have no pre-existing meaning in Unicode, allowing flexible assignment
+
+### Assigning Colors to New Agents
+
+When creating a new agent, assign a color based on its **primary capability**:
+
+**Decision Tree:**
+
+```
+Start: What is the agent's primary capability?
+    │
+    ├─ Creates new files/content from scratch
+    │   └─> color: blue (Writer)
+    │       - Must have `Write` tool
+    │       - Examples: docs-writer, plan-writer
+    │
+    ├─ Validates/checks without modifying
+    │   └─> color: green (Checker)
+    │       - Read-only tools (no Write or Edit)
+    │       - Examples: repo-rules-checker, docs-link-checker
+    │
+    ├─ Modifies/updates existing content only
+    │   └─> color: yellow (Updater)
+    │       - Has `Edit` but NOT `Write`
+    │       - Examples: repo-rules-updater, docs-renamer
+    │
+    └─ Executes plans/orchestrates tasks
+        └─> color: purple (Implementor)
+            - Has Write, Edit, AND Bash
+            - Examples: plan-implementor
+```
+
+**Edge Cases:**
+
+- **Agent has both Write and Edit**: Choose based on primary purpose
+  - If mainly creates new content → `blue` (Writer)
+  - If mainly executes plans/tasks → `purple` (Implementor)
+- **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
+- **Unsure**: Default to the most restrictive category based on tools, or omit the color field
+
+### Using Colors in Documentation
+
+**Agent README Listings:**
+
+When listing agents in `.claude/agents/README.md`, use the colored square emoji:
+
+```markdown
+### 🟦 `docs-writer.md`
+
+Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
+```
+
+**Consistency with Emoji Convention:**
+
+Colored square emojis follow the [Emoji Usage Convention](../conventions/ex-co__emoji-usage.md):
+
+- Use at the start of headings for visual categorization
+- Maintain semantic consistency (same color = same role across all docs)
+- Avoid overuse (1 emoji per agent listing)
+
+### Color Field Examples
+
+**Writer Agent (Blue):**
+
+```yaml
+---
+name: docs-writer
+description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
+tools: Read, Write, Edit, Glob, Grep
+model: inherit
+color: blue
+---
+```
+
+**Checker Agent (Green):**
+
+```yaml
+---
+name: repo-rules-checker
+description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
+tools: Read, Glob, Grep
+model: sonnet
+color: green
+---
+```
+
+**Updater Agent (Yellow):**
+
+```yaml
+---
+name: repo-rules-updater
+description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
+tools: Read, Edit, Glob, Grep
+model: sonnet
+color: yellow
+---
+```
+
+**Implementor Agent (Purple):**
+
+```yaml
+---
+name: plan-implementor
+description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-writer agent.
+tools: Read, Write, Edit, Glob, Grep, Bash
+model: sonnet
+color: purple
+---
+```
 
 ## Agent Responsibility Boundaries
 
@@ -423,6 +585,7 @@ Before submitting a new agent, verify:
 - [ ] `description` clearly states when to use this agent
 - [ ] `tools` explicitly lists required tools only (least privilege)
 - [ ] `model` set to `inherit` (or justified if specific)
+- [ ] `color` assigned based on agent role (blue/green/yellow/purple) - optional but recommended
 
 #### Document Structure
 
@@ -470,6 +633,7 @@ name: agent-name
 description: Expert in [domain] specializing in [specific area]. Use when [specific scenario].
 tools: Read, Glob, Grep
 model: inherit
+color: blue
 ---
 
 # Agent Name Agent
@@ -654,4 +818,4 @@ Before committing a new agent:
 
 ---
 
-**Last Updated**: 2025-11-23
+**Last Updated**: 2025-11-29

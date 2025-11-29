@@ -3,6 +3,7 @@ name: repo-rules-updater
 description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet
+color: yellow
 ---
 
 # Repository Rule Updater Agent
@@ -460,9 +461,11 @@ If the AI Agents Convention (`ex-de__ai-agents.md`) changes in a way that affect
 **Example self-update scenarios**:
 
 - New required frontmatter field added
+- New optional frontmatter field added (e.g., `color` field for agent categorization)
 - Tool access patterns changed
 - Model selection guidelines updated
 - Reference documentation format changed
+- Agent color categorization system introduced
 
 ## Integration with Other Agents
 
