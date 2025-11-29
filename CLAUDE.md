@@ -537,6 +537,7 @@ All agents must have `name`, `description`, `tools`, and `model` frontmatter fie
 - **`docs-renamer.md`** - Expert at renaming/moving files and directories in docs/ directory while maintaining conventions
 - **`docs-writer.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
 - **`journal-writer.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
+- **`plan-implementation-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
 - **`plan-implementor.md`** - Expert at systematically implementing project plans by following delivery checklists
 - **`plan-writer.md`** - Expert at creating structured project planning documents in the plans/ folder
 - **`repo-rules-checker.md`** - Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation

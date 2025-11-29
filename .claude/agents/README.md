@@ -109,15 +109,32 @@ Expert at creating structured project planning documents in the plans/ folder.
 Expert at systematically implementing project plans by following delivery checklists.
 
 - **Primary Use:** Executing plans created by the plan-writer agent
-- **Specialization:** Sequential implementation, validation, progress tracking, checklist management
+- **Specialization:** Sequential implementation, per-phase validation, progress tracking, checklist management
 - **Tools:** Read, Write, Edit, Glob, Grep, Bash
 - **When to Use:**
   - Implementing a plan from plans/in-progress/
   - Following delivery checklists step-by-step
-  - Running validation checklists and acceptance criteria
+  - Running per-phase validation and acceptance criteria (self-validation)
   - Updating delivery.md with implementation progress and notes
   - Completing all phases of a multi-phase plan
-  - Ensuring all requirements are met before marking plan complete
+  - Stopping at final validation handoff (does NOT perform final validation)
+
+### 🟪 `plan-implementation-checker.md`
+
+Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports.
+
+- **Primary Use:** Independent final validation of completed plan implementations
+- **Specialization:** Requirements verification, code quality assessment, integration testing, comprehensive validation reporting
+- **Tools:** Read, Glob, Grep, Bash
+- **When to Use:**
+  - After plan-implementor completes all implementation tasks
+  - Validating implementation meets all requirements from requirements.md
+  - Verifying technical documentation alignment (tech-docs.md)
+  - Running comprehensive code quality checks (tests, lints, builds)
+  - Performing end-to-end integration testing
+  - Providing independent quality gate with fresh eyes
+  - Generating detailed validation reports with specific findings
+  - Iterating with plan-implementor to fix issues until validation passes
 
 ### 🟦 `journal-writer.md`
 
@@ -151,12 +168,21 @@ The agents work together in complementary workflows:
    └─> Use plan-implementor with plan path
         └─> Executes delivery checklist step-by-step
         └─> Updates delivery.md with progress and notes
-        └─> Validates each phase before proceeding
+        └─> Performs per-phase validation (self-validation)
+        └─> Marks status as "Ready for Final Validation"
 
-3. Complete Implementation
-   └─> plan-implementor completes final validation
-   └─> All acceptance criteria verified
-   └─> Plan marked as complete
+3. Final Validation (Independent Quality Gate)
+   └─> Use plan-implementation-checker with plan path
+        └─> Validates all requirements are met
+        └─> Runs comprehensive quality checks
+        └─> Performs integration testing
+        └─> Generates detailed validation report
+        └─> If issues found: Returns to plan-implementor for fixes
+        └─> If validation passes: Marks plan as complete
+
+4. Complete and Archive
+   └─> Move plan from in-progress/ to done/
+   └─> Plan ready for review or deployment
 ```
 
 ### 🔧 Repository Maintenance Workflow
@@ -196,6 +222,8 @@ The agents work together in complementary workflows:
 
 - **When starting a new project:** Use `plan-writer` to create structured plans in plans/backlog/
 - **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
+- **After plan-implementor completes:** Use `plan-implementation-checker` for independent final validation
+- **Quality assurance workflow:** plan-implementor → plan-implementation-checker → (fix issues if needed) → repeat until validation passes
 - **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
 - **When creating documentation:** Use `docs-writer` for proper structure
