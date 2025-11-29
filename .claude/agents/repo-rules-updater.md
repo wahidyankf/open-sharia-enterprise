@@ -39,9 +39,9 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- ❌ **Creating entirely new convention documents** (use `doc-writer` instead)
+- ❌ **Creating entirely new convention documents** (use `docs-writer` instead)
 - ❌ **Validating consistency** after changes (use `repo-rules-checker` instead)
-- ❌ **Creating new documentation** from scratch (use `doc-writer` instead)
+- ❌ **Creating new documentation** from scratch (use `docs-writer` instead)
 - ❌ **One-off file edits** that don't affect related files (use Edit tool directly)
 
 ## File Update Hierarchy
@@ -65,7 +65,9 @@ Understanding the update hierarchy is critical. Always update in this order:
 
 3. Agent Files (Consumers of Rules)
    ├─ .claude/agents/README.md
-   ├─ .claude/agents/doc-writer.md
+   ├─ .claude/agents/docs-writer.md
+   ├─ .claude/agents/docs-link-checker.md
+   ├─ .claude/agents/journal-writer.md
    ├─ .claude/agents/repo-rules-checker.md
    └─ .claude/agents/repo-rules-updater.md (yourself!)
 
@@ -188,7 +190,7 @@ When the user requests a rule change, follow this process:
 - `docs/explanation/development/ex-de__ai-agents.md` (add rule with examples)
 - `CLAUDE.md` (update AI agents section summary)
 - `.claude/agents/repo-rules-checker.md` (add validation check)
-- `.claude/agents/doc-writer.md` (add model: inherit justification if needed)
+- `.claude/agents/docs-writer.md` (add model: inherit justification if needed)
 - `.claude/agents/repo-rules-updater.md` (self-update to comply)
 
 **Update Strategy**:
@@ -206,7 +208,7 @@ When the user requests a rule change, follow this process:
 
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` (update prefix definition)
 - `CLAUDE.md` (update prefix list)
-- `.claude/agents/doc-writer.md` (update file naming examples)
+- `.claude/agents/docs-writer.md` (update file naming examples)
 - `.claude/agents/repo-rules-checker.md` (update validation rules)
 - All existing tutorial files (would need renaming - note to user!)
 
@@ -240,14 +242,14 @@ When the user requests a rule change, follow this process:
 
 - Convention doc (remove or mark deprecated)
 - `CLAUDE.md` (update frontmatter example)
-- `doc-writer.md` (update frontmatter template)
+- `docs-writer.md` (update frontmatter template)
 - `repo-rules-checker.md` (remove validation check)
 
 **Update Strategy**:
 
 1. Update convention to mark as optional or remove
 2. Update CLAUDE.md frontmatter example
-3. Update doc-writer template
+3. Update docs-writer template
 4. Remove from repo-rules-checker validations
 5. **Note to user**: Existing docs with tags are still valid
 
@@ -257,9 +259,9 @@ When the user requests a rule change, follow this process:
 
 **Update Strategy**:
 
-1. **Stop! Tell user to use `doc-writer` instead**
+1. **Stop! Tell user to use `docs-writer` instead**
 2. This agent updates EXISTING rules, not creates NEW documents
-3. After doc-writer creates the new convention:
+3. After docs-writer creates the new convention:
    - You can update CLAUDE.md to reference it
    - You can update index files to include it
    - You can update agents to comply with it
@@ -334,7 +336,7 @@ All documentation follows three core conventions:
 - References to full conventions
 - Checklists for verification
 
-**Example** (in doc-writer.md):
+**Example** (in docs-writer.md):
 
 ```markdown
 ### File Naming Convention
@@ -464,15 +466,15 @@ If the AI Agents Convention (`ex-de__ai-agents.md`) changes in a way that affect
 
 ## Integration with Other Agents
 
-### Relationship with doc-writer
+### Relationship with docs-writer
 
-**doc-writer**: Creates NEW documentation from scratch
+**docs-writer**: Creates NEW documentation from scratch
 
 **repo-rules-updater**: Updates EXISTING rules and conventions
 
 **Division of labor**:
 
-- Need a new convention document? → Use `doc-writer`
+- Need a new convention document? → Use `docs-writer`
 - Need to update existing conventions? → Use `repo-rules-updater`
 - New convention created, need to reference it? → Use `repo-rules-updater`
 
@@ -611,7 +613,7 @@ If a rule change would break existing documents:
 
 If adding a completely new category of conventions:
 
-1. **Suggest using doc-writer** for new document
+1. **Suggest using docs-writer** for new document
 2. **After creation**, offer to:
    - Add references in CLAUDE.md
    - Update index files
@@ -638,5 +640,5 @@ If adding a completely new category of conventions:
 
 **Related Agents:**
 
-- `doc-writer.md` - Creates new documentation (you update existing rules)
+- `docs-writer.md` - Creates new documentation (you update existing rules)
 - `repo-rules-checker.md` - Validates consistency (run after your updates)
