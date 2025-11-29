@@ -31,6 +31,17 @@ open-sharia-enterprise/
 │       ├── plan-writer.md        # Project planning agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
 │       └── repo-rules-updater.md  # Rule propagation agent
+├── apps/                      # Deployable applications (Nx monorepo)
+│   ├── README.md             # Apps folder documentation
+│   └── [app-name]/           # Individual applications
+│       ├── project.json      # Nx configuration
+│       └── ...               # App-specific files
+├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
+│   ├── README.md             # Libs folder documentation
+│   └── ts-[name]/            # TypeScript libraries (language-prefixed)
+│       ├── src/              # Library source code
+│       ├── project.json      # Nx configuration
+│       └── ...               # Lib-specific files
 ├── docs/                      # Documentation (Diátaxis framework)
 │   ├── tutorials/            # Learning-oriented guides
 │   │   └── README.md         # Tutorials index
@@ -60,7 +71,9 @@ open-sharia-enterprise/
 │   └── done/                 # Completed and archived plans
 │       └── README.md         # Lists completed plans
 ├── .husky/                    # Git hooks (pre-commit, commit-msg)
-├── package.json              # Node.js project manifest with Volta pinning
+├── nx.json                   # Nx workspace configuration
+├── tsconfig.base.json        # Base TypeScript configuration with path mappings
+├── package.json              # Node.js project manifest with Volta pinning and workspaces
 ├── commitlint.config.js       # Commitlint configuration
 ├── .gitignore               # Git ignore rules (Node.js and fintech)
 ├── CLAUDE.md                # This file - guidance for Claude Code
@@ -177,10 +190,162 @@ All AI agents should assume work happens on `main` branch unless explicitly told
 As the project develops, typical commands will include:
 
 - `npm install` - Install dependencies
-- `npm run build` - Build the project (to be configured)
-- `npm test` - Run tests (to be configured)
-- `npm run lint` - Lint code (to be configured)
-- `npm run dev` - Start development server (to be configured)
+- `npm run build` - Build all projects (`nx run-many -t build`)
+- `npm test` - Run all tests (`nx run-many -t test`)
+- `npm run lint` - Lint all projects (`nx run-many -t lint`)
+- `npm run graph` - View dependency graph (`nx graph`)
+- `nx build [project-name]` - Build specific project
+- `nx test [project-name]` - Test specific project
+- `nx dev [app-name]` - Start development server for app
+- `nx affected:build` - Build only affected projects
+- `nx affected:test` - Test only affected projects
+
+## Monorepo Structure
+
+This project uses **Nx** as a monorepo build system to manage multiple applications and shared libraries. The monorepo is organized into two main folders: `apps/` for deployable applications and `libs/` for reusable libraries.
+
+### Apps Folder (`apps/`)
+
+**Purpose**: Contains deployable application projects (executables)
+
+**Location**: `apps/` at repository root
+
+**Naming Convention**: `[domain]-[type]` (e.g., `api-gateway`, `admin-dashboard`)
+
+**Characteristics**:
+
+- **Consumers** - Apps import and use libs, they don't export anything for reuse
+- **Isolated** - Apps should NOT import from other apps
+- **Deployable** - Each app is independently deployable
+- **Specific** - Contains app-specific logic and configuration
+
+**Standard Structure**:
+
+```
+apps/
+└── [app-name]/
+    ├── src/                     # Application source code
+    ├── project.json             # Nx project configuration
+    ├── tsconfig.json            # TypeScript configuration
+    ├── package.json             # App-specific dependencies (if any)
+    └── README.md                # App documentation
+```
+
+**Running apps**:
+
+- `nx dev [app-name]` - Start development server
+- `nx build [app-name]` - Build for production
+- `nx test [app-name]` - Run tests
+
+### Libs Folder (`libs/`)
+
+**Purpose**: Contains reusable library packages
+
+**Location**: `libs/` at repository root
+
+**Organization**: Flat structure (no nested scopes)
+
+**Naming Convention**: `[language-prefix]-[name]` (e.g., `ts-utils`, `ts-components`)
+
+**Language Prefixes**:
+
+- `ts-*` - TypeScript libraries (current implementation)
+- `java-*` - Java libraries (future)
+- `kt-*` - Kotlin libraries (future)
+- `py-*` - Python libraries (future)
+
+**Current Scope**: TypeScript libraries only
+
+**Characteristics**:
+
+- **Polyglot-Ready** - Designed to support multiple languages (TypeScript now, Java/Kotlin/Python future)
+- **Flat Structure** - All libs at same level, no nested scopes
+- **Reusable** - Libs are designed to be imported by apps and other libs
+- **Focused** - Each lib has a single, clear purpose
+- **Public API** - Exports controlled through `index.ts` (barrel export)
+
+**Standard Structure (TypeScript)**:
+
+```
+libs/
+└── ts-[name]/
+    ├── src/
+    │   ├── index.ts         # Public API (barrel export)
+    │   ├── lib/             # Implementation
+    │   │   └── [feature].ts
+    │   └── __tests__/       # Tests
+    ├── dist/                # Build output (gitignored)
+    ├── project.json         # Nx project configuration
+    ├── tsconfig.json        # TypeScript configuration
+    ├── package.json         # Lib dependencies (if any)
+    └── README.md            # Library documentation
+```
+
+**Importing from libs**:
+
+```typescript
+import { functionName } from "@open-sharia-enterprise/ts-[lib-name]";
+```
+
+**Running lib commands**:
+
+- `nx build [lib-name]` - Build library
+- `nx test [lib-name]` - Run tests
+- `nx lint [lib-name]` - Lint library
+
+### Dependency Guidelines
+
+**Apps can import from any lib**:
+
+```typescript
+// In apps/demo-ts-fe/app/page.tsx
+import { greet } from "@open-sharia-enterprise/ts-demo-libs";
+```
+
+**Libs can import from other libs**:
+
+```typescript
+// In libs/ts-components/src/index.ts
+import { formatDate } from "@open-sharia-enterprise/ts-utils";
+```
+
+**Rules**:
+
+1. Apps can import from any lib
+2. Libs can import from other libs
+3. No circular dependencies allowed (A → B → A is prohibited)
+4. Apps should NOT import from other apps
+5. Language boundaries exist (TypeScript libs can't directly import Go/Python/Rust libs)
+
+**Monitoring dependencies**:
+
+- `nx graph` - View full dependency graph
+- `nx affected:graph` - View affected projects after changes
+
+### Nx Features
+
+**Task Caching**: Nx caches build, test, and lint outputs. Second build uses cache and completes instantly.
+
+**Affected Detection**: Only rebuild what changed using `nx affected:build` or `nx affected:test`.
+
+**Dependency Graph**: Visualize project relationships with `nx graph`.
+
+**Run Many**: Execute tasks across all projects with `nx run-many -t build`.
+
+**Manual Configuration**: This monorepo uses "vanilla Nx" without plugins. All configuration is manual using `nx:run-commands` executor for full transparency and control.
+
+### Documentation
+
+For detailed guides and references:
+
+- **How-To Guides**:
+  - [Add New App](./docs/how-to/ht__add-new-app.md) - Step-by-step guide for creating apps
+  - [Add New Lib](./docs/how-to/ht__add-new-lib.md) - Step-by-step guide for creating libs
+  - [Run Nx Commands](./docs/how-to/ht__run-nx-commands.md) - Common Nx workflows
+
+- **Reference Documentation**:
+  - [Monorepo Structure](./docs/reference/re__monorepo-structure.md) - Complete structure reference
+  - [Nx Configuration](./docs/reference/re__nx-configuration.md) - Configuration file reference
 
 ## Documentation Organization
 

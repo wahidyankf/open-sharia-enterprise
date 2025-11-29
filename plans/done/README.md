@@ -4,7 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
-(Currently empty)
+- [2025-11-24: Nx Monorepo Initialization](./2025-11-24__init-monorepo/) - Initialize and configure Nx-based monorepo with apps/ and libs/ structure (Completed: 2025-11-29)
 
 ## Instructions
 

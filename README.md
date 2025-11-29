@@ -127,6 +127,8 @@ npm install
 
 ```
 open-sharia-enterprise/
+├── apps/                  # Deployable applications (Nx monorepo)
+├── libs/                  # Reusable libraries (Nx monorepo, flat structure)
 ├── docs/                  # Project documentation (Diataxis framework)
 │   ├── tutorials/         # Learning-oriented guides
 │   ├── how-to/            # Problem-oriented guides
@@ -136,10 +138,63 @@ open-sharia-enterprise/
 │   ├── in-progress/       # Active project plans
 │   ├── backlog/           # Planned projects for future
 │   └── done/              # Completed and archived plans
-├── src/                   # Source code (to be created)
-├── package.json           # Project manifest
+├── nx.json                # Nx workspace configuration
+├── tsconfig.base.json     # Base TypeScript configuration
+├── package.json           # Project manifest with npm workspaces
 └── README.md              # This file
 ```
+
+### 🏗️ Monorepo Architecture
+
+This project uses **Nx** as a monorepo build system to manage multiple applications and shared libraries with efficient task execution and caching.
+
+#### Apps (`apps/`)
+
+Deployable applications - independent executables that consume shared libraries.
+
+**Examples**: `api-gateway`, `admin-dashboard`, `customer-portal`
+
+**Run an app**:
+
+```bash
+nx dev [app-name]    # Start development server
+nx build [app-name]  # Build for production
+```
+
+#### Libraries (`libs/`)
+
+Reusable libraries organized in a **flat structure** with **language prefixes**:
+
+- `ts-*` - TypeScript libraries (current: `ts-utils`, `ts-components`)
+- `java-*`, `kt-*`, `py-*` - Future multi-language support
+
+**Importing libraries**:
+
+```typescript
+import { functionName } from "@open-sharia-enterprise/ts-[lib-name]";
+```
+
+**Run library commands**:
+
+```bash
+nx build [lib-name]  # Build library
+nx test [lib-name]   # Run tests
+```
+
+#### Nx Features
+
+- **Task Caching**: Speeds up builds by caching outputs
+- **Affected Detection**: Only rebuild what changed (`nx affected:build`)
+- **Dependency Graph**: Visualize relationships (`nx graph`)
+- **Manual Configuration**: "Vanilla Nx" without plugins for full transparency
+
+#### Documentation
+
+- [How to Add New App](./docs/how-to/ht__add-new-app.md)
+- [How to Add New Library](./docs/how-to/ht__add-new-lib.md)
+- [How to Run Nx Commands](./docs/how-to/ht__run-nx-commands.md)
+- [Monorepo Structure Reference](./docs/reference/re__monorepo-structure.md)
+- [Nx Configuration Reference](./docs/reference/re__nx-configuration.md)
 
 ## 💻 Development
 

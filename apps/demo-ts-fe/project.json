@@ -1,0 +1,37 @@
+{
+  "name": "demo-ts-fe",
+  "sourceRoot": "apps/demo-ts-fe",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next dev",
+        "cwd": "apps/demo-ts-fe"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next build",
+        "cwd": "apps/demo-ts-fe"
+      },
+      "outputs": ["{projectRoot}/.next"]
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next start",
+        "cwd": "apps/demo-ts-fe"
+      },
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next lint",
+        "cwd": "apps/demo-ts-fe"
+      }
+    }
+  }
+}

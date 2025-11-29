@@ -1,6 +1,6 @@
 # Nx Monorepo Initialization
 
-**Status**: Backlog
+**Status**: In Progress
 
 ## Overview
 

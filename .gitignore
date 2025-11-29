@@ -10,6 +10,9 @@ build/
 .next/
 out/
 
+# Nx cache
+.nx/
+
 # Environment variables
 .env*
 
@@ -72,6 +75,9 @@ generated-reports/
 .eslintcache
 .prettierignore
 .cache/
+
+# Playwright MCP
+.playwright-mcp/
 
 # Database
 *.db
