@@ -366,7 +366,7 @@ DAST works best when combined with:
 
 - [OWASP DAST Overview](https://owasp.org/www-community/Vulnerability_Scanning_Tools)
 - [OWASP ZAP Documentation](https://www.zaproxy.org/docs/)
-- [NIST Guidelines on DAST](https://csrc.nist.gov/glossary/term/dynamic_application_security_testing)
+- [NIST Guidelines on DAST](https://www.nist.gov/cyberframework)
 
 ## Related Documentation
 

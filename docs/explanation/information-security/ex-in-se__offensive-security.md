@@ -378,10 +378,8 @@ graph TD
 ## Further Reading
 
 - [OWASP Penetration Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
-- [NIST SP 800-115: Technical Security Testing](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-115.pdf)
 - [SANS Penetration Testing Resources](https://www.sans.org/white-papers/)
-- [Bug Bounty Basics](https://www.hackerone.com/knowledge-base)
-- [Responsible Disclosure](https://en.wikipedia.org/wiki/Responsible_disclosure)
+- [Responsible Disclosure](https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure)
 
 ## Related Documentation
 
