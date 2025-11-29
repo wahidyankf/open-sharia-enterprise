@@ -6,7 +6,7 @@
 
 Initialize and configure an Nx-based monorepo architecture for the open-sharia-enterprise project using vanilla Nx commands without any plugins or generators. This plan establishes the foundation for a scalable, maintainable codebase with clear separation between applications and shared libraries.
 
-**Git Workflow**: Commit to `main`
+**Git Workflow**: Work on `feat/init-monorepo` branch, merge to `main` via PR
 
 **Delivery Type**: Single PR
 
