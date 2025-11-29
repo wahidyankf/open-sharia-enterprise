@@ -97,14 +97,18 @@ When running a consistency check, systematically verify:
 
 ### AI Agent Convention Compliance
 
-- [ ] All agent files in `.claude/agents/` have required frontmatter (name, description, tools, model)
+- [ ] All agent files in `.claude/agents/` have required frontmatter (name, description, tools, model, color)
 - [ ] Agent `name` field matches filename (without .md extension)
 - [ ] Agent `description` provides clear usage guidance ("Use when...")
 - [ ] Agent `tools` field explicitly lists allowed tools only
 - [ ] Agent `model` field uses either `inherit` or specific model with justification
-- [ ] Agent `color` field (if present) uses valid value: blue, green, yellow, or purple
-- [ ] Agent `color` field (if present) aligns with agent role: blue (writers), green (checkers), yellow (updaters), purple (implementors)
-- [ ] Agent `color` field (if present) matches tool permissions pattern (e.g., blue agents have Write tool)
+- [ ] Agent `color` field uses valid value: blue, green, yellow, or purple
+- [ ] Agent `color` field matches tool permissions:
+  - Blue (writers): Has `Write` tool
+  - Green (checkers): Has Read-only tools (no `Write` or `Edit`)
+  - Yellow (updaters): Has `Edit` but NOT `Write`
+  - Purple (implementors): Has `Write`, `Edit`, AND `Bash`
+- [ ] Agent frontmatter fields follow required order: name, description, tools, model, color
 - [ ] All agents include "Reference Documentation" section
 - [ ] All agents reference CLAUDE.md
 - [ ] All agents reference the AI agents convention (`ex-de__ai-agents.md`)
