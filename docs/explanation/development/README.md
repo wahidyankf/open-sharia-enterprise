@@ -27,4 +27,4 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 
 ---
 
-**Last Updated**: 2025-11-26
+**Last Updated**: 2025-11-29
