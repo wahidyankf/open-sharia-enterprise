@@ -221,9 +221,10 @@ docs/
 ├── 🎓 tutorials/         # Learning-oriented guides
 ├── 🔧 how-to/            # Problem-solving guides
 ├── 📖 reference/         # Technical reference
-└── 💡 explanation/       # Conceptual documentation
-    ├── 📋 conventions/   # Documentation conventions
-    └── 🛠️ development/   # Development conventions
+├── 💡 explanation/       # Conceptual documentation
+│   ├── 📋 conventions/   # Documentation conventions
+│   └── 🛠️ development/   # Development conventions
+└── 📓 journals/          # Daily research notes (Logseq format)
 ```
 
 ### 🧠 Viewing Documentation with Obsidian
