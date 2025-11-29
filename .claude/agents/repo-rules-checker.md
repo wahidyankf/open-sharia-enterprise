@@ -167,7 +167,7 @@ When running a consistency check, systematically verify:
 - [ ] First line of journal files is a bullet point (not a heading)
 - [ ] Journal files follow naming pattern: `YYYY-MM/YYYY-MM-DD.md` or `YYYY-MM/summary.md`
 - [ ] Journals use Mermaid for diagrams (inside `docs/` directory)
-- [ ] journal-writer.md agent correctly documents "no heading" requirement, TAB indentation scoped to `docs/` directory, and frontmatter spacing rule
+- [ ] journal-maker.md agent correctly documents "no heading" requirement, TAB indentation scoped to `docs/` directory, and frontmatter spacing rule
 - [ ] CLAUDE.md correctly describes journals as using "Logseq-style outliner format" and explicitly states frontmatter spacing rule
 - [ ] Convention document (ex-co\_\_journals-format.md) clearly states no H1 heading rule, TAB indentation requirement scoped to `docs/` directory (Obsidian vault), and CRITICAL frontmatter spacing exception
 
@@ -186,9 +186,9 @@ When running a consistency check, systematically verify:
 - [ ] CLAUDE.md "Implications for Agents" section accurately reflects TBD workflow
 - [ ] Plans in `plans/` folders correctly document git workflow (default: commit to `main`)
 - [ ] Plans only specify branches when justified per TBD convention
-- [ ] plan-writer.md agent correctly instructs NOT to specify branches by default
-- [ ] plan-implementor.md agent correctly defaults to `main` branch
-- [ ] plan-implementor.md agent correctly checks delivery.md for branch specification
+- [ ] plan-maker.md agent correctly instructs NOT to specify branches by default
+- [ ] plan-executor.md agent correctly defaults to `main` branch
+- [ ] plan-executor.md agent correctly checks delivery.md for branch specification
 - [ ] Agents reference TBD convention where appropriate
 - [ ] No documentation contradicts TBD principles (e.g., suggesting long-lived feature branches)
 - [ ] Feature flag usage documented as primary mechanism for hiding incomplete work
@@ -242,13 +242,13 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 ### Agent Definitions
 
 - `.claude/agents/README.md`
-- `.claude/agents/docs-writer.md`
+- `.claude/agents/docs-maker.md`
 - `.claude/agents/docs-link-checker.md`
-- `.claude/agents/journal-writer.md`
-- `.claude/agents/plan-writer.md`
-- `.claude/agents/plan-implementor.md`
+- `.claude/agents/journal-maker.md`
+- `.claude/agents/plan-maker.md`
+- `.claude/agents/plan-executor.md`
 - `.claude/agents/repo-rules-checker.md` (this file)
-- `.claude/agents/repo-rules-updater.md`
+- `.claude/agents/repo-rules-update-executor.md`
 
 ### Convention Documents
 
@@ -330,5 +330,5 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 
 **Related Agents:**
 
-- `docs-writer.md` - Creates and edits documentation (this agent validates its output)
-- `repo-rules-updater.md` - Propagates rule changes (this agent validates the results)
+- `docs-maker.md` - Creates and edits documentation (this agent validates its output)
+- `repo-rules-update-executor.md` - Propagates rule changes (this agent validates the results)

@@ -52,7 +52,7 @@ Ask the user **5 focused questions** to collect all necessary information:
 **Examples to show**:
 
 ```
-Good names: docs-writer, repo-rules-checker, plan-implementor
+Good names: docs-maker, repo-rules-checker, plan-executor
 Bad names: DocWriter, doc_writer, documentation-helper-agent
 ```
 
@@ -62,17 +62,15 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 **Question**: "What is the agent's primary role?"
 **Options** (single choice):
 
-1. **Writer** - Creates new files/content from scratch (e.g., docs-writer, plan-writer)
+1. **Maker** - Creates new files/content from scratch (e.g., docs-maker, plan-maker)
 2. **Checker** - Validates without modifying; read-only operations (e.g., repo-rules-checker)
-3. **Updater** - Modifies and propagates existing content only (e.g., repo-rules-updater)
-4. **Implementor** - Executes plans with full tool access (e.g., plan-implementor)
+3. **Executor** - Modifies, propagates, or executes existing content (e.g., repo-rules-update-executor, plan-executor)
 
 **Validation (Auto-Assignment Based on Role)**:
 
-- **Writer** - color: blue, base tools: Read, Write, Edit, Glob, Grep (Bash can be added via Question 3 if needed)
+- **Maker** - color: blue, base tools: Read, Write, Edit, Glob, Grep (Bash can be added via Question 3 if needed)
 - **Checker** - color: green, tools: Read, Glob, Grep (read-only)
-- **Updater** - color: yellow, tools: Read, Edit, Glob, Grep (no Write, no Bash)
-- **Implementor** - color: purple, tools: Read, Write, Edit, Glob, Grep, Bash (full access)
+- **Executor** - color: yellow/purple, tools: Read, Edit, Glob, Grep (yellow: no Write/Bash; purple: full access with Write/Bash)
 
 #### Question 3: Additional Tools
 
@@ -412,7 +410,7 @@ An agent is successfully created when:
 
 **Related Agents:**
 
-- `docs-writer.md` - Example of blue (writer) agent
+- `docs-maker.md` - Example of blue (maker) agent
 - `repo-rules-checker.md` - Example of green (checker) agent, also handles validation
-- `repo-rules-updater.md` - Example of yellow (updater) agent
-- `plan-implementor.md` - Example of purple (implementor) agent
+- `repo-rules-update-executor.md` - Example of yellow (executor) agent
+- `plan-executor.md` - Example of purple (executor) agent
