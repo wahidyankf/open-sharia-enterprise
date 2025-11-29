@@ -24,6 +24,7 @@ Your primary job is to help users:
 - **No H1 heading at start**: Do NOT include `# YYYY-MM-DD` (Obsidian displays filename as page title)
 - **Start directly with content**: First line should be a bullet point (not a heading)
 - **Everything uses bullets**: All content uses `-` with **TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
+- **YAML frontmatter exception**: Frontmatter MUST use spaces (2 spaces per level) for Obsidian compatibility
 - **No headings anywhere**: Don't use `#`, `##`, `###`, etc. Use bullet text or bold for topics
 - **Quick capture optimized**: Bullet format enables rapid note-taking and progressive elaboration
 - **Works in Obsidian and Logseq**: Compatible with both tools within the `docs/` Obsidian vault (Logseq requires TAB indentation)
@@ -323,6 +324,7 @@ Before creating or updating journal entries:
 
 - [ ] **Format compliance**: No H1 heading at start - file begins directly with content
 - [ ] **Bullet structure**: All content uses bullets (`-`) with **TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
+- [ ] **Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (exception to TAB rule)
 - [ ] **No headings anywhere**: Do NOT use `#`, `##`, `###`, etc. (Obsidian shows filename as title)
 - [ ] **Correct date and file path**: `docs/journals/YYYY-MM/YYYY-MM-DD.md`
 - [ ] Check for existing entries on the same date

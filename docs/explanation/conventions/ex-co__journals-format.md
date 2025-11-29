@@ -9,7 +9,7 @@ tags:
   - research-notes
   - format-convention
 created: 2025-11-26
-updated: 2025-11-29
+updated: 2025-11-28
 ---
 
 # Journals Format Convention
@@ -469,6 +469,13 @@ This distinction keeps journals agile and explorative while maintaining formal d
 - **Visual clarity**: Tab width is adjustable per user preference in most editors
 - **Not project-wide**: Files outside `docs/` (like root README.md, CLAUDE.md, files in `plans/`) can use standard markdown conventions (spaces are fine)
 
+**YAML frontmatter exception:**
+
+- **YAML frontmatter MUST use spaces** (2 spaces per indentation level) for Obsidian compatibility
+- YAML spec allows both tabs and spaces, but Obsidian's frontmatter parser expects spaces
+- This is the ONLY exception to TAB indentation within `docs/` directory files
+- All content bullets after frontmatter continue to use TAB indentation
+
 ### Heading Usage
 
 - **No headings in journal entries**: Don't use `#`, `##`, `###`, etc.
@@ -665,14 +672,14 @@ Example:
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant API
-    participant Database
+		participant Client
+		participant API
+		participant Database
 
-    Client->>API: Request
-    API->>Database: Query
-    Database-->>API: Result
-    API-->>Client: Response
+		Client->>API: Request
+		API->>Database: Query
+		Database-->>API: Result
+		API-->>Client: Response
 ```
 
 - Next: Implement and test this flow
@@ -797,6 +804,7 @@ Before committing journal entries:
 - [ ] No headings used anywhere (`#`, `##`, `###`, etc.)
 - [ ] All content is in bullet format
 - [ ] **Nesting uses TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
+- [ ] **YAML frontmatter uses spaces** (2 spaces per level) - Exception to TAB rule for Obsidian compatibility
 - [ ] Tags use kebab-case (`#tag-name`)
 - [ ] All links are GitHub-compatible with `.md` extension
 - [ ] Any diagrams use Mermaid (since file is in `docs/` directory)

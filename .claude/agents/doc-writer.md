@@ -40,6 +40,8 @@ You are an expert technical documentation writer specializing in creating high-q
 Before considering documentation complete:
 
 - [ ] File name follows naming convention (correct prefix for location)
+- [ ] **Indentation correct**: Files in `docs/` use TAB indentation for bullets (NOT spaces)
+- [ ] **Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (exception to TAB rule)
 - [ ] All code examples have been tested
 - [ ] All file paths verified against actual structure
 - [ ] All internal links verified to exist and use correct relative paths with `.md` extension
@@ -90,6 +92,17 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/ex-
 - **Accessibility**: Emojis enhance but don't replace text meaning
 - **Common Emojis**: 📋 Overview, 🎯 Purpose, 💡 Key Concepts, 📚 Resources, ✅ Correct, ❌ Incorrect, ⚠️ Warning, 🚀 Quick Start, 🔧 Configuration, 🔍 Deep Dive, 🔒 Security, 📝 Notes
 
+### Indentation Convention for docs/ Directory
+
+All files in the `docs/` directory (Obsidian vault) MUST use TAB indentation for nested bullet items:
+
+- **Required for**: Files in `docs/` directory only (Obsidian vault)
+- **Logseq compatibility**: Logseq requires TABs for proper outliner functionality
+- **YAML frontmatter exception**: Frontmatter MUST use spaces (2 spaces per level) for Obsidian compatibility
+- **Not project-wide**: Files outside `docs/` (root README.md, CLAUDE.md, files in `plans/`) use standard markdown conventions (spaces are fine)
+
+See [Journals Format Convention](../docs/explanation/conventions/ex-co__journals-format.md) for complete details.
+
 ### Frontmatter Template
 
 ```yaml
@@ -104,6 +117,8 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 ```
+
+**Important**: Frontmatter uses 2 spaces for indentation (standard YAML). This is the ONLY exception to TAB indentation within `docs/` directory.
 
 ### Tags
 

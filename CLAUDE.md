@@ -238,6 +238,20 @@ Since `plans/` is outside the `docs/` folder (Obsidian vault), **all files in pl
 
 All documentation must follow core conventions defined in `docs/explanation/conventions/`:
 
+### Indentation Convention for docs/ Directory
+
+All files in the `docs/` directory (Obsidian vault) use TAB indentation for nested bullet items, NOT spaces. This is required for:
+
+- **Logseq compatibility**: Logseq requires TAB indentation for proper outliner functionality
+- **Obsidian compatibility**: Works seamlessly in both Logseq and Obsidian
+- **Universal readability**: Tab width adjustable per user preference
+
+**YAML frontmatter exception**: Frontmatter MUST use spaces (2 spaces per indentation level) for Obsidian compatibility. This applies ONLY to the frontmatter block at the start of files.
+
+**Scope**: This convention applies exclusively to files in `docs/` directory. Files outside `docs/` (root README.md, CLAUDE.md, files in `plans/`) use standard markdown conventions (spaces are fine).
+
+See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details on TAB indentation requirements.
+
 ### File Naming Convention
 
 Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (except `docs/journals/` which uses `YYYY-MM/YYYY-MM-DD.md` format). See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
