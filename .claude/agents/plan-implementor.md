@@ -268,11 +268,13 @@ If the plan has phases, after completing all implementation steps in a phase, up
 **Status**: Implementation Complete - Awaiting Validation
 ```
 
-### Phase 3: Validation and Quality Assurance
+### Phase 3: Per-Phase Validation (Self-Validation)
 
-#### Step 3.1: Execute Validation Checklist
+**IMPORTANT**: This phase is about **self-validating your work as you go**, not the final comprehensive validation.
 
-After all implementation steps are complete, execute the **Validation Checklist**:
+#### Step 3.1: Execute Per-Phase Validation Checklist
+
+After completing implementation steps in a phase, execute the **Validation Checklist** for that phase:
 
 For each **unchecked validation item**:
 
@@ -283,18 +285,18 @@ For each **unchecked validation item**:
    - **Single-File**: Update Validation Checklist section in `README.md`
    - **Multi-File**: Update validation section in `delivery.md`
 
-**Common validation tasks:**
+**Self-validation tasks (check your work as you go):**
 
-- ✅ Run unit tests and verify they pass
-- ✅ Run integration tests and verify they pass
-- ✅ Run linting and ensure no errors
-- ✅ Run build and ensure it succeeds
-- ✅ Verify file structure matches requirements
-- ✅ Check code coverage meets targets
-- ✅ Verify error handling works correctly
-- ✅ Test edge cases and boundary conditions
-- ✅ Verify security requirements are met
-- ✅ Confirm performance meets requirements
+- ✅ Run unit tests for code you just wrote
+- ✅ Run integration tests for features you just implemented
+- ✅ Run linting on files you modified
+- ✅ Run build to ensure nothing broke
+- ✅ Verify file structure matches what you intended
+- ✅ Check that your code meets basic quality standards
+- ✅ Verify error handling works for your changes
+- ✅ Test edge cases for features you implemented
+- ✅ Check for obvious security issues in your code
+- ✅ Confirm performance is reasonable for your implementation
 
 **Validation note format:**
 
@@ -390,122 +392,109 @@ After all validation and acceptance criteria pass:
 - **Summary**: Database schema, base models, and data access layer implemented and validated. Foundation is ready for Phase 2.
 ```
 
-### Phase 4: Final Validation
+### Phase 4: Handoff to Final Validation
 
-After **ALL phases** are completed, execute the **Final Validation Checklist**:
+After **ALL implementation phases** are completed and per-phase validation passes:
 
-This is a comprehensive checklist at the end of delivery.md that verifies the entire implementation.
+**STOP** - Do NOT execute the final validation checklist yourself.
 
-#### Step 4.1: Requirements Validation
+#### Step 4.1: Verify Implementation Complete
 
-Verify all requirements from requirements.md:
+Before handing off, ensure:
 
-- [ ] All user stories have been implemented
-- [ ] All Gherkin acceptance criteria pass
-- [ ] All functional requirements met
-- [ ] All non-functional requirements met
-- [ ] No out-of-scope items were included
+1. ✅ All implementation steps are checked and have notes
+2. ✅ All per-phase validation items are checked and passed
+3. ✅ All acceptance criteria for each phase are verified
+4. ✅ All phases are marked as "Implementation Complete"
+5. ✅ Self-validation (tests, lints, builds) all passing
 
-**Update each item** with validation notes following the same format as Phase 3.
+#### Step 4.2: Update Status to "Ready for Validation"
 
-#### Step 4.2: Code Quality Validation
+Update the overall status in the plan file:
 
-Verify code quality standards:
+**Location depends on structure:**
 
-- [ ] All unit tests pass
-- [ ] All integration tests pass
-- [ ] All end-to-end tests pass
-- [ ] Code coverage meets target
-- [ ] No linting errors or warnings
-- [ ] Code follows project style guidelines
-- [ ] No code smells or technical debt introduced
-- [ ] All TODOs resolved or documented
+- **Single-File**: Update status in README.md
+- **Multi-File**: Update status in delivery.md
 
-**Run quality checks:**
-
-```bash
-# Run tests
-npm test
-
-# Run linting
-npm run lint
-
-# Run build
-npm run build
-
-# Check coverage
-npm run test:coverage
-```
-
-Document results in delivery.md.
-
-#### Step 4.3: Documentation Validation
-
-Verify documentation is complete:
-
-- [ ] API documentation updated and accurate
-- [ ] README updated (if applicable)
-- [ ] Code comments added for complex logic
-- [ ] Architecture diagrams updated (if applicable)
-- [ ] User documentation created/updated (if applicable)
-- [ ] Migration guide created (if breaking changes)
-
-#### Step 4.4: Update Overall Status
-
-After final validation passes:
-
-1. **Update Completion Status** in delivery.md
-2. **Set completion date**
-3. **Add final summary notes**
-
-**Before:**
+**Status update:**
 
 ```markdown
 ## Completion Status
 
-**Overall Status**: In Progress
-
-**Last Updated**: 2025-11-25
-```
-
-**After:**
-
-```markdown
-## Completion Status
-
-**Overall Status**: Completed
+**Overall Status**: Implementation Complete - Ready for Final Validation
 
 **Last Updated**: 2025-11-26
 
-**Completion Date**: 2025-11-26
+**Implementation Summary**:
 
-**Final Summary**:
-
-- **Total Phases**: 4
-- **Total Implementation Steps**: 23
-- **Total Validation Items**: 31
-- **Total User Stories Implemented**: 8
-- **Total Tests Passing**: 127
-- **Code Coverage**: 91%
-- **All Requirements Met**: Yes
-- **All Acceptance Criteria Passed**: Yes
-- **Ready for Review**: Yes
-
-**Notable Achievements**:
-
-- Implemented complete authentication system with JWT tokens
-- Added comprehensive test coverage (91%)
-- Created detailed API documentation
-- Zero linting errors or warnings
-- All Gherkin scenarios passing
+- **Total Phases**: [X]
+- **Total Implementation Steps Completed**: [Y]
+- **Total Per-Phase Validation Items Passed**: [Z]
+- **Self-Validation Status**: All tests passing, builds successful, linting clean
 
 **Next Steps**:
 
-- Move plan folder from in-progress/ to done/
-- Update folder date to completion date
-- Create pull request with implementation
-- Archive plan after merge
+- Final validation by plan-implementation-checker agent
+- Address any issues found during final validation
+- Mark plan as complete after validation passes
 ```
+
+#### Step 4.3: Inform User About Handoff
+
+Notify the user that implementation is complete and ready for final validation:
+
+**Message to user:**
+
+```
+Implementation complete! ✅
+
+All implementation tasks and per-phase validation have been completed successfully.
+
+**Summary:**
+- [X] phases implemented
+- [Y] implementation steps completed
+- [Z] validation items passed
+- All tests passing
+- Build successful
+- Linting clean
+
+**Next Step:**
+The implementation is ready for comprehensive final validation by the plan-implementation-checker agent.
+
+To proceed with final validation, invoke:
+- plan-implementation-checker agent with the plan path: [plan-path]
+
+The validator will perform independent verification of:
+- All requirements are met
+- Technical documentation alignment
+- Code quality assessment
+- Integration testing
+- Documentation completeness
+```
+
+#### Step 4.4: Do NOT Check Final Validation Items
+
+**CRITICAL**: Do NOT check any items in the "Final Validation Checklist" section of delivery.md.
+
+The final validation checklist items should remain **unchecked** for the plan-implementation-checker agent to validate independently.
+
+**Your responsibility ends at:**
+
+- ✅ Implementation complete
+- ✅ Per-phase validation complete
+- ✅ Status updated to "Ready for Final Validation"
+- ✅ User notified about handoff
+
+**The plan-implementation-checker will handle:**
+
+- ❌ Final requirements verification
+- ❌ Comprehensive code quality validation
+- ❌ End-to-end integration testing
+- ❌ Final documentation validation
+- ❌ Marking plan as "Completed"
+
+This separation ensures independent quality assurance with fresh eyes on the complete implementation.
 
 ## Error Handling and Blockers
 
@@ -700,6 +689,7 @@ For **Multi-PR plans**: delivery.md will specify which phase corresponds to whic
 **Related Agents:**
 
 - `.claude/agents/plan-writer.md` - Creates plans (complementary agent)
+- `.claude/agents/plan-implementation-checker.md` - Validates completed implementations (handoff agent for final validation)
 - `.claude/agents/docs-writer.md` - Writes permanent documentation (for docs/ updates)
 - `.claude/agents/repo-rules-checker.md` - Validates repository consistency (for final checks)
 
