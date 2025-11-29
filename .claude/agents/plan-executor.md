@@ -435,7 +435,7 @@ Update the overall status in the plan file:
 
 **Next Steps**:
 
-- Final validation by plan-implementation-checker agent
+- Final validation by plan-execution-checker agent
 - Address any issues found during final validation
 - Mark plan as complete after validation passes
 ```
@@ -460,10 +460,10 @@ All implementation tasks and per-phase validation have been completed successful
 - Linting clean
 
 **Next Step:**
-The implementation is ready for comprehensive final validation by the plan-implementation-checker agent.
+The implementation is ready for comprehensive final validation by the plan-execution-checker agent.
 
 To proceed with final validation, invoke:
-- plan-implementation-checker agent with the plan path: [plan-path]
+- plan-execution-checker agent with the plan path: [plan-path]
 
 The validator will perform independent verification of:
 - All requirements are met
@@ -477,7 +477,7 @@ The validator will perform independent verification of:
 
 **CRITICAL**: Do NOT check any items in the "Final Validation Checklist" section of delivery.md.
 
-The final validation checklist items should remain **unchecked** for the plan-implementation-checker agent to validate independently.
+The final validation checklist items should remain **unchecked** for the plan-execution-checker agent to validate independently.
 
 **Your responsibility ends at:**
 
@@ -486,7 +486,7 @@ The final validation checklist items should remain **unchecked** for the plan-im
 - ✅ Status updated to "Ready for Final Validation"
 - ✅ User notified about handoff
 
-**The plan-implementation-checker will handle:**
+**The plan-execution-checker will handle:**
 
 - ❌ Final requirements verification
 - ❌ Comprehensive code quality validation
@@ -690,7 +690,7 @@ For **Multi-PR plans**: delivery.md will specify which phase corresponds to whic
 **Related Agents:**
 
 - `.claude/agents/plan-maker.md` - Creates plans (complementary agent)
-- `.claude/agents/plan-implementation-checker.md` - Validates completed implementations (handoff agent for final validation)
+- `.claude/agents/plan-execution-checker.md` - Validates completed implementations (handoff agent for final validation)
 - `.claude/agents/docs-maker.md` - Writes permanent documentation (for docs/ updates)
 - `.claude/agents/repo-rules-checker.md` - Validates repository consistency (for final checks)
 

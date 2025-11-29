@@ -119,7 +119,7 @@ Expert at systematically implementing project plans by following delivery checkl
   - Completing all phases of a multi-phase plan
   - Stopping at final validation handoff (does NOT perform final validation)
 
-### 🟪 `plan-implementation-checker.md`
+### 🟪 `plan-execution-checker.md`
 
 Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports.
 
@@ -199,7 +199,7 @@ The agents work together in complementary workflows:
         └─> Marks status as "Ready for Final Validation"
 
 4. Implementation Validation (Quality Gate for Code)
-   └─> Use plan-implementation-checker with plan path
+   └─> Use plan-execution-checker with plan path
         └─> Validates all requirements are met
         └─> Runs comprehensive quality checks
         └─> Performs integration testing
@@ -250,8 +250,8 @@ The agents work together in complementary workflows:
 - **When starting a new project:** Use `plan-maker` to create structured plans in plans/backlog/
 - **After creating a plan:** Use `plan-checker` to validate plan before implementation (prevents wasted effort)
 - **When implementing a plan:** Use `plan-executor` with the plan path to execute systematically
-- **After plan-executor completes:** Use `plan-implementation-checker` for independent final validation
-- **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-implementation-checker
+- **After plan-executor completes:** Use `plan-execution-checker` for independent final validation
+- **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
 - **After adding new conventions:** Use `repo-rules-update-executor` → `repo-rules-checker`
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links

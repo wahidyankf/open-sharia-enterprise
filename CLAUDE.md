@@ -559,7 +559,7 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 - **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
 - **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
 - **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
-- **`plan-implementation-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
+- **`plan-execution-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
 - **`plan-executor.md`** - Expert at systematically implementing project plans by following delivery checklists
 - **`plan-maker.md`** - Expert at creating structured project planning documents in the plans/ folder
 - **`repo-rules-checker.md`** - Validates consistency between agents, CLAUDE.md, conventions, and documentation

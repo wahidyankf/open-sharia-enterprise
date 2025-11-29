@@ -1,5 +1,5 @@
 ---
-name: plan-implementation-checker
+name: plan-execution-checker
 description: Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
 tools:
   - Read
@@ -133,7 +133,7 @@ Use this format for your validation report:
 # Validation Report: [Plan Name]
 
 **Date**: YYYY-MM-DD
-**Validator**: plan-implementation-checker
+**Validator**: plan-execution-checker
 **Plan Location**: [path to plan folder]
 
 ## Summary
