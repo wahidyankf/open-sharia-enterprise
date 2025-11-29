@@ -1,5 +1,5 @@
 ---
-name: repo-rules-updater
+name: repo-rules-update-executor
 description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet

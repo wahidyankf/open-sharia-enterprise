@@ -22,15 +22,15 @@ open-sharia-enterprise/
 ├── .claude/                   # Claude Code configuration
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
-│       ├── agent-creator.md      # Agent creation automation
+│       ├── agent-maker.md      # Agent creation automation
 │       ├── docs-link-checker.md  # Link validation agent
-│       ├── docs-renamer.md       # File and directory renaming
-│       ├── docs-writer.md     # Documentation writer agent
-│       ├── journal-writer.md     # Journal and research notes agent
-│       ├── plan-implementor.md   # Plan execution agent
-│       ├── plan-writer.md        # Project planning agent
+│       ├── docs-rename-executor.md       # File and directory renaming
+│       ├── docs-maker.md     # Documentation writer agent
+│       ├── journal-maker.md     # Journal and research notes agent
+│       ├── plan-executor.md   # Plan execution agent
+│       ├── plan-maker.md        # Project planning agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
-│       └── repo-rules-updater.md  # Rule propagation agent
+│       └── repo-rules-update-executor.md  # Rule propagation agent
 ├── apps/                      # Deployable applications (Nx monorepo)
 │   ├── README.md             # Apps folder documentation
 │   └── [app-name]/           # Individual applications
@@ -182,8 +182,8 @@ This repository uses **Trunk Based Development (TBD)** as its git workflow. See 
 
 All AI agents should assume work happens on `main` branch unless explicitly told otherwise:
 
-- **plan-writer**: Plans should NOT specify a git branch by default (work happens on `main`)
-- **plan-implementor**: Should use `main` branch unless plan explicitly specifies a different branch
+- **plan-maker**: Plans should NOT specify a git branch by default (work happens on `main`)
+- **plan-executor**: Should use `main` branch unless plan explicitly specifies a different branch
 - When creating plans: Only specify a branch if there's a documented reason (see TBD convention)
 
 ## Common Development Commands
@@ -533,17 +533,17 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 
 ### Available Agents
 
-- **`agent-creator.md`** - Expert at creating new AI agents following all repository conventions
+- **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
 - **`docs-link-checker.md`** - Expert at validating both external and internal links in documentation files to ensure they are not broken
-- **`docs-renamer.md`** - Expert at renaming/moving files and directories in docs/ directory while maintaining conventions
-- **`docs-writer.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
-- **`journal-writer.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
+- **`docs-rename-executor.md`** - Expert at renaming/moving files and directories in docs/ directory while maintaining conventions
+- **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
+- **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
 - **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
 - **`plan-implementation-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
-- **`plan-implementor.md`** - Expert at systematically implementing project plans by following delivery checklists
-- **`plan-writer.md`** - Expert at creating structured project planning documents in the plans/ folder
+- **`plan-executor.md`** - Expert at systematically implementing project plans by following delivery checklists
+- **`plan-maker.md`** - Expert at creating structured project planning documents in the plans/ folder
 - **`repo-rules-checker.md`** - Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation
-- **`repo-rules-updater.md`** - Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices
+- **`repo-rules-update-executor.md`** - Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices
 
 See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent descriptions and workflow guidance.
 

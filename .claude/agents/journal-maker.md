@@ -1,5 +1,5 @@
 ---
-name: journal-writer
+name: journal-maker
 description: Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries. Use when capturing research insights or creating monthly progress reports.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: inherit
