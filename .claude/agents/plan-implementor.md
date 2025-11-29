@@ -41,7 +41,7 @@ Use this agent when:
 **Do NOT use this agent for:**
 
 - ❌ Creating new plans (use `plan-writer` agent instead)
-- ❌ Writing permanent documentation (use `doc-writer` instead)
+- ❌ Writing permanent documentation (use `docs-writer` instead)
 - ❌ Validating repository consistency (use `repo-rules-checker` instead)
 - ❌ Ad-hoc development tasks without a plan
 
@@ -699,7 +699,7 @@ For **Multi-PR plans**: delivery.md will specify which phase corresponds to whic
 **Related Agents:**
 
 - `.claude/agents/plan-writer.md` - Creates plans (complementary agent)
-- `.claude/agents/doc-writer.md` - Writes permanent documentation (for docs/ updates)
+- `.claude/agents/docs-writer.md` - Writes permanent documentation (for docs/ updates)
 - `.claude/agents/repo-rules-checker.md` - Validates repository consistency (for final checks)
 
 ---

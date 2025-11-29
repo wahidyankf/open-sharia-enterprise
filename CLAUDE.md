@@ -22,7 +22,8 @@ open-sharia-enterprise/
 ├── .claude/                   # Claude Code configuration
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
-│       ├── doc-writer.md     # Documentation writer agent
+│       ├── docs-writer.md     # Documentation writer agent
+│       ├── docs-link-checker.md  # Link validation agent
 │       ├── journal-writer.md     # Journal and research notes agent
 │       ├── plan-writer.md        # Project planning agent
 │       ├── plan-implementor.md   # Plan execution agent
@@ -292,7 +293,8 @@ All agents must have `name`, `description`, `tools`, and `model` frontmatter fie
 
 ### Available Agents
 
-- **`doc-writer.md`** - Documentation creation and editing
+- **`docs-writer.md`** - Documentation creation and editing
+- **`docs-link-checker.md`** - External and internal link validation
 - **`journal-writer.md`** - Daily research notes and monthly project summaries
 - **`plan-writer.md`** - Project planning and requirements documentation
 - **`plan-implementor.md`** - Systematic plan execution following delivery checklists

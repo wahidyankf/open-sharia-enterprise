@@ -4,7 +4,7 @@ This directory contains specialized AI agents for repository maintenance and doc
 
 ## 🤖 Available Agents
 
-### 📝 `doc-writer.md`
+### 📝 `docs-writer.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
 
@@ -16,6 +16,22 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
   - Editing existing documentation for clarity or structure
   - Organizing documentation according to Diátaxis framework
   - Ensuring documentation follows file naming, linking, and emoji conventions
+
+### 🔗 `docs-link-checker.md`
+
+Validates both external and internal links in documentation files to ensure they are not broken.
+
+- **Primary Use:** Checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health
+- **Specialization:** External URL validation, internal link verification, web accessibility testing, broken link detection and repair
+- **Tools:** Read, Glob, Grep, WebFetch, WebSearch
+- **When to Use:**
+  - Auditing all external and internal links in documentation
+  - Verifying external URLs are accessible (not 404, 403, or broken)
+  - Checking internal markdown links point to existing files
+  - Finding and replacing broken links with working alternatives
+  - Periodic link health checks (monthly or before releases)
+  - After major documentation updates to ensure link integrity
+  - After file renames or directory restructuring
 
 ### ✅ `repo-rules-checker.md`
 
@@ -130,8 +146,14 @@ The agents work together in complementary workflows:
         └─> Return to step 2 for re-validation
 
 4. Write/Update Documentation
-   └─> Use doc-writer for documentation tasks
+   └─> Use docs-writer for documentation tasks
         └─> Ensures proper formatting and convention compliance
+
+5. Verify All Links
+   └─> Use docs-link-checker to audit link health
+        └─> Validates all external URLs are accessible
+        └─> Validates all internal markdown links exist
+        └─> Fixes broken links with working alternatives
 ```
 
 ## ✅ Best Practices
@@ -139,10 +161,13 @@ The agents work together in complementary workflows:
 - **When starting a new project:** Use `plan-writer` to create structured plans in plans/backlog/
 - **When implementing a plan:** Use `plan-implementor` with the plan path to execute systematically
 - **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
-- **Before major releases:** Run `repo-rules-checker` for full audit
-- **When creating documentation:** Use `doc-writer` for proper structure
+- **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
+- **When creating documentation:** Use `docs-writer` for proper structure
 - **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
 - **During plan implementation:** Let `plan-implementor` update delivery.md - it maintains detailed notes
+- **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid
+- **After major documentation updates:** Use `docs-link-checker` to verify link integrity
+- **After file renames or restructuring:** Use `docs-link-checker` to validate internal links
 
 ## 📚 Resources
 
