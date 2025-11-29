@@ -2,9 +2,9 @@
 
 This directory contains specialized AI agents for repository maintenance and documentation tasks. Each agent has specific responsibilities and tools to ensure consistency, quality, and adherence to project conventions.
 
-## 🤖 Available Agents
+## Available Agents
 
-### 📝 `docs-writer.md`
+### 🟦 `docs-writer.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
 
@@ -17,7 +17,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
   - Organizing documentation according to Diátaxis framework
   - Ensuring documentation follows file naming, linking, and emoji conventions
 
-### 🔗 `docs-link-checker.md`
+### 🟩 `docs-link-checker.md`
 
 Validates both external and internal links in documentation files to ensure they are not broken.
 
@@ -33,7 +33,7 @@ Validates both external and internal links in documentation files to ensure they
   - After major documentation updates to ensure link integrity
   - After file renames or directory restructuring
 
-### 📁 `docs-renamer.md`
+### 🟨 `docs-renamer.md`
 
 Expert at renaming/moving files and directories in docs/ directory while maintaining conventions.
 
@@ -48,7 +48,7 @@ Expert at renaming/moving files and directories in docs/ directory while maintai
   - After rename: automatically updates all internal links and indices
   - Uses git mv to preserve file history
 
-### ✅ `repo-rules-checker.md`
+### 🟩 `repo-rules-checker.md`
 
 Validates consistency between agents, CLAUDE.md, conventions, and documentation.
 
@@ -62,7 +62,7 @@ Validates consistency between agents, CLAUDE.md, conventions, and documentation.
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
 
-### 🔄 `repo-rules-updater.md`
+### 🟨 `repo-rules-updater.md`
 
 Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
 
@@ -76,7 +76,7 @@ Propagates rule and convention changes across CLAUDE.md, convention docs, agents
   - Updating cross-references after structural changes
   - Maintaining consistency across agent definitions
 
-### 📋 `plan-writer.md`
+### 🟦 `plan-writer.md`
 
 Expert at creating structured project planning documents in the plans/ folder.
 
@@ -90,7 +90,7 @@ Expert at creating structured project planning documents in the plans/ folder.
   - Creating project roadmaps with milestones and timelines
   - Organizing project deliverables into structured plans
 
-### 🚀 `plan-implementor.md`
+### 🟪 `plan-implementor.md`
 
 Expert at systematically implementing project plans by following delivery checklists.
 
@@ -105,7 +105,7 @@ Expert at systematically implementing project plans by following delivery checkl
   - Completing all phases of a multi-phase plan
   - Ensuring all requirements are met before marking plan complete
 
-### 📓 `journal-writer.md`
+### 🟦 `journal-writer.md`
 
 Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries.
 
