@@ -1,6 +1,6 @@
 ---
 name: docs-link-checker
-description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links to avoid redundant checks. Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
+description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links to avoid redundant checks. Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health. Note - Write tool is used exclusively for cache file management, not documentation creation.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
 model: haiku
 color: yellow
