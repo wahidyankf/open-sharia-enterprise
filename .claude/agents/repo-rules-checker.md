@@ -3,6 +3,7 @@ name: repo-rules-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep
 model: sonnet
+color: green
 ---
 
 # Repository Rule Checker Agent
@@ -90,6 +91,9 @@ When running a consistency check, systematically verify:
 - [ ] Agent `description` provides clear usage guidance ("Use when...")
 - [ ] Agent `tools` field explicitly lists allowed tools only
 - [ ] Agent `model` field uses either `inherit` or specific model with justification
+- [ ] Agent `color` field (if present) uses valid value: blue, green, yellow, or purple
+- [ ] Agent `color` field (if present) aligns with agent role: blue (writers), green (checkers), yellow (updaters), purple (implementors)
+- [ ] Agent `color` field (if present) matches tool permissions pattern (e.g., blue agents have Write tool)
 - [ ] All agents include "Reference Documentation" section
 - [ ] All agents reference CLAUDE.md
 - [ ] All agents reference the AI agents convention (`ex-de__ai-agents.md`)

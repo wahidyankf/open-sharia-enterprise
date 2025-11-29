@@ -3,6 +3,7 @@ name: plan-implementor
 description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-writer agent.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
+color: purple
 ---
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:

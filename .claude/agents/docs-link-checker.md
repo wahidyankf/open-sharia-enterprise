@@ -3,6 +3,7 @@ name: docs-link-checker
 description: Validates both external and internal links in documentation files to ensure they are not broken. Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
 tools: Read, Glob, Grep, WebFetch, WebSearch
 model: haiku
+color: green
 ---
 
 # Documentation Links Checker Agent
