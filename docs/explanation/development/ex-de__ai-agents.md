@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-11-23
+updated: 2025-11-28
 ---
 
 # AI Agents Convention
@@ -335,6 +335,11 @@ Follow these guidelines when writing agent documentation:
 5. **Be specific, not vague**
    - ✅ "Checks file naming against ex-co\_\_file-naming-convention.md"
    - ❌ "Validates files"
+
+6. **Follow indentation convention**
+   - Agent files are in `.claude/agents/` (outside `docs/`), so use standard markdown (spaces for indentation)
+   - When agents create/edit files in `docs/`, they must use TAB indentation for nested bullets
+   - YAML frontmatter always uses spaces (2 spaces per level) regardless of file location
 
 ## Information Accuracy and Verification
 
