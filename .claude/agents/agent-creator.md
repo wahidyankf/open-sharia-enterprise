@@ -37,16 +37,17 @@ Ask the user **5 focused questions** to collect all necessary information:
 #### Question 1: Agent Identity
 
 **Header**: "Agent Details"
-**Ask for**:
-
-- Agent name (kebab-case format, no `-agent` suffix)
-- One-sentence description (what the agent does, when to use it)
+**Question**: "Provide the agent name and description"
+**Input**: Free text (two fields: name and description)
 
 **Validation**:
 
-- Check if agent name follows kebab-case format
-- Check if agent already exists in `.claude/agents/` directory
-- If invalid or exists, prompt for a different name
+- Check if agent name follows kebab-case format (lowercase, hyphens, no spaces/underscores)
+- Use Glob to check if `[agent-name].md` already exists in `.claude/agents/` directory
+- Validate description format: "Expert [role] specializing in [area]. Use when [scenario]."
+- Must start with "Expert" and include "Use when" clause
+- If invalid format, show examples from existing agents and prompt for correction
+- If name exists, show list of existing agents and prompt for different name
 
 **Examples to show**:
 
@@ -66,12 +67,12 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 3. **Updater** - Modifies and propagates existing content only (e.g., repo-rules-updater)
 4. **Implementor** - Executes plans with full tool access (e.g., plan-implementor)
 
-**Auto-Assignment Based on Role**:
+**Validation (Auto-Assignment Based on Role)**:
 
-- **Writer** → `color: blue`, tools: `Read, Write, Edit, Glob, Grep`
-- **Checker** → `color: green`, tools: `Read, Glob, Grep`
-- **Updater** → `color: yellow`, tools: `Read, Edit, Glob, Grep`
-- **Implementor** → `color: purple`, tools: `Read, Write, Edit, Glob, Grep, Bash`
+- **Writer** - color: blue, base tools: Read, Write, Edit, Glob, Grep (Bash can be added via Question 3 if needed)
+- **Checker** - color: green, tools: Read, Glob, Grep (read-only)
+- **Updater** - color: yellow, tools: Read, Edit, Glob, Grep (no Write, no Bash)
+- **Implementor** - color: purple, tools: Read, Write, Edit, Glob, Grep, Bash (full access)
 
 #### Question 3: Additional Tools
 
@@ -79,14 +80,21 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 **Question**: "Does the agent need any additional tools?"
 **Options** (multi-select):
 
-- [ ] **Bash** - Execute shell commands (for running commands, git operations)
-- [ ] **WebFetch** - Fetch external content (for checking URLs, documentation)
-- [ ] **WebSearch** - Search the web (for finding information online)
+- **Bash** - Execute shell commands (for running commands, git operations)
+- **WebFetch** - Fetch external content (for checking URLs, documentation)
+- **WebSearch** - Search the web (for finding information online)
 
-**Validation Logic**:
+**Validation**:
 
-- If user selects Bash for Checker role, warn: "Checkers typically don't need Bash (read-only). Are you sure?"
-- If unusual combination, ask for confirmation
+Basic validation:
+
+- If user selects Bash for Checker role, warn: "Checkers are read-only and typically don't need Bash. Are you sure?"
+- If unusual combination detected, ask for confirmation
+
+Edge case handling:
+
+- If agent has both Write and Edit with Bash, this suggests purple (Implementor) role - confirm with user: "This looks like an Implementor agent. Should color be purple instead of blue?"
+- If agent doesn't fit any standard category, warn: "This agent doesn't fit standard categories. Consider if it should be split into multiple agents." Offer option to omit color field or manually override with justification
 
 #### Question 4: Model Selection
 
@@ -97,7 +105,9 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 1. **inherit** (default) - Uses default model, most agents use this
 2. **sonnet** - Advanced reasoning for complex validation, planning, or orchestration
 
-**Guidance text**:
+**Validation**:
+
+Provide guidance to user:
 
 ```
 Use 'inherit' for most agents.
@@ -113,13 +123,21 @@ Use 'sonnet' only if the agent requires:
 **Header**: "Specialization"
 **Question**: "What is the agent's specific domain or area of expertise? (Optional)"
 **Input**: Free text
-**Used for**: Populating the expertise sections and README details
+
+**Validation**:
+
+This input is optional and will be used for:
+
+- Populating the expertise sections in the agent file
+- Adding specialization details to the README entry
 
 ### Step 2: Generate Agent File
 
 Create `.claude/agents/[agent-name].md` with the following structure:
 
 #### Frontmatter
+
+**Field Order (REQUIRED):** Fields MUST appear in this exact order for consistency:
 
 ```yaml
 ---
@@ -131,17 +149,22 @@ color: [auto-assigned: blue|green|yellow|purple]
 ---
 ```
 
+Rationale: Consistent field order improves readability and grep-ability across all agents.
+
 #### Document Body
 
 ```markdown
 # [Title Case Name] Agent
 
-[If model is sonnet, add justification section]
+[If model is sonnet, add model justification IMMEDIATELY after H1 title]
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
-- [Reason provided by user or inferred from role]
+- [Reason 1: specific capability needed]
+- [Reason 2: complexity justification]
+- [Reason 3: comparison to similar agents]
+- [Reason 4: workflow orchestration details]
 
-[Role-appropriate introduction paragraph based on role type]
+[Then add role-appropriate introduction paragraph based on role type]
 
 ## Core Responsibility
 
@@ -192,6 +215,13 @@ Your primary job is to [clear purpose statement based on user description and ro
 ```markdown
 ### [COLOR_EMOJI] `[agent-name].md`
 
+Note: Replace [COLOR_EMOJI] with actual emoji in README.md:
+
+- Blue writers use 🟦
+- Green checkers use 🟩
+- Yellow updaters use 🟨
+- Purple implementors use 🟪
+
 [User-provided description]
 
 - **Primary Use:** [Inferred from role and description]
@@ -203,18 +233,30 @@ Your primary job is to [clear purpose statement based on user description and ro
   - [Use case 3 if applicable]
 ```
 
-**Color Emoji Mapping**:
+**Color Emoji Mapping** (for README.md only):
 
-- Blue (Writer) → 🟦
-- Green (Checker) → 🟩
-- Yellow (Updater) → 🟨
-- Purple (Implementor) → 🟪
+- Blue (Writer)
+- Green (Checker)
+- Yellow (Updater)
+- Purple (Implementor)
+
+Note: Color emojis (🟦🟩🟨🟪) are ONLY used in README.md, not in agent prompt files.
 
 **Alphabetical Insertion**:
 
-- Find agents with same color
-- Insert in alphabetical order by agent name
+- Insert in overall alphabetical order by agent name (not grouped by color)
 - Maintain all existing formatting and spacing
+- Use exactly one blank line between agent entries
+- Preserve all content before and after the insertion point
+
+**Color Emoji Validation**:
+
+Verify emoji matches color assignment:
+
+- blue → 🟦 (Blue writers)
+- green → 🟩 (Green checkers)
+- yellow → 🟨 (Yellow updaters)
+- purple → 🟪 (Purple implementors)
 
 ### Step 4: Validate with repo-rules-checker
 
@@ -253,12 +295,12 @@ Agent: [agent-name]
 - Model: [inherit/sonnet]
 
 Automated Actions Completed:
-✓ Created agent file with proper structure
-✓ Updated .claude/agents/README.md
-✓ Validated with repo-rules-checker
+- Created agent file with proper structure
+- Updated .claude/agents/README.md
+- Validated with repo-rules-checker
 
 Validation Results:
-[Display green checkmarks or specific issues with line numbers]
+[Display PASS/FAIL status or specific issues with line numbers]
 
 Next Steps:
 1. Customize the domain-specific sections in .claude/agents/[agent-name].md
@@ -275,8 +317,17 @@ Next Steps:
 
 ### Agent Name Already Exists
 
-**Detection**: Search `.claude/agents/` directory before creating
-**Action**: Prompt user for different name, show existing agents list
+**Detection**:
+
+1. Before creating agent file, use Glob to list all files matching `.claude/agents/*.md`
+2. Check if `[agent-name].md` exists
+3. Optionally use Grep to search frontmatter `name:` fields for conflicts
+
+**Action**:
+
+1. Prompt user: "Agent '[agent-name]' already exists. Choose a different name."
+2. Show list of existing agents
+3. Re-prompt for Question 1 (Agent Identity) with new name
 
 ### Invalid Kebab-Case Name
 
@@ -299,6 +350,8 @@ Next Steps:
 **Action**: Display specific problems with file paths and line numbers, offer to retry or fix manually
 
 ## Tool Usage Guidelines
+
+Note: These are domain-specific applications of standard tools. For general tool usage, see CLAUDE.md.
 
 ### Read Tool
 
@@ -333,13 +386,13 @@ Next Steps:
 
 An agent is successfully created when:
 
-- ✅ Agent file created with all required frontmatter fields
-- ✅ Color correctly assigned based on role
-- ✅ Tools match role requirements
-- ✅ README updated with agent listing in alphabetical order
-- ✅ repo-rules-checker validation passes (or issues clearly reported)
-- ✅ All file paths and links use correct format
-- ✅ User receives clear summary and next steps
+- [ ] Agent file created with all required frontmatter fields
+- [ ] Color correctly assigned based on role
+- [ ] Tools match role requirements
+- [ ] README updated with agent listing in alphabetical order
+- [ ] repo-rules-checker validation passes (or issues clearly reported)
+- [ ] All file paths and links use correct format
+- [ ] User receives clear summary and next steps
 
 ## Reference Documentation
 
