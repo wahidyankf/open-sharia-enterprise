@@ -31,7 +31,7 @@
   - Verify Volta pinning remains: `"node": "24.11.1"`, `"npm": "11.6.2"`
 - [ ] Create `tsconfig.base.json`:
   - Base TypeScript compiler options
-  - Path mappings for language-prefixed libraries: `@open-sharia/ts-*`
+  - Path mappings for language-prefixed libraries: `@open-sharia-enterprise/ts-*`
   - Target ES2022, strict mode enabled
 - [ ] Create `.nxignore`:
   - Exclude `docs/`, `plans/`, `*.md`
@@ -220,7 +220,7 @@
 - [ ] Create `libs/ts-demo-libs/package.json`:
   ```json
   {
-    "name": "@open-sharia/ts-demo-libs",
+    "name": "@open-sharia-enterprise/ts-demo-libs",
     "version": "0.1.0",
     "private": true
   }
@@ -276,7 +276,7 @@
 - [ ] Update `apps/demo-ts-fe/app/page.tsx` to import lib:
 
   ```typescript
-  import { greet } from "@open-sharia/ts-demo-libs";
+  import { greet } from "@open-sharia-enterprise/ts-demo-libs";
 
   export default function Home() {
     const message = greet("Next.js");
@@ -642,7 +642,7 @@ Before marking this plan as complete and ready for merge, verify ALL items below
 - [ ] `nx affected:build` only builds changed projects
 - [ ] Task caching works (second build shows "[local cache]")
 - [ ] `nx run-many -t build` builds all projects
-- [ ] Path mappings work: `@open-sharia/[language-prefix]-[name]`
+- [ ] Path mappings work: `@open-sharia-enterprise/[language-prefix]-[name]`
 
 ### Folder Structure
 
