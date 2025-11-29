@@ -22,11 +22,13 @@ open-sharia-enterprise/
 ├── .claude/                   # Claude Code configuration
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
-│       ├── docs-writer.md     # Documentation writer agent
+│       ├── agent-creator.md      # Agent creation automation
 │       ├── docs-link-checker.md  # Link validation agent
+│       ├── docs-renamer.md       # File and directory renaming
+│       ├── docs-writer.md     # Documentation writer agent
 │       ├── journal-writer.md     # Journal and research notes agent
-│       ├── plan-writer.md        # Project planning agent
 │       ├── plan-implementor.md   # Plan execution agent
+│       ├── plan-writer.md        # Project planning agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
 │       └── repo-rules-updater.md  # Rule propagation agent
 ├── docs/                      # Documentation (Diátaxis framework)
@@ -312,11 +314,13 @@ All agents must have `name`, `description`, `tools`, and `model` frontmatter fie
 
 ### Available Agents
 
-- **`docs-writer.md`** - Documentation creation and editing
+- **`agent-creator.md`** - Agent creation following repository conventions
 - **`docs-link-checker.md`** - External and internal link validation
+- **`docs-renamer.md`** - File and directory renaming with prefix updates
+- **`docs-writer.md`** - Documentation creation and editing
 - **`journal-writer.md`** - Daily research notes and monthly project summaries
-- **`plan-writer.md`** - Project planning and requirements documentation
 - **`plan-implementor.md`** - Systematic plan execution following delivery checklists
+- **`plan-writer.md`** - Project planning and requirements documentation
 - **`repo-rules-checker.md`** - Consistency validation and auditing
 - **`repo-rules-updater.md`** - Rule propagation across files
 
