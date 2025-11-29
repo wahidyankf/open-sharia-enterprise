@@ -67,6 +67,8 @@ color: blue
 ---
 ```
 
+**Field Order**: Fields MUST appear in this exact order (name, description, tools, model, color) for consistency and grep-ability across all agents.
+
 **Field Definitions:**
 
 1. **`name`** (required)
@@ -89,8 +91,8 @@ color: blue
 
 4. **`model`** (required)
    - Specifies which model to use for this agent
-   - Options: `inherit` (default) or specific model name (e.g., `sonnet`)
-   - Use `inherit` unless there's a specific need
+   - Options: `inherit` (default), `haiku`, `sonnet`, or `opus`
+   - Use `inherit` unless there's a specific need for a particular model
    - See "Model Selection Guidelines" below for decision criteria
 
 5. **`color`** (optional, recommended)
@@ -200,9 +202,14 @@ Start: Choosing Agent Model
     │   │
     │   └─ Yes → What specific capability?
     │              │
+    │              ├─ Simple, straightforward tasks → `model: haiku`
+    │              │   (Pattern matching, URL validation, file checks)
+    │              │
     │              ├─ Advanced reasoning/deep analysis → `model: sonnet`
-    │              ├─ Complex validation/consistency checking → `model: sonnet`
+    │              │   (Complex validation, cascading impacts, multi-step orchestration)
+    │              │
     │              ├─ Multi-step planning and strategy → `model: sonnet`
+    │              │
     │              └─ Unsure → Use `model: inherit` ✅
     │                         (Can always change later)
 ```
