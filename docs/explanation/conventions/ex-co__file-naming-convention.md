@@ -204,11 +204,19 @@ docs/explanation/conventions/README.md           # Subcategory index
 
 The `journals/` directory uses a different pattern:
 
+**Daily entries:**
+
 ```
 journals/YYYY-MM/YYYY-MM-DD.md
 ```
 
-This is configured in `.obsidian/daily-notes.json` and doesn't use the prefix system.
+**Monthly summaries:**
+
+```
+journals/YYYY-MM/summary.md
+```
+
+These patterns are configured in `.obsidian/daily-notes.json` and don't use the prefix system.
 
 ### Images and Assets
 
