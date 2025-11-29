@@ -308,7 +308,7 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 ### Key Requirements
 
-All agents must have `name`, `description`, `tools`, and `model` frontmatter fields. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
+All agents must have `name`, `description`, `tools`, and `model` frontmatter fields. Agents may optionally include a `color` field (blue/green/yellow/purple) for visual categorization by role. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 
 ### Available Agents
 
