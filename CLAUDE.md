@@ -55,7 +55,8 @@ open-sharia-enterprise/
 │   │   │   └── README.md     # Conventions index
 │   │   └── development/      # Development conventions and standards
 │   │       └── README.md     # Development index
-│   └── journals/             # Daily notes (Obsidian vault)
+│   ├── journals/             # Daily notes (Obsidian vault)
+│   └── metadata/             # Operational metadata (link cache, validation data)
 ├── plans/                     # Project planning documents
 │   ├── README.md             # Plans index and purpose
 │   ├── in-progress/          # Active project plans
@@ -528,7 +529,7 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 ### Key Requirements
 
-All agents must have `name`, `description`, `tools`, and `model` frontmatter fields. Agents may optionally include a `color` field (blue/green/yellow/purple) for visual categorization by role. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
+All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 
 ### Available Agents
 

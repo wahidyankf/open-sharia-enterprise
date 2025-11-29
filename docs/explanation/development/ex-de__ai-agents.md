@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-11-29
+updated: 2025-11-30
 ---
 
 # AI Agents Convention
@@ -55,7 +55,7 @@ This convention applies to:
 
 ### Required Frontmatter
 
-Every agent file MUST begin with YAML frontmatter containing four required fields and one optional field:
+Every agent file MUST begin with YAML frontmatter containing five required fields:
 
 ```yaml
 ---
@@ -95,7 +95,7 @@ color: blue
    - Use `inherit` unless there's a specific need for a particular model
    - See "Model Selection Guidelines" below for decision criteria
 
-5. **`color`** (optional, recommended)
+5. **`color`** (required)
    - Visual categorization based on agent role
    - Options: `blue` (writers), `green` (checkers), `yellow` (updaters), `purple` (implementors)
    - Helps users quickly identify agent type
@@ -218,7 +218,7 @@ Start: Choosing Agent Model
 
 ## Agent Color Categorization
 
-### Color Field (Optional)
+### Color Field (Required)
 
 The `color` frontmatter field provides visual categorization for agents based on their **primary role**. This helps users quickly identify agent types and understand their capabilities at a glance.
 
@@ -236,7 +236,7 @@ color: blue
 
 **Field Definition:**
 
-- **`color`** (optional, recommended)
+- **`color`** (required)
   - Values: `blue`, `green`, `yellow`, `purple`
   - Indicates the agent's primary role category
   - Used for visual identification in agent listings
@@ -246,12 +246,12 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                | Agents                                       |
-| ------------- | ---------------- | ------------------------------------- | --------------------------- | -------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool            | docs-writer<br>plan-writer<br>journal-writer |
-| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only tools             | repo-rules-checker<br>docs-link-checker      |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`  | repo-rules-updater<br>docs-renamer           |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` | plan-implementor                             |
+| Color         | Role             | Purpose                               | Tool Pattern                 | Agents                                                  |
+| ------------- | ---------------- | ------------------------------------- | ---------------------------- | ------------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool             | docs-writer<br>plan-writer<br>journal-writer            |
+| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only (no Write or Edit) | repo-rules-checker<br>plan-checker                      |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-updater<br>docs-renamer<br>docs-link-checker |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-implementor                                        |
 
 ### Why This Categorization System
 
@@ -280,12 +280,12 @@ Start: What is the agent's primary capability?
     ├─ Validates/checks without modifying
     │   └─> color: green (Checker)
     │       - Read-only tools (no Write or Edit)
-    │       - Examples: repo-rules-checker, docs-link-checker
+    │       - Examples: repo-rules-checker, plan-checker
     │
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: repo-rules-updater, docs-renamer
+    │       - Examples: repo-rules-updater, docs-renamer, docs-link-checker
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
@@ -592,7 +592,7 @@ Before submitting a new agent, verify:
 - [ ] `description` clearly states when to use this agent
 - [ ] `tools` explicitly lists required tools only (least privilege)
 - [ ] `model` set to `inherit` (or justified if specific)
-- [ ] `color` assigned based on agent role (blue/green/yellow/purple) - optional but recommended
+- [ ] `color` assigned based on agent role (blue/green/yellow/purple) - required
 
 #### Document Structure
 
