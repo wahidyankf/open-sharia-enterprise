@@ -173,6 +173,19 @@ When running a consistency check, systematically verify:
 - [ ] No documentation contradicts TBD principles (e.g., suggesting long-lived feature branches)
 - [ ] Feature flag usage documented as primary mechanism for hiding incomplete work
 
+### Commit Granularity Compliance
+
+- [ ] Commit granularity convention comprehensively documented in `ex-de__commit-messages.md` (section: "Commit Granularity")
+- [ ] CLAUDE.md summarizes commit splitting strategy in "Commit Message Convention" section
+- [ ] CLAUDE.md includes "Commit Granularity" subsection with key principles
+- [ ] CLAUDE.md provides example of good commit splitting (multi-commit example)
+- [ ] Convention document explains when to split commits (different types, domains, create vs update)
+- [ ] Convention document explains when to combine commits (single logical change, tightly coupled)
+- [ ] Convention document covers commit ordering best practices (create before update, type progression)
+- [ ] Convention document defines atomic commits (self-contained, functional, single purpose, reversible)
+- [ ] Convention document provides real-world examples of good and bad commit splitting
+- [ ] Convention document explains benefits of proper commit granularity
+
 ### Duplication Detection
 
 - [ ] Identify conventions/rules duplicated across CLAUDE.md, agents, and convention files

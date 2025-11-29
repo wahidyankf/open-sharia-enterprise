@@ -118,7 +118,26 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 - `fix: prevent race condition`
 - `docs: update API documentation`
 
-For detailed commit message rules, validation errors, best practices, and examples, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
+**Commit Granularity:**
+
+Split work into multiple logical commits rather than one large commit. Key principles:
+
+- **Split by type**: Different commit types (`feat`, `docs`, `refactor`, etc.) should be separate commits
+- **Split by domain**: Changes to different parts of the codebase should be separate commits
+- **Create before update**: Create new files in one commit, update references in another
+- **Atomic commits**: Each commit should be self-contained, functional, and reversible
+- **Logical ordering**: Order commits naturally (create → refactor → docs → test → fix)
+
+**Example of good commit splitting:**
+
+```
+1. feat(agents): add docs-link-checker agent
+2. refactor(agents): rename agents for consistency
+3. docs(agents): update all references to renamed agents
+4. fix(docs): align frontmatter date
+```
+
+For detailed commit message rules, validation errors, best practices, commit granularity guidance, and examples, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
 
 ## Git Workflow
 

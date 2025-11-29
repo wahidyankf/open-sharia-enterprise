@@ -8,7 +8,7 @@ tags:
   - development
   - code-quality
 created: 2025-11-24
-updated: 2025-11-24
+updated: 2025-11-29
 ---
 
 # Commit Message Convention
@@ -549,6 +549,206 @@ BREAKING CHANGE: The /auth endpoint now requires OAuth 2.0
 instead of API keys. See migration guide in docs/migration.md.
 ```
 
+## Commit Granularity
+
+When making changes to the codebase, it's essential to split your work into multiple logical commits rather than creating one large commit with many unrelated changes. This practice improves code review, makes git history more navigable, and enables easier debugging with tools like `git bisect`.
+
+### When to Split Commits
+
+Split your work into multiple commits when:
+
+**Different commit types** - Changes that fall under different conventional commit types should be separate commits:
+
+```
+✅ Good:
+1. feat(agents): add docs-link-checker agent
+2. docs(agents): update agent index with new agent
+
+❌ Bad:
+1. feat(agents): add docs-link-checker agent and update agent index
+```
+
+**Creating vs updating** - Creating new files and updating references to them should be separate commits:
+
+```
+✅ Good:
+1. feat(auth): add user authentication module
+2. refactor(api): integrate authentication module
+
+❌ Bad:
+1. feat(auth): add user authentication module and integrate it
+```
+
+**Renaming vs updating references** - Renaming files and updating all references should be separate commits:
+
+```
+✅ Good:
+1. refactor(agents): rename agents for consistency
+2. docs(agents): update all references to renamed agents
+
+❌ Bad:
+1. refactor(agents): rename agents and update all references
+```
+
+**Different domains** - Changes to different parts of the codebase should be separate commits:
+
+```
+✅ Good:
+1. feat(api): add user endpoint
+2. docs: document user API
+3. test(api): add user endpoint tests
+
+❌ Bad:
+1. feat(api): add user endpoint with docs and tests
+```
+
+**Independent changes** - Changes that could be reviewed or reverted separately should be separate commits:
+
+```
+✅ Good:
+1. fix(validation): handle empty strings correctly
+2. perf(db): optimize user query
+3. docs: update API reference
+
+❌ Bad:
+1. fix: various improvements to validation, database, and docs
+```
+
+### When to Combine Commits
+
+Combine related changes into a single commit when:
+
+**Single logical change** - Multiple files that together form one atomic feature or fix:
+
+```
+✅ Good:
+1. feat(auth): add two-factor authentication
+   (includes: auth.js, auth.test.js, auth.md, routes.js)
+
+❌ Bad:
+1. feat(auth): add auth.js
+2. feat(auth): add auth.test.js
+3. feat(auth): add auth.md
+4. feat(auth): update routes.js
+```
+
+**Tightly coupled changes** - Changes that don't make sense separately or would break the build if separated:
+
+```
+✅ Good:
+1. refactor(api): rename getUserData to fetchUserProfile
+   (includes renaming function definition and all call sites)
+
+❌ Bad:
+1. refactor(api): rename function definition
+2. refactor(api): update call sites
+   (This would break the build between commits)
+```
+
+### Commit Ordering Best Practices
+
+When you have multiple commits, order them logically:
+
+1. **Create before update** - Create new files before updating references to them
+2. **Refactor before fix** - Refactor code before fixing bugs in the refactored code
+3. **Type progression** - Follow a natural flow: `feat` → `refactor` → `docs` → `test` → `fix`
+
+**Example of good commit ordering:**
+
+```
+1. feat(agents): add docs-link-checker agent          # Create new file
+2. refactor(agents): rename agents for consistency    # Rename existing files
+3. docs(agents): update all references to renamed agents  # Update references
+4. fix(docs): align frontmatter date                  # Fix issues discovered
+```
+
+### Atomic Commits
+
+Each commit should be **atomic** - meaning:
+
+- **Self-contained**: The commit includes everything needed for the change
+- **Functional**: The codebase builds and runs after the commit
+- **Single purpose**: The commit has one clear, well-defined purpose
+- **Reversible**: The commit can be reverted without breaking other changes
+
+**Example of atomic commits:**
+
+```
+✅ Good (atomic):
+1. feat(db): add user index on email field
+   - Includes migration file
+   - Includes rollback script
+   - Updates schema documentation
+   - All related to ONE database change
+
+❌ Bad (not atomic):
+1. feat(db): add user index
+   - Only adds migration, missing rollback
+   - Builds fail until next commit
+```
+
+### Real-World Examples
+
+**Example 1: Adding a new feature**
+
+```
+✅ Good:
+1. feat(analytics): add event tracking system
+2. docs(analytics): document event tracking API
+3. test(analytics): add event tracking tests
+
+❌ Bad:
+1. feat(analytics): add event tracking with docs and tests
+```
+
+**Example 2: Refactoring and fixing**
+
+```
+✅ Good:
+1. refactor(parser): extract validation logic
+2. fix(parser): handle edge case in validation
+
+❌ Bad:
+1. refactor(parser): extract validation and fix edge case
+```
+
+**Example 3: Configuration changes**
+
+```
+✅ Good:
+1. chore(deps): update eslint to v8.0.0
+2. style: fix linting errors from eslint update
+
+❌ Bad:
+1. chore: update eslint and fix all linting errors
+```
+
+### Benefits of Proper Commit Granularity
+
+**For code review:**
+
+- Easier to review focused, single-purpose commits
+- Clear understanding of what changed and why
+- Ability to approve/reject specific changes
+
+**For debugging:**
+
+- More effective `git bisect` with clear commit boundaries
+- Easier to identify which commit introduced a bug
+- Simpler to revert specific changes
+
+**For project history:**
+
+- Clean, navigable git log
+- Clear narrative of how the project evolved
+- Better documentation of decision-making process
+
+**For collaboration:**
+
+- Reduces merge conflicts
+- Makes cherry-picking easier
+- Improves communication between team members
+
 ## Making Commits
 
 ### Interactive Workflow
@@ -601,4 +801,4 @@ Closes #123
 
 ---
 
-**Last Updated**: 2025-11-24
+**Last Updated**: 2025-11-29
