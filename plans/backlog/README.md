@@ -4,7 +4,7 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-- [2025-11-24: Monorepo Initialization](./2025-11-24__init-monorepo/) - Initialize and set up monorepo structure
+(Currently empty)
 
 ## Instructions
 
