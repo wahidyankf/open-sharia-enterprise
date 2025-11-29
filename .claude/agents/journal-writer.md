@@ -25,10 +25,30 @@ Your primary job is to help users:
 - **No H1 heading at start**: Do NOT include `# YYYY-MM-DD` (Obsidian displays filename as page title)
 - **Start directly with content**: First line should be a bullet point (not a heading)
 - **Everything uses bullets**: All content uses `-` with **TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
-- **YAML frontmatter exception**: Frontmatter MUST use spaces (2 spaces per level) for Obsidian compatibility
 - **No headings anywhere**: Don't use `#`, `##`, `###`, etc. Use bullet text or bold for topics
 - **Quick capture optimized**: Bullet format enables rapid note-taking and progressive elaboration
 - **Works in Obsidian and Logseq**: Compatible with both tools within the `docs/` Obsidian vault (Logseq requires TAB indentation)
+
+#### CRITICAL: YAML Frontmatter MUST Use Spaces
+
+**YAML frontmatter is the ONLY exception to TAB indentation within `docs/` directory files.**
+
+- **Use 2 spaces per indentation level** (NOT tabs) for ALL nested frontmatter fields
+- **Applies to**: `tags`, list fields, nested objects
+- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces, not tabs
+- **After frontmatter, use TABs**: All content bullets use TAB indentation
+
+#### Code Blocks in Journals
+
+Code blocks in journal entries use language-appropriate indentation (exempt from TAB rule):
+
+- **JavaScript/TypeScript**: 2 spaces
+- **Python**: 4 spaces
+- **YAML**: 2 spaces
+- **Go**: Tabs
+- **JSON**: 2 spaces
+
+Code blocks represent actual source code and follow language conventions, not markdown formatting rules.
 
 ## Journal Structure
 
@@ -325,7 +345,8 @@ Before creating or updating journal entries:
 
 - [ ] **Format compliance**: No H1 heading at start - file begins directly with content
 - [ ] **Bullet structure**: All content uses bullets (`-`) with **TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
-- [ ] **Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (exception to TAB rule)
+- [ ] **CRITICAL - Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (NOT tabs), including ALL nested fields (tags, lists, objects)
+- [ ] **Code blocks use language-appropriate indentation**: JavaScript/TypeScript (2 spaces), Python (4 spaces), YAML (2 spaces), Go (tabs), JSON (2 spaces)
 - [ ] **No headings anywhere**: Do NOT use `#`, `##`, `###`, etc. (Obsidian shows filename as title)
 - [ ] **Correct date and file path**: `docs/journals/YYYY-MM/YYYY-MM-DD.md`
 - [ ] Check for existing entries on the same date

@@ -71,9 +71,20 @@ When running a consistency check, systematically verify:
 ### Frontmatter Consistency
 
 - [ ] All docs have required frontmatter fields (title, description, category, tags, created, updated)
+- [ ] **CRITICAL - Frontmatter indentation**: All YAML frontmatter uses 2 spaces per level (NOT tabs) for ALL nested fields (tags, lists, objects)
 - [ ] Category values match the documented options (tutorial, how-to, reference, explanation)
 - [ ] Category is singular (not plural)
 - [ ] Tags are relevant and properly formatted
+
+### Code Block Indentation Compliance
+
+- [ ] Code blocks in `docs/` use language-appropriate indentation (NOT markdown TABs)
+- [ ] JavaScript/TypeScript code blocks use 2 spaces
+- [ ] Python code blocks use 4 spaces
+- [ ] YAML code blocks use 2 spaces
+- [ ] Go code blocks use tabs
+- [ ] JSON code blocks use 2 spaces
+- [ ] Bash/Shell code blocks use 2 or 4 spaces (consistent within file)
 
 ### CLAUDE.md Alignment
 
@@ -148,12 +159,13 @@ When running a consistency check, systematically verify:
 - [ ] **Monthly summaries have NO heading** - Files start directly with content (no `# summary`)
 - [ ] No headings anywhere in journal files (`#`, `##`, `###`, etc.)
 - [ ] **All content uses bullets (`-`) with TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
+- [ ] **CRITICAL - Journal frontmatter uses spaces**: All YAML frontmatter uses 2 spaces per level (NOT tabs) for ALL nested fields (tags, lists, objects)
 - [ ] First line of journal files is a bullet point (not a heading)
 - [ ] Journal files follow naming pattern: `YYYY-MM/YYYY-MM-DD.md` or `YYYY-MM/summary.md`
 - [ ] Journals use Mermaid for diagrams (inside `docs/` directory)
-- [ ] journal-writer.md agent correctly documents "no heading" requirement and TAB indentation scoped to `docs/` directory
-- [ ] CLAUDE.md correctly describes journals as using "Logseq-style outliner format"
-- [ ] Convention document (ex-co\_\_journals-format.md) clearly states no H1 heading rule and TAB indentation requirement scoped to `docs/` directory (Obsidian vault)
+- [ ] journal-writer.md agent correctly documents "no heading" requirement, TAB indentation scoped to `docs/` directory, and frontmatter spacing rule
+- [ ] CLAUDE.md correctly describes journals as using "Logseq-style outliner format" and explicitly states frontmatter spacing rule
+- [ ] Convention document (ex-co\_\_journals-format.md) clearly states no H1 heading rule, TAB indentation requirement scoped to `docs/` directory (Obsidian vault), and CRITICAL frontmatter spacing exception
 
 ### Special Cases
 

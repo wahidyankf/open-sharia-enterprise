@@ -42,7 +42,8 @@ Before considering documentation complete:
 
 - [ ] File name follows naming convention (correct prefix for location)
 - [ ] **Indentation correct**: Files in `docs/` use TAB indentation for bullets (NOT spaces)
-- [ ] **Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (exception to TAB rule)
+- [ ] **CRITICAL - Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (NOT tabs), including ALL nested fields (tags, lists, objects)
+- [ ] **Code blocks use language-appropriate indentation**: JavaScript/TypeScript (2 spaces), Python (4 spaces), YAML (2 spaces), Go (tabs), JSON (2 spaces)
 - [ ] All code examples have been tested
 - [ ] All file paths verified against actual structure
 - [ ] All internal links verified to exist and use correct relative paths with `.md` extension
@@ -99,10 +100,43 @@ All files in the `docs/` directory (Obsidian vault) MUST use TAB indentation for
 
 - **Required for**: Files in `docs/` directory only (Obsidian vault)
 - **Logseq compatibility**: Logseq requires TABs for proper outliner functionality
-- **YAML frontmatter exception**: Frontmatter MUST use spaces (2 spaces per level) for Obsidian compatibility
 - **Not project-wide**: Files outside `docs/` (root README.md, CLAUDE.md, files in `plans/`) use standard markdown conventions (spaces are fine)
 
+#### CRITICAL: YAML Frontmatter MUST Use Spaces
+
+**YAML frontmatter is the ONLY exception to TAB indentation within `docs/` directory files.**
+
+All YAML frontmatter blocks MUST use **2 spaces per indentation level** (NOT tabs) for Obsidian compatibility:
+
+- **Applies to ALL nested frontmatter fields**: `tags`, list fields, nested objects
+- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces, not tabs
+- **After frontmatter, use TABs**: All content bullets after frontmatter use TAB indentation
+
+```yaml
+✅ CORRECT - Frontmatter uses 2 spaces:
+tags:
+  - primary-topic    # 2 spaces before dash
+  - secondary-topic  # 2 spaces before dash
+
+❌ INCORRECT - Frontmatter uses tabs:
+tags:
+	- primary-topic    # TAB before dash - WRONG!
+```
+
 See [Journals Format Convention](../docs/explanation/conventions/ex-co__journals-format.md) for complete details.
+
+### Code Block Standards
+
+When writing code examples in documentation, use language-appropriate indentation (NOT the TAB indentation rule from markdown bullets):
+
+- **JavaScript/TypeScript**: 2 spaces (project Prettier configuration)
+- **Python**: 4 spaces (PEP 8 standard)
+- **YAML**: 2 spaces (YAML specification)
+- **JSON**: 2 spaces (project standard)
+- **Go**: Tabs (Go language standard)
+- **Bash/Shell**: 2 or 4 spaces (common practice)
+
+**Important**: Code blocks represent actual source code and must follow their language's conventions, not markdown formatting rules. Always test code examples for correctness before publishing.
 
 ### Frontmatter Template
 
@@ -112,14 +146,14 @@ title: Document Title
 description: Brief description for search and context
 category: tutorial # tutorial | how-to | reference | explanation
 tags:
-  - primary-topic
-  - secondary-topic
+  - primary-topic # IMPORTANT: 2 spaces before dash, NOT tab
+  - secondary-topic # IMPORTANT: 2 spaces before dash, NOT tab
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 ```
 
-**Important**: Frontmatter uses 2 spaces for indentation (standard YAML). This is the ONLY exception to TAB indentation within `docs/` directory.
+**CRITICAL**: Frontmatter MUST use 2 spaces for indentation (NOT tabs). This is the ONLY exception to TAB indentation within `docs/` directory. All nested frontmatter fields (tags, lists, objects) must use spaces.
 
 ### Tags
 
