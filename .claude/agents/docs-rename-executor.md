@@ -699,6 +699,7 @@ Proceed anyway? (Please confirm)
 - `docs/explanation/conventions/README.md` - Index of all conventions
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files with hierarchical prefixes (required reading)
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files with GitHub-compatible markdown (required reading)
+- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
 
 **Related Agents:**
 

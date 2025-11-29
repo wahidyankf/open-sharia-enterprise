@@ -1407,6 +1407,7 @@ This agent follows repository conventions defined in:
 **Documentation Conventions:**
 
 - [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) - ASCII art examples and guidance
+- [Emoji Usage Convention](../docs/explanation/conventions/ex-co__emoji-usage.md) - When and where to use emojis
 - [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md) - General naming standards
 - [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) - How to create links
 
