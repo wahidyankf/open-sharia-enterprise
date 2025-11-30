@@ -6,5 +6,24 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 
 ## Ideas List
 
-- Landing page for oseplatform.com
+### Research
+
+- Research about ERP application
+- Research about IAM
+- Research about CIAM
+
+### Infrastructure
+
+- Create IAM (Identity and Access Management) service/module for authentication and authorization
+
+### Development Experience
+
 - Document for CI/CD target of this repository
+- Standardize project's script for this repository
+- Add helper script/cli for @agent-docs-link-checker
+- Document best practices for gherkin
+- Setup specs folder for gherkin files
+
+### Services
+
+- Landing page for oseplatform.com
