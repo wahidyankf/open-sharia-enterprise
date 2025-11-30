@@ -641,6 +641,8 @@ If adding a completely new category of conventions:
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation into four categories
 - `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
+- `docs/explanation/conventions/ex-co__journals-format.md` - Logseq-style outliner format for journals
+- `docs/explanation/conventions/ex-co__timestamp-format.md` - UTC+7 timestamp standards for cache and metadata
 
 **Related Agents:**
 
