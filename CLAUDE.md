@@ -23,9 +23,9 @@ open-sharia-enterprise/
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
 │       ├── agent-maker.md      # Agent creation automation
+│       ├── docs-file-manager.md  # File and directory management (rename, move, delete)
 │       ├── docs-link-checker.md  # Link validation agent
 │       ├── docs-maker.md     # Documentation writer agent
-│       ├── docs-renamer.md       # File and directory renaming
 │       ├── journal-maker.md     # Journal and research notes agent
 │       ├── plan-checker.md      # Plan validation agent
 │       ├── plan-execution-checker.md  # Implementation validation agent
@@ -557,8 +557,8 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 ### Available Agents
 
 - **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
+- **`docs-file-manager.md`** - Expert at managing files and directories in docs/ directory (rename, move, delete operations while maintaining conventions)
 - **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks
-- **`docs-renamer.md`** - Expert at renaming/moving files and directories in docs/ directory
 - **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
 - **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
 - **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification

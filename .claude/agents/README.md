@@ -48,20 +48,21 @@ Validates both external and internal links in documentation files to ensure they
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations)
 
-### 🟨 `docs-renamer.md`
+### 🟨 `docs-file-manager.md`
 
-Expert at renaming/moving files and directories in docs/ directory while maintaining conventions.
+Expert at managing files and directories in docs/ directory. Handles renaming, moving, and deleting operations while maintaining conventions.
 
-- **Primary Use:** Reorganizing documentation structure, renaming directories, or moving files between locations
-- **Specialization:** File/directory renaming, prefix recalculation, link updates, index maintenance, git operations
+- **Primary Use:** Reorganizing documentation structure, renaming directories, moving files, or deleting unused files/directories
+- **Specialization:** File/directory management (rename, move, delete), prefix recalculation, link updates, index maintenance, safe deletion verification, git operations
 - **Tools:** Read, Edit, Glob, Grep, Bash
 - **When to Use:**
   - Renaming directories in docs/ (updates all file prefixes and links)
   - Moving files between directories (recalculates prefixes)
-  - Reorganizing documentation structure with multiple renames/moves
+  - Deleting files or directories (verifies no broken links, updates references)
+  - Reorganizing documentation structure with multiple operations
   - Fixing incorrect file prefixes that don't match directory location
-  - After rename: automatically updates all internal links and indices
-  - Uses git mv to preserve file history
+  - After operations: automatically updates all internal links and indices
+  - Uses git mv and git rm to preserve file history
 
 ### 🟩 `repo-rules-checker.md`
 
@@ -233,7 +234,7 @@ The agents work together in complementary workflows:
         └─> Ensures proper formatting and convention compliance
 
 5. Rename/Move Files (if needed)
-   └─> Use docs-renamer to reorganize documentation
+   └─> Use docs-file-manager to reorganize documentation
         └─> Renames files/directories with git mv
         └─> Recalculates file prefixes based on new location
         └─> Updates all internal links automatically
@@ -259,8 +260,8 @@ The agents work together in complementary workflows:
 - **When creating documentation:** Use `docs-maker` for proper structure
 - **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
-- **When renaming/moving files in docs/:** Use `docs-renamer` to handle prefixes, links, and indices automatically
-- **After using docs-renamer:** Always run `docs-link-checker` to verify all links are valid
+- **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
+- **After using docs-file-manager:** Always run `docs-link-checker` to verify all links are valid
 - **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid
 - **After major documentation updates:** Use `docs-link-checker` to verify link integrity
 

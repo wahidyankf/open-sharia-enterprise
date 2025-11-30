@@ -246,12 +246,12 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                 | Agents                                                  |
-| ------------- | ---------------- | ------------------------------------- | ---------------------------- | ------------------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool             | docs-writer<br>plan-writer<br>journal-writer            |
-| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only (no Write or Edit) | repo-rules-checker<br>plan-checker                      |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-updater<br>docs-renamer<br>docs-link-checker |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-implementor                                        |
+| Color         | Role             | Purpose                               | Tool Pattern                 | Agents                                                       |
+| ------------- | ---------------- | ------------------------------------- | ---------------------------- | ------------------------------------------------------------ |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool             | docs-writer<br>plan-writer<br>journal-writer                 |
+| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only (no Write or Edit) | repo-rules-checker<br>plan-checker                           |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-updater<br>docs-file-manager<br>docs-link-checker |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-implementor                                             |
 
 ### Why This Categorization System
 
@@ -285,7 +285,7 @@ Start: What is the agent's primary capability?
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: repo-rules-updater, docs-renamer, docs-link-checker
+    │       - Examples: repo-rules-updater, docs-file-manager, docs-link-checker
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
