@@ -32,6 +32,11 @@ This directory contains conceptual documentation about information security prac
 
 - [Offensive Security](./ex-in-se__offensive-security.md) - Active security testing, penetration testing, and red team exercises to validate defenses and find vulnerabilities
 
+### 🔧 Security Toolings
+
+- [Security Toolings Index](./toolings/README.md) - Security testing tools and utilities for offensive and defensive security
+  - [Gobuster](./toolings/ex-in-se-to__gobuster.md) - Directory and file brute-forcing tool for web application enumeration
+
 ## 🔗 Related Documentation
 
 - [Development Conventions](../development/README.md) - Development practices and standards
