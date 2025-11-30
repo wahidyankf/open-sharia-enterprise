@@ -25,14 +25,14 @@ open-sharia-enterprise/
 │       ├── agent-maker.md      # Agent creation automation
 │       ├── docs-link-checker.md  # Link validation agent
 │       ├── docs-maker.md     # Documentation writer agent
-│       ├── docs-rename-executor.md       # File and directory renaming
+│       ├── docs-renamer.md       # File and directory renaming
 │       ├── journal-maker.md     # Journal and research notes agent
 │       ├── plan-checker.md      # Plan validation agent
 │       ├── plan-execution-checker.md  # Implementation validation agent
 │       ├── plan-executor.md   # Plan execution agent
 │       ├── plan-maker.md        # Project planning agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
-│       └── repo-rules-update-executor.md  # Rule propagation agent
+│       └── repo-rules-updater.md  # Rule propagation agent
 ├── apps/                      # Deployable applications (Nx monorepo)
 │   ├── README.md             # Apps folder documentation
 │   └── [app-name]/           # Individual applications
@@ -558,7 +558,7 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 
 - **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
 - **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks
-- **`docs-rename-executor.md`** - Expert at renaming/moving files and directories in docs/ directory
+- **`docs-renamer.md`** - Expert at renaming/moving files and directories in docs/ directory
 - **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework
 - **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
 - **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
@@ -566,7 +566,7 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 - **`plan-executor.md`** - Expert at systematically implementing project plans by following delivery checklists
 - **`plan-maker.md`** - Expert at creating structured project planning documents in the plans/ folder
 - **`repo-rules-checker.md`** - Validates consistency between agents, CLAUDE.md, conventions, and documentation
-- **`repo-rules-update-executor.md`** - Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices
+- **`repo-rules-updater.md`** - Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices
 
 See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent descriptions and workflow guidance.
 

@@ -48,7 +48,7 @@ Validates both external and internal links in documentation files to ensure they
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations)
 
-### 🟨 `docs-rename-executor.md`
+### 🟨 `docs-renamer.md`
 
 Expert at renaming/moving files and directories in docs/ directory while maintaining conventions.
 
@@ -77,7 +77,7 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
 
-### 🟨 `repo-rules-update-executor.md`
+### 🟨 `repo-rules-updater.md`
 
 Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
 
@@ -217,7 +217,7 @@ The agents work together in complementary workflows:
 
 ```
 1. Make Changes
-   └─> Use repo-rules-update-executor to propagate across files
+   └─> Use repo-rules-updater to propagate across files
         └─> Ensures consistency in CLAUDE.md, conventions, agents, indices
 
 2. Validate Changes
@@ -225,7 +225,7 @@ The agents work together in complementary workflows:
         └─> Detects inconsistencies, contradictions, duplications
 
 3. Fix Issues (if any)
-   └─> Use repo-rules-update-executor to fix detected issues
+   └─> Use repo-rules-updater to fix detected issues
         └─> Return to step 2 for re-validation
 
 4. Write/Update Documentation
@@ -233,7 +233,7 @@ The agents work together in complementary workflows:
         └─> Ensures proper formatting and convention compliance
 
 5. Rename/Move Files (if needed)
-   └─> Use docs-rename-executor to reorganize documentation
+   └─> Use docs-renamer to reorganize documentation
         └─> Renames files/directories with git mv
         └─> Recalculates file prefixes based on new location
         └─> Updates all internal links automatically
@@ -254,13 +254,13 @@ The agents work together in complementary workflows:
 - **After plan-executor completes:** Use `plan-execution-checker` for independent final validation
 - **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
-- **After adding new conventions:** Use `repo-rules-update-executor` → `repo-rules-checker`
+- **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
 - **When creating documentation:** Use `docs-maker` for proper structure
-- **When modifying CLAUDE.md:** Use `repo-rules-update-executor` to cascade changes
+- **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
-- **When renaming/moving files in docs/:** Use `docs-rename-executor` to handle prefixes, links, and indices automatically
-- **After using docs-rename-executor:** Always run `docs-link-checker` to verify all links are valid
+- **When renaming/moving files in docs/:** Use `docs-renamer` to handle prefixes, links, and indices automatically
+- **After using docs-renamer:** Always run `docs-link-checker` to verify all links are valid
 - **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid
 - **After major documentation updates:** Use `docs-link-checker` to verify link integrity
 
@@ -277,7 +277,7 @@ When creating new agents:
 
 1. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md)
 2. Add the agent to this README index
-3. Use `repo-rules-update-executor` to propagate references to CLAUDE.md and other files
+3. Use `repo-rules-updater` to propagate references to CLAUDE.md and other files
 4. Use `repo-rules-checker` to validate the new agent follows all conventions
 5. Update CLAUDE.md if the agent should be mentioned in project guidance
 
