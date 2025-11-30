@@ -8,6 +8,8 @@ Active project plans currently being worked on.
 
 ## Instructions
 
+**Quick Idea Capture**: For 1-3 liner ideas not ready for formal planning, use `../ideas.md`.
+
 When starting work on a plan:
 
 1. Move the plan folder from `backlog/` to `in-progress/`
