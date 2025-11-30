@@ -18,6 +18,23 @@ Expert at creating new AI agents following all repository conventions.
   - Automatically updating agents README with new agent listing
   - Running validation via repo-rules-checker
 
+### 🟩 `docs-checker.md`
+
+Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information.
+
+- **Primary Use:** Verifying technical claims, checking command syntax, detecting contradictions, or auditing documentation accuracy
+- **Specialization:** Factual accuracy verification, command syntax validation, code example checking, contradiction detection, freshness assessment, web-based verification
+- **Tools:** Read, Glob, Grep, WebFetch, WebSearch
+- **When to Use:**
+  - Validating technical documentation before release
+  - Checking documentation after dependency updates
+  - Reviewing community contributions for accuracy
+  - Auditing documentation for outdated information
+  - Verifying technical claims in tutorials or guides
+  - Ensuring code examples use current APIs
+  - Detecting contradictions across documentation
+  - Checking command syntax and flags are correct
+
 ### 🟦 `docs-maker.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
@@ -245,6 +262,13 @@ The agents work together in complementary workflows:
         └─> Validates all external URLs are accessible
         └─> Validates all internal markdown links exist
         └─> Fixes broken links with working alternatives
+
+7. Validate Documentation Accuracy
+   └─> Use docs-checker to verify factual correctness
+        └─> Validates technical claims against authoritative sources
+        └─> Checks command syntax and code examples
+        └─> Detects contradictions within and across documents
+        └─> Identifies outdated information
 ```
 
 ## ✅ Best Practices
@@ -262,8 +286,11 @@ The agents work together in complementary workflows:
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
 - **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
 - **After using docs-file-manager:** Always run `docs-link-checker` to verify all links are valid
-- **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid
-- **After major documentation updates:** Use `docs-link-checker` to verify link integrity
+- **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid, then `docs-checker` to verify technical accuracy
+- **After major documentation updates:** Use `docs-link-checker` to verify link integrity, then `docs-checker` to validate content accuracy
+- **After dependency updates:** Run `docs-checker` to ensure documentation matches new versions
+- **Before releasing technical docs:** Use `docs-checker` to validate all technical claims and code examples
+- **When reviewing contributions:** Use `docs-checker` to verify factual accuracy of new documentation
 
 ## 📚 Resources
 
