@@ -256,7 +256,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/agent-maker.md`
 - `.claude/agents/docs-link-checker.md`
 - `.claude/agents/docs-maker.md`
-- `.claude/agents/docs-renamer.md`
+- `.claude/agents/docs-file-manager.md`
 - `.claude/agents/journal-maker.md`
 - `.claude/agents/plan-checker.md`
 - `.claude/agents/plan-execution-checker.md`
