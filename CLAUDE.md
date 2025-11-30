@@ -55,8 +55,10 @@ open-sharia-enterprise/
 │   │   ├── README.md         # Explanation index
 │   │   ├── conventions/      # Documentation conventions and standards
 │   │   │   └── README.md     # Conventions index
-│   │   └── development/      # Development conventions and standards
-│   │       └── README.md     # Development index
+│   │   ├── development/      # Development conventions and standards
+│   │   │   └── README.md     # Development index
+│   │   └── information-security/  # Information security concepts
+│   │       └── README.md     # Information security index
 │   ├── journals/             # Daily notes (Obsidian vault)
 │   └── metadata/             # Operational metadata (link cache, validation data)
 ├── plans/                     # Project planning documents
