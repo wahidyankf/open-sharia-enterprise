@@ -1,14 +1,15 @@
 ---
 title: How to Add a New App
-type: how-to
-category: monorepo
+description: Step-by-step guide for creating a new application in the apps/ folder
+category: how-to
 tags:
   - nx
   - monorepo
   - apps
   - typescript
   - nextjs
-date: 2025-11-29
+created: 2025-11-29
+updated: 2025-11-30
 ---
 
 # How to Add a New App

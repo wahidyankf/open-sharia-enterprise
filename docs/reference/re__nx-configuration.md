@@ -1,12 +1,13 @@
 ---
 title: Nx Configuration Reference
-type: reference
-category: monorepo
+description: Complete reference for Nx workspace configuration files, options, and settings
+category: reference
 tags:
   - nx
   - configuration
   - build-system
-date: 2025-11-29
+created: 2025-11-29
+updated: 2025-11-30
 ---
 
 # Nx Configuration Reference
