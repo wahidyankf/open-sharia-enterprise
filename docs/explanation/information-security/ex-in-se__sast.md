@@ -1,3 +1,16 @@
+---
+title: SAST (Static Application Security Testing)
+description: Understanding static security analysis and how it protects applications during development
+category: explanation
+tags:
+  - information-security
+  - sast
+  - security-testing
+  - static-analysis
+created: 2025-11-26
+updated: 2025-11-30
+---
+
 # SAST (Static Application Security Testing)
 
 ## 📋 Overview

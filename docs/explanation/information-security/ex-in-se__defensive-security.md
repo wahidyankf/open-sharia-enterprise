@@ -1,3 +1,15 @@
+---
+title: Defensive Security
+description: Comprehensive guide to protecting systems, networks, and data through defense-in-depth strategies and monitoring
+category: explanation
+tags:
+  - information-security
+  - defensive-security
+  - blue-team
+created: 2025-11-26
+updated: 2025-11-30
+---
+
 # Defensive Security
 
 ## 📋 Overview

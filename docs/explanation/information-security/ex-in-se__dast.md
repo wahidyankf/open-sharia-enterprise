@@ -1,3 +1,16 @@
+---
+title: DAST (Dynamic Application Security Testing)
+description: Understanding dynamic security testing in runtime environments
+category: explanation
+tags:
+  - information-security
+  - dast
+  - security-testing
+  - dynamic-analysis
+created: 2025-11-26
+updated: 2025-11-30
+---
+
 # DAST (Dynamic Application Security Testing)
 
 ## 📋 Overview

@@ -1,3 +1,15 @@
+---
+title: Information Security (InfoSec)
+description: Overview of information security practices, domains, and the CIA triad for protecting digital assets
+category: explanation
+tags:
+  - information-security
+  - infosec
+  - cia-triad
+created: 2025-11-26
+updated: 2025-11-30
+---
+
 # Information Security (InfoSec)
 
 ## 📋 Overview
