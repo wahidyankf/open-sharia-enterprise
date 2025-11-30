@@ -1,3 +1,15 @@
+---
+title: Information Security
+description: Information security concepts and practices for Open Sharia Enterprise
+category: explanation
+tags:
+  - index
+  - information-security
+  - security
+created: 2025-11-26
+updated: 2025-11-30
+---
+
 # Information Security Concepts
 
 This directory contains conceptual documentation about information security practices, tools, and approaches for the Open Sharia Enterprise project.
