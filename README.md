@@ -2,17 +2,22 @@
 
 ✨ An enterprise solutions platform for Sharia-compliant business systems.
 
+🌐 **Website**: [https://oseplatform.com](https://oseplatform.com) (under construction)
+
 > ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
 
 ## 🎯 Motivation
 
-This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems (fintech, ERP, and beyond) that serve communities with specific religious and ethical requirements. As the repository owner, my particular interest lies in building Sharia-compliant fintech solutions for the Indonesian market, which is why Phase 1 prioritizes this focus—but the architecture is designed to scale globally and across enterprise domains. We believe:
+This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems (fintech, ERP, and beyond) that serve communities with specific religious and ethical requirements. We're starting with ERP to establish a solid enterprise foundation that can support diverse business operations, with plans to expand into fintech and other domains. We believe:
 
 - 🕌 **Sharia-compliance as a foundation** should be built into enterprise solutions from the ground up, not bolted on later
 - 🔓 **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
+- 🌐 **Open source by default** - We believe in radical transparency unless it compromises security and/or privacy protection
+- 🤖 **AI-assisted development, not vibe-coding** - We leverage AI tools systematically to enhance productivity and code quality, not as a substitute for thoughtful engineering
 - 🤝 **Community collaboration** can accelerate the development of accessible and culturally sensitive business tools
 - 💡 **Innovation** across enterprise domains (financial services, supply chain, HR, and more) should be driven by open standards and shared knowledge
 - 🛡️ **Governance and security from day one** are essential for enterprise solutions - good governance and sound security practices must be architectural foundations, not afterthoughts
+- 🎯 **Production ready from beta** - Every feature follows clear quality stages: Alpha (experimental, not production ready), Beta (production ready: secure, scalable, documented), Stable (battle-tested, proven in production)
 
 🚀 Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
@@ -32,26 +37,34 @@ This project is open-source and licensed under the **MIT License**. This means y
 
 This project is being developed with a **phased approach** to establish strong Sharia-compliance foundations and gradually expand enterprise capabilities:
 
-### 🇮🇩 Phase 1: Indonesian Fintech Foundation
+### 📊 Phase 1: ERP Foundation
 
-As the repository owner is based in Indonesia, the initial implementation will establish core Sharia-compliance and fintech capabilities with Indonesian regulatory alignment:
+Building a solid enterprise foundation with ERP capabilities to support core business operations:
 
 - 🕌 **Sharia Compliance Framework** - Core architecture for Sharia-compliant business logic
+- 📋 **Accounting & Finance** - Sharia-compliant financial management and reporting
+- 🔗 **Supply Chain Management** - Halal-compliant supply chain tracking and operations
+- 👥 **HR & Payroll** - Sharia-compliant workforce management
+- 📊 **Core ERP Modules** - Foundation for enterprise resource planning
+
+### 🇮🇩 Phase 2: Indonesian Fintech Integration
+
+Expand into fintech capabilities with Indonesian regulatory alignment:
+
 - 🏦 **OJK (Otoritas Jasa Keuangan)** Sharia banking regulations compliance
 - 📋 **DSN-MUI (Dewan Syariah Nasional - Majelis Ulama Indonesia)** guidelines integration
 - 📚 **Indonesian fintech standards** and best practices
 - 💳 **Fintech domain implementation** (payments, lending, banking services)
 
-### 🌐 Phase 2: Multi-Domain Enterprise Solutions
+### 🌐 Phase 3: Multi-Domain Enterprise Solutions
 
-Once the Sharia-compliance foundation is solid, expand to support diverse enterprise solutions:
+Extend to support additional enterprise solutions and domains:
 
-- 📊 **ERP systems** - Enterprise Resource Planning with Sharia-compliant accounting and operations
-- 🔗 **Supply chain management** - Halal-compliant supply chain tracking
-- 👥 **HR & payroll systems** - Sharia-compliant workforce management
+- 🏪 **Retail & E-commerce** - Sharia-compliant sales and inventory systems
+- 🏭 **Manufacturing** - Production planning and management
 - 🎯 **Other enterprise domains** - Extending the framework to additional business solutions
 
-### 🌍 Phase 3: Global Expansion
+### 🌍 Phase 4: Global Expansion
 
 Extend the platform to support multiple jurisdictions and regions:
 
@@ -62,13 +75,13 @@ Extend the platform to support multiple jurisdictions and regions:
 
 ### 💭 Why This Approach?
 
-- 🏗️ **Strong foundation first** - Establishing robust Sharia-compliance principles from the start
-- 🔍 **Deep local understanding** ensures implementation quality and trust
+- 🏗️ **ERP as foundation** - Enterprise Resource Planning provides the core infrastructure for all business operations
+- 🕌 **Sharia-compliance from day one** - Establishing robust compliance principles from the start
 - 📈 **Scalable architecture** - Standards-based design enables extension to new domains and regions
-- 👂 **Community feedback** from local users helps refine the solution
+- 🔄 **Reusable components** - ERP foundation supports fintech and other domains
 - ⚖️ **Gradual expansion** reduces complexity while ensuring quality
 
-### 🤝 Contributing
+## 🤝 Contributing
 
 🔒 **Contributions are currently closed** until the project patterns and architecture are stable enough to accept external contributions. This ensures we maintain code quality and regulatory compliance as we build the foundation.
 
@@ -302,7 +315,7 @@ You can also view the documentation directly on GitHub or in any markdown viewer
 
 ## 📜 License
 
-📖 MIT
+This project is licensed under the **MIT License** - see the [Freedom to Use](#-freedom-to-use) section for details on what you can do with this code.
 
 ## 🚧 Project Status
 
