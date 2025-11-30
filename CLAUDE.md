@@ -540,6 +540,7 @@ All documentation organized into four categories (Tutorials, How-To, Reference, 
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](./docs/explanation/conventions/ex-co__diataxis-framework.md)
 - **Journals Format Guide:** [`docs/explanation/conventions/ex-co__journals-format.md`](./docs/explanation/conventions/ex-co__journals-format.md)
 - **Emoji Usage Guide:** [`docs/explanation/conventions/ex-co__emoji-usage.md`](./docs/explanation/conventions/ex-co__emoji-usage.md)
+- **Timestamp Format Guide:** [`docs/explanation/conventions/ex-co__timestamp-format.md`](./docs/explanation/conventions/ex-co__timestamp-format.md)
 
 ## AI Agent Standards
 

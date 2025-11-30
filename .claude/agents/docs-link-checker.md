@@ -320,7 +320,7 @@ Follow this systematic approach:
    - Include usedIn data (file paths only) for all links (needed for maintenance)
    - Sort links by URL for consistent git diffs
    - Use 2-space YAML indentation
-   - **All timestamps must use UTC+7 (Indonesian time)** format with +07:00 offset
+   - **All timestamps must use UTC+7 (Indonesian time)** format with +07:00 offset (see [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md))
 
 2. **Cache should contain:**
    - Only verified working links (200, 301, 302)
