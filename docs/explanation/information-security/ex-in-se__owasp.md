@@ -1,3 +1,15 @@
+---
+title: OWASP (Open Worldwide Application Security Project)
+description: Community-driven security resources, standards, and tools including the OWASP Top 10 and security testing guides
+category: explanation
+tags:
+  - information-security
+  - owasp
+  - security-standards
+created: 2025-11-26
+updated: 2025-11-30
+---
+
 # OWASP (Open Worldwide Application Security Project)
 
 ## 📋 Overview

@@ -1,3 +1,16 @@
+---
+title: Offensive Security
+description: Active security testing, penetration testing, and red team exercises to validate defenses and find vulnerabilities
+category: explanation
+tags:
+  - information-security
+  - offensive-security
+  - red-team
+  - penetration-testing
+created: 2025-11-26
+updated: 2025-11-30
+---
+
 # Offensive Security
 
 ## 📋 Overview
