@@ -14,7 +14,7 @@ updated: 2025-11-30
 
 ## 📋 Overview
 
-**OWASP** is a nonprofit foundation and global community dedicated to improving application security. Founded in 2001, OWASP operates as an open-source, vendor-neutral organization where security professionals, developers, and organizations collaborate to create free resources for building, maintaining, and improving the security of software applications.
+**OWASP** is a nonprofit foundation and global community dedicated to improving application security. Started by Mark Curphey on September 9, 2001 as an informal open source community, OWASP was formally established as the OWASP Foundation, Inc. on April 21, 2004 as a 501(c)(3) nonprofit organization. OWASP operates as an open-source, vendor-neutral organization where security professionals, developers, and organizations collaborate to create free resources for building, maintaining, and improving the security of software applications.
 
 OWASP is not a company or a product, but rather a collaborative platform where security knowledge is shared freely and transparently. The organization is driven by thousands of volunteers worldwide who contribute their expertise to create tools, documentation, testing guides, and training materials that help the entire software development industry build more secure applications.
 
@@ -89,24 +89,29 @@ The **OWASP Top 10** is the most widely recognized web application security stan
 
 ### 2025 OWASP Top 10 Updates
 
+The OWASP Top 10:2025 RC1 (Release Candidate 1) was announced on November 6, 2025 at the Global AppSec Conference. The final version is expected after community feedback period ends on November 20, 2025.
+
 The 2025 edition includes significant changes reflecting current threats:
 
-1. **A01:2025 Broken Access Control** - Users exceeding privileges they should have
-2. **A02:2025 Cryptographic Failures** - Exposure of sensitive data due to weak encryption
-3. **A03:2025 Software Supply Chain Failures** - Vulnerabilities in dependencies and third-party code
-4. **A04:2025 Injection** - Untrusted data injection into interpreters
-5. **A05:2025 Insecure Design** - Missing security controls in architecture
-6. **A06:2025 Security Misconfiguration** - Insecure default configurations
-7. **A07:2025 Vulnerable and Outdated Components** - Using libraries with known vulnerabilities
-8. **A08:2025 Identification and Authentication Failures** - Weaknesses in identity verification
-9. **A09:2025 Software and Data Integrity Failures** - Integrity of code and data not verified
-10. **A10:2025 Mishandling of Exceptional Conditions** - Errors revealing sensitive information
+1. **A01:2025 Broken Access Control** - Maintains position at #1. Users exceeding privileges they should have
+2. **A02:2025 Security Misconfiguration** - Moved up from #5 in 2021. Insecure default configurations and settings
+3. **A03:2025 Software Supply Chain Failures** - New category in 2025. Vulnerabilities in dependencies and third-party code
+4. **A04:2025 Cryptographic Failures** - Exposure of sensitive data due to weak encryption
+5. **A05:2025 Injection** - Untrusted data injection into interpreters (SQL, NoSQL, OS commands)
+6. **A06:2025 Insecure Design** - Missing security controls in architecture and design phase
+7. **A07:2025 Authentication Failures** - Renamed from "Identification and Authentication Failures". Weaknesses in identity verification
+8. **A08:2025 Software and Data Integrity Failures** - Integrity of code and data not verified
+9. **A09:2025 Logging and Alerting Failures** - Renamed from "Security Logging and Monitoring Failures". Insufficient logging and monitoring
+10. **A10:2025 Unsafe Error Handling** - New category replacing SSRF (merged into A01). Errors revealing sensitive information
 
 ### Notable 2025 Changes
 
-- **Supply Chain Failures (New)** - Reflects increased importance of dependency security
-- **Exceptional Conditions (New)** - Emphasis on error handling and information disclosure
-- **Regulatory Alignment** - Better alignment with international compliance frameworks
+- **A03: Software Supply Chain Failures (New)** - New category reflecting increased importance of dependency security and third-party code vulnerabilities
+- **A10: Unsafe Error Handling (New)** - New category emphasizing proper error handling and preventing information disclosure through error messages
+- **A02: Security Misconfiguration** - Moved up from #5 to #2, highlighting critical importance of secure configurations
+- **A07: Authentication Failures** - Renamed from "Identification and Authentication Failures" for clarity
+- **A09: Logging and Alerting Failures** - Renamed from "Security Logging and Monitoring Failures" to emphasize active alerting
+- **SSRF Merged** - Server-Side Request Forgery merged into A01: Broken Access Control
 
 For detailed vulnerability explanations, see [Information Security Overview](./ex-in-se__infosec.md).
 

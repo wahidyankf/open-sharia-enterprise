@@ -135,26 +135,36 @@ Financial applications are high-value targets for:
 
 ## The InfoSec Lifecycle
 
-Information security is not a one-time activity but a continuous process:
+Information security is not a one-time activity but a continuous process. This lifecycle follows the **NIST Cybersecurity Framework 2.0** (released February 2024):
 
 ```mermaid
 graph TD
-    A["1️⃣ IDENTIFY<br/>Assets, risks,<br/>vulnerabilities"] --> B["2️⃣ PROTECT<br/>Access controls,<br/>encryption, etc."]
-    B --> C["3️⃣ DETECT<br/>Monitoring,<br/>alerting"]
-    C --> D["4️⃣ ANALYZE<br/>Determine root<br/>cause"]
+    A["1️⃣ GOVERN<br/>Policies, risk mgmt,<br/>oversight"] --> B["2️⃣ IDENTIFY<br/>Assets, risks,<br/>vulnerabilities"]
+    B --> C["3️⃣ PROTECT<br/>Access controls,<br/>encryption, etc."]
+    C --> D["4️⃣ DETECT<br/>Monitoring,<br/>alerting"]
     D --> E["5️⃣ RESPOND<br/>Incident response,<br/>containment"]
     E --> F["6️⃣ RECOVER<br/>Restore data,<br/>resume ops"]
     F -.-> A
 
-    style A fill:#e1f5ff
-    style B fill:#f3e5f5
-    style C fill:#fff3e0
-    style D fill:#fce4ec
+    style A fill:#e8f5e9
+    style B fill:#e1f5ff
+    style C fill:#f3e5f5
+    style D fill:#fff3e0
     style E fill:#f1f8e9
     style F fill:#e0f2f1
 ```
 
-### 1. Identify
+### 1. Govern
+
+Establish and maintain organizational security governance:
+
+- Define security policies and procedures
+- Manage cybersecurity risk
+- Provide oversight and accountability
+- Align security with business objectives
+- Establish security roles and responsibilities
+
+### 2. Identify
 
 Understand what needs protection:
 
@@ -163,7 +173,7 @@ Understand what needs protection:
 - Assess risk levels
 - Define security requirements
 
-### 2. Protect
+### 3. Protect
 
 Implement preventive controls:
 
@@ -173,7 +183,7 @@ Implement preventive controls:
 - Apply secure coding practices
 - Harden infrastructure
 
-### 3. Detect
+### 4. Detect
 
 Monitor for security issues:
 
@@ -182,16 +192,6 @@ Monitor for security issues:
 - Track security events
 - Alert on suspicious activity
 - Continuously scan for vulnerabilities
-
-### 4. Analyze
-
-Investigate detected issues:
-
-- Determine if alerts indicate real threats
-- Assess severity and impact
-- Identify root causes
-- Understand attack patterns
-- Learn from incidents
 
 ### 5. Respond
 
@@ -288,18 +288,20 @@ graph TD
 
 ## Common Vulnerabilities (OWASP Top 10)
 
-The [OWASP Top 10](https://owasp.org/www-project-top-ten/) represents the most critical security risks for web applications:
+The [OWASP Top 10:2025](https://owasp.org/Top10/) represents the most critical security risks for web applications. The 2025 RC1 (Release Candidate) was announced on November 6, 2025:
 
-1. **Injection** - SQL, OS command, LDAP injection attacks
-2. **Broken Authentication** - Weak authentication mechanisms
-3. **Sensitive Data Exposure** - Unencrypted or improperly protected data
-4. **XML External Entities (XXE)** - XML parser vulnerabilities
-5. **Broken Access Control** - Users accessing resources they shouldn't
-6. **Security Misconfiguration** - Insecure default settings
-7. **Cross-Site Scripting (XSS)** - Malicious script injection in web pages
-8. **Insecure Deserialization** - Untrusted object deserialization
-9. **Using Components with Known Vulnerabilities** - Outdated dependencies
-10. **Insufficient Logging & Monitoring** - Inability to detect attacks
+1. **A01:2025 Broken Access Control** - Users exceeding privileges they should have
+2. **A02:2025 Security Misconfiguration** - Insecure default configurations and settings
+3. **A03:2025 Software Supply Chain Failures** - Vulnerabilities in dependencies and third-party code
+4. **A04:2025 Cryptographic Failures** - Exposure of sensitive data due to weak encryption
+5. **A05:2025 Injection** - Untrusted data injection into interpreters (SQL, NoSQL, OS commands)
+6. **A06:2025 Insecure Design** - Missing security controls in architecture and design phase
+7. **A07:2025 Authentication Failures** - Weaknesses in identity verification mechanisms
+8. **A08:2025 Software and Data Integrity Failures** - Integrity of code and data not verified
+9. **A09:2025 Logging and Alerting Failures** - Insufficient logging and monitoring capabilities
+10. **A10:2025 Unsafe Error Handling** - Errors revealing sensitive information or system details
+
+For detailed OWASP information and 2025 changes, see [OWASP Documentation](./ex-in-se__owasp.md).
 
 ## InfoSec for Open Sharia Enterprise
 
