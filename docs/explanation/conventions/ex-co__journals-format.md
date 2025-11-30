@@ -865,6 +865,7 @@ Before committing journal entries:
 - [Diagram Convention](./ex-co__diagrams.md) - When to use Mermaid vs ASCII art
 - [File Naming Convention](./ex-co__file-naming-convention.md) - File naming rules (journals are exempt from prefix system)
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - How formal documentation is organized (separate from journals)
+- [Timestamp Format Convention](./ex-co__timestamp-format.md) - UTC+7 timestamp standards for cache and metadata files
 - [Conventions Index](./README.md) - Overview of all conventions
 
 ## 🌐 External Resources
