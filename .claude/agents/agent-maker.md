@@ -64,7 +64,7 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 
 1. **Maker** - Creates new files/content from scratch (e.g., docs-maker, plan-maker)
 2. **Checker** - Validates without modifying; read-only operations (e.g., repo-rules-checker)
-3. **Executor** - Modifies, propagates, or executes existing content (e.g., repo-rules-update-executor, plan-executor)
+3. **Executor** - Modifies, propagates, or executes existing content (e.g., repo-rules-updater, plan-executor)
 
 **Validation (Auto-Assignment Based on Role)**:
 
@@ -412,5 +412,5 @@ An agent is successfully created when:
 
 - `docs-maker.md` - Example of blue (maker) agent
 - `repo-rules-checker.md` - Example of green (checker) agent, also handles validation
-- `repo-rules-update-executor.md` - Example of yellow (executor) agent
+- `repo-rules-updater.md` - Example of yellow (executor) agent
 - `plan-executor.md` - Example of purple (executor) agent

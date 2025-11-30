@@ -256,14 +256,14 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/agent-maker.md`
 - `.claude/agents/docs-link-checker.md`
 - `.claude/agents/docs-maker.md`
-- `.claude/agents/docs-rename-executor.md`
+- `.claude/agents/docs-renamer.md`
 - `.claude/agents/journal-maker.md`
 - `.claude/agents/plan-checker.md`
 - `.claude/agents/plan-execution-checker.md`
 - `.claude/agents/plan-executor.md`
 - `.claude/agents/plan-maker.md`
 - `.claude/agents/repo-rules-checker.md` (this file)
-- `.claude/agents/repo-rules-update-executor.md`
+- `.claude/agents/repo-rules-updater.md`
 
 ### Convention Documents
 
@@ -348,4 +348,4 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Related Agents:**
 
 - `docs-maker.md` - Creates and edits documentation (this agent validates its output)
-- `repo-rules-update-executor.md` - Propagates rule changes (this agent validates the results)
+- `repo-rules-updater.md` - Propagates rule changes (this agent validates the results)
