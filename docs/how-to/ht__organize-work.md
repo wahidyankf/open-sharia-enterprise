@@ -76,10 +76,14 @@ flowchart TD
 **Key Characteristics:**
 
 - **Lifecycle:** Temporary, moves between states, archived when done
-- **Structure:** Three states (backlog, in-progress, done)
+- **Structure:** Three states (backlog, in-progress, done) plus ideas.md for quick captures
 - **File Naming:** NO prefixes inside plan folders; folder names use `YYYY-MM-DD__[identifier]`
 - **Diagram Format:** ASCII art (outside Obsidian vault)
 - **Audience:** Project team, stakeholders tracking progress
+
+**Root Level:**
+
+- `ideas.md` - Quick 1-3 liner ideas not yet formalized into plans
 
 **Subfolders:**
 
@@ -87,7 +91,7 @@ flowchart TD
 - `in-progress/` - Active projects being worked on
 - `done/` - Completed and archived projects
 
-**Standard Plan Files:**
+**Standard Plan Files (inside plan folders):**
 
 - `README.md` - Plan overview
 - `requirements.md` - Requirements and objectives
@@ -135,14 +139,18 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 
 ### Use plans/ when you're:
 
-✅ **Planning a feature** - Structured project with requirements and timeline
+✅ **Capturing quick ideas** - 1-3 liner todos for potential projects → `plans/ideas.md`
+✅ **Planning a feature** - Structured project with requirements and timeline → `plans/backlog/`
 ✅ **Organizing a sprint** - Time-boxed work with deliverables
 ✅ **Designing a system** - Technical planning with architecture decisions
 ✅ **Tracking a project** - Work that moves through stages (backlog → in-progress → done)
 ✅ **Creating specifications** - Detailed requirements for implementation
 ✅ **Managing initiatives** - Strategic projects with clear outcomes
 
-**Example:** "I want to plan the monorepo migration" → `plans/backlog/2025-11-24__init-monorepo/`
+**Examples:**
+
+- "Quick idea: Add OAuth2 authentication" → `plans/ideas.md`
+- "I want to plan the monorepo migration" → `plans/backlog/2025-11-24__init-monorepo/`
 
 ### Use docs/ when you're:
 
@@ -157,7 +165,54 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 
 ## Common Workflows
 
-### Workflow 1: Brandstorm → Project Plan
+### Workflow 1: Quick Idea → Project Plan
+
+**Scenario:** You have a quick idea for a feature but aren't ready for full planning yet.
+
+**Steps:**
+
+1. **Capture in plans/ideas.md** (Quick Capture Phase)
+
+   ```markdown
+   # Ideas
+
+   - Add real-time notification system using WebSockets
+   - Create admin dashboard for user management
+   ```
+
+   - One-liner or short description
+   - No structure needed
+   - Fast capture
+
+2. **Promote to plans/backlog/** (When Ready for Planning)
+
+   When the idea is ready for formal planning:
+
+   ```
+   plans/backlog/2025-11-25__notification-system/
+   ├── README.md
+   ├── requirements.md
+   ├── tech-docs.md
+   └── delivery.md
+   ```
+
+   - Create full plan structure
+   - Define requirements and deliverables
+   - Remove or check off the idea from ideas.md
+
+3. **Move to in-progress/** (Execution Phase)
+
+   ```
+   mv plans/backlog/2025-11-25__notification-system/ plans/in-progress/
+   ```
+
+4. **Complete and archive**
+
+   ```
+   mv plans/in-progress/2025-11-25__notification-system/ plans/done/
+   ```
+
+### Workflow 2: Brandstorm → Project Plan
 
 **Scenario:** You want to develop your brand identity.
 
@@ -393,6 +448,7 @@ This project is complete. See the following documentation:
 | ------------------------------------------ | -------------------- | ----------------------------------------------- |
 | Daily scratch work                         | `journals/`          | Meeting notes, daily logs                       |
 | Brainstorming ideas                        | `journals/`          | Brand identity brainstorm                       |
+| Quick project ideas (1-3 liners)           | `plans/ideas.md`     | "Add OAuth2 authentication"                     |
 | Planning a feature                         | `plans/backlog/`     | `2025-11-24__auth-system/`                      |
 | Working on a project                       | `plans/in-progress/` | Move from backlog when starting                 |
 | Archiving completed project                | `plans/done/`        | Move from in-progress when done                 |

@@ -371,10 +371,30 @@ Project planning documents are organized in the `plans/` folder at the repositor
 
 ```
 plans/
+├── ideas.md         # Quick 1-3 liner ideas not yet formalized into plans
 ├── in-progress/      # Active plans currently being worked on
 ├── backlog/         # Planned projects for future implementation
 └── done/            # Completed and archived plans
 ```
+
+### Ideas File
+
+**Location**: `plans/ideas.md` (root level of plans/ folder)
+
+**Purpose**: Capture quick ideas and todos that haven't been formalized into full plan documents yet.
+
+**Format**:
+
+- Simple markdown file with bullet points or numbered lists
+- Each idea should be 1-3 lines maximum
+- No formal plan structure required
+
+**How it differs from backlog/**:
+
+- `ideas.md` contains 1-3 liner quick captures
+- `backlog/` contains full plan folders with structured requirements, tech-docs, and delivery files
+
+**Promoting an idea to a plan**: When ready, create a plan folder in `backlog/` with the standard structure and remove the idea from `ideas.md`.
 
 ### Plan Folder Naming
 
