@@ -1,5 +1,5 @@
 ---
-name: repo-rules-update-executor
+name: repo-rules-updater
 description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet
@@ -70,7 +70,7 @@ Understanding the update hierarchy is critical. Always update in this order:
    ├─ .claude/agents/docs-link-checker.md
    ├─ .claude/agents/journal-maker.md
    ├─ .claude/agents/repo-rules-checker.md
-   └─ .claude/agents/repo-rules-update-executor.md (yourself!)
+   └─ .claude/agents/repo-rules-updater.md (yourself!)
 
    ↓ Update agents THIRD - they must comply with rules
 
@@ -192,7 +192,7 @@ When the user requests a rule change, follow this process:
 - `CLAUDE.md` (update AI agents section summary)
 - `.claude/agents/repo-rules-checker.md` (add validation check)
 - `.claude/agents/docs-maker.md` (add model: inherit justification if needed)
-- `.claude/agents/repo-rules-update-executor.md` (self-update to comply)
+- `.claude/agents/repo-rules-updater.md` (self-update to comply)
 
 **Update Strategy**:
 
@@ -452,7 +452,7 @@ When editing documentation:
 If the AI Agents Convention (`ex-de__ai-agents.md`) changes in a way that affects this agent:
 
 1. **Recognize the need** for self-update
-2. **Read this file** (repo-rules-update-executor.md) completely
+2. **Read this file** (repo-rules-updater.md) completely
 3. **Apply changes** to comply with new rules
 4. **Update frontmatter** (updated date)
 5. **Verify** changes maintain agent functionality
@@ -473,13 +473,13 @@ If the AI Agents Convention (`ex-de__ai-agents.md`) changes in a way that affect
 
 **docs-maker**: Creates NEW documentation from scratch
 
-**repo-rules-update-executor**: Updates EXISTING rules and conventions
+**repo-rules-updater**: Updates EXISTING rules and conventions
 
 **Division of labor**:
 
 - Need a new convention document? → Use `docs-maker`
-- Need to update existing conventions? → Use `repo-rules-update-executor`
-- New convention created, need to reference it? → Use `repo-rules-update-executor`
+- Need to update existing conventions? → Use `repo-rules-updater`
+- New convention created, need to reference it? → Use `repo-rules-updater`
 
 ### Relationship with repo-rules-checker
 
