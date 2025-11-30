@@ -1,13 +1,14 @@
 ---
 title: How to Add a New Library
-type: how-to
-category: monorepo
+description: Step-by-step guide for creating a new reusable library in the libs/ folder
+category: how-to
 tags:
   - nx
   - monorepo
   - libraries
   - typescript
-date: 2025-11-29
+created: 2025-11-29
+updated: 2025-11-30
 ---
 
 # How to Add a New Library

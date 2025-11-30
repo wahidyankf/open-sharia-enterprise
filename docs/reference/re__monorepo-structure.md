@@ -1,13 +1,14 @@
 ---
 title: Monorepo Structure Reference
-type: reference
-category: monorepo
+description: Complete reference for the Nx monorepo structure, folder organization, and file formats
+category: reference
 tags:
   - nx
   - monorepo
   - architecture
   - structure
-date: 2025-11-29
+created: 2025-11-29
+updated: 2025-11-30
 ---
 
 # Monorepo Structure Reference

@@ -1,13 +1,14 @@
 ---
 title: How to Run Nx Commands
-type: how-to
-category: monorepo
+description: Common Nx workflows and commands for working with the monorepo
+category: how-to
 tags:
   - nx
   - monorepo
   - commands
   - workflows
-date: 2025-11-29
+created: 2025-11-29
+updated: 2025-11-30
 ---
 
 # How to Run Nx Commands
