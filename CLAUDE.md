@@ -554,6 +554,10 @@ Selective use of semantic emojis to enhance document scannability. See [Emoji Us
 
 All documentation organized into four categories (Tutorials, How-To, Reference, Explanation). See [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) for complete details.
 
+### Timestamp Format Convention
+
+All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** with ISO 8601 format: `YYYY-MM-DDTHH:MM:SS+07:00`. This applies to cache files, metadata files, logs, and documentation frontmatter. Exceptions include Git commits (uses Git's own format), external APIs requiring UTC, user-facing timestamps (use user's timezone), and database timestamps (follow database conventions). See [Timestamp Format Convention](./docs/explanation/conventions/ex-co__timestamp-format.md) for complete details.
+
 ### Key Resources
 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
@@ -587,7 +591,7 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 - **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
 - **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
 - **`plan-execution-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
-- **`plan-executor.md`** - Expert at systematically implementing project plans by following delivery checklists
+- **`plan-executor.md`** - Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes
 - **`plan-maker.md`** - Expert at creating structured project planning documents in the plans/ folder
 - **`repo-rules-checker.md`** - Validates consistency between agents, CLAUDE.md, conventions, and documentation
 - **`repo-rules-updater.md`** - Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices
