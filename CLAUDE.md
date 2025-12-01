@@ -581,6 +581,15 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 
+### Temporary Files for AI Agents
+
+AI agents creating temporary uncommitted files must use designated directories to prevent repository clutter:
+
+- **`generated-reports/`** - For validation, audit, and check reports (report-generating agents)
+- **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
+
+These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/conventions/ex-co__temporary-files.md) for complete details on naming patterns, use cases, and when to use each directory.
+
 ### Available Agents
 
 - **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
