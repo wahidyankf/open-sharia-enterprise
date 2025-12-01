@@ -226,7 +226,7 @@ Analyze source code for vulnerabilities during development:
 - No false positives from unexecuted code
 - Find exact code locations to fix
 
-**Learn more**: [SAST Explanation](./ex-in-se__sast.md)
+**Learn more**: [SAST Explanation](./ex-inse__sast.md)
 
 ### Dynamic Application Security Testing (DAST)
 
@@ -237,7 +237,7 @@ Test running applications for real-world vulnerabilities:
 - Confirm vulnerabilities are truly exploitable
 - Find configuration and deployment issues
 
-**Learn more**: [DAST Explanation](./ex-in-se__dast.md)
+**Learn more**: [DAST Explanation](./ex-inse__dast.md)
 
 ### Complementary Testing
 
@@ -301,7 +301,7 @@ The [OWASP Top 10:2025](https://owasp.org/Top10/) represents the most critical s
 9. **A09:2025 Logging and Alerting Failures** - Insufficient logging and monitoring capabilities
 10. **A10:2025 Unsafe Error Handling** - Errors revealing sensitive information or system details
 
-For detailed OWASP information and 2025 changes, see [OWASP Documentation](./ex-in-se__owasp.md).
+For detailed OWASP information and 2025 changes, see [OWASP Documentation](./ex-inse__owasp.md).
 
 ## InfoSec for Open Sharia Enterprise
 
@@ -326,8 +326,8 @@ As we build the Open Sharia Enterprise platform, our security strategy focuses o
 
 ## Related Documentation
 
-- [SAST (Static Application Security Testing)](./ex-in-se__sast.md)
-- [DAST (Dynamic Application Security Testing)](./ex-in-se__dast.md)
+- [SAST (Static Application Security Testing)](./ex-inse__sast.md)
+- [DAST (Dynamic Application Security Testing)](./ex-inse__dast.md)
 - [Information Security Index](./README.md)
 - [Development Conventions](../development/README.md)
 

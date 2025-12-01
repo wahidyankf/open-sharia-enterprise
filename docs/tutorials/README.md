@@ -21,20 +21,27 @@ Learning-oriented guides for the open-sharia-enterprise project. These documents
 Quick-start guides for learning programming languages and technologies:
 
 - [**Crash Courses Index**](./crash-courses/README.md) - All available crash courses
-  - [Golang Crash Course](./crash-courses/tu-cr__golang.md) - Learn Go language mechanics
+  - [Golang Crash Course](./crash-courses/tu-crco__golang.md) - Learn Go language mechanics
 
 ### 🍳 Cookbooks
 
 Practical recipes and patterns for solving real-world programming problems:
 
 - [**Cookbooks Index**](./cookbooks/README.md) - All available cookbooks
-  - [Golang Cookbook](./cookbooks/tu-cb__golang.md) - Practical Go patterns and recipes
+  - [Golang Cookbook](./cookbooks/tu-co__golang.md) - Practical Go patterns and recipes
 
 ### 🏗️ System Design
 
 Real-world system design study cases and architectural tutorials:
 
 - [**System Design Index**](./system-design/README.md) - All available system design study cases
+
+### 🤖 AI Engineering
+
+Learning-oriented guides for building AI and machine learning systems:
+
+- [**AI Engineering Index**](./ai-engineering/README.md) - All available AI engineering tutorials
+  - [Chat with PDF](./ai-engineering/tu-aien__chat-with-pdf.md) - Understanding how PDF chat applications work
 
 ---
 

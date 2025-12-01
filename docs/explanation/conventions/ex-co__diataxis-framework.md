@@ -84,8 +84,8 @@ Each category serves a different purpose and addresses different user needs.
 **In our project**:
 
 - Location: `docs/how-to/`
-- Prefix: `ht__`
-- Examples: `ht__configure-api.md`, `ht__deploy-docker.md`
+- Prefix: `hoto__`
+- Examples: `hoto__configure-api.md`, `hoto__deploy-docker.md`
 
 ### Reference (Information-Oriented)
 
@@ -173,7 +173,7 @@ docs/
 ├── tutorials/                                # tu__ prefix - Learning-oriented
 │   ├── README.md                            # Category index
 │   └── ...
-├── how-to/                                   # ht__ prefix - Problem-oriented
+├── how-to/                                   # hoto__ prefix - Problem-oriented
 │   ├── README.md                            # Category index
 │   └── ...
 ├── reference/                                # re__ prefix - Information-oriented
@@ -204,7 +204,7 @@ This is intentional and follows standard documentation naming conventions. See t
 Each category has a unique prefix that encodes the Diátaxis category:
 
 - `tu__` = Tutorials
-- `ht__` = How-To
+- `hoto__` = How-To
 - `re__` = Reference
 - `ex__` = Explanation
 
@@ -311,7 +311,7 @@ Start here
 
 ### How-To Example: Configure API
 
-**Location**: `docs/how-to/ht__configure-api.md`
+**Location**: `docs/how-to/hoto__configure-api.md`
 
 **Structure**:
 

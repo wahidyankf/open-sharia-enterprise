@@ -68,7 +68,7 @@ Study cases should be:
 
 ## 📚 Available Study Cases
 
-- [**AI-Powered Personal Finance Advisor**](./tu-sd__ai-personal-finance-advisor.md) - Design a system where users upload payment receipts and receive AI-generated financial insights, spending patterns, and budget recommendations
+- [**AI-Powered Personal Finance Advisor**](./tu-syde__ai-personal-finance-advisor.md) - Design a system where users upload payment receipts and receive AI-generated financial insights, spending patterns, and budget recommendations
 
 ## 🏗️ Structure of a Study Case
 

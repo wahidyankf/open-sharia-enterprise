@@ -473,7 +473,7 @@ nx graph --file=graph.json | jq '.dependencies'
 
 ## Related Documentation
 
-- [Add New App](./ht__add-new-app.md)
-- [Add New Library](./ht__add-new-lib.md)
+- [Add New App](./hoto__add-new-app.md)
+- [Add New Library](./hoto__add-new-lib.md)
 - [Monorepo Structure Reference](../reference/re__monorepo-structure.md)
 - [Nx Configuration Reference](../reference/re__nx-configuration.md)

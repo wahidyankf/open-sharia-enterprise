@@ -394,9 +394,9 @@ Scenario: Npm scripts provide convenient Nx access
 **User Stories**: All stories
 
 - Update `CLAUDE.md` with monorepo structure section
-- Create `docs/how-to/ht__add-new-app.md` - Step-by-step guide for adding apps
-- Create `docs/how-to/ht__add-new-lib.md` - Step-by-step guide for adding libs
-- Create `docs/how-to/ht__run-nx-commands.md` - Common Nx workflows
+- Create `docs/how-to/hoto__add-new-app.md` - Step-by-step guide for adding apps
+- Create `docs/how-to/hoto__add-new-lib.md` - Step-by-step guide for adding libs
+- Create `docs/how-to/hoto__run-nx-commands.md` - Common Nx workflows
 - Create `docs/reference/re__monorepo-structure.md` - Complete structure reference
 - Create `docs/reference/re__nx-configuration.md` - Configuration file reference
 

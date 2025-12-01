@@ -99,7 +99,7 @@ For details, see [Diagram and Schema Convention](../docs/explanation/conventions
 
 For guidance on organizing your work:
 
-- [How to Organize Your Work](../docs/how-to/ht__organize-work.md) - Decision guide for choosing between journals/, plans/, and docs/
+- [How to Organize Your Work](../docs/how-to/hoto__organize-work.md) - Decision guide for choosing between journals/, plans/, and docs/
 
 For permanent documentation, see:
 

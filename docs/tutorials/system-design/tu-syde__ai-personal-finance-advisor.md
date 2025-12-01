@@ -1456,7 +1456,7 @@ sequenceDiagram
 ### Financial Technology
 
 - [Stripe's Engineering Blog](https://stripe.com/blog/engineering) - Payment processing insights
-- [Plaid's Engineering Blog](https://plaid.com/blog/engineering/) - Fintech data aggregation
+- [Plaid's Engineering Blog](https://plaid.com/blog/) - Fintech data aggregation
 - [Modern Treasury - Payment Operations](https://www.moderntreasury.com/learn)
 
 ### OCR and Document Processing

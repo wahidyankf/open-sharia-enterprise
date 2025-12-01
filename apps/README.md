@@ -91,7 +91,7 @@ Each app must have a `project.json` file with Nx configuration:
 
 ## How to Add a New App
 
-See the how-to guide: `docs/how-to/ht__add-new-app.md` (to be created)
+See the how-to guide: `docs/how-to/hoto__add-new-app.md` (to be created)
 
 ## Importing from Libraries
 
