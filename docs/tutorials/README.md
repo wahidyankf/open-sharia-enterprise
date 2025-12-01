@@ -30,6 +30,12 @@ Practical recipes and patterns for solving real-world programming problems:
 - [**Cookbooks Index**](./cookbooks/README.md) - All available cookbooks
   - [Golang Cookbook](./cookbooks/tu-cb__golang.md) - Practical Go patterns and recipes
 
+### 🏗️ System Design
+
+Real-world system design study cases and architectural tutorials:
+
+- [**System Design Index**](./system-design/README.md) - All available system design study cases
+
 ---
 
 ## 🎯 Learning Path
