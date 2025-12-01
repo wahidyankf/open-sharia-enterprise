@@ -61,9 +61,9 @@ Before considering documentation complete:
 You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md):
 
 - **Pattern**: `[prefix]__[content-identifier].[extension]`
-- **Examples**: `tu__getting-started.md`, `ex-co__file-naming-convention.md`, `re-ap-en__endpoints.md`
-- **Root Prefixes**: `tu` (tutorials), `ht` (how-to), `re` (reference), `ex` (explanation)
-- **Subdirectory Prefixes**: Add 2-letter abbreviations (e.g., `ex-co` for explanation/conventions)
+- **Examples**: `tu__getting-started.md`, `ex-co__file-naming-convention.md`, `hoto__deploy-app.md`, `re__api-reference.md`
+- **Root Prefixes**: `tu` (tutorials), `hoto` (how-to), `refe` (reference), `ex` (explanation)
+- **Subdirectory Prefixes**: Hyphenated directories concatenate first 2 letters of each word WITHOUT dash (e.g., `ex-co` for conventions, `ex-inse` for information-security, `tu-aien` for ai-engineering, `tu-crco` for crash-courses, `tu-syde` for system-design)
 - When creating files, determine the correct prefix based on location
 - **Important**: When renaming a directory in `docs/`, you must rename all files within to update their prefixes (except `docs/journals/` which uses `YYYY-MM/YYYY-MM-DD.md` format)
 
@@ -196,10 +196,10 @@ docs/
 │   ├── README.md                            # Category index (GitHub compatible)
 │   ├── tu__getting-started.md
 │   └── tu__first-deployment.md
-├── how-to/                                   # ht__ prefix
+├── how-to/                                   # hoto__ prefix
 │   ├── README.md                            # Category index (GitHub compatible)
-│   ├── ht__configure-api.md
-│   └── ht__add-compliance-rule.md
+│   ├── hoto__configure-api.md
+│   └── hoto__add-compliance-rule.md
 ├── reference/                                # re__ prefix
 │   ├── README.md                            # Category index (GitHub compatible)
 │   ├── re__api-reference.md

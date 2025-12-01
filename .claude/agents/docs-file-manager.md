@@ -60,23 +60,26 @@ Before any operation, understand the [File Naming Convention](../../docs/explana
 
 ### Prefix Calculation
 
-The prefix encodes the directory path using 2-letter abbreviations:
+The prefix encodes the directory path using abbreviations:
 
-- **Root prefixes**: `tu` (tutorials), `ht` (how-to), `re` (reference), `ex` (explanation)
-- **Subdirectory prefixes**: Add 2-letter abbreviations separated by hyphens
+- **Root prefixes**: `tu` (tutorials), `hoto` (how-to), `refe` (reference), `ex` (explanation)
+- **Subdirectory prefixes**: Add abbreviations separated by hyphens
 
 **Examples**:
 
 - `docs/tutorials/` → `tu__`
+- `docs/how-to/` → `hoto__`
 - `docs/explanation/conventions/` → `ex-co__`
-- `docs/explanation/information-security/` → `ex-in-se__`
-- `docs/reference/api/endpoints/` → `re-ap-en__`
+- `docs/explanation/information-security/` → `ex-inse__`
+- `docs/tutorials/ai-engineering/` → `tu-aien__`
+- `docs/tutorials/crash-courses/` → `tu-crco__`
+- `docs/tutorials/system-design/` → `tu-syde__`
 
 ### Abbreviation Rules
 
-1. **2 letters per word**: Take first 2 letters (`authentication` → `au`, `api` → `ap`)
-2. **Multi-word directories**: Concatenate without hyphens (`sharia-compliance` → `shco`, `information-security` → `in-se`)
-3. **Single character words**: Add underscore suffix (`v` → `v_`)
+1. **Hyphenated directories**: Concatenate first 2 letters of each word WITHOUT inserting dash (`information-security` → `inse`, `ai-engineering` → `aien`, `crash-courses` → `crco`, `system-design` → `syde`, `how-to` → `hoto`)
+2. **Single word directories**: Use first 2-4 letters based on length (`conventions` → `co`, `development` → `de`, `cookbooks` → `co`, `toolings` → `to`)
+3. **Key rule**: The dash in a hyphenated directory name does NOT appear in the abbreviation - just concatenate the letters
 
 ### Exceptions
 
@@ -275,7 +278,7 @@ Before deleting any file or directory:
 
 1. **Calculate new prefix**:
    - Old: `ex-se__` (explanation + security)
-   - New: `ex-in-se__` (explanation + information-security)
+   - New: `ex-inse__` (explanation + inse, where "inse" is "in" + "se" concatenated)
 
 2. **Find affected files**:
 
@@ -292,22 +295,22 @@ Before deleting any file or directory:
 4. **Rename all files inside**:
 
    ```bash
-   # For each file: ex-se__*.md → ex-in-se__*.md
-   git mv ex-se__file.md ex-in-se__file.md
+   # For each file: ex-se__*.md → ex-inse__*.md
+   git mv ex-se__file.md ex-inse__file.md
    ```
 
 5. **Update all links**:
 
    ```bash
    # Use Grep to find: \]\(.*security/ex-se__
-   # Update each link: ./security/ex-se__file.md → ./information-security/ex-in-se__file.md
+   # Update each link: ./security/ex-se__file.md → ./information-security/ex-inse__file.md
    ```
 
 6. **Update parent index**:
    ```bash
    # Edit docs/explanation/README.md
    # Change: [Security](./security/README.md)
-   # To: [Security](./information-security/README.md)
+   # To: [Information Security](./information-security/README.md)
    ```
 
 ### Scenario 2: Moving a File Between Directories
@@ -353,7 +356,7 @@ Before deleting any file or directory:
 
 ### Scenario 3: Deleting an Outdated File
 
-**Example**: Delete `docs/how-to/ht__deprecated-workflow.md`
+**Example**: Delete `docs/how-to/hoto__deprecated-workflow.md`
 
 **Impact**:
 
@@ -367,7 +370,7 @@ Before deleting any file or directory:
 
    ```bash
    # Use Grep to find all links
-   grep -r "ht__deprecated-workflow.md" docs/
+   grep -r "hoto__deprecated-workflow.md" docs/
    ```
 
 2. **Plan reference cleanup**:
@@ -377,9 +380,9 @@ Before deleting any file or directory:
 3. **Get user confirmation**:
 
    ```
-   Found 3 files linking to ht__deprecated-workflow.md:
+   Found 3 files linking to hoto__deprecated-workflow.md:
    - docs/how-to/README.md (index entry)
-   - docs/how-to/ht__modern-workflow.md (reference link)
+   - docs/how-to/hoto__modern-workflow.md (reference link)
    - docs/tutorials/tu__getting-started.md (reference link)
 
    All references will be removed.
@@ -390,18 +393,18 @@ Before deleting any file or directory:
 4. **Delete file**:
 
    ```bash
-   git rm docs/how-to/ht__deprecated-workflow.md
+   git rm docs/how-to/hoto__deprecated-workflow.md
    ```
 
 5. **Clean up references**:
    - Remove entry from `docs/how-to/README.md`
-   - Remove link from `ht__modern-workflow.md`
+   - Remove link from `hoto__modern-workflow.md`
    - Remove link from `tu__getting-started.md`
 
 6. **Verify**:
    ```bash
    # Use Grep to verify no references remain
-   grep -r "ht__deprecated-workflow.md" docs/
+   grep -r "hoto__deprecated-workflow.md" docs/
    # Should return no results
    ```
 
@@ -491,7 +494,7 @@ When deleting files, you may need to:
 ```markdown
 # Before
 
-See the [old workflow guide](./ht__deprecated-workflow.md) for details.
+See the [old workflow guide](./hoto__deprecated-workflow.md) for details.
 
 # After (Option 1: Remove)
 
@@ -499,11 +502,11 @@ See the workflow guide for details.
 
 # After (Option 2: Replace)
 
-See the [modern workflow guide](./ht__modern-workflow.md) for details.
+See the [modern workflow guide](./hoto__modern-workflow.md) for details.
 
 # After (Option 3: Add note)
 
-~~The old workflow guide has been deprecated.~~ See the [modern workflow guide](./ht__modern-workflow.md) for details.
+~~The old workflow guide has been deprecated.~~ See the [modern workflow guide](./hoto__modern-workflow.md) for details.
 ```
 
 ### Verification Tip
