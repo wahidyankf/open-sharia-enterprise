@@ -24,6 +24,7 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 ## 🔗 Related Documentation
 
 - [Documentation Conventions](../conventions/README.md) - File naming, linking, and Diátaxis framework standards
+- [Temporary Files Convention](../conventions/ex-co__temporary-files.md) - Guidelines for AI agents creating temporary files
 - [Information Security](../information-security/README.md) - Information security concepts and practices
 
 ---
