@@ -9,7 +9,7 @@ links:
     finalUrl: https://cheatsheetseries.owasp.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__owasp.md
+      - docs/explanation/information-security/ex-inse__owasp.md
 
   - url: https://cloudsecurityalliance.org/
     lastChecked: 2025-11-30T22:45:00+07:00
@@ -17,8 +17,8 @@ links:
     finalUrl: https://cloudsecurityalliance.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__infosec.md
-      - docs/explanation/information-security/ex-in-se__defensive-security.md
+      - docs/explanation/information-security/ex-inse__infosec.md
+      - docs/explanation/information-security/ex-inse__defensive-security.md
 
   - url: https://commitlint.js.org/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -34,7 +34,7 @@ links:
     finalUrl: https://cwe.mitre.org/top25/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__infosec.md
+      - docs/explanation/information-security/ex-inse__infosec.md
 
   - url: https://diataxis.fr/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -63,7 +63,7 @@ links:
     finalUrl: https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__offensive-security.md
+      - docs/explanation/information-security/ex-inse__offensive-security.md
     note: Wikipedia blocks automated tools (403 Forbidden). Use WebSearch to verify article exists.
 
   - url: https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type
@@ -145,7 +145,7 @@ links:
     finalUrl: https://owasp.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__owasp.md
+      - docs/explanation/information-security/ex-inse__owasp.md
 
   - url: https://owasp.org/Top10/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -153,7 +153,7 @@ links:
     finalUrl: https://owasp.org/Top10/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__owasp.md
+      - docs/explanation/information-security/ex-inse__owasp.md
 
   - url: https://owasp.org/chapters/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -161,7 +161,7 @@ links:
     finalUrl: https://owasp.org/chapters/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__owasp.md
+      - docs/explanation/information-security/ex-inse__owasp.md
 
   - url: https://owasp.org/projects/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -169,7 +169,7 @@ links:
     finalUrl: https://owasp.org/projects/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__owasp.md
+      - docs/explanation/information-security/ex-inse__owasp.md
 
   - url: https://owasp.org/www-community/Source_Code_Analysis_Tools
     lastChecked: 2025-11-30T22:45:00+07:00
@@ -177,7 +177,7 @@ links:
     finalUrl: https://owasp.org/www-community/Source_Code_Analysis_Tools
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__sast.md
+      - docs/explanation/information-security/ex-inse__sast.md
 
   - url: https://owasp.org/www-community/Vulnerability_Scanning_Tools
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -185,7 +185,7 @@ links:
     finalUrl: https://owasp.org/www-community/Vulnerability_Scanning_Tools
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__dast.md
+      - docs/explanation/information-security/ex-inse__dast.md
 
   - url: https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -193,7 +193,7 @@ links:
     finalUrl: https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__defensive-security.md
+      - docs/explanation/information-security/ex-inse__defensive-security.md
 
   - url: https://owasp.org/www-project-top-ten/
     lastChecked: 2025-11-30T22:45:00+07:00
@@ -201,7 +201,7 @@ links:
     finalUrl: https://owasp.org/www-project-top-ten/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__infosec.md
+      - docs/explanation/information-security/ex-inse__infosec.md
 
   - url: https://owasp.org/www-project-web-security-testing-guide/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -209,8 +209,8 @@ links:
     finalUrl: https://owasp.org/www-project-web-security-testing-guide/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__owasp.md
-      - docs/explanation/information-security/ex-in-se__offensive-security.md
+      - docs/explanation/information-security/ex-inse__owasp.md
+      - docs/explanation/information-security/ex-inse__offensive-security.md
 
   - url: https://sans.org/training/
     lastChecked: 2025-11-30T22:45:00+07:00
@@ -218,7 +218,7 @@ links:
     finalUrl: https://www.sans.org/training/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__defensive-security.md
+      - docs/explanation/information-security/ex-inse__defensive-security.md
 
   - url: https://semver.org/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -258,7 +258,7 @@ links:
     finalUrl: https://www.cisecurity.org/controls
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__defensive-security.md
+      - docs/explanation/information-security/ex-inse__defensive-security.md
 
   - url: https://www.conventionalcommits.org/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -274,10 +274,10 @@ links:
     finalUrl: https://www.nist.gov/cyberframework
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__dast.md
-      - docs/explanation/information-security/ex-in-se__defensive-security.md
-      - docs/explanation/information-security/ex-in-se__sast.md
-      - docs/explanation/information-security/ex-in-se__infosec.md
+      - docs/explanation/information-security/ex-inse__dast.md
+      - docs/explanation/information-security/ex-inse__defensive-security.md
+      - docs/explanation/information-security/ex-inse__sast.md
+      - docs/explanation/information-security/ex-inse__infosec.md
 
   - url: https://www.sans.org/white-papers/
     lastChecked: 2025-11-30T22:45:00+07:00
@@ -285,7 +285,7 @@ links:
     finalUrl: https://www.sans.org/white-papers/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__offensive-security.md
+      - docs/explanation/information-security/ex-inse__offensive-security.md
 
   - url: https://www.zaproxy.org/docs/
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -293,4 +293,4 @@ links:
     finalUrl: https://www.zaproxy.org/docs/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-in-se__dast.md
+      - docs/explanation/information-security/ex-inse__dast.md
