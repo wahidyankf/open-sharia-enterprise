@@ -34,7 +34,8 @@ Crash courses provide:
 1. **Prerequisites** - Check each course for required background knowledge
 2. **Hands-on practice** - Type out examples, don't just read
 3. **Experiment** - Modify examples to test your understanding
-4. **Build something** - Apply concepts in a small project
+4. **Continue to cookbooks** - After completing a crash course, check the [Cookbooks](../cookbooks/README.md) for practical patterns
+5. **Build something** - Apply concepts in a small project
 
 ## 🗺️ Course Structure
 
@@ -42,10 +43,10 @@ Each crash course follows this structure:
 
 - **Introduction** - What, why, and when to use the technology
 - **Setup** - Installation and development environment
-- **Core Concepts** - Fundamental building blocks
-- **Practical Examples** - Real-world code patterns
-- **Common Patterns** - Idiomatic usage and best practices
-- **Next Steps** - Where to go for deeper learning
+- **Core Language Features** - Syntax, types, control flow, data structures
+- **Language Mechanics** - Functions, methods, interfaces, error handling, concurrency primitives
+- **Basic Examples** - Simple code to understand each feature
+- **Next Steps** - Where to go for practical patterns (cookbooks) and deeper learning
 
 ## 🔗 Related Documentation
 
