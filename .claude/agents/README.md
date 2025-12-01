@@ -39,14 +39,33 @@ Expert at validating factual correctness and content consistency of documentatio
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
 
-- **Primary Use:** Creating, editing, or organizing project documentation
+- **Primary Use:** Creating, editing, or organizing project documentation (how-to guides, reference, explanations)
 - **Specialization:** Markdown optimization, Diátaxis framework, convention compliance, emoji usage
 - **Tools:** Read, Write, Edit, Glob, Grep
 - **When to Use:**
-  - Creating new documentation files with proper emoji usage
+  - Creating how-to guides, reference documentation, or explanations
   - Editing existing documentation for clarity or structure
   - Organizing documentation according to Diátaxis framework
   - Ensuring documentation follows file naming, linking, and emoji conventions
+- **Works with:** `docs-checker` for accuracy validation, `docs-link-checker` for link validation
+- **Note:** For tutorials, use `docs-tutorial-maker` instead
+
+### 🟦 `docs-tutorial-maker.md`
+
+Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements.
+
+- **Primary Use:** Creating engaging, learning-oriented tutorials with narrative storytelling
+- **Specialization:** Learning-oriented content, narrative writing, progressive scaffolding, diagram creation (architecture/sequence/flowcharts), hands-on examples, pedagogical structure
+- **Tools:** Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
+- **When to Use:**
+  - Creating new tutorials in docs/tutorials/
+  - Building complete learning journeys (concept → implementation → practice)
+  - Writing narrative-driven content (not list-heavy reference material)
+  - Adding comprehensive diagrams (architecture, sequence, flowcharts)
+  - Creating step-by-step hands-on learning experiences
+  - Teaching complex technical concepts progressively
+  - Following Diátaxis tutorial principles (learning-oriented, not task-oriented)
+- **Works with:** `docs-tutorial-checker` for quality validation
 
 ### 🟩 `docs-link-checker.md`
 
@@ -64,6 +83,25 @@ Validates both external and internal links in documentation files to ensure they
   - After major documentation updates to ensure link integrity
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations)
+
+### 🟩 `docs-tutorial-checker.md`
+
+Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, and hands-on elements.
+
+- **Primary Use:** Validating tutorials for learning effectiveness and completeness
+- **Specialization:** Pedagogical assessment, narrative flow analysis, diagram completeness checking, hands-on element validation, tutorial structure verification (Diátaxis compliance), content balance assessment
+- **Tools:** Read, Glob, Grep, WebFetch, WebSearch
+- **When to Use:**
+  - Validating new tutorials before publication
+  - Reviewing existing tutorials for quality and effectiveness
+  - Ensuring tutorials have sufficient diagrams and visual aids
+  - Checking narrative flow and storytelling quality
+  - Verifying tutorials aren't list-heavy (need narrative explanations)
+  - Assessing hands-on elements (code examples, checkpoints, exercises)
+  - Ensuring progressive scaffolding (simple → complex)
+  - Validating tutorial completeness (intro, objectives, prerequisites, next steps)
+- **Works with:** `docs-tutorial-maker` for content creation, `docs-checker` for accuracy, `docs-link-checker` for links
+- **Note:** Complements (doesn't duplicate) docs-checker (accuracy) and docs-link-checker (links)
 
 ### 🟨 `docs-file-manager.md`
 
@@ -122,6 +160,7 @@ Expert at creating structured project planning documents in the plans/ folder.
   - Documenting technical approach and architecture decisions
   - Creating project roadmaps with milestones and timelines
   - Organizing project deliverables into structured plans
+- **Works with:** `plan-checker` for pre-implementation validation
 
 ### 🟪 `plan-executor.md`
 
@@ -137,6 +176,7 @@ Expert at systematically implementing project plans by following delivery checkl
   - Updating delivery.md with implementation progress and notes
   - Completing all phases of a multi-phase plan
   - Stopping at final validation handoff (does NOT perform final validation)
+- **Works with:** `plan-execution-checker` for final validation
 
 ### 🟪 `plan-execution-checker.md`
 
@@ -154,6 +194,7 @@ Expert at validating plan implementations against requirements, performing compr
   - Providing independent quality gate with fresh eyes
   - Generating detailed validation reports with specific findings
   - Iterating with plan-executor to fix issues until validation passes
+- **Works with:** `plan-executor` for implementation
 
 ### 🟩 `plan-checker.md`
 
@@ -171,6 +212,7 @@ Expert at validating plans are ready for implementation by verifying completenes
   - Ensuring requirements have testable acceptance criteria
   - Identifying contradictions or missing information in plan
   - Preventing implementation blockers by catching plan issues early
+- **Works with:** `plan-maker` for plan creation
 
 ### 🟦 `journal-maker.md`
 
@@ -247,23 +289,35 @@ The agents work together in complementary workflows:
         └─> Return to step 2 for re-validation
 
 4. Write/Update Documentation
-   └─> Use docs-maker for documentation tasks
+   └─> For tutorials: Use docs-tutorial-maker
+        └─> Creates learning-oriented content with narrative flow
+        └─> Adds comprehensive diagrams (architecture, sequences, flowcharts)
+        └─> Includes hands-on elements and progressive scaffolding
+   └─> For other docs: Use docs-maker
+        └─> Creates how-to guides, reference, or explanations
         └─> Ensures proper formatting and convention compliance
 
-5. Rename/Move Files (if needed)
+5. Validate Tutorial Quality (for tutorials only)
+   └─> Use docs-tutorial-checker to validate tutorial effectiveness
+        └─> Checks pedagogical structure and narrative flow
+        └─> Validates diagram completeness
+        └─> Assesses hands-on elements and learning progression
+        └─> Identifies list-heavy sections needing narrative
+
+6. Rename/Move Files (if needed)
    └─> Use docs-file-manager to reorganize documentation
         └─> Renames files/directories with git mv
         └─> Recalculates file prefixes based on new location
         └─> Updates all internal links automatically
         └─> Updates index files (README.md)
 
-6. Verify All Links
+7. Verify All Links
    └─> Use docs-link-checker to audit link health
         └─> Validates all external URLs are accessible
         └─> Validates all internal markdown links exist
         └─> Fixes broken links with working alternatives
 
-7. Validate Documentation Accuracy
+8. Validate Documentation Accuracy
    └─> Use docs-checker to verify factual correctness
         └─> Validates technical claims against authoritative sources
         └─> Checks command syntax and code examples
@@ -281,7 +335,9 @@ The agents work together in complementary workflows:
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
 - **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
-- **When creating documentation:** Use `docs-maker` for proper structure
+- **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
+- **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
+- **After creating tutorials:** Use `docs-tutorial-checker` to validate pedagogical quality and completeness
 - **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
 - **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
