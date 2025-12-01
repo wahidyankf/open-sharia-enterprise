@@ -11,7 +11,7 @@ This is the **open-sharia-enterprise** project - a fintech application built wit
 The project uses **Volta** for Node.js and npm version management:
 
 - **Node.js**: 24.11.1 (LTS)
-- **npm**: 11.6.2
+- **npm**: 11.6.3
 
 These versions are pinned in `package.json` under the `volta` field. When you run `npm` commands, Volta automatically ensures the correct versions are used.
 
@@ -345,9 +345,9 @@ import { formatDate } from "@open-sharia-enterprise/ts-utils";
 For detailed guides and references:
 
 - **How-To Guides**:
-  - [Add New App](./docs/how-to/ht__add-new-app.md) - Step-by-step guide for creating apps
-  - [Add New Lib](./docs/how-to/ht__add-new-lib.md) - Step-by-step guide for creating libs
-  - [Run Nx Commands](./docs/how-to/ht__run-nx-commands.md) - Common Nx workflows
+  - [Add New App](./docs/how-to/hoto__add-new-app.md) - Step-by-step guide for creating apps
+  - [Add New Lib](./docs/how-to/hoto__add-new-lib.md) - Step-by-step guide for creating libs
+  - [Run Nx Commands](./docs/how-to/hoto__run-nx-commands.md) - Common Nx workflows
 
 - **Reference Documentation**:
   - [Monorepo Structure](./docs/reference/re__monorepo-structure.md) - Complete structure reference
