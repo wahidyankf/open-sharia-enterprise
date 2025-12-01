@@ -339,6 +339,11 @@ module.exports = {
 };
 ```
 
+**Note for Node.js 24+**: Node v24 introduced changes to module loading. Ensure:
+
+- Project has `package.json` (this project uses npm workspaces ✓)
+- Or rename config to `commitlint.config.mjs` if using ES6 modules
+
 **Validates:**
 
 - Commit message format

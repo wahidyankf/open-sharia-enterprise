@@ -8,7 +8,7 @@ tags:
   - organization
   - documentation
 created: 2025-11-19
-updated: 2025-11-29
+updated: 2025-12-01
 ---
 
 # Documentation File Naming Convention
@@ -69,12 +69,12 @@ The prefix encodes the folder path using abbreviations separated by single hyphe
 
 ### Root Directory Prefixes
 
-The four main Diátaxis categories have short prefixes:
+The four main Diátaxis categories use consistent 4-character prefixes:
 
-- `tu` - Tutorials (`docs/tutorials/`)
-- `ht` - How-To (`docs/how-to/`)
-- `re` - Reference (`docs/reference/`)
-- `ex` - Explanation (`docs/explanation/`)
+- `tu` - Tutorials (`docs/tutorials/`) - Common/short root: 2 chars
+- `hoto` - How-To (`docs/how-to/`) - Compound root: 4 chars (2 from each word)
+- `refe` - Reference (`docs/reference/`) - Single word root: 4 chars
+- `ex` - Explanation (`docs/explanation/`) - Common/short root: 2 chars
 
 **Note on Directory Naming:**
 
@@ -89,13 +89,22 @@ This apparent inconsistency is intentional and follows standard documentation co
 
 ### Abbreviation Strategy
 
-Use a systematic 2-letter encoding rule:
+Use a systematic encoding rule based on directory characteristics:
 
-1. **2 letters per word** - Take first 2 letters (`authentication` → `au`, `api` → `ap`)
-2. **Multi-word directories** - Concatenate without hyphens (`sharia-compliance` → `shco`)
-3. **Single character words** - Add underscore suffix (`v` → `v_`)
+**For Root Directories:**
 
-Examples: `tu__getting-started.md` (tutorials), `tu-au__oauth2.md` (tutorials/authentication), `re-ap-en__transactions.md` (reference/api/endpoints)
+1. **Common/short roots** - 2 characters (`tutorials` → `tu`, `explanation` → `ex`)
+2. **Compound roots** - 4 characters, 2 from each word (`how-to` → `hoto`)
+3. **Single word roots** - 4 characters (`reference` → `refe`)
+
+**For Subdirectories:**
+
+1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ai-engineering` → `aien`, `crash-courses` → `crco`, `system-design` → `syde`, `information-security` → `inse`, `how-to` → `hoto`)
+2. **Single words** - First 2 or 4 characters based on length (`conventions` → `co`, `development` → `de`, `cookbooks` → `co`, `toolings` → `to`)
+
+**Key Rule**: For hyphenated directory names, take first 2 letters of EACH word and concatenate them WITHOUT inserting a dash. The dash in the directory name does NOT appear in the abbreviation.
+
+Examples: `tu__getting-started.md` (tutorials), `tu-aien__chat-with-pdf.md` (tutorials/ai-engineering), `hoto__deploy-app.md` (how-to), `re__api-reference.md` (reference), `ex-co__file-naming-convention.md` (explanation/conventions), `ex-inse__infosec.md` (explanation/information-security)
 
 ## The `__` Separator
 
@@ -120,9 +129,9 @@ All filenames use lowercase with hyphens as separators (no spaces, mixed case, o
 ✅ Good:
 
 - tu\_\_getting-started-with-authentication.md
-- ht-ap\_\_configure-rate-limiting.md
-- re-ap-en\_\_transaction-endpoints.md
-- ex-shco\_\_murabaha-contract-structure.png
+- hoto-deve\_\_configure-rate-limiting.md
+- refe-appe\_\_transaction-endpoints.md
+- ex-conv\_\_file-naming-convention.md
 
 ❌ Bad:
 
@@ -163,7 +172,7 @@ tu-qu__10-advanced-concepts.md
 
 ```
 journals/2025-11/2025-11-19.md
-ht-de__release-process-2025-11.md
+hoto-de__release-process-2025-11.md
 ```
 
 **Frontmatter dates:** Frontmatter fields (`created`, `updated`) also use ISO 8601 format:
@@ -264,11 +273,11 @@ When creating a new subdirectory:
 2. Add this abbreviation to the prefix of all files in that directory
 3. Update any related index files
 
-**Example**: Creating `docs/tutorials/testing/`:
+**Example**: Creating `docs/how-to/deployment/`:
 
-- Directory: `docs/tutorials/testing/`
-- Prefix: `tu-te__` (tu = tutorials, te = testing)
-- Files: `tu-te__unit-testing.md`, `tu-te__integration-testing.md`
+- Directory: `docs/how-to/deployment/`
+- Prefix: `hoto-de__` (hoto = how-to, de = deployment)
+- Files: `hoto-de__deploy-to-production.md`, `hoto-de__configure-ci-cd.md`
 
 ### Renaming Directories
 
@@ -299,16 +308,16 @@ docs/explanation/security/
 ```
 docs/explanation/information-security/
 ├── README.md
-├── ex-in-se__authentication.md
-└── ex-in-se__authorization.md
+├── ex-inse__authentication.md
+└── ex-inse__authorization.md
 ```
 
 **Changes required**:
 
 - Directory: `security/` → `information-security/`
-- Prefix: `ex-se__` → `ex-in-se__` (se = security, in-se = information-security)
-- All files: `ex-se__*.md` → `ex-in-se__*.md`
-- Links: Update all references from `./security/ex-se__*.md` to `./information-security/ex-in-se__*.md`
+- Prefix: `ex-se__` → `ex-inse__` (se = security, inse = in + se concatenated WITHOUT dash)
+- All files: `ex-se__*.md` → `ex-inse__*.md`
+- Links: Update all references from `./security/ex-se__*.md` to `./information-security/ex-inse__*.md`
 - Index: Update `docs/explanation/README.md` to reflect new directory name
 
 ### Reorganizing Directories
@@ -331,12 +340,25 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ## 📖 Quick Reference
 
-| Category    | Prefix | Example                  |
-| ----------- | ------ | ------------------------ |
-| Tutorials   | `tu__` | `tu__getting-started.md` |
-| How-To      | `ht__` | `ht__deploy-docker.md`   |
-| Reference   | `re__` | `re__api-reference.md`   |
-| Explanation | `ex__` | `ex__architecture.md`    |
+| Category    | Prefix   | Example                  |
+| ----------- | -------- | ------------------------ |
+| Tutorials   | `tu__`   | `tu__getting-started.md` |
+| How-To      | `hoto__` | `hoto__deploy-docker.md` |
+| Reference   | `re__`   | `re__api-reference.md`   |
+| Explanation | `ex__`   | `ex__architecture.md`    |
+
+**Common Subdirectory Prefixes:**
+
+| Directory Path                            | Prefix         | Example                                   |
+| ----------------------------------------- | -------------- | ----------------------------------------- |
+| explanation/conventions                   | `ex-co__`      | `ex-co__file-naming-convention.md`        |
+| explanation/development                   | `ex-de__`      | `ex-de__ai-agents.md`                     |
+| explanation/information-security          | `ex-inse__`    | `ex-inse__infosec.md`                     |
+| explanation/information-security/toolings | `ex-inse-to__` | `ex-inse-to__gobuster.md`                 |
+| tutorials/ai-engineering                  | `tu-aien__`    | `tu-aien__chat-with-pdf.md`               |
+| tutorials/cookbooks                       | `tu-co__`      | `tu-co__golang.md`                        |
+| tutorials/crash-courses                   | `tu-crco__`    | `tu-crco__golang.md`                      |
+| tutorials/system-design                   | `tu-syde__`    | `tu-syde__ai-personal-finance-advisor.md` |
 
 ## 🔗 Related Documentation
 
@@ -346,4 +368,4 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ---
 
-**Last Updated**: 2025-11-29
+**Last Updated**: 2025-12-01
