@@ -48,6 +48,17 @@ Use this agent when:
 - ❌ Validating repository consistency (use `repo-rules-checker` instead)
 - ❌ Ad-hoc development tasks without a plan
 
+## Temporary Files
+
+If this agent needs to create temporary files (e.g., scratch notes, intermediate data), use the `local-temp/` directory following the [Temporary Files Convention](../../docs/explanation/conventions/ex-co__temporary-files.md).
+
+**Example temporary files:**
+
+- `local-temp/implementation-notes.md` - Scratch notes during implementation
+- `local-temp/temp-checklist.md` - Temporary checklist copy for offline work
+
+**Note**: The actual delivery checklist updates go in the plan files (`README.md` or `delivery.md`), not in temporary files.
+
 ## Implementation Workflow
 
 ### Phase 1: Plan Reading and Analysis
