@@ -21,7 +21,25 @@ Learning-oriented guides for the open-sharia-enterprise project. These documents
 Quick-start guides for learning programming languages and technologies:
 
 - [**Crash Courses Index**](./crash-courses/README.md) - All available crash courses
-  - [Golang Crash Course](./crash-courses/tu-cr__golang.md) - Learn Go programming language
+  - [Golang Crash Course](./crash-courses/tu-cr__golang.md) - Learn Go language mechanics
+
+### 🍳 Cookbooks
+
+Practical recipes and patterns for solving real-world programming problems:
+
+- [**Cookbooks Index**](./cookbooks/README.md) - All available cookbooks
+  - [Golang Cookbook](./cookbooks/tu-cb__golang.md) - Practical Go patterns and recipes
+
+---
+
+## 🎯 Learning Path
+
+**New to a language?** Follow this path:
+
+1. **Start with Crash Courses** - Learn the language mechanics and core features
+2. **Continue to Cookbooks** - Learn to solve real-world problems with patterns and recipes
+3. **Check How-To Guides** - Step-by-step solutions for specific tasks
+4. **Reference Documentation** - Look up technical details as needed
 
 ---
 
