@@ -45,7 +45,7 @@ When running a consistency check, systematically verify:
 
 - [ ] All files in `docs/` follow the prefix pattern (except README.md)
 - [ ] All `README.md` files are properly documented as exceptions
-- [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`)
+- [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`, `ex-inse__` for `explanation/information-security/`, `ex-inse-to__` for `explanation/information-security/toolings/`, `tu-aien__` for `tutorials/ai-engineering/`, `tu-co__` for `tutorials/cookbooks/`, `tu-crco__` for `tutorials/crash-courses/`, `tu-syde__` for `tutorials/system-design/`, `hoto__` for `how-to/`)
 - [ ] Files inside `plans/` folders do NOT use prefixes (folder structure provides context)
 - [ ] Plan folders follow the naming pattern `YYYY-MM-DD__[project-identifier]/`
 - [ ] When directories are renamed, all files within have updated prefixes (except `docs/journals/`)
@@ -93,7 +93,7 @@ When running a consistency check, systematically verify:
 - [ ] Directory structure shown matches reality (includes `plans/` folder)
 - [ ] Plans Organization section accurately describes plans/ structure
 - [ ] All convention files are referenced
-- [ ] Prefixes (`tu`, `ht`, `re`, `ex`) are correctly documented
+- [ ] Prefixes (`tu`, `hoto`, `re`, `ex`) are correctly documented
 
 ### AI Agent Convention Compliance
 
@@ -254,9 +254,10 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 
 - `.claude/agents/README.md`
 - `.claude/agents/agent-maker.md`
+- `.claude/agents/docs-checker.md`
+- `.claude/agents/docs-file-manager.md`
 - `.claude/agents/docs-link-checker.md`
 - `.claude/agents/docs-maker.md`
-- `.claude/agents/docs-file-manager.md`
 - `.claude/agents/journal-maker.md`
 - `.claude/agents/plan-checker.md`
 - `.claude/agents/plan-execution-checker.md`
