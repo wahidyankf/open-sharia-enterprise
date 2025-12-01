@@ -105,12 +105,14 @@ Each study case typically includes:
    - Compliance requirements (GDPR, PCI-DSS, HIPAA, SOC 2, data residency)
    - Security testing (penetration testing, vulnerability scanning, security audits)
 10. **Disaster Recovery & Business Continuity**: How to handle failures and maintain availability
-    - Backup strategies (frequency, retention policies, backup types: full/incremental/differential)
-    - Disaster recovery plans (hot/warm/cold standby, multi-region failover)
-    - RTO (Recovery Time Objective) and RPO (Recovery Point Objective) targets
-    - Failover systems, redundancy, and high availability architecture
-    - Data replication across regions and availability zones
-    - Business continuity planning and incident response procedures
+
+- Backup strategies (frequency, retention policies, backup types: full/incremental/differential)
+- Disaster recovery plans (hot/warm/cold standby, multi-region failover)
+- RTO (Recovery Time Objective) and RPO (Recovery Point Objective) targets
+- Failover systems, redundancy, and high availability architecture
+- Data replication across regions and availability zones
+- Business continuity planning and incident response procedures
+
 11. **Trade-offs and Alternatives**: Different approaches and their pros/cons at various scales
 12. **Further Reading**: Links to related resources and real-world implementations
 
