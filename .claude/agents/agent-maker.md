@@ -59,18 +59,20 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 #### Question 2: Primary Role
 
 **Header**: "Agent Type"
-**Question**: "What is the agent's primary role?"
+**Question**: "What is the agent's primary capability?"
 **Options** (single choice):
 
-1. **Maker** - Creates new files/content from scratch (e.g., docs-maker, plan-maker)
-2. **Checker** - Validates without modifying; read-only operations (e.g., repo-rules-checker)
-3. **Executor** - Modifies, propagates, or executes existing content (e.g., repo-rules-updater, plan-executor)
+1. **Writer** - Creates new files/content from scratch (e.g., docs-maker, plan-maker)
+2. **Checker** - Validates/checks without modifying (e.g., repo-rules-checker, plan-checker)
+3. **Updater** - Modifies/updates existing content only (e.g., repo-rules-updater, docs-file-manager)
+4. **Implementor** - Executes plans/orchestrates tasks (e.g., plan-executor)
 
 **Validation (Auto-Assignment Based on Role)**:
 
-- **Maker** - color: blue, base tools: Read, Write, Edit, Glob, Grep (Bash can be added via Question 3 if needed)
-- **Checker** - color: green, tools: Read, Glob, Grep (read-only)
-- **Executor** - color: yellow/purple, tools: Read, Edit, Glob, Grep (yellow: no Write/Bash; purple: full access with Write/Bash)
+- **Writer** - color: blue, base tools: Read, Write, Edit, Glob, Grep (must have Write tool)
+- **Checker** - color: green, tools: Read, Glob, Grep (read-only, no Write or Edit)
+- **Updater** - color: yellow, tools: Read, Edit, Glob, Grep (has Edit but NOT Write)
+- **Implementor** - color: purple, tools: Read, Write, Edit, Glob, Grep, Bash (has Write, Edit, AND Bash)
 
 #### Question 3: Additional Tools
 
@@ -91,8 +93,9 @@ Basic validation:
 
 Edge case handling:
 
-- If agent has both Write and Edit with Bash, this suggests purple (Implementor) role - confirm with user: "This looks like an Implementor agent. Should color be purple instead of blue?"
-- If agent doesn't fit any standard category, warn: "This agent doesn't fit standard categories. Consider if it should be split into multiple agents." Offer option to omit color field or manually override with justification
+- If agent has both Write and Edit, confirm primary purpose: "Agent has both Write and Edit. Is its primary purpose to create new content (blue Writer) or execute plans/tasks (purple Implementor)?"
+- If agent doesn't fit any category, warn: "This agent doesn't fit standard categories. Consider if it should be split into multiple agents." Offer option to omit color field or manually override with justification
+- If agent has Edit but also Write, it should be Writer (blue) or Implementor (purple), not Updater (yellow)
 
 #### Question 4: Model Selection
 
