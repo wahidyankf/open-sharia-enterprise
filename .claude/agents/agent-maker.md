@@ -415,5 +415,5 @@ An agent is successfully created when:
 
 - `docs-maker.md` - Example of blue (maker) agent
 - `repo-rules-checker.md` - Example of green (checker) agent, also handles validation
-- `repo-rules-updater.md` - Example of yellow (executor) agent
-- `plan-executor.md` - Example of purple (executor) agent
+- `repo-rules-updater.md` - Example of yellow (updater) agent
+- `plan-executor.md` - Example of purple (implementor) agent
