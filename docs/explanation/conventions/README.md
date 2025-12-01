@@ -23,7 +23,8 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for daily research notes and monthly summaries (includes TAB indentation requirement for docs/ directory; CRITICAL: YAML frontmatter must use spaces, not tabs; code blocks use language-appropriate indentation)
 - [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage to enhance document scannability and engagement
 - [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
+- [Temporary Files Convention](./ex-co__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 
 ---
 
-**Last Updated**: 2025-11-30
+**Last Updated**: 2025-12-01
