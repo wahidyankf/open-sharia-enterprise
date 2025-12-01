@@ -125,7 +125,7 @@ The tech stack for the main enterprise platform is currently being evaluated. Up
 🔧 **Project Tooling & Infrastructure:**
 
 - 📦 **Node.js**: 24.11.1 LTS (pinned via Volta)
-- 📦 **npm**: 11.6.2 (pinned via Volta)
+- 📦 **npm**: 11.6.3 (pinned via Volta)
 - ⚡ **Volta**: [Install Volta](https://docs.volta.sh/guide/getting-started) for automatic Node.js/npm version management
 
 > 💡 **Note:** Node.js is used for project tooling, infrastructure, and development tools. The tech stack for the main enterprise platform is currently being decided and may be implemented in a different technology.
@@ -203,9 +203,9 @@ nx test [lib-name]   # Run tests
 
 #### Documentation
 
-- [How to Add New App](./docs/how-to/ht__add-new-app.md)
-- [How to Add New Library](./docs/how-to/ht__add-new-lib.md)
-- [How to Run Nx Commands](./docs/how-to/ht__run-nx-commands.md)
+- [How to Add New App](./docs/how-to/hoto__add-new-app.md)
+- [How to Add New Library](./docs/how-to/hoto__add-new-lib.md)
+- [How to Run Nx Commands](./docs/how-to/hoto__run-nx-commands.md)
 - [Monorepo Structure Reference](./docs/reference/re__monorepo-structure.md)
 - [Nx Configuration Reference](./docs/reference/re__nx-configuration.md)
 

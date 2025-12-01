@@ -580,7 +580,7 @@ Node.js and npm version pinning.
 {
   "volta": {
     "node": "24.11.1",
-    "npm": "11.6.2"
+    "npm": "11.6.3"
   }
 }
 ```
@@ -653,7 +653,7 @@ NX_DAEMON=false nx build demo-ts-fe
 
 ## Related Documentation
 
-- [How to Add New App](../how-to/ht__add-new-app.md)
-- [How to Add New Library](../how-to/ht__add-new-lib.md)
-- [How to Run Nx Commands](../how-to/ht__run-nx-commands.md)
+- [How to Add New App](../how-to/hoto__add-new-app.md)
+- [How to Add New Library](../how-to/hoto__add-new-lib.md)
+- [How to Run Nx Commands](../how-to/hoto__run-nx-commands.md)
 - [Monorepo Structure Reference](./re__monorepo-structure.md)
