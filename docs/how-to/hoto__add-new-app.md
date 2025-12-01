@@ -300,6 +300,6 @@ TypeScript path mappings are configured in `tsconfig.base.json`.
 
 ## Related Documentation
 
-- [Add New Library](./ht__add-new-lib.md)
-- [Run Nx Commands](./ht__run-nx-commands.md)
+- [Add New Library](./hoto__add-new-lib.md)
+- [Run Nx Commands](./hoto__run-nx-commands.md)
 - [Monorepo Structure Reference](../reference/re__monorepo-structure.md)

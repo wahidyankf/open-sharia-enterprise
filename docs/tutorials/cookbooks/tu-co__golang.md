@@ -21,7 +21,7 @@ Practical recipes for solving real-world problems with idiomatic Go code. This c
 
 Before using this cookbook, you should:
 
-- ✅ Complete the [Golang Crash Course](../crash-courses/tu-cr__golang.md)
+- ✅ Complete the [Golang Crash Course](../crash-courses/tu-crco__golang.md)
 - ✅ Understand Go syntax, types, and control flow
 - ✅ Know how to work with slices, maps, and structs
 - ✅ Understand functions, methods, and interfaces
@@ -1904,7 +1904,7 @@ You've learned practical Go patterns! Continue your journey:
 - **Official Documentation** - [go.dev/doc](https://go.dev/doc)
 - **Effective Go** - [go.dev/doc/effective_go](https://go.dev/doc/effective_go)
 - **Go Blog** - [go.dev/blog](https://go.dev/blog)
-- **Go Wiki** - [github.com/golang/go/wiki](https://github.com/golang/go/wiki)
+- **Go Wiki** - [go.dev/wiki](https://go.dev/wiki/)
 
 ---
 

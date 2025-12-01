@@ -148,7 +148,7 @@ Journal files are nested 2 levels deep from `docs/`, so they require `../../` to
 <!-- Descriptive text with relative path and .md extension -->
 
 [Understanding the Diátaxis Framework](./ex-co__diataxis-framework.md)
-[How to Configure API](../how-to/ht__configure-api.md)
+[How to Configure API](../how-to/hoto__configure-api.md)
 [Transaction Endpoints Reference](../../reference/api/re-ap__endpoints.md)
 
 <!-- Links with context -->

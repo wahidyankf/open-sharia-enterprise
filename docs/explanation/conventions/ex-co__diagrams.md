@@ -437,7 +437,7 @@ Structured data representation:
 │   Category   │   Prefix   │   Example    │
 ├──────────────┼────────────┼──────────────┤
 │  Tutorials   │    tu__    │  tu__start.md│
-│  How-To      │    ht__    │  ht__api.md  │
+│  How-To      │   hoto__   │ hoto__api.md │
 │  Reference   │    re__    │  re__spec.md │
 │  Explanation │    ex__    │  ex__arch.md │
 └──────────────┴────────────┴──────────────┘

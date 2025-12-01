@@ -883,9 +883,9 @@ coverage/
    - Reference how-to guides
 
 2. **Create How-To Guides** (in `docs/how-to/`):
-   - `ht__add-new-app.md` - Step-by-step app creation
-   - `ht__add-new-lib.md` - Step-by-step lib creation
-   - `ht__run-nx-commands.md` - Common workflows
+   - `hoto__add-new-app.md` - Step-by-step app creation
+   - `hoto__add-new-lib.md` - Step-by-step lib creation
+   - `hoto__run-nx-commands.md` - Common workflows
 
 3. **Create Reference Docs** (in `docs/reference/`):
    - `re__monorepo-structure.md` - Complete structure reference
@@ -1328,7 +1328,7 @@ This plan was informed by official Nx documentation and polyglot monorepo best p
 ### Polyglot Monorepo Resources
 
 - [Using Nx to build a multilang monorepo](https://sylhare.github.io/2024/10/21/Nx-multilang-monorepo.html) - Practical guide for polyglot Nx setups
-- [Managing multiple languages in a monorepo](https://graphite.dev/guides/managing-multiple-languages-in-a-monorepo) - Multi-language strategies
+- [Managing multiple languages in a monorepo](https://graphite.com/guides/managing-multiple-languages-in-a-monorepo) - Multi-language strategies
 
 ### Architecture Patterns
 

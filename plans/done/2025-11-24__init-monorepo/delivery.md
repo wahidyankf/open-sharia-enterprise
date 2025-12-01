@@ -615,21 +615,21 @@
   - **Date**: 2025-11-29
   - **Status**: Completed
   - **Files Changed**: CLAUDE.md (modified)
-- [x] Create `docs/how-to/ht__add-new-app.md`:
+- [x] Create `docs/how-to/hoto__add-new-app.md`:
   - **Implementation Notes**: Created comprehensive how-to guide with step-by-step instructions for adding Next.js and Express apps, complete with prerequisites, naming conventions, directory structure, Nx configuration examples, TypeScript setup, package.json format, README template, verification checklist, common issues/solutions, and related documentation links.
   - **Date**: 2025-11-29
   - **Status**: Completed
-  - **Files Changed**: docs/how-to/ht\_\_add-new-app.md (new)
-- [x] Create `docs/how-to/ht__add-new-lib.md`:
+  - **Files Changed**: docs/how-to/hoto\_\_add-new-app.md (new)
+- [x] Create `docs/how-to/hoto__add-new-lib.md`:
   - **Implementation Notes**: Created comprehensive how-to guide covering library naming with language prefixes (ts-, java-, kt-, py-), complete directory structure, source files creation, Nx configuration, TypeScript setup, testing, verification checklist, dependency management (avoiding circular deps, language boundaries), common issues/solutions, and next steps.
   - **Date**: 2025-11-29
   - **Status**: Completed
-  - **Files Changed**: docs/how-to/ht\_\_add-new-lib.md (new)
-- [x] Create `docs/how-to/ht__run-nx-commands.md`:
+  - **Files Changed**: docs/how-to/hoto\_\_add-new-lib.md (new)
+- [x] Create `docs/how-to/hoto__run-nx-commands.md`:
   - **Implementation Notes**: Created comprehensive command reference covering basic project commands (build, test, lint, dev, serve), run-many for multiple projects, affected commands for changed projects only, dependency graph visualization, caching behavior, workspace commands, common workflows (development, testing, build, pre-commit), CI/CD workflows with GitHub Actions examples, performance tips, troubleshooting, and advanced commands.
   - **Date**: 2025-11-29
   - **Status**: Completed
-  - **Files Changed**: docs/how-to/ht\_\_run-nx-commands.md (new)
+  - **Files Changed**: docs/how-to/hoto\_\_run-nx-commands.md (new)
 - [x] Create `docs/reference/re__monorepo-structure.md`:
   - **Implementation Notes**: Created complete structure reference documenting root structure, apps folder (purpose, naming, structure for Next.js/Express, characteristics), libs folder (flat structure, language prefixes, organization, characteristics), file format reference (project.json, tsconfig.json, package.json), dependency rules (import patterns, monitoring), path mappings, and build outputs.
   - **Date**: 2025-11-29
@@ -989,9 +989,9 @@ Before marking this plan as complete and ready for merge, verify ALL items below
 ### Documentation
 
 - [x] `CLAUDE.md` updated with monorepo section
-- [x] `docs/how-to/ht__add-new-app.md` created
-- [x] `docs/how-to/ht__add-new-lib.md` created
-- [x] `docs/how-to/ht__run-nx-commands.md` created
+- [x] `docs/how-to/hoto__add-new-app.md` created
+- [x] `docs/how-to/hoto__add-new-lib.md` created
+- [x] `docs/how-to/hoto__run-nx-commands.md` created
 - [x] `docs/reference/re__monorepo-structure.md` created
 - [x] `docs/reference/re__nx-configuration.md` created
 - [x] Root `README.md` updated

@@ -19,14 +19,14 @@ This directory contains conceptual documentation about specific security testing
 
 ### 🔍 Reconnaissance & Discovery
 
-- [Gobuster](./ex-in-se-to__gobuster.md) - Directory and file brute-forcing tool for web application enumeration
+- [Gobuster](./ex-inse-to__gobuster.md) - Directory and file brute-forcing tool for web application enumeration
 
 ## 🔗 Related Documentation
 
 - [Information Security Index](../README.md) - Core security concepts
-- [Offensive Security](../ex-in-se__offensive-security.md) - Active security testing and penetration testing
-- [Defensive Security](../ex-in-se__defensive-security.md) - Protection strategies and defensive practices
-- [DAST (Dynamic Application Security Testing)](../ex-in-se__dast.md) - Runtime security testing
+- [Offensive Security](../ex-inse__offensive-security.md) - Active security testing and penetration testing
+- [Defensive Security](../ex-inse__defensive-security.md) - Protection strategies and defensive practices
+- [DAST (Dynamic Application Security Testing)](../ex-inse__dast.md) - Runtime security testing
 
 ## 🎯 Purpose
 

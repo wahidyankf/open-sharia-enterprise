@@ -18,24 +18,24 @@ This directory contains conceptual documentation about information security prac
 
 ### 🔒 Core Security Concepts
 
-- [Information Security (InfoSec)](./ex-in-se__infosec.md) - Overview of information security practices, domains, and the CIA triad for protecting digital assets
-- [OWASP (Open Worldwide Application Security Project)](./ex-in-se__owasp.md) - Community-driven security resources, standards, and tools including the industry-standard OWASP Top 10, testing guides, and security tools like ZAP
+- [Information Security (InfoSec)](./ex-inse__infosec.md) - Overview of information security practices, domains, and the CIA triad for protecting digital assets
+- [OWASP (Open Worldwide Application Security Project)](./ex-inse__owasp.md) - Community-driven security resources, standards, and tools including the industry-standard OWASP Top 10, testing guides, and security tools like ZAP
 
 ### 🛡️ Defensive Security
 
-- [Defensive Security](./ex-in-se__defensive-security.md) - Comprehensive guide to protecting systems, networks, and data through defense-in-depth strategies, monitoring, and incident response
+- [Defensive Security](./ex-inse__defensive-security.md) - Comprehensive guide to protecting systems, networks, and data through defense-in-depth strategies, monitoring, and incident response
 - **Security Testing Approaches:**
-  - [SAST (Static Application Security Testing)](./ex-in-se__sast.md) - Understanding static security analysis and how it protects applications during development
-  - [DAST (Dynamic Application Security Testing)](./ex-in-se__dast.md) - Understanding dynamic security testing in runtime environments
+  - [SAST (Static Application Security Testing)](./ex-inse__sast.md) - Understanding static security analysis and how it protects applications during development
+  - [DAST (Dynamic Application Security Testing)](./ex-inse__dast.md) - Understanding dynamic security testing in runtime environments
 
 ### ⚔️ Offensive Security Testing
 
-- [Offensive Security](./ex-in-se__offensive-security.md) - Active security testing, penetration testing, and red team exercises to validate defenses and find vulnerabilities
+- [Offensive Security](./ex-inse__offensive-security.md) - Active security testing, penetration testing, and red team exercises to validate defenses and find vulnerabilities
 
 ### 🔧 Security Toolings
 
 - [Security Toolings Index](./toolings/README.md) - Security testing tools and utilities for offensive and defensive security
-  - [Gobuster](./toolings/ex-in-se-to__gobuster.md) - Directory and file brute-forcing tool for web application enumeration
+  - [Gobuster](./toolings/ex-inse-to__gobuster.md) - Directory and file brute-forcing tool for web application enumeration
 
 ## 🔗 Related Documentation
 

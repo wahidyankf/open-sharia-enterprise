@@ -27,7 +27,7 @@ Crash courses provide:
 
 ### Programming Languages
 
-- [**Golang Crash Course**](./tu-cr__golang.md) - Modern systems programming language with built-in concurrency
+- [**Golang Crash Course**](./tu-crco__golang.md) - Modern systems programming language with built-in concurrency
 
 ## 🎓 How to Use These Courses
 

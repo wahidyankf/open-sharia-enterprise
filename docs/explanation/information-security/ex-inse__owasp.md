@@ -113,7 +113,7 @@ The 2025 edition includes significant changes reflecting current threats:
 - **A09: Logging and Alerting Failures** - Renamed from "Security Logging and Monitoring Failures" to emphasize active alerting
 - **SSRF Merged** - Server-Side Request Forgery merged into A01: Broken Access Control
 
-For detailed vulnerability explanations, see [Information Security Overview](./ex-in-se__infosec.md).
+For detailed vulnerability explanations, see [Information Security Overview](./ex-inse__infosec.md).
 
 ## 🤝 How OWASP Works
 
@@ -365,10 +365,10 @@ Demonstrating security compliance using industry-recognized OWASP standards buil
 
 ## Related Documentation
 
-- [Information Security (InfoSec) Overview](./ex-in-se__infosec.md) - Foundation of security concepts, includes OWASP Top 10 detailed list
-- [DAST (Dynamic Application Security Testing)](./ex-in-se__dast.md) - Includes detailed coverage of OWASP ZAP tool
-- [Defensive Security](./ex-in-se__defensive-security.md) - Defensive strategies aligned with OWASP practices
-- [Offensive Security](./ex-in-se__offensive-security.md) - Offensive testing using OWASP ZAP and methodologies
+- [Information Security (InfoSec) Overview](./ex-inse__infosec.md) - Foundation of security concepts, includes OWASP Top 10 detailed list
+- [DAST (Dynamic Application Security Testing)](./ex-inse__dast.md) - Includes detailed coverage of OWASP ZAP tool
+- [Defensive Security](./ex-inse__defensive-security.md) - Defensive strategies aligned with OWASP practices
+- [Offensive Security](./ex-inse__offensive-security.md) - Offensive testing using OWASP ZAP and methodologies
 - [Information Security Index](./README.md) - Complete information security documentation index
 
 ## Further Reading

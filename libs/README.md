@@ -136,7 +136,7 @@ nx affected:graph           # View affected projects
 
 ## How to Add a New Library
 
-See the how-to guide: `docs/how-to/ht__add-new-lib.md` (to be created)
+See the how-to guide: `docs/how-to/hoto__add-new-lib.md` (to be created)
 
 ## Path Mappings
 

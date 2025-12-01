@@ -383,6 +383,6 @@ npm install -D tsx
 
 ## Related Documentation
 
-- [Add New App](./ht__add-new-app.md)
-- [Run Nx Commands](./ht__run-nx-commands.md)
+- [Add New App](./hoto__add-new-app.md)
+- [Run Nx Commands](./hoto__run-nx-commands.md)
 - [Monorepo Structure Reference](../reference/re__monorepo-structure.md)

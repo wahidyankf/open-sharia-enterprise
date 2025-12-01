@@ -396,8 +396,8 @@ graph TD
 
 ## Related Documentation
 
-- [Information Security (InfoSec) Overview](./ex-in-se__infosec.md)
-- [SAST (Static Application Security Testing)](./ex-in-se__sast.md)
-- [DAST (Dynamic Application Security Testing)](./ex-in-se__dast.md)
+- [Information Security (InfoSec) Overview](./ex-inse__infosec.md)
+- [SAST (Static Application Security Testing)](./ex-inse__sast.md)
+- [DAST (Dynamic Application Security Testing)](./ex-inse__dast.md)
 - [Information Security Index](./README.md)
 - [Development Conventions](../development/README.md)

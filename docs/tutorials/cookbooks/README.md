@@ -38,7 +38,7 @@ Cookbooks are collections of **practical recipes** that teach you how to apply p
 
 ### Programming Languages
 
-- **[Golang Cookbook](./tu-cb__golang.md)** - Practical Go patterns including generics, concurrency patterns, error handling strategies, file embedding, testing patterns, and design patterns
+- **[Golang Cookbook](./tu-co__golang.md)** - Practical Go patterns including generics, concurrency patterns, error handling strategies, file embedding, testing patterns, and design patterns
 
 ## 🎯 How to Use Cookbooks
 
