@@ -17,13 +17,19 @@ Learn Go (Golang) - a modern, statically typed, compiled programming language de
 
 ## 🎯 What You'll Learn
 
+This crash course teaches **Go language mechanics** - the core features and syntax you need to read and write Go code:
+
 - Go syntax and core language features
 - Data types, functions, and control flow
 - Structs, interfaces, and methods
-- Goroutines and channels for concurrency
-- Error handling the Go way
+- **Generics and type parameters (Go 1.18+)** - core language feature
+- Pointers and memory
+- Error handling - how to create and return errors
+- Goroutines and channels - concurrency primitives
 - Package management and project structure
-- Testing in Go
+- Testing basics - how to write and run tests
+
+**After this crash course**, check out the [Golang Cookbook](../cookbooks/tu-cb__golang.md) for practical patterns and day-to-day problem solving.
 
 ## 📋 Prerequisites
 
@@ -553,7 +559,8 @@ func main() {
 }
 
 // Common use: cleanup resources
-// Required import: "os"
+import "os"
+
 func readFile(filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -711,7 +718,12 @@ func main() {
 	anything = "hello"
 	anything = rect
 
-	fmt.Println(anything)
+	// 'any' is an alias for interface{} (Go 1.18+)
+	var something any
+	something = []int{1, 2, 3}
+	something = map[string]int{"key": 42}
+
+	fmt.Println(anything, something)
 }
 ```
 
@@ -948,47 +960,6 @@ func main() {
 }
 ```
 
-### Channel Patterns
-
-```go
-package main
-
-import (
-	"fmt"
-	"time"
-)
-
-// Worker pattern
-func worker(id int, jobs <-chan int, results chan<- int) {
-	for j := range jobs {
-		fmt.Printf("Worker %d processing job %d\n", id, j)
-		time.Sleep(time.Second)
-		results <- j * 2
-	}
-}
-
-func main() {
-	jobs := make(chan int, 5)
-	results := make(chan int, 5)
-
-	// Start 3 workers
-	for w := 1; w <= 3; w++ {
-		go worker(w, jobs, results)
-	}
-
-	// Send 5 jobs
-	for j := 1; j <= 5; j++ {
-		jobs <- j
-	}
-	close(jobs)
-
-	// Collect results
-	for a := 1; a <= 5; a++ {
-		fmt.Println("Result:", <-results)
-	}
-}
-```
-
 ### Select Statement
 
 Multiplex channel operations:
@@ -1029,84 +1000,208 @@ func main() {
 }
 ```
 
-### WaitGroup
+## 🔷 Generics (Go 1.18+)
 
-Wait for goroutines to finish:
+Go added generics in version 1.18, enabling type-safe reusable code:
+
+### Generic Functions
 
 ```go
 package main
 
-import (
-	"fmt"
-	"sync"
-	"time"
-)
+import "fmt"
 
-func worker(id int, wg *sync.WaitGroup) {
-	defer wg.Done() // Decrement counter when done
+// Generic function with type parameter
+func Print[T any](value T) {
+	fmt.Println(value)
+}
 
-	fmt.Printf("Worker %d starting\n", id)
-	time.Sleep(time.Second)
-	fmt.Printf("Worker %d done\n", id)
+// Generic function with type constraint
+func Min[T int | float64](a, b T) T {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// Generic function with comparable constraint
+func Contains[T comparable](slice []T, value T) bool {
+	for _, item := range slice {
+		if item == value {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
-	var wg sync.WaitGroup
+	// Type inference
+	Print(42)
+	Print("hello")
+	Print(3.14)
 
-	for i := 1; i <= 5; i++ {
-		wg.Add(1) // Increment counter
-		go worker(i, &wg)
-	}
+	// Explicit type arguments
+	Print[int](100)
 
-	wg.Wait() // Block until counter is 0
-	fmt.Println("All workers done")
+	// Generic Min function
+	fmt.Println(Min(10, 20))       // int
+	fmt.Println(Min(3.14, 2.71))   // float64
+
+	// Generic Contains function
+	numbers := []int{1, 2, 3, 4, 5}
+	fmt.Println(Contains(numbers, 3))  // true
+	fmt.Println(Contains(numbers, 10)) // false
+
+	words := []string{"go", "rust", "python"}
+	fmt.Println(Contains(words, "go")) // true
 }
 ```
 
-### Mutex
-
-Protect shared data:
+### Generic Types
 
 ```go
 package main
 
-import (
-	"fmt"
-	"sync"
-)
+import "fmt"
 
-type SafeCounter struct {
-	mu    sync.Mutex
-	count int
+// Generic struct
+type Stack[T any] struct {
+	items []T
 }
 
-func (c *SafeCounter) Increment() {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	c.count++
+func (s *Stack[T]) Push(item T) {
+	s.items = append(s.items, item)
 }
 
-func (c *SafeCounter) Value() int {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	return c.count
+func (s *Stack[T]) Pop() (T, bool) {
+	if len(s.items) == 0 {
+		var zero T
+		return zero, false
+	}
+	item := s.items[len(s.items)-1]
+	s.items = s.items[:len(s.items)-1]
+	return item, true
+}
+
+func (s *Stack[T]) IsEmpty() bool {
+	return len(s.items) == 0
+}
+
+// Generic map type
+type Cache[K comparable, V any] struct {
+	data map[K]V
+}
+
+func NewCache[K comparable, V any]() *Cache[K, V] {
+	return &Cache[K, V]{
+		data: make(map[K]V),
+	}
+}
+
+func (c *Cache[K, V]) Set(key K, value V) {
+	c.data[key] = value
+}
+
+func (c *Cache[K, V]) Get(key K) (V, bool) {
+	value, ok := c.data[key]
+	return value, ok
 }
 
 func main() {
-	counter := SafeCounter{}
-	var wg sync.WaitGroup
+	// Integer stack
+	intStack := Stack[int]{}
+	intStack.Push(1)
+	intStack.Push(2)
+	intStack.Push(3)
 
-	// 1000 goroutines incrementing
-	for i := 0; i < 1000; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			counter.Increment()
-		}()
+	for !intStack.IsEmpty() {
+		val, _ := intStack.Pop()
+		fmt.Println(val) // 3, 2, 1
 	}
 
-	wg.Wait()
-	fmt.Println("Final count:", counter.Value()) // 1000
+	// String stack
+	strStack := Stack[string]{}
+	strStack.Push("hello")
+	strStack.Push("world")
+
+	val, _ := strStack.Pop()
+	fmt.Println(val) // world
+
+	// Generic cache
+	cache := NewCache[string, int]()
+	cache.Set("age", 30)
+	cache.Set("score", 95)
+
+	age, ok := cache.Get("age")
+	if ok {
+		fmt.Println("Age:", age)
+	}
+}
+```
+
+### Type Constraints
+
+```go
+package main
+
+import "fmt"
+
+// Define custom constraint
+type Number interface {
+	int | int32 | int64 | float32 | float64
+}
+
+// Use constraint in generic function
+func Sum[T Number](numbers []T) T {
+	var total T
+	for _, n := range numbers {
+		total += n
+	}
+	return total
+}
+
+// Constraint with methods
+type Stringer interface {
+	String() string
+}
+
+func PrintAll[T Stringer](items []T) {
+	for _, item := range items {
+		fmt.Println(item.String())
+	}
+}
+
+// Multiple type parameters
+func Map[T any, U any](slice []T, fn func(T) U) []U {
+	result := make([]U, len(slice))
+	for i, v := range slice {
+		result[i] = fn(v)
+	}
+	return result
+}
+
+func main() {
+	// Sum integers
+	ints := []int{1, 2, 3, 4, 5}
+	fmt.Println("Sum:", Sum(ints)) // 15
+
+	// Sum floats
+	floats := []float64{1.1, 2.2, 3.3}
+	fmt.Println("Sum:", Sum(floats)) // 6.6
+
+	// Map strings to lengths
+	words := []string{"go", "rust", "python"}
+	lengths := Map(words, func(s string) int {
+		return len(s)
+	})
+	fmt.Println("Lengths:", lengths) // [2 4 6]
+
+	// Map ints to strings
+	numbers := []int{1, 2, 3}
+	strings := Map(numbers, func(n int) string {
+		return fmt.Sprintf("num-%d", n)
+	})
+	fmt.Println("Strings:", strings) // [num-1 num-2 num-3]
 }
 ```
 
@@ -1274,200 +1369,24 @@ go test -cover       # Show coverage
 go test -run TestAdd # Run specific test
 ```
 
-### Table-Driven Tests
+---
 
-```go
-func TestAddTableDriven(t *testing.T) {
-	tests := []struct {
-		name     string
-		a, b     int
-		expected int
-	}{
-		{"positive numbers", 2, 3, 5},
-		{"negative numbers", -2, -3, -5},
-		{"mixed signs", -2, 3, 1},
-		{"with zero", 0, 5, 5},
-	}
+## 🍳 Ready for Practical Patterns?
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := Add(tt.a, tt.b)
-			if result != tt.expected {
-				t.Errorf("Add(%d, %d) = %d; want %d",
-					tt.a, tt.b, result, tt.expected)
-			}
-		})
-	}
-}
-```
+You've learned the Go language fundamentals! Now it's time to learn how to solve real-world problems.
 
-### Benchmarks
+**Continue to the [Golang Cookbook](../cookbooks/tu-cb__golang.md)** for:
 
-```go
-func BenchmarkAdd(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		Add(2, 3)
-	}
-}
-```
+- 🔷 Practical generics recipes (stack, cache, filter/map/reduce)
+- 🚀 Concurrency patterns (worker pools, pipelines, fan-out/fan-in)
+- ⚠️ Error handling strategies (wrapping, sentinel errors, custom types)
+- 🎯 Context patterns (cancellation, timeouts)
+- 📁 File embedding (static assets, templates, web servers)
+- 🧪 Testing patterns (table-driven tests, fuzzing, benchmarks)
+- 🎨 Design patterns (functional options, builder, singleton)
+- 🌐 Web development recipes (middleware, JSON APIs)
 
-Run benchmarks:
-
-```bash
-go test -bench=.
-go test -bench=BenchmarkAdd
-```
-
-## 🎨 Common Patterns
-
-### Error Wrapping (Go 1.13+)
-
-```go
-import (
-	"fmt"
-	"errors"
-)
-
-func readConfig() error {
-	err := openFile()
-	if err != nil {
-		return fmt.Errorf("failed to read config: %w", err)
-	}
-	return nil
-}
-
-// Check wrapped error
-if errors.Is(err, ErrNotFound) {
-	// Handle not found
-}
-
-// Unwrap to check type
-var pathErr *os.PathError
-if errors.As(err, &pathErr) {
-	// Handle path error
-}
-```
-
-### Context for Cancellation
-
-```go
-import (
-	"context"
-	"fmt"
-	"time"
-)
-
-func doWork(ctx context.Context) error {
-	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err() // Cancelled or timed out
-		default:
-			// Do work
-			time.Sleep(100 * time.Millisecond)
-		}
-	}
-}
-
-func main() {
-	// Context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-
-	if err := doWork(ctx); err != nil {
-		fmt.Println("Error:", err)
-	}
-}
-```
-
-### Functional Options Pattern
-
-```go
-type Server struct {
-	host string
-	port int
-	timeout time.Duration
-}
-
-type Option func(*Server)
-
-func WithHost(host string) Option {
-	return func(s *Server) {
-		s.host = host
-	}
-}
-
-func WithPort(port int) Option {
-	return func(s *Server) {
-		s.port = port
-	}
-}
-
-func NewServer(opts ...Option) *Server {
-	// Defaults
-	s := &Server{
-		host: "localhost",
-		port: 8080,
-		timeout: 30 * time.Second,
-	}
-
-	// Apply options
-	for _, opt := range opts {
-		opt(s)
-	}
-
-	return s
-}
-
-// Usage
-server := NewServer(
-	WithHost("0.0.0.0"),
-	WithPort(9000),
-)
-```
-
-### Builder Pattern
-
-```go
-type QueryBuilder struct {
-	table  string
-	fields []string
-	where  string
-	limit  int
-}
-
-func NewQuery(table string) *QueryBuilder {
-	return &QueryBuilder{table: table}
-}
-
-func (q *QueryBuilder) Select(fields ...string) *QueryBuilder {
-	q.fields = fields
-	return q
-}
-
-func (q *QueryBuilder) Where(condition string) *QueryBuilder {
-	q.where = condition
-	return q
-}
-
-func (q *QueryBuilder) Limit(n int) *QueryBuilder {
-	q.limit = n
-	return q
-}
-
-func (q *QueryBuilder) Build() string {
-	// Build SQL query
-	return fmt.Sprintf("SELECT %s FROM %s WHERE %s LIMIT %d",
-		strings.Join(q.fields, ", "), q.table, q.where, q.limit)
-}
-
-// Usage
-query := NewQuery("users").
-	Select("id", "name", "email").
-	Where("age > 18").
-	Limit(10).
-	Build()
-```
+---
 
 ## 📚 Next Steps
 
@@ -1487,10 +1406,12 @@ query := NewQuery("users").
 ### Advanced Topics
 
 - **Reflection** - Runtime type inspection with `reflect` package
-- **Generics** - Type parameters (Go 1.18+)
-- **Performance** - Profiling with pprof, optimization techniques
+- **Performance** - Profiling with pprof, optimization techniques, memory management
 - **CGo** - Calling C code from Go
 - **Assembly** - Understanding Go's assembly output
+- **Context patterns** - Advanced cancellation and timeout patterns
+- **Custom generics constraints** - Building reusable type-safe libraries
+- **Workspace mode** - Multi-module development (Go 1.18+)
 
 ### Popular Packages
 
@@ -1505,18 +1426,20 @@ query := NewQuery("users").
 
 ## 🎓 Summary
 
-You've learned:
+**You've learned the Go language mechanics!**
+
+This crash course covered:
 
 - ✅ Go syntax, types, and variables
 - ✅ Control flow (if, switch, for, range)
 - ✅ Data structures (arrays, slices, maps, structs)
 - ✅ Functions, methods, and interfaces
 - ✅ Pointers and memory
-- ✅ Error handling patterns
-- ✅ Concurrency with goroutines and channels
+- ✅ Error handling basics (creating and returning errors)
+- ✅ Concurrency primitives (goroutines, channels, select)
+- ✅ **Generics and type constraints (Go 1.18+)**
 - ✅ Packages, modules, and project structure
-- ✅ Testing and benchmarking
-- ✅ Common Go idioms and patterns
+- ✅ Testing basics (writing and running tests)
 
 Go is designed for building **simple, reliable, and efficient software**. The language is intentionally minimal, forcing you to write explicit, readable code.
 
@@ -1527,4 +1450,4 @@ Go is designed for building **simple, reliable, and efficient software**. The la
 - Composition over inheritance
 - Concurrency as a first-class feature
 
-Now go build something! 🚀
+**Ready to solve real problems?** Continue to the [Golang Cookbook](../cookbooks/tu-cb__golang.md) for practical patterns and day-to-day problem solving! 🍳
