@@ -29,7 +29,7 @@ This crash course teaches **Go language mechanics** - the core features and synt
 - Package management and project structure
 - Testing basics - how to write and run tests
 
-**After this crash course**, check out the [Golang Cookbook](../cookbooks/tu-cb__golang.md) for practical patterns and day-to-day problem solving.
+**After this crash course**, check out the [Golang Cookbook](../cookbooks/tu-co__golang.md) for practical patterns and day-to-day problem solving.
 
 ## 📋 Prerequisites
 
@@ -1375,7 +1375,7 @@ go test -run TestAdd # Run specific test
 
 You've learned the Go language fundamentals! Now it's time to learn how to solve real-world problems.
 
-**Continue to the [Golang Cookbook](../cookbooks/tu-cb__golang.md)** for:
+**Continue to the [Golang Cookbook](../cookbooks/tu-co__golang.md)** for:
 
 - 🔷 Practical generics recipes (stack, cache, filter/map/reduce)
 - 🚀 Concurrency patterns (worker pools, pipelines, fan-out/fan-in)
@@ -1392,7 +1392,7 @@ You've learned the Go language fundamentals! Now it's time to learn how to solve
 
 ### Essential Reading
 
-- **Official Tour**: [tour.golang.org](https://tour.golang.org)
+- **Official Tour**: [go.dev/tour](https://go.dev/tour/)
 - **Effective Go**: [go.dev/doc/effective_go](https://go.dev/doc/effective_go)
 - **Go by Example**: [gobyexample.com](https://gobyexample.com)
 
@@ -1450,4 +1450,4 @@ Go is designed for building **simple, reliable, and efficient software**. The la
 - Composition over inheritance
 - Concurrency as a first-class feature
 
-**Ready to solve real problems?** Continue to the [Golang Cookbook](../cookbooks/tu-cb__golang.md) for practical patterns and day-to-day problem solving! 🍳
+**Ready to solve real problems?** Continue to the [Golang Cookbook](../cookbooks/tu-co__golang.md) for practical patterns and day-to-day problem solving! 🍳
