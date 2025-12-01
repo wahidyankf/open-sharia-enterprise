@@ -20,7 +20,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Documentation Linking Convention](./ex-co__linking-convention.md) - Standards for linking between documentation files using GitHub-compatible markdown
 - [Diagram and Schema Convention](./ex-co__diagrams.md) - Standards for using Mermaid diagrams and ASCII art in markdown files
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the four-category documentation organization framework we use
-- [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for daily research notes and monthly summaries (includes TAB indentation requirement for docs/ directory; CRITICAL: YAML frontmatter must use spaces, not tabs; code blocks use language-appropriate indentation)
+- [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for daily research notes and monthly summaries
 - [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage to enhance document scannability and engagement
 - [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 - [Temporary Files Convention](./ex-co__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
