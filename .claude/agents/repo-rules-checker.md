@@ -4,6 +4,7 @@ description: Validates consistency between agents, CLAUDE.md, conventions, and d
 tools: Read, Glob, Grep
 model: sonnet
 color: green
+updated: 2025-12-01
 ---
 
 # Repository Rule Checker Agent
@@ -67,6 +68,7 @@ When running a consistency check, systematically verify:
 - [ ] No format mixing within single file (consistent Mermaid or ASCII throughout)
 - [ ] Mermaid code blocks use proper syntax with `mermaid` language identifier
 - [ ] ASCII art uses box-drawing characters and monospace-compatible formatting
+- [ ] Mermaid diagrams in `docs/` use vertical orientation (TD or BT) for mobile-friendly viewing (exception: horizontal only when vertical would harm clarity)
 
 ### Frontmatter Consistency
 

@@ -4,6 +4,7 @@ description: Expert journal writer specializing in Logseq-style outliner format 
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: inherit
 color: blue
+updated: 2025-12-01
 ---
 
 # Journal Writer Agent
@@ -107,7 +108,7 @@ When the user wants to create or update a daily research entry:
 
 ### Diagrams in Journal Entries
 
-Since `docs/journals/` is inside the `docs/` directory (Obsidian vault), use **Mermaid diagrams** for any technical diagrams. See [Diagram Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for examples.
+Since `docs/journals/` is inside the `docs/` directory (Obsidian vault), use **Mermaid diagrams** for any technical diagrams. Use vertical orientation (`graph TD` or `graph BT`) for mobile-friendly viewing. See [Diagram Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples.
 
 ### Link Suggestion Strategy
 

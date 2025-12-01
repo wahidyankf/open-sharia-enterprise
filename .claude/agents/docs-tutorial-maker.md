@@ -11,6 +11,7 @@ tools:
   - WebSearch
 model: sonnet
 color: blue
+updated: 2025-12-01
 ---
 
 # Tutorial Content Creator
@@ -754,6 +755,17 @@ flowchart TD
     style C fill:#e8f5e9
 ```
 
+### Diagram Orientation: Mobile-First
+
+**CRITICAL RULE**: ALL Mermaid diagrams in tutorials MUST use vertical orientation for mobile-friendly viewing:
+
+- ✅ **Use**: `graph TD` (top-down) or `graph BT` (bottom-top)
+- ❌ **Avoid**: `graph LR` (left-right) or `graph RL` (right-left)
+- **Rationale**: Mobile devices have vertical screens; horizontal scrolling is poor UX
+- **Exception**: Use horizontal only when vertical layout would significantly harm diagram clarity
+
+**This applies to ALL diagram types**: architecture diagrams, flowcharts, component diagrams, sequence diagrams, etc.
+
 ---
 
 ## Quality Checklist
@@ -875,7 +887,7 @@ using mathematics. If two text passages have similar meanings, their
 vectors will be close together in high-dimensional space.
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Text] --> B[Embedding Model]
     B --> C[Vector<br/>[numbers]]
     C --> D[Vector Database]
