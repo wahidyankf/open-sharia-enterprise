@@ -1480,7 +1480,7 @@ sequenceDiagram
 
 - [High Scalability Blog](http://highscalability.com/)
 - [Netflix Tech Blog](https://netflixtechblog.com/)
-- [Uber Engineering Blog](https://eng.uber.com/)
+- [Uber Engineering Blog](https://www.uber.com/blog/engineering/)
 
 ---
 
