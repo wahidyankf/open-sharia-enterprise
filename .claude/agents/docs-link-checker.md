@@ -1,6 +1,6 @@
 ---
 name: docs-link-checker
-description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks. Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health. Note - Write tool is used exclusively for cache file management, not documentation creation.
+description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks. Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health. Note - Write tool is allowed for cache file management only, not for documentation creation.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
 model: haiku
 color: green
@@ -472,8 +472,8 @@ Common path errors:
 
 All internal links must include the `.md` extension per the [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md).
 
-**Example of incorrect link:** `[Text](./file)` ✗
-**Example of correct link:** `[Text](./file.md)` ✓
+**Example of incorrect link:** `[Text](./file)` [INCORRECT]
+**Example of correct link:** `[Text](./file.md)` [CORRECT]
 
 ## Fixing Broken Links
 
@@ -543,12 +543,12 @@ Clean list format - NO usedIn information:
 
 Detailed format - FULL usedIn information:
 
-1. ✗ `https://example.com/broken` - Returns 404
+1. [BROKEN] `https://example.com/broken` - Returns 404
    - docs/example/file.md:123
    - docs/reference/guide.md:89
    - Suggestion: Replace with `https://example.com/new-location`
 
-2. ✗ `https://example.org/missing` - Returns 404
+2. [BROKEN] `https://example.org/missing` - Returns 404
    - docs/another/file.md:456
    - Suggestion: Remove (no replacement found)
 
@@ -556,12 +556,12 @@ Detailed format - FULL usedIn information:
 
 Detailed format with source locations:
 
-1. ✗ `./nonexistent/file.md` - File not found
+1. [BROKEN] `./nonexistent/file.md` - File not found
    - Source: `docs/explanation/README.md:45`
    - Expected path: `docs/explanation/nonexistent/file.md`
    - Suggestion: File may have been moved or renamed
 
-2. ✗ `../wrong/path.md` - File not found
+2. [BROKEN] `../wrong/path.md` - File not found
    - Source: `docs/how-to/guide.md:78`
    - Expected path: `docs/wrong/path.md`
    - Suggestion: Check if file exists at different location
@@ -655,9 +655,9 @@ Before starting work, familiarize yourself with:
      - 22 links not in cache: CHECK
 
    Checking 27 links (5 stale + 22 new):
-     Link 1: ✓ Success (200)
-     Link 2: ✗ 404 Not Found
-     Link 3: ✓ Redirect (301 → new URL)
+     Link 1: [OK] Success (200)
+     Link 2: [BROKEN] 404 Not Found
+     Link 3: [OK] Redirect (301 → new URL)
      ...
    ```
 
@@ -738,9 +738,9 @@ Before starting work, familiarize yourself with:
      - Resolve relative path to absolute
      - Use Glob or Read to check if file exists
 
-   Link 1: ✓ File exists
-   Link 2: ✗ File not found
-   Link 3: ✓ File exists
+   Link 1: [OK] File exists
+   Link 2: [BROKEN] File not found
+   Link 3: [OK] File exists
    ...
    ```
 
