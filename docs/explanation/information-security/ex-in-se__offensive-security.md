@@ -109,7 +109,7 @@ Systematic evaluation of an organization's security controls, policies, and prac
 ## Offensive vs Defensive Security
 
 ```mermaid
-graph LR
+graph TD
     A["🛡️ Defensive Security<br/>Blue Team"] -->|Informs| C["Stronger<br/>Defenses"]
     B["⚔️ Offensive Security<br/>Red Team"] -->|Validates| C
     C -->|Discovered<br/>Gaps| B

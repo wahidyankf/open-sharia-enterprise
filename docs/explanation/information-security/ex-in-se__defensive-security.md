@@ -270,7 +270,7 @@ graph TD
 ## Defensive vs Offensive Security
 
 ```mermaid
-graph LR
+graph TD
     A["🛡️ Defensive Security<br/>Blue Team<br/>Protect & Prevent"] -->|Validates| C["Complete<br/>Security"]
     B["⚔️ Offensive Security<br/>Red Team<br/>Find & Exploit"] -->|Tests| C
     C -->|Improves| A

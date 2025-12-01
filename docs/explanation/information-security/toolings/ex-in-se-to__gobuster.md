@@ -35,7 +35,7 @@ Gobuster works by systematically testing words from a wordlist against a target 
 **Basic workflow:**
 
 ```mermaid
-graph LR
+graph TD
 	A["📄 Wordlist<br/>(paths to test)"] --> B["🔄 Gobuster<br/>(sends requests)"]
 	B --> C["🌐 Target Server<br/>(web app or DNS)"]
 	C --> D["📊 Response<br/>(status codes)"]

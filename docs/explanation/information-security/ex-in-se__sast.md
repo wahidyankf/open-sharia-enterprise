@@ -24,7 +24,7 @@ SAST tools work by examining the static codebase to identify potential security 
 ## How SAST Works
 
 ```mermaid
-graph LR
+graph TD
     A[Source Code] --> B[SAST Scanner]
     B --> C[Parse & Build AST]
     C --> D[Pattern Matching]
@@ -261,7 +261,7 @@ SAST helps protect against:
 ### Integration Strategy
 
 ```mermaid
-graph LR
+graph TD
     A[Developer Codes] --> B[ESLint in IDE]
     B --> C[Pre-commit Hook]
     C --> D[Git Push]
