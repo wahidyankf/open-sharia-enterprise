@@ -528,7 +528,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram and Schema Convention
 
-Use Mermaid diagrams for files inside `docs/` directory (Obsidian vault) and ASCII art for files outside `docs/` (README.md, CLAUDE.md, etc.) to ensure universal compatibility. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
+Use Mermaid diagrams for files inside `docs/` directory (Obsidian vault) and ASCII art for files outside `docs/` (README.md, CLAUDE.md, etc.) to ensure universal compatibility. Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
 
 ### Emoji Usage Convention
 
@@ -605,6 +605,10 @@ See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent 
 - **Trunk Based Development Guide:** [`docs/explanation/development/ex-de__trunk-based-development.md`](./docs/explanation/development/ex-de__trunk-based-development.md)
 - **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)
 - **Agents Index:** [`.claude/agents/README.md`](./.claude/agents/README.md)
+
+## Planning Without Timelines
+
+When planning tasks, provide concrete implementation steps without time estimates. Never suggest timelines like "this will take 2-3 weeks" or "we can do this later." Focus on what needs to be done, not when. Break work into actionable steps and let users decide scheduling.
 
 ## Important Notes
 

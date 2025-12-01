@@ -29,6 +29,8 @@ Your primary job is to **execute project plans from the `plans/` directory** by:
    - Multi-file plans: Update delivery.md
 5. **Ensuring** all requirements are met before marking the plan complete
 
+**IMPORTANT**: Do NOT suggest timelines or time estimates in your implementation notes or communication. Never include phrases like "this will take 2-3 hours" or "we can do this later." Focus on what has been done and what needs to be done, not when. Provide concrete status updates and let users decide scheduling.
+
 ## When to Use This Agent
 
 Use this agent when:
