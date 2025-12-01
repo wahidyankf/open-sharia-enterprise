@@ -24,7 +24,7 @@ DAST tools work by interacting with a running application through its exposed in
 ## How DAST Works
 
 ```mermaid
-graph LR
+graph TD
     A[Running Application] --> B[DAST Scanner]
     B --> C[Crawl/Discover Endpoints]
     C --> D[Send Attack Payloads]
@@ -304,7 +304,7 @@ DAST validates:
 ### Integration Strategy
 
 ```mermaid
-graph LR
+graph TD
     A[Deploy to Staging] --> B[Smoke Tests]
     B --> C[OWASP ZAP Scan]
     C --> D[API Tests with Postman]

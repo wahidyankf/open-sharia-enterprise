@@ -222,7 +222,7 @@ graph TD
 ## Top 10 Development Methodology
 
 ```mermaid
-graph LR
+graph TD
     A["📊 Data Collection<br/>Security firms<br/>Bug bounties<br/>Vulnerability databases"] -->
     B["🔍 Community Analysis<br/>Experts review<br/>Validate data<br/>Categorize issues"]
 
