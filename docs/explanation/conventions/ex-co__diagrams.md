@@ -9,7 +9,7 @@ tags:
   - visualization
   - conventions
 created: 2025-11-24
-updated: 2025-11-26
+updated: 2025-12-01
 ---
 
 # Diagram and Schema Convention
@@ -271,6 +271,24 @@ gitGraph
     commit
 ```
 
+### Diagram Orientation
+
+**Mobile-First Orientation**: Diagrams should be styled vertically (top to bottom or bottom to top) for optimal mobile viewing:
+
+- **Preferred**: `graph TD` (top-down) or `graph BT` (bottom-top)
+- **Avoid when possible**: `graph LR` (left-right) or `graph RL` (right-left)
+- **Exception**: Use horizontal orientation when vertical layout would significantly harm clarity or readability
+
+**Rationale**: Mobile devices have vertical screens. Vertical diagrams are easier to view without horizontal scrolling.
+
+**Example**:
+
+```mermaid
+graph TD
+	A[Start] --> B[Process]
+	B --> C[End]
+```
+
 ### Mermaid Best Practices
 
 1. **Keep it Simple** - Complex diagrams become hard to maintain
@@ -278,6 +296,7 @@ gitGraph
 3. **Add Comments** - Explain complex logic with inline comments
 4. **Test Rendering** - Preview in Obsidian before committing
 5. **Version Control Friendly** - Use consistent formatting for easier diffs
+6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
 
 ### Mermaid Resources
 
