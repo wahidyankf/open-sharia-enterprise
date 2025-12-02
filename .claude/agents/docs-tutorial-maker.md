@@ -823,6 +823,7 @@ Before completing a tutorial, verify:
 - ✓ Common pitfalls addressed
 - ✓ Practice challenges included
 - ✓ Code is runnable and complete
+- ✓ Code examples include output expectations as comments for print/logging statements
 
 ### Learning Arc
 
@@ -831,6 +832,17 @@ Before completing a tutorial, verify:
 - ✓ Progressive complexity
 - ✓ Satisfying conclusion
 - ✓ Next steps provided
+
+## Quality Validation
+
+After creating a tutorial, it will be validated by the `docs-tutorial-checker` agent against:
+
+- **Narrative flow score** (0-10) - Evaluates how well the tutorial tells a story
+- **Visual completeness** - Checks diagram count and quality
+- **Hands-on elements** - Validates code examples with output expectations
+- **Content balance** - Ensures narrative vs lists ratio is appropriate
+
+See [docs-tutorial-checker.md](./docs-tutorial-checker.md) for complete validation criteria.
 
 ---
 
