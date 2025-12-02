@@ -46,7 +46,7 @@ When running a consistency check, systematically verify:
 
 - [ ] All files in `docs/` follow the prefix pattern (except README.md)
 - [ ] All `README.md` files are properly documented as exceptions
-- [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`, `ex-inse__` for `explanation/information-security/`, `ex-inse-to__` for `explanation/information-security/toolings/`, `tu-aien__` for `tutorials/ai-engineering/`, `tu-co__` for `tutorials/cookbooks/`, `tu-crco__` for `tutorials/crash-courses/`, `tu-syde__` for `tutorials/system-design/`, `hoto__` for `how-to/`)
+- [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`, `ex-inse__` for `explanation/information-security/`, `ex-inse-to__` for `explanation/information-security/toolings/`, `tu-aien__` for `tutorials/ai-engineering/`, `tu-bufi__` for `tutorials/business-and-finance/`, `tu-soen-syde__` for `tutorials/software-engineering/system-design/`, `hoto__` for `how-to/`)
 - [ ] Files inside `plans/` folders do NOT use prefixes (folder structure provides context)
 - [ ] Plan folders follow the naming pattern `YYYY-MM-DD__[project-identifier]/`
 - [ ] When directories are renamed, all files within have updated prefixes (except `docs/journals/`)
