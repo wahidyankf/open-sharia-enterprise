@@ -302,34 +302,40 @@ Before making financial decisions, you need to understand a company's current fi
 
 **Income Statement** - Profitability over a period:
 
-```
-Revenue
-- Cost of Goods Sold
-= Gross Profit
-- Operating Expenses
-= Operating Income (EBIT)
-- Interest Expense
-= Earnings Before Tax (EBT)
-- Taxes
-= Net Income
-```
+$$
+\begin{align}
+\text{Revenue} &\\
+- \text{Cost of Goods Sold} &\\
+= \text{Gross Profit} &\\
+- \text{Operating Expenses} &\\
+= \text{Operating Income (EBIT)} &\\
+- \text{Interest Expense} &\\
+= \text{Earnings Before Tax (EBT)} &\\
+- \text{Taxes} &\\
+= \text{Net Income}
+\end{align}
+$$
 
 **Balance Sheet** - Financial position at a point in time:
 
-```
-Assets = Liabilities + Equity
+$$
+\text{Assets} = \text{Liabilities} + \text{Equity}
+$$
 
-Current Assets + Fixed Assets = Current Liabilities + Long-term Debt + Equity
-```
+$$
+\text{Current Assets} + \text{Fixed Assets} = \text{Current Liabilities} + \text{Long-term Debt} + \text{Equity}
+$$
 
 **Cash Flow Statement** - Cash movement during period:
 
-```
-Operating Cash Flow
-+ Investing Cash Flow
-+ Financing Cash Flow
-= Net Change in Cash
-```
+$$
+\begin{align}
+\text{Operating Cash Flow} &\\
++ \text{Investing Cash Flow} &\\
++ \text{Financing Cash Flow} &\\
+= \text{Net Change in Cash}
+\end{align}
+$$
 
 ### CloudTech Solutions - Financial Statements
 
