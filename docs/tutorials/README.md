@@ -73,6 +73,12 @@ Learning-oriented guides for building AI and machine learning systems:
 - [**AI Engineering Index**](./ai-engineering/README.md) - All available AI engineering tutorials
   - 🟢 [**Chat with PDF**](./ai-engineering/tu-aien__chat-with-pdf.md) - Understanding how PDF chat applications work **(⏱️ 30-40 minutes)**
 
+### 🔒 Information Security
+
+Learning-oriented guides for information security concepts and practices:
+
+- [**Information Security Index**](./information-security/README.md) - All available information security tutorials
+
 ---
 
 ## 🎯 Learning Paths
