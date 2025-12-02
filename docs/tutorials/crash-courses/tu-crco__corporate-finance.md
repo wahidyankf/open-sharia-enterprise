@@ -300,42 +300,11 @@ Before making financial decisions, you need to understand a company's current fi
 
 ### The Three Financial Statements (Quick Review)
 
-**Income Statement** - Profitability over a period:
+**Income Statement** - Shows what happened: Revenue minus all expenses to get Net Income (profit or loss)
 
-$$
-\begin{align}
-\text{Revenue} &\\
-- \text{Cost of Goods Sold} &\\
-= \text{Gross Profit} &\\
-- \text{Operating Expenses} &\\
-= \text{Operating Income (EBIT)} &\\
-- \text{Interest Expense} &\\
-= \text{Earnings Before Tax (EBT)} &\\
-- \text{Taxes} &\\
-= \text{Net Income}
-\end{align}
-$$
+**Balance Sheet** - Shows the snapshot: What the company owns (Assets) versus what it owes (Liabilities) and what shareholders own (Equity)
 
-**Balance Sheet** - Financial position at a point in time:
-
-$$
-\text{Assets} = \text{Liabilities} + \text{Equity}
-$$
-
-$$
-\text{Current Assets} + \text{Fixed Assets} = \text{Current Liabilities} + \text{Long-term Debt} + \text{Equity}
-$$
-
-**Cash Flow Statement** - Cash movement during period:
-
-$$
-\begin{align}
-\text{Operating Cash Flow} &\\
-+ \text{Investing Cash Flow} &\\
-+ \text{Financing Cash Flow} &\\
-= \text{Net Change in Cash}
-\end{align}
-$$
+**Cash Flow Statement** - Shows the movement: Cash from operations, investing, and financing activities
 
 ### CloudTech Solutions - Financial Statements
 
@@ -453,19 +422,25 @@ Financial ratios help you quickly assess company performance and compare across 
 
 **Return on Assets (ROA):**
 
-```
-ROA = Net Income / Total Assets
-CloudTech ROA = $5,625,000 / $35,000,000 = 16.07%
-```
+$$
+ROA = \frac{\text{Net Income}}{\text{Total Assets}}
+$$
+
+$$
+\text{CloudTech ROA} = \frac{\$5,625,000}{\$35,000,000} = 16.07\%
+$$
 
 **Interpretation:** CloudTech generates $0.16 profit for every $1 of assets. Higher is better.
 
 **Return on Equity (ROE):**
 
-```
-ROE = Net Income / Shareholders' Equity
-CloudTech ROE = $5,625,000 / $20,000,000 = 28.13%
-```
+$$
+ROE = \frac{\text{Net Income}}{\text{Shareholders' Equity}}
+$$
+
+$$
+\text{CloudTech ROE} = \frac{\$5,625,000}{\$20,000,000} = 28.13\%
+$$
 
 **Interpretation:** CloudTech generates $0.28 profit for every $1 of equity. This is excellent!
 
@@ -473,19 +448,25 @@ CloudTech ROE = $5,625,000 / $20,000,000 = 28.13%
 
 **Current Ratio:**
 
-```
-Current Ratio = Current Assets / Current Liabilities
-CloudTech = $15,000,000 / $5,000,000 = 3.0
-```
+$$
+\text{Current Ratio} = \frac{\text{Current Assets}}{\text{Current Liabilities}}
+$$
+
+$$
+\text{CloudTech} = \frac{\$15,000,000}{\$5,000,000} = 3.0
+$$
 
 **Interpretation:** CloudTech has $3 in current assets for every $1 of current liabilities. Very healthy! (Ratio > 1.5 is typically good)
 
 **Quick Ratio (Acid Test):**
 
-```
-Quick Ratio = (Current Assets - Inventory) / Current Liabilities
-CloudTech = ($15M - $2M) / $5M = $13M / $5M = 2.6
-```
+$$
+\text{Quick Ratio} = \frac{\text{Current Assets} - \text{Inventory}}{\text{Current Liabilities}}
+$$
+
+$$
+\text{CloudTech} = \frac{\$15M - \$2M}{\$5M} = \frac{\$13M}{\$5M} = 2.6
+$$
 
 **Interpretation:** Even excluding inventory, CloudTech has strong liquidity.
 
@@ -493,19 +474,25 @@ CloudTech = ($15M - $2M) / $5M = $13M / $5M = 2.6
 
 **Debt-to-Equity Ratio:**
 
-```
-Debt-to-Equity = Total Debt / Equity
-CloudTech = $11,000,000 / $20,000,000 = 0.55
-```
+$$
+\text{Debt-to-Equity} = \frac{\text{Total Debt}}{\text{Equity}}
+$$
+
+$$
+\text{CloudTech} = \frac{\$11,000,000}{\$20,000,000} = 0.55
+$$
 
 **Interpretation:** For every $1 of equity, CloudTech has $0.55 of debt. Moderate leverage.
 
 **Debt-to-Assets Ratio:**
 
-```
-Debt-to-Assets = Total Debt / Total Assets
-CloudTech = $11,000,000 / $35,000,000 = 31.4%
-```
+$$
+\text{Debt-to-Assets} = \frac{\text{Total Debt}}{\text{Total Assets}}
+$$
+
+$$
+\text{CloudTech} = \frac{\$11,000,000}{\$35,000,000} = 31.4\%
+$$
 
 **Interpretation:** 31.4% of assets financed by debt, 68.6% by equity.
 
@@ -513,29 +500,37 @@ CloudTech = $11,000,000 / $35,000,000 = 31.4%
 
 **Asset Turnover:**
 
-```
-Asset Turnover = Revenue / Total Assets
-CloudTech = $50,000,000 / $35,000,000 = 1.43
-```
+$$
+\text{Asset Turnover} = \frac{\text{Revenue}}{\text{Total Assets}}
+$$
+
+$$
+\text{CloudTech} = \frac{\$50,000,000}{\$35,000,000} = 1.43
+$$
 
 **Interpretation:** CloudTech generates $1.43 in revenue for every $1 of assets.
 
 **Inventory Turnover:**
 
-```
-Inventory Turnover = COGS / Average Inventory
-CloudTech = $30,000,000 / $2,000,000 = 15
-```
+$$
+\text{Inventory Turnover} = \frac{\text{COGS}}{\text{Average Inventory}}
+$$
+
+$$
+\text{CloudTech} = \frac{\$30,000,000}{\$2,000,000} = 15
+$$
 
 **Interpretation:** CloudTech turns over inventory 15 times per year (every 24 days).
 
 ### Working Capital and Cash Conversion Cycle
 
-**Working Capital** = Current Assets - Current Liabilities
+$$
+\text{Working Capital} = \text{Current Assets} - \text{Current Liabilities}
+$$
 
-```
-CloudTech Working Capital = $15,000,000 - $5,000,000 = $10,000,000
-```
+$$
+\text{CloudTech Working Capital} = \$15,000,000 - \$5,000,000 = \$10,000,000
+$$
 
 The **cash conversion cycle** shows how long cash is tied up in operations:
 
@@ -703,10 +698,10 @@ The data center creates $814,329 in value for CloudTech.
 
 **Finding IRR (requires financial calculator or Excel):**
 
-```
-For CloudTech's project:
-IRR ≈ 15.24%
-```
+$$
+\text{For CloudTech's project:} \\
+IRR \approx 15.24\%
+$$
 
 **Decision:** Accept! IRR (15.24%) > Required Return (12%)
 
@@ -716,7 +711,7 @@ IRR ≈ 15.24%
 
 **CloudTech's payback:**
 
-$
+$$
 \begin{align}
 \text{Year 0:} & \quad -\$10,000,000 \\
 \text{Year 1:} & \quad -\$10,000,000 + \$3,000,000 = -\$7,000,000 \\
@@ -724,7 +719,7 @@ $
 \text{Year 3:} & \quad -\$4,000,000 + \$3,000,000 = -\$1,000,000 \\
 \text{Year 4:} & \quad -\$1,000,000 + \$3,000,000 = +\$2,000,000
 \end{align}
-$
+$$
 
 **Payback Period:** 3.33 years (3 years + $1M/$3M = 3.33 years)
 
@@ -853,20 +848,20 @@ Where:
 
 **CloudTech Example:**
 
-$
+$$
 \begin{align}
-\text{Interest Expense} &= \$500,000 \\
-\text{Total Debt} &= \$11,000,000 \\
+\text{Interest Expense} &= 500,000 \\
+\text{Total Debt} &= 11,000,000 \\
 \text{Tax Rate} &= 25\%
 \end{align}
-$
+$$
 
-$
+$$
 \begin{align}
-\text{Pre-tax Cost of Debt} &= \$500,000 / \$11,000,000 = 4.55\% \\
+\text{Pre-tax Cost of Debt} &= \frac{500,000}{11,000,000} = 4.55\% \\
 \text{After-tax Cost of Debt} &= 4.55\% \times (1 - 0.25) = 3.41\%
 \end{align}
-$
+$$
 
 CloudTech's effective cost of debt is 3.41% after tax benefits.
 
@@ -888,22 +883,22 @@ Where:
 
 **CloudTech Example:**
 
-$
+$$
 \begin{align}
 \text{Risk-free rate } (r_f) &= 3\% \\
 \text{Beta } (\beta) &= 1.2 \text{ (CloudTech is 20\% riskier than market)} \\
 \text{Market return } (r_m) &= 10\% \\
 \text{Market risk premium} &= 10\% - 3\% = 7\%
 \end{align}
-$
+$$
 
-$
+$$
 \begin{align}
 r_e &= 3\% + 1.2 \times 7\% \\
 r_e &= 3\% + 8.4\% \\
 r_e &= 11.4\%
 \end{align}
-$
+$$
 
 CloudTech's cost of equity is 11.4%.
 
@@ -928,35 +923,35 @@ Where:
 
 **CloudTech Calculation:**
 
-$
+$$
 \begin{align}
 \text{Equity (E)} &= \$20,000,000 \\
 \text{Debt (D)} &= \$11,000,000 \\
 \text{Total Value (V)} &= \$31,000,000
 \end{align}
-$
+$$
 
-$
+$$
 \begin{align}
 E/V &= \$20M / \$31M = 64.5\% \\
 D/V &= \$11M / \$31M = 35.5\%
 \end{align}
-$
+$$
 
-$
+$$
 \begin{align}
 r_e &= 11.4\% \\
 r_d \text{ (after-tax)} &= 3.41\%
 \end{align}
-$
+$$
 
-$
+$$
 \begin{align}
 WACC &= (0.645 \times 11.4\%) + (0.355 \times 3.41\%) \\
 WACC &= 7.35\% + 1.21\% \\
 WACC &= 8.56\%
 \end{align}
-$
+$$
 
 **CloudTech's WACC = 8.56%**
 
@@ -1265,14 +1260,14 @@ flowchart TD
 
 **Step 1: Project Future Free Cash Flows (5 years)**
 
-$
+$$
 \begin{align}
 \text{Current FCF} &= \$6,000,000 \\
 \text{Growth rate} &= 8\% \text{ per year}
 \end{align}
-$
+$$
 
-$
+$$
 \begin{align}
 \text{Year 1:} & \quad \$6,000,000 \times 1.08 = \$6,480,000 \\
 \text{Year 2:} & \quad \$6,480,000 \times 1.08 = \$6,998,400 \\
@@ -1280,7 +1275,7 @@ $
 \text{Year 4:} & \quad \$7,558,272 \times 1.08 = \$8,162,934 \\
 \text{Year 5:} & \quad \$8,162,934 \times 1.08 = \$8,815,968
 \end{align}
-$
+$$
 
 **Step 2: Calculate Terminal Value (value after Year 5)**
 
@@ -1296,25 +1291,25 @@ Where:
 - $WACC$ = 8.56%
 - $g$ = Long-term growth rate = 3%
 
-$
+$$
 FCF_{Year6} = \$8,815,968 \times 1.03 = \$9,080,447
-$
+$$
 
-$
+$$
 \begin{align}
 \text{Terminal Value} &= \$9,080,447 / (0.0856 - 0.03) \\
 \text{Terminal Value} &= \$9,080,447 / 0.0556 \\
 \text{Terminal Value} &= \$163,314,749
 \end{align}
-$
+$$
 
 **Step 3: Discount Everything to Present Value**
 
-$
+$$
 WACC = 8.56\%
-$
+$$
 
-$
+$$
 \begin{align}
 \text{PV Year 1} &= \$6,480,000 / 1.0856 = \$5,968,486 \\
 \text{PV Year 2} &= \$6,998,400 / (1.0856)^2 = \$5,938,746 \\
@@ -1323,33 +1318,33 @@ $
 \text{PV Year 5} &= \$8,815,968 / (1.0856)^5 = \$5,855,317 \\
 \text{PV Terminal Value} &= \$163,314,749 / (1.0856)^5 = \$108,157,524
 \end{align}
-$
+$$
 
 **Step 4: Sum to Get Enterprise Value**
 
-$
+$$
 \begin{align}
 \text{Enterprise Value} &= \$5,968,486 + \$5,938,746 + \$5,909,982 + \$5,882,177 + \$5,855,317 + \$108,157,524 \\
 \text{Enterprise Value} &= \$137,712,232
 \end{align}
-$
+$$
 
 **Step 5: Calculate Equity Value**
 
-$
+$$
 \text{Equity Value} = \text{Enterprise Value} - \text{Net Debt}
-$
+$$
 
-$
+$$
 \begin{align}
 \text{Net Debt} &= \text{Total Debt} - \text{Cash} \\
 \text{Net Debt} &= \$11,000,000 - \$5,000,000 = \$6,000,000
 \end{align}
-$
+$$
 
-$
+$$
 \text{Equity Value} = \$137,712,232 - \$6,000,000 = \$131,712,232
-$
+$$
 
 **CloudTech's Equity Value ≈ $131.7 million**
 
@@ -1398,20 +1393,20 @@ DCF is only as good as your assumptions:
 
 **Alternative approach:** Use market multiples
 
-$
+$$
 \text{EV/EBIT Multiple} = \frac{\text{Enterprise Value}}{\text{EBIT}}
-$
+$$
 
-$
+$$
 \begin{align}
 \text{Industry average EV/EBIT} &= 15x \\
 \text{CloudTech EBIT} &= \$8,000,000
 \end{align}
-$
+$$
 
-$
+$$
 \text{Estimated Enterprise Value} = 15 \times \$8,000,000 = \$120,000,000
-$
+$$
 
 This provides a **quick sanity check** on DCF valuation.
 
@@ -1489,22 +1484,22 @@ Discount rate = 10%. Should you accept?
 
 **Discount each cash flow:**
 
-$
+$$
 \begin{align}
 \text{Year 1:} & \quad \$15,000 / 1.10 = \$13,636.36 \\
 \text{Year 2:} & \quad \$20,000 / (1.10)^2 = \$16,528.93 \\
 \text{Year 3:} & \quad \$25,000 / (1.10)^3 = \$18,782.87 \\
 \text{Year 4:} & \quad \$15,000 / (1.10)^4 = \$10,245.20
 \end{align}
-$
+$$
 
-$
+$$
 \text{Total PV} = \$59,193.36
-$
+$$
 
-$
+$$
 NPV = \$59,193.36 - \$50,000 = \$9,193.36
-$
+$$
 
 **Decision: Accept!** NPV = $9,193.36 > 0
 
@@ -1525,28 +1520,28 @@ Calculate WACC.
 <details>
 <summary>Solution</summary>
 
-$
+$$
 \text{Total Value (V)} = \$80M + \$40M = \$120M
-$
+$$
 
-$
+$$
 \begin{align}
 E/V &= \$80M / \$120M = 66.67\% \\
 D/V &= \$40M / \$120M = 33.33\%
 \end{align}
-$
+$$
 
-$
+$$
 \text{After-tax cost of debt} = 6\% \times (1 - 0.30) = 4.2\%
-$
+$$
 
-$
+$$
 \begin{align}
 WACC &= (0.6667 \times 13\%) + (0.3333 \times 4.2\%) \\
 WACC &= 8.67\% + 1.40\% \\
 WACC &= 10.07\%
 \end{align}
-$
+$$
 
 Company XYZ's WACC = 10.07%
 
