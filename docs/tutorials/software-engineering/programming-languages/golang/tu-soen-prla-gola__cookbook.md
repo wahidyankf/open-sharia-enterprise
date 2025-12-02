@@ -36,7 +36,7 @@ By working through this cookbook, you will be able to:
 
 Before using this cookbook, you should:
 
-- ✅ Complete the [Golang Crash Course](../software-engineering/programming-languages/golang/tu-soen-prla-gola__golang-crash-course.md)
+- ✅ Complete the [Golang Crash Course](./tu-soen-prla-gola__crash-course.md)
 - ✅ Understand Go syntax, types, and control flow
 - ✅ Know how to work with slices, maps, and structs
 - ✅ Understand functions, methods, and interfaces
