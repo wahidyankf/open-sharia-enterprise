@@ -7,7 +7,7 @@ tags:
   - tutorials
   - learning
 created: 2025-11-22
-updated: 2025-12-02
+updated: 2025-12-03
 ---
 
 # Tutorials
@@ -19,64 +19,52 @@ Learning-oriented guides for the open-sharia-enterprise project. These documents
 ```mermaid
 graph TB
 	subgraph "🟢 Beginner Level"
-		A[Golang Crash Course<br/>⏱️ 2-3 hours]
-		D[Chat with PDF<br/>⏱️ 30-40 min]
-	end
-
-	subgraph "🟡 Intermediate Level"
-		B[Golang Cookbook<br/>⏱️ 3-4 hours]
+		A[Accounting<br/>⏱️ 1-2 hours]
+		B[Corporate Finance<br/>⏱️ 1-2 hours]
+		C[Chat with PDF<br/>⏱️ 30-40 min]
 	end
 
 	subgraph "🔴 Advanced Level"
-		C[AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
+		D[AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
 	end
 
-	A --> B
-	D --> C
-	B -.-> C
+	A --> D
+	B --> D
+	C --> D
 
 	style A fill:#a5d6a7
-	style D fill:#a5d6a7
-	style B fill:#fff59d
-	style C fill:#ef9a9a
+	style B fill:#a5d6a7
+	style C fill:#a5d6a7
+	style D fill:#ef9a9a
 
 	classDef beginner fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	classDef intermediate fill:#fff59d,stroke:#fbc02d,stroke-width:2px
 	classDef advanced fill:#ef9a9a,stroke:#e53935,stroke-width:2px
 ```
 
 **Legend**:
 
 - 🟢 **Beginner** - No prerequisites, start here
-- 🟡 **Intermediate** - Requires beginner knowledge
-- 🔴 **Advanced** - Requires intermediate knowledge
+- 🔴 **Advanced** - Requires beginner knowledge
 - Solid arrows (→) show recommended learning paths
-- Dotted arrows (⋯→) show optional connections
 
 ---
 
 ## 📋 Contents
 
-### 🚀 Crash Courses
+### 💼 Business and Finance
 
-Quick-start guides for learning programming languages and technologies:
+Learning-oriented guides for accounting, corporate finance, and financial analysis:
 
-- [**Crash Courses Index**](./crash-courses/README.md) - All available crash courses
-  - 🟢 [**Golang Crash Course**](./crash-courses/tu-crco__golang.md) - Learn Go language mechanics **(⏱️ 2-3 hours)**
-
-### 🍳 Cookbooks
-
-Practical recipes and patterns for solving real-world programming problems:
-
-- [**Cookbooks Index**](./cookbooks/README.md) - All available cookbooks
-  - 🟡 [**Golang Cookbook**](./cookbooks/tu-co__golang.md) - Practical Go patterns and recipes **(⏱️ 3-4 hours)**
+- [**Business and Finance Index**](./business-and-finance/README.md) - All available business and finance tutorials
+  - 🟢 [**Accounting Crash Course**](./business-and-finance/tu-bufi__accounting.md) - Fundamental accounting principles and financial statements
+  - 🟢 [**Corporate Finance Crash Course**](./business-and-finance/tu-bufi__corporate-finance.md) - Time value of money and capital budgeting
 
 ### 🏗️ System Design
 
 Real-world system design study cases and architectural tutorials:
 
-- [**System Design Index**](./system-design/README.md) - All available system design study cases
-  - 🔴 [**AI Personal Finance Advisor**](./system-design/tu-syde__ai-personal-finance-advisor.md) - Complete system design for fintech AI **(⏱️ 1-2 hours)**
+- [**System Design Index**](./software-engineering/system-design/README.md) - All available system design study cases
+  - 🔴 [**AI Personal Finance Advisor**](./software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md) - Complete system design for fintech AI **(⏱️ 1-2 hours)**
 
 ### 🤖 AI Engineering
 
@@ -89,21 +77,19 @@ Learning-oriented guides for building AI and machine learning systems:
 
 ## 🎯 Learning Paths
 
-### Path 1: Backend Developer (Go)
+### Path 1: Business and Finance Professional
 
-**Goal**: Learn Go and build production-ready backend services
+**Goal**: Understand accounting and financial analysis fundamentals
 
 ```
-1. 🟢 Golang Crash Course (2-3 hours)
+1. 🟢 Accounting Crash Course (1-2 hours)
    ↓
-2. 🟡 Golang Cookbook (3-4 hours)
+2. 🟢 Corporate Finance Crash Course (1-2 hours)
    ↓
-3. Check How-To Guides for specific tasks
-   ↓
-4. Reference Documentation for API details
+3. Apply concepts to real-world scenarios
 ```
 
-**Total Time**: ~5-7 hours core learning
+**Total Time**: ~2-4 hours core learning
 
 ---
 
@@ -123,23 +109,23 @@ Learning-oriented guides for building AI and machine learning systems:
 
 ---
 
-### Path 3: Full-Stack Developer
+### Path 3: Fintech Developer
 
-**Goal**: Build complete applications (backend + AI)
+**Goal**: Combine financial knowledge with AI capabilities
 
 ```
-1. 🟢 Golang Crash Course (2-3 hours)
-   ↓
-2. 🟡 Golang Cookbook (3-4 hours)
+1. 🟢 Accounting Crash Course (1-2 hours)
    ↓ (parallel)
+2. 🟢 Corporate Finance Crash Course (1-2 hours)
+   ↓
 3. 🟢 Chat with PDF (30-40 min)
    ↓
 4. 🔴 AI Personal Finance Advisor (1-2 hours)
    ↓
-5. Build integrated applications
+5. Build financial AI applications
 ```
 
-**Total Time**: ~7-10 hours core learning
+**Total Time**: ~4-6 hours core learning
 
 ---
 
@@ -147,33 +133,22 @@ Learning-oriented guides for building AI and machine learning systems:
 
 ### 🎓 For Beginners
 
-**Start here if**: You're new to Go or AI/ML systems
+**Start here if**: You're new to finance, accounting, or AI/ML systems
 
 1. Pick a 🟢 **Beginner** tutorial based on your interest:
-   - Want to learn backend? → [Golang Crash Course](./crash-courses/tu-crco__golang.md)
+   - Want to learn finance? → [Accounting](./business-and-finance/tu-bufi__accounting.md) or [Corporate Finance](./business-and-finance/tu-bufi__corporate-finance.md)
    - Want to learn AI? → [Chat with PDF](./ai-engineering/tu-aien__chat-with-pdf.md)
 
 2. Work through the tutorial step-by-step
-3. Try the practice exercises
+3. Try the practice exercises and calculations
 4. Move to the next level when comfortable
 
-### 📚 For Intermediate Learners
-
-**Start here if**: You know the basics and want practical patterns
-
-1. Jump to 🟡 **Intermediate** tutorials:
-   - [Golang Cookbook](./cookbooks/tu-co__golang.md) - Real-world Go patterns
-
-2. Focus on sections relevant to your projects
-3. Apply patterns to your own code
-4. Explore advanced topics when ready
-
-### 🚀 For Advanced Developers
+### 🚀 For Advanced Learners
 
 **Start here if**: You want to design complete systems
 
 1. Go directly to 🔴 **Advanced** tutorials:
-   - [AI Personal Finance Advisor](./system-design/tu-syde__ai-personal-finance-advisor.md) - End-to-end system design
+   - [AI Personal Finance Advisor](./software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md) - End-to-end system design
 
 2. Study architecture decisions and trade-offs
 3. Adapt patterns to your specific requirements
@@ -183,19 +158,12 @@ Learning-oriented guides for building AI and machine learning systems:
 
 ## 📖 Tutorial Categories Explained
 
-### Crash Courses 🚀
+### Business and Finance 💼
 
-- **Purpose**: Fast-paced introduction to language fundamentals
-- **Format**: Code-first, minimal explanation
-- **Best for**: Experienced developers learning a new language
-- **Time**: 2-3 hours typically
-
-### Cookbooks 🍳
-
-- **Purpose**: Practical recipes for real-world problems
-- **Format**: Problem → Solution → Explanation
-- **Best for**: Developers who know basics, need patterns
-- **Time**: 3-4 hours typically
+- **Purpose**: Learn fundamental accounting and finance concepts
+- **Format**: Concepts → Formulas → Examples → Applications
+- **Best for**: Professionals needing financial literacy, fintech developers
+- **Time**: 1-2 hours per tutorial
 
 ### System Design 🏗️
 
@@ -223,4 +191,4 @@ After completing tutorials, explore:
 
 ---
 
-**Last Updated**: 2025-12-02
+**Last Updated**: 2025-12-03
