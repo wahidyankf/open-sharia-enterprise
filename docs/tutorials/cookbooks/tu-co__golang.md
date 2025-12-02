@@ -639,7 +639,7 @@ func main() {
 **How Pipeline Works:**
 
 ```mermaid
-graph LR
+graph TB
     Input[Input: 1,2,3,4,5,6,7,8,9,10] --> Gen[Stage 1: Generate<br/>goroutine]
     Gen --> Ch1[Channel<br/>1,2,3,4,5,6,7,8,9,10]
     Ch1 --> Sq[Stage 2: Square<br/>goroutine]
