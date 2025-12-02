@@ -124,7 +124,7 @@ Journal files are nested 2 levels deep from `docs/`, so they require `../../` to
 <!-- Link to explanation files (2 levels up, then down) -->
 
 [File Naming Convention](../../explanation/conventions/ex-co__file-naming-convention.md)
-[Information Security Overview](../../explanation/information-security/ex-in-se__infosec.md)
+[Information Security Overview](../../explanation/information-security/ex-inse__infosec.md)
 
 <!-- Link to other categories (2 levels up, then down) -->
 
