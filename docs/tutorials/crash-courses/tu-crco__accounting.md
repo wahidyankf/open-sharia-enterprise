@@ -79,9 +79,9 @@ Every accounting system in the world is built on one simple equation. Master thi
 
 ### The Magic Equation
 
-```
-Assets = Liabilities + Equity
-```
+$$
+\text{Assets} = \text{Liabilities} + \text{Equity}
+$$
 
 **What does this mean?**
 
@@ -171,7 +171,9 @@ flowchart TD
 <details>
 <summary>Solution</summary>
 
-Equity = Assets - Liabilities = $50,000 - $20,000 = $30,000
+$$
+\text{Equity} = \text{Assets} - \text{Liabilities} = \$50,000 - \$20,000 = \$30,000
+$$
 
 </details>
 
@@ -919,7 +921,11 @@ flowchart TD
 
 **Purpose:** Shows profitability for a period
 
-**Formula:** Revenue - Expenses = Net Income
+**Formula:**
+
+$$
+\text{Net Income} = \text{Revenue} - \text{Expenses}
+$$
 
 ```
 Tech Haven Computer Repair
@@ -957,7 +963,11 @@ NET LOSS                                   ($925)
 
 **Purpose:** Shows financial position at a point in time
 
-**Formula:** Assets = Liabilities + Equity
+**Formula:**
+
+$$
+\text{Assets} = \text{Liabilities} + \text{Equity}
+$$
 
 ```
 Tech Haven Computer Repair

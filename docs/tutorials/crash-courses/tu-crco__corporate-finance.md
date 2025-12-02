@@ -105,15 +105,16 @@ Understanding time value of money is **essential** for every financial decision:
 
 **Formula:**
 
-```
-FV = PV × (1 + r)^n
+$$
+FV = PV \times (1 + r)^n
+$$
 
 Where:
-FV = Future Value
-PV = Present Value (amount invested today)
-r = Interest rate per period (as decimal)
-n = Number of periods
-```
+
+- $FV$ = Future Value
+- $PV$ = Present Value (amount invested today)
+- $r$ = Interest rate per period (as decimal)
+- $n$ = Number of periods
 
 **Example 1:** You invest $1,000 today at 8% annual interest for 5 years.
 
@@ -142,12 +143,15 @@ This is the **most important concept in corporate finance**—it lets you compar
 
 **Formula:**
 
-```
-PV = FV / (1 + r)^n
+$$
+PV = \frac{FV}{(1 + r)^n}
+$$
 
 Or equivalently:
-PV = FV × (1 + r)^-n
-```
+
+$$
+PV = FV \times (1 + r)^{-n}
+$$
 
 **Example 1:** You'll receive $10,000 in 5 years. With a 6% discount rate, what's it worth today?
 
@@ -229,14 +233,15 @@ An **annuity** is a series of equal payments at regular intervals.
 
 **Present Value of Annuity:**
 
-```
-PV = PMT × [(1 - (1 + r)^-n) / r]
+$$
+PV = PMT \times \frac{1 - (1 + r)^{-n}}{r}
+$$
 
 Where:
-PMT = Payment amount each period
-r = Discount rate per period
-n = Number of periods
-```
+
+- $PMT$ = Payment amount each period
+- $r$ = Discount rate per period
+- $n$ = Number of periods
 
 **Example:** CloudTech will receive $20,000 per year for 5 years. At 10% discount rate, what's the PV?
 
@@ -610,13 +615,16 @@ Should CloudTech invest $10M in a new data center? **Capital budgeting** answers
 
 **Formula:**
 
-```
-NPV = Σ [Cash Flow_t / (1 + r)^t] - Initial Investment
+$$
+NPV = \sum_{t=1}^{n} \frac{CF_t}{(1 + r)^t} - \text{Initial Investment}
+$$
 
 Where:
-t = Time period (0, 1, 2, 3...)
-r = Discount rate
-```
+
+- $CF_t$ = Cash flow at time $t$
+- $r$ = Discount rate
+- $t$ = Time period (0, 1, 2, 3...)
+- $n$ = Number of periods
 
 **Decision Rule:**
 
@@ -804,12 +812,14 @@ It represents:
 
 **Formula:**
 
-```
-After-Tax Cost of Debt = r_d × (1 - Tax Rate)
+$$
+\text{After-Tax Cost of Debt} = r_d \times (1 - T)
+$$
 
 Where:
-r_d = Interest rate on debt
-```
+
+- $r_d$ = Interest rate on debt
+- $T$ = Tax rate
 
 **Why after-tax?** Interest expense is tax-deductible, reducing the effective cost.
 
@@ -830,16 +840,17 @@ CloudTech's effective cost of debt is 3.41% after tax benefits.
 
 **Capital Asset Pricing Model (CAPM):**
 
-```
-r_e = r_f + β × (r_m - r_f)
+$$
+r_e = r_f + \beta \times (r_m - r_f)
+$$
 
 Where:
-r_e = Cost of equity
-r_f = Risk-free rate (e.g., government bonds)
-β (beta) = Stock's systematic risk
-r_m = Expected market return
-(r_m - r_f) = Market risk premium
-```
+
+- $r_e$ = Cost of equity
+- $r_f$ = Risk-free rate (e.g., government bonds)
+- $\beta$ = Stock's systematic risk (beta)
+- $r_m$ = Expected market return
+- $(r_m - r_f)$ = Market risk premium
 
 **CloudTech Example:**
 
@@ -862,17 +873,18 @@ CloudTech's cost of equity is 11.4%.
 
 **Formula:**
 
-```
-WACC = (E/V) × r_e + (D/V) × r_d × (1 - T)
+$$
+WACC = \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T)
+$$
 
 Where:
-E = Market value of equity
-D = Market value of debt
-V = E + D (total value)
-r_e = Cost of equity
-r_d = Cost of debt
-T = Tax rate
-```
+
+- $E$ = Market value of equity
+- $D$ = Market value of debt
+- $V$ = $E + D$ (total value)
+- $r_e$ = Cost of equity
+- $r_d$ = Cost of debt
+- $T$ = Tax rate
 
 **CloudTech Calculation:**
 
@@ -1160,15 +1172,15 @@ flowchart TD
 
 **Formula:**
 
-```
-Company Value = PV of Future Free Cash Flows + Terminal Value
-```
+$$
+\text{Company Value} = \text{PV of Future Free Cash Flows} + \text{Terminal Value}
+$$
 
 **Free Cash Flow (FCF):**
 
-```
-FCF = Operating Cash Flow - Capital Expenditures
-```
+$$
+FCF = \text{Operating Cash Flow} - \text{Capital Expenditures}
+$$
 
 FCF is cash available to all investors (debt and equity).
 
@@ -1210,24 +1222,28 @@ Year 5: $8,162,934 × 1.08 = $8,815,968
 
 **Gordon Growth Model:**
 
-```
-Terminal Value = FCF_Year6 / (WACC - g)
+$$
+\text{Terminal Value} = \frac{FCF_{n+1}}{WACC - g}
+$$
 
 Where:
-FCF_Year6 = Year 5 FCF × (1 + perpetual growth rate)
-WACC = 8.56%
-g = Long-term growth rate = 3%
+
+- $FCF_{n+1}$ = Year 5 FCF $\times$ (1 + perpetual growth rate)
+- $WACC$ = 8.56%
+- $g$ = Long-term growth rate = 3%
 
 FCF_Year6 = $8,815,968 × 1.03 = $9,080,447
 
 Terminal Value = $9,080,447 / (0.0856 - 0.03)
 Terminal Value = $9,080,447 / 0.0556
 Terminal Value = $163,314,749
+
 ```
 
 **Step 3: Discount Everything to Present Value**
 
 ```
+
 WACC = 8.56%
 
 PV Year 1 = $6,480,000 / 1.0856 = $5,968,486
@@ -1237,26 +1253,30 @@ PV Year 4 = $8,162,934 / (1.0856)^4 = $5,882,177
 PV Year 5 = $8,815,968 / (1.0856)^5 = $5,855,317
 
 PV Terminal Value = $163,314,749 / (1.0856)^5 = $108,157,524
+
 ```
 
 **Step 4: Sum to Get Enterprise Value**
 
 ```
-Enterprise Value = $5,968,486 + $5,938,746 + $5,909,982
-                 + $5,882,177 + $5,855,317 + $108,157,524
+
+Enterprise Value = $5,968,486 + $5,938,746 + $5,909,982 + $5,882,177 + $5,855,317 + $108,157,524
 Enterprise Value = $137,712,232
+
 ```
 
 **Step 5: Calculate Equity Value**
 
 ```
+
 Equity Value = Enterprise Value - Net Debt
 
 Net Debt = Total Debt - Cash
 Net Debt = $11,000,000 - $5,000,000 = $6,000,000
 
 Equity Value = $137,712,232 - $6,000,000 = $131,712,232
-```
+
+````
 
 **CloudTech's Equity Value ≈ $131.7 million**
 
@@ -1272,7 +1292,7 @@ flowchart TD
 
 	style A fill:#e1f5ff
 	style F fill:#e8f5e9
-```
+````
 
 ### Sensitivity Analysis
 
