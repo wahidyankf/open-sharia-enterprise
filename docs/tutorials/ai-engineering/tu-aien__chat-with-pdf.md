@@ -1003,8 +1003,8 @@ Now that you understand how PDF chat systems work, here are your next steps:
 
 ### 4. Related Tutorials
 
-- [RAG System Basics](../../cookbooks/tu-co__rag-system-basics.md) - Implementation patterns (planned)
-- [Prompt Engineering Fundamentals](./tu-aien__prompt-engineering-fundamentals.md) - Optimize LLM responses (planned)
+- RAG System Basics - Implementation patterns (planned)
+- Prompt Engineering Fundamentals - Optimize LLM responses (planned)
 
 ---
 
