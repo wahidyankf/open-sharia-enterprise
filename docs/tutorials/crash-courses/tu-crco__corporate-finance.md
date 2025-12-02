@@ -1259,16 +1259,22 @@ flowchart TD
 
 **Step 1: Project Future Free Cash Flows (5 years)**
 
-```
-Current FCF = $6,000,000
-Growth rate = 8% per year
+$
+\begin{align}
+\text{Current FCF} &= \$6,000,000 \\
+\text{Growth rate} &= 8\% \text{ per year}
+\end{align}
+$
 
-Year 1: $6,000,000 × 1.08 = $6,480,000
-Year 2: $6,480,000 × 1.08 = $6,998,400
-Year 3: $6,998,400 × 1.08 = $7,558,272
-Year 4: $7,558,272 × 1.08 = $8,162,934
-Year 5: $8,162,934 × 1.08 = $8,815,968
-```
+$
+\begin{align}
+\text{Year 1:} & \quad \$6,000,000 \times 1.08 = \$6,480,000 \\
+\text{Year 2:} & \quad \$6,480,000 \times 1.08 = \$6,998,400 \\
+\text{Year 3:} & \quad \$6,998,400 \times 1.08 = \$7,558,272 \\
+\text{Year 4:} & \quad \$7,558,272 \times 1.08 = \$8,162,934 \\
+\text{Year 5:} & \quad \$8,162,934 \times 1.08 = \$8,815,968
+\end{align}
+$
 
 **Step 2: Calculate Terminal Value (value after Year 5)**
 
@@ -1284,38 +1290,43 @@ Where:
 - $WACC$ = 8.56%
 - $g$ = Long-term growth rate = 3%
 
-FCF_Year6 = $8,815,968 × 1.03 = $9,080,447
+$
+FCF_{Year6} = \$8,815,968 \times 1.03 = \$9,080,447
+$
 
-Terminal Value = $9,080,447 / (0.0856 - 0.03)
-Terminal Value = $9,080,447 / 0.0556
-Terminal Value = $163,314,749
-
-```
+$
+\begin{align}
+\text{Terminal Value} &= \$9,080,447 / (0.0856 - 0.03) \\
+\text{Terminal Value} &= \$9,080,447 / 0.0556 \\
+\text{Terminal Value} &= \$163,314,749
+\end{align}
+$
 
 **Step 3: Discount Everything to Present Value**
 
-```
+$
+WACC = 8.56\%
+$
 
-WACC = 8.56%
-
-PV Year 1 = $6,480,000 / 1.0856 = $5,968,486
-PV Year 2 = $6,998,400 / (1.0856)^2 = $5,938,746
-PV Year 3 = $7,558,272 / (1.0856)^3 = $5,909,982
-PV Year 4 = $8,162,934 / (1.0856)^4 = $5,882,177
-PV Year 5 = $8,815,968 / (1.0856)^5 = $5,855,317
-
-PV Terminal Value = $163,314,749 / (1.0856)^5 = $108,157,524
-
-```
+$
+\begin{align}
+\text{PV Year 1} &= \$6,480,000 / 1.0856 = \$5,968,486 \\
+\text{PV Year 2} &= \$6,998,400 / (1.0856)^2 = \$5,938,746 \\
+\text{PV Year 3} &= \$7,558,272 / (1.0856)^3 = \$5,909,982 \\
+\text{PV Year 4} &= \$8,162,934 / (1.0856)^4 = \$5,882,177 \\
+\text{PV Year 5} &= \$8,815,968 / (1.0856)^5 = \$5,855,317 \\
+\text{PV Terminal Value} &= \$163,314,749 / (1.0856)^5 = \$108,157,524
+\end{align}
+$
 
 **Step 4: Sum to Get Enterprise Value**
 
-```
-
-Enterprise Value = $5,968,486 + $5,938,746 + $5,909,982 + $5,882,177 + $5,855,317 + $108,157,524
-Enterprise Value = $137,712,232
-
-````
+$
+\begin{align}
+\text{Enterprise Value} &= \$5,968,486 + \$5,938,746 + \$5,909,982 + \$5,882,177 + \$5,855,317 + \$108,157,524 \\
+\text{Enterprise Value} &= \$137,712,232
+\end{align}
+$
 
 **Step 5: Calculate Equity Value**
 
@@ -1348,7 +1359,7 @@ flowchart TD
 
 	style A fill:#e1f5ff
 	style F fill:#e8f5e9
-````
+```
 
 ### Sensitivity Analysis
 
