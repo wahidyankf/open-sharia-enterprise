@@ -804,8 +804,8 @@ It represents:
 
 ### Three Components of Cost of Capital
 
-1. **Cost of Debt (r_d)** - Interest rate on borrowing
-2. **Cost of Equity (r_e)** - Return required by shareholders
+1. **Cost of Debt ($r_d$)** - Interest rate on borrowing
+2. **Cost of Equity ($r_e$)** - Return required by shareholders
 3. **WACC** - Weighted average of debt and equity costs
 
 ### Cost of Debt (After-Tax)
@@ -855,9 +855,9 @@ Where:
 **CloudTech Example:**
 
 ```
-Risk-free rate (r_f) = 3%
-Beta (β) = 1.2 (CloudTech is 20% riskier than market)
-Market return (r_m) = 10%
+Risk-free rate ($r_f$) = 3%
+Beta ($\beta$) = 1.2 (CloudTech is 20% riskier than market)
+Market return ($r_m$) = 10%
 Market risk premium = 10% - 3% = 7%
 
 r_e = 3% + 1.2 × 7%
