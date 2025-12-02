@@ -564,6 +564,10 @@ All documentation organized into four categories (Tutorials, How-To, Reference, 
 
 All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** with ISO 8601 format: `YYYY-MM-DDTHH:MM:SS+07:00`. This applies to cache files, metadata files, logs, and documentation frontmatter. Exceptions include Git commits (uses Git's own format), external APIs requiring UTC, user-facing timestamps (use user's timezone), and database timestamps (follow database conventions). See [Timestamp Format Convention](./docs/explanation/conventions/ex-co__timestamp-format.md) for complete details.
 
+### Mathematical Notation Convention
+
+All mathematical equations and formulas in documentation use **LaTeX notation** for proper rendering in both Obsidian and GitHub (both support LaTeX since May 2022). Use `$...$` for inline math and `$$...$$` for display math. LaTeX provides proper subscripts ($r_f$), superscripts ($x^2$), Greek letters ($\beta$), and complex formulas. **Do NOT use LaTeX inside code blocks, Mermaid diagrams, or ASCII art** - these contexts require plain text notation. See [Mathematical Notation Convention](./docs/explanation/conventions/ex-co__mathematical-notation.md) for complete details.
+
 ### Key Resources
 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
@@ -575,6 +579,7 @@ All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** 
 - **Emoji Usage Guide:** [`docs/explanation/conventions/ex-co__emoji-usage.md`](./docs/explanation/conventions/ex-co__emoji-usage.md)
 - **Timestamp Format Guide:** [`docs/explanation/conventions/ex-co__timestamp-format.md`](./docs/explanation/conventions/ex-co__timestamp-format.md)
 - **Temporary Files Guide:** [`docs/explanation/conventions/ex-co__temporary-files.md`](./docs/explanation/conventions/ex-co__temporary-files.md)
+- **Mathematical Notation Guide:** [`docs/explanation/conventions/ex-co__mathematical-notation.md`](./docs/explanation/conventions/ex-co__mathematical-notation.md)
 
 ## AI Agent Standards
 

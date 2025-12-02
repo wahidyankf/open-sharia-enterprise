@@ -140,6 +140,15 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 - Too deep (overwhelming for target audience)?
 - Right balance for prerequisites?
 
+**E. Mathematical Content**
+
+- LaTeX notation used for all formulas and equations
+- Variables properly formatted with subscripts/superscripts
+- Display equations centered and properly formatted
+- All mathematical symbols defined and explained
+- Formulas include worked examples with numbers
+- No LaTeX inside diagrams or code blocks
+
 **Report:**
 
 - Sections that are too list-heavy (flag for rewriting)
