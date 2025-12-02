@@ -927,7 +927,7 @@ flowchart TD
 	Debt --> RD[Cost of Debt<br/>4.55% pre-tax<br/>3.41% after-tax]
 	Equity --> RE[Cost of Equity<br/>11.4% (CAPM)]
 
-	RE --> CAPM[r_f + β × Risk Premium<br/>3% + 1.2 × 7% = 11.4%]
+	RE --> CAPM[rf + β × Risk Premium<br/>3% + 1.2 × 7% = 11.4%]
 
 	style WACC fill:#e8f5e9
 	style Debt fill:#ffe1e1
