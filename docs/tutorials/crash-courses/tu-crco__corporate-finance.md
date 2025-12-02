@@ -195,6 +195,27 @@ The **discount rate** (r) represents:
 
 **Choosing the right discount rate is critical** - too low and you accept bad projects; too high and you reject good ones.
 
+### Risk and Required Return
+
+Different investments require different discount rates based on risk:
+
+```mermaid
+flowchart TD
+	A[Investment Risk Categories] --> B[Low Risk<br/>Discount Rate: 4-6%]
+	A --> C[Medium Risk<br/>Discount Rate: 8-12%]
+	A --> D[High Risk<br/>Discount Rate: 15-25%]
+
+	B --> B1[Examples:<br/>• Government bonds<br/>• Stable utilities<br/>• Blue-chip stocks]
+	C --> C1[Examples:<br/>• Established companies<br/>• Real estate<br/>• Corporate bonds]
+	D --> D1[Examples:<br/>• Startups<br/>• Emerging markets<br/>• Speculative ventures]
+
+	style B fill:#e8f5e9
+	style C fill:#fff4e1
+	style D fill:#ffebee
+```
+
+**Rule:** Higher risk = Higher required return = Higher discount rate
+
 ⚠️ **Common Mistake**: Confusing interest rate with discount rate.
 
 - **Interest rate** = Rate at which money grows (future value)
@@ -485,6 +506,38 @@ CloudTech = $30,000,000 / $2,000,000 = 15
 
 **Interpretation:** CloudTech turns over inventory 15 times per year (every 24 days).
 
+### Working Capital and Cash Conversion Cycle
+
+**Working Capital** = Current Assets - Current Liabilities
+
+```
+CloudTech Working Capital = $15,000,000 - $5,000,000 = $10,000,000
+```
+
+The **cash conversion cycle** shows how long cash is tied up in operations:
+
+```mermaid
+flowchart TD
+	A[Cash] --> B[Purchase Inventory]
+	B --> C[Inventory<br/>24 days]
+	C --> D[Sell to Customers]
+	D --> E[Accounts Receivable<br/>58 days]
+	E --> F[Collect Cash]
+	F --> A
+
+	G[Accounts Payable<br/>48 days delay payment] -.Reduces cycle.-> C
+
+	H[Cash Conversion Cycle<br/>= 24 + 58 - 48 = 34 days]
+
+	style A fill:#e8f5e9
+	style H fill:#e1f5ff
+	style G fill:#fff4e1
+```
+
+**CloudTech's cash is tied up for 34 days** from paying suppliers to collecting from customers.
+
+**Shorter cycle = Better** (cash available faster)
+
 ### Ratio Analysis Summary
 
 ```mermaid
@@ -525,6 +578,16 @@ flowchart TD
 - Efficiency ratios: Asset turnover shows operational effectiveness
 
 **CloudTech's Financial Health:** Strong profitability, excellent liquidity, moderate leverage, good efficiency. Well-positioned for growth!
+
+⚠️ **Common Mistake**: Comparing ratios across different industries without context.
+
+A D/E ratio of 0.55 is moderate for CloudTech (tech company), but would be considered **low** for a utility company (typically 1.5-2.0) or **high** for a consulting firm (typically 0.1-0.3).
+
+**Always compare ratios to:**
+
+- Industry averages (not all companies)
+- Company's historical trends
+- Direct competitors
 
 ---
 
@@ -833,6 +896,15 @@ WACC = 8.56%
 
 This is the minimum return CloudTech must earn on investments.
 
+⚠️ **Common Mistake**: Using book values instead of market values for WACC.
+
+**WACC should use market values:**
+
+- **Market value of equity** = Stock price × Shares outstanding (NOT book equity from balance sheet)
+- **Market value of debt** = Current trading price of bonds (NOT face value)
+
+Book values are historical costs. Market values reflect current investor expectations and opportunity costs. For our CloudTech example, we simplified by using book values, but in practice, always use market values!
+
 ### Using WACC for Decisions
 
 **Rule:** Accept projects with return > WACC
@@ -1010,6 +1082,17 @@ but stay below D/E = 1.0 to maintain flexibility
 
 Balances tax benefits with financial flexibility.
 
+⚠️ **Common Mistake**: Thinking "debt is always better because it's cheaper."
+
+While debt has tax benefits and lower cost than equity, **too much debt is dangerous:**
+
+- Fixed interest payments during bad times (can lead to bankruptcy)
+- Financial distress costs (legal fees, lost customers, employee turnover)
+- Loss of financial flexibility (can't invest in new opportunities)
+- Increased required return on equity (shareholders demand more return for higher risk)
+
+**Optimal capital structure balances benefits and costs** - there's no universal "right" answer!
+
 ### Capital Structure Impact
 
 ```mermaid
@@ -1055,6 +1138,22 @@ What's CloudTech worth? **Valuation** provides the answer.
 
 We'll focus on **DCF** - the fundamental approach.
 
+```mermaid
+flowchart TD
+	A[Valuation Methods] --> B[DCF Analysis<br/>Intrinsic Value]
+	A --> C[Comparable Companies<br/>Market Value]
+	A --> D[Precedent Transactions<br/>M&A Prices]
+
+	B --> B1[✓ Cash flow based<br/>✓ Fundamental analysis<br/>✗ Assumption sensitive]
+	C --> C1[✓ Quick market check<br/>✓ Easy to understand<br/>✗ Needs comparable firms]
+	D --> D1[✓ Real transaction data<br/>✓ Control premiums<br/>✗ Limited data availability]
+
+	style A fill:#e1f5ff
+	style B fill:#e8f5e9
+	style C fill:#fff4e1
+	style D fill:#f3e5f5
+```
+
 ### Discounted Cash Flow (DCF) Valuation
 
 **Core Idea:** A company is worth the present value of all future cash flows.
@@ -1072,6 +1171,25 @@ FCF = Operating Cash Flow - Capital Expenditures
 ```
 
 FCF is cash available to all investors (debt and equity).
+
+### DCF Valuation Process
+
+```mermaid
+flowchart TD
+	A[Start DCF Valuation] --> B[Step 1:<br/>Project Free Cash Flows<br/>5-10 years]
+	B --> C[Step 2:<br/>Calculate Terminal Value<br/>Gordon Growth Model]
+	C --> D[Step 3:<br/>Determine Discount Rate<br/>Use WACC]
+	D --> E[Step 4:<br/>Discount All Cash Flows<br/>to Present Value]
+	E --> F[Step 5:<br/>Sum = Enterprise Value]
+	F --> G[Step 6:<br/>Subtract Net Debt]
+	G --> H[Equity Value<br/>What shareholders own]
+
+	I[Sensitivity Analysis<br/>Test assumptions] -.Validate.-> H
+
+	style A fill:#e1f5ff
+	style H fill:#e8f5e9
+	style I fill:#fff4e1
+```
 
 ### CloudTech DCF Valuation
 
