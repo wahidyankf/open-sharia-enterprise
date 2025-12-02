@@ -23,7 +23,7 @@ Tutorials are **learning-oriented** documentation that guide learners through ac
 
 **Purpose**: This convention defines the requirements and standards for creating tutorials that both `docs-tutorial-maker` creates and `docs-tutorial-checker` validates. It serves as the single source of truth for tutorial quality.
 
-**Scope**: Applies to all tutorials in `docs/tutorials/` directory, including: - Crash courses (`docs/tutorials/crash-courses/`) - AI Engineering tutorials (`docs/tutorials/ai-engineering/`) - Domain-specific tutorials (finance, accounting, etc.) - Technical tutorials (programming, tools, frameworks)
+**Scope**: Applies to all tutorials in `docs/tutorials/` directory, including: - Business and Finance tutorials (`docs/tutorials/business-and-finance/`) - AI Engineering tutorials (`docs/tutorials/ai-engineering/`) - Software Engineering tutorials (`docs/tutorials/software-engineering/`) - Domain-specific tutorials organized by subject area
 
 ## 🎯 Diátaxis Principles for Tutorials
 
@@ -1115,15 +1115,15 @@ $
 
 ### File Organization
 
-**Naming**: - Follow [File Naming Convention](./ex-co__file-naming-convention.md) - Tutorials use `tu-*` prefix - Crash courses use `tu-crco__*` pattern - Descriptive, kebab-case names
+**Naming**: - Follow [File Naming Convention](./ex-co__file-naming-convention.md) - Tutorials use `tu-*` prefix - Business and Finance tutorials use `tu-bufi__*` pattern - Descriptive, kebab-case names
 
-**Location**: - All tutorials in `docs/tutorials/` - Organized by domain or subject - Crash courses in `docs/tutorials/crash-courses/`
+**Location**: - All tutorials in `docs/tutorials/` - Organized by domain or subject - Business and Finance in `docs/tutorials/business-and-finance/`
 
 **Examples**:
 
 ```
-docs/tutorials/crash-courses/tu-crco__accounting.md
-docs/tutorials/crash-courses/tu-crco__corporate-finance.md
+docs/tutorials/business-and-finance/tu-bufi__accounting.md
+docs/tutorials/business-and-finance/tu-bufi__corporate-finance.md
 docs/tutorials/ai-engineering/tu-aien__chat-with-pdf.md
 ```
 
@@ -1136,7 +1136,7 @@ docs/tutorials/ai-engineering/tu-aien__chat-with-pdf.md
 ```markdown
 For more details on the Diátaxis framework, see [Diátaxis Framework Convention](./ex-co__diataxis-framework.md).
 
-If you're new to finance, start with [Accounting Crash Course](../crash-courses/tu-crco__accounting.md).
+If you're new to finance, start with [Accounting](../business-and-finance/tu-bufi__accounting.md).
 ```
 
 **Internal Links**: - Link to glossary for terms - Link to conventions for standards - Link to references for formulas - Link to how-to guides for tasks
@@ -1467,7 +1467,7 @@ One might consider using this approach. [impersonal]
 
 ### Exemplary Tutorial: Crash Course Structure
 
-See existing crash courses as examples: - [Accounting Crash Course](../crash-courses/tu-crco__accounting.md) - [Corporate Finance Crash Course](../crash-courses/tu-crco__corporate-finance.md)
+See existing tutorials as examples: - [Accounting](../../tutorials/business-and-finance/tu-bufi__accounting.md) - [Corporate Finance](../../tutorials/business-and-finance/tu-bufi__corporate-finance.md)
 
 **These exemplify**: - Clear structure with all required sections - Progressive scaffolding from simple to complex - Visual completeness with diagrams and formulas - Hands-on practice exercises and challenges - Narrative flow with teacher voice - Real-world relevance throughout
 
