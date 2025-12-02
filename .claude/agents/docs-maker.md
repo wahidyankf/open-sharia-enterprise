@@ -4,7 +4,7 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
-updated: 2025-12-01
+updated: 2025-12-03
 ---
 
 # Documentation Writer Agent
@@ -148,6 +148,28 @@ When writing code examples in documentation, use language-appropriate indentatio
 - Include variable definitions after formulas
 - Never use LaTeX inside code blocks or Mermaid diagrams
 - See [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md)
+
+**CRITICAL LaTeX Delimiter Rules:**
+
+- Single `$` ONLY for inline math (on same line as text): `The value $x$ is...`
+- Double `$$` for display math (standalone, on separate lines)
+- All `\begin{align}` blocks MUST use `$$` delimiters
+- NEVER use single `$` on its own line - this breaks rendering
+
+Common mistake to avoid:
+
+```markdown
+❌ Single $ for display:
+$
+r_e = r_f + \beta \times (r_m - r_f)
+$
+
+✅ Correct - use $$:
+
+$$
+r_e = r_f + \beta \times (r_m - r_f)
+$$
+```
 
 ### Frontmatter Template
 

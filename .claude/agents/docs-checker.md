@@ -4,6 +4,7 @@ description: Expert at validating factual correctness and content consistency of
 tools: Read, Glob, Grep, WebFetch, WebSearch
 model: sonnet
 color: green
+updated: 2025-12-03
 ---
 
 # Documentation Checker Agent
@@ -69,6 +70,30 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 - Ensure display math uses `$$...$$` with proper spacing
 - Verify LaTeX is NOT used inside code blocks or Mermaid diagrams
 - Check that all variables are defined after formulas
+
+**LaTeX Delimiter Validation:**
+
+When validating mathematical notation:
+
+- Check that single `$` delimiters are ONLY used inline (on same line as text)
+- Check that display math uses `$$` delimiters
+- Check that all `\begin{align}` blocks use `$$` delimiters (not single `$`)
+- Flag any single `$` on its own line as a rendering error
+
+**Common error pattern to detect:**
+
+```markdown
+❌ BROKEN - Single $ on its own line:
+$
+WACC = \frac{E}{V} \times r_e
+$
+
+✅ CORRECT - Use $$:
+
+$$
+WACC = \frac{E}{V} \times r_e
+$$
+```
 
 ### 2. Code Example Validation
 
