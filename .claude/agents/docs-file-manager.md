@@ -72,13 +72,13 @@ The prefix encodes the directory path using abbreviations:
 - `docs/explanation/conventions/` → `ex-co__`
 - `docs/explanation/information-security/` → `ex-inse__`
 - `docs/tutorials/ai-engineering/` → `tu-aien__`
-- `docs/tutorials/crash-courses/` → `tu-crco__`
-- `docs/tutorials/system-design/` → `tu-syde__`
+- `docs/tutorials/business-and-finance/` → `tu-bufi__`
+- `docs/tutorials/software-engineering/system-design/` → `tu-soen-syde__`
 
 ### Abbreviation Rules
 
-1. **Hyphenated directories**: Concatenate first 2 letters of each word WITHOUT inserting dash (`information-security` → `inse`, `ai-engineering` → `aien`, `crash-courses` → `crco`, `system-design` → `syde`, `how-to` → `hoto`)
-2. **Single word directories**: Use first 2-4 letters based on length (`conventions` → `co`, `development` → `de`, `cookbooks` → `co`, `toolings` → `to`)
+1. **Hyphenated directories**: Concatenate first 2 letters of each word WITHOUT inserting dash (`information-security` → `inse`, `ai-engineering` → `aien`, `business-and-finance` → `bufi`, `system-design` → `syde`, `how-to` → `hoto`)
+2. **Single word directories**: Use first 2-4 letters based on length (`conventions` → `co`, `development` → `de`, `toolings` → `to`)
 3. **Key rule**: The dash in a hyphenated directory name does NOT appear in the abbreviation - just concatenate the letters
 
 ### Exceptions
