@@ -351,6 +351,54 @@ func main() {
 }
 ```
 
+**How Type Constraints Work:**
+
+```mermaid
+graph TB
+    subgraph "Type Constraint Definition"
+        TC[Number interface<br/>int | int8 | ... | float64]
+    end
+
+    subgraph "Generic Function"
+        GF["Sum[T Number](numbers []T) T"]
+    end
+
+    subgraph "Concrete Types (Allowed)"
+        T1[int]
+        T2[int32]
+        T3[float64]
+        T4[uint]
+    end
+
+    subgraph "Non-Numeric Types (Rejected)"
+        T5[string ❌]
+        T6[bool ❌]
+        T7[struct ❌]
+    end
+
+    TC --> GF
+    T1 -.implements.-> TC
+    T2 -.implements.-> TC
+    T3 -.implements.-> TC
+    T4 -.implements.-> TC
+
+    T5 -.does not implement.-> TC
+    T6 -.does not implement.-> TC
+    T7 -.does not implement.-> TC
+
+    style TC fill:#4CAF50
+    style GF fill:#2196F3
+    style T1 fill:#e1ffe1
+    style T2 fill:#e1ffe1
+    style T3 fill:#e1ffe1
+    style T4 fill:#e1ffe1
+    style T5 fill:#ffe1e1
+    style T6 fill:#ffe1e1
+    style T7 fill:#ffe1e1
+```
+
+**Key Insight**: The `Number` constraint acts as a filter—only types in the union (`int | int8 | ... | float64`) can be used with functions like `Sum[T Number]`. Attempting to use `Sum([]string{...})` will fail at compile time.
+
 **When to use**: When you need math functions that work with all numeric types.
 
 ---
@@ -392,6 +440,43 @@ graph TB
     style W2 fill:#ffe1e1
     style W3 fill:#ffe1e1
 ```
+
+**Channel Communication Patterns:**
+
+Channels are the fundamental communication mechanism between goroutines. Understanding buffered vs unbuffered channels is crucial:
+
+```mermaid
+sequenceDiagram
+    participant S1 as Sender Goroutine
+    participant UB as Unbuffered Channel
+    participant R1 as Receiver Goroutine
+    participant S2 as Sender Goroutine
+    participant BC as Buffered Channel (size=2)
+    participant R2 as Receiver Goroutine
+
+    Note over S1,R1: Unbuffered (Synchronous)
+    S1->>UB: ch <- 42 (blocks)
+    Note over S1: Sender waits...
+    R1->>UB: val := <-ch
+    Note over S1,R1: Both synchronized
+
+    Note over S2,R2: Buffered (Asynchronous)
+    S2->>BC: ch <- 10 (no block)
+    S2->>BC: ch <- 20 (no block)
+    Note over BC: Buffer: [10, 20]
+    S2->>BC: ch <- 30 (BLOCKS - buffer full)
+    Note over S2: Sender waits...
+    R2->>BC: <-ch returns 10
+    Note over BC: Buffer: [20, 30]
+    Note over S2: Sender unblocked
+```
+
+**Key Differences**:
+
+- **Unbuffered**: Every send blocks until receive (tight synchronization)
+- **Buffered**: Sends don't block until buffer is full (looser coupling, higher throughput)
+- **Use unbuffered** for strict synchronization points
+- **Use buffered** for asynchronous work distribution (like worker pools)
 
 **Key Concepts**:
 
@@ -550,6 +635,33 @@ func main() {
 	}
 }
 ```
+
+**How Pipeline Works:**
+
+```mermaid
+graph LR
+    Input[Input: 1,2,3,4,5,6,7,8,9,10] --> Gen[Stage 1: Generate<br/>goroutine]
+    Gen --> Ch1[Channel<br/>1,2,3,4,5,6,7,8,9,10]
+    Ch1 --> Sq[Stage 2: Square<br/>goroutine]
+    Sq --> Ch2[Channel<br/>1,4,9,16,25,36,49,64,81,100]
+    Ch2 --> Filt[Stage 3: Filter Even<br/>goroutine]
+    Filt --> Ch3[Channel<br/>4,16,36,64,100]
+    Ch3 --> Output[Output: 4,16,36,64,100]
+
+    style Gen fill:#4CAF50
+    style Sq fill:#4CAF50
+    style Filt fill:#4CAF50
+    style Ch1 fill:#2196F3
+    style Ch2 fill:#2196F3
+    style Ch3 fill:#2196F3
+```
+
+**Key Insight**: Each pipeline stage runs in its own goroutine and communicates via channels. Data flows left-to-right through the pipeline, with each stage processing concurrently. This enables efficient multi-core utilization where:
+
+- `generate()` is producing numbers
+- `square()` is squaring them
+- `filterEven()` is filtering them
+- All happening **simultaneously** for different data items
 
 **When to use**: When data flows through multiple processing stages that can run concurrently.
 
@@ -1942,6 +2054,440 @@ Key principles for production-ready Go code.
 ✅ **Reuse allocations** - Use `sync.Pool` for frequently allocated objects
 ✅ **Use buffered channels** - When throughput matters
 ✅ **Avoid premature optimization** - Clarity first, performance second
+
+---
+
+## 🔧 Troubleshooting Common Patterns
+
+Advanced Go patterns can introduce subtle bugs. Here's how to identify and fix them.
+
+### Concurrency Pitfalls
+
+**Problem: Goroutine Leak in Worker Pool**
+
+```go
+// ❌ Wrong - Workers never exit
+func badWorkerPool() {
+	jobs := make(chan int)
+	for i := 0; i < 5; i++ {
+		go func() {
+			for job := range jobs {  // Blocks forever if jobs never closes
+				process(job)
+			}
+		}()
+	}
+	// Forgot to close jobs channel - workers leak!
+}
+```
+
+**Fix**: Always close channels and provide exit mechanisms.
+
+```go
+// ✅ Correct - Workers can exit
+func goodWorkerPool(ctx context.Context) {
+	jobs := make(chan int, 10)
+	var wg sync.WaitGroup
+
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				select {
+				case job, ok := <-jobs:
+					if !ok {
+						return  // Channel closed, exit goroutine
+					}
+					process(job)
+				case <-ctx.Done():
+					return  // Context cancelled, exit goroutine
+				}
+			}
+		}()
+	}
+
+	// Send jobs...
+	close(jobs)  // Signal workers to exit
+	wg.Wait()    // Wait for cleanup
+}
+```
+
+**Problem: Data Race on Shared Counter**
+
+```go
+// ❌ Wrong - Race condition
+type BadCounter struct {
+	count int
+}
+
+func (c *BadCounter) Increment() {
+	c.count++  // NOT atomic! Race condition
+}
+```
+
+**Fix**: Use mutex or atomic operations.
+
+```go
+// ✅ Correct - Mutex protection
+type GoodCounter struct {
+	mu    sync.Mutex
+	count int
+}
+
+func (c *GoodCounter) Increment() {
+	c.mu.Lock()
+	c.count++
+	c.mu.Unlock()
+}
+
+// ✅ Alternative - Atomic operations
+type AtomicCounter struct {
+	count int64
+}
+
+func (c *AtomicCounter) Increment() {
+	atomic.AddInt64(&c.count, 1)
+}
+```
+
+**Problem: Deadlock from Circular Wait**
+
+```go
+// ❌ Wrong - Deadlock
+func deadlockExample() {
+	var mu1, mu2 sync.Mutex
+
+	go func() {
+		mu1.Lock()
+		time.Sleep(10 * time.Millisecond)
+		mu2.Lock()  // Deadlock: waiting for mu2
+		defer mu2.Unlock()
+		defer mu1.Unlock()
+	}()
+
+	go func() {
+		mu2.Lock()
+		time.Sleep(10 * time.Millisecond)
+		mu1.Lock()  // Deadlock: waiting for mu1
+		defer mu1.Unlock()
+		defer mu2.Unlock()
+	}()
+}
+```
+
+**Fix**: Always acquire locks in the same order.
+
+```go
+// ✅ Correct - Consistent lock ordering
+func fixedLocking() {
+	var mu1, mu2 sync.Mutex
+
+	lockInOrder := func() {
+		mu1.Lock()  // Always lock mu1 first
+		defer mu1.Unlock()
+		mu2.Lock()  // Then mu2
+		defer mu2.Unlock()
+		// Critical section
+	}
+
+	go lockInOrder()
+	go lockInOrder()
+	// No deadlock - both goroutines acquire locks in same order
+}
+```
+
+### Generics Pitfalls
+
+**Problem: Type Constraint Too Restrictive**
+
+```go
+// ❌ Wrong - Only works with comparable types
+func BadFind[T comparable](slice []T, target T) int {
+	for i, v := range slice {
+		if v == target {
+			return i
+		}
+	}
+	return -1
+}
+
+// Won't compile: slices aren't comparable
+// result := BadFind([][]int{{1, 2}, {3, 4}}, []int{1, 2})
+```
+
+**Fix**: Use appropriate constraints or custom comparison functions.
+
+```go
+// ✅ Correct - Custom comparison function
+func GoodFind[T any](slice []T, target T, equals func(T, T) bool) int {
+	for i, v := range slice {
+		if equals(v, target) {
+			return i
+		}
+	}
+	return -1
+}
+
+// Usage
+result := GoodFind([][]int{{1, 2}, {3, 4}}, []int{1, 2}, func(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+})
+```
+
+**Problem: Zero Value Confusion**
+
+```go
+// ❌ Wrong - Returns zero value, hard to distinguish from valid result
+func BadPop[T any](stack *[]T) T {
+	if len(*stack) == 0 {
+		var zero T
+		return zero  // Ambiguous: is 0 a valid element or empty stack?
+	}
+	result := (*stack)[len(*stack)-1]
+	*stack = (*stack)[:len(*stack)-1]
+	return result
+}
+```
+
+**Fix**: Return (value, bool) tuple or use error.
+
+```go
+// ✅ Correct - Boolean indicates success
+func GoodPop[T any](stack *[]T) (T, bool) {
+	if len(*stack) == 0 {
+		var zero T
+		return zero, false  // Clear signal: stack was empty
+	}
+	result := (*stack)[len(*stack)-1]
+	*stack = (*stack)[:len(*stack)-1]
+	return result, true  // Success
+}
+
+// Usage
+if val, ok := GoodPop(&myStack); ok {
+	fmt.Println("Popped:", val)
+} else {
+	fmt.Println("Stack is empty")
+}
+```
+
+### Error Handling Pitfalls
+
+**Problem: Losing Error Context**
+
+```go
+// ❌ Wrong - Lost context
+func badProcessFile(filename string) error {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return err  // Who called this? What file? Lost!
+	}
+	return processData(data)
+}
+```
+
+**Fix**: Wrap errors with context.
+
+```go
+// ✅ Correct - Preserves context
+func goodProcessFile(filename string) error {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("processFile(%q): %w", filename, err)
+	}
+	if err := processData(data); err != nil {
+		return fmt.Errorf("processFile(%q): processing failed: %w", filename, err)
+	}
+	return nil
+}
+// Error message: processFile("data.json"): open data.json: no such file or directory
+```
+
+**Problem: Ignoring Errors in Defer**
+
+```go
+// ❌ Wrong - Ignoring Close() error
+func badFileHandler() error {
+	file, err := os.Create("output.txt")
+	if err != nil {
+		return err
+	}
+	defer file.Close()  // Error ignored!
+
+	_, err = file.WriteString("data")
+	return err
+}
+```
+
+**Fix**: Handle defer errors properly.
+
+```go
+// ✅ Correct - Capture defer error
+func goodFileHandler() (err error) {
+	file, err := os.Create("output.txt")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := file.Close(); closeErr != nil && err == nil {
+			err = fmt.Errorf("close file: %w", closeErr)
+		}
+	}()
+
+	_, err = file.WriteString("data")
+	return err
+}
+```
+
+### Performance Issues
+
+**Problem: Excessive Allocations in Hot Path**
+
+```go
+// ❌ Wrong - Allocates new slice every iteration
+func badProcessLoop(items []string) {
+	for i := 0; i < 1000000; i++ {
+		result := make([]string, 0, len(items))  // Allocates 1M times!
+		for _, item := range items {
+			result = append(result, process(item))
+		}
+		handle(result)
+	}
+}
+```
+
+**Fix**: Reuse allocations or use sync.Pool.
+
+```go
+// ✅ Correct - Reuses buffer
+var bufferPool = sync.Pool{
+	New: func() interface{} {
+		return make([]string, 0, 100)
+	},
+}
+
+func goodProcessLoop(items []string) {
+	for i := 0; i < 1000000; i++ {
+		result := bufferPool.Get().([]string)
+		result = result[:0]  // Reset length, keep capacity
+
+		for _, item := range items {
+			result = append(result, process(item))
+		}
+		handle(result)
+
+		bufferPool.Put(result)  // Return to pool
+	}
+}
+```
+
+**Problem: Unbuffered Channel Causing Contention**
+
+```go
+// ❌ Wrong - Unbuffered channel creates synchronization points
+func badPipeline() {
+	ch1 := make(chan int)     // Unbuffered
+	ch2 := make(chan int)     // Unbuffered
+
+	go producer(ch1)   // Blocks on every send
+	go processor(ch1, ch2)  // Blocks on send and receive
+	consumer(ch2)      // Blocks on every receive
+	// Stages are tightly coupled - no parallelism
+}
+```
+
+**Fix**: Use buffered channels for throughput.
+
+```go
+// ✅ Correct - Buffered channels for async processing
+func goodPipeline() {
+	ch1 := make(chan int, 100)  // Buffered
+	ch2 := make(chan int, 100)  // Buffered
+
+	go producer(ch1)
+	go processor(ch1, ch2)
+	consumer(ch2)
+	// Stages can work independently - better parallelism
+}
+```
+
+### Debugging Tips
+
+**1. Detect Race Conditions**
+
+```bash
+# Run with race detector
+go test -race ./...
+go run -race main.go
+
+# Will report:
+# WARNING: DATA RACE
+# Write at 0x... by goroutine 7:
+#   main.(*BadCounter).Increment()
+```
+
+**2. Find Goroutine Leaks**
+
+```go
+// Use runtime to track goroutines
+import "runtime"
+
+func detectLeaks() {
+	before := runtime.NumGoroutine()
+
+	// Run your code
+	runWorkerPool()
+
+	time.Sleep(time.Second)  // Wait for cleanup
+	after := runtime.NumGoroutine()
+
+	if after > before {
+		fmt.Printf("Goroutine leak: %d -> %d (+%d)\n", before, after, after-before)
+	}
+}
+```
+
+**3. Profile Performance**
+
+```go
+import _ "net/http/pprof"
+
+func main() {
+	go func() {
+		http.ListenAndServe("localhost:6060", nil)
+	}()
+
+	// Access http://localhost:6060/debug/pprof/
+	// Or use: go tool pprof http://localhost:6060/debug/pprof/profile
+}
+```
+
+**4. Use Context for Cancellation**
+
+```go
+// Always pass context for long-running operations
+func worker(ctx context.Context, jobs <-chan Job) {
+	for {
+		select {
+		case job := <-jobs:
+			if err := processWithContext(ctx, job); err != nil {
+				log.Printf("Error: %v", err)
+			}
+		case <-ctx.Done():
+			log.Println("Worker cancelled")
+			return
+		}
+	}
+}
+```
 
 ---
 
