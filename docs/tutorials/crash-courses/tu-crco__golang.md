@@ -8,7 +8,7 @@ tags:
   - crash-course
   - concurrency
 created: 2025-12-01
-updated: 2025-12-01
+updated: 2025-12-02
 ---
 
 # Golang Crash Course
@@ -113,6 +113,7 @@ func main() {
 	const MaxRetries = 3
 
 	fmt.Println(name, age, city, country, x, y, z, Pi, MaxRetries)
+	// Output: Alice 30 Jakarta Indonesia 10 20 30 3.14159 3
 }
 ```
 
@@ -172,12 +173,12 @@ func main() {
 
 	// Basic if
 	if age >= 18 {
-		fmt.Println("Adult")
+		fmt.Println("Adult") // Output: Adult
 	}
 
 	// If with else
 	if age >= 18 {
-		fmt.Println("Adult")
+		fmt.Println("Adult") // Output: Adult
 	} else {
 		fmt.Println("Minor")
 	}
@@ -186,7 +187,7 @@ func main() {
 	if score := 85; score >= 90 {
 		fmt.Println("Grade: A")
 	} else if score >= 80 {
-		fmt.Println("Grade: B")
+		fmt.Println("Grade: B") // Output: Grade: B
 	} else {
 		fmt.Println("Grade: C")
 	}
@@ -209,7 +210,7 @@ func main() {
 	day := "Monday"
 	switch day {
 	case "Monday":
-		fmt.Println("Start of work week")
+		fmt.Println("Start of work week") // Output: Start of work week
 	case "Friday":
 		fmt.Println("TGIF!")
 	case "Saturday", "Sunday":
@@ -222,7 +223,7 @@ func main() {
 	hour := time.Now().Hour()
 	switch {
 	case hour < 12:
-		fmt.Println("Good morning")
+		fmt.Println("Good morning") // Output depends on current time
 	case hour < 17:
 		fmt.Println("Good afternoon")
 	default:
@@ -235,7 +236,7 @@ func main() {
 	case int:
 		fmt.Printf("Integer: %d\n", v)
 	case string:
-		fmt.Printf("String: %s\n", v)
+		fmt.Printf("String: %s\n", v) // Output: String: hello
 	default:
 		fmt.Printf("Unknown type: %T\n", v)
 	}
@@ -254,13 +255,13 @@ import "fmt"
 func main() {
 	// Traditional for loop
 	for i := 0; i < 5; i++ {
-		fmt.Println(i)
+		fmt.Println(i) // Output: 0, 1, 2, 3, 4 (on separate lines)
 	}
 
 	// While-style loop
 	count := 0
 	for count < 3 {
-		fmt.Println("Count:", count)
+		fmt.Println("Count:", count) // Output: Count: 0, Count: 1, Count: 2
 		count++
 	}
 
@@ -274,25 +275,49 @@ func main() {
 	numbers := []int{10, 20, 30, 40}
 	for index, value := range numbers {
 		fmt.Printf("Index: %d, Value: %d\n", index, value)
+		// Output: Index: 0, Value: 10
+		//         Index: 1, Value: 20
+		//         Index: 2, Value: 30
+		//         Index: 3, Value: 40
 	}
 
 	// Ignore index with _
 	for _, value := range numbers {
-		fmt.Println(value)
+		fmt.Println(value) // Output: 10, 20, 30, 40 (on separate lines)
 	}
 
 	// Range over map
 	scores := map[string]int{"Alice": 90, "Bob": 85}
 	for name, score := range scores {
 		fmt.Printf("%s scored %d\n", name, score)
+		// Output: Alice scored 90
+		//         Bob scored 85
+		// Note: map iteration order is not guaranteed
 	}
 
 	// Range over string (iterates over runes)
 	for index, char := range "Hello" {
 		fmt.Printf("%d: %c\n", index, char)
+		// Output: 0: H
+		//         1: e
+		//         2: l
+		//         3: l
+		//         4: o
 	}
 }
 ```
+
+### ✅ Checkpoint: Control Flow
+
+Before moving forward, ensure you can:
+
+- [ ] Write `if/else` statements with initialization
+- [ ] Use `switch` statements (including type switches)
+- [ ] Iterate with `for` loops in different styles (traditional, while-style, range)
+- [ ] Use `range` to iterate over slices, maps, and strings
+- [ ] Understand when to use each control structure
+
+**Quick Check**: Can you write a program that iterates over a map of student names and grades, printing only students with grades above 80?
 
 ## 📊 Data Structures
 
@@ -326,6 +351,33 @@ func main() {
 
 ### Slices
 
+Dynamic-length sequences (most commonly used). Slices are more powerful than arrays—here's their internal structure:
+
+```mermaid
+graph TD
+    subgraph "Slice Header"
+        ptr[Pointer to Array]
+        len[Length: 3]
+        cap[Capacity: 5]
+    end
+
+    subgraph "Underlying Array"
+        arr["[ 10 | 20 | 30 | 0 | 0 ]"]
+    end
+
+    ptr -.points to.-> arr
+
+    style ptr fill:#2196F3
+    style len fill:#4CAF50
+    style cap fill:#FF9800
+```
+
+**Key Concepts**:
+
+- **Length**: Number of elements in the slice (`len(s)`)
+- **Capacity**: Size of underlying array from pointer position (`cap(s)`)
+- **Append**: When length exceeds capacity, a new larger array is allocated
+
 Dynamic-length sequences (most commonly used):
 
 ```go
@@ -354,12 +406,12 @@ func main() {
 	copy(dest, numbers)
 
 	// Slicing operations
-	fmt.Println(numbers[:3])  // First 3 elements
-	fmt.Println(numbers[2:])  // From index 2 to end
-	fmt.Println(numbers[1:4]) // From index 1 to 3
+	fmt.Println(numbers[:3])  // Output: [10 20 30] - First 3 elements
+	fmt.Println(numbers[2:])  // Output: [30 40 50 60 70 80] - From index 2 to end
+	fmt.Println(numbers[1:4]) // Output: [20 30 40] - From index 1 to 3
 
-	fmt.Println("Length:", len(numbers))
-	fmt.Println("Capacity:", cap(numbers))
+	fmt.Println("Length:", len(numbers))     // Output: Length: 7
+	fmt.Println("Capacity:", cap(numbers))   // Output: Capacity: 8 (or higher, depends on growth)
 }
 ```
 
@@ -393,7 +445,7 @@ func main() {
 	if exists {
 		fmt.Println("David's score:", score)
 	} else {
-		fmt.Println("David not found")
+		fmt.Println("David not found") // Output: David not found
 	}
 
 	// Delete key
@@ -402,6 +454,9 @@ func main() {
 	// Iterate over map
 	for name, score := range scores {
 		fmt.Printf("%s: %d\n", name, score)
+		// Output: Alice: 90
+		//         Carol: 95
+		// Note: map iteration order is not guaranteed
 	}
 }
 ```
@@ -463,6 +518,7 @@ func main() {
 	}
 
 	fmt.Println(p1, p2, p3, p4, config)
+	// Output: {Alice 31 Jakarta} {Bob 25 Bandung} {Carol 0 } &{David 35 Surabaya} {localhost 8080}
 }
 ```
 
@@ -515,23 +571,23 @@ func sum(numbers ...int) int {
 }
 
 func main() {
-	greet("Alice")
+	greet("Alice") // Output: Hello, Alice
 
 	result := add(10, 20)
-	fmt.Println("Add:", result)
+	fmt.Println("Add:", result) // Output: Add: 30
 
 	quotient, err := divide(10, 2)
 	if err != nil {
 		fmt.Println("Error:", err)
 	} else {
-		fmt.Println("Quotient:", quotient)
+		fmt.Println("Quotient:", quotient) // Output: Quotient: 5
 	}
 
 	x, y := split(17)
-	fmt.Println("Split:", x, y)
+	fmt.Println("Split:", x, y) // Output: Split: 7 10
 
 	total := sum(1, 2, 3, 4, 5)
-	fmt.Println("Sum:", total)
+	fmt.Println("Sum:", total) // Output: Sum: 15
 }
 ```
 
@@ -583,14 +639,14 @@ import "fmt"
 func main() {
 	// Anonymous function
 	func() {
-		fmt.Println("Anonymous function")
+		fmt.Println("Anonymous function") // Output: Anonymous function
 	}()
 
 	// Assign to variable
 	add := func(a, b int) int {
 		return a + b
 	}
-	fmt.Println(add(5, 3))
+	fmt.Println(add(5, 3)) // Output: 8
 
 	// Closure
 	counter := func() func() int {
@@ -606,6 +662,19 @@ func main() {
 	fmt.Println(counter()) // 3
 }
 ```
+
+### ✅ Checkpoint: Functions
+
+Before moving forward, ensure you can:
+
+- [ ] Define functions with parameters and return values
+- [ ] Use multiple return values (common for result + error)
+- [ ] Implement variadic functions
+- [ ] Use defer for cleanup operations
+- [ ] Create and use anonymous functions and closures
+- [ ] Understand when to use value receivers vs pointer receivers (covered in next section)
+
+**Quick Check**: Can you write a function that takes a variadic list of numbers and returns both the sum and average?
 
 ## 🔗 Methods and Interfaces
 
@@ -654,7 +723,7 @@ func main() {
 	fmt.Println("Scaled area:", rect.Area()) // 200
 
 	circle := Circle{Radius: 5}
-	fmt.Println("Circle area:", circle.Area())
+	fmt.Println("Circle area:", circle.Area()) // Output: Circle area: 78.53981633974483
 }
 ```
 
@@ -709,8 +778,8 @@ func main() {
 	rect := Rectangle{Width: 10, Height: 5}
 	circle := Circle{Radius: 5}
 
-	printShapeInfo(rect)
-	printShapeInfo(circle)
+	printShapeInfo(rect)   // Output: Area: 50.00, Perimeter: 30.00
+	printShapeInfo(circle) // Output: Area: 78.54, Perimeter: 31.42
 
 	// Empty interface (interface{}) accepts any type
 	var anything interface{}
@@ -723,7 +792,7 @@ func main() {
 	something = []int{1, 2, 3}
 	something = map[string]int{"key": 42}
 
-	fmt.Println(anything, something)
+	fmt.Println(anything, something) // Output: {10 5} map[key:42]
 }
 ```
 
@@ -764,7 +833,33 @@ func main() {
 
 ## 🎯 Pointers
 
-Go has pointers but no pointer arithmetic:
+Go has pointers but no pointer arithmetic. Here's how they work in memory:
+
+```mermaid
+graph LR
+    subgraph "Memory"
+        A["Address: 0x1000<br/>Value: 42"]
+        B["Address: 0x2000<br/>Value: 0x1000"]
+    end
+
+    subgraph "Variables"
+        x["x int = 42<br/>(stored at 0x1000)"]
+        p["p *int = &x<br/>(stored at 0x2000)"]
+    end
+
+    x --> A
+    p --> B
+    B -.points to.-> A
+
+    style A fill:#4CAF50
+    style B fill:#2196F3
+```
+
+**Key Concepts**:
+
+- `&x` gives you the memory address of `x`
+- `*p` dereferences the pointer (gets the value at that address)
+- Pointers enable functions to modify values outside their scope
 
 ```go
 package main
@@ -803,9 +898,60 @@ func changePointer(ptr *int) {
 }
 ```
 
+### ✅ Checkpoint: Methods, Interfaces, and Pointers
+
+Before moving forward, ensure you can:
+
+- [ ] Define methods with value and pointer receivers
+- [ ] Understand when to use pointer vs value receivers
+- [ ] Define and implement interfaces
+- [ ] Use the empty interface (`interface{}` or `any`)
+- [ ] Perform type assertions and type switches
+- [ ] Work with pointers and understand pointer dereferencing
+- [ ] Know when to pass values vs pointers to functions
+
+**Quick Check**: Can you create a `BankAccount` struct with methods to deposit, withdraw (using pointer receiver), and check balance? Then create an `Account` interface that these methods implement?
+
 ## ⚠️ Error Handling
 
 Go doesn't have exceptions; it uses explicit error returns:
+
+```mermaid
+graph TD
+    Start[Function Call] --> Check{Returns Error?}
+    Check -->|Yes, err != nil| Handle[Handle Error]
+    Check -->|No, err == nil| Success[Use Result Value]
+
+    Handle --> TypeCheck{Need Error Details?}
+    TypeCheck -->|Yes| Assert[Type Assertion<br/>Extract Error Info]
+    TypeCheck -->|No| Log[Log/Return Error]
+
+    Assert --> Custom{Custom Error Type?}
+    Custom -->|Yes| Extract[Access Custom Fields]
+    Custom -->|No| Standard[Use Standard Error Message]
+
+    Extract --> Decision{Recoverable?}
+    Standard --> Decision
+    Log --> Decision
+
+    Decision -->|Yes| Retry[Retry/Fallback Logic]
+    Decision -->|No| Propagate[Return Error to Caller]
+
+    Success --> Continue[Continue Execution]
+
+    style Check fill:#e1f5ff
+    style Handle fill:#ffe1e1
+    style Success fill:#e1ffe1
+    style Decision fill:#fff4e1
+```
+
+**Key Principles:**
+
+- Functions return `(result, error)` tuples
+- Caller MUST check `if err != nil`
+- Errors propagate up the call stack explicitly
+- Custom error types provide structured error information
+- `panic`/`recover` are for truly exceptional cases only
 
 ```go
 package main
@@ -895,7 +1041,50 @@ func safeDivide(a, b int) {
 
 ## 🚀 Concurrency
 
-Go's killer feature - goroutines and channels:
+Go's killer feature - goroutines and channels. Let's understand how Go achieves amazing concurrency with simple primitives:
+
+```mermaid
+graph TD
+    subgraph "Go Runtime"
+        Scheduler[Go Scheduler<br/>M:N Scheduler]
+    end
+
+    subgraph "OS Threads (M)"
+        T1[OS Thread 1]
+        T2[OS Thread 2]
+        T3[OS Thread 3]
+    end
+
+    subgraph "Goroutines (N)"
+        G1[Goroutine 1]
+        G2[Goroutine 2]
+        G3[Goroutine 3]
+        G4[Goroutine 4]
+        G5[Goroutine 5]
+        G6[Goroutine 6]
+    end
+
+    Scheduler --> T1
+    Scheduler --> T2
+    Scheduler --> T3
+
+    G1 --> Scheduler
+    G2 --> Scheduler
+    G3 --> Scheduler
+    G4 --> Scheduler
+    G5 --> Scheduler
+    G6 --> Scheduler
+
+    style Scheduler fill:#4CAF50
+    style G1 fill:#2196F3
+    style G2 fill:#2196F3
+    style G3 fill:#2196F3
+    style G4 fill:#2196F3
+    style G5 fill:#2196F3
+    style G6 fill:#2196F3
+```
+
+**Key Insight**: Go multiplexes many goroutines (G1-G6) onto few OS threads (T1-T3). This is why goroutines are cheap—you can have millions of them!
 
 ### Goroutines
 
@@ -922,6 +1111,13 @@ func main() {
 
 	// Run in main goroutine
 	say("hello")
+	// Output (interleaved, non-deterministic):
+	// hello
+	// world
+	// hello
+	// world
+	// hello
+	// world
 
 	// Without sleep/wait, main might exit before goroutines finish
 	time.Sleep(1 * time.Second)
@@ -929,6 +1125,31 @@ func main() {
 ```
 
 ### Channels
+
+Channels enable safe communication between goroutines. Think of them as typed pipes:
+
+```mermaid
+sequenceDiagram
+    participant G1 as Goroutine 1
+    participant Ch as Channel
+    participant G2 as Goroutine 2
+
+    Note over G1,G2: Unbuffered Channel (Synchronous)
+    G1->>Ch: ch <- 42 (blocks until receive)
+    Note over G1: Sender waits...
+    Ch->>G2: val := <-ch (receives value)
+    Note over G1,G2: Both synchronized
+
+    Note over G1,G2: Buffered Channel (Asynchronous)
+    G1->>Ch: ch <- 10 (non-blocking if buffer not full)
+    G1->>Ch: ch <- 20 (non-blocking if buffer not full)
+    Note over Ch: Buffer: [10, 20]
+    Ch->>G2: <-ch returns 10
+    Ch->>G2: <-ch returns 20
+```
+
+**Unbuffered channels** create synchronization points—sender blocks until receiver is ready.
+**Buffered channels** allow sending without blocking until the buffer is full.
 
 Communication between goroutines:
 
@@ -947,7 +1168,7 @@ func main() {
 	}()
 
 	value := <-ch // Receive from channel
-	fmt.Println(value)
+	fmt.Println(value) // Output: 42
 
 	// Buffered channel
 	buffered := make(chan string, 2)
@@ -955,14 +1176,51 @@ func main() {
 	buffered <- "world"
 	// No blocking until buffer is full
 
-	fmt.Println(<-buffered)
-	fmt.Println(<-buffered)
+	fmt.Println(<-buffered) // Output: hello
+	fmt.Println(<-buffered) // Output: world
 }
 ```
 
 ### Select Statement
 
 Multiplex channel operations:
+
+```mermaid
+graph TD
+    Start[Select Statement] --> Wait[Wait on Multiple Channels]
+
+    Wait --> Ready{Which Channel<br/>is Ready First?}
+
+    Ready -->|ch1 Ready| Case1[Execute case ch1 Block]
+    Ready -->|ch2 Ready| Case2[Execute case ch2 Block]
+    Ready -->|timeout Ready| Case3[Execute timeout Block]
+    Ready -->|None Ready| CheckDefault{Has default Case?}
+
+    CheckDefault -->|Yes| Default[Execute default Block<br/>Non-blocking]
+    CheckDefault -->|No| Block[Block Until<br/>One Channel Ready]
+
+    Block --> Ready
+
+    Case1 --> Done[Continue After Select]
+    Case2 --> Done
+    Case3 --> Done
+    Default --> Done
+
+    style Wait fill:#e1f5ff
+    style Ready fill:#fff4e1
+    style Case1 fill:#e1ffe1
+    style Case2 fill:#e1ffe1
+    style Case3 fill:#ffe1e1
+    style Default fill:#ffe1e1
+```
+
+**How select works:**
+
+1. **Simultaneous monitoring**: Select waits on multiple channel operations at once
+2. **First ready wins**: Executes the case for whichever channel becomes ready first
+3. **Random selection**: If multiple channels ready simultaneously, Go picks one randomly (prevents starvation)
+4. **Non-blocking with default**: Adding a `default` case makes select non-blocking
+5. **Timeout pattern**: Common to use `time.After()` as a timeout case
 
 ```go
 package main
@@ -1000,6 +1258,20 @@ func main() {
 }
 ```
 
+### ✅ Checkpoint: Concurrency
+
+Before moving forward, ensure you can:
+
+- [ ] Launch goroutines with the `go` keyword
+- [ ] Create and use unbuffered channels
+- [ ] Create and use buffered channels
+- [ ] Use `select` to multiplex channel operations
+- [ ] Understand the difference between buffered and unbuffered channels
+- [ ] Recognize when goroutines block and synchronize
+- [ ] Close channels and range over them
+
+**Quick Check**: Can you write a program that spawns 3 goroutines, each printing numbers 1-5, and ensures the main function waits for all goroutines to complete before exiting?
+
 ## 🔷 Generics (Go 1.18+)
 
 Go added generics in version 1.18, enabling type-safe reusable code:
@@ -1036,12 +1308,12 @@ func Contains[T comparable](slice []T, value T) bool {
 
 func main() {
 	// Type inference
-	Print(42)
-	Print("hello")
-	Print(3.14)
+	Print(42)      // Output: 42
+	Print("hello") // Output: hello
+	Print(3.14)    // Output: 3.14
 
 	// Explicit type arguments
-	Print[int](100)
+	Print[int](100) // Output: 100
 
 	// Generic Min function
 	fmt.Println(Min(10, 20))       // int
@@ -1385,6 +1657,108 @@ You've learned the Go language fundamentals! Now it's time to learn how to solve
 - 🧪 Testing patterns (table-driven tests, fuzzing, benchmarks)
 - 🎨 Design patterns (functional options, builder, singleton)
 - 🌐 Web development recipes (middleware, JSON APIs)
+
+---
+
+## 🎯 Practice Exercises
+
+Test your Go knowledge with these hands-on exercises. Start with Level 1 and progress to more advanced challenges.
+
+### Level 1: Basics (Beginner)
+
+**Exercise 1.1: FizzBuzz**
+Write a program that prints numbers from 1 to 100. For multiples of 3, print "Fizz" instead of the number. For multiples of 5, print "Buzz". For multiples of both 3 and 5, print "FizzBuzz".
+
+**Exercise 1.2: Reverse a Slice**
+Write a function that takes a slice of integers and returns a new slice with elements in reverse order.
+
+```go
+func reverse(nums []int) []int {
+	// Your code here
+}
+
+// Example: reverse([]int{1, 2, 3, 4, 5}) → []int{5, 4, 3, 2, 1}
+```
+
+**Exercise 1.3: Word Counter**
+Write a program that reads a string and returns a map counting the frequency of each word.
+
+### Level 2: Intermediate
+
+**Exercise 2.1: Generic Stack Implementation**
+Complete the generic stack implementation with additional methods:
+
+- `Peek() (T, bool)` - View top element without removing
+- `Size() int` - Get number of elements
+- `Clear()` - Empty the stack
+
+**Exercise 2.2: Concurrent URL Fetcher**
+Write a program that fetches multiple URLs concurrently using goroutines and channels:
+
+- Takes a list of URLs
+- Fetches them concurrently (max 3 concurrent requests)
+- Collects results and reports status for each URL
+
+**Exercise 2.3: Custom Error Type**
+Create a `ValidationError` type that:
+
+- Stores field name and error message
+- Implements `Error() interface`
+- Supports wrapping other errors
+- Has a method to check if error is of this type
+
+### Level 3: Advanced
+
+**Exercise 3.1: Worker Pool Pattern**
+Implement a worker pool that:
+
+- Spawns N worker goroutines
+- Processes jobs from a job channel
+- Collects results in a results channel
+- Handles graceful shutdown with context cancellation
+
+**Exercise 3.2: Generic Cache with Expiration**
+Build a thread-safe generic cache that:
+
+- Stores key-value pairs with TTL (time-to-live)
+- Automatically evicts expired entries
+- Supports concurrent read/write
+- Uses mutexes for synchronization
+
+**Exercise 3.3: JSON API Parser**
+Create a program that:
+
+- Fetches data from a REST API
+- Unmarshals JSON into Go structs
+- Handles errors gracefully
+- Implements retry logic with exponential backoff
+
+### Level 4: Expert
+
+**Exercise 4.1: Rate Limiter**
+Implement a rate limiter using Go concurrency primitives:
+
+- Allows N requests per time window
+- Blocks when limit exceeded
+- Uses ticker and channels (no external libraries)
+
+**Exercise 4.2: Reflection-Based Validator**
+Build a struct validator using reflection that:
+
+- Reads struct tags (e.g., `validate:"required,min=3,max=10"`)
+- Validates field values
+- Returns detailed validation errors
+- Supports custom validation functions
+
+### Solutions & Hints
+
+**Hint for 1.1 (FizzBuzz)**: Use modulo operator (%) and if/else conditions
+
+**Hint for 2.2 (Concurrent Fetcher)**: Use a buffered channel for limiting concurrency, sync.WaitGroup for coordination
+
+**Hint for 3.1 (Worker Pool)**: Use `select` with context.Done() for graceful shutdown
+
+**Hint for 4.1 (Rate Limiter)**: Combine time.NewTicker() with a buffered channel as token bucket
 
 ---
 
