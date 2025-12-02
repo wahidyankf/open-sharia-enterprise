@@ -9,6 +9,7 @@ tools:
   - WebSearch
 model: sonnet
 color: green
+updated: 2025-12-02
 ---
 
 # Tutorial Quality Validator
@@ -131,6 +132,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 - Are examples progressive (simple → complex)?
 - Are examples explained, not just shown?
 - Are examples realistic and practical?
+- **Do print/logging statements include output expectations as comments?**
 
 **D. Depth Appropriateness**
 
@@ -220,6 +222,7 @@ For **algorithm tutorials**:
 - Are examples complete and runnable?
 - Are examples well-commented?
 - Do examples build progressively?
+- **Do print/logging statements include output expectations as comments?**
 
 **B. Step-by-Step Instructions**
 
@@ -250,6 +253,7 @@ For **algorithm tutorials**:
 
 - Missing or insufficient code examples
 - Non-runnable or incomplete examples
+- **Code examples with print/logging statements lacking output expectations**
 - Missing step-by-step instructions
 - Missing troubleshooting guidance
 - Lack of checkpoints or validation
