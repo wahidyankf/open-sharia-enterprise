@@ -285,6 +285,8 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/docs-file-manager.md`
 - `.claude/agents/docs-link-checker.md`
 - `.claude/agents/docs-maker.md`
+- `.claude/agents/docs-tutorial-checker.md`
+- `.claude/agents/docs-tutorial-maker.md`
 - `.claude/agents/journal-maker.md`
 - `.claude/agents/plan-checker.md`
 - `.claude/agents/plan-execution-checker.md`
@@ -302,6 +304,8 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/explanation/conventions/ex-co__diataxis-framework.md`
 - `docs/explanation/conventions/ex-co__emoji-usage.md`
 - `docs/explanation/conventions/ex-co__journals-format.md`
+- `docs/explanation/conventions/ex-co__temporary-files.md`
+- `docs/explanation/conventions/ex-co__timestamp-format.md`
 
 ### Development Conventions
 
