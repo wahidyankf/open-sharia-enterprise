@@ -118,22 +118,26 @@ Where:
 
 **Example 1:** You invest $1,000 today at 8% annual interest for 5 years.
 
-```
-FV = $1,000 × (1 + 0.08)^5
-FV = $1,000 × (1.08)^5
-FV = $1,000 × 1.4693
-FV = $1,469.30
-```
+$$
+\begin{align}
+FV &= \$1,000 \times (1 + 0.08)^5 \\
+FV &= \$1,000 \times (1.08)^5 \\
+FV &= \$1,000 \times 1.4693 \\
+FV &= \$1,469.30
+\end{align}
+$$
 
 Your $1,000 grows to $1,469.30 in 5 years.
 
 **Example 2:** CloudTech invests $100,000 at 10% for 3 years.
 
-```
-FV = $100,000 × (1.10)^3
-FV = $100,000 × 1.331
-FV = $133,100
-```
+$$
+\begin{align}
+FV &= \$100,000 \times (1.10)^3 \\
+FV &= \$100,000 \times 1.331 \\
+FV &= \$133,100
+\end{align}
+$$
 
 ### Present Value (PV): Today's Worth of Future Money
 
@@ -155,21 +159,25 @@ $$
 
 **Example 1:** You'll receive $10,000 in 5 years. With a 6% discount rate, what's it worth today?
 
-```
-PV = $10,000 / (1.06)^5
-PV = $10,000 / 1.3382
-PV = $7,472.58
-```
+$$
+\begin{align}
+PV &= \frac{\$10,000}{(1.06)^5} \\
+PV &= \frac{\$10,000}{1.3382} \\
+PV &= \$7,472.58
+\end{align}
+$$
 
 $10,000 received in 5 years is worth $7,472.58 today.
 
 **Example 2:** CloudTech expects to receive $50,000 in 2 years. At 12% discount rate:
 
-```
-PV = $50,000 / (1.12)^2
-PV = $50,000 / 1.2544
-PV = $39,860.14
-```
+$$
+\begin{align}
+PV &= \frac{\$50,000}{(1.12)^2} \\
+PV &= \frac{\$50,000}{1.2544} \\
+PV &= \$39,860.14
+\end{align}
+$$
 
 ### Visualizing Time Value
 
@@ -245,13 +253,15 @@ Where:
 
 **Example:** CloudTech will receive $20,000 per year for 5 years. At 10% discount rate, what's the PV?
 
-```
-PV = $20,000 × [(1 - (1.10)^-5) / 0.10]
-PV = $20,000 × [(1 - 0.6209) / 0.10]
-PV = $20,000 × [0.3791 / 0.10]
-PV = $20,000 × 3.791
-PV = $75,820
-```
+$$
+\begin{align}
+PV &= \$20,000 \times \frac{1 - (1.10)^{-5}}{0.10} \\
+PV &= \$20,000 \times \frac{1 - 0.6209}{0.10} \\
+PV &= \$20,000 \times \frac{0.3791}{0.10} \\
+PV &= \$20,000 \times 3.791 \\
+PV &= \$75,820
+\end{align}
+$$
 
 The stream of $20,000 payments is worth $75,820 today.
 
@@ -270,11 +280,13 @@ The stream of $20,000 payments is worth $75,820 today.
 <details>
 <summary>Solution</summary>
 
-```
-PV = $5,000 / (1.08)^3
-PV = $5,000 / 1.2597
-PV = $3,969.16
-```
+$$
+\begin{align}
+PV &= \frac{\$5,000}{(1.08)^3} \\
+PV &= \frac{\$5,000}{1.2597} \\
+PV &= \$3,969.16
+\end{align}
+$$
 
 The $5,000 future payment is worth $3,969.16 today.
 
@@ -647,22 +659,26 @@ Year 5: +$3,000,000
 
 **Step 2:** Discount each cash flow to present value
 
-```
-Year 0: -$10,000,000 / (1.12)^0 = -$10,000,000
-Year 1: $3,000,000 / (1.12)^1 = $2,678,571
-Year 2: $3,000,000 / (1.12)^2 = $2,391,582
-Year 3: $3,000,000 / (1.12)^3 = $2,135,341
-Year 4: $3,000,000 / (1.12)^4 = $1,906,554
-Year 5: $3,000,000 / (1.12)^5 = $1,702,281
-```
+$$
+\begin{align}
+\text{Year 0:} & \quad -\$10,000,000 / (1.12)^0 = -\$10,000,000 \\
+\text{Year 1:} & \quad \$3,000,000 / (1.12)^1 = \$2,678,571 \\
+\text{Year 2:} & \quad \$3,000,000 / (1.12)^2 = \$2,391,582 \\
+\text{Year 3:} & \quad \$3,000,000 / (1.12)^3 = \$2,135,341 \\
+\text{Year 4:} & \quad \$3,000,000 / (1.12)^4 = \$1,906,554 \\
+\text{Year 5:} & \quad \$3,000,000 / (1.12)^5 = \$1,702,281
+\end{align}
+$$
 
 **Step 3:** Sum all present values
 
-```
-NPV = -$10,000,000 + $2,678,571 + $2,391,582 + $2,135,341 + $1,906,554 + $1,702,281
-NPV = -$10,000,000 + $10,814,329
-NPV = $814,329
-```
+$$
+\begin{align}
+NPV &= -\$10,000,000 + \$2,678,571 + \$2,391,582 + \$2,135,341 + \$1,906,554 + \$1,702,281 \\
+NPV &= -\$10,000,000 + \$10,814,329 \\
+NPV &= \$814,329
+\end{align}
+$$
 
 **Decision:** **Accept the project!** NPV = $814,329 > 0
 
@@ -694,13 +710,15 @@ IRR ≈ 15.24%
 
 **CloudTech's payback:**
 
-```
-Year 0: -$10,000,000
-Year 1: -$10,000,000 + $3,000,000 = -$7,000,000
-Year 2: -$7,000,000 + $3,000,000 = -$4,000,000
-Year 3: -$4,000,000 + $3,000,000 = -$1,000,000
-Year 4: -$1,000,000 + $3,000,000 = +$2,000,000
-```
+$
+\begin{align}
+\text{Year 0:} & \quad -\$10,000,000 \\
+\text{Year 1:} & \quad -\$10,000,000 + \$3,000,000 = -\$7,000,000 \\
+\text{Year 2:} & \quad -\$7,000,000 + \$3,000,000 = -\$4,000,000 \\
+\text{Year 3:} & \quad -\$4,000,000 + \$3,000,000 = -\$1,000,000 \\
+\text{Year 4:} & \quad -\$1,000,000 + \$3,000,000 = +\$2,000,000
+\end{align}
+$
 
 **Payback Period:** 3.33 years (3 years + $1M/$3M = 3.33 years)
 
@@ -752,13 +770,17 @@ flowchart TD
 
 **1. Calculate NPV:**
 
-```
-PV of cash flows = $1.5M × [(1 - (1.10)^-5) / 0.10]
-PV of cash flows = $1.5M × 3.791
-PV of cash flows = $5,686,500
+$$
+\begin{align}
+\text{PV of cash flows} &= \$1.5M \times \frac{1 - (1.10)^{-5}}{0.10} \\
+\text{PV of cash flows} &= \$1.5M \times 3.791 \\
+\text{PV of cash flows} &= \$5,686,500
+\end{align}
+$$
 
-NPV = $5,686,500 - $5,000,000 = $686,500
-```
+$$
+NPV = \$5,686,500 - \$5,000,000 = \$686,500
+$$
 
 **2. Decision:** **Accept!** NPV = $686,500 > 0
 
@@ -825,14 +847,20 @@ Where:
 
 **CloudTech Example:**
 
-```
-Interest Expense = $500,000
-Total Debt = $11,000,000
-Tax Rate = 25%
+$
+\begin{align}
+\text{Interest Expense} &= \$500,000 \\
+\text{Total Debt} &= \$11,000,000 \\
+\text{Tax Rate} &= 25\%
+\end{align}
+$
 
-Pre-tax Cost of Debt = $500,000 / $11,000,000 = 4.55%
-After-tax Cost of Debt = 4.55% × (1 - 0.25) = 3.41%
-```
+$
+\begin{align}
+\text{Pre-tax Cost of Debt} &= \$500,000 / \$11,000,000 = 4.55\% \\
+\text{After-tax Cost of Debt} &= 4.55\% \times (1 - 0.25) = 3.41\%
+\end{align}
+$
 
 CloudTech's effective cost of debt is 3.41% after tax benefits.
 
@@ -854,16 +882,22 @@ Where:
 
 **CloudTech Example:**
 
-```
-Risk-free rate ($r_f$) = 3%
-Beta ($\beta$) = 1.2 (CloudTech is 20% riskier than market)
-Market return ($r_m$) = 10%
-Market risk premium = 10% - 3% = 7%
+$
+\begin{align}
+\text{Risk-free rate } (r_f) &= 3\% \\
+\text{Beta } (\beta) &= 1.2 \text{ (CloudTech is 20\% riskier than market)} \\
+\text{Market return } (r_m) &= 10\% \\
+\text{Market risk premium} &= 10\% - 3\% = 7\%
+\end{align}
+$
 
-r_e = 3% + 1.2 × 7%
-r_e = 3% + 8.4%
-r_e = 11.4%
-```
+$
+\begin{align}
+r_e &= 3\% + 1.2 \times 7\% \\
+r_e &= 3\% + 8.4\% \\
+r_e &= 11.4\%
+\end{align}
+$
 
 CloudTech's cost of equity is 11.4%.
 
@@ -888,21 +922,35 @@ Where:
 
 **CloudTech Calculation:**
 
-```
-Equity (E) = $20,000,000
-Debt (D) = $11,000,000
-Total Value (V) = $31,000,000
+$
+\begin{align}
+\text{Equity (E)} &= \$20,000,000 \\
+\text{Debt (D)} &= \$11,000,000 \\
+\text{Total Value (V)} &= \$31,000,000
+\end{align}
+$
 
-E/V = $20M / $31M = 64.5%
-D/V = $11M / $31M = 35.5%
+$
+\begin{align}
+E/V &= \$20M / \$31M = 64.5\% \\
+D/V &= \$11M / \$31M = 35.5\%
+\end{align}
+$
 
-r_e = 11.4%
-r_d (after-tax) = 3.41%
+$
+\begin{align}
+r_e &= 11.4\% \\
+r_d \text{ (after-tax)} &= 3.41\%
+\end{align}
+$
 
-WACC = (0.645 × 11.4%) + (0.355 × 3.41%)
-WACC = 7.35% + 1.21%
-WACC = 8.56%
-```
+$
+\begin{align}
+WACC &= (0.645 \times 11.4\%) + (0.355 \times 3.41\%) \\
+WACC &= 7.35\% + 1.21\% \\
+WACC &= 8.56\%
+\end{align}
+$
 
 **CloudTech's WACC = 8.56%**
 
@@ -961,13 +1009,17 @@ flowchart TD
 <details>
 <summary>Solution</summary>
 
-```
-After-tax cost of debt = 5% × (1 - 0.30) = 3.5%
+$$
+\text{After-tax cost of debt} = 5\% \times (1 - 0.30) = 3.5\%
+$$
 
-WACC = (0.60 × 12%) + (0.40 × 3.5%)
-WACC = 7.2% + 1.4%
-WACC = 8.6%
-```
+$$
+\begin{align}
+WACC &= (0.60 \times 12\%) + (0.40 \times 3.5\%) \\
+WACC &= 7.2\% + 1.4\% \\
+WACC &= 8.6\%
+\end{align}
+$$
 
 The company's WACC is 8.6%.
 
@@ -1263,20 +1315,24 @@ PV Terminal Value = $163,314,749 / (1.0856)^5 = $108,157,524
 Enterprise Value = $5,968,486 + $5,938,746 + $5,909,982 + $5,882,177 + $5,855,317 + $108,157,524
 Enterprise Value = $137,712,232
 
-```
+````
 
 **Step 5: Calculate Equity Value**
 
-```
+$
+\text{Equity Value} = \text{Enterprise Value} - \text{Net Debt}
+$
 
-Equity Value = Enterprise Value - Net Debt
+$
+\begin{align}
+\text{Net Debt} &= \text{Total Debt} - \text{Cash} \\
+\text{Net Debt} &= \$11,000,000 - \$5,000,000 = \$6,000,000
+\end{align}
+$
 
-Net Debt = Total Debt - Cash
-Net Debt = $11,000,000 - $5,000,000 = $6,000,000
-
-Equity Value = $137,712,232 - $6,000,000 = $131,712,232
-
-````
+$
+\text{Equity Value} = \$137,712,232 - \$6,000,000 = \$131,712,232
+$
 
 **CloudTech's Equity Value ≈ $131.7 million**
 
@@ -1325,14 +1381,20 @@ DCF is only as good as your assumptions:
 
 **Alternative approach:** Use market multiples
 
-```
-EV/EBIT Multiple = Enterprise Value / EBIT
+$
+\text{EV/EBIT Multiple} = \frac{\text{Enterprise Value}}{\text{EBIT}}
+$
 
-Industry average EV/EBIT = 15x
-CloudTech EBIT = $8,000,000
+$
+\begin{align}
+\text{Industry average EV/EBIT} &= 15x \\
+\text{CloudTech EBIT} &= \$8,000,000
+\end{align}
+$
 
-Estimated Enterprise Value = 15 × $8,000,000 = $120,000,000
-```
+$
+\text{Estimated Enterprise Value} = 15 \times \$8,000,000 = \$120,000,000
+$
 
 This provides a **quick sanity check** on DCF valuation.
 
@@ -1368,17 +1430,27 @@ Discount rate = 8%. Which option is best?
 
 **Calculate present value of each:**
 
-```
-Option 1: $10,000 (already in present value)
+**Option 1:** $10,000 (already in present value)
 
-Option 2: PV = $12,000 / (1.08)^2
-         PV = $12,000 / 1.1664
-         PV = $10,288.07
+**Option 2:**
 
-Option 3: PV = $15,000 / (1.08)^4
-         PV = $15,000 / 1.3605
-         PV = $11,025.12
-```
+$$
+\begin{align}
+PV &= \frac{\$12,000}{(1.08)^2} \\
+PV &= \frac{\$12,000}{1.1664} \\
+PV &= \$10,288.07
+\end{align}
+$$
+
+**Option 3:**
+
+$$
+\begin{align}
+PV &= \frac{\$15,000}{(1.08)^4} \\
+PV &= \frac{\$15,000}{1.3605} \\
+PV &= \$11,025.12
+\end{align}
+$$
 
 **Best option: Option 3** ($15,000 in 4 years has highest PV of $11,025.12)
 
@@ -1400,16 +1472,22 @@ Discount rate = 10%. Should you accept?
 
 **Discount each cash flow:**
 
-```
-Year 1: $15,000 / 1.10 = $13,636.36
-Year 2: $20,000 / (1.10)^2 = $16,528.93
-Year 3: $25,000 / (1.10)^3 = $18,782.87
-Year 4: $15,000 / (1.10)^4 = $10,245.20
+$
+\begin{align}
+\text{Year 1:} & \quad \$15,000 / 1.10 = \$13,636.36 \\
+\text{Year 2:} & \quad \$20,000 / (1.10)^2 = \$16,528.93 \\
+\text{Year 3:} & \quad \$25,000 / (1.10)^3 = \$18,782.87 \\
+\text{Year 4:} & \quad \$15,000 / (1.10)^4 = \$10,245.20
+\end{align}
+$
 
-Total PV = $59,193.36
+$
+\text{Total PV} = \$59,193.36
+$
 
-NPV = $59,193.36 - $50,000 = $9,193.36
-```
+$
+NPV = \$59,193.36 - \$50,000 = \$9,193.36
+$
 
 **Decision: Accept!** NPV = $9,193.36 > 0
 
@@ -1430,18 +1508,28 @@ Calculate WACC.
 <details>
 <summary>Solution</summary>
 
-```
-Total Value (V) = $80M + $40M = $120M
+$
+\text{Total Value (V)} = \$80M + \$40M = \$120M
+$
 
-E/V = $80M / $120M = 66.67%
-D/V = $40M / $120M = 33.33%
+$
+\begin{align}
+E/V &= \$80M / \$120M = 66.67\% \\
+D/V &= \$40M / \$120M = 33.33\%
+\end{align}
+$
 
-After-tax cost of debt = 6% × (1 - 0.30) = 4.2%
+$
+\text{After-tax cost of debt} = 6\% \times (1 - 0.30) = 4.2\%
+$
 
-WACC = (0.6667 × 13%) + (0.3333 × 4.2%)
-WACC = 8.67% + 1.40%
-WACC = 10.07%
-```
+$
+\begin{align}
+WACC &= (0.6667 \times 13\%) + (0.3333 \times 4.2\%) \\
+WACC &= 8.67\% + 1.40\% \\
+WACC &= 10.07\%
+\end{align}
+$
 
 Company XYZ's WACC = 10.07%
 
