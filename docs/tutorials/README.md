@@ -7,7 +7,7 @@ tags:
   - tutorials
   - learning
 created: 2025-11-22
-updated: 2025-12-01
+updated: 2025-12-02
 ---
 
 # Tutorials
@@ -223,4 +223,4 @@ After completing tutorials, explore:
 
 ---
 
-**Last Updated**: 2025-12-01
+**Last Updated**: 2025-12-02
