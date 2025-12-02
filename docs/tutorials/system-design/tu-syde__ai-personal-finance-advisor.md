@@ -858,6 +858,87 @@ sequenceDiagram
 
 **Cache Strategy**: Insights are cached for 1 hour to avoid redundant ML processing for frequent requests.
 
+#### Complete User Journey Flow
+
+This diagram shows the end-to-end user experience from authentication to viewing personalized financial insights:
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as Mobile App
+    participant Gateway as API Gateway
+    participant Auth as Auth Service
+    participant Upload as Upload Service
+    participant Storage as Object Storage
+    participant OCR as OCR Service
+    participant DB as Database
+    participant Insights as Insights Service
+    participant ML as ML Service
+    participant Cache as Redis Cache
+
+    Note over User,Cache: User Authentication
+    User->>Mobile: Open app
+    Mobile->>Gateway: Login request
+    Gateway->>Auth: Validate credentials
+    Auth->>DB: Check user exists
+    DB-->>Auth: User record
+    Auth-->>Gateway: JWT token
+    Gateway-->>Mobile: Auth token + user profile
+    Mobile-->>User: Dashboard displayed
+
+    Note over User,Cache: Receipt Upload
+    User->>Mobile: Take photo of receipt
+    Mobile->>Gateway: Upload receipt
+    Gateway->>Upload: Store receipt
+    Upload->>Storage: Save file
+    Storage-->>Upload: File URL
+    Upload->>DB: Create receipt record
+    Upload-->>Mobile: Receipt ID
+    Mobile-->>User: "Processing..." notification
+
+    Note over User,Cache: Background Processing
+    Upload->>OCR: Async OCR job
+    OCR->>Storage: Fetch receipt
+    OCR->>OCR: Extract text & amounts
+    OCR->>DB: Save transaction
+    OCR->>Mobile: Push: "Receipt processed"
+    Mobile-->>User: "Transaction added!"
+
+    Note over User,Cache: View Insights
+    User->>Mobile: Request insights
+    Mobile->>Gateway: GET /insights
+    Gateway->>Insights: Fetch insights
+    Insights->>Cache: Check cache
+
+    alt Cache Hit
+        Cache-->>Insights: Cached insights
+    else Cache Miss
+        Insights->>DB: Query transactions
+        DB-->>Insights: Transaction data
+        Insights->>ML: Generate insights
+        ML-->>Insights: Trends + recommendations
+        Insights->>Cache: Store insights (TTL=1h)
+    end
+
+    Insights-->>Gateway: Insights payload
+    Gateway-->>Mobile: Insights data
+    Mobile-->>User: Display spending trends + recommendations
+```
+
+**User Experience Flow**:
+
+1. **Authentication** (< 500ms): User logs in and receives JWT token for session
+2. **Receipt Upload** (< 1s): User captures receipt photo, app uploads and returns immediately
+3. **Async Processing** (5-15s): Background workers extract transaction data
+4. **Push Notification**: User notified when transaction is ready
+5. **View Insights** (< 2s cache hit, < 5s cache miss): User sees personalized financial insights
+
+**Key Performance Targets**:
+
+- API response time: p95 < 500ms (cached), p95 < 2s (uncached)
+- Receipt processing: p95 < 15 seconds end-to-end
+- Push notification latency: < 3 seconds after processing completes
+
 ## 6. Scalability Considerations
 
 ### Startup Scale (0–1K users)
@@ -1494,6 +1575,414 @@ sequenceDiagram
 - **Use Case**: Medium to planet scale
 
 **Recommendation**: Start with cloud APIs, transition to self-hosted at 50K+ users
+
+## 12. Troubleshooting & Operational Issues
+
+Building and operating a complex AI system comes with challenges. Here's how to identify and resolve common issues.
+
+### Deployment Issues
+
+**Problem: OCR Service Not Processing Receipts**
+
+**Symptoms:**
+
+- Receipts stuck in "PROCESSING" status for > 60 seconds
+- OCR queue depth growing continuously
+- No error logs in OCR service
+
+**Diagnosis Steps:**
+
+```bash
+# 1. Check OCR worker health
+kubectl get pods -l app=ocr-service
+# Look for: CrashLoopBackOff, ImagePullBackOff, OOMKilled
+
+# 2. Check queue depth
+aws sqs get-queue-attributes --queue-url <OCR_QUEUE_URL> \
+  --attribute-names ApproximateNumberOfMessages
+
+# 3. Check OCR service logs
+kubectl logs -l app=ocr-service --tail=100
+
+# 4. Check resource utilization
+kubectl top pods -l app=ocr-service
+```
+
+**Common Causes & Fixes:**
+
+| Cause                  | Symptoms                                                     | Fix                                                |
+| ---------------------- | ------------------------------------------------------------ | -------------------------------------------------- |
+| Out of Memory          | Pods restart frequently, OOMKilled status                    | Increase memory limit in deployment YAML           |
+| API Rate Limits        | HTTP 429 errors in logs                                      | Implement exponential backoff, increase quota      |
+| Invalid Image Format   | Specific receipts fail, error logs show "unsupported format" | Add format validation, convert to supported format |
+| Queue Permission Error | "Access Denied" in logs                                      | Update IAM role with SQS permissions               |
+
+---
+
+**Problem: Database Connection Pool Exhaustion**
+
+**Symptoms:**
+
+- API returns 500 errors: "connection pool exhausted"
+- High latency for all database queries
+- Application logs show connection timeout errors
+
+**Diagnosis:**
+
+```bash
+# Check active database connections
+SELECT count(*) FROM pg_stat_activity WHERE state = 'active';
+
+# Check connection pool metrics
+# Application metrics endpoint
+curl http://localhost:8080/metrics | grep db_pool
+
+# Expected output:
+# db_pool_active_connections 90
+# db_pool_max_connections 100  # ← At limit!
+# db_pool_wait_time_ms 5000    # ← High wait time
+```
+
+**Fixes:**
+
+1. **Increase pool size** (short-term):
+
+```yaml
+# config/database.yml
+pool_size: 200 # Increase from 100
+max_overflow: 50
+```
+
+2. **Fix connection leaks** (long-term):
+
+```go
+// ❌ Wrong - Connection not returned to pool
+rows, err := db.Query("SELECT * FROM transactions")
+// Missing rows.Close()
+
+// ✅ Correct - Always close resources
+rows, err := db.Query("SELECT * FROM transactions")
+if err != nil {
+    return err
+}
+defer rows.Close()  // Returns connection to pool
+```
+
+3. **Add connection timeout**:
+
+```yaml
+db_config:
+  max_idle_time: 5m # Close idle connections
+  max_lifetime: 15m # Recycle connections
+```
+
+---
+
+### Performance Issues
+
+**Problem: Slow Insight Generation (> 10 seconds)**
+
+**Symptoms:**
+
+- Users complain insights take too long to load
+- p95 latency > 10s for `/api/v1/insights`
+- High CPU utilization on ML service
+
+**Diagnosis:**
+
+```bash
+# 1. Profile the request
+curl -w "@curl-format.txt" -o /dev/null -s \
+  "http://api/v1/insights?user_id=123"
+
+# 2. Check cache hit rate
+redis-cli INFO stats | grep keyspace_hits
+# Low hit rate means cache not being used effectively
+
+# 3. Check database query performance
+EXPLAIN ANALYZE SELECT * FROM transactions
+WHERE user_id = 'uuid' AND date > NOW() - INTERVAL '30 days';
+```
+
+**Optimizations:**
+
+1. **Add database indexes**:
+
+```sql
+-- Add composite index for common query pattern
+CREATE INDEX idx_transactions_user_date
+ON transactions(user_id, transaction_date DESC);
+
+-- Verify index is used
+EXPLAIN SELECT * FROM transactions
+WHERE user_id = 'uuid' AND transaction_date > '2025-11-01';
+-- Should show: Index Scan using idx_transactions_user_date
+```
+
+2. **Optimize cache strategy**:
+
+```python
+# ❌ Wrong - Cache key too granular (low hit rate)
+cache_key = f"insights:{user_id}:{start_date}:{end_date}:{category}"
+
+# ✅ Better - Round to hour for better hit rate
+hour = datetime.now().replace(minute=0, second=0)
+cache_key = f"insights:{user_id}:{period}:{hour}"
+```
+
+3. **Pre-compute insights**:
+
+```python
+# Background job runs daily at 2 AM
+def precompute_daily_insights():
+    active_users = get_active_users()
+    for user in active_users:
+        insights = generate_insights(user.id, period="last_30_days")
+        cache.set(f"insights:{user.id}:30d", insights, ttl=24h)
+```
+
+---
+
+**Problem: High Memory Usage in Receipt Processing**
+
+**Symptoms:**
+
+- OCR service pods frequently OOMKilled
+- Memory usage spikes when processing large PDFs
+- Kubernetes evicts pods under memory pressure
+
+**Diagnosis:**
+
+```bash
+# 1. Check memory usage by pod
+kubectl top pods -l app=ocr-service
+
+# 2. Get detailed memory metrics
+kubectl exec -it <pod-name> -- cat /proc/meminfo
+
+# 3. Profile memory usage (if running Go)
+go tool pprof http://localhost:6060/debug/pprof/heap
+```
+
+**Fixes:**
+
+1. **Limit file size at upload**:
+
+```go
+const MaxFileSize = 10 * 1024 * 1024  // 10 MB
+
+func validateFileSize(file io.Reader) error {
+    size := 0
+    buf := make([]byte, 32*1024)  // 32 KB chunks
+    for {
+        n, err := file.Read(buf)
+        size += n
+        if size > MaxFileSize {
+            return fmt.Errorf("file too large: max %d MB", MaxFileSize/1024/1024)
+        }
+        if err == io.EOF {
+            break
+        }
+    }
+    return nil
+}
+```
+
+2. **Process images in chunks**:
+
+```python
+# ❌ Wrong - Load entire image in memory
+image = Image.open(receipt_path)
+processed = ocr_engine.process(image)
+
+# ✅ Better - Stream processing
+with Image.open(receipt_path) as image:
+    # Process in tiles for large images
+    if image.width > 4000 or image.height > 4000:
+        results = process_in_tiles(image, tile_size=2000)
+    else:
+        results = ocr_engine.process(image)
+```
+
+3. **Increase resource limits**:
+
+```yaml
+# k8s/ocr-service.yaml
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "500m"
+  limits:
+    memory: "2Gi" # Increase limit
+    cpu: "2000m"
+```
+
+---
+
+### Debugging Strategies
+
+**1. Distributed Tracing**
+
+Use OpenTelemetry to trace requests across services:
+
+```python
+from opentelemetry import trace
+
+tracer = trace.get_tracer(__name__)
+
+@app.route('/api/v1/receipts/upload')
+def upload_receipt():
+    with tracer.start_as_current_span("upload_receipt") as span:
+        span.set_attribute("user.id", user_id)
+        span.set_attribute("file.size", file_size)
+
+        # Trace object storage call
+        with tracer.start_as_current_span("store_in_s3"):
+            s3.upload_file(file, bucket, key)
+
+        # Trace database call
+        with tracer.start_as_current_span("insert_receipt_record"):
+            db.insert_receipt(receipt_id, user_id, file_url)
+```
+
+**View trace in Jaeger/Zipkin:**
+
+```
+User Request → API Gateway (5ms) → Upload Service (200ms) →
+  ├─ S3 Upload (150ms)
+  └─ DB Insert (45ms)
+Total: 205ms
+```
+
+**2. Structured Logging**
+
+Use JSON logging for easy parsing and filtering:
+
+```python
+import structlog
+
+logger = structlog.get_logger()
+
+# ❌ Wrong - Unstructured log
+logger.info(f"User {user_id} uploaded receipt {receipt_id}")
+
+# ✅ Better - Structured log
+logger.info("receipt_uploaded",
+    user_id=user_id,
+    receipt_id=receipt_id,
+    file_size=file_size,
+    upload_source="mobile_app"
+)
+```
+
+**Query logs efficiently:**
+
+```bash
+# Find all failed OCR jobs for user
+kubectl logs -l app=ocr-service | \
+  jq 'select(.user_id=="123" and .status=="failed")'
+
+# Calculate average processing time
+kubectl logs -l app=ocr-service | \
+  jq -s 'map(.processing_time_ms) | add/length'
+```
+
+**3. Health Checks & Readiness Probes**
+
+```yaml
+# k8s/deployment.yaml
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+```
+
+**Health endpoint implementation:**
+
+```go
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+    // Check dependencies
+    if err := db.Ping(); err != nil {
+        http.Error(w, "database unhealthy", http.StatusServiceUnavailable)
+        return
+    }
+
+    if err := cache.Ping(); err != nil {
+        http.Error(w, "cache unhealthy", http.StatusServiceUnavailable)
+        return
+    }
+
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(map[string]string{"status": "healthy"})
+}
+```
+
+**4. Chaos Engineering**
+
+Test resilience by intentionally breaking things:
+
+```bash
+# Kill random pod to test pod restart handling
+kubectl delete pod -l app=ocr-service \
+  $(kubectl get pods -l app=ocr-service -o name | shuf -n 1)
+
+# Inject network latency
+tc qdisc add dev eth0 root netem delay 100ms
+
+# Simulate database failure
+# Temporarily revoke database permissions to test error handling
+
+# Simulate third-party API failure
+# Use Nginx proxy to return 503 for OCR API calls
+```
+
+---
+
+### Monitoring Alerts
+
+**Critical Alerts (PagerDuty)**:
+
+```yaml
+# prometheus/alerts.yml
+groups:
+  - name: critical
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        annotations:
+          summary: "Error rate > 5% for 2 minutes"
+
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        annotations:
+          summary: "Database is unreachable"
+
+      - alert: QueueBacklog
+        expr: queue_depth{queue="ocr"} > 1000
+        for: 5m
+        annotations:
+          summary: "OCR queue has > 1000 messages"
+```
+
+**Warning Alerts (Slack)**:
+
+- p95 latency > 2s for 5 minutes
+- Cache hit rate < 70% for 10 minutes
+- Disk usage > 80%
+- Memory usage > 85%
+
+---
 
 ## 12. Practice Exercises
 
