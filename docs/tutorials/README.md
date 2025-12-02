@@ -22,6 +22,8 @@ graph TB
 		A[Accounting<br/>⏱️ 1-2 hours]
 		B[Corporate Finance<br/>⏱️ 1-2 hours]
 		C[Chat with PDF<br/>⏱️ 30-40 min]
+		E[Golang Crash Course<br/>⏱️ 2-3 hours]
+		F[Golang Cookbook<br/>⏱️ 3-4 hours]
 	end
 
 	subgraph "🔴 Advanced Level"
@@ -31,10 +33,14 @@ graph TB
 	A --> D
 	B --> D
 	C --> D
+	E --> F
+	F --> D
 
 	style A fill:#a5d6a7
 	style B fill:#a5d6a7
 	style C fill:#a5d6a7
+	style E fill:#a5d6a7
+	style F fill:#a5d6a7
 	style D fill:#ef9a9a
 
 	classDef beginner fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
@@ -73,6 +79,15 @@ Learning-oriented guides for building AI and machine learning systems:
 - [**AI Engineering Index**](./ai-engineering/README.md) - All available AI engineering tutorials
   - 🟢 [**Chat with PDF**](./ai-engineering/tu-aien__chat-with-pdf.md) - Understanding how PDF chat applications work **(⏱️ 30-40 minutes)**
 
+### 🔧 Programming Languages
+
+Learning-oriented guides for programming languages, from fundamentals to advanced patterns:
+
+- [**Programming Languages Index**](./software-engineering/programming-languages/README.md) - All available programming language tutorials
+  - [**Go (Golang) Tutorials**](./software-engineering/programming-languages/golang/README.md) - Learn Go programming language
+    - 🟢 [**Golang Crash Course**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md) - Go fundamentals to advanced patterns **(⏱️ 2-3 hours)**
+    - 🟢 [**Golang Cookbook**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md) - Practical Go patterns and recipes **(⏱️ 3-4 hours)**
+
 ### 🔒 Information Security
 
 Learning-oriented guides for information security concepts and practices:
@@ -87,12 +102,17 @@ Learning-oriented guides for information security concepts and practices:
 
 **Goal**: Understand accounting and financial analysis fundamentals
 
-```
-1. 🟢 Accounting Crash Course (1-2 hours)
-   ↓
-2. 🟢 Corporate Finance Crash Course (1-2 hours)
-   ↓
-3. Apply concepts to real-world scenarios
+```mermaid
+graph TB
+	A[🟢 Accounting Crash Course<br/>⏱️ 1-2 hours]
+	B[🟢 Corporate Finance Crash Course<br/>⏱️ 1-2 hours]
+	C[Apply concepts to<br/>real-world scenarios]
+
+	A --> B --> C
+
+	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style B fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style C fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
 ```
 
 **Total Time**: ~2-4 hours core learning
@@ -103,12 +123,17 @@ Learning-oriented guides for information security concepts and practices:
 
 **Goal**: Build intelligent systems with LLMs and RAG
 
-```
-1. 🟢 Chat with PDF (30-40 min)
-   ↓
-2. 🔴 AI Personal Finance Advisor (1-2 hours)
-   ↓
-3. Explore production deployment strategies
+```mermaid
+graph TB
+	A[🟢 Chat with PDF<br/>⏱️ 30-40 min]
+	B[🔴 AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
+	C[Explore production<br/>deployment strategies]
+
+	A --> B --> C
+
+	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style B fill:#ef9a9a,stroke:#e53935,stroke-width:2px
+	style C fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
 ```
 
 **Total Time**: ~2-3 hours core learning
@@ -119,19 +144,47 @@ Learning-oriented guides for information security concepts and practices:
 
 **Goal**: Combine financial knowledge with AI capabilities
 
-```
-1. 🟢 Accounting Crash Course (1-2 hours)
-   ↓ (parallel)
-2. 🟢 Corporate Finance Crash Course (1-2 hours)
-   ↓
-3. 🟢 Chat with PDF (30-40 min)
-   ↓
-4. 🔴 AI Personal Finance Advisor (1-2 hours)
-   ↓
-5. Build financial AI applications
+```mermaid
+graph TB
+	A[🟢 Accounting Crash Course<br/>⏱️ 1-2 hours]
+	B[🟢 Corporate Finance Crash Course<br/>⏱️ 1-2 hours]
+	C[🟢 Chat with PDF<br/>⏱️ 30-40 min]
+	D[🔴 AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
+	E[Build financial<br/>AI applications]
+
+	A --> C
+	B --> C
+	C --> D --> E
+
+	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style B fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style C fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style D fill:#ef9a9a,stroke:#e53935,stroke-width:2px
+	style E fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
 ```
 
 **Total Time**: ~4-6 hours core learning
+
+---
+
+### Path 4: Backend/Systems Engineer
+
+**Goal**: Master Go for building scalable backend systems
+
+```mermaid
+graph TB
+	A[🟢 Golang Crash Course<br/>⏱️ 2-3 hours]
+	B[🟢 Golang Cookbook<br/>⏱️ 3-4 hours]
+	C[Build production-grade<br/>backend services]
+
+	A --> B --> C
+
+	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style B fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
+	style C fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+```
+
+**Total Time**: ~5-7 hours core learning
 
 ---
 
@@ -139,11 +192,12 @@ Learning-oriented guides for information security concepts and practices:
 
 ### 🎓 For Beginners
 
-**Start here if**: You're new to finance, accounting, or AI/ML systems
+**Start here if**: You're new to finance, accounting, AI/ML systems, or backend programming
 
 1. Pick a 🟢 **Beginner** tutorial based on your interest:
    - Want to learn finance? → [Accounting](./business-and-finance/tu-bufi__accounting.md) or [Corporate Finance](./business-and-finance/tu-bufi__corporate-finance.md)
    - Want to learn AI? → [Chat with PDF](./ai-engineering/tu-aien__chat-with-pdf.md)
+   - Want to learn Go? → [Golang Crash Course](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md)
 
 2. Work through the tutorial step-by-step
 3. Try the practice exercises and calculations
@@ -184,6 +238,13 @@ Learning-oriented guides for information security concepts and practices:
 - **Format**: Concepts → Architecture → Implementation strategies
 - **Best for**: Developers exploring AI/ML applications
 - **Time**: 30 minutes to 2 hours depending on depth
+
+### Programming Languages 🔧
+
+- **Purpose**: Learn programming languages from fundamentals to advanced patterns
+- **Format**: Syntax → Fundamentals → Advanced Features → Practical Patterns
+- **Best for**: Backend developers, systems engineers, anyone learning a new language
+- **Time**: 2-7 hours per language depending on depth (crash course vs cookbook)
 
 ---
 
