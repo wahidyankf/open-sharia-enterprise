@@ -580,6 +580,7 @@ All mathematical equations and formulas in documentation use **LaTeX notation** 
 - **Timestamp Format Guide:** [`docs/explanation/conventions/ex-co__timestamp-format.md`](./docs/explanation/conventions/ex-co__timestamp-format.md)
 - **Temporary Files Guide:** [`docs/explanation/conventions/ex-co__temporary-files.md`](./docs/explanation/conventions/ex-co__temporary-files.md)
 - **Mathematical Notation Guide:** [`docs/explanation/conventions/ex-co__mathematical-notation.md`](./docs/explanation/conventions/ex-co__mathematical-notation.md)
+- **Tutorial Guide:** [`docs/explanation/conventions/ex-co__tutorials.md`](./docs/explanation/conventions/ex-co__tutorials.md)
 
 ## AI Agent Standards
 

@@ -25,7 +25,8 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas
 - [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 - [Temporary Files Convention](./ex-co__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
+- [Tutorial Convention](./ex-co__tutorials.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
 
 ---
 
-**Last Updated**: 2025-12-02
+**Last Updated**: 2025-12-03
