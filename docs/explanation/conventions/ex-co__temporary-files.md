@@ -8,7 +8,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-01
+updated: 2025-12-02
 ---
 
 # Temporary Files Convention
@@ -90,6 +90,7 @@ Use these directories when:
 Do NOT use these directories for:
 
 - **Permanent documentation** - Use `docs/` directory with proper naming convention
+- **Operational metadata** - Use `docs/metadata/` directory (e.g., `external-links-status.yaml` for link verification cache)
 - **Project planning** - Use `plans/` directory with proper structure
 - **Source code** - Use `apps/` or `libs/` directories
 - **Configuration files** - Place in repository root or appropriate subdirectories
@@ -128,13 +129,13 @@ Agents creating miscellaneous temporary files should:
 
 Both directories are **gitignored** (not tracked by version control):
 
-```gitignore
-# Temporary files (line 70)
-local-temp/
+Under the "Temporary files" section:
 
-# Generated reports (line 73)
-generated-reports/
-```
+- `local-temp/`
+
+Under the "Generated reports" section:
+
+- `generated-reports/`
 
 Files in these directories will not be committed to the repository.
 
@@ -148,6 +149,7 @@ The rule includes "unless specified otherwise by other rules/conventions":
 
 **Example exceptions**:
 
+- **Operational metadata files** - Use `docs/metadata/` instead (e.g., `external-links-status.yaml` is committed to git, not temporary)
 - Agent-specific conventions may override this rule
 - Task-specific requirements may specify different locations
 - User instructions may explicitly request different locations
