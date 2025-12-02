@@ -38,9 +38,10 @@ This convention establishes designated directories for temporary files created b
 
 - Validation reports (docs-checker, plan-checker, etc.)
 - Audit reports (repo-rules-checker)
-- Link check reports (docs-link-checker)
 - Execution verification reports (plan-execution-checker)
 - Todo lists and progress tracking
+
+**Note**: `docs-link-checker` does NOT create report files (outputs in conversation only)
 
 **Naming pattern**: `YYYY-MM-DD__[report-type].md`
 
@@ -49,7 +50,7 @@ This convention establishes designated directories for temporary files created b
 ```
 generated-reports/2025-12-01__repository-audit.md
 generated-reports/2025-12-01__docs-validation.md
-generated-reports/2025-12-01__link-check-results.md
+generated-reports/2025-12-01__plan-execution-validation.md
 ```
 
 ### `local-temp/`
@@ -150,6 +151,7 @@ The rule includes "unless specified otherwise by other rules/conventions":
 **Example exceptions**:
 
 - **Operational metadata files** - Use `docs/metadata/` instead (e.g., `external-links-status.yaml` is committed to git, not temporary)
+- **docs-link-checker agent** - Outputs results in conversation only (no report files created)
 - Agent-specific conventions may override this rule
 - Task-specific requirements may specify different locations
 - User instructions may explicitly request different locations
