@@ -9,7 +9,7 @@ tags:
   - notation
   - conventions
 created: 2025-12-02
-updated: 2025-12-02
+updated: 2025-12-03
 ---
 
 # Mathematical Notation Convention
@@ -105,6 +105,66 @@ $$
 - Complex multi-line expressions
 - Equations that should stand out visually
 - Formulas that need to be referenced or cited
+
+### ⚠️ Critical: Delimiter Placement Rules
+
+**Single `$` delimiters MUST be inline (on the same line as text):**
+
+```markdown
+✅ Correct - Inline math:
+The cost of equity $r_e$ is calculated using CAPM.
+
+❌ Incorrect - Single $ on its own line:
+$
+r_e = r_f + \beta \times (r_m - r_f)
+$
+```
+
+**Display-level equations MUST use `$$` delimiters:**
+
+```markdown
+✅ Correct - Display math:
+
+$$
+r_e = r_f + \beta \times (r_m - r_f)
+$$
+
+❌ Incorrect - Single $ for display:
+$
+r_e = r_f + \beta \times (r_m - r_f)
+$
+```
+
+**All `\begin{align}` blocks MUST use `$$` delimiters:**
+
+```markdown
+✅ Correct - align with $$:
+
+$$
+\begin{align}
+WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c) \\
+     &= 0.645 \times 11.4\% + 0.355 \times 3.41\% \\
+     &= 8.56\%
+\end{align}
+$$
+
+❌ Incorrect - align with single $:
+$
+\begin{align}
+WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c)
+\end{align}
+$
+```
+
+**Why this matters:**
+
+Single `$` on its own line breaks rendering in both GitHub and Obsidian - the LaTeX code displays as raw text instead of rendered math. This is the #1 most common LaTeX rendering issue.
+
+**Rule of thumb:**
+
+- **Inline math** (within text): `$x + y$` on same line as text
+- **Display math** (standalone): `$$...$$` on separate lines
+- **Multi-line equations**: Always use `$$` with `\begin{align}`
 
 ## ✅ Where to Use LaTeX
 
@@ -586,6 +646,34 @@ Where:
 
 ### Common Rendering Issues
 
+**Problem**: LaTeX displays as raw text instead of rendering
+
+**Cause**: Single `$` delimiter used for display math
+
+**Example of broken code:**
+
+```markdown
+$
+WACC = \frac{E}{V} \times r_e
+$
+```
+
+**Solution**: Use double `$$` for display math:
+
+```markdown
+$$
+WACC = \frac{E}{V} \times r_e
+$$
+```
+
+**Applies to:**
+
+- Any equation on its own line
+- All `\begin{align}` blocks
+- Display-level formulas
+
+---
+
 **Problem**: Formula doesn't render (shows raw LaTeX code)
 
 **Causes**:
@@ -795,6 +883,9 @@ When adding or reviewing mathematical notation:
 - [ ] All mathematical expressions use LaTeX syntax
 - [ ] Inline math uses `$...$` for terms within text
 - [ ] Display math uses `$$...$$` for standalone equations
+- [ ] Single `$` delimiters are ONLY used inline (on same line as text)
+- [ ] Display-level equations use `$$` delimiters (on separate lines)
+- [ ] All `\begin{align}` blocks use `$$` delimiters (not single `$`)
 - [ ] Variables are defined after formulas
 - [ ] Notation is consistent throughout the document
 - [ ] Formulas render correctly in Obsidian reading mode
