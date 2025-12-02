@@ -61,6 +61,15 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 - Validate repository URLs are accessible
 - Confirm configuration steps are accurate
 
+#### Mathematical Notation Validation
+
+- Verify LaTeX syntax is used for mathematical formulas
+- Check that variables use proper subscripts ($r_f$ not r_f in text)
+- Confirm Greek letters use LaTeX ($\beta$ not β in formulas)
+- Ensure display math uses `$$...$$` with proper spacing
+- Verify LaTeX is NOT used inside code blocks or Mermaid diagrams
+- Check that all variables are defined after formulas
+
 ### 2. Code Example Validation
 
 **Syntax Correctness:**

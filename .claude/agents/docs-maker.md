@@ -140,6 +140,15 @@ When writing code examples in documentation, use language-appropriate indentatio
 
 **Important**: Code blocks represent actual source code and must follow their language's conventions, not markdown formatting rules. Always test code examples for correctness before publishing.
 
+#### Mathematical Notation
+
+- Use LaTeX notation for all mathematical equations and formulas
+- Inline math: `$...$` for variables and expressions within text
+- Display math: `$$...$$` for standalone equations
+- Include variable definitions after formulas
+- Never use LaTeX inside code blocks or Mermaid diagrams
+- See [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md)
+
 ### Frontmatter Template
 
 ```yaml

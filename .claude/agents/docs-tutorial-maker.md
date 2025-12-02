@@ -43,6 +43,17 @@ Create **engaging, effective tutorials** that help learners build understanding 
 
 ---
 
+## Standards and Conventions
+
+### Mathematical Formulas
+
+- Use LaTeX notation for all mathematical content
+- Inline variables: `$r_f$`, `$\beta$`, `$x^2$`
+- Display equations: Use `$$...$$` with blank lines before/after
+- Define all variables after presenting formulas
+- Provide examples with actual numbers
+- Use LaTeX in tutorial text, but simplified notation in Mermaid diagrams
+
 ## Tutorial Writing Principles
 
 ### 1. Learning-Oriented (Not Task-Oriented)
