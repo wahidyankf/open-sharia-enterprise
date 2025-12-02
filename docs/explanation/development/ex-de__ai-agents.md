@@ -251,7 +251,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 | 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool             | docs-writer<br>plan-writer<br>journal-writer                 |
 | 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only (no Write or Edit) | repo-rules-checker<br>plan-checker                           |
 | 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-updater<br>docs-file-manager<br>docs-link-checker |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-implementor                                             |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-executor                                                |
 
 ### Why This Categorization System
 
@@ -290,7 +290,7 @@ Start: What is the agent's primary capability?
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
             - Has Write, Edit, AND Bash
-            - Examples: plan-implementor
+            - Examples: plan-executor
 ```
 
 **Edge Cases:**
@@ -363,8 +363,8 @@ color: yellow
 
 ```yaml
 ---
-name: plan-implementor
-description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-writer agent.
+name: plan-executor
+description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-maker agent.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: purple
