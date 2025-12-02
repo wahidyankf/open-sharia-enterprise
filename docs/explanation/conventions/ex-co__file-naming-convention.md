@@ -99,8 +99,8 @@ Use a systematic encoding rule based on directory characteristics:
 
 **For Subdirectories:**
 
-1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ai-engineering` → `aien`, `crash-courses` → `crco`, `system-design` → `syde`, `information-security` → `inse`, `how-to` → `hoto`)
-2. **Single words** - First 2 or 4 characters based on length (`conventions` → `co`, `development` → `de`, `cookbooks` → `co`, `toolings` → `to`)
+1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ai-engineering` → `aien`, `business-and-finance` → `bufi`, `system-design` → `syde`, `information-security` → `inse`, `how-to` → `hoto`)
+2. **Single words** - First 2 or 4 characters based on length (`conventions` → `co`, `development` → `de`, `toolings` → `to`)
 
 **Key Rule**: For hyphenated directory names, take first 2 letters of EACH word and concatenate them WITHOUT inserting a dash. The dash in the directory name does NOT appear in the abbreviation.
 
@@ -349,16 +349,16 @@ tu-au-oa-fl__authorization-code-flow.md
 
 **Common Subdirectory Prefixes:**
 
-| Directory Path                            | Prefix         | Example                                   |
-| ----------------------------------------- | -------------- | ----------------------------------------- |
-| explanation/conventions                   | `ex-co__`      | `ex-co__file-naming-convention.md`        |
-| explanation/development                   | `ex-de__`      | `ex-de__ai-agents.md`                     |
-| explanation/information-security          | `ex-inse__`    | `ex-inse__infosec.md`                     |
-| explanation/information-security/toolings | `ex-inse-to__` | `ex-inse-to__gobuster.md`                 |
-| tutorials/ai-engineering                  | `tu-aien__`    | `tu-aien__chat-with-pdf.md`               |
-| tutorials/cookbooks                       | `tu-co__`      | `tu-co__golang.md`                        |
-| tutorials/crash-courses                   | `tu-crco__`    | `tu-crco__golang.md`                      |
-| tutorials/system-design                   | `tu-syde__`    | `tu-syde__ai-personal-finance-advisor.md` |
+| Directory Path                                              | Prefix                | Example                                        |
+| ----------------------------------------------------------- | --------------------- | ---------------------------------------------- |
+| explanation/conventions                                     | `ex-co__`             | `ex-co__file-naming-convention.md`             |
+| explanation/development                                     | `ex-de__`             | `ex-de__ai-agents.md`                          |
+| explanation/information-security                            | `ex-inse__`           | `ex-inse__infosec.md`                          |
+| explanation/information-security/toolings                   | `ex-inse-to__`        | `ex-inse-to__gobuster.md`                      |
+| tutorials/ai-engineering                                    | `tu-aien__`           | `tu-aien__chat-with-pdf.md`                    |
+| tutorials/business-and-finance                              | `tu-bufi__`           | `tu-bufi__accounting.md`                       |
+| tutorials/software-engineering/system-design                | `tu-soen-syde__`      | `tu-soen-syde__ai-personal-finance-advisor.md` |
+| tutorials/software-engineering/programming-languages/golang | `tu-soen-prla-gola__` | `tu-soen-prla-gola__golang-crash-course.md`    |
 
 ## 🔗 Related Documentation
 
