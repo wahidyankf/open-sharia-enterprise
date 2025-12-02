@@ -11,7 +11,7 @@ tools:
   - WebSearch
 model: sonnet
 color: blue
-updated: 2025-12-01
+updated: 2025-12-02
 ---
 
 # Tutorial Content Creator
@@ -277,15 +277,16 @@ Let's dive in...
 - Progressive complexity
 - Well-commented
 - Explained, not just shown
+- **Include output expectations** as comments for print/logging statements
 
 **Example:**
 
 ```python
-# BAD: Code without explanation
+# BAD: Code without explanation or output
 def embed(text):
     return openai.embed(text)
 
-# GOOD: Code with narrative
+# GOOD: Code with narrative and output expectations
 # First, we'll create a function to convert text into vector embeddings.
 # This is the foundation of our search system—transforming words into
 # numbers that machines can compare.
@@ -305,6 +306,14 @@ def generate_embedding(text: str) -> list[float]:
         input=text
     )
     return response.data[0].embedding
+
+# Test it out
+embedding = generate_embedding("Hello, world!")
+print(f"Embedding has {len(embedding)} dimensions")
+# Output: Embedding has 1536 dimensions
+
+print(f"First 5 values: {embedding[:5]}")
+# Output: First 5 values: [0.0123, -0.0456, 0.0789, -0.0234, 0.0567]
 ```
 
 **B. Step-by-Step Instructions**
