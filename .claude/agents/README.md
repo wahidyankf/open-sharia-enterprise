@@ -69,11 +69,12 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
 
 ### 🟩 `docs-link-checker.md`
 
-Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks.
+Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` with automatic pruning to avoid redundant checks.
 
 - **Primary Use:** Checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health
 - **Specialization:** External URL validation with caching, internal link verification, automatic cache pruning, web accessibility testing, broken link detection and repair
 - **Tools:** Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
+- **Cache File:** `docs/metadata/external-links-status.yaml` (REQUIRED - the ONLY cache file for external link verification)
 - **When to Use:**
   - Auditing all external and internal links in documentation
   - Verifying external URLs are accessible (not 404, 403, or broken)

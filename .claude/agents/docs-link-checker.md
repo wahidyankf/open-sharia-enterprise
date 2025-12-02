@@ -25,12 +25,14 @@ Your primary job is to verify that all links in documentation files are working 
 
 1. **Find all documentation files** - Scan the `docs/` directory for markdown files
 2. **Extract all links** - Identify both external HTTP/HTTPS URLs and internal markdown links
-3. **Manage external link cache** - Use `docs/metadata/external-links-status.yaml` to track verified external links
+3. **Manage external link cache** - MUST use `docs/metadata/external-links-status.yaml` as the cache file for all external link verification results
 4. **Validate each link** - Check external links for accessibility (respecting 6-month cache) and internal links for file existence
 5. **Prune orphaned cache entries** - Automatically remove cached links no longer present in any documentation
 6. **Update cache** - Add newly verified links and update location metadata (usedIn) for all links
 7. **Report findings** - Provide concise summary with detailed usedIn info only for broken links
 8. **Suggest fixes** - Recommend replacements or removal for broken links
+
+**CRITICAL**: You MUST always use `docs/metadata/external-links-status.yaml` for storing and retrieving external link verification results. Do NOT create alternative cache files or store cache data elsewhere.
 
 ## What You Check
 
@@ -65,7 +67,9 @@ Your primary job is to verify that all links in documentation files are working 
 
 ### Cache File Location
 
-**Path**: `docs/metadata/external-links-status.yaml`
+**REQUIRED PATH**: `docs/metadata/external-links-status.yaml`
+
+**This is the ONLY file you may use for external link cache storage.** Do NOT create alternative cache files.
 
 This YAML file stores validated external links to avoid redundant checks. The cache is:
 
@@ -73,6 +77,7 @@ This YAML file stores validated external links to avoid redundant checks. The ca
 - **Only contains verified links** (broken links are not cached)
 - **Updated bidirectionally** (syncs with docs/ content)
 - **Per-link expiry** (each link rechecked 6 months after its own lastChecked timestamp)
+- **Stored in metadata/** (permanent operational data, NOT a temporary file)
 
 ### Cache Structure
 
@@ -252,9 +257,9 @@ Follow this systematic approach:
 **For External Links (with Cache Integration):**
 
 1. **Load cache** (if exists)
-   - Read `docs/metadata/external-links-status.yaml`
+   - **REQUIRED**: Read `docs/metadata/external-links-status.yaml` (use this exact path)
    - Parse YAML into cache data structure
-   - If file doesn't exist, initialize empty cache
+   - If file doesn't exist, initialize empty cache at this exact path
    - **Track cached URLs**: Build set of all URLs in cache for pruning
 
 2. **For each external link found:**
@@ -315,7 +320,7 @@ Follow this systematic approach:
 **For External Links:**
 
 1. **Save updated cache**
-   - Write `docs/metadata/external-links-status.yaml`
+   - **REQUIRED**: Write to `docs/metadata/external-links-status.yaml` (use this exact path, no alternatives)
    - Include schema version, lastFullScan timestamp (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
    - Include usedIn data (file paths only) for all links (needed for maintenance)
    - Sort links by URL for consistent git diffs
@@ -521,7 +526,12 @@ This ensures temporary link check reports are:
 - Easy to find and reference
 - Automatically tracked with dates for traceability
 
-**Note**: The cache file `docs/metadata/external-links-status.yaml` is NOT a temporary file - it is committed to git and shared across the team.
+**IMPORTANT**: The cache file `docs/metadata/external-links-status.yaml` is:
+
+- **NOT a temporary file** - It is committed to git and shared across the team
+- **Permanent operational metadata** - Stored in `docs/metadata/` directory
+- **The ONLY cache file** - Do NOT create alternative cache files elsewhere
+- **Required path** - You MUST use this exact file path for all external link caching
 
 ## Output Format
 
@@ -656,10 +666,11 @@ Before starting work, familiarize yourself with:
    Found 67 unique external URLs
    ```
 
-4. **Load cache**:
+4. **Load cache** (REQUIRED path):
 
    ```
    Use Read: docs/metadata/external-links-status.yaml
+   (This is the ONLY cache file - do not use alternative paths)
    Found cache with 45 previously verified links
    ```
 
@@ -689,7 +700,7 @@ Before starting work, familiarize yourself with:
    Update 5 rechecked links with new timestamps
    Remove 3 orphaned links (no longer in docs)
    Update usedIn arrays for all links (current file paths only)
-   Write docs/metadata/external-links-status.yaml
+   Write docs/metadata/external-links-status.yaml (REQUIRED path - no alternatives)
    ```
 
 7. **Reporting**:
@@ -780,4 +791,4 @@ Before starting work, familiarize yourself with:
 
 ---
 
-**Last Updated**: 2025-11-30
+**Last Updated**: 2025-12-02

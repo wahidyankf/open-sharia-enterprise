@@ -61,7 +61,8 @@ open-sharia-enterprise/
 │   │   └── information-security/  # Information security concepts
 │   │       └── README.md     # Information security index
 │   ├── journals/             # Daily notes (Obsidian vault)
-│   └── metadata/             # Operational metadata (link cache, validation data)
+│   └── metadata/             # Operational metadata (committed to git)
+│       └── external-links-status.yaml  # Link verification cache (docs-link-checker)
 ├── plans/                     # Project planning documents
 │   ├── README.md             # Plans index and purpose
 │   ├── in-progress/          # Active project plans
@@ -362,7 +363,12 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 - **Reference** (`docs/reference/`) - Technical reference
 - **Explanation** (`docs/explanation/`) - Conceptual
 
-**Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily research notes and monthly summaries in **Logseq-style outliner format** (`YYYY-MM/YYYY-MM-DD.md`). Unlike formal documentation which uses traditional markdown structure, journals use bullet-based format optimized for quick capture and progressive thinking. **Important**: Journal entries must NOT include an H1 heading at the start (Obsidian displays the filename as the page title). See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
+**Special Directories**:
+
+- **`journals/`** - Daily research notes and monthly summaries in **Logseq-style outliner format** (`YYYY-MM/YYYY-MM-DD.md`). Unlike formal documentation which uses traditional markdown structure, journals use bullet-based format optimized for quick capture and progressive thinking. **Important**: Journal entries must NOT include an H1 heading at the start (Obsidian displays the filename as the page title). See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
+
+- **`metadata/`** - Operational metadata files committed to git (NOT temporary files). Contains:
+  - **`external-links-status.yaml`** - Cache of verified external links maintained by `docs-link-checker` agent. This is the ONLY file that may be used for external link verification results. Contains link status codes, redirect chains, last-checked timestamps (UTC+7), and file usage tracking. Uses 6-month per-link expiry. See [docs-link-checker agent](./.claude/agents/docs-link-checker.md) for complete details.
 
 ## Plans Organization
 
@@ -596,7 +602,7 @@ These directories are gitignored and provide organized storage for temporary out
 - **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
 - **`docs-checker.md`** - Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information
 - **`docs-file-manager.md`** - Expert at managing files and directories in docs/ directory (rename, move, delete operations while maintaining conventions)
-- **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links with automatic pruning to avoid redundant checks
+- **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` with automatic pruning to avoid redundant checks. This is the ONLY cache file for external link verification
 - **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework (for how-to guides, reference, explanations)
 - **`docs-tutorial-checker.md`** - Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, and hands-on elements. Complements docs-checker (accuracy) and docs-link-checker (links)
 - **`docs-tutorial-maker.md`** - Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements. Creates engaging tutorials following Diátaxis framework
