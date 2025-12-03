@@ -31,6 +31,57 @@ After this tutorial, you'll be able to:
 - Implement security best practices in Go applications
 - Deploy Go applications with health checks and observability
 
+## 🏗️ Production Go Architecture
+
+Professional Go development involves multiple layers working together:
+
+```mermaid
+graph TB
+    subgraph "Production System"
+        A[API Layer<br/>HTTP Handlers & Middleware]
+        B[Business Logic<br/>Domain Services]
+        C[Data Layer<br/>Repository Pattern]
+        D[Infrastructure<br/>Database, Cache, Queue]
+    end
+
+    subgraph "Cross-Cutting Concerns"
+        E[Error Handling<br/>& Recovery]
+        F[Observability<br/>Logs, Metrics, Traces]
+        G[Security<br/>Auth, Validation, Secrets]
+        H[Testing<br/>Unit, Integration, E2E]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+
+    E -.- A
+    E -.- B
+    E -.- C
+
+    F -.- A
+    F -.- B
+    F -.- C
+
+    G -.- A
+    G -.- B
+
+    H -.- A
+    H -.- B
+    H -.- C
+
+    style A fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style B fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style C fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style D fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style E fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style F fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style G fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style H fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+```
+
+This tutorial covers techniques for building each layer and implementing cross-cutting concerns professionally.
+
 ---
 
 ## Section 1: Advanced Concurrency Patterns
@@ -140,6 +191,59 @@ func main() {
 - **Worker Goroutines**: Fixed number prevents resource exhaustion
 - **WaitGroup**: Synchronizes workers and main goroutine
 - **Channel Closure**: Signals workers when no more jobs are coming
+
+**Worker Pool Architecture**:
+
+```mermaid
+graph LR
+    subgraph "Job Producers"
+        P1[Producer 1]
+        P2[Producer 2]
+        P3[Producer 3]
+    end
+
+    subgraph "Worker Pool"
+        Q[Job Queue<br/>Buffered Channel]
+        W1[Worker 1]
+        W2[Worker 2]
+        W3[Worker 3]
+        W4[Worker 4]
+        W5[Worker 5]
+    end
+
+    subgraph "Results"
+        R[Results Channel]
+        C[Consumer]
+    end
+
+    P1 -->|Submit Jobs| Q
+    P2 -->|Submit Jobs| Q
+    P3 -->|Submit Jobs| Q
+
+    Q -.->|Pull Job| W1
+    Q -.->|Pull Job| W2
+    Q -.->|Pull Job| W3
+    Q -.->|Pull Job| W4
+    Q -.->|Pull Job| W5
+
+    W1 -->|Result| R
+    W2 -->|Result| R
+    W3 -->|Result| R
+    W4 -->|Result| R
+    W5 -->|Result| R
+
+    R --> C
+
+    style Q fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style R fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style W1 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style W2 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style W3 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style W4 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style W5 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+```
+
+The worker pool prevents goroutine explosion by maintaining a fixed number of workers processing an unbounded queue of jobs.
 
 ### Pipeline Pattern
 

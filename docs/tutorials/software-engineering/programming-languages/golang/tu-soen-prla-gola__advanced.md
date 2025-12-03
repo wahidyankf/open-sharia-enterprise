@@ -33,6 +33,64 @@ After this tutorial, you'll understand:
 - Advanced generics and type system features
 - Go tooling ecosystem (code generation, custom linters)
 
+## 🧠 Go Internals & Expert Topics
+
+This tutorial explores three layers of Go mastery:
+
+```mermaid
+graph TB
+    subgraph "Layer 1: Runtime Internals"
+        A1[Goroutine Scheduler<br/>M:N Threading Model]
+        A2[Memory Allocator<br/>Stack & Heap Management]
+        A3[Garbage Collector<br/>Tri-Color Mark-Sweep]
+    end
+
+    subgraph "Layer 2: Optimization & Performance"
+        B1[Profiling<br/>CPU, Memory, Block, Mutex]
+        B2[Escape Analysis<br/>Stack vs Heap Decisions]
+        B3[Lock-Free Concurrency<br/>Atomics & CAS]
+    end
+
+    subgraph "Layer 3: Advanced Language Features"
+        C1[Reflection<br/>Type System Runtime]
+        C2[Advanced Generics<br/>Constraint Design]
+        C3[Unsafe & CGo<br/>Breaking Boundaries]
+    end
+
+    subgraph "Layer 4: System Design"
+        D1[Distributed Patterns<br/>Circuit Breaker, Rate Limiting]
+        D2[Debugging & Testing<br/>Delve, Race Detector]
+        D3[Tooling Mastery<br/>Code Generation, Linters]
+    end
+
+    A1 --> B1
+    A2 --> B2
+    A3 --> B2
+
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+
+    C1 --> D1
+    C2 --> D2
+    C3 --> D3
+
+    style A1 fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    style A2 fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    style A3 fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    style B1 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style B2 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style B3 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style C1 fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    style C2 fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    style C3 fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    style D1 fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style D2 fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style D3 fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+```
+
+Each layer builds on the previous, taking you from understanding Go's internals to designing sophisticated systems.
+
 ---
 
 ## Section 1: Go Runtime Internals
@@ -43,21 +101,61 @@ Understanding how Go executes code is crucial for optimization:
 
 Go uses an M:N scheduler where M goroutines are multiplexed onto N OS threads:
 
-```
-┌─────────────────────────────────────────┐
-│  Go Application (Thousands of goroutines) │
-└─────────────────────────────────────────┘
-              ↓↓↓ (multiplexed)
-┌─────────────────────────────────────────┐
-│  Go Scheduler (GOMAXPROCS OS threads)    │
-│  ├─ P0 (processor) → M0 (OS thread)    │
-│  ├─ P1 (processor) → M1 (OS thread)    │
-│  └─ P2 (processor) → M2 (OS thread)    │
-└─────────────────────────────────────────┘
-              ↓↓↓
-┌─────────────────────────────────────────┐
-│  OS Kernel                              │
-└─────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Application Layer"
+        G1[G: Goroutine 1<br/>~2KB stack]
+        G2[G: Goroutine 2<br/>~2KB stack]
+        G3[G: Goroutine 3<br/>~2KB stack]
+        G4[G: Goroutine 4<br/>~2KB stack]
+        G5[G: Goroutine 5<br/>~2KB stack]
+        GN[G: ... thousands more]
+    end
+
+    subgraph "Go Scheduler Layer"
+        P0[P0: Processor<br/>Run Queue]
+        P1[P1: Processor<br/>Run Queue]
+        P2[P2: Processor<br/>Run Queue]
+    end
+
+    subgraph "OS Thread Layer"
+        M0[M0: OS Thread<br/>~2MB stack]
+        M1[M1: OS Thread<br/>~2MB stack]
+        M2[M2: OS Thread<br/>~2MB stack]
+    end
+
+    subgraph "Hardware Layer"
+        K[OS Kernel<br/>CPU Cores]
+    end
+
+    G1 -.->|Scheduled on| P0
+    G2 -.->|Scheduled on| P0
+    G3 -.->|Scheduled on| P1
+    G4 -.->|Scheduled on| P1
+    G5 -.->|Scheduled on| P2
+    GN -.->|Scheduled on| P2
+
+    P0 -->|Bound to| M0
+    P1 -->|Bound to| M1
+    P2 -->|Bound to| M2
+
+    M0 --> K
+    M1 --> K
+    M2 --> K
+
+    style G1 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
+    style G2 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
+    style G3 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
+    style G4 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
+    style G5 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
+    style GN fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
+    style P0 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style P1 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style P2 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style M0 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style M1 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style M2 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style K fill:#FFEBEE,stroke:#C62828,stroke-width:2px
 ```
 
 **Key Components**:
