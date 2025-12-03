@@ -78,6 +78,31 @@ Scenario: Following the learning path
   Then I find a clear link to Quick Start tutorial
   And the Quick Start builds on Initial Setup knowledge
   And there are no confusing gaps or duplications
+
+Scenario: Demonstrating Initial Setup mastery (0-5% coverage)
+  Given I complete Initial Setup tutorial
+  When I verify my understanding
+  Then I can run "go version" and see Go 1.23.4 or later
+  And I can create and run a "Hello World" program independently
+  And I can explain what "package main" and "func main" do
+
+Scenario: Demonstrating Quick Start mastery (5-30% coverage)
+  Given I complete Quick Start tutorial
+  When I verify my understanding
+  Then I can write a program using variables, functions, and basic structs
+  And I can implement basic error handling with if err != nil pattern
+  And I can start a goroutine and understand what it does
+  And I can read Go documentation and try simple examples independently
+
+Scenario: Demonstrating Beginner mastery (0-60% coverage)
+  Given I complete Beginner tutorial
+  When I verify my understanding
+  Then I can build a working CLI tool with at least 3 commands
+  And I can implement error handling throughout the application
+  And I can write unit tests with table-driven test pattern
+  And I can use goroutines and channels for concurrent operations
+  And I can define and use interfaces for abstraction
+  And I understand when to use pointers vs values
 ```
 
 ### Story 2: Intermediate Developer Advancing Skills
@@ -95,6 +120,29 @@ Scenario: Finding appropriate advanced content
   Then I find production-focused content (60-85% coverage)
   And topics include optimization, architecture, security
   And examples are realistic and production-relevant
+
+Scenario: Demonstrating Intermediate mastery (60-85% coverage)
+  Given I complete the Intermediate tutorial
+  When I verify my understanding
+  Then I can implement a concurrent HTTP server handling 1000+ requests/second
+  And I can use context for request timeouts and cancellation
+  And I can write integration tests with mocking and test fixtures
+  And I can apply hexagonal or clean architecture patterns to a project
+  And I can profile an application and identify performance bottlenecks
+  And I can implement security best practices (input validation, SQL injection prevention)
+  And I can build applications with graceful shutdown and health checks
+
+Scenario: Demonstrating Advanced mastery (85-95% coverage)
+  Given I complete the Advanced tutorial
+  When I verify my understanding
+  Then I can use pprof to analyze CPU, memory, block, and mutex profiles
+  And I can explain Go's goroutine scheduler (M:N model) and garbage collector
+  And I can implement lock-free data structures using atomic operations
+  And I can use generics with advanced type constraints
+  And I can debug complex race conditions using delve and race detector
+  And I can implement system design patterns (circuit breaker, rate limiter)
+  And I can use reflection for flexible serialization
+  And I understand when to use unsafe package and its tradeoffs
 
 Scenario: Progressing to expert level
   Given I complete the Intermediate tutorial
@@ -125,6 +173,15 @@ Scenario: Cookbook complements learning path
   When I use Cookbook recipes
   Then they complement but don't duplicate tutorial content
   And they provide practical problem-solving patterns
+
+Scenario: Using Cookbook effectively
+  Given I have completed Beginner tutorial
+  When I use the Cookbook
+  Then I can find and apply recipes for common patterns (worker pools, error handling)
+  And I can locate recipes by problem domain (concurrency, testing, web development)
+  And Each recipe is self-contained with working code
+  And I can copy, run, and adapt recipes to my specific use case
+  And Recipes reference tutorial concepts for deeper understanding
 ```
 
 ## Functional Requirements
@@ -381,6 +438,33 @@ Scenario: Learner navigates Full Set smoothly
   And next tutorial is linked explicitly
   And I understand what was covered vs what's coming
   And there are no confusing jumps or gaps
+```
+
+### Compatibility
+
+**REQ-NFR-004**: Go Version Compatibility
+
+- All tutorials must specify compatible Go versions
+- Recommend latest stable patch version
+- Code examples tested with specified Go version
+- Version-specific features noted explicitly
+
+**Acceptance Criteria** (Gherkin):
+
+```gherkin
+Scenario: Go version is clearly specified
+  Given I am reading any tutorial
+  When I check the Initial Setup tutorial
+  Then I see "Go 1.23.4 or later" as minimum version
+  And I see note: "Always install latest patch version from https://go.dev/dl/"
+  And version check command is documented: "go version"
+
+Scenario: Code examples work with specified version
+  Given code examples in tutorials
+  When I run them with Go 1.23.4
+  Then all examples compile without errors
+  And all examples produce expected output
+  And no deprecated features are used without warning
 ```
 
 ## Constraints
