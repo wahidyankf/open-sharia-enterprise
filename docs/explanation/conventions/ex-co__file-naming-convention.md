@@ -358,7 +358,7 @@ tu-au-oa-fl__authorization-code-flow.md
 | tutorials/ai-engineering                                    | `tu-aien__`           | `tu-aien__chat-with-pdf.md`                    |
 | tutorials/business-and-finance                              | `tu-bufi__`           | `tu-bufi__accounting.md`                       |
 | tutorials/software-engineering/system-design                | `tu-soen-syde__`      | `tu-soen-syde__ai-personal-finance-advisor.md` |
-| tutorials/software-engineering/programming-languages/golang | `tu-soen-prla-gola__` | `tu-soen-prla-gola__crash-course.md`           |
+| tutorials/software-engineering/programming-languages/golang | `tu-soen-prla-gola__` | `tu-soen-prla-gola__quick-start.md`            |
 
 ## 🔗 Related Documentation
 
