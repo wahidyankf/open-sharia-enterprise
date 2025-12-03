@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-11-30
+updated: 2025-12-03
 ---
 
 # AI Agents Convention
@@ -100,6 +100,45 @@ color: blue
    - Options: `blue` (writers), `green` (checkers), `yellow` (updaters), `purple` (implementors)
    - Helps users quickly identify agent type
    - See "Agent Color Categorization" below for assignment guidelines
+
+### Optional Frontmatter Fields
+
+In addition to the five required fields, agents may include optional metadata fields for tracking:
+
+6. **`created`** (optional)
+   - Date when the agent was first created
+   - Format: `YYYY-MM-DD` (ISO 8601 date only)
+   - Example: `created: 2025-11-23`
+   - Helps track agent age and history
+
+7. **`updated`** (optional)
+   - Date when the agent was last modified
+   - Format: `YYYY-MM-DD` (ISO 8601 date only)
+   - Example: `updated: 2025-12-03`
+   - Automatically updated when significant changes are made
+   - Helps identify stale or recently maintained agents
+
+**Best Practices:**
+
+- Use both `created` and `updated` fields together for complete tracking
+- Update the `updated` field whenever making substantial changes to the agent
+- Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../conventions/ex-co__timestamp-format.md) (date-only format)
+- Place these fields after the five required fields in frontmatter
+- These fields align with documentation frontmatter best practices from Hugo, Jekyll, and Front Matter CMS
+
+**Example with optional fields:**
+
+```yaml
+---
+name: agent-name
+description: Expert in X specializing in Y. Use when Z.
+tools: Read, Glob, Grep
+model: inherit
+color: blue
+created: 2025-11-23
+updated: 2025-12-03
+---
+```
 
 ### Document Structure
 
@@ -641,6 +680,8 @@ description: Expert in [domain] specializing in [specific area]. Use when [speci
 tools: Read, Glob, Grep
 model: inherit
 color: blue
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
 ---
 
 # Agent Name Agent

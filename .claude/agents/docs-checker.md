@@ -4,6 +4,7 @@ description: Expert at validating factual correctness and content consistency of
 tools: Read, Glob, Grep, WebFetch, WebSearch
 model: sonnet
 color: green
+created: 2025-12-01
 updated: 2025-12-03
 ---
 

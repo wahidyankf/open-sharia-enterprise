@@ -4,6 +4,8 @@ description: Propagates rule and convention changes across CLAUDE.md, convention
 tools: Read, Edit, Glob, Grep
 model: sonnet
 color: yellow
+created: 2025-11-30
+updated: 2025-12-03
 ---
 
 # Repository Rule Updater Agent

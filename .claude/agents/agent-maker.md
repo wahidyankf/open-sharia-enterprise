@@ -4,6 +4,8 @@ description: Expert at creating new AI agents following all repository conventio
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
+created: 2025-11-29
+updated: 2025-12-03
 ---
 
 # Agent Creator Agent
