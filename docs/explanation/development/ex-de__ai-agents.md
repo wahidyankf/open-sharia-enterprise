@@ -292,7 +292,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 | 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-updater<br>docs-file-manager<br>docs-link-checker |
 | 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-executor                                                |
 
-**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) and meet WCAG AA standards for both light and dark modes. These colors work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color.
+**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
 ### Why This Categorization System
 
@@ -342,7 +342,7 @@ Start: What is the agent's primary capability?
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
-**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards. Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users.
+**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards per the [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md). Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users. See the Color Accessibility Convention for complete details on palette verification, testing methodology, and WCAG compliance.
 
 ### Color Accessibility for Agent Identification
 
@@ -386,7 +386,7 @@ All agent colors are from the verified accessible palette:
 - Text label "Updater"
 - Role suffix "-updater"
 
-**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) for complete details.
+**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
 
 #### Why These Colors Were Chosen
 
@@ -943,10 +943,11 @@ Before committing a new agent:
 
 - [Development Index](./README.md) - Overview of development conventions
 - [Conventions Index](../conventions/README.md) - Documentation conventions
+- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
 - [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - How to name files
 - [Linking Convention](../conventions/ex-co__linking-convention.md) - How to link between files
 - [Diátaxis Framework](../conventions/ex-co__diataxis-framework.md) - Documentation organization
 
 ---
 
-**Last Updated**: 2025-11-29
+**Last Updated**: 2025-12-04

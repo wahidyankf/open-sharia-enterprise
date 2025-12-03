@@ -428,7 +428,9 @@ flowchart TD
 
 ### Color Accessibility: Color-Blind Friendly
 
-**CRITICAL REQUIREMENT**: ALL Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes:
+**CRITICAL REQUIREMENT**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY.
+
+**Master Reference**: See [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - the authoritative source for all color-related decisions - for complete palette details, WCAG compliance requirements, testing methodology with color blindness simulators, and scientific verification sources.
 
 **Accessible Color Palette (use only these):**
 
@@ -453,8 +455,9 @@ flowchart TD
 - Include black borders (#000000) for definition
 - Meet WCAG AA contrast ratios (4.5:1 for text)
 - Add comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->`
+- Test with color blindness simulators before publishing (see Color Accessibility Convention)
 
-See [Diagram and Schema Convention - Color Accessibility](../../docs/explanation/conventions/ex-co__diagrams.md#color-accessibility-for-color-blindness) for complete details and testing requirements.
+See [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
 
 ---
 

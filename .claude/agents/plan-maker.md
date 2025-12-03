@@ -1066,16 +1066,17 @@ plans/backlog/2025-11-25__user-auth/
 
 Files in `plans/` folder should use **Mermaid diagrams** as the primary format (same as all markdown files in the repository). ASCII art is optional and only needed for simple directory trees or rare edge cases where Mermaid is not suitable.
 
-**CRITICAL - Color Accessibility**: ALL Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes:
+**CRITICAL - Color Accessibility**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for complete palette details, WCAG compliance requirements, and testing methodology:
 
-- **Accessible palette**: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
-- **DO NOT USE**: red, green, or yellow (invisible to various forms of color blindness)
-- **Always use**: shape differentiation (not color alone), black borders (#000000), proper contrast ratios (WCAG AA: 4.5:1)
+- **Accessible palette**: Blue (#0173B2), Orange (#DE8F05), Teal (#029E73), Purple (#CC78BC), Brown (#CA9161)
+- **DO NOT USE**: Red, green, or yellow (invisible to various forms of color blindness)
+- **Always use**: Shape differentiation (not color alone), black borders (#000000), proper contrast ratios (WCAG AA: 4.5:1)
+- **Testing required**: Test all diagrams with color blindness simulators before publishing (see Color Accessibility Convention)
 
 **Example Mermaid Architecture Diagram with Accessible Colors:**
 
 ````markdown
-<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05), teal (#029E73) -->
+<!-- Uses accessible colors from verified palette: blue (#0173B2), orange (#DE8F05), teal (#029E73) -->
 
 ```mermaid
 graph TD
