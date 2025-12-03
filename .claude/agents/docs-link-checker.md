@@ -4,6 +4,8 @@ description: Validates both external and internal links in documentation files t
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
 model: haiku
 color: green
+created: 2025-11-29
+updated: 2025-12-03
 ---
 
 # Documentation Links Checker Agent

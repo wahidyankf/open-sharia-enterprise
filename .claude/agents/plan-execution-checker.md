@@ -8,6 +8,8 @@ tools:
   - Bash
 model: sonnet
 color: purple
+created: 2025-11-29
+updated: 2025-12-03
 ---
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:

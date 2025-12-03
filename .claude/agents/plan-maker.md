@@ -4,6 +4,8 @@ description: Expert at creating structured project planning documents in the pla
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
+created: 2025-11-29
+updated: 2025-12-03
 ---
 
 # Plan Writer Agent

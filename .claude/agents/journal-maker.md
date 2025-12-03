@@ -4,6 +4,7 @@ description: Expert journal writer specializing in Logseq-style outliner format 
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: inherit
 color: blue
+created: 2025-11-29
 updated: 2025-12-01
 ---
 
