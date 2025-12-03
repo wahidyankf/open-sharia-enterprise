@@ -84,9 +84,22 @@ Learning-oriented guides for building AI and machine learning systems:
 Learning-oriented guides for programming languages, from fundamentals to advanced patterns:
 
 - [**Programming Languages Index**](./software-engineering/programming-languages/README.md) - All available programming language tutorials
-  - [**Go (Golang) Tutorials**](./software-engineering/programming-languages/golang/README.md) - Learn Go programming language
-    - 🟢 [**Golang Quick Start**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md) - Go fundamentals to advanced patterns **(⏱️ 2-3 hours)**
-    - 🟢 [**Golang Cookbook**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md) - Practical Go patterns and recipes **(⏱️ 3-4 hours)**
+
+## Golang
+
+Complete learning path from installation to expert mastery:
+
+**Full Set (Sequential Learning Path)**:
+
+1. 🟢 [**Golang Initial Setup**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md) - Get Go installed and running in 15 minutes **(⏱️ 5-15 min, 0-5%)**
+2. 🟢 [**Golang Quick Start**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md) - Learn core syntax to explore independently **(⏱️ 1-2 hours, 5-30%)**
+3. 🟢 [**Complete Beginner's Guide to Go**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md) - Comprehensive Go fundamentals from scratch **(⏱️ 3-4 hours, 0-60%)**
+4. 🟡 [**Intermediate Go Programming**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__intermediate.md) - Professional techniques for production systems **(⏱️ 4-8 hours, 60-85%)**
+5. 🔴 [**Advanced Go Programming**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__advanced.md) - Expert mastery of internals and optimization **(⏱️ 6-12 hours, 85-95%)**
+
+**Parallel Track (Problem-Solving Reference)**:
+
+- 🟢 [**Golang Cookbook**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md) - Practical patterns and recipes for common problems **(⏱️ 3-4 hours)**
 
 ### 🔒 Information Security
 
