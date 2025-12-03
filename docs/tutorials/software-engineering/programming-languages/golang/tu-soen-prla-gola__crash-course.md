@@ -1,25 +1,25 @@
 ---
-title: Golang Crash Course
+title: Golang Quick Start
 description: A comprehensive quick-start guide to Go programming language
 category: tutorials
 tags:
   - golang
   - programming-languages
-  - crash-course
+  - quick-start
   - concurrency
 created: 2025-12-01
-updated: 2025-12-02
+updated: 2025-12-03
 ---
 
-# Golang Crash Course
+# Golang Quick Start
 
 **Want to build software that handles millions of concurrent requests?** Go (Golang) powers some of the world's most critical infrastructure - from Docker containers to Kubernetes orchestration, from Uber's backend to Dropbox's file sync. Created by Google engineers who built systems at planetary scale, Go brings the simplicity of Python with the performance of C++.
 
-In this crash course, you'll learn Go from scratch in **2-3 hours**. By the end, you'll write concurrent programs, handle errors idiomatically, and understand why companies like Netflix, Twitch, and SoundCloud chose Go for their production systems.
+In this Quick Start guide, you'll learn Go from scratch in **2-3 hours**. By the end, you'll write concurrent programs, handle errors idiomatically, and understand why companies like Netflix, Twitch, and SoundCloud chose Go for their production systems.
 
 ## 🎯 What You'll Learn
 
-This crash course teaches **Go language mechanics** - the core features and syntax you need to read and write Go code:
+This Quick Start teaches **Go language mechanics** - the core features and syntax you need to read and write Go code:
 
 - Go syntax and core language features
 - Data types, functions, and control flow
@@ -31,7 +31,7 @@ This crash course teaches **Go language mechanics** - the core features and synt
 - Package management and project structure
 - Testing basics - how to write and run tests
 
-**After this crash course**, check out the [Golang Cookbook](./tu-soen-prla-gola__cookbook.md) for practical patterns and day-to-day problem solving.
+**After this Quick Start**, check out the [Golang Cookbook](./tu-soen-prla-gola__cookbook.md) for practical patterns and day-to-day problem solving.
 
 ## 📋 Prerequisites
 
