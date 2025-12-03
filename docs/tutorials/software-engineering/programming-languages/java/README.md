@@ -19,7 +19,7 @@ updated: 2025-12-04
 
 The 5-tutorial sequential track will provide a complete learning journey from 0% to 95% proficiency:
 
-### 1. **Java Initial Setup** 🚀
+### 1. **Java Initial Setup** 🚀 (`tu-se-pl-ja__initial-setup.md`)
 
 - **Coverage**: 0-5% (Installation and Hello World)
 - **Time**: 5-15 minutes
@@ -27,7 +27,7 @@ The 5-tutorial sequential track will provide a complete learning journey from 0%
 - **Goal**: Get Java working on your system
 - **Best for**: Complete beginners with no Java experience
 
-### 2. **Java Quick Start** ⚡
+### 2. **Java Quick Start** ⚡ (`tu-se-pl-ja__quick-start.md`)
 
 - **Coverage**: 5-30% (Touchpoints and core concepts)
 - **Time**: 1-2 hours
@@ -35,7 +35,7 @@ The 5-tutorial sequential track will provide a complete learning journey from 0%
 - **Goal**: Learn enough to explore Java independently
 - **Best for**: Developers familiar with other languages wanting a quick overview
 
-### 3. **Complete Beginner's Guide to Java** 📖
+### 3. **Complete Beginner's Guide to Java** 📖 (`tu-se-pl-ja__beginner.md`)
 
 - **Coverage**: 0-60% (Comprehensive fundamentals)
 - **Time**: 3-4 hours
@@ -43,7 +43,7 @@ The 5-tutorial sequential track will provide a complete learning journey from 0%
 - **Goal**: Build a solid foundation for real applications
 - **Best for**: Developers wanting comprehensive coverage and practice
 
-### 4. **Intermediate Java Programming** 💼
+### 4. **Intermediate Java Programming** 💼 (`tu-se-pl-ja__intermediate.md`)
 
 - **Coverage**: 60-85% (Production-grade techniques)
 - **Time**: 4-8 hours
@@ -51,7 +51,7 @@ The 5-tutorial sequential track will provide a complete learning journey from 0%
 - **Goal**: Build production-grade systems
 - **Best for**: Developers building real projects who need professional techniques
 
-### 5. **Advanced Java Programming** 🎓
+### 5. **Advanced Java Programming** 🎓 (`tu-se-pl-ja__advanced.md`)
 
 - **Coverage**: 85-95% (Expert mastery)
 - **Time**: 6-12 hours
@@ -63,7 +63,7 @@ The 5-tutorial sequential track will provide a complete learning journey from 0%
 
 In addition to the sequential path, use this reference for specific patterns:
 
-- **Java Cookbook** - Practical recipes and patterns for real-world problems
+- **Java Cookbook** (`tu-se-pl-ja__cookbook.md`) - Practical recipes and patterns for real-world problems
   - **Prerequisites**: Complete the Beginner tutorial
   - String operations, collection patterns, concurrency recipes, error handling, design patterns, REST APIs
 
