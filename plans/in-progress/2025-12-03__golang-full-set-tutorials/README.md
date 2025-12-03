@@ -1,6 +1,6 @@
 # Golang Full Set Tutorial Series
 
-**Status**: Backlog
+**Status**: In Progress
 
 ## Overview
 
