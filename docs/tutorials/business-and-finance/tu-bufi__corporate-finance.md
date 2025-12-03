@@ -1,21 +1,21 @@
 ---
-title: "Corporate Finance Crash Course: Master the Fundamentals"
+title: "Corporate Finance Quick Start: Master the Fundamentals"
 description: Learn essential corporate finance concepts through hands-on practice with real business scenarios
 category: tutorial
 tags:
   - corporate-finance
   - finance
   - valuation
-  - crash-course
+  - quick-start
 created: 2025-12-02
-updated: 2025-12-02
+updated: 2025-12-03
 ---
 
-# 💼 Corporate Finance Crash Course: Master the Fundamentals
+# 💼 Corporate Finance Quick Start: Master the Fundamentals
 
 Should your company invest $5 million in a new factory? Is it better to finance expansion with debt or equity? What's your business really worth? These aren't accounting questions—they're **corporate finance** questions that determine whether companies thrive or fail.
 
-While accounting tells you what happened in the past, corporate finance helps you make smart decisions about the future. By the end of this crash course, you'll understand how to analyze investments, value companies, and make financing decisions that maximize shareholder value.
+While accounting tells you what happened in the past, corporate finance helps you make smart decisions about the future. By the end of this Quick Start guide, you'll understand how to analyze investments, value companies, and make financing decisions that maximize shareholder value.
 
 ## 🎯 What You'll Learn
 

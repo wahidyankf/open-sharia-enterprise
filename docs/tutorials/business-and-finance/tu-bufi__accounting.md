@@ -1,19 +1,19 @@
 ---
-title: "Accounting Crash Course: Master the Fundamentals"
+title: "Accounting Quick Start: Master the Fundamentals"
 description: Learn essential accounting concepts through hands-on practice with a real business scenario
 category: tutorial
 tags:
   - accounting
   - finance
   - business
-  - crash-course
+  - quick-start
 created: 2025-12-02
-updated: 2025-12-02
+updated: 2025-12-03
 ---
 
-# 💰 Accounting Crash Course: Master the Fundamentals
+# 💰 Accounting Quick Start: Master the Fundamentals
 
-Welcome to the world of accounting! Whether you're starting a business, managing finances, or just want to understand how money flows through organizations, this crash course will give you the foundation you need.
+Welcome to the world of accounting! Whether you're starting a business, managing finances, or just want to understand how money flows through organizations, this Quick Start guide will give you the foundation you need.
 
 By the end of this tutorial, you'll understand how businesses track their financial activities, how to read financial statements, and how to apply accounting principles in real-world scenarios.
 
