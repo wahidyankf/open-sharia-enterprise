@@ -52,13 +52,14 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
 
 ### 🟦 `docs-tutorial-maker.md`
 
-Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements.
+Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements. Follows Tutorial Naming Convention with six standardized types (Getting Started, Crash Course, Beginner, Intermediate, Advanced, Cookbook).
 
 - **Primary Use:** Creating engaging, learning-oriented tutorials with narrative storytelling
-- **Specialization:** Learning-oriented content, narrative writing, progressive scaffolding, diagram creation (architecture/sequence/flowcharts), hands-on examples, pedagogical structure
+- **Specialization:** Learning-oriented content, narrative writing, progressive scaffolding, diagram creation (architecture/sequence/flowcharts), hands-on examples, pedagogical structure, tutorial type selection (Getting Started through Advanced)
 - **Tools:** Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 - **When to Use:**
   - Creating new tutorials in docs/tutorials/
+  - Choosing appropriate tutorial type based on audience and depth (0-5% to 85-95% coverage)
   - Building complete learning journeys (concept → implementation → practice)
   - Writing narrative-driven content (not list-heavy reference material)
   - Adding comprehensive diagrams (architecture, sequence, flowcharts)
@@ -89,14 +90,15 @@ Validates both external and internal links in documentation files to ensure they
 
 ### 🟩 `docs-tutorial-checker.md`
 
-Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, and hands-on elements.
+Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance (Getting Started through Advanced).
 
 - **Primary Use:** Validating tutorials for learning effectiveness and completeness
-- **Specialization:** Pedagogical assessment, narrative flow analysis, diagram completeness checking, hands-on element validation, tutorial structure verification (Diátaxis compliance), content balance assessment
+- **Specialization:** Pedagogical assessment, narrative flow analysis, diagram completeness checking, hands-on element validation, tutorial structure verification (Diátaxis compliance), content balance assessment, tutorial type compliance validation (naming, coverage, time estimates)
 - **Tools:** Read, Glob, Grep, WebFetch, WebSearch
 - **When to Use:**
   - Validating new tutorials before publication
   - Reviewing existing tutorials for quality and effectiveness
+  - Verifying tutorial type compliance (title, coverage, time estimate, depth)
   - Ensuring tutorials have sufficient diagrams and visual aids
   - Checking narrative flow and storytelling quality
   - Verifying tutorials aren't list-heavy (need narrative explanations)

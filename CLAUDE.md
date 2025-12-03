@@ -568,6 +568,20 @@ All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** 
 
 All mathematical equations and formulas in documentation use **LaTeX notation** for proper rendering in both Obsidian and GitHub (both support LaTeX since May 2022). Use `$...$` for inline math and `$$...$$` for display math. LaTeX provides proper subscripts ($r_f$), superscripts ($x^2$), Greek letters ($\beta$), and complex formulas. **Do NOT use LaTeX inside code blocks, Mermaid diagrams, or ASCII art** - these contexts require plain text notation. See [Mathematical Notation Convention](./docs/explanation/conventions/ex-co__mathematical-notation.md) for complete details.
 
+### Tutorial Standards
+
+Tutorials follow standardized naming and depth levels to help learners find appropriate content:
+
+- **Tutorial Types:** Six standardized levels from Getting Started to Advanced plus Cookbook
+- **Getting Started** (0-5%, 5-15 min) - Quick "Hello World" verification
+- **Crash Course** (5-30%, 1-3 hrs) - Learn enough to explore independently
+- **Beginner** (0-60%, 3-6 hrs) - Comprehensive foundation from scratch
+- **Intermediate** (60-85%, 4-8 hrs) - Professional-level expertise
+- **Advanced** (85-95%, 6-12 hrs) - Expert-level mastery
+- **Cookbook** (Practical, 2-6 hrs) - Day-to-day recipes and real-world problems
+
+See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details on coverage, time estimates, and when to use each type.
+
 ### Key Resources
 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
@@ -581,6 +595,7 @@ All mathematical equations and formulas in documentation use **LaTeX notation** 
 - **Temporary Files Guide:** [`docs/explanation/conventions/ex-co__temporary-files.md`](./docs/explanation/conventions/ex-co__temporary-files.md)
 - **Mathematical Notation Guide:** [`docs/explanation/conventions/ex-co__mathematical-notation.md`](./docs/explanation/conventions/ex-co__mathematical-notation.md)
 - **Tutorial Guide:** [`docs/explanation/conventions/ex-co__tutorials.md`](./docs/explanation/conventions/ex-co__tutorials.md)
+- **Tutorial Naming Guide:** [`docs/explanation/conventions/ex-co__tutorial-naming.md`](./docs/explanation/conventions/ex-co__tutorial-naming.md)
 
 ## AI Agent Standards
 

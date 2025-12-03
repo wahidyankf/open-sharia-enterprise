@@ -4,7 +4,8 @@ description: Validates consistency between agents, CLAUDE.md, conventions, and d
 tools: Read, Glob, Grep
 model: sonnet
 color: green
-updated: 2025-12-01
+created: 2025-11-26
+updated: 2025-12-03
 ---
 
 # Repository Rule Checker Agent
@@ -219,6 +220,24 @@ When running a consistency check, systematically verify:
 - [ ] Convention document provides real-world examples of good and bad commit splitting
 - [ ] Convention document explains benefits of proper commit granularity
 
+### Tutorial Naming Convention Compliance
+
+- [ ] Tutorial naming convention comprehensively documented in `ex-co__tutorial-naming.md`
+- [ ] Convention defines six standardized tutorial types (Getting Started, Crash Course, Beginner, Intermediate, Advanced, Cookbook)
+- [ ] Each tutorial type has coverage percentage, time estimate, and clear definition
+- [ ] Naming patterns provided for each tutorial type with examples
+- [ ] Decision tree or guidance for choosing tutorial type included
+- [ ] CLAUDE.md references tutorial naming convention in Documentation Standards section
+- [ ] CLAUDE.md summarizes six tutorial types with coverage and time estimates
+- [ ] docs-tutorial-maker.md references tutorial naming convention
+- [ ] docs-tutorial-maker.md includes tutorial type selection guidance in writing process
+- [ ] docs-tutorial-maker.md provides naming patterns for each tutorial type
+- [ ] docs-tutorial-checker.md references tutorial naming convention
+- [ ] docs-tutorial-checker.md validates tutorial type compliance (title, coverage, time, depth)
+- [ ] docs-tutorial-checker.md includes tutorial type validation in report template
+- [ ] Conventions README.md lists tutorial naming convention
+- [ ] All tutorial agents (maker, checker) updated to enforce naming convention
+
 ### Duplication Detection
 
 - [ ] Identify conventions/rules duplicated across CLAUDE.md, agents, and convention files
@@ -306,6 +325,8 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/explanation/conventions/ex-co__journals-format.md`
 - `docs/explanation/conventions/ex-co__temporary-files.md`
 - `docs/explanation/conventions/ex-co__timestamp-format.md`
+- `docs/explanation/conventions/ex-co__tutorials.md`
+- `docs/explanation/conventions/ex-co__tutorial-naming.md`
 
 ### Development Conventions
 
@@ -376,6 +397,8 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation
 - `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
 - `docs/explanation/conventions/ex-co__journals-format.md` - Logseq-style outliner format for journals
+- `docs/explanation/conventions/ex-co__tutorials.md` - Standards for creating learning-oriented tutorials
+- `docs/explanation/conventions/ex-co__tutorial-naming.md` - Standardized tutorial types and depth levels
 
 **Related Agents:**
 
