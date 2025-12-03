@@ -426,6 +426,36 @@ flowchart TD
 
 **This applies to ALL diagram types**: architecture diagrams, flowcharts, component diagrams, sequence diagrams, etc.
 
+### Color Accessibility: Color-Blind Friendly
+
+**CRITICAL REQUIREMENT**: ALL Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes:
+
+**Accessible Color Palette (use only these):**
+
+- Blue: `#0173B2` - Safe for all color blindness types
+- Orange: `#DE8F05` - Safe for all color blindness types
+- Teal: `#029E73` - Safe for all color blindness types
+- Purple: `#CC78BC` - Safe for all color blindness types
+- Brown: `#CA9161` - Safe for all color blindness types
+- Black: `#000000` - For borders and text on light backgrounds
+- White: `#FFFFFF` - For text on dark backgrounds
+- Gray: `#808080` - For secondary elements
+
+**DO NOT USE (invisible to color-blind users):**
+
+- ❌ Red (#FF0000, #E74C3C, #DC143C) - Invisible to protanopia/deuteranopia
+- ❌ Green (#00FF00, #27AE60, #2ECC71) - Invisible to protanopia/deuteranopia
+- ❌ Yellow (#FFFF00, #F1C40F) - Invisible to tritanopia
+
+**Requirements:**
+
+- Always use shape differentiation (not color alone)
+- Include black borders (#000000) for definition
+- Meet WCAG AA contrast ratios (4.5:1 for text)
+- Add comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->`
+
+See [Diagram and Schema Convention - Color Accessibility](../../docs/explanation/conventions/ex-co__diagrams.md#color-accessibility-for-color-blindness) for complete details and testing requirements.
+
 ---
 
 ## Quality Checklist

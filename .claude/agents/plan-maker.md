@@ -1066,16 +1066,36 @@ plans/backlog/2025-11-25__user-auth/
 
 Files in `plans/` folder should use **Mermaid diagrams** as the primary format (same as all markdown files in the repository). ASCII art is optional and only needed for simple directory trees or rare edge cases where Mermaid is not suitable.
 
-**Example Mermaid Architecture Diagram (Recommended):**
+**CRITICAL - Color Accessibility**: ALL Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes:
+
+- **Accessible palette**: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
+- **DO NOT USE**: red, green, or yellow (invisible to various forms of color blindness)
+- **Always use**: shape differentiation (not color alone), black borders (#000000), proper contrast ratios (WCAG AA: 4.5:1)
+
+**Example Mermaid Architecture Diagram with Accessible Colors:**
 
 ````markdown
+<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05), teal (#029E73) -->
+
 ```mermaid
 graph TD
-    A[Client Browser] -->|HTTPS| B[API Gateway/Proxy]
-    B --> C[Auth Service - Node.js]
-    B --> D[API Service - Node.js]
-    C --> E[User DB - PostgreSQL]
-    D --> F[App DB - PostgreSQL]
+    A[Client Browser]:::blue
+    B[API Gateway]:::orange
+    C[Auth Service]:::teal
+    D[API Service]:::teal
+    E[User DB]:::purple
+    F[App DB]:::purple
+
+    A -->|HTTPS| B
+    B --> C
+    B --> D
+    C --> E
+    D --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 ````
 

@@ -534,7 +534,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram and Schema Convention
 
-Use Mermaid diagrams as the primary format for all markdown files in the repository. ASCII art is optional and only needed for rare edge cases (simple directory trees, terminal-only environments). Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
+Use Mermaid diagrams as the primary format for all markdown files in the repository. ASCII art is optional and only needed for rare edge cases (simple directory trees, terminal-only environments). Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. **All Mermaid diagrams must use color-blind friendly colors** (accessible palette only: blue #0173B2, orange #DE8F05, teal #029E73, purple #CC78BC, brown #CA9161) that work in both light and dark modes. Never use red or green (invisible to protanopia/deuteranopia) or yellow (invisible to tritanopia). See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details including accessible color palette, testing requirements, and WCAG compliance.
 
 ### Emoji Usage Convention
 
