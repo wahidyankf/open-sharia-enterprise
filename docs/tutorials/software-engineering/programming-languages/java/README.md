@@ -3,11 +3,11 @@ title: Java Full Set Tutorials
 description: Complete learning path from zero to expert Java development - 6 comprehensive tutorials covering 0-95% knowledge
 category: tutorial
 tags:
-	- java
-	- learning-path
-	- programming
-	- full-set
-	- tutorials
+  - java
+  - learning-path
+  - programming
+  - full-set
+  - tutorials
 created: 2025-12-04
 updated: 2025-12-04
 ---

@@ -3,13 +3,13 @@ title: Complete Beginner's Guide to Java
 description: Master Java fundamentals from zero - comprehensive coverage of OOP, collections, testing, and functional programming with extensive examples and exercises
 category: tutorial
 tags:
-	- java
-	- beginner
-	- oop
-	- fundamentals
-	- collections
-	- testing
-	- streams
+  - java
+  - beginner
+  - oop
+  - fundamentals
+  - collections
+  - testing
+  - streams
 created: 2025-12-04
 updated: 2025-12-04
 ---

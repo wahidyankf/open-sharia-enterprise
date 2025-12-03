@@ -3,12 +3,12 @@ title: Java Quick Start
 description: Learn Java syntax and core concepts in 1-2 hours - cover variables, methods, classes, and collections through hands-on examples
 category: tutorial
 tags:
-	- java
-	- quick-start
-	- syntax
-	- oop-basics
-	- collections
-	- exception-handling
+  - java
+  - quick-start
+  - syntax
+  - oop-basics
+  - collections
+  - exception-handling
 created: 2025-12-04
 updated: 2025-12-04
 ---
