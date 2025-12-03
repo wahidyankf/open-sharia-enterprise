@@ -85,7 +85,7 @@ Learning-oriented guides for programming languages, from fundamentals to advance
 
 - [**Programming Languages Index**](./software-engineering/programming-languages/README.md) - All available programming language tutorials
   - [**Go (Golang) Tutorials**](./software-engineering/programming-languages/golang/README.md) - Learn Go programming language
-    - 🟢 [**Golang Quick Start**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md) - Go fundamentals to advanced patterns **(⏱️ 2-3 hours)**
+    - 🟢 [**Golang Quick Start**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md) - Go fundamentals to advanced patterns **(⏱️ 2-3 hours)**
     - 🟢 [**Golang Cookbook**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md) - Practical Go patterns and recipes **(⏱️ 3-4 hours)**
 
 ### 🔒 Information Security
@@ -197,7 +197,7 @@ graph TB
 1. Pick a 🟢 **Beginner** tutorial based on your interest:
    - Want to learn finance? → [Accounting](./business-and-finance/tu-bufi__accounting.md) or [Corporate Finance](./business-and-finance/tu-bufi__corporate-finance.md)
    - Want to learn AI? → [Chat with PDF](./ai-engineering/tu-aien__chat-with-pdf.md)
-   - Want to learn Go? → [Golang Quick Start](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md)
+   - Want to learn Go? → [Golang Quick Start](./software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md)
 
 2. Work through the tutorial step-by-step
 3. Try the practice exercises and calculations
