@@ -81,9 +81,9 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 
 ### Diagram Convention
 
-- **Inside `docs/` directory**: Use Mermaid diagrams for rich, native rendering in Obsidian
-- **Outside `docs/` directory** (including `plans/`, `CLAUDE.md`, `README.md`, etc.): Use ASCII art for universal compatibility across all platforms
-- **Diagram Orientation (CRITICAL for docs/)**: ALL Mermaid diagrams in `docs/` directory (tutorials, how-to, reference, explanation) MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
+- **All markdown files**: Use Mermaid diagrams as the primary format (inside and outside `docs/` directory)
+- **ASCII art**: Optional fallback for rare edge cases (simple directory trees, terminal-only environments)
+- **Diagram Orientation (CRITICAL)**: ALL Mermaid diagrams MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
 - See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples
 
 ### Emoji Usage Convention
