@@ -28,11 +28,11 @@ These tutorials provide:
 
 ### Accounting
 
-- [**Accounting Crash Course**](./tu-bufi__accounting.md) - Fundamental accounting principles, financial statements, and analysis
+- [**Accounting Quick Start**](./tu-bufi__accounting.md) - Fundamental accounting principles, financial statements, and analysis
 
 ### Corporate Finance
 
-- [**Corporate Finance Crash Course**](./tu-bufi__corporate-finance.md) - Time value of money, capital budgeting, and financial decision-making
+- [**Corporate Finance Quick Start**](./tu-bufi__corporate-finance.md) - Time value of money, capital budgeting, and financial decision-making
 
 ## 🎓 How to Use These Tutorials
 

@@ -17,7 +17,7 @@ This directory contains learning-oriented tutorials focused on the Go programmin
 
 ## Available Tutorials
 
-- [**Golang Crash Course**](./tu-soen-prla-gola__crash-course.md) - Learn Go language mechanics from fundamentals to advanced patterns (⏱️ 2-3 hours)
+- [**Golang Quick Start**](./tu-soen-prla-gola__crash-course.md) - Learn Go language mechanics from fundamentals to advanced patterns (⏱️ 2-3 hours)
 - [**Golang Cookbook**](./tu-soen-prla-gola__cookbook.md) - Practical Go patterns and recipes for real-world problems (⏱️ 3-4 hours)
 
 ## Tutorial Structure

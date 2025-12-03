@@ -22,7 +22,7 @@ graph TB
 		A[Accounting<br/>⏱️ 1-2 hours]
 		B[Corporate Finance<br/>⏱️ 1-2 hours]
 		C[Chat with PDF<br/>⏱️ 30-40 min]
-		E[Golang Crash Course<br/>⏱️ 2-3 hours]
+		E[Golang Quick Start<br/>⏱️ 2-3 hours]
 		F[Golang Cookbook<br/>⏱️ 3-4 hours]
 	end
 
@@ -62,8 +62,8 @@ graph TB
 Learning-oriented guides for accounting, corporate finance, and financial analysis:
 
 - [**Business and Finance Index**](./business-and-finance/README.md) - All available business and finance tutorials
-  - 🟢 [**Accounting Crash Course**](./business-and-finance/tu-bufi__accounting.md) - Fundamental accounting principles and financial statements
-  - 🟢 [**Corporate Finance Crash Course**](./business-and-finance/tu-bufi__corporate-finance.md) - Time value of money and capital budgeting
+  - 🟢 [**Accounting Quick Start**](./business-and-finance/tu-bufi__accounting.md) - Fundamental accounting principles and financial statements
+  - 🟢 [**Corporate Finance Quick Start**](./business-and-finance/tu-bufi__corporate-finance.md) - Time value of money and capital budgeting
 
 ### 🏗️ System Design
 
@@ -85,7 +85,7 @@ Learning-oriented guides for programming languages, from fundamentals to advance
 
 - [**Programming Languages Index**](./software-engineering/programming-languages/README.md) - All available programming language tutorials
   - [**Go (Golang) Tutorials**](./software-engineering/programming-languages/golang/README.md) - Learn Go programming language
-    - 🟢 [**Golang Crash Course**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md) - Go fundamentals to advanced patterns **(⏱️ 2-3 hours)**
+    - 🟢 [**Golang Quick Start**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md) - Go fundamentals to advanced patterns **(⏱️ 2-3 hours)**
     - 🟢 [**Golang Cookbook**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md) - Practical Go patterns and recipes **(⏱️ 3-4 hours)**
 
 ### 🔒 Information Security
@@ -104,8 +104,8 @@ Learning-oriented guides for information security concepts and practices:
 
 ```mermaid
 graph TB
-	A[🟢 Accounting Crash Course<br/>⏱️ 1-2 hours]
-	B[🟢 Corporate Finance Crash Course<br/>⏱️ 1-2 hours]
+	A[🟢 Accounting Quick Start<br/>⏱️ 1-2 hours]
+	B[🟢 Corporate Finance Quick Start<br/>⏱️ 1-2 hours]
 	C[Apply concepts to<br/>real-world scenarios]
 
 	A --> B --> C
@@ -146,8 +146,8 @@ graph TB
 
 ```mermaid
 graph TB
-	A[🟢 Accounting Crash Course<br/>⏱️ 1-2 hours]
-	B[🟢 Corporate Finance Crash Course<br/>⏱️ 1-2 hours]
+	A[🟢 Accounting Quick Start<br/>⏱️ 1-2 hours]
+	B[🟢 Corporate Finance Quick Start<br/>⏱️ 1-2 hours]
 	C[🟢 Chat with PDF<br/>⏱️ 30-40 min]
 	D[🔴 AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
 	E[Build financial<br/>AI applications]
@@ -173,7 +173,7 @@ graph TB
 
 ```mermaid
 graph TB
-	A[🟢 Golang Crash Course<br/>⏱️ 2-3 hours]
+	A[🟢 Golang Quick Start<br/>⏱️ 2-3 hours]
 	B[🟢 Golang Cookbook<br/>⏱️ 3-4 hours]
 	C[Build production-grade<br/>backend services]
 
@@ -197,7 +197,7 @@ graph TB
 1. Pick a 🟢 **Beginner** tutorial based on your interest:
    - Want to learn finance? → [Accounting](./business-and-finance/tu-bufi__accounting.md) or [Corporate Finance](./business-and-finance/tu-bufi__corporate-finance.md)
    - Want to learn AI? → [Chat with PDF](./ai-engineering/tu-aien__chat-with-pdf.md)
-   - Want to learn Go? → [Golang Crash Course](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md)
+   - Want to learn Go? → [Golang Quick Start](./software-engineering/programming-languages/golang/tu-soen-prla-gola__crash-course.md)
 
 2. Work through the tutorial step-by-step
 3. Try the practice exercises and calculations
@@ -244,7 +244,7 @@ graph TB
 - **Purpose**: Learn programming languages from fundamentals to advanced patterns
 - **Format**: Syntax → Fundamentals → Advanced Features → Practical Patterns
 - **Best for**: Backend developers, systems engineers, anyone learning a new language
-- **Time**: 2-7 hours per language depending on depth (crash course vs cookbook)
+- **Time**: 2-7 hours per language depending on depth (Quick Start vs Cookbook)
 
 ---
 
