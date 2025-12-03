@@ -451,13 +451,15 @@ public class Human implements Workable, Eatable, Manageable {
 Streams process data through a pipeline of operations, similar to an assembly line:
 
 ```mermaid
-graph LR
-    A[Source<br/>List of numbers<br/>1,2,3,4,5,6,7,8,9,10] -->|filter<br/>Keep evens| B[2,4,6,8,10]
-    B -->|map<br/>Square each| C[4,16,36,64,100]
-    C -->|reduce<br/>Sum all| D[Result<br/>220]
+graph TD
+    A["📊 Source<br/>List of numbers<br/>1,2,3,4,5,6,7,8,9,10"] -->|filter<br/>Keep evens| B["2,4,6,8,10"]
+    B -->|map<br/>Square each| C["4,16,36,64,100"]
+    C -->|reduce<br/>Sum all| D["✅ Result<br/>220"]
 
     style A fill:#e1f5ff
-    style D fill:#ffe1e1
+    style B fill:#fff9e1
+    style C fill:#ffe9e1
+    style D fill:#e1ffe1
 ```
 
 Each operation transforms the data and passes it to the next stage. This is immensely powerful for data processing.
