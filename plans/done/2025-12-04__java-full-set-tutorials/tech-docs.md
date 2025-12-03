@@ -18,47 +18,31 @@ Cookbook (Practical, any level)
 
 ### Learning Path Flow
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                   Java Full Set Tutorial Series                       │
-└──────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    A["<b>Level 0: Initial Setup</b><br/>0-5% | 5-15 min<br/>JDK installation, environment setup,<br/>Hello World"]
+    B["<b>Level 1: Quick Start</b><br/>5-30% | 1-2 hrs<br/>Variables, types, basic classes,<br/>simple OOP, collections intro"]
+    C["<b>Level 2: Beginner</b><br/>0-60% | 3-4 hrs<br/>Comprehensive OOP, design principles,<br/>Collections, exceptions, testing"]
+    D["<b>Level 3: Intermediate</b><br/>60-85% | 4-8 hrs<br/>Production techniques, design patterns,<br/>concurrency, build tools, security"]
+    E["<b>Level 4: Advanced</b><br/>85-95% | 6-12 hrs<br/>Expert patterns, JVM internals,<br/>profiling, reflection, bytecode"]
+    F["<b>Cookbook</b><br/>Practical | 2-6 hrs<br/>Problem-focused recipes,<br/>real-world solutions<br/><br/><i>Accessible from<br/>any level</i>"]
 
-Level 0: Initial Setup (0-5%, 5-15 min)
-│
-│ JDK installation, environment setup, "Hello World"
-│
-▼
-Level 1: Quick Start (5-30%, 1-2 hrs) [CREATE NEW]
-│
-│ Core syntax touchpoints: variables, types, basic classes, simple OOP
-│ Collections intro, basic error handling (NOT comprehensive)
-│ Goal: Explore Java independently
-│
-▼
-Level 2: Beginner (0-60%, 3-4 hrs) [CREATE NEW]
-│
-│ COMPREHENSIVE coverage: OOP fundamentals, design principles
-│ Collections Framework with generics, exception handling, unit testing
-│ Multiple examples, practice exercises, troubleshooting
-│
-▼
-Level 3: Intermediate (60-85%, 4-8 hrs) [CREATE NEW]
-│
-│ Production techniques, design patterns, concurrency, build tools
-│ Security, performance tuning, enterprise patterns
-│
-▼
-Level 4: Advanced (85-95%, 6-12 hrs) [CREATE NEW]
-│
-│ Expert patterns, JVM internals, performance profiling, reflection
-│ Advanced concurrency, bytecode, GC tuning
-│
+    A --> B
+    B --> C
+    C --> D
+    D --> E
 
-Parallel Access: Cookbook (Practical, 2-6 hrs) [CREATE NEW]
-│
-│ Problem-focused recipes, patterns, real-world solutions
-│ Prerequisites: Beginner (or higher)
-└──────────────────────────────────────────────────────────────────────┘
+    B -.->|can reference| F
+    C -.->|can reference| F
+    D -.->|can reference| F
+    E -.->|can reference| F
+
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#e8f5e9
+    style D fill:#fff3e0
+    style E fill:#ffe0b2
+    style F fill:#fce4ec,stroke:#c2185b,stroke-width:3px
 ```
 
 **Key Architectural Principles**:
