@@ -814,6 +814,350 @@ String upper = value
 
 ---
 
+## Common Issues and Solutions
+
+### Issue 1: NullPointerException
+
+**Problem**: Your code crashes with `NullPointerException` at a specific line.
+
+**Causes and Solutions**:
+
+1. **Null object access**:
+
+   ```java
+   // ❌ Dangerous
+   String name = user.getName();
+   System.out.println(name.toUpperCase());  // Crashes if name is null
+
+   // ✅ Safe
+   String name = user.getName();
+   if (name != null) {
+       System.out.println(name.toUpperCase());
+   }
+
+   // ✅ Better: Use Optional
+   user.getName()
+       .map(String::toUpperCase)
+       .ifPresent(System.out::println);
+   ```
+
+2. **Uninitialized collections**:
+
+   ```java
+   // ❌ Crashes
+   List<String> items;
+   items.add("test");  // NullPointerException!
+
+   // ✅ Initialize first
+   List<String> items = new ArrayList<>();
+   items.add("test");
+   ```
+
+3. **Method returning null**:
+   ```java
+   // Check method documentation
+   String result = someMethod();
+   if (result != null) {
+       // Use result
+   }
+   ```
+
+### Issue 2: ClassNotFoundException
+
+**Problem**: `ClassNotFoundException: com.example.MyClass`
+
+**Causes and Solutions**:
+
+1. **Typo in class name**:
+   - Double-check fully qualified name
+   - Include package name: `com.example.MyClass` not just `MyClass`
+
+2. **Missing dependency**:
+
+   ```bash
+   # If using Maven, ensure pom.xml has the dependency
+   # If using Gradle, ensure build.gradle has the dependency
+   ```
+
+3. **Running from wrong directory**:
+
+   ```bash
+   # ❌ Wrong
+   cd src
+   java MyClass
+
+   # ✅ Correct (run from project root)
+   java -cp bin com.example.MyClass
+   ```
+
+### Issue 3: ArrayIndexOutOfBoundsException
+
+**Problem**: `ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 5`
+
+**Solutions**:
+
+```java
+// ❌ Dangerous
+int[] numbers = {1, 2, 3, 4, 5};
+System.out.println(numbers[10]);  // Crashes!
+
+// ✅ Safe: Check length
+int[] numbers = {1, 2, 3, 4, 5};
+if (index >= 0 && index < numbers.length) {
+    System.out.println(numbers[index]);
+}
+
+// ✅ Better: Use ArrayList
+List<Integer> numbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+if (index >= 0 && index < numbers.size()) {
+    System.out.println(numbers.get(index));
+}
+```
+
+### Issue 4: ConcurrentModificationException
+
+**Problem**: `ConcurrentModificationException` when modifying collection during iteration
+
+**Solutions**:
+
+```java
+List<String> items = new ArrayList<>(Arrays.asList("a", "b", "c"));
+
+// ❌ Crashes
+for (String item : items) {
+    items.remove(item);  // Don't modify while iterating!
+}
+
+// ✅ Use Iterator
+Iterator<String> it = items.iterator();
+while (it.hasNext()) {
+    String item = it.next();
+    it.remove();  // Safe way to remove
+}
+
+// ✅ Or create a copy first
+List<String> toRemove = new ArrayList<>();
+for (String item : items) {
+    if (condition) toRemove.add(item);
+}
+items.removeAll(toRemove);
+
+// ✅ Or use streams
+items = items.stream()
+    .filter(item -> !condition)
+    .collect(Collectors.toList());
+```
+
+### Issue 5: String Index Out Of Bounds
+
+**Problem**: `StringIndexOutOfBoundsException` when accessing string characters
+
+**Solutions**:
+
+```java
+String text = "Hello";
+
+// ❌ Crashes
+char c = text.charAt(10);  // String only has 5 chars
+
+// ✅ Check length
+if (index >= 0 && index < text.length()) {
+    char c = text.charAt(index);
+}
+
+// ✅ Use substring safely
+if (endIndex <= text.length()) {
+    String sub = text.substring(0, endIndex);
+}
+```
+
+### Issue 6: NumberFormatException
+
+**Problem**: `NumberFormatException: For input string: "abc"`
+
+**Solutions**:
+
+```java
+// ❌ Crashes
+int num = Integer.parseInt("abc");
+
+// ✅ Validate first
+String input = "abc";
+try {
+    int num = Integer.parseInt(input);
+    System.out.println(num);
+} catch (NumberFormatException e) {
+    System.out.println("Invalid number: " + input);
+}
+
+// ✅ Check if parseable
+if (input.matches("-?\\d+")) {
+    int num = Integer.parseInt(input);
+}
+```
+
+### Issue 7: OutOfMemoryError
+
+**Problem**: `OutOfMemoryError: Java heap space`
+
+**Causes and Solutions**:
+
+1. **Memory leak** (holding references):
+
+   ```java
+   // ❌ Creates millions of objects
+   List<byte[]> largeData = new ArrayList<>();
+   for (int i = 0; i < 1000000; i++) {
+       largeData.add(new byte[10000]);  // Never cleaned up!
+   }
+
+   // ✅ Process in chunks
+   for (int i = 0; i < 1000000; i++) {
+       byte[] data = new byte[10000];
+       processData(data);
+       // data is eligible for garbage collection
+   }
+   ```
+
+2. **Increase heap size**:
+
+   ```bash
+   # Increase heap to 1GB
+   java -Xmx1G MyApp
+   ```
+
+3. **Check for resource leaks**:
+
+   ```java
+   // ❌ Resource not closed
+   FileInputStream fis = new FileInputStream("file.txt");
+
+   // ✅ Always close resources
+   try (FileInputStream fis = new FileInputStream("file.txt")) {
+       // Use fis
+   }  // Automatically closed
+   ```
+
+### Issue 8: StackOverflowError
+
+**Problem**: `StackOverflowError` - stack overflow
+
+**Causes**:
+
+1. **Infinite recursion**:
+
+   ```java
+   // ❌ Infinite recursion
+   public int factorial(int n) {
+       return n * factorial(n);  // Never stops!
+   }
+
+   // ✅ Base case required
+   public int factorial(int n) {
+       if (n <= 1) return 1;  // Base case
+       return n * factorial(n - 1);
+   }
+   ```
+
+### Issue 9: FileNotFoundException
+
+**Problem**: `FileNotFoundException: file.txt`
+
+**Solutions**:
+
+```java
+// ❌ Crashes if file doesn't exist
+FileInputStream fis = new FileInputStream("file.txt");
+
+// ✅ Check if file exists
+File file = new File("file.txt");
+if (file.exists()) {
+    FileInputStream fis = new FileInputStream(file);
+}
+
+// ✅ Better: Use try-catch
+try {
+    FileInputStream fis = new FileInputStream("file.txt");
+} catch (FileNotFoundException e) {
+    System.out.println("File not found: " + e.getMessage());
+}
+
+// ✅ Check classpath for resources
+InputStream is = getClass().getResourceAsStream("/file.txt");
+```
+
+### Issue 10: Type Casting Exception
+
+**Problem**: `ClassCastException: String cannot be cast to Integer`
+
+**Solutions**:
+
+```java
+// ❌ Crashes if object isn't really an Integer
+Object obj = "123";
+Integer num = (Integer) obj;  // ClassCastException!
+
+// ✅ Use instanceof
+Object obj = "123";
+if (obj instanceof Integer) {
+    Integer num = (Integer) obj;
+}
+
+// ✅ Safer with collections (use generics)
+List<String> items = new ArrayList<>();
+// Compiler prevents adding non-Strings
+
+// ❌ Avoid raw types
+List list = new ArrayList();  // Raw type - unsafe!
+
+// ✅ Use generics
+List<String> list = new ArrayList<>();
+```
+
+---
+
+## Performance Tips
+
+1. **String concatenation in loops**:
+
+   ```java
+   // ❌ Slow (creates new String each iteration)
+   String result = "";
+   for (int i = 0; i < 1000; i++) {
+       result += i;
+   }
+
+   // ✅ Fast (uses StringBuilder)
+   StringBuilder sb = new StringBuilder();
+   for (int i = 0; i < 1000; i++) {
+       sb.append(i);
+   }
+   String result = sb.toString();
+   ```
+
+2. **Avoid repeated method calls**:
+
+   ```java
+   // ❌ Slow
+   for (int i = 0; i < list.size(); i++) {  // size() called every iteration
+       // ...
+   }
+
+   // ✅ Fast
+   int size = list.size();
+   for (int i = 0; i < size; i++) {
+       // ...
+   }
+   ```
+
+3. **Use appropriate collections**:
+   - **ArrayList**: Fast random access, slow insertion
+   - **LinkedList**: Fast insertion, slow random access
+   - **HashSet**: Fast lookup and insertion
+   - **HashMap**: Fast key-value lookup
+
+---
+
 ## Final Tips
 
 - **When stuck**: Search this cookbook or Stack Overflow
@@ -821,7 +1165,9 @@ String upper = value
 - **After copying**: Adapt to your specific context
 - **Test**: Always test before using in production
 - **Refactor**: Extract repeated recipes into utility classes
+- **Troubleshoot**: Check the "Common Issues" section first
+- **Read stack traces**: They tell you exactly what went wrong and where
 
 ---
 
-**Happy Cooking!** Use this cookbook as your daily reference for common Java problems.
+**Happy Cooking!** Use this cookbook as your daily reference for common Java problems and solutions.
