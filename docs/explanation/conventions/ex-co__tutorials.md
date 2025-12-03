@@ -287,9 +287,9 @@ The investment grows to $5,955.
 
 **500-1,500 lines (Ideal)**: - Focused on single topic or skill - Sufficient depth and practice - Maintains learner engagement - Completable in one sitting
 
-**1,500-2,000 lines (Upper Limit)**: - Still manageable but approaching threshold - Consider if content can be split - Ensure strong narrative flow to maintain engagement
+**1,500-5,000 lines (Upper Limit)**: - Still manageable but approaching threshold - Consider if content can be split - Ensure strong narrative flow to maintain engagement
 
-**> 2,000 lines (Too Long - Must Split)**: - Risk overwhelming learners - Violates single-focus principle - Action required: Split into tutorial series
+**> 5,000 lines (Too Long - Must Split)**: - Risk overwhelming learners - Violates single-focus principle - Action required: Split into tutorial series
 
 **How to Split Long Tutorials**:
 
