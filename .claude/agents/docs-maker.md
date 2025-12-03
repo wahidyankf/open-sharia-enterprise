@@ -84,7 +84,8 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - **All markdown files**: Use Mermaid diagrams as the primary format (inside and outside `docs/` directory)
 - **ASCII art**: Optional fallback for rare edge cases (simple directory trees, terminal-only environments)
 - **Diagram Orientation (CRITICAL)**: ALL Mermaid diagrams MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
-- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples
+- **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes. Use accessible palette only: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161). Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone)
+- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete details including accessible color palette, testing requirements, and WCAG compliance
 
 ### Emoji Usage Convention
 

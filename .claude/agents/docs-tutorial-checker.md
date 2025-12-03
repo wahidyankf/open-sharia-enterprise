@@ -178,8 +178,18 @@ $
    - Are they sufficient?
    - Are they well-integrated?
    - Are they readable?
+   - Do they use color-blind friendly colors?
+   - Do colors work in both light and dark mode?
+   - Is shape differentiation used (not color alone)?
 
-3. **Note missing diagrams**
+3. **Check color accessibility**
+   - ✅ Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
+   - ❌ Avoids inaccessible colors: red, green, yellow
+   - ✅ Includes black borders (#000000) for definition
+   - ✅ Meets WCAG AA contrast ratios (4.5:1)
+   - ✅ Has comment documenting color scheme
+
+4. **Note missing diagrams**
    - Specific types needed
    - Placement suggestions
 
@@ -353,10 +363,19 @@ Create a comprehensive report with:
 
 - [Assessment of existing diagrams]
 
+**Color Accessibility Check**:
+
+- ✓/✗ Uses accessible color palette (no red/green/yellow)
+- ✓/✗ Includes shape differentiation (not color alone)
+- ✓/✗ Has black borders for definition
+- ✓/✗ Meets WCAG AA contrast ratios
+- ✓/✗ Documented color scheme in comment
+
 **Recommendations**:
 
 - Add flowchart at line XXX showing [specific flow]
 - Add architecture diagram at line YYY showing [components]
+- [If applicable] Fix color accessibility: Replace red/green with accessible palette
 
 ---
 

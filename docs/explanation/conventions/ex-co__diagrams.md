@@ -1,6 +1,6 @@
 ---
 title: "Diagram and Schema Convention"
-description: Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files
+description: Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files. Includes color-blind accessibility requirements
 category: explanation
 tags:
   - diagrams
@@ -8,6 +8,8 @@ tags:
   - ascii-art
   - visualization
   - conventions
+  - accessibility
+  - color-blindness
 created: 2025-11-24
 updated: 2025-12-04
 ---
@@ -326,12 +328,145 @@ graph TD
 4. **Test Rendering** - Preview in Obsidian before committing
 5. **Version Control Friendly** - Use consistent formatting for easier diffs
 6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
+7. **Use Color-Blind Friendly Colors** - Ensure diagrams are accessible to all users (see Color Accessibility below)
+
+### Color Accessibility for Color Blindness
+
+**CRITICAL REQUIREMENT**: All Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes.
+
+#### Why This Matters
+
+Approximately 8% of males and 0.5% of females have some form of color blindness. Accessible diagrams benefit everyone with clearer, more professional appearance and ensure compliance with accessibility standards.
+
+#### Color Blindness Types to Support
+
+1. **Protanopia (red-blind)**: Cannot distinguish red/green, sees reds and greens as brownish-yellow
+2. **Deuteranopia (green-blind)**: Cannot distinguish red/green, sees reds and greens as brownish-yellow
+3. **Tritanopia (blue-yellow blind)**: Cannot distinguish blue/yellow, sees blues as pink and yellows as light pink
+
+#### Accessible Color Palette
+
+Use ONLY these proven accessible colors for Mermaid diagram elements:
+
+**Recommended Colors (safe for all color blindness types):**
+
+- **Blue**: `#0173B2` - Safe for all types, works in light and dark mode
+- **Orange**: `#DE8F05` - Safe for all types, works in light and dark mode
+- **Teal**: `#029E73` - Safe for all types, works in light and dark mode
+- **Purple**: `#CC78BC` - Safe for all types, works in light and dark mode
+- **Brown**: `#CA9161` - Safe for all types, works in light and dark mode
+- **Black**: `#000000` - Safe for borders and text on light backgrounds
+- **White**: `#FFFFFF` - Safe for text on dark backgrounds
+- **Gray**: `#808080` - Safe for secondary elements
+
+**DO NOT USE:**
+
+- ❌ Red (`#FF0000`, `#E74C3C`, `#DC143C`) - Invisible to protanopia/deuteranopia
+- ❌ Green (`#00FF00`, `#27AE60`, `#2ECC71`) - Invisible to protanopia/deuteranopia
+- ❌ Yellow (`#FFFF00`, `#F1C40F`) - Invisible to tritanopia
+- ❌ Light red/pink (`#FF69B4`, `#FFC0CB`) - Problematic for tritanopia
+- ❌ Bright magenta (`#FF00FF`) - Problematic for all types
+
+#### Dark and Light Mode Compliance
+
+All colors must provide sufficient contrast in BOTH rendering modes:
+
+**Light mode background**: White (`#FFFFFF`)
+**Dark mode background**: Dark gray/black (`#1E1E2E`)
+
+**Contrast Requirements (WCAG AA):**
+
+- Minimum contrast ratio: **4.5:1** for normal text
+- Large text (18pt+ or 14pt+ bold): **3:1**
+- Element borders must be distinguishable by shape + color, not color alone
+
+#### Shape Differentiation (Required)
+
+**Never rely on color alone.** Always use multiple visual cues:
+
+- Different node shapes (rectangle, circle, diamond, hexagon)
+- Different line styles (solid, dashed, dotted)
+- Clear text labels
+- Icons or symbols where appropriate
+
+#### Implementation Example
+
+**Good Example (accessible):**
+
+````markdown
+<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05), teal (#029E73) -->
+
+```mermaid
+graph TD
+		A["User Request<br/>(Blue)"]:::blue
+		B["Processing<br/>(Orange)"]:::orange
+		C["Response<br/>(Teal)"]:::teal
+
+		A --> B
+		B --> C
+
+		classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+		classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+		classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+````
+
+**Bad Example (not accessible):**
+
+````markdown
+<!-- Uses inaccessible colors: red and green -->
+
+```mermaid
+graph TD
+		A["Success"]:::green
+		B["Error"]:::red
+
+		classDef green fill:#00FF00,stroke:#000000  ❌ Invisible to protanopia/deuteranopia
+		classDef red fill:#FF0000,stroke:#000000    ❌ Invisible to protanopia/deuteranopia
+```
+````
+
+#### Testing Requirements
+
+All diagrams SHOULD be tested with color blindness simulators before publishing:
+
+- **Simulators**: [Coblis Color Blindness Simulator](https://www.color-blindness.com/coblis-color-blindness-simulator/)
+- **Contrast Checker**: [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+
+**Testing Process:**
+
+1. Create diagram with accessible color palette
+2. Test in at least one color blindness simulator (protanopia, deuteranopia, or tritanopia)
+3. Verify contrast ratios meet WCAG AA standards
+4. Confirm shape differentiation is sufficient
+
+#### Documentation Requirements
+
+For each diagram using colors:
+
+1. **Add comment** above diagram explaining the color scheme
+   - Example: `<!-- Uses colors #0173B2 (blue), #DE8F05 (orange) for accessibility -->`
+2. **Include labels** that don't rely solely on color
+3. **Test verification** noted in diagram documentation (if applicable)
+
+#### Key Implementation Points
+
+When creating Mermaid diagrams:
+
+- Use hex color codes (not CSS color names like "red", "green")
+- Always include black borders (`#000000`) for shape definition
+- Use white text (`#FFFFFF`) for dark-filled backgrounds
+- Use black text (`#000000`) for light-filled backgrounds
+- Define colors in `classDef` sections, not inline
+- Ensure contrast ratios meet WCAG AA (4.5:1 for normal text)
 
 ### Mermaid Resources
 
 - [Official Mermaid Documentation](https://mermaid.js.org/)
 - [Mermaid Live Editor](https://mermaid.live/) - Test diagrams online
 - [Obsidian Mermaid Docs](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram)
+- [Coblis Color Blindness Simulator](https://www.color-blindness.com/coblis-color-blindness-simulator/) - Test diagrams for accessibility
+- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) - Verify WCAG compliance
 
 ## 📝 ASCII Art: Optional Fallback
 
@@ -761,6 +896,11 @@ Before committing documentation with diagrams:
 
 - [ ] Primary format is Mermaid (unless specific reason for ASCII)
 - [ ] Mermaid diagrams use vertical orientation (TD or BT) for mobile-friendliness
+- [ ] Mermaid diagrams use color-blind friendly colors (only accessible palette)
+- [ ] Colors work in both light and dark mode
+- [ ] Shape differentiation used (not relying on color alone)
+- [ ] Contrast ratios meet WCAG AA standards (4.5:1 for text)
+- [ ] Color scheme documented in comment above diagram
 - [ ] Mermaid diagrams tested in GitHub preview or Obsidian
 - [ ] ASCII art (if used) verified in monospace font
 - [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)

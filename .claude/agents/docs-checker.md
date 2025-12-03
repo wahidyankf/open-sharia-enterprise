@@ -72,6 +72,15 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 - Verify LaTeX is NOT used inside code blocks or Mermaid diagrams
 - Check that all variables are defined after formulas
 
+#### Diagram Color Accessibility Validation
+
+- Verify Mermaid diagrams use color-blind friendly colors from accessible palette
+- Check that inaccessible colors (red, green, yellow) are NOT used
+- Confirm shape differentiation is used (not relying on color alone)
+- Validate black borders (#000000) are included for definition
+- Check for color scheme documentation in comments above diagrams
+- Verify contrast ratios meet WCAG AA standards (4.5:1 for text)
+
 **LaTeX Delimiter Validation:**
 
 When validating mathematical notation:
