@@ -451,7 +451,7 @@ Plans differ from `docs/` in several important ways:
 
 ### Diagrams in Plans
 
-Since `plans/` is outside the `docs/` folder (Obsidian vault), **all files in plans/ must use ASCII art** for diagrams and schemas. This ensures universal compatibility across text editors, terminals, and version control tools. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
+Files in `plans/` folder should use **Mermaid diagrams** as the primary format (same as all markdown files in the repository). ASCII art is optional and only needed for simple directory trees or rare edge cases. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
 
 ## Documentation Standards
 
@@ -534,7 +534,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram and Schema Convention
 
-Use Mermaid diagrams for files inside `docs/` directory (Obsidian vault) and ASCII art for files outside `docs/` (README.md, CLAUDE.md, etc.) to ensure universal compatibility. Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
+Use Mermaid diagrams as the primary format for all markdown files in the repository. ASCII art is optional and only needed for rare edge cases (simple directory trees, terminal-only environments). Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
 
 ### Emoji Usage Convention
 

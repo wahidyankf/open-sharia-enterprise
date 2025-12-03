@@ -188,7 +188,7 @@ Scenario: [Scenario name]
 
 [High-level description of the system architecture]
 
-[Use ASCII art for diagrams]
+[Use Mermaid diagrams - see Diagram Convention section below]
 
 ### Technology Stack
 
@@ -458,7 +458,7 @@ Architecture, design decisions, and implementation approach.
 
 [High-level description of the system architecture]
 
-[Use ASCII art for diagrams - see Diagram Convention section below]
+[Use Mermaid diagrams - see Diagram Convention section below]
 
 ## Technology Stack
 
@@ -502,7 +502,7 @@ Architecture, design decisions, and implementation approach.
 
 ## Data Models
 
-[Describe key data structures and relationships using ASCII art]
+[Describe key data structures and relationships using Mermaid diagrams - see Diagram Convention section below]
 
 ## API Design
 
@@ -1062,58 +1062,62 @@ plans/backlog/2025-11-25__user-auth/
 └── pl-ba__delivery.md        # NO PREFIXES!
 ```
 
-### 2. Diagram Convention: ASCII Art ONLY
+### 2. Diagram Convention: Mermaid Primary, ASCII Optional
 
-Since `plans/` is outside the `docs/` folder (Obsidian vault), you MUST use ASCII art for all diagrams and schemas. This ensures universal compatibility across text editors, terminals, and version control tools.
+Files in `plans/` folder should use **Mermaid diagrams** as the primary format (same as all markdown files in the repository). ASCII art is optional and only needed for simple directory trees or rare edge cases where Mermaid is not suitable.
 
-**Example ASCII Art Architecture Diagram:**
+**Example Mermaid Architecture Diagram (Recommended):**
 
+````markdown
+```mermaid
+graph TD
+    A[Client Browser] -->|HTTPS| B[API Gateway/Proxy]
+    B --> C[Auth Service - Node.js]
+    B --> D[API Service - Node.js]
+    C --> E[User DB - PostgreSQL]
+    D --> F[App DB - PostgreSQL]
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     System Architecture                      │
-└─────────────────────────────────────────────────────────────┘
+````
 
-                            ┌──────────┐
-                            │  Client  │
-                            │ (Browser)│
-                            └────┬─────┘
-                                 │
-                                 │ HTTPS
-                                 ▼
-                    ┌────────────────────────┐
-                    │   API Gateway/Proxy    │
-                    │     (Load Balancer)    │
-                    └───────┬───────┬────────┘
-                            │       │
-                ┌───────────┘       └───────────┐
-                │                               │
-                ▼                               ▼
-        ┌──────────────┐              ┌──────────────┐
-        │  Auth Service│              │  API Service │
-        │  (Node.js)   │              │  (Node.js)   │
-        └──────┬───────┘              └──────┬───────┘
-               │                             │
-               │                             │
-               ▼                             ▼
-        ┌──────────────┐              ┌──────────────┐
-        │   User DB    │              │  App DB      │
-        │ (PostgreSQL) │              │ (PostgreSQL) │
-        └──────────────┘              └──────────────┘
+**Example Mermaid Data Flow Diagram:**
+
+````markdown
+```mermaid
+graph TD
+    A[User Action] --> B[Frontend]
+    B --> C[API]
+    C --> D[Service Layer]
+    D --> E[Database]
+    D --> F[Cache - Redis]
+    C --> G[Message Queue - RabbitMQ]
+    B --> H[Analytics]
 ```
+````
 
-**Example ASCII Art Data Flow:**
+**Example Mermaid Entity Relationship:**
 
+````markdown
+```mermaid
+erDiagram
+    USER ||--o{ ACCOUNT : owns
+    ACCOUNT ||--o{ TRANSACTION : contains
+    TRANSACTION }o--|| TRANSACTION_TYPE : has
+
+    USER {
+        string id PK
+        string email
+        string name
+    }
+
+    ACCOUNT {
+        string id PK
+        string user_id FK
+        decimal balance
+    }
 ```
-User Action → Frontend → API → Service Layer → Database
-                 │         │         │
-                 │         │         └──→ Cache (Redis)
-                 │         │
-                 │         └──→ Message Queue (RabbitMQ)
-                 │
-                 └──→ Analytics (Track events)
-```
+````
 
-**Example ASCII Art Entity Relationship:**
+**Alternative: Simple ASCII Directory Tree (when clearer than Mermaid):**
 
 ```
 ┌──────────────┐         ┌──────────────┐         ┌──────────────┐
@@ -1141,7 +1145,7 @@ Relationships:
 - Product has many OrderItems (1:N)
 ```
 
-❌ **Do NOT use Mermaid diagrams** in plans/ - they won't render in all environments.
+✅ **Use Mermaid diagrams as primary format** in plans/ - modern platforms (GitHub, VS Code, Obsidian) all support Mermaid rendering.
 
 For more diagram examples and conventions, see [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md).
 

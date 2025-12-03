@@ -9,7 +9,7 @@ tags:
   - visualization
   - conventions
 created: 2025-11-24
-updated: 2025-12-01
+updated: 2025-12-04
 ---
 
 # Diagram and Schema Convention
@@ -18,45 +18,74 @@ This document defines when and how to use different diagram formats in the open-
 
 ## 🎯 The Core Principle
 
-The choice between Mermaid diagrams and ASCII art depends on **where the file lives** and **who will read it**:
+**Mermaid diagrams are the primary and preferred format for all markdown files** in this repository, both inside and outside the `docs/` directory.
 
-- **Inside `docs/` directory**: Use Mermaid diagrams for rich, native rendering in Obsidian
-- **Outside `docs/` directory**: Use ASCII art for maximum compatibility across all platforms
+- **All markdown files**: Use Mermaid diagrams as the primary format
+- **ASCII art**: Optional fallback for edge cases where Mermaid isn't supported (rarely needed)
 
-## 💡 Why This Matters
+## 💡 Why Mermaid First?
 
-Different tools render diagrams differently. By following location-based conventions, we ensure diagrams always display correctly regardless of where they're viewed.
+Mermaid diagram support has become ubiquitous across modern development tools:
 
-### Obsidian Vault Context
+### Wide Platform Support
 
-The `docs/` directory is our Obsidian vault - a rich markdown environment with native Mermaid support. Obsidian users expect beautiful, interactive diagrams that take full advantage of the tool's capabilities.
+- **GitHub**: Native Mermaid rendering in markdown files (since May 2021)
+- **Text Editors**: VS Code, IntelliJ IDEA, Sublime Text (via plugins/extensions)
+- **Obsidian**: Native rendering without plugins
+- **Documentation Platforms**: GitLab, Notion, Confluence all support Mermaid
+- **Mobile Apps**: GitHub mobile, Obsidian mobile render Mermaid correctly
 
-### Universal Compatibility Context
+### Advantages Over ASCII Art
 
-Files like `README.md`, `CLAUDE.md`, and other root-level documentation are viewed across diverse platforms: GitHub web interface, text editors, terminals, mobile apps, and CI/CD logs. ASCII art renders consistently everywhere without requiring special rendering support.
+1. **Professional Appearance**: Clean, crisp diagrams with proper styling
+2. **Maintainability**: Text-based source is easier to edit than ASCII positioning
+3. **Expressiveness**: Supports complex relationships (sequence diagrams, entity relationships, state machines)
+4. **Interactive**: Many platforms allow zooming and inspection
+5. **Accessible**: Screen readers can parse the source text structure
 
-## 🎨 Mermaid Diagrams: For `docs/` Directory
+### When ASCII Art Is Still Useful
+
+ASCII art is now **optional** and only recommended for rare edge cases:
+
+- Terminal-only environments without rich markdown support
+- Extremely limited bandwidth scenarios where rendering is disabled
+- Simple directory tree structures (where ASCII is clearer than Mermaid)
+
+**In practice**: Most users will view markdown files through GitHub, Obsidian, or modern text editors, all of which support Mermaid.
+
+## 🎨 Mermaid Diagrams: Primary Format for All Markdown Files
 
 ### When to Use
 
-Use Mermaid diagrams for **all files inside the `docs/` directory**:
+Use Mermaid diagrams for **all markdown files** in the repository:
 
 ```
-docs/
-├── tutorials/          ← Use Mermaid
-├── how-to/            ← Use Mermaid
-├── reference/         ← Use Mermaid
-├── explanation/       ← Use Mermaid
-└── journals/          ← Use Mermaid
+open-sharia-enterprise/
+├── README.md              ← Use Mermaid
+├── CLAUDE.md             ← Use Mermaid
+├── CONTRIBUTING.md       ← Use Mermaid
+├── docs/                 ← Use Mermaid
+│   ├── tutorials/
+│   ├── how-to/
+│   ├── reference/
+│   ├── explanation/
+│   └── journals/
+├── plans/                ← Use Mermaid
+│   ├── in-progress/
+│   ├── backlog/
+│   └── done/
+└── .github/              ← Use Mermaid
+    └── *.md
 ```
 
 ### Why Mermaid?
 
-1. **Native Rendering** - Obsidian renders Mermaid natively without plugins
+1. **Universal Support** - GitHub, Obsidian, VS Code, and most platforms render Mermaid natively
 2. **Rich Visuals** - Professional-looking diagrams with colors, shapes, and styling
 3. **Interactive** - Diagrams can be zoomed and inspected
 4. **Maintainable** - Text-based source is easy to version control and edit
 5. **Powerful** - Supports flowcharts, sequence diagrams, class diagrams, entity relationships, state diagrams, and more
+6. **Mobile-Friendly** - Renders beautifully on mobile devices (when using vertical orientation)
 
 ### Mermaid Syntax
 
@@ -304,47 +333,30 @@ graph TD
 - [Mermaid Live Editor](https://mermaid.live/) - Test diagrams online
 - [Obsidian Mermaid Docs](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram)
 
-## 📝 ASCII Art: For Files Outside `docs/`
+## 📝 ASCII Art: Optional Fallback
 
 ### When to Use
 
-Use ASCII art for **all files outside the `docs/` directory**:
+ASCII art is now **optional** and should only be used when:
 
-```
-open-sharia-enterprise/
-├── README.md          ← Use ASCII art
-├── CLAUDE.md          ← Use ASCII art
-├── CONTRIBUTING.md    ← Use ASCII art
-├── plans/            ← Use ASCII art
-│   ├── in-progress/
-│   ├── backlog/
-│   └── done/
-├── .github/
-│   └── *.md          ← Use ASCII art
-└── docs/             ← Use Mermaid (see above)
-```
+- **Directory tree structures**: Simple file/folder hierarchies (ASCII is often clearer than Mermaid for this specific use case)
+- **Terminal-only contexts**: Rare situations where rich markdown rendering is completely unavailable
+- **Personal preference**: When you find ASCII art clearer for a specific simple diagram
 
-### Why ASCII Art?
+**Default recommendation**: Use Mermaid for all diagrams unless you have a specific reason to use ASCII art.
 
-1. **Universal Compatibility** - Renders identically everywhere (GitHub, terminals, text editors)
-2. **No Dependencies** - No special rendering engines required
-3. **Predictable** - WYSIWYG - what you type is what everyone sees
-4. **Lightweight** - Fast to load, minimal bandwidth
-5. **Accessible** - Screen readers and text-based browsers handle it well
+### Why ASCII Art Is Now Optional
 
-### Important: Plans Folder
+With widespread Mermaid support across GitHub, Obsidian, VS Code, and other platforms, the original rationale for requiring ASCII art in files outside `docs/` no longer applies:
 
-The `plans/` folder is located at the repository root (NOT inside `docs/`) and contains temporary project planning documents. Since it's outside the Obsidian vault, **all files within `plans/` must use ASCII art** for any diagrams or schemas.
+1. **GitHub Support**: GitHub has supported Mermaid natively since May 2021
+2. **Editor Support**: Modern text editors (VS Code, IntelliJ, Sublime) all support Mermaid previews
+3. **Mobile Support**: GitHub mobile and Obsidian mobile render Mermaid correctly
+4. **Better Maintainability**: Mermaid is easier to update than manually positioned ASCII art
 
-This applies to:
+**Previous approach**: We required ASCII art for files outside `docs/` (README.md, CLAUDE.md, plans/) to ensure universal compatibility.
 
-- `plans/in-progress/*/README.md`
-- `plans/in-progress/*/requirements.md`
-- `plans/in-progress/*/tech-docs.md`
-- `plans/in-progress/*/delivery.md`
-- And equivalent files in `plans/backlog/` and `plans/done/`
-
-**Rationale**: The `plans/` folder is a root-level working documents folder (like `.claude/`, `.husky/`). It is NOT part of the Obsidian vault (`docs/`). ASCII art ensures universal compatibility for files outside the documentation vault, maintaining consistency with other root-level files.
+**Current approach**: Use Mermaid everywhere. ASCII art is a fallback option, not a requirement.
 
 ### ASCII Art Use Cases
 
@@ -481,14 +493,15 @@ Connectors:
 
 Use this quick reference to choose the right format:
 
-| File Location     | Use         | Reason                                  |
-| ----------------- | ----------- | --------------------------------------- |
-| `docs/**/*.md`    | **Mermaid** | Native Obsidian rendering, rich visuals |
-| `README.md`       | **ASCII**   | GitHub web, terminal, universal access  |
-| `CLAUDE.md`       | **ASCII**   | AI agents, text editors, terminals      |
-| `plans/**/*.md`   | **ASCII**   | Working documents, universal access     |
-| `.github/**/*.md` | **ASCII**   | GitHub Actions logs, PR reviews         |
-| `CONTRIBUTING.md` | **ASCII**   | First-time contributors, all platforms  |
+| File Location     | Primary Format | Alternative       | Notes                                           |
+| ----------------- | -------------- | ----------------- | ----------------------------------------------- |
+| `docs/**/*.md`    | **Mermaid**    | ASCII (optional)  | Native Obsidian rendering, rich visuals         |
+| `README.md`       | **Mermaid**    | ASCII (optional)  | GitHub renders Mermaid natively                 |
+| `CLAUDE.md`       | **Mermaid**    | ASCII (optional)  | Modern text editors support Mermaid             |
+| `plans/**/*.md`   | **Mermaid**    | ASCII (optional)  | GitHub and editors render Mermaid               |
+| `.github/**/*.md` | **Mermaid**    | ASCII (optional)  | GitHub Actions and web UI support Mermaid       |
+| `CONTRIBUTING.md` | **Mermaid**    | ASCII (optional)  | Contributors use GitHub web or modern editors   |
+| Directory trees   | **ASCII**      | Mermaid (complex) | ASCII is clearer for simple file/folder listing |
 
 ## 🧪 Examples in Context
 
@@ -524,24 +537,36 @@ sequenceDiagram
 
 **File**: `README.md`
 
-**Use ASCII Art**:
+**Recommended: Use Mermaid for Complex Diagrams**:
+
+````markdown
+## Project Architecture
+
+```mermaid
+graph TD
+    A[Client Request] --> B[API Gateway]
+    B --> C{Auth Check}
+    C -->|Valid| D[Business Logic]
+    C -->|Invalid| E[Return 401]
+    D --> F[Database]
+    F --> D
+    D --> G[Response]
+```
+````
+
+**Alternative: Use ASCII for Simple Directory Trees**:
 
 ```markdown
 ## Project Structure
-```
 
 open-sharia-enterprise/
 ├── .claude/ # Claude Code configuration
 ├── docs/ # Documentation
 │ ├── tutorials/ # Step-by-step guides
 │ ├── how-to/ # Problem solutions
-│ ├── reference/ # Technical specs
-│ └── explanation/ # Concepts
+│ └── reference/ # Technical specs
 ├── src/ # Source code
 └── package.json # Dependencies
-
-```
-
 ```
 
 ### Example 3: State Machine in Tutorial
@@ -570,103 +595,131 @@ stateDiagram-v2
 
 **File**: `CLAUDE.md`
 
-**Use ASCII Art**:
+**Recommended: Use Mermaid**:
+
+````markdown
+## Agent Architecture
+
+```mermaid
+graph TD
+    A[Claude Code - Main Agent] --> B[docs-maker.md]
+    A --> C[repo-rules-checker.md]
+    A --> D[repo-rules-updater.md]
+    A --> E[plan-maker.md]
+
+    B --> F[Documentation]
+    C --> G[Validation]
+    D --> H[Propagation]
+    E --> I[Planning]
+```
+````
+
+**Alternative: Use ASCII for Simple Hierarchies**:
 
 ```markdown
 ## Agent Architecture
+
+Claude Code (Main Agent)
+├── docs-maker.md (Documentation)
+├── repo-rules-checker.md (Validation)
+├── repo-rules-updater.md (Propagation)
+└── plan-maker.md (Planning)
 ```
 
-┌──────────────────────────────────────┐
-│ Claude Code (Main Agent) │
-└────────────┬─────────────────────────┘
-│
-├──▶ doc-writer.md (Documentation)
-│
-├──▶ repo-rules-checker.md (Validation)
-│
-└──▶ repo-rules-updater.md (Propagation)
+## Mixing Formats
 
-```
+**Prefer consistency within a single file**. Choose Mermaid as your primary format and use it throughout the file unless you have a specific reason to use ASCII art.
 
-```
-
-## Mixing Formats (Avoid)
-
-**Don't mix formats within a single context**. If your file is in `docs/`, use Mermaid consistently. If outside `docs/`, use ASCII art throughout.
-
-❌ **Bad** (mixing in `docs/explanation/ex-ar__system.md`):
+❌ **Avoid mixing unnecessarily**:
 
 ````markdown
+## System Flow
+
 ```mermaid
 graph TD
-		A --> B
+    A --> B
 ```
 
+## Directory Structure
+
 ```
-A --> B
+A
+└── B
+```
+
+## Another Flow
+
+A --> B (plain text - no format!)
+````
+
+✅ **Good - consistent Mermaid**:
+
+````markdown
+## System Flow
+
+```mermaid
+graph TD
+    A[Component A] --> B[Component B]
+```
+
+## State Transitions
+
+```mermaid
+stateDiagram-v2
+    [*] --> Active
+    Active --> Inactive
 ```
 ````
 
-✅ **Good** (consistent Mermaid in `docs/`):
+✅ **Acceptable - intentional format choice**:
 
 ````markdown
-```mermaid
-graph TD
-		A --> B
-```
+## Architecture Diagram
 
 ```mermaid
-sequenceDiagram
-		A->>B: Request
+graph TD
+    A[API] --> B[Database]
+```
+
+## Project Structure (simple tree)
+
+```
+project/
+├── src/
+└── docs/
 ```
 ````
+
+**Rationale**: Mermaid is preferred, but ASCII directory trees are acceptable when they're clearer for simple file/folder listings.
 
 ## Migration Strategy
 
-### Converting ASCII to Mermaid
+### Upgrading ASCII to Mermaid (Recommended)
 
-When moving diagrams from root files to `docs/`:
+Since Mermaid is now the primary format, consider upgrading existing ASCII art diagrams to Mermaid for better maintainability and visual quality:
 
-1. Identify the diagram type (flowchart, sequence, etc.)
+**When to upgrade**:
+
+- Complex flowcharts or architecture diagrams currently in ASCII
+- Diagrams that are hard to update due to ASCII positioning
+- When adding new content to a file with ASCII diagrams (good time to upgrade all diagrams)
+
+**When to keep ASCII**:
+
+- Simple directory tree structures (ASCII is clearer)
+- If the ASCII diagram is simple and works perfectly well
+
+**Upgrade process**:
+
+1. Identify the diagram type (flowchart, sequence, state machine, etc.)
 2. Use appropriate Mermaid syntax
-3. Test rendering in Obsidian
-4. Verify all relationships preserved
+3. Test rendering on GitHub preview or Obsidian
+4. Verify all relationships and labels are preserved
+5. Keep vertical orientation (top-down or bottom-top) for mobile-friendliness
 
-**Before** (`README.md`):
+**Example upgrade**:
 
-```
-A → B → C
-```
-
-**After** (`docs/explanation/ex-ar__flow.md`):
-
-````markdown
-```mermaid
-graph LR
-		A --> B --> C
-```
-````
-
-### Converting Mermaid to ASCII
-
-When moving diagrams from `docs/` to root files:
-
-1. Simplify complex relationships
-2. Use box-drawing characters
-3. Test in plain text editor
-4. Verify readability in terminal
-
-**Before** (`docs/tutorials/tu__flow.md`):
-
-````markdown
-```mermaid
-graph TD
-		A[Start] --> B[Process]
-		B --> C[End]
-```
-````
-
-**After** (`README.md`):
+**Before (ASCII)**:
 
 ```
 ┌───────┐
@@ -684,17 +737,37 @@ graph TD
 └─────┘
 ```
 
+**After (Mermaid - vertical orientation)**:
+
+````markdown
+```mermaid
+graph TD
+    A[Start] --> B[Process]
+    B --> C[End]
+```
+````
+
+### No Need to Convert Mermaid to ASCII
+
+With widespread Mermaid support, there's no reason to convert Mermaid diagrams to ASCII art. If you encounter a situation where Mermaid doesn't render, consider:
+
+1. Using a different viewing platform (GitHub web, VS Code, Obsidian)
+2. Updating your editor/viewer to support Mermaid
+3. Only in extreme edge cases: create an ASCII fallback
+
 ## Verification Checklist
 
 Before committing documentation with diagrams:
 
-- [ ] File location determines format (Mermaid in `docs/`, ASCII elsewhere)
-- [ ] Mermaid diagrams tested in Obsidian preview
-- [ ] ASCII art verified in monospace font
-- [ ] No format mixing within single file
+- [ ] Primary format is Mermaid (unless specific reason for ASCII)
+- [ ] Mermaid diagrams use vertical orientation (TD or BT) for mobile-friendliness
+- [ ] Mermaid diagrams tested in GitHub preview or Obsidian
+- [ ] ASCII art (if used) verified in monospace font
+- [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)
 - [ ] All labels and text are clear and readable
 - [ ] Complex diagrams simplified where possible
 - [ ] Diagram serves the documentation purpose
+- [ ] Vertical orientation preferred (horizontal only if clarity requires it)
 
 ## 🔗 Related Documentation
 
@@ -712,4 +785,4 @@ Before committing documentation with diagrams:
 
 ---
 
-**Last Updated**: 2025-11-26
+**Last Updated**: 2025-12-04
