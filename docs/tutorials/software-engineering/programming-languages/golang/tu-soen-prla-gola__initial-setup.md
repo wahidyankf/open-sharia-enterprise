@@ -26,6 +26,31 @@ By the end of this tutorial, you'll have:
 
 **Time needed**: 5-15 minutes depending on your system
 
+## 🔄 Installation Verification Flow
+
+Here's the simple path from download to running code:
+
+```mermaid
+graph TD
+    A[Download Go from go.dev/dl] --> B[Install on Your OS]
+    B --> C[Verify: go version]
+    C --> D{Version Shows?}
+    D -->|Yes| E[Create hello.go]
+    D -->|No| F[Check PATH/Restart Terminal]
+    F --> C
+    E --> G[Run: go run hello.go]
+    G --> H{Prints Hello World?}
+    H -->|Yes| I[Success! Go Works]
+    H -->|No| J[Check File Location]
+    J --> G
+
+    style I fill:#90EE90,stroke:#2E8B57,stroke-width:2px
+    style D fill:#FFD700,stroke:#FF8C00,stroke-width:2px
+    style H fill:#FFD700,stroke:#FF8C00,stroke-width:2px
+```
+
+This diagram shows every verification checkpoint - you'll know immediately if something's wrong and where to look.
+
 ## 📋 Prerequisites
 
 - Basic familiarity with your computer's terminal/command line

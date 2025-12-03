@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: 2025-12-02T10:15:00+07:00
+lastFullScan: 2025-12-03T12:00:00+07:00
 description: Cache of verified external links. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -294,3 +294,84 @@ links:
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__dast.md
+
+  - url: https://go.dev/blog
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://go.dev/blog
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+
+  - url: https://go.dev/dl
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://go.dev/dl
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
+
+  - url: https://go.dev/doc
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://go.dev/doc
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md
+
+  - url: https://go.dev/doc/effective_go
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://go.dev/doc/effective_go
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+
+  - url: https://go.dev/help
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 301
+    finalUrl: https://go.dev/help
+    redirectChain:
+      - from: https://golang.org/help
+        to: https://go.dev/help
+        status: 301
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
+
+  - url: https://go.dev/tour/
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://go.dev/tour/
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+
+  - url: https://go.dev/wiki/
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://go.dev/wiki/
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+
+  - url: https://gobyexample.com
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://gobyexample.com
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+
+  - url: https://github.com/golang/go
+    lastChecked: 2025-12-03T12:00:00+07:00
+    statusCode: 200
+    finalUrl: https://github.com/golang/go
+    redirectChain: null
+    usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__advanced.md
