@@ -7,7 +7,7 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2025-11-30
+updated: 2025-12-03
 ---
 
 # Conventions
@@ -22,10 +22,11 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the four-category documentation organization framework we use
 - [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for daily research notes and monthly summaries
 - [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage to enhance document scannability and engagement
-- [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas
+- [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas in GitHub-compatible markdown. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), and Obsidian/GitHub dual compatibility
 - [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 - [Temporary Files Convention](./ex-co__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 - [Tutorial Convention](./ex-co__tutorials.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
+- [Tutorial Naming Convention](./ex-co__tutorial-naming.md) - Standardized tutorial types and depth levels (Getting Started, Crash Course, Beginner, Intermediate, Advanced, Cookbook)
 
 ---
 
