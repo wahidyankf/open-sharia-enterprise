@@ -7,7 +7,7 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2025-12-03
+updated: 2025-12-04
 ---
 
 # Conventions
@@ -16,7 +16,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ## 📋 Contents
 
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Master reference for all color usage: verified accessible palette (Blue, Orange, Teal, Purple, Brown), color blindness types, WCAG compliance requirements, implementation guidance for Mermaid diagrams and AI agents, testing methodology with simulators and contrast checkers
+- [Color Accessibility Convention](./ex-co__color-accessibility.md) - MASTER REFERENCE for all color-related decisions in the repository. Defines verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), supports all color blindness types (protanopia, deuteranopia, tritanopia), meets WCAG AA standards, provides complete implementation guidance for Mermaid diagrams and AI agent categorization, and includes testing methodology with color blindness simulators and contrast checkers. All color usage must reference this convention as the authoritative source
 - [Diagram and Schema Convention](./ex-co__diagrams.md) - Standards for using Mermaid diagrams (primary) and ASCII art (optional) with color-blind friendly colors for accessibility
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the four-category documentation organization framework we use
 - [Documentation File Naming Convention](./ex-co__file-naming-convention.md) - Systematic approach to naming files with hierarchical prefixes

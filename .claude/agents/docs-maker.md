@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
 created: 2025-11-29
-updated: 2025-12-03
+updated: 2025-12-04
 ---
 
 # Documentation Writer Agent
@@ -84,8 +84,8 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - **All markdown files**: Use Mermaid diagrams as the primary format (inside and outside `docs/` directory)
 - **ASCII art**: Optional fallback for rare edge cases (simple directory trees, terminal-only environments)
 - **Diagram Orientation (CRITICAL)**: ALL Mermaid diagrams MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
-- **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes. Use accessible palette only: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161). Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone)
-- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete details including accessible color palette, testing requirements, and WCAG compliance
+- **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for the complete verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, testing methodology with color blindness simulators, and implementation guidance. Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone). Always test diagrams with color blindness simulators before publishing
+- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details
 
 ### Emoji Usage Convention
 
@@ -361,9 +361,10 @@ You have access to the project's documentation and source code. When creating ne
 **Documentation Conventions (Required Reading):**
 
 - [Conventions Index](../docs/explanation/conventions/README.md) - Index of all conventions
+- [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
 - [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
 - [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) - How to link between files with GitHub-compatible markdown
-- [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) - When to use Mermaid diagrams vs ASCII art
+- [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
 - [Diátaxis Framework](../docs/explanation/conventions/ex-co__diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**

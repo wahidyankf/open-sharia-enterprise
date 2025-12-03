@@ -534,7 +534,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram and Schema Convention
 
-Use Mermaid diagrams as the primary format for all markdown files in the repository. ASCII art is optional and only needed for rare edge cases (simple directory trees, terminal-only environments). Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. **All Mermaid diagrams must use color-blind friendly colors** (accessible palette only: blue #0173B2, orange #DE8F05, teal #029E73, purple #CC78BC, brown #CA9161) that work in both light and dark modes. Never use red or green (invisible to protanopia/deuteranopia) or yellow (invisible to tritanopia). See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details including accessible color palette, testing requirements, and WCAG compliance.
+Use Mermaid diagrams as the primary format for all markdown files in the repository. ASCII art is optional and only needed for rare edge cases (simple directory trees, terminal-only environments). Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. **CRITICAL: All Mermaid diagrams must use color-blind friendly colors from the verified accessible palette ONLY.** See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color-related decisions - for the verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, and testing methodology. Never use red, green, or yellow (invisible to color blindness types). See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
 
 ### Emoji Usage Convention
 
@@ -587,7 +587,7 @@ See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-
 ### Key Resources
 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
-- **Color Accessibility Guide:** [`docs/explanation/conventions/ex-co__color-accessibility.md`](./docs/explanation/conventions/ex-co__color-accessibility.md) - Comprehensive guide for accessible color palette, WCAG standards, and color blindness support
+- **Color Accessibility Guide (MASTER REFERENCE):** [`docs/explanation/conventions/ex-co__color-accessibility.md`](./docs/explanation/conventions/ex-co__color-accessibility.md) - Authoritative source for ALL color-related decisions in this repository. Defines verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), supports all color blindness types (protanopia, deuteranopia, tritanopia), provides WCAG AA compliance standards, complete testing methodology with color blindness simulators and contrast checkers, and implementation guidance for Mermaid diagrams, AI agent categorization, and future CSS/styling. All agents and documentation working with colors MUST reference this convention as the single source of truth
 - **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](./docs/explanation/conventions/ex-co__file-naming-convention.md)
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](./docs/explanation/conventions/ex-co__linking-convention.md)
 - **Diagram and Schema Guide:** [`docs/explanation/conventions/ex-co__diagrams.md`](./docs/explanation/conventions/ex-co__diagrams.md)
