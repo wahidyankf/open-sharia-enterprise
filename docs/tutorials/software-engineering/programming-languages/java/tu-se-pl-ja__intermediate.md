@@ -3,13 +3,13 @@ title: Intermediate Java - Production-Ready Development
 description: Learn production techniques and patterns - design patterns, SOLID principles, concurrency, performance, and database integration for professional development
 category: tutorial
 tags:
-	- java
-	- intermediate
-	- design-patterns
-	- concurrency
-	- performance
-	- production
-	- jdbc
+  - java
+  - intermediate
+  - design-patterns
+  - concurrency
+  - performance
+  - production
+  - jdbc
 created: 2025-12-04
 updated: 2025-12-04
 ---

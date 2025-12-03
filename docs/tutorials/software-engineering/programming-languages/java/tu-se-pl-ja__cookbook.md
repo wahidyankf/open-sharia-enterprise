@@ -3,12 +3,12 @@ title: Java Cookbook - Practical Recipes
 description: Day-to-day recipes and solutions for common Java programming problems - ready to copy and use
 category: tutorial
 tags:
-	- java
-	- cookbook
-	- recipes
-	- practical
-	- solutions
-	- reference
+  - java
+  - cookbook
+  - recipes
+  - practical
+  - solutions
+  - reference
 created: 2025-12-04
 updated: 2025-12-04
 ---

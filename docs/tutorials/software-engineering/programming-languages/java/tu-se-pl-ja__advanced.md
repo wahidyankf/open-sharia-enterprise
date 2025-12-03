@@ -3,14 +3,14 @@ title: Advanced Java - Expert Mastery
 description: Master JVM internals, advanced concurrency, reflection, optimization, and system design for expert-level Java development
 category: tutorial
 tags:
-	- java
-	- advanced
-	- jvm
-	- internals
-	- concurrency
-	- reflection
-	- optimization
-	- expert
+  - java
+  - advanced
+  - jvm
+  - internals
+  - concurrency
+  - reflection
+  - optimization
+  - expert
 created: 2025-12-04
 updated: 2025-12-04
 ---

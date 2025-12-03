@@ -3,11 +3,11 @@ title: Initial Setup for Java
 description: Get Java running in 15 minutes - install JDK, verify installation, and run your first program
 category: tutorial
 tags:
-	- java
-	- initial-setup
-	- installation
-	- hello-world
-	- jdk
+  - java
+  - initial-setup
+  - installation
+  - hello-world
+  - jdk
 created: 2025-12-04
 updated: 2025-12-04
 ---
