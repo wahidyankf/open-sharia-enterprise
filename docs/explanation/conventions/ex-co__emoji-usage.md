@@ -107,6 +107,63 @@ Use for AI agent categorization in `.claude/agents/README.md`:
 
 **Note:** These colored square emojis are ONLY used in `.claude/agents/README.md` to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../development/ex-de__ai-agents.md) for complete details on agent color categorization.
 
+**Color Accessibility:** All four colors (blue, green, yellow, purple) are from the verified accessible palette and work for all types of color blindness (protanopia, deuteranopia, tritanopia). These emojis are SUPPLEMENTARY to text labels - agents are primarily identified by their name, role suffix, and description, not by color alone. See [Color Accessibility Convention](./ex-co__color-accessibility.md) for complete details.
+
+## 🎨 Color Accessibility for Colored Emojis
+
+**Where colored emojis (like 🟦🟩🟨🟪) are used for visual categorization, ensure:**
+
+1. **Colors are SUPPLEMENTARY to semantic information**
+   - Primary identification relies on non-color factors (shape, text label, context)
+   - Color enhances visual scannability but is never the sole identifier
+
+2. **All colors used are from the verified accessible palette**
+   - Blue (#0173B2), Orange (#DE8F05), Teal (#029E73), Purple (#CC78BC), Brown (#CA9161)
+   - See [Color Accessibility Convention](./ex-co__color-accessibility.md) for complete palette details
+
+3. **Users with color blindness can still identify items by shape/text alone**
+   - Square emoji shape (🟦) is distinct from other emoji shapes
+   - Text labels ("Writer", "Checker", "Updater") provide semantic meaning
+   - Context (placement next to agent names) provides additional cues
+
+4. **Never rely on color alone for categorization**
+   - Always combine color with text labels
+   - Always combine color with shape differentiation
+   - Always provide context through surrounding text
+
+**Example of accessible colored emoji usage:**
+
+✅ **Good - Color + Text + Shape:**
+
+```markdown
+### 🟦 `docs-maker.md`
+
+Expert documentation writer specializing in Obsidian-optimized markdown.
+```
+
+**Why this works:**
+
+- Color: Blue square (accessible color from verified palette)
+- Shape: Square emoji (distinguishable shape)
+- Text: "docs-maker.md" (primary identifier)
+- Description: "Expert documentation writer..." (semantic meaning)
+
+❌ **Bad - Color only:**
+
+```markdown
+### 🟦
+
+Agent for documentation
+```
+
+**Why this fails:**
+
+- No text label to identify specific agent
+- Relies solely on color and shape
+- No semantic context provided
+
+For complete color accessibility guidelines including WCAG standards, testing tools, and research sources, see [Color Accessibility Convention](./ex-co__color-accessibility.md).
+
 ## ✅ Usage Rules
 
 ### Rule 1: Semantic Consistency
@@ -625,6 +682,7 @@ When reviewing emoji usage, verify:
 - [Diátaxis Framework](./ex-co__diataxis-framework.md)
 - [Journals Format](./ex-co__journals-format.md)
 - [AI Agents Convention](../development/ex-de__ai-agents.md) - For agent color categorization using colored square emojis
+- [Color Accessibility Convention](./ex-co__color-accessibility.md) - For accessible color palette and WCAG standards
 
 ## 📝 Notes
 
@@ -657,5 +715,5 @@ If unsure whether to use an emoji:
 
 ---
 
-**Last Updated:** 2025-11-26
+**Last Updated:** 2025-12-04
 **Status:** 🆕 New Convention

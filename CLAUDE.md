@@ -587,6 +587,7 @@ See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-
 ### Key Resources
 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
+- **Color Accessibility Guide:** [`docs/explanation/conventions/ex-co__color-accessibility.md`](./docs/explanation/conventions/ex-co__color-accessibility.md) - Comprehensive guide for accessible color palette, WCAG standards, and color blindness support
 - **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](./docs/explanation/conventions/ex-co__file-naming-convention.md)
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](./docs/explanation/conventions/ex-co__linking-convention.md)
 - **Diagram and Schema Guide:** [`docs/explanation/conventions/ex-co__diagrams.md`](./docs/explanation/conventions/ex-co__diagrams.md)
