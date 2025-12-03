@@ -29,8 +29,8 @@ This document defines the standard tutorial types and naming conventions used ac
 
 ```mermaid
 graph TB
-	A[Getting Started<br/>0-5%]
-	B[Crash Course<br/>5-30%]
+	A[Initial Setup<br/>0-5%]
+	B[Quick Start<br/>5-30%]
 	C[Beginner<br/>0-60%]
 	D[Intermediate<br/>60-85%]
 	E[Advanced<br/>85-95%]
@@ -55,15 +55,20 @@ graph TB
 
 **Legend**:
 
-- Solid arrows (→) show linear progression
-- Dotted arrows (⋯→) show cookbook can be used at multiple levels
+- Solid arrows (→) show linear progression within the "Full Set" (5 sequential levels)
+- Dotted arrows (⋯→) show cookbook can be used at multiple levels (parallel track)
 - Percentages indicate depth of domain knowledge coverage
+
+**Full Set vs Cookbook**:
+
+- **Full Set**: The 5 sequential learning levels (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) that provide comprehensive mastery from 0% to 95% coverage
+- **Cookbook**: A parallel, practical reference track (not part of the Full Set) for solving specific problems at any skill level
 
 ---
 
 ## 📚 Tutorial Type Definitions
 
-### 🚀 Getting Started
+### 🚀 Initial Setup
 
 **Coverage**: 0-5% of domain knowledge
 **Time**: 5-15 minutes
@@ -88,22 +93,22 @@ Minimal tutorial to get you running your first program or using a tool. In progr
 
 **Example titles**:
 
-- "Getting Started with Go"
-- "Getting Started with React"
-- "Getting Started with PostgreSQL"
+- "Initial Setup for Go"
+- "Initial Setup for React"
+- "Initial Setup for PostgreSQL"
 
 **When to use**: When someone needs to verify they can run code in 5-15 minutes before committing to deeper learning.
 
 ---
 
-### ⚡ Crash Course
+### ⚡ Quick Start
 
 **Coverage**: 5-30% of domain knowledge
 **Time**: 1-3 hours
 **Goal**: Learn enough to explore independently
 
 **Description**:
-Teaches the core concepts and syntax needed to start exploring the domain independently. After completing a crash course, learners can read documentation, try examples, and solve simple problems on their own.
+Teaches the core concepts and syntax needed to start exploring the domain independently. After completing a quick start, learners can read documentation, try examples, and solve simple problems on their own.
 
 **Content includes**:
 
@@ -122,9 +127,9 @@ Teaches the core concepts and syntax needed to start exploring the domain indepe
 
 **Example titles**:
 
-- "Golang Crash Course"
-- "React Crash Course"
-- "Docker Crash Course"
+- "Quick Start Guide to Golang"
+- "React Quick Start"
+- "Docker Quick Start"
 
 **When to use**: When someone wants to quickly understand a language/tool's fundamentals and start experimenting independently.
 
@@ -141,7 +146,7 @@ Teaches everything from absolute basics to solid working knowledge. Covers the m
 
 **Content includes**:
 
-- Everything in Getting Started and Crash Course
+- Everything in Initial Setup and Quick Start
 - Comprehensive coverage of core features
 - Multiple examples and practice exercises
 - Common patterns and idioms
@@ -299,10 +304,10 @@ graph TB
 	Q1 -->|Yes| Q2
 	Q1 -->|No| Q7
 
-	Q2 -->|Yes| GS[Getting Started]
+	Q2 -->|Yes| IS[Initial Setup]
 	Q2 -->|No| Q3
 
-	Q3 -->|Yes| CC[Crash Course]
+	Q3 -->|Yes| QS[Quick Start]
 	Q3 -->|No| Q4
 
 	Q4 -->|Yes| BEG[Beginner]
@@ -316,8 +321,8 @@ graph TB
 
 	Q7 -->|Yes| CB
 
-	style GS fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-	style CC fill:#b3e5fc,stroke:#0277bd,stroke-width:2px
+	style IS fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+	style QS fill:#b3e5fc,stroke:#0277bd,stroke-width:2px
 	style BEG fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
 	style INT fill:#fff59d,stroke:#f9a825,stroke-width:2px
 	style ADV fill:#ef9a9a,stroke:#e53935,stroke-width:2px
@@ -326,14 +331,16 @@ graph TB
 
 ### Quick Reference Table
 
-| Tutorial Type       | Time     | Coverage  | Use When                            |
-| ------------------- | -------- | --------- | ----------------------------------- |
-| **Getting Started** | 5-15 min | 0-5%      | Need quick verification setup works |
-| **Crash Course**    | 1-3 hrs  | 5-30%     | Want to explore independently       |
-| **Beginner**        | 3-6 hrs  | 0-60%     | Complete beginner, need foundation  |
-| **Intermediate**    | 4-8 hrs  | 60-85%    | Building production systems         |
-| **Advanced**        | 6-12 hrs | 85-95%    | Need expert-level mastery           |
-| **Cookbook**        | 2-6 hrs  | Practical | Solving specific problems           |
+| Tutorial Type     | Time     | Coverage  | Use When                            |
+| ----------------- | -------- | --------- | ----------------------------------- |
+| **Initial Setup** | 5-15 min | 0-5%      | Need quick verification setup works |
+| **Quick Start**   | 1-3 hrs  | 5-30%     | Want to explore independently       |
+| **Beginner**      | 3-6 hrs  | 0-60%     | Complete beginner, need foundation  |
+| **Intermediate**  | 4-8 hrs  | 60-85%    | Building production systems         |
+| **Advanced**      | 6-12 hrs | 85-95%    | Need expert-level mastery           |
+| **Cookbook**      | 2-6 hrs  | Practical | Solving specific problems           |
+
+**Note**: The first 5 types (Initial Setup through Advanced) form the "Full Set" - a sequential learning path from 0% to 95% coverage. Cookbook is a parallel track for practical problem-solving.
 
 ---
 
@@ -341,8 +348,8 @@ graph TB
 
 ### Programming Languages
 
-- **Getting Started with Python**
-- **Python Crash Course**
+- **Initial Setup for Python**
+- **Python Quick Start**
 - **Python for Beginners: Complete Guide**
 - **Intermediate Python: Professional Techniques**
 - **Advanced Python: Internals and Optimization**
@@ -350,8 +357,8 @@ graph TB
 
 ### Frameworks and Tools
 
-- **Getting Started with React**
-- **React Crash Course**
+- **Initial Setup for React**
+- **React Quick Start**
 - **React for Beginners**
 - **Intermediate React: Production Patterns**
 - **Advanced React: Performance and Internals**
@@ -359,8 +366,8 @@ graph TB
 
 ### Domain Topics
 
-- **Getting Started with Accounting**
-- **Accounting Crash Course**
+- **Initial Setup for Accounting**
+- **Accounting Quick Start**
 - **Accounting for Beginners**
 - **Intermediate Accounting: Financial Reporting**
 - **Advanced Accounting: Complex Transactions**

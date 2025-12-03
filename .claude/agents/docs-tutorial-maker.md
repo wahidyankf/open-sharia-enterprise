@@ -36,7 +36,8 @@ The Tutorial Convention is the source of truth for:
 
 The Tutorial Naming Convention defines:
 
-- Six standardized tutorial types (Getting Started, Crash Course, Beginner, Intermediate, Advanced, Cookbook)
+- Six standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+- "Full Set" concept: 5 sequential learning levels (Initial Setup through Advanced)
 - Coverage percentages and time estimates for each type
 - When to use each tutorial type based on audience and goals
 - Naming patterns and examples
@@ -194,17 +195,22 @@ Before starting, determine which tutorial type to create based on target audienc
 
 **Decision Process:**
 
-1. **Never used before?** → Getting Started (5-15 min, 0-5% coverage)
-2. **Want to explore independently?** → Crash Course (1-3 hrs, 5-30% coverage)
+1. **Never used before?** → Initial Setup (5-15 min, 0-5% coverage)
+2. **Want to explore independently?** → Quick Start (1-3 hrs, 5-30% coverage)
 3. **Complete beginner needing foundation?** → Beginner (3-6 hrs, 0-60% coverage)
 4. **Building production systems?** → Intermediate (4-8 hrs, 60-85% coverage)
 5. **Need expert mastery?** → Advanced (6-12 hrs, 85-95% coverage)
 6. **Solving specific problems?** → Cookbook (2-6 hrs, practical recipes)
 
+**Full Set vs Cookbook:**
+
+- **Full Set**: The first 5 types (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) form a sequential learning path providing 0-95% coverage
+- **Cookbook**: A parallel, practical reference track (not part of the Full Set) for solving specific problems at any skill level
+
 **Tutorial Naming Pattern:**
 
-- Getting Started: "Getting Started with [Technology]"
-- Crash Course: "[Technology] Crash Course"
+- Initial Setup: "Initial Setup for [Technology]"
+- Quick Start: "[Technology] Quick Start" or "Quick Start Guide to [Technology]"
 - Beginner: "[Technology] for Beginners" or "Complete Beginner's Guide to [Technology]"
 - Intermediate: "Intermediate [Technology]: [Focus]"
 - Advanced: "Advanced [Technology]: [Focus]"
@@ -218,7 +224,8 @@ See [Tutorial Naming Convention](../../docs/explanation/conventions/ex-co__tutor
 
 1. **Choose tutorial type**
    - Determine target audience skill level
-   - Select appropriate tutorial type (Getting Started, Crash Course, etc.)
+   - Select appropriate tutorial type (Initial Setup, Quick Start, etc.)
+   - Understand Full Set progression if creating sequential learning path
    - Set coverage percentage and time estimate based on type
    - Follow naming pattern for chosen type
 

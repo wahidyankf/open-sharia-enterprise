@@ -223,7 +223,7 @@ When running a consistency check, systematically verify:
 ### Tutorial Naming Convention Compliance
 
 - [ ] Tutorial naming convention comprehensively documented in `ex-co__tutorial-naming.md`
-- [ ] Convention defines six standardized tutorial types (Getting Started, Crash Course, Beginner, Intermediate, Advanced, Cookbook)
+- [ ] Convention defines six standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
 - [ ] Each tutorial type has coverage percentage, time estimate, and clear definition
 - [ ] Naming patterns provided for each tutorial type with examples
 - [ ] Decision tree or guidance for choosing tutorial type included

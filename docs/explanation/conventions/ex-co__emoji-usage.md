@@ -55,16 +55,16 @@ Use to indicate state, warnings, or validation:
 
 Use to indicate steps, actions, or processes:
 
-| Emoji | Meaning                         | Usage                                   |
-| ----- | ------------------------------- | --------------------------------------- |
-| 🚀    | **Quick Start/Getting Started** | Onboarding, initial setup               |
-| 🔧    | **Configuration/Setup**         | Configuration steps, setup instructions |
-| ⚙️    | **Settings/Options**            | Configuration options, parameters       |
-| 🔍    | **Deep Dive/Investigation**     | Detailed explanations, debugging        |
-| 📊    | **Metrics/Analysis**            | Data, statistics, measurements          |
-| 🔄    | **Process/Workflow**            | Multi-step processes, workflows         |
-| 🔗    | **Links/Connections**           | Related content, cross-references       |
-| 📝    | **Notes/Documentation**         | Additional information, footnotes       |
+| Emoji | Meaning                       | Usage                                   |
+| ----- | ----------------------------- | --------------------------------------- |
+| 🚀    | **Quick Start/Initial Setup** | Onboarding, initial setup               |
+| 🔧    | **Configuration/Setup**       | Configuration steps, setup instructions |
+| ⚙️    | **Settings/Options**          | Configuration options, parameters       |
+| 🔍    | **Deep Dive/Investigation**   | Detailed explanations, debugging        |
+| 📊    | **Metrics/Analysis**          | Data, statistics, measurements          |
+| 🔄    | **Process/Workflow**          | Multi-step processes, workflows         |
+| 🔗    | **Links/Connections**         | Related content, cross-references       |
+| 📝    | **Notes/Documentation**       | Additional information, footnotes       |
 
 ### Domain-Specific Markers
 
@@ -335,7 +335,7 @@ No emojis for machines: config files
 **Example:**
 
 ```markdown
-# Getting Started with SAST
+# Initial Setup for SAST
 
 ## 🎯 Learning Objectives
 

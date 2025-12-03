@@ -50,7 +50,7 @@ Each category serves a different purpose and addresses different user needs.
 
 **Example use cases**:
 
-- "Getting Started with the Project"
+- "Initial Setup for the Project"
 - "Your First API Call"
 - "Setting Up the Development Environment"
 
@@ -295,9 +295,9 @@ Start here
 
 ## 🧪 Examples from Our Project
 
-### Tutorial Example: Getting Started
+### Tutorial Example: Initial Setup
 
-**Location**: `docs/tutorials/tu__getting-started.md`
+**Location**: `docs/tutorials/tu__initial-setup.md`
 
 **Structure**:
 

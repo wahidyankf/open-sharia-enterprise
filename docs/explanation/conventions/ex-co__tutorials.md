@@ -45,16 +45,16 @@ A tutorial is characterized by:
 
 ### Tutorial vs Other Documentation Types
 
-| Aspect        | Tutorial                     | How-To Guide            | Reference                | Explanation              |
-| ------------- | ---------------------------- | ----------------------- | ------------------------ | ------------------------ |
-| **Purpose**   | Learning                     | Achieving a goal        | Information lookup       | Understanding            |
-| **Oriented**  | Learning                     | Task/Goal               | Information              | Conceptual               |
-| **Format**    | Lesson                       | Series of steps         | Dry description          | Discursive explanation   |
-| **Analogy**   | Teaching a child to cook     | Recipe                  | Encyclopedia entry       | Article on culinary arts |
-| **Answers**   | "Can you teach me to...?"    | "How do I...?"          | "What is...?"            | "Why...?"                |
-| **Structure** | Sequential, guided           | Goal-focused, direct    | Structured by topic      | Thematic, exploratory    |
-| **Tone**      | Encouraging, supportive      | Direct, efficient       | Neutral, factual         | Informative, engaging    |
-| **Example**   | "Crash Course on Accounting" | "How to Calculate WACC" | "WACC Formula Reference" | "Why WACC Matters"       |
+| Aspect        | Tutorial                  | How-To Guide            | Reference                | Explanation              |
+| ------------- | ------------------------- | ----------------------- | ------------------------ | ------------------------ |
+| **Purpose**   | Learning                  | Achieving a goal        | Information lookup       | Understanding            |
+| **Oriented**  | Learning                  | Task/Goal               | Information              | Conceptual               |
+| **Format**    | Lesson                    | Series of steps         | Dry description          | Discursive explanation   |
+| **Analogy**   | Teaching a child to cook  | Recipe                  | Encyclopedia entry       | Article on culinary arts |
+| **Answers**   | "Can you teach me to...?" | "How do I...?"          | "What is...?"            | "Why...?"                |
+| **Structure** | Sequential, guided        | Goal-focused, direct    | Structured by topic      | Thematic, exploratory    |
+| **Tone**      | Encouraging, supportive   | Direct, efficient       | Neutral, factual         | Informative, engaging    |
+| **Example**   | "Accounting Quick Start"  | "How to Calculate WACC" | "WACC Formula Reference" | "Why WACC Matters"       |
 
 **Critical Distinction**: A tutorial teaches **through experience**. If it just lists steps without teaching concepts, it's a how-to guide, not a tutorial.
 
@@ -70,21 +70,21 @@ All tutorials must follow a consistent structure that supports the learning jour
 
 ```markdown
 ---
-title: "[Subject] Crash Course" or "Tutorial: [Topic]"
+title: "[Subject] Quick Start" or "Tutorial: [Topic]"
 description: Brief description (1-2 sentences) of what learner will achieve
 category: tutorials
 tags:
   - [subject]
   - [domain]
-  - crash-course (if applicable)
+  - quick-start (if applicable)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 
-# [Subject] Crash Course
+# [Subject] Quick Start
 ```
 
-**Requirements**: - Title clearly indicates it's a tutorial/crash course - Description states learning outcome (not just topic) - Tags include subject and domain - Follows [File Naming Convention](./ex-co__file-naming-convention.md): `tu-*` prefix
+**Requirements**: - Title clearly indicates it's a tutorial/quick start - Description states learning outcome (not just topic) - Tags include subject and domain - Follows [File Naming Convention](./ex-co__file-naming-convention.md): `tu-*` prefix
 
 #### 2. Introduction (The Hook)
 
@@ -95,7 +95,7 @@ updated: YYYY-MM-DD
 **Example Structure**:
 
 ```markdown
-# [Subject] Crash Course
+# [Subject] Quick Start
 
 [Opening paragraph: Why this topic matters in real-world context]
 
@@ -283,7 +283,7 @@ The investment grows to $5,955.
 
 **Length Guidelines**:
 
-**< 300 lines (Too Short)**: - May indicate insufficient depth - Consider: - Combining with related tutorial - Adding more examples and practice exercises - Expanding explanations with visual aids - Exception: "Getting Started" tutorials can be shorter (200-300 lines)
+**< 300 lines (Too Short)**: - May indicate insufficient depth - Consider: - Combining with related tutorial - Adding more examples and practice exercises - Expanding explanations with visual aids - Exception: "Initial Setup" tutorials can be shorter (200-300 lines)
 
 **500-1,500 lines (Ideal)**: - Focused on single topic or skill - Sufficient depth and practice - Maintains learner engagement - Completable in one sitting
 
@@ -1465,7 +1465,7 @@ One might consider using this approach. [impersonal]
 
 ## 📚 Examples and Templates
 
-### Exemplary Tutorial: Crash Course Structure
+### Exemplary Tutorial: Quick Start Structure
 
 See existing tutorials as examples: - [Accounting](../../tutorials/business-and-finance/tu-bufi__accounting.md) - [Corporate Finance](../../tutorials/business-and-finance/tu-bufi__corporate-finance.md)
 
@@ -1475,18 +1475,18 @@ See existing tutorials as examples: - [Accounting](../../tutorials/business-and-
 
 ````markdown
 ---
-title: "[Subject] Crash Course" or "Tutorial: [Topic]"
+title: "[Subject] Quick Start" or "Tutorial: [Topic]"
 description: [1-2 sentence description of learning outcome]
 category: tutorials
 tags:
   - [subject]
   - [domain]
-  - crash-course
+  - quick-start
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 
-# [Subject] Crash Course
+# [Subject] Quick Start
 
 [Opening hook - why this topic matters, real-world relevance]
 
