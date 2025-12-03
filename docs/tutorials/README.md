@@ -7,7 +7,7 @@ tags:
   - tutorials
   - learning
 created: 2025-11-22
-updated: 2025-12-03
+updated: 2025-12-04
 ---
 
 # Tutorials
@@ -101,11 +101,43 @@ Complete learning path from installation to expert mastery:
 
 - 🟢 [**Golang Cookbook**](./software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md) - Practical patterns and recipes for common problems **(⏱️ 3-4 hours)**
 
+## Java
+
+Complete learning path from installation to expert mastery _(Coming Soon)_:
+
+- 🟢 [**Java Initial Setup**](./software-engineering/programming-languages/java/) - Get Java installed and running
+- 🟢 [**Java Quick Start**](./software-engineering/programming-languages/java/) - Learn core syntax to explore independently
+- 🟢 [**Complete Beginner's Guide to Java**](./software-engineering/programming-languages/java/) - Comprehensive Java fundamentals from scratch
+- 🟡 [**Intermediate Java Programming**](./software-engineering/programming-languages/java/) - Professional techniques for production systems
+- 🔴 [**Advanced Java Programming**](./software-engineering/programming-languages/java/) - Expert mastery of JVM internals and optimization
+- 🟢 [**Java Cookbook**](./software-engineering/programming-languages/java/) - Practical patterns and recipes for common problems
+
 ### 🔒 Information Security
 
 Learning-oriented guides for information security concepts and practices:
 
 - [**Information Security Index**](./information-security/README.md) - All available information security tutorials
+
+### 🎨 Web Backend
+
+Learning-oriented guides for web backend development and frameworks:
+
+- [**Web Backend Index**](./software-engineering/web-backend/README.md) - All available web backend tutorials
+  - [Spring Boot Tutorials](./software-engineering/web-backend/spring-boot/) - Complete Full Set from setup to expert mastery (coming soon)
+
+### 🌐 Web Frontend
+
+Learning-oriented guides for web frontend development:
+
+- [**Web Frontend Index**](./software-engineering/web-frontend/README.md) - All available web frontend tutorials
+  - [React Tutorials](./software-engineering/web-frontend/react/) - Complete Full Set from setup to expert mastery (coming soon)
+
+### 📱 Mobile
+
+Learning-oriented guides for mobile application development:
+
+- [**Mobile Index**](./software-engineering/mobile/README.md) - All available mobile tutorials
+  - [React Native Tutorials](./software-engineering/mobile/react-native/) - Complete Full Set from setup to expert mastery (coming soon)
 
 ---
 
@@ -271,4 +303,4 @@ After completing tutorials, explore:
 
 ---
 
-**Last Updated**: 2025-12-03
+**Last Updated**: 2025-12-04

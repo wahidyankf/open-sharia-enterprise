@@ -1,7 +1,7 @@
 ---
 title: Golang Quick Start
 description: Learn enough Go to explore independently - core syntax and basic patterns in 1-2 hours
-category: tutorials
+category: tutorial
 tags:
   - golang
   - programming-languages
