@@ -357,7 +357,47 @@ The Java Full Set structure mirrors the proven Golang approach while adapting co
 
 ---
 
-### Phase 8: Update README and Final Integration
+### Phase 8: Test End-to-End Tutorial Navigation Flow
+
+**Status**: Not Started
+
+**Goal**: Validate cross-tutorial navigation and learning progression
+
+**Implementation Steps**:
+
+- [ ] Test progression path: Initial Setup → Quick Start → Beginner → Intermediate → Advanced
+- [ ] Verify all cross-references between tutorials are valid
+- [ ] Test that learner can follow Cookbook recipes independently
+- [ ] Verify "Next Steps" sections guide to appropriate next tutorial
+- [ ] Test with target audience (3-5 learners) following full progression
+- [ ] Collect feedback on pacing and transitions
+- [ ] Verify no broken internal links between tutorials
+- [ ] Test that each tutorial stands alone while connecting to others
+
+**Validation Checklist**:
+
+- [ ] All internal cross-references are valid (no broken links)
+- [ ] Progression from Initial Setup → Advanced is smooth
+- [ ] Quick Start → Beginner transition clear
+- [ ] Beginner → Intermediate transition clear
+- [ ] Intermediate → Advanced transition clear
+- [ ] Cookbook can be accessed independently
+- [ ] Time estimates remain accurate for complete progression (5-30 hours total)
+- [ ] No dead ends or missing connections
+
+**Acceptance Criteria**:
+
+- [ ] Learner can progress from Initial Setup to Advanced following tutorial sequence
+- [ ] All tutorials reference each other appropriately
+- [ ] Navigation is intuitive and clear
+- [ ] No broken links or references
+- [ ] Progression feels natural and well-paced
+
+**Deliverable**: Validation report confirming end-to-end navigation works correctly
+
+---
+
+### Phase 9: Update README and Final Integration
 
 **Status**: Not Started
 
@@ -397,6 +437,51 @@ The Java Full Set structure mirrors the proven Golang approach while adapting co
 - [ ] No content errors
 
 **Deliverable**: Updated README.md with complete Full Set guidance
+
+---
+
+### Phase 10: Final Quality Validation
+
+**Status**: Not Started
+
+**Goal**: Comprehensive quality check before completion
+
+**Implementation Steps**:
+
+- [ ] Run docs-tutorial-checker on all 6 tutorials
+- [ ] Run docs-link-checker on all cross-references and links
+- [ ] Verify all file names follow convention (`tu-se-pl-ja__*.md`)
+- [ ] Verify all frontmatter complete and correct
+- [ ] Validate all code examples compile with Java 21
+- [ ] Test code examples on multiple platforms (Windows/Mac/Linux)
+- [ ] Verify time estimates are accurate (test with target audience)
+- [ ] Perform technical accuracy review with Java expert
+- [ ] Check for broken internal references
+- [ ] Validate against all requirements (REQ-001 through REQ-007, NFR-001 through NFR-003)
+- [ ] Plan-executor agent performs final validation before marking complete
+
+**Validation Checklist**:
+
+- [ ] All tutorials pass docs-tutorial-checker
+- [ ] All tutorials pass docs-link-checker
+- [ ] All code examples compile and run correctly
+- [ ] Time estimates validated with target audience (80% complete within range)
+- [ ] Technical accuracy verified
+- [ ] Cross-references validated
+- [ ] No broken links or dead references
+- [ ] All requirements satisfied
+- [ ] README updated with correct links and information
+
+**Acceptance Criteria**:
+
+- [ ] All 6 tutorials meet quality standards
+- [ ] No validation errors or warnings
+- [ ] Technical content is accurate and current
+- [ ] All cross-references work correctly
+- [ ] Learner experience is consistent across all tutorials
+- [ ] Plan is ready for final completion
+
+**Deliverable**: Final validation report and plan completion
 
 ---
 
@@ -575,8 +660,12 @@ All changes will be committed directly to the `main` branch following Trunk Base
 - **Commit 4**: Create Intermediate tutorial (Phase 5)
 - **Commit 5**: Create Advanced tutorial (Phase 6)
 - **Commit 6**: Create Cookbook tutorial (Phase 7)
-- **Commit 7**: Update README and final integration (Phase 8)
+- **Commit 7**: Test end-to-end navigation (Phase 8)
+- **Commit 8**: Update README and final integration (Phase 9)
+- **Commit 9**: Final quality validation (Phase 10)
 
-Alternatively, Phase 1 (Planning Validation) can be completed as a single preliminary step, then phases 2-8 can proceed.
+Alternatively, Phase 1 (Planning Validation) can be completed as a single preliminary step, then phases 2-10 can proceed.
 
 Each commit is independently functional, allowing incremental delivery while building the complete Full Set. Commits follow the repository's commit message convention (Conventional Commits format).
+
+**Phase 10 Clarification**: Final Quality Validation is performed by the plan-executor agent as the final step before marking the plan complete. This ensures all requirements are met and all quality standards are satisfied.
