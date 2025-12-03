@@ -608,6 +608,82 @@ This program combines:
 
 ---
 
+## 🎯 Practice Challenges
+
+Ready to test your knowledge? Try these challenges using the concepts you've learned:
+
+### Challenge 1: Temperature Converter
+
+**Goal**: Create a program that converts Celsius to Fahrenheit
+
+**Requirements**:
+
+- Read a temperature in Celsius from user input
+- Calculate Fahrenheit using the formula: F = (C × 9/5) + 32
+- Display the result clearly
+
+**Hint**: You'll need Scanner, variables, and arithmetic operators.
+
+### Challenge 2: Name Formatter
+
+**Goal**: Create a program that takes a first and last name and outputs them formatted
+
+**Requirements**:
+
+- Read first name from user
+- Read last name from user
+- Print three formats:
+  1.  "First Last" (normal format)
+  2.  "Last, First" (formal format)
+  3.  "F. Last" (abbreviated format)
+
+**Hint**: You'll need String methods like `charAt()` and string concatenation.
+
+### Challenge 3: Simple Calculator
+
+**Goal**: Build a program that performs basic math operations
+
+**Requirements**:
+
+- Read two numbers from the user
+- Read an operation (+, -, \*, /)
+- Perform the calculation
+- Display the result
+- Handle division by zero
+
+**Hint**: You'll need if/else statements for the operation selection.
+
+### Challenge 4: Grade Calculator
+
+**Goal**: Create a program that stores student grades and calculates the average
+
+**Requirements**:
+
+- Read 3 grades from the user
+- Store them in an array
+- Calculate and display the average
+- Display a letter grade (A: 90+, B: 80-89, C: 70-79, F: below 70)
+
+**Hint**: You'll need arrays, loops, and conditional logic.
+
+### Challenge 5: Product Inventory (Advanced)
+
+**Goal**: Build a simple inventory system
+
+**Requirements**:
+
+- Create a HashMap to store product names and prices
+- Add 3 products to the inventory
+- Allow the user to look up a product price
+- Calculate the total value of all inventory
+- Display a summary
+
+**Hint**: You'll need HashMap methods like `put()`, `get()`, and `values()`.
+
+**These challenges consolidate all concepts from this Quick Start tutorial. Start with Challenge 1 and work your way up!**
+
+---
+
 ## Next Steps: What to Learn Next
 
 ### Congratulations! You've covered the basics.

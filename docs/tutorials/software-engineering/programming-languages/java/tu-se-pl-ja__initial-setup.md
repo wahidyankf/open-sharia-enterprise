@@ -263,6 +263,40 @@ Confirm you can do all of the following:
 
 If all checkboxes are checked, you're ready to start learning Java!
 
+## 🎯 Quick Challenge
+
+Now that you have Java working, try this quick challenge to solidify your understanding:
+
+### Challenge: Modify the Hello World Program
+
+1. **Edit** `Hello.java` and change the message to print your name instead of "Hello, Java!"
+2. **Compile** it again with `javac Hello.java`
+3. **Run** it with `java Hello` and verify your name appears
+
+**Success criteria**:
+
+- Program compiles without errors
+- Program runs without errors
+- Your custom message displays
+
+### Challenge: Create a Second Program
+
+Try creating another Java program from scratch:
+
+1. **Create** a file named `Calculator.java`
+2. **Write** a class with a main method that performs a simple calculation:
+   ```java
+   int x = 10;
+   int y = 20;
+   System.out.println("Sum: " + (x + y));
+   ```
+3. **Compile** and run it
+4. **Verify** the output shows the correct sum (30)
+
+**Hint**: Remember the class name must match the filename (Calculator.java for class Calculator).
+
+These challenges confirm that your Java setup is complete and working properly.
+
 ## Optional: Set Up an IDE
 
 While you can develop Java with a text editor and command line, an **Integrated Development Environment (IDE)** provides code completion, debugging, and other helpful features.

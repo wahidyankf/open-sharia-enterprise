@@ -1345,6 +1345,184 @@ Create abstract Shape class with concrete Circle, Rectangle, Triangle implementa
 
 ---
 
+## 🎯 Capstone Project: Student Management System
+
+Now it's time to build a complete application that demonstrates all concepts learned in this tutorial.
+
+### Project Overview
+
+Build a Student Management System that tracks students, their courses, and grades. This project integrates:
+
+- Object-oriented design (classes, inheritance, interfaces)
+- Collections and generics
+- Exception handling
+- Streams and functional programming
+- SOLID principles
+- Testing with JUnit 5
+
+### Requirements
+
+**1. Core Classes**
+
+Create the following classes:
+
+- **`Student`** (abstract)
+  - Properties: ID, name, email, enrollment date
+  - Methods: getInfo(), enrollInCourse(Course), dropCourse(Course)
+  - Encapsulation with validation
+
+- **`UndergraduateStudent`** extends `Student`
+  - Additional: major, expected graduation year
+  - Method: getYearsUntilGraduation()
+
+- **`GraduateStudent`** extends `Student`
+  - Additional: advisor, thesis title
+  - Method: isThesisComplete()
+
+- **`Course`**
+  - Properties: code, name, credits, instructor
+  - Immutable (use final fields)
+
+- **`Grade`**
+  - Properties: student, course, score (0-100), letterGrade
+  - Implements Comparable<Grade>
+
+**2. Collection Management**
+
+- Store students in a `Set<Student>` (no duplicates)
+- Store courses in a `List<Course>`
+- Store grades in a `Map<Student, List<Grade>>`
+
+**3. Functionality**
+
+- Add/remove students
+- Add/remove courses
+- Record grades for students
+- Calculate student GPA (average of all grades)
+- Find courses by code
+- List all students in a course
+- Find highest-scoring student in each course
+- Generate student transcripts
+
+**4. Exception Handling**
+
+Create custom exceptions:
+
+- **`StudentNotFoundException`** - Student doesn't exist
+- **`CourseFullException`** - Course enrollment limit reached
+- **`InvalidGradeException`** - Grade score out of bounds
+- **`InvalidStudentException`** - Invalid student data
+
+**5. Stream Processing**
+
+Use streams for:
+
+- Finding top students by GPA
+- Filtering students by major/advisor
+- Grouping students by year
+- Sorting grades by score
+
+**6. SOLID Principles**
+
+- **Single Responsibility**: Each class has one reason to change
+- **Open/Closed**: Open for extension (UndergraduateStudent, GraduateStudent)
+- **Liskov Substitution**: Subclasses properly substitute parents
+- **Interface Segregation**: Use specific interfaces if needed
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+### Testing Requirements
+
+Write JUnit 5 tests for:
+
+- Student creation and validation
+- Course enrollment/drops
+- Grade calculation and GPA
+- Exception scenarios
+- Stream operations
+
+**Minimum coverage**:
+
+- 2-3 tests per class
+- At least one negative test per method
+- Exception handling tests
+
+### Sample Code Structure
+
+```java
+public abstract class Student {
+    private String id;
+    private String name;
+    private String email;
+    private LocalDate enrollmentDate;
+    private Set<Course> enrolledCourses;
+
+    public Student(String id, String name, String email) {
+        if (id == null || id.isEmpty()) {
+            throw new InvalidStudentException("ID cannot be empty");
+        }
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.enrollmentDate = LocalDate.now();
+        this.enrolledCourses = new HashSet<>();
+    }
+
+    public void enrollInCourse(Course course) throws CourseFullException {
+        // Implementation
+    }
+
+    public double calculateGPA(Map<Student, List<Grade>> allGrades) {
+        return allGrades.getOrDefault(this, new ArrayList<>())
+                .stream()
+                .mapToDouble(Grade::getScore)
+                .average()
+                .orElse(0.0);
+    }
+
+    public abstract String getInfo();
+}
+
+public class Course {
+    private final String code;
+    private final String name;
+    private final int credits;
+    private final String instructor;
+    private final int maxEnrollment = 30;
+
+    // Constructor and getters
+}
+```
+
+### Success Criteria
+
+- ✅ All classes properly implement inheritance hierarchy
+- ✅ Collections used appropriately (Set, List, Map)
+- ✅ No raw types warnings
+- ✅ All custom exceptions thrown correctly
+- ✅ Streams used for at least 3 operations
+- ✅ All SOLID principles demonstrated
+- ✅ All JUnit tests pass
+- ✅ Code is well-commented and readable
+- ✅ No null pointer exceptions (validation in constructors)
+
+### Challenges (Optional Extensions)
+
+1. **Persistence**: Save/load from JSON or CSV
+2. **Scheduling**: Add class schedule with time conflicts detection
+3. **Grading Weights**: Different assignment weights (homework 30%, exams 70%)
+4. **Prerequisites**: Track course prerequisites and enforce
+5. **GPA Calculation**: Different rules for undergraduate vs graduate
+
+### Time Estimate
+
+- **Core implementation**: 2-3 hours
+- **Tests and refinement**: 1-2 hours
+- **Extensions**: 1-2 hours
+
+This project consolidates everything you've learned in this Beginner tutorial. Start with core classes, add functionality gradually, and test as you go!
+
+---
+
 ## What to Learn Next
 
 Congratulations! You've mastered Java fundamentals (0-60% coverage).
