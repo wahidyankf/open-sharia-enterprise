@@ -30,50 +30,41 @@ This "vanilla Nx" approach provides full control and transparency while maintain
 
 ### High-Level Architecture Diagram
 
+```mermaid
+graph TB
+    Root["open-sharia-enterprise/"]
+
+    Root --> Apps["<b>apps/</b><br/>(Deployable applications)"]
+    Root --> Libs["<b>libs/</b><br/>(Reusable libraries)"]
+    Root --> Docs["<b>docs/</b><br/>(Documentation)"]
+
+    Apps --> AppTS["demo-ts-fe<br/>(Next.js app)"]
+    Apps --> AppOther["app-2<br/>..."]
+
+    Libs --> LibTS1["ts-demo-libs"]
+    Libs --> LibTS2["ts-utils"]
+    Libs --> LibTS3["ts-components"]
+    Libs --> LibFuture["(Future: java-*, kt-*, py-*)"]
+
+    AppTS -->|imports| LibTS1
+    AppTS -->|imports| LibTS2
+    AppTS -->|imports| LibTS3
+    AppOther -->|imports| LibTS1
+
+    style Root fill:#e1f5ff
+    style Apps fill:#fff3e0
+    style Libs fill:#f3e5f5
+    style Docs fill:#e8f5e9
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│         Nx Polyglot Monorepo Workspace Architecture              │
-└─────────────────────────────────────────────────────────────────┘
 
-                       open-sharia-enterprise/
-                                  │
-                 ┌────────────────┼────────────────┐
-                 │                │                │
-                 ▼                ▼                ▼
-            ┌─────────┐      ┌─────────┐    ┌───────────┐
-            │  apps/  │      │  libs/  │    │   docs/   │
-            └─────────┘      └─────────┘    └───────────┘
-                 │                │
-         ┌───────┼──────┐    ┌────┴─────────────┐
-         │       │      │    │ (Flat structure) │
-         ▼          ▼           ▼
-      demo-ts-fe  app-2  ts-demo-libs
-                         ts-utils
-                         ts-components
+**Multi-Language Support (TypeScript, Go, Python, Rust, Java, Kotlin, etc.)**
 
-┌─────────────────────────────────────────────────────────────────┐
-│  Multi-Language Support (TypeScript, Go, Python, Rust, etc.)    │
-└─────────────────────────────────────────────────────────────────┘
+**Rules:**
 
-         Apps Layer (Any language)
-         ┌─────────────────────────────────────────┐
-         │  app-1    app-2    app-3                │
-         └──────────────┬──────────────────────────┘
-                        │ imports
-                        ▼
-         Libs Layer (Flat, language-prefixed)
-         ┌─────────────────────────────────────────┐
-         │  ts-demo-libs    ts-utils               │
-         │  ts-components   ts-hooks               │
-         │  (Future: java-*, kt-*, py-*)           │
-         └─────────────────────────────────────────┘
-
-Rules:
-- Apps can import from any lib
-- Libs can import from other libs (be mindful of circular deps)
-- No circular dependencies allowed
-- Each language uses its own build tools via nx:run-commands
-```
+- ✅ Apps can import from any lib
+- ✅ Libs can import from other libs (be mindful of circular deps)
+- ❌ No circular dependencies allowed
+- ✅ Each language uses its own build tools via nx:run-commands
 
 ## Technology Stack
 

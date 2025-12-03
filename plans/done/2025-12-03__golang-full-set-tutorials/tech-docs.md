@@ -18,47 +18,30 @@ Cookbook (Practical, any level)
 
 ### Learning Path Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    Golang Full Set Tutorial Series                   │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    A["<b>Level 0: Initial Setup</b><br/>0-5% | 5-15 min<br/>Installation, environment setup,<br/>Hello World"]
+    B["<b>Level 1: Quick Start</b><br/>5-30% | 1-2 hrs<br/>Variables, functions, simple structs,<br/>error handling, goroutines intro"]
+    C["<b>Level 2: Beginner</b><br/>0-60% | 3-4 hrs<br/>Comprehensive fundamentals, concurrency,<br/>generics, testing, troubleshooting"]
+    D["<b>Level 3: Intermediate</b><br/>60-85% | 4-8 hrs<br/>Production techniques, optimization,<br/>architecture, testing strategies, security"]
+    E["<b>Level 4: Advanced</b><br/>85-95% | 6-12 hrs<br/>Expert patterns, optimization internals,<br/>performance tuning, system design"]
+    F["<b>Cookbook</b><br/>Practical | 3-4 hrs<br/>Problem-focused recipes,<br/>real-world solutions<br/><br/><i>Prerequisite: Beginner<br/>or higher</i>"]
 
-Level 0: Initial Setup (0-5%, 5-15 min)
-│
-│ Installation, environment setup, "Hello World"
-│
-▼
-Level 1: Quick Start (5-30%, 1-2 hrs) [NEW - EXTRACT from Beginner]
-│
-│ Core syntax touchpoints only: variables, functions, simple structs
-│ Basic error handling, goroutines intro (NOT comprehensive)
-│ Goal: Explore Go independently
-│
-▼
-Level 2: Beginner (0-60%, 3-4 hrs) [EXISTS - RENAME current "Quick Start"]
-│
-│ CURRENT FILE: tu-soen-prla-gola__quick-start.md (2,279 lines)
-│ Comprehensive coverage: all fundamentals, concurrency, generics, testing
-│ Multiple examples, 4 levels of practice exercises, troubleshooting
-│
-▼
-Level 3: Intermediate (60-85%, 4-8 hrs) [NEW - CREATE]
-│
-│ Production techniques, optimization, architecture, testing strategies
-│ Security, deployment, team collaboration
-│
-▼
-Level 4: Advanced (85-95%, 6-12 hrs) [NEW - CREATE]
-│
-│ Expert patterns, complex optimization, internals, performance tuning
-│ Advanced debugging, system design trade-offs
-│
+    A --> B
+    B --> C
+    C --> D
+    D --> E
 
-Parallel Access: Cookbook (Practical, 3-4 hrs) [EXISTS - UPDATE prerequisites]
-│
-│ Problem-focused recipes, patterns, real-world solutions
-│ Prerequisites: Beginner (was Quick Start)
-└─────────────────────────────────────────────────────────────────────┘
+    C -.->|can reference| F
+    D -.->|can reference| F
+    E -.->|can reference| F
+
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#e8f5e9
+    style D fill:#fff3e0
+    style E fill:#ffe0b2
+    style F fill:#fce4ec,stroke:#c2185b,stroke-width:3px
 ```
 
 **Key Architectural Principles**:
