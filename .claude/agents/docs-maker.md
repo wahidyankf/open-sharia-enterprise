@@ -4,6 +4,7 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
+created: 2025-11-29
 updated: 2025-12-03
 ---
 
@@ -201,6 +202,8 @@ updated: YYYY-MM-DD
 **When**: Teaching newcomers step-by-step
 **How**: Sequential steps with example outputs
 **Structure**: Introduction → Prerequisites → Steps → Verification → Next steps
+
+**Note**: For comprehensive tutorial creation following Tutorial Convention and Tutorial Naming Convention, use the specialized `docs-tutorial-maker` agent. This agent (docs-maker) handles simpler tutorial creation when specialized tutorial features (narrative flow, progressive scaffolding, visual completeness) are not required.
 
 ### How-To Guides (Problem-oriented)
 
