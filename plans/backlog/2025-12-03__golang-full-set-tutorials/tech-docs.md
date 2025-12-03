@@ -78,9 +78,11 @@ Parallel Access: Cookbook (Practical, 3-4 hrs) [EXISTS - UPDATE prerequisites]
 
 **Go Version**:
 
-- Target: Go 1.18+ (generics support)
-- All code examples must be runnable
+- Recommended: **Go 1.23.4 or later** (latest stable as of December 2025)
+- Minimum: Go 1.18+ (generics support)
+- All code examples must be runnable on Go 1.23.4
 - Version-specific features noted explicitly
+- Note: Always install the latest patch version from https://go.dev/dl/ for security and bug fixes
 
 **Tools**:
 
@@ -195,6 +197,79 @@ Parallel Access: Cookbook (Practical, 3-4 hrs) [EXISTS - UPDATE prerequisites]
 - Prevents scope creep
 - Learners understand what to expect at each level
 - Advanced tutorial doesn't try to cover everything (95% is mastery)
+
+## Feature Coverage Matrix
+
+This matrix documents which Go features and concepts are introduced in each tutorial level, preventing duplication and ensuring logical learning progression.
+
+| Feature/Concept                  | IS  | QS  | BEG | INT | ADV | Complexity  | Notes                                                     |
+| -------------------------------- | --- | --- | --- | --- | --- | ----------- | --------------------------------------------------------- |
+| **Installation & Setup**         | ✓   |     |     |     |     | Low         | Download, install, verify only                            |
+| **Hello World**                  | ✓   |     |     |     |     | Low         | package main, func main basics                            |
+| **Variables & Types**            |     | ✓   | ✓   |     |     | Low         | var, :=, const, basic types (int, string, bool, float64)  |
+| **Zero Values**                  |     | ✓   | ✓   |     |     | Low         | Mention in QS, explain in BEG                             |
+| **Control Flow (if/for/switch)** |     | ✓   | ✓   |     |     | Low         | Basic syntax in QS, comprehensive in BEG                  |
+| **Functions (basic)**            |     | ✓   | ✓   |     |     | Low         | Declaration, parameters, returns                          |
+| **Multiple Return Values**       |     | ✓   | ✓   |     |     | Low         | Touch in QS, explain in BEG                               |
+| **Error Handling (basic)**       |     | ✓   | ✓   | ✓   |     | Medium      | if err != nil pattern (QS/BEG), wrapping (INT)            |
+| **Structs (basic)**              |     | ✓   | ✓   |     |     | Medium      | Definition, initialization in QS; methods in BEG          |
+| **Slices (basic)**               |     | ✓   | ✓   |     |     | Medium      | Creation, access in QS; append, internals in BEG          |
+| **Maps (basic)**                 |     | ✓   | ✓   |     |     | Medium      | Creation, access in QS; iteration in BEG                  |
+| **Packages (import)**            |     | ✓   | ✓   |     |     | Medium      | Using standard library (QS), custom packages (BEG)        |
+| **Goroutines (intro)**           |     | ✓   | ✓   |     |     | Medium      | What is, go keyword (QS); practical usage (BEG)           |
+| **Channels (basic)**             |     |     | ✓   | ✓   |     | Medium      | Buffered/unbuffered (BEG), patterns (INT)                 |
+| **Methods**                      |     |     | ✓   |     |     | Medium      | Pointer vs value receivers                                |
+| **Interfaces**                   |     |     | ✓   | ✓   |     | Medium      | Definition, implementation (BEG); advanced patterns (INT) |
+| **Pointers**                     |     |     | ✓   |     |     | Medium      | Basics, when to use                                       |
+| **Type Embedding**               |     |     | ✓   |     |     | Medium      | Struct embedding                                          |
+| **Generics (intro)**             |     |     | ✓   | ✓   | ✓   | Medium-High | Basics (BEG), type constraints (INT), advanced (ADV)      |
+| **Testing (basic)**              |     |     | ✓   | ✓   |     | Medium      | Unit tests, table-driven (BEG); integration (INT)         |
+| **Modules (go.mod)**             |     |     | ✓   |     |     | Medium      | Creating, managing dependencies                           |
+| **Error Wrapping**               |     |     |     | ✓   |     | Medium      | errors.Is, errors.As, wrapping chains                     |
+| **Context Package**              |     |     |     | ✓   | ✓   | Medium      | Timeout, cancellation, values                             |
+| **Concurrency Patterns**         |     |     |     | ✓   | ✓   | High        | Worker pools (INT), advanced patterns (ADV)               |
+| **Workspace Mode (go.work)**     |     |     |     | ✓   |     | Medium      | Multi-module development                                  |
+| **Mocking & Interfaces**         |     |     |     | ✓   |     | Medium      | Test doubles, dependency injection                        |
+| **Benchmarking**                 |     |     |     | ✓   | ✓   | Medium      | Basic benchmarks (INT), optimization (ADV)                |
+| **Profiling (pprof intro)**      |     |     |     | ✓   | ✓   | High        | Basic profiling (INT), deep dive (ADV)                    |
+| **Architecture Patterns**        |     |     |     | ✓   |     | High        | Hexagonal, Clean Architecture                             |
+| **Security Best Practices**      |     |     |     | ✓   |     | Medium      | Validation, injection prevention, secrets                 |
+| **Deployment & Observability**   |     |     |     | ✓   |     | Medium      | Build, health checks, logging, metrics                    |
+| **Profiling (pprof advanced)**   |     |     |     |     | ✓   | High        | CPU, memory, block, mutex profiling                       |
+| **Escape Analysis**              |     |     |     |     | ✓   | High        | Understanding allocations                                 |
+| **Assembly Inspection**          |     |     |     |     | ✓   | High        | Reading Go assembly                                       |
+| **Runtime Internals**            |     |     |     |     | ✓   | High        | Scheduler (M:N), GC, memory allocator                     |
+| **Advanced Sync Primitives**     |     |     |     |     | ✓   | High        | Cond, Once, Map, atomic operations                        |
+| **Lock-Free Data Structures**    |     |     |     |     | ✓   | High        | Memory models, happens-before                             |
+| **Advanced Generics**            |     |     |     |     | ✓   | High        | Type constraints, inference, performance                  |
+| **Reflection**                   |     |     |     |     | ✓   | High        | Use cases, pitfalls, serialization                        |
+| **Unsafe Package**               |     |     |     |     | ✓   | High        | When and why to use                                       |
+| **CGo**                          |     |     |     |     | ✓   | High        | Calling C from Go                                         |
+| **Delve Debugger (advanced)**    |     |     |     |     | ✓   | High        | Complex debugging scenarios                               |
+| **System Design Patterns**       |     |     |     |     | ✓   | High        | Circuit breaker, rate limiting, CQRS                      |
+| **Go Tooling Mastery**           |     |     |     |     | ✓   | Medium-High | go generate, custom linters, code gen                     |
+
+**Legend**:
+
+- **IS** = Initial Setup (0-5%)
+- **QS** = Quick Start (5-30%)
+- **BEG** = Beginner (0-60%)
+- **INT** = Intermediate (60-85%)
+- **ADV** = Advanced (85-95%)
+
+**Usage Rules**:
+
+1. **If QS covers it**: BEG expands with depth; INT/ADV reference BEG
+2. **If BEG covers it**: INT/ADV reference BEG and add advanced aspects
+3. **If INT introduces it**: ADV can add expert-level depth
+4. **No duplication**: Each level adds unique value, references earlier tutorials for foundations
+
+**Content Relationship**:
+
+- **QS is subset of BEG**: Every topic in QS is covered MORE comprehensively in BEG
+- **BEG is foundation**: INT and ADV build on BEG's comprehensive coverage
+- **INT adds production**: Professional techniques building on BEG fundamentals
+- **ADV adds mastery**: Expert-level depth on INT/BEG topics + internals
 
 ## Content Outlines
 
@@ -658,6 +733,262 @@ Extract and simplify the following sections from Beginner:
 - Framework specifics
 - 95-100% specialized research topics
 
+## Code Example Directory Structure
+
+All runnable code examples for the tutorial series will be organized in the following structure within the `docs/tutorials/` directory:
+
+```
+docs/tutorials/golang-examples/
+├── README.md                          # Overview of example repository
+├── initial-setup/
+│   └── hello-world/
+│       ├── hello.go                   # Basic "Hello, World!" program
+│       └── README.md                  # Instructions for running
+├── quick-start/
+│   ├── 01-variables/
+│   │   ├── main.go                    # Variable declaration examples
+│   │   └── README.md
+│   ├── 02-control-flow/
+│   │   ├── main.go                    # if, for, switch examples
+│   │   └── README.md
+│   ├── 03-functions/
+│   │   ├── main.go                    # Function examples
+│   │   └── README.md
+│   ├── 04-structs/
+│   │   ├── main.go                    # Simple struct examples
+│   │   └── README.md
+│   └── 05-goroutines/
+│       ├── main.go                    # Basic goroutine example
+│       └── README.md
+├── beginner/
+│   ├── 01-fundamentals/
+│   │   ├── variables/
+│   │   │   ├── main.go
+│   │   │   └── README.md
+│   │   ├── types/
+│   │   │   ├── main.go
+│   │   │   └── README.md
+│   │   └── control-flow/
+│   │       ├── main.go
+│   │       └── README.md
+│   ├── 02-structs-methods/
+│   │   ├── main.go
+│   │   ├── person.go                  # Example struct
+│   │   └── README.md
+│   ├── 03-interfaces/
+│   │   ├── main.go
+│   │   ├── shapes.go                  # Interface example
+│   │   └── README.md
+│   ├── 04-error-handling/
+│   │   ├── main.go
+│   │   └── README.md
+│   ├── 05-concurrency/
+│   │   ├── goroutines/
+│   │   │   ├── main.go
+│   │   │   └── README.md
+│   │   └── channels/
+│   │       ├── main.go
+│   │       └── README.md
+│   ├── 06-generics/
+│   │   ├── main.go
+│   │   ├── stack.go                   # Generic stack implementation
+│   │   └── README.md
+│   └── 07-testing/
+│       ├── calculator.go
+│       ├── calculator_test.go         # Test examples
+│       └── README.md
+├── intermediate/
+│   ├── 01-concurrency-patterns/
+│   │   ├── worker-pool/
+│   │   │   ├── main.go
+│   │   │   ├── pool.go
+│   │   │   └── README.md
+│   │   ├── pipeline/
+│   │   │   ├── main.go
+│   │   │   └── README.md
+│   │   └── context-cancellation/
+│   │       ├── main.go
+│   │       └── README.md
+│   ├── 02-error-handling/
+│   │   ├── wrapping/
+│   │   │   ├── main.go
+│   │   │   └── README.md
+│   │   └── custom-errors/
+│   │       ├── main.go
+│   │       ├── errors.go
+│   │       └── README.md
+│   ├── 03-testing/
+│   │   ├── integration/
+│   │   │   ├── main_test.go
+│   │   │   └── README.md
+│   │   └── mocking/
+│   │       ├── service.go
+│   │       ├── service_test.go
+│   │       └── README.md
+│   ├── 04-architecture/
+│   │   ├── hexagonal/
+│   │   │   ├── main.go
+│   │   │   ├── domain/
+│   │   │   ├── adapters/
+│   │   │   └── README.md
+│   │   └── repository-pattern/
+│   │       ├── main.go
+│   │       ├── repository.go
+│   │       └── README.md
+│   ├── 05-performance/
+│   │   ├── profiling/
+│   │   │   ├── main.go
+│   │   │   └── README.md
+│   │   └── optimization/
+│   │       ├── main.go
+│   │       └── README.md
+│   └── 06-workspace/
+│       ├── go.work                    # Workspace file
+│       ├── module-a/
+│       │   ├── go.mod
+│       │   └── main.go
+│       ├── module-b/
+│       │   ├── go.mod
+│       │   └── main.go
+│       └── README.md
+└── advanced/
+    ├── 01-profiling/
+    │   ├── cpu-profiling/
+    │   │   ├── main.go
+    │   │   └── README.md
+    │   ├── memory-profiling/
+    │   │   ├── main.go
+    │   │   └── README.md
+    │   └── escape-analysis/
+    │       ├── main.go
+    │       └── README.md
+    ├── 02-runtime/
+    │   ├── scheduler/
+    │   │   ├── main.go
+    │   │   └── README.md
+    │   └── gc-tuning/
+    │       ├── main.go
+    │       └── README.md
+    ├── 03-concurrency/
+    │   ├── lock-free/
+    │   │   ├── queue.go               # Lock-free queue
+    │   │   ├── queue_test.go
+    │   │   └── README.md
+    │   └── atomic-operations/
+    │       ├── main.go
+    │       └── README.md
+    ├── 04-generics/
+    │   ├── constraints/
+    │   │   ├── main.go
+    │   │   └── README.md
+    │   └── algorithms/
+    │       ├── sort.go                # Generic sort
+    │       ├── sort_test.go
+    │       └── README.md
+    ├── 05-reflection/
+    │   ├── serialization/
+    │   │   ├── main.go
+    │   │   └── README.md
+    │   └── struct-tags/
+    │       ├── main.go
+    │       └── README.md
+    └── 06-system-design/
+        ├── circuit-breaker/
+        │   ├── breaker.go
+        │   ├── breaker_test.go
+        │   └── README.md
+        └── rate-limiter/
+            ├── limiter.go
+            ├── limiter_test.go
+            └── README.md
+```
+
+### Code Example Requirements
+
+Each example must meet these standards:
+
+**1. Completeness**:
+
+- All code must be complete and runnable
+- Include all necessary imports
+- Provide clear main() entry point
+- Include go.mod file where needed
+
+**2. Documentation**:
+
+- Each example has a README.md explaining:
+  - What the example demonstrates
+  - How to run it (commands)
+  - Expected output
+  - Key concepts highlighted
+  - Links to relevant tutorial sections
+
+**3. Testing**:
+
+- All examples tested with Go 1.23.4
+- Verified to compile without errors
+- Verified to run with expected output
+- Cross-platform compatibility (Windows/Mac/Linux) where applicable
+
+**4. Quality**:
+
+- Follow Go conventions (gofmt, naming)
+- Include comments explaining non-obvious code
+- Keep examples focused (one concept per example)
+- No security vulnerabilities
+
+**5. Progression**:
+
+- Examples increase in complexity appropriately
+- Earlier examples referenced by later tutorials
+- Build on each other logically
+- No circular dependencies
+
+### Example README Template
+
+Each example's README.md should follow this structure:
+
+````markdown
+# [Example Name]
+
+## What This Demonstrates
+
+Brief explanation of the concept/feature being demonstrated.
+
+## Prerequisites
+
+- Completed [Tutorial Name] up to [Section]
+- Go 1.23.4 or later installed
+
+## How to Run
+
+```bash
+cd golang-examples/[tutorial-level]/[example-name]
+go run .
+```
+````
+
+## Expected Output
+
+```
+[Expected console output]
+```
+
+## Key Concepts
+
+- **Concept 1**: Explanation
+- **Concept 2**: Explanation
+
+## Related Tutorial Sections
+
+- [Tutorial Section Link](../../../tu-soen-prla-gola__[level].md#section-anchor)
+
+## Exercises
+
+Optional: Suggested modifications or exercises to deepen understanding.
+
+```
+
 ## Implementation Approach
 
 ### Phase 1: Rename Current Quick Start to Beginner
@@ -928,3 +1259,4 @@ Extract and simplify the following sections from Beginner:
 - Technical accuracy review by Go experts
 - Check against official Go documentation
 - Verify best practices are current
+```

@@ -20,6 +20,60 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 
 ## Implementation Phases
 
+### Phase 0: Planning and Feature Mapping
+
+**Status**: Not Started
+
+**Goal**: Create comprehensive feature mapping and validate plan completeness before implementation begins
+
+**Implementation Steps**:
+
+- [ ] Review and validate Feature Coverage Matrix in tech-docs.md
+- [ ] Confirm which features belong to which tutorial level (IS/QS/BEG/INT/ADV)
+- [ ] Identify any feature gaps or overlaps in the matrix
+- [ ] Define learning objectives for each tutorial level
+- [ ] Map prerequisites between tutorials explicitly:
+  - [ ] Initial Setup → Quick Start (optional, good to have Go installed)
+  - [ ] Quick Start → Beginner (references for all touchpoint topics)
+  - [ ] Beginner → Intermediate (foundation for production techniques)
+  - [ ] Intermediate → Advanced (professional patterns as base for expert mastery)
+- [ ] Validate progression path (no feature jumps or missing prerequisites)
+- [ ] Review Code Example Directory Structure in tech-docs.md
+- [ ] Confirm example organization matches tutorial levels
+- [ ] Verify Go version specification (Go 1.23.4 or later) is consistent across all plan documents
+- [ ] Validate all web sources and technical claims referenced in plan:
+  - [ ] Go 1.23.4 availability (https://go.dev/dl/)
+  - [ ] Generics support (Go 1.18+)
+  - [ ] Workspace mode (Go 1.18+)
+  - [ ] Delve debugger (github.com/go-delve/delve)
+  - [ ] pprof profiling (standard library)
+
+**Validation Checklist**:
+
+- [ ] Feature Coverage Matrix reviewed and validated
+- [ ] No feature duplication between tutorial levels
+- [ ] No feature gaps in progression (no jumps from basic to expert without intermediate)
+- [ ] All prerequisites clearly mapped
+- [ ] Learning objectives defined for each level
+- [ ] Code example structure aligns with tutorial content
+- [ ] Go version specification consistent (Go 1.23.4 or later)
+- [ ] All technical claims verified via web research
+- [ ] No blocking ambiguities or unclear requirements
+
+**Acceptance Criteria**:
+
+- [ ] Feature Coverage Matrix is complete and validated
+- [ ] Tutorial progression is logical and gap-free
+- [ ] All prerequisites are explicit and achievable
+- [ ] Technical accuracy confirmed for all Go features and tools
+- [ ] Plan ready for implementation (no TBD items in critical paths)
+
+**Deliverable**: Updated planning documents with validated feature mapping and confirmed technical accuracy
+
+**Note**: This phase can be completed quickly (1-2 hours) but is critical for preventing issues during tutorial creation. The Feature Coverage Matrix and Code Example Structure have already been added to tech-docs.md as part of plan refinement.
+
+---
+
 ### Phase 1: Rename Current Quick Start to Beginner + Update Cookbook
 
 **Status**: Not Started
@@ -66,7 +120,14 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] First paragraph updated with Beginner positioning
 - [ ] Cookbook prerequisites updated to reference "Beginner"
 - [ ] Cookbook frontmatter updated date set
-- [ ] Both files pass `docs-tutorial-checker` validation
+- [ ] Both files pass detailed quality validation:
+  - [ ] Run `docs-tutorial-checker` on Beginner tutorial - verify all structural, narrative, visual, and hands-on requirements pass
+  - [ ] Run `docs-tutorial-checker` on Cookbook - verify all requirements pass
+  - [ ] Run `docs-link-checker` on both files - ensure all internal and external links work
+  - [ ] Verify frontmatter YAML is valid (no syntax errors)
+  - [ ] Check all Mermaid diagrams render correctly in Obsidian
+  - [ ] Test all code examples in Beginner tutorial compile and run with Go 1.23.4
+  - [ ] Verify all cross-references point to valid sections
 - [ ] No broken internal links
 
 **Acceptance Criteria**:
@@ -75,6 +136,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Frontmatter accurately reflects Beginner-level content (0-60%, 3-4 hrs)
 - [ ] Content quality remains high (no degradation from rename)
 - [ ] Cookbook correctly references Beginner tutorial
+- [ ] All quality checks pass (docs-tutorial-checker, docs-link-checker, code verification)
 - [ ] No blocking issues or errors
 
 ---
@@ -129,7 +191,18 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Avoids advanced features (generics, testing details, advanced concurrency)
 - [ ] Cross-references to Beginner for comprehensive learning
 - [ ] Cross-references to Cookbook for patterns
-- [ ] Passes `docs-tutorial-checker` validation
+- [ ] Detailed quality validation passes:
+  - [ ] Run `docs-tutorial-checker` - verify structural requirements (frontmatter, headings, sections)
+  - [ ] Run `docs-tutorial-checker` - verify narrative flow (introduction, transitions, conclusion)
+  - [ ] Run `docs-tutorial-checker` - verify visual completeness (diagrams for abstract concepts)
+  - [ ] Run `docs-tutorial-checker` - verify hands-on elements (exercises, checkpoints)
+  - [ ] Run `docs-link-checker` - ensure all internal links to Beginner tutorial work
+  - [ ] Run `docs-link-checker` - ensure all external links (go.dev, etc.) are accessible
+  - [ ] Test all 10 code examples compile without errors using Go 1.23.4
+  - [ ] Test all 10 code examples produce expected output
+  - [ ] Verify all Mermaid diagrams (if any) render in Obsidian
+  - [ ] Check YAML frontmatter syntax is valid
+  - [ ] Time estimate validation: test with 3 target users, verify 80% complete in 1-2 hours
 - [ ] All code examples run correctly
 - [ ] Time estimate accurate (80% complete in 1-2 hours)
 
@@ -139,6 +212,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Quick Start is clearly a SUBSET of Beginner
 - [ ] Learner can read Go docs and try simple examples after completion
 - [ ] Tutorial quality meets all Convention standards
+- [ ] All quality checks pass (docs-tutorial-checker, docs-link-checker, code tests, time validation)
 - [ ] No blocking issues or errors
 
 ---
@@ -198,7 +272,21 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Hello World example runs correctly
 - [ ] Tutorial completable in 5-15 minutes (tested with beginners)
 - [ ] Cross-references link to Quick Start and Beginner
-- [ ] Passes `docs-tutorial-checker` validation
+- [ ] Detailed quality validation passes:
+  - [ ] Run `docs-tutorial-checker` - verify all structural requirements
+  - [ ] Run `docs-tutorial-checker` - verify narrative flow (clear, concise, beginner-friendly)
+  - [ ] Run `docs-tutorial-checker` - verify visual elements (optional diagram for setup flow)
+  - [ ] Run `docs-tutorial-checker` - verify hands-on elements (verification checklist)
+  - [ ] Run `docs-link-checker` - ensure all links to Quick Start and Beginner work
+  - [ ] Run `docs-link-checker` - ensure external link to https://go.dev/dl/ is accessible
+  - [ ] Test installation instructions on Windows 10/11 - verify Go installs correctly
+  - [ ] Test installation instructions on macOS (Intel and ARM) - verify Go installs correctly
+  - [ ] Test installation instructions on Linux (Ubuntu/Debian) - verify Go installs correctly
+  - [ ] Test "Hello World" example compiles and runs on all platforms with Go 1.23.4
+  - [ ] Verify `go version` command produces expected output
+  - [ ] Verify `go build` produces executable that runs
+  - [ ] Check YAML frontmatter is valid
+  - [ ] Time estimate validation: test with 3 complete beginners, verify completion in 5-15 minutes
 - [ ] Code examples are accurate and runnable
 - [ ] No duplication with Quick Start content
 - [ ] Minimal content, maximum speed
@@ -208,6 +296,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Complete beginner can install Go and run first program in 15 minutes or less
 - [ ] Tutorial structure follows Tutorial Convention standards
 - [ ] All platform-specific instructions are accurate
+- [ ] All quality checks pass (docs-tutorial-checker, docs-link-checker, multi-platform tests, time validation)
 - [ ] No blocking issues or errors
 
 ---
@@ -302,7 +391,22 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Cross-references to Beginner (prerequisites)
 - [ ] Cross-references to Advanced (next steps)
 - [ ] Cross-references to Cookbook (patterns)
-- [ ] Passes `docs-tutorial-checker` validation
+- [ ] Detailed quality validation passes:
+  - [ ] Run `docs-tutorial-checker` - verify structural requirements (7-8 main sections, challenges)
+  - [ ] Run `docs-tutorial-checker` - verify narrative flow (production-focused, professional tone)
+  - [ ] Run `docs-tutorial-checker` - verify visual completeness (architecture diagrams for patterns)
+  - [ ] Run `docs-tutorial-checker` - verify hands-on elements (practice exercise per section, 3-4 challenges)
+  - [ ] Run `docs-link-checker` - ensure all internal links (to Beginner, Cookbook, Advanced) work
+  - [ ] Run `docs-link-checker` - ensure all external links are accessible
+  - [ ] Run `docs-checker` - verify technical accuracy of concurrency patterns, error handling, testing strategies
+  - [ ] Test all code examples compile and run with Go 1.23.4
+  - [ ] Test production scenarios are realistic and runnable
+  - [ ] Verify worker pool example handles 1000+ operations correctly
+  - [ ] Verify profiling examples produce valid pprof output
+  - [ ] Verify security examples demonstrate best practices correctly
+  - [ ] Check all Mermaid diagrams (architecture patterns) render in Obsidian
+  - [ ] Verify YAML frontmatter is valid
+  - [ ] Time estimate validation: test with 3 intermediate developers, verify 80% complete in 4-8 hours
 - [ ] All code examples production-quality
 - [ ] Time estimate accurate (80% complete in 4-8 hours)
 
@@ -312,6 +416,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Production-ready techniques taught
 - [ ] Real-world scenarios and challenges
 - [ ] Tutorial quality meets all Convention standards
+- [ ] All quality checks pass (docs-tutorial-checker, docs-link-checker, docs-checker, code tests, time validation)
 - [ ] No blocking issues or errors
 
 ---
@@ -408,7 +513,24 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Mermaid diagrams for runtime internals
 - [ ] Cross-references to earlier tutorials for context
 - [ ] Links to research-level resources for 95-100% topics
-- [ ] Passes `docs-tutorial-checker` validation
+- [ ] Detailed quality validation passes:
+  - [ ] Run `docs-tutorial-checker` - verify structural requirements (8-10 sections, expert challenges)
+  - [ ] Run `docs-tutorial-checker` - verify narrative flow (expert-level, assumes advanced knowledge)
+  - [ ] Run `docs-tutorial-checker` - verify visual completeness (runtime internals diagrams for scheduler, GC, allocator)
+  - [ ] Run `docs-tutorial-checker` - verify hands-on elements (practice per section, 3-4 expert challenges)
+  - [ ] Run `docs-link-checker` - ensure all internal links (to earlier tutorials) work
+  - [ ] Run `docs-link-checker` - ensure all external links (research papers, Go source) are accessible
+  - [ ] Run `docs-checker` - verify technical accuracy of runtime internals, profiling techniques, advanced patterns
+  - [ ] Test all code examples compile and run with Go 1.23.4
+  - [ ] Test profiling examples (CPU, memory, block, mutex) produce valid output
+  - [ ] Verify escape analysis examples demonstrate allocation behavior correctly
+  - [ ] Test lock-free queue implementation is correct and race-free
+  - [ ] Verify generic algorithms work with multiple types correctly
+  - [ ] Test reflection examples for serialization work correctly
+  - [ ] Verify system design pattern implementations (circuit breaker, rate limiter) work under load
+  - [ ] Check all Mermaid diagrams (scheduler, GC, memory allocator) render in Obsidian
+  - [ ] Verify YAML frontmatter is valid
+  - [ ] Time estimate validation: test with 3 advanced developers, verify 80% complete in 6-12 hours
 - [ ] All code examples expert-quality
 - [ ] Time estimate accurate (80% complete in 6-12 hours)
 
@@ -418,6 +540,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [ ] Expert-level techniques taught
 - [ ] Internals and advanced patterns covered
 - [ ] Tutorial quality meets all Convention standards
+- [ ] All quality checks pass (docs-tutorial-checker, docs-link-checker, docs-checker, code tests, time validation)
 - [ ] No blocking issues or errors
 
 ---
