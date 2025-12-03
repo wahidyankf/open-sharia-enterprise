@@ -264,6 +264,37 @@ One interface, many implementations (covered with inheritance).
 
 **Inheritance** allows a class to inherit fields and methods from another class.
 
+#### Class Hierarchy Visualization
+
+```mermaid
+classDiagram
+    class Animal {
+        #String name
+        #int age
+        +eat() void
+        +sleep() void
+    }
+
+    class Dog {
+        -String breed
+        +eat() void*
+        +bark() void
+        +getBreed() String
+    }
+
+    class Cat {
+        -String furColor
+        +eat() void*
+        +meow() void
+        +getFurColor() String
+    }
+
+    Animal <|-- Dog
+    Animal <|-- Cat
+
+    note "Dog overrides eat() method"
+```
+
 #### Example: Simple Inheritance
 
 ```java
