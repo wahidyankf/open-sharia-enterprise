@@ -80,7 +80,7 @@ Plans differ from `docs/` in several important ways:
 2. **Purpose**: Temporary project planning (not permanent documentation)
 3. **File Naming**: No prefixes inside plan folders (folder structure provides context)
 4. **Lifecycle**: Plans move between in-progress, backlog, and done folders
-5. **Diagram Format**: ASCII art only (since plans/ is outside the Obsidian vault)
+5. **Diagram Format**: Mermaid primary, ASCII optional (for simple directory trees)
 
 ## Working with Plans
 
@@ -91,9 +91,7 @@ Plans differ from `docs/` in several important ways:
 
 ## Diagrams in Plans
 
-Since `plans/` is outside the `docs/` folder (Obsidian vault), **all files in plans/ must use ASCII art** for diagrams and schemas. This ensures universal compatibility across text editors, terminals, and version control tools.
-
-For details, see [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md).
+Files in `plans/` folder should use **Mermaid diagrams** as the primary format (same as all markdown files in the repository). ASCII art is optional and only needed for simple directory trees or rare edge cases. See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete details.
 
 ## Related Documentation
 

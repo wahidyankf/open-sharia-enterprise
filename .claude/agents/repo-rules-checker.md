@@ -63,10 +63,9 @@ When running a consistency check, systematically verify:
 
 ### Diagram Convention Compliance
 
-- [ ] Files inside `docs/` directory use Mermaid diagrams (not ASCII art)
-- [ ] Files outside `docs/` directory (README.md, CLAUDE.md, plans/, etc.) use ASCII art (not Mermaid)
-- [ ] Files within `plans/` folder use ASCII art (not Mermaid) since it's outside the Obsidian vault
-- [ ] No format mixing within single file (consistent Mermaid or ASCII throughout)
+- [ ] Files use Mermaid diagrams as primary format (all markdown files, including docs/, plans/, README.md)
+- [ ] ASCII art only used for simple directory trees or rare edge cases
+- [ ] No unnecessary format mixing within single file (prefer consistent format)
 - [ ] Mermaid code blocks use proper syntax with `mermaid` language identifier
 - [ ] ASCII art uses box-drawing characters and monospace-compatible formatting
 - [ ] Mermaid diagrams in `docs/` use vertical orientation (TD or BT) for mobile-friendly viewing (exception: horizontal only when vertical would harm clarity)

@@ -358,7 +358,7 @@ The agents work together in complementary workflows:
 - [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) - Complete agent specification and standards
 - [CLAUDE.md](../CLAUDE.md) - Project guidance for all agents
 - [Documentation Conventions](../docs/explanation/conventions/README.md) - File naming, linking, and Diátaxis framework
-- [Plans Organization](../plans/README.md) - Planning document structure and conventions (use ASCII art for diagrams)
+- [Plans Organization](../plans/README.md) - Planning document structure and conventions
 
 ## 🆕 Adding New Agents
 
