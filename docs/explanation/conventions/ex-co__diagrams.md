@@ -911,6 +911,7 @@ Before committing documentation with diagrams:
 
 ## 🔗 Related Documentation
 
+- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)
 - [File Naming Convention](./ex-co__file-naming-convention.md) - How to name documentation files
 - [Linking Convention](./ex-co__linking-convention.md) - How to link between files
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Documentation organization principles

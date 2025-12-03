@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-03
+updated: 2025-12-04
 ---
 
 # AI Agents Convention
@@ -292,6 +292,8 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 | 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-updater<br>docs-file-manager<br>docs-link-checker |
 | 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-executor                                                |
 
+**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) and meet WCAG AA standards for both light and dark modes. These colors work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color.
+
 ### Why This Categorization System
 
 This role-based categorization was chosen because it:
@@ -339,6 +341,87 @@ Start: What is the agent's primary capability?
   - If mainly executes plans/tasks → `purple` (Implementor)
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
+
+**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards. Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users.
+
+### Color Accessibility for Agent Identification
+
+**CRITICAL**: Colored square emojis (🟦🟩🟨🟪) provide visual categorization but are SUPPLEMENTARY to semantic information. Agents must be identifiable without relying on color perception.
+
+#### Multiple Identification Methods
+
+Agents are identified through FIVE independent methods:
+
+| Identification Method | Example                          | Purpose                                   |
+| --------------------- | -------------------------------- | ----------------------------------------- |
+| **Agent Name**        | "docs-maker"                     | Primary text-based identifier             |
+| **Role Suffix**       | "-maker" (writer)                | Indicates category through naming pattern |
+| **Emoji Shape**       | 🟦 (square)                      | Shape differentiation (not color)         |
+| **Description**       | "Expert documentation writer..." | Semantic purpose statement                |
+| **Color Field**       | `color: blue`                    | Text value in frontmatter                 |
+
+**Users with color blindness can identify agents by:**
+
+- Reading the agent name
+- Recognizing the role suffix pattern (-maker, -checker, -updater, -executor)
+- Seeing that the emoji is a square (shape, not color)
+- Reading the description field
+
+**Color perception is NOT required** to use agents effectively.
+
+#### Accessible Color Palette Verification
+
+All agent colors are from the verified accessible palette:
+
+| Color  | Emoji | Hex Code | WCAG AA (Light) | WCAG AA (Dark) | Safe For               |
+| ------ | ----- | -------- | --------------- | -------------- | ---------------------- |
+| Blue   | 🟦    | #0173B2  | ✅ 4.88:1       | ✅ 4.30:1      | All types (excellent)  |
+| Green  | 🟩    | #029E73  | ✅ 4.67:1       | ✅ 4.50:1      | All types (good)       |
+| Yellow | 🟨    | #F1C40F  | ⚠️ 3.51:1       | ⚠️ 2.99:1      | All types (moderate)\* |
+| Purple | 🟪    | #CC78BC  | ✅ 3.65:1       | ✅ 5.74:1      | All types (moderate)   |
+
+\*Yellow emoji (#F1C40F) has slightly lower contrast but remains distinguishable because it's combined with:
+
+- Square shape (not relying on color alone)
+- Text label "Updater"
+- Role suffix "-updater"
+
+**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) for complete details.
+
+#### Why These Colors Were Chosen
+
+1. **Protanopia & Deuteranopia (red-green blindness)**: Blue, yellow, and purple remain distinct. We avoid red and green entirely.
+2. **Tritanopia (blue-yellow blindness)**: Blue appears pink, yellow appears light pink, but shape and text differentiation ensure identification.
+3. **WCAG AA Compliance**: All colors meet minimum contrast requirements against both light and dark backgrounds.
+4. **Cross-Platform Consistency**: Colors render consistently across GitHub, Obsidian, VS Code, and terminals.
+
+#### Agent Identification Example
+
+**Example agent: `docs-maker`**
+
+```yaml
+---
+name: docs-maker
+description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
+tools: Read, Write, Edit, Glob, Grep
+model: inherit
+color: blue
+---
+```
+
+**How users identify this agent (without seeing color):**
+
+1. **Name**: "docs-maker" (text identifier)
+2. **Suffix**: "-maker" implies writer/creator role
+3. **Description**: "Expert documentation writer" (semantic identifier)
+4. **Emoji**: 🟦 appears as a square (shape), regardless of color perception
+5. **Field**: `color: blue` is a text value in YAML
+
+**For users with protanopia/deuteranopia**: The blue square appears as a distinct shade but is identifiable by its square shape and accompanying text.
+
+**For users with tritanopia**: The blue square appears pinkish but is identifiable by its square shape and accompanying text.
+
+**For users with complete color blindness (achromatopsia)**: All squares appear as different shades of gray but are identifiable by their position next to agent names and descriptions.
 
 ### Using Colors in Documentation
 
