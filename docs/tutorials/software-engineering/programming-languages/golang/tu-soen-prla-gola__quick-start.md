@@ -18,6 +18,34 @@ estimated_time: "1-2 hours"
 
 For comprehensive coverage and hands-on practice, see the [Complete Beginner's Guide](./tu-soen-prla-gola__beginner.md). For practical patterns and recipes, check out the [Golang Cookbook](./tu-soen-prla-gola__cookbook.md).
 
+## 🗺️ Go Learning Touchpoints
+
+This Quick Start gives you exposure to Go's core concepts in order of importance:
+
+```mermaid
+graph TB
+    A[Variables & Types] --> B[Control Flow]
+    B --> C[Functions]
+    C --> D[Structs]
+    D --> E[Error Handling]
+    E --> F[Goroutines]
+    F --> G[Slices & Maps]
+    G --> H[Packages]
+    H --> I[Ready to Explore!]
+
+    style A fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style B fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style C fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style D fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style E fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style F fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style G fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style H fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style I fill:#C8E6C9,stroke:#4CAF50,stroke-width:3px
+```
+
+Each section introduces ONE essential concept with ONE example. After completing all touchpoints, you'll understand Go's philosophy and can start experimenting independently.
+
 ## 📋 Prerequisites
 
 - Basic programming knowledge in any language
