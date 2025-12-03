@@ -10,7 +10,7 @@ tags:
   - generics
   - concurrency
 created: 2025-12-01
-updated: 2025-12-02
+updated: 2025-12-03
 ---
 
 # Golang Cookbook
@@ -36,7 +36,7 @@ By working through this cookbook, you will be able to:
 
 Before using this cookbook, you should:
 
-- ✅ Complete the [Golang Quick Start](./tu-soen-prla-gola__quick-start.md)
+- ✅ Complete the [Golang Beginner tutorial](./tu-soen-prla-gola__beginner.md) - or have equivalent experience with Go fundamentals
 - ✅ Understand Go syntax, types, and control flow
 - ✅ Know how to work with slices, maps, and structs
 - ✅ Understand functions, methods, and interfaces
