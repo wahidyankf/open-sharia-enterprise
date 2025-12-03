@@ -130,6 +130,6 @@ When adding new study cases:
 
 ## 🔗 Related Resources
 
-- [Diátaxis Framework](../explanation/conventions/ex-co__diataxis-framework.md) - Documentation structure
-- [Diagram Convention](../explanation/conventions/ex-co__diagrams.md) - How to create diagrams
-- [File Naming Convention](../explanation/conventions/ex-co__file-naming-convention.md) - Naming guidelines
+- [Diátaxis Framework](../../../explanation/conventions/ex-co__diataxis-framework.md) - Documentation structure
+- [Diagram Convention](../../../explanation/conventions/ex-co__diagrams.md) - How to create diagrams
+- [File Naming Convention](../../../explanation/conventions/ex-co__file-naming-convention.md) - Naming guidelines

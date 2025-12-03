@@ -7,7 +7,7 @@ tags:
   - software-engineering
   - learning
 created: 2025-12-03
-updated: 2025-12-03
+updated: 2025-12-04
 ---
 
 # Programming Languages Tutorials
@@ -16,7 +16,8 @@ This directory contains learning-oriented tutorials focused on programming langu
 
 ## Available Tutorials
 
-Currently, this directory is being populated with tutorials. Check back soon for comprehensive guides on various programming languages.
+- **[Go (Golang) Tutorials](./golang/)** - Complete Full Set covering Go from installation to expert mastery (6 comprehensive tutorials)
+- **[Java Tutorials](./java/)** - Complete Full Set covering Java from installation to expert mastery (tutorials coming soon)
 
 ## Tutorial Structure
 

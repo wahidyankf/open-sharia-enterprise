@@ -1,7 +1,7 @@
 ---
 title: Golang Initial Setup
 description: Get Go installed and running your first program in 15 minutes
-category: tutorials
+category: tutorial
 tags:
   - golang
   - installation
