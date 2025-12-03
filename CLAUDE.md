@@ -572,13 +572,15 @@ All mathematical equations and formulas in documentation use **LaTeX notation** 
 
 Tutorials follow standardized naming and depth levels to help learners find appropriate content:
 
-- **Tutorial Types:** Six standardized levels from Getting Started to Advanced plus Cookbook
-- **Getting Started** (0-5%, 5-15 min) - Quick "Hello World" verification
-- **Crash Course** (5-30%, 1-3 hrs) - Learn enough to explore independently
+- **Tutorial Types:** Six standardized levels - Full Set (5 sequential levels) plus Cookbook (parallel track)
+- **Initial Setup** (0-5%, 5-15 min) - Quick "Hello World" verification
+- **Quick Start** (5-30%, 1-3 hrs) - Learn enough to explore independently
 - **Beginner** (0-60%, 3-6 hrs) - Comprehensive foundation from scratch
 - **Intermediate** (60-85%, 4-8 hrs) - Professional-level expertise
 - **Advanced** (85-95%, 6-12 hrs) - Expert-level mastery
 - **Cookbook** (Practical, 2-6 hrs) - Day-to-day recipes and real-world problems
+
+**Full Set**: The 5 sequential levels (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) provide comprehensive mastery from 0% to 95% coverage. Cookbook is a separate, parallel track for practical problem-solving.
 
 See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details on coverage, time estimates, and when to use each type.
 

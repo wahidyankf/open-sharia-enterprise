@@ -37,8 +37,8 @@ Use standard markdown link syntax with relative paths:
 ### Key Rules
 
 1. **Always include the `.md` extension**
-   - ✅ `[Getting Started](./tutorials/tu__getting-started.md)`
-   - ❌ `[Getting Started](./tutorials/tu__getting-started)`
+   - ✅ `[Initial Setup](./tutorials/tu__initial-setup.md)`
+   - ❌ `[Initial Setup](./tutorials/tu__initial-setup)`
 
 2. **Use relative paths from the current file's location**
    - Same directory: `./file.md`
@@ -78,7 +78,7 @@ Use standard markdown link syntax with relative paths:
 ```markdown
 <!-- Link to sibling files in same directory -->
 
-[Getting Started](./tu__getting-started.md)
+[Initial Setup](./tu__initial-setup.md)
 [First Deployment](./tu__first-deployment.md)
 
 <!-- Link to parent directory -->

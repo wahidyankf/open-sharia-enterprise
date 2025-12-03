@@ -26,7 +26,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 - [Temporary Files Convention](./ex-co__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 - [Tutorial Convention](./ex-co__tutorials.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
-- [Tutorial Naming Convention](./ex-co__tutorial-naming.md) - Standardized tutorial types and depth levels (Getting Started, Crash Course, Beginner, Intermediate, Advanced, Cookbook)
+- [Tutorial Naming Convention](./ex-co__tutorial-naming.md) - Standardized tutorial types and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) with "Full Set" concept for sequential learning
 
 ---
 

@@ -34,7 +34,8 @@ The Tutorial Convention defines what to validate:
 
 The Tutorial Naming Convention defines:
 
-- Six standardized tutorial types (Getting Started, Crash Course, Beginner, Intermediate, Advanced, Cookbook)
+- Six standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+- "Full Set" concept: 5 sequential learning levels (Initial Setup through Advanced)
 - Expected coverage percentages and time estimates for each type
 - Proper naming patterns for each tutorial type
 - When each tutorial type should be used
@@ -264,7 +265,7 @@ Create a comprehensive report with:
 
 **Tutorial Type Compliance**:
 
-- Tutorial Type: [Getting Started | Crash Course | Beginner | Intermediate | Advanced | Cookbook]
+- Tutorial Type: [Initial Setup | Quick Start | Beginner | Intermediate | Advanced | Cookbook]
 - ✓/✗ Title follows naming pattern
 - ✓/✗ Coverage aligns with type (expected: X-Y%)
 - ✓/✗ Time estimate appropriate (expected: X hrs)
