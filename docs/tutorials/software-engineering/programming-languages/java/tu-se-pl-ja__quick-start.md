@@ -137,6 +137,26 @@ public class Operations {
 
 ## 3. Control Flow
 
+### Decision Tree Visualization
+
+Here's how if/else makes decisions:
+
+```mermaid
+graph TD
+    A["score = 85"] --> B{"score >= 90?"}
+    B -->|Yes| C["Grade: A"]
+    B -->|No| D{"score >= 80?"}
+    D -->|Yes| E["Grade: B"]
+    D -->|No| F{"score >= 70?"}
+    F -->|Yes| G["Grade: C"]
+    F -->|No| H["Grade: F"]
+
+    style C fill:#e1ffe1
+    style E fill:#fff0e1
+    style G fill:#ffe1e1
+    style H fill:#f0e1ff
+```
+
 ### Example: If/Else and Loops
 
 ```java

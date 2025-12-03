@@ -72,6 +72,43 @@ Metaspace (class definitions, constants)
 
 **Garbage Collection** automatically manages memory, freeing unreferenced objects.
 
+#### Understanding Generational GC
+
+Java uses **generational garbage collection** - most objects die young, so the young generation is collected frequently:
+
+```mermaid
+graph TD
+    subgraph "Heap Memory"
+        subgraph "Young Generation (80% of memory)"
+            E["Eden Space<br/>(New objects created here)"]
+            S0["Survivor Space S0<br/>(Objects survived 1 GC)"]
+            S1["Survivor Space S1<br/>(Objects survived 2 GCs)"]
+        end
+
+        subgraph "Old Generation (20% of memory)"
+            O["Tenured Space<br/>(Long-lived objects)"]
+        end
+    end
+
+    E -->|Minor GC<br/>Frequent| S0
+    S0 -->|Minor GC<br/>Frequent| S1
+    S1 -->|After multiple GCs| O
+    O -->|Major GC<br/>Infrequent| O
+
+    style E fill:#e1ffe1
+    style S0 fill:#ffe1e1
+    style S1 fill:#ffe1e1
+    style O fill:#e1e1ff
+```
+
+**How it works**:
+
+1. New objects are created in **Eden Space**
+2. After a **Minor GC**, survivors move to **S0**
+3. After another Minor GC, survivors move to **S1**
+4. Objects that survive multiple GCs move to **Old Generation**
+5. **Major GC** (full collection) is rare, affecting old generation
+
 #### Example: GC Tuning
 
 ```java

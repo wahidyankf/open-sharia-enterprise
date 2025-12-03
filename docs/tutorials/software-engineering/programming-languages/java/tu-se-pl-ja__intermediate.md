@@ -444,6 +444,26 @@ public class Human implements Workable, Eatable, Manageable {
 
 ---
 
+## Part 2B: Streams API (Visual Guide)
+
+### Understanding Stream Pipelines
+
+Streams process data through a pipeline of operations, similar to an assembly line:
+
+```mermaid
+graph LR
+    A[Source<br/>List of numbers<br/>1,2,3,4,5,6,7,8,9,10] -->|filter<br/>Keep evens| B[2,4,6,8,10]
+    B -->|map<br/>Square each| C[4,16,36,64,100]
+    C -->|reduce<br/>Sum all| D[Result<br/>220]
+
+    style A fill:#e1f5ff
+    style D fill:#ffe1e1
+```
+
+Each operation transforms the data and passes it to the next stage. This is immensely powerful for data processing.
+
+---
+
 ## Part 3: Advanced Concurrency
 
 ### 3.1 Threads and Synchronization
@@ -513,6 +533,24 @@ public class ThreadDemo {
 ```
 
 ### 3.2 Thread Safety with Synchronized
+
+**⚠️ Thread Safety Warning**
+
+Threads are powerful but dangerous. Consider this seemingly innocent code:
+
+```java
+class Counter {
+    private int count = 0;
+
+    public void increment() {
+        count++;  // NOT thread-safe!
+    }
+}
+```
+
+If two threads call `increment()` simultaneously, you might lose counts. This is a **race condition** - a common source of production bugs.
+
+**Rule**: Only use threads when you understand synchronization. For most cases, use higher-level abstractions like `ExecutorService` or `CompletableFuture`.
 
 **Synchronization** prevents race conditions when multiple threads access shared data.
 
