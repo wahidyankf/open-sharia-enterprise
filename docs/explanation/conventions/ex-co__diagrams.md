@@ -332,6 +332,7 @@ graph TD
 5. **Version Control Friendly** - Use consistent formatting for easier diffs
 6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
 7. **Use Color-Blind Friendly Colors** - Ensure diagrams are accessible to all users (see Color Accessibility below)
+8. **Single Color Palette Comment** - Each Mermaid diagram should have at most ONE color palette comment at the start (no duplicates)
 
 ### Color Accessibility for Color Blindness
 
@@ -449,8 +450,10 @@ All diagrams SHOULD be tested with color blindness simulators before publishing:
 
 For each diagram using colors:
 
-1. **Add comment** above diagram explaining the color scheme
+1. **Add ONE color palette comment** above diagram explaining the color scheme
    - Example: `<!-- Uses colors #0173B2 (blue), #DE8F05 (orange) for accessibility -->`
+   - **CRITICAL**: Each diagram should have exactly ONE color palette comment (no duplicates)
+   - Multiple identical comments add unnecessary clutter and create maintenance burden
 2. **Include labels** that don't rely solely on color
 3. **Test verification** noted in diagram documentation (if applicable)
 
@@ -906,6 +909,7 @@ Before committing documentation with diagrams:
 - [ ] Shape differentiation used (not relying on color alone)
 - [ ] Contrast ratios meet WCAG AA standards (4.5:1 for text)
 - [ ] Color scheme documented in comment above diagram
+- [ ] **Each diagram has exactly ONE color palette comment** (no duplicates)
 - [ ] Mermaid diagrams tested in GitHub preview or Obsidian
 - [ ] ASCII art (if used) verified in monospace font
 - [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)

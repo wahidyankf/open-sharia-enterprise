@@ -454,7 +454,8 @@ flowchart TD
 - Always use shape differentiation (not color alone)
 - Include black borders (#000000) for definition
 - Meet WCAG AA contrast ratios (4.5:1 for text)
-- Add comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->`
+- Add ONE color palette comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->`
+- **No duplicate color palette comments** - Each diagram should have exactly one comment (not multiple identical comments)
 - Test with color blindness simulators before publishing (see Color Accessibility Convention)
 
 See [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
