@@ -355,8 +355,6 @@ func main() {
 
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TB
@@ -416,11 +414,6 @@ Go's concurrency primitives enable powerful patterns. Here are production-ready 
 
 Before diving into recipes, let's visualize how worker pools coordinate multiple goroutines:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TB
     subgraph "Main Goroutine"
@@ -454,11 +447,6 @@ graph TB
 **Channel Communication Patterns:**
 
 Channels are the fundamental communication mechanism between goroutines. Understanding buffered vs unbuffered channels is crucial:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 sequenceDiagram
@@ -652,11 +640,6 @@ func main() {
 ```
 
 **How Pipeline Works:**
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TB

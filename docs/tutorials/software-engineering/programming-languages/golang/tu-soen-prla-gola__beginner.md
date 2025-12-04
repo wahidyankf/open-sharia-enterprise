@@ -389,8 +389,6 @@ Dynamic-length sequences (most commonly used). Slices are more powerful than arr
 
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -881,11 +879,6 @@ func main() {
 
 Go has pointers but no pointer arithmetic. Here's how they work in memory:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph LR
     subgraph "Memory"
@@ -966,11 +959,6 @@ Before moving forward, ensure you can:
 ## ⚠️ Error Handling
 
 Go doesn't have exceptions; it uses explicit error returns:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -1103,11 +1091,6 @@ func safeDivide(a, b int) {
 
 Go's killer feature - goroutines and channels. Let's understand how Go achieves amazing concurrency with simple primitives:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TD
     subgraph "Go Runtime"
@@ -1193,11 +1176,6 @@ func main() {
 
 Channels enable safe communication between goroutines. Think of them as typed pipes:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 sequenceDiagram
     participant G1 as Goroutine 1
@@ -1254,11 +1232,6 @@ func main() {
 ### Select Statement
 
 Multiplex channel operations:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD

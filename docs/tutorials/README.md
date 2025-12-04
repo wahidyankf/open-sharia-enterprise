@@ -150,9 +150,6 @@ Learning-oriented guides for mobile application development:
 
 **Goal**: Understand accounting and financial analysis fundamentals
 
-%% Color palette: Teal #029E73 (beginner), Blue #0173B2 (application)
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TB
 	A[Accounting Quick Start<br/>⏱️ 1-2 hours]
@@ -174,9 +171,6 @@ graph TB
 
 **Goal**: Build intelligent systems with LLMs and RAG
 
-%% Color palette: Teal #029E73 (beginner), Orange #DE8F05 (advanced), Blue #0173B2 (exploration)
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TB
 	A[Chat with PDF<br/>⏱️ 30-40 min]
@@ -197,9 +191,6 @@ graph TB
 ### Path 3: Fintech Developer
 
 **Goal**: Combine financial knowledge with AI capabilities
-
-%% Color palette: Teal #029E73 (beginner), Orange #DE8F05 (advanced), Blue #0173B2 (application)
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TB
@@ -227,9 +218,6 @@ graph TB
 ### Path 4: Backend/Systems Engineer
 
 **Goal**: Master Go for building scalable backend systems
-
-%% Color palette: Teal #029E73 (beginner), Blue #0173B2 (application)
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TB

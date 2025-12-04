@@ -114,9 +114,6 @@ graph TD
 Perfect for processes, workflows, and decision trees:
 
 ````markdown
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart LR
 		A[User Request] --> B{Authenticated?}
@@ -125,9 +122,6 @@ flowchart LR
 		C --> E[Return Response]
 ```
 ````
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart LR
@@ -142,9 +136,6 @@ flowchart LR
 Shows interactions between components over time:
 
 ````markdown
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 sequenceDiagram
 		participant Client
@@ -157,9 +148,6 @@ sequenceDiagram
 		API-->>Client: 201 Created
 ```
 ````
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 sequenceDiagram
@@ -178,9 +166,6 @@ sequenceDiagram
 Represents object-oriented structures and relationships:
 
 ````markdown
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 classDiagram
 		class Transaction {
@@ -201,9 +186,6 @@ classDiagram
 		Transaction --> Account : involves
 ```
 ````
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 classDiagram
@@ -230,9 +212,6 @@ classDiagram
 Shows database schema relationships:
 
 ````markdown
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 erDiagram
 		CUSTOMER ||--o{ ACCOUNT : owns
@@ -252,9 +231,6 @@ erDiagram
 		}
 ```
 ````
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 erDiagram
@@ -280,9 +256,6 @@ erDiagram
 Illustrates state transitions in systems:
 
 ````markdown
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 stateDiagram-v2
 		[*] --> Pending
@@ -293,9 +266,6 @@ stateDiagram-v2
 		Completed --> [*]
 ```
 ````
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 stateDiagram-v2
@@ -312,9 +282,6 @@ stateDiagram-v2
 Shows branch and merge history:
 
 ````markdown
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 gitGraph
 		commit
@@ -326,9 +293,6 @@ gitGraph
 		commit
 ```
 ````
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 gitGraph
@@ -352,9 +316,6 @@ gitGraph
 **Rationale**: Mobile devices have vertical screens. Vertical diagrams are easier to view without horizontal scrolling.
 
 **Example**:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -440,9 +401,6 @@ All colors must provide sufficient contrast in BOTH rendering modes:
 ````markdown
 <!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05), teal (#029E73) -->
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TD
 		A["User Request<br/>(Blue)"]:::blue
@@ -462,9 +420,6 @@ graph TD
 
 ````markdown
 <!-- Uses inaccessible colors: red and green -->
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -699,9 +654,6 @@ Use this quick reference to choose the right format:
 ````markdown
 ## Request Processing Flow
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 sequenceDiagram
 		participant Client
@@ -729,9 +681,6 @@ sequenceDiagram
 
 ````markdown
 ## Project Architecture
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -769,9 +718,6 @@ open-sharia-enterprise/
 ````markdown
 ## Transaction States
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 stateDiagram-v2
 		[*] --> Draft
@@ -793,9 +739,6 @@ stateDiagram-v2
 
 ````markdown
 ## Agent Architecture
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -832,9 +775,6 @@ Claude Code (Main Agent)
 ````markdown
 ## System Flow
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TD
     A --> B
@@ -857,18 +797,12 @@ A --> B (plain text - no format!)
 ````markdown
 ## System Flow
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TD
     A[Component A] --> B[Component B]
 ```
 
 ## State Transitions
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 stateDiagram-v2
@@ -881,9 +815,6 @@ stateDiagram-v2
 
 ````markdown
 ## Architecture Diagram
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -949,9 +880,6 @@ Since Mermaid is now the primary format, consider upgrading existing ASCII art d
 **After (Mermaid - vertical orientation)**:
 
 ````markdown
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TD
     A[Start] --> B[Process]

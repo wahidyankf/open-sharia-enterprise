@@ -197,9 +197,6 @@ func main() {
 
 **Worker Pool Architecture**:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph LR
     subgraph "Job Producers"
