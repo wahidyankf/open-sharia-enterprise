@@ -221,9 +221,6 @@ graph TD
 
 #### Complete Mermaid Template with Accessibility
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 <!--
 Uses accessible colors:
@@ -427,17 +424,11 @@ Borders provide shape definition that doesn't rely on fill color:
 
 ✅ **Good:**
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 classDef box fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ❌ **Avoid:**
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 classDef box fill:#0173B2,color:#0000FF
@@ -455,9 +446,6 @@ Never use color alone. Combine:
 ### 4. Document Your Color Choices
 
 Add HTML comments in diagrams explaining the color scheme:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 <!-- Uses accessible colors: blue (#0173B2) for primary, orange (#DE8F05) for warnings -->
@@ -506,9 +494,6 @@ Before committing content with colors:
 #### Step 1: Create Content Using Accessible Palette
 
 Create your diagram or design using only colors from the verified palette:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -589,9 +574,6 @@ Use this checklist before considering color usage complete:
 
 ❌ **Problem**: Red-blind and green-blind users cannot distinguish these colors
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 ❌ WRONG
 graph TD
@@ -603,9 +585,6 @@ graph TD
 ```
 
 ✅ **Solution**: Use colors from verified palette
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 ✅ CORRECT
@@ -621,9 +600,6 @@ graph TD
 
 ❌ **Problem**: Color-blind users cannot distinguish elements
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 ❌ WRONG
 graph TD
@@ -635,9 +611,6 @@ graph TD
 ```
 
 ✅ **Solution**: Add text labels and shapes
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 ✅ CORRECT
@@ -653,9 +626,6 @@ graph TD
 
 ❌ **Problem**: Yellow is invisible to tritanopia (blue-yellow blind)
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 ❌ WRONG - Yellow not visible to tritanopia users
 graph TD
@@ -665,9 +635,6 @@ graph TD
 ```
 
 ✅ **Solution**: Use orange or teal instead
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 ✅ CORRECT - Orange visible to all color blindness types
@@ -681,9 +648,6 @@ graph TD
 
 ❌ **Problem**: Insufficient contrast causes readability issues
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 ❌ WRONG - Purple text on light purple might have low contrast
 graph TD
@@ -693,9 +657,6 @@ graph TD
 ```
 
 ✅ **Solution**: Verify with contrast checker
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 ✅ CORRECT - Use verified palette with sufficient contrast
@@ -745,9 +706,6 @@ Dark mode: Dark background + Blue fill ✅ 6.93:1 contrast
 
 ### Good Example: Accessible Mermaid Diagram
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 <!--
 Uses accessible colors:
@@ -789,9 +747,6 @@ graph TD
 - ✅ Safe for all color blindness types
 
 ### Bad Example: Inaccessible Diagram
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 <!-- This diagram fails accessibility requirements -->

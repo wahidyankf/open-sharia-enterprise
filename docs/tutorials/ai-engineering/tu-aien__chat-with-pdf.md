@@ -123,9 +123,6 @@ User uploads "Company_Report_2024.pdf"
 
 **Extraction Process**:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TB
 	A[PDF File] --> B{Is it<br/>searchable?}
@@ -257,9 +254,6 @@ Similar words cluster together in vector space!
 
 **Process**:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TD
 	A[Text Chunk] --> B[Embedding Model<br/>OpenAI/Cohere/etc]
@@ -314,9 +308,6 @@ Find top 5 chunks most similar to:
 
 **How Vector Databases Work**:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 graph TD
 	A[New Embedding] --> B{Indexing Algorithm<br/>HNSW/IVF}
@@ -356,9 +347,6 @@ chunk_003   | [0.23, 0.89, ..., 0.45]   | {page: 2, doc: "Q4_Report"}
 **What Happens**: When a user asks a question, it goes through the same embedding process as document chunks.
 
 **User Question Flow**:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 sequenceDiagram
@@ -414,9 +402,6 @@ Chunk C: [-0.5, 0.2, 0.8] → Similarity: 0.23   Not similar
 ```
 
 **Search Process**:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TB
@@ -474,9 +459,6 @@ User Question:
 ```
 
 **Context Optimization Strategies**:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -543,9 +525,6 @@ What was Q4 revenue?
 ```
 
 **LLM Processing**:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD

@@ -184,9 +184,6 @@ $$
 
 ### Visualizing Time Value
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	subgraph "Future Value (Growing Money)"
@@ -216,9 +213,6 @@ The **discount rate** (r) represents:
 ### Risk and Required Return
 
 Different investments require different discount rates based on risk:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -392,9 +386,6 @@ TOTAL LIABILITIES + EQUITY        $35,000,000
 
 ### Financial Statement Relationships
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	IS[Income Statement<br/>Shows: Profitability] --> NI[Net Income]
@@ -546,9 +537,6 @@ $$
 
 The **cash conversion cycle** shows how long cash is tied up in operations:
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	A[Cash] --> B[Purchase Inventory]
@@ -572,9 +560,6 @@ flowchart TD
 **Shorter cycle = Better** (cash available faster)
 
 ### Ratio Analysis Summary
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -754,9 +739,6 @@ Payback period **ignores**:
 **Always use NPV or IRR as primary method.** Payback is supplementary.
 
 ### Capital Budgeting Process
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -1001,9 +983,6 @@ The project earns more than the cost of capital, creating value.
 
 ### Cost of Capital Breakdown
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	WACC[WACC: 8.56%<br/>Weighted Average] --> Debt[Debt Component<br/>35.5% × 3.41% = 1.21%]
@@ -1184,9 +1163,6 @@ While debt has tax benefits and lower cost than equity, **too much debt is dange
 
 ### Capital Structure Impact
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	A[Financing Decision] --> B{Debt or Equity?}
@@ -1230,9 +1206,6 @@ What's CloudTech worth? **Valuation** provides the answer.
 
 We'll focus on **DCF** - the fundamental approach.
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	A[Valuation Methods] --> B[DCF Analysis<br/>Intrinsic Value]
@@ -1268,9 +1241,6 @@ $$
 FCF is cash available to all investors (debt and equity).
 
 ### DCF Valuation Process
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -1382,9 +1352,6 @@ $$
 **CloudTech's Equity Value ≈ $131.7 million**
 
 ### DCF Valuation Flow
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD

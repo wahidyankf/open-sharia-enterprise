@@ -142,9 +142,6 @@ Check: $15,000 = $5,000 + $10,000 ✓
 
 ### Visual Representation
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	subgraph "The Accounting Equation"
@@ -203,9 +200,6 @@ This isn't opinion or preference—it's the mathematical law that makes accounti
 ### Account Types and Their Normal Balances
 
 Different types of accounts increase and decrease differently:
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -397,9 +391,6 @@ EXPENSES (5000-5999)
 ```
 
 ### Visual Organization
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -658,9 +649,6 @@ Account                 Debit      Credit
 
 ### Transaction Summary
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 sequenceDiagram
 	participant Transaction
@@ -790,9 +778,6 @@ Final Balance: $450 (Credit)
 
 ### Ledger Organization
 
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
 ```mermaid
 flowchart TD
 	J[Journal Entries<br/>Chronological] --> L{Post to Ledger}
@@ -916,9 +901,6 @@ Next, you'll transform these numbers into the three core financial statements th
 Now we transform accounting records into meaningful financial reports.
 
 ### The Three Core Financial Statements
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -1200,9 +1182,6 @@ Jan 25: Cash 300 / Accounts Receivable 300
 **Example:** $5 stapler can be expensed immediately rather than treated as long-term asset.
 
 ### Principles Summary
-
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
