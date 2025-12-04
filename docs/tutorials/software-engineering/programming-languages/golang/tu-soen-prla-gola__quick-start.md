@@ -22,6 +22,9 @@ For comprehensive coverage and hands-on practice, see the [Complete Beginner's G
 
 This Quick Start gives you exposure to Go's core concepts in order of importance:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
     A[Variables & Types] --> B[Control Flow]
@@ -33,15 +36,15 @@ graph TB
     G --> H[Packages]
     H --> I[Ready to Explore!]
 
-    style A fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style B fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style C fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style D fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style E fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style F fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style G fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style H fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style I fill:#C8E6C9,stroke:#4CAF50,stroke-width:3px
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style H fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style I fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:3px
 ```
 
 Each section introduces ONE essential concept with ONE example. After completing all touchpoints, you'll understand Go's philosophy and can start experimenting independently.

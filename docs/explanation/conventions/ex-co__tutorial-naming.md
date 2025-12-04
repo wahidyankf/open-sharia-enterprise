@@ -28,13 +28,14 @@ This document defines the standard tutorial types and naming conventions used ac
 ## 📊 Tutorial Types Overview
 
 ```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
-	A[Initial Setup<br/>0-5%]
-	B[Quick Start<br/>5-30%]
-	C[Beginner<br/>0-60%]
-	D[Intermediate<br/>60-85%]
-	E[Advanced<br/>85-95%]
-	F[Cookbook<br/>Practical]
+	A["<b>Initial Setup</b><br/>0-5%"]
+	B["<b>Quick Start</b><br/>5-30%"]
+	C["<b>Beginner</b><br/>0-60%"]
+	D["<b>Intermediate</b><br/>60-85%"]
+	E["<b>Advanced</b><br/>85-95%"]
+	F["<b>Cookbook</b><br/>Practical"]
 
 	A --> B
 	B --> C
@@ -45,12 +46,12 @@ graph TB
 	D -.-> F
 	E -.-> F
 
-	style A fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-	style B fill:#b3e5fc,stroke:#0277bd,stroke-width:2px
-	style C fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style D fill:#fff59d,stroke:#f9a825,stroke-width:2px
-	style E fill:#ef9a9a,stroke:#e53935,stroke-width:2px
-	style F fill:#ce93d8,stroke:#8e24aa,stroke-width:2px
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style F fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Legend**:
@@ -290,6 +291,7 @@ Collection of practical recipes and patterns for solving common real-world probl
 ### Decision Tree
 
 ```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 graph TB
 	START[Need to learn a topic?]
 	Q1{Never used before?}
@@ -321,12 +323,12 @@ graph TB
 
 	Q7 -->|Yes| CB
 
-	style IS fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-	style QS fill:#b3e5fc,stroke:#0277bd,stroke-width:2px
-	style BEG fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style INT fill:#fff59d,stroke:#f9a825,stroke-width:2px
-	style ADV fill:#ef9a9a,stroke:#e53935,stroke-width:2px
-	style CB fill:#ce93d8,stroke:#8e24aa,stroke-width:2px
+	style IS fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style QS fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style BEG fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style INT fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style ADV fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style CB fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Quick Reference Table

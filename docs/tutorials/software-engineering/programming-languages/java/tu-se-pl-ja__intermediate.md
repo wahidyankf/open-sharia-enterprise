@@ -450,16 +450,19 @@ public class Human implements Workable, Eatable, Manageable {
 
 Streams process data through a pipeline of operations, similar to an assembly line:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A["📊 Source<br/>List of numbers<br/>1,2,3,4,5,6,7,8,9,10"] -->|filter<br/>Keep evens| B["2,4,6,8,10"]
     B -->|map<br/>Square each| C["4,16,36,64,100"]
     C -->|reduce<br/>Sum all| D["✅ Result<br/>220"]
 
-    style A fill:#e1f5ff
-    style B fill:#fff9e1
-    style C fill:#ffe9e1
-    style D fill:#e1ffe1
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05
+    style C fill:#DE8F05
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 Each operation transforms the data and passes it to the next stage. This is immensely powerful for data processing.

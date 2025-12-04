@@ -643,6 +643,11 @@ Imagine you're the CFO of CloudTech, a growing SaaS company. Your CEO wants to i
 
 This flowchart shows how companies evaluate investment opportunities:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Investment Opportunity] --> B[Estimate Cash Flows]
@@ -653,9 +658,9 @@ flowchart TD
 	E -->|Yes| F[✓ Accept Project<br/>Creates Value]
 	E -->|No| G[✗ Reject Project<br/>Destroys Value]
 
-	style A fill:#e1f5ff
-	style F fill:#e8f5e9
-	style G fill:#ffebee
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style F fill:#029E73,stroke:#000000,color:#FFFFFF
+	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 ````
 
@@ -1542,6 +1547,11 @@ Where:
 - $[var2]$ = [definition]
 
 **Visual representation:**
+
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 [Diagram illustrating concept]

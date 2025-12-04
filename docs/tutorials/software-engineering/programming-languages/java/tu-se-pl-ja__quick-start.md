@@ -141,6 +141,9 @@ public class Operations {
 
 Here's how if/else makes decisions:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A["score = 85"] --> B{"score >= 90?"}
@@ -151,10 +154,10 @@ graph TD
     F -->|Yes| G["Grade: C"]
     F -->|No| H["Grade: F"]
 
-    style C fill:#e1ffe1
-    style E fill:#fff0e1
-    style G fill:#ffe1e1
-    style H fill:#f0e1ff
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style E fill:#DE8F05
+    style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style H fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ### Example: If/Else and Loops

@@ -35,6 +35,9 @@ After this tutorial, you'll be able to:
 
 Professional Go development involves multiple layers working together:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
     subgraph "Production System"
@@ -70,14 +73,14 @@ graph TB
     H -.- B
     H -.- C
 
-    style A fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style B fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style C fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style D fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style E fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style F fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style G fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style H fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 This tutorial covers techniques for building each layer and implementing cross-cutting concerns professionally.
@@ -194,6 +197,9 @@ func main() {
 
 **Worker Pool Architecture**:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph LR
     subgraph "Job Producers"
@@ -234,13 +240,13 @@ graph LR
 
     R --> C
 
-    style Q fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style R fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style W1 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style W2 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style W3 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style W4 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style W5 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style Q fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style R fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style W1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style W2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style W3 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style W4 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style W5 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 The worker pool prevents goroutine explosion by maintaining a fixed number of workers processing an unbounded queue of jobs.

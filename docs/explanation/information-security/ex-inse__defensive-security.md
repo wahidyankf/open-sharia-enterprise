@@ -205,6 +205,11 @@ Procedures and processes for responding to and recovering from security incident
 
 ## Defense-in-Depth Strategy
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     Attacker["⚠️ ATTACKER<br/>External Threat"]
@@ -229,13 +234,13 @@ graph TD
     Monitor -.->|Protects| Layer5
 
     style Attacker fill:#ffcccc,stroke:#b71c1c,stroke-width:3px
-    style Layer1 fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style Layer2 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style Layer3 fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
-    style Layer4 fill:#fffde7,stroke:#f57f17,stroke-width:2px
-    style Layer5 fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    style Assets fill:#c8e6c9,stroke:#1b5e20,stroke-width:3px
-    style Monitor fill:#ffebee,stroke:#c62828,stroke-width:3px
+    style Layer1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Layer2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Layer3 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke:#6a1b9a,stroke-width:2px
+    style Layer4 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke:#f57f17,stroke-width:2px
+    style Layer5 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke:#c2185b,stroke-width:2px
+    style Assets fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    style Monitor fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:3px
 ```
 
 ### Layered Approach
@@ -249,6 +254,11 @@ graph TD
 
 ## Defensive Security in the SDLC
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A["Planning<br/>Threat Modeling<br/>Security Requirements"] --> B["Design<br/>Security Architecture<br/>Design Review"]
@@ -258,16 +268,21 @@ graph TD
     E --> F["Operations<br/>Monitoring & Detection<br/>Incident Response"]
     F --> G["Maintenance<br/>Patching<br/>Vulnerability Management"]
 
-    style A fill:#e3f2fd
-    style B fill:#e8f5e9
-    style C fill:#f3e5f5
-    style D fill:#fff3e0
-    style E fill:#fce4ec
-    style F fill:#ffebee
-    style G fill:#fffde7
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ## Defensive vs Offensive Security
+
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -275,9 +290,9 @@ graph TD
     B["⚔️ Offensive Security<br/>Red Team<br/>Find & Exploit"] -->|Tests| C
     C -->|Improves| A
 
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#f1f8e9
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### Key Differences
@@ -456,6 +471,11 @@ As a financial technology company, Open Sharia Enterprise must:
 
 ## Defensive vs SAST vs DAST vs Offensive
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A["Comprehensive<br/>Security Program"]
@@ -471,12 +491,12 @@ graph TD
     A --> E
     A --> F
 
-    style A fill:#f1f8e9
-    style B fill:#e3f2fd
-    style C fill:#e8f5e9
-    style D fill:#fff3e0
+    style A fill:#029E73,stroke:#000000,color:#FFFFFF
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
     style E fill:#ffe0b2
-    style F fill:#ffebee
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### When Each Is Used

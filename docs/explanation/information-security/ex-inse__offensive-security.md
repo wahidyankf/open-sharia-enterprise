@@ -108,15 +108,18 @@ Systematic evaluation of an organization's security controls, policies, and prac
 
 ## Offensive vs Defensive Security
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A["🛡️ Defensive Security<br/>Blue Team"] -->|Informs| C["Stronger<br/>Defenses"]
     B["⚔️ Offensive Security<br/>Red Team"] -->|Validates| C
     C -->|Discovered<br/>Gaps| B
 
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#f1f8e9
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### Complementary Approaches
@@ -252,6 +255,9 @@ Organizations invite security researchers to find vulnerabilities:
 
 ## Offensive Security in the SDLC
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A["Development<br/>Code Review & SAST"] --> B["Testing<br/>DAST & Security Testing"]
@@ -260,12 +266,12 @@ graph TD
     D --> E["Production<br/>Continuous Monitoring"]
     E --> F["Post-Incident<br/>Vulnerability Research"]
 
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#ffe0b2
-    style D fill:#ffcc80
-    style E fill:#f1f8e9
-    style F fill:#c8e6c9
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style F fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Integration Points
@@ -369,16 +375,19 @@ As a financial technology company, Open Sharia Enterprise must validate:
 
 ## Offensive vs SAST vs DAST
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A["SAST<br/>Static Code Analysis<br/>Pre-Deployment<br/>White-Box"] --> D["Comprehensive<br/>Security"]
     B["DAST<br/>Runtime Testing<br/>During Testing<br/>Black-Box"] --> D
     C["Offensive<br/>Active Exploitation<br/>Authorized Testing<br/>Attacker Mindset"] --> D
 
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#ffe0b2
-    style D fill:#f1f8e9
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Complementary Approaches

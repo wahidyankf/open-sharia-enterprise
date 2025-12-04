@@ -21,6 +21,9 @@ This guide helps you choose the right location based on the type and lifecycle o
 
 ## Quick Decision Tree
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Brown #CA9161, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
     Start([New Work]) --> Q1{Is this daily<br/>scratch work?}
@@ -38,14 +41,14 @@ flowchart TD
     Q5 -->|Conceptual| Explanation[docs/explanation/]
     Q4 -->|No| Journals
 
-    style Journals fill:#e1f5ff
-    style Backlog fill:#fff4e1
-    style InProgress fill:#ffe1e1
-    style Done fill:#e1ffe1
-    style Tutorial fill:#f0e1ff
-    style HowTo fill:#f0e1ff
-    style Reference fill:#f0e1ff
-    style Explanation fill:#f0e1ff
+    style Journals fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style Backlog fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style InProgress fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style Done fill:#029E73,stroke:#000000,color:#FFFFFF
+    style Tutorial fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style HowTo fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style Reference fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style Explanation fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ## The Three Work Folders

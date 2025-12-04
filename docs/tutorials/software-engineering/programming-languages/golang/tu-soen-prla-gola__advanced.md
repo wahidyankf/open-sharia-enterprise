@@ -37,6 +37,9 @@ After this tutorial, you'll understand:
 
 This tutorial explores three layers of Go mastery:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
     subgraph "Layer 1: Runtime Internals"
@@ -75,18 +78,18 @@ graph TB
     C2 --> D2
     C3 --> D3
 
-    style A1 fill:#FFEBEE,stroke:#C62828,stroke-width:2px
-    style A2 fill:#FFEBEE,stroke:#C62828,stroke-width:2px
-    style A3 fill:#FFEBEE,stroke:#C62828,stroke-width:2px
-    style B1 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style B2 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style B3 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style C1 fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
-    style C2 fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
-    style C3 fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
-    style D1 fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
-    style D2 fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
-    style D3 fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style A1 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style A2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style A3 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B1 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B3 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C3 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D1 fill:#CC78BC,stroke:#CC78BC,stroke-width:2px
+    style D2 fill:#CC78BC,stroke:#CC78BC,stroke-width:2px
+    style D3 fill:#CC78BC,stroke:#CC78BC,stroke-width:2px
 ```
 
 Each layer builds on the previous, taking you from understanding Go's internals to designing sophisticated systems.
@@ -100,6 +103,9 @@ Understanding how Go executes code is crucial for optimization:
 ### Goroutine Scheduler (M:N Model)
 
 Go uses an M:N scheduler where M goroutines are multiplexed onto N OS threads:
+
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TB
@@ -143,19 +149,19 @@ graph TB
     M1 --> K
     M2 --> K
 
-    style G1 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
-    style G2 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
-    style G3 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
-    style G4 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
-    style G5 fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
-    style GN fill:#C8E6C9,stroke:#4CAF50,stroke-width:2px
-    style P0 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style P1 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style P2 fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style M0 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style M1 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style M2 fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
-    style K fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    style G1 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G4 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G5 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style GN fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style P0 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style P1 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style P2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M0 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style K fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Key Components**:

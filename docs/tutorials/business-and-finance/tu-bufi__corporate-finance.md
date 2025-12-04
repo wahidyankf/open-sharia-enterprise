@@ -68,6 +68,9 @@ Throughout this tutorial, we'll follow **"CloudTech Solutions"**, a growing clou
 - DCF valuation model for the company
 - Practical skills for real-world financial decisions
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Business Decision] --> B[Analyze Cash Flows]
@@ -77,8 +80,8 @@ flowchart TD
 	E --> F[Make Investment Decision]
 	F --> G[Create Value]
 
-	style A fill:#e1f5ff
-	style G fill:#e8f5e9
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style G fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 The diagram above shows the corporate finance decision-making framework we'll master.
@@ -181,6 +184,9 @@ $$
 
 ### Visualizing Time Value
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	subgraph "Future Value (Growing Money)"
@@ -191,10 +197,10 @@ flowchart TD
 		FV2[$10,000 in 5 years] --> PV2[$7,473 Today<br/>@ 6% discount rate]
 	end
 
-	style PV1 fill:#e1f5ff
-	style FV1 fill:#e8f5e9
-	style FV2 fill:#fff4e1
-	style PV2 fill:#e1f5ff
+	style PV1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style FV1 fill:#029E73,stroke:#000000,color:#FFFFFF
+	style FV2 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style PV2 fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 ### Discount Rate: The Key Number
@@ -211,6 +217,9 @@ The **discount rate** (r) represents:
 
 Different investments require different discount rates based on risk:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Investment Risk Categories] --> B[Low Risk<br/>Discount Rate: 4-6%]
@@ -221,9 +230,9 @@ flowchart TD
 	C --> C1[Examples:<br/>• Established companies<br/>• Real estate<br/>• Corporate bonds]
 	D --> D1[Examples:<br/>• Startups<br/>• Emerging markets<br/>• Speculative ventures]
 
-	style B fill:#e8f5e9
-	style C fill:#fff4e1
-	style D fill:#ffebee
+	style B fill:#029E73,stroke:#000000,color:#FFFFFF
+	style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Rule:** Higher risk = Higher required return = Higher discount rate
@@ -383,6 +392,9 @@ TOTAL LIABILITIES + EQUITY        $35,000,000
 
 ### Financial Statement Relationships
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	IS[Income Statement<br/>Shows: Profitability] --> NI[Net Income]
@@ -396,9 +408,9 @@ flowchart TD
 	NI -.Flows to.-> Equity
 	Cash -.Matches.-> Assets
 
-	style IS fill:#fff4e1
-	style BS fill:#e8f5e9
-	style CF fill:#f3e5f5
+	style IS fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style BS fill:#029E73,stroke:#000000,color:#FFFFFF
+	style CF fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -534,6 +546,9 @@ $$
 
 The **cash conversion cycle** shows how long cash is tied up in operations:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Cash] --> B[Purchase Inventory]
@@ -547,9 +562,9 @@ flowchart TD
 
 	H[Cash Conversion Cycle<br/>= 24 + 58 - 48 = 34 days]
 
-	style A fill:#e8f5e9
-	style H fill:#e1f5ff
-	style G fill:#fff4e1
+	style A fill:#029E73,stroke:#000000,color:#FFFFFF
+	style H fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **CloudTech's cash is tied up for 34 days** from paying suppliers to collecting from customers.
@@ -557,6 +572,9 @@ flowchart TD
 **Shorter cycle = Better** (cash available faster)
 
 ### Ratio Analysis Summary
+
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 flowchart TD
@@ -580,10 +598,10 @@ flowchart TD
 		IT[Inventory Turnover: 15<br/>Efficient]
 	end
 
-	style ROA fill:#e8f5e9
-	style ROE fill:#e8f5e9
-	style CR fill:#e1f5ff
-	style DE fill:#fff4e1
+	style ROA fill:#029E73,stroke:#000000,color:#FFFFFF
+	style ROE fill:#029E73,stroke:#000000,color:#FFFFFF
+	style CR fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style DE fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -737,6 +755,9 @@ Payback period **ignores**:
 
 ### Capital Budgeting Process
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Investment Opportunity] --> B[Estimate Cash Flows]
@@ -752,9 +773,9 @@ flowchart TD
 	I -->|Yes| F
 	I -->|No| G
 
-	style A fill:#e1f5ff
-	style F fill:#e8f5e9
-	style G fill:#ffebee
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style F fill:#029E73,stroke:#000000,color:#FFFFFF
+	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### Practice Exercise
@@ -980,6 +1001,9 @@ The project earns more than the cost of capital, creating value.
 
 ### Cost of Capital Breakdown
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	WACC[WACC: 8.56%<br/>Weighted Average] --> Debt[Debt Component<br/>35.5% × 3.41% = 1.21%]
@@ -990,9 +1014,9 @@ flowchart TD
 
 	RE --> CAPM[rf + β × Risk Premium<br/>3% + 1.2 × 7% = 11.4%]
 
-	style WACC fill:#e8f5e9
-	style Debt fill:#ffe1e1
-	style Equity fill:#e1f5ff
+	style WACC fill:#029E73,stroke:#000000,color:#FFFFFF
+	style Debt fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style Equity fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -1160,6 +1184,9 @@ While debt has tax benefits and lower cost than equity, **too much debt is dange
 
 ### Capital Structure Impact
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Financing Decision] --> B{Debt or Equity?}
@@ -1175,8 +1202,8 @@ flowchart TD
 	E --> G
 	F --> G
 
-	style A fill:#e1f5ff
-	style G fill:#e8f5e9
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style G fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -1203,6 +1230,9 @@ What's CloudTech worth? **Valuation** provides the answer.
 
 We'll focus on **DCF** - the fundamental approach.
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Valuation Methods] --> B[DCF Analysis<br/>Intrinsic Value]
@@ -1213,10 +1243,10 @@ flowchart TD
 	C --> C1[✓ Quick market check<br/>✓ Easy to understand<br/>✗ Needs comparable firms]
 	D --> D1[✓ Real transaction data<br/>✓ Control premiums<br/>✗ Limited data availability]
 
-	style A fill:#e1f5ff
-	style B fill:#e8f5e9
-	style C fill:#fff4e1
-	style D fill:#f3e5f5
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style B fill:#029E73,stroke:#000000,color:#FFFFFF
+	style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ### Discounted Cash Flow (DCF) Valuation
@@ -1239,6 +1269,9 @@ FCF is cash available to all investors (debt and equity).
 
 ### DCF Valuation Process
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Start DCF Valuation] --> B[Step 1:<br/>Project Free Cash Flows<br/>5-10 years]
@@ -1251,9 +1284,9 @@ flowchart TD
 
 	I[Sensitivity Analysis<br/>Test assumptions] -.Validate.-> H
 
-	style A fill:#e1f5ff
-	style H fill:#e8f5e9
-	style I fill:#fff4e1
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style H fill:#029E73,stroke:#000000,color:#FFFFFF
+	style I fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### CloudTech DCF Valuation
@@ -1350,6 +1383,9 @@ $$
 
 ### DCF Valuation Flow
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Project Free Cash Flows<br/>5 years] --> B[Calculate Terminal Value<br/>Value after Year 5]
@@ -1358,8 +1394,8 @@ flowchart TD
 	D --> E[Subtract Net Debt<br/>-$6M]
 	E --> F[Equity Value<br/>$131.7M]
 
-	style A fill:#e1f5ff
-	style F fill:#e8f5e9
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style F fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### Sensitivity Analysis

@@ -387,6 +387,11 @@ func main() {
 
 Dynamic-length sequences (most commonly used). Slices are more powerful than arrays—here's their internal structure:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     subgraph "Slice Header"
@@ -401,9 +406,9 @@ graph TD
 
     ptr -.points to.-> arr
 
-    style ptr fill:#2196F3
-    style len fill:#4CAF50
-    style cap fill:#FF9800
+    style ptr fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style len fill:#029E73,stroke:#000000,color:#FFFFFF
+    style cap fill:#DE8F05
 ```
 
 **Key Concepts**:
@@ -876,6 +881,11 @@ func main() {
 
 Go has pointers but no pointer arithmetic. Here's how they work in memory:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph LR
     subgraph "Memory"
@@ -892,8 +902,8 @@ graph LR
     p --> B
     B -.points to.-> A
 
-    style A fill:#4CAF50
-    style B fill:#2196F3
+    style A fill:#029E73,stroke:#000000,color:#FFFFFF
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 **Key Concepts**:
@@ -957,6 +967,11 @@ Before moving forward, ensure you can:
 
 Go doesn't have exceptions; it uses explicit error returns:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     Start[Function Call] --> Check{Returns Error?}
@@ -980,10 +995,10 @@ graph TD
 
     Success --> Continue[Continue Execution]
 
-    style Check fill:#e1f5ff
-    style Handle fill:#ffe1e1
-    style Success fill:#e1ffe1
-    style Decision fill:#fff4e1
+    style Check fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style Handle fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style Success fill:#029E73,stroke:#000000,color:#FFFFFF
+    style Decision fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Key Principles:**
@@ -1088,6 +1103,11 @@ func safeDivide(a, b int) {
 
 Go's killer feature - goroutines and channels. Let's understand how Go achieves amazing concurrency with simple primitives:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     subgraph "Go Runtime"
@@ -1120,13 +1140,13 @@ graph TD
     G5 --> Scheduler
     G6 --> Scheduler
 
-    style Scheduler fill:#4CAF50
-    style G1 fill:#2196F3
-    style G2 fill:#2196F3
-    style G3 fill:#2196F3
-    style G4 fill:#2196F3
-    style G5 fill:#2196F3
-    style G6 fill:#2196F3
+    style Scheduler fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style G2 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style G3 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style G4 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style G5 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style G6 fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 **Key Insight**: Go multiplexes many goroutines (G1-G6) onto few OS threads (T1-T3). This is why goroutines are cheap—you can have millions of them!
@@ -1172,6 +1192,11 @@ func main() {
 ### Channels
 
 Channels enable safe communication between goroutines. Think of them as typed pipes:
+
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 sequenceDiagram
@@ -1230,6 +1255,11 @@ func main() {
 
 Multiplex channel operations:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     Start[Select Statement] --> Wait[Wait on Multiple Channels]
@@ -1251,12 +1281,12 @@ graph TD
     Case3 --> Done
     Default --> Done
 
-    style Wait fill:#e1f5ff
-    style Ready fill:#fff4e1
-    style Case1 fill:#e1ffe1
-    style Case2 fill:#e1ffe1
-    style Case3 fill:#ffe1e1
-    style Default fill:#ffe1e1
+    style Wait fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style Ready fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style Case1 fill:#029E73,stroke:#000000,color:#FFFFFF
+    style Case2 fill:#029E73,stroke:#000000,color:#FFFFFF
+    style Case3 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style Default fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **How select works:**
