@@ -80,7 +80,7 @@ Plans differ from `docs/` in several important ways:
 2. **Purpose**: Temporary project planning (not permanent documentation)
 3. **File Naming**: No prefixes inside plan folders (folder structure provides context)
 4. **Lifecycle**: Plans move between in-progress, backlog, and done folders
-5. **Diagram Format**: Mermaid primary, ASCII optional (for simple directory trees)
+5. **Diagram Format**: Mermaid (primary format for all markdown files), ASCII art optional for simple directory trees
 
 ## Working with Plans
 

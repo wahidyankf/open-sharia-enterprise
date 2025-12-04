@@ -164,7 +164,7 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Plan folders follow naming pattern `YYYY-MM-DD__[project-identifier]/`
 - [ ] Each plan folder contains standard files: `README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`
 - [ ] Plan files DON'T use prefixes (folder structure provides context)
-- [ ] Plan files correctly use ASCII art for diagrams (not Mermaid, since outside `docs/`)
+- [ ] Plan files use Mermaid diagrams as primary format (ASCII art optional for simple directory trees)
 - [ ] Plans correctly specify git workflow in `delivery.md` (branch name or default `main`)
 - [ ] Plans document feature flag strategy when working on `main` branch
 - [ ] Plan folder date prefix matches creation/completion date appropriately
