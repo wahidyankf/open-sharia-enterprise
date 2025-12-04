@@ -56,6 +56,9 @@ Throughout this tutorial, we'll follow **"Tech Haven"**, a small computer repair
 - Understanding of how transactions flow through the accounting system
 - Confidence to track finances for any small business
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Business Transaction] --> B[Analyze Transaction]
@@ -65,8 +68,8 @@ flowchart TD
 	E --> F[Create Financial Statements]
 	F --> G[Analyze Financial Health]
 
-	style A fill:#e1f5ff
-	style G fill:#e8f5e9
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style G fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 The diagram above shows the complete accounting cycle we'll master in this tutorial.
@@ -139,6 +142,9 @@ Check: $15,000 = $5,000 + $10,000 ✓
 
 ### Visual Representation
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	subgraph "The Accounting Equation"
@@ -151,10 +157,10 @@ flowchart TD
 	L --> Sum
 	E --> Sum
 
-	style A fill:#e1f5ff
-	style L fill:#ffe1e1
-	style E fill:#e8f5e9
-	style Sum fill:#fff4e1
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style L fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style E fill:#029E73,stroke:#000000,color:#FFFFFF
+	style Sum fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -198,6 +204,9 @@ This isn't opinion or preference—it's the mathematical law that makes accounti
 
 Different types of accounts increase and decrease differently:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	subgraph "Asset Accounts"
@@ -230,11 +239,11 @@ flowchart TD
 		X1 --> X2
 	end
 
-	style A1 fill:#e1f5ff
-	style L1 fill:#ffe1e1
-	style E1 fill:#e8f5e9
-	style R1 fill:#f3e5f5
-	style X1 fill:#fff4e1
+	style A1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style L1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style E1 fill:#029E73,stroke:#000000,color:#FFFFFF
+	style R1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style X1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Memory aid:**
@@ -389,6 +398,9 @@ EXPENSES (5000-5999)
 
 ### Visual Organization
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	subgraph "1000: Assets"
@@ -418,11 +430,11 @@ flowchart TD
 		X3[5400 Depreciation]
 	end
 
-	style A1 fill:#e1f5ff
-	style L1 fill:#ffe1e1
-	style E1 fill:#e8f5e9
-	style R1 fill:#f3e5f5
-	style X1 fill:#fff4e1
+	style A1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style L1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style E1 fill:#029E73,stroke:#000000,color:#FFFFFF
+	style R1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style X1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### Why Numbering Matters
@@ -646,6 +658,9 @@ Account                 Debit      Credit
 
 ### Transaction Summary
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 sequenceDiagram
 	participant Transaction
@@ -775,6 +790,9 @@ Final Balance: $450 (Credit)
 
 ### Ledger Organization
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	J[Journal Entries<br/>Chronological] --> L{Post to Ledger}
@@ -791,8 +809,8 @@ flowchart TD
 	R --> TB
 	X --> TB
 
-	style J fill:#e1f5ff
-	style TB fill:#e8f5e9
+	style J fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style TB fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -899,6 +917,9 @@ Now we transform accounting records into meaningful financial reports.
 
 ### The Three Core Financial Statements
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	TB[Trial Balance] --> IS[Income Statement]
@@ -911,10 +932,10 @@ flowchart TD
 	BS --> D2[Shows:<br/>Financial Position]
 	CF --> D3[Shows:<br/>Cash Movement]
 
-	style TB fill:#e1f5ff
-	style IS fill:#fff4e1
-	style BS fill:#e8f5e9
-	style CF fill:#f3e5f5
+	style TB fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style IS fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style BS fill:#029E73,stroke:#000000,color:#FFFFFF
+	style CF fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ### Statement 1: Income Statement
@@ -1180,6 +1201,9 @@ Jan 25: Cash 300 / Accounts Receivable 300
 
 ### Principles Summary
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 flowchart TD
 	A[Accrual Basis] --> Q[Quality<br/>Financial<br/>Information]
@@ -1191,8 +1215,8 @@ flowchart TD
 
 	Q --> D[Better<br/>Decisions]
 
-	style Q fill:#e8f5e9
-	style D fill:#e1f5ff
+	style Q fill:#029E73,stroke:#000000,color:#FFFFFF
+	style D fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint

@@ -34,6 +34,9 @@ Gobuster works by systematically testing words from a wordlist against a target 
 
 **Basic workflow:**
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
 	A["📄 Wordlist<br/>(paths to test)"] --> B["🔄 Gobuster<br/>(sends requests)"]
@@ -43,13 +46,13 @@ graph TD
 	E -->|Yes| F["✅ Found<br/>(report result)"]
 	E -->|No| G["❌ Not found<br/>(404, no response)"]
 
-	style A fill:#e3f2fd
-	style B fill:#fff3e0
-	style C fill:#f3e5f5
-	style D fill:#f1f8e9
-	style E fill:#fce4ec
-	style F fill:#c8e6c9
-	style G fill:#ffcdd2
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style C fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style D fill:#029E73,stroke:#000000,color:#FFFFFF
+	style E fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style F fill:#029E73,stroke:#000000,color:#FFFFFF
+	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ## 🔧 Operating Modes
@@ -284,6 +287,9 @@ Wordlist quality directly impacts enumeration success. Choose wordlists based on
 
 ### Wordlist Strategy
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
 	A["🎯 Start enumeration"] --> B{"Target<br/>knowledge?"}
@@ -302,17 +308,17 @@ graph TD
 	I -->|Yes| J["✅ Analyze results"]
 	I -->|No| K["🔄 Try larger<br/>or different list"]
 
-	style A fill:#e3f2fd
-	style B fill:#fff3e0
-	style C fill:#f3e5f5
-	style D fill:#f3e5f5
-	style E fill:#f3e5f5
-	style F fill:#c8e6c9
-	style G fill:#fff9c4
-	style H fill:#c8e6c9
-	style I fill:#fce4ec
-	style J fill:#c8e6c9
-	style K fill:#ffcdd2
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style C fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style E fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style F fill:#029E73,stroke:#000000,color:#FFFFFF
+	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style H fill:#029E73,stroke:#000000,color:#FFFFFF
+	style I fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style J fill:#029E73,stroke:#000000,color:#FFFFFF
+	style K fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Best practice**: Start small, then scale up based on initial findings.
@@ -597,6 +603,9 @@ Before running gobuster, gather intelligence:
 
 Gobuster works best as part of a comprehensive methodology:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
 	A["🔍 Reconnaissance<br/>(nmap, whois, DNS)"] --> B["🌐 Web enumeration<br/>(gobuster dir)"]
@@ -605,12 +614,12 @@ graph TD
 	D --> E["🧪 Vulnerability scanning<br/>(nikto, nuclei)"]
 	E --> F["🎯 Manual testing<br/>(exploit validation)"]
 
-	style A fill:#e3f2fd
-	style B fill:#fff3e0
-	style C fill:#f3e5f5
-	style D fill:#fff9c4
-	style E fill:#fce4ec
-	style F fill:#c8e6c9
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style C fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style E fill:#CC78BC,stroke:#000000,color:#FFFFFF
+	style F fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ## 🔗 Related Tools

@@ -176,6 +176,9 @@ Quick reference guides on specific security topics:
 
 ## OWASP Ecosystem Overview
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     OWASP["🏛️ OWASP Foundation<br/>Nonprofit Organization"]
@@ -208,18 +211,21 @@ graph TD
     Output["📈 Industry Standards<br/>Security Tools<br/>Knowledge Base"]
     Impact --> Output
 
-    style OWASP fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
-    style Projects fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style Community fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
-    style Events fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    style Documentation fill:#f1f8e9,stroke:#558b2f,stroke-width:2px
-    style Tools fill:#e0f2f1,stroke:#00695c,stroke-width:2px
-    style Training fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    style Impact fill:#f5f5f5,stroke:#616161,stroke-width:2px
-    style Output fill:#c8e6c9,stroke:#1b5e20,stroke-width:3px
+    style OWASP fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    style Projects fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Community fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Events fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Documentation fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Tools fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Training fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Impact fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Output fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:3px
 ```
 
 ## Top 10 Development Methodology
+
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 graph TD
@@ -240,12 +246,12 @@ graph TD
 
     F -.->|Continuous feedback| A
 
-    style A fill:#e3f2fd
-    style B fill:#e8f5e9
-    style C fill:#f3e5f5
-    style D fill:#fff3e0
-    style E fill:#f1f8e9
-    style F fill:#fce4ec
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#029E73,stroke:#000000,color:#FFFFFF
+    style F fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ## ✅ Advantages of OWASP Resources

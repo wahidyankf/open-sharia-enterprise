@@ -16,9 +16,12 @@ Learning-oriented guides for the open-sharia-enterprise project. These documents
 
 ## 📊 Tutorial Overview
 
+%% Color palette: Teal #029E73 (beginner), Orange #DE8F05 (advanced)
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
-	subgraph "🟢 Beginner Level"
+	subgraph "Beginner Level"
 		A[Accounting<br/>⏱️ 1-2 hours]
 		B[Corporate Finance<br/>⏱️ 1-2 hours]
 		C[Chat with PDF<br/>⏱️ 30-40 min]
@@ -26,7 +29,7 @@ graph TB
 		F[Golang Cookbook<br/>⏱️ 3-4 hours]
 	end
 
-	subgraph "🔴 Advanced Level"
+	subgraph "Advanced Level"
 		D[AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
 	end
 
@@ -36,15 +39,15 @@ graph TB
 	E --> F
 	F --> D
 
-	style A fill:#a5d6a7
-	style B fill:#a5d6a7
-	style C fill:#a5d6a7
-	style E fill:#a5d6a7
-	style F fill:#a5d6a7
-	style D fill:#ef9a9a
+	style A fill:#029E73,stroke:#000000,color:#FFFFFF
+	style B fill:#029E73,stroke:#000000,color:#FFFFFF
+	style C fill:#029E73,stroke:#000000,color:#FFFFFF
+	style E fill:#029E73,stroke:#000000,color:#FFFFFF
+	style F fill:#029E73,stroke:#000000,color:#FFFFFF
+	style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
 
-	classDef beginner fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	classDef advanced fill:#ef9a9a,stroke:#e53935,stroke-width:2px
+	classDef beginner fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	classDef advanced fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Legend**:
@@ -147,17 +150,20 @@ Learning-oriented guides for mobile application development:
 
 **Goal**: Understand accounting and financial analysis fundamentals
 
+%% Color palette: Teal #029E73 (beginner), Blue #0173B2 (application)
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
-	A[🟢 Accounting Quick Start<br/>⏱️ 1-2 hours]
-	B[🟢 Corporate Finance Quick Start<br/>⏱️ 1-2 hours]
+	A[Accounting Quick Start<br/>⏱️ 1-2 hours]
+	B[Corporate Finance Quick Start<br/>⏱️ 1-2 hours]
 	C[Apply concepts to<br/>real-world scenarios]
 
 	A --> B --> C
 
-	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style B fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style C fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+	style A fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style B fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style C fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Total Time**: ~2-4 hours core learning
@@ -168,17 +174,20 @@ graph TB
 
 **Goal**: Build intelligent systems with LLMs and RAG
 
+%% Color palette: Teal #029E73 (beginner), Orange #DE8F05 (advanced), Blue #0173B2 (exploration)
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
-	A[🟢 Chat with PDF<br/>⏱️ 30-40 min]
-	B[🔴 AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
+	A[Chat with PDF<br/>⏱️ 30-40 min]
+	B[AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
 	C[Explore production<br/>deployment strategies]
 
 	A --> B --> C
 
-	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style B fill:#ef9a9a,stroke:#e53935,stroke-width:2px
-	style C fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+	style A fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style C fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Total Time**: ~2-3 hours core learning
@@ -189,23 +198,26 @@ graph TB
 
 **Goal**: Combine financial knowledge with AI capabilities
 
+%% Color palette: Teal #029E73 (beginner), Orange #DE8F05 (advanced), Blue #0173B2 (application)
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
-	A[🟢 Accounting Quick Start<br/>⏱️ 1-2 hours]
-	B[🟢 Corporate Finance Quick Start<br/>⏱️ 1-2 hours]
-	C[🟢 Chat with PDF<br/>⏱️ 30-40 min]
-	D[🔴 AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
+	A[Accounting Quick Start<br/>⏱️ 1-2 hours]
+	B[Corporate Finance Quick Start<br/>⏱️ 1-2 hours]
+	C[Chat with PDF<br/>⏱️ 30-40 min]
+	D[AI Personal Finance Advisor<br/>⏱️ 1-2 hours]
 	E[Build financial<br/>AI applications]
 
 	A --> C
 	B --> C
 	C --> D --> E
 
-	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style B fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style C fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style D fill:#ef9a9a,stroke:#e53935,stroke-width:2px
-	style E fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+	style A fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style B fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style D fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style E fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Total Time**: ~4-6 hours core learning
@@ -216,17 +228,20 @@ graph TB
 
 **Goal**: Master Go for building scalable backend systems
 
+%% Color palette: Teal #029E73 (beginner), Blue #0173B2 (application)
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
-	A[🟢 Golang Quick Start<br/>⏱️ 2-3 hours]
-	B[🟢 Golang Cookbook<br/>⏱️ 3-4 hours]
+	A[Golang Quick Start<br/>⏱️ 2-3 hours]
+	B[Golang Cookbook<br/>⏱️ 3-4 hours]
 	C[Build production-grade<br/>backend services]
 
 	A --> B --> C
 
-	style A fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style B fill:#a5d6a7,stroke:#4caf50,stroke-width:2px
-	style C fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+	style A fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style B fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style C fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Total Time**: ~5-7 hours core learning

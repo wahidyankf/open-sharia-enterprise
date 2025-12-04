@@ -138,6 +138,7 @@ Financial applications are high-value targets for:
 Information security is not a one-time activity but a continuous process. This lifecycle follows the **NIST Cybersecurity Framework 2.0** (released February 2024):
 
 ```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["1️⃣ GOVERN<br/>Policies, risk mgmt,<br/>oversight"] --> B["2️⃣ IDENTIFY<br/>Assets, risks,<br/>vulnerabilities"]
     B --> C["3️⃣ PROTECT<br/>Access controls,<br/>encryption, etc."]
@@ -146,12 +147,12 @@ graph TD
     E --> F["6️⃣ RECOVER<br/>Restore data,<br/>resume ops"]
     F -.-> A
 
-    style A fill:#e8f5e9
-    style B fill:#e1f5ff
-    style C fill:#f3e5f5
-    style D fill:#fff3e0
-    style E fill:#f1f8e9
-    style F fill:#e0f2f1
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style F fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### 1. Govern
@@ -244,17 +245,18 @@ Test running applications for real-world vulnerabilities:
 SAST and DAST should be used together in a defense-in-depth strategy:
 
 ```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
 graph TD
     A["🔍 Development<br/>SAST<br/>✓ Code analysis<br/>✓ Early detection<br/>✓ Fast feedback"] --> B["📤 Code committed<br/>and tested"]
     B --> C["🧪 Testing<br/>DAST<br/>✓ Runtime validation<br/>✓ Configuration testing<br/>✓ Real exploitation attempts"]
     C --> D["🚀 Production<br/>deployment"]
     D --> E["🛡️ Operational Security<br/>& Monitoring<br/>✓ Incident detection<br/>✓ Threat response<br/>✓ Continuous improvement"]
 
-    style A fill:#e3f2fd
-    style B fill:#f5f5f5
-    style C fill:#fff3e0
-    style D fill:#f5f5f5
-    style E fill:#f1f8e9
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## InfoSec Best Practices

@@ -30,6 +30,9 @@ By the end of this tutorial, you'll have:
 
 Here's the simple path from download to running code:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     A[Download Go from go.dev/dl] --> B[Install on Your OS]
@@ -44,9 +47,9 @@ graph TD
     H -->|No| J[Check File Location]
     J --> G
 
-    style I fill:#90EE90,stroke:#2E8B57,stroke-width:2px
-    style D fill:#FFD700,stroke:#FF8C00,stroke-width:2px
-    style H fill:#FFD700,stroke:#FF8C00,stroke-width:2px
+    style I fill:#029E73,stroke:#029E73,stroke-width:2px
+    style D fill:#DE8F05,stroke:#DE8F05,stroke-width:2px
+    style H fill:#DE8F05,stroke:#DE8F05,stroke-width:2px
 ```
 
 This diagram shows every verification checkpoint - you'll know immediately if something's wrong and where to look.

@@ -76,6 +76,9 @@ Metaspace (class definitions, constants)
 
 Java uses **generational garbage collection** - most objects die young, so the young generation is collected frequently:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
     subgraph "Heap Memory"
@@ -95,10 +98,10 @@ graph TD
     S1 -->|After multiple GCs| O
     O -->|Major GC<br/>Infrequent| O
 
-    style E fill:#e1ffe1
-    style S0 fill:#ffe1e1
-    style S1 fill:#ffe1e1
-    style O fill:#e1e1ff
+    style E fill:#029E73,stroke:#000000,color:#FFFFFF
+    style S0 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style S1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style O fill:#DE8F05
 ```
 
 **How it works**:

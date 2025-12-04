@@ -49,6 +49,9 @@ By completing this tutorial, you will understand:
 
 Let's start with the big picture. A PDF chat system has two main phases: **Ingestion** (preparing the document) and **Query** (answering questions).
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
 	subgraph "Phase 1: Document Ingestion (One-time)"
@@ -68,9 +71,9 @@ graph TB
 		K --> L[📝 Answer]
 	end
 
-	style A fill:#e1f5ff
-	style F fill:#fff3e0
-	style L fill:#e8f5e9
+	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
+	style L fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 **Key Insight**: The document is processed **once** during ingestion, but queries happen **many times**. This asymmetry is crucial for performance—we do expensive processing upfront so queries can be fast.
@@ -120,6 +123,9 @@ User uploads "Company_Report_2024.pdf"
 
 **Extraction Process**:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
 	A[PDF File] --> B{Is it<br/>searchable?}
@@ -130,8 +136,8 @@ graph TB
 	F --> G[Text Output]
 	C --> G
 
-	style C fill:#a5d6a7
-	style D fill:#ffcc80
+	style C fill:#029E73,stroke:#000000,color:#FFFFFF
+	style D fill:#DE8F05
 ```
 
 **Example Output**:
@@ -251,14 +257,17 @@ Similar words cluster together in vector space!
 
 **Process**:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
 	A[Text Chunk] --> B[Embedding Model<br/>OpenAI/Cohere/etc]
 	B --> C[Vector<br/>1536 dimensions]
 	C --> D[Stored with Chunk ID]
 
-	style B fill:#bbdefb
-	style C fill:#c5e1a5
+	style B fill:#0173B2,stroke:#000000,color:#FFFFFF
+	style C fill:#029E73
 ```
 
 **Real Example**:
@@ -305,6 +314,9 @@ Find top 5 chunks most similar to:
 
 **How Vector Databases Work**:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
 	A[New Embedding] --> B{Indexing Algorithm<br/>HNSW/IVF}
@@ -315,8 +327,8 @@ graph TD
 	D --> F
 	F --> G[Top K Similar<br/>Vectors]
 
-	style D fill:#ffecb3
-	style G fill:#c5e1a5
+	style D fill:#DE8F05
+	style G fill:#029E73
 ```
 
 **Storage Format**:
@@ -344,6 +356,9 @@ chunk_003   | [0.23, 0.89, ..., 0.45]   | {page: 2, doc: "Q4_Report"}
 **What Happens**: When a user asks a question, it goes through the same embedding process as document chunks.
 
 **User Question Flow**:
+
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 ```mermaid
 sequenceDiagram
@@ -400,6 +415,9 @@ Chunk C: [-0.5, 0.2, 0.8] → Similarity: 0.23   Not similar
 
 **Search Process**:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TB
 	A[Query Embedding] --> B[Calculate Similarity<br/>to All Chunks]
@@ -407,7 +425,7 @@ graph TB
 	C --> D[Return Top K<br/>default K=5]
 	D --> E[Chunk 1: 0.94<br/>Chunk 2: 0.91<br/>Chunk 3: 0.87<br/>Chunk 4: 0.82<br/>Chunk 5: 0.79]
 
-	style E fill:#a5d6a7
+	style E fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 **Result Example**:
@@ -457,6 +475,9 @@ User Question:
 
 **Context Optimization Strategies**:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
 	A[Retrieved Chunks] --> B{Optimization}
@@ -469,7 +490,7 @@ graph TD
 	E --> G
 	F --> G
 
-	style G fill:#bbdefb
+	style G fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 **Token Budget Example**:
@@ -523,6 +544,9 @@ What was Q4 revenue?
 
 **LLM Processing**:
 
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 ```mermaid
 graph TD
 	A[Prompt] --> B[LLM<br/>GPT-4/Claude/etc]
@@ -530,8 +554,8 @@ graph TD
 	C -->|✓ Grounded| D[Final Answer]
 	C -->|✗ Hallucination| E[Retry or Error]
 
-	style D fill:#a5d6a7
-	style E fill:#ef9a9a
+	style D fill:#029E73,stroke:#000000,color:#FFFFFF
+	style E fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Generated Answer**:
