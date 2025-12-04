@@ -1071,6 +1071,7 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 - **Accessible palette**: Blue (#0173B2), Orange (#DE8F05), Teal (#029E73), Purple (#CC78BC), Brown (#CA9161)
 - **DO NOT USE**: Red, green, or yellow (invisible to various forms of color blindness)
 - **Always use**: Shape differentiation (not color alone), black borders (#000000), proper contrast ratios (WCAG AA: 4.5:1)
+- **Single color palette comment**: Each diagram should have exactly ONE color palette comment at the start (no duplicate comments)
 - **Testing required**: Test all diagrams with color blindness simulators before publishing (see Color Accessibility Convention)
 
 **Example Mermaid Architecture Diagram with Accessible Colors:**

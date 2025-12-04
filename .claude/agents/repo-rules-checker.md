@@ -69,6 +69,7 @@ When running a consistency check, systematically verify:
 - [ ] Mermaid code blocks use proper syntax with `mermaid` language identifier
 - [ ] ASCII art uses box-drawing characters and monospace-compatible formatting
 - [ ] Mermaid diagrams in `docs/` use vertical orientation (TD or BT) for mobile-friendly viewing (exception: horizontal only when vertical would harm clarity)
+- [ ] **No duplicate color palette comments in Mermaid diagrams** - Each diagram has exactly ONE color palette comment at the start (not multiple identical comments)
 
 ### Color Accessibility Compliance
 
