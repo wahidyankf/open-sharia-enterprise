@@ -1,0 +1,74 @@
+# Hugo configuration file
+title: AyoKoding
+
+# import hextra as module
+module:
+  imports:
+    - path: github.com/imfing/hextra
+
+markup:
+  # allow raw html
+  goldmark:
+    renderer:
+      unsafe: true
+
+  # enable hextra syntax highlight
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: English
+      pageRef: /en
+      weight: 1
+    - name: Bahasa
+      pageRef: /id
+      weight: 2
+    - name: T&C
+      pageRef: /terms-and-conditions
+      weight: 3
+    - name: Search
+      weight: 4
+      params:
+        type: search
+    - name: Threads
+      weight: 5
+      url: "https://www.threads.net/@wahidyankf"
+      params:
+        icon: globe-alt
+    - name: GitHub
+      weight: 6
+      url: "https://github.com/wahidyankf/oss/"
+      params:
+        icon: github
+
+params:
+  navbar:
+    displayTitle: true
+    displayLogo: false
+
+  footer:
+    displayCopyright: false
+    displayPoweredBy: true
+
+  theme:
+    # light | dark | system
+    default: light
+    displayToggle: true
+
+  displayUpdatedDate: true
+  dateFormat: "January 2, 2006"
+  enableGitInfo: true
+  search:
+    enable: true
+    type: flexsearch
+
+    flexsearch:
+      # index page by: content | summary | heading | title
+      index: content
+      # full | forward | reverse | strict
+      tokenize: full
+
+services:
+  googleAnalytics:
+    ID: G-1NHDR7S3GV
