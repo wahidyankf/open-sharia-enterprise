@@ -10,8 +10,6 @@ cascade:
 breadcrumbs: false
 ---
 
-test
-
 ## Content in [English](./en/)
 
 {{< cards >}}
