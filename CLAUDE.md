@@ -119,6 +119,13 @@ Runs after pre-commit hook, before commit is finalized:
 
 ### Commit Message Convention
 
+<!--
+  MAINTENANCE NOTE: Intentional duplication for quick reference
+  When updating commit message format, synchronize these files:
+  1. docs/explanation/development/ex-de__commit-messages.md (master reference)
+  2. CLAUDE.md (this quick reference)
+-->
+
 All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for complete details.
 
 **Format:**
@@ -164,6 +171,15 @@ Split work into multiple logical commits rather than one large commit. Key princ
 For detailed commit message rules, validation errors, best practices, commit granularity guidance, and examples, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
 
 ## Git Workflow
+
+<!--
+  MAINTENANCE NOTE: Intentional duplication for AI agent context
+  When updating TBD workflow, synchronize these files:
+  1. docs/explanation/development/ex-de__trunk-based-development.md (master reference)
+  2. CLAUDE.md (this summary)
+  3. .claude/agents/plan-maker.md (Git Workflow section)
+  4. .claude/agents/plan-executor.md (Verify Git Branch section)
+-->
 
 This repository uses **Trunk Based Development (TBD)** as its git workflow. See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
 
@@ -413,6 +429,14 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 ## Plans Organization
 
+<!--
+  MAINTENANCE NOTE: Intentional duplication for AI agent context
+  When updating plans structure, synchronize these files:
+  1. plans/README.md (master reference)
+  2. CLAUDE.md (this summary)
+  3. .claude/agents/plan-maker.md (Plans Folder Structure section)
+-->
+
 Project planning documents are organized in the `plans/` folder at the repository root. This folder contains temporary, ephemeral documents used for project planning and tracking, distinct from the permanent documentation in `docs/`.
 
 ### Plans Structure
@@ -638,6 +662,7 @@ See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-
 - **Timestamp Format Guide:** [`docs/explanation/conventions/ex-co__timestamp-format.md`](./docs/explanation/conventions/ex-co__timestamp-format.md)
 - **Temporary Files Guide:** [`docs/explanation/conventions/ex-co__temporary-files.md`](./docs/explanation/conventions/ex-co__temporary-files.md)
 - **Mathematical Notation Guide:** [`docs/explanation/conventions/ex-co__mathematical-notation.md`](./docs/explanation/conventions/ex-co__mathematical-notation.md)
+- **OSS Documentation Guide:** [`docs/explanation/conventions/ex-co__oss-documentation.md`](./docs/explanation/conventions/ex-co__oss-documentation.md) - Standards for repository documentation (README, CONTRIBUTING, ADRs, security)
 - **Tutorial Guide:** [`docs/explanation/conventions/ex-co__tutorials.md`](./docs/explanation/conventions/ex-co__tutorials.md)
 - **Tutorial Naming Guide:** [`docs/explanation/conventions/ex-co__tutorial-naming.md`](./docs/explanation/conventions/ex-co__tutorial-naming.md)
 
