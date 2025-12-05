@@ -43,21 +43,20 @@ Use this agent when:
 ## Plans Folder Structure
 
 <!--
-  MAINTENANCE NOTE: Intentional duplication for agent context
-  When updating plans structure, synchronize these files:
-  1. plans/README.md (master reference)
-  2. CLAUDE.md (summary)
-  3. .claude/agents/plan-maker.md (this section)
+  MAINTENANCE NOTE: Reference to master convention
+  For comprehensive documentation, see:
+  docs/explanation/conventions/ex-co__plans-organization.md
 -->
 
-All plans are organized in the `plans/` folder with three subfolders:
+All plans are organized in the `plans/` folder following the [Plans Organization Convention](../../docs/explanation/conventions/ex-co__plans-organization.md).
 
-```
-plans/
-├── backlog/         # Planned projects for future implementation
-├── in-progress/     # Active projects currently being worked on
-└── done/           # Completed and archived plans
-```
+**Quick Reference:**
+
+- **backlog/** - Planned projects for future implementation
+- **in-progress/** - Active projects currently being worked on
+- **done/** - Completed and archived plans
+
+For complete details on folder structure, naming conventions, and file organization, refer to the convention document.
 
 ### Plan Folder Naming Convention
 
