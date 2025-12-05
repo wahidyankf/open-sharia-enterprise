@@ -430,93 +430,25 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 ## Plans Organization
 
 <!--
-  MAINTENANCE NOTE: Intentional duplication for AI agent context
-  When updating plans structure, synchronize these files:
-  1. plans/README.md (master reference)
-  2. CLAUDE.md (this summary)
-  3. .claude/agents/plan-maker.md (Plans Folder Structure section)
+  MAINTENANCE NOTE: Brief summary with link to convention
+  For comprehensive documentation, see:
+  docs/explanation/conventions/ex-co__plans-organization.md
 -->
 
 Project planning documents are organized in the `plans/` folder at the repository root. This folder contains temporary, ephemeral documents used for project planning and tracking, distinct from the permanent documentation in `docs/`.
 
-### Plans Structure
+**Quick Reference:**
 
-```
-plans/
-├── ideas.md         # Quick 1-3 liner ideas not yet formalized into plans
-├── in-progress/      # Active plans currently being worked on
-├── backlog/         # Planned projects for future implementation
-└── done/            # Completed and archived plans
-```
+- **ideas.md** - Quick 1-3 liner ideas not yet formalized into plans
+- **backlog/** - Planned projects for future implementation
+- **in-progress/** - Active plans currently being worked on
+- **done/** - Completed and archived plans
 
-### Ideas File
+**Plan Folder Naming:** `YYYY-MM-DD__[project-identifier]/` (e.g., `2025-11-24__init-monorepo/`)
 
-**Location**: `plans/ideas.md` (root level of plans/ folder)
+**Plan Structure:** Single-file (≤1000 lines) or multi-file (>1000 lines)
 
-**Purpose**: Capture quick ideas and todos that haven't been formalized into full plan documents yet.
-
-**Format**:
-
-- Simple markdown file with bullet points or numbered lists
-- Each idea should be 1-3 lines maximum
-- No formal plan structure required
-
-**How it differs from backlog/**:
-
-- `ideas.md` contains 1-3 liner quick captures
-- `backlog/` contains full plan folders with structured requirements, tech-docs, and delivery files
-
-**Promoting an idea to a plan**: When ready, create a plan folder in `backlog/` with the standard structure and remove the idea from `ideas.md`.
-
-### Plan Folder Naming
-
-Each plan folder follows the naming pattern:
-
-```
-YYYY-MM-DD__[project-identifier]/
-```
-
-Examples:
-
-- `2025-11-24__init-monorepo/`
-- `2025-12-01__auth-system/`
-
-### Plan Contents
-
-Plans can use either **single-file** or **multi-file** structure:
-
-**Single-File Structure** (≤ 1000 lines total):
-
-- `README.md` - Contains all sections: Overview, Requirements, Tech Docs, Delivery
-
-**Multi-File Structure** (> 1000 lines total):
-
-- `README.md` - Plan overview and navigation
-- `requirements.md` - Detailed requirements and objectives
-- `tech-docs.md` - Technical documentation and architecture
-- `delivery.md` - Timeline and milestones
-
-Files inside plan folders do NOT use naming prefixes (folder structure provides context).
-
-### Key Differences from Documentation
-
-Plans differ from `docs/` in several important ways:
-
-1. **Location**: Root-level `plans/` folder (not inside `docs/`)
-2. **Purpose**: Temporary project planning (not permanent documentation)
-3. **File Naming**: No prefixes inside plan folders (folder structure provides context)
-4. **Lifecycle**: Plans move between in-progress, backlog, and done folders
-
-### Working with Plans
-
-- **Creating Plans**: Place new plans in `backlog/` folder
-- **Starting Work**: Move plan folder from `backlog/` to `in-progress/`
-- **Completing Work**: Move plan folder from `in-progress/` to `done/`
-- **Plan Index**: Each subfolder has a README.md listing all plans in that category
-
-### Diagrams in Plans
-
-Files in `plans/` folder should use **Mermaid diagrams** as the primary format (same as all markdown files in the repository). ASCII art is optional and only needed for simple directory trees or rare edge cases. See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for complete details.
+**For complete details**, see [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md).
 
 ## Documentation Standards
 
@@ -663,6 +595,7 @@ See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-
 - **Temporary Files Guide:** [`docs/explanation/conventions/ex-co__temporary-files.md`](./docs/explanation/conventions/ex-co__temporary-files.md)
 - **Mathematical Notation Guide:** [`docs/explanation/conventions/ex-co__mathematical-notation.md`](./docs/explanation/conventions/ex-co__mathematical-notation.md)
 - **OSS Documentation Guide:** [`docs/explanation/conventions/ex-co__oss-documentation.md`](./docs/explanation/conventions/ex-co__oss-documentation.md) - Standards for repository documentation (README, CONTRIBUTING, ADRs, security)
+- **Plans Organization Guide:** [`docs/explanation/conventions/ex-co__plans-organization.md`](./docs/explanation/conventions/ex-co__plans-organization.md) - Standards for organizing project planning documents
 - **Tutorial Guide:** [`docs/explanation/conventions/ex-co__tutorials.md`](./docs/explanation/conventions/ex-co__tutorials.md)
 - **Tutorial Naming Guide:** [`docs/explanation/conventions/ex-co__tutorial-naming.md`](./docs/explanation/conventions/ex-co__tutorial-naming.md)
 
