@@ -141,6 +141,8 @@ npm install
 ```
 open-sharia-enterprise/
 ├── apps/                  # Deployable applications (Nx monorepo)
+├── apps-standalone/       # Standalone projects (NOT in Nx monorepo)
+│   └── ayokoding-web/     # Hugo-based bilingual educational website
 ├── libs/                  # Reusable libraries (Nx monorepo, flat structure)
 ├── docs/                  # Project documentation (Diataxis framework)
 │   ├── tutorials/         # Learning-oriented guides
@@ -161,9 +163,11 @@ open-sharia-enterprise/
 
 This project uses **Nx** as a monorepo build system to manage multiple applications and shared libraries with efficient task execution and caching.
 
+**Note**: The Nx monorepo consists of `apps/` and `libs/` only. The `apps-standalone/` directory contains projects with independent build systems that are NOT part of the Nx monorepo.
+
 #### Apps (`apps/`)
 
-Deployable applications - independent executables that consume shared libraries.
+Deployable applications - independent executables that consume shared libraries. Part of the Nx monorepo.
 
 **Examples**: `api-gateway`, `admin-dashboard`, `customer-portal`
 
@@ -200,6 +204,45 @@ nx test [lib-name]   # Run tests
 - **Affected Detection**: Only rebuild what changed (`nx affected:build`)
 - **Dependency Graph**: Visualize relationships (`nx graph`)
 - **Manual Configuration**: "Vanilla Nx" without plugins for full transparency
+
+#### Standalone Projects (`apps-standalone/`)
+
+Projects with independent build systems that are NOT integrated with the Nx monorepo. These projects have their own tooling and deployment workflows.
+
+**Current standalone projects**:
+
+- **`ayokoding-web/`** - Hugo-based bilingual educational website for software engineering content (Indonesian/English). Deployed on Vercel. Uses Hugo static site generator with Hextra theme.
+
+**Characteristics**:
+
+- Independent build systems (Hugo, Go, Python, etc.)
+- Not managed by Nx workspace
+- Self-contained configuration
+- Separate deployment pipelines
+- Appropriate for projects that have their own established tooling
+
+**When to use `apps-standalone/`**:
+
+Use this directory for projects that:
+
+- Have their own specialized build tools (Hugo, Go, Python frameworks, etc.)
+- Don't benefit from Nx monorepo integration
+- Require independent deployment workflows
+- Are not eligible for TypeScript path mappings or shared configuration
+
+**Deployment for ayokoding-web**:
+
+The `apps-standalone/ayokoding-web/` project uses a dedicated production branch for deployment:
+
+- **Production Branch**: `prod-ayokoding-web`
+- **Deployment Target**: ayokoding.com (via Vercel)
+- **Workflow**:
+  1. Make all changes in `main` branch first
+  2. When ready to deploy, pull latest changes from `main` to `prod-ayokoding-web`
+  3. Pushing to `prod-ayokoding-web` triggers automatic deployment
+- **Important**: Never commit directly to `prod-ayokoding-web` - keep the branch clean
+
+See [ayokoding-web README](./apps-standalone/ayokoding-web/README.md) for detailed deployment instructions.
 
 #### Documentation
 

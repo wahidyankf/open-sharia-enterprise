@@ -39,6 +39,8 @@ open-sharia-enterprise/
 │   └── [app-name]/           # Individual applications
 │       ├── project.json      # Nx configuration
 │       └── ...               # App-specific files
+├── apps-standalone/           # Standalone projects (NOT in Nx monorepo)
+│   └── ayokoding-web/        # Hugo-based bilingual educational website
 ├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
 │   ├── README.md             # Libs folder documentation
 │   └── ts-[name]/            # TypeScript libraries (language-prefixed)
@@ -173,6 +175,19 @@ This repository uses **Trunk Based Development (TBD)** as its git workflow. See 
 - **Feature flags for incomplete work**: Hide unfinished features using toggles, not branches
 - **Small, frequent commits**: Break work into tiny, mergeable increments
 
+### Deployment Branches (Exception to TBD)
+
+**Environment branches for production deployment are acceptable in TBD.** These are NOT feature branches.
+
+**Production Branch for ayokoding-web**: `prod-ayokoding-web`
+
+- **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
+- **Workflow**: Make all changes in `main` first, then pull to `prod-ayokoding-web` when ready to deploy
+- **Important**: Do NOT commit directly to `prod-ayokoding-web`
+- **Compliance with TBD**: Environment branches (production, staging) are explicitly allowed in Trunk Based Development as they serve deployment purposes, not feature isolation
+
+See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for details on environment branches.
+
 ### When to Use Branches
 
 **Default**: Work directly on `main` branch.
@@ -183,6 +198,7 @@ This repository uses **Trunk Based Development (TBD)** as its git workflow. See 
 - Experimental work that may be discarded
 - External contributions via fork + PR
 - Regulatory compliance requires review trail
+- Environment-specific deployment (e.g., `prod-ayokoding-web` for production)
 
 ### Implications for Agents
 
@@ -191,6 +207,7 @@ All AI agents should assume work happens on `main` branch unless explicitly told
 - **plan-maker**: Plans should NOT specify a git branch by default (work happens on `main`)
 - **plan-executor**: Should use `main` branch unless plan explicitly specifies a different branch
 - When creating plans: Only specify a branch if there's a documented reason (see TBD convention)
+- **Deployment branches**: Agents should never commit directly to deployment branches like `prod-ayokoding-web`
 
 ## Common Development Commands
 
@@ -209,7 +226,31 @@ As the project develops, typical commands will include:
 
 ## Monorepo Structure
 
-This project uses **Nx** as a monorepo build system to manage multiple applications and shared libraries. The monorepo is organized into two main folders: `apps/` for deployable applications and `libs/` for reusable libraries.
+This project uses **Nx** as a monorepo build system to manage multiple applications and shared libraries. The monorepo consists of two main folders: `apps/` for deployable applications and `libs/` for reusable libraries.
+
+### Monorepo vs Standalone Projects
+
+The repository contains two types of project structures:
+
+**Nx Monorepo** (`apps/` and `libs/`):
+
+- Managed by Nx workspace
+- Integrated build system with caching and task orchestration
+- Shared TypeScript configuration and path mappings
+- Cross-project dependencies supported
+- Unified testing and linting
+
+**Standalone Projects** (`apps-standalone/`):
+
+- NOT part of the Nx monorepo
+- Independent build systems (Hugo, Go, Python, etc.)
+- No Nx workspace integration
+- Self-contained configuration
+- Appropriate for projects with their own tooling that don't benefit from monorepo integration
+
+**Current standalone projects:**
+
+- `apps-standalone/ayokoding-web/` - Hugo-based bilingual educational website deployed on Vercel
 
 ### Apps Folder (`apps/`)
 

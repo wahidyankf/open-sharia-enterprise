@@ -153,6 +153,54 @@ Place custom files in:
 
 ## Deployment
 
+### Production Deployment to ayokoding.com
+
+The project uses a dedicated production branch for automatic deployment to ayokoding.com via Vercel.
+
+**Production Branch**: `prod-ayokoding-web`
+
+**Workflow**:
+
+1. **Make all changes in `main` branch first**
+
+   ```bash
+   git checkout main
+   # ... make your changes ...
+   git add .
+   git commit -m "feat(content): add new tutorial"
+   git push origin main
+   ```
+
+2. **When ready to deploy to production, pull changes to production branch**
+
+   ```bash
+   git checkout prod-ayokoding-web
+   git pull origin main
+   git push origin prod-ayokoding-web
+   ```
+
+3. **Automatic deployment triggers**
+   - Vercel automatically detects the push to `prod-ayokoding-web`
+   - Builds and deploys to ayokoding.com
+
+**Important Guidelines**:
+
+- ✅ **DO**: Always work in `main` branch for all development
+- ✅ **DO**: Pull from `main` to `prod-ayokoding-web` when ready to deploy
+- ✅ **DO**: Keep `prod-ayokoding-web` clean and synchronized with `main`
+- ❌ **DON'T**: Commit directly to `prod-ayokoding-web` branch
+- ❌ **DON'T**: Make changes in `prod-ayokoding-web` that don't exist in `main`
+- ❌ **DON'T**: Use `prod-ayokoding-web` for development or experimentation
+
+**Why This Approach?**
+
+- **Controlled deployments**: Only deploy when explicitly ready
+- **Clean deployment trigger**: Vercel watches `prod-ayokoding-web` for production
+- **Compliant with Trunk Based Development**: Environment branches (production, staging) are acceptable in TBD - they serve deployment purposes, not feature isolation
+- **Simple rollback**: Revert `prod-ayokoding-web` to a previous commit if needed
+
+### Vercel Configuration
+
 Configuration in `vercel.json`:
 
 ```json
