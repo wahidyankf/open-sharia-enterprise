@@ -1,5 +1,14 @@
 # Plans
 
+<!--
+  MAINTENANCE NOTE: Master reference for plans organization
+  This is duplicated (intentionally) in multiple files for different audiences:
+  1. plans/README.md (this file - comprehensive reference)
+  2. CLAUDE.md (summary for AI agents)
+  3. .claude/agents/plan-maker.md (context for plan creation)
+  When updating, synchronize all three locations.
+-->
+
 This folder contains temporary, ephemeral project planning documents, distinct from permanent documentation in `docs/`.
 
 ## Structure

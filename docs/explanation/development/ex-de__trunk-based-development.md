@@ -14,6 +14,16 @@ updated: 2025-12-05
 
 # Trunk Based Development Convention
 
+<!--
+  MAINTENANCE NOTE: Master reference for TBD workflow
+  This is duplicated (intentionally) in multiple files for different audiences:
+  1. docs/explanation/development/ex-de__trunk-based-development.md (this file - comprehensive reference)
+  2. CLAUDE.md (summary for AI agents)
+  3. .claude/agents/plan-maker.md (context for plan creation)
+  4. .claude/agents/plan-executor.md (context for plan execution)
+  When updating, synchronize all four locations.
+-->
+
 This document defines the **Trunk Based Development (TBD)** workflow used in the open-sharia-enterprise project. TBD is a branching strategy where developers commit directly to a single branch (the trunk), enabling continuous integration, rapid feedback, and simplified collaboration.
 
 ## What is Trunk Based Development?

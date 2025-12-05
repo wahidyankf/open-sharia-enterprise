@@ -42,6 +42,14 @@ Use this agent when:
 
 ## Plans Folder Structure
 
+<!--
+  MAINTENANCE NOTE: Intentional duplication for agent context
+  When updating plans structure, synchronize these files:
+  1. plans/README.md (master reference)
+  2. CLAUDE.md (summary)
+  3. .claude/agents/plan-maker.md (this section)
+-->
+
 All plans are organized in the `plans/` folder with three subfolders:
 
 ```
@@ -923,6 +931,15 @@ This folder contains all technical architecture, design decisions, and implement
 ## Plan Scope and Delivery
 
 ### Git Workflow: Trunk Based Development
+
+<!--
+  MAINTENANCE NOTE: Intentional duplication for agent context
+  When updating TBD workflow, synchronize these files:
+  1. docs/explanation/development/ex-de__trunk-based-development.md (master reference)
+  2. CLAUDE.md (summary)
+  3. .claude/agents/plan-maker.md (this section)
+  4. .claude/agents/plan-executor.md (Verify Git Branch section)
+-->
 
 **IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default.
 

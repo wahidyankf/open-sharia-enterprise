@@ -129,6 +129,15 @@ If `requirements/` or `tech-docs/` folders exist instead of single files:
 
 #### Step 1.4: Verify Git Branch (Trunk Based Development)
 
+<!--
+  MAINTENANCE NOTE: Intentional duplication for agent context
+  When updating TBD workflow, synchronize these files:
+  1. docs/explanation/development/ex-de__trunk-based-development.md (master reference)
+  2. CLAUDE.md (summary)
+  3. .claude/agents/plan-maker.md (Git Workflow section)
+  4. .claude/agents/plan-executor.md (this section)
+-->
+
 **IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default.
 
 - ✅ **Default (99% of plans)**: Work on `main` branch directly

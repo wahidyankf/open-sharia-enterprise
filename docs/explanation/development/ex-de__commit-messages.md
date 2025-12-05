@@ -13,6 +13,14 @@ updated: 2025-11-29
 
 # Commit Message Convention
 
+<!--
+  MAINTENANCE NOTE: Master reference for commit message format
+  This is duplicated (intentionally) in multiple files for different audiences:
+  1. docs/explanation/development/ex-de__commit-messages.md (this file - comprehensive reference)
+  2. CLAUDE.md (quick reference for AI agents)
+  When updating, synchronize both locations.
+-->
+
 This document explains the commit message convention used in the open-sharia-enterprise project, why we use it, and how it's enforced. Understanding commit messages helps maintain a clean, navigable project history that benefits all contributors.
 
 ## What are Conventional Commits?
