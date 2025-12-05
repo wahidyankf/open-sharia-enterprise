@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "ayokoding-web",
+  "version": "1.0.0",
+  "description": "Ayokoding Web is a multilingual Hugo-powered website for learning and sharing knowledge in both English and Indonesian.",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "hugo server",
+    "build": "hugo --minify"
+  },
+  "volta": {
+    "node": "22.20.0",
+    "npm": "11.1.0"
+  }
+}
