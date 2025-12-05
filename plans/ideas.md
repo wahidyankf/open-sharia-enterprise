@@ -23,6 +23,8 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 - Add helper script/cli for @agent-docs-link-checker
 - Document best practices for gherkin
 - Setup specs folder for gherkin files
+- Align the documentation and ayokoding-web. Basically we want to move all software engineering related tutorial to ayokoding.com
+- Add agents to write content in ayokoding-web.
 
 ### Services
 
