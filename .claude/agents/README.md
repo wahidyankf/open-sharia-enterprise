@@ -18,6 +18,21 @@ Expert at creating new AI agents following all repository conventions.
   - Automatically updating agents README with new agent listing
   - Running validation via repo-rules-checker
 
+### 🟪 `ayokoding-deployer.md`
+
+Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web branch with main and pushes to origin to trigger automatic deployment to ayokoding.com via Vercel.
+
+- **Primary Use:** Deploying ayokoding-web to production environment
+- **Specialization:** Git branch synchronization, production deployment, Vercel integration, safety checks, rollback procedures
+- **Tools:** Bash
+- **When to Use:**
+  - Deploying latest main branch to ayokoding.com production
+  - After changes to apps-standalone/ayokoding-web/ are tested on main
+  - Triggering Vercel production build and deployment
+  - Need safe, controlled deployment with pre-flight checks
+  - Syncing prod-ayokoding-web branch with origin/main
+- **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ayokoding-web
+
 ### 🟩 `docs-checker.md`
 
 Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information.
