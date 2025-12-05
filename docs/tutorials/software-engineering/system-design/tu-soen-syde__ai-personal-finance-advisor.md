@@ -2178,7 +2178,7 @@ Good system design isn't about knowing every technology—it's about understandi
 
 ### OCR and Document Processing
 
-- [Google Cloud Vision API](https://cloud.google.com/vision/docs/ocr)
+- [Google Cloud Vision API](https://docs.cloud.google.com/vision/docs/ocr)
 - [AWS Textract Documentation](https://aws.amazon.com/textract/)
 - [Tesseract OCR - Open Source](https://github.com/tesseract-ocr/tesseract)
 
