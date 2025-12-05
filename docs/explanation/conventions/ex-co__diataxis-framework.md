@@ -8,7 +8,7 @@ tags:
   - organization
   - conventions
 created: 2025-11-22
-updated: 2025-11-26
+updated: 2025-12-05
 ---
 
 # Diátaxis Framework
@@ -356,6 +356,7 @@ Start here
 - [Conventions Index](./README.md) - Overview of all documentation conventions
 - [File Naming Convention](./ex-co__file-naming-convention.md) - How to name files with category prefixes
 - [Linking Convention](./ex-co__linking-convention.md) - How to link between documents
+- [OSS Documentation Convention](./ex-co__oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
 
 ## 🌐 External Resources
 
@@ -364,4 +365,4 @@ Start here
 
 ---
 
-**Last Updated**: 2025-11-26
+**Last Updated**: 2025-12-05

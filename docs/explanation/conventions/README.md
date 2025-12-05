@@ -7,7 +7,7 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2025-12-04
+updated: 2025-12-05
 ---
 
 # Conventions
@@ -24,6 +24,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
 - [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for daily research notes and monthly summaries
 - [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas in GitHub-compatible markdown. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), and Obsidian/GitHub dual compatibility
+- [OSS Documentation Convention](./ex-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
 - [Temporary Files Convention](./ex-co__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 - [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 - [Tutorial Convention](./ex-co__tutorials.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
@@ -31,4 +32,4 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ---
 
-**Last Updated**: 2025-12-04
+**Last Updated**: 2025-12-05
