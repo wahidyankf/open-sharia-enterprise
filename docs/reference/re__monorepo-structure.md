@@ -8,7 +8,7 @@ tags:
   - architecture
   - structure
 created: 2025-11-29
-updated: 2025-11-30
+updated: 2025-12-05
 ---
 
 # Monorepo Structure Reference
@@ -17,17 +17,21 @@ Complete reference for the Nx monorepo structure, folder organization, and file 
 
 ## Overview
 
-This project uses **Nx** as a monorepo build system with a plugin-free "vanilla Nx" approach. The monorepo is organized into two main folders:
+This project uses **Nx** as a monorepo build system with a plugin-free "vanilla Nx" approach. The Nx monorepo consists of two main folders:
 
 - `apps/` - Deployable applications
 - `libs/` - Reusable libraries (flat structure with language prefixes)
+
+**Note**: The repository also contains `apps-standalone/` directory for projects that are NOT part of the Nx monorepo. These standalone projects have independent build systems and are not integrated with Nx workspace configuration. See [Standalone Projects vs Monorepo Projects](#standalone-projects-vs-monorepo-projects) section for details.
 
 ## Root Structure
 
 ```
 open-sharia-enterprise/
-├── apps/                      # Deployable applications
-├── libs/                      # Reusable libraries (flat structure)
+├── apps/                      # Deployable applications (Nx monorepo)
+├── apps-standalone/           # Standalone projects (NOT in Nx monorepo)
+│   └── ayokoding-web/        # Hugo-based bilingual educational website
+├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
 ├── docs/                      # Documentation (Diátaxis framework)
 ├── plans/                     # Project planning documents
 ├── .claude/                   # Claude Code configuration
@@ -186,6 +190,96 @@ libs/ts-demo-libs/
 ### Current Scope
 
 TypeScript libraries only. Future languages (Java, Kotlin, Python) not yet implemented.
+
+## Standalone Projects vs Monorepo Projects
+
+The repository contains two distinct project structures with different purposes and characteristics:
+
+### Nx Monorepo Projects (`apps/` and `libs/`)
+
+**Purpose**: Integrated TypeScript projects that benefit from shared tooling and workspace integration.
+
+**Characteristics**:
+
+- Managed by Nx workspace configuration
+- Integrated build system with task caching and orchestration
+- Shared TypeScript configuration (`tsconfig.base.json`)
+- Workspace path mappings (`@open-sharia-enterprise/*`)
+- Cross-project dependencies supported
+- Unified testing and linting commands
+- Affected detection (`nx affected:build`)
+- Dependency graph visualization (`nx graph`)
+
+**When to use**:
+
+- TypeScript applications and libraries
+- Projects that share code with other monorepo projects
+- Projects that benefit from task caching
+- Projects that need unified build/test/lint workflows
+
+**Examples**:
+
+- Next.js frontend applications
+- Express.js API services
+- Reusable TypeScript libraries
+
+### Standalone Projects (`apps-standalone/`)
+
+**Purpose**: Projects with independent build systems that are NOT part of the Nx monorepo.
+
+**Characteristics**:
+
+- NOT managed by Nx workspace
+- Independent build systems (Hugo, Go, Python, Rust, etc.)
+- Self-contained configuration
+- Separate deployment pipelines
+- No access to workspace path mappings
+- Not integrated with Nx task commands
+- No cross-project dependencies with monorepo projects
+
+**When to use**:
+
+- Projects with specialized build tools (Hugo, Go toolchain, etc.)
+- Projects in non-TypeScript languages without Nx plugins
+- Projects with established tooling that don't need Nx integration
+- Projects that deploy independently with their own CI/CD
+
+**Current examples**:
+
+- `apps-standalone/ayokoding-web/` - Hugo-based bilingual educational website
+  - Static site generator: Hugo
+  - Theme: Hextra documentation theme
+  - Deployment: Vercel
+  - Languages: Indonesian (primary), English
+  - Purpose: Educational platform for software engineering content
+
+### Key Differences
+
+| Aspect                     | Nx Monorepo (`apps/`, `libs/`)    | Standalone (`apps-standalone/`)      |
+| -------------------------- | --------------------------------- | ------------------------------------ |
+| Build System               | Nx workspace                      | Independent (Hugo, Go, Python, etc.) |
+| Configuration              | Shared `tsconfig.base.json`       | Self-contained                       |
+| Path Mappings              | Yes (`@open-sharia-enterprise/*`) | No                                   |
+| Task Caching               | Yes (Nx cache)                    | No                                   |
+| Cross-project Dependencies | Supported                         | Not supported                        |
+| Deployment                 | Varies by app                     | Independent pipelines                |
+| Language                   | TypeScript (current)              | Any language                         |
+
+### Decision Guide
+
+**Use Nx monorepo (`apps/` or `libs/`)** if:
+
+- Project is TypeScript-based
+- Project shares code with other monorepo projects
+- Project benefits from task caching
+- Project needs unified tooling
+
+**Use standalone (`apps-standalone/`)** if:
+
+- Project has specialized build tools (Hugo, Go, etc.)
+- Project is in a language without Nx support
+- Project has established tooling that works well independently
+- Project has separate deployment requirements
 
 ## File Format Reference
 

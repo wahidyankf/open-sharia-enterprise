@@ -9,7 +9,7 @@ tags:
   - development
   - continuous-integration
 created: 2025-11-26
-updated: 2025-11-26
+updated: 2025-12-05
 ---
 
 # Trunk Based Development Convention
@@ -311,6 +311,40 @@ If industry regulations require documented review:
 - ✅ **Use branches + PRs** for audit trail
 - ✅ **Still minimize branch lifespan** (review quickly)
 - ✅ **Automate compliance checks** in CI
+
+### Environment/Deployment Branches
+
+**Long-lived environment branches are explicitly allowed in TBD.** These are NOT feature branches.
+
+Environment branches serve deployment purposes, not feature isolation:
+
+- ✅ **Production branches**: Trigger deployment to production environment
+- ✅ **Staging branches**: Trigger deployment to staging environment
+- ✅ **Environment-specific configuration**: Different settings per environment
+
+**Key distinction**: Environment branches reflect deployment state, not development work.
+
+**Example in this repository: `prod-ayokoding-web`**
+
+The `apps-standalone/ayokoding-web/` project uses a production deployment branch:
+
+- **Branch**: `prod-ayokoding-web`
+- **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
+- **Workflow**:
+  1. All development happens in `main`
+  2. When ready to deploy, pull `main` changes to `prod-ayokoding-web`
+  3. Push to `prod-ayokoding-web` triggers production deployment
+- **Important**: Never commit directly to `prod-ayokoding-web`
+
+**Why this is TBD-compliant**:
+
+- Development still happens on `main` (trunk)
+- No feature isolation in branches
+- `prod-ayokoding-web` is a deployment trigger, not a development workspace
+- Changes flow from `main` to `prod-ayokoding-web`, never the reverse
+- Consistent with TBD principles: environment branches are for release management, not feature development
+
+**Reference**: [TrunkBasedDevelopment.com - Branch for Release](https://trunkbaseddevelopment.com/branch-for-release/) explicitly describes release branches as acceptable in TBD.
 
 ## What NOT to Do
 
