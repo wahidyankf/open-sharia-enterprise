@@ -1,0 +1,29 @@
+{
+  "name": "ayokoding-web",
+  "sourceRoot": "apps/ayokoding-web",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "hugo server -D",
+        "cwd": "apps/ayokoding-web"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./build.sh",
+        "cwd": "apps/ayokoding-web"
+      },
+      "outputs": ["{projectRoot}/public"]
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "rm -rf public resources .hugo_build.lock",
+        "cwd": "apps/ayokoding-web"
+      }
+    }
+  }
+}
