@@ -23,11 +23,15 @@ open-sharia-enterprise/
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
 │       ├── agent-maker.md      # Agent creation automation
+│       ├── ayokoding-deployer.md # ayokoding-web production deployment
 │       ├── docs-checker.md     # Documentation accuracy validator
 │       ├── docs-file-manager.md  # File and directory management (rename, move, delete)
 │       ├── docs-link-checker.md  # Link validation agent
 │       ├── docs-maker.md     # Documentation writer agent
+│       ├── docs-tutorial-checker.md # Tutorial quality validation
+│       ├── docs-tutorial-maker.md # Tutorial content creation
 │       ├── journal-maker.md     # Journal and research notes agent
+│       ├── ose-platform-web-deployer.md # ose-platform-web production deployment
 │       ├── plan-checker.md      # Plan validation agent
 │       ├── plan-execution-checker.md  # Implementation validation agent
 │       ├── plan-executor.md   # Plan execution agent
@@ -195,13 +199,21 @@ This repository uses **Trunk Based Development (TBD)** as its git workflow. See 
 
 **Environment branches for production deployment are acceptable in TBD.** These are NOT feature branches.
 
-**Production Branch for ayokoding-web**: `prod-ayokoding-web`
+**Production Branches:**
 
-- **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
-- **Location**: Deploys `apps/ayokoding-web/` (integrated with Nx monorepo)
-- **Workflow**: Make all changes in `main` first, then pull to `prod-ayokoding-web` when ready to deploy
-- **Important**: Do NOT commit directly to `prod-ayokoding-web`
-- **Compliance with TBD**: Environment branches (production, staging) are explicitly allowed in Trunk Based Development as they serve deployment purposes, not feature isolation
+1. **prod-ayokoding-web** - Deploys ayokoding-web to ayokoding.com
+   - **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
+   - **Location**: Deploys `apps/ayokoding-web/` (integrated with Nx monorepo)
+   - **Workflow**: Make all changes in `main` first, then pull to `prod-ayokoding-web` when ready to deploy
+   - **Important**: Do NOT commit directly to `prod-ayokoding-web`
+
+2. **prod-ose-platform-web** - Deploys ose-platform-web to oseplatform.com
+   - **Purpose**: Triggers automatic deployment to oseplatform.com via Vercel
+   - **Location**: Deploys `apps/ose-platform-web/` (integrated with Nx monorepo)
+   - **Workflow**: Make all changes in `main` first, then pull to `prod-ose-platform-web` when ready to deploy
+   - **Important**: Do NOT commit directly to `prod-ose-platform-web`
+
+**Compliance with TBD**: Environment branches (production, staging) are explicitly allowed in Trunk Based Development as they serve deployment purposes, not feature isolation.
 
 See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for details on environment branches.
 
@@ -215,7 +227,7 @@ See [Trunk Based Development Convention](./docs/explanation/development/ex-de__t
 - Experimental work that may be discarded
 - External contributions via fork + PR
 - Regulatory compliance requires review trail
-- Environment-specific deployment (e.g., `prod-ayokoding-web` for production)
+- Environment-specific deployment (e.g., `prod-ayokoding-web`, `prod-ose-platform-web` for production)
 
 ### Implications for Agents
 
@@ -224,7 +236,7 @@ All AI agents should assume work happens on `main` branch unless explicitly told
 - **plan-maker**: Plans should NOT specify a git branch by default (work happens on `main`)
 - **plan-executor**: Should use `main` branch unless plan explicitly specifies a different branch
 - When creating plans: Only specify a branch if there's a documented reason (see TBD convention)
-- **Deployment branches**: Agents should never commit directly to deployment branches like `prod-ayokoding-web`
+- **Deployment branches**: Agents should never commit directly to deployment branches like `prod-ayokoding-web` or `prod-ose-platform-web`
 
 ## Common Development Commands
 
