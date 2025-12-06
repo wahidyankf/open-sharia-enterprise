@@ -8,7 +8,12 @@ The `apps/` directory contains **deployable application projects** (executables)
 
 Apps follow the naming pattern: **`[domain]-[type]`**
 
-### Examples
+### Current Production Apps
+
+- `ose-platform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
+- `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
+
+### Example App Names
 
 - `api-gateway` - API gateway service
 - `admin-dashboard` - Admin web application
