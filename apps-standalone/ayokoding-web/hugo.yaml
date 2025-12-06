@@ -1,5 +1,26 @@
 # Hugo configuration file
+baseURL: "https://ayokoding.com/"
 title: AyoKoding
+
+# Language configuration
+defaultContentLanguage: id
+defaultContentLanguageInSubdir: true
+
+languages:
+  id:
+    languageName: "Bahasa Indonesia"
+    languageCode: "id-ID"
+    weight: 1
+    title: "AyoKoding"
+    params:
+      description: "Platform edukasi bilingual untuk rekayasa perangkat lunak - membantu komunitas teknologi Indonesia belajar dan berkembang"
+  en:
+    languageName: "English"
+    languageCode: "en-US"
+    weight: 2
+    title: "AyoKoding"
+    params:
+      description: "Bilingual educational platform for software engineering - helping the Indonesian tech community learn and grow"
 
 # import hextra as module
 module:
@@ -38,11 +59,22 @@ menu:
         icon: globe-alt
     - name: GitHub
       weight: 6
-      url: "https://github.com/wahidyankf/oss/"
+      url: "https://github.com/wahidyankf/open-sharia-enterprise"
       params:
         icon: github
 
 params:
+  # SEO & Social Media
+  author: "Wahidyan Kresna Fridayoka"
+  images:
+    - /logo.png
+
+  # Social media profiles
+  social:
+    threads: "https://www.threads.net/@wahidyankf"
+    github: "https://github.com/wahidyankf/open-sharia-enterprise"
+    youtube: "https://www.youtube.com/@AyoKoding"
+
   navbar:
     displayTitle: true
     displayLogo: false
@@ -72,3 +104,32 @@ params:
 services:
   googleAnalytics:
     ID: G-1NHDR7S3GV
+
+# Output formats (for sitemap, RSS, etc.)
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+  page:
+    - HTML
+  section:
+    - HTML
+    - RSS
+
+# Sitemap configuration
+sitemap:
+  changefreq: weekly
+  filename: sitemap.xml
+  priority: 0.5
+
+# Privacy configuration
+privacy:
+  googleAnalytics:
+    anonymizeIP: true
+    respectDoNotTrack: true
+
+# Taxonomies
+taxonomies:
+  tag: tags
+  category: categories
