@@ -1,0 +1,24 @@
+# Custom Indonesian translations
+- id: readMore
+  translation: "Baca Selengkapnya"
+
+- id: lastUpdated
+  translation: "Terakhir diperbarui"
+
+- id: publishedOn
+  translation: "Dipublikasikan pada"
+
+- id: author
+  translation: "Penulis"
+
+- id: tags
+  translation: "Tag"
+
+- id: categories
+  translation: "Kategori"
+
+- id: share
+  translation: "Bagikan"
+
+- id: relatedContent
+  translation: "Konten Terkait"
