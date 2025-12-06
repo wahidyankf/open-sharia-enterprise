@@ -27,8 +27,6 @@ AyoKoding ("Let's Code" in Indonesian) is a platform dedicated to sharing softwa
 
 ### Prerequisites
 
-- Node.js 22.20.0 (managed by Volta)
-- npm 11.1.0
 - Hugo extended version (latest)
 
 ### Installation
@@ -39,17 +37,12 @@ brew install hugo
 
 # Navigate to project
 cd apps-standalone/ayokoding-web
-
-# Install npm dependencies
-npm install
 ```
 
 ### Development
 
 ```bash
 # Start development server
-npm run dev
-# or
 hugo server -D
 
 # Server runs at http://localhost:1313
@@ -59,8 +52,6 @@ hugo server -D
 
 ```bash
 # Build for production
-npm run build
-# or
 hugo --minify
 
 # Output will be in public/ directory
@@ -378,11 +369,11 @@ Configuration in `vercel.json`:
 - Use appropriate technical terms
 - Consider cultural context
 
-## Scripts
+## Common Commands
 
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
+hugo server -D   # Start development server
+hugo --minify    # Build for production
 ./build.sh       # Custom build script
 ```
 
