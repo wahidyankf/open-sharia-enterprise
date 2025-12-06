@@ -36,7 +36,7 @@ AyoKoding ("Let's Code" in Indonesian) is a platform dedicated to sharing softwa
 brew install hugo
 
 # Navigate to project
-cd apps-standalone/ayokoding-web
+cd apps/ayokoding-web
 ```
 
 ### Development
