@@ -33,6 +33,21 @@ Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web
   - Syncing prod-ayokoding-web branch with origin/main
 - **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ayokoding-web
 
+### 🟪 `ose-platform-web-deployer.md`
+
+Expert at deploying ose-platform-web to production. Synchronizes prod-ose-platform-web branch with main and pushes to origin to trigger automatic deployment to oseplatform.com via Vercel.
+
+- **Primary Use:** Deploying ose-platform-web to production environment
+- **Specialization:** Git branch synchronization, production deployment, Vercel integration, safety checks, rollback procedures
+- **Tools:** Bash
+- **When to Use:**
+  - Deploying latest main branch to oseplatform.com production
+  - After changes to apps/ose-platform-web/ are tested on main
+  - Triggering Vercel production build and deployment
+  - Need safe, controlled deployment with pre-flight checks
+  - Syncing prod-ose-platform-web branch with origin/main
+- **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ose-platform-web
+
 ### 🟩 `docs-checker.md`
 
 Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information.
