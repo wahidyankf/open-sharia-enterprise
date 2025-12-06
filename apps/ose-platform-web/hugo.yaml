@@ -1,0 +1,171 @@
+baseURL: "https://oseplatform.com/"
+title: OSE Platform
+
+pagination:
+  pagerSize: 10
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+# Import PaperMod as module
+module:
+  imports:
+    - path: github.com/adityatelange/hugo-PaperMod
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+params:
+  env: production
+  title: OSE Platform
+  description: "Open-source platform for Sharia-compliant enterprise solutions (ERP, fintech). Building transparent, ethical business technology."
+  keywords:
+    [
+      Sharia-compliant,
+      Islamic finance,
+      ERP,
+      fintech,
+      halal,
+      enterprise,
+      open-source,
+    ]
+  author: Open Sharia Enterprise
+
+  # Theme customization
+  defaultTheme: auto # dark, light, auto
+  disableThemeToggle: false
+
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowWordCount: true
+  ShowRssButtonInSectionTermList: true
+  UseHugoToc: true
+  disableSpecial1stPost: false
+  disableScrollToTop: false
+  comments: false
+  hidemeta: false
+  hideSummary: false
+  showtoc: true
+  tocopen: false
+
+  # Home page configuration
+  homeInfoParams:
+    Title: "Open Sharia Enterprise Platform"
+    Content: >
+      **Open-source platform for Sharia-compliant enterprise solutions**
+
+
+      Building transparent, ethical business technology for ERP, fintech, and beyond.
+      Currently in pre-alpha development.
+
+  # Social icons
+  socialIcons:
+    - name: github
+      url: "https://github.com/wahidyankf/open-sharia-enterprise"
+    - name: rss
+      url: "/index.xml"
+
+  # Analytics (optional)
+  # analytics:
+  #   google:
+  #     SiteVerificationTag: "XYZabc"
+
+  # Cover image
+  cover:
+    hidden: true # hide everywhere but not in structured data
+    hiddenInList: true # hide on list pages and home
+    hiddenInSingle: true # hide on single page
+
+  # Edit post button
+  # editPost:
+  #   URL: "https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps/ose-platform-web/content"
+  #   Text: "Suggest Changes"
+  #   appendFilePath: true
+
+  # Label (top left corner)
+  label:
+    text: "OSE Platform"
+    icon: /favicon.ico
+    iconHeight: 35
+
+  # Footer
+  footer:
+    text: "Open Sharia Enterprise Platform · [MIT License](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/LICENSE)"
+
+# Menu
+menu:
+  main:
+    - identifier: updates
+      name: Updates
+      url: /updates/
+      weight: 10
+    - identifier: about
+      name: About
+      url: /about/
+      weight: 20
+    - identifier: docs
+      name: Documentation
+      url: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs
+      weight: 30
+    - identifier: github
+      name: GitHub
+      url: https://github.com/wahidyankf/open-sharia-enterprise
+      weight: 40
+
+# Markup settings
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+    anchorLineNos: true
+    codeFences: true
+    guessSyntax: true
+    lineNos: true
+    style: monokai
+
+# Privacy
+privacy:
+  vimeo:
+    disabled: false
+    simple: true
+
+  x:
+    disabled: false
+    enableDNT: true
+    simple: true
+
+  instagram:
+    disabled: false
+    simple: true
+
+  youtube:
+    disabled: false
+    privacyEnhanced: true
+
+# Services
+services:
+  instagram:
+    disableInlineCSS: true
+  x:
+    disableInlineCSS: true
+
+# Output formats
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+# Taxonomies
+taxonomies:
+  category: categories
+  tag: tags
+  series: series
