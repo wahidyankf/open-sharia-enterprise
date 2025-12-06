@@ -1,15 +1,7 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "build.sh",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "public",
-        "framework": "hugo"
-      }
-    }
-  ],
+  "buildCommand": "hugo --gc --minify",
+  "outputDirectory": "public",
+  "framework": "hugo",
   "build": {
     "env": {
       "HUGO_VERSION": "0.152.2"
