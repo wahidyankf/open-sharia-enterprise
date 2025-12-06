@@ -6,6 +6,11 @@ Bilingual educational platform for software engineering content, focused on help
 
 AyoKoding ("Let's Code" in Indonesian) is a platform dedicated to sharing software engineering knowledge in both Indonesian and English. It follows a "learning in public" philosophy, encouraging developers to share their learning journey with the community.
 
+## 🌐 Website
+
+- **Production**: https://ayokoding.com
+- **Repository**: Part of the [open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise) monorepo
+
 ## Features
 
 - **Bilingual Content**: Full support for Indonesian (ID) and English (EN)

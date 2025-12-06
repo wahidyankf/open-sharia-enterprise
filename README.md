@@ -2,7 +2,10 @@
 
 ✨ An enterprise solutions platform for Sharia-compliant business systems.
 
-🌐 **Website**: [https://oseplatform.com](https://oseplatform.com) (under construction)
+🌐 **Live Sites**:
+
+- **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
+- **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Educational content platform for software engineering
 
 > ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
 
