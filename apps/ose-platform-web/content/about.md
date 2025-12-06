@@ -86,6 +86,16 @@ While we're not accepting contributions during the pre-alpha phase, you're welco
 - 📢 Share the project with your network
 - 👀 Watch for updates and releases
 
+## Related Projects
+
+### AyoKoding
+
+[**AyoKoding**](https://ayokoding.com) is our bilingual educational platform (Indonesian/English) for software engineering education. It serves the Indonesian tech community with tutorials, guides, and resources to help developers learn and grow.
+
+- 🌐 Website: [ayokoding.com](https://ayokoding.com)
+- 🎯 Mission: Democratize software engineering education for Indonesian developers
+- 📚 Content: Tutorials, how-to guides, and technical resources in Indonesian and English
+
 ## Repository
 
 Main repository: [open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise)
