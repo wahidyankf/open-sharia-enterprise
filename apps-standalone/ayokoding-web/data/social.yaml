@@ -1,0 +1,16 @@
+# Social media profiles for AyoKoding
+platforms:
+  - name: "YouTube"
+    url: "https://www.youtube.com/@AyoKoding"
+    icon: "youtube"
+    handle: "@AyoKoding"
+
+  - name: "Threads"
+    url: "https://www.threads.net/@wahidyankf"
+    icon: "threads"
+    handle: "@wahidyankf"
+
+  - name: "GitHub"
+    url: "https://github.com/wahidyankf/open-sharia-enterprise"
+    icon: "github"
+    handle: "wahidyankf"
