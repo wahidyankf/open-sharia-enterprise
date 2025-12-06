@@ -1,0 +1,24 @@
+# Custom English translations
+- id: readMore
+  translation: "Read More"
+
+- id: lastUpdated
+  translation: "Last updated"
+
+- id: publishedOn
+  translation: "Published on"
+
+- id: author
+  translation: "Author"
+
+- id: tags
+  translation: "Tags"
+
+- id: categories
+  translation: "Categories"
+
+- id: share
+  translation: "Share"
+
+- id: relatedContent
+  translation: "Related Content"
