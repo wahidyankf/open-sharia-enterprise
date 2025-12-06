@@ -17,7 +17,7 @@ if ! command -v hugo &>/dev/null; then
     echo "Hugo not found, installing..."
 
     # Determine the appropriate Hugo download URL
-    HUGO_VERSION="0.135.0"
+    HUGO_VERSION="0.145.0"
     HUGO_URL="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz"
 
     # Download Hugo using curl
