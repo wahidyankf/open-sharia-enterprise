@@ -38,7 +38,7 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": "prettier --write",
     "*.json": "prettier --write",
-    "apps-standalone/ayokoding-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
+    "apps/ayokoding-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
     "*.md": "prettier --write",
     "*.{yml,yaml}": "prettier --write",
     "*.{css,scss}": "prettier --write"

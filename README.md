@@ -142,7 +142,7 @@ npm install
 open-sharia-enterprise/
 ├── apps/                  # Deployable applications (Nx monorepo)
 ├── apps-standalone/       # Standalone projects (NOT in Nx monorepo)
-│   └── ayokoding-web/     # Hugo-based bilingual educational website
+│   └── .gitkeep           # Placeholder for future standalone projects
 ├── libs/                  # Reusable libraries (Nx monorepo, flat structure)
 ├── docs/                  # Project documentation (Diataxis framework)
 │   ├── tutorials/         # Learning-oriented guides
@@ -211,7 +211,8 @@ Projects with independent build systems that are NOT integrated with the Nx mono
 
 **Current standalone projects**:
 
-- **`ayokoding-web/`** - Hugo-based bilingual educational website for software engineering content (Indonesian/English). Deployed on Vercel. Uses Hugo static site generator with Hextra theme.
+- None (directory reserved for future standalone projects)
+- Previously housed `ayokoding-web` before Nx integration (now at `apps/ayokoding-web/`)
 
 **Characteristics**:
 
@@ -225,24 +226,12 @@ Projects with independent build systems that are NOT integrated with the Nx mono
 
 Use this directory for projects that:
 
-- Have their own specialized build tools (Hugo, Go, Python frameworks, etc.)
+- Have their own specialized build tools that cannot integrate with Nx
 - Don't benefit from Nx monorepo integration
-- Require independent deployment workflows
+- Require completely independent deployment workflows
 - Are not eligible for TypeScript path mappings or shared configuration
 
-**Deployment for ayokoding-web**:
-
-The `apps-standalone/ayokoding-web/` project uses a dedicated production branch for deployment:
-
-- **Production Branch**: `prod-ayokoding-web`
-- **Deployment Target**: ayokoding.com (via Vercel)
-- **Workflow**:
-  1. Make all changes in `main` branch first
-  2. When ready to deploy, pull latest changes from `main` to `prod-ayokoding-web`
-  3. Pushing to `prod-ayokoding-web` triggers automatic deployment
-- **Important**: Never commit directly to `prod-ayokoding-web` - keep the branch clean
-
-See [ayokoding-web README](./apps-standalone/ayokoding-web/README.md) for detailed deployment instructions.
+**Note**: Even projects with non-Node.js toolchains (like Hugo) can be integrated with Nx using `nx:run-commands` executor to wrap their CLI commands. See `apps/ayokoding-web/` as an example of Hugo integration with Nx.
 
 #### Documentation
 

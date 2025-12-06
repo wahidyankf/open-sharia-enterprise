@@ -22,7 +22,7 @@ This project uses **Nx** as a monorepo build system with a plugin-free "vanilla 
 - `apps/` - Deployable applications
 - `libs/` - Reusable libraries (flat structure with language prefixes)
 
-**Note**: The repository also contains `apps-standalone/` directory for projects that are NOT part of the Nx monorepo. These standalone projects have independent build systems and are not integrated with Nx workspace configuration. See [Standalone Projects vs Monorepo Projects](#standalone-projects-vs-monorepo-projects) section for details.
+**Note**: The repository also contains `apps-standalone/` directory reserved for projects that are NOT part of the Nx monorepo. These standalone projects would have independent build systems and no Nx workspace integration. See [Standalone Projects vs Monorepo Projects](#standalone-projects-vs-monorepo-projects) section for details.
 
 ## Root Structure
 
@@ -30,7 +30,7 @@ This project uses **Nx** as a monorepo build system with a plugin-free "vanilla 
 open-sharia-enterprise/
 ├── apps/                      # Deployable applications (Nx monorepo)
 ├── apps-standalone/           # Standalone projects (NOT in Nx monorepo)
-│   └── ayokoding-web/        # Hugo-based bilingual educational website
+│   └── .gitkeep              # Placeholder for future standalone projects
 ├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
 ├── docs/                      # Documentation (Diátaxis framework)
 ├── plans/                     # Project planning documents
@@ -239,19 +239,17 @@ The repository contains two distinct project structures with different purposes 
 
 **When to use**:
 
-- Projects with specialized build tools (Hugo, Go toolchain, etc.)
-- Projects in non-TypeScript languages without Nx plugins
-- Projects with established tooling that don't need Nx integration
-- Projects that deploy independently with their own CI/CD
+- Projects with specialized build tools that cannot integrate with Nx
+- Projects in non-TypeScript languages that require completely independent workflows
+- Projects with established tooling where Nx integration provides no benefit
+- Projects that must deploy independently with their own CI/CD
 
 **Current examples**:
 
-- `apps-standalone/ayokoding-web/` - Hugo-based bilingual educational website
-  - Static site generator: Hugo
-  - Theme: Hextra documentation theme
-  - Deployment: Vercel
-  - Languages: Indonesian (primary), English
-  - Purpose: Educational platform for software engineering content
+- None (directory reserved for future projects)
+- Previously housed `ayokoding-web` (now integrated with Nx as `apps/ayokoding-web/`)
+
+**Note on Nx integration**: Even projects with non-Node.js toolchains (like Hugo, Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization. See `apps/ayokoding-web/` as an example of a Hugo static site integrated with Nx monorepo.
 
 ### Key Differences
 

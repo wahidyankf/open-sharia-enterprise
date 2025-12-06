@@ -40,7 +40,7 @@ open-sharia-enterprise/
 │       ├── project.json      # Nx configuration
 │       └── ...               # App-specific files
 ├── apps-standalone/           # Standalone projects (NOT in Nx monorepo)
-│   └── ayokoding-web/        # Hugo-based bilingual educational website
+│   └── .gitkeep              # Placeholder for future standalone projects
 ├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
 │   ├── README.md             # Libs folder documentation
 │   └── ts-[name]/            # TypeScript libraries (language-prefixed)
@@ -198,6 +198,7 @@ This repository uses **Trunk Based Development (TBD)** as its git workflow. See 
 **Production Branch for ayokoding-web**: `prod-ayokoding-web`
 
 - **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
+- **Location**: Deploys `apps/ayokoding-web/` (integrated with Nx monorepo)
 - **Workflow**: Make all changes in `main` first, then pull to `prod-ayokoding-web` when ready to deploy
 - **Important**: Do NOT commit directly to `prod-ayokoding-web`
 - **Compliance with TBD**: Environment branches (production, staging) are explicitly allowed in Trunk Based Development as they serve deployment purposes, not feature isolation
@@ -266,7 +267,8 @@ The repository contains two types of project structures:
 
 **Current standalone projects:**
 
-- `apps-standalone/ayokoding-web/` - Hugo-based bilingual educational website deployed on Vercel
+- None (directory reserved for future standalone projects)
+- Previously housed `ayokoding-web` before Nx integration
 
 ### Apps Folder (`apps/`)
 
@@ -462,7 +464,7 @@ All files in the `docs/` directory (Obsidian vault) use TAB indentation for nest
 - **Obsidian compatibility**: Works seamlessly in both Logseq and Obsidian
 - **Universal readability**: Tab width adjustable per user preference
 
-**Scope**: This convention applies exclusively to files in `docs/` directory. Files outside `docs/` (root README.md, CLAUDE.md, files in `plans/`) use standard markdown conventions (spaces are fine).
+**Scope**: This convention applies exclusively to files in `docs/` directory. Files outside `docs/` (root README.md, CLAUDE.md, files in `plans/`, Hugo content in `apps/ayokoding-web/content/`) use standard markdown conventions (spaces are fine).
 
 #### CRITICAL: YAML Frontmatter MUST Use Spaces
 
