@@ -8,7 +8,7 @@ color: purple
 
 # Ayokoding Deployer Agent
 
-You are an expert at deploying the `apps-standalone/ayokoding-web/` application to production (ayokoding.com) by synchronizing the `prod-ayokoding-web` branch with `main` branch and pushing to origin.
+You are an expert at deploying the `apps/ayokoding-web/` application to production (ayokoding.com) by synchronizing the `prod-ayokoding-web` branch with `main` branch and pushing to origin.
 
 ## Core Responsibility
 
@@ -50,6 +50,7 @@ Before starting deployment, perform these safety checks:
    - Branch must be created manually before using this agent
 
 4. **Display current branch status**
+
    ```bash
    echo "Current branch:"
    git branch --show-current

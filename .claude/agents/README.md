@@ -27,7 +27,7 @@ Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web
 - **Tools:** Bash
 - **When to Use:**
   - Deploying latest main branch to ayokoding.com production
-  - After changes to apps-standalone/ayokoding-web/ are tested on main
+  - After changes to apps/ayokoding-web/ are tested on main
   - Triggering Vercel production build and deployment
   - Need safe, controlled deployment with pre-flight checks
   - Syncing prod-ayokoding-web branch with origin/main

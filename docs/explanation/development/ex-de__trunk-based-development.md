@@ -336,10 +336,11 @@ Environment branches serve deployment purposes, not feature isolation:
 
 **Example in this repository: `prod-ayokoding-web`**
 
-The `apps-standalone/ayokoding-web/` project uses a production deployment branch:
+The `apps/ayokoding-web/` project uses a production deployment branch:
 
 - **Branch**: `prod-ayokoding-web`
 - **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
+- **Location**: Deploys `apps/ayokoding-web/` (Nx-integrated Hugo application)
 - **Workflow**:
   1. All development happens in `main`
   2. When ready to deploy, pull `main` changes to `prod-ayokoding-web`
