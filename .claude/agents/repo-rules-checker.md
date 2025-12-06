@@ -314,6 +314,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/README.md`
 - `.claude/agents/agent-maker.md`
 - `.claude/agents/ayokoding-deployer.md`
+- `.claude/agents/ose-platform-web-deployer.md`
 - `.claude/agents/docs-checker.md`
 - `.claude/agents/docs-file-manager.md`
 - `.claude/agents/docs-link-checker.md`
