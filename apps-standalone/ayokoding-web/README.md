@@ -83,33 +83,125 @@ content/
     └── belajar/          # Learning materials
 ```
 
-### Creating Content
+## Creating New Content
 
-#### English Content
+### Using Archetypes
+
+AyoKoding provides content templates (archetypes) for different content types. Use the appropriate archetype based on your content:
+
+#### 1. Technical Learning Content
+
+For tutorials, guides, and educational content:
 
 ```bash
-hugo new content/en/learn/topic-name.md
+# Indonesian
+hugo new content/id/belajar/topic-name.md --kind learn
+
+# English
+hugo new content/en/learn/topic-name.md --kind learn
 ```
 
-#### Indonesian Content
+#### 2. Personal Essays/Rants (Celoteh)
+
+For opinion pieces and personal narratives:
 
 ```bash
-hugo new content/id/belajar/nama-topik.md
+# Indonesian
+hugo new content/id/celoteh/YYYY/essay-title.md --kind celoteh
+
+# English
+hugo new content/en/rants/YYYY/essay-title.md --kind celoteh
 ```
 
-### Content Frontmatter
+#### 3. Video Content
 
-```yaml
----
-title: "Your Article Title"
-date: 2024-01-01
-draft: false
-description: "Brief description for SEO"
-tags: ["javascript", "tutorial"]
-categories: ["learn"]
-weight: 10 # For ordering
----
+For YouTube video embeds:
+
+```bash
+# Indonesian
+hugo new content/id/konten-video/series-name/video-title.md --kind konten-video
+
+# English
+hugo new content/en/video-content/series-name/video-title.md --kind konten-video
 ```
+
+After creating, remember to:
+
+1. Update the `youtube_id` field in frontmatter
+2. Replace `YOUTUBE_ID_HERE` in the content with actual video ID
+
+#### 4. Navigation/Index Pages
+
+For section index pages:
+
+```bash
+# Indonesian
+hugo new content/id/section-name/_index.md
+
+# English
+hugo new content/en/section-name/_index.md
+```
+
+#### 5. Default Content
+
+For general pages:
+
+```bash
+# Indonesian
+hugo new content/id/page-name.md
+
+# English
+hugo new content/en/page-name.md
+```
+
+### Content Frontmatter Fields
+
+All content should include these frontmatter fields for optimal SEO:
+
+| Field         | Required    | Description                     | Example                              |
+| ------------- | ----------- | ------------------------------- | ------------------------------------ |
+| `title`       | Yes         | Page title                      | `"How to Learn JavaScript"`          |
+| `date`        | Yes         | Publication date (WIB/UTC+7)    | `2025-12-06T12:00:00+07:00`          |
+| `lastmod`     | Recommended | Last modified date              | `2025-12-06T12:00:00+07:00`          |
+| `draft`       | Yes         | Draft status                    | `false`                              |
+| `description` | Recommended | SEO description (150-160 chars) | `"Learn JavaScript fundamentals..."` |
+| `weight`      | Optional    | Ordering in menus               | `10`                                 |
+| `tags`        | Recommended | Content tags                    | `["javascript", "tutorial"]`         |
+| `categories`  | Recommended | Content categories              | `["learn"]`                          |
+| `author`      | Recommended | Author name                     | `"Wahidyan Kresna Fridayoka"`        |
+| `images`      | Recommended | Social sharing images           | `["/images/cover.png"]`              |
+| `keywords`    | Optional    | SEO keywords                    | `["javascript tutorial"]`            |
+| `youtube_id`  | Video only  | YouTube video ID                | `"dQw4w9WgXcQ"`                      |
+
+### Content Writing Best Practices
+
+1. **SEO Optimization**
+   - Write descriptive titles (50-60 characters)
+   - Craft compelling descriptions (150-160 characters)
+   - Use relevant tags and categories
+   - Include featured images when possible
+
+2. **Content Structure**
+   - Use clear heading hierarchy (H2, H3, H4)
+   - Include introduction and summary sections
+   - Add code examples with syntax highlighting
+   - Use bullet points for scannability
+
+3. **Bilingual Content**
+   - Maintain consistency between ID and EN versions
+   - Keep URLs synchronized (e.g., `/belajar/topic` ↔ `/learn/topic`)
+   - Ensure equivalent content quality in both languages
+
+4. **Images and Media**
+   - Place images in `static/images/`
+   - Use descriptive alt text
+   - Optimize images for web (compress, resize)
+   - For video content, use YouTube shortcode: `{{< youtube VIDEO_ID >}}`
+
+5. **Internal Linking**
+   - Link to related content within the site
+   - Use descriptive anchor text
+   - Ensure links work in both languages
 
 ## Configuration
 
@@ -132,23 +224,79 @@ defaultContentLanguage: "id"
 defaultContentLanguageInSubdir: false
 ```
 
+## SEO Features
+
+This site implements comprehensive SEO best practices:
+
+### Meta Tags
+
+- **Open Graph**: Facebook and social media sharing
+- **Twitter Cards**: Twitter sharing with images
+- **Canonical URLs**: Prevent duplicate content issues
+- **Language Alternates**: Hreflang tags for bilingual content
+- **JSON-LD Structured Data**: Rich search results
+
+### Sitemaps & Feeds
+
+- **XML Sitemap**: Auto-generated at `/sitemap.xml`
+- **RSS Feeds**: Available for all content sections
+- **Robots.txt**: Search engine crawling instructions
+
+### Performance
+
+- **Static Site**: Fast loading times
+- **CDN Delivery**: Vercel edge network
+- **Asset Optimization**: Minified CSS/JS
+- **Image Optimization**: Recommended for all images
+
 ## Theme Customization
 
-### Override Theme Files
+### Custom CSS
 
-Place custom files in:
-
-- `layouts/` - Override theme templates
-- `assets/` - Custom CSS/JS
-- `static/` - Static assets
-
-### Custom Styles
+Add custom styles in `assets/css/custom.css`. This file is automatically loaded by Hextra.
 
 ```css
-/* assets/custom.scss */
+/* Example custom styles */
 .your-custom-class {
-  /* Custom styles */
+  color: #your-color;
 }
+```
+
+### Custom Layouts
+
+Override theme layouts by creating files in `layouts/` directory:
+
+- `layouts/partials/custom/head-end.html` - Custom head scripts/meta tags
+- `layouts/partials/custom/footer.html` - Custom footer content
+- `layouts/_default/single.html` - Single page layout override
+
+### Custom Data
+
+Store structured data in `data/` directory (YAML, JSON, or TOML):
+
+- `data/social.yaml` - Social media profiles
+- `data/authors.yaml` - Author information
+- `data/testimonials.yaml` - User testimonials
+
+### Internationalization (i18n)
+
+Add custom translation strings in `i18n/` directory:
+
+- `i18n/id.yaml` - Indonesian translations
+- `i18n/en.yaml` - English translations
+
+Example:
+
+```yaml
+# i18n/id.yaml
+- id: readMore
+  translation: "Baca Selengkapnya"
+```
+
+Use in templates:
+
+```go-html-template
+{{ i18n "readMore" }}
 ```
 
 ## Deployment
