@@ -5,6 +5,7 @@ Archived plans and completed project planning documents.
 ## Completed Projects
 
 - [2025-11-24: Nx Monorepo Initialization](./2025-11-24__init-monorepo/) - Initialize and configure Nx-based monorepo with apps/ and libs/ structure (Completed: 2025-11-29)
+- [2025-12-07: Hugo Content Convention and Agents](./2025-12-07__hugo-content-convention/) - Comprehensive Hugo content standards, Content Quality Principles, and 4 specialized AI agents for ayokoding-web and ose-platform-web (Completed: 2025-12-07)
 
 ## Instructions
 
