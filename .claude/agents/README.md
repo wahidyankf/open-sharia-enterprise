@@ -456,6 +456,7 @@ The agents work together in complementary workflows:
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
 - **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
 - **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-rules-updater` to check size when adding rules
+- **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for complete size guidelines
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
 - **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
@@ -481,11 +482,12 @@ The agents work together in complementary workflows:
 
 When creating new agents:
 
-1. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md)
-2. Add the agent to this README index
-3. Use `repo-rules-updater` to propagate references to CLAUDE.md and other files
-4. Use `repo-rules-checker` to validate the new agent follows all conventions
-5. Update CLAUDE.md if the agent should be mentioned in project guidance
+1. Use `agent-maker` to automate creation with proper structure, size verification, and README updates
+2. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for all standards
+3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
+4. Use `repo-rules-updater` to propagate references to CLAUDE.md and other files
+5. Use `repo-rules-checker` to validate the new agent follows all conventions
+6. Update CLAUDE.md if the agent should be mentioned in project guidance
 
 ---
 

@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
 created: 2025-11-29
-updated: 2025-12-03
+updated: 2025-12-08
 ---
 
 # Agent Creator Agent
@@ -261,7 +261,38 @@ Verify emoji matches color assignment:
 - yellow → 🟨 (Yellow updaters)
 - purple → 🟪 (Purple implementors)
 
-### Step 4: Validate with repo-rules-checker
+### Step 4: Check Agent File Size
+
+**Size Verification**:
+
+1. Count lines and characters in created agent file
+2. Determine appropriate tier based on agent complexity:
+   - **Simple** (deployers, specialized operations): Target <500 lines, Hard limit 800 lines
+   - **Standard** (makers, checkers, validators): Target <800 lines, Hard limit 1,200 lines
+   - **Complex** (planners, orchestrators): Target <1,200 lines, Hard limit 1,800 lines
+
+3. Compare agent size to tier limits
+4. Display size status:
+   - ✅ Within target: "Agent size: X lines (within target for [tier] tier)"
+   - ⚠️ Approaching warning: "Agent size: X lines (approaching warning threshold)"
+   - 🚨 Exceeds limit: "Agent size: X lines (exceeds hard limit for [tier] tier)"
+
+**If Approaching Limits**:
+
+Suggest condensation strategies:
+
+- Move detailed examples to convention docs
+- Remove redundant explanations
+- Use tables instead of verbose lists
+- Link to convention docs instead of duplicating
+
+**Size Categorization Examples**:
+
+- Simple tier: ayokoding-deployer, ose-platform-web-deployer
+- Standard tier: docs-maker, agent-maker, journal-maker, content-makers
+- Complex tier: plan-maker, repo-rules-updater, docs-file-manager, hugo-developer
+
+### Step 5: Validate with repo-rules-checker
 
 **Automatic Validation**:
 
@@ -274,6 +305,7 @@ Verify emoji matches color assignment:
    - Document structure follows convention
    - Links use correct GitHub-compatible format
    - No duplicate agent names
+   - Agent size within tier limits
 
 4. Parse validation results
 5. Display findings with specific line numbers if issues found
@@ -284,7 +316,7 @@ Verify emoji matches color assignment:
 - Offer to re-run with corrections
 - Suggest manual fixes if needed
 
-### Step 5: Provide Summary
+### Step 6: Provide Summary
 
 **Display comprehensive summary**:
 
@@ -296,9 +328,11 @@ Agent: [agent-name]
 - Color: [color] ([role])
 - Tools: [complete tool list]
 - Model: [inherit/sonnet]
+- Size: [X lines / Y KB] ([tier] tier: [status])
 
 Automated Actions Completed:
 - Created agent file with proper structure
+- Verified file size within tier limits
 - Updated .claude/agents/README.md
 - Validated with repo-rules-checker
 
@@ -392,6 +426,7 @@ An agent is successfully created when:
 - [ ] Agent file created with all required frontmatter fields
 - [ ] Color correctly assigned based on role
 - [ ] Tools match role requirements
+- [ ] Agent size verified within appropriate tier limits
 - [ ] README updated with agent listing in alphabetical order
 - [ ] repo-rules-checker validation passes (or issues clearly reported)
 - [ ] All file paths and links use correct format
