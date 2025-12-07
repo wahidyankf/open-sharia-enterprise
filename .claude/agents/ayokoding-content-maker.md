@@ -1,7 +1,7 @@
 ---
 name: ayokoding-content-maker
 description: Expert at creating Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
 ---
