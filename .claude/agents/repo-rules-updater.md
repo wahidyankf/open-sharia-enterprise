@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep
 model: sonnet
 color: yellow
 created: 2025-11-30
-updated: 2025-12-08
+updated: 2025-12-07
 ---
 
 # Repository Rule Updater Agent
@@ -635,10 +635,12 @@ Before completing an update request, verify:
 
 When CLAUDE.md exceeds 35,000 characters, suggest these strategies to user:
 
-1. **Move Details to Convention Docs:**
+1. **Move Details to Convention Docs (PRIMARY STRATEGY):**
+   - **CRITICAL:** Condensation means MOVE content to conventions, NOT DELETE
    - Identify verbose sections with examples or detailed explanations
    - Create/expand convention document with full details
    - Replace verbose section with 2-5 line summary + link
+   - **Verify content is preserved** in convention doc (zero content loss)
 
 2. **Consolidate Related Sections:**
    - Combine multiple small sections into one with subsections
@@ -700,6 +702,339 @@ Reduction needed: ~7,500 characters
 
 Would you like me to suggest specific condensation changes?
 ```
+
+## Content Offload Strategy
+
+**FUNDAMENTAL PRINCIPLE:** When condensing any file (CLAUDE.md, agent files, or documentation), content must be **MOVED to convention docs, NOT DELETED**. This ensures zero content loss and maintains the repository as a comprehensive knowledge base.
+
+### Why This Matters
+
+**Problem:** Simply deleting content to reduce file size causes:
+
+- Loss of valuable knowledge and context
+- Need to recreate documentation later
+- Inconsistent coverage across repository
+- Erosion of institutional knowledge
+
+**Solution:** Offload content to appropriate convention documents where it becomes:
+
+- Permanent, comprehensive reference
+- Source of truth for the topic
+- Discoverable through convention index
+- Maintainable in one canonical location
+
+### Offload Decision Tree
+
+When condensing content, ask these questions:
+
+```
+Is this content unique and valuable?
+    │
+    ├─ YES → Offload to convention document
+    │   │
+    │   ├─ Does convention doc exist?
+    │   │   ├─ YES → Option B: Merge into existing convention
+    │   │   └─ NO → Option A: Create new convention doc
+    │   │
+    │   └─ Is this pattern shared across multiple files?
+    │       ├─ YES → Option C: Extract common pattern to shared convention
+    │       └─ NO → Option D: Add to development conventions
+    │
+    ├─ NO (duplicated from conventions) → Link instead of duplicate
+    │
+    └─ UNSURE (agent-specific implementation) → Keep in agent file
+```
+
+### Offload Options
+
+#### Option A: Create New Convention Document
+
+**When to use:** Content represents a new convention or standard not yet documented.
+
+**Process:**
+
+1. Identify the convention topic (e.g., "acceptance criteria format")
+2. Use `docs-maker` to create new convention doc in `docs/explanation/conventions/`
+3. Move ALL relevant content to new convention (comprehensive detail)
+4. Replace original content with 2-5 line summary + link
+5. Update convention index (`docs/explanation/conventions/README.md`)
+6. Verify all cross-references work
+
+**Example:**
+
+- **Before:** Gherkin acceptance criteria details in `plan-maker.md` (500 lines)
+- **After:**
+  - New file: `docs/explanation/conventions/ex-co__acceptance-criteria.md` (comprehensive)
+  - `plan-maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
+  - Savings: 497 lines
+
+#### Option B: Merge into Existing Convention
+
+**When to use:** Content expands or clarifies an existing convention.
+
+**Process:**
+
+1. Identify the most relevant existing convention doc
+2. Read convention doc to understand current content
+3. Add new content to appropriate section (maintain structure)
+4. Update frontmatter (`updated` date)
+5. Replace original content with summary + link
+6. Verify convention doc is indexed
+
+**Example:**
+
+- **Before:** TBD workflow details duplicated in `plan-maker.md` and `plan-executor.md`
+- **After:**
+  - Updated: `docs/explanation/development/ex-de__trunk-based-development.md` (comprehensive)
+  - `plan-maker.md`: "Follow TBD workflow. See [TBD Convention](link)" (2 lines)
+  - `plan-executor.md`: "Default to main branch per TBD. See [TBD Convention](link)" (2 lines)
+  - Savings: Duplication eliminated
+
+#### Option C: Extract Common Pattern to Shared Convention
+
+**When to use:** Multiple agents share the same detailed content (cross-file duplication).
+
+**Process:**
+
+1. Identify files with overlapping content (>50% similarity)
+2. Determine if pattern represents a convention or standard
+3. Create new convention doc OR expand existing one
+4. Move shared pattern to convention (single source of truth)
+5. Update all affected files with summary + link
+6. Update convention index
+7. Verify zero content loss
+
+**Example:**
+
+- **Before:** Diagram standards duplicated in `docs-maker.md`, `plan-maker.md`, `journal-maker.md`
+- **After:**
+  - New file: `docs/explanation/conventions/ex-co__diagrams.md` (comprehensive)
+  - All agents: "Use Mermaid diagrams. See [Diagram Convention](link)" (2 lines each)
+  - Savings: Eliminated triplication
+
+#### Option D: Add to Development Conventions
+
+**When to use:** Content is about development practices (not documentation conventions).
+
+**Process:**
+
+1. Determine if it's a development practice (git, commits, CI/CD, etc.)
+2. Create new doc OR expand existing in `docs/explanation/development/`
+3. Move content to development convention
+4. Replace with summary + link
+5. Update development index (`docs/explanation/development/README.md`)
+6. Verify all cross-references work
+
+**Example:**
+
+- **Before:** Commit granularity examples in `plan-executor.md`
+- **After:**
+  - Updated: `docs/explanation/development/ex-de__commit-messages.md` (comprehensive)
+  - `plan-executor.md`: "Split commits logically. See [Commit Messages Convention](link)" (2 lines)
+  - Savings: 100+ lines
+
+### Offload Process Workflow
+
+Follow this systematic process when offloading content:
+
+**Step 1: Identify Content to Condense**
+
+- Read the file completely
+- Identify verbose sections with detailed explanations
+- Look for duplicated content across files
+- Check if content is unique or already in conventions
+
+**Step 2: Determine Offload Destination**
+
+- Is this a new convention? → Option A
+- Expands existing convention? → Option B
+- Shared across multiple files? → Option C
+- Development practice? → Option D
+
+**Step 3: Create or Update Convention Document**
+
+- Use `docs-maker` for new files
+- Use `Edit` tool for updating existing
+- Move ALL relevant content (be comprehensive)
+- Add examples, rationale, anti-patterns
+- Update frontmatter (`updated` date)
+
+**Step 4: Replace Original Content**
+
+- Write 2-5 line summary
+- Add link to convention doc
+- Remove verbose details
+- Maintain readability and context
+
+**Step 5: Update Index Files**
+
+- Add new conventions to `docs/explanation/conventions/README.md`
+- Add new development docs to `docs/explanation/development/README.md`
+- Maintain alphabetical ordering
+
+**Step 6: Verify All Cross-References**
+
+- Use Glob to verify convention doc exists
+- Test all links point to correct files
+- Verify links include `.md` extension
+- Check bidirectional references where appropriate
+
+**Step 7: Confirm Zero Content Loss**
+
+- Read original content
+- Read convention doc
+- Verify all information preserved
+- Confirm no unique details lost
+- Document any intentional omissions
+
+**Step 8: Update Related Files**
+
+- Search for references to condensed topic
+- Update other files to link to convention
+- Eliminate duplication across repository
+- Maintain consistent terminology
+
+### Content Offload Examples
+
+#### Example 1: Acceptance Criteria Format
+
+**Scenario:** `plan-maker.md` contains 500 lines of Gherkin format details.
+
+**Offload Option:** A (Create New Convention)
+
+**Process:**
+
+1. Create `docs/explanation/conventions/ex-co__acceptance-criteria.md`
+2. Move all Gherkin format details, examples, anti-patterns
+3. In `plan-maker.md`, replace with:
+
+   ```markdown
+   ## Acceptance Criteria
+
+   Use Gherkin format for all acceptance criteria. See [Acceptance Criteria Convention](../../docs/explanation/conventions/ex-co__acceptance-criteria.md) for complete format, examples, and anti-patterns.
+   ```
+
+4. Update `docs/explanation/conventions/README.md` to list new convention
+5. Verify link works
+
+**Result:** 500 lines → 3 lines (497 line savings)
+
+#### Example 2: TBD Workflow Duplication
+
+**Scenario:** TBD workflow described in `plan-maker.md`, `plan-executor.md`, and `CLAUDE.md`.
+
+**Offload Option:** B (Merge into Existing Convention)
+
+**Process:**
+
+1. Expand `docs/explanation/development/ex-de__trunk-based-development.md`
+2. Add details from all three files
+3. In `plan-maker.md`: "Plans should NOT specify a git branch by default (work happens on `main` per TBD). See [TBD Convention](link)"
+4. In `plan-executor.md`: "Should use `main` branch unless plan explicitly specifies otherwise. See [TBD Convention](link)"
+5. In `CLAUDE.md`: "This repository uses Trunk Based Development. See [TBD Convention](link) for complete details."
+6. Verify all links work
+
+**Result:** Eliminated triplication, single source of truth
+
+#### Example 3: Diagram Standards Across Agents
+
+**Scenario:** `docs-maker.md`, `plan-maker.md`, `journal-maker.md` all duplicate diagram guidance.
+
+**Offload Option:** C (Extract Common Pattern)
+
+**Process:**
+
+1. Create `docs/explanation/conventions/ex-co__diagrams.md`
+2. Extract common diagram standards from all agents
+3. Add Mermaid vs ASCII art decision tree
+4. Update all agents with: "Use Mermaid diagrams. See [Diagram Convention](link)"
+5. Update convention index
+6. Verify no content lost
+
+**Result:** Triplication eliminated, 300+ lines saved
+
+### Verification Checklist
+
+Before completing a content offload, verify:
+
+**Content Preservation:**
+
+- [ ] All unique content moved to convention doc
+- [ ] No valuable information deleted
+- [ ] Examples preserved or improved
+- [ ] Rationale and context maintained
+- [ ] Anti-patterns documented
+
+**Convention Document Quality:**
+
+- [ ] Convention doc is comprehensive
+- [ ] Frontmatter complete and accurate
+- [ ] Updated date reflects changes
+- [ ] Structure follows convention patterns
+- [ ] Examples include ✅ good and ❌ bad
+
+**Original File Updates:**
+
+- [ ] Replaced with 2-5 line summary
+- [ ] Link to convention doc included
+- [ ] Link uses correct relative path
+- [ ] Link includes `.md` extension
+- [ ] Summary maintains context
+
+**Index and Navigation:**
+
+- [ ] Convention indexed in README.md
+- [ ] Alphabetical ordering maintained
+- [ ] Category correct (conventions vs development)
+- [ ] No broken links introduced
+
+**Cross-Reference Integrity:**
+
+- [ ] All links verified with Glob
+- [ ] Link targets exist
+- [ ] Relative paths correct
+- [ ] Bidirectional references maintained
+
+**Zero Content Loss:**
+
+- [ ] Read original content completely
+- [ ] Read convention doc completely
+- [ ] Verified all information present
+- [ ] No unique details lost
+- [ ] Document any intentional omissions
+
+**Consistency Across Repository:**
+
+- [ ] Same terminology used everywhere
+- [ ] No contradictions introduced
+- [ ] Duplication eliminated
+- [ ] Single source of truth established
+
+### When NOT to Offload
+
+**Keep content in the original file when:**
+
+1. **Agent-specific implementation details** - How THIS agent applies a convention
+2. **Agent-unique workflows** - Process specific to this agent's task
+3. **Agent decision logic** - Internal reasoning not applicable elsewhere
+4. **Minimal content** - Section is already 3-5 lines
+5. **Context-dependent** - Content only makes sense in this specific context
+
+**Example of content to keep:**
+
+```markdown
+## File Naming Convention
+
+You MUST follow the [File Naming Convention](link).
+
+When creating documentation files:
+
+1. Read the target directory path
+2. Convert to prefix using 2-letter abbreviations
+3. Use pattern: [prefix]\_\_[content-identifier].md
+```
+
+**Why keep:** This is agent-specific application (how docs-maker uses the convention), not the convention itself.
 
 ## Edge Cases and Special Considerations
 
