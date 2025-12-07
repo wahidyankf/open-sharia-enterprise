@@ -723,6 +723,35 @@ Would you like me to suggest specific condensation changes?
 - Discoverable through convention index
 - Maintainable in one canonical location
 
+### Choosing Between Conventions/ and Development/
+
+When offloading content, you must choose the appropriate destination folder. Both are valid offload targets with distinct purposes.
+
+**docs/explanation/conventions/** - Content and format standards:
+
+- File naming, linking, emoji usage
+- Diagram formats, color accessibility
+- Content quality, mathematical notation
+- Hugo content, tutorials, acceptance criteria
+- Documentation organization (Diátaxis)
+- Journals format, timestamp format
+
+**docs/explanation/development/** - Development processes and workflows:
+
+- AI agent standards and guidelines
+- Commit message conventions
+- Git workflow (Trunk Based Development)
+- Code review processes
+- Testing strategies
+- Release management
+- CI/CD workflows
+
+**Decision Rule**:
+
+- Conventions = "How to write and format"
+- Development = "How to work and process"
+- If unclear, ask: "Is this primarily about content or process?"
+
 ### Offload Decision Tree
 
 When condensing content, ask these questions:
@@ -730,17 +759,23 @@ When condensing content, ask these questions:
 ```
 Is this content unique and valuable?
     │
-    ├─ YES → Offload to convention document
+    ├─ YES → Offload to convention OR development doc
     │   │
-    │   ├─ Does convention doc exist?
-    │   │   ├─ YES → Option B: Merge into existing convention
-    │   │   └─ NO → Option A: Create new convention doc
+    │   ├─ Is this about HOW we write/format?
+    │   │   └─> docs/explanation/conventions/
+    │   │
+    │   ├─ Is this about HOW we work/process?
+    │   │   └─> docs/explanation/development/
+    │   │
+    │   ├─ Does convention/development doc exist?
+    │   │   ├─ YES → Option B: Merge into existing doc
+    │   │   └─ NO → Option A: Create new doc
     │   │
     │   └─ Is this pattern shared across multiple files?
-    │       ├─ YES → Option C: Extract common pattern to shared convention
-    │       └─ NO → Option D: Add to development conventions
+    │       ├─ YES → Option C: Extract common pattern to shared doc
+    │       └─ NO → Option D: Add to appropriate folder (conventions/ or development/)
     │
-    ├─ NO (duplicated from conventions) → Link instead of duplicate
+    ├─ NO (duplicated from conventions/development) → Link instead of duplicate
     │
     └─ UNSURE (agent-specific implementation) → Keep in agent file
 ```
@@ -814,16 +849,35 @@ Is this content unique and valuable?
 
 #### Option D: Add to Development Conventions
 
-**When to use:** Content is about development practices (not documentation conventions).
+**When to use:** Content relates to development processes, workflows, or team practices.
+
+**Destination:** `docs/explanation/development/`
+
+**Examples of development content:**
+
+- Code review checklists → ex-de\_\_code-review.md
+- Testing strategies → ex-de\_\_testing-strategy.md
+- Release process → ex-de\_\_release-process.md
+- CI/CD workflows → ex-de\_\_cicd-workflow.md
+- Git workflows → ex-de\_\_trunk-based-development.md
+- Commit conventions → ex-de\_\_commit-messages.md
+- Agent standards → ex-de\_\_ai-agents.md
+
+**Existing development docs:**
+
+- ex-de\_\_ai-agents.md (AI agent standards)
+- ex-de\_\_commit-messages.md (commit conventions)
+- ex-de\_\_trunk-based-development.md (git workflow)
 
 **Process:**
 
-1. Determine if it's a development practice (git, commits, CI/CD, etc.)
+1. Determine if it's a development practice (git, commits, CI/CD, testing, code review, etc.)
 2. Create new doc OR expand existing in `docs/explanation/development/`
-3. Move content to development convention
-4. Replace with summary + link
-5. Update development index (`docs/explanation/development/README.md`)
-6. Verify all cross-references work
+3. Use ex-de\_\_ prefix for consistency
+4. Move content to development convention (comprehensive detail)
+5. Replace original with 2-5 line summary + link
+6. Update development index (`docs/explanation/development/README.md`)
+7. Verify all cross-references work
 
 **Example:**
 
@@ -942,6 +996,10 @@ Follow this systematic process when offloading content:
 
 **Offload Option:** C (Extract Common Pattern)
 
+**Destination:** `docs/explanation/conventions/ex-co__diagrams.md` (NEW)
+
+**Why Conventions Folder:** Diagrams are a content format standard, not development process
+
 **Process:**
 
 1. Create `docs/explanation/conventions/ex-co__diagrams.md`
@@ -952,6 +1010,27 @@ Follow this systematic process when offloading content:
 6. Verify no content lost
 
 **Result:** Triplication eliminated, 300+ lines saved
+
+#### Example 4: Testing Strategy Across Agents
+
+**Scenario:** Multiple agents duplicate testing guidelines (unit test requirements, integration test patterns, test coverage thresholds).
+
+**Offload Option:** C (Extract Common Pattern to Shared Convention)
+
+**Destination:** `docs/explanation/development/ex-de__testing-strategy.md` (NEW)
+
+**Why Development Folder:** Testing is a development process, not content format
+
+**Process:**
+
+1. Create `docs/explanation/development/ex-de__testing-strategy.md` with comprehensive testing guidelines
+2. Extract common testing patterns from agents (unit tests, integration tests, coverage requirements)
+3. Add test organization, naming conventions, best practices
+4. Replace agent sections with: "See [Testing Strategy](../../docs/explanation/development/ex-de__testing-strategy.md) for comprehensive testing guidelines"
+5. Update `docs/explanation/development/README.md` index
+6. Verify all testing knowledge preserved in development doc
+
+**Result:** Eliminated duplication, established single source of truth for testing standards
 
 ### Verification Checklist
 
@@ -1035,6 +1114,37 @@ When creating documentation files:
 ```
 
 **Why keep:** This is agent-specific application (how docs-maker uses the convention), not the convention itself.
+
+### Understanding the Docs Folder Structure
+
+**docs/explanation/** contains two main subfolders for offloading content:
+
+**1. conventions/ (18+ docs)**
+
+- **Focus:** Content creation and formatting standards
+- **Prefix:** ex-co\_\_
+- **Examples:**
+  - ex-co\_\_file-naming-convention.md (how to name files)
+  - ex-co\_\_diagrams.md (how to create diagrams)
+  - ex-co\_\_hugo-content.md (how to write Hugo content)
+  - ex-co\_\_content-quality.md (how to ensure content quality)
+- **When to use:** "How should we write/format this?"
+
+**2. development/ (3+ docs currently, can grow)**
+
+- **Focus:** Development processes and team workflows
+- **Prefix:** ex-de\_\_
+- **Examples:**
+  - ex-de\_\_ai-agents.md (how to create agents)
+  - ex-de\_\_commit-messages.md (how to write commits)
+  - ex-de\_\_trunk-based-development.md (how to manage git workflow)
+  - ex-de\_\_testing-strategy.md (how to test code - future)
+- **When to use:** "How should we do/manage this?"
+
+**Both are valid offload destinations. Choose based on content nature:**
+
+- Content/format standards → conventions/
+- Process/workflow standards → development/
 
 ## Edge Cases and Special Considerations
 

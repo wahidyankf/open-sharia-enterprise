@@ -264,19 +264,45 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 
 When validating files that have been condensed, verify content was MOVED (not deleted):
 
-- [ ] **Content preservation**: Condensed content exists in convention docs (not lost)
-- [ ] **Convention doc exists**: Target convention file is present and indexed
-- [ ] **Links are correct**: Summary links to correct convention doc with `.md` extension
-- [ ] **Convention indexed**: New/updated conventions listed in appropriate README.md
+- [ ] **Content preservation**: Condensed content exists in convention/development docs (not lost)
+- [ ] **Doc exists**: Target convention or development file is present and indexed
+- [ ] **Links are correct**: Summary links to correct doc with `.md` extension
+- [ ] **Doc indexed**: New/updated docs listed in appropriate README.md
 - [ ] **No unique content lost**: All valuable information preserved somewhere
 - [ ] **Offload option documented**: Can trace which offload option was used (A/B/C/D)
+- [ ] **Correct folder choice**: Content offloaded to appropriate folder (conventions/ or development/)
 
-**Red flags to watch for:**
+**Verify Correct Folder Choice:**
 
-- Content removed without corresponding convention doc
-- Broken links to conventions
-- Convention exists but not indexed
-- Unique content missing from conventions
+Check that content was offloaded to the appropriate folder:
+
+**For docs/explanation/conventions/** (content/format):
+
+- File naming, linking, emoji, diagrams, colors
+- Content quality, mathematical notation
+- Hugo content, tutorials, acceptance criteria
+- Documentation organization
+
+**For docs/explanation/development/** (process/workflow):
+
+- AI agent standards
+- Commit messages, git workflow
+- Code review, testing, release processes
+- CI/CD, deployment strategies
+
+**Red Flags:**
+
+- Testing strategy in conventions/ (should be development/)
+- File naming in development/ (should be conventions/)
+- Git workflow in conventions/ (should be development/)
+- Diagram format in development/ (should be conventions/)
+
+**General red flags to watch for:**
+
+- Content removed without corresponding convention/development doc
+- Broken links to conventions/development docs
+- Doc exists but not indexed
+- Unique content missing from docs
 - Duplicate content still in multiple places (offload incomplete)
 
 ### Temporary Files Convention Compliance
