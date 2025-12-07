@@ -508,6 +508,8 @@ The agents work together in complementary workflows:
 - **After dependency updates:** Run `docs-checker` to ensure documentation matches new versions
 - **Before releasing technical docs:** Use `docs-checker` to validate all technical claims and code examples
 - **When reviewing contributions:** Use `docs-checker` to verify factual accuracy of new documentation
+- **When creating/updating README:** Use `readme-maker` for content, then `readme-checker` for validation
+- **README quality workflow:** readme-maker → readme-checker → (fix if needed) → commit
 
 ## 📚 Resources
 

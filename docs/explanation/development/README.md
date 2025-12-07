@@ -40,6 +40,34 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 - Visual documentation elements (diagrams, colors in docs)
 - Documentation quality and accessibility
 
+## 📂 Document Types
+
+Development practices in this directory fall into several categories:
+
+### Workflow Documentation
+
+**Purpose:** Define step-by-step processes for development activities
+**Examples:** Trunk Based Development, Commit Messages
+**Structure:** Context → Process → Examples → Exceptions
+
+### Standards Documentation
+
+**Purpose:** Establish quality gates and requirements
+**Examples:** Code Quality, Acceptance Criteria
+**Structure:** Purpose → Requirements → Checklist → Examples
+
+### Tool-Specific Documentation
+
+**Purpose:** Define technology-specific best practices
+**Examples:** Hugo Development, AI Agents
+**Structure:** Overview → Conventions → Patterns → Anti-patterns
+
+### Infrastructure Documentation
+
+**Purpose:** Document system design decisions
+**Examples:** Temporary Files
+**Structure:** Problem → Solution → Organization → Usage
+
 ## 📋 Contents
 
 - [Acceptance Criteria Convention](./ex-de__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation. Covers Gherkin syntax (Scenario, Given, When, Then), best practices, common patterns (CRUD, auth, errors), and integration with BDD test frameworks

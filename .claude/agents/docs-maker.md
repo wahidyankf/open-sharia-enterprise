@@ -389,6 +389,7 @@ You have access to the project's documentation and source code. When creating ne
 **Documentation Conventions (Required Reading):**
 
 - [Conventions Index](../docs/explanation/conventions/README.md) - Index of all conventions
+- [Convention Writing Convention](../docs/explanation/conventions/ex-co__convention-writing.md) - How to write convention documents (meta-convention)
 - [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
 - [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
 - [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) - How to link between files with GitHub-compatible markdown

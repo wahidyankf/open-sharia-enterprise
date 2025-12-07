@@ -658,6 +658,7 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Documentation Conventions:**
 
 - `docs/explanation/conventions/README.md` - Index of all conventions
+- `docs/explanation/conventions/ex-co__convention-writing.md` - How to write convention documents (meta-convention)
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
