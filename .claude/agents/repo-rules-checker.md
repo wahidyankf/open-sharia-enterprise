@@ -5,7 +5,7 @@ tools: Read, Glob, Grep
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-07
+updated: 2025-12-08
 ---
 
 # Repository Rule Checker Agent
@@ -315,6 +315,67 @@ Check that content was offloaded to the appropriate folder:
 - [ ] No temporary files committed to repository
 - [ ] Convention document accurately reflects .gitignore line numbers
 
+### Convention Writing Convention Compliance
+
+Validate that ALL files matching `ex-co__*.md` pattern in `docs/explanation/conventions/` comply with the [Convention Writing Convention](../../docs/explanation/conventions/ex-co__convention-writing.md):
+
+**Frontmatter Compliance:**
+
+- [ ] **title** field present, quoted, uses Title Case, includes "Convention" word
+- [ ] **description** field present, 1-2 sentences
+- [ ] **category** field present with value exactly `explanation` (singular, not plural)
+- [ ] **subcategory** field present with value exactly `conventions` (CRITICAL - frequently missing)
+- [ ] **tags** field present with 3-5 tags in YAML list format
+- [ ] **Tags indentation** uses 2 spaces (NOT tabs) per YAML requirement
+- [ ] **created** field present in YYYY-MM-DD format (date-only, not full timestamp)
+- [ ] **updated** field present in YYYY-MM-DD format (date-only, not full timestamp)
+- [ ] Frontmatter fields in recommended order: title, description, category, subcategory, tags, created, updated
+
+**Required Sections:**
+
+- [ ] **Frontmatter** (YAML) - Must be first thing in file
+- [ ] **Introduction** - H1 heading matching title + opening paragraph (1-3 paragraphs)
+- [ ] **Purpose** - H2 section explaining why convention exists
+- [ ] **Scope** - H2 section with "What This Convention Covers" and "What This Convention Does NOT Cover"
+- [ ] **Standards/Rules** - H2 section with detailed requirements (may have various names like "Standards", "Rules", "Guidelines")
+
+**Recommended Sections (encourage but don't fail if missing):**
+
+- [ ] **Examples** - H2 section with good ✅ and bad ❌ examples
+- [ ] **Tools and Automation** - H2 section listing agents/tools that enforce convention
+- [ ] **References** - H2 section with related conventions, external resources, agents
+
+**Quality Standards:**
+
+- [ ] Uses clear, imperative language ("Use X", "Never do Y")
+- [ ] Provides rationale for non-obvious rules
+- [ ] Includes concrete examples (not just abstract rules)
+- [ ] Cross-references related conventions with proper links
+- [ ] Links use relative paths with `.md` extension
+- [ ] File follows File Naming Convention (ex-co\_\_\*.md pattern)
+- [ ] Uses TAB indentation for bullet items (Obsidian compatibility)
+- [ ] No duplicate content from other conventions (>60% overlap)
+
+**Integration:**
+
+- [ ] Convention listed in `docs/explanation/conventions/README.md`
+- [ ] Mentioned in CLAUDE.md if it affects agent behavior
+- [ ] Referenced by at least one agent OR enforced in a process
+- [ ] Cross-referenced by related conventions where appropriate
+
+**Common Issues to Flag:**
+
+- [ ] Missing `subcategory: conventions` field (CRITICAL - was missing in 10+ files)
+- [ ] Missing ALL frontmatter (file starts directly with H1)
+- [ ] Wrong category value (e.g., "conventions" instead of "explanation")
+- [ ] Wrong subcategory value (e.g., "standards" instead of "conventions")
+- [ ] Frontmatter using tabs instead of 2 spaces for tags indentation
+- [ ] Missing Purpose or Scope sections (required for clarity)
+- [ ] No examples (reduces usability)
+- [ ] No cross-references to related conventions (orphaned document)
+- [ ] Title doesn't include "Convention" word
+- [ ] Description missing or too vague
+
 ## How to Perform a Check
 
 When the user requests a consistency check:
@@ -581,6 +642,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 ### Convention Documents
 
 - `docs/explanation/conventions/README.md`
+- `docs/explanation/conventions/ex-co__convention-writing.md`
 - `docs/explanation/conventions/ex-co__file-naming-convention.md`
 - `docs/explanation/conventions/ex-co__linking-convention.md`
 - `docs/explanation/conventions/ex-co__diagrams.md`
@@ -658,7 +720,7 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Documentation Conventions:**
 
 - `docs/explanation/conventions/README.md` - Index of all conventions
-- `docs/explanation/conventions/ex-co__convention-writing.md` - How to write convention documents (meta-convention)
+- `docs/explanation/conventions/ex-co__convention-writing.md` - How to write convention documents (meta-convention) - THIS AGENT VALIDATES COMPLIANCE
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files
 - `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art

@@ -2,6 +2,7 @@
 title: "Plans Organization Convention"
 description: Standards for organizing project planning documents in plans/ folder
 category: explanation
+subcategory: conventions
 tags:
   - conventions
   - plans

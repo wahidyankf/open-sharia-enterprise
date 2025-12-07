@@ -2,6 +2,7 @@
 title: "Diátaxis Framework"
 description: Understanding the Diátaxis documentation framework used in open-sharia-enterprise
 category: explanation
+subcategory: conventions
 tags:
   - diataxis
   - documentation-framework

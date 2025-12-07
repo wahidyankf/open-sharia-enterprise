@@ -2,6 +2,7 @@
 title: "OSS Documentation Convention"
 description: Standards for repository documentation files (README, CONTRIBUTING, ADRs, security)
 category: explanation
+subcategory: conventions
 tags:
   - conventions
   - documentation
