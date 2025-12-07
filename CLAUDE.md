@@ -259,7 +259,11 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 ### Key Requirements
 
-All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
+All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role.
+
+**Agent File Sizes**: Three tiers based on complexity - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Agents approaching limits should link to convention docs instead of duplicating content.
+
+See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 
 ### Temporary Files for AI Agents
 

@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep
 model: sonnet
 color: yellow
 created: 2025-11-30
-updated: 2025-12-07
+updated: 2025-12-08
 ---
 
 # Repository Rule Updater Agent
@@ -155,6 +155,11 @@ When the user requests a rule change, follow this process:
    - Update agents that validate the rule (repo-rules-checker)
    - Consider self-updates if AI agents convention changed
    - Maintain agent structure
+   - **Check agent file sizes** after updates:
+     - Count lines before and after changes
+     - Compare to tier limits (Simple: 800, Standard: 1,200, Complex: 1,800 lines)
+     - Warn if approaching warning thresholds
+     - Suggest condensation if limits exceeded
 
 10. **Update index files LAST**
     - Update README.md files if contents changed
@@ -175,14 +180,26 @@ When the user requests a rule change, follow this process:
     - No contradictions introduced
     - Frontmatter updated (dates, tags if needed)
 
-### Phase 5: User Communication
+### Phase 5: Agent Size Verification (If Agents Updated)
 
-13. **Summarize changes**
+13. **Check agent file sizes**
+    - Count lines for each modified agent
+    - Compare to tier limits:
+      - Simple (deployers): Target <500, Hard limit 800 lines
+      - Standard (makers/checkers): Target <800, Hard limit 1,200 lines
+      - Complex (planners/orchestrators): Target <1,200, Hard limit 1,800 lines
+    - Warn if any agent approaches or exceeds limits
+    - Suggest condensation strategies if needed
+
+### Phase 6: User Communication
+
+14. **Summarize changes**
     - List all files modified
     - Explain what changed in each
     - Note any decisions made
+    - **Report agent sizes** if agents were updated
 
-14. **Recommend validation**
+15. **Recommend validation**
     - Remind user to run `repo-rules-checker`
     - Suggest reviewing diffs before committing
     - Note any edge cases to watch for
@@ -553,11 +570,19 @@ Before completing an update request, verify:
 - [ ] Did NOT change `created:` date
 - [ ] Maintained frontmatter structure
 
+### Agent Size Verification (if agents updated)
+
+- [ ] Counted lines for modified agents
+- [ ] Compared to appropriate tier limits
+- [ ] Warned if approaching or exceeding thresholds
+- [ ] Suggested condensation strategies if needed
+
 ### Communication
 
 - [ ] Listed all files modified
 - [ ] Explained changes in each file
 - [ ] Noted any decisions made
+- [ ] Reported agent sizes if agents updated
 - [ ] Reminded user to run repo-rules-checker
 - [ ] Suggested reviewing diffs
 

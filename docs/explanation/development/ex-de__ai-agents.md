@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-07
+updated: 2025-12-08
 ---
 
 # AI Agents Convention
@@ -582,6 +582,193 @@ Use GitHub-compatible markdown with relative paths:
 
 See [Linking Convention](../conventions/ex-co__linking-convention.md) for details.
 
+## Agent File Size Standards
+
+### Size Limits by Agent Complexity
+
+Agent files are organized into **three complexity tiers** with corresponding size guidelines. These limits balance agent capability with performance, maintainability, and clarity.
+
+**Rationale**: Research shows LLMs follow ~150-200 instructions reliably, with quality degrading as count increases. While agents are only loaded when spawned (unlike CLAUDE.md which is universally included), keeping them focused improves effectiveness.
+
+#### Tier 1: Simple Agents (Deployers, Specialized Operations)
+
+**Target**: < 500 lines / < 15KB
+**Warning**: 600 lines / 18KB
+**Hard Limit**: 800 lines / 25KB
+
+**Characteristics**:
+
+- Single, straightforward responsibility
+- Minimal decision logic
+- Limited tool usage (typically Bash only for deployers)
+- Few edge cases to handle
+- Direct, linear workflows
+
+**Examples**:
+
+- ayokoding-deployer (deployment automation)
+- ose-platform-web-deployer (deployment automation)
+
+**When to use this tier**:
+
+- Agent performs one specific operation repeatedly
+- Minimal validation or error handling needed
+- Clear success/failure conditions
+- No complex orchestration
+
+#### Tier 2: Standard Agents (Makers, Checkers, Validators)
+
+**Target**: < 800 lines / < 25KB
+**Warning**: 1,000 lines / 30KB
+**Hard Limit**: 1,200 lines / 35KB
+
+**Characteristics**:
+
+- Moderate complexity with clear domain
+- Multiple related responsibilities
+- Comprehensive validation or creation logic
+- Moderate edge case handling
+- Structured workflows with phases
+
+**Examples**:
+
+- docs-maker (documentation creation)
+- docs-checker (factual verification)
+- docs-tutorial-checker (tutorial quality validation)
+- journal-maker (journal creation)
+- agent-maker (agent creation automation)
+- ayokoding-content-maker (Hugo content creation)
+- ose-platform-web-content-maker (Hugo content creation)
+
+**When to use this tier**:
+
+- Agent creates or validates content
+- Requires moderate decision-making
+- Follows established patterns
+- Handles multiple related tasks within a domain
+
+#### Tier 3: Complex Agents (Planners, Orchestrators, Comprehensive Validators)
+
+**Target**: < 1,200 lines / < 35KB
+**Warning**: 1,500 lines / 40KB
+**Hard Limit**: 1,800 lines / 50KB
+
+**Characteristics**:
+
+- High complexity with multiple interconnected concerns
+- Advanced reasoning and pattern recognition
+- Multi-step orchestration
+- Extensive edge case handling
+- Complex validation or planning logic
+- Cross-cutting concerns
+
+**Examples**:
+
+- plan-maker (comprehensive project planning)
+- plan-executor (multi-phase implementation)
+- plan-checker (pre-implementation validation)
+- repo-rules-updater (cascading updates across files)
+- repo-rules-checker (comprehensive consistency validation)
+- docs-file-manager (prefix calculation, link updates, git operations)
+- hugo-developer (theme development, asset pipeline, configuration)
+- docs-link-checker (external/internal link validation with caching)
+
+**When to use this tier**:
+
+- Agent orchestrates multiple phases or agents
+- Requires advanced reasoning
+- Handles complex dependencies
+- Manages cascading impacts
+- Performs comprehensive validation
+
+### Agent Categorization Reference
+
+Quick categorization for existing agents:
+
+| Tier                 | Agents                                                                                                                                                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | ayokoding-deployer, ose-platform-web-deployer                                                                                                                                                                          |
+| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, journal-maker, agent-maker, ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-updater, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                          |
+
+### When to Condense or Split Agents
+
+**Warning Signs (approaching limits)**:
+
+- Agent approaching warning threshold for its tier
+- Agent has multiple unrelated responsibilities
+- Documentation becoming hard to navigate
+- Users confused about when to use the agent
+
+**Condensation Strategies**:
+
+1. **Move details to conventions** - Link instead of duplicating
+2. **Remove redundant examples** - Keep 1-2 clear examples per pattern
+3. **Consolidate similar sections** - Merge related guidelines
+4. **Use tables instead of lists** - More compact for comparisons
+5. **Remove "nice to have" guidance** - Focus on essential requirements
+
+**When to split an agent**:
+
+- Agent exceeds hard limit for its tier
+- Agent has two clearly separable responsibilities
+- Agent requires different tool sets for different tasks
+- Users would benefit from specialized agents
+
+**Example split scenarios**:
+
+- Agent that both creates and validates → Split into maker + checker
+- Agent handling multiple unrelated domains → Split by domain
+- Agent with basic + advanced modes → Split by complexity level
+
+### Size Checking Process
+
+**For agent-maker**:
+
+1. After creating agent file, count lines and characters
+2. Compare to tier limits based on agent type
+3. Warn if approaching warning threshold
+4. Suggest condensation if near limit
+
+**For repo-rules-updater**:
+
+1. When updating agents, check file size before/after
+2. If agent crosses warning threshold, notify user
+3. Suggest condensation strategies
+
+**For all agent authors**:
+
+1. Before committing agent changes, verify size
+2. If approaching limits, review for redundancy
+3. Consider moving details to convention docs
+4. Link to detailed docs rather than duplicating
+
+### Agent Content Philosophy
+
+**Focus on single responsibility**:
+
+- Each agent should do ONE thing well
+- Complex workflows should orchestrate multiple agents
+- Don't create "Swiss Army knife" agents
+
+**Detailed but targeted prompts**:
+
+- Provide comprehensive guidance for the agent's domain
+- Don't document unrelated concerns
+- Link to convention docs instead of duplicating
+
+**Avoid duplication with convention docs**:
+
+- Convention docs are the source of truth
+- Agents should reference conventions, not repeat them
+- Exception: Agent-specific applications of conventions
+
+**Balance comprehensiveness with conciseness**:
+
+- Include essential decision logic and examples
+- Remove tangential information
+- Prefer structured formats (tables, checklists) over prose
+
 ## Agent Documentation Standards
 
 ### Required Elements
@@ -744,6 +931,12 @@ Before submitting a new agent, verify:
 - [ ] Agent specifies when to use WebSearch/WebFetch for verification
 - [ ] Agent emphasizes verification over assumptions
 - [ ] Agent provides examples of good vs bad verification practices
+
+#### File Size Compliance
+
+- [ ] Agent size within appropriate tier limits (Simple: <800 lines, Standard: <1,200 lines, Complex: <1,800 lines)
+- [ ] If approaching warning threshold, consider condensation strategies
+- [ ] Verified no duplication with convention docs (link instead)
 
 #### Testing
 
