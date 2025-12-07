@@ -20,6 +20,20 @@ Active project plans currently being worked on.
 
 **Implementation**: 6 phases (Phase 0: Planning validation, Phases 1-5: Tutorial creation, Phase 6: Integration)
 
+### [2025-12-07\_\_hugo-content-convention](./2025-12-07__hugo-content-convention/)
+
+**Status**: In Progress
+
+**Goal**: Establish standardized Hugo content conventions and create 4 specialized AI agents for managing content in two Hugo-based websites (ayokoding-web and ose-platform-web)
+
+**Deliverables**:
+
+- Create Hugo content convention document covering inherited, adapted, Hugo-specific, and site-specific conventions
+- Create 4 specialized agents: ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker
+- Update conventions index, agents index, and CLAUDE.md
+
+**Implementation**: 12 steps covering convention creation, agent creation, and index updates
+
 ## Instructions
 
 **Quick Idea Capture**: For 1-3 liner ideas not ready for formal planning, use `../ideas.md`.
