@@ -702,7 +702,14 @@ Quick categorization for existing agents:
 
 **Condensation Strategies**:
 
-1. **Move details to conventions (PRIMARY STRATEGY)** - **CRITICAL:** MOVE content to convention docs, NOT DELETE. Create or expand convention documents with comprehensive details, then replace with brief summary + link. Zero content loss required.
+1. **Move details to conventions OR development docs (PRIMARY STRATEGY)** - **CRITICAL:** MOVE content to appropriate docs, NOT DELETE.
+
+   **Destinations**:
+   - `docs/explanation/conventions/` (content/format standards)
+   - `docs/explanation/development/` (process/workflow standards)
+
+   Create or expand documents with comprehensive details, then replace with brief summary + link. Zero content loss required.
+
 2. **Remove redundant examples** - Keep 1-2 clear examples per pattern
 3. **Consolidate similar sections** - Merge related guidelines
 4. **Use tables instead of lists** - More compact for comparisons
