@@ -123,120 +123,11 @@ Runs after pre-commit hook, before commit is finalized:
 
 ### Commit Message Convention
 
-<!--
-  MAINTENANCE NOTE: Intentional duplication for quick reference
-  When updating commit message format, synchronize these files:
-  1. docs/explanation/development/ex-de__commit-messages.md (master reference)
-  2. CLAUDE.md (this quick reference)
--->
-
-All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for complete details.
-
-**Format:**
-
-```
-<type>(<scope>): <description>
-```
-
-**Key Rules:**
-
-- `type` is REQUIRED and must be lowercase
-- `scope` is OPTIONAL (recommended)
-- `description` is REQUIRED (imperative mood, no period)
-- First line (header) ≤ 50 characters
-
-**Valid types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `revert`
-
-**Quick examples:**
-
-- `feat(auth): add login functionality`
-- `fix: prevent race condition`
-- `docs: update API documentation`
-
-**Commit Granularity:**
-
-Split work into multiple logical commits rather than one large commit. Key principles:
-
-- **Split by type**: Different commit types (`feat`, `docs`, `refactor`, etc.) should be separate commits
-- **Split by domain**: Changes to different parts of the codebase should be separate commits
-- **Create before update**: Create new files in one commit, update references in another
-- **Atomic commits**: Each commit should be self-contained, functional, and reversible
-- **Logical ordering**: Order commits naturally (create → refactor → docs → test → fix)
-
-**Example of good commit splitting:**
-
-```
-1. feat(agents): add docs-link-checker agent
-2. refactor(agents): rename agents for consistency
-3. docs(agents): update all references to renamed agents
-4. fix(docs): align frontmatter date
-```
-
-For detailed commit message rules, validation errors, best practices, commit granularity guidance, and examples, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
+All commits follow [Conventional Commits](https://www.conventionalcommits.org/) format: `<type>(<scope>): <description>`. Split work into multiple logical commits by type and domain. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for complete rules, valid types, and examples.
 
 ## Git Workflow
 
-<!--
-  MAINTENANCE NOTE: Intentional duplication for AI agent context
-  When updating TBD workflow, synchronize these files:
-  1. docs/explanation/development/ex-de__trunk-based-development.md (master reference)
-  2. CLAUDE.md (this summary)
-  3. .claude/agents/plan-maker.md (Git Workflow section)
-  4. .claude/agents/plan-executor.md (Verify Git Branch section)
--->
-
-This repository uses **Trunk Based Development (TBD)** as its git workflow. See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
-
-### Key Principles
-
-- **Single main branch**: All development happens on `main` branch
-- **No long-lived feature branches**: Branches (if used) must be merged within 1-2 days
-- **Commit directly to main**: Default workflow for most changes
-- **Feature flags for incomplete work**: Hide unfinished features using toggles, not branches
-- **Small, frequent commits**: Break work into tiny, mergeable increments
-
-### Deployment Branches (Exception to TBD)
-
-**Environment branches for production deployment are acceptable in TBD.** These are NOT feature branches.
-
-**Production Branches:**
-
-1. **prod-ayokoding-web** - Deploys ayokoding-web to ayokoding.com
-   - **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
-   - **Location**: Deploys `apps/ayokoding-web/` (integrated with Nx monorepo)
-   - **Workflow**: Make all changes in `main` first, then pull to `prod-ayokoding-web` when ready to deploy
-   - **Important**: Do NOT commit directly to `prod-ayokoding-web`
-
-2. **prod-ose-platform-web** - Deploys ose-platform-web to oseplatform.com
-   - **Purpose**: Triggers automatic deployment to oseplatform.com via Vercel
-   - **Location**: Deploys `apps/ose-platform-web/` (integrated with Nx monorepo)
-   - **Workflow**: Make all changes in `main` first, then pull to `prod-ose-platform-web` when ready to deploy
-   - **Important**: Do NOT commit directly to `prod-ose-platform-web`
-
-**Compliance with TBD**: Environment branches (production, staging) are explicitly allowed in Trunk Based Development as they serve deployment purposes, not feature isolation.
-
-See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for details on environment branches.
-
-### When to Use Branches
-
-**Default**: Work directly on `main` branch.
-
-**Only use branches when**:
-
-- Code review is required by team policy (keep branch < 2 days)
-- Experimental work that may be discarded
-- External contributions via fork + PR
-- Regulatory compliance requires review trail
-- Environment-specific deployment (e.g., `prod-ayokoding-web`, `prod-ose-platform-web` for production)
-
-### Implications for Agents
-
-All AI agents should assume work happens on `main` branch unless explicitly told otherwise:
-
-- **plan-maker**: Plans should NOT specify a git branch by default (work happens on `main`)
-- **plan-executor**: Should use `main` branch unless plan explicitly specifies a different branch
-- When creating plans: Only specify a branch if there's a documented reason (see TBD convention)
-- **Deployment branches**: Agents should never commit directly to deployment branches like `prod-ayokoding-web` or `prod-ose-platform-web`
+This repository uses **Trunk Based Development (TBD)**. All development happens on `main` branch with small, frequent commits. **AI agents assume `main` branch by default** unless explicitly told otherwise. Environment branches (`prod-ayokoding-web`, `prod-ose-platform-web`) exist for deployment only - never commit directly to them. See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
 
 ## Common Development Commands
 
@@ -255,175 +146,17 @@ As the project develops, typical commands will include:
 
 ## Monorepo Structure
 
-This project uses **Nx** as a monorepo build system to manage multiple applications and shared libraries. The monorepo consists of two main folders: `apps/` for deployable applications and `libs/` for reusable libraries.
+This project uses **Nx** monorepo with two main folders:
 
-### Monorepo vs Standalone Projects
+- **`apps/`** - Deployable applications (naming: `[domain]-[type]`). Apps import libs, never export. Each app independently deployable.
+- **`libs/`** - Reusable libraries (naming: `ts-[name]` for TypeScript, future: `java-*`, `kt-*`, `py-*`). Flat structure, no nesting. Import via `@open-sharia-enterprise/ts-[lib-name]`.
+- **`apps-standalone/`** - Non-Nx projects with independent build systems (currently empty).
 
-The repository contains two types of project structures:
+**Key Rules**: Apps can import any lib. Libs can import other libs. No circular dependencies. Apps never import other apps.
 
-**Nx Monorepo** (`apps/` and `libs/`):
+**Nx Features**: Task caching, affected detection (`nx affected:build`), dependency graph (`nx graph`), run-many (`nx run-many -t build`).
 
-- Managed by Nx workspace
-- Integrated build system with caching and task orchestration
-- Shared TypeScript configuration and path mappings
-- Cross-project dependencies supported
-- Unified testing and linting
-
-**Standalone Projects** (`apps-standalone/`):
-
-- NOT part of the Nx monorepo
-- Independent build systems (Hugo, Go, Python, etc.)
-- No Nx workspace integration
-- Self-contained configuration
-- Appropriate for projects with their own tooling that don't benefit from monorepo integration
-
-**Current standalone projects:**
-
-- None (directory reserved for future standalone projects)
-- Previously housed `ayokoding-web` before Nx integration
-
-### Apps Folder (`apps/`)
-
-**Purpose**: Contains deployable application projects (executables)
-
-**Location**: `apps/` at repository root
-
-**Naming Convention**: `[domain]-[type]` (e.g., `api-gateway`, `admin-dashboard`)
-
-**Characteristics**:
-
-- **Consumers** - Apps import and use libs, they don't export anything for reuse
-- **Isolated** - Apps should NOT import from other apps
-- **Deployable** - Each app is independently deployable
-- **Specific** - Contains app-specific logic and configuration
-
-**Standard Structure**:
-
-```
-apps/
-└── [app-name]/
-    ├── src/                     # Application source code
-    ├── project.json             # Nx project configuration
-    ├── tsconfig.json            # TypeScript configuration
-    ├── package.json             # App-specific dependencies (if any)
-    └── README.md                # App documentation
-```
-
-**Running apps**:
-
-- `nx dev [app-name]` - Start development server
-- `nx build [app-name]` - Build for production
-- `nx test [app-name]` - Run tests
-
-### Libs Folder (`libs/`)
-
-**Purpose**: Contains reusable library packages
-
-**Location**: `libs/` at repository root
-
-**Organization**: Flat structure (no nested scopes)
-
-**Naming Convention**: `[language-prefix]-[name]` (e.g., `ts-utils`, `ts-components`)
-
-**Language Prefixes**:
-
-- `ts-*` - TypeScript libraries (current implementation)
-- `java-*` - Java libraries (future)
-- `kt-*` - Kotlin libraries (future)
-- `py-*` - Python libraries (future)
-
-**Current Scope**: TypeScript libraries only
-
-**Characteristics**:
-
-- **Polyglot-Ready** - Designed to support multiple languages (TypeScript now, Java/Kotlin/Python future)
-- **Flat Structure** - All libs at same level, no nested scopes
-- **Reusable** - Libs are designed to be imported by apps and other libs
-- **Focused** - Each lib has a single, clear purpose
-- **Public API** - Exports controlled through `index.ts` (barrel export)
-
-**Standard Structure (TypeScript)**:
-
-```
-libs/
-└── ts-[name]/
-    ├── src/
-    │   ├── index.ts         # Public API (barrel export)
-    │   ├── lib/             # Implementation
-    │   │   └── [feature].ts
-    │   └── __tests__/       # Tests
-    ├── dist/                # Build output (gitignored)
-    ├── project.json         # Nx project configuration
-    ├── tsconfig.json        # TypeScript configuration
-    ├── package.json         # Lib dependencies (if any)
-    └── README.md            # Library documentation
-```
-
-**Importing from libs**:
-
-```typescript
-import { functionName } from "@open-sharia-enterprise/ts-[lib-name]";
-```
-
-**Running lib commands**:
-
-- `nx build [lib-name]` - Build library
-- `nx test [lib-name]` - Run tests
-- `nx lint [lib-name]` - Lint library
-
-### Dependency Guidelines
-
-**Apps can import from any lib**:
-
-```typescript
-// In apps/demo-ts-fe/app/page.tsx
-import { greet } from "@open-sharia-enterprise/ts-demo-libs";
-```
-
-**Libs can import from other libs**:
-
-```typescript
-// In libs/ts-components/src/index.ts
-import { formatDate } from "@open-sharia-enterprise/ts-utils";
-```
-
-**Rules**:
-
-1. Apps can import from any lib
-2. Libs can import from other libs
-3. No circular dependencies allowed (A → B → A is prohibited)
-4. Apps should NOT import from other apps
-5. Language boundaries exist (TypeScript libs can't directly import Go/Python/Rust libs)
-
-**Monitoring dependencies**:
-
-- `nx graph` - View full dependency graph
-- `nx affected:graph` - View affected projects after changes
-
-### Nx Features
-
-**Task Caching**: Nx caches build, test, and lint outputs. Second build uses cache and completes instantly.
-
-**Affected Detection**: Only rebuild what changed using `nx affected:build` or `nx affected:test`.
-
-**Dependency Graph**: Visualize project relationships with `nx graph`.
-
-**Run Many**: Execute tasks across all projects with `nx run-many -t build`.
-
-**Manual Configuration**: This monorepo uses "vanilla Nx" without plugins. All configuration is manual using `nx:run-commands` executor for full transparency and control.
-
-### Documentation
-
-For detailed guides and references:
-
-- **How-To Guides**:
-  - [Add New App](./docs/how-to/hoto__add-new-app.md) - Step-by-step guide for creating apps
-  - [Add New Lib](./docs/how-to/hoto__add-new-lib.md) - Step-by-step guide for creating libs
-  - [Run Nx Commands](./docs/how-to/hoto__run-nx-commands.md) - Common Nx workflows
-
-- **Reference Documentation**:
-  - [Monorepo Structure](./docs/reference/re__monorepo-structure.md) - Complete structure reference
-  - [Nx Configuration](./docs/reference/re__nx-configuration.md) - Configuration file reference
+See [Monorepo Structure](./docs/reference/re__monorepo-structure.md), [Add New App](./docs/how-to/hoto__add-new-app.md), [Add New Lib](./docs/how-to/hoto__add-new-lib.md) for complete details.
 
 ## Documentation Organization
 
@@ -468,72 +201,9 @@ Project planning documents are organized in the `plans/` folder at the repositor
 
 All documentation must follow core conventions defined in `docs/explanation/conventions/`:
 
-### Indentation Convention for docs/ Directory
+### Indentation Convention
 
-All files in the `docs/` directory (Obsidian vault) use TAB indentation for nested bullet items, NOT spaces. This is required for:
-
-- **Logseq compatibility**: Logseq requires TAB indentation for proper outliner functionality
-- **Obsidian compatibility**: Works seamlessly in both Logseq and Obsidian
-- **Universal readability**: Tab width adjustable per user preference
-
-**Scope**: This convention applies exclusively to files in `docs/` directory. Files outside `docs/` (root README.md, CLAUDE.md, files in `plans/`, Hugo content in `apps/ayokoding-web/content/`) use standard markdown conventions (spaces are fine).
-
-#### CRITICAL: YAML Frontmatter MUST Use Spaces
-
-**YAML frontmatter is the ONLY exception to TAB indentation within `docs/` directory files.**
-
-All YAML frontmatter blocks MUST use **2 spaces per indentation level** (NOT tabs) for Obsidian compatibility:
-
-```yaml
-✅ CORRECT - Frontmatter uses 2 spaces:
----
-title: "Document Title"
-description: Brief description
-category: explanation
-tags:
-  - primary-topic    # 2 spaces before dash
-  - secondary-topic  # 2 spaces before dash
-created: 2025-11-29
-updated: 2025-11-29
----
-
-❌ INCORRECT - Frontmatter uses tabs:
----
-title: "Document Title"
-description: Brief description
-category: explanation
-tags:
-	- primary-topic    # TAB before dash - WRONG!
-	- secondary-topic  # TAB before dash - WRONG!
-created: 2025-11-29
-updated: 2025-11-29
----
-```
-
-**Why spaces in frontmatter?**
-
-- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces, not tabs
-- **YAML spec**: While YAML allows both, Obsidian tooling is stricter
-- **Consistency**: All frontmatter across `docs/` must use same indentation
-
-**After frontmatter, use TABs**: All content bullets after the frontmatter block MUST continue using TAB indentation.
-
-#### Code Blocks
-
-**Code blocks are exempt from the markdown TAB indentation rule.**
-
-Code blocks in documentation use language-appropriate indentation standards, not the TAB indentation required for markdown bullets:
-
-- **JavaScript/TypeScript**: 2 spaces (project Prettier configuration)
-- **Python**: 4 spaces (PEP 8 standard)
-- **YAML**: 2 spaces (YAML specification)
-- **JSON**: 2 spaces (project standard)
-- **Go**: Tabs (Go language standard)
-- **Bash/Shell**: 2 or 4 spaces (common practice)
-
-**Rationale**: Code blocks represent actual source code and must follow their language's conventions, not markdown formatting rules.
-
-See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details on indentation requirements.
+Files in `docs/` directory use **TAB indentation** for bullet items (Logseq/Obsidian compatibility). **Exception**: YAML frontmatter MUST use 2 spaces (Obsidian requirement). Code blocks use language-appropriate indentation. Files outside `docs/` use standard markdown (spaces OK). See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
 
 ### File Naming Convention
 
@@ -543,29 +213,13 @@ Files follow the pattern `[prefix]__[content-identifier].[extension]` where pref
 
 Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
 
-### Diagram and Schema Convention
+### Diagram Convention
 
-Use Mermaid diagrams as the primary format for all markdown files in the repository. ASCII art is optional and only needed for rare edge cases (simple directory trees, terminal-only environments). Prefer vertical diagram orientation (top-down or bottom-top) for mobile-friendly viewing. **CRITICAL: All Mermaid diagrams must use color-blind friendly colors from the verified accessible palette ONLY.** See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color-related decisions - for the verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, and testing methodology. Never use red, green, or yellow (invisible to color blindness types). Each Mermaid diagram should include a single color palette comment at the start (not duplicated). See [Diagram and Schema Convention](./docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
+Use Mermaid diagrams (vertical orientation for mobile). **CRITICAL: Use only color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow. See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) for complete palette and [Diagrams Convention](./docs/explanation/conventions/ex-co__diagrams.md) for implementation.
 
 ### Emoji Usage Convention
 
-Selective use of semantic emojis to enhance document scannability. See [Emoji Usage Convention](./docs/explanation/conventions/ex-co__emoji-usage.md) for complete details.
-
-**Where emojis are allowed:**
-
-- Documentation files in `docs/` directory (tutorials, how-to, reference, explanation)
-- README files for human readers
-- Files in `plans/` folder
-- `.claude/agents/README.md` (agent index only)
-
-**Where emojis are FORBIDDEN:**
-
-- `CLAUDE.md` (AI instructions)
-- Agent prompt files `.claude/agents/*.md` (except README.md)
-- Configuration files (.json, .yaml, .toml, .env)
-- Source code files
-
-**Why**: CLAUDE.md and agent files are AI prompts/instructions, not human documentation. Emojis in AI prompts can interfere with model processing and are unnecessary visual noise.
+Semantic emojis allowed in `docs/`, README files, `plans/`, and `.claude/agents/README.md`. **FORBIDDEN** in CLAUDE.md, agent prompt files, config files, and source code. See [Emoji Usage Convention](./docs/explanation/conventions/ex-co__emoji-usage.md) for complete details.
 
 ### Diátaxis Framework
 
@@ -573,155 +227,27 @@ All documentation organized into four categories (Tutorials, How-To, Reference, 
 
 ### Timestamp Format Convention
 
-All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** with ISO 8601 format: `YYYY-MM-DDTHH:MM:SS+07:00`. This applies to cache files, metadata files, logs, and documentation frontmatter. Exceptions include Git commits (uses Git's own format), external APIs requiring UTC, user-facing timestamps (use user's timezone), and database timestamps (follow database conventions). See [Timestamp Format Convention](./docs/explanation/conventions/ex-co__timestamp-format.md) for complete details.
+All timestamps use **UTC+7** with ISO 8601 format: `YYYY-MM-DDTHH:MM:SS+07:00` (cache files, metadata, logs, frontmatter). See [Timestamp Format Convention](./docs/explanation/conventions/ex-co__timestamp-format.md) for exceptions.
 
 ### Mathematical Notation Convention
 
-All mathematical equations and formulas in documentation use **LaTeX notation** for proper rendering in both Obsidian and GitHub (both support LaTeX since May 2022). Use `$...$` for inline math and `$$...$$` for display math. LaTeX provides proper subscripts ($r_f$), superscripts ($x^2$), Greek letters ($\beta$), and complex formulas. **Do NOT use LaTeX inside code blocks, Mermaid diagrams, or ASCII art** - these contexts require plain text notation. See [Mathematical Notation Convention](./docs/explanation/conventions/ex-co__mathematical-notation.md) for complete details.
+Use **LaTeX notation** for equations: `$...$` (inline), `$$...$$` (display). NOT in code blocks/Mermaid/ASCII art. See [Mathematical Notation Convention](./docs/explanation/conventions/ex-co__mathematical-notation.md) for details.
 
 ### Tutorial Standards
 
-Tutorials follow standardized naming and depth levels to help learners find appropriate content:
-
-- **Tutorial Types:** Six standardized levels - Full Set (5 sequential levels) plus Cookbook (parallel track)
-- **Initial Setup** (0-5%, 5-15 min) - Quick "Hello World" verification
-- **Quick Start** (5-30%, 1-3 hrs) - Learn enough to explore independently
-- **Beginner** (0-60%, 3-6 hrs) - Comprehensive foundation from scratch
-- **Intermediate** (60-85%, 4-8 hrs) - Professional-level expertise
-- **Advanced** (85-95%, 6-12 hrs) - Expert-level mastery
-- **Cookbook** (Practical, 2-6 hrs) - Day-to-day recipes and real-world problems
-
-**Full Set**: The 5 sequential levels (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) provide comprehensive mastery from 0% to 95% coverage. Cookbook is a separate, parallel track for practical problem-solving.
-
-See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details on coverage, time estimates, and when to use each type.
+Six tutorial levels: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes). See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete coverage and time estimates.
 
 ### Content Quality Principles
 
-All markdown content in this repository must follow [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md).
-
-**Universal Application**: These standards apply to ALL markdown content regardless of location.
-
-**Applies to:**
-
-- docs/ (documentation)
-- Hugo sites (ayokoding-web, ose-platform-web)
-- plans/ (project planning documents)
-- Root files (README.md, CONTRIBUTING.md, etc.)
-
-**Key Principles:**
-
-1. **Writing Style and Tone:**
-   - Active voice (not passive)
-   - Professional yet approachable
-   - Clear and concise (no filler words)
-   - Audience-appropriate complexity
-
-2. **Heading Hierarchy:**
-   - Single H1 per document (the title)
-   - Proper H2-H6 nesting (no skipped levels)
-   - Descriptive headings (not vague)
-   - Semantic structure (headings for structure, not styling)
-
-3. **Accessibility Standards:**
-   - All images must have descriptive alt text
-   - Semantic HTML elements used correctly
-   - ARIA labels where appropriate
-   - Color contrast (WCAG AA compliance)
-   - Screen reader considerations
-
-4. **Formatting Conventions:**
-   - Code blocks specify language
-   - Text formatting purposeful (bold for key terms, italic for emphasis)
-   - Lists use proper markdown syntax
-   - Blockquotes for callouts
-   - Line length 80-100 characters for prose
-   - Paragraphs 3-5 sentences with blank lines between
-
-**Quality Checklist** - verify before committing:
-
-- Writing style (active voice, professional tone, clear, concise)
-- Heading hierarchy (single H1, proper nesting, descriptive)
-- Accessibility (alt text, semantic HTML, descriptive links)
-- Formatting (code blocks, text formatting, lists, blockquotes)
-- Readability (line length, paragraph structure)
-
-See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md) for complete standards and examples.
+All markdown content must follow quality standards: active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast, semantic formatting. Applies to docs/, Hugo sites, plans/, root files. See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md) for complete checklist.
 
 ### Hugo Content Convention
 
-All Hugo content for ayokoding-web and ose-platform-web must follow the [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md).
+**ayokoding-web**: Hextra theme, bilingual ID/EN, educational content, 5 archetypes. **ose-platform-web**: PaperMod v7.0+, English-only, project updates, 1 archetype. Key differences: Hugo linking (no `.md` extension), YAML frontmatter (title, date, draft required), date format `YYYY-MM-DDTHH:MM:SS+07:00`. Specialized agents: ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker. See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards.
 
-**Applies to:**
+### Convention References
 
-- ayokoding-web (Hextra theme, bilingual Indonesian/English, educational content)
-- ose-platform-web (PaperMod theme v7.0+, English-only, project updates)
-
-**Key Principles:**
-
-1. **Inherited Conventions** (7 total):
-   - Mathematical Notation (LaTeX in learning content)
-   - Color Accessibility (accessible palette in diagrams)
-   - Diagrams (Mermaid with vertical orientation)
-   - Emoji Usage (semantic use)
-   - Timestamp Format (ISO 8601 with UTC+7)
-   - Tutorial Convention (applies to ayokoding-web learning content only)
-   - Tutorial Naming (applies to ayokoding-web learning content only)
-
-2. **Adapted Conventions** (5 total):
-   - Indentation (YAML frontmatter uses 2 spaces, content uses standard markdown)
-   - Linking (Hugo ref/relref or paths WITHOUT .md extension)
-   - File Naming (simple slugs or date-prefixed, no prefix encoding)
-   - Frontmatter (YAML format with required fields: title, date, draft)
-   - Date Format (REQUIRED: YYYY-MM-DDTHH:MM:SS+07:00)
-
-3. **Hugo-Specific Conventions** (6 total):
-   - Archetypes (ayokoding-web: 5 types, ose-platform-web: 1 type)
-   - Shortcodes (Hextra: callout, cards, steps; PaperMod: relies on Hugo built-ins)
-   - Taxonomy (tags, categories, series)
-   - Asset Organization (static/ directory structure)
-   - Content Types (\_index.md vs regular files)
-   - URL Structure (slug generation)
-
-**Site Differences:**
-
-| Aspect     | ayokoding-web           | ose-platform-web    |
-| ---------- | ----------------------- | ------------------- |
-| Theme      | Hextra                  | PaperMod v7.0+      |
-| Language   | Bilingual (ID/EN)       | English only        |
-| Content    | Learning, essays, video | Updates, about page |
-| Archetypes | 5 types                 | 1 type (default)    |
-| Audience   | Indonesian developers   | Enterprise users    |
-| Structure  | Deep hierarchy          | Flat structure      |
-
-**Specialized Agents:**
-
-- ayokoding-content-maker (creates ayokoding-web content)
-- ayokoding-content-checker (validates ayokoding-web content)
-- ose-platform-web-content-maker (creates ose-platform-web content)
-- ose-platform-web-content-checker (validates ose-platform-web content)
-
-See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards and examples.
-
-### Key Resources
-
-- **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
-- **Color Accessibility Guide (MASTER REFERENCE):** [`docs/explanation/conventions/ex-co__color-accessibility.md`](./docs/explanation/conventions/ex-co__color-accessibility.md) - Authoritative source for ALL color-related decisions in this repository. Defines verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), supports all color blindness types (protanopia, deuteranopia, tritanopia), provides WCAG AA compliance standards, complete testing methodology with color blindness simulators and contrast checkers, and implementation guidance for Mermaid diagrams, AI agent categorization, and future CSS/styling. All agents and documentation working with colors MUST reference this convention as the single source of truth
-- **Content Quality Principles Guide:** [`docs/explanation/conventions/ex-co__content-quality.md`](./docs/explanation/conventions/ex-co__content-quality.md) - Universal markdown content quality standards for ALL repository markdown (docs/, Hugo sites, plans/, root files)
-- **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](./docs/explanation/conventions/ex-co__file-naming-convention.md)
-- **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](./docs/explanation/conventions/ex-co__linking-convention.md)
-- **Diagram and Schema Guide:** [`docs/explanation/conventions/ex-co__diagrams.md`](./docs/explanation/conventions/ex-co__diagrams.md)
-- **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](./docs/explanation/conventions/ex-co__diataxis-framework.md)
-- **Hugo Content Guide:** [`docs/explanation/conventions/ex-co__hugo-content.md`](./docs/explanation/conventions/ex-co__hugo-content.md) - Comprehensive Hugo content standards for ayokoding-web and ose-platform-web
-- **Hugo Development Guide:** [`docs/explanation/conventions/ex-co__hugo-development.md`](./docs/explanation/conventions/ex-co__hugo-development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration, i18n, performance, SEO, accessibility, build processes)
-- **Journals Format Guide:** [`docs/explanation/conventions/ex-co__journals-format.md`](./docs/explanation/conventions/ex-co__journals-format.md)
-- **Emoji Usage Guide:** [`docs/explanation/conventions/ex-co__emoji-usage.md`](./docs/explanation/conventions/ex-co__emoji-usage.md)
-- **Timestamp Format Guide:** [`docs/explanation/conventions/ex-co__timestamp-format.md`](./docs/explanation/conventions/ex-co__timestamp-format.md)
-- **Temporary Files Guide:** [`docs/explanation/conventions/ex-co__temporary-files.md`](./docs/explanation/conventions/ex-co__temporary-files.md)
-- **Mathematical Notation Guide:** [`docs/explanation/conventions/ex-co__mathematical-notation.md`](./docs/explanation/conventions/ex-co__mathematical-notation.md)
-- **OSS Documentation Guide:** [`docs/explanation/conventions/ex-co__oss-documentation.md`](./docs/explanation/conventions/ex-co__oss-documentation.md) - Standards for repository documentation (README, CONTRIBUTING, ADRs, security)
-- **Plans Organization Guide:** [`docs/explanation/conventions/ex-co__plans-organization.md`](./docs/explanation/conventions/ex-co__plans-organization.md) - Standards for organizing project planning documents
-- **Tutorial Guide:** [`docs/explanation/conventions/ex-co__tutorials.md`](./docs/explanation/conventions/ex-co__tutorials.md)
-- **Tutorial Naming Guide:** [`docs/explanation/conventions/ex-co__tutorial-naming.md`](./docs/explanation/conventions/ex-co__tutorial-naming.md)
+All conventions documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md). Key conventions: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Hugo Development](./docs/explanation/conventions/ex-co__hugo-development.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Tutorials](./docs/explanation/conventions/ex-co__tutorials.md), [Tutorial Naming](./docs/explanation/conventions/ex-co__tutorial-naming.md).
 
 ## AI Agent Standards
 
@@ -746,29 +272,17 @@ These directories are gitignored and provide organized storage for temporary out
 
 ### Available Agents
 
-- **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
-- **`ayokoding-deployer.md`** - Expert at deploying ayokoding-web to production via git synchronization. Synchronizes prod-ayokoding-web branch with main and pushes to origin to trigger automatic deployment to ayokoding.com via Vercel. Includes safety checks and user confirmation
-- **`ayokoding-content-maker.md`** - Expert at creating Hugo content for ayokoding-web (Hextra theme, bilingual, learning content, essays, video content) following Hugo Content Convention and Content Quality Principles
-- **`ayokoding-content-checker.md`** - Expert at validating Hugo content for ayokoding-web against Hugo Content Convention and Content Quality Principles. Validates frontmatter, structure, Hextra shortcodes, Mermaid diagrams, and tutorial quality
-- **`ose-platform-web-deployer.md`** - Expert at deploying ose-platform-web to production via git synchronization. Synchronizes prod-ose-platform-web branch with main and pushes to origin to trigger automatic deployment to oseplatform.com via Vercel. Includes safety checks and user confirmation
-- **`ose-platform-web-content-maker.md`** - Expert at creating Hugo content for ose-platform-web (PaperMod theme v7.0+, English-only, professional updates, about page) following Hugo Content Convention and Content Quality Principles
-- **`ose-platform-web-content-checker.md`** - Expert at validating Hugo content for ose-platform-web against Hugo Content Convention and Content Quality Principles. Validates frontmatter, PaperMod fields, cover images, structure, and professional English tone
-- **`docs-checker.md`** - Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information
-- **`docs-file-manager.md`** - Expert at managing files and directories in docs/ directory (rename, move, delete operations while maintaining conventions)
-- **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (all invocation contexts). Outputs results in conversation only (no separate report files)
-- **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework (for how-to guides, reference, explanations)
-- **`docs-tutorial-checker.md`** - Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, and hands-on elements. Complements docs-checker (accuracy) and docs-link-checker (links)
-- **`docs-tutorial-maker.md`** - Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements. Creates engaging tutorials following Diátaxis framework
-- **`hugo-developer.md`** - Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web following Hugo Development Convention. Handles non-content aspects: theme customization, template development, asset optimization, i18n, performance, SEO, and build processes
-- **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
-- **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
-- **`plan-execution-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
-- **`plan-executor.md`** - Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes
-- **`plan-maker.md`** - Expert at creating structured project planning documents in the plans/ folder
-- **`repo-rules-checker.md`** - Validates consistency between agents, CLAUDE.md, conventions, and documentation
-- **`repo-rules-updater.md`** - Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices
+**Content Creation**: docs-maker, docs-tutorial-maker, journal-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
-See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent descriptions and workflow guidance.
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), ayokoding-content-checker, ose-platform-web-content-checker, repo-rules-checker
+
+**Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
+
+**Operations**: docs-file-manager, hugo-developer, ayokoding-deployer, ose-platform-web-deployer
+
+**Meta**: agent-maker, repo-rules-updater
+
+See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed descriptions and workflows.
 
 ### Resources
 
@@ -777,6 +291,69 @@ See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed agent 
 - **Trunk Based Development Guide:** [`docs/explanation/development/ex-de__trunk-based-development.md`](./docs/explanation/development/ex-de__trunk-based-development.md)
 - **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)
 - **Agents Index:** [`.claude/agents/README.md`](./.claude/agents/README.md)
+
+## CLAUDE.md Maintenance
+
+**Purpose:** CLAUDE.md is a navigation document providing high-level guidance, not a knowledge dump. Keep it concise with links to detailed documentation.
+
+**Size Limits:**
+
+- **Hard limit:** 40,000 characters (performance threshold - DO NOT EXCEED)
+- **Target limit:** 30,000 characters (provides 25% headroom)
+- **Warning threshold:** 35,000 characters (time to review and condense)
+
+**Content Philosophy:**
+
+- Each section answers "what, where, and why" but links to "how"
+- Maximum section length: 3-5 lines + link to detailed documentation
+- Brief summaries only - comprehensive details belong in convention docs
+
+**Adding New Content:**
+
+When adding new conventions, rules, or standards:
+
+1. Create detailed documentation in `docs/explanation/conventions/` or `docs/explanation/development/`
+2. Add brief 2-5 line summary to CLAUDE.md with prominent link to detailed doc
+3. Never duplicate detailed examples, explanations, or comprehensive lists in CLAUDE.md
+
+**Maintenance Rules:**
+
+- When updating convention docs, review CLAUDE.md summary for accuracy (keep it brief)
+- When CLAUDE.md exceeds 35k characters, trigger review and condensation
+- Use `repo-rules-checker` periodically to detect duplication between CLAUDE.md and convention docs
+- `repo-rules-updater` should check CLAUDE.md size when adding rules (warn if approaching limits)
+
+**Example of Good vs Bad:**
+
+```markdown
+❌ Bad (too detailed, duplicates convention docs):
+
+## Documentation Standards
+
+All documentation must follow core conventions:
+
+### File Naming Convention
+
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where:
+
+- prefix encodes the directory path (2-letter abbreviations)
+- content-identifier describes the content
+- extension is typically .md
+
+Examples:
+
+- ex-co\_\_file-naming-convention.md (explanation/conventions)
+- tu\_\_getting-started.md (tutorials)
+- re-ap\_\_api-endpoints.md (reference/api)
+
+[... many more examples ...]
+
+✅ Good (concise summary with link):
+
+## Documentation Standards
+
+All documentation follows file naming (`[prefix]__[content-identifier].md`), GitHub-compatible linking, Diátaxis organization, and other core conventions. See [Conventions Index](./docs/explanation/conventions/README.md) for complete standards.
+```
 
 ## Planning Without Timelines
 

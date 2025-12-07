@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-04
+updated: 2025-12-07
 ---
 
 # AI Agents Convention
@@ -836,6 +836,34 @@ Your primary job is to [clear, specific purpose statement].
 - ✅ Agent creation guidelines
 - ✅ Tool and model selection criteria
 - ✅ Convention referencing requirements
+
+### CLAUDE.md Maintenance Standards
+
+**CRITICAL:** CLAUDE.md is a navigation document, not a knowledge dump. All agents must help maintain its conciseness.
+
+**Size Limits:**
+
+- **Hard limit:** 40,000 characters (performance threshold - DO NOT EXCEED)
+- **Target limit:** 30,000 characters (provides 25% headroom)
+- **Warning threshold:** 35,000 characters (time to review and condense)
+
+**Agent Responsibilities:**
+
+1. **repo-rules-updater:**
+   - MUST check CLAUDE.md size when adding rules
+   - Warn user if file exceeds 35,000 characters
+   - Suggest condensation strategies (move details to convention docs)
+   - Add only 2-5 line summaries to CLAUDE.md, link to detailed docs
+
+2. **docs-maker and related content agents:**
+   - MUST NOT add verbose content to CLAUDE.md
+   - When adding conventions, create detailed doc first, then brief CLAUDE.md summary
+   - Maximum CLAUDE.md section length: 3-5 lines + link
+
+3. **All agents:**
+   - When in doubt, link to detailed docs rather than duplicate content
+   - Each CLAUDE.md section should answer "what, where, why" but link to "how"
+   - Comprehensive details belong in convention docs, not CLAUDE.md
 
 ### Inheritance Pattern
 
