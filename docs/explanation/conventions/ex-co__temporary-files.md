@@ -8,7 +8,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-02
+updated: 2025-12-07
 ---
 
 # Temporary Files Convention
@@ -130,11 +130,11 @@ Agents creating miscellaneous temporary files should:
 
 Both directories are **gitignored** (not tracked by version control):
 
-Under the "Temporary files" section:
+Under the "Temporary files" section (line 70):
 
 - `local-temp/`
 
-Under the "Generated reports" section:
+Under the "Generated reports" section (line 73):
 
 - `generated-reports/`
 

@@ -23,6 +23,8 @@ open-sharia-enterprise/
 │   └── agents/               # Specialized AI agents
 │       ├── README.md         # Agent index and workflow
 │       ├── agent-maker.md      # Agent creation automation
+│       ├── ayokoding-content-checker.md # ayokoding-web content quality validation
+│       ├── ayokoding-content-maker.md # ayokoding-web content creation
 │       ├── ayokoding-deployer.md # ayokoding-web production deployment
 │       ├── docs-checker.md     # Documentation accuracy validator
 │       ├── docs-file-manager.md  # File and directory management (rename, move, delete)
@@ -30,7 +32,10 @@ open-sharia-enterprise/
 │       ├── docs-maker.md     # Documentation writer agent
 │       ├── docs-tutorial-checker.md # Tutorial quality validation
 │       ├── docs-tutorial-maker.md # Tutorial content creation
+│       ├── hugo-developer.md    # Hugo site development and customization
 │       ├── journal-maker.md     # Journal and research notes agent
+│       ├── ose-platform-web-content-checker.md # ose-platform-web content quality validation
+│       ├── ose-platform-web-content-maker.md # ose-platform-web content creation
 │       ├── ose-platform-web-deployer.md # ose-platform-web production deployment
 │       ├── plan-checker.md      # Plan validation agent
 │       ├── plan-execution-checker.md  # Implementation validation agent
@@ -247,7 +252,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 ### Convention References
 
-All conventions documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md). Key conventions: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Hugo Development](./docs/explanation/conventions/ex-co__hugo-development.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Tutorials](./docs/explanation/conventions/ex-co__tutorials.md), [Tutorial Naming](./docs/explanation/conventions/ex-co__tutorial-naming.md).
+All conventions documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md). Key conventions frequently referenced: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Acceptance Criteria](./docs/explanation/conventions/ex-co__acceptance-criteria.md), [Plans Organization](./docs/explanation/conventions/ex-co__plans-organization.md), [Temporary Files](./docs/explanation/conventions/ex-co__temporary-files.md). See [Conventions Index](./docs/explanation/conventions/README.md) for the complete list of 19 conventions.
 
 ## AI Agent Standards
 
@@ -282,7 +287,9 @@ These directories are gitignored and provide organized storage for temporary out
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
-**Operations**: docs-file-manager, hugo-developer, ayokoding-deployer, ose-platform-web-deployer
+**Development**: hugo-developer
+
+**Operations**: docs-file-manager, ayokoding-deployer, ose-platform-web-deployer
 
 **Meta**: agent-maker, repo-rules-updater
 
