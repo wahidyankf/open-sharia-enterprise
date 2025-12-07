@@ -11,7 +11,11 @@
 
 ## 🎯 Motivation
 
-This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems (fintech, ERP, and beyond) that serve communities with specific religious and ethical requirements. We're starting with ERP to establish a solid enterprise foundation that can support diverse business operations, with plans to expand into fintech and other domains. We believe:
+**The Challenge**: Organizations worldwide need enterprise software that respects Islamic principles, but most solutions treat Sharia-compliance as an afterthought—bolted on rather than built in.
+
+**Our Solution**: We're building an open-source platform with Sharia-compliance at its core. Starting with ERP foundations, we'll expand to fintech and beyond, making trustworthy business systems accessible to any organization—regardless of size, region, or industry.
+
+**What We Believe:**
 
 - 🕌 **Sharia-compliance as a foundation** should be built into enterprise solutions from the ground up, not bolted on later
 - 🔓 **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
@@ -54,8 +58,8 @@ Building a solid enterprise foundation with ERP capabilities to support core bus
 
 Expand into fintech capabilities with Indonesian regulatory alignment:
 
-- 🏦 **OJK (Otoritas Jasa Keuangan)** Sharia banking regulations compliance
-- 📋 **DSN-MUI (Dewan Syariah Nasional - Majelis Ulama Indonesia)** guidelines integration
+- 🏦 **Indonesian Banking Authority (OJK)** - Sharia banking regulations compliance
+- 📋 **National Sharia Board (DSN-MUI)** - Islamic finance guidelines integration
 - 📚 **Indonesian fintech standards** and best practices
 - 💳 **Fintech domain implementation** (payments, lending, banking services)
 
@@ -71,7 +75,7 @@ Extend to support additional enterprise solutions and domains:
 
 Extend the platform to support multiple jurisdictions and regions:
 
-- 🕌 **International Islamic finance standards** (AAOIFI, IFSB)
+- 🕌 **International Islamic finance standards** - Accounting (AAOIFI) and prudential (IFSB) standards
 - 🌏 **Multi-jurisdiction compliance** for various countries and regions
 - 📖 **Regional variations** in Sharia interpretations and requirements
 - ✈️ **Cross-border enterprise operations** support
@@ -100,16 +104,18 @@ However, 🎉 **you are welcome to fork this repository!** Feel free to:
 ## 🛠️ Tech Stack
 
 🎯 **Guiding Principle:**
-We prioritize open-source and vendor-neutral technologies to avoid lock-in while maintaining project quality and long-term sustainability. All technology choices are evaluated based on their benefit to the project and community.
+We choose technologies that keep you free. Your data stays yours, in open formats you can take anywhere. No vendor traps, no proprietary formats, no forced dependencies.
 
-🔓 We value avoiding vendor lock-in over strict OSS-only requirements. We may use non-open-source tools if they meet these criteria:
+**What this means:**
 
-- 📁 Data is stored in transparent, portable formats (no proprietary formats)
-- ☁️ No dependency on vendor-specific infrastructure
-- 📤 Easy data export and migration to alternatives
-- 🔐 Community is not locked into a single vendor
+- 📁 **Your data is portable** - Plain text and open formats you can read anywhere
+- ☁️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
+- 📤 **Easy migration** - Export and move to alternatives anytime
+- 🔐 **Community ownership** - You control your technology choices
 
-💡 **Example:** We use [Obsidian](https://obsidian.md/) for documentation knowledge management (not OSS), but all documentation is stored as plain markdown files. This ensures complete portability—we can migrate to any markdown editor or documentation system anytime without vendor lock-in.
+We prefer open-source tools, but we'll use non-open-source software if it respects these principles.
+
+💡 **Example:** We use [Obsidian](https://obsidian.md/) for documentation (not open-source), but all docs are plain markdown files. You can open them in any text editor—no lock-in, complete freedom.
 
 📦 **Project Tooling:**
 
