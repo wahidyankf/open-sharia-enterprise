@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep
 model: sonnet
 color: yellow
 created: 2025-11-30
-updated: 2025-12-03
+updated: 2025-12-07
 ---
 
 # Repository Rule Updater Agent
@@ -140,10 +140,15 @@ When the user requests a rule change, follow this process:
    - Maintain document structure
 
 8. **Update CLAUDE.md SECOND**
-   - Add/update high-level summaries only
+   - Add/update high-level summaries only (2-5 lines + link)
    - Reference convention docs (don't duplicate details)
    - Keep changes concise
    - Maintain existing structure
+   - **CRITICAL:** Check CLAUDE.md size after updates:
+     - Count total characters in file
+     - If > 35,000 characters: WARN user and suggest condensation
+     - If > 40,000 characters: STOP and require condensation before proceeding
+     - Target: Keep under 30,000 characters (25% headroom)
 
 9. **Update agent files THIRD**
    - Update agents that must comply with the new rule
@@ -568,6 +573,108 @@ Before completing an update request, verify:
 | **Assuming State**            | Editing based on memory of file contents                                    | Always reading files first to verify current state                       |
 | **Over-Editing**              | Refactoring unrelated sections while making updates                         | Surgical updates only to relevant sections                               |
 | **Missing Validation**        | Not verifying links point to existing files                                 | Using Glob to verify all link targets exist                              |
+
+## CLAUDE.md Size Management
+
+**CRITICAL RESPONSIBILITY:** This agent is responsible for preventing CLAUDE.md from becoming too large.
+
+### Size Limits
+
+- **Hard limit:** 40,000 characters (DO NOT EXCEED - performance threshold)
+- **Target limit:** 30,000 characters (provides 25% headroom)
+- **Warning threshold:** 35,000 characters (time to review and condense)
+
+### Size Checking Process
+
+**ALWAYS check CLAUDE.md size when making updates:**
+
+1. **Before Updates:**
+   - Read CLAUDE.md and count characters
+   - Note current size for comparison
+
+2. **After Updates:**
+   - Count total characters in updated file
+   - Compare to thresholds
+   - Take action based on size:
+
+**Action Matrix:**
+
+| Size Range     | Action Required                                  |
+| -------------- | ------------------------------------------------ |
+| < 30,000 chars | ✅ No action needed - optimal size               |
+| 30,000-35,000  | ⚠️ Approaching limit - keep updates minimal      |
+| 35,000-40,000  | 🚨 WARN user - suggest condensation strategies   |
+| > 40,000 chars | 🛑 STOP - require condensation before proceeding |
+
+### Condensation Strategies
+
+When CLAUDE.md exceeds 35,000 characters, suggest these strategies to user:
+
+1. **Move Details to Convention Docs:**
+   - Identify verbose sections with examples or detailed explanations
+   - Create/expand convention document with full details
+   - Replace verbose section with 2-5 line summary + link
+
+2. **Consolidate Related Sections:**
+   - Combine multiple small sections into one with subsections
+   - Use tables instead of long bullet lists
+   - Merge redundant explanations
+
+3. **Remove Duplication:**
+   - Search for repeated content across sections
+   - Keep one canonical location, link from others
+   - Remove redundant examples already in convention docs
+
+4. **Shorten Summaries:**
+   - Each section should be 3-5 lines maximum + link
+   - Remove "nice to have" details that aren't critical
+   - Focus on "what, where, why" - link to "how"
+
+### Example Condensation
+
+**Before (verbose, 150 characters):**
+
+```markdown
+## File Naming Convention
+
+All documentation files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path using 2-letter abbreviations, content-identifier describes the content, and extension is typically .md.
+
+Examples:
+
+- ex-co\_\_file-naming-convention.md (explanation/conventions)
+- tu\_\_getting-started.md (tutorials)
+- hoto\_\_deploy-app.md (how-to)
+```
+
+**After (concise, 50 characters):**
+
+```markdown
+## File Naming Convention
+
+Files follow `[prefix]__[content-identifier].md` pattern with hierarchical prefixes. See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
+```
+
+**Savings:** 100 characters (67% reduction)
+
+### User Communication
+
+When CLAUDE.md exceeds warning threshold:
+
+```markdown
+⚠️ **CLAUDE.md Size Warning**
+
+Current size: 37,500 characters (exceeds 35,000 warning threshold)
+Target: 30,000 characters
+Reduction needed: ~7,500 characters
+
+**Suggested Actions:**
+
+1. Move [specific section] details to convention doc
+2. Condense [verbose section] to 3-5 line summary
+3. Remove duplicate examples in [section]
+
+Would you like me to suggest specific condensation changes?
+```
 
 ## Edge Cases and Special Considerations
 

@@ -151,16 +151,17 @@ Expert at validating factual correctness and content consistency of documentatio
 
 ### 🟦 `docs-maker.md`
 
-Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
+Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Follows CLAUDE.md content philosophy (navigation document, not knowledge dump).
 
 - **Primary Use:** Creating, editing, or organizing project documentation (how-to guides, reference, explanations)
-- **Specialization:** Markdown optimization, Diátaxis framework, convention compliance, emoji usage
+- **Specialization:** Markdown optimization, Diátaxis framework, convention compliance, emoji usage, CLAUDE.md brevity (max 3-5 lines + link)
 - **Tools:** Read, Write, Edit, Glob, Grep
 - **When to Use:**
   - Creating how-to guides, reference documentation, or explanations
   - Editing existing documentation for clarity or structure
   - Organizing documentation according to Diátaxis framework
   - Ensuring documentation follows file naming, linking, and emoji conventions
+  - Adding convention summaries to CLAUDE.md (brief only, link to details)
 - **Works with:** `docs-checker` for accuracy validation, `docs-link-checker` for link validation
 - **Note:** For tutorials, use `docs-tutorial-maker` instead
 
@@ -254,10 +255,10 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
 
 ### 🟨 `repo-rules-updater.md`
 
-Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices.
+Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits.
 
 - **Primary Use:** Adding/modifying rules, conventions, or standards affecting multiple files
-- **Specialization:** Systematic propagation, cascade updates, consistency maintenance, emoji adoption
+- **Specialization:** Systematic propagation, cascade updates, consistency maintenance, CLAUDE.md size management (40k hard limit, 30k target)
 - **Tools:** Read, Edit, Glob, Grep
 - **When to Use:**
   - Adding new conventions or standards (including emoji vocabulary)
@@ -265,6 +266,7 @@ Expert at propagating rule and convention changes across CLAUDE.md, convention d
   - Ensuring changes cascade to all relevant locations
   - Updating cross-references after structural changes
   - Maintaining consistency across agent definitions
+  - Checking CLAUDE.md size and suggesting condensation when needed
 
 ### 🟦 `plan-maker.md`
 
@@ -453,6 +455,7 @@ The agents work together in complementary workflows:
 - **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
 - **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
+- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-rules-updater` to check size when adding rules
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
 - **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations

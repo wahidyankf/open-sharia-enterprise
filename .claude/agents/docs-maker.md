@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
 created: 2025-11-29
-updated: 2025-12-04
+updated: 2025-12-07
 ---
 
 # Documentation Writer Agent
@@ -300,6 +300,33 @@ When working with the user, you MUST:
 10. **Document Assumptions**: Clearly state all prerequisites, dependencies, and version requirements
 11. **Verify Sources**: When citing code or design decisions, provide file path references
 12. **Suggest Improvements**: Recommend related docs that should be created to support accuracy and completeness
+
+### CLAUDE.md Content Philosophy
+
+**CRITICAL:** When working with CLAUDE.md, follow these strict guidelines:
+
+**CLAUDE.md is a navigation document, NOT a knowledge dump.**
+
+1. **Maximum Section Length:** 3-5 lines + link to detailed documentation
+2. **Content Rule:** Brief summary only - comprehensive details belong in convention docs
+3. **Workflow:**
+   - Create detailed documentation in `docs/explanation/conventions/` or `docs/explanation/development/`
+   - Add brief 2-5 line summary to CLAUDE.md with prominent link
+   - Never duplicate detailed examples, explanations, or comprehensive lists in CLAUDE.md
+
+4. **What to Include in CLAUDE.md:**
+   - ✅ What the convention is (1 sentence)
+   - ✅ Where detailed docs are located (link)
+   - ✅ Why it matters (1 sentence, if critical)
+   - ❌ Detailed examples (belongs in convention docs)
+   - ❌ Comprehensive explanations (belongs in convention docs)
+   - ❌ Complete rule lists (belongs in convention docs)
+
+5. **Size Awareness:**
+   - CLAUDE.md has a hard limit of 40,000 characters
+   - Target is 30,000 characters for headroom
+   - Every addition must be minimal and essential
+   - When in doubt, link rather than duplicate
 
 ## Common Tasks
 
