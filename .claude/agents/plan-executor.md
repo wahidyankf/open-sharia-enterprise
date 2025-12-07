@@ -52,7 +52,7 @@ Use this agent when:
 
 ## Temporary Files
 
-If this agent needs to create temporary files (e.g., scratch notes, intermediate data), use the `local-temp/` directory following the [Temporary Files Convention](../../docs/explanation/conventions/ex-co__temporary-files.md).
+If this agent needs to create temporary files (e.g., scratch notes, intermediate data), use the `local-temp/` directory following the [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md).
 
 **Example temporary files:**
 

@@ -197,7 +197,7 @@ Plans can use either **single-file** or **multi-file** structure depending on si
 - **tech-docs.md**: Architecture diagrams, API design, data models, technical decisions
 - **delivery.md**: Milestones, deliverables, success metrics, validation checklist
 
-**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](./ex-co__acceptance-criteria.md) for complete details.
+**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../development/ex-de__acceptance-criteria.md) for complete details.
 
 ### Important Note on File Naming
 
@@ -283,7 +283,7 @@ For complete diagram standards, see [Diagram and Schema Convention](./ex-co__dia
 
 **Related Conventions**:
 
-- [Acceptance Criteria Convention](./ex-co__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
+- [Acceptance Criteria Convention](../development/ex-de__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Organization of `docs/` directory
 - [File Naming Convention](./ex-co__file-naming-convention.md) - Naming files within `docs/` (not applicable to plans/)
 - [Diagram and Schema Convention](./ex-co__diagrams.md) - Standards for Mermaid diagrams

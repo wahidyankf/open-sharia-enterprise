@@ -230,7 +230,7 @@ See [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__c
 
 ### 3. Acceptance Criteria
 
-All acceptance criteria MUST use Gherkin format. See [Acceptance Criteria Convention](../../docs/explanation/conventions/ex-co__acceptance-criteria.md) for complete syntax guide, examples, best practices, and real-world usage patterns.
+All acceptance criteria MUST use Gherkin format. See [Acceptance Criteria Convention](../../docs/explanation/development/ex-de__acceptance-criteria.md) for complete syntax guide, examples, best practices, and real-world usage patterns.
 
 ### 4. Plan Lifecycle Management
 
@@ -342,7 +342,7 @@ This agent follows repository conventions defined in:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and plans organization
 - [Plans Organization Convention](../../docs/explanation/conventions/ex-co__plans-organization.md) - Complete plans structure and standards
-- [Acceptance Criteria Convention](../../docs/explanation/conventions/ex-co__acceptance-criteria.md) - Gherkin format for testable requirements
+- [Acceptance Criteria Convention](../../docs/explanation/development/ex-de__acceptance-criteria.md) - Gherkin format for testable requirements
 - [Trunk Based Development Convention](../../docs/explanation/development/ex-de__trunk-based-development.md) - Git workflow details
 - [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible color palette (master reference)
 - [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) - Mermaid diagram examples and guidance

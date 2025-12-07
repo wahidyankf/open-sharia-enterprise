@@ -799,7 +799,7 @@ Is this content unique and valuable?
 
 - **Before:** Gherkin acceptance criteria details in `plan-maker.md` (500 lines)
 - **After:**
-  - New file: `docs/explanation/conventions/ex-co__acceptance-criteria.md` (comprehensive)
+  - New file: `docs/explanation/development/ex-de__acceptance-criteria.md` (comprehensive)
   - `plan-maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
   - Savings: 497 lines
 
@@ -958,14 +958,14 @@ Follow this systematic process when offloading content:
 
 **Process:**
 
-1. Create `docs/explanation/conventions/ex-co__acceptance-criteria.md`
+1. Create `docs/explanation/development/ex-de__acceptance-criteria.md`
 2. Move all Gherkin format details, examples, anti-patterns
 3. In `plan-maker.md`, replace with:
 
    ```markdown
    ## Acceptance Criteria
 
-   Use Gherkin format for all acceptance criteria. See [Acceptance Criteria Convention](../../docs/explanation/conventions/ex-co__acceptance-criteria.md) for complete format, examples, and anti-patterns.
+   Use Gherkin format for all acceptance criteria. See [Acceptance Criteria Convention](../../docs/explanation/development/ex-de__acceptance-criteria.md) for complete format, examples, and anti-patterns.
    ```
 
 4. Update `docs/explanation/conventions/README.md` to list new convention

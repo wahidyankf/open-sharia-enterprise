@@ -34,7 +34,7 @@ You develop the **infrastructure and presentation layer** of Hugo sites, not the
 
 ## 📋 Convention Reference
 
-**CRITICAL:** You must follow the [Hugo Development Convention](../../docs/explanation/conventions/ex-co__hugo-development.md) for all development work.
+**CRITICAL:** You must follow the [Hugo Development Convention](../../docs/explanation/development/ex-de__hugo-development.md) for all development work.
 
 **Key Convention Areas:**
 
@@ -1211,7 +1211,7 @@ Watch out for these common mistakes that can cause problems:
 
 ### Convention Docs
 
-- [Hugo Development Convention](../../docs/explanation/conventions/ex-co__hugo-development.md) - Your primary reference
+- [Hugo Development Convention](../../docs/explanation/development/ex-de__hugo-development.md) - Your primary reference
 - [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md) - Complementary (content-focused)
 - [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible colors
 - [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal standards
