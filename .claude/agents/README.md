@@ -112,6 +112,26 @@ Expert at validating Hugo content for ose-platform-web (PaperMod theme) against 
 - **Works with:** `ose-platform-web-content-maker` for content creation
 - **References:** Hugo Content Convention, Content Quality Principles
 
+### 🟦 `hugo-developer.md`
+
+Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web following Hugo Development Convention.
+
+- **Primary Use:** Developing Hugo site infrastructure (layouts, themes, assets, config, build)
+- **Specialization:** Theme customization (Hextra, PaperMod), layout development, shortcode creation, asset pipeline (Hugo Pipes), configuration, i18n, performance, SEO, accessibility, build processes
+- **Tools:** Read, Write, Edit, Glob, Grep, Bash
+- **When to Use:**
+  - Customizing themes (Hextra/PaperMod)
+  - Creating layouts, partials, templates
+  - Developing custom shortcodes
+  - Processing assets with Hugo Pipes
+  - Configuring hugo.yaml
+  - Implementing i18n translations
+  - Optimizing performance and SEO
+  - Managing build scripts
+- **Out of Scope:** Creating content (use content-maker agents), validating content (use content-checker agents)
+- **Works with:** Content-maker agents for content, hugo-developer for infrastructure
+- **References:** Hugo Development Convention, Color Accessibility Convention
+
 ### 🟩 `docs-checker.md`
 
 Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information.
