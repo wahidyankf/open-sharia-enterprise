@@ -595,14 +595,123 @@ Tutorials follow standardized naming and depth levels to help learners find appr
 
 See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details on coverage, time estimates, and when to use each type.
 
+### Hugo Content Convention
+
+All Hugo content for ayokoding-web and ose-platform-web must follow the [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md).
+
+**Applies to:**
+
+- ayokoding-web (Hextra theme, bilingual Indonesian/English, educational content)
+- ose-platform-web (PaperMod theme v7.0+, English-only, project updates)
+
+**Key Principles:**
+
+1. **Inherited Conventions** (7 total):
+   - Mathematical Notation (LaTeX in learning content)
+   - Color Accessibility (accessible palette in diagrams)
+   - Diagrams (Mermaid with vertical orientation)
+   - Emoji Usage (semantic use)
+   - Timestamp Format (ISO 8601 with UTC+7)
+   - Tutorial Convention (applies to ayokoding-web learning content only)
+   - Tutorial Naming (applies to ayokoding-web learning content only)
+
+2. **Adapted Conventions** (5 total):
+   - Indentation (YAML frontmatter uses 2 spaces, content uses standard markdown)
+   - Linking (Hugo ref/relref or paths WITHOUT .md extension)
+   - File Naming (simple slugs or date-prefixed, no prefix encoding)
+   - Frontmatter (YAML format with required fields: title, date, draft)
+   - Date Format (REQUIRED: YYYY-MM-DDTHH:MM:SS+07:00)
+
+3. **Hugo-Specific Conventions** (6 total):
+   - Archetypes (ayokoding-web: 5 types, ose-platform-web: 1 type)
+   - Shortcodes (Hextra: callout, cards, steps; PaperMod: relies on Hugo built-ins)
+   - Taxonomy (tags, categories, series)
+   - Asset Organization (static/ directory structure)
+   - Content Types (\_index.md vs regular files)
+   - URL Structure (slug generation)
+
+**Site Differences:**
+
+| Aspect     | ayokoding-web           | ose-platform-web    |
+| ---------- | ----------------------- | ------------------- |
+| Theme      | Hextra                  | PaperMod v7.0+      |
+| Language   | Bilingual (ID/EN)       | English only        |
+| Content    | Learning, essays, video | Updates, about page |
+| Archetypes | 5 types                 | 1 type (default)    |
+| Audience   | Indonesian developers   | Enterprise users    |
+| Structure  | Deep hierarchy          | Flat structure      |
+
+**Specialized Agents:**
+
+- ayokoding-content-maker (creates ayokoding-web content)
+- ayokoding-content-checker (validates ayokoding-web content)
+- ose-platform-web-content-maker (creates ose-platform-web content)
+- ose-platform-web-content-checker (validates ose-platform-web content)
+
+See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards and examples.
+
+### Content Quality Principles
+
+All markdown content in this repository must follow [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md).
+
+**Universal Application**: These standards apply to ALL markdown content regardless of location.
+
+**Applies to:**
+
+- docs/ (documentation)
+- Hugo sites (ayokoding-web, ose-platform-web)
+- plans/ (project planning documents)
+- Root files (README.md, CONTRIBUTING.md, etc.)
+
+**Key Principles:**
+
+1. **Writing Style and Tone:**
+   - Active voice (not passive)
+   - Professional yet approachable
+   - Clear and concise (no filler words)
+   - Audience-appropriate complexity
+
+2. **Heading Hierarchy:**
+   - Single H1 per document (the title)
+   - Proper H2-H6 nesting (no skipped levels)
+   - Descriptive headings (not vague)
+   - Semantic structure (headings for structure, not styling)
+
+3. **Accessibility Standards:**
+   - All images must have descriptive alt text
+   - Semantic HTML elements used correctly
+   - ARIA labels where appropriate
+   - Color contrast (WCAG AA compliance)
+   - Screen reader considerations
+
+4. **Formatting Conventions:**
+   - Code blocks specify language
+   - Text formatting purposeful (bold for key terms, italic for emphasis)
+   - Lists use proper markdown syntax
+   - Blockquotes for callouts
+   - Line length 80-100 characters for prose
+   - Paragraphs 3-5 sentences with blank lines between
+
+**Quality Checklist** - verify before committing:
+
+- Writing style (active voice, professional tone, clear, concise)
+- Heading hierarchy (single H1, proper nesting, descriptive)
+- Accessibility (alt text, semantic HTML, descriptive links)
+- Formatting (code blocks, text formatting, lists, blockquotes)
+- Readability (line length, paragraph structure)
+
+See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md) for complete standards and examples.
+
 ### Key Resources
 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
 - **Color Accessibility Guide (MASTER REFERENCE):** [`docs/explanation/conventions/ex-co__color-accessibility.md`](./docs/explanation/conventions/ex-co__color-accessibility.md) - Authoritative source for ALL color-related decisions in this repository. Defines verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), supports all color blindness types (protanopia, deuteranopia, tritanopia), provides WCAG AA compliance standards, complete testing methodology with color blindness simulators and contrast checkers, and implementation guidance for Mermaid diagrams, AI agent categorization, and future CSS/styling. All agents and documentation working with colors MUST reference this convention as the single source of truth
+- **Content Quality Principles Guide:** [`docs/explanation/conventions/ex-co__content-quality.md`](./docs/explanation/conventions/ex-co__content-quality.md) - Universal markdown content quality standards for ALL repository markdown (docs/, Hugo sites, plans/, root files)
 - **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](./docs/explanation/conventions/ex-co__file-naming-convention.md)
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](./docs/explanation/conventions/ex-co__linking-convention.md)
 - **Diagram and Schema Guide:** [`docs/explanation/conventions/ex-co__diagrams.md`](./docs/explanation/conventions/ex-co__diagrams.md)
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](./docs/explanation/conventions/ex-co__diataxis-framework.md)
+- **Hugo Content Guide:** [`docs/explanation/conventions/ex-co__hugo-content.md`](./docs/explanation/conventions/ex-co__hugo-content.md) - Comprehensive Hugo content standards for ayokoding-web and ose-platform-web
 - **Journals Format Guide:** [`docs/explanation/conventions/ex-co__journals-format.md`](./docs/explanation/conventions/ex-co__journals-format.md)
 - **Emoji Usage Guide:** [`docs/explanation/conventions/ex-co__emoji-usage.md`](./docs/explanation/conventions/ex-co__emoji-usage.md)
 - **Timestamp Format Guide:** [`docs/explanation/conventions/ex-co__timestamp-format.md`](./docs/explanation/conventions/ex-co__timestamp-format.md)
@@ -638,7 +747,11 @@ These directories are gitignored and provide organized storage for temporary out
 
 - **`agent-maker.md`** - Expert at creating new AI agents following all repository conventions
 - **`ayokoding-deployer.md`** - Expert at deploying ayokoding-web to production via git synchronization. Synchronizes prod-ayokoding-web branch with main and pushes to origin to trigger automatic deployment to ayokoding.com via Vercel. Includes safety checks and user confirmation
+- **`ayokoding-content-maker.md`** - Expert at creating Hugo content for ayokoding-web (Hextra theme, bilingual, learning content, essays, video content) following Hugo Content Convention and Content Quality Principles
+- **`ayokoding-content-checker.md`** - Expert at validating Hugo content for ayokoding-web against Hugo Content Convention and Content Quality Principles. Validates frontmatter, structure, Hextra shortcodes, Mermaid diagrams, and tutorial quality
 - **`ose-platform-web-deployer.md`** - Expert at deploying ose-platform-web to production via git synchronization. Synchronizes prod-ose-platform-web branch with main and pushes to origin to trigger automatic deployment to oseplatform.com via Vercel. Includes safety checks and user confirmation
+- **`ose-platform-web-content-maker.md`** - Expert at creating Hugo content for ose-platform-web (PaperMod theme v7.0+, English-only, professional updates, about page) following Hugo Content Convention and Content Quality Principles
+- **`ose-platform-web-content-checker.md`** - Expert at validating Hugo content for ose-platform-web against Hugo Content Convention and Content Quality Principles. Validates frontmatter, PaperMod fields, cover images, structure, and professional English tone
 - **`docs-checker.md`** - Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information
 - **`docs-file-manager.md`** - Expert at managing files and directories in docs/ directory (rename, move, delete operations while maintaining conventions)
 - **`docs-link-checker.md`** - Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (all invocation contexts). Outputs results in conversation only (no separate report files)

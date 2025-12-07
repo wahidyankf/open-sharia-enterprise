@@ -48,6 +48,70 @@ Expert at deploying ose-platform-web to production. Synchronizes prod-ose-platfo
   - Syncing prod-ose-platform-web branch with origin/main
 - **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ose-platform-web
 
+### 🟦 `ayokoding-content-maker.md`
+
+Expert at creating Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles.
+
+- **Primary Use:** Creating new Hugo content for ayokoding-web educational platform
+- **Specialization:** Hextra theme content, bilingual content (Indonesian/English), learning content, personal essays, video content, archetype usage (5 types), Tutorial Convention compliance, Content Quality Principles
+- **Tools:** Read, Write, Edit, Glob, Grep, Bash
+- **When to Use:**
+  - Creating learning content (tutorials, guides, courses) for ayokoding-web
+  - Writing personal essays (celoteh/rants)
+  - Adding video content (konten-video/video-content)
+  - Creating section index pages (\_index.md)
+  - Producing bilingual content (Indonesian and English versions)
+- **Works with:** `ayokoding-content-checker` for validation before publication
+- **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention, Tutorial Naming Convention
+
+### 🟨 `ayokoding-content-checker.md`
+
+Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles.
+
+- **Primary Use:** Validating ayokoding-web content quality before publication
+- **Specialization:** Frontmatter validation (YAML, date format, required fields), content structure (heading hierarchy, links, images), Hextra shortcode validation, Mermaid diagram accessibility, tutorial-specific validation, content quality assessment
+- **Tools:** Read, Grep, Glob, Bash
+- **When to Use:**
+  - Validating new content before publication
+  - Checking frontmatter correctness (YAML format, date format YYYY-MM-DDTHH:MM:SS+07:00)
+  - Verifying content structure (heading hierarchy, link format, image alt text)
+  - Ensuring convention compliance (Hugo conventions, content quality standards)
+  - Quality assurance before merging or deploying content
+- **Works with:** `ayokoding-content-maker` for content creation
+- **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention
+
+### 🟦 `ose-platform-web-content-maker.md`
+
+Expert at creating Hugo content for ose-platform-web (PaperMod theme) following Hugo Content Convention and Content Quality Principles.
+
+- **Primary Use:** Creating new Hugo content for ose-platform-web project landing page
+- **Specialization:** PaperMod theme content (v7.0+), English-only content, update posts, about page, professional enterprise tone, archetype usage (default.md), release announcements
+- **Tools:** Read, Write, Edit, Glob, Grep, Bash
+- **When to Use:**
+  - Creating platform update posts for ose-platform-web
+  - Writing about page content or site information
+  - Publishing project announcements or release notes
+  - Adding progress updates or milestone reports
+  - Creating English-only professional content for enterprise audience
+- **Works with:** `ose-platform-web-content-checker` for validation before publication
+- **References:** Hugo Content Convention, Content Quality Principles
+
+### 🟨 `ose-platform-web-content-checker.md`
+
+Expert at validating Hugo content for ose-platform-web (PaperMod theme) against Hugo Content Convention and Content Quality Principles.
+
+- **Primary Use:** Validating ose-platform-web content quality before publication
+- **Specialization:** Frontmatter validation (YAML, PaperMod fields, cover image, summary), content structure (heading hierarchy, links, images), Mermaid diagram accessibility, English language quality, professional tone verification
+- **Tools:** Read, Grep, Glob, Bash
+- **When to Use:**
+  - Validating new content before publication
+  - Checking frontmatter correctness (YAML format, date format, cover image alt text)
+  - Verifying content structure (heading hierarchy, link format, image alt text)
+  - Ensuring convention compliance (Hugo conventions, content quality standards)
+  - Quality assurance before merging or deploying content
+- **Works with:** `ose-platform-web-content-maker` for content creation
+- **References:** Hugo Content Convention, Content Quality Principles
+
 ### 🟩 `docs-checker.md`
 
 Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information.
