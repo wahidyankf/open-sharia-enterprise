@@ -193,7 +193,7 @@ This project uses Nx to manage applications and libraries:
 
 - **apps/** - Deployable applications (e.g., api-gateway, admin-dashboard)
 - **libs/** - Reusable libraries with language prefixes (ts-*, future: java-*, py-*)
-- **apps-standalone/** - Projects with independent build systems (not in Nx)
+- **apps-labs/** - Experimental apps and POCs (framework evaluation, language exploration)
 
 **Quick Commands**:
 ```bash

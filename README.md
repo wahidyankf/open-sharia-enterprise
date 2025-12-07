@@ -150,8 +150,8 @@ npm install
 ```
 open-sharia-enterprise/
 ├── apps/                  # Deployable applications (Nx monorepo)
-├── apps-standalone/       # Standalone projects (NOT in Nx monorepo)
-│   └── .gitkeep           # Placeholder for future standalone projects
+├── apps-labs/             # Experimental apps and POCs (NOT in Nx monorepo)
+│   └── README.md          # Labs directory documentation
 ├── libs/                  # Reusable libraries (Nx monorepo, flat structure)
 ├── docs/                  # Project documentation (Diataxis framework)
 │   ├── tutorials/         # Learning-oriented guides
@@ -174,7 +174,7 @@ This project uses **Nx** to manage applications and libraries:
 
 - **`apps/`** - Deployable applications (e.g., `api-gateway`, `admin-dashboard`)
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`)
-- **`apps-standalone/`** - Projects with independent build systems (not in Nx)
+- **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration)
 
 **Quick Commands**:
 
