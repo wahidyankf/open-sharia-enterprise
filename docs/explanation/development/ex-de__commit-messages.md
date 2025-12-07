@@ -802,6 +802,7 @@ Closes #123
 ## Related Documentation
 
 - [AI Agents Convention](./ex-de__ai-agents.md) - Standards for AI agents
+- [Code Quality Convention](./ex-de__code-quality.md) - Automated tools and git hooks for code formatting and commit validation
 - [Development Index](./README.md) - Overview of development conventions
 - [Conventions Index](../conventions/README.md) - Documentation conventions
 

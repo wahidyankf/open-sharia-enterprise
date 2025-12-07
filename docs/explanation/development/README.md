@@ -8,7 +8,7 @@ tags:
   - conventions
   - ai-agents
 created: 2025-11-23
-updated: 2025-11-30
+updated: 2025-12-07
 ---
 
 # Development
@@ -44,6 +44,7 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 
 - [Acceptance Criteria Convention](./ex-de__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation. Covers Gherkin syntax (Scenario, Given, When, Then), best practices, common patterns (CRUD, auth, errors), and integration with BDD test frameworks
 - [AI Agents Convention](./ex-de__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory
+- [Code Quality Convention](./ex-de__code-quality.md) - Automated code quality tools and git hooks (Prettier, Husky, lint-staged) for consistent formatting and commit validation
 - [Commit Message Convention](./ex-de__commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
 - [Hugo Development Convention](./ex-de__hugo-development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web. Covers theme development, layout organization, asset pipeline (Hugo Pipes, CSS/JS processing, image optimization), configuration management, i18n/l10n, performance optimization, SEO best practices, accessibility (WCAG compliance), shortcode development, and build/deployment processes
 - [Temporary Files Convention](./ex-de__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
