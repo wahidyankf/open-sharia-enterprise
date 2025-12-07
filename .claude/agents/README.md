@@ -64,7 +64,7 @@ Expert at creating Hugo content for ayokoding-web (Hextra theme) following Hugo 
 - **Works with:** `ayokoding-content-checker` for validation before publication
 - **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention, Tutorial Naming Convention
 
-### 🟨 `ayokoding-content-checker.md`
+### 🟩 `ayokoding-content-checker.md`
 
 Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles.
 
@@ -96,7 +96,7 @@ Expert at creating Hugo content for ose-platform-web (PaperMod theme) following 
 - **Works with:** `ose-platform-web-content-checker` for validation before publication
 - **References:** Hugo Content Convention, Content Quality Principles
 
-### 🟨 `ose-platform-web-content-checker.md`
+### 🟩 `ose-platform-web-content-checker.md`
 
 Expert at validating Hugo content for ose-platform-web (PaperMod theme) against Hugo Content Convention and Content Quality Principles.
 
