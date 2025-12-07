@@ -48,8 +48,8 @@ open-sharia-enterprise/
 │   └── [app-name]/           # Individual applications
 │       ├── project.json      # Nx configuration
 │       └── ...               # App-specific files
-├── apps-standalone/           # Standalone projects (NOT in Nx monorepo)
-│   └── .gitkeep              # Placeholder for future standalone projects
+├── apps-labs/                 # Experimental apps and POCs (NOT in Nx monorepo)
+│   └── README.md             # Labs directory documentation
 ├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
 │   ├── README.md             # Libs folder documentation
 │   └── ts-[name]/            # TypeScript libraries (language-prefixed)
@@ -156,7 +156,7 @@ This project uses **Nx** monorepo with two main folders:
 
 - **`apps/`** - Deployable applications (naming: `[domain]-[type]`). Apps import libs, never export. Each app independently deployable.
 - **`libs/`** - Reusable libraries (naming: `ts-[name]` for TypeScript, future: `java-*`, `kt-*`, `py-*`). Flat structure, no nesting. Import via `@open-sharia-enterprise/ts-[lib-name]`.
-- **`apps-standalone/`** - Non-Nx projects with independent build systems (currently empty).
+- **`apps-labs/`** - Experimental apps and POCs outside Nx monorepo. For framework evaluation, language exploration, and temporary prototypes.
 
 **Key Rules**: Apps can import any lib. Libs can import other libs. No circular dependencies. Apps never import other apps.
 

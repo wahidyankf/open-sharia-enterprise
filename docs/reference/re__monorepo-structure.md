@@ -22,15 +22,15 @@ This project uses **Nx** as a monorepo build system with a plugin-free "vanilla 
 - `apps/` - Deployable applications
 - `libs/` - Reusable libraries (flat structure with language prefixes)
 
-**Note**: The repository also contains `apps-standalone/` directory reserved for projects that are NOT part of the Nx monorepo. These standalone projects would have independent build systems and no Nx workspace integration. See [Standalone Projects vs Monorepo Projects](#standalone-projects-vs-monorepo-projects) section for details.
+**Note**: The repository also contains `apps-labs/` directory for experimental applications and POCs that are NOT part of the Nx monorepo. These experimental projects have independent build systems and no Nx workspace integration. See [Experimental Projects vs Monorepo Projects](#experimental-projects-vs-monorepo-projects) section for details.
 
 ## Root Structure
 
 ```
 open-sharia-enterprise/
 ├── apps/                      # Deployable applications (Nx monorepo)
-├── apps-standalone/           # Standalone projects (NOT in Nx monorepo)
-│   └── .gitkeep              # Placeholder for future standalone projects
+├── apps-labs/                 # Experimental apps and POCs (NOT in Nx monorepo)
+│   └── README.md             # Labs directory documentation
 ├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
 ├── docs/                      # Documentation (Diátaxis framework)
 ├── plans/                     # Project planning documents
@@ -191,7 +191,7 @@ libs/ts-demo-libs/
 
 TypeScript libraries only. Future languages (Java, Kotlin, Python) not yet implemented.
 
-## Standalone Projects vs Monorepo Projects
+## Experimental Projects vs Monorepo Projects
 
 The repository contains two distinct project structures with different purposes and characteristics:
 
@@ -223,9 +223,9 @@ The repository contains two distinct project structures with different purposes 
 - Express.js API services
 - Reusable TypeScript libraries
 
-### Standalone Projects (`apps-standalone/`)
+### Experimental Projects (`apps-labs/`)
 
-**Purpose**: Projects with independent build systems that are NOT part of the Nx monorepo.
+**Purpose**: Experimental applications and POCs with independent build systems that are NOT part of the Nx monorepo. Used for framework evaluation, language exploration, and temporary prototypes.
 
 **Characteristics**:
 
@@ -239,21 +239,22 @@ The repository contains two distinct project structures with different purposes 
 
 **When to use**:
 
-- Projects with specialized build tools that cannot integrate with Nx
-- Projects in non-TypeScript languages that require completely independent workflows
-- Projects with established tooling where Nx integration provides no benefit
-- Projects that must deploy independently with their own CI/CD
+- Framework evaluation (Next.js vs Remix vs SvelteKit)
+- Language exploration (Python, Go, Rust, etc.)
+- Technology POCs (databases, authentication approaches, etc.)
+- Quick prototypes without monorepo integration overhead
+- Temporary experiments that might be deleted after evaluation
 
 **Current examples**:
 
-- None (directory reserved for future projects)
-- Previously housed `ayokoding-web` (now integrated with Nx as `apps/ayokoding-web/`)
+- None (directory is empty, awaiting first experimental projects)
+- Note: Production apps like `ayokoding-web` are in `apps/` (Nx integrated)
 
 **Note on Nx integration**: Even projects with non-Node.js toolchains (like Hugo, Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization. See `apps/ayokoding-web/` as an example of a Hugo static site integrated with Nx monorepo.
 
 ### Key Differences
 
-| Aspect                     | Nx Monorepo (`apps/`, `libs/`)    | Standalone (`apps-standalone/`)      |
+| Aspect                     | Nx Monorepo (`apps/`, `libs/`)    | Experimental (`apps-labs/`)          |
 | -------------------------- | --------------------------------- | ------------------------------------ |
 | Build System               | Nx workspace                      | Independent (Hugo, Go, Python, etc.) |
 | Configuration              | Shared `tsconfig.base.json`       | Self-contained                       |
@@ -272,12 +273,13 @@ The repository contains two distinct project structures with different purposes 
 - Project benefits from task caching
 - Project needs unified tooling
 
-**Use standalone (`apps-standalone/`)** if:
+**Use experimental (`apps-labs/`)** if:
 
-- Project has specialized build tools (Hugo, Go, etc.)
-- Project is in a language without Nx support
-- Project has established tooling that works well independently
-- Project has separate deployment requirements
+- Evaluating framework ergonomics before production decisions
+- Exploring new programming languages
+- Building temporary POCs that might be deleted
+- Testing technology stacks without monorepo integration commitment
+- Quick prototyping without Nx overhead
 
 ## File Format Reference
 

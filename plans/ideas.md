@@ -23,8 +23,8 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 - Add helper script/cli for @agent-docs-link-checker
 - Document best practices for gherkin
 - Setup specs folder for gherkin files
-- Align the documentation and ayokoding-web. Basically we want to move all software engineering related tutorial to ayokoding.com (Note: app moved from apps-standalone to apps/ for Nx integration)
-- Add agents to write content in ayokoding-web (Note: app moved from apps-standalone to apps/ for Nx integration)
+- Align the documentation and ayokoding-web. Basically we want to move all software engineering related tutorial to ayokoding.com (Note: app previously in apps-standalone/, now in apps/ for Nx integration and production deployment)
+- Add agents to write content in ayokoding-web (Note: app previously in apps-standalone/, now in apps/ for Nx integration and production deployment)
 
 ### Services
 
