@@ -110,10 +110,9 @@ Runs automatically before a commit is created:
 2. **Prettier** formats matching files:
    - `*.{js,jsx,ts,tsx,mjs,cjs}` - JavaScript/TypeScript
    - `*.json` - JSON files
-   - `*.md` - Markdown
+   - `*.md` - Markdown (excluding Hugo archetypes)
    - `*.{yml,yaml}` - YAML
    - `*.{css,scss}` - Styles
-   - `*.html` - HTML
 3. Formatted files are automatically staged
 4. Commit blocked if any issues found
 
@@ -129,6 +128,8 @@ Runs after pre-commit hook, before commit is finalized:
 ### Commit Message Convention
 
 All commits follow [Conventional Commits](https://www.conventionalcommits.org/) format: `<type>(<scope>): <description>`. Split work into multiple logical commits by type and domain. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for complete rules, valid types, and examples.
+
+For complete details on automated tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md).
 
 ## Git Workflow
 
