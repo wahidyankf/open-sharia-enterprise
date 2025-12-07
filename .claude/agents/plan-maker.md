@@ -228,15 +228,9 @@ Use **Mermaid diagrams** as primary format. ASCII art is optional for simple dir
 
 See [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) (master reference) and [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples.
 
-### 3. Acceptance Criteria: Gherkin Format
+### 3. Acceptance Criteria
 
-All acceptance criteria MUST use Gherkin format for clarity and testability.
-
-**Syntax**: `Scenario: [name]` → `Given [context]` → `When [action]` → `Then [outcome]` (use `And`/`But` for additional conditions)
-
-**Best Practices**: Be specific with concrete values, one scenario per behavior, present tense, focus on behavior (not implementation), make it testable
-
-**Why Gherkin?** Clear communication, test automation, living documentation, unambiguous requirements
+All acceptance criteria MUST use Gherkin format. See [Acceptance Criteria Convention](../../docs/explanation/conventions/ex-co__acceptance-criteria.md) for complete syntax guide, examples, best practices, and real-world usage patterns.
 
 ### 4. Plan Lifecycle Management
 
@@ -348,6 +342,7 @@ This agent follows repository conventions defined in:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and plans organization
 - [Plans Organization Convention](../../docs/explanation/conventions/ex-co__plans-organization.md) - Complete plans structure and standards
+- [Acceptance Criteria Convention](../../docs/explanation/conventions/ex-co__acceptance-criteria.md) - Gherkin format for testable requirements
 - [Trunk Based Development Convention](../../docs/explanation/development/ex-de__trunk-based-development.md) - Git workflow details
 - [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible color palette (master reference)
 - [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) - Mermaid diagram examples and guidance

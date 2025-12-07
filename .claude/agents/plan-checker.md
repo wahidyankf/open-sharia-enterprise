@@ -40,7 +40,7 @@ You are the **QUALITY GATE FOR PLANS**. You validate that plans created by plan-
 
 ### 2. Requirements Validation
 
-- Check all user stories have testable acceptance criteria (Gherkin format preferred)
+- Check all user stories have testable acceptance criteria (Gherkin format required - see [Acceptance Criteria Convention](../../docs/explanation/conventions/ex-co__acceptance-criteria.md))
 - Verify functional requirements are clear, specific, and unambiguous
 - Validate non-functional requirements are measurable (not vague)
 - Identify contradictory or conflicting requirements
