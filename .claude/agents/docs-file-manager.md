@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Bash
 model: sonnet
 color: yellow
 created: 2025-11-30
-updated: 2025-12-03
+updated: 2025-12-07
 ---
 
 # Documentation File Manager Agent

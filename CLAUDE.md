@@ -213,7 +213,7 @@ Files in `docs/` directory use **TAB indentation** for bullet items (Logseq/Obsi
 
 ### File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (except `docs/journals/` which uses `YYYY-MM/YYYY-MM-DD.md` format). See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (except `docs/journals/` which uses `YYYY-MM/YYYY-MM-DD.md` format, and `docs/metadata/` which stores operational files without prefixes). See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
 
 ### Linking Convention
 
@@ -251,9 +251,13 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 **ayokoding-web**: Hextra theme, bilingual ID/EN, educational content, 5 archetypes. **ose-platform-web**: PaperMod v7.0+, English-only, project updates, 1 archetype. Key differences: Hugo linking (no `.md` extension), YAML frontmatter (title, date, draft required), date format `YYYY-MM-DDTHH:MM:SS+07:00`. Specialized agents: ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker. See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards.
 
+### README Quality Convention
+
+All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language (no jargon), acronym context, paragraph limits (≤5 lines), benefits-focused language. See [README Quality Convention](./docs/explanation/conventions/ex-co__readme-quality.md) for complete standards.
+
 ### Convention References
 
-All standards documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md) (documentation writing) and [`docs/explanation/development/`](./docs/explanation/development/README.md) (software development). Key conventions frequently referenced: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Acceptance Criteria](./docs/explanation/development/ex-de__acceptance-criteria.md), [Plans Organization](./docs/explanation/conventions/ex-co__plans-organization.md), [Temporary Files](./docs/explanation/development/ex-de__temporary-files.md), [Hugo Development](./docs/explanation/development/ex-de__hugo-development.md). See [Conventions Index](./docs/explanation/conventions/README.md) for 15 documentation conventions and [Development Index](./docs/explanation/development/README.md) for 6 development practices.
+All standards documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md) (documentation writing) and [`docs/explanation/development/`](./docs/explanation/development/README.md) (software development). Key conventions frequently referenced: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Acceptance Criteria](./docs/explanation/development/ex-de__acceptance-criteria.md), [Plans Organization](./docs/explanation/conventions/ex-co__plans-organization.md), [Temporary Files](./docs/explanation/development/ex-de__temporary-files.md), [Hugo Development](./docs/explanation/development/ex-de__hugo-development.md). For creating convention documents, see [Convention Writing Convention](./docs/explanation/conventions/ex-co__convention-writing.md). See [Conventions Index](./docs/explanation/conventions/README.md) for 17 documentation conventions and [Development Index](./docs/explanation/development/README.md) for 7 development practices.
 
 ## AI Agent Standards
 
@@ -282,9 +286,9 @@ These directories are gitignored and provide organized storage for temporary out
 
 ### Available Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, journal-maker, ayokoding-content-maker, ose-platform-web-content-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, journal-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), ayokoding-content-checker, ose-platform-web-content-checker, repo-rules-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ose-platform-web-content-checker, repo-rules-checker
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
