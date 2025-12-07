@@ -595,6 +595,58 @@ Tutorials follow standardized naming and depth levels to help learners find appr
 
 See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details on coverage, time estimates, and when to use each type.
 
+### Content Quality Principles
+
+All markdown content in this repository must follow [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md).
+
+**Universal Application**: These standards apply to ALL markdown content regardless of location.
+
+**Applies to:**
+
+- docs/ (documentation)
+- Hugo sites (ayokoding-web, ose-platform-web)
+- plans/ (project planning documents)
+- Root files (README.md, CONTRIBUTING.md, etc.)
+
+**Key Principles:**
+
+1. **Writing Style and Tone:**
+   - Active voice (not passive)
+   - Professional yet approachable
+   - Clear and concise (no filler words)
+   - Audience-appropriate complexity
+
+2. **Heading Hierarchy:**
+   - Single H1 per document (the title)
+   - Proper H2-H6 nesting (no skipped levels)
+   - Descriptive headings (not vague)
+   - Semantic structure (headings for structure, not styling)
+
+3. **Accessibility Standards:**
+   - All images must have descriptive alt text
+   - Semantic HTML elements used correctly
+   - ARIA labels where appropriate
+   - Color contrast (WCAG AA compliance)
+   - Screen reader considerations
+
+4. **Formatting Conventions:**
+   - Code blocks specify language
+   - Text formatting purposeful (bold for key terms, italic for emphasis)
+   - Lists use proper markdown syntax
+   - Blockquotes for callouts
+   - Line length 80-100 characters for prose
+   - Paragraphs 3-5 sentences with blank lines between
+
+**Quality Checklist** - verify before committing:
+
+- Writing style (active voice, professional tone, clear, concise)
+- Heading hierarchy (single H1, proper nesting, descriptive)
+- Accessibility (alt text, semantic HTML, descriptive links)
+- Formatting (code blocks, text formatting, lists, blockquotes)
+- Readability (line length, paragraph structure)
+
+See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md) for complete standards and examples.
+
 ### Hugo Content Convention
 
 All Hugo content for ayokoding-web and ose-platform-web must follow the [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md).
@@ -650,58 +702,6 @@ All Hugo content for ayokoding-web and ose-platform-web must follow the [Hugo Co
 
 See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards and examples.
 
-### Content Quality Principles
-
-All markdown content in this repository must follow [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md).
-
-**Universal Application**: These standards apply to ALL markdown content regardless of location.
-
-**Applies to:**
-
-- docs/ (documentation)
-- Hugo sites (ayokoding-web, ose-platform-web)
-- plans/ (project planning documents)
-- Root files (README.md, CONTRIBUTING.md, etc.)
-
-**Key Principles:**
-
-1. **Writing Style and Tone:**
-   - Active voice (not passive)
-   - Professional yet approachable
-   - Clear and concise (no filler words)
-   - Audience-appropriate complexity
-
-2. **Heading Hierarchy:**
-   - Single H1 per document (the title)
-   - Proper H2-H6 nesting (no skipped levels)
-   - Descriptive headings (not vague)
-   - Semantic structure (headings for structure, not styling)
-
-3. **Accessibility Standards:**
-   - All images must have descriptive alt text
-   - Semantic HTML elements used correctly
-   - ARIA labels where appropriate
-   - Color contrast (WCAG AA compliance)
-   - Screen reader considerations
-
-4. **Formatting Conventions:**
-   - Code blocks specify language
-   - Text formatting purposeful (bold for key terms, italic for emphasis)
-   - Lists use proper markdown syntax
-   - Blockquotes for callouts
-   - Line length 80-100 characters for prose
-   - Paragraphs 3-5 sentences with blank lines between
-
-**Quality Checklist** - verify before committing:
-
-- Writing style (active voice, professional tone, clear, concise)
-- Heading hierarchy (single H1, proper nesting, descriptive)
-- Accessibility (alt text, semantic HTML, descriptive links)
-- Formatting (code blocks, text formatting, lists, blockquotes)
-- Readability (line length, paragraph structure)
-
-See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md) for complete standards and examples.
-
 ### Key Resources
 
 - **Conventions Index:** [`docs/explanation/conventions/README.md`](./docs/explanation/conventions/README.md)
@@ -712,6 +712,7 @@ See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-q
 - **Diagram and Schema Guide:** [`docs/explanation/conventions/ex-co__diagrams.md`](./docs/explanation/conventions/ex-co__diagrams.md)
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](./docs/explanation/conventions/ex-co__diataxis-framework.md)
 - **Hugo Content Guide:** [`docs/explanation/conventions/ex-co__hugo-content.md`](./docs/explanation/conventions/ex-co__hugo-content.md) - Comprehensive Hugo content standards for ayokoding-web and ose-platform-web
+- **Hugo Development Guide:** [`docs/explanation/conventions/ex-co__hugo-development.md`](./docs/explanation/conventions/ex-co__hugo-development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration, i18n, performance, SEO, accessibility, build processes)
 - **Journals Format Guide:** [`docs/explanation/conventions/ex-co__journals-format.md`](./docs/explanation/conventions/ex-co__journals-format.md)
 - **Emoji Usage Guide:** [`docs/explanation/conventions/ex-co__emoji-usage.md`](./docs/explanation/conventions/ex-co__emoji-usage.md)
 - **Timestamp Format Guide:** [`docs/explanation/conventions/ex-co__timestamp-format.md`](./docs/explanation/conventions/ex-co__timestamp-format.md)
@@ -758,6 +759,7 @@ These directories are gitignored and provide organized storage for temporary out
 - **`docs-maker.md`** - Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework (for how-to guides, reference, explanations)
 - **`docs-tutorial-checker.md`** - Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, and hands-on elements. Complements docs-checker (accuracy) and docs-link-checker (links)
 - **`docs-tutorial-maker.md`** - Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements. Creates engaging tutorials following Diátaxis framework
+- **`hugo-developer.md`** - Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web following Hugo Development Convention. Handles non-content aspects: theme customization, template development, asset optimization, i18n, performance, SEO, and build processes
 - **`journal-maker.md`** - Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries
 - **`plan-checker.md`** - Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
 - **`plan-execution-checker.md`** - Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
