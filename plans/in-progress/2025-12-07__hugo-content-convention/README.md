@@ -410,10 +410,11 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
 
 ### Technology Stack
 
-- **Hugo**: Static site generator (ayokoding-web uses Hextra theme, ose-platform-web uses PaperMod theme)
+- **Hugo**: Static site generator (ayokoding-web uses Hextra theme, ose-platform-web uses PaperMod theme v7.0)
 - **Markdown**: Content format with YAML frontmatter
 - **Mermaid**: Diagram generation (with accessible color palette)
 - **AI Agents**: Claude Code agents for content creation and validation
+- **Theme Compatibility**: Convention targets PaperMod v7.0+ and is compatible with v8.0
 
 ### Design Decisions
 
@@ -749,6 +750,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - Document Linking (Hugo ref/relref, no .md extension)
   - Document File Naming (Hugo-specific patterns)
   - Document Frontmatter (YAML format, required fields)
+  - Document Date Format (REQUIRED per ex-co\_\_timestamp-format.md): ISO 8601 with UTC+7 timezone (YYYY-MM-DDTHH:MM:SS+07:00)
 
 - [ ] Step 4: Document Hugo-Specific Conventions section
   - Document Archetypes (purpose, usage, site-specific types)
@@ -762,6 +764,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - Create comparison table for ayokoding-web vs ose-platform-web (with theme info)
   - Document Hextra theme specifics (FlexSearch, Tailwind CSS, multilingual, shortcodes)
   - Document PaperMod theme specifics (share buttons, analytics, simple SEO)
+  - Document theme version compatibility (targeting v7.0+, compatible with v8.0)
   - Document ayokoding-web specifics (bilingual, learning content, 5 archetypes)
   - Document ose-platform-web specifics (English-only, updates/about, simple structure)
   - Add validated research findings from official theme documentation
