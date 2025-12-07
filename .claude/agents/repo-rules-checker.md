@@ -5,7 +5,7 @@ tools: Read, Glob, Grep
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-03
+updated: 2025-12-07
 ---
 
 # Repository Rule Checker Agent
@@ -260,6 +260,25 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Calculate estimated token savings for each duplication found
 - [ ] Suggest whether to extract to new file or condense existing content
 
+### Condensation Validation
+
+When validating files that have been condensed, verify content was MOVED (not deleted):
+
+- [ ] **Content preservation**: Condensed content exists in convention docs (not lost)
+- [ ] **Convention doc exists**: Target convention file is present and indexed
+- [ ] **Links are correct**: Summary links to correct convention doc with `.md` extension
+- [ ] **Convention indexed**: New/updated conventions listed in appropriate README.md
+- [ ] **No unique content lost**: All valuable information preserved somewhere
+- [ ] **Offload option documented**: Can trace which offload option was used (A/B/C/D)
+
+**Red flags to watch for:**
+
+- Content removed without corresponding convention doc
+- Broken links to conventions
+- Convention exists but not indexed
+- Unique content missing from conventions
+- Duplicate content still in multiple places (offload incomplete)
+
 ### Temporary Files Convention Compliance
 
 - [ ] All report-generating agents reference temporary files convention
@@ -282,6 +301,205 @@ When the user requests a consistency check:
    - **Important**: Inconsistencies that cause confusion
    - **Minor**: Small discrepancies or missing cross-references
 5. **Provide specific fixes** for each issue found
+
+## Condensation Validation Process
+
+**CRITICAL RESPONSIBILITY:** When validating condensed files, ensure content was MOVED to conventions, NOT DELETED.
+
+### Why This Matters
+
+Condensation should preserve knowledge by moving it to convention docs, not erase it. This validation process ensures zero content loss and maintains the repository as a comprehensive knowledge base.
+
+### Validation Questions to Ask
+
+When reviewing a condensed file, systematically ask:
+
+1. **Where did the removed content go?**
+   - Which convention doc contains it now?
+   - Can you locate the exact section in the convention doc?
+   - Is the content comprehensive (not abbreviated)?
+
+2. **Is the content accessible?**
+   - Does a link point to the convention doc?
+   - Is the link correct (relative path, `.md` extension)?
+   - Is the summary clear enough to know what's in the full doc?
+
+3. **Is the convention doc indexed?**
+   - Listed in `docs/explanation/conventions/README.md`?
+   - Listed in `docs/explanation/development/README.md`?
+   - Alphabetically ordered?
+
+4. **Can users still find this information?**
+   - Is the summary informative?
+   - Does the link work?
+   - Is the convention doc discoverable?
+
+5. **Are cross-references working?**
+   - Do related files link to the same convention?
+   - Are bidirectional references maintained?
+   - No broken links introduced?
+
+### Validation Steps
+
+**Step 1: Identify Condensed Sections**
+
+- Read the file that was condensed
+- Look for brief summaries (2-5 lines) with links
+- Identify sections that were previously longer
+- Compare to git history if available
+
+**Step 2: Verify Convention Doc Exists**
+
+- Use Glob to verify convention doc exists
+- Read the convention doc completely
+- Verify it contains the expected content
+- Check frontmatter has `updated` date
+
+**Step 3: Compare Content**
+
+- Read original content (from git or user description)
+- Read convention doc content
+- Verify ALL information is present
+- Check examples, rationale, anti-patterns preserved
+- Confirm no unique details lost
+
+**Step 4: Verify Links**
+
+- Test link from condensed file to convention
+- Verify relative path is correct
+- Confirm `.md` extension included
+- Check link target exists (use Glob)
+
+**Step 5: Check Index Files**
+
+- Read `docs/explanation/conventions/README.md`
+- Read `docs/explanation/development/README.md`
+- Verify convention is listed
+- Verify alphabetical ordering
+
+**Step 6: Search for Duplicates**
+
+- Use Grep to search for the content topic
+- Verify no other files still have verbose version
+- Confirm single source of truth established
+- Check all references point to convention
+
+**Step 7: Validate Zero Content Loss**
+
+- Create checklist of original content elements
+- Verify each element exists in convention doc
+- Document any intentional omissions
+- Flag any missing unique content
+
+### Red Flags and Issues
+
+**Critical Issues (content loss):**
+
+- Content removed without convention doc
+- Convention doc exists but content missing
+- Unique information not preserved anywhere
+- Examples or anti-patterns deleted
+
+**Important Issues (broken navigation):**
+
+- Broken links to conventions
+- Convention not indexed
+- Link uses wrong path format
+- Summary too vague to be useful
+
+**Minor Issues (incomplete offload):**
+
+- Duplicate content still in multiple places
+- Inconsistent linking (some files link, others don't)
+- Convention doc exists but not comprehensive
+- Missing cross-references
+
+### Validation Report Format
+
+When reporting condensation validation results, include:
+
+```markdown
+### Condensation Validation Results
+
+#### Files Validated
+
+- `CLAUDE.md` - Condensed sections: [list sections]
+- `plan-maker.md` - Condensed sections: [list sections]
+- `docs-maker.md` - Condensed sections: [list sections]
+
+#### Convention Docs Created/Updated
+
+- `docs/explanation/conventions/ex-co__acceptance-criteria.md` - Created
+- `docs/explanation/development/ex-de__trunk-based-development.md` - Updated
+
+#### Content Preservation Verification
+
+✅ **Zero Content Loss Confirmed**
+
+- All unique content moved to convention docs
+- No valuable information deleted
+- Examples and anti-patterns preserved
+- Rationale and context maintained
+
+#### Link Verification
+
+✅ **All Links Working**
+
+- Relative paths correct
+- `.md` extensions included
+- Link targets exist
+- Cross-references maintained
+
+#### Index Verification
+
+✅ **Conventions Indexed**
+
+- `ex-co__acceptance-criteria.md` listed in conventions README
+- `ex-de__trunk-based-development.md` listed in development README
+- Alphabetical ordering maintained
+
+#### Issues Found
+
+❌ **Critical:** None
+⚠️ **Important:** 1 issue found
+
+- `plan-executor.md` still has verbose TBD content (should link to convention)
+
+✅ **Minor:** None
+
+#### Recommendations
+
+1. Update `plan-executor.md` to link to TBD convention
+2. Remove duplicate TBD content from `plan-executor.md`
+3. Verify all agents link to TBD convention consistently
+```
+
+### Integration with repo-rules-updater
+
+When `repo-rules-updater` condenses files:
+
+1. **Before condensation**: Note what content will be moved
+2. **After condensation**: Verify with `repo-rules-checker`
+3. **Validation**: Run full condensation validation
+4. **Fix issues**: Use `repo-rules-updater` to correct problems
+
+**Workflow:**
+
+```
+User requests rule change
+    ↓
+repo-rules-updater condenses verbose content
+    ↓
+repo-rules-updater creates/updates convention docs
+    ↓
+User reviews changes
+    ↓
+repo-rules-checker validates condensation
+    ↓
+If issues found → repo-rules-updater fixes
+    ↓
+If no issues → Approve changes
+```
 
 ## Temporary Report Files
 
