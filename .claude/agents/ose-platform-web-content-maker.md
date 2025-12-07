@@ -3,7 +3,7 @@ name: ose-platform-web-content-maker
 description: Expert at creating Hugo content for ose-platform-web (PaperMod theme) following Hugo Content Convention and Content Quality Principles
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
-color: green
+color: blue
 ---
 
 # ose-platform-web-content-maker Agent
