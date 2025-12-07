@@ -1,7 +1,7 @@
 ---
 title: "Hugo Development Convention"
 description: Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web
-category: explanation
+category: development
 tags:
   - hugo
   - development
@@ -59,10 +59,10 @@ This convention defines standards for:
 
 This convention builds upon and references:
 
-- [Hugo Content Convention](./ex-co__hugo-content.md) - Content-related standards (complementary)
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Accessible color palette for themes
-- [Diagram Convention](./ex-co__diagrams.md) - Mermaid diagrams in documentation
-- [Content Quality Principles](./ex-co__content-quality.md) - Universal markdown standards
+- [Hugo Content Convention](../conventions/ex-co__hugo-content.md) - Content-related standards (complementary)
+- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Accessible color palette for themes
+- [Diagram Convention](../conventions/ex-co__diagrams.md) - Mermaid diagrams in documentation
+- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal markdown standards
 
 ## 🏗️ Theme Development
 
@@ -896,7 +896,7 @@ Sitemap: {{ .Site.BaseURL }}sitemap.xml
 
 **Use Accessible Color Palette:**
 
-Refer to [Color Accessibility Convention](./ex-co__color-accessibility.md) for the verified accessible palette:
+Refer to [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) for the verified accessible palette:
 
 - Blue: `#0173B2`
 - Orange: `#DE8F05`
@@ -2156,9 +2156,9 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 
 ### Related Conventions
 
-- [Hugo Content Convention](./ex-co__hugo-content.md) - Content standards
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Accessible colors
-- [Content Quality Principles](./ex-co__content-quality.md) - Universal standards
+- [Hugo Content Convention](../conventions/ex-co__hugo-content.md) - Content standards
+- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Accessible colors
+- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal standards
 
 ---
 

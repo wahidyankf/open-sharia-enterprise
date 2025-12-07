@@ -1,7 +1,7 @@
 ---
 title: "Acceptance Criteria Convention"
 description: Writing testable acceptance criteria using Gherkin format for clarity and automation
-category: conventions
+category: development
 tags:
   - acceptance-criteria
   - gherkin
@@ -320,7 +320,7 @@ Then something happens
 
 - **Requirements files** (`plans/*/requirements.md`): Define acceptance criteria for each user story
 - **Delivery checklists**: Validate implementation against Gherkin scenarios
-- See [Plans Organization Convention](./ex-co__plans-organization.md)
+- See [Plans Organization Convention](../conventions/ex-co__plans-organization.md)
 
 ### ✅ Feature Specifications
 
@@ -455,9 +455,9 @@ graph TD
 
 ## Related Conventions
 
-- [Plans Organization Convention](./ex-co__plans-organization.md) - Where to use acceptance criteria in plans
-- [Tutorial Convention](./ex-co__tutorials.md) - Acceptance criteria for tutorial quality
-- [Content Quality Principles](./ex-co__content-quality.md) - Writing clear, testable content
+- [Plans Organization Convention](../conventions/ex-co__plans-organization.md) - Where to use acceptance criteria in plans
+- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Acceptance criteria for tutorial quality
+- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Writing clear, testable content
 
 ## Summary
 

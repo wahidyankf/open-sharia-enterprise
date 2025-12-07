@@ -1,7 +1,7 @@
 ---
 title: "Temporary Files Convention"
 description: Guidelines for AI agents creating temporary uncommitted files and folders
-category: explanation
+category: development
 tags:
   - temporary-files
   - ai-agents
@@ -158,9 +158,9 @@ The rule includes "unless specified otherwise by other rules/conventions":
 
 ## 📚 Related Conventions
 
-- [File Naming Convention](./ex-co__file-naming-convention.md) - For permanent documentation files
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - For agent design and tool access
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - For documentation organization
+- [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - For permanent documentation files
+- [AI Agents Convention](./ex-de__ai-agents.md) - For agent design and tool access
+- [Diátaxis Framework](../conventions/ex-co__diataxis-framework.md) - For documentation organization
 
 ## 🎯 Benefits
 

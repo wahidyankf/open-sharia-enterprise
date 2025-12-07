@@ -65,9 +65,9 @@ open-sharia-enterprise/
 │   │   └── README.md         # Reference index
 │   ├── explanation/          # Conceptual documentation
 │   │   ├── README.md         # Explanation index
-│   │   ├── conventions/      # Documentation conventions and standards
+│   │   ├── conventions/      # Documentation writing standards (markdown, formatting, content)
 │   │   │   └── README.md     # Conventions index
-│   │   ├── development/      # Development conventions and standards
+│   │   ├── development/      # Software development practices (BDD, Hugo dev, git, agents)
 │   │   │   └── README.md     # Development index
 │   │   └── information-security/  # Information security concepts
 │   │       └── README.md     # Information security index
@@ -252,7 +252,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 ### Convention References
 
-All conventions documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md). Key conventions frequently referenced: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Acceptance Criteria](./docs/explanation/conventions/ex-co__acceptance-criteria.md), [Plans Organization](./docs/explanation/conventions/ex-co__plans-organization.md), [Temporary Files](./docs/explanation/conventions/ex-co__temporary-files.md). See [Conventions Index](./docs/explanation/conventions/README.md) for the complete list of 19 conventions.
+All standards documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md) (documentation writing) and [`docs/explanation/development/`](./docs/explanation/development/README.md) (software development). Key conventions frequently referenced: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Acceptance Criteria](./docs/explanation/development/ex-de__acceptance-criteria.md), [Plans Organization](./docs/explanation/conventions/ex-co__plans-organization.md), [Temporary Files](./docs/explanation/development/ex-de__temporary-files.md), [Hugo Development](./docs/explanation/development/ex-de__hugo-development.md). See [Conventions Index](./docs/explanation/conventions/README.md) for 15 documentation conventions and [Development Index](./docs/explanation/development/README.md) for 6 development practices.
 
 ## AI Agent Standards
 
@@ -277,7 +277,7 @@ AI agents creating temporary uncommitted files must use designated directories t
 - **`generated-reports/`** - For validation, audit, and check reports (report-generating agents)
 - **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
 
-These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/conventions/ex-co__temporary-files.md) for complete details on naming patterns, use cases, and when to use each directory.
+These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/ex-de__temporary-files.md) for complete details on naming patterns, use cases, and when to use each directory.
 
 ### Available Agents
 
