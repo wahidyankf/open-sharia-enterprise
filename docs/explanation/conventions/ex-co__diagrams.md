@@ -2,6 +2,7 @@
 title: "Diagram and Schema Convention"
 description: Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files. Includes color-blind accessibility requirements
 category: explanation
+subcategory: conventions
 tags:
   - diagrams
   - mermaid

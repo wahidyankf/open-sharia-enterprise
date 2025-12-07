@@ -1,12 +1,16 @@
 ---
-title: README Quality Convention
+title: "README Quality Convention"
+description: Quality standards for README.md files ensuring engagement, accessibility, and scannability
+category: explanation
+subcategory: conventions
 tags:
   - conventions
   - readme
   - engagement
   - accessibility
   - writing
-category: explanation
+created: 2025-12-07
+updated: 2025-12-07
 ---
 
 # README Quality Convention

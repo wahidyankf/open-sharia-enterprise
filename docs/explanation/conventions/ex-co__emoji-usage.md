@@ -1,3 +1,18 @@
+---
+title: "Emoji Usage Convention"
+description: Standards for semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
+category: explanation
+subcategory: conventions
+tags:
+  - emoji
+  - accessibility
+  - scannability
+  - conventions
+  - markdown
+created: 2025-12-04
+updated: 2025-12-04
+---
+
 # Emoji Usage Convention
 
 ## 📋 Overview

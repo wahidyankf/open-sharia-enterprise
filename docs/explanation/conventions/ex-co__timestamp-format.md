@@ -2,6 +2,7 @@
 title: "Timestamp Format Convention"
 description: Standard timestamp format using UTC+7 (Indonesian WIB Time)
 category: explanation
+subcategory: conventions
 tags:
   - conventions
   - timestamps

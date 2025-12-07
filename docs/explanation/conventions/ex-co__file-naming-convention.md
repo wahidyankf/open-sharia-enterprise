@@ -2,6 +2,7 @@
 title: "Documentation File Naming Convention"
 description: Systematic file naming for open-sharia-enterprise documentation
 category: explanation
+subcategory: conventions
 tags:
   - naming-convention
   - file-structure

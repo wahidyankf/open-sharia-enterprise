@@ -1,7 +1,8 @@
 ---
-title: Tutorial Naming Convention
+title: "Tutorial Naming Convention"
 description: Standardized tutorial naming and depth levels for consistent learning experiences
 category: explanation
+subcategory: conventions
 tags:
   - conventions
   - tutorials

@@ -2,6 +2,7 @@
 title: "Journals Format Convention"
 description: Logseq-style outliner format for daily research notes and monthly summaries in open-sharia-enterprise
 category: explanation
+subcategory: conventions
 tags:
   - journals
   - logseq

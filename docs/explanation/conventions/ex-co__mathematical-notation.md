@@ -2,6 +2,7 @@
 title: "Mathematical Notation Convention"
 description: Standards for using LaTeX notation for mathematical equations and formulas in open-sharia-enterprise documentation
 category: explanation
+subcategory: conventions
 tags:
   - latex
   - mathematics

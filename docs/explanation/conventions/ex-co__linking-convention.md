@@ -2,6 +2,7 @@
 title: "Documentation Linking Convention"
 description: Standards for linking between documentation files in open-sharia-enterprise
 category: explanation
+subcategory: conventions
 tags:
   - linking
   - markdown

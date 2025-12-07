@@ -2,6 +2,7 @@
 title: "Tutorial Convention"
 description: Standards for creating learning-oriented tutorials in open-sharia-enterprise
 category: explanation
+subcategory: conventions
 tags:
   - tutorials
   - diataxis
