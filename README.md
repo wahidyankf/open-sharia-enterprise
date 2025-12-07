@@ -164,189 +164,61 @@ open-sharia-enterprise/
 
 ### 🏗️ Monorepo Architecture
 
-This project uses **Nx** as a monorepo build system to manage multiple applications and shared libraries with efficient task execution and caching.
+This project uses **Nx** to manage applications and libraries:
 
-**Note**: The Nx monorepo consists of `apps/` and `libs/` only. The `apps-standalone/` directory contains projects with independent build systems that are NOT part of the Nx monorepo.
+- **`apps/`** - Deployable applications (e.g., `api-gateway`, `admin-dashboard`)
+- **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`)
+- **`apps-standalone/`** - Projects with independent build systems (not in Nx)
 
-#### Apps (`apps/`)
-
-Deployable applications - independent executables that consume shared libraries. Part of the Nx monorepo.
-
-**Examples**: `api-gateway`, `admin-dashboard`, `customer-portal`
-
-**Run an app**:
+**Quick Commands**:
 
 ```bash
-nx dev [app-name]    # Start development server
-nx build [app-name]  # Build for production
+nx dev [app-name]       # Start development server
+nx build [app-name]     # Build specific project
+nx affected:build       # Build only affected projects
+nx graph                # Visualize dependencies
 ```
 
-#### Libraries (`libs/`)
+**Learn More**:
 
-Reusable libraries organized in a **flat structure** with **language prefixes**:
-
-- `ts-*` - TypeScript libraries (current: `ts-utils`, `ts-components`)
-- `java-*`, `kt-*`, `py-*` - Future multi-language support
-
-**Importing libraries**:
-
-```typescript
-import { functionName } from "@open-sharia-enterprise/ts-[lib-name]";
-```
-
-**Run library commands**:
-
-```bash
-nx build [lib-name]  # Build library
-nx test [lib-name]   # Run tests
-```
-
-#### Nx Features
-
-- **Task Caching**: Speeds up builds by caching outputs
-- **Affected Detection**: Only rebuild what changed (`nx affected:build`)
-- **Dependency Graph**: Visualize relationships (`nx graph`)
-- **Manual Configuration**: "Vanilla Nx" without plugins for full transparency
-
-#### Standalone Projects (`apps-standalone/`)
-
-Projects with independent build systems that are NOT integrated with the Nx monorepo. These projects have their own tooling and deployment workflows.
-
-**Current standalone projects**:
-
-- None (directory reserved for future standalone projects)
-- Previously housed `ayokoding-web` before Nx integration (now at `apps/ayokoding-web/`)
-
-**Characteristics**:
-
-- Independent build systems (Hugo, Go, Python, etc.)
-- Not managed by Nx workspace
-- Self-contained configuration
-- Separate deployment pipelines
-- Appropriate for projects that have their own established tooling
-
-**When to use `apps-standalone/`**:
-
-Use this directory for projects that:
-
-- Have their own specialized build tools that cannot integrate with Nx
-- Don't benefit from Nx monorepo integration
-- Require completely independent deployment workflows
-- Are not eligible for TypeScript path mappings or shared configuration
-
-**Note**: Even projects with non-Node.js toolchains (like Hugo) can be integrated with Nx using `nx:run-commands` executor to wrap their CLI commands. See `apps/ayokoding-web/` as an example of Hugo integration with Nx.
-
-#### Documentation
-
+- [Monorepo Structure Reference](./docs/reference/re__monorepo-structure.md)
 - [How to Add New App](./docs/how-to/hoto__add-new-app.md)
 - [How to Add New Library](./docs/how-to/hoto__add-new-lib.md)
 - [How to Run Nx Commands](./docs/how-to/hoto__run-nx-commands.md)
-- [Monorepo Structure Reference](./docs/reference/re__monorepo-structure.md)
-- [Nx Configuration Reference](./docs/reference/re__nx-configuration.md)
 
 ## 💻 Development
 
-### ✨ Code Quality
+### ✨ Code Quality & Git Hooks
 
-This project uses:
+This project uses automated tools to maintain code quality:
 
-- 🎨 **Prettier**: Automatic code formatting
-- ✅ **Commitlint**: Enforce conventional commit messages
-- 🪝 **Husky**: Git hooks for automated checks
-- 📋 **Lint-staged**: Run tools on staged files
+- 🎨 **Prettier** - Automatic code formatting
+- 🪝 **Husky** - Git hooks for automated checks
+- 📋 **Lint-staged** - Run formatters on staged files only
+- ✅ **Commitlint** - Enforce [Conventional Commits](https://www.conventionalcommits.org/)
 
-#### 🔧 Git Hooks & Automated Checks
+**Automated Checks**:
 
-This project uses **Husky** and **lint-staged** to automatically enforce code quality:
+- **Pre-commit**: Formats staged files (JS/TS, JSON, Markdown, YAML, CSS, HTML)
+- **Commit-msg**: Validates commit message format
 
-- ⚙️ **Pre-commit hook**: Runs Prettier to format staged files (JS/TS, JSON, Markdown, YAML, CSS, HTML)
-- 💬 **Commit-msg hook**: Runs Commitlint to validate commit message format against Conventional Commits
-
-#### 📝 Commit Message Convention
-
-This project strictly follows [Conventional Commits](https://www.conventionalcommits.org/). For complete details on the convention, validation, best practices, and troubleshooting, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) documentation.
-
-**Format:**
-
-```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-**Key Rules:**
-
-- `<type>` is required and must be lowercase
-- `<scope>` is optional but recommended for clarity
-- `<description>` is required and should be imperative mood (e.g., "add" not "added")
-- First line must be 50 characters or less
-- Body lines must be 100 characters or less (if present)
-
-**Valid types:**
-
-| Type       | Purpose                  | Example                                 |
-| ---------- | ------------------------ | --------------------------------------- |
-| `feat`     | New feature              | `feat(auth): add login form`            |
-| `fix`      | Bug fix                  | `fix: correct validation error`         |
-| `docs`     | Documentation            | `docs: update API reference`            |
-| `style`    | Formatting/whitespace    | `style: remove unused import`           |
-| `refactor` | Code refactoring         | `refactor(parser): simplify logic`      |
-| `perf`     | Performance improvement  | `perf: optimize database query`         |
-| `test`     | Test changes             | `test: add unit tests for auth`         |
-| `chore`    | Build/dependency changes | `chore: update dependencies`            |
-| `ci`       | CI/CD changes            | `ci: add GitHub Actions workflow`       |
-| `revert`   | Revert previous commit   | `revert: feat(auth): remove login form` |
-
-**Quick Examples:**
-
-- ✅ `feat(auth): add two-factor authentication`
-- ✅ `fix: prevent race condition on startup`
-- ✅ `docs: correct typo in README`
-- ✅ `refactor(api): extract common logic into utilities`
-- ❌ `Added new feature` (missing type)
-- ❌ `feat: added login` (wrong tense)
-- ❌ `FEAT(AUTH): ADD LOGIN` (wrong case)
-
-For detailed explanations of each type, scope examples, validation errors, and best practices, see the [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
+For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md) and [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
 
 ## 📚 Documentation
 
-All project documentation is organized using the [Diátaxis framework](https://diataxis.fr/) - a systematic approach that divides documentation into four categories based on user needs: Tutorials (learning-oriented), How-To Guides (problem-solving), Reference (technical lookup), and Explanation (conceptual understanding).
+Documentation is organized using the [Diátaxis framework](https://diataxis.fr/) with four categories: Tutorials (learning), How-To (problem-solving), Reference (lookup), and Explanation (understanding).
 
-For a complete explanation of Diátaxis and how we implement it, see the [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) documentation. See also [`docs/README.md`](./docs/README.md) for documentation index.
+### 📂 Quick Navigation
 
-### 📂 Documentation Structure
+- 🎓 [Tutorials](./docs/tutorials/) - Learning-oriented guides
+- 🔧 [How-To](./docs/how-to/) - Problem-solving guides
+- 📖 [Reference](./docs/reference/) - Technical reference
+- 💡 [Explanation](./docs/explanation/) - Conventions and concepts
+- 📓 [Journals](./docs/journals/) - Research notes
 
-```
-docs/
-├── 🎓 tutorials/         # Learning-oriented guides
-├── 🔧 how-to/            # Problem-solving guides
-├── 📖 reference/         # Technical reference
-├── 💡 explanation/       # Conceptual documentation
-│   ├── 📋 conventions/   # Documentation conventions
-│   └── 🛠️ development/   # Development conventions
-└── 📓 journals/          # Daily research notes (Logseq format)
-```
+**Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault for enhanced navigation and graph view.
 
-### 🧠 Viewing Documentation with Obsidian
-
-The `docs/` folder is optimized to be read using [Obsidian](https://obsidian.md/), a powerful knowledge management tool. While the documentation works fine in any markdown viewer, Obsidian provides:
-
-- 🗺️ **Better navigation** through internal links between documents
-- 🎨 **Visual graph view** to explore documentation structure
-- 🔍 **Full-text search** across all documentation
-- ⚡ **Quick navigation** with command palette
-- 🎭 **Customizable themes** for comfortable reading
-
-To view the docs in Obsidian:
-
-1. 📥 [Download and install Obsidian](https://obsidian.md/)
-2. 📂 Open the `docs/` folder as a vault in Obsidian
-3. 🧭 Navigate using the sidebar or use the graph view to explore relationships
-
-You can also view the documentation directly on GitHub or in any markdown viewer of your choice.
+For complete documentation framework details, see [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) and [`docs/README.md`](./docs/README.md).
 
 ## 📜 License
 
