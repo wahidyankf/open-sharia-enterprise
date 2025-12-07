@@ -239,6 +239,44 @@ Expert at managing files and directories in docs/ directory. Handles renaming, m
   - After operations: automatically updates all internal links and indices
   - Uses git mv and git rm to preserve file history
 
+### 🟩 `readme-checker.md`
+
+Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation.
+
+- **Primary Use:** Reviewing README changes or auditing README quality before merge/release
+- **Specialization:** Engagement validation (problem-solution hooks, clear motivation), accessibility checking (jargon detection, plain language, acronym context), scannability assessment (paragraph length ≤5 lines, visual hierarchy), navigation focus (summary + links, not comprehensive), language quality (active voice, benefits-focused)
+- **Tools:** Read, Glob, Grep
+- **When to Use:**
+  - Validating README updates before committing
+  - Auditing README quality after major changes
+  - Checking for jargon or corporate speak
+  - Verifying paragraph length and scannability
+  - Ensuring acronyms have context (not just expansion)
+  - Confirming problem-solution narrative exists
+  - Detecting duplicate content from detailed docs
+  - Assessing overall engagement and accessibility
+- **Works with:** `readme-maker` for content creation/updates
+- **References:** README Quality Convention
+
+### 🟦 `readme-maker.md`
+
+Creates and updates README.md content while maintaining engagement, accessibility, and quality standards. Rewrites jargony sections, adds context to acronyms, breaks up dense paragraphs.
+
+- **Primary Use:** Adding or updating README sections with quality standards
+- **Specialization:** Engaging content creation (problem-solution hooks, clear narrative), jargon elimination (plain language transformation), acronym contextualization (English-first naming), benefits-focused writing (user perspective), scannability optimization (short paragraphs, visual hierarchy), navigation structure (summary + links)
+- **Tools:** Read, Write, Edit, Glob, Grep
+- **When to Use:**
+  - Adding new sections to README (features, getting started, etc.)
+  - Rewriting jargony or corporate sections
+  - Breaking up dense paragraphs (>5 lines)
+  - Adding context to unexplained acronyms
+  - Converting feature lists to user benefits
+  - Creating problem-solution hooks for motivation
+  - Ensuring README stays navigation-focused (not comprehensive)
+  - Maintaining consistent, welcoming tone throughout
+- **Works with:** `readme-checker` for quality validation
+- **References:** README Quality Convention
+
 ### 🟩 `repo-rules-checker.md`
 
 Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation.
