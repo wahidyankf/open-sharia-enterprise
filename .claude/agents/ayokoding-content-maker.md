@@ -138,11 +138,21 @@ Use this agent when:
    - `{{< filetree >}}` - File/directory trees
    - `{{< icon >}}` - Icon insertion
 
-3. **Taxonomy**:
+3. **Index File Navigation Depth**:
+   - `_index.md` files MUST show **3 layers deep** (parent, children, grandchildren)
+   - Provides comprehensive navigation hierarchy for content discovery
+   - Example structure:
+     ```markdown
+     - [Software Engineering](/learn/swe)
+       - [Programming Languages](/learn/swe/prog-lang)
+         - [JavaScript](/learn/swe/prog-lang/javascript)
+     ```
+
+4. **Taxonomy**:
    - `tags`: Granular topics (e.g., "nodejs", "api", "tutorial", "beginner")
    - `categories`: Fixed set - `["learn"]`, `["celoteh"]`, `["video"]`
 
-4. **Asset Organization**:
+5. **Asset Organization**:
    ```
    static/
    └── images/
@@ -450,6 +460,7 @@ Before completing, verify:
   - [ ] NO author field in video content (`content/en/video-content/`, `content/id/konten-video/`)
   - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
 - [ ] **For `_index.md` files**: Title matches parent folder name exactly (capitalize first letter only)
+- [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, grandchildren)
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids
 - [ ] For bilingual content: Both Indonesian and English versions created
 
