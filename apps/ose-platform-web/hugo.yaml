@@ -21,7 +21,7 @@ minify:
 params:
   env: production
   title: OSE Platform
-  description: "Open-source platform for Sharia-compliant enterprise solutions (ERP, fintech). Building transparent, ethical business technology."
+  description: "Open-source, research-driven platform for Sharia-compliant enterprise solutions. Starting with Indonesian regulations (OJK, DSN-MUI, PBI, PDP), expanding to ERP, fintech, and global markets. Built-in compliance, radical transparency."
   keywords:
     [
       Sharia-compliant,
@@ -31,6 +31,11 @@ params:
       halal,
       enterprise,
       open-source,
+      Indonesian,
+      OJK,
+      DSN-MUI,
+      AAOIFI,
+      IFSB,
     ]
   author: Open Sharia Enterprise
 
@@ -61,8 +66,8 @@ params:
       **Open-source platform for Sharia-compliant enterprise solutions**
 
 
-      Building transparent, ethical business technology for ERP, fintech, and beyond.
-      Currently in pre-alpha development.
+      Research-first approach starting with Indonesian market, expanding to ERP, fintech, and global operations.
+      Built-in compliance architecture with radical transparency. Currently in pre-alpha development.
 
   # Social icons
   socialIcons:
