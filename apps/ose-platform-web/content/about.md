@@ -83,11 +83,16 @@ Extending the platform to support multiple jurisdictions:
 
 ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**.
 
-**Current Stage:**
+**Current Phase: Phase 0 (Setup and Research)**
+
+We are establishing foundational infrastructure and conducting research to inform architectural decisions:
 
 - 🔨 Core infrastructure setup
 - 📋 Project planning and architecture design
 - 🏗️ Foundation patterns being established
+- 🔍 Researching Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
+- 🛡️ Security and DevSecOps research
+- 🤖 AI research and integration exploration
 
 **Not Yet Available:**
 
