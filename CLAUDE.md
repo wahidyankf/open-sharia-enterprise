@@ -249,7 +249,13 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 ### Hugo Content Convention
 
-**ayokoding-web**: Hextra theme, bilingual ID/EN, educational content, 5 archetypes. **ose-platform-web**: PaperMod v7.0+, English-only, project updates, 1 archetype. Key differences: Hugo linking (no `.md` extension), YAML frontmatter (title, date, draft required), date format `YYYY-MM-DDTHH:MM:SS+07:00`. **ayokoding-web specific**: Index file titles must match parent folder names exactly (capitalize first letter only: folder `lang` → title `Lang`). Author field: DO NOT include in learning/video content (uses site-level config `params.author: "Wahidyan Kresna Fridayoka"`), allowed ONLY in rants/celoteh (guest contributors). Specialized agents: ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker. See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards.
+**Both Sites**: Hugo linking (no `.md`), YAML frontmatter (title/date/draft required), ISO 8601 dates (`YYYY-MM-DDTHH:MM:SS+07:00`)
+
+**ayokoding-web** (Hextra): Bilingual ID/EN, 5 archetypes, educational content. Index titles match folder names (`lang` → `Lang`). Author: site-level config only (NO in frontmatter except rants/celoteh for guests)
+
+**ose-platform-web** (PaperMod v7.0+): English-only, 1 archetype, project updates
+
+**Agents**: ayokoding-content-maker/checker, ose-platform-web-content-maker/checker. See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards.
 
 ### README Quality Convention
 
