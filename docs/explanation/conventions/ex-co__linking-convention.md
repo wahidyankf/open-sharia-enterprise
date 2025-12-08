@@ -298,6 +298,16 @@ Start:  docs/journals/2025-11/2025-11-27.md
 Final path: ../../explanation/conventions/ex-co__linking-convention.md
 ```
 
+## Hugo Content Linking
+
+**Important**: This convention applies to documentation in the `docs/` directory. Hugo content in `apps/ayokoding-web/` and `apps/ose-platform-web/` uses different linking rules:
+
+- **Hugo internal links** use absolute paths starting with `/` (e.g., `/learn/ai/chat-with-pdf`)
+- **Hugo links omit** the `.md` extension
+- **Why different**: Hugo renders the same navigation content in different page contexts (sidebar, mobile menu, homepage), so relative paths would resolve incorrectly
+
+See [Hugo Content Convention](./ex-co__hugo-content.md) for complete Hugo linking standards.
+
 ## Anchor Links (Same Page)
 
 For linking to headings within the same document:
