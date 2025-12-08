@@ -369,6 +369,47 @@ title: LANG # WRONG! Incorrect capitalization (should be Lang)
 ---
 ```
 
+### Index File Navigation Depth Validation
+
+**For `_index.md` files in ayokoding-web**:
+
+- [ ] Navigation links display **3 layers deep** (parent + children + grandchildren)
+- [ ] Layer 1: Parent section/category (current level)
+- [ ] Layer 2: Children (immediate subsections)
+- [ ] Layer 3: Grandchildren (subsections of children)
+
+**Valid Navigation (3 layers deep)**:
+
+```markdown
+<!-- File: apps/ayokoding-web/content/en/learn/_index.md -->
+
+- [Software Engineering](/learn/swe)
+  - [Programming Languages](/learn/swe/prog-lang)
+    - [JavaScript](/learn/swe/prog-lang/javascript)
+    - [TypeScript](/learn/swe/prog-lang/typescript)
+  - [System Design](/learn/swe/system-design)
+    - [Fundamentals](/learn/swe/system-design/fundamentals)
+```
+
+**Invalid Navigation (only 2 layers - missing grandchildren)**:
+
+```markdown
+<!-- WRONG! Stops at children -->
+
+- [Software Engineering](/learn/swe)
+  - [Programming Languages](/learn/swe/prog-lang)
+  - [System Design](/learn/swe/system-design)
+```
+
+**Invalid Navigation (only 1 layer)**:
+
+```markdown
+<!-- WRONG! No hierarchy -->
+
+- [Software Engineering](/learn/swe)
+- [AI Engineering](/learn/ai)
+```
+
 ### Archetype Compliance Validation
 
 **Purpose**: Verify content follows archetype-specific conventions and rules.

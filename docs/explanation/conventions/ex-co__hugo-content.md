@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-10
+updated: 2025-12-09
 ---
 
 # Hugo Content Convention
@@ -821,6 +821,57 @@ title: Programming Languages # WRONG! Doesn't match folder name
 - Folder `swe` → Title `Swe`
 - Folder `business-law` → Title `Business-law`
 - Folder `crash-courses` → Title `Crash-courses`
+
+**Index File Navigation Depth** (ayokoding-web):
+
+- `_index.md` files MUST display navigation links **3 layers deep** (parent + children + grandchildren)
+- **Layer 1**: Parent section/category (current level)
+- **Layer 2**: Children (immediate subsections)
+- **Layer 3**: Grandchildren (subsections of children)
+- **Rationale**: Provides comprehensive navigation hierarchy, helps users discover deeply nested content without clicking through multiple pages, improves content discoverability and UX
+- **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
+
+✅ **Good (3 layers deep)**:
+
+```markdown
+<!-- File: apps/ayokoding-web/content/en/learn/_index.md -->
+
+- [Software Engineering](/learn/swe)
+  - [Programming Languages](/learn/swe/prog-lang)
+    - [JavaScript](/learn/swe/prog-lang/javascript)
+    - [TypeScript](/learn/swe/prog-lang/typescript)
+  - [System Design](/learn/swe/system-design)
+    - [Fundamentals](/learn/swe/system-design/fundamentals)
+- [AI Engineering](/learn/ai)
+  - [Chat with PDF](/learn/ai/chat-with-pdf)
+- [Human](/learn/human)
+  - [Tools](/learn/human/tools)
+    - [CliftonStrengths](/learn/human/tools/cliftonstrengths)
+```
+
+❌ **Bad (only 2 layers - missing grandchildren)**:
+
+```markdown
+<!-- WRONG! Stops at children, doesn't show grandchildren -->
+
+- [Software Engineering](/learn/swe)
+  - [Programming Languages](/learn/swe/prog-lang)
+  - [System Design](/learn/swe/system-design)
+- [AI Engineering](/learn/ai)
+  - [Chat with PDF](/learn/ai/chat-with-pdf)
+```
+
+❌ **Bad (only 1 layer - no hierarchy)**:
+
+```markdown
+<!-- WRONG! No children or grandchildren shown -->
+
+- [Software Engineering](/learn/swe)
+- [AI Engineering](/learn/ai)
+- [Human](/learn/human)
+```
+
+**Important**: This rule applies to navigation sections in `_index.md` files. Regular content pages do not require this hierarchy depth.
 
 **Example (ayokoding-web directory structure)**:
 
