@@ -174,24 +174,46 @@ showtoc: false
 
 **Internal Links**:
 
-- [ ] Use Hugo `{{< ref >}}` shortcode OR paths without `.md` extension
+- [ ] Use **absolute paths** starting with `/` (e.g., `/updates/path`)
+- [ ] Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
+- [ ] Do NOT use `.md` extension
 - [ ] Links point to valid content files
 - [ ] No broken internal links
+
+**Why absolute paths are required**: Hugo renders navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on context, causing broken links.
 
 **Valid Internal Link Formats**:
 
 ```markdown
+<!-- Hugo ref shortcode (recommended) -->
+
 {{< ref "/updates/getting-started" >}}
-{{< relref "../previous-update" >}}
+
+<!-- Absolute path without .md (required for navigation) -->
+
 [Release Notes](/updates/release-notes)
+[About Us](/about)
+[Feature Update](/updates/feature-release)
 ```
 
 **Invalid Internal Link Formats**:
 
 ```markdown
-[Release Notes](/updates/release-notes.md) <!-- WRONG! Has .md extension -->
-[Guide](./guide.md) <!-- WRONG! Has .md extension -->
+<!-- WRONG! Relative paths break in different contexts -->
+
+[Release Notes](./release-notes)
+[Previous Update](../previous-update)
+[About](../../about)
+
+<!-- WRONG! Has .md extension -->
+
+[Release Notes](/updates/release-notes.md)
+[Guide](./guide.md)
 ```
+
+**Validation Logic for Relative Paths**:
+
+When scanning content, flag any internal links using relative paths (`./` or `../`) as **errors**, especially in navigation sections or content that appears in multiple contexts.
 
 **External Links**:
 
