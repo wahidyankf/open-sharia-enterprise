@@ -92,8 +92,11 @@ Use this agent when:
    - Markdown content: Standard markdown indentation
 
 2. **Linking**:
-   - Internal links: Use `{{< ref >}}` or paths without `.md` extension
-   - Example: `{{< ref "/id/belajar/nodejs/getting-started" >}}`
+   - Internal links: Use **absolute paths** starting with `/` (e.g., `/learn/path`)
+   - Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
+   - Do NOT use `.md` extension
+   - Example: `{{< ref "/belajar/nodejs/getting-started" >}}` or `[Tutorial](/learn/nodejs/basics)`
+   - **Why**: Hugo renders navigation in different contexts (sidebar, mobile, homepage); relative paths resolve differently
 
 3. **File Naming**:
    - Simple slugs: `getting-started.md`, `advanced-patterns.md`
@@ -435,7 +438,8 @@ Before completing, verify:
 - [ ] Frontmatter uses YAML with 2-space indentation
 - [ ] Date format is `YYYY-MM-DDTHH:MM:SS+07:00`
 - [ ] Description is 150-160 characters (if present)
-- [ ] Internal links use `{{< ref >}}` or paths without `.md`
+- [ ] Internal links use **absolute paths** starting with `/` (NO relative paths like `./` or `../`)
+- [ ] Internal links do NOT have `.md` extension
 - [ ] All images have descriptive alt text
 - [ ] Mermaid diagrams use accessible color palette
 - [ ] Code blocks specify language

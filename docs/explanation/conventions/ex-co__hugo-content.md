@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-09
+updated: 2025-12-10
 ---
 
 # Hugo Content Convention
@@ -352,7 +352,7 @@ tags:
 
 **Adaptation for Hugo**:
 
-- **Internal Links**: Use Hugo's ref/relref shortcodes OR relative paths WITHOUT `.md` extension
+- **Internal Links**: Use absolute paths starting with `/` (e.g., `/learn/path`) WITHOUT `.md` extension
 - **External Links**: Standard markdown `[text](url)`
 - **Asset Links**: Reference `/images/` path (served from `static/`)
 
@@ -362,16 +362,31 @@ tags:
 - Hugo generates URLs without `.md` extensions
 - Using `.md` in Hugo links breaks in production builds
 
-**Examples**:
+#### Internal Link Path Format
+
+**CRITICAL RULE**: Always use **absolute paths** starting with `/` for internal content links. Never use relative paths (`./` or `../`).
+
+**Why absolute paths?**
+
+Hugo renders the same navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on where they're rendered:
+
+- From `/en/learn/` page: `./ai/` → `/en/learn/ai/` ✅
+- From `/en/` homepage: `./ai/` → `/en/ai/` ❌ (broken)
+
+Absolute paths work correctly from **any page context**.
+
+**Correct (absolute paths)**:
 
 ```markdown
-<!-- Hugo ref shortcode (recommended) -->
+<!-- Hugo ref shortcode (recommended for validation) -->
 
 Check out our [getting started guide]({{< ref "/learn/getting-started" >}})
 
-<!-- Relative path without .md (also works) -->
+<!-- Absolute path without .md (works in all contexts) -->
 
-See the [advanced tutorial](/learn/advanced-tutorial)
+[Chat with PDF](/learn/ai/chat-with-pdf)
+[Software Engineering](/learn/swe)
+[About Us](/about)
 
 <!-- External link (standard markdown) -->
 
@@ -382,11 +397,29 @@ Visit [Hugo Documentation](https://gohugo.io/documentation/)
 ![Architecture Diagram](/images/architecture.png)
 ```
 
-❌ **Incorrect (using .md extension)**:
+❌ **Incorrect (relative paths or .md extension)**:
 
 ```markdown
-See our [tutorial](/learn/tutorial.md) <!-- WRONG! Breaks in production -->
+<!-- WRONG! Relative paths break in different rendering contexts -->
+
+[Chat with PDF](./ai/chat-with-pdf/)
+[Software Engineering](../swe/)
+[Advanced Guide](../../advanced/)
+
+<!-- WRONG! Using .md extension breaks in production -->
+
+[Tutorial](/learn/tutorial.md)
+[Guide](./guide.md)
 ```
+
+**Language Prefix**: Hugo handles language prefix automatically. Never include `/en/` or `/id/` in internal links:
+
+```markdown
+✅ Good: [Tutorial](/learn/nodejs)
+❌ Bad: [Tutorial](/en/learn/nodejs) <!-- Hugo adds language prefix -->
+```
+
+**Lesson Learned**: This rule was discovered after navigation links broke on mobile in ayokoding-web. Links in `_index.md` files (navigation sections) must use absolute paths to ensure they work correctly when rendered in sidebar, mobile menu, and homepage contexts.
 
 ### 3. File Naming Convention
 

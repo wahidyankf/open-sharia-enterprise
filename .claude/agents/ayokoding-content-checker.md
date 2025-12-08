@@ -155,24 +155,50 @@ categories: ["learn"]
 
 **Internal Links**:
 
-- [ ] Use Hugo `{{< ref >}}` shortcode OR paths without `.md` extension
+- [ ] Use **absolute paths** starting with `/` (e.g., `/learn/path`)
+- [ ] Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
+- [ ] Do NOT use `.md` extension
 - [ ] Links point to valid content files
 - [ ] No broken internal links
+
+**Why absolute paths are required**: Hugo renders navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on context, causing broken links.
 
 **Valid Internal Link Formats**:
 
 ```markdown
-{{< ref "/id/belajar/nodejs/getting-started" >}}
-{{< relref "../advanced-topics" >}}
-[Tutorial](/en/learn/nodejs/basics)
+<!-- Hugo ref shortcode (recommended) -->
+
+{{< ref "/belajar/nodejs/getting-started" >}}
+{{< ref "/learn/nodejs/getting-started" >}}
+
+<!-- Absolute path without .md (required for navigation) -->
+
+[Chat with PDF](/learn/ai/chat-with-pdf)
+[Software Engineering](/learn/swe)
+[Tutorial](/learn/nodejs/basics)
 ```
 
 **Invalid Internal Link Formats**:
 
 ```markdown
-[Tutorial](/en/learn/nodejs/basics.md) <!-- WRONG! Has .md extension -->
-[Guide](./guide.md) <!-- WRONG! Has .md extension -->
+<!-- WRONG! Relative paths break in different contexts (sidebar, mobile menu, homepage) -->
+
+[Chat with PDF](./ai/chat-with-pdf/)
+[Software Engineering](../swe/)
+[Tutorial](../../nodejs/basics)
+
+<!-- WRONG! Has .md extension -->
+
+[Tutorial](/learn/nodejs/basics.md)
+[Guide](./guide.md)
 ```
+
+**Validation Logic for Relative Paths**:
+
+When scanning content, flag any internal links using relative paths (`./` or `../`) as **errors**, especially in:
+
+- `_index.md` files (navigation sections)
+- Any content that appears in sidebar or mobile navigation
 
 **External Links**:
 

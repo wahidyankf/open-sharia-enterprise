@@ -98,8 +98,11 @@ content/
    - Markdown content: Standard markdown indentation
 
 2. **Linking**:
-   - Internal links: Use `{{< ref >}}` or paths without `.md` extension
-   - Example: `{{< ref "/updates/getting-started" >}}`
+   - Internal links: Use **absolute paths** starting with `/` (e.g., `/updates/path`)
+   - Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
+   - Do NOT use `.md` extension
+   - Example: `{{< ref "/updates/getting-started" >}}` or `[Release Notes](/updates/release-notes)`
+   - **Why**: Hugo renders navigation in different contexts (sidebar, mobile, homepage); relative paths resolve differently
 
 3. **File Naming**:
    - Date-prefixed for updates: `YYYY-MM-DD-slug.md` (e.g., `2025-12-07-initial-release.md`)
@@ -480,7 +483,8 @@ Before completing, verify:
 - [ ] Frontmatter uses YAML with 2-space indentation
 - [ ] Date format is `YYYY-MM-DDTHH:MM:SS+07:00`
 - [ ] Summary is descriptive (for SEO)
-- [ ] Internal links use `{{< ref >}}` or paths without `.md`
+- [ ] Internal links use **absolute paths** starting with `/` (NO relative paths like `./` or `../`)
+- [ ] Internal links do NOT have `.md` extension
 - [ ] All images have descriptive alt text
 - [ ] Mermaid diagrams use accessible color palette
 - [ ] Code blocks specify language
