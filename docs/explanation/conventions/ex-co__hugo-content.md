@@ -32,7 +32,7 @@ Hugo content in this repository follows a layered convention approach:
 5. **Site-Specific Differences** (2) - ayokoding-web vs ose-platform-web patterns
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
 graph TD
     A[Hugo Content Creation] --> B[Inherited Conventions<br/>7 standards from docs/]
     A --> C[Adapted Conventions<br/>5 modified standards]
@@ -122,7 +122,7 @@ where $\pi$ represents the expected inflation rate.
 
 ````markdown
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
 graph LR
     A[Start] --> B[Process]
     B --> C[End]
@@ -155,7 +155,7 @@ graph LR
 
 ```markdown
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
 flowchart TD
     A[User Request] --> B{Authentication?}
     B -->|Yes| C[Access Granted]
@@ -1183,6 +1183,195 @@ static/
 | **Tutorial Content**       | Yes (id/belajar/, en/learn/)                             | No (not applicable)                        |
 | **Navigation**             | Auto-sidebar, prev/next, breadcrumbs                     | Breadcrumbs, archive, smooth scrolling     |
 | **Frontmatter Complexity** | More fields (weight, categories, author, sidebar)        | Simpler (tags, categories, summary, cover) |
+
+## Configuration Highlights
+
+This section documents important hugo.yaml configuration patterns for both sites.
+
+### ayokoding-web Configuration (Hextra Theme)
+
+**Language Configuration**:
+
+```yaml
+defaultContentLanguage: id
+defaultContentLanguageInSubdir: true
+
+languages:
+  id:
+    languageName: "Bahasa Indonesia"
+    languageCode: "id-ID"
+    weight: 1
+  en:
+    languageName: "English"
+    languageCode: "en-US"
+    weight: 2
+```
+
+**Key Points**:
+
+- Default language is Indonesian (`id`)
+- Both languages get subdirectories (`/id/`, `/en/`)
+- Language codes use ISO format (`id-ID`, `en-US`)
+
+**Module Mounts** (content organization):
+
+```yaml
+module:
+  imports:
+    - path: github.com/imfing/hextra
+  mounts:
+    - source: content/en
+      target: content
+      lang: en
+    - source: content/id
+      target: content
+      lang: id
+```
+
+**LaTeX Math Rendering**:
+
+```yaml
+markup:
+  goldmark:
+    extensions:
+      passthrough:
+        delimiters:
+          block: [["$$", "$$"]]
+          inline: [["$", "$"]]
+        enable: true
+
+params:
+  math:
+    enable: true
+    engine: katex
+```
+
+**FlexSearch Configuration** (offline search):
+
+```yaml
+params:
+  search:
+    enable: true
+    type: flexsearch
+    flexsearch:
+      index: content # Index full content
+      tokenize: full # Full tokenization
+```
+
+**SEO & Author Configuration**:
+
+```yaml
+params:
+  # Site-level author (used when content doesn't have author field)
+  author: "Wahidyan Kresna Fridayoka"
+
+  # Default Open Graph image
+  images:
+    - /logo.png
+
+  # Social media profiles
+  social:
+    threads: "https://www.threads.net/@wahidyankf"
+    github: "https://github.com/wahidyankf/open-sharia-enterprise"
+    youtube: "https://www.youtube.com/@AyoKoding"
+```
+
+**Important**: The `params.author` field serves as the default author for ALL content. Individual content files should NOT include `author:` in frontmatter unless they have guest contributors (rants/celoteh only).
+
+**Sitemap & SEO**:
+
+```yaml
+sitemap:
+  changefreq: weekly
+  filename: sitemap.xml
+  priority: 0.5
+
+services:
+  googleAnalytics:
+    ID: G-1NHDR7S3GV
+
+privacy:
+  googleAnalytics:
+    anonymizeIP: true
+    respectDoNotTrack: true
+```
+
+### ose-platform-web Configuration (PaperMod Theme)
+
+**Basic Configuration**:
+
+```yaml
+baseURL: "https://oseplatform.com/"
+title: "OSE Platform"
+languageCode: "en-us"
+defaultContentLanguage: "en"
+
+theme: "PaperMod"
+```
+
+**PaperMod-Specific Parameters**:
+
+```yaml
+params:
+  env: production
+  author: "OSE Platform Team"
+
+  # Content display
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowCodeCopyButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+
+  # Theme
+  defaultTheme: auto # light/dark/auto
+
+  # Social sharing
+  ShareButtons:
+    - twitter
+    - linkedin
+    - reddit
+```
+
+**Home Page Configuration**:
+
+```yaml
+params:
+  homeInfoParams:
+    Title: "Welcome to OSE Platform"
+    Content: "Open Sharia Enterprise Platform documentation and updates"
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/wahidyankf/open-sharia-enterprise"
+    - name: twitter
+      url: "https://twitter.com/oseplatform"
+```
+
+**Cover Image Defaults**:
+
+```yaml
+params:
+  cover:
+    responsiveImages: true
+    hidden: false
+    linkFullImages: true
+```
+
+### Configuration Comparison
+
+| Aspect               | ayokoding-web (Hextra)                   | ose-platform-web (PaperMod)        |
+| -------------------- | ---------------------------------------- | ---------------------------------- |
+| **Language Support** | Bilingual (id/en) with subdirs           | English only                       |
+| **Theme Import**     | Hugo module (`github.com/imfing/hextra`) | Traditional theme folder           |
+| **Search**           | FlexSearch (offline, content indexing)   | Fuse.js (default PaperMod search)  |
+| **Math Rendering**   | KaTeX (LaTeX passthrough enabled)        | Not configured                     |
+| **Author Config**    | `params.author` (site-level default)     | `params.author` (per-post typical) |
+| **Social Sharing**   | Via theme defaults                       | Configurable ShareButtons          |
+| **Analytics**        | Google Analytics (anonymized)            | Google Analytics (standard)        |
+| **Content Mounting** | Custom mounts per language               | Standard Hugo content directory    |
+| **Home Page**        | Auto-generated from content              | homeInfoParams configuration       |
+| **Cover Images**     | Not emphasized                           | Built-in cover image support       |
 
 ## Content Creation Workflow
 
