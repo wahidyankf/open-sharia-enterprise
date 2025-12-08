@@ -5,8 +5,9 @@ draft: false
 weight: 2
 ---
 
-[Topics](./topics/)
-
-[Principles](./principles/)
-
-[Components](./components/)
+- [Topics](./topics/)
+  - [Multi-tier Architecture](./topics/multi-tier-architecture/)
+  - [Scalability](./topics/scalability/)
+- [Principles](./principles/)
+- [Components](./components/)
+  - [Data Stores](./components/data-stores/)

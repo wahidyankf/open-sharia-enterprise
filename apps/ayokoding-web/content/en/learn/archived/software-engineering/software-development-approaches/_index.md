@@ -5,18 +5,13 @@ draft: false
 weight: 3
 ---
 
-[Overview](./overview/)
-
-[Waterfall](./waterfall/)
-
-[Agile](./agile/)
-
-[DevOps](./devops/)
-
-[Rapid Application Development (RAD)](./rapid-application-development-rad/)
-
-[Spiral Model](./spiral-model/)
-
-[Iterative and Incremental](./iterative-and-incremental/)
-
-[V Model](./v-model/)
+- [Overview](./overview/)
+- [Waterfall](./waterfall/)
+- [Agile](./agile/)
+  - [Methodologies](./agile/methodologies/)
+  - [Project Management](./agile/project-management/)
+- [DevOps](./devops/)
+- [Rapid Application Development (RAD)](./rapid-application-development-rad/)
+- [Spiral Model](./spiral-model/)
+- [Iterative and Incremental](./iterative-and-incremental/)
+- [V Model](./v-model/)

@@ -76,7 +76,11 @@ Use this agent when:
 - [ ] `description` - If present, should be 150-160 characters for SEO
 - [ ] `tags` - If present, should be array format (e.g., `["tag1", "tag2"]`)
 - [ ] `categories` - If present, should be array with valid categories (`["learn"]`, `["celoteh"]`, `["video"]`)
-- [ ] `author` - If present, should be string or array
+- [ ] `author` - Special rules:
+  - [ ] Should NOT exist in learning content (`content/en/learn/`, `content/id/belajar/`)
+  - [ ] Should NOT exist in video content (`content/en/video-content/`, `content/id/konten-video/`)
+  - [ ] MAY exist in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
+  - [ ] If present, should be string (e.g., "Wahidyan Kresna Fridayoka")
 - [ ] `weight` - If present, should be integer (for ordering)
 
 **Frontmatter Format**:
@@ -108,7 +112,7 @@ description: "Complete beginner's guide to Node.js development environment setup
 weight: 5
 tags: ["nodejs", "beginner", "tutorial", "javascript"]
 categories: ["learn"]
-author: "Wahid Fajar"
+# Note: No author field - uses site-level config (learning content)
 ---
 ```
 
@@ -306,6 +310,39 @@ Content for step 2.
 {{< /steps >}}
 ```
 
+### Index File Title Validation
+
+**For `_index.md` files only**:
+
+- [ ] `title` field MUST exactly match parent folder name (case-sensitive)
+- [ ] Capitalization: First letter capitalized only (folder `lang` → title `Lang`, folder `business-law` → title `Business-law`)
+
+**Valid Index File Titles**:
+
+```yaml
+# File: content/en/learn/swe/lang/_index.md
+---
+title: Lang # Correct - matches folder name exactly
+---
+# File: content/id/belajar/crash-courses/_index.md
+---
+title: Crash-courses # Correct - matches folder name exactly
+---
+```
+
+**Invalid Index File Titles**:
+
+```yaml
+# File: content/en/learn/swe/lang/_index.md
+---
+title: Programming Languages # WRONG! Doesn't match folder name
+---
+# File: content/en/learn/swe/lang/_index.md
+---
+title: LANG # WRONG! Incorrect capitalization (should be Lang)
+---
+```
+
 ### Taxonomy Validation
 
 **Categories** (ayokoding-web specific):
@@ -487,6 +524,7 @@ Provide structured feedback:
 ✅ **Date Format**: Correct ISO 8601 with UTC+7 format
 ⚠️ **Description Length**: 145 characters (recommended: 150-160 for SEO)
 ✅ **YAML Indentation**: Correct 2-space indentation
+✅ **Author Field**: Not present (learning content - correct)
 
 ## Content Structure
 
@@ -629,6 +667,7 @@ Excellent content! No issues found. Ready for immediate publication.
 ⚠️ **Description**: Only 95 characters (recommended: 150-160)
 ❌ **YAML Indentation**: Uses tabs instead of 2 spaces (lines 4-6)
 ❌ **Categories**: `["tutorials"]` (invalid category, should be `["learn"]`)
+⚠️ **Author Field**: Present in learning content (should not exist - uses site-level config)
 
 ## Content Structure
 

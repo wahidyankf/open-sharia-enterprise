@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-07
+updated: 2025-12-09
 ---
 
 # Hugo Content Convention
@@ -463,10 +463,19 @@ content/
 - `description` - Page description (recommended 150-160 chars for SEO)
 - `tags` - Content tags (array)
 - `categories` - Content categories (array)
-- `author` - Content author (string or array)
 - `weight` - Page ordering (integer)
 
 **Site-Specific Fields**: See "Site-Specific Differences" section below
+
+**Important Site-Specific Rules**:
+
+- **ayokoding-web**:
+  - **Default**: Do NOT include `author:` field in frontmatter (site-level author configuration in `hugo.yaml` handles this globally via `params.author: "Wahidyan Kresna Fridayoka"`)
+  - **Exceptions**: Author field IS allowed in:
+    - `apps/ayokoding-web/content/en/rants/` - English rants may have different authors
+    - `apps/ayokoding-web/content/id/celoteh/` - Indonesian rants may have different authors
+  - **Rationale**: Site-level author handles most content; rants/celoteh may have guest contributors
+- **ose-platform-web**: `author:` field is allowed and used per-post
 
 **Example (ayokoding-web learning content)**:
 
@@ -479,7 +488,7 @@ description: "Learn TypeScript fundamentals in 30 minutes"
 weight: 10
 tags: ["typescript", "javascript", "tutorial"]
 categories: ["learn"]
-author: "Wahid Fajar"
+# Note: No author field - uses site-level config (params.author in hugo.yaml)
 ---
 ```
 
@@ -541,7 +550,7 @@ These conventions are unique to Hugo static site generation.
 
 **ayokoding-web Archetypes**:
 
-1. **learn.md** - Educational/tutorial content
+1. **learn.md** - Educational/tutorial content (no author field - uses site-level config)
 
    ```yaml
    ---
@@ -552,11 +561,11 @@ These conventions are unique to Hugo static site generation.
    weight: 10
    tags: []
    categories: ["learn"]
-   author: "Author Name"
+   # Note: No author field - uses site-level config (params.author in hugo.yaml)
    ---
    ```
 
-2. **celoteh.md** - Personal essays/rants
+2. **celoteh.md** - Personal essays/rants (author field allowed - may have guest contributors)
 
    ```yaml
    ---
@@ -566,11 +575,11 @@ These conventions are unique to Hugo static site generation.
    description: ""
    tags: []
    categories: ["celoteh"]
-   author: "Author Name"
+   author: "Author Name"  # Optional - allowed in rants/celoteh directories
    ---
    ```
 
-3. **konten-video.md** - Video content
+3. **konten-video.md** - Video content (no author field - uses site-level config)
 
    ```yaml
    ---
@@ -580,12 +589,12 @@ These conventions are unique to Hugo static site generation.
    description: ""
    tags: []
    categories: ["video"]
-   author: "Author Name"
    videoUrl: ""
+   # Note: No author field - uses site-level config (params.author in hugo.yaml)
    ---
    ```
 
-4. **\_index.md** - Section index pages
+4. **\_index.md** - Section index pages (title must match parent folder name exactly)
 5. **default.md** - Default template
 
 **ose-platform-web Archetypes**:
@@ -746,6 +755,39 @@ static/
 - List pages for a directory
 - Can include intro content
 - Generate taxonomy pages
+
+**Index File Title Rule** (ayokoding-web):
+
+- The `title` field in `_index.md` frontmatter MUST exactly match the parent folder name (case-sensitive)
+- **Rationale**: Consistency and simplicity in navigation structure
+- **Example**: File at `/content/en/learn/swe/lang/_index.md` must have `title: Lang` (not "Programming Languages")
+
+✅ **Good**:
+
+```yaml
+# File: content/en/learn/swe/lang/_index.md
+---
+title: Lang # Matches parent folder name exactly
+---
+```
+
+❌ **Bad**:
+
+```yaml
+# File: content/en/learn/swe/lang/_index.md
+---
+title: Programming Languages # WRONG! Doesn't match folder name
+---
+```
+
+**Uppercase Convention**: Folder names determine titles. If folder is `lang`, title is `Lang` (capitalize first letter). If folder is `business-law`, title is `Business-law` (capitalize only first word's first letter).
+
+**Example Mappings**:
+
+- Folder `lang` → Title `Lang`
+- Folder `swe` → Title `Swe`
+- Folder `business-law` → Title `Business-law`
+- Folder `crash-courses` → Title `Crash-courses`
 
 **Example (ayokoding-web directory structure)**:
 
@@ -1008,7 +1050,7 @@ content/
 4. `_index.md` - Section index pages
 5. `default.md` - Default template
 
-**Frontmatter Pattern** (learn archetype):
+**Frontmatter Pattern** (learn archetype - no author field):
 
 ```yaml
 ---
@@ -1019,11 +1061,11 @@ description: "Master TypeScript generics with practical examples"
 weight: 15
 tags: ["typescript", "generics", "advanced"]
 categories: ["learn"]
-author: "Wahid Fajar"
+# Note: No author field - uses site-level config (params.author: "Wahidyan Kresna Fridayoka")
 ---
 ```
 
-**Frontmatter Pattern** (celoteh archetype):
+**Frontmatter Pattern** (celoteh archetype - author field optional):
 
 ```yaml
 ---
@@ -1033,7 +1075,7 @@ draft: false
 description: "Personal reflections on developer tooling"
 tags: ["tools", "productivity", "opinion"]
 categories: ["celoteh"]
-author: "Wahid Fajar"
+author: "Wahidyan Kresna Fridayoka" # Optional - allowed in rants/celoteh only
 ---
 ```
 

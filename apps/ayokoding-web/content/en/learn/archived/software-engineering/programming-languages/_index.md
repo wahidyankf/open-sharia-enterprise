@@ -7,22 +7,26 @@ weight: 1
 
 ## Introduction
 
-[Overview](./overview/)
-
-[How to Pick Up Any Programming Language](./how-to-pick-up-any-programming-language/)
+- [Overview](./overview/)
+- [How to Pick Up Any Programming Language](./how-to-pick-up-any-programming-language/)
 
 ## Languages
 
-[C](./c/)
-
-[Clojure](./clojure/)
-
-[Dart](./dart/)
-
-[F#](./f-sharp/)
-
-[Java](./java/)
-
-[SQL](./sql/)
-
-[TypeScript](./typescript/)
+- [C](./c/)
+  - [Cookbook](./c/cookbook/)
+- [Clojure](./clojure/)
+  - [Overview](./clojure/overview/)
+  - [Cookbook](./clojure/cookbook/)
+- [Dart](./dart/)
+  - [Overview](./dart/overview/)
+  - [Cookbook](./dart/cookbook/)
+- [F#](./f-sharp/)
+  - [Overview](./f-sharp/overview/)
+  - [Cookbook](./f-sharp/cookbook/)
+- [Java](./java/)
+  - [Cookbook](./java/cookbook/)
+- [SQL](./sql/)
+  - [Essentials](./sql/essentials/)
+- [TypeScript](./typescript/)
+  - [Overview](./typescript/overview/)
+  - [Cookbook](./typescript/cookbook/)

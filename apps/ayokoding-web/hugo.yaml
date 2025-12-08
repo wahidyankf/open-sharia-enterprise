@@ -14,6 +14,11 @@ languages:
     title: "AyoKoding"
     params:
       description: "Platform edukasi bilingual untuk rekayasa perangkat lunak - membantu komunitas teknologi Indonesia belajar dan berkembang"
+    menu:
+      main:
+        - name: S&K
+          url: /id/syarat-dan-ketentuan/
+          weight: 3
   en:
     languageName: "English"
     languageCode: "en-US"
@@ -21,17 +26,51 @@ languages:
     title: "AyoKoding"
     params:
       description: "Bilingual educational platform for software engineering - helping the Indonesian tech community learn and grow"
+    menu:
+      main:
+        - name: T&C
+          url: /en/terms-and-conditions/
+          weight: 3
 
 # import hextra as module
 module:
   imports:
     - path: github.com/imfing/hextra
+  mounts:
+    - source: content/en
+      target: content
+      lang: en
+    - source: content/id
+      target: content
+      lang: id
+    - source: static
+      target: static
+    - source: layouts
+      target: layouts
+    - source: data
+      target: data
+    - source: assets
+      target: assets
+    - source: i18n
+      target: i18n
+    - source: archetypes
+      target: archetypes
 
 markup:
   # allow raw html
   goldmark:
     renderer:
       unsafe: true
+    extensions:
+      passthrough:
+        delimiters:
+          block:
+            - ['\[', '\]']
+            - ["$$", "$$"]
+          inline:
+            - ['\(', '\)']
+            - ["$", "$"]
+        enable: true
 
   # enable hextra syntax highlight
   highlight:
@@ -40,14 +79,15 @@ markup:
 menu:
   main:
     - name: English
-      pageRef: /en
+      url: /en/
       weight: 1
+      params:
+        lang: en
     - name: Bahasa
-      pageRef: /id
+      url: /id/
       weight: 2
-    - name: T&C
-      pageRef: /terms-and-conditions
-      weight: 3
+      params:
+        lang: id
     - name: Search
       weight: 4
       params:
@@ -64,6 +104,11 @@ menu:
         icon: github
 
 params:
+  # Enable LaTeX math rendering with KaTeX
+  math:
+    enable: true
+    engine: katex
+
   # SEO & Social Media
   author: "Wahidyan Kresna Fridayoka"
   images:

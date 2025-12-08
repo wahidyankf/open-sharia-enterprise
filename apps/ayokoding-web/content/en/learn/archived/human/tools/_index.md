@@ -6,3 +6,4 @@ weight: 1
 ---
 
 - [CliftonStrengths](./cliftonstrengths/)
+  - [Themes](./cliftonstrengths/themes/)

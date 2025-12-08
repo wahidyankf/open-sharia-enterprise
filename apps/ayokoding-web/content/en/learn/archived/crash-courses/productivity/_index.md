@@ -6,3 +6,4 @@ weight: 2
 ---
 
 - [AI Assisted](./ai-assisted/)
+  - [Prompt Engineering](./ai-assisted/prompt-engineering/)

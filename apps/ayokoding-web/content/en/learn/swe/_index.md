@@ -5,5 +5,7 @@ draft: false
 weight: 1
 ---
 
-- [Data](./data/)
-- [Web](./web/)
+- [Programming Languages](./prog-lang/)
+  - [Golang](./prog-lang/golang/)
+  - [Java](./prog-lang/java/)
+- [System Design](./system-design/)
