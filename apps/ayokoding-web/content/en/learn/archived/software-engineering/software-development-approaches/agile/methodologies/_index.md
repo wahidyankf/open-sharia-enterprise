@@ -42,15 +42,16 @@ _Example:_ In FDD, a software team might create an initial model of the domain, 
 
 ## Contents
 
-[Scrum](./scrum/)
-
-[Kanban](./kanban/)
-
-[Lean](./lean/)
-
-[Extreme Programming (XP)](./extreme-programming-xp/)
-
-[Feature Driven Development (FDD)](./feature-driven-development-fdd/)
+- [Scrum](./scrum/)
+  - [Overview](./scrum/overview/)
+  - [Roles](./scrum/roles/)
+  - [Artifacts](./scrum/artifacts/)
+  - [Events](./scrum/events/)
+  - [FAQ](./scrum/faq/)
+- [Kanban](./kanban/)
+- [Lean](./lean/)
+- [Extreme Programming (XP)](./extreme-programming-xp/)
+- [Feature Driven Development (FDD)](./feature-driven-development-fdd/)
 
 ## Further Readings
 

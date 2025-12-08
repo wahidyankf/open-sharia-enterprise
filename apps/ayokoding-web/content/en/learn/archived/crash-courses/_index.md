@@ -6,4 +6,9 @@ weight: 3
 ---
 
 - [Software Engineering](./swe/)
+  - [Data](./swe/data/)
+  - [Lang](./swe/lang/)
+  - [Platform Development](./swe/platform-development/)
+  - [Stacks](./swe/stacks/)
 - [Productivity](./productivity/)
+  - [AI Assisted](./productivity/ai-assisted/)

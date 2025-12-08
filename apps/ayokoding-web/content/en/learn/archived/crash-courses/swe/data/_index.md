@@ -6,4 +6,14 @@ weight: 3
 ---
 
 - [Storage](./storage/)
+  - [PostgreSQL](./storage/postgresql/)
+  - [SQLite](./storage/sqlite/)
+  - [Redis](./storage/redis/)
+  - [BigQuery](./storage/bigquery/)
 - [Format](./format/)
+  - [XML](./format/xml/)
+  - [JSON](./format/json/)
+  - [YAML](./format/yaml/)
+  - [TOML](./format/toml/)
+  - [Protobuf](./format/protobuf/)
+  - [EDN](./format/edn/)

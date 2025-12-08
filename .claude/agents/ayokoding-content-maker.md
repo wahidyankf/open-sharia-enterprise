@@ -102,7 +102,13 @@ Use this agent when:
 4. **Frontmatter**:
    - Format: YAML (2-space indentation)
    - Required fields: `title`, `date`, `draft`
-   - Common fields: `description`, `weight`, `tags`, `categories`, `author`
+   - Common fields: `description`, `weight`, `tags`, `categories`
+   - **Author Field Rules**:
+     - **Default**: Do NOT include `author:` field (configured globally in hugo.yaml as `params.author: "Wahidyan Kresna Fridayoka"`)
+     - **Exceptions**: Author field IS allowed ONLY in:
+       - `content/en/rants/` - English rants
+       - `content/id/celoteh/` - Indonesian rants
+     - **Rationale**: Site-level config handles most content; rants/celoteh may have guest contributors
 
 5. **Date Format**:
    - REQUIRED: `YYYY-MM-DDTHH:MM:SS+07:00`
@@ -116,6 +122,9 @@ Use this agent when:
    - `celoteh.md` for personal essays
    - `konten-video.md` for video content
    - `_index.md` for section indexes
+   - **Index File Title Rule**: For `_index.md` files, the `title` field MUST exactly match the parent folder name (case-sensitive)
+     - Capitalization: Capitalize first letter only (folder `lang` → title `Lang`, folder `business-law` → title `Business-law`)
+     - Example: `/content/en/learn/swe/lang/_index.md` must have `title: Lang` (not "Programming Languages")
 
 2. **Shortcodes** (Hextra Theme):
    - `{{< callout type="info" >}}` - Callout boxes
@@ -220,11 +229,11 @@ description: "Master TypeScript generics with practical examples and real-world 
 weight: 15
 tags: ["typescript", "generics", "advanced", "programming"]
 categories: ["learn"]
-author: "Wahid Fajar"
+# Note: No author field - uses site-level config (params.author in hugo.yaml)
 ---
 ```
 
-**Personal Essay Frontmatter** (`celoteh` archetype):
+**Personal Essay Frontmatter** (`celoteh` archetype - author field optional):
 
 ```yaml
 ---
@@ -234,7 +243,7 @@ draft: false
 description: "Personal reflections on developer tooling and productivity"
 tags: ["tools", "productivity", "opinion", "vim"]
 categories: ["celoteh"]
-author: "Wahid Fajar"
+author: "Wahidyan Kresna Fridayoka" # Optional - only in rants/celoteh directories
 ---
 ```
 
@@ -248,8 +257,8 @@ draft: false
 description: "Video tutorial covering Express.js API development from scratch"
 tags: ["nodejs", "express", "api", "video"]
 categories: ["video"]
-author: "Wahid Fajar"
 videoUrl: "https://youtube.com/watch?v=..."
+# Note: No author field - uses site-level config (params.author in hugo.yaml)
 ---
 ```
 
@@ -386,7 +395,6 @@ description: "Menguasai TypeScript generics dengan contoh praktis dan kasus nyat
 weight: 15
 tags: ["typescript", "generics", "advanced", "pemrograman"]
 categories: ["learn"]
-author: "Wahid Fajar"
 ---
 
 ## Apa yang Akan Anda Pelajari
@@ -409,7 +417,6 @@ description: "Master TypeScript generics with practical examples and real-world 
 weight: 15
 tags: ["typescript", "generics", "advanced", "programming"]
 categories: ["learn"]
-author: "Wahid Fajar"
 ---
 
 ## What You'll Learn
@@ -434,6 +441,11 @@ Before completing, verify:
 - [ ] Code blocks specify language
 - [ ] Heading hierarchy is proper (single H1, proper nesting)
 - [ ] Draft status is set correctly
+- [ ] **Author field rules followed**:
+  - [ ] NO author field in learning content (`content/en/learn/`, `content/id/belajar/`)
+  - [ ] NO author field in video content (`content/en/video-content/`, `content/id/konten-video/`)
+  - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
+- [ ] **For `_index.md` files**: Title matches parent folder name exactly (capitalize first letter only)
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids
 - [ ] For bilingual content: Both Indonesian and English versions created
 
@@ -452,7 +464,7 @@ description: "Complete beginner's guide to Node.js development environment setup
 weight: 5
 tags: ["nodejs", "beginner", "tutorial", "javascript"]
 categories: ["learn"]
-author: "Wahid Fajar"
+# Note: No author field - uses site-level config
 ---
 
 ## What You'll Learn
@@ -634,7 +646,6 @@ draft: false
 description: "Refleksi personal tentang perpindahan dari Vim ke Neovim dan alasannya"
 tags: ["tools", "productivity", "vim", "neovim", "opini"]
 categories: ["celoteh"]
-author: "Wahid Fajar"
 ---
 
 Setelah 5 tahun menggunakan Vim, saya akhirnya memutuskan untuk pindah ke
