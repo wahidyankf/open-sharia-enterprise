@@ -249,7 +249,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 ### Hugo Content Convention
 
-**Both Sites**: Hugo linking (no `.md`), YAML frontmatter (title/date/draft required), ISO 8601 dates (`YYYY-MM-DDTHH:MM:SS+07:00`)
+**Both Sites**: Hugo linking (absolute paths starting with `/`, no `.md`), YAML frontmatter (title/date/draft required), ISO 8601 dates (`YYYY-MM-DDTHH:MM:SS+07:00`)
 
 **ayokoding-web** (Hextra): Bilingual ID/EN, 5 archetypes, educational content. Index titles match folder names (`lang` → `Lang`). Author: site-level config only (NO in frontmatter except rants/celoteh for guests)
 
