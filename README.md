@@ -11,9 +11,9 @@
 
 ## 🎯 Motivation
 
-**The Challenge**: Organizations worldwide need enterprise software that respects Islamic principles, but most solutions treat Sharia-compliance as an afterthought—bolted on rather than built in.
+**The Opportunity**: Islamic finance is a multi-trillion dollar industry growing at double-digit rates, creating massive demand for Sharia-compliant enterprise systems. While purpose-built platforms exist, they're typically proprietary and expensive. Many organizations still struggle with legacy systems retrofitted for Sharia compliance. The gap? Accessible, open-source solutions with built-in compliance and radical transparency.
 
-**Our Solution**: We're building an open-source platform with Sharia-compliance at its core. Starting with ERP foundations, we'll expand to fintech and beyond, making trustworthy business systems accessible to any organization—regardless of size, region, or industry.
+**Our Solution**: We're building an open-source platform with Sharia-compliance at its core—starting with Indonesian regulations and ERP foundations, expanding to fintech and global markets. We're making trustworthy, transparent business systems accessible to any organization—regardless of size, region, or industry.
 
 **What We Believe:**
 
@@ -44,34 +44,36 @@ This project is open-source and licensed under the **MIT License**. This means y
 
 This project is being developed with a **phased approach** to establish strong Sharia-compliance foundations and gradually expand enterprise capabilities:
 
+### 🔬 Phase 0: Setup and Research
+
+Establishing the foundational infrastructure and conducting research to inform architectural decisions:
+
+- 🛠️ **Development Tooling & Processes** - Infrastructure (Volta, formatting, git hooks), documentation framework (Diátaxis, Obsidian), AI agents, planning system
+- 🏗️ **Architecture & Design** - Monorepo architecture (Nx workspace), core patterns, technology evaluation, security foundations
+- 🤖 **AI Research** - AI/ML applications, LLM integration, intelligent automation, AI-assisted development
+- 🔍 **Sharia Compliance Research** - Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
+- 🛡️ **Security & DevSecOps Research** - Information security frameworks, threat modeling, compliance as code, DevSecOps automation
+- ☁️ **Infrastructure Creation** - Cloud infrastructure, deployment pipelines, CI/CD setup
+
 ### 📊 Phase 1: ERP Foundation
 
 Building a solid enterprise foundation with ERP capabilities to support core business operations:
 
-- 🕌 **Sharia Compliance Framework** - Core architecture for Sharia-compliant business logic
-- 📋 **Accounting & Finance** - Sharia-compliant financial management and reporting
-- 🔗 **Supply Chain Management** - Halal-compliant supply chain tracking and operations
-- 👥 **HR & Payroll** - Sharia-compliant workforce management
-- 📊 **Core ERP Modules** - Foundation for enterprise resource planning
+- 💰 **Financial Management** - Accounting & finance, asset management, reporting & analytics with Sharia compliance
+- 🔗 **Operations Management** - Supply chain (halal-compliant), inventory control, procurement & vendor management
+- 👥 **People & Customer Management** - HR & payroll (Sharia-compliant), sales & CRM, customer relationships
+- 🕌 **Execution & Compliance** - Project management, resource allocation, Sharia compliance framework
 
 ### 🇮🇩 Phase 2: Indonesian Fintech Integration
 
 Expand into fintech capabilities with Indonesian regulatory alignment:
 
-- 🏦 **Indonesian Banking Authority (OJK)** - Sharia banking regulations compliance
-- 📋 **National Sharia Board (DSN-MUI)** - Islamic finance guidelines integration
-- 📚 **Indonesian fintech standards** and best practices
-- 💳 **Fintech domain implementation** (payments, lending, banking services)
+- 🏦 **Regulatory Compliance** - Indonesian Banking Authority (OJK) and National Sharia Board (DSN-MUI) integration
+- 📚 **Fintech Standards** - Indonesian best practices and implementation guidelines
+- 📈 **Market Monitoring** - Fintech market trends, regulatory changes, and competitive landscape
+- 💳 **Fintech Domain Implementation** - Payments, lending, and banking services
 
-### 🌐 Phase 3: Multi-Domain Enterprise Solutions
-
-Extend to support additional enterprise solutions and domains:
-
-- 🏪 **Retail & E-commerce** - Sharia-compliant sales and inventory systems
-- 🏭 **Manufacturing** - Production planning and management
-- 🎯 **Other enterprise domains** - Extending the framework to additional business solutions
-
-### 🌍 Phase 4: Global Expansion
+### 🌍 Phase 3: Global Expansion
 
 Extend the platform to support multiple jurisdictions and regions:
 
@@ -82,11 +84,13 @@ Extend the platform to support multiple jurisdictions and regions:
 
 ### 💭 Why This Approach?
 
-- 🏗️ **ERP as foundation** - Enterprise Resource Planning provides the core infrastructure for all business operations
-- 🕌 **Sharia-compliance from day one** - Establishing robust compliance principles from the start
-- 📈 **Scalable architecture** - Standards-based design enables extension to new domains and regions
-- 🔄 **Reusable components** - ERP foundation supports fintech and other domains
-- ⚖️ **Gradual expansion** reduces complexity while ensuring quality
+- 🔬 **Research before building** - Phase 0 establishes foundations through compliance, security, and AI research before implementation
+- 🇮🇩 **Indonesian market first** - Deep focus on local regulations (OJK, DSN-MUI, PBI, PDP) before global expansion
+- 🏗️ **ERP as foundation** - Enterprise Resource Planning provides core infrastructure for all business operations
+- 🕌 **Sharia-compliance from day one** - Built-in compliance architecture, not bolt-on features
+- 🛡️ **Security by design** - DevSecOps and compliance-as-code integrated from the start
+- 📈 **Scalable architecture** - Standards-based design enables extension to new regions
+- ⚖️ **Gradual expansion** - Phased approach reduces complexity while ensuring quality
 
 ## 🤝 Contributing
 
