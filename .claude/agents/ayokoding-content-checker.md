@@ -343,6 +343,125 @@ title: LANG # WRONG! Incorrect capitalization (should be Lang)
 ---
 ```
 
+### Archetype Compliance Validation
+
+**Purpose**: Verify content follows archetype-specific conventions and rules.
+
+**Validation by Archetype Type**:
+
+1. **learn.md archetype** (educational/tutorial content):
+   - [ ] **NO author field** - Learning content must NOT have `author:` in frontmatter
+   - [ ] **Uses site-level config** - Author comes from `params.author` in hugo.yaml
+   - [ ] Categories should be `["learn"]`
+   - [ ] Should have `weight` field for ordering
+   - [ ] Should have `description` field for SEO
+
+2. **celoteh.md archetype** (personal essays/rants):
+   - [ ] **Author field OPTIONAL** - Only include when content has guest contributor
+   - [ ] **Default behavior** - When author field absent, uses site-level config
+   - [ ] Categories should be `["celoteh"]`
+   - [ ] May omit weight field (chronological ordering)
+
+3. **konten-video.md archetype** (video content):
+   - [ ] **NO author field** - Video content must NOT have `author:` in frontmatter
+   - [ ] **videoUrl field REQUIRED** - Must have `videoUrl: ""` field
+   - [ ] Categories should be `["video"]`
+   - [ ] Should have `description` field
+
+4. **\_index.md archetype** (section index pages):
+   - [ ] **Title matches folder** - `title` must exactly match parent folder name
+   - [ ] **Capitalization rule** - Capitalize first letter only (folder `lang` → title `Lang`)
+   - [ ] **Multi-word folders** - Preserve hyphens (folder `business-law` → title `Business-law`)
+   - [ ] `draft: false` (index pages should be published)
+   - [ ] `weight: 1` (default ordering)
+
+5. **default.md archetype** (fallback template):
+   - [ ] Basic frontmatter validation
+   - [ ] No specific archetype rules
+
+**Common Archetype Violations**:
+
+❌ **Wrong (learning content with author field)**:
+
+```yaml
+---
+title: "Node.js Tutorial"
+categories: ["learn"]
+author: "Wahidyan Kresna Fridayoka" # WRONG! Should not exist
+---
+```
+
+✅ **Correct (learning content without author)**:
+
+```yaml
+---
+title: "Node.js Tutorial"
+categories: ["learn"]
+# Note: No author field - uses site-level config
+---
+```
+
+❌ **Wrong (\_index.md with non-matching title)**:
+
+```yaml
+# File: content/en/learn/swe/lang/_index.md
+---
+title: "Programming Languages" # WRONG! Doesn't match folder "lang"
+---
+```
+
+✅ **Correct (\_index.md with matching title)**:
+
+```yaml
+# File: content/en/learn/swe/lang/_index.md
+---
+title: "Lang" # Correct - matches folder name exactly
+---
+```
+
+❌ **Wrong (video content missing videoUrl)**:
+
+```yaml
+---
+title: "Tutorial Video"
+categories: ["video"]
+# WRONG! Missing videoUrl field
+---
+```
+
+✅ **Correct (video content with videoUrl)**:
+
+```yaml
+---
+title: "Tutorial Video"
+categories: ["video"]
+videoUrl: "https://youtube.com/watch?v=..."
+---
+```
+
+**Archetype Detection Logic**:
+
+Determine content archetype by:
+
+1. **File path pattern** - `/content/id/belajar/` or `/content/en/learn/` → learn archetype
+2. **File path pattern** - `/content/id/celoteh/` or `/content/en/rants/` → celoteh archetype
+3. **File path pattern** - `/content/id/konten-video/` or `/content/en/video-content/` → konten-video archetype
+4. **Filename** - `_index.md` → \_index archetype
+5. **Categories field** - Can confirm archetype type (`["learn"]`, `["celoteh"]`, `["video"]`)
+
+**Archetype Validation Process**:
+
+```markdown
+1. Identify content archetype (by path/filename/categories)
+2. Apply archetype-specific validation rules
+3. Check for violations:
+   - Author field presence/absence
+   - Required fields (videoUrl for video content)
+   - Title matching (for \_index.md files)
+   - Category consistency
+4. Report archetype-specific issues with remediation guidance
+```
+
 ### Taxonomy Validation
 
 **Categories** (ayokoding-web specific):
