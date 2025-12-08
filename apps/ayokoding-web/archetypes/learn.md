@@ -6,7 +6,7 @@ description: ""
 weight: 10
 tags: []
 categories: ["learn"]
-author: "{{ .Site.Params.author }}"
+# Note: No author field - uses site-level config (params.author in hugo.yaml)
 ---
 
 ## Pengantar

@@ -5,7 +5,7 @@ draft: true
 description: ""
 tags: []
 categories: ["konten-video"]
-author: "{{ .Site.Params.author }}"
+# Note: No author field - uses site-level config (params.author in hugo.yaml)
 youtube_id: ""
 ---
 

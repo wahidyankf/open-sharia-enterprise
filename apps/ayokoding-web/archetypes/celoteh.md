@@ -5,7 +5,8 @@ draft: true
 description: ""
 tags: []
 categories: ["celoteh"]
-author: "{{ .Site.Params.author }}"
+# Note: author field is OPTIONAL - only add when content has guest contributor
+# Default: Uses site-level config (params.author: "Wahidyan Kresna Fridayoka")
 ---
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
