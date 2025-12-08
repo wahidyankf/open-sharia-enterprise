@@ -3,14 +3,14 @@ baseURL: "https://ayokoding.com/"
 title: AyoKoding
 
 # Language configuration
-defaultContentLanguage: id
+defaultContentLanguage: en
 defaultContentLanguageInSubdir: true
 
 languages:
   id:
     languageName: "Bahasa Indonesia"
     languageCode: "id-ID"
-    weight: 1
+    weight: 2
     title: "AyoKoding"
     params:
       description: "Platform edukasi bilingual untuk rekayasa perangkat lunak - membantu komunitas teknologi Indonesia belajar dan berkembang"
@@ -22,7 +22,7 @@ languages:
   en:
     languageName: "English"
     languageCode: "en-US"
-    weight: 2
+    weight: 1
     title: "AyoKoding"
     params:
       description: "Bilingual educational platform for software engineering - helping the Indonesian tech community learn and grow"
