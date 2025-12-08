@@ -7,6 +7,8 @@ weight: 1
 
 - [Software Engineering](/learn/swe)
   - [Programming Languages](/learn/swe/prog-lang)
+    - [Golang](/learn/swe/prog-lang/golang)
+    - [Java](/learn/swe/prog-lang/java)
   - [System Design](/learn/swe/system-design)
 - [AI Engineering](/learn/ai)
   - [Chat with PDF](/learn/ai/chat-with-pdf)
@@ -15,6 +17,7 @@ weight: 1
   - [Corporate Finance](/learn/business/corporate-finance)
 - [Human](/learn/human)
   - [Tools](/learn/human/tools)
+    - [CliftonStrengths](/learn/human/tools/cliftonstrengths)
 - [Archived](/learn/archived)
   - [Crash Courses](/learn/archived/crash-courses)
   - [Interviews](/learn/archived/interviews)
