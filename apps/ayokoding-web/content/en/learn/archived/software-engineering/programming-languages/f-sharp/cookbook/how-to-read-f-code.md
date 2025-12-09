@@ -50,7 +50,7 @@ Reading F# code requires patience, practice, and a systematic approach. You can 
 
 Here are some additional resources that can help you improve your skills in reading and understanding F# code:
 
-- **Online F# Programming Tutorials**: Websites like [fsharp.org](https://fsharp.org/), [fsharpforfunandprofit.com](https://fsharpforfunandprofit.com/), and [Microsoft's F# Guide](https://docs.microsoft.com/en-us/dotnet/fsharp/) offer free online tutorials covering various F# programming aspects.
+- **Online F# Programming Tutorials**: Websites like [fsharp.org](https://fsharp.org/), [fsharpforfunandprofit.com](https://fsharpforfunandprofit.com/), and [Microsoft's F# Guide](https://learn.microsoft.com/en-us/dotnet/fsharp/) offer free online tutorials covering various F# programming aspects.
 - **Open-Source Projects**: Exploring open-source projects written in F# can be an excellent way to learn from real-world code. GitHub is a widespread platform where you can find many F# projects to study and analyze.
 - **F# Language Specifications**: The official F# language specification provides a detailed and formal definition of the F# language. While this document may be more technical, it can be a valuable reference for understanding the intricacies of the language.
 - **F# Programming Forums and Communities**: Engaging in online forums and communities dedicated to F# programming can provide opportunities to ask questions, seek guidance, and learn from experienced developers. Websites like Stack Overflow and Reddit's r/fsharp are popular F# programming discussion platforms.

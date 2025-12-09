@@ -82,4 +82,4 @@ This will increase the price of all products by 10%.
 2. [The SQL UPDATE Statement](https://www.sqltutorial.org/sql-update/) - SQL Tutorial
 3. [Update Data In a MySQL Table Using MySQLi and PDO](https://www.w3schools.com/sql/sql_update.asp) - W3Schools
 4. [SQL Server UPDATE Statement](https://www.sqlservertutorial.net/sql-server-basics/sql-server-update/) - SQL Server Tutorial
-5. [UPDATE (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/queries/update-transact-sql?view=sql-server-ver15) - Microsoft Docs
+5. [UPDATE (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/queries/update-transact-sql?view=sql-server-ver15) - Microsoft Docs

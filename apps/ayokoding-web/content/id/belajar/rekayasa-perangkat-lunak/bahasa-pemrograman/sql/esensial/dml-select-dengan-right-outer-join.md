@@ -143,8 +143,8 @@ Hasil kueri:
 Kueri ini mengelompokkan pesanan berdasarkan nama pelanggan dan menghitung jumlah pesanan yang dilakukan oleh setiap pelanggan. Sally belum membuat pesanan apa pun, sehingga NumberOfOrders adalah 0.
 
 1. [SQL RIGHT JOIN Keyword](https://www.w3schools.com/sql/sql_join_right.asp) - W3Schools
-2. [RIGHT OUTER JOIN in SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/from-transact-sql?view=sql-server-ver15#right-outer-join) - Dokumen Microsoft
+2. [RIGHT OUTER JOIN in SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/from-transact-sql?view=sql-server-ver15#right-outer-join) - Dokumen Microsoft
 3. [SQL Aggregate Functions](https://www.w3schools.com/sql/sql_count_avg_sum.asp) - W3Schools
 4. [Pernyataan GROUP BY pada SQL](https://www.sqltutorial.org/sql-group-by/) - Tutorial SQL
-5. [Menggunakan JOIN dalam SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Dokumen Microsoft
+5. [Menggunakan JOIN dalam SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Dokumen Microsoft
 6. [Memfilter Data dengan Klausul WHERE di SQL Server](https://www.sqlservertutorial.net/sql-server-basics/sql-server-where/) - Tutorial SQL Server

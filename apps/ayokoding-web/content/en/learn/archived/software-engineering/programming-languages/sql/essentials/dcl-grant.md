@@ -50,4 +50,4 @@ This will allow the user "jane" to select data from the "customer" table and gra
 
 1. [Granting Privileges In MySQL](https://www.mysqltutorial.org/mysql-grant.aspx) - MySQL Tutorial
 2. [SQL Server GRANT Statement](https://www.sqlservertutorial.net/sql-server-security/sql-server-grant/) - SQL Server Tutorial
-3. [GRANT (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-transact-sql?view=sql-server-ver15) - Microsoft Docs
+3. [GRANT (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/statements/grant-transact-sql?view=sql-server-ver15) - Microsoft Docs

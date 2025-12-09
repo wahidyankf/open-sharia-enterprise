@@ -143,8 +143,8 @@ Result-set:
 This query groups the orders by customer names and counts the number of orders each customer has made. Sally has not made any orders, so the NumberOfOrders is 0.
 
 1. [SQL RIGHT JOIN Keyword](https://www.w3schools.com/sql/sql_join_right.asp) - W3Schools
-2. [RIGHT OUTER JOIN in SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/from-transact-sql?view=sql-server-ver15#right-outer-join) - Microsoft Docs
+2. [RIGHT OUTER JOIN in SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/from-transact-sql?view=sql-server-ver15#right-outer-join) - Microsoft Docs
 3. [SQL Aggregate Functions](https://www.w3schools.com/sql/sql_count_avg_sum.asp) - W3Schools
 4. [The GROUP BY Statement in SQL](https://www.sqltutorial.org/sql-group-by/) - SQL Tutorial
-5. [Using JOINs in SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Microsoft Docs
+5. [Using JOINs in SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Microsoft Docs
 6. [Filtering Data with WHERE Clause in SQL Server](https://www.sqlservertutorial.net/sql-server-basics/sql-server-where/) - SQL Server Tutorial

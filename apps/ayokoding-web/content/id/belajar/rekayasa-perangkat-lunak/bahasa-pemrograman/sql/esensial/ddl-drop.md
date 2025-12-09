@@ -85,5 +85,5 @@ Perintah ini akan menjatuhkan tampilan bernama `tampilan_karyawan`.
 ## Bacaan Lebih Lanjut
 
 1. [Pernyataan SQL DROP DATABASE - Tutorialspoint](https://www.tutorialspoint.com/sql/sql-drop-database.htm)
-2. [Pernyataan DROP TABLE - Microsoft SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/statements/drop-table-transact-sql?view=sql-server-ver15)
+2. [Pernyataan DROP TABLE - Microsoft SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/statements/drop-table-transact-sql?view=sql-server-ver15)
 3. [Pernyataan DROP VIEW - Oracle Help Center](https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-TABLE.html)

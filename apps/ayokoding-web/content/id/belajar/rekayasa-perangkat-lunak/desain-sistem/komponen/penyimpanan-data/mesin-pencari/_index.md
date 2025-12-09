@@ -4,6 +4,6 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-[Profil](./profil/)
+[Profil](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/mesin-pencari/profil)
 
-[Konsep Kunci](./konsep-kunci/)
+[Konsep Kunci](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/mesin-pencari/konsep-kunci)

@@ -98,7 +98,7 @@ This will update the "customer" table and create a savepoint called "update_orde
 ## Further Readings
 
 1. [MySQL Transactions](https://www.mysqltutorial.org/mysql-transaction.aspx) - MySQL Tutorial
-2. [BEGIN TRANSACTION (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/language-elements/begin-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs
-3. [COMMIT TRANSACTION (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/language-elements/commit-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs
-4. [ROLLBACK TRANSACTION (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/language-elements/rollback-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs
-5. [SAVE TRANSACTION (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/language-elements/save-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs
+2. [BEGIN TRANSACTION (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/begin-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs
+3. [COMMIT TRANSACTION (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/commit-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs
+4. [ROLLBACK TRANSACTION (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/rollback-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs
+5. [SAVE TRANSACTION (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/save-transaction-transact-sql?view=sql-server-ver15) - Microsoft Docs

@@ -50,4 +50,4 @@ Ini akan menghapus kemampuan kita untuk memilih data dari tabel "customer" dan m
 
 1. [Revoking Privileges In MySQL](https://www.mysqltutorial.org/mysql-revoke.aspx) - Panduan MySQL
 2. [SQL Server REVOKE Statement](https://www.sqlservertutorial.net/sql-server-security/sql-server-revoke/) - Panduan SQL Server
-3. [REVOKE (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql?view=sql-server-ver15) - Dokumen Microsoft
+3. [REVOKE (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql?view=sql-server-ver15) - Dokumen Microsoft

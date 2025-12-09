@@ -90,5 +90,5 @@ Pernyataan SQL `SELECT` adalah alat penting bagi setiap profesional data. Penggu
 ## Bacaan Lanjutan
 
 - [SQL SELECT Statement - W3Schools](https://www.w3schools.com/sql/sql_select.asp)
-- [Introduction to SQL SELECT statement - SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql)
+- [Introduction to SQL SELECT statement - SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql)
 - [SQL SELECT Statement - Mode Analytics](https://mode.com/sql-tutorial/sql-select-statement/)

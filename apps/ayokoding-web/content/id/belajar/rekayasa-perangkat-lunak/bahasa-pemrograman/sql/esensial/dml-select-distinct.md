@@ -109,6 +109,6 @@ Ini akan mengembalikan:
 ## Bacaan Lebih Lanjut
 
 1. [W3Schools SQL SELECT DISTINCT Statement](https://www.w3schools.com/sql/sql_distinct.asp)
-2. [SQL Server SELECT DISTINCT | Microsoft Docs](https://docs.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15)
+2. [SQL Server SELECT DISTINCT | Microsoft Docs](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15)
 3. [Oracle / PLSQL: SELECT Statement](https://www.techonthenet.com/oracle/select.php)
 4. [PostgreSQL SELECT DISTINCT](https://www.postgresqltutorial.com/postgresql-select-distinct/)

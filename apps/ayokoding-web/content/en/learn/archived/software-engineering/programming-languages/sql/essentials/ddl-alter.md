@@ -123,5 +123,5 @@ Please note that the syntax may vary slightly depending on your SQL dialect (lik
 
 - [W3Schools: SQL ALTER TABLE Statement](https://www.w3schools.com/sql/sql_alter.asp)
 - [Oracle: ALTER TABLE](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_3001.htm)
-- [SQL Server: ALTER TABLE (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/statements/alter-table-transact-sql?view=sql-server-ver15)
+- [SQL Server: ALTER TABLE (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/statements/alter-table-transact-sql?view=sql-server-ver15)
 - [MySQL: ALTER TABLE Syntax](https://dev.mysql.com/doc/refman/8.0/en/alter-table.html)

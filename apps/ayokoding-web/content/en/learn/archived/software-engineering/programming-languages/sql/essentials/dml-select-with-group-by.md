@@ -129,6 +129,6 @@ The result set shows the total price for each product sold based on the number o
 2. [The GROUP BY Statement in SQL](https://www.sqltutorial.org/sql-group-by/) - SQL Tutorial
 3. [SQL Aggregate Functions](https://www.w3schools.com/sql/sql_count_avg_sum.asp) - W3Schools
 4. [SQL HAVING Clause](https://www.sqlservertutorial.net/sql-server-basics/sql-server-having/) - SQL Server Tutorial
-5. [Using JOINs in SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Microsoft Docs
+5. [Using JOINs in SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Microsoft Docs
 6. [Filtering Data with WHERE Clause in SQL Server](https://www.sqlservertutorial.net/sql-server-basics/sql-server-where/) - SQL Server Tutorial
 7. [Using GROUP BY with COUNT](https://mode.com/sql-tutorial/sql-group-by/) - Mode Analytics
