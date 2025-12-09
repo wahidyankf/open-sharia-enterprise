@@ -20,11 +20,11 @@ These tutorials provide:
 
 ### Accounting
 
-- [**Accounting Quick Start**](./accounting) - Fundamental accounting principles, financial statements, and analysis
+- [**Accounting Quick Start**](/en/learn/business/accounting) - Fundamental accounting principles, financial statements, and analysis
 
 ### Corporate Finance
 
-- [**Corporate Finance Quick Start**](./corporate-finance) - Time value of money, capital budgeting, and financial decision-making
+- [**Corporate Finance Quick Start**](/en/learn/business/corporate-finance) - Time value of money, capital budgeting, and financial decision-making
 
 ## 🎓 How to Use These Tutorials
 

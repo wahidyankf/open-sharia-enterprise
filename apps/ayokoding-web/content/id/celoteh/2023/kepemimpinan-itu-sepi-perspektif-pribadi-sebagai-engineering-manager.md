@@ -4,7 +4,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Leadership is Lonely: A Personal Perspective as an Engineering Manager](../../../en/rants/2023/leadership-is-lonely-a-personal-perspective-as-an-engineering-manager/)_
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Leadership is Lonely: A Personal Perspective as an Engineering Manager](/en/rants/2023/leadership-is-lonely-a-personal-perspective-as-an-engineering-manager/)_
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

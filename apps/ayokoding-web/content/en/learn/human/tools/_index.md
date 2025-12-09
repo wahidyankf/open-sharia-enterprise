@@ -5,5 +5,5 @@ draft: false
 weight: 1
 ---
 
-- [CliftonStrengths](/learn/human/tools/cliftonstrengths)
-  - [Themes](/learn/human/tools/cliftonstrengths/themes)
+- [CliftonStrengths](/en/learn/human/tools/cliftonstrengths)
+  - [Themes](/en/learn/human/tools/cliftonstrengths/themes)

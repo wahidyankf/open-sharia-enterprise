@@ -11,7 +11,7 @@ breadcrumbs: false
 ---
 
 {{< cards >}}
-{{< card link="/en/learn" title="Learn" >}}
-{{< card link="/en/rants" title="Rants" >}}
-{{< card link="/en/about-ayokoding" title="About AyoKoding" >}}
+{{< card link="/learn" title="Learn" >}}
+{{< card link="/rants" title="Rants" >}}
+{{< card link="/about-ayokoding" title="About AyoKoding" >}}
 {{< /cards >}}

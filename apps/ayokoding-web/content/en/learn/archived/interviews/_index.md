@@ -5,13 +5,13 @@ draft: false
 weight: 2
 ---
 
-- [Introduction](./introduction)
-- [Roles](./roles/)
-  - [Backend Engineer](./roles/backend-engineer/)
-  - [Frontend Engineer](./roles/frontend-engineer/)
-  - [Software Engineering Manager](./roles/software-engineering-manager/)
-- [Software Engineering](./swe/)
-  - [Languages](./swe/languages/)
-  - [Data Structures and Algorithms (DSA)](./swe/dsa/)
-  - [System Design](./swe/system-design/)
-  - [Stacks](./swe/stacks/)
+- [Introduction](/en/learn/archived/interviews/introduction)
+- [Roles](/en/learn/archived/interviews/roles/)
+  - [Backend Engineer](/en/learn/archived/interviews/roles/backend-engineer/)
+  - [Frontend Engineer](/en/learn/archived/interviews/roles/frontend-engineer/)
+  - [Software Engineering Manager](/en/learn/archived/interviews/roles/software-engineering-manager/)
+- [Software Engineering](/en/learn/archived/interviews/swe/)
+  - [Languages](/en/learn/archived/interviews/swe/languages/)
+  - [Data Structures and Algorithms (DSA)](/en/learn/archived/interviews/swe/dsa/)
+  - [System Design](/en/learn/archived/interviews/swe/system-design/)
+  - [Stacks](/en/learn/archived/interviews/swe/stacks/)

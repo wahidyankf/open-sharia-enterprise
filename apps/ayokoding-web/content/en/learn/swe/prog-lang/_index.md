@@ -8,20 +8,20 @@ Master programming languages from fundamentals to advanced patterns. Each langua
 
 ## Available Languages
 
-- [**Golang**](./golang/) - Complete Full Set from setup to expert mastery
-  - [Initial Setup](./golang/initial-setup/)
-  - [Quick Start](./golang/quick-start/)
-  - [Beginner](./golang/beginner/)
-  - [Intermediate](./golang/intermediate/)
-  - [Advanced](./golang/advanced/)
-  - [Cookbook](./golang/cookbook/)
-- [**Java**](./java/) - Complete Full Set from setup to expert mastery
-  - [Initial Setup](./java/initial-setup/)
-  - [Quick Start](./java/quick-start/)
-  - [Beginner](./java/beginner/)
-  - [Intermediate](./java/intermediate/)
-  - [Advanced](./java/advanced/)
-  - [Cookbook](./java/cookbook/)
+- [**Golang**](/en/learn/swe/prog-lang/golang/) - Complete Full Set from setup to expert mastery
+  - [Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup/)
+  - [Quick Start](/en/learn/swe/prog-lang/golang/quick-start/)
+  - [Beginner](/en/learn/swe/prog-lang/golang/beginner/)
+  - [Intermediate](/en/learn/swe/prog-lang/golang/intermediate/)
+  - [Advanced](/en/learn/swe/prog-lang/golang/advanced/)
+  - [Cookbook](/en/learn/swe/prog-lang/golang/cookbook/)
+- [**Java**](/en/learn/swe/prog-lang/java/) - Complete Full Set from setup to expert mastery
+  - [Initial Setup](/en/learn/swe/prog-lang/java/initial-setup/)
+  - [Quick Start](/en/learn/swe/prog-lang/java/quick-start/)
+  - [Beginner](/en/learn/swe/prog-lang/java/beginner/)
+  - [Intermediate](/en/learn/swe/prog-lang/java/intermediate/)
+  - [Advanced](/en/learn/swe/prog-lang/java/advanced/)
+  - [Cookbook](/en/learn/swe/prog-lang/java/cookbook/)
 
 ## Tutorial Structure
 

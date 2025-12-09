@@ -5,11 +5,11 @@ draft: false
 weight: 3
 ---
 
-- [Activator](./activator/)
-- [Command](./command/)
-- [Communication](./communication/)
-- [Competition](./competition/)
-- [Maximizer](./maximizer/)
-- [Self-Assurance](./self-assurance/)
-- [Significance](./significance/)
-- [Woo (Winning Others Over)](./woo-winning-others-over/)
+- [Activator](/en/learn/human/tools/cliftonstrengths/themes/influencing/activator/)
+- [Command](/en/learn/human/tools/cliftonstrengths/themes/influencing/command/)
+- [Communication](/en/learn/human/tools/cliftonstrengths/themes/influencing/communication/)
+- [Competition](/en/learn/human/tools/cliftonstrengths/themes/influencing/competition/)
+- [Maximizer](/en/learn/human/tools/cliftonstrengths/themes/influencing/maximizer/)
+- [Self-Assurance](/en/learn/human/tools/cliftonstrengths/themes/influencing/self-assurance/)
+- [Significance](/en/learn/human/tools/cliftonstrengths/themes/influencing/significance/)
+- [Woo (Winning Others Over)](/en/learn/human/tools/cliftonstrengths/themes/influencing/woo-winning-others-over/)

@@ -5,4 +5,4 @@ draft: false
 weight: 2
 ---
 
-- [Python](./python.md)
+- [Python](./python)
