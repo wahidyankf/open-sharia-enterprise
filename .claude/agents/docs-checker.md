@@ -87,8 +87,10 @@ When validating mathematical notation:
 
 - Check that single `$` delimiters are ONLY used inline (on same line as text)
 - Check that display math uses `$$` delimiters
-- Check that all `\begin{align}` blocks use `$$` delimiters (not single `$`)
+- Check that multi-line equations use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility
+- Check that all `\begin{aligned}` blocks use `$$` delimiters (not single `$`)
 - Flag any single `$` on its own line as a rendering error
+- Flag any `\begin{align}` usage as KaTeX incompatible (should be `\begin{aligned}`)
 
 **Common error pattern to detect:**
 
