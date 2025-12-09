@@ -111,7 +111,7 @@ r_e = r_f + \beta \times (r_m - r_f)
 $
 ```
 
-**Rule**: Single `$` ONLY for inline math (same line as text). Display-level equations and `\begin{align}` blocks MUST use `$$`.
+**Rule**: Single `$` ONLY for inline math (same line as text). Display-level equations and `\begin{aligned}` blocks MUST use `$$`. Multi-line equations must use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility.
 
 ---
 

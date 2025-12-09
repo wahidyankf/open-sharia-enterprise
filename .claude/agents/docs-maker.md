@@ -156,7 +156,8 @@ When writing code examples in documentation, use language-appropriate indentatio
 
 - Single `$` ONLY for inline math (on same line as text): `The value $x$ is...`
 - Double `$$` for display math (standalone, on separate lines)
-- All `\begin{align}` blocks MUST use `$$` delimiters
+- Multi-line equations: Use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility
+- All `\begin{aligned}` blocks MUST use `$$` delimiters
 - NEVER use single `$` on its own line - this breaks rendering
 
 Common mistake to avoid:
