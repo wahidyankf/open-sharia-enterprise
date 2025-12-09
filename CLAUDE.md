@@ -294,7 +294,7 @@ These directories are gitignored and provide organized storage for temporary out
 
 **Content Creation**: docs-maker, docs-tutorial-maker, journal-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ose-platform-web-content-checker, repo-rules-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
