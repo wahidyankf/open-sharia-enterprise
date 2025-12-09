@@ -1,6 +1,6 @@
 ---
 name: ayokoding-link-checker
-description: Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths without .md extension). Detects common linking mistakes and maintains external link cache. Use when checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web.
+description: Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths with language prefix, no .md extension). Detects common linking mistakes and maintains external link cache. Use when checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
 model: sonnet
 color: yellow
@@ -77,11 +77,11 @@ Your primary job is to verify that all links in ayokoding-web Hugo content files
 
 ### Hugo Link Format Validation
 
-**CRITICAL**: ayokoding-web uses Hugo-specific linking conventions that differ from docs/ markdown:
+**CRITICAL**: ayokoding-web uses Hugo-specific linking conventions with `defaultContentLanguageInSubdir: true`:
 
 - [ ] Internal links use **absolute paths** starting with `/` (NOT relative paths like `./` or `../`)
 - [ ] Internal links do NOT include `.md` extension
-- [ ] Internal links do NOT include language prefix (`/en/` or `/id/`)
+- [ ] Internal links **MUST include language prefix** (`/en/` or `/id/`) - this is REQUIRED for the Hugo multilingual setup
 - [ ] Internal links do NOT have trailing slashes (unless linking to section index)
 - [ ] No mixed linking styles within the same file
 
@@ -93,28 +93,28 @@ Your primary job is to verify that all links in ayokoding-web Hugo content files
 [Guide](../swe/basics)
 
 ❌ WRONG: .md extension (breaks in production)
-[Tutorial](/learn/nodejs.md)
-[Guide](/learn/tutorial.md)
+[Tutorial](/en/learn/nodejs.md)
+[Guide](/id/belajar/tutorial.md)
 
-❌ WRONG: Language prefix (Hugo adds automatically)
-[Tutorial](/en/learn/nodejs)
-[Tutorial](/id/belajar/nodejs)
+❌ WRONG: Missing language prefix (REQUIRED for this Hugo setup)
+[Tutorial](/learn/nodejs)
+[Tutorial](/belajar/nodejs)
 
 ❌ WRONG: Trailing slash on content (only for sections)
-[Tutorial](/learn/nodejs/)
-[Guide](/learn/getting-started/)
+[Tutorial](/en/learn/nodejs/)
+[Guide](/id/belajar/getting-started/)
 
-✅ CORRECT: Absolute path, no .md, no language prefix
-[Tutorial](/learn/nodejs)
-[Guide](/learn/getting-started)
-[Section Index](/learn/)
+✅ CORRECT: Absolute path with language prefix, no .md extension
+[Tutorial](/en/learn/nodejs)
+[Guide](/id/belajar/getting-started)
+[Section Index](/en/learn/)
 ```
 
 **Why these rules?**
 
 - **Absolute paths**: Hugo renders navigation in different contexts (sidebar, mobile menu, homepage). Relative paths resolve differently based on context.
 - **No .md extension**: Hugo generates URLs without `.md` - including it breaks production builds
-- **No language prefix**: Hugo adds language prefix automatically based on content directory (`/en/` or `/id/`)
+- **Language prefix REQUIRED**: With `defaultContentLanguageInSubdir: true`, all URLs must include `/en/` or `/id/` prefix explicitly in links
 - **No trailing slash**: Hugo reserves trailing slash for section indices (`_index.md` files)
 
 ### External Link Validation
@@ -131,7 +131,7 @@ Your primary job is to verify that all links in ayokoding-web Hugo content files
 - [ ] All internal Hugo links point to existing content files
 - [ ] Links use absolute paths starting with `/` (not relative `./` or `../`)
 - [ ] Links do NOT include `.md` extension
-- [ ] Links do NOT include language prefix (`/en/` or `/id/`)
+- [ ] Links MUST include language prefix (`/en/` for English content, `/id/` for Indonesian content)
 - [ ] Links do NOT have incorrect trailing slashes
 - [ ] Links resolve to both English and Indonesian content directories
 
@@ -357,9 +357,9 @@ Follow this systematic approach:
    - Pattern: `\[([^\]]+)\]\(([^\)]+\.md)\)`
    - Report: Links ending in `.md` (should omit extension)
 
-3. **Check for language prefix**
-   - Pattern: `\[([^\]]+)\]\(/(?:en|id)/([^\)]+)\)`
-   - Report: Links starting with `/en/` or `/id/` (Hugo adds automatically)
+3. **Check for missing language prefix**
+   - Pattern: `\[([^\]]+)\]\((/(?!en/|id/)[^\)]+)\)` (links without /en/ or /id/)
+   - Report: Links missing `/en/` or `/id/` prefix (REQUIRED for this Hugo setup)
 
 4. **Check for incorrect trailing slashes**
    - Pattern: `\[([^\]]+)\]\((/[^\)]+/)\)`
@@ -506,10 +506,10 @@ When reporting broken links or format violations:
        - content/en/learn/basics.md:78
        - Fix: [Guide](/learn/tutorial)
 
-  3. Language Prefix (Hugo adds automatically)
-     - [Tutorial](/en/learn/nodejs)
+  3. Missing Language Prefix (REQUIRED for this Hugo setup)
+     - [Tutorial](/learn/nodejs)
        - content/en/learn/advanced.md:123
-       - Fix: [Tutorial](/learn/nodejs)
+       - Fix: [Tutorial](/en/learn/nodejs)
   ```
 
 **Working External Links (concise format):**
@@ -583,15 +583,17 @@ When content includes `.md` extension:
    - ❌ Wrong: `[Tutorial](/learn/nodejs.md)`
    - ✅ Correct: `[Tutorial](/learn/nodejs)`
 
-#### Language Prefix
+#### Missing Language Prefix
 
-When content includes language prefix:
+When content is missing the required language prefix:
 
-1. **Explain the problem**: Hugo adds language prefix automatically based on content directory
-2. **Show the fix**: Remove `/en/` or `/id/` prefix
+1. **Explain the problem**: With `defaultContentLanguageInSubdir: true`, all internal links MUST include the language prefix (`/en/` or `/id/`)
+2. **Show the fix**: Add `/en/` or `/id/` prefix based on the content's language directory
 3. **Example**:
-   - ❌ Wrong: `[Tutorial](/en/learn/nodejs)`
-   - ✅ Correct: `[Tutorial](/learn/nodejs)`
+   - ❌ Wrong: `[Tutorial](/learn/nodejs)` (in English content)
+   - ✅ Correct: `[Tutorial](/en/learn/nodejs)` (in English content)
+   - ❌ Wrong: `[Tutorial](/belajar/nodejs)` (in Indonesian content)
+   - ✅ Correct: `[Tutorial](/id/belajar/nodejs)` (in Indonesian content)
 
 #### Incorrect Trailing Slashes
 
@@ -701,7 +703,7 @@ When you find broken internal links:
 - Only change the URL or path portion
 - Maintain markdown formatting
 - If no replacement exists, remove the entire link entry
-- Ensure Hugo link format compliance (absolute path, no .md, no language prefix)
+- Ensure Hugo link format compliance (absolute path with language prefix, no .md extension)
 
 ## Output and Reporting
 
