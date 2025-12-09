@@ -63,12 +63,6 @@ No specific tools are required for this tutorial. It's a conceptual system desig
 - OCR APIs (Google Vision, AWS Textract)
 - ML frameworks (TensorFlow, PyTorch)
 
-### Time Estimate
-
-- **Reading time**: 45-60 minutes for complete tutorial
-- **Deep study**: 2-3 hours with note-taking and research
-- **Practice exercises**: 1-2 hours for design challenges
-
 ## 1. Problem Statement
 
 ### The Challenge

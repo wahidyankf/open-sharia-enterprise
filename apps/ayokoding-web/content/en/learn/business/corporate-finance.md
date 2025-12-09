@@ -42,7 +42,6 @@ While accounting tells you what happened in the past, corporate finance helps yo
 - Financial calculator or spreadsheet software (Excel, Google Sheets)
 - Calculator with exponent functions
 - Pen and paper for practice
-- **Estimated time:** 4-5 hours for complete tutorial with exercises
 
 **Optional (Helpful):**
 
