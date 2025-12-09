@@ -77,6 +77,9 @@ generated-reports/
 .prettierignore
 .cache/
 
+# Link validation cache
+apps/ayokoding-web/ayokoding-links-status.yml
+
 # Playwright MCP
 .playwright-mcp/
 
