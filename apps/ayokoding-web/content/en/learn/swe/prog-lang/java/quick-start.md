@@ -1,8 +1,8 @@
 ---
 title: Quick Start
-date: 2025-12-04T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
-description: Learn Java syntax and core concepts in 1-2 hours - cover variables, methods, classes, and collections through hands-on examples
+description: Learn Java syntax and core concepts - cover variables, methods, classes, and collections through hands-on examples
 weight: 20
 tags:
   - java
@@ -19,11 +19,11 @@ categories:
 
 # Java Quick Start
 
-**Learn enough Java to explore independently in 1-2 hours.** This tutorial gives you a quick tour of Java's essential features. You'll explore variables, methods, classes, collections, and error handling through practical examples. Perfect for getting a quick overview before diving into comprehensive learning.
+**Learn enough Java to explore independently.** This tutorial gives you a quick tour of Java's essential features. You'll explore variables, methods, classes, collections, and error handling through practical examples. Perfect for getting a quick overview before diving into comprehensive learning.
 
 ## What You'll Achieve
 
-By the end of this tutorial (1-2 hours), you'll be able to:
+By the end of this tutorial, you'll be able to:
 
 - ✅ Understand Java's basic data types and variables
 - ✅ Write and call methods (functions)
@@ -36,7 +36,7 @@ By the end of this tutorial (1-2 hours), you'll be able to:
 ## Prerequisites
 
 - Completed [Initial Setup for Java](initial-setup) - You have Java installed and can compile/run programs
-- Or just run the Initial Setup tutorial first (15 minutes)
+- Or just run the Initial Setup tutorial first
 
 ## Learning Path
 
@@ -696,7 +696,7 @@ Now you have two paths:
 
 **Path 1: Dive Deeper (Recommended)**
 
-Continue with [Complete Beginner's Guide to Java](beginner) (3-4 hours) to learn:
+Continue with [Complete Beginner's Guide to Java](beginner) to learn:
 
 - Object-oriented principles (inheritance, polymorphism, interfaces)
 - Collections Framework comprehensively

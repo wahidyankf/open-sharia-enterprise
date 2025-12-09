@@ -22,23 +22,23 @@ categories:
 
 All 6 tutorials in the Java Full Set are now available:
 
-#### Level 1: Initial Setup (0-5%, 15 min) ✅
+#### Level 1: Initial Setup (0-5%) ✅
 
 [Initial Setup for Java](initial-setup) - Install JDK, verify installation, run your first program.
 
-#### Level 2: Quick Start (5-30%, 1-2 hrs) ✅
+#### Level 2: Quick Start (5-30%) ✅
 
 [Java Quick Start](quick-start) - 10 core concepts through touchpoint examples.
 
-#### Level 3: Beginner (0-60%, 3-4 hrs) ✅
+#### Level 3: Beginner (0-60%) ✅
 
 [Complete Beginner's Guide to Java](beginner) - Comprehensive OOP, collections, testing, streams.
 
-#### Level 4: Intermediate (60-85%, 4-8 hrs) ✅
+#### Level 4: Intermediate (60-85%) ✅
 
 [Intermediate Java](intermediate) - Design patterns, SOLID, concurrency, Maven/Gradle, JDBC.
 
-#### Level 5: Advanced (85-95%, 6-12 hrs) ✅
+#### Level 5: Advanced (85-95%) ✅
 
 [Advanced Java](advanced) - JVM internals, GC, reflection, system design.
 
@@ -50,13 +50,13 @@ All 6 tutorials in the Java Full Set are now available:
 
 ## 🎯 Choose Your Path
 
-| Experience                   | Path                                               | Time         |
-| ---------------------------- | -------------------------------------------------- | ------------ |
-| **Beginner**                 | Initial Setup → Beginner → Intermediate → Advanced | 22-32 hrs    |
-| **Experienced, new to Java** | Quick Start → Beginner → Intermediate → Advanced   | 14-26 hrs    |
-| **Want production skills**   | Intermediate → Advanced                            | 10-20 hrs    |
-| **Seeking mastery**          | Advanced (+ reference earlier tutorials)           | 6-12 hrs     |
-| **Need quick reference**     | Cookbook (+ tutorials as needed)                   | 30 min-2 hrs |
+| Experience                   | Path                                               |
+| ---------------------------- | -------------------------------------------------- |
+| **Beginner**                 | Initial Setup → Beginner → Intermediate → Advanced |
+| **Experienced, new to Java** | Quick Start → Beginner → Intermediate → Advanced   |
+| **Want production skills**   | Intermediate → Advanced                            |
+| **Seeking mastery**          | Advanced (+ reference earlier tutorials)           |
+| **Need quick reference**     | Cookbook (+ tutorials as needed)                   |
 
 ---
 

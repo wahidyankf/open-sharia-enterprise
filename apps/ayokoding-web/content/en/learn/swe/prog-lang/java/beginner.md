@@ -1,6 +1,6 @@
 ---
 title: Beginner
-date: 2025-12-04T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Master Java fundamentals from zero - comprehensive coverage of OOP, collections, testing, and functional programming with extensive examples and exercises
 weight: 30
@@ -20,11 +20,11 @@ categories:
 
 # Complete Beginner's Guide to Java
 
-**Master Java fundamentals comprehensively in 3-4 hours.** This is a complete journey from zero to solid Java expertise. You'll learn object-oriented programming, the collections framework, testing, and modern Java features through structured lessons and practice exercises.
+**Master Java fundamentals comprehensively.** This is a complete journey from zero to solid Java expertise. You'll learn object-oriented programming, the collections framework, testing, and modern Java features through structured lessons and practice exercises.
 
 ## What You'll Achieve
 
-By the end of this tutorial (3-4 hours), you will:
+By the end of this tutorial, you will:
 
 - ✅ Understand Java's core data types and how to use them effectively
 - ✅ Write well-structured classes with proper encapsulation
@@ -1516,12 +1516,6 @@ public class Course {
 3. **Grading Weights**: Different assignment weights (homework 30%, exams 70%)
 4. **Prerequisites**: Track course prerequisites and enforce
 5. **GPA Calculation**: Different rules for undergraduate vs graduate
-
-### Time Estimate
-
-- **Core implementation**: 2-3 hours
-- **Tests and refinement**: 1-2 hours
-- **Extensions**: 1-2 hours
 
 This project consolidates everything you've learned in this Beginner tutorial. Start with core classes, add functionality gradually, and test as you go!
 

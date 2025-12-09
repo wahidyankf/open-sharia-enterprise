@@ -1,6 +1,6 @@
 ---
 title: Advanced
-date: 2025-12-04T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Master JVM internals, advanced concurrency, reflection, optimization, and system design for expert-level Java development
 weight: 50
@@ -21,11 +21,11 @@ categories:
 
 # Advanced Java - Expert Mastery
 
-**Achieve expert-level Java proficiency in 6-12 hours.** This tutorial covers the deep internals of Java, advanced concurrency patterns, reflection, bytecode analysis, and optimization techniques used by top-tier developers.
+**Achieve expert-level Java proficiency.** This tutorial covers the deep internals of Java, advanced concurrency patterns, reflection, bytecode analysis, and optimization techniques used by top-tier developers.
 
 ## What You'll Achieve
 
-By the end of this tutorial (6-12 hours), you will:
+By the end of this tutorial, you will:
 
 - ✅ Understand JVM architecture and how it executes code
 - ✅ Master garbage collection and memory management

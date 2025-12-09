@@ -16,7 +16,6 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 - **File**: [initial-setup](initial-setup)
 - **Coverage**: 0-5% (Installation and Hello World)
-- **Time**: 5-15 minutes
 - **What you'll do**: Install Go, verify installation, run your first program
 - **Goal**: Get Go working on your system
 - **Best for**: Complete beginners with no Go experience
@@ -25,7 +24,6 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 - **File**: [quick-start](quick-start)
 - **Coverage**: 5-30% (Touchpoints and core concepts)
-- **Time**: 1-2 hours
 - **What you'll learn**: Variables, functions, control flow, goroutines basics, error handling
 - **Goal**: Learn enough to explore Go independently
 - **Best for**: Developers familiar with other languages wanting a quick overview
@@ -34,7 +32,6 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 - **File**: [beginner](beginner)
 - **Coverage**: 0-60% (Comprehensive fundamentals)
-- **Time**: 3-4 hours
 - **What you'll learn**: Complete coverage of Go basics with 4 levels of hands-on exercises
 - **Goal**: Build a solid foundation for real applications
 - **Best for**: Developers wanting comprehensive coverage and practice
@@ -43,7 +40,6 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 - **File**: [intermediate](intermediate)
 - **Coverage**: 60-85% (Production-grade techniques)
-- **Time**: 4-8 hours
 - **What you'll learn**: Advanced concurrency, error handling, testing, architecture patterns, performance optimization, security, deployment
 - **Goal**: Build production-grade systems
 - **Best for**: Developers building real projects who need professional techniques
@@ -52,7 +48,6 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 - **File**: [advanced](advanced)
 - **Coverage**: 85-95% (Expert mastery)
-- **Time**: 6-12 hours
 - **What you'll learn**: Runtime internals, memory optimization, lock-free concurrency, reflection, system design patterns, debugging
 - **Goal**: Achieve expert-level mastery
 - **Best for**: Experienced developers seeking deep understanding and optimization expertise
@@ -61,7 +56,7 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 In addition to the sequential path, use this reference for specific patterns:
 
-- [**Golang Cookbook**](cookbook) - Practical recipes and patterns for real-world problems (⏱️ 3-4 hours)
+- [**Golang Cookbook**](cookbook) - Practical recipes and patterns for real-world problems
   - **Prerequisites**: Complete the [Beginner](beginner) tutorial
   - Generics patterns, concurrency recipes, error handling, design patterns, web development
 
@@ -69,14 +64,14 @@ In addition to the sequential path, use this reference for specific patterns:
 
 **Choose based on your experience level:**
 
-| Experience Level                      | Recommended Path                                                   | Duration         |
-| ------------------------------------- | ------------------------------------------------------------------ | ---------------- |
-| **No programming experience**         | Initial Setup → Quick Start → Beginner → Intermediate → Advanced   | 22-32 hours      |
-| **Experienced programmer, new to Go** | Quick Start → Beginner → Intermediate → Advanced                   | 14-26 hours      |
-| **Familiar with some Go, want depth** | Beginner → Intermediate → Advanced                                 | 13-24 hours      |
-| **Building production systems now**   | Intermediate → Advanced (reference Quick Start/Beginner as needed) | 10-20 hours      |
-| **Seeking expert mastery**            | Advanced (assume Intermediate knowledge)                           | 6-12 hours       |
-| **Need a specific pattern?**          | Cookbook (reference relevant tutorials as needed)                  | 30 min - 2 hours |
+| Experience Level                      | Recommended Path                                                   |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| **No programming experience**         | Initial Setup → Quick Start → Beginner → Intermediate → Advanced   |
+| **Experienced programmer, new to Go** | Quick Start → Beginner → Intermediate → Advanced                   |
+| **Familiar with some Go, want depth** | Beginner → Intermediate → Advanced                                 |
+| **Building production systems now**   | Intermediate → Advanced (reference Quick Start/Beginner as needed) |
+| **Seeking expert mastery**            | Advanced (assume Intermediate knowledge)                           |
+| **Need a specific pattern?**          | Cookbook (reference relevant tutorials as needed)                  |
 
 ## 📝 Tutorial Structure
 

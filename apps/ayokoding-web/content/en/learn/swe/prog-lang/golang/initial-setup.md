@@ -1,8 +1,8 @@
 ---
 title: "Initial Setup"
-date: 2025-12-03T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
-description: "Get Go installed and running your first program in 15 minutes"
+description: "Get Go installed and running your first program"
 tags:
   - golang
   - installation
@@ -10,7 +10,7 @@ tags:
   - hello-world
 ---
 
-**Get Go running in 15 minutes or less.** This guide covers installation and your first "Hello, World!" program. No programming experience needed.
+**Get Go up and running quickly.** This guide covers installation and your first "Hello, World!" program. No programming experience needed.
 
 ## 🎯 What You'll Accomplish
 
@@ -19,8 +19,6 @@ By the end of this tutorial, you'll have:
 - ✅ Go installed and verified
 - ✅ Your first Go program running
 - ✅ Confidence that Go works on your system
-
-**Time needed**: 5-15 minutes depending on your system
 
 ## 🔄 Installation Verification Flow
 
@@ -212,12 +210,12 @@ You've successfully installed Go and run your first program. You're ready for th
 
 Now that Go is working, you have two paths:
 
-**Quick learner** (1-2 hours): [Golang Quick Start](quick-start)
+**Quick learner**: [Golang Quick Start](quick-start)
 
 - Learn core syntax and basic patterns
 - Understand enough to explore Go independently
 
-**Comprehensive learner** (3-4 hours): [Complete Beginner's Guide to Go](beginner)
+**Comprehensive learner**: [Complete Beginner's Guide to Go](beginner)
 
 - Comprehensive coverage of Go fundamentals
 - Hands-on exercises and practice

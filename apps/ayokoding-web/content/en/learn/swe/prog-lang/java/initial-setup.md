@@ -1,8 +1,8 @@
 ---
 title: Initial Setup
-date: 2025-12-04T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
-description: Get Java running in 15 minutes - install JDK, verify installation, and run your first program
+description: Get Java running quickly - install JDK, verify installation, and run your first program
 weight: 10
 tags:
   - java
@@ -14,11 +14,11 @@ categories:
   - learn
 ---
 
-**Get Java running in 15 minutes.** This tutorial provides the quickest path to running your first Java program. You'll install the Java Development Kit (JDK), verify it works, and run a simple "Hello World" application.
+**Get Java running quickly.** This tutorial provides the quickest path to running your first Java program. You'll install the Java Development Kit (JDK), verify it works, and run a simple "Hello World" application.
 
 ## What You'll Achieve
 
-By the end of this tutorial (5-15 minutes), you'll have:
+By the end of this tutorial, you'll have:
 
 - ✅ Java Development Kit (JDK 21 or later) installed on your system
 - ✅ Verified Java installation works correctly
@@ -332,9 +332,9 @@ Congratulations! You have a working Java development environment.
 
 ### Continue Learning
 
-- **[Java Quick Start](quick-start)** (1-2 hours) - Learn enough Java to explore independently. Perfect if you want a quick overview of core syntax and concepts.
+- **[Java Quick Start](quick-start)** - Learn enough Java to explore independently. Perfect if you want a quick overview of core syntax and concepts.
 
-- **[Complete Beginner's Guide to Java](beginner)** (3-4 hours) - Comprehensive foundation covering Java fundamentals from zero. Choose this if you want in-depth coverage with practice exercises.
+- **[Complete Beginner's Guide to Java](beginner)** - Comprehensive foundation covering Java fundamentals from zero. Choose this if you want in-depth coverage with practice exercises.
 
 ### What's Next?
 
