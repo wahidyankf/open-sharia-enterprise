@@ -36,9 +36,10 @@ The Tutorial Naming Convention defines:
 
 - Six standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
 - "Full Set" concept: 5 sequential learning levels (Initial Setup through Advanced)
-- Expected coverage percentages and time estimates for each type
+- Expected coverage percentages for each type (depth indicators, NOT time estimates)
 - Proper naming patterns for each tutorial type
 - When each tutorial type should be used
+- **CRITICAL**: Tutorials must NOT include time estimates - flag any "X hours" or "X minutes" as violations
 
 **This agent focuses on the validation workflow.** For creation guidance, see docs-tutorial-maker.
 
@@ -279,7 +280,7 @@ Create a comprehensive report with:
 - Tutorial Type: [Initial Setup | Quick Start | Beginner | Intermediate | Advanced | Cookbook]
 - ✓/✗ Title follows naming pattern
 - ✓/✗ Coverage aligns with type (expected: X-Y%)
-- ✓/✗ Time estimate appropriate (expected: X hrs)
+- ✓/✗ No time estimates present ("X hours", "X minutes", "Duration:", etc.)
 - ✓/✗ Prerequisites match type requirements
 - ✓/✗ Content depth matches type definition
 

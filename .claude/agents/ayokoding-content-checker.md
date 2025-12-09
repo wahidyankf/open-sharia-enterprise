@@ -63,6 +63,34 @@ Use this agent when:
 
 ## Validation Checklist
 
+### No Time Estimates Validation (Learning Content)
+
+**CRITICAL for `content/en/learn/` and `content/id/belajar/` only**:
+
+- [ ] **No time estimates in content** - Flag any "X hours", "X minutes", "Duration:", "Time needed:", etc. as violations
+- [ ] **No time estimates in frontmatter** - Check `description` field for time claims
+- [ ] **Coverage percentages allowed** - "Coverage: 0-5%" or "60-85%" are acceptable (depth indicators, not time)
+
+**Why this matters**: Time estimates create pressure and anxiety. Everyone learns at different speeds. Focus on outcomes, not duration.
+
+**Violation Examples**:
+
+❌ **Flag these as errors**:
+
+```markdown
+This tutorial takes 2-3 hours to complete.
+Duration: 45 minutes
+Learn TypeScript in 30 minutes
+Time needed: 1-2 hrs
+```
+
+✅ **Acceptable**:
+
+```markdown
+By the end of this tutorial, you'll be able to...
+Coverage: 60-85% of domain knowledge (intermediate depth)
+```
+
 ### Frontmatter Validation
 
 **Required Fields**:
@@ -583,6 +611,7 @@ categories: ["tutorials"]  <!-- WRONG! Not valid category -->
 - [ ] **Hands-on elements** - Includes code examples, exercises, or activities
 - [ ] **Visual aids** - Contains diagrams, screenshots, or visual explanations
 - [ ] **Summary** - Recaps what was learned
+- [ ] **No time estimates** - Does NOT include "X hours", "X minutes", "Duration:", "Time needed:", etc.
 
 **Tutorial Structure Pattern**:
 

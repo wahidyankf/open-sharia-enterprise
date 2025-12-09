@@ -280,12 +280,14 @@ Let's start by creating a new project...
 
 **Tutorial Types**:
 
-- **Initial Setup** (0-5%, 5-15 min) - Quick "Hello World" verification
-- **Quick Start** (5-30%, 1-3 hrs) - Learn enough to explore independently
-- **Beginner** (0-60%, 3-6 hrs) - Comprehensive foundation from scratch
-- **Intermediate** (60-85%, 4-8 hrs) - Professional-level expertise
-- **Advanced** (85-95%, 6-12 hrs) - Expert-level mastery
-- **Cookbook** (Practical, 2-6 hrs) - Day-to-day recipes and real-world problems
+- **Initial Setup** (0-5%) - Quick "Hello World" verification
+- **Quick Start** (5-30%) - Learn enough to explore independently
+- **Beginner** (0-60%) - Comprehensive foundation from scratch
+- **Intermediate** (60-85%) - Professional-level expertise
+- **Advanced** (85-95%) - Expert-level mastery
+- **Cookbook** (Practical) - Day-to-day recipes and real-world problems
+
+**Note**: Coverage percentages indicate depth/scope, NOT time required. See "No Time Estimates" convention below.
 
 **Example (ayokoding-web file naming)**:
 
@@ -297,6 +299,45 @@ content/id/belajar/nodejs/
 └── cookbook/
     └── error-handling.md      # Cookbook recipe
 ```
+
+### 8. No Time Estimates in Educational Content
+
+**Reference**: [Content Quality Principles - No Time Estimates](./ex-co__content-quality.md#no-time-estimates)
+
+**Application to Hugo**: Do NOT include time estimates in educational/tutorial content.
+
+**Scope**: ayokoding-web learning content (`content/en/learn/`, `content/id/belajar/`)
+
+**Rationale**:
+
+- Time estimates create artificial pressure on learners
+- Everyone learns at different speeds
+- Focus on WHAT learners accomplish, not HOW LONG it takes
+- Makes content evergreen (no need to update time claims)
+
+**Forbidden in Hugo Content**:
+
+❌ **Avoid**:
+
+```markdown
+This tutorial takes 2-3 hours to complete.
+Duration: 45 minutes
+Learn this in 30 minutes.
+```
+
+✅ **Good**:
+
+```markdown
+By the end of this tutorial, you'll be able to...
+Coverage: 60-85% of domain knowledge (intermediate depth)
+```
+
+**Exception - Coverage Percentages Allowed**:
+
+Coverage percentages indicate **depth/scope**, not **time**, so they're allowed:
+
+- ✅ "Coverage: 0-5%" (initial setup scope)
+- ✅ "Coverage: 60-85%" (intermediate depth)
 
 ## Adapted Conventions
 
@@ -517,7 +558,7 @@ content/
 title: "Getting Started with TypeScript"
 date: 2025-12-07T10:00:00+07:00
 draft: false
-description: "Learn TypeScript fundamentals in 30 minutes"
+description: "Learn TypeScript fundamentals and start building type-safe applications"
 weight: 10
 tags: ["typescript", "javascript", "tutorial"]
 categories: ["learn"]

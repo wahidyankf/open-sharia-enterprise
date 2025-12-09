@@ -241,7 +241,7 @@ Use **LaTeX notation** for equations: `$...$` (inline), `$$...$$` (display). NOT
 
 ### Tutorial Standards
 
-Six tutorial levels: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes). See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete coverage and time estimates.
+Six tutorial levels: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes). Coverage percentages indicate depth, NOT time. No time estimates in educational content (everyone learns at different speeds). See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details.
 
 ### Content Quality Principles
 
@@ -379,7 +379,7 @@ All documentation follows file naming (`[prefix]__[content-identifier].md`), Git
 
 ## Planning Without Timelines
 
-When planning tasks, provide concrete implementation steps without time estimates. Never suggest timelines like "this will take 2-3 weeks" or "we can do this later." Focus on what needs to be done, not when. Break work into actionable steps and let users decide scheduling.
+When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines like "this will take 2-3 weeks" or "complete this in 30 minutes." Focus on WHAT needs to be done or learned, not HOW LONG it takes. This applies to project planning (plans/) and educational content (tutorials, learning materials). Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./docs/explanation/conventions/ex-co__content-quality.md#no-time-estimates) for educational content specifics.
 
 ## Important Notes
 

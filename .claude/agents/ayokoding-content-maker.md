@@ -84,6 +84,7 @@ Use this agent when:
 5. **Timestamp Format** - ISO 8601 with UTC+7 (`YYYY-MM-DDTHH:MM:SS+07:00`)
 6. **Tutorial Convention** - Progressive scaffolding, hands-on elements, visual aids (applies to learning content)
 7. **Tutorial Naming** - Use standardized types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+8. **No Time Estimates** - **CRITICAL**: Do NOT include time estimates ("X hours", "X minutes", "Duration:", etc.) in educational content. Focus on learning outcomes, not duration. Coverage percentages (0-5%, 60-85%) are allowed as they indicate depth, not time.
 
 ### Adapted Conventions (ayokoding-web Specifics)
 

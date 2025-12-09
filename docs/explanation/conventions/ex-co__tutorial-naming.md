@@ -9,7 +9,7 @@ tags:
   - naming
   - learning-paths
 created: 2025-12-03
-updated: 2025-12-03
+updated: 2025-12-09
 ---
 
 # Tutorial Naming Convention
@@ -73,7 +73,6 @@ graph TB
 ### 🚀 Initial Setup
 
 **Coverage**: 0-5% of domain knowledge
-**Time**: 5-15 minutes
 **Goal**: Get up and running quickly
 
 **Description**:
@@ -99,14 +98,13 @@ Minimal tutorial to get you running your first program or using a tool. In progr
 - "Initial Setup for React"
 - "Initial Setup for PostgreSQL"
 
-**When to use**: When someone needs to verify they can run code in 5-15 minutes before committing to deeper learning.
+**When to use**: When someone needs to verify they can run code before committing to deeper learning.
 
 ---
 
 ### ⚡ Quick Start
 
 **Coverage**: 5-30% of domain knowledge
-**Time**: 1-3 hours
 **Goal**: Learn enough to explore independently
 
 **Description**:
@@ -140,7 +138,6 @@ Teaches the core concepts and syntax needed to start exploring the domain indepe
 ### 🟢 Beginner
 
 **Coverage**: 0-60% of domain knowledge
-**Time**: 3-6 hours
 **Goal**: Comprehensive foundation from zero to working knowledge
 
 **Description**:
@@ -176,7 +173,6 @@ Teaches everything from absolute basics to solid working knowledge. Covers the m
 ### 🟡 Intermediate
 
 **Coverage**: 60-85% of domain knowledge
-**Time**: 4-8 hours
 **Goal**: Professional-level expertise for production systems
 
 **Description**:
@@ -215,7 +211,6 @@ Builds on beginner knowledge to cover professional techniques, optimization, and
 ### 🔴 Advanced
 
 **Coverage**: 85-95% of domain knowledge
-**Time**: 6-12 hours
 **Goal**: Expert-level mastery of advanced techniques
 
 **Description**:
@@ -253,7 +248,6 @@ Covers advanced techniques, edge cases, and sophisticated patterns used by exper
 ### 🧪 Cookbook
 
 **Coverage**: Practical recipes (not depth-based)
-**Time**: 2-6 hours (reference material)
 **Goal**: Solve day-to-day and real-world problems
 
 **Description**:
@@ -334,14 +328,14 @@ graph TB
 
 ### Quick Reference Table
 
-| Tutorial Type     | Time     | Coverage  | Use When                            |
-| ----------------- | -------- | --------- | ----------------------------------- |
-| **Initial Setup** | 5-15 min | 0-5%      | Need quick verification setup works |
-| **Quick Start**   | 1-3 hrs  | 5-30%     | Want to explore independently       |
-| **Beginner**      | 3-6 hrs  | 0-60%     | Complete beginner, need foundation  |
-| **Intermediate**  | 4-8 hrs  | 60-85%    | Building production systems         |
-| **Advanced**      | 6-12 hrs | 85-95%    | Need expert-level mastery           |
-| **Cookbook**      | 2-6 hrs  | Practical | Solving specific problems           |
+| Tutorial Type     | Coverage  | Use When                            |
+| ----------------- | --------- | ----------------------------------- |
+| **Initial Setup** | 0-5%      | Need quick verification setup works |
+| **Quick Start**   | 5-30%     | Want to explore independently       |
+| **Beginner**      | 0-60%     | Complete beginner, need foundation  |
+| **Intermediate**  | 60-85%    | Building production systems         |
+| **Advanced**      | 85-95%    | Need expert-level mastery           |
+| **Cookbook**      | Practical | Solving specific problems           |
 
 **Note**: The first 5 types (Initial Setup through Advanced) form the "Full Set" - a sequential learning path from 0% to 95% coverage. Cookbook is a parallel track for practical problem-solving.
 
@@ -385,7 +379,8 @@ graph TB
 - **Use consistent naming** - Follow the standard tutorial type names
 - **Match content to type** - Ensure coverage aligns with tutorial type definition
 - **State prerequisites** - Clearly list what learners need before starting
-- **Include time estimates** - Help learners plan their learning sessions
+- **Focus on learning outcomes** - Emphasize WHAT learners will achieve, not HOW LONG it takes
+- **Use coverage percentages** - Indicate depth (0-5%, 60-85%, etc.) to set expectations
 - **Provide practical examples** - Real-world scenarios, not toy problems
 - **Test with target audience** - Validate content matches the intended level
 
@@ -393,7 +388,7 @@ graph TB
 
 - **Mix tutorial types** - Don't combine "Beginner + Intermediate" in one tutorial
 - **Skip prerequisite tutorials** - Each level builds on previous ones
-- **Underestimate time** - Better to overestimate than frustrate learners
+- **Include time estimates** - No "X hours" or "X minutes" (people learn at different speeds)
 - **Use jargon without explanation** - Define terms appropriate to the level
 - **Create arbitrary levels** - Stick to the six standard types
 - **Make cookbooks too basic** - Cookbook assumes working knowledge
