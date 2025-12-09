@@ -872,6 +872,59 @@ title: Programming Languages # WRONG! Doesn't match folder name
 - **Rationale**: Provides comprehensive navigation hierarchy, helps users discover deeply nested content without clicking through multiple pages, improves content discoverability and UX
 - **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
 
+**Index File Content Separation** (ayokoding-web):
+
+- `_index.md` files should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
+- **Introduction/Overview Content**: Create a separate `overview.md` file in the same directory
+- **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance
+- **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
+
+**Example Structure**:
+
+```
+content/en/learn/swe/prog-lang/golang/
+├── _index.md        # Navigation only (3-layer list)
+├── overview.md      # Introduction to Golang learning path
+├── initial-setup.md
+├── quick-start.md
+├── beginner.md
+├── intermediate.md
+├── advanced.md
+└── cookbook.md
+```
+
+**Example `_index.md` (navigation only)**:
+
+```markdown
+---
+title: Golang
+---
+
+- [Overview](/learn/swe/prog-lang/golang/overview)
+- [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
+- [Quick Start](/learn/swe/prog-lang/golang/quick-start)
+- [Beginner Guide](/learn/swe/prog-lang/golang/beginner)
+- [Intermediate Guide](/learn/swe/prog-lang/golang/intermediate)
+- [Advanced Guide](/learn/swe/prog-lang/golang/advanced)
+- [Cookbook](/learn/swe/prog-lang/golang/cookbook)
+```
+
+**Example `overview.md` (content)**:
+
+```markdown
+---
+title: "Golang Learning Path Overview"
+date: 2025-12-09T10:00:00+07:00
+draft: false
+description: "Introduction to our comprehensive Golang learning resources"
+weight: 1
+tags: ["golang", "programming", "overview"]
+categories: ["learn"]
+---
+
+Welcome to our Golang learning path! This comprehensive curriculum takes you from...
+```
+
 ✅ **Good (3 layers deep)**:
 
 ```markdown

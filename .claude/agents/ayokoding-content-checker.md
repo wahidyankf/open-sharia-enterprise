@@ -406,6 +406,72 @@ title: LANG # WRONG! Incorrect capitalization (should be Lang)
 - [ ] Layer 2: Children (immediate subsections)
 - [ ] Layer 3: Grandchildren (subsections of children)
 
+### Index File Content Separation Validation
+
+**For `_index.md` files in learn/belajar directories ONLY**:
+
+**Scope**: This rule applies ONLY to:
+
+- `apps/ayokoding-web/content/en/learn/` and its subdirectories
+- `apps/ayokoding-web/content/id/belajar/` and its subdirectories
+
+**Does NOT apply to**: Root `_index.md`, rants/celoteh directories, or ose-platform-web
+
+**Validation Checklist**:
+
+- [ ] `_index.md` contains ONLY navigation lists (3 layers deep)
+- [ ] NO introduction paragraphs in `_index.md`
+- [ ] NO overview content in `_index.md`
+- [ ] NO explanatory text beyond navigation links
+- [ ] If introduction/overview needed: Separate `overview.md` file exists
+- [ ] `overview.md` (if present) has proper frontmatter and content structure
+
+**Valid `_index.md` Structure** (navigation only):
+
+```markdown
+---
+title: Golang
+---
+
+- [Overview](/learn/swe/prog-lang/golang/overview)
+- [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
+- [Quick Start](/learn/swe/prog-lang/golang/quick-start)
+- [Beginner Guide](/learn/swe/prog-lang/golang/beginner)
+```
+
+**Invalid `_index.md` Structure** (contains intro content):
+
+```markdown
+---
+title: Golang
+---
+
+Welcome to our comprehensive Golang learning path! Go is a statically typed...
+
+<!-- WRONG! Introduction content should be in overview.md -->
+
+- [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
+- [Quick Start](/learn/swe/prog-lang/golang/quick-start)
+```
+
+**Valid `overview.md` Structure** (content file):
+
+```markdown
+---
+title: "Golang Learning Path Overview"
+date: 2025-12-09T10:00:00+07:00
+draft: false
+description: "Introduction to our comprehensive Golang learning resources"
+weight: 1
+tags: ["golang", "programming", "overview"]
+categories: ["learn"]
+---
+
+Welcome to our Golang learning path! This comprehensive curriculum takes you from...
+```
+
+**Rationale**: Clear separation of concerns - `_index.md` handles navigation, `overview.md` handles content
+
 **Valid Navigation (3 layers deep)**:
 
 ```markdown
