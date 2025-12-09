@@ -157,8 +157,8 @@ Keterampilan manajemen waktu sangat penting bagi insinyur perangkat lunak yang i
 
 [^2]: [Harvard Business Review - The Most Important Practice in Time Management](https://hbr.org/2011/01/the-most-important-practice-i)
 
-[^3]: [Lifehacker - How Long It Takes to Get Back on Track After a Distraction](https://lifehacker.com/how-long-it-takes-to-get-back-on-track-after-a-distract-1720708353)
+[^3]: [UC Irvine - Regaining Focus in a World of Digital Distractions](https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/)
 
-[^4]: [Centers for Disease Control and Prevention - Physical Activity Guidelines for Americans](https://www.cdc.gov/physicalactivity/basics/adults/index.htm)
+[^4]: [Centers for Disease Control and Prevention - Physical Activity Guidelines for Americans](https://www.cdc.gov/physical-activity-basics/guidelines/adults.html)
 
 ---

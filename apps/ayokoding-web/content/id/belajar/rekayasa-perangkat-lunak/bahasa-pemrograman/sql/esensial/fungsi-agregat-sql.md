@@ -178,4 +178,4 @@ Ini akan mengembalikan hasil:
 3. [SQL Aggregate Functions: A Beginner’s Guide](https://www.databasestar.com/sql-aggregate-functions/) - Database Star
 4. [Aggregate Functions in MySQL](https://www.mysqltutorial.org/mysql-aggregate-functions.aspx) - MySQL Tutorial
 5. [SQL Server Aggregate Functions](https://www.sqlservertutorial.net/sql-server-aggregate-functions/) - SQL Server Tutorial
-6. [Aggregate Functions (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/functions/aggregate-functions-transact-sql?view=sql-server-ver15) - Microsoft Docs
+6. [Aggregate Functions (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/functions/aggregate-functions-transact-sql?view=sql-server-ver15) - Microsoft Docs

@@ -126,6 +126,6 @@ Further Readings
 
 "Redis in Action" by Josiah L. Carlson
 
-[Profil](./profil/)
+[Profil](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/penyimpanan-data-dalam-memori/profil)
 
-[Konsep Kunci](./konsep-kunci/)
+[Konsep Kunci](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/penyimpanan-data-dalam-memori/konsep-kunci)

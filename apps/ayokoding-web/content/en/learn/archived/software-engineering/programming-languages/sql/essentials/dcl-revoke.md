@@ -50,4 +50,4 @@ This will remove the user "jane"'s ability to select data from the "customer" ta
 
 1. [Revoking Privileges In MySQL](https://www.mysqltutorial.org/mysql-revoke.aspx) - MySQL Tutorial
 2. [SQL Server REVOKE Statement](https://www.sqlservertutorial.net/sql-server-security/sql-server-revoke/) - SQL Server Tutorial
-3. [REVOKE (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql?view=sql-server-ver15) - Microsoft Docs
+3. [REVOKE (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql?view=sql-server-ver15) - Microsoft Docs

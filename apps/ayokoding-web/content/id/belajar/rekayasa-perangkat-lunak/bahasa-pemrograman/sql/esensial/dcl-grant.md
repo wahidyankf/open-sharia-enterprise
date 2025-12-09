@@ -50,4 +50,4 @@ Ini akan memungkinkan pengguna "jane" untuk memilih data dari tabel "customer" d
 
 1. [Memberikan Hak Istimewa di MySQL](https://www.mysqltutorial.org/mysql-grant.aspx) - Tutorial MySQL
 2. [Perintah GRANT SQL Server](https://www.sqlservertutorial.net/sql-server-security/sql-server-grant/) - Tutorial SQL Server
-3. [GRANT (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-transact-sql?view=sql-server-ver15) - Dokumen Microsoft
+3. [GRANT (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/statements/grant-transact-sql?view=sql-server-ver15) - Dokumen Microsoft

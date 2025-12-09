@@ -87,5 +87,5 @@ This command will drop the view named `employee_view`.
 ## Further Readings
 
 1. [SQL DROP DATABASE Statement - Tutorialspoint](https://www.tutorialspoint.com/sql/sql-drop-database.htm)
-2. [DROP TABLE statement - Microsoft SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/statements/drop-table-transact-sql?view=sql-server-ver15)
+2. [DROP TABLE statement - Microsoft SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/statements/drop-table-transact-sql?view=sql-server-ver15)
 3. [DROP VIEW statement - Oracle Help Center](https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-TABLE.html)
