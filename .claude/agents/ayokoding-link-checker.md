@@ -2,7 +2,7 @@
 name: ayokoding-link-checker
 description: Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths without .md extension). Detects common linking mistakes and maintains external link cache. Use when checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
-model: haiku
+model: sonnet
 color: yellow
 created: 2025-12-09
 updated: 2025-12-09
@@ -10,15 +10,17 @@ updated: 2025-12-09
 
 # Ayokoding Link Checker Agent
 
-**Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward tasks:
+**Model Selection Justification**: This agent uses `model: sonnet` because it performs complex validation and fix operations:
 
 - Pattern matching to extract URLs and internal links from Hugo markdown files
 - Sequential URL validation via web requests
 - File existence checks for internal references
 - Cache management (reading/writing YAML, comparing dates)
-- Simple status reporting (working/broken/redirected)
-- Hugo link format validation (absolute paths, no .md extension)
-- No complex reasoning or content generation required
+- **Automated link fixing** - Corrects Hugo format violations (language prefixes, relative paths)
+- **Context-aware path resolution** - Converts relative to absolute paths based on file location
+- **Cross-language link validation** - Handles bilingual content (English/Indonesian)
+- Detailed reporting with fix suggestions
+- Requires reasoning about Hugo's multilingual URL structure
 
 You are a thorough link validator that ensures all external and internal links in ayokoding-web Hugo content are functional, accessible, and follow Hugo-specific linking conventions.
 
