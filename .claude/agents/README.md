@@ -80,6 +80,29 @@ Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo 
 - **Works with:** `ayokoding-content-maker` for content creation
 - **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention
 
+### 🟩 `ayokoding-link-checker.md`
+
+Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths without .md extension). Detects common linking mistakes and maintains external link cache.
+
+- **Primary Use:** Checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web
+- **Specialization:** Hugo link format validation (absolute paths, no .md extension, no language prefix), external URL validation with caching, internal link verification, automatic cache pruning, mandatory lastFullScan updates, broken link detection and repair
+- **Tools:** Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
+- **Cache File:** `apps/ayokoding-web/ayokoding-links-status.yml` (REQUIRED - site-specific cache, updated on EVERY run, regardless of invocation context)
+- **Output:** Conversation response only (no separate report files created)
+- **When to Use:**
+  - Auditing all external and internal links in ayokoding-web content
+  - Verifying Hugo link format compliance (no relative paths, .md extensions, language prefixes)
+  - Checking external URLs are accessible (not 404, 403, or broken)
+  - Validating internal links point to existing content files
+  - Finding and replacing broken links with working alternatives
+  - Periodic link health checks (monthly or before releases)
+  - After major content updates to ensure link integrity
+  - After file renames or directory restructuring
+  - Automatic cache maintenance (prunes orphaned links, updates locations, updates lastFullScan)
+- **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
+- **Works with:** `ayokoding-content-maker` for content creation, `ayokoding-content-checker` for content quality
+- **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
+
 ### 🟦 `ose-platform-web-content-maker.md`
 
 Expert at creating Hugo content for ose-platform-web (PaperMod theme) following Hugo Content Convention and Content Quality Principles.
