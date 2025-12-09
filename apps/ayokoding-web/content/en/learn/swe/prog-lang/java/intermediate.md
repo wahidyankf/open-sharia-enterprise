@@ -1,6 +1,6 @@
 ---
 title: Intermediate
-date: 2025-12-04T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Learn production techniques and patterns - design patterns, SOLID principles, concurrency, performance, and database integration for professional development
 weight: 40
@@ -20,11 +20,11 @@ categories:
 
 # Intermediate Java - Production-Ready Development
 
-**Master production-ready Java techniques in 4-8 hours.** This tutorial bridges the gap between basic understanding and professional development. You'll learn design patterns, advanced concurrency, performance optimization, and integration with databases and build tools.
+**Master production-ready Java techniques.** This tutorial bridges the gap between basic understanding and professional development. You'll learn design patterns, advanced concurrency, performance optimization, and integration with databases and build tools.
 
 ## What You'll Achieve
 
-By the end of this tutorial (4-8 hours), you will:
+By the end of this tutorial, you will:
 
 - ✅ Understand and apply common design patterns
 - ✅ Apply SOLID principles to real code

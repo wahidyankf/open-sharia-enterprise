@@ -1,6 +1,6 @@
 ---
 title: "Cookbook"
-date: 2025-12-01T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
 description: "Practical recipes and patterns for idiomatic Go programming"
 tags:
@@ -26,8 +26,6 @@ By working through this cookbook, you will be able to:
 6. **Write Production-Grade Tests** - Create table-driven tests, property-based tests, and benchmarks
 7. **Apply Design Patterns** - Use functional options, builder pattern, and other Go-idiomatic patterns
 8. **Build Web Services** - Create HTTP servers with middleware, routing, and JSON APIs
-
-**Estimated Time**: 3-4 hours to work through all recipes
 
 ## 📋 Prerequisites
 

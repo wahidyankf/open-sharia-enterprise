@@ -1,6 +1,6 @@
 ---
 title: "Beginner"
-date: 2025-12-01T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
 description: "Comprehensive Go programming tutorial covering 0-60% of the language from scratch with hands-on exercises"
 tags:
@@ -13,7 +13,7 @@ tags:
 
 **Want to build software that handles millions of concurrent requests?** Go (Golang) powers some of the world's most critical infrastructure - from Docker containers to Kubernetes orchestration, from Uber's backend to Dropbox's file sync. Created by Google engineers who built systems at planetary scale, Go brings the simplicity of Python with the performance of C++.
 
-In this Beginner's guide, you'll learn Go from scratch in **3-4 hours**. By the end, you'll write concurrent programs, handle errors idiomatically, and understand why companies like Netflix, Twitch, and SoundCloud chose Go for their production systems. This tutorial provides comprehensive coverage of Go fundamentals, from basic syntax to concurrency patterns and testing.
+In this Beginner's guide, you'll learn Go from scratch. By the end, you'll write concurrent programs, handle errors idiomatically, and understand why companies like Netflix, Twitch, and SoundCloud chose Go for their production systems. This tutorial provides comprehensive coverage of Go fundamentals, from basic syntax to concurrency patterns and testing.
 
 ## 🎯 What You'll Learn
 

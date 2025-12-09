@@ -1,8 +1,8 @@
 ---
 title: "Quick Start"
-date: 2025-12-03T00:00:00+07:00
+date: 2025-12-09T00:00:00+07:00
 draft: false
-description: "Learn enough Go to explore independently - core syntax and basic patterns in 1-2 hours"
+description: "Learn enough Go to explore independently - core syntax and basic patterns"
 tags:
   - golang
   - programming-languages
@@ -10,7 +10,7 @@ tags:
   - touchpoints
 ---
 
-**Want to get productive with Go fast?** This Quick Start teaches you the essential syntax and core patterns you need to read Go code and try simple examples independently. In just **1-2 hours**, you'll understand Go's approach to simplicity and concurrency.
+**Want to get productive with Go fast?** This Quick Start teaches you the essential syntax and core patterns you need to read Go code and try simple examples independently. You'll understand Go's approach to simplicity and concurrency.
 
 For comprehensive coverage and hands-on practice, see the [Complete Beginner's Guide](beginner). For practical patterns and recipes, check out the [Golang Cookbook](cookbook).
 
@@ -369,7 +369,7 @@ You now have touchpoints across Go's core concepts! To deepen your knowledge:
 
 1. **Try the examples**: Copy and run each code snippet. Modify them and experiment.
 2. **Read the docs**: Visit [go.dev/doc](https://go.dev/doc) to explore in depth.
-3. **Complete the Beginner tutorial**: [Complete Beginner's Guide to Go](beginner) covers everything comprehensively (3-4 hours) with:
+3. **Complete the Beginner tutorial**: [Complete Beginner's Guide to Go](beginner) covers everything comprehensively with:
    - Methods, interfaces, and embedding
    - Comprehensive error handling and wrapping
    - Advanced concurrency patterns
