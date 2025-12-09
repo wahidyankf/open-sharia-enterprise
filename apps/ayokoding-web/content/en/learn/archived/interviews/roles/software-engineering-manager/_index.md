@@ -5,7 +5,7 @@ draft: false
 weight: 3
 ---
 
-- [Responsibilities](./responsibilities)
-- [Concepts](./concepts/)
-- [Mini Projects](./mini-projects/)
-- [Questions](./questions/)
+- [Responsibilities](/en/learn/archived/interviews/roles/software-engineering-manager/responsibilities)
+- [Concepts](/en/learn/archived/interviews/roles/software-engineering-manager/concepts/)
+- [Mini Projects](/en/learn/archived/interviews/roles/software-engineering-manager/mini-projects/)
+- [Questions](/en/learn/archived/interviews/roles/software-engineering-manager/questions/)

@@ -4,6 +4,8 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
+**Similar article:** [Menyiapkan C, TypeScript, F#, dan Dart untuk Pengembangan Lokal dalam VS Code: Pengalaman Liburan Saya](/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya)
+
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 
 In the name of Allah, The Most Gracious and The Most Merciful

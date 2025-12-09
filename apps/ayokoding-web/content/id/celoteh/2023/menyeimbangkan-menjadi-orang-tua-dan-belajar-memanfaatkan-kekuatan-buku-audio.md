@@ -4,7 +4,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Balancing Parenthood and Learning: Harnessing the Power of Audiobooks](../../../en/rants/2023/balancing-parenthood-and-learning-harnessing-the-power-of-audiobooks/)_
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Balancing Parenthood and Learning: Harnessing the Power of Audiobooks](/en/rants/2023/balancing-parenthood-and-learning-harnessing-the-power-of-audiobooks/)_
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

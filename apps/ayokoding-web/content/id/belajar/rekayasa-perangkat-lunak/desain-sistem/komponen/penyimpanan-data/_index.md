@@ -4,28 +4,28 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-[Pertimbangan](./pertimbangan/)
+[Pertimbangan](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/pertimbangan/)
 
-[Basis Data Relasional](./basis-data-relasional/)
+[Basis Data Relasional](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-relasional/)
 
-[Basis Data Berbasis Dokumen](./basis-data-berbasis-dokumen/)
+[Basis Data Berbasis Dokumen](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-berbasis-dokumen/)
 
-[Penyimpanan Kunci-Nilai](./penyimpanan-kunci-nilai/)
+[Penyimpanan Kunci-Nilai](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/penyimpanan-kunci-nilai/)
 
-[Penyimpanan Keluarga Kolom](./penyimpanan-keluarga-kolom/)
+[Penyimpanan Keluarga Kolom](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/penyimpanan-keluarga-kolom/)
 
-[Basis Data Graf](./basis-data-graf/)
+[Basis Data Graf](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/)
 
-[Penyimpanan Objek](./penyimpanan-objek/)
+[Penyimpanan Objek](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/penyimpanan-objek/)
 
-[Broker Pesan](./broker-pesan/)
+[Broker Pesan](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/broker-pesan/)
 
-[Penyimpanan Data Dalam Memori](./penyimpanan-data-dalam-memori/)
+[Penyimpanan Data Dalam Memori](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/penyimpanan-data-dalam-memori/)
 
-[Sistem File](./sistem-file/)
+[Sistem File](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/sistem-file/)
 
-[Mesin Pencari](./mesin-pencari/)
+[Mesin Pencari](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/mesin-pencari/)
 
-[Basis Data Deret Waktu](./basis-data-deret-waktu/)
+[Basis Data Deret Waktu](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-deret-waktu/)
 
-[Gudang Data](./gudang-data/)
+[Gudang Data](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/gudang-data/)

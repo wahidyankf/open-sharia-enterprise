@@ -4,6 +4,8 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
+**Similar article:** [Tech Winter di Indonesia: Pelajaran yang Gw Ambil dan Pentingnya Stock-Based Compensation](/id/celoteh/2023/tech-winter-di-indonesia-pelajaran-yang-gw-ambil-dan-pentingnya-stock-based-compensation)
+
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 
 In the name of Allah, The Most Gracious and The Most Merciful

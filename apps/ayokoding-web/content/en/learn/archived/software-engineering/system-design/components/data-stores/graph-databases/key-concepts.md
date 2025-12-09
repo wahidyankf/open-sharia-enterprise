@@ -38,4 +38,4 @@ Some examples of graph databases include:
 
 - [Neo4j Documentation](https://neo4j.com/docs/)
 - [Amazon Neptune Documentation](https://docs.aws.amazon.com/neptune/latest/userguide/intro.html)
-- [Microsoft Azure Cosmos DB Documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction)
+- [Microsoft Azure Cosmos DB Documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/graph-introduction)

@@ -21,58 +21,58 @@ Overall, the CliftonStrengths assessment and philosophy are intended to help ind
 
 The 34 themes in the CliftonStrengths assessment can be grouped into four main categories: Executing, Influencing, Relationship Building, and Strategic Thinking.
 
-### [Executing](./themes/executing/)
+### [Executing](/en/learn/human/tools/cliftonstrengths/themes/executing/)
 
 These themes relate to action-oriented individuals who can get things done.
 
-- [Achiever](./themes/executing/achiever/): Individuals with a strong work ethic are driven to accomplish their goals.
-- [Arranger](./themes/executing/arranger/): People adept at organizing and coordinating resources to achieve a desired outcome.
-- [Belief](./themes/executing/belief/): Core values or principles guide those with a strong sense of purpose.
-- [Consistency](./themes/executing/consistency/): Individuals who strive to treat everyone fairly and equally.
-- [Deliberative](./themes/executing/deliberative/): People who are careful and thorough in their decision-making processes.
-- [Discipline](./themes/executing/discipline/): Those who are highly organized and thrive on routine and structure.
-- [Focus](./themes/executing/focus/): Individuals who can concentrate on a task and see it through to completion.
-- [Responsibility](./themes/executing/responsibility/): People who take personal accountability for their actions and the outcomes they produce.
-- [Restorative](./themes/executing/restorative/): Individuals who are adept at identifying and solving problems.
+- [Achiever](/en/learn/human/tools/cliftonstrengths/themes/executing/achiever/): Individuals with a strong work ethic are driven to accomplish their goals.
+- [Arranger](/en/learn/human/tools/cliftonstrengths/themes/executing/arranger/): People adept at organizing and coordinating resources to achieve a desired outcome.
+- [Belief](/en/learn/human/tools/cliftonstrengths/themes/executing/belief/): Core values or principles guide those with a strong sense of purpose.
+- [Consistency](/en/learn/human/tools/cliftonstrengths/themes/executing/consistency/): Individuals who strive to treat everyone fairly and equally.
+- [Deliberative](/en/learn/human/tools/cliftonstrengths/themes/executing/deliberative/): People who are careful and thorough in their decision-making processes.
+- [Discipline](/en/learn/human/tools/cliftonstrengths/themes/executing/discipline/): Those who are highly organized and thrive on routine and structure.
+- [Focus](/en/learn/human/tools/cliftonstrengths/themes/executing/focus/): Individuals who can concentrate on a task and see it through to completion.
+- [Responsibility](/en/learn/human/tools/cliftonstrengths/themes/executing/responsibility/): People who take personal accountability for their actions and the outcomes they produce.
+- [Restorative](/en/learn/human/tools/cliftonstrengths/themes/executing/restorative/): Individuals who are adept at identifying and solving problems.
 
-## [Influencing](./themes/influencing/)
+## [Influencing](/en/learn/human/tools/cliftonstrengths/themes/influencing/)
 
 These themes relate to individuals who can lead and persuade others.
 
-- [Activator](./themes/influencing/activator/): Individuals who are quick to take action and help others get started on a task.
-- [Command](./themes/influencing/command/): People who can take charge and decisively make decisions.
-- [Communication](./themes/influencing/communication/): Those who are adept at compellingly articulating their thoughts and ideas.
-- [Competition](./themes/influencing/competition/): Individuals who are motivated by competition and enjoy measuring their performance against others.
-- [Maximizer](./themes/influencing/maximizer/): People who are adept at identifying and developing the strengths of themselves and others.
-- [Self-Assurance](./themes/influencing/self-assurance/): Those who are confident in their abilities and decisions.
-- [Significance](./themes/influencing/significance/): Individuals who strive to impact the world and be recognized for their achievements significantly.
-- [Woo (Winning Others Over)](./themes/influencing/woo-winning-others-over/): People who naturally can win others over and build relationships.
+- [Activator](/en/learn/human/tools/cliftonstrengths/themes/influencing/activator/): Individuals who are quick to take action and help others get started on a task.
+- [Command](/en/learn/human/tools/cliftonstrengths/themes/influencing/command/): People who can take charge and decisively make decisions.
+- [Communication](/en/learn/human/tools/cliftonstrengths/themes/influencing/communication/): Those who are adept at compellingly articulating their thoughts and ideas.
+- [Competition](/en/learn/human/tools/cliftonstrengths/themes/influencing/competition/): Individuals who are motivated by competition and enjoy measuring their performance against others.
+- [Maximizer](/en/learn/human/tools/cliftonstrengths/themes/influencing/maximizer/): People who are adept at identifying and developing the strengths of themselves and others.
+- [Self-Assurance](/en/learn/human/tools/cliftonstrengths/themes/influencing/self-assurance/): Those who are confident in their abilities and decisions.
+- [Significance](/en/learn/human/tools/cliftonstrengths/themes/influencing/significance/): Individuals who strive to impact the world and be recognized for their achievements significantly.
+- [Woo (Winning Others Over)](/en/learn/human/tools/cliftonstrengths/themes/influencing/woo-winning-others-over/): People who naturally can win others over and build relationships.
 
-## [Relationship Building](./themes/relationship-building/)
+## [Relationship Building](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/)
 
-- [Adaptability](./themes/relationship-building/adaptability/): Individuals who adapt to changing circumstances and adjust their behavior accordingly.
-- [Connectedness](./themes/relationship-building/connectedness/): People who have a deep sense of interconnectedness and believe that everything in the world is interrelated.
-- [Developer](./themes/relationship-building/developer/): Those who enjoy helping others grow and develop their abilities.
-- [Empathy](./themes/relationship-building/empathy/): Individuals who can sense and understand the feelings of others.
-- [Harmony](./themes/relationship-building/harmony/): People who seek to avoid conflict and strive for harmony in their relationships.
-- [Includer](./themes/relationship-building/includer/): Those who are naturally accepting of others and seek to include them in social situations.
-- [Individualization](./themes/relationship-building/individualization/): Individuals are adept at recognizing and appreciating the unique qualities of each person.
-- [Positivity](./themes/relationship-building/positivity/): People who have a contagious enthusiasm and optimism about life.
-- [Relator](./themes/relationship-building/relator/): Those who prefer close, one-on-one relationships with a few people.
+- [Adaptability](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/adaptability/): Individuals who adapt to changing circumstances and adjust their behavior accordingly.
+- [Connectedness](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/connectedness/): People who have a deep sense of interconnectedness and believe that everything in the world is interrelated.
+- [Developer](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/developer/): Those who enjoy helping others grow and develop their abilities.
+- [Empathy](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/empathy/): Individuals who can sense and understand the feelings of others.
+- [Harmony](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/harmony/): People who seek to avoid conflict and strive for harmony in their relationships.
+- [Includer](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/includer/): Those who are naturally accepting of others and seek to include them in social situations.
+- [Individualization](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/individualization/): Individuals are adept at recognizing and appreciating the unique qualities of each person.
+- [Positivity](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/positivity/): People who have a contagious enthusiasm and optimism about life.
+- [Relator](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/relator/): Those who prefer close, one-on-one relationships with a few people.
 
-## [Strategic Thinking](./themes/strategic-thinking/)
+## [Strategic Thinking](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/)
 
 These themes relate to individuals who can think conceptually and see the big picture.
 
-- [Analytical](./themes/strategic-thinking/analytical/): Individuals enjoy analyzing data and information to understand complex problems better.
-- [Context](./themes/strategic-thinking/context/): People who can understand the historical and cultural context in which they work.
-- [Futuristic](./themes/strategic-thinking/futuristic/): Those who can envision the possibilities of the future.
-- [Ideation](./themes/strategic-thinking/ideation/): Individuals who can generate creative ideas.
-- [Input](./themes/strategic-thinking/input/): People who enjoy gathering information and are continually learning.
-- [Intellection](./themes/strategic-thinking/intellection/): Those who enjoy thinking and reflecting on complex issues.
-- [Learner](./themes/strategic-thinking/learner/): Individuals who are constantly seeking to acquire new knowledge and skills.
-- [Strategic](./themes/strategic-thinking/strategic/): People adept at seeing patterns and connections between ideas.
+- [Analytical](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/analytical/): Individuals enjoy analyzing data and information to understand complex problems better.
+- [Context](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/context/): People who can understand the historical and cultural context in which they work.
+- [Futuristic](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/futuristic/): Those who can envision the possibilities of the future.
+- [Ideation](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/ideation/): Individuals who can generate creative ideas.
+- [Input](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/input/): People who enjoy gathering information and are continually learning.
+- [Intellection](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/intellection/): Those who enjoy thinking and reflecting on complex issues.
+- [Learner](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/learner/): Individuals who are constantly seeking to acquire new knowledge and skills.
+- [Strategic](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/strategic/): People adept at seeing patterns and connections between ideas.
 
 ## Links
 
-[Themes](./themes/)
+[Themes](/en/learn/human/tools/cliftonstrengths/themes/)

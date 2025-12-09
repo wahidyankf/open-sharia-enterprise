@@ -5,6 +5,6 @@ draft: false
 weight: 2
 ---
 
-- [Backend Engineer](./backend-engineer/)
-- [Frontend Engineer](./frontend-engineer/)
-- [Software Engineering Manager](./software-engineering-manager/)
+- [Backend Engineer](/en/learn/archived/interviews/roles/backend-engineer/)
+- [Frontend Engineer](/en/learn/archived/interviews/roles/frontend-engineer/)
+- [Software Engineering Manager](/en/learn/archived/interviews/roles/software-engineering-manager/)

@@ -5,4 +5,4 @@ draft: false
 weight: 4
 ---
 
-- [Tools](/learn/human/tools)
+- [Tools](/en/learn/human/tools)

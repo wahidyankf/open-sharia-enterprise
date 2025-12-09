@@ -4,7 +4,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [The Journey of Lifelong Improvement: Unpacking the Story of a Kindergarten and its Echoes in the World of Software Engineering and AI](../../../en/rants/2023/the-journey-of-lifelong-improvement-unpacking-the-story-of-a-kindergarten-and-its-echoes-in-the-world-of-software-engineering-and-ai/)_
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [The Journey of Lifelong Improvement: Unpacking the Story of a Kindergarten and its Echoes in the World of Software Engineering and AI](/en/rants/2023/the-journey-of-lifelong-improvement-unpacking-the-story-of-a-kindergarten-and-its-echoes-in-the-world-of-software-engineering-and-ai/)_
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

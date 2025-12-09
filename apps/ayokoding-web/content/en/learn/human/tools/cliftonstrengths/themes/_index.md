@@ -5,7 +5,7 @@ draft: false
 weight: 1
 ---
 
-- [Executing](./executing/)
-- [Influencing](./influencing/)
-- [Relationship Building](./relationship-building/)
-- [Strategic Thinking](./strategic-thinking/)
+- [Executing](/en/learn/human/tools/cliftonstrengths/themes/executing/)
+- [Influencing](/en/learn/human/tools/cliftonstrengths/themes/influencing/)
+- [Relationship Building](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/)
+- [Strategic Thinking](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/)

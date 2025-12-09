@@ -4,6 +4,8 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
+**Similar article:** [Kepemimpinan itu Sepi: Perspektif Pribadi sebagai Engineering Manager](/id/celoteh/2023/kepemimpinan-itu-sepi-perspektif-pribadi-sebagai-engineering-manager)
+
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 
 In the name of Allah, The Most Gracious and The Most Merciful

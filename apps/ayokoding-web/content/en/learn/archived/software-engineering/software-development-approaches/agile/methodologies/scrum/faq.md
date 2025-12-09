@@ -14,4 +14,4 @@ Product backlog items should be estimated during the sprint planning meeting. Th
 
 ### How can we do the estimation?
 
-You can see this section of Agile Software Development: [Estimation](../../project-management/estimation/)
+You can see this section of Agile Software Development: [Estimation](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation/)

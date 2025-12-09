@@ -38,4 +38,4 @@ Beberapa contoh basis data graf termasuk:
 
 - [Dokumentasi Neo4j](https://neo4j.com/docs/)
 - [Dokumentasi Amazon Neptune](https://docs.aws.amazon.com/neptune/latest/userguide/intro.html)
-- [Dokumentasi Microsoft Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction)
+- [Dokumentasi Microsoft Azure Cosmos DB](https://learn.microsoft.com/en-us/azure/cosmos-db/graph-introduction)
