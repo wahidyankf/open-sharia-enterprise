@@ -10,7 +10,7 @@ tags:
   - notation
   - conventions
 created: 2025-12-02
-updated: 2025-12-03
+updated: 2025-12-09
 ---
 
 # Mathematical Notation Convention
@@ -136,36 +136,46 @@ r_e = r_f + \beta \times (r_m - r_f)
 $
 ```
 
-**All `\begin{align}` blocks MUST use `$$` delimiters:**
+**All `\begin{aligned}` blocks MUST use `$$` delimiters:**
 
 ```markdown
-✅ Correct - align with $$:
+✅ Correct - aligned with $$:
 
 $$
-\begin{align}
+\begin{aligned}
 WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c) \\
      &= 0.645 \times 11.4\% + 0.355 \times 3.41\% \\
      &= 8.56\%
-\end{align}
+\end{aligned}
 $$
 
-❌ Incorrect - align with single $:
-$
+❌ Incorrect - using align instead of aligned (KaTeX incompatible):
+
+$$
 \begin{align}
 WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c)
 \end{align}
+$$
+
+❌ Incorrect - aligned with single $:
+$
+\begin{aligned}
+WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c)
+\end{aligned}
 $
 ```
 
 **Why this matters:**
 
-Single `$` on its own line breaks rendering in both GitHub and Obsidian - the LaTeX code displays as raw text instead of rendered math. This is the #1 most common LaTeX rendering issue.
+1. **KaTeX Compatibility**: This project uses KaTeX for math rendering (Hugo sites use KaTeX). KaTeX does NOT support the `align` environment - it only supports `aligned`. Always use `\begin{aligned}...\end{aligned}` for multi-line equations.
+
+2. **Delimiter Requirement**: Single `$` on its own line breaks rendering in both GitHub and Obsidian - the LaTeX code displays as raw text instead of rendered math.
 
 **Rule of thumb:**
 
 - **Inline math** (within text): `$x + y$` on same line as text
 - **Display math** (standalone): `$$...$$` on separate lines
-- **Multi-line equations**: Always use `$$` with `\begin{align}`
+- **Multi-line equations**: Always use `$$` with `\begin{aligned}` (NOT `\begin{align}`)
 
 ## ✅ Where to Use LaTeX
 
@@ -731,10 +741,10 @@ Break multi-line formulas for readability:
 
 ```markdown
 $$
-\begin{align}
+\begin{aligned}
 NPV &= \sum_{t=0}^{n} \frac{CF_t}{(1 + r)^t} \\
     &= -I_0 + \frac{CF_1}{1+r} + \frac{CF_2}{(1+r)^2} + \cdots + \frac{CF_n}{(1+r)^n}
-\end{align}
+\end{aligned}
 $$
 ```
 
@@ -844,15 +854,19 @@ Where:
 
 ### Alignment (Multi-line)
 
+Use `aligned` environment for multi-line equations (KaTeX compatible):
+
 ```markdown
 $$
-\begin{align}
+\begin{aligned}
 WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c) \\
      &= \text{Equity weight} \times \text{Cost of equity} \\
      &\quad + \text{Debt weight} \times \text{After-tax cost of debt}
-\end{align}
+\end{aligned}
 $$
 ```
+
+**Note**: Use `aligned` (not `align`) for KaTeX compatibility. The `aligned` environment does not auto-number equations.
 
 ### Text in Formulas
 
@@ -886,7 +900,8 @@ When adding or reviewing mathematical notation:
 - [ ] Display math uses `$$...$$` for standalone equations
 - [ ] Single `$` delimiters are ONLY used inline (on same line as text)
 - [ ] Display-level equations use `$$` delimiters (on separate lines)
-- [ ] All `\begin{align}` blocks use `$$` delimiters (not single `$`)
+- [ ] All multi-line equations use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility
+- [ ] All `\begin{aligned}` blocks use `$$` delimiters (not single `$`)
 - [ ] Variables are defined after formulas
 - [ ] Notation is consistent throughout the document
 - [ ] Formulas render correctly in Obsidian reading mode
