@@ -149,11 +149,21 @@ Use this agent when:
          - [JavaScript](/learn/swe/prog-lang/javascript)
      ```
 
-4. **Taxonomy**:
+4. **Index File Content Separation** (learn/belajar directories ONLY):
+   - **Scope**: Applies ONLY to `_index.md` files in `content/en/learn/` and `content/id/belajar/`
+   - **Rule**: `_index.md` should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
+   - **Introduction/Overview**: Create separate `overview.md` file in the same directory
+   - **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance
+   - **Example**:
+     - `_index.md` - Navigation only (bullet lists linking to content)
+     - `overview.md` - Introduction to the learning path
+   - **Does NOT apply to**: Root `_index.md`, rants/celoteh directories, or other parts of site
+
+5. **Taxonomy**:
    - `tags`: Granular topics (e.g., "nodejs", "api", "tutorial", "beginner")
    - `categories`: Fixed set - `["learn"]`, `["celoteh"]`, `["video"]`
 
-5. **Asset Organization**:
+6. **Asset Organization**:
    ```
    static/
    └── images/
@@ -462,6 +472,7 @@ Before completing, verify:
   - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
 - [ ] **For `_index.md` files**: Title matches parent folder name exactly (capitalize first letter only)
 - [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, grandchildren)
+- [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md)
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids
 - [ ] For bilingual content: Both Indonesian and English versions created
 
