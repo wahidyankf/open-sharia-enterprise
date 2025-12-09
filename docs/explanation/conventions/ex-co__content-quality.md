@@ -10,7 +10,7 @@ tags:
   - accessibility
   - documentation
 created: 2025-12-07
-updated: 2025-12-07
+updated: 2025-12-09
 ---
 
 # Content Quality Principles
@@ -751,6 +751,60 @@ Authentication tokens expire after 1 hour of inactivity and to extend the sessio
 - **3-5 sentences maximum** - Short paragraphs are easier to scan on screens
 - **Topic sentence first** - Lead with the main point
 - **Blank line between paragraphs** - Visual separation improves scannability
+
+### No Time Estimates
+
+**Do NOT include time estimates in educational or tutorial content.**
+
+**Rationale**:
+
+- Time estimates create artificial pressure on learners
+- Everyone learns at different speeds
+- Focus should be on WHAT learners accomplish, not HOW LONG it takes
+- Makes content evergreen (no need to update time claims)
+- Reduces anxiety and creates pressure-free learning environment
+
+**Forbidden Time Estimates**:
+
+❌ **Avoid (time-based claims)**:
+
+```markdown
+This tutorial takes 2-3 hours to complete.
+Estimated time: 45 minutes
+Duration: 1-2 hrs
+You'll learn this in 30 minutes.
+Time needed: 20 min
+```
+
+✅ **Good (focus on outcomes, not duration)**:
+
+```markdown
+By the end of this tutorial, you'll be able to...
+This tutorial covers the fundamentals of...
+You'll learn how to build a complete application.
+Coverage: 60-85% of domain knowledge (intermediate depth)
+```
+
+**Exception - Coverage Percentages Allowed**:
+
+Coverage percentages are allowed because they indicate **depth/scope**, not **time**:
+
+- ✅ "Coverage: 0-5%" (indicates initial setup scope)
+- ✅ "Coverage: 60-85%" (indicates intermediate depth)
+- ✅ "Coverage: 85-95%" (indicates advanced depth)
+
+**Where This Applies**:
+
+- All tutorial content (`docs/tutorials/`)
+- Educational content in Hugo sites (ayokoding-web learning content)
+- How-to guides that teach concepts
+- Reference documentation with learning components
+
+**Where This Does NOT Apply**:
+
+- Project planning documents (`plans/`) - can estimate implementation time
+- Development task tracking - can estimate effort
+- Meeting agendas - can allocate time slots
 
 ✅ **Good (Well-Structured Paragraphs)**:
 
