@@ -31,8 +31,6 @@ By completing this tutorial, you will understand:
 
 **No Coding Required**: This is an explanatory tutorial focused on understanding concepts, not implementation.
 
-**Time Estimate**: 30-40 minutes
-
 ---
 
 ## 🏗️ System Architecture

@@ -38,7 +38,6 @@ By the end of this tutorial, you'll understand how businesses track their financ
 
 - Pen and paper for exercises (or spreadsheet software)
 - Calculator
-- **Estimated time:** 3-4 hours for complete tutorial with exercises
 
 **Optional (Helpful):**
 
