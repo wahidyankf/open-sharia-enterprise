@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-10
+updated: 2025-12-11
 ---
 
 # Hugo Content Convention
@@ -893,16 +893,45 @@ title: Business # WRONG! Too generic (missing context)
 **Index File Content Separation** (ayokoding-web):
 
 - `_index.md` files should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
-- **Introduction/Overview Content**: Create a separate `overview.md` file in the same directory
+- **Introduction/Overview Content**: Create a separate `overview.md` (English) or `ikhtisar.md` (Indonesian) file in the same directory
 - **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance
 - **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
 
-**Example Structure**:
+**File Naming Convention for Intro Content** (ayokoding-web):
+
+- **English folders** (`learn/` and subfolders): Use `overview.md` for introductory/overview content
+- **Indonesian folders** (`belajar/` and subfolders): Use `ikhtisar.md` for introductory/overview content (NOT `overview.md`)
+- **Why "ikhtisar"?** "Ikhtisar" is the Indonesian word for "overview" - using language-appropriate filenames maintains consistency with bilingual conventions
+
+**Navigation Ordering Rule** (ayokoding-web):
+
+When a folder in `learn/` or `belajar/` contains both `_index.md` (navigation hub) and intro content file (`overview.md` or `ikhtisar.md`), the navigation order MUST be:
+
+1. **`_index.md`** - Navigation hub (appears topmost in file listing)
+2. **`overview.md` (English) or `ikhtisar.md` (Indonesian)** - Introductory content (appears immediately below)
+
+**Rationale**: Ensures consistent navigation structure where the index (navigation hub) is always first, followed by introductory content
+
+**Example Structure (English)**:
 
 ```
 content/en/learn/swe/prog-lang/golang/
-├── _index.md        # Navigation only (3-layer list)
-├── overview.md      # Introduction to Golang learning path
+├── _index.md        # Navigation only (topmost)
+├── overview.md      # English intro content (immediately below _index.md)
+├── initial-setup.md
+├── quick-start.md
+├── beginner.md
+├── intermediate.md
+├── advanced.md
+└── cookbook.md
+```
+
+**Example Structure (Indonesian)**:
+
+```
+content/id/belajar/swe/prog-lang/golang/
+├── _index.md        # Navigation only (topmost)
+├── ikhtisar.md      # Indonesian intro content (immediately below _index.md)
 ├── initial-setup.md
 ├── quick-start.md
 ├── beginner.md
@@ -927,7 +956,7 @@ title: Golang
 - [Cookbook](/learn/swe/prog-lang/golang/cookbook)
 ```
 
-**Example `overview.md` (content)**:
+**Example `overview.md` (English intro content)**:
 
 ```markdown
 ---
@@ -941,6 +970,22 @@ categories: ["learn"]
 ---
 
 Welcome to our Golang learning path! This comprehensive curriculum takes you from...
+```
+
+**Example `ikhtisar.md` (Indonesian intro content)**:
+
+```markdown
+---
+title: "Ikhtisar Jalur Pembelajaran Golang"
+date: 2025-12-09T10:00:00+07:00
+draft: false
+description: "Pengenalan ke sumber pembelajaran Golang komprehensif kami"
+weight: 1
+tags: ["golang", "programming", "ikhtisar"]
+categories: ["learn"]
+---
+
+Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini membawa Anda dari...
 ```
 
 ✅ **Good (3 layers deep)**:
