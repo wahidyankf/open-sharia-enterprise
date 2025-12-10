@@ -4,7 +4,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Please don't do it! 1 Story Point is not 1 Engineering Hour!](/en/rants/2023/please-dont-do-it-1-story-point-is-not-1-engineering-hour/)_
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Please don't do it! 1 Story Point is not 1 Engineering Hour!](/en/rants/2023/please-dont-do-it-1-story-point-is-not-1-engineering-hour)_
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

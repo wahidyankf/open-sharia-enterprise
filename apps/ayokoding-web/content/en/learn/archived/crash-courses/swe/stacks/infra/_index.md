@@ -5,8 +5,8 @@ draft: false
 weight: 2
 ---
 
-- [Bash](/en/learn/archived/crash-courses/swe/stacks/infra/bash/)
-- [Linux Administration](/en/learn/archived/crash-courses/swe/stacks/infra/linux-administration/)
-- [Docker](/en/learn/archived/crash-courses/swe/stacks/infra/docker/)
-- [Kubernetes](/en/learn/archived/crash-courses/swe/stacks/infra/kubernetes/)
-- [Terraform](/en/learn/archived/crash-courses/swe/stacks/infra/terraform/)
+- [Bash](/en/learn/archived/crash-courses/swe/stacks/infra/bash)
+- [Linux Administration](/en/learn/archived/crash-courses/swe/stacks/infra/linux-administration)
+- [Docker](/en/learn/archived/crash-courses/swe/stacks/infra/docker)
+- [Kubernetes](/en/learn/archived/crash-courses/swe/stacks/infra/kubernetes)
+- [Terraform](/en/learn/archived/crash-courses/swe/stacks/infra/terraform)

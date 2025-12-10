@@ -2,6 +2,7 @@
 title: "Ikhtisar"
 date: 2025-03-16T07:20:00+07:00
 draft: false
+weight: 1
 ---
 
 MongoDB adalah basis data dokumen NoSQL open-source yang populer dan fleksibel, dirancang untuk skalabilitas, performa, dan kemudahan pengembangan. Basis data ini menawarkan model dokumen yang sangat skalabel, fleksibel, dan mirip JSON yang memungkinkan penyimpanan dan pengambilan data secara lebih dinamis dan tanpa skema. Berikut adalah pengenalan MongoDB:

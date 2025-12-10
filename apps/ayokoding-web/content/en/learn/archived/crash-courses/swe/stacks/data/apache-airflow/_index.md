@@ -5,4 +5,4 @@ draft: false
 weight: 1
 ---
 
-[Basic](/en/learn/archived/crash-courses/swe/stacks/data/apache-airflow/basics/)
+[Basic](/en/learn/archived/crash-courses/swe/stacks/data/apache-airflow/basics)

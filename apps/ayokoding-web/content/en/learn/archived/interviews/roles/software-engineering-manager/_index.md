@@ -6,6 +6,6 @@ weight: 3
 ---
 
 - [Responsibilities](/en/learn/archived/interviews/roles/software-engineering-manager/responsibilities)
-- [Concepts](/en/learn/archived/interviews/roles/software-engineering-manager/concepts/)
-- [Mini Projects](/en/learn/archived/interviews/roles/software-engineering-manager/mini-projects/)
-- [Questions](/en/learn/archived/interviews/roles/software-engineering-manager/questions/)
+- [Concepts](/en/learn/archived/interviews/roles/software-engineering-manager/concepts)
+- [Mini Projects](/en/learn/archived/interviews/roles/software-engineering-manager/mini-projects)
+- [Questions](/en/learn/archived/interviews/roles/software-engineering-manager/questions)

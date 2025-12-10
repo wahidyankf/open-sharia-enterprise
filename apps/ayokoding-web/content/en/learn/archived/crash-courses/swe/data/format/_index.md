@@ -5,9 +5,9 @@ draft: false
 weight: 2
 ---
 
-- [XML](/en/learn/archived/crash-courses/swe/data/format/xml/)
-- [JSON](/en/learn/archived/crash-courses/swe/data/format/json/)
-- [YAML](/en/learn/archived/crash-courses/swe/data/format/yaml/)
-- [TOML](/en/learn/archived/crash-courses/swe/data/format/toml/)
-- [Protobuf](/en/learn/archived/crash-courses/swe/data/format/protobuf/)
-- [EDN](/en/learn/archived/crash-courses/swe/data/format/edn/)
+- [XML](/en/learn/archived/crash-courses/swe/data/format/xml)
+- [JSON](/en/learn/archived/crash-courses/swe/data/format/json)
+- [YAML](/en/learn/archived/crash-courses/swe/data/format/yaml)
+- [TOML](/en/learn/archived/crash-courses/swe/data/format/toml)
+- [Protobuf](/en/learn/archived/crash-courses/swe/data/format/protobuf)
+- [EDN](/en/learn/archived/crash-courses/swe/data/format/edn)

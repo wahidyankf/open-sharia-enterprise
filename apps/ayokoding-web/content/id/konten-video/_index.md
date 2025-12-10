@@ -7,11 +7,11 @@ weight: 5
 
 ## Seri
 
-- [Cerita Programmer](/id/konten-video/cerita-programmer/)
-- [Pengen Jadi Programmer](/id/konten-video/pengen-jadi-programmer/)
-- [Karir Programmer](/id/konten-video/karir-programmer/)
-- [Jam Kantor](/id/konten-video/jam-kantor/)
-- [Klub Belajar](/id/konten-video/klub-belajar/)
+- [Cerita Programmer](/id/konten-video/cerita-programmer)
+- [Pengen Jadi Programmer](/id/konten-video/pengen-jadi-programmer)
+- [Karir Programmer](/id/konten-video/karir-programmer)
+- [Jam Kantor](/id/konten-video/jam-kantor)
+- [Klub Belajar](/id/konten-video/klub-belajar)
 
 ## Tautan
 

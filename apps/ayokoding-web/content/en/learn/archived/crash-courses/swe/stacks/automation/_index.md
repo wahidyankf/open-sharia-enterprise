@@ -5,8 +5,8 @@ draft: false
 weight: 3
 ---
 
-- [Gherkin](/en/learn/archived/crash-courses/swe/stacks/automation/gherkin/)
-- [Playwright](/en/learn/archived/crash-courses/swe/stacks/automation/playwright/)
-- [Cypress](/en/learn/archived/crash-courses/swe/stacks/automation/cypress/)
-- [WDIO](/en/learn/archived/crash-courses/swe/stacks/automation/wdio/)
-- [GitHub Actions](/en/learn/archived/crash-courses/swe/stacks/automation/github-actions/)
+- [Gherkin](/en/learn/archived/crash-courses/swe/stacks/automation/gherkin)
+- [Playwright](/en/learn/archived/crash-courses/swe/stacks/automation/playwright)
+- [Cypress](/en/learn/archived/crash-courses/swe/stacks/automation/cypress)
+- [WDIO](/en/learn/archived/crash-courses/swe/stacks/automation/wdio)
+- [GitHub Actions](/en/learn/archived/crash-courses/swe/stacks/automation/github-actions)

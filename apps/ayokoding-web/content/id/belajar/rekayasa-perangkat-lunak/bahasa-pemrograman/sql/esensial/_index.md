@@ -4,8 +4,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-Prinsip Pareto, juga dikenal sebagai aturan 80/20, menyatakan bahwa sekitar 80% dari efek berasal dari 20% penyebab. Prinsip ini dapat membantu memprioritaskan konsep-konsep paling penting untuk dipahami dan dimanfaatkan untuk SQL. Berikut adalah daftar topik, disusun dalam urutan pembelajaran:
-
+- [Ikhtisar Esensial SQL](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/sql/esensial/ikhtisar)
 - [Sekilas Tentang Basis Data](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/sql/esensial/sekilas-tentang-basis-data)
 - [Sintaks dan Kata Kunci](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/sql/esensial/sintaks-dan-kata-kunci)
 - [DDL: CREATE](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/sql/esensial/ddl-create)

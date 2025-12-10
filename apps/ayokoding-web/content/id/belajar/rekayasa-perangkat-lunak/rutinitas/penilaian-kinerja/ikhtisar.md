@@ -2,6 +2,7 @@
 title: "Ikhtisar"
 date: 2025-03-16T07:20:00+07:00
 draft: false
+weight: 1
 ---
 
 Performance reviews are a crucial part of any organization's management process. They allow employees to receive feedback on their work, set future goals, and identify improvement areas. We usually have to write three performance review documents, the so-called 360 reviews, which consist of self-review, peer review, and supervisor review.
