@@ -2,6 +2,7 @@
 title: "Overview"
 date: 2025-03-16T07:20:00+07:00
 draft: false
+weight: 1
 ---
 
 Redis is an open-source, in-memory data structure store that can be used as a database, cache, and message broker. It provides high-performance and low-latency access to data, making it well-suited for use cases that require fast data retrieval and processing. Here's an introduction to Redis:

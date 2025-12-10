@@ -5,7 +5,7 @@ draft: false
 weight: 1
 ---
 
-- [Programming Languages](/en/learn/swe/prog-lang/)
-  - [Golang](/en/learn/swe/prog-lang/golang/)
-  - [Java](/en/learn/swe/prog-lang/java/)
-- [System Design](/en/learn/swe/system-design/)
+- [Programming Languages](/en/learn/swe/prog-lang)
+  - [Golang](/en/learn/swe/prog-lang/golang)
+  - [Java](/en/learn/swe/prog-lang/java)
+- [System Design](/en/learn/swe/system-design)

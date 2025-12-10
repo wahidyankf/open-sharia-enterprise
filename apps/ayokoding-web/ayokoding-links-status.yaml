@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-11T18:45:00+07:00"
+lastFullScan: "2025-12-11T20:15:00+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -167,6 +167,14 @@ links:
     usedIn:
       - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
       - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
+
+  - url: https://github.com/microsoft/pyright/blob/main/docs/type-concepts.md
+    lastChecked: "2025-12-11T20:15:00+07:00"
+    statusCode: 200
+    finalUrl: https://github.com/microsoft/pyright/blob/main/docs/type-concepts.md
+    redirectChain: null
+    usedIn:
+      - content/en/learn/archived/crash-courses/swe/lang/python/static-typing.md
 
   - url: https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/
     lastChecked: "2025-12-11T18:45:00+07:00"

@@ -2,6 +2,7 @@
 title: "Ikhtisar"
 date: 2025-03-16T07:20:00+07:00
 draft: false
+weight: 1
 ---
 
 Redis adalah penyimpanan struktur data yang sumber terbuka dan bekerja di dalam memori. Redis dapat digunakan sebagai database, cache, dan message broker. Redis memberikan akses data yang cepat dan rendah laten, sehingga cocok untuk kasus penggunaan yang memerlukan pengambilan dan pemrosesan data yang cepat. Berikut adalah pengenalan tentang Redis:

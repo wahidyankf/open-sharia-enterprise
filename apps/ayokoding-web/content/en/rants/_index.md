@@ -5,4 +5,4 @@ draft: false
 weight: 4
 ---
 
-- [2023](/en/rants/2023/)
+- [2023](/en/rants/2023)

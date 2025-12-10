@@ -426,7 +426,7 @@ Python programming. Include:
 2. Specific free resources (websites, tutorials)
 3. Small daily practice exercises
 4. A weekend project for each week
-5. Expected time commitment per day (assuming 1 hour available)
+5. Daily practice session structure
 
 Focus on practical web scraping applications as the end goal.
 ```

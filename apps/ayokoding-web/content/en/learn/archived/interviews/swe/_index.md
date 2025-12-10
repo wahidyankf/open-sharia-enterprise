@@ -5,7 +5,7 @@ draft: false
 weight: 3
 ---
 
-- [Languages](/en/learn/archived/interviews/swe/languages/)
-- [Data Structures and Algorithms (DSA)](/en/learn/archived/interviews/swe/dsa/)
-- [System Design](/en/learn/archived/interviews/swe/system-design/)
-- [Stacks](/en/learn/archived/interviews/swe/stacks/)
+- [Languages](/en/learn/archived/interviews/swe/languages)
+- [Data Structures and Algorithms (DSA)](/en/learn/archived/interviews/swe/dsa)
+- [System Design](/en/learn/archived/interviews/swe/system-design)
+- [Stacks](/en/learn/archived/interviews/swe/stacks)

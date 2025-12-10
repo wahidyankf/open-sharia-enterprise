@@ -2,6 +2,7 @@
 title: "Ikhtisar"
 date: 2025-03-16T07:20:00+07:00
 draft: false
+weight: 1
 ---
 
 MySQL adalah sistem manajemen basis data relasional open-source yang banyak digunakan karena kemampuan kinerjanya, skalabilitas, dan kemudahan penggunaannya. MySQL telah dikembangkan dan dipelihara oleh Oracle Corporation dan telah menjadi salah satu basis data paling populer di industri. Berikut adalah pengenalan MySQL:

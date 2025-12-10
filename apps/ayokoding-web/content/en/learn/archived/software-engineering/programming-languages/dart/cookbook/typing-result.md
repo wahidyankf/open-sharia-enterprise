@@ -207,7 +207,7 @@ Explanation of the Dart code:
 
 This code provides a flexible and type-safe way to handle results that can be either successful or erroneous, allowing developers to handle different scenarios effectively.
 
-For more information and examples, you can refer to the [Typing: Option](./typing-option/) resource.
+For more information and examples, you can refer to the [Typing: Option](/en/learn/archived/software-engineering/programming-languages/dart/cookbook/typing-option) resource.
 
 ```dart
 void main() {

@@ -4,7 +4,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-Assuming that you already know SQL's [Essentials](/en/learn/archived/software-engineering/programming-languages/sql/essentials/), here are the essential things in PostgreSQL that you need to know.
+Assuming that you already know SQL's [Essentials](/en/learn/archived/software-engineering/programming-languages/sql/essentials), here are the essential things in PostgreSQL that you need to know.
 
 ## 1. PostgreSQL Basics
 
