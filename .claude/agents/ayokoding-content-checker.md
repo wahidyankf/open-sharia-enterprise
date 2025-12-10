@@ -368,32 +368,46 @@ Content for step 2.
 
 **For `_index.md` files only**:
 
-- [ ] `title` field MUST exactly match parent folder name (case-sensitive)
-- [ ] Capitalization: First letter capitalized only (folder `lang` → title `Lang`, folder `business-law` → title `Business-law`)
+- [ ] `title` field is DESCRIPTIVE and READABLE for human display
+- [ ] Uses proper capitalization (title case, proper acronyms, product names)
+- [ ] Provides context when helpful (not just folder name)
+- [ ] Acronyms use standard capitalization (AI, SWE, PDF - not Ai, Swe, Pdf)
 
 **Valid Index File Titles**:
 
 ```yaml
-# File: content/en/learn/swe/lang/_index.md
+# File: content/en/learn/swe/prog-lang/_index.md
 ---
-title: Lang # Correct - matches folder name exactly
+title: Programming Languages # Descriptive, readable, properly capitalized
 ---
-# File: content/id/belajar/crash-courses/_index.md
+# File: content/en/learn/ai/_index.md
 ---
-title: Crash-courses # Correct - matches folder name exactly
+title: AI Engineering # Proper acronym capitalization, adds context
+---
+# File: content/en/learn/human/tools/cliftonstrengths/_index.md
+---
+title: CliftonStrengths # Proper product name capitalization
+---
+# File: content/en/learn/business/_index.md
+---
+title: Business and Finance # Descriptive with context
 ---
 ```
 
 **Invalid Index File Titles**:
 
 ```yaml
-# File: content/en/learn/swe/lang/_index.md
+# File: content/en/learn/swe/prog-lang/_index.md
 ---
-title: Programming Languages # WRONG! Doesn't match folder name
+title: Prog-lang # WRONG! Unreadable, mimics folder name
 ---
-# File: content/en/learn/swe/lang/_index.md
+# File: content/en/learn/ai/_index.md
 ---
-title: LANG # WRONG! Incorrect capitalization (should be Lang)
+title: Ai # WRONG! Incorrect acronym capitalization (should be AI)
+---
+# File: content/en/learn/business/_index.md
+---
+title: business # WRONG! No capitalization, too generic
 ---
 ```
 
@@ -530,9 +544,9 @@ Welcome to our Golang learning path! This comprehensive curriculum takes you fro
    - [ ] Should have `description` field
 
 4. **\_index.md archetype** (section index pages):
-   - [ ] **Title matches folder** - `title` must exactly match parent folder name
-   - [ ] **Capitalization rule** - Capitalize first letter only (folder `lang` → title `Lang`)
-   - [ ] **Multi-word folders** - Preserve hyphens (folder `business-law` → title `Business-law`)
+   - [ ] **Title is descriptive and readable** - Uses proper capitalization and context
+   - [ ] **Proper acronym capitalization** - AI, SWE, PDF (not Ai, Swe, Pdf)
+   - [ ] **Product names capitalized correctly** - CliftonStrengths, JavaScript, TypeScript
    - [ ] `draft: false` (index pages should be published)
    - [ ] `weight: 1` (default ordering)
 
@@ -562,21 +576,29 @@ categories: ["learn"]
 ---
 ```
 
-❌ **Wrong (\_index.md with non-matching title)**:
+❌ **Wrong (\_index.md with unreadable/poorly capitalized title)**:
 
 ```yaml
-# File: content/en/learn/swe/lang/_index.md
+# File: content/en/learn/swe/prog-lang/_index.md
 ---
-title: "Programming Languages" # WRONG! Doesn't match folder "lang"
+title: "Prog-lang" # WRONG! Unreadable, mimics folder name
+---
+# File: content/en/learn/ai/_index.md
+---
+title: "Ai" # WRONG! Incorrect acronym capitalization (should be "AI")
 ---
 ```
 
-✅ **Correct (\_index.md with matching title)**:
+✅ **Correct (\_index.md with descriptive, readable title)**:
 
 ```yaml
-# File: content/en/learn/swe/lang/_index.md
+# File: content/en/learn/swe/prog-lang/_index.md
 ---
-title: "Lang" # Correct - matches folder name exactly
+title: "Programming Languages" # Correct - descriptive and readable
+---
+# File: content/en/learn/ai/_index.md
+---
+title: "AI Engineering" # Correct - proper acronym capitalization with context
 ---
 ```
 

@@ -126,9 +126,10 @@ Use this agent when:
    - `celoteh.md` for personal essays
    - `konten-video.md` for video content
    - `_index.md` for section indexes
-   - **Index File Title Rule**: For `_index.md` files, the `title` field MUST exactly match the parent folder name (case-sensitive)
-     - Capitalization: Capitalize first letter only (folder `lang` → title `Lang`, folder `business-law` → title `Business-law`)
-     - Example: `/content/en/learn/swe/lang/_index.md` must have `title: Lang` (not "Programming Languages")
+   - **Index File Title Rule**: For `_index.md` files, the `title` field should be DESCRIPTIVE and READABLE
+     - Use proper capitalization (title case, proper acronyms like AI/SWE/PDF, product names like CliftonStrengths)
+     - Provide context when helpful (e.g., "Business and Finance" instead of just "Business")
+     - Example: `/content/en/learn/swe/prog-lang/_index.md` should have `title: Programming Languages` (descriptive and readable)
 
 2. **Shortcodes** (Hextra Theme):
    - `{{< callout type="info" >}}` - Callout boxes
@@ -470,7 +471,7 @@ Before completing, verify:
   - [ ] NO author field in learning content (`content/en/learn/`, `content/id/belajar/`)
   - [ ] NO author field in video content (`content/en/video-content/`, `content/id/konten-video/`)
   - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
-- [ ] **For `_index.md` files**: Title matches parent folder name exactly (capitalize first letter only)
+- [ ] **For `_index.md` files**: Title is descriptive and readable (proper capitalization, acronyms, context)
 - [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, grandchildren)
 - [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md)
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids

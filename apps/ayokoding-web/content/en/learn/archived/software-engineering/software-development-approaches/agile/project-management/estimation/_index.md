@@ -1,11 +1,9 @@
 ---
-title: "Estimation"
+title: Estimation
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-[Overview](./overview/)
-
-[T-Shirt Sizing](./t-shirt-sizing/)
-
-[Planning Poker](./planning-poker/)
+- [Overview](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation/overview)
+- [T-Shirt Sizing](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation/t-shirt-sizing)
+- [Planning Poker](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation/planning-poker)

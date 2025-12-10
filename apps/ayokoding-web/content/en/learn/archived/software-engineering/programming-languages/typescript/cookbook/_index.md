@@ -1,10 +1,8 @@
 ---
-title: "Cookbook"
+title: Cookbook
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
-
-## Introduction
 
 Welcome to the TypeScript Cookbook! This section is your reliable guide for practical solutions and hands-on examples in TypeScript programming. Whether you are a novice venturing into static types or an experienced developer seeking practical solutions to regular challenges, this cookbook offers you a comprehensive assortment of recipes to boost your TypeScript prowess.
 
@@ -18,10 +16,7 @@ You can access the code repository for the TypeScript Cookbook on GitHub at the 
 
 So, dive in, delve into the recipes, and let the TypeScript Cookbook be your trusted aide in mastering TypeScript programming. Happy coding!
 
-## Contents
-
 ### Up and Running
 
-[How to Read TypeScript Code?](./how-to-read-typescript-code/)
-
-[Hello World](./hello-world/)
+- [How to Read TypeScript Code?](/en/learn/archived/software-engineering/programming-languages/typescript/cookbook/how-to-read-typescript-code)
+- [Hello World](/en/learn/archived/software-engineering/programming-languages/typescript/cookbook/hello-world)

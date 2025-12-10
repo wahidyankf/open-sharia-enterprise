@@ -1,10 +1,10 @@
 ---
-title: "Project Management"
+title: Project Management
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-- [Estimation](./estimation/)
-  - [Overview](./estimation/overview/)
-  - [T-Shirt Sizing](./estimation/t-shirt-sizing/)
-  - [Planning Poker](./estimation/planning-poker/)
+- [Estimation](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation)
+  - [Overview](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation/overview)
+  - [T-Shirt Sizing](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation/t-shirt-sizing)
+  - [Planning Poker](/en/learn/archived/software-engineering/software-development-approaches/agile/project-management/estimation/planning-poker)

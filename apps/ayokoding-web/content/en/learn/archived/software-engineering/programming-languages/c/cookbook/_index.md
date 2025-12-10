@@ -1,10 +1,8 @@
 ---
-title: "Cookbook"
+title: Cookbook
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
-
-## Introduction
 
 Welcome to the C Cookbook! This section is your go-to resource for practical solutions and hands-on examples in C programming. Whether you are a beginner exploring the world of procedural programming or an experienced developer looking for efficient solutions to common problems, this cookbook will provide you with a wide range of recipes to enhance your C skills.
 
@@ -18,9 +16,7 @@ You can access the code repository for the C Cookbook on GitHub at the [C Cookbo
 
 So, dive in, explore the recipes, and let the C Cookbook be your trusted companion for mastering C programming. Happy cooking!
 
-## Contents
-
 ### Up and Running
 
-- [How to Read C Code?](./how-to-read-c-code/)
-- [Hello World](./hello-world/)
+- [How to Read C Code?](/en/learn/archived/software-engineering/programming-languages/c/cookbook/how-to-read-c-code)
+- [Hello World](/en/learn/archived/software-engineering/programming-languages/c/cookbook/hello-world)

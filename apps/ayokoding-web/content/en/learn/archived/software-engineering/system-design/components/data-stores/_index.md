@@ -1,31 +1,19 @@
 ---
-title: "Data Stores"
+title: Data Stores
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-[Considerations](./considerations/)
-
-[Relational databases](./relational-databases/)
-
-[Document Oriented Databases](./document-oriented-databases/)
-
-[Key-Value Stores](./key-value-stores/)
-
-[Column-Family Stores](./column-family-stores/)
-
-[Graph Databases](./graph-databases/)
-
-[Object Storage](./object-storage/)
-
-[Message Brokers](./message-brokers/)
-
-[In-Memory Datastores](./in-memory-datastores/)
-
-[File Systems](./file-systems/)
-
-[Search Engines](./search-engines/)
-
-[Time-Series Databases](./time-series-databases/)
-
-[Data Warehouses](./data-warehouses/)
+- [Considerations](/en/learn/archived/software-engineering/system-design/components/data-stores/considerations)
+- [Relational databases](/en/learn/archived/software-engineering/system-design/components/data-stores/relational-databases)
+- [Document Oriented Databases](/en/learn/archived/software-engineering/system-design/components/data-stores/document-oriented-databases)
+- [Key-Value Stores](/en/learn/archived/software-engineering/system-design/components/data-stores/key-value-stores)
+- [Column-Family Stores](/en/learn/archived/software-engineering/system-design/components/data-stores/column-family-stores)
+- [Graph Databases](/en/learn/archived/software-engineering/system-design/components/data-stores/graph-databases)
+- [Object Storage](/en/learn/archived/software-engineering/system-design/components/data-stores/object-storage)
+- [Message Brokers](/en/learn/archived/software-engineering/system-design/components/data-stores/message-brokers)
+- [In-Memory Datastores](/en/learn/archived/software-engineering/system-design/components/data-stores/in-memory-datastores)
+- [File Systems](/en/learn/archived/software-engineering/system-design/components/data-stores/file-systems)
+- [Search Engines](/en/learn/archived/software-engineering/system-design/components/data-stores/search-engines)
+- [Time-Series Databases](/en/learn/archived/software-engineering/system-design/components/data-stores/time-series-databases)
+- [Data Warehouses](/en/learn/archived/software-engineering/system-design/components/data-stores/data-warehouses)

@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-09
+updated: 2025-12-10
 ---
 
 # Hugo Content Convention
@@ -668,7 +668,7 @@ These conventions are unique to Hugo static site generation.
    ---
    ```
 
-4. **\_index.md** - Section index pages (title must match parent folder name exactly)
+4. **\_index.md** - Section index pages (title should be descriptive and readable)
 5. **default.md** - Default template
 
 **ose-platform-web Archetypes**:
@@ -832,36 +832,54 @@ static/
 
 **Index File Title Rule** (ayokoding-web):
 
-- The `title` field in `_index.md` frontmatter MUST exactly match the parent folder name (case-sensitive)
-- **Rationale**: Consistency and simplicity in navigation structure
-- **Example**: File at `/content/en/learn/swe/lang/_index.md` must have `title: Lang` (not "Programming Languages")
+- The `title` field in `_index.md` frontmatter should be **DESCRIPTIVE and READABLE** for human display
+- **Rationale**: Titles are for user interface display - they should be clear and meaningful, not constrained by URL-friendly folder names
+- **Key Principle**: Folder names use lowercase-with-hyphens for URL compatibility; titles use proper capitalization and spacing for readability
 
-✅ **Good**:
+✅ **Good (descriptive, readable titles)**:
 
 ```yaml
-# File: content/en/learn/swe/lang/_index.md
+# File: content/en/learn/swe/prog-lang/_index.md
 ---
-title: Lang # Matches parent folder name exactly
+title: Programming Languages # Clear, descriptive, properly capitalized
+---
+# File: content/en/learn/ai/_index.md
+---
+title: AI Engineering # Human-readable, proper acronym capitalization
+---
+# File: content/en/learn/human/tools/cliftonstrengths/_index.md
+---
+title: CliftonStrengths # Proper product name capitalization
+---
+# File: content/en/learn/business/_index.md
+---
+title: Business and Finance # Descriptive with context
 ---
 ```
 
-❌ **Bad**:
+❌ **Bad (forced folder name matching)**:
 
 ```yaml
-# File: content/en/learn/swe/lang/_index.md
+# File: content/en/learn/swe/prog-lang/_index.md
 ---
-title: Programming Languages # WRONG! Doesn't match folder name
+title: Prog-lang # WRONG! Unreadable, keeps folder naming pattern
+---
+# File: content/en/learn/ai/_index.md
+---
+title: Ai # WRONG! Incorrect capitalization (should be "AI")
+---
+# File: content/en/learn/business/_index.md
+---
+title: Business # WRONG! Too generic (missing context)
 ---
 ```
 
-**Uppercase Convention**: Folder names determine titles. If folder is `lang`, title is `Lang` (capitalize first letter). If folder is `business-law`, title is `Business-law` (capitalize only first word's first letter).
+**Capitalization Guidelines**:
 
-**Example Mappings**:
-
-- Folder `lang` → Title `Lang`
-- Folder `swe` → Title `Swe`
-- Folder `business-law` → Title `Business-law`
-- Folder `crash-courses` → Title `Crash-courses`
+- Use proper title case for readability
+- Acronyms use standard capitalization (AI, SWE, PDF, not Ai, Swe, Pdf)
+- Product names use official capitalization (CliftonStrengths, JavaScript, TypeScript)
+- Add context when helpful (e.g., "Business and Finance" instead of just "Business")
 
 **Index File Navigation Depth** (ayokoding-web):
 

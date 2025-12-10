@@ -1,14 +1,14 @@
 ---
-title: "Crash Courses"
+title: Crash Courses
 date: 2025-03-25T07:17:00+07:00
 draft: false
 weight: 3
 ---
 
-- [Software Engineering](./swe/)
-  - [Data](./swe/data/)
-  - [Lang](./swe/lang/)
-  - [Platform Development](./swe/platform-development/)
-  - [Stacks](./swe/stacks/)
-- [Productivity](./productivity/)
-  - [AI Assisted](./productivity/ai-assisted/)
+- [Software Engineering](/en/learn/archived/crash-courses/swe)
+  - [Data](/en/learn/archived/crash-courses/swe/data)
+  - [Lang](/en/learn/archived/crash-courses/swe/lang)
+  - [Platform Development](/en/learn/archived/crash-courses/swe/platform-development)
+  - [Stacks](/en/learn/archived/crash-courses/swe/stacks)
+- [Productivity](/en/learn/archived/crash-courses/productivity)
+  - [AI Assisted](/en/learn/archived/crash-courses/productivity/ai-assisted)

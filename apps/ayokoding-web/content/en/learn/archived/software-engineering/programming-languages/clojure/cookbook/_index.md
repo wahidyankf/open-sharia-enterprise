@@ -1,10 +1,8 @@
 ---
-title: "Cookbook"
+title: Cookbook
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
-
-## Introduction
 
 Welcome to the Clojure Cookbook! This section is your go-to resource for practical solutions and hands-on examples in Clojure programming. Whether you are a beginner exploring the world of functional programming or an experienced developer looking for efficient solutions to common problems, this cookbook will provide you with a wide range of recipes to enhance your Clojure skills.
 
@@ -18,37 +16,35 @@ You can access the code repository for the Clojure Cookbook on GitHub at the [Cl
 
 So, dive in, explore the recipes, and let the Clojure Cookbook be your trusted companion on your journey to mastering Clojure programming. Happy cooking!
 
-## Contents
-
 ### Up and Running
 
-- [How to Read Clojure Code](./how-to-read-clojure-code/)
-- [Hello World](./hello-world/)
+- [How to Read Clojure Code](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/how-to-read-clojure-code)
+- [Hello World](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/hello-world)
 
 ### Essentials
 
-- [Data Types: Basics](./data-types-basics/)
-- [Functions: Basics](./functions-basics/)
-- [Control Structure](./control-structure/)
-- [Data Types: String](./data-types-string/)
-- [Collections: List](./collections-list/)
-- [Collections: Vector](./collections-vector/)
-- [Collections: Maps](./collections-maps/)
-- [Collections: Set](./collections-set/)
-- [Functions: Intermediate](./functions-intermediate/)
-- [Testing: Basics](./testing-basics/)
-- [Collections: Manipulation](./collections-manipulation/)
-- [Files: General](./files-general/)
-- [Files: EDN - Overview](./files-edn-overview/)
-- [Interop: Using Java in Clojure](./interop-using-java-in-clojure/)
+- [Data Types: Basics](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/data-types-basics)
+- [Functions: Basics](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/functions-basics)
+- [Control Structure](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/control-structure)
+- [Data Types: String](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/data-types-string)
+- [Collections: List](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/collections-list)
+- [Collections: Vector](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/collections-vector)
+- [Collections: Maps](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/collections-maps)
+- [Collections: Set](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/collections-set)
+- [Functions: Intermediate](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/functions-intermediate)
+- [Testing: Basics](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/testing-basics)
+- [Collections: Manipulation](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/collections-manipulation)
+- [Files: General](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/files-general)
+- [Files: EDN - Overview](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/files-edn-overview)
+- [Interop: Using Java in Clojure](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/interop-using-java-in-clojure)
 
 ### Extra Miles
 
-- [Deps and CLI](./deps-and-cli/)
+- [Deps and CLI](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/deps-and-cli)
 
 ### Get Things Done
 
-- [Date and Time](./date-and-time/)
-- [Files: EDN - Working With](./files-edn-working-with/)
-- [Files: JSON - Working With](./files-json-working-with/)
-- [Files: YAML - Working With](./files-yaml-working-with/)
+- [Date and Time](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/date-and-time)
+- [Files: EDN - Working With](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/files-edn-working-with)
+- [Files: JSON - Working With](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/files-json-working-with)
+- [Files: YAML - Working With](/en/learn/archived/software-engineering/programming-languages/clojure/cookbook/files-yaml-working-with)

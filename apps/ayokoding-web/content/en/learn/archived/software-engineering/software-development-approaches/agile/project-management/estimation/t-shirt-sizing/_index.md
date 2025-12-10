@@ -1,16 +1,12 @@
 ---
-title: "T-Shirt Sizing"
+title: T-Shirt Sizing
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-## Overview
-
 T-shirt sizing is a commonly used estimation technique within the Agile framework. It provides a simple and quick way to estimate the relative size of user stories or tasks without going into detailed hour-based estimations. In this method, sizes are represented using t-shirt sizes, such as small, medium, large, and extra-large. This markdown document will provide an overview of t-shirt sizing in Agile estimation, including its process, participants, benefits, downsides, do's, and don'ts.
 
 T-shirt sizing is a collaborative activity that involves the Agile development team, product owner, and stakeholders. Its purpose is to assign a size or relative effort to user stories or tasks based on their complexity, size, and other factors. The estimation is done by comparing the items to be estimated with a set of reference items already known to the team.
-
-## Output
 
 T-shirt sizing estimation is a valuable technique to help teams determine the relative size of user stories or tasks. Teams can better plan and prioritize their work by assigning a size to each user story or task based on its complexity and scope. The size is represented using t-shirt sizes, which usually include:
 
@@ -20,8 +16,6 @@ T-shirt sizing estimation is a valuable technique to help teams determine the re
 - **L (Large):** Indicates significantly more significant or complex items than medium-sized items. These items may require more resources, time, and effort, but they are still feasible with proper planning and execution.
 - **XL (Extra Large):** Represents the most oversized and complex items. These items may seem daunting at first, but with proper planning and execution, they can be completed successfully.
 
-## Participants
-
 The estimation process typically involves the following participants:
 
 1. **Agile Development Team:** The team responsible for developing and delivering the software. They provide their expertise and knowledge during the estimation process.
@@ -30,21 +24,15 @@ The estimation process typically involves the following participants:
 
 In addition to the participants listed above, the estimation process may involve other organization members, such as business analysts, architects, or subject matter experts. These individuals can provide additional context and knowledge that can help to refine estimates and ensure that the software is developed to meet the needs of the stakeholders. Overall, the estimation process is a collaborative effort involving input from various individuals with different perspectives and areas of expertise.
 
-## Duration
-
 The duration of a t-shirt sizing estimation session can vary depending on the number of items to be estimated and the project's complexity. Generally, it is recommended to allocate a specific timebox, such as 1 to 2 hours, for this activity.
 
 The estimation process can be complex, especially for large and complex projects requiring attention to detail. For this reason, it may be necessary to devote more time to the estimation process to ensure everything is done correctly.
-
-## Preparation
 
 Before conducting a t-shirt sizing session, it is essential to have the following preparations:
 
 1. **User Stories or Tasks:** Prepare a list of user stories or tasks that need to be estimated. These should be well-defined and understandable by the participants. Try to include a variety of stories or tasks that cover different aspects of the project and require different levels of effort.
 2. **Reference Items:** Create a set of reference items representing each t-shirt size. These items should be previously completed user stories or tasks the team can easily relate to during estimation. Make sure to choose reference items that cover a range of t-shirt sizes, from XS to XL, to provide a clear picture of the effort required for each size.
 3. **Estimation Cards:** Prepare t-shirt-sized estimation cards or sticky notes for each participant. Each card should have a different t-shirt size (XS, S, M, L, XL) written on it. You can also include additional information on the cards, such as the project name or a logo, to make them more visually appealing and engaging for the participants. Additionally, consider providing examples of using the cards so everyone is on the same page regarding estimation.
-
-## Process
 
 The t-shirt sizing estimation process typically involves the following steps:
 
@@ -65,8 +53,6 @@ graph TD
 5. **Repeat Estimation:** If needed, the estimation process is repeated for any unresolved items until a collective agreement is reached. This step ensures that all items are estimated accurately, and no item is left behind.
 6. **Finalize Estimations:** The agreed-upon estimations are recorded, and the items are prioritized based on the assigned sizes. This step helps the team to prioritize their work and allocate resources based on the estimated effort required for each item.
 
-## Benefits
-
 T-shirt sizing estimation offers several additional benefits that can help Agile development teams:
 
 - **Improved Communication:** By involving the entire Agile team in the estimation process, T-shirt sizing estimation can improve communication and better understand each team member's role and responsibilities.
@@ -74,8 +60,6 @@ T-shirt sizing estimation offers several additional benefits that can help Agile
 - **Greater Transparency:** Relative sizing can help make the estimation process more transparent, as it allows team members to see how each task or project fits into the larger picture and how much effort is required.
 - **Better Planning:** By focusing on relative sizing, T-shirt sizing estimation can help Agile teams prioritize and plan their work more effectively, ensuring they can complete tasks on time and within budget.
 - **Improved Risk Management:** T-shirt sizing estimation allows for flexibility in adjusting estimates as the team gains more information or insights during the project, helping to improve risk management and reduce the likelihood of project delays or failures.
-
-## Downsides
 
 While t-shirt sizing is a popular approach to estimating effort, it has potential downsides. Here are some key points to consider:
 
@@ -85,8 +69,6 @@ While t-shirt sizing is a popular approach to estimating effort, it has potentia
 - **Lack of Flexibility:** T-shirt sizing relies on pre-defined categories, which may only be suitable for some tasks or user stories. This can limit the team's ability to estimate effort accurately and may require additional effort to refine estimates.
 - **Limited Granularity:** T-shirt sizing only provides a limited number of categories, which may not capture the full range of effort required for each user story or task. This can lead to overestimation or underestimation of effort, depending on the complexity of the task.
 
-## Do's
-
 To ensure a successful and accurate t-shirt sizing estimation, consider implementing the following do's:
 
 - **Encourage Collaboration:** Foster open communication and collaboration among the team members during the estimation process. This will help ensure that everyone's input is heard and valued, which can lead to more accurate estimations.
@@ -95,15 +77,11 @@ To ensure a successful and accurate t-shirt sizing estimation, consider implemen
 - **Take your time with the estimation process**: Take the time to ensure that everyone's input is heard and valued and that everyone fully understands the estimation process.
 - **Keep it Timeboxed:** Allocate a specific timebox for the estimation session to maintain focus and efficiency. This can help ensure the estimation process is smooth, and everyone stays engaged.
 
-## Don'ts
-
 - **Don't Allow Dominance:** Avoid allowing one individual to dominate the estimation process. This can lead to inaccurate estimations and make other team members feel undervalued.
 - **Don't Overcomplicate:** Avoid overcomplicating the estimation process with unnecessary details or complicated formulas. This can make the process more transparent and lead to accurate estimations.
 - **Don't Aim for Precision:** T-shirt sizing is a high-level estimation technique, so only attempt to achieve precise hour-based estimates.
 - **Don't Dictate Estimations:** Facilitate a collaborative environment and avoid imposing estimations on team members.
 - **Don't Overanalyze:** The goal is to provide a quick and relative estimation to avoid excessive analysis or debates.
-
-## Further Readings
 
 To delve deeper into Agile estimation and t-shirt sizing, here are some recommended resources:
 

@@ -1,10 +1,8 @@
 ---
-title: "Cookbook"
+title: Cookbook
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
-
-## Introduction
 
 Welcome to the Dart Cookbook! This section is your go-to resource for practical solutions and hands-on examples in Dart programming. Whether you are a beginner exploring the world of procedural programming or an experienced developer looking for efficient solutions to common problems, this cookbook will provide you with a wide range of recipes to enhance your Dart skills.
 
@@ -18,20 +16,14 @@ You can access the code repository for the Dart Cookbook on GitHub at the [Dart 
 
 So, dive in, explore the recipes, and let the Dart Cookbook be your trusted companion for mastering Dart programming. Happy cooking!
 
-## Contents
-
 ### Up and Running
 
-[How to Read Dart Code?](./how-to-read-dart-code/)
-
-[Hello World](./hello-world/)
+- [How to Read Dart Code?](/en/learn/archived/software-engineering/programming-languages/dart/cookbook/how-to-read-dart-code)
+- [Hello World](/en/learn/archived/software-engineering/programming-languages/dart/cookbook/hello-world)
 
 ### Extra Miles
 
-[Typing: Sealed Class](./typing-sealed-class/)
-
-[Typing: Option](./typing-option/)
-
-[Typing: Result](./typing-result/)
-
-[Typing: tryCatch](./typing-trycatch/)
+- [Typing: Sealed Class](/en/learn/archived/software-engineering/programming-languages/dart/cookbook/typing-sealed-class)
+- [Typing: Option](/en/learn/archived/software-engineering/programming-languages/dart/cookbook/typing-option)
+- [Typing: Result](/en/learn/archived/software-engineering/programming-languages/dart/cookbook/typing-result)
+- [Typing: tryCatch](/en/learn/archived/software-engineering/programming-languages/dart/cookbook/typing-trycatch)
