@@ -154,9 +154,13 @@ Use this agent when:
    - **Scope**: Applies ONLY to `_index.md` files in `content/en/learn/` and `content/id/belajar/`
    - **Rule**: `_index.md` should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
    - **Introduction/Overview**: Create separate intro content file:
-     - **English folders**: Use `overview.md`
-     - **Indonesian folders**: Use `ikhtisar.md` (NOT `overview.md`)
+     - **English folders**: Use `overview.md` with `title: "Overview"`
+     - **Indonesian folders**: Use `ikhtisar.md` with `title: "Ikhtisar"` (NOT `overview.md`)
    - **Why "ikhtisar"?** "Ikhtisar" is Indonesian for "overview" - using language-appropriate filenames maintains bilingual consistency
+   - **Title Format**:
+     - `overview.md` MUST have `title: "Overview"` (NOT descriptive like "Programming Languages Overview")
+     - `ikhtisar.md` MUST have `title: "Ikhtisar"` (NOT descriptive like "Ikhtisar Penyimpanan Data")
+     - **Rationale**: Context is provided by directory path; simple generic titles are cleaner
    - **Navigation Ordering**: When folder contains both `_index.md` and intro content:
      - `_index.md` appears topmost in file listing
      - `overview.md` (English) or `ikhtisar.md` (Indonesian) appears immediately below
