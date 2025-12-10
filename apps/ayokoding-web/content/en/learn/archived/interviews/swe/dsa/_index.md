@@ -1,5 +1,5 @@
 ---
-title: DSA
+title: Data Structures & Algorithms
 date: 2025-03-16T17:23:00+07:00
 draft: false
 weight: 3
