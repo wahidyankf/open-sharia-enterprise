@@ -153,11 +153,17 @@ Use this agent when:
 4. **Index File Content Separation** (learn/belajar directories ONLY):
    - **Scope**: Applies ONLY to `_index.md` files in `content/en/learn/` and `content/id/belajar/`
    - **Rule**: `_index.md` should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
-   - **Introduction/Overview**: Create separate `overview.md` file in the same directory
+   - **Introduction/Overview**: Create separate intro content file:
+     - **English folders**: Use `overview.md`
+     - **Indonesian folders**: Use `ikhtisar.md` (NOT `overview.md`)
+   - **Why "ikhtisar"?** "Ikhtisar" is Indonesian for "overview" - using language-appropriate filenames maintains bilingual consistency
+   - **Navigation Ordering**: When folder contains both `_index.md` and intro content:
+     - `_index.md` appears topmost in file listing
+     - `overview.md` (English) or `ikhtisar.md` (Indonesian) appears immediately below
    - **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance
    - **Example**:
-     - `_index.md` - Navigation only (bullet lists linking to content)
-     - `overview.md` - Introduction to the learning path
+     - `_index.md` - Navigation only (bullet lists linking to content) - topmost
+     - `overview.md` or `ikhtisar.md` - Introduction to the learning path - immediately below
    - **Does NOT apply to**: Root `_index.md`, rants/celoteh directories, or other parts of site
 
 5. **Taxonomy**:
@@ -473,7 +479,9 @@ Before completing, verify:
   - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
 - [ ] **For `_index.md` files**: Title is descriptive and readable (proper capitalization, acronyms, context)
 - [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, grandchildren)
-- [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md)
+- [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md or ikhtisar.md)
+- [ ] **For intro content files**: Correct naming based on language (overview.md for English, ikhtisar.md for Indonesian)
+- [ ] **For folders with both index and intro**: Navigation ordering correct (\_index.md topmost, then overview.md/ikhtisar.md)
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids
 - [ ] For bilingual content: Both Indonesian and English versions created
 

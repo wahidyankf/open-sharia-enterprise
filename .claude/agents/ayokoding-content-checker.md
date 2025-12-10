@@ -437,8 +437,35 @@ title: business # WRONG! No capitalization, too generic
 - [ ] NO introduction paragraphs in `_index.md`
 - [ ] NO overview content in `_index.md`
 - [ ] NO explanatory text beyond navigation links
-- [ ] If introduction/overview needed: Separate `overview.md` file exists
-- [ ] `overview.md` (if present) has proper frontmatter and content structure
+- [ ] If introduction/overview needed: Separate intro content file exists
+  - [ ] **English folders**: `overview.md` file exists
+  - [ ] **Indonesian folders**: `ikhtisar.md` file exists (NOT `overview.md`)
+- [ ] Intro content file (if present) has proper frontmatter and content structure
+
+### File Naming Validation for Intro Content
+
+**Validate correct file naming based on language**:
+
+- [ ] **English folders** (`content/en/learn/` and subfolders): Intro content uses `overview.md`
+- [ ] **Indonesian folders** (`content/id/belajar/` and subfolders): Intro content uses `ikhtisar.md` (NOT `overview.md`)
+- [ ] Flag `overview.md` in Indonesian folders as error (should be `ikhtisar.md`)
+- [ ] Flag `ikhtisar.md` in English folders as error (should be `overview.md`)
+
+**Why this matters**: "Ikhtisar" is Indonesian for "overview" - using language-appropriate filenames maintains bilingual consistency.
+
+### Navigation Ordering Validation
+
+**For folders containing both `_index.md` and intro content**:
+
+- [ ] `_index.md` appears topmost in file listing
+- [ ] `overview.md` (English) or `ikhtisar.md` (Indonesian) appears immediately below `_index.md`
+- [ ] Navigation order is consistent: index first, then intro content
+
+**Validation Logic**:
+
+1. Detect folders with both `_index.md` and intro content file (`overview.md` or `ikhtisar.md`)
+2. Verify navigation ordering (index topmost, intro immediately below)
+3. Report any ordering violations
 
 **Valid `_index.md` Structure** (navigation only):
 
@@ -462,13 +489,13 @@ title: Golang
 
 Welcome to our comprehensive Golang learning path! Go is a statically typed...
 
-<!-- WRONG! Introduction content should be in overview.md -->
+<!-- WRONG! Introduction content should be in overview.md (English) or ikhtisar.md (Indonesian) -->
 
 - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
 - [Quick Start](/learn/swe/prog-lang/golang/quick-start)
 ```
 
-**Valid `overview.md` Structure** (content file):
+**Valid `overview.md` Structure** (English intro content):
 
 ```markdown
 ---
@@ -484,7 +511,35 @@ categories: ["learn"]
 Welcome to our Golang learning path! This comprehensive curriculum takes you from...
 ```
 
-**Rationale**: Clear separation of concerns - `_index.md` handles navigation, `overview.md` handles content
+**Valid `ikhtisar.md` Structure** (Indonesian intro content):
+
+```markdown
+---
+title: "Ikhtisar Jalur Pembelajaran Golang"
+date: 2025-12-09T10:00:00+07:00
+draft: false
+description: "Pengenalan ke sumber pembelajaran Golang komprehensif kami"
+weight: 1
+tags: ["golang", "programming", "ikhtisar"]
+categories: ["learn"]
+---
+
+Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini membawa Anda dari...
+```
+
+**Invalid File Naming Examples**:
+
+```markdown
+<!-- WRONG! overview.md in Indonesian folder -->
+
+content/id/belajar/swe/prog-lang/golang/overview.md # Should be ikhtisar.md
+
+<!-- WRONG! ikhtisar.md in English folder -->
+
+content/en/learn/swe/prog-lang/golang/ikhtisar.md # Should be overview.md
+```
+
+**Rationale**: Clear separation of concerns - `_index.md` handles navigation, `overview.md`/`ikhtisar.md` handles content. Language-appropriate filenames maintain bilingual consistency
 
 **Valid Navigation (3 layers deep)**:
 
