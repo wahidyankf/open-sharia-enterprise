@@ -1,10 +1,8 @@
 ---
-title: "Cookbook"
+title: Cookbook
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
-
-## Introduction
 
 Welcome to the Java Cookbook! This section is your go-to resource for practical solutions and hands-on examples in Java programming. Whether you are a beginner exploring the world of object-oriented programming or an experienced developer looking for efficient solutions to common problems, this cookbook will provide you with a wide range of recipes to enhance your Java skills.
 
@@ -18,30 +16,21 @@ You can access the code repository for the Java Cookbook on GitHub at the [Java 
 
 So, dive in, explore the recipes, and let the Java Cookbook be your trusted companion for mastering Java programming. Happy cooking!
 
-## Contents
-
 ### Up and Running
 
-[How to Read Java Code](./how-to-read-java-code/)
-
-[Hello World](./hello-world/)
+- [How to Read Java Code](/en/learn/archived/software-engineering/programming-languages/java/cookbook/how-to-read-java-code)
+- [Hello World](/en/learn/archived/software-engineering/programming-languages/java/cookbook/hello-world)
 
 ### Essentials
 
-[Data Types in Java](./data-types-in-java/)
-
-[Data Types: Primitive](./data-types-primitive/)
-
-[Reference Types](./reference-types/)
-
-[Class: Basics](./class-basics/)
-
-[Control Structure](./control-structure/)
-
-[Methods: Basics](./methods-basics/)
-
-[Class: Intermediate](./class-intermediate/)
+- [Data Types in Java](/en/learn/archived/software-engineering/programming-languages/java/cookbook/data-types-in-java)
+- [Data Types: Primitive](/en/learn/archived/software-engineering/programming-languages/java/cookbook/data-types-primitive)
+- [Reference Types](/en/learn/archived/software-engineering/programming-languages/java/cookbook/reference-types)
+- [Class: Basics](/en/learn/archived/software-engineering/programming-languages/java/cookbook/class-basics)
+- [Control Structure](/en/learn/archived/software-engineering/programming-languages/java/cookbook/control-structure)
+- [Methods: Basics](/en/learn/archived/software-engineering/programming-languages/java/cookbook/methods-basics)
+- [Class: Intermediate](/en/learn/archived/software-engineering/programming-languages/java/cookbook/class-intermediate)
 
 ### Extra Miles
 
-[Package Managers](./package-managers/)
+- [Package Managers](/en/learn/archived/software-engineering/programming-languages/java/cookbook/package-managers)

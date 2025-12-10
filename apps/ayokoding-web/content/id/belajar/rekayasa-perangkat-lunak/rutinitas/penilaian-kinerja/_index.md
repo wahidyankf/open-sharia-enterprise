@@ -1,13 +1,10 @@
 ---
-title: "Penilaian Kinerja"
+title: Penilaian Kinerja
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-[Ikhtisar](./ikhtisar/)
-
-[Ulasan Diri](./ulasan-diri/)
-
-[Ulasan Rekan](./ulasan-rekan/)
-
-[Ulasan Atasan](./ulasan-atasan/)
+- [Ikhtisar](/id/belajar/rekayasa-perangkat-lunak/rutinitas/penilaian-kinerja/ikhtisar)
+- [Ulasan Diri](/id/belajar/rekayasa-perangkat-lunak/rutinitas/penilaian-kinerja/ulasan-diri)
+- [Ulasan Rekan](/id/belajar/rekayasa-perangkat-lunak/rutinitas/penilaian-kinerja/ulasan-rekan)
+- [Ulasan Atasan](/id/belajar/rekayasa-perangkat-lunak/rutinitas/penilaian-kinerja/ulasan-atasan)

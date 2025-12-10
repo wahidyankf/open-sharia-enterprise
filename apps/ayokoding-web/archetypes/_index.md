@@ -1,6 +1,7 @@
 ---
-# IMPORTANT: Title MUST match parent folder name exactly (capitalize first letter only)
-# Example: folder "lang" → title "Lang", folder "business-law" → title "Business-law"
+# IMPORTANT: Title should be DESCRIPTIVE and READABLE for human display
+# Use proper capitalization: title case, proper acronyms (AI, SWE), product names (CliftonStrengths)
+# Example: folder "prog-lang" → title "Programming Languages", folder "ai" → title "AI Engineering"
 title: "{{ .Name | title }}"
 date: { { .Date } }
 draft: false

@@ -1,12 +1,10 @@
 ---
-title: "Overview"
+title: Overview
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
 Scrum is an agile framework for managing and completing complex projects. Scrum events are time-boxed events that are used to facilitate the Scrum framework. Five Scrum events occur within a Sprint, a time-boxed iteration of one to four weeks.
-
-## The Five Scrum Events
 
 ### 1. Sprint Planning
 
@@ -60,8 +58,6 @@ In addition, Backlog Refinement is an opportunity for the Scrum Team to collabor
 
 Overall, Backlog Refinement is a critical aspect of the Scrum framework, and it is essential to ensure that the Product Backlog is well-prepared for the next Sprint Planning. The Scrum Team can deliver a high-quality product that meets the customer's needs and expectations by collaborating, refining, and continuously improving the Product Backlog Items.
 
-## The Scrum Flow
-
 Here is the Scrum flow diagram:
 
 ```mermaid
@@ -78,8 +74,6 @@ graph TD;
 ```
 
 This flowchart visually represents the Scrum framework and how the events fit together to support iterative and incremental development.
-
-## Further Readings
 
 - [The Scrum Guide](https://scrumguides.org/scrum-guide.html)
 - [Scrum.org](https://www.scrum.org/)

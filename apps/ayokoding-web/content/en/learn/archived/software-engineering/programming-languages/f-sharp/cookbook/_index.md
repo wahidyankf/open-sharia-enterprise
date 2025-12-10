@@ -1,10 +1,8 @@
 ---
-title: "Cookbook"
+title: Cookbook
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
-
-## Introduction
 
 Welcome to the F# Cookbook! This section is your go-to resource for practical solutions and hands-on examples in F# programming. Whether you are a beginner exploring the world of functional programming or an experienced developer looking for efficient solutions to common problems, this cookbook will provide you with a wide range of recipes to enhance your F# skills.
 
@@ -18,10 +16,7 @@ You can access the code repository for the F# Cookbook on GitHub at the [F# Cook
 
 So, dive in, explore the recipes, and let the F# Cookbook be your trusted companion for mastering F# programming. Happy cooking!
 
-## Contents
-
 ### Up and Running
 
-[How to Read F# Code?](./how-to-read-f-code/)
-
-[Hello World](./hello-world/)
+- [How to Read F# Code?](/en/learn/archived/software-engineering/programming-languages/f-sharp/cookbook/how-to-read-f-code)
+- [Hello World](/en/learn/archived/software-engineering/programming-languages/f-sharp/cookbook/hello-world)

@@ -1,8 +1,8 @@
 ---
-title: "AI Assisted"
+title: AI Assisted
 date: 2025-03-25T07:17:00+07:00
 draft: false
 weight: 2
 ---
 
-- [Prompt Engineering](./prompt-engineering/)
+- [Prompt Engineering](/en/learn/archived/crash-courses/productivity/ai-assisted/prompt-engineering)

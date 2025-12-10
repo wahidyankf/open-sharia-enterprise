@@ -1,5 +1,5 @@
 ---
-title: "In-Memory Datastores"
+title: In-Memory Datastores
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
@@ -126,6 +126,5 @@ Further Readings
 
 "Redis in Action" by Josiah L. Carlson
 
-[Profile](./profile/)
-
-[Key Concepts](./key-concepts/)
+- [Profile](/en/learn/archived/software-engineering/system-design/components/data-stores/in-memory-datastores/profile)
+- [Key Concepts](/en/learn/archived/software-engineering/system-design/components/data-stores/in-memory-datastores/key-concepts)

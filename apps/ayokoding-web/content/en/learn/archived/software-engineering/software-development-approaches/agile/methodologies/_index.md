@@ -1,12 +1,10 @@
 ---
-title: "Methodologies"
+title: Methodologies
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
 Agile software development revolutionized the world of software engineering by introducing a set of methodologies that advocate flexibility, collaboration, and responsiveness to change. These methodologies marked a significant departure from traditional waterfall development approaches, which often proved rigid, inefficient, and poorly suited to the rapid pace of changing user requirements.
-
-## Essential Agile Methodologies
 
 The agile approach has several vital methodologies, each with unique practices and principles. Here are some of the most notable:
 
@@ -40,20 +38,16 @@ Feature Driven Development (FDD) is a model-driven, iterative process that build
 
 _Example:_ In FDD, a software team might create an initial model of the domain, break the system down into a list of features, and then develop each feature in a short iteration.
 
-## Contents
-
-- [Scrum](./scrum/)
-  - [Overview](./scrum/overview/)
-  - [Roles](./scrum/roles/)
-  - [Artifacts](./scrum/artifacts/)
-  - [Events](./scrum/events/)
-  - [FAQ](./scrum/faq/)
-- [Kanban](./kanban/)
-- [Lean](./lean/)
-- [Extreme Programming (XP)](./extreme-programming-xp/)
-- [Feature Driven Development (FDD)](./feature-driven-development-fdd/)
-
-## Further Readings
+- [Scrum](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/scrum)
+  - [Overview](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/scrum/overview)
+  - [Roles](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/scrum/roles)
+  - [Artifacts](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/scrum/artifacts)
+  - [Events](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/scrum/events)
+  - [FAQ](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/scrum/faq)
+- [Kanban](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/kanban)
+- [Lean](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/lean)
+- [Extreme Programming (XP)](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/extreme-programming-xp)
+- [Feature Driven Development (FDD)](/en/learn/archived/software-engineering/software-development-approaches/agile/methodologies/feature-driven-development-fdd)
 
 For a deeper understanding of these methodologies and to learn how to apply them effectively, refer to the following resources:
 

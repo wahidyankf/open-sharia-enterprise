@@ -1,9 +1,9 @@
 ---
-title: "Python"
+title: Python
 date: 2025-03-25T07:17:00+07:00
 draft: false
 weight: 1
 ---
 
-- [Basics](./basics)
-- [Static Typing](./static-typing)
+- [Basics](/en/learn/archived/crash-courses/swe/lang/python/basics)
+- [Static Typing](/en/learn/archived/crash-courses/swe/lang/python/static-typing)
