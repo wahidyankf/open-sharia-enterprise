@@ -145,8 +145,8 @@ This query groups the orders by customer names, and counts the number of orders 
 
 1. [SQL LEFT JOIN Keyword](https://www.w3schools.com/sql/sql_join_left.asp) - W3Schools
 2. [The SQL LEFT JOIN syntax](https://www.sqltutorial.org/sql-left-join/) - SQL Tutorial
-3. [LEFT OUTER JOIN in SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/from-transact-sql?view=sql-server-ver15#left-outer-join) - Microsoft Docs
+3. [LEFT OUTER JOIN in SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/from-transact-sql?view=sql-server-ver15#left-outer-join) - Microsoft Docs
 4. [SQL Aggregate Functions](https://www.w3schools.com/sql/sql_count_avg_sum.asp) - W3Schools
 5. [The GROUP BY Statement in SQL](https://www.sqltutorial.org/sql-group-by/) - SQL Tutorial
-6. [Using JOINs in SQL Server](https://docs.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Microsoft Docs
+6. [Using JOINs in SQL Server](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver15#using-joins) - Microsoft Docs
 7. [Filtering Data with WHERE Clause in SQL Server](https://www.sqlservertutorial.net/sql-server-basics/sql-server-where/) - SQL Server Tutorial

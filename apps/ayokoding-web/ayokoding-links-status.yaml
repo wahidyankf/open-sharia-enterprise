@@ -1,25 +1,32 @@
 version: 1.0.0
-lastFullScan: "2025-12-09T22:30:00+07:00"
+lastFullScan: "2025-12-11T18:45:00+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
-  - url: https://www.youtube.com/ayokoding
+  - url: http://highscalability.com/
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://www.youtube.com/ayokoding
+    finalUrl: http://highscalability.com/
     redirectChain: null
     usedIn:
-      - content/en/about-ayokoding.md
-      - content/id/tentang-ayokoding.md
+      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
 
-  - url: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
+  - url: http://super.so/
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
+    finalUrl: http://super.so/
     redirectChain: null
     usedIn:
-      - content/en/about-ayokoding.md
-      - content/id/tentang-ayokoding.md
+      - content/en/rants/2023/i-migrated-ayokoding-com-from-gitbook-to-notion-and-super.md
+      - content/id/celoteh/2023/migrasi-ayokoding-com-dari-gitbook-ke-notion-dan-super.md
+
+  - url: https://adoptium.net/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://adoptium.net/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/java/initial-setup.md
 
   - url: https://blog.omnistrate.com/posts/30
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -29,73 +36,70 @@ links:
     usedIn:
       - content/en/learn/swe/system-design/_index.md
 
+  - url: https://bytebytego.com/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://bytebytego.com/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+
+  - url: https://dataintensive.net/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://dataintensive.net/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+
+  - url: https://diataxis.fr/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://diataxis.fr/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/golang/_index.md
+
+  - url: https://docs.aws.amazon.com/neptune/latest/userguide/intro.html
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://docs.aws.amazon.com/neptune/latest/userguide/intro.html
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
+
+  - url: https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 301
+    finalUrl: https://learn.microsoft.com/en-us/azure/cosmos-db/graph-introduction
+    redirectChain:
+      - from: https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction
+        to: https://learn.microsoft.com/en-us/azure/cosmos-db/graph-introduction
+        status: 301
+    usedIn:
+      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
+
+  - url: https://docs.oracle.com/en/java/javase/21/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://docs.oracle.com/en/java/javase/21/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/java/initial-setup.md
+      - content/en/learn/swe/prog-lang/java/quick-start.md
+
+  - url: https://drive.google.com/drive/folders/1seVOuX8zsx4jyi3zFlIs6n0OtYKkVWRN?usp=sharing
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://drive.google.com/drive/folders/1seVOuX8zsx4jyi3zFlIs6n0OtYKkVWRN?usp=sharing
+    redirectChain: null
+    usedIn:
+      - content/id/konten-video/_index.md
+
   - url: https://github.com/organiclever/ayokoding/tree/main/contents/c-cookbook/c-cookbook-primary
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
     finalUrl: https://github.com/organiclever/ayokoding/tree/main/contents/c-cookbook/c-cookbook-primary
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
-      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
-
-  - url: https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
-      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
-
-  - url: https://marketplace.visualstudio.com/items?itemName=ryuta46.multi-command
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://marketplace.visualstudio.com/items?itemName=ryuta46.multi-command
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
-      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
-
-  - url: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
-      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
-
-  - url: https://github.com/organiclever/ayokoding/tree/main/contents/fsharp-cookbook/fsharp-cookbook-primary
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://github.com/organiclever/ayokoding/tree/main/contents/fsharp-cookbook/fsharp-cookbook-primary
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
-      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
-
-  - url: https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
-      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
-
-  - url: https://github.com/organiclever/ayokoding/tree/main/contents/typescript-cookbook/typescript-cookbook-primary
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://github.com/organiclever/ayokoding/tree/main/contents/typescript-cookbook/typescript-cookbook-primary
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
-      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
-
-  - url: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
     redirectChain: null
     usedIn:
       - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
@@ -119,57 +123,41 @@ links:
       - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
       - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
-  - url: https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 301
-    finalUrl: https://learn.microsoft.com/en-us/azure/cosmos-db/graph-introduction
-    redirectChain:
-      - from: https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction
-        to: https://learn.microsoft.com/en-us/azure/cosmos-db/graph-introduction
-        status: 301
-    usedIn:
-      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
-
-  - url: https://www.w3schools.com/sql/sql_select.asp
+  - url: https://github.com/organiclever/ayokoding/tree/main/contents/fsharp-cookbook/fsharp-cookbook-primary
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://www.w3schools.com/sql/sql_select.asp
+    finalUrl: https://github.com/organiclever/ayokoding/tree/main/contents/fsharp-cookbook/fsharp-cookbook-primary
     redirectChain: null
     usedIn:
-      - content/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/sql/esensial/dml-select.md
+      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
-  - url: https://neo4j.com/docs/
+  - url: https://github.com/organiclever/ayokoding/tree/main/contents/typescript-cookbook/typescript-cookbook-primary
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://neo4j.com/docs/
+    finalUrl: https://github.com/organiclever/ayokoding/tree/main/contents/typescript-cookbook/typescript-cookbook-primary
     redirectChain: null
     usedIn:
-      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
+      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
-  - url: https://docs.aws.amazon.com/neptune/latest/userguide/intro.html
+  - url: https://hbr.org/2011/01/the-most-important-practice-i
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://docs.aws.amazon.com/neptune/latest/userguide/intro.html
+    finalUrl: https://hbr.org/2011/01/the-most-important-practice-i
     redirectChain: null
     usedIn:
-      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
+      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
+      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
 
-  - url: http://super.so/
-    lastChecked: "2025-12-09T22:30:00+07:00"
+  - url: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
+    lastChecked: "2025-12-11T18:45:00+07:00"
     statusCode: 200
-    finalUrl: http://super.so/
+    finalUrl: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
     redirectChain: null
     usedIn:
-      - content/en/rants/2023/i-migrated-ayokoding-com-from-gitbook-to-notion-and-super.md
-      - content/id/celoteh/2023/migrasi-ayokoding-com-dari-gitbook-ke-notion-dan-super.md
-
-  - url: https://drive.google.com/drive/folders/1seVOuX8zsx4jyi3zFlIs6n0OtYKkVWRN?usp=sharing
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://drive.google.com/drive/folders/1seVOuX8zsx4jyi3zFlIs6n0OtYKkVWRN?usp=sharing
-    redirectChain: null
-    usedIn:
-      - content/id/konten-video/_index.md
+      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
+      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
 
   - url: https://www.effectiveengineer.com/
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -180,10 +168,10 @@ links:
       - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
       - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
 
-  - url: https://hbr.org/2011/01/the-most-important-practice-i
-    lastChecked: "2025-12-09T22:30:00+07:00"
+  - url: https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/
+    lastChecked: "2025-12-11T18:45:00+07:00"
     statusCode: 200
-    finalUrl: https://hbr.org/2011/01/the-most-important-practice-i
+    finalUrl: https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/
     redirectChain: null
     usedIn:
       - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
@@ -197,51 +185,90 @@ links:
     usedIn:
       - content/en/rants/2023/tech-winter-in-indonesia-lessons-learned-and-the-importance-of-stock-based-compensation.md
 
-  - url: https://dataintensive.net/
+  - url: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://dataintensive.net/
+    finalUrl: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+      - content/en/about-ayokoding.md
+      - content/id/tentang-ayokoding.md
 
-  - url: https://bytebytego.com/
+  - url: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://bytebytego.com/
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
-  - url: http://highscalability.com/
+  - url: https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: http://highscalability.com/
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
-  - url: https://diataxis.fr/
+  - url: https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://diataxis.fr/
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/_index.md
+      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
-  - url: https://docs.oracle.com/en/java/javase/21/
+  - url: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://docs.oracle.com/en/java/javase/21/
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/java/initial-setup.md
-      - content/en/learn/swe/prog-lang/java/quick-start.md
+      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
-  - url: https://adoptium.net/
+  - url: https://marketplace.visualstudio.com/items?itemName=ryuta46.multi-command
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://adoptium.net/
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=ryuta46.multi-command
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/java/initial-setup.md
+      - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
+
+  - url: https://neo4j.com/docs/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://neo4j.com/docs/
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
+
+  - url: https://www.w3schools.com/sql/sql_select.asp
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.w3schools.com/sql/sql_select.asp
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/sql/esensial/dml-select.md
+
+  - url: https://www.youtube.com/ayokoding
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.youtube.com/ayokoding
+    redirectChain: null
+    usedIn:
+      - content/en/about-ayokoding.md
+      - content/id/tentang-ayokoding.md
+
+  - url: https://youtu.be/TCPjk8Tpb5c
+    lastChecked: "2025-12-11T18:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://youtu.be/TCPjk8Tpb5c
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/tech-winter-in-indonesia-lessons-learned-and-the-importance-of-stock-based-compensation.md
+      - content/id/celoteh/2023/tech-winter-di-indonesia-pelajaran-yang-gw-ambil-dan-pentingnya-stock-based-compensation.md

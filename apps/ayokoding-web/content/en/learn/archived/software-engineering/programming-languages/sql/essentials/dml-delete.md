@@ -61,4 +61,4 @@ This will delete all rows in the "product" table.
 3. [Delete Data In a MySQL Table Using MySQLi and PDO](https://www.w3schools.com/sql/sql_delete.asp) - W3Schools
 4. [SQL DELETE JOIN Statement](https://www.mysqltutorial.org/mysql-delete-join/) - MySQL Tutorial
 5. [SQL Server DELETE Statement](https://www.sqlservertutorial.net/sql-server-basics/sql-server-delete/) - SQL Server Tutorial
-6. [DELETE (Transact-SQL)](https://docs.microsoft.com/en-us/sql/t-sql/statements/delete-transact-sql?view=sql-server-ver15) - Microsoft Docs
+6. [DELETE (Transact-SQL)](https://learn.microsoft.com/en-us/sql/t-sql/statements/delete-transact-sql?view=sql-server-ver15) - Microsoft Docs
