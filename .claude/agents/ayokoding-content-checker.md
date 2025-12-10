@@ -453,6 +453,42 @@ title: business # WRONG! No capitalization, too generic
 
 **Why this matters**: "Ikhtisar" is Indonesian for "overview" - using language-appropriate filenames maintains bilingual consistency.
 
+### Title Validation for Intro Content
+
+**Validate correct title format for overview/ikhtisar files**:
+
+- [ ] **`overview.md` files**: Title MUST be "Overview" (not descriptive like "Programming Languages Overview")
+- [ ] **`ikhtisar.md` files**: Title MUST be "Ikhtisar" (not descriptive like "Ikhtisar Penyimpanan Data Dalam Memori")
+- [ ] Flag descriptive titles as errors (should be simple generic "Overview" or "Ikhtisar")
+
+**Why this matters**: Context is provided by directory path; simple generic titles make navigation cleaner and more consistent.
+
+**Valid Title Examples**:
+
+```yaml
+# File: content/en/learn/swe/prog-lang/overview.md
+---
+title: "Overview" # Correct - simple and generic
+---
+# File: content/id/belajar/swe/prog-lang/ikhtisar.md
+---
+title: "Ikhtisar" # Correct - simple and generic
+---
+```
+
+**Invalid Title Examples**:
+
+```yaml
+# File: content/en/learn/swe/prog-lang/overview.md
+---
+title: "Programming Languages Overview" # WRONG! Too descriptive
+---
+# File: content/id/belajar/swe/prog-lang/ikhtisar.md
+---
+title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
+---
+```
+
 ### Navigation Ordering Validation
 
 **For folders containing both `_index.md` and intro content**:
@@ -499,7 +535,7 @@ Welcome to our comprehensive Golang learning path! Go is a statically typed...
 
 ```markdown
 ---
-title: "Golang Learning Path Overview"
+title: "Overview"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Introduction to our comprehensive Golang learning resources"
@@ -515,7 +551,7 @@ Welcome to our Golang learning path! This comprehensive curriculum takes you fro
 
 ```markdown
 ---
-title: "Ikhtisar Jalur Pembelajaran Golang"
+title: "Ikhtisar"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Pengenalan ke sumber pembelajaran Golang komprehensif kami"

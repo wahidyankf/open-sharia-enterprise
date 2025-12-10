@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-11
+updated: 2025-12-12
 ---
 
 # Hugo Content Convention
@@ -903,6 +903,38 @@ title: Business # WRONG! Too generic (missing context)
 - **Indonesian folders** (`belajar/` and subfolders): Use `ikhtisar.md` for introductory/overview content (NOT `overview.md`)
 - **Why "ikhtisar"?** "Ikhtisar" is the Indonesian word for "overview" - using language-appropriate filenames maintains consistency with bilingual conventions
 
+**Title Format for Intro Content Files** (ayokoding-web):
+
+- **`overview.md` files**: Title MUST be "Overview" (not descriptive like "Programming Languages Overview")
+- **`ikhtisar.md` files**: Title MUST be "Ikhtisar" (not descriptive like "Ikhtisar Penyimpanan Data Dalam Memori")
+- **Rationale**: These files are for overview content - their context is already provided by their location in the directory structure. Simple, generic titles make navigation cleaner and more consistent.
+
+✅ **Good (simple, generic titles)**:
+
+```yaml
+# File: content/en/learn/swe/prog-lang/overview.md
+---
+title: "Overview" # Simple, generic - context from path
+---
+# File: content/id/belajar/swe/prog-lang/ikhtisar.md
+---
+title: "Ikhtisar" # Simple, generic - context from path
+---
+```
+
+❌ **Bad (descriptive titles)**:
+
+```yaml
+# File: content/en/learn/swe/prog-lang/overview.md
+---
+title: "Programming Languages Overview" # WRONG! Too descriptive
+---
+# File: content/id/belajar/swe/prog-lang/ikhtisar.md
+---
+title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
+---
+```
+
 **Navigation Ordering Rule** (ayokoding-web):
 
 When a folder in `learn/` or `belajar/` contains both `_index.md` (navigation hub) and intro content file (`overview.md` or `ikhtisar.md`), the navigation order MUST be:
@@ -960,7 +992,7 @@ title: Golang
 
 ```markdown
 ---
-title: "Golang Learning Path Overview"
+title: "Overview"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Introduction to our comprehensive Golang learning resources"
@@ -976,7 +1008,7 @@ Welcome to our Golang learning path! This comprehensive curriculum takes you fro
 
 ```markdown
 ---
-title: "Ikhtisar Jalur Pembelajaran Golang"
+title: "Ikhtisar"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Pengenalan ke sumber pembelajaran Golang komprehensif kami"
