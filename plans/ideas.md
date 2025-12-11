@@ -26,6 +26,8 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 - Align the documentation and ayokoding-web. Basically we want to move all software engineering related tutorial to ayokoding.com (Note: app previously in apps-standalone/, now in apps/ for Nx integration and production deployment)
 - Add agents to write content in ayokoding-web (Note: app previously in apps-standalone/, now in apps/ for Nx integration and production deployment)
 
-### Services
+### AyoKoding
 
-- Landing page for oseplatform.com
+- Create cli to check whether a content changes (mirroring)
+- Create cli to automatically create \_index.md in every folders and update it using list (to links)
+- Separate hugo convention to ayokoding content convention
