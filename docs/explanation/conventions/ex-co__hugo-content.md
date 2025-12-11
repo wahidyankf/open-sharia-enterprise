@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-12
+updated: 2025-12-11
 ---
 
 # Hugo Content Convention
@@ -943,6 +943,38 @@ When a folder in `learn/` or `belajar/` contains both `_index.md` (navigation hu
 2. **`overview.md` (English) or `ikhtisar.md` (Indonesian)** - Introductory content (appears immediately below)
 
 **Rationale**: Ensures consistent navigation structure where the index (navigation hub) is always first, followed by introductory content
+
+**Weight Field Ordering Rule** (ayokoding-web):
+
+When a directory contains an `overview.md` or `ikhtisar.md` file with `weight: 1`, all sibling `_index.md` files (subdirectories) MUST have `weight: 2` or higher.
+
+**Why this matters**: Hugo uses the `weight` field to order pages at the same navigation level, with lower weights appearing first. If both the overview/ikhtisar file and a sibling directory's `_index.md` have `weight: 1`, they will be sorted alphabetically, breaking navigation ordering.
+
+**Example - The Problem**:
+
+```
+prog-lang/
+  _index.md (Programming Languages)
+  overview.md (weight: 1)
+  java/
+    _index.md (weight: 1)  ← WRONG! Conflicts with overview.md
+```
+
+Result: "Java" appears before "Overview" due to alphabetical sorting, breaking expected navigation order.
+
+**Example - The Solution**:
+
+```
+prog-lang/
+  _index.md (Programming Languages)
+  overview.md (weight: 1)     ← First child
+  java/
+    _index.md (weight: 2)     ← After overview
+  golang/
+    _index.md (weight: 3)     ← After java
+```
+
+Result: Navigation order is preserved - overview/ikhtisar appears first, followed by topic subdirectories in weight order
 
 **Example Structure (English)**:
 

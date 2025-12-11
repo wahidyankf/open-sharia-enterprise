@@ -113,6 +113,11 @@ Use this agent when:
        - `content/en/rants/` - English rants
        - `content/id/celoteh/` - Indonesian rants
      - **Rationale**: Site-level config handles most content; rants/celoteh may have guest contributors
+   - **Weight Field Rules**:
+     - **Critical**: When creating `overview.md` or `ikhtisar.md`, use `weight: 1`
+     - **Sibling directories**: All sibling `_index.md` files (subdirectories) MUST use `weight: 2` or higher
+     - **Why**: Hugo sorts by weight at the same level; weight conflicts cause alphabetical sorting, breaking navigation order
+     - **Example**: If `overview.md` has `weight: 1`, then `java/_index.md` must have `weight: 2`, `golang/_index.md` must have `weight: 3`, etc.
 
 5. **Date Format**:
    - REQUIRED: `YYYY-MM-DDTHH:MM:SS+07:00`
@@ -486,6 +491,7 @@ Before completing, verify:
 - [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md or ikhtisar.md)
 - [ ] **For intro content files**: Correct naming based on language (overview.md for English, ikhtisar.md for Indonesian)
 - [ ] **For folders with both index and intro**: Navigation ordering correct (\_index.md topmost, then overview.md/ikhtisar.md)
+- [ ] **Weight field conflicts**: If folder contains overview.md/ikhtisar.md with `weight: 1`, verify all sibling `_index.md` files have `weight: 2` or higher
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids
 - [ ] For bilingual content: Both Indonesian and English versions created
 
