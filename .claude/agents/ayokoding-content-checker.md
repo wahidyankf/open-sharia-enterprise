@@ -503,6 +503,64 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 2. Verify navigation ordering (index topmost, intro immediately below)
 3. Report any ordering violations
 
+### Weight Field Ordering Validation
+
+**For folders containing overview.md or ikhtisar.md with weight: 1**:
+
+- [ ] All sibling `_index.md` files (subdirectories) have `weight: 2` or higher
+- [ ] No weight conflicts that would cause alphabetical sorting
+- [ ] Navigation order is preserved (overview/ikhtisar first, then subdirectories)
+
+**Why this matters**: Hugo uses the `weight` field to order pages at the same level. If both overview/ikhtisar and a sibling directory's `_index.md` have `weight: 1`, they will be sorted alphabetically, breaking the expected navigation order (e.g., "Java" appearing before "Overview").
+
+**Validation Logic**:
+
+1. Read `overview.md` or `ikhtisar.md` frontmatter to check weight value
+2. If weight is 1, scan sibling directories for `_index.md` files
+3. Read each sibling `_index.md` frontmatter and extract weight value
+4. Flag any sibling `_index.md` with `weight: 1` as a **critical error** (weight conflict)
+5. Report violations with specific file paths and recommended weight values
+
+**Example Violation**:
+
+```yaml
+# prog-lang/overview.md
+---
+title: "Overview"
+weight: 1
+---
+# prog-lang/java/_index.md
+---
+title: "Java"
+weight: 1 # ❌ WRONG! Conflicts with overview.md
+---
+# prog-lang/golang/_index.md
+---
+title: "Golang"
+weight: 1 # ❌ WRONG! Conflicts with overview.md
+---
+```
+
+**Correct Structure**:
+
+```yaml
+# prog-lang/overview.md
+---
+title: "Overview"
+weight: 1 # ✅ First child
+---
+# prog-lang/java/_index.md
+---
+title: "Java"
+weight: 2 # ✅ After overview
+---
+# prog-lang/golang/_index.md
+---
+title: "Golang"
+weight: 3 # ✅ After java
+---
+```
+
 **Valid `_index.md` Structure** (navigation only):
 
 ```markdown
