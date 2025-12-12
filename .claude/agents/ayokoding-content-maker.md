@@ -155,18 +155,26 @@ Use this agent when:
          - [JavaScript](/learn/swe/prog-lang/javascript)
      ```
 
-4. **Index File Content Separation** (learn/belajar directories ONLY):
-   - **Scope**: Applies ONLY to `_index.md` files in `content/en/learn/` and `content/id/belajar/`
-   - **Rule**: `_index.md` should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
-   - **Introduction/Overview**: Create separate intro content file:
-     - **English folders**: Use `overview.md` with `title: "Overview"`
-     - **Indonesian folders**: Use `ikhtisar.md` with `title: "Ikhtisar"` (NOT `overview.md`)
-   - **Overview/Ikhtisar Link Requirement**: When `overview.md` or `ikhtisar.md` exists, `_index.md` MUST include a link to that overview/ikhtisar page as the FIRST item in the navigation list
-   - **Why "ikhtisar"?** "Ikhtisar" is Indonesian for "overview" - using language-appropriate filenames maintains bilingual consistency
+4. **Overview/Ikhtisar File Requirement** (learn/belajar directories ONLY):
+   - **CRITICAL REQUIREMENT**: EVERY content folder MUST have an intro content file
+   - **English folders** (`/en/learn/` and ALL subfolders): MUST create `overview.md`
+   - **Indonesian folders** (`/id/belajar/` and ALL subfolders): MUST create `ikhtisar.md` (NOT `overview.md`)
+   - **Applies to ALL folder types**:
+     - Topic folders (e.g., `/en/learn/swe/prog-lang/golang/`)
+     - Category folders (e.g., `/en/learn/swe/`, `/en/learn/ai/`)
+     - Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/`, `/en/learn/swe/prog-lang/golang/how-to/`)
+     - Any folder containing `_index.md` navigation file
    - **Title Format**:
      - `overview.md` MUST have `title: "Overview"` (NOT descriptive like "Programming Languages Overview")
      - `ikhtisar.md` MUST have `title: "Ikhtisar"` (NOT descriptive like "Ikhtisar Penyimpanan Data")
-     - **Rationale**: Context is provided by directory path; simple generic titles are cleaner
+   - **Rationale**: Every section needs context and introduction separate from navigation; ensures consistent user experience
+   - **Why "ikhtisar"?** Indonesian word for "overview" - maintains bilingual file naming consistency
+
+5. **Index File Content Separation** (learn/belajar directories ONLY):
+   - **Scope**: Applies ONLY to `_index.md` files in `content/en/learn/` and `content/id/belajar/`
+   - **Rule**: `_index.md` should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
+   - **Introduction/Overview**: Goes in separate `overview.md` or `ikhtisar.md` file per "Overview/Ikhtisar File Requirement" above
+   - **Overview/Ikhtisar Link Requirement**: When `overview.md` or `ikhtisar.md` exists, `_index.md` MUST include a link to that overview/ikhtisar page as the FIRST item in the navigation list
    - **Navigation Ordering**: When folder contains both `_index.md` and intro content:
      - `_index.md` appears topmost in file listing
      - `overview.md` (English) or `ikhtisar.md` (Indonesian) appears immediately below
@@ -176,11 +184,11 @@ Use this agent when:
      - `overview.md` or `ikhtisar.md` - Introduction to the learning path - immediately below
    - **Does NOT apply to**: Root `_index.md`, rants/celoteh directories, or other parts of site
 
-5. **Taxonomy**:
+6. **Taxonomy**:
    - `tags`: Granular topics (e.g., "nodejs", "api", "tutorial", "beginner")
    - `categories`: Fixed set - `["learn"]`, `["celoteh"]`, `["video"]`
 
-6. **Asset Organization**:
+7. **Asset Organization**:
 
    ```
    static/
@@ -191,7 +199,7 @@ Use this agent when:
        └── video-content/
    ```
 
-7. **Optional Topic-Level Diátaxis Structure**:
+8. **Optional Topic-Level Diátaxis Structure**:
    - **Scope**: ayokoding-web topics MAY optionally organize content using Diátaxis framework
    - **Status**: OPTIONAL pattern (not required, you decide based on topic needs)
    - **When to use**: Topic has diverse content types (tutorials + recipes + reference + concepts) and growing content
@@ -521,6 +529,7 @@ Before completing, verify:
   - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
 - [ ] **For `_index.md` files**: Title is descriptive and readable (proper capitalization, acronyms, context)
 - [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, grandchildren)
+- [ ] **CRITICAL: Every folder has intro file** - overview.md (English) or ikhtisar.md (Indonesian) exists for ALL learn/belajar folders
 - [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md or ikhtisar.md)
 - [ ] **For `_index.md` with overview/ikhtisar**: Link to overview.md or ikhtisar.md is FIRST item in navigation list
 - [ ] **For intro content files**: Correct naming based on language (overview.md for English, ikhtisar.md for Indonesian)

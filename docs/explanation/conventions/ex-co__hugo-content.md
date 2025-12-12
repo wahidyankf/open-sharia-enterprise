@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-13
+updated: 2025-12-12
 ---
 
 # Hugo Content Convention
@@ -890,10 +890,23 @@ title: Business # WRONG! Too generic (missing context)
 - **Rationale**: Provides comprehensive navigation hierarchy, helps users discover deeply nested content without clicking through multiple pages, improves content discoverability and UX
 - **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
 
+**Overview/Ikhtisar File Requirement** (ayokoding-web learn/belajar directories):
+
+- **CRITICAL REQUIREMENT**: EVERY content folder in `apps/ayokoding-web/content/` MUST have an intro content file
+- **English folders** (`/en/learn/` and ALL subfolders): MUST have `overview.md`
+- **Indonesian folders** (`/id/belajar/` and ALL subfolders): MUST have `ikhtisar.md` (NOT `overview.md`)
+- **Applies to ALL folder types**:
+  - Topic folders (e.g., `/en/learn/swe/prog-lang/golang/`)
+  - Category folders (e.g., `/en/learn/swe/`, `/en/learn/ai/`)
+  - Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/`, `/en/learn/swe/prog-lang/golang/how-to/`)
+  - Any folder containing `_index.md` navigation file
+- **Rationale**: Every section needs context and introduction separate from navigation; ensures consistent user experience across all sections
+- **Why "ikhtisar"?** Indonesian word for "overview" - maintains bilingual file naming consistency
+
 **Index File Content Separation** (ayokoding-web):
 
 - `_index.md` files should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
-- **Introduction/Overview Content**: Create a separate `overview.md` (English) or `ikhtisar.md` (Indonesian) file in the same directory
+- **Introduction/Overview Content**: Goes in separate `overview.md` (English) or `ikhtisar.md` (Indonesian) file per "Overview/Ikhtisar File Requirement" above
 - **Overview/Ikhtisar Link Requirement**: All `_index.md` files that have a corresponding `overview.md` or `ikhtisar.md` MUST include a link to that overview/ikhtisar page as the FIRST item in their navigation list
 - **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance, ensures overview pages are consistently visible
 - **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
