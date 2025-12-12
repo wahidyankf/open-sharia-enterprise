@@ -181,6 +181,7 @@ Use this agent when:
    - `categories`: Fixed set - `["learn"]`, `["celoteh"]`, `["video"]`
 
 6. **Asset Organization**:
+
    ```
    static/
    └── images/
@@ -189,6 +190,37 @@ Use this agent when:
        ├── celoteh/
        └── video-content/
    ```
+
+7. **Optional Topic-Level Diátaxis Structure**:
+   - **Scope**: ayokoding-web topics MAY optionally organize content using Diátaxis framework
+   - **Status**: OPTIONAL pattern (not required, you decide based on topic needs)
+   - **When to use**: Topic has diverse content types (tutorials + recipes + reference + concepts) and growing content
+   - **When to keep flat**: Topic has few pages (< 10), all similar type, simple structure sufficient
+   - **Example Diátaxis-organized topic**:
+     ```
+     content/en/learn/swe/prog-lang/golang/
+     ├── _index.md                    # Navigation hub
+     ├── overview.md                  # Topic intro
+     ├── tutorials/                   # Learning-oriented
+     │   ├── _index.md
+     │   ├── initial-setup.md
+     │   └── beginner.md
+     ├── how-to/                      # Problem-solving
+     │   ├── _index.md
+     │   └── cookbook.md
+     ├── reference/                   # Information-oriented
+     │   └── _index.md
+     └── explanation/                 # Understanding-oriented
+         └── _index.md
+     ```
+   - **Example flat topic**:
+     ```
+     content/en/learn/swe/system-design/
+     ├── _index.md
+     ├── overview.md
+     └── ai-personal-finance-advisor.md
+     ```
+   - **Important**: This is OPTIONAL - you choose based on topic complexity and content volume. See [Hugo Content Convention - Optional Topic-Level Diátaxis](../../docs/explanation/conventions/ex-co__hugo-content.md#7-optional-topic-level-di%C3%A1taxis-structure-ayokoding-web-only) for complete details.
 
 ## Content Quality Principles Compliance
 
