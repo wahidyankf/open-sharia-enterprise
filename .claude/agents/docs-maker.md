@@ -85,8 +85,7 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - **ASCII art**: Optional fallback for rare edge cases (simple directory trees, terminal-only environments)
 - **Diagram Orientation (CRITICAL)**: ALL Mermaid diagrams MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
 - **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for the complete verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, testing methodology with color blindness simulators, and implementation guidance. Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone). Always test diagrams with color blindness simulators before publishing
-- **Color Palette Comments (CRITICAL)**: Each Mermaid diagram should have exactly ONE color palette comment at the start (no duplicate comments). Multiple identical comments add unnecessary clutter
-- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details
+- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete diagram standards including color palette comment guidance
 
 ### Emoji Usage Convention
 
@@ -99,36 +98,17 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/ex-
 - **Accessibility**: Emojis enhance but don't replace text meaning
 - **Common Emojis**: 📋 Overview, 🎯 Purpose, 💡 Key Concepts, 📚 Resources, ✅ Correct, ❌ Incorrect, ⚠️ Warning, 🚀 Quick Start, 🔧 Configuration, 🔍 Deep Dive, 🔒 Security, 📝 Notes
 
-### Indentation Convention for docs/ Directory
+### Indentation Convention
 
-All files in the `docs/` directory (Obsidian vault) MUST use TAB indentation for nested bullet items:
+**Reference**: See [Indentation Convention](../docs/explanation/conventions/ex-co__indentation.md) for complete standards.
 
-- **Required for**: Files in `docs/` directory only (Obsidian vault)
-- **Logseq compatibility**: Logseq requires TABs for proper outliner functionality
-- **Not project-wide**: Files outside `docs/` (root README.md, CLAUDE.md, files in `plans/`) use standard markdown conventions (spaces are fine)
+**Key Points**:
 
-#### CRITICAL: YAML Frontmatter MUST Use Spaces
-
-**YAML frontmatter is the ONLY exception to TAB indentation within `docs/` directory files.**
-
-All YAML frontmatter blocks MUST use **2 spaces per indentation level** (NOT tabs) for Obsidian compatibility:
-
-- **Applies to ALL nested frontmatter fields**: `tags`, list fields, nested objects
-- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces, not tabs
-- **After frontmatter, use TABs**: All content bullets after frontmatter use TAB indentation
-
-```yaml
-✅ CORRECT - Frontmatter uses 2 spaces:
-tags:
-  - primary-topic    # 2 spaces before dash
-  - secondary-topic  # 2 spaces before dash
-
-❌ INCORRECT - Frontmatter uses tabs:
-tags:
-	- primary-topic    # TAB before dash - WRONG!
-```
-
-See [Journals Format Convention](../docs/explanation/conventions/ex-co__journals-format.md) for complete details.
+- **Scope**: Files in `docs/` directory ONLY (Obsidian vault)
+- **Markdown bullets**: Use TAB indentation for nesting (Logseq/Obsidian compatibility)
+- **CRITICAL Exception**: YAML frontmatter MUST use 2 spaces per level (NOT tabs) - Obsidian requirement
+- **Code blocks**: Use language-appropriate indentation (NOT tabs)
+- **Not project-wide**: Files outside `docs/` use standard markdown (spaces OK)
 
 ### Code Block Standards
 

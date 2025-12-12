@@ -209,7 +209,7 @@ All documentation must follow core conventions defined in `docs/explanation/conv
 
 ### Indentation Convention
 
-Files in `docs/` directory use **TAB indentation** for bullet items (Logseq/Obsidian compatibility). **Exception**: YAML frontmatter MUST use 2 spaces (Obsidian requirement). Code blocks use language-appropriate indentation. Files outside `docs/` use standard markdown (spaces OK). See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
+Files in `docs/` directory use **TAB indentation** for bullets (Logseq/Obsidian compatibility). YAML frontmatter MUST use 2 spaces (critical exception). See [Indentation Convention](./docs/explanation/conventions/ex-co__indentation.md) for complete details.
 
 ### File Naming Convention
 
@@ -249,13 +249,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 ### Hugo Content Convention
 
-**Both Sites**: Hugo linking (absolute paths starting with `/`, no `.md`), YAML frontmatter (title/date/draft required), ISO 8601 dates (`YYYY-MM-DDTHH:MM:SS+07:00`)
-
-**ayokoding-web** (Hextra): Bilingual ID/EN, 5 archetypes, educational content. Index titles should be descriptive and readable (proper capitalization, acronyms like AI/SWE, context). Index navigation shows 3 layers deep (parent, children, grandchildren). **CRITICAL: Every folder requires intro file** - English folders need overview.md, Indonesian folders need ikhtisar.md (applies to ALL learn/belajar folders including Diátaxis subdirectories). **Index files in learn/belajar directories**: Navigation only (NO intro content - intro goes in overview.md/ikhtisar.md). **Overview/ikhtisar link**: Link MUST be FIRST item in \_index.md navigation. **Weight field ordering**: \_index.md uses weight: 1 (topmost), overview.md/ikhtisar.md uses weight: 2 (immediately below), other content uses weight: 3+ (logical order). Author: site-level config only (NO in frontmatter except rants/celoteh for guests). **Optional topic-level Diátaxis**: Topics (languages, tools) MAY organize content using tutorials/, how-to/, reference/, explanation/ subdirectories (not required, not validated)
-
-**ose-platform-web** (PaperMod v7.0+): English-only, 1 archetype, project updates
-
-**Agents**: ayokoding-content-maker/checker, ose-platform-web-content-maker/checker. See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete standards.
+Hugo content follows specialized conventions for each site. ayokoding-web (Hextra) provides bilingual educational content, while ose-platform-web (PaperMod) hosts English project updates. See [Hugo Content Convention](./docs/explanation/conventions/ex-co__hugo-content.md) for complete archetype, frontmatter, and site-specific standards.
 
 ### README Quality Convention
 
@@ -263,7 +257,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-All standards documented in [`docs/explanation/conventions/`](./docs/explanation/conventions/README.md) (documentation writing) and [`docs/explanation/development/`](./docs/explanation/development/README.md) (software development). Key conventions frequently referenced: [Color Accessibility](./docs/explanation/conventions/ex-co__color-accessibility.md) (MASTER for all color decisions), [File Naming](./docs/explanation/conventions/ex-co__file-naming-convention.md), [Linking](./docs/explanation/conventions/ex-co__linking-convention.md), [Diagrams](./docs/explanation/conventions/ex-co__diagrams.md), [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md), [Hugo Content](./docs/explanation/conventions/ex-co__hugo-content.md), [Content Quality](./docs/explanation/conventions/ex-co__content-quality.md), [Acceptance Criteria](./docs/explanation/development/ex-de__acceptance-criteria.md), [Plans Organization](./docs/explanation/conventions/ex-co__plans-organization.md), [Temporary Files](./docs/explanation/development/ex-de__temporary-files.md), [Hugo Development](./docs/explanation/development/ex-de__hugo-development.md). For creating convention documents, see [Convention Writing Convention](./docs/explanation/conventions/ex-co__convention-writing.md). See [Conventions Index](./docs/explanation/conventions/README.md) for 17 documentation conventions and [Development Index](./docs/explanation/development/README.md) for 7 development practices.
+For comprehensive standards, see [Conventions Index](./docs/explanation/conventions/README.md) (18 documentation conventions) and [Development Index](./docs/explanation/development/README.md) (7 development practices).
 
 ## AI Agent Standards
 

@@ -345,7 +345,7 @@ These conventions from `docs/` are modified for Hugo's specific requirements.
 
 ### 1. Indentation Convention
 
-**Reference**: [Journals Format Convention (Indentation)](./ex-co__journals-format.md)
+**Reference**: [Indentation Convention](./ex-co__indentation.md)
 
 **Adaptation for Hugo**:
 

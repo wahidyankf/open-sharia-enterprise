@@ -333,7 +333,7 @@ graph TD
 5. **Version Control Friendly** - Use consistent formatting for easier diffs
 6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
 7. **Use Color-Blind Friendly Colors** - Ensure diagrams are accessible to all users (see Color Accessibility below)
-8. **Single Color Palette Comment** - Each Mermaid diagram should have at most ONE color palette comment at the start (no duplicates)
+8. **Single Color Palette Comment** - Each Mermaid diagram should have exactly ONE color palette comment at the start (no duplicate comments). Multiple identical comments add unnecessary clutter and create maintenance burden
 
 ### Color Accessibility for Color Blindness
 
