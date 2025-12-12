@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-12
+updated: 2025-12-13
 ---
 
 # Hugo Content Convention
@@ -1186,6 +1186,99 @@ url: "/about/" # Override default URL
 slug: "company-info" # Override slug only (keeps path)
 ---
 ```
+
+### 7. Optional Topic-Level Diátaxis Structure (ayokoding-web Only)
+
+**Scope**: ayokoding-web topics MAY optionally organize content using Diátaxis framework internally
+
+**Status**: OPTIONAL pattern (not required, not validated by ayokoding-content-checker)
+
+Topics in ayokoding-web (programming languages, tools, frameworks) can choose to organize their content using the Diátaxis framework at the topic level. This is different from the repository-level `docs/` folder which REQUIRES Diátaxis structure.
+
+**Diátaxis Directories (Optional at Topic Level)**:
+
+- `tutorials/` - Learning-oriented, step-by-step guides
+- `how-to/` - Problem-solving, practical recipes
+- `reference/` - Information-oriented, technical reference
+- `explanation/` - Understanding-oriented, conceptual guides
+
+**When to Use Diátaxis at Topic Level**:
+
+✅ **Use when**:
+
+- Topic has diverse content types (tutorials + recipes + reference + concepts)
+- Content is growing and needs better organization
+- Users have different goals (learning vs. looking up vs. solving problems)
+
+❌ **Keep flat when**:
+
+- Topic has few pages (< 10 files)
+- All content is similar type (e.g., all tutorials)
+- Simple structure meets user needs
+
+**Example 1: Topic Using Diátaxis Structure**
+
+```
+content/en/learn/swe/prog-lang/golang/
+├── _index.md                           # Navigation hub (3 layers deep)
+├── overview.md                         # Topic introduction
+├── tutorials/
+│   ├── _index.md                       # Tutorials section index
+│   ├── initial-setup.md                # Tutorial: 0-5% coverage
+│   ├── quick-start.md                  # Tutorial: 5-30% coverage
+│   ├── beginner.md                     # Tutorial: 0-60% coverage
+│   ├── intermediate.md                 # Tutorial: 60-85% coverage
+│   └── advanced.md                     # Tutorial: 85-95% coverage
+├── how-to/
+│   ├── _index.md                       # How-to section index
+│   └── cookbook.md                     # Practical recipes
+├── reference/
+│   └── _index.md                       # Reference section (placeholder)
+└── explanation/
+    └── _index.md                       # Explanation section (placeholder)
+```
+
+**Example 2: Topic Using Flat Structure**
+
+```
+content/en/learn/swe/system-design/
+├── _index.md                           # Navigation hub
+├── overview.md                         # Topic introduction
+└── ai-personal-finance-advisor.md      # Single article
+```
+
+**Navigation in \_index.md (Diátaxis-organized topic)**:
+
+```markdown
+## <!-- File: content/en/learn/swe/prog-lang/golang/_index.md -->
+
+## title: Golang
+
+- [Overview](/learn/swe/prog-lang/golang/overview)
+- [Tutorials](/learn/swe/prog-lang/golang/tutorials)
+  - [Initial Setup](/learn/swe/prog-lang/golang/tutorials/initial-setup)
+  - [Quick Start](/learn/swe/prog-lang/golang/tutorials/quick-start)
+  - [Beginner](/learn/swe/prog-lang/golang/tutorials/beginner)
+  - [Intermediate](/learn/swe/prog-lang/golang/tutorials/intermediate)
+  - [Advanced](/learn/swe/prog-lang/golang/tutorials/advanced)
+- [How-To](/learn/swe/prog-lang/golang/how-to)
+  - [Cookbook](/learn/swe/prog-lang/golang/how-to/cookbook)
+- [Reference](/learn/swe/prog-lang/golang/reference)
+- [Explanation](/learn/swe/prog-lang/golang/explanation)
+```
+
+**Important Notes**:
+
+- This pattern is OPTIONAL for ayokoding-web topics only
+- Does NOT apply to repository-level `docs/` (which REQUIRES Diátaxis)
+- Does NOT apply to ose-platform-web (simple update/about structure)
+- ayokoding-content-checker does NOT validate or enforce this pattern
+- Each topic decides independently based on content volume and diversity
+- Diátaxis at topic level follows same philosophy as repository-level Diátaxis
+
+**Rationale**:
+
+Some topics have enough content to benefit from Diátaxis organization (e.g., Golang with tutorials, how-to guides, reference docs, and explanations). Other topics remain simple with just a few files. Allowing optional Diátaxis structure gives topic maintainers flexibility to organize content as it grows.
 
 ## Theme-Specific Differences
 
