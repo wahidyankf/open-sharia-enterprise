@@ -420,6 +420,46 @@ title: business # WRONG! No capitalization, too generic
 - [ ] Layer 2: Children (immediate subsections)
 - [ ] Layer 3: Grandchildren (subsections of children)
 
+### Overview/Ikhtisar File Requirement Validation
+
+**CRITICAL VALIDATION**: EVERY content folder in learn/belajar MUST have an intro content file.
+
+**Scope**: ALL folders in:
+
+- `apps/ayokoding-web/content/en/learn/` and ALL its subdirectories
+- `apps/ayokoding-web/content/id/belajar/` and ALL its subdirectories
+
+**Applies to ALL folder types**:
+
+- Topic folders (e.g., `/en/learn/swe/prog-lang/golang/`)
+- Category folders (e.g., `/en/learn/swe/`, `/en/learn/ai/`)
+- Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/`, `/en/learn/swe/prog-lang/golang/how-to/`)
+- Any folder containing `_index.md` navigation file
+
+**Validation Checklist**:
+
+- [ ] **English folders**: `overview.md` file exists (NOT `ikhtisar.md`)
+- [ ] **Indonesian folders**: `ikhtisar.md` file exists (NOT `overview.md`)
+- [ ] Intro content file has proper frontmatter (title, date, draft, description, weight)
+- [ ] Title is generic: "Overview" for overview.md, "Ikhtisar" for ikhtisar.md (NOT descriptive)
+- [ ] File is not empty (contains actual introduction content)
+
+**Error Cases**:
+
+- ❌ **Missing intro file** - Folder has `_index.md` but NO `overview.md` (English) or `ikhtisar.md` (Indonesian)
+- ❌ **Wrong language filename** - `overview.md` in Indonesian folder or `ikhtisar.md` in English folder
+- ❌ **Descriptive title** - Title is "Programming Languages Overview" instead of just "Overview"
+- ❌ **Empty file** - Intro file exists but has no content
+
+**Validation Logic**:
+
+1. Scan all folders in `content/en/learn/` and `content/id/belajar/`
+2. For each folder containing `_index.md`:
+   - Verify intro file exists (`overview.md` for English, `ikhtisar.md` for Indonesian)
+   - Check file is not empty
+   - Validate frontmatter and title format
+3. Report missing intro files as **CRITICAL ERRORS**
+
 ### Index File Content Separation Validation
 
 **For `_index.md` files in learn/belajar directories ONLY**:
@@ -437,11 +477,8 @@ title: business # WRONG! No capitalization, too generic
 - [ ] NO introduction paragraphs in `_index.md`
 - [ ] NO overview content in `_index.md`
 - [ ] NO explanatory text beyond navigation links
-- [ ] If introduction/overview needed: Separate intro content file exists
-  - [ ] **English folders**: `overview.md` file exists
-  - [ ] **Indonesian folders**: `ikhtisar.md` file exists (NOT `overview.md`)
 - [ ] **Overview/Ikhtisar Link Position**: If `overview.md` or `ikhtisar.md` exists, `_index.md` MUST include link to it as FIRST item in navigation list
-- [ ] Intro content file (if present) has proper frontmatter and content structure
+- [ ] Intro content file has proper frontmatter and content structure
 
 ### File Naming Validation for Intro Content
 
