@@ -251,7 +251,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 **Both Sites**: Hugo linking (absolute paths starting with `/`, no `.md`), YAML frontmatter (title/date/draft required), ISO 8601 dates (`YYYY-MM-DDTHH:MM:SS+07:00`)
 
-**ayokoding-web** (Hextra): Bilingual ID/EN, 5 archetypes, educational content. Index titles should be descriptive and readable (proper capitalization, acronyms like AI/SWE, context). Index navigation shows 3 layers deep (parent, children, grandchildren). **Index files in learn/belajar directories**: Navigation only (NO intro content - use separate overview.md for English, ikhtisar.md for Indonesian). **Navigation ordering**: \_index.md topmost, then overview.md/ikhtisar.md immediately below. Author: site-level config only (NO in frontmatter except rants/celoteh for guests)
+**ayokoding-web** (Hextra): Bilingual ID/EN, 5 archetypes, educational content. Index titles should be descriptive and readable (proper capitalization, acronyms like AI/SWE, context). Index navigation shows 3 layers deep (parent, children, grandchildren). **Index files in learn/belajar directories**: Navigation only (NO intro content - use separate overview.md for English, ikhtisar.md for Indonesian). **Overview/ikhtisar link**: When overview.md or ikhtisar.md exists, link to it MUST be FIRST item in \_index.md navigation. **Navigation ordering**: \_index.md topmost, then overview.md/ikhtisar.md immediately below. Author: site-level config only (NO in frontmatter except rants/celoteh for guests)
 
 **ose-platform-web** (PaperMod v7.0+): English-only, 1 archetype, project updates
 

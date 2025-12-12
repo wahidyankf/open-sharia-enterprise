@@ -440,6 +440,7 @@ title: business # WRONG! No capitalization, too generic
 - [ ] If introduction/overview needed: Separate intro content file exists
   - [ ] **English folders**: `overview.md` file exists
   - [ ] **Indonesian folders**: `ikhtisar.md` file exists (NOT `overview.md`)
+- [ ] **Overview/Ikhtisar Link Position**: If `overview.md` or `ikhtisar.md` exists, `_index.md` MUST include link to it as FIRST item in navigation list
 - [ ] Intro content file (if present) has proper frontmatter and content structure
 
 ### File Naming Validation for Intro Content
@@ -561,20 +562,20 @@ weight: 3 # ✅ After java
 ---
 ```
 
-**Valid `_index.md` Structure** (navigation only):
+**Valid `_index.md` Structure** (navigation only with overview link first):
 
 ```markdown
 ---
 title: Golang
 ---
 
-- [Overview](/learn/swe/prog-lang/golang/overview)
+- [Overview](/learn/swe/prog-lang/golang/overview) # MUST be first when overview.md exists
 - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
 - [Quick Start](/learn/swe/prog-lang/golang/quick-start)
 - [Beginner Guide](/learn/swe/prog-lang/golang/beginner)
 ```
 
-**Invalid `_index.md` Structure** (contains intro content):
+**Invalid `_index.md` Structure** (contains intro content or missing overview link):
 
 ```markdown
 ---
@@ -586,6 +587,16 @@ Welcome to our comprehensive Golang learning path! Go is a statically typed...
 <!-- WRONG! Introduction content should be in overview.md (English) or ikhtisar.md (Indonesian) -->
 
 - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
+- [Quick Start](/learn/swe/prog-lang/golang/quick-start)
+```
+
+```markdown
+---
+title: Golang
+---
+
+- [Initial Setup](/learn/swe/prog-lang/golang/initial-setup) # WRONG! Missing overview link as first item
+- [Overview](/learn/swe/prog-lang/golang/overview) # WRONG! Overview should be first, not second
 - [Quick Start](/learn/swe/prog-lang/golang/quick-start)
 ```
 
@@ -633,7 +644,7 @@ content/id/belajar/swe/prog-lang/golang/overview.md # Should be ikhtisar.md
 content/en/learn/swe/prog-lang/golang/ikhtisar.md # Should be overview.md
 ```
 
-**Rationale**: Clear separation of concerns - `_index.md` handles navigation, `overview.md`/`ikhtisar.md` handles content. Language-appropriate filenames maintain bilingual consistency
+**Rationale**: Clear separation of concerns - `_index.md` handles navigation with overview link first for visibility, `overview.md`/`ikhtisar.md` handles content. Language-appropriate filenames maintain bilingual consistency
 
 **Valid Navigation (3 layers deep)**:
 

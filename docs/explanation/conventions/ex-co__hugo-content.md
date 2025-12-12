@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-11
+updated: 2025-12-12
 ---
 
 # Hugo Content Convention
@@ -894,7 +894,8 @@ title: Business # WRONG! Too generic (missing context)
 
 - `_index.md` files should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
 - **Introduction/Overview Content**: Create a separate `overview.md` (English) or `ikhtisar.md` (Indonesian) file in the same directory
-- **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance
+- **Overview/Ikhtisar Link Requirement**: All `_index.md` files that have a corresponding `overview.md` or `ikhtisar.md` MUST include a link to that overview/ikhtisar page as the FIRST item in their navigation list
+- **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance, ensures overview pages are consistently visible
 - **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
 
 **File Naming Convention for Intro Content** (ayokoding-web):
@@ -1004,14 +1005,14 @@ content/id/belajar/swe/prog-lang/golang/
 └── cookbook.md
 ```
 
-**Example `_index.md` (navigation only)**:
+**Example `_index.md` (navigation only with overview link first)**:
 
 ```markdown
 ---
 title: Golang
 ---
 
-- [Overview](/learn/swe/prog-lang/golang/overview)
+- [Overview](/learn/swe/prog-lang/golang/overview) # MUST be first when overview.md exists
 - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
 - [Quick Start](/learn/swe/prog-lang/golang/quick-start)
 - [Beginner Guide](/learn/swe/prog-lang/golang/beginner)
@@ -1052,22 +1053,29 @@ categories: ["learn"]
 Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini membawa Anda dari...
 ```
 
-✅ **Good (3 layers deep)**:
+✅ **Good (3 layers deep with overview/ikhtisar links first)**:
 
 ```markdown
-<!-- File: apps/ayokoding-web/content/en/learn/_index.md -->
+<!-- File: apps/ayokoding-web/content/en/learn/swe/prog-lang/_index.md -->
+<!-- Shows: 3 layers deep + overview link as first item -->
 
-- [Software Engineering](/learn/swe)
-  - [Programming Languages](/learn/swe/prog-lang)
-    - [JavaScript](/learn/swe/prog-lang/javascript)
-    - [TypeScript](/learn/swe/prog-lang/typescript)
-  - [System Design](/learn/swe/system-design)
-    - [Fundamentals](/learn/swe/system-design/fundamentals)
-- [AI Engineering](/learn/ai)
-  - [Chat with PDF](/learn/ai/chat-with-pdf)
-- [Human](/learn/human)
-  - [Tools](/learn/human/tools)
-    - [CliftonStrengths](/learn/human/tools/cliftonstrengths)
+- [Overview](/learn/swe/prog-lang/overview) # ← Overview FIRST when exists
+- [Golang](/learn/swe/prog-lang/golang)
+  - [Overview](/learn/swe/prog-lang/golang/overview) # ← Overview FIRST
+  - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
+  - [Quick Start](/learn/swe/prog-lang/golang/quick-start)
+  - [Beginner](/learn/swe/prog-lang/golang/beginner)
+  - [Intermediate](/learn/swe/prog-lang/golang/intermediate)
+  - [Advanced](/learn/swe/prog-lang/golang/advanced)
+  - [Cookbook](/learn/swe/prog-lang/golang/cookbook)
+- [Java](/learn/swe/prog-lang/java)
+  - [Overview](/learn/swe/prog-lang/java/overview) # ← Overview FIRST
+  - [Initial Setup](/learn/swe/prog-lang/java/initial-setup)
+  - [Quick Start](/learn/swe/prog-lang/java/quick-start)
+  - [Beginner](/learn/swe/prog-lang/java/beginner)
+  - [Intermediate](/learn/swe/prog-lang/java/intermediate)
+  - [Advanced](/learn/swe/prog-lang/java/advanced)
+  - [Cookbook](/learn/swe/prog-lang/java/cookbook)
 ```
 
 ❌ **Bad (only 2 layers - missing grandchildren)**:
@@ -1090,6 +1098,21 @@ Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini mem
 - [Software Engineering](/learn/swe)
 - [AI Engineering](/learn/ai)
 - [Human](/learn/human)
+```
+
+❌ **Bad (overview/ikhtisar not first in 3-layer navigation)**:
+
+```markdown
+<!-- WRONG! Has 3 layers but overview links not first -->
+
+- [Golang](/learn/swe/prog-lang/golang) # ← WRONG! Overview should be first
+  - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
+  - [Quick Start](/learn/swe/prog-lang/golang/quick-start)
+  - [Overview](/learn/swe/prog-lang/golang/overview) # ← WRONG! Should be first
+  - [Beginner](/learn/swe/prog-lang/golang/beginner)
+- [Java](/learn/swe/prog-lang/java)
+  - [Beginner](/learn/swe/prog-lang/java/beginner)
+  - [Overview](/learn/swe/prog-lang/java/overview) # ← WRONG! Should be first
 ```
 
 **Important**: This rule applies to navigation sections in `_index.md` files. Regular content pages do not require this hierarchy depth.

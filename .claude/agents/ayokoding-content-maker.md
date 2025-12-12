@@ -161,6 +161,7 @@ Use this agent when:
    - **Introduction/Overview**: Create separate intro content file:
      - **English folders**: Use `overview.md` with `title: "Overview"`
      - **Indonesian folders**: Use `ikhtisar.md` with `title: "Ikhtisar"` (NOT `overview.md`)
+   - **Overview/Ikhtisar Link Requirement**: When `overview.md` or `ikhtisar.md` exists, `_index.md` MUST include a link to that overview/ikhtisar page as the FIRST item in the navigation list
    - **Why "ikhtisar"?** "Ikhtisar" is Indonesian for "overview" - using language-appropriate filenames maintains bilingual consistency
    - **Title Format**:
      - `overview.md` MUST have `title: "Overview"` (NOT descriptive like "Programming Languages Overview")
@@ -169,9 +170,9 @@ Use this agent when:
    - **Navigation Ordering**: When folder contains both `_index.md` and intro content:
      - `_index.md` appears topmost in file listing
      - `overview.md` (English) or `ikhtisar.md` (Indonesian) appears immediately below
-   - **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance
+   - **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance, ensures overview pages are consistently visible
    - **Example**:
-     - `_index.md` - Navigation only (bullet lists linking to content) - topmost
+     - `_index.md` - Navigation only (bullet lists with overview/ikhtisar link FIRST) - topmost
      - `overview.md` or `ikhtisar.md` - Introduction to the learning path - immediately below
    - **Does NOT apply to**: Root `_index.md`, rants/celoteh directories, or other parts of site
 
@@ -489,6 +490,7 @@ Before completing, verify:
 - [ ] **For `_index.md` files**: Title is descriptive and readable (proper capitalization, acronyms, context)
 - [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, grandchildren)
 - [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md or ikhtisar.md)
+- [ ] **For `_index.md` with overview/ikhtisar**: Link to overview.md or ikhtisar.md is FIRST item in navigation list
 - [ ] **For intro content files**: Correct naming based on language (overview.md for English, ikhtisar.md for Indonesian)
 - [ ] **For folders with both index and intro**: Navigation ordering correct (\_index.md topmost, then overview.md/ikhtisar.md)
 - [ ] **Weight field conflicts**: If folder contains overview.md/ikhtisar.md with `weight: 1`, verify all sibling `_index.md` files have `weight: 2` or higher
