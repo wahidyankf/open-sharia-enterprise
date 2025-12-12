@@ -7,6 +7,7 @@ weight: 1
 
 - [Rekayasa Perangkat Lunak](/id/belajar/rekayasa-perangkat-lunak)
   - [Bahasa Pemrograman](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman)
+    - [Ikhtisar](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/ikhtisar)
     - [SQL](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/sql)
   - [Desain Sistem](/id/belajar/rekayasa-perangkat-lunak/desain-sistem)
     - [Komponen](/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen)

@@ -6,3 +6,6 @@ weight: 4
 ---
 
 - [Tools](/en/learn/human/tools)
+  - [CliftonStrengths](/en/learn/human/tools/cliftonstrengths)
+    - [Overview](/en/learn/human/tools/cliftonstrengths/overview)
+    - [Themes](/en/learn/human/tools/cliftonstrengths/themes)

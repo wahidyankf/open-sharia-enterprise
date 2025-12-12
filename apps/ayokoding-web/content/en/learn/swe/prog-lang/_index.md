@@ -4,7 +4,9 @@ date: 2025-12-04T00:00:00+07:00
 draft: false
 ---
 
+- [Overview](/en/learn/swe/prog-lang/overview)
 - [Golang](/en/learn/swe/prog-lang/golang)
+  - [Overview](/en/learn/swe/prog-lang/golang/overview)
   - [Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup)
   - [Quick Start](/en/learn/swe/prog-lang/golang/quick-start)
   - [Beginner](/en/learn/swe/prog-lang/golang/beginner)
@@ -12,6 +14,7 @@ draft: false
   - [Advanced](/en/learn/swe/prog-lang/golang/advanced)
   - [Cookbook](/en/learn/swe/prog-lang/golang/cookbook)
 - [Java](/en/learn/swe/prog-lang/java)
+  - [Overview](/en/learn/swe/prog-lang/java/overview)
   - [Initial Setup](/en/learn/swe/prog-lang/java/initial-setup)
   - [Quick Start](/en/learn/swe/prog-lang/java/quick-start)
   - [Beginner](/en/learn/swe/prog-lang/java/beginner)

@@ -6,6 +6,7 @@ description: Complete learning path from installation to expert mastery - 6 comp
 weight: 10
 ---
 
+- [Overview](overview)
 - [Initial Setup](initial-setup)
 - [Quick Start](quick-start)
 - [Beginner](beginner)
