@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - themes
 created: 2025-12-07
-updated: 2025-12-12
+updated: 2025-12-13
 ---
 
 # Hugo Content Convention
@@ -829,6 +829,69 @@ static/
 - List pages for a directory
 - Can include intro content
 - Generate taxonomy pages
+
+**Weight Field Ordering Rule** (ayokoding-web):
+
+All content files use the `weight` field in frontmatter to control navigation ordering (lower weight = first in list). To ensure predictable navigation structure:
+
+- **`_index.md` files**: MUST have `weight: 1` (topmost in navigation)
+- **`overview.md` or `ikhtisar.md` files**: MUST have `weight: 2` (immediately after index)
+- **Other content files**: Should use `weight: 3, 4, 5, ...` in logical order
+
+**Rationale**: Ensures `_index.md` (navigation hub) appears first in file listings, `overview.md`/`ikhtisar.md` (intro content) appears second, and prevents weight conflicts that cause alphabetical sorting.
+
+**Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`, all folder depths and content types).
+
+✅ **Good (correct weight ordering)**:
+
+```yaml
+# _index.md
+---
+title: Golang
+weight: 1 # Index always weight 1
+---
+# overview.md
+---
+title: Overview
+weight: 2 # Overview always weight 2
+---
+# initial-setup.md
+---
+title: Initial Setup
+weight: 3 # First content file is weight 3
+---
+# quick-start.md
+---
+title: Quick Start
+weight: 4 # Second content file is weight 4
+---
+```
+
+❌ **Bad (incorrect weight ordering)**:
+
+```yaml
+# _index.md
+---
+title: Golang
+weight: 10 # WRONG! Should be weight: 1
+---
+# overview.md
+---
+title: Overview
+weight: 1 # WRONG! Should be weight: 2
+---
+# initial-setup.md
+---
+title: Initial Setup
+# WRONG! Missing weight field
+---
+```
+
+**Special Cases**:
+
+- **Subdirectory `_index.md` files**: Also use `weight: 1` (within their parent directory context)
+- **Diátaxis subdirectories** (tutorials/, how-to/, etc.): Follow same pattern within their subdirectory
+- **Archived content**: Same rules apply for consistency
 
 **Index File Title Rule** (ayokoding-web):
 

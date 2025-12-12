@@ -543,59 +543,70 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
 ### Weight Field Ordering Validation
 
-**For folders containing overview.md or ikhtisar.md with weight: 1**:
+**CRITICAL REQUIREMENT**: All content files in ayokoding-web must follow weight field ordering pattern to ensure predictable navigation structure.
 
-- [ ] All sibling `_index.md` files (subdirectories) have `weight: 2` or higher
+**Required Weight Values**:
+
+- [ ] **`_index.md` files**: MUST have `weight: 1` (topmost in navigation)
+- [ ] **`overview.md` or `ikhtisar.md` files**: MUST have `weight: 2` (immediately after index)
+- [ ] **Other content files**: Should use `weight: 3, 4, 5, ...` in logical order
 - [ ] No weight conflicts that would cause alphabetical sorting
-- [ ] Navigation order is preserved (overview/ikhtisar first, then subdirectories)
+- [ ] Navigation order is preserved (index first, overview/ikhtisar second, content third+)
 
-**Why this matters**: Hugo uses the `weight` field to order pages at the same level. If both overview/ikhtisar and a sibling directory's `_index.md` have `weight: 1`, they will be sorted alphabetically, breaking the expected navigation order (e.g., "Java" appearing before "Overview").
+**Why this matters**: Hugo uses the `weight` field to order pages at the same level. Consistent weight values ensure predictable navigation structure: `_index.md` (navigation hub) appears first, `overview.md`/`ikhtisar.md` (intro content) appears second, and content files appear in logical order.
+
+**Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`, all folder depths and content types).
 
 **Validation Logic**:
 
-1. Read `overview.md` or `ikhtisar.md` frontmatter to check weight value
-2. If weight is 1, scan sibling directories for `_index.md` files
-3. Read each sibling `_index.md` frontmatter and extract weight value
-4. Flag any sibling `_index.md` with `weight: 1` as a **critical error** (weight conflict)
-5. Report violations with specific file paths and recommended weight values
+1. Read all content files in a directory and extract `weight` values from frontmatter
+2. Check `_index.md` has `weight: 1` - Flag violations as **critical errors**
+3. Check `overview.md`/`ikhtisar.md` has `weight: 2` - Flag violations as **critical errors**
+4. Check other content files use `weight: 3+` in sequential order - Flag violations as **warnings**
+5. Report violations with specific file paths, current weights, and recommended weight values
 
 **Example Violation**:
 
 ```yaml
+# prog-lang/_index.md
+---
+title: "Programming Languages"
+weight: 10 # ❌ WRONG! Should be weight: 1
+---
 # prog-lang/overview.md
 ---
 title: "Overview"
-weight: 1
+weight: 1 # ❌ WRONG! Should be weight: 2
 ---
-# prog-lang/java/_index.md
+# prog-lang/golang.md
 ---
-title: "Java"
-weight: 1 # ❌ WRONG! Conflicts with overview.md
----
-# prog-lang/golang/_index.md
----
-title: "Golang"
-weight: 1 # ❌ WRONG! Conflicts with overview.md
+title: "Golang Tutorial"
+# ❌ WRONG! Missing weight field (should be weight: 3)
 ---
 ```
 
 **Correct Structure**:
 
 ```yaml
+# prog-lang/_index.md
+---
+title: "Programming Languages"
+weight: 1 # ✅ Index always weight 1 (topmost)
+---
 # prog-lang/overview.md
 ---
 title: "Overview"
-weight: 1 # ✅ First child
+weight: 2 # ✅ Overview always weight 2 (immediately after index)
 ---
-# prog-lang/java/_index.md
+# prog-lang/golang.md
 ---
-title: "Java"
-weight: 2 # ✅ After overview
+title: "Golang Tutorial"
+weight: 3 # ✅ First content file is weight 3
 ---
-# prog-lang/golang/_index.md
+# prog-lang/java.md
 ---
-title: "Golang"
-weight: 3 # ✅ After java
+title: "Java Tutorial"
+weight: 4 # ✅ Second content file is weight 4
 ---
 ```
 
