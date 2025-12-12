@@ -12,7 +12,7 @@ updated: 2025-12-07
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 17 conventions covering all aspects of documentation writing and formatting.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 18 conventions covering all aspects of documentation writing and formatting.
 
 ## 🎯 Scope
 
@@ -50,6 +50,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Documentation Linking Convention](./ex-co__linking-convention.md) - Standards for linking between documentation files using GitHub-compatible markdown
 - [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
 - [Hugo Content Convention](./ex-co__hugo-content.md) - Comprehensive Hugo content standards for ayokoding-web (Hextra theme) and ose-platform-web (PaperMod theme). Covers 7 inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial Convention, Tutorial Naming), 5 adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), 6 Hugo-specific conventions (Archetypes, Shortcodes, Taxonomy, Asset Organization, Content Types, URL Structure), and theme/site-specific differences
+- [Indentation Convention](./ex-co__indentation.md) - TAB indentation standard for files in docs/ directory (Obsidian vault) with critical YAML frontmatter exception requiring 2 spaces. Establishes Logseq/Obsidian compatibility for markdown bullets while maintaining tool-specific requirements for frontmatter and code blocks
 - [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for daily research notes and monthly summaries
 - [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas in GitHub-compatible markdown. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), and Obsidian/GitHub dual compatibility
 - [OSS Documentation Convention](./ex-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
@@ -61,4 +62,4 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ---
 
-**Last Updated**: 2025-12-07
+**Last Updated**: 2025-12-12

@@ -437,6 +437,8 @@ This distinction keeps journals agile and explorative while maintaining formal d
 
 ### Bullet Style
 
+**Reference**: See [Indentation Convention](./ex-co__indentation.md) for complete indentation standards.
+
 - Use single dash (`-`) followed by space for all bullets
 - **Indent with TAB for each nesting level** (NOT spaces) - **Applies to files in `docs/` directory only**
 - No blank lines between bullets (unless separating major topics)
