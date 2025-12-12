@@ -113,11 +113,12 @@ Use this agent when:
        - `content/en/rants/` - English rants
        - `content/id/celoteh/` - Indonesian rants
      - **Rationale**: Site-level config handles most content; rants/celoteh may have guest contributors
-   - **Weight Field Rules**:
-     - **Critical**: When creating `overview.md` or `ikhtisar.md`, use `weight: 1`
-     - **Sibling directories**: All sibling `_index.md` files (subdirectories) MUST use `weight: 2` or higher
-     - **Why**: Hugo sorts by weight at the same level; weight conflicts cause alphabetical sorting, breaking navigation order
-     - **Example**: If `overview.md` has `weight: 1`, then `java/_index.md` must have `weight: 2`, `golang/_index.md` must have `weight: 3`, etc.
+   - **Weight Field Ordering Rules** (ayokoding-web):
+     - **`_index.md` files**: MUST have `weight: 1` (topmost in navigation)
+     - **`overview.md` or `ikhtisar.md` files**: MUST have `weight: 2` (immediately after index)
+     - **Other content files**: Should use `weight: 3, 4, 5, ...` in logical order
+     - **Rationale**: Ensures `_index.md` (navigation hub) appears first, `overview.md`/`ikhtisar.md` (intro content) appears second, and prevents weight conflicts that cause alphabetical sorting
+     - **Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`, all folders)
 
 5. **Date Format**:
    - REQUIRED: `YYYY-MM-DDTHH:MM:SS+07:00`
@@ -534,7 +535,7 @@ Before completing, verify:
 - [ ] **For `_index.md` with overview/ikhtisar**: Link to overview.md or ikhtisar.md is FIRST item in navigation list
 - [ ] **For intro content files**: Correct naming based on language (overview.md for English, ikhtisar.md for Indonesian)
 - [ ] **For folders with both index and intro**: Navigation ordering correct (\_index.md topmost, then overview.md/ikhtisar.md)
-- [ ] **Weight field conflicts**: If folder contains overview.md/ikhtisar.md with `weight: 1`, verify all sibling `_index.md` files have `weight: 2` or higher
+- [ ] **Weight field ordering**: \_index.md has `weight: 1`, overview.md/ikhtisar.md has `weight: 2`, other content has `weight: 3+` in logical order
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids
 - [ ] For bilingual content: Both Indonesian and English versions created
 
