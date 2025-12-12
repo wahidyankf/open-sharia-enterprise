@@ -1,8 +1,8 @@
 ---
 title: Java
-date: 2025-12-04T00:00:00+07:00
+date: 2025-12-12T00:00:00+07:00
 draft: false
-description: Complete learning path from zero to expert Java development - 6 comprehensive tutorials covering 0-95% knowledge
+description: Complete learning path from zero to expert Java development - organized using the Diátaxis framework
 weight: 2
 tags:
   - java
@@ -15,9 +15,13 @@ categories:
 ---
 
 - [Overview](overview)
-- [Initial Setup](initial-setup)
-- [Quick Start](quick-start)
-- [Beginner](beginner)
-- [Intermediate](intermediate)
-- [Advanced](advanced)
-- [Cookbook](cookbook)
+- [Tutorials](tutorials)
+  - [Initial Setup](tutorials/initial-setup)
+  - [Quick Start](tutorials/quick-start)
+  - [Beginner](tutorials/beginner)
+  - [Intermediate](tutorials/intermediate)
+  - [Advanced](tutorials/advanced)
+- [How-To Guides](how-to)
+  - [Cookbook](how-to/cookbook)
+- [Reference](reference)
+- [Explanation](explanation)
