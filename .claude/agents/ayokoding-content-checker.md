@@ -4,7 +4,7 @@ description: Expert at validating Hugo content for ayokoding-web (Hextra theme) 
 tools: Read, Grep, Glob, Bash
 model: sonnet
 color: green
-updated: 2025-12-13
+updated: 2025-12-14
 ---
 
 # ayokoding-content-checker Agent
@@ -551,15 +551,21 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
 ### Weight Field Ordering Validation
 
-**CRITICAL REQUIREMENT**: All content files in ayokoding-web must follow weight field ordering pattern to ensure predictable navigation structure.
+**CRITICAL REQUIREMENT**: All content files in ayokoding-web must follow depth-based weight field ordering pattern to ensure predictable navigation structure.
 
-**Required Weight Values**:
+**Weight Formula**: `weight = (depth × 100) + sequence`
 
-- [ ] **`_index.md` files**: MUST have `weight: 1` (topmost in navigation)
-- [ ] **`overview.md` or `ikhtisar.md` files**: MUST have `weight: 2` (immediately after index)
-- [ ] **Other content files**: Should use `weight: 3, 4, 5, ...` in logical order
+**IMPORTANT**: Weights RESET for each folder at the same depth. Sibling folders are independent and self-contained.
+
+**Required Weight Values (within each folder)**:
+
+- [ ] **`_index.md` files**: MUST have `weight: (depth × 100) + 1` (topmost in navigation)
+- [ ] **`overview.md` or `ikhtisar.md` files**: MUST have `weight: (depth × 100) + 2` (immediately after index)
+- [ ] **Other content files**: Should use `weight: (depth × 100) + 3, 4, 5, ...` in logical order
 - [ ] No weight conflicts that would cause alphabetical sorting
 - [ ] Navigation order is preserved (index first, overview/ikhtisar second, content third+)
+
+**Example**: At depth 4, ALL folders use 401, 402, 403... (golang/, java/, python/ each reset to 401, NOT continue sequentially across siblings)
 
 **Why this matters**: Hugo uses the `weight` field to order pages at the same level. Consistent weight values ensure predictable navigation structure: `_index.md` (navigation hub) appears first, `overview.md`/`ikhtisar.md` (intro content) appears second, and content files appear in logical order.
 

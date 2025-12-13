@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-13T14:30:00+07:00"
+lastFullScan: "2025-12-13T16:45:00+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -86,6 +86,18 @@ links:
         status: 301
     usedIn:
       - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
+
+  - url: https://docs.mongodb.com/
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 301
+    finalUrl: https://www.mongodb.com/docs/
+    redirectChain:
+      - from: https://docs.mongodb.com/
+        to: https://www.mongodb.com/docs/
+        status: 301
+    usedIn:
+      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-berbasis-dokumen/konsep-kunci.md
+      - content/id/belajar/rekayasa-perangkat-lunak/peralatan/data/mongodb/ikhtisar.md
 
   - url: https://docs.oracle.com/en/java/javase/21/
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -204,57 +216,24 @@ links:
       - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
       - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
 
-  - url: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
-    lastChecked: "2025-12-11T18:45:00+07:00"
+  - url: https://kafka.apache.org/
+    lastChecked: "2025-12-13T16:45:00+07:00"
     statusCode: 200
-    finalUrl: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
+    finalUrl: https://kafka.apache.org/
     redirectChain: null
     usedIn:
-      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
-      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
+      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/broker-pesan/konsep-kunci.md
 
-  - url: https://www.detik.com/hikmah/doa-dan-hadits/d-6665987/tulisan-arab-bismillahirrahmanirrahim-beserta-arti-dan-keutamaan
-    lastChecked: "2025-12-13T14:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://www.detik.com/hikmah/doa-dan-hadits/d-6665987/tulisan-arab-bismillahirrahmanirrahim-beserta-arti-dan-keutamaan
-    redirectChain: null
+  - url: https://m.signalvnoise.com/
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 301
+    finalUrl: https://signalvnoise.com/
+    redirectChain:
+      - from: https://m.signalvnoise.com/
+        to: https://signalvnoise.com/
+        status: 301
     usedIn:
-      - content/id/celoteh/2023/tech-winter-di-indonesia-pelajaran-yang-gw-ambil-dan-pentingnya-stock-based-compensation.md
-
-  - url: https://www.effectiveengineer.com/
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://www.effectiveengineer.com/
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
-      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
-
-  - url: https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/
-    lastChecked: "2025-12-11T18:45:00+07:00"
-    statusCode: 200
-    finalUrl: https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
-      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
-
-  - url: https://www.levels.fyi/companies/google/salaries/software-engineer
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://www.levels.fyi/companies/google/salaries/software-engineer
-    redirectChain: null
-    usedIn:
-      - content/en/rants/2023/tech-winter-in-indonesia-lessons-learned-and-the-importance-of-stock-based-compensation.md
-
-  - url: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
-    lastChecked: "2025-12-09T22:30:00+07:00"
-    statusCode: 200
-    finalUrl: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
-    redirectChain: null
-    usedIn:
-      - content/en/about-ayokoding.md
-      - content/id/tentang-ayokoding.md
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
 
   - url: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -308,6 +287,122 @@ links:
     redirectChain: null
     usedIn:
       - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/basis-data-graf/konsep-kunci.md
+
+  - url: https://www.amazon.com/4-Hour-Workweek-Escape-Live-Anywhere/dp/0307465357
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.amazon.com/4-Hour-Workweek-Escape-Live-Anywhere/dp/0307465357
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
+
+  - url: https://www.amazon.com/Doesnt-Have-Be-Crazy-Work/dp/0062874780
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.amazon.com/Doesnt-Have-Be-Crazy-Work/dp/0062874780
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
+
+  - url: https://www.amazon.com/Lean-Startup-Entrepreneurs-Continuous-Innovation/dp/0307887898
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.amazon.com/Lean-Startup-Entrepreneurs-Continuous-Innovation/dp/0307887898
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
+
+  - url: https://www.amazon.com/Remote-Office-Not-Required/dp/0804137501
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.amazon.com/Remote-Office-Not-Required/dp/0804137501
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
+
+  - url: https://www.amazon.com/Traction-Startup-Achieve-Explosive-Customer/dp/1591848369
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.amazon.com/Traction-Startup-Achieve-Explosive-Customer/dp/1591848369
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
+
+  - url: https://www.amazon.com/Zero-One-Notes-Startups-Future/dp/0804139296
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.amazon.com/Zero-One-Notes-Startups-Future/dp/0804139296
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
+
+  - url: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
+    lastChecked: "2025-12-11T18:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
+      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
+
+  - url: https://www.detik.com/hikmah/doa-dan-hadits/d-6665987/tulisan-arab-bismillahirrahmanirrahim-beserta-arti-dan-keutamaan
+    lastChecked: "2025-12-13T14:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.detik.com/hikmah/doa-dan-hadits/d-6665987/tulisan-arab-bismillahirrahmanirrahim-beserta-arti-dan-keutamaan
+    redirectChain: null
+    usedIn:
+      - content/id/celoteh/2023/tech-winter-di-indonesia-pelajaran-yang-gw-ambil-dan-pentingnya-stock-based-compensation.md
+
+  - url: https://www.effectiveengineer.com/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.effectiveengineer.com/
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
+      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
+
+  - url: https://www.ibm.com/cloud/learn/object-storage
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.ibm.com/cloud/learn/object-storage
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/rekayasa-perangkat-lunak/desain-sistem/komponen/penyimpanan-data/penyimpanan-objek/konsep-kunci.md
+
+  - url: https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/
+    lastChecked: "2025-12-11T18:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.informatics.uci.edu/regaining-focus-in-a-world-of-digital-distractions/
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
+      - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
+
+  - url: https://www.levels.fyi/companies/google/salaries/software-engineer
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.levels.fyi/companies/google/salaries/software-engineer
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/tech-winter-in-indonesia-lessons-learned-and-the-importance-of-stock-based-compensation.md
+
+  - url: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
+    lastChecked: "2025-12-09T22:30:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.linkedin.com/in/wahidyan-kresna-fridayoka/
+    redirectChain: null
+    usedIn:
+      - content/en/about-ayokoding.md
+      - content/id/tentang-ayokoding.md
+
+  - url: https://www.ted.com/talks/jason_fried_why_work_doesn_t_happen_at_work
+    lastChecked: "2025-12-13T16:45:00+07:00"
+    statusCode: 200
+    finalUrl: https://www.ted.com/talks/jason_fried_why_work_doesn_t_happen_at_work
+    redirectChain: null
+    usedIn:
+      - content/id/belajar/pelajaran-kunci/buku/rework-jason-fried-david-heinemeier.md
 
   - url: https://www.w3schools.com/sql/sql_select.asp
     lastChecked: "2025-12-09T22:30:00+07:00"

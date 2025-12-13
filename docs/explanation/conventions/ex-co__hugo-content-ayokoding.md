@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-13
+updated: 2025-12-14
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -236,6 +236,16 @@ Where:
 - `depth` = directory nesting level (0 = content root, 1 = first level, 2 = second level, etc.)
 - `sequence` = position within that depth level (1 for \_index.md, 2 for overview.md, 3+ for content)
 
+**CRITICAL: Weights Reset for Each Folder at Same Depth**
+
+Each folder at the same depth uses the SAME weight pattern:
+
+- `/en/learn/swe/prog-lang/golang/` → 401, 402, 403...
+- `/en/learn/swe/prog-lang/java/` → 401, 402, 403... (RESET, not 404, 405...)
+- `/en/learn/swe/prog-lang/python/` → 401, 402, 403... (RESET, not 407, 408...)
+
+**Why**: Folders are self-contained and independent. No coordination needed across siblings. This makes adding/removing/reorganizing folders easier.
+
 **Depth Level Ranges**:
 
 - Depth 0: 1-99 (root level: `/en/`, `/id/`)
@@ -303,8 +313,8 @@ weight: 501 # depth 5: (5 × 100) + 1 = 501
 │       │   └── tutorials/ (depth 5, base = 500)
 │       │       └── _index.md (weight: 501)
 │       └── java/ (depth 4, base = 400)
-│           ├── _index.md (weight: 403)  # Next in sequence at depth 4
-│           └── overview.md (weight: 404)
+│           ├── _index.md (weight: 401)  # RESET to base + 1 (self-contained)
+│           └── overview.md (weight: 402) # RESET to base + 2 (independent)
 ```
 
 ❌ **Bad (incorrect weight ordering)**:
@@ -333,6 +343,9 @@ title: Initial Setup
 - ✅ **Predictable**: Easy to calculate weights (depth × 100 + position)
 - ✅ **Scalable**: Supports up to 99 items per depth level
 - ✅ **Readable**: Depth 4 = 400s, Depth 5 = 500s (easy to understand at a glance)
+- ✅ **Self-contained**: Each folder at the same depth resets to the same weight pattern (401, 402, 403...) - no coordination needed across siblings
+- ✅ **Independent**: Adding, removing, or reordering sibling folders doesn't affect each other's weights
+- ✅ **Maintainable**: Moving folders between locations is simpler - just update depth calculation, not sequential numbering
 
 ### Index File Requirements
 
