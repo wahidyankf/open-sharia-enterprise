@@ -2,7 +2,7 @@
 title: "Concepts"
 date: 2025-03-22T07:20:00+07:00
 draft: false
-weight: 2
+weight: 603
 ---
 
 ## Foundational Knowledge

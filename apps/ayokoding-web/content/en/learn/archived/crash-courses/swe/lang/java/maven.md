@@ -2,7 +2,7 @@
 title: "Maven"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 20
+weight: 603
 ---
 
 Maven is a powerful build automation and project management tool primarily used for Java projects. This crash course will give you the essential knowledge to use Maven effectively in your daily work.

@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 This crash course will guide you through the essential aspects of Java programming that you'll need for everyday work, building a solid foundation that will enable you to explore more advanced concepts independently.

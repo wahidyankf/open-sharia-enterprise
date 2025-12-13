@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-07-07T07:17:00+07:00
 draft: false
-weight: 4
+weight: 803
 ---
 
 This cheatsheet is a concise, practical guide for the _SWE - Spring Boot - Advanced_ course, designed for web developers with intermediate Spring Boot knowledge (e.g., REST APIs, JPA, dependency injection) and familiarity with JavaScript, REST APIs, JSON, and frontend testing (e.g., Jest). It covers microservices, asynchronous processing, caching, advanced security, resiliency, deployment, and testing, using analogies to frontend concepts for clarity. Each section includes an overview, key concepts, commented code examples adhering to the _Code Commenting Guideline for Software Engineering Course_ with output comments, run commands with explanations, Mermaid diagrams, tips, and pitfalls.

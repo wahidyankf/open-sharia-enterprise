@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 2
+weight: 703
 ---
 
 This crash course will cover 85% of what you need to know for working with Spring Boot daily, and give you a roadmap for exploring the remaining 15% independently.

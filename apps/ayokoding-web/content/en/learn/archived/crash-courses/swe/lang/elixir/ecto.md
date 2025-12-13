@@ -2,7 +2,7 @@
 title: "Ecto"
 date: 2025-04-07T09:15:00+07:00
 draft: false
-weight: 2
+weight: 603
 ---
 
 This crash course covers 85% of what you'll need for daily Ecto usage, with enough knowledge to explore the remaining advanced features independently.

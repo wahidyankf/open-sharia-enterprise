@@ -1,5 +1,6 @@
 ---
 title: "Panduan 1:1 Untuk Software Engineer Non Pimpinan Struktural"
+weight: 403
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---

@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 Playwright is a powerful, modern framework created by Microsoft for automating browser interactions and testing web applications. This crash course will get you up and running with the essentials that cover 85% of daily usage.

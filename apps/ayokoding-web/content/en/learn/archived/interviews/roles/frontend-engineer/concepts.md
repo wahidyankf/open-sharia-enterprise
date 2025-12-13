@@ -2,7 +2,7 @@
 title: "Concepts"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 2
+weight: 503
 ---
 
 As a frontend engineer preparing for interviews, mastering key technical areas is essential for success. Based on research into effective interview-focused learning approaches for software engineers and verified interview topic lists, I've compiled this comprehensive guide to the most important topics to master for frontend engineering interviews, including specialized technical sections for senior, staff, and higher-level positions.

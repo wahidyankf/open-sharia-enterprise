@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 GitHub Actions is a powerful automation platform integrated directly into GitHub repositories, enabling you to automate building, testing, and deploying your code without setting up separate CI/CD tools.

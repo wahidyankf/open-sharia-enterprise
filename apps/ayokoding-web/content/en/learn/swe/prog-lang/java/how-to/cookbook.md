@@ -3,7 +3,7 @@ title: Cookbook
 date: 2025-12-04T00:00:00+07:00
 draft: false
 description: Day-to-day recipes and solutions for common Java programming problems - ready to copy and use
-weight: 1
+weight: 503
 tags:
   - java
   - cookbook

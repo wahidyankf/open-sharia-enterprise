@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 1
+weight: 602
 ---
 
 MySQL is a widely used open-source relational database management system (RDBMS) known for its performance, scalability, and ease of use. It has been developed and maintained by Oracle Corporation and has become one of the most popular databases in the industry. Here's an introduction to MySQL:

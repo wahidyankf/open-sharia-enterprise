@@ -2,7 +2,7 @@
 title: "Mini Projects"
 date: 2025-03-16T17:43:00+07:00
 draft: false
-weight: 2
+weight: 503
 ---
 
 These mini-projects have been verified as an effective approach to mastering system design interviews through practical implementation. Each project addresses core concepts directly relevant to common interview questions while helping you develop both technical skills and architectural thinking.

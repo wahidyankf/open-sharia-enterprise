@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 Cypress is a powerful JavaScript-based end-to-end testing framework designed specifically for modern web applications. This crash course will give you the core knowledge you need for daily testing work, along with a foundation to explore more advanced topics on your own.

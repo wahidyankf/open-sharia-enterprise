@@ -2,7 +2,7 @@
 title: "Responsibilities"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 1
+weight: 503
 ---
 
 Frontend engineers build the visible parts of websites and applications that users interact with directly. They transform designs into functional interfaces using HTML, CSS, JavaScript, and specialized frameworks. As a frontend engineer advances through career levels, their responsibilities expand from coding individual components to architecting entire systems and influencing organizational technical direction.

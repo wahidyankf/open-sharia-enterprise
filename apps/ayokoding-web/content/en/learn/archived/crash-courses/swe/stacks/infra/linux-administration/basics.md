@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 Welcome to your Linux administration crash course! This guide covers the fundamental 85% of Linux administration skills you'll use daily, while giving you the foundation to explore more advanced topics independently.

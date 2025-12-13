@@ -2,7 +2,7 @@
 title: "Mini Projects"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 3
+weight: 503
 ---
 
 Based on the industry-validated competency framework you've shared, I've refined these mini-projects to ensure strong alignment with industry standards and practices. Each project has been validated against research, frameworks, and practical implementation guides from leading tech companies.

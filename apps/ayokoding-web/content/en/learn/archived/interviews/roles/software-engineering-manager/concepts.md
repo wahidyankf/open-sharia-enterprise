@@ -2,7 +2,7 @@
 title: "Concepts"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 2
+weight: 503
 ---
 
 Based on comprehensive research across Meta's interview processes, IEEE standards, GitLab's management handbook, and academic studies, we've created this learning-optimized guide covering the essential competencies for software engineering manager interviews. The guide is arranged to progressively build your skills from foundational elements to organizational impact.

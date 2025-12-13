@@ -2,7 +2,7 @@
 title: "Static Typing"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 2
+weight: 603
 ---
 
 ## Introduction
@@ -449,7 +449,7 @@ While this crash course covers the essential 85%, here are the advanced topics y
 To deepen your understanding of Python static typing:
 
 - [Pyright GitHub Repository](https://github.com/microsoft/pyright) - The official source
-- [Type Concepts Documentation](https://github.com/microsoft/pyright/blob/main/docs/type-concepts.md) - Deep dives into type theory
+- [Type Concepts Documentation](https://github.com/microsoft/pyright/blob/main/docs/type-concepts) - Deep dives into type theory
 - [Python Typing Documentation](https://docs.python.org/3/library/typing.html) - The standard library's typing module
 - [mypy Documentation](https://mypy.readthedocs.io/) - Another popular type checker with useful guides
 

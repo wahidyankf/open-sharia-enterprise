@@ -2,7 +2,7 @@
 title: Software Development Approaches
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 3
+weight: 401
 ---
 
 - [Overview](/en/learn/archived/software-engineering/software-development-approaches/overview)

@@ -2,7 +2,7 @@
 title: "Questions"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 4
+weight: 503
 ---
 
 ## Core Frontend Technologies

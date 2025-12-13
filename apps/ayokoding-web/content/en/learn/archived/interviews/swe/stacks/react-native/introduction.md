@@ -2,7 +2,7 @@
 title: "Introduction"
 date: 2025-03-22T07:20:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 React Native has established itself as a leading framework for mobile app development, enabling developers to build applications for multiple platforms with a single codebase. This comprehensive introduction explores the key aspects of React Native, from its core purpose to security considerations, providing a solid foundation for anyone looking to understand or utilize this technology.

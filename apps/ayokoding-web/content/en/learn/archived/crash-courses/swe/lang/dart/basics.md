@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-04-07T07:17:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 Dart is a client-optimized programming language developed by Google, primarily known as the language powering Flutter - a framework for building cross-platform applications. This crash course covers 85% of what you'll encounter daily in Dart programming, providing you with the foundation to explore the remaining 15% on your own.

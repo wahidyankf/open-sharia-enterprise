@@ -2,7 +2,7 @@
 title: "Introduction"
 date: 2025-03-16T14:57:00+07:00
 draft: false
-weight: 1
+weight: 303
 ---
 
 In today's rapidly changing professional landscape, experts across fields face a fundamental challenge: how do we continue learning effectively throughout our careers? Traditional learning methods often leave gaps between theory and practice. But there's a powerful alternative gaining traction: structuring your learning around interview-style questions and scenarios. This approach doesn't just prepare you for job interviews—it fundamentally transforms how you develop and internalize professional skills in any discipline.

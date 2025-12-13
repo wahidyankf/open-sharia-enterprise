@@ -2,7 +2,7 @@
 title: "Questions"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 4
+weight: 503
 ---
 
 This comprehensive guide contains essential questions covering the core technical knowledge required for backend engineering interviews. Each question includes an explanation of why the topic matters, clarifying questions to ask during interviews, solution steps, and both best practices and anti-patterns to demonstrate comprehensive understanding. The guide covers traditional backend concepts while incorporating emerging technologies and modern architectural patterns.

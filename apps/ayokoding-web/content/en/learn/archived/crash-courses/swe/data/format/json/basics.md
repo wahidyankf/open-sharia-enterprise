@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 This crash course will equip you with 85% of what you'll encounter in day-to-day JSON usage, with enough foundation to explore the more advanced concepts on your own.

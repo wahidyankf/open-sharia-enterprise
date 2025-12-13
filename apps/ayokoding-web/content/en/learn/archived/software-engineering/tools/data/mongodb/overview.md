@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 1
+weight: 602
 ---
 
 MongoDB is a popular and flexible open-source NoSQL document database designed for scalability, performance, and ease of development. It offers a highly scalable, flexible, and JSON-like document model that allows for storing and retrieving data in a more dynamic and schema-less way. Here's an introduction to MongoDB:

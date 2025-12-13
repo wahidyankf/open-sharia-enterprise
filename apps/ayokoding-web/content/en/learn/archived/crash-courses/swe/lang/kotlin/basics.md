@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 Welcome to this comprehensive Kotlin crash course! I've designed this guide to cover the most essential 85% of Kotlin features you'll use daily, while giving you the foundation to explore the remaining 15% on your own.

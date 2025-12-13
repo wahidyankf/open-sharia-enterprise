@@ -1,5 +1,6 @@
 ---
 title: "Chat with PDF"
+weight: 203
 date: 2025-12-02T00:00:00+07:00
 draft: false
 ---

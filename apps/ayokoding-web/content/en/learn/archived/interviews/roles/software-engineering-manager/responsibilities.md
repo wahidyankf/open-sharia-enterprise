@@ -2,7 +2,7 @@
 title: "Responsibilities"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 1
+weight: 503
 ---
 
 Software engineering managers lead teams of engineers to deliver high-quality software products. They bridge technical expertise with leadership skills to guide development efforts, manage performance, and align engineering work with business objectives. As engineering managers progress through career levels, their responsibilities expand from leading individual teams to directing entire engineering organizations and shaping company-wide technical strategy.

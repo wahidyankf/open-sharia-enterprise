@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 1
+weight: 502
 ---
 
 Embarking on a journey to learn about Agile software development can be exciting and overwhelming due to the extensive resources available. This guide provides a clear, concise, comprehensive roadmap for the most important topics you should master.

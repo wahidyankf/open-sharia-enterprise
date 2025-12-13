@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 2
+weight: 703
 ---
 
 Docker has transformed how developers build, deploy, and run applications by introducing a powerful containerization approach. This crash course will guide you through the essential Docker concepts and commands you'll use daily, while giving you the foundation to explore more advanced topics on your own.
