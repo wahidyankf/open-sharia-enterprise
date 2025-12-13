@@ -16,27 +16,27 @@ All 6 tutorials in the Java Full Set are now available:
 
 #### Level 1: Initial Setup (0-5%) ✅
 
-[Initial Setup for Java](initial-setup) - Install JDK, verify installation, run your first program.
+[Initial Setup for Java](/en/learn/swe/prog-lang/java/tutorials/initial-setup) - Install JDK, verify installation, run your first program.
 
 #### Level 2: Quick Start (5-30%) ✅
 
-[Java Quick Start](quick-start) - 10 core concepts through touchpoint examples.
+[Java Quick Start](/en/learn/swe/prog-lang/java/tutorials/quick-start) - 10 core concepts through touchpoint examples.
 
 #### Level 3: Beginner (0-60%) ✅
 
-[Complete Beginner's Guide to Java](beginner) - Comprehensive OOP, collections, testing, streams.
+[Complete Beginner's Guide to Java](/en/learn/swe/prog-lang/java/tutorials/beginner) - Comprehensive OOP, collections, testing, streams.
 
 #### Level 4: Intermediate (60-85%) ✅
 
-[Intermediate Java](intermediate) - Design patterns, SOLID, concurrency, Maven/Gradle, JDBC.
+[Intermediate Java](/en/learn/swe/prog-lang/java/tutorials/intermediate) - Design patterns, SOLID, concurrency, Maven/Gradle, JDBC.
 
 #### Level 5: Advanced (85-95%) ✅
 
-[Advanced Java](advanced) - JVM internals, GC, reflection, system design.
+[Advanced Java](/en/learn/swe/prog-lang/java/tutorials/advanced) - JVM internals, GC, reflection, system design.
 
 #### Cookbook: Practical Recipes (Reference) ✅
 
-[Java Cookbook](cookbook) - 30+ copy-paste-ready recipes for daily use.
+[Java Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook) - 30+ copy-paste-ready recipes for daily use.
 
 ---
 
@@ -56,14 +56,14 @@ All 6 tutorials in the Java Full Set are now available:
 
 ### Start Here:
 
-- **Complete beginner**: [Initial Setup](initial-setup) then [Beginner](beginner)
-- **Programmer new to Java**: [Quick Start](quick-start) then [Beginner](beginner)
-- **Professional developer**: [Intermediate](intermediate)
-- **Expert seeking mastery**: [Advanced](advanced)
+- **Complete beginner**: [Initial Setup](/en/learn/swe/prog-lang/java/tutorials/initial-setup) then [Beginner](/en/learn/swe/prog-lang/java/tutorials/beginner)
+- **Programmer new to Java**: [Quick Start](/en/learn/swe/prog-lang/java/tutorials/quick-start) then [Beginner](/en/learn/swe/prog-lang/java/tutorials/beginner)
+- **Professional developer**: [Intermediate](/en/learn/swe/prog-lang/java/tutorials/intermediate)
+- **Expert seeking mastery**: [Advanced](/en/learn/swe/prog-lang/java/tutorials/advanced)
 
 ### Use Anytime:
 
-[Cookbook](cookbook) for recipes and day-to-day solutions
+[Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook) for recipes and day-to-day solutions
 
 ---
 

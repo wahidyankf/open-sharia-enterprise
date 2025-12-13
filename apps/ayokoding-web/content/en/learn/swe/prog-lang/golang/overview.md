@@ -14,7 +14,7 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 ### 1. **Golang Initial Setup** 🚀
 
-- **File**: [initial-setup](initial-setup)
+- **File**: [initial-setup](/en/learn/swe/prog-lang/golang/tutorials/initial-setup)
 - **Coverage**: 0-5% (Installation and Hello World)
 - **What you'll do**: Install Go, verify installation, run your first program
 - **Goal**: Get Go working on your system
@@ -22,7 +22,7 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 ### 2. **Golang Quick Start** ⚡
 
-- **File**: [quick-start](quick-start)
+- **File**: [quick-start](/en/learn/swe/prog-lang/golang/tutorials/quick-start)
 - **Coverage**: 5-30% (Touchpoints and core concepts)
 - **What you'll learn**: Variables, functions, control flow, goroutines basics, error handling
 - **Goal**: Learn enough to explore Go independently
@@ -30,7 +30,7 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 ### 3. **Complete Beginner's Guide to Go** 📖
 
-- **File**: [beginner](beginner)
+- **File**: [beginner](/en/learn/swe/prog-lang/golang/tutorials/beginner)
 - **Coverage**: 0-60% (Comprehensive fundamentals)
 - **What you'll learn**: Complete coverage of Go basics with 4 levels of hands-on exercises
 - **Goal**: Build a solid foundation for real applications
@@ -38,7 +38,7 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 ### 4. **Intermediate Go Programming** 💼
 
-- **File**: [intermediate](intermediate)
+- **File**: [intermediate](/en/learn/swe/prog-lang/golang/tutorials/intermediate)
 - **Coverage**: 60-85% (Production-grade techniques)
 - **What you'll learn**: Advanced concurrency, error handling, testing, architecture patterns, performance optimization, security, deployment
 - **Goal**: Build production-grade systems
@@ -46,7 +46,7 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 ### 5. **Advanced Go Programming** 🎓
 
-- **File**: [advanced](advanced)
+- **File**: [advanced](/en/learn/swe/prog-lang/golang/tutorials/advanced)
 - **Coverage**: 85-95% (Expert mastery)
 - **What you'll learn**: Runtime internals, memory optimization, lock-free concurrency, reflection, system design patterns, debugging
 - **Goal**: Achieve expert-level mastery
@@ -56,8 +56,8 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 In addition to the sequential path, use this reference for specific patterns:
 
-- [**Golang Cookbook**](cookbook) - Practical recipes and patterns for real-world problems
-  - **Prerequisites**: Complete the [Beginner](beginner) tutorial
+- [**Golang Cookbook**](/en/learn/swe/prog-lang/golang/how-to/cookbook) - Practical recipes and patterns for real-world problems
+  - **Prerequisites**: Complete the [Beginner](/en/learn/swe/prog-lang/golang/tutorials/beginner) tutorial
   - Generics patterns, concurrency recipes, error handling, design patterns, web development
 
 ## 🎯 How to Choose Your Starting Point
