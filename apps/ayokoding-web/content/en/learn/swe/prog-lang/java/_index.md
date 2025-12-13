@@ -3,7 +3,7 @@ title: Java
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Java development - organized using the Diátaxis framework
-weight: 2
+weight: 401
 tags:
   - java
   - learning-path

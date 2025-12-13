@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 Welcome to your Python crash course! Python has become one of the world's most popular programming languages due to its readability, versatility, and extensive library support. This guide will equip you with the core knowledge needed for daily Python use while providing a solid foundation to explore the more advanced features on your own.

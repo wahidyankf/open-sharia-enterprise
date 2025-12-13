@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 Bash scripting is a powerful way to automate tasks on Unix-based systems. Whether you're a system administrator, developer, or just someone who wants to be more efficient with their computer, learning Bash will save you countless hours of repetitive work. This crash course will give you the core knowledge you need for daily use, while equipping you with the tools to explore advanced topics on your own.

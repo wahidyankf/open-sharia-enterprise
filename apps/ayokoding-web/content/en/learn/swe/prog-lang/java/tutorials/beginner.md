@@ -3,7 +3,7 @@ title: Beginner
 date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Master Java fundamentals from zero - comprehensive coverage of OOP, collections, testing, and functional programming with extensive examples and exercises
-weight: 3
+weight: 503
 tags:
   - java
   - beginner

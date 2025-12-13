@@ -2,7 +2,7 @@
 title: Ikhtisar
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 1
+weight: 502
 ---
 
 PostgreSQL, sering disebut sebagai Postgres, adalah sistem manajemen basis data relasional open-source yang kuat dan lengkap. Awalnya dikembangkan di University of California, Berkeley pada tahun 1980-an dan sejak itu berkembang menjadi salah satu basis data terpopuler dan terpercaya di industri. PostgreSQL sangat terkenal karena keandalannya, kekuatan, dan kemampuan yang luas, membuatnya menjadi pilihan yang disukai untuk berbagai aplikasi.

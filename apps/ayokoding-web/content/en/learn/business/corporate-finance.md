@@ -3,7 +3,7 @@ title: "Corporate Finance"
 date: 2025-12-02T00:00:00+07:00
 draft: false
 description: "Learn essential corporate finance concepts through hands-on practice with real business scenarios"
-weight: 20
+weight: 203
 tags:
   - corporate-finance
   - finance

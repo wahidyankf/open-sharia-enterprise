@@ -2,7 +2,7 @@
 title: Books
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 1
+weight: 401
 ---
 
 - [First Break All The Rules (Marcus Buckingham, Curt Coffman)](/en/learn/archived/takeaways/books/first-break-all-the-rules-marcus-buckingham-curt-coffman)

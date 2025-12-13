@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-07-07T07:17:00+07:00
 draft: false
-weight: 3
+weight: 803
 ---
 
 This cheatsheet is a concise, practical guide for the _SWE - Spring Boot - Intermediate_ course, designed for web developers with basic Spring Boot knowledge (e.g., REST APIs, JPA, dependency injection) and familiarity with JavaScript, REST APIs, JSON, and frontend testing (e.g., Jest). It covers advanced JPA, REST API design, external API integration, validation, security, testing, scheduling, and monitoring, using analogies to frontend concepts for clarity. Each section includes an overview, key concepts, commented code examples adhering to the _Code Commenting Guideline for Software Engineering Course_ with output comments, run commands with explanations, Mermaid diagrams, tips, and pitfalls.

@@ -2,7 +2,7 @@
 title: "Mini Projects"
 date: 2025-03-22T07:20:00+07:00
 draft: false
-weight: 3
+weight: 603
 ---
 
 ## 1. Multi-Screen Navigation App with Authentication

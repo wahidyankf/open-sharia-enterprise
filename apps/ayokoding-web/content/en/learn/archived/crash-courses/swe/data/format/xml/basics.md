@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 XML (eXtensible Markup Language) is a markup language designed for storing and transporting data in a format that's both human-readable and machine-readable. Unlike HTML which focuses on displaying data, XML focuses on describing what data is. Let's dive into this versatile technology that powers many data exchange systems.

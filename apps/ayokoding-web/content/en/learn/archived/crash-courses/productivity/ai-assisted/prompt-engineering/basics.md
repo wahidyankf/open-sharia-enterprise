@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 This crash course distills the most important aspects of prompt engineering to help you effectively communicate with AI language models like GPT-4, Claude, and others. By the end of this guide, you'll have mastered the core 85% of what you need for daily interactions, along with a clear roadmap for the remaining 15% you can explore independently.

@@ -2,7 +2,7 @@
 title: "Concepts"
 date: 2025-03-16T17:23:00+07:00
 draft: false
-weight: 1
+weight: 503
 ---
 
 As a software engineer preparing for technical interviews, having a strong foundation in algorithms and data structures isn't just about passing interviews—it's about developing a problem-solving mindset that will serve you throughout your career. This comprehensive guide will walk you through the key concepts you need to master, organized to optimize your learning journey from fundamental concepts to advanced techniques.

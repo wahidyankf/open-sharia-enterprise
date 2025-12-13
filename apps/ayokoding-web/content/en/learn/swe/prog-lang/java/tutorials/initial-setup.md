@@ -3,7 +3,7 @@ title: Initial Setup
 date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Get Java running quickly - install JDK, verify installation, and run your first program
-weight: 1
+weight: 503
 tags:
   - java
   - initial-setup

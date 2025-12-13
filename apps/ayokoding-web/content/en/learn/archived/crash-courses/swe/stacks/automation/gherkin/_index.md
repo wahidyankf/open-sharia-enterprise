@@ -2,7 +2,7 @@
 title: Gherkin
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 701
 ---
 
 - [Basics](/en/learn/archived/crash-courses/swe/stacks/automation/gherkin/basics)

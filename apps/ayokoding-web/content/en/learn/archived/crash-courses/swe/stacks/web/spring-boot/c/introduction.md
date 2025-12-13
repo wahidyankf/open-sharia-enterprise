@@ -2,7 +2,7 @@
 title: "Introduction"
 date: 2025-07-07T07:17:00+07:00
 draft: false
-weight: 2
+weight: 803
 ---
 
 This cheatsheet is a clear, concise reference for the _SWE - Spring Boot - Up and Running and Introduction_ course, designed for web developers with no Java or Spring framework experience but familiar with JavaScript, REST APIs, JSON, and frontend testing (e.g., Jest). It introduces Spring Boot setup, REST API development, data persistence with JPA, security, logging, and testing, using analogies to frontend concepts for easy understanding. Each section includes key concepts, heavily commented code examples adhering to the _Code Commenting Guideline for Software Engineering Course_ with output comments, commands to run the code with explanations, Mermaid diagrams for visual clarity, practical tips, and common pitfalls.

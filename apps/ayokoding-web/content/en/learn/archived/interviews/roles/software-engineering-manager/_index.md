@@ -2,7 +2,7 @@
 title: Software Engineering Manager
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 3
+weight: 501
 ---
 
 - [Responsibilities](/en/learn/archived/interviews/roles/software-engineering-manager/responsibilities)

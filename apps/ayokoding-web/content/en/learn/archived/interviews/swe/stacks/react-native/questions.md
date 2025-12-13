@@ -2,7 +2,7 @@
 title: "Questions"
 date: 2025-03-22T07:20:00+07:00
 draft: false
-weight: 4
+weight: 603
 ---
 
 This guide presents essential React Native interview questions organized by topic, with explanations of why each matters, solution approaches, and best practices. It focuses on verified, current approaches to help you prepare for technical interviews at all levels.

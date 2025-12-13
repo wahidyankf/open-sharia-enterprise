@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-04-07T09:15:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 Welcome to your Elixir crash course! This guide will take you through the most important aspects of Elixir that you'll use every day, while building a solid foundation that lets you explore more advanced topics on your own later.

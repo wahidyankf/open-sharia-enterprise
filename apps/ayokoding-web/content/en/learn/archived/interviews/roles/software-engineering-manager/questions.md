@@ -2,7 +2,7 @@
 title: "Questions"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 4
+weight: 503
 ---
 
 Based on comprehensive research across industry standards, this guide covers essential interview questions for software engineering manager positions. Each question includes why it matters, clarifying questions where appropriate, solution approaches, and best practices/anti-patterns.

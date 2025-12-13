@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-04-07T07:17:00+07:00
 draft: false
-weight: 1
+weight: 603
 ---
 
 Welcome to your Swift crash course! Swift is Apple's powerful, intuitive programming language for building iOS, macOS, watchOS, and tvOS applications. I'll cover the essential 85% you'll need day-to-day while preparing you to explore the remaining 15% independently.

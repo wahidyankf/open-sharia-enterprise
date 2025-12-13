@@ -2,7 +2,7 @@
 title: "Questions"
 date: 2025-03-16T17:43:00+07:00
 draft: false
-weight: 3
+weight: 503
 ---
 
 I've reorganized these 50 system design questions into a progressive learning path, starting with foundational concepts and gradually advancing to more complex specialized domains. This sequence allows you to build knowledge systematically while tackling increasingly challenging design problems, with the most specialized domains (AI/ML and blockchain) at the end.

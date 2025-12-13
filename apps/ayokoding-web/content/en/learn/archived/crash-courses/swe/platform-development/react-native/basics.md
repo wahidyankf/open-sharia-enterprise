@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 2
+weight: 603
 ---
 
 This crash course will guide you through the essential aspects of React Native development, covering the core knowledge you need to build cross-platform mobile applications effectively.

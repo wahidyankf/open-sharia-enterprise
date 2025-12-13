@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 1
+weight: 602
 ---
 
 PostgreSQL, often referred to as Postgres, is a powerful and feature-rich open-source relational database management system (RDBMS). It was initially developed at the University of California, Berkeley, in the 1980s and has since evolved into one of the industry's most popular and trusted databases. PostgreSQL is widely acclaimed for its reliability, robustness, and extensive capabilities, making it a preferred choice for various applications.

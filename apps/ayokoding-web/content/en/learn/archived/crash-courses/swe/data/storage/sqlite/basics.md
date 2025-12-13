@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 This crash course will equip you with the core knowledge needed for daily SQLite work. By the end, you'll understand 85% of what you'll encounter regularly, with clear pointers to the remaining 15% for self-exploration.

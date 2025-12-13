@@ -2,7 +2,7 @@
 title: Ikhtisar
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 1
+weight: 502
 ---
 
 Prinsip Pareto, juga dikenal sebagai aturan 80/20, menyatakan bahwa sekitar 80% dari efek berasal dari 20% penyebab. Prinsip ini dapat membantu memprioritaskan konsep-konsep paling penting untuk dipahami dan dimanfaatkan untuk SQL. Berikut adalah daftar topik, disusun dalam urutan pembelajaran:

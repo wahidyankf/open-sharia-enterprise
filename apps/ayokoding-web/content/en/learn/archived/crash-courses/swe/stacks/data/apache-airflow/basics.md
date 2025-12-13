@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 1
+weight: 703
 ---
 
 Apache Airflow is an open-source platform for creating, scheduling, and monitoring workflows. This crash course will give you the 85% of knowledge you'll need daily while preparing you to explore the rest on your own.

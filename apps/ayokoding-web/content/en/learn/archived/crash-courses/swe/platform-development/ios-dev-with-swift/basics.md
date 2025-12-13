@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 2
+weight: 603
 ---
 
 Welcome to your iOS development crash course! This guide covers the essential 85% of what you'll encounter daily when building iOS apps with Swift, giving you enough foundation to explore the remaining 15% independently.

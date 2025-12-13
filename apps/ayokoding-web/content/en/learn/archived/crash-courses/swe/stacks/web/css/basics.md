@@ -2,7 +2,7 @@
 title: "Basics"
 date: 2025-03-25T07:17:00+07:00
 draft: false
-weight: 20
+weight: 703
 ---
 
 CSS (Cascading Style Sheets) is essential for transforming plain HTML into visually appealing websites. This crash course covers the 85% of CSS you'll use daily, providing a solid foundation that will enable you to explore the remaining concepts independently.

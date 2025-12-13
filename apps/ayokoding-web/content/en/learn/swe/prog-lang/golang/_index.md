@@ -3,7 +3,7 @@ title: Golang
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Complete learning path from installation to expert mastery - organized using the Diátaxis framework
-weight: 10
+weight: 401
 ---
 
 - [Overview](/en/learn/swe/prog-lang/golang/overview)

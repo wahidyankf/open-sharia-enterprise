@@ -2,7 +2,7 @@
 title: "Concepts"
 date: 2025-03-16T17:23:00+07:00
 draft: false
-weight: 1
+weight: 503
 ---
 
 This technical guide incorporates all critical system design components in an optimal learning progression. This structure ensures comprehensive coverage of the most important concepts in a sequence that builds knowledge effectively.

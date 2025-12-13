@@ -2,7 +2,7 @@
 title: "Responsibilities"
 date: 2025-03-23T09:17:00+07:00
 draft: false
-weight: 1
+weight: 503
 ---
 
 Backend engineers build and maintain the server-side components of applications that power functionality, process data, and enable the services users interact with. They work with databases, server programming languages, APIs, and infrastructure to create the systems that support applications. As backend engineers progress through career levels, their responsibilities evolve from implementing individual features to designing distributed systems and shaping technical strategy.
