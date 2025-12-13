@@ -4,6 +4,7 @@ description: Expert at creating Hugo content for ose-platform-web (PaperMod them
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
+updated: 2025-12-13
 ---
 
 # ose-platform-web-content-maker Agent
@@ -79,7 +80,7 @@ content/
 
 ## Hugo Content Convention Compliance
 
-**Reference**: [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md)
+**Reference**: [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) and [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md)
 
 ### Inherited Conventions (Apply to ose-platform-web)
 
@@ -99,10 +100,11 @@ content/
 
 2. **Linking**:
    - Internal links: Use **absolute paths** starting with `/` (e.g., `/updates/path`)
+   - **Language prefix handling**: ose-platform-web is English-only with `defaultContentLanguageInSubdir: true`, so all links use `/en/` prefix implicitly (Hugo handles this automatically for single-language sites)
    - Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
    - Do NOT use `.md` extension
    - Example: `{{< ref "/updates/getting-started" >}}` or `[Release Notes](/updates/release-notes)`
-   - **Why**: Hugo renders navigation in different contexts (sidebar, mobile, homepage); relative paths resolve differently
+   - **Why**: Hugo renders navigation in different contexts (sidebar, mobile, homepage); relative paths resolve differently. For single-language sites with `defaultContentLanguageInSubdir: true`, Hugo adds language prefix automatically
 
 3. **File Naming**:
    - Date-prefixed for updates: `YYYY-MM-DD-slug.md` (e.g., `2025-12-07-initial-release.md`)
@@ -805,7 +807,8 @@ npm run dev
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md) - Complete Hugo content standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
 - [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
 
 **Related Conventions**:

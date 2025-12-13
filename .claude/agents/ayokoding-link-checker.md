@@ -871,7 +871,8 @@ Before starting work, familiarize yourself with:
 
 **Domain-Specific Conventions:**
 
-- `docs/explanation/conventions/ex-co__hugo-content.md` - Hugo content standards (ayokoding-web and ose-platform-web)
+- `docs/explanation/conventions/ex-co__hugo-content-shared.md` - Shared Hugo content standards
+- `docs/explanation/conventions/ex-co__hugo-content-ayokoding.md` - ayokoding-web specific Hugo standards
 - `docs/explanation/conventions/ex-co__linking-convention.md` - Linking standards (adapted for Hugo)
 - `docs/explanation/conventions/ex-co__timestamp-format.md` - Timestamp format (UTC+7)
 

@@ -648,7 +648,9 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/explanation/conventions/ex-co__diagrams.md`
 - `docs/explanation/conventions/ex-co__diataxis-framework.md`
 - `docs/explanation/conventions/ex-co__emoji-usage.md`
-- `docs/explanation/conventions/ex-co__hugo-content.md`
+- `docs/explanation/conventions/ex-co__hugo-content-shared.md`
+- `docs/explanation/conventions/ex-co__hugo-content-ayokoding.md`
+- `docs/explanation/conventions/ex-co__hugo-content-ose-platform.md`
 - `docs/explanation/conventions/ex-co__journals-format.md`
 - `docs/explanation/conventions/ex-co__timestamp-format.md`
 - `docs/explanation/conventions/ex-co__tutorials.md`

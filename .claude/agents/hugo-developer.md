@@ -1212,7 +1212,9 @@ Watch out for these common mistakes that can cause problems:
 ### Convention Docs
 
 - [Hugo Development Convention](../../docs/explanation/development/ex-de__hugo-development.md) - Your primary reference
-- [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md) - Complementary (content-focused)
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
 - [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible colors
 - [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal standards
 
