@@ -4,6 +4,7 @@ description: Expert at validating Hugo content for ayokoding-web (Hextra theme) 
 tools: Read, Grep, Glob, Bash
 model: sonnet
 color: green
+updated: 2025-12-13
 ---
 
 # ayokoding-content-checker Agent
@@ -183,27 +184,29 @@ categories: ["learn"]
 
 **Internal Links**:
 
-- [ ] Use **absolute paths** starting with `/` (e.g., `/learn/path`)
+- [ ] Use **absolute paths** starting with `/` (e.g., `/en/learn/path`, `/id/belajar/path`)
+- [ ] **MUST include language prefix** (`/en/` or `/id/`) - REQUIRED for ayokoding-web's `defaultContentLanguageInSubdir: true` configuration
 - [ ] Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
 - [ ] Do NOT use `.md` extension
 - [ ] Links point to valid content files
 - [ ] No broken internal links
 
-**Why absolute paths are required**: Hugo renders navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on context, causing broken links.
+**Why absolute paths with language prefix are required**: Hugo renders navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on context. With `defaultContentLanguageInSubdir: true`, all internal links MUST include explicit language prefix (`/en/` or `/id/`).
 
 **Valid Internal Link Formats**:
 
 ```markdown
 <!-- Hugo ref shortcode (recommended) -->
 
-{{< ref "/belajar/nodejs/getting-started" >}}
-{{< ref "/learn/nodejs/getting-started" >}}
+{{< ref "/id/belajar/nodejs/getting-started" >}}
+{{< ref "/en/learn/nodejs/getting-started" >}}
 
-<!-- Absolute path without .md (required for navigation) -->
+<!-- Absolute path with language prefix, no .md extension (REQUIRED) -->
 
-[Chat with PDF](/learn/ai/chat-with-pdf)
-[Software Engineering](/learn/swe)
-[Tutorial](/learn/nodejs/basics)
+[Chat with PDF](/en/learn/ai/chat-with-pdf)
+[Software Engineering](/en/learn/swe)
+[Tutorial](/en/learn/nodejs/basics)
+[Belajar Node.js](/id/belajar/nodejs/basics)
 ```
 
 **Invalid Internal Link Formats**:
@@ -215,9 +218,14 @@ categories: ["learn"]
 [Software Engineering](../swe/)
 [Tutorial](../../nodejs/basics)
 
+<!-- WRONG! Missing language prefix (REQUIRED for ayokoding-web) -->
+
+[Tutorial](/learn/nodejs/basics)
+[Guide](/belajar/nodejs)
+
 <!-- WRONG! Has .md extension -->
 
-[Tutorial](/learn/nodejs/basics.md)
+[Tutorial](/en/learn/nodejs/basics.md)
 [Guide](./guide.md)
 ```
 
@@ -1323,7 +1331,8 @@ Categorize issues:
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md) - Complete Hugo content standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
 - [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
 
 **Related Conventions**:

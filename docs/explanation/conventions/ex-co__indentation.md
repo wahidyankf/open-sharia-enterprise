@@ -227,7 +227,9 @@ Before committing files in `docs/`:
 **Context-Specific**:
 
 - [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for journals (uses TAB indentation)
-- [Hugo Content Convention](./ex-co__hugo-content.md) - Adapted for Hugo (frontmatter spaces, content standard markdown)
+- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Adapted for Hugo (frontmatter spaces, content standard markdown)
+- [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - ayokoding-web indentation specifics
+- [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - ose-platform-web indentation specifics
 - [File Naming Convention](./ex-co__file-naming-convention.md) - File naming standards
 
 ## 🌐 External Resources

@@ -306,7 +306,7 @@ Final path: ../../explanation/conventions/ex-co__linking-convention.md
 - **Hugo links omit** the `.md` extension
 - **Why different**: Hugo renders the same navigation content in different page contexts (sidebar, mobile menu, homepage), so relative paths would resolve incorrectly
 
-See [Hugo Content Convention](./ex-co__hugo-content.md) for complete Hugo linking standards.
+See [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) for complete Hugo linking standards applicable to all sites, and [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) or [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) for site-specific linking patterns.
 
 ## Anchor Links (Same Page)
 

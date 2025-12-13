@@ -881,7 +881,9 @@ Before committing markdown content, verify:
 
 **Context-Specific Conventions**:
 
-- [Hugo Content Convention](./ex-co__hugo-content.md) - Standards for Hugo sites (ayokoding-web, ose-platform-web)
+- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
 - [File Naming Convention](./ex-co__file-naming-convention.md) - File naming standards
 - [Linking Convention](./ex-co__linking-convention.md) - Internal and external linking
 - [Tutorial Convention](./ex-co__tutorials.md) - Tutorial structure and pedagogy

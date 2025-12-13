@@ -4,6 +4,7 @@ description: Expert at validating Hugo content for ose-platform-web (PaperMod th
 tools: Read, Grep, Glob, Bash
 model: sonnet
 color: green
+updated: 2025-12-13
 ---
 
 # ose-platform-web-content-checker Agent
@@ -175,12 +176,13 @@ showtoc: false
 **Internal Links**:
 
 - [ ] Use **absolute paths** starting with `/` (e.g., `/updates/path`)
+- [ ] **Language prefix handling**: ose-platform-web is English-only with `defaultContentLanguageInSubdir: true` - Hugo adds `/en/` prefix automatically (no need to include manually in links)
 - [ ] Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
 - [ ] Do NOT use `.md` extension
 - [ ] Links point to valid content files
 - [ ] No broken internal links
 
-**Why absolute paths are required**: Hugo renders navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on context, causing broken links.
+**Why absolute paths are required**: Hugo renders navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on context. For single-language sites with `defaultContentLanguageInSubdir: true`, Hugo adds the language prefix automatically.
 
 **Valid Internal Link Formats**:
 
@@ -681,7 +683,8 @@ Always provide:
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md) - Complete Hugo content standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
 - [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
 
 **Related Conventions**:

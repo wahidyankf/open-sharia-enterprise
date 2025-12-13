@@ -59,7 +59,9 @@ This convention defines standards for:
 
 This convention builds upon and references:
 
-- [Hugo Content Convention](../conventions/ex-co__hugo-content.md) - Content-related standards (complementary)
+- [Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md) - Shared content standards (complementary)
+- [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web content standards
 - [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Accessible color palette for themes
 - [Diagram Convention](../conventions/ex-co__diagrams.md) - Mermaid diagrams in documentation
 - [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal markdown standards
@@ -2156,7 +2158,9 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 
 ### Related Conventions
 
-- [Hugo Content Convention](../conventions/ex-co__hugo-content.md) - Content standards
+- [Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md) - Shared content standards
+- [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web content standards
 - [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Accessible colors
 - [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal standards
 

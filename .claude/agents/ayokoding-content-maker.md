@@ -4,6 +4,7 @@ description: Expert at creating Hugo content for ayokoding-web (Hextra theme) fo
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
+updated: 2025-12-13
 ---
 
 # ayokoding-content-maker Agent
@@ -73,7 +74,7 @@ Use this agent when:
 
 ## Hugo Content Convention Compliance
 
-**Reference**: [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md)
+**Reference**: [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) and [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md)
 
 ### Inherited Conventions (Apply to ayokoding-web)
 
@@ -93,11 +94,12 @@ Use this agent when:
    - Markdown content: Standard markdown indentation
 
 2. **Linking**:
-   - Internal links: Use **absolute paths** starting with `/` (e.g., `/learn/path`)
+   - Internal links: Use **absolute paths** starting with `/` (e.g., `/en/learn/path`, `/id/belajar/path`)
+   - **MUST include language prefix** (`/en/` or `/id/`) - REQUIRED for ayokoding-web's `defaultContentLanguageInSubdir: true` configuration
    - Do NOT use relative paths (`./` or `../`) - they break in different rendering contexts
    - Do NOT use `.md` extension
-   - Example: `{{< ref "/belajar/nodejs/getting-started" >}}` or `[Tutorial](/learn/nodejs/basics)`
-   - **Why**: Hugo renders navigation in different contexts (sidebar, mobile, homepage); relative paths resolve differently
+   - Example: `{{< ref "/id/belajar/nodejs/getting-started" >}}` or `[Tutorial](/en/learn/nodejs/basics)`
+   - **Why**: Hugo renders navigation in different contexts (sidebar, mobile, homepage); relative paths resolve differently. With `defaultContentLanguageInSubdir: true`, all URLs must include explicit language prefix
 
 3. **File Naming**:
    - Simple slugs: `getting-started.md`, `advanced-patterns.md`
@@ -229,7 +231,7 @@ Use this agent when:
      ├── overview.md
      └── ai-personal-finance-advisor.md
      ```
-   - **Important**: This is OPTIONAL - you choose based on topic complexity and content volume. See [Hugo Content Convention - Optional Topic-Level Diátaxis](../../docs/explanation/conventions/ex-co__hugo-content.md#7-optional-topic-level-di%C3%A1taxis-structure-ayokoding-web-only) for complete details.
+   - **Important**: This is OPTIONAL - you choose based on topic complexity and content volume. See [Hugo Content Convention - ayokoding - Optional Topic-Level Diátaxis](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md#7-optional-topic-level-di%C3%A1taxis-structure-ayokoding-web-only) for complete details.
 
 ## Content Quality Principles Compliance
 
@@ -517,7 +519,8 @@ Before completing, verify:
 - [ ] Frontmatter uses YAML with 2-space indentation
 - [ ] Date format is `YYYY-MM-DDTHH:MM:SS+07:00`
 - [ ] Description is 150-160 characters (if present)
-- [ ] Internal links use **absolute paths** starting with `/` (NO relative paths like `./` or `../`)
+- [ ] Internal links use **absolute paths** starting with `/` with language prefix (NO relative paths like `./` or `../`)
+- [ ] Internal links **MUST include language prefix** (`/en/` or `/id/`) - REQUIRED for ayokoding-web
 - [ ] Internal links do NOT have `.md` extension
 - [ ] All images have descriptive alt text
 - [ ] Mermaid diagrams use accessible color palette
@@ -913,7 +916,8 @@ This code:
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention](../../docs/explanation/conventions/ex-co__hugo-content.md) - Complete Hugo content standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
 - [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
 
 **Related Conventions**:

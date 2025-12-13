@@ -56,14 +56,14 @@ Does this define HOW TO WRITE OR FORMAT DOCUMENTATION?
 
 ### Examples of Scope Boundaries
 
-| Topic                                             | Location                                       | Reasoning                            |
-| ------------------------------------------------- | ---------------------------------------------- | ------------------------------------ |
-| How to write Hugo content (frontmatter, markdown) | `conventions/ex-co__hugo-content.md`           | About **writing** content            |
-| How to develop Hugo themes (layouts, templates)   | `development/ex-de__hugo-development.md`       | About **building** infrastructure    |
-| How to format tutorials                           | `conventions/ex-co__tutorials.md`              | About **writing** tutorials          |
-| How to write acceptance criteria                  | `development/ex-de__acceptance-criteria.md`    | About **software quality** process   |
-| How to name files                                 | `conventions/ex-co__file-naming-convention.md` | About **documentation** organization |
-| How to write commit messages                      | `development/ex-de__commit-messages.md`        | About **git workflow**               |
+| Topic                                             | Location                                                                                                               | Reasoning                            |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| How to write Hugo content (frontmatter, markdown) | `conventions/ex-co__hugo-content-shared.md`, `ex-co__hugo-content-ayokoding.md`, `ex-co__hugo-content-ose-platform.md` | About **writing** content            |
+| How to develop Hugo themes (layouts, templates)   | `development/ex-de__hugo-development.md`                                                                               | About **building** infrastructure    |
+| How to format tutorials                           | `conventions/ex-co__tutorials.md`                                                                                      | About **writing** tutorials          |
+| How to write acceptance criteria                  | `development/ex-de__acceptance-criteria.md`                                                                            | About **software quality** process   |
+| How to name files                                 | `conventions/ex-co__file-naming-convention.md`                                                                         | About **documentation** organization |
+| How to write commit messages                      | `development/ex-de__commit-messages.md`                                                                                | About **git workflow**               |
 
 ## Convention Document Structure
 
@@ -363,7 +363,9 @@ Where:
 
 - `ex-co__file-naming-convention.md`
 - `ex-co__color-accessibility.md`
-- `ex-co__hugo-content.md`
+- `ex-co__hugo-content-shared.md` (shared Hugo conventions)
+- `ex-co__hugo-content-ayokoding.md` (ayokoding-web specific)
+- `ex-co__hugo-content-ose-platform.md` (ose-platform-web specific)
 - `ex-co__convention-writing.md` (this file)
 
 **Title vs Filename:**
