@@ -32,7 +32,7 @@ By working through this cookbook, you will be able to:
 
 Before using this cookbook, you should:
 
-- ✅ Complete the [Golang Beginner tutorial](beginner) - or have equivalent experience with Go fundamentals
+- ✅ Complete the [Golang Beginner tutorial](/en/learn/swe/prog-lang/golang/tutorials/beginner) - or have equivalent experience with Go fundamentals
 - ✅ Understand Go syntax, types, and control flow
 - ✅ Know how to work with slices, maps, and structs
 - ✅ Understand functions, methods, and interfaces

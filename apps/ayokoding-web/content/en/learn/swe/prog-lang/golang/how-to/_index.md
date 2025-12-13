@@ -6,4 +6,4 @@ weight: 2
 description: Practical recipes and patterns for solving real-world Go problems
 ---
 
-- [Cookbook](cookbook)
+- [Cookbook](/en/learn/swe/prog-lang/golang/how-to/cookbook)

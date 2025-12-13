@@ -21,7 +21,7 @@ Model Bazaar mempromosikan rasa komunitas dan mendorong inovasi melalui kolabora
 
 ## Bacaan Lebih Lanjut
 
-- [The Cathedral and the Bazaar (Esai Asli)](http://www.catb.org/~esr/writings/cathedral-bazaar/cathedral-bazaar/index.html)
+- [The Cathedral and the Bazaar (Esai Asli)](http://www.catb.org/esr/writings/cathedral-bazaar/cathedral-bazaar/)
 - [Understanding Open Source and Free Software Licensing](https://www.oreilly.com/library/view/understanding-open-source/0596005814/)
 - [The Success of Open Source](https://www.hup.harvard.edu/catalog.php?isbn=9780674012929)
 - [Producing Open Source Software: How to Run a Successful Free Software Project](https://producingoss.com/)

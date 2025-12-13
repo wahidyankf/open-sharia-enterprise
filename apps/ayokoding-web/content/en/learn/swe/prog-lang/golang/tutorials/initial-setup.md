@@ -271,4 +271,4 @@ chmod +x hello
 
 ---
 
-**Still stuck?** Visit [go.dev/doc](https://go.dev/doc) or the [Go community forums](https://golang.org/help).
+**Still stuck?** Visit [go.dev/doc](https://go.dev/doc) or the [Go community forums](https://go.dev/help).

@@ -6,4 +6,4 @@ weight: 2
 description: Practical recipes and patterns for solving real-world Java problems
 ---
 
-- [Cookbook](cookbook)
+- [Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook)
