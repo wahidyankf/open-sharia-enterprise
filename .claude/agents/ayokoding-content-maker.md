@@ -4,6 +4,7 @@ description: Expert at creating Hugo content for ayokoding-web (Hextra theme) fo
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
+created: 2025-12-15
 updated: 2025-12-15
 ---
 
@@ -83,6 +84,8 @@ Use this agent when:
 3. **Diagrams** - Prefer Mermaid, use vertical orientation, accessible colors
 4. **Emoji Usage** - Semantic emojis for section markers, status, categories
 5. **Timestamp Format** - ISO 8601 with UTC+7 (`YYYY-MM-DDTHH:MM:SS+07:00`)
+   - **Command to get current timestamp**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
 6. **Tutorial Convention** - Progressive scaffolding, hands-on elements, visual aids (applies to learning content)
 7. **Tutorial Naming** - Use standardized types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
 8. **No Time Estimates** - **CRITICAL**: Do NOT include time estimates ("X hours", "X minutes", "Duration:", etc.) in educational content. Focus on learning outcomes, not duration. Coverage percentages (0-5%, 60-85%) are allowed as they indicate depth, not time.

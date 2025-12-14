@@ -172,6 +172,13 @@ updated: YYYY-MM-DD
 
 **CRITICAL**: Frontmatter MUST use 2 spaces for indentation (NOT tabs). This is the ONLY exception to TAB indentation within `docs/` directory. All nested frontmatter fields (tags, lists, objects) must use spaces.
 
+**Date Fields**:
+
+- **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
+- Example output: `2025-12-14`
+- Use for both `created` and `updated` fields when creating new docs
+- See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
+
 ### Tags
 
 - Use `#tag-name` throughout documents
