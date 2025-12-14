@@ -4,7 +4,7 @@ description: Expert at validating Hugo content for ayokoding-web (Hextra theme) 
 tools: Read, Grep, Glob, Bash
 model: sonnet
 color: green
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # ayokoding-content-checker Agent
@@ -428,23 +428,30 @@ title: business # WRONG! No capitalization, too generic
 - [ ] Layer 2: Children (immediate subsections)
 - [ ] Layer 3: Grandchildren (subsections of children)
 
-### Overview/Ikhtisar File Requirement Validation
+### Overview/Ikhtisar File Requirement Validation (Learning Content Only)
 
 **CRITICAL VALIDATION**: EVERY content folder in learn/belajar MUST have an intro content file.
+
+**IMPORTANT**: This validation applies ONLY to learning content directories, NOT to blogging content (rants/celoteh).
 
 **Scope**: ALL folders in:
 
 - `apps/ayokoding-web/content/en/learn/` and ALL its subdirectories
 - `apps/ayokoding-web/content/id/belajar/` and ALL its subdirectories
 
-**Applies to ALL folder types**:
+**DOES NOT apply to**:
+
+- `apps/ayokoding-web/content/en/rants/` (blogging content - no overview required)
+- `apps/ayokoding-web/content/id/celoteh/` (blogging content - no ikhtisar required)
+
+**Applies to ALL learning folder types**:
 
 - Topic folders (e.g., `/en/learn/swe/prog-lang/golang/`)
 - Category folders (e.g., `/en/learn/swe/`, `/en/learn/ai/`)
 - Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/`, `/en/learn/swe/prog-lang/golang/how-to/`)
 - Any folder containing `_index.md` navigation file
 
-**Validation Checklist**:
+**Validation Checklist** (learning content only):
 
 - [ ] **English folders**: `overview.md` file exists (NOT `ikhtisar.md`)
 - [ ] **Indonesian folders**: `ikhtisar.md` file exists (NOT `overview.md`)
@@ -461,12 +468,16 @@ title: business # WRONG! No capitalization, too generic
 
 **Validation Logic**:
 
-1. Scan all folders in `content/en/learn/` and `content/id/belajar/`
+1. Scan all folders in `content/en/learn/` and `content/id/belajar/` (SKIP rants/celoteh directories)
 2. For each folder containing `_index.md`:
    - Verify intro file exists (`overview.md` for English, `ikhtisar.md` for Indonesian)
    - Check file is not empty
    - Validate frontmatter and title format
 3. Report missing intro files as **CRITICAL ERRORS**
+
+**Blogging Content Exemption**:
+
+Folders in `/en/rants/` and `/id/celoteh/` do NOT require overview/ikhtisar files. They use year/month organization and index files may include introductory text directly.
 
 ### Index File Content Separation Validation
 
@@ -477,9 +488,14 @@ title: business # WRONG! No capitalization, too generic
 - `apps/ayokoding-web/content/en/learn/` and its subdirectories
 - `apps/ayokoding-web/content/id/belajar/` and its subdirectories
 
-**Does NOT apply to**: Root `_index.md`, rants/celoteh directories, or ose-platform-web
+**Does NOT apply to**:
 
-**Validation Checklist**:
+- Root `_index.md`
+- `apps/ayokoding-web/content/en/rants/` directories (blogging content - index MAY include intro text)
+- `apps/ayokoding-web/content/id/celoteh/` directories (blogging content - index MAY include intro text)
+- ose-platform-web
+
+**Validation Checklist** (learning content only):
 
 - [ ] `_index.md` contains ONLY navigation lists (3 layers deep)
 - [ ] NO introduction paragraphs in `_index.md`
@@ -487,6 +503,10 @@ title: business # WRONG! No capitalization, too generic
 - [ ] NO explanatory text beyond navigation links
 - [ ] **Overview/Ikhtisar Link Position**: If `overview.md` or `ikhtisar.md` exists, `_index.md` MUST include link to it as FIRST item in navigation list
 - [ ] Intro content file has proper frontmatter and content structure
+
+**Blogging Content Difference**:
+
+For `/en/rants/` and `/id/celoteh/` directories, `_index.md` files MAY include introductory text or context. Content separation is NOT enforced for blogging content.
 
 ### File Naming Validation for Intro Content
 
@@ -739,6 +759,129 @@ content/en/learn/swe/prog-lang/golang/ikhtisar.md # Should be overview.md
 - [Software Engineering](/learn/swe)
 - [AI Engineering](/learn/ai)
 ```
+
+### Cross-Reference Validation (Blogging Content)
+
+**Scope**: ONLY applies to bilingual blogging content in `/en/rants/` and `/id/celoteh/`.
+
+**CRITICAL REQUIREMENT**: When a blog article exists in BOTH languages, cross-reference links MUST be present at the top of each article.
+
+**Validation Checklist**:
+
+- [ ] **Cross-reference placement**: Appears immediately after frontmatter, before main content (first element readers see)
+- [ ] **English articles**: Use `**Similar article:**` format with bold formatting
+- [ ] **Indonesian articles**: Use blockquote (`>`) with machine translation disclaimer
+- [ ] **Link format**: Absolute paths with language prefix (`/en/rants/...` or `/id/celoteh/...`)
+- [ ] **No .md extension**: Links do NOT include `.md` (Hugo convention)
+- [ ] **Bidirectional**: Both EN → ID and ID → EN links exist when content is bilingual
+
+**Validation Logic**:
+
+1. Detect blogging content files (path contains `/rants/` or `/celoteh/`)
+2. Check for corresponding file in other language (same YYYY/MM/slug pattern)
+3. If bilingual pair exists, verify cross-reference in BOTH files
+4. Validate cross-reference format (English vs Indonesian patterns)
+5. Verify link paths are absolute with language prefix
+6. Check links do NOT have `.md` extension
+
+**Valid Cross-Reference Examples**:
+
+**English Article** (`/en/rants/2023/07/why-neovim.md`):
+
+```markdown
+---
+frontmatter...
+---
+
+**Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
+
+After 5 years of using Vim, I finally made the switch to Neovim...
+```
+
+**Indonesian Article** (`/id/celoteh/2023/07/kenapa-neovim.md`):
+
+```markdown
+---
+frontmatter...
+---
+
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Why I Switched to Neovim](/en/rants/2023/07/why-neovim)_
+
+Setelah 5 tahun menggunakan Vim, saya akhirnya pindah ke Neovim...
+```
+
+**Invalid Cross-Reference Examples**:
+
+❌ **Missing cross-reference** (bilingual content without link):
+
+```markdown
+---
+frontmatter...
+---
+
+After 5 years of using Vim...
+
+<!-- WRONG! Missing cross-reference to Indonesian version -->
+```
+
+❌ **Wrong format for English** (missing bold or different text):
+
+```markdown
+Similar article: [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
+
+<!-- WRONG! Should be **Similar article:** with bold -->
+```
+
+❌ **Wrong format for Indonesian** (missing disclaimer):
+
+```markdown
+**Artikel serupa:** [Why I Switched to Neovim](/en/rants/2023/07/why-neovim)
+
+<!-- WRONG! Should use blockquote disclaimer about machine translation -->
+```
+
+❌ **Relative path** (breaks in different contexts):
+
+```markdown
+**Similar article:** [Kenapa Saya Pindah ke Neovim](../../celoteh/2023/07/kenapa-neovim)
+
+<!-- WRONG! Should use absolute path with language prefix -->
+```
+
+❌ **Missing language prefix**:
+
+```markdown
+**Similar article:** [Kenapa Saya Pindah ke Neovim](/celoteh/2023/07/kenapa-neovim)
+
+<!-- WRONG! Missing /id/ language prefix -->
+```
+
+❌ **Includes .md extension**:
+
+```markdown
+**Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim.md)
+
+<!-- WRONG! Should NOT have .md extension (Hugo convention) -->
+```
+
+**Error Reporting**:
+
+When cross-reference violations detected:
+
+```markdown
+❌ **Cross-Reference Missing** (Line 8-10)
+
+This article has a corresponding Indonesian translation at:
+`apps/ayokoding-web/content/id/celoteh/2023/07/kenapa-neovim.md`
+
+But cross-reference link is missing.
+
+**Required at top of article** (after frontmatter):
+
+**Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
+```
+
+**Important**: Cross-reference validation applies ONLY to blogging content (`/rants/` and `/celoteh/`), NOT to learning content (`/learn/` and `/belajar/`).
 
 ### Archetype Compliance Validation
 

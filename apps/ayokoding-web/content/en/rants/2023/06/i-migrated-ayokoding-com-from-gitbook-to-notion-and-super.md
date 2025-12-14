@@ -1,11 +1,11 @@
 ---
 title: "I migrated Ayokoding.com from Gitbook to Notion and Super"
-weight: 203
-date: 2025-03-16T07:20:00+07:00
+weight: 205
+date: 2023-06-01T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [Migrasi ayokoding.com dari Gitbook ke Notion dan Super](/id/celoteh/2023/migrasi-ayokoding-com-dari-gitbook-ke-notion-dan-super)
+**Similar article:** [Migrasi ayokoding.com dari Gitbook ke Notion dan Super](/id/celoteh/2023/06/migrasi-ayokoding-com-dari-gitbook-ke-notion-dan-super)
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

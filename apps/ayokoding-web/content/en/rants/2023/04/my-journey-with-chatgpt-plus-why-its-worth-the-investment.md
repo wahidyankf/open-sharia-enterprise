@@ -1,11 +1,11 @@
 ---
 title: "My Journey with ChatGPT Plus: Why It's Worth the Investment"
-weight: 203
-date: 2025-03-16T07:20:00+07:00
+weight: 202
+date: 2023-04-30T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [Perjalanan Gw dengan ChatGPT Plus: Kenapa Layak Diinvestasikan](/id/celoteh/2023/perjalanan-gw-dengan-chatgpt-plus-kenapa-layak-diinvestasikan)
+**Similar article:** [Perjalanan Gw dengan ChatGPT Plus: Kenapa Layak Diinvestasikan](/id/celoteh/2023/04/perjalanan-gw-dengan-chatgpt-plus-kenapa-layak-diinvestasikan)
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

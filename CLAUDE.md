@@ -252,7 +252,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 Hugo content follows specialized conventions organized into three documents:
 
 - **Shared Conventions**: [Hugo Content Convention - Shared](./docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common conventions applying to all Hugo sites (inherited standards, adapted conventions, Hugo basics)
-- **ayokoding-web**: [Hugo Content Convention - ayokoding](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual educational platform, navigation rules, weight ordering, overview/ikhtisar requirements
+- **ayokoding-web**: [Hugo Content Convention - ayokoding](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual educational platform, navigation rules, weight ordering, overview/ikhtisar requirements, blogging structure (year/month organization for rants/celoteh)
 - **ose-platform-web**: [Hugo Content Convention - OSE Platform](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, simple English-only landing page, updates and about patterns
 
 Site-specific agents and developers should reference both the shared document and their site-specific document.

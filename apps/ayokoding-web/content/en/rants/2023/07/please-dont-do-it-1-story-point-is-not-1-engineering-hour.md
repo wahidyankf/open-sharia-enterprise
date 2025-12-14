@@ -1,11 +1,11 @@
 ---
 title: "Please don't do it! 1 Story Point is not 1 Engineering Hour!"
-weight: 203
-date: 2025-03-16T07:20:00+07:00
+weight: 204
+date: 2023-07-14T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [Tolong jangan lakukan itu! 1 Story Point bukanlah 1 Engineering Hour!](/id/celoteh/2023/tolong-jangan-lakukan-itu-1-story-point-bukanlah-1-engineering-hour)
+**Similar article:** [Tolong jangan lakukan itu! 1 Story Point bukanlah 1 Engineering Hour!](/id/celoteh/2023/07/tolong-jangan-lakukan-itu-1-story-point-bukanlah-1-engineering-hour)
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 
