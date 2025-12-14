@@ -1,12 +1,11 @@
 ---
 name: readme-checker
 description: Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation. Use when reviewing README changes or auditing README quality.
-tools:
-  - Read
-  - Glob
-  - Grep
+tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
+created: 2025-12-01
+updated: 2025-12-15
 ---
 
 # README Checker Agent

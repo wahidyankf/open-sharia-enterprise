@@ -1,9 +1,10 @@
 ---
 name: ayokoding-content-checker
 description: Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles
-tools: Read, Grep, Glob, Bash
+tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
+created: 2025-12-01
 updated: 2025-12-15
 ---
 

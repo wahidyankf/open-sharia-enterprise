@@ -1,11 +1,11 @@
 ---
 name: ayokoding-link-checker
 description: Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths with language prefix, no .md extension). Detects common linking mistakes and maintains external link cache. Use when checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web.
-tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
+tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: sonnet
 color: yellow
 created: 2025-12-09
-updated: 2025-12-09
+updated: 2025-12-15
 ---
 
 # Ayokoding Link Checker Agent
@@ -273,6 +273,8 @@ Even for cached links that weren't rechecked:
 
 - Write `apps/ayokoding-web/ayokoding-links-status.yaml`
 - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
+  - Use command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
+  - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
 - Include full usedIn data for all links (needed for maintenance)
 - Sort links by URL for consistent git diffs
 - This step is REQUIRED on every run
@@ -461,11 +463,13 @@ Follow this systematic approach:
 1. **Save updated cache (REQUIRED on every run)**
    - **REQUIRED**: Write to `apps/ayokoding-web/ayokoding-links-status.yaml` (use this exact path, no alternatives)
    - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
+     - **Command to get current UTC+7 time**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
+     - Example output: `2025-12-14T16:23:00+07:00`
+     - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
    - Include schema version
    - Include usedIn data (file paths only) for all links (needed for maintenance)
    - Sort links by URL for consistent git diffs
    - Use 2-space YAML indentation
-   - **All timestamps must use UTC+7 (Indonesian time)** format with +07:00 offset
    - **This update is MANDATORY on every run**, even if no links were checked
 
 2. **Cache should contain:**

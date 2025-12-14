@@ -1,16 +1,11 @@
 ---
 name: docs-tutorial-checker
 description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-checker (links).
-tools:
-  - Read
-  - Glob
-  - Grep
-  - WebFetch
-  - WebSearch
+tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-03
+updated: 2025-12-15
 ---
 
 # Tutorial Quality Validator
