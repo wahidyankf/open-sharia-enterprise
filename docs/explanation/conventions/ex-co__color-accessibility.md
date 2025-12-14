@@ -257,7 +257,7 @@ graph TD
 | ----- | ------ | -------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content         | docs-maker, docs-tutorial-maker, journal-maker, agent-maker, plan-maker                  |
 | 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency    | docs-checker, docs-link-checker, docs-tutorial-checker, plan-checker, repo-rules-checker |
-| 🟨    | Yellow | #F1C40F  | **Updaters/Modifiers** - Agents that update or modify existing content | docs-file-manager, repo-rules-updater                                                    |
+| 🟨    | Yellow | #F1C40F  | **Updaters/Modifiers** - Agents that update or modify existing content | docs-file-manager, repo-rules-maker                                                      |
 | 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans    | plan-executor, plan-execution-checker                                                    |
 
 #### Implementation in `.claude/agents/README.md`

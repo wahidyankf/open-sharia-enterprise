@@ -66,7 +66,7 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 
 1. **Writer** - Creates new files/content from scratch (e.g., docs-maker, plan-maker)
 2. **Checker** - Validates/checks without modifying (e.g., repo-rules-checker, plan-checker)
-3. **Updater** - Modifies/updates existing content only (e.g., repo-rules-updater, docs-file-manager)
+3. **Updater** - Modifies/updates existing content only (e.g., repo-rules-maker, docs-file-manager)
 4. **Implementor** - Executes plans/orchestrates tasks (e.g., plan-executor)
 
 **Validation (Auto-Assignment Based on Role)**:
@@ -299,7 +299,7 @@ Suggest condensation strategies:
 
 - Simple tier: ayokoding-deployer, ose-platform-web-deployer
 - Standard tier: docs-maker, agent-maker, journal-maker, content-makers
-- Complex tier: plan-maker, repo-rules-updater, docs-file-manager, hugo-developer
+- Complex tier: plan-maker, repo-rules-maker, docs-file-manager, hugo-developer
 
 ### Step 5: Validate with repo-rules-checker
 
@@ -461,5 +461,5 @@ An agent is successfully created when:
 
 - `docs-maker.md` - Example of blue (maker) agent
 - `repo-rules-checker.md` - Example of green (checker) agent, also handles validation
-- `repo-rules-updater.md` - Example of yellow (updater) agent
+- `repo-rules-maker.md` - Example of yellow (updater) agent
 - `plan-executor.md` - Example of purple (implementor) agent
