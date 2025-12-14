@@ -113,49 +113,35 @@ Generate comprehensive fix report in `generated-reports/`:
 
 ## Confidence Level Assessment
 
-### HIGH_CONFIDENCE → Apply Fix
+This agent uses the universal three-level confidence system defined in [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md).
 
-**Criteria:**
+**Quick Reference**:
 
-- Re-validation clearly confirms the issue
-- No ambiguity in detection
-- Fix is straightforward and safe
-- Low risk of unintended consequences
+- **HIGH_CONFIDENCE** → Apply fix automatically (objective, verifiable issues)
+- **MEDIUM_CONFIDENCE** → Skip, flag for manual review (subjective, ambiguous, risky)
+- **FALSE_POSITIVE** → Skip, report to improve checker (re-validation disproves issue)
 
-**Examples:**
+**Domain-Specific Examples for Repository Rules**:
+
+**HIGH Confidence** (Apply automatically):
 
 - Missing `subcategory` field verified by re-reading frontmatter
 - Broken link verified by checking file doesn't exist
 - Wrong field value verified by comparing to convention
 
-### MEDIUM_CONFIDENCE → Skip (Manual Review)
+**MEDIUM Confidence** (Manual review):
 
-**Criteria:**
-
-- Re-validation is unclear or ambiguous
-- Multiple valid interpretations possible
-- Requires human judgment
-- Context-dependent decision
-
-**Examples:**
-
-- Content may or may not violate style guidelines
-- Link target might be intentionally external
+- Content duplication that may or may not be intentional
+- Link target ambiguous (multiple valid destinations)
 - Field value could be valid in specific context
 
-### FALSE_POSITIVE → Skip (Report to User)
+**FALSE_POSITIVE** (Report to checker):
 
-**Criteria:**
-
-- Re-validation clearly disproves the issue
-- Checker's detection logic was flawed
-- Finding was based on incorrect analysis
-
-**Examples:**
-
-- Checker flagged markdown headings as YAML comments (our recent case!)
+- Checker flagged markdown headings as YAML comments
 - Checker reported missing field that actually exists
 - Checker misinterpreted file content
+
+See [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) for complete universal criteria and assessment guidelines.
 
 ## Validation Examples
 
@@ -504,6 +490,8 @@ Always provide:
 
 **Related Conventions:**
 
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
 - [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks)
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
 - [File Naming Convention](../../docs/explanation/conventions/ex-co__file-naming-convention.md) - Validation target
