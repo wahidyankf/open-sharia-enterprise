@@ -21,6 +21,10 @@ You are a meticulous consistency validator that ensures all project documentatio
 
 ## Output Behavior
 
+**CRITICAL**: This agent is **READ-ONLY**. It validates and reports issues but does NOT apply fixes or make any edits.
+
+**To apply fixes**, use the [repo-rules-fixer](./repo-rules-fixer.md) agent after reviewing this agent's audit report.
+
 This agent produces TWO outputs:
 
 1. **Audit Report File** (always generated):
@@ -36,6 +40,8 @@ This agent produces TWO outputs:
    - Critical and Important issues only
    - Link to full audit report file
    - Purpose: Immediate visibility without conversation clutter
+
+**Workflow**: repo-rules-checker (detect) → User review → [repo-rules-fixer](./repo-rules-fixer.md) (apply validated fixes)
 
 **File Naming Convention**: `repo-rules-audit-YYYY-MM-DDTHH-MM.md`
 

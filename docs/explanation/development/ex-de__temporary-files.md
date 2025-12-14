@@ -9,7 +9,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Temporary Files Convention
@@ -53,6 +53,7 @@ generated-reports/2025-12-01__repository-audit.md
 generated-reports/2025-12-01__docs-validation.md
 generated-reports/2025-12-01__plan-execution-validation.md
 generated-reports/repo-rules-audit-2025-12-14T15-30.md
+generated-reports/repo-rules-audit-2025-12-14T15-30-fix.md
 ```
 
 #### Repository Audit Reports
@@ -73,6 +74,32 @@ generated-reports/repo-rules-audit-2025-12-14T15-30.md
 **Timestamp**: Audit start time in UTC+7 (ISO 8601 format: `YYYY-MM-DDTHH-MM`)
 
 **Retention**: Keep for historical tracking and comparison. Review/archive older reports periodically.
+
+#### Repository Fix Reports
+
+**Agent**: repo-rules-fixer
+**Pattern**: `repo-rules-audit-YYYY-MM-DDTHH-MM-fix.md`
+**Example**: `repo-rules-audit-2025-12-14T15-30-fix.md`
+
+**Content**: Fix application report with validation results covering:
+
+- Validation summary (total findings, fixes applied, false positives, manual review items)
+- Detailed list of fixes applied with confidence levels
+- False positives detected with recommendations for checker improvement
+- Items needing manual review with reasoning
+- Files modified during fix application
+- Recommendations for improving repo-rules-checker accuracy
+
+**Naming**: Same base name as source audit report with `-fix` suffix appended
+
+**Example Pairing**:
+
+- Audit report: `repo-rules-audit-2025-12-14T15-30.md`
+- Fix report: `repo-rules-audit-2025-12-14T15-30-fix.md`
+
+**Workflow**: Generated after repo-rules-fixer processes a repo-rules-checker audit report
+
+**Retention**: Keep alongside audit reports for complete audit trail. Provides transparency on what was automatically fixed vs. skipped.
 
 ### `local-temp/`
 
