@@ -332,9 +332,9 @@ Applies validated fixes from repo-rules-checker audit reports. Re-validates find
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
 - **Output:** Generates `repo-rules-audit-{timestamp}-fix.md` report in `generated-reports/`
 
-### 🟨 `repo-rules-updater.md`
+### 🟨 `repo-rules-maker.md`
 
-Expert at propagating rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits.
+Expert at making rule and convention changes effective across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits.
 
 - **Primary Use:** Adding/modifying rules, conventions, or standards affecting multiple files
 - **Specialization:** Systematic propagation, cascade updates, consistency maintenance, CLAUDE.md size management (40k hard limit, 30k target)
@@ -477,7 +477,7 @@ The agents work together in complementary workflows:
 
 ```
 1. Make Changes
-   └─> Use repo-rules-updater to propagate across files
+   └─> Use repo-rules-maker to make changes effective across files
         └─> Ensures consistency in CLAUDE.md, conventions, agents, indices
 
 2. Validate Changes
@@ -544,14 +544,14 @@ The agents work together in complementary workflows:
 - **After plan-executor completes:** Use `plan-execution-checker` for independent final validation
 - **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
-- **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker` → `repo-rules-fixer` (if issues found)
-- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-rules-updater` to check size when adding rules
+- **After adding new conventions:** Use `repo-rules-maker` → `repo-rules-checker` → `repo-rules-fixer` (if issues found)
+- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-rules-maker` to check size when adding rules
 - **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for complete size guidelines
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
 - **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
 - **After creating tutorials:** Use `docs-tutorial-checker` to validate pedagogical quality and completeness
-- **When modifying CLAUDE.md:** Use `repo-rules-updater` to cascade changes
+- **When modifying CLAUDE.md:** Use `repo-rules-maker` to cascade changes
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
 - **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
 - **After using docs-file-manager:** Always run `docs-link-checker` to verify all links are valid
@@ -577,7 +577,7 @@ When creating new agents:
 1. Use `agent-maker` to automate creation with proper structure, size verification, and README updates
 2. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for all standards
 3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
-4. Use `repo-rules-updater` to propagate references to CLAUDE.md and other files
+4. Use `repo-rules-maker` to propagate references to CLAUDE.md and other files
 5. Use `repo-rules-checker` to validate the new agent follows all conventions
 6. Use `repo-rules-fixer` to apply any validated fixes from the audit report
 7. Update CLAUDE.md if the agent should be mentioned in project guidance

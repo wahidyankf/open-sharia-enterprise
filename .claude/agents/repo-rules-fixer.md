@@ -45,7 +45,7 @@ Use this agent when:
 **Do NOT use this agent for:**
 
 - ❌ Initial validation (use repo-rules-checker for detection)
-- ❌ Propagating new rules (use repo-rules-updater for rule changes)
+- ❌ Propagating new rules (use repo-rules-maker for rule changes)
 - ❌ Manual fixes (just use Edit tool directly)
 - ❌ When no audit report exists
 
@@ -557,7 +557,7 @@ Always provide:
 **Related Agents:**
 
 - [repo-rules-checker.md](./repo-rules-checker.md) - Generates audit reports that this agent processes
-- [repo-rules-updater.md](./repo-rules-updater.md) - Propagates rule changes (different purpose)
+- [repo-rules-maker.md](./repo-rules-maker.md) - Propagates rule changes (different purpose)
 
 **Related Conventions:**
 

@@ -37,7 +37,7 @@ Use this agent when:
 
 - ❌ Creating permanent documentation (use `docs-maker` instead)
 - ❌ Daily notes or scratch work (use `journals/` directly)
-- ❌ Modifying existing conventions (use `repo-rules-updater`)
+- ❌ Modifying existing conventions (use `repo-rules-maker`)
 - ❌ Auditing repository consistency (use `repo-rules-checker`)
 
 ## Plans Folder Structure

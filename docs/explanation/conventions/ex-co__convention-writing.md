@@ -386,7 +386,7 @@ Where:
 
 - Update `updated` field in frontmatter when making changes
 - Significant changes should update CLAUDE.md if they affect agent behavior
-- Use `repo-rules-updater` to propagate changes across related files
+- Use `repo-rules-maker` to propagate changes across related files
 
 ### Deprecation
 
@@ -507,7 +507,7 @@ Conventions are most effective when enforced or assisted by agents:
 ### Agents That Create Conventions
 
 - **docs-maker** - Creates convention documents following this meta-convention
-- **repo-rules-updater** - Propagates convention changes across repository
+- **repo-rules-maker** - Propagates convention changes across repository
 
 ### Agents That Use Conventions
 
@@ -549,7 +549,7 @@ When creating a convention:
 **Agents:**
 
 - `docs-maker` - Creates convention documents following this structure
-- `repo-rules-updater` - Propagates convention changes
+- `repo-rules-maker` - Propagates convention changes
 - `repo-rules-checker` - Validates convention compliance
 
 ---

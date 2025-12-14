@@ -748,7 +748,7 @@ stateDiagram-v2
 graph TD
     A[Claude Code - Main Agent] --> B[docs-maker.md]
     A --> C[repo-rules-checker.md]
-    A --> D[repo-rules-updater.md]
+    A --> D[repo-rules-maker.md]
     A --> E[plan-maker.md]
 
     B --> F[Documentation]
@@ -766,7 +766,7 @@ graph TD
 Claude Code (Main Agent)
 ├── docs-maker.md (Documentation)
 ├── repo-rules-checker.md (Validation)
-├── repo-rules-updater.md (Propagation)
+├── repo-rules-maker.md (Propagation)
 └── plan-maker.md (Planning)
 ```
 

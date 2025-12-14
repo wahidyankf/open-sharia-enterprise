@@ -43,7 +43,7 @@ open-sharia-enterprise/
 │       ├── plan-maker.md        # Project planning agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
 │       ├── repo-rules-fixer.md    # Validated fix applier agent
-│       └── repo-rules-updater.md  # Rule propagation agent
+│       └── repo-rules-maker.md    # Rule implementation agent
 ├── apps/                      # Deployable applications (Nx monorepo)
 │   ├── README.md             # Apps folder documentation
 │   └── [app-name]/           # Individual applications
@@ -305,7 +305,7 @@ These directories are gitignored and provide organized storage for temporary out
 
 **Operations**: docs-file-manager, ayokoding-deployer, ose-platform-web-deployer
 
-**Meta**: agent-maker, repo-rules-updater
+**Meta**: agent-maker, repo-rules-maker
 
 See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed descriptions and workflows.
 
@@ -347,7 +347,7 @@ When adding new conventions, rules, or standards:
 - When CLAUDE.md exceeds 35k characters, trigger review and condensation
 - Use `repo-rules-checker` periodically to detect duplication between CLAUDE.md and convention docs
 - Use `repo-rules-fixer` to apply validated fixes from audit reports (after user review)
-- `repo-rules-updater` should check CLAUDE.md size when adding rules (warn if approaching limits)
+- `repo-rules-maker` should check CLAUDE.md size when adding rules (warn if approaching limits)
 
 **Example of Good vs Bad:**
 

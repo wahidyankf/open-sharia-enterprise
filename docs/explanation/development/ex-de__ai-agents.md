@@ -288,12 +288,12 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                 | Agents                                                       |
-| ------------- | ---------------- | ------------------------------------- | ---------------------------- | ------------------------------------------------------------ |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool             | docs-writer<br>plan-writer<br>journal-writer                 |
-| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only (no Write or Edit) | repo-rules-checker<br>plan-checker                           |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-updater<br>docs-file-manager<br>docs-link-checker |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-executor                                                |
+| Color         | Role             | Purpose                               | Tool Pattern                 | Agents                                                     |
+| ------------- | ---------------- | ------------------------------------- | ---------------------------- | ---------------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool             | docs-writer<br>plan-writer<br>journal-writer               |
+| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only (no Write or Edit) | repo-rules-checker<br>plan-checker                         |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-maker<br>docs-file-manager<br>docs-link-checker |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-executor                                              |
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
@@ -329,7 +329,7 @@ Start: What is the agent's primary capability?
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: repo-rules-updater, docs-file-manager, docs-link-checker
+    │       - Examples: repo-rules-maker, docs-file-manager, docs-link-checker
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
@@ -476,7 +476,7 @@ color: green
 
 ```yaml
 ---
-name: repo-rules-updater
+name: repo-rules-maker
 description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet
@@ -670,7 +670,7 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - plan-maker (comprehensive project planning)
 - plan-executor (multi-phase implementation)
 - plan-checker (pre-implementation validation)
-- repo-rules-updater (cascading updates across files)
+- repo-rules-maker (cascading updates across files)
 - repo-rules-checker (comprehensive consistency validation)
 - docs-file-manager (prefix calculation, link updates, git operations)
 - hugo-developer (theme development, asset pipeline, configuration)
@@ -692,7 +692,7 @@ Quick categorization for existing agents:
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Tier 1: Simple**   | ayokoding-deployer, ose-platform-web-deployer                                                                                                                                                                                                        |
 | **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, journal-maker, readme-maker, readme-checker, agent-maker, ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-updater, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                                                        |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                                                          |
 
 ### When to Condense or Split Agents
 
@@ -740,7 +740,7 @@ Quick categorization for existing agents:
 3. Warn if approaching warning threshold
 4. Suggest condensation if near limit
 
-**For repo-rules-updater**:
+**For repo-rules-maker**:
 
 1. When updating agents, check file size before/after
 2. If agent crosses warning threshold, notify user
@@ -1052,7 +1052,7 @@ Your primary job is to [clear, specific purpose statement].
 
 **Agent Responsibilities:**
 
-1. **repo-rules-updater:**
+1. **repo-rules-maker:**
    - MUST check CLAUDE.md size when adding rules
    - Warn user if file exceeds 35,000 characters
    - Suggest condensation strategies (move details to convention docs)

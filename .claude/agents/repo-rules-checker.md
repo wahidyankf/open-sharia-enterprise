@@ -741,29 +741,29 @@ When reporting condensation validation results, include:
 3. Verify all agents link to TBD convention consistently
 ```
 
-### Integration with repo-rules-updater
+### Integration with repo-rules-maker
 
-When `repo-rules-updater` condenses files:
+When `repo-rules-maker` condenses files:
 
 1. **Before condensation**: Note what content will be moved
 2. **After condensation**: Verify with `repo-rules-checker`
 3. **Validation**: Run full condensation validation
-4. **Fix issues**: Use `repo-rules-updater` to correct problems
+4. **Fix issues**: Use `repo-rules-maker` to correct problems
 
 **Workflow:**
 
 ```
 User requests rule change
     ↓
-repo-rules-updater condenses verbose content
+repo-rules-maker condenses verbose content
     ↓
-repo-rules-updater creates/updates convention docs
+repo-rules-maker creates/updates convention docs
     ↓
 User reviews changes
     ↓
 repo-rules-checker validates condensation
     ↓
-If issues found → repo-rules-updater fixes
+If issues found → repo-rules-maker fixes
     ↓
 If no issues → Approve changes
 ```
@@ -826,7 +826,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/plan-executor.md`
 - `.claude/agents/plan-maker.md`
 - `.claude/agents/repo-rules-checker.md` (this file)
-- `.claude/agents/repo-rules-updater.md`
+- `.claude/agents/repo-rules-maker.md`
 
 ### Convention Documents
 
@@ -925,4 +925,4 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Related Agents:**
 
 - `docs-maker.md` - Creates and edits documentation (this agent validates its output)
-- `repo-rules-updater.md` - Propagates rule changes (this agent validates the results)
+- `repo-rules-maker.md` - Makes rule changes effective (this agent validates the results)
