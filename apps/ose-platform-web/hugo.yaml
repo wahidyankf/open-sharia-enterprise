@@ -63,11 +63,22 @@ params:
   homeInfoParams:
     Title: "Open Sharia Enterprise Platform"
     Content: >
-      **Open-source platform for Sharia-compliant enterprise solutions**
+      **Built in the Open · Sharia-Compliant · Enterprise-Ready**
 
 
-      Research-first approach starting with Indonesian market, expanding to ERP, fintech, and global operations.
-      Built-in compliance architecture with radical transparency. Currently in pre-alpha development.
+      Open-source platform for Sharia-compliant enterprise solutions. Research-driven approach starting with Indonesian market (OJK, DSN-MUI, PBI, PDP), expanding to ERP, fintech, and global operations.
+
+
+      **Why Open Source?**
+
+      - **Transparency & Trust** - Full visibility into compliance implementation and security practices
+
+      - **Accessibility** - Free for organizations of all sizes to use, customize, and deploy
+
+      - **Community-Driven** - Built with input from developers, Islamic finance experts, and enterprise users
+
+
+      Currently in pre-alpha development. [View on GitHub](https://github.com/wahidyankf/open-sharia-enterprise) · [Learn More](/about/)
 
   # Social icons
   socialIcons:
