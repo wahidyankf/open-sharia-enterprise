@@ -1,14 +1,7 @@
 ---
 name: docs-tutorial-maker
 description: Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements. Creates engaging tutorials following Diátaxis framework and Tutorial Naming Convention.
-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebFetch
-  - WebSearch
+tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 model: sonnet
 color: blue
 created: 2025-12-01

@@ -4,7 +4,8 @@ description: Expert at creating Hugo content for ose-platform-web (PaperMod them
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
-updated: 2025-12-13
+created: 2025-12-15
+updated: 2025-12-15
 ---
 
 # ose-platform-web-content-maker Agent
@@ -89,6 +90,8 @@ content/
 3. **Diagrams** - Prefer Mermaid, use vertical orientation, accessible colors
 4. **Emoji Usage** - Semantic emojis for section markers, status indicators
 5. **Timestamp Format** - ISO 8601 with UTC+7 (`YYYY-MM-DDTHH:MM:SS+07:00`)
+   - **Command to get current timestamp**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
 
 **Note**: Tutorial conventions do NOT apply (ose-platform-web has no tutorial content)
 

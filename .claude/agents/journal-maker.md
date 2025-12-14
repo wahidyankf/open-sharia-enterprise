@@ -74,6 +74,9 @@ docs/journals/
 When the user wants to create or update a daily research entry:
 
 1. **Determine the date** - Use today's date or user-specified date
+   - **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
+   - Example output: `2025-12-14`
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
 2. **Create/open entry** - File: `docs/journals/YYYY-MM/YYYY-MM-DD.md`
 3. **Capture research** - Document findings, insights, questions
 4. **Add markdown links** - Link to other journal entries, plans, and documentation

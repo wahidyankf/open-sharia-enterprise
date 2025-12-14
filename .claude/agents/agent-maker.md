@@ -149,8 +149,17 @@ description: [user-provided-description]
 tools: [base-tools-from-role + additional-selections]
 model: [user-selected: inherit or sonnet]
 color: blue
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
 ---
 ```
+
+**Optional Fields**: The `created` and `updated` fields are optional but recommended for tracking agent history. When including them:
+
+- **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
+- Example output: `2025-12-14`
+- Use same date for both `created` and `updated` when creating new agents
+- See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
 
 **Color Assignment**: Auto-assigned based on agent role and tools:
 
