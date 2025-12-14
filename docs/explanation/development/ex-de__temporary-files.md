@@ -46,59 +46,61 @@ This convention establishes designated directories for temporary files created b
 
 ### Report File Naming Standard
 
-**CRITICAL REQUIREMENT**: All checker/fixer agents use standardized report naming pattern.
+**CRITICAL REQUIREMENT**: All checker/fixer agents use standardized report naming pattern aligned with repository file naming convention.
 
-**Pattern**: `{agent-family}-report-{YYYY-MM-DD-HH-MM}-{suffix}.md`
+**Pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__{suffix}.md`
 
 **Components**:
 
 - `{agent-family}`: Agent name WITHOUT checker/fixer/maker suffix (e.g., `repo-rules`, `ayokoding-content`, `docs`, `plan`, `plan-execution`)
-- `-report-`: Literal string with single dash separators (makes purpose immediately clear)
-- `{YYYY-MM-DD-HH-MM}`: Timestamp in UTC+7 (year-month-day-hour-minute, single dashes throughout)
-- `-{suffix}`: Optional suffix with single dash separator (`audit`, `fix`, `validation`, `summary`)
+- `__`: Double underscore separator (aligns with repository file naming convention)
+- `{YYYY-MM-DD--HH-MM}`: Timestamp in UTC+7 with double dash between date and time
+- `__`: Double underscore separator
+- `{suffix}`: Optional suffix (`audit`, `fix`, `validation`, `summary`)
 
 **Separator Rules**:
 
-- Single dash (`-`) separates ALL components consistently
-- "report" keyword is ALWAYS included in filename
-- Timestamp uses single dashes throughout (YYYY-MM-DD-HH-MM)
+- Double underscore (`__`) separates major components (agent-family, timestamp, suffix)
+- Double dash (`--`) separates date from time within timestamp
+- Single dash (`-`) separates components within date (YYYY-MM-DD) and time (HH-MM)
+- NO "report" keyword in filename (redundant - location in `generated-reports/` makes purpose clear)
 
 **Why this pattern**:
 
-- **Explicit purpose**: "report" keyword makes file purpose immediately clear
-- **Simplicity**: Single dash separator is simpler and more readable than mixed separators
-- **Consistency**: Same structure across all agents (easier discovery, programmatic processing)
-- **Clarity**: Agent family, report keyword, timestamp, and suffix all immediately visible
+- **Alignment**: Follows repository file naming convention (`[prefix]__[content-identifier].md`)
+- **Consistency**: Same separator style as documentation files (double underscore for major segments)
+- **Clarity**: Agent family, timestamp, and suffix all clearly separated
 - **Sortability**: Chronological sorting works naturally (YYYY-MM-DD first)
 - **Flexibility**: Optional suffix supports different report types from same agent family
+- **No Redundancy**: "report" keyword omitted (directory name already indicates purpose)
 
 **Example files**:
 
 ```
-generated-reports/repo-rules-report-2025-12-14-20-45-audit.md
-generated-reports/repo-rules-report-2025-12-14-20-45-fix.md
-generated-reports/ayokoding-content-report-2025-12-14-15-30-audit.md
-generated-reports/ose-platform-web-content-report-2025-12-14-15-30-audit.md
-generated-reports/docs-report-2025-12-15-10-00-validation.md
-generated-reports/plan-report-2025-12-15-11-30-validation.md
-generated-reports/plan-execution-report-2025-12-15-14-00-validation.md
+generated-reports/repo-rules__2025-12-14--20-45__audit.md
+generated-reports/repo-rules__2025-12-14--20-45__fix.md
+generated-reports/ayokoding-content__2025-12-14--15-30__audit.md
+generated-reports/ose-platform-web-content__2025-12-14--15-30__audit.md
+generated-reports/docs__2025-12-15--10-00__validation.md
+generated-reports/plan__2025-12-15--11-30__validation.md
+generated-reports/plan-execution__2025-12-15--14-00__validation.md
 ```
 
 **Pattern Rules**:
 
-- Use single dash (`-`) to separate all components
-- Include "report" keyword after agent-family name
-- Timestamp MUST be UTC+7 (YYYY-MM-DD-HH-MM format)
+- Use double underscore (`__`) to separate agent-family, timestamp, and suffix
+- Use double dash (`--`) to separate date from time in timestamp
+- Timestamp MUST be UTC+7 (YYYY-MM-DD--HH-MM format)
 - Zero-pad all timestamp components (01 not 1, 09 not 9)
-- Agent family is lowercase with dashes (multi-word: `ose-platform-web-content`, `plan-execution`)
+- Agent family is lowercase with single dashes (multi-word: `ose-platform-web-content`, `plan-execution`)
 - Suffix is lowercase, no plurals (`audit` not `audits`)
 - Suffix is optional (may be omitted if report type is obvious from context)
 
 #### Repository Audit Reports
 
 **Agent**: repo-rules-checker
-**Pattern**: `repo-rules-report-{YYYY-MM-DD-HH-MM}-audit.md`
-**Example**: `repo-rules-report-2025-12-14-20-45-audit.md`
+**Pattern**: `repo-rules__{YYYY-MM-DD--HH-MM}__audit.md`
+**Example**: `repo-rules__2025-12-14--20-45__audit.md`
 
 **Content**: Comprehensive consistency audit covering:
 
@@ -116,8 +118,8 @@ generated-reports/plan-execution-report-2025-12-15-14-00-validation.md
 #### Repository Fix Reports
 
 **Agent**: repo-rules-fixer
-**Pattern**: `repo-rules-report-{YYYY-MM-DD-HH-MM}-fix.md`
-**Example**: `repo-rules-report-2025-12-14-20-45-fix.md`
+**Pattern**: `repo-rules__{YYYY-MM-DD--HH-MM}__fix.md`
+**Example**: `repo-rules__2025-12-14--20-45__fix.md`
 
 **Content**: Fix application report with validation results covering:
 
@@ -128,12 +130,12 @@ generated-reports/plan-execution-report-2025-12-15-14-00-validation.md
 - Files modified during fix application
 - Recommendations for improving repo-rules-checker accuracy
 
-**Naming**: Replaces `-audit` suffix with `-fix` suffix (same timestamp)
+**Naming**: Replaces `__audit` suffix with `__fix` suffix (same timestamp)
 
 **Example Pairing**:
 
-- Audit report: `repo-rules-report-2025-12-14-20-45-audit.md`
-- Fix report: `repo-rules-report-2025-12-14-20-45-fix.md`
+- Audit report: `repo-rules__2025-12-14--20-45__audit.md`
+- Fix report: `repo-rules__2025-12-14--20-45__fix.md`
 
 **Workflow**: Generated after repo-rules-fixer processes a repo-rules-checker audit report
 
@@ -142,36 +144,36 @@ generated-reports/plan-execution-report-2025-12-15-14-00-validation.md
 #### Content Validation Reports
 
 **Agents**: ayokoding-content-checker, ose-platform-web-content-checker
-**Pattern**: `{site}-content-report-{YYYY-MM-DD-HH-MM}-audit.md`
+**Pattern**: `{site}-content__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Examples**:
 
-- `ayokoding-content-report-2025-12-14-15-30-audit.md`
-- `ose-platform-web-content-report-2025-12-14-15-30-audit.md`
+- `ayokoding-content__2025-12-14--15-30__audit.md`
+- `ose-platform-web-content__2025-12-14--15-30__audit.md`
 
 **Content**: Hugo content validation results (frontmatter, structure, quality)
 
 #### Documentation Validation Reports
 
 **Agent**: docs-checker
-**Pattern**: `docs-report-{YYYY-MM-DD-HH-MM}-validation.md`
-**Example**: `docs-report-2025-12-15-10-00-validation.md`
+**Pattern**: `docs__{YYYY-MM-DD--HH-MM}__validation.md`
+**Example**: `docs__2025-12-15--10-00__validation.md`
 
 **Content**: Documentation factual accuracy and consistency validation
 
 #### Plan Validation Reports
 
 **Agent**: plan-checker
-**Pattern**: `plan-report-{YYYY-MM-DD-HH-MM}-validation.md`
-**Example**: `plan-report-2025-12-15-11-30-validation.md`
+**Pattern**: `plan__{YYYY-MM-DD--HH-MM}__validation.md`
+**Example**: `plan__2025-12-15--11-30__validation.md`
 
 **Content**: Plan readiness validation (completeness, accuracy, implementability)
 
 #### Plan Execution Validation Reports
 
 **Agent**: plan-execution-checker
-**Pattern**: `plan-execution-report-{YYYY-MM-DD-HH-MM}-validation.md`
-**Example**: `plan-execution-report-2025-12-15-14-00-validation.md`
+**Pattern**: `plan-execution__{YYYY-MM-DD--HH-MM}__validation.md`
+**Example**: `plan-execution__2025-12-15--14-00__validation.md`
 
 **Content**: Implementation validation against requirements
 
