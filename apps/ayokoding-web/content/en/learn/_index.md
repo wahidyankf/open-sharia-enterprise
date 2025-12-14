@@ -23,8 +23,3 @@ weight: 101
 - [Human](/en/learn/human)
   - [Tools](/en/learn/human/tools)
     - [CliftonStrengths](/en/learn/human/tools/cliftonstrengths)
-- [Archived](/en/learn/archived)
-  - [Crash Courses](/en/learn/archived/crash-courses)
-  - [Interviews](/en/learn/archived/interviews)
-  - [Software Engineering](/en/learn/archived/software-engineering)
-  - [Takeaways](/en/learn/archived/takeaways)
