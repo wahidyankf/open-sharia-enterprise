@@ -314,6 +314,23 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
   - Historical tracking of repository consistency over time
+- **Important:** READ-ONLY agent - does not apply fixes. Use `repo-rules-fixer` to apply validated fixes after reviewing audit report.
+
+### 🟨 `repo-rules-fixer.md`
+
+Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives.
+
+- **Primary Use:** Applying validated fixes from repo-rules-checker audit reports after user review
+- **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks
+- **Tools:** Read, Edit, Glob, Grep, Write
+- **When to Use:**
+  - After reviewing repo-rules-checker audit report
+  - Applying validated fixes automatically with re-validation
+  - Detecting false positives in checker findings
+  - Generating fix audit trail for transparency
+- **Workflow:** repo-rules-checker (detect) → User review → repo-rules-fixer (apply validated fixes)
+- **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
+- **Output:** Generates `repo-rules-audit-{timestamp}-fix.md` report in `generated-reports/`
 
 ### 🟨 `repo-rules-updater.md`
 
@@ -466,12 +483,23 @@ The agents work together in complementary workflows:
 2. Validate Changes
    └─> Use repo-rules-checker to verify consistency
         └─> Detects inconsistencies, contradictions, duplications
+        └─> Generates audit report in generated-reports/
 
-3. Fix Issues (if any)
-   └─> Use repo-rules-updater to fix detected issues
-        └─> Return to step 2 for re-validation
+3. Review Audit Report
+   └─> Check findings and validate recommendations
+        └─> Identify which fixes should be applied
 
-4. Write/Update Documentation
+4. Apply Validated Fixes
+   └─> Use repo-rules-fixer to apply fixes automatically
+        └─> Re-validates findings, applies HIGH confidence fixes
+        └─> Skips false positives, reports MEDIUM confidence items
+        └─> Generates fix report for audit trail
+
+5. Verify Fixes (if fixes were applied)
+   └─> Use repo-rules-checker to re-validate
+        └─> Ensure fixes resolved issues without introducing new ones
+
+6. Write/Update Documentation
    └─> For tutorials: Use docs-tutorial-maker
         └─> Creates learning-oriented content with narrative flow
         └─> Adds comprehensive diagrams (architecture, sequences, flowcharts)
@@ -516,7 +544,7 @@ The agents work together in complementary workflows:
 - **After plan-executor completes:** Use `plan-execution-checker` for independent final validation
 - **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
-- **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker`
+- **After adding new conventions:** Use `repo-rules-updater` → `repo-rules-checker` → `repo-rules-fixer` (if issues found)
 - **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-rules-updater` to check size when adding rules
 - **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for complete size guidelines
 - **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
@@ -551,7 +579,8 @@ When creating new agents:
 3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
 4. Use `repo-rules-updater` to propagate references to CLAUDE.md and other files
 5. Use `repo-rules-checker` to validate the new agent follows all conventions
-6. Update CLAUDE.md if the agent should be mentioned in project guidance
+6. Use `repo-rules-fixer` to apply any validated fixes from the audit report
+7. Update CLAUDE.md if the agent should be mentioned in project guidance
 
 ---
 

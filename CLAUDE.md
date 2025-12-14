@@ -42,6 +42,7 @@ open-sharia-enterprise/
 │       ├── plan-executor.md   # Plan execution agent
 │       ├── plan-maker.md        # Project planning agent
 │       ├── repo-rules-checker.md  # Consistency validator agent
+│       ├── repo-rules-fixer.md    # Validated fix applier agent
 │       └── repo-rules-updater.md  # Rule propagation agent
 ├── apps/                      # Deployable applications (Nx monorepo)
 │   ├── README.md             # Apps folder documentation
@@ -296,6 +297,8 @@ These directories are gitignored and provide organized storage for temporary out
 
 **Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
 
+**Fixing**: repo-rules-fixer (applies validated fixes from repo-rules-checker audit reports)
+
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
 **Development**: hugo-developer
@@ -343,6 +346,7 @@ When adding new conventions, rules, or standards:
 - When updating convention docs, review CLAUDE.md summary for accuracy (keep it brief)
 - When CLAUDE.md exceeds 35k characters, trigger review and condensation
 - Use `repo-rules-checker` periodically to detect duplication between CLAUDE.md and convention docs
+- Use `repo-rules-fixer` to apply validated fixes from audit reports (after user review)
 - `repo-rules-updater` should check CLAUDE.md size when adding rules (warn if approaching limits)
 
 **Example of Good vs Bad:**
