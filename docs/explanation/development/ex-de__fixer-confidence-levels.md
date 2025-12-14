@@ -10,12 +10,12 @@ tags:
   - automation
   - quality-assurance
 created: 2025-12-14
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## 📋 Overview
 
@@ -93,6 +93,8 @@ All fixer agents implement this confidence level system:
 - **docs-tutorial-fixer** - Tutorial quality fixes
 - **ose-platform-web-content-fixer** - ose-platform-web Hugo content fixes
 - **readme-fixer** - README quality fixes
+- **docs-fixer** - Documentation factual accuracy fixes
+- **plan-fixer** - Plan structural and format fixes
 
 ### Universal Application
 
@@ -157,6 +159,22 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Broken internal link verified by file existence check
 - Format errors verified by structural analysis (heading hierarchy violations)
 
+**docs-fixer:**
+
+- Broken command syntax verified by WebFetch of official documentation
+- Incorrect version number verified by checking package registry (npm, PyPI)
+- Wrong API method verified by WebFetch of current API docs
+- LaTeX delimiter error verified by pattern match (single `$` on own line for display math)
+- Diagram color accessibility violation verified against accessible palette
+
+**plan-fixer:**
+
+- Missing required section verified by heading search (Introduction, Requirements, Technical Documentation)
+- Broken internal link to codebase file verified by file existence check
+- Format violation verified (frontmatter YAML, acceptance criteria format)
+- Naming convention violation verified (folder name doesn't match `YYYY-MM-DD__identifier`)
+- File structure mismatch verified (single-file vs multi-file convention)
+
 **Common Pattern:** HIGH confidence issues are **objective, measurable, and verifiable** - they either exist or they don't.
 
 ### MEDIUM_CONFIDENCE → Skip (Manual Review Needed)
@@ -210,6 +228,22 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Word choice preferences ("utilize" vs "use" when both are clear)
 - Section length borderline (25 lines - depends on README philosophy)
 
+**docs-fixer:**
+
+- Contradiction that may be context-dependent (HTTP for local, HTTPS for production)
+- Outdated information where "outdated" is subjective or requires judgment
+- Content duplication where duplication may be intentional for clarity
+- Narrative flow issues or writing style critiques (subjective quality)
+- Terminology inconsistency where both terms are technically correct
+
+**plan-fixer:**
+
+- Scope decisions ("plan scope too broad" - requires business judgment)
+- Technology choices ("should use PostgreSQL instead of MongoDB" - architectural expertise)
+- Approach critiques ("microservices approach not suitable" - domain knowledge)
+- Timeline assessments ("timeline unrealistic" - team capacity knowledge)
+- Implementation strategies ("should use different design pattern" - technical judgment)
+
 **Common Pattern:** MEDIUM confidence issues involve **human judgment, subjective quality assessment, or context-dependent decisions**.
 
 ### FALSE_POSITIVE → Skip (Report to User)
@@ -256,6 +290,21 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker counted lines incorrectly (markdown formatting issues)
 - Checker misinterpreted valid plain language as jargon (context-appropriate technical term)
 - Checker flagged code block as long paragraph (wrong content detection)
+
+**docs-fixer:**
+
+- Checker flagged correct LaTeX as incorrect (misunderstood syntax)
+- Checker reported missing field that actually exists in frontmatter
+- Checker flagged valid command as broken (used wrong verification source)
+- Checker misinterpreted accessible diagram colors as inaccessible
+- Checker reported contradiction but statements apply to different contexts
+
+**plan-fixer:**
+
+- Checker reported missing section that actually exists (different heading variation)
+- Checker flagged technology as "deprecated" but it's still maintained (outdated info)
+- Checker reported broken link that actually works (path resolution issue)
+- Checker misidentified file structure (valid edge case)
 
 **Common Pattern:** FALSE_POSITIVE issues reveal **checker logic flaws** that need correction.
 

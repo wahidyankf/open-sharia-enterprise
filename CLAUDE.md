@@ -293,7 +293,7 @@ These directories are gitignored and provide organized storage for temporary out
 
 ### Maker-Checker-Fixer Pattern
 
-Many agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Fixers use universal HIGH/MEDIUM/FALSE_POSITIVE confidence system to distinguish objective fixes from subjective improvements. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal assessment criteria.
+Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-content, docs-tutorial, ose-platform-web-content, readme, docs, plan. Fixers use universal HIGH/MEDIUM/FALSE_POSITIVE confidence system to distinguish objective fixes from subjective improvements. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal assessment criteria.
 
 ### Available Agents
 
@@ -301,7 +301,7 @@ Many agent families follow a three-stage workflow for content quality: Maker (cr
 
 **Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
 
-**Fixing**: repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer (apply validated fixes from corresponding checker audit reports)
+**Fixing**: repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer (apply validated fixes from corresponding checker audit reports)
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 

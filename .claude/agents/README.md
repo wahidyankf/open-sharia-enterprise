@@ -203,6 +203,27 @@ Expert at validating factual correctness and content consistency of documentatio
   - Ensuring code examples use current APIs
   - Detecting contradictions across documentation
   - Checking command syntax and flags are correct
+- **Works with:** `docs-fixer` for applying validated fixes, `docs-maker` for content creation
+
+### 🟨 `docs-fixer.md`
+
+Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
+
+- **Primary Use:** Applying validated fixes from docs-checker audit reports after user review
+- **Specialization:** Factual accuracy fix application, web-based re-validation (WebSearch/WebFetch), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective distinction, false positive detection
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing docs-checker audit report and deciding to apply validated fixes
+  - Fixing objective factual errors (command syntax, version numbers, broken links) automatically
+  - Flagging subjective improvements (narrative quality, terminology choices) for manual review
+  - Detecting and reporting false positives to improve docs-checker accuracy
+  - Generating comprehensive fix reports with audit trail
+  - Re-validating documentation findings using WebSearch and WebFetch before applying changes
+- **Workflow:** docs-checker (detect) → User review → docs-fixer (apply validated fixes)
+- **Safety:** Re-executes validation checks using web tools before applying fixes (applies only HIGH confidence objective fixes automatically)
+- **Output:** Generates `docs__{timestamp}__fix.md` report in `generated-reports/`
+- **Note:** Many documentation "issues" are subjective (editorial improvements, style preferences) - this agent applies only objective factual errors (verifiable against authoritative sources) and flags subjective improvements for human judgment
+- **Works with:** `docs-checker` for audit report generation, `docs-maker` for content creation
 
 ### 🟦 `docs-maker.md`
 
@@ -471,7 +492,7 @@ Expert at validating plans are ready for implementation by verifying completenes
 
 - **Primary Use:** Pre-implementation validation of project plans
 - **Specialization:** Plan completeness verification, codebase alignment checking, external verification via web, technical accuracy validation
-- **Tools:** Read, Glob, Grep, WebSearch, WebFetch
+- **Tools:** Read, Glob, Grep, WebSearch, WebFetch, Write, Bash
 - **When to Use:**
   - After plan-maker creates a plan, before implementation begins
   - Validating plan structure and completeness (requirements, tech-docs, delivery)
@@ -481,7 +502,27 @@ Expert at validating plans are ready for implementation by verifying completenes
   - Ensuring requirements have testable acceptance criteria
   - Identifying contradictions or missing information in plan
   - Preventing implementation blockers by catching plan issues early
-- **Works with:** `plan-maker` for plan creation
+- **Output:** Generates `plan__{timestamp}__validation.md` report in `generated-reports/`
+- **Works with:** `plan-fixer` for applying validated fixes, `plan-maker` for plan creation
+
+### 🟨 `plan-fixer.md`
+
+Applies validated fixes from plan-checker audit reports. Re-validates plan completeness and accuracy findings before applying changes. Distinguishes structural/format issues from strategic decisions.
+
+- **Primary Use:** Applying validated fixes from plan-checker validation reports after user review
+- **Specialization:** Structural vs strategic issue classification, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application for objective issues (missing sections, broken links, format errors), manual review flagging for strategic decisions (scope, architecture, technology choices, timelines)
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing plan-checker validation report
+  - Applying validated structural/format fixes automatically (missing sections, broken links, format violations)
+  - Detecting false positives in checker findings
+  - Flagging strategic/architectural decisions for manual review
+  - Generating fix audit trail for transparency
+- **Workflow:** plan-checker (validate) → User review → plan-fixer (apply validated structural fixes)
+- **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence objective fixes automatically)
+- **Output:** Generates `plan__{timestamp}__fix.md` report in `generated-reports/`
+- **Note:** Plans contain strategic decisions - this agent applies only structural/format fixes (objective) and flags strategic choices (scope, architecture, timelines) for human judgment
+- **Works with:** `plan-checker` for validation report generation, `plan-maker` for plan creation
 
 ### 🟦 `journal-maker.md`
 
@@ -532,8 +573,9 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Skip MEDIUM confidence (manual review needed)
         └─> Skip FALSE_POSITIVE (report to improve checker)
         └─> Generate fix report in generated-reports/
-        └─> Fixers: docs-tutorial-fixer, readme-fixer, ayokoding-content-fixer,
-                    ose-platform-web-content-fixer, repo-rules-fixer
+        └─> Fixers: docs-fixer, docs-tutorial-fixer, readme-fixer,
+                    ayokoding-content-fixer, ose-platform-web-content-fixer,
+                    repo-rules-fixer, plan-fixer
 
 5. Verification Stage (Re-run Checker)
    └─> Re-run checker to verify fixes resolved issues
@@ -650,6 +692,19 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Checks command syntax and code examples
         └─> Detects contradictions within and across documents
         └─> Identifies outdated information
+        └─> Generates validation report in generated-reports/
+
+9. Apply Documentation Fixes (if issues found)
+   └─> Use docs-fixer to apply validated fixes
+        └─> Re-validates findings using WebSearch and WebFetch
+        └─> Applies HIGH confidence objective fixes automatically
+        └─> Flags MEDIUM confidence subjective improvements for manual review
+        └─> Reports FALSE_POSITIVE to improve checker
+        └─> Generates fix report for audit trail
+
+10. Verify Documentation Fixes (if fixes applied)
+   └─> Re-run docs-checker to verify fixes resolved issues
+        └─> Ensure no new factual errors introduced
 ```
 
 ## ✅ Best Practices
@@ -676,6 +731,8 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **After dependency updates:** Run `docs-checker` to ensure documentation matches new versions
 - **Before releasing technical docs:** Use `docs-checker` to validate all technical claims and code examples
 - **When reviewing contributions:** Use `docs-checker` to verify factual accuracy of new documentation
+- **Documentation accuracy workflow:** docs-checker → (review validation report) → docs-fixer (apply objective fixes) → re-run docs-checker
+- **Documentation validation with automated fixes:** Use `docs-checker` to generate validation report, then `docs-fixer` to apply validated objective fixes (command syntax, version numbers, broken links) while flagging subjective improvements (narrative, terminology) for manual review
 - **When creating/updating README:** Use `readme-maker` for content, then `readme-checker` for validation
 - **README quality workflow:** readme-maker → readme-checker → (review audit) → readme-fixer (apply objective fixes) → commit
 - **README validation with automated fixes:** Use `readme-checker` to generate audit report, then `readme-fixer` to apply validated objective fixes (paragraph breaks, acronym context, format corrections) while flagging subjective improvements for manual review

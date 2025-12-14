@@ -9,7 +9,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Temporary Files Convention
@@ -137,7 +137,7 @@ filename="repo-rules__${timestamp}__audit.md"
 
 #### Fixer Reports (Universal Pattern)
 
-**Agents**: All fixer agents (repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer)
+**Agents**: All fixer agents (repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
 
 **Pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__fix.md`
 
@@ -158,6 +158,8 @@ filename="repo-rules__${timestamp}__audit.md"
 | ose-platform-web-content | `ose-platform-web-content__2025-12-14--16-00__audit.md` | `ose-platform-web-content__2025-12-14--16-00__fix.md` |
 | docs-tutorial            | `docs-tutorial__2025-12-14--10-15__audit.md`            | `docs-tutorial__2025-12-14--10-15__fix.md`            |
 | readme                   | `readme__2025-12-14--09-45__audit.md`                   | `readme__2025-12-14--09-45__fix.md`                   |
+| docs                     | `docs__2025-12-15--10-00__validation.md`                | `docs__2025-12-15--10-00__fix.md`                     |
+| plan                     | `plan__2025-12-15--11-30__validation.md`                | `plan__2025-12-15--11-30__fix.md`                     |
 
 **Why Same Timestamp?**
 
