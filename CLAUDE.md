@@ -286,10 +286,10 @@ See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) f
 
 AI agents creating temporary uncommitted files must use designated directories to prevent repository clutter:
 
-- **`generated-reports/`** - For validation, audit, and check reports (report-generating agents)
+- **`generated-reports/`** - For validation, audit, and check reports (report-generating agents). **CRITICAL**: Any agent writing to this directory MUST have both Write and Bash tools (Write for files, Bash for UTC+7 timestamps).
 - **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
 
-These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/ex-de__temporary-files.md) for complete details on naming patterns, use cases, and when to use each directory.
+These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/ex-de__temporary-files.md) for complete details on naming patterns, tool requirements, and when to use each directory.
 
 ### Available Agents
 
