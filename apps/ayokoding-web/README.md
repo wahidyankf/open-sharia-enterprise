@@ -6,6 +6,14 @@ Bilingual educational platform for software engineering content, focused on help
 
 AyoKoding ("Let's Code" in Indonesian) is a platform dedicated to sharing software engineering knowledge in both Indonesian and English. It follows a "learning in public" philosophy, encouraging developers to share their learning journey with the community.
 
+**Why AyoKoding Exists**
+
+As we build [Open Sharia Enterprise](https://github.com/wahidyankf/open-sharia-enterprise)—an open-source platform for Sharia-compliant business systems—we're learning and researching extensively. Rather than keeping this knowledge internal, we share it with the wider tech community through AyoKoding.
+
+The platform turns our real project work into educational content. When we research a technology stack, design a system architecture, or solve a complex problem for the enterprise platform, we document the learning journey and publish it here. This way, the research becomes useful beyond just our project—it helps developers everywhere learn and grow.
+
+Think of it as "learning in public" at scale: our practical work on Open Sharia Enterprise becomes the foundation for tutorials, guides, and insights that benefit the global software engineering community.
+
 ## 🌐 Website
 
 - **Production**: https://ayokoding.com

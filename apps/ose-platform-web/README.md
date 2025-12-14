@@ -1,13 +1,18 @@
 # OSE Platform Web
 
-Official website for the Open Sharia Enterprise platform - a Sharia-compliant enterprise solutions platform.
+Official website for the **Open Sharia Enterprise** platform - an open-source Sharia-compliant enterprise solutions platform built in the open.
 
-Landing page with weekly/monthly project updates.
+**Why This Matters**: Islamic finance is a multi-trillion dollar industry, but most Sharia-compliant enterprise solutions are proprietary and expensive. We're building an open-source alternative with Sharia-compliance at its core - not bolted on as an afterthought.
+
+**What This Site Does**: Showcases the platform and shares our journey. Weekly and monthly updates keep the community informed as we build this long-term project with radical transparency.
+
+**Why Open Source**: Transparency builds trust in Sharia-compliant systems. By building in the open, we make trustworthy enterprise technology accessible to organizations of all sizes - not just those who can afford expensive proprietary solutions.
 
 ## 🌐 Website
 
 - **Production**: https://oseplatform.com (under construction)
-- **Repository**: Part of the [open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise) monorepo
+- **Main Project**: [Open Sharia Enterprise on GitHub](https://github.com/wahidyankf/open-sharia-enterprise) - The full platform repository
+- **This Site**: Part of the OSE monorepo under `apps/ose-platform-web/`
 
 ## 🛠️ Tech Stack
 
