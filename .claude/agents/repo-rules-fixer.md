@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Write
 model: sonnet
 color: yellow
 created: 2025-12-14
-updated: 2025-12-15
+updated: 2025-12-14
 ---
 
 # Repository Rules Fixer Agent
@@ -60,13 +60,13 @@ The agent will:
 1. **Auto-detect latest audit report** in `generated-reports/`:
 
    ```bash
-   ls -t generated-reports/repo-rules-audit-*.md | head -1
+   ls -t generated-reports/repo-rules__*__audit.md | head -1
    ```
 
 2. **Allow manual override** if user specifies a report:
 
    ```
-   User: "Use repo-rules-audit-2025-12-14T15-30.md"
+   User: "Use repo-rules__2025-12-14--20-45__audit.md"
    Agent: "Using specified report instead of auto-detected latest"
    ```
 
@@ -104,12 +104,12 @@ FALSE_POSITIVE:
 
 Generate comprehensive fix report in `generated-reports/`:
 
-**File naming pattern**: `{source-report-name}-fix.md`
+**File naming pattern**: Replace `__audit` suffix with `__fix` (same timestamp)
 
 **Examples:**
 
-- Input: `repo-rules-audit-2025-12-14T15-30.md`
-- Output: `repo-rules-audit-2025-12-14T15-30-fix.md`
+- Input: `repo-rules__2025-12-14--20-45__audit.md`
+- Output: `repo-rules__2025-12-14--20-45__fix.md`
 
 ## Confidence Level Assessment
 
@@ -176,7 +176,7 @@ See [Repository Validation Methodology Convention](../../docs/explanation/develo
 
 ```bash
 # Auto-detect latest or use specified report
-REPORT=$(ls -t generated-reports/repo-rules-audit-*.md 2>/dev/null | head -1)
+REPORT=$(ls -t generated-reports/repo-rules__*__audit.md 2>/dev/null | head -1)
 
 if [ -z "$REPORT" ]; then
   echo "No audit reports found in generated-reports/"
