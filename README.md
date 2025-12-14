@@ -5,7 +5,7 @@
 🌐 **Live Sites**:
 
 - **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
-- **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Educational content platform for software engineering
+- **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Shares the technological research and domain knowledge we develop for this project. What we learn while building Open Sharia Enterprise becomes accessible to the wider community through educational content
 
 > ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
 
@@ -23,8 +23,11 @@
 - 🤖 **AI-assisted development, not vibe-coding** - We leverage AI tools systematically to enhance productivity and code quality, not as a substitute for thoughtful engineering
 - 🤝 **Community collaboration** can accelerate the development of accessible and culturally sensitive business tools
 - 💡 **Innovation** across enterprise domains (financial services, supply chain, HR, and more) should be driven by open standards and shared knowledge
+- 📚 **Share what we learn** - The research and technological knowledge we develop gets shared through [ayokoding.com](https://ayokoding.com), making our learning journey useful to the wider community
 - 🛡️ **Governance and security from day one** are essential for enterprise solutions - good governance and sound security practices must be architectural foundations, not afterthoughts
 - 🎯 **Production ready from beta** - Every feature follows clear quality stages: Alpha (experimental, not production ready), Beta (production ready: secure, scalable, documented), Stable (battle-tested, proven in production)
+- 🏗️ **Long-term foundation over quick wins** - This is a life-long project building solid foundations now
+- 🔐 **Parallel infrastructure development** - Security operations, compliance automation, and red teaming tools are being built ALONGSIDE the enterprise platform from day one, not added later as afterthoughts
 
 🚀 Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
@@ -46,14 +49,24 @@ This project is being developed with a **phased approach** to establish strong S
 
 ### 🔬 Phase 0: Setup and Research
 
-Establishing the foundational infrastructure and conducting research to inform architectural decisions:
+Establishing the foundational infrastructure and conducting research to inform architectural decisions. This phase is building the solid foundation for a life-long project—thoughtful groundwork now ensures we can build a trustworthy, secure, and compliant enterprise platform.
+
+**Two parallel tracks running simultaneously:**
+
+**🏗️ Enterprise Platform Track:**
 
 - 🛠️ **Development Tooling & Processes** - Infrastructure (Volta, formatting, git hooks), documentation framework (Diátaxis, Obsidian), AI agents, planning system
-- 🏗️ **Architecture & Design** - Monorepo architecture (Nx workspace), core patterns, technology evaluation, security foundations
+- 🏗️ **Architecture & Design** - Monorepo architecture (Nx workspace), core patterns, technology evaluation
 - 🤖 **AI Research** - AI/ML applications, LLM integration, intelligent automation, AI-assisted development
 - 🔍 **Sharia Compliance Research** - Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
-- 🛡️ **Security & DevSecOps Research** - Information security frameworks, threat modeling, compliance as code, DevSecOps automation
 - ☁️ **Infrastructure Creation** - Cloud infrastructure, deployment pipelines, CI/CD setup
+
+**🔐 Security & Compliance Infrastructure Track (IN PARALLEL):**
+
+- 🛡️ **Security Operations Tooling** - Building monitoring, incident response, and security testing capabilities from the ground up
+- 🎯 **Red Teaming Infrastructure** - Offensive security tools to continuously test and strengthen platform defenses as we build
+- 📋 **Compliance Automation** - Automated validation, audit trails, and regulatory reporting tools being developed alongside platform features
+- 🔒 **DevSecOps Research** - Information security frameworks, threat modeling, compliance as code, security operations foundations
 
 ### 📊 Phase 1: ERP Foundation
 
@@ -82,15 +95,28 @@ Extend the platform to support multiple jurisdictions and regions:
 - 📖 **Regional variations** in Sharia interpretations and requirements
 - ✈️ **Cross-border enterprise operations** support
 
+### 🔐 Security & Compliance Infrastructure (Evolving in Parallel)
+
+**These capabilities are being developed ALONGSIDE the enterprise platform from Phase 0 onward—not as future additions, but as parallel infrastructure that grows with the platform:**
+
+- 🛡️ **Security Operations Tooling** - Built-in monitoring and incident response capabilities to protect the enterprise platform and its users
+- 🎯 **Red Teaming Infrastructure** - Offensive security tools to continuously test and strengthen platform defenses as we build
+- 📋 **Compliance Automation** - Automated validation, audit trails, and regulatory reporting to maintain Sharia and regulatory compliance across the platform
+- 🔐 **Enterprise-Grade Security** - Robust security operations built-in from the start, not bolted on later
+
+**Parallel Development Approach:** As we build each platform feature (ERP modules, fintech capabilities), the corresponding security monitoring, compliance validation, and testing tools are developed in tandem. Security and compliance infrastructure evolves with the platform, ensuring they're architected together from day one.
+
 ### 💭 Why This Approach?
 
 - 🔬 **Research before building** - Phase 0 establishes foundations through compliance, security, and AI research before implementation
 - 🇮🇩 **Indonesian market first** - Deep focus on local regulations (OJK, DSN-MUI, PBI, PDP) before global expansion
 - 🏗️ **ERP as foundation** - Enterprise Resource Planning provides core infrastructure for all business operations
 - 🕌 **Sharia-compliance from day one** - Built-in compliance architecture, not bolt-on features
-- 🛡️ **Security by design** - DevSecOps and compliance-as-code integrated from the start
-- 📈 **Scalable architecture** - Standards-based design enables extension to new regions
+- 🔐 **Parallel security infrastructure** - Security operations, red teaming tools, and compliance automation are developed ALONGSIDE platform features from Phase 0 onward—not added later, but built together from the start
+- 🛡️ **Security by design** - DevSecOps and compliance-as-code integrated from the start, ensuring security and compliance are architectural foundations
+- 📈 **Scalable architecture** - Standards-based design enables extension to new regions and capabilities
 - ⚖️ **Gradual expansion** - Phased approach reduces complexity while ensuring quality
+- 🏗️ **Long-term thinking** - Building solid enterprise foundations now, with security and compliance infrastructure that evolves in parallel with the platform
 
 ## 🤝 Contributing
 
@@ -240,14 +266,22 @@ This project is licensed under the **MIT License** - see the [Freedom to Use](#-
 
 **Current Phase: Phase 0 (Setup and Research)**
 
-We are establishing foundational infrastructure and conducting research to inform architectural decisions:
+We are establishing foundational infrastructure and conducting research to inform architectural decisions. **Two parallel tracks are running simultaneously:**
+
+**Enterprise Platform Track:**
 
 - 🔨 Core infrastructure setup (Volta, code formatting, commit validation, documentation structure)
 - 📋 Project planning and architecture design
 - 🏗️ Foundation patterns being established
 - 🔍 Researching Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
-- 🛡️ Security and DevSecOps research
 - 🤖 AI research and integration exploration
+
+**Security & Compliance Infrastructure Track (IN PARALLEL):**
+
+- 🛡️ Building security operations tooling from the ground up
+- 🎯 Developing red teaming infrastructure to test platform defenses
+- 📋 Creating compliance automation and audit trail systems
+- 🔒 Researching DevSecOps frameworks and threat modeling approaches
 
 **Not Yet Available:**
 
