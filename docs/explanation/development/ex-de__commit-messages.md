@@ -2,6 +2,7 @@
 title: "Commit Message Convention"
 description: Understanding Conventional Commits and why we use them in open-sharia-enterprise
 category: explanation
+subcategory: development
 tags:
   - conventional-commits
   - git

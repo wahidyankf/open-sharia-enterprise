@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
 created: 2025-11-29
-updated: 2025-12-08
+updated: 2025-12-14
 ---
 
 # Agent Creator Agent
@@ -148,11 +148,20 @@ name: [user-provided-name]
 description: [user-provided-description]
 tools: [base-tools-from-role + additional-selections]
 model: [user-selected: inherit or sonnet]
-color: [auto-assigned: blue|green|yellow|purple]
+color: blue
 ---
 ```
 
-Rationale: Consistent field order improves readability and grep-ability across all agents.
+**Color Assignment**: Auto-assigned based on agent role and tools:
+
+- blue (writers): Has Write tool
+- green (checkers): Read-only tools (no Write or Edit)
+- yellow (updaters): Has Edit but NOT Write
+- purple (implementors): Has Write, Edit, AND Bash
+
+**Field Order Rationale**: Consistent field order improves readability and grep-ability across all agents.
+
+**NO Comments in Frontmatter**: Agent frontmatter MUST NOT contain inline comments (# symbols in YAML). Claude Code has frontmatter parsing issues (GitHub issue #6377). Put explanations in the document body, not as inline comments.
 
 #### Document Body
 

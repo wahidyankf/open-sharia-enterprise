@@ -263,7 +263,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Conventions Index](./docs/explanation/conventions/README.md) (18 documentation conventions) and [Development Index](./docs/explanation/development/README.md) (7 development practices).
+For comprehensive standards, see [Conventions Index](./docs/explanation/conventions/README.md) (20 documentation conventions) and [Development Index](./docs/explanation/development/README.md) (7 development practices).
 
 ## AI Agent Standards
 
@@ -275,7 +275,7 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 ### Key Requirements
 
-All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role.
+All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. Agent frontmatter must be comment-free (no # symbols in YAML).
 
 **Agent File Sizes**: Three tiers based on complexity - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Agents approaching limits should link to convention docs instead of duplicating content.
 
@@ -294,7 +294,7 @@ These directories are gitignored and provide organized storage for temporary out
 
 **Content Creation**: docs-maker, docs-tutorial-maker, journal-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 

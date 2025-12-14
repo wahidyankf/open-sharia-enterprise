@@ -2,6 +2,7 @@
 title: "AI Agents Convention"
 description: Standards for creating and managing AI agents in the .claude/agents/ directory
 category: explanation
+subcategory: development
 tags:
   - ai-agents
   - conventions
@@ -9,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-07
+updated: 2025-12-14
 ---
 
 # AI Agents Convention
@@ -68,6 +69,8 @@ color: blue
 ```
 
 **Field Order**: Fields MUST appear in this exact order (name, description, tools, model, color) for consistency and grep-ability across all agents.
+
+**NO Comments in Frontmatter**: Agent frontmatter MUST NOT contain inline comments (# symbols in YAML). Research shows Claude Code has frontmatter parsing issues (GitHub issue #6377), and best practice for configuration files is to keep YAML clean without inline comments. Put explanations in the document body below the frontmatter code block, not as inline comments.
 
 **Field Definitions:**
 

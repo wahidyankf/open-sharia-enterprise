@@ -2,6 +2,7 @@
 title: Development
 description: Development conventions and standards for open-sharia-enterprise
 category: explanation
+subcategory: development
 tags:
   - index
   - development

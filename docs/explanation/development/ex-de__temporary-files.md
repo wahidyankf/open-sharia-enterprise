@@ -2,13 +2,14 @@
 title: "Temporary Files Convention"
 description: Guidelines for AI agents creating temporary uncommitted files and folders
 category: development
+subcategory: development
 tags:
   - temporary-files
   - ai-agents
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-07
+updated: 2025-12-14
 ---
 
 # Temporary Files Convention
@@ -43,7 +44,7 @@ This convention establishes designated directories for temporary files created b
 
 **Note**: `docs-link-checker` does NOT create report files (outputs in conversation only)
 
-**Naming pattern**: `YYYY-MM-DD__[report-type].md`
+**Naming pattern**: `YYYY-MM-DD__[report-type].md` OR `[report-type]-YYYY-MM-DDTHH-MM.md` (with timestamp)
 
 **Example files**:
 
@@ -51,7 +52,27 @@ This convention establishes designated directories for temporary files created b
 generated-reports/2025-12-01__repository-audit.md
 generated-reports/2025-12-01__docs-validation.md
 generated-reports/2025-12-01__plan-execution-validation.md
+generated-reports/repo-rules-audit-2025-12-14T15-30.md
 ```
+
+#### Repository Audit Reports
+
+**Agent**: repo-rules-checker
+**Pattern**: `repo-rules-audit-YYYY-MM-DDTHH-MM.md`
+**Example**: `repo-rules-audit-2025-12-14T15-30.md`
+
+**Content**: Comprehensive consistency audit covering:
+
+- CLAUDE.md vs convention documents
+- Agent definitions vs conventions
+- Cross-references and links
+- Duplication and contradictions
+- Frontmatter consistency
+- File naming compliance
+
+**Timestamp**: Audit start time in UTC+7 (ISO 8601 format: `YYYY-MM-DDTHH-MM`)
+
+**Retention**: Keep for historical tracking and comparison. Review/archive older reports periodically.
 
 ### `local-temp/`
 
