@@ -12,7 +12,7 @@ updated: 2025-12-07
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 18 conventions covering all aspects of documentation writing and formatting.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 20 conventions covering all aspects of documentation writing and formatting.
 
 ## 🎯 Scope
 

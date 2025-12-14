@@ -302,17 +302,18 @@ Creates and updates README.md content while maintaining engagement, accessibilit
 
 ### 🟩 `repo-rules-checker.md`
 
-Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation.
+Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation. Generates detailed audit reports in `generated-reports/repo-rules-audit-{timestamp}.md` for historical tracking.
 
 - **Primary Use:** Checking for inconsistencies, contradictions, or verifying compliance
-- **Specialization:** Cross-file validation, duplication detection, convention enforcement, emoji consistency
-- **Tools:** Read, Glob, Grep
+- **Specialization:** Cross-file validation, duplication detection, convention enforcement, emoji consistency, persistent audit reporting
+- **Tools:** Read, Glob, Grep, Write
 - **When to Use:**
   - After making changes to conventions or CLAUDE.md
   - Periodic audits of repository consistency
   - Validating that all files follow documented standards (including emoji usage)
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
+  - Historical tracking of repository consistency over time
 
 ### 🟨 `repo-rules-updater.md`
 

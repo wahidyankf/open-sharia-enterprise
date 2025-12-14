@@ -9,6 +9,7 @@ tags:
   - git-hooks
   - automation
 category: explanation
+subcategory: development
 ---
 
 # Code Quality Convention
