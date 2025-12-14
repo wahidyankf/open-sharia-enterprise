@@ -80,6 +80,22 @@ Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo 
 - **Works with:** `ayokoding-content-maker` for content creation
 - **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention
 
+### 🟨 `ayokoding-content-fixer.md`
+
+Applies validated fixes from ayokoding-content-checker audit reports. Re-validates findings before applying changes to prevent false positives.
+
+- **Primary Use:** Applying validated fixes from ayokoding-content-checker audit reports after user review
+- **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks for Hugo content
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing ayokoding-content-checker audit report
+  - Applying validated fixes automatically with re-validation
+  - Detecting false positives in checker findings
+  - Generating fix audit trail for transparency
+- **Workflow:** ayokoding-content-checker (detect) → User review → ayokoding-content-fixer (apply validated fixes)
+- **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
+- **Output:** Generates `ayokoding-content__{timestamp}__fix.md` report in `generated-reports/`
+
 ### 🟩 `ayokoding-link-checker.md`
 
 Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths without .md extension). Detects common linking mistakes and maintains external link cache.
@@ -134,6 +150,22 @@ Expert at validating Hugo content for ose-platform-web (PaperMod theme) against 
   - Quality assurance before merging or deploying content
 - **Works with:** `ose-platform-web-content-maker` for content creation
 - **References:** Hugo Content Convention, Content Quality Principles
+
+### 🟨 `ose-platform-web-content-fixer.md`
+
+Applies validated fixes from ose-platform-web-content-checker audit reports. Re-validates findings before applying changes to prevent false positives.
+
+- **Primary Use:** Applying validated fixes from ose-platform-web-content-checker audit reports after user review
+- **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks for Hugo content
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing ose-platform-web-content-checker audit report
+  - Applying validated fixes automatically with re-validation
+  - Detecting false positives in checker findings
+  - Generating fix audit trail for transparency
+- **Workflow:** ose-platform-web-content-checker (detect) → User review → ose-platform-web-content-fixer (apply validated fixes)
+- **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
+- **Output:** Generates `ose-platform-web-content__{timestamp}__fix.md` report in `generated-reports/`
 
 ### 🟦 `hugo-developer.md`
 
@@ -246,6 +278,24 @@ Validates tutorial quality focusing on pedagogical structure, narrative flow, vi
 - **Works with:** `docs-tutorial-maker` for content creation, `docs-checker` for accuracy, `docs-link-checker` for links
 - **Note:** Complements (doesn't duplicate) docs-checker (accuracy) and docs-link-checker (links)
 
+### 🟨 `docs-tutorial-fixer.md`
+
+Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes to prevent false positives.
+
+- **Primary Use:** Applying validated fixes from tutorial quality audits
+- **Specialization:** Tutorial quality fix application, pedagogical finding re-validation, confidence level assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective issue distinction, fix report generation, false positive detection
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - Applying fixes from docs-tutorial-checker audit reports automatically
+  - After reviewing checker findings and deciding to apply validated fixes
+  - Fixing objective issues (missing sections, LaTeX errors, naming violations) automatically
+  - Flagging subjective issues (narrative quality, diagram placement) for manual review
+  - Detecting and reporting false positives to improve checker accuracy
+  - Generating comprehensive fix reports with audit trail
+  - Re-validating tutorial quality findings before applying changes
+- **Works with:** `docs-tutorial-checker` for audit report generation, `docs-tutorial-maker` for content creation
+- **Note:** Only applies HIGH confidence fixes (objective issues), flags MEDIUM confidence (subjective quality) for manual review
+
 ### 🟨 `docs-file-manager.md`
 
 Expert at managing files and directories in docs/ directory. Handles renaming, moving, and deleting operations while maintaining conventions.
@@ -268,7 +318,7 @@ Validates README.md for engagement, accessibility, and quality standards. Checks
 
 - **Primary Use:** Reviewing README changes or auditing README quality before merge/release
 - **Specialization:** Engagement validation (problem-solution hooks, clear motivation), accessibility checking (jargon detection, plain language, acronym context), scannability assessment (paragraph length ≤5 lines, visual hierarchy), navigation focus (summary + links, not comprehensive), language quality (active voice, benefits-focused)
-- **Tools:** Read, Glob, Grep
+- **Tools:** Read, Glob, Grep, Write, Bash
 - **When to Use:**
   - Validating README updates before committing
   - Auditing README quality after major changes
@@ -278,8 +328,27 @@ Validates README.md for engagement, accessibility, and quality standards. Checks
   - Confirming problem-solution narrative exists
   - Detecting duplicate content from detailed docs
   - Assessing overall engagement and accessibility
-- **Works with:** `readme-maker` for content creation/updates
+- **Works with:** `readme-maker` for content creation/updates, `readme-fixer` for applying validated fixes
 - **References:** README Quality Convention
+
+### 🟨 `readme-fixer.md`
+
+Applies validated fixes from readme-checker audit reports. Re-validates README quality findings before applying changes. Conservative approach applies only objective fixes automatically.
+
+- **Primary Use:** Applying validated fixes from readme-checker audit reports after user review
+- **Specialization:** Objective vs subjective fix classification, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application for measurable issues (paragraph length, acronym context, broken links), manual review flagging for subjective improvements (tone, engagement, benefits framing)
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing readme-checker audit report
+  - Applying validated objective fixes automatically (paragraph breaks, acronym expansion, format corrections)
+  - Detecting false positives in checker findings
+  - Flagging subjective improvements for manual review
+  - Generating fix audit trail for transparency
+- **Workflow:** readme-checker (detect) → User review → readme-fixer (apply validated fixes)
+- **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence objective fixes automatically)
+- **Output:** Generates `readme__{timestamp}__fix.md` report in `generated-reports/`
+- **Note:** Many README quality issues are subjective - this agent applies only objective fixes (measurable violations) and flags subjective improvements (tone, engagement) for human judgment
+- **Works with:** `readme-checker` for audit report generation, `readme-maker` for content creation
 
 ### 🟦 `readme-maker.md`
 
@@ -434,6 +503,53 @@ Expert journal writer specializing in Logseq-style outliner format for daily res
 
 The agents work together in complementary workflows:
 
+### 📝 Content Quality Workflows (Maker-Checker-Fixer Pattern)
+
+The repository uses a three-stage workflow for content creation and quality assurance:
+
+**Pattern: Maker → Checker → (User Review) → Fixer**
+
+```
+1. Creation Stage (Maker Agents)
+   └─> Create content following conventions
+        └─> Makers: docs-maker, docs-tutorial-maker, readme-maker,
+                    ayokoding-content-maker, ose-platform-web-content-maker
+
+2. Detection Stage (Checker Agents)
+   └─> Validate content quality and convention compliance
+        └─> Generate audit report in generated-reports/
+        └─> Checkers: docs-checker, docs-tutorial-checker, readme-checker,
+                      ayokoding-content-checker, ose-platform-web-content-checker,
+                      repo-rules-checker
+
+3. User Review Stage
+   └─> Review audit report findings
+        └─> Identify which fixes should be applied
+        └─> Verify checker findings are accurate
+
+4. Fix Application Stage (Fixer Agents)
+   └─> Re-validate findings, apply HIGH confidence fixes automatically
+        └─> Skip MEDIUM confidence (manual review needed)
+        └─> Skip FALSE_POSITIVE (report to improve checker)
+        └─> Generate fix report in generated-reports/
+        └─> Fixers: docs-tutorial-fixer, readme-fixer, ayokoding-content-fixer,
+                    ose-platform-web-content-fixer, repo-rules-fixer
+
+5. Verification Stage (Re-run Checker)
+   └─> Re-run checker to verify fixes resolved issues
+        └─> Ensure no new issues introduced
+```
+
+**Why This Pattern:**
+
+- **Safety:** Human review before automated fixes (prevents over-automation)
+- **Confidence Levels:** Fixers distinguish objective fixes (HIGH - apply) from subjective improvements (MEDIUM - manual review)
+- **False Positive Detection:** Fixers validate findings, report checker errors with improvement suggestions
+- **Audit Trail:** Both audit and fix reports saved in `generated-reports/` for transparency
+- **Quality Improvement Loop:** False positive reports improve checker accuracy over time
+
+**See Also:** [Fixer Confidence Levels Convention](../docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal confidence assessment criteria.
+
 ### 📋 Project Planning and Implementation Workflow
 
 ```
@@ -561,7 +677,8 @@ The agents work together in complementary workflows:
 - **Before releasing technical docs:** Use `docs-checker` to validate all technical claims and code examples
 - **When reviewing contributions:** Use `docs-checker` to verify factual accuracy of new documentation
 - **When creating/updating README:** Use `readme-maker` for content, then `readme-checker` for validation
-- **README quality workflow:** readme-maker → readme-checker → (fix if needed) → commit
+- **README quality workflow:** readme-maker → readme-checker → (review audit) → readme-fixer (apply objective fixes) → commit
+- **README validation with automated fixes:** Use `readme-checker` to generate audit report, then `readme-fixer` to apply validated objective fixes (paragraph breaks, acronym context, format corrections) while flagging subjective improvements for manual review
 
 ## 📚 Resources
 
