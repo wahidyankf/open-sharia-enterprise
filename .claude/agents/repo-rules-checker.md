@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Repository Rule Checker Agent
@@ -425,70 +425,17 @@ When the user requests a consistency check:
 
 ### Special Detection Methods
 
-#### Agent Frontmatter Comment Detection
+**CRITICAL**: This agent uses standardized validation patterns defined in the [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md). Always extract frontmatter FIRST before searching to prevent false positives.
 
-**CRITICAL**: When checking for YAML comments in agent frontmatter, you MUST search ONLY the frontmatter section, NOT the entire file.
+**Key validation methods:**
 
-**Common Mistake (causes false positives):**
+- **Frontmatter Comment Detection** - Extract YAML block with awk, then search for `#` symbols (prevents flagging markdown headings)
+- **Missing Field Check** - Search extracted frontmatter for field name at line start
+- **Wrong Value Check** - Extract field value and compare to expected
+- **Broken Link Detection** - Resolve relative paths from file's directory
+- **File Naming Validation** - Compute expected prefix from directory path
 
-```bash
-# ❌ WRONG: Searches entire file including markdown body
-grep "#" .claude/agents/agent-name.md
-# This incorrectly flags markdown headings like "# Agent Title" as violations
-```
-
-**Correct Method:**
-
-```bash
-# ✅ CORRECT: Extract frontmatter first, then search
-awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/agent-name.md | grep "#"
-
-# If grep returns results → VIOLATION (YAML comment in frontmatter)
-# If grep returns nothing → COMPLIANT (clean frontmatter)
-```
-
-**Why This Matters:**
-
-- Agent files contain many `#` symbols in their markdown body (headings, examples, comments)
-- These are **legitimate** and **required** for documentation structure
-- Only `#` symbols **inside the YAML frontmatter** (between `---` delimiters) are violations
-- Searching the entire file produces false positives
-
-**What to Flag:**
-
-```yaml
-# ❌ VIOLATION: Comment in frontmatter
----
-name: agent-name
-description: Description here
-tools: Read, Write # This comment is a violation
-model: sonnet
-color: blue
----
-```
-
-**What NOT to Flag:**
-
-```yaml
-# ✅ COMPLIANT: Clean frontmatter
----
-name: agent-name
-description: Description here
-tools: Read, Write
-model: sonnet
-color: blue
----
-# Agent Title  ← This is a markdown heading, NOT a violation
-## Section      ← This is also NOT a violation
-```
-
-**Verification Steps:**
-
-1. Extract frontmatter using awk (lines between first two `---`)
-2. Search extracted frontmatter for `#` symbols
-3. If found → report as violation with line number
-4. If not found → mark as compliant
-5. Never flag markdown headings in document body
+See [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for complete patterns, examples, and common pitfalls.
 
 ## File Output Requirements
 
@@ -571,202 +518,16 @@ The file is readable at ALL times during the audit. Structure:
 
 ## Condensation Validation Process
 
-**CRITICAL RESPONSIBILITY:** When validating condensed files, ensure content was MOVED to conventions, NOT DELETED.
+**CRITICAL RESPONSIBILITY:** When validating condensed files, ensure content was MOVED to conventions, NOT DELETED. Follow the principles defined in [Content Preservation Convention](../../docs/explanation/development/ex-de__content-preservation.md).
 
-### Why This Matters
+**Key validation questions:**
 
-Condensation should preserve knowledge by moving it to convention docs, not erase it. This validation process ensures zero content loss and maintains the repository as a comprehensive knowledge base.
+- Where did removed content go? (Which convention/development doc?)
+- Is content accessible? (Working link with correct path?)
+- Is convention doc indexed? (Listed in appropriate README.md?)
+- Zero content loss? (All unique information preserved?)
 
-### Validation Questions to Ask
-
-When reviewing a condensed file, systematically ask:
-
-1. **Where did the removed content go?**
-   - Which convention doc contains it now?
-   - Can you locate the exact section in the convention doc?
-   - Is the content comprehensive (not abbreviated)?
-
-2. **Is the content accessible?**
-   - Does a link point to the convention doc?
-   - Is the link correct (relative path, `.md` extension)?
-   - Is the summary clear enough to know what's in the full doc?
-
-3. **Is the convention doc indexed?**
-   - Listed in `docs/explanation/conventions/README.md`?
-   - Listed in `docs/explanation/development/README.md`?
-   - Alphabetically ordered?
-
-4. **Can users still find this information?**
-   - Is the summary informative?
-   - Does the link work?
-   - Is the convention doc discoverable?
-
-5. **Are cross-references working?**
-   - Do related files link to the same convention?
-   - Are bidirectional references maintained?
-   - No broken links introduced?
-
-### Validation Steps
-
-**Step 1: Identify Condensed Sections**
-
-- Read the file that was condensed
-- Look for brief summaries (2-5 lines) with links
-- Identify sections that were previously longer
-- Compare to git history if available
-
-**Step 2: Verify Convention Doc Exists**
-
-- Use Glob to verify convention doc exists
-- Read the convention doc completely
-- Verify it contains the expected content
-- Check frontmatter has `updated` date
-
-**Step 3: Compare Content**
-
-- Read original content (from git or user description)
-- Read convention doc content
-- Verify ALL information is present
-- Check examples, rationale, anti-patterns preserved
-- Confirm no unique details lost
-
-**Step 4: Verify Links**
-
-- Test link from condensed file to convention
-- Verify relative path is correct
-- Confirm `.md` extension included
-- Check link target exists (use Glob)
-
-**Step 5: Check Index Files**
-
-- Read `docs/explanation/conventions/README.md`
-- Read `docs/explanation/development/README.md`
-- Verify convention is listed
-- Verify alphabetical ordering
-
-**Step 6: Search for Duplicates**
-
-- Use Grep to search for the content topic
-- Verify no other files still have verbose version
-- Confirm single source of truth established
-- Check all references point to convention
-
-**Step 7: Validate Zero Content Loss**
-
-- Create checklist of original content elements
-- Verify each element exists in convention doc
-- Document any intentional omissions
-- Flag any missing unique content
-
-### Red Flags and Issues
-
-**Critical Issues (content loss):**
-
-- Content removed without convention doc
-- Convention doc exists but content missing
-- Unique information not preserved anywhere
-- Examples or anti-patterns deleted
-
-**Important Issues (broken navigation):**
-
-- Broken links to conventions
-- Convention not indexed
-- Link uses wrong path format
-- Summary too vague to be useful
-
-**Minor Issues (incomplete offload):**
-
-- Duplicate content still in multiple places
-- Inconsistent linking (some files link, others don't)
-- Convention doc exists but not comprehensive
-- Missing cross-references
-
-### Validation Report Format
-
-When reporting condensation validation results, include:
-
-```markdown
-### Condensation Validation Results
-
-#### Files Validated
-
-- `CLAUDE.md` - Condensed sections: [list sections]
-- `plan-maker.md` - Condensed sections: [list sections]
-- `docs-maker.md` - Condensed sections: [list sections]
-
-#### Convention Docs Created/Updated
-
-- `docs/explanation/development/ex-de__acceptance-criteria.md` - Created
-- `docs/explanation/development/ex-de__trunk-based-development.md` - Updated
-
-#### Content Preservation Verification
-
-✅ **Zero Content Loss Confirmed**
-
-- All unique content moved to convention docs
-- No valuable information deleted
-- Examples and anti-patterns preserved
-- Rationale and context maintained
-
-#### Link Verification
-
-✅ **All Links Working**
-
-- Relative paths correct
-- `.md` extensions included
-- Link targets exist
-- Cross-references maintained
-
-#### Index Verification
-
-✅ **Conventions Indexed**
-
-- `ex-de__acceptance-criteria.md` listed in development README
-- `ex-de__trunk-based-development.md` listed in development README
-- Alphabetical ordering maintained
-
-#### Issues Found
-
-❌ **Critical:** None
-⚠️ **Important:** 1 issue found
-
-- `plan-executor.md` still has verbose TBD content (should link to convention)
-
-✅ **Minor:** None
-
-#### Recommendations
-
-1. Update `plan-executor.md` to link to TBD convention
-2. Remove duplicate TBD content from `plan-executor.md`
-3. Verify all agents link to TBD convention consistently
-```
-
-### Integration with repo-rules-maker
-
-When `repo-rules-maker` condenses files:
-
-1. **Before condensation**: Note what content will be moved
-2. **After condensation**: Verify with `repo-rules-checker`
-3. **Validation**: Run full condensation validation
-4. **Fix issues**: Use `repo-rules-maker` to correct problems
-
-**Workflow:**
-
-```
-User requests rule change
-    ↓
-repo-rules-maker condenses verbose content
-    ↓
-repo-rules-maker creates/updates convention docs
-    ↓
-User reviews changes
-    ↓
-repo-rules-checker validates condensation
-    ↓
-If issues found → repo-rules-maker fixes
-    ↓
-If no issues → Approve changes
-```
+See [Content Preservation Convention](../../docs/explanation/development/ex-de__content-preservation.md) for complete validation workflow, offload options, verification checklist, and integration with repo-rules-maker.
 
 ## Temporary Report Files
 
@@ -908,6 +669,11 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Agent Conventions:**
 
 - `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+
+**Validation Methodology:**
+
+- `docs/explanation/development/ex-de__repository-validation.md` - Standard validation patterns (frontmatter extraction, field checks, link validation)
+- `docs/explanation/development/ex-de__content-preservation.md` - Content offload principles and verification (MOVE not DELETE)
 
 **Documentation Conventions:**
 

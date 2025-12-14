@@ -9,7 +9,7 @@ tags:
   - conventions
   - ai-agents
 created: 2025-11-23
-updated: 2025-12-07
+updated: 2025-12-15
 ---
 
 # Development
@@ -75,7 +75,9 @@ Development practices in this directory fall into several categories:
 - [AI Agents Convention](./ex-de__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory
 - [Code Quality Convention](./ex-de__code-quality.md) - Automated code quality tools and git hooks (Prettier, Husky, lint-staged) for consistent formatting and commit validation
 - [Commit Message Convention](./ex-de__commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
+- [Content Preservation Convention](./ex-de__content-preservation.md) - Principles and processes for preserving knowledge when condensing files and extracting duplications. Covers the fundamental MOVE NOT DELETE principle, offload decision tree, four offload options (create new, merge existing, extract common, add to development), verification checklist, and when NOT to offload
 - [Hugo Development Convention](./ex-de__hugo-development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web. Covers theme development, layout organization, asset pipeline (Hugo Pipes, CSS/JS processing, image optimization), configuration management, i18n/l10n, performance optimization, SEO best practices, accessibility (WCAG compliance), shortcode development, and build/deployment processes
+- [Repository Validation Methodology Convention](./ex-de__repository-validation.md) - Standard validation methods and patterns for repository consistency checking. Covers frontmatter extraction (AWK pattern), validation checks (comments, fields, links, naming), best practices, and common pitfalls to avoid false positives
 - [Temporary Files Convention](./ex-de__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 - [Trunk Based Development Convention](./ex-de__trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
 
@@ -86,4 +88,4 @@ Development practices in this directory fall into several categories:
 
 ---
 
-**Last Updated**: 2025-12-07
+**Last Updated**: 2025-12-15
