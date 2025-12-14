@@ -29,9 +29,9 @@ This agent produces TWO outputs:
 
 1. **Audit Report File** (always generated):
    - **CRITICAL**: ONLY ONE file per audit run
-   - Location: `generated-reports/repo-rules-report-{YYYY-MM-DD-HH-MM}-audit.md`
+   - Location: `generated-reports/repo-rules__{YYYY-MM-DD--HH-MM}__audit.md`
    - Content: Full detailed audit report with all findings
-   - Timestamp: Audit start time in UTC+7 (YYYY-MM-DD-HH-MM format)
+   - Timestamp: Audit start time in UTC+7 (YYYY-MM-DD--HH-MM format)
    - **Behavior**: File is updated PROGRESSIVELY during audit (not just at end)
    - Purpose: Persistent record for historical tracking with real-time visibility
 
