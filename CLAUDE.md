@@ -291,13 +291,17 @@ AI agents creating temporary uncommitted files must use designated directories t
 
 These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/ex-de__temporary-files.md) for complete details on naming patterns, tool requirements, and when to use each directory.
 
+### Maker-Checker-Fixer Pattern
+
+Many agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Fixers use universal HIGH/MEDIUM/FALSE_POSITIVE confidence system to distinguish objective fixes from subjective improvements. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal assessment criteria.
+
 ### Available Agents
 
 **Content Creation**: docs-maker, docs-tutorial-maker, journal-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
 **Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
 
-**Fixing**: repo-rules-fixer (applies validated fixes from repo-rules-checker audit reports)
+**Fixing**: repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer (apply validated fixes from corresponding checker audit reports)
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
@@ -312,6 +316,8 @@ See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed descri
 ### Resources
 
 - **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
+- **Maker-Checker-Fixer Pattern:** [`docs/explanation/development/ex-de__maker-checker-fixer-pattern.md`](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
+- **Fixer Confidence Levels:** [`docs/explanation/development/ex-de__fixer-confidence-levels.md`](./docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment for automated fixes
 - **Repository Validation:** [`docs/explanation/development/ex-de__repository-validation.md`](./docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns for consistency checking
 - **Content Preservation:** [`docs/explanation/development/ex-de__content-preservation.md`](./docs/explanation/development/ex-de__content-preservation.md) - Principles for preserving knowledge when condensing files
 - **Commit Messages Guide:** [`docs/explanation/development/ex-de__commit-messages.md`](./docs/explanation/development/ex-de__commit-messages.md)
