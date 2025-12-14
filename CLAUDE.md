@@ -312,6 +312,8 @@ See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed descri
 ### Resources
 
 - **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
+- **Repository Validation:** [`docs/explanation/development/ex-de__repository-validation.md`](./docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns for consistency checking
+- **Content Preservation:** [`docs/explanation/development/ex-de__content-preservation.md`](./docs/explanation/development/ex-de__content-preservation.md) - Principles for preserving knowledge when condensing files
 - **Commit Messages Guide:** [`docs/explanation/development/ex-de__commit-messages.md`](./docs/explanation/development/ex-de__commit-messages.md)
 - **Trunk Based Development Guide:** [`docs/explanation/development/ex-de__trunk-based-development.md`](./docs/explanation/development/ex-de__trunk-based-development.md)
 - **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)

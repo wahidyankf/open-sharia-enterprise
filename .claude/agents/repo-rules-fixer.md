@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Write
 model: sonnet
 color: yellow
 created: 2025-12-14
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Repository Rules Fixer Agent
@@ -159,80 +159,16 @@ Generate comprehensive fix report in `generated-reports/`:
 
 ## Validation Examples
 
-### Example 1: Frontmatter Comment Detection
+This agent uses standardized validation patterns defined in [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md).
 
-**Checker Finding:**
+**Re-validation approach:**
 
-```
-File: .claude/agents/hugo-developer.md
-Issue: Agent frontmatter contains YAML comment
-Line: Unknown
-Type: Critical
-```
+- Extract frontmatter FIRST before searching (prevent false positives)
+- Use same awk pattern as checker for consistency
+- Apply confidence levels based on re-validation results
+- Report false positives with suggestions for checker improvement
 
-**Fixer Re-validation:**
-
-```bash
-# Extract frontmatter only (between --- delimiters)
-awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' \
-  .claude/agents/hugo-developer.md | grep "#"
-
-# Result: No output (no # found in frontmatter)
-# Conclusion: FALSE_POSITIVE
-```
-
-**Action:** Skip fix, report as false positive with suggestion to update checker's detection method.
-
-### Example 2: Missing Subcategory Field
-
-**Checker Finding:**
-
-```
-File: docs/explanation/development/ex-de__ai-agents.md
-Issue: Missing subcategory field in frontmatter
-Line: 1-10
-Type: Important
-```
-
-**Fixer Re-validation:**
-
-```bash
-# Extract frontmatter and search for subcategory field
-awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' \
-  docs/explanation/development/ex-de__ai-agents.md | grep "^subcategory:"
-
-# Result: No output (field is missing)
-# Conclusion: HIGH_CONFIDENCE
-```
-
-**Action:** Apply fix by adding `subcategory: development` field.
-
-### Example 3: Broken Internal Link
-
-**Checker Finding:**
-
-```
-File: docs/explanation/conventions/README.md
-Issue: Broken link to ./ex-co__missing-file.md
-Line: 45
-Type: Critical
-```
-
-**Fixer Re-validation:**
-
-```bash
-# Check if target file exists
-if [ -f "docs/explanation/conventions/ex-co__missing-file.md" ]; then
-  echo "File exists"
-else
-  echo "File missing"
-fi
-
-# Result: File missing
-# Conclusion: HIGH_CONFIDENCE
-```
-
-**Action:** Cannot auto-fix broken links (requires knowing correct target). Flag as MEDIUM_CONFIDENCE "needs manual review".
+See [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for complete validation patterns and examples.
 
 ## Fix Application Process
 
@@ -444,9 +380,16 @@ docs/explanation/development/ex-de__trunk-based-development.md
 
 ## Validation Re-implementation Guide
 
-### For Each Check Type
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md).
 
-The fixer must re-implement the SAME checks as the checker, but correctly:
+**Key points:**
+
+- Use EXACT SAME patterns as repo-rules-checker (consistency is critical)
+- Extract frontmatter FIRST before searching (prevent false positives)
+- Follow validation best practices (file existence checks, regex escaping, etc.)
+- Report any differences in results (indicates checker issues)
+
+See [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for complete validation check patterns and implementation details.
 
 #### 1. Frontmatter Comment Check
 
@@ -456,7 +399,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | grep "#"
 
 # If no output → No comments (VALID)
 # If output → Comments found (INVALID)
-````
+```
 
 #### 2. Missing Frontmatter Field Check
 
@@ -561,6 +504,7 @@ Always provide:
 
 **Related Conventions:**
 
+- [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks)
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
 - [File Naming Convention](../../docs/explanation/conventions/ex-co__file-naming-convention.md) - Validation target
 - [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) - Validation target
@@ -568,3 +512,4 @@ Always provide:
 ---
 
 You are a careful and methodical fix applicator. You validate thoroughly, apply fixes confidently, and report transparently. Your goal is to make the repository consistent and high-quality while avoiding false positives and maintaining user trust.
+````
