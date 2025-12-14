@@ -13,6 +13,28 @@ At AyoKoding, I strive to share my learning journey and create a space where we 
 
 Explore a range of topics on AyoKoding, from the life of a programmer and software engineering principles to working in tech companies and tips for enhancing your software engineering skills. I hope that my content inspires and offers valuable insights to our readers.
 
+## The Connection to Open Sharia Enterprise
+
+AyoKoding has a unique relationship with a project I'm actively building: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - a Sharia-compliant fintech platform that I'm developing as an open-source project with full transparency.
+
+Why does this matter to you as a reader?
+
+**Content grounded in real problems.** Everything I write on AyoKoding doesn't come from theoretical exercises or made-up tutorials. This content emerges from the experience of building an actual enterprise system - complete with complex architecture, carefully considered technology decisions, and real problems that demand practical solutions.
+
+**Learning that's practical and battle-tested.** When I share about microservices, event-driven architecture, or domain-driven design, these insights come from active implementation in Open Sharia Enterprise. Not just theory from books or articles - but knowledge that has gone through iterations, debugging sessions, and learning from real mistakes.
+
+**Transparency and knowledge sharing.** By building Open Sharia Enterprise as open-source and documenting the process on AyoKoding, I can:
+
+- **Force myself to think and write clearly** - because if I don't understand something deeply, I can't explain it well
+- **Share architectural decisions** along with the reasoning behind them, not just the final results
+- **Make enterprise system development knowledge accessible** to anyone interested, not just those working in large tech companies
+
+This creates a win-win situation: the Open Sharia Enterprise project benefits from clear documentation and structured thinking, while the community gains access to practical knowledge that's usually locked inside engineering teams at big companies.
+
+So when you read articles on AyoKoding about system design, architectural patterns, or best practices - know that they come from the real struggle of building something complex, not just theoretical knowledge.
+
+## Stay Connected
+
 Beyond written articles, AyoKoding also features a [YouTube channel](https://www.youtube.com/ayokoding) where I create videos to help you better understand and engage with the discussed topics (in Bahasa).
 
 Feel free to ask any questions or suggestions about AyoKoding's content. You can contact me at [wahidyankf@organiclever.com](mailto:wahidyankf@organiclever.com) or on LinkedIn at [https://www.linkedin.com/in/wahidyan-kresna-fridayoka/](https://www.linkedin.com/in/wahidyan-kresna-fridayoka/).
