@@ -9,7 +9,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-16
+updated: 2025-12-14
 ---
 
 # Temporary Files Convention
@@ -135,31 +135,85 @@ filename="repo-rules__${timestamp}__audit.md"
 
 **Retention**: Keep for historical tracking and comparison. Review/archive older reports periodically.
 
-#### Repository Fix Reports
+#### Fixer Reports (Universal Pattern)
 
-**Agent**: repo-rules-fixer
-**Pattern**: `repo-rules__{YYYY-MM-DD--HH-MM}__fix.md`
-**Example**: `repo-rules__2025-12-14--20-45__fix.md`
+**Agents**: All fixer agents (repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer)
 
-**Content**: Fix application report with validation results covering:
+**Pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__fix.md`
 
-- Validation summary (total findings, fixes applied, false positives, manual review items)
-- Detailed list of fixes applied with confidence levels
-- False positives detected with recommendations for checker improvement
-- Items needing manual review with reasoning
-- Files modified during fix application
-- Recommendations for improving repo-rules-checker accuracy
+**Universal Structure**: All fixer agents follow the same report structure:
 
-**Naming**: Replaces `__audit` suffix with `__fix` suffix (same timestamp)
+**Naming Convention**:
 
-**Example Pairing**:
+- Replaces `__audit` suffix with `__fix` suffix
+- **CRITICAL**: Uses SAME timestamp as source audit report
+- This creates clear audit-fix report pairing for traceability
 
-- Audit report: `repo-rules__2025-12-14--20-45__audit.md`
-- Fix report: `repo-rules__2025-12-14--20-45__fix.md`
+**Report Pairing Examples**:
 
-**Workflow**: Generated after repo-rules-fixer processes a repo-rules-checker audit report
+| Agent Family             | Audit Report                                            | Fix Report                                            |
+| ------------------------ | ------------------------------------------------------- | ----------------------------------------------------- |
+| repo-rules               | `repo-rules__2025-12-14--20-45__audit.md`               | `repo-rules__2025-12-14--20-45__fix.md`               |
+| ayokoding-content        | `ayokoding-content__2025-12-14--15-30__audit.md`        | `ayokoding-content__2025-12-14--15-30__fix.md`        |
+| ose-platform-web-content | `ose-platform-web-content__2025-12-14--16-00__audit.md` | `ose-platform-web-content__2025-12-14--16-00__fix.md` |
+| docs-tutorial            | `docs-tutorial__2025-12-14--10-15__audit.md`            | `docs-tutorial__2025-12-14--10-15__fix.md`            |
+| readme                   | `readme__2025-12-14--09-45__audit.md`                   | `readme__2025-12-14--09-45__fix.md`                   |
 
-**Retention**: Keep alongside audit reports for complete audit trail. Provides transparency on what was automatically fixed vs. skipped.
+**Why Same Timestamp?**
+
+- Enables matching audit report with corresponding fix report
+- Chronological sorting keeps related reports together
+- Audit trail shows what was detected vs what was fixed
+- Supports debugging (compare checker findings vs fixer actions)
+
+**Universal Content Structure**:
+
+All fixer reports include these sections:
+
+1. **Validation Summary**:
+   - Total findings processed from audit report
+   - Fixes applied (HIGH confidence count)
+   - False positives detected (count)
+   - Needs manual review (MEDIUM confidence count)
+
+2. **Fixes Applied**:
+   - Detailed list of HIGH confidence fixes
+   - What was changed in each file
+   - Re-validation results confirming issue
+   - Confidence level reasoning
+
+3. **False Positives Detected**:
+   - Checker findings that re-validation disproved
+   - Why checker was wrong (detection logic flaw)
+   - Actionable recommendations to improve checker
+   - Example code showing correct validation approach
+
+4. **Needs Manual Review**:
+   - MEDIUM confidence items requiring human judgment
+   - Why automated fix was skipped (subjective/ambiguous/risky)
+   - Action required from user
+
+5. **Recommendations for Checker**:
+   - Improvements based on false positives
+   - Concrete suggestions with example code
+   - Impact assessment
+
+6. **Files Modified**:
+   - Complete list of files changed during fix application
+   - Total count for summary
+
+**Confidence Levels**: All fixers use universal three-level system (HIGH/MEDIUM/FALSE_POSITIVE). See [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md) for complete criteria.
+
+**Workflow**:
+
+1. Checker generates audit report
+2. User reviews audit report
+3. User invokes fixer
+4. Fixer reads audit report, re-validates findings
+5. Fixer applies HIGH confidence fixes automatically
+6. Fixer generates fix report with same timestamp as audit
+
+**Retention**: Keep alongside audit reports for complete audit trail. Provides transparency on automated fixes vs manual review items vs false positives.
 
 #### Content Validation Reports
 
