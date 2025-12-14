@@ -9,7 +9,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-15
+updated: 2025-12-16
 ---
 
 # Temporary Files Convention
@@ -95,6 +95,26 @@ generated-reports/plan-execution__2025-12-15--14-00__validation.md
 - Agent family is lowercase with single dashes (multi-word: `ose-platform-web-content`, `plan-execution`)
 - Suffix is lowercase, no plurals (`audit` not `audits`)
 - Suffix is optional (may be omitted if report type is obvious from context)
+
+**CRITICAL - Timestamp Generation:**
+
+**❌ WRONG - Using placeholder timestamps:**
+
+```bash
+# DO NOT use placeholder values
+filename="repo-rules__2025-12-14--00-00__audit.md"  # WRONG!
+```
+
+**✅ CORRECT - Execute bash command for actual current time:**
+
+```bash
+# MUST execute bash command to get real time
+timestamp=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
+filename="repo-rules__${timestamp}__audit.md"
+# Example: repo-rules__2025-12-14--16-43__audit.md (actual time!)
+```
+
+**Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../conventions/ex-co__timestamp-format.md) for complete details.
 
 #### Repository Audit Reports
 
@@ -231,6 +251,28 @@ Agents that create validation/audit reports (docs-checker, plan-checker, repo-ru
 2. Follow naming pattern: `YYYY-MM-DD__[report-type].md`
 3. Include timestamp in filename for traceability
 4. Use descriptive report type in filename
+5. **MUST have both Write and Bash tools** in their frontmatter
+
+**Tool Requirements**:
+
+Any agent writing to `generated-reports/` MUST have:
+
+- **Write tool**: Required for creating report files
+- **Bash tool**: Required for generating UTC+7 timestamps using `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+
+**Example frontmatter**:
+
+```yaml
+---
+name: repo-rules-checker
+description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
+tools: Read, Glob, Grep, Write, Bash
+model: sonnet
+color: green
+---
+```
+
+**Rationale**: Write tool creates the file, Bash tool generates accurate timestamps. Both are mandatory for report-generating agents.
 
 **Example implementation**:
 

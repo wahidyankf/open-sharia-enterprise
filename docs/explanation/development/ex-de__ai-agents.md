@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-14
+updated: 2025-12-16
 ---
 
 # AI Agents Convention
@@ -222,11 +222,48 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 
 Tool permissions follow the **principle of least privilege**: agents should only have access to tools they actually need.
 
-| Pattern           | Tools                               | Use For                                       | Example            | Rationale                                                     |
-| ----------------- | ----------------------------------- | --------------------------------------------- | ------------------ | ------------------------------------------------------------- |
-| **Read-Only**     | Read, Glob, Grep                    | Validation, analysis, checking, code review   | repo-rules-checker | Should never modify files; prevents accidental changes        |
-| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer         | Needs file creation/editing but no shell access               |
-| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner        | Requires command execution (⚠️ powerful, only when necessary) |
+| Pattern           | Tools                               | Use For                                       | Example            | Rationale                                                          |
+| ----------------- | ----------------------------------- | --------------------------------------------- | ------------------ | ------------------------------------------------------------------ |
+| **Read-Only**     | Read, Glob, Grep                    | Analysis without reports                      | (none currently)   | Pure read operations without file output                           |
+| **Checker**       | Read, Glob, Grep, Write, Bash       | Validation with audit report generation       | repo-rules-checker | Needs Write for reports in generated-reports/, Bash for timestamps |
+| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer         | Needs file creation/editing but no shell access                    |
+| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner        | Requires command execution (⚠️ powerful, only when necessary)      |
+
+### Report-Generating Agents: Mandatory Tool Requirements
+
+**CRITICAL RULE**: Any agent that writes to `generated-reports/` directory MUST have **both Write and Bash** tools in their frontmatter.
+
+**Tool Requirements Explained**:
+
+- **Write tool**: Required for creating report files in `generated-reports/`
+- **Bash tool**: Required for generating UTC+7 timestamps for report filenames using `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+
+**Why both are mandatory**:
+
+1. **Write** - Creates the actual report file
+2. **Bash** - Generates accurate, real-time timestamps (placeholder timestamps like "00-00" are forbidden)
+
+**Applies to these agent types**:
+
+- All `*-checker` agents (repo-rules-checker, docs-checker, plan-checker, plan-execution-checker, etc.)
+- `repo-rules-fixer` (generates fix reports)
+- Any agent creating validation, audit, or verification reports
+
+**Example frontmatter**:
+
+```yaml
+---
+name: repo-rules-checker
+description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
+tools: Read, Glob, Grep, Write, Bash
+model: sonnet
+color: green
+---
+```
+
+**Verification**: When creating or updating report-generating agents, verify both Write and Bash are present in the tools list.
+
+See [Temporary Files Convention](./ex-de__temporary-files.md) for complete details on report naming patterns and timestamp generation.
 
 ## Model Selection Guidelines
 
@@ -288,12 +325,12 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                 | Agents                                                     |
-| ------------- | ---------------- | ------------------------------------- | ---------------------------- | ---------------------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool             | docs-writer<br>plan-writer<br>journal-writer               |
-| 🟩 **Green**  | **Checkers**     | Validate and verify without modifying | Read-only (no Write or Edit) | repo-rules-checker<br>plan-checker                         |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`   | repo-rules-maker<br>docs-file-manager<br>docs-link-checker |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`  | plan-executor                                              |
+| Color         | Role             | Purpose                               | Tool Pattern                    | Agents                                             |
+| ------------- | ---------------- | ------------------------------------- | ------------------------------- | -------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                | docs-writer<br>plan-writer<br>journal-writer       |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`) | repo-rules-checker<br>plan-checker<br>docs-checker |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`      | repo-rules-maker<br>docs-file-manager              |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`     | plan-executor                                      |
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
@@ -321,10 +358,12 @@ Start: What is the agent's primary capability?
     │       - Must have `Write` tool
     │       - Examples: docs-writer, plan-writer
     │
-    ├─ Validates/checks without modifying
+    ├─ Validates/checks and generates reports
     │   └─> color: green (Checker)
-    │       - Read-only tools (no Write or Edit)
-    │       - Examples: repo-rules-checker, plan-checker
+    │       - Has `Write`, `Bash` (no Edit)
+    │       - Write needed for audit reports in generated-reports/
+    │       - Bash needed for UTC+7 timestamps
+    │       - Examples: repo-rules-checker, plan-checker, docs-checker
     │
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
@@ -466,7 +505,7 @@ color: blue
 ---
 name: repo-rules-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
-tools: Read, Glob, Grep
+tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 ---
