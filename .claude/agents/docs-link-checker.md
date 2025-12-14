@@ -1,11 +1,11 @@
 ---
 name: docs-link-checker
 description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how this agent is invoked (spawned by other agents, processes, or direct invocation). Outputs results in conversation only (no separate report files). Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
-tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
+tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: haiku
 color: yellow
 created: 2025-11-29
-updated: 2025-12-07
+updated: 2025-12-15
 ---
 
 # Documentation Links Checker Agent
@@ -225,6 +225,8 @@ Even for cached links that weren't rechecked:
 
 - Write `docs/metadata/external-links-status.yaml`
 - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
+  - Use command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
+  - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
 - Include full usedIn data for all links (needed for maintenance)
 - Sort links by URL for consistent git diffs
 - This step is REQUIRED on every run
@@ -379,11 +381,13 @@ Follow this systematic approach:
 1. **Save updated cache (REQUIRED on every run)**
    - **REQUIRED**: Write to `docs/metadata/external-links-status.yaml` (use this exact path, no alternatives)
    - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
+     - **Command to get current UTC+7 time**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
+     - Example output: `2025-12-14T16:23:00+07:00`
+     - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
    - Include schema version
    - Include usedIn data (file paths only) for all links (needed for maintenance)
    - Sort links by URL for consistent git diffs
    - Use 2-space YAML indentation
-   - **All timestamps must use UTC+7 (Indonesian time)** format with +07:00 offset (see [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md))
    - **This update is MANDATORY on every run**, even if no links were checked
 
 2. **Cache should contain:**

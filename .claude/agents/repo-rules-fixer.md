@@ -1,7 +1,7 @@
 ---
 name: repo-rules-fixer
 description: Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing repo-rules-checker output.
-tools: Read, Edit, Glob, Grep, Write
+tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: yellow
 created: 2025-12-14

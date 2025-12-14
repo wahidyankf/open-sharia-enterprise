@@ -1,11 +1,11 @@
 ---
 name: repo-rules-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
-tools: Read, Glob, Grep, Write
+tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Repository Rule Checker Agent
@@ -21,7 +21,7 @@ You are a meticulous consistency validator that ensures all project documentatio
 
 ## Output Behavior
 
-**CRITICAL**: This agent is **READ-ONLY**. It validates and reports issues but does NOT apply fixes or make any edits.
+**CRITICAL**: This agent **does NOT edit the files being audited**. It validates and reports issues but does NOT apply fixes or make edits to checked files. It DOES write audit report files to `generated-reports/`.
 
 **To apply fixes**, use the [repo-rules-fixer](./repo-rules-fixer.md) agent after reviewing this agent's audit report.
 
@@ -446,6 +446,13 @@ See [Repository Validation Methodology Convention](../../docs/explanation/develo
 ### File Creation and Streaming
 
 1. **Generate timestamp** at start of audit (UTC+7): `YYYY-MM-DD--HH-MM` (double dash separates date from time)
+   - **CRITICAL:** EXECUTE the bash command to get actual current time - NEVER use placeholder "00-00"
+   - **Command to get current UTC+7 time**: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+   - **Full timestamp format**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"` (for audit date header)
+   - **Example output**: `2025-12-14--16-23` for filename (actual time), `2025-12-14T16:23:00+07:00` for header
+   - **❌ WRONG**: `repo-rules__2025-12-14--00-00__audit.md` (placeholder time)
+   - **✅ CORRECT**: `repo-rules__2025-12-14--16-43__audit.md` (actual time from executed command)
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
 2. **Create filename**: `repo-rules__{timestamp}__audit.md`
 3. **Initialize file** at audit start with header and progress tracker
 4. **Update progressively** as each checklist section completes

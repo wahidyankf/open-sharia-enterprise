@@ -1,10 +1,11 @@
 ---
 name: ose-platform-web-content-checker
 description: Expert at validating Hugo content for ose-platform-web (PaperMod theme) against Hugo Content Convention and Content Quality Principles
-tools: Read, Grep, Glob, Bash
+tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
-updated: 2025-12-13
+created: 2025-12-01
+updated: 2025-12-15
 ---
 
 # ose-platform-web-content-checker Agent
