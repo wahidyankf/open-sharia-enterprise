@@ -22,3 +22,6 @@
 
 - id: relatedContent
   translation: "Related Content"
+
+- id: openSourceProject
+  translation: "Open Source Project"
