@@ -1,11 +1,11 @@
 ---
 title: "Pengalaman Gw dengan Tes CliftonStrengths: Jadi makin yakin di jalur engineering management"
 weight: 203
-date: 2025-03-16T07:20:00+07:00
+date: 2023-04-24T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [My CliftonStrengths Journey: It makes me more confident to take the engineering management path](/en/rants/2023/my-cliftonstrengths-journey-it-makes-me-more-confident-to-take-the-engineering-management-path)
+**Similar article:** [My CliftonStrengths Journey: It makes me more confident to take the engineering management path](/en/rants/2023/04/my-cliftonstrengths-journey-it-makes-me-more-confident-to-take-the-engineering-management-path)
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

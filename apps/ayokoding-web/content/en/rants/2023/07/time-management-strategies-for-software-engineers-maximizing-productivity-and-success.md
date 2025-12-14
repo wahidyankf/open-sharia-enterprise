@@ -1,11 +1,11 @@
 ---
 title: "Time Management Strategies for Software Engineers: Maximizing Productivity and Success"
 weight: 203
-date: 2025-03-16T07:20:00+07:00
+date: 2023-07-14T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [Strategi Manajemen Waktu untuk Insinyur Perangkat Lunak: Memaksimalkan Produktivitas dan Kesuksesan](/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan)
+**Similar article:** [Strategi Manajemen Waktu untuk Insinyur Perangkat Lunak: Memaksimalkan Produktivitas dan Kesuksesan](/id/celoteh/2023/07/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan)
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

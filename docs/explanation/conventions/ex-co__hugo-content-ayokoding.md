@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -656,6 +656,234 @@ content/en/learn/swe/prog-lang/golang/
 ```
 
 **Note**: This pattern is OPTIONAL. Each topic decides independently based on content volume and diversity.
+
+### Blogging Content Structure (Rants/Celoteh)
+
+**Scope**: This section applies ONLY to blogging content in:
+
+- `/en/rants/` - English personal essays and opinion pieces
+- `/id/celoteh/` - Indonesian personal essays and opinion pieces
+
+**CRITICAL DIFFERENCES from Learning Content**:
+
+Blogging content uses a **year/month organization** structure that differs significantly from the topic-based learning content structure.
+
+#### Cross-Reference Pattern (Bilingual Blogging Content)
+
+**CRITICAL REQUIREMENT**: Blogging content that exists in both languages MUST include cross-reference links at the top of each article.
+
+**Cross-Reference Placement**: Immediately after frontmatter, before main content (first element readers see).
+
+**English Articles (Original)**:
+
+```markdown
+**Similar article:** [Indonesian Article Title](/id/celoteh/2023/07/article-slug)
+```
+
+- Uses bold formatting for "**Similar article:**"
+- Links to corresponding Indonesian translation
+- Uses absolute path with language prefix
+
+**Indonesian Articles (Translated)**:
+
+```markdown
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [English Article Title](/en/rants/2023/07/article-slug)_
+```
+
+- Uses blockquote (>) for machine translation disclaimer
+- Explains nuance shifts due to machine translation
+- Links to original English article
+- Uses absolute path with language prefix
+
+**Key Rules**:
+
+1. Cross-references appear at **top of article** (after frontmatter, before main content)
+2. Links use **absolute paths** with language prefix (`/en/rants/...` or `/id/celoteh/...`)
+3. Links do NOT include `.md` extension (Hugo convention)
+4. **Both directions exist**: EN → ID and ID → EN
+5. **Applies ONLY to blogging content** (`/rants/` and `/celoteh/`), NOT learning content
+
+**Example - English Article** (`/en/rants/2023/07/why-neovim.md`):
+
+```markdown
+---
+title: "Why I Switched to Neovim"
+date: 2023-07-15T10:30:00+07:00
+draft: false
+description: "Personal reflections on moving from Vim to Neovim"
+weight: 402
+tags: ["tools", "vim", "neovim"]
+categories: ["rants"]
+---
+
+**Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
+
+After 5 years of using Vim, I finally made the switch to Neovim...
+```
+
+**Example - Indonesian Article** (`/id/celoteh/2023/07/kenapa-neovim.md`):
+
+```markdown
+---
+title: "Kenapa Saya Pindah ke Neovim"
+date: 2023-07-15T10:30:00+07:00
+draft: false
+description: "Refleksi personal tentang perpindahan dari Vim ke Neovim"
+weight: 402
+tags: ["tools", "vim", "neovim"]
+categories: ["celoteh"]
+---
+
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Why I Switched to Neovim](/en/rants/2023/07/why-neovim)_
+
+Setelah 5 tahun menggunakan Vim, saya akhirnya pindah ke Neovim...
+```
+
+**Rationale**: Cross-references help bilingual readers find content in their preferred language and set expectations about translation quality.
+
+**Directory Organization**:
+
+```
+content/en/rants/
+├── _index.md                           # Main rants section index
+├── 2023/
+│   ├── _index.md                       # Year index (3-layer tree: year → months → articles)
+│   ├── 07/
+│   │   ├── _index.md                   # Month index (lists articles in that month)
+│   │   ├── article-1.md                # Individual blog post
+│   │   └── article-2.md                # Individual blog post
+│   └── 06/
+│       ├── _index.md                   # Month index
+│       └── article-3.md                # Individual blog post
+└── 2024/
+    ├── _index.md                       # Year index
+    └── 01/
+        └── article-4.md
+```
+
+**Key Differences from Learning Content**:
+
+| Feature                     | Learning Content (/learn/, /belajar/)                        | Blogging Content (/rants/, /celoteh/)                              |
+| --------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------ |
+| **Organization**            | Topic-based hierarchy (e.g., swe/prog-lang/golang/)          | Time-based hierarchy (year/month/)                                 |
+| **Overview/Ikhtisar**       | **REQUIRED** - Every folder needs overview.md or ikhtisar.md | **NOT REQUIRED** - No overview files needed                        |
+| **Index File Structure**    | Navigation lists (3 layers deep)                             | Year index: 3-layer tree; Month index: flat article list           |
+| **Directory Depth Purpose** | Represents topic nesting                                     | Represents time period (year/month)                                |
+| **Content Separation**      | `_index.md` navigation only, intro in overview/ikhtisar      | `_index.md` can include intro text (no separate overview required) |
+| **Weight System**           | Depth-based (depth × 100 + sequence)                         | Same depth-based formula (month index = 201, articles = 202+)      |
+| **Naming Convention**       | Topic slugs (getting-started.md, advanced-patterns.md)       | Descriptive article slugs (why-i-switched-to-neovim.md)            |
+| **Author Field**            | FORBIDDEN (uses site-level config)                           | ALLOWED (guest contributors possible)                              |
+| **Validation Strictness**   | Strict structure enforcement                                 | Flexible structure (no overview requirement)                       |
+| **Diátaxis Organization**   | Optional (tutorials/, how-to/, reference/, explanation/)     | Not applicable (chronological organization)                        |
+
+**Year Index File (`_index.md`) Structure**:
+
+Year index files display a **3-layer tree structure** showing:
+
+1. **Layer 1**: Year (current level)
+2. **Layer 2**: Months within that year (children)
+3. **Layer 3**: Articles within each month (grandchildren)
+
+**Example Year Index** (`/en/rants/2023/_index.md`):
+
+```markdown
+---
+title: "2023 Rants"
+weight: 201 # Year folder at depth 2
+date: 2023-01-01T00:00:00+07:00
+draft: false
+---
+
+- [July 2023](/en/rants/2023/07)
+  - [Why I Switched to Neovim](/en/rants/2023/07/why-i-switched-to-neovim)
+  - [The Case for Trunk Based Development](/en/rants/2023/07/trunk-based-development)
+- [June 2023](/en/rants/2023/06)
+  - [Building Apps That Last](/en/rants/2023/06/building-apps-that-last)
+  - [Simplicity in Software Engineering](/en/rants/2023/06/simplicity-in-swe)
+```
+
+**Month Index File (`_index.md`) Structure**:
+
+Month index files display a **flat list of articles** within that month.
+
+**Example Month Index** (`/en/rants/2023/07/_index.md`):
+
+```markdown
+---
+title: "July 2023"
+weight: 201 # Month folder at depth 3 (3 × 100 + 1)
+date: 2023-07-01T07:20:00+07:00
+draft: false
+---
+
+- [Why I Switched to Neovim](/en/rants/2023/07/why-i-switched-to-neovim)
+- [The Case for Trunk Based Development](/en/rants/2023/07/trunk-based-development)
+```
+
+**Weight System for Blogging Content**:
+
+Uses the **same depth-based formula** as learning content:
+
+**Formula**: `weight = (depth × 100) + sequence`
+
+**Example Weights** (for `/en/rants/2023/07/`):
+
+- Depth calculation: `/en/` (1) → `/rants/` (2) → `/2023/` (3) → `/07/` (4)
+- `_index.md` for month (07/): `weight: 401` (depth 4: 4 × 100 + 1)
+- First article: `weight: 402` (depth 4: 4 × 100 + 2)
+- Second article: `weight: 403` (depth 4: 4 × 100 + 3)
+
+**Important Notes**:
+
+1. **No Overview/Ikhtisar Required**: Unlike learning content, blogging content does NOT need separate overview.md or ikhtisar.md files
+2. **Index Can Include Intro**: Month/year `_index.md` files MAY include introductory text (not restricted to navigation only)
+3. **Chronological Ordering**: Articles are typically ordered by date within month (newest first), though weight field provides manual control
+4. **Flexible Structure**: Blogging content has more structural flexibility than learning content (fewer validation rules)
+
+**Article Frontmatter Example** (`/en/rants/2023/07/why-i-switched-to-neovim.md`):
+
+```yaml
+---
+title: "Why I Switched to Neovim"
+date: 2023-07-15T10:30:00+07:00
+draft: false
+description: "Personal reflections on moving from Vim to Neovim and the productivity benefits"
+weight: 402 # depth 4: (4 × 100) + 2
+tags: ["tools", "vim", "neovim", "productivity"]
+categories: ["rants"]
+author: "Wahidyan Kresna Fridayoka" # Optional - allowed in rants/celoteh
+---
+After 5 years of using Vim, I finally made the switch to Neovim...
+```
+
+**Validation Differences**:
+
+For blogging content (`/en/rants/`, `/id/celoteh/`):
+
+- ✅ Weight field ordering: Same depth-based formula
+- ✅ Author field: ALLOWED (guest contributors possible)
+- ✅ Year/month directory structure: REQUIRED
+- ✅ Index files: REQUIRED (year and month levels)
+- ❌ Overview/Ikhtisar files: NOT REQUIRED (major difference)
+- ❌ Content separation rule: NOT ENFORCED (index can have intro)
+- ❌ 3-layer navigation: Different pattern (year → months → articles tree)
+- ❌ Diátaxis organization: NOT APPLICABLE (chronological only)
+
+**Creating Blogging Content**:
+
+```bash
+# Create article (English)
+hugo new content/en/rants/2024/01/my-new-post.md --kind celoteh
+
+# Create article (Indonesian)
+hugo new content/id/celoteh/2024/01/postingan-baru.md --kind celoteh
+
+# Create month index (if not exists)
+hugo new content/en/rants/2024/01/_index.md --kind _index
+
+# Create year index (if not exists)
+hugo new content/en/rants/2024/_index.md --kind _index
+```
 
 ---
 

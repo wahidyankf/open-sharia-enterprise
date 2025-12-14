@@ -1,11 +1,11 @@
 ---
 title: "The Journey of Lifelong Improvement: Unpacking the Story of a Kindergarten and its Echoes in the World of Software Engineering and AI"
-weight: 203
-date: 2025-03-16T07:20:00+07:00
+weight: 204
+date: 2023-06-18T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [Perjalanan Meningkatkan Kemampuan Seumur Hidup: Kisah Taman Kanak-Kanak dan Hubungannya dengan Dunia Rekayasa Perangkat Lunak dan AI](/id/celoteh/2023/perjalanan-meningkatkan-kemampuan-seumur-hidup-kisah-taman-kanak-kanak-dan-hubungannya-dengan-dunia-rekayasa-perangkat-lunak-dan-ai)
+**Similar article:** [Perjalanan Meningkatkan Kemampuan Seumur Hidup: Kisah Taman Kanak-Kanak dan Hubungannya dengan Dunia Rekayasa Perangkat Lunak dan AI](/id/celoteh/2023/06/perjalanan-meningkatkan-kemampuan-seumur-hidup-kisah-taman-kanak-kanak-dan-hubungannya-dengan-dunia-rekayasa-perangkat-lunak-dan-ai)
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

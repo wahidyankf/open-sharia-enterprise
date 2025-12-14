@@ -4,7 +4,7 @@ description: Expert at creating Hugo content for ayokoding-web (Hextra theme) fo
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # ayokoding-content-maker Agent
@@ -60,8 +60,8 @@ Use this agent when:
 
 **Content Types**:
 
-- **Learning content** (id/belajar/, en/learn/) - Tutorials, courses, guides
-- **Personal essays** (id/celoteh/, en/rants/) - Opinion pieces, reflections
+- **Learning content** (id/belajar/, en/learn/) - Tutorials, courses, guides (topic-based organization)
+- **Blogging content** (id/celoteh/, en/rants/) - Opinion pieces, reflections (year/month organization)
 - **Video content** (id/konten-video/, en/video-content/) - Video tutorials
 
 **Available Archetypes**:
@@ -205,8 +205,8 @@ Use this agent when:
        └── video-content/
    ```
 
-8. **Optional Topic-Level Diátaxis Structure**:
-   - **Scope**: ayokoding-web topics MAY optionally organize content using Diátaxis framework
+8. **Optional Topic-Level Diátaxis Structure** (learning content only):
+   - **Scope**: ayokoding-web learning topics MAY optionally organize content using Diátaxis framework
    - **Status**: OPTIONAL pattern (not required, you decide based on topic needs)
    - **When to use**: Topic has diverse content types (tutorials + recipes + reference + concepts) and growing content
    - **When to keep flat**: Topic has few pages (< 10), all similar type, simple structure sufficient
@@ -235,6 +235,35 @@ Use this agent when:
      └── ai-personal-finance-advisor.md
      ```
    - **Important**: This is OPTIONAL - you choose based on topic complexity and content volume. See [Hugo Content Convention - ayokoding - Optional Topic-Level Diátaxis](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md#7-optional-topic-level-di%C3%A1taxis-structure-ayokoding-web-only) for complete details.
+
+9. **Blogging Content Structure** (rants/celoteh only):
+   - **Scope**: ONLY applies to `/en/rants/` and `/id/celoteh/` directories
+   - **Organization**: Year/month hierarchy (not topic-based like learning content)
+   - **Directory pattern**: `/rants/YYYY/MM/article-slug.md`
+   - **Year index**: 3-layer tree (year → months → articles)
+   - **Month index**: Flat list of articles in that month
+   - **NO overview/ikhtisar files**: Unlike learning content, blogging does NOT require separate overview files
+   - **Index can include intro**: Month/year `_index.md` files MAY include introductory text (not restricted to navigation only)
+   - **Weight system**: Same depth-based formula (month index = weight 401 at depth 4, articles = 402+)
+   - **Author field allowed**: Blogging content MAY include `author:` field (guest contributors possible)
+   - **Cross-Reference Pattern (Bilingual Blogging)**:
+     - **CRITICAL**: Bilingual blog articles MUST include cross-reference links at top (after frontmatter, before content)
+     - **English → Indonesian**: `**Similar article:** [Indonesian Title](/id/celoteh/YYYY/MM/slug)`
+     - **Indonesian → English**: `> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [English Title](/en/rants/YYYY/MM/slug)_`
+     - Links use absolute paths with language prefix, NO `.md` extension
+     - Both directions exist (EN → ID and ID → EN)
+   - **Example structure**:
+     ```
+     content/en/rants/
+     ├── _index.md                    # Main rants index
+     ├── 2023/
+     │   ├── _index.md                # Year index (3-layer tree)
+     │   └── 07/
+     │       ├── _index.md            # Month index (flat list)
+     │       ├── why-neovim.md        # Article (weight: 402, cross-ref to ID)
+     │       └── trunk-based-dev.md   # Article (weight: 403, cross-ref to ID)
+     ```
+   - **Important**: Blogging content has DIFFERENT validation rules than learning content. See [Hugo Content Convention - ayokoding - Blogging Content Structure](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md#blogging-content-structure-rantsceloteh) for complete details.
 
 ## Content Quality Principles Compliance
 
@@ -536,14 +565,19 @@ Before completing, verify:
   - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
 - [ ] **For `_index.md` files**: Title is descriptive and readable (proper capitalization, acronyms, context)
 - [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, grandchildren)
-- [ ] **CRITICAL: Every folder has intro file** - overview.md (English) or ikhtisar.md (Indonesian) exists for ALL learn/belajar folders
+- [ ] **CRITICAL (learning content only): Every folder has intro file** - overview.md (English) or ikhtisar.md (Indonesian) exists for ALL learn/belajar folders (NOT required for rants/celoteh blogging content)
 - [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md or ikhtisar.md)
-- [ ] **For `_index.md` with overview/ikhtisar**: Link to overview.md or ikhtisar.md is FIRST item in navigation list
-- [ ] **For intro content files**: Correct naming based on language (overview.md for English, ikhtisar.md for Indonesian)
-- [ ] **For folders with both index and intro**: Navigation ordering correct (\_index.md topmost, then overview.md/ikhtisar.md)
+- [ ] **For blogging content (rants/celoteh)**: Index files MAY include intro text (no separate overview required)
+- [ ] **For `_index.md` with overview/ikhtisar** (learning content): Link to overview.md or ikhtisar.md is FIRST item in navigation list
+- [ ] **For intro content files** (learning content): Correct naming based on language (overview.md for English, ikhtisar.md for Indonesian)
+- [ ] **For folders with both index and intro** (learning content): Navigation ordering correct (\_index.md topmost, then overview.md/ikhtisar.md)
 - [ ] **Weight field ordering**: \_index.md has `weight: 1`, overview.md/ikhtisar.md has `weight: 2`, other content has `weight: 3+` in logical order
 - [ ] For learning content: Progressive scaffolding, hands-on elements, visual aids
 - [ ] For bilingual content: Both Indonesian and English versions created
+- [ ] **For bilingual blogging content (rants/celoteh)**: Cross-reference links added at top of article (after frontmatter)
+  - [ ] English articles use `**Similar article:**` format linking to Indonesian version
+  - [ ] Indonesian articles use blockquote disclaimer linking to English original
+  - [ ] Links use absolute paths with language prefix, NO `.md` extension
 
 ## Examples
 
@@ -730,19 +764,22 @@ Keep practicing, and you'll be building powerful Node.js applications in no time
 
 ````
 
-### Example 2: Personal Essay (Celoteh)
+### Example 2: Personal Essay (Celoteh) with Cross-Reference
 
-**Path**: `content/id/celoteh/kenapa-neovim.md`
+**Path**: `content/id/celoteh/2023/07/kenapa-neovim.md`
 
 ```markdown
 ---
 title: "Kenapa Saya Pindah ke Neovim"
-date: 2025-12-07T13:00:00+07:00
+date: 2023-07-15T13:00:00+07:00
 draft: false
 description: "Refleksi personal tentang perpindahan dari Vim ke Neovim dan alasannya"
+weight: 402
 tags: ["tools", "productivity", "vim", "neovim", "opini"]
 categories: ["celoteh"]
 ---
+
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Why I Switched to Neovim](/en/rants/2023/07/why-neovim)_
 
 Setelah 5 tahun menggunakan Vim, saya akhirnya memutuskan untuk pindah ke
 Neovim. Bukan keputusan yang mudah, tapi saya tidak menyesal.
@@ -832,6 +869,92 @@ tidak setajam yang dibayangkan, dan hasilnya sangat worth it.
 menyentuh Vim lagi. Best decision ever.
 
 ````
+
+### Example 3: Personal Essay (Rants) - English Original
+
+**Path**: `content/en/rants/2023/07/why-neovim.md`
+
+```markdown
+---
+title: "Why I Switched to Neovim"
+date: 2023-07-15T13:00:00+07:00
+draft: false
+description: "Personal reflections on switching from Vim to Neovim and why it was worth it"
+weight: 402
+tags: ["tools", "productivity", "vim", "neovim", "opinion"]
+categories: ["rants"]
+---
+
+**Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
+
+After 5 years of using Vim, I finally decided to switch to Neovim. It wasn't
+an easy decision, but I have no regrets.
+
+## The Breaking Point
+
+My Vim configuration had grown to over 1,000 lines of Vimscript. Every time I
+updated plugins, something would break. My plugin manager (vim-plug) was good,
+but it still felt hacky.
+
+The final frustration came when I tried to set up Language Server Protocol
+(LSP) for TypeScript. The process was complicated, required many additional
+plugins, and the results were inconsistent.
+
+## Why Neovim?
+
+Neovim offered several advantages that caught my attention:
+
+### Lua Configuration
+
+Vimscript is... weird. The syntax is odd, the documentation is confusing, and
+debugging is a nightmare. Neovim supports Lua as a first-class configuration
+language.
+
+```lua
+-- Neovim config with Lua is much more readable
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+```
+
+Compare this to Vimscript:
+
+```vim
+" Vimscript feels verbose and weird
+set number
+set relativenumber
+set expandtab
+set shiftwidth=2
+```
+
+### Built-in LSP
+
+Neovim has built-in LSP support. No more hacky plugins needed. Setting up LSP
+for TypeScript only takes a few lines of Lua code:
+
+```lua
+require('lspconfig').tsserver.setup{}
+```
+
+Done. Autocomplete, go-to-definition, rename - everything works immediately.
+
+## Was It Worth It?
+
+**Yes, absolutely.**
+
+My productivity increased, frustration decreased, and I enjoy coding again.
+Neovim isn't just a more modern Vim - it's a fundamental rethinking of how a
+text editor should work in the modern era.
+
+If you're still using Vim, consider switching. The learning curve isn't as
+steep as you might think, and the results are very much worth it.
+
+---
+
+**Update 2025-12-07**: After 3 months of using Neovim, I haven't touched Vim
+again. Best decision ever.
+```
 
 ## Common Patterns
 

@@ -1,11 +1,11 @@
 ---
 title: "Balancing Parenthood and Learning: Harnessing the Power of Audiobooks"
-weight: 203
-date: 2025-03-16T07:20:00+07:00
+weight: 202
+date: 2023-07-29T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [Menyeimbangkan Menjadi Orang Tua dan Belajar: Memanfaatkan Kekuatan Buku Audio](/id/celoteh/2023/menyeimbangkan-menjadi-orang-tua-dan-belajar-memanfaatkan-kekuatan-buku-audio)
+**Similar article:** [Menyeimbangkan Menjadi Orang Tua dan Belajar: Memanfaatkan Kekuatan Buku Audio](/id/celoteh/2023/07/menyeimbangkan-menjadi-orang-tua-dan-belajar-memanfaatkan-kekuatan-buku-audio)
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

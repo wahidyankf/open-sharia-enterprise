@@ -1,7 +1,7 @@
 ---
 title: "Tech Winter di Indonesia: Pelajaran yang Gw Ambil dan Pentingnya Stock-Based Compensation"
-weight: 203
-date: 2025-03-16T07:20:00+07:00
+weight: 202
+date: 2023-05-04T07:20:00+07:00
 draft: false
 ---
 
