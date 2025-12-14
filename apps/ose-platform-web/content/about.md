@@ -1,12 +1,14 @@
 ---
 title: "About OSE Platform"
 url: "/about/"
-summary: "Learn about the Open Sharia Enterprise Platform mission and goals"
+summary: "Learn about the Open Sharia Enterprise Platform - an open-source Sharia-compliant enterprise solutions platform"
+date: 2025-12-14T19:29:14+07:00
+showtoc: true
 ---
 
 # About Open Sharia Enterprise
 
-Open Sharia Enterprise (OSE) Platform is an open-source platform for building Sharia-compliant enterprise solutions.
+Open Sharia Enterprise (OSE) Platform is an **open-source** platform for building Sharia-compliant enterprise solutions. Built for Islamic finance institutions and Sharia-compliant businesses, starting with Indonesian regulations and expanding globally.
 
 ## The Opportunity
 
@@ -16,9 +18,65 @@ Islamic finance is a multi-trillion dollar industry growing at double-digit rate
 
 ## Mission
 
-Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
+Our mission is to democratize access to **trustworthy**, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
 We're building an open-source platform with Sharia-compliance at its core—starting with Indonesian regulations and ERP foundations, expanding to fintech and global markets.
+
+## Why Open Source Matters
+
+**Transparency builds trust in Sharia-compliant systems.** Unlike expensive proprietary solutions, OSE Platform is accessible to all organizations—from small businesses to large enterprises.
+
+### Trust Through Transparency
+
+- **Community verification** - Anyone can review the code to verify Sharia compliance
+- **Auditable by scholars** - Islamic finance experts can examine implementation details
+- **No hidden mechanisms** - Complete transparency in financial calculations and processes
+- **Trust through openness** - Open standards and shared knowledge drive innovation
+
+### Accessible to All
+
+- **No licensing fees** - Free to use, modify, and deploy for any organization
+- **No vendor lock-in** - Own your data, control your infrastructure
+- **Community-driven** - Benefits from collective expertise and contributions
+- **Lower barriers** - Organizations of all sizes can access enterprise-grade solutions
+
+### Open Standards
+
+- **Interoperability** - Works with existing systems through open standards
+- **Portable** - Not tied to specific vendors or proprietary formats
+- **Extensible** - Customize for your organization's specific needs
+- **Future-proof** - Community ensures long-term sustainability
+
+## Development Approach
+
+We're building OSE Platform **in the open from day one**, with transparency and knowledge-sharing as core principles.
+
+### Built in the Open
+
+- **Public development** - All code, discussions, and decisions happen publicly on GitHub
+- **Security and compliance infrastructure developed in parallel** - Not bolted on later
+- **Community-driven roadmap** - Transparent planning and prioritization
+- **Open governance** - Clear decision-making processes and contribution guidelines
+
+### Learning in Public
+
+We document our journey and share knowledge through [**AyoKoding**](https://ayokoding.com), our bilingual educational platform. This "learning in public" approach:
+
+- **Shares technical insights** - Tutorials, guides, and lessons learned
+- **Builds community expertise** - Help others learn from our experiences
+- **Demonstrates transparency** - Show how decisions are made
+- **Accelerates ecosystem growth** - Enable others to build on our foundation
+
+### Current Status
+
+**Phase 0: Research and Setup** - We're establishing foundations before building features:
+
+- Infrastructure, documentation framework, and planning systems
+- Research into Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
+- Security and DevSecOps foundations
+- AI/ML exploration and integration research
+
+⚠️ **Pre-Alpha** - Not yet production ready. No stable APIs, no security hardening, not accepting contributions yet.
 
 ## Development Roadmap
 
@@ -111,23 +169,31 @@ This project is licensed under the **MIT License** - giving you complete freedom
 
 ## Get Involved
 
-While we're not accepting contributions during the pre-alpha phase, you're welcome to:
+While we're not accepting contributions during the pre-alpha phase, you can stay connected and support the project:
 
-- ⭐ Star the project on [GitHub](https://github.com/wahidyankf/open-sharia-enterprise)
-- 🍴 Fork the repository for your own use
+### Follow the Project
+
+- **GitHub Repository**: [open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise)
+  - ⭐ Star the repository to show your support
+  - 👀 Watch for updates and release announcements
+  - 📋 Read the [detailed roadmap](https://github.com/wahidyankf/open-sharia-enterprise#readme) and planning documents
+
+### Learn and Explore
+
+- **AyoKoding**: [ayokoding.com](https://ayokoding.com)
+  - 📚 Educational content documenting our "learning in public" journey
+  - 🎓 Tutorials, guides, and technical resources in Indonesian and English
+  - 💡 Insights into building enterprise Sharia-compliant systems
+
+### Spread the Word
+
 - 📢 Share the project with your network
-- 👀 Watch for updates and releases
+- 💬 Discuss with colleagues in Islamic finance and fintech
+- 🤝 Connect with others interested in open-source Sharia-compliant solutions
 
-## Related Projects
+## Key Resources
 
-### AyoKoding
-
-[**AyoKoding**](https://ayokoding.com) is our bilingual educational platform (Indonesian/English) for software engineering education. It serves the Indonesian tech community with tutorials, guides, and resources to help developers learn and grow.
-
-- 🌐 Website: [ayokoding.com](https://ayokoding.com)
-- 🎯 Mission: Democratize software engineering education for Indonesian developers
-- 📚 Content: Tutorials, how-to guides, and technical resources in Indonesian and English
-
-## Repository
-
-Main repository: [open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise)
+- **Main Repository**: [github.com/wahidyankf/open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise)
+- **Project Updates**: [oseplatform.com/updates](/updates/)
+- **Educational Platform**: [ayokoding.com](https://ayokoding.com)
+- **License**: MIT - complete freedom to use, modify, and distribute
