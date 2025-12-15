@@ -250,7 +250,6 @@ Documentation is organized using the [Diátaxis framework](https://diataxis.fr/)
 - 🔧 [How-To](./docs/how-to/) - Problem-solving guides
 - 📖 [Reference](./docs/reference/) - Technical reference
 - 💡 [Explanation](./docs/explanation/) - Conventions and concepts
-- 📓 [Journals](./docs/journals/) - Research notes
 
 **Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault for enhanced navigation and graph view.
 

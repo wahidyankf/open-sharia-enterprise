@@ -1,7 +1,7 @@
 ---
 title: "Acceptance Criteria Convention"
 description: Writing testable acceptance criteria using Gherkin format for clarity and automation
-category: development
+category: explanation
 subcategory: development
 tags:
   - acceptance-criteria

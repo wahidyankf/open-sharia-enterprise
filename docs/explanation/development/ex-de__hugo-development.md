@@ -1,7 +1,7 @@
 ---
 title: "Hugo Development Convention"
 description: Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web
-category: development
+category: explanation
 subcategory: development
 tags:
   - hugo
