@@ -1,7 +1,7 @@
 ---
 title: "Temporary Files Convention"
 description: Guidelines for AI agents creating temporary uncommitted files and folders
-category: development
+category: explanation
 subcategory: development
 tags:
   - temporary-files
