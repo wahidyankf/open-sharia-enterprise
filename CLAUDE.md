@@ -33,7 +33,6 @@ open-sharia-enterprise/
 │       ├── docs-tutorial-checker.md # Tutorial quality validation
 │       ├── docs-tutorial-maker.md # Tutorial content creation
 │       ├── hugo-developer.md    # Hugo site development and customization
-│       ├── journal-maker.md     # Journal and research notes agent
 │       ├── ose-platform-web-content-checker.md # ose-platform-web content quality validation
 │       ├── ose-platform-web-content-maker.md # ose-platform-web content creation
 │       ├── ose-platform-web-deployer.md # ose-platform-web production deployment
@@ -66,13 +65,14 @@ open-sharia-enterprise/
 │   │   └── README.md         # Reference index
 │   ├── explanation/          # Conceptual documentation
 │   │   ├── README.md         # Explanation index
+│   │   ├── core-principles/  # Foundational principles (govern all conventions and development)
+│   │   │   └── README.md     # Core principles index
 │   │   ├── conventions/      # Documentation writing standards (markdown, formatting, content)
 │   │   │   └── README.md     # Conventions index
 │   │   ├── development/      # Software development practices (BDD, Hugo dev, git, agents)
 │   │   │   └── README.md     # Development index
 │   │   └── information-security/  # Information security concepts
 │   │       └── README.md     # Information security index
-│   ├── journals/             # Daily notes (Obsidian vault)
 │   └── metadata/             # Operational metadata (committed to git)
 │       └── external-links-status.yaml  # Link verification cache (docs-link-checker)
 ├── plans/                     # Project planning documents
@@ -176,8 +176,6 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 **Special Directories**:
 
-- **`journals/`** - Daily research notes and monthly summaries in **Logseq-style outliner format** (`YYYY-MM/YYYY-MM-DD.md`). Unlike formal documentation which uses traditional markdown structure, journals use bullet-based format optimized for quick capture and progressive thinking. **Important**: Journal entries must NOT include an H1 heading at the start (Obsidian displays the filename as the page title). See [Journals Format Convention](./docs/explanation/conventions/ex-co__journals-format.md) for complete details.
-
 - **`metadata/`** - Operational metadata files committed to git (NOT temporary files). Contains:
   - **`external-links-status.yaml`** - Cache of verified external links maintained by `docs-link-checker` agent. This is the ONLY file that may be used for external link verification results. Contains link status codes, redirect chains, last-checked timestamps (UTC+7), and file usage tracking. Uses 6-month per-link expiry. The `lastFullScan` timestamp is updated on EVERY run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (spawned by other agents, processes, or direct invocation). The agent outputs results in conversation only (no separate report files). See [docs-link-checker agent](./.claude/agents/docs-link-checker.md) for complete details.
 
@@ -204,17 +202,21 @@ Project planning documents are organized in the `plans/` folder at the repositor
 
 **For complete details**, see [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md).
 
+## Core Principles
+
+Foundational values that govern all conventions and development practices. Six principles establish the "why" behind our standards: **Explicit Over Implicit** (transparent configuration, no magic), **Accessibility First** (WCAG compliance, universal design), **Simplicity Over Complexity** (flat structures, KISS/YAGNI), **Automation Over Manual** (git hooks, AI agents), **Progressive Disclosure** (layer complexity gradually), **No Time Estimates** (outcomes over duration). All conventions and development practices must respect these principles. See [Core Principles Index](./docs/explanation/core-principles/README.md) for complete details.
+
 ## Documentation Standards
 
 All documentation must follow core conventions defined in `docs/explanation/conventions/`:
 
 ### Indentation Convention
 
-Files in `docs/` directory use **TAB indentation** for bullets (Logseq/Obsidian compatibility). YAML frontmatter MUST use 2 spaces (critical exception). See [Indentation Convention](./docs/explanation/conventions/ex-co__indentation.md) for complete details.
+All markdown files use **space indentation for nested bullets** (2 spaces per indentation level). YAML frontmatter MUST use 2 spaces. See [Indentation Convention](./docs/explanation/conventions/ex-co__indentation.md) for complete details.
 
 ### File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (except `docs/journals/` which uses `YYYY-MM/YYYY-MM-DD.md` format, and `docs/metadata/` which stores operational files without prefixes). See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (exception: `docs/metadata/` stores operational files without prefixes). See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
 
 ### Linking Convention
 
@@ -264,7 +266,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Conventions Index](./docs/explanation/conventions/README.md) (20 documentation conventions) and [Development Index](./docs/explanation/development/README.md) (7 development practices).
+For comprehensive standards, see [Core Principles Index](./docs/explanation/core-principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (20 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (7 development practices).
 
 ## AI Agent Standards
 
@@ -297,7 +299,7 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 ### Available Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, journal-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
 **Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
 
