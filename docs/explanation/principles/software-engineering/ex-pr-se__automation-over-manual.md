@@ -2,9 +2,9 @@
 title: "Automation Over Manual"
 description: Automate repetitive tasks to ensure consistency and reduce human error - humans for creative work, machines for repetition
 category: explanation
-subcategory: core-principles
+subcategory: principles
 tags:
-  - core-principles
+  - principles
   - automation
   - git-hooks
   - ai-agents
@@ -444,16 +444,16 @@ The project enforces code quality through automated git hooks:
 
 ## 🔗 Related Principles
 
-- [Explicit Over Implicit](./ex-cp__explicit-over-implicit.md) - Automation makes behavior explicit
-- [Simplicity Over Complexity](./ex-cp__simplicity-over-complexity.md) - Automate simple, repetitive tasks
-- [Accessibility First](./ex-cp__accessibility-first.md) - Automated accessibility checks
+- [Explicit Over Implicit](./ex-pr-se__explicit-over-implicit.md) - Automation makes behavior explicit
+- [Simplicity Over Complexity](../general/ex-pr-ge__simplicity-over-complexity.md) - Automate simple, repetitive tasks
+- [Accessibility First](../content/ex-pr-co__accessibility-first.md) - Automated accessibility checks
 
 ## 📚 Related Conventions
 
-- [Code Quality Convention](../development/ex-de__code-quality.md) - Git hooks and Prettier
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - Validation agents
-- [Commit Message Convention](../development/ex-de__commit-messages.md) - Automated validation
-- [Repository Validation](../development/ex-de__repository-validation.md) - Standard validation patterns
+- [Code Quality Convention](../../development/ex-de__code-quality.md) - Git hooks and Prettier
+- [AI Agents Convention](../../development/ex-de__ai-agents.md) - Validation agents
+- [Commit Message Convention](../../development/ex-de__commit-messages.md) - Automated validation
+- [Repository Validation](../../development/ex-de__repository-validation.md) - Standard validation patterns
 
 ## 📖 References
 

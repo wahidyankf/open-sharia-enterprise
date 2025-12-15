@@ -17,6 +17,14 @@ updated: 2025-12-14
 
 This convention defines the principles and processes for preserving knowledge when condensing files and extracting duplications. It ensures zero content loss when reducing file sizes or eliminating duplication across the repository.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Content offload process explicitly moves content to convention documents with clear links. No hidden assumptions about where knowledge lives - every condensation creates documented references to comprehensive sources.
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Single source of truth for each topic in convention docs. Brief summaries in CLAUDE.md link to comprehensive references. Eliminates duplication and maintains simple, flat information architecture.
+
 ## 🎯 Purpose
 
 When files become too large (CLAUDE.md approaching 40k character limit, agent files exceeding size tiers, duplicated documentation), content must be condensed. This convention ensures condensation preserves knowledge by **moving content to convention documents, NOT deleting it**.

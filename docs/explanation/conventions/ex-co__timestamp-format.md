@@ -14,6 +14,14 @@ updated: 2025-12-15
 
 # ⏰ Timestamp Format Convention
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Uses ISO 8601 format with explicit timezone (`2025-12-15T22:08:00+07:00`). No ambiguous dates like "12/11/2025" (is that December 11 or November 12?). Timezone is always stated, never assumed.
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: One universal format for all contexts (cache files, metadata, logs, frontmatter). No juggling multiple date formats or converting between systems.
+
 ## 📋 Overview
 
 All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** by default with ISO 8601 format.

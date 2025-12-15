@@ -16,6 +16,14 @@ updated: 2025-12-07
 
 This convention defines how to write testable acceptance criteria using **Gherkin format** for plans, specifications, and requirements documentation.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Gherkin syntax (Given-When-Then) explicitly states preconditions, actions, and expected outcomes. No ambiguous requirements like "should work well" - everything is concrete and verifiable.
+
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Gherkin scenarios translate directly to automated tests (BDD frameworks). Requirements become executable specifications. Machines verify correctness automatically instead of manual testing.
+
 ## Purpose
 
 Acceptance criteria define the conditions that must be met for a feature, story, or requirement to be considered complete. Using structured Gherkin format provides:

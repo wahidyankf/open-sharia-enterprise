@@ -2,9 +2,9 @@
 title: "No Time Estimates"
 description: People work and learn at vastly different speeds - focus on outcomes and deliverables, not arbitrary time constraints
 category: explanation
-subcategory: core-principles
+subcategory: principles
 tags:
-  - core-principles
+  - principles
   - no-time-estimates
   - learning
   - productivity
@@ -412,15 +412,15 @@ Focus on WHAT needs to be done or learned, not HOW LONG it takes.
 
 ## 🔗 Related Principles
 
-- [Progressive Disclosure](./ex-cp__progressive-disclosure.md) - Learn at your own pace through progressive levels
-- [Accessibility First](./ex-cp__accessibility-first.md) - Inclusive of different learning speeds
-- [Simplicity Over Complexity](./ex-cp__simplicity-over-complexity.md) - Simple outcomes, not complex schedules
+- [Progressive Disclosure](./ex-pr-co__progressive-disclosure.md) - Learn at your own pace through progressive levels
+- [Accessibility First](./ex-pr-co__accessibility-first.md) - Inclusive of different learning speeds
+- [Simplicity Over Complexity](../general/ex-pr-ge__simplicity-over-complexity.md) - Simple outcomes, not complex schedules
 
 ## 📚 Related Conventions
 
-- [Tutorial Naming Convention](../conventions/ex-co__tutorial-naming.md) - Coverage percentages, not time estimates
-- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Outcome-focused tutorial structure
-- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Explicit no-time-estimates rule
+- [Tutorial Naming Convention](../../conventions/ex-co__tutorial-naming.md) - Coverage percentages, not time estimates
+- [Tutorial Convention](../../conventions/ex-co__tutorials.md) - Outcome-focused tutorial structure
+- [Content Quality Principles](../../conventions/ex-co__content-quality.md) - Explicit no-time-estimates rule
 
 ## 📖 References
 

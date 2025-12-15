@@ -18,6 +18,16 @@ updated: 2025-12-03
 
 Standards for creating effective, engaging, and pedagogically sound tutorials in the open-sharia-enterprise project.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Progressive Disclosure](../principles/content/ex-pr-co__progressive-disclosure.md)**: Tutorials build knowledge incrementally through guided experience. Simple concepts first, complexity added gradually. Each section complete and useful before moving to the next.
+
+- **[No Time Estimates](../principles/content/ex-pr-co__no-time-estimates.md)**: Tutorials focus on learning outcomes and skill development, not completion time. Everyone learns at different speeds - what matters is mastery, not how long it takes.
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Learning-oriented content with clear structure, encouraging tone, and step-by-step guidance makes knowledge accessible to beginners. Reduces barriers to entry for learners from all backgrounds.
+
 ## 📋 Overview
 
 Tutorials are **learning-oriented** documentation that guide learners through acquiring new skills and knowledge. Unlike how-to guides (goal-oriented) or reference material (information-oriented), tutorials focus on the **learning journey** itself.

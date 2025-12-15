@@ -16,6 +16,14 @@ updated: 2025-12-07
 
 This meta-convention defines how to write convention documents in the `docs/explanation/conventions/` directory. It ensures consistency, clarity, and completeness across all convention documentation.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Required sections, clear scope boundaries, and explicit content structure for all conventions. No guessing about what belongs in conventions/ vs development/ - decision criteria are documented.
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Standardized convention structure reduces cognitive load. Same sections in same order across all conventions - readers know what to expect.
+
 ## Purpose
 
 Convention documents define **how to write and format documentation** in this repository. They establish standards for markdown syntax, content organization, visual elements, and content quality. This meta-convention ensures all convention documents follow consistent structure and quality standards.

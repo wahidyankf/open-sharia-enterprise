@@ -2,9 +2,9 @@
 title: "Accessibility First"
 description: Design for universal access from the start - WCAG compliance, color-blind friendly palettes, screen reader support
 category: explanation
-subcategory: core-principles
+subcategory: principles
 tags:
-  - core-principles
+  - principles
   - accessibility
   - wcag
   - inclusive-design
@@ -387,7 +387,7 @@ title: "Accessibility First"
 description: Design for universal access from the start
 category: explanation
 tags:
-  - core-principles
+  - principles
   - accessibility
 ---
 ```
@@ -401,15 +401,15 @@ tags:
 
 ## 🔗 Related Principles
 
-- [Explicit Over Implicit](./ex-cp__explicit-over-implicit.md) - Explicit alt text and descriptions
-- [Simplicity Over Complexity](./ex-cp__simplicity-over-complexity.md) - Simple accessible design
-- [Progressive Disclosure](./ex-cp__progressive-disclosure.md) - Accessible to all skill levels
+- [Explicit Over Implicit](../software-engineering/ex-pr-se__explicit-over-implicit.md) - Explicit alt text and descriptions
+- [Simplicity Over Complexity](../general/ex-pr-ge__simplicity-over-complexity.md) - Simple accessible design
+- [Progressive Disclosure](./ex-pr-co__progressive-disclosure.md) - Accessible to all skill levels
 
 ## 📚 Related Conventions
 
-- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
-- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Accessibility standards in content
-- [Diagrams Convention](../conventions/ex-co__diagrams.md) - Accessible diagram standards
+- [Color Accessibility Convention](../../conventions/ex-co__color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
+- [Content Quality Principles](../../conventions/ex-co__content-quality.md) - Accessibility standards in content
+- [Diagrams Convention](../../conventions/ex-co__diagrams.md) - Accessible diagram standards
 
 ## 📖 References
 

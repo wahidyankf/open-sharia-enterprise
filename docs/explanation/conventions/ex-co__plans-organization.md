@@ -25,6 +25,14 @@ updated: 2025-12-05
 
 This document defines the standards for organizing project planning documents in the `plans/` folder. Plans are temporary, ephemeral documents used for project planning and tracking, distinct from permanent documentation in `docs/`.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Flat structure with three clear states (backlog, in-progress, done). No complex nested hierarchies or status tracking systems.
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Plan folder names encode the date (`YYYY-MM-DD__[identifier]`) making chronological order explicit. File location indicates status - no hidden metadata or databases.
+
 ## 📋 Overview
 
 The `plans/` folder serves as the workspace for project planning activities:

@@ -2,6 +2,10 @@
 
 This directory contains specialized AI agents for repository maintenance and documentation tasks. Each agent has specific responsibilities and tools to ensure consistency, quality, and adherence to project conventions.
 
+**Hierarchy Position**: AI agents are the **implementation layer** that enforces conventions (from `docs/explanation/conventions/`) and development practices (from `docs/explanation/development/`). Each agent implements and validates specific rules, which ultimately trace back to [Core Principles](../docs/explanation/principles/README.md).
+
+**Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Principle → Convention/Practice → Agent.
+
 ## Available Agents
 
 ### 🟦 `agent-maker.md`
@@ -523,6 +527,53 @@ Applies validated fixes from plan-checker audit reports. Re-validates plan compl
 - **Output:** Generates `plan__{timestamp}__fix.md` report in `generated-reports/`
 - **Note:** Plans contain strategic decisions - this agent applies only structural/format fixes (objective) and flags strategic choices (scope, architecture, timelines) for human judgment
 - **Works with:** `plan-checker` for validation report generation, `plan-maker` for plan creation
+
+## 🔗 Hierarchy Examples: Principles to Agents
+
+Understanding which agents enforce which conventions helps trace decisions from principles to implementation.
+
+### Example 1: Color Accessibility
+
+**Principle**: [Accessibility First](../docs/explanation/principles/content/ex-pr-co__accessibility-first.md)
+
+**Convention**: [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md)
+
+**Enforcing Agents**:
+
+- **docs-maker**: Validates Mermaid diagram colors against accessible palette
+- **docs-tutorial-maker**: Ensures tutorial diagrams use color-blind friendly colors
+- **hugo-developer**: Implements accessible color palette in theme development
+- **ayokoding-content-maker**, **ose-platform-web-content-maker**: Apply accessible colors in Hugo content
+
+### Example 2: Explicit Configuration
+
+**Principle**: [Explicit Over Implicit](../docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md)
+
+**Practice**: [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md)
+
+**Enforcing Agents**:
+
+- **agent-maker**: Validates new agents have explicit `tools`, `model`, and `color` frontmatter fields
+- **repo-rules-checker**: Audits all agents for missing or incomplete frontmatter
+- **repo-rules-fixer**: Adds missing frontmatter fields when validated by user
+
+### Example 3: Automation
+
+**Principle**: [Automation Over Manual](../docs/explanation/principles/software-engineering/ex-pr-se__automation-over-manual.md)
+
+**Practice**: [Code Quality Convention](../docs/explanation/development/ex-de__code-quality.md), [Maker-Checker-Fixer Pattern](../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md)
+
+**Enforcing Agents** (Checker family):
+
+- **docs-checker**: Automated factual accuracy validation
+- **docs-tutorial-checker**: Automated pedagogical quality validation
+- **repo-rules-checker**: Automated consistency validation
+- **ayokoding-content-checker**, **ose-platform-web-content-checker**: Automated Hugo content validation
+- **readme-checker**: Automated README quality validation
+
+**Enforcing Agents** (Fixer family):
+
+- **docs-fixer**, **docs-tutorial-fixer**, **repo-rules-fixer**, **ayokoding-content-fixer**, **ose-platform-web-content-fixer**, **readme-fixer**, **plan-fixer**: Automated fix application with confidence levels
 
 ## 🔄 Agent Workflow
 

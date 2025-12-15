@@ -18,6 +18,14 @@ updated: 2025-12-15
 
 This document defines the **maker-checker-fixer pattern**, a three-stage content quality workflow used across multiple agent families in this repository. The pattern ensures high-quality content through systematic creation, validation, and remediation cycles.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Checker agents automatically validate content against conventions. Fixer agents apply validated fixes without manual intervention. Human effort focuses on content creation and subjective improvements, not mechanical validation.
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Three clear stages (make, check, fix) instead of complex, multi-phase workflows. Each agent has single, well-defined responsibility. Separation of concerns keeps the workflow simple and predictable.
+
 ## 📋 Overview
 
 ### What is the Maker-Checker-Fixer Pattern?

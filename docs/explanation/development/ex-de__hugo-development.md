@@ -17,6 +17,14 @@ updated: 2025-12-07
 
 Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **ayokoding-web** (Hextra theme) and **ose-platform-web** (PaperMod theme).
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Theme development enforces WCAG compliance, semantic HTML, keyboard navigation, screen reader support, and color-blind friendly palettes. Accessibility is built into the infrastructure, not added as an afterthought.
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Hugo's template lookup order is explicitly documented. Configuration in `hugo.yaml` uses clear, stated values - no reliance on undocumented defaults. Theme overrides are visible in `layouts/` directory structure.
+
 ## 📋 Purpose
 
 This convention defines standards for:

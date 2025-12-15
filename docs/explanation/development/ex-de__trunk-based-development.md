@@ -27,6 +27,14 @@ updated: 2025-12-05
 
 This document defines the **Trunk Based Development (TBD)** workflow used in the open-sharia-enterprise project. TBD is a branching strategy where developers commit directly to a single branch (the trunk), enabling continuous integration, rapid feedback, and simplified collaboration.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Single branch (`main`) instead of complex GitFlow with multiple long-lived branches (develop, release, hotfix). Small, frequent commits instead of large, delayed integrations. Flat workflow reduces merge conflicts and coordination overhead.
+
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Every commit to `main` triggers automated CI testing. Integration issues caught immediately by machines, not discovered weeks later through manual testing. Continuous automated validation replaces manual integration phases.
+
 ## What is Trunk Based Development?
 
 **Trunk Based Development** is a source control branching model where developers work primarily on a single branch called the "trunk" (in Git, this is typically the `main` branch). Unlike feature-branch workflows, TBD minimizes long-lived branches and emphasizes frequent integration.
