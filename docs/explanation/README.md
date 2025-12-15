@@ -67,6 +67,61 @@ graph TD
 
 **Traceability**: Every rule should trace through the hierarchy: Principle (WHY) → Convention/Practice (WHAT/HOW) → Agent/Automation (IMPLEMENT). See [Core Principles](./principles/README.md) for complete traceability examples.
 
+## 🧪 The Layer Test: Where Does My Document Belong?
+
+Use these questions to determine the correct directory for a new document:
+
+### Principles Test
+
+**Question**: Can you ask "**WHY do we value this?**" about the content?
+
+- ✅ **YES** → Place in `principles/` - It's a foundational value
+- ❌ **NO** → It's not a principle, continue to next test
+
+**Examples**:
+
+- "Why do we value simplicity?" → Principle (Simplicity Over Complexity)
+- "Why do we value accessibility?" → Principle (Accessibility First)
+- "How do I format markdown?" → Not a principle (it's a convention)
+
+### Conventions Test
+
+**Question**: Can you ask "**WHAT are the documentation rules?**" about the content?
+
+- ✅ **YES** → Place in `conventions/` - It's a documentation standard
+- ❌ **NO** → It's not a convention, continue to next test
+
+**Examples**:
+
+- "What are the file naming rules?" → Convention (File Naming)
+- "What are the linking standards?" → Convention (Linking)
+- "How do I develop Hugo themes?" → Not a convention (it's a development practice)
+
+### Development Test
+
+**Question**: Can you ask "**HOW do we develop software?**" about the content?
+
+- ✅ **YES** → Place in `development/` - It's a software practice
+- ❌ **NO** → It doesn't belong in explanation/ - consider how-to/ or reference/
+
+**Examples**:
+
+- "How do I commit code?" → Development (Commit Messages)
+- "How do I develop Hugo themes?" → Development (Hugo Development)
+- "Why do we automate?" → Not a development practice (it's a principle)
+
+### Quick Decision Tree
+
+```
+Is it about WHY we value something?
+├─ YES → principles/
+└─ NO → Is it about WHAT documentation rules to follow?
+    ├─ YES → conventions/
+    └─ NO → Is it about HOW to develop software?
+        ├─ YES → development/
+        └─ NO → Wrong category (try how-to/ or reference/)
+```
+
 ## 📋 Contents
 
 - [Core Principles](./principles/README.md) - Foundational principles guiding all conventions and development

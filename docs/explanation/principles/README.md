@@ -48,6 +48,34 @@ graph TD
 - **Development** - Software practices embodying these principles
 - **Implementation** - Actual code and content following conventions and practices
 
+## 🧪 The Layer Test for Principles
+
+**Question**: Does this document answer "**WHY do we value this?**"
+
+✅ **Belongs in principles/** if it defines:
+
+- A foundational VALUE that governs decision-making
+- A philosophical stance that applies across multiple contexts
+- A timeless belief that guides conventions and practices
+- The REASON behind multiple related standards
+
+❌ **Does NOT belong** if it defines:
+
+- WHAT specific rules to follow (that's a convention)
+- HOW to implement something (that's a development practice)
+- Step-by-step instructions (that's a how-to guide)
+- Technical specifications (that's a reference)
+
+**Examples**:
+
+- "Why we value simplicity in all solutions" → ✅ Principle (foundational value)
+- "Why accessibility must be built in from day one" → ✅ Principle (philosophical stance)
+- "Why we avoid time estimates in learning materials" → ✅ Principle (timeless belief)
+- "File naming must use prefix\_\_identifier format" → ❌ Convention (specific rule)
+- "Use git hooks for automated validation" → ❌ Development (implementation practice)
+
+**Key Distinction**: Principles answer "why we care", conventions/development answer "what to do" or "how to do it".
+
 ## 📋 Principles Index
 
 ### General Principles

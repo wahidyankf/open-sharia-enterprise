@@ -7,7 +7,7 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2025-12-07
+updated: 2025-12-15
 ---
 
 # Conventions
@@ -41,6 +41,30 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - AI agent development standards
 - Code quality and testing practices
 
+## 🧪 The Layer Test for Conventions
+
+**Question**: Does this document answer "**WHAT are the documentation rules?**"
+
+✅ **Belongs in conventions/** if it defines:
+
+- HOW to write markdown content (formatting, syntax, structure)
+- WHAT files should be named or organized
+- WHAT visual standards to follow in docs (colors, diagrams, emojis)
+- WHAT content quality standards apply to documentation
+
+❌ **Does NOT belong** if it defines:
+
+- WHY we value something (that's a principle)
+- HOW to develop software/themes (that's a development practice)
+- HOW to solve a specific problem (that's a how-to guide)
+
+**Examples**:
+
+- "File naming must use `prefix__identifier.md` format" → ✅ Convention (documentation rule)
+- "Use 2-space indentation for nested lists" → ✅ Convention (documentation formatting)
+- "Hugo themes use Tailwind CSS" → ❌ Development (software practice)
+- "Why we avoid time estimates in tutorials" → ❌ Principle (foundational value)
+
 ## 📋 Contents
 
 - [Color Accessibility Convention](./ex-co__color-accessibility.md) - MASTER REFERENCE for all color-related decisions in the repository. Defines verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), supports all color blindness types (protanopia, deuteranopia, tritanopia), meets WCAG AA standards, provides complete implementation guidance for Mermaid diagrams and AI agent categorization, and includes testing methodology with color blindness simulators and contrast checkers. All color usage must reference this convention as the authoritative source
@@ -65,4 +89,4 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ---
 
-**Last Updated**: 2025-12-12
+**Last Updated**: 2025-12-15
