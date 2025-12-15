@@ -16,6 +16,14 @@ updated: 2025-12-15
 
 Guidelines for AI agents when creating temporary uncommitted files and folders in the open-sharia-enterprise repository.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Designated directories (`generated-reports/`, `local-temp/`) with explicit purposes. Report naming pattern clearly encodes agent family, timestamp, and type. No hidden temporary files scattered throughout the repository.
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Two directories for all temporary files - one for reports, one for scratch work. Simple, flat structure with clear naming conventions. No complex hierarchies or categorization schemes.
+
 ## 📋 Overview
 
 This convention establishes designated directories for temporary files created by AI agents during validation, auditing, checking, and other automated tasks. It prevents repository clutter and provides clear organization for ephemeral outputs.

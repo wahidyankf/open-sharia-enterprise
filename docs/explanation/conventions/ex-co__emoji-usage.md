@@ -19,6 +19,14 @@ updated: 2025-12-04
 
 This document defines conventions for emoji usage in markdown documentation across the Open Sharia Enterprise repository. Emojis serve as **semantic visual markers** that enhance document scannability and engagement while maintaining professionalism.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Uses color-blind friendly emoji colors (blue, orange, teal, purple, brown). Emojis supplement text headings, never replace them. Semantic meaning is always conveyed through text first, emoji second.
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Defines a standardized emoji vocabulary where each emoji has explicit, documented meaning. Same emoji = same meaning across all docs. No guessing or implicit conventions.
+
 ## 🎯 Purpose
 
 Emojis in documentation should:

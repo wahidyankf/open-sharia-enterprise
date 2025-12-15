@@ -65,7 +65,7 @@ open-sharia-enterprise/
 │   │   └── README.md         # Reference index
 │   ├── explanation/          # Conceptual documentation
 │   │   ├── README.md         # Explanation index
-│   │   ├── core-principles/  # Foundational principles (govern all conventions and development)
+│   │   ├── principles/       # Foundational principles (govern all conventions and development)
 │   │   │   └── README.md     # Core principles index
 │   │   ├── conventions/      # Documentation writing standards (markdown, formatting, content)
 │   │   │   └── README.md     # Conventions index
@@ -202,9 +202,45 @@ Project planning documents are organized in the `plans/` folder at the repositor
 
 **For complete details**, see [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md).
 
-## Core Principles
+## Repository Architecture: Four-Layer Hierarchy
 
-Foundational values that govern all conventions and development practices. Six principles establish the "why" behind our standards: **Explicit Over Implicit** (transparent configuration, no magic), **Accessibility First** (WCAG compliance, universal design), **Simplicity Over Complexity** (flat structures, KISS/YAGNI), **Automation Over Manual** (git hooks, AI agents), **Progressive Disclosure** (layer complexity gradually), **No Time Estimates** (outcomes over duration). All conventions and development practices must respect these principles. See [Core Principles Index](./docs/explanation/core-principles/README.md) for complete details.
+The repository follows a four-layer architecture where each layer builds on the foundation of the layer above:
+
+```
+Principles (WHY - foundational values)
+    ↓ governs
+    ├─→ Conventions (WHAT - documentation rules)
+    │       ↓ implemented by
+    │       AI Agents (IMPLEMENT and ENFORCE)
+    │
+    └─→ Development (HOW - software practices)
+            ↓ implemented by
+            AI Agents (IMPLEMENT and ENFORCE)
+```
+
+**Layer 1: Core Principles** (`docs/explanation/principles/`)
+
+Foundational values that govern all conventions and development practices. Six principles establish the "why" behind our standards: **Explicit Over Implicit** (transparent configuration, no magic), **Accessibility First** (WCAG compliance, universal design), **Simplicity Over Complexity** (flat structures, KISS/YAGNI), **Automation Over Manual** (git hooks, AI agents), **Progressive Disclosure** (layer complexity gradually), **No Time Estimates** (outcomes over duration). All conventions and development practices must respect these principles. See [Core Principles Index](./docs/explanation/principles/README.md) for complete details.
+
+**Layer 2: Conventions** (`docs/explanation/conventions/`)
+
+Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 19 documentation conventions.
+
+**Layer 3: Development** (`docs/explanation/development/`)
+
+Software practices that implement core principles. Defines HOW we develop, test, and deploy software. Each practice traces back to specific principles it respects. See [Development Index](./docs/explanation/development/README.md) for 11 development practices.
+
+**Layer 4: AI Agents** (`.claude/agents/`)
+
+Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3. See [Agents Index](./.claude/agents/README.md) for all agents and their responsibilities.
+
+**Traceability Example:**
+
+Principle → Convention → Agent flow:
+
+- **Accessibility First** (principle) → **Color Accessibility Convention** (defines palette) → **docs-maker**, **hugo-developer** (enforce palette in content and diagrams)
+- **Explicit Over Implicit** (principle) → **AI Agents Convention** (explicit tool permissions) → **agent-maker** (validates tool lists during creation)
+- **Automation Over Manual** (principle) → **Code Quality Convention** (automated formatting) → Git hooks (enforce on commit)
 
 ## Documentation Standards
 
@@ -266,7 +302,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Core Principles Index](./docs/explanation/core-principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (20 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (7 development practices).
+For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (19 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (11 development practices).
 
 ## AI Agent Standards
 

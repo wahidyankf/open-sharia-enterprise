@@ -18,6 +18,14 @@ updated: 2025-12-14
 
 This document defines the standard validation methods and patterns used by repository validation agents (repo-rules-checker, repo-rules-fixer, and related tools) to ensure consistency across the codebase. Following these patterns prevents false positives, improves accuracy, and maintains reliable automated checks.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Standard validation patterns enable accurate automated consistency checking. AWK commands reliably extract frontmatter, bash scripts verify conventions automatically. Machines handle repetitive validation instead of humans.
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Frontmatter extraction pattern (`awk 'BEGIN{p=0}...'`) is explicitly documented as the canonical method. Validation logic is transparent and reproducible. No magic regex or undocumented checking methods.
+
 ## 📋 Overview
 
 ### Why Standardized Validation Methods?

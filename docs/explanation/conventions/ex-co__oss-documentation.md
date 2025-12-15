@@ -16,6 +16,14 @@ updated: 2025-12-05
 
 Standards for creating and maintaining repository-level documentation files that follow open source best practices. This convention defines requirements for README, CONTRIBUTING.md, Architecture Decision Records (ADRs), security documentation, and other repository-level files.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: README quality standards require clear, scannable content accessible to diverse audiences (non-native English speakers, screen reader users, developers of all skill levels).
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Architecture Decision Records document the "why" behind decisions explicitly. No hidden assumptions or implicit knowledge - reasoning is stated clearly for future maintainers.
+
 ## 📋 Overview
 
 Repository documentation serves as the primary interface between the project and its users, contributors, and maintainers. Well-structured documentation:

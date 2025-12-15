@@ -17,6 +17,14 @@ updated: 2025-12-09
 
 This convention establishes universal content quality standards for **ALL markdown content** in this repository.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Requires alt text for images, proper heading hierarchy, WCAG AA color contrast, semantic HTML structure, and screen reader support. Accessibility is not optional - it's a baseline requirement for all content.
+
+- **[No Time Estimates](../principles/content/ex-pr-co__no-time-estimates.md)**: Explicitly forbids time-based framing ("takes 30 minutes", "2-3 weeks to complete"). Focus on outcomes and deliverables, not arbitrary time constraints that create pressure.
+
 ## Scope
 
 These principles apply to markdown content in:

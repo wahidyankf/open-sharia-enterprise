@@ -24,6 +24,14 @@ The naming convention serves three critical purposes:
 2. **Discoverability** - Consistent prefixes make it easy to find related files across the documentation
 3. **Global Uniqueness** - Hierarchical prefixes ensure no two files have the same name, preventing ambiguity across the entire documentation vault
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: File names explicitly encode their location in the directory structure (`[prefix]__[name]`), making the organizational hierarchy visible without requiring users to navigate folders. No hidden conventions or magic - the full path is transparent in the filename itself.
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Uses straightforward abbreviation rules (2 or 4 characters) and a single separator pattern (`__`). Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
+
 ## 🎯 Scope
 
 This naming convention applies to **all files in the `docs/` directory** (the Obsidian vault):

@@ -16,6 +16,8 @@ updated: 2025-12-14
 
 Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
+**Governance**: All development practices in this directory implement and embody the [Core Principles](../principles/README.md). Each practice should trace back to one or more foundational principles (Explicit Over Implicit, Automation Over Manual, Simplicity Over Complexity, etc.).
+
 ## 🎯 Scope
 
 **This directory contains conventions for SOFTWARE DEVELOPMENT:**

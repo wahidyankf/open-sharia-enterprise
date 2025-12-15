@@ -2,9 +2,9 @@
 title: "Progressive Disclosure"
 description: Start simple and layer complexity gradually - beginners see simple patterns, experts access advanced features when needed
 category: explanation
-subcategory: core-principles
+subcategory: principles
 tags:
-  - core-principles
+  - principles
   - progressive-disclosure
   - learning-paths
   - user-experience
@@ -450,16 +450,16 @@ ex-inse__security-basics.md    (7 letters - ex-inse)
 
 ## 🔗 Related Principles
 
-- [Simplicity Over Complexity](./ex-cp__simplicity-over-complexity.md) - Start simple, add complexity only when needed
-- [No Time Estimates](./ex-cp__no-time-estimates.md) - Focus on learning outcomes, not duration
-- [Accessibility First](./ex-cp__accessibility-first.md) - Progressive disclosure improves accessibility
+- [Simplicity Over Complexity](../general/ex-pr-ge__simplicity-over-complexity.md) - Start simple, add complexity only when needed
+- [No Time Estimates](./ex-pr-co__no-time-estimates.md) - Focus on learning outcomes, not duration
+- [Accessibility First](./ex-pr-co__accessibility-first.md) - Progressive disclosure improves accessibility
 
 ## 📚 Related Conventions
 
-- [Tutorial Naming Convention](../conventions/ex-co__tutorial-naming.md) - Six progressive tutorial levels
-- [Diátaxis Framework](../conventions/ex-co__diataxis-framework.md) - Four documentation types
-- [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - Progressive prefix complexity
-- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Progressive tutorial structure
+- [Tutorial Naming Convention](../../conventions/ex-co__tutorial-naming.md) - Six progressive tutorial levels
+- [Diátaxis Framework](../../conventions/ex-co__diataxis-framework.md) - Four documentation types
+- [File Naming Convention](../../conventions/ex-co__file-naming-convention.md) - Progressive prefix complexity
+- [Tutorial Convention](../../conventions/ex-co__tutorials.md) - Progressive tutorial structure
 
 ## 📖 References
 

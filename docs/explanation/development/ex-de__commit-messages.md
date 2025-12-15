@@ -24,6 +24,14 @@ updated: 2025-11-29
 
 This document explains the commit message convention used in the open-sharia-enterprise project, why we use it, and how it's enforced. Understanding commit messages helps maintain a clean, navigable project history that benefits all contributors.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Commit format (`type(scope): description`) explicitly states the nature of change. No guessing from cryptic messages like "fix stuff" or "updates". Commit type, scope, and description are all explicit.
+
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Commitlint automatically validates message format via git hooks. Commits rejected if format is invalid. No manual review of commit messages needed - automation enforces the standard.
+
 ## What are Conventional Commits?
 
 **Conventional Commits** is a specification for writing human and machine-readable commit messages. It provides a standardized format that clearly communicates the nature of changes in the repository.

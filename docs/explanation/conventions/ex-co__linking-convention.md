@@ -16,6 +16,14 @@ updated: 2025-11-27
 
 This document defines the standard syntax and practices for linking between documentation files in the open-sharia-enterprise project. Following these conventions ensures links work consistently across GitHub web, Obsidian, and other markdown viewers.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Uses explicit relative paths (`./path/to/file.md`) instead of implicit wiki-style links (`[[filename]]`). File extensions are always included, making it clear what type of file is being referenced. No magic linking behavior - every path is stated clearly.
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Descriptive link text (not filenames) improves screen reader experience. Users hear meaningful context like "File Naming Convention" instead of cryptic identifiers like "ex-co\_\_file-naming-convention".
+
 ## 🎯 Why GitHub-Compatible Links?
 
 We use GitHub-compatible markdown link syntax instead of Obsidian wiki links to ensure:

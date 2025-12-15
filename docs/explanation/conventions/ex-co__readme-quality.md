@@ -25,7 +25,13 @@ This document defines quality standards for README.md files to ensure they are e
 
 **Plain Language**: Use conversational, benefits-focused language. Avoid jargon, corporate speak, and unnecessarily technical terms.
 
-## Core Principles
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: README quality standards prioritize accessible writing - plain language (no jargon), acronym context (not just expansion), short paragraphs (≤5 lines for scannability), conversational tone (welcoming to all backgrounds). These practices ensure READMEs are accessible to non-native English speakers, those with cognitive disabilities, and contributors with varying technical backgrounds.
+
+- **[Progressive Disclosure](../principles/content/ex-pr-co__progressive-disclosure.md)**: READMEs serve as navigation documents, not comprehensive manuals. Each section provides a 3-5 line summary with links to detailed documentation. Users get quick orientation without cognitive overload, then dive deeper into specific topics as needed. Essential information is present, but comprehensive explanations are linked, not embedded.
 
 ### 1. Hook Readers Immediately
 

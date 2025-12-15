@@ -16,6 +16,14 @@ subcategory: development
 
 This document explains the automated code quality tools and git hooks used in this repository to maintain consistent code formatting and commit message standards.
 
+## Principles Respected
+
+This practice respects the following core principles:
+
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Git hooks (Husky) automatically run Prettier and Commitlint before commits. Humans write code, machines enforce formatting and standards. No manual formatting or message validation required.
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Prettier uses default settings - no custom configuration file. Commitlint uses standard Conventional Commits spec. Minimal tooling configuration reduces complexity.
+
 ## Overview
 
 This project enforces code quality through automated tools that run during the development workflow:

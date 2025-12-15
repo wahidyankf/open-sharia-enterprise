@@ -2,9 +2,9 @@
 title: "Simplicity Over Complexity"
 description: Favor minimum viable abstraction and avoid over-engineering - start simple, add complexity only when proven necessary
 category: explanation
-subcategory: core-principles
+subcategory: principles
 tags:
-  - core-principles
+  - principles
   - simplicity
   - kiss
   - yagni
@@ -146,7 +146,7 @@ subtitle: Additional subtitle
 description: Brief description
 long_description: Very long description
 category: explanation
-subcategory: core-principles
+subcategory: principles
 sub_subcategory: philosophy
 tags:
   - tag1
@@ -460,15 +460,15 @@ ex-co__color-accessibility.md
 
 ## 🔗 Related Principles
 
-- [Explicit Over Implicit](./ex-cp__explicit-over-implicit.md) - Simple explicit configuration
-- [Progressive Disclosure](./ex-cp__progressive-disclosure.md) - Start simple, layer complexity
-- [Automation Over Manual](./ex-cp__automation-over-manual.md) - Automate simple repetitive tasks
+- [Explicit Over Implicit](../software-engineering/ex-pr-se__explicit-over-implicit.md) - Simple explicit configuration
+- [Progressive Disclosure](../content/ex-pr-co__progressive-disclosure.md) - Start simple, layer complexity
+- [Automation Over Manual](../software-engineering/ex-pr-se__automation-over-manual.md) - Automate simple repetitive tasks
 
 ## 📚 Related Conventions
 
-- [Monorepo Structure](../../reference/re__monorepo-structure.md) - Flat library organization
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - Single-purpose agents
-- [Diátaxis Framework](../conventions/ex-co__diataxis-framework.md) - Four simple categories
+- [Monorepo Structure](../../../reference/re__monorepo-structure.md) - Flat library organization
+- [AI Agents Convention](../../development/ex-de__ai-agents.md) - Single-purpose agents
+- [Diátaxis Framework](../../conventions/ex-co__diataxis-framework.md) - Four simple categories
 
 ## 📖 References
 

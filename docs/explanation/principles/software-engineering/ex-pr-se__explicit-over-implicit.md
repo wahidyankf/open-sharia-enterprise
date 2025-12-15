@@ -2,9 +2,9 @@
 title: "Explicit Over Implicit"
 description: Choose explicit composition and configuration over magic, convenience, and hidden behavior
 category: explanation
-subcategory: core-principles
+subcategory: principles
 tags:
-  - core-principles
+  - principles
   - explicit-configuration
   - transparency
   - clarity
@@ -87,10 +87,10 @@ tools: all
 ✅ **Explicit (Correct)**:
 
 ```
-ex-cp__explicit-over-implicit.md
+ex-pr__explicit-over-implicit.md
 ```
 
-**Why this works**: The prefix `ex-cp` explicitly states "explanation/core-principles". Anyone can decode this by reading the convention.
+**Why this works**: The prefix `ex-pr` explicitly states "explanation/principles". Anyone can decode this by reading the convention.
 
 ❌ **Implicit (Avoid)**:
 
@@ -131,9 +131,9 @@ fill: blue;
 title: "Explicit Over Implicit"
 description: Choose explicit composition over magic
 category: explanation
-subcategory: core-principles
+subcategory: principles
 tags:
-  - core-principles
+  - principles
   - explicit-configuration
 created: 2025-12-15
 updated: 2025-12-15
@@ -409,16 +409,16 @@ npx lint-staged
 
 ## 🔗 Related Principles
 
-- [Simplicity Over Complexity](./ex-cp__simplicity-over-complexity.md) - Explicit configuration is often simpler than magic
-- [Accessibility First](./ex-cp__accessibility-first.md) - Explicit configuration improves understanding for all users
-- [Automation Over Manual](./ex-cp__automation-over-manual.md) - Automate explicit checks, not implicit assumptions
+- [Simplicity Over Complexity](../general/ex-pr-ge__simplicity-over-complexity.md) - Explicit configuration is often simpler than magic
+- [Accessibility First](../content/ex-pr-co__accessibility-first.md) - Explicit configuration improves understanding for all users
+- [Automation Over Manual](./ex-pr-se__automation-over-manual.md) - Automate explicit checks, not implicit assumptions
 
 ## 📚 Related Conventions
 
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - Explicit tool permissions
-- [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - Explicit prefixes
-- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Explicit hex codes
-- [Code Quality Convention](../development/ex-de__code-quality.md) - Explicit git hooks
+- [AI Agents Convention](../../development/ex-de__ai-agents.md) - Explicit tool permissions
+- [File Naming Convention](../../conventions/ex-co__file-naming-convention.md) - Explicit prefixes
+- [Color Accessibility Convention](../../conventions/ex-co__color-accessibility.md) - Explicit hex codes
+- [Code Quality Convention](../../development/ex-de__code-quality.md) - Explicit git hooks
 
 ## 📖 References
 

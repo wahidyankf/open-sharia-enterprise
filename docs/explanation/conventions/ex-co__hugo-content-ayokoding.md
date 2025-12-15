@@ -18,6 +18,16 @@ updated: 2025-12-15
 
 This document defines Hugo content conventions specific to **ayokoding-web** - a bilingual educational platform using the Hextra theme.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Progressive Disclosure](../principles/content/ex-pr-co__progressive-disclosure.md)**: Weight-based navigation ordering allows complexity to be introduced gradually. Main sections (weight 1-10) for beginners, advanced topics later (weight 20+). Overview/ikhtisar pages provide entry points appropriate for each skill level.
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Bilingual content (Indonesian/English) serves diverse audiences. Consistent structure aids screen readers. Color-blind friendly palettes in visual content.
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Weight values explicitly control navigation order - no magic sorting algorithms. Frontmatter fields clearly state language, type, and navigation position.
+
 ## Prerequisites
 
 **IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md).

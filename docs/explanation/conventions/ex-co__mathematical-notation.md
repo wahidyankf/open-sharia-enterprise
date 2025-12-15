@@ -17,6 +17,14 @@ updated: 2025-12-09
 
 This document defines how to write mathematical equations and formulas in the open-sharia-enterprise project. Using LaTeX notation ensures mathematical expressions render correctly and consistently across all documentation platforms.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: LaTeX notation as the single standard for all equations. No mixing different math syntaxes or rolling custom solutions.
+
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: LaTeX notation renders properly in modern browsers and can be parsed by screen readers with math support. Text-based source allows assistive technology to interpret mathematical content.
+
 ## 📋 Overview
 
 Mathematical notation appears throughout fintech documentation - from financial formulas like WACC and CAPM to statistical models and algorithmic complexity analysis. This convention ensures all mathematical expressions are:

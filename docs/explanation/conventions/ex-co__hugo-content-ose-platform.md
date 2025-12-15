@@ -17,6 +17,14 @@ updated: 2025-12-13
 
 This document defines Hugo content conventions specific to **ose-platform-web** - an English-only project landing page using the PaperMod theme.
 
+## Principles Implemented
+
+This convention implements the following core principles:
+
+- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Flat content structure (updates/ and about.md) - no deep hierarchies or complex organization. English-only, single theme, minimal configuration. Updates sorted by date automatically - no manual weight management.
+
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Update filenames encode the date (YYYY-MM-DD prefix) making chronological order explicit and sortable.
+
 ## Prerequisites
 
 **IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md).
