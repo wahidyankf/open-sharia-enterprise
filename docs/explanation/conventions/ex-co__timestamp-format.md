@@ -231,7 +231,6 @@ If you have a UTC timestamp and need to convert to WIB:
 ## 📚 Related Conventions
 
 - [File Naming Convention](./ex-co__file-naming-convention.md) - Date format in filenames
-- [Journals Format Convention](./ex-co__journals-format.md) - Daily journal timestamp format
 
 ## See Also
 

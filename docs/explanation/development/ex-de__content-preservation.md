@@ -103,7 +103,7 @@ When offloading content, you must choose the appropriate destination folder. Bot
 - Content quality, mathematical notation
 - Hugo content, tutorials, acceptance criteria
 - Documentation organization (Diátaxis)
-- Journals format, timestamp format
+- Timestamp format
 
 ### docs/explanation/development/ - Development Processes and Workflows
 
@@ -214,11 +214,11 @@ Is this content unique and valuable?
 
 **Example - Content Format Standard:**
 
-- **Before:** Diagram standards duplicated in `docs-maker.md`, `plan-maker.md`, `journal-maker.md`
+- **Before:** Diagram standards duplicated in `docs-maker.md`, `plan-maker.md`
 - **After:**
   - New file: `docs/explanation/conventions/ex-co__diagrams.md` (comprehensive)
   - All agents: "Use Mermaid diagrams. See [Diagram Convention](link)" (2 lines each)
-  - Savings: Eliminated triplication
+  - Savings: Eliminated duplication
 - **Why Conventions Folder:** Diagrams are a content format standard, not development process
 
 **Example - Development Process Standard:**

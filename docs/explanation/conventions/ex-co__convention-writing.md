@@ -30,7 +30,7 @@ Convention documents define **how to write and format documentation** in this re
 - Content organization frameworks (Diátaxis, tutorials, plans)
 - Visual elements in documentation (diagrams, colors, emojis, mathematical notation)
 - Content quality and accessibility standards
-- Specific documentation types (journals, tutorials, plans, READMEs, Hugo content)
+- Specific documentation types (tutorials, plans, READMEs, Hugo content)
 - Documentation file formats and structures
 
 ### What Does NOT Belong in conventions/

@@ -71,8 +71,7 @@ open-sharia-enterprise/
 │   ├── tutorials/
 │   ├── how-to/
 │   ├── reference/
-│   ├── explanation/
-│   └── journals/
+│   └── explanation/
 ├── plans/                ← Use Mermaid
 │   ├── in-progress/
 │   ├── backlog/

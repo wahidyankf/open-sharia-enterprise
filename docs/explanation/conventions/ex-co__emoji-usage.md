@@ -50,7 +50,6 @@ Use at the start of section headings to indicate content category:
 | 📖    | **Reference**                | Technical specifications, API docs           |
 | 🛠️    | **How-To/Tools**             | Practical guides, tool usage                 |
 | 🧪    | **Examples/Demos**           | Code examples, demonstrations                |
-| 📓    | **Journals**                 | Daily notes, research logs                   |
 
 ### Status and Signal Markers
 
@@ -339,7 +338,7 @@ category: explanation
 
 1. **All documentation** - `docs/**/*.md`
    - Explanations, tutorials, how-tos, reference
-   - Journals, conventions, development docs
+   - Conventions, development docs
 
 2. **All README files** - `**/README.md`
    - Root README.md
@@ -355,7 +354,7 @@ category: explanation
 1. **CLAUDE.md** - Root configuration file with instructions for Claude Code AI
 
 2. **Agent prompt files** - `.claude/agents/*.md` (except README.md)
-   - `doc-writer.md`, `journal-writer.md`, `plan-implementor.md`, etc.
+   - `docs-maker.md`, `plan-executor.md`, `repo-rules-checker.md`, etc.
    - These are AI prompts/instructions, not human documentation
    - Exception: `.claude/agents/README.md` gets emojis (it's an index for humans)
 
@@ -531,30 +530,6 @@ SAST analyzes code without executing it...
 - No runtime context
 ```
 
-### Journals (`docs/journals/`)
-
-**Goal:** Capture daily notes and research
-
-**Recommended emojis:**
-
-- 📓 Research topics
-- 💭 Thoughts and insights
-- 🔍 Investigations
-- ✅ Completed tasks
-- 🚧 Work in progress
-- 💡 Key learnings
-- 🔗 Related resources
-
-**Example:**
-
-```markdown
-- ## 📓 Research: SAST Tools
-  - 💡 Key finding: SonarQube has better CI/CD integration
-  - 🔍 Investigated Semgrep vs ESLint
-  - ✅ Decision: Use SonarQube as primary tool
-  - 🔗 [SAST Explanation](../../explanation/information-security/ex-in-se__sast.md)
-```
-
 ### Plans (`plans/`)
 
 **Goal:** Project planning and tracking
@@ -672,7 +647,7 @@ When adding emojis to existing documentation:
 **Phase 4: Plans and Historical Content** (As Needed)
 
 - Update active plans in `plans/in-progress/`
-- Update journals and archived plans as they are revisited
+- Update archived plans as they are revisited
 - Not urgent for completed/archived content
 
 ## ✅ Validation Checklist
@@ -697,7 +672,6 @@ When reviewing emoji usage, verify:
 - [File Naming Convention](./ex-co__file-naming-convention.md)
 - [Linking Convention](./ex-co__linking-convention.md)
 - [Diátaxis Framework](./ex-co__diataxis-framework.md)
-- [Journals Format](./ex-co__journals-format.md)
 - [AI Agents Convention](../development/ex-de__ai-agents.md) - For agent color categorization using colored square emojis
 - [Color Accessibility Convention](./ex-co__color-accessibility.md) - For accessible color palette and WCAG standards
 
