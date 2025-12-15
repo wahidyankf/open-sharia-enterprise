@@ -32,7 +32,6 @@ This naming convention applies to **all files in the `docs/` directory** (the Ob
 - `docs/how-to/` - Problem-solving guides
 - `docs/reference/` - Technical reference documentation
 - `docs/explanation/` - Conceptual documentation
-- `docs/journals/` - Daily notes (uses different pattern: `YYYY-MM/YYYY-MM-DD.md`)
 
 **File types covered:**
 
@@ -172,7 +171,6 @@ tu-qu__10-advanced-concepts.md
 **Examples:**
 
 ```
-journals/2025-11/2025-11-19.md
 hoto-de__release-process-2025-11.md
 ```
 
@@ -209,24 +207,6 @@ docs/explanation/conventions/README.md           # Subcategory index
 - `README.md` files are **exempt from the prefix requirement**
 - This ensures GitHub web interface displays indices automatically
 - Works seamlessly with Obsidian and other markdown viewers
-
-### Journals (Daily Notes)
-
-The `journals/` directory uses a different pattern:
-
-**Daily entries:**
-
-```
-journals/YYYY-MM/YYYY-MM-DD.md
-```
-
-**Monthly summaries:**
-
-```
-journals/YYYY-MM/summary.md
-```
-
-These patterns are configured in `.obsidian/daily-notes.json` and don't use the prefix system.
 
 ### Metadata Files (docs/metadata/)
 
@@ -284,7 +264,7 @@ When creating a new subdirectory:
 
 When renaming a directory in `docs/`, you **must rename all files within that directory** to update their prefixes accordingly. This is because the file naming convention encodes the directory path in the filename prefix.
 
-**Exception**: Files in `docs/journals/` follow a different naming pattern (`YYYY-MM/YYYY-MM-DD.md`) and are exempt from this requirement.
+**Exception**: Files in `docs/metadata/` store operational files without prefixes and are exempt from this requirement.
 
 **Process**:
 

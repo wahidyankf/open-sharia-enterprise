@@ -1,6 +1,6 @@
 ---
 title: "Indentation Convention"
-description: TAB indentation standard for files in docs/ directory (Obsidian vault) with YAML frontmatter exception
+description: Standard markdown indentation for all files in the repository
 category: explanation
 subcategory: conventions
 tags:
@@ -8,77 +8,88 @@ tags:
   - formatting
   - markdown
   - obsidian
-  - logseq
 created: 2025-12-12
-updated: 2025-12-12
+updated: 2025-12-15
 ---
 
 # Indentation Convention
 
-This convention establishes indentation standards for markdown files in the `docs/` directory (Obsidian vault) to ensure compatibility with Logseq and Obsidian tools.
+This convention establishes standard markdown indentation for all files in the repository to ensure compatibility with standard markdown tools and Obsidian.
 
 ## 🎯 Scope
 
-**Applies to**: Files in `docs/` directory ONLY (Obsidian vault)
+**Applies to**: All markdown files in the repository
 
-**Does NOT apply to**: Files outside `docs/` (root README.md, CLAUDE.md, `plans/`, `.github/`, etc.)
+**Primary focus**: Files in `docs/` directory (Obsidian vault)
 
 ```
 open-sharia-enterprise/
-├── docs/              ← TAB indentation (Obsidian vault)
-│   ├── tutorials/
-│   ├── how-to/
-│   ├── reference/
-│   ├── explanation/
-│   └── journals/
-├── README.md          ← Standard markdown (spaces OK)
-├── CLAUDE.md          ← Standard markdown (spaces OK)
-├── plans/             ← Standard markdown (spaces OK)
-└── .github/           ← Standard markdown (spaces OK)
+├── docs/              ← Standard markdown with space indentation
+│   ├── tutorials/     ← Traditional markdown (with H1, sections)
+│   ├── how-to/        ← Traditional markdown (with H1, sections)
+│   ├── reference/     ← Traditional markdown (with H1, sections)
+│   └── explanation/   ← Traditional markdown (with H1, sections)
+├── README.md          ← Standard markdown (spaces)
+├── CLAUDE.md          ← Standard markdown (spaces)
+├── plans/             ← Standard markdown (spaces)
+└── .github/           ← Standard markdown (spaces)
 ```
+
+**All markdown files** use standard markdown bullet formatting (dash-space-text with space indentation).
 
 ## 💡 Core Principle
 
-**Files in `docs/` directory use TAB indentation for nested bullet items** (NOT spaces).
+**All markdown files use STANDARD MARKDOWN bullet formatting** with space indentation.
 
 **Why?**
 
-- **Obsidian vault scope**: The `docs/` directory is the Obsidian vault requiring Logseq/Obsidian compatibility
-- **Logseq compatibility**: Logseq requires TAB indentation for proper outliner functionality
-- **Obsidian compatibility**: Obsidian renders both tabs and spaces, but tabs align with Logseq
-- **Consistency within vault**: Using tabs ensures the same file works seamlessly in both Logseq and Obsidian
-- **Visual clarity**: Tab width is adjustable per user preference in most editors
-- **Not project-wide**: Files outside `docs/` can use standard markdown conventions (spaces are fine)
+- **Standard markdown compatibility**: Works in all markdown processors (GitHub, Obsidian, VS Code)
+- **Obsidian compatibility**: Obsidian fully supports standard markdown
+- **Universal compatibility**: Same format works everywhere (GitHub web, local editors, note-taking apps)
+- **Editor consistency**: All text editors handle spaces consistently
+- **Project-wide consistency**: All markdown files follow the same indentation rules
 
 ## 📝 Basic Rules
 
 ### Markdown Bullet Indentation
 
-Use TAB character for each nesting level in bullet items:
+**Standard markdown format:**
+
+- `- Text` (dash, SPACE, text) for same-level bullets
+- Nested bullets use SPACES for indentation (2 spaces per level)
+
+**Correct Pattern:**
 
 ```markdown
-✅ CORRECT - TABs for nesting:
+✅ CORRECT - Standard markdown format:
 
 - Main point
-  - Nested detail (indented with TAB)
-  - Another detail (indented with TAB)
-    - Deeper elaboration (indented with 2 TABs)
+  - Nested detail (2 spaces before dash)
+  - Another detail (2 spaces before dash)
+    - Deeper elaboration (4 spaces before dash)
 
-❌ INCORRECT - Spaces for nesting:
+❌ INCORRECT - Tab after dash (NEVER use this):
+
+-<TAB>Main point (tab after dash - WRONG!) -<TAB>Nested detail (tab after dash - WRONG!)
+
+❌ INCORRECT - Tab before dash (NEVER use this):
 
 - Main point
-  - Nested detail (spaces instead of TAB)
-  - Another detail (spaces instead of TAB)
-    - Deeper elaboration (spaces instead of TAB)
+  <TAB>- Nested detail (tab before dash - WRONG!)
+  <TAB><TAB>- Deeper elaboration (tabs before dash - WRONG!)
 ```
 
-**Important**: The TAB character (`\t`) is a single character, not multiple spaces. Configure your editor to insert actual tabs, not spaces when you press the Tab key.
+**Important**: Standard markdown uses:
 
-## 🚨 CRITICAL Exception: YAML Frontmatter
+1. Dash (`-`)
+2. Single space
+3. Text content
 
-**YAML frontmatter is the ONLY exception to TAB indentation within `docs/` directory files.**
+For nested bullets, add 2 spaces per indentation level BEFORE the dash. The pattern is always: `[SPACES]- Text` where SPACES determine nesting level (0 spaces = level 1, 2 spaces = level 2, 4 spaces = level 3, etc.).
 
-All YAML frontmatter blocks MUST use **2 spaces per indentation level** (NOT tabs):
+## 🚨 YAML Frontmatter Indentation
+
+All YAML frontmatter blocks MUST use **2 spaces per indentation level** (standard YAML requirement):
 
 ```yaml
 ✅ CORRECT - Frontmatter uses 2 spaces:
@@ -87,20 +98,8 @@ title: "Document Title"
 description: Brief description
 category: explanation
 tags:
-  - primary-topic    # 2 spaces before dash
-  - secondary-topic  # 2 spaces before dash
-created: 2025-12-12
-updated: 2025-12-12
----
-
-❌ INCORRECT - Frontmatter uses tabs:
----
-title: "Document Title"
-description: Brief description
-category: explanation
-tags:
-	- primary-topic    # TAB before dash - WRONG!
-	- secondary-topic  # TAB before dash - WRONG!
+  - primary-topic # 2 spaces before dash
+  - secondary-topic # 2 spaces before dash
 created: 2025-12-12
 updated: 2025-12-12
 ---
@@ -108,25 +107,26 @@ updated: 2025-12-12
 
 **Why spaces in frontmatter?**
 
-- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces, not tabs
-- **YAML spec**: While YAML allows both, Obsidian tooling is stricter
+- **YAML specification**: YAML standard uses spaces for indentation
+- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces
+- **Tool compatibility**: All YAML parsers expect consistent space indentation
 - **Critical for ALL nested frontmatter fields**: This applies to `tags`, any list fields, and any nested objects
-- **Consistency**: All frontmatter across `docs/` must use same indentation
 
-**After frontmatter, use TABs**: All content bullets after the frontmatter block MUST continue using TAB indentation.
+**After frontmatter**: All markdown content (including bullets) continues using standard markdown formatting (space indentation).
 
-## 🔧 Code Block Exception
+## 🔧 Code Block Indentation
 
-**Code blocks are exempt from the markdown TAB indentation rule.**
+Code blocks within documentation MUST use **language-specific idiomatic indentation**:
 
-Code blocks within documentation use language-appropriate indentation standards, not the TAB indentation required for markdown bullets:
+- **JavaScript/TypeScript**: 2 spaces per indent level (aligns with project Prettier configuration)
+- **Python**: 4 spaces per indent level (PEP 8 standard)
+- **YAML**: 2 spaces per indent level (YAML specification)
+- **JSON**: 2 spaces per indent level (project standard)
+- **CSS**: 2 spaces per indent level
+- **Bash/Shell**: 2 spaces per indent level (common practice)
+- **Go**: Tabs (Go language standard - ONLY exception where tabs are correct)
 
-- **JavaScript/TypeScript**: 2 spaces (aligns with project Prettier configuration)
-- **Python**: 4 spaces (PEP 8 standard)
-- **YAML**: 2 spaces (YAML specification)
-- **JSON**: 2 spaces (project standard)
-- **Go**: Tabs (Go language standard)
-- **Bash/Shell**: 2 or 4 spaces (common practice)
+**CRITICAL**: Using TAB characters in code blocks (except Go) creates code that cannot be copied and pasted correctly. Always use the language's idiomatic indentation.
 
 **Example**:
 
@@ -152,9 +152,20 @@ def authenticate(user):
         return generate_token(user)  # 4 spaces (Python standard)
     return None
 ```
+
+    - Implementation in Go (uses tabs):
+
+```go
+func Authenticate(user User) Token {
+	if user.IsValid {
+		return generateToken(user) // Tab indentation (Go standard)
+	}
+	return nil
+}
+```
 ````
 
-**Rationale**: Code blocks represent actual source code and must follow their language's conventions, not the markdown formatting rules. This ensures code examples are syntactically correct and can be copied directly into editors or files.
+**Rationale**: Code blocks represent actual source code and must follow their language's conventions, not the markdown formatting rules. This ensures code examples are syntactically correct and can be copied directly into editors or files without modification.
 
 ## 🧪 Complete Example
 
@@ -188,9 +199,8 @@ updated: 2025-12-12
 ```bash
 npm install oauth2-provider
 ```
-````
 
-    - Configure the provider:
+- Configure the provider:
 
 ```javascript
 const oauth = new OAuth2Provider({
@@ -200,23 +210,30 @@ const oauth = new OAuth2Provider({
 });
 ```
 
-    - Test the integration
-    	- Use Postman for manual testing
-    	- Write automated tests for token flow
+- Test the integration
+  - Use Postman for manual testing
+  - Write automated tests for token flow
 
 #authentication #oauth #implementation
-
-```
+````
 
 ## 📋 Indentation Checklist
 
 Before committing files in `docs/`:
 
-- [ ] **Markdown bullets** use TAB indentation for nesting
-- [ ] **YAML frontmatter** uses 2 spaces per indentation level (NOT tabs)
-- [ ] **Code blocks** use language-appropriate indentation
+- [ ] **Markdown bullets** use standard format: `- Text` (dash-space-text)
+- [ ] **Nested bullets** use 2 spaces per indentation level
+- [ ] **YAML frontmatter** uses 2 spaces per indentation level
+- [ ] **Code blocks** use language-specific idiomatic indentation:
+  - [ ] JavaScript/TypeScript: 2 spaces
+  - [ ] Python: 4 spaces
+  - [ ] YAML: 2 spaces
+  - [ ] JSON: 2 spaces
+  - [ ] CSS: 2 spaces
+  - [ ] Bash/Shell: 2 spaces
+  - [ ] Go: Tabs (Go language standard)
 - [ ] **No mixed indentation** - consistent throughout file
-- [ ] **Editor configured** to insert actual tab characters (not spaces converted to tabs)
+- [ ] **No tabs in bullets** - use spaces only (standard markdown)
 
 ## 🔗 Related Conventions
 
@@ -226,7 +243,6 @@ Before committing files in `docs/`:
 
 **Context-Specific**:
 
-- [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for journals (uses TAB indentation)
 - [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Adapted for Hugo (frontmatter spaces, content standard markdown)
 - [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - ayokoding-web indentation specifics
 - [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - ose-platform-web indentation specifics
@@ -234,11 +250,10 @@ Before committing files in `docs/`:
 
 ## 🌐 External Resources
 
-- [Logseq Documentation](https://docs.logseq.com/) - Outliner tool requiring TAB indentation
 - [Obsidian Documentation](https://help.obsidian.md/) - Knowledge base tool with frontmatter parsing
 - [YAML Specification](https://yaml.org/spec/) - YAML format specification
+- [CommonMark Specification](https://spec.commonmark.org/) - Standard markdown specification
 
 ---
 
-**Last Updated**: 2025-12-12
-```
+**Last Updated**: 2025-12-15

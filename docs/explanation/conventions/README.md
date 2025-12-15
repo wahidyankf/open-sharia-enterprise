@@ -25,7 +25,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - File naming, linking, and cross-referencing
 - Visual elements in docs (diagrams, colors, emojis, math notation)
 - Content quality and accessibility standards
-- Documentation file formats (journals, tutorials, plans)
+- Documentation file formats (tutorials, plans)
 - Hugo **content** writing (frontmatter, markdown, archetypes)
 - Repository documentation standards (README, CONTRIBUTING)
 
@@ -52,8 +52,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository. Covers inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial standards), adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), and Hugo-specific basics (Archetypes, Shortcodes, Taxonomy, Asset Organization). Foundation for all Hugo content work
 - [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - Site-specific conventions for ayokoding-web (Hextra theme). Covers Hextra shortcodes, bilingual requirements, navigation patterns, weight field ordering, overview/ikhtisar file requirements, index file content separation, and optional Diátaxis structure. Use with shared convention
 - [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme). Covers PaperMod features, English-only requirements, simple update patterns, cover image standards, and flat content structure. Use with shared convention
-- [Indentation Convention](./ex-co__indentation.md) - TAB indentation standard for files in docs/ directory (Obsidian vault) with critical YAML frontmatter exception requiring 2 spaces. Establishes Logseq/Obsidian compatibility for markdown bullets while maintaining tool-specific requirements for frontmatter and code blocks
-- [Journals Format Convention](./ex-co__journals-format.md) - Logseq-style outliner format for daily research notes and monthly summaries
+- [Indentation Convention](./ex-co__indentation.md) - Standard markdown indentation for all files using 2 spaces per indentation level. YAML frontmatter uses 2 spaces. Code blocks use language-specific conventions
 - [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas in GitHub-compatible markdown. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), and Obsidian/GitHub dual compatibility
 - [OSS Documentation Convention](./ex-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
 - [Plans Organization Convention](./ex-co__plans-organization.md) - Standards for organizing project planning documents in plans/ folder including structure, naming, and workflow

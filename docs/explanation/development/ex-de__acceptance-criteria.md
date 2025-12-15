@@ -352,21 +352,21 @@ Gherkin scenarios can be directly translated to automated tests using BDD framew
 ```javascript
 // features/login.feature
 Scenario: User login with valid credentials
-	Given a user with email "user@example.com"
-	When the user logs in with correct password
-	Then the user should be authenticated
+  Given a user with email "user@example.com"
+  When the user logs in with correct password
+  Then the user should be authenticated
 
 // step-definitions/login.steps.js
 Given('a user with email {string}', async (email) => {
-	await createUser({ email });
+  await createUser({ email });
 });
 
 When('the user logs in with correct password', async () => {
-	await loginPage.login(user.email, user.password);
+  await loginPage.login(user.email, user.password);
 });
 
 Then('the user should be authenticated', async () => {
-	expect(await session.isAuthenticated()).toBe(true);
+  expect(await session.isAuthenticated()).toBe(true);
 });
 ```
 
@@ -395,15 +395,15 @@ defineFeature(feature, (test) => {
 # features/steps/login.py
 @given('a user with email "{email}"')
 def step_impl(context, email):
-	context.user = create_user(email=email)
+  context.user = create_user(email=email)
 
 @when('the user logs in with correct password')
 def step_impl(context):
-	context.response = login(context.user.email, context.user.password)
+  context.response = login(context.user.email, context.user.password)
 
 @then('the user should be authenticated')
 def step_impl(context):
-	assert context.response.authenticated == True
+  assert context.response.authenticated == True
 ```
 
 ### Go

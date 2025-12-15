@@ -155,7 +155,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | grep "#"
 ```bash
 # Extract frontmatter and check for field
 awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | \
-	grep "^${field_name}:"
+  grep "^${field_name}:"
 
 # If no output → Field missing (INVALID)
 # If output → Field present (VALID)
@@ -173,7 +173,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | \
 # Check if 'model' field exists
 field_name="model"
 awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs-maker.md | \
-	grep "^model:"
+  grep "^model:"
 ```
 
 ### 3. Wrong Field Value Check
@@ -185,13 +185,13 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs-
 ```bash
 # Extract field value
 actual_value=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | \
-	grep "^${field_name}:" | cut -d: -f2- | tr -d ' ')
+  grep "^${field_name}:" | cut -d: -f2- | tr -d ' ')
 
 # Compare with expected
 if [ "$actual_value" = "$expected_value" ]; then
-	echo "VALID"
+  echo "VALID"
 else
-	echo "INVALID - wrong value: got '$actual_value', expected '$expected_value'"
+  echo "INVALID - wrong value: got '$actual_value', expected '$expected_value'"
 fi
 ```
 
@@ -209,12 +209,12 @@ fi
 field_name="model"
 expected_value="sonnet"
 actual_value=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs-maker.md | \
-	grep "^model:" | cut -d: -f2- | tr -d ' ')
+  grep "^model:" | cut -d: -f2- | tr -d ' ')
 
 if [ "$actual_value" = "$expected_value" ]; then
-	echo "Model field is correct: $actual_value"
+  echo "Model field is correct: $actual_value"
 else
-	echo "Model field mismatch: got '$actual_value', expected '$expected_value'"
+  echo "Model field mismatch: got '$actual_value', expected '$expected_value'"
 fi
 ```
 
@@ -233,9 +233,9 @@ resolved_path=$(dirname "$file")/"$link_target"
 
 # Check if file exists
 if [ -f "$resolved_path" ]; then
-	echo "VALID"
+  echo "VALID"
 else
-	echo "INVALID - broken link: $link_target"
+  echo "INVALID - broken link: $link_target"
 fi
 ```
 
@@ -264,9 +264,9 @@ resolved_path=$(dirname "$file")/"$link_target"
 
 # Check existence
 if [ -f "$resolved_path" ]; then
-	echo "Link valid: $link_target"
+  echo "Link valid: $link_target"
 else
-	echo "Broken link: $link_target (resolved to: $resolved_path)"
+  echo "Broken link: $link_target (resolved to: $resolved_path)"
 fi
 ```
 
@@ -284,9 +284,9 @@ actual_prefix=$(basename "$file" | cut -d_ -f1-2)
 
 # Compare
 if [ "$actual_prefix" = "$expected_prefix" ]; then
-	echo "VALID"
+  echo "VALID"
 else
-	echo "INVALID - wrong prefix: got '$actual_prefix', expected '$expected_prefix'"
+  echo "INVALID - wrong prefix: got '$actual_prefix', expected '$expected_prefix'"
 fi
 ```
 
@@ -294,7 +294,7 @@ fi
 
 - Compute expected prefix from directory path (see [File Naming Convention](../conventions/ex-co__file-naming-convention.md))
 - Extract actual prefix using `cut -d_ -f1-2` (two underscores in `prefix__`)
-- Handle special cases: `README.md`, `docs/journals/`, `docs/metadata/`
+- Handle special cases: `README.md`, `docs/metadata/`
 - Account for subdirectories (hyphenated names → concatenated prefixes)
 
 **Example prefix calculation:**
@@ -345,8 +345,8 @@ awk '...' "$file" | grep "^${escaped_field}:"
 ```bash
 # ✅ CORRECT
 if [ ! -f "$file" ]; then
-	echo "ERROR: File not found: $file"
-	exit 1
+  echo "ERROR: File not found: $file"
+  exit 1
 fi
 
 # Then proceed with validation
@@ -362,14 +362,14 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | grep "#"
 - **Files without frontmatter** - Not all markdown files have YAML frontmatter
 - **Empty frontmatter** - Frontmatter exists but contains no fields
 - **Malformed frontmatter** - Missing opening/closing `---` delimiters
-- **Special directories** - `journals/`, `metadata/`, exempted from naming conventions
+- **Special directories** - `metadata/`, exempted from naming conventions
 - **Special files** - `README.md`, `index.md` exempt from naming conventions
 
 ```bash
 # Check if frontmatter exists
 if ! grep -q "^---$" "$file"; then
-	echo "WARNING: No frontmatter found in $file"
-	# Decide: skip check or report missing frontmatter
+  echo "WARNING: No frontmatter found in $file"
+  # Decide: skip check or report missing frontmatter
 fi
 ```
 

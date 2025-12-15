@@ -113,34 +113,6 @@ Use standard markdown link syntax with relative paths:
 [Tutorials](../../tutorials/README.md)
 ```
 
-### Linking from Journal Entries (`docs/journals/2025-11/2025-11-27.md`)
-
-Journal files are nested 2 levels deep from `docs/`, so they require `../../` to reach the `docs/` root:
-
-```markdown
-<!-- Link to docs/ root (2 levels up) -->
-
-[Documentation Home](../../README.md)
-
-<!-- Link to explanation files (2 levels up, then down) -->
-
-[File Naming Convention](../../explanation/conventions/ex-co__file-naming-convention.md)
-[Information Security Overview](../../explanation/information-security/ex-inse__infosec.md)
-
-<!-- Link to other categories (2 levels up, then down) -->
-
-[Tutorials](../../tutorials/README.md)
-[How-To Guides](../../how-to/README.md)
-
-<!-- Link to sibling journal entries (same directory) -->
-
-[Yesterday's Journal](./2025-11-26.md)
-
-<!-- Link to other months (1 level up, then down) -->
-
-[October Journal](../2025-10/2025-10-31.md)
-```
-
 ## Correct vs. Incorrect Examples
 
 ### ✅ Correct Examples
@@ -179,10 +151,10 @@ For more information, refer to our [authentication tutorial](../../tutorials/aut
 [ex-co\_\_file-naming-convention.md](./ex-co__file-naming-convention.md)
 
 <!-- Wrong number of ../ for nesting depth -->
-<!-- From docs/journals/2025-11/2025-11-27.md (2 levels deep) -->
+<!-- From docs/explanation/conventions/ex-co__linking-convention.md (2 levels deep) -->
 
-[File Naming Convention](../explanation/conventions/ex-co__file-naming-convention.md) <!-- Only 1 ../ instead of 2 -->
 [Documentation Home](./README.md) <!-- Should be ../../README.md -->
+[Tutorials](../tutorials/README.md) <!-- Only 1 ../ instead of 2 -->
 
 <!-- From docs/explanation/conventions/README.md (2 levels deep) -->
 
@@ -218,7 +190,6 @@ Understanding relative paths is crucial when linking from files at different nes
 | `docs/README.md`                                         | 0 (at root)        | `.` (current dir)     |
 | `docs/tutorials/README.md`                               | 1 level deep       | `../`                 |
 | `docs/explanation/conventions/ex-co__linking.md`         | 2 levels deep      | `../../`              |
-| `docs/journals/2025-11/2025-11-27.md`                    | 2 levels deep      | `../../`              |
 | `docs/reference/api/endpoints/re-ap-en__transactions.md` | 3 levels deep      | `../../../`           |
 
 ### Common Linking Patterns
@@ -241,7 +212,7 @@ Understanding relative paths is crucial when linking from files at different nes
 [How-To](../how-to/README.md)
 ```
 
-#### From 2-Level Deep Files (`docs/journals/2025-11/2025-11-27.md`)
+#### From 2-Level Deep Files (`docs/explanation/conventions/ex-co__linking-convention.md`)
 
 ```markdown
 <!-- To docs/ root (up 2 levels) -->
@@ -251,11 +222,11 @@ Understanding relative paths is crucial when linking from files at different nes
 <!-- To other categories (up 2, down 1) -->
 
 [Tutorials](../../tutorials/README.md)
-[Explanation](../../explanation/README.md)
+[How-To](../../how-to/README.md)
 
-<!-- To deeply nested files (up 2, down 2) -->
+<!-- To sibling files (same directory) -->
 
-[File Naming Convention](../../explanation/conventions/ex-co__file-naming-convention.md)
+[File Naming Convention](./ex-co__file-naming-convention.md)
 ```
 
 #### From 3-Level Deep Files (`docs/reference/api/endpoints/re-ap-en__transactions.md`)
@@ -285,17 +256,22 @@ To verify your relative path is correct:
 3. **Count each `/dirname/` as going down one level**
 4. **Verify you end at the target file**
 
-Example from `docs/journals/2025-11/2025-11-27.md` to `docs/explanation/conventions/ex-co__linking-convention.md`:
+Example from `docs/explanation/conventions/ex-co__file-naming-convention.md` to `docs/tutorials/README.md`:
 
 ```
-Start:  docs/journals/2025-11/2025-11-27.md
-  ../   docs/journals/                      (up 1)
-  ../   docs/                               (up 2)
-  explanation/  docs/explanation/           (down 1)
-  conventions/  docs/explanation/conventions/  (down 2)
-  ex-co__linking-convention.md              (target file)
+Start:  docs/explanation/conventions/ex-co__file-naming-convention.md
+  ../   docs/explanation/conventions/       (up 1)
+  ../   docs/explanation/                   (up 2)
+  ../   docs/                               (up 3 - wait, only need 2!)
 
-Final path: ../../explanation/conventions/ex-co__linking-convention.md
+Actually:
+Start:  docs/explanation/conventions/ex-co__file-naming-convention.md
+  ../   docs/explanation/                   (up 1)
+  ../   docs/                               (up 2)
+  tutorials/  docs/tutorials/               (down 1)
+  README.md                                 (target file)
+
+Final path: ../../tutorials/README.md
 ```
 
 ## Hugo Content Linking

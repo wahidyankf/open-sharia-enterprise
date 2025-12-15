@@ -280,7 +280,7 @@ For complete diagram standards, see [Diagram and Schema Convention](./ex-co__dia
 
 **Decision Guides**:
 
-- [How to Organize Your Work](../../how-to/hoto__organize-work.md) - Decision guide for choosing between journals/, plans/, and docs/
+- [How to Organize Your Work](../../how-to/hoto__organize-work.md) - Decision guide for choosing between plans/ and docs/
 
 **Related Conventions**:
 

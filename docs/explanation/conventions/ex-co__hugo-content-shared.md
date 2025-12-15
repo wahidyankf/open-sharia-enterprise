@@ -341,7 +341,7 @@ These conventions from `docs/` are modified for Hugo's specific requirements.
 
 **Why different from docs/?**
 
-- docs/ uses TABs for markdown bullets (Logseq compatibility)
+- docs/ uses standard markdown with space indentation (2 spaces per level)
 - Hugo content is published web content, not Obsidian vault
 - Standard markdown practices apply
 
@@ -368,8 +368,8 @@ Content starts here with standard markdown indentation.
 ---
 title: "My Post"
 tags:
-	- nodejs        # TAB before dash - WRONG!
-	- javascript
+  - nodejs # TAB before dash - WRONG!
+  - javascript
 ---
 ```
 
