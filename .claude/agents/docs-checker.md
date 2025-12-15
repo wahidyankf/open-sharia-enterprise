@@ -107,6 +107,99 @@ WACC = \frac{E}{V} \times r_e
 $$
 ```
 
+#### Markdown Structure Format Validation
+
+**CRITICAL**: Validate correct traditional markdown structure:
+
+**All markdown files** (traditional markdown):
+
+- MUST have H1 heading at start (`# ...`)
+- MUST use traditional sections (`## H2`, `### H3`, etc.)
+- Paragraphs and proper document structure required
+- Includes: `tutorials/`, `how-to/`, `reference/`, `explanation/`, `plans/`, root `README.md`, `CLAUDE.md`
+
+**Validation:**
+
+- Check if file has H1 heading at start
+- Flag any files missing H1 heading
+
+See [Indentation Convention](../../docs/explanation/conventions/ex-co__indentation.md) for complete details.
+
+#### Bullet Indentation Validation
+
+**CRITICAL**: Validate correct bullet indentation pattern in `docs/` files.
+
+**Correct pattern:**
+
+- `- Text` (dash, space, text) for same-level bullets
+- `  - Text` (2 spaces BEFORE dash) for nested bullets
+- `    - Text` (4 spaces BEFORE dash) for deeper nesting
+
+**Common error to detect:**
+
+- ❌ `-  Text` (spaces AFTER dash) is WRONG - should be `  - Text` (spaces BEFORE dash)
+
+**Validation:**
+
+- Check that spaces appear BEFORE dash marker in nested bullets
+- Flag any pattern of `-  ` (dash followed by multiple spaces) - should be spaces before dash instead
+
+**Error pattern example:**
+
+```markdown
+❌ WRONG - Spaces after dash:
+
+- First level (spaces after dash - WRONG!)
+- Nested level (spaces after dash - WRONG!)
+
+✅ CORRECT - Spaces before dash:
+
+- First level
+  - Nested level (2 spaces before dash)
+    - Deeper level (4 spaces before dash)
+```
+
+#### Code Block Indentation Validation
+
+- Verify code blocks use language-specific idiomatic indentation (NOT tabs, except Go)
+- Check JavaScript/TypeScript code uses 2 spaces per indent level
+- Check Python code uses 4 spaces per indent level
+- Check YAML code uses 2 spaces per indent level
+- Check JSON code uses 2 spaces per indent level
+- Check CSS code uses 2 spaces per indent level
+- Check Bash/Shell code uses 2 spaces per indent level
+- Check Go code uses tabs (ONLY exception where tabs are correct)
+- Flag any code blocks (except Go) using TAB characters for indentation
+- Flag mixed indentation (tabs and spaces) within code blocks
+
+**Common error pattern to detect:**
+
+````markdown
+❌ INCORRECT - JavaScript using tabs:
+
+```javascript
+function example() {
+  if (condition) {
+    // TAB character - WRONG!
+    return true;
+  }
+}
+```
+
+✅ CORRECT - JavaScript using 2 spaces:
+
+```javascript
+function example() {
+  if (condition) {
+    // 2 spaces - correct!
+    return true;
+  }
+}
+```
+````
+
+**Rationale**: Code blocks must use language-specific idiomatic indentation to ensure examples can be copied and pasted correctly into actual code files. TAB characters in most languages (except Go) break this requirement.
+
 ### 2. Code Example Validation
 
 **Syntax Correctness:**
@@ -594,7 +687,7 @@ gobuster dir -u http://example.com --extensions php,html
 
 **Severity**: Medium (sets incorrect expectations)
 
-## ⚠️ Contradictions
+## Contradictions
 
 ### Contradiction 1: Installation Method
 

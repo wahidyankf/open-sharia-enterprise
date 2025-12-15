@@ -307,7 +307,7 @@ Suggest condensation strategies:
 **Size Categorization Examples**:
 
 - Simple tier: ayokoding-deployer, ose-platform-web-deployer
-- Standard tier: docs-maker, agent-maker, journal-maker, content-makers
+- Standard tier: docs-maker, agent-maker, content-makers
 - Complex tier: plan-maker, repo-rules-maker, docs-file-manager, hugo-developer
 
 ### Step 5: Validate with repo-rules-checker

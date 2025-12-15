@@ -86,7 +86,7 @@ If an experiment proves valuable:
 
 **Keep a lightweight record:**
 
-- Consider documenting learnings in `docs/explanation/` or `docs/journals/`
+- Consider documenting learnings in `docs/explanation/`
 - Update `plans/ideas.md` if the experiment inspired new plans
 
 ## Structure Example

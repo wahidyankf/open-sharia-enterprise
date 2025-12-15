@@ -524,22 +524,6 @@ Applies validated fixes from plan-checker audit reports. Re-validates plan compl
 - **Note:** Plans contain strategic decisions - this agent applies only structural/format fixes (objective) and flags strategic choices (scope, architecture, timelines) for human judgment
 - **Works with:** `plan-checker` for validation report generation, `plan-maker` for plan creation
 
-### 🟦 `journal-maker.md`
-
-Expert journal writer specializing in Logseq-style outliner format for daily research notes and monthly project summaries.
-
-- **Primary Use:** Capturing research insights or creating monthly progress reports
-- **Specialization:** Bullet-based quick capture, knowledge graph building with markdown links, research organization, emoji usage in journals
-- **Tools:** Read, Write, Edit, Glob, Grep, Bash
-- **When to Use:**
-  - Creating daily research notes using Logseq-style outliner format (bullet-based)
-  - Generating monthly project summaries (recommended second Sunday of month)
-  - Building knowledge graphs through markdown linking
-  - Suggesting link opportunities across journal entries
-  - Reorganizing and merging concepts for better knowledge retrieval
-  - Tracking research themes and project progress over time
-- **Format:** No headings - starts directly with bullets, uses emojis semantically (see [Journals Format Convention](../docs/explanation/conventions/ex-co__journals-format.md))
-
 ## 🔄 Agent Workflow
 
 The agents work together in complementary workflows:
