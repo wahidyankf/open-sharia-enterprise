@@ -9,7 +9,7 @@ tags:
   - conventions
   - ai-agents
 created: 2025-11-23
-updated: 2025-12-14
+updated: 2025-12-15
 ---
 
 # Development
@@ -42,6 +42,31 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 - Hugo **content** writing (frontmatter, markdown, archetypes)
 - Visual documentation elements (diagrams, colors in docs)
 - Documentation quality and accessibility
+
+## 🧪 The Layer Test for Development
+
+**Question**: Does this document answer "**HOW do we develop software?**"
+
+✅ **Belongs in development/** if it defines:
+
+- HOW to develop software systems (code, themes, layouts, build processes)
+- WHAT development workflows to follow (git, commits, testing)
+- HOW to automate development tasks (git hooks, CI/CD, AI agents)
+- WHAT development tools and standards to use
+
+❌ **Does NOT belong** if it defines:
+
+- WHY we value something (that's a principle)
+- HOW to write documentation (that's a convention)
+- HOW to solve a specific user problem (that's a how-to guide)
+
+**Examples**:
+
+- "Use Trunk Based Development for git workflow" → ✅ Development (software practice)
+- "Commit messages must follow Conventional Commits" → ✅ Development (development workflow)
+- "Hugo themes use Hugo Pipes for asset processing" → ✅ Development (software development)
+- "Markdown files use 2-space indentation" → ❌ Convention (documentation rule)
+- "Why we automate repetitive tasks" → ❌ Principle (foundational value)
 
 ## 📂 Document Types
 
@@ -80,6 +105,7 @@ Development practices in this directory fall into several categories:
 - [Content Preservation Convention](./ex-de__content-preservation.md) - Principles and processes for preserving knowledge when condensing files and extracting duplications. Covers the fundamental MOVE NOT DELETE principle, offload decision tree, four offload options (create new, merge existing, extract common, add to development), verification checklist, and when NOT to offload
 - [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md) - Universal confidence level system for fixer agents to assess and apply validated fixes. Covers three confidence levels (HIGH/MEDIUM/FALSE_POSITIVE), when to apply fixes automatically, re-validation requirements, domain-specific vs universal criteria, and false positive feedback loop for improving checker accuracy
 - [Hugo Development Convention](./ex-de__hugo-development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web. Covers theme development, layout organization, asset pipeline (Hugo Pipes, CSS/JS processing, image optimization), configuration management, i18n/l10n, performance optimization, SEO best practices, accessibility (WCAG compliance), shortcode development, and build/deployment processes
+- [Implementation Workflow Convention](./ex-de__implementation-workflow.md) - Three-stage development workflow: make it work (functionality first), make it right (refactor for quality), make it fast (optimize only if needed). Implements Simplicity Over Complexity, YAGNI, and Progressive Disclosure principles. Covers each stage's goals, what to do/avoid, anti-patterns (premature optimization, skipping refactoring), best practices (profile before optimizing, document decisions), and when to apply vs exceptions
 - [Maker-Checker-Fixer Pattern Convention](./ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow for content creation and validation. Covers agent roles (Maker creates/updates, Checker validates/audits, Fixer applies validated fixes), workflow stages with user review gates, confidence level integration, report pairing (audit-fix), benefits (safety, transparency, quality improvement loop), and when to use each agent type
 - [Repository Validation Methodology Convention](./ex-de__repository-validation.md) - Standard validation methods and patterns for repository consistency checking. Covers frontmatter extraction (AWK pattern), validation checks (comments, fields, links, naming), best practices, and common pitfalls to avoid false positives
 - [Temporary Files Convention](./ex-de__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
@@ -92,4 +118,4 @@ Development practices in this directory fall into several categories:
 
 ---
 
-**Last Updated**: 2025-12-14
+**Last Updated**: 2025-12-15
