@@ -31,4 +31,4 @@ Examples: `2025-11-24__init-monorepo/`, `2025-12-01__auth-system/`
 
 ## Related Documentation
 
-- [How to Organize Your Work](../docs/how-to/hoto__organize-work.md) - Decision guide for journals/, plans/, and docs/
+- [How to Organize Your Work](../docs/how-to/hoto__organize-work.md) - Decision guide for plans/ and docs/

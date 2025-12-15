@@ -36,7 +36,6 @@ Use this agent when:
 **Do NOT use this agent for:**
 
 - ❌ Creating permanent documentation (use `docs-maker` instead)
-- ❌ Daily notes or scratch work (use `journals/` directly)
 - ❌ Modifying existing conventions (use `repo-rules-maker`)
 - ❌ Auditing repository consistency (use `repo-rules-checker`)
 
@@ -329,7 +328,6 @@ Before finalizing:
 Plans are for **temporary project planning documents**. Do NOT use plans/ for:
 
 - ❌ Permanent documentation → Use `docs/` instead
-- ❌ Daily scratch notes → Use `docs/journals/` instead
 - ❌ Code comments or READMEs → Use inline documentation
 - ❌ API documentation → Use `docs/reference/` instead
 - ❌ Tutorials or guides → Use `docs/tutorials/` or `docs/how-to/` instead

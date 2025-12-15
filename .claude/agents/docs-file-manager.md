@@ -86,7 +86,6 @@ The prefix encodes the directory path using abbreviations:
 ### Exceptions
 
 - **README.md files**: Exempt from prefix requirement (GitHub compatibility)
-- **Journal files**: Use date format `YYYY-MM/YYYY-MM-DD.md` (exempt from prefix system)
 
 ## Systematic File Management Process
 
@@ -648,7 +647,6 @@ Before marking an operation complete, verify:
 - [ ] File naming convention followed
 - [ ] Linking convention followed
 - [ ] No README.md files have prefixes (exempt)
-- [ ] Journal files not affected (use date format)
 
 ### Deletion Safety (if applicable)
 
@@ -755,14 +753,6 @@ Before telling user "done":
 4. **List any warnings** or edge cases
 
 ## Edge Cases and Special Considerations
-
-### Journals Directory Exception
-
-The `docs/journals/` directory uses different naming:
-
-- **Format**: `YYYY-MM/YYYY-MM-DD.md`
-- **No prefixes**: Journal files are exempt from prefix system
-- **If renaming**: Only rename if moving out of journals/ (then add prefix)
 
 ### README.md Files
 

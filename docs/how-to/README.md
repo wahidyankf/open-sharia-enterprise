@@ -16,7 +16,7 @@ Problem-solving guides for common tasks in the open-sharia-enterprise project. T
 
 ## 📋 Contents
 
-- [How to Organize Your Work](./hoto__organize-work.md) - Choose the right folder (journals, plans, docs) for different types of work
+- [How to Organize Your Work](./hoto__organize-work.md) - Choose the right folder (plans, docs) for different types of work
 
 ---
 

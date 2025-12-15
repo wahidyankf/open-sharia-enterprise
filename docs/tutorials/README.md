@@ -50,4 +50,3 @@ For internal project documentation, see the `docs/` directory structure:
 - `docs/explanation/` - Conceptual documentation
 - `docs/how-to/` - Problem-solving guides
 - `docs/reference/` - Technical reference
-- `docs/journals/` - Research notes

@@ -70,7 +70,6 @@ Understanding the update hierarchy is critical. Always update in this order:
    ├─ .claude/agents/README.md
    ├─ .claude/agents/docs-maker.md
    ├─ .claude/agents/docs-link-checker.md
-   ├─ .claude/agents/journal-maker.md
    ├─ .claude/agents/repo-rules-checker.md
    └─ .claude/agents/repo-rules-maker.md (yourself!)
 
@@ -743,7 +742,7 @@ If a rule change requires renaming files (e.g., prefix change):
 When documenting directory renames in `docs/`:
 
 1. **Acknowledge cascading impact**: Renaming a directory requires renaming all files within (prefix must match directory path)
-2. **Document the exception**: Files in `docs/journals/` use date-based naming (`YYYY-MM/YYYY-MM-DD.md`) and are exempt
+2. **Document the exception**: Files in `docs/metadata/` store operational files without prefixes
 3. **Provide concrete example**: Use real rename scenario (e.g., `security/` → `information-security/`)
 4. **Show before/after**: Illustrate directory structure, prefix changes, and file renames
 5. **List all affected components**: Directory name, file prefixes, markdown links, index files
@@ -794,7 +793,6 @@ If adding a completely new category of conventions:
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation into four categories
 - `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
-- `docs/explanation/conventions/ex-co__journals-format.md` - Logseq-style outliner format for journals
 - `docs/explanation/conventions/ex-co__timestamp-format.md` - UTC+7 timestamp standards for cache and metadata
 
 **Related Agents:**

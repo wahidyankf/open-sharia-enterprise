@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-15
+updated: 2025-12-16
 ---
 
 # Repository Rule Checker Agent
@@ -78,7 +78,7 @@ When running a consistency check, systematically verify:
 - [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`, `ex-inse__` for `explanation/information-security/`, `ex-inse-to__` for `explanation/information-security/toolings/`, `tu-aien__` for `tutorials/ai-engineering/`, `tu-bufi__` for `tutorials/business-and-finance/`, `tu-soen-syde__` for `tutorials/software-engineering/system-design/`, `hoto__` for `how-to/`)
 - [ ] Files inside `plans/` folders do NOT use prefixes (folder structure provides context)
 - [ ] Plan folders follow the naming pattern `YYYY-MM-DD__[project-identifier]/`
-- [ ] When directories are renamed, all files within have updated prefixes (except `docs/journals/`)
+- [ ] When directories are renamed, all files within have updated prefixes
 - [ ] No files violate the naming convention
 
 ### Linking Convention Compliance
@@ -119,6 +119,14 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Category values match the documented options (tutorial, how-to, reference, explanation)
 - [ ] Category is singular (not plural)
 - [ ] Tags are relevant and properly formatted
+
+### Bullet Indentation Compliance
+
+- [ ] Files in `docs/` use correct bullet indentation: `  - Text` (2 spaces BEFORE dash for nesting)
+- [ ] No files use incorrect pattern: `-  Text` (spaces AFTER dash)
+- [ ] Indentation convention clearly documents: spaces BEFORE dash for nesting, NOT after
+- [ ] Agents (docs-maker, docs-tutorial-maker) emphasize correct pattern in their instructions
+- [ ] docs-checker validates bullet indentation and flags `-  ` pattern
 
 ### Code Block Indentation Compliance
 
@@ -206,20 +214,22 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Plan status in README.md matches folder location (in-progress/backlog/done)
 - [ ] Plan index files (`plans/{in-progress,backlog,done}/README.md`) list all plans in their category
 
-### Journals Format Convention Compliance
+### Markdown Structure Compliance
 
-- [ ] All journal entries in `docs/journals/` use Logseq-style outliner format
-- [ ] **Daily entries have NO H1 heading** - Files start directly with content (no `# YYYY-MM-DD`)
-- [ ] **Monthly summaries have NO heading** - Files start directly with content (no `# summary`)
-- [ ] No headings anywhere in journal files (`#`, `##`, `###`, etc.)
-- [ ] **All content uses bullets (`-`) with TAB indentation** (NOT spaces) - Required for files in `docs/` directory (Obsidian vault)
-- [ ] **CRITICAL - Journal frontmatter uses spaces**: All YAML frontmatter uses 2 spaces per level (NOT tabs) for ALL nested fields (tags, lists, objects)
-- [ ] First line of journal files is a bullet point (not a heading)
-- [ ] Journal files follow naming pattern: `YYYY-MM/YYYY-MM-DD.md` or `YYYY-MM/summary.md`
-- [ ] Journals use Mermaid for diagrams (inside `docs/` directory)
-- [ ] journal-maker.md agent correctly documents "no heading" requirement, TAB indentation scoped to `docs/` directory, and frontmatter spacing rule
-- [ ] CLAUDE.md correctly describes journals as using "Logseq-style outliner format" and explicitly states frontmatter spacing rule
-- [ ] Convention document (ex-co\_\_journals-format.md) clearly states no H1 heading rule, TAB indentation requirement scoped to `docs/` directory (Obsidian vault), and CRITICAL frontmatter spacing exception
+**CRITICAL**: Validate correct traditional markdown structure:
+
+- [ ] **All markdown files** (`tutorials/`, `how-to/`, `reference/`, `explanation/`, `plans/`, root files) use traditional markdown structure:
+  - [ ] MUST have H1 heading at start (`# Title`)
+  - [ ] Use traditional sections (`## H2`, `### H3`, etc.)
+  - [ ] Have paragraphs and proper document structure
+  - [ ] **CRITICAL - Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (NOT tabs)
+
+- [ ] **Convention clarity**: ex-co\_\_indentation.md clearly documents space indentation for bullets
+- [ ] **CLAUDE.md clarity**: Documentation Organization section explicitly states markdown structure requirements
+- [ ] **Agent clarity**: docs-maker.md emphasizes it creates traditional markdown
+- [ ] **Agent clarity**: docs-tutorial-maker.md emphasizes it creates traditional markdown
+- [ ] **Agent validation**: docs-checker.md validates markdown structure
+- [ ] **Agent validation**: repo-rules-checker.md (this file) validates markdown structure
 
 ### Emoji Usage Convention Compliance
 
@@ -236,8 +246,6 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 
 - [ ] README.md exception is documented in file naming convention
 - [ ] README.md exception is mentioned in CLAUDE.md
-- [ ] Journals pattern (`YYYY-MM/YYYY-MM-DD.md`) is documented
-- [ ] Journals format convention (`ex-co__journals-format.md`) is referenced in CLAUDE.md and conventions index
 - [ ] Directory naming rationale (singular vs plural) is documented
 
 ### Trunk Based Development (TBD) Compliance
@@ -588,7 +596,6 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/docs-tutorial-checker.md`
 - `.claude/agents/docs-tutorial-maker.md`
 - `.claude/agents/hugo-developer.md`
-- `.claude/agents/journal-maker.md`
 - `.claude/agents/plan-checker.md`
 - `.claude/agents/plan-execution-checker.md`
 - `.claude/agents/plan-executor.md`
@@ -608,7 +615,6 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `docs/explanation/conventions/ex-co__hugo-content-shared.md`
 - `docs/explanation/conventions/ex-co__hugo-content-ayokoding.md`
 - `docs/explanation/conventions/ex-co__hugo-content-ose-platform.md`
-- `docs/explanation/conventions/ex-co__journals-format.md`
 - `docs/explanation/conventions/ex-co__timestamp-format.md`
 - `docs/explanation/conventions/ex-co__tutorials.md`
 - `docs/explanation/development/ex-de__acceptance-criteria.md`
@@ -691,7 +697,6 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 - `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
 - `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation
 - `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
-- `docs/explanation/conventions/ex-co__journals-format.md` - Logseq-style outliner format for journals
 - `docs/explanation/conventions/ex-co__tutorials.md` - Standards for creating learning-oriented tutorials
 - `docs/explanation/conventions/ex-co__tutorial-naming.md` - Standardized tutorial types and depth levels
 
