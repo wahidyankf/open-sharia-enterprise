@@ -111,8 +111,8 @@ params:
 
   # SEO & Social Media
   author: "Wahidyan Kresna Fridayoka"
-  images:
-    - /logo.png
+  # images:
+  #   - /logo.png
 
   # Social media profiles
   social:
