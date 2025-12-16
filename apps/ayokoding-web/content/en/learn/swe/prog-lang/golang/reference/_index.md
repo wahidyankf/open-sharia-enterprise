@@ -6,4 +6,4 @@ weight: 501
 description: Technical reference documentation for Go language features and standard library
 ---
 
-_Coming soon: Language reference, standard library documentation, and API specifications._
+- [Overview](/en/learn/swe/prog-lang/golang/reference/overview)

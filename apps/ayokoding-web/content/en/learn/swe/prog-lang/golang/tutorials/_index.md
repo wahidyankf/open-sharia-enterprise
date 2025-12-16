@@ -6,6 +6,7 @@ weight: 501
 description: Step-by-step learning path from installation to expert Go mastery
 ---
 
+- [Overview](/en/learn/swe/prog-lang/golang/tutorials/overview)
 - [Initial Setup](/en/learn/swe/prog-lang/golang/tutorials/initial-setup)
 - [Quick Start](/en/learn/swe/prog-lang/golang/tutorials/quick-start)
 - [Beginner](/en/learn/swe/prog-lang/golang/tutorials/beginner)

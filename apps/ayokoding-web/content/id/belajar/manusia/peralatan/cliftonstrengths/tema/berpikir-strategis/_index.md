@@ -5,6 +5,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
+- [Ikhtisar](/id/belajar/manusia/peralatan/cliftonstrengths/tema/berpikir-strategis/ikhtisar)
 - [Analitis](/id/belajar/manusia/peralatan/cliftonstrengths/tema/berpikir-strategis/analitis)
 - [Konteks](/id/belajar/manusia/peralatan/cliftonstrengths/tema/berpikir-strategis/konteks)
 - [Futuristik](/id/belajar/manusia/peralatan/cliftonstrengths/tema/berpikir-strategis/futuristik)
