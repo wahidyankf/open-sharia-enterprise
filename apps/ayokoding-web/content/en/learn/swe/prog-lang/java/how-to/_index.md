@@ -6,4 +6,5 @@ weight: 501
 description: Practical recipes and patterns for solving real-world Java problems
 ---
 
+- [Overview](/en/learn/swe/prog-lang/java/how-to/overview)
 - [Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook)

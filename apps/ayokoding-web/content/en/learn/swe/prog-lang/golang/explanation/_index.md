@@ -6,4 +6,4 @@ weight: 501
 description: Conceptual guides explaining Go's design decisions and key concepts
 ---
 
-_Coming soon: Design principles, concurrency models, memory management, and Go philosophy._
+- [Overview](/en/learn/swe/prog-lang/golang/explanation/overview)

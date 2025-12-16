@@ -5,6 +5,7 @@ date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
+- [Ikhtisar](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/ikhtisar)
 - [Aktivator](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/aktivator)
 - [Komando](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/komando)
 - [Komunikasi](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/komunikasi)

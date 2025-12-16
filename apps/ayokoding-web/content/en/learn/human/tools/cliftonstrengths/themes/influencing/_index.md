@@ -5,6 +5,7 @@ draft: false
 weight: 601
 ---
 
+- [Overview](/en/learn/human/tools/cliftonstrengths/themes/influencing/overview)
 - [Activator](/en/learn/human/tools/cliftonstrengths/themes/influencing/activator)
 - [Command](/en/learn/human/tools/cliftonstrengths/themes/influencing/command)
 - [Communication](/en/learn/human/tools/cliftonstrengths/themes/influencing/communication)

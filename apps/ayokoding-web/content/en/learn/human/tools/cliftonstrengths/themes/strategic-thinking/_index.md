@@ -5,6 +5,7 @@ draft: false
 weight: 601
 ---
 
+- [Overview](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/overview)
 - [Analytical](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/analytical)
 - [Context](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/context)
 - [Futuristic](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/futuristic)

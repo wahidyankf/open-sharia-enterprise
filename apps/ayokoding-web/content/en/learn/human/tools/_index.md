@@ -5,9 +5,11 @@ draft: false
 weight: 301
 ---
 
+- [Overview](/en/learn/human/tools/overview)
 - [CliftonStrengths](/en/learn/human/tools/cliftonstrengths)
   - [Overview](/en/learn/human/tools/cliftonstrengths/overview)
   - [Themes](/en/learn/human/tools/cliftonstrengths/themes)
+    - [Overview](/en/learn/human/tools/cliftonstrengths/themes/overview)
     - [Executing](/en/learn/human/tools/cliftonstrengths/themes/executing)
     - [Influencing](/en/learn/human/tools/cliftonstrengths/themes/influencing)
     - [Relationship Building](/en/learn/human/tools/cliftonstrengths/themes/relationship-building)

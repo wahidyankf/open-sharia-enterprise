@@ -6,4 +6,4 @@ weight: 501
 description: Conceptual guides explaining Java's design decisions and key concepts
 ---
 
-_Coming soon: Design principles, JVM internals, memory management, and Java philosophy._
+- [Overview](/en/learn/swe/prog-lang/java/explanation/overview)
