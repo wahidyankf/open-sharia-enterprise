@@ -127,8 +127,6 @@ Is it about WHY we value something?
 - [Core Principles](./principles/README.md) - Foundational principles guiding all conventions and development
 - [Conventions](./conventions/README.md) - Documentation writing and organization standards
 - [Development](./development/README.md) - Software development practices and workflows
-- [Software Engineering](./software-engineering/README.md) - Software engineering concepts and practices
-- [Security](./information-security/README.md) - Security concepts and practices
 
 ---
 
