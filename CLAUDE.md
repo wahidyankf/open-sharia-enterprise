@@ -228,11 +228,11 @@ Foundational values that govern all conventions and development practices. Six p
 
 **Layer 2: Conventions** (`docs/explanation/conventions/`)
 
-Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 19 documentation conventions.
+Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 20 documentation conventions.
 
 **Layer 3: Development** (`docs/explanation/development/`)
 
-Software practices that implement core principles. Defines HOW we develop, test, and deploy software. Each practice traces back to specific principles it respects. See [Development Index](./docs/explanation/development/README.md) for 11 development practices.
+Software practices that implement core principles. Defines HOW we develop, test, and deploy software. Each practice traces back to specific principles it respects. See [Development Index](./docs/explanation/development/README.md) for 12 development practices.
 
 **Layer 4: AI Agents** (`.claude/agents/`)
 
@@ -310,7 +310,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (19 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (11 development practices).
+For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (20 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
 
 ## AI Agent Standards
 
