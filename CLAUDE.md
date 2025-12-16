@@ -69,10 +69,8 @@ open-sharia-enterprise/
 │   │   │   └── README.md     # Core principles index
 │   │   ├── conventions/      # Documentation writing standards (markdown, formatting, content)
 │   │   │   └── README.md     # Conventions index
-│   │   ├── development/      # Software development practices (BDD, Hugo dev, git, agents)
-│   │   │   └── README.md     # Development index
-│   │   └── information-security/  # Information security concepts
-│   │       └── README.md     # Information security index
+│   │   └── development/      # Software development practices (BDD, Hugo dev, git, agents)
+│   │       └── README.md     # Development index
 │   └── metadata/             # Operational metadata (committed to git)
 │       └── external-links-status.yaml  # Link verification cache (docs-link-checker)
 ├── plans/                     # Project planning documents

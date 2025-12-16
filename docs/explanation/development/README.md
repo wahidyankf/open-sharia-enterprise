@@ -114,7 +114,6 @@ Development practices in this directory fall into several categories:
 ## 🔗 Related Documentation
 
 - [Documentation Conventions](../conventions/README.md) - File naming, linking, and Diátaxis framework standards
-- [Information Security](../information-security/README.md) - Information security concepts and practices
 
 ---
 
