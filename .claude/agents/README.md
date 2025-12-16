@@ -84,6 +84,23 @@ Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo 
 - **Works with:** `ayokoding-content-maker` for content creation
 - **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention
 
+### 🟩 `ayokoding-facts-checker.md`
+
+Expert at validating factual correctness of ayokoding-web educational content using web verification. Checks technical accuracy, code examples, tutorial sequences, and bilingual consistency.
+
+- **Primary Use:** Verifying factual accuracy of educational tutorials and learning content
+- **Specialization:** Code example validation, version number verification, bilingual consistency checking, tutorial sequence logic, educational accuracy using WebSearch/WebFetch
+- **Tools:** Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
+- **When to Use:**
+  - Validating tutorial code examples are correct and current
+  - Checking framework/library versions are accurate
+  - Verifying bilingual content (Indonesian/English) is factually consistent
+  - Ensuring learning sequences are logical and achievable
+  - Auditing educational content for technical accuracy
+  - After framework/library version updates
+- **Works with:** `ayokoding-facts-fixer` for applying validated fixes
+- **References:** Factual Validation Convention, Hugo Content Convention, Tutorial Convention
+
 ### 🟨 `ayokoding-content-fixer.md`
 
 Applies validated fixes from ayokoding-content-checker audit reports. Re-validates findings before applying changes to prevent false positives.
@@ -99,6 +116,23 @@ Applies validated fixes from ayokoding-content-checker audit reports. Re-validat
 - **Workflow:** ayokoding-content-checker (detect) → User review → ayokoding-content-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
 - **Output:** Generates `ayokoding-content__{timestamp}__fix.md` report in `generated-reports/`
+
+### 🟨 `ayokoding-facts-fixer.md`
+
+Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates factual findings before applying changes.
+
+- **Primary Use:** Applying validated factual accuracy fixes from ayokoding-facts-checker reports after user review
+- **Specialization:** Factual accuracy fix application, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective distinction, code/version corrections
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing ayokoding-facts-checker validation report
+  - Fixing objective factual errors (code syntax, API usage, version numbers) automatically
+  - Flagging subjective improvements (difficulty levels, pedagogical choices) for manual review
+  - Detecting and reporting false positives to improve checker accuracy
+  - Generating comprehensive fix reports with audit trail
+- **Workflow:** ayokoding-facts-checker (validate) → User review → ayokoding-facts-fixer (apply validated factual fixes)
+- **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence objective fixes automatically)
+- **Output:** Generates `ayokoding-facts__{timestamp}__fix.md` report in `generated-reports/`
 
 ### 🟩 `ayokoding-link-checker.md`
 

@@ -290,6 +290,10 @@ Six tutorial levels: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%)
 
 All markdown content must follow quality standards: active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast, semantic formatting. Applies to docs/, Hugo sites, plans/, root files. See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md) for complete checklist.
 
+### Factual Validation Convention
+
+Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated). See [Factual Validation Convention](./docs/explanation/conventions/ex-co__factual-validation.md) for complete methodology.
+
 ### Hugo Content Convention
 
 Hugo content follows specialized conventions organized into three documents:
@@ -341,9 +345,9 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-facts-checker (validates educational content factual accuracy), ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
 
-**Fixing**: repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer (apply validated fixes from corresponding checker audit reports)
+**Fixing**: repo-rules-fixer, ayokoding-content-fixer, ayokoding-facts-fixer (applies factual accuracy fixes), docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer (apply validated fixes from corresponding checker audit reports)
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
