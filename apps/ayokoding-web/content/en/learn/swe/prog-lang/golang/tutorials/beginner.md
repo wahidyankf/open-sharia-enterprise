@@ -60,7 +60,7 @@ Verify installation:
 
 ```bash
 go version
-# Should output: go version go1.25.x ... (or go1.24.x, go1.23.x)
+# Should output: go version go1.25.x ... (or go1.24.x - current stable versions)
 ```
 
 ### Your First Program

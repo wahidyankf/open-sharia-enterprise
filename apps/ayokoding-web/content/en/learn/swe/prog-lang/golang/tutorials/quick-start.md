@@ -46,7 +46,7 @@ Each section introduces ONE essential concept with ONE example. After completing
 ## 📋 Prerequisites
 
 - Basic programming knowledge in any language
-- Go installed (version 1.23.4 or later from [go.dev/dl](https://go.dev/dl))
+- Go installed (version 1.24 or later recommended - download from [go.dev/dl](https://go.dev/dl))
 
 ## 🔤 Variables and Types
 
