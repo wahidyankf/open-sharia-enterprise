@@ -289,7 +289,8 @@ package main
 
 import "fmt"
 
-// Number constraint for all numeric types
+// Number is a custom constraint (not built-in)
+// Only 'comparable' and 'any' are predeclared in Go
 type Number interface {
 	int | int8 | int16 | int32 | int64 |
 		uint | uint8 | uint16 | uint32 | uint64 |
@@ -469,10 +470,10 @@ sequenceDiagram
 
 **Key Differences**:
 
-- **Unbuffered**: Every send blocks until receive (tight synchronization)
-- **Buffered**: Sends don't block until buffer is full (looser coupling, higher throughput)
-- **Use unbuffered** for strict synchronization points
-- **Use buffered** for asynchronous work distribution (like worker pools)
+- **Unbuffered**: Every send blocks until receive (rendezvous synchronization - both goroutines must be ready simultaneously)
+- **Buffered**: Sends don't block until buffer is full (asynchronous communication up to buffer capacity)
+- **Use unbuffered** for strict synchronization points and guaranteed ordering
+- **Use buffered** for asynchronous work distribution and throughput optimization (like worker pools)
 
 **Key Concepts**:
 
@@ -721,7 +722,8 @@ func main() {
 
 	// Using WaitGroup.Go() - automatically handles Add(1) and Done()
 	for i := 1; i <= 5; i++ {
-		id := i // Capture loop variable
+		id := i // Capture loop variable - required in Go 1.21 and earlier
+		        // Go 1.22+ fixes this, but capturing is still good practice
 		wg.Go(func() {
 			worker(id)
 		})

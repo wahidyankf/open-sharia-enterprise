@@ -118,10 +118,10 @@ go version
 **Expected output**:
 
 ```
-go version go1.23.4 linux/amd64
+go version go1.25.5 linux/amd64
 ```
 
-(Version number and OS/architecture will vary)
+(Version number will vary - Go 1.24.x or 1.25.x depending on your installation)
 
 **If you get an error**:
 
@@ -198,7 +198,7 @@ Hello, World!
 
 Before moving forward, verify:
 
-- [ ] `go version` shows Go 1.23.4 or later
+- [ ] `go version` shows Go 1.24.x or 1.25.x (current stable versions)
 - [ ] `go run hello.go` prints "Hello, World!"
 - [ ] `go build hello.go` creates an executable
 - [ ] The executable runs and prints "Hello, World!"
