@@ -399,7 +399,7 @@ public class VirtualThreadsExample {
 
 ```java
 // Define sealed class - only specified classes can extend
-public sealed class Payment permits CreditCardPayment, PayPalPayment, Cryptocurrency {
+public abstract sealed class Payment permits CreditCardPayment, PayPalPayment, CryptocurrencyPayment {
     private double amount;
 
     public Payment(double amount) {
