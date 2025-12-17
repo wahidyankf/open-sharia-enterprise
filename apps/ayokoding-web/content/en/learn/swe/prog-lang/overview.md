@@ -10,19 +10,17 @@ Master programming languages from fundamentals to advanced patterns. Each langua
 ## Available Languages
 
 - [**Golang**](/en/learn/swe/prog-lang/golang) - Complete Full Set from setup to expert mastery
-  - [Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup)
-  - [Quick Start](/en/learn/swe/prog-lang/golang/quick-start)
-  - [Beginner](/en/learn/swe/prog-lang/golang/beginner)
-  - [Intermediate](/en/learn/swe/prog-lang/golang/intermediate)
-  - [Advanced](/en/learn/swe/prog-lang/golang/advanced)
-  - [Cookbook](/en/learn/swe/prog-lang/golang/cookbook)
+  - [Tutorials](/en/learn/swe/prog-lang/golang/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
+  - [How-To Guides](/en/learn/swe/prog-lang/golang/how-to) - Practical solutions for common problems
+  - [Explanation](/en/learn/swe/prog-lang/golang/explanation) - Best practices and anti-patterns
 - [**Java**](/en/learn/swe/prog-lang/java) - Complete Full Set from setup to expert mastery
-  - [Initial Setup](/en/learn/swe/prog-lang/java/initial-setup)
-  - [Quick Start](/en/learn/swe/prog-lang/java/quick-start)
-  - [Beginner](/en/learn/swe/prog-lang/java/beginner)
-  - [Intermediate](/en/learn/swe/prog-lang/java/intermediate)
-  - [Advanced](/en/learn/swe/prog-lang/java/advanced)
-  - [Cookbook](/en/learn/swe/prog-lang/java/cookbook)
+  - [Tutorials](/en/learn/swe/prog-lang/java/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
+  - [How-To Guides](/en/learn/swe/prog-lang/java/how-to) - Practical solutions for common problems
+  - [Explanation](/en/learn/swe/prog-lang/java/explanation) - Best practices and anti-patterns
+- [**Python**](/en/learn/swe/prog-lang/python) - Complete Full Set from setup to expert mastery
+  - [Tutorials](/en/learn/swe/prog-lang/python/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
+  - [How-To Guides](/en/learn/swe/prog-lang/python/how-to) - Practical solutions for common problems
+  - [Explanation](/en/learn/swe/prog-lang/python/explanation) - Best practices and anti-patterns
 
 ## Tutorial Structure
 
