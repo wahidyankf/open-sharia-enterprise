@@ -2,7 +2,7 @@
 title: "Initial Setup"
 date: 2025-12-09T00:00:00+07:00
 draft: false
-weight: 503
+weight: 502
 description: "Get Go installed and running your first program"
 tags:
   - golang
