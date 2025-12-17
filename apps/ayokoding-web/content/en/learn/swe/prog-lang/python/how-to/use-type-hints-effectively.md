@@ -203,13 +203,13 @@ user: UserDict = {
     "age": 30
 }
 
-# ✅ Optional fields
+# ✅ All fields optional with total=False
 class UserDictOptional(TypedDict, total=False):
     id: int
     name: str
-    email: str  # Required
-    age: int    # Optional
-    phone: str  # Optional
+    email: str
+    age: int
+    phone: str
 
 # ✅ Better alternative: dataclass
 from dataclasses import dataclass

@@ -700,40 +700,6 @@ func main() {
 }
 ```
 
-**Solution (Go 1.25+ Modern)**:
-
-```go
-package main
-
-import (
-	"fmt"
-	"sync"
-	"time"
-)
-
-func worker(id int) {
-	fmt.Printf("Worker %d starting\n", id)
-	time.Sleep(time.Second)
-	fmt.Printf("Worker %d done\n", id)
-}
-
-func main() {
-	var wg sync.WaitGroup
-
-	// Using WaitGroup.Go() - automatically handles Add(1) and Done()
-	for i := 1; i <= 5; i++ {
-		id := i // Capture loop variable - required in Go 1.21 and earlier
-		        // Go 1.22+ fixes this, but capturing is still good practice
-		wg.Go(func() {
-			worker(id)
-		})
-	}
-
-	wg.Wait()
-	fmt.Println("All workers done")
-}
-```
-
 **When to use**: When you need to wait for a group of goroutines to complete before continuing.
 
 ---

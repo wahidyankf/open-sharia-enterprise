@@ -4,14 +4,8 @@ date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Java development - organized using the Diátaxis framework
 weight: 401
-tags:
-  - java
-  - learning-path
-  - programming
-  - full-set
-  - tutorials
-categories:
-  - learn
+type: docs
+layout: list
 ---
 
 - [Overview](/en/learn/swe/prog-lang/java/overview)

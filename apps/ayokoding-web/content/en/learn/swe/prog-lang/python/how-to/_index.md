@@ -1,14 +1,13 @@
 ---
-title: "How-To Guides"
+title: How-To Guides
 date: 2025-12-17T10:54:44+07:00
 draft: false
 weight: 501
-description: "Practical Python how-to guides for problem-solving"
-tags: ["python", "how-to", "guides"]
-categories: ["learn"]
+description: Practical recipes and patterns for solving real-world Python problems
 ---
 
 - [Overview](/en/learn/swe/prog-lang/python/how-to/overview)
+- [Cookbook](/en/learn/swe/prog-lang/python/how-to/cookbook)
 - [How to Avoid Common Pitfalls](/en/learn/swe/prog-lang/python/how-to/avoid-common-pitfalls)
 - [How to Handle Errors Effectively](/en/learn/swe/prog-lang/python/how-to/handle-errors-effectively)
 - [How to Use Type Hints Effectively](/en/learn/swe/prog-lang/python/how-to/use-type-hints-effectively)

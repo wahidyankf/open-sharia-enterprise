@@ -4,21 +4,21 @@ date: 2025-12-17T10:54:44+07:00
 draft: false
 description: Complete learning path from zero to expert Python development - organized using the Diátaxis framework
 weight: 401
-tags:
-  - python
-  - learning-path
-  - programming
-  - full-set
-  - tutorials
-categories:
-  - learn
+type: docs
+layout: list
 ---
 
 - [Overview](/en/learn/swe/prog-lang/python/overview)
 - [Tutorials](/en/learn/swe/prog-lang/python/tutorials)
   - [Overview](/en/learn/swe/prog-lang/python/tutorials/overview)
+  - [Initial Setup](/en/learn/swe/prog-lang/python/tutorials/initial-setup)
+  - [Quick Start](/en/learn/swe/prog-lang/python/tutorials/quick-start)
+  - [Beginner](/en/learn/swe/prog-lang/python/tutorials/beginner)
+  - [Intermediate](/en/learn/swe/prog-lang/python/tutorials/intermediate)
+  - [Advanced](/en/learn/swe/prog-lang/python/tutorials/advanced)
 - [How-To Guides](/en/learn/swe/prog-lang/python/how-to)
   - [Overview](/en/learn/swe/prog-lang/python/how-to/overview)
+  - [Cookbook](/en/learn/swe/prog-lang/python/how-to/cookbook)
   - [How to Avoid Common Pitfalls](/en/learn/swe/prog-lang/python/how-to/avoid-common-pitfalls)
   - [How to Handle Errors Effectively](/en/learn/swe/prog-lang/python/how-to/handle-errors-effectively)
   - [How to Use Type Hints Effectively](/en/learn/swe/prog-lang/python/how-to/use-type-hints-effectively)

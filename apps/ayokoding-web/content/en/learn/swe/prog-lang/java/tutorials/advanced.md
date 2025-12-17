@@ -362,7 +362,8 @@ public class CompletableFutureExample {
 #### Example: Virtual Threads
 
 ```java
-// Java 19+ with --enable-preview flag
+// Java 21+ (finalized feature, no preview flag needed)
+// Java 19-20 required --enable-preview flag
 
 public class VirtualThreadsExample {
     public static void main(String[] args) throws Exception {
