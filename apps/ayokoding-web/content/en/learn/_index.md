@@ -10,6 +10,7 @@ weight: 101
     - [Overview](/en/learn/swe/prog-lang/overview)
     - [Golang](/en/learn/swe/prog-lang/golang)
     - [Java](/en/learn/swe/prog-lang/java)
+    - [Python](/en/learn/swe/prog-lang/python)
   - [System Design](/en/learn/swe/system-design)
     - [Overview](/en/learn/swe/system-design/overview)
     - [AI-Powered Personal Finance Advisor](/en/learn/swe/system-design/ai-personal-finance-advisor)
