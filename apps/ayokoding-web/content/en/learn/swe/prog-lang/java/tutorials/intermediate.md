@@ -707,7 +707,7 @@ public class ConcurrentCollectionsDemo {
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.0</version>
+            <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -761,7 +761,7 @@ repositories {
 
 dependencies {
     // JUnit 5
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
 
     // JSON
     implementation 'com.google.code.gson:gson:2.10.1'
@@ -880,10 +880,11 @@ public class JDBCExample {
         String password = "password";
 
         try {
-            // Load driver
+            // Note: Class.forName() is optional for JDBC 4.0+ drivers (auto-loaded)
+            // Only needed for legacy pre-JDBC 4.0 drivers
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Get connection
+            // Get connection (driver auto-loaded from classpath for JDBC 4.0+)
             Connection conn = DriverManager.getConnection(url, user, password);
 
             // Create statement

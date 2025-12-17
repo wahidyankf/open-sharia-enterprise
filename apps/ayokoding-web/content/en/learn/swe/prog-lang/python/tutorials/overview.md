@@ -1,15 +1,11 @@
 ---
 title: "Overview"
-date: 2025-12-17T10:54:44+07:00
-draft: false
 weight: 502
-description: "Python tutorials overview and learning guidance"
+date: 2025-12-17T15:00:24+07:00
+draft: false
+description: "Step-by-step learning path from installation to expert Python mastery"
 tags: ["python", "tutorials", "overview"]
 categories: ["learn"]
 ---
 
-## Python Tutorials
-
-This section will contain hands-on tutorials for learning Python development. Tutorials are currently being developed and will be added soon.
-
-For now, explore the How-To Guides and Explanation sections for practical Python guidance.
+Learn Python through hands-on tutorials that guide you from your first program to advanced systems programming. Start with installation, build foundations with Python fundamentals, then progress through intermediate patterns and advanced internals.
