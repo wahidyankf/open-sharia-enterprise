@@ -14,7 +14,6 @@ tags:
     "dns-enumeration",
     "vhost-discovery",
   ]
-categories: ["learn"]
 ---
 
 ## What You'll Learn
