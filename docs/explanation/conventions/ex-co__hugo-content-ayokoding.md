@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-15
+updated: 2025-12-18
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -127,6 +127,8 @@ params:
 - `{{< steps >}}` - Numbered step sequence
 - `{{< tabs >}}` - Tabbed content
 
+**CRITICAL: Hextra shortcodes require `{{% %}}` delimiters** (see [Shortcode Delimiter Rules](./ex-co__hugo-content-shared.md#2-shortcodes) in shared conventions).
+
 **Example Usage**:
 
 ```markdown
@@ -134,7 +136,7 @@ params:
 This is an informational callout using Hextra's callout shortcode.
 {{< /callout >}}
 
-{{< steps >}}
+{{% steps %}}
 
 ### Step 1: Install Dependencies
 
@@ -144,7 +146,7 @@ Run `npm install` to install required packages.
 
 Edit the configuration file...
 
-{{< /steps >}}
+{{% /steps %}}
 
 {{< cards >}}
 {{< card link="/learn/nodejs" title="Node.js" >}}
@@ -234,6 +236,77 @@ categories: ["celoteh"]
 author: "Guest Contributor Name" # Optional - allowed in rants/celoteh only
 ---
 ```
+
+### Frontmatter Field Formatting Rules
+
+**CRITICAL RULES**: ayokoding-web frontmatter has specific formatting requirements to prevent rendering errors.
+
+#### Categories Field - DO NOT USE
+
+**FORBIDDEN**: The `categories:` field MUST NOT be used in ayokoding-web frontmatter.
+
+**Rationale**: Hextra theme renders categories field as raw text on the page. Content categorization is handled through:
+
+- Directory structure (`/learn/`, `/rants/`, `/celoteh/`)
+- Tags field for topic categorization
+- Navigation weight for ordering
+
+❌ **Bad (causes raw text leak on page)**:
+
+```yaml
+---
+title: "Getting Started with TypeScript"
+date: 2025-12-07T10:00:00+07:00
+tags: ["typescript", "tutorial"]
+categories: ["learn"] # WRONG! Displays as raw text on page
+---
+```
+
+✅ **Good (no categories field)**:
+
+```yaml
+---
+title: "Getting Started with TypeScript"
+date: 2025-12-07T10:00:00+07:00
+tags: ["typescript", "tutorial"]
+# Note: No categories field - categorization through directory structure
+---
+```
+
+#### Tags Field - Single-Line JSON Array Format
+
+**REQUIRED FORMAT**: Tags MUST use single-line JSON array format, NOT multi-line YAML array format.
+
+✅ **Good (single-line JSON array)**:
+
+```yaml
+---
+title: "Understanding Async/Await in JavaScript"
+date: 2025-12-07T10:00:00+07:00
+tags: ["javascript", "async", "promises", "tutorial"]
+---
+```
+
+❌ **Bad (multi-line YAML array)**:
+
+```yaml
+---
+title: "Understanding Async/Await in JavaScript"
+date: 2025-12-07T10:00:00+07:00
+tags:
+  - javascript
+  - async
+  - promises
+  - tutorial
+---
+```
+
+**Rationale**:
+
+- Single-line format is more compact and scannable
+- Consistent with Hextra theme examples
+- Easier to edit and maintain
+- Prevents accidental indentation errors
 
 ### Weight Field Ordering
 
@@ -338,6 +411,7 @@ weight: 1 # Should be 401 at depth 4
 # WRONG! Conflicting weights at different depths
 /en/learn/overview.md → weight: 2
 /en/learn/swe/overview.md → weight: 2 # Conflict!
+
 
 # WRONG! Missing weight field
 ---
@@ -913,7 +987,7 @@ draft: true
 description: ""
 weight: 10
 tags: []
-categories: ["learn"]
+# Note: No categories field - causes raw text leak in Hextra theme
 # Note: No author field - uses site-level config (params.author in hugo.yaml)
 ---
 ```
@@ -927,7 +1001,7 @@ date: { { .Date } }
 draft: true
 description: ""
 tags: []
-categories: ["celoteh"]
+# Note: No categories field - causes raw text leak in Hextra theme
 author: "Author Name" # Optional - allowed in rants/celoteh directories
 ---
 ```
@@ -941,8 +1015,8 @@ date: { { .Date } }
 draft: true
 description: ""
 tags: []
-categories: ["video"]
 videoUrl: ""
+# Note: No categories field - causes raw text leak in Hextra theme
 # Note: No author field - uses site-level config (params.author in hugo.yaml)
 ---
 ```
@@ -959,18 +1033,21 @@ Fallback template for general content.
 
 ## Taxonomy
 
-**Categories** (fixed set):
+**CRITICAL**: ayokoding-web does NOT use the `categories` field in frontmatter (causes raw text leak).
 
-- `["learn"]` - Educational content
-- `["celoteh"]` - Personal essays (Indonesian)
-- `["rants"]` - Personal essays (English)
-- `["video"]` - Video content
+**Content Categorization** (via directory structure):
+
+- `/en/learn/` and `/id/belajar/` - Educational content
+- `/en/rants/` - Personal essays (English)
+- `/id/celoteh/` - Personal essays (Indonesian)
+- `/en/video-content/` and `/id/konten-video/` - Video content
 
 **Tags** (flexible):
 
 - Granular topics (e.g., "nodejs", "api", "tutorial", "beginner")
 - Multiple tags allowed per content
 - Use lowercase, hyphenated format
+- MUST use single-line JSON array format: `["tag1", "tag2"]`
 
 **Example**:
 
@@ -978,7 +1055,7 @@ Fallback template for general content.
 ---
 title: "Understanding Async/Await in JavaScript"
 tags: ["javascript", "async", "promises", "tutorial"]
-categories: ["learn"]
+# Note: No categories field - categorization through directory structure
 ---
 ```
 
@@ -1118,7 +1195,11 @@ Before publishing, verify:
 - [ ] Internal links use absolute paths without `.md` extension
 - [ ] All images have descriptive alt text
 - [ ] Mermaid diagrams use accessible color palette
-- [ ] Tags and categories are properly formatted arrays
+- [ ] Mermaid comments use `%% Comment %%` format (NO curly braces)
+- [ ] Mermaid text with forward slashes is quoted (e.g., `["Path: /admin"]`)
+- [ ] Hextra shortcodes use `{{% %}}` delimiters for Markdown content
+- [ ] Tags use single-line JSON array format: `["tag1", "tag2"]`
+- [ ] NO `categories` field in frontmatter (causes raw text leak)
 - [ ] Draft status is set correctly (`draft: true/false`)
 - [ ] `weight` field follows depth-based ordering rules (formula: depth × 100 + sequence)
 - [ ] NO `author` field in learning content (uses site-level config)

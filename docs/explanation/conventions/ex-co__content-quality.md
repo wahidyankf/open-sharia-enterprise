@@ -37,7 +37,7 @@ These principles apply to markdown content in:
 **Universal Application**: Every markdown file in this repository should follow these quality principles, regardless of location or purpose.
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
 graph TD
     A[Content Quality Principles] --> B[Writing Style & Tone]
     A --> C[Heading Hierarchy]

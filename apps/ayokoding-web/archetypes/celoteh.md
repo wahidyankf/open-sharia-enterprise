@@ -3,8 +3,8 @@ title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 draft: true
 description: ""
-tags: []
-categories: ["celoteh"]
+tags: ["example-tag"]
+# Note: No categories field - causes raw text leak in Hextra theme
 # Note: author field is OPTIONAL - only add when content has guest contributor
 # Default: Uses site-level config (params.author: "Wahidyan Kresna Fridayoka")
 ---
