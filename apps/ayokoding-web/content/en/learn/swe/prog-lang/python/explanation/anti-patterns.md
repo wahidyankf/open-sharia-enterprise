@@ -2,7 +2,7 @@
 title: "Common Python Anti-Patterns"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 504
+weight: 704
 description: "Common Python anti-patterns that seem reasonable but create problems, with explanations and solutions"
 tags: ["python", "anti-patterns", "pitfalls", "code-quality"]
 categories: ["learn"]

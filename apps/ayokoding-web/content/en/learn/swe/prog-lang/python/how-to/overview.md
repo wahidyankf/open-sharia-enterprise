@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 502
+weight: 602
 description: "Python how-to guides overview and navigation"
 tags: ["python", "how-to", "overview"]
 categories: ["learn"]

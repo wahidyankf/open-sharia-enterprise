@@ -10,7 +10,7 @@ tags:
   - education
   - content-standards
 created: 2025-12-18
-updated: 2025-12-18
+updated: 2025-12-22
 ---
 
 # Programming Language Content Standard
@@ -52,29 +52,29 @@ Every programming language MUST follow this structure:
 
 ```
 [language]/
-├── _index.md                    # Navigation hub (weight: 401)
-├── overview.md                  # Learning path guide (weight: 402)
+├── _index.md                    # Navigation hub (weight: 1)
+├── overview.md                  # Learning path guide (weight: 2)
 ├── tutorials/
-│   ├── _index.md               # Tutorial index
-│   ├── overview.md             # Tutorial overview with full set explanation
-│   ├── initial-setup.md        # Level 1: 0-5% coverage
-│   ├── quick-start.md          # Level 2: 5-30% coverage
-│   ├── beginner.md             # Level 3: 0-60% coverage
-│   ├── intermediate.md         # Level 4: 60-85% coverage
-│   └── advanced.md             # Level 5: 85-95% coverage
+│   ├── _index.md               # Tutorial index (weight: 501)
+│   ├── overview.md             # Tutorial overview with full set explanation (weight: 502)
+│   ├── initial-setup.md        # Level 1: 0-5% coverage (weight: 503)
+│   ├── quick-start.md          # Level 2: 5-30% coverage (weight: 504)
+│   ├── beginner.md             # Level 3: 0-60% coverage (weight: 505)
+│   ├── intermediate.md         # Level 4: 60-85% coverage (weight: 506)
+│   └── advanced.md             # Level 5: 85-95% coverage (weight: 507)
 ├── how-to/
-│   ├── _index.md               # How-to index
-│   ├── overview.md             # How-to overview
-│   ├── cookbook.md             # 30+ practical recipes
-│   └── [12-18 problem-solving guides]
+│   ├── _index.md               # How-to index (weight: 601)
+│   ├── overview.md             # How-to overview (weight: 602)
+│   ├── cookbook.md             # 30+ practical recipes (weight: 603) ← MUST be position 3
+│   └── [12-18 problem-solving guides] # (weight: 604+)
 ├── explanation/
-│   ├── _index.md               # Explanation index
-│   ├── overview.md             # Explanation overview
-│   ├── best-practices.md       # Language best practices
-│   └── anti-patterns.md        # Common mistakes and pitfalls
+│   ├── _index.md               # Explanation index (weight: 701)
+│   ├── overview.md             # Explanation overview (weight: 702)
+│   ├── best-practices.md       # Language best practices (weight: 703)
+│   └── anti-patterns.md        # Common mistakes and pitfalls (weight: 704)
 └── reference/
-    ├── _index.md               # Reference index
-    └── overview.md             # Reference overview (placeholder)
+    ├── _index.md               # Reference index (weight: 801)
+    └── overview.md             # Reference overview (placeholder) (weight: 802)
 ```
 
 **Notes:**
@@ -82,6 +82,104 @@ Every programming language MUST follow this structure:
 - File names are FIXED (do not rename `beginner.md` to `basics.md`)
 - Reference directory is placeholder for future API documentation
 - All directories require `_index.md` and `overview.md`
+
+### Weight Allocation Pattern: Category-Based Hundred-Ranges
+
+**CRITICAL STRUCTURAL RULE:** Each Diátaxis category receives its own hundred-range for weight allocation, providing clear separation and scalability.
+
+**Weight Allocation by Category:**
+
+- **tutorials/** → 500s (501-5XX)
+  - 501: \_index.md
+  - 502: overview.md
+  - 503: initial-setup.md
+  - 504: quick-start.md
+  - 505: beginner.md
+  - 506: intermediate.md
+  - 507: advanced.md
+  - 508+: additional tutorial files
+
+- **how-to/** → 600s (601-6XX)
+  - 601: \_index.md
+  - 602: overview.md
+  - 603: cookbook.md (MUST be position 3 for optimal learner engagement)
+  - 604+: how-to guide files
+
+- **explanation/** → 700s (701-7XX)
+  - 701: \_index.md
+  - 702: overview.md
+  - 703: best-practices.md
+  - 704: anti-patterns.md
+  - 705+: additional explanation files
+
+- **reference/** → 800s (801-8XX)
+  - 801: \_index.md
+  - 802: overview.md
+  - 803+: reference files
+
+**Rationale:**
+
+1. **Clear Category Separation**: Weight numbers immediately reveal which Diátaxis category a file belongs to
+2. **Scalability**: Each category can accommodate up to 99 items without weight conflicts
+3. **Consistency**: All programming languages follow identical weight allocation
+4. **Pedagogical Ordering**: Categories appear in learning-optimized sequence (learn → practice → understand → reference)
+
+**Cookbook Position Rule:**
+
+**CRITICAL PEDAGOGICAL REQUIREMENT:** In how-to/ directories, `cookbook.md` MUST always be at position 3 (weight: 603), immediately after `overview.md` (weight: 602).
+
+**Why Cookbook Comes Third (Not Last):**
+
+1. **Immediate Practical Value**: Learners get hands-on examples immediately after understanding what how-to guides offer
+2. **Example-Driven Learning**: Follows "Hook → Engage → Teach" model:
+   - Overview.md = Hook (explains what how-to guides are)
+   - Cookbook.md = Engage (shows quick wins with practical examples)
+   - Detailed guides = Teach (deep problem-solving patterns)
+3. **Quick Wins and Motivation**: Seeing 30+ working examples early motivates continued learning
+4. **Ongoing Reference**: Cookbook serves as reference while studying detailed guides
+
+**Anti-Pattern (Don't Do This):**
+
+```
+# ❌ BAD: Cookbook at the end or wrong hundred-range
+how-to/
+├── _index.md           (601)
+├── overview.md         (602)
+├── guide-1.md          (603)
+├── guide-2.md          (604)
+├── ...                 (605-617)
+└── cookbook.md         (618) ← WRONG! Too late
+
+# ❌ BAD: Wrong hundred-range for category
+tutorials/
+├── _index.md           (401) ← WRONG! Should be 501
+├── overview.md         (402) ← WRONG! Should be 502
+```
+
+**Correct Pattern:**
+
+```
+# ✅ GOOD: Cookbook at position 3 with correct hundred-range
+how-to/
+├── _index.md           (601)
+├── overview.md         (602)
+├── cookbook.md         (603) ← RIGHT! Immediate engagement
+├── guide-1.md          (604)
+├── guide-2.md          (605)
+└── ...                 (606+)
+
+# ✅ GOOD: Correct hundred-range for each category
+tutorials/
+├── _index.md           (501) ← Tutorials use 500s
+how-to/
+├── _index.md           (601) ← How-to uses 600s
+explanation/
+├── _index.md           (701) ← Explanation uses 700s
+reference/
+├── _index.md           (801) ← Reference uses 800s
+```
+
+**Implementation Note:** This category-based weight allocation pattern was implemented across all 4 reference programming languages (Golang, Python, Java, Kotlin) in December 2025, replacing the previous pattern where all categories started in the 400s-500s range. The new pattern has proven to improve structural clarity and eliminate weight conflicts.
 
 ## Coverage Philosophy
 
@@ -417,7 +515,7 @@ These MUST be identical:
 - Diátaxis categorization (tutorials, how-to, explanation, reference)
 - Pedagogical patterns (front hook, learning path, prerequisites)
 - Quality requirements (color palette, no time estimates, runnable code)
-- Weight numbering (401, 402, 501, 502, etc.)
+- Weight numbering (category-based hundred-ranges: 500s for tutorials, 600s for how-to, 700s for explanation, 800s for reference)
 - Frontmatter structure (title, date, draft, description, weight)
 
 ### Customizable Elements (Adapt Per Language)

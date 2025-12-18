@@ -2,7 +2,7 @@
 title: "How to Use Collections Effectively"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 507
+weight: 608
 description: "Choose and use Python collection types for optimal performance and clarity"
 tags: ["python", "collections", "list", "dict", "set", "performance"]
 categories: ["learn"]

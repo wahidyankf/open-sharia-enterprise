@@ -8,6 +8,16 @@ description: Complete learning path from installation to expert mastery - 6 comp
 
 **Master Go step-by-step.** This directory contains the complete Golang Full Set tutorial series - a comprehensive learning path from installation to expert mastery. Choose your starting point based on your experience level.
 
+## 🎯 Where Golang Fits in Your Learning Journey
+
+**Golang is the #4 recommended language** in our pedagogical sequence. Best learned as a third or fourth language after [Python](/en/learn/swe/prog-lang/python), [Java](/en/learn/swe/prog-lang/java), and optionally [Kotlin](/en/learn/swe/prog-lang/kotlin).
+
+**Why Golang last?** Go represents a fundamentally different design philosophy - simplicity over features, explicit over implicit, composition over inheritance. This minimalist approach contrasts sharply with Python's "batteries included" and Java's extensive abstractions. Understanding these differences requires experience with other paradigms first.
+
+**What makes Go special?** Go excels at systems programming and concurrent applications. Goroutines and channels provide elegant concurrency patterns without the complexity of traditional threading. The language's fast compilation, single binary deployment, and excellent tooling make it ideal for cloud infrastructure and microservices.
+
+**Prerequisites recommended**: Familiarity with at least one other language (Python or Java) helps you appreciate Go's design choices. See [Programming Languages Overview](/en/learn/swe/prog-lang/overview) for the complete learning path.
+
 ## 📚 Complete Full Set (Sequential Learning Path)
 
 The 5-tutorial sequential track provides a complete learning journey from 0% to 95% proficiency:

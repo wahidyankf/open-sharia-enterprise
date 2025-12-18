@@ -2,7 +2,7 @@
 title: "How to Organize Code with Packages and Modules"
 date: 2025-12-18T14:50:04+07:00
 draft: false
-weight: 621
+weight: 617
 description: "Best practices for organizing Kotlin code with packages, modules, and visibility modifiers"
 tags: ["kotlin", "packages", "modules", "code-organization", "architecture"]
 categories: ["learn"]

@@ -8,6 +8,14 @@ description: Complete learning path from installation to expert mastery - 5 comp
 
 **Master Python step-by-step.** This directory contains the complete Python Full Set tutorial series - a comprehensive learning path from installation to expert mastery. Choose your starting point based on your experience level.
 
+## 🎯 Where Python Fits in Your Learning Journey
+
+**Python is the #1 recommended starting language for beginners.** If you're new to programming, start here. Python's simple syntax lets you focus on learning programming concepts without getting lost in complex syntax rules.
+
+**Already know another language?** Python is still valuable as it teaches different approaches to problem-solving. Many experienced programmers find Python's philosophy refreshing and its ecosystem invaluable for rapid development.
+
+**Learning path progression**: Python → [Java](/en/learn/swe/prog-lang/java) → [Kotlin](/en/learn/swe/prog-lang/kotlin) → [Golang](/en/learn/swe/prog-lang/golang). See [Programming Languages Overview](/en/learn/swe/prog-lang/overview) for the complete pedagogical rationale.
+
 ## 📚 Complete Full Set (Sequential Learning Path)
 
 The 5-tutorial sequential track provides a complete learning journey from 0% to 95% proficiency:

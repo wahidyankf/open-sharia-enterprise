@@ -2,7 +2,7 @@
 title: "How to Build CLI Applications"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 517
+weight: 618
 description: "Build professional command-line tools with argparse, Click, and Typer frameworks"
 tags: ["python", "cli", "argparse", "click", "typer", "command-line"]
 categories: ["learn"]

@@ -2,7 +2,7 @@
 title: "How to Access Databases with Exposed"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 616
+weight: 620
 description: "Use Exposed ORM for type-safe database access in Kotlin"
 tags: ["kotlin", "database", "exposed", "orm", "sql"]
 categories: ["learn"]

@@ -2,7 +2,7 @@
 title: "How to Document Code Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 516
+weight: 617
 description: "Write clear docstrings, meaningful comments, and comprehensive documentation with Sphinx"
 tags: ["python", "documentation", "docstrings", "sphinx", "type-hints"]
 categories: ["learn"]

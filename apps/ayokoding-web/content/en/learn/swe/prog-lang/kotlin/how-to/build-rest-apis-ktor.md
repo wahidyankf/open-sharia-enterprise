@@ -2,7 +2,7 @@
 title: "How to Build REST APIs with Ktor"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 614
+weight: 621
 description: "Build production-ready REST APIs using Ktor framework"
 tags: ["kotlin", "ktor", "rest-api", "web-development"]
 categories: ["learn"]

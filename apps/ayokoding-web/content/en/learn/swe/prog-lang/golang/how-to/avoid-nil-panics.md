@@ -2,7 +2,7 @@
 title: "How to Avoid Nil Panics"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 503
+weight: 605
 description: "Practical techniques for preventing nil pointer dereference panics in Go applications"
 tags: ["golang", "nil", "panic", "pointers", "safety"]
 categories: ["learn"]

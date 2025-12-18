@@ -2,7 +2,7 @@
 title: "How to Set Up Gradle with Kotlin DSL"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 613
+weight: 622
 description: "Configure Gradle builds using type-safe Kotlin DSL"
 tags: ["kotlin", "gradle", "build-tools", "kotlin-dsl"]
 categories: ["learn"]

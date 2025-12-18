@@ -2,7 +2,7 @@
 title: "How to Avoid Common Pitfalls"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 503
+weight: 606
 description: "Practical guide to recognizing and preventing frequent Python mistakes"
 tags: ["python", "pitfalls", "debugging", "best-practices"]
 categories: ["learn"]

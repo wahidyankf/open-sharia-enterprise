@@ -2,7 +2,7 @@
 title: "How to Organize Packages Properly"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 510
+weight: 613
 description: "Structure Python packages with proper imports and clear module organization"
 tags: ["python", "packages", "imports", "modules", "project-structure"]
 categories: ["learn"]

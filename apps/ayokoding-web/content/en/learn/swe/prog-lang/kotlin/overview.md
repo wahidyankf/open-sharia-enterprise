@@ -8,6 +8,14 @@ description: Complete learning path from zero to expert Kotlin development - 6 c
 
 **Your complete journey from zero to expert Kotlin developer.** This full set provides 6 comprehensive tutorials taking you from initial setup through expert-level mastery.
 
+## 🎯 Where Kotlin Fits in Your Learning Journey
+
+**Kotlin is the #3 recommended language** in our pedagogical sequence. Best learned after [Java](/en/learn/swe/prog-lang/java), Kotlin shows you modern language features like null safety, coroutines, and functional programming while leveraging your JVM knowledge.
+
+**Why Kotlin after Java?** Kotlin interoperates seamlessly with Java, so you can apply your Java knowledge immediately. Kotlin's conciseness and modern features demonstrate how languages evolve to solve real developer pain points (verbosity, null pointer exceptions, callback hell).
+
+**What's next?** After mastering Kotlin, explore [Golang](/en/learn/swe/prog-lang/golang) for a completely different paradigm focused on simplicity and concurrency. See [Programming Languages Overview](/en/learn/swe/prog-lang/overview) for the complete learning path.
+
 ## 📚 Complete Learning Path
 
 ### ✅ All Tutorials Complete

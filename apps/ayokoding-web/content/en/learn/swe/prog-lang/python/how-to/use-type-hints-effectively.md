@@ -2,7 +2,7 @@
 title: "How to Use Type Hints Effectively"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 505
+weight: 607
 description: "Apply modern Python typing with generics, protocols, and static analysis"
 tags: ["python", "type-hints", "mypy", "typing", "static-analysis"]
 categories: ["learn"]

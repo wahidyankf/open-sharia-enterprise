@@ -2,7 +2,7 @@
 title: "How to Use Java Collections Effectively"
 date: 2025-12-17T07:06:48+07:00
 draft: false
-weight: 505
+weight: 606
 description: "Practical guide for choosing and using Java Collections Framework efficiently"
 tags: ["java", "collections", "list", "map", "set", "performance"]
 categories: ["learn"]
