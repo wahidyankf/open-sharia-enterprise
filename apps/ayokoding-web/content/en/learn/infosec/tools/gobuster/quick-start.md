@@ -13,7 +13,6 @@ tags:
     "brute-forcing",
     "web-security",
   ]
-categories: ["learn"]
 ---
 
 ## What You'll Learn
@@ -188,7 +187,7 @@ Finished
 ### Understanding the Output
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart LR
     A[/admin] --> B[Status: 301]
     B --> C[Redirect to /admin/]
@@ -364,7 +363,7 @@ gobuster dir -u http://example.com -w ~/wordlists/common.txt -b 404
 
 Now that you understand Gobuster basics, continue learning:
 
-- [Gobuster Beginner Tutorial](/en/learn/infosec/tools/tutorials/gobuster-beginner) - Learn all three modes (dir, dns, vhost), advanced options, output formats, and real-world scenarios
+- [Gobuster Beginner Tutorial](/en/learn/infosec/tools/gobuster/beginner) - Learn all three modes (dir, dns, vhost), advanced options, output formats, and real-world scenarios
 - Practice on legal testing platforms like DVWA, HackTheBox, or TryHackMe
 - Explore other reconnaissance tools like Nmap, Nikto, and Wappalyzer
 
