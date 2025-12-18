@@ -1,5 +1,5 @@
 ---
-title: Advanced
+title: "Advanced"
 date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Master JVM internals, advanced concurrency, reflection, optimization, and system design for expert-level Java development
