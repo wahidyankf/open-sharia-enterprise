@@ -297,7 +297,7 @@ Universal methodology for verifying factual correctness using WebSearch/WebFetch
 Hugo content follows specialized conventions organized into three documents:
 
 - **Shared Conventions**: [Hugo Content Convention - Shared](./docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common conventions applying to all Hugo sites (inherited standards, adapted conventions, Hugo basics, Mermaid syntax rules, shortcode delimiters `{{% %}}` for Markdown vs `{{< >}}` for HTML)
-- **ayokoding-web**: [Hugo Content Convention - ayokoding](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual educational platform, navigation rules, weight ordering, overview/ikhtisar requirements, blogging structure, frontmatter rules (no categories field, single-line tags)
+- **ayokoding-web**: [Hugo Content Convention - ayokoding](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual educational platform, navigation rules, weight ordering, overview/ikhtisar requirements, blogging structure, frontmatter rules (no categories field, JSON array tags format, Prettier-enforced)
 - **ose-platform-web**: [Hugo Content Convention - OSE Platform](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, simple English-only landing page, updates and about patterns
 
 Site-specific agents and developers should reference both the shared document and their site-specific document.
