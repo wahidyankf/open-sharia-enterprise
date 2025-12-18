@@ -69,7 +69,7 @@ flowchart TD
 
 ## Installing Gobuster
 
-{{< steps >}}
+{{% steps %}}
 
 ### Step 1: Choose Installation Method
 
@@ -134,7 +134,7 @@ Alternatively, if you have SecLists installed:
 # /opt/SecLists (manual installation)
 ```
 
-{{< /steps >}}
+{{% /steps %}}
 
 ## Your First Directory Scan
 
