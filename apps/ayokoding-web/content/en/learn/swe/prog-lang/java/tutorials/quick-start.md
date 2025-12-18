@@ -1,5 +1,5 @@
 ---
-title: Quick Start
+title: "Quick Start"
 date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Learn Java syntax and core concepts - cover variables, methods, classes, and collections through hands-on examples

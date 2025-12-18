@@ -1,5 +1,5 @@
 ---
-title: Intermediate
+title: "Intermediate"
 date: 2025-12-09T00:00:00+07:00
 draft: false
 description: Learn production techniques and patterns - design patterns, SOLID principles, concurrency, performance, and database integration for professional development
