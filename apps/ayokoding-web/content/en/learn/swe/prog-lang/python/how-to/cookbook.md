@@ -13,6 +13,8 @@ tags:
   - async
 ---
 
+# Python Cookbook - Practical Recipes
+
 **Ready to level up your Python skills?** This cookbook provides practical, battle-tested recipes for solving real-world problems with idiomatic Python code. Whether you're building web services, data pipelines, or automation tools, you'll find proven patterns and techniques used in production by companies like Google, Spotify, and Instagram.
 
 ## 🎯 What You'll Learn
@@ -92,6 +94,11 @@ combinations = [(color, size) for color in colors for size in sizes]
 ```
 
 **When to use**: When you need to create a new list from an existing iterable with transformation or filtering.
+
+**See Also**:
+
+- [Recipe 2: Dictionary Comprehensions](#recipe-2-dictionary-comprehensions) - Transform to dictionaries
+- [Recipe 5: Generator Expressions](#recipe-5-generator-expressions) - Memory-efficient iteration
 
 ---
 
@@ -355,43 +362,43 @@ Python 3.5+ supports type hints for static type checking with tools like mypy.
 **Solution**:
 
 ```python
-from typing import List, Dict, Set, Optional, Union, Tuple
+# No import needed for built-in types in Python 3.9+
 
 # Basic types
 def greet(name: str) -> str:
     return f"Hello, {name}"
 
 # Collection types
-def sum_numbers(numbers: List[int]) -> int:
+def sum_numbers(numbers: list[int]) -> int:
     return sum(numbers)
 
-def get_scores() -> Dict[str, int]:
+def get_scores() -> dict[str, int]:
     return {'Alice': 95, 'Bob': 87}
 
-def unique_items(items: List[str]) -> Set[str]:
+def unique_items(items: list[str]) -> set[str]:
     return set(items)
 
-# Optional (can be None)
-def find_user(user_id: int) -> Optional[str]:
+# Optional (can be None) - using | None syntax
+def find_user(user_id: int) -> str | None:
     users = {1: 'Alice', 2: 'Bob'}
     return users.get(user_id)  # Returns str or None
 
-# Union (multiple types)
-def parse_value(value: Union[int, str]) -> int:
+# Union (multiple types) - using | syntax
+def parse_value(value: int | str) -> int:
     if isinstance(value, str):
         return int(value)
     return value
 
 # Tuple with specific types
-def get_coordinates() -> Tuple[float, float]:
+def get_coordinates() -> tuple[float, float]:
     return (40.7128, -74.0060)
 
 # Multiple return values
-def divide(a: int, b: int) -> Tuple[int, int]:
+def divide(a: int, b: int) -> tuple[int, int]:
     return a // b, a % b  # quotient, remainder
 
 # Complex nested types
-def process_data() -> Dict[str, List[Tuple[int, str]]]:
+def process_data() -> dict[str, list[tuple[int, str]]]:
     return {
         'users': [(1, 'Alice'), (2, 'Bob')],
         'admins': [(10, 'Admin')]
@@ -409,30 +416,30 @@ def process_data() -> Dict[str, List[Tuple[int, str]]]:
 **Solution**:
 
 ```python
-from typing import TypeVar, Generic, Protocol, Callable, Any
+from typing import TypeVar, Generic, Protocol, Callable, Any, NewType
 
 # Type variables
 T = TypeVar('T')
 
-def first_element(items: List[T]) -> Optional[T]:
+def first_element(items: list[T]) -> T | None:
     return items[0] if items else None
 
 # Works with any type
 numbers = [1, 2, 3]
-first_num = first_element(numbers)  # Type: Optional[int]
+first_num = first_element(numbers)  # Type: int | None
 
 strings = ['a', 'b', 'c']
-first_str = first_element(strings)  # Type: Optional[str]
+first_str = first_element(strings)  # Type: str | None
 
 # Generic class
 class Stack(Generic[T]):
     def __init__(self) -> None:
-        self.items: List[T] = []
+        self.items: list[T] = []
 
     def push(self, item: T) -> None:
         self.items.append(item)
 
-    def pop(self) -> Optional[T]:
+    def pop(self) -> T | None:
         return self.items.pop() if self.items else None
 
     def is_empty(self) -> bool:
@@ -442,7 +449,7 @@ class Stack(Generic[T]):
 int_stack: Stack[int] = Stack()
 int_stack.push(1)
 int_stack.push(2)
-value: Optional[int] = int_stack.pop()
+value: int | None = int_stack.pop()
 
 # Protocol (structural typing)
 class Drawable(Protocol):
@@ -470,8 +477,6 @@ def apply_operation(x: int, operation: Callable[[int], int]) -> int:
 result = apply_operation(5, lambda x: x ** 2)  # 25
 
 # NewType for semantic clarity
-from typing import NewType
-
 UserId = NewType('UserId', int)
 OrderId = NewType('OrderId', int)
 
@@ -577,7 +582,7 @@ result = fibonacci(100)
 # Custom cache decorator
 def memoize(func: Callable[..., Any]) -> Callable[..., Any]:
     """Simple memoization decorator"""
-    cache: Dict[str, Any] = {}
+    cache: dict[str, Any] = {}
 
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -811,7 +816,6 @@ Python's async/await enables efficient concurrent I/O operations.
 
 ```python
 import asyncio
-from typing import List
 
 # Basic async function
 async def fetch_data(url: str) -> str:
@@ -868,14 +872,14 @@ async def main_with_tasks():
 ```python
 import asyncio
 import aiohttp
-from typing import List, Dict
+from typing import Any
 
 async def fetch_url(session: aiohttp.ClientSession, url: str) -> str:
     """Fetch URL content asynchronously"""
     async with session.get(url) as response:
         return await response.text()
 
-async def fetch_multiple_urls(urls: List[str]) -> List[str]:
+async def fetch_multiple_urls(urls: list[str]) -> list[str]:
     """Fetch multiple URLs concurrently"""
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_url(session, url) for url in urls]
@@ -892,7 +896,7 @@ results = asyncio.run(fetch_multiple_urls(urls))
 # Total time ~1 second (concurrent) instead of 3 seconds (sequential)
 
 # With error handling
-async def fetch_with_error_handling(url: str) -> Dict[str, any]:
+async def fetch_with_error_handling(url: str) -> dict[str, Any]:
     """Fetch URL with error handling"""
     try:
         async with aiohttp.ClientSession() as session:
@@ -918,6 +922,11 @@ async def fetch_stream(url: str):
 
 **When to use**: When making multiple HTTP requests or streaming large responses.
 
+**See Also**:
+
+- [Recipe 33-35: Web and API Operations](#-web-and-api-operations) - Synchronous HTTP requests
+- [Recipe 14: Basic Async Operations](#recipe-14-basic-async-operations) - Async fundamentals
+
 ---
 
 ### Recipe 16: Async Queue Pattern
@@ -929,7 +938,6 @@ async def fetch_stream(url: str):
 ```python
 import asyncio
 from asyncio import Queue
-from typing import Optional
 
 async def producer(queue: Queue, num_items: int):
     """Produce items to queue"""
@@ -1073,13 +1081,118 @@ with handle_errors(log_error):
 
 **When to use**: Always! Proper error handling prevents crashes and aids debugging.
 
+**See Also**:
+
+- [Recipe 18: Exception Chaining](#recipe-18-exception-chaining) - Preserve error context across layers
+- [Recipe 37-46: Troubleshooting](#-troubleshooting) - Common Python errors and solutions
+- [Recipe 12: File Context Manager](#recipe-12-file-context-manager) - Safe resource cleanup with context managers
+
+---
+
+### Recipe 18: Exception Chaining
+
+**Problem**: You need to preserve error context when catching and re-raising exceptions.
+
+**Solution**:
+
+```python
+# Basic exception chaining with 'from'
+def load_config(filename: str):
+    try:
+        with open(filename) as f:
+            return json.load(f)
+    except FileNotFoundError as e:
+        raise ConfigError(f"Config file not found: {filename}") from e
+    except json.JSONDecodeError as e:
+        raise ConfigError(f"Invalid JSON in config: {filename}") from e
+
+# Usage
+try:
+    config = load_config("config.json")
+except ConfigError as e:
+    print(f"Error: {e}")
+    print(f"Caused by: {e.__cause__}")
+    # Output: Error: Config file not found: config.json
+    #         Caused by: [Errno 2] No such file or directory: 'config.json'
+```
+
+**Advanced example - Exception context preservation**:
+
+```python
+import logging
+
+class DatabaseError(Exception):
+    """Custom exception with context preservation."""
+    pass
+
+class ConnectionError(DatabaseError):
+    """Database connection failed."""
+    pass
+
+def connect_to_database(url: str):
+    """Connect with detailed error chain."""
+    try:
+        # Simulate connection attempt
+        if "invalid" in url:
+            raise ValueError(f"Invalid URL format: {url}")
+
+        # Simulate network error
+        raise OSError("Connection refused")
+
+    except ValueError as e:
+        # Explicitly chain - shows both original and new error
+        raise ConnectionError(f"Failed to parse database URL") from e
+    except OSError as e:
+        # Chain network errors
+        raise ConnectionError(f"Failed to connect to database") from e
+
+def initialize_app():
+    """Initialize with full error context."""
+    try:
+        connect_to_database("invalid://localhost")
+    except DatabaseError as e:
+        # Full error chain is preserved
+        logging.error("Application initialization failed", exc_info=True)
+
+        # Access error chain
+        print(f"Main error: {e}")
+        if e.__cause__:
+            print(f"Root cause: {e.__cause__}")
+        # Output: Main error: Failed to parse database URL
+        #         Root cause: Invalid URL format: invalid://localhost
+
+# Suppress context with 'from None'
+def safe_conversion(value: str) -> int | None:
+    """Convert string to int, hide implementation details."""
+    try:
+        return int(value)
+    except ValueError:
+        # Hide internal error, raise clean error
+        raise TypeError(f"Cannot convert '{value}' to integer") from None
+
+# Usage
+try:
+    result = safe_conversion("abc")
+except TypeError as e:
+    # No __cause__, cleaner for user-facing errors
+    print(f"Error: {e}")
+    print(f"Cause: {e.__cause__}")  # None
+```
+
+**When to use**: Preserving error context across layers (e.g., database → business logic → API). Use `raise ... from e` to chain exceptions. Use `raise ... from None` to suppress internal errors for user-facing messages. Always preserve context in libraries and internal code.
+
+**See Also**:
+
+- [Recipe 17: Exception Patterns](#recipe-17-exception-patterns) - Basic exception handling patterns
+- [Recipe 37-46: Troubleshooting](#-troubleshooting) - Common error solutions
+
 ---
 
 ## 🔷 File and Path Operations
 
 Modern Python uses `pathlib` for path handling and provides robust file operations.
 
-### Recipe 18: Path Operations
+### Recipe 19: Path Operations
 
 **Problem**: You need to work with file paths safely across platforms.
 
@@ -1158,7 +1271,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
 ---
 
-### Recipe 19: File Reading Patterns
+### Recipe 20: File Reading Patterns
 
 **Problem**: You need to read files efficiently in various formats.
 
@@ -1166,7 +1279,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
 ```python
 from pathlib import Path
-from typing import List, Iterator
+from typing import Iterator
 
 # Read entire file
 content = Path('data.txt').read_text()
@@ -1181,13 +1294,13 @@ for line in read_lines(Path('large_file.txt')):
     process(line)
 
 # Read file as list
-lines: List[str] = Path('data.txt').read_text().splitlines()
+lines: list[str] = Path('data.txt').read_text().splitlines()
 
 # Read CSV
 import csv
 from pathlib import Path
 
-def read_csv(filepath: Path) -> List[Dict[str, str]]:
+def read_csv(filepath: Path) -> list[dict[str, str]]:
     with filepath.open('r') as f:
         reader = csv.DictReader(f)
         return list(reader)
@@ -1233,7 +1346,7 @@ def process_file(filepath: Path):
 
 Python provides powerful string manipulation capabilities.
 
-### Recipe 20: String Formatting
+### Recipe 21: String Formatting
 
 **Problem**: You need to format strings with variables.
 
@@ -1303,7 +1416,7 @@ result = template.substitute(name=name, age=age)
 
 ---
 
-### Recipe 21: String Manipulation
+### Recipe 22: String Manipulation
 
 **Problem**: You need to parse, split, or transform strings.
 
@@ -1377,11 +1490,212 @@ without_ext = filename.removesuffix('.txt')  # "document"
 
 ---
 
+### Recipe 23: Regular Expression Matching
+
+**Problem**: You need powerful pattern matching and extraction from text.
+
+**Solution**:
+
+```python
+import re
+
+# Basic pattern matching
+text = "My email is john@example.com"
+pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
+match = re.search(pattern, text)
+if match:
+    print(f"Found email: {match.group()}")
+    # Output: Found email: john@example.com
+
+# Find all matches
+text = "Contact us: info@company.com or support@company.com"
+emails = re.findall(pattern, text)
+print(f"Found {len(emails)} emails: {emails}")
+# Output: Found 2 emails: ['info@company.com', 'support@company.com']
+
+# Extract with groups
+phone_text = "Call me at (555) 123-4567"
+phone_pattern = r'\((\d{3})\)\s*(\d{3})-(\d{4})'
+
+match = re.search(phone_pattern, phone_text)
+if match:
+    area_code, prefix, number = match.groups()
+    print(f"Area: {area_code}, Prefix: {prefix}, Number: {number}")
+    # Output: Area: 555, Prefix: 123, Number: 4567
+```
+
+**Advanced example - URL parsing and log extraction**:
+
+```python
+import re
+
+# Extract structured data from logs
+log_line = "2025-12-18 14:30:45 ERROR [UserService] Failed to authenticate user_id=123"
+
+log_pattern = r'(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<time>\d{2}:\d{2}:\d{2})\s+(?P<level>\w+)\s+\[(?P<component>\w+)\]\s+(?P<message>.+)'
+
+match = re.match(log_pattern, log_line)
+if match:
+    log_data = match.groupdict()
+    print(f"Level: {log_data['level']}, Component: {log_data['component']}")
+    # Output: Level: ERROR, Component: UserService
+
+# Replace patterns
+text = "Price: $100, Discount: $20"
+cleaned = re.sub(r'\$(\d+)', r'\1 USD', text)
+print(cleaned)
+# Output: Price: 100 USD, Discount: 20 USD
+
+# Validate and extract version numbers
+version_text = "App version: 2.5.3-beta"
+version_pattern = r'(\d+)\.(\d+)\.(\d+)(?:-(\w+))?'
+
+match = re.search(version_pattern, version_text)
+if match:
+    major, minor, patch, tag = match.groups()
+    print(f"Version: {major}.{minor}.{patch} ({tag or 'release'})")
+    # Output: Version: 2.5.3 (beta)
+```
+
+**When to use**: Pattern matching, data extraction, text validation, log parsing, or complex find/replace. Use raw strings (r'...') for patterns. Use named groups for clarity. Compile patterns with re.compile() if reusing frequently.
+
+**See Also**:
+
+- [Recipe 24: String Validation Patterns](#recipe-24-string-validation-patterns) - Validation using regex
+- [Recipe 22: String Manipulation](#recipe-22-string-manipulation) - Basic string operations
+
+---
+
+### Recipe 24: String Validation Patterns
+
+**Problem**: You need to validate user input against common formats (email, phone, URL, etc.).
+
+**Solution**:
+
+```python
+import re
+
+def validate_email(email: str) -> tuple[bool, str]:
+    """Validate email address format."""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+    if not email:
+        return False, "Email cannot be empty"
+
+    if not re.match(pattern, email):
+        return False, "Invalid email format"
+
+    if len(email) > 254:  # RFC 5321
+        return False, "Email too long"
+
+    return True, "Valid"
+
+# Test validation
+test_emails = [
+    "user@example.com",
+    "invalid.email",
+    "user@domain.co.uk",
+]
+
+for email in test_emails:
+    is_valid, message = validate_email(email)
+    status = "✓" if is_valid else "✗"
+    print(f"{status} {email}: {message}")
+# Output:
+# ✓ user@example.com: Valid
+# ✗ invalid.email: Invalid email format
+# ✓ user@domain.co.uk: Valid
+```
+
+**Advanced example - Validation suite**:
+
+```python
+import re
+from dataclasses import dataclass
+
+@dataclass
+class ValidationResult:
+    is_valid: bool
+    errors: list[str]
+
+    def __bool__(self):
+        return self.is_valid
+
+class StringValidator:
+    """Collection of string validation methods."""
+
+    @staticmethod
+    def validate_password(password: str, min_length: int = 8) -> ValidationResult:
+        """Validate password strength."""
+        errors = []
+
+        if len(password) < min_length:
+            errors.append(f"Must be at least {min_length} characters")
+
+        if not re.search(r'[A-Z]', password):
+            errors.append("Must contain uppercase letter")
+
+        if not re.search(r'[a-z]', password):
+            errors.append("Must contain lowercase letter")
+
+        if not re.search(r'\d', password):
+            errors.append("Must contain digit")
+
+        if not re.search(r'[!@#$%^&*()]', password):
+            errors.append("Must contain special character")
+
+        return ValidationResult(len(errors) == 0, errors)
+
+    @staticmethod
+    def validate_username(username: str) -> ValidationResult:
+        """Validate username (alphanumeric, underscore, 3-20 chars)."""
+        errors = []
+
+        if len(username) < 3 or len(username) > 20:
+            errors.append("Must be 3-20 characters")
+
+        if not re.match(r'^[a-zA-Z0-9_]+$', username):
+            errors.append("Only letters, numbers, underscores allowed")
+
+        if not re.match(r'^[a-zA-Z]', username):
+            errors.append("Must start with a letter")
+
+        return ValidationResult(len(errors) == 0, errors)
+
+# Usage
+validator = StringValidator()
+
+# Validate weak password
+pwd_result = validator.validate_password("weak")
+if not pwd_result:
+    print("Password errors:")
+    for error in pwd_result.errors:
+        print(f"  - {error}")
+
+# Validate strong password
+strong_pwd = validator.validate_password("MyP@ssw0rd!")
+print(f"Strong password valid: {strong_pwd.is_valid}")  # True
+
+# Validate username
+user_result = validator.validate_username("user_123")
+print(f"Username valid: {user_result.is_valid}")  # True
+```
+
+**When to use**: User input validation, form processing, or data quality checks. Combine regex with business rules (length, character requirements). Return structured errors for user feedback. Use dataclasses for validation results.
+
+**See Also**:
+
+- [Recipe 23: Regular Expression Matching](#recipe-23-regular-expression-matching) - Pattern matching basics
+- [Recipe 17: Exception Patterns](#recipe-17-exception-patterns) - Handling validation errors
+
+---
+
 ## 🔷 Date and Time Operations
 
 Python's `datetime` module provides comprehensive date/time handling.
 
-### Recipe 22: Working with Dates
+### Recipe 25: Working with Dates
 
 **Problem**: You need to parse, format, and manipulate dates.
 
@@ -1462,7 +1776,7 @@ print(f"Weekday: {now.weekday()}")  # Monday=0, Sunday=6
 
 Loading and validating configuration is essential for applications.
 
-### Recipe 23: Configuration from Environment
+### Recipe 26: Configuration from Environment
 
 **Problem**: You need to load configuration from environment variables.
 
@@ -1470,7 +1784,6 @@ Loading and validating configuration is essential for applications.
 
 ```python
 import os
-from typing import Optional
 
 # Get environment variable
 api_key = os.getenv('API_KEY')
@@ -1537,7 +1850,7 @@ settings = get_settings()
 
 ---
 
-### Recipe 24: Configuration from Files
+### Recipe 27: Configuration from Files
 
 **Problem**: You need to load configuration from JSON or YAML files.
 
@@ -1547,16 +1860,16 @@ settings = get_settings()
 import json
 import yaml
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any
 
 # Load JSON config
-def load_json_config(filepath: Path) -> Dict[str, Any]:
+def load_json_config(filepath: Path) -> dict[str, Any]:
     return json.loads(filepath.read_text())
 
 config = load_json_config(Path('config.json'))
 
 # Load YAML config
-def load_yaml_config(filepath: Path) -> Dict[str, Any]:
+def load_yaml_config(filepath: Path) -> dict[str, Any]:
     return yaml.safe_load(filepath.read_text())
 
 config = load_yaml_config(Path('config.yaml'))
@@ -1566,7 +1879,7 @@ class Config:
     def __init__(self, config_path: Path):
         self.config = self._load_config(config_path)
 
-    def _load_config(self, path: Path) -> Dict[str, Any]:
+    def _load_config(self, path: Path) -> dict[str, Any]:
         if path.suffix == '.json':
             return json.loads(path.read_text())
         elif path.suffix in ('.yaml', '.yml'):
@@ -1586,7 +1899,7 @@ database_url = config.get('database_url', 'sqlite:///default.db')
 api_key = config['api_key']
 
 # Layered configuration (environment overrides file)
-def load_layered_config(config_file: Path) -> Dict[str, Any]:
+def load_layered_config(config_file: Path) -> dict[str, Any]:
     # Load from file
     config = load_yaml_config(config_file)
 
@@ -1607,7 +1920,7 @@ def load_layered_config(config_file: Path) -> Dict[str, Any]:
 
 pytest is the de facto standard for Python testing.
 
-### Recipe 25: Basic pytest Patterns
+### Recipe 28: Basic pytest Patterns
 
 **Problem**: You need to write effective unit tests.
 
@@ -1706,7 +2019,7 @@ def test_database_connection():
 
 ---
 
-### Recipe 26: Advanced pytest Patterns
+### Recipe 29: Advanced pytest Patterns
 
 **Problem**: You need mocking, async tests, or complex fixtures.
 
@@ -1806,7 +2119,7 @@ def test_with_parametrized_fixture(number):
 
 Building command-line interfaces is common in Python.
 
-### Recipe 27: argparse for CLI
+### Recipe 30: argparse for CLI
 
 **Problem**: You need to build a CLI tool with arguments and options.
 
@@ -1866,7 +2179,7 @@ if __name__ == '__main__':
 
 ---
 
-### Recipe 28: Click for Advanced CLI
+### Recipe 31: Click for Advanced CLI
 
 **Problem**: You need a more powerful CLI framework with subcommands.
 
@@ -1935,7 +2248,7 @@ if __name__ == '__main__':
 
 Proper logging is essential for debugging and monitoring production applications.
 
-### Recipe 29: Logging Setup
+### Recipe 32: Logging Setup
 
 **Problem**: You need structured logging for your application.
 
@@ -2018,9 +2331,575 @@ logging.getLogger('module2').setLevel(logging.WARNING)
 
 ---
 
+## 🔷 Web and API Operations
+
+Master HTTP requests and API interactions using the `requests` library.
+
+### Recipe 33: Make HTTP GET Request
+
+**Problem**: You need to fetch data from a REST API or web service.
+
+**Solution**:
+
+```python
+import requests
+
+# Basic example - Simple GET request
+def main():
+    # Make GET request
+    response = requests.get('https://api.github.com/users/octocat')
+
+    # Check status code
+    if response.status_code == 200:
+        print("✓ Request successful")
+        data = response.json()  # Parse JSON response
+        print(f"User: {data['login']}")
+        print(f"Name: {data['name']}")
+        print(f"Followers: {data['followers']}")
+        # Output: User: octocat
+        #         Name: The Octocat
+        #         Followers: 12345
+    else:
+        print(f"✗ Request failed: {response.status_code}")
+
+    # Access response properties
+    print(f"Status: {response.status_code}")
+    print(f"Headers: {response.headers['content-type']}")
+    print(f"URL: {response.url}")
+
+if __name__ == '__main__':
+    main()
+```
+
+requests.get() makes an HTTP GET request and returns a Response object. Use response.json() to parse JSON responses automatically. Check response.status_code to verify success (200 = OK). Access response.text for raw text or response.content for binary data.
+
+```python
+import requests
+from typing import Any
+import time
+
+# Advanced example - GET with headers, parameters, and error handling
+def fetch_user_repos(username: str, per_page: int = 30) -> list | None:
+    """Fetch GitHub repos with proper error handling."""
+
+    # URL and query parameters
+    url = f'https://api.github.com/users/{username}/repos'
+    params = {
+        'per_page': per_page,
+        'sort': 'updated',
+        'direction': 'desc'
+    }
+
+    # Custom headers
+    headers = {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'Python-Requests-Tutorial'
+    }
+
+    # Timeout prevents hanging indefinitely
+    try:
+        response = requests.get(
+            url,
+            params=params,
+            headers=headers,
+            timeout=10  # 10 seconds timeout
+        )
+
+        # Raise exception for bad status codes
+        response.raise_for_status()
+
+        repos = response.json()
+        print(f"✓ Fetched {len(repos)} repositories")
+
+        for repo in repos[:5]:  # Show first 5
+            print(f"  - {repo['name']}: {repo['stargazers_count']} ⭐")
+
+        return repos
+
+    except requests.exceptions.Timeout:
+        print(f"✗ Request timed out after 10 seconds")
+        return None
+    except requests.exceptions.ConnectionError:
+        print(f"✗ Connection error - check your internet")
+        return None
+    except requests.exceptions.HTTPError as e:
+        print(f"✗ HTTP error: {e.response.status_code} - {e.response.reason}")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"✗ Request failed: {e}")
+        return None
+
+def fetch_with_retry(url: str, max_retries: int = 3) -> dict[Any, Any] | None:
+    """Fetch with exponential backoff retry."""
+
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                wait_time = 2 ** attempt  # Exponential backoff: 1s, 2s, 4s
+                print(f"Retry {attempt + 1}/{max_retries} after {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                print(f"✗ Failed after {max_retries} attempts: {e}")
+                return None
+
+def main():
+    # Fetch with parameters and headers
+    repos = fetch_user_repos('octocat', per_page=10)
+
+    # Fetch with retry logic
+    data = fetch_with_retry('https://api.github.com/users/torvalds')
+    if data:
+        print(f"\n✓ Fetched user: {data['name']}")
+
+    # Multiple parallel requests (session for connection pooling)
+    with requests.Session() as session:
+        users = ['octocat', 'torvalds', 'gvanrossum']
+        for user in users:
+            response = session.get(f'https://api.github.com/users/{user}')
+            if response.ok:
+                data = response.json()
+                print(f"{data['login']}: {data['public_repos']} repos")
+
+if __name__ == '__main__':
+    main()
+```
+
+**When to use**: Fetching data from REST APIs, calling web services, downloading files, or integrating with third-party services. Use params for query parameters. Use headers for authentication (API keys, tokens). Always set timeout to prevent hanging. Use raise_for_status() to catch HTTP errors. Use Session() for multiple requests to the same host (connection pooling).
+
+### Recipe 34: Make HTTP POST Request
+
+**Problem**: You need to send data to an API or web service.
+
+**Solution**:
+
+```python
+import requests
+import json
+
+# Basic example - POST request with JSON data
+def main():
+    # API endpoint
+    url = 'https://httpbin.org/post'
+
+    # Data to send (will be JSON-encoded)
+    payload = {
+        'name': 'Alice',
+        'email': 'alice@example.com',
+        'age': 30
+    }
+
+    # POST with JSON
+    response = requests.post(url, json=payload)
+
+    if response.status_code == 200:
+        print("✓ POST successful")
+        result = response.json()
+        print(f"Sent data: {result['json']}")
+        # Output: Sent data: {'name': 'Alice', 'email': 'alice@example.com', 'age': 30}
+    else:
+        print(f"✗ POST failed: {response.status_code}")
+
+    # POST with form data
+    form_data = {
+        'username': 'alice',
+        'password': 'secret123'
+    }
+    response = requests.post(url, data=form_data)
+    print(f"Form POST status: {response.status_code}")
+
+if __name__ == '__main__':
+    main()
+```
+
+requests.post() sends data to a server. Use json=data to send JSON (sets Content-Type automatically). Use data=data for form-encoded data (application/x-www-form-urlencoded). The server response can be parsed with response.json() or response.text.
+
+```python
+import requests
+from typing import Any
+from pathlib import Path
+
+# Advanced example - POST with different content types and authentication
+def create_user(api_url: str, user_data: dict[str, Any], api_key: str) -> dict | None:
+    """Create user via API with authentication."""
+
+    headers = {
+        'Authorization': f'Bearer {api_key}',
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.post(
+            f'{api_url}/users',
+            json=user_data,
+            headers=headers,
+            timeout=10
+        )
+
+        # Handle different status codes
+        if response.status_code == 201:
+            print("✓ User created successfully")
+            return response.json()
+        elif response.status_code == 400:
+            print(f"✗ Bad request: {response.json()}")
+            return None
+        elif response.status_code == 401:
+            print("✗ Unauthorized - check your API key")
+            return None
+        elif response.status_code == 409:
+            print("✗ User already exists")
+            return None
+        else:
+            response.raise_for_status()
+
+    except requests.exceptions.RequestException as e:
+        print(f"✗ Request failed: {e}")
+        return None
+
+def upload_file(url: str, file_path: Path) -> bool:
+    """Upload file with multipart/form-data."""
+
+    if not file_path.exists():
+        print(f"✗ File not found: {file_path}")
+        return False
+
+    # Open file in binary mode
+    with open(file_path, 'rb') as f:
+        files = {'file': (file_path.name, f, 'application/octet-stream')}
+
+        # Additional form fields
+        data = {
+            'description': 'Uploaded via Python',
+            'category': 'documents'
+        }
+
+        try:
+            response = requests.post(
+                url,
+                files=files,
+                data=data,
+                timeout=30  # Longer timeout for file uploads
+            )
+
+            if response.ok:
+                print(f"✓ File uploaded: {file_path.name}")
+                return True
+            else:
+                print(f"✗ Upload failed: {response.status_code}")
+                return False
+
+        except requests.exceptions.RequestException as e:
+            print(f"✗ Upload error: {e}")
+            return False
+
+def batch_create(api_url: str, items: list, api_key: str) -> dict[str, int]:
+    """Batch create multiple items with progress tracking."""
+
+    results = {'success': 0, 'failed': 0}
+    headers = {'Authorization': f'Bearer {api_key}'}
+
+    for i, item in enumerate(items, 1):
+        print(f"Processing {i}/{len(items)}...", end=' ')
+
+        try:
+            response = requests.post(
+                f'{api_url}/items',
+                json=item,
+                headers=headers,
+                timeout=10
+            )
+
+            if response.status_code == 201:
+                print("✓")
+                results['success'] += 1
+            else:
+                print(f"✗ {response.status_code}")
+                results['failed'] += 1
+
+        except requests.exceptions.RequestException as e:
+            print(f"✗ Error: {e}")
+            results['failed'] += 1
+
+    print(f"\nResults: {results['success']} success, {results['failed']} failed")
+    return results
+
+def main():
+    # Create user with authentication
+    user_data = {
+        'username': 'alice',
+        'email': 'alice@example.com',
+        'full_name': 'Alice Anderson'
+    }
+
+    user = create_user(
+        'https://api.example.com',
+        user_data,
+        'your-api-key-here'
+    )
+
+    # Upload file
+    file_path = Path('document.pdf')
+    upload_file('https://httpbin.org/post', file_path)
+
+    # Batch operations
+    items = [
+        {'name': 'Item 1', 'price': 10.00},
+        {'name': 'Item 2', 'price': 20.00},
+        {'name': 'Item 3', 'price': 15.00},
+    ]
+
+    results = batch_create('https://api.example.com', items, 'api-key')
+
+    # Session for multiple requests
+    with requests.Session() as session:
+        session.headers.update({'Authorization': 'Bearer api-key'})
+
+        # All requests in this session use the same headers
+        response1 = session.post('https://api.example.com/endpoint1', json={'data': 1})
+        response2 = session.post('https://api.example.com/endpoint2', json={'data': 2})
+
+if __name__ == '__main__':
+    main()
+```
+
+**When to use**: Creating resources via REST APIs, submitting forms, uploading files, authentication requests, or sending data to web services. Use json=data for JSON payloads. Use data=data for form submissions. Use files=files for file uploads (multipart/form-data). Always handle different status codes (201 Created, 400 Bad Request, 401 Unauthorized). Use Session() for authenticated requests to reuse headers.
+
+### Recipe 35: Parse JSON API Responses
+
+**Problem**: You need to safely parse and validate JSON data from APIs.
+
+**Solution**:
+
+```python
+import requests
+from typing import Any
+
+# Basic example - Parse JSON with error handling
+def fetch_and_parse(url: str) -> dict[str, Any] | None:
+    """Fetch JSON data with safe parsing."""
+
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+
+        # Parse JSON
+        data = response.json()
+
+        # Access nested data safely
+        if 'user' in data:
+            user = data['user']
+            print(f"User: {user.get('name', 'Unknown')}")
+            print(f"Email: {user.get('email', 'Not provided')}")
+
+        return data
+
+    except requests.exceptions.JSONDecodeError:
+        print("✗ Invalid JSON response")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"✗ Request failed: {e}")
+        return None
+
+def main():
+    # Fetch and parse GitHub user
+    url = 'https://api.github.com/users/octocat'
+    data = fetch_and_parse(url)
+
+    if data:
+        # Safe access with get()
+        login = data.get('login', 'unknown')
+        followers = data.get('followers', 0)
+        repos = data.get('public_repos', 0)
+
+        print(f"\n{login}: {followers} followers, {repos} repos")
+
+        # Access nested fields
+        company = data.get('company')
+        if company:
+            print(f"Company: {company}")
+
+if __name__ == '__main__':
+    main()
+```
+
+response.json() parses JSON automatically and returns a Python dict. Use .get() for safe access to optional fields. Handle JSONDecodeError for invalid JSON. Check for required fields before accessing to avoid KeyError.
+
+```python
+import requests
+from typing import Any, TypedDict
+from dataclasses import dataclass
+from datetime import datetime
+
+# Advanced example - Parse with validation and type safety
+class UserData(TypedDict):
+    """Type definition for user data."""
+    id: int
+    login: str
+    name: str
+    followers: int
+    public_repos: int
+    created_at: str
+
+@dataclass
+class User:
+    """Validated user model."""
+    id: int
+    username: str
+    name: str
+    followers: int
+    repos: int
+    created_at: datetime
+
+    @classmethod
+    def from_api(cls, data: dict[str, Any]) -> 'User' | None:
+        """Create User from API response with validation."""
+        try:
+            # Validate required fields
+            required_fields = ['id', 'login', 'followers', 'public_repos', 'created_at']
+            missing = [f for f in required_fields if f not in data]
+
+            if missing:
+                print(f"✗ Missing required fields: {missing}")
+                return None
+
+            # Parse datetime
+            created_at = datetime.fromisoformat(data['created_at'].replace('Z', '+00:00'))
+
+            return cls(
+                id=int(data['id']),
+                username=str(data['login']),
+                name=str(data.get('name', '')),
+                followers=int(data['followers']),
+                repos=int(data['public_repos']),
+                created_at=created_at
+            )
+
+        except (ValueError, TypeError) as e:
+            print(f"✗ Validation error: {e}")
+            return None
+
+def fetch_users(usernames: list[str]) -> list[User]:
+    """Fetch multiple users with validation."""
+
+    users = []
+
+    for username in usernames:
+        url = f'https://api.github.com/users/{username}'
+
+        try:
+            response = requests.get(url, timeout=10)
+
+            if response.status_code == 404:
+                print(f"✗ User not found: {username}")
+                continue
+
+            response.raise_for_status()
+            data = response.json()
+
+            # Validate and parse
+            user = User.from_api(data)
+            if user:
+                users.append(user)
+                print(f"✓ Fetched: {user.username}")
+
+        except requests.exceptions.RequestException as e:
+            print(f"✗ Error fetching {username}: {e}")
+            continue
+
+    return users
+
+def parse_paginated_response(url: str) -> list[dict[str, Any]]:
+    """Parse paginated API responses."""
+
+    all_items = []
+
+    while url:
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+
+            # Parse current page
+            data = response.json()
+
+            # Handle different pagination formats
+            if isinstance(data, list):
+                # Simple list response
+                all_items.extend(data)
+                break
+            elif 'items' in data:
+                # Format: {"items": [...], "next_page": "url"}
+                all_items.extend(data['items'])
+                url = data.get('next_page')
+            elif 'results' in data:
+                # Format: {"results": [...], "next": "url"}
+                all_items.extend(data['results'])
+                url = data.get('next')
+            else:
+                break
+
+            print(f"Fetched {len(all_items)} items so far...")
+
+        except requests.exceptions.RequestException as e:
+            print(f"✗ Pagination error: {e}")
+            break
+
+    return all_items
+
+def extract_nested_data(data: dict[str, Any], path: str, default: Any = None) -> Any:
+    """Safely extract nested data using dot notation."""
+
+    keys = path.split('.')
+    current = data
+
+    for key in keys:
+        if isinstance(current, dict) and key in current:
+            current = current[key]
+        else:
+            return default
+
+    return current
+
+def main():
+    # Fetch and validate multiple users
+    usernames = ['octocat', 'torvalds', 'invalid-user-xyz']
+    users = fetch_users(usernames)
+
+    print(f"\n✓ Successfully fetched {len(users)} users:")
+    for user in users:
+        print(f"  {user.username}: {user.followers} followers, joined {user.created_at.year}")
+
+    # Parse paginated responses
+    repos = parse_paginated_response('https://api.github.com/users/octocat/repos')
+    print(f"\n✓ Total repos: {len(repos)}")
+
+    # Extract nested data
+    sample_data = {
+        'user': {
+            'profile': {
+                'contact': {
+                    'email': 'user@example.com'
+                }
+            }
+        }
+    }
+
+    email = extract_nested_data(sample_data, 'user.profile.contact.email', 'N/A')
+    print(f"\nExtracted email: {email}")
+
+if __name__ == '__main__':
+    main()
+```
+
+**When to use**: Consuming REST APIs, processing JSON data, integrating with web services, or building API clients. Always validate required fields before accessing. Use dataclasses or TypedDict for type safety. Handle pagination for large result sets. Use .get() with defaults for optional fields. Parse dates/timestamps explicitly. Create validation functions for complex data structures.
+
+---
+
 ## 🔷 Common Patterns and Best Practices
 
-### Recipe 30: Enum for Constants
+### Recipe 36: Enum for Constants
 
 **Problem**: You need type-safe constants or enumerations.
 
@@ -2087,6 +2966,1290 @@ if Permission.READ in user_permissions:
 ```
 
 **When to use**: For any set of related constants or states.
+
+---
+
+## 🐛 Troubleshooting
+
+Common Python errors and their solutions.
+
+### Recipe 37: ImportError / ModuleNotFoundError
+
+**Problem**: You encounter "ModuleNotFoundError: No module named 'xyz'" when running your code.
+
+**Solution**:
+
+**Basic Example - Install Missing Package**:
+
+```python
+# Error:
+# ModuleNotFoundError: No module named 'requests'
+
+# Solution 1: Install the package
+# pip install requests
+
+# Solution 2: Check installed packages
+# pip list | grep requests
+
+# Solution 3: Install from requirements.txt
+# pip install -r requirements.txt
+
+# Verify installation
+try:
+    import requests
+    print(f"requests version: {requests.__version__}")
+except ImportError as e:
+    print(f"Import failed: {e}")
+    print("Run: pip install requests")
+```
+
+**Common Causes**:
+
+- Package not installed in current virtual environment
+- Typo in package name
+- Wrong Python interpreter (system vs virtual environment)
+- Package installed in different Python version
+
+**Advanced Example - Virtual Environment Setup**:
+
+```python
+# Check which Python is being used
+import sys
+print(f"Python executable: {sys.executable}")
+print(f"Python version: {sys.version}")
+print(f"Python path: {sys.path}")
+
+# Create and activate virtual environment (terminal commands)
+# python -m venv venv
+# source venv/bin/activate  # On Unix/macOS
+# venv\Scripts\activate     # On Windows
+
+# Install packages in virtual environment
+# pip install requests pandas numpy
+
+# Verify package location
+import requests
+print(f"requests location: {requests.__file__}")
+
+# Check if using virtual environment
+if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+    print("Running in virtual environment")
+else:
+    print("NOT in virtual environment - create one!")
+```
+
+**Prevention Tips**:
+
+- Always use virtual environments (`python -m venv venv`)
+- Keep `requirements.txt` updated (`pip freeze > requirements.txt`)
+- Document installation steps in README
+- Use `pip list` to verify installed packages
+
+**When to use**: Whenever you encounter import errors or module not found issues.
+
+**See Also**:
+
+- [Recipe 17: Exception Patterns](#recipe-17-exception-patterns) - Proper error handling
+- [Recipe 26-27: Configuration](#-configuration-management) - Environment setup
+
+---
+
+### Recipe 38: AttributeError
+
+**Problem**: You get "AttributeError: 'NoneType' object has no attribute 'xyz'" or similar attribute errors.
+
+**Solution**:
+
+**Basic Example - Check for None**:
+
+```python
+# Error-prone code
+user_data = get_user(user_id)  # Might return None
+name = user_data.name  # AttributeError if user_data is None
+
+# Solution 1: Check before accessing
+user_data = get_user(user_id)
+if user_data is not None:
+    name = user_data.name
+else:
+    name = "Unknown"
+
+# Solution 2: Use getattr with default
+user_data = get_user(user_id)
+name = getattr(user_data, 'name', 'Unknown')
+
+# Solution 3: Optional chaining (Python 3.8+)
+# Optional type uses | None syntax (Python 3.10+)
+
+def get_user_name(user: object | None) -> str:
+    return getattr(user, 'name', 'Unknown')
+```
+
+**Common Causes**:
+
+- Accessing attributes on `None` value
+- Typo in attribute name
+- Object doesn't have expected attribute
+- Accessing private attributes incorrectly
+
+**Advanced Example - Safe Attribute Access**:
+
+```python
+from typing import Any
+from dataclasses import dataclass
+
+@dataclass
+class User:
+    name: str
+    email: str
+    age: int | None = None
+
+def safe_get_attr(obj: Any, attr_path: str, default: Any = None) -> Any:
+    """
+    Safely get nested attributes with dot notation.
+
+    Example: safe_get_attr(user, 'profile.address.city', 'Unknown')
+    """
+    attrs = attr_path.split('.')
+    current = obj
+
+    for attr in attrs:
+        if current is None:
+            return default
+        try:
+            current = getattr(current, attr)
+        except AttributeError:
+            return default
+
+    return current if current is not None else default
+
+# Usage
+user = User(name="Alice", email="alice@example.com")
+
+# Safe access
+name = safe_get_attr(user, 'name', 'Unknown')  # "Alice"
+age = safe_get_attr(user, 'age', 0)  # 0 (None → default)
+city = safe_get_attr(user, 'profile.address.city', 'N/A')  # "N/A"
+
+print(f"User: {name}, Age: {age}, City: {city}")
+# Output: User: Alice, Age: 0, City: N/A
+
+# Type-safe alternative with hasattr
+if hasattr(user, 'name'):
+    print(f"Name exists: {user.name}")
+
+# Check multiple attributes
+required_attrs = ['name', 'email']
+missing = [attr for attr in required_attrs if not hasattr(user, attr)]
+if missing:
+    print(f"Missing attributes: {missing}")
+```
+
+**Prevention Tips**:
+
+- Use type hints to catch issues early
+- Check for `None` before accessing attributes
+- Use `hasattr()` to verify attribute existence
+- Use `getattr()` with defaults for optional attributes
+
+**When to use**: When working with objects that might be None or have optional attributes.
+
+**See Also**:
+
+- [Recipe 7-8: Type Hints](#-type-hints-and-type-safety) - Type safety with hints
+- [Recipe 17: Exception Patterns](#recipe-17-exception-patterns) - Error handling patterns
+
+---
+
+### Recipe 39: KeyError
+
+**Problem**: You get "KeyError: 'xyz'" when accessing dictionary keys.
+
+**Solution**:
+
+**Basic Example - Safe Dictionary Access**:
+
+```python
+# Error-prone code
+config = {'host': 'localhost', 'port': 8080}
+database = config['database']  # KeyError: 'database'
+
+# Solution 1: Use get() with default
+database = config.get('database', 'default.db')
+
+# Solution 2: Check key existence
+if 'database' in config:
+    database = config['database']
+else:
+    database = 'default.db'
+
+# Solution 3: Use setdefault()
+database = config.setdefault('database', 'default.db')
+print(config)  # Now includes 'database': 'default.db'
+```
+
+**Common Causes**:
+
+- Key doesn't exist in dictionary
+- Typo in key name
+- Expecting data from API that wasn't returned
+- Case sensitivity in keys
+
+**Advanced Example - Nested Dictionary Access**:
+
+```python
+from typing import Any
+from collections import defaultdict
+
+def safe_get_nested(data: dict[str, Any], *keys: str, default: Any = None) -> Any:
+    """
+    Safely access nested dictionary values.
+
+    Example: safe_get_nested(data, 'user', 'profile', 'email', default='')
+    """
+    current = data
+    for key in keys:
+        if not isinstance(current, dict):
+            return default
+        current = current.get(key)
+        if current is None:
+            return default
+    return current
+
+# Usage with API response
+api_response = {
+    'status': 'success',
+    'data': {
+        'user': {
+            'name': 'Alice',
+            'profile': {
+                'email': 'alice@example.com'
+            }
+        }
+    }
+}
+
+# Safe nested access
+email = safe_get_nested(api_response, 'data', 'user', 'profile', 'email', default='no-email')
+phone = safe_get_nested(api_response, 'data', 'user', 'profile', 'phone', default='no-phone')
+
+print(f"Email: {email}")  # alice@example.com
+print(f"Phone: {phone}")  # no-phone
+
+# Use defaultdict for auto-creation
+from collections import defaultdict
+
+counts = defaultdict(int)
+counts['apples'] += 1  # No KeyError, starts at 0
+counts['oranges'] += 2
+
+# Nested defaultdict
+nested = defaultdict(lambda: defaultdict(list))
+nested['user1']['orders'].append('item1')  # No KeyError
+nested['user2']['orders'].append('item2')
+```
+
+**Prevention Tips**:
+
+- Use `.get()` method instead of direct key access
+- Validate API responses before accessing nested keys
+- Use `defaultdict` for counters and accumulations
+- Check key existence with `in` operator
+
+**When to use**: When working with dictionaries, especially from external sources like APIs or configuration files.
+
+**See Also**:
+
+- [Recipe 4: defaultdict and Counter](#recipe-4-defaultdict-and-counter) - Avoid KeyError with defaultdict
+- [Recipe 2: Dictionary Comprehensions](#recipe-2-dictionary-comprehensions) - Dictionary operations
+
+---
+
+### Recipe 40: IndexError
+
+**Problem**: You get "IndexError: list index out of range" when accessing list elements.
+
+**Solution**:
+
+**Basic Example - Safe List Access**:
+
+```python
+# Error-prone code
+items = [1, 2, 3]
+fourth = items[3]  # IndexError: list index out of range
+
+# Solution 1: Check length first
+if len(items) > 3:
+    fourth = items[3]
+else:
+    fourth = None
+
+# Solution 2: Use try-except
+try:
+    fourth = items[3]
+except IndexError:
+    fourth = None
+
+# Solution 3: Use slice (returns empty list if out of range)
+fourth_list = items[3:4]  # Returns [] if index 3 doesn't exist
+fourth = fourth_list[0] if fourth_list else None
+```
+
+**Common Causes**:
+
+- Accessing index beyond list length
+- Off-by-one errors (forgetting lists are 0-indexed)
+- Empty list access
+- Negative indices on short lists
+
+**Advanced Example - Robust List Operations**:
+
+```python
+from typing import TypeVar
+
+T = TypeVar('T')
+
+def safe_get_index(lst: list[T], index: int, default: T | None = None) -> T | None:
+    """
+    Safely get list element at index.
+
+    Supports negative indices.
+    """
+    try:
+        return lst[index]
+    except IndexError:
+        return default
+
+def safe_slice(lst: list[T], start: int = 0, end: int | None = None,
+               step: int = 1) -> list[T]:
+    """
+    Safe list slicing with bounds checking.
+    """
+    if not lst:
+        return []
+
+    length = len(lst)
+    # Normalize negative indices
+    start = max(0, start if start >= 0 else length + start)
+    end = min(length, end if end is not None and end >= 0 else length + (end or 0))
+
+    return lst[start:end:step]
+
+# Usage
+numbers = [10, 20, 30, 40, 50]
+
+# Safe index access
+first = safe_get_index(numbers, 0, default=0)  # 10
+tenth = safe_get_index(numbers, 10, default=0)  # 0 (out of range)
+last = safe_get_index(numbers, -1, default=0)  # 50
+invalid = safe_get_index(numbers, -10, default=0)  # 0 (out of range)
+
+print(f"First: {first}, Tenth: {tenth}, Last: {last}, Invalid: {invalid}")
+
+# Safe slicing
+empty_list: list[int] = []
+slice1 = safe_slice(empty_list, 0, 5)  # [] (empty input)
+slice2 = safe_slice(numbers, 2, 10)  # [30, 40, 50] (end beyond length)
+slice3 = safe_slice(numbers, -2)  # [40, 50] (negative start)
+
+# Iterate safely with enumerate
+for index, value in enumerate(numbers):
+    next_value = safe_get_index(numbers, index + 1, default='End')
+    print(f"Current: {value}, Next: {next_value}")
+```
+
+**Prevention Tips**:
+
+- Always check list length before accessing indices
+- Use `enumerate()` for index-based iteration
+- Prefer slicing over direct index access when possible
+- Use negative indices carefully (remember `-len(lst)` to `-1`)
+
+**When to use**: When working with lists where length is uncertain or when accessing specific positions.
+
+---
+
+### Recipe 41: TypeError
+
+**Problem**: You get "TypeError: unsupported operand type(s)" or "TypeError: 'X' object is not callable".
+
+**Solution**:
+
+**Basic Example - Type Mismatches**:
+
+```python
+# Error: Adding incompatible types
+age = "25"
+next_year = age + 1  # TypeError: can only concatenate str (not "int") to str
+
+# Solution 1: Convert types explicitly
+age = "25"
+next_year = int(age) + 1  # 26
+
+# Solution 2: Type checking
+def add_one(value):
+    if isinstance(value, str):
+        value = int(value)
+    return value + 1
+
+# Error: Calling non-callable
+data = {'name': 'Alice'}
+result = data()  # TypeError: 'dict' object is not callable
+
+# Solution: Check if callable
+if callable(data):
+    result = data()
+else:
+    result = data
+```
+
+**Common Causes**:
+
+- Mixing strings and numbers in operations
+- Calling variables that aren't functions
+- Passing wrong number of arguments
+- Mixing mutable and immutable types
+
+**Advanced Example - Type-Safe Operations**:
+
+```python
+from typing import TypeVar, Callable, Any
+from functools import wraps
+
+T = TypeVar('T')
+
+def ensure_type(expected_type: type, convert: bool = True):
+    """
+    Decorator to ensure argument types.
+
+    Example:
+        @ensure_type(int, convert=True)
+        def add_one(x): return x + 1
+    """
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            converted_args = []
+            for arg in args:
+                if not isinstance(arg, expected_type):
+                    if convert:
+                        try:
+                            arg = expected_type(arg)
+                        except (ValueError, TypeError) as e:
+                            raise TypeError(f"Cannot convert {type(arg).__name__} to {expected_type.__name__}: {e}")
+                    else:
+                        raise TypeError(f"Expected {expected_type.__name__}, got {type(arg).__name__}")
+                converted_args.append(arg)
+            return func(*converted_args, **kwargs)
+        return wrapper
+    return decorator
+
+# Usage
+@ensure_type(int, convert=True)
+def add_one(x: int) -> int:
+    return x + 1
+
+# Auto-converts string to int
+result1 = add_one("42")  # 43
+result2 = add_one(42)  # 43
+
+print(f"Results: {result1}, {result2}")
+
+# Safe type conversion with fallback
+def safe_convert(value: Any, target_type: type, default: Any = None) -> Any:
+    """
+    Safely convert value to target type with fallback.
+    """
+    if isinstance(value, target_type):
+        return value
+
+    try:
+        return target_type(value)
+    except (ValueError, TypeError):
+        return default
+
+# Examples
+num1 = safe_convert("123", int, default=0)  # 123
+num2 = safe_convert("abc", int, default=0)  # 0
+num3 = safe_convert([1, 2], str, default="")  # "[1, 2]"
+
+# Check if object is callable before calling
+def safe_call(obj: Any, *args, **kwargs) -> Any:
+    """
+    Safely call object if callable, otherwise return it.
+    """
+    if callable(obj):
+        return obj(*args, **kwargs)
+    return obj
+
+# Usage
+func = lambda x: x * 2
+value = 42
+
+result1 = safe_call(func, 5)  # 10 (callable)
+result2 = safe_call(value)  # 42 (not callable, returned as-is)
+```
+
+**Prevention Tips**:
+
+- Use type hints and mypy for static type checking
+- Convert types explicitly rather than relying on implicit conversion
+- Check if objects are callable before calling
+- Use `isinstance()` for runtime type checking
+
+**When to use**: When working with mixed types or when type safety is critical.
+
+---
+
+### Recipe 42: ValueError
+
+**Problem**: You get "ValueError: invalid literal for int()" or similar value conversion errors.
+
+**Solution**:
+
+**Basic Example - Input Validation**:
+
+```python
+# Error: Converting invalid string to int
+user_input = "abc"
+age = int(user_input)  # ValueError: invalid literal for int() with base 10: 'abc'
+
+# Solution 1: Try-except
+user_input = "abc"
+try:
+    age = int(user_input)
+except ValueError:
+    age = 0
+    print("Invalid input, using default age")
+
+# Solution 2: Validation before conversion
+user_input = "abc"
+if user_input.isdigit():
+    age = int(user_input)
+else:
+    age = 0
+
+# Solution 3: Regular expression validation
+import re
+
+def is_valid_age(value: str) -> bool:
+    return bool(re.match(r'^\d+$', value))
+
+if is_valid_age(user_input):
+    age = int(user_input)
+```
+
+**Common Causes**:
+
+- Invalid string to number conversion
+- Unpacking wrong number of values
+- Invalid format strings
+- Out-of-range values
+
+**Advanced Example - Robust Input Parsing**:
+
+```python
+# Optional type uses | None syntax (Python 3.10+), Union, TypeVar, Callable
+import re
+
+T = TypeVar('T')
+
+def safe_parse(value: str, parser: Callable[[str], T],
+               validator: Callable[[T], bool] | None = None,
+               default: T | None = None) -> T | None:
+    """
+    Safely parse and validate input with custom parser.
+
+    Example:
+        age = safe_parse("25", int, lambda x: 0 <= x <= 120, default=0)
+    """
+    try:
+        parsed = parser(value)
+        if validator and not validator(parsed):
+            return default
+        return parsed
+    except (ValueError, TypeError):
+        return default
+
+# Usage examples
+age = safe_parse("25", int, lambda x: 0 <= x <= 120, default=0)  # 25
+invalid_age = safe_parse("200", int, lambda x: 0 <= x <= 120, default=0)  # 0
+price = safe_parse("19.99", float, lambda x: x > 0, default=0.0)  # 19.99
+
+print(f"Age: {age}, Invalid Age: {invalid_age}, Price: {price}")
+
+# Validate and parse complex formats
+def parse_phone(phone: str) -> str | None:
+    """
+    Parse phone number to standard format.
+
+    Accepts: (123) 456-7890, 123-456-7890, 1234567890
+    Returns: 1234567890 or None
+    """
+    # Remove all non-digits
+    digits = re.sub(r'\D', '', phone)
+
+    # Validate length
+    if len(digits) != 10:
+        return None
+
+    return digits
+
+# Test phone parsing
+phones = ["(123) 456-7890", "123-456-7890", "1234567890", "invalid"]
+for phone in phones:
+    parsed = parse_phone(phone)
+    print(f"{phone} → {parsed}")
+# Output:
+# (123) 456-7890 → 1234567890
+# 123-456-7890 → 1234567890
+# 1234567890 → 1234567890
+# invalid → None
+
+# Unpacking with validation
+def safe_unpack(data: str, separator: str = ',', expected_count: int | None = None):
+    """
+    Safely unpack delimited string.
+    """
+    parts = [p.strip() for p in data.split(separator)]
+
+    if expected_count and len(parts) != expected_count:
+        raise ValueError(f"Expected {expected_count} parts, got {len(parts)}")
+
+    return parts
+
+# Usage
+try:
+    name, age, city = safe_unpack("Alice,25,NYC", expected_count=3)
+    print(f"Name: {name}, Age: {age}, City: {city}")
+except ValueError as e:
+    print(f"Unpacking error: {e}")
+```
+
+**Prevention Tips**:
+
+- Validate input before conversion
+- Use try-except for conversion operations
+- Provide sensible defaults for invalid input
+- Use regular expressions for format validation
+
+**When to use**: When parsing user input, configuration files, or external data sources.
+
+---
+
+### Recipe 43: NameError
+
+**Problem**: You get "NameError: name 'xyz' is not defined".
+
+**Solution**:
+
+**Basic Example - Undefined Variables**:
+
+```python
+# Error: Using undefined variable
+print(message)  # NameError: name 'message' is not defined
+
+# Solution 1: Define before use
+message = "Hello, World!"
+print(message)
+
+# Error: Typo in variable name
+greeting = "Hello"
+print(greting)  # NameError: name 'greting' is not defined
+
+# Solution 2: Check spelling
+greeting = "Hello"
+print(greeting)  # Correct spelling
+
+# Error: Variable in wrong scope
+def my_function():
+    local_var = 42
+
+print(local_var)  # NameError: name 'local_var' is not defined
+
+# Solution 3: Return value from function
+def my_function():
+    local_var = 42
+    return local_var
+
+result = my_function()
+print(result)
+```
+
+**Common Causes**:
+
+- Typo in variable name
+- Variable not defined before use
+- Scope issues (accessing local variable outside function)
+- Forgetting to import module
+
+**Advanced Example - Scope Management**:
+
+```python
+from typing import Any
+
+# Global vs Local scope
+global_var = "I'm global"
+
+def demonstrate_scope():
+    local_var = "I'm local"
+
+    # Access global variable
+    print(global_var)  # Works
+
+    # Modify global variable (requires global keyword)
+    global global_var
+    global_var = "Modified global"
+
+    return local_var
+
+result = demonstrate_scope()
+print(global_var)  # "Modified global"
+# print(local_var)  # NameError
+
+# Safe attribute/variable checking
+def safe_eval(expr: str, context: dict[str, Any]) -> Any | None:
+    """
+    Safely evaluate expression with given context.
+
+    Example:
+        result = safe_eval("x + y", {"x": 10, "y": 20})  # 30
+    """
+    try:
+        return eval(expr, {"__builtins__": {}}, context)
+    except NameError as e:
+        print(f"Undefined variable in '{expr}': {e}")
+        return None
+
+# Usage
+context = {"x": 10, "y": 20, "z": 30}
+result1 = safe_eval("x + y", context)  # 30
+result2 = safe_eval("x + undefined", context)  # None (catches NameError)
+
+print(f"Result 1: {result1}, Result 2: {result2}")
+
+# Check if variable exists in scope
+def is_defined(var_name: str, scope: dict[str, Any]) -> bool:
+    """
+    Check if variable is defined in given scope.
+    """
+    return var_name in scope
+
+# Usage with globals() and locals()
+x = 42
+
+print(is_defined('x', globals()))  # True
+print(is_defined('y', globals()))  # False
+
+def my_function():
+    local_x = 100
+    print(is_defined('local_x', locals()))  # True
+    print(is_defined('x', globals()))  # True (global x)
+
+my_function()
+
+# Lazy initialization with getattr
+class Config:
+    """Configuration with lazy initialization."""
+
+    def __getattr__(self, name: str) -> Any:
+        """
+        Called when attribute doesn't exist.
+        Prevents NameError for missing config values.
+        """
+        print(f"Config '{name}' not defined, using default")
+        return None
+
+config = Config()
+config.database = "postgres"
+
+print(config.database)  # postgres
+print(config.cache)  # None (doesn't exist, __getattr__ called)
+```
+
+**Prevention Tips**:
+
+- Use linters (pylint, flake8) to catch undefined variables
+- Initialize all variables before use
+- Be careful with variable scope (global vs local)
+- Use `globals()` and `locals()` to check variable existence
+
+**When to use**: When debugging scope issues or working with dynamic variable names.
+
+---
+
+### Recipe 44: IndentationError
+
+**Problem**: You get "IndentationError: expected an indented block" or "IndentationError: unindent does not match any outer indentation level".
+
+**Solution**:
+
+**Basic Example - Consistent Indentation**:
+
+```python
+# Error: Missing indentation
+def my_function():
+print("Hello")  # IndentationError: expected an indented block
+
+# Solution: Add proper indentation
+def my_function():
+    print("Hello")  # Correct: 4 spaces
+
+# Error: Mixed tabs and spaces
+def another_function():
+    x = 1  # 4 spaces
+	y = 2  # Tab (looks like spaces but isn't)
+    # IndentationError: unindent does not match
+
+# Solution: Use spaces consistently (PEP 8: 4 spaces)
+def another_function():
+    x = 1  # 4 spaces
+    y = 2  # 4 spaces
+```
+
+**Common Causes**:
+
+- Missing indentation after `def`, `if`, `for`, `while`, `class`
+- Mixing tabs and spaces
+- Incorrect unindentation
+- Copy-paste from different sources with different indentation
+
+**Advanced Example - Indentation Best Practices**:
+
+```python
+# Correct multi-level indentation
+def process_data(items):
+    """
+    Process items with proper indentation.
+    """
+    results = []
+
+    for item in items:
+        if item > 0:
+            # Nested indentation: 8 spaces (2 levels × 4 spaces)
+            processed = item * 2
+            results.append(processed)
+        else:
+            # Alternative branch at same level
+            results.append(0)
+
+    return results
+
+# Correct indentation for long lines (PEP 8)
+def function_with_many_parameters(
+        param1,
+        param2,
+        param3,
+        param4):
+    """Parameters aligned or indented."""
+    return param1 + param2 + param3 + param4
+
+# Alternative style (hanging indent)
+result = function_with_many_parameters(
+    param1=1,
+    param2=2,
+    param3=3,
+    param4=4
+)
+
+# List comprehension with proper indentation
+filtered_and_processed = [
+    item * 2
+    for item in range(100)
+    if item % 2 == 0
+]
+
+# Dictionary with proper indentation
+config = {
+    'database': {
+        'host': 'localhost',
+        'port': 5432,
+        'name': 'mydb'
+    },
+    'cache': {
+        'enabled': True,
+        'ttl': 300
+    }
+}
+
+# Class with proper indentation
+class DataProcessor:
+    """Example class with correct indentation."""
+
+    def __init__(self, name):
+        """Constructor."""
+        self.name = name
+        self.data = []
+
+    def process(self, items):
+        """
+        Process items.
+
+        Multi-line docstring properly indented.
+        """
+        for item in items:
+            if self._is_valid(item):
+                self.data.append(item)
+
+    def _is_valid(self, item):
+        """Private method."""
+        return item is not None
+
+# Context manager with proper indentation
+with open('file.txt', 'r') as f:
+    for line in f:
+        if line.strip():
+            print(line)
+```
+
+**Prevention Tips**:
+
+- **Always use 4 spaces for indentation** (PEP 8 standard)
+- Configure editor to insert spaces when Tab is pressed
+- Use `.editorconfig` file for consistent team settings
+- Enable "show whitespace" in your editor
+- Use code formatters (black, autopep8) to auto-fix indentation
+
+**Editor Configuration Example** (`.editorconfig`):
+
+```ini
+[*.py]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+```
+
+**When to use**: Configure your editor once and let tools enforce consistency.
+
+---
+
+### Recipe 45: FileNotFoundError
+
+**Problem**: You get "FileNotFoundError: [Errno 2] No such file or directory: 'xyz.txt'".
+
+**Solution**:
+
+**Basic Example - Check File Existence**:
+
+```python
+import os
+from pathlib import Path
+
+# Error: File doesn't exist
+with open('nonexistent.txt', 'r') as f:
+    content = f.read()  # FileNotFoundError
+
+# Solution 1: Check existence first
+if os.path.exists('config.txt'):
+    with open('config.txt', 'r') as f:
+        content = f.read()
+else:
+    print("File not found, using defaults")
+    content = ""
+
+# Solution 2: Use Path (modern approach)
+config_path = Path('config.txt')
+if config_path.exists():
+    content = config_path.read_text()
+else:
+    content = ""
+
+# Solution 3: Try-except
+try:
+    with open('config.txt', 'r') as f:
+        content = f.read()
+except FileNotFoundError:
+    print("File not found, creating default")
+    content = "default content"
+    with open('config.txt', 'w') as f:
+        f.write(content)
+```
+
+**Common Causes**:
+
+- Typo in filename
+- Wrong directory (relative vs absolute paths)
+- File doesn't exist yet
+- Insufficient permissions
+
+**Advanced Example - Robust File Operations**:
+
+```python
+from pathlib import Path
+# Optional type uses | None syntax (Python 3.10+), Union
+import os
+
+def safe_read_file(filepath: str | Path,
+                   default: str = "",
+                   create_if_missing: bool = False) -> str:
+    """
+    Safely read file with fallback options.
+
+    Args:
+        filepath: Path to file
+        default: Default content if file doesn't exist
+        create_if_missing: Create file with default content if True
+
+    Returns:
+        File content or default
+    """
+    path = Path(filepath)
+
+    try:
+        return path.read_text(encoding='utf-8')
+    except FileNotFoundError:
+        if create_if_missing:
+            # Create parent directories if needed
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(default, encoding='utf-8')
+            print(f"Created {path} with default content")
+        return default
+    except PermissionError:
+        print(f"Permission denied: {path}")
+        return default
+
+# Usage
+config = safe_read_file('config/settings.txt', default='{}', create_if_missing=True)
+print(f"Config: {config}")
+
+# Find file in multiple locations
+def find_file(filename: str, search_paths: list[str]) -> Path | None:
+    """
+    Search for file in multiple directories.
+
+    Returns first match or None.
+    """
+    for search_path in search_paths:
+        path = Path(search_path) / filename
+        if path.exists():
+            return path
+    return None
+
+# Usage
+search_locations = [
+    '.',
+    './config',
+    os.path.expanduser('~/.config/myapp'),
+    '/etc/myapp'
+]
+
+config_file = find_file('settings.json', search_locations)
+if config_file:
+    print(f"Found config at: {config_file}")
+    content = config_file.read_text()
+else:
+    print("Config not found in any location")
+
+# Safe file operations with context
+class SafeFileHandler:
+    """Handle files with automatic fallback and logging."""
+
+    def __init__(self, base_path: str | Path):
+        self.base_path = Path(base_path)
+        self.base_path.mkdir(parents=True, exist_ok=True)
+
+    def read(self, filename: str, default: str = "") -> str:
+        """Read file with fallback."""
+        filepath = self.base_path / filename
+        try:
+            return filepath.read_text(encoding='utf-8')
+        except FileNotFoundError:
+            print(f"File not found: {filepath}")
+            return default
+
+    def write(self, filename: str, content: str) -> bool:
+        """Write file, create directories if needed."""
+        filepath = self.base_path / filename
+        try:
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(content, encoding='utf-8')
+            return True
+        except (PermissionError, OSError) as e:
+            print(f"Write failed: {e}")
+            return False
+
+    def exists(self, filename: str) -> bool:
+        """Check if file exists."""
+        return (self.base_path / filename).exists()
+
+# Usage
+handler = SafeFileHandler('./data')
+content = handler.read('users.json', default='[]')
+success = handler.write('users.json', '["Alice", "Bob"]')
+print(f"File exists: {handler.exists('users.json')}")
+```
+
+**Prevention Tips**:
+
+- Use `Path.exists()` before file operations
+- Use absolute paths instead of relative when possible
+- Create parent directories with `mkdir(parents=True, exist_ok=True)`
+- Handle `FileNotFoundError` with try-except
+- Log file paths for debugging
+
+**When to use**: When working with files, especially configuration or user-provided paths.
+
+**See Also**:
+
+- [Recipe 19: Path Operations](#recipe-19-path-operations) - Safe path handling
+- [Recipe 20: File Reading Patterns](#recipe-20-file-reading-patterns) - File operations
+
+---
+
+### Recipe 46: ZeroDivisionError
+
+**Problem**: You get "ZeroDivisionError: division by zero".
+
+**Solution**:
+
+**Basic Example - Check for Zero**:
+
+```python
+# Error: Division by zero
+result = 10 / 0  # ZeroDivisionError
+
+# Solution 1: Check before dividing
+denominator = 0
+if denominator != 0:
+    result = 10 / denominator
+else:
+    result = float('inf')  # or None, or 0, depending on context
+
+# Solution 2: Try-except
+try:
+    result = 10 / denominator
+except ZeroDivisionError:
+    result = None
+    print("Cannot divide by zero")
+
+# Solution 3: Use default value
+denominator = 0
+result = 10 / denominator if denominator != 0 else 0
+```
+
+**Common Causes**:
+
+- User input of zero
+- Calculation resulting in zero
+- Empty dataset (average of no items)
+- Iteration over empty collection
+
+**Advanced Example - Safe Mathematical Operations**:
+
+```python
+# Optional type uses | None syntax (Python 3.10+), List, Union
+import math
+
+def safe_divide(numerator: float, denominator: float,
+                default: float | None = None) -> float | None:
+    """
+    Safely divide with zero check.
+
+    Returns default if denominator is zero.
+    """
+    if denominator == 0:
+        return default
+    return numerator / denominator
+
+# Usage
+result1 = safe_divide(10, 2)  # 5.0
+result2 = safe_divide(10, 0, default=0)  # 0
+result3 = safe_divide(10, 0, default=float('inf'))  # inf
+
+print(f"Results: {result1}, {result2}, {result3}")
+
+# Safe average calculation
+def safe_average(numbers: list[float], default: float = 0.0) -> float:
+    """
+    Calculate average with empty list handling.
+    """
+    if not numbers:
+        return default
+    return sum(numbers) / len(numbers)
+
+# Usage
+avg1 = safe_average([10, 20, 30])  # 20.0
+avg2 = safe_average([])  # 0.0 (default)
+avg3 = safe_average([], default=float('nan'))  # nan
+
+# Statistical operations with validation
+def calculate_statistics(data: list[float]) -> dict:
+    """
+    Calculate statistics with zero-division protection.
+    """
+    if not data:
+        return {
+            'mean': 0.0,
+            'variance': 0.0,
+            'std_dev': 0.0,
+            'coefficient_of_variation': None
+        }
+
+    n = len(data)
+    mean = sum(data) / n
+
+    variance = sum((x - mean) ** 2 for x in data) / n
+    std_dev = math.sqrt(variance)
+
+    # Coefficient of Variation (CV) can have division by zero
+    cv = safe_divide(std_dev, mean) if mean != 0 else None
+
+    return {
+        'mean': mean,
+        'variance': variance,
+        'std_dev': std_dev,
+        'coefficient_of_variation': cv
+    }
+
+# Usage
+data = [10, 20, 30, 40, 50]
+stats = calculate_statistics(data)
+print(f"Mean: {stats['mean']:.2f}")
+print(f"Std Dev: {stats['std_dev']:.2f}")
+print(f"CV: {stats['coefficient_of_variation']:.2f if stats['coefficient_of_variation'] else 'N/A'}")
+
+# Percentage calculation with zero protection
+def calculate_percentage(part: float, total: float,
+                         decimal_places: int = 2) -> float | None:
+    """
+    Calculate percentage with zero total handling.
+
+    Returns None if total is zero.
+    """
+    if total == 0:
+        return None
+    percentage = (part / total) * 100
+    return round(percentage, decimal_places)
+
+# Usage
+pct1 = calculate_percentage(25, 100)  # 25.0
+pct2 = calculate_percentage(25, 0)  # None
+print(f"Percentage 1: {pct1}%, Percentage 2: {pct2}")
+
+# Rate calculation (e.g., items per second)
+def calculate_rate(items: int, duration_seconds: float,
+                   default: float = 0.0) -> float:
+    """
+    Calculate rate with zero duration handling.
+    """
+    if duration_seconds <= 0:
+        return default
+    return items / duration_seconds
+
+# Usage
+rate1 = calculate_rate(100, 10)  # 10.0 items/second
+rate2 = calculate_rate(100, 0)  # 0.0 (default)
+```
+
+**Prevention Tips**:
+
+- Always validate denominators before division
+- Use safe wrapper functions for common calculations
+- Return `None` or sentinel values for undefined results
+- Consider using `float('inf')` or `float('nan')` for mathematical contexts
+- Validate input data before calculations
+
+**When to use**: When performing division, calculating averages, percentages, or rates.
 
 ---
 

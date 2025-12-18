@@ -13,6 +13,8 @@ tags:
   - concurrency
 ---
 
+# Golang Cookbook - Practical Recipes
+
 **Ready to level up your Go skills?** This cookbook provides practical, battle-tested recipes for solving real-world problems with idiomatic Go code. Whether you're building concurrent systems, designing APIs, or optimizing performance, you'll find proven patterns and techniques used in production by companies like Google, Uber, and Docker.
 
 ## 🎯 What You'll Learn
@@ -53,11 +55,2225 @@ Before using this cookbook, you should:
 
 ---
 
+## 🔷 Collection Operations
+
+Master common operations on slices and maps - the fundamental data structures in Go.
+
+### Recipe 1: Filter Collection
+
+**Problem**: You need to filter a slice based on a condition.
+
+**Solution**:
+
+```go
+package main
+
+import "fmt"
+
+// Basic example - Filter slice with custom predicate
+func Filter[T any](slice []T, predicate func(T) bool) []T {
+	result := make([]T, 0, len(slice))
+	for _, item := range slice {
+		if predicate(item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func main() {
+	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	// Filter even numbers
+	evens := Filter(numbers, func(n int) bool {
+		return n%2 == 0
+	})
+	fmt.Println("Even numbers:", evens)
+	// Output: Even numbers: [2 4 6 8 10]
+
+	// Filter numbers greater than 5
+	greaterThanFive := Filter(numbers, func(n int) bool {
+		return n > 5
+	})
+	fmt.Println("Greater than 5:", greaterThanFive)
+	// Output: Greater than 5: [6 7 8 9 10]
+}
+```
+
+Filter creates a new slice containing only elements that satisfy the predicate function. The generic type parameter `T any` allows it to work with any type. Pre-allocating the result slice with capacity improves performance.
+
+```go
+// Advanced example - Filter with multiple conditions and chaining
+type Product struct {
+	Name     string
+	Price    float64
+	InStock  bool
+	Category string
+}
+
+func FilterProducts(products []Product, filters ...func(Product) bool) []Product {
+	result := products
+	for _, filter := range filters {
+		result = Filter(result, filter)
+	}
+	return result
+}
+
+func main() {
+	products := []Product{
+		{"Laptop", 999.99, true, "Electronics"},
+		{"Mouse", 25.00, false, "Electronics"},
+		{"Desk", 299.99, true, "Furniture"},
+		{"Chair", 149.99, true, "Furniture"},
+		{"Keyboard", 75.00, true, "Electronics"},
+	}
+
+	// Multiple filter conditions
+	inStockFilter := func(p Product) bool { return p.InStock }
+	priceFilter := func(p Product) bool { return p.Price < 300 }
+	categoryFilter := func(p Product) bool { return p.Category == "Electronics" }
+
+	filtered := FilterProducts(products, inStockFilter, priceFilter, categoryFilter)
+	for _, p := range filtered {
+		fmt.Printf("%s - $%.2f\n", p.Name, p.Price)
+	}
+	// Output: Keyboard - $75.00
+}
+```
+
+**When to use**: Filtering slices based on conditions, data validation, search results, or any scenario where you need a subset of items that match criteria. Use Filter for immutable transformations (returns new slice). For in-place filtering, iterate and use slice tricks.
+
+**See Also**:
+
+- [Recipe 2: Map/Transform Collection](#recipe-2-map-transform-collection) - Transform elements
+- [Recipe 21: Generic Filter and Map](#recipe-21-generic-filter-and-map) - Generic versions
+
+### Recipe 2: Map/Transform Collection
+
+**Problem**: You need to transform each element in a slice.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+// Basic example - Transform slice elements
+func Map[T, R any](slice []T, transform func(T) R) []R {
+	result := make([]R, len(slice))
+	for i, item := range slice {
+		result[i] = transform(item)
+	}
+	return result
+}
+
+func main() {
+	numbers := []int{1, 2, 3, 4, 5}
+
+	// Transform to squares
+	squares := Map(numbers, func(n int) int {
+		return n * n
+	})
+	fmt.Println("Squares:", squares)
+	// Output: Squares: [1 4 9 16 25]
+
+	names := []string{"alice", "bob", "charlie"}
+
+	// Transform to uppercase
+	upperNames := Map(names, func(s string) string {
+		return strings.ToUpper(s)
+	})
+	fmt.Println("Uppercase:", upperNames)
+	// Output: Uppercase: [ALICE BOB CHARLIE]
+}
+```
+
+Map transforms each element using the provided function, returning a new slice. The generic parameters `T` (input type) and `R` (result type) allow transforming between different types (e.g., int to string).
+
+```go
+// Advanced example - Complex transformations with error handling
+type User struct {
+	ID    int
+	Name  string
+	Email string
+}
+
+type UserDTO struct {
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+}
+
+func MapWithError[T, R any](slice []T, transform func(T) (R, error)) ([]R, error) {
+	result := make([]R, len(slice))
+	for i, item := range slice {
+		r, err := transform(item)
+		if err != nil {
+			return nil, fmt.Errorf("transform failed at index %d: %w", i, err)
+		}
+		result[i] = r
+	}
+	return result, nil
+}
+
+func main() {
+	users := []User{
+		{1, "alice", "alice@example.com"},
+		{2, "bob", "bob@example.com"},
+		{3, "charlie", "charlie@example.com"},
+	}
+
+	// Transform User to UserDTO
+	dtos := Map(users, func(u User) UserDTO {
+		return UserDTO{
+			ID:       u.ID,
+			Username: u.Name,
+		}
+	})
+
+	fmt.Printf("DTOs: %+v\n", dtos)
+	// Output: DTOs: [{ID:1 Username:alice} {ID:2 Username:bob} {ID:3 Username:charlie}]
+
+	// Map with extraction
+	emails := Map(users, func(u User) string {
+		return u.Email
+	})
+	fmt.Println("Emails:", emails)
+	// Output: Emails: [alice@example.com bob@example.com charlie@example.com]
+}
+```
+
+**When to use**: Data transformation, type conversion, extracting fields from structs, formatting output, or preparing data for serialization. Use Map for pure transformations without side effects. For transformations with errors, use MapWithError variant.
+
+### Recipe 3: Group by Property
+
+**Problem**: You need to group items by a common property.
+
+**Solution**:
+
+```go
+package main
+
+import "fmt"
+
+// Basic example - Group slice by key
+func GroupBy[T any, K comparable](slice []T, keyFunc func(T) K) map[K][]T {
+	result := make(map[K][]T)
+	for _, item := range slice {
+		key := keyFunc(item)
+		result[key] = append(result[key], item)
+	}
+	return result
+}
+
+func main() {
+	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	// Group by even/odd
+	grouped := GroupBy(numbers, func(n int) string {
+		if n%2 == 0 {
+			return "even"
+		}
+		return "odd"
+	})
+
+	fmt.Println("Even:", grouped["even"])
+	fmt.Println("Odd:", grouped["odd"])
+	// Output: Even: [2 4 6 8 10]
+	// Output: Odd: [1 3 5 7 9]
+}
+```
+
+GroupBy partitions a slice into a map where keys are determined by the keyFunc. The `K comparable` constraint ensures keys can be used in maps. Items with the same key are grouped together in a slice.
+
+```go
+// Advanced example - Group complex objects with counting
+type Order struct {
+	ID       int
+	Customer string
+	Amount   float64
+	Status   string
+}
+
+type GroupStats struct {
+	Count      int
+	TotalAmount float64
+	Items      []Order
+}
+
+func GroupByWithStats(orders []Order, keyFunc func(Order) string) map[string]GroupStats {
+	result := make(map[string]GroupStats)
+	for _, order := range orders {
+		key := keyFunc(order)
+		stats := result[key]
+		stats.Count++
+		stats.TotalAmount += order.Amount
+		stats.Items = append(stats.Items, order)
+		result[key] = stats
+	}
+	return result
+}
+
+func main() {
+	orders := []Order{
+		{1, "Alice", 100.00, "completed"},
+		{2, "Bob", 50.00, "pending"},
+		{3, "Alice", 75.00, "completed"},
+		{4, "Charlie", 200.00, "completed"},
+		{5, "Bob", 150.00, "completed"},
+	}
+
+	// Group by customer
+	byCustomer := GroupBy(orders, func(o Order) string {
+		return o.Customer
+	})
+
+	for customer, customerOrders := range byCustomer {
+		fmt.Printf("%s: %d orders\n", customer, len(customerOrders))
+	}
+	// Output: Alice: 2 orders
+	//         Bob: 2 orders
+	//         Charlie: 1 orders
+
+	// Group by status with statistics
+	byStatus := GroupByWithStats(orders, func(o Order) string {
+		return o.Status
+	})
+
+	for status, stats := range byStatus {
+		fmt.Printf("%s: %d orders, total: $%.2f\n", status, stats.Count, stats.TotalAmount)
+	}
+	// Output: completed: 4 orders, total: $525.00
+	//         pending: 1 orders, total: $50.00
+}
+```
+
+**When to use**: Categorizing data, aggregating by category, preparing data for reports, or organizing items by shared attributes. Use GroupBy for simple grouping. For aggregations (count, sum, average), extend with statistics like GroupByWithStats.
+
+### Recipe 4: Sort by Custom Field
+
+**Problem**: You need to sort a slice by custom criteria.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+// Basic example - Sort slice with custom comparison
+type Person struct {
+	Name string
+	Age  int
+}
+
+func main() {
+	people := []Person{
+		{"Alice", 30},
+		{"Bob", 25},
+		{"Charlie", 35},
+		{"Diana", 28},
+	}
+
+	// Sort by age (ascending)
+	sort.Slice(people, func(i, j int) bool {
+		return people[i].Age < people[j].Age
+	})
+
+	fmt.Println("Sorted by age:")
+	for _, p := range people {
+		fmt.Printf("%s: %d\n", p.Name, p.Age)
+	}
+	// Output: Bob: 25
+	//         Diana: 28
+	//         Alice: 30
+	//         Charlie: 35
+
+	// Sort by name (ascending)
+	sort.Slice(people, func(i, j int) bool {
+		return people[i].Name < people[j].Name
+	})
+
+	fmt.Println("\nSorted by name:")
+	for _, p := range people {
+		fmt.Printf("%s: %d\n", p.Name, p.Age)
+	}
+	// Output: Alice: 30
+	//         Bob: 25
+	//         Charlie: 35
+	//         Diana: 28
+}
+```
+
+sort.Slice sorts a slice in-place using the provided comparison function. Return true if element i should come before element j. The sort is not stable (equal elements may change order).
+
+```go
+// Advanced example - Multi-field sorting with stable sort
+type Product struct {
+	Name     string
+	Price    float64
+	Rating   float64
+	Category string
+}
+
+func main() {
+	products := []Product{
+		{"Laptop", 999.99, 4.5, "Electronics"},
+		{"Mouse", 25.00, 4.2, "Electronics"},
+		{"Desk", 299.99, 4.8, "Furniture"},
+		{"Keyboard", 75.00, 4.5, "Electronics"},
+		{"Chair", 149.99, 4.7, "Furniture"},
+	}
+
+	// Multi-level sort: category (asc), then price (desc)
+	sort.SliceStable(products, func(i, j int) bool {
+		if products[i].Category != products[j].Category {
+			return products[i].Category < products[j].Category
+		}
+		return products[i].Price > products[j].Price // Descending price
+	})
+
+	fmt.Println("Sorted by category, then price (desc):")
+	for _, p := range products {
+		fmt.Printf("%-12s $%-7.2f %s\n", p.Name, p.Price, p.Category)
+	}
+	// Output: Laptop       $999.99  Electronics
+	//         Keyboard     $75.00   Electronics
+	//         Mouse        $25.00   Electronics
+	//         Desk         $299.99  Furniture
+	//         Chair        $149.99  Furniture
+
+	// Sort by rating (descending), preserve order for ties
+	sort.SliceStable(products, func(i, j int) bool {
+		return products[i].Rating > products[j].Rating
+	})
+
+	fmt.Println("\nSorted by rating (desc):")
+	for _, p := range products {
+		fmt.Printf("%-12s %.1f ★\n", p.Name, p.Rating)
+	}
+	// Output: Desk         4.8 ★
+	//         Chair        4.7 ★
+	//         Laptop       4.5 ★
+	//         Keyboard     4.5 ★
+	//         Mouse        4.2 ★
+}
+```
+
+**When to use**: Sorting custom structs, multi-field sorting, ranking items, or ordering data for display. Use sort.Slice for simple sorting. Use sort.SliceStable when you need to preserve the relative order of equal elements (important for multi-level sorting). For primitive types, use sort.Ints, sort.Strings, sort.Float64s.
+
+### Recipe 5: Remove Duplicates
+
+**Problem**: You need to remove duplicate values from a slice.
+
+**Solution**:
+
+```go
+package main
+
+import "fmt"
+
+// Basic example - Remove duplicates using map
+func RemoveDuplicates[T comparable](slice []T) []T {
+	seen := make(map[T]bool)
+	result := make([]T, 0, len(slice))
+
+	for _, item := range slice {
+		if !seen[item] {
+			seen[item] = true
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
+func main() {
+	numbers := []int{1, 2, 2, 3, 3, 3, 4, 5, 5}
+	unique := RemoveDuplicates(numbers)
+	fmt.Println("Unique numbers:", unique)
+	// Output: Unique numbers: [1 2 3 4 5]
+
+	words := []string{"apple", "banana", "apple", "cherry", "banana"}
+	uniqueWords := RemoveDuplicates(words)
+	fmt.Println("Unique words:", uniqueWords)
+	// Output: Unique words: [apple banana cherry]
+}
+```
+
+RemoveDuplicates uses a map to track seen items, preserving the first occurrence of each unique element. The `comparable` constraint ensures items can be used as map keys. Order is preserved.
+
+```go
+// Advanced example - Remove duplicates from complex objects
+type User struct {
+	ID    int
+	Name  string
+	Email string
+}
+
+func RemoveDuplicatesByKey[T any, K comparable](slice []T, keyFunc func(T) K) []T {
+	seen := make(map[K]bool)
+	result := make([]T, 0, len(slice))
+
+	for _, item := range slice {
+		key := keyFunc(item)
+		if !seen[key] {
+			seen[key] = true
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
+func main() {
+	users := []User{
+		{1, "Alice", "alice@example.com"},
+		{2, "Bob", "bob@example.com"},
+		{3, "Alice", "alice2@example.com"}, // Duplicate name
+		{4, "Charlie", "charlie@example.com"},
+		{5, "Bob", "bob2@example.com"}, // Duplicate name
+	}
+
+	// Remove duplicates by name
+	uniqueByName := RemoveDuplicatesByKey(users, func(u User) string {
+		return u.Name
+	})
+
+	fmt.Println("Unique by name:")
+	for _, u := range uniqueByName {
+		fmt.Printf("%s (%s)\n", u.Name, u.Email)
+	}
+	// Output: Alice (alice@example.com)
+	//         Bob (bob@example.com)
+	//         Charlie (charlie@example.com)
+
+	// Remove duplicates by email
+	uniqueByEmail := RemoveDuplicatesByKey(users, func(u User) string {
+		return u.Email
+	})
+
+	fmt.Println("\nUnique by email:")
+	fmt.Printf("Count: %d users\n", len(uniqueByEmail))
+	// Output: Count: 5 users
+}
+```
+
+**When to use**: Deduplicating user input, cleaning data sets, ensuring unique IDs, or removing redundant items. Use RemoveDuplicates for simple types. For complex objects, use RemoveDuplicatesByKey with a key extraction function. For set operations (union, intersection), use map-based approaches.
+
+### Recipe 6: Find Min/Max
+
+**Problem**: You need to find the minimum or maximum value in a slice.
+
+**Solution**:
+
+```go
+package main
+
+import "fmt"
+
+// Basic example - Find min and max with generics
+type Ordered interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+		~float32 | ~float64 | ~string
+}
+
+func Min[T Ordered](slice []T) (T, bool) {
+	if len(slice) == 0 {
+		var zero T
+		return zero, false
+	}
+
+	min := slice[0]
+	for _, item := range slice[1:] {
+		if item < min {
+			min = item
+		}
+	}
+	return min, true
+}
+
+func Max[T Ordered](slice []T) (T, bool) {
+	if len(slice) == 0 {
+		var zero T
+		return zero, false
+	}
+
+	max := slice[0]
+	for _, item := range slice[1:] {
+		if item > max {
+			max = item
+		}
+	}
+	return max, true
+}
+
+func main() {
+	numbers := []int{3, 1, 4, 1, 5, 9, 2, 6}
+
+	min, _ := Min(numbers)
+	max, _ := Max(numbers)
+
+	fmt.Printf("Min: %d, Max: %d\n", min, max)
+	// Output: Min: 1, Max: 9
+
+	prices := []float64{99.99, 25.50, 149.99, 75.00}
+	minPrice, _ := Min(prices)
+	maxPrice, _ := Max(prices)
+
+	fmt.Printf("Price range: $%.2f - $%.2f\n", minPrice, maxPrice)
+	// Output: Price range: $25.50 - $149.99
+}
+```
+
+Min and Max use the Ordered constraint to work with any comparable numeric or string type. They return the value and a boolean indicating whether the slice was non-empty. The `~` allows underlying types (like type aliases) to match.
+
+```go
+// Advanced example - Find min/max by custom comparison
+type Product struct {
+	Name  string
+	Price float64
+	Stock int
+}
+
+func MinBy[T any](slice []T, less func(T, T) bool) (T, bool) {
+	if len(slice) == 0 {
+		var zero T
+		return zero, false
+	}
+
+	min := slice[0]
+	for _, item := range slice[1:] {
+		if less(item, min) {
+			min = item
+		}
+	}
+	return min, true
+}
+
+func MaxBy[T any](slice []T, less func(T, T) bool) (T, bool) {
+	if len(slice) == 0 {
+		var zero T
+		return zero, false
+	}
+
+	max := slice[0]
+	for _, item := range slice[1:] {
+		if less(max, item) {
+			max = item
+		}
+	}
+	return max, true
+}
+
+func main() {
+	products := []Product{
+		{"Laptop", 999.99, 10},
+		{"Mouse", 25.00, 50},
+		{"Keyboard", 75.00, 30},
+		{"Monitor", 299.99, 15},
+	}
+
+	// Find cheapest product
+	cheapest, _ := MinBy(products, func(a, b Product) bool {
+		return a.Price < b.Price
+	})
+	fmt.Printf("Cheapest: %s ($%.2f)\n", cheapest.Name, cheapest.Price)
+	// Output: Cheapest: Mouse ($25.00)
+
+	// Find most expensive product
+	expensive, _ := MaxBy(products, func(a, b Product) bool {
+		return a.Price < b.Price
+	})
+	fmt.Printf("Most expensive: %s ($%.2f)\n", expensive.Name, expensive.Price)
+	// Output: Most expensive: Laptop ($999.99)
+
+	// Find product with highest stock
+	highestStock, _ := MaxBy(products, func(a, b Product) bool {
+		return a.Stock < b.Stock
+	})
+	fmt.Printf("Highest stock: %s (%d units)\n", highestStock.Name, highestStock.Stock)
+	// Output: Highest stock: Mouse (50 units)
+}
+```
+
+**When to use**: Finding extremes in data, identifying best/worst items, price comparisons, or range calculations. Use Min/Max for numeric types with natural ordering. Use MinBy/MaxBy for custom comparisons on complex objects. Always check the boolean return value to handle empty slices safely.
+
+---
+
+## 🔷 String Manipulation
+
+Work with strings effectively using Go's `strings` and `fmt` packages.
+
+### Recipe 7: Split and Join Strings
+
+**Problem**: You need to split a string into parts or join parts into a string.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+// Basic example - Split and join operations
+func main() {
+	// Split string by delimiter
+	csv := "apple,banana,cherry,date"
+	fruits := strings.Split(csv, ",")
+	fmt.Println("Fruits:", fruits)
+	// Output: Fruits: [apple banana cherry date]
+
+	// Join slice into string
+	joined := strings.Join(fruits, " | ")
+	fmt.Println("Joined:", joined)
+	// Output: Joined: apple | banana | cherry | date
+
+	// Split by whitespace
+	sentence := "  hello   world  go  "
+	words := strings.Fields(sentence) // Removes extra whitespace
+	fmt.Println("Words:", words)
+	// Output: Words: [hello world go]
+
+	// Split with limit
+	path := "user/docs/project/file.txt"
+	parts := strings.SplitN(path, "/", 2) // Split into 2 parts max
+	fmt.Println("Parts:", parts)
+	// Output: Parts: [user docs/project/file.txt]
+}
+```
+
+strings.Split divides a string by a delimiter into a slice. strings.Join combines a slice into a string with a separator. strings.Fields splits on any whitespace and removes empty strings.
+
+```go
+// Advanced example - Complex splitting and parsing
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	// Parse CSV with quotes (simple parser)
+	csvLine := `"John Doe","30","New York, NY"`
+
+	// Split by comma, but handle quoted values
+	fields := strings.Split(csvLine, ",")
+	for i, field := range fields {
+		// Remove quotes
+		fields[i] = strings.Trim(field, `"`)
+	}
+	fmt.Printf("Name: %s, Age: %s, City: %s\n", fields[0], fields[1], fields[2])
+	// Output: Name: John Doe, Age: 30, City: New York, NY
+
+	// Split by multiple delimiters
+	text := "apple;banana,cherry|date"
+	replacer := strings.NewReplacer(";", ",", "|", ",")
+	normalized := replacer.Replace(text)
+	items := strings.Split(normalized, ",")
+	fmt.Println("Items:", items)
+	// Output: Items: [apple banana cherry date]
+
+	// Build path safely
+	pathParts := []string{"users", "john", "documents", "file.txt"}
+	fullPath := strings.Join(pathParts, "/")
+	fmt.Println("Path:", fullPath)
+	// Output: Path: users/john/documents/file.txt
+
+	// Split lines preserving empty lines
+	multiline := "line1\n\nline3\nline4"
+	lines := strings.Split(multiline, "\n")
+	fmt.Printf("Lines: %v (count: %d)\n", lines, len(lines))
+	// Output: Lines: [line1  line3 line4] (count: 4)
+}
+```
+
+**When to use**: Parsing CSV/TSV files, processing command-line arguments, splitting paths or URLs, or building strings from parts. Use Split for fixed delimiters. Use Fields for whitespace-separated values. Use SplitN when you need to limit the number of splits. For complex parsing, consider using csv package or regex.
+
+### Recipe 8: Format Strings with Variables
+
+**Problem**: You need to format strings with dynamic values.
+
+**Solution**:
+
+```go
+package main
+
+import "fmt"
+
+// Basic example - String formatting with fmt
+func main() {
+	name := "Alice"
+	age := 30
+	balance := 1234.56
+
+	// Basic string interpolation
+	message := fmt.Sprintf("Hello, %s! You are %d years old.", name, age)
+	fmt.Println(message)
+	// Output: Hello, Alice! You are 30 years old.
+
+	// Number formatting
+	fmt.Printf("Balance: $%.2f\n", balance)
+	// Output: Balance: $1234.56
+
+	// Multiple values
+	fmt.Printf("Name: %s, Age: %d, Balance: $%.2f\n", name, age, balance)
+	// Output: Name: Alice, Age: 30, Balance: $1234.56
+
+	// Width and alignment
+	fmt.Printf("%-10s: %5d\n", "Alice", 30)    // Left-align name, right-align number
+	fmt.Printf("%-10s: %5d\n", "Bob", 25)
+	// Output: Alice     :    30
+	//         Bob       :    25
+}
+```
+
+fmt.Sprintf returns a formatted string. fmt.Printf prints directly to stdout. Format verbs: %s (string), %d (integer), %f (float), %.2f (float with 2 decimals). Width and alignment: %5d (right-align in 5 chars), %-10s (left-align in 10 chars).
+
+```go
+// Advanced example - Complex formatting scenarios
+import (
+	"fmt"
+	"strings"
+)
+
+type User struct {
+	ID       int
+	Username string
+	Email    string
+	IsActive bool
+}
+
+func main() {
+	user := User{
+		ID:       123,
+		Username: "alice",
+		Email:    "alice@example.com",
+		IsActive: true,
+	}
+
+	// Format struct with different verbs
+	fmt.Printf("User: %+v\n", user) // Include field names
+	// Output: User: {ID:123 Username:alice Email:alice@example.com IsActive:true}
+
+	fmt.Printf("User: %#v\n", user) // Go-syntax representation
+	// Output: User: main.User{ID:123, Username:"alice", Email:"alice@example.com", IsActive:true}
+
+	// Build formatted table
+	headers := []string{"ID", "Username", "Email", "Status"}
+	row1 := []interface{}{123, "alice", "alice@example.com", "active"}
+	row2 := []interface{}{456, "bob", "bob@example.com", "inactive"}
+
+	fmt.Printf("%-5s | %-10s | %-20s | %-8s\n", headers[0], headers[1], headers[2], headers[3])
+	fmt.Println(strings.Repeat("-", 50))
+	fmt.Printf("%-5d | %-10s | %-20s | %-8s\n", row1[0], row1[1], row1[2], row1[3])
+	fmt.Printf("%-5d | %-10s | %-20s | %-8s\n", row2[0], row2[1], row2[2], row2[3])
+	// Output: ID    | Username   | Email                | Status
+	//         --------------------------------------------------
+	//         123   | alice      | alice@example.com    | active
+	//         456   | bob        | bob@example.com      | inactive
+
+	// Format boolean as custom text
+	status := "inactive"
+	if user.IsActive {
+		status = "active"
+	}
+	fmt.Printf("Account status: %s\n", status)
+	// Output: Account status: active
+
+	// Hexadecimal and binary formatting
+	num := 255
+	fmt.Printf("Decimal: %d, Hex: %x, Hex (uppercase): %X, Binary: %b\n", num, num, num, num)
+	// Output: Decimal: 255, Hex: ff, Hex (uppercase): FF, Binary: 11111111
+}
+```
+
+**When to use**: Logging, building error messages, generating reports, formatting output for display, or creating SQL queries (use parameterized queries for production). Use %+v for debugging structs. Use width/alignment for tables. Use Sprintf when you need the string for later use instead of immediate printing.
+
+### Recipe 9: Find and Replace in Strings
+
+**Problem**: You need to find and replace text in a string.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+// Basic example - Replace operations
+func main() {
+	text := "Hello World, Hello Go!"
+
+	// Replace all occurrences
+	replaced := strings.ReplaceAll(text, "Hello", "Hi")
+	fmt.Println(replaced)
+	// Output: Hi World, Hi Go!
+
+	// Replace limited occurrences
+	limited := strings.Replace(text, "Hello", "Hi", 1) // Replace first occurrence only
+	fmt.Println(limited)
+	// Output: Hi World, Hello Go!
+
+	// Case-insensitive check
+	contains := strings.Contains(strings.ToLower(text), "world")
+	fmt.Printf("Contains 'world': %v\n", contains)
+	// Output: Contains 'world': true
+
+	// Multiple replacements
+	html := "Hello <b>World</b>!"
+	replacer := strings.NewReplacer("<b>", "**", "</b>", "**")
+	markdown := replacer.Replace(html)
+	fmt.Println(markdown)
+	// Output: Hello **World**!
+}
+```
+
+strings.ReplaceAll replaces all occurrences. strings.Replace limits replacements with the n parameter (use -1 for all). strings.NewReplacer efficiently handles multiple replacements in a single pass.
+
+```go
+// Advanced example - Complex replacement scenarios
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	// Clean user input (remove sensitive data)
+	logMessage := "User login failed: username=admin, password=secret123, ip=192.168.1.1"
+
+	// Replace sensitive fields
+	sanitizer := strings.NewReplacer(
+		"password=secret123", "password=***",
+		"192.168.1.1", "xxx.xxx.xxx.xxx",
+	)
+	sanitized := sanitizer.Replace(logMessage)
+	fmt.Println("Sanitized:", sanitized)
+	// Output: Sanitized: User login failed: username=admin, password=***, ip=xxx.xxx.xxx.xxx
+
+	// Template replacement (simple)
+	template := "Hello, {{name}}! Your balance is ${{balance}}."
+	result := template
+	result = strings.ReplaceAll(result, "{{name}}", "Alice")
+	result = strings.ReplaceAll(result, "{{balance}}", "1234.56")
+	fmt.Println(result)
+	// Output: Hello, Alice! Your balance is $1234.56.
+
+	// Normalize whitespace
+	messyText := "Hello    World\n\n\nGo    Language  "
+	normalized := strings.Join(strings.Fields(messyText), " ")
+	fmt.Println("Normalized:", normalized)
+	// Output: Normalized: Hello World Go Language
+
+	// Chain replacements for cleanup
+	dirty := "  Hello   World!!!  "
+	clean := strings.TrimSpace(dirty)
+	clean = strings.ReplaceAll(clean, "!!!", "!")
+	clean = strings.Join(strings.Fields(clean), " ")
+	fmt.Println("Clean:", clean)
+	// Output: Clean: Hello World!
+
+	// Bulk string transformations
+	oldTerms := []string{"color", "flavor", "center"}
+	newTerms := []string{"colour", "flavour", "centre"}
+	britishText := "I like the color and flavor of this center piece."
+
+	for i := range oldTerms {
+		britishText = strings.ReplaceAll(britishText, oldTerms[i], newTerms[i])
+	}
+	fmt.Println("British:", britishText)
+	// Output: British: I like the colour and flavour of this centre piece.
+}
+```
+
+**When to use**: Sanitizing user input, cleaning logs, template substitution, text normalization, or converting formats. Use ReplaceAll for simple substitutions. Use NewReplacer for multiple replacements (more efficient). For complex patterns, use regexp package. Always validate after replacement for security-sensitive operations.
+
+### Recipe 10: Regular Expression Matching
+
+**Problem**: You need to match or validate strings with patterns.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+// Basic example - Pattern matching with regex
+func main() {
+	// Email validation pattern
+	emailPattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	emailRegex := regexp.MustCompile(emailPattern)
+
+	// Test emails
+	emails := []string{
+		"alice@example.com",
+		"invalid.email",
+		"bob.smith+tag@company.co.uk",
+	}
+
+	for _, email := range emails {
+		if emailRegex.MatchString(email) {
+			fmt.Printf("✓ %s is valid\n", email)
+		} else {
+			fmt.Printf("✗ %s is invalid\n", email)
+		}
+	}
+	// Output: ✓ alice@example.com is valid
+	//         ✗ invalid.email is invalid
+	//         ✓ bob.smith+tag@company.co.uk is valid
+
+	// Extract matches
+	text := "Contact us at support@example.com or sales@example.com"
+	matches := emailRegex.FindAllString(text, -1)
+	fmt.Println("Found emails:", matches)
+	// Output: Found emails: [support@example.com sales@example.com]
+}
+```
+
+regexp.MustCompile compiles a regex pattern (panics on invalid patterns). MatchString checks if the string matches. FindAllString extracts all matches. Use `^` and `$` for exact matches (start/end of string).
+
+```go
+// Advanced example - Complex regex operations
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	// Phone number extraction with groups
+	phonePattern := `\((\d{3})\)\s*(\d{3})-(\d{4})`
+	phoneRegex := regexp.MustCompile(phonePattern)
+
+	text := "Call me at (555) 123-4567 or (555) 987-6543"
+
+	// Find with capture groups
+	matches := phoneRegex.FindAllStringSubmatch(text, -1)
+	for _, match := range matches {
+		fmt.Printf("Full: %s, Area: %s, Exchange: %s, Number: %s\n",
+			match[0], match[1], match[2], match[3])
+	}
+	// Output: Full: (555) 123-4567, Area: 555, Exchange: 123, Number: 4567
+	//         Full: (555) 987-6543, Area: 555, Exchange: 987, Number: 6543
+
+	// Replace with capture group references
+	formatted := phoneRegex.ReplaceAllString(text, "$1-$2-$3")
+	fmt.Println("Formatted:", formatted)
+	// Output: Formatted: Call me at 555-123-4567 or 555-987-6543
+
+	// Validate URL
+	urlPattern := `^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/.*)?$`
+	urlRegex := regexp.MustCompile(urlPattern)
+
+	urls := []string{
+		"https://example.com",
+		"http://sub.example.com/path/to/page",
+		"invalid-url",
+		"ftp://example.com",
+	}
+
+	for _, url := range urls {
+		valid := urlRegex.MatchString(url)
+		fmt.Printf("%-40s: %v\n", url, valid)
+	}
+	// Output: https://example.com                    : true
+	//         http://sub.example.com/path/to/page    : true
+	//         invalid-url                            : false
+	//         ftp://example.com                      : false
+
+	// Extract and transform
+	logLine := "2025-12-18 10:30:45 ERROR Failed to connect: timeout"
+	logPattern := `(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) (\w+) (.+)`
+	logRegex := regexp.MustCompile(logPattern)
+
+	if match := logRegex.FindStringSubmatch(logLine); match != nil {
+		fmt.Printf("Date: %s\nTime: %s\nLevel: %s\nMessage: %s\n",
+			match[1], match[2], match[3], match[4])
+	}
+	// Output: Date: 2025-12-18
+	//         Time: 10:30:45
+	//         Level: ERROR
+	//         Message: Failed to connect: timeout
+}
+```
+
+**When to use**: Input validation (email, phone, URL), log parsing, data extraction from text, text transformation, or pattern-based search. Compile patterns once with MustCompile or Compile. Use FindAllStringSubmatch for capture groups. Use ReplaceAllString with $1, $2 for group references. For simple string operations, prefer strings package (faster).
+
+### Recipe 11: String Validation
+
+**Problem**: You need to validate strings against common criteria.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"regexp"
+	"strings"
+	"unicode"
+)
+
+// Basic example - Common string validations
+func IsValidUsername(username string) bool {
+	// 3-20 characters, alphanumeric and underscores only
+	if len(username) < 3 || len(username) > 20 {
+		return false
+	}
+	for _, ch := range username {
+		if !unicode.IsLetter(ch) && !unicode.IsDigit(ch) && ch != '_' {
+			return false
+		}
+	}
+	return true
+}
+
+func IsValidPassword(password string) bool {
+	// At least 8 characters, must have: uppercase, lowercase, digit
+	if len(password) < 8 {
+		return false
+	}
+
+	hasUpper := false
+	hasLower := false
+	hasDigit := false
+
+	for _, ch := range password {
+		if unicode.IsUpper(ch) {
+			hasUpper = true
+		}
+		if unicode.IsLower(ch) {
+			hasLower = true
+		}
+		if unicode.IsDigit(ch) {
+			hasDigit = true
+		}
+	}
+
+	return hasUpper && hasLower && hasDigit
+}
+
+func main() {
+	// Test usernames
+	usernames := []string{"alice", "ab", "user123", "user@name", "very_long_username_here_exceeds_limit"}
+	for _, username := range usernames {
+		valid := IsValidUsername(username)
+		fmt.Printf("%-40s: %v\n", username, valid)
+	}
+	// Output: alice                                   : true
+	//         ab                                      : false
+	//         user123                                 : true
+	//         user@name                               : false
+	//         very_long_username_here_exceeds_limit  : false
+
+	// Test passwords
+	passwords := []string{"short", "alllowercase", "ALLUPPERCASE", "Password123"}
+	for _, password := range passwords {
+		valid := IsValidPassword(password)
+		fmt.Printf("%-15s: %v\n", password, valid)
+	}
+	// Output: short          : false
+	//         alllowercase   : false
+	//         ALLUPPERCASE   : false
+	//         Password123    : true
+}
+```
+
+String validation uses unicode package for character type checking and custom logic for business rules. Check length first for performance. Iterate once through the string collecting flags for multiple conditions.
+
+```go
+// Advanced example - Comprehensive validation suite
+import (
+	"fmt"
+	"net/mail"
+	"regexp"
+	"strings"
+	"unicode"
+)
+
+type ValidationError struct {
+	Field   string
+	Message string
+}
+
+func (e ValidationError) Error() string {
+	return fmt.Sprintf("%s: %s", e.Field, e.Message)
+}
+
+// Email validation using standard library
+func ValidateEmail(email string) error {
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		return ValidationError{"email", "invalid email format"}
+	}
+	return nil
+}
+
+// URL validation
+func ValidateURL(url string) error {
+	pattern := `^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/.*)?$`
+	matched, _ := regexp.MatchString(pattern, url)
+	if !matched {
+		return ValidationError{"url", "invalid URL format"}
+	}
+	return nil
+}
+
+// Phone validation (US format)
+func ValidatePhone(phone string) error {
+	// Remove common separators
+	cleaned := strings.Map(func(r rune) rune {
+		if unicode.IsDigit(r) {
+			return r
+		}
+		return -1
+	}, phone)
+
+	if len(cleaned) != 10 {
+		return ValidationError{"phone", "must be 10 digits"}
+	}
+	return nil
+}
+
+func main() {
+	// Email validation
+	emails := []string{"alice@example.com", "invalid", "bob@company.co.uk"}
+	for _, email := range emails {
+		err := ValidateEmail(email)
+		if err != nil {
+			fmt.Printf("✗ %s: %v\n", email, err)
+		} else {
+			fmt.Printf("✓ %s is valid\n", email)
+		}
+	}
+
+	// Phone validation
+	phones := []string{"(555) 123-4567", "555-1234", "5551234567"}
+	for _, phone := range phones {
+		err := ValidatePhone(phone)
+		if err != nil {
+			fmt.Printf("✗ %s: %v\n", phone, err)
+		} else {
+			fmt.Printf("✓ %s is valid\n", phone)
+		}
+	}
+}
+```
+
+**When to use**: User input validation, form processing, API request validation, or data cleaning. Use net/mail for email validation. Use unicode package for character type checks. Implement custom validators for business logic. Use regexp for complex patterns. For production, consider validation libraries like go-playground/validator.
+
+---
+
+## 🔷 File and I/O Operations
+
+Master file operations for reading, writing, and managing files in Go.
+
+### Recipe 12: Read File to String
+
+**Problem**: You need to read an entire file into a string.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+// Basic example - Read entire file
+func main() {
+	// Read file to byte slice (Go 1.16+)
+	content, err := os.ReadFile("config.txt")
+	if err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		return
+	}
+
+	// Convert bytes to string
+	text := string(content)
+	fmt.Println("File content:")
+	fmt.Println(text)
+	// Output: File content:
+	//         [contents of config.txt]
+
+	// Check file size
+	fmt.Printf("\nFile size: %d bytes\n", len(content))
+}
+```
+
+os.ReadFile reads the entire file into memory as a byte slice. Convert to string with string(). This is the simplest approach for small files. For large files, use buffered reading to avoid loading everything into memory.
+
+```go
+// Advanced example - Read with error handling and buffering
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
+// Read file line by line (memory efficient for large files)
+func ReadFileLines(filename string) ([]string, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+
+	// Optional: increase buffer size for long lines
+	const maxCapacity = 1024 * 1024 // 1MB
+	buf := make([]byte, maxCapacity)
+	scanner.Buffer(buf, maxCapacity)
+
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("error reading file: %w", err)
+	}
+
+	return lines, nil
+}
+
+// Read file in chunks (for very large files)
+func ReadFileChunks(filename string, chunkSize int) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	buffer := make([]byte, chunkSize)
+	totalBytes := 0
+
+	for {
+		n, err := file.Read(buffer)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		if n == 0 {
+			break
+		}
+
+		// Process chunk
+		totalBytes += n
+		fmt.Printf("Read chunk: %d bytes\n", n)
+	}
+
+	fmt.Printf("Total bytes read: %d\n", totalBytes)
+	return nil
+}
+
+func main() {
+	// Read file line by line
+	lines, err := ReadFileLines("data.txt")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Read %d lines\n", len(lines))
+
+	// Process lines
+	for i, line := range lines {
+		if strings.TrimSpace(line) == "" {
+			continue // Skip empty lines
+		}
+		fmt.Printf("Line %d: %s\n", i+1, line)
+	}
+
+	// Read large file in chunks
+	if err := ReadFileChunks("large-file.bin", 4096); err != nil {
+		fmt.Printf("Error reading chunks: %v\n", err)
+	}
+}
+```
+
+**When to use**: Reading configuration files, loading templates, parsing logs, or processing text data. Use os.ReadFile for small files (< 100MB). Use bufio.Scanner for line-by-line reading (memory efficient). Use chunked reading for very large files or binary data. Always use defer file.Close() to prevent resource leaks.
+
+### Recipe 13: Write String to File
+
+**Problem**: You need to write data to a file.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+// Basic example - Write to file
+func main() {
+	content := "Hello, World!\nThis is a test file.\n"
+
+	// Write entire content at once (Go 1.16+)
+	err := os.WriteFile("output.txt", []byte(content), 0644)
+	if err != nil {
+		fmt.Printf("Error writing file: %v\n", err)
+		return
+	}
+
+	fmt.Println("File written successfully")
+	// Output: File written successfully
+
+	// Verify by reading back
+	data, _ := os.ReadFile("output.txt")
+	fmt.Printf("Written content:\n%s", string(data))
+	// Output: Written content:
+	//         Hello, World!
+	//         This is a test file.
+}
+```
+
+os.WriteFile writes data to a file, creating it if it doesn't exist or truncating if it does. The third parameter (0644) sets file permissions: owner read/write, group/others read-only. Convert string to []byte before writing.
+
+```go
+// Advanced example - Buffered writing and append mode
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+// Write with buffered writer (efficient for multiple writes)
+func WriteFileBuffered(filename string, lines []string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
+	defer writer.Flush() // Important: flush buffer before closing
+
+	for _, line := range lines {
+		_, err := writer.WriteString(line + "\n")
+		if err != nil {
+			return fmt.Errorf("failed to write line: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// Append to existing file
+func AppendToFile(filename string, content string) error {
+	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
+	defer writer.Flush()
+
+	_, err = writer.WriteString(content + "\n")
+	return err
+}
+
+// Atomic write (write to temp file, then rename)
+func WriteFileAtomic(filename string, content []byte) error {
+	tempFile := filename + ".tmp"
+
+	// Write to temp file
+	err := os.WriteFile(tempFile, content, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write temp file: %w", err)
+	}
+
+	// Rename temp file to target (atomic operation)
+	err = os.Rename(tempFile, filename)
+	if err != nil {
+		os.Remove(tempFile) // Clean up temp file on error
+		return fmt.Errorf("failed to rename file: %w", err)
+	}
+
+	return nil
+}
+
+func main() {
+	// Buffered write
+	lines := []string{
+		"Line 1: First line",
+		"Line 2: Second line",
+		"Line 3: Third line",
+	}
+
+	if err := WriteFileBuffered("buffered.txt", lines); err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println("Buffered write complete")
+
+	// Append to file
+	if err := AppendToFile("buffered.txt", "Line 4: Appended line"); err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println("Append complete")
+
+	// Read back to verify
+	content, _ := os.ReadFile("buffered.txt")
+	fmt.Printf("Final content:\n%s", string(content))
+	// Output: Final content:
+	//         Line 1: First line
+	//         Line 2: Second line
+	//         Line 3: Third line
+	//         Line 4: Appended line
+
+	// Atomic write (safe for concurrent access)
+	data := []byte("Critical configuration data")
+	if err := WriteFileAtomic("config.json", data); err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+	fmt.Println("Atomic write complete")
+}
+```
+
+**When to use**: Saving configuration, writing logs, exporting data, or generating reports. Use os.WriteFile for simple one-time writes. Use bufio.Writer for multiple writes (better performance). Use append mode for logs. Use atomic writes for critical files (prevents corruption if interrupted). Always flush buffered writers before closing.
+
+### Recipe 14: List Files in Directory
+
+**Problem**: You need to list all files in a directory.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+)
+
+// Basic example - List files in directory
+func main() {
+	// Read directory entries
+	entries, err := os.ReadDir(".")
+	if err != nil {
+		fmt.Printf("Error reading directory: %v\n", err)
+		return
+	}
+
+	fmt.Println("Files in current directory:")
+	for _, entry := range entries {
+		// Get file info
+		info, _ := entry.Info()
+
+		fileType := "file"
+		if entry.IsDir() {
+			fileType = "dir "
+		}
+
+		fmt.Printf("[%s] %-30s %10d bytes\n", fileType, entry.Name(), info.Size())
+	}
+	// Output: [dir ] documents                      4096 bytes
+	//         [file] config.txt                      1234 bytes
+	//         [file] data.json                       5678 bytes
+}
+```
+
+os.ReadDir reads directory entries efficiently. entry.IsDir() checks if it's a directory. entry.Info() gets detailed file information (size, modification time, permissions). Use filepath.Join to build paths safely.
+
+```go
+// Advanced example - Recursive directory traversal and filtering
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+// Walk directory recursively
+func WalkDirectory(root string) error {
+	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip hidden files
+		if strings.HasPrefix(info.Name(), ".") {
+			if info.IsDir() {
+				return filepath.SkipDir // Skip entire directory
+			}
+			return nil // Skip file
+		}
+
+		indent := strings.Repeat("  ", strings.Count(path, string(os.PathSeparator)))
+		if info.IsDir() {
+			fmt.Printf("%s📁 %s/\n", indent, info.Name())
+		} else {
+			fmt.Printf("%s📄 %s (%d bytes)\n", indent, info.Name(), info.Size())
+		}
+
+		return nil
+	})
+}
+
+// Find files by extension
+func FindFilesByExtension(root string, ext string) ([]string, error) {
+	var matches []string
+
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && filepath.Ext(path) == ext {
+			matches = append(matches, path)
+		}
+
+		return nil
+	})
+
+	return matches, err
+}
+
+// Get directory statistics
+type DirStats struct {
+	FileCount int
+	DirCount  int
+	TotalSize int64
+}
+
+func GetDirStats(root string) (*DirStats, error) {
+	stats := &DirStats{}
+
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			stats.DirCount++
+		} else {
+			stats.FileCount++
+			stats.TotalSize += info.Size()
+		}
+
+		return nil
+	})
+
+	return stats, err
+}
+
+func main() {
+	// Recursive walk
+	fmt.Println("Directory structure:")
+	if err := WalkDirectory("."); err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+
+	// Find all Go files
+	goFiles, err := FindFilesByExtension(".", ".go")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("\nFound %d Go files:\n", len(goFiles))
+	for _, file := range goFiles {
+		fmt.Printf("  - %s\n", file)
+	}
+
+	// Get statistics
+	stats, err := GetDirStats(".")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("\nDirectory statistics:\n")
+	fmt.Printf("Files: %d\n", stats.FileCount)
+	fmt.Printf("Directories: %d\n", stats.DirCount)
+	fmt.Printf("Total size: %d bytes (%.2f MB)\n", stats.TotalSize, float64(stats.TotalSize)/1024/1024)
+}
+```
+
+**When to use**: Building file browsers, processing multiple files, finding files by pattern, or calculating directory sizes. Use os.ReadDir for single directory listing. Use filepath.Walk for recursive traversal. Use filepath.Glob for pattern matching. Return filepath.SkipDir to skip directories. Always handle errors in walk function.
+
+### Recipe 15: Create Directory
+
+**Problem**: You need to create directories for organizing files.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+// Basic example - Create directories
+func main() {
+	// Create single directory
+	err := os.Mkdir("temp", 0755)
+	if err != nil {
+		if os.IsExist(err) {
+			fmt.Println("Directory already exists")
+		} else {
+			fmt.Printf("Error creating directory: %v\n", err)
+			return
+		}
+	} else {
+		fmt.Println("Directory created: temp/")
+	}
+
+	// Create nested directories (creates all parents)
+	err = os.MkdirAll("data/2025/12", 0755)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println("Directory tree created: data/2025/12/")
+
+	// Verify directory exists
+	if _, err := os.Stat("data/2025/12"); err == nil {
+		fmt.Println("✓ Directory verified")
+	}
+	// Output: Directory created: temp/
+	//         Directory tree created: data/2025/12/
+	//         ✓ Directory verified
+}
+```
+
+os.Mkdir creates a single directory (fails if parent doesn't exist). os.MkdirAll creates directory and all parent directories (like mkdir -p). Permissions 0755 = owner rwx, group rx, others rx. Use os.IsExist to check if directory already exists.
+
+```go
+// Advanced example - Safe directory creation with cleanup
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+)
+
+// Create directory with validation
+func CreateDirSafe(path string) error {
+	// Check if path exists
+	info, err := os.Stat(path)
+	if err == nil {
+		// Path exists - check if it's a directory
+		if !info.IsDir() {
+			return fmt.Errorf("path exists but is not a directory: %s", path)
+		}
+		return nil // Directory already exists
+	}
+
+	// Path doesn't exist - create it
+	if os.IsNotExist(err) {
+		if err := os.MkdirAll(path, 0755); err != nil {
+			return fmt.Errorf("failed to create directory: %w", err)
+		}
+		return nil
+	}
+
+	// Other error
+	return fmt.Errorf("failed to stat path: %w", err)
+}
+
+// Create temporary directory
+func CreateTempDir(pattern string) (string, error) {
+	tempDir, err := os.MkdirTemp("", pattern)
+	if err != nil {
+		return "", fmt.Errorf("failed to create temp dir: %w", err)
+	}
+	return tempDir, nil
+}
+
+// Create directory structure for project
+func CreateProjectStructure(root string) error {
+	dirs := []string{
+		filepath.Join(root, "src"),
+		filepath.Join(root, "tests"),
+		filepath.Join(root, "docs"),
+		filepath.Join(root, "config"),
+		filepath.Join(root, "data", "input"),
+		filepath.Join(root, "data", "output"),
+	}
+
+	for _, dir := range dirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return fmt.Errorf("failed to create %s: %w", dir, err)
+		}
+		fmt.Printf("Created: %s\n", dir)
+	}
+
+	return nil
+}
+
+func main() {
+	// Safe directory creation
+	if err := CreateDirSafe("output"); err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println("✓ Directory ready: output/")
+
+	// Create temporary directory
+	tempDir, err := CreateTempDir("myapp-")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	defer os.RemoveAll(tempDir) // Clean up when done
+	fmt.Printf("✓ Temp directory: %s\n", tempDir)
+	// Output: ✓ Temp directory: /tmp/myapp-1234567890
+
+	// Create project structure
+	if err := CreateProjectStructure("myproject"); err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println("✓ Project structure created")
+	// Output: Created: myproject/src
+	//         Created: myproject/tests
+	//         Created: myproject/docs
+	//         Created: myproject/config
+	//         Created: myproject/data/input
+	//         Created: myproject/data/output
+	//         ✓ Project structure created
+}
+```
+
+**When to use**: Organizing output files, creating build directories, setting up project structure, or managing temporary files. Use os.MkdirAll for most cases (safe, creates parents). Use os.MkdirTemp for temporary directories. Use os.IsExist to handle existing directories gracefully. Always set appropriate permissions (0755 for directories, 0644 for files).
+
+---
+
+## 🔷 Date and Time Operations
+
+Working with dates and times is a common task in Go. The time package provides comprehensive support for parsing, formatting, and manipulating temporal data.
+
+### Recipe 16: Format and Parse Dates
+
+**Problem**: You need to convert between time.Time and string representations.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Get current time
+	now := time.Now()
+	fmt.Println("Current time:", now)
+	// Output: Current time: 2025-12-18 14:30:45.123456 +0700 WIB
+
+	// Format using layout constants
+	fmt.Println("RFC3339:", now.Format(time.RFC3339))
+	// Output: RFC3339: 2025-12-18T14:30:45+07:00
+
+	fmt.Println("Date only:", now.Format("2006-01-02"))
+	// Output: Date only: 2025-12-18
+
+	fmt.Println("Time only:", now.Format("15:04:05"))
+	// Output: Time only: 14:30:45
+
+	// Custom format (reference time: Jan 2 15:04:05 2006 MST)
+	custom := now.Format("Monday, January 2, 2006 at 3:04 PM")
+	fmt.Println("Custom:", custom)
+	// Output: Custom: Wednesday, December 18, 2025 at 2:30 PM
+
+	// Parse string to time
+	dateStr := "2025-12-25"
+	christmas, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		fmt.Println("Parse error:", err)
+	}
+	fmt.Println("Christmas:", christmas)
+	// Output: Christmas: 2025-12-25 00:00:00 +0000 UTC
+}
+```
+
+**Advanced example - Multiple formats and timezone handling**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+// ParseFlexible tries multiple date formats
+func ParseFlexible(dateStr string) (time.Time, error) {
+	formats := []string{
+		time.RFC3339,
+		"2006-01-02",
+		"2006-01-02 15:04:05",
+		"01/02/2006",
+		"January 2, 2006",
+		"2 Jan 2006",
+	}
+
+	for _, format := range formats {
+		t, err := time.Parse(format, dateStr)
+		if err == nil {
+			return t, nil
+		}
+	}
+
+	return time.Time{}, fmt.Errorf("unable to parse date: %s", dateStr)
+}
+
+func main() {
+	// Test various formats
+	dates := []string{
+		"2025-12-18",
+		"12/18/2025",
+		"December 18, 2025",
+		"18 Dec 2025",
+	}
+
+	for _, dateStr := range dates {
+		parsed, err := ParseFlexible(dateStr)
+		if err != nil {
+			fmt.Printf("✗ Failed to parse: %s\n", dateStr)
+			continue
+		}
+		fmt.Printf("✓ Parsed '%s' → %s\n", dateStr, parsed.Format("2006-01-02"))
+	}
+
+	// Work with timezones
+	location, _ := time.LoadLocation("America/New_York")
+	nyTime := time.Now().In(location)
+	fmt.Printf("\nNew York time: %s\n", nyTime.Format(time.RFC3339))
+
+	// Convert between timezones
+	jakartaLoc, _ := time.LoadLocation("Asia/Jakarta")
+	jakartaTime := nyTime.In(jakartaLoc)
+	fmt.Printf("Jakarta time: %s\n", jakartaTime.Format(time.RFC3339))
+	// Shows same instant, different timezone
+}
+```
+
+**When to use**: Converting between time.Time and strings for APIs, logs, or user interfaces. Use time.RFC3339 for machine-readable formats. Use custom formats for human-readable display. Always handle parse errors. Use LoadLocation for timezone-aware operations.
+
+**See Also**:
+
+- [Recipe 17: Calculate Time Differences](#recipe-17-calculate-time-differences) - Duration operations
+- [Recipe 18: Time Comparisons and Scheduling](#recipe-18-time-comparisons-and-scheduling) - Time logic
+
+---
+
+### Recipe 17: Calculate Time Differences
+
+**Problem**: You need to calculate durations between times or add/subtract time periods.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Create two times
+	start := time.Date(2025, 12, 1, 9, 0, 0, 0, time.UTC)
+	end := time.Date(2025, 12, 18, 14, 30, 0, 0, time.UTC)
+
+	// Calculate duration
+	duration := end.Sub(start)
+	fmt.Println("Duration:", duration)
+	// Output: Duration: 413h30m0s
+
+	// Extract components
+	hours := duration.Hours()
+	days := hours / 24
+	fmt.Printf("Days: %.2f, Hours: %.2f\n", days, hours)
+	// Output: Days: 17.23, Hours: 413.50
+
+	// Add/subtract durations
+	tomorrow := time.Now().Add(24 * time.Hour)
+	fmt.Println("Tomorrow:", tomorrow.Format("2006-01-02"))
+
+	weekAgo := time.Now().Add(-7 * 24 * time.Hour)
+	fmt.Println("Week ago:", weekAgo.Format("2006-01-02"))
+
+	// Add months/years (AddDate)
+	nextMonth := time.Now().AddDate(0, 1, 0)
+	fmt.Println("Next month:", nextMonth.Format("2006-01-02"))
+
+	nextYear := time.Now().AddDate(1, 0, 0)
+	fmt.Println("Next year:", nextYear.Format("2006-01-02"))
+}
+```
+
+**Advanced example - Business hours and working days**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+// IsWeekday returns true if the date is Monday-Friday
+func IsWeekday(t time.Time) bool {
+	weekday := t.Weekday()
+	return weekday != time.Saturday && weekday != time.Sunday
+}
+
+// IsBusinessHour returns true if time is between 9 AM and 5 PM on weekday
+func IsBusinessHour(t time.Time) bool {
+	if !IsWeekday(t) {
+		return false
+	}
+	hour := t.Hour()
+	return hour >= 9 && hour < 17
+}
+
+// AddBusinessDays adds n working days (skips weekends)
+func AddBusinessDays(start time.Time, days int) time.Time {
+	current := start
+	remaining := days
+
+	for remaining > 0 {
+		current = current.Add(24 * time.Hour)
+		if IsWeekday(current) {
+			remaining--
+		}
+	}
+
+	return current
+}
+
+// TimeUntil calculates time components until target
+func TimeUntil(target time.Time) string {
+	duration := time.Until(target)
+
+	if duration < 0 {
+		return "Time has passed"
+	}
+
+	days := int(duration.Hours() / 24)
+	hours := int(duration.Hours()) % 24
+	minutes := int(duration.Minutes()) % 60
+
+	return fmt.Sprintf("%d days, %d hours, %d minutes", days, hours, minutes)
+}
+
+func main() {
+	now := time.Now()
+
+	// Check business hours
+	fmt.Printf("Is business hour: %v\n", IsBusinessHour(now))
+
+	// Add 5 business days
+	deadline := AddBusinessDays(now, 5)
+	fmt.Printf("Deadline (5 business days): %s\n", deadline.Format("Monday, Jan 2"))
+
+	// Countdown to New Year
+	newYear := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	countdown := TimeUntil(newYear)
+	fmt.Printf("Time until New Year: %s\n", countdown)
+
+	// Calculate age
+	birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, time.UTC)
+	age := time.Since(birthDate)
+	years := int(age.Hours() / 24 / 365.25)
+	fmt.Printf("Age: %d years\n", years)
+}
+```
+
+**When to use**: Scheduling tasks, calculating deadlines, age calculations, or time tracking. Use Sub() for duration between times. Use Add() for simple offsets. Use AddDate() for calendar-aware additions (handles month/year boundaries). For business logic, implement custom functions that skip weekends and holidays.
+
+---
+
+### Recipe 18: Time Comparisons and Scheduling
+
+**Problem**: You need to compare times, check if deadlines have passed, or schedule recurring tasks.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	now := time.Now()
+	deadline := time.Now().Add(2 * time.Hour)
+	past := time.Now().Add(-1 * time.Hour)
+
+	// Compare times
+	fmt.Println("Now is before deadline:", now.Before(deadline))
+	// Output: Now is before deadline: true
+
+	fmt.Println("Now is after past:", now.After(past))
+	// Output: Now is after past: true
+
+	fmt.Println("Times equal:", now.Equal(deadline))
+	// Output: Times equal: false
+
+	// Check if deadline passed
+	if time.Now().After(deadline) {
+		fmt.Println("Deadline has passed!")
+	} else {
+		fmt.Println("Still within deadline")
+	}
+
+	// Truncate to day boundary
+	dayStart := now.Truncate(24 * time.Hour)
+	fmt.Println("Day start:", dayStart.Format("2006-01-02 15:04:05"))
+	// Output: Day start: 2025-12-18 00:00:00
+
+	// Round to nearest hour
+	rounded := now.Round(time.Hour)
+	fmt.Println("Rounded to hour:", rounded.Format("15:04:05"))
+}
+```
+
+**Advanced example - Task scheduler with deadlines**:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type Task struct {
+	Name     string
+	Deadline time.Time
+	Priority int
+}
+
+// IsOverdue checks if task deadline has passed
+func (t Task) IsOverdue() bool {
+	return time.Now().After(t.Deadline)
+}
+
+// TimeRemaining returns duration until deadline
+func (t Task) TimeRemaining() time.Duration {
+	return time.Until(t.Deadline)
+}
+
+// UrgencyLevel returns urgency based on time remaining
+func (t Task) UrgencyLevel() string {
+	remaining := t.TimeRemaining()
+
+	if remaining < 0 {
+		return "OVERDUE"
+	} else if remaining < 24*time.Hour {
+		return "URGENT"
+	} else if remaining < 7*24*time.Hour {
+		return "SOON"
+	}
+	return "NORMAL"
+}
+
+// ScheduleRecurring creates recurring task schedule
+func ScheduleRecurring(interval time.Duration, count int) []time.Time {
+	schedule := make([]time.Time, count)
+	next := time.Now()
+
+	for i := 0; i < count; i++ {
+		next = next.Add(interval)
+		schedule[i] = next
+	}
+
+	return schedule
+}
+
+func main() {
+	tasks := []Task{
+		{"Deploy to production", time.Now().Add(2 * time.Hour), 1},
+		{"Code review", time.Now().Add(6 * time.Hour), 2},
+		{"Write documentation", time.Now().Add(3 * 24 * time.Hour), 3},
+		{"Team meeting", time.Now().Add(-1 * time.Hour), 2}, // Overdue
+	}
+
+	// Check task status
+	for _, task := range tasks {
+		status := "✓"
+		if task.IsOverdue() {
+			status = "✗"
+		}
+
+		fmt.Printf("%s %s - %s (Priority: %d)\n",
+			status,
+			task.Name,
+			task.UrgencyLevel(),
+			task.Priority,
+		)
+
+		if !task.IsOverdue() {
+			remaining := task.TimeRemaining()
+			fmt.Printf("   Time remaining: %s\n", remaining.Round(time.Minute))
+		}
+	}
+
+	// Schedule weekly meetings
+	fmt.Println("\nUpcoming weekly meetings:")
+	meetings := ScheduleRecurring(7*24*time.Hour, 4)
+	for i, meeting := range meetings {
+		fmt.Printf("Meeting %d: %s\n", i+1, meeting.Format("Monday, Jan 2 at 3:04 PM"))
+	}
+
+	// Find next business day at 9 AM
+	nextDay := time.Now().AddDate(0, 0, 1)
+	nextBusinessDay := time.Date(
+		nextDay.Year(),
+		nextDay.Month(),
+		nextDay.Day(),
+		9, 0, 0, 0,
+		time.Local,
+	)
+	fmt.Printf("\nNext business day start: %s\n", nextBusinessDay.Format(time.RFC3339))
+}
+```
+
+**When to use**: Task scheduling, deadline tracking, recurring events, or time-based triggers. Use Before()/After()/Equal() for comparisons. Use Truncate() for day/hour boundaries. Use Round() for rounding to intervals. Implement custom scheduling logic for business requirements like working hours and recurring tasks.
+
+---
+
 ## 🔷 Generics Recipes
 
 Go 1.18+ introduced generics for type-safe reusable code. Here are practical recipes for common use cases.
 
-### Recipe 1: Generic Stack
+### Recipe 19: Generic Stack
 
 **Problem**: You need a type-safe stack data structure that works with any type.
 
@@ -135,7 +2351,7 @@ func main() {
 
 ---
 
-### Recipe 2: Generic Cache
+### Recipe 20: Generic Cache
 
 **Problem**: You need a simple in-memory cache that works with any key-value types.
 
@@ -211,7 +2427,7 @@ func main() {
 
 ---
 
-### Recipe 3: Generic Filter and Map
+### Recipe 21: Generic Filter and Map
 
 **Problem**: You want to filter and transform slices without writing repetitive code.
 
@@ -278,7 +2494,7 @@ func main() {
 
 ---
 
-### Recipe 4: Type Constraints for Numbers
+### Recipe 22: Type Constraints for Numbers
 
 **Problem**: You want to write generic math functions that work with all numeric types.
 
@@ -482,7 +2698,7 @@ sequenceDiagram
 - **Results Channel**: Collects completed work from all workers
 - **WaitGroup**: Ensures all workers finish before closing results channel
 
-### Recipe 5: Worker Pool
+### Recipe 23: Worker Pool
 
 **Problem**: You need to process many tasks concurrently with a fixed number of workers.
 
@@ -571,7 +2787,7 @@ func main() {
 
 ---
 
-### Recipe 6: Pipeline Pattern
+### Recipe 24: Pipeline Pattern
 
 **Problem**: You need to process data through multiple stages concurrently.
 
@@ -664,7 +2880,7 @@ graph TB
 
 ---
 
-### Recipe 7: WaitGroup Patterns
+### Recipe 25: WaitGroup Patterns
 
 **Problem**: You need to wait for multiple goroutines to complete.
 
@@ -704,7 +2920,7 @@ func main() {
 
 ---
 
-### Recipe 8: Mutex for Shared State
+### Recipe 26: Mutex for Shared State
 
 **Problem**: Multiple goroutines need to safely access shared data.
 
@@ -782,7 +2998,7 @@ func main() {
 
 ---
 
-### Recipe 9: Fan-Out, Fan-In
+### Recipe 27: Fan-Out, Fan-In
 
 **Problem**: You need to distribute work across multiple workers and collect results.
 
@@ -866,7 +3082,7 @@ func main() {
 
 Idiomatic Go error handling goes beyond simple `if err != nil` checks.
 
-### Recipe 10: Error Wrapping
+### Recipe 28: Error Wrapping
 
 **Problem**: You want to add context to errors while preserving the original error.
 
@@ -928,9 +3144,14 @@ func main() {
 
 **When to use**: When you want to add context to errors without losing the original error information.
 
+**See Also**:
+
+- [Recipe 29: Custom Error Types](#recipe-29-custom-error-types) - Structured errors
+- [Recipe 30: Error Collection](#recipe-30-error-collection) - Multiple error handling
+
 ---
 
-### Recipe 11: Custom Error Types
+### Recipe 29: Custom Error Types
 
 **Problem**: You need errors with additional structured data.
 
@@ -1002,7 +3223,7 @@ func main() {
 
 ---
 
-### Recipe 12: Error Collection
+### Recipe 30: Error Collection
 
 **Problem**: You need to collect multiple errors from concurrent operations.
 
@@ -1111,7 +3332,7 @@ func main() {
 
 Context is essential for cancellation, timeouts, and passing request-scoped values.
 
-### Recipe 13: Context with Timeout
+### Recipe 31: Context with Timeout
 
 **Problem**: You need to limit how long an operation can run.
 
@@ -1158,7 +3379,7 @@ func main() {
 
 ---
 
-### Recipe 14: Context Cancellation
+### Recipe 32: Context Cancellation
 
 **Problem**: You need to cancel an operation based on external events.
 
@@ -1209,7 +3430,7 @@ func main() {
 
 ---
 
-### Recipe 15: Context with Values
+### Recipe 33: Context with Values
 
 **Problem**: You need to pass request-scoped data through the call chain.
 
@@ -1272,7 +3493,7 @@ func main() {
 
 Go 1.16+ allows embedding files directly into your binary at compile time.
 
-### Recipe 16: Embed Static Files
+### Recipe 34: Embed Static Files
 
 **Problem**: You want to bundle static assets with your binary.
 
@@ -1309,7 +3530,7 @@ func main() {
 
 ---
 
-### Recipe 17: Embed Directory for Web Server
+### Recipe 35: Embed Directory for Web Server
 
 **Problem**: You want to serve static web files from an embedded directory.
 
@@ -1367,7 +3588,7 @@ myapp/
 
 ---
 
-### Recipe 18: Embed Templates
+### Recipe 36: Embed Templates
 
 **Problem**: You want to embed HTML templates with your application.
 
@@ -1442,7 +3663,7 @@ func main() {
 
 Go's testing tools enable powerful testing strategies.
 
-### Recipe 19: Table-Driven Tests
+### Recipe 37: Table-Driven Tests
 
 **Problem**: You want to test multiple cases without repeating code.
 
@@ -1486,7 +3707,7 @@ func TestAdd(t *testing.T) {
 
 ---
 
-### Recipe 20: Fuzz Testing
+### Recipe 38: Fuzz Testing
 
 **Problem**: You want to find edge cases automatically.
 
@@ -1548,7 +3769,7 @@ go test -fuzz=FuzzReverse -fuzztime=30s
 
 ---
 
-### Recipe 21: Benchmarks
+### Recipe 39: Benchmarks
 
 **Problem**: You want to measure performance and compare implementations.
 
@@ -1626,7 +3847,7 @@ go test -bench=. -benchmem
 
 Idiomatic Go design patterns for clean, maintainable code.
 
-### Recipe 22: Functional Options
+### Recipe 40: Functional Options
 
 **Problem**: You want flexible initialization without multiple constructors.
 
@@ -1709,7 +3930,7 @@ func main() {
 
 ---
 
-### Recipe 23: Builder Pattern
+### Recipe 41: Builder Pattern
 
 **Problem**: You want to construct complex objects step by step.
 
@@ -1770,7 +3991,7 @@ func main() {
 
 ---
 
-### Recipe 24: Singleton Pattern
+### Recipe 42: Singleton Pattern
 
 **Problem**: You need exactly one instance of a type.
 
@@ -1820,7 +4041,7 @@ func main() {
 
 Practical patterns for building web services.
 
-### Recipe 25: HTTP Middleware
+### Recipe 43: HTTP Middleware
 
 **Problem**: You need to add logging, authentication, or other cross-cutting concerns.
 
@@ -1888,7 +4109,7 @@ func main() {
 
 ---
 
-### Recipe 26: JSON API Handler
+### Recipe 44: JSON API Handler
 
 **Problem**: You want clean JSON API handlers with proper error handling.
 
@@ -1977,6 +4198,405 @@ func main() {
 ```
 
 **When to use**: When building JSON APIs with consistent error handling.
+
+---
+
+## 🔷 Configuration and Logging
+
+Production applications need robust configuration management and structured logging.
+
+### Recipe 45: Load Configuration
+
+**Problem**: You need to load application configuration from multiple sources (files, environment variables, flags).
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+)
+
+type Config struct {
+	Server struct {
+		Port int    `json:"port"`
+		Host string `json:"host"`
+	} `json:"server"`
+	Database struct {
+		URL      string `json:"url"`
+		MaxConns int    `json:"max_conns"`
+	} `json:"database"`
+	LogLevel string `json:"log_level"`
+}
+
+// LoadConfig reads configuration from JSON file
+func LoadConfig(filename string) (*Config, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open config: %w", err)
+	}
+	defer file.Close()
+
+	var config Config
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&config); err != nil {
+		return nil, fmt.Errorf("failed to decode config: %w", err)
+	}
+
+	return &config, nil
+}
+
+func main() {
+	config, err := LoadConfig("config.json")
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+		return
+	}
+
+	fmt.Printf("Server: %s:%d\n", config.Server.Host, config.Server.Port)
+	fmt.Printf("Database: %s (max_conns: %d)\n",
+		config.Database.URL,
+		config.Database.MaxConns)
+	fmt.Printf("Log level: %s\n", config.LogLevel)
+	// Output: Server: localhost:8080
+	//         Database: postgres://localhost/mydb (max_conns: 10)
+	//         Log level: info
+}
+```
+
+**Advanced example - Multi-source configuration with environment override**:
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+type AppConfig struct {
+	ServerPort    int
+	ServerHost    string
+	DatabaseURL   string
+	DatabaseConns int
+	LogLevel      string
+	Environment   string
+}
+
+// LoadConfigWithEnv loads from file and overrides with environment variables
+func LoadConfigWithEnv(filename string) (*AppConfig, error) {
+	// Default values
+	config := &AppConfig{
+		ServerPort:    8080,
+		ServerHost:    "localhost",
+		DatabaseURL:   "postgres://localhost/dev",
+		DatabaseConns: 10,
+		LogLevel:      "info",
+		Environment:   "development",
+	}
+
+	// Load from file if exists
+	if file, err := os.Open(filename); err == nil {
+		defer file.Close()
+
+		var fileConfig map[string]interface{}
+		if err := json.NewDecoder(file).Decode(&fileConfig); err != nil {
+			return nil, fmt.Errorf("failed to decode config: %w", err)
+		}
+
+		// Apply file values
+		if server, ok := fileConfig["server"].(map[string]interface{}); ok {
+			if port, ok := server["port"].(float64); ok {
+				config.ServerPort = int(port)
+			}
+			if host, ok := server["host"].(string); ok {
+				config.ServerHost = host
+			}
+		}
+
+		if db, ok := fileConfig["database"].(map[string]interface{}); ok {
+			if url, ok := db["url"].(string); ok {
+				config.DatabaseURL = url
+			}
+			if conns, ok := db["max_conns"].(float64); ok {
+				config.DatabaseConns = int(conns)
+			}
+		}
+
+		if logLevel, ok := fileConfig["log_level"].(string); ok {
+			config.LogLevel = logLevel
+		}
+	}
+
+	// Override with environment variables (highest priority)
+	if port := os.Getenv("SERVER_PORT"); port != "" {
+		if p, err := strconv.Atoi(port); err == nil {
+			config.ServerPort = p
+		}
+	}
+
+	if host := os.Getenv("SERVER_HOST"); host != "" {
+		config.ServerHost = host
+	}
+
+	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+		config.DatabaseURL = dbURL
+	}
+
+	if logLevel := os.Getenv("LOG_LEVEL"); logLevel != "" {
+		config.LogLevel = logLevel
+	}
+
+	if env := os.Getenv("ENVIRONMENT"); env != "" {
+		config.Environment = env
+	}
+
+	return config, nil
+}
+
+// Validate checks if configuration is valid
+func (c *AppConfig) Validate() error {
+	if c.ServerPort < 1 || c.ServerPort > 65535 {
+		return fmt.Errorf("invalid server port: %d", c.ServerPort)
+	}
+
+	if c.DatabaseConns < 1 {
+		return fmt.Errorf("database connections must be > 0")
+	}
+
+	validLogLevels := map[string]bool{
+		"debug": true, "info": true, "warn": true, "error": true,
+	}
+	if !validLogLevels[c.LogLevel] {
+		return fmt.Errorf("invalid log level: %s", c.LogLevel)
+	}
+
+	return nil
+}
+
+func main() {
+	// Set some environment variables for testing
+	os.Setenv("SERVER_PORT", "9000")
+	os.Setenv("LOG_LEVEL", "debug")
+	os.Setenv("ENVIRONMENT", "production")
+
+	config, err := LoadConfigWithEnv("config.json")
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+		return
+	}
+
+	if err := config.Validate(); err != nil {
+		fmt.Println("Invalid config:", err)
+		return
+	}
+
+	fmt.Printf("Configuration loaded:\n")
+	fmt.Printf("  Environment: %s\n", config.Environment)
+	fmt.Printf("  Server: %s:%d\n", config.ServerHost, config.ServerPort)
+	fmt.Printf("  Database: %s (%d connections)\n",
+		config.DatabaseURL, config.DatabaseConns)
+	fmt.Printf("  Log Level: %s\n", config.LogLevel)
+
+	// Output:
+	// Configuration loaded:
+	//   Environment: production
+	//   Server: localhost:9000
+	//   Database: postgres://localhost/dev (10 connections)
+	//   Log Level: debug
+}
+```
+
+**When to use**: Loading application settings from files, environment variables, or command-line flags. Use JSON, YAML, or TOML for config files. Environment variables override file settings (12-factor app principle). Always validate configuration on startup. For complex needs, use libraries like viper or envconfig.
+
+**See Also**:
+
+- [Recipe 46: Structured Logging](#recipe-46-structured-logging) - Logging setup
+- [Recipe 26-27: Configuration](#-configuration-and-logging) - Related patterns
+
+---
+
+### Recipe 46: Structured Logging
+
+**Problem**: You need production-grade logging with structured data, log levels, and context.
+
+**Solution**:
+
+```go
+package main
+
+import (
+	"log/slog"
+	"os"
+)
+
+func main() {
+	// Create JSON logger for production
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+	// Log with different levels
+	logger.Info("application started", "version", "1.0.0", "port", 8080)
+	// Output: {"time":"2025-12-18T14:30:45Z","level":"INFO","msg":"application started","version":"1.0.0","port":8080}
+
+	logger.Warn("disk space low", "available_gb", 5, "threshold_gb", 10)
+	// Output: {"time":"2025-12-18T14:30:45Z","level":"WARN","msg":"disk space low","available_gb":5,"threshold_gb":10}
+
+	logger.Error("database connection failed",
+		"error", "connection timeout",
+		"host", "localhost",
+		"port", 5432)
+	// Output: {"time":"2025-12-18T14:30:45Z","level":"ERROR","msg":"database connection failed"...}
+
+	// Log with attributes
+	requestLogger := logger.With("request_id", "abc-123", "user_id", 456)
+	requestLogger.Info("processing request", "method", "GET", "path", "/api/users")
+	// Output: {"time":"2025-12-18T14:30:45Z","level":"INFO","msg":"processing request","request_id":"abc-123","user_id":456,"method":"GET","path":"/api/users"}
+}
+```
+
+**Advanced example - Custom logger with context and formatting**:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"os"
+	"time"
+)
+
+// AppLogger wraps slog with custom methods
+type AppLogger struct {
+	*slog.Logger
+}
+
+// NewAppLogger creates a logger with custom configuration
+func NewAppLogger(env string) *AppLogger {
+	var handler slog.Handler
+
+	if env == "production" {
+		// JSON format for production
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		})
+	} else {
+		// Text format for development
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		})
+	}
+
+	return &AppLogger{
+		Logger: slog.New(handler),
+	}
+}
+
+// LogRequest logs HTTP request with timing
+func (l *AppLogger) LogRequest(method, path string, duration time.Duration, status int) {
+	l.Info("http request",
+		"method", method,
+		"path", path,
+		"duration_ms", duration.Milliseconds(),
+		"status", status,
+	)
+}
+
+// LogError logs errors with context
+func (l *AppLogger) LogError(ctx context.Context, msg string, err error, attrs ...any) {
+	allAttrs := append([]any{"error", err.Error()}, attrs...)
+
+	// Extract context values if available
+	if reqID, ok := ctx.Value("request_id").(string); ok {
+		allAttrs = append(allAttrs, "request_id", reqID)
+	}
+
+	l.Error(msg, allAttrs...)
+}
+
+// Example usage with database operations
+func processUser(ctx context.Context, logger *AppLogger, userID int) error {
+	start := time.Now()
+
+	logger.Debug("fetching user", "user_id", userID)
+
+	// Simulate database query
+	time.Sleep(50 * time.Millisecond)
+
+	// Simulate error
+	err := fmt.Errorf("user not found")
+	if err != nil {
+		logger.LogError(ctx, "failed to fetch user",
+			err,
+			"user_id", userID,
+			"query_duration_ms", time.Since(start).Milliseconds(),
+		)
+		return err
+	}
+
+	logger.Info("user fetched successfully",
+		"user_id", userID,
+		"duration_ms", time.Since(start).Milliseconds(),
+	)
+
+	return nil
+}
+
+func main() {
+	// Create logger for development environment
+	logger := NewAppLogger("development")
+
+	logger.Info("application starting",
+		"environment", "development",
+		"go_version", "1.21",
+		"pid", os.Getpid(),
+	)
+
+	// Create context with request ID
+	ctx := context.WithValue(context.Background(), "request_id", "req-789")
+
+	// Log HTTP request
+	start := time.Now()
+	logger.LogRequest("GET", "/api/users/123", time.Since(start), 200)
+
+	// Log with error
+	if err := processUser(ctx, logger, 123); err != nil {
+		logger.LogError(ctx, "request failed", err, "endpoint", "/api/users/123")
+	}
+
+	// Log with grouped attributes
+	dbLogger := logger.With(
+		"component", "database",
+		"connection_pool", "main",
+	)
+
+	dbLogger.Info("connection pool initialized",
+		"max_connections", 20,
+		"idle_connections", 5,
+	)
+
+	dbLogger.Warn("slow query detected",
+		"query", "SELECT * FROM users",
+		"duration_ms", 1500,
+		"threshold_ms", 1000,
+	)
+
+	logger.Info("application ready", "uptime_ms", time.Since(start).Milliseconds())
+}
+```
+
+**When to use**: Production applications requiring structured, searchable logs. Use JSON format in production for log aggregation systems (ELK, Splunk, Datadog). Use text format in development for readability. Always include context (request ID, user ID, trace ID). Log at appropriate levels (Debug for diagnostics, Info for events, Warn for issues, Error for failures). Use With() for contextual loggers.
+
+**See Also**:
+
+- [Recipe 45: Load Configuration](#recipe-45-load-configuration) - Config management
+- [Recipe 31: Context with Timeout](#recipe-31-context-with-timeout) - Context for logging
 
 ---
 
