@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-13T18:30:00+07:00"
+lastFullScan: "2025-12-18T07:46:24+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -108,6 +108,30 @@ links:
       - content/en/learn/swe/prog-lang/java/tutorials/initial-setup.md
       - content/en/learn/swe/prog-lang/java/tutorials/quick-start.md
 
+  - url: https://docs.python.org/
+    lastChecked: "2025-12-18T07:46:24+07:00"
+    statusCode: 200
+    finalUrl: https://docs.python.org/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
+
+  - url: https://docs.python.org/3/library/asyncio.html
+    lastChecked: "2025-12-18T07:46:24+07:00"
+    statusCode: 200
+    finalUrl: https://docs.python.org/3/library/asyncio.html
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
+
+  - url: https://docs.pytest.org/
+    lastChecked: "2025-12-18T07:46:24+07:00"
+    statusCode: 200
+    finalUrl: https://docs.pytest.org/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
+
   - url: https://drive.google.com/drive/folders/1seVOuX8zsx4jyi3zFlIs6n0OtYKkVWRN?usp=sharing
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
@@ -177,6 +201,14 @@ links:
       - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
       - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
 
+  - url: https://go.dev/blog
+    lastChecked: "2025-12-18T07:46:24+07:00"
+    statusCode: 200
+    finalUrl: https://go.dev/blog
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
+
   - url: https://go.dev/dl
     lastChecked: "2025-12-13T14:30:00+07:00"
     statusCode: 200
@@ -193,7 +225,23 @@ links:
     finalUrl: https://go.dev/doc
     redirectChain: null
     usedIn:
+      - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
       - content/en/learn/swe/prog-lang/golang/tutorials/initial-setup.md
+
+  - url: https://go.dev/doc/effective_go
+    lastChecked: "2025-12-18T07:46:24+07:00"
+    statusCode: 200
+    finalUrl: https://go.dev/doc/effective_go
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
+
+  - url: https://go.dev/wiki/
+    lastChecked: "2025-12-18T07:46:24+07:00"
+    statusCode: 200
+    finalUrl: https://go.dev/wiki/
+    redirectChain: null
+    usedIn:
       - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
 
   - url: https://golang.org/help
@@ -279,6 +327,14 @@ links:
     usedIn:
       - content/en/rants/2023/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
       - content/id/celoteh/2023/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
+
+  - url: https://mypy.readthedocs.io/
+    lastChecked: "2025-12-18T07:46:24+07:00"
+    statusCode: 200
+    finalUrl: https://mypy.readthedocs.io/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
 
   - url: https://neo4j.com/docs/
     lastChecked: "2025-12-09T22:30:00+07:00"
