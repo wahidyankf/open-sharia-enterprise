@@ -20,6 +20,23 @@ Active project plans currently being worked on.
 
 **Implementation**: 6 phases (Phase 0: Planning validation, Phases 1-5: Tutorial creation, Phase 6: Integration)
 
+### [2025-12-18\_\_add-kotlin-programming-language](./2025-12-18__add-kotlin-programming-language/)
+
+**Status**: In Progress
+
+**Goal**: Create comprehensive Kotlin programming language content for ayokoding-web following the Programming Language Content Standard
+
+**Deliverables**:
+
+- Complete directory structure with \_index.md and overview.md
+- 5 tutorial levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced)
+- 30+ cookbook recipes organized in 6 categories
+- 15 how-to guides for common tasks
+- 8 explanation documents covering core concepts
+- Reference documentation (cheat sheet, glossary, resources)
+
+**Implementation**: 6 phases (Setup & Structure, Tutorials, Cookbooks, How-To & Explanation, Reference & Polish, Integration & Deployment)
+
 ## Instructions
 
 **Quick Idea Capture**: For 1-3 liner ideas not ready for formal planning, use `../ideas.md`.

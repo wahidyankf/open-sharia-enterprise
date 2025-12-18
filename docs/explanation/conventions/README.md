@@ -7,12 +7,12 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2025-12-15
+updated: 2025-12-18
 ---
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 20 conventions covering all aspects of documentation writing and formatting.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 21 conventions covering all aspects of documentation writing and formatting.
 
 **Governance**: All conventions in this directory implement and embody the [Core Principles](../principles/README.md). Each convention should trace back to one or more foundational principles (Accessibility First, Simplicity Over Complexity, Progressive Disclosure, etc.).
 
@@ -83,6 +83,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas in GitHub-compatible markdown. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), and Obsidian/GitHub dual compatibility
 - [OSS Documentation Convention](./ex-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
 - [Plans Organization Convention](./ex-co__plans-organization.md) - Standards for organizing project planning documents in plans/ folder including structure, naming, and workflow
+- [Programming Language Content Standard](./ex-co__programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web. Defines mandatory structure (5 tutorial levels, cookbook, how-to guides), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), quality metrics (line counts, pedagogical patterns), and completeness criteria. Benchmarked from Golang, Python, Java implementations. Includes replication formula for adding new languages (Kotlin, TypeScript, Rust, Clojure). **See also**: [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md)
 - [README Quality Convention](./ex-co__readme-quality.md) - Quality standards for README.md files ensuring engagement, accessibility, and scannability. Defines problem-solution hooks, jargon elimination (plain language over corporate speak), acronym context requirements, benefits-focused language, navigation structure (summary + links), and paragraph length limits (≤5 lines). Includes transformation examples and quality checklist. **Agents**: readme-maker, readme-checker
 - [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 - [Tutorial Convention](./ex-co__tutorials.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
@@ -90,4 +91,4 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2025-12-18

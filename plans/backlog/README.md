@@ -4,7 +4,7 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-(Currently empty)
+_No plans currently in backlog. All plans have been moved to in-progress._
 
 ## Instructions
 
