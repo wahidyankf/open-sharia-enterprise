@@ -189,14 +189,14 @@ Finished
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart LR
-    A[/admin] --> B[Status: 301]
-    B --> C[Redirect to /admin/]
+    A["Path: /admin"] --> B["Status: 301"]
+    B --> C["Redirect to /admin/"]
 
-    D[/images] --> E[Status: 301]
-    E --> F[Redirect to /images/]
+    D["Path: /images"] --> E["Status: 301"]
+    E --> F["Redirect to /images/"]
 
-    G[/login] --> H[Status: 200]
-    H --> I[Page Found]
+    G["Path: /login"] --> H["Status: 200"]
+    H --> I["Page Found"]
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#000
