@@ -7,7 +7,7 @@ tags:
   - how-to
   - guides
 created: 2025-11-22
-updated: 2025-11-26
+updated: 2025-12-18
 ---
 
 # How-To Guides
@@ -16,8 +16,9 @@ Problem-solving guides for common tasks in the open-sharia-enterprise project. T
 
 ## 📋 Contents
 
+- [How to Add a Programming Language](./hoto__add-programming-language.md) - Step-by-step guide for adding a new programming language to ayokoding-web (e.g., Kotlin, TypeScript, Rust, Clojure) following the Programming Language Content Standard. Covers planning, setup, content creation (5 tutorials, cookbook, how-to guides, best practices), validation, and deployment
 - [How to Organize Your Work](./hoto__organize-work.md) - Choose the right folder (plans, docs) for different types of work
 
 ---
 
-**Last Updated**: 2025-11-24
+**Last Updated**: 2025-12-18

@@ -754,6 +754,13 @@ content/en/learn/swe/prog-lang/golang/
 
 **Note**: This pattern is OPTIONAL. Each topic decides independently based on content volume and diversity.
 
+**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), this Diátaxis structure is MANDATORY and follows the [Programming Language Content Standard](./ex-co__programming-language-content.md). See that convention for complete requirements including:
+
+- Universal directory structure (5 tutorial levels, cookbook, how-to guides, best practices, anti-patterns)
+- Coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%, cookbook)
+- Quality metrics and pedagogical patterns
+- Step-by-step implementation guide: [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md)
+
 ### Blogging Content Structure (Rants/Celoteh)
 
 **Scope**: This section applies ONLY to blogging content in:
