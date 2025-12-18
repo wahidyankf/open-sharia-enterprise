@@ -32,7 +32,7 @@ By the end of this tutorial, you'll be able to:
 
 Before starting, ensure you have:
 
-- Completed the [Gobuster Quick Start](/en/learn/infosec/tools/tutorials/gobuster-quick-start) tutorial
+- Completed the [Gobuster Quick Start](/en/learn/infosec/tools/gobuster/quick-start) tutorial
 - Gobuster 3.6+ installed and verified
 - Multiple wordlists downloaded (directory, subdomain, virtual host)
 - Basic understanding of HTTP, DNS, and web application architecture
