@@ -273,11 +273,13 @@ tags: ["typescript", "tutorial"]
 ---
 ```
 
-#### Tags Field - Single-Line JSON Array Format
+#### Tags Field - JSON Array Format (Prettier-Enforced)
 
-**REQUIRED FORMAT**: Tags MUST use single-line JSON array format, NOT multi-line YAML array format.
+**REQUIRED FORMAT**: Tags MUST use JSON array format (either single-line or Prettier's multi-line format). Dash-based YAML array format is forbidden.
 
-✅ **Good (single-line JSON array)**:
+**IMPORTANT**: Prettier automatically reformats tags during pre-commit hooks. Both formats below are acceptable:
+
+✅ **Good (true single-line JSON array)**:
 
 ```yaml
 ---
@@ -287,7 +289,17 @@ tags: ["javascript", "async", "promises", "tutorial"]
 ---
 ```
 
-❌ **Bad (multi-line YAML array)**:
+✅ **Good (Prettier's multi-line JSON array)** - Prettier auto-formats to this:
+
+```yaml
+---
+title: "Understanding Async/Await in JavaScript"
+date: 2025-12-07T10:00:00+07:00
+tags: ["javascript", "async", "promises", "tutorial"]
+---
+```
+
+❌ **Bad (dash-based YAML array format)**:
 
 ```yaml
 ---
@@ -303,10 +315,11 @@ tags:
 
 **Rationale**:
 
-- Single-line format is more compact and scannable
-- Consistent with Hextra theme examples
-- Easier to edit and maintain
-- Prevents accidental indentation errors
+- Prettier (automated code formatter) enforces multi-line JSON array format during pre-commit hooks
+- Both single-line and Prettier's multi-line JSON array formats are valid JSON arrays in YAML
+- Consistent with repository-wide Prettier configuration
+- Attempting to override Prettier's formatting would add configuration complexity
+- Dash-based YAML arrays are forbidden for consistency with JSON array format
 
 ### Weight Field Ordering
 
