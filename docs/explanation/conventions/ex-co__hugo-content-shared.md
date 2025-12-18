@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - shared
 created: 2025-12-13
-updated: 2025-12-13
+updated: 2025-12-18
 ---
 
 # Hugo Content Convention - Shared
@@ -160,6 +160,40 @@ flowchart TD
     style D fill:#CC78BC,stroke:#000,color:#000
 ```
 ````
+
+**CRITICAL: Mermaid Syntax Rules**
+
+Hugo's Mermaid renderer has strict syntax requirements:
+
+1. **Comments**: Use `%% Comment %%` (NO curly braces)
+2. **Text with special characters**: Quote text containing forward slashes, brackets, or special symbols
+
+✅ **Good (correct Mermaid syntax)**:
+
+````markdown
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
+flowchart LR
+    A["Path: /admin"] --> B["Route: /api/v1/users"]
+    C[Simple Text] --> D[Another Node]
+```
+````
+
+❌ **Bad (syntax errors)**:
+
+````markdown
+```mermaid
+%%{ Color Palette: ... }%% <!-- WRONG! Curly braces cause "syntax error in text" -->
+flowchart LR
+    A[/admin] --> B[/api/v1/users] <!-- WRONG! Unquoted forward slashes cause "syntax error in text" -->
+```
+````
+
+**Rationale**:
+
+- `%%{ }%%` is reserved for Mermaid directives (init config), not comments
+- Forward slashes in unquoted bracket text break Mermaid's parser
+- Quoting text containing special characters prevents parsing errors
 
 ### 4. Emoji Usage Convention
 
@@ -650,6 +684,58 @@ These conventions are unique to Hugo static site generation and apply to both si
 
 Check out our [getting started guide]({{< ref "/updates/getting-started" >}})
 ```
+
+**CRITICAL: Shortcode Delimiter Rules**
+
+Hugo uses two delimiter types based on content processing needs:
+
+1. **`{{< >}}`** - For shortcodes that output **HTML directly** (no Markdown processing)
+2. **`{{% %}}`** - For shortcodes that contain **Markdown content** (requires Markdown processing)
+
+**When to Use Each**:
+
+✅ **Use `{{% %}}` for Markdown content**:
+
+```markdown
+{{% steps %}}
+
+### Step 1: Install Dependencies
+
+Run `npm install` to install required packages.
+
+### Step 2: Configure Settings
+
+Edit the configuration file...
+
+{{% /steps %}}
+```
+
+✅ **Use `{{< >}}` for HTML content**:
+
+```markdown
+{{< figure src="/images/dashboard.png" caption="OSE Platform Dashboard" >}}
+
+{{< ref "/learn/getting-started" >}}
+```
+
+❌ **Bad (wrong delimiter for Markdown content)**:
+
+```markdown
+{{< steps >}} <!-- WRONG! Displays as plain text instead of rendering -->
+
+### Step 1: Install Dependencies
+
+Run `npm install`
+
+{{< /steps >}}
+```
+
+**Rationale**:
+
+- `{{< >}}` treats inner content as raw HTML - Markdown won't be processed
+- `{{% %}}` processes inner content as Markdown before rendering
+- Using wrong delimiter causes content to display as plain text
+- Theme shortcodes often require Markdown processing (steps, callouts, cards)
 
 ### 3. Taxonomy
 

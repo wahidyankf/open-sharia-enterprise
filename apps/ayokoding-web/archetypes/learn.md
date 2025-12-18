@@ -4,8 +4,8 @@ date: {{ .Date }}
 draft: true
 description: ""
 weight: 10
-tags: []
-categories: ["learn"]
+tags: ["example-tag"]
+# Note: No categories field - causes raw text leak in Hextra theme
 # Note: No author field - uses site-level config (params.author in hugo.yaml)
 ---
 
