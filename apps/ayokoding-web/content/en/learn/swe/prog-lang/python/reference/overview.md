@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 502
+weight: 802
 date: 2025-12-17T10:54:44+07:00
 draft: false
 description: Technical reference documentation for Python language features and standard library

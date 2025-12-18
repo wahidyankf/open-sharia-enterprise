@@ -2,7 +2,7 @@
 title: "How to Use Property Delegates"
 date: 2025-12-18T14:50:04+07:00
 draft: false
-weight: 619
+weight: 613
 description: "Master Kotlin property delegation with lazy, observable, vetoable, and custom delegates"
 tags: ["kotlin", "delegates", "lazy-initialization", "observable-properties"]
 categories: ["learn"]

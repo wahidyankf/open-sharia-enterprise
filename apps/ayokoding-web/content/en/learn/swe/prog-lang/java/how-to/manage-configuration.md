@@ -2,7 +2,7 @@
 title: "How to Manage Configuration"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 511
+weight: 609
 description: "Handle application configuration with properties files, environment variables, and configuration best practices"
 tags: ["java", "configuration", "properties", "environment-variables"]
 categories: ["learn"]

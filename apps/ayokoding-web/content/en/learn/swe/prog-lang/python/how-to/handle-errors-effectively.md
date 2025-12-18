@@ -2,7 +2,7 @@
 title: "How to Handle Errors Effectively"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 504
+weight: 605
 description: "Master Python's exception system with proper error handling patterns"
 tags: ["python", "exceptions", "error-handling", "eafp"]
 categories: ["learn"]

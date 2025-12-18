@@ -8,6 +8,14 @@ description: Complete learning path from zero to expert Java development - 6 com
 
 **Your complete journey from zero to expert Java developer.** This full set provides 6 comprehensive tutorials taking you from initial setup through expert-level mastery.
 
+## 🎯 Where Java Fits in Your Learning Journey
+
+**Java is the #2 recommended language** in our pedagogical sequence. Best learned after [Python](/en/learn/swe/prog-lang/python), Java introduces static typing and explicit object-oriented programming principles that are foundational for enterprise development.
+
+**Why Java after Python?** Java's verbosity teaches explicit thinking. Everything must be declared, typed, and structured. This discipline builds strong programming fundamentals and prepares you for enterprise-grade development.
+
+**What's next?** After mastering Java, you're ready for [Kotlin](/en/learn/swe/prog-lang/kotlin) (modern JVM language) or [Golang](/en/learn/swe/prog-lang/golang) (systems programming). See [Programming Languages Overview](/en/learn/swe/prog-lang/overview) for the complete learning path.
+
 ## 📚 Complete Learning Path
 
 ### ✅ All Tutorials Complete

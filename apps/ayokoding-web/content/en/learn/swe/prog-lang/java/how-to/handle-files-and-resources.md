@@ -2,7 +2,7 @@
 title: "How to Handle Files and Resources"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 508
+weight: 608
 description: "Master Java file I/O with Path API, try-with-resources, and modern file operations"
 tags: ["java", "files", "io", "nio", "resources"]
 categories: ["learn"]

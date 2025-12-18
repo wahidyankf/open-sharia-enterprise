@@ -2,7 +2,7 @@
 title: "How to Work with Strings Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 510
+weight: 607
 description: "Master Java string manipulation with immutability, StringBuilder, formatting, and regex patterns"
 tags: ["java", "strings", "text-processing", "regex", "formatting"]
 categories: ["learn"]

@@ -2,7 +2,7 @@
 title: "How to Work with Collections Idiomatically"
 date: 2025-12-18T14:50:04+07:00
 draft: false
-weight: 620
+weight: 609
 description: "Master Kotlin's powerful collection operations including transformations, filtering, and sequences"
 tags: ["kotlin", "collections", "functional-programming", "sequences"]
 categories: ["learn"]

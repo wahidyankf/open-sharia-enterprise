@@ -2,7 +2,7 @@
 title: "How to Manage Configuration"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 515
+weight: 611
 description: "Handle configuration with environment variables, config files, and Pydantic Settings"
 tags: ["python", "configuration", "environment-variables", "pydantic", "config"]
 categories: ["learn"]

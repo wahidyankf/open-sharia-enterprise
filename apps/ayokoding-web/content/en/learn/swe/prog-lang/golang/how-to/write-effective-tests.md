@@ -2,7 +2,7 @@
 title: "How to Write Effective Tests"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 509
+weight: 613
 description: "Master Go testing with table-driven tests, subtests, mocking, and effective test organization"
 tags: ["golang", "testing", "table-driven", "testify", "mocking"]
 categories: ["learn"]

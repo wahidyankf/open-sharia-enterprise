@@ -300,6 +300,8 @@ Hugo content follows specialized conventions organized into three documents:
 - **ayokoding-web**: [Hugo Content Convention - ayokoding](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual educational platform, navigation rules, weight ordering, overview/ikhtisar requirements, blogging structure, frontmatter rules (no categories field, JSON array tags format, Prettier-enforced)
 - **ose-platform-web**: [Hugo Content Convention - OSE Platform](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, simple English-only landing page, updates and about patterns
 
+**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), ayokoding-web follows the [Programming Language Content Standard](./docs/explanation/conventions/ex-co__programming-language-content.md). This defines mandatory structure (5 tutorial levels, cookbook at position 3 in how-to/, best practices), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), and pedagogical patterns. Cookbook must appear immediately after overview (weight 603) for optimal learner engagement.
+
 Site-specific agents and developers should reference both the shared document and their site-specific document.
 
 ### README Quality Convention

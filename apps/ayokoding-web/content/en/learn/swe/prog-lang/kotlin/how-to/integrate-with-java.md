@@ -2,7 +2,7 @@
 title: "How to Handle Java Interoperability"
 date: 2025-12-18T14:50:04+07:00
 draft: false
-weight: 622
+weight: 618
 description: "Master calling Java from Kotlin and Kotlin from Java with interoperability best practices"
 tags: ["kotlin", "java", "interoperability", "jvm"]
 categories: ["learn"]

@@ -2,7 +2,7 @@
 title: "How to Refactor God Classes"
 date: 2025-12-17T07:06:48+07:00
 draft: false
-weight: 504
+weight: 610
 description: "Step-by-step guide to breaking down god classes into maintainable components"
 tags:
   ["java", "refactoring", "god-class", "clean-code", "single-responsibility"]

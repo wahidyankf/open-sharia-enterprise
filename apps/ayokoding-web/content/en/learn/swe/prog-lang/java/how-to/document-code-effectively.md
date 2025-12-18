@@ -2,7 +2,7 @@
 title: "How to Document Code Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 512
+weight: 613
 description: "Write clear Javadoc, meaningful comments, and comprehensive documentation for maintainable code"
 tags: ["java", "javadoc", "documentation", "comments", "code-quality"]
 categories: ["learn"]

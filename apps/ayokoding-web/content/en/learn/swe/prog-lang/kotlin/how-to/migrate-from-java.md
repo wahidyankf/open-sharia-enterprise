@@ -2,7 +2,7 @@
 title: "How to Migrate Java Code to Kotlin"
 date: 2025-12-18T14:50:04+07:00
 draft: false
-weight: 618
+weight: 619
 description: "Complete guide for Java developers migrating to Kotlin with syntax comparisons and migration strategies"
 tags: ["kotlin", "java", "migration", "interoperability"]
 categories: ["learn"]

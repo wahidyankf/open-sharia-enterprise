@@ -2,7 +2,7 @@
 title: "How to Debug and Log Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 509
+weight: 612
 description: "Master debugging techniques and structured logging with SLF4J and Logback"
 tags: ["java", "debugging", "logging", "slf4j", "logback"]
 categories: ["learn"]
