@@ -42,3 +42,12 @@ draft: false
   - [How-To Guides](/en/learn/swe/prog-lang/golang/how-to)
   - [Reference](/en/learn/swe/prog-lang/golang/reference)
   - [Explanation](/en/learn/swe/prog-lang/golang/explanation)
+- [Rust](/en/learn/swe/prog-lang/rust) - Memory safety & systems programming
+  - [Overview](/en/learn/swe/prog-lang/rust/overview)
+  - [Tutorials](/en/learn/swe/prog-lang/rust/tutorials)
+    - [Initial Setup](/en/learn/swe/prog-lang/rust/tutorials/initial-setup)
+    - [Quick Start](/en/learn/swe/prog-lang/rust/tutorials/quick-start)
+    - [Beginner](/en/learn/swe/prog-lang/rust/tutorials/beginner)
+  - [How-To Guides](/en/learn/swe/prog-lang/rust/how-to)
+  - [Reference](/en/learn/swe/prog-lang/rust/reference)
+  - [Explanation](/en/learn/swe/prog-lang/rust/explanation)

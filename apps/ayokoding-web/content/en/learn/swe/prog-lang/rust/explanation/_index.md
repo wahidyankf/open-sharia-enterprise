@@ -7,4 +7,6 @@ weight: 701
 type: docs
 ---
 
-Conceptual understanding of Rust philosophy, idiomatic patterns, and common pitfalls.
+- [Overview](/en/learn/swe/prog-lang/rust/explanation/overview)
+- [Rust Best Practices and Design Principles](/en/learn/swe/prog-lang/rust/explanation/best-practices)
+- [Common Rust Anti-Patterns](/en/learn/swe/prog-lang/rust/explanation/anti-patterns)
