@@ -1,5 +1,5 @@
 ---
-title: How-To Overview
+title: Overview
 date: 2025-12-18T00:00:00+07:00
 draft: false
 weight: 602
@@ -61,6 +61,103 @@ description: Practical problem-solving guides and recipes for Kotlin development
 - [Optimize Performance](/en/learn/swe/prog-lang/kotlin/how-to/optimize-performance)
 - [Build REST APIs with Ktor](/en/learn/swe/prog-lang/kotlin/how-to/build-rest-apis-ktor)
 - [Access Databases with Exposed](/en/learn/swe/prog-lang/kotlin/how-to/database-access-exposed)
+
+---
+
+## Guide Categories
+
+### By Complexity
+
+**Beginner-Friendly**:
+
+- Use Data Classes Effectively
+- Work with Nullable Types
+- Use Smart Casts
+- Handle Collections Idiomatically
+- Use Extension Functions
+- Work with Scope Functions
+
+**Intermediate**:
+
+- Avoid Common Null Pointer Errors
+- Implement Error Handling Patterns
+- Use Sealed Classes for Type-Safe State
+- Implement Delegates and Lazy Initialization
+- Use Inline Functions and Reified Types
+- Write Effective Unit Tests
+- Organize Packages and Modules
+- Manage Dependencies with Gradle
+- Handle Java Interoperability
+- Migrate Java Code to Kotlin
+
+**Advanced**:
+
+- Handle Coroutines and Async Operations
+- Use Flow and State Management
+- Optimize Performance
+- Build REST APIs with Ktor
+- Access Databases with Exposed
+
+### By Use Case
+
+**Null Safety and Type Safety**:
+
+- Work with Nullable Types
+- Avoid Common Null Pointer Errors
+- Use Smart Casts
+- Use Sealed Classes for Type-Safe State
+- Implement Error Handling Patterns
+
+**Language Features**:
+
+- Use Data Classes Effectively
+- Use Extension Functions
+- Work with Scope Functions
+- Implement Delegates and Lazy Initialization
+- Use Inline Functions and Reified Types
+
+**Concurrency and Async**:
+
+- Handle Coroutines and Async Operations
+- Use Flow and State Management
+
+**Java Interoperability**:
+
+- Handle Java Interoperability
+- Migrate Java Code to Kotlin
+
+**Application Development**:
+
+- Build REST APIs with Ktor
+- Access Databases with Exposed
+- Optimize Performance
+- Manage Dependencies with Gradle
+
+**Code Organization**:
+
+- Organize Packages and Modules
+- Handle Collections Idiomatically
+- Write Effective Unit Tests
+
+---
+
+## How to Use These Guides
+
+1. **Start with Cookbook** for quick recipes
+2. **Read beginner-friendly guides** to build solid foundations
+3. **Explore use-case-specific guides** based on your project needs
+4. **Reference advanced guides** when hitting specialized challenges
+
+Each guide includes:
+
+- Clear problem statement
+- Step-by-step solution
+- Complete working examples
+- Common pitfalls to avoid
+- Variations and alternatives
+- Links to related guides
+
+---
 
 ## How-To Guide Structure
 
