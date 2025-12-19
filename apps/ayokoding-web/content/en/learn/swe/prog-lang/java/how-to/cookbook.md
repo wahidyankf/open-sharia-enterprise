@@ -11,8 +11,6 @@ tags:
   - practical
   - solutions
   - reference
-categories:
-  - learn
 ---
 
 ---
