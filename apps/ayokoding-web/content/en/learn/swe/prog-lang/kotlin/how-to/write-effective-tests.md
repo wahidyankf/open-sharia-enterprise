@@ -5,7 +5,6 @@ draft: false
 weight: 623
 description: "Write effective tests using JUnit 5 and MockK mocking framework"
 tags: ["kotlin", "testing", "junit", "mockk", "unit-testing"]
-categories: ["learn"]
 ---
 
 ## Problem

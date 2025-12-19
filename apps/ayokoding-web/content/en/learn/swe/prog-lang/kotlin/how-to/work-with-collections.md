@@ -5,7 +5,6 @@ draft: false
 weight: 609
 description: "Master Kotlin's powerful collection operations including transformations, filtering, and sequences"
 tags: ["kotlin", "collections", "functional-programming", "sequences"]
-categories: ["learn"]
 ---
 
 ## Problem

@@ -11,7 +11,6 @@ tags:
   - hello-world
   - jdk
   - intellij
-categories:
   - learn
 ---
 

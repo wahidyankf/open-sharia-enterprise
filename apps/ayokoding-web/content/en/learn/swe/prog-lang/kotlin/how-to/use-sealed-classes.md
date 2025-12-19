@@ -5,7 +5,6 @@ draft: false
 weight: 612
 description: "Create type-safe restricted hierarchies with sealed classes and interfaces"
 tags: ["kotlin", "sealed-classes", "type-safety", "kotlin-features"]
-categories: ["learn"]
 ---
 
 ## Problem

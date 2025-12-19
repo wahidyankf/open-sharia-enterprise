@@ -5,7 +5,6 @@ draft: false
 weight: 607
 description: "Leverage Kotlin's smart cast feature for cleaner type checking and casting"
 tags: ["kotlin", "smart-cast", "type-checking", "type-safety"]
-categories: ["learn"]
 ---
 
 ## Problem

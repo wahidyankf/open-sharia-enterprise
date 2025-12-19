@@ -5,7 +5,6 @@ draft: false
 weight: 624
 description: "Performance optimization techniques including inline functions, collections, memory management, and profiling"
 tags: ["kotlin", "performance", "optimization", "profiling"]
-categories: ["learn"]
 ---
 
 ## Problem

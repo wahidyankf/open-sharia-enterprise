@@ -11,7 +11,6 @@ tags:
   - null-safety
   - coroutines
   - data-classes
-categories:
   - learn
 ---
 

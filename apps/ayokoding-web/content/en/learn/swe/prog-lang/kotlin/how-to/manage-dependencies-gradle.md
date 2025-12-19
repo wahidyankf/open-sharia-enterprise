@@ -5,7 +5,6 @@ draft: false
 weight: 622
 description: "Configure Gradle builds using type-safe Kotlin DSL"
 tags: ["kotlin", "gradle", "build-tools", "kotlin-dsl"]
-categories: ["learn"]
 ---
 
 ## Problem

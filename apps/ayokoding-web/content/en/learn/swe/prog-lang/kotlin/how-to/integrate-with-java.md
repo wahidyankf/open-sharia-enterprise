@@ -5,7 +5,6 @@ draft: false
 weight: 618
 description: "Master calling Java from Kotlin and Kotlin from Java with interoperability best practices"
 tags: ["kotlin", "java", "interoperability", "jvm"]
-categories: ["learn"]
 ---
 
 ## Problem

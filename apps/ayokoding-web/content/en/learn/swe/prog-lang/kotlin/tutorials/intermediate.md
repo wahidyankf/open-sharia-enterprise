@@ -13,7 +13,6 @@ tags:
   - rest-api
   - performance
   - testing
-categories:
   - learn
 ---
 

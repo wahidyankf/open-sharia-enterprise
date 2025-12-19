@@ -13,7 +13,6 @@ tags:
   - null-safety
   - collections
   - testing
-categories:
   - learn
 ---
 

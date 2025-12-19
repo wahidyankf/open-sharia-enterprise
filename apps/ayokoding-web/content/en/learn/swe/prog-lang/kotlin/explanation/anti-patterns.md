@@ -5,7 +5,6 @@ draft: false
 weight: 704
 description: "Identify and avoid common Kotlin mistakes and anti-patterns"
 tags: ["kotlin", "anti-patterns", "common-mistakes", "code-smells"]
-categories: ["learn"]
 ---
 
 ## Java Developer Migration Pitfalls
@@ -620,6 +619,322 @@ fun `creating user returns user with generated ID`() {
 ```
 
 **Context**: Every test needs at least one meaningful assertion.
+
+---
+
+## Java-to-Kotlin Migration Anti-Patterns
+
+### Anti-Pattern: Overusing Force Unwrap (!!)
+
+**Severity**: CRITICAL
+
+**Why Problematic**: Defeats Kotlin's null safety system and causes NullPointerException.
+
+```kotlin
+// ❌ Bad - force unwrap everywhere
+fun processUser(userId: String) {
+    val user = userRepository.findById(userId)!!  // NPE risk
+    val address = user.address!!  // NPE risk
+    val city = address.city!!  // NPE risk
+    println(city.name)
+}
+
+// ✅ Better - safe calls and elvis operator
+fun processUser(userId: String) {
+    val cityName = userRepository.findById(userId)
+        ?.address
+        ?.city
+        ?.name
+        ?: "Unknown"
+    println(cityName)
+}
+
+// ✅ Better - early return
+fun processUser(userId: String) {
+    val user = userRepository.findById(userId) ?: return
+    val address = user.address ?: return
+    val city = address.city ?: return
+    println(city.name)
+}
+```
+
+**Context**: Use `!!` only when you have external guarantees and document why.
+
+### Anti-Pattern: Using Mutable Collections Unnecessarily
+
+**Severity**: MAJOR
+
+**Why Problematic**: Mutable state increases complexity and makes code harder to reason about.
+
+```kotlin
+// ❌ Bad - mutable collections by default (Java habit)
+class UserService {
+    private val users = mutableListOf<User>()
+
+    fun getUsers(): MutableList<User> = users  // Exposes internal state!
+}
+
+// ✅ Better - immutable by default
+class UserService {
+    private val _users = mutableListOf<User>()
+    val users: List<User> get() = _users.toList()  // Returns immutable copy
+
+    fun addUser(user: User) {
+        _users.add(user)
+    }
+}
+
+// ✅ Best - truly immutable
+class UserService {
+    private val users = listOf<User>()
+
+    fun withUser(user: User): UserService {
+        return UserService(users + user)  // New instance
+    }
+}
+```
+
+**Context**: Default to immutable collections. Use mutable only when necessary and keep them private.
+
+### Anti-Pattern: Not Using Data Classes
+
+**Severity**: MAJOR
+
+**Why Problematic**: Misses free implementations of equals/hashCode/toString/copy.
+
+```kotlin
+// ❌ Bad - manual implementation (Java habit)
+class User(val id: String, val name: String, val email: String) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+        return id == other.id && name == other.name && email == other.email
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + email.hashCode()
+        return result
+    }
+
+    override fun toString(): String = "User(id=$id, name=$name, email=$email)"
+}
+
+// ✅ Better - data class generates all of this
+data class User(val id: String, val name: String, val email: String)
+```
+
+**Context**: Use data classes for simple value holders. Regular classes for complex domain objects with behavior.
+
+---
+
+## Coroutine Anti-Patterns
+
+### Anti-Pattern: Blocking in Suspend Functions
+
+**Severity**: CRITICAL
+
+**Why Problematic**: Defeats the purpose of coroutines and can deadlock.
+
+```kotlin
+// ❌ Bad - blocking call in suspend function
+suspend fun fetchUser(userId: String): User {
+    Thread.sleep(1000)  // Blocks thread!
+    return apiClient.getUser(userId).execute()  // Blocking call!
+}
+
+// ✅ Better - use delay and suspending APIs
+suspend fun fetchUser(userId: String): User {
+    delay(1000)  // Suspends without blocking
+    return apiClient.getUser(userId)  // Suspending call
+}
+
+// ❌ Bad - blocking I/O
+suspend fun readFile(path: String): String {
+    return File(path).readText()  // Blocks thread!
+}
+
+// ✅ Better - use IO dispatcher for blocking operations
+suspend fun readFile(path: String): String = withContext(Dispatchers.IO) {
+    File(path).readText()  // Blocking OK on IO dispatcher
+}
+```
+
+**Context**: Use `delay()` instead of `Thread.sleep()`, suspending functions instead of blocking calls.
+
+### Anti-Pattern: GlobalScope for Coroutine Launch
+
+**Severity**: CRITICAL
+
+**Why Problematic**: Coroutines are never cancelled, causing memory leaks.
+
+```kotlin
+// ❌ Bad - GlobalScope leaks
+class UserViewModel {
+    fun loadUser(userId: String) {
+        GlobalScope.launch {  // Never cancelled!
+            val user = fetchUser(userId)
+            updateUI(user)  // Crashes if view destroyed
+        }
+    }
+}
+
+// ✅ Better - lifecycle-aware scope
+class UserViewModel : ViewModel() {
+    private val viewModelScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Main
+    )
+
+    fun loadUser(userId: String) {
+        viewModelScope.launch {
+            val user = fetchUser(userId)
+            updateUI(user)
+        }
+    }
+
+    override fun onCleared() {
+        viewModelScope.cancel()  // Cancels all coroutines
+    }
+}
+
+// ✅ Best - use structured concurrency
+class UserViewModel {
+    suspend fun loadUser(userId: String): User = coroutineScope {
+        async { fetchUser(userId) }.await()
+    }
+}
+```
+
+**Context**: Never use GlobalScope except for truly application-wide operations. Use lifecycle-aware scopes.
+
+### Anti-Pattern: Swallowing Exceptions in Coroutines
+
+**Severity**: MAJOR
+
+**Why Problematic**: Silent failures make debugging impossible.
+
+```kotlin
+// ❌ Bad - silent failure
+suspend fun fetchData() {
+    try {
+        apiClient.fetch()
+    } catch (e: Exception) {
+        // Exception swallowed - no logging, no handling
+    }
+}
+
+// ✅ Better - log and propagate
+suspend fun fetchData(): Result<Data> {
+    return try {
+        Result.Success(apiClient.fetch())
+    } catch (e: IOException) {
+        logger.error("Network error", e)
+        Result.Error("Network error: ${e.message}")
+    } catch (e: Exception) {
+        logger.error("Unexpected error", e)
+        Result.Error("Unexpected error: ${e.message}")
+    }
+}
+
+// ✅ Better - exception handler
+val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+    logger.error("Coroutine failed", exception)
+    showErrorToUser(exception.message)
+}
+
+viewModelScope.launch(exceptionHandler) {
+    fetchData()
+}
+```
+
+**Context**: Always log exceptions. Return Result types or use CoroutineExceptionHandler.
+
+---
+
+## Performance Anti-Patterns
+
+### Anti-Pattern: Unnecessary Object Allocation
+
+**Severity**: MAJOR
+
+**Why Problematic**: Causes garbage collection pressure and performance degradation.
+
+```kotlin
+// ❌ Bad - allocates intermediate objects
+fun processData(items: List<Item>): List<Result> {
+    return items
+        .map { transform(it) }     // Allocates list
+        .filter { it.isValid }     // Allocates another list
+        .map { convert(it) }       // Allocates another list
+}
+
+// ✅ Better - use sequence for lazy evaluation
+fun processData(items: List<Item>): List<Result> {
+    return items.asSequence()
+        .map { transform(it) }     // No intermediate allocation
+        .filter { it.isValid }     // No intermediate allocation
+        .map { convert(it) }       // No intermediate allocation
+        .toList()                  // Single final allocation
+}
+
+// ❌ Bad - string concatenation in loop
+fun buildMessage(items: List<String>): String {
+    var message = ""
+    for (item in items) {
+        message += item + "\n"  // Creates new string each iteration!
+    }
+    return message
+}
+
+// ✅ Better - use StringBuilder
+fun buildMessage(items: List<String>): String {
+    return buildString {
+        items.forEach { append(it).append("\n") }
+    }
+}
+```
+
+**Context**: Use sequences for large collections, buildString for string concatenation.
+
+### Anti-Pattern: Inefficient Collection Operations
+
+**Severity**: MAJOR
+
+**Why Problematic**: Quadratic time complexity instead of linear.
+
+```kotlin
+// ❌ Bad - O(n²) complexity
+fun removeDuplicates(items: List<String>): List<String> {
+    val result = mutableListOf<String>()
+    for (item in items) {
+        if (!result.contains(item)) {  // O(n) lookup each iteration!
+            result.add(item)
+        }
+    }
+    return result
+}
+
+// ✅ Better - O(n) with set
+fun removeDuplicates(items: List<String>): List<String> {
+    return items.toSet().toList()  // O(n) complexity
+}
+
+// ❌ Bad - repeated list traversal
+fun processItems(items: List<Item>) {
+    val valid = items.filter { it.isValid }
+    val invalid = items.filter { !it.isValid }
+    // Traverses list twice!
+}
+
+// ✅ Better - single traversal with partition
+fun processItems(items: List<Item>) {
+    val (valid, invalid) = items.partition { it.isValid }
+    // Traverses list once!
+}
+```
+
+**Context**: Choose appropriate data structures. Use partition instead of multiple filters.
 
 ## Related Resources
 

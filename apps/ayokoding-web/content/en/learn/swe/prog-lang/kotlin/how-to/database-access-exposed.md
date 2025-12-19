@@ -5,7 +5,6 @@ draft: false
 weight: 620
 description: "Use Exposed ORM for type-safe database access in Kotlin"
 tags: ["kotlin", "database", "exposed", "orm", "sql"]
-categories: ["learn"]
 ---
 
 ## Problem

@@ -5,7 +5,6 @@ draft: false
 weight: 611
 description: "Add functionality to existing classes without inheritance using extension functions"
 tags: ["kotlin", "extension-functions", "kotlin-features", "clean-code"]
-categories: ["learn"]
 ---
 
 ## Problem

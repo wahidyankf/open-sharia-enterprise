@@ -5,7 +5,6 @@ draft: false
 weight: 613
 description: "Master Kotlin property delegation with lazy, observable, vetoable, and custom delegates"
 tags: ["kotlin", "delegates", "lazy-initialization", "observable-properties"]
-categories: ["learn"]
 ---
 
 ## Problem

@@ -5,7 +5,6 @@ draft: false
 weight: 604
 description: "Master Kotlin's nullable types and avoid null pointer exceptions"
 tags: ["kotlin", "null-safety", "nullable-types", "type-system"]
-categories: ["learn"]
 ---
 
 ## Problem

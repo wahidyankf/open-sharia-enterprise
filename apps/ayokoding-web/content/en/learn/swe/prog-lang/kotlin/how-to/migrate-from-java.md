@@ -5,7 +5,6 @@ draft: false
 weight: 619
 description: "Complete guide for Java developers migrating to Kotlin with syntax comparisons and migration strategies"
 tags: ["kotlin", "java", "migration", "interoperability"]
-categories: ["learn"]
 ---
 
 ## Problem

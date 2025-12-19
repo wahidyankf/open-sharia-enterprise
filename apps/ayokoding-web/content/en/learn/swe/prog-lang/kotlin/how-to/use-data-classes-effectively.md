@@ -5,7 +5,6 @@ draft: false
 weight: 608
 description: "Master Kotlin's data classes for clean, concise domain models"
 tags: ["kotlin", "data-classes", "domain-modeling", "kotlin-features"]
-categories: ["learn"]
 ---
 
 ## Problem

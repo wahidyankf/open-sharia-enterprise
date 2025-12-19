@@ -5,7 +5,6 @@ draft: false
 weight: 621
 description: "Build production-ready REST APIs using Ktor framework"
 tags: ["kotlin", "ktor", "rest-api", "web-development"]
-categories: ["learn"]
 ---
 
 ## Problem

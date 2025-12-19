@@ -5,7 +5,6 @@ draft: false
 weight: 616
 description: "Manage reactive state with Kotlin Flow, StateFlow, and SharedFlow"
 tags: ["kotlin", "flow", "state-management", "reactive", "coroutines"]
-categories: ["learn"]
 ---
 
 ## Problem

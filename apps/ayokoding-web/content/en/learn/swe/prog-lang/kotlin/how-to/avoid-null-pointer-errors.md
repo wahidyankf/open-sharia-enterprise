@@ -5,7 +5,6 @@ draft: false
 weight: 605
 description: "Advanced null handling patterns with Elvis (?:) and safe call (?.) operators"
 tags: ["kotlin", "null-safety", "elvis-operator", "safe-call"]
-categories: ["learn"]
 ---
 
 ## Problem

@@ -5,7 +5,6 @@ draft: false
 weight: 614
 description: "Optimize performance with inline functions and reified type parameters"
 tags: ["kotlin", "inline-functions", "performance", "kotlin-features"]
-categories: ["learn"]
 ---
 
 ## Problem

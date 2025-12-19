@@ -5,7 +5,6 @@ draft: false
 weight: 703
 description: "Idiomatic Kotlin patterns and best practices for production code"
 tags: ["kotlin", "best-practices", "idioms", "design-principles"]
-categories: ["learn"]
 ---
 
 ## What Makes Kotlin Special
@@ -491,6 +490,276 @@ fun calculate Statistics(data: List<Int>): Stats {
   }
 
   return Stats(sum, count, max)
+}
+```
+
+## Advanced Null Safety Patterns
+
+### Principle: Use Safe Calls and Elvis Operator
+
+**Rationale**: Avoid `!!` (force unwrap) which defeats null safety. Use safe operators for clean null handling.
+
+```kotlin
+// ✅ Good - safe call with elvis operator
+fun getUserName(user: User?): String = user?.name ?: "Unknown"
+
+// ✅ Good - chained safe calls
+val cityName = user?.address?.city?.name
+
+// ✅ Good - let for null-safe block execution
+user?.let { u ->
+    println("Name: ${u.name}")
+    sendEmail(u.email)
+}
+
+// ❌ Bad - force unwrap
+fun getUserName(user: User?): String = user!!.name  // NullPointerException risk
+
+// ❌ Bad - unnecessary null checks
+fun getUserName(user: User?): String {
+    if (user != null) {
+        return user.name
+    } else {
+        return "Unknown"
+    }
+}
+```
+
+**When to use `!!`**: Only when you have external guarantees (e.g., Android framework callbacks), and document why.
+
+```kotlin
+// ✅ Exception - framework guarantees non-null
+override fun onActivityResult(data: Intent?) {
+    // Android framework guarantees data is non-null for this result code
+    val result = data!!.getStringExtra("key")  // Document assumption
+}
+```
+
+### Principle: Prefer Early Returns for Null Checks
+
+**Rationale**: Guard clauses improve readability by handling edge cases first.
+
+```kotlin
+// ✅ Good - early return
+fun processUser(user: User?): Result {
+    if (user == null) return Result.Error("User not found")
+
+    // Main logic without nesting
+    val validated = validate(user)
+    val saved = save(validated)
+    return Result.Success(saved)
+}
+
+// ❌ Bad - nested null checks
+fun processUser(user: User?): Result {
+    return if (user != null) {
+        val validated = validate(user)
+        val saved = save(validated)
+        Result.Success(saved)
+    } else {
+        Result.Error("User not found")
+    }
+}
+```
+
+## Coroutine Best Practices
+
+### Principle: Use Structured Concurrency
+
+**Rationale**: Prevents coroutine leaks and ensures proper cancellation propagation.
+
+```kotlin
+// ✅ Good - structured concurrency
+class UserRepository {
+    suspend fun loadUserData(userId: String): UserData = coroutineScope {
+        val user = async { fetchUser(userId) }
+        val preferences = async { fetchPreferences(userId) }
+
+        UserData(user.await(), preferences.await())
+    }
+}
+
+// ❌ Bad - GlobalScope leaks
+class UserRepository {
+    suspend fun loadUserData(userId: String): UserData {
+        GlobalScope.launch {  // Never cancelled!
+            fetchUser(userId)
+        }
+        // ...
+    }
+}
+```
+
+### Principle: Choose Correct Dispatcher
+
+**Rationale**: Different dispatchers optimize for different workloads.
+
+```kotlin
+// ✅ Good - appropriate dispatchers
+suspend fun loadData() {
+    withContext(Dispatchers.IO) {
+        // I/O operations (network, database)
+        fetchFromApi()
+    }
+
+    withContext(Dispatchers.Default) {
+        // CPU-intensive work
+        processLargeDataset()
+    }
+
+    withContext(Dispatchers.Main) {
+        // UI updates (Android/desktop)
+        updateUI()
+    }
+}
+
+// ❌ Bad - wrong dispatcher
+suspend fun loadData() {
+    withContext(Dispatchers.Main) {
+        // Blocking I/O on main thread!
+        fetchFromApi()  // Freezes UI
+    }
+}
+```
+
+### Principle: Handle Coroutine Exceptions Properly
+
+**Rationale**: Unhandled exceptions can crash the entire scope. Use try-catch or exception handlers.
+
+```kotlin
+// ✅ Good - explicit exception handling
+suspend fun fetchData(): Result<Data> = try {
+    val data = apiClient.fetch()
+    Result.Success(data)
+} catch (e: IOException) {
+    Result.Error("Network error: ${e.message}")
+} catch (e: Exception) {
+    Result.Error("Unexpected error: ${e.message}")
+}
+
+// ✅ Good - CoroutineExceptionHandler for background work
+val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+    logger.error("Coroutine failed", exception)
+}
+
+val scope = CoroutineScope(Dispatchers.Default + exceptionHandler)
+
+// ❌ Bad - unhandled exceptions
+suspend fun fetchData(): Data {
+    return apiClient.fetch()  // Exception crashes scope
+}
+```
+
+## Java Interoperability
+
+### Principle: Use JVM Annotations for Java-Friendly APIs
+
+**Rationale**: Make Kotlin code natural to call from Java.
+
+```kotlin
+// ✅ Good - Java-friendly
+class UserService {
+    @JvmStatic
+    fun getInstance(): UserService = instance
+
+    @JvmField
+    val DEFAULT_TIMEOUT = 30
+
+    @JvmOverloads
+    fun createUser(name: String, email: String = "unknown@example.com"): User {
+        return User(name, email)
+    }
+}
+
+// Java usage:
+// UserService.getInstance()  // Static method
+// UserService.DEFAULT_TIMEOUT  // Public field
+// service.createUser("Alice")  // Default parameter works
+
+// ❌ Bad - awkward from Java
+class UserService {
+    companion object {
+        fun getInstance(): UserService = instance  // Companion.getInstance()
+    }
+
+    val DEFAULT_TIMEOUT = 30  // getDEFAULT_TIMEOUT() in Java
+
+    fun createUser(name: String, email: String = "unknown"): User {
+        return User(name, email)  // Default param doesn't work in Java
+    }
+}
+```
+
+### Principle: Handle Platform Types Carefully
+
+**Rationale**: Java types can be null. Treat them as nullable unless documented otherwise.
+
+```kotlin
+// ✅ Good - explicit nullability
+fun processJavaList(javaList: List<String>?) {
+    javaList?.forEach { item ->
+        // Treat item as potentially null from Java
+        val safe = item ?: "default"
+        println(safe)
+    }
+}
+
+// ❌ Bad - assuming non-null
+fun processJavaList(javaList: List<String>) {
+    javaList.forEach { item ->
+        println(item.length)  // NPE if Java passed null
+    }
+}
+```
+
+## Performance Best Practices
+
+### Principle: Use Inline Functions for High-Order Functions
+
+**Rationale**: Eliminates lambda object allocation overhead.
+
+```kotlin
+// ✅ Good - inline for performance
+inline fun <T> measureTime(block: () -> T): Pair<T, Long> {
+    val start = System.currentTimeMillis()
+    val result = block()
+    val elapsed = System.currentTimeMillis() - start
+    return result to elapsed
+}
+
+// Zero overhead - block() is inlined at call site
+val (data, time) = measureTime { fetchData() }
+
+// ❌ Bad - unnecessary lambda allocation
+fun <T> measureTime(block: () -> T): Pair<T, Long> {
+    // Creates lambda object on each call
+    val start = System.currentTimeMillis()
+    val result = block()
+    val elapsed = System.currentTimeMillis() - start
+    return result to elapsed
+}
+```
+
+### Principle: Use Sequences for Large Collections
+
+**Rationale**: Lazy evaluation avoids creating intermediate collections.
+
+```kotlin
+// ✅ Good - sequence for large data
+fun processLargeDataset(data: List<Int>): List<Int> {
+    return data.asSequence()
+        .filter { it % 2 == 0 }  // No intermediate list
+        .map { it * 2 }          // No intermediate list
+        .filter { it > 100 }     // No intermediate list
+        .toList()                // Single final list
+}
+
+// ❌ Bad - multiple intermediate lists
+fun processLargeDataset(data: List<Int>): List<Int> {
+    return data
+        .filter { it % 2 == 0 }  // Creates list 1
+        .map { it * 2 }          // Creates list 2
+        .filter { it > 100 }     // Creates list 3
 }
 ```
 

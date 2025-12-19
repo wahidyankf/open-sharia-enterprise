@@ -5,7 +5,6 @@ draft: false
 weight: 606
 description: "Effective error handling with exceptions, Result type, and sealed classes"
 tags: ["kotlin", "error-handling", "result-type", "exceptions"]
-categories: ["learn"]
 ---
 
 ## Problem

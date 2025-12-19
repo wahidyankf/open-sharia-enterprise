@@ -5,7 +5,6 @@ draft: false
 weight: 615
 description: "Master Kotlin coroutines for asynchronous programming"
 tags: ["kotlin", "coroutines", "async", "concurrency"]
-categories: ["learn"]
 ---
 
 ## Problem

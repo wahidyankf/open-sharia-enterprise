@@ -5,7 +5,6 @@ draft: false
 weight: 610
 description: "Master let, run, with, apply, and also for cleaner Kotlin code"
 tags: ["kotlin", "scope-functions", "idiomatic-kotlin", "kotlin-features"]
-categories: ["learn"]
 ---
 
 ## Problem

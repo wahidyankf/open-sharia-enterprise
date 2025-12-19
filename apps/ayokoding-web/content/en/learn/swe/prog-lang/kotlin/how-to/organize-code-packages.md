@@ -5,7 +5,6 @@ draft: false
 weight: 617
 description: "Best practices for organizing Kotlin code with packages, modules, and visibility modifiers"
 tags: ["kotlin", "packages", "modules", "code-organization", "architecture"]
-categories: ["learn"]
 ---
 
 ## Problem

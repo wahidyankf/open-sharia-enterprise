@@ -13,7 +13,6 @@ tags:
   - coroutines
   - performance
   - debugging
-categories:
   - learn
 ---
 
