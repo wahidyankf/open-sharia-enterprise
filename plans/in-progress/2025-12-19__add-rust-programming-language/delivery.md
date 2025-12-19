@@ -1027,6 +1027,7 @@ All navigation files MUST include proper frontmatter (title, date, draft, descri
   - [ ] **Total links**: ~35 (overview + 5 tutorials + cookbook + 18 guides + 3 philosophy + 3 reference + category headers)
 
 - [ ] **rust/overview.md** (weight: 2, learning path guide, ~300 lines)
+
   ```yaml
   ---
   title: Overview
@@ -1094,6 +1095,7 @@ All navigation files MUST include proper frontmatter (title, date, draft, descri
     - [ ] Link to advanced.md
 
 - [ ] **tutorials/overview.md** (weight: 502, tutorial overview, ~200 lines)
+
   ```yaml
   ---
   title: Tutorial Overview
@@ -1148,6 +1150,7 @@ All navigation files MUST include proper frontmatter (title, date, draft, descri
     - [ ] Links to all 18 how-to guides (in order)
 
 - [ ] **how-to/overview.md** (weight: 602, how-to overview, ~150 lines)
+
   ```yaml
   ---
   title: How-To Overview
@@ -1202,6 +1205,7 @@ All navigation files MUST include proper frontmatter (title, date, draft, descri
     - [ ] Link to anti-patterns.md
 
 - [ ] **explanation/overview.md** (weight: 702, explanation overview, ~100 lines)
+
   ```yaml
   ---
   title: Explanation Overview
@@ -1254,6 +1258,7 @@ All navigation files MUST include proper frontmatter (title, date, draft, descri
     - [ ] Link to resources.md
 
 - [ ] **reference/overview.md** (weight: 802, reference overview, ~80 lines)
+
   ```yaml
   ---
   title: Reference Overview
