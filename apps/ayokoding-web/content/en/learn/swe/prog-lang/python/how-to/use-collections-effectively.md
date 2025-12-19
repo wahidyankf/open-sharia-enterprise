@@ -5,7 +5,6 @@ draft: false
 weight: 608
 description: "Choose and use Python collection types for optimal performance and clarity"
 tags: ["python", "collections", "list", "dict", "set", "performance"]
-categories: ["learn"]
 ---
 
 ## Problem

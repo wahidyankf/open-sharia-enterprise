@@ -5,7 +5,6 @@ draft: false
 weight: 703
 description: "Essential Python best practices and Pythonic idioms for writing maintainable code"
 tags: ["python", "best-practices", "pythonic", "code-quality"]
-categories: ["learn"]
 ---
 
 ## Overview

@@ -6,7 +6,6 @@ weight: 614
 description: "Set up reproducible Python environments with virtual environments and modern dependency management"
 tags:
   ["python", "dependencies", "venv", "pip", "poetry", "virtual-environments"]
-categories: ["learn"]
 ---
 
 ## Problem

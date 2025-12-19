@@ -7,3 +7,6 @@ description: Technical reference documentation for Python language features and 
 ---
 
 - [Overview](/en/learn/swe/prog-lang/python/reference/overview)
+- [Cheat Sheet](/en/learn/swe/prog-lang/python/reference/cheat-sheet)
+- [Glossary](/en/learn/swe/prog-lang/python/reference/glossary)
+- [Resources](/en/learn/swe/prog-lang/python/reference/resources)

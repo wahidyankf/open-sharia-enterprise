@@ -5,7 +5,6 @@ draft: false
 weight: 616
 description: "Master Python debugging with pdb, logging module, and effective debugging strategies"
 tags: ["python", "debugging", "logging", "pdb", "ipdb"]
-categories: ["learn"]
 ---
 
 ## Problem

@@ -5,7 +5,6 @@ draft: false
 weight: 604
 description: "Embrace Python idioms for cleaner, more maintainable code"
 tags: ["python", "pythonic", "idioms", "zen-of-python"]
-categories: ["learn"]
 ---
 
 ## Problem

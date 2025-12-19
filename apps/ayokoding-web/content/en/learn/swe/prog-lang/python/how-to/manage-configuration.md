@@ -5,7 +5,6 @@ draft: false
 weight: 611
 description: "Handle configuration with environment variables, config files, and Pydantic Settings"
 tags: ["python", "configuration", "environment-variables", "pydantic", "config"]
-categories: ["learn"]
 ---
 
 ## Problem

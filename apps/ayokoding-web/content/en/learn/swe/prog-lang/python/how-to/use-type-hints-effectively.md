@@ -5,7 +5,6 @@ draft: false
 weight: 607
 description: "Apply modern Python typing with generics, protocols, and static analysis"
 tags: ["python", "type-hints", "mypy", "typing", "static-analysis"]
-categories: ["learn"]
 ---
 
 ## Problem

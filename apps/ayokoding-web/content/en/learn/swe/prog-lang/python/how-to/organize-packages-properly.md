@@ -5,7 +5,6 @@ draft: false
 weight: 613
 description: "Structure Python packages with proper imports and clear module organization"
 tags: ["python", "packages", "imports", "modules", "project-structure"]
-categories: ["learn"]
 ---
 
 ## Problem

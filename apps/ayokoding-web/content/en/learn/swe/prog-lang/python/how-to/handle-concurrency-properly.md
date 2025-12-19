@@ -6,7 +6,6 @@ weight: 612
 description: "Navigate Python's GIL with threading, multiprocessing, and asyncio"
 tags:
   ["python", "concurrency", "threading", "multiprocessing", "asyncio", "gil"]
-categories: ["learn"]
 ---
 
 ## Problem

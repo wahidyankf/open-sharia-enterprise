@@ -5,7 +5,6 @@ draft: false
 weight: 605
 description: "Master Python's exception system with proper error handling patterns"
 tags: ["python", "exceptions", "error-handling", "eafp"]
-categories: ["learn"]
 ---
 
 ## Problem

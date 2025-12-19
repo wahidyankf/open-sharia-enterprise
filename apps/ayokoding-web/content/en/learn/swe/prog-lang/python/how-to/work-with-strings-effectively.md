@@ -5,7 +5,6 @@ draft: false
 weight: 609
 description: "Master Python string manipulation with f-strings, str methods, and efficient text processing"
 tags: ["python", "strings", "text-processing", "regex", "formatting"]
-categories: ["learn"]
 ---
 
 ## Problem

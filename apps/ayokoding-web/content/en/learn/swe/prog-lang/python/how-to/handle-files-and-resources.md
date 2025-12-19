@@ -5,7 +5,6 @@ draft: false
 weight: 610
 description: "Master Python file I/O with context managers, pathlib, and proper resource management"
 tags: ["python", "files", "io", "pathlib", "context-managers"]
-categories: ["learn"]
 ---
 
 ## Problem

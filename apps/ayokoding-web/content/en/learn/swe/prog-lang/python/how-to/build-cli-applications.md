@@ -5,7 +5,6 @@ draft: false
 weight: 618
 description: "Build professional command-line tools with argparse, Click, and Typer frameworks"
 tags: ["python", "cli", "argparse", "click", "typer", "command-line"]
-categories: ["learn"]
 ---
 
 ## Problem

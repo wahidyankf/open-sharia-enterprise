@@ -5,7 +5,6 @@ draft: false
 weight: 704
 description: "Common Python anti-patterns that seem reasonable but create problems, with explanations and solutions"
 tags: ["python", "anti-patterns", "pitfalls", "code-quality"]
-categories: ["learn"]
 ---
 
 ## Overview

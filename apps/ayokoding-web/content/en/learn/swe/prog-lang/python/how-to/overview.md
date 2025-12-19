@@ -5,7 +5,6 @@ draft: false
 weight: 602
 description: "Python how-to guides overview and navigation"
 tags: ["python", "how-to", "overview"]
-categories: ["learn"]
 ---
 
 ## Python How-To Guides
@@ -29,6 +28,26 @@ These practical guides show you how to solve specific problems in Python develop
 **[How to Handle Concurrency Properly](/en/learn/swe/prog-lang/python/how-to/handle-concurrency-properly)** - Navigate Python's GIL with threading, multiprocessing, and asyncio for different workload types.
 
 **[How to Organize Packages Properly](/en/learn/swe/prog-lang/python/how-to/organize-packages-properly)** - Structure Python packages with proper imports and clear module organization.
+
+**[How to Write Effective Tests](/en/learn/swe/prog-lang/python/how-to/write-effective-tests)** - Create reliable test suites that catch bugs and support confident refactoring.
+
+**[How to Handle Files and Resources](/en/learn/swe/prog-lang/python/how-to/handle-files-and-resources)** - Work with files, paths, and system resources using modern Python patterns.
+
+**[How to Debug and Log Effectively](/en/learn/swe/prog-lang/python/how-to/debug-and-log-effectively)** - Debug code efficiently and implement comprehensive logging for production systems.
+
+**[How to Work with Strings Effectively](/en/learn/swe/prog-lang/python/how-to/work-with-strings-effectively)** - Master string manipulation, formatting, and text processing in Python.
+
+**[How to Manage Configuration](/en/learn/swe/prog-lang/python/how-to/manage-configuration)** - Handle application configuration across different environments and deployment scenarios.
+
+**[How to Document Code Effectively](/en/learn/swe/prog-lang/python/how-to/document-code-effectively)** - Write clear documentation with docstrings, type hints, and automated documentation tools.
+
+**[How to Build CLI Applications](/en/learn/swe/prog-lang/python/how-to/build-cli-applications)** - Create professional command-line tools with argument parsing and user-friendly interfaces.
+
+**[Advanced Async Patterns](/en/learn/swe/prog-lang/python/how-to/advanced-async-patterns)** - Master asynchronous programming with asyncio, concurrent task management, and real-world async patterns.
+
+**[Testing Strategies](/en/learn/swe/prog-lang/python/how-to/testing-strategies)** - Comprehensive testing approaches including unit tests, integration tests, mocking, fixtures, and coverage strategies.
+
+**[API Development Best Practices](/en/learn/swe/prog-lang/python/how-to/api-development-best-practices)** - Build robust REST APIs with FastAPI, Flask, and Django REST Framework following industry best practices.
 
 ## Using These Guides
 

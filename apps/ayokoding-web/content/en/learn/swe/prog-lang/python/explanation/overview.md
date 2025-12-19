@@ -5,7 +5,6 @@ draft: false
 weight: 702
 description: "Python conceptual explanations overview"
 tags: ["python", "explanation", "overview"]
-categories: ["learn"]
 ---
 
 ## Python Explanation Guides

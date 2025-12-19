@@ -23,3 +23,6 @@ description: Practical recipes and patterns for solving real-world Python proble
 - [How to Manage Configuration](/en/learn/swe/prog-lang/python/how-to/manage-configuration)
 - [How to Document Code Effectively](/en/learn/swe/prog-lang/python/how-to/document-code-effectively)
 - [How to Build CLI Applications](/en/learn/swe/prog-lang/python/how-to/build-cli-applications)
+- [Advanced Async Patterns](/en/learn/swe/prog-lang/python/how-to/advanced-async-patterns)
+- [Testing Strategies](/en/learn/swe/prog-lang/python/how-to/testing-strategies)
+- [API Development Best Practices](/en/learn/swe/prog-lang/python/how-to/api-development-best-practices)

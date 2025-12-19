@@ -5,7 +5,6 @@ draft: false
 weight: 615
 description: "Master Python testing with pytest, fixtures, mocking, and effective test organization"
 tags: ["python", "testing", "pytest", "fixtures", "mocking"]
-categories: ["learn"]
 ---
 
 ## Problem

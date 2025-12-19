@@ -5,7 +5,6 @@ draft: false
 weight: 617
 description: "Write clear docstrings, meaningful comments, and comprehensive documentation with Sphinx"
 tags: ["python", "documentation", "docstrings", "sphinx", "type-hints"]
-categories: ["learn"]
 ---
 
 ## Problem

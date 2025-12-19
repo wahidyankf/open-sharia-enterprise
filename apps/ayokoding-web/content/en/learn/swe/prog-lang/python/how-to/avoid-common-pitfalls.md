@@ -5,7 +5,6 @@ draft: false
 weight: 606
 description: "Practical guide to recognizing and preventing frequent Python mistakes"
 tags: ["python", "pitfalls", "debugging", "best-practices"]
-categories: ["learn"]
 ---
 
 ## Problem
