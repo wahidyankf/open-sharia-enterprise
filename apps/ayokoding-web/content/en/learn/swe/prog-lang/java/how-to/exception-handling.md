@@ -5,7 +5,6 @@ draft: false
 weight: 604
 description: "Best practices for exception handling in Java applications"
 tags: ["java", "exceptions", "error-handling", "try-catch"]
-categories: ["learn"]
 ---
 
 ## Problem

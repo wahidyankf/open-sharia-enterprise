@@ -5,7 +5,6 @@ draft: false
 weight: 703
 description: "Essential Java best practices and design principles for writing maintainable and robust code"
 tags: ["java", "best-practices", "design-principles", "code-quality"]
-categories: ["learn"]
 ---
 
 ## Overview

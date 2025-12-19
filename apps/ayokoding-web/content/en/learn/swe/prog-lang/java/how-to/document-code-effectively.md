@@ -5,7 +5,6 @@ draft: false
 weight: 613
 description: "Write clear Javadoc, meaningful comments, and comprehensive documentation for maintainable code"
 tags: ["java", "javadoc", "documentation", "comments", "code-quality"]
-categories: ["learn"]
 ---
 
 ## Problem

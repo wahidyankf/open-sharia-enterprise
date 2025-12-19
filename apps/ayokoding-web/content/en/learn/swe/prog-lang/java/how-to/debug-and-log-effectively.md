@@ -5,7 +5,6 @@ draft: false
 weight: 612
 description: "Master debugging techniques and structured logging with SLF4J and Logback"
 tags: ["java", "debugging", "logging", "slf4j", "logback"]
-categories: ["learn"]
 ---
 
 ## Problem

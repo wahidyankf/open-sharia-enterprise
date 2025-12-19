@@ -5,7 +5,6 @@ draft: false
 weight: 607
 description: "Master Java string manipulation with immutability, StringBuilder, formatting, and regex patterns"
 tags: ["java", "strings", "text-processing", "regex", "formatting"]
-categories: ["learn"]
 ---
 
 ## Problem

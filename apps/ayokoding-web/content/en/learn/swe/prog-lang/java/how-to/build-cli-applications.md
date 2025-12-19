@@ -5,7 +5,6 @@ draft: false
 weight: 614
 description: "Create command-line applications with picocli, proper argument parsing, and executable JAR packaging"
 tags: ["java", "cli", "command-line", "picocli", "jar"]
-categories: ["learn"]
 ---
 
 ## Problem

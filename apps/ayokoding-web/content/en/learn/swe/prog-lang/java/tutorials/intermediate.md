@@ -12,7 +12,6 @@ tags:
   - performance
   - production
   - jdbc
-categories:
   - learn
 ---
 

@@ -13,7 +13,6 @@ tags:
   - reflection
   - optimization
   - expert
-categories:
   - learn
 ---
 

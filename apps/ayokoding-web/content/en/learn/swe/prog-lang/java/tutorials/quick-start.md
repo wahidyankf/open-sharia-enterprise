@@ -11,7 +11,6 @@ tags:
   - oop-basics
   - collections
   - exception-handling
-categories:
   - learn
 ---
 

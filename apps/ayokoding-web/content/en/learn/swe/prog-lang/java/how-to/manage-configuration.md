@@ -5,7 +5,6 @@ draft: false
 weight: 609
 description: "Handle application configuration with properties files, environment variables, and configuration best practices"
 tags: ["java", "configuration", "properties", "environment-variables"]
-categories: ["learn"]
 ---
 
 ## Problem

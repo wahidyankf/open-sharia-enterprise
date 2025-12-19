@@ -5,7 +5,6 @@ draft: false
 weight: 605
 description: "Practical techniques for preventing NullPointerException in Java applications"
 tags: ["java", "nullpointerexception", "optional", "null-safety"]
-categories: ["learn"]
 ---
 
 ## Problem

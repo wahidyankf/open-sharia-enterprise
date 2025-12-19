@@ -5,7 +5,6 @@ draft: false
 weight: 608
 description: "Master Java file I/O with Path API, try-with-resources, and modern file operations"
 tags: ["java", "files", "io", "nio", "resources"]
-categories: ["learn"]
 ---
 
 ## Problem

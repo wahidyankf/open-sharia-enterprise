@@ -12,7 +12,6 @@ tags:
   - collections
   - testing
   - streams
-categories:
   - learn
 ---
 

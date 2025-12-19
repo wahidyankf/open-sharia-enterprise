@@ -5,7 +5,6 @@ draft: false
 weight: 611
 description: "Master JUnit 5 (Jupiter) testing with proper structure, assertions, mocking, and test organization"
 tags: ["java", "junit", "testing", "tdd", "mockito"]
-categories: ["learn"]
 ---
 
 ## Problem

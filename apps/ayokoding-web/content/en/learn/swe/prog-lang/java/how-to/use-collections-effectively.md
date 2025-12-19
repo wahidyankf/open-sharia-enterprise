@@ -5,7 +5,6 @@ draft: false
 weight: 606
 description: "Practical guide for choosing and using Java Collections Framework efficiently"
 tags: ["java", "collections", "list", "map", "set", "performance"]
-categories: ["learn"]
 ---
 
 ## Problem

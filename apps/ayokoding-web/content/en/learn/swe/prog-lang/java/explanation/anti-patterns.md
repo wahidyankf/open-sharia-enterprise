@@ -5,7 +5,6 @@ draft: false
 weight: 704
 description: "Recognizing and avoiding common Java anti-patterns that lead to unmaintainable code"
 tags: ["java", "anti-patterns", "code-smells", "refactoring"]
-categories: ["learn"]
 ---
 
 ## Overview

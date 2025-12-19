@@ -10,7 +10,6 @@ tags:
   - installation
   - hello-world
   - jdk
-categories:
   - learn
 ---
 

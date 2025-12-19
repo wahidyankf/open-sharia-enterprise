@@ -6,7 +6,6 @@ weight: 610
 description: "Step-by-step guide to breaking down god classes into maintainable components"
 tags:
   ["java", "refactoring", "god-class", "clean-code", "single-responsibility"]
-categories: ["learn"]
 ---
 
 ## Problem
