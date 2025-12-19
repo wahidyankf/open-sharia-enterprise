@@ -214,7 +214,7 @@ pip 23.3.1 from /path/to/pip (python 3.12)
 
 Before moving forward, verify:
 
-- [ ] `python --version` (or `python3 --version`) shows Python 3.10.x, 3.11.x, or 3.12.x
+- [ ] `python --version` (or `python3 --version`) shows Python 3.13.x or 3.14.x
 - [ ] `python hello.py` prints "Hello, World!"
 - [ ] Interactive shell (`python` or `python3`) starts and responds to commands
 - [ ] `python -m pip --version` shows pip is installed
