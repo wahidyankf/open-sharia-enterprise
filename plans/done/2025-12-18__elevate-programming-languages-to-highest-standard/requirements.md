@@ -293,6 +293,7 @@ All languages MUST maintain:
 - **FR7.2**: All `overview.md` files for section introductions
 - **FR7.3**: Correct weight numbering (500s for tutorials, 600s for how-to, 700s for explanation, 800s for reference)
 - **FR7.4**: Cookbook at position 3 in how-to/ (weight: 603)
+- **FR7.5**: When new files are created, corresponding `_index.md` and `overview.md` MUST be updated to include links and descriptions
 
 ## Non-Functional Requirements
 
