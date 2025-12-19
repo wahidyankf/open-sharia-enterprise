@@ -5,7 +5,6 @@ draft: false
 weight: 610
 description: "Handle configuration with environment variables, viper, and structured config patterns"
 tags: ["golang", "configuration", "viper", "environment-variables", "config"]
-categories: ["learn"]
 ---
 
 ## Problem

@@ -5,7 +5,6 @@ draft: false
 weight: 616
 description: "Create command-line applications with cobra, proper flag handling, and native binary distribution"
 tags: ["golang", "cli", "cobra", "command-line", "flags"]
-categories: ["learn"]
 ---
 
 ## Problem

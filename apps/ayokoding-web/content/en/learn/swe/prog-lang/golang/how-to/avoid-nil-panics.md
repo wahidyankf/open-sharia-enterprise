@@ -5,7 +5,6 @@ draft: false
 weight: 605
 description: "Practical techniques for preventing nil pointer dereference panics in Go applications"
 tags: ["golang", "nil", "panic", "pointers", "safety"]
-categories: ["learn"]
 ---
 
 ## Problem

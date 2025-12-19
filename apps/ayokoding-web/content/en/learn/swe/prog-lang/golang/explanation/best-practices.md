@@ -5,7 +5,6 @@ draft: false
 weight: 703
 description: "Essential Go idioms and best practices for writing clean, maintainable, and idiomatic code"
 tags: ["golang", "best-practices", "idioms", "code-quality"]
-categories: ["learn"]
 ---
 
 ## Overview
@@ -742,9 +741,290 @@ Choose channel buffer sizes deliberately: unbuffered for synchronization, buffer
 
 These idioms reinforce Go's philosophy of clarity over cleverness, making code that's straightforward to read, test, and maintain. The patterns may feel constraining at first, but they create consistency across Go codebases that makes reading other people's code feel familiar rather than foreign.
 
+## Testing and Code Quality
+
+### Write Table-Driven Tests
+
+Go's testing philosophy emphasizes table-driven tests for comprehensive coverage.
+
+**Why it matters:**
+
+- Tests multiple scenarios with single test function
+- Easy to add new test cases
+- Clear documentation of behavior
+- Reduces test code duplication
+
+**Example:**
+
+```go
+func TestAdd(t *testing.T) {
+  tests := []struct {
+    name     string
+    a, b     int
+    expected int
+  }{
+    {"positive numbers", 2, 3, 5},
+    {"negative numbers", -2, -3, -5},
+    {"mixed signs", -2, 3, 1},
+    {"zeros", 0, 0, 0},
+  }
+
+  for _, tt := range tests {
+    t.Run(tt.name, func(t *testing.T) {
+      result := Add(tt.a, tt.b)
+      if result != tt.expected {
+        t.Errorf("Add(%d, %d) = %d; want %d",
+          tt.a, tt.b, result, tt.expected)
+      }
+    })
+  }
+}
+```
+
+### Use Test Helpers
+
+Mark helper functions with `t.Helper()` for cleaner stack traces.
+
+**Example:**
+
+```go
+func assertEqual(t *testing.T, got, want interface{}) {
+  t.Helper() // Marks this as helper
+  if got != want {
+    t.Errorf("got %v; want %v", got, want)
+  }
+}
+
+func TestUser(t *testing.T) {
+  user := GetUser("123")
+  assertEqual(t, user.Name, "Alice") // Error points to this line, not assertEqual
+}
+```
+
+## Performance Optimization
+
+### Pre-allocate Slices When Size Known
+
+Avoid multiple reallocations by pre-allocating capacity.
+
+**Why it matters:**
+
+- Reduces memory allocations
+- Improves performance in loops
+- Prevents copying during growth
+- Clear intent in code
+
+**Example:**
+
+```go
+// ❌ Multiple reallocations
+func processItems(n int) []Item {
+  var items []Item // Starts with nil
+  for i := 0; i < n; i++ {
+    items = append(items, Item{ID: i}) // Grows on each iteration
+  }
+  return items
+}
+
+// ✅ Pre-allocated capacity
+func processItems(n int) []Item {
+  items := make([]Item, 0, n) // Pre-allocate space
+  for i := 0; i < n; i++ {
+    items = append(items, Item{ID: i}) // No reallocation
+  }
+  return items
+}
+
+// ✅ Pre-allocated length (if filling all indices)
+func processItems(n int) []Item {
+  items := make([]Item, n) // Pre-allocate length
+  for i := 0; i < n; i++ {
+    items[i] = Item{ID: i} // Direct assignment
+  }
+  return items
+}
+```
+
+### Use strings.Builder for String Concatenation
+
+Avoid creating multiple intermediate strings in loops.
+
+**Example:**
+
+```go
+// ❌ Creates new string each iteration
+func buildString(items []string) string {
+  s := ""
+  for _, item := range items {
+    s += item + " " // Allocates new string each time
+  }
+  return s
+}
+
+// ✅ Uses strings.Builder
+func buildString(items []string) string {
+  var builder strings.Builder
+  builder.Grow(len(items) * 10) // Pre-allocate approximate size
+  for _, item := range items {
+    builder.WriteString(item)
+    builder.WriteString(" ")
+  }
+  return builder.String()
+}
+```
+
+### Reuse Buffers with sync.Pool
+
+For frequently allocated objects, use sync.Pool to reduce GC pressure.
+
+**Example:**
+
+```go
+var bufferPool = sync.Pool{
+  New: func() interface{} {
+    return new(bytes.Buffer)
+  },
+}
+
+func processData(data []byte) string {
+  buf := bufferPool.Get().(*bytes.Buffer)
+  defer bufferPool.Put(buf)
+  buf.Reset()
+
+  buf.Write(data)
+  buf.WriteString(" processed")
+  return buf.String()
+}
+```
+
+## Context Management
+
+### Always Pass Context as First Parameter
+
+Context should be the first parameter and named `ctx`.
+
+**Why it matters:**
+
+- Consistent API across codebase
+- Enables cancellation and timeout
+- Follows Go conventions
+- Makes context usage obvious
+
+**Example:**
+
+```go
+// ✅ Context first, named ctx
+func FetchUser(ctx context.Context, userID string) (*User, error) {
+  select {
+  case <-ctx.Done():
+    return nil, ctx.Err()
+  default:
+    return db.Query(ctx, userID)
+  }
+}
+
+// ❌ Wrong parameter order
+func FetchUser(userID string, ctx context.Context) (*User, error) {
+  // Inconsistent with Go conventions
+}
+```
+
+### Don't Store Context in Structs
+
+Pass context through function calls, not struct fields.
+
+**Example:**
+
+```go
+// ❌ Storing context in struct
+type Worker struct {
+  ctx context.Context // Don't do this
+  db  *sql.DB
+}
+
+func (w *Worker) Process() error {
+  return w.db.QueryRowContext(w.ctx, "SELECT...")
+}
+
+// ✅ Pass context to methods
+type Worker struct {
+  db *sql.DB
+}
+
+func (w *Worker) Process(ctx context.Context) error {
+  return w.db.QueryRowContext(ctx, "SELECT...")
+}
+```
+
+## Package Organization
+
+### Group Related Functionality
+
+Organize packages by domain, not by layer.
+
+**Example:**
+
+```go
+// ❌ Organized by layer (technical grouping)
+project/
+  models/
+    user.go
+    product.go
+  handlers/
+    user_handler.go
+    product_handler.go
+  repositories/
+    user_repo.go
+    product_repo.go
+
+// ✅ Organized by domain (functional grouping)
+project/
+  user/
+    user.go       // Types
+    handler.go    // HTTP handlers
+    store.go      // Database access
+  product/
+    product.go
+    handler.go
+    store.go
+```
+
+### Internal Packages for Internal Code
+
+Use `internal/` directory to prevent external imports.
+
+**Example:**
+
+```go
+project/
+  api/              // Public API
+    api.go
+  internal/         // Internal-only code
+    database/
+      db.go
+    crypto/
+      hash.go
+
+// External packages can import project/api
+// External packages CANNOT import project/internal/*
+```
+
 ## Related Content
 
-- [Common Go Anti-Patterns](/en/learn/swe/prog-lang/golang/explanation/anti-patterns)
-- [How to Avoid Nil Panics](/en/learn/swe/prog-lang/golang/how-to/avoid-nil-panics)
-- [How to Handle Errors Effectively](/en/learn/swe/prog-lang/golang/how-to/handle-errors-effectively)
-- [How to Use Goroutines and Channels](/en/learn/swe/prog-lang/golang/how-to/use-goroutines-and-channels)
+**Core concepts**:
+
+- [Common Go Anti-Patterns](/en/learn/swe/prog-lang/golang/explanation/anti-patterns) - What to avoid
+- [Go Overview](/en/learn/swe/prog-lang/golang/explanation/overview) - Language philosophy
+
+**How-to guides**:
+
+- [Concurrency Patterns](/en/learn/swe/prog-lang/golang/how-to/concurrency-patterns) - Goroutines and channels
+- [Error Handling](/en/learn/swe/prog-lang/golang/how-to/error-handling) - Error patterns
+- [HTTP Server Patterns](/en/learn/swe/prog-lang/golang/how-to/http-server-patterns) - Web servers
+- [Testing Strategies](/en/learn/swe/prog-lang/golang/how-to/testing-strategies) - Test patterns
+- [Performance Optimization](/en/learn/swe/prog-lang/golang/how-to/performance-optimization) - Profiling and optimization
+
+**Reference**:
+
+- [Cheat Sheet](/en/learn/swe/prog-lang/golang/reference/cheat-sheet) - Quick syntax reference
+- [Resources](/en/learn/swe/prog-lang/golang/reference/resources) - Books and tools

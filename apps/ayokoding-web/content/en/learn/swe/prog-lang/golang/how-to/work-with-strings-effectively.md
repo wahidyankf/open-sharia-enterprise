@@ -5,7 +5,6 @@ draft: false
 weight: 607
 description: "Master Go string manipulation with runes, strings.Builder, and efficient text processing"
 tags: ["golang", "strings", "text-processing", "unicode", "performance"]
-categories: ["learn"]
 ---
 
 ## Problem

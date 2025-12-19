@@ -5,7 +5,6 @@ draft: false
 weight: 612
 description: "Practical steps for breaking down large packages into focused, maintainable modules"
 tags: ["golang", "refactoring", "package-design", "architecture"]
-categories: ["learn"]
 ---
 
 ## Problem

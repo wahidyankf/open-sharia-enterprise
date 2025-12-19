@@ -5,7 +5,6 @@ draft: false
 weight: 606
 description: "Practical patterns for working with Go's built-in slice and map data structures efficiently"
 tags: ["golang", "slices", "maps", "data-structures", "performance"]
-categories: ["learn"]
 ---
 
 ## Problem

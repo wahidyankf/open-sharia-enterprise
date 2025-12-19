@@ -5,7 +5,6 @@ draft: false
 weight: 704
 description: "Recognizing and avoiding common Go anti-patterns that lead to bugs and unmaintainable code"
 tags: ["golang", "anti-patterns", "code-smells", "refactoring"]
-categories: ["learn"]
 ---
 
 ## Overview

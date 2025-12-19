@@ -5,7 +5,6 @@ draft: false
 weight: 609
 description: "Master Go file I/O with defer, os package, proper resource cleanup, and modern file operations"
 tags: ["golang", "files", "io", "resources", "defer"]
-categories: ["learn"]
 ---
 
 ## Problem

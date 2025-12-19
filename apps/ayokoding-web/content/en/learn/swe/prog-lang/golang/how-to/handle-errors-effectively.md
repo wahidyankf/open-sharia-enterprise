@@ -5,7 +5,6 @@ draft: false
 weight: 604
 description: "Practical patterns for Go error handling with wrapping, sentinel errors, and custom error types"
 tags: ["golang", "errors", "error-handling", "best-practices"]
-categories: ["learn"]
 ---
 
 ## Problem

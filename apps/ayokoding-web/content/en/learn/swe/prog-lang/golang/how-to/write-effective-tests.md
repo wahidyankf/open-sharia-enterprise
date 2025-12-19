@@ -5,7 +5,6 @@ draft: false
 weight: 613
 description: "Master Go testing with table-driven tests, subtests, mocking, and effective test organization"
 tags: ["golang", "testing", "table-driven", "testify", "mocking"]
-categories: ["learn"]
 ---
 
 ## Problem

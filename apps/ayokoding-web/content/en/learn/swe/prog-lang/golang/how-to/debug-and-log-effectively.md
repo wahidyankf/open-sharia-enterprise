@@ -5,7 +5,6 @@ draft: false
 weight: 614
 description: "Master Go debugging with Delve, structured logging with slog, and effective debugging strategies"
 tags: ["golang", "debugging", "logging", "delve", "slog"]
-categories: ["learn"]
 ---
 
 ## Problem

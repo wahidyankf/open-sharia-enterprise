@@ -5,7 +5,6 @@ draft: false
 weight: 611
 description: "Practical patterns for designing small, focused interfaces that follow Go idioms"
 tags: ["golang", "interfaces", "design", "best-practices"]
-categories: ["learn"]
 ---
 
 ## Problem

@@ -5,7 +5,6 @@ draft: false
 weight: 615
 description: "Write clear godoc comments, meaningful documentation, and comprehensive package documentation"
 tags: ["golang", "documentation", "godoc", "comments", "code-quality"]
-categories: ["learn"]
 ---
 
 ## Problem

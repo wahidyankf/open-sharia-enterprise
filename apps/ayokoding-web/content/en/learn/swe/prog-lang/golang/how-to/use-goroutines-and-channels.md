@@ -5,7 +5,6 @@ draft: false
 weight: 608
 description: "Practical patterns for concurrent programming with goroutines, channels, and synchronization primitives"
 tags: ["golang", "concurrency", "goroutines", "channels", "sync"]
-categories: ["learn"]
 ---
 
 ## Problem
