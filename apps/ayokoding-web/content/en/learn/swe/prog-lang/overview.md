@@ -51,6 +51,16 @@ Minimalist language focused on simplicity and concurrency. Different paradigm fr
 
 **Why Golang fourth?** Different paradigm (simplicity over features), concurrency primitives (goroutines, channels), systems programming concepts.
 
+### 5. [Rust](/en/learn/swe/prog-lang/rust) - Memory Safety & Systems Programming
+
+Advanced systems language with ownership model for memory safety without garbage collection. Steep learning curve, best learned after solid foundation in other languages.
+
+- [Tutorials](/en/learn/swe/prog-lang/rust/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
+- [How-To Guides](/en/learn/swe/prog-lang/rust/how-to) - Practical solutions for common problems
+- [Explanation](/en/learn/swe/prog-lang/rust/explanation) - Best practices and anti-patterns
+
+**Why Rust fifth?** Unique ownership system (requires strong fundamentals), compile-time memory safety (prevents entire bug classes), zero-cost abstractions, fearless concurrency, ideal for performance-critical systems.
+
 ## Tutorial Structure
 
 Each language follows a consistent learning path:
