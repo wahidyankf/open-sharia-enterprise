@@ -145,6 +145,25 @@ Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
 - **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/ex-de__ai-agents.md#hybrid-agents-exception) for complete rationale
 
+### 🟩 `ayokoding-navigation-maker.md`
+
+Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md files from file structure.
+
+- **Primary Use:** Regenerating navigation listings in \_index.md files after content changes
+- **Specialization:** File structure scanning (2 layers deep), weight-based sorting, frontmatter preservation, title extraction, markdown navigation generation, mechanical content regeneration
+- **Tools:** Read, Write, Glob, Grep, Bash
+- **Model:** Haiku (efficient mechanical task)
+- **When to Use:**
+  - After adding new content files to ayokoding-web (tutorials, guides, pages)
+  - After changing file weights to regenerate navigation order
+  - After restructuring content (moving files, renaming directories)
+  - Bulk navigation updates needed across multiple \_index.md files
+  - Semi-automatic workflow (suggested after content changes detected)
+- **Exclusions:** Root \_index.md files (en/\_index.md, id/\_index.md) use custom Hugo shortcodes
+- **Content Replacement:** Completely replaces everything after frontmatter with generated navigation list
+- **Works with:** `ayokoding-content-maker` creates files → `ayokoding-navigation-maker` generates navigation → `ayokoding-structure-checker` validates → `ayokoding-structure-fixer` fixes issues
+- **References:** Hugo Content Convention - ayokoding (weight system, navigation depth)
+
 ### 🟩 `ayokoding-structure-checker.md`
 
 Expert at validating ALL ayokoding-web content files including navigation architecture, weight conventions across all markdown files, overview completeness, and pedagogical progression.
@@ -175,10 +194,10 @@ Expert at validating ALL ayokoding-web content files including navigation archit
 
 ### 🟪 `ayokoding-structure-fixer.md`
 
-Applies validated fixes from ayokoding-structure-checker audit reports for ALL content files. Re-validates structural findings before applying weight corrections, navigation updates, and ordering fixes across all markdown files.
+Applies validated fixes from ayokoding-structure-checker audit reports for ALL content files. Re-validates structural findings before applying weight corrections and ordering fixes across all markdown files. CANNOT regenerate navigation listings (use ayokoding-navigation-maker).
 
 - **Primary Use:** Applying validated structural fixes from ayokoding-structure-checker reports after user review
-- **Specialization:** Structural fix application for ALL content files (navigation lists, weight values across all file types, file presence, tutorial progression), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective fix automation, content creation boundary awareness
+- **Specialization:** Structural fix application for ALL content files (weight values across all file types, file presence, tutorial progression), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective fix automation, content creation and navigation regeneration boundary awareness
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **Expanded Scope:** Now fixes weight issues in ALL markdown files with frontmatter, including:
   - Tutorial files (initial-setup.md, quick-start.md, beginner.md, intermediate.md, advanced.md)
@@ -189,15 +208,16 @@ Applies validated fixes from ayokoding-structure-checker audit reports for ALL c
   - Static pages (about-ayokoding.md, terms-and-conditions.md, etc.)
 - **When to Use:**
   - After reviewing ayokoding-structure-checker structural audit report
-  - Fixing objective structural issues (navigation items, weight values across ALL files, file presence) automatically
+  - Fixing objective structural issues (weight values across ALL files, file presence) automatically
   - Correcting tutorial progression violations (wrong pedagogical order)
   - Flagging content creation tasks (overview writing) for ayokoding-content-maker
+  - Flagging navigation regeneration tasks for ayokoding-navigation-maker
   - Detecting and reporting false positives to improve checker accuracy
   - Generating comprehensive fix reports with audit trail
 - **Workflow:** ayokoding-structure-checker (detect) → User review → ayokoding-structure-fixer (apply validated structural fixes)
 - **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence structural fixes automatically)
 - **Output:** Generates `ayokoding-structure__{timestamp}__fix.md` report in `generated-reports/`
-- **Limitation:** CANNOT write overview content (requires ayokoding-content-maker)
+- **Limitations:** CANNOT write overview content (requires ayokoding-content-maker), CANNOT regenerate navigation listings (requires ayokoding-navigation-maker)
 
 ### 🟦 `ose-platform-web-content-maker.md`
 

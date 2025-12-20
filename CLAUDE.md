@@ -237,6 +237,8 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 **Content**: docs-maker, docs-tutorial-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
+**Navigation**: ayokoding-navigation-maker
+
 **Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, readme-checker, ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, repo-rules-checker
 
 **Fixing**: repo-rules-fixer, ayokoding-content-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer

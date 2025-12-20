@@ -7,7 +7,7 @@ weight: 300000
 type: docs
 ---
 
-- [Overview](/en/learn/swe/prog-lang/rust/reference/overview)
-- [Cheat Sheet](/en/learn/swe/prog-lang/rust/reference/cheat-sheet)
-- [Glossary](/en/learn/swe/prog-lang/rust/reference/glossary)
-- [Resources](/en/learn/swe/prog-lang/rust/reference/resources)
+- [Reference Overview](overview)
+- [Rust Cheat Sheet](cheat-sheet)
+- [Rust Glossary](glossary)
+- [Rust Resources](resources)

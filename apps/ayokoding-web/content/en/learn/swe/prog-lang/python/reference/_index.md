@@ -6,4 +6,7 @@ weight: 300000
 description: Technical reference documentation for Python language features and standard library
 ---
 
-- [Overview](/en/learn/swe/prog-lang/python/reference/overview)
+- [Overview](overview)
+- [Python Cheat Sheet](cheat-sheet)
+- [Python Glossary](glossary)
+- [Python Resources](resources)

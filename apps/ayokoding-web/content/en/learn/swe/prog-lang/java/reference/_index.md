@@ -6,4 +6,7 @@ weight: 300000
 description: Technical reference documentation for Java language features and standard library
 ---
 
-- [Overview](/en/learn/swe/prog-lang/java/reference/overview)
+- [Overview](overview)
+- [Java Cheat Sheet](cheat-sheet)
+- [Java Glossary](glossary)
+- [Java Resources](resources)

@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-04T00:00:00+07:00
 draft: false
-weight: 10020
+weight: 1000
 ---
 
 Master programming languages from fundamentals to advanced patterns. Each language tutorial series provides a complete learning path from setup to expert mastery.

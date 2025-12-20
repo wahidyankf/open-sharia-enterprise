@@ -6,4 +6,4 @@ weight: 100020
 description: Deep dives into security concepts and principles
 ---
 
-- [Overview](/en/learn/infosec/concepts/explanation/overview)
+- [Overview](overview)

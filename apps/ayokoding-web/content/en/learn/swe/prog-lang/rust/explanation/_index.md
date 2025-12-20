@@ -7,6 +7,6 @@ weight: 400000
 type: docs
 ---
 
-- [Overview](/en/learn/swe/prog-lang/rust/explanation/overview)
-- [Rust Best Practices and Design Principles](/en/learn/swe/prog-lang/rust/explanation/best-practices)
-- [Common Rust Anti-Patterns](/en/learn/swe/prog-lang/rust/explanation/anti-patterns)
+- [Explanation Overview](overview)
+- [Rust Best Practices and Design Principles](best-practices)
+- [Common Rust Anti-Patterns](anti-patterns)

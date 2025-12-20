@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-12T00:00:00+07:00
 draft: false
-weight: 1000020
+weight: 1000000
 description: Practical problem-solving guides and recipes for Java development
 ---
 

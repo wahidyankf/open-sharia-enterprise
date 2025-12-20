@@ -2,23 +2,16 @@
 title: Information Security
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 500
+weight: 103
 ---
 
-- [Overview](/en/learn/infosec/overview)
-- [Concepts](/en/learn/infosec/concepts)
-  - [Overview](/en/learn/infosec/concepts/overview)
-  - [Tutorials](/en/learn/infosec/concepts/tutorials)
-    - [Overview](/en/learn/infosec/concepts/tutorials/overview)
-  - [How-To Guides](/en/learn/infosec/concepts/how-to)
-    - [Overview](/en/learn/infosec/concepts/how-to/overview)
-  - [Reference](/en/learn/infosec/concepts/reference)
-    - [Overview](/en/learn/infosec/concepts/reference/overview)
-  - [Explanation](/en/learn/infosec/concepts/explanation)
-    - [Overview](/en/learn/infosec/concepts/explanation/overview)
-- [Tools](/en/learn/infosec/tools)
-  - [Overview](/en/learn/infosec/tools/overview)
-  - [Gobuster](/en/learn/infosec/tools/gobuster)
-    - [Overview](/en/learn/infosec/tools/gobuster/overview)
-    - [Quick Start](/en/learn/infosec/tools/gobuster/quick-start)
-    - [Beginner](/en/learn/infosec/tools/gobuster/beginner)
+- [Overview](overview)
+- [Information Security Tools](tools)
+  - [Overview](tools/overview)
+  - [Gobuster](tools/gobuster)
+- [Information Security Concepts](concepts)
+  - [Overview](concepts/overview)
+  - [Tutorials](concepts/tutorials)
+  - [Explanation](concepts/explanation)
+  - [How-To Guides](concepts/how-to)
+  - [Reference](concepts/reference)
