@@ -333,15 +333,15 @@ tags:
 
 #### Quick Reference Table
 
-| Level | Path Example                      | Weight Range | Capacity    | \_index.md | overview.md/ikhtisar.md | Content Files   |
-| ----- | --------------------------------- | ------------ | ----------- | ---------- | ----------------------- | --------------- |
-| 1     | `/en/`, `/id/`                    | 0-9          | 10 items    | N/A        | N/A                     | 1, 2, 3...      |
-| 2     | `/en/learn/`, `/id/belajar/`      | 10-99        | 90 items    | 10         | 11                      | 12, 13, 14...   |
-| 3     | `/en/learn/swe/`                  | 100-999      | 900 items   | 100        | 101                     | 102, 103...     |
-| 4     | `/en/learn/swe/prog-lang/`        | 1000-9999    | 9000 items  | 1000       | 1001                    | 1002, 1003...   |
-| 5     | `/en/learn/swe/prog-lang/golang/` | 10000-99999  | 90000 items | 10000      | 10001                   | 10002, 10003... |
+| Folder Level | Path Example                      | Folder's \_index.md       | Content Inside (overview.md, files) |
+| ------------ | --------------------------------- | ------------------------- | ----------------------------------- |
+| 1            | `/en/`, `/id/`                    | 1, 2 (level 1)            | 10, 11, 12... (level 2)             |
+| 2            | `/en/learn/`, `/id/belajar/`      | 12, 13, 14... (level 2)   | 100, 101, 102... (level 3)          |
+| 3            | `/en/learn/swe/`                  | 102, 103... (level 3)     | 1000, 1001, 1002... (level 4)       |
+| 4            | `/en/learn/swe/prog-lang/`        | 1002, 1003... (level 4)   | 10000, 10001... (level 5)           |
+| 5            | `/en/learn/swe/prog-lang/golang/` | 10002, 10003... (level 5) | 100000, 100001... (level 6)         |
 
-**Note**: Level 1 (0-9) represents language roots only (`/en/`, `/id/`), so 10 items is sufficient.
+**Critical Rule**: `_index.md` represents the folder itself at level N. Content **inside** the folder is one level deeper (level N+1).
 
 ---
 
@@ -400,48 +400,53 @@ tags:
 
 #### Standard File Weights
 
-**CRITICAL RULE**: `_index.md` must always have the **lightest weight** (lowest number) in its folder. `overview.md`/`ikhtisar.md` must come immediately after `_index.md`.
+**CRITICAL RULE**: `_index.md` represents the folder itself at level N. Content **inside** the folder is one level deeper (level N+1).
 
 Within each folder, files follow this standard sequence:
 
-**Level 1 (Language Roots)**:
+**Level 1 Folders** (`/en/`, `/id/`):
 
-- Language folders: `1, 2, 3...`
+- Folder's `_index.md`: `weight: 1, 2` (level 1)
+- Content inside folder: Uses level 2 (10, 11, 12...)
 
-**Level 2+ (All Other Folders)**:
+**Level 2 Folders** (e.g., `/en/learn/`):
 
-1. **`_index.md`** → Base number for that level (lightest weight)
-   - Level 2: 10
-   - Level 3: 100
-   - Level 4: 1000
-   - Level 5: 10000
-2. **`overview.md`/`ikhtisar.md`** → Base + 1 (immediately after \_index)
-   - Level 2: 11
-   - Level 3: 101
-   - Level 4: 1001
-   - Level 5: 10001
-3. **Content files** → Base + 2, 3, 4...
-   - Level 2: 12, 13, 14...
-   - Level 3: 102, 103, 104...
-   - Level 4: 1002, 1003, 1004...
-   - Level 5: 10002, 10003, 10004...
+1. **Folder's `_index.md`** → Level 2 weight
+   - Examples: 12, 13, 14... (positions folder among level 1 children)
+2. **`overview.md`/`ikhtisar.md`** → Level 3 base (content is one level deeper)
+   - Weight: 100 (level 3 base)
+3. **Other content files** → Level 3 base + position
+   - Examples: 101, 102, 103... (level 3 range)
+4. **Child folders' `_index.md`** → Level 3 weight
+   - Examples: 104, 105, 106... (level 3 range)
 
-**Example**: If `_index.md` is 100, then `overview.md` must be 101, and content files start at 102.
+**Level 3 Folders** (e.g., `/en/learn/swe/`):
 
-**Example (Level 3 folder)**:
+1. **Folder's `_index.md`** → Level 3 weight
+   - Examples: 102, 103, 104... (positions folder among level 2 children)
+2. **`overview.md`/`ikhtisar.md`** → Level 4 base (content is one level deeper)
+   - Weight: 1000 (level 4 base)
+3. **Other content files** → Level 4 base + position
+   - Examples: 1001, 1002, 1003... (level 4 range)
+4. **Child folders' `_index.md`** → Level 4 weight
+   - Examples: 1004, 1005, 1006... (level 4 range)
+
+**Example (Level 3 folder: `/en/learn/swe/`)**:
 
 ```yaml
 # /en/learn/swe/_index.md
-weight: 100 # Level 3 base
+weight: 102 # Level 3 weight - represents the level 3 folder
 
 # /en/learn/swe/overview.md
-weight: 101 # Level 3 base + 1
+weight: 1000 # Level 4 base - content inside level 3 folder is one level deeper
 
-# /en/learn/swe/prog-lang/
-weight: 102 # Level 3 base + 2
+# /en/learn/swe/prog-lang/ (folder)
+# /en/learn/swe/prog-lang/_index.md
+weight: 1002 # Level 4 weight - represents the level 4 folder
 
-# /en/learn/swe/infosec/
-weight: 103 # Level 3 base + 3
+# /en/learn/swe/infosec/ (folder)
+# /en/learn/swe/infosec/_index.md
+weight: 1003 # Level 4 weight - represents the level 4 folder
 ```
 
 ---
@@ -453,34 +458,43 @@ weight: 103 # Level 3 base + 3
 **Example - Language Root Children Reset**:
 
 ```
-/en/ (level 1: weight 1)
-├── _index.md        → weight: 10   (level 2 base)
-├── overview.md      → weight: 11   (level 2 base + 1)
-├── learn/           → weight: 12   (level 2 base + 2)
-├── rants/           → weight: 13   (level 2 base + 3)
-└── about-ayokoding  → weight: 14   (level 2 base + 4)
+/en/ (level 1 folder)
+├── _index.md           → weight: 1    (level 1 - represents the folder)
+├── learn/ (level 2 folder)
+│   └── _index.md       → weight: 12   (level 2 - represents the folder)
+├── rants/ (level 2 folder)
+│   └── _index.md       → weight: 13   (level 2 - represents the folder)
+└── about-ayokoding.md  → weight: 14   (level 2 - content inside /en/)
 
-/id/ (level 1: weight 2)
-├── _index.md        → weight: 10   (level 2 base, RESET)
-├── belajar/         → weight: 11   (level 2 base + 1, RESET)
-├── celoteh/         → weight: 12   (level 2 base + 2, RESET)
-└── konten-video/    → weight: 13   (level 2 base + 3, RESET)
+/id/ (level 1 folder)
+├── _index.md           → weight: 2    (level 1 - represents the folder)
+├── belajar/ (level 2 folder)
+│   └── _index.md       → weight: 12   (level 2 - RESET, same weight as /en/learn/)
+├── celoteh/ (level 2 folder)
+│   └── _index.md       → weight: 13   (level 2 - RESET, same weight as /en/rants/)
+└── konten-video/ (level 2 folder)
+    └── _index.md       → weight: 14   (level 2 - RESET)
 ```
 
 **Example - Sibling Section Children Reset**:
 
 ```
-/en/learn/ (level 2: weight 12)
-├── _index.md    → weight: 100  (level 3 base)
-├── overview.md  → weight: 101  (level 3 base + 1)
-├── swe/         → weight: 102  (level 3 base + 2)
-├── ai/          → weight: 103  (level 3 base + 3)
-└── business/    → weight: 104  (level 3 base + 4)
+/en/learn/ (level 2 folder)
+├── _index.md       → weight: 12   (level 2 - represents the folder)
+├── overview.md     → weight: 100  (level 3 - content inside level 2 folder)
+├── swe/ (level 3 folder)
+│   └── _index.md   → weight: 102  (level 3 - represents the folder)
+├── ai/ (level 3 folder)
+│   └── _index.md   → weight: 103  (level 3 - represents the folder)
+└── business/ (level 3 folder)
+    └── _index.md   → weight: 104  (level 3 - represents the folder)
 
-/en/rants/ (level 2: weight 13, different parent!)
-├── _index.md    → weight: 100  (level 3 base, RESET)
-├── 2024/        → weight: 101  (level 3 base + 1, RESET)
-└── 2023/        → weight: 102  (level 3 base + 2, RESET)
+/en/rants/ (level 2 folder - different parent!)
+├── _index.md       → weight: 13   (level 2 - represents the folder)
+├── 2024/ (level 3 folder)
+│   └── _index.md   → weight: 102  (level 3 - RESET, same weight as /en/learn/swe/)
+└── 2023/ (level 3 folder)
+    └── _index.md   → weight: 103  (level 3 - RESET, same weight as /en/learn/ai/)
 ```
 
 **Why Reset Per Parent?**
@@ -495,108 +509,124 @@ weight: 103 # Level 3 base + 3
 #### Complete Example: Multi-Level Structure
 
 ```
-/en/ (level 1: weight 1)
-├── _index.md (level 2: weight 10)
-├── overview.md (level 2: weight 11)
-├── learn/ (level 2: weight 12)
-│   ├── _index.md (level 3: weight 100)
-│   ├── overview.md (level 3: weight 101)
-│   ├── swe/ (level 3: weight 102)
-│   │   ├── _index.md (level 4: weight 1000)
-│   │   ├── overview.md (level 4: weight 1001)
-│   │   ├── prog-lang/ (level 4: weight 1002)
-│   │   │   ├── _index.md (level 5: weight 10000)
-│   │   │   ├── overview.md (level 5: weight 10001)
-│   │   │   ├── golang/ (level 5: weight 10002)
-│   │   │   ├── java/ (level 5: weight 10003)
-│   │   │   └── python/ (level 5: weight 10004)
-│   │   └── infosec/ (level 4: weight 1003)
-│   │       ├── _index.md (level 5: weight 10000, RESET - different parent)
-│   │       └── overview.md (level 5: weight 10001, RESET)
-│   ├── ai/ (level 3: weight 103)
-│   │   ├── _index.md (level 4: weight 1000, RESET - different parent)
-│   │   └── overview.md (level 4: weight 1001, RESET)
-│   └── business/ (level 3: weight 104)
-├── rants/ (level 2: weight 13)
-│   ├── _index.md (level 3: weight 100, RESET - different parent)
-│   └── 2024/ (level 3: weight 101, RESET)
-└── about-ayokoding (level 2: weight 14)
+/en/ (level 1 folder)
+├── _index.md                           → weight: 1      (level 1 - represents the folder)
+├── learn/ (level 2 folder)
+│   ├── _index.md                       → weight: 12     (level 2 - represents the folder)
+│   ├── overview.md                     → weight: 100    (level 3 - content inside level 2 folder)
+│   ├── swe/ (level 3 folder)
+│   │   ├── _index.md                   → weight: 102    (level 3 - represents the folder)
+│   │   ├── overview.md                 → weight: 1000   (level 4 - content inside level 3 folder)
+│   │   ├── prog-lang/ (level 4 folder)
+│   │   │   ├── _index.md               → weight: 1002   (level 4 - represents the folder)
+│   │   │   ├── overview.md             → weight: 10000  (level 5 - content inside level 4 folder)
+│   │   │   ├── golang/ (level 5 folder)
+│   │   │   │   ├── _index.md           → weight: 10002  (level 5 - represents the folder)
+│   │   │   │   └── overview.md         → weight: 100000 (level 6 - content inside level 5 folder)
+│   │   │   ├── java/ (level 5 folder)
+│   │   │   │   └── _index.md           → weight: 10003  (level 5 - represents the folder)
+│   │   │   └── python/ (level 5 folder)
+│   │   │       └── _index.md           → weight: 10004  (level 5 - represents the folder)
+│   │   └── infosec/ (level 4 folder - sibling of prog-lang/)
+│   │       ├── _index.md               → weight: 1003   (level 4 - sibling continues sequence)
+│   │       └── overview.md             → weight: 10000  (level 5 - RESET, content inside different parent)
+│   ├── ai/ (level 3 folder - sibling of swe/)
+│   │   ├── _index.md                   → weight: 103    (level 3 - sibling continues sequence)
+│   │   └── overview.md                 → weight: 1000   (level 4 - RESET, content inside different parent)
+│   └── business/ (level 3 folder - sibling of swe/ and ai/)
+│       └── _index.md                   → weight: 104    (level 3 - sibling continues sequence)
+├── rants/ (level 2 folder)
+│   ├── _index.md                       → weight: 13     (level 2 - represents the folder)
+│   └── 2024/ (level 3 folder)
+│       └── _index.md                   → weight: 102    (level 3 - RESET, represents the folder)
+└── about-ayokoding.md                  → weight: 14     (level 2 - content inside /en/)
 
-/id/ (level 1: weight 2)
-├── _index.md (level 2: weight 10, RESET - different parent)
-├── belajar/ (level 2: weight 11, RESET)
-│   ├── _index.md (level 3: weight 100, RESET - different parent)
-│   ├── overview.md (level 3: weight 101, RESET)
-│   └── swe/ (level 3: weight 102, RESET)
-├── celoteh/ (level 2: weight 12, RESET)
-└── konten-video/ (level 2: weight 13, RESET)
+/id/ (level 1 folder)
+├── _index.md                           → weight: 2      (level 1 - represents the folder)
+├── belajar/ (level 2 folder)
+│   ├── _index.md                       → weight: 12     (level 2 - RESET, represents the folder)
+│   ├── ikhtisar.md                     → weight: 100    (level 3 - RESET, content inside level 2 folder)
+│   └── swe/ (level 3 folder)
+│       └── _index.md                   → weight: 102    (level 3 - RESET, represents the folder)
+├── celoteh/ (level 2 folder)
+│   └── _index.md                       → weight: 13     (level 2 - RESET, represents the folder)
+└── konten-video/ (level 2 folder)
+    └── _index.md                       → weight: 14     (level 2 - RESET)
 ```
 
 ---
 
 #### Common Mistakes
 
-❌ **Mistake 1: Not resetting weights for different parents**
+❌ **Mistake 1: Content using same level as folder instead of one level deeper**
+
+```yaml
+# WRONG! Content using same level as folder
+# File: /en/learn/overview.md (inside level 2 folder)
+---
+title: Overview
+weight: 10 # WRONG! Should use level 3, not level 2
+---
+```
+
+✅ **Correct: Content is one level deeper than folder**
+
+```yaml
+# File: /en/learn/overview.md (inside level 2 folder)
+---
+title: Overview
+weight: 100 # Correct! Level 3 base (one level deeper than folder)
+---
+```
+
+---
+
+❌ **Mistake 2: Not resetting weights for different parents**
 
 ```yaml
 # WRONG! Continuing numbers across different parents
-/en/learn/_index.md → weight: 100
-/en/rants/_index.md → weight: 101 # Should be 100! (different parent)
+/en/learn/swe/_index.md → weight: 102 (level 3)
+/en/learn/ai/_index.md → weight: 103 (level 3)
+# But then:
+/en/rants/2024/_index.md → weight: 104 # WRONG! Should reset to 102
 
-/en/learn/swe/_index.md → weight: 1000
-/en/learn/ai/_index.md → weight: 1001 # Should be 1000! (different parent)
+# Same mistake at deeper levels:
+/en/learn/swe/prog-lang/_index.md → weight: 1002 (level 4, parent: swe/)
+/en/learn/ai/ml-basics/_index.md → weight: 1003 # WRONG! Should be 1002 (different parent: ai/)
 ```
 
 ✅ **Correct: Reset to base for each parent**
 
 ```yaml
-/en/learn/_index.md → weight: 100
-/en/rants/_index.md → weight: 100 # RESET (different parent)
+/en/learn/swe/_index.md → weight: 102 (level 3)
+/en/learn/ai/_index.md → weight: 103 (level 3)
+/en/rants/2024/_index.md → weight: 102 # RESET (level 3, different parent: rants/)
 
-/en/learn/swe/_index.md → weight: 1000
-/en/learn/ai/_index.md → weight: 1000 # RESET (different parent)
+/en/learn/swe/prog-lang/_index.md → weight: 1002 (level 4, parent: swe/)
+/en/learn/ai/ml-basics/_index.md → weight: 1002 # RESET (level 4, different parent: ai/)
 ```
 
 ---
 
-❌ **Mistake 2: Using wrong level range**
+❌ **Mistake 3: Using wrong level for \_index.md**
 
 ```yaml
-# WRONG! Using level 2 range (10-99) at level 3
-# File: /en/learn/swe/_index.md (level 3)
+# WRONG! _index.md using wrong level
+# File: /en/learn/swe/_index.md (swe/ is level 3 folder)
 ---
 title: Software Engineering
-weight: 10 # Should be 100 (level 3 base)
+weight: 100 # WRONG! Should be level 3, not level 3 base
 ---
 ```
 
-✅ **Correct: Use correct level base**
+✅ **Correct: \_index.md represents the folder at its level**
 
 ```yaml
-# File: /en/learn/swe/_index.md (level 3)
+# File: /en/learn/swe/_index.md (swe/ is level 3 folder)
 ---
 title: Software Engineering
-weight: 100 # Level 3 base
+weight: 102 # Correct! Level 3 weight represents level 3 folder
 ---
-```
-
----
-
-❌ **Mistake 3: Not following standard sequence**
-
-```yaml
-# WRONG! overview.md should come before content
-/en/learn/swe/_index.md → weight: 100
-/en/learn/swe/prog-lang/ → weight: 101 # Should be after overview
-/en/learn/swe/overview.md → weight: 102 # Should be 101!
-```
-
-✅ **Correct: \_index, overview, then content**
-
-```yaml
-/en/learn/swe/_index.md → weight: 100 # Base
-/en/learn/swe/overview.md → weight: 101 # Base + 1
-/en/learn/swe/prog-lang/ → weight: 102 # Base + 2
 ```
 
 ---
@@ -616,7 +646,7 @@ title: Initial Setup
 ```yaml
 ---
 title: Initial Setup
-weight: 10002 # Level 5: base (10000) + 2
+weight: 100001 # Level 6 base + 1 (content inside level 5 folder)
 ---
 ```
 
@@ -839,15 +869,19 @@ title: Business # WRONG! Too generic (missing context)
 ✅ **Good (simple, generic titles)**:
 
 ```yaml
-# File: content/en/learn/swe/prog-lang/overview.md (level 3)
+# File: content/en/learn/swe/prog-lang/overview.md
+# Path: /en/ (1) → /learn/ (2) → /swe/ (3) → /prog-lang/ (4)
+# prog-lang is level 4 folder, content inside uses level 5
 ---
 title: "Overview" # Simple, generic - context from path
-weight: 302 # level 3: (3 × 100) + 2
+weight: 10000 # Level 5 base - content inside level 4 folder
 ---
-# File: content/id/belajar/swe/prog-lang/ikhtisar.md (level 3)
+# File: content/id/belajar/swe/prog-lang/ikhtisar.md
+# Path: /id/ (1) → /belajar/ (2) → /swe/ (3) → /prog-lang/ (4)
+# prog-lang is level 4 folder, content inside uses level 5
 ---
 title: "Ikhtisar" # Simple, generic - context from path
-weight: 302 # level 3: (3 × 100) + 2
+weight: 10000 # Level 5 base - content inside level 4 folder
 ---
 ```
 
@@ -866,32 +900,32 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
 #### Example Structure
 
-**English Structure** (level 4 example):
+**English Structure** (golang/ is level 5 folder, content inside uses level 6):
 
 ```
 content/en/learn/swe/prog-lang/golang/
-├── _index.md        # Navigation only (weight: 401)
-├── overview.md      # English intro content (weight: 402)
-├── initial-setup.md # (weight: 403)
-├── quick-start.md   # (weight: 404)
-├── beginner.md      # (weight: 405)
-├── intermediate.md  # (weight: 406)
-├── advanced.md      # (weight: 407)
-└── cookbook.md      # (weight: 408)
+├── _index.md        # Folder (weight: 10002, level 5 - represents golang/ folder)
+├── overview.md      # Content (weight: 100000, level 6 - content inside level 5 folder)
+├── initial-setup.md # Content (weight: 100001, level 6)
+├── quick-start.md   # Content (weight: 100002, level 6)
+├── beginner.md      # Content (weight: 100003, level 6)
+├── intermediate.md  # Content (weight: 100004, level 6)
+├── advanced.md      # Content (weight: 100005, level 6)
+└── cookbook.md      # Content (weight: 100006, level 6)
 ```
 
-**Indonesian Structure** (level 4 example):
+**Indonesian Structure** (golang/ is level 5 folder, content inside uses level 6):
 
 ```
 content/id/belajar/swe/prog-lang/golang/
-├── _index.md        # Navigation only (weight: 401)
-├── ikhtisar.md      # Indonesian intro content (weight: 402)
-├── initial-setup.md # (weight: 403)
-├── quick-start.md   # (weight: 404)
-├── beginner.md      # (weight: 405)
-├── intermediate.md  # (weight: 406)
-├── advanced.md      # (weight: 407)
-└── cookbook.md      # (weight: 408)
+├── _index.md        # Folder (weight: 10002, level 5 - represents golang/ folder)
+├── ikhtisar.md      # Content (weight: 100000, level 6 - content inside level 5 folder)
+├── initial-setup.md # Content (weight: 100001, level 6)
+├── quick-start.md   # Content (weight: 100002, level 6)
+├── beginner.md      # Content (weight: 100003, level 6)
+├── intermediate.md  # Content (weight: 100004, level 6)
+├── advanced.md      # Content (weight: 100005, level 6)
+└── cookbook.md      # Content (weight: 100006, level 6)
 ```
 
 **Example `_index.md` (navigation only with overview link first)**:
@@ -899,7 +933,7 @@ content/id/belajar/swe/prog-lang/golang/
 ```markdown
 ---
 title: Golang
-weight: 401 # level 4: /en/learn/swe/prog-lang/golang/
+weight: 10002 # Level 5 - represents the level 5 folder
 ---
 
 - [Overview](/learn/swe/prog-lang/golang/overview) # MUST be first
@@ -919,9 +953,9 @@ title: "Overview"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Introduction to our comprehensive Golang learning resources"
-weight: 402 # level 4: (4 × 100) + 2
+weight: 100000 # Level 6 base - content inside level 5 folder
 tags: ["golang", "programming", "overview"]
-categories: ["learn"]
+# Note: No categories field - causes raw text leak in Hextra theme
 ---
 
 Welcome to our Golang learning path! This comprehensive curriculum takes you from...
@@ -935,9 +969,9 @@ title: "Ikhtisar"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Pengenalan ke sumber pembelajaran Golang komprehensif kami"
-weight: 402 # level 4: (4 × 100) + 2
+weight: 100000 # Level 6 base - content inside level 5 folder
 tags: ["golang", "programming", "ikhtisar"]
-categories: ["learn"]
+# Note: No categories field - causes raw text leak in Hextra theme
 ---
 
 Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini membawa Anda dari...
@@ -1059,9 +1093,9 @@ title: "Why I Switched to Neovim"
 date: 2023-07-15T10:30:00+07:00
 draft: false
 description: "Personal reflections on moving from Vim to Neovim"
-weight: 402
+weight: 10000 # Level 5 base - content inside level 4 folder (07/)
 tags: ["tools", "vim", "neovim"]
-categories: ["rants"]
+# Note: No categories field - causes raw text leak in Hextra theme
 ---
 
 **Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
@@ -1077,9 +1111,9 @@ title: "Kenapa Saya Pindah ke Neovim"
 date: 2023-07-15T10:30:00+07:00
 draft: false
 description: "Refleksi personal tentang perpindahan dari Vim ke Neovim"
-weight: 402
+weight: 10000 # Level 5 base - content inside level 4 folder (07/)
 tags: ["tools", "vim", "neovim"]
-categories: ["celoteh"]
+# Note: No categories field - causes raw text leak in Hextra theme
 ---
 
 > _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Why I Switched to Neovim](/en/rants/2023/07/why-neovim)_
@@ -1111,18 +1145,18 @@ content/en/rants/
 
 **Key Differences from Learning Content**:
 
-| Feature                     | Learning Content (/learn/, /belajar/)                        | Blogging Content (/rants/, /celoteh/)                              |
-| --------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------ |
-| **Organization**            | Topic-based hierarchy (e.g., swe/prog-lang/golang/)          | Time-based hierarchy (year/month/)                                 |
-| **Overview/Ikhtisar**       | **REQUIRED** - Every folder needs overview.md or ikhtisar.md | **NOT REQUIRED** - No overview files needed                        |
-| **Index File Structure**    | Navigation lists (3 layers deep)                             | Year index: 3-layer tree; Month index: flat article list           |
-| **Directory Depth Purpose** | Represents topic nesting                                     | Represents time period (year/month)                                |
-| **Content Separation**      | `_index.md` navigation only, intro in overview/ikhtisar      | `_index.md` can include intro text (no separate overview required) |
-| **Weight System**           | Level-based (powers of 10 with resets per parent)            | Same level-based system (month index = 201, articles = 202+)       |
-| **Naming Convention**       | Topic slugs (getting-started.md, advanced-patterns.md)       | Descriptive article slugs (why-i-switched-to-neovim.md)            |
-| **Author Field**            | FORBIDDEN (uses site-level config)                           | ALLOWED (guest contributors possible)                              |
-| **Validation Strictness**   | Strict structure enforcement                                 | Flexible structure (no overview requirement)                       |
-| **Diátaxis Organization**   | Optional (tutorials/, how-to/, reference/, explanation/)     | Not applicable (chronological organization)                        |
+| Feature                     | Learning Content (/learn/, /belajar/)                              | Blogging Content (/rants/, /celoteh/)                                          |
+| --------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| **Organization**            | Topic-based hierarchy (e.g., swe/prog-lang/golang/)                | Time-based hierarchy (year/month/)                                             |
+| **Overview/Ikhtisar**       | **REQUIRED** - Every folder needs overview.md or ikhtisar.md       | **NOT REQUIRED** - No overview files needed                                    |
+| **Index File Structure**    | Navigation lists (3 layers deep)                                   | Year index: 3-layer tree; Month index: flat article list                       |
+| **Directory Depth Purpose** | Represents topic nesting                                           | Represents time period (year/month)                                            |
+| **Content Separation**      | `_index.md` navigation only, intro in overview/ikhtisar            | `_index.md` can include intro text (no separate overview required)             |
+| **Weight System**           | Level-based (\_index uses parent level, content uses current base) | Same level-based system (\_index uses parent level, articles use current base) |
+| **Naming Convention**       | Topic slugs (getting-started.md, advanced-patterns.md)             | Descriptive article slugs (why-i-switched-to-neovim.md)                        |
+| **Author Field**            | FORBIDDEN (uses site-level config)                                 | ALLOWED (guest contributors possible)                                          |
+| **Validation Strictness**   | Strict structure enforcement                                       | Flexible structure (no overview requirement)                                   |
+| **Diátaxis Organization**   | Optional (tutorials/, how-to/, reference/, explanation/)           | Not applicable (chronological organization)                                    |
 
 **Year Index File (`_index.md`) Structure**:
 
@@ -1137,7 +1171,7 @@ Year index files display a **3-layer tree structure** showing:
 ```markdown
 ---
 title: "2023 Rants"
-weight: 201 # Year folder at level 2
+weight: 102 # Level 3 - positions 2023/ among rants/ children
 date: 2023-01-01T00:00:00+07:00
 draft: false
 ---
@@ -1159,7 +1193,7 @@ Month index files display a **flat list of articles** within that month.
 ```markdown
 ---
 title: "July 2023"
-weight: 201 # Month folder at level 3 (3 × 100 + 1)
+weight: 1002 # Level 4 - represents the level 4 folder (07/)
 date: 2023-07-01T07:20:00+07:00
 draft: false
 ---
@@ -1172,16 +1206,17 @@ draft: false
 
 Uses the **same level-based system** as learning content:
 
-- Folder level determines base weight (powers of 10)
+- Folder at level N → `_index.md` uses level N weight
+- Content inside folder → uses level N+1 weight (one level deeper)
 - Weights reset for children of each parent folder
 - Hugo compares siblings only (no need to coordinate across parents)
 
 **Example Weights** (for `/en/rants/2023/07/`):
 
 - Level calculation: `/en/` (1) → `/rants/` (2) → `/2023/` (3) → `/07/` (4)
-- `_index.md` for month (07/): `weight: 401` (level 4: 4 × 100 + 1)
-- First article: `weight: 402` (level 4: 4 × 100 + 2)
-- Second article: `weight: 403` (level 4: 4 × 100 + 3)
+- `_index.md` for month (07/): `weight: 1002` (level 4 - represents the level 4 folder)
+- First article: `weight: 10000` (level 5 base - content inside level 4 folder)
+- Second article: `weight: 10001` (level 5 base + 1)
 
 **Important Notes**:
 
@@ -1198,9 +1233,9 @@ title: "Why I Switched to Neovim"
 date: 2023-07-15T10:30:00+07:00
 draft: false
 description: "Personal reflections on moving from Vim to Neovim and the productivity benefits"
-weight: 402 # level 4: (4 × 100) + 2
+weight: 10000 # Level 5 base - content inside level 4 folder (07/)
 tags: ["tools", "vim", "neovim", "productivity"]
-categories: ["rants"]
+# Note: No categories field - causes raw text leak in Hextra theme
 author: "Wahidyan Kresna Fridayoka" # Optional - allowed in rants/celoteh
 ---
 After 5 years of using Vim, I finally made the switch to Neovim...
@@ -1467,7 +1502,7 @@ Before publishing, verify:
 - [ ] Tags use single-line JSON array format: `["tag1", "tag2"]`
 - [ ] NO `categories` field in frontmatter (causes raw text leak)
 - [ ] Draft status is set correctly (`draft: true/false`)
-- [ ] `weight` field follows level-based ordering rules (powers of 10 with resets per parent)
+- [ ] `weight` field follows level-based ordering rules (\_index.md represents folder at level N, content inside uses level N+1)
 - [ ] NO `author` field in learning content (uses site-level config)
 - [ ] `author` field ONLY in rants/celoteh directories if needed
 - [ ] Every folder has `overview.md` (English) or `ikhtisar.md` (Indonesian)

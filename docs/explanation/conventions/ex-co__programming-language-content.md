@@ -52,29 +52,29 @@ Every programming language MUST follow this structure:
 
 ```
 [language]/                                    # Level 5 folder (e.g., /en/learn/swe/prog-lang/golang/)
-├── _index.md                                  # Navigation hub (weight: 100000)
-├── overview.md                                # Learning path guide (weight: 100001)
-├── tutorials/                                 # Tutorial category (weight: 100002)
-│   ├── _index.md                             # Tutorial index (weight: 1000000)
-│   ├── overview.md                           # Tutorial overview (weight: 1000001)
-│   ├── initial-setup.md                      # Level 1: 0-5% coverage (weight: 1000002)
-│   ├── quick-start.md                        # Level 2: 5-30% coverage (weight: 1000003)
-│   ├── beginner.md                           # Level 3: 0-60% coverage (weight: 1000004)
-│   ├── intermediate.md                       # Level 4: 60-85% coverage (weight: 1000005)
-│   └── advanced.md                           # Level 5: 85-95% coverage (weight: 1000006)
-├── how-to/                                    # How-to category (weight: 100003)
-│   ├── _index.md                             # How-to index (weight: 1000000)
-│   ├── overview.md                           # How-to overview (weight: 1000001)
-│   ├── cookbook.md                           # 30+ recipes (weight: 1000002) ← Position 3
-│   └── [12-18 problem-solving guides]        # (weight: 1000003+)
-├── explanation/                               # Explanation category (weight: 100004)
-│   ├── _index.md                             # Explanation index (weight: 1000000)
-│   ├── overview.md                           # Explanation overview (weight: 1000001)
-│   ├── best-practices.md                     # Best practices (weight: 1000002)
-│   └── anti-patterns.md                      # Common mistakes (weight: 1000003)
-└── reference/                                 # Reference category (weight: 100005)
-    ├── _index.md                             # Reference index (weight: 1000000)
-    └── overview.md                           # Reference overview (weight: 1000001)
+├── _index.md                                  # Folder (weight: 10002, level 5 - represents the folder)
+├── overview.md                                # Content (weight: 100000, level 6 - content inside level 5 folder)
+├── tutorials/                                 # Folder (weight: 100002, level 6 - represents the folder)
+│   ├── _index.md                             # Folder (weight: 100002, level 6 - represents the folder)
+│   ├── overview.md                           # Content (weight: 1000000, level 7 - content inside level 6 folder)
+│   ├── initial-setup.md                      # Content (weight: 1000001, level 7 - Level 1: 0-5%)
+│   ├── quick-start.md                        # Content (weight: 1000002, level 7 - Level 2: 5-30%)
+│   ├── beginner.md                           # Content (weight: 1000003, level 7 - Level 3: 0-60%)
+│   ├── intermediate.md                       # Content (weight: 1000004, level 7 - Level 4: 60-85%)
+│   └── advanced.md                           # Content (weight: 1000005, level 7 - Level 5: 85-95%)
+├── how-to/                                    # Folder (weight: 100003, level 6 - represents the folder)
+│   ├── _index.md                             # Folder (weight: 100003, level 6 - represents the folder)
+│   ├── overview.md                           # Content (weight: 1000000, level 7 - content inside level 6 folder)
+│   ├── cookbook.md                           # Content (weight: 1000001, level 7 - Position 3 ← IMPORTANT)
+│   └── [12-18 problem-solving guides]        # Content (weight: 1000002+, level 7)
+├── explanation/                               # Folder (weight: 100004, level 6 - represents the folder)
+│   ├── _index.md                             # Folder (weight: 100004, level 6 - represents the folder)
+│   ├── overview.md                           # Content (weight: 1000000, level 7 - content inside level 6 folder)
+│   ├── best-practices.md                     # Content (weight: 1000001, level 7)
+│   └── anti-patterns.md                      # Content (weight: 1000002, level 7)
+└── reference/                                 # Folder (weight: 100005, level 6 - represents the folder)
+    ├── _index.md                             # Folder (weight: 100005, level 6 - represents the folder)
+    └── overview.md                           # Content (weight: 1000000, level 7 - content inside level 6 folder)
 ```
 
 **Weight System Explanation:**
@@ -85,22 +85,26 @@ Programming language folders (e.g., `golang/`, `python/`, `java/`) are at **leve
 /en/ (level 1) → /learn/ (level 2) → /swe/ (level 3) → /prog-lang/ (level 4) → /golang/ (level 5)
 ```
 
-- **Level 6 files** (direct children of language folder): Use base **100000**
-  - `_index.md`: 100000
-  - `overview.md`: 100001
-  - `tutorials/`: 100002
-  - `how-to/`: 100003
-  - `explanation/`: 100004
-  - `reference/`: 100005
+**Key Rule:** Folder at level N has `_index.md` at level N, content INSIDE that folder is one level deeper (level N+1).
 
-- **Level 7 files** (children of category folders): Use base **1000000** (resets per parent)
-  - Each category folder's children start at 1000000
-  - `tutorials/_index.md`: 1000000
-  - `how-to/_index.md`: 1000000 (RESET - different parent)
-  - `explanation/_index.md`: 1000000 (RESET - different parent)
-  - `reference/_index.md`: 1000000 (RESET - different parent)
+- **Level 5 folder** (`golang/`, `python/`, `java/`):
+  - Folder's `_index.md`: **10002** (level 5 - represents the language folder among other languages)
 
-This follows the ayokoding-web level-based weight system where weights reset for children of each parent folder.
+- **Level 6 content** (direct children INSIDE language folder): Use base **100000**
+  - `overview.md`: 100000 (content inside level 5 folder is level 6)
+  - `tutorials/` folder's `_index.md`: 100002 (level 6 - represents the tutorials folder)
+  - `how-to/` folder's `_index.md`: 100003 (level 6 - represents the how-to folder)
+  - `explanation/` folder's `_index.md`: 100004 (level 6 - represents the explanation folder)
+  - `reference/` folder's `_index.md`: 100005 (level 6 - represents the reference folder)
+
+- **Level 7 content** (children INSIDE category folders): Use base **1000000** (resets per parent)
+  - Each category folder's content starts at 1000000
+  - `tutorials/overview.md`: 1000000 (content inside level 6 tutorials/ folder is level 7)
+  - `how-to/overview.md`: 1000000 (RESET - different parent, content inside level 6 how-to/ folder)
+  - `explanation/overview.md`: 1000000 (RESET - different parent, content inside level 6 explanation/ folder)
+  - `reference/overview.md`: 1000000 (RESET - different parent, content inside level 6 reference/ folder)
+
+This follows the ayokoding-web level-based weight system where `_index.md` represents the folder itself at level N, and content inside is one level deeper at level N+1. Weights reset for children of each parent folder.
 
 **Notes:**
 
@@ -111,16 +115,16 @@ This follows the ayokoding-web level-based weight system where weights reset for
 
 ### Cookbook Position Rule
 
-**CRITICAL PEDAGOGICAL REQUIREMENT:** In `how-to/` directories, `cookbook.md` MUST always be at position 3 (weight: 1000002), immediately after `overview.md` (weight: 1000001).
+**CRITICAL PEDAGOGICAL REQUIREMENT:** In `how-to/` directories, `cookbook.md` MUST always be at position 3 (weight: 1000001), immediately after `overview.md` (weight: 1000000).
 
 **Why Cookbook Comes Third (Not Last):**
 
 1. **Immediate Practical Value**: Learners get hands-on examples immediately after understanding what how-to guides offer
 2. **Example-Driven Learning**: Follows "Hook → Engage → Teach" model:
-   - `_index.md` = Navigation (weight: 1000000)
-   - `overview.md` = Hook (explains what how-to guides are, weight: 1000001)
-   - `cookbook.md` = Engage (shows quick wins with 30+ practical examples, weight: 1000002)
-   - Detailed guides = Teach (deep problem-solving patterns, weight: 1000003+)
+   - `_index.md` = Navigation (weight: 100003, level 6 - represents the how-to folder)
+   - `overview.md` = Hook (explains what how-to guides are, weight: 1000000, level 7)
+   - `cookbook.md` = Engage (shows quick wins with 30+ practical examples, weight: 1000001, level 7)
+   - Detailed guides = Teach (deep problem-solving patterns, weight: 1000002+, level 7)
 3. **Quick Wins and Motivation**: Seeing 30+ working examples early motivates continued learning
 4. **Ongoing Reference**: Cookbook serves as reference while studying detailed guides
 
@@ -129,18 +133,18 @@ This follows the ayokoding-web level-based weight system where weights reset for
 ```
 # ❌ BAD: Cookbook at the end
 how-to/
-├── _index.md           (1000000)
-├── overview.md         (1000001)
-├── guide-1.md          (1000002)
-├── guide-2.md          (1000003)
-├── ...                 (1000004-1000016)
-└── cookbook.md         (1000017) ← WRONG! Too late, learners miss early engagement
+├── _index.md           (100003) ← Level 6 (represents folder)
+├── overview.md         (1000000) ← Level 7 base
+├── guide-1.md          (1000001)
+├── guide-2.md          (1000002)
+├── ...                 (1000003-1000015)
+└── cookbook.md         (1000016) ← WRONG! Too late, learners miss early engagement
 
-# ❌ BAD: Wrong weight values (not using level 7 base)
+# ❌ BAD: Wrong weight values (completely ignoring level-based system)
 how-to/
-├── _index.md           (601) ← WRONG! Should be 1000000 (level 7 base)
-├── overview.md         (602) ← WRONG! Should be 1000001
-├── cookbook.md         (603) ← WRONG! Should be 1000002
+├── _index.md           (10) ← WRONG! Should be 100003 (level 6 - represents folder)
+├── overview.md         (20) ← WRONG! Should be 1000000 (level 7 base)
+├── cookbook.md         (30) ← WRONG! Should be 1000001 (level 7)
 ```
 
 **Correct Pattern:**
@@ -148,32 +152,37 @@ how-to/
 ```
 # ✅ GOOD: Cookbook at position 3 with correct level-based weights
 how-to/
-├── _index.md           (1000000) ← Level 7 base
-├── overview.md         (1000001) ← Base + 1
-├── cookbook.md         (1000002) ← Base + 2 (Position 3, immediate engagement!)
-├── guide-1.md          (1000003) ← Base + 3
-├── guide-2.md          (1000004) ← Base + 4
-└── ...                 (1000005+)
+├── _index.md           (100003) ← Level 6 (represents the how-to folder)
+├── overview.md         (1000000) ← Level 7 base (first content inside folder)
+├── cookbook.md         (1000001) ← Level 7 base + 1 (Position 3, immediate engagement!)
+├── guide-1.md          (1000002) ← Level 7 base + 2
+├── guide-2.md          (1000003) ← Level 7 base + 3
+└── ...                 (1000004+)
 
-# ✅ GOOD: All category folders use level 7 base (1000000) with resets
+# ✅ GOOD: Category folders at level 6, content inside at level 7 with resets
 tutorials/
-├── _index.md           (1000000) ← Level 7 base (tutorials parent)
+├── _index.md           (100002) ← Level 6 (represents tutorials folder)
+├── overview.md         (1000000) ← Level 7 base (content inside tutorials/)
 
 how-to/
-├── _index.md           (1000000) ← Level 7 base RESET (different parent: how-to)
+├── _index.md           (100003) ← Level 6 (represents how-to folder)
+├── overview.md         (1000000) ← Level 7 base RESET (content inside how-to/)
 
 explanation/
-├── _index.md           (1000000) ← Level 7 base RESET (different parent: explanation)
+├── _index.md           (100004) ← Level 6 (represents explanation folder)
+├── overview.md         (1000000) ← Level 7 base RESET (content inside explanation/)
 
 reference/
-├── _index.md           (1000000) ← Level 7 base RESET (different parent: reference)
+├── _index.md           (100005) ← Level 6 (represents reference folder)
+├── overview.md         (1000000) ← Level 7 base RESET (content inside reference/)
 ```
 
 **Weight System Summary:**
 
-- **Level 6** (language-level files): 100000, 100001, 100002...
-- **Level 7** (category files): 1000000, 1000001, 1000002... (resets per category)
-- Follows ayokoding-web's level-based system with powers of 10 progression
+- **Level 5** (language folder): Language folder's `_index.md` at 10002
+- **Level 6** (content inside language folder): `overview.md` at 100000, category folders' `_index.md` at 100002, 100003, 100004...
+- **Level 7** (content inside category folders): 1000000, 1000001, 1000002... (resets per category parent)
+- Follows ayokoding-web's level-based system: folder at level N has `_index.md` at level N, content inside at level N+1
 
 ## Coverage Philosophy
 
@@ -509,7 +518,7 @@ These MUST be identical:
 - Diátaxis categorization (tutorials, how-to, explanation, reference)
 - Pedagogical patterns (front hook, learning path, prerequisites)
 - Quality requirements (color palette, no time estimates, runnable code)
-- Weight numbering (level-based system: level 6 uses 100000+, level 7 uses 1000000+ with resets per parent)
+- Weight numbering (level-based system: level 5 folder uses 10002, level 6 content uses 100000+, level 7 content uses 1000000+ with resets per parent)
 - Frontmatter structure (title, date, draft, description, weight)
 
 ### Customizable Elements (Adapt Per Language)
