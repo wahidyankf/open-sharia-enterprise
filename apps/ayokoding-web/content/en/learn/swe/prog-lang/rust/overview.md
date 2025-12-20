@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 402
+weight: 100010
 description: Complete learning path from zero to expert Rust development - 5 comprehensive tutorials covering 0-95% knowledge
 ---
 

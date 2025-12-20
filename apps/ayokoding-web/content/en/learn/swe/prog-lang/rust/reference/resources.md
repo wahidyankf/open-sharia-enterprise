@@ -2,7 +2,7 @@
 title: Rust Resources
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 805
+weight: 1000050
 description: Curated Rust learning materials, tools, community platforms, and learning paths for different domains
 tags: ["rust", "reference", "resources", "learning", "documentation", "tools"]
 ---

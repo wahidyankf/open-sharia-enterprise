@@ -2,7 +2,7 @@
 title: "Java Best Practices and Design Principles"
 date: 2025-12-17T07:06:48+07:00
 draft: false
-weight: 703
+weight: 1000030
 description: "Essential Java best practices and design principles for writing maintainable and robust code"
 tags: ["java", "best-practices", "design-principles", "code-quality"]
 categories: ["learn"]

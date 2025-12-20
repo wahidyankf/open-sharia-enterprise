@@ -2,7 +2,7 @@
 title: "Python Best Practices"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 703
+weight: 1000030
 description: "Essential Python best practices and Pythonic idioms for writing maintainable code"
 tags: ["python", "best-practices", "pythonic", "code-quality"]
 categories: ["learn"]

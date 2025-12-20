@@ -2,7 +2,7 @@
 title: Complete Beginner's Guide to Rust
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 505
+weight: 1000004
 description: Comprehensive Rust fundamentals with deep ownership system coverage, borrowing rules, lifetimes, pattern matching, error handling, and testing
 tags:
   [

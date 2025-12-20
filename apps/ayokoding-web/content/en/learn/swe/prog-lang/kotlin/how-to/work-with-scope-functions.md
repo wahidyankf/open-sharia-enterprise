@@ -2,7 +2,7 @@
 title: "How to Work with Scope Functions"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 610
+weight: 1000100
 description: "Master let, run, with, apply, and also for cleaner Kotlin code"
 tags: ["kotlin", "scope-functions", "idiomatic-kotlin", "kotlin-features"]
 categories: ["learn"]

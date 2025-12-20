@@ -2,7 +2,7 @@
 title: "How to Implement Error Handling Patterns"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 606
+weight: 1000060
 description: "Effective error handling with exceptions, Result type, and sealed classes"
 tags: ["kotlin", "error-handling", "result-type", "exceptions"]
 categories: ["learn"]

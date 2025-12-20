@@ -2,7 +2,7 @@
 title: "Common Go Anti-Patterns"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 704
+weight: 1000040
 description: "Recognizing and avoiding common Go anti-patterns that lead to bugs and unmaintainable code"
 tags: ["golang", "anti-patterns", "code-smells", "refactoring"]
 categories: ["learn"]

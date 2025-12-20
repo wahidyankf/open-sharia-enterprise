@@ -2,7 +2,7 @@
 title: "How to Work with Nullable Types"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 604
+weight: 1000040
 description: "Master Kotlin's nullable types and avoid null pointer exceptions"
 tags: ["kotlin", "null-safety", "nullable-types", "type-system"]
 categories: ["learn"]

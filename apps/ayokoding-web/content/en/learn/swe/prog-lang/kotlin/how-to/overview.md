@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 602
+weight: 1000020
 description: Practical problem-solving guides and recipes for Kotlin development
 ---
 

@@ -2,7 +2,7 @@
 title: "How to Write Pythonic Code"
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 604
+weight: 1000040
 description: "Embrace Python idioms for cleaner, more maintainable code"
 tags: ["python", "pythonic", "idioms", "zen-of-python"]
 categories: ["learn"]

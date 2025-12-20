@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-12-17T15:00:24+07:00
 draft: false
-weight: 504
+weight: 1000004
 description: "Comprehensive Python programming tutorial covering 0-60% of the language from scratch with hands-on exercises"
 tags:
   - python

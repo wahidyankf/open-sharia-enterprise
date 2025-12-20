@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 702
+weight: 1000020
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Conceptual guides explaining Java's design philosophy and core concepts

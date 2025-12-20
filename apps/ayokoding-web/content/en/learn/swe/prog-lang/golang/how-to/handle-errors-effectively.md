@@ -2,7 +2,7 @@
 title: "How to Handle Errors Effectively"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 604
+weight: 1000040
 description: "Practical patterns for Go error handling with wrapping, sentinel errors, and custom error types"
 tags: ["golang", "errors", "error-handling", "best-practices"]
 categories: ["learn"]

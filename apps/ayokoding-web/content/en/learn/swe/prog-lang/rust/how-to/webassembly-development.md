@@ -2,7 +2,7 @@
 title: WebAssembly Development
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 618
+weight: 1000180
 description: Practical guide to compiling Rust to WebAssembly for browser applications
 tags:
   ["rust", "how-to", "webassembly", "wasm", "web", "javascript", "wasm-bindgen"]

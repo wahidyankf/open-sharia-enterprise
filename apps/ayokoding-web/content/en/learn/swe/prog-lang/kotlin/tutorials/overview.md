@@ -2,7 +2,7 @@
 title: Tutorial Overview
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 502
+weight: 1000001
 description: Understanding the full Kotlin tutorial set - 5 levels from 0-5% through 85-95% coverage
 ---
 

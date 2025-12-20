@@ -2,7 +2,7 @@
 title: Rust Cheat Sheet
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 803
+weight: 1000030
 description: Essential Rust syntax and patterns reference - ownership, types, traits, cargo commands, and more
 tags: ["rust", "reference", "cheat-sheet", "syntax", "quick-reference"]
 ---

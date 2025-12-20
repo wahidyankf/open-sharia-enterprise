@@ -2,7 +2,7 @@
 title: Build CLI Applications
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 612
+weight: 1000120
 description: Practical guide to building command-line applications in Rust
 tags:
   [

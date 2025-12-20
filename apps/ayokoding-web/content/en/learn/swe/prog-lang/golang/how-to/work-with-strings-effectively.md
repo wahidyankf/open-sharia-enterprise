@@ -2,7 +2,7 @@
 title: "How to Work with Strings Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 607
+weight: 1000070
 description: "Master Go string manipulation with runes, strings.Builder, and efficient text processing"
 tags: ["golang", "strings", "text-processing", "unicode", "performance"]
 categories: ["learn"]

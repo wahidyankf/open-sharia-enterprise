@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 702
+weight: 1000020
 description: "Python conceptual explanations overview"
 tags: ["python", "explanation", "overview"]
 categories: ["learn"]

@@ -2,7 +2,7 @@
 title: "How to Use Flow and State Management"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 616
+weight: 1000160
 description: "Manage reactive state with Kotlin Flow, StateFlow, and SharedFlow"
 tags: ["kotlin", "flow", "state-management", "reactive", "coroutines"]
 categories: ["learn"]

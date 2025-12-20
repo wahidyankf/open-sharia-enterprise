@@ -2,7 +2,7 @@
 title: "How to Refactor God Packages"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 612
+weight: 1000120
 description: "Practical steps for breaking down large packages into focused, maintainable modules"
 tags: ["golang", "refactoring", "package-design", "architecture"]
 categories: ["learn"]

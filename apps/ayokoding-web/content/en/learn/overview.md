@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 102
+weight: 120
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Your complete learning hub for software engineering, AI, business, and human development

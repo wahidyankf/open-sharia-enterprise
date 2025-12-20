@@ -3,7 +3,7 @@ title: Rust
 date: 2025-12-19T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Rust development - organized using the Diátaxis framework
-weight: 405
+weight: 100020
 type: docs
 layout: list
 ---

@@ -2,7 +2,7 @@
 title: "Kotlin Best Practices and Design Principles"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 703
+weight: 1000030
 description: "Idiomatic Kotlin patterns and best practices for production code"
 tags: ["kotlin", "best-practices", "idioms", "design-principles"]
 categories: ["learn"]

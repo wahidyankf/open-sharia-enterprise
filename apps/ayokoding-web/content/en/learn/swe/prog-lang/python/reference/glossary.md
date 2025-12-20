@@ -2,7 +2,7 @@
 title: Python Glossary
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 804
+weight: 1000040
 description: Python-specific terminology and definitions for learners and developers
 ---
 

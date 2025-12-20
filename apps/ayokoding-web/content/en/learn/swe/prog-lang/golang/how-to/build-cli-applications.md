@@ -2,7 +2,7 @@
 title: "How to Build CLI Applications"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 616
+weight: 1000160
 description: "Create command-line applications with cobra, proper flag handling, and native binary distribution"
 tags: ["golang", "cli", "cobra", "command-line", "flags"]
 categories: ["learn"]

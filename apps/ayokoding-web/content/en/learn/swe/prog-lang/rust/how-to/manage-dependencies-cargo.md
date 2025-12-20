@@ -2,7 +2,7 @@
 title: Manage Dependencies with Cargo
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 606
+weight: 1000060
 description: Practical guide to managing Rust dependencies using Cargo
 tags:
   [

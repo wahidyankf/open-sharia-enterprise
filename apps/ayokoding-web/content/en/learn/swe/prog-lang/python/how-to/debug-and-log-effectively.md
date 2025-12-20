@@ -2,7 +2,7 @@
 title: "How to Debug and Log Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 616
+weight: 1000160
 description: "Master Python debugging with pdb, logging module, and effective debugging strategies"
 tags: ["python", "debugging", "logging", "pdb", "ipdb"]
 categories: ["learn"]

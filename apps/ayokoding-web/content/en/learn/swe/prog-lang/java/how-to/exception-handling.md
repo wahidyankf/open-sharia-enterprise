@@ -2,7 +2,7 @@
 title: "How to Implement Proper Exception Handling"
 date: 2025-12-17T07:06:48+07:00
 draft: false
-weight: 604
+weight: 1000040
 description: "Best practices for exception handling in Java applications"
 tags: ["java", "exceptions", "error-handling", "try-catch"]
 categories: ["learn"]

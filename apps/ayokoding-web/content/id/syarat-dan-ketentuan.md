@@ -2,7 +2,7 @@
 date: 2025-03-16T07:20:00+07:00
 draft: false
 title: Syarat dan Ketentuan
-weight: 3
+weight: 40
 ---
 
 Selamat datang di AyoKoding! Harap baca syarat dan ketentuan ini dengan saksama sebelum menggunakan situs web kami. Dengan mengakses dan menggunakan AyoKoding, Anda setuju untuk mematuhi dan terikat oleh syarat dan ketentuan ini. Harap jangan gunakan situs web kami jika Anda tidak setuju dengan syarat dan ketentuan ini.

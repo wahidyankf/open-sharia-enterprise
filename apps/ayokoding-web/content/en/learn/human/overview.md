@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 202
+weight: 1010
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Discover tools and frameworks for personal development and understanding human strengths

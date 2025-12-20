@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 501
+weight: 1000001
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Choose your Java learning path - 5 tutorial levels from 0% to 95% knowledge coverage

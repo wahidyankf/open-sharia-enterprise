@@ -2,7 +2,7 @@
 title: Explanation
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 504
+weight: 100020
 description: Deep dives into security concepts and principles
 ---
 

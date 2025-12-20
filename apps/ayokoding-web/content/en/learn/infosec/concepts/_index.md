@@ -2,7 +2,7 @@
 title: Information Security Concepts
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 301
+weight: 10020
 ---
 
 - [Overview](/en/learn/infosec/concepts/overview)

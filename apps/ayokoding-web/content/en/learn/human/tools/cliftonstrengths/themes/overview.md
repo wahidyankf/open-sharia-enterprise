@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 502
+weight: 1000020
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Understanding the 34 CliftonStrengths themes across four leadership domains

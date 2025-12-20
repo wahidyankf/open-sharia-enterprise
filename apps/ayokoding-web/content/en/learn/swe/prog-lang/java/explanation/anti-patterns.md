@@ -2,7 +2,7 @@
 title: "Common Java Anti-Patterns"
 date: 2025-12-17T07:06:48+07:00
 draft: false
-weight: 704
+weight: 1000040
 description: "Recognizing and avoiding common Java anti-patterns that lead to unmaintainable code"
 tags: ["java", "anti-patterns", "code-smells", "refactoring"]
 categories: ["learn"]

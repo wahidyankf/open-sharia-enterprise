@@ -2,7 +2,7 @@
 title: "How to Use Extension Functions"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 611
+weight: 1000110
 description: "Add functionality to existing classes without inheritance using extension functions"
 tags: ["kotlin", "extension-functions", "kotlin-features", "clean-code"]
 categories: ["learn"]

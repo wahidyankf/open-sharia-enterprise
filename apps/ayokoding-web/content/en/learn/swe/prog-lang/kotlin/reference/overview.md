@@ -2,7 +2,7 @@
 title: Reference Overview
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 802
+weight: 1000020
 description: Kotlin reference documentation placeholder
 ---
 

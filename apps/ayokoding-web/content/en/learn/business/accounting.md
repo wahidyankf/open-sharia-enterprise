@@ -3,7 +3,7 @@ title: "Accounting"
 date: 2025-12-02T00:00:00+07:00
 draft: false
 description: "Learn essential accounting concepts through hands-on practice with a real business scenario"
-weight: 203
+weight: 1020
 tags:
   - accounting
   - finance

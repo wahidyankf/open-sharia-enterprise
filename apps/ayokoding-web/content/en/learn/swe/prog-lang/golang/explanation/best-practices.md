@@ -2,7 +2,7 @@
 title: "Go Best Practices and Idioms"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 703
+weight: 1000030
 description: "Essential Go idioms and best practices for writing clean, maintainable, and idiomatic code"
 tags: ["golang", "best-practices", "idioms", "code-quality"]
 categories: ["learn"]
