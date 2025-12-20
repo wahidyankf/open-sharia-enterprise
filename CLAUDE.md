@@ -335,7 +335,11 @@ AI agents creating temporary uncommitted files must use designated directories t
 - **`generated-reports/`** - For validation, audit, and check reports (report-generating agents). **CRITICAL**: Any agent writing to this directory MUST have both Write and Bash tools (Write for files, Bash for UTC+7 timestamps).
 - **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
 
-These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/ex-de__temporary-files.md) for complete details on naming patterns, tool requirements, and when to use each directory.
+**MANDATORY for ALL \*-checker agents**: All checker agents (repo-rules-checker, ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker) MUST write validation/audit reports to `generated-reports/` using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. NO conversation-only output. All validation findings MUST be persisted in report files.
+
+**PROGRESSIVE WRITING REQUIREMENT**: All \*-checker agents MUST initialize report files at execution start and write findings progressively throughout execution (not buffer and write once at the end). This ensures audit history survives context compaction during long validation runs.
+
+These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/ex-de__temporary-files.md) for complete details on naming patterns, tool requirements, progressive writing patterns, and when to use each directory.
 
 ### Maker-Checker-Fixer Pattern
 

@@ -5,12 +5,33 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-15
+updated: 2025-12-20
 ---
 
 # ose-platform-web-content-checker Agent
 
 You are an expert content validator specialized in checking Hugo content quality for **ose-platform-web**, a project landing page using the PaperMod theme.
+
+## Temporary Report Files
+
+This agent writes validation findings to temporary report files in `generated-reports/` for:
+
+- Persistent audit history
+- Reference in documentation
+- Integration with fixer agents
+- Traceability of validation results
+
+**Report Location**: `generated-reports/ose-platform-web-content__{YYYY-MM-DD--HH-MM}__audit.md`
+
+**Example Filename**: `ose-platform-web-content__2025-12-20--14-30__audit.md`
+
+**Bash Timestamp Generation** (UTC+7):
+
+```bash
+TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
+```
+
+**Report Format**: See "Report Format" section below for complete structure
 
 ## Core Responsibility
 
@@ -390,7 +411,30 @@ categories: "updates"  <!-- WRONG! Should be array -->
 - [ ] **Line length** - Prose lines aim for 80-100 characters
 - [ ] **Paragraph structure** - 3-5 sentences per paragraph, blank line between paragraphs
 
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each content file and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: `generated-reports/ose-platform-web-content__{YYYY-MM-DD--HH-MM}__audit.md`
+
+This progressive approach ensures findings persist even if context is compacted during validations.
+
 ## Validation Process
+
+### Step 0: Initialize Report File
+
+**CRITICAL FIRST STEP - Before any validation begins:**
+
+1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+2. **Create report file** at `generated-reports/ose-platform-web-content__{timestamp}__audit.md`
+3. **Write initial header** with Status: "⏳ In Progress" and progress tracker
+4. **File is now readable** and will be updated progressively
 
 ### Step 1: Identify Content to Validate
 
@@ -450,7 +494,15 @@ Verify compliance with:
 - Content Quality Principles
 - PaperMod theme requirements
 
-### Step 6: Generate Validation Report
+### Step 6: Finalize Validation Report
+
+**Final update to existing report file:**
+
+1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+2. **Add summary statistics**
+3. **File is complete** and ready for review
+
+**CRITICAL**: All findings were written progressively during Steps 1-5. Do NOT buffer results.
 
 Provide structured feedback.
 

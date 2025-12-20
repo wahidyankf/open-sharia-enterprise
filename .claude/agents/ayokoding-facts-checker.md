@@ -158,7 +158,34 @@ Verify color accessibility per [Color Accessibility Convention](../../docs/expla
 - Color scheme documented in comments
 - Contrast ratios meet WCAG AA (4.5:1)
 
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each factual claim and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: `generated-reports/ayokoding-facts__{YYYY-MM-DD--HH-MM}__validation.md`
+
+This progressive approach ensures findings persist even if context is compacted during long validations (15+ minutes of web verification).
+
 ## Validation Workflow
+
+### Step 0: Initialize Report File
+
+**CRITICAL FIRST STEP - Before any validation begins:**
+
+1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+2. **Create report file** at `generated-reports/ayokoding-facts__{timestamp}__validation.md`
+3. **Write initial header** with:
+   - Validation date/time
+   - Scope (files to check)
+   - Status: "⏳ In Progress"
+   - Progress tracker section (all validation phases marked as "⏳ Pending")
+4. **File is now readable** and will be updated progressively
 
 ### Step 1: Discovery Phase
 
@@ -177,6 +204,8 @@ glob "apps/ayokoding-web/content/*/learn/*/typescript/*.md"
 glob "apps/ayokoding-web/content/*/belajar/*/typescript/*.md"
 ```
 
+**Update progress tracker**: Mark "Discovery Phase" as 🔄 In Progress → ✅ Complete
+
 ### Step 2: Code Validation Phase
 
 **For each code example:**
@@ -185,12 +214,14 @@ glob "apps/ayokoding-web/content/*/belajar/*/typescript/*.md"
 2. **Identify language** (from code fence declaration)
 3. **WebSearch** for official documentation
 4. **WebFetch** API references
-5. **Verify**:
+5. **Verify** and **immediately write result** to report file:
    - Syntax is correct for declared language
    - Imports/requires use correct paths
    - API methods exist in current version
    - Parameter order and types match
    - Code would actually run
+
+**CRITICAL**: Write each code validation result IMMEDIATELY after verification. Do NOT buffer results.
 
 **Example Verification:**
 
@@ -208,7 +239,10 @@ Verification:
 2. Check: useState signature, TypeScript typing
 3. Verify: Import path, generic syntax
 4. Result: ✅ Verified (correct React 18+ API)
+   **Immediately append** to report file
 ````
+
+**Update progress tracker**: Mark "Code Validation" as 🔄 In Progress, update count as each example is checked
 
 ### Step 3: Bilingual Consistency Check
 
@@ -216,13 +250,15 @@ Verification:
 
 1. **Read Indonesian version** (id/ directory)
 2. **Read English version** (en/ directory)
-3. **Compare**:
+3. **Compare** and **immediately write findings** to report file:
    - Same code examples (identical)
    - Equivalent concepts (not necessarily word-for-word)
    - Same difficulty level
    - Same prerequisites
    - Same external links
 4. **Flag differences** with specific examples
+
+**CRITICAL**: Write each bilingual comparison IMMEDIATELY after checking. Do NOT buffer results.
 
 **Example Check:**
 
@@ -236,7 +272,10 @@ Compare:
 - Difficulty: ✅ Same (Intermediate)
 - Prerequisites: ⚠️ Indonesian lists "TypeScript Basics", English doesn't mention
 - External Links: ✅ Same documentation references
+**Immediately append** findings to report file
 ```
+
+**Update progress tracker**: Mark "Bilingual Consistency" as 🔄 In Progress → ✅ Complete
 
 ### Step 4: Tutorial Sequence Validation
 
@@ -247,6 +286,9 @@ Compare:
 3. **Check progression** is logical (concepts build on each other)
 4. **Validate difficulty** increases appropriately
 5. **Confirm checkpoints** align with taught concepts
+6. **Immediately write findings** to report file
+
+**CRITICAL**: Write each sequence validation IMMEDIATELY after checking. Do NOT buffer results.
 
 **Example:**
 
@@ -260,6 +302,8 @@ Check:
 4. Difficulty progression: Beginner → Intermediate → Advanced ✅
 ```
 
+**Update progress tracker**: Mark "Tutorial Sequence" as 🔄 In Progress → ✅ Complete
+
 ### Step 5: External Reference Verification
 
 **For all external links:**
@@ -268,7 +312,10 @@ Check:
 2. **WebFetch** to verify accessibility
 3. **Check** content supports the claim
 4. **WebSearch** for replacements if broken
-5. **Flag** dead or outdated links
+5. **Immediately write verification result** to report file
+6. **Flag** dead or outdated links
+
+**CRITICAL**: Write each link verification IMMEDIATELY after checking. Do NOT buffer results.
 
 **Example:**
 
@@ -281,9 +328,19 @@ Verification:
 4. Result: ✅ Verified
 ```
 
-### Step 6: Reporting Phase
+**Update progress tracker**: Mark "External References" as 🔄 In Progress → ✅ Complete
 
-Generate comprehensive validation report in `generated-reports/ayokoding-facts__{YYYY-MM-DD--HH-MM}__validation.md`.
+### Step 6: Finalize Validation Report
+
+**Final update to existing report file:**
+
+1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+2. **Add summary statistics**:
+   - Files checked
+   - Code examples validated
+   - Bilingual pairs checked
+   - Factual errors / Outdated info / Inconsistencies found
+3. **File is complete** and ready for review
 
 **Report Structure:**
 

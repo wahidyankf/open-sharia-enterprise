@@ -1,6 +1,6 @@
 ---
 name: ayokoding-structure-checker
-description: Expert at validating ayokoding-web content structure, navigation depth, weight conventions, overview completeness, and cookbook weight ordering
+description: Expert at validating ayokoding-web content structure, navigation depth, weight conventions, overview completeness, and cookbook weight ordering. Generates audit reports to generated-reports/.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
@@ -32,7 +32,25 @@ Your primary job is to **validate the structural integrity and navigation archit
 
 **Validation Scope**: `apps/ayokoding-web/content/en/` and `apps/ayokoding-web/content/id/`
 
+## Output Behavior
+
+**CRITICAL**: This agent generates audit report files to `generated-reports/` on EVERY run.
+
 **Report Output**: `generated-reports/ayokoding-structure__{YYYY-MM-DD--HH-MM}__audit.md`
+
+This agent produces TWO outputs:
+
+1. **Audit Report File** (always generated):
+   - Location: `generated-reports/ayokoding-structure__{YYYY-MM-DD--HH-MM}__audit.md`
+   - Content: Full detailed validation results with all findings
+   - Timestamp: Validation start time in UTC+7 (YYYY-MM-DD--HH-MM format)
+   - Purpose: Persistent record for historical tracking and detailed review
+
+2. **Conversation Summary** (always provided):
+   - Executive summary with key metrics
+   - Critical issues only
+   - Link to full audit report file
+   - Purpose: Immediate visibility without conversation clutter
 
 ## When to Use This Agent
 
@@ -437,7 +455,34 @@ weight: 1002 # Should come BEFORE advanced
 ---
 ```
 
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each file and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: `generated-reports/ayokoding-structure__{YYYY-MM-DD--HH-MM}__audit.md`
+
+This progressive approach ensures findings persist even if context is compacted during long audits (hundreds of files).
+
 ## Validation Process
+
+### Step 0: Initialize Report File
+
+**CRITICAL FIRST STEP - Before any validation begins:**
+
+1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+2. **Create report file** at `generated-reports/ayokoding-structure__{timestamp}__audit.md`
+3. **Write initial header** with:
+   - Audit date/time
+   - Audit ID (timestamp)
+   - Status: "⏳ In Progress"
+   - Progress tracker section (all validation checks marked as "⏳ Pending")
+4. **File is now readable** and will be updated progressively
 
 ### Step 1: Scan Content Directories
 
@@ -453,6 +498,8 @@ apps/ayokoding-web/content/en/**/overview.md
 apps/ayokoding-web/content/id/**/ikhtisar.md
 ```
 
+**Update progress tracker**: Mark "Scanning Directories" as 🔄 In Progress → ✅ Complete
+
 ### Step 2: Read and Parse Files
 
 For each file found:
@@ -462,100 +509,75 @@ For each file found:
 3. Parse navigation lists from `_index.md` files
 4. Extract linked paths from navigation items
 
+**Update progress tracker**: Mark "Reading Files" as 🔄 In Progress → ✅ Complete
+
 ### Step 3: Validate Structure
 
-Apply all validation rules:
+Apply all validation rules, **writing findings immediately after each check**:
 
 1. **Navigation Depth**: Check 3-level nesting in `_index.md`
+   - **Immediately append** findings to report file
 2. **Navigation Ordering**: Verify weight-based order
+   - **Immediately append** findings to report file
 3. **Overview Presence**: Check for overview.md/ikhtisar.md
+   - **Immediately append** findings to report file
 4. **Overview Link Position**: Verify first link in navigation
+   - **Immediately append** findings to report file
 5. **Weight Validation**: Check level-based system compliance
+   - **Immediately append** findings to report file
 6. **Cookbook Weight Ordering**: Verify cookbook weight > overview weight
+   - **Immediately append** findings to report file
 7. **Pedagogical Progression**: Assess non-conventional orderings
+   - **Immediately append** findings to report file
 
-### Step 4: Generate Audit Report
+**CRITICAL**: Write each file's validation result IMMEDIATELY after checking. Do NOT buffer results.
 
-Create detailed report with:
+**Update progress tracker**: Mark each validation rule as 🔄 In Progress → ✅ Complete as it finishes
 
-- **Summary**: Total files checked, issues found, status
-- **Critical Issues**: Must-fix structural violations
-- **Important Issues**: Significant inconsistencies
-- **Minor Issues**: Recommendations for improvement
-- **Verification Results**: Checklist with ✅/❌ indicators
-- **Priority Recommendations**: Actionable fixes with file paths and line numbers
+### Step 4: Finalize Audit Report
 
-### Step 5: Write Report File
+**Final update to existing report file:**
 
-**MANDATORY**: Generate audit report file on EVERY run.
+1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+2. **Add summary statistics**:
+   - Files checked
+   - Issues found (Critical/Important/Minor)
+   - Status (✅ Pass | ⚠️ Pass with Warnings | ❌ Fail)
+3. **Add verification results**: Checklist with ✅/❌ indicators
+4. **Add priority recommendations**: Actionable fixes with file paths
+5. **File is complete** and ready for review
 
-**File Creation**:
+### Step 5: Output Summary to Conversation
 
-1. Generate timestamp at start (UTC+7): `YYYY-MM-DD--HH-MM`
-2. Command to get timestamp: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
-3. Create filename: `ayokoding-structure__{timestamp}__audit.md`
-4. Write to: `generated-reports/ayokoding-structure__{timestamp}__audit.md`
+**CRITICAL**: After writing the report file, provide an executive summary in the conversation.
 
-**Report Structure**:
+**Conversation Output Format**:
 
 ```markdown
-# ayokoding-web Structure Validation Audit
-
-**Audit Date**: YYYY-MM-DD HH:MM UTC+7
-**Audit ID**: {timestamp}
+✅ Audit report generated: `generated-reports/ayokoding-structure__{timestamp}__audit.md`
 
 ## Summary
 
 - Files Checked: [N]
 - Issues Found: [N]
-- Status: ✅ Pass | ⚠️ Pass with Warnings | ❌ Fail
+- Status: [✅ Pass | ⚠️ Pass with Warnings | ❌ Fail]
 
 ## Critical Issues
 
-[Critical violations that break conventions]
+[List critical issues if any, or "None" if all passed]
 
 ## Important Issues
 
-[Significant inconsistencies]
+[List important issues if any, or "None" if all passed]
 
-## Minor Issues
-
-[Recommendations for improvement]
-
-## Verification Results
-
-- ✅/❌ Navigation depth (3 levels)
-- ✅/❌ Navigation ordering (by weight)
-- ✅/❌ Overview/Ikhtisar presence
-- ✅/❌ Overview link position (first)
-- ✅/❌ Weight field compliance
-- ✅/❌ Pedagogical progression
-
-## Priority Recommendations
-
-1. [Specific fix with file path and line number]
-2. [Next priority fix]
+See full audit report for complete details and recommendations.
 ```
 
-### Step 6: Output Summary to Conversation
+**Why Two Outputs:**
 
-Provide executive summary:
-
-```markdown
-Audit report generated: `generated-reports/ayokoding-structure__{timestamp}__audit.md`
-
-Summary:
-
-- Files Checked: [N]
-- Issues Found: [N]
-- Status: [✅ Pass | ⚠️ Pass with Warnings | ❌ Fail]
-
-Critical Issues:
-
-- [List critical issues if any]
-
-See full report for details.
-```
+- **Report file**: Complete detailed findings for thorough review and historical tracking
+- **Conversation summary**: Quick visibility of status and critical issues without cluttering conversation
+- **User workflow**: Review summary → Decide if detailed report review needed → Take action
 
 ## Example Validation Scenarios
 
@@ -656,9 +678,9 @@ Always provide:
 - `docs/explanation/conventions/ex-co__hugo-content-ayokoding.md` - ayokoding-web specific standards (CRITICAL for weight system)
 - `docs/explanation/conventions/ex-co__programming-language-content.md` - Programming language structure standards
 
-**Temporary Files Convention:**
+**Development Practices:**
 
-- `docs/explanation/development/ex-de__temporary-files.md` - Report file naming and location standards
+- `docs/explanation/development/ex-de__temporary-files.md` - Report file naming and location standards (CRITICAL - defines `generated-reports/` usage, timestamp format, tool requirements)
 
 **Related Agents:**
 

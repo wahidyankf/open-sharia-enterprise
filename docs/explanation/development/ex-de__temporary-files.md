@@ -9,7 +9,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-15
+updated: 2025-12-20
 ---
 
 # Temporary Files Convention
@@ -37,6 +37,86 @@ This convention establishes designated directories for temporary files created b
 
 **Exception**: Unless specified otherwise by other existing rules/conventions in the repository.
 
+## 📋 Mandatory Report Generation for Checker Agents
+
+**CRITICAL REQUIREMENT**: All \*-checker agents MUST write their validation/audit reports to the `generated-reports/` directory. This is a hard requirement for consistency and traceability across all checker agent families.
+
+### Checker Agents That Must Generate Reports
+
+All checker agents in the following families MUST write audit reports to `generated-reports/`:
+
+1. **repo-rules-checker** - Repository consistency validation
+2. **ayokoding-content-checker** - Hugo content validation (ayokoding-web)
+3. **ayokoding-facts-checker** - Educational content factual accuracy validation
+4. **ayokoding-link-checker** - Link validation (ayokoding-web)
+5. **ayokoding-structure-checker** - Content structure validation (ayokoding-web)
+6. **ose-platform-web-content-checker** - Hugo content validation (ose-platform-web)
+7. **docs-checker** - Documentation factual accuracy validation
+8. **docs-tutorial-checker** - Tutorial quality validation
+9. **readme-checker** - README quality validation
+10. **plan-checker** - Plan readiness validation
+11. **plan-execution-checker** - Implementation validation
+
+**NO EXCEPTIONS**: Checker agents MUST NOT output results in conversation only. All validation findings MUST be written to audit report files.
+
+### Required Tool Permissions
+
+All checker agents MUST have both `Write` and `Bash` tools in their frontmatter:
+
+- **Write tool** - Required for creating report files in `generated-reports/`
+- **Bash tool** - Required for generating UTC+7 timestamps using `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+
+**Example frontmatter**:
+
+```yaml
+---
+name: example-checker
+description: Validates example content against conventions
+tools: Read, Glob, Grep, Write, Bash
+model: inherit
+color: green
+---
+```
+
+### Report File Naming Pattern
+
+All checker agents MUST follow the universal naming pattern:
+
+```
+{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md
+```
+
+**Components**:
+
+- `{agent-family}`: Agent name WITHOUT the `-checker` suffix (e.g., `repo-rules`, `ayokoding-content`, `docs`, `plan`)
+- `__`: Double underscore separator
+- `{YYYY-MM-DD--HH-MM}`: Timestamp in UTC+7 (double dash between date and time)
+- `__`: Double underscore separator
+- `audit`: Report type suffix
+
+**Examples**:
+
+```
+generated-reports/repo-rules__2025-12-14--20-45__audit.md
+generated-reports/ayokoding-content__2025-12-14--15-30__audit.md
+generated-reports/ose-platform-web-content__2025-12-14--16-00__audit.md
+generated-reports/docs__2025-12-15--10-00__audit.md
+generated-reports/plan__2025-12-15--11-30__audit.md
+generated-reports/plan-execution__2025-12-15--14-00__audit.md
+```
+
+### Why This is Mandatory
+
+**Consistency**: Standardized report location and naming across all checker families
+
+**Traceability**: Timestamps enable chronological tracking of validation runs
+
+**Integration**: Fixer agents expect audit reports in `generated-reports/` following this naming pattern
+
+**Documentation**: Audit trail for all validation activities
+
+**NO conversation-only output**: Reports must be persisted for review, comparison, and fixer integration
+
 ## 📂 Directory Purposes
 
 ### `generated-reports/`
@@ -51,6 +131,114 @@ This convention establishes designated directories for temporary files created b
 - Todo lists and progress tracking
 
 **Note**: `docs-link-checker` does NOT create report files (outputs in conversation only)
+
+### Progressive Writing Requirement for Checker Agents
+
+**CRITICAL BEHAVIORAL REQUIREMENT**: All \*-checker agents MUST write their validation reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
+
+**Why This is Critical:**
+
+Progressive writing ensures reports survive context compaction:
+
+- During long audits, conversation context may be compacted/summarized by Claude Code
+- If agent only writes report at the END, file contents may be lost during compaction
+- If file is continuously updated THROUGHOUT execution, findings persist regardless of context compaction
+- This is a **behavioral requirement**, not optional
+
+**What Progressive Writing Means:**
+
+**❌ Bad Pattern (Buffering - DO NOT DO THIS)**:
+
+```markdown
+findings = [] # Collect in memory
+for item in items:
+result = validate(item)
+findings.append(result) # Buffer in memory
+
+# At the very end...
+
+write_report(findings) # Write once after all validation complete
+```
+
+**✅ Good Pattern (Progressive - MUST DO THIS)**:
+
+```markdown
+file.write("# Audit Report\n\n") # Create file immediately
+file.write("**Status**: In Progress\n\n")
+
+for item in items:
+result = validate(item)
+file.write(f"## {item}\n")
+file.write(f"Result: {result}\n\n") # Write immediately
+file.flush() # Ensure written to disk
+
+file.write("**Status**: Complete\n") # Update final status
+file.flush()
+```
+
+**Requirements for All \*-Checker Agents:**
+
+1. **Initialize file immediately** at start of agent execution (not at the end)
+   - Use `Write` tool to create report file with header
+   - Document creation timestamp and status "In Progress"
+   - Each section added as discovered
+
+2. **Write findings progressively** as they are discovered
+   - Each validated item written to file immediately after checking
+   - Use `Edit` or `Write` tool to append/update findings
+   - Include interim status updates
+
+3. **Update file continuously** throughout execution
+   - Current progress indicator shown in file
+   - Running totals updated
+   - Any findings from this point forward are persisted
+
+4. **Final update with completion status** when done
+   - Update "In Progress" → "Complete"
+   - Provide final summary statistics
+   - File is fully persisted before agent finishes
+
+5. **NO buffering in conversation** of findings to write later
+   - Each finding must be written to file immediately
+   - Conversation output is SUPPLEMENTARY (summary), not the source
+
+**Implementation Pattern:**
+
+All checker agents should follow this structure in their instructions:
+
+```
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each item and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: generated-reports/{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md
+
+This progressive approach ensures findings persist even if context is compacted during long audits.
+```
+
+**Checker Agents Subject to This Requirement:**
+
+ALL \*-checker agents must implement progressive writing:
+
+1. repo-rules-checker
+2. ayokoding-content-checker
+3. ayokoding-facts-checker
+4. ayokoding-link-checker
+5. ayokoding-structure-checker
+6. ose-platform-web-content-checker
+7. docs-checker
+8. docs-tutorial-checker
+9. readme-checker
+10. plan-checker
+11. plan-execution-checker
+
+**Validation**: See repo-rules-checker agent for validation rules that verify progressive writing compliance across all checker agents.
 
 ### Report File Naming Standard
 

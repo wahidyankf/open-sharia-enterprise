@@ -259,6 +259,43 @@ Tool permissions follow the **principle of least privilege**: agents should only
 - `repo-rules-fixer` (generates fix reports)
 - Any agent creating validation, audit, or verification reports
 
+**MANDATORY REQUIREMENT FOR ALL \*-CHECKER AGENTS**:
+
+ALL checker agents MUST write their validation/audit reports to `generated-reports/` directory. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
+
+1. repo-rules-checker
+2. ayokoding-content-checker
+3. ayokoding-facts-checker
+4. ayokoding-link-checker
+5. ayokoding-structure-checker
+6. ose-platform-web-content-checker
+7. docs-checker
+8. docs-tutorial-checker
+9. readme-checker
+10. plan-checker
+11. plan-execution-checker
+
+**NO conversation-only output**: Checker agents MUST NOT output validation results in conversation only. All validation findings MUST be written to audit report files following the pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`.
+
+**PROGRESSIVE WRITING REQUIREMENT**:
+
+**CRITICAL BEHAVIORAL REQUIREMENT**: ALL \*-checker agents MUST write reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
+
+**Why this is mandatory:**
+
+- **Context compaction survival**: During long audits, Claude Code may compact/summarize conversation context. If agent only writes at the END, file contents may be lost during compaction.
+- **Real-time persistence**: File continuously updated THROUGHOUT execution ensures findings persist regardless of context compaction.
+- **Behavioral, not optional**: This is a hard requirement for all checker agents.
+
+**Implementation requirement:**
+
+1. **Initialize file at execution start** - Create report file with header and "In Progress" status immediately
+2. **Write findings progressively** - Each validated item written to file immediately after checking (not buffered)
+3. **Update continuously** - Progress indicator and running totals updated throughout execution
+4. **Finalize on completion** - Update status to "Complete" with final summary statistics
+
+See [Temporary Files Convention - Progressive Writing Requirement](./ex-de__temporary-files.md#progressive-writing-requirement-for-checker-agents) for complete details, patterns, and examples.
+
 **Example frontmatter**:
 
 ```yaml
@@ -273,7 +310,7 @@ color: green
 
 **Verification**: When creating or updating report-generating agents, verify both Write and Bash are present in the tools list.
 
-See [Temporary Files Convention](./ex-de__temporary-files.md) for complete details on report naming patterns and timestamp generation.
+See [Temporary Files Convention](./ex-de__temporary-files.md) for complete details on report naming patterns, mandatory checker requirements, and timestamp generation.
 
 ## Model Selection Guidelines
 
