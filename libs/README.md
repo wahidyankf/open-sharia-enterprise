@@ -10,12 +10,10 @@ The `libs/` directory contains **reusable library packages** that can be shared 
 
 ```
 libs/
-├── ts-demo-libs/
-├── ts-utils/
-├── ts-components/
-├── ts-hooks/
-└── (future: java-*, kt-*, py-*)
+└── (future: ts-*, java-*, kt-*, py-*)
 ```
+
+Currently empty - libraries will be added as needed.
 
 ## Naming Convention
 
@@ -32,15 +30,14 @@ This flat structure with language prefixes supports a **polyglot monorepo** wher
 
 ### Examples
 
-**TypeScript libraries** (current focus):
+**TypeScript libraries** (planned):
 
-- `ts-demo-libs` - Demo TypeScript library consumed by Next.js app
 - `ts-utils` - TypeScript utility functions
 - `ts-components` - Reusable React components
 - `ts-hooks` - Custom React hooks
 - `ts-api` - API client libraries
 
-**Future polyglot examples** (planned):
+**Future polyglot examples**:
 
 - `java-services` - Java backend services
 - `java-utils` - Java utility libraries
@@ -51,7 +48,7 @@ This flat structure with language prefixes supports a **polyglot monorepo** wher
 
 ## Current Implementation
 
-**TypeScript only** - The initial implementation focuses on TypeScript libraries for the Next.js/React ecosystem. Support for Java, Kotlin, and Python will be added in future iterations.
+**No libraries yet** - The `libs/` directory is currently empty. Libraries will be created as shared functionality is identified across applications. Future libraries may use TypeScript, Java, Kotlin, or Python depending on project needs.
 
 ## Library Characteristics
 
@@ -153,8 +150,8 @@ TypeScript libraries use workspace path mappings configured in `tsconfig.base.js
 This allows clean imports:
 
 ```typescript
-import { greet } from "@open-sharia-enterprise/ts-demo-libs";
 import { utils } from "@open-sharia-enterprise/ts-utils";
+import { Button } from "@open-sharia-enterprise/ts-components";
 ```
 
 ## Running Library Commands

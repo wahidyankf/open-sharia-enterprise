@@ -675,7 +675,7 @@ You:
 6. CODEBASE STRUCTURE:
    - Plan references: libs/ts-auth/
    - Glob: libs/ts-*
-   - Found: libs/ts-utils/, libs/ts-demo-libs/
+   - Found: (currently empty)
    - NOT FOUND: libs/ts-auth/
    - FLAG: Directory doesn't exist, plan should specify creation
 
