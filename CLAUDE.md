@@ -226,7 +226,7 @@ Foundational values that govern all conventions and development practices. Six p
 
 **Layer 2: Conventions** (`docs/explanation/conventions/`)
 
-Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 20 documentation conventions.
+Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 21 documentation conventions.
 
 **Layer 3: Development** (`docs/explanation/development/`)
 
@@ -310,7 +310,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (20 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
+For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (21 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
 
 ## AI Agent Standards
 
@@ -345,9 +345,9 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-facts-checker (validates educational content factual accuracy), ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-facts-checker (validates educational content factual accuracy), ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ayokoding-structure-checker (validates ayokoding-web content structure), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
 
-**Fixing**: repo-rules-fixer, ayokoding-content-fixer, ayokoding-facts-fixer (applies factual accuracy fixes), docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer (apply validated fixes from corresponding checker audit reports)
+**Fixing**: repo-rules-fixer, ayokoding-content-fixer, ayokoding-facts-fixer (applies factual accuracy fixes), ayokoding-structure-fixer (applies structural fixes), docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer (apply validated fixes from corresponding checker audit reports)
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
