@@ -259,7 +259,7 @@ fi
 title: "Folder Title"
 weight: 1002 # Level 4 - represents level 4 folder
 ---
-# Navigation list will be added here (3 layers deep)
+# Navigation list will be added here (2 layers deep)
 ```
 
 ```yaml

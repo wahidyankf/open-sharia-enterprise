@@ -147,7 +147,7 @@ Validates internal and external links in ayokoding-web Hugo content, enforcing H
 Expert at validating ALL ayokoding-web content files including navigation architecture, weight conventions across all markdown files, overview completeness, and pedagogical progression.
 
 - **Primary Use:** Validating ayokoding-web navigation architecture and structural compliance for ALL markdown files
-- **Specialization:** Navigation depth validation (3 levels), weight ordering for ALL content files (level-based system with per-parent resets), overview/ikhtisar presence checking, tutorial progression validation, pedagogical progression assessment, structural integrity verification
+- **Specialization:** Navigation depth validation (2 layers), weight ordering for ALL content files (level-based system with per-parent resets), overview/ikhtisar presence checking, tutorial progression validation, pedagogical progression assessment, structural integrity verification
 - **Tools:** Read, Glob, Grep, Write, Bash
 - **Expanded Scope:** Now validates ALL markdown files with weight fields, including:
   - Navigation files (`_index.md`)
@@ -163,7 +163,7 @@ Expert at validating ALL ayokoding-web content files including navigation archit
   - Validating navigation architecture across ayokoding-web content
   - Checking weight ordering follows level-based system across ALL content files
   - Verifying overview/ikhtisar presence in learning content folders
-  - Auditing navigation depth (3 levels deep requirement)
+  - Auditing navigation depth (2 layers deep requirement)
   - Validating tutorial pedagogical progression (initial-setup → quick-start → beginner → intermediate → advanced)
   - Ensuring structural compliance with Hugo Content Convention - ayokoding
 - **Output:** Generates `ayokoding-structure__{timestamp}__audit.md` report in `generated-reports/`
