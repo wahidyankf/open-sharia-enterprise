@@ -6,4 +6,4 @@ weight: 100020
 description: Practical solutions to common information security problems
 ---
 
-- [Overview](/en/learn/infosec/concepts/how-to/overview)
+- [Overview](overview)

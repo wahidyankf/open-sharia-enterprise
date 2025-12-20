@@ -6,4 +6,7 @@ weight: 300000
 description: Technical reference documentation for Go language features and standard library
 ---
 
-- [Overview](/en/learn/swe/prog-lang/golang/reference/overview)
+- [Overview](overview)
+- [Go Cheat Sheet](cheat-sheet)
+- [Go Glossary](glossary)
+- [Go Resources](resources)

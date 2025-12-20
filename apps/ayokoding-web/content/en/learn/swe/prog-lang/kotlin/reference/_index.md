@@ -8,4 +8,7 @@ type: docs
 layout: list
 ---
 
-- [Overview](/en/learn/swe/prog-lang/kotlin/reference/overview)
+- [Reference Overview](overview)
+- [Kotlin Cheat Sheet](cheat-sheet)
+- [Kotlin Glossary](glossary)
+- [Kotlin Resources](resources)

@@ -2,7 +2,7 @@
 title: Tutorials Overview
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000001
+weight: 1000000
 description: Choose your Rust learning path - 5 tutorial levels from 0% to 95% knowledge coverage
 ---
 
