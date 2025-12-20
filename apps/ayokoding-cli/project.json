@@ -1,0 +1,36 @@
+{
+  "name": "ayokoding-cli",
+  "sourceRoot": "apps/ayokoding-cli",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/ayokoding-cli",
+        "cwd": "apps/ayokoding-cli"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/ayokoding-cli"
+      }
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/ayokoding-cli"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "apps/ayokoding-cli"
+      }
+    }
+  }
+}
