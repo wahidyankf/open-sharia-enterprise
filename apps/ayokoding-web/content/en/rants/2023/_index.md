@@ -6,7 +6,7 @@ weight: 100
 ---
 
 - [April 2023](04)
-  - [My Journey with ChatGPT Plus: Why Its Worth the Investment](04/my-journey-with-chatgpt-plus-why-its-worth-the-investment)
+  - [My Journey with ChatGPT Plus: Why It's Worth the Investment](04/my-journey-with-chatgpt-plus-why-its-worth-the-investment)
   - [My CliftonStrengths Journey: It makes me more confident to take the engineering management path](04/my-cliftonstrengths-journey-it-makes-me-more-confident-to-take-the-engineering-management-path)
 - [May 2023](05)
   - [Tech Winter in Indonesia: Lessons Learned and the Importance of Stock-Based Compensation](05/tech-winter-in-indonesia-lessons-learned-and-the-importance-of-stock-based-compensation)
@@ -18,4 +18,4 @@ weight: 100
 - [July 2023](07)
   - [Balancing Parenthood and Learning: Harnessing the Power of Audiobooks](07/balancing-parenthood-and-learning-harnessing-the-power-of-audiobooks)
   - [Time Management Strategies for Software Engineers: Maximizing Productivity and Success](07/time-management-strategies-for-software-engineers-maximizing-productivity-and-success)
-  - [Please dont do it! 1 Story Point is not 1 Engineering Hour!](07/please-dont-do-it-1-story-point-is-not-1-engineering-hour)
+  - [Please don't do it! 1 Story Point is not 1 Engineering Hour!](07/please-dont-do-it-1-story-point-is-not-1-engineering-hour)

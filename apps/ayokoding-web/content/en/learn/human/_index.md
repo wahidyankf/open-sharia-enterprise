@@ -9,3 +9,5 @@ weight: 106
 - [Tools](tools)
   - [Overview](tools/overview)
   - [CliftonStrengths](tools/cliftonstrengths)
+    - [Overview](tools/cliftonstrengths/overview)
+    - [Themes](tools/cliftonstrengths/themes)

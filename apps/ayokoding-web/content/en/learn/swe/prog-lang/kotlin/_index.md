@@ -13,7 +13,7 @@ layout: list
   - [Tutorial Overview](tutorials/overview)
   - [Initial Setup](tutorials/initial-setup)
   - [Quick Start](tutorials/quick-start)
-  - [Complete Beginners Guide to Kotlin](tutorials/beginner)
+  - [Complete Beginner's Guide to Kotlin](tutorials/beginner)
   - [Intermediate Kotlin](tutorials/intermediate)
   - [Advanced Kotlin](tutorials/advanced)
 - [How-To Guides](how-to)

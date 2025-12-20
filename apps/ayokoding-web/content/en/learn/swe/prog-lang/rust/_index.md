@@ -13,7 +13,7 @@ layout: list
   - [Tutorials Overview](tutorials/overview)
   - [Initial Setup for Rust](tutorials/initial-setup)
   - [Rust Quick Start](tutorials/quick-start)
-  - [Complete Beginners Guide to Rust](tutorials/beginner)
+  - [Complete Beginner's Guide to Rust](tutorials/beginner)
   - [Intermediate Rust](tutorials/intermediate)
   - [Advanced Rust](tutorials/advanced)
 - [How-To Guides](how-to)

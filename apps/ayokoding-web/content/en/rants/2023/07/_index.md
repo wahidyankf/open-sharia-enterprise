@@ -7,4 +7,4 @@ draft: false
 
 - [Balancing Parenthood and Learning: Harnessing the Power of Audiobooks](balancing-parenthood-and-learning-harnessing-the-power-of-audiobooks)
 - [Time Management Strategies for Software Engineers: Maximizing Productivity and Success](time-management-strategies-for-software-engineers-maximizing-productivity-and-success)
-- [Please dont do it! 1 Story Point is not 1 Engineering Hour!](please-dont-do-it-1-story-point-is-not-1-engineering-hour)
+- [Please don't do it! 1 Story Point is not 1 Engineering Hour!](please-dont-do-it-1-story-point-is-not-1-engineering-hour)
