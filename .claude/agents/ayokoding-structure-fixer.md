@@ -1,6 +1,6 @@
 ---
 name: ayokoding-structure-fixer
-description: Applies validated fixes from ayokoding-structure-checker audit reports for structural issues. Re-validates structural findings before applying changes.
+description: Applies validated fixes from ayokoding-structure-checker audit reports for ALL content files. Re-validates structural findings before applying weight corrections, navigation updates, and ordering fixes across all markdown files.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: haiku
 color: purple
@@ -27,7 +27,16 @@ Your primary job is to:
 
 **CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.
 
-**LIMITATION**: This agent CANNOT write overview content (subjective task requiring ayokoding-content-maker). It only fixes structural issues like missing navigation items, incorrect weight values, cookbook weight ordering, and file presence violations.
+**LIMITATION**: This agent CANNOT write overview content (subjective task requiring ayokoding-content-maker). It only fixes structural issues like missing navigation items, incorrect weight values across ALL content files, cookbook weight ordering, tutorial progression violations, and file presence violations.
+
+**Expanded Scope**: This agent now fixes weight issues in ALL markdown files with frontmatter, including:
+
+- Tutorial files (initial-setup.md, quick-start.md, beginner.md, intermediate.md, advanced.md)
+- How-to guides (all files in how-to/ directories, including cookbook.md)
+- Reference files (cheat-sheet.md, glossary.md, resources.md, etc.)
+- Explanation files (best-practices.md, anti-patterns.md, etc.)
+- Topic content files (standalone content with weight fields)
+- Static pages (about-ayokoding.md, terms-and-conditions.md, etc.)
 
 ## When to Use This Agent
 
@@ -124,11 +133,17 @@ This agent uses the universal three-level confidence system defined in [Fixer Co
 **HIGH Confidence** (Apply automatically):
 
 - Missing navigation item verified by checking `_index.md` content
-- Wrong weight value verified by comparing actual vs expected (level-based system)
+- Wrong weight value verified by comparing actual vs expected (level-based system) - applies to ALL content files
 - Navigation item out of order verified by weight comparison
 - Missing `_index.md` file verified by file existence check
 - Missing overview/ikhtisar file verified by file existence check (learning content only)
 - Cookbook weight lower than overview weight verified by weight comparison (must be higher)
+- Tutorial file weight out of pedagogical order verified by comparing weights (initial-setup < quick-start < beginner < intermediate < advanced)
+- How-to guide weight outside correct level range verified by level calculation
+- Reference file weight outside correct level range verified by level calculation
+- Explanation file weight outside correct level range verified by level calculation
+- Topic content file weight outside correct level range verified by level calculation
+- Static page weight outside level 2 range (10-99) verified by level calculation
 
 **MEDIUM Confidence** (Manual review):
 
@@ -352,6 +367,134 @@ weight: 1000001  # Corrected - higher than overview (appears after)
 **Confidence**: HIGH (objective rule - cookbook weight MUST be > overview weight)
 
 **Rationale**: Overview provides context before practical examples; cookbook at position 3 (after overview at position 1) ensures optimal pedagogical flow.
+
+### 6. Tutorial Progression Fixes
+
+**Issue**: Tutorial files not following pedagogical order (initial-setup → quick-start → beginner → intermediate → advanced)
+
+**Re-validation**:
+
+```bash
+# Check tutorial file weights in order
+dir="apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorials"
+
+# Extract weights from all tutorial files
+initial_weight=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$dir/initial-setup.md" | \
+  grep "^weight:" | cut -d: -f2- | tr -d ' ')
+
+quick_weight=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$dir/quick-start.md" | \
+  grep "^weight:" | cut -d: -f2- | tr -d ' ')
+
+beginner_weight=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$dir/beginner.md" | \
+  grep "^weight:" | cut -d: -f2- | tr -d ' ')
+
+intermediate_weight=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$dir/intermediate.md" | \
+  grep "^weight:" | cut -d: -f2- | tr -d ' ')
+
+advanced_weight=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$dir/advanced.md" | \
+  grep "^weight:" | cut -d: -f2- | tr -d ' ')
+
+# Verify pedagogical order
+if [ "$quick_weight" -le "$initial_weight" ] || \
+   [ "$beginner_weight" -le "$quick_weight" ] || \
+   [ "$intermediate_weight" -le "$beginner_weight" ] || \
+   [ "$advanced_weight" -le "$intermediate_weight" ]; then
+  echo "INVALID - tutorial weights not in pedagogical order"
+fi
+```
+
+**Fix**: Update tutorial weights to follow progression
+
+```yaml
+---
+# initial-setup.md
+title: "Initial Setup"
+weight: 1000001 # Level 7 base + 1
+---
+```
+
+```yaml
+---
+# quick-start.md
+title: "Quick Start"
+weight: 1000002 # Level 7 base + 2 (after initial-setup)
+---
+```
+
+```yaml
+---
+# beginner.md
+title: "Beginner"
+weight: 1000003 # Level 7 base + 3 (after quick-start)
+---
+```
+
+```yaml
+---
+# intermediate.md
+title: "Intermediate"
+weight: 1000004 # Level 7 base + 4 (after beginner)
+---
+```
+
+```yaml
+---
+# advanced.md
+title: "Advanced"
+weight: 1000005 # Level 7 base + 5 (after intermediate)
+---
+```
+
+**Confidence**: HIGH (objective rule - tutorial progression must be sequential)
+
+**Rationale**: Tutorials build on each other; learners must progress from basic to advanced in order.
+
+### 7. All Content Files Weight Fixes
+
+**Issue**: Content files (how-to guides, reference files, explanation files, etc.) using wrong weight ranges
+
+**Re-validation**:
+
+```bash
+# Determine file's directory level
+file="apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/how-to/build-cli-applications.md"
+
+# Count depth from language root
+# /en/ (1) → /learn/ (2) → /swe/ (3) → /prog-lang/ (4) → /golang/ (5) → /how-to/ (6) → file (7)
+level=7
+
+# Calculate expected base weight
+base_weight=$((10 ** (level - 1)))  # 10^6 = 1000000
+
+# Extract current weight
+current_weight=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | \
+  grep "^weight:" | cut -d: -f2- | tr -d ' ')
+
+# Check if weight is in correct range
+max_weight=$((base_weight * 10 - 1))  # 9999999
+
+if [ "$current_weight" -lt "$base_weight" ] || [ "$current_weight" -gt "$max_weight" ]; then
+  echo "INVALID - weight $current_weight outside level $level range ($base_weight-$max_weight)"
+fi
+```
+
+**Fix**: Update weight to correct level range
+
+```yaml
+---
+# BEFORE (wrong level)
+title: "How to Build CLI Applications"
+weight: 616  # WRONG! Level 4 weight for level 7 content
+
+# AFTER (correct level)
+title: "How to Build CLI Applications"
+weight: 1000616  # Correct! Level 7 weight
+---
+```
+
+**Confidence**: HIGH (objective calculation based on directory depth)
+
+**Rationale**: Weight ranges must match file's directory level for Hugo navigation to work correctly.
 
 ## Fix Application Process
 

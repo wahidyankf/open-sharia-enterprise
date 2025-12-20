@@ -144,16 +144,27 @@ Validates internal and external links in ayokoding-web Hugo content, enforcing H
 
 ### 🟩 `ayokoding-structure-checker.md`
 
-Expert at validating ayokoding-web content structure, navigation depth, weight conventions, and overview completeness.
+Expert at validating ALL ayokoding-web content files including navigation architecture, weight conventions across all markdown files, overview completeness, and pedagogical progression.
 
-- **Primary Use:** Validating ayokoding-web navigation architecture and structural compliance
-- **Specialization:** Navigation depth validation (3 levels), weight ordering (level-based system with per-parent resets), overview/ikhtisar presence checking, pedagogical progression assessment, structural integrity verification
+- **Primary Use:** Validating ayokoding-web navigation architecture and structural compliance for ALL markdown files
+- **Specialization:** Navigation depth validation (3 levels), weight ordering for ALL content files (level-based system with per-parent resets), overview/ikhtisar presence checking, tutorial progression validation, pedagogical progression assessment, structural integrity verification
 - **Tools:** Read, Glob, Grep, Write, Bash
+- **Expanded Scope:** Now validates ALL markdown files with weight fields, including:
+  - Navigation files (`_index.md`)
+  - Overview/intro files (`overview.md`, `ikhtisar.md`)
+  - Recipe collections (`cookbook.md`)
+  - Tutorial files (`initial-setup.md`, `quick-start.md`, `beginner.md`, `intermediate.md`, `advanced.md`)
+  - How-to guides (all files in `how-to/` directories)
+  - Reference files (all files in `reference/` directories)
+  - Explanation files (all files in `explanation/` directories)
+  - Topic content files (standalone content with weights)
+  - Static pages (`about-ayokoding.md`, `terms-and-conditions.md`, etc.)
 - **When to Use:**
   - Validating navigation architecture across ayokoding-web content
-  - Checking weight ordering follows level-based system with per-parent resets
+  - Checking weight ordering follows level-based system across ALL content files
   - Verifying overview/ikhtisar presence in learning content folders
   - Auditing navigation depth (3 levels deep requirement)
+  - Validating tutorial pedagogical progression (initial-setup → quick-start → beginner → intermediate → advanced)
   - Ensuring structural compliance with Hugo Content Convention - ayokoding
 - **Output:** Generates `ayokoding-structure__{timestamp}__audit.md` report in `generated-reports/`
 - **Works with:** `ayokoding-content-checker` for content quality, `ayokoding-facts-checker` for factual accuracy, `ayokoding-link-checker` for link validation
@@ -161,14 +172,22 @@ Expert at validating ayokoding-web content structure, navigation depth, weight c
 
 ### 🟪 `ayokoding-structure-fixer.md`
 
-Applies validated fixes from ayokoding-structure-checker audit reports for structural issues. Re-validates structural findings before applying changes.
+Applies validated fixes from ayokoding-structure-checker audit reports for ALL content files. Re-validates structural findings before applying weight corrections, navigation updates, and ordering fixes across all markdown files.
 
 - **Primary Use:** Applying validated structural fixes from ayokoding-structure-checker reports after user review
-- **Specialization:** Structural fix application (navigation lists, weight values, file presence), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective fix automation, content creation boundary awareness
+- **Specialization:** Structural fix application for ALL content files (navigation lists, weight values across all file types, file presence, tutorial progression), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective fix automation, content creation boundary awareness
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **Expanded Scope:** Now fixes weight issues in ALL markdown files with frontmatter, including:
+  - Tutorial files (initial-setup.md, quick-start.md, beginner.md, intermediate.md, advanced.md)
+  - How-to guides (all files in how-to/ directories, including cookbook.md)
+  - Reference files (cheat-sheet.md, glossary.md, resources.md, etc.)
+  - Explanation files (best-practices.md, anti-patterns.md, etc.)
+  - Topic content files (standalone content with weight fields)
+  - Static pages (about-ayokoding.md, terms-and-conditions.md, etc.)
 - **When to Use:**
   - After reviewing ayokoding-structure-checker structural audit report
-  - Fixing objective structural issues (navigation items, weight values, file presence) automatically
+  - Fixing objective structural issues (navigation items, weight values across ALL files, file presence) automatically
+  - Correcting tutorial progression violations (wrong pedagogical order)
   - Flagging content creation tasks (overview writing) for ayokoding-content-maker
   - Detecting and reporting false positives to improve checker accuracy
   - Generating comprehensive fix reports with audit trail
