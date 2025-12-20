@@ -178,7 +178,7 @@ Before starting, ensure you have:
    date: YYYY-MM-DDTHH:MM:SS+07:00
    draft: false
    description: Complete learning path from installation to expert mastery - organized using the Diátaxis framework
-   weight: 100000  # Level 6 base (language-level files)
+   weight: 10002  # Level 5 (represents the language folder)
    type: docs
    layout: list
    ---
@@ -203,7 +203,7 @@ Before starting, ensure you have:
      - [Anti-Patterns](/en/learn/swe/prog-lang/[language]/explanation/anti-patterns)
    ```
 
-   **Note**: Programming language folders are at level 5 (`/en/learn/swe/prog-lang/[language]/`), so direct children are level 6 and use base weight 100000.
+   **Note**: Programming language folders are at level 5 (`/en/learn/swe/prog-lang/[language]/`). The folder's `_index.md` uses level 5 weight (10002 to position among other languages), while content INSIDE the folder (like `overview.md`, `tutorials/`, etc.) uses level 6 weights starting at 100000.
 
 2. **Create `overview.md` (learning path guide)**:
    - See [Golang overview.md](../../apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorials/overview.md) as template
@@ -798,14 +798,21 @@ Before starting, ensure you have:
 **Solution:** Review [Hugo Content Convention - ayokoding](../explanation/conventions/ex-co__hugo-content-ayokoding.md) and fix violations. Common issues:
 
 - Missing frontmatter fields
-- Incorrect weight values (use level-based system: level 6 = 100000+, level 7 = 1000000+)
+- Incorrect weight values (use level-based system with correct levels)
 - Wrong link format (use absolute paths with language prefix)
 
 **Weight System Quick Reference:**
 
-- Programming language folder (e.g., `/golang/`) is at level 5
-- Language-level files (`_index.md`, `overview.md`, `tutorials/`, etc.) are level 6: use base 100000
-- Category files (tutorial files, how-to files, etc.) are level 7: use base 1000000 (resets per category)
+- **Programming language folder** (e.g., `/golang/`) is at **level 5**
+  - Folder's `_index.md`: weight **10002** (level 5 - represents the folder)
+- **Content inside language folder** (`overview.md`, category folders) is at **level 6**
+  - `overview.md`: weight **100000** (level 6 base)
+  - `tutorials/` folder's `_index.md`: weight **100002** (level 6 - represents the folder)
+  - Other category folders: **100003**, **100004**, **100005**...
+- **Content inside category folders** (tutorial files, how-to files) is at **level 7**
+  - Use base **1000000** (resets per parent category)
+  - `tutorials/overview.md`: **1000000** (level 7)
+  - `how-to/overview.md`: **1000000** (RESET - different parent)
 
 **Issue:** ayokoding-facts-checker reports ❌ Error or 📅 Outdated
 
