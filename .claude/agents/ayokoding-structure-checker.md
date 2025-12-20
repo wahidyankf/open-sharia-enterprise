@@ -98,26 +98,45 @@ Use this agent when:
 
 ### 1. Navigation Depth Validation (3 Levels Deep)
 
-**CRITICAL RULE**: All `_index.md` files (except language roots) MUST display navigation 3 layers deep.
+**CRITICAL RULE**: All `_index.md` files (except language roots and terminal directories) MUST display navigation 3 layers deep with COMPLETE coverage.
 
-**Exemptions** (only 2 layers required):
+**Exemptions**:
 
-- `/en/_index.md` (level 1: language root)
-- `/id/_index.md` (level 1: language root)
+1. **Language roots** (only 2 layers required):
+   - `/en/_index.md` (level 1: language root)
+   - `/id/_index.md` (level 1: language root)
 
-**Required Structure**:
+2. **Terminal directories** (exempt from 3-layer requirement):
+   - **Definition**: Folders containing ONLY content files (no subdirectories)
+   - **Examples**: `/en/learn/swe/prog-lang/golang/`, `/en/learn/swe/infosec/concepts/tutorials/`
+   - **Rationale**: Cannot structurally support 3-layer navigation (no subdirectories to show as layers)
+
+**Required Structure for Non-Terminal Directories**:
 
 - **Layer 1**: Current level (parent section/category)
-- **Layer 2**: Children (immediate subsections)
-- **Layer 3**: Grandchildren (subsections of children)
+- **Layer 2**: ALL immediate children (subdirectories) - COMPLETE COVERAGE REQUIRED
+- **Layer 3**: ALL grandchildren (contents of each child subdirectory) - COMPLETE COVERAGE REQUIRED
+
+**Completeness Requirement**:
+
+Non-terminal directories MUST show:
+
+- ALL children (every subdirectory)
+- ALL grandchildren (every file/folder within each child)
+
+Partial coverage (showing only some children or some grandchildren) is a violation.
 
 **Validation Logic**:
 
 1. Find all `_index.md` files (exclude language roots)
-2. Parse navigation lists in each file
-3. Verify 3-level nested bullet structure exists
-4. Flag files with < 3 levels as errors
-5. Report specific file paths and missing levels
+2. Determine if directory is terminal (contains only content files, no subdirectories)
+3. **For terminal directories**: Exempt from 3-layer requirement (structural limitation)
+4. **For non-terminal directories**:
+   - Parse navigation lists
+   - Verify 3-level nested bullet structure exists
+   - Verify COMPLETE coverage of all children and grandchildren
+   - Flag missing children or grandchildren as errors
+5. Report specific file paths and missing content
 
 **Valid Example** (3 levels deep):
 
@@ -132,14 +151,31 @@ Use this agent when:
     - [Fundamentals](/en/learn/swe/system-design/fundamentals)
 ```
 
-**Invalid Example** (only 2 levels):
+**Invalid Examples**:
 
 ```markdown
-<!-- WRONG! Missing grandchildren (layer 3) -->
+<!-- WRONG! Missing grandchildren (layer 3) in NON-TERMINAL directory -->
+<!-- File: /en/learn/_index.md (non-terminal: has subdirectories swe/, ai/, business/) -->
 
 - [Software Engineering](/en/learn/swe)
   - [Programming Languages](/en/learn/swe/prog-lang)
   - [System Design](/en/learn/swe/system-design)
+
+<!-- WRONG! Incomplete coverage - missing some children -->
+<!-- File: /en/learn/_index.md -->
+<!-- This folder has: swe/, ai/, business/, human/, gobuster/, system-design/ -->
+<!-- But navigation only shows swe/ and ai/ - missing 4 children! -->
+
+- [Software Engineering](/en/learn/swe)
+  - [Programming Languages](/en/learn/swe/prog-lang)
+    - [Golang](/en/learn/swe/prog-lang/golang)
+    - [Java](/en/learn/swe/prog-lang/java)
+- [AI Engineering](/en/learn/ai)
+  - [Chat with PDF](/en/learn/ai/chat-with-pdf)
+    - [Overview](/en/learn/ai/chat-with-pdf/overview)
+
+<!-- NOTE: Terminal directories like /en/learn/swe/prog-lang/golang/ are EXEMPT -->
+<!-- They contain only content files, so showing < 3 layers is NOT a violation -->
 ```
 
 ### 2. Navigation Ordering Validation
@@ -264,20 +300,52 @@ content/en/learn/swe/prog-lang/golang/
 └── tutorials/
 ```
 
-### 4. Overview/Ikhtisar Link Position
+### 4. Overview/Ikhtisar Link Position - CRITICAL
 
-**CRITICAL RULE**: When overview.md or ikhtisar.md exists, `_index.md` MUST link to it as FIRST item in navigation.
+**CRITICAL RULE**: ALL `_index.md` files in learning content folders (except language roots) MUST link to overview.md or ikhtisar.md as FIRST item in navigation when such files exist.
+
+**Scope**:
+
+- ALL `_index.md` files in `apps/ayokoding-web/content/en/learn/` and subdirectories
+- ALL `_index.md` files in `apps/ayokoding-web/content/id/belajar/` and subdirectories
+
+**Exemptions** (language roots):
+
+- `/en/_index.md` (exempt from this rule)
+- `/id/_index.md` (exempt from this rule)
+
+**Applies to ALL folder levels**:
+
+- Category folders (e.g., `/en/learn/swe/_index.md`)
+- Topic folders (e.g., `/en/learn/swe/prog-lang/golang/_index.md`)
+- Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/_index.md`)
+- ANY folder containing both `_index.md` and `overview.md`/`ikhtisar.md`
 
 **Validation Process**:
 
-1. Read `_index.md` file
-2. Check if overview.md or ikhtisar.md exists in same directory
-3. If exists, verify first navigation link points to it
-4. Flag violations where overview link is not first
+1. Scan ALL `_index.md` files in learning content (exclude language roots `/en/` and `/id/`)
+2. For each `_index.md`, check if overview.md or ikhtisar.md exists in same directory
+3. If overview/ikhtisar exists, verify first navigation link points to it
+4. Flag violations where:
+   - Overview link is missing entirely
+   - Overview link exists but is NOT first (2nd or later position)
+   - Overview link is in wrong format (e.g., uses title other than "Overview" or "Ikhtisar")
 
-**Valid Example**:
+**Valid Examples**:
 
 ```markdown
+<!-- File: /en/learn/_index.md -->
+
+- [Overview](/en/learn/overview) # FIRST item
+- [Software Engineering](/en/learn/swe)
+- [AI Engineering](/en/learn/ai)
+
+<!-- File: /en/learn/swe/_index.md -->
+
+- [Overview](/en/learn/swe/overview) # FIRST item
+- [Programming Languages](/en/learn/swe/prog-lang)
+- [System Design](/en/learn/swe/system-design)
+
 <!-- File: /en/learn/swe/prog-lang/golang/_index.md -->
 
 - [Overview](/en/learn/swe/prog-lang/golang/overview) # FIRST item
@@ -285,13 +353,52 @@ content/en/learn/swe/prog-lang/golang/
 - [Quick Start](/en/learn/swe/prog-lang/golang/quick-start)
 ```
 
-**Invalid Example**:
+**Invalid Examples**:
 
 ```markdown
-<!-- WRONG! Overview is not first -->
+<!-- WRONG! Overview is not first (2nd position) -->
+<!-- File: /en/learn/swe/_index.md -->
 
-- [Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup)
-- [Overview](/en/learn/swe/prog-lang/golang/overview) # Should be first!
+- [Programming Languages](/en/learn/swe/prog-lang)
+- [Overview](/en/learn/swe/overview) # Should be first!
+- [System Design](/en/learn/swe/system-design)
+
+<!-- WRONG! Missing overview link entirely -->
+<!-- File: /en/learn/swe/prog-lang/_index.md -->
+
+- [Golang](/en/learn/swe/prog-lang/golang)
+- [Java](/en/learn/swe/prog-lang/java)
+- [Python](/en/learn/swe/prog-lang/python)
+
+# overview.md exists but not linked!
+
+<!-- WRONG! Overview exists but link is 3rd position -->
+<!-- File: /en/learn/_index.md -->
+
+- [Software Engineering](/en/learn/swe)
+- [AI Engineering](/en/learn/ai)
+- [Overview](/en/learn/overview) # Should be first!
+```
+
+**Rationale**:
+
+- Overview provides essential context BEFORE diving into subsections
+- Pedagogical progression requires overview-first navigation
+- Consistent pattern across ALL folders improves user experience
+
+**Report Finding Format**:
+
+```markdown
+❌ Overview Link Position: NOT FIRST or MISSING
+
+- File: apps/ayokoding-web/content/en/learn/swe/\_index.md
+- Overview File: apps/ayokoding-web/content/en/learn/swe/overview.md (exists)
+- Current Position: 2nd in navigation list (should be 1st)
+- OR: Missing from navigation list entirely
+
+Recommendation: Move or add `- [Overview](/en/learn/swe/overview)` as FIRST navigation item
+
+Status: FAIL (CRITICAL)
 ```
 
 ### 5. Weight Field Validation (Level-Based System)

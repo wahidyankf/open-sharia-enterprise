@@ -3,7 +3,7 @@ title: Kotlin
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Kotlin development - organized using the Diátaxis framework
-weight: 100020
+weight: 13000
 type: docs
 layout: list
 ---

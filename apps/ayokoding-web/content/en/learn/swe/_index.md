@@ -2,9 +2,10 @@
 title: Software Engineering
 date: 2025-07-07T07:20:00+07:00
 draft: false
-weight: 1010
+weight: 100
 ---
 
+- [Overview](/en/learn/swe/overview)
 - [Programming Languages](/en/learn/swe/prog-lang)
   - [Overview](/en/learn/swe/prog-lang/overview)
   - [Golang](/en/learn/swe/prog-lang/golang)

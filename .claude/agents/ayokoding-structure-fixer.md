@@ -137,6 +137,8 @@ This agent uses the universal three-level confidence system defined in [Fixer Co
 - Navigation item out of order verified by weight comparison
 - Missing `_index.md` file verified by file existence check
 - Missing overview/ikhtisar file verified by file existence check (learning content only)
+- Overview/ikhtisar link NOT first in navigation verified by checking first link position
+- Overview/ikhtisar link missing from navigation when file exists verified by checking navigation list
 - Cookbook weight lower than overview weight verified by weight comparison (must be higher)
 - Tutorial file weight out of pedagogical order verified by comparing weights (initial-setup < quick-start < beginner < intermediate < advanced)
 - How-to guide weight outside correct level range verified by level calculation
@@ -314,7 +316,70 @@ title: "Ikhtisar" # Corrected from "Ikhtisar Bahasa Pemrograman"
 
 **Confidence**: HIGH (objective rule - title MUST be "Overview" or "Ikhtisar")
 
-### 5. Cookbook Weight Ordering Fixes
+### 5. Overview/Ikhtisar Link Position Fixes
+
+**Issue**: Overview/ikhtisar link is NOT first in navigation list or missing entirely when file exists
+
+**Re-validation**:
+
+```bash
+# Check if overview.md or ikhtisar.md exists in same directory as _index.md
+dir="apps/ayokoding-web/content/en/learn/swe"
+index_file="$dir/_index.md"
+overview_file="$dir/overview.md"
+
+if [ -f "$overview_file" ]; then
+  # Extract first navigation link from _index.md
+  first_link=$(grep -m 1 "^- \[" "$index_file" | grep -o '\[.*\](.*)' || echo "")
+
+  # Check if first link points to overview
+  if [[ ! "$first_link" =~ overview ]]; then
+    echo "INVALID - first link does not point to overview"
+  fi
+
+  # Check if overview link exists anywhere in navigation
+  if ! grep -q "^- \[.*overview\]" "$index_file"; then
+    echo "INVALID - overview link missing from navigation entirely"
+  fi
+fi
+```
+
+**Fix**: Move or add overview/ikhtisar link as first navigation item
+
+```markdown
+<!-- BEFORE (wrong position) -->
+
+- [Programming Languages](/learn/swe/prog-lang)
+- [Overview](/learn/swe/overview) # Should be first!
+- [System Design](/learn/swe/system-design)
+
+<!-- AFTER (correct position) -->
+
+- [Overview](/learn/swe/overview) # Now first!
+- [Programming Languages](/learn/swe/prog-lang)
+- [System Design](/learn/swe/system-design)
+```
+
+```markdown
+<!-- BEFORE (missing link) -->
+
+- [Programming Languages](/learn/swe/prog-lang)
+- [System Design](/learn/swe/system-design)
+
+# overview.md exists but not linked
+
+<!-- AFTER (link added) -->
+
+- [Overview](/learn/swe/overview) # Added as first item
+- [Programming Languages](/learn/swe/prog-lang)
+- [System Design](/learn/swe/system-design)
+```
+
+**Confidence**: HIGH (objective rule - overview link MUST be first when file exists)
+
+**Rationale**: Overview provides essential context before subsections; pedagogical progression requires overview-first navigation.
+
+### 6. Cookbook Weight Ordering Fixes
 
 **Issue**: Cookbook weight is lower than or equal to overview weight (cookbook appears before or at same position as overview)
 
@@ -368,7 +433,7 @@ weight: 1000001  # Corrected - higher than overview (appears after)
 
 **Rationale**: Overview provides context before practical examples; cookbook at position 3 (after overview at position 1) ensures optimal pedagogical flow.
 
-### 6. Tutorial Progression Fixes
+### 7. Tutorial Progression Fixes
 
 **Issue**: Tutorial files not following pedagogical order (initial-setup → quick-start → beginner → intermediate → advanced)
 
@@ -449,7 +514,7 @@ weight: 1000005 # Level 7 base + 5 (after intermediate)
 
 **Rationale**: Tutorials build on each other; learners must progress from basic to advanced in order.
 
-### 7. All Content Files Weight Fixes
+### 8. All Content Files Weight Fixes
 
 **Issue**: Content files (how-to guides, reference files, explanation files, etc.) using wrong weight ranges
 
