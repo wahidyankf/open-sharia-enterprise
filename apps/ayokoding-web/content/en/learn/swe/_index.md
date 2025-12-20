@@ -2,7 +2,7 @@
 title: Software Engineering
 date: 2025-07-07T07:20:00+07:00
 draft: false
-weight: 201
+weight: 1010
 ---
 
 - [Programming Languages](/en/learn/swe/prog-lang)

@@ -2,7 +2,7 @@
 title: "Common Kotlin Anti-Patterns"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 704
+weight: 1000040
 description: "Identify and avoid common Kotlin mistakes and anti-patterns"
 tags: ["kotlin", "anti-patterns", "common-mistakes", "code-smells"]
 categories: ["learn"]

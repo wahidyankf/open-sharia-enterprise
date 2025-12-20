@@ -3,7 +3,7 @@ title: Advanced Kotlin
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Expert Kotlin mastery - compiler internals, reflection, metaprogramming, advanced coroutines, performance tuning, and debugging strategies
-weight: 507
+weight: 1000006
 tags:
   - kotlin
   - advanced

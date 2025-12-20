@@ -1,6 +1,6 @@
 ---
 title: "Tolong jangan lakukan itu! 1 Story Point bukanlah 1 Engineering Hour!"
-weight: 204
+weight: 10040
 date: 2023-07-14T07:20:00+07:00
 draft: false
 ---

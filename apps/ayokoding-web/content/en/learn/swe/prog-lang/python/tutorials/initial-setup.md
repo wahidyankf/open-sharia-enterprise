@@ -2,7 +2,7 @@
 title: "Initial Setup"
 date: 2025-12-17T15:00:24+07:00
 draft: false
-weight: 502
+weight: 1000002
 description: "Get Python installed and running your first program"
 tags:
   - python

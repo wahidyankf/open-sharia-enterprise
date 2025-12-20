@@ -2,7 +2,7 @@
 title: "How to Debug and Log Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 614
+weight: 1000140
 description: "Master Go debugging with Delve, structured logging with slog, and effective debugging strategies"
 tags: ["golang", "debugging", "logging", "delve", "slog"]
 categories: ["learn"]

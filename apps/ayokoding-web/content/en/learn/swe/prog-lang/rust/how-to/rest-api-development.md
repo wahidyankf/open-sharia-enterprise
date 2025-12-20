@@ -2,7 +2,7 @@
 title: REST API Development
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 613
+weight: 1000130
 description: Practical guide to building REST APIs with Rust using Axum or Actix-web
 tags:
   ["rust", "how-to", "rest-api", "web", "axum", "actix-web", "http", "backend"]

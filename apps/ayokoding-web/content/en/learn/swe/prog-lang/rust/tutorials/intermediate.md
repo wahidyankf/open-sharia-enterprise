@@ -2,7 +2,7 @@
 title: Intermediate Rust
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 506
+weight: 1000005
 description: Production-grade Rust with generics, traits, lifetime annotations, smart pointers, concurrency, async/await, iterators, and advanced error handling
 tags:
   [

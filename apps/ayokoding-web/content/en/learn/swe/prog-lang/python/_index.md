@@ -3,7 +3,7 @@ title: Python
 date: 2025-12-17T10:54:44+07:00
 draft: false
 description: Complete learning path from zero to expert Python development - organized using the Diátaxis framework
-weight: 401
+weight: 100010
 type: docs
 layout: list
 ---

@@ -2,7 +2,7 @@
 date: 2025-03-16T07:20:00+07:00
 draft: false
 title: Terms and Conditions
-weight: 3
+weight: 40
 ---
 
 Welcome to AyoKoding! Please read these terms and conditions carefully before using our website. By accessing and using AyoKoding, you agree to comply with and be bound by these terms and conditions. Please do not use our website if you disagree with these terms and conditions.

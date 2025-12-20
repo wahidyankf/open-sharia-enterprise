@@ -2,7 +2,7 @@
 title: "How to Use Slices and Maps Effectively"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 606
+weight: 1000060
 description: "Practical patterns for working with Go's built-in slice and map data structures efficiently"
 tags: ["golang", "slices", "maps", "data-structures", "performance"]
 categories: ["learn"]

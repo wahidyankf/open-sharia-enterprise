@@ -3,7 +3,7 @@ title: Cookbook
 date: 2025-12-18T15:48:37+07:00
 draft: false
 description: Day-to-day recipes and solutions for common Kotlin programming problems - ready to copy and use
-weight: 603
+weight: 1000030
 tags:
   - kotlin
   - cookbook

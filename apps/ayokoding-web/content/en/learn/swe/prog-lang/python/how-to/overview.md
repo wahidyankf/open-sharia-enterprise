@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 602
+weight: 1000020
 description: Practical problem-solving guides and recipes for Python development
 tags: ["python", "how-to", "overview"]
 ---

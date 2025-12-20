@@ -2,7 +2,7 @@
 title: "How to Handle Files and Resources"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 609
+weight: 1000090
 description: "Master Go file I/O with defer, os package, proper resource cleanup, and modern file operations"
 tags: ["golang", "files", "io", "resources", "defer"]
 categories: ["learn"]

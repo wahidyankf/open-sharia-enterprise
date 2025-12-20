@@ -2,7 +2,7 @@
 title: Reference
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 801
+weight: 1000010
 description: Technical reference documentation for Python language features and standard library
 ---
 

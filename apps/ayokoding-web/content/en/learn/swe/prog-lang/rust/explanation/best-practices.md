@@ -2,7 +2,7 @@
 title: Rust Best Practices and Design Principles
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 703
+weight: 1000030
 description: Idiomatic Rust patterns, best practices for ownership, error handling, type design, concurrency, async, performance, and code organization
 tags: ["rust", "best-practices", "idiomatic", "patterns", "design-principles"]
 ---

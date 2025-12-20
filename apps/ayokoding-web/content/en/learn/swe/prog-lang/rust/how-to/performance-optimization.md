@@ -2,7 +2,7 @@
 title: Performance Optimization
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 617
+weight: 1000170
 description: Practical guide to measuring and optimizing Rust code performance
 tags:
   [

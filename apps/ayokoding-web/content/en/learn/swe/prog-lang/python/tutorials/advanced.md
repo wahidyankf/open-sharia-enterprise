@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-17T15:00:24+07:00
 draft: false
-weight: 506
+weight: 1000006
 description: "Expert-level Python mastery - internals, optimization, advanced patterns, and system design"
 tags:
   - python

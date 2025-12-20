@@ -2,7 +2,7 @@
 title: Kotlin Resources
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 805
+weight: 1000050
 description: Curated list of official documentation, community resources, tools, and learning materials for Kotlin development
 ---
 

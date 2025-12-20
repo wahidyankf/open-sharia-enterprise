@@ -2,7 +2,7 @@
 title: "How to Document Code Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 615
+weight: 1000150
 description: "Write clear godoc comments, meaningful documentation, and comprehensive package documentation"
 tags: ["golang", "documentation", "godoc", "comments", "code-quality"]
 categories: ["learn"]

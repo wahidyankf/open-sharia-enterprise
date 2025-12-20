@@ -2,7 +2,7 @@
 title: Information Security
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 202
+weight: 1020
 ---
 
 - [Overview](/en/learn/infosec/overview)

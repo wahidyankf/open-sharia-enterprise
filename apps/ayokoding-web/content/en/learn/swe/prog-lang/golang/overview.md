@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-03T00:00:00+07:00
 draft: false
-weight: 402
+weight: 100010
 description: Complete learning path from installation to expert mastery - 6 comprehensive tutorials covering 0% to 95% Go proficiency
 ---
 

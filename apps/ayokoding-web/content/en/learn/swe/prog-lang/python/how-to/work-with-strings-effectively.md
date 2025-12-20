@@ -2,7 +2,7 @@
 title: "How to Work with Strings Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 609
+weight: 1000090
 description: "Master Python string manipulation with f-strings, str methods, and efficient text processing"
 tags: ["python", "strings", "text-processing", "regex", "formatting"]
 categories: ["learn"]

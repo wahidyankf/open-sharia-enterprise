@@ -2,7 +2,7 @@
 title: Concurrent Programming
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 610
+weight: 1000100
 description: Practical guide to writing concurrent Rust programs with threads, channels, and shared state
 tags:
   [

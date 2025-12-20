@@ -2,7 +2,7 @@
 title: "How to Use Sealed Classes and Interfaces"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 612
+weight: 1000120
 description: "Create type-safe restricted hierarchies with sealed classes and interfaces"
 tags: ["kotlin", "sealed-classes", "type-safety", "kotlin-features"]
 categories: ["learn"]

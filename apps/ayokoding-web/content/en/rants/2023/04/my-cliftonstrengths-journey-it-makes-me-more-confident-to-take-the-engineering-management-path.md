@@ -1,6 +1,6 @@
 ---
 title: "My CliftonStrengths Journey: It makes me more confident to take the engineering management path"
-weight: 203
+weight: 10030
 date: 2023-04-24T07:20:00+07:00
 draft: false
 ---

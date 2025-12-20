@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 802
+weight: 1000020
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Technical reference documentation for Java language features and standard library

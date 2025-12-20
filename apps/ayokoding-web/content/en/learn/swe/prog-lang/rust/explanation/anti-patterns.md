@@ -2,7 +2,7 @@
 title: Common Rust Anti-Patterns
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 704
+weight: 1000040
 description: Common Rust mistakes and anti-patterns - ownership pitfalls, error handling issues, concurrency problems, type system misuse, and performance mistakes
 tags: ["rust", "anti-patterns", "mistakes", "pitfalls", "common-errors"]
 ---

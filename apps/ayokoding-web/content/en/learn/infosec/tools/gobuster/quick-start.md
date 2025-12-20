@@ -2,7 +2,7 @@
 title: "Quick Start"
 date: 2025-12-18T14:00:16+07:00
 draft: false
-weight: 510
+weight: 100002
 description: "Get started with Gobuster for web directory discovery and DNS enumeration in minutes"
 tags:
   [

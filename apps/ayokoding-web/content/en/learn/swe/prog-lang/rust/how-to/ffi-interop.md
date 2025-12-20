@@ -2,7 +2,7 @@
 title: FFI Interoperability
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 616
+weight: 1000160
 description: Practical guide to calling C code from Rust and exposing Rust to other languages
 tags: ["rust", "how-to", "ffi", "c", "unsafe", "bindgen", "interop", "cbindgen"]
 ---

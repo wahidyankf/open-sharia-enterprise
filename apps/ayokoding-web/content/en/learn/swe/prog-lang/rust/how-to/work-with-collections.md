@@ -2,7 +2,7 @@
 title: Work with Collections
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 608
+weight: 1000080
 description: Practical guide to using Vec, HashMap, HashSet, and other Rust collections
 tags:
   [

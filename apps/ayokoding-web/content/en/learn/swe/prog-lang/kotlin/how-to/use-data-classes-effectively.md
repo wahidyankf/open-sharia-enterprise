@@ -2,7 +2,7 @@
 title: "How to Use Data Classes Effectively"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 608
+weight: 1000080
 description: "Master Kotlin's data classes for clean, concise domain models"
 tags: ["kotlin", "data-classes", "domain-modeling", "kotlin-features"]
 categories: ["learn"]

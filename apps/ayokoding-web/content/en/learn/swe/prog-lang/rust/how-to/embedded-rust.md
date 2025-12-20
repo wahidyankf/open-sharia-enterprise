@@ -2,7 +2,7 @@
 title: Embedded Rust Development
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 619
+weight: 1000190
 description: Practical guide to developing embedded systems with Rust
 tags:
   [
