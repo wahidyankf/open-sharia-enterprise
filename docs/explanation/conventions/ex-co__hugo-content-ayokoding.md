@@ -765,17 +765,53 @@ Even on 32-bit systems (max: 2.1 billion), we could theoretically have:
 
 #### Navigation Depth (3 Layers)
 
-**CRITICAL RULE**: `_index.md` files MUST display navigation links **3 layers deep**.
+**CRITICAL RULE**: `_index.md` files MUST display navigation links **3 layers deep** with complete coverage of all children and grandchildren (with terminal directory exemption).
 
 **Layer Definition**:
 
 - **Layer 1**: Parent section/category (current level)
-- **Layer 2**: Children (immediate subsections)
-- **Layer 3**: Grandchildren (subsections of children)
+- **Layer 2**: ALL immediate children (subdirectories) - COMPLETE COVERAGE REQUIRED
+- **Layer 3**: ALL grandchildren (contents of each child subdirectory) - COMPLETE COVERAGE REQUIRED
+
+**Completeness Requirement**:
+
+Non-terminal directories MUST show:
+
+- ALL children (every subdirectory)
+- ALL grandchildren (every file/folder within each child)
+
+Partial coverage (showing only some children or some grandchildren) is a violation.
 
 **Rationale**: Provides comprehensive navigation hierarchy, helps users discover deeply nested content, improves UX.
 
 **Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
+
+**Terminal Directory Exemption**:
+
+**Definition**: Terminal directories are folders containing ONLY content files (no subdirectories). They are leaf nodes in the directory tree.
+
+**Exemption**: Terminal directories are **EXEMPT** from the 3-layer navigation depth requirement because they cannot structurally support 3-layer navigation (they have no subdirectories to show as Layer 2 or grandchildren as Layer 3).
+
+**Examples of Terminal Directories** (exempt from 3-layer rule):
+
+- Language topic folders: `/en/learn/swe/prog-lang/golang/` (contains only content files: overview.md, initial-setup.md, quick-start.md, beginner.md, intermediate.md, advanced.md, cookbook.md)
+- Diátaxis subdirectories: `/en/learn/swe/infosec/concepts/tutorials/` (contains only tutorial content files)
+- Any folder where all contents are content files (no subdirectories)
+
+**Examples of Non-Terminal Directories** (NOT exempt, MUST show 3 layers with COMPLETE coverage):
+
+- `/en/learn/swe/` - Has subdirectories: prog-lang/, system-design/, infosec/ (MUST show ALL these + ALL their children)
+- `/en/learn/swe/prog-lang/` - Has subdirectories: golang/, java/, python/, kotlin/, rust/ (MUST show ALL of these + ALL their content)
+- `/en/learn/` - Has subdirectories: swe/, ai/, business/, human/, gobuster/, system-design/ (MUST show ALL of these + ALL their children)
+
+**What Terminal Directories Should Show**:
+
+Terminal directories display available content within structural limitations:
+
+- Layer 1: Current folder
+- Layer 2: Immediate content files
+
+This is a **structural limitation, not a compliance violation**.
 
 ✅ **Good (3 layers deep with overview links first)**:
 
@@ -894,11 +930,89 @@ title: Business # WRONG! Too generic (missing context)
 
 **Why "ikhtisar"?** Indonesian word for "overview" - maintains bilingual file naming consistency.
 
-#### Overview/Ikhtisar Link Requirement
+#### Overview/Ikhtisar Link Requirement - CRITICAL
 
-**CRITICAL RULE**: All `_index.md` files that have a corresponding `overview.md` or `ikhtisar.md` MUST include a link to that overview/ikhtisar page as the FIRST item in their navigation list.
+**CRITICAL RULE**: ALL `_index.md` files in learning content folders (except language roots) MUST include a link to overview.md or ikhtisar.md as the FIRST item in their navigation list when such files exist.
 
-**Rationale**: Ensures overview pages are consistently visible and accessible.
+**Scope**:
+
+- ALL `_index.md` files in `apps/ayokoding-web/content/en/learn/` and subdirectories
+- ALL `_index.md` files in `apps/ayokoding-web/content/id/belajar/` and subdirectories
+
+**Exemptions** (language roots do not require this):
+
+- `/en/_index.md`
+- `/id/_index.md`
+
+**Link Format**:
+
+- **English folders**: `- [Overview](/path/to/overview)` (MUST be first item)
+- **Indonesian folders**: `- [Ikhtisar](/path/to/ikhtisar)` (MUST be first item)
+
+**Applies to ALL folder levels**:
+
+- Category folders (e.g., `/en/learn/swe/_index.md` → starts with overview link)
+- Topic folders (e.g., `/en/learn/swe/prog-lang/golang/_index.md` → starts with overview link)
+- Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/_index.md` → starts with overview link)
+- ANY folder containing both `_index.md` and `overview.md`/`ikhtisar.md`
+
+**Examples of CORRECT usage**:
+
+```markdown
+<!-- File: /en/learn/_index.md -->
+
+- [Overview](/en/learn/overview) # ← FIRST ITEM
+- [Software Engineering](/en/learn/swe)
+- [AI Engineering](/en/learn/ai)
+
+<!-- File: /en/learn/swe/_index.md -->
+
+- [Overview](/en/learn/swe/overview) # ← FIRST ITEM
+- [Programming Languages](/en/learn/swe/prog-lang)
+- [System Design](/en/learn/swe/system-design)
+
+<!-- File: /en/learn/swe/prog-lang/golang/_index.md -->
+
+- [Overview](/en/learn/swe/prog-lang/golang/overview) # ← FIRST ITEM
+- [Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup)
+- [Quick Start](/en/learn/swe/prog-lang/golang/quick-start)
+```
+
+**Examples of INCORRECT usage**:
+
+```markdown
+<!-- WRONG! Overview link is NOT first -->
+<!-- File: /en/learn/swe/_index.md -->
+
+- [Programming Languages](/en/learn/swe/prog-lang) # ← Wrong position
+- [Overview](/en/learn/swe/overview) # Should be first!
+- [System Design](/en/learn/swe/system-design)
+
+<!-- WRONG! Missing overview link entirely -->
+<!-- File: /en/learn/swe/prog-lang/_index.md -->
+
+- [Golang](/en/learn/swe/prog-lang/golang) # Missing overview link
+- [Java](/en/learn/swe/prog-lang/java)
+- [Python](/en/learn/swe/prog-lang/python)
+
+<!-- WRONG! Overview link exists but is 2nd or later -->
+<!-- File: /en/learn/_index.md -->
+
+- [Software Engineering](/en/learn/swe) # ← Wrong position
+- [Overview](/en/learn/overview) # Should be first!
+- [AI Engineering](/en/learn/ai)
+```
+
+**Rationale**:
+
+- Overview provides essential context BEFORE diving into subsections
+- Pedagogical progression requires overview-first navigation for optimal learning experience
+- Consistent pattern across ALL folders improves discoverability and user experience
+
+**Validation Responsibility**:
+
+- `ayokoding-structure-checker` agent MUST check this rule for EVERY `_index.md` file comprehensively
+- Violations are flagged as CRITICAL errors in audit reports
 
 #### Cookbook Weight Ordering Requirement
 

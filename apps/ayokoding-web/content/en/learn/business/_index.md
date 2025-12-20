@@ -2,7 +2,7 @@
 title: Business and Finance
 date: 2025-12-03T00:00:00+07:00
 draft: false
-weight: 1040
+weight: 400
 ---
 
 - [Overview](/en/learn/business/overview)

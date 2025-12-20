@@ -1,6 +1,6 @@
 ---
 title: Programming Languages
-weight: 10010
+weight: 1000
 date: 2025-12-04T00:00:00+07:00
 draft: false
 ---

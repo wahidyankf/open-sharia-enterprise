@@ -2,9 +2,10 @@
 title: Learn
 date: 2025-07-07T07:20:00+07:00
 draft: false
-weight: 110
+weight: 10
 ---
 
+- [Overview](/en/learn/overview)
 - [Software Engineering](/en/learn/swe)
   - [Programming Languages](/en/learn/swe/prog-lang)
     - [Overview](/en/learn/swe/prog-lang/overview)
