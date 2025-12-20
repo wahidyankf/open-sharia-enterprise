@@ -3,7 +3,7 @@ name: readme-fixer
 description: Applies validated fixes from readme-checker audit reports. Re-validates README quality findings before applying changes. Use after reviewing readme-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
-color: yellow
+color: purple
 created: 2025-12-14
 updated: 2025-12-14
 ---

@@ -3,7 +3,7 @@ name: ayokoding-facts-fixer
 description: Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates factual findings before applying changes. Use after reviewing ayokoding-facts-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
-color: yellow
+color: purple
 created: 2025-12-16
 updated: 2025-12-16
 ---

@@ -3,7 +3,7 @@ name: docs-tutorial-fixer
 description: Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes. Use after reviewing docs-tutorial-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
-color: yellow
+color: purple
 created: 2025-12-14
 updated: 2025-12-14
 ---
@@ -422,7 +422,7 @@ def apply_fix(finding, validation_result):
 
 Create comprehensive report in `generated-reports/`:
 
-````markdown
+`````markdown
 # Tutorial Quality Fix Report
 
 **Source Audit:** {source-report-filename}
@@ -590,7 +590,7 @@ docs/tutorials/tu-software__git-quickstart.md
 ---
 
 **Fix Report ID:** {timestamp}
-````
+`````
 
 ## Validation Re-implementation Guide
 
