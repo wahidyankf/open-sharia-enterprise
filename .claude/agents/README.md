@@ -22,36 +22,6 @@ Expert at creating new AI agents following all repository conventions.
   - Automatically updating agents README with new agent listing
   - Running validation via repo-rules-checker
 
-### 🟪 `ayokoding-deployer.md`
-
-Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web branch with main and pushes to origin to trigger automatic deployment to ayokoding.com via Vercel.
-
-- **Primary Use:** Deploying ayokoding-web to production environment
-- **Specialization:** Git branch synchronization, production deployment, Vercel integration, safety checks, rollback procedures
-- **Tools:** Bash
-- **When to Use:**
-  - Deploying latest main branch to ayokoding.com production
-  - After changes to apps/ayokoding-web/ are tested on main
-  - Triggering Vercel production build and deployment
-  - Need safe, controlled deployment with pre-flight checks
-  - Syncing prod-ayokoding-web branch with origin/main
-- **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ayokoding-web
-
-### 🟪 `ose-platform-web-deployer.md`
-
-Expert at deploying ose-platform-web to production. Synchronizes prod-ose-platform-web branch with main and pushes to origin to trigger automatic deployment to oseplatform.com via Vercel.
-
-- **Primary Use:** Deploying ose-platform-web to production environment
-- **Specialization:** Git branch synchronization, production deployment, Vercel integration, safety checks, rollback procedures
-- **Tools:** Bash
-- **When to Use:**
-  - Deploying latest main branch to oseplatform.com production
-  - After changes to apps/ose-platform-web/ are tested on main
-  - Triggering Vercel production build and deployment
-  - Need safe, controlled deployment with pre-flight checks
-  - Syncing prod-ose-platform-web branch with origin/main
-- **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ose-platform-web
-
 ### 🟦 `ayokoding-content-maker.md`
 
 Expert at creating Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles.
@@ -101,7 +71,7 @@ Expert at validating factual correctness of ayokoding-web educational content us
 - **Works with:** `ayokoding-facts-fixer` for applying validated fixes
 - **References:** Factual Validation Convention, Hugo Content Convention, Tutorial Convention
 
-### 🟨 `ayokoding-content-fixer.md`
+### 🟪 `ayokoding-content-fixer.md`
 
 Applies validated fixes from ayokoding-content-checker audit reports. Re-validates findings before applying changes to prevent false positives.
 
@@ -117,7 +87,22 @@ Applies validated fixes from ayokoding-content-checker audit reports. Re-validat
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
 - **Output:** Generates `ayokoding-content__{timestamp}__fix.md` report in `generated-reports/`
 
-### 🟨 `ayokoding-facts-fixer.md`
+### 🟪 `ayokoding-deployer.md`
+
+Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web branch with main and pushes to origin to trigger automatic deployment to ayokoding.com via Vercel.
+
+- **Primary Use:** Deploying ayokoding-web to production environment
+- **Specialization:** Git branch synchronization, production deployment, Vercel integration, safety checks, rollback procedures
+- **Tools:** Bash
+- **When to Use:**
+  - Deploying latest main branch to ayokoding.com production
+  - After changes to apps/ayokoding-web/ are tested on main
+  - Triggering Vercel production build and deployment
+  - Need safe, controlled deployment with pre-flight checks
+  - Syncing prod-ayokoding-web branch with origin/main
+- **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ayokoding-web
+
+### 🟪 `ayokoding-facts-fixer.md`
 
 Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates factual findings before applying changes.
 
@@ -157,6 +142,41 @@ Validates internal and external links in ayokoding-web Hugo content, enforcing H
 - **Works with:** `ayokoding-content-maker` for content creation, `ayokoding-content-checker` for content quality
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
 
+### 🟩 `ayokoding-structure-checker.md`
+
+Expert at validating ayokoding-web content structure, navigation depth, weight conventions, and overview completeness.
+
+- **Primary Use:** Validating ayokoding-web navigation architecture and structural compliance
+- **Specialization:** Navigation depth validation (3 levels), weight ordering (level-based system with per-parent resets), overview/ikhtisar presence checking, pedagogical progression assessment, structural integrity verification
+- **Tools:** Read, Glob, Grep, Write, Bash
+- **When to Use:**
+  - Validating navigation architecture across ayokoding-web content
+  - Checking weight ordering follows level-based system with per-parent resets
+  - Verifying overview/ikhtisar presence in learning content folders
+  - Auditing navigation depth (3 levels deep requirement)
+  - Ensuring structural compliance with Hugo Content Convention - ayokoding
+- **Output:** Generates `ayokoding-structure__{timestamp}__audit.md` report in `generated-reports/`
+- **Works with:** `ayokoding-content-checker` for content quality, `ayokoding-facts-checker` for factual accuracy, `ayokoding-link-checker` for link validation
+- **References:** Hugo Content Convention - ayokoding (weight system), Programming Language Content Standard (structure requirements)
+
+### 🟪 `ayokoding-structure-fixer.md`
+
+Applies validated fixes from ayokoding-structure-checker audit reports for structural issues. Re-validates structural findings before applying changes.
+
+- **Primary Use:** Applying validated structural fixes from ayokoding-structure-checker reports after user review
+- **Specialization:** Structural fix application (navigation lists, weight values, file presence), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective fix automation, content creation boundary awareness
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing ayokoding-structure-checker structural audit report
+  - Fixing objective structural issues (navigation items, weight values, file presence) automatically
+  - Flagging content creation tasks (overview writing) for ayokoding-content-maker
+  - Detecting and reporting false positives to improve checker accuracy
+  - Generating comprehensive fix reports with audit trail
+- **Workflow:** ayokoding-structure-checker (detect) → User review → ayokoding-structure-fixer (apply validated structural fixes)
+- **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence structural fixes automatically)
+- **Output:** Generates `ayokoding-structure__{timestamp}__fix.md` report in `generated-reports/`
+- **Limitation:** CANNOT write overview content (requires ayokoding-content-maker)
+
 ### 🟦 `ose-platform-web-content-maker.md`
 
 Expert at creating Hugo content for ose-platform-web (PaperMod theme) following Hugo Content Convention and Content Quality Principles.
@@ -189,7 +209,7 @@ Expert at validating Hugo content for ose-platform-web (PaperMod theme) against 
 - **Works with:** `ose-platform-web-content-maker` for content creation
 - **References:** Hugo Content Convention, Content Quality Principles
 
-### 🟨 `ose-platform-web-content-fixer.md`
+### 🟪 `ose-platform-web-content-fixer.md`
 
 Applies validated fixes from ose-platform-web-content-checker audit reports. Re-validates findings before applying changes to prevent false positives.
 
@@ -204,6 +224,21 @@ Applies validated fixes from ose-platform-web-content-checker audit reports. Re-
 - **Workflow:** ose-platform-web-content-checker (detect) → User review → ose-platform-web-content-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
 - **Output:** Generates `ose-platform-web-content__{timestamp}__fix.md` report in `generated-reports/`
+
+### 🟪 `ose-platform-web-deployer.md`
+
+Expert at deploying ose-platform-web to production. Synchronizes prod-ose-platform-web branch with main and pushes to origin to trigger automatic deployment to oseplatform.com via Vercel.
+
+- **Primary Use:** Deploying ose-platform-web to production environment
+- **Specialization:** Git branch synchronization, production deployment, Vercel integration, safety checks, rollback procedures
+- **Tools:** Bash
+- **When to Use:**
+  - Deploying latest main branch to oseplatform.com production
+  - After changes to apps/ose-platform-web/ are tested on main
+  - Triggering Vercel production build and deployment
+  - Need safe, controlled deployment with pre-flight checks
+  - Syncing prod-ose-platform-web branch with origin/main
+- **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ose-platform-web
 
 ### 🟦 `hugo-developer.md`
 
@@ -243,7 +278,7 @@ Expert at validating factual correctness and content consistency of documentatio
   - Checking command syntax and flags are correct
 - **Works with:** `docs-fixer` for applying validated fixes, `docs-maker` for content creation
 
-### 🟨 `docs-fixer.md`
+### 🟪 `docs-fixer.md`
 
 Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
 
@@ -337,7 +372,7 @@ Validates tutorial quality focusing on pedagogical structure, narrative flow, vi
 - **Works with:** `docs-tutorial-maker` for content creation, `docs-checker` for accuracy, `docs-link-checker` for links
 - **Note:** Complements (doesn't duplicate) docs-checker (accuracy) and docs-link-checker (links)
 
-### 🟨 `docs-tutorial-fixer.md`
+### 🟪 `docs-tutorial-fixer.md`
 
 Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes to prevent false positives.
 
@@ -390,7 +425,7 @@ Validates README.md for engagement, accessibility, and quality standards. Checks
 - **Works with:** `readme-maker` for content creation/updates, `readme-fixer` for applying validated fixes
 - **References:** README Quality Convention
 
-### 🟨 `readme-fixer.md`
+### 🟪 `readme-fixer.md`
 
 Applies validated fixes from readme-checker audit reports. Re-validates README quality findings before applying changes. Conservative approach applies only objective fixes automatically.
 
@@ -444,7 +479,7 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
   - Historical tracking of repository consistency over time
 - **Important:** READ-ONLY agent - does not apply fixes. Use `repo-rules-fixer` to apply validated fixes after reviewing audit report.
 
-### 🟨 `repo-rules-fixer.md`
+### 🟪 `repo-rules-fixer.md`
 
 Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives.
 
@@ -543,7 +578,7 @@ Expert at validating plans are ready for implementation by verifying completenes
 - **Output:** Generates `plan__{timestamp}__validation.md` report in `generated-reports/`
 - **Works with:** `plan-fixer` for applying validated fixes, `plan-maker` for plan creation
 
-### 🟨 `plan-fixer.md`
+### 🟪 `plan-fixer.md`
 
 Applies validated fixes from plan-checker audit reports. Re-validates plan completeness and accuracy findings before applying changes. Distinguishes structural/format issues from strategic decisions.
 

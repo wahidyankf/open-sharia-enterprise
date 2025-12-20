@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-18
+updated: 2025-12-20
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -900,6 +900,43 @@ title: Business # WRONG! Too generic (missing context)
 
 **Rationale**: Ensures overview pages are consistently visible and accessible.
 
+#### Cookbook Weight Ordering Requirement
+
+**CRITICAL RULE**: In folders containing both `overview.md`/`ikhtisar.md` and `cookbook.md` files, the cookbook MUST have a higher weight value than the overview (cookbook appears AFTER overview in navigation order).
+
+**Rationale**: Overview provides context before practical examples; ensures consistent navigation experience.
+
+**Applies to**: All Diátaxis-structured folders (e.g., `/en/learn/swe/prog-lang/golang/how-to/`)
+
+**Weight Pattern**:
+
+- `overview.md`/`ikhtisar.md`: Base weight for content level (e.g., 1000000 for level 7)
+- `cookbook.md`: Base weight + 1 or higher (e.g., 1000001 for level 7)
+
+**Example (Level 7 how-to folder)**:
+
+✅ **Good (cookbook after overview)**:
+
+```yaml
+# /en/learn/swe/prog-lang/golang/how-to/overview.md
+weight: 1000000  # Level 7 base
+
+# /en/learn/swe/prog-lang/golang/how-to/cookbook.md
+weight: 1000001  # Level 7 base + 1 (appears after overview)
+```
+
+❌ **Bad (cookbook before overview)**:
+
+```yaml
+# /en/learn/swe/prog-lang/golang/how-to/overview.md
+weight: 1000000  # Level 7 base
+
+# /en/learn/swe/prog-lang/golang/how-to/cookbook.md
+weight: 999999   # WRONG! Would appear before overview
+```
+
+**Note**: This complements the [Programming Language Content Standard](./ex-co__programming-language-content.md) which mandates cookbook at position 3 in how-to directories (overview at position 1, cookbook at position 3 = weight 1000001).
+
 #### Title Format for Overview/Ikhtisar Files
 
 **CRITICAL RULE**: Titles must be simple and generic.
@@ -1412,18 +1449,18 @@ tags: ["javascript", "async", "promises", "tutorial"]
 ### Language Configuration
 
 ```yaml
-defaultContentLanguage: id
+defaultContentLanguage: en
 defaultContentLanguageInSubdir: true
 
 languages:
   id:
     languageName: "Bahasa Indonesia"
     languageCode: "id-ID"
-    weight: 1
+    weight: 2
   en:
     languageName: "English"
     languageCode: "en-US"
-    weight: 2
+    weight: 1
 ```
 
 ### Module Mounts
