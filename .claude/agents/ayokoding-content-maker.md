@@ -122,10 +122,12 @@ Use this agent when:
      - **Level-based system**: Powers of 10 ranges that reset for each parent folder
      - **Level ranges**: Level 1 (0-9), Level 2 (10-99), Level 3 (100-999), Level 4 (1000-9999), Level 5 (10000-99999)
      - **CRITICAL**: Weights reset to base range for children of EACH parent (Hugo compares siblings only)
-     - **`_index.md` files**: MUST have base weight for that level (10, 100, 1000, 10000 - lightest weight)
-     - **`overview.md` or `ikhtisar.md` files**: MUST have base + 1 (11, 101, 1001, 10001 - immediately after index)
-     - **Other content files**: Should use base + 2, 3, 4... in logical order (12, 13... or 102, 103... or 1002, 1003...)
-     - **Example**: `/en/learn/_index.md` → 100, `/en/rants/_index.md` → 100 (RESET - different parent)
+     - **`_index.md` files**: Use weights from the folder's level range, assigned sequentially among siblings
+       - Example: Level 3 siblings might be 102 (swe/), 103 (ai/), 104 (business/)
+       - First sibling CAN use base (100) but doesn't have to
+     - **`overview.md` or `ikhtisar.md` files**: Use their level's base weight (e.g., 1000 for content in level 3 folder)
+     - **Other content files**: Use base + 1, 2, 3... in logical order (e.g., 1001, 1002, 1003...)
+     - **Example**: `/en/learn/swe/_index.md` → 102, `/en/rants/2024/_index.md` → 102 (RESET - different parent)
      - **Rationale**: Per-folder independence, no global coordination, massive scalability (90 to 90,000 items per level)
      - **Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`, all folders)
 
@@ -248,7 +250,7 @@ Use this agent when:
    - **Month index**: Flat list of articles in that month
    - **NO overview/ikhtisar files**: Unlike learning content, blogging does NOT require separate overview files
    - **Index can include intro**: Month/year `_index.md` files MAY include introductory text (not restricted to navigation only)
-   - **Weight system**: Same depth-based formula (month index = weight 401 at depth 4, articles = 402+)
+   - **Weight system**: Same level-based system (month index at level 4, articles use level 5)
    - **Author field allowed**: Blogging content MAY include `author:` field (guest contributors possible)
    - **Cross-Reference Pattern (Bilingual Blogging)**:
      - **CRITICAL**: Bilingual blog articles MUST include cross-reference links at top (after frontmatter, before content)

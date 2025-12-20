@@ -85,26 +85,52 @@ Programming language folders (e.g., `golang/`, `python/`, `java/`) are at **leve
 /en/ (level 1) → /learn/ (level 2) → /swe/ (level 3) → /prog-lang/ (level 4) → /golang/ (level 5)
 ```
 
-**Key Rule:** Folder at level N has `_index.md` at level N, content INSIDE that folder is one level deeper (level N+1).
+**Understanding Levels and Weights:**
+
+The level-based weight system uses a two-part rule:
+
+1. **Folder's `_index.md`** represents the folder itself at level N → uses level N weight
+2. **Content INSIDE the folder** is one level deeper → uses level N+1 base weight
+
+**Why This Design?**
+
+- `_index.md` IS the folder (navigation hub) → uses the folder's own level
+- Regular content files LIVE INSIDE the folder → one level deeper in hierarchy
+- Hugo compares siblings only → weights reset independently per parent
+
+**Detailed Weight Calculation:**
 
 - **Level 5 folder** (`golang/`, `python/`, `java/`):
-  - Folder's `_index.md`: **10002** (level 5 - represents the language folder among other languages)
+  - These folders exist at level 5 in the directory tree
+  - Each folder's `_index.md` represents the folder at level 5 → **weight: 10002** (level 5 range: 10000-99999)
+  - Why 10002? Because golang/ might be the 3rd language among siblings (first is 10000, second is 10001, third is 10002)
 
-- **Level 6 content** (direct children INSIDE language folder): Use base **100000**
-  - `overview.md`: 100000 (content inside level 5 folder is level 6)
-  - `tutorials/` folder's `_index.md`: 100002 (level 6 - represents the tutorials folder)
-  - `how-to/` folder's `_index.md`: 100003 (level 6 - represents the how-to folder)
-  - `explanation/` folder's `_index.md`: 100004 (level 6 - represents the explanation folder)
-  - `reference/` folder's `_index.md`: 100005 (level 6 - represents the reference folder)
+- **Level 6 content** (files INSIDE the level 5 language folder):
+  - Content inside a level 5 folder is one level deeper → uses **level 6 base: 100000** (level 6 range: 100000-999999)
+  - `overview.md`: **100000** (first content file, uses level 6 base)
+  - `tutorials/_index.md`: **100002** (represents the tutorials folder at level 6, 3rd sibling among category folders)
+  - `how-to/_index.md`: **100003** (represents the how-to folder at level 6, 4th sibling)
+  - `explanation/_index.md`: **100004** (represents the explanation folder at level 6, 5th sibling)
+  - `reference/_index.md`: **100005** (represents the reference folder at level 6, 6th sibling)
 
-- **Level 7 content** (children INSIDE category folders): Use base **1000000** (resets per parent)
-  - Each category folder's content starts at 1000000
-  - `tutorials/overview.md`: 1000000 (content inside level 6 tutorials/ folder is level 7)
-  - `how-to/overview.md`: 1000000 (RESET - different parent, content inside level 6 how-to/ folder)
-  - `explanation/overview.md`: 1000000 (RESET - different parent, content inside level 6 explanation/ folder)
-  - `reference/overview.md`: 1000000 (RESET - different parent, content inside level 6 reference/ folder)
+- **Level 7 content** (files INSIDE the level 6 category folders):
+  - Content inside level 6 folders is one level deeper → uses **level 7 base: 1000000** (level 7 range: 1000000-9999999)
+  - **CRITICAL: Weights RESET per parent** - Each category folder's children independently start at 1000000
+  - `tutorials/overview.md`: **1000000** (content inside tutorials/ folder, level 7 base)
+  - `tutorials/initial-setup.md`: **1000001** (second content file in tutorials/)
+  - `how-to/overview.md`: **1000000** (RESET - different parent, content inside how-to/ folder)
+  - `how-to/cookbook.md`: **1000001** (second content file in how-to/)
+  - `explanation/overview.md`: **1000000** (RESET - different parent, content inside explanation/ folder)
+  - `reference/overview.md`: **1000000** (RESET - different parent, content inside reference/ folder)
 
-This follows the ayokoding-web level-based weight system where `_index.md` represents the folder itself at level N, and content inside is one level deeper at level N+1. Weights reset for children of each parent folder.
+**Key Insight: "Level" Has Two Meanings**
+
+1. **Directory depth** (counting from /en/): golang/ is 5 steps from root
+2. **Weight range** (powers of 10): level 5 uses 10000-99999, level 6 uses 100000-999999
+
+The rule connects them: folder at directory depth N uses weight range N, content inside uses weight range N+1.
+
+For complete details on the level-based weight system, see [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md).
 
 **Notes:**
 
@@ -139,12 +165,6 @@ how-to/
 ├── guide-2.md          (1000002)
 ├── ...                 (1000003-1000015)
 └── cookbook.md         (1000016) ← WRONG! Too late, learners miss early engagement
-
-# ❌ BAD: Wrong weight values (completely ignoring level-based system)
-how-to/
-├── _index.md           (10) ← WRONG! Should be 100003 (level 6 - represents folder)
-├── overview.md         (20) ← WRONG! Should be 1000000 (level 7 base)
-├── cookbook.md         (30) ← WRONG! Should be 1000001 (level 7)
 ```
 
 **Correct Pattern:**
@@ -158,24 +178,40 @@ how-to/
 ├── guide-1.md          (1000002) ← Level 7 base + 2
 ├── guide-2.md          (1000003) ← Level 7 base + 3
 └── ...                 (1000004+)
+```
 
+**Why These Specific Weight Values?**
+
+Path calculation: `/en/` (1) → `/learn/` (2) → `/swe/` (3) → `/prog-lang/` (4) → `/golang/` (5) → `/how-to/` (6)
+
+- `how-to/` is a **level 6 folder** (6 steps from language root /en/)
+- `how-to/_index.md` represents THIS folder at level 6 → **weight: 100003** (level 6 range: 100000-999999)
+  - Why 100003? It's the 4th sibling among category folders (overview.md=100000, ikhtisar.md=100001, tutorials/=100002, how-to/=100003)
+- `overview.md` is content INSIDE the level 6 folder → **weight: 1000000** (level 7 base for children of level 6)
+- `cookbook.md` is also content inside → **weight: 1000001** (level 7 base + 1)
+
+**Understanding Weight Resets Across Sibling Folders:**
+
+```
 # ✅ GOOD: Category folders at level 6, content inside at level 7 with resets
 tutorials/
-├── _index.md           (100002) ← Level 6 (represents tutorials folder)
+├── _index.md           (100002) ← Level 6 (represents tutorials folder, 3rd sibling)
 ├── overview.md         (1000000) ← Level 7 base (content inside tutorials/)
 
 how-to/
-├── _index.md           (100003) ← Level 6 (represents how-to folder)
-├── overview.md         (1000000) ← Level 7 base RESET (content inside how-to/)
+├── _index.md           (100003) ← Level 6 (represents how-to folder, 4th sibling)
+├── overview.md         (1000000) ← Level 7 base RESET (different parent, content inside how-to/)
 
 explanation/
-├── _index.md           (100004) ← Level 6 (represents explanation folder)
-├── overview.md         (1000000) ← Level 7 base RESET (content inside explanation/)
+├── _index.md           (100004) ← Level 6 (represents explanation folder, 5th sibling)
+├── overview.md         (1000000) ← Level 7 base RESET (different parent, content inside explanation/)
 
 reference/
-├── _index.md           (100005) ← Level 6 (represents reference folder)
-├── overview.md         (1000000) ← Level 7 base RESET (content inside reference/)
+├── _index.md           (100005) ← Level 6 (represents reference folder, 6th sibling)
+├── overview.md         (1000000) ← Level 7 base RESET (different parent, content inside reference/)
 ```
+
+**RESET Explanation:** Different parent folders independently use the same base weight (1000000) for their children. Hugo only compares siblings (files with the same parent), so `tutorials/overview.md` (1000000) and `how-to/overview.md` (1000000) never conflict - they have different parents and appear in different navigation contexts.
 
 **Weight System Summary:**
 

@@ -558,7 +558,17 @@ weight: 1003 # Level 4 weight - represents the level 4 folder
 
 #### Common Mistakes
 
+**Understanding These Mistakes:**
+
+These examples show actual errors content creators make when learning the level-based weight system. Each mistake illustrates a misunderstanding of how Hugo's navigation hierarchy works with our weight conventions.
+
 ❌ **Mistake 1: Content using same level as folder instead of one level deeper**
+
+**Common Error:** Using the folder's own weight range for content files inside it
+
+**Why this happens:** Forgetting that `_index.md` represents the folder itself, so regular content must be one level deeper
+
+**How to avoid:** Always ask: "Is this file `_index.md` (folder itself, uses folder's level) or content (inside folder, uses next level deeper)?"
 
 ```yaml
 # WRONG! Content using same level as folder
@@ -567,6 +577,8 @@ weight: 1003 # Level 4 weight - represents the level 4 folder
 title: Overview
 weight: 10 # WRONG! Should use level 3, not level 2
 ---
+# This puts overview.md in the same weight range as /en/learn/_index.md,
+# which breaks navigation hierarchy
 ```
 
 ✅ **Correct: Content is one level deeper than folder**
@@ -577,61 +589,88 @@ weight: 10 # WRONG! Should use level 3, not level 2
 title: Overview
 weight: 100 # Correct! Level 3 base (one level deeper than folder)
 ---
+# /en/learn/ is level 2 folder → /en/learn/_index.md uses level 2 (weight: 12)
+# Content INSIDE /en/learn/ is level 3 → overview.md uses level 3 (weight: 100)
 ```
 
 ---
 
 ❌ **Mistake 2: Not resetting weights for different parents**
 
+**Common Error:** Continuing sequential weights across folders with different parents
+
+**Why this happens:** Thinking weights are globally sequential instead of per-parent
+
+**How to avoid:** Remember Hugo only compares siblings (same parent). Different parents = independent weight sequences.
+
 ```yaml
 # WRONG! Continuing numbers across different parents
-/en/learn/swe/_index.md → weight: 102 (level 3)
-/en/learn/ai/_index.md → weight: 103 (level 3)
+/en/learn/swe/_index.md → weight: 102 (level 3, parent: learn/)
+/en/learn/ai/_index.md → weight: 103 (level 3, parent: learn/)
 # But then:
 /en/rants/2024/_index.md → weight: 104 # WRONG! Should reset to 102
+# Different parent (/en/rants/ vs /en/learn/) = should start from base again
 
 # Same mistake at deeper levels:
 /en/learn/swe/prog-lang/_index.md → weight: 1002 (level 4, parent: swe/)
 /en/learn/ai/ml-basics/_index.md → weight: 1003 # WRONG! Should be 1002 (different parent: ai/)
+# ai/ and swe/ are different parents, so their children reset independently
 ```
 
 ✅ **Correct: Reset to base for each parent**
 
 ```yaml
-/en/learn/swe/_index.md → weight: 102 (level 3)
-/en/learn/ai/_index.md → weight: 103 (level 3)
+/en/learn/swe/_index.md → weight: 102 (level 3, parent: learn/)
+/en/learn/ai/_index.md → weight: 103 (level 3, parent: learn/)
 /en/rants/2024/_index.md → weight: 102 # RESET (level 3, different parent: rants/)
+# rants/ and learn/ are siblings under /en/, so their children reset independently
 
 /en/learn/swe/prog-lang/_index.md → weight: 1002 (level 4, parent: swe/)
 /en/learn/ai/ml-basics/_index.md → weight: 1002 # RESET (level 4, different parent: ai/)
+# swe/ and ai/ are siblings under learn/, so their children reset independently
 ```
 
 ---
 
 ❌ **Mistake 3: Using wrong level for \_index.md**
 
+**Common Error:** Using the content base weight for `_index.md` instead of folder's sequential weight
+
+**Why this happens:** Confusing "level 3 base" (100, for content) with "level 3 weight" (102, for 3rd folder sibling)
+
+**How to avoid:** Remember `_index.md` IS the folder itself, representing it among siblings. Content files LIVE INSIDE the folder.
+
 ```yaml
 # WRONG! _index.md using wrong level
-# File: /en/learn/swe/_index.md (swe/ is level 3 folder)
+# File: /en/learn/swe/_index.md (swe/ is level 3 folder, 3rd child of learn/)
 ---
 title: Software Engineering
-weight: 100 # WRONG! Should be level 3, not level 3 base
+weight: 100 # WRONG! This is level 3 BASE for content, not folder weight
 ---
+# Using 100 makes it appear BEFORE overview.md (100) in the parent folder
 ```
 
 ✅ **Correct: \_index.md represents the folder at its level**
 
 ```yaml
-# File: /en/learn/swe/_index.md (swe/ is level 3 folder)
+# File: /en/learn/swe/_index.md (swe/ is level 3 folder, 3rd child of learn/)
 ---
 title: Software Engineering
-weight: 102 # Correct! Level 3 weight represents level 3 folder
+weight: 102 # Correct! Level 3 weight represents level 3 folder (3rd sibling)
 ---
+# Path: /en/learn/ has children: overview.md (100), ikhtisar.md (101), swe/ (102)
+# swe/_index.md uses 102 to represent the folder among its siblings
 ```
 
 ---
 
 ❌ **Mistake 4: Missing weight field**
+
+**Common Error:** Omitting the `weight` field entirely
+
+**Why this happens:** Assuming Hugo will auto-assign weights or use alphabetical order
+
+**How to avoid:** EVERY content file in ayokoding-web MUST have an explicit `weight` field. Hugo's default alphabetical sorting breaks our hierarchical navigation.
 
 ```yaml
 # WRONG! Missing weight field entirely
@@ -639,6 +678,8 @@ weight: 102 # Correct! Level 3 weight represents level 3 folder
 title: Initial Setup
 # No weight field
 ---
+# Without weight, Hugo sorts alphabetically by filename
+# This breaks the intended tutorial progression order
 ```
 
 ✅ **Correct: Always include weight**
@@ -646,8 +687,10 @@ title: Initial Setup
 ```yaml
 ---
 title: Initial Setup
-weight: 100001 # Level 6 base + 1 (content inside level 5 folder)
+weight: 1000001 # Level 7 base + 1 (content inside level 6 folder)
 ---
+# Explicit weight ensures this appears in the correct position
+# in the tutorial sequence: overview (1000000), initial-setup (1000001), quick-start (1000002)
 ```
 
 ---
