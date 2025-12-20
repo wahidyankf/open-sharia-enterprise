@@ -20,7 +20,7 @@
 - 🕌 **Sharia-compliance as a foundation** should be built into enterprise solutions from the ground up, not bolted on later
 - 🔓 **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
 - 🌐 **Open source by default** - We believe in radical transparency unless it compromises security and/or privacy protection
-- 🤖 **AI-assisted development, not vibe-coding** - We leverage AI tools systematically to enhance productivity and code quality, not as a substitute for thoughtful engineering
+- 🤖 **AI-assisted development, not vibe-coding** - We use AI tools systematically to enhance productivity and code quality, not as a substitute for thoughtful engineering
 - 🤝 **Community collaboration** can accelerate the development of accessible and culturally sensitive business tools
 - 💡 **Innovation** across enterprise domains (financial services, supply chain, HR, and more) should be driven by open standards and shared knowledge
 - 📚 **Share what we learn** - The research and technological knowledge we develop gets shared through [ayokoding.com](https://ayokoding.com), making our learning journey useful to the wider community
@@ -155,7 +155,7 @@ We prefer open-source tools, but we'll use non-open-source software if it respec
 - ✅ Commitlint - Commit message validation
 
 🚀 **Main Service:**
-The tech stack for the main enterprise platform is currently being evaluated. Updates will be provided as architectural decisions are finalized. Technology selection will follow our open-source and vendor-neutrality principles.
+The tech stack for the main enterprise platform is currently being evaluated. Updates will be provided as architectural decisions are finalized. Technology selection will follow our open-source principles and keep you free to choose.
 
 ## 🚀 Getting Started
 

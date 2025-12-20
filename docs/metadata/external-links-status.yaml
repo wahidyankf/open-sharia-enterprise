@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: 2025-12-05T10:30:00+07:00
+lastFullScan: 2025-12-20T19:54:30+07:00
 description: Cache of verified external links. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -174,25 +174,14 @@ links:
     statusCode: 200
     finalUrl: https://docs.oracle.com/en/java/javase/21/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/java/tu-se-pl-ja__quick-start.md
+    usedIn: []
 
   - url: https://docs.oracle.com/javase/specs/
     lastChecked: 2025-12-05T10:30:00+07:00
     statusCode: 200
     finalUrl: https://docs.oracle.com/javase/specs/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/java/tu-se-pl-ja__advanced.md
-
-  - url: https://docs.oracle.com/javase/specs/jvms/
-    lastChecked: 2025-12-05T10:30:00+07:00
-    statusCode: 404
-    finalUrl: https://docs.oracle.com/javase/specs/jvms/
-    redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/java/tu-se-pl-ja__advanced.md
-    note: BROKEN LINK - Returns 404 Not Found. Correct URL should be https://docs.oracle.com/javase/specs/jvms/se25/html/index.html or similar with version number
+    usedIn: []
 
   - url: https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure
     lastChecked: 2025-11-30T07:00:00+07:00
@@ -531,8 +520,7 @@ links:
     statusCode: 200
     finalUrl: https://www.linkedin.com/in/briangoetz/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/java/tu-se-pl-ja__advanced.md
+    usedIn: []
 
   - url: https://www.linuxfoundation.org/research/the-2023-state-of-open-source-in-financial-services
     lastChecked: 2025-12-05T10:30:00+07:00
@@ -703,16 +691,14 @@ links:
     statusCode: 200
     finalUrl: https://openjdk.org/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/java/tu-se-pl-ja__advanced.md
+    usedIn: []
 
   - url: https://openjdk.org/jeps/
     lastChecked: 2025-12-05T10:30:00+07:00
     statusCode: 200
     finalUrl: https://openjdk.org/jeps/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/java/tu-se-pl-ja__advanced.md
+    usedIn: []
 
   - url: https://plaid.com/blog/
     lastChecked: 2025-12-05T10:30:00+07:00

@@ -396,6 +396,38 @@ This role-based categorization was chosen because it:
 4. **Extensible** - New agents naturally fit into one of the four role categories
 5. **Semantic consistency** - Colored square emojis (🟦🟩🟨🟪) have no pre-existing meaning in Unicode, allowing flexible assignment
 
+### Hybrid Agents Exception
+
+**DOCUMENTED EXCEPTION**: Link checker agents are hybrid agents that combine validation (green) with state management (purple). This is an explicit exception to the standard color-to-role mapping.
+
+**Hybrid Link Checkers:**
+
+- **docs-link-checker** - Validates documentation links + manages external-links-status.yaml cache
+- **ayokoding-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
+
+**Why hybrid status?**
+
+1. **Primary role**: Link validation (checker behavior) with audit report generation
+2. **State management**: Maintain persistent cache files tracking external link health over time
+3. **Tool requirements**: Write tool needed ONLY for cache file management (not general content modification)
+4. **Color assignment**: `purple` reflects the hybrid nature (validation + state management)
+
+**Rationale for Write tool access:**
+
+- Cache files (`external-links-status.yaml`, `ayokoding-links-status.yaml`) are operational metadata, NOT temporary reports
+- Cache management is essential functionality, NOT general file writing capability
+- Write tool is scoped specifically to designated cache file paths (explicit over implicit)
+- This exception respects the Explicit Over Implicit principle by documenting the hybrid role
+
+**Cache files are NOT temporary:**
+
+- Location: `docs/metadata/` (docs-link-checker) and `apps/ayokoding-web/` (ayokoding-link-checker)
+- Purpose: Long-term link status tracking (6-month expiry), shared across team
+- Committed to git: Yes (operational metadata)
+- Updated every run: Yes (including lastFullScan timestamp)
+
+This hybrid status is intentionally documented here to maintain transparency and prevent confusion about tool permission patterns.
+
 ### Assigning Colors to New Agents
 
 When creating a new agent, assign a color based on its **primary capability**:
@@ -416,16 +448,18 @@ Start: What is the agent's primary capability?
     │       - Write needed for audit reports in generated-reports/
     │       - Bash needed for UTC+7 timestamps
     │       - Examples: repo-rules-checker, plan-checker, docs-checker
+    │       - EXCEPTION: Link checkers use purple (see Hybrid Agents above)
     │
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: repo-rules-maker, docs-file-manager, docs-link-checker
+    │       - Examples: repo-rules-maker, docs-file-manager
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
             - Has Write, Edit, AND Bash
             - Examples: plan-executor
+            - INCLUDES: Hybrid link checkers (validation + state management)
 ```
 
 **Edge Cases:**

@@ -19,116 +19,33 @@ These versions are pinned in `package.json` under the `volta` field. When you ru
 
 ```
 open-sharia-enterprise/
-├── .claude/                   # Claude Code configuration
-│   └── agents/               # Specialized AI agents
-│       ├── README.md         # Agent index and workflow
-│       ├── agent-maker.md      # Agent creation automation
-│       ├── ayokoding-content-checker.md # ayokoding-web content quality validation
-│       ├── ayokoding-content-maker.md # ayokoding-web content creation
-│       ├── ayokoding-deployer.md # ayokoding-web production deployment
-│       ├── docs-checker.md     # Documentation accuracy validator
-│       ├── docs-file-manager.md  # File and directory management (rename, move, delete)
-│       ├── docs-link-checker.md  # Link validation agent
-│       ├── docs-maker.md     # Documentation writer agent
-│       ├── docs-tutorial-checker.md # Tutorial quality validation
-│       ├── docs-tutorial-maker.md # Tutorial content creation
-│       ├── hugo-developer.md    # Hugo site development and customization
-│       ├── ose-platform-web-content-checker.md # ose-platform-web content quality validation
-│       ├── ose-platform-web-content-maker.md # ose-platform-web content creation
-│       ├── ose-platform-web-deployer.md # ose-platform-web production deployment
-│       ├── plan-checker.md      # Plan validation agent
-│       ├── plan-execution-checker.md  # Implementation validation agent
-│       ├── plan-executor.md   # Plan execution agent
-│       ├── plan-maker.md        # Project planning agent
-│       ├── repo-rules-checker.md  # Consistency validator agent
-│       ├── repo-rules-fixer.md    # Validated fix applier agent
-│       └── repo-rules-maker.md    # Rule implementation agent
-├── apps/                      # Deployable applications (Nx monorepo)
-│   ├── README.md             # Apps folder documentation
-│   └── [app-name]/           # Individual applications
-│       ├── project.json      # Nx configuration
-│       └── ...               # App-specific files
-├── apps-labs/                 # Experimental apps and POCs (NOT in Nx monorepo)
-│   └── README.md             # Labs directory documentation
-├── libs/                      # Reusable libraries (Nx monorepo, flat structure)
-│   ├── README.md             # Libs folder documentation
-│   └── ts-[name]/            # TypeScript libraries (language-prefixed)
-│       ├── src/              # Library source code
-│       ├── project.json      # Nx configuration
-│       └── ...               # Lib-specific files
-├── docs/                      # Documentation (Diátaxis framework)
-│   ├── tutorials/            # Learning-oriented guides
-│   │   └── README.md         # Tutorials index
-│   ├── how-to/               # Problem-oriented guides
-│   │   └── README.md         # How-To index
-│   ├── reference/            # Technical reference
-│   │   └── README.md         # Reference index
-│   ├── explanation/          # Conceptual documentation
-│   │   ├── README.md         # Explanation index
-│   │   ├── principles/       # Foundational principles (govern all conventions and development)
-│   │   │   └── README.md     # Core principles index
-│   │   ├── conventions/      # Documentation writing standards (markdown, formatting, content)
-│   │   │   └── README.md     # Conventions index
-│   │   └── development/      # Software development practices (BDD, Hugo dev, git, agents)
-│   │       └── README.md     # Development index
-│   └── metadata/             # Operational metadata (committed to git)
-│       └── external-links-status.yaml  # Link verification cache (docs-link-checker)
-├── plans/                     # Project planning documents
-│   ├── README.md             # Plans index and purpose
-│   ├── in-progress/          # Active project plans
-│   │   ├── README.md         # Lists active plans
-│   │   └── [plan-name]/      # Individual plan folders
-│   │       ├── README.md     # Plan overview
-│   │       ├── requirements.md  # Requirements and objectives
-│   │       ├── tech-docs.md  # Technical documentation
-│   │       └── delivery.md   # Timeline and milestones
-│   ├── backlog/              # Planned projects for future
-│   │   ├── README.md         # Lists backlog plans
-│   │   └── [plan-name]/      # Individual plan folders
-│   └── done/                 # Completed and archived plans
-│       └── README.md         # Lists completed plans
-├── .husky/                    # Git hooks (pre-commit, commit-msg)
-├── nx.json                   # Nx workspace configuration
-├── tsconfig.base.json        # Base TypeScript configuration with path mappings
-├── package.json              # Node.js project manifest with Volta pinning and workspaces
-├── commitlint.config.js       # Commitlint configuration
-├── .gitignore               # Git ignore rules (Node.js and fintech)
-├── CLAUDE.md                # This file - guidance for Claude Code
-└── README.md                # Project README
+├── .claude/agents/           # AI agents (see .claude/agents/README.md)
+├── apps/                     # Deployable applications (Nx)
+├── apps-labs/                # Experimental apps (NOT in Nx)
+├── libs/                     # Reusable libraries (Nx, flat structure)
+├── docs/                     # Documentation (Diátaxis framework)
+│   ├── tutorials/           # Learning-oriented
+│   ├── how-to/              # Problem-solving
+│   ├── reference/           # Technical reference
+│   ├── explanation/         # Conceptual
+│   │   ├── principles/     # Foundational values
+│   │   ├── conventions/    # Documentation standards
+│   │   └── development/    # Software practices
+│   └── metadata/           # Operational metadata (link caches)
+├── plans/                   # Project planning (in-progress/, backlog/, done/)
+├── .husky/                  # Git hooks
+├── package.json            # Volta pinning (Node.js 24.11.1, npm 11.6.3)
+└── nx.json                 # Nx workspace config
 ```
 
 ## Code Quality & Git Hooks
 
-The project enforces code quality through automated git hooks managed by **Husky** and **lint-staged**:
+Automated git hooks enforce quality through **Husky** and **lint-staged**:
 
-### Pre-commit Hook (`.husky/pre-commit`)
+- **Pre-commit**: Prettier formats staged files (JS/TS, JSON, Markdown, YAML, CSS)
+- **Commit-msg**: Commitlint validates Conventional Commits format `<type>(<scope>): <description>`
 
-Runs automatically before a commit is created:
-
-1. **Lint-staged** selects staged files
-2. **Prettier** formats matching files:
-   - `*.{js,jsx,ts,tsx,mjs,cjs}` - JavaScript/TypeScript
-   - `*.json` - JSON files
-   - `*.md` - Markdown (excluding Hugo archetypes)
-   - `*.{yml,yaml}` - YAML
-   - `*.{css,scss}` - Styles
-3. Formatted files are automatically staged
-4. Commit blocked if any issues found
-
-### Commit-msg Hook (`.husky/commit-msg`)
-
-Runs after pre-commit hook, before commit is finalized:
-
-1. **Commitlint** validates the commit message
-2. Checks against **@commitlint/config-conventional** rules
-3. Rejects commit if format is invalid
-4. Provides helpful error message
-
-### Commit Message Convention
-
-All commits follow [Conventional Commits](https://www.conventionalcommits.org/) format: `<type>(<scope>): <description>`. Split work into multiple logical commits by type and domain. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for complete rules, valid types, and examples.
-
-For complete details on automated tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md).
+Split work into multiple logical commits by type and domain. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for rules and [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md) for complete details.
 
 ## Git Workflow
 
@@ -140,18 +57,11 @@ When developing features or fixing bugs, follow the **three-stage workflow**: ma
 
 ## Common Development Commands
 
-As the project develops, typical commands will include:
-
 - `npm install` - Install dependencies
-- `npm run build` - Build all projects (`nx run-many -t build`)
-- `npm test` - Run all tests (`nx run-many -t test`)
-- `npm run lint` - Lint all projects (`nx run-many -t lint`)
-- `npm run graph` - View dependency graph (`nx graph`)
-- `nx build [project-name]` - Build specific project
-- `nx test [project-name]` - Test specific project
-- `nx dev [app-name]` - Start development server for app
-- `nx affected:build` - Build only affected projects
-- `nx affected:test` - Test only affected projects
+- `npm run build/test/lint` - All projects via Nx
+- `nx build/test/dev [project-name]` - Specific project
+- `nx affected:build/test` - Only affected projects
+- `nx graph` - View dependency graph
 
 ## Monorepo Structure
 
@@ -178,31 +88,11 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 **Special Directories**:
 
-- **`metadata/`** - Operational metadata files committed to git (NOT temporary files). Contains:
-  - **`external-links-status.yaml`** - Cache of verified external links maintained by `docs-link-checker` agent. This is the ONLY file that may be used for external link verification results. Contains link status codes, redirect chains, last-checked timestamps (UTC+7), and file usage tracking. Uses 6-month per-link expiry. The `lastFullScan` timestamp is updated on EVERY run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (spawned by other agents, processes, or direct invocation). The agent outputs results in conversation only (no separate report files). See [docs-link-checker agent](./.claude/agents/docs-link-checker.md) for complete details.
+- **`metadata/`** - Operational metadata committed to git (NOT temporary). Contains `external-links-status.yaml` cache for link verification (6-month expiry, mandatory for docs-link-checker agent). See [docs-link-checker agent](./.claude/agents/docs-link-checker.md) for details.
 
 ## Plans Organization
 
-<!--
-  MAINTENANCE NOTE: Brief summary with link to convention
-  For comprehensive documentation, see:
-  docs/explanation/conventions/ex-co__plans-organization.md
--->
-
-Project planning documents are organized in the `plans/` folder at the repository root. This folder contains temporary, ephemeral documents used for project planning and tracking, distinct from the permanent documentation in `docs/`.
-
-**Quick Reference:**
-
-- **ideas.md** - Quick 1-3 liner ideas not yet formalized into plans
-- **backlog/** - Planned projects for future implementation
-- **in-progress/** - Active plans currently being worked on
-- **done/** - Completed and archived plans
-
-**Plan Folder Naming:** `YYYY-MM-DD__[project-identifier]/` (e.g., `2025-11-24__init-monorepo/`)
-
-**Plan Structure:** Single-file (≤1000 lines) or multi-file (>1000 lines)
-
-**For complete details**, see [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md).
+Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `backlog/` (future), `in-progress/` (active), `done/` (archived). Folder naming: `YYYY-MM-DD__[project-identifier]/`. See [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md) for details.
 
 ## Repository Architecture: Four-Layer Hierarchy
 
@@ -294,15 +184,13 @@ Universal methodology for verifying factual correctness using WebSearch/WebFetch
 
 ### Hugo Content Convention
 
-Hugo content follows specialized conventions organized into three documents:
+Three specialized documents:
 
-- **Shared Conventions**: [Hugo Content Convention - Shared](./docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common conventions applying to all Hugo sites (inherited standards, adapted conventions, Hugo basics, Mermaid syntax rules, shortcode delimiters `{{% %}}` for Markdown vs `{{< >}}` for HTML)
-- **ayokoding-web**: [Hugo Content Convention - ayokoding](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual educational platform, level-based weight system with powers of 10 ranges that reset per parent folder. Folder at level N: `_index.md` uses level N weight (e.g., 102 for level 3 folder), content inside uses level N+1 base (e.g., 1000 for content in level 3 folder). Hugo compares siblings only, so children of different parents independently reset to their level's base (e.g., /en/learn/swe/ and /en/rants/2024/ both have children starting at 1000). **CRITICAL**: ALL `_index.md` files in learning content MUST link to overview/ikhtisar as FIRST navigation item. **Navigation Depth (2 Layers with Complete Coverage)**: Non-terminal directories (folders with subdirectories) MUST show 2 layers deep with COMPLETE coverage - Layer 2: ALL immediate children (subdirectories and direct content files). Complete coverage means NO missing children. **Terminal Directory Exemption**: Folders containing ONLY content files (no subdirectories) are exempt because they cannot structurally support 2-layer navigation. Terminal example: `/en/learn/swe/prog-lang/golang/` (only content files). Non-terminal example: `/en/learn/swe/prog-lang/` has subdirectories (golang/, java/, python/, kotlin/, rust/) - MUST show ALL languages. Also includes blogging structure, frontmatter rules (no categories field, JSON array tags format, Prettier-enforced).
-- **ose-platform-web**: [Hugo Content Convention - OSE Platform](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, simple English-only landing page, updates and about patterns
+- [Shared](./docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common conventions for all Hugo sites
+- [ayokoding-web](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual, level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required
+- [ose-platform-web](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, English-only landing page
 
-**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), ayokoding-web follows the [Programming Language Content Standard](./docs/explanation/conventions/ex-co__programming-language-content.md). This defines mandatory structure (5 tutorial levels, cookbook at position 3 in how-to/, best practices), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), and pedagogical patterns. Cookbook must appear immediately after overview for optimal learner engagement.
-
-Site-specific agents and developers should reference both the shared document and their site-specific document.
+Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/ex-co__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).
 
 ### README Quality Convention
 
@@ -347,11 +235,11 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 ### Available Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
+**Content**: docs-maker, docs-tutorial-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker (uses `docs/metadata/external-links-status.yaml` cache), readme-checker, ayokoding-content-checker, ayokoding-facts-checker (validates educational content factual accuracy), ayokoding-link-checker (uses `apps/ayokoding-web/ayokoding-links-status.yaml` cache), ayokoding-structure-checker (validates ayokoding-web content structure), ose-platform-web-content-checker, repo-rules-checker (generates audit reports in `generated-reports/`)
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, readme-checker, ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, repo-rules-checker
 
-**Fixing**: repo-rules-fixer, ayokoding-content-fixer, ayokoding-facts-fixer (applies factual accuracy fixes), ayokoding-structure-fixer (applies structural fixes), docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer (apply validated fixes from corresponding checker audit reports)
+**Fixing**: repo-rules-fixer, ayokoding-content-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
@@ -361,19 +249,11 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 **Meta**: agent-maker, repo-rules-maker
 
-See [`.claude/agents/README.md`](./.claude/agents/README.md) for detailed descriptions and workflows.
+See [Agents Index](./.claude/agents/README.md) for descriptions and workflows.
 
 ### Resources
 
-- **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
-- **Maker-Checker-Fixer Pattern:** [`docs/explanation/development/ex-de__maker-checker-fixer-pattern.md`](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
-- **Fixer Confidence Levels:** [`docs/explanation/development/ex-de__fixer-confidence-levels.md`](./docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment for automated fixes
-- **Repository Validation:** [`docs/explanation/development/ex-de__repository-validation.md`](./docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns for consistency checking
-- **Content Preservation:** [`docs/explanation/development/ex-de__content-preservation.md`](./docs/explanation/development/ex-de__content-preservation.md) - Principles for preserving knowledge when condensing files
-- **Commit Messages Guide:** [`docs/explanation/development/ex-de__commit-messages.md`](./docs/explanation/development/ex-de__commit-messages.md)
-- **Trunk Based Development Guide:** [`docs/explanation/development/ex-de__trunk-based-development.md`](./docs/explanation/development/ex-de__trunk-based-development.md)
-- **Development Index:** [`docs/explanation/development/README.md`](./docs/explanation/development/README.md)
-- **Agents Index:** [`.claude/agents/README.md`](./.claude/agents/README.md)
+See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md), [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md), [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md), [Repository Validation](./docs/explanation/development/ex-de__repository-validation.md), [Content Preservation](./docs/explanation/development/ex-de__content-preservation.md), [Development Index](./docs/explanation/development/README.md), and [Agents Index](./.claude/agents/README.md).
 
 ## CLAUDE.md Maintenance
 
@@ -407,37 +287,7 @@ When adding new conventions, rules, or standards:
 - Use `repo-rules-fixer` to apply validated fixes from audit reports (after user review)
 - `repo-rules-maker` should check CLAUDE.md size when adding rules (warn if approaching limits)
 
-**Example of Good vs Bad:**
-
-```markdown
-❌ Bad (too detailed, duplicates convention docs):
-
-## Documentation Standards
-
-All documentation must follow core conventions:
-
-### File Naming Convention
-
-Files follow the pattern `[prefix]__[content-identifier].[extension]` where:
-
-- prefix encodes the directory path (2-letter abbreviations)
-- content-identifier describes the content
-- extension is typically .md
-
-Examples:
-
-- ex-co\_\_file-naming-convention.md (explanation/conventions)
-- tu\_\_getting-started.md (tutorials)
-- re-ap\_\_api-endpoints.md (reference/api)
-
-[... many more examples ...]
-
-✅ Good (concise summary with link):
-
-## Documentation Standards
-
-All documentation follows file naming (`[prefix]__[content-identifier].md`), GitHub-compatible linking, Diátaxis organization, and other core conventions. See [Conventions Index](./docs/explanation/conventions/README.md) for complete standards.
-```
+**Example**: ❌ Bad - Detailed examples duplicating convention docs. ✅ Good - Brief summary with link to detailed documentation.
 
 ## Planning Without Timelines
 

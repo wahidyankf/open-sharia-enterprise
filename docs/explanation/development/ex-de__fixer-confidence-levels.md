@@ -656,11 +656,11 @@ repo-rules-fixer re-validates:
 
 ### Fixer Agents Using This Convention
 
-- [repo-rules-fixer.md](../../.claude/agents/repo-rules-fixer.md) - Repository structural consistency fixer
-- [ayokoding-content-fixer.md](../../.claude/agents/ayokoding-content-fixer.md) - ayokoding-web Hugo content fixer
-- [docs-tutorial-fixer.md](../../.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
-- [ose-platform-web-content-fixer.md](../../.claude/agents/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
-- [readme-fixer.md](../../.claude/agents/readme-fixer.md) - README quality fixer
+- [repo-rules-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/repo-rules-fixer.md) - Repository structural consistency fixer
+- [ayokoding-content-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-fixer.md) - ayokoding-web Hugo content fixer
+- [docs-tutorial-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
+- [ose-platform-web-content-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
+- [readme-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/readme-fixer.md) - README quality fixer
 
 ### Related Conventions
 

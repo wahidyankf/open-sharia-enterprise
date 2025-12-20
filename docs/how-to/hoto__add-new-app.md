@@ -18,7 +18,7 @@ This guide shows you how to create a new application in the `apps/` folder of th
 
 ## Prerequisites
 
-- Node.js 24.11.1 and npm 11.6.2 (managed by Volta)
+- Node.js 24.11.1 and npm 11.6.3 (managed by Volta)
 - Nx workspace initialized
 - Understanding of the app you want to create (Next.js, Express API, etc.)
 
