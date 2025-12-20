@@ -1,6 +1,6 @@
 ---
 name: ayokoding-structure-checker
-description: Expert at validating ayokoding-web content structure, navigation depth, weight conventions, overview completeness, and cookbook weight ordering. Generates audit reports to generated-reports/.
+description: Expert at validating ALL ayokoding-web content files including navigation architecture, weight conventions across all markdown files, overview completeness, and pedagogical progression. Generates audit reports to generated-reports/.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
@@ -27,10 +27,23 @@ Your primary job is to **validate the structural integrity and navigation archit
 2. **Validating** navigation lists are ordered by weight using itemized lists
 3. **Checking** overview.md and ikhtisar.md exist with correct titles ("Overview" and "Ikhtisar")
 4. **Confirming** overview.md and ikhtisar.md summarize their folder scope (presence only, not quality)
-5. **Validating** all weights align with level-based conventions (powers of 10, per-parent resets)
-6. **Assessing** pedagogical progression for non-conventional weights (must not violate conventions)
+5. **Validating** ALL markdown files have correct weight fields aligned with level-based conventions
+6. **Checking** ALL content files follow pedagogical ordering (tutorials, how-to guides, reference files, etc.)
+7. **Assessing** pedagogical progression for non-conventional weights (must not violate conventions)
 
-**Validation Scope**: `apps/ayokoding-web/content/en/` and `apps/ayokoding-web/content/id/`
+**Validation Scope**: ALL markdown files in `apps/ayokoding-web/content/en/` and `apps/ayokoding-web/content/id/`
+
+**File Types Validated**:
+
+- Navigation files: `_index.md`
+- Overview/intro files: `overview.md`, `ikhtisar.md`
+- Recipe collections: `cookbook.md`
+- Tutorial files: `initial-setup.md`, `quick-start.md`, `beginner.md`, `intermediate.md`, `advanced.md`
+- How-to guides: All `.md` files in `how-to/` directories
+- Reference files: All `.md` files in `reference/` directories (e.g., `cheat-sheet.md`, `glossary.md`, `resources.md`)
+- Explanation files: All `.md` files in `explanation/` directories (e.g., `best-practices.md`, `anti-patterns.md`)
+- Topic content files: Any other `.md` files with frontmatter weight fields
+- Static pages: `about-ayokoding.md`, `terms-and-conditions.md`, etc.
 
 ## Output Behavior
 
@@ -397,7 +410,83 @@ weight: 999999   # WRONG! Lower weight means appears before overview
 
 **Rationale**: Overview provides context before practical examples; cookbook at position 3 (after overview at position 1) ensures optimal pedagogical flow.
 
-### 7. Pedagogical Progression Validation
+### 7. All Content Files Weight Validation
+
+**CRITICAL RULE**: ALL markdown files with weight fields must follow level-based system and pedagogical ordering.
+
+**Scope**: This validation applies to ALL `.md` files in the content directory, not just special files.
+
+**File Categories**:
+
+1. **Tutorial Files** (`tutorials/` directories):
+   - `initial-setup.md`, `quick-start.md`, `beginner.md`, `intermediate.md`, `advanced.md`
+   - Must follow pedagogical progression: initial-setup < quick-start < beginner < intermediate < advanced
+   - Each tutorial must have higher weight than previous
+
+2. **How-To Guides** (`how-to/` directories):
+   - `cookbook.md` (must appear early, position 3 after overview)
+   - All other how-to files (e.g., `build-cli-applications.md`, `handle-errors-effectively.md`)
+   - Must follow logical problem-solving order
+
+3. **Reference Files** (`reference/` directories):
+   - `cheat-sheet.md`, `glossary.md`, `resources.md`, etc.
+   - Must use correct weight range for their level
+
+4. **Explanation Files** (`explanation/` directories):
+   - `best-practices.md`, `anti-patterns.md`, etc.
+   - Must use correct weight range for their level
+
+5. **Topic Content Files**:
+   - Any standalone content files (e.g., `chat-with-pdf.md`, `accounting.md`)
+   - Must have weight field matching their directory level
+
+6. **Static Pages**:
+   - Root-level pages (e.g., `about-ayokoding.md`, `terms-and-conditions.md`)
+   - Must have appropriate level 2 weights (10-99 range)
+
+**Validation Process**:
+
+1. Scan ALL `.md` files in content directories
+2. Extract weight from frontmatter (skip files without weight field)
+3. Determine file's directory level (count depth from language root)
+4. Calculate expected weight range for that level
+5. Verify weight falls within correct range
+6. Check pedagogical ordering for related files (same directory)
+7. Flag violations with specific file paths and weight values
+
+**Valid Example** (Tutorial progression at level 7):
+
+```yaml
+# /en/learn/swe/prog-lang/golang/tutorials/initial-setup.md
+weight: 1000001  # Level 7 base + 1
+
+# /en/learn/swe/prog-lang/golang/tutorials/quick-start.md
+weight: 1000002  # Level 7 base + 2 (higher than initial-setup)
+
+# /en/learn/swe/prog-lang/golang/tutorials/beginner.md
+weight: 1000003  # Level 7 base + 3 (higher than quick-start)
+```
+
+**Invalid Example** (Wrong level range):
+
+```yaml
+# WRONG! Level 7 content using level 4 weight
+# /en/learn/swe/prog-lang/golang/tutorials/beginner.md
+weight: 504 # Should be 1000003 (level 7 range)
+```
+
+**Invalid Example** (Wrong pedagogical order):
+
+```yaml
+# WRONG! Advanced before beginner
+# /en/learn/swe/prog-lang/golang/tutorials/beginner.md
+weight: 1000005
+
+# /en/learn/swe/prog-lang/golang/tutorials/advanced.md
+weight: 1000002  # Should be higher than beginner
+```
+
+### 8. Pedagogical Progression Validation
 
 **CRITICAL RULE**: Non-conventional weight orderings must have pedagogical justification and NOT violate level-based conventions.
 
@@ -486,17 +575,31 @@ This progressive approach ensures findings persist even if context is compacted 
 
 ### Step 1: Scan Content Directories
 
-Use Glob to find all relevant files:
+Use Glob to find ALL markdown files:
 
 ```bash
-# Find all _index.md files
-apps/ayokoding-web/content/en/**/_index.md
-apps/ayokoding-web/content/id/**/_index.md
-
-# Find all overview.md and ikhtisar.md files
-apps/ayokoding-web/content/en/**/overview.md
-apps/ayokoding-web/content/id/**/ikhtisar.md
+# Find ALL markdown files in content directories
+apps/ayokoding-web/content/en/**/*.md
+apps/ayokoding-web/content/id/**/*.md
 ```
+
+This includes:
+
+- Navigation files (`_index.md`)
+- Overview/intro files (`overview.md`, `ikhtisar.md`)
+- Recipe files (`cookbook.md`)
+- Tutorial files (`initial-setup.md`, `quick-start.md`, `beginner.md`, `intermediate.md`, `advanced.md`)
+- How-to guides (all `.md` files in `how-to/` directories)
+- Reference files (all `.md` files in `reference/` directories)
+- Explanation files (all `.md` files in `explanation/` directories)
+- Topic content files (any other `.md` files with weight fields)
+- Static pages (`about-ayokoding.md`, `terms-and-conditions.md`, etc.)
+
+**Filter Strategy**: After globbing all `.md` files, categorize them by:
+
+1. Filename pattern (e.g., `_index.md`, `overview.md`, `cookbook.md`)
+2. Directory location (e.g., `tutorials/`, `how-to/`, `reference/`)
+3. Presence of weight field in frontmatter
 
 **Update progress tracker**: Mark "Scanning Directories" as 🔄 In Progress → ✅ Complete
 
@@ -515,19 +618,36 @@ For each file found:
 
 Apply all validation rules, **writing findings immediately after each check**:
 
-1. **Navigation Depth**: Check 3-level nesting in `_index.md`
+1. **Navigation Depth**: Check 3-level nesting in ALL `_index.md` files
    - **Immediately append** findings to report file
-2. **Navigation Ordering**: Verify weight-based order
+
+2. **Navigation Ordering**: Verify weight-based order in ALL `_index.md` files
    - **Immediately append** findings to report file
-3. **Overview Presence**: Check for overview.md/ikhtisar.md
+
+3. **Overview Presence**: Check for overview.md/ikhtisar.md in learning content folders
    - **Immediately append** findings to report file
-4. **Overview Link Position**: Verify first link in navigation
+
+4. **Overview Link Position**: Verify first link in navigation (when overview exists)
    - **Immediately append** findings to report file
-5. **Weight Validation**: Check level-based system compliance
-   - **Immediately append** findings to report file
+
+5. **ALL Content Files Weight Validation**: Check EVERY markdown file with weight field
+   - **Scan all tutorial files** (initial-setup, quick-start, beginner, intermediate, advanced)
+   - **Scan all how-to guides** (cookbook and all other how-to files)
+   - **Scan all reference files** (cheat-sheet, glossary, resources, etc.)
+   - **Scan all explanation files** (best-practices, anti-patterns, etc.)
+   - **Scan all topic content files** (standalone content with weights)
+   - **Scan all static pages** (about, terms-and-conditions, etc.)
+   - For each file: Extract weight → Calculate level → Verify range → Check ordering
+   - **Immediately append** findings to report file (per file, not batched)
+
 6. **Cookbook Weight Ordering**: Verify cookbook weight > overview weight
    - **Immediately append** findings to report file
-7. **Pedagogical Progression**: Assess non-conventional orderings
+
+7. **Tutorial Progression**: Verify tutorial files follow pedagogical order
+   - initial-setup < quick-start < beginner < intermediate < advanced
+   - **Immediately append** findings to report file
+
+8. **Pedagogical Progression**: Assess non-conventional orderings across all content
    - **Immediately append** findings to report file
 
 **CRITICAL**: Write each file's validation result IMMEDIATELY after checking. Do NOT buffer results.
