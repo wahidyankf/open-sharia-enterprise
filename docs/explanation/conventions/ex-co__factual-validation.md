@@ -17,7 +17,7 @@ updated: 2025-12-16
 
 This document defines the **universal methodology** for validating factual correctness across all content in the repository. This convention provides shared verification patterns that apply to documentation, Hugo sites, plans, and README files.
 
-## Principles Respected
+## Principles Implemented
 
 This convention respects the following core principles:
 

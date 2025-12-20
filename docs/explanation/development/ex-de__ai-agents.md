@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-16
+updated: 2025-12-20
 ---
 
 # AI Agents Convention
@@ -335,12 +335,17 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                    | Agents                                             |
-| ------------- | ---------------- | ------------------------------------- | ------------------------------- | -------------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                | docs-maker<br>plan-maker<br>docs-tutorial-maker    |
-| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`) | repo-rules-checker<br>plan-checker<br>docs-checker |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` but not `Write`      | repo-rules-maker<br>docs-file-manager              |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash`     | plan-executor                                      |
+| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                      |
+| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                             |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-rules-checker<br>plan-checker<br>docs-checker                          |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-rules-maker\*<br>docs-file-manager                                     |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-checker<br>ayokoding-link-checker<br>deployers\* |
+
+**Edge Case Notes:**
+
+- **\*Yellow with Write**: repo-rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
+- **\*Purple Bash-only**: Deployers (ayokoding-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
@@ -391,6 +396,21 @@ Start: What is the agent's primary capability?
 - **Agent has both Write and Edit**: Choose based on primary purpose
   - If mainly creates new content → `blue` (Writer)
   - If mainly executes plans/tasks → `purple` (Implementor)
+- **Link-checkers with Write, Edit, Bash**: Use `purple` (Implementor)
+  - Write tool needed for cache file updates (external-links-status.yaml)
+  - Edit tool needed for fixing broken links in content
+  - Bash tool needed for UTC+7 timestamps
+  - Examples: docs-link-checker, ayokoding-link-checker
+- **Deployers with Bash only**: Use `purple` (Implementor)
+  - Execute deployment orchestration (purple's "executes plans/orchestrates tasks")
+  - Don't create or edit files, only run git/deployment commands
+  - Edge case: purple without Write/Edit tools (Bash-only orchestration)
+  - Examples: ayokoding-deployer, ose-platform-web-deployer
+- **Updaters with Write tool**: Investigate actual usage
+  - Yellow (Updaters) should have Edit but NOT Write
+  - If Write is needed for creating new convention files → keep yellow, document exception
+  - If Write can be removed → remove Write to match yellow categorization
+  - Example: repo-rules-maker (creates new conventions, keeps Write + Edit)
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
