@@ -422,7 +422,7 @@ static/
 | **Primary Purpose**    | Project landing & progress updates     | Educational platform for developers               |
 | **Target Audience**    | Enterprise users (international)       | Indonesian developers (bilingual)                 |
 | **Tutorial Content**   | No (not applicable)                    | Yes (id/belajar/, en/learn/)                      |
-| **Navigation**         | Breadcrumbs, archive, smooth scrolling | Auto-sidebar, 2-layer nav, breadcrumbs            |
+| **Navigation**         | Breadcrumbs, archive, smooth scrolling | Auto-sidebar, 3-layer nav, breadcrumbs            |
 | **Author Field**       | Per-post (flexible)                    | Site-level default (rants/celoteh exceptions)     |
 | **Complexity**         | Simple, minimal                        | Feature-rich, complex structure                   |
 | **Weight Ordering**    | Optional                               | Strict rules (1=index, 2=overview, 3+=content)    |
