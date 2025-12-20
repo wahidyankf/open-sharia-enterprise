@@ -67,6 +67,7 @@ npx prettier --write [file-path]
 
 - `.husky/pre-commit` - Runs before commit is created
 - `.husky/commit-msg` - Runs after commit message is entered
+- `.husky/pre-push` - Runs before pushing to remote
 
 **Why Husky**: Ensures all developers have the same git hooks configured automatically after running `npm install`. Hooks are stored in the repository (`.husky/` directory) for version control.
 
@@ -166,6 +167,51 @@ $ git commit -m "added new feature"
 ✖   found 2 problems, 0 warnings
 ```
 
+### Pre-push Hook
+
+**Location**: `.husky/pre-push`
+
+**Execution Order**:
+
+1. You run `git push`
+2. Pre-push hook triggers
+3. Nx detects affected projects since last push
+4. `test:quick` target runs for each affected project
+5. Push proceeds if all tests pass
+
+**What It Validates**:
+
+- Runs unit tests for all projects affected by changes
+- Uses Nx affected detection to test only changed code
+- Ensures broken code doesn't reach the remote repository
+
+**What Happens on Failure**:
+
+- Push is blocked
+- Error message shows which tests failed
+- Fix the failing tests and try again
+
+**Example**:
+
+```bash
+$ git push origin main
+> nx affected -t test:quick
+
+✔ Running target test:quick for affected projects...
+  ✔ ayokoding-cli
+✔ All tests passed
+
+Enumerating objects: 5, done.
+[main abc1234] Successfully pushed
+```
+
+**Benefits**:
+
+- Prevents broken code from reaching remote repository
+- Only tests affected projects (faster than testing everything)
+- Catches issues before CI/CD pipeline runs
+- Maintains repository quality for all team members
+
 ## Bypassing Hooks (Not Recommended)
 
 You can bypass git hooks using `--no-verify`:
@@ -207,14 +253,26 @@ Bypassing hooks regularly defeats the purpose of automated quality checks.
 
 ### Hooks Not Running
 
-**Symptom**: Git hooks don't execute when committing
+**Symptom**: Git hooks don't execute when committing or pushing
 
 **Solutions**:
 
 1. Run `npm install` to ensure Husky is set up
 2. Check `.husky/` directory exists with hook files
 3. Verify hook files are executable: `ls -la .husky/`
-4. If needed, make executable: `chmod +x .husky/pre-commit .husky/commit-msg`
+4. If needed, make executable: `chmod +x .husky/pre-commit .husky/commit-msg .husky/pre-push`
+
+### Tests Fail on Pre-push
+
+**Symptom**: Pre-push hook blocks push due to test failures
+
+**Solutions**:
+
+1. Check which tests failed in the error output
+2. Run tests locally: `nx affected -t test:quick`
+3. Fix failing tests
+4. Commit fixes and push again
+5. If tests pass locally but fail in hook, ensure all changes are committed
 
 ## Adding New File Types
 
@@ -253,6 +311,14 @@ git commit -m "feat(api): add new endpoint"
 # ✔ Prettier formats src/index.ts
 # ✔ Commitlint validates message
 # ✔ Commit succeeds
+
+# 4. Push to remote (pre-push hook runs)
+git push origin main
+
+# Pre-push hook executes:
+# ✔ Nx detects affected projects
+# ✔ Runs test:quick for affected projects
+# ✔ Push succeeds
 ```
 
 ### When Hooks Modify Files

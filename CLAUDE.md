@@ -44,6 +44,7 @@ Automated git hooks enforce quality through **Husky** and **lint-staged**:
 
 - **Pre-commit**: Prettier formats staged files (JS/TS, JSON, Markdown, YAML, CSS)
 - **Commit-msg**: Commitlint validates Conventional Commits format `<type>(<scope>): <description>`
+- **Pre-push**: Runs `test:quick` for affected projects (Nx detects changes)
 
 Split work into multiple logical commits by type and domain. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for rules and [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md) for complete details.
 

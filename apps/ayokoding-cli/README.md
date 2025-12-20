@@ -135,6 +135,8 @@ go test ./... -v
 - `internal/markdown`: 97.5% coverage
 - `internal/navigation`: 88.2% coverage
 
+**Note**: Unit tests automatically run via pre-push git hook for affected projects (see [Code Quality Convention](../../docs/explanation/development/ex-de__code-quality.md)).
+
 ### Run without building
 
 ```bash
@@ -149,12 +151,19 @@ The CLI is integrated into the Nx workspace:
 # Build via Nx
 nx build ayokoding-cli
 
-# Test via Nx
-nx test ayokoding-cli
+# Run unit tests via Nx
+nx test:quick ayokoding-cli
 
 # Run via Nx
 nx run ayokoding-cli
 ```
+
+**Available Nx Targets:**
+
+- `build` - Build the CLI binary to `dist/`
+- `test:quick` - Run unit tests (`go test ./...`)
+- `run` - Run the CLI directly (`go run main.go`)
+- `install` - Install Go dependencies (`go mod tidy`)
 
 ## Future Commands (Planned)
 
