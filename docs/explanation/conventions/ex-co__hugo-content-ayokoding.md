@@ -1737,7 +1737,7 @@ static/
 
 **Related AI Agents**:
 
-- [ayokoding-content-maker](../../.claude/agents/ayokoding-content-maker.md) - Creates ayokoding-web content
-- [ayokoding-content-checker](../../.claude/agents/ayokoding-content-checker.md) - Validates ayokoding-web content
-- [ayokoding-link-checker](../../.claude/agents/ayokoding-link-checker.md) - Validates links in ayokoding-web
-- [ayokoding-deployer](../../.claude/agents/ayokoding-deployer.md) - Deploys ayokoding-web to production
+- [ayokoding-content-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-maker.md) - Creates ayokoding-web content
+- [ayokoding-content-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-checker.md) - Validates ayokoding-web content
+- [ayokoding-link-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-link-checker.md) - Validates links in ayokoding-web
+- [ayokoding-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-deployer.md) - Deploys ayokoding-web to production

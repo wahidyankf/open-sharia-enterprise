@@ -119,14 +119,16 @@ Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates
 - **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence objective fixes automatically)
 - **Output:** Generates `ayokoding-facts__{timestamp}__fix.md` report in `generated-reports/`
 
-### 🟩 `ayokoding-link-checker.md`
+### 🟪 `ayokoding-link-checker.md`
 
-Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths without .md extension). Detects common linking mistakes and maintains external link cache.
+**HYBRID AGENT** (Validator + State Manager): Validates internal and external links in ayokoding-web Hugo content while maintaining operational cache file. Enforces Hugo-specific linking conventions (absolute paths without .md extension). Detects common linking mistakes and maintains external link cache.
 
 - **Primary Use:** Checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web
 - **Specialization:** Hugo link format validation (absolute paths, no .md extension, no language prefix), external URL validation with caching, internal link verification, automatic cache pruning, mandatory lastFullScan updates, broken link detection and repair
-- **Tools:** Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
-- **Cache File:** `apps/ayokoding-web/ayokoding-links-status.yml` (REQUIRED - site-specific cache, updated on EVERY run, regardless of invocation context)
+- **Tools:** Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
+- **Color:** purple (hybrid: validation + cache state management)
+- **Why hybrid:** Validation (checker behavior) + persistent cache file management (state management) - Write tool used ONLY for designated cache file, NOT general content modification
+- **Cache File:** `apps/ayokoding-web/ayokoding-links-status.yaml` (REQUIRED - site-specific cache, updated on EVERY run, regardless of invocation context)
 - **Output:** Conversation response only (no separate report files created)
 - **When to Use:**
   - Auditing all external and internal links in ayokoding-web content
@@ -141,6 +143,7 @@ Validates internal and external links in ayokoding-web Hugo content, enforcing H
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
 - **Works with:** `ayokoding-content-maker` for content creation, `ayokoding-content-checker` for content quality
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/ex-de__ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟩 `ayokoding-structure-checker.md`
 
@@ -351,13 +354,15 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
   - Following Diátaxis tutorial principles (learning-oriented, not task-oriented)
 - **Works with:** `docs-tutorial-checker` for quality validation
 
-### 🟩 `docs-link-checker.md`
+### 🟪 `docs-link-checker.md`
 
-Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (spawned by other agents, automated processes, or direct invocation). Outputs results in conversation only (no separate report files).
+**HYBRID AGENT** (Validator + State Manager): Validates both external and internal links in documentation files while maintaining operational cache file. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (spawned by other agents, automated processes, or direct invocation). Outputs results in conversation only (no separate report files).
 
 - **Primary Use:** Checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health
 - **Specialization:** External URL validation with caching, internal link verification, automatic cache pruning, mandatory lastFullScan updates, web accessibility testing, broken link detection and repair
-- **Tools:** Read, Glob, Grep, WebFetch, WebSearch, Write, Edit
+- **Tools:** Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
+- **Color:** purple (hybrid: validation + cache state management)
+- **Why hybrid:** Validation (checker behavior) + persistent cache file management (state management) - Write tool used ONLY for designated cache file, NOT general content modification
 - **Cache File:** `docs/metadata/external-links-status.yaml` (REQUIRED - the ONLY cache file, updated on EVERY run, regardless of invocation context)
 - **Output:** Conversation response only (no separate report files created)
 - **When to Use:**
@@ -370,6 +375,7 @@ Validates both external and internal links in documentation files to ensure they
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations, updates lastFullScan)
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/ex-de__ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟩 `docs-tutorial-checker.md`
 
