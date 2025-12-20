@@ -15,4 +15,4 @@ draft: false
 - [Pengen Jadi Programmer - Gimana Caranya biar kita fokus dan konsisten belajar ngoding?](gimana-caranya-biar-kita-fokus-dan-konsisten-belajar-ngoding)
 - [Pengen Jadi Programmer - Pro dan kontra jadi programmer lewat jalur kuliah](pro-dan-kontra-jadi-programmer-lewat-jalur-kuliah)
 - [Pengen Jadi Programmer - Pro dan kontra jadi programmer lewat jalur otodidak](pro-dan-kontra-jadi-programmer-lewat-jalur-otodidak)
-- [Pengen Jadi Programmer - Umur Gw Udah Segini bisakah?](umur-gw-udah-segini-bisakah)
+- [Pengen Jadi Programmer - Umur Gw Udah "Segini" bisakah?](umur-gw-udah-segini-bisakah)

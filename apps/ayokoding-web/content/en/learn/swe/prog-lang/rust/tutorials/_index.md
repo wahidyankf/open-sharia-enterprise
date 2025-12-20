@@ -10,6 +10,6 @@ type: docs
 - [Tutorials Overview](overview)
 - [Initial Setup for Rust](initial-setup)
 - [Rust Quick Start](quick-start)
-- [Complete Beginners Guide to Rust](beginner)
+- [Complete Beginner's Guide to Rust](beginner)
 - [Intermediate Rust](intermediate)
 - [Advanced Rust](advanced)

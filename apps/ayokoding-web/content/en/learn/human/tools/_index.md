@@ -9,3 +9,8 @@ weight: 1000
 - [CliftonStrengths](cliftonstrengths)
   - [Overview](cliftonstrengths/overview)
   - [Themes](cliftonstrengths/themes)
+    - [Overview](cliftonstrengths/themes/overview)
+    - [Executing](cliftonstrengths/themes/executing)
+    - [Influencing](cliftonstrengths/themes/influencing)
+    - [Relationship Building](cliftonstrengths/themes/relationship-building)
+    - [Strategic Thinking](cliftonstrengths/themes/strategic-thinking)

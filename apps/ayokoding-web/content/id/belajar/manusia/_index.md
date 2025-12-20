@@ -9,3 +9,5 @@ draft: false
 - [Peralatan](peralatan)
   - [Ikhtisar](peralatan/ikhtisar)
   - [CliftonStrengths](peralatan/cliftonstrengths)
+    - [Ikhtisar](peralatan/cliftonstrengths/ikhtisar)
+    - [Tema](peralatan/cliftonstrengths/tema)

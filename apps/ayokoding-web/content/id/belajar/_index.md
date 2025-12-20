@@ -9,4 +9,6 @@ weight: 10
 - [Manusia](manusia)
   - [Ikhtisar](manusia/ikhtisar)
   - [Peralatan](manusia/peralatan)
+    - [Ikhtisar](manusia/peralatan/ikhtisar)
+    - [CliftonStrengths](manusia/peralatan/cliftonstrengths)
 - [Perkenalan](perkenalan)
