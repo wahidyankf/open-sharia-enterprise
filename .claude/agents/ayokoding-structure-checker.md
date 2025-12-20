@@ -913,7 +913,9 @@ Always provide:
 
 **Related Agents:**
 
+- `ayokoding-structure-maker.md` - Proactively modifies weights and structure (intentional structural changes)
 - `ayokoding-navigation-maker.md` - Generates navigation listings (complementary - maker generates, structure-checker validates)
+- `ayokoding-structure-fixer.md` - Applies validated fixes from audit reports (reactive fixes after validation)
 - `ayokoding-content-checker.md` - Content quality validation (complementary)
 - `ayokoding-facts-checker.md` - Factual accuracy validation (complementary)
 - `ayokoding-link-checker.md` - Link validation (complementary)

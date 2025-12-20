@@ -164,6 +164,26 @@ Automatically regenerate 3-layer navigation listings in ayokoding-web \_index.md
 - **Works with:** `ayokoding-content-maker` creates files → `ayokoding-navigation-maker` generates navigation → `ayokoding-structure-checker` validates → `ayokoding-structure-fixer` fixes issues
 - **References:** Hugo Content Convention - ayokoding (weight system, navigation depth)
 
+### 🟨 `ayokoding-structure-maker.md`
+
+Expert at proactively modifying ayokoding-web content structure by adjusting weights to reorder content, insert new items at specific positions, and maintain weight conventions. Automatically regenerates navigation listings after structural changes using ayokoding-navigation-maker CLI.
+
+- **Primary Use:** Intentionally restructuring ayokoding-web content by adjusting weights
+- **When to Use:**
+  - Reordering content intentionally (e.g., move rust before golang)
+  - Inserting new items at specific positions with proper weight spacing
+  - Restructuring sections (change organization of existing content)
+  - Preparing for new content (reserve weight slots for upcoming additions)
+- **Key Operations:**
+  - Reorder existing items by adjusting weights
+  - Insert new items at specific positions with cascading updates
+  - Create gaps for future content insertions
+  - Move items to different parent folders with level recalculation
+  - Invoke ayokoding-navigation-maker CLI automatically after changes
+- **Works with:** `ayokoding-content-maker` creates files → `ayokoding-structure-maker` adjusts weights → `ayokoding-navigation-maker` regenerates navigation → `ayokoding-structure-checker` validates → `ayokoding-structure-fixer` fixes issues
+- **Workflow:** Proactive structural changes (this agent) → Navigation Regeneration (CLI) → Validation (checker) → Reactive fixes (fixer if needed)
+- **References:** Hugo Content Convention - ayokoding (weight system, level-based ordering)
+
 ### 🟩 `ayokoding-structure-checker.md`
 
 Expert at validating ALL ayokoding-web content files including navigation architecture, weight conventions across all markdown files, overview completeness, and pedagogical progression.
