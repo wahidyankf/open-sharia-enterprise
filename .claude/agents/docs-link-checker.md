@@ -38,6 +38,27 @@ This agent produces a **conversation-only output** (no progressive streaming):
 
 **CRITICAL DIFFERENCE from repo-rules-checker**: This agent does NOT use progressive streaming. Results are output once at the end of execution, not incrementally during the check. The cache file is updated atomically after all checks complete.
 
+## Output Requirements
+
+**This agent produces TWO outputs:**
+
+1. **Cache File** (`docs/metadata/external-links-status.yaml`):
+   - Permanent operational data committed to git
+   - Stores external link verification results (status, redirects, timestamps)
+   - Updated on EVERY run with current link locations
+   - The `lastFullScan` field MUST be updated on every run
+   - Purpose: Link status tracking for operational use
+
+2. **Audit Report** (`generated-reports/docs-link__{YYYY-MM-DD--HH-MM}__audit.md`):
+   - Temporary validation report for audit trail
+   - Contains validation findings, broken links, format violations
+   - Purpose: Integration with fixer agents and historical tracking
+
+**CRITICAL DISTINCTION**: Cache file ≠ Audit report
+
+- **Cache**: Operational link status (permanent, in `docs/metadata/`)
+- **Audit**: Validation findings (temporary, in `generated-reports/`)
+
 ## CRITICAL REQUIREMENTS
 
 **These requirements are MANDATORY and non-negotiable:**
@@ -54,24 +75,47 @@ This agent produces a **conversation-only output** (no progressive streaming):
    - NO other locations for storing link verification results
    - This file MUST be updated on every run
 
-3. **Do NOT create separate report files**
-   - You should NOT create temporary report files in `generated-reports/`
-   - You should NOT create reports in any other location
-   - The cache file itself is the authoritative record
-   - Output summaries directly in the conversation response only
+3. **ALWAYS generate audit report file**
+   - You MUST create audit report in `generated-reports/docs-link__{YYYY-MM-DD--HH-MM}__audit.md`
+   - Report contains validation findings and broken link details
+   - This is separate from the cache file (different purpose)
+   - Audit report integrates with docs-link-fixer agent
 
-4. **Cache file is the single source of truth**
-   - All link verification data goes into `docs/metadata/external-links-status.yaml`
-   - Human-readable summaries are provided in your response text, not separate files
-   - The cache file contains all necessary information
+4. **Cache file and audit report serve different purposes**
+   - Cache file: Permanent operational link status tracking
+   - Audit report: Temporary validation findings for review and fixing
+   - Both outputs are required on every run
 
-5. **Universal cache requirement applies to ALL invocations - NO EXCEPTIONS**
-   - Cache file usage is MANDATORY regardless of HOW this agent is invoked
+5. **Universal requirements apply to ALL invocations - NO EXCEPTIONS**
+   - Cache file and audit report generation are MANDATORY regardless of HOW this agent is invoked
    - Applies whether spawned by other agents, automated processes, or direct user invocation
    - Applies whether called directly or indirectly through programmatic means
    - Applies whether run manually or as part of automated workflows
    - This is a HARD REQUIREMENT with NO EXCEPTIONS for using this agent
-   - The cache file requirement is NOT negotiable and applies universally to every invocation context
+
+## Temporary Report Files
+
+This agent writes validation findings to temporary report files in `generated-reports/` for:
+
+- Persistent audit history
+- Reference in documentation
+- Integration with fixer agents (docs-link-fixer)
+- Traceability of validation results
+
+**Report Location**: `generated-reports/docs-link__{YYYY-MM-DD--HH-MM}__audit.md`
+
+**Example Filename**: `docs-link__2025-12-20--14-30__audit.md`
+
+**Bash Timestamp Generation** (UTC+7):
+
+```bash
+TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
+```
+
+**Note**: This agent maintains TWO separate outputs:
+
+- **Cache File** (`docs/metadata/external-links-status.yaml`): Link status tracking for operational use
+- **Audit Report** (`generated-reports/docs-link__{timestamp}__audit.md`): Validation findings and summary for audit trail
 
 ## Core Responsibility
 
@@ -83,7 +127,7 @@ Your primary job is to verify that all links in documentation files are working 
 4. **Validate each link** - Check external links for accessibility (respecting 6-month cache) and internal links for file existence
 5. **Prune orphaned cache entries** - Automatically remove cached links no longer present in any documentation
 6. **Update cache and lastFullScan** - Add newly verified links, update location metadata (usedIn), and ALWAYS update lastFullScan timestamp
-7. **Report findings in conversation** - Provide concise summary with detailed usedIn info only for broken links (no separate report files)
+7. **Generate audit report** - Write validation findings to `generated-reports/docs-link__{timestamp}__audit.md`
 8. **Suggest fixes** - Recommend replacements or removal for broken links
 
 ## What You Check
@@ -576,25 +620,41 @@ When you find broken internal links:
 
 ## Output and Reporting
 
-**CRITICAL**: This agent does NOT create separate report files.
+**CRITICAL**: This agent creates TWO separate outputs on every run:
 
-All link check results are provided directly in the conversation response. Do NOT create temporary report files in `generated-reports/` or any other location.
+1. **Cache File** (`docs/metadata/external-links-status.yaml`):
+   - Permanent operational link status tracking
+   - Committed to git and shared across the team
+   - Stores status, redirects, usedIn, timestamps
+   - Updated on EVERY run (including lastFullScan)
 
-**Why no separate reports?**
+2. **Audit Report** (`generated-reports/docs-link__{timestamp}__audit.md`):
+   - Temporary validation findings
+   - Integration with docs-link-fixer agent
+   - Historical tracking of link health audits
+   - Contains broken links and fix recommendations
 
-- The cache file `docs/metadata/external-links-status.yaml` is the authoritative record of all link verification data
-- Human-readable summaries are provided in conversation responses
-- The cache file contains all necessary information (status, redirects, usedIn, timestamps)
-- Separate report files would duplicate information already in the cache
-- Conversation output is immediately visible and actionable
+**Why both outputs?**
+
+- **Cache file**: Operational data for link status (permanent, shared)
+- **Audit report**: Validation findings for review and fixing (temporary, audit trail)
+- Different purposes require different storage locations
+- Cache tracks link health over time; audit captures point-in-time validation
 
 **The cache file `docs/metadata/external-links-status.yaml` is:**
 
-- **The ONLY file for link verification data** - No alternative cache files allowed
-- **NOT a temporary file** - It is committed to git and shared across the team
-- **Permanent operational metadata** - Stored in `docs/metadata/` directory
+- **Permanent operational metadata** - Stored in `docs/metadata/` directory (NOT temporary)
+- **Link status tracking** - Contains verification results for operational use
+- **Committed to git** - Shared across the team
 - **Required path** - You MUST use this exact file path for all external link caching
 - **Updated on every run** - Including the `lastFullScan` timestamp (MANDATORY)
+
+**The audit report `generated-reports/docs-link__{timestamp}__audit.md` is:**
+
+- **Temporary validation report** - Stored in `generated-reports/` directory
+- **Audit trail** - Historical record of link health checks
+- **Fixer integration** - Used by docs-link-fixer agent to apply fixes
+- **Generated on every run** - With UTC+7 timestamp in filename
 
 ## Output Format (Conversation Response Only)
 

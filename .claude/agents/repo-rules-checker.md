@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-16
+updated: 2025-12-20
 ---
 
 # Repository Rule Checker Agent
@@ -447,6 +447,51 @@ Check that content was offloaded to the appropriate folder:
 - [ ] .gitignore includes both directories without @ prefix
 - [ ] No temporary files committed to repository
 - [ ] Convention document accurately reflects .gitignore line numbers
+
+### Mandatory Checker Report Generation Compliance
+
+**CRITICAL**: ALL \*-checker agents MUST write audit reports to `generated-reports/`. This is a hard requirement with NO EXCEPTIONS.
+
+- [ ] **All checker agents have Write + Bash tools**: repo-rules-checker, ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker
+- [ ] **All checker agents specify generated-reports/ output**: Each checker explicitly documents it writes to `generated-reports/` (not conversation-only)
+- [ ] **All checker agents use correct naming pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md` (agent name without -checker suffix)
+- [ ] **All checker agents generate timestamps with Bash**: Use `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"` (no placeholder "00-00")
+- [ ] **NO conversation-only output**: No checker agent outputs results only in conversation without file persistence
+- [ ] **Temporary Files Convention documents mandatory requirement**: ex-de\_\_temporary-files.md includes section "Mandatory Report Generation for Checker Agents"
+- [ ] **AI Agents Convention documents mandatory requirement**: ex-de\_\_ai-agents.md includes mandatory checker reporting rule
+- [ ] **CLAUDE.md references mandatory requirement**: Temporary Files section mentions ALL checker agents must write to generated-reports/
+
+### Progressive Writing Compliance (Checker Agents)
+
+**CRITICAL**: ALL \*-checker agents MUST write reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
+
+- [ ] **Agent initializes file at execution start**: Each checker creates report file with header and "In Progress" status immediately (not at end)
+- [ ] **Agent writes findings progressively**: Validation results written to file immediately after each check (not buffered in memory/conversation)
+- [ ] **Agent uses Edit/Write tools throughout execution**: File updated continuously, not just once at completion
+- [ ] **Agent documents progressive writing approach**: Instructions explicitly state "write progressively" or "initialize file at start"
+- [ ] **Agent includes progress indicators**: Report file shows interim status updates (e.g., "In Progress" → "Complete")
+- [ ] **Agent updates running totals**: File contains current counts throughout execution (not just final summary)
+- [ ] **Agent avoids buffering patterns**: No mention of "collect findings then write" or "buffer results" in instructions
+- [ ] **Agent documents context compaction survival**: Explanation of why progressive writing is needed (context compaction)
+- [ ] **Temporary Files Convention documents requirement**: ex-de\_\_temporary-files.md includes "Progressive Writing Requirement for Checker Agents" section
+- [ ] **AI Agents Convention documents requirement**: ex-de\_\_ai-agents.md includes "PROGRESSIVE WRITING REQUIREMENT" section
+- [ ] **CLAUDE.md references requirement**: Temporary Files section mentions progressive writing requirement
+
+**Validation Method**: For each \*-checker agent, verify instructions include:
+
+1. File initialization at execution start (not end)
+2. Progressive writing pattern (write after each validation, not buffered)
+3. Status progression ("In Progress" → "Complete")
+4. Explanation of context compaction survival benefit
+
+**Anti-Patterns to Flag**:
+
+- ❌ "Collect all findings in conversation then write report at end"
+- ❌ "Buffer validation results in memory before writing"
+- ❌ "Generate complete report after all checks finish"
+- ❌ No mention of file initialization timing
+- ❌ No mention of progressive updates
+- ❌ No status indicators in report file
 
 ### Convention Writing Convention Compliance
 

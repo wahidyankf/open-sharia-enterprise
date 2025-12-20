@@ -298,7 +298,34 @@ function example() {
 - **Checks**: Technical claims, command syntax, contradictions, examples
 - **Tools**: WebSearch and WebFetch for verification of facts
 
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each factual claim and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: `generated-reports/docs__{YYYY-MM-DD--HH-MM}__audit.md`
+
+This progressive approach ensures findings persist even if context is compacted during long factual verifications (15+ minutes of web checking).
+
 ## Validation Workflow
+
+### Step 0: Initialize Report File
+
+**CRITICAL FIRST STEP - Before any validation begins:**
+
+1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+2. **Create report file** at `generated-reports/docs__{timestamp}__audit.md`
+3. **Write initial header** with:
+   - Audit date/time
+   - Scope (files to check)
+   - Status: "⏳ In Progress"
+   - Progress tracker section (all validation phases marked as "⏳ Pending")
+4. **File is now readable** and will be updated progressively
 
 ### Step 1: Discovery Phase
 
@@ -307,6 +334,8 @@ function example() {
 1. **User specifies** files/directories to validate
 2. **Use Glob** to find all markdown files in specified path
 3. **Read each file** to extract content for analysis
+
+**Update progress tracker**: Mark "Discovery Phase" as 🔄 In Progress → ✅ Complete
 
 ### Step 2: Claim Extraction Phase
 
@@ -341,9 +370,11 @@ function example() {
 - Citations to third-party sources
 - References to other tools or libraries
 
+**Update progress tracker**: Mark "Claim Extraction" as 🔄 In Progress → ✅ Complete
+
 ### Step 3: Web Verification Phase
 
-**For each verifiable claim:**
+**For each verifiable claim, write verification result IMMEDIATELY after checking:**
 
 #### Command Syntax Verification
 
@@ -365,7 +396,10 @@ Verification:
 2. WebFetch: https://github.com/OJ/gobuster (official repo)
 3. Check: -u flag exists, -w for wordlist, -x for extensions
 4. Result: ✅ Verified or ❌ Flag -x is actually --extensions
+**Immediately append** verification result to report file
 ```
+
+**CRITICAL**: Write each verification IMMEDIATELY after checking. Do NOT buffer results.
 
 #### Feature Existence Verification
 
@@ -384,7 +418,10 @@ Verification:
 2. Extract: Actual mode list from official docs
 3. Compare: Claimed vs. actual modes
 4. Result: ✅ All 7 modes verified or ❌ Only 6 modes exist (missing fuzz)
+**Immediately append** verification result to report file
 ```
+
+**Update progress tracker**: Update count as each verification completes
 
 #### Version Number Verification
 
@@ -505,7 +542,16 @@ Inconsistency across files:
 3. **Verify spelling** (e.g., "Kubernetes" not "Kubernates")
 4. **Flag inconsistent usage** (e.g., "repo" vs. "repository")
 
-### Step 5: Reporting Phase
+### Step 5: Finalize Audit Report
+
+**Final update to existing report file:**
+
+1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+2. **Add summary statistics**:
+   - Total claims checked
+   - Verified / Outdated / Incorrect counts
+   - Critical errors / Warnings / Info
+3. **File is complete** and ready for review
 
 **Generate comprehensive validation report** with:
 

@@ -94,7 +94,30 @@ You are the **QUALITY GATE FOR PLANS**. You validate that plans created by plan-
 - External dependencies are available
 - No blockers that would prevent implementation
 
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each plan aspect and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: `generated-reports/plan__{YYYY-MM-DD--HH-MM}__validation.md`
+
+This progressive approach ensures findings persist even if context is compacted during long validations (codebase checks, web verification).
+
 ## Validation Process
+
+### Step 0: Initialize Report File
+
+**CRITICAL FIRST STEP - Before any validation begins:**
+
+1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+2. **Create report file** at `generated-reports/plan__{timestamp}__validation.md`
+3. **Write initial header** with Status: "⏳ In Progress" and progress tracker
+4. **File is now readable** and will be updated progressively
 
 ### Step 1: Locate and Read Plan
 
@@ -226,7 +249,15 @@ Validation steps:
    - Do file paths referenced exist or will be created?
    - Are version numbers consistent across documents?
 
-### Step 8: Generate Validation Report
+### Step 8: Finalize Plan Validation Report
+
+**Final update to existing report file:**
+
+1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+2. **Add summary statistics** and overall verdict
+3. **File is complete** and ready for review
+
+**CRITICAL**: All findings were written progressively during Steps 1-7. Do NOT buffer results.
 
 Provide detailed report with:
 

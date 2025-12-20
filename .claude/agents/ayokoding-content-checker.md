@@ -1,11 +1,11 @@
 ---
 name: ayokoding-content-checker
 description: Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles
-tools: Read, Glob, Grep, Write, Bash
+tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-15
+updated: 2025-12-20
 ---
 
 # ayokoding-content-checker Agent
@@ -1113,7 +1113,55 @@ Links to related content.
 Recap of learning.
 ```
 
+## Temporary Report Files
+
+This agent writes validation findings to temporary report files in `generated-reports/` for:
+
+- Persistent audit history
+- Reference in documentation
+- Integration with fixer agents
+- Traceability of validation results
+
+**Report Location**: `generated-reports/ayokoding-content__{YYYY-MM-DD--HH-MM}__audit.md`
+
+**Example Filename**: `ayokoding-content__2025-12-20--14-30__audit.md`
+
+**Bash Timestamp Generation** (UTC+7):
+
+```bash
+TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
+```
+
+**Report Format**: See "Report Format" section below for complete structure
+
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each content file and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: `generated-reports/ayokoding-content__{YYYY-MM-DD--HH-MM}__audit.md`
+
+This progressive approach ensures findings persist even if context is compacted during large content validations (100+ files).
+
 ## Validation Process
+
+### Step 0: Initialize Report File
+
+**CRITICAL FIRST STEP - Before any validation begins:**
+
+1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+2. **Create report file** at `generated-reports/ayokoding-content__{timestamp}__audit.md`
+3. **Write initial header** with:
+   - Audit date/time
+   - Scope (files to validate)
+   - Status: "⏳ In Progress"
+   - Progress tracker section (all files marked as "⏳ Pending")
+4. **File is now readable** and will be updated progressively
 
 ### Step 1: Identify Content to Validate
 
@@ -1136,6 +1184,8 @@ apps/ayokoding-web/content/id/belajar/**/*.md
 apps/ayokoding-web/content/**/*.md
 ```
 
+**Update progress tracker**: Mark "Identifying Content" as 🔄 In Progress → ✅ Complete
+
 ### Step 2: Read Content Files
 
 Use Read tool to read content files:
@@ -1148,9 +1198,11 @@ Read: apps/ayokoding-web/content/id/belajar/nodejs/getting-started.md
 Glob: "apps/ayokoding-web/content/id/belajar/**/*.md"
 ```
 
+**Update progress tracker**: Mark "Reading Files" as 🔄 In Progress → ✅ Complete
+
 ### Step 3: Parse Frontmatter
 
-Extract and validate frontmatter:
+For each file, extract and validate frontmatter:
 
 - Verify YAML format
 - Check required fields present
@@ -1158,9 +1210,15 @@ Extract and validate frontmatter:
 - Check field types (string, boolean, array)
 - Verify indentation (2 spaces)
 
+**Immediately write frontmatter validation results** to report file after each file check.
+
+**CRITICAL**: Do NOT buffer results. Write immediately after validating each file's frontmatter.
+
+**Update progress tracker**: Mark each file as 🔄 In Progress → ✅ Complete as frontmatter is validated
+
 ### Step 4: Validate Content Structure
 
-Check content body:
+For each file, check content body:
 
 - Heading hierarchy
 - Link formats
@@ -1169,15 +1227,36 @@ Check content body:
 - Code block language specification
 - Shortcode usage
 
+**Immediately write content structure validation results** to report file after each file check.
+
+**CRITICAL**: Do NOT buffer results. Write immediately after validating each file's structure.
+
+**Update progress tracker**: Update file status as structure validation completes
+
 ### Step 5: Check Convention Compliance
 
-Verify compliance with:
+For each file, verify compliance with:
 
 - Hugo Content Convention (inherited, adapted, Hugo-specific)
 - Content Quality Principles (writing style, accessibility, formatting)
 - Tutorial Convention (if learning content)
 
-### Step 6: Generate Validation Report
+**Immediately write convention compliance results** to report file after each file check.
+
+**CRITICAL**: Do NOT buffer results. Write immediately after validating each file's compliance.
+
+**Update progress tracker**: Update file status as convention checks complete
+
+### Step 6: Finalize Validation Report
+
+**Final update to existing report file:**
+
+1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+2. **Add summary statistics**:
+   - Total checks performed
+   - Passed/Warnings/Errors counts
+   - Overall status
+3. **File is complete** and ready for review
 
 Provide structured feedback:
 

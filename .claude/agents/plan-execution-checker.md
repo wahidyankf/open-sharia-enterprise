@@ -74,7 +74,56 @@ You are the **QUALITY GATE**. You provide independent, objective validation of w
 - Validate API documentation (if applicable)
 - Check that examples work correctly
 
+## File Output Strategy
+
+This agent writes findings PROGRESSIVELY to ensure survival through context compaction:
+
+1. **Initialize** report file at execution start with header and "In Progress" status
+2. **Validate** each requirement and write findings immediately to file (not buffered)
+3. **Update** file continuously with progress indicator and running totals
+4. **Finalize** with completion status and summary statistics
+5. **Never** buffer findings in memory - write immediately after each validation
+
+Report file: `generated-reports/plan-execution__{YYYY-MM-DD--HH-MM}__validation.md`
+
+This progressive approach ensures findings persist even if context is compacted during long validations.
+
 ## Validation Process
+
+### Step 0: Initialize Report File
+
+**CRITICAL FIRST STEP - Before any validation begins:**
+
+1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+2. **Create report file** at `generated-reports/plan-execution__{timestamp}__validation.md`
+3. **Write initial header** with:
+   - Plan name and location
+   - Validation date/time
+   - Status: "⏳ In Progress"
+   - Progress tracker section (all requirements marked as "⏳ Pending")
+4. **File is now readable** and will be updated progressively
+
+**Example initial file structure:**
+
+```markdown
+# Validation Report: [Plan Name]
+
+**Date**: YYYY-MM-DDTHH:MM:SS+07:00
+**Validator**: plan-execution-checker
+**Plan Location**: [path to plan folder]
+**Status**: ⏳ In Progress
+
+## Progress Tracker
+
+- ⏳ Requirement 1 - User Authentication
+- ⏳ Requirement 2 - Data Validation
+- ⏳ Requirement 3 - API Endpoints
+  [... all requirements listed ...]
+
+## Validation Results
+
+[Results will be appended as validation progresses]
+```
 
 ### Step 1: Understand the Plan
 
@@ -82,6 +131,7 @@ You are the **QUALITY GATE**. You provide independent, objective validation of w
 2. Read `tech-docs.md` to understand architecture
 3. Read `delivery.md` to see what was supposed to be done
 4. Form a mental model of expected implementation
+5. **Update progress tracker**: Mark "Understanding Plan" as 🔄 In Progress
 
 ### Step 2: Examine Implementation
 
@@ -90,13 +140,17 @@ You are the **QUALITY GATE**. You provide independent, objective validation of w
 3. Read code files to understand what was built
 4. Trace execution flow
 5. Identify all modified/created files
+6. **Update progress tracker**: Mark "Examining Implementation" as 🔄 In Progress
 
 ### Step 3: Run Automated Checks
 
 1. Run test suite: `npm test` (or appropriate command)
-2. Run linter: `npm run lint` (or appropriate command)
-3. Run build: `npm run build` (or appropriate command)
-4. Check for any errors or warnings
+2. **Immediately append** test results to report file
+3. Run linter: `npm run lint` (or appropriate command)
+4. **Immediately append** linter results to report file
+5. Run build: `npm run build` (or appropriate command)
+6. **Immediately append** build results to report file
+7. **Update progress tracker**: Mark "Automated Checks" as ✅ Complete
 
 ### Step 4: Manual Verification
 
@@ -106,7 +160,12 @@ For each requirement:
 2. Verify it works as specified
 3. Test edge cases
 4. Check error handling
-5. Mark as ✅ verified or ❌ issue found
+5. **Immediately write verification result** to report file:
+   - ✅ Verified (with evidence and file:line)
+   - ❌ Issue found (with detailed description)
+6. **Update progress tracker**: Mark requirement as 🔄 In Progress → ✅ Complete
+
+**CRITICAL**: Write each requirement verification IMMEDIATELY after checking. Do NOT buffer results.
 
 ### Step 5: Integration Testing
 
@@ -114,14 +173,45 @@ For each requirement:
 2. Verify components work together
 3. Check for unintended side effects
 4. Test realistic user scenarios
+5. **Immediately append** integration test results to report file
+6. **Update progress tracker**: Mark "Integration Testing" as ✅ Complete
 
-### Step 6: Generate Validation Report
+### Step 6: Finalize Validation Report
 
-Provide a comprehensive report with:
+**Final update to existing report file:**
 
-- ✅ **Passed**: Requirements met, tests pass, quality good
-- ⚠️ **Warnings**: Minor issues, non-blocking
-- ❌ **Failed**: Critical issues, requirements not met
+1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+2. **Add summary statistics**:
+   - Total requirements validated
+   - Passed/Failed/Warnings counts
+   - Overall validation status
+3. **Add final verdict**: ✅ PASS / ⚠️ PASS WITH WARNINGS / ❌ FAIL
+4. **File is complete** and ready for review
+
+**Report structure shows real-time progress:**
+
+```markdown
+# Validation Report: [Plan Name]
+
+**Status**: ✅ Complete (updated from "⏳ In Progress")
+
+## Summary (added at finalization)
+
+- Total Requirements: X
+- Requirements Met: Y
+- Requirements Failed: Z
+- Overall Status: [verdict]
+
+## Progress Tracker (updated throughout)
+
+- ✅ Requirement 1 - Verified at 14:32
+- ❌ Requirement 2 - Failed at 14:35
+- ✅ Requirement 3 - Verified at 14:38
+
+## Validation Results (appended progressively)
+
+[All validation findings written immediately as discovered]
+```
 
 ## Temporary Report Files
 
