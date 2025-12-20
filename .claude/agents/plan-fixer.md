@@ -3,7 +3,7 @@ name: plan-fixer
 description: Applies validated fixes from plan-checker audit reports. Re-validates plan completeness and accuracy findings before applying changes. Use after reviewing plan-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
-color: yellow
+color: purple
 created: 2025-12-14
 updated: 2025-12-14
 ---

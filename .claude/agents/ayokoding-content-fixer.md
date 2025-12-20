@@ -3,7 +3,7 @@ name: ayokoding-content-fixer
 description: Applies validated fixes from ayokoding-content-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing ayokoding-content-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
-color: yellow
+color: purple
 created: 2025-12-14
 updated: 2025-12-14
 ---
