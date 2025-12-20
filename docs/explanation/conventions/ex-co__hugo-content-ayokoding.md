@@ -763,14 +763,15 @@ Even on 32-bit systems (max: 2.1 billion), we could theoretically have:
 
 ### Index File Requirements
 
-#### Navigation Depth (2 Layers)
+#### Navigation Depth (3 Layers)
 
-**CRITICAL RULE**: `_index.md` files MUST display navigation links **2 layers deep** with complete coverage of all immediate children (with terminal directory exemption).
+**CRITICAL RULE**: `_index.md` files MUST display navigation links **3 layers deep** with complete coverage of all immediate children (with terminal directory exemption).
 
 **Layer Definition**:
 
 - **Layer 1**: Parent section/category (current level)
 - **Layer 2**: ALL immediate children (subdirectories and direct content files) - COMPLETE COVERAGE REQUIRED
+- **Layer 3**: ALL grandchildren (subdirectories and content files 2 levels down) - COMPLETE COVERAGE REQUIRED
 
 **Completeness Requirement**:
 
@@ -788,19 +789,19 @@ Partial coverage (showing only some children) is a violation.
 
 **Definition**: Terminal directories are folders containing ONLY content files (no subdirectories). They are leaf nodes in the directory tree.
 
-**Exemption**: Terminal directories are **EXEMPT** from the 2-layer navigation depth requirement because they cannot structurally support 2-layer navigation (they have no subdirectories to show as Layer 2).
+**Exemption**: Terminal directories are **EXEMPT** from the 3-layer navigation depth requirement because they cannot structurally support 3-layer navigation (they have no subdirectories to show as Layer 2 and Layer 3).
 
-**Examples of Terminal Directories** (exempt from 2-layer rule):
+**Examples of Terminal Directories** (exempt from 3-layer rule):
 
 - Language topic folders: `/en/learn/swe/prog-lang/golang/` (contains only content files: overview.md, initial-setup.md, quick-start.md, beginner.md, intermediate.md, advanced.md, cookbook.md)
 - Diátaxis subdirectories: `/en/learn/swe/infosec/concepts/tutorials/` (contains only tutorial content files)
 - Any folder where all contents are content files (no subdirectories)
 
-**Examples of Non-Terminal Directories** (NOT exempt, MUST show 2 layers with COMPLETE coverage):
+**Examples of Non-Terminal Directories** (NOT exempt, MUST show 3 layers with COMPLETE coverage):
 
-- `/en/learn/swe/` - Has subdirectories: prog-lang/, system-design/, infosec/ (MUST show ALL these subdirectories as Layer 2)
-- `/en/learn/swe/prog-lang/` - Has subdirectories: golang/, java/, python/, kotlin/, rust/ (MUST show ALL of these as Layer 2)
-- `/en/learn/` - Has subdirectories: swe/, ai/, business/, human/, gobuster/, system-design/ (MUST show ALL these as Layer 2)
+- `/en/learn/swe/` - Has subdirectories: prog-lang/, system-design/, infosec/ (MUST show ALL these subdirectories as Layer 2, and their children as Layer 3)
+- `/en/learn/swe/prog-lang/` - Has subdirectories: golang/, java/, python/, kotlin/, rust/ (MUST show ALL of these as Layer 2, and their children as Layer 3)
+- `/en/learn/` - Has subdirectories: swe/, ai/, business/, human/, gobuster/, system-design/ (MUST show ALL these as Layer 2, and their children as Layer 3)
 
 **What Terminal Directories Should Show**:
 
@@ -811,16 +812,22 @@ Terminal directories display available content within structural limitations:
 
 This is a **structural limitation, not a compliance violation**.
 
-✅ **Good (2 layers deep with overview links first)**:
+✅ **Good (3 layers deep with overview links first)**:
 
 ```markdown
 <!-- File: content/en/learn/swe/prog-lang/_index.md -->
-<!-- Shows: 2 layers deep + overview link as first item -->
+<!-- Shows: 3 layers deep + overview link as first item -->
 
 - [Overview](/learn/swe/prog-lang/overview) # ← Overview FIRST when exists
 - [Golang](/learn/swe/prog-lang/golang)
+  - [Overview](/learn/swe/prog-lang/golang/overview)
+  - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
+  - [Quick Start](/learn/swe/prog-lang/golang/quick-start)
 - [Java](/learn/swe/prog-lang/java)
+  - [Overview](/learn/swe/prog-lang/java/overview)
+  - [Initial Setup](/learn/swe/prog-lang/java/initial-setup)
 - [Python](/learn/swe/prog-lang/python)
+  - [Overview](/learn/swe/prog-lang/python/overview)
 - [Kotlin](/learn/swe/prog-lang/kotlin)
 - [Rust](/learn/swe/prog-lang/rust)
 ```
@@ -900,7 +907,7 @@ title: Business # WRONG! Too generic (missing context)
 
 #### Content Separation
 
-**CRITICAL RULE**: `_index.md` files should contain ONLY navigation lists (2 layers deep) - NO introduction or overview content.
+**CRITICAL RULE**: `_index.md` files should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content.
 
 **Introduction/Overview Content**: Goes in separate `overview.md` (English) or `ikhtisar.md` (Indonesian) file.
 
@@ -1200,7 +1207,7 @@ Topics in ayokoding-web MAY optionally organize content using Diátaxis framewor
 
 ```
 content/en/learn/swe/prog-lang/golang/
-├── _index.md                           # Navigation hub (2 layers deep)
+├── _index.md                           # Navigation hub (3 layers deep)
 ├── overview.md                         # Topic introduction
 ├── tutorials/
 │   ├── _index.md                       # Tutorials section index
@@ -1321,7 +1328,7 @@ Setelah 5 tahun menggunakan Vim, saya akhirnya pindah ke Neovim...
 content/en/rants/
 ├── _index.md                           # Main rants section index
 ├── 2023/
-│   ├── _index.md                       # Year index (2-layer tree: year → months)
+│   ├── _index.md                       # Year index (3-layer tree: year → months → articles)
 │   ├── 07/
 │   │   ├── _index.md                   # Month index (lists articles in that month)
 │   │   ├── article-1.md                # Individual blog post
@@ -1341,7 +1348,7 @@ content/en/rants/
 | --------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | **Organization**            | Topic-based hierarchy (e.g., swe/prog-lang/golang/)                | Time-based hierarchy (year/month/)                                             |
 | **Overview/Ikhtisar**       | **REQUIRED** - Every folder needs overview.md or ikhtisar.md       | **NOT REQUIRED** - No overview files needed                                    |
-| **Index File Structure**    | Navigation lists (2 layers deep)                                   | Year index: 2-layer tree; Month index: flat article list                       |
+| **Index File Structure**    | Navigation lists (3 layers deep)                                   | Year index: 3-layer tree; Month index: flat article list                       |
 | **Directory Depth Purpose** | Represents topic nesting                                           | Represents time period (year/month)                                            |
 | **Content Separation**      | `_index.md` navigation only, intro in overview/ikhtisar            | `_index.md` can include intro text (no separate overview required)             |
 | **Weight System**           | Level-based (\_index uses parent level, content uses current base) | Same level-based system (\_index uses parent level, articles use current base) |
@@ -1352,10 +1359,11 @@ content/en/rants/
 
 **Year Index File (`_index.md`) Structure**:
 
-Year index files display a **2-layer tree structure** showing:
+Year index files display a **3-layer tree structure** showing:
 
 1. **Layer 1**: Year (current level)
 2. **Layer 2**: Months within that year (children)
+3. **Layer 3**: Articles within each month (grandchildren)
 
 **Example Year Index** (`/en/rants/2023/_index.md`):
 
@@ -1436,9 +1444,9 @@ For blogging content (`/en/rants/`, `/id/celoteh/`):
 - ✅ Author field: ALLOWED (guest contributors possible)
 - ✅ Year/month directory structure: REQUIRED
 - ✅ Index files: REQUIRED (year and month levels)
+- ✅ 3-layer navigation: Same as learning content (year → months → articles)
 - ❌ Overview/Ikhtisar files: NOT REQUIRED (major difference)
 - ❌ Content separation rule: NOT ENFORCED (index can have intro)
-- ❌ 2-layer navigation: Different pattern (year → months tree; month → articles flat list)
 - ❌ Diátaxis organization: NOT APPLICABLE (chronological only)
 
 **Creating Blogging Content**:
@@ -1693,7 +1701,7 @@ Before publishing, verify:
 - [ ] NO `author` field in learning content (uses site-level config)
 - [ ] `author` field ONLY in rants/celoteh directories if needed
 - [ ] Every folder has `overview.md` (English) or `ikhtisar.md` (Indonesian)
-- [ ] `_index.md` files show 2-layer navigation with overview links first
+- [ ] `_index.md` files show 3-layer navigation with overview links first
 - [ ] Content follows archetype patterns
 - [ ] Assets are organized in appropriate `static/` subdirectories
 

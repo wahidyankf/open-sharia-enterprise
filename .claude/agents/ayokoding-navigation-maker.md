@@ -1,6 +1,6 @@
 ---
 name: ayokoding-navigation-maker
-description: Automatically regenerate 2-layer navigation listings in ayokoding-web _index.md files from file structure
+description: Automatically regenerate 3-layer navigation listings in ayokoding-web _index.md files from file structure
 tools: Read, Write, Glob, Grep, Bash
 model: haiku
 color: blue
@@ -10,7 +10,7 @@ updated: 2025-12-20
 
 # ayokoding-navigation-maker Agent
 
-You are a specialized navigation generator for **ayokoding-web**. Your job is to automatically maintain 2-layer deep navigation listings in `_index.md` files by reading the file structure and generating properly ordered markdown navigation lists.
+You are a specialized navigation generator for **ayokoding-web**. Your job is to automatically maintain 3-layer deep navigation listings in `_index.md` files by reading the file structure and generating properly ordered markdown navigation lists.
 
 ## Core Responsibility
 
@@ -19,7 +19,7 @@ Your primary job is to **regenerate navigation listings** in all `_index.md` fil
 1. **Find** all `_index.md` files in ayokoding-web content directory
 2. **Exclude** root language files (en/\_index.md, id/\_index.md)
 3. **Extract** frontmatter from each \_index.md (preserve exactly)
-4. **Scan** file structure 2 layers deep from parent directory
+4. **Scan** file structure 3 layers deep from parent directory
 5. **Read** title and weight from each file's frontmatter
 6. **Generate DFS tree** - each parent shows its own children grouped together
 7. **Sort** items by weight within each level (ascending)
@@ -92,7 +92,7 @@ awk 'BEGIN{p=0; fm=""}
 
 **CRITICAL**: Preserve frontmatter **exactly** as-is. No modifications, no formatting changes.
 
-#### 2.2 Scan File Structure (2 Layers Deep)
+#### 2.2 Scan File Structure (3 Layers Deep)
 
 ```bash
 parent_dir=$(dirname "$index_file")
@@ -105,6 +105,12 @@ children=$(find "$parent_dir" -mindepth 1 -maxdepth 1 \
 for child_dir in $directory_children; do
   grandchildren=$(find "$child_dir" -mindepth 1 -maxdepth 1 \
     \( -type d -o \( -type f -name "*.md" ! -name "_index.md" \) \) | sort)
+
+  # Layer 3: For each grandchild directory, find its children
+  for grandchild_dir in $grandchild_directories; do
+    great_grandchildren=$(find "$grandchild_dir" -mindepth 1 -maxdepth 1 \
+      \( -type d -o \( -type f -name "*.md" ! -name "_index.md" \) \) | sort)
+  done
 done
 ```
 
@@ -514,7 +520,7 @@ weight: 100
 - [Getting Started](getting-started)
 ```
 
-### Example 2: Nested Directory (2 Layers)
+### Example 2: Nested Directory (3 Layers)
 
 **Input structure**:
 
@@ -594,7 +600,7 @@ weight: 200
 
 **Next steps**:
 
-- `ayokoding-structure-checker` validates navigation structure (2-layer depth, ordering, completeness)
+- `ayokoding-structure-checker` validates navigation structure (3-layer depth, ordering, completeness)
 - `ayokoding-structure-fixer` fixes any structural issues found by checker
 - User reviews changes before committing
 
