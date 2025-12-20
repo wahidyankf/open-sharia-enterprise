@@ -67,52 +67,42 @@ Flat structure - all apps at the same level, no subdirectories.
 
 `[domain]-[type]`
 
-**Examples**:
+**Current Apps**:
 
-- `api-gateway` - API gateway service
-- `admin-dashboard` - Admin web application
-- `customer-portal` - Customer-facing portal
-- `payment-processor` - Payment processing service
-- `demo-ts-fe` - Demo Next.js frontend (temporary)
+- `ose-platform-web` - OSE Platform website (Hugo static site)
+- `ayokoding-web` - AyoKoding educational platform (Hugo static site)
+- `ayokoding-cli` - AyoKoding CLI tool (Go application)
 
-### App Structure (Next.js Example)
+### App Structure (Hugo Static Site)
 
 ```
-apps/demo-ts-fe/
-├── app/                       # Next.js 14+ app directory
-│   ├── layout.tsx             # Root layout
-│   ├── page.tsx               # Home page
-│   └── globals.css            # Global styles
-├── public/                    # Static assets
-│   └── favicon.ico
-├── .next/                     # Build output (gitignored)
-├── node_modules/              # App dependencies (hoisted to root)
+apps/ose-platform-web/
+├── content/                   # Markdown content files
+├── layouts/                   # Hugo templates
+├── static/                    # Static assets (images, CSS, JS)
+├── themes/                    # Hugo themes
+├── data/                      # Data files
+├── i18n/                      # Internationalization
+├── assets/                    # Asset pipeline files
+├── archetypes/                # Content templates
+├── public/                    # Build output (gitignored)
+├── hugo.yaml                  # Hugo configuration
 ├── project.json               # Nx project configuration
-├── tsconfig.json              # TypeScript configuration
-├── next.config.ts             # Next.js configuration
-├── tailwind.config.ts         # Tailwind CSS configuration
-├── postcss.config.mjs         # PostCSS configuration
-├── .eslintrc.json             # ESLint configuration
-├── package.json               # App-specific dependencies
-├── .gitignore                 # App-specific git ignores
+├── build.sh                   # Build script
+├── vercel.json                # Deployment configuration
 └── README.md                  # App documentation
 ```
 
-### App Structure (Express API Example)
+### App Structure (Go CLI Application)
 
 ```
-apps/api-gateway/
-├── src/                       # Application source code
-│   ├── index.ts               # Entry point
-│   ├── routes/                # API routes
-│   ├── controllers/           # Request handlers
-│   ├── middleware/            # Express middleware
-│   └── __tests__/             # Tests
+apps/ayokoding-cli/
+├── cmd/                       # CLI commands
+├── internal/                  # Internal packages
 ├── dist/                      # Build output (gitignored)
+├── main.go                    # Entry point
+├── go.mod                     # Go module definition
 ├── project.json               # Nx project configuration
-├── tsconfig.json              # TypeScript configuration
-├── tsconfig.build.json        # Build-specific TS config
-├── package.json               # App-specific dependencies
 └── README.md                  # App documentation
 ```
 
@@ -156,12 +146,11 @@ Contains reusable library packages.
 - `ts-hooks` - Custom React hooks
 - `ts-api` - API client libraries
 - `ts-validators` - Data validation functions
-- `ts-demo-libs` - Demo TypeScript library (temporary)
 
 ### Library Structure (TypeScript)
 
 ```
-libs/ts-demo-libs/
+libs/ts-utils/
 ├── src/
 │   ├── index.ts               # Public API (barrel export)
 │   └── lib/                   # Implementation
@@ -287,38 +276,38 @@ The repository contains two distinct project structures with different purposes 
 
 Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
-**Next.js App Example**:
+**Hugo App Example** (`ose-platform-web`):
 
 ```json
 {
-  "name": "demo-ts-fe",
-  "sourceRoot": "apps/demo-ts-fe",
+  "name": "ose-platform-web",
+  "sourceRoot": "apps/ose-platform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev",
-        "cwd": "apps/demo-ts-fe"
+        "command": "hugo server --buildDrafts --buildFuture",
+        "cwd": "apps/ose-platform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next build",
-        "cwd": "apps/demo-ts-fe"
+        "command": "bash build.sh",
+        "cwd": "apps/ose-platform-web"
       },
-      "outputs": ["{projectRoot}/.next"]
+      "outputs": ["{projectRoot}/public"]
     },
-    "serve": {
+    "clean": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start",
-        "cwd": "apps/demo-ts-fe"
-      },
-      "dependsOn": ["build"]
+        "command": "rm -rf public resources",
+        "cwd": "apps/ose-platform-web"
+      }
     }
-  }
+  },
+  "tags": ["type:app", "platform:hugo"]
 }
 ```
 
@@ -326,14 +315,14 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
 ```json
 {
-  "name": "ts-demo-libs",
-  "sourceRoot": "libs/ts-demo-libs/src",
+  "name": "ts-utils",
+  "sourceRoot": "libs/ts-utils/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc -p libs/ts-demo-libs/tsconfig.build.json",
+        "command": "tsc -p libs/ts-utils/tsconfig.build.json",
         "cwd": "."
       },
       "outputs": ["{projectRoot}/dist"]
@@ -341,7 +330,7 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --import tsx --test libs/ts-demo-libs/src/**/*.test.ts",
+        "command": "node --import tsx --test libs/ts-utils/src/**/*.test.ts",
         "cwd": "."
       },
       "dependsOn": ["build"]
@@ -414,31 +403,38 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 - Workspace path mappings inherited from base config
 - Project-specific options only
 
-### `package.json`
+### App Configuration Files
 
-**App Example**:
+**Hugo Apps** do not require `package.json` as they use Hugo's native configuration:
+
+```yaml
+# apps/ose-platform-web/hugo.yaml
+baseURL: https://oseplatform.com/
+languageCode: en-us
+title: Open Sharia Enterprise Platform
+theme: PaperMod
+```
+
+**Go Apps** use `go.mod` for dependency management:
+
+```go
+// apps/ayokoding-cli/go.mod
+module github.com/wahidyankf/open-sharia-enterprise/apps/ayokoding-cli
+
+go 1.23
+```
+
+**Future TypeScript/Next.js Apps** will use `package.json`:
 
 ```json
 {
-  "name": "@open-sharia-enterprise/demo-ts-fe",
+  "name": "@open-sharia-enterprise/[app-name]",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "15.5.6",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "typescript": "^5"
+    "start": "next start"
   }
 }
 ```
@@ -447,7 +443,7 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
 ```json
 {
-  "name": "@open-sharia-enterprise/ts-demo-libs",
+  "name": "@open-sharia-enterprise/ts-utils",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -468,11 +464,13 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
 ### Import Patterns
 
-**Apps importing libs**:
+**Note**: Current apps (Hugo, Go) do not use TypeScript path mappings. These patterns apply to future TypeScript/Next.js apps.
+
+**Apps importing libs** (future TypeScript apps):
 
 ```typescript
-// In apps/demo-ts-fe/app/page.tsx
-import { greet } from "@open-sharia-enterprise/ts-demo-libs";
+// In apps/[future-ts-app]/app/page.tsx
+import { formatDate } from "@open-sharia-enterprise/ts-utils";
 ```
 
 **Libs importing other libs**:
@@ -497,7 +495,7 @@ import { formatDate } from "@open-sharia-enterprise/ts-utils";
 nx graph
 
 # View specific project dependencies
-nx graph --focus=demo-ts-fe
+nx graph --focus=ose-platform-web
 
 # View affected projects
 nx affected:graph
@@ -530,8 +528,10 @@ Configured in `tsconfig.base.json`:
 
 ### Apps
 
-- **Next.js**: `apps/[app-name]/.next/`
-- **Express**: `apps/[app-name]/dist/`
+- **Hugo**: `apps/[app-name]/public/` (static site files)
+- **Go**: `apps/[app-name]/dist/` (compiled binaries)
+- **Future Next.js**: `apps/[app-name]/.next/`
+- **Future Express**: `apps/[app-name]/dist/`
 
 ### Libraries
 

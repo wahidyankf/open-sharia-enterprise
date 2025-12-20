@@ -39,10 +39,10 @@ nx serve [app-name]
 **Examples**:
 
 ```bash
-nx build ts-demo-libs           # Build library
-nx test ts-demo-libs            # Test library
-nx dev demo-ts-fe               # Start Next.js dev server
-nx build demo-ts-fe             # Build Next.js app
+nx build ts-utils           # Build library
+nx test ts-utils            # Test library
+nx dev customer-portal               # Start Next.js dev server
+nx build customer-portal             # Build Next.js app
 ```
 
 ### Run Multiple Projects
@@ -76,7 +76,7 @@ npm run lint     # Same as: nx run-many -t lint
 nx run-many -t build -p ts-utils ts-components
 
 # Test specific projects
-nx run-many -t test -p ts-demo-libs demo-ts-fe
+nx run-many -t test -p ts-utils customer-portal
 ```
 
 ## Affected Commands
@@ -144,10 +144,10 @@ This opens an interactive visualization showing:
 
 ```bash
 # Show dependencies of a specific project
-nx graph --focus=ts-demo-libs
+nx graph --focus=ts-utils
 
 # Show what depends on a project
-nx graph --focus=ts-demo-libs --groupByFolder
+nx graph --focus=ts-utils --groupByFolder
 ```
 
 ### Export Graph
@@ -168,11 +168,11 @@ Nx caches task outputs to speed up subsequent runs.
 
 ```bash
 # First build (executes task)
-nx build ts-demo-libs
+nx build ts-utils
 # Output: Compiled successfully
 
 # Second build (uses cache)
-nx build ts-demo-libs
+nx build ts-utils
 # Output: [existing outputs match the cache, left as is]
 ```
 
@@ -190,7 +190,7 @@ nx reset
 
 ```bash
 # Skip cache for a single run
-nx build ts-demo-libs --skip-nx-cache
+nx build ts-utils --skip-nx-cache
 
 # Skip cache for affected
 nx affected:build --skip-nx-cache
@@ -215,10 +215,10 @@ nx show projects --type=lib
 
 ```bash
 # Show project configuration
-nx show project ts-demo-libs
+nx show project ts-utils
 
 # Show project graph
-nx graph --focus=ts-demo-libs
+nx graph --focus=ts-utils
 ```
 
 ### Workspace Information
@@ -242,13 +242,13 @@ nx report
 git pull origin main
 
 # 2. Start development server
-nx dev demo-ts-fe
+nx dev customer-portal
 
 # 3. Make changes to app or libs
 
 # 4. Test changes
-nx test ts-demo-libs
-nx build demo-ts-fe
+nx test ts-utils
+nx build customer-portal
 
 # 5. View affected projects
 nx affected:graph
@@ -261,13 +261,13 @@ nx affected:graph
 nx affected:test
 
 # 2. Run tests for specific project
-nx test ts-demo-libs
+nx test ts-utils
 
 # 3. Run all tests
 nx run-many -t test
 
 # 4. Run tests in watch mode (if configured)
-nx test ts-demo-libs --watch
+nx test ts-utils --watch
 ```
 
 ### Build Workflow
@@ -277,15 +277,15 @@ nx test ts-demo-libs --watch
 nx affected:build
 
 # 2. Build specific project and its dependencies
-nx build demo-ts-fe
-# (Automatically builds ts-demo-libs first)
+nx build customer-portal
+# (Automatically builds ts-utils first)
 
 # 3. Build all projects
 nx run-many -t build
 
 # 4. Verify build outputs
-ls libs/ts-demo-libs/dist
-ls apps/demo-ts-fe/.next
+ls libs/ts-utils/dist
+ls apps/customer-portal/.next
 ```
 
 ### Pre-Commit Workflow
@@ -382,10 +382,10 @@ nx run-many -t build --parallel=3
 
 ```bash
 # Watch mode for tests (if supported)
-nx test ts-demo-libs --watch
+nx test ts-utils --watch
 
 # Watch mode for builds (if configured)
-nx build ts-demo-libs --watch
+nx build ts-utils --watch
 ```
 
 ## Troubleshooting
@@ -401,7 +401,7 @@ nx build ts-demo-libs --watch
 nx reset
 
 # Rebuild from scratch
-nx build ts-demo-libs --skip-nx-cache
+nx build ts-utils --skip-nx-cache
 ```
 
 ### Dependency Issues
@@ -412,11 +412,11 @@ nx build ts-demo-libs --skip-nx-cache
 
 ```bash
 # Check if dependency exists in graph
-nx graph --focus=demo-ts-fe
+nx graph --focus=customer-portal
 
 # Ensure library is built first
-nx build ts-demo-libs
-nx build demo-ts-fe
+nx build ts-utils
+nx build customer-portal
 ```
 
 ### Affected Detection Issues
@@ -445,10 +445,10 @@ nx affected:graph
 
 ```bash
 # Set environment variable for command
-NODE_ENV=production nx build demo-ts-fe
+NODE_ENV=production nx build customer-portal
 
 # Multiple environment variables
-NODE_ENV=production DEBUG=true nx build demo-ts-fe
+NODE_ENV=production DEBUG=true nx build customer-portal
 ```
 
 ### Run Custom Commands
@@ -458,7 +458,7 @@ NODE_ENV=production DEBUG=true nx build demo-ts-fe
 nx run-many -t custom-script
 
 # Run command for specific projects
-nx run custom-target -p demo-ts-fe
+nx run custom-target -p customer-portal
 ```
 
 ### Generate Dependency Report

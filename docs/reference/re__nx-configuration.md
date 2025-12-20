@@ -225,45 +225,38 @@ Per-project:
 - `apps/[app-name]/project.json`
 - `libs/[lib-name]/project.json`
 
-### Complete Example (Next.js App)
+### Complete Example (Hugo App)
 
 ```json
 {
-  "name": "demo-ts-fe",
-  "sourceRoot": "apps/demo-ts-fe",
+  "name": "ose-platform-web",
+  "sourceRoot": "apps/ose-platform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev",
-        "cwd": "apps/demo-ts-fe"
+        "command": "hugo server --buildDrafts --buildFuture",
+        "cwd": "apps/ose-platform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next build",
-        "cwd": "apps/demo-ts-fe"
+        "command": "bash build.sh",
+        "cwd": "apps/ose-platform-web"
       },
-      "outputs": ["{projectRoot}/.next"]
+      "outputs": ["{projectRoot}/public"]
     },
-    "serve": {
+    "clean": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start",
-        "cwd": "apps/demo-ts-fe"
-      },
-      "dependsOn": ["build"]
-    },
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "next lint",
-        "cwd": "apps/demo-ts-fe"
+        "command": "rm -rf public resources",
+        "cwd": "apps/ose-platform-web"
       }
     }
-  }
+  },
+  "tags": ["type:app", "platform:hugo"]
 }
 ```
 
@@ -271,14 +264,14 @@ Per-project:
 
 ```json
 {
-  "name": "ts-demo-libs",
-  "sourceRoot": "libs/ts-demo-libs/src",
+  "name": "ts-utils",
+  "sourceRoot": "libs/ts-utils/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc -p libs/ts-demo-libs/tsconfig.build.json",
+        "command": "tsc -p libs/ts-utils/tsconfig.build.json",
         "cwd": "."
       },
       "outputs": ["{projectRoot}/dist"]
@@ -286,7 +279,7 @@ Per-project:
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --import tsx --test libs/ts-demo-libs/src/**/*.test.ts",
+        "command": "node --import tsx --test libs/ts-utils/src/**/*.test.ts",
         "cwd": "."
       },
       "dependsOn": ["build"]
@@ -314,8 +307,8 @@ Project name used by Nx CLI.
 
 **Examples**:
 
-- `"demo-ts-fe"` (app)
-- `"ts-demo-libs"` (lib)
+- `"ose-platform-web"` (app)
+- `"ts-utils"` (lib)
 
 #### `sourceRoot`
 
@@ -327,8 +320,8 @@ Location of source code.
 
 **Examples**:
 
-- `"apps/demo-ts-fe"` (app root)
-- `"libs/ts-demo-libs/src"` (lib source)
+- `"apps/ose-platform-web"` (app root)
+- `"libs/ts-utils/src"` (lib source)
 
 #### `projectType`
 
@@ -381,7 +374,7 @@ Executor options.
   - Examples: `"next build"`, `"tsc -p tsconfig.json"`
 - `cwd` (string): Working directory
   - Optional (defaults to workspace root)
-  - Examples: `"apps/demo-ts-fe"`, `"."`
+  - Examples: `"apps/ose-platform-web"`, `"."`
 
 **Example**:
 
@@ -389,7 +382,7 @@ Executor options.
 {
   "options": {
     "command": "next build",
-    "cwd": "apps/demo-ts-fe"
+    "cwd": "apps/ose-platform-web"
   }
 }
 ```
@@ -484,8 +477,8 @@ Path mappings for TypeScript imports.
 
 **How it works**:
 
-- Import: `import { greet } from "@open-sharia-enterprise/ts-demo-libs"`
-- Resolves to: `libs/ts-demo-libs/src/index.ts`
+- Import: `import { greet } from "@open-sharia-enterprise/ts-utils"`
+- Resolves to: `libs/ts-utils/src/index.ts`
 
 **Future languages** (not yet implemented):
 
@@ -638,7 +631,7 @@ Skip Nx cache.
 **Usage**:
 
 ```bash
-NX_SKIP_NX_CACHE=true nx build demo-ts-fe
+NX_SKIP_NX_CACHE=true nx build ose-platform-web
 ```
 
 #### `NX_DAEMON`
@@ -648,7 +641,7 @@ Enable/disable Nx daemon.
 **Usage**:
 
 ```bash
-NX_DAEMON=false nx build demo-ts-fe
+NX_DAEMON=false nx build ose-platform-web
 ```
 
 ## Related Documentation

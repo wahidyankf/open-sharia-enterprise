@@ -8,18 +8,11 @@ The `apps/` directory contains **deployable application projects** (executables)
 
 Apps follow the naming pattern: **`[domain]-[type]`**
 
-### Current Production Apps
+### Current Apps
 
 - `ose-platform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
-
-### Example App Names
-
-- `api-gateway` - API gateway service
-- `admin-dashboard` - Admin web application
-- `customer-portal` - Customer-facing portal
-- `payment-processor` - Payment processing service
-- `demo-ts-fe` - Demo Next.js frontend app (TypeScript)
+- `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 
 ## Application Characteristics
 
@@ -29,70 +22,81 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - **Specific** - Contains app-specific logic and configuration
 - **Entry Points** - Has clear entry points (index.ts, main.ts, etc.)
 
-## Required Files (TypeScript/Next.js Apps)
+## App Structure Examples
 
-Each TypeScript application requires:
+### Hugo Static Site (Current)
 
 ```
-apps/[app-name]/
-├── app/                     # Next.js app directory (Next.js 14+)
-│   ├── page.tsx             # Home page
-│   ├── layout.tsx           # Root layout
-│   └── ...
-├── public/                  # Static assets (if applicable)
-├── next.config.js           # Next.js configuration
-├── package.json             # App-specific dependencies
+apps/ose-platform-web/
+├── content/                 # Markdown content files
+├── layouts/                 # Hugo templates
+├── static/                  # Static assets (images, CSS, JS)
+├── themes/                  # Hugo themes
+├── public/                  # Build output (gitignored)
+├── hugo.yaml                # Hugo configuration
 ├── project.json             # Nx project configuration
-├── tsconfig.json            # TypeScript configuration (extends workspace)
+├── build.sh                 # Build script
+├── vercel.json              # Deployment configuration
 └── README.md                # App documentation
 ```
 
-For other app types (Node.js backend, etc.):
+### Go CLI Application (Current)
 
 ```
-apps/[app-name]/
-├── src/                     # Application source code
-│   ├── index.ts             # Entry point
-│   ├── [feature]/           # Feature modules
-│   └── __tests__/           # Test files
+apps/ayokoding-cli/
+├── cmd/                     # CLI commands
+├── internal/                # Internal packages
 ├── dist/                    # Build output (gitignored)
-├── package.json             # App-specific dependencies (if any)
+├── main.go                  # Entry point
+├── go.mod                   # Go module definition
 ├── project.json             # Nx project configuration
-├── tsconfig.json            # TypeScript configuration
-├── tsconfig.build.json      # Build-specific TS config
 └── README.md                # App documentation
 ```
+
+### Future App Types
+
+TypeScript/Next.js, Java, Kotlin, Python apps will have language-specific structures and tooling.
 
 ## Nx Configuration (project.json)
 
-Each app must have a `project.json` file with Nx configuration:
+Each app must have a `project.json` file with Nx configuration.
+
+**Hugo App Example** (`ose-platform-web`):
 
 ```json
 {
-  "name": "app-name",
-  "sourceRoot": "apps/app-name",
+  "name": "ose-platform-web",
+  "sourceRoot": "apps/ose-platform-web",
   "projectType": "application",
   "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "hugo server --buildDrafts --buildFuture",
+        "cwd": "apps/ose-platform-web"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "your build command",
-        "cwd": "apps/app-name"
+        "command": "bash build.sh",
+        "cwd": "apps/ose-platform-web"
       },
-      "outputs": ["{projectRoot}/dist"]
+      "outputs": ["{projectRoot}/public"]
     },
-    "serve": {
+    "clean": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "your serve command",
-        "cwd": "apps/app-name"
+        "command": "rm -rf public resources",
+        "cwd": "apps/ose-platform-web"
       }
     }
-  }
+  },
+  "tags": ["type:app", "platform:hugo"]
 }
 ```
 
-**Note**: This repository uses vanilla Nx (no plugins), so all executors use `nx:run-commands` to run standard build tools directly.
+**Note**: This repository uses vanilla Nx (no plugins), so all executors use `nx:run-commands` to run standard build tools directly (Hugo, Go, etc.).
 
 ## How to Add a New App
 
@@ -103,29 +107,35 @@ See the how-to guide: `docs/how-to/hoto__add-new-app.md` (to be created)
 Apps can import from any library in `libs/` using path mappings:
 
 ```typescript
-import { greet } from "@open-sharia-enterprise/ts-demo-libs";
+// Future TypeScript apps will use path mappings like:
 import { utils } from "@open-sharia-enterprise/ts-utils";
+import { Button } from "@open-sharia-enterprise/ts-components";
 ```
 
 Path mappings are configured in the workspace `tsconfig.base.json` file.
+
+**Note**: Currently there are no libraries in `libs/`. Libraries will be created as shared functionality is identified.
 
 ## Running Apps
 
 Use Nx commands to run apps:
 
 ```bash
-# Development mode
-nx dev [app-name]
+# Development mode (Hugo sites)
+nx dev ose-platform-web
+nx dev ayokoding-web
 
 # Build for production
-nx build [app-name]
+nx build ose-platform-web
+nx build ayokoding-web
+nx build ayokoding-cli
 
-# Serve production build
-nx serve [app-name]
+# Clean build artifacts
+nx clean ose-platform-web
 ```
 
 ## Language Support
 
-Currently: **TypeScript/Next.js** apps
+Currently: **Hugo** (static sites) and **Go** (CLI tools)
 
-Future: Java, Kotlin, Python apps (each language will have language-specific structure and tooling)
+Future: TypeScript/Next.js, Java, Kotlin, Python apps (each language will have language-specific structure and tooling)
