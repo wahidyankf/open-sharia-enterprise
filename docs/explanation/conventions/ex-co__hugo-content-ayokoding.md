@@ -323,126 +323,370 @@ tags:
 
 ### Weight Field Ordering
 
-**CRITICAL RULE**: All content files use the `weight` field to control navigation ordering (lower weight = first in list). ayokoding-web uses a **depth-based weight system** to ensure clear separation between directory levels.
-
-**Weight Formula**: `weight = (depth × 100) + sequence`
-
-Where:
-
-- `depth` = directory nesting level (0 = content root, 1 = first level, 2 = second level, etc.)
-- `sequence` = position within that depth level (1 for \_index.md, 2 for overview.md, 3+ for content)
-
-**CRITICAL: Weights Reset for Each Folder at Same Depth**
-
-Each folder at the same depth uses the SAME weight pattern:
-
-- `/en/learn/swe/prog-lang/golang/` → 401, 402, 403...
-- `/en/learn/swe/prog-lang/java/` → 401, 402, 403... (RESET, not 404, 405...)
-- `/en/learn/swe/prog-lang/python/` → 401, 402, 403... (RESET, not 407, 408...)
-
-**Why**: Folders are self-contained and independent. No coordination needed across siblings. This makes adding/removing/reorganizing folders easier.
-
-**Depth Level Ranges**:
-
-- Depth 0: 1-99 (root level: `/en/`, `/id/`)
-- Depth 1: 101-199 (e.g., `/en/learn/`, `/id/belajar/`)
-- Depth 2: 201-299 (e.g., `/en/learn/swe/`)
-- Depth 3: 301-399 (e.g., `/en/learn/swe/prog-lang/`)
-- Depth 4: 401-499 (e.g., `/en/learn/swe/prog-lang/golang/`)
-- And so on...
-
-**Standard Sequence Within Each Depth**:
-
-1. `_index.md` → `depth × 100 + 1`
-2. `overview.md`/`ikhtisar.md` → `depth × 100 + 2`
-3. Content files → `depth × 100 + 3, 4, 5...`
-
-**Rationale**: This system ensures subdirectories at deeper levels (e.g., depth 4 = 401+) always appear after content at shallower levels (e.g., depth 3 = 301-399), preventing weight conflicts and ensuring predictable navigation order.
+**CRITICAL RULE**: All content files use the `weight` field to control navigation ordering (lower weight = first in list). ayokoding-web uses a **level-based weight system** with powers of 10 ranges that reset for each parent folder.
 
 **Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`).
 
-✅ **Good (correct depth-based weight ordering)**:
+**Key Principle**: Hugo compares weights only among siblings within the same parent folder. Weights reset for children of different parents, allowing independent numbering in each folder.
+
+---
+
+#### Quick Reference Table
+
+| Level | Path Example                      | Weight Range | Capacity    | \_index.md | overview.md/ikhtisar.md | Content Files   |
+| ----- | --------------------------------- | ------------ | ----------- | ---------- | ----------------------- | --------------- |
+| 1     | `/en/`, `/id/`                    | 0-9          | 10 items    | N/A        | N/A                     | 1, 2, 3...      |
+| 2     | `/en/learn/`, `/id/belajar/`      | 10-99        | 90 items    | 10         | 11                      | 12, 13, 14...   |
+| 3     | `/en/learn/swe/`                  | 100-999      | 900 items   | 100        | 101                     | 102, 103...     |
+| 4     | `/en/learn/swe/prog-lang/`        | 1000-9999    | 9000 items  | 1000       | 1001                    | 1002, 1003...   |
+| 5     | `/en/learn/swe/prog-lang/golang/` | 10000-99999  | 90000 items | 10000      | 10001                   | 10002, 10003... |
+
+**Note**: Level 1 (0-9) represents language roots only (`/en/`, `/id/`), so 10 items is sufficient.
+
+---
+
+#### The Weight System
+
+**Powers of 10 Ranges**:
+
+- Level 1: **0-9** (language roots)
+- Level 2: **10-99** (children of language roots)
+- Level 3: **100-999** (children of level 2 folders)
+- Level 4: **1000-9999** (children of level 3 folders)
+- Level 5: **10000-99999** (children of level 4 folders)
+- And so on (×10 for each level)...
+
+**Reset Rule**: Weights reset to the base range for children of each parent folder.
+
+**Example**:
+
+```
+/en/ → 1 (level 1)
+  children start at 10 (level 2 base)
+
+/id/ → 2 (level 1)
+  children start at 10 (level 2 base, RESET - different parent)
+
+/en/learn/ → 12 (level 2)
+  children start at 100 (level 3 base)
+
+/en/rants/ → 13 (level 2)
+  children start at 100 (level 3 base, RESET - different parent)
+```
+
+---
+
+#### Level Calculation
+
+**How to determine the level**:
+
+1. Count the directory depth from the language root
+2. Language root (`/en/`, `/id/`) = Level 1
+3. Direct children of language root = Level 2
+4. Children of level 2 = Level 3
+5. And so on...
+
+**Example**:
+
+```
+/en/                           → Level 1 (language root)
+/en/learn/                     → Level 2 (child of level 1)
+/en/learn/swe/                 → Level 3 (child of level 2)
+/en/learn/swe/prog-lang/       → Level 4 (child of level 3)
+/en/learn/swe/prog-lang/golang/→ Level 5 (child of level 4)
+```
+
+---
+
+#### Standard File Weights
+
+**CRITICAL RULE**: `_index.md` must always have the **lightest weight** (lowest number) in its folder. `overview.md`/`ikhtisar.md` must come immediately after `_index.md`.
+
+Within each folder, files follow this standard sequence:
+
+**Level 1 (Language Roots)**:
+
+- Language folders: `1, 2, 3...`
+
+**Level 2+ (All Other Folders)**:
+
+1. **`_index.md`** → Base number for that level (lightest weight)
+   - Level 2: 10
+   - Level 3: 100
+   - Level 4: 1000
+   - Level 5: 10000
+2. **`overview.md`/`ikhtisar.md`** → Base + 1 (immediately after \_index)
+   - Level 2: 11
+   - Level 3: 101
+   - Level 4: 1001
+   - Level 5: 10001
+3. **Content files** → Base + 2, 3, 4...
+   - Level 2: 12, 13, 14...
+   - Level 3: 102, 103, 104...
+   - Level 4: 1002, 1003, 1004...
+   - Level 5: 10002, 10003, 10004...
+
+**Example**: If `_index.md` is 100, then `overview.md` must be 101, and content files start at 102.
+
+**Example (Level 3 folder)**:
 
 ```yaml
-# /en/learn/swe/prog-lang/golang/_index.md (depth 4)
----
-title: Golang
-weight: 401 # depth 4: (4 × 100) + 1 = 401
----
-# /en/learn/swe/prog-lang/golang/overview.md (depth 4)
----
-title: Overview
-weight: 402 # depth 4: (4 × 100) + 2 = 402
----
-# /en/learn/swe/prog-lang/golang/initial-setup.md (depth 4)
----
-title: Initial Setup
-weight: 403 # depth 4: (4 × 100) + 3 = 403
----
-# /en/learn/swe/prog-lang/golang/quick-start.md (depth 4)
----
-title: Quick Start
-weight: 404 # depth 4: (4 × 100) + 4 = 404
----
-# /en/learn/swe/prog-lang/golang/tutorials/_index.md (depth 5 - subdirectory)
----
-title: Tutorials
-weight: 501 # depth 5: (5 × 100) + 1 = 501
----
+# /en/learn/swe/_index.md
+weight: 100 # Level 3 base
+
+# /en/learn/swe/overview.md
+weight: 101 # Level 3 base + 1
+
+# /en/learn/swe/prog-lang/
+weight: 102 # Level 3 base + 2
+
+# /en/learn/swe/infosec/
+weight: 103 # Level 3 base + 3
 ```
 
-**Example: Multi-level Structure**
+---
+
+#### Reset Rules (Per-Parent Independence)
+
+**CRITICAL**: Weights reset to the base range for children of EACH parent folder.
+
+**Example - Language Root Children Reset**:
 
 ```
-/en/learn/ (depth 1, base = 100)
-├── _index.md (weight: 101)
-├── overview.md (weight: 102)
-├── swe/ (depth 2, base = 200)
-│   ├── _index.md (weight: 201)
-│   ├── overview.md (weight: 202)
-│   └── prog-lang/ (depth 3, base = 300)
-│       ├── _index.md (weight: 301)
-│       ├── overview.md (weight: 302)
-│       ├── golang/ (depth 4, base = 400)
-│       │   ├── _index.md (weight: 401)
-│       │   ├── overview.md (weight: 402)
-│       │   └── tutorials/ (depth 5, base = 500)
-│       │       └── _index.md (weight: 501)
-│       └── java/ (depth 4, base = 400)
-│           ├── _index.md (weight: 401)  # RESET to base + 1 (self-contained)
-│           └── overview.md (weight: 402) # RESET to base + 2 (independent)
+/en/ (level 1: weight 1)
+├── _index.md        → weight: 10   (level 2 base)
+├── overview.md      → weight: 11   (level 2 base + 1)
+├── learn/           → weight: 12   (level 2 base + 2)
+├── rants/           → weight: 13   (level 2 base + 3)
+└── about-ayokoding  → weight: 14   (level 2 base + 4)
+
+/id/ (level 1: weight 2)
+├── _index.md        → weight: 10   (level 2 base, RESET)
+├── belajar/         → weight: 11   (level 2 base + 1, RESET)
+├── celoteh/         → weight: 12   (level 2 base + 2, RESET)
+└── konten-video/    → weight: 13   (level 2 base + 3, RESET)
 ```
 
-❌ **Bad (incorrect weight ordering)**:
+**Example - Sibling Section Children Reset**:
+
+```
+/en/learn/ (level 2: weight 12)
+├── _index.md    → weight: 100  (level 3 base)
+├── overview.md  → weight: 101  (level 3 base + 1)
+├── swe/         → weight: 102  (level 3 base + 2)
+├── ai/          → weight: 103  (level 3 base + 3)
+└── business/    → weight: 104  (level 3 base + 4)
+
+/en/rants/ (level 2: weight 13, different parent!)
+├── _index.md    → weight: 100  (level 3 base, RESET)
+├── 2024/        → weight: 101  (level 3 base + 1, RESET)
+└── 2023/        → weight: 102  (level 3 base + 2, RESET)
+```
+
+**Why Reset Per Parent?**
+
+- ✅ **Hugo compares siblings only**: Weights only matter within the same parent
+- ✅ **Independent folders**: No coordination needed across different parents
+- ✅ **Simple numbering**: Each folder starts fresh at its level's base
+- ✅ **Easy maintenance**: Moving folders doesn't affect unrelated content
+
+---
+
+#### Complete Example: Multi-Level Structure
+
+```
+/en/ (level 1: weight 1)
+├── _index.md (level 2: weight 10)
+├── overview.md (level 2: weight 11)
+├── learn/ (level 2: weight 12)
+│   ├── _index.md (level 3: weight 100)
+│   ├── overview.md (level 3: weight 101)
+│   ├── swe/ (level 3: weight 102)
+│   │   ├── _index.md (level 4: weight 1000)
+│   │   ├── overview.md (level 4: weight 1001)
+│   │   ├── prog-lang/ (level 4: weight 1002)
+│   │   │   ├── _index.md (level 5: weight 10000)
+│   │   │   ├── overview.md (level 5: weight 10001)
+│   │   │   ├── golang/ (level 5: weight 10002)
+│   │   │   ├── java/ (level 5: weight 10003)
+│   │   │   └── python/ (level 5: weight 10004)
+│   │   └── infosec/ (level 4: weight 1003)
+│   │       ├── _index.md (level 5: weight 10000, RESET - different parent)
+│   │       └── overview.md (level 5: weight 10001, RESET)
+│   ├── ai/ (level 3: weight 103)
+│   │   ├── _index.md (level 4: weight 1000, RESET - different parent)
+│   │   └── overview.md (level 4: weight 1001, RESET)
+│   └── business/ (level 3: weight 104)
+├── rants/ (level 2: weight 13)
+│   ├── _index.md (level 3: weight 100, RESET - different parent)
+│   └── 2024/ (level 3: weight 101, RESET)
+└── about-ayokoding (level 2: weight 14)
+
+/id/ (level 1: weight 2)
+├── _index.md (level 2: weight 10, RESET - different parent)
+├── belajar/ (level 2: weight 11, RESET)
+│   ├── _index.md (level 3: weight 100, RESET - different parent)
+│   ├── overview.md (level 3: weight 101, RESET)
+│   └── swe/ (level 3: weight 102, RESET)
+├── celoteh/ (level 2: weight 12, RESET)
+└── konten-video/ (level 2: weight 13, RESET)
+```
+
+---
+
+#### Common Mistakes
+
+❌ **Mistake 1: Not resetting weights for different parents**
 
 ```yaml
-# WRONG! Not using depth-based system
----
-title: Golang
-weight: 1 # Should be 401 at depth 4
----
-# WRONG! Conflicting weights at different depths
-/en/learn/overview.md → weight: 2
-/en/learn/swe/overview.md → weight: 2 # Conflict!
+# WRONG! Continuing numbers across different parents
+/en/learn/_index.md → weight: 100
+/en/rants/_index.md → weight: 101 # Should be 100! (different parent)
 
+/en/learn/swe/_index.md → weight: 1000
+/en/learn/ai/_index.md → weight: 1001 # Should be 1000! (different parent)
+```
 
-# WRONG! Missing weight field
+✅ **Correct: Reset to base for each parent**
+
+```yaml
+/en/learn/_index.md → weight: 100
+/en/rants/_index.md → weight: 100 # RESET (different parent)
+
+/en/learn/swe/_index.md → weight: 1000
+/en/learn/ai/_index.md → weight: 1000 # RESET (different parent)
+```
+
 ---
-title: Initial Setup
-# Missing weight field entirely
+
+❌ **Mistake 2: Using wrong level range**
+
+```yaml
+# WRONG! Using level 2 range (10-99) at level 3
+# File: /en/learn/swe/_index.md (level 3)
+---
+title: Software Engineering
+weight: 10 # Should be 100 (level 3 base)
 ---
 ```
 
-**Benefits of This System**:
+✅ **Correct: Use correct level base**
 
-- ✅ **No conflicts**: Each depth has its own 100-number range
-- ✅ **Automatic separation**: Subdirectories (deeper levels) always appear after shallower content
-- ✅ **Predictable**: Easy to calculate weights (depth × 100 + position)
-- ✅ **Scalable**: Supports up to 99 items per depth level
-- ✅ **Readable**: Depth 4 = 400s, Depth 5 = 500s (easy to understand at a glance)
-- ✅ **Self-contained**: Each folder at the same depth resets to the same weight pattern (401, 402, 403...) - no coordination needed across siblings
-- ✅ **Independent**: Adding, removing, or reordering sibling folders doesn't affect each other's weights
-- ✅ **Maintainable**: Moving folders between locations is simpler - just update depth calculation, not sequential numbering
+```yaml
+# File: /en/learn/swe/_index.md (level 3)
+---
+title: Software Engineering
+weight: 100 # Level 3 base
+---
+```
+
+---
+
+❌ **Mistake 3: Not following standard sequence**
+
+```yaml
+# WRONG! overview.md should come before content
+/en/learn/swe/_index.md → weight: 100
+/en/learn/swe/prog-lang/ → weight: 101 # Should be after overview
+/en/learn/swe/overview.md → weight: 102 # Should be 101!
+```
+
+✅ **Correct: \_index, overview, then content**
+
+```yaml
+/en/learn/swe/_index.md → weight: 100 # Base
+/en/learn/swe/overview.md → weight: 101 # Base + 1
+/en/learn/swe/prog-lang/ → weight: 102 # Base + 2
+```
+
+---
+
+❌ **Mistake 4: Missing weight field**
+
+```yaml
+# WRONG! Missing weight field entirely
+---
+title: Initial Setup
+# No weight field
+---
+```
+
+✅ **Correct: Always include weight**
+
+```yaml
+---
+title: Initial Setup
+weight: 10002 # Level 5: base (10000) + 2
+---
+```
+
+---
+
+#### Benefits of This System
+
+- ✅ **Powers of 10**: Natural progression (10, 100, 1000) is intuitive and memorable
+- ✅ **Scalable capacity**: More items at deeper levels (90, 900, 9000) where complexity grows
+- ✅ **Per-folder independence**: Each parent's children reset to base - no global coordination needed
+- ✅ **Hugo-native**: Leverages Hugo's sibling-only weight comparison for simpler numbering
+- ✅ **Level visibility**: Number magnitude immediately shows level (102 vs 10002)
+- ✅ **No conflicts**: Different parents use same ranges without collision
+- ✅ **Easy calculation**: Base for level + sequence position
+- ✅ **Room to grow**: Massive capacity at deep levels (90,000 items at level 5)
+- ✅ **Maintainable**: Moving folders only requires updating the folder's level, not global renumbering
+- ✅ **Compact numbers**: Lower weights at shallow levels (12 vs 102 in old system)
+
+---
+
+#### Maximum Weight Values (Technical Limits)
+
+Hugo uses Go's `int` type for the weight field. The maximum value depends on system architecture:
+
+**64-bit systems (most modern systems and GitHub Actions):**
+
+- Maximum: **9,223,372,036,854,775,807** (~9.2 quintillion)
+
+**32-bit systems (legacy systems):**
+
+- Maximum: **2,147,483,647** (~2.1 billion)
+
+**Safety Analysis for Our Weight System:**
+
+Our level-based system with powers of 10 ranges is extremely safe:
+
+```
+Maximum practical weights by level:
+- Level 1: 9 (languages)
+- Level 2: 99 (90 items)
+- Level 3: 999 (900 items)
+- Level 4: 9,999 (9,000 items)
+- Level 5: 99,999 (90,000 items)
+- Level 6: 999,999 (900,000 items)
+- Level 7: 9,999,999 (9,000,000 items)
+```
+
+Even on 32-bit systems (max: 2.1 billion), we could theoretically have:
+
+- **Level 10 with maximum items**: 9,999,999,999 (~10 billion) - exceeds 32-bit limit
+- **Practical limit on 32-bit**: Level 9 (999,999,999) is well within bounds
+- **On 64-bit systems**: Effectively unlimited (can reach level 18+)
+
+**Real-world usage**: Most sites never exceed level 5 (max weight: 99,999), which is safe on all systems.
+
+**Conclusion**: Our weight system has zero risk of exceeding Hugo's limits in any practical scenario.
+
+**Platform Verification:**
+
+- ✅ **GitHub Actions CI**: All runners are 64-bit (x64 or ARM64)
+- ✅ **Modern development machines**: Typically 64-bit
+- ✅ **Hugo production builds**: Almost always 64-bit
+
+**References:**
+
+- [Hugo Weight Method](https://gohugo.io/methods/menu-entry/weight/)
+- [Hugo weighted.go source code](https://github.com/gohugoio/hugo/blob/master/resources/page/weighted.go)
+- [Maximum value of int in Go](https://yourbasic.org/golang/max-min-int-uint/)
+- [GitHub Actions ARM64 runners](https://github.blog/news-insights/product-news/arm64-on-github-actions-powering-faster-more-efficient-build-systems/)
+- [Self-hosted runners architecture support](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/supported-architectures-and-operating-systems-for-self-hosted-runners)
 
 ### Index File Requirements
 
@@ -595,15 +839,15 @@ title: Business # WRONG! Too generic (missing context)
 ✅ **Good (simple, generic titles)**:
 
 ```yaml
-# File: content/en/learn/swe/prog-lang/overview.md (depth 3)
+# File: content/en/learn/swe/prog-lang/overview.md (level 3)
 ---
 title: "Overview" # Simple, generic - context from path
-weight: 302 # depth 3: (3 × 100) + 2
+weight: 302 # level 3: (3 × 100) + 2
 ---
-# File: content/id/belajar/swe/prog-lang/ikhtisar.md (depth 3)
+# File: content/id/belajar/swe/prog-lang/ikhtisar.md (level 3)
 ---
 title: "Ikhtisar" # Simple, generic - context from path
-weight: 302 # depth 3: (3 × 100) + 2
+weight: 302 # level 3: (3 × 100) + 2
 ---
 ```
 
@@ -622,7 +866,7 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
 #### Example Structure
 
-**English Structure** (depth 4 example):
+**English Structure** (level 4 example):
 
 ```
 content/en/learn/swe/prog-lang/golang/
@@ -636,7 +880,7 @@ content/en/learn/swe/prog-lang/golang/
 └── cookbook.md      # (weight: 408)
 ```
 
-**Indonesian Structure** (depth 4 example):
+**Indonesian Structure** (level 4 example):
 
 ```
 content/id/belajar/swe/prog-lang/golang/
@@ -655,7 +899,7 @@ content/id/belajar/swe/prog-lang/golang/
 ```markdown
 ---
 title: Golang
-weight: 401 # depth 4: /en/learn/swe/prog-lang/golang/
+weight: 401 # level 4: /en/learn/swe/prog-lang/golang/
 ---
 
 - [Overview](/learn/swe/prog-lang/golang/overview) # MUST be first
@@ -675,7 +919,7 @@ title: "Overview"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Introduction to our comprehensive Golang learning resources"
-weight: 402 # depth 4: (4 × 100) + 2
+weight: 402 # level 4: (4 × 100) + 2
 tags: ["golang", "programming", "overview"]
 categories: ["learn"]
 ---
@@ -691,7 +935,7 @@ title: "Ikhtisar"
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Pengenalan ke sumber pembelajaran Golang komprehensif kami"
-weight: 402 # depth 4: (4 × 100) + 2
+weight: 402 # level 4: (4 × 100) + 2
 tags: ["golang", "programming", "ikhtisar"]
 categories: ["learn"]
 ---
@@ -874,7 +1118,7 @@ content/en/rants/
 | **Index File Structure**    | Navigation lists (3 layers deep)                             | Year index: 3-layer tree; Month index: flat article list           |
 | **Directory Depth Purpose** | Represents topic nesting                                     | Represents time period (year/month)                                |
 | **Content Separation**      | `_index.md` navigation only, intro in overview/ikhtisar      | `_index.md` can include intro text (no separate overview required) |
-| **Weight System**           | Depth-based (depth × 100 + sequence)                         | Same depth-based formula (month index = 201, articles = 202+)      |
+| **Weight System**           | Level-based (powers of 10 with resets per parent)            | Same level-based system (month index = 201, articles = 202+)       |
 | **Naming Convention**       | Topic slugs (getting-started.md, advanced-patterns.md)       | Descriptive article slugs (why-i-switched-to-neovim.md)            |
 | **Author Field**            | FORBIDDEN (uses site-level config)                           | ALLOWED (guest contributors possible)                              |
 | **Validation Strictness**   | Strict structure enforcement                                 | Flexible structure (no overview requirement)                       |
@@ -893,7 +1137,7 @@ Year index files display a **3-layer tree structure** showing:
 ```markdown
 ---
 title: "2023 Rants"
-weight: 201 # Year folder at depth 2
+weight: 201 # Year folder at level 2
 date: 2023-01-01T00:00:00+07:00
 draft: false
 ---
@@ -915,7 +1159,7 @@ Month index files display a **flat list of articles** within that month.
 ```markdown
 ---
 title: "July 2023"
-weight: 201 # Month folder at depth 3 (3 × 100 + 1)
+weight: 201 # Month folder at level 3 (3 × 100 + 1)
 date: 2023-07-01T07:20:00+07:00
 draft: false
 ---
@@ -926,16 +1170,18 @@ draft: false
 
 **Weight System for Blogging Content**:
 
-Uses the **same depth-based formula** as learning content:
+Uses the **same level-based system** as learning content:
 
-**Formula**: `weight = (depth × 100) + sequence`
+- Folder level determines base weight (powers of 10)
+- Weights reset for children of each parent folder
+- Hugo compares siblings only (no need to coordinate across parents)
 
 **Example Weights** (for `/en/rants/2023/07/`):
 
-- Depth calculation: `/en/` (1) → `/rants/` (2) → `/2023/` (3) → `/07/` (4)
-- `_index.md` for month (07/): `weight: 401` (depth 4: 4 × 100 + 1)
-- First article: `weight: 402` (depth 4: 4 × 100 + 2)
-- Second article: `weight: 403` (depth 4: 4 × 100 + 3)
+- Level calculation: `/en/` (1) → `/rants/` (2) → `/2023/` (3) → `/07/` (4)
+- `_index.md` for month (07/): `weight: 401` (level 4: 4 × 100 + 1)
+- First article: `weight: 402` (level 4: 4 × 100 + 2)
+- Second article: `weight: 403` (level 4: 4 × 100 + 3)
 
 **Important Notes**:
 
@@ -952,7 +1198,7 @@ title: "Why I Switched to Neovim"
 date: 2023-07-15T10:30:00+07:00
 draft: false
 description: "Personal reflections on moving from Vim to Neovim and the productivity benefits"
-weight: 402 # depth 4: (4 × 100) + 2
+weight: 402 # level 4: (4 × 100) + 2
 tags: ["tools", "vim", "neovim", "productivity"]
 categories: ["rants"]
 author: "Wahidyan Kresna Fridayoka" # Optional - allowed in rants/celoteh
@@ -964,7 +1210,7 @@ After 5 years of using Vim, I finally made the switch to Neovim...
 
 For blogging content (`/en/rants/`, `/id/celoteh/`):
 
-- ✅ Weight field ordering: Same depth-based formula
+- ✅ Weight field ordering: Same level-based system
 - ✅ Author field: ALLOWED (guest contributors possible)
 - ✅ Year/month directory structure: REQUIRED
 - ✅ Index files: REQUIRED (year and month levels)
@@ -1221,7 +1467,7 @@ Before publishing, verify:
 - [ ] Tags use single-line JSON array format: `["tag1", "tag2"]`
 - [ ] NO `categories` field in frontmatter (causes raw text leak)
 - [ ] Draft status is set correctly (`draft: true/false`)
-- [ ] `weight` field follows depth-based ordering rules (formula: depth × 100 + sequence)
+- [ ] `weight` field follows level-based ordering rules (powers of 10 with resets per parent)
 - [ ] NO `author` field in learning content (uses site-level config)
 - [ ] `author` field ONLY in rants/celoteh directories if needed
 - [ ] Every folder has `overview.md` (English) or `ikhtisar.md` (Indonesian)

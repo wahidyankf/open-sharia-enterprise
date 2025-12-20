@@ -119,13 +119,14 @@ Use this agent when:
        - `content/id/celoteh/` - Indonesian rants
      - **Rationale**: Site-level config handles most content; rants/celoteh may have guest contributors
    - **Weight Field Ordering Rules** (ayokoding-web):
-     - **Formula**: `weight = (depth × 100) + sequence`
-     - **CRITICAL**: Weights RESET for each folder at the same depth (sibling folders are independent)
-     - **`_index.md` files**: MUST have `weight: (depth × 100) + 1` (topmost in navigation)
-     - **`overview.md` or `ikhtisar.md` files**: MUST have `weight: (depth × 100) + 2` (immediately after index)
-     - **Other content files**: Should use `weight: (depth × 100) + 3, 4, 5, ...` in logical order
-     - **Example**: At depth 4, ALL folders use 401, 402, 403... (golang/, java/, python/ each reset to 401)
-     - **Rationale**: Self-contained folders, no coordination needed across siblings, easier maintenance
+     - **Level-based system**: Powers of 10 ranges that reset for each parent folder
+     - **Level ranges**: Level 1 (0-9), Level 2 (10-99), Level 3 (100-999), Level 4 (1000-9999), Level 5 (10000-99999)
+     - **CRITICAL**: Weights reset to base range for children of EACH parent (Hugo compares siblings only)
+     - **`_index.md` files**: MUST have base weight for that level (10, 100, 1000, 10000 - lightest weight)
+     - **`overview.md` or `ikhtisar.md` files**: MUST have base + 1 (11, 101, 1001, 10001 - immediately after index)
+     - **Other content files**: Should use base + 2, 3, 4... in logical order (12, 13... or 102, 103... or 1002, 1003...)
+     - **Example**: `/en/learn/_index.md` → 100, `/en/rants/_index.md` → 100 (RESET - different parent)
+     - **Rationale**: Per-folder independence, no global coordination, massive scalability (90 to 90,000 items per level)
      - **Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`, all folders)
 
 5. **Date Format**:

@@ -116,7 +116,7 @@ Maker Agent (ayokoding-content-maker):
 3. Updates content/en/learn/swe/prog-lang/typescript/\_index.md (navigation)
 4. Updates content/id/belajar/swe/prog-lang/typescript/\_index.md (navigation)
 5. Ensures overview.md/ikhtisar.md links are correct
-6. Follows weight ordering convention (depth-based)
+6. Follows weight ordering convention (level-based)
 7. Uses accessible colors in diagrams
 8. Validates all internal links
 9. Delivers complete, ready-to-publish content

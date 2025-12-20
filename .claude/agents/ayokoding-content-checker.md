@@ -572,76 +572,84 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
 ### Weight Field Ordering Validation
 
-**CRITICAL REQUIREMENT**: All content files in ayokoding-web must follow depth-based weight field ordering pattern to ensure predictable navigation structure.
+**CRITICAL REQUIREMENT**: All content files in ayokoding-web must follow level-based weight field ordering pattern to ensure predictable navigation structure.
 
-**Weight Formula**: `weight = (depth × 100) + sequence`
+**Level-Based System**: Powers of 10 ranges that reset for each parent folder.
 
-**IMPORTANT**: Weights RESET for each folder at the same depth. Sibling folders are independent and self-contained.
+- **Level 1**: 0-9 (language roots only)
+- **Level 2**: 10-99 (children of language roots)
+- **Level 3**: 100-999 (children of level 2 folders)
+- **Level 4**: 1000-9999 (children of level 3 folders)
+- **Level 5**: 10000-99999 (children of level 4 folders)
+
+**CRITICAL**: Weights reset to the base range for children of EACH parent folder (Hugo compares siblings only).
 
 **Required Weight Values (within each folder)**:
 
-- [ ] **`_index.md` files**: MUST have `weight: (depth × 100) + 1` (topmost in navigation)
-- [ ] **`overview.md` or `ikhtisar.md` files**: MUST have `weight: (depth × 100) + 2` (immediately after index)
-- [ ] **Other content files**: Should use `weight: (depth × 100) + 3, 4, 5, ...` in logical order
+- [ ] **`_index.md` files**: MUST have base weight for that level (10, 100, 1000, 10000 - lightest weight)
+- [ ] **`overview.md` or `ikhtisar.md` files**: MUST have base + 1 (11, 101, 1001, 10001 - immediately after index)
+- [ ] **Other content files**: Should use base + 2, 3, 4... in logical order (12, 13... or 102, 103... or 1002, 1003...)
 - [ ] No weight conflicts that would cause alphabetical sorting
 - [ ] Navigation order is preserved (index first, overview/ikhtisar second, content third+)
 
-**Example**: At depth 4, ALL folders use 401, 402, 403... (golang/, java/, python/ each reset to 401, NOT continue sequentially across siblings)
+**Example**: `/en/learn/_index.md` → 100, `/en/rants/_index.md` → 100 (RESET - different parent), `/en/learn/swe/_index.md` → 1000, `/en/learn/ai/_index.md` → 1000 (RESET - different parent)
 
-**Why this matters**: Hugo uses the `weight` field to order pages at the same level. Consistent weight values ensure predictable navigation structure: `_index.md` (navigation hub) appears first, `overview.md`/`ikhtisar.md` (intro content) appears second, and content files appear in logical order.
+**Why this matters**: Hugo uses the `weight` field to order pages at the same level. Level-based weights with per-parent resets ensure predictable navigation: `_index.md` (navigation hub) appears first, `overview.md`/`ikhtisar.md` (intro content) appears second, and content files appear in logical order. Massive scalability (90 to 90,000 items per level).
 
 **Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`, all folder depths and content types).
 
 **Validation Logic**:
 
-1. Read all content files in a directory and extract `weight` values from frontmatter
-2. Check `_index.md` has `weight: 1` - Flag violations as **critical errors**
-3. Check `overview.md`/`ikhtisar.md` has `weight: 2` - Flag violations as **critical errors**
-4. Check other content files use `weight: 3+` in sequential order - Flag violations as **warnings**
-5. Report violations with specific file paths, current weights, and recommended weight values
+1. Determine folder level (count depth from language root)
+2. Calculate base weight for that level (10 for level 2, 100 for level 3, 1000 for level 4, etc.)
+3. Read all content files in a directory and extract `weight` values from frontmatter
+4. Check `_index.md` has base weight - Flag violations as **critical errors**
+5. Check `overview.md`/`ikhtisar.md` has base + 1 - Flag violations as **critical errors**
+6. Check other content files use base + 2, 3, 4... in sequential order - Flag violations as **warnings**
+7. Report violations with specific file paths, current weights, and recommended weight values
 
-**Example Violation**:
+**Example Violation** (Level 3 folder):
 
 ```yaml
-# prog-lang/_index.md
+# /en/learn/swe/_index.md (level 3)
 ---
-title: "Programming Languages"
-weight: 10 # ❌ WRONG! Should be weight: 1
+title: "Software Engineering"
+weight: 10 # ❌ WRONG! Should be weight: 100 (level 3 base)
 ---
-# prog-lang/overview.md
+# /en/learn/swe/overview.md (level 3)
 ---
 title: "Overview"
-weight: 1 # ❌ WRONG! Should be weight: 2
+weight: 1 # ❌ WRONG! Should be weight: 101 (level 3 base + 1)
 ---
-# prog-lang/golang.md
+# /en/learn/swe/prog-lang/ (level 3)
 ---
-title: "Golang Tutorial"
-# ❌ WRONG! Missing weight field (should be weight: 3)
+title: "Programming Languages"
+# ❌ WRONG! Missing weight field (should be weight: 102)
 ---
 ```
 
-**Correct Structure**:
+**Correct Structure** (Level 3 folder):
 
 ```yaml
-# prog-lang/_index.md
+# /en/learn/swe/_index.md (level 3)
 ---
-title: "Programming Languages"
-weight: 1 # ✅ Index always weight 1 (topmost)
+title: "Software Engineering"
+weight: 100 # ✅ Level 3 base
 ---
-# prog-lang/overview.md
+# /en/learn/swe/overview.md (level 3)
 ---
 title: "Overview"
-weight: 2 # ✅ Overview always weight 2 (immediately after index)
+weight: 101 # ✅ Level 3 base + 1 (immediately after index)
 ---
-# prog-lang/golang.md
+# /en/learn/swe/prog-lang/ (level 3)
 ---
-title: "Golang Tutorial"
-weight: 3 # ✅ First content file is weight 3
+title: "Programming Languages"
+weight: 102 # ✅ Level 3 base + 2 (first content item)
 ---
-# prog-lang/java.md
+# /en/learn/swe/infosec/ (level 3)
 ---
-title: "Java Tutorial"
-weight: 4 # ✅ Second content file is weight 4
+title: "Information Security"
+weight: 103 # ✅ Level 3 base + 3 (second content item)
 ---
 ```
 

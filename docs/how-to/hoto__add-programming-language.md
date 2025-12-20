@@ -178,7 +178,7 @@ Before starting, ensure you have:
    date: YYYY-MM-DDTHH:MM:SS+07:00
    draft: false
    description: Complete learning path from installation to expert mastery - organized using the Diátaxis framework
-   weight: 401
+   weight: 100000  # Level 6 base (language-level files)
    type: docs
    layout: list
    ---
@@ -202,6 +202,8 @@ Before starting, ensure you have:
      - [Best Practices and Idioms](/en/learn/swe/prog-lang/[language]/explanation/best-practices)
      - [Anti-Patterns](/en/learn/swe/prog-lang/[language]/explanation/anti-patterns)
    ```
+
+   **Note**: Programming language folders are at level 5 (`/en/learn/swe/prog-lang/[language]/`), so direct children are level 6 and use base weight 100000.
 
 2. **Create `overview.md` (learning path guide)**:
    - See [Golang overview.md](../../apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorials/overview.md) as template
@@ -796,8 +798,14 @@ Before starting, ensure you have:
 **Solution:** Review [Hugo Content Convention - ayokoding](../explanation/conventions/ex-co__hugo-content-ayokoding.md) and fix violations. Common issues:
 
 - Missing frontmatter fields
-- Incorrect weight values
+- Incorrect weight values (use level-based system: level 6 = 100000+, level 7 = 1000000+)
 - Wrong link format (use absolute paths with language prefix)
+
+**Weight System Quick Reference:**
+
+- Programming language folder (e.g., `/golang/`) is at level 5
+- Language-level files (`_index.md`, `overview.md`, `tutorials/`, etc.) are level 6: use base 100000
+- Category files (tutorial files, how-to files, etc.) are level 7: use base 1000000 (resets per category)
 
 **Issue:** ayokoding-facts-checker reports ❌ Error or 📅 Outdated
 

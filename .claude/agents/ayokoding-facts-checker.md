@@ -410,7 +410,7 @@ Important concept explanation
 
 **Navigation Structure:**
 
-- Weight values follow depth-based ordering
+- Weight values follow level-based ordering
 - overview.md exists for English sections
 - ikhtisar.md exists for Indonesian sections
 - \_index.md files have weight: 1
