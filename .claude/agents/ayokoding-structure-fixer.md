@@ -819,6 +819,7 @@ Always provide:
 
 **Related Agents:**
 
+- [ayokoding-structure-maker.md](./ayokoding-structure-maker.md) - Proactively modifies weights and structure (intentional changes, different workflow)
 - [ayokoding-structure-checker.md](./ayokoding-structure-checker.md) - Generates structural audit reports that this agent processes
 - [ayokoding-navigation-maker.md](./ayokoding-navigation-maker.md) - Regenerates navigation listings from file structure (complementary - handles what this agent cannot)
 - [ayokoding-content-maker.md](./ayokoding-content-maker.md) - Creates overview content (different purpose)

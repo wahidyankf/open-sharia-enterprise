@@ -1014,9 +1014,10 @@ title: Business # WRONG! Too generic (missing context)
 - Pedagogical progression requires overview-first navigation for optimal learning experience
 - Consistent pattern across ALL folders improves discoverability and user experience
 
-**Validation Responsibility**:
+**Agent Responsibilities**:
 
-- `ayokoding-structure-checker` agent MUST check this rule for EVERY `_index.md` file comprehensively
+- `ayokoding-structure-maker` agent proactively modifies weights following this system when making intentional structural changes
+- `ayokoding-structure-checker` agent validates compliance with this system for ALL `_index.md` files
 - Violations are flagged as CRITICAL errors in audit reports
 
 #### Cookbook Weight Ordering Requirement
