@@ -29,9 +29,9 @@ The implementation workflow follows three sequential stages:
 
 ## 💡 Why
 
-### Principles Implemented
+## Principles Respected
 
-This workflow implements three core principles:
+This workflow respects three core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)** - Start with the simplest solution that works
 - **[YAGNI (You Aren't Gonna Need It)](../principles/general/ex-pr-ge__simplicity-over-complexity.md#yagni-principles)** - Don't optimize prematurely
