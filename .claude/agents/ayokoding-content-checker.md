@@ -586,9 +586,11 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
 **Required Weight Values (within each folder)**:
 
-- [ ] **`_index.md` files**: MUST have base weight for that level (10, 100, 1000, 10000 - lightest weight)
-- [ ] **`overview.md` or `ikhtisar.md` files**: MUST have base + 1 (11, 101, 1001, 10001 - immediately after index)
-- [ ] **Other content files**: Should use base + 2, 3, 4... in logical order (12, 13... or 102, 103... or 1002, 1003...)
+- [ ] **`_index.md` files**: Use weights from the folder's level range, assigned sequentially among siblings
+  - Example: Level 3 siblings might be 102 (swe/), 103 (ai/), 104 (business/)
+  - First sibling CAN use base (100) but doesn't have to
+- [ ] **`overview.md` or `ikhtisar.md` files**: Use their level's base weight (e.g., 1000 for content in level 3 folder)
+- [ ] **Other content files**: Use base + 1, 2, 3... in logical order (e.g., 1001, 1002, 1003...)
 - [ ] No weight conflicts that would cause alphabetical sorting
 - [ ] Navigation order is preserved (index first, overview/ikhtisar second, content third+)
 
