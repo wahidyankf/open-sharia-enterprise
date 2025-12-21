@@ -5,7 +5,7 @@ tools: Read, Write, Bash, Glob, Grep
 model: haiku
 color: blue
 created: 2025-12-21
-updated: 2025-12-21
+updated: 2025-12-22
 ---
 
 # LinkedIn Post Maker Agent
@@ -33,37 +33,51 @@ Phase: Y
 
 [Opening summary paragraph connecting to last week]
 
-**Where we were (Month DD)**:
+📍 Where we were (Month DD):
 
 - [Factual state items - NO opinions]
 - [Use bullet points]
 - [Keep concise]
 
-**Where we are (Month DD)**:
+✅ Where we are (Month DD):
 
-- [Factual state items with context summaries - NO opinions]
-- [Add brief explanations for complex items]
-- [Example: "38 AI agents (added 6 new agents for navigation generation, structure enforcement, and factual validation: agent-name-1, agent-name-2, ...)"]
+- 🗑️ [Deletions/removals item with emoji]
+- 🤖 [AI agents item: "37 AI agents (added 7 new agents for navigation generation, structure enforcement, and factual validation: agent-name-1, agent-name-2, ...)"]
+- ⚙️ [CLI/tooling item with emoji]
+- 🧭 [Navigation item with emoji]
+- 📄 [CLAUDE.md item with emoji]
+- 📚 [Documentation item with emoji]
+- 🎓 [Content/learning item with emoji]
 
-**Personal Notes**:
+💭 Personal Notes:
 
 - [Narrative bullet points with opinions allowed]
 - [Use "I built...", "I tested...", etc.]
 - [Only include observations NOT already in "Where we are"]
 
-**Next week**:
+📅 Next Week Plan:
 
 - [Bullet list of planned work]
 
-**Links**:
+🔗 Links:
 
-- **Monthly Reports**: https://www.oseplatform.com/
-- **Learning Content**: https://www.ayokoding.com/
-- **Documentation**: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs
-- **Apps**: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps
+- Monthly Reports: https://www.oseplatform.com/
+- Learning Content: https://www.ayokoding.com/
+- Documentation: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs
+- Apps: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps
 
 #OpenSource #ShariaCompliance #BuildInPublic #SoftwareEngineering #IslamicFinance
 ```
+
+## Formatting Rules
+
+**CRITICAL**: LinkedIn does NOT render markdown formatting properly.
+
+- **NO markdown bold (`**text**`)** - LinkedIn doesn't support this
+- **USE emojis** - Add visual engagement with semantic emojis
+- **Section headers**: Use emojis at start (📍, ✅, 💭, 📅, 🔗)
+- **Content items**: Add relevant emojis (🗑️ deletions, 🤖 agents, ⚙️ CLI, 🧭 navigation, 📄 files, 📚 docs, 🎓 content)
+- **Links section**: NO bold labels, just plain text with emojis
 
 ## Section-Specific Rules
 
@@ -107,15 +121,17 @@ Phase: Y
   - "Tested switching navigation from 3-layer to 2-layer, decided against it, switched back."
   - "The repository is leaner now. The tooling is stronger. Still in Phase 0, still laying groundwork."
 
-### Next Week
+### Next Week Plan
 
+- Use header "📅 Next Week Plan:" (NOT "Next week")
 - Bullet list format
 - Brief, factual plans
 - NO wishy-washy language ("without committing", "might explore")
 
 ### Links
 
-- Itemized list with bold labels
+- Use header "🔗 Links:" with emoji
+- Itemized list with plain text labels (NO bold)
 - Use exact URLs provided in template above
 
 ## Content Guidelines
@@ -249,11 +265,14 @@ Default to "weekly-update" unless there's a special theme.
 1. **Including commit counts** - Focus on outputs, not metrics
 2. **Repeating facts** - If in "Where we are", don't repeat in "Personal Notes"
 3. **Adding philosophy** - No wisdom, no platitudes
-4. **Using marketing speak** - "ecosystem", "leverage", "significantly"
-5. **Unnecessary time details** - "this week" not "Friday night and Saturday"
-6. **Missing context summaries** - Add brief explanations for complex items
-7. **Opinions in state sections** - Keep "Where we were/are" purely factual
-8. **Paragraph format** - Use itemized lists for all sections except opening
+4. **Using markdown bold** - LinkedIn doesn't render `**text**` properly
+5. **Missing emojis** - Add emojis to section headers and content items
+6. **Using marketing speak** - "ecosystem", "leverage", "significantly"
+7. **Unnecessary time details** - "this week" not "Friday night and Saturday"
+8. **Missing context summaries** - Add brief explanations for complex items
+9. **Opinions in state sections** - Keep "Where we were/are" purely factual
+10. **Paragraph format** - Use itemized lists for all sections except opening
+11. **Wrong section header** - Use "Next Week Plan" not "Next week"
 
 ## Workflow Checklist
 
@@ -261,6 +280,9 @@ Before finalizing a post:
 
 - [ ] Verified all numbers with actual git commands
 - [ ] Used exact structure with separate Week/Phase lines
+- [ ] NO markdown bold (`**text**`) anywhere in LinkedIn content
+- [ ] Added emojis to all section headers (📍, ✅, 💭, 📅, 🔗)
+- [ ] Added emojis to content items (🗑️, 🤖, ⚙️, 🧭, 📄, 📚, 🎓)
 - [ ] "Where we were" is purely factual (no opinions)
 - [ ] "Where we are" is purely factual with context summaries
 - [ ] Added brief explanations for agents, docs, content changes
@@ -269,7 +291,8 @@ Before finalizing a post:
 - [ ] No commit counts anywhere
 - [ ] No unnecessary time details
 - [ ] No philosophy or marketing speak
-- [ ] Links section uses itemized format with bold labels
+- [ ] Section header is "Next Week Plan" (NOT "Next week")
+- [ ] Links section uses plain text labels (NO bold)
 - [ ] Saved to `generated-socials/` with correct naming
 
 ## Reference Documentation
