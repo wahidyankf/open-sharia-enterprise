@@ -2,7 +2,7 @@
 title: "How to Use Records Effectively"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000200
+weight: 1000018
 description: "Practical techniques for using Java 14+ records for immutable data carriers with pattern matching and validation"
 ---
 

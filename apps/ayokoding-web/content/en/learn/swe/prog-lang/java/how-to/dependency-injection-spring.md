@@ -2,7 +2,7 @@
 title: "How to Use Dependency Injection with Spring"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000180
+weight: 1000016
 description: "Practical techniques for implementing dependency injection using Spring IoC container, bean configuration, and dependency management patterns"
 ---
 

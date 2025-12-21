@@ -2,7 +2,7 @@
 title: "How to Use Sealed Classes"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000210
+weight: 1000019
 description: "Practical techniques for using Java 17+ sealed classes to create controlled type hierarchies with exhaustive pattern matching"
 ---
 

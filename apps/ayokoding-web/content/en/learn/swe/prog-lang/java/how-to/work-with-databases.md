@@ -2,7 +2,7 @@
 title: "How to Work with Databases"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000160
+weight: 1000014
 description: "Practical techniques for database integration using JDBC, connection pooling, transactions, and ORM patterns in Java applications"
 ---
 

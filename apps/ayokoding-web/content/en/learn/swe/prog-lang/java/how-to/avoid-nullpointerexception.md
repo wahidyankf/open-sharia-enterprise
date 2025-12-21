@@ -2,7 +2,7 @@
 title: "How to Avoid NullPointerException"
 date: 2025-12-17T07:06:48+07:00
 draft: false
-weight: 1000050
+weight: 1000003
 description: "Practical techniques for preventing NullPointerException in Java applications"
 tags: ["java", "nullpointerexception", "optional", "null-safety"]
 categories: ["learn"]

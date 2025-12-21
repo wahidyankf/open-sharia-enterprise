@@ -2,7 +2,7 @@
 title: Tutorials
 date: 2025-12-12T00:00:00+07:00
 draft: false
-weight: 100000
+weight: 100002
 description: Step-by-step learning path from installation to expert Java mastery
 ---
 

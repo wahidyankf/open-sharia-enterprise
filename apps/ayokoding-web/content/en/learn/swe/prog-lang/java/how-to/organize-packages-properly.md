@@ -2,7 +2,7 @@
 title: "How to Organize Packages Properly"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000240
+weight: 1000022
 description: "Practical techniques for organizing Java packages using feature-based packaging, layered architecture, and Java modules for maintainable codebases"
 ---
 

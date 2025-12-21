@@ -2,7 +2,7 @@
 title: "How to Work with Streams Effectively"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000190
+weight: 1000017
 description: "Practical techniques for using Java Stream API with lazy evaluation, parallel processing, and custom collectors for efficient data processing"
 ---
 

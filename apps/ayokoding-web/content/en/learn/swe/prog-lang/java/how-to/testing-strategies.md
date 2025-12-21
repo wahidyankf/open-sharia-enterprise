@@ -2,7 +2,7 @@
 title: "How to Implement Testing Strategies"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000260
+weight: 1000024
 description: "Practical techniques for comprehensive testing using JUnit 5, Mockito, test organization, and test-driven development for reliable Java applications"
 ---
 

@@ -2,7 +2,7 @@
 title: "How to Optimize Performance"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000150
+weight: 1000013
 description: "Practical techniques for optimizing Java application performance through JVM tuning, profiling, and benchmarking"
 ---
 
