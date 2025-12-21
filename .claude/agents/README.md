@@ -322,6 +322,25 @@ Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayo
 - **Works with:** Content-maker agents for content, hugo-developer for infrastructure
 - **References:** Hugo Development Convention, Color Accessibility Convention
 
+### 🟦 `linkedin-post-maker.md`
+
+Expert content creator specializing in weekly LinkedIn update posts. Use when generating factual, no-hype weekly summaries of Open Sharia Enterprise development progress.
+
+- **Primary Use:** Creating weekly LinkedIn update posts summarizing development progress
+- **Specialization:** Git history analysis, commit counting, before/after comparisons, factual verification, conversational personal voice, narrative continuity with previous posts
+- **Tools:** Read, Write, Bash, Glob, Grep
+- **Model:** Haiku (cost-effective for straightforward content creation)
+- **When to Use:**
+  - Generating weekly progress updates for LinkedIn
+  - Analyzing git commits to extract major themes
+  - Creating factual, verifiable before/after comparisons
+  - Writing honest, no-hype summaries of work completed
+  - Maintaining consistent personal voice across posts
+  - Connecting current week's progress to previous updates
+- **Output:** Saves posts to `generated-socials/` with naming pattern `YYYY-MM-DD__linkedin__[descriptor].md`
+- **Style:** Factual, conversational personal voice ("I built...", "I added..."), no marketing speak, no platitudes, verifiable numbers only
+- **References:** Content Quality Principles, File Naming Convention
+
 ### 🟩 `docs-checker.md`
 
 Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information.
