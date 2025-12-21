@@ -4,21 +4,9 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-### [2025-12-18\_\_elevate-programming-languages-to-highest-standard](./2025-12-18__elevate-programming-languages-to-highest-standard/)
+_No active plans at the moment._
 
-**Status**: In Progress
-
-**Goal**: Elevate all 4 programming languages (Python, Java, Kotlin, Golang) to highest standard with complete tutorials, cookbooks, reference sections, and validation
-
-**Deliverables**:
-
-- **Python** (Priority 1): Expand tutorials 100KB, create reference section (44KB)
-- **Kotlin** (Priority 2): Expand cookbook 47KB, enhance philosophy 26KB
-- **Java** (Priority 3): Create reference section (44KB), add 6 how-to guides (72KB)
-- **Golang** (Priority 4): Create reference section (44KB), add 4 how-to guides (60KB)
-- All languages pass content-checker, facts-checker, and link-checker validation
-
-**Implementation**: 4 phases (one per language: Python → Kotlin → Java → Golang), multi-PR delivery
+All recent projects have been completed and moved to `done/`. See `../ideas.md` for potential future projects.
 
 ## Instructions
 

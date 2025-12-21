@@ -4,7 +4,9 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-- [2025-12-21: Standardize Programming Language Content Quality](./2025-12-21__standardize-prog-lang-content/) - Bring all 5 programming languages (Java, Golang, Python, Kotlin, Rust) to exceptional standard with 23 how-to guides and 5,000+ line cookbooks each
+_No planned projects in backlog at the moment._
+
+See `../ideas.md` for potential future projects that haven't been formalized into plans yet.
 
 ## Instructions
 
