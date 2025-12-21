@@ -2604,6 +2604,38 @@ end
 2. Create test suite for CSV parser with edge cases
 3. Test Todo List with property-based testing
 
+## Related Content
+
+**Previous Tutorials:**
+
+- [Initial Setup](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup) - Installation guide
+- [Quick Start](/en/learn/swe/prog-lang/elixir/tutorials/quick-start) - Core concepts overview
+
+**Next Steps:**
+
+- [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) - OTP and Phoenix
+- [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced) - Expert topics
+
+**How-To Guides:**
+
+- [Elixir Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Practical solutions
+- [How to Write Tests in Elixir](/en/learn/swe/prog-lang/elixir/how-to/write-tests-elixir) - Testing guide
+- [How to Use Protocols](/en/learn/swe/prog-lang/elixir/how-to/use-protocols) - Protocol patterns
+- [How to Handle Errors](/en/learn/swe/prog-lang/elixir/how-to/handle-errors) - Error strategies
+- [How to Work with Structs](/en/learn/swe/prog-lang/elixir/how-to/work-with-structs) - Struct usage
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) - Coding standards
+- [Anti-Patterns](/en/learn/swe/prog-lang/elixir/explanation/anti-patterns) - Common pitfalls
+
+**Reference:**
+
+- [Elixir Cheat Sheet](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet) - Quick reference
+- [Elixir Glossary](/en/learn/swe/prog-lang/elixir/reference/glossary) - Terminology
+
+---
+
 ## Next Steps
 
 Congratulations! You've mastered Elixir fundamentals (0-60% coverage).

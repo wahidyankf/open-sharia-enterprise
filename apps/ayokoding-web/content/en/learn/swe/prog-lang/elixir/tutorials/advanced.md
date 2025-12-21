@@ -1540,6 +1540,34 @@ Logger.info("User action",
 
 ---
 
+## Related Content
+
+**Previous Tutorials:**
+
+- [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) - OTP and Phoenix
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Fundamentals
+
+**How-To Guides:**
+
+- [Elixir Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Expert recipes
+- [How to Build Distributed Systems](/en/learn/swe/prog-lang/elixir/how-to/build-distributed-systems) - Distribution patterns
+- [How to Write Macros](/en/learn/swe/prog-lang/elixir/how-to/write-macros) - Metaprogramming guide
+- [How to Optimize Performance](/en/learn/swe/prog-lang/elixir/how-to/optimize-performance) - Performance tuning
+- [How to Deploy Elixir Apps](/en/learn/swe/prog-lang/elixir/how-to/deploy-elixir-apps) - Deployment strategies
+- [How to Monitor Production](/en/learn/swe/prog-lang/elixir/how-to/monitor-production) - Production monitoring
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) - Expert standards
+- [Anti-Patterns](/en/learn/swe/prog-lang/elixir/explanation/anti-patterns) - Advanced pitfalls
+
+**Reference:**
+
+- [Elixir Cheat Sheet](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet) - Complete reference
+- [Elixir Glossary](/en/learn/swe/prog-lang/elixir/reference/glossary) - Advanced terms
+
+---
+
 ## Next Steps
 
 **Master These Concepts**:

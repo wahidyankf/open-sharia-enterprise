@@ -1882,6 +1882,38 @@ end
 
 ---
 
+## Related Content
+
+**Previous Tutorials:**
+
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Elixir fundamentals
+- [Quick Start](/en/learn/swe/prog-lang/elixir/tutorials/quick-start) - Core concepts
+
+**Next Steps:**
+
+- [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced) - Expert topics
+
+**How-To Guides:**
+
+- [Elixir Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Practical recipes
+- [How to Build GenServer](/en/learn/swe/prog-lang/elixir/how-to/build-genserver) - GenServer patterns
+- [How to Build Supervisor Tree](/en/learn/swe/prog-lang/elixir/how-to/build-supervisor-tree) - Supervision strategies
+- [How to Use Phoenix Framework](/en/learn/swe/prog-lang/elixir/how-to/use-phoenix-framework) - Phoenix guide
+- [How to Use Ecto](/en/learn/swe/prog-lang/elixir/how-to/use-ecto) - Database patterns
+- [How to Test OTP Applications](/en/learn/swe/prog-lang/elixir/how-to/test-otp-applications) - Testing OTP
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) - Production standards
+- [Anti-Patterns](/en/learn/swe/prog-lang/elixir/explanation/anti-patterns) - OTP pitfalls
+
+**Reference:**
+
+- [Elixir Cheat Sheet](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet) - Syntax guide
+- [Elixir Glossary](/en/learn/swe/prog-lang/elixir/reference/glossary) - OTP terminology
+
+---
+
 ## Next Steps
 
 **Master These Concepts**:

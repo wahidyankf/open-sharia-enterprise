@@ -648,6 +648,33 @@ Now that your environment is set up, continue your learning journey:
 
 **Recommendation:** Take a 5-minute break, then proceed to the Quick Start tutorial. You're ready to start learning Elixir!
 
+## Related Content
+
+**Next Steps:**
+
+- [Quick Start Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/quick-start) - Learn core Elixir concepts
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Master Elixir fundamentals
+
+**How-To Guides:**
+
+- [Elixir Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Practical code recipes
+- [How to Debug Elixir Code](/en/learn/swe/prog-lang/elixir/how-to/debug-elixir-code) - Debugging techniques
+- [How to Set Up Mix Project](/en/learn/swe/prog-lang/elixir/how-to/setup-mix-project) - Project structure
+- [How to Use IEx Effectively](/en/learn/swe/prog-lang/elixir/how-to/use-iex-effectively) - Interactive shell tips
+- [How to Manage Dependencies](/en/learn/swe/prog-lang/elixir/how-to/manage-dependencies) - Mix dependencies
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) - Elixir coding standards
+- [Anti-Patterns](/en/learn/swe/prog-lang/elixir/explanation/anti-patterns) - Common mistakes
+
+**Reference:**
+
+- [Elixir Cheat Sheet](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet) - Quick syntax reference
+- [Elixir Glossary](/en/learn/swe/prog-lang/elixir/reference/glossary) - Terminology guide
+
+---
+
 ## Additional Resources
 
 **Official Documentation:**
