@@ -2,7 +2,7 @@
 title: "How to Use Smart Casts"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 1000070
+weight: 1000005
 description: "Leverage Kotlin's smart cast feature for cleaner type checking and casting"
 tags: ["kotlin", "smart-cast", "type-checking", "type-safety"]
 categories: ["learn"]

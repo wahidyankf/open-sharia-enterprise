@@ -2,7 +2,7 @@
 title: "How to Test with JUnit and MockK"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 1000230
+weight: 1000021
 description: "Write effective tests using JUnit 5 and MockK mocking framework"
 tags: ["kotlin", "testing", "junit", "mockk", "unit-testing"]
 categories: ["learn"]

@@ -3,7 +3,7 @@ title: Quick Start
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Learn Kotlin syntax and core concepts - cover variables, null safety, functions, classes, collections, and coroutines through hands-on examples
-weight: 1000003
+weight: 1000002
 tags:
   - kotlin
   - quick-start
