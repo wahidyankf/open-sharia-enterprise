@@ -20,10 +20,7 @@ func GenerateMarkdown(items []Item, currentLayer int) string {
 
 		// If this item has children, recursively generate their navigation
 		if item.IsDir && len(item.Children) > 0 {
-			// Update children paths to be relative to current item
-			for i := range item.Children {
-				item.Children[i].Path = item.Path + "/" + item.Children[i].Path
-			}
+			// Children already have absolute paths, no need to modify them
 			sb.WriteString(GenerateMarkdown(item.Children, currentLayer+1))
 		}
 	}

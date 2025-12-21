@@ -40,7 +40,7 @@ func RegenerateNavigation(contentDir string) (*RegenerateResult, error) {
 
 	// Process each _index.md file
 	for _, indexFile := range indexFiles {
-		if err := processIndexFile(indexFile); err != nil {
+		if err := processIndexFile(indexFile, contentDir); err != nil {
 			result.ErrorCount++
 			result.Errors = append(result.Errors, fmt.Sprintf("%s: %v", indexFile, err))
 		} else {
@@ -81,7 +81,7 @@ func findIndexFiles(contentDir string) ([]string, error) {
 }
 
 // processIndexFile processes a single _index.md file
-func processIndexFile(indexPath string) error {
+func processIndexFile(indexPath string, contentDir string) error {
 	// Extract frontmatter
 	fm, err := markdown.ExtractFrontmatter(indexPath)
 	if err != nil {
@@ -91,8 +91,24 @@ func processIndexFile(indexPath string) error {
 	// Get parent directory
 	parentDir := filepath.Dir(indexPath)
 
+	// Calculate base URL path from content root
+	// Example: content/en/learn/swe -> /en/learn/swe
+	relPath, err := filepath.Rel(contentDir, parentDir)
+	if err != nil {
+		return fmt.Errorf("failed to calculate relative path: %w", err)
+	}
+
+	// Convert filesystem path to URL path (replace backslashes with forward slashes on Windows)
+	// Handle edge case where relPath is "." (same directory as contentDir)
+	var basePath string
+	if relPath == "." {
+		basePath = ""
+	} else {
+		basePath = "/" + filepath.ToSlash(relPath)
+	}
+
 	// Scan directory structure (3 layers deep, starting from layer 1)
-	items, err := ScanDirectory(parentDir, 1, 3)
+	items, err := ScanDirectory(parentDir, basePath, 1, 3)
 	if err != nil {
 		return fmt.Errorf("failed to scan directory: %w", err)
 	}

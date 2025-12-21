@@ -15,44 +15,44 @@ func TestGenerateMarkdown(t *testing.T) {
 		{
 			name: "single item at layer 0",
 			items: []Item{
-				{Title: "Overview", Path: "overview", Weight: 1, IsDir: false},
+				{Title: "Overview", Path: "/test/overview", Weight: 1, IsDir: false},
 			},
 			layer:    0,
-			expected: "- [Overview](overview)\n",
+			expected: "- [Overview](/test/overview)\n",
 		},
 		{
 			name: "multiple items at layer 0",
 			items: []Item{
-				{Title: "Overview", Path: "overview", Weight: 1, IsDir: false},
-				{Title: "Installation", Path: "installation", Weight: 2, IsDir: false},
-				{Title: "Getting Started", Path: "getting-started", Weight: 3, IsDir: false},
+				{Title: "Overview", Path: "/test/overview", Weight: 1, IsDir: false},
+				{Title: "Installation", Path: "/test/installation", Weight: 2, IsDir: false},
+				{Title: "Getting Started", Path: "/test/getting-started", Weight: 3, IsDir: false},
 			},
 			layer: 0,
-			expected: `- [Overview](overview)
-- [Installation](installation)
-- [Getting Started](getting-started)
+			expected: `- [Overview](/test/overview)
+- [Installation](/test/installation)
+- [Getting Started](/test/getting-started)
 `,
 		},
 		{
 			name: "items with children (DFS structure)",
 			items: []Item{
-				{Title: "Overview", Path: "overview", Weight: 1, IsDir: false},
+				{Title: "Overview", Path: "/test/overview", Weight: 1, IsDir: false},
 				{
 					Title:  "Tutorials",
-					Path:   "tutorials",
+					Path:   "/test/tutorials",
 					Weight: 2,
 					IsDir:  true,
 					Children: []Item{
-						{Title: "Beginner", Path: "beginner", Weight: 1, IsDir: false},
-						{Title: "Advanced", Path: "advanced", Weight: 2, IsDir: false},
+						{Title: "Beginner", Path: "/test/tutorials/beginner", Weight: 1, IsDir: false},
+						{Title: "Advanced", Path: "/test/tutorials/advanced", Weight: 2, IsDir: false},
 					},
 				},
 			},
 			layer: 0,
-			expected: `- [Overview](overview)
-- [Tutorials](tutorials)
-  - [Beginner](tutorials/beginner)
-  - [Advanced](tutorials/advanced)
+			expected: `- [Overview](/test/overview)
+- [Tutorials](/test/tutorials)
+  - [Beginner](/test/tutorials/beginner)
+  - [Advanced](/test/tutorials/advanced)
 `,
 		},
 		{
@@ -60,39 +60,39 @@ func TestGenerateMarkdown(t *testing.T) {
 			items: []Item{
 				{
 					Title:  "Learn",
-					Path:   "learn",
+					Path:   "/test/learn",
 					Weight: 1,
 					IsDir:  true,
 					Children: []Item{
 						{
 							Title:  "Programming",
-							Path:   "programming",
+							Path:   "/test/learn/programming",
 							Weight: 1,
 							IsDir:  true,
 							Children: []Item{
-								{Title: "Python", Path: "python", Weight: 1, IsDir: false},
-								{Title: "Go", Path: "go", Weight: 2, IsDir: false},
+								{Title: "Python", Path: "/test/learn/programming/python", Weight: 1, IsDir: false},
+								{Title: "Go", Path: "/test/learn/programming/go", Weight: 2, IsDir: false},
 							},
 						},
 					},
 				},
 			},
 			layer: 0,
-			expected: `- [Learn](learn)
-  - [Programming](learn/programming)
-    - [Python](learn/programming/python)
-    - [Go](learn/programming/go)
+			expected: `- [Learn](/test/learn)
+  - [Programming](/test/learn/programming)
+    - [Python](/test/learn/programming/python)
+    - [Go](/test/learn/programming/go)
 `,
 		},
 		{
 			name: "items at layer 1 (2-space indentation)",
 			items: []Item{
-				{Title: "Overview", Path: "tutorials/overview", Weight: 1, IsDir: false},
-				{Title: "Beginner", Path: "tutorials/beginner", Weight: 2, IsDir: false},
+				{Title: "Overview", Path: "/test/tutorials/overview", Weight: 1, IsDir: false},
+				{Title: "Beginner", Path: "/test/tutorials/beginner", Weight: 2, IsDir: false},
 			},
 			layer: 1,
-			expected: `  - [Overview](tutorials/overview)
-  - [Beginner](tutorials/beginner)
+			expected: `  - [Overview](/test/tutorials/overview)
+  - [Beginner](/test/tutorials/beginner)
 `,
 		},
 	}
@@ -116,14 +116,14 @@ weight: 100
 `
 
 	items := []Item{
-		{Title: "Overview", Path: "overview", Weight: 1, IsDir: false},
+		{Title: "Overview", Path: "/test/overview", Weight: 1, IsDir: false},
 		{
 			Title:  "Tutorials",
-			Path:   "tutorials",
+			Path:   "/test/tutorials",
 			Weight: 2,
 			IsDir:  true,
 			Children: []Item{
-				{Title: "Beginner", Path: "beginner", Weight: 1, IsDir: false},
+				{Title: "Beginner", Path: "/test/tutorials/beginner", Weight: 1, IsDir: false},
 			},
 		},
 	}
@@ -133,9 +133,9 @@ title: Test Page
 weight: 100
 ---
 
-- [Overview](overview)
-- [Tutorials](tutorials)
-  - [Beginner](tutorials/beginner)
+- [Overview](/test/overview)
+- [Tutorials](/test/tutorials)
+  - [Beginner](/test/tutorials/beginner)
 `
 
 	result := GenerateNavigationContent(frontmatter, items)
@@ -153,28 +153,28 @@ func TestGenerateMarkdown_EmptyItems(t *testing.T) {
 }
 
 func TestGenerateMarkdown_PathPrefixing(t *testing.T) {
-	// Test that child paths are correctly prefixed with parent path
+	// Test that paths are used as-is (absolute paths from scanner)
 	items := []Item{
 		{
 			Title:  "Parent",
-			Path:   "parent",
+			Path:   "/test/parent",
 			Weight: 1,
 			IsDir:  true,
 			Children: []Item{
-				{Title: "Child1", Path: "child1", Weight: 1, IsDir: false},
-				{Title: "Child2", Path: "child2", Weight: 2, IsDir: false},
+				{Title: "Child1", Path: "/test/parent/child1", Weight: 1, IsDir: false},
+				{Title: "Child2", Path: "/test/parent/child2", Weight: 2, IsDir: false},
 			},
 		},
 	}
 
 	result := GenerateMarkdown(items, 0)
 
-	// Verify that child paths are prefixed with parent path
-	if !strings.Contains(result, "[Child1](parent/child1)") {
-		t.Error("Child1 path not correctly prefixed with parent path")
+	// Verify that paths are used as-is (absolute paths)
+	if !strings.Contains(result, "[Child1](/test/parent/child1)") {
+		t.Error("Child1 path should be absolute path from scanner")
 	}
-	if !strings.Contains(result, "[Child2](parent/child2)") {
-		t.Error("Child2 path not correctly prefixed with parent path")
+	if !strings.Contains(result, "[Child2](/test/parent/child2)") {
+		t.Error("Child2 path should be absolute path from scanner")
 	}
 }
 
@@ -182,17 +182,17 @@ func TestGenerateMarkdown_Indentation(t *testing.T) {
 	items := []Item{
 		{
 			Title:  "L1",
-			Path:   "l1",
+			Path:   "/test/l1",
 			Weight: 1,
 			IsDir:  true,
 			Children: []Item{
 				{
 					Title:  "L2",
-					Path:   "l2",
+					Path:   "/test/l1/l2",
 					Weight: 1,
 					IsDir:  true,
 					Children: []Item{
-						{Title: "L3", Path: "l3", Weight: 1, IsDir: false},
+						{Title: "L3", Path: "/test/l1/l2/l3", Weight: 1, IsDir: false},
 					},
 				},
 			},
