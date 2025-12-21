@@ -6,6 +6,6 @@ weight: 400000
 description: Conceptual guides explaining Go's design decisions and key concepts
 ---
 
-- [Overview](overview)
-- [Go Best Practices and Idioms](best-practices)
-- [Common Go Anti-Patterns](anti-patterns)
+- [Overview](/en/learn/swe/prog-lang/golang/explanation/overview)
+- [Go Best Practices and Idioms](/en/learn/swe/prog-lang/golang/explanation/best-practices)
+- [Common Go Anti-Patterns](/en/learn/swe/prog-lang/golang/explanation/anti-patterns)

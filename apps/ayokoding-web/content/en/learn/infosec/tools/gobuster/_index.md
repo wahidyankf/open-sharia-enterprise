@@ -8,6 +8,6 @@ type: docs
 layout: list
 ---
 
-- [Overview](overview)
-- [Quick Start](quick-start)
-- [Beginner](beginner)
+- [Overview](/en/learn/infosec/tools/gobuster/overview)
+- [Quick Start](/en/learn/infosec/tools/gobuster/quick-start)
+- [Beginner](/en/learn/infosec/tools/gobuster/beginner)

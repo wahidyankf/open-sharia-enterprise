@@ -5,13 +5,13 @@ draft: false
 weight: 10000010
 ---
 
-- [Overview](overview)
-- [Achiever](achiever)
-- [Arranger](arranger)
-- [Focus](focus)
-- [Responsibility](responsibility)
-- [Discipline](discipline)
-- [Deliberative](deliberative)
-- [Restorative](restorative)
-- [Belief](belief)
-- [Consistency](consistency)
+- [Overview](/en/learn/human/tools/cliftonstrengths/themes/executing/overview)
+- [Achiever](/en/learn/human/tools/cliftonstrengths/themes/executing/achiever)
+- [Arranger](/en/learn/human/tools/cliftonstrengths/themes/executing/arranger)
+- [Focus](/en/learn/human/tools/cliftonstrengths/themes/executing/focus)
+- [Responsibility](/en/learn/human/tools/cliftonstrengths/themes/executing/responsibility)
+- [Discipline](/en/learn/human/tools/cliftonstrengths/themes/executing/discipline)
+- [Deliberative](/en/learn/human/tools/cliftonstrengths/themes/executing/deliberative)
+- [Restorative](/en/learn/human/tools/cliftonstrengths/themes/executing/restorative)
+- [Belief](/en/learn/human/tools/cliftonstrengths/themes/executing/belief)
+- [Consistency](/en/learn/human/tools/cliftonstrengths/themes/executing/consistency)

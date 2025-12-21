@@ -6,6 +6,6 @@ weight: 400000
 description: Conceptual guides explaining Java's design decisions and key concepts
 ---
 
-- [Overview](overview)
-- [Java Best Practices and Design Principles](best-practices)
-- [Common Java Anti-Patterns](anti-patterns)
+- [Overview](/en/learn/swe/prog-lang/java/explanation/overview)
+- [Java Best Practices and Design Principles](/en/learn/swe/prog-lang/java/explanation/best-practices)
+- [Common Java Anti-Patterns](/en/learn/swe/prog-lang/java/explanation/anti-patterns)

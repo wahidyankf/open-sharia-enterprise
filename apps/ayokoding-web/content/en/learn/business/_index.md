@@ -5,6 +5,6 @@ draft: false
 weight: 105
 ---
 
-- [Overview](overview)
-- [Accounting](accounting)
-- [Corporate Finance](corporate-finance)
+- [Overview](/en/learn/business/overview)
+- [Accounting](/en/learn/business/accounting)
+- [Corporate Finance](/en/learn/business/corporate-finance)

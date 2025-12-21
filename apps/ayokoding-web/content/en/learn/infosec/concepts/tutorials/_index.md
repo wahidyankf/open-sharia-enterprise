@@ -6,4 +6,4 @@ weight: 100000
 description: Step-by-step learning path for information security concepts
 ---
 
-- [Overview](overview)
+- [Overview](/en/learn/infosec/concepts/tutorials/overview)

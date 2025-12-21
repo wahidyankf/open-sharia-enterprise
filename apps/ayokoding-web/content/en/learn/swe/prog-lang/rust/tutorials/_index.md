@@ -7,9 +7,9 @@ weight: 100000
 type: docs
 ---
 
-- [Overview](overview)
-- [Initial Setup for Rust](initial-setup)
-- [Rust Quick Start](quick-start)
-- [Complete Beginner's Guide to Rust](beginner)
-- [Intermediate Rust](intermediate)
-- [Advanced Rust](advanced)
+- [Overview](/en/learn/swe/prog-lang/rust/tutorials/overview)
+- [Initial Setup for Rust](/en/learn/swe/prog-lang/rust/tutorials/initial-setup)
+- [Rust Quick Start](/en/learn/swe/prog-lang/rust/tutorials/quick-start)
+- [Complete Beginner's Guide to Rust](/en/learn/swe/prog-lang/rust/tutorials/beginner)
+- [Intermediate Rust](/en/learn/swe/prog-lang/rust/tutorials/intermediate)
+- [Advanced Rust](/en/learn/swe/prog-lang/rust/tutorials/advanced)

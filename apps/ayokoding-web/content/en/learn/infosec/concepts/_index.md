@@ -5,12 +5,12 @@ draft: false
 weight: 11000
 ---
 
-- [Overview](overview)
-- [Tutorials](tutorials)
-  - [Overview](tutorials/overview)
-- [Explanation](explanation)
-  - [Overview](explanation/overview)
-- [How-To Guides](how-to)
-  - [Overview](how-to/overview)
-- [Reference](reference)
-  - [Overview](reference/overview)
+- [Overview](/en/learn/infosec/concepts/overview)
+- [Tutorials](/en/learn/infosec/concepts/tutorials)
+  - [Overview](/en/learn/infosec/concepts/tutorials/overview)
+- [Explanation](/en/learn/infosec/concepts/explanation)
+  - [Overview](/en/learn/infosec/concepts/explanation/overview)
+- [How-To Guides](/en/learn/infosec/concepts/how-to)
+  - [Overview](/en/learn/infosec/concepts/how-to/overview)
+- [Reference](/en/learn/infosec/concepts/reference)
+  - [Overview](/en/learn/infosec/concepts/reference/overview)

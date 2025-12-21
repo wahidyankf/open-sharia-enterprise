@@ -6,6 +6,6 @@ weight: 400000
 description: Conceptual guides explaining Python's design decisions and key concepts
 ---
 
-- [Overview](overview)
-- [Python Best Practices](best-practices)
-- [Common Python Anti-Patterns](anti-patterns)
+- [Overview](/en/learn/swe/prog-lang/python/explanation/overview)
+- [Python Best Practices](/en/learn/swe/prog-lang/python/explanation/best-practices)
+- [Common Python Anti-Patterns](/en/learn/swe/prog-lang/python/explanation/anti-patterns)

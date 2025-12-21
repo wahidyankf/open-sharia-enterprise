@@ -5,7 +5,7 @@ draft: false
 weight: 100005
 ---
 
-- [Overview](overview)
-- [Elixir Cheat Sheet](cheat-sheet)
-- [Elixir Glossary](glossary)
-- [Elixir Learning Resources](resources)
+- [Overview](/en/learn/swe/prog-lang/elixir/reference/overview)
+- [Elixir Cheat Sheet](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet)
+- [Elixir Glossary](/en/learn/swe/prog-lang/elixir/reference/glossary)
+- [Elixir Learning Resources](/en/learn/swe/prog-lang/elixir/reference/resources)

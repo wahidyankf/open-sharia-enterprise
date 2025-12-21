@@ -8,9 +8,9 @@ type: docs
 layout: list
 ---
 
-- [Overview](overview)
-- [Initial Setup](initial-setup)
-- [Quick Start](quick-start)
-- [Complete Beginner's Guide to Kotlin](beginner)
-- [Intermediate Kotlin](intermediate)
-- [Advanced Kotlin](advanced)
+- [Overview](/en/learn/swe/prog-lang/kotlin/tutorials/overview)
+- [Initial Setup](/en/learn/swe/prog-lang/kotlin/tutorials/initial-setup)
+- [Quick Start](/en/learn/swe/prog-lang/kotlin/tutorials/quick-start)
+- [Complete Beginner's Guide to Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/beginner)
+- [Intermediate Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/intermediate)
+- [Advanced Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/advanced)
