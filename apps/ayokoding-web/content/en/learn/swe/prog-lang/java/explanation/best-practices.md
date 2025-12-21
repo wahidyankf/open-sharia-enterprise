@@ -502,6 +502,145 @@ private BigDecimal applyDiscounts(Order order, BigDecimal total) {
 }
 ```
 
+## Testing Best Practices
+
+### Write Testable Code
+
+Design code with testing in mind from the start.
+
+**Why it matters:**
+
+- Catches bugs before production
+- Documents expected behavior
+- Enables safe refactoring
+- Improves design quality
+
+**Example:**
+
+```java
+// ❌ Hard to test - hidden dependencies
+public class PaymentProcessor {
+  public void processPayment(BigDecimal amount) {
+    // Direct instantiation - cannot mock
+    EmailService emailService = new EmailService();
+    PaymentGateway gateway = new PaymentGateway();
+
+    gateway.charge(amount);
+    emailService.sendReceipt(amount);
+  }
+}
+
+// ✅ Easy to test - dependencies injected
+public class PaymentProcessor {
+  private final EmailService emailService;
+  private final PaymentGateway gateway;
+
+  public PaymentProcessor(EmailService emailService, PaymentGateway gateway) {
+    this.emailService = emailService;
+    this.gateway = gateway;
+  }
+
+  public void processPayment(BigDecimal amount) {
+    gateway.charge(amount);
+    emailService.sendReceipt(amount);
+  }
+}
+
+// Test with mocks
+@Test
+void testPaymentProcessing() {
+  EmailService mockEmail = mock(EmailService.class);
+  PaymentGateway mockGateway = mock(PaymentGateway.class);
+
+  PaymentProcessor processor = new PaymentProcessor(mockEmail, mockGateway);
+  processor.processPayment(new BigDecimal("100.00"));
+
+  verify(mockGateway).charge(new BigDecimal("100.00"));
+  verify(mockEmail).sendReceipt(new BigDecimal("100.00"));
+}
+```
+
+### Test Behavior, Not Implementation
+
+Focus tests on observable behavior rather than internal details.
+
+**Example:**
+
+```java
+// ❌ Tests implementation details
+@Test
+void testCalculateDiscount_CallsGetPriceThreeTimes() {
+  Order order = spy(new Order());
+  order.calculateDiscount();
+  verify(order, times(3)).getPrice(); // Brittle test
+}
+
+// ✅ Tests behavior
+@Test
+void testCalculateDiscount_AppliesTenPercentForPremiumCustomers() {
+  Order order = new Order(new BigDecimal("100.00"), true);
+  BigDecimal discount = order.calculateDiscount();
+  assertEquals(new BigDecimal("10.00"), discount);
+}
+```
+
+## Concurrency Best Practices
+
+### Prefer Immutable Objects for Thread Safety
+
+Immutable objects eliminate synchronization needs.
+
+**Example:**
+
+```java
+// ❌ Mutable shared state - requires synchronization
+public class Counter {
+  private int count = 0;
+
+  public synchronized void increment() {
+    count++;
+  }
+
+  public synchronized int getCount() {
+    return count;
+  }
+}
+
+// ✅ Immutable - thread-safe by design
+public final class CounterSnapshot {
+  private final int count;
+
+  public CounterSnapshot(int count) {
+    this.count = count;
+  }
+
+  public int getCount() {
+    return count;
+  }
+
+  public CounterSnapshot increment() {
+    return new CounterSnapshot(count + 1);
+  }
+}
+```
+
+### Use Concurrent Collections
+
+Java provides thread-safe collections that outperform manual synchronization.
+
+**Example:**
+
+```java
+// ❌ Synchronized collections - performance bottleneck
+Map<String, User> users = Collections.synchronizedMap(new HashMap<>());
+
+// ✅ Concurrent collections - better performance
+Map<String, User> users = new ConcurrentHashMap<>();
+
+// ✅ For high contention scenarios
+BlockingQueue<Task> tasks = new LinkedBlockingQueue<>();
+```
+
 ## Design Philosophy
 
 ### SOLID Principles
@@ -543,7 +682,29 @@ These practices compound their benefits over the lifetime of your codebase. Immu
 
 ## Related Content
 
-- [Common Java Anti-Patterns](/en/learn/swe/prog-lang/java/explanation/anti-patterns)
-- [How to Avoid NullPointerException](/en/learn/swe/prog-lang/java/how-to/avoid-nullpointerexception)
-- [How to Refactor God Classes](/en/learn/swe/prog-lang/java/how-to/refactor-god-classes)
-- [How to Use Java Collections Effectively](/en/learn/swe/prog-lang/java/how-to/use-collections-effectively)
+**Explanations:**
+
+- [Common Java Anti-Patterns](/en/learn/swe/prog-lang/java/explanation/anti-patterns) - Avoid common mistakes
+- [Programming Language Content Standard](/en/docs/explanation/conventions/ex-co__programming-language-content) - Content guidelines
+
+**How-To Guides:**
+
+- [How to Avoid NullPointerException](/en/learn/swe/prog-lang/java/how-to/avoid-nullpointerexception) - Null safety patterns
+- [How to Refactor God Classes](/en/learn/swe/prog-lang/java/how-to/refactor-god-classes) - Breaking down large classes
+- [How to Use Java Collections Effectively](/en/learn/swe/prog-lang/java/how-to/use-collections-effectively) - Collection selection guide
+- [How to Implement Builder Pattern](/en/learn/swe/prog-lang/java/how-to/implement-builder-pattern) - Immutable object construction
+- [How to Write Unit Tests](/en/learn/swe/prog-lang/java/how-to/write-unit-tests) - Testing fundamentals
+- [How to Handle Exceptions Effectively](/en/learn/swe/prog-lang/java/how-to/handle-exceptions-effectively) - Exception strategies
+- [How to Use Dependency Injection](/en/learn/swe/prog-lang/java/how-to/use-dependency-injection) - DI patterns
+- [How to Design Clean APIs](/en/learn/swe/prog-lang/java/how-to/design-clean-apis) - API design principles
+
+**Tutorials:**
+
+- [Java Beginner Tutorial](/en/learn/swe/prog-lang/java/tutorials/beginner) - Core language features
+- [Java Intermediate Tutorial](/en/learn/swe/prog-lang/java/tutorials/intermediate) - OOP and design
+- [Java Advanced Tutorial](/en/learn/swe/prog-lang/java/tutorials/advanced) - Advanced patterns
+
+**Reference:**
+
+- [Java Cheat Sheet](/en/learn/swe/prog-lang/java/reference/cheat-sheet) - Quick syntax reference
+- [Java Glossary](/en/learn/swe/prog-lang/java/reference/glossary) - Terminology guide

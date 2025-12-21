@@ -21,7 +21,7 @@ categories:
 
 # Advanced Java - Expert Mastery
 
-**Achieve expert-level Java proficiency.** This tutorial covers the deep internals of Java, advanced concurrency patterns, reflection, bytecode analysis, and optimization techniques used by top-tier developers.
+Want to understand how Java actually works under the hood? This tutorial covers the deep internals of Java, advanced concurrency patterns, reflection, bytecode analysis, and optimization techniques used by top-tier developers.
 
 ## What You'll Achieve
 
@@ -785,6 +785,39 @@ Create a cache that:
 - Handles network partitions
 - Implements cache coherency
 - Provides eventual consistency
+
+---
+
+## Related Content
+
+**Previous Tutorials:**
+
+- [Intermediate Java](/en/learn/swe/prog-lang/java/tutorials/intermediate) - Design patterns and production techniques
+- [Beginner Java](/en/learn/swe/prog-lang/java/tutorials/beginner) - Foundational concepts
+
+**How-To Guides:**
+
+- [How to Optimize Java Performance](/en/learn/swe/prog-lang/java/how-to/optimize-performance) - Performance tuning strategies
+- [How to Debug Concurrency Issues](/en/learn/swe/prog-lang/java/how-to/debug-concurrency-issues) - Threading and race conditions
+- [How to Analyze Heap Dumps](/en/learn/swe/prog-lang/java/how-to/analyze-heap-dumps) - Memory analysis
+- [How to Profile Java Applications](/en/learn/swe/prog-lang/java/how-to/profile-applications) - Profiling techniques
+- [How to Use Reflection Safely](/en/learn/swe/prog-lang/java/how-to/use-reflection-safely) - Reflection best practices
+- [How to Implement Custom Annotations](/en/learn/swe/prog-lang/java/how-to/implement-custom-annotations) - Annotation processing
+- [How to Tune Garbage Collection](/en/learn/swe/prog-lang/java/how-to/tune-garbage-collection) - GC optimization
+
+**Cookbook:**
+
+- [Java Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook) - Expert recipes
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/java/explanation/best-practices) - Expert-level standards
+- [Anti-Patterns](/en/learn/swe/prog-lang/java/explanation/anti-patterns) - Advanced pitfalls
+
+**Reference:**
+
+- [Java Cheat Sheet](/en/learn/swe/prog-lang/java/reference/cheat-sheet) - Complete reference
+- [Java Glossary](/en/learn/swe/prog-lang/java/reference/glossary) - Technical terminology
 
 ---
 

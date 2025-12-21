@@ -20,7 +20,7 @@ categories:
 
 # Complete Beginner's Guide to Java
 
-**Master Java fundamentals comprehensively.** This is a complete journey from zero to solid Java expertise. You'll learn object-oriented programming, the collections framework, testing, and modern Java features through structured lessons and practice exercises.
+Ever wondered how professional developers transform simple code into robust, maintainable applications? This is a complete journey from zero to solid Java expertise. You'll learn object-oriented programming, the collections framework, testing, and modern Java features through structured lessons and practice exercises.
 
 ## What You'll Achieve
 
@@ -1547,6 +1547,38 @@ Congratulations! You've mastered Java fundamentals (0-60% coverage).
 - Garbage collection
 - Advanced concurrency
 - Reflection and annotations
+
+---
+
+## Related Content
+
+**Previous Tutorials:**
+
+- [Initial Setup](/en/learn/swe/prog-lang/java/tutorials/initial-setup) - Install and configure Java
+- [Quick Start](/en/learn/swe/prog-lang/java/tutorials/quick-start) - Fast overview of Java
+
+**Next Steps:**
+
+- [Intermediate Java](/en/learn/swe/prog-lang/java/tutorials/intermediate) - Design patterns and concurrency
+- [Advanced Java](/en/learn/swe/prog-lang/java/tutorials/advanced) - JVM internals and advanced topics
+
+**How-To Guides:**
+
+- [How to Use Java Collections Effectively](/en/learn/swe/prog-lang/java/how-to/use-collections-effectively) - Collection strategies
+- [How to Write Unit Tests](/en/learn/swe/prog-lang/java/how-to/write-unit-tests) - Testing patterns
+- [How to Handle Exceptions Effectively](/en/learn/swe/prog-lang/java/how-to/handle-exceptions-effectively) - Error handling
+- [How to Use Streams Effectively](/en/learn/swe/prog-lang/java/how-to/use-streams-effectively) - Functional programming
+- [How to Implement Inheritance Correctly](/en/learn/swe/prog-lang/java/how-to/implement-inheritance-correctly) - OOP best practices
+- [How to Design Interfaces](/en/learn/swe/prog-lang/java/how-to/design-interfaces) - Interface design
+
+**Cookbook:**
+
+- [Java Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook) - Practical recipes
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/java/explanation/best-practices) - Java coding standards
+- [Anti-Patterns](/en/learn/swe/prog-lang/java/explanation/anti-patterns) - Mistakes to avoid
 
 ---
 
