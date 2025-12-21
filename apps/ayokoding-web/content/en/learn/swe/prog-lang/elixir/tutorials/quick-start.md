@@ -1256,6 +1256,37 @@ ContactManager.list_contacts(manager)
 # => {:ok, %{email: "alice@example.com", phone: "555-1234"}}
 ```
 
+## Related Content
+
+**Previous Tutorial:**
+
+- [Initial Setup](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup) - Install and configure Elixir
+
+**Next Steps:**
+
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Deep dive into language features
+- [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) - OTP and concurrency
+- [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced) - Expert topics
+
+**How-To Guides:**
+
+- [Elixir Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Practical recipes
+- [How to Use Pattern Matching Effectively](/en/learn/swe/prog-lang/elixir/how-to/use-pattern-matching-effectively) - Pattern matching guide
+- [How to Work with Lists](/en/learn/swe/prog-lang/elixir/how-to/work-with-lists) - List operations
+- [How to Use Pipe Operator](/en/learn/swe/prog-lang/elixir/how-to/use-pipe-operator) - Pipeline patterns
+- [How to Handle Errors](/en/learn/swe/prog-lang/elixir/how-to/handle-errors) - Error handling
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) - Elixir standards
+- [Anti-Patterns](/en/learn/swe/prog-lang/elixir/explanation/anti-patterns) - Mistakes to avoid
+
+**Reference:**
+
+- [Elixir Cheat Sheet](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet) - Syntax reference
+
+---
+
 ## Next Steps
 
 Congratulations! You now understand Elixir's core concepts and can write working programs.
