@@ -82,32 +82,7 @@ ayokoding-cli nav regen --verbose
 - `--output, -o` - Output format: text, json, markdown
 - `--no-color` - Disable colored output
 
-#### Validate Navigation (Planned)
-
-```bash
-ayokoding-cli nav validate
-```
-
-### Content Management (Planned)
-
-```bash
-ayokoding-cli content scaffold <type> <name>
-ayokoding-cli content validate
-```
-
-### Weight Validation (Planned)
-
-```bash
-ayokoding-cli weight validate
-```
-
-### Link Checking (Planned)
-
-```bash
-ayokoding-cli link validate
-```
-
-### Help Commands
+## Help Commands
 
 ```bash
 # General help
@@ -129,12 +104,7 @@ apps/ayokoding-cli/
 ├── cmd/
 │   ├── root.go               # Cobra root command, global flags
 │   ├── nav.go                # Navigation command group
-│   ├── nav_regen.go          # nav regen - regenerate navigation
-│   ├── nav_validate.go       # nav validate - validate structure (planned)
-│   ├── content.go            # Content command group (planned)
-│   ├── weight.go             # Weight command group (planned)
-│   ├── link.go               # Link command group (planned)
-│   └── regen_nav_legacy.go   # DEPRECATED: Pre-Cobra reference
+│   └── nav_regen.go          # nav regen - regenerate navigation
 ├── internal/
 │   ├── navigation/           # Navigation generation logic
 │   │   ├── scanner.go        # File structure scanner (3 layers)
@@ -169,7 +139,7 @@ ayokoding-cli nav regen [--path=path]
 
 ### v0.1.0 → v0.2.0
 
-- **Grouped subcommands**: Commands organized by domain (nav, content, weight, link)
+- **Grouped subcommands**: Navigation commands under `nav` group
 - **Global flags**: --verbose, --quiet, --output, --no-color
 - **Output formats**: JSON and Markdown in addition to text
 - **Dry-run mode**: Preview changes before writing
