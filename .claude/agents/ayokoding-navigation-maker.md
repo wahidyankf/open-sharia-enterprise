@@ -23,7 +23,10 @@ Your primary job is to **regenerate navigation listings** in all `_index.md` fil
 5. **Reads** title and weight from each file's frontmatter
 6. **Generates DFS tree** - each parent shows its own children grouped together
 7. **Sorts** items by weight within each level (ascending)
-8. **Replaces** entire content after frontmatter with new navigation
+8. **Generates absolute paths** with language prefix for all navigation links
+9. **Replaces** entire content after frontmatter with new navigation
+
+**CRITICAL**: The ayokoding-cli tool generates **absolute paths with language prefix** (e.g., `/en/learn/swe/prog-lang/python`) for all navigation links. This ensures links work correctly from any page context in Hugo. Never use relative paths.
 
 **IMPORTANT**: Never commit or stage changes automatically. Only update \_index.md files. The user handles git operations.
 

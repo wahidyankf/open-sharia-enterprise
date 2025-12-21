@@ -149,7 +149,7 @@ Files follow the pattern `[prefix]__[content-identifier].[extension]` where pref
 
 ### Linking Convention
 
-Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
+Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. **Hugo sites use absolute paths without .md**. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
 
 ### Diagram Convention
 
@@ -188,7 +188,7 @@ Universal methodology for verifying factual correctness using WebSearch/WebFetch
 Three specialized documents:
 
 - [Shared](./docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common conventions for all Hugo sites
-- [ayokoding-web](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual, level-based weight system (powers of 10), 3-layer navigation depth with complete coverage, overview/ikhtisar links required
+- [ayokoding-web](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual, level-based weight system (powers of 10), 3-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**
 - [ose-platform-web](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, English-only landing page
 
 Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/ex-co__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).
