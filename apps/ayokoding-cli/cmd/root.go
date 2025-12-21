@@ -20,8 +20,8 @@ var rootCmd = &cobra.Command{
 	Short: "CLI tools for ayokoding-web Hugo site",
 	Long: `Command-line tools for ayokoding-web Hugo site maintenance and automation.
 
-Provides fast navigation regeneration with support for multiple output formats,
-dry-run mode, and verbose logging.`,
+Provides fast navigation regeneration with support for multiple output formats
+and verbose logging.`,
 	Version: "0.3.0",
 }
 

@@ -4,7 +4,7 @@ Command-line tools for ayokoding-web Hugo site maintenance and automation.
 
 ## What is ayokoding-cli?
 
-A Go-based CLI tool that automates repetitive tasks for the ayokoding-web Hugo site. Currently provides fast navigation regeneration with plans to expand to other utilities like link checking, weight validation, and content scaffolding.
+A Go-based CLI tool that automates repetitive tasks for the ayokoding-web Hugo site. Provides fast navigation regeneration with support for multiple output formats and verbose logging.
 
 **Why Go instead of bash?** The original navigation regeneration was done by an AI agent making hundreds of file I/O calls. Moving this logic to a compiled binary provides 100-1000x performance improvement (50ms vs several seconds for 74 files).
 
@@ -16,9 +16,6 @@ ayokoding-cli nav regen
 
 # Regenerate specific directory
 ayokoding-cli nav regen --path apps/ayokoding-web/content/en/learn
-
-# Preview changes without writing
-ayokoding-cli nav regen --dry-run
 
 # Verbose output with timestamps
 ayokoding-cli nav regen --verbose
@@ -52,9 +49,6 @@ ayokoding-cli nav regen
 ayokoding-cli nav regen --path /custom/path
 ayokoding-cli nav regen /custom/path
 
-# Preview changes
-ayokoding-cli nav regen --dry-run
-
 # Verbose output
 ayokoding-cli nav regen --verbose
 ```
@@ -72,7 +66,6 @@ ayokoding-cli nav regen --verbose
 **Flags:**
 
 - `--path, -p` - Content directory (default: apps/ayokoding-web/content)
-- `--dry-run` - Preview changes without writing
 - `--exclude` - Files to exclude (default: en/\_index.md, id/\_index.md)
 
 **Global Flags** (available to all commands):
@@ -142,7 +135,6 @@ ayokoding-cli nav regen [--path=path]
 - **Grouped subcommands**: Navigation commands under `nav` group
 - **Global flags**: --verbose, --quiet, --output, --no-color
 - **Output formats**: JSON and Markdown in addition to text
-- **Dry-run mode**: Preview changes before writing
 - **Better help**: Context-aware help with examples
 
 ## Integration with AI Agents
