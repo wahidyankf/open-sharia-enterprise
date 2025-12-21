@@ -7,6 +7,11 @@ weight: 200000
 type: docs
 ---
 
+- [How to Debug and Log Effectively](debug-and-logging)
+- [How to Manage Configuration](configuration-management)
+- [How to Document Code Effectively](code-documentation)
+- [How to Use Async Programming Patterns](async-programming-patterns)
+- [How to Implement Testing Strategies](testing-patterns)
 - [How-To Guides Overview](overview)
 - [Rust Cookbook](cookbook)
 - [Working with Ownership](working-with-ownership)
