@@ -2,7 +2,7 @@
 title: Advanced Rust
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000006
+weight: 1000005
 description: Expert-level Rust with unsafe code, macros, advanced traits, memory layout, performance optimization, type-level programming, and WebAssembly
 tags:
   [

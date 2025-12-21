@@ -2,7 +2,7 @@
 title: Write Effective Tests
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000070
+weight: 1000005
 description: Practical guide to writing unit tests, integration tests, and benchmarks in Rust
 tags:
   [

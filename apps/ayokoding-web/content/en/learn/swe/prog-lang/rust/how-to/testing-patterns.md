@@ -2,7 +2,7 @@
 title: "How to Implement Testing Strategies"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1060
+weight: 1000024
 description: "Practical techniques for testing Rust code with unit tests, integration tests, property-based testing, and benchmarking"
 ---
 

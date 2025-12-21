@@ -2,7 +2,7 @@
 title: "How to Manage Configuration"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1030
+weight: 1000021
 description: "Practical techniques for managing application configuration in Rust using config crates, environment variables, and typed configuration"
 ---
 

@@ -2,7 +2,7 @@
 title: Database Integration
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000140
+weight: 1000012
 description: Practical guide to integrating databases in Rust applications
 tags:
   [

@@ -2,7 +2,7 @@
 title: Rust Quick Start
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000003
+weight: 1000002
 description: Learn 12 essential Rust concepts rapidly through focused touchpoint examples - ownership, borrowing, pattern matching, and more
 tags: ["rust", "tutorial", "quick-start", "ownership", "borrowing", "beginner"]
 ---
