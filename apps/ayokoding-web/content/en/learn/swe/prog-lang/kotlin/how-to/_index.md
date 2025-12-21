@@ -31,3 +31,5 @@ layout: list
 - [How to Set Up Gradle with Kotlin DSL](manage-dependencies-gradle)
 - [How to Test with JUnit and MockK](write-effective-tests)
 - [How to Optimize Kotlin Performance](optimize-performance)
+- [How to Build Multiplatform Applications](multiplatform-development)
+- [How to Use Advanced Coroutine Patterns](coroutines-advanced)

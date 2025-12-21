@@ -4,13 +4,6 @@ date: 2025-12-18T15:48:37+07:00
 draft: false
 description: Day-to-day recipes and solutions for common Kotlin programming problems - ready to copy and use
 weight: 1000030
-tags:
-  - kotlin
-  - cookbook
-  - recipes
-  - practical
-  - solutions
-  - reference
 ---
 
 ---
@@ -2646,9 +2639,2370 @@ fun largeDataSequences() {
 
 ---
 
+## Advanced Coroutines Patterns
+
+Master sophisticated coroutine patterns for production applications.
+
+### Recipe: StateFlow and SharedFlow for Reactive State Management
+
+**Problem**: You need reactive state management with backpressure handling and state replay.
+
+**Solution**:
+
+```kotlin
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.*
+
+class UserViewModel {
+    // StateFlow - Always has value, replays latest to new collectors
+    private val _userState = MutableStateFlow<UserState>(UserState.Idle)
+    val userState: StateFlow<UserState> = _userState.asStateFlow()
+
+    // SharedFlow - Configurable replay, for one-time events
+    private val _events = MutableSharedFlow<Event>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val events: SharedFlow<Event> = _events.asSharedFlow()
+
+    sealed class UserState {
+        object Idle : UserState()
+        data class Loading(val message: String) : UserState()
+        data class Success(val data: String) : UserState()
+        data class Error(val error: String) : UserState()
+    }
+
+    sealed class Event {
+        data class ShowMessage(val message: String) : Event()
+        object NavigateBack : Event()
+    }
+
+    suspend fun loadData() {
+        _userState.value = UserState.Loading("Fetching data...")
+        delay(1000)
+
+        try {
+            val data = fetchData()
+            _userState.value = UserState.Success(data)
+            _events.emit(Event.ShowMessage("Data loaded"))
+        } catch (e: Exception) {
+            _userState.value = UserState.Error(e.message ?: "Unknown error")
+            _events.emit(Event.ShowMessage("Failed to load data"))
+        }
+    }
+}
+
+// Usage in UI
+lifecycleScope.launch {
+    viewModel.userState.collect { state ->
+        when (state) {
+            is UserState.Loading -> showLoading(state.message)
+            is UserState.Success -> showData(state.data)
+            is UserState.Error -> showError(state.error)
+            UserState.Idle -> hideLoading()
+        }
+    }
+}
+```
+
+**When to use**: Building reactive UIs with state management and one-time events.
+
+**Learn More**: See [Advanced Coroutines Guide](./coroutines-advanced.md).
+
+---
+
+### Recipe: Flow Transformation and Combination
+
+**Problem**: You need to transform, combine, and debounce multiple data streams.
+
+**Solution**:
+
+```kotlin
+class SearchViewModel {
+    private val _searchQuery = MutableStateFlow("")
+
+    // Debounced search with transformation
+    val searchResults: Flow<List<Result>> = _searchQuery
+        .debounce(300)  // Wait 300ms after typing stops
+        .filter { it.length >= 3 }  // Minimum 3 characters
+        .distinctUntilChanged()  // Ignore duplicate queries
+        .flatMapLatest { query ->  // Cancel previous search
+            flow {
+                emit(performSearch(query))
+            }
+        }
+        .catch { emit(emptyList()) }  // Handle errors gracefully
+
+    // Combine multiple flows
+    fun getUserDashboard(userId: String): Flow<Dashboard> {
+        val userFlow = fetchUser(userId)
+        val statsFlow = fetchStats(userId)
+        val notificationsFlow = fetchNotifications(userId)
+
+        return combine(userFlow, statsFlow, notificationsFlow) { user, stats, notifications ->
+            Dashboard(user, stats, notifications)
+        }
+    }
+
+    // Merge flows
+    fun getAllUpdates(): Flow<Update> {
+        val userUpdates = userUpdateFlow()
+        val systemUpdates = systemUpdateFlow()
+
+        return merge(userUpdates, systemUpdates)
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+}
+```
+
+**When to use**: Search functionality, combining multiple data sources, real-time updates.
+
+**Learn More**: See [Flow State Management](./flow-state-management.md).
+
+---
+
+### Recipe: Structured Concurrency with supervisorScope
+
+**Problem**: You need independent task execution where one failure doesn't cancel others.
+
+**Solution**:
+
+```kotlin
+class DataSyncService {
+    // Regular coroutineScope - one failure cancels all
+    suspend fun syncAllOrNothing(): Result<Unit> = coroutineScope {
+        try {
+            val user = async { syncUserData() }
+            val settings = async { syncSettings() }
+            val files = async { syncFiles() }
+
+            awaitAll(user, settings, files)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // supervisorScope - failures are independent
+    suspend fun syncIndependently(): SyncResult = supervisorScope {
+        val userResult = async {
+            runCatching { syncUserData() }
+        }
+        val settingsResult = async {
+            runCatching { syncSettings() }
+        }
+        val filesResult = async {
+            runCatching { syncFiles() }
+        }
+
+        SyncResult(
+            user = userResult.await(),
+            settings = settingsResult.await(),
+            files = filesResult.await()
+        )
+    }
+
+    data class SyncResult(
+        val user: Result<Unit>,
+        val settings: Result<Unit>,
+        val files: Result<Unit>
+    ) {
+        val allSucceeded = user.isSuccess && settings.isSuccess && files.isSuccess
+        val anySucceeded = user.isSuccess || settings.isSuccess || files.isSuccess
+    }
+}
+```
+
+**When to use**: Independent tasks, partial failure tolerance, batch operations.
+
+**Learn More**: See [Handle Coroutines and Async](./handle-coroutines-and-async.md).
+
+---
+
+### Recipe: Channel-Based Producer-Consumer
+
+**Problem**: You need communication between multiple coroutines with buffering.
+
+**Solution**:
+
+```kotlin
+class TaskQueue {
+    private val taskChannel = Channel<Task>(capacity = Channel.BUFFERED)
+
+    data class Task(val id: Int, val data: String)
+
+    // Producer
+    suspend fun submitTask(task: Task) {
+        taskChannel.send(task)
+        println("Submitted task ${task.id}")
+    }
+
+    // Consumer
+    fun startWorkers(workerCount: Int, scope: CoroutineScope) {
+        repeat(workerCount) { workerId ->
+            scope.launch {
+                for (task in taskChannel) {
+                    processTask(workerId, task)
+                }
+            }
+        }
+    }
+
+    private suspend fun processTask(workerId: Int, task: Task) {
+        println("Worker $workerId processing task ${task.id}")
+        delay(1000)  // Simulate work
+        println("Worker $workerId completed task ${task.id}")
+    }
+
+    fun close() {
+        taskChannel.close()
+    }
+}
+
+// Usage
+val queue = TaskQueue()
+val scope = CoroutineScope(Dispatchers.Default)
+
+// Start 3 workers
+queue.startWorkers(3, scope)
+
+// Submit tasks
+scope.launch {
+    repeat(10) { i ->
+        queue.submitTask(TaskQueue.Task(i, "Data $i"))
+        delay(100)
+    }
+    queue.close()
+}
+```
+
+**When to use**: Work queues, producer-consumer patterns, rate limiting.
+
+**Learn More**: See [Advanced Coroutines Guide](./coroutines-advanced.md#channels).
+
+---
+
+### Recipe: Coroutine Cancellation and Cleanup
+
+**Problem**: You need proper cancellation handling and resource cleanup.
+
+**Solution**:
+
+```kotlin
+class ResourceManager {
+    suspend fun processWithCleanup() {
+        val resource = acquireResource()
+
+        try {
+            // Main work
+            repeat(100) { i ->
+                ensureActive()  // Check cancellation
+                processItem(i)
+                delay(100)
+            }
+        } catch (e: CancellationException) {
+            println("Processing cancelled")
+            throw e  // Must re-throw CancellationException
+        } finally {
+            // Cleanup - runs even on cancellation
+            withContext(NonCancellable) {
+                resource.close()
+                println("Resource cleaned up")
+            }
+        }
+    }
+
+    // Timeout with fallback
+    suspend fun fetchWithTimeout(timeout: Long): Data? {
+        return try {
+            withTimeout(timeout) {
+                fetchData()
+            }
+        } catch (e: TimeoutCancellationException) {
+            println("Timed out, using cached data")
+            getCachedData()
+        }
+    }
+
+    // Exception handler
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        println("Coroutine failed: ${exception.message}")
+    }
+
+    fun startBackgroundTask(scope: CoroutineScope) {
+        scope.launch(exceptionHandler) {
+            // Uncaught exceptions handled by exceptionHandler
+            riskyOperation()
+        }
+    }
+}
+```
+
+**When to use**: Resource management, timeouts, background tasks, cleanup operations.
+
+**Learn More**: See [Error Handling Patterns](./error-handling-patterns.md).
+
+---
+
+## Kotlin-Specific Features
+
+Leverage Kotlin's unique language features for cleaner code.
+
+### Recipe: Extension Functions for Domain-Specific APIs
+
+**Problem**: You want to add functionality to existing types without inheritance.
+
+**Solution**:
+
+```kotlin
+// String extensions
+fun String.isValidEmail(): Boolean =
+    matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"))
+
+fun String.truncate(maxLength: Int, ellipsis: String = "..."): String =
+    if (length <= maxLength) this else take(maxLength - ellipsis.length) + ellipsis
+
+fun String.toTitleCase(): String =
+    split(" ").joinToString(" ") { it.capitalize() }
+
+// Collection extensions
+fun <T> List<T>.second(): T = this[1]
+
+fun <T> List<T>.secondOrNull(): T? = getOrNull(1)
+
+fun <K, V> Map<K, V>.getOrThrow(key: K, message: String = "Key not found: $key"): V =
+    this[key] ?: throw IllegalArgumentException(message)
+
+// Nullable extensions
+fun <T : Any> T?.orThrow(message: String): T =
+    this ?: throw IllegalStateException(message)
+
+// Domain-specific extensions
+data class User(val id: String, val name: String, val age: Int)
+
+fun User.isAdult(): Boolean = age >= 18
+
+fun User.displayName(): String = name.toTitleCase()
+
+fun List<User>.adults(): List<User> = filter { it.isAdult() }
+
+fun List<User>.sortedByName(): List<User> = sortedBy { it.name }
+
+// Usage
+val email = "user@example.com"
+if (email.isValidEmail()) {
+    println("Valid email")
+}
+
+val text = "This is a very long text that needs truncation"
+println(text.truncate(20))  // "This is a very lo..."
+
+val users = listOf(
+    User("1", "john doe", 25),
+    User("2", "jane smith", 17)
+)
+val adults = users.adults().sortedByName()
+```
+
+**When to use**: Adding utility functions, domain-specific operations, improving readability.
+
+**Learn More**: See [Extension Functions Guide](./extension-functions.md).
+
+---
+
+### Recipe: Sealed Classes for Type-Safe States
+
+**Problem**: You need exhaustive when expressions and type-safe state modeling.
+
+**Solution**:
+
+```kotlin
+// Network result modeling
+sealed class NetworkResult<out T> {
+    data class Success<T>(val data: T) : NetworkResult<T>()
+    data class Error(val exception: Exception, val code: Int? = null) : NetworkResult<Nothing>()
+    object Loading : NetworkResult<Nothing>()
+    object Empty : NetworkResult<Nothing>()
+
+    // Utility methods
+    fun <R> map(transform: (T) -> R): NetworkResult<R> = when (this) {
+        is Success -> Success(transform(data))
+        is Error -> this
+        is Loading -> this
+        is Empty -> this
+    }
+
+    fun getOrNull(): T? = when (this) {
+        is Success -> data
+        else -> null
+    }
+
+    fun getOrThrow(): T = when (this) {
+        is Success -> data
+        is Error -> throw exception
+        is Loading -> throw IllegalStateException("Still loading")
+        is Empty -> throw NoSuchElementException("No data")
+    }
+}
+
+// UI state modeling
+sealed class UiState<out T> {
+    object Idle : UiState<Nothing>()
+    object Loading : UiState<Nothing>()
+    data class Content<T>(val data: T) : UiState<T>()
+    data class Error(val message: String) : UiState<Nothing>()
+    object Empty : UiState<Nothing>()
+}
+
+// Usage with exhaustive when
+fun handleNetworkResult(result: NetworkResult<User>) {
+    when (result) {
+        is NetworkResult.Success -> showUser(result.data)
+        is NetworkResult.Error -> showError(result.exception.message)
+        is NetworkResult.Loading -> showLoading()
+        is NetworkResult.Empty -> showEmptyState()
+    }  // Compiler ensures all cases handled
+}
+
+// Transform results
+val userNames: NetworkResult<List<String>> = userResult.map { users ->
+    users.map { it.name }
+}
+```
+
+**When to use**: State machines, result types, exhaustive pattern matching, type-safe APIs.
+
+**Learn More**: See [Use Sealed Classes](./use-sealed-classes.md).
+
+---
+
+### Recipe: Inline Functions and Reified Types
+
+**Problem**: You need type information at runtime without reflection overhead.
+
+**Solution**:
+
+```kotlin
+// Generic JSON parsing with reified types
+inline fun <reified T> String.parseJson(): T {
+    val gson = Gson()
+    return gson.fromJson(this, T::class.java)
+}
+
+// Type-safe filtering
+inline fun <reified T> List<*>.filterIsInstance(): List<T> =
+    filter { it is T }.map { it as T }
+
+// Intent creation (Android)
+inline fun <reified T : Activity> Context.startActivity() {
+    val intent = Intent(this, T::class.java)
+    startActivity(intent)
+}
+
+// Repository pattern with reified types
+class Repository {
+    inline fun <reified T : Any> findById(id: String): T? {
+        val tableName = T::class.simpleName
+        return database.query(tableName, id) as? T
+    }
+
+    inline fun <reified T : Any> findAll(): List<T> {
+        val tableName = T::class.simpleName
+        return database.queryAll(tableName).filterIsInstance<T>()
+    }
+}
+
+// Usage
+val json = """{"name":"John","age":30}"""
+val user = json.parseJson<User>()  // Type inferred!
+
+val mixed: List<Any> = listOf(1, "text", 2, User("1", "John", 25))
+val users: List<User> = mixed.filterIsInstance<User>()
+
+// Android
+context.startActivity<MainActivity>()  // Type-safe!
+
+// Database
+val user = repository.findById<User>("123")
+val allUsers = repository.findAll<User>()
+```
+
+**When to use**: Generic APIs, type-safe operations, avoiding reflection, library design.
+
+**Learn More**: See [Use Inline Functions and Reified](./use-inline-functions-reified.md).
+
+---
+
+### Recipe: Delegation Patterns
+
+**Problem**: You want to reuse behavior without inheritance.
+
+**Solution**:
+
+```kotlin
+// Property delegation
+class User {
+    // Lazy initialization
+    val expensiveProperty: String by lazy {
+        println("Computing expensive value")
+        computeExpensiveValue()
+    }
+
+    // Observable property
+    var name: String by Delegates.observable("initial") { property, oldValue, newValue ->
+        println("${property.name} changed from $oldValue to $newValue")
+    }
+
+    // Vetoable property
+    var age: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
+        newValue >= 0  // Only allow non-negative ages
+    }
+
+    // Map-backed properties
+    class MappedUser(map: Map<String, Any>) {
+        val name: String by map
+        val age: Int by map
+    }
+}
+
+// Interface delegation
+interface Logger {
+    fun log(message: String)
+}
+
+class ConsoleLogger : Logger {
+    override fun log(message: String) {
+        println("[LOG] $message")
+    }
+}
+
+// UserService delegates logging to ConsoleLogger
+class UserService(logger: Logger) : Logger by logger {
+    fun createUser(name: String) {
+        log("Creating user: $name")  // Delegated to logger
+        // Create user logic
+    }
+}
+
+// Custom delegate
+class Preference<T>(
+    private val key: String,
+    private val defaultValue: T,
+    private val preferences: SharedPreferences
+) {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return when (defaultValue) {
+            is String -> preferences.getString(key, defaultValue as String) as T
+            is Int -> preferences.getInt(key, defaultValue as Int) as T
+            is Boolean -> preferences.getBoolean(key, defaultValue as Boolean) as T
+            else -> throw IllegalArgumentException("Unsupported type")
+        }
+    }
+
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        preferences.edit().apply {
+            when (value) {
+                is String -> putString(key, value)
+                is Int -> putInt(key, value)
+                is Boolean -> putBoolean(key, value)
+            }
+            apply()
+        }
+    }
+}
+
+// Usage
+class Settings(prefs: SharedPreferences) {
+    var username: String by Preference("username", "", prefs)
+    var fontSize: Int by Preference("fontSize", 14, prefs)
+    var darkMode: Boolean by Preference("darkMode", false, prefs)
+}
+```
+
+**When to use**: Property initialization, change observation, interface composition, shared preferences.
+
+**Learn More**: See [Use Delegates](./use-delegates.md).
+
+---
+
+## Functional Programming Patterns
+
+Apply functional programming techniques in Kotlin.
+
+### Recipe: Higher-Order Functions and Function Composition
+
+**Problem**: You need to compose and chain operations functionally.
+
+**Solution**:
+
+```kotlin
+// Function composition
+infix fun <A, B, C> ((A) -> B).then(other: (B) -> C): (A) -> C = { a ->
+    other(this(a))
+}
+
+// Pipe operator
+infix fun <T, R> T.pipe(transform: (T) -> R): R = transform(this)
+
+// Practical example
+val processUser = ::validateUser then ::enrichUser then ::saveUser
+
+fun validateUser(user: User): User {
+    require(user.email.isNotBlank()) { "Email required" }
+    return user
+}
+
+fun enrichUser(user: User): User =
+    user.copy(name = user.name.toTitleCase())
+
+fun saveUser(user: User): User {
+    database.save(user)
+    return user
+}
+
+// Usage
+val result = User("1", "john", "john@example.com")
+    .pipe(processUser)
+
+// Currying
+fun add(a: Int): (Int) -> Int = { b -> a + b }
+
+val add5 = add(5)
+println(add5(3))  // 8
+
+// Partial application
+fun <A, B, C> ((A, B) -> C).partial(a: A): (B) -> C = { b -> this(a, b) }
+
+fun multiply(a: Int, b: Int): Int = a * b
+val multiplyBy10 = ::multiply.partial(10)
+println(multiplyBy10(5))  // 50
+
+// Memoization
+fun <A, R> ((A) -> R).memoize(): (A) -> R {
+    val cache = mutableMapOf<A, R>()
+    return { a ->
+        cache.getOrPut(a) { this(a) }
+    }
+}
+
+fun fibonacci(n: Int): Int = if (n <= 1) n else fibonacci(n - 1) + fibonacci(n - 2)
+val memoizedFib = ::fibonacci.memoize()
+```
+
+**When to use**: Function composition, pipeline processing, currying, memoization.
+
+**Learn More**: See [Work with Scope Functions](./work-with-scope-functions.md).
+
+---
+
+### Recipe: Monadic Operations with Result
+
+**Problem**: You need functional error handling without exceptions.
+
+**Solution**:
+
+```kotlin
+// Result chaining
+fun processUser(id: String): Result<User> =
+    findUser(id)
+        .mapCatching { user -> validateUser(user) }
+        .mapCatching { user -> enrichUser(user) }
+        .mapCatching { user -> saveUser(user) }
+
+fun findUser(id: String): Result<User> = runCatching {
+    database.findById(id) ?: throw NoSuchElementException("User not found")
+}
+
+// Railway-oriented programming
+sealed class Either<out L, out R> {
+    data class Left<L>(val value: L) : Either<L, Nothing>()
+    data class Right<R>(val value: R) : Either<Nothing, R>()
+
+    fun <T> map(transform: (R) -> T): Either<L, T> = when (this) {
+        is Left -> this
+        is Right -> Right(transform(value))
+    }
+
+    fun <T> flatMap(transform: (R) -> Either<L, T>): Either<L, T> = when (this) {
+        is Left -> this
+        is Right -> transform(value)
+    }
+}
+
+typealias ValidationResult<T> = Either<List<String>, T>
+
+fun validateUserData(user: User): ValidationResult<User> {
+    val errors = mutableListOf<String>()
+
+    if (user.email.isBlank()) errors.add("Email required")
+    if (user.name.length < 3) errors.add("Name too short")
+    if (user.age < 0) errors.add("Invalid age")
+
+    return if (errors.isEmpty()) {
+        Either.Right(user)
+    } else {
+        Either.Left(errors)
+    }
+}
+```
+
+**When to use**: Functional error handling, validation, railway-oriented programming.
+
+**Learn More**: See [Error Handling Patterns](./error-handling-patterns.md).
+
+---
+
+### Recipe: Sequence Operations for Lazy Evaluation
+
+**Problem**: You need efficient processing of large collections without intermediate allocations.
+
+**Solution**:
+
+```kotlin
+// Lazy sequence processing
+val largeDataset = (1..1_000_000).asSequence()
+    .filter { it % 2 == 0 }  // Not executed yet
+    .map { it * it }  // Not executed yet
+    .take(10)  // Only first 10 elements computed
+    .toList()  // Execution triggered here
+
+// Infinite sequences
+fun fibonacci(): Sequence<Long> = sequence {
+    var a = 0L
+    var b = 1L
+    while (true) {
+        yield(a)
+        val next = a + b
+        a = b
+        b = next
+    }
+}
+
+val first10Fib = fibonacci().take(10).toList()
+
+// File processing (memory efficient)
+fun processLargeFile(file: File): Map<String, Int> =
+    file.bufferedReader()
+        .lineSequence()
+        .filter { it.isNotBlank() }
+        .flatMap { it.split(" ").asSequence() }
+        .map { it.lowercase() }
+        .groupingBy { it }
+        .eachCount()
+
+// Custom sequence generator
+fun <T> repeatSequence(value: T): Sequence<T> = generateSequence { value }
+
+val tenOnes = repeatSequence(1).take(10).toList()
+
+// Windowed operations
+val movingAverage = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    .asSequence()
+    .windowed(size = 3, step = 1)
+    .map { window -> window.average() }
+    .toList()
+
+// Chunked processing
+fun processInBatches(items: List<Item>) {
+    items.asSequence()
+        .chunked(100)
+        .forEach { batch ->
+            processBatch(batch)
+        }
+}
+```
+
+**When to use**: Large datasets, infinite sequences, file processing, memory optimization.
+
+**Learn More**: See [Work with Collections](./work-with-collections.md).
+
+---
+
+## DSL Creation
+
+Build type-safe domain-specific languages.
+
+### Recipe: Type-Safe Builder DSL
+
+**Problem**: You want to build structured data programmatically with compile-time safety.
+
+**Solution**:
+
+```kotlin
+@DslMarker
+annotation class HtmlDsl
+
+@HtmlDsl
+abstract class Tag(val name: String) {
+    val children = mutableListOf<Tag>()
+    val attributes = mutableMapOf<String, String>()
+
+    protected fun <T : Tag> initTag(tag: T, init: T.() -> Unit): T {
+        tag.init()
+        children.add(tag)
+        return tag
+    }
+
+    override fun toString(): String {
+        val attrs = attributes.map { (k, v) -> """$k="$v"""" }.joinToString(" ")
+        val attrsStr = if (attrs.isNotEmpty()) " $attrs" else ""
+        val childrenStr = children.joinToString("")
+        return "<$name$attrsStr>$childrenStr</$name>"
+    }
+}
+
+class HTML : Tag("html") {
+    fun head(init: Head.() -> Unit) = initTag(Head(), init)
+    fun body(init: Body.() -> Unit) = initTag(Body(), init)
+}
+
+class Head : Tag("head") {
+    fun title(init: Title.() -> Unit) = initTag(Title(), init)
+}
+
+class Title : Tag("title") {
+    operator fun String.unaryPlus() {
+        children.add(object : Tag("") {
+            override fun toString() = this@unaryPlus
+        })
+    }
+}
+
+class Body : Tag("body") {
+    fun h1(init: H1.() -> Unit) = initTag(H1(), init)
+    fun p(init: P.() -> Unit) = initTag(P(), init)
+    fun div(init: Div.() -> Unit) = initTag(Div(), init)
+}
+
+class H1 : Tag("h1") {
+    operator fun String.unaryPlus() {
+        children.add(object : Tag("") {
+            override fun toString() = this@unaryPlus
+        })
+    }
+}
+
+class P : Tag("p") {
+    operator fun String.unaryPlus() {
+        children.add(object : Tag("") {
+            override fun toString() = this@unaryPlus
+        })
+    }
+}
+
+class Div : Tag("div") {
+    var id: String
+        get() = attributes["id"] ?: ""
+        set(value) { attributes["id"] = value }
+
+    var cssClass: String
+        get() = attributes["class"] ?: ""
+        set(value) { attributes["class"] = value }
+
+    fun p(init: P.() -> Unit) = initTag(P(), init)
+}
+
+fun html(init: HTML.() -> Unit): HTML {
+    val html = HTML()
+    html.init()
+    return html
+}
+
+// Usage
+val page = html {
+    head {
+        title {
+            +"My Page"
+        }
+    }
+    body {
+        h1 {
+            +"Welcome"
+        }
+        div {
+            id = "content"
+            cssClass = "container"
+            p {
+                +"This is a paragraph"
+            }
+        }
+    }
+}
+
+println(page)
+```
+
+**When to use**: HTML generation, configuration DSLs, builder patterns.
+
+**Learn More**: See [Build REST APIs with Ktor](./build-rest-apis-ktor.md).
+
+---
+
+### Recipe: Type-Safe SQL Query DSL
+
+**Problem**: You want compile-time safe SQL queries without string concatenation.
+
+**Solution**:
+
+```kotlin
+@DslMarker
+annotation class SqlDsl
+
+@SqlDsl
+class SelectBuilder {
+    private val columns = mutableListOf<String>()
+    private var tableName: String = ""
+    private val whereClauses = mutableListOf<String>()
+    private val orderByClauses = mutableListOf<String>()
+    private var limitValue: Int? = null
+
+    fun select(vararg cols: String) {
+        columns.addAll(cols)
+    }
+
+    fun from(table: String) {
+        tableName = table
+    }
+
+    fun where(clause: String) {
+        whereClauses.add(clause)
+    }
+
+    fun orderBy(column: String, direction: String = "ASC") {
+        orderByClauses.add("$column $direction")
+    }
+
+    fun limit(value: Int) {
+        limitValue = value
+    }
+
+    fun build(): String {
+        val columnsStr = if (columns.isEmpty()) "*" else columns.joinToString(", ")
+        var sql = "SELECT $columnsStr FROM $tableName"
+
+        if (whereClauses.isNotEmpty()) {
+            sql += " WHERE " + whereClauses.joinToString(" AND ")
+        }
+
+        if (orderByClauses.isNotEmpty()) {
+            sql += " ORDER BY " + orderByClauses.joinToString(", ")
+        }
+
+        limitValue?.let {
+            sql += " LIMIT $it"
+        }
+
+        return sql
+    }
+}
+
+fun select(init: SelectBuilder.() -> Unit): String {
+    val builder = SelectBuilder()
+    builder.init()
+    return builder.build()
+}
+
+// Usage
+val query = select {
+    select("id", "name", "email")
+    from("users")
+    where("age > 18")
+    where("active = true")
+    orderBy("name", "ASC")
+    limit(10)
+}
+
+println(query)
+// SELECT id, name, email FROM users WHERE age > 18 AND active = true ORDER BY name ASC LIMIT 10
+```
+
+**When to use**: SQL builders, configuration, fluent APIs, type-safe builders.
+
+**Learn More**: See [Database Access with Exposed](./database-access-exposed.md).
+
+---
+
+## Multiplatform Development
+
+Build cross-platform applications with shared code.
+
+### Recipe: Expect/Actual for Platform-Specific APIs
+
+**Problem**: You need platform-specific implementations with shared interface.
+
+**Solution**:
+
+```kotlin
+// commonMain - Expect declarations
+expect class Platform() {
+    val name: String
+}
+
+expect fun getPlatformName(): String
+
+expect object Logger {
+    fun log(message: String)
+    fun error(message: String, throwable: Throwable?)
+}
+
+expect class KeyValueStorage {
+    fun getString(key: String): String?
+    fun putString(key: String, value: String)
+    fun remove(key: String)
+}
+
+// androidMain - Android implementations
+actual class Platform actual constructor() {
+    actual val name: String = "Android ${android.os.Build.VERSION.SDK_INT}"
+}
+
+actual fun getPlatformName(): String = Platform().name
+
+actual object Logger {
+    actual fun log(message: String) {
+        android.util.Log.d("KMP", message)
+    }
+
+    actual fun error(message: String, throwable: Throwable?) {
+        android.util.Log.e("KMP", message, throwable)
+    }
+}
+
+actual class KeyValueStorage(private val context: Context) {
+    private val prefs = context.getSharedPreferences("kmp_storage", Context.MODE_PRIVATE)
+
+    actual fun getString(key: String): String? = prefs.getString(key, null)
+
+    actual fun putString(key: String, value: String) {
+        prefs.edit().putString(key, value).apply()
+    }
+
+    actual fun remove(key: String) {
+        prefs.edit().remove(key).apply()
+    }
+}
+
+// iosMain - iOS implementations
+actual class Platform actual constructor() {
+    actual val name: String =
+        UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
+}
+
+actual fun getPlatformName(): String = Platform().name
+
+actual object Logger {
+    actual fun log(message: String) {
+        NSLog("KMP: %@", message)
+    }
+
+    actual fun error(message: String, throwable: Throwable?) {
+        NSLog("KMP ERROR: %@ - %@", message, throwable?.message ?: "")
+    }
+}
+
+actual class KeyValueStorage {
+    private val userDefaults = NSUserDefaults.standardUserDefaults
+
+    actual fun getString(key: String): String? = userDefaults.stringForKey(key)
+
+    actual fun putString(key: String, value: String) {
+        userDefaults.setObject(value, forKey = key)
+    }
+
+    actual fun remove(key: String) {
+        userDefaults.removeObjectForKey(key)
+    }
+}
+
+// Shared business logic in commonMain
+class UserRepository(private val storage: KeyValueStorage) {
+    fun saveUser(user: User) {
+        val json = Json.encodeToString(User.serializer(), user)
+        storage.putString("current_user", json)
+        Logger.log("User saved: ${user.name}")
+    }
+
+    fun getCurrentUser(): User? {
+        val json = storage.getString("current_user") ?: return null
+        return try {
+            Json.decodeFromString(User.serializer(), json)
+        } catch (e: Exception) {
+            Logger.error("Failed to parse user", e)
+            null
+        }
+    }
+}
+```
+
+**When to use**: Cross-platform apps, shared business logic, platform abstraction.
+
+**Learn More**: See [Multiplatform Development](./multiplatform-development.md).
+
+---
+
+### Recipe: Shared Network Layer with Ktor
+
+**Problem**: You need HTTP client that works on all platforms.
+
+**Solution**:
+
+```kotlin
+// commonMain - build.gradle.kts
+val commonMain by getting {
+    dependencies {
+        implementation("io.ktor:ktor-client-core:3.0.3")
+        implementation("io.ktor:ktor-client-content-negotiation:3.0.3")
+        implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.3")
+    }
+}
+
+val androidMain by getting {
+    dependencies {
+        implementation("io.ktor:ktor-client-okhttp:3.0.3")
+    }
+}
+
+val iosMain by getting {
+    dependencies {
+        implementation("io.ktor:ktor-client-darwin:3.0.3")
+    }
+}
+
+// commonMain - Shared API client
+class ApiClient {
+    private val client = HttpClient {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            })
+        }
+    }
+
+    suspend fun fetchUsers(): Result<List<User>> = runCatching {
+        client.get("https://api.example.com/users").body<List<User>>()
+    }
+
+    suspend fun createUser(user: User): Result<User> = runCatching {
+        client.post("https://api.example.com/users") {
+            setBody(user)
+        }.body<User>()
+    }
+
+    suspend fun updateUser(id: String, user: User): Result<User> = runCatching {
+        client.put("https://api.example.com/users/$id") {
+            setBody(user)
+        }.body<User>()
+    }
+
+    suspend fun deleteUser(id: String): Result<Unit> = runCatching {
+        client.delete("https://api.example.com/users/$id")
+    }
+
+    fun close() {
+        client.close()
+    }
+}
+```
+
+**When to use**: Shared networking, API clients, cross-platform data access.
+
+**Learn More**: See [Multiplatform Development](./multiplatform-development.md#networking-with-ktor-client).
+
+---
+
+## Testing Strategies
+
+Write comprehensive tests for Kotlin code.
+
+### Recipe: MockK for Mocking and Verification
+
+**Problem**: You need powerful mocking with minimal boilerplate.
+
+**Solution**:
+
+```kotlin
+class UserServiceTest {
+    private val repository = mockk<UserRepository>()
+    private val service = UserService(repository)
+
+    @Test
+    fun `should return user when found`() {
+        // Given
+        val userId = "123"
+        val user = User(userId, "John", "john@example.com")
+        every { repository.findById(userId) } returns user
+
+        // When
+        val result = service.getUser(userId)
+
+        // Then
+        assertEquals(user, result)
+        verify(exactly = 1) { repository.findById(userId) }
+    }
+
+    @Test
+    fun `should throw when user not found`() {
+        // Given
+        every { repository.findById(any()) } returns null
+
+        // When/Then
+        assertFailsWith<NoSuchElementException> {
+            service.getUser("999")
+        }
+    }
+
+    @Test
+    fun `should save user with generated id`() {
+        // Given
+        val user = User("", "Jane", "jane@example.com")
+        val slot = slot<User>()
+        every { repository.save(capture(slot)) } returns Unit
+
+        // When
+        service.createUser(user.name, user.email)
+
+        // Then
+        verify { repository.save(any()) }
+        assertTrue(slot.captured.id.isNotEmpty())
+        assertEquals(user.name, slot.captured.name)
+    }
+
+    @Test
+    fun `should call repository methods in order`() {
+        // Given
+        val userId = "123"
+        every { repository.findById(userId) } returns User(userId, "John", "john@example.com")
+        every { repository.update(any()) } returns Unit
+        every { repository.save(any()) } returns Unit
+
+        // When
+        service.updateAndBackup(userId)
+
+        // Then
+        verifyOrder {
+            repository.findById(userId)
+            repository.update(any())
+            repository.save(any())
+        }
+    }
+
+    @Test
+    fun `should handle suspend functions`() = runTest {
+        // Given
+        val api = mockk<ApiClient>()
+        coEvery { api.fetchUsers() } returns Result.success(listOf(
+            User("1", "John", "john@example.com")
+        ))
+
+        // When
+        val result = api.fetchUsers()
+
+        // Then
+        assertTrue(result.isSuccess)
+        coVerify { api.fetchUsers() }
+    }
+}
+```
+
+**When to use**: Unit testing, mocking dependencies, verifying interactions, testing coroutines.
+
+**Learn More**: See [Write Effective Tests](./write-effective-tests.md).
+
+---
+
+### Recipe: Property-Based Testing with Kotest
+
+**Problem**: You need to test properties across many random inputs.
+
+**Solution**:
+
+```kotlin
+class StringUtilsTest : FunSpec({
+    test("reverse of reverse should equal original") {
+        checkAll<String> { str ->
+            str.reversed().reversed() shouldBe str
+        }
+    }
+
+    test("length should be preserved after reversing") {
+        checkAll<String> { str ->
+            str.reversed().length shouldBe str.length
+        }
+    }
+
+    test("sum of two positives is always positive") {
+        checkAll(Arb.positiveInt(), Arb.positiveInt()) { a, b ->
+            (a + b) shouldBeGreaterThan 0
+        }
+    }
+
+    test("list concatenation is associative") {
+        checkAll<List<Int>, List<Int>, List<Int>> { a, b, c ->
+            ((a + b) + c) shouldBe (a + (b + c))
+        }
+    }
+
+    test("custom generator for email") {
+        val emailArb = arbitrary {
+            val username = Arb.string(5..10, Codepoint.alphanumeric()).bind()
+            val domain = Arb.string(5..10, Codepoint.alphanumeric()).bind()
+            "$username@$domain.com"
+        }
+
+        checkAll(emailArb) { email ->
+            email should contain("@")
+            email should endWith(".com")
+        }
+    }
+
+    test("user validation properties") {
+        val userArb = arbitrary {
+            User(
+                id = Arb.string(10).bind(),
+                name = Arb.string(3..50).bind(),
+                age = Arb.int(0..150).bind()
+            )
+        }
+
+        checkAll(userArb) { user ->
+            validateUser(user).let { result ->
+                if (user.age >= 18) {
+                    result shouldBe Valid(user)
+                } else {
+                    result shouldBe Invalid("Underage")
+                }
+            }
+        }
+    }
+})
+```
+
+**When to use**: Testing properties, invariants, edge cases, generating test data.
+
+**Learn More**: See [Write Effective Tests](./write-effective-tests.md#property-based-testing).
+
+---
+
+## Advanced Coroutines Recipes
+
+### Recipe: Channel-Based Communication Patterns
+
+**Problem**: You need thread-safe communication between coroutines.
+
+**Solution**:
+
+```kotlin
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
+
+// Producer-Consumer Pattern
+fun CoroutineScope.produceNumbers(count: Int) = produce {
+    repeat(count) {
+        delay(100)
+        send(it)
+        println("Produced: $it")
+    }
+}
+
+fun CoroutineScope.squareNumbers(numbers: ReceiveChannel<Int>) = produce {
+    for (num in numbers) {
+        val squared = num * num
+        send(squared)
+        println("Squared: $num -> $squared")
+    }
+}
+
+// Fan-out: Multiple workers processing from single channel
+fun CoroutineScope.launchWorkers(channel: ReceiveChannel<Int>, count: Int) {
+    repeat(count) { id ->
+        launch {
+            for (item in channel) {
+                delay(Random.nextLong(100, 300))
+                println("Worker $id processed $item")
+            }
+        }
+    }
+}
+
+// Buffered channel for backpressure
+suspend fun bufferedChannelExample() = coroutineScope {
+    val channel = Channel<Int>(capacity = 5) // Buffer size = 5
+
+    launch {
+        repeat(10) {
+            channel.send(it)
+            println("Sent: $it")
+        }
+        channel.close()
+    }
+
+    delay(500) // Simulate slow consumer
+
+    launch {
+        for (item in channel) {
+            delay(100)
+            println("Received: $it")
+        }
+    }
+}
+
+// Usage
+runBlocking {
+    val numbers = produceNumbers(5)
+    val squares = squareNumbers(numbers)
+
+    for (square in squares) {
+        println("Result: $square")
+    }
+}
+```
+
+**When to use**: Producer-consumer patterns, work distribution, pipeline processing, backpressure handling.
+
+**Learn More**: See [Work with Coroutines](./work-with-coroutines.md).
+
+---
+
+### Recipe: Structured Concurrency and Supervision
+
+**Problem**: You need to manage coroutine hierarchies and handle child failures.
+
+**Solution**:
+
+```kotlin
+import kotlinx.coroutines.*
+
+// Structured concurrency with proper cleanup
+suspend fun structuredConcurrencyExample() = coroutineScope {
+    println("Parent scope started")
+
+    launch {
+        repeat(5) { i ->
+            delay(100)
+            println("Child 1: $i")
+        }
+    }
+
+    launch {
+        repeat(3) { i ->
+            delay(150)
+            println("Child 2: $i")
+        }
+    }
+
+    println("Parent scope waiting for children")
+    // Automatically waits for all children
+}
+
+// SupervisorJob for independent child failures
+suspend fun supervisedConcurrency() = coroutineScope {
+    val supervisor = SupervisorJob()
+
+    with(CoroutineScope(coroutineContext + supervisor)) {
+        val child1 = launch {
+            delay(100)
+            throw Exception("Child 1 failed!")
+        }
+
+        val child2 = launch {
+            repeat(5) { i ->
+                delay(200)
+                println("Child 2: $i (still running)")
+            }
+        }
+
+        child1.join()
+        child2.join()
+    }
+
+    println("Supervisor completed")
+}
+
+// Cancellation and cleanup
+suspend fun cancellationExample() = coroutineScope {
+    val job = launch {
+        try {
+            repeat(10) { i ->
+                delay(100)
+                println("Working: $i")
+            }
+        } finally {
+            withContext(NonCancellable) {
+                println("Cleanup resources")
+                delay(100)
+                println("Cleanup done")
+            }
+        }
+    }
+
+    delay(350)
+    println("Cancelling job")
+    job.cancelAndJoin()
+    println("Job cancelled")
+}
+```
+
+**When to use**: Managing coroutine lifecycles, handling failures, cancellation with cleanup, independent task execution.
+
+**Learn More**: See [Work with Coroutines](./work-with-coroutines.md#structured-concurrency).
+
+---
+
+### Recipe: Advanced Flow Operators
+
+**Problem**: You need to transform, combine, and process asynchronous data streams.
+
+**Solution**:
+
+```kotlin
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+
+// Combining flows
+suspend fun combineFlowsExample() {
+    val numbers = flowOf(1, 2, 3).onEach { delay(100) }
+    val strings = flowOf("A", "B", "C").onEach { delay(150) }
+
+    // Combine latest values
+    numbers.combine(strings) { num, str ->
+        "$str-$num"
+    }.collect { println("Combined: $it") }
+
+    // Zip: pair corresponding elements
+    numbers.zip(strings) { num, str ->
+        "$str-$num"
+    }.collect { println("Zipped: $it") }
+}
+
+// StateFlow and SharedFlow
+class DataRepository {
+    private val _state = MutableStateFlow<DataState>(DataState.Loading)
+    val state: StateFlow<DataState> = _state.asStateFlow()
+
+    private val _events = MutableSharedFlow<DataEvent>()
+    val events: SharedFlow<DataEvent> = _events.asSharedFlow()
+
+    suspend fun loadData() {
+        _state.value = DataState.Loading
+        delay(500)
+
+        try {
+            val data = fetchData()
+            _state.value = DataState.Success(data)
+            _events.emit(DataEvent.DataLoaded(data))
+        } catch (e: Exception) {
+            _state.value = DataState.Error(e.message ?: "Unknown error")
+            _events.emit(DataEvent.ErrorOccurred(e))
+        }
+    }
+
+    private suspend fun fetchData(): String {
+        delay(100)
+        return "Sample data"
+    }
+}
+
+sealed class DataState {
+    object Loading : DataState()
+    data class Success(val data: String) : DataState()
+    data class Error(val message: String) : DataState()
+}
+
+sealed class DataEvent {
+    data class DataLoaded(val data: String) : DataEvent()
+    data class ErrorOccurred(val error: Exception) : DataEvent()
+}
+
+// Usage
+runBlocking {
+    val repo = DataRepository()
+
+    launch {
+        repo.state.collect { state ->
+            println("State: $state")
+        }
+    }
+
+    launch {
+        repo.events.collect { event ->
+            println("Event: $event")
+        }
+    }
+
+    repo.loadData()
+    delay(1000)
+}
+```
+
+**When to use**: Asynchronous data streams, reactive state management, combining multiple data sources.
+
+**Learn More**: See [Work with Coroutines](./work-with-coroutines.md#flows).
+
+---
+
+## Functional Programming Recipes
+
+### Recipe: Function Composition and Currying
+
+**Problem**: You need to compose functions and create reusable function builders.
+
+**Solution**:
+
+```kotlin
+// Function composition
+infix fun <A, B, C> ((B) -> C).compose(other: (A) -> B): (A) -> C = { a ->
+    this(other(a))
+}
+
+infix fun <A, B, C> ((A) -> B).andThen(other: (B) -> C): (A) -> C = { a ->
+    other(this(a))
+}
+
+// Currying
+fun <A, B, C> curry(fn: (A, B) -> C): (A) -> (B) -> C = { a ->
+    { b -> fn(a, b) }
+}
+
+// Partial application
+fun <A, B, C> partial(fn: (A, B) -> C, a: A): (B) -> C = { b ->
+    fn(a, b)
+}
+
+// Examples
+fun double(x: Int): Int = x * 2
+fun increment(x: Int): Int = x + 1
+fun square(x: Int): Int = x * x
+
+val doubleAndIncrement = ::increment compose ::double
+val incrementAndSquare = ::increment andThen ::square
+
+println(doubleAndIncrement(5))  // 11 = 5 * 2 + 1
+println(incrementAndSquare(5))  // 36 = (5 + 1)^2
+
+// Currying example
+fun add(a: Int, b: Int): Int = a + b
+
+val curriedAdd = curry(::add)
+val add5 = curriedAdd(5)
+
+println(add5(3))  // 8
+println(add5(10)) // 15
+
+// Pipeline operator
+infix fun <T, R> T.pipe(fn: (T) -> R): R = fn(this)
+
+val result = 5
+    .pipe(::double)
+    .pipe(::increment)
+    .pipe(::square)
+
+println(result)  // 121 = ((5 * 2) + 1)^2
+```
+
+**When to use**: Building reusable function chains, data transformation pipelines, functional composition patterns.
+
+**Learn More**: See [Use Functional Programming](./use-functional-programming.md).
+
+---
+
+### Recipe: Monads and Functional Error Handling
+
+**Problem**: You need functional error handling without exceptions.
+
+**Solution**:
+
+```kotlin
+// Either monad
+sealed class Either<out L, out R> {
+    data class Left<out L>(val value: L) : Either<L, Nothing>()
+    data class Right<out R>(val value: R) : Either<Nothing, R>()
+
+    fun <T> map(fn: (R) -> T): Either<L, T> = when (this) {
+        is Left -> this
+        is Right -> Right(fn(value))
+    }
+
+    fun <T> flatMap(fn: (R) -> Either<L, T>): Either<L, T> = when (this) {
+        is Left -> this
+        is Right -> fn(value)
+    }
+
+    fun getOrElse(default: R): R = when (this) {
+        is Left -> default
+        is Right -> value
+    }
+}
+
+// Usage
+fun divide(a: Int, b: Int): Either<String, Int> =
+    if (b == 0) Either.Left("Division by zero")
+    else Either.Right(a / b)
+
+val result1 = divide(10, 2).map { it * 2 }
+println(result1)  // Right(10)
+
+val result2 = divide(10, 0).map { it * 2 }
+println(result2)  // Left("Division by zero")
+
+// Chaining operations
+fun parseNumber(s: String): Either<String, Int> =
+    s.toIntOrNull()?.let { Either.Right(it) }
+        ?: Either.Left("Not a valid number")
+
+fun validatePositive(n: Int): Either<String, Int> =
+    if (n > 0) Either.Right(n)
+    else Either.Left("Number must be positive")
+
+val chainResult = parseNumber("42")
+    .flatMap { validatePositive(it) }
+    .map { it * 2 }
+
+println(chainResult)  // Right(84)
+```
+
+**When to use**: Functional error handling, composable operations, avoiding exceptions.
+
+**Learn More**: See [Handle Errors Gracefully](./handle-errors-gracefully.md).
+
+---
+
+## DSL Creation Recipes
+
+### Recipe: Type-Safe HTML DSL
+
+**Problem**: You need to build HTML dynamically with compile-time safety.
+
+**Solution**:
+
+```kotlin
+// HTML DSL Implementation
+@DslMarker
+annotation class HtmlTagMarker
+
+@HtmlTagMarker
+abstract class Tag(val name: String) {
+    val children = mutableListOf<Tag>()
+    val attributes = mutableMapOf<String, String>()
+
+    protected fun <T : Tag> initTag(tag: T, init: T.() -> Unit): T {
+        tag.init()
+        children.add(tag)
+        return tag
+    }
+
+    override fun toString(): String {
+        val attrs = attributes.entries.joinToString(" ") { "${it.key}=\"${it.value}\"" }
+        val attrsStr = if (attrs.isNotEmpty()) " $attrs" else ""
+        return if (children.isEmpty()) {
+            "<$name$attrsStr/>"
+        } else {
+            val content = children.joinToString("")
+            "<$name$attrsStr>$content</$name>"
+        }
+    }
+}
+
+class HTML : Tag("html") {
+    fun head(init: Head.() -> Unit) = initTag(Head(), init)
+    fun body(init: Body.() -> Unit) = initTag(Body(), init)
+}
+
+class Head : Tag("head") {
+    fun title(init: Title.() -> Unit) = initTag(Title(), init)
+}
+
+class Title : Tag("title") {
+    operator fun String.unaryPlus() {
+        children.add(object : Tag("") {
+            override fun toString() = this@unaryPlus
+        })
+    }
+}
+
+class Body : Tag("body") {
+    fun h1(init: H1.() -> Unit) = initTag(H1(), init)
+    fun p(init: P.() -> Unit) = initTag(P(), init)
+    fun div(cssClass: String? = null, init: Div.() -> Unit) = initTag(Div(), init).apply {
+        cssClass?.let { attributes["class"] = it }
+    }
+}
+
+class H1 : Tag("h1") {
+    operator fun String.unaryPlus() {
+        children.add(object : Tag("") {
+            override fun toString() = this@unaryPlus
+        })
+    }
+}
+
+class P : Tag("p") {
+    operator fun String.unaryPlus() {
+        children.add(object : Tag("") {
+            override fun toString() = this@unaryPlus
+        })
+    }
+}
+
+class Div : Tag("div") {
+    fun p(init: P.() -> Unit) = initTag(P(), init)
+    fun span(init: Span.() -> Unit) = initTag(Span(), init)
+}
+
+class Span : Tag("span") {
+    operator fun String.unaryPlus() {
+        children.add(object : Tag("") {
+            override fun toString() = this@unaryPlus
+        })
+    }
+}
+
+// DSL builder function
+fun html(init: HTML.() -> Unit): HTML {
+    val html = HTML()
+    html.init()
+    return html
+}
+
+// Usage
+val page = html {
+    head {
+        title {
+            +"My Page"
+        }
+    }
+    body {
+        h1 {
+            +"Welcome"
+        }
+        div(cssClass = "content") {
+            p {
+                +"This is a paragraph."
+            }
+            span {
+                +"Some text in a span."
+            }
+        }
+    }
+}
+
+println(page)
+```
+
+**When to use**: Building type-safe DSLs, HTML generation, configuration builders, API design.
+
+**Learn More**: See [Create Domain-Specific Languages](./create-dsls.md).
+
+---
+
+### Recipe: Configuration DSL
+
+**Problem**: You need a type-safe configuration builder.
+
+**Solution**:
+
+```kotlin
+// Database Configuration DSL
+@DslMarker
+annotation class ConfigDsl
+
+@ConfigDsl
+class DatabaseConfig {
+    var host: String = "localhost"
+    var port: Int = 5432
+    var database: String = "mydb"
+    var username: String = ""
+    var password: String = ""
+    var maxConnections: Int = 10
+
+    fun validate() {
+        require(host.isNotBlank()) { "Host cannot be blank" }
+        require(port in 1..65535) { "Port must be between 1 and 65535" }
+        require(database.isNotBlank()) { "Database name cannot be blank" }
+        require(username.isNotBlank()) { "Username cannot be blank" }
+    }
+}
+
+@ConfigDsl
+class PoolConfig {
+    var minIdle: Int = 5
+    var maxIdle: Int = 10
+    var maxLifetime: Long = 1800000 // 30 minutes
+    var connectionTimeout: Long = 30000 // 30 seconds
+}
+
+@ConfigDsl
+class AppConfig {
+    private var _database: DatabaseConfig? = null
+    private var _pool: PoolConfig? = null
+
+    val database: DatabaseConfig get() = _database!!
+    val pool: PoolConfig get() = _pool!!
+
+    fun database(init: DatabaseConfig.() -> Unit) {
+        val config = DatabaseConfig()
+        config.init()
+        config.validate()
+        _database = config
+    }
+
+    fun pool(init: PoolConfig.() -> Unit) {
+        val config = PoolConfig()
+        config.init()
+        _pool = config
+    }
+}
+
+// Builder function
+fun appConfig(init: AppConfig.() -> Unit): AppConfig {
+    val config = AppConfig()
+    config.init()
+    return config
+}
+
+// Usage
+val config = appConfig {
+    database {
+        host = "db.example.com"
+        port = 5432
+        database = "production"
+        username = "admin"
+        password = "secret"
+        maxConnections = 20
+    }
+
+    pool {
+        minIdle = 10
+        maxIdle = 20
+        maxLifetime = 3600000
+        connectionTimeout = 60000
+    }
+}
+
+println("Database: ${config.database.host}:${config.database.port}/${config.database.database}")
+println("Pool: min=${config.pool.minIdle}, max=${config.pool.maxIdle}")
+```
+
+**When to use**: Application configuration, build scripts, testing fixtures, fluent APIs.
+
+**Learn More**: See [Create Domain-Specific Languages](./create-dsls.md#configuration-dsl).
+
+---
+
+## Multiplatform Development Recipes
+
+### Recipe: Expect/Actual Platform-Specific APIs
+
+**Problem**: You need platform-specific implementations in Kotlin Multiplatform.
+
+**Solution**:
+
+```kotlin
+// commonMain/Platform.kt
+expect class Platform() {
+    val name: String
+    val version: String
+}
+
+expect fun currentTimeMillis(): Long
+
+expect fun randomUUID(): String
+
+expect suspend fun httpGet(url: String): String
+
+// androidMain/Platform.kt
+actual class Platform actual constructor() {
+    actual val name: String = "Android"
+    actual val version: String = android.os.Build.VERSION.RELEASE
+}
+
+actual fun currentTimeMillis(): Long = System.currentTimeMillis()
+
+actual fun randomUUID(): String = java.util.UUID.randomUUID().toString()
+
+actual suspend fun httpGet(url: String): String {
+    return withContext(Dispatchers.IO) {
+        java.net.URL(url).readText()
+    }
+}
+
+// iosMain/Platform.kt
+import platform.Foundation.*
+import platform.UIKit.UIDevice
+
+actual class Platform actual constructor() {
+    actual val name: String = UIDevice.currentDevice.systemName()
+    actual val version: String = UIDevice.currentDevice.systemVersion
+}
+
+actual fun currentTimeMillis(): Long {
+    return (NSDate().timeIntervalSince1970 * 1000).toLong()
+}
+
+actual fun randomUUID(): String {
+    return NSUUID().UUIDString
+}
+
+actual suspend fun httpGet(url: String): String = withContext(Dispatchers.IO) {
+    val nsUrl = NSURL.URLWithString(url)!!
+    val data = NSData.dataWithContentsOfURL(nsUrl)!!
+    NSString.create(data, NSUTF8StringEncoding) as String
+}
+
+// jsMain/Platform.kt
+actual class Platform actual constructor() {
+    actual val name: String = "JavaScript"
+    actual val version: String = js("process.version") as String
+}
+
+actual fun currentTimeMillis(): Long = js("Date.now()") as Long
+
+actual fun randomUUID(): String {
+    return js("crypto.randomUUID()") as String
+}
+
+actual suspend fun httpGet(url: String): String = suspendCoroutine { cont ->
+    js("""
+        fetch(url)
+            .then(response => response.text())
+            .then(text => cont.resume(text))
+            .catch(error => cont.resumeWithException(error))
+    """)
+}
+
+// commonMain usage
+class PlatformService {
+    private val platform = Platform()
+
+    fun getPlatformInfo(): String {
+        return "${platform.name} ${platform.version}"
+    }
+
+    suspend fun fetchData(url: String): String {
+        val start = currentTimeMillis()
+        val data = httpGet(url)
+        val elapsed = currentTimeMillis() - start
+        println("Fetched in ${elapsed}ms")
+        return data
+    }
+
+    fun generateId(): String {
+        return randomUUID()
+    }
+}
+```
+
+**When to use**: Kotlin Multiplatform projects, platform-specific functionality, shared business logic.
+
+**Learn More**: See [Build Multiplatform Apps](./multiplatform-development.md).
+
+---
+
+### Recipe: Shared ViewModel Pattern
+
+**Problem**: You need to share view models across Android/iOS in Kotlin Multiplatform.
+
+**Solution**:
+
+```kotlin
+// commonMain
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+
+sealed class UiState<out T> {
+    object Loading : UiState<Nothing>()
+    data class Success<T>(val data: T) : UiState<T>()
+    data class Error(val message: String) : UiState<Nothing>()
+}
+
+abstract class BaseViewModel {
+    protected val viewModelScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    open fun onCleared() {
+        viewModelScope.cancel()
+    }
+}
+
+class UserListViewModel(
+    private val repository: UserRepository
+) : BaseViewModel() {
+    private val _uiState = MutableStateFlow<UiState<List<User>>>(UiState.Loading)
+    val uiState: StateFlow<UiState<List<User>>> = _uiState.asStateFlow()
+
+    init {
+        loadUsers()
+    }
+
+    fun loadUsers() {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+
+            try {
+                val users = repository.getUsers()
+                _uiState.value = UiState.Success(users)
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun refresh() {
+        loadUsers()
+    }
+}
+
+data class User(
+    val id: String,
+    val name: String,
+    val email: String
+)
+
+interface UserRepository {
+    suspend fun getUsers(): List<User>
+}
+
+// androidMain - Android Integration
+class AndroidUserListViewModel(repository: UserRepository) : ViewModel() {
+    private val viewModel = UserListViewModel(repository)
+
+    val uiState = viewModel.uiState
+
+    fun refresh() = viewModel.refresh()
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModel.onCleared()
+    }
+}
+
+// Android Compose UI
+@Composable
+fun UserListScreen(viewModel: AndroidUserListViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    when (val state = uiState) {
+        is UiState.Loading -> LoadingView()
+        is UiState.Success -> UserList(state.data)
+        is UiState.Error -> ErrorView(state.message) {
+            viewModel.refresh()
+        }
+    }
+}
+
+// iosMain - iOS Integration
+class IOSUserListViewModel(repository: UserRepository) {
+    private val viewModel = UserListViewModel(repository)
+
+    fun observe(onChange: (UiState<List<User>>) -> Unit): Closeable {
+        val job = viewModel.viewModelScope.launch {
+            viewModel.uiState.collect { onChange(it) }
+        }
+
+        return object : Closeable {
+            override fun close() {
+                job.cancel()
+            }
+        }
+    }
+
+    fun refresh() = viewModel.refresh()
+
+    fun onCleared() = viewModel.onCleared()
+}
+
+// iOS SwiftUI Integration
+class UserListView: ObservableObject {
+    @Published var uiState: UiState<[User]> = .loading
+
+    private let viewModel: IOSUserListViewModel
+    private var observation: Closeable?
+
+    init(viewModel: IOSUserListViewModel) {
+        self.viewModel = viewModel
+        observation = viewModel.observe { [weak self] state in
+            DispatchQueue.main.async {
+                self?.uiState = state
+            }
+        }
+    }
+
+    func refresh() {
+        viewModel.refresh()
+    }
+
+    deinit {
+        observation?.close()
+        viewModel.onCleared()
+    }
+}
+```
+
+**When to use**: Kotlin Multiplatform Mobile (KMM), shared business logic, cross-platform state management.
+
+**Learn More**: See [Build Multiplatform Apps](./multiplatform-development.md#shared-viewmodels).
+
+---
+
+## Advanced Testing Recipes
+
+### Recipe: Integration Testing with Testcontainers
+
+**Problem**: You need to test against real databases and services in integration tests.
+
+**Solution**:
+
+```kotlin
+import org.junit.jupiter.api.*
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+
+@Testcontainers
+class UserRepositoryIntegrationTest {
+    companion object {
+        @Container
+        val postgres = PostgreSQLContainer<Nothing>("postgres:15").apply {
+            withDatabaseName("testdb")
+            withUsername("test")
+            withPassword("test")
+        }
+    }
+
+    private lateinit var repository: UserRepository
+    private lateinit var database: Database
+
+    @BeforeEach
+    fun setup() {
+        database = Database.connect(
+            url = postgres.jdbcUrl,
+            driver = "org.postgresql.Driver",
+            user = postgres.username,
+            password = postgres.password
+        )
+
+        transaction {
+            SchemaUtils.create(Users)
+        }
+
+        repository = UserRepositoryImpl(database)
+    }
+
+    @AfterEach
+    fun teardown() {
+        transaction {
+            SchemaUtils.drop(Users)
+        }
+    }
+
+    @Test
+    fun `should save and retrieve user`() = runBlocking {
+        // Given
+        val user = User("1", "John Doe", "john@example.com")
+
+        // When
+        repository.save(user)
+        val retrieved = repository.findById("1")
+
+        // Then
+        assertEquals(user, retrieved)
+    }
+
+    @Test
+    fun `should find users by email`() = runBlocking {
+        // Given
+        val users = listOf(
+            User("1", "John", "john@example.com"),
+            User("2", "Jane", "jane@example.com"),
+            User("3", "John Jr", "john.jr@example.com")
+        )
+
+        users.forEach { repository.save(it) }
+
+        // When
+        val johnUsers = repository.findByEmailContaining("john")
+
+        // Then
+        assertEquals(2, johnUsers.size)
+        assertTrue(johnUsers.all { it.email.contains("john", ignoreCase = true) })
+    }
+
+    @Test
+    fun `should handle concurrent updates correctly`() = runBlocking {
+        // Given
+        val user = User("1", "John", "john@example.com")
+        repository.save(user)
+
+        // When - Concurrent updates
+        val jobs = (1..10).map { index ->
+            async(Dispatchers.IO) {
+                repository.update(user.copy(name = "John $index"))
+            }
+        }
+
+        jobs.awaitAll()
+
+        // Then - Last update wins
+        val updated = repository.findById("1")
+        assertNotNull(updated)
+        assertTrue(updated.name.startsWith("John "))
+    }
+}
+
+// Redis integration test
+@Testcontainers
+class CacheServiceIntegrationTest {
+    companion object {
+        @Container
+        val redis = GenericContainer<Nothing>("redis:7-alpine").apply {
+            withExposedPorts(6379)
+        }
+    }
+
+    private lateinit var cacheService: CacheService
+
+    @BeforeEach
+    fun setup() {
+        val jedis = Jedis(redis.host, redis.getMappedPort(6379))
+        cacheService = RedisCacheService(jedis)
+    }
+
+    @Test
+    fun `should cache and retrieve values`() {
+        // When
+        cacheService.set("key1", "value1")
+        val retrieved = cacheService.get("key1")
+
+        // Then
+        assertEquals("value1", retrieved)
+    }
+
+    @Test
+    fun `should expire keys after TTL`() = runBlocking {
+        // Given
+        cacheService.set("key1", "value1", ttlSeconds = 1)
+
+        // When - Wait for expiration
+        delay(1500)
+
+        // Then
+        assertNull(cacheService.get("key1"))
+    }
+}
+```
+
+**When to use**: Integration testing, testing with real databases/services, container-based testing, E2E tests.
+
+**Learn More**: See [Write Effective Tests](./write-effective-tests.md#integration-testing).
+
+---
+
 ## Summary
 
-This cookbook provides 35 practical recipes organized into 8 categories covering the most common Kotlin programming tasks. Each recipe is designed to be self-contained and ready to adapt to your specific needs.
+This cookbook provides 58 practical recipes organized into 16 categories covering the most common Kotlin programming tasks. Each recipe is designed to be self-contained and ready to adapt to your specific needs.
 
 **Key Takeaways**:
 
