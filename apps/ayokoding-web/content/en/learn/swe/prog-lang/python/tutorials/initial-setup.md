@@ -11,7 +11,7 @@ tags:
   - hello-world
 ---
 
-**Get Python up and running quickly.** This guide covers installation and your first "Hello, World!" program. No programming experience needed.
+Want to start programming in Python but not sure where to begin? Installing Python takes just a few minutes, and you'll run your first program before you know it. This guide walks you through installation on any operating system and gets you writing code immediately - no programming experience needed.
 
 ## 🎯 What You'll Accomplish
 
@@ -51,6 +51,8 @@ This diagram shows every verification checkpoint - you'll know immediately if so
 - Basic familiarity with your computer's terminal/command line
 - No programming experience needed
 - Internet connection to download Python
+
+**After installation**, explore the [Python Cookbook](/learn/swe/prog-lang/python/how-to/cookbook) for practical recipes or start with the [Quick Start tutorial](/learn/swe/prog-lang/python/tutorials/quick-start) to learn core syntax.
 
 ## 💾 Step 1: Download and Install Python
 
@@ -247,6 +249,8 @@ Hello, Alice!
 
 Type `exit()` or press `Ctrl+D` (macOS/Linux) or `Ctrl+Z` then Enter (Windows) to exit.
 
+The interactive shell is perfect for experimenting - you'll use it extensively in the [Quick Start tutorial](/learn/swe/prog-lang/python/tutorials/quick-start) and [Beginner tutorial](/learn/swe/prog-lang/python/tutorials/beginner).
+
 ## 📦 Step 6: Verify pip (Package Manager)
 
 Python includes `pip`, the package installer. Verify it works:
@@ -272,6 +276,8 @@ pip 23.3.1 from /path/to/pip (python 3.12)
 - Essential for installing tools like Django, Flask, NumPy, etc.
 - Always use `python -m pip` instead of just `pip` to avoid version conflicts
 - Comes pre-installed with Python 3.4+
+
+For best practices on managing packages, see [Manage Python packages effectively](/learn/swe/prog-lang/python/how-to/manage-packages-effectively) and [Use virtual environments](/learn/swe/prog-lang/python/how-to/use-virtual-environments).
 
 **Common pip commands** (you'll use these later):
 
@@ -301,20 +307,31 @@ You've successfully installed Python and run your first program. You're ready fo
 
 ## 📚 What's Next?
 
-Now that Python is working, you have two paths:
+Now that Python is working, choose your learning path:
 
-**Quick learner**: [Python Quick Start](quick-start)
+**Quick learner**: [Python Quick Start](/learn/swe/prog-lang/python/tutorials/quick-start)
 
-- Learn core syntax and basic patterns
+- Learn core syntax and basic patterns in one session
 - Understand enough to explore Python independently
+- Great for experienced programmers learning Python
 
-**Comprehensive learner**: [Complete Beginner's Guide to Python](beginner)
+**Comprehensive learner**: [Complete Beginner's Guide to Python](/learn/swe/prog-lang/python/tutorials/beginner)
 
 - Comprehensive coverage of Python fundamentals
 - Hands-on exercises and practice
-- Ready to build real applications
+- Build a solid foundation for real applications
 
-**Problem solver**: Check the How-To Guides for practical Python solutions
+**Problem solver**: [Python Cookbook](/learn/swe/prog-lang/python/how-to/cookbook)
+
+- Jump straight into practical recipes
+- Copy-paste-modify approach
+- Solutions to common Python tasks
+
+**Reference seeker**: [Python Cheat Sheet](/learn/swe/prog-lang/python/reference/cheat-sheet)
+
+- Quick syntax reference
+- Common patterns at a glance
+- Perfect for quick lookups
 
 ## 🆘 Troubleshooting
 
@@ -352,7 +369,7 @@ python3.13 --version
 
 Use the specific version command (e.g., `python3.12 hello.py`) if needed.
 
-**Best practice**: Use [pyenv](https://github.com/pyenv/pyenv) to manage multiple Python versions cleanly.
+**Best practice**: Use [pyenv](https://github.com/pyenv/pyenv) to manage multiple Python versions cleanly. See also [Manage Python versions effectively](/learn/swe/prog-lang/python/how-to/manage-python-versions) for detailed guidance.
 
 **Problem**: "hello.py: file not found" when running
 
@@ -452,8 +469,8 @@ This is common after fresh Python installation on macOS.
 python3 -m pip install --user package_name
 ```
 
-Or use virtual environments (recommended, covered in Quick Start tutorial).
+Or use virtual environments (recommended, covered in [Quick Start tutorial](/learn/swe/prog-lang/python/tutorials/quick-start) and [Use virtual environments](/learn/swe/prog-lang/python/how-to/use-virtual-environments)).
 
 ---
 
-**Still stuck?** Visit [Python Documentation](https://docs.python.org/) or the [Python Community Forums](https://discuss.python.org/).
+**Still stuck?** Visit [Python Documentation](https://docs.python.org/) or the [Python Community Forums](https://discuss.python.org/). Also check our [Python Resources](/learn/swe/prog-lang/python/reference/resources) for more learning materials and community links.

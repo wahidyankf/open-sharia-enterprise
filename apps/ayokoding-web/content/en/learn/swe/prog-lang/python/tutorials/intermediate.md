@@ -16,7 +16,7 @@ tags:
 
 **Ready to build production-grade systems?** This tutorial teaches professional Python techniques used in companies like Instagram, Spotify, and Dropbox. You'll learn advanced OOP patterns, concurrency with asyncio, testing strategies, and deployment practices.
 
-**Prerequisites**: Complete the [Beginner tutorial](beginner) or have equivalent Python experience.
+**Prerequisites**: Complete the [Beginner tutorial](/learn/swe/prog-lang/python/tutorials/beginner) or have equivalent Python experience. For even deeper expertise, progress to the [Advanced tutorial](/learn/swe/prog-lang/python/tutorials/advanced).
 
 ## 🎯 Learning Objectives
 
@@ -80,11 +80,13 @@ graph TB
     style H fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-This tutorial covers techniques for building each layer and implementing cross-cutting concerns professionally.
+This tutorial covers techniques for building each layer and implementing cross-cutting concerns professionally. For foundational concepts, review the [Beginner tutorial](/learn/swe/prog-lang/python/tutorials/beginner).
 
 ---
 
 ## Section 1: Advanced Object-Oriented Programming
+
+For practical OOP patterns, see [Work with classes effectively](/learn/swe/prog-lang/python/how-to/work-with-classes-effectively) and [Use decorators effectively](/learn/swe/prog-lang/python/how-to/use-decorators-effectively).
 
 ### Decorators
 
@@ -959,7 +961,7 @@ Congratulations! You've completed the Python Intermediate tutorial. You've learn
 
 ## 📚 What's Next?
 
-**Advanced Tutorial**: [Python Advanced](advanced)
+**Advanced Tutorial**: [Python Advanced](/learn/swe/prog-lang/python/tutorials/advanced)
 
 - Python internals (GIL, memory management, bytecode)
 - Advanced metaprogramming and AST manipulation
@@ -967,8 +969,30 @@ Congratulations! You've completed the Python Intermediate tutorial. You've learn
 - System design patterns for distributed systems
 - Advanced debugging techniques
 
-**How-To Guides**: Practical solutions for production Python development
+**Practical Recipes**: [Python Cookbook](/learn/swe/prog-lang/python/how-to/cookbook)
+
+- Production-ready code patterns
+- Real-world solutions
+- Copy-paste-modify approach
+
+**How-To Guides**: [Python How-To Guides](/learn/swe/prog-lang/python/how-to/overview)
+
+- Focused tutorials on advanced techniques
+- Best practices for production systems
+- Deep dives into frameworks and tools
+
+**Best Practices**: [Python Best Practices](/learn/swe/prog-lang/python/explanation/best-practices)
+
+- Professional coding standards
+- Performance and security guidelines
+- Maintainability patterns
+
+**Reference Materials**:
+
+- [Python Cheat Sheet](/learn/swe/prog-lang/python/reference/cheat-sheet) - Quick syntax reference
+- [Python Glossary](/learn/swe/prog-lang/python/reference/glossary) - Term definitions
+- [Python Resources](/learn/swe/prog-lang/python/reference/resources) - Learning materials and tools
 
 ---
 
-**Keep practicing and building!** The best way to master these patterns is to apply them in real projects.
+**Keep practicing and building!** The best way to master these patterns is to apply them in real projects. Check the [Anti-Patterns](/learn/swe/prog-lang/python/explanation/anti-patterns) guide to learn what to avoid.

@@ -33,13 +33,41 @@ This Beginner tutorial teaches **comprehensive Python fundamentals** - everythin
 - Practical exercises at 4 difficulty levels
 - Common patterns and troubleshooting
 
-**After this Beginner tutorial**, check out the How-To Guides for practical patterns and real-world problem solving, or progress to the Intermediate tutorial for production-level techniques.
+**After this Beginner tutorial**, check out the [Python Cookbook](/learn/swe/prog-lang/python/how-to/cookbook) and [How-To Guides](/learn/swe/prog-lang/python/how-to/overview) for practical patterns and real-world problem solving, or progress to the [Intermediate tutorial](/learn/swe/prog-lang/python/tutorials/intermediate) for production-level techniques.
 
 ## 📋 Prerequisites
 
 - Basic programming knowledge in any language
 - Familiarity with command line/terminal
 - Understanding of basic computer science concepts
+- Python installed (see [Initial Setup](/learn/swe/prog-lang/python/tutorials/initial-setup) if needed)
+
+## Learning Path
+
+This comprehensive tutorial covers Python fundamentals progressively from basic syntax to advanced object-oriented programming:
+
+```mermaid
+%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+graph TB
+    Start[Start: Python Basics] --> Syntax[Basic Syntax<br/>Variables, Types, Operators]
+    Syntax --> Flow[Control Flow<br/>If, Loops, Logic]
+    Flow --> Collections[Collections<br/>Lists, Dicts, Sets, Tuples]
+    Collections --> Functions[Functions<br/>Definition, Parameters, Returns]
+    Functions --> OOP[Object-Oriented<br/>Classes, Inheritance]
+    OOP --> Advanced[Advanced Topics<br/>File I/O, Modules, Testing]
+    Advanced --> Ready[Ready to Build!]
+
+    style Start fill:#0173B2
+    style Ready fill:#029E73
+    style Syntax fill:#DE8F05
+    style Flow fill:#DE8F05
+    style Collections fill:#DE8F05
+    style Functions fill:#DE8F05
+    style OOP fill:#CC78BC
+    style Advanced fill:#CC78BC
+```
+
+This tutorial provides **0-60% coverage** of Python knowledge, giving you a solid foundation to build real applications and progress to [Intermediate](/learn/swe/prog-lang/python/tutorials/intermediate) and [Advanced](/learn/swe/prog-lang/python/tutorials/advanced) topics.
 
 ## 🚀 Why Python?
 
@@ -55,9 +83,9 @@ This Beginner tutorial teaches **comprehensive Python fundamentals** - everythin
 
 ### Installation
 
-Visit [python.org/downloads](https://www.python.org/downloads/) and download the installer for your platform.
+If you haven't installed Python yet, follow the [Initial Setup](/learn/swe/prog-lang/python/tutorials/initial-setup) tutorial for step-by-step installation instructions.
 
-Verify installation:
+Quick verification:
 
 ```bash
 # Windows
@@ -532,6 +560,8 @@ Before moving forward, ensure you can:
 **Quick Check**: Can you write a function that takes a list of dictionaries (each with "name" and "score" keys) and returns a sorted list by score (highest first)?
 
 ## 🎭 Object-Oriented Programming
+
+Object-oriented programming is central to Python. For deeper coverage, see the [Intermediate tutorial](/learn/swe/prog-lang/python/tutorials/intermediate) for decorators, metaclasses, and design patterns, or check [Work with classes effectively](/learn/swe/prog-lang/python/how-to/work-with-classes-effectively) for practical patterns.
 
 ### Classes and Objects
 
@@ -1030,6 +1060,8 @@ pip freeze > requirements.txt
 
 ## 🧪 Testing Basics
 
+Testing is essential for reliable software. For comprehensive testing strategies, see [Write effective tests](/learn/swe/prog-lang/python/how-to/write-effective-tests) and the [Intermediate tutorial](/learn/swe/prog-lang/python/tutorials/intermediate).
+
 ### Writing Tests with pytest
 
 Install pytest:
@@ -1212,7 +1244,7 @@ Congratulations! You've completed the Python Beginner tutorial. You've learned:
 
 ## 📚 What's Next?
 
-**Intermediate Tutorial**: [Python Intermediate](intermediate)
+**Intermediate Tutorial**: [Python Intermediate](/learn/swe/prog-lang/python/tutorials/intermediate)
 
 - Advanced OOP (decorators, metaclasses, descriptors)
 - Concurrency and parallelism (threading, multiprocessing, asyncio)
@@ -1221,14 +1253,30 @@ Congratulations! You've completed the Python Beginner tutorial. You've learned:
 - Building REST APIs with Flask/FastAPI
 - Production-ready patterns
 
-**How-To Guides**: Check out practical Python solutions for common patterns
+**Practical Recipes**: [Python Cookbook](/learn/swe/prog-lang/python/how-to/cookbook)
 
-**Advanced Tutorial**: [Python Advanced](advanced)
+- 30+ copy-paste-modify solutions
+- Real-world problem solving
+- Quick reference for common tasks
+
+**How-To Guides**: [Python How-To Guides](/learn/swe/prog-lang/python/how-to/overview)
+
+- Focused tutorials on specific techniques
+- Best practices and patterns
+- Deep dives into Python features
+
+**Advanced Tutorial**: [Python Advanced](/learn/swe/prog-lang/python/tutorials/advanced)
 
 - Python internals (GIL, memory management)
 - Advanced metaprogramming
 - C extensions and optimization
 - System design patterns
+
+**Best Practices**: [Python Best Practices](/learn/swe/prog-lang/python/explanation/best-practices) and [Anti-Patterns](/learn/swe/prog-lang/python/explanation/anti-patterns)
+
+- Industry-standard coding conventions
+- What to do and what to avoid
+- Performance and maintainability tips
 
 ## 🆘 Troubleshooting
 
@@ -1250,4 +1298,4 @@ Congratulations! You've completed the Python Beginner tutorial. You've learned:
 
 ---
 
-**Still stuck?** Visit [Python Documentation](https://docs.python.org/) or [Python Community Forums](https://discuss.python.org/).
+**Still stuck?** Visit [Python Documentation](https://docs.python.org/) or [Python Community Forums](https://discuss.python.org/). Also check our [Python Resources](/learn/swe/prog-lang/python/reference/resources) for more learning materials and [Python Glossary](/learn/swe/prog-lang/python/reference/glossary) for term definitions.
