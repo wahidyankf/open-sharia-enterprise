@@ -2,7 +2,7 @@
 title: "How to Use Advanced Async Patterns"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000200
+weight: 1000018
 description: "Practical techniques for advanced asynchronous programming in Python using asyncio, aiohttp, async context managers, and async generators"
 ---
 

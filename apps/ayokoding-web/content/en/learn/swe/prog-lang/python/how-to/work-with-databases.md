@@ -2,7 +2,7 @@
 title: "How to Work with Databases"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000210
+weight: 1000019
 description: "Practical techniques for working with databases in Python using SQLAlchemy, async SQLAlchemy, migrations with Alembic, and connection pooling"
 ---
 

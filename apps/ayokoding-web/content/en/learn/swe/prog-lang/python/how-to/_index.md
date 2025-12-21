@@ -2,7 +2,7 @@
 title: How-To Guides
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 200000
+weight: 100003
 description: Practical recipes and patterns for solving real-world Python problems
 ---
 
@@ -29,5 +29,4 @@ description: Practical recipes and patterns for solving real-world Python proble
 - [How to Build REST APIs](/en/learn/swe/prog-lang/python/how-to/build-rest-apis)
 - [How to Implement Data Validation](/en/learn/swe/prog-lang/python/how-to/data-validation-patterns)
 - [How to Implement Security Best Practices](/en/learn/swe/prog-lang/python/how-to/security-best-practices)
-- [How to Use Type Hints Effectively](/en/learn/swe/prog-lang/python/how-to/type-hints-effectively)
 - [How to Manage Packages and Dependencies](/en/learn/swe/prog-lang/python/how-to/package-management)

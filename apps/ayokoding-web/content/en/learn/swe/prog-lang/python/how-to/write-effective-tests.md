@@ -2,7 +2,7 @@
 title: "How to Write Effective Tests"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 1000150
+weight: 1000013
 description: "Master Python testing with pytest, fixtures, mocking, and effective test organization"
 tags: ["python", "testing", "pytest", "fixtures", "mocking"]
 categories: ["learn"]

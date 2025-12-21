@@ -2,7 +2,7 @@
 title: "How to Handle Files and Resources"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 1000100
+weight: 1000008
 description: "Master Python file I/O with context managers, pathlib, and proper resource management"
 tags: ["python", "files", "io", "pathlib", "context-managers"]
 categories: ["learn"]
