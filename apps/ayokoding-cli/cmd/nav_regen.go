@@ -12,7 +12,6 @@ import (
 
 var (
 	regenPath    string
-	regenDryRun  bool
 	regenExclude []string
 )
 
@@ -26,7 +25,7 @@ navigation trees based on file structure 3 layers deep. Items are sorted
 by weight within each level.`,
 	Example: `  ayokoding-cli nav regen
   ayokoding-cli nav regen --path apps/ayokoding-web/content/en/learn
-  ayokoding-cli nav regen --verbose --dry-run
+  ayokoding-cli nav regen --verbose
   ayokoding-cli nav regen -o json`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runNavRegen,
@@ -36,7 +35,6 @@ func init() {
 	navCmd.AddCommand(navRegenCmd)
 
 	navRegenCmd.Flags().StringVarP(&regenPath, "path", "p", "", "content directory (default: apps/ayokoding-web/content)")
-	navRegenCmd.Flags().BoolVar(&regenDryRun, "dry-run", false, "preview changes without writing")
 	navRegenCmd.Flags().StringSliceVar(&regenExclude, "exclude", []string{"en/_index.md", "id/_index.md"}, "files to exclude")
 }
 
@@ -57,16 +55,12 @@ func runNavRegen(cmd *cobra.Command, args []string) error {
 
 	// Text output header (unless quiet or JSON)
 	if !quiet && output == "text" {
-		if regenDryRun {
-			fmt.Println("DRY RUN MODE (no files will be modified)")
-		}
 		fmt.Printf("Regenerating navigation for: %s\n", absPath)
 		fmt.Println("---")
 	}
 
 	startTime := time.Now()
 
-	// TODO: Pass dry-run flag to navigation package (future enhancement)
 	result, err := navigation.RegenerateNavigation(absPath)
 	if err != nil {
 		return fmt.Errorf("navigation regeneration failed: %w", err)
