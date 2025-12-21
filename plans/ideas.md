@@ -14,6 +14,7 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 - Research about what demo app to create (assess the ergonomics of programming languages/framework)
 - Research about enterprise architecture
 - Research about middleware architecture
+- Research about C4 or other similar system architecture definition
 
 ### Infrastructure
 
