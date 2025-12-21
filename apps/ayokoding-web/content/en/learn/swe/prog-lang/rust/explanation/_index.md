@@ -7,6 +7,6 @@ weight: 400000
 type: docs
 ---
 
-- [Explanation Overview](overview)
+- [Overview](overview)
 - [Rust Best Practices and Design Principles](best-practices)
 - [Common Rust Anti-Patterns](anti-patterns)

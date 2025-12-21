@@ -8,7 +8,7 @@ type: docs
 layout: list
 ---
 
-- [Tutorial Overview](overview)
+- [Overview](overview)
 - [Initial Setup](initial-setup)
 - [Quick Start](quick-start)
 - [Complete Beginner's Guide to Kotlin](beginner)

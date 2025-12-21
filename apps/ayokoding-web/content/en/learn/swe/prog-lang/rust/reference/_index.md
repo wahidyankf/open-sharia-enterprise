@@ -7,7 +7,7 @@ weight: 300000
 type: docs
 ---
 
-- [Reference Overview](overview)
+- [Overview](overview)
 - [Rust Cheat Sheet](cheat-sheet)
 - [Rust Glossary](glossary)
 - [Rust Resources](resources)

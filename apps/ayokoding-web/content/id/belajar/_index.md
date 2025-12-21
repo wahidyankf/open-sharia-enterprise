@@ -11,4 +11,8 @@ weight: 10
   - [Peralatan](manusia/peralatan)
     - [Ikhtisar](manusia/peralatan/ikhtisar)
     - [CliftonStrengths](manusia/peralatan/cliftonstrengths)
+- [Rekayasa Perangkat Lunak](swe)
+  - [Ikhtisar](swe/ikhtisar)
+  - [Bahasa Pemrograman](swe/prog-lang)
+    - [Ikhtisar](swe/prog-lang/ikhtisar)
 - [Perkenalan](perkenalan)
