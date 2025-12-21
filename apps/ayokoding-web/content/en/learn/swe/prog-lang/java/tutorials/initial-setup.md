@@ -14,7 +14,7 @@ categories:
   - learn
 ---
 
-**Get Java running quickly.** This tutorial provides the quickest path to running your first Java program. You'll install the Java Development Kit (JDK), verify it works, and run a simple "Hello World" application.
+Ever wondered how enterprise systems that process millions of transactions daily get started? It begins exactly where you are now - setting up your development environment. This tutorial provides the quickest path to running your first Java program. You'll install the Java Development Kit (JDK), verify it works, and run a simple "Hello World" application.
 
 ## What You'll Achieve
 
@@ -29,6 +29,22 @@ By the end of this tutorial, you'll have:
 
 - **Basic command line familiarity** - You should know how to open a terminal/command prompt and navigate directories
 - **No programming experience required** - This tutorial assumes you're completely new to Java
+
+## Learning Path
+
+```mermaid
+graph TD
+    A[Initial Setup<br/>THIS TUTORIAL] --> B[Quick Start<br/>Basic Syntax]
+    B --> C[Beginner<br/>OOP Foundations]
+    C --> D[Intermediate<br/>Advanced OOP]
+    D --> E[Advanced<br/>Concurrency & Patterns]
+
+    style A fill:#0173B2,stroke:#0173B2,color:#fff
+    style B fill:#029E73,stroke:#029E73,color:#fff
+    style C fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style D fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style E fill:#CA9161,stroke:#CA9161,color:#fff
+```
 
 ## Why Learn Java?
 
@@ -335,6 +351,31 @@ Congratulations! You have a working Java development environment.
 - **[Java Quick Start](quick-start)** - Learn enough Java to explore independently. Perfect if you want a quick overview of core syntax and concepts.
 
 - **[Complete Beginner's Guide to Java](beginner)** - Comprehensive foundation covering Java fundamentals from zero. Choose this if you want in-depth coverage with practice exercises.
+
+## Related Content
+
+**Next Steps:**
+
+- [Java Quick Start Tutorial](/en/learn/swe/prog-lang/java/tutorials/quick-start) - Learn basic syntax and control flow
+- [Java Beginner Tutorial](/en/learn/swe/prog-lang/java/tutorials/beginner) - Comprehensive OOP foundations
+
+**How-To Guides:**
+
+- [How to Set Up IntelliJ IDEA](/en/learn/swe/prog-lang/java/how-to/setup-intellij-idea) - IDE configuration
+- [How to Set Up VS Code for Java](/en/learn/swe/prog-lang/java/how-to/setup-vscode-java) - VS Code setup
+- [How to Debug Java Code](/en/learn/swe/prog-lang/java/how-to/debug-java-code) - Debugging basics
+- [How to Manage Dependencies with Maven](/en/learn/swe/prog-lang/java/how-to/manage-dependencies-maven) - Build tools
+- [How to Organize Java Projects](/en/learn/swe/prog-lang/java/how-to/organize-java-projects) - Project structure
+
+**Cookbook:**
+
+- [Java Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook) - Ready-to-use code snippets
+
+**Reference:**
+
+- [Java Cheat Sheet](/en/learn/swe/prog-lang/java/reference/cheat-sheet) - Quick syntax reference
+- [Java Glossary](/en/learn/swe/prog-lang/java/reference/glossary) - Common Java terms
+- [Java Resources](/en/learn/swe/prog-lang/java/reference/resources) - External learning materials
 
 ### What's Next?
 

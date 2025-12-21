@@ -19,7 +19,7 @@ categories:
 
 # Java Quick Start
 
-**Learn enough Java to explore independently.** This tutorial gives you a quick tour of Java's essential features. You'll explore variables, methods, classes, collections, and error handling through practical examples. Perfect for getting a quick overview before diving into comprehensive learning.
+Want to build real applications without spending months on theory? This tutorial gives you a quick tour of Java's essential features - just enough to start creating working programs. You'll explore variables, methods, classes, collections, and error handling through practical examples. Perfect for getting a quick overview before diving into comprehensive learning.
 
 ## What You'll Achieve
 
@@ -724,6 +724,40 @@ When you're ready for depth:
 
 - **[Oracle Java Documentation](https://docs.oracle.com/en/java/javase/21/)** - Official reference
 - **[Java Language Specification](https://docs.oracle.com/javase/specs/)** - Complete language details
+
+---
+
+## Related Content
+
+**Previous Tutorial:**
+
+- [Initial Setup](/en/learn/swe/prog-lang/java/tutorials/initial-setup) - Install JDK and verify setup
+
+**Next Steps:**
+
+- [Java Beginner Tutorial](/en/learn/swe/prog-lang/java/tutorials/beginner) - Deep dive into OOP
+- [Java Intermediate Tutorial](/en/learn/swe/prog-lang/java/tutorials/intermediate) - Advanced OOP patterns
+
+**How-To Guides:**
+
+- [How to Use Java Collections Effectively](/en/learn/swe/prog-lang/java/how-to/use-collections-effectively) - Collection best practices
+- [How to Handle Exceptions Effectively](/en/learn/swe/prog-lang/java/how-to/handle-exceptions-effectively) - Error handling patterns
+- [How to Write Unit Tests](/en/learn/swe/prog-lang/java/how-to/write-unit-tests) - Testing basics
+- [How to Use Streams Effectively](/en/learn/swe/prog-lang/java/how-to/use-streams-effectively) - Functional programming
+- [How to Implement Builder Pattern](/en/learn/swe/prog-lang/java/how-to/implement-builder-pattern) - Object construction
+
+**Cookbook:**
+
+- [Java Cookbook](/en/learn/swe/prog-lang/java/how-to/cookbook) - Ready-to-use code snippets
+
+**Explanations:**
+
+- [Best Practices](/en/learn/swe/prog-lang/java/explanation/best-practices) - Code quality guidelines
+- [Anti-Patterns](/en/learn/swe/prog-lang/java/explanation/anti-patterns) - Common mistakes to avoid
+
+**Reference:**
+
+- [Java Cheat Sheet](/en/learn/swe/prog-lang/java/reference/cheat-sheet) - Complete syntax reference
 
 ---
 
