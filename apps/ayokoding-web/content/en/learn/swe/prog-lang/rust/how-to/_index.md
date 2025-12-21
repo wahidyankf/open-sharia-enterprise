@@ -12,7 +12,7 @@ type: docs
 - [How to Document Code Effectively](code-documentation)
 - [How to Use Async Programming Patterns](async-programming-patterns)
 - [How to Implement Testing Strategies](testing-patterns)
-- [How-To Guides Overview](overview)
+- [Overview](overview)
 - [Rust Cookbook](cookbook)
 - [Working with Ownership](working-with-ownership)
 - [Error Handling Strategies](error-handling-strategies)

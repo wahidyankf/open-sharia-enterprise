@@ -15,6 +15,7 @@ weight: 10
     - [Java](swe/prog-lang/java)
     - [Kotlin](swe/prog-lang/kotlin)
     - [Rust](swe/prog-lang/rust)
+    - [Elixir](swe/prog-lang/elixir)
   - [System Design](swe/system-design)
     - [Overview](swe/system-design/overview)
     - [AI-Powered Personal Finance Advisor](swe/system-design/ai-personal-finance-advisor)

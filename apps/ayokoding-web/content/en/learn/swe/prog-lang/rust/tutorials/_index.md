@@ -7,7 +7,7 @@ weight: 100000
 type: docs
 ---
 
-- [Tutorials Overview](overview)
+- [Overview](overview)
 - [Initial Setup for Rust](initial-setup)
 - [Rust Quick Start](quick-start)
 - [Complete Beginner's Guide to Rust](beginner)

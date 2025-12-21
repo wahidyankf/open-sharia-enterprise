@@ -8,7 +8,7 @@ type: docs
 layout: list
 ---
 
-- [Reference Overview](overview)
+- [Overview](overview)
 - [Kotlin Cheat Sheet](cheat-sheet)
 - [Kotlin Glossary](glossary)
 - [Kotlin Resources](resources)
