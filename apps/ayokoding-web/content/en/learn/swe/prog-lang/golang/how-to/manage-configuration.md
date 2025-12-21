@@ -582,28 +582,489 @@ func main() {
 }
 ```
 
-## Summary
+## How It Works
 
-Configuration management in Go uses environment variables as the primary mechanism, with .env files for development convenience and flag package for command-line overrides. Environment variables work universally across deployment platforms and keep secrets out of version control.
+### Configuration Loading Pipeline
 
-godotenv loads .env files in development without requiring environment variable setup on each developer machine. Production deployments use actual environment variables. Never commit .env files containing secrets - use .env.example templates instead.
+Go configuration follows a layered approach with priority resolution:
 
-flag package provides command-line argument parsing with type safety and automatic help text generation. Define flags with default values, parse with flag.Parse(), access through pointers. Combine with environment variables for flexible configuration.
+1. **Default Values**: Hardcoded fallbacks in application code
+2. **Config Files**: YAML/JSON/TOML loaded from filesystem
+3. **Environment Variables**: OS-level configuration (12-factor apps)
+4. **Command-Line Flags**: Runtime overrides via CLI arguments
+5. **Merge and Resolve**: Higher priority sources override lower ones
 
-Viper offers advanced configuration features - multiple file formats (YAML, JSON, TOML), hierarchical configuration, environment variable binding, command-line flag binding, and configuration file watching. Use when applications need complex configuration with multiple sources.
+### Environment Variable Resolution
 
-Configuration priority follows command-line flags > environment variables > config files > defaults. This ordering lets operators override any setting at runtime without modifying files. Viper implements this priority automatically.
+`os.Getenv()` reads from process environment:
 
-Validation ensures configuration correctness at startup. Check required fields exist, validate ranges for numeric values, verify URLs parse correctly. Fail fast during initialization rather than crashing later during request handling.
+- Queries OS environment table (inherited from parent process)
+- Returns empty string if variable not set (no error)
+- Case-sensitive on Unix-like systems
+- Available at any point in program execution
+- No parsing - always returns string
 
-Never hardcode secrets in source code. Load from environment variables, secret management services (AWS Secrets Manager, HashiCorp Vault), or encrypted configuration files. Fail immediately if required secrets are missing.
+### Viper Configuration Cascade
 
-Configuration reloading with Viper's watch capability enables updating settings without restarting applications. Watch configuration files for changes, reload on modification, apply new settings. Useful for feature flags and operational parameters.
+Viper merges multiple configuration sources:
 
-Struct-based configuration with mapstructure tags provides type safety and validation. Unmarshal configuration into structs with proper types, validate with custom validation methods. This approach catches configuration errors at startup, not during runtime.
+```
+defaults (SetDefault)
+    ↓
+config files (ReadInConfig)
+    ↓ overrides
+environment variables (AutomaticEnv)
+    ↓ overrides
+command-line flags (BindPFlags)
+    ↓ overrides
+explicit Set calls (highest priority)
+```
 
-## Related Content
+Each layer overrides values from layers above it.
 
-- [Go Best Practices and Idioms](/en/learn/swe/prog-lang/golang/explanation/best-practices)
-- [How to Handle Files and Resources](/en/learn/swe/prog-lang/golang/how-to/handle-files-and-resources)
-- [How to Build CLI Applications](/en/learn/swe/prog-lang/golang/how-to/build-cli-applications)
+### godotenv File Parsing
+
+godotenv loads `.env` files into environment:
+
+1. **Read File**: Parse `.env` line by line
+2. **Parse Lines**: Extract `KEY=value` pairs
+3. **Set Environment**: Call `os.Setenv()` for each pair
+4. **Skip Existing**: Does NOT override existing env vars
+5. **Comments**: Ignore lines starting with `#`
+
+**Important**: godotenv sets actual environment variables, affecting `os.Getenv()` globally.
+
+### Flag Package Parsing
+
+`flag` package provides CLI argument parsing:
+
+- **Definition Phase**: `flag.String()`, `flag.Int()` register flags
+- **Parse Phase**: `flag.Parse()` reads `os.Args`
+- **Access Phase**: Dereference flag pointers to get values
+- **Type Safety**: Automatic type conversion and validation
+- **Help Text**: `-h` or `-help` shows usage automatically
+
+## Variations
+
+### 1. Multiple Environment Files
+
+Load different `.env` files per environment:
+
+```go
+func LoadEnvByEnvironment() error {
+    env := os.Getenv("GO_ENV")
+    if env == "" {
+        env = "development"
+    }
+
+    // Load base .env
+    if err := godotenv.Load(".env"); err != nil {
+        log.Println("No .env file")
+    }
+
+    // Load environment-specific file (overrides base)
+    envFile := fmt.Sprintf(".env.%s", env)
+    if err := godotenv.Load(envFile); err != nil {
+        log.Printf("No %s file\n", envFile)
+    }
+
+    return nil
+}
+
+// File structure:
+// .env              (shared defaults)
+// .env.development  (dev overrides)
+// .env.production   (prod overrides)
+// .env.test         (test overrides)
+```
+
+**Trade-offs**: Flexible per-environment config but more files to manage.
+
+### 2. Configuration as Code
+
+Use Go code for complex configuration logic:
+
+```go
+type Config struct {
+    Environment string
+    Database    DatabaseConfig
+    Cache       CacheConfig
+}
+
+func NewConfig() *Config {
+    env := os.Getenv("GO_ENV")
+    if env == "" {
+        env = "development"
+    }
+
+    config := &Config{Environment: env}
+
+    switch env {
+    case "production":
+        config.Database = DatabaseConfig{
+            Host:           os.Getenv("DB_HOST"),
+            MaxConnections: 100,
+            SSLMode:        "require",
+        }
+        config.Cache = CacheConfig{
+            Enabled: true,
+            TTL:     time.Hour,
+        }
+    case "development":
+        config.Database = DatabaseConfig{
+            Host:           "localhost",
+            MaxConnections: 10,
+            SSLMode:        "disable",
+        }
+        config.Cache = CacheConfig{
+            Enabled: false,
+        }
+    }
+
+    return config
+}
+```
+
+**Trade-offs**: Type-safe and flexible but requires recompilation for changes.
+
+### 3. Remote Configuration with etcd/Consul
+
+Fetch configuration from distributed key-value stores:
+
+```go
+import "github.com/hashicorp/consul/api"
+
+func LoadConfigFromConsul() (*Config, error) {
+    client, err := api.NewClient(api.DefaultConfig())
+    if err != nil {
+        return nil, err
+    }
+
+    kv := client.KV()
+
+    // Get configuration values
+    pair, _, err := kv.Get("app/config/database_url", nil)
+    if err != nil {
+        return nil, err
+    }
+
+    config := &Config{
+        DatabaseURL: string(pair.Value),
+    }
+
+    return config, nil
+}
+```
+
+**Trade-offs**: Centralized config and dynamic updates but adds infrastructure dependency.
+
+### 4. Configuration Providers Pattern
+
+Abstract configuration source behind interface:
+
+```go
+type ConfigProvider interface {
+    GetString(key string) string
+    GetInt(key string) int
+    GetBool(key string) bool
+}
+
+// Environment provider
+type EnvProvider struct{}
+
+func (p *EnvProvider) GetString(key string) string {
+    return os.Getenv(key)
+}
+
+// Viper provider
+type ViperProvider struct{}
+
+func (p *ViperProvider) GetString(key string) string {
+    return viper.GetString(key)
+}
+
+// Use in application
+type App struct {
+    config ConfigProvider
+}
+
+func (app *App) Start() {
+    dbURL := app.config.GetString("DATABASE_URL")
+    // Use dbURL...
+}
+```
+
+**Trade-offs**: Decouples from specific config library but adds abstraction layer.
+
+### 5. Typed Configuration with Struct Tags
+
+Use struct tags for validation and transformation:
+
+```go
+import "github.com/kelseyhightower/envconfig"
+
+type Config struct {
+    Port     int    `envconfig:"PORT" default:"8080"`
+    Host     string `envconfig:"HOST" default:"localhost"`
+    Debug    bool   `envconfig:"DEBUG" default:"false"`
+    DBMaxConn int   `envconfig:"DB_MAX_CONN" required:"true"`
+}
+
+func LoadTypedConfig() (*Config, error) {
+    var config Config
+    err := envconfig.Process("", &config)
+    if err != nil {
+        return nil, err
+    }
+    return &config, nil
+}
+```
+
+**Trade-offs**: Declarative and type-safe but limited to environment variables.
+
+## Common Pitfalls
+
+### 1. Hardcoding Secrets
+
+**Problem**: Secrets committed to version control:
+
+```go
+// Bad: Secret in code
+const APIKey = "sk_live_1234567890abcdef"
+
+func callAPI() {
+    client := api.NewClient(APIKey)  // Secret exposed!
+}
+```
+
+**Solution**: Always load secrets from environment:
+
+```go
+// Good: Secret from environment
+func callAPI() error {
+    apiKey := os.Getenv("API_KEY")
+    if apiKey == "" {
+        return errors.New("API_KEY not set")
+    }
+
+    client := api.NewClient(apiKey)
+    return nil
+}
+
+// Even better: Fail fast at startup
+func MustGetAPIKey() string {
+    apiKey := os.Getenv("API_KEY")
+    if apiKey == "" {
+        log.Fatal("API_KEY environment variable required")
+    }
+    return apiKey
+}
+```
+
+### 2. Not Validating Configuration
+
+**Problem**: Invalid configuration causes runtime failures:
+
+```go
+// Bad: No validation
+func main() {
+    port := os.Getenv("PORT")
+    // What if PORT="invalid"? Runtime panic!
+    portNum, _ := strconv.Atoi(port)
+    server.Start(portNum)
+}
+```
+
+**Solution**: Validate early at startup:
+
+```go
+// Good: Validate and fail fast
+func LoadConfig() (*Config, error) {
+    portStr := os.Getenv("PORT")
+    if portStr == "" {
+        return nil, errors.New("PORT required")
+    }
+
+    port, err := strconv.Atoi(portStr)
+    if err != nil {
+        return nil, fmt.Errorf("PORT must be integer: %w", err)
+    }
+
+    if port < 1024 || port > 65535 {
+        return nil, fmt.Errorf("PORT must be 1024-65535, got %d", port)
+    }
+
+    return &Config{Port: port}, nil
+}
+
+func main() {
+    config, err := LoadConfig()
+    if err != nil {
+        log.Fatalf("Configuration error: %v", err)
+    }
+
+    server.Start(config.Port)
+}
+```
+
+### 3. Ignoring Config File Errors
+
+**Problem**: Silently ignoring missing or invalid config files:
+
+```go
+// Bad: Ignoring errors
+viper.ReadInConfig()  // Might fail silently
+config := viper.GetString("database.url")  // Returns empty string on error!
+```
+
+**Solution**: Handle config file errors explicitly:
+
+```go
+// Good: Explicit error handling
+if err := viper.ReadInConfig(); err != nil {
+    if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+        log.Println("Config file not found, using defaults")
+    } else {
+        log.Fatalf("Error reading config file: %v", err)
+    }
+}
+
+dbURL := viper.GetString("database.url")
+if dbURL == "" {
+    log.Fatal("database.url not configured")
+}
+```
+
+### 4. Not Setting Defaults
+
+**Problem**: Application breaks when optional config missing:
+
+```go
+// Bad: No defaults
+timeout := os.Getenv("TIMEOUT")
+timeoutDuration, _ := time.ParseDuration(timeout)  // Zero value if empty!
+// timeoutDuration is 0, requests never timeout
+```
+
+**Solution**: Always provide sensible defaults:
+
+```go
+// Good: Defaults for optional config
+func GetTimeout() time.Duration {
+    timeoutStr := os.Getenv("TIMEOUT")
+    if timeoutStr == "" {
+        return 30 * time.Second  // Default
+    }
+
+    timeout, err := time.ParseDuration(timeoutStr)
+    if err != nil {
+        log.Printf("Invalid TIMEOUT, using default: %v", err)
+        return 30 * time.Second
+    }
+
+    return timeout
+}
+```
+
+### 5. Mutating Configuration at Runtime
+
+**Problem**: Changing configuration during execution leads to race conditions:
+
+```go
+// Bad: Mutable global config
+var GlobalConfig = &Config{}
+
+func UpdateConfig(newPort int) {
+    GlobalConfig.Port = newPort  // Race condition!
+}
+
+func HandleRequest() {
+    port := GlobalConfig.Port  // Might read mid-update
+}
+```
+
+**Solution**: Make configuration immutable or use proper synchronization:
+
+```go
+// Good: Immutable config
+func main() {
+    config := LoadConfig()  // Load once
+
+    server := NewServer(config)  // Pass to components
+    server.Start()
+}
+
+// Better: If config must update, use atomic operations
+type AtomicConfig struct {
+    value atomic.Value  // stores *Config
+}
+
+func (ac *AtomicConfig) Load() *Config {
+    return ac.value.Load().(*Config)
+}
+
+func (ac *AtomicConfig) Store(config *Config) {
+    ac.value.Store(config)
+}
+```
+
+### 6. Mixing Configuration Concerns
+
+**Problem**: Business logic mixed with configuration loading:
+
+```go
+// Bad: Logic in config loading
+func LoadConfig() *Config {
+    port, _ := strconv.Atoi(os.Getenv("PORT"))
+
+    // Business logic doesn't belong here!
+    if port == 8080 {
+        setupDevMode()
+    } else {
+        setupProdMode()
+    }
+
+    return &Config{Port: port}
+}
+```
+
+**Solution**: Separate configuration from application logic:
+
+```go
+// Good: Pure configuration loading
+func LoadConfig() (*Config, error) {
+    port, err := getEnvAsInt("PORT", 8080)
+    if err != nil {
+        return nil, err
+    }
+
+    return &Config{Port: port}, nil
+}
+
+// Business logic elsewhere
+func main() {
+    config, err := LoadConfig()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Application logic based on config
+    if config.Port == 8080 {
+        setupDevMode()
+    } else {
+        setupProdMode()
+    }
+
+    runApp(config)
+}
+```
+
+## Related Patterns
+
+**Related Tutorial**: See [Beginner Tutorial - Configuration](../tutorials/beginner.md#configuration) for configuration basics.
+
+**Related How-To**: See [Handle Files and Resources](./handle-files-and-resources.md) for config file reading, [Build CLI Applications](./build-cli-applications.md) for flag parsing, [Handle Errors Effectively](./handle-errors-effectively.md) for config validation errors.
+
+**Related Cookbook**: See Cookbook recipes "Environment Variables", "Viper Configuration", "Configuration Validation" for ready-to-use config patterns.
+
+**Related Explanation**: See [Best Practices](../explanation/best-practices.md) for configuration principles.
