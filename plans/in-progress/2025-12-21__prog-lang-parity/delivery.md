@@ -347,12 +347,18 @@ Feature: Clear parity standards defined
     - python/how-to/cookbook.md (weight: 1000030→1000001)
     - python/how-to/\*.md (23 guides reweighted: 1000040→1000002 through 1000260→1000023)
 
-- [ ] **Step 3.1.2**: Fix Python content gaps
+- [x] **Step 3.1.2**: Fix Python content gaps
   - Review content-gaps.md for Python
   - Expand files below minimum line counts
   - Add missing how-to guides (if any)
   - Expand cookbook if below 30 recipes
   - Commit: `feat(ayokoding-web): python content parity (expansions)`
+  - **Implementation Notes**: Expanded Python tutorials to meet minimum line count requirements. initial-setup.md expanded from 309 to 459 lines (target: 400+) with platform-specific installation tips, expanded troubleshooting section, pip explanation, and common installation issues. quick-start.md expanded from 440 to 708 lines (target: 600+) by adding new touchpoints: File I/O, JSON handling, virtual environments, common patterns (enumerate, zip, any/all), and Pythonic style tips. Both files now exceed targets.
+  - **Date**: 2025-12-21
+  - **Status**: Completed
+  - **Files Changed**:
+    - python/tutorials/initial-setup.md (309→459 lines, +150 lines)
+    - python/tutorials/quick-start.md (440→708 lines, +268 lines)
 
 - [ ] **Step 3.1.3**: Fix Python quality gaps
   - Review quality-gaps.md for Python

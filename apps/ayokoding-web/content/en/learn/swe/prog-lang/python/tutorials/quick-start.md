@@ -408,6 +408,273 @@ print(f"Random: {random_number}, Directory: {current_dir}")
 
 ---
 
+## 📁 File Input/Output
+
+Reading and writing files is simple in Python:
+
+```python
+# Writing to a file
+with open('data.txt', 'w') as f:
+    f.write("Hello, file!\n")
+    f.write("Second line\n")
+
+# Reading from a file
+with open('data.txt', 'r') as f:
+    content = f.read()
+    print(content)
+
+# Reading line by line
+with open('data.txt', 'r') as f:
+    for line in f:
+        print(line.strip())  # strip() removes newline
+
+# Appending to a file
+with open('data.txt', 'a') as f:
+    f.write("Appended line\n")
+```
+
+**File Modes**:
+
+- `'r'` - Read (default)
+- `'w'` - Write (overwrites existing file)
+- `'a'` - Append (adds to end of file)
+- `'r+'` - Read and write
+- `'rb'` - Read binary
+- `'wb'` - Write binary
+
+**Best Practices**:
+
+- Always use `with` statement - automatically closes files
+- Use `pathlib.Path` for cross-platform path handling
+- Handle file exceptions with try/except
+
+```python
+from pathlib import Path
+
+# Modern path handling
+file_path = Path('data') / 'users.txt'
+if file_path.exists():
+    text = file_path.read_text()
+    print(text)
+```
+
+---
+
+## 🗂️ Working with JSON
+
+JSON is Python's most common data interchange format:
+
+```python
+import json
+
+# Python dict to JSON
+data = {
+    'name': 'Alice',
+    'age': 30,
+    'skills': ['Python', 'JavaScript'],
+    'active': True
+}
+
+# Convert to JSON string
+json_string = json.dumps(data, indent=2)
+print(json_string)
+
+# Write JSON to file
+with open('user.json', 'w') as f:
+    json.dump(data, f, indent=2)
+
+# Read JSON from file
+with open('user.json', 'r') as f:
+    loaded_data = json.load(f)
+    print(loaded_data['name'])  # Alice
+
+# Parse JSON string
+json_text = '{"status": "success", "count": 42}'
+result = json.loads(json_text)
+print(result['count'])  # 42
+```
+
+**Key Functions**:
+
+- `json.dumps()` - Convert Python object to JSON string
+- `json.dump()` - Write Python object to file as JSON
+- `json.loads()` - Parse JSON string to Python object
+- `json.load()` - Read JSON file to Python object
+
+**JSON Type Mapping**:
+
+- Python `dict` ↔ JSON object
+- Python `list` ↔ JSON array
+- Python `str` ↔ JSON string
+- Python `int`/`float` ↔ JSON number
+- Python `True`/`False` ↔ JSON true/false
+- Python `None` ↔ JSON null
+
+---
+
+## 🔧 Virtual Environments
+
+Virtual environments isolate project dependencies:
+
+```bash
+# Create a virtual environment
+python -m venv venv
+
+# Activate it
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
+# Your prompt changes to show (venv)
+
+# Install packages (isolated to this project)
+pip install requests
+
+# List installed packages
+pip list
+
+# Save dependencies
+pip freeze > requirements.txt
+
+# Install from requirements file
+pip install -r requirements.txt
+
+# Deactivate when done
+deactivate
+```
+
+**Why Use Virtual Environments?**:
+
+- Each project has its own dependencies
+- Avoid version conflicts between projects
+- Easy to reproduce exact environment
+- Don't pollute global Python installation
+
+**Best Practice**: Create a new venv for every project.
+
+---
+
+## 🎨 Common Patterns
+
+### Enumerate for Index + Value
+
+```python
+fruits = ['apple', 'banana', 'cherry']
+
+# Without enumerate (not Pythonic)
+for i in range(len(fruits)):
+    print(f"{i}: {fruits[i]}")
+
+# With enumerate (Pythonic!)
+for i, fruit in enumerate(fruits):
+    print(f"{i}: {fruit}")
+
+# Start index at 1
+for i, fruit in enumerate(fruits, start=1):
+    print(f"{i}. {fruit}")
+```
+
+### Zip for Parallel Iteration
+
+```python
+names = ['Alice', 'Bob', 'Charlie']
+ages = [25, 30, 35]
+
+# Combine lists
+for name, age in zip(names, ages):
+    print(f"{name} is {age} years old")
+
+# Create dict from two lists
+user_dict = dict(zip(names, ages))
+print(user_dict)  # {'Alice': 25, 'Bob': 30, 'Charlie': 35}
+```
+
+### Any and All
+
+```python
+numbers = [1, 2, 3, 4, 5]
+
+# Check if any element is even
+has_even = any(n % 2 == 0 for n in numbers)  # True
+
+# Check if all elements are positive
+all_positive = all(n > 0 for n in numbers)  # True
+
+# Check if list is empty
+is_empty = not any(numbers)  # False
+```
+
+### Default Dictionary Values
+
+```python
+# Using dict.get() for safe access
+config = {'timeout': 30}
+timeout = config.get('timeout', 10)  # 30
+retries = config.get('retries', 3)   # 3 (default)
+
+# Using dict.setdefault()
+config.setdefault('retries', 3)  # Sets retries=3 if not exists
+print(config)  # {'timeout': 30, 'retries': 3}
+```
+
+---
+
+## 🐍 Pythonic Style Tips
+
+**Use in for Membership**:
+
+```python
+# Not Pythonic
+if name == 'Alice' or name == 'Bob' or name == 'Charlie':
+    print("Known user")
+
+# Pythonic
+if name in ['Alice', 'Bob', 'Charlie']:
+    print("Known user")
+```
+
+**Use with for Resources**:
+
+```python
+# Not Pythonic
+f = open('file.txt', 'r')
+try:
+    content = f.read()
+finally:
+    f.close()
+
+# Pythonic
+with open('file.txt', 'r') as f:
+    content = f.read()
+```
+
+**Use Comprehensions**:
+
+```python
+# Not Pythonic
+squares = []
+for i in range(10):
+    squares.append(i**2)
+
+# Pythonic
+squares = [i**2 for i in range(10)]
+```
+
+**Use Multiple Assignment**:
+
+```python
+# Not Pythonic
+temp = a
+a = b
+b = temp
+
+# Pythonic
+a, b = b, a
+```
+
+---
+
 ## ✅ Next Steps
 
 You now have touchpoints across Python's core concepts! To deepen your knowledge:
