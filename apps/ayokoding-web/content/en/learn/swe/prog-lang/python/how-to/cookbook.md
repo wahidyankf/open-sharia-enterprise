@@ -4,13 +4,6 @@ date: 2025-12-17T00:00:00+07:00
 draft: false
 description: Practical recipes and patterns for idiomatic Python programming
 weight: 1000030
-tags:
-  - python
-  - cookbook
-  - patterns
-  - best-practices
-  - type-hints
-  - async
 ---
 
 # Python Cookbook - Practical Recipes
@@ -4250,6 +4243,846 @@ rate2 = calculate_rate(100, 0)  # 0.0 (default)
 - Validate input data before calculations
 
 **When to use**: When performing division, calculating averages, percentages, or rates.
+
+---
+
+## 🔷 Advanced Async Patterns
+
+Modern Python applications leverage async/await for efficient I/O operations. These recipes show production-ready async patterns.
+
+### Recipe: Concurrent API Requests with Rate Limiting
+
+**Problem**: You need to fetch data from multiple API endpoints concurrently while respecting rate limits.
+
+**Solution**:
+
+```python
+import asyncio
+import aiohttp
+from typing import List, Dict
+from asyncio import Semaphore
+
+class RateLimitedClient:
+    """HTTP client with built-in rate limiting."""
+
+    def __init__(self, max_concurrent: int = 5, requests_per_second: float = 10):
+        self.semaphore = Semaphore(max_concurrent)
+        self.delay = 1.0 / requests_per_second
+        self.last_request = 0
+
+    async def fetch(self, session: aiohttp.ClientSession, url: str) -> Dict:
+        """Fetch URL with rate limiting."""
+        async with self.semaphore:
+            # Ensure minimum delay between requests
+            now = asyncio.get_event_loop().time()
+            time_since_last = now - self.last_request
+
+            if time_since_last < self.delay:
+                await asyncio.sleep(self.delay - time_since_last)
+
+            self.last_request = asyncio.get_event_loop().time()
+
+            try:
+                async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                    return {
+                        "url": url,
+                        "status": response.status,
+                        "data": await response.json()
+                    }
+            except asyncio.TimeoutError:
+                return {"url": url, "error": "timeout"}
+            except Exception as e:
+                return {"url": url, "error": str(e)}
+
+async def fetch_multiple_apis(urls: List[str]) -> List[Dict]:
+    """Fetch multiple URLs with rate limiting."""
+    client = RateLimitedClient(max_concurrent=5, requests_per_second=10)
+
+    async with aiohttp.ClientSession() as session:
+        tasks = [client.fetch(session, url) for url in urls]
+        return await asyncio.gather(*tasks)
+
+# Usage
+urls = [
+    "https://api.example.com/users/1",
+    "https://api.example.com/users/2",
+    "https://api.example.com/users/3",
+    # ... more URLs
+]
+
+results = asyncio.run(fetch_multiple_apis(urls))
+for result in results:
+    if "error" in result:
+        print(f"Failed {result['url']}: {result['error']}")
+    else:
+        print(f"Success {result['url']}: {result['status']}")
+```
+
+**When to use**: When making multiple concurrent HTTP requests, especially to rate-limited APIs.
+
+**See Also**:
+
+- [How to Use Advanced Async Patterns](./async-patterns-advanced.md) - Complete async guide
+- [Recipe: Async Context Managers](#recipe-2-context-managers-for-resources) - Resource management
+
+---
+
+### Recipe: Async Generator for Streaming Data
+
+**Problem**: You need to process large datasets without loading everything into memory.
+
+**Solution**:
+
+```python
+import asyncio
+from typing import AsyncIterator, Dict, List
+
+async def fetch_paginated_data(
+    page_size: int = 100,
+    max_pages: int = 10
+) -> AsyncIterator[Dict]:
+    """Stream paginated API results."""
+    page = 1
+
+    while page <= max_pages:
+        # Simulate API call
+        await asyncio.sleep(0.1)
+        data = await fetch_page(page, page_size)
+
+        if not data:
+            break
+
+        for item in data:
+            yield item
+
+        page += 1
+
+async def fetch_page(page: int, size: int) -> List[Dict]:
+    """Simulate fetching a page of data."""
+    if page > 3:
+        return []
+    return [{"id": i + (page - 1) * size, "page": page} for i in range(size)]
+
+# Usage - process items as they arrive
+async def process_large_dataset():
+    """Process items one at a time without loading all into memory."""
+    item_count = 0
+
+    async for item in fetch_paginated_data(page_size=50):
+        await process_item(item)
+        item_count += 1
+
+        if item_count % 50 == 0:
+            print(f"Processed {item_count} items...")
+
+async def process_item(item: Dict):
+    """Process individual item."""
+    await asyncio.sleep(0.01)  # Simulate processing
+    print(f"Processing {item['id']}")
+
+# Run
+asyncio.run(process_large_dataset())
+```
+
+**When to use**: When working with large datasets, streaming data, or paginated APIs.
+
+**Performance Impact**: Reduces memory usage from O(n) to O(1) for large datasets.
+
+---
+
+### Recipe: Background Task Management with Graceful Shutdown
+
+**Problem**: You need to run background tasks and cleanly shut them down.
+
+**Solution**:
+
+```python
+import asyncio
+from typing import Set, Coroutine
+
+class BackgroundTaskManager:
+    """Manage background tasks with graceful shutdown."""
+
+    def __init__(self):
+        self.tasks: Set[asyncio.Task] = set()
+        self._shutting_down = False
+
+    def create_task(self, coro: Coroutine) -> asyncio.Task:
+        """Create and track background task."""
+        if self._shutting_down:
+            raise RuntimeError("Cannot create tasks during shutdown")
+
+        task = asyncio.create_task(coro)
+        self.tasks.add(task)
+        task.add_done_callback(self.tasks.discard)
+        return task
+
+    async def shutdown(self, timeout: float = 30.0):
+        """Cancel all tasks and wait for completion."""
+        self._shutting_down = True
+
+        if not self.tasks:
+            return
+
+        # Cancel all tasks
+        for task in self.tasks:
+            task.cancel()
+
+        # Wait for tasks with timeout
+        try:
+            await asyncio.wait_for(
+                asyncio.gather(*self.tasks, return_exceptions=True),
+                timeout=timeout
+            )
+        except asyncio.TimeoutError:
+            print(f"Warning: {len(self.tasks)} tasks did not complete in {timeout}s")
+
+# Usage
+async def background_worker(name: str, interval: float):
+    """Long-running background task."""
+    try:
+        while True:
+            print(f"{name} working...")
+            await asyncio.sleep(interval)
+    except asyncio.CancelledError:
+        print(f"{name} shutting down gracefully")
+        # Cleanup code here
+        raise
+
+async def main():
+    manager = BackgroundTaskManager()
+
+    # Start background workers
+    manager.create_task(background_worker("Worker-1", 1.0))
+    manager.create_task(background_worker("Worker-2", 2.0))
+    manager.create_task(background_worker("Worker-3", 1.5))
+
+    # Do main work
+    await asyncio.sleep(5)
+
+    # Graceful shutdown
+    print("Initiating shutdown...")
+    await manager.shutdown(timeout=5.0)
+    print("Shutdown complete")
+
+asyncio.run(main())
+```
+
+**When to use**: When building services with background tasks (queue processors, periodic jobs, monitoring).
+
+**See Also**:
+
+- [How to Use Advanced Async Patterns](./async-patterns-advanced.md#6-background-task-management) - Complete background task guide
+
+---
+
+## 🔷 Database Patterns with SQLAlchemy
+
+Production applications need robust database interactions. These recipes show SQLAlchemy best practices.
+
+### Recipe: Repository Pattern for Clean Architecture
+
+**Problem**: You want to separate database logic from business logic.
+
+**Solution**:
+
+```python
+from abc import ABC, abstractmethod
+from typing import Optional, List, Generic, TypeVar
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+
+# Domain model
+T = TypeVar('T')
+
+class Repository(ABC, Generic[T]):
+    """Abstract repository for database operations."""
+
+    @abstractmethod
+    def get_by_id(self, id: int) -> Optional[T]:
+        pass
+
+    @abstractmethod
+    def get_all(self, skip: int = 0, limit: int = 100) -> List[T]:
+        pass
+
+    @abstractmethod
+    def create(self, entity: T) -> T:
+        pass
+
+    @abstractmethod
+    def update(self, entity: T) -> T:
+        pass
+
+    @abstractmethod
+    def delete(self, id: int) -> None:
+        pass
+
+class SQLAlchemyRepository(Repository[T]):
+    """SQLAlchemy implementation of repository."""
+
+    def __init__(self, session: Session, model_class: type):
+        self.session = session
+        self.model_class = model_class
+
+    def get_by_id(self, id: int) -> Optional[T]:
+        return self.session.query(self.model_class).filter_by(id=id).first()
+
+    def get_all(self, skip: int = 0, limit: int = 100) -> List[T]:
+        return self.session.query(self.model_class).offset(skip).limit(limit).all()
+
+    def create(self, entity: T) -> T:
+        self.session.add(entity)
+        self.session.flush()
+        self.session.refresh(entity)
+        return entity
+
+    def update(self, entity: T) -> T:
+        merged = self.session.merge(entity)
+        self.session.flush()
+        return merged
+
+    def delete(self, id: int) -> None:
+        entity = self.get_by_id(id)
+        if entity:
+            self.session.delete(entity)
+            self.session.flush()
+
+# Usage with dependency injection
+from contextlib import contextmanager
+
+@contextmanager
+def get_session():
+    """Provide transactional session."""
+    session = Session(engine)
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+def create_user_service(username: str, email: str):
+    """Business logic using repository."""
+    with get_session() as session:
+        user_repo = SQLAlchemyRepository(session, User)
+
+        # Business logic here
+        user = User(username=username, email=email)
+        return user_repo.create(user)
+
+# Testing is easier with repository pattern
+class InMemoryRepository(Repository[T]):
+    """In-memory repository for testing."""
+
+    def __init__(self):
+        self.store = {}
+        self.next_id = 1
+
+    def get_by_id(self, id: int) -> Optional[T]:
+        return self.store.get(id)
+
+    def create(self, entity: T) -> T:
+        entity.id = self.next_id
+        self.store[self.next_id] = entity
+        self.next_id += 1
+        return entity
+
+    # ... implement other methods
+```
+
+**When to use**: When building applications with clean architecture, testable code, or multiple storage backends.
+
+**Benefits**:
+
+- Separation of concerns (business logic vs data access)
+- Easier testing (mock repository)
+- Flexible (swap implementations)
+
+**See Also**:
+
+- [How to Work with Databases](./work-with-databases.md#repository-pattern-for-clean-architecture) - Complete database guide
+
+---
+
+### Recipe: Async SQLAlchemy with Connection Pooling
+
+**Problem**: You need high-performance database access in async applications.
+
+**Solution**:
+
+```python
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.orm import selectinload
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
+# Configure async engine with connection pooling
+engine = create_async_engine(
+    "postgresql+asyncpg://user:password@localhost/dbname",
+    pool_size=20,           # Maintain 20 connections
+    max_overflow=40,        # Allow 40 additional connections
+    pool_pre_ping=True,     # Verify connections before use
+    pool_recycle=3600,      # Recycle connections after 1 hour
+    echo=True               # Log SQL (disable in production)
+)
+
+# Create session factory
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+@asynccontextmanager
+async def get_db_session() -> AsyncIterator[AsyncSession]:
+    """Provide async database session."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+
+# CRUD operations
+async def create_user(username: str, email: str):
+    """Create user asynchronously."""
+    async with get_db_session() as session:
+        user = User(username=username, email=email)
+        session.add(user)
+        await session.flush()
+        await session.refresh(user)
+        return user
+
+async def get_users_with_posts():
+    """Fetch users with eager loading of posts (N+1 prevention)."""
+    async with get_db_session() as session:
+        stmt = select(User).options(selectinload(User.posts))
+        result = await session.execute(stmt)
+        return result.scalars().all()
+
+async def bulk_create_users(users_data: List[Dict]):
+    """Bulk insert for performance."""
+    async with get_db_session() as session:
+        users = [User(**data) for data in users_data]
+        session.add_all(users)
+        # Bulk insert is faster than individual inserts
+
+# Usage
+import asyncio
+
+async def main():
+    # Create single user
+    user = await create_user("john_doe", "john@example.com")
+    print(f"Created user: {user.id}")
+
+    # Fetch with relationships
+    users = await get_users_with_posts()
+    for user in users:
+        print(f"{user.username} has {len(user.posts)} posts")
+
+    # Bulk operations
+    users_data = [
+        {"username": f"user_{i}", "email": f"user_{i}@example.com"}
+        for i in range(1000)
+    ]
+    await bulk_create_users(users_data)
+    print("Bulk insert complete")
+
+asyncio.run(main())
+```
+
+**When to use**: When building async web services (FastAPI, aiohttp) with database access.
+
+**Performance Impact**: 10-20x throughput improvement for I/O-bound database operations.
+
+---
+
+## 🔷 FastAPI REST API Patterns
+
+Building production-ready REST APIs requires proper validation, error handling, and dependency injection.
+
+### Recipe: FastAPI with Pydantic Validation and Error Handling
+
+**Problem**: You need type-safe REST API endpoints with comprehensive validation.
+
+**Solution**:
+
+```python
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from pydantic import BaseModel, EmailStr, Field, validator
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List, Optional
+
+app = FastAPI(title="User API", version="1.0.0")
+
+# Request/Response models
+class UserCreate(BaseModel):
+    """User creation request."""
+    username: str = Field(..., min_length=3, max_length=50, pattern=r'^[a-zA-Z0-9_]+$')
+    email: EmailStr
+    password: str = Field(..., min_length=8)
+    age: Optional[int] = Field(None, ge=18, le=150)
+
+    @validator('password')
+    def password_strength(cls, v):
+        if not any(char.isdigit() for char in v):
+            raise ValueError('Password must contain at least one digit')
+        if not any(char.isupper() for char in v):
+            raise ValueError('Password must contain uppercase letter')
+        return v
+
+class UserResponse(BaseModel):
+    """User response model."""
+    id: int
+    username: str
+    email: str
+    age: Optional[int]
+
+    class Config:
+        from_attributes = True
+
+class ErrorResponse(BaseModel):
+    """Standard error response."""
+    detail: str
+    error_code: str
+
+# Global exception handlers
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc: RequestValidationError):
+    """Handle validation errors."""
+    errors = []
+    for error in exc.errors():
+        errors.append({
+            "field": ".".join(str(loc) for loc in error["loc"]),
+            "message": error["msg"],
+            "type": error["type"]
+        })
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": errors}
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc: Exception):
+    """Handle unexpected errors."""
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "Internal server error", "error_code": "INTERNAL_ERROR"}
+    )
+
+# Dependency injection
+async def get_db() -> AsyncSession:
+    """Provide database session."""
+    async with get_db_session() as session:
+        yield session
+
+# Endpoints
+@app.post(
+    "/users",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        422: {"model": ErrorResponse, "description": "Validation error"},
+        500: {"model": ErrorResponse, "description": "Internal error"}
+    }
+)
+async def create_user(
+    user: UserCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    """Create new user with validation."""
+    # Check for duplicate
+    existing = await get_user_by_username(db, user.username)
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists"
+        )
+
+    # Create user
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=hash_password(user.password),
+        age=user.age
+    )
+    db.add(db_user)
+    await db.flush()
+    await db.refresh(db_user)
+
+    return db_user
+
+@app.get("/users", response_model=List[UserResponse])
+async def list_users(
+    skip: int = 0,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db)
+):
+    """List users with pagination."""
+    stmt = select(User).offset(skip).limit(limit)
+    result = await db.execute(stmt)
+    return result.scalars().all()
+```
+
+**When to use**: When building REST APIs with type safety and automatic documentation.
+
+**Benefits**:
+
+- Automatic OpenAPI documentation
+- Request/response validation
+- Type safety with Pydantic
+- Dependency injection
+
+**See Also**:
+
+- [How to Build REST APIs](./build-rest-apis.md) - Complete FastAPI guide
+- [How to Implement Data Validation](./data-validation-patterns.md) - Pydantic patterns
+
+---
+
+### Recipe: JWT Authentication with Dependency Injection
+
+**Problem**: You need to protect endpoints with JWT authentication.
+
+**Solution**:
+
+```python
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from typing import Optional
+
+# Configuration
+SECRET_KEY = "your-secret-key-keep-it-secret"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+security = HTTPBearer()
+
+# Password utilities
+def verify_password(plain: str, hashed: str) -> bool:
+    return pwd_context.verify(plain, hashed)
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+# Token utilities
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+# Authentication dependency
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_db)
+) -> User:
+    """Verify JWT and return current user."""
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    stmt = select(User).where(User.username == username)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
+
+    if user is None:
+        raise credentials_exception
+
+    return user
+
+# Login endpoint
+@app.post("/auth/login")
+async def login(username: str, password: str, db: AsyncSession = Depends(get_db)):
+    """Authenticate and return JWT token."""
+    stmt = select(User).where(User.username == username)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
+
+    if not user or not verify_password(password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password"
+        )
+
+    access_token = create_access_token(
+        data={"sub": user.username},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# Protected endpoint
+@app.get("/users/me", response_model=UserResponse)
+async def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """Get current authenticated user."""
+    return current_user
+
+# Protected endpoint with permission check
+async def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Require admin role."""
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user
+
+@app.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    admin: User = Depends(require_admin)
+):
+    """Delete user (admin only)."""
+    user = await db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    await db.delete(user)
+    await db.flush()
+```
+
+**When to use**: When building secured REST APIs with user authentication.
+
+**Security Considerations**:
+
+- Use strong secret keys (store in environment variables)
+- Set appropriate token expiration
+- Use HTTPS in production
+- Consider refresh tokens for long-lived sessions
+
+---
+
+## 🔷 Security Patterns
+
+Production applications must handle credentials and sensitive data securely.
+
+### Recipe: Secure Credential Management with Environment Variables
+
+**Problem**: You need to manage secrets without hardcoding them.
+
+**Solution**:
+
+```python
+import os
+from pathlib import Path
+from typing import Optional
+from pydantic import BaseSettings, Field, validator
+
+class Settings(BaseSettings):
+    """Application settings with validation."""
+
+    # Database
+    database_url: str = Field(..., env='DATABASE_URL')
+    database_pool_size: int = Field(10, env='DB_POOL_SIZE')
+
+    # Security
+    secret_key: str = Field(..., env='SECRET_KEY')
+    api_key: str = Field(..., env='API_KEY')
+
+    # Application
+    app_name: str = Field('MyApp', env='APP_NAME')
+    debug_mode: bool = Field(False, env='DEBUG')
+    log_level: str = Field('INFO', env='LOG_LEVEL')
+
+    # Redis
+    redis_url: Optional[str] = Field(None, env='REDIS_URL')
+
+    @validator('secret_key')
+    def validate_secret_key(cls, v):
+        if len(v) < 32:
+            raise ValueError('SECRET_KEY must be at least 32 characters')
+        return v
+
+    @validator('log_level')
+    def validate_log_level(cls, v):
+        valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+        if v.upper() not in valid_levels:
+            raise ValueError(f'Invalid log level: {v}')
+        return v.upper()
+
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+        case_sensitive = False
+
+# Load settings (automatically reads from environment)
+settings = Settings()
+
+# Usage in application
+from sqlalchemy import create_engine
+
+engine = create_engine(
+    settings.database_url,
+    pool_size=settings.database_pool_size
+)
+
+# .env file example (never commit to git!)
+"""
+DATABASE_URL=postgresql://user:password@localhost/dbname
+DB_POOL_SIZE=20
+SECRET_KEY=your-super-secret-key-at-least-32-characters-long
+API_KEY=your-api-key-here
+DEBUG=False
+LOG_LEVEL=INFO
+REDIS_URL=redis://localhost:6379/0
+"""
+
+# .env.example file (commit this for documentation)
+"""
+DATABASE_URL=postgresql://user:password@localhost/dbname
+DB_POOL_SIZE=10
+SECRET_KEY=change-me-to-secure-random-string
+API_KEY=your-api-key
+DEBUG=False
+LOG_LEVEL=INFO
+REDIS_URL=redis://localhost:6379/0
+"""
+
+# .gitignore (always ignore actual .env)
+"""
+.env
+.env.local
+.env.*.local
+"""
+```
+
+**When to use**: Always, for any secret or environment-specific configuration.
+
+**Best Practices**:
+
+- Never hardcode secrets
+- Use different .env files for dev/staging/prod
+- Validate all settings on startup
+- Provide .env.example for documentation
+- Use secret management services in production (AWS Secrets Manager, HashiCorp Vault)
+
+**See Also**:
+
+- [How to Implement Security Best Practices](./security-best-practices.md) - Complete security guide
 
 ---
 
