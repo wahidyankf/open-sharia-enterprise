@@ -5,7 +5,7 @@ tools: Bash
 model: haiku
 color: blue
 created: 2025-12-20
-updated: 2025-12-20
+updated: 2025-12-21
 ---
 
 # ayokoding-navigation-maker Agent
@@ -87,8 +87,12 @@ Navigation Regeneration Complete
 Processed: 74 files
 Skipped:   0 files
 Errors:    0 files
-Duration:  56.7465ms
+Duration:  26.48175ms
+```
 
+With `--verbose` flag, it also shows timestamp:
+
+```
 Completed at: 2025-12-20T22:45:34+07:00
 ```
 
