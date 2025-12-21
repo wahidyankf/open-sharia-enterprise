@@ -236,7 +236,7 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 ### Available Agents
 
-**Content**: docs-maker, docs-tutorial-maker, readme-maker, ayokoding-content-maker, ose-platform-web-content-maker
+**Content**: docs-maker, docs-tutorial-maker, readme-maker, linkedin-post-maker, ayokoding-content-maker, ose-platform-web-content-maker
 
 **Navigation**: ayokoding-navigation-maker, ayokoding-structure-maker
 
