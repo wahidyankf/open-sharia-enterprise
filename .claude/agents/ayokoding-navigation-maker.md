@@ -61,7 +61,7 @@ cd apps/ayokoding-cli && go build -o dist/ayokoding-cli
 Run the CLI tool from the repository root:
 
 ```bash
-./apps/ayokoding-cli/dist/ayokoding-cli regen-nav
+./apps/ayokoding-cli/dist/ayokoding-cli nav regen
 ```
 
 This will process all `_index.md` files in `apps/ayokoding-web/content/`.
@@ -71,7 +71,7 @@ This will process all `_index.md` files in `apps/ayokoding-web/content/`.
 To regenerate navigation for a specific directory:
 
 ```bash
-./apps/ayokoding-cli/dist/ayokoding-cli regen-nav apps/ayokoding-web/content/en/learn/swe
+./apps/ayokoding-cli/dist/ayokoding-cli nav regen apps/ayokoding-web/content/en/learn/swe
 ```
 
 ## Expected Output
@@ -161,7 +161,7 @@ When invoked, follow these steps:
 2. **Run navigation regeneration**:
 
    ```bash
-   ./apps/ayokoding-cli/dist/ayokoding-cli regen-nav
+   ./apps/ayokoding-cli/dist/ayokoding-cli nav regen
    ```
 
 3. **Report results** to the user:
@@ -171,27 +171,6 @@ When invoked, follow these steps:
    - Timestamp (UTC+7)
 
 4. **List any errors** encountered during regeneration
-
-## Implementation Details
-
-The `ayokoding-cli` tool is a Go application located in `apps/ayokoding-cli/` with the following structure:
-
-```
-apps/ayokoding-cli/
-├── cmd/
-│   └── regen_nav.go          # Navigation regeneration command
-├── internal/
-│   ├── navigation/           # Navigation generation logic
-│   │   ├── scanner.go        # File structure scanner
-│   │   ├── generator.go      # Markdown generator
-│   │   └── regenerate.go     # Main regeneration logic
-│   └── markdown/             # Markdown parsing utilities
-│       └── frontmatter.go    # Frontmatter extraction
-├── main.go                   # CLI entry point
-└── project.json              # Nx project configuration
-```
-
-The CLI implements the same DFS algorithm as the previous bash-based approach but is significantly faster (processes 74 files in ~50ms vs several seconds).
 
 ## Important Constraints
 

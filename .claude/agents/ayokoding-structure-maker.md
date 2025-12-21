@@ -347,7 +347,7 @@ This agent has **Bash** tool access specifically to invoke `ayokoding-navigation
 ```bash
 # After making weight changes, regenerate navigation
 cd /Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise
-nx dev ayokoding-cli -- navigation regenerate
+nx dev ayokoding-cli -- nav regen
 
 # The CLI will:
 # 1. Scan all folders in content/en/ and content/id/
@@ -415,7 +415,7 @@ After making structural changes and regenerating navigation:
 1. Read rust/\_index.md current weight (10006)
 2. Assign new weight: 10001 (before golang's 10002)
 3. Update rust/\_index.md frontmatter: `weight: 10001`
-4. Run: `nx dev ayokoding-cli -- navigation regenerate`
+4. Run: `nx dev ayokoding-cli -- nav regen`
 5. Verify with ayokoding-structure-checker
 
 **No cascading needed** - rust moved to start, others unchanged.
@@ -448,7 +448,7 @@ After making structural changes and regenerating navigation:
 1. Create kotlin/\_index.md with basic structure
 2. **Cascade**: Update python (10004→10005) and rust (10006→10007)
 3. Assign kotlin weight: 10004
-4. Run: `nx dev ayokoding-cli -- navigation regenerate`
+4. Run: `nx dev ayokoding-cli -- nav regen`
 5. Verify with ayokoding-structure-checker
 
 **Cascading required** - python and rust shifted to make room.
@@ -480,7 +480,7 @@ After making structural changes and regenerating navigation:
 1. Read current weights: java=10003, python=10004
 2. Swap weights: java→10004, python→10003
 3. Update both \_index.md files
-4. Run: `nx dev ayokoding-cli -- navigation regenerate`
+4. Run: `nx dev ayokoding-cli -- nav regen`
 5. Verify with ayokoding-structure-checker
 
 **No cascading needed** - just weight swap.
@@ -513,7 +513,7 @@ After making structural changes and regenerating navigation:
 2. Update java: 10003→10005
 3. Update python: 10004→10008
 4. Update rust: 10006→10011
-5. Run: `nx dev ayokoding-cli -- navigation regenerate`
+5. Run: `nx dev ayokoding-cli -- nav regen`
 6. Verify with ayokoding-structure-checker
 
 **Use case**: Planning to add typescript (10003), c++ (10006), csharp (10009)
@@ -639,7 +639,7 @@ if len(affected_files) > MAX_CASCADE_FILES:
 
 ### Bash Tool
 
-- Invoke `nx dev ayokoding-cli -- navigation regenerate` after changes
+- Invoke `nx dev ayokoding-cli -- nav regen` after changes
 - Calculate directory levels using `find` and `awk`
 - Detect weight conflicts using shell scripts
 - Generate UTC+7 timestamps if needed

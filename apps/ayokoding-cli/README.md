@@ -8,6 +8,25 @@ A Go-based CLI tool that automates repetitive tasks for the ayokoding-web Hugo s
 
 **Why Go instead of bash?** The original navigation regeneration was done by an AI agent making hundreds of file I/O calls. Moving this logic to a compiled binary provides 100-1000x performance improvement (50ms vs several seconds for 74 files).
 
+## Quick Start
+
+```bash
+# Regenerate all navigation
+ayokoding-cli nav regen
+
+# Regenerate specific directory
+ayokoding-cli nav regen --path apps/ayokoding-web/content/en/learn
+
+# Preview changes without writing
+ayokoding-cli nav regen --dry-run
+
+# Verbose output with timestamps
+ayokoding-cli nav regen --verbose
+
+# JSON output for scripting
+ayokoding-cli nav regen -o json
+```
+
 ## Installation
 
 Build the CLI tool from the repository root:
@@ -21,12 +40,23 @@ The binary will be created at `apps/ayokoding-cli/dist/ayokoding-cli`.
 
 ## Commands
 
-### Navigation Regeneration
+### Navigation Management
 
-Regenerate 3-layer navigation listings in all `_index.md` files:
+#### Regenerate Navigation
 
 ```bash
-./apps/ayokoding-cli/dist/ayokoding-cli regen-nav
+# Basic usage
+ayokoding-cli nav regen
+
+# Custom path (flag or positional)
+ayokoding-cli nav regen --path /custom/path
+ayokoding-cli nav regen /custom/path
+
+# Preview changes
+ayokoding-cli nav regen --dry-run
+
+# Verbose output
+ayokoding-cli nav regen --verbose
 ```
 
 **What it does:**
@@ -39,42 +69,57 @@ Regenerate 3-layer navigation listings in all `_index.md` files:
 - Sorts items by weight within each level
 - Writes updated navigation back to files
 
-**Regenerate specific directory only:**
+**Flags:**
+
+- `--path, -p` - Content directory (default: apps/ayokoding-web/content)
+- `--dry-run` - Preview changes without writing
+- `--exclude` - Files to exclude (default: en/\_index.md, id/\_index.md)
+
+**Global Flags** (available to all commands):
+
+- `--verbose, -v` - Verbose output with timestamps
+- `--quiet, -q` - Quiet mode (errors only)
+- `--output, -o` - Output format: text, json, markdown
+- `--no-color` - Disable colored output
+
+#### Validate Navigation (Planned)
 
 ```bash
-./apps/ayokoding-cli/dist/ayokoding-cli regen-nav apps/ayokoding-web/content/en/learn
+ayokoding-cli nav validate
 ```
 
-**Example output:**
-
-```
-Regenerating navigation for: /path/to/apps/ayokoding-web/content
----
-
-Navigation Regeneration Complete
-=================================
-Processed: 74 files
-Skipped:   0 files
-Errors:    0 files
-Duration:  56.7465ms
-
-Completed at: 2025-12-20T22:45:34+07:00
-```
-
-### Help
-
-View all available commands:
+### Content Management (Planned)
 
 ```bash
-./apps/ayokoding-cli/dist/ayokoding-cli help
+ayokoding-cli content scaffold <type> <name>
+ayokoding-cli content validate
 ```
 
-### Version
-
-Check CLI version:
+### Weight Validation (Planned)
 
 ```bash
-./apps/ayokoding-cli/dist/ayokoding-cli version
+ayokoding-cli weight validate
+```
+
+### Link Checking (Planned)
+
+```bash
+ayokoding-cli link validate
+```
+
+### Help Commands
+
+```bash
+# General help
+ayokoding-cli --help
+ayokoding-cli help
+
+# Command-specific help
+ayokoding-cli nav --help
+ayokoding-cli nav regen --help
+
+# Version
+ayokoding-cli --version
 ```
 
 ## Architecture
@@ -82,7 +127,14 @@ Check CLI version:
 ```
 apps/ayokoding-cli/
 ├── cmd/
-│   └── regen_nav.go          # Navigation regeneration command
+│   ├── root.go               # Cobra root command, global flags
+│   ├── nav.go                # Navigation command group
+│   ├── nav_regen.go          # nav regen - regenerate navigation
+│   ├── nav_validate.go       # nav validate - validate structure (planned)
+│   ├── content.go            # Content command group (planned)
+│   ├── weight.go             # Weight command group (planned)
+│   ├── link.go               # Link command group (planned)
+│   └── regen_nav_legacy.go   # DEPRECATED: Pre-Cobra reference
 ├── internal/
 │   ├── navigation/           # Navigation generation logic
 │   │   ├── scanner.go        # File structure scanner (3 layers)
@@ -91,23 +143,47 @@ apps/ayokoding-cli/
 │   └── markdown/             # Markdown utilities
 │       └── frontmatter.go    # YAML frontmatter extraction
 ├── dist/                     # Built binary (gitignored)
-├── main.go                   # CLI entry point
-├── go.mod                    # Go module definition
+├── main.go                   # CLI entry point (Cobra execution)
+├── go.mod                    # Go module definition (+ Cobra)
 └── project.json              # Nx project configuration
 ```
 
-## Integration with AI Agents
+## Migration Notes
 
-The `ayokoding-navigation-maker` agent now calls this CLI tool instead of implementing navigation generation directly:
+### v0.2.0 → v0.3.0 (Breaking Change)
+
+**BREAKING**: Legacy `regen-nav` command removed. Use new grouped syntax only:
 
 ```bash
-# Agent workflow
-if [ ! -f apps/ayokoding-cli/dist/ayokoding-cli ]; then
-  cd apps/ayokoding-cli && go build -o dist/ayokoding-cli && cd ../..
-fi
+# ❌ Old syntax (NO LONGER SUPPORTED)
+ayokoding-cli regen-nav [path]
 
-./apps/ayokoding-cli/dist/ayokoding-cli regen-nav
+# ✅ Current syntax (REQUIRED)
+ayokoding-cli nav regen [--path=path]
 ```
+
+**Impact**:
+
+- All scripts and agents must be updated to use new syntax
+- `ayokoding-navigation-maker` agent updated to use `nav regen`
+
+### v0.1.0 → v0.2.0
+
+- **Grouped subcommands**: Commands organized by domain (nav, content, weight, link)
+- **Global flags**: --verbose, --quiet, --output, --no-color
+- **Output formats**: JSON and Markdown in addition to text
+- **Dry-run mode**: Preview changes before writing
+- **Better help**: Context-aware help with examples
+
+## Integration with AI Agents
+
+The `ayokoding-navigation-maker` agent calls this CLI tool using the current syntax:
+
+```bash
+./apps/ayokoding-cli/dist/ayokoding-cli nav regen
+```
+
+**Performance**: ~25ms for 74 files
 
 ## Development
 
@@ -140,7 +216,7 @@ go test ./... -v
 ### Run without building
 
 ```bash
-go run main.go regen-nav
+go run main.go nav regen
 ```
 
 ## Nx Integration
@@ -164,14 +240,6 @@ nx run ayokoding-cli
 - `test:quick` - Run unit tests (`go test ./...`)
 - `run` - Run the CLI directly (`go run main.go`)
 - `install` - Install Go dependencies (`go mod tidy`)
-
-## Future Commands (Planned)
-
-- `validate-nav` - Validate navigation structure and ordering
-- `validate-weights` - Check for missing or incorrect weight values
-- `validate-links` - Verify internal and external links
-- `scaffold-content` - Create new content files with proper frontmatter
-- `check-frontmatter` - Validate frontmatter completeness
 
 ## Performance
 
