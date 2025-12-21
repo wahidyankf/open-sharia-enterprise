@@ -40,6 +40,8 @@ layout: list
   - [How to Set Up Gradle with Kotlin DSL](how-to/manage-dependencies-gradle)
   - [How to Test with JUnit and MockK](how-to/write-effective-tests)
   - [How to Optimize Kotlin Performance](how-to/optimize-performance)
+  - [How to Build Multiplatform Applications](how-to/multiplatform-development)
+  - [How to Use Advanced Coroutine Patterns](how-to/coroutines-advanced)
 - [Reference](reference)
   - [Reference Overview](reference/overview)
   - [Kotlin Cheat Sheet](reference/cheat-sheet)
