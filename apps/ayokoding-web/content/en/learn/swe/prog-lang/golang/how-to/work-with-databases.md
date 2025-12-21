@@ -2,7 +2,7 @@
 title: "How to Work with Databases"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000180
+weight: 1000016
 description: "Practical techniques for database integration using database/sql, connection pooling, transactions, and sqlx in Go applications"
 ---
 

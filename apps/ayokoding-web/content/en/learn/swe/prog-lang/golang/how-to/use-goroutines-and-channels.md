@@ -2,7 +2,7 @@
 title: "How to Use Goroutines and Channels"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 1000080
+weight: 1000006
 description: "Practical patterns for concurrent programming with goroutines, channels, and synchronization primitives"
 tags: ["golang", "concurrency", "goroutines", "channels", "sync"]
 categories: ["learn"]

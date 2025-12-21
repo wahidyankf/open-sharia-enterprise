@@ -2,7 +2,7 @@
 title: "How to Use Generics Effectively"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000260
+weight: 1000024
 description: "Practical techniques for using Go 1.18+ generics with type parameters, constraints, and generic data structures"
 ---
 

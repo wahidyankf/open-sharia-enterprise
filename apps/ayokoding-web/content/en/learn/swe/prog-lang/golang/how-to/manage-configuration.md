@@ -2,7 +2,7 @@
 title: "How to Manage Configuration"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 1000100
+weight: 1000008
 description: "Handle configuration with environment variables, viper, and structured config patterns"
 tags: ["golang", "configuration", "viper", "environment-variables", "config"]
 categories: ["learn"]

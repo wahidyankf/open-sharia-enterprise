@@ -2,7 +2,7 @@
 title: "Initial Setup"
 date: 2025-12-09T00:00:00+07:00
 draft: false
-weight: 1000002
+weight: 1000001
 description: "Get Go installed and running your first program"
 tags:
   - golang
@@ -60,6 +60,15 @@ This diagram shows every verification checkpoint - you'll know immediately if so
 2. Click the Windows installer (`.msi` file)
 3. Run the installer and follow the prompts
 4. Default installation path (`C:\Program Files\Go`) is fine
+5. Installer automatically adds Go to PATH
+
+**Windows Installation Tips**:
+
+- The installer adds Go to `C:\Program Files\Go\bin`
+- PATH is updated automatically (no manual configuration needed)
+- If using chocolatey: `choco install golang` (alternative method)
+- Administrator privileges required for installation
+- Windows Defender might scan the installer (normal, let it finish)
 
 ### macOS
 
@@ -69,6 +78,15 @@ This diagram shows every verification checkpoint - you'll know immediately if so
    - **Intel**: Download `go*.darwin-amd64.pkg`
 3. Run the installer and follow the prompts
 4. Default installation path (`/usr/local/go`) is fine
+
+**macOS Installation Tips**:
+
+- Apple Silicon users: verify you download the ARM64 version (not AMD64)
+- Intel users: download the AMD64 version
+- Installer automatically adds `/usr/local/go/bin` to PATH
+- Xcode Command Line Tools might be required for some packages
+- If using homebrew: `brew install go` (alternative method)
+- macOS may show "unidentified developer" warning (allow in Security & Privacy)
 
 ### Linux
 
@@ -84,6 +102,8 @@ sudo apt install golang-go
 # Verify (see next section)
 go version
 ```
+
+**Note**: Package manager versions might be older. For the latest version, use manual installation below.
 
 Or, manual installation:
 
@@ -107,6 +127,15 @@ Then reload your shell:
 source ~/.bashrc  # or source ~/.zshrc
 ```
 
+**Linux Installation Tips**:
+
+- Manual installation gives you the latest version
+- Package manager installation is easier but may be outdated
+- For Arch Linux: `sudo pacman -S go`
+- For Fedora: `sudo dnf install golang`
+- Check your shell (echo $SHELL) to know which profile to edit
+- Some distributions place Go in `/usr/lib/go` instead of `/usr/local/go`
+
 ## ✅ Step 2: Verify Installation
 
 Open a new terminal/command prompt and run:
@@ -127,6 +156,17 @@ go version go1.25.5 linux/amd64
 
 - "command not found": Go isn't in your PATH. Try restarting your terminal.
 - On macOS/Linux: Edit your shell profile and reload it.
+
+**Additional verification**:
+
+```bash
+# Check Go environment
+go env
+
+# Important variables to verify:
+# GOROOT: where Go is installed (e.g., /usr/local/go)
+# GOPATH: where your Go workspace is (default: ~/go)
+```
 
 ## 🚀 Step 3: Create Your First Program
 
@@ -194,11 +234,25 @@ Both will output:
 Hello, World!
 ```
 
+## 🧩 Understanding Go Modules (Optional)
+
+Go uses modules to manage dependencies. For simple programs like hello.go, you don't need a module. But as you advance, you'll use:
+
+```bash
+# Create a new module
+go mod init example.com/hello
+
+# This creates go.mod file tracking your dependencies
+```
+
+You'll learn more about modules in the [Quick Start tutorial](/learn/swe/prog-lang/golang/tutorials/quick-start) and [Manage Go modules effectively](/learn/swe/prog-lang/golang/how-to/manage-go-modules).
+
 ## ✔️ Verification Checklist
 
 Before moving forward, verify:
 
 - [ ] `go version` shows Go 1.24.x or 1.25.x (current stable versions)
+- [ ] `go env` shows GOROOT and GOPATH correctly
 - [ ] `go run hello.go` prints "Hello, World!"
 - [ ] `go build hello.go` creates an executable
 - [ ] The executable runs and prints "Hello, World!"
@@ -211,18 +265,18 @@ You've successfully installed Go and run your first program. You're ready for th
 
 Now that Go is working, you have two paths:
 
-**Quick learner**: [Golang Quick Start](quick-start)
+**Quick learner**: [Golang Quick Start](/learn/swe/prog-lang/golang/tutorials/quick-start)
 
 - Learn core syntax and basic patterns
 - Understand enough to explore Go independently
 
-**Comprehensive learner**: [Complete Beginner's Guide to Go](beginner)
+**Comprehensive learner**: [Complete Beginner's Guide to Go](/learn/swe/prog-lang/golang/tutorials/beginner)
 
 - Comprehensive coverage of Go fundamentals
 - Hands-on exercises and practice
 - Ready to build real applications
 
-**Problem solver**: [Golang Cookbook](cookbook)
+**Problem solver**: [Golang Cookbook](/learn/swe/prog-lang/golang/how-to/cookbook)
 
 - Practical recipes for common patterns
 - Real-world problem solving
@@ -247,6 +301,7 @@ Now that Go is working, you have two paths:
 
 ```bash
 which go  # macOS/Linux
+where go  # Windows
 ```
 
 Remove old versions and keep only one.
@@ -267,6 +322,71 @@ dir  # Windows, shows files in current directory
 ```bash
 chmod +x hello
 ./hello
+```
+
+**Problem**: Wrong architecture downloaded (M1/M2 Mac with AMD64 installer)
+
+**Solution**: Check your Mac's chip:
+
+```bash
+uname -m
+# arm64 = Apple Silicon, x86_64 = Intel
+```
+
+Download the correct installer for your architecture.
+
+**Problem**: "go: cannot find main module" error
+
+**Solution**: You don't need a module for simple programs. Just run `go run hello.go` without initializing a module. Modules are covered in [Quick Start tutorial](/learn/swe/prog-lang/golang/tutorials/quick-start).
+
+**Problem**: Antivirus blocks Go installation (Windows)
+
+**Solution**: Temporarily disable antivirus during installation, or add an exception for the Go installer. Go is safe - downloaded from official go.dev site.
+
+**Problem**: `go env` shows incorrect GOPATH
+
+**Solution**: GOPATH defaults to `$HOME/go` (or `%USERPROFILE%\go` on Windows). To change it:
+
+```bash
+# Linux/macOS: add to ~/.bashrc or ~/.zshrc
+export GOPATH=$HOME/mygopath
+
+# Windows: use System Properties → Environment Variables
+```
+
+Then restart your terminal.
+
+## 🔧 Common Installation Issues
+
+**Issue**: Package manager Go version too old
+
+**Fix**: Use manual installation to get the latest version. Remove package manager version first:
+
+```bash
+# Ubuntu/Debian
+sudo apt remove golang-go
+
+# Then follow manual installation steps above
+```
+
+**Issue**: Go compiles but programs crash immediately
+
+**Fix**: Verify you downloaded the correct architecture:
+
+- Apple Silicon (M1/M2/M3): ARM64 version
+- Intel Mac: AMD64 version
+- Linux: Check with `uname -m` and download matching version
+
+**Issue**: Cannot write to GOPATH directory
+
+**Fix**: GOPATH should be in your home directory (where you have write permissions). Don't use `/usr/local/go` as GOPATH - that's GOROOT (where Go itself is installed).
+
+```bash
+# Correct:
+export GOPATH=$HOME/go
+
+# Incorrect (don't do this):
+export GOPATH=/usr/local/go
 ```
 
 ---

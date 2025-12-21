@@ -2,7 +2,7 @@
 title: "How to Implement Middleware"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000220
+weight: 1000020
 description: "Practical techniques for implementing HTTP middleware patterns in Go for logging, authentication, rate limiting, and request processing"
 ---
 

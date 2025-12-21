@@ -2,7 +2,7 @@
 title: "How to Build REST APIs"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000190
+weight: 1000017
 description: "Practical techniques for building RESTful APIs in Go using net/http, routing, middleware, and JSON handling"
 ---
 
