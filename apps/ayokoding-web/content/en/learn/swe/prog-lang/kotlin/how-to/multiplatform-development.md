@@ -2,7 +2,7 @@
 title: "How to Build Multiplatform Applications"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000250
+weight: 1000023
 description: "Practical techniques for building Kotlin Multiplatform applications with shared code, expect/actual declarations, and platform-specific implementations"
 ---
 

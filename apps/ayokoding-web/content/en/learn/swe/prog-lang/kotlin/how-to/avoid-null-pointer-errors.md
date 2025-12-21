@@ -2,7 +2,7 @@
 title: "How to Handle Null with Elvis and Safe Call"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 1000050
+weight: 1000003
 description: "Advanced null handling patterns with Elvis (?:) and safe call (?.) operators"
 tags: ["kotlin", "null-safety", "elvis-operator", "safe-call"]
 categories: ["learn"]

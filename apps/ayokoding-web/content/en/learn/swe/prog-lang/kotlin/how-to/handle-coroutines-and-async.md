@@ -2,7 +2,7 @@
 title: "How to Work with Coroutines Basics"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 1000150
+weight: 1000013
 description: "Master Kotlin coroutines for asynchronous programming"
 tags: ["kotlin", "coroutines", "async", "concurrency"]
 categories: ["learn"]

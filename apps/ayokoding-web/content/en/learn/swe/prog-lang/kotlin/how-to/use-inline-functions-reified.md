@@ -2,7 +2,7 @@
 title: "How to Use Inline Functions"
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 1000140
+weight: 1000012
 description: "Optimize performance with inline functions and reified type parameters"
 tags: ["kotlin", "inline-functions", "performance", "kotlin-features"]
 categories: ["learn"]

@@ -2,7 +2,7 @@
 title: "How to Optimize Kotlin Performance"
 date: 2025-12-18T14:50:04+07:00
 draft: false
-weight: 1000240
+weight: 1000022
 description: "Performance optimization techniques including inline functions, collections, memory management, and profiling"
 tags: ["kotlin", "performance", "optimization", "profiling"]
 categories: ["learn"]
