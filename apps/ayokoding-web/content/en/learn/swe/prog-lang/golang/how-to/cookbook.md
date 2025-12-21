@@ -2,7 +2,7 @@
 title: "Cookbook"
 date: 2025-12-09T00:00:00+07:00
 draft: false
-weight: 1000030
+weight: 1000001
 description: "Practical recipes and patterns for idiomatic Go programming"
 tags:
   - golang

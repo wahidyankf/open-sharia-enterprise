@@ -2,7 +2,7 @@
 title: "How to Implement Graceful Shutdown"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000230
+weight: 1000021
 description: "Practical techniques for implementing graceful shutdown in Go applications using signal handling, context cancellation, and wait groups"
 ---
 

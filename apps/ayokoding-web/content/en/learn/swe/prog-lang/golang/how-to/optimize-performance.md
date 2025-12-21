@@ -2,7 +2,7 @@
 title: "How to Optimize Performance"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000170
+weight: 1000015
 description: "Practical techniques for optimizing Go application performance through profiling, benchmarking, memory optimization, and goroutine management"
 ---
 

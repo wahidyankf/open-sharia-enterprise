@@ -2,7 +2,7 @@
 title: "How to Design Interfaces Properly"
 date: 2025-12-17T10:00:00+07:00
 draft: false
-weight: 1000110
+weight: 1000009
 description: "Practical patterns for designing small, focused interfaces that follow Go idioms"
 tags: ["golang", "interfaces", "design", "best-practices"]
 categories: ["learn"]

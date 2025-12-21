@@ -2,7 +2,7 @@
 title: "How to Write Table-Driven Tests"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000250
+weight: 1000023
 description: "Practical techniques for implementing table-driven tests in Go using subtests, test coverage, and golden files"
 ---
 

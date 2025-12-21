@@ -2,7 +2,7 @@
 title: "How to Use Dependency Injection Patterns"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000200
+weight: 1000018
 description: "Practical techniques for implementing dependency injection in Go using constructor injection, interface-based DI, and Wire for scalable applications"
 ---
 

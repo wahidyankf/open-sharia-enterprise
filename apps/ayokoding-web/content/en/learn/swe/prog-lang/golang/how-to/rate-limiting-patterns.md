@@ -2,7 +2,7 @@
 title: "How to Implement Rate Limiting"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000240
+weight: 1000022
 description: "Practical techniques for implementing rate limiting in Go using token bucket, leaky bucket, and golang.org/x/time/rate"
 ---
 
