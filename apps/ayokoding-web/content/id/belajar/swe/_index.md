@@ -5,6 +5,6 @@ draft: false
 weight: 102
 ---
 
-- [Ikhtisar](ikhtisar)
-- [Bahasa Pemrograman](prog-lang)
-  - [Ikhtisar](prog-lang/ikhtisar)
+- [Ikhtisar](/id/belajar/swe/ikhtisar)
+- [Bahasa Pemrograman](/id/belajar/swe/prog-lang)
+  - [Ikhtisar](/id/belajar/swe/prog-lang/ikhtisar)

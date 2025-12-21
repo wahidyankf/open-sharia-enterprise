@@ -6,4 +6,4 @@ weight: 100020
 description: Technical specifications and security standards
 ---
 
-- [Overview](overview)
+- [Overview](/en/learn/infosec/concepts/reference/overview)

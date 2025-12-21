@@ -5,13 +5,13 @@ draft: false
 weight: 10000010
 ---
 
-- [Overview](overview)
-- [Relator](relator)
-- [Harmony](harmony)
-- [Connectedness](connectedness)
-- [Developer](developer)
-- [Adaptability](adaptability)
-- [Positivity](positivity)
-- [Empathy](empathy)
-- [Individualization](individualization)
-- [Includer](includer)
+- [Overview](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/overview)
+- [Relator](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/relator)
+- [Harmony](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/harmony)
+- [Connectedness](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/connectedness)
+- [Developer](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/developer)
+- [Adaptability](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/adaptability)
+- [Positivity](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/positivity)
+- [Empathy](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/empathy)
+- [Individualization](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/individualization)
+- [Includer](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/includer)

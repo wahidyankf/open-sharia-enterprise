@@ -5,12 +5,12 @@ draft: false
 weight: 10000010
 ---
 
-- [Overview](overview)
-- [Strategic](strategic)
-- [Input](input)
-- [Context](context)
-- [Learner](learner)
-- [Intellection](intellection)
-- [Ideation](ideation)
-- [Analytical](analytical)
-- [Futuristic](futuristic)
+- [Overview](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/overview)
+- [Strategic](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/strategic)
+- [Input](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/input)
+- [Context](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/context)
+- [Learner](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/learner)
+- [Intellection](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/intellection)
+- [Ideation](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/ideation)
+- [Analytical](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/analytical)
+- [Futuristic](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/futuristic)

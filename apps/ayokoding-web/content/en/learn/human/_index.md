@@ -5,9 +5,9 @@ draft: false
 weight: 106
 ---
 
-- [Overview](overview)
-- [Tools](tools)
-  - [Overview](tools/overview)
-  - [CliftonStrengths](tools/cliftonstrengths)
-    - [Overview](tools/cliftonstrengths/overview)
-    - [Themes](tools/cliftonstrengths/themes)
+- [Overview](/en/learn/human/overview)
+- [Tools](/en/learn/human/tools)
+  - [Overview](/en/learn/human/tools/overview)
+  - [CliftonStrengths](/en/learn/human/tools/cliftonstrengths)
+    - [Overview](/en/learn/human/tools/cliftonstrengths/overview)
+    - [Themes](/en/learn/human/tools/cliftonstrengths/themes)

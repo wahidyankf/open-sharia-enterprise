@@ -5,5 +5,5 @@ draft: false
 weight: 104
 ---
 
-- [Overview](overview)
-- [Chat with PDF](chat-with-pdf)
+- [Overview](/en/learn/ai/overview)
+- [Chat with PDF](/en/learn/ai/chat-with-pdf)

@@ -5,8 +5,8 @@ draft: false
 weight: 10000
 ---
 
-- [Overview](overview)
-- [Gobuster](gobuster)
-  - [Overview](gobuster/overview)
-  - [Quick Start](gobuster/quick-start)
-  - [Beginner](gobuster/beginner)
+- [Overview](/en/learn/infosec/tools/overview)
+- [Gobuster](/en/learn/infosec/tools/gobuster)
+  - [Overview](/en/learn/infosec/tools/gobuster/overview)
+  - [Quick Start](/en/learn/infosec/tools/gobuster/quick-start)
+  - [Beginner](/en/learn/infosec/tools/gobuster/beginner)

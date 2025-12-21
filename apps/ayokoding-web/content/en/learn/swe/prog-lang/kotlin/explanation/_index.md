@@ -8,6 +8,6 @@ type: docs
 layout: list
 ---
 
-- [Overview](overview)
-- [Kotlin Best Practices and Design Principles](best-practices)
-- [Common Kotlin Anti-Patterns](anti-patterns)
+- [Overview](/en/learn/swe/prog-lang/kotlin/explanation/overview)
+- [Kotlin Best Practices and Design Principles](/en/learn/swe/prog-lang/kotlin/explanation/best-practices)
+- [Common Kotlin Anti-Patterns](/en/learn/swe/prog-lang/kotlin/explanation/anti-patterns)

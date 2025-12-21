@@ -5,4 +5,4 @@ draft: false
 weight: 1000
 ---
 
-- [Ikhtisar](ikhtisar)
+- [Ikhtisar](/id/belajar/swe/prog-lang/ikhtisar)
