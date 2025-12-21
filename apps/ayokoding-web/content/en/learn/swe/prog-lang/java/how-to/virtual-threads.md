@@ -2,7 +2,7 @@
 title: "How to Use Virtual Threads"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000250
+weight: 1000023
 description: "Practical techniques for using Java 21+ virtual threads (Project Loom) for scalable concurrent applications with structured concurrency"
 ---
 

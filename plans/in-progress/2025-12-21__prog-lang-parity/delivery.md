@@ -446,13 +446,28 @@ Feature: Clear parity standards defined
 
 ##### Java Remediation
 
-- [ ] **Step 3.3.1**: Fix Java structural issues
+- [x] **Step 3.3.1**: Fix Java structural issues
   - Review structural-gaps.md for Java
   - Add missing files from templates
   - Fix cookbook weight from 1000030 to 1000001
   - Reweight all subsequent how-to guides sequentially (1000002, 1000003, ...)
   - Fix file naming violations
   - Commit: `fix(ayokoding-web): java structural parity (cookbook weight, files, naming)`
+  - **Implementation Notes**: Fixed all Java structural issues: (1) Fixed category folder weights (tutorials: 100000→100002, how-to: 200000→100003, explanation: 400000→100004, reference: 300000→100005), (2) Fixed tutorial weights to start at 1000001 (reduced all by 1), (3) Fixed cookbook weight from 1000030 to 1000001, (4) Reweighted all 23 how-to guides sequentially (1000002-1000024). All weights now match Elixir reference implementation.
+  - **Date**: 2025-12-21
+  - **Status**: Completed
+  - **Files Changed**:
+    - java/tutorials/\_index.md (weight: 100000→100002)
+    - java/how-to/\_index.md (weight: 200000→100003)
+    - java/explanation/\_index.md (weight: 400000→100004)
+    - java/reference/\_index.md (weight: 300000→100005)
+    - java/tutorials/initial-setup.md (weight: 1000002→1000001)
+    - java/tutorials/quick-start.md (weight: 1000003→1000002)
+    - java/tutorials/beginner.md (weight: 1000004→1000003)
+    - java/tutorials/intermediate.md (weight: 1000005→1000004)
+    - java/tutorials/advanced.md (weight: 1000006→1000005)
+    - java/how-to/cookbook.md (weight: 1000030→1000001)
+    - java/how-to/\*.md (23 guides reweighted: 1000040→1000002 through 1000260→1000024)
 
 - [ ] **Step 3.3.2**: Fix Java content gaps
 - [ ] **Step 3.3.3**: Fix Java quality gaps

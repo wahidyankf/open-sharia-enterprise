@@ -2,7 +2,7 @@
 title: "How to Write Effective Tests"
 date: 2025-12-17T13:19:07+07:00
 draft: false
-weight: 1000110
+weight: 1000009
 description: "Master JUnit 5 (Jupiter) testing with proper structure, assertions, mocking, and test organization"
 tags: ["java", "junit", "testing", "tdd", "mockito"]
 categories: ["learn"]
