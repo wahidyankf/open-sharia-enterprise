@@ -61,7 +61,10 @@ ayokoding-cli nav regen --verbose
 - Scans file structure 3 layers deep
 - Generates DFS navigation tree with proper indentation
 - Sorts items by weight within each level
+- **Generates absolute paths with language prefix** for all navigation links (e.g., `/en/learn/swe/prog-lang/python`)
 - Writes updated navigation back to files
+
+**CRITICAL - Absolute Path Requirement**: All generated navigation links use **absolute paths with language prefix**. This is required for Hugo sites because relative paths break when content is rendered in different page contexts (sidebar, hamburger menu, content pages). See [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md#internal-link-requirements) for complete details.
 
 **Flags:**
 
@@ -100,8 +103,8 @@ apps/ayokoding-cli/
 │   └── nav_regen.go          # nav regen - regenerate navigation
 ├── internal/
 │   ├── navigation/           # Navigation generation logic
-│   │   ├── scanner.go        # File structure scanner (3 layers)
-│   │   ├── generator.go      # Markdown DFS tree generator
+│   │   ├── scanner.go        # File structure scanner (3 layers) + absolute path builder
+│   │   ├── generator.go      # Markdown DFS tree generator + absolute path links
 │   │   └── regenerate.go     # Main orchestration logic
 │   └── markdown/             # Markdown utilities
 │       └── frontmatter.go    # YAML frontmatter extraction
@@ -110,6 +113,8 @@ apps/ayokoding-cli/
 ├── go.mod                    # Go module definition (+ Cobra)
 └── project.json              # Nx project configuration
 ```
+
+**Critical Bug Fix (2025-12-21)**: Prior to this date, `scanner.go`, `regenerate.go`, and `generator.go` generated relative paths for navigation links, causing broken links when navigating from certain page contexts. All three files were updated to generate absolute paths with language prefixes (`/en/learn/...`, `/id/belajar/...`) ensuring links work correctly from any page context in Hugo.
 
 ## Migration Notes
 
