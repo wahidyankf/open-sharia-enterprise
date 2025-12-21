@@ -11,10 +11,22 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 - Research about ERP application
 - Research about IAM
 - Research about CIAM
+- Research about what demo app to create (assess the ergonomics of programming languages/framework)
+- Research about enterprise architecture
+- Research about middleware architecture
 
 ### Infrastructure
 
 - Create IAM (Identity and Access Management) service/module for authentication and authorization
+
+### Demo Apps
+
+- Demo BE app for Golang
+- Demo BE app for Java with Spring Boot
+- Demo BE app for Kotlin
+- Demo BE app for Elixir
+- Demo BE app for Rust
+- Demo BE app for Clojure
 
 ### Development Experience
 
@@ -23,11 +35,8 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 - Add helper script/cli for @agent-docs-link-checker
 - Document best practices for gherkin
 - Setup specs folder for gherkin files
-- Align the documentation and ayokoding-web. Basically we want to move all software engineering related tutorial to ayokoding.com (Note: app previously in apps-standalone/, now in apps/ for Nx integration and production deployment)
-- Add agents to write content in ayokoding-web (Note: app previously in apps-standalone/, now in apps/ for Nx integration and production deployment)
+- Create workflow/protocol system to define a series of processes that includes multiple agents and/or processes
 
 ### AyoKoding
 
 - Create cli to check whether a content changes (mirroring)
-- Create cli to automatically create \_index.md in every folders and update it using list (to links)
-- Separate hugo convention to ayokoding content convention
