@@ -2,7 +2,7 @@
 title: "How to Use Async Programming Patterns"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1050
+weight: 1000023
 description: "Practical techniques for async programming in Rust with Tokio runtime, async traits, futures, and concurrent patterns"
 ---
 

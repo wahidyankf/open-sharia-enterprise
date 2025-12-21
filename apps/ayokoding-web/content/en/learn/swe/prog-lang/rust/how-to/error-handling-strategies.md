@@ -2,7 +2,7 @@
 title: Error Handling Strategies
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000050
+weight: 1000003
 description: Practical guide to handling errors effectively in Rust applications
 tags:
   [

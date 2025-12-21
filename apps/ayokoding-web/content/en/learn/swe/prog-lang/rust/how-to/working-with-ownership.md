@@ -2,7 +2,7 @@
 title: Working with Ownership
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000040
+weight: 1000002
 description: Practical guide to solving common ownership challenges in Rust
 tags:
   [

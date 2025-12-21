@@ -2,7 +2,7 @@
 title: "How to Document Code Effectively"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1040
+weight: 1000022
 description: "Practical techniques for writing effective Rust documentation with doc comments, rustdoc, examples, and documentation tests"
 ---
 
