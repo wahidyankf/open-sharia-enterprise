@@ -20,7 +20,8 @@ type Item struct {
 }
 
 // ScanDirectory scans a directory and returns navigation items up to 3 layers deep
-func ScanDirectory(dirPath string, currentLayer int, maxLayers int) ([]Item, error) {
+// basePath is the absolute URL path to this directory (e.g., "/en/learn/swe")
+func ScanDirectory(dirPath string, basePath string, currentLayer int, maxLayers int) ([]Item, error) {
 	if currentLayer > maxLayers {
 		return nil, nil
 	}
@@ -55,16 +56,19 @@ func ScanDirectory(dirPath string, currentLayer int, maxLayers int) ([]Item, err
 				continue
 			}
 
+			// Build absolute URL path for this directory
+			itemPath := basePath + "/" + entry.Name()
+
 			item := Item{
 				Title:  fm.Title,
-				Path:   entry.Name(),
+				Path:   itemPath,
 				Weight: fm.Weight,
 				IsDir:  true,
 			}
 
 			// Recursively scan children if we haven't reached max depth
 			if currentLayer < maxLayers {
-				children, err := ScanDirectory(fullPath, currentLayer+1, maxLayers)
+				children, err := ScanDirectory(fullPath, itemPath, currentLayer+1, maxLayers)
 				if err == nil {
 					item.Children = children
 				}
@@ -83,9 +87,12 @@ func ScanDirectory(dirPath string, currentLayer int, maxLayers int) ([]Item, err
 			// Remove .md extension for path
 			pathWithoutExt := strings.TrimSuffix(entry.Name(), ".md")
 
+			// Build absolute URL path for this file
+			itemPath := basePath + "/" + pathWithoutExt
+
 			item := Item{
 				Title:  fm.Title,
-				Path:   pathWithoutExt,
+				Path:   itemPath,
 				Weight: fm.Weight,
 				IsDir:  false,
 			}

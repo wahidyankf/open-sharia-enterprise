@@ -124,15 +124,15 @@ func TestRegenerateNavigation(t *testing.T) {
 		t.Error("Old content should be replaced")
 	}
 
-	// Should contain navigation links
-	if !strings.Contains(contentStr, "- [Overview](overview)") {
-		t.Error("Should contain Overview link")
+	// Should contain navigation links with absolute paths
+	if !strings.Contains(contentStr, "- [Overview](/en/learn/overview)") {
+		t.Error("Should contain Overview link with absolute path")
 	}
-	if !strings.Contains(contentStr, "- [Tutorials](tutorials)") {
-		t.Error("Should contain Tutorials link")
+	if !strings.Contains(contentStr, "- [Tutorials](/en/learn/tutorials)") {
+		t.Error("Should contain Tutorials link with absolute path")
 	}
-	if !strings.Contains(contentStr, "  - [Beginner Tutorial](tutorials/beginner)") {
-		t.Error("Should contain nested Beginner Tutorial link with proper indentation")
+	if !strings.Contains(contentStr, "  - [Beginner Tutorial](/en/learn/tutorials/beginner)") {
+		t.Error("Should contain nested Beginner Tutorial link with proper indentation and absolute path")
 	}
 }
 
@@ -238,7 +238,7 @@ title: Overview
 weight: 1
 ---`)
 
-	err := processIndexFile(indexPath)
+	err := processIndexFile(indexPath, tmpDir)
 	if err != nil {
 		t.Fatalf("processIndexFile failed: %v", err)
 	}
@@ -267,9 +267,10 @@ weight: 1
 		t.Error("Old content should be replaced")
 	}
 
-	// Verify navigation is generated
-	if !strings.Contains(contentStr, "- [Overview](overview)") {
-		t.Error("Navigation should be generated")
+	// Verify navigation is generated with absolute paths
+	// Note: This test creates files directly in tmpDir, so basePath will be "/"
+	if !strings.Contains(contentStr, "- [Overview](/overview)") {
+		t.Error("Navigation should be generated with absolute path")
 	}
 }
 
@@ -280,7 +281,7 @@ func TestProcessIndexFile_MalformedFrontmatter(t *testing.T) {
 	createTestContentFile(t, tmpDir, "_index.md", `No frontmatter here
 Just content`)
 
-	err := processIndexFile(indexPath)
+	err := processIndexFile(indexPath, tmpDir)
 	if err == nil {
 		t.Error("Expected error for malformed frontmatter")
 	}
@@ -303,7 +304,7 @@ description: A test page
 
 	createTestContentFile(t, tmpDir, "_index.md", originalFrontmatter+"\nOld content")
 
-	err := processIndexFile(indexPath)
+	err := processIndexFile(indexPath, tmpDir)
 	if err != nil {
 		t.Fatalf("processIndexFile failed: %v", err)
 	}

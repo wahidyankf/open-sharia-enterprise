@@ -41,7 +41,7 @@ title: Installation
 weight: 2
 ---`)
 
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -59,11 +59,11 @@ weight: 2
 	}
 
 	// Verify paths
-	if items[0].Path != "overview" {
-		t.Errorf("Overview path should be 'overview', got %s", items[0].Path)
+	if items[0].Path != "/test/overview" {
+		t.Errorf("Overview path should be '/test/overview', got %s", items[0].Path)
 	}
-	if items[1].Path != "installation" {
-		t.Errorf("Installation path should be 'installation', got %s", items[1].Path)
+	if items[1].Path != "/test/installation" {
+		t.Errorf("Installation path should be '/test/installation', got %s", items[1].Path)
 	}
 }
 
@@ -98,7 +98,7 @@ title: Advanced
 weight: 2
 ---`)
 
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -157,7 +157,7 @@ title: Python
 weight: 1
 ---`)
 
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -218,7 +218,7 @@ weight: 1
 ---`)
 
 	// Scan with maxLayers = 3
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -257,7 +257,7 @@ weight: 1
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -290,7 +290,7 @@ title: Hidden
 weight: 2
 ---`)
 
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -324,7 +324,7 @@ title: Medium Weight
 weight: 50
 ---`)
 
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -358,7 +358,7 @@ title: With Weight
 weight: 10
 ---`)
 
-	items, err := ScanDirectory(tmpDir, 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
