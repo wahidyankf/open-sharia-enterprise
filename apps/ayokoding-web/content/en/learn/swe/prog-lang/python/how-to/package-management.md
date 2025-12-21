@@ -2,7 +2,7 @@
 title: "How to Manage Packages and Dependencies"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000260
+weight: 1000023
 description: "Practical techniques for managing Python packages with pip, virtual environments, Poetry, dependency resolution, and reproducible builds"
 ---
 

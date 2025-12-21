@@ -2,7 +2,7 @@
 title: "How to Implement Data Validation"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000230
+weight: 1000021
 description: "Practical techniques for data validation in Python using Pydantic, custom validators, field constraints, and dataclass validation"
 ---
 
