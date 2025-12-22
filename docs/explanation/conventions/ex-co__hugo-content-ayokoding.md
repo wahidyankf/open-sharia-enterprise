@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-21
+updated: 2025-12-22
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -157,6 +157,69 @@ Edit the configuration file...
 ---
 
 ## ayokoding-web Site Patterns
+
+### No H1 Headings in Content (ayokoding-web Specific)
+
+**CRITICAL**: ayokoding-web content MUST NOT include ANY H1 headings (`# ...`) in markdown content.
+
+**This rule is STRICTER than the shared convention**, which only prohibits duplicate H1s. For ayokoding-web, ALL H1 headings are prohibited.
+
+**Rationale**:
+
+- Hextra theme automatically renders frontmatter `title` as the page H1
+- Each page should have exactly ONE H1 (from frontmatter)
+- Educational content requires clear, single-topic structure
+- Multiple H1s (even semantically different) suggest content should be split into multiple pages
+- Simplifies content creation (clear rule: never use H1 in content)
+- Better SEO and accessibility (one H1 per page)
+
+**Rule**: Content should start with introduction text or H2 headings (`## ...`).
+
+**Applies to**: ALL ayokoding-web content (learning, rants/celoteh, video content)
+
+✅ **Good (no H1 in content)**:
+
+```markdown
+---
+title: "Beginner Tutorial - Elixir"
+date: 2025-12-22T10:00:00+07:00
+draft: false
+---
+
+This tutorial covers the fundamentals of Elixir programming...
+
+## What You'll Learn
+
+- Pattern matching
+- Functional programming concepts
+- Basic syntax
+
+## Prerequisites
+
+Before starting, ensure you have...
+```
+
+❌ **Bad (any H1 in content)**:
+
+```markdown
+---
+title: "Software Engineering Best Practices"
+date: 2025-12-22T10:00:00+07:00
+draft: false
+---
+
+# Introduction to Code Quality
+
+This section discusses foundational concepts...
+
+# Design Patterns Overview
+
+This section covers common patterns...
+```
+
+**Issue**: Even though these H1s are semantically different from the title, ayokoding-web prohibits ALL H1s. If content needs multiple main sections, split into separate pages.
+
+**Note**: This stricter rule applies ONLY to ayokoding-web. ose-platform-web follows the shared convention (allows H1s that differ from title).
 
 ### Bilingual Content Organization
 
@@ -1872,6 +1935,7 @@ Before publishing, verify:
 - [ ] Frontmatter uses YAML format with 2-space indentation
 - [ ] Date format is `YYYY-MM-DDTHH:MM:SS+07:00`
 - [ ] Description length is 150-160 characters (if present)
+- [ ] **No H1 headings in content** - Content does NOT include ANY H1 (`# ...`) headings (stricter than shared convention)
 - [ ] Internal links use absolute paths without `.md` extension
 - [ ] All images have descriptive alt text
 - [ ] Mermaid diagrams use accessible color palette
