@@ -7,8 +7,6 @@ weight: 1000002
 tags: ["elixir", "tutorial", "quick-start", "beginner", "fundamentals"]
 ---
 
-# Quick Start - Elixir
-
 **Want to write real Elixir code in your first learning session?** This quick start tutorial teaches you the 10 core concepts you need to start building programs immediately - no lengthy theory, just practical working code.
 
 ## Prerequisites

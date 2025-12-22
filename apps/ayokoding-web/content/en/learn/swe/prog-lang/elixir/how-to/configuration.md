@@ -7,8 +7,6 @@ weight: 1000012
 tags: ["elixir", "configuration", "environment", "secrets", "devops", "how-to"]
 ---
 
-# Configuration and Environment Management
-
 **Need environment-specific configuration?** Elixir provides compile-time and runtime config with environment variable support, enabling flexible configuration management across development, staging, and production environments.
 
 ## Prerequisites

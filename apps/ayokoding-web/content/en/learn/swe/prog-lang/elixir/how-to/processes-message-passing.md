@@ -7,8 +7,6 @@ weight: 1000004
 tags: ["elixir", "processes", "concurrency", "message-passing", "spawn"]
 ---
 
-# Work with Processes and Message Passing
-
 **Need to handle concurrent operations?** This guide teaches Elixir's lightweight processes, message passing, spawn patterns, process linking, and building concurrent systems with the actor model.
 
 ## Problem

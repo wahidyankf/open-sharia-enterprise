@@ -19,8 +19,6 @@ categories:
 
 ---
 
-# Intermediate Kotlin
-
 **Build production-ready Kotlin applications.** This tutorial covers everything you need to write professional, scalable Kotlin code for real-world projects. You'll master advanced coroutines, implement design patterns, work with databases, build REST APIs, optimize performance, and apply comprehensive testing strategies.
 
 ## What You'll Achieve

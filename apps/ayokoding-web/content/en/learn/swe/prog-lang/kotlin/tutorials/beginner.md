@@ -19,8 +19,6 @@ categories:
 
 ---
 
-# Complete Beginner's Guide to Kotlin
-
 **Master Kotlin from the ground up.** This comprehensive tutorial covers everything you need to know to write production-quality Kotlin code. You'll learn the type system, object-oriented programming, functional programming basics, collections, error handling, testing, and Kotlin idioms.
 
 ## What You'll Achieve

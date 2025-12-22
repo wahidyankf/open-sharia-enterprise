@@ -7,8 +7,6 @@ weight: 1000021
 tags: ["elixir", "caching", "ets", "performance", "optimization", "how-to"]
 ---
 
-# Caching Strategies
-
 **Need to cache data for performance?** Elixir offers multiple caching strategies from in-memory ETS tables to external stores like Redis, with built-in concurrency support.
 
 ## Prerequisites

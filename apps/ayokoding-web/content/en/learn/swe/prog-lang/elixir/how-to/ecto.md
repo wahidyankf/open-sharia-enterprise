@@ -7,8 +7,6 @@ weight: 1000009
 tags: ["elixir", "ecto", "database", "postgres", "orm", "how-to"]
 ---
 
-# Ecto Database Patterns
-
 **Need robust database layer in Elixir?** Ecto provides schemas, changesets, composable queries, associations, migrations, and transactions for reliable data persistence.
 
 ## Prerequisites

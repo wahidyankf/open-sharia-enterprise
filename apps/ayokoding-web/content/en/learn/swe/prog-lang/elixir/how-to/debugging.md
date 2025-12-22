@@ -7,8 +7,6 @@ weight: 1000022
 tags: ["elixir", "debugging", "troubleshooting", "iex", "observer", "how-to"]
 ---
 
-# Debugging and Troubleshooting
-
 **Need to debug Elixir code?** Use IEx.pry, dbg, Observer, and logging for effective debugging.
 
 ## Prerequisites

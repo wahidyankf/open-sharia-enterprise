@@ -6,8 +6,6 @@ weight: 1000000
 description: Quick reference materials for Elixir - cheat sheet, glossary, and learning resources
 ---
 
-# Overview
-
 Quick access to Elixir syntax, terminology, and learning resources.
 
 ## What Are Reference Materials?

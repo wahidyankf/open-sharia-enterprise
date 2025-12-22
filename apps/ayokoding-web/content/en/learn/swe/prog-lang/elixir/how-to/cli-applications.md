@@ -7,8 +7,6 @@ weight: 1000018
 tags: ["elixir", "cli", "escript", "command-line", "tools", "how-to"]
 ---
 
-# Building CLI Applications
-
 **Need to build command-line tools?** Elixir's escript enables standalone CLI applications with argument parsing, configuration management, and professional output formatting.
 
 ## Prerequisites

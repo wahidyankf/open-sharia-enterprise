@@ -6,8 +6,6 @@ weight: 1000000
 description: Practical solutions for Elixir problems - cookbook recipes, OTP patterns, Phoenix development, and production best practices
 ---
 
-# Overview
-
 Practical, copy-paste-ready solutions for common Elixir challenges. From pattern matching to Phoenix APIs.
 
 ## What Are How-To Guides?

@@ -6,8 +6,6 @@ weight: 1000000
 description: Understanding Elixir philosophy - best practices, design principles, idioms, and anti-patterns for functional programming
 ---
 
-# Overview
-
 Understand the "why" behind Elixir patterns. Philosophy, idioms, and design principles.
 
 ## What Are Explanation Documents?

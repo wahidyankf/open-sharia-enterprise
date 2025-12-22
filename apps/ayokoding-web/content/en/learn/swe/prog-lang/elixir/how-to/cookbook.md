@@ -7,8 +7,6 @@ weight: 1000001
 tags: ["elixir", "cookbook", "recipes", "patterns", "best-practices"]
 ---
 
-# Elixir Cookbook
-
 **Need quick solutions to common Elixir problems?** This cookbook provides 35+ tested recipes covering data structures, concurrency, OTP patterns, Phoenix development, Ecto queries, testing strategies, and performance optimization.
 
 ## How to Use This Cookbook

@@ -7,8 +7,6 @@ weight: 1000010
 tags: ["elixir", "testing", "exunit", "tdd", "quality", "how-to"]
 ---
 
-# Testing with ExUnit
-
 **Need robust testing for Elixir applications?** ExUnit provides powerful testing with async execution, setup callbacks, and rich assertions.
 
 ## Prerequisites

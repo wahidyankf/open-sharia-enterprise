@@ -7,8 +7,6 @@ weight: 1000014
 tags: ["elixir", "macros", "metaprogramming", "ast", "dsl", "how-to"]
 ---
 
-# Metaprogramming with Macros
-
 **Need to generate code at compile time?** Elixir macros enable powerful metaprogramming with AST manipulation, allowing you to extend the language and create domain-specific languages.
 
 ## Prerequisites

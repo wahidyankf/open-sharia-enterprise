@@ -15,8 +15,6 @@ tags:
   ]
 ---
 
-# Performance Profiling and Optimization
-
 **Need to optimize slow Elixir code?** This guide teaches systematic profiling and optimization techniques using benchmarking, profiling tools, and BEAM VM insights to identify and eliminate bottlenecks in production applications.
 
 ## Prerequisites

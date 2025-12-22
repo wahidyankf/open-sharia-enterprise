@@ -6,8 +6,6 @@ weight: 10000
 description: Learn Elixir from basics to advanced - functional programming, OTP platform, Phoenix framework, and fault-tolerant systems
 ---
 
-# Overview
-
 Welcome to ayokoding's comprehensive Elixir guide. Master functional programming, concurrent systems, and fault-tolerant applications with the BEAM VM.
 
 ## What is Elixir?

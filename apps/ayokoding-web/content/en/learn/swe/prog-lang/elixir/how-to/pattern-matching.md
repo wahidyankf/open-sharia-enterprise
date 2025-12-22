@@ -7,8 +7,6 @@ weight: 1000002
 tags: ["elixir", "pattern-matching", "destructuring", "guards"]
 ---
 
-# Pattern Matching Effectively
-
 **Struggling with nested data extraction?** This guide teaches pattern matching techniques for destructuring complex structures, dispatching functions, validating data, and controlling program flow in Elixir.
 
 ## Problem

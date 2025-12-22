@@ -16,8 +16,6 @@ tags:
   ]
 ---
 
-# Monitoring and Logging
-
 **Need production observability?** Use Logger, Telemetry, and metrics for comprehensive monitoring.
 
 ## Prerequisites

@@ -6,8 +6,6 @@ weight: 10000
 description: Pelajari berbagai bahasa pemrograman dari dasar hingga mahir - Python, Java, Kotlin, Golang, Rust, Elixir
 ---
 
-# Ikhtisar Bahasa Pemrograman
-
 Selamat datang di koleksi lengkap panduan bahasa pemrograman ayokoding. Di sini Anda akan menemukan tutorial komprehensif untuk bahasa pemrograman modern yang banyak digunakan di industri.
 
 ## Bahasa Pemrograman yang Tersedia
