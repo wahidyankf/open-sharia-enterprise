@@ -385,7 +385,7 @@ specific needs.
 OSE Platform is built with modern, proven technologies:
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A[OSE Platform] --> B[Backend]
     A --> C[Frontend]
@@ -453,7 +453,7 @@ _Building the future of open-source enterprise fintech._
 
 ```markdown
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     A[User Request] --> B{Authenticated?}
     B -->|Yes| C[Access Dashboard]
@@ -581,7 +581,7 @@ Enhanced session handling for better security:
 ## Security Architecture
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart LR
     A[User Login] --> B{MFA Enabled?}
     B -->|Yes| C[Request MFA Code]

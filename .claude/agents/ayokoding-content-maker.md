@@ -465,7 +465,7 @@ The migration took a weekend. I rewrote my entire config in Lua...
 
 ````markdown
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     A[User Request] --> B{Valid Token?}
     B -->|Yes| C[Access Granted]
@@ -734,7 +734,7 @@ Congratulations! You just ran your first Node.js application.
 Let's break down what happened:
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart LR
     A[app.js File] --> B[Node.js Runtime]
     B --> C[V8 Engine]
