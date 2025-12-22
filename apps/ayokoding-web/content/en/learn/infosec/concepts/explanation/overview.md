@@ -9,4 +9,4 @@ Deep conceptual understanding of information security principles and why things 
 
 ## Available Explanations
 
-Coming soon.
+- **[Offensive Security](/en/learn/infosec/concepts/explanation/offensive-security)** - Understanding offensive security methodologies, practices, and its critical role in modern cybersecurity defense strategies
