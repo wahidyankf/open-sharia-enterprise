@@ -23,7 +23,7 @@ tags:
 
 - Intermediate Elixir knowledge
 - Understanding of BEAM VM basics
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 - Basic understanding of processes and concurrency
 
 ## Problem
@@ -521,7 +521,7 @@ Repo.all(from u in User, where: u.id in ^user_ids, preload: :posts)
 
 ## Related Resources
 
-- [Advanced Tutorial](/learn/swe/prog-lang/elixir/tutorials/advanced) - BEAM VM internals
-- [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices) - Performance patterns
-- [Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook) - Optimization recipes
-- [Caching Guide](/learn/swe/prog-lang/elixir/how-to/caching) - ETS and caching strategies
+- [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced) - BEAM VM internals
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) - Performance patterns
+- [Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Optimization recipes
+- [Caching Guide](/en/learn/swe/prog-lang/elixir/how-to/caching) - ETS and caching strategies

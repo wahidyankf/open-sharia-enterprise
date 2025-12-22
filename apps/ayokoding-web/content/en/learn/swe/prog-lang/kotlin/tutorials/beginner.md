@@ -58,6 +58,32 @@ This tutorial covers **0-60% of Kotlin** - comprehensive fundamentals. You'll bu
 
 **Structure**: This tutorial is organized into 10 parts with hands-on examples and exercises throughout.
 
+```mermaid
+graph TD
+    A["1. Type System & Null Safety"] --> B["2. Functions & Lambdas"]
+    B --> C["3. Classes & OOP"]
+    C --> D["4. Inheritance & Interfaces"]
+    D --> E["5. Functional Programming"]
+    E --> F["6. Collections Mastery"]
+    F --> G["7. Error Handling"]
+    G --> H["8. Code Organization"]
+    H --> I["9. Testing with JUnit"]
+    I --> J["10. Best Practices"]
+    J --> K["Ready for Intermediate!"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style G fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style I fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style J fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style K fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
 ---
 
 ## Part 1: Type System and Variables
@@ -1790,6 +1816,16 @@ You've now mastered Kotlin fundamentals:
 - Testing code comprehensively
 - Organizing code with packages and visibility
 - Applying SOLID principles
+
+## Next Steps
+
+Continue your Kotlin journey with these resources:
+
+- **[Intermediate Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/intermediate)** - Master production patterns and advanced topics
+- **[Kotlin Cookbook](/en/learn/swe/prog-lang/kotlin/how-to/cookbook)** - Ready-to-use code recipes for common tasks
+- **[Kotlin Best Practices](/en/learn/swe/prog-lang/kotlin/explanation/best-practices)** - Professional coding standards
+- **[Kotlin Anti-Patterns](/en/learn/swe/prog-lang/kotlin/explanation/anti-patterns)** - Common mistakes and how to avoid them
+- **[Kotlin Cheat Sheet](/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet)** - Quick syntax reference
 
 ---
 

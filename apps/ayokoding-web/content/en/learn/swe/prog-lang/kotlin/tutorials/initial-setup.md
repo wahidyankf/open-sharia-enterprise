@@ -32,6 +32,26 @@ By the end of this tutorial, you'll have:
 - **Basic command line familiarity** - You should know how to open a terminal/command prompt
 - **No programming experience required** - This tutorial assumes you're completely new to Kotlin
 
+## Learning Path
+
+This tutorial follows a step-by-step path to get you running quickly:
+
+```mermaid
+graph TD
+    A["1. Install JDK"] --> B["2. Install IntelliJ IDEA"]
+    B --> C["3. Create Gradle Project"]
+    C --> D["4. Write Hello World"]
+    D --> E["5. Run & Verify"]
+    E --> F["Ready for Quick Start!"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
 ## Why Learn Kotlin?
 
 Kotlin is a modern, pragmatic programming language that combines productivity with safety:
@@ -249,7 +269,7 @@ fun main() {
 - No class required for a simple program (unlike Java)
 - No semicolons needed
 
-**Note**: You'll learn these concepts in detail in the Quick Start and Beginner tutorials.
+**Note**: You'll learn these concepts in detail in the [Quick Start](/en/learn/swe/prog-lang/kotlin/tutorials/quick-start) and [Beginner Guide](/en/learn/swe/prog-lang/kotlin/tutorials/beginner) tutorials. For advanced function patterns, see [Intermediate Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/intermediate).
 
 ### Comparison with Java
 
@@ -442,7 +462,7 @@ dependencies {
 - `mavenCentral()` - The repository for downloading libraries
 - `dependencies {}` - Where you add libraries your project needs
 
-You'll learn more about Gradle as you progress through the tutorials.
+You'll learn more about Gradle as you progress through the tutorials. For build configuration best practices, see [Kotlin Best Practices](/en/learn/swe/prog-lang/kotlin/explanation/best-practices). For common Gradle tasks, check the [Kotlin Cookbook](/en/learn/swe/prog-lang/kotlin/how-to/cookbook).
 
 ## Next Steps
 
@@ -478,6 +498,12 @@ The **Beginner** tutorial provides comprehensive coverage:
 Choose Quick Start for a fast overview, or jump to Beginner for thorough, comprehensive learning.
 
 ### Additional Resources
+
+- **Internal Resources**:
+  - [Kotlin Cheat Sheet](/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet) - Quick reference for Kotlin syntax
+  - [Kotlin Glossary](/en/learn/swe/prog-lang/kotlin/reference/glossary) - Technical terms explained
+  - [Kotlin Learning Resources](/en/learn/swe/prog-lang/kotlin/reference/learning-resources) - External learning materials
+  - [Kotlin Anti-Patterns](/en/learn/swe/prog-lang/kotlin/explanation/anti-patterns) - Common mistakes to avoid
 
 - **Official Kotlin Documentation**: [https://kotlinlang.org/docs/home.html](https://kotlinlang.org/docs/home.html)
 - **Kotlin Language Reference**: [https://kotlinlang.org/spec/](https://kotlinlang.org/spec/)

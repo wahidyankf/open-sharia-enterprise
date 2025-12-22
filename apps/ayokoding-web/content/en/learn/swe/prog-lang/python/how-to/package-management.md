@@ -563,6 +563,6 @@ pip-audit --fix  # Auto-upgrade vulnerable packages
 
 ## Related Patterns
 
-**Related Tutorial**: See [Beginner Tutorial - Setup](../tutorials/beginner.md#setup).
-**Related How-To**: See [Implement Security Best Practices](./security-best-practices.md).
+**Related Tutorial**: See [Beginner Tutorial - Setup](/en/learn/swe/prog-lang/python/tutorials/beginner#setup).
+**Related How-To**: See [Implement Security Best Practices](/en/learn/swe/prog-lang/python/how-to/security-best-practices).
 **Related Cookbook**: See Cookbook recipe "Dependency Management".

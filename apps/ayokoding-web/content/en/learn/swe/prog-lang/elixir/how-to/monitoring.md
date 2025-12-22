@@ -24,7 +24,7 @@ tags:
 
 - Production Elixir application
 - Understanding of processes and supervision
-- Completed [Advanced Tutorial](/learn/swe/prog-lang/elixir/tutorials/advanced)
+- Completed [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced)
 
 ## Problem
 
@@ -784,8 +784,8 @@ config :logger, :console, format: "$message\n"
 
 ## Related Resources
 
-- [Deployment Guide](/learn/swe/prog-lang/elixir/how-to/deployment)
-- [Debugging Guide](/learn/swe/prog-lang/elixir/how-to/debugging)
-- [Performance Guide](/learn/swe/prog-lang/elixir/how-to/performance)
+- [Deployment Guide](/en/learn/swe/prog-lang/elixir/how-to/deployment)
+- [Debugging Guide](/en/learn/swe/prog-lang/elixir/how-to/debugging)
+- [Performance Guide](/en/learn/swe/prog-lang/elixir/how-to/performance)
 - [Telemetry Documentation](https://hexdocs.pm/telemetry/)
 - [Phoenix LiveDashboard](https://hexdocs.pm/phoenix_live_dashboard/)

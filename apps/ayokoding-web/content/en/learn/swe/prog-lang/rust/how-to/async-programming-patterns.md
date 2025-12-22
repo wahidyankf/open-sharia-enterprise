@@ -726,8 +726,8 @@ tokio::spawn(async move {
 
 ## Related Patterns
 
-**Related Patterns**: See [Concurrent Programming](./concurrent-programming.md) for thread-based patterns, [Error Handling Strategies](./error-handling-strategies.md) for async error handling, [Testing Patterns](./testing-patterns.md) for testing async code.
+**Related Patterns**: See [Concurrent Programming](/en/learn/swe/prog-lang/rust/how-to/concurrent-programming) for thread-based patterns, [Error Handling Strategies](/en/learn/swe/prog-lang/rust/how-to/error-handling-strategies) for async error handling, [Testing Patterns](/en/learn/swe/prog-lang/rust/how-to/testing-patterns) for testing async code.
 
-**Tutorial**: See [Beginner Tutorial](../beginner-tutorial.md) for async basics.
+**Tutorial**: See [Beginner Tutorial](/en/learn/swe/prog-lang/rust/tutorials/beginner) for async basics.
 
-**Cookbook**: See [Cookbook Recipe 52 - Async HTTP Server](./cookbook.md#recipe-52-async-http-server), [Recipe 53 - WebSocket Server](./cookbook.md#recipe-53-websocket-server) for async examples.
+**Cookbook**: See [Cookbook Recipe 52 - Async HTTP Server](/en/learn/swe/prog-lang/rust/how-to/cookbook#recipe-52-async-http-server), [Recipe 53 - WebSocket Server](/en/learn/swe/prog-lang/rust/how-to/cookbook#recipe-53-websocket-server) for async examples.

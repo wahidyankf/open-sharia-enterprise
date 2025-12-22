@@ -689,7 +689,7 @@ end
 
 ## Related Resources
 
-- [Mix Guide](/learn/swe/prog-lang/elixir/how-to/mix)
-- [Deployment Guide](/learn/swe/prog-lang/elixir/how-to/deployment)
-- [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing)
-- [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices)
+- [Mix Guide](/en/learn/swe/prog-lang/elixir/how-to/mix)
+- [Deployment Guide](/en/learn/swe/prog-lang/elixir/how-to/deployment)
+- [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices)

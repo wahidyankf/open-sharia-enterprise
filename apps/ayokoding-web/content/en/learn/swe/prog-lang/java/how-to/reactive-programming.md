@@ -569,13 +569,13 @@ shared.subscribe(i -> System.out.println("Sub2: " + i));
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Reactive Programming](../tutorials/advanced.md#reactive-programming) for reactive fundamentals and [Intermediate Tutorial - Async Programming](../tutorials/intermediate.md#async-programming) for async basics.
+**Related Tutorial**: See [Advanced Tutorial - Reactive Programming](/en/learn/swe/prog-lang/python/tutorials/advanced#reactive-programming) for reactive fundamentals and [Intermediate Tutorial - Async Programming](/en/learn/swe/prog-lang/python/tutorials/intermediate#async-programming) for async basics.
 
-**Related How-To**: See [Build REST APIs with Spring](./build-rest-apis-spring.md) for WebFlux integration and [Work with Databases](./work-with-databases.md) for reactive database access.
+**Related How-To**: See [Build REST APIs with Spring](/en/learn/swe/prog-lang/java/how-to/build-rest-apis-spring) for WebFlux integration and [Work with Databases](/en/learn/swe/prog-lang/java/how-to/work-with-databases) for reactive database access.
 
 **Related Cookbook**: See Cookbook recipes "Reactive API Patterns", "Backpressure Strategies", and "Error Handling in Reactive Streams" for copy-paste ready reactive implementations.
 
-**Related Explanation**: See [Best Practices - Reactive Programming](../explanation/best-practices.md#reactive-programming) for reactive design principles.
+**Related Explanation**: See [Best Practices - Reactive Programming](/en/learn/swe/prog-lang/python/explanation/best-practices#reactive-programming) for reactive design principles.
 
 ## Further Reading
 

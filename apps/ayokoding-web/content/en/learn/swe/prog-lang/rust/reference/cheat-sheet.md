@@ -318,10 +318,10 @@ use std::collections::HashMap;
 
 let mut scores = HashMap::new();
 scores.insert(String::from("Blue"), 10);
-scores.insert(String::from("Yellow"), 50);
+scores.insert(String::from("TeamA"), 50);
 
 let score = scores.get("Blue");   // Option<&V>
-scores.entry(String::from("Red")).or_insert(50);
+scores.entry(String::from("TeamB")).or_insert(50);
 ```
 
 ## Traits

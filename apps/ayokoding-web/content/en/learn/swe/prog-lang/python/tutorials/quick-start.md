@@ -13,7 +13,7 @@ tags:
 
 **Want to get productive with Python fast?** This Quick Start teaches you the essential syntax and core patterns you need to read Python code and try simple examples independently. You'll understand Python's approach to simplicity and readability.
 
-For comprehensive coverage and hands-on practice, see the [Complete Beginner's Guide](/learn/swe/prog-lang/python/tutorials/beginner). For practical patterns and recipes, check out the [Python Cookbook](/learn/swe/prog-lang/python/how-to/cookbook) and [How-To Guides](/learn/swe/prog-lang/python/how-to/overview).
+For comprehensive coverage and hands-on practice, see the [Complete Beginner's Guide](/en/learn/swe/prog-lang/python/tutorials/beginner). For practical patterns and recipes, check out the [Python Cookbook](/en/learn/swe/prog-lang/python/how-to/cookbook) and [How-To Guides](/en/learn/swe/prog-lang/python/how-to/overview).
 
 ## 🗺️ Python Learning Touchpoints
 
@@ -46,7 +46,7 @@ Each section introduces ONE essential concept with ONE example. After completing
 ## 📋 Prerequisites
 
 - Basic programming knowledge in any language
-- Python installed (version 3.12 or later recommended - see [Initial Setup](/learn/swe/prog-lang/python/tutorials/initial-setup) if you haven't installed Python yet)
+- Python installed (version 3.12 or later recommended - see [Initial Setup](/en/learn/swe/prog-lang/python/tutorials/initial-setup) if you haven't installed Python yet)
 
 ## 🔤 Variables and Types
 
@@ -83,7 +83,7 @@ print(name, age, height, is_active)
 - `bool` - `True`/`False` (capitalized)
 - `None` - Absence of value (like `null` in other languages)
 
-Python uses duck typing: "If it walks like a duck and quacks like a duck, it's a duck." For deeper coverage of types and type hints, see the [Beginner tutorial](/learn/swe/prog-lang/python/tutorials/beginner) and [Use type hints effectively](/learn/swe/prog-lang/python/how-to/use-type-hints-effectively).
+Python uses duck typing: "If it walks like a duck and quacks like a duck, it's a duck." For deeper coverage of types and type hints, see the [Beginner tutorial](/en/learn/swe/prog-lang/python/tutorials/beginner) and [Use type hints effectively](/en/learn/swe/prog-lang/python/how-to/use-type-hints-effectively).
 
 ---
 
@@ -131,7 +131,7 @@ for i in range(10):
 - `range(n)` generates numbers from 0 to n-1
 - `for item in collection` is the Pythonic way
 
-For advanced control flow patterns, see [Use control structures effectively](/learn/swe/prog-lang/python/how-to/use-control-structures-effectively) and [Python Best Practices](/learn/swe/prog-lang/python/explanation/best-practices).
+For advanced control flow patterns, see [Use control structures effectively](/en/learn/swe/prog-lang/python/how-to/use-control-structures-effectively) and [Python Best Practices](/en/learn/swe/prog-lang/python/explanation/best-practices).
 
 ---
 
@@ -178,7 +178,7 @@ print(square(4))            # 16
 - Functions can return multiple values (tuples)
 - Lambdas are concise one-line functions
 
-Deep dive into functions in the [Beginner tutorial](/learn/swe/prog-lang/python/tutorials/beginner) or explore patterns in [Write effective functions](/learn/swe/prog-lang/python/how-to/write-effective-functions).
+Deep dive into functions in the [Beginner tutorial](/en/learn/swe/prog-lang/python/tutorials/beginner) or explore patterns in [Write effective functions](/en/learn/swe/prog-lang/python/how-to/write-effective-functions).
 
 ---
 
@@ -224,7 +224,7 @@ for key, value in person.items():
 - Dictionaries are unordered (Python 3.7+ maintains insertion order)
 - Use `.get(key)` to avoid KeyError
 
-For more collection patterns, see [Work with lists effectively](/learn/swe/prog-lang/python/how-to/work-with-lists-effectively) and [Work with dictionaries effectively](/learn/swe/prog-lang/python/how-to/work-with-dictionaries-effectively).
+For more collection patterns, see [Work with lists effectively](/en/learn/swe/prog-lang/python/how-to/use-collections-effectively) and [Work with dictionaries effectively](/en/learn/swe/prog-lang/python/how-to/use-collections-effectively).
 
 ---
 
@@ -323,7 +323,7 @@ else:
 - Specific exceptions before general ones
 - `finally` block always executes (cleanup code)
 
-For comprehensive error handling strategies, see [Handle errors effectively](/learn/swe/prog-lang/python/how-to/handle-errors-effectively) and [Intermediate tutorial](/learn/swe/prog-lang/python/tutorials/intermediate).
+For comprehensive error handling strategies, see [Handle errors effectively](/en/learn/swe/prog-lang/python/how-to/handle-errors-effectively) and [Intermediate tutorial](/en/learn/swe/prog-lang/python/tutorials/intermediate).
 
 ---
 
@@ -559,7 +559,7 @@ deactivate
 - Easy to reproduce exact environment
 - Don't pollute global Python installation
 
-For more details, see [Use virtual environments](/learn/swe/prog-lang/python/how-to/use-virtual-environments) and [Manage Python packages effectively](/learn/swe/prog-lang/python/how-to/manage-packages-effectively).
+For more details, see [Use virtual environments](/en/learn/swe/prog-lang/python/how-to/manage-dependencies-and-environments) and [Manage Python packages effectively](/en/learn/swe/prog-lang/python/how-to/manage-dependencies-and-environments).
 
 **Best Practice**: Create a new venv for every project.
 
@@ -690,8 +690,8 @@ a, b = b, a
 You now have touchpoints across Python's core concepts! To deepen your knowledge:
 
 1. **Try the examples**: Copy and run each code snippet. Modify them and experiment.
-2. **Read the docs**: Visit [docs.python.org](https://docs.python.org/) to explore in depth or check our [Python Resources](/learn/swe/prog-lang/python/reference/resources).
-3. **Complete the Beginner tutorial**: [Complete Beginner's Guide to Python](/learn/swe/prog-lang/python/tutorials/beginner) covers everything comprehensively with:
+2. **Read the docs**: Visit [docs.python.org](https://docs.python.org/) to explore in depth or check our [Python Resources](/en/learn/swe/prog-lang/python/reference/resources).
+3. **Complete the Beginner tutorial**: [Complete Beginner's Guide to Python](/en/learn/swe/prog-lang/python/tutorials/beginner) covers everything comprehensively with:
    - Classes, objects, and inheritance
    - Decorators and context managers
    - File I/O and working with APIs
@@ -699,11 +699,11 @@ You now have touchpoints across Python's core concepts! To deepen your knowledge
    - Testing with pytest
    - 4 levels of practice exercises
 
-4. **Explore practical recipes**: [Python Cookbook](/learn/swe/prog-lang/python/how-to/cookbook) has 30+ copy-paste-modify solutions.
+4. **Explore practical recipes**: [Python Cookbook](/en/learn/swe/prog-lang/python/how-to/cookbook) has 30+ copy-paste-modify solutions.
 
-5. **Deepen specific topics**: [How-To Guides](/learn/swe/prog-lang/python/how-to/overview) provide focused tutorials on specific techniques.
+5. **Deepen specific topics**: [How-To Guides](/en/learn/swe/prog-lang/python/how-to/overview) provide focused tutorials on specific techniques.
 
-6. **Learn best practices**: [Python Best Practices](/learn/swe/prog-lang/python/explanation/best-practices) and [Anti-Patterns](/learn/swe/prog-lang/python/explanation/anti-patterns) show what to do (and what to avoid).
+6. **Learn best practices**: [Python Best Practices](/en/learn/swe/prog-lang/python/explanation/best-practices) and [Anti-Patterns](/en/learn/swe/prog-lang/python/explanation/anti-patterns) show what to do (and what to avoid).
 
 ## 🎯 Self-Assessment
 

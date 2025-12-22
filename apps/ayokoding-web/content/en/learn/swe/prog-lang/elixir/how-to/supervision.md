@@ -16,7 +16,7 @@ tags:
 
 - Understanding of GenServer
 - Basic OTP concepts
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate) or equivalent
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) or equivalent
 
 ## Problem
 
@@ -620,10 +620,10 @@ children = [
 
 ## Related Resources
 
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver) - Building supervised workers
-- [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate) - Supervision fundamentals
-- [Error Handling](/learn/swe/prog-lang/elixir/how-to/error-handling) - Complementary error strategies
-- [Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook) - Supervision recipes
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver) - Building supervised workers
+- [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) - Supervision fundamentals
+- [Error Handling](/en/learn/swe/prog-lang/elixir/how-to/error-handling) - Complementary error strategies
+- [Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Supervision recipes
 
 ## Next Steps
 

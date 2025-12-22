@@ -16,7 +16,7 @@ tags: ["elixir", "phoenix", "rest-api", "web-development", "how-to"]
 - Phoenix framework basics
 - Ecto for data layer
 - HTTP/REST concepts
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 
 ## Problem
 
@@ -773,9 +773,9 @@ end
 
 ## Related Resources
 
-- [Ecto Guide](/learn/swe/prog-lang/elixir/how-to/ecto)
-- [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing)
-- [Authentication Guide](/learn/swe/prog-lang/elixir/how-to/authentication)
+- [Ecto Guide](/en/learn/swe/prog-lang/elixir/how-to/ecto)
+- [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)
+- [Authentication Guide](/en/learn/swe/prog-lang/elixir/how-to/authentication)
 - [Phoenix Documentation](https://hexdocs.pm/phoenix/)
 - [Guardian Documentation](https://hexdocs.pm/guardian/)
 - [OpenAPI Specification](https://swagger.io/specification/)

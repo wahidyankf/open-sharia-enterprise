@@ -497,13 +497,13 @@ public class UserController {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Package Organization](../tutorials/intermediate.md#package-organization) for package basics and [Advanced Tutorial - Architecture Patterns](../tutorials/advanced.md#architecture) for architectural styles.
+**Related Tutorial**: See [Intermediate Tutorial - Package Organization](/en/learn/swe/prog-lang/python/tutorials/intermediate#package-organization) for package basics and [Advanced Tutorial - Architecture Patterns](/en/learn/swe/prog-lang/python/tutorials/advanced#architecture) for architectural styles.
 
-**Related How-To**: See [Dependency Injection with Spring](./dependency-injection-spring.md) for managing dependencies and [Use Sealed Classes](./use-sealed-classes.md) for controlling type hierarchies.
+**Related How-To**: See [Dependency Injection with Spring](/en/learn/swe/prog-lang/java/how-to/dependency-injection-spring) for managing dependencies and [Use Sealed Classes](/en/learn/swe/prog-lang/java/how-to/use-sealed-classes) for controlling type hierarchies.
 
 **Related Cookbook**: See Cookbook recipes "Feature-Based Package Structure", "Layered Architecture Template", and "Module Dependency Management" for copy-paste ready package organizations.
 
-**Related Explanation**: See [Best Practices - Code Organization](../explanation/best-practices.md#code-organization) for organization principles.
+**Related Explanation**: See [Best Practices - Code Organization](/en/learn/swe/prog-lang/python/explanation/best-practices#code-organization) for organization principles.
 
 ## Further Reading
 

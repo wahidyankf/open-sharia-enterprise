@@ -15,7 +15,7 @@ tags: ["elixir", "caching", "ets", "performance", "optimization", "how-to"]
 
 - Understanding of GenServer and processes
 - Basic performance optimization concepts
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 
 ## Problem
 
@@ -833,8 +833,8 @@ end
 
 ## Related Resources
 
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver)
-- [Performance Guide](/learn/swe/prog-lang/elixir/how-to/performance)
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
+- [Performance Guide](/en/learn/swe/prog-lang/elixir/how-to/performance)
 - [ETS Documentation](https://www.erlang.org/doc/man/ets.html)
 - [Cachex Documentation](https://hexdocs.pm/cachex/)
 - [Redix Documentation](https://hexdocs.pm/redix/)

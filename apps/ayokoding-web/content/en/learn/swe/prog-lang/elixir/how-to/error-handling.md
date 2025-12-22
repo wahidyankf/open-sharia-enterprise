@@ -25,9 +25,9 @@ Elixir uses explicit result tuples `{:ok, value}` and `{:error, reason}` for pre
 
 ## Prerequisites
 
-- [Quick Start Tutorial](/learn/swe/prog-lang/elixir/tutorials/quick-start) - Basic syntax
-- [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner) - Pattern matching
-- [Pattern Matching Guide](/learn/swe/prog-lang/elixir/how-to/pattern-matching)
+- [Quick Start Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/quick-start) - Basic syntax
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Pattern matching
+- [Pattern Matching Guide](/en/learn/swe/prog-lang/elixir/how-to/pattern-matching)
 
 ## Solution Overview
 
@@ -777,7 +777,7 @@ end
 
 ## See Also
 
-- [Cookbook - Error Handling Recipes](/learn/swe/prog-lang/elixir/how-to/cookbook#error-handling)
-- [Beginner Tutorial - Error Handling](/learn/swe/prog-lang/elixir/tutorials/beginner#error-handling)
-- [Supervision Guide](/learn/swe/prog-lang/elixir/how-to/supervision-trees)
-- [Best Practices - Error Handling](/learn/swe/prog-lang/elixir/explanation/best-practices)
+- [Cookbook - Error Handling Recipes](/en/learn/swe/prog-lang/elixir/how-to/cookbook#error-handling)
+- [Beginner Tutorial - Error Handling](/en/learn/swe/prog-lang/elixir/tutorials/beginner#error-handling)
+- [Supervision Guide](/en/learn/swe/prog-lang/elixir/how-to/supervision)
+- [Best Practices - Error Handling](/en/learn/swe/prog-lang/elixir/explanation/best-practices)

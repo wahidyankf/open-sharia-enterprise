@@ -521,6 +521,6 @@ async def good_concurrent_requests():
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Async Programming](../tutorials/advanced.md#async-programming).
-**Related How-To**: See [Work with Async Databases](./work-with-databases.md).
+**Related Tutorial**: See [Advanced Tutorial - Async Programming](/en/learn/swe/prog-lang/python/tutorials/advanced#async-programming).
+**Related How-To**: See [Work with Async Databases](/en/learn/swe/prog-lang/python/how-to/work-with-databases).
 **Related Cookbook**: See Cookbook recipe "Advanced Async Patterns".

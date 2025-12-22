@@ -360,7 +360,7 @@ func workerPool(jobs <-chan int, results chan<- int) {
 ### Profiling Workflow
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
     A[Start Application] --> B[Enable Profiling]
     B --> C{Profiling Type}
@@ -540,13 +540,13 @@ func startWorker(ctx context.Context) {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Performance](../tutorials/intermediate.md#performance) for performance fundamentals and [Advanced Tutorial - Profiling](../tutorials/advanced.md#profiling) for advanced profiling techniques.
+**Related Tutorial**: See [Intermediate Tutorial - Performance](/en/learn/swe/prog-lang/golang/tutorials/intermediate#performance) for performance fundamentals and [Advanced Tutorial - Profiling](/en/learn/swe/prog-lang/golang/tutorials/advanced#profiling) for advanced profiling techniques.
 
-**Related How-To**: See [Work with Concurrency](./work-with-concurrency.md) for goroutine best practices and [Use Channels Effectively](./use-channels-effectively.md) for channel patterns.
+**Related How-To**: See [Work with Concurrency](/en/learn/swe/prog-lang/golang/how-to/work-with-concurrency) for goroutine best practices and [Use Channels Effectively](/en/learn/swe/prog-lang/golang/how-to/use-channels-effectively) for channel patterns.
 
 **Related Cookbook**: See Cookbook recipes "pprof Profiling Patterns", "Benchmark Comparison", and "Memory Optimization" for copy-paste ready optimization code.
 
-**Related Explanation**: See [Best Practices - Performance](../explanation/best-practices.md#performance) for performance principles.
+**Related Explanation**: See [Best Practices - Performance](/en/learn/swe/prog-lang/golang/explanation/best-practices#performance) for performance principles.
 
 ## Further Reading
 

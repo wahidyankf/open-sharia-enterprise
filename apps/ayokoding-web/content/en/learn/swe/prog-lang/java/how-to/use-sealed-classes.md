@@ -592,13 +592,13 @@ public sealed interface PaymentStatus permits Pending, Completed, Failed {}
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Modern Java Features](../tutorials/advanced.md#modern-java) for sealed classes and pattern matching and [Intermediate Tutorial - OOP Principles](../tutorials/intermediate.md#oop) for inheritance design.
+**Related Tutorial**: See [Advanced Tutorial - Modern Java Features](/en/learn/swe/prog-lang/python/tutorials/advanced#modern-java) for sealed classes and pattern matching and [Intermediate Tutorial - OOP Principles](/en/learn/swe/prog-lang/python/tutorials/intermediate#oop) for inheritance design.
 
-**Related How-To**: See [Use Records Effectively](./use-records-effectively.md) for combining records with sealed types and [Pattern Matching](./pattern-matching.md) for exhaustive pattern matching.
+**Related How-To**: See [Use Records Effectively](/en/learn/swe/prog-lang/java/how-to/use-records-effectively) for combining records with sealed types and [Pattern Matching](/en/learn/swe/prog-lang/java/how-to/pattern-matching) for exhaustive pattern matching.
 
 **Related Cookbook**: See Cookbook recipes "Sealed Type Hierarchies", "Domain Modeling with Sealed Types", and "Result Type Pattern" for copy-paste ready sealed class patterns.
 
-**Related Explanation**: See [Best Practices - Type Safety](../explanation/best-practices.md#type-safety) for type safety principles.
+**Related Explanation**: See [Best Practices - Type Safety](/en/learn/swe/prog-lang/python/explanation/best-practices#type-safety) for type safety principles.
 
 ## Further Reading
 

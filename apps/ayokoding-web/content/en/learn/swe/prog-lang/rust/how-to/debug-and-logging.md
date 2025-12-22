@@ -458,8 +458,8 @@ error!("Database connection lost");
 
 ## Related Patterns
 
-**Related Tutorial**: See [Beginner Tutorial - Debugging](../tutorials/beginner.md#debugging) for debugging fundamentals.
+**Related Tutorial**: See [Beginner Tutorial - Debugging](/en/learn/swe/prog-lang/python/tutorials/beginner#debugging) for debugging fundamentals.
 
 **Related Cookbook**: See Cookbook recipes on "Error Handling Patterns" and "Production Logging".
 
-**Related How-To**: See [Handle Errors Gracefully](./handle-errors-gracefully.md) for error context strategies.
+**Related How-To**: See [Handle Errors Gracefully](/en/learn/swe/prog-lang/rust/how-to/handle-errors-gracefully) for error context strategies.

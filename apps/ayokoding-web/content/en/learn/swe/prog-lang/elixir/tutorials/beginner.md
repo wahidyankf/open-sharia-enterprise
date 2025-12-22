@@ -15,7 +15,7 @@ tags: ["elixir", "tutorial", "beginner", "comprehensive", "otp"]
 
 **Required:**
 
-- Completed [Initial Setup](/learn/swe/prog-lang/elixir/tutorials/initial-setup) and [Quick Start](/learn/swe/prog-lang/elixir/tutorials/quick-start)
+- Completed [Initial Setup](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup) and [Quick Start](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)
 - Elixir 1.14+ installed
 - Text editor configured
 - IEx shell experience
@@ -61,7 +61,7 @@ This tutorial provides **comprehensive coverage** of Elixir fundamentals:
 ## Learning Path
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     Start[Start: Quick Start Done] --> Pattern[Advanced Pattern Matching]
     Pattern --> Data[Data Structures Mastery]
@@ -2642,13 +2642,13 @@ Congratulations! You've mastered Elixir fundamentals (0-60% coverage).
 
 **Continue your journey:**
 
-1. **[Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)** - OTP deep dive (60-85%)
+1. **[Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)** - OTP deep dive (60-85%)
    - GenServer patterns
    - Supervision trees
    - Phoenix framework
    - Ecto database patterns
 
-2. **[Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook)** - Solutions to common problems
+2. **[Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook)** - Solutions to common problems
 3. **Build Projects** - Apply your knowledge to real applications
 
 **You're now ready to:**

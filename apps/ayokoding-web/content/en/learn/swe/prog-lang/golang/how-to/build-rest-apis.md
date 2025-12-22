@@ -323,7 +323,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 ### HTTP Request Flow
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
     A[HTTP Request] --> B[Middleware Chain]
     B --> C[Logging]
@@ -425,9 +425,9 @@ defer r.Body.Close()
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Web Development](../tutorials/intermediate.md#web) and [Beginner Tutorial - HTTP Basics](../tutorials/beginner.md#http).
+**Related Tutorial**: See [Intermediate Tutorial - Web Development](/en/learn/swe/prog-lang/golang/tutorials/intermediate#web) and [Beginner Tutorial - HTTP Basics](/en/learn/swe/prog-lang/golang/tutorials/beginner#http).
 
-**Related How-To**: See [Implement Middleware](./implement-middleware.md) and [Work with JSON](./work-with-json-effectively.md).
+**Related How-To**: See [Implement Middleware](/en/learn/swe/prog-lang/golang/how-to/implement-middleware) and [Work with JSON](/en/learn/swe/prog-lang/golang/how-to/work-with-json-effectively).
 
 **Related Cookbook**: See Cookbook recipes "REST API Patterns", "Request Validation", "Error Handling".
 

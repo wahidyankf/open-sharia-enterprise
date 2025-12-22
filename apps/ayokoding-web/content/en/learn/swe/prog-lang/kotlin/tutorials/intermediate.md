@@ -59,6 +59,28 @@ This tutorial covers **60-85% of Kotlin** - production patterns and advanced top
 
 **Structure**: This tutorial is organized into 8 practical sections with production-ready examples.
 
+```mermaid
+graph TD
+    A["1. Advanced Coroutines"] --> B["2. Design Patterns"]
+    B --> C["3. Database Integration"]
+    C --> D["4. REST API Development"]
+    D --> E["5. Performance Optimization"]
+    E --> F["6. Testing Strategies"]
+    F --> G["7. Configuration & Security"]
+    G --> H["8. Production Deployment"]
+    H --> I["Ready for Advanced!"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style G fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style I fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
 ---
 
 ## Part 1: Advanced Coroutines
@@ -1434,6 +1456,17 @@ You've mastered production Kotlin patterns:
 - Test applications comprehensively
 - Optimize code for performance
 - Apply professional development practices
+
+## Next Steps
+
+Continue advancing your Kotlin expertise:
+
+- **[Advanced Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/advanced)** - Compiler internals, reflection, metaprogramming
+- **[Kotlin Cookbook](/en/learn/swe/prog-lang/kotlin/how-to/cookbook)** - Advanced code recipes
+- **[Kotlin Best Practices](/en/learn/swe/prog-lang/kotlin/explanation/best-practices)** - Production coding standards
+- **[Complete Beginner's Guide](/en/learn/swe/prog-lang/kotlin/tutorials/beginner)** - Review fundamentals
+- **[Kotlin Glossary](/en/learn/swe/prog-lang/kotlin/reference/glossary)** - Technical terminology
+- **[Kotlin Cheat Sheet](/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet)** - Quick reference
 
 ---
 

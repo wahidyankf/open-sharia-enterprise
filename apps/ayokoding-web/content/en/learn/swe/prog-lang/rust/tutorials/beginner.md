@@ -1940,7 +1940,7 @@ fn main() {
     let mut scores = HashMap::new();
 
     scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
+    scores.insert(String::from("TeamA"), 50);
 }
 ```
 
@@ -1953,7 +1953,7 @@ fn main() {
     let mut scores = HashMap::new();
 
     scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
+    scores.insert(String::from("TeamA"), 50);
 
     let team_name = String::from("Blue");
     let score = scores.get(&team_name);  // Returns Option<&i32>
@@ -1974,7 +1974,7 @@ fn main() {
     let mut scores = HashMap::new();
 
     scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
+    scores.insert(String::from("TeamA"), 50);
 
     for (key, value) in &scores {
         println!("{key}: {value}");
@@ -2023,10 +2023,10 @@ fn main() {
     let mut scores = HashMap::new();
     scores.insert(String::from("Blue"), 10);
 
-    scores.entry(String::from("Yellow")).or_insert(50);
+    scores.entry(String::from("TeamA")).or_insert(50);
     scores.entry(String::from("Blue")).or_insert(50);  // Doesn't overwrite
 
-    println!("{:?}", scores);  // {"Yellow": 50, "Blue": 10}
+    println!("{:?}", scores);  // {"TeamA": 50, "Blue": 10}
 }
 ```
 
@@ -2371,6 +2371,13 @@ Build something to solidify your knowledge:
 - File parser using Result and error propagation
 - Todo list manager with Vec and HashMap
 - Simple web scraper (preview async concepts)
+
+### Internal Resources
+
+- [Rust Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook) - Ready-to-use code recipes
+- [Rust Best Practices](/en/learn/swe/prog-lang/rust/explanation/best-practices) - Professional standards
+- [Rust Cheat Sheet](/en/learn/swe/prog-lang/rust/reference/cheat-sheet) - Quick reference
+- [Advanced Rust](/en/learn/swe/prog-lang/rust/tutorials/advanced) - Expert topics
 
 ### External Resources
 

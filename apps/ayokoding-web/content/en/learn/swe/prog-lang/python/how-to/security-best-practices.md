@@ -643,6 +643,6 @@ async def enforce_https(request: Request, call_next):
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Security](../tutorials/advanced.md#security).
-**Related How-To**: See [Build REST APIs](./build-rest-apis.md), [Implement Data Validation](./data-validation-patterns.md).
+**Related Tutorial**: See [Advanced Tutorial - Security](/en/learn/swe/prog-lang/python/tutorials/advanced#security).
+**Related How-To**: See [Build REST APIs](/en/learn/swe/prog-lang/python/how-to/build-rest-apis), [Implement Data Validation](/en/learn/swe/prog-lang/python/how-to/data-validation-patterns).
 **Related Cookbook**: See Cookbook recipe "Security Patterns".

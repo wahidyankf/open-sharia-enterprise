@@ -675,8 +675,8 @@ impl MyCollection {
 
 ## Related Patterns
 
-**Related Patterns**: See [Write Effective Tests](./write-effective-tests.md) for documentation testing strategies, [Error Handling Strategies](./error-handling-strategies.md) for documenting error conditions, [Testing Patterns](./testing-patterns.md) for integration with regular tests.
+**Related Patterns**: See [Write Effective Tests](/en/learn/swe/prog-lang/rust/how-to/write-effective-tests) for documentation testing strategies, [Error Handling Strategies](/en/learn/swe/prog-lang/rust/how-to/error-handling-strategies) for documenting error conditions, [Testing Patterns](/en/learn/swe/prog-lang/rust/how-to/testing-patterns) for integration with regular tests.
 
-**Tutorial**: See [Beginner Tutorial](../beginner-tutorial.md) for documentation basics.
+**Tutorial**: See [Beginner Tutorial](/en/learn/swe/prog-lang/rust/tutorials/beginner) for documentation basics.
 
-**Cookbook**: See [Cookbook](./cookbook.md) for documentation examples throughout recipes.
+**Cookbook**: See [Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook) for documentation examples throughout recipes.

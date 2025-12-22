@@ -15,7 +15,7 @@ tags: ["elixir", "testing", "exunit", "tdd", "quality", "how-to"]
 
 - Basic Elixir syntax
 - Understanding of modules and functions
-- Completed [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner)
+- Completed [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
 
 ## Problem
 
@@ -750,9 +750,9 @@ Process.sleep(10)
 
 ## Related Resources
 
-- [Debugging Guide](/learn/swe/prog-lang/elixir/how-to/debugging)
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver)
-- [Ecto Guide](/learn/swe/prog-lang/elixir/how-to/ecto)
+- [Debugging Guide](/en/learn/swe/prog-lang/elixir/how-to/debugging)
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
+- [Ecto Guide](/en/learn/swe/prog-lang/elixir/how-to/ecto)
 - [ExUnit Documentation](https://hexdocs.pm/ex_unit/)
 - [Mox Documentation](https://hexdocs.pm/mox/)
 - [StreamData Documentation](https://hexdocs.pm/stream_data/)

@@ -537,29 +537,29 @@ tags: ["elixir", "reference", "resources", "learning", "community"]
 
 ### Path 1: Web Developer (Phoenix Focus)
 
-1. Complete [Initial Setup Tutorial](/learn/swe/prog-lang/elixir/tutorials/initial-setup)
-2. Work through [Quick Start](/learn/swe/prog-lang/elixir/tutorials/quick-start)
+1. Complete [Initial Setup Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup)
+2. Work through [Quick Start](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)
 3. Read "Programming Elixir" or "Elixir in Action"
-4. Complete [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner)
-5. Study [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate) (Phoenix sections)
+4. Complete [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
+5. Study [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) (Phoenix sections)
 6. Read "Programming Phoenix"
 7. Build a complete Phoenix application
-8. Explore [LiveView](/learn/swe/prog-lang/elixir/how-to/liveview) and [Ecto](/learn/swe/prog-lang/elixir/how-to/ecto) guides
+8. Explore [LiveView](/en/learn/swe/prog-lang/elixir/how-to/liveview) and [Ecto](/en/learn/swe/prog-lang/elixir/how-to/ecto) guides
 
 ### Path 2: Backend Systems (OTP Focus)
 
-1. Complete [Initial Setup](/learn/swe/prog-lang/elixir/tutorials/initial-setup) and [Quick Start](/learn/swe/prog-lang/elixir/tutorials/quick-start)
+1. Complete [Initial Setup](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup) and [Quick Start](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)
 2. Read "The Little Elixir & OTP Guidebook"
-3. Complete [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner) (OTP sections)
-4. Study [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate) (GenServer, Supervisor)
+3. Complete [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) (OTP sections)
+4. Study [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) (GenServer, Supervisor)
 5. Read "Designing Elixir Systems with OTP"
 6. Build a distributed concurrent system
-7. Study [Advanced Tutorial](/learn/swe/prog-lang/elixir/tutorials/advanced) (BEAM internals, distribution)
+7. Study [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced) (BEAM internals, distribution)
 
 ### Path 3: Complete Mastery
 
 1. Follow Web Developer or Backend Systems path
-2. Complete [Advanced Tutorial](/learn/swe/prog-lang/elixir/tutorials/advanced)
+2. Complete [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced)
 3. Read "Metaprogramming Elixir"
 4. Study "Concurrent Data Processing in Elixir"
 5. Contribute to open-source Elixir libraries
@@ -614,4 +614,4 @@ tags: ["elixir", "reference", "resources", "learning", "community"]
 - You're here! Complete bilingual Elixir learning path
 - URL: [/id/belajar/swe/prog-lang/elixir/](/id/belajar/swe/prog-lang/elixir/)
 
-Ready to start learning? Begin with our [Initial Setup Tutorial](/learn/swe/prog-lang/elixir/tutorials/initial-setup) or dive into [Quick Start](/learn/swe/prog-lang/elixir/tutorials/quick-start)!
+Ready to start learning? Begin with our [Initial Setup Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup) or dive into [Quick Start](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)!

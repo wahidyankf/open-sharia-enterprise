@@ -16,7 +16,7 @@ tags:
 
 - Basic Elixir syntax (pattern matching, functions)
 - Understanding of lists and tuples
-- Completed [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner) or equivalent
+- Completed [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) or equivalent
 
 ## Problem
 
@@ -544,10 +544,10 @@ fib(35)  # Instant!
 
 ## Related Resources
 
-- [Pattern Matching Guide](/learn/swe/prog-lang/elixir/how-to/pattern-matching) - Essential for recursive patterns
-- [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner) - Recursion fundamentals
-- [Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook) - Quick reference recipes
-- [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices) - Recursion guidelines
+- [Pattern Matching Guide](/en/learn/swe/prog-lang/elixir/how-to/pattern-matching) - Essential for recursive patterns
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Recursion fundamentals
+- [Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - Quick reference recipes
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) - Recursion guidelines
 
 ## Next Steps
 

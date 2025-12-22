@@ -686,5 +686,5 @@ with Pool(4) as pool:
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Performance](../tutorials/intermediate.md#performance).
+**Related Tutorial**: See [Intermediate Tutorial - Performance](/en/learn/swe/prog-lang/python/tutorials/intermediate#performance).
 **Related Cookbook**: See Cookbook recipe "Performance Optimization".

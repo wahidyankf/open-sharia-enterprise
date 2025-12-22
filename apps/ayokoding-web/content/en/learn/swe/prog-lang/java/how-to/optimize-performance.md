@@ -421,13 +421,13 @@ String result = new StringBuilder().append("x").toString();
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Performance Optimization](../tutorials/intermediate.md#performance-optimization) for performance fundamentals and [Advanced Tutorial - JVM Internals](../tutorials/advanced.md#jvm-internals) for deep JVM tuning.
+**Related Tutorial**: See [Intermediate Tutorial - Performance Optimization](/en/learn/swe/prog-lang/python/tutorials/intermediate#performance-optimization) for performance fundamentals and [Advanced Tutorial - JVM Internals](/en/learn/swe/prog-lang/python/tutorials/advanced#jvm-internals) for deep JVM tuning.
 
-**Related How-To**: See [Work with Streams Effectively](./work-with-streams-effectively.md) for stream performance patterns and [Use Collections Effectively](./use-collections-effectively.md) for collection performance.
+**Related How-To**: See [Work with Streams Effectively](/en/learn/swe/prog-lang/java/how-to/work-with-streams-effectively) for stream performance patterns and [Use Collections Effectively](/en/learn/swe/prog-lang/java/how-to/use-collections-effectively) for collection performance.
 
 **Related Cookbook**: See Cookbook recipes "Efficient String Operations" and "Concurrent Collections Performance" for copy-paste ready performance patterns.
 
-**Related Explanation**: See [Best Practices - Performance](../explanation/best-practices.md#performance) for overarching performance principles.
+**Related Explanation**: See [Best Practices - Performance](/en/learn/swe/prog-lang/python/explanation/best-practices#performance) for overarching performance principles.
 
 ## Further Reading
 

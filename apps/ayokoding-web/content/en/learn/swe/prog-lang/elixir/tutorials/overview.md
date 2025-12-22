@@ -29,7 +29,7 @@ Get Elixir running on your machine and write your first program.
 
 **Time investment:** Foundation for all future learning
 
-[Start with Initial Setup →](/learn/swe/prog-lang/elixir/tutorials/initial-setup)
+[Start with Initial Setup →](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup)
 
 ### Quick Start (5-30% Coverage)
 
@@ -46,7 +46,7 @@ Grasp core concepts quickly to become productive fast.
 
 **Prerequisites:** Initial Setup completed
 
-[Jump to Quick Start →](/learn/swe/prog-lang/elixir/tutorials/quick-start)
+[Jump to Quick Start →](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)
 
 ### Beginner Tutorial (0-60% Coverage)
 
@@ -65,7 +65,7 @@ Complete foundation in Elixir fundamentals.
 
 **Prerequisites:** None (comprehensive from basics)
 
-[Study Beginner Tutorial →](/learn/swe/prog-lang/elixir/tutorials/beginner)
+[Study Beginner Tutorial →](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
 
 ### Intermediate Tutorial (60-85% Coverage)
 
@@ -84,7 +84,7 @@ Production-ready skills with OTP and Phoenix.
 
 **Prerequisites:** Beginner tutorial or equivalent experience
 
-[Advance to Intermediate →](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+[Advance to Intermediate →](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 
 ### Advanced Tutorial (85-95% Coverage)
 
@@ -103,12 +103,12 @@ Expert-level optimization and distributed systems.
 
 **Prerequisites:** Intermediate tutorial mastery
 
-[Master Advanced Topics →](/learn/swe/prog-lang/elixir/tutorials/advanced)
+[Master Advanced Topics →](/en/learn/swe/prog-lang/elixir/tutorials/advanced)
 
 ## Learning Path Visualization
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     Start[Start Here] --> Setup[Initial Setup<br/>0-5%]
     Setup --> Quick[Quick Start<br/>5-30%]
@@ -169,4 +169,4 @@ The remaining 5% includes specialized topics (e.g., Nerves for embedded, Broadwa
 3. **Solve Problems**: Use How-To Guides and Cookbook
 4. **Stay Current**: Follow Elixir Forum, ElixirConf talks
 
-Ready to begin? [Start with Initial Setup →](/learn/swe/prog-lang/elixir/tutorials/initial-setup)
+Ready to begin? [Start with Initial Setup →](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup)

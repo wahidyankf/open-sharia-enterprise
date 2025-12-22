@@ -40,7 +40,7 @@ By the end of this tutorial, you will:
 ## Learning Path
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     Start[Start: Fresh System] --> Choose[Choose Installation Method]
     Choose --> Install[Install Elixir + Erlang]
@@ -646,7 +646,7 @@ Now that your environment is set up, continue your learning journey:
 2. **Beginner Tutorial** - Master Elixir syntax and fundamental programming concepts
 3. **Interactive Elixir Practice** - Use IEx to experiment with what you learn
 
-**Recommendation:** Take a 5-minute break, then proceed to the Quick Start tutorial. You're ready to start learning Elixir!
+**Recommendation:** When ready, proceed to the Quick Start tutorial. You're ready to start learning Elixir!
 
 ## Related Content
 

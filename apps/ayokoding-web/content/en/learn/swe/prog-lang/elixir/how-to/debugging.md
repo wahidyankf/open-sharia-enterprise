@@ -15,7 +15,7 @@ tags: ["elixir", "debugging", "troubleshooting", "iex", "observer", "how-to"]
 
 - Basic Elixir syntax
 - Understanding of processes and the BEAM
-- Completed [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner)
+- Completed [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
 
 ## Problem
 
@@ -544,8 +544,8 @@ IO.inspect(large_data)  # Blocks
 
 ## Related Resources
 
-- [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing)
-- [Monitoring Guide](/learn/swe/prog-lang/elixir/how-to/monitoring)
-- [Performance Guide](/learn/swe/prog-lang/elixir/how-to/performance)
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver)
-- [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices)
+- [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)
+- [Monitoring Guide](/en/learn/swe/prog-lang/elixir/how-to/monitoring)
+- [Performance Guide](/en/learn/swe/prog-lang/elixir/how-to/performance)
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices)

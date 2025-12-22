@@ -562,13 +562,13 @@ public record UserDto(String name, int age) {}
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Modern Java Features](../tutorials/advanced.md#modern-java) for records and pattern matching and [Intermediate Tutorial - Immutability](../tutorials/intermediate.md#immutability) for immutable design patterns.
+**Related Tutorial**: See [Advanced Tutorial - Modern Java Features](/en/learn/swe/prog-lang/python/tutorials/advanced#modern-java) for records and pattern matching and [Intermediate Tutorial - Immutability](/en/learn/swe/prog-lang/python/tutorials/intermediate#immutability) for immutable design patterns.
 
-**Related How-To**: See [Use Sealed Classes](./use-sealed-classes.md) for sealed hierarchies with records and [Pattern Matching](./pattern-matching.md) for advanced pattern matching.
+**Related How-To**: See [Use Sealed Classes](/en/learn/swe/prog-lang/java/how-to/use-sealed-classes) for sealed hierarchies with records and [Pattern Matching](/en/learn/swe/prog-lang/java/how-to/pattern-matching) for advanced pattern matching.
 
 **Related Cookbook**: See Cookbook recipes "Record Validation Patterns", "Record with Collections", and "Record-Based DTOs" for copy-paste ready record implementations.
 
-**Related Explanation**: See [Best Practices - Immutability](../explanation/best-practices.md#immutability) for immutability principles.
+**Related Explanation**: See [Best Practices - Immutability](/en/learn/swe/prog-lang/python/explanation/best-practices#immutability) for immutability principles.
 
 ## Further Reading
 

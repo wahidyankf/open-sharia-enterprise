@@ -15,7 +15,7 @@ tags: ["elixir", "file-io", "filesystem", "streams", "system", "how-to"]
 
 - Basic Elixir syntax
 - Understanding of binaries and strings
-- Completed [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner)
+- Completed [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
 - Familiarity with streams (optional but helpful)
 
 ## Problem
@@ -613,7 +613,7 @@ tmp_file = Path.join(tmp_dir, "myapp_#{:erlang.unique_integer([:positive])}")
 
 ## Related Resources
 
-- [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner) - Strings and binaries
-- [Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook) - File processing recipes
-- [Strings and Binaries Guide](/learn/swe/prog-lang/elixir/how-to/strings-binaries) - Text processing
-- [CLI Applications Guide](/learn/swe/prog-lang/elixir/how-to/cli-applications) - Building file-based tools
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Strings and binaries
+- [Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - File processing recipes
+- [Strings and Binaries Guide](/en/learn/swe/prog-lang/elixir/how-to/strings-binaries) - Text processing
+- [CLI Applications Guide](/en/learn/swe/prog-lang/elixir/how-to/cli-applications) - Building file-based tools

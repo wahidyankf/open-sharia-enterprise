@@ -16,7 +16,7 @@ tags:
 
 - Understanding of processes and message passing
 - Basic OTP concepts
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate) or equivalent
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) or equivalent
 
 ## Problem
 
@@ -665,10 +665,10 @@ end
 
 ## Related Resources
 
-- [Processes and Message Passing](/learn/swe/prog-lang/elixir/how-to/processes-message-passing) - Foundation concepts
-- [Supervision Trees](/learn/swe/prog-lang/elixir/how-to/supervision) - Fault tolerance with GenServer
-- [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate) - GenServer fundamentals
-- [Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook) - GenServer recipes
+- [Processes and Message Passing](/en/learn/swe/prog-lang/elixir/how-to/processes-message-passing) - Foundation concepts
+- [Supervision Trees](/en/learn/swe/prog-lang/elixir/how-to/supervision) - Fault tolerance with GenServer
+- [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate) - GenServer fundamentals
+- [Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - GenServer recipes
 
 ## Next Steps
 

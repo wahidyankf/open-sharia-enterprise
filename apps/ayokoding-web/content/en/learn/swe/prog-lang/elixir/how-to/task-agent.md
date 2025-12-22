@@ -15,7 +15,7 @@ tags: ["elixir", "task", "agent", "concurrency", "async", "how-to"]
 
 - Understanding of processes
 - Basic GenServer knowledge
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 
 ## Problem
 
@@ -768,9 +768,9 @@ end
 
 ## Related Resources
 
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver)
-- [Processes Guide](/learn/swe/prog-lang/elixir/how-to/processes-message-passing)
-- [Supervision Guide](/learn/swe/prog-lang/elixir/how-to/supervision)
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
+- [Processes Guide](/en/learn/swe/prog-lang/elixir/how-to/processes-message-passing)
+- [Supervision Guide](/en/learn/swe/prog-lang/elixir/how-to/supervision)
 - [Task Documentation](https://hexdocs.pm/elixir/Task.html)
 - [Agent Documentation](https://hexdocs.pm/elixir/Agent.html)
 - [Task.Supervisor Documentation](https://hexdocs.pm/elixir/Task.Supervisor.html)

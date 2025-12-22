@@ -16,7 +16,7 @@ tags: ["elixir", "ecto", "database", "postgres", "orm", "how-to"]
 - Database concepts (SQL)
 - Phoenix or standalone Elixir app
 - PostgreSQL installed
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 
 ## Problem
 
@@ -830,8 +830,8 @@ create index(:posts, [:inserted_at])
 
 ## Related Resources
 
-- [Phoenix REST API](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
-- [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing)
+- [Phoenix REST API](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
+- [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)
 - [Ecto Documentation](https://hexdocs.pm/ecto/)
 - [Ecto Query Documentation](https://hexdocs.pm/ecto/Ecto.Query.html)
 - [Ecto Changeset Documentation](https://hexdocs.pm/ecto/Ecto.Changeset.html)

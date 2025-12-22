@@ -651,13 +651,13 @@ public void createUserWithPost(User user, Post post) {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Database Integration](../tutorials/intermediate.md#database-integration) for database fundamentals and [Beginner Tutorial - JDBC Basics](../tutorials/beginner.md#jdbc-basics) for JDBC introduction.
+**Related Tutorial**: See [Intermediate Tutorial - Database Integration](/en/learn/swe/prog-lang/python/tutorials/intermediate#database-integration) for database fundamentals and [Beginner Tutorial - JDBC Basics](/en/learn/swe/prog-lang/python/tutorials/beginner#jdbc-basics) for JDBC introduction.
 
-**Related How-To**: See [Handle Files and Resources](./handle-files-and-resources.md) for resource management patterns and [Exception Handling](./exception-handling.md) for database exception handling.
+**Related How-To**: See [Handle Files and Resources](/en/learn/swe/prog-lang/java/how-to/handle-files-and-resources) for resource management patterns and [Exception Handling](/en/learn/swe/prog-lang/java/how-to/exception-handling) for database exception handling.
 
 **Related Cookbook**: See Cookbook recipes "Database Connection Pool Setup", "Transaction Management Patterns", and "JPA Query Optimization" for copy-paste ready database patterns.
 
-**Related Explanation**: See [Best Practices - Database](../explanation/best-practices.md#database) for database design principles.
+**Related Explanation**: See [Best Practices - Database](/en/learn/swe/prog-lang/python/explanation/best-practices#database) for database design principles.
 
 ## Further Reading
 

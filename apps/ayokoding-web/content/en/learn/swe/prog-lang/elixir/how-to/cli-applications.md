@@ -15,7 +15,7 @@ tags: ["elixir", "cli", "escript", "command-line", "tools", "how-to"]
 
 - Basic Elixir syntax
 - Understanding of Mix projects
-- Completed [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner)
+- Completed [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
 
 ## Problem
 
@@ -755,8 +755,8 @@ mix release
 
 ## Related Resources
 
-- [Mix Guide](/learn/swe/prog-lang/elixir/how-to/mix)
-- [File I/O Guide](/learn/swe/prog-lang/elixir/how-to/file-io)
-- [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing)
+- [Mix Guide](/en/learn/swe/prog-lang/elixir/how-to/mix)
+- [File I/O Guide](/en/learn/swe/prog-lang/elixir/how-to/file-io)
+- [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)
 - [OptionParser Documentation](https://hexdocs.pm/elixir/OptionParser.html)
 - [IO.ANSI Documentation](https://hexdocs.pm/elixir/IO.ANSI.html)

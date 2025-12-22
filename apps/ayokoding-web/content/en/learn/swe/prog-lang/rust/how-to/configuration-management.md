@@ -622,8 +622,8 @@ fn main() {
 
 ## Related Patterns
 
-**Related Patterns**: See [Error Handling Strategies](./error-handling-strategies.md) for configuration error handling, [Build CLI Applications](./build-cli-applications.md) for command-line argument parsing, [Testing Patterns](./testing-patterns.md) for configuration testing strategies.
+**Related Patterns**: See [Error Handling Strategies](/en/learn/swe/prog-lang/rust/how-to/error-handling-strategies) for configuration error handling, [Build CLI Applications](/en/learn/swe/prog-lang/rust/how-to/build-cli-applications) for command-line argument parsing, [Testing Patterns](/en/learn/swe/prog-lang/rust/how-to/testing-patterns) for configuration testing strategies.
 
-**Tutorial**: See [Beginner Tutorial](../beginner-tutorial.md) for configuration basics.
+**Tutorial**: See [Beginner Tutorial](/en/learn/swe/prog-lang/rust/tutorials/beginner) for configuration basics.
 
-**Cookbook**: See [Cookbook Recipe 45 - Environment-Based Configuration](./cookbook.md#recipe-45-environment-based-configuration) for complete examples.
+**Cookbook**: See [Cookbook Recipe 45 - Environment-Based Configuration](/en/learn/swe/prog-lang/rust/how-to/cookbook#recipe-45-environment-based-configuration) for complete examples.

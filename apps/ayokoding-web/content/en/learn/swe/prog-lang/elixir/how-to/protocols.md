@@ -507,7 +507,7 @@ end
 
 ## Related Resources
 
-- [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner)
-- [Advanced Tutorial](/learn/swe/prog-lang/elixir/tutorials/advanced)
-- [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices)
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver)
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
+- [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced)
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices)
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
