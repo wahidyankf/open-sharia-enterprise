@@ -51,7 +51,7 @@ Each practice includes:
 - **Rationale**: Why the good way is better
 - **When to Use**: Appropriate contexts
 
-[Read Best Practices →](/learn/swe/prog-lang/elixir/explanation/best-practices)
+[Read Best Practices →](/en/learn/swe/prog-lang/elixir/explanation/best-practices)
 
 ### Anti-Patterns
 
@@ -85,7 +85,7 @@ Each anti-pattern includes:
 - **Better Approach**: The right way
 - **Migration Path**: How to fix existing code
 
-[Study Anti-Patterns →](/learn/swe/prog-lang/elixir/explanation/anti-patterns)
+[Study Anti-Patterns →](/en/learn/swe/prog-lang/elixir/explanation/anti-patterns)
 
 ## How to Use These Documents
 
@@ -123,4 +123,4 @@ Each anti-pattern includes:
 
 Together, they provide complete understanding of Elixir idioms.
 
-Ready to understand Elixir deeply? [Start with Best Practices →](/learn/swe/prog-lang/elixir/explanation/best-practices)
+Ready to understand Elixir deeply? [Start with Best Practices →](/en/learn/swe/prog-lang/elixir/explanation/best-practices)

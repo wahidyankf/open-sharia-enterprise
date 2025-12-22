@@ -1051,4 +1051,4 @@ end
 2. Fix tests that fail (likely shared state issues)
 3. Enjoy faster test suite
 
-Ready to write idiomatic Elixir? Check [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices) for patterns to follow!
+Ready to write idiomatic Elixir? Check [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) for patterns to follow!

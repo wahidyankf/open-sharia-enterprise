@@ -1072,4 +1072,4 @@ for x <- 1..10, rem(x, 2) == 0, do: x * 2
 
 **When to avoid**: Complex logic (use `Enum` functions).
 
-Ready to learn what to avoid? See [Anti-Patterns](/learn/swe/prog-lang/elixir/explanation/anti-patterns) for common mistakes and how to fix them.
+Ready to learn what to avoid? See [Anti-Patterns](/en/learn/swe/prog-lang/elixir/explanation/anti-patterns) for common mistakes and how to fix them.
