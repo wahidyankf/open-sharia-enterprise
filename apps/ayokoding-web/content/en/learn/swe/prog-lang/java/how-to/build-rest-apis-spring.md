@@ -579,13 +579,13 @@ public class ErrorResponse {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Web Development](../tutorials/intermediate.md#web-development) for Spring Boot fundamentals and [Beginner Tutorial - HTTP Basics](../tutorials/beginner.md#http-basics) for HTTP protocol introduction.
+**Related Tutorial**: See [Intermediate Tutorial - Web Development](/en/learn/swe/prog-lang/python/tutorials/intermediate#web-development) for Spring Boot fundamentals and [Beginner Tutorial - HTTP Basics](/en/learn/swe/prog-lang/python/tutorials/beginner#http-basics) for HTTP protocol introduction.
 
-**Related How-To**: See [Work with Databases](./work-with-databases.md) for data persistence in REST APIs and [Exception Handling](./exception-handling.md) for error handling patterns.
+**Related How-To**: See [Work with Databases](/en/learn/swe/prog-lang/java/how-to/work-with-databases) for data persistence in REST APIs and [Exception Handling](/en/learn/swe/prog-lang/java/how-to/exception-handling) for error handling patterns.
 
 **Related Cookbook**: See Cookbook recipes "REST API Endpoint Patterns", "Request Validation", and "API Error Handling" for copy-paste ready REST API implementations.
 
-**Related Explanation**: See [Best Practices - REST API Design](../explanation/best-practices.md#rest-api-design) for API design principles.
+**Related Explanation**: See [Best Practices - REST API Design](/en/learn/swe/prog-lang/python/explanation/best-practices#rest-api-design) for API design principles.
 
 ## Further Reading
 

@@ -23,8 +23,8 @@ Pattern matching is fundamental to Elixir, but beginners often:
 
 ## Prerequisites
 
-- [Quick Start Tutorial](/learn/swe/prog-lang/elixir/tutorials/quick-start) - Basic pattern matching
-- [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner) - Data structures
+- [Quick Start Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/quick-start) - Basic pattern matching
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - Data structures
 
 ## Solution Overview
 
@@ -723,7 +723,7 @@ def extract2(data), do: data.user.name
 
 ## See Also
 
-- [Cookbook - Pattern Matching Recipes](/learn/swe/prog-lang/elixir/how-to/cookbook#pattern-matching)
-- [Beginner Tutorial - Pattern Matching](/learn/swe/prog-lang/elixir/tutorials/beginner#pattern-matching)
-- [Error Handling Guide](/learn/swe/prog-lang/elixir/how-to/error-handling)
-- [Best Practices - Pattern Matching](/learn/swe/prog-lang/elixir/explanation/best-practices)
+- [Cookbook - Pattern Matching Recipes](/en/learn/swe/prog-lang/elixir/how-to/cookbook#pattern-matching)
+- [Beginner Tutorial - Pattern Matching](/en/learn/swe/prog-lang/elixir/tutorials/beginner#pattern-matching)
+- [Error Handling Guide](/en/learn/swe/prog-lang/elixir/how-to/error-handling)
+- [Best Practices - Pattern Matching](/en/learn/swe/prog-lang/elixir/explanation/best-practices)

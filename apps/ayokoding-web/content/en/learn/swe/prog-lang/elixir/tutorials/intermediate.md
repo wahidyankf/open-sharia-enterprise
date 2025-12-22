@@ -50,7 +50,7 @@ By the end of this tutorial, you will:
 ## Learning Path
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A[GenServer ⭐] --> B[Supervisor ⭐]
     B --> C[Application]

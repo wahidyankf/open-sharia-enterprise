@@ -580,13 +580,13 @@ public void testCreateUser() {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Beginner Tutorial - Dependency Injection Basics](../tutorials/beginner.md#dependency-injection) for DI fundamentals and [Intermediate Tutorial - Spring Framework](../tutorials/intermediate.md#spring-framework) for Spring IoC container details.
+**Related Tutorial**: See [Beginner Tutorial - Dependency Injection Basics](/en/learn/swe/prog-lang/python/tutorials/beginner#dependency-injection) for DI fundamentals and [Intermediate Tutorial - Spring Framework](/en/learn/swe/prog-lang/python/tutorials/intermediate#spring-framework) for Spring IoC container details.
 
-**Related How-To**: See [Write Effective Tests](./write-effective-tests.md) for testing with dependency injection and [Build REST APIs with Spring](./build-rest-apis-spring.md) for DI in web controllers.
+**Related How-To**: See [Write Effective Tests](/en/learn/swe/prog-lang/java/how-to/write-effective-tests) for testing with dependency injection and [Build REST APIs with Spring](/en/learn/swe/prog-lang/java/how-to/build-rest-apis-spring) for DI in web controllers.
 
 **Related Cookbook**: See Cookbook recipes "Spring Bean Configuration", "Conditional Bean Creation", and "Bean Lifecycle Management" for copy-paste ready DI patterns.
 
-**Related Explanation**: See [Best Practices - Dependency Injection](../explanation/best-practices.md#dependency-injection) for DI design principles.
+**Related Explanation**: See [Best Practices - Dependency Injection](/en/learn/swe/prog-lang/python/explanation/best-practices#dependency-injection) for DI design principles.
 
 ## Further Reading
 

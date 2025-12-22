@@ -529,8 +529,8 @@ func checkRateLimit(ctx context.Context, client *redis.Client, key string) (bool
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Concurrency](../tutorials/advanced.md#concurrency) for concurrency fundamentals.
+**Related Tutorial**: See [Advanced Tutorial - Concurrency](/en/learn/swe/prog-lang/golang/tutorials/advanced#concurrency) for concurrency fundamentals.
 
-**Related How-To**: See [Implement Middleware](./implement-middleware.md) for middleware integration, [Use Context Effectively](./use-context-effectively.md) for context-based limiting.
+**Related How-To**: See [Implement Middleware](/en/learn/swe/prog-lang/golang/how-to/implement-middleware) for middleware integration, [Use Context Effectively](/en/learn/swe/prog-lang/golang/how-to/use-context-effectively) for context-based limiting.
 
 **Related Cookbook**: See Cookbook recipes "Rate Limiting", "Token Bucket", "Redis Rate Limiting" for ready-to-use implementations.

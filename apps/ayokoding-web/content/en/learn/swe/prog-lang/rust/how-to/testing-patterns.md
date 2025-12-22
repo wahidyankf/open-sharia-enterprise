@@ -623,8 +623,8 @@ fn test_user_service() {
 
 ## Related Patterns
 
-**Related Patterns**: See [Write Effective Tests](./write-effective-tests.md) for test writing best practices, [Debug and Logging](./debug-and-logging.md) for debugging test failures, [Code Documentation](./code-documentation.md) for documentation tests, [Async Programming Patterns](./async-programming-patterns.md) for async testing.
+**Related Patterns**: See [Write Effective Tests](/en/learn/swe/prog-lang/rust/how-to/write-effective-tests) for test writing best practices, [Debug and Logging](/en/learn/swe/prog-lang/rust/how-to/debug-and-logging) for debugging test failures, [Code Documentation](/en/learn/swe/prog-lang/rust/how-to/code-documentation) for documentation tests, [Async Programming Patterns](/en/learn/swe/prog-lang/rust/how-to/async-programming-patterns) for async testing.
 
-**Tutorial**: See [Beginner Tutorial](../beginner-tutorial.md) for testing basics.
+**Tutorial**: See [Beginner Tutorial](/en/learn/swe/prog-lang/rust/tutorials/beginner) for testing basics.
 
-**Cookbook**: See [Cookbook Recipe 15 - Writing Unit Tests](./cookbook.md#recipe-15-writing-unit-tests), [Recipe 16 - Integration Testing](./cookbook.md#recipe-16-integration-testing) for complete examples.
+**Cookbook**: See [Cookbook Recipe 15 - Writing Unit Tests](/en/learn/swe/prog-lang/rust/how-to/cookbook#recipe-15-writing-unit-tests), [Recipe 16 - Integration Testing](/en/learn/swe/prog-lang/rust/how-to/cookbook#recipe-16-integration-testing) for complete examples.

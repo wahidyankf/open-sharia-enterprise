@@ -647,6 +647,6 @@ async def search(query: str, db: AsyncSession = Depends(get_db)):
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Web Development](../tutorials/intermediate.md#web).
-**Related How-To**: See [Use Advanced Async Patterns](./async-patterns-advanced.md), [Work with Databases](./work-with-databases.md).
+**Related Tutorial**: See [Intermediate Tutorial - Web Development](/en/learn/swe/prog-lang/python/tutorials/intermediate#web).
+**Related How-To**: See [Use Advanced Async Patterns](/en/learn/swe/prog-lang/python/how-to/async-patterns-advanced), [Work with Databases](/en/learn/swe/prog-lang/python/how-to/work-with-databases).
 **Related Cookbook**: See Cookbook recipe "REST API Patterns".

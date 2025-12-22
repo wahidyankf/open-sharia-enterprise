@@ -344,7 +344,7 @@ func TestWithTestify(t *testing.T) {
 ### Dependency Injection Flow
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
     A[Main/Injector] --> B[Create Dependencies]
     B --> C[Database Connection]
@@ -504,9 +504,9 @@ type UserService struct {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Design Patterns](../tutorials/intermediate.md#design-patterns) and [Advanced Tutorial - Architecture](../tutorials/advanced.md#architecture).
+**Related Tutorial**: See [Intermediate Tutorial - Design Patterns](/en/learn/swe/prog-lang/golang/tutorials/intermediate#design-patterns) and [Advanced Tutorial - Architecture](/en/learn/swe/prog-lang/golang/tutorials/advanced#architecture).
 
-**Related How-To**: See [Write Testable Code](./write-testable-code.md) and [Use Interfaces Effectively](./use-interfaces-effectively.md).
+**Related How-To**: See [Write Testable Code](/en/learn/swe/prog-lang/golang/how-to/write-testable-code) and [Use Interfaces Effectively](/en/learn/swe/prog-lang/golang/how-to/use-interfaces-effectively).
 
 **Related Cookbook**: See Cookbook recipes "DI Patterns", "Mock Implementation", "Wire Setup".
 

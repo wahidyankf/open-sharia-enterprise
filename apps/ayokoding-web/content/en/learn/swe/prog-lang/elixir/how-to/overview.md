@@ -41,7 +41,7 @@ Each recipe follows:
 3. **How It Works**: Brief explanation
 4. **Use Cases**: When to apply this pattern
 
-[Browse the Cookbook →](/learn/swe/prog-lang/elixir/how-to/cookbook)
+[Browse the Cookbook →](/en/learn/swe/prog-lang/elixir/how-to/cookbook)
 
 ### 18+ Specialized Guides
 
@@ -98,4 +98,4 @@ Coming soon:
 
 Use both together: Tutorials for understanding, Cookbook for application.
 
-Ready to solve problems? [Start with the Cookbook →](/learn/swe/prog-lang/elixir/how-to/cookbook)
+Ready to solve problems? [Start with the Cookbook →](/en/learn/swe/prog-lang/elixir/how-to/cookbook)

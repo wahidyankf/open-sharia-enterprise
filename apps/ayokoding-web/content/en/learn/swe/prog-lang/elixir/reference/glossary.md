@@ -25,7 +25,7 @@ Agent.update(pid, fn state -> state + 1 end)
 
 **Use case**: Simple shared state without complex logic.
 
-**See also**: [Intermediate Tutorial - Task and Agent](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-4-task-and-agent-for-concurrent-tasks)
+**See also**: [Intermediate Tutorial - Task and Agent](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-4-task-and-agent-for-concurrent-tasks)
 
 ---
 
@@ -45,7 +45,7 @@ double.(5)  # 10
 
 **Note**: Requires dot (`.`) when calling.
 
-**See also**: [Quick Start - Functions and Modules](/learn/swe/prog-lang/elixir/tutorials/quick-start#section-3-functions-and-modules)
+**See also**: [Quick Start - Functions and Modules](/en/learn/swe/prog-lang/elixir/tutorials/quick-start#section-3-functions-and-modules)
 
 ---
 
@@ -85,7 +85,7 @@ end
 
 **Built-in behaviours**: GenServer, Supervisor, Application.
 
-**See also**: [Beginner Tutorial - Protocols and Behaviours](/learn/swe/prog-lang/elixir/tutorials/beginner#section-11-protocols-and-behaviours)
+**See also**: [Beginner Tutorial - Protocols and Behaviours](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-11-protocols-and-behaviours)
 
 ---
 
@@ -123,7 +123,7 @@ for {k, v} <- %{a: 1, b: 2}, into: %{}, do: {k, v * 2}
 # %{a: 2, b: 4}
 ```
 
-**See also**: [Beginner Tutorial - Comprehensions](/learn/swe/prog-lang/elixir/tutorials/beginner#section-14-comprehensions-advanced)
+**See also**: [Beginner Tutorial - Comprehensions](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-14-comprehensions-advanced)
 
 ---
 
@@ -143,7 +143,7 @@ def check(x) when x < 0, do: :negative
 
 **Not allowed**: User-defined functions, most standard library functions.
 
-**See also**: [Beginner Tutorial - Pattern Matching](/learn/swe/prog-lang/elixir/tutorials/beginner#section-1-pattern-matching-advanced)
+**See also**: [Beginner Tutorial - Pattern Matching](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-1-pattern-matching-advanced)
 
 ---
 
@@ -183,7 +183,7 @@ opts[:name]  # "Alice"
 
 **Common use**: Function options.
 
-**See also**: [Beginner Tutorial - Data Structures](/learn/swe/prog-lang/elixir/tutorials/beginner#section-2-data-structures-complete)
+**See also**: [Beginner Tutorial - Data Structures](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-2-data-structures-complete)
 
 ---
 
@@ -205,7 +205,7 @@ end
 
 **Use cases**: DSLs, code generation, compile-time optimization.
 
-**See also**: [Advanced Tutorial - Metaprogramming and Macros](/learn/swe/prog-lang/elixir/tutorials/advanced#section-4-metaprogramming-and-macros)
+**See also**: [Advanced Tutorial - Metaprogramming and Macros](/en/learn/swe/prog-lang/elixir/tutorials/advanced#section-4-metaprogramming-and-macros)
 
 ---
 
@@ -226,7 +226,7 @@ map["name"]   # String key
 map.name      # Atom key only
 ```
 
-**See also**: [Beginner Tutorial - Data Structures](/learn/swe/prog-lang/elixir/tutorials/beginner#section-2-data-structures-complete)
+**See also**: [Beginner Tutorial - Data Structures](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-2-data-structures-complete)
 
 ---
 
@@ -247,7 +247,7 @@ Math.add(1, 2)  # 3
 
 **Module attributes**: `@moduledoc`, `@doc`, custom attributes.
 
-**See also**: [Quick Start - Functions and Modules](/learn/swe/prog-lang/elixir/tutorials/quick-start#section-3-functions-and-modules)
+**See also**: [Quick Start - Functions and Modules](/en/learn/swe/prog-lang/elixir/tutorials/quick-start#section-3-functions-and-modules)
 
 ---
 
@@ -269,7 +269,7 @@ end
 
 **Pin operator**: `^x` matches existing value of `x`.
 
-**See also**: [Quick Start - Pattern Matching](/learn/swe/prog-lang/elixir/tutorials/quick-start#section-1-pattern-matching)
+**See also**: [Quick Start - Pattern Matching](/en/learn/swe/prog-lang/elixir/tutorials/quick-start#section-1-pattern-matching)
 
 ---
 
@@ -292,7 +292,7 @@ String.upcase(String.trim("  hello  "))
 
 **Convention**: Enables readable data transformation pipelines.
 
-**See also**: [Quick Start - Pipe Operator](/learn/swe/prog-lang/elixir/tutorials/quick-start#section-4-pipe-operator)
+**See also**: [Quick Start - Pipe Operator](/en/learn/swe/prog-lang/elixir/tutorials/quick-start#section-4-pipe-operator)
 
 ---
 
@@ -312,7 +312,7 @@ end
 
 **Characteristics**: Isolated memory, communicate via messages, lightweight (thousands/millions possible).
 
-**See also**: [Beginner Tutorial - Processes and OTP Basics](/learn/swe/prog-lang/elixir/tutorials/beginner#section-9-processes-and-otp-basics)
+**See also**: [Beginner Tutorial - Processes and OTP Basics](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-9-processes-and-otp-basics)
 
 ---
 
@@ -338,7 +338,7 @@ end
 
 **Built-in protocols**: Enumerable, Collectable, Inspect, String.Chars.
 
-**See also**: [Beginner Tutorial - Protocols and Behaviours](/learn/swe/prog-lang/elixir/tutorials/beginner#section-11-protocols-and-behaviours)
+**See also**: [Beginner Tutorial - Protocols and Behaviours](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-11-protocols-and-behaviours)
 
 ---
 
@@ -360,7 +360,7 @@ def sum([head | tail], acc), do: sum(tail, head + acc)
 
 **Tail recursion**: Last operation is recursive call. Optimized by compiler (no stack growth).
 
-**See also**: [Quick Start - Lists and Recursion](/learn/swe/prog-lang/elixir/tutorials/quick-start#section-5-lists-and-recursion)
+**See also**: [Quick Start - Lists and Recursion](/en/learn/swe/prog-lang/elixir/tutorials/quick-start#section-5-lists-and-recursion)
 
 ---
 
@@ -403,7 +403,7 @@ Stream.cycle([1, 2, 3])
 
 **Use case**: Large/infinite sequences, pipeline optimization.
 
-**See also**: [Beginner Tutorial - Enum and Stream](/learn/swe/prog-lang/elixir/tutorials/beginner#section-5-enum-and-stream-for-collections)
+**See also**: [Beginner Tutorial - Enum and Stream](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-5-enum-and-stream-for-collections)
 
 ---
 
@@ -427,7 +427,7 @@ user.name  # "Alice"
 
 **Constraints**: Keys are atoms, known at compile time.
 
-**See also**: [Beginner Tutorial - Data Structures](/learn/swe/prog-lang/elixir/tutorials/beginner#section-2-data-structures-complete)
+**See also**: [Beginner Tutorial - Data Structures](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-2-data-structures-complete)
 
 ---
 
@@ -476,7 +476,7 @@ end
 
 **Structure**: Defined in `mix.exs`, started at runtime.
 
-**See also**: [Intermediate Tutorial - Application Structure](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-3-application-structure)
+**See also**: [Intermediate Tutorial - Application Structure](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-3-application-structure)
 
 ---
 
@@ -518,7 +518,7 @@ end
 
 **Callbacks**: `init/1`, `handle_call/3`, `handle_cast/2`, `handle_info/2`, `terminate/2`.
 
-**See also**: [Intermediate Tutorial - GenServer](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-1-genserver-for-state-management)
+**See also**: [Intermediate Tutorial - GenServer](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-1-genserver-for-state-management)
 
 ---
 
@@ -583,7 +583,7 @@ end
 
 **Strategies**: `:one_for_one`, `:one_for_all`, `:rest_for_one`.
 
-**See also**: [Intermediate Tutorial - Supervisor](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-2-supervisor-for-fault-tolerance)
+**See also**: [Intermediate Tutorial - Supervisor](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-2-supervisor-for-fault-tolerance)
 
 ---
 
@@ -605,7 +605,7 @@ Application
 
 **Principle**: Separate error handling from business logic via supervision.
 
-**See also**: [Intermediate Tutorial - Supervisor](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-2-supervisor-for-fault-tolerance)
+**See also**: [Intermediate Tutorial - Supervisor](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-2-supervisor-for-fault-tolerance)
 
 ---
 
@@ -626,7 +626,7 @@ result = Task.await(task)
 
 **Supervised tasks**: `Task.Supervisor` for fault tolerance.
 
-**See also**: [Intermediate Tutorial - Task and Agent](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-4-task-and-agent-for-concurrent-tasks)
+**See also**: [Intermediate Tutorial - Task and Agent](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-4-task-and-agent-for-concurrent-tasks)
 
 ---
 
@@ -673,7 +673,7 @@ end
 
 **Convention**: `lib/my_app/accounts/` with `accounts.ex` as API module.
 
-**See also**: [Intermediate Tutorial - Phoenix Framework](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-5-phoenix-framework-introduction)
+**See also**: [Intermediate Tutorial - Phoenix Framework](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-5-phoenix-framework-introduction)
 
 ---
 
@@ -720,7 +720,7 @@ query = from u in User, where: u.age > 18, select: u
 Repo.all(query)
 ```
 
-**See also**: [Intermediate Tutorial - Ecto for Databases](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-7-ecto-for-databases)
+**See also**: [Intermediate Tutorial - Ecto for Databases](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-7-ecto-for-databases)
 
 ---
 
@@ -771,7 +771,7 @@ defmodule MyAppWeb.CounterLive do
 end
 ```
 
-**See also**: [Intermediate Tutorial - LiveView](/learn/swe/prog-lang/elixir/tutorials/intermediate#section-6-liveview-for-real-time-interfaces)
+**See also**: [Intermediate Tutorial - LiveView](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#section-6-liveview-for-real-time-interfaces)
 
 ---
 
@@ -862,7 +862,7 @@ end
 - Distribution support
 - Garbage collection per process
 
-**See also**: [Advanced Tutorial - BEAM VM Internals](/learn/swe/prog-lang/elixir/tutorials/advanced#section-2-beam-vm-internals)
+**See also**: [Advanced Tutorial - BEAM VM Internals](/en/learn/swe/prog-lang/elixir/tutorials/advanced#section-2-beam-vm-internals)
 
 ---
 
@@ -883,7 +883,7 @@ Node.connect(:"node2@hostname")
 pid = Node.spawn(:"node2@hostname", fn -> IO.puts("Remote") end)
 ```
 
-**See also**: [Advanced Tutorial - Distributed Elixir](/learn/swe/prog-lang/elixir/tutorials/advanced#section-3-distributed-elixir)
+**See also**: [Advanced Tutorial - Distributed Elixir](/en/learn/swe/prog-lang/elixir/tutorials/advanced#section-3-distributed-elixir)
 
 ---
 
@@ -893,7 +893,7 @@ pid = Node.spawn(:"node2@hostname", fn -> IO.puts("Remote") end)
 
 **Benefit**: GC pauses isolated to individual processes, not entire system.
 
-**See also**: [Advanced Tutorial - BEAM VM Internals](/learn/swe/prog-lang/elixir/tutorials/advanced#section-2-beam-vm-internals)
+**See also**: [Advanced Tutorial - BEAM VM Internals](/en/learn/swe/prog-lang/elixir/tutorials/advanced#section-2-beam-vm-internals)
 
 ---
 
@@ -935,7 +935,7 @@ Node.connect(:"other@host")    # Connect to node
 
 **Benefit**: Single process cannot monopolize scheduler. Predictable latency.
 
-**See also**: [Advanced Tutorial - BEAM VM Internals](/learn/swe/prog-lang/elixir/tutorials/advanced#section-2-beam-vm-internals)
+**See also**: [Advanced Tutorial - BEAM VM Internals](/en/learn/swe/prog-lang/elixir/tutorials/advanced#section-2-beam-vm-internals)
 
 ---
 
@@ -961,7 +961,7 @@ mix dialyzer
 
 **Setup**: Requires PLT (Persistent Lookup Table) build.
 
-**See also**: [Advanced Tutorial - Type System](/learn/swe/prog-lang/elixir/tutorials/advanced#section-1-type-system-elixir-119)
+**See also**: [Advanced Tutorial - Type System](/en/learn/swe/prog-lang/elixir/tutorials/advanced#section-1-type-system-elixir-119)
 
 ---
 
@@ -1002,7 +1002,7 @@ defmodule MathTest do
 end
 ```
 
-**See also**: [Beginner Tutorial - Testing with ExUnit](/learn/swe/prog-lang/elixir/tutorials/beginner#section-8-testing-with-exunit)
+**See also**: [Beginner Tutorial - Testing with ExUnit](/en/learn/swe/prog-lang/elixir/tutorials/beginner#section-8-testing-with-exunit)
 
 ---
 
@@ -1035,7 +1035,7 @@ iex> h Enum.map
 # Documentation displayed
 ```
 
-**See also**: [Initial Setup - IEx Basics](/learn/swe/prog-lang/elixir/tutorials/initial-setup#section-4-interactive-elixir-iex)
+**See also**: [Initial Setup - IEx Basics](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup#section-4-interactive-elixir-iex)
 
 ---
 
@@ -1052,7 +1052,7 @@ mix test                # Run tests
 mix deps.get            # Fetch dependencies
 ```
 
-**See also**: [Quick Start - Mix Project Basics](/learn/swe/prog-lang/elixir/tutorials/quick-start#section-10-mix-project-basics)
+**See also**: [Quick Start - Mix Project Basics](/en/learn/swe/prog-lang/elixir/tutorials/quick-start#section-10-mix-project-basics)
 
 ---
 
@@ -1067,8 +1067,8 @@ mix release
 _build/prod/rel/my_app/bin/my_app start
 ```
 
-**See also**: [Advanced Tutorial - Production Deployment](/learn/swe/prog-lang/elixir/tutorials/advanced#section-7-production-deployment)
+**See also**: [Advanced Tutorial - Production Deployment](/en/learn/swe/prog-lang/elixir/tutorials/advanced#section-7-production-deployment)
 
 ---
 
-Ready to dive deeper? Explore [Tutorials](/learn/swe/prog-lang/elixir/tutorials/) for comprehensive learning or browse [How-To Guides](/learn/swe/prog-lang/elixir/how-to/) for practical solutions.
+Ready to dive deeper? Explore [Tutorials](/en/learn/swe/prog-lang/elixir/tutorials/) for comprehensive learning or browse [How-To Guides](/en/learn/swe/prog-lang/elixir/how-to/) for practical solutions.

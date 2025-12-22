@@ -15,7 +15,7 @@ tags: ["elixir", "strings", "binaries", "text-processing", "unicode", "how-to"]
 
 - Basic Elixir syntax
 - Understanding of pattern matching
-- Completed [Quick Start Tutorial](/learn/swe/prog-lang/elixir/tutorials/quick-start)
+- Completed [Quick Start Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)
 - Familiarity with Unicode concepts (helpful)
 
 ## Problem
@@ -557,7 +557,7 @@ String.slice("café", 0, 3)  # "caf"
 
 ## Related Resources
 
-- [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner) - String fundamentals
-- [Pattern Matching Guide](/learn/swe/prog-lang/elixir/how-to/pattern-matching) - Binary patterns
-- [File I/O Guide](/learn/swe/prog-lang/elixir/how-to/file-io) - Text file processing
-- [Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook) - String recipes
+- [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner) - String fundamentals
+- [Pattern Matching Guide](/en/learn/swe/prog-lang/elixir/how-to/pattern-matching) - Binary patterns
+- [File I/O Guide](/en/learn/swe/prog-lang/elixir/how-to/file-io) - Text file processing
+- [Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook) - String recipes

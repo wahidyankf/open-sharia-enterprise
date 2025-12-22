@@ -578,8 +578,8 @@ func TestModify(t *testing.T) {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Testing](../tutorials/intermediate.md#testing) for testing fundamentals.
+**Related Tutorial**: See [Intermediate Tutorial - Testing](/en/learn/swe/prog-lang/golang/tutorials/intermediate#testing) for testing fundamentals.
 
-**Related How-To**: See [Write Effective Tests](./write-effective-tests.md) for general testing practices, [Optimize Performance](./optimize-performance.md) for benchmarking.
+**Related How-To**: See [Write Effective Tests](/en/learn/swe/prog-lang/golang/how-to/write-effective-tests) for general testing practices, [Optimize Performance](/en/learn/swe/prog-lang/golang/how-to/optimize-performance) for benchmarking.
 
 **Related Cookbook**: See Cookbook recipes "Table-Driven Tests", "Test Helpers", "Golden Files" for ready-to-use patterns.

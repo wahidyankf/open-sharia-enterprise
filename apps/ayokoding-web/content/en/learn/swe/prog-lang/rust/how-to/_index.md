@@ -7,13 +7,13 @@ weight: 100003
 type: docs
 ---
 
+- [Overview](/en/learn/swe/prog-lang/rust/how-to/overview)
+- [Rust Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook)
 - [How to Debug and Log Effectively](/en/learn/swe/prog-lang/rust/how-to/debug-and-logging)
 - [How to Manage Configuration](/en/learn/swe/prog-lang/rust/how-to/configuration-management)
 - [How to Document Code Effectively](/en/learn/swe/prog-lang/rust/how-to/code-documentation)
 - [How to Use Async Programming Patterns](/en/learn/swe/prog-lang/rust/how-to/async-programming-patterns)
 - [How to Implement Testing Strategies](/en/learn/swe/prog-lang/rust/how-to/testing-patterns)
-- [Overview](/en/learn/swe/prog-lang/rust/how-to/overview)
-- [Rust Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook)
 - [Working with Ownership](/en/learn/swe/prog-lang/rust/how-to/working-with-ownership)
 - [Error Handling Strategies](/en/learn/swe/prog-lang/rust/how-to/error-handling-strategies)
 - [Manage Dependencies with Cargo](/en/learn/swe/prog-lang/rust/how-to/manage-dependencies-cargo)

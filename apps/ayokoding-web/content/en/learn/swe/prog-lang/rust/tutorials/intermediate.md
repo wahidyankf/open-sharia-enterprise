@@ -1360,8 +1360,13 @@ You've completed Intermediate Rust, covering **60-85% of Rust knowledge**!
 
 ### Practical Resources
 
-- **[Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook)** - 30+ production-ready recipes
+- **[Rust Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook)** - 30+ production-ready recipes
 - **[How-To Guides](/en/learn/swe/prog-lang/rust/how-to)** - Domain-specific patterns
+- **[Rust Best Practices](/en/learn/swe/prog-lang/rust/explanation/best-practices)** - Industry standards
+- **[Rust Anti-Patterns](/en/learn/swe/prog-lang/rust/explanation/anti-patterns)** - Common mistakes to avoid
+- **[Rust Cheat Sheet](/en/learn/swe/prog-lang/rust/reference/cheat-sheet)** - Advanced syntax reference
+- **[Rust Glossary](/en/learn/swe/prog-lang/rust/reference/glossary)** - Technical terminology
+- **[Complete Beginner's Guide](/en/learn/swe/prog-lang/rust/tutorials/beginner)** - Review fundamentals
 
 ### Build Projects
 

@@ -553,13 +553,13 @@ ScopedValue<ExpensiveObject> sv = ScopedValue.newInstance();
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Concurrency](../tutorials/advanced.md#concurrency) for concurrency fundamentals and [Intermediate Tutorial - Threading](../tutorials/intermediate.md#threading) for traditional threading.
+**Related Tutorial**: See [Advanced Tutorial - Concurrency](/en/learn/swe/prog-lang/python/tutorials/advanced#concurrency) for concurrency fundamentals and [Intermediate Tutorial - Threading](/en/learn/swe/prog-lang/python/tutorials/intermediate#threading) for traditional threading.
 
-**Related How-To**: See [Reactive Programming](./reactive-programming.md) for alternative async approaches and [Optimize Performance](./optimize-performance.md) for performance tuning.
+**Related How-To**: See [Reactive Programming](/en/learn/swe/prog-lang/java/how-to/reactive-programming) for alternative async approaches and [Optimize Performance](/en/learn/swe/prog-lang/java/how-to/optimize-performance) for performance tuning.
 
 **Related Cookbook**: See Cookbook recipes "Virtual Thread Executor Patterns", "Structured Concurrency Templates", and "Migration from Platform Threads" for copy-paste ready virtual thread implementations.
 
-**Related Explanation**: See [Best Practices - Concurrency](../explanation/best-practices.md#concurrency) for concurrency design principles.
+**Related Explanation**: See [Best Practices - Concurrency](/en/learn/swe/prog-lang/python/explanation/best-practices#concurrency) for concurrency design principles.
 
 ## Further Reading
 

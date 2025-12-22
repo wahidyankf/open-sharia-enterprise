@@ -59,6 +59,28 @@ This tutorial covers **85-95% of Kotlin** - expert mastery. You'll dive deep int
 
 **Note**: This is expert-level material. Real-world experience with Kotlin is highly recommended.
 
+```mermaid
+graph TD
+    A["1. Compiler Internals"] --> B["2. Reflection API"]
+    B --> C["3. Metaprogramming & DSLs"]
+    C --> D["4. Advanced Coroutines"]
+    D --> E["5. Performance Optimization"]
+    E --> F["6. Memory Management"]
+    F --> G["7. Debugging Mastery"]
+    G --> H["8. Tooling Ecosystem"]
+    H --> I["Expert Level Achieved!"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style G fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style I fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
 ---
 
 ## Part 1: Kotlin Compiler Internals
@@ -1098,6 +1120,17 @@ You've achieved expert Kotlin mastery:
 6. **Explore Kotlin Multiplatform** - Share code across JVM, Android, iOS, Web
 
 ### Resources
+
+- **Internal Resources**:
+  - [Intermediate Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/intermediate) - Review production patterns
+  - [Complete Beginner's Guide](/en/learn/swe/prog-lang/kotlin/tutorials/beginner) - Refresh fundamentals
+  - [Quick Start](/en/learn/swe/prog-lang/kotlin/tutorials/quick-start) - Quick syntax review
+  - [Kotlin Cookbook](/en/learn/swe/prog-lang/kotlin/how-to/cookbook) - Advanced recipes
+  - [Kotlin Best Practices](/en/learn/swe/prog-lang/kotlin/explanation/best-practices) - Expert standards
+  - [Kotlin Anti-Patterns](/en/learn/swe/prog-lang/kotlin/explanation/anti-patterns) - Advanced pitfalls
+  - [Kotlin Glossary](/en/learn/swe/prog-lang/kotlin/reference/glossary) - Expert terminology
+  - [Kotlin Cheat Sheet](/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet) - Complete reference
+  - [Kotlin Learning Resources](/en/learn/swe/prog-lang/kotlin/reference/learning-resources) - External materials
 
 - **Kotlin Language Spec**: [https://kotlinlang.org/spec/](https://kotlinlang.org/spec/)
 - **Kotlin GitHub**: [https://github.com/Kotlin/kotlin](https://github.com/Kotlin/kotlin)

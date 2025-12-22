@@ -19,7 +19,7 @@ This guide shows how to handle exceptions effectively.
 Understanding Java's exception hierarchy helps you choose the right approach.
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     Throwable[Throwable] --> Error[Error]
     Throwable --> Exception[Exception]

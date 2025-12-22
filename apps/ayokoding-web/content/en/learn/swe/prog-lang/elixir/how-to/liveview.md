@@ -17,7 +17,7 @@ tags:
 - Phoenix framework installed
 - Basic HTML/CSS knowledge
 - Understanding of processes
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 
 ## Problem
 
@@ -655,8 +655,8 @@ handle_event with timers
 
 ## Related Resources
 
-- [Phoenix REST API](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
-- [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing)
-- [Ecto Guide](/learn/swe/prog-lang/elixir/how-to/ecto)
+- [Phoenix REST API](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
+- [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)
+- [Ecto Guide](/en/learn/swe/prog-lang/elixir/how-to/ecto)
 - [LiveView Documentation](https://hexdocs.pm/phoenix_live_view/)
 - [Phoenix PubSub](https://hexdocs.pm/phoenix_pubsub/)

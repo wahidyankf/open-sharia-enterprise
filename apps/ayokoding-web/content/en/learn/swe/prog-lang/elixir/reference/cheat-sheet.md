@@ -689,4 +689,4 @@ Repo.transaction(fn ->
 end)
 ```
 
-Need deep dives? Check out [Tutorials](/learn/swe/prog-lang/elixir/tutorials/) for comprehensive learning paths.
+Need deep dives? Check out [Tutorials](/en/learn/swe/prog-lang/elixir/tutorials/) for comprehensive learning paths.

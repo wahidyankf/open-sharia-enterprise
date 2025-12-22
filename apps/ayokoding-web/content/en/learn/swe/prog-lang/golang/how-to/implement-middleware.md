@@ -488,8 +488,8 @@ func goodLoggingMiddleware(next http.Handler) http.Handler {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Web](../tutorials/intermediate.md#web) for middleware fundamentals.
+**Related Tutorial**: See [Intermediate Tutorial - Web](/en/learn/swe/prog-lang/golang/tutorials/intermediate#web) for middleware fundamentals.
 
-**Related How-To**: See [Build REST APIs](./build-rest-apis.md) for API middleware patterns, [Use Context Effectively](./use-context-effectively.md) for context propagation, [Graceful Shutdown](./graceful-shutdown.md) for cleanup in middleware.
+**Related How-To**: See [Build REST APIs](/en/learn/swe/prog-lang/golang/how-to/build-rest-apis) for API middleware patterns, [Use Context Effectively](/en/learn/swe/prog-lang/golang/how-to/use-context-effectively) for context propagation, [Graceful Shutdown](/en/learn/swe/prog-lang/golang/how-to/graceful-shutdown) for cleanup in middleware.
 
 **Related Cookbook**: See Cookbook recipes "HTTP Middleware", "Authentication Middleware", "Logging Middleware" for ready-to-use middleware implementations.

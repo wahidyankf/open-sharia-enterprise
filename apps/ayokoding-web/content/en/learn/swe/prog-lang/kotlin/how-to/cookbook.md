@@ -2708,7 +2708,7 @@ lifecycleScope.launch {
 
 **When to use**: Building reactive UIs with state management and one-time events.
 
-**Learn More**: See [Advanced Coroutines Guide](./coroutines-advanced.md).
+**Learn More**: See [Advanced Coroutines Guide](/en/learn/swe/prog-lang/kotlin/how-to/coroutines-advanced).
 
 ---
 
@@ -2761,7 +2761,7 @@ class SearchViewModel {
 
 **When to use**: Search functionality, combining multiple data sources, real-time updates.
 
-**Learn More**: See [Flow State Management](./flow-state-management.md).
+**Learn More**: See [Flow State Management](/en/learn/swe/prog-lang/kotlin/how-to/flow-state-management).
 
 ---
 
@@ -2819,7 +2819,7 @@ class DataSyncService {
 
 **When to use**: Independent tasks, partial failure tolerance, batch operations.
 
-**Learn More**: See [Handle Coroutines and Async](./handle-coroutines-and-async.md).
+**Learn More**: See [Handle Coroutines and Async](/en/learn/swe/prog-lang/kotlin/how-to/handle-coroutines-and-async).
 
 ---
 
@@ -2882,7 +2882,7 @@ scope.launch {
 
 **When to use**: Work queues, producer-consumer patterns, rate limiting.
 
-**Learn More**: See [Advanced Coroutines Guide](./coroutines-advanced.md#channels).
+**Learn More**: See [Advanced Coroutines Guide](/en/learn/swe/prog-lang/kotlin/how-to/coroutines-advanced#channels).
 
 ---
 
@@ -2944,7 +2944,7 @@ class ResourceManager {
 
 **When to use**: Resource management, timeouts, background tasks, cleanup operations.
 
-**Learn More**: See [Error Handling Patterns](./error-handling-patterns.md).
+**Learn More**: See [Error Handling Patterns](/en/learn/swe/prog-lang/kotlin/how-to/error-handling-patterns).
 
 ---
 
@@ -3010,7 +3010,7 @@ val adults = users.adults().sortedByName()
 
 **When to use**: Adding utility functions, domain-specific operations, improving readability.
 
-**Learn More**: See [Extension Functions Guide](./extension-functions.md).
+**Learn More**: See [Extension Functions Guide](/en/learn/swe/prog-lang/kotlin/how-to/extension-functions).
 
 ---
 
@@ -3076,7 +3076,7 @@ val userNames: NetworkResult<List<String>> = userResult.map { users ->
 
 **When to use**: State machines, result types, exhaustive pattern matching, type-safe APIs.
 
-**Learn More**: See [Use Sealed Classes](./use-sealed-classes.md).
+**Learn More**: See [Use Sealed Classes](/en/learn/swe/prog-lang/kotlin/how-to/use-sealed-classes).
 
 ---
 
@@ -3133,7 +3133,7 @@ val allUsers = repository.findAll<User>()
 
 **When to use**: Generic APIs, type-safe operations, avoiding reflection, library design.
 
-**Learn More**: See [Use Inline Functions and Reified](./use-inline-functions-reified.md).
+**Learn More**: See [Use Inline Functions and Reified](/en/learn/swe/prog-lang/kotlin/how-to/use-inline-functions-reified).
 
 ---
 
@@ -3225,7 +3225,7 @@ class Settings(prefs: SharedPreferences) {
 
 **When to use**: Property initialization, change observation, interface composition, shared preferences.
 
-**Learn More**: See [Use Delegates](./use-delegates.md).
+**Learn More**: See [Use Delegates](/en/learn/swe/prog-lang/kotlin/how-to/use-delegates).
 
 ---
 
@@ -3295,7 +3295,7 @@ val memoizedFib = ::fibonacci.memoize()
 
 **When to use**: Function composition, pipeline processing, currying, memoization.
 
-**Learn More**: See [Work with Scope Functions](./work-with-scope-functions.md).
+**Learn More**: See [Work with Scope Functions](/en/learn/swe/prog-lang/kotlin/how-to/work-with-scope-functions).
 
 ---
 
@@ -3352,7 +3352,7 @@ fun validateUserData(user: User): ValidationResult<User> {
 
 **When to use**: Functional error handling, validation, railway-oriented programming.
 
-**Learn More**: See [Error Handling Patterns](./error-handling-patterns.md).
+**Learn More**: See [Error Handling Patterns](/en/learn/swe/prog-lang/kotlin/how-to/error-handling-patterns).
 
 ---
 
@@ -3418,7 +3418,7 @@ fun processInBatches(items: List<Item>) {
 
 **When to use**: Large datasets, infinite sequences, file processing, memory optimization.
 
-**Learn More**: See [Work with Collections](./work-with-collections.md).
+**Learn More**: See [Work with Collections](/en/learn/swe/prog-lang/kotlin/how-to/work-with-collections).
 
 ---
 
@@ -3538,7 +3538,7 @@ println(page)
 
 **When to use**: HTML generation, configuration DSLs, builder patterns.
 
-**Learn More**: See [Build REST APIs with Ktor](./build-rest-apis-ktor.md).
+**Learn More**: See [Build REST APIs with Ktor](/en/learn/swe/prog-lang/kotlin/how-to/build-rest-apis-ktor).
 
 ---
 
@@ -3622,7 +3622,7 @@ println(query)
 
 **When to use**: SQL builders, configuration, fluent APIs, type-safe builders.
 
-**Learn More**: See [Database Access with Exposed](./database-access-exposed.md).
+**Learn More**: See [Database Access with Exposed](/en/learn/swe/prog-lang/kotlin/how-to/database-access-exposed).
 
 ---
 
@@ -3740,7 +3740,7 @@ class UserRepository(private val storage: KeyValueStorage) {
 
 **When to use**: Cross-platform apps, shared business logic, platform abstraction.
 
-**Learn More**: See [Multiplatform Development](./multiplatform-development.md).
+**Learn More**: See [Multiplatform Development](/en/learn/swe/prog-lang/kotlin/how-to/multiplatform-development).
 
 ---
 
@@ -3811,7 +3811,7 @@ class ApiClient {
 
 **When to use**: Shared networking, API clients, cross-platform data access.
 
-**Learn More**: See [Multiplatform Development](./multiplatform-development.md#networking-with-ktor-client).
+**Learn More**: See [Multiplatform Development](/en/learn/swe/prog-lang/kotlin/how-to/multiplatform-development#networking-with-ktor-client).
 
 ---
 
@@ -3911,7 +3911,7 @@ class UserServiceTest {
 
 **When to use**: Unit testing, mocking dependencies, verifying interactions, testing coroutines.
 
-**Learn More**: See [Write Effective Tests](./write-effective-tests.md).
+**Learn More**: See [Write Effective Tests](/en/learn/swe/prog-lang/kotlin/how-to/write-effective-tests).
 
 ---
 
@@ -3984,7 +3984,7 @@ class StringUtilsTest : FunSpec({
 
 **When to use**: Testing properties, invariants, edge cases, generating test data.
 
-**Learn More**: See [Write Effective Tests](./write-effective-tests.md#property-based-testing).
+**Learn More**: See [Write Effective Tests](/en/learn/swe/prog-lang/kotlin/how-to/write-effective-tests#property-based-testing).
 
 ---
 
@@ -4064,7 +4064,7 @@ runBlocking {
 
 **When to use**: Producer-consumer patterns, work distribution, pipeline processing, backpressure handling.
 
-**Learn More**: See [Work with Coroutines](./work-with-coroutines.md).
+**Learn More**: See [Handle Coroutines and Async](/en/learn/swe/prog-lang/kotlin/how-to/handle-coroutines-and-async).
 
 ---
 
@@ -4149,7 +4149,7 @@ suspend fun cancellationExample() = coroutineScope {
 
 **When to use**: Managing coroutine lifecycles, handling failures, cancellation with cleanup, independent task execution.
 
-**Learn More**: See [Work with Coroutines](./work-with-coroutines.md#structured-concurrency).
+**Learn More**: See [Handle Coroutines and Async](/en/learn/swe/prog-lang/kotlin/how-to/handle-coroutines-and-async).
 
 ---
 
@@ -4241,7 +4241,7 @@ runBlocking {
 
 **When to use**: Asynchronous data streams, reactive state management, combining multiple data sources.
 
-**Learn More**: See [Work with Coroutines](./work-with-coroutines.md#flows).
+**Learn More**: See [Flow State Management](/en/learn/swe/prog-lang/kotlin/how-to/flow-state-management).
 
 ---
 
@@ -4306,7 +4306,7 @@ println(result)  // 121 = ((5 * 2) + 1)^2
 
 **When to use**: Building reusable function chains, data transformation pipelines, functional composition patterns.
 
-**Learn More**: See [Use Functional Programming](./use-functional-programming.md).
+**Learn More**: See [Work with Scope Functions](/en/learn/swe/prog-lang/kotlin/how-to/work-with-scope-functions).
 
 ---
 
@@ -4367,7 +4367,7 @@ println(chainResult)  // Right(84)
 
 **When to use**: Functional error handling, composable operations, avoiding exceptions.
 
-**Learn More**: See [Handle Errors Gracefully](./handle-errors-gracefully.md).
+**Learn More**: See [Error Handling Patterns](/en/learn/swe/prog-lang/kotlin/how-to/error-handling-patterns).
 
 ---
 
@@ -4495,7 +4495,7 @@ println(page)
 
 **When to use**: Building type-safe DSLs, HTML generation, configuration builders, API design.
 
-**Learn More**: See [Create Domain-Specific Languages](./create-dsls.md).
+**Learn More**: See [Kotlin How-To Guides](/en/learn/swe/prog-lang/kotlin/how-to/overview).
 
 ---
 
@@ -4589,7 +4589,7 @@ println("Pool: min=${config.pool.minIdle}, max=${config.pool.maxIdle}")
 
 **When to use**: Application configuration, build scripts, testing fixtures, fluent APIs.
 
-**Learn More**: See [Create Domain-Specific Languages](./create-dsls.md#configuration-dsl).
+**Learn More**: See [Kotlin How-To Guides](/en/learn/swe/prog-lang/kotlin/how-to/overview).
 
 ---
 
@@ -4698,7 +4698,7 @@ class PlatformService {
 
 **When to use**: Kotlin Multiplatform projects, platform-specific functionality, shared business logic.
 
-**Learn More**: See [Build Multiplatform Apps](./multiplatform-development.md).
+**Learn More**: See [Multiplatform Development](/en/learn/swe/prog-lang/kotlin/how-to/multiplatform-development).
 
 ---
 
@@ -4843,7 +4843,7 @@ class UserListView: ObservableObject {
 
 **When to use**: Kotlin Multiplatform Mobile (KMM), shared business logic, cross-platform state management.
 
-**Learn More**: See [Build Multiplatform Apps](./multiplatform-development.md#shared-viewmodels).
+**Learn More**: See [Multiplatform Development](/en/learn/swe/prog-lang/kotlin/how-to/multiplatform-development).
 
 ---
 
@@ -4996,7 +4996,7 @@ class CacheServiceIntegrationTest {
 
 **When to use**: Integration testing, testing with real databases/services, container-based testing, E2E tests.
 
-**Learn More**: See [Write Effective Tests](./write-effective-tests.md#integration-testing).
+**Learn More**: See [Write Effective Tests](/en/learn/swe/prog-lang/kotlin/how-to/write-effective-tests).
 
 ---
 

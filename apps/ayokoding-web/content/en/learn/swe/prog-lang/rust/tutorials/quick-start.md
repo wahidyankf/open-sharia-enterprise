@@ -1030,7 +1030,7 @@ fn main() {
     let mut scores = HashMap::new();
 
     scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
+    scores.insert(String::from("TeamA"), 50);
 
     // Getting values
     let team_name = String::from("Blue");
@@ -1050,7 +1050,7 @@ fn main() {
     scores.insert(String::from("Blue"), 25);  // Overwrite
 
     // Insert if key doesn't exist
-    scores.entry(String::from("Red")).or_insert(50);
+    scores.entry(String::from("TeamB")).or_insert(50);
 }
 ```
 
@@ -1158,6 +1158,11 @@ Ready for comprehensive Rust mastery?
 - Build a small project (CLI calculator, todo list, file parser)
 
 ### Resources
+
+- **Internal Resources**:
+  - [Rust Cheat Sheet](/en/learn/swe/prog-lang/rust/reference/cheat-sheet) - Quick syntax reference
+  - [Rust Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook) - Code recipes
+  - [Intermediate Rust](/en/learn/swe/prog-lang/rust/tutorials/intermediate) - Production patterns
 
 - [Rust Book](https://doc.rust-lang.org/book/) - Comprehensive official guide
 - [Rust by Example](https://doc.rust-lang.org/rust-by-example/) - Learn by running examples

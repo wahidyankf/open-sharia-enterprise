@@ -585,8 +585,8 @@ func goodCleanup(db *sql.DB, file *os.File) error {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Concurrency](../tutorials/intermediate.md#concurrency).
+**Related Tutorial**: See [Intermediate Tutorial - Concurrency](/en/learn/swe/prog-lang/golang/tutorials/intermediate#concurrency).
 
-**Related How-To**: See [Use Context](./use-context-effectively.md), [Handle Errors](./handle-errors-effectively.md).
+**Related How-To**: See [Use Context](/en/learn/swe/prog-lang/golang/how-to/use-context-effectively), [Handle Errors](/en/learn/swe/prog-lang/golang/how-to/handle-errors-effectively).
 
 **Related Cookbook**: See Cookbook recipe "Shutdown Patterns".

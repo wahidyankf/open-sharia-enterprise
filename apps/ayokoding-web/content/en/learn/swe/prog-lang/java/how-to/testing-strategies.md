@@ -726,13 +726,13 @@ void reliableTest() {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Testing](../tutorials/intermediate.md#testing) for testing fundamentals and [Advanced Tutorial - TDD](../tutorials/advanced.md#tdd) for test-driven development.
+**Related Tutorial**: See [Intermediate Tutorial - Testing](/en/learn/swe/prog-lang/python/tutorials/intermediate#testing) for testing fundamentals and [Advanced Tutorial - TDD](/en/learn/swe/prog-lang/python/tutorials/advanced#tdd) for test-driven development.
 
-**Related How-To**: See [Write Effective Tests](./write-effective-tests.md) for test best practices and [Dependency Injection with Spring](./dependency-injection-spring.md) for testable dependency management.
+**Related How-To**: See [Write Effective Tests](/en/learn/swe/prog-lang/java/how-to/write-effective-tests) for test best practices and [Dependency Injection with Spring](/en/learn/swe/prog-lang/java/how-to/dependency-injection-spring) for testable dependency management.
 
 **Related Cookbook**: See Cookbook recipes "JUnit 5 Test Templates", "Mockito Patterns", and "Test Organization Strategies" for copy-paste ready testing implementations.
 
-**Related Explanation**: See [Best Practices - Testing](../explanation/best-practices.md#testing) for testing principles.
+**Related Explanation**: See [Best Practices - Testing](/en/learn/swe/prog-lang/python/explanation/best-practices#testing) for testing principles.
 
 ## Further Reading
 

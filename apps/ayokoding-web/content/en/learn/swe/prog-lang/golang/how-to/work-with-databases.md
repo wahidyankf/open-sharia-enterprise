@@ -311,7 +311,7 @@ func batchInsertTx(db *sql.DB, users []User) error {
 ### Database Connection Lifecycle
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
     A[sql.Open] --> B[Connection Pool Created]
     B --> C{Query Requested}
@@ -478,13 +478,13 @@ tx.Commit()
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Database](../tutorials/intermediate.md#database) for database fundamentals and [Beginner Tutorial - SQL Basics](../tutorials/beginner.md#sql) for SQL introduction.
+**Related Tutorial**: See [Intermediate Tutorial - Database](/en/learn/swe/prog-lang/golang/tutorials/intermediate#database) for database fundamentals and [Beginner Tutorial - SQL Basics](/en/learn/swe/prog-lang/golang/tutorials/beginner#sql) for SQL introduction.
 
-**Related How-To**: See [Handle Errors Gracefully](./handle-errors-gracefully.md) for database error handling and [Use Context Effectively](./use-context-effectively.md) for context with queries.
+**Related How-To**: See [Handle Errors Gracefully](/en/learn/swe/prog-lang/golang/how-to/handle-errors-gracefully) for database error handling and [Use Context Effectively](/en/learn/swe/prog-lang/golang/how-to/use-context-effectively) for context with queries.
 
 **Related Cookbook**: See Cookbook recipes "Database Connection Pool", "Transaction Patterns", and "SQL Query Optimization" for copy-paste ready database code.
 
-**Related Explanation**: See [Best Practices - Database](../explanation/best-practices.md#database) for database design principles.
+**Related Explanation**: See [Best Practices - Database](/en/learn/swe/prog-lang/golang/explanation/best-practices#database) for database design principles.
 
 ## Further Reading
 

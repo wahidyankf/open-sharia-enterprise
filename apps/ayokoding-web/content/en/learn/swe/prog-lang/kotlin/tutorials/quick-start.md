@@ -1022,6 +1022,12 @@ Try building these to reinforce your knowledge:
 
 ### Additional Resources
 
+- **Internal Resources**:
+  - [Kotlin Cheat Sheet](/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet) - Quick syntax reference
+  - [Kotlin Best Practices](/en/learn/swe/prog-lang/kotlin/explanation/best-practices) - Coding standards
+  - [Kotlin Anti-Patterns](/en/learn/swe/prog-lang/kotlin/explanation/anti-patterns) - Mistakes to avoid
+  - [Advanced Kotlin](/en/learn/swe/prog-lang/kotlin/tutorials/advanced) - Expert-level topics
+
 - **Official Kotlin Docs**: [https://kotlinlang.org/docs/home.html](https://kotlinlang.org/docs/home.html)
 - **Kotlin Koans** (interactive exercises): [https://play.kotlinlang.org/koans](https://play.kotlinlang.org/koans)
 - **Kotlin by Example**: [https://play.kotlinlang.org/byExample/overview](https://play.kotlinlang.org/byExample/overview)

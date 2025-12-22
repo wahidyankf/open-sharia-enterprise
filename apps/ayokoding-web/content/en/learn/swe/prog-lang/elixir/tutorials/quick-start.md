@@ -15,7 +15,7 @@ tags: ["elixir", "tutorial", "quick-start", "beginner", "fundamentals"]
 
 **Required:**
 
-- Elixir installed and working (complete [Initial Setup](/learn/swe/prog-lang/elixir/tutorials/initial-setup) first)
+- Elixir installed and working (complete [Initial Setup](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup) first)
 - Text editor ready
 - Terminal access
 
@@ -43,7 +43,7 @@ By the end of this tutorial, you will:
 ## Learning Path
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     Start[Start: Elixir Installed] --> Pattern[Pattern Matching]
     Pattern --> Immutable[Immutability]
@@ -1053,7 +1053,7 @@ defmodule MyApp.MixProject do
     [
       app: :my_app,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -1293,14 +1293,14 @@ Congratulations! You now understand Elixir's core concepts and can write working
 
 **Continue your learning:**
 
-1. **[Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner)** - Master all language features (0-60% coverage)
+1. **[Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner)** - Master all language features (0-60% coverage)
    - Advanced pattern matching (guards, pin operator)
    - Complete data structure tour (tuples, maps, keywords, structs)
    - Protocols and behaviors
    - Testing with ExUnit
    - Error handling patterns
 
-2. **[Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook)** - Quick recipes for common problems
+2. **[Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook)** - Quick recipes for common problems
    - Copy-paste solutions
    - Real-world patterns
 

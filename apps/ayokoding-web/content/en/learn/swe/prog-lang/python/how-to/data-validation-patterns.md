@@ -567,6 +567,6 @@ def load_from_database(user_dict: dict) -> User:
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Data Validation](../tutorials/intermediate.md#validation).
-**Related How-To**: See [Build REST APIs](./build-rest-apis.md).
+**Related Tutorial**: See [Intermediate Tutorial - Data Validation](/en/learn/swe/prog-lang/python/tutorials/intermediate#validation).
+**Related How-To**: See [Build REST APIs](/en/learn/swe/prog-lang/python/how-to/build-rest-apis).
 **Related Cookbook**: See Cookbook recipe "Validation Patterns".

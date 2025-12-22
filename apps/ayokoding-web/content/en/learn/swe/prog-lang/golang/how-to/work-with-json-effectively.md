@@ -123,7 +123,7 @@ func handleEvent(eventJSON string) error {
 ## How It Works
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
     A[Go Struct] --> B{Marshal}
     B --> C[JSON Encoder]
@@ -319,8 +319,8 @@ if err := json.Unmarshal(data, &user); err != nil {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Beginner Tutorial - JSON Basics](../tutorials/beginner.md#json).
-**Related How-To**: See [Build REST APIs](./build-rest-apis.md).
+**Related Tutorial**: See [Beginner Tutorial - JSON Basics](/en/learn/swe/prog-lang/golang/tutorials/beginner#json).
+**Related How-To**: See [Build REST APIs](/en/learn/swe/prog-lang/golang/how-to/build-rest-apis).
 **Related Cookbook**: See Cookbook recipe "JSON Patterns".
 
 ## Further Reading

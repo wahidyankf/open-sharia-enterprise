@@ -1061,10 +1061,10 @@ func main() {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Beginner Tutorial - Configuration](../tutorials/beginner.md#configuration) for configuration basics.
+**Related Tutorial**: See [Beginner Tutorial - Configuration](/en/learn/swe/prog-lang/golang/tutorials/beginner#configuration) for configuration basics.
 
-**Related How-To**: See [Handle Files and Resources](./handle-files-and-resources.md) for config file reading, [Build CLI Applications](./build-cli-applications.md) for flag parsing, [Handle Errors Effectively](./handle-errors-effectively.md) for config validation errors.
+**Related How-To**: See [Handle Files and Resources](/en/learn/swe/prog-lang/golang/how-to/handle-files-and-resources) for config file reading, [Build CLI Applications](/en/learn/swe/prog-lang/golang/how-to/build-cli-applications) for flag parsing, [Handle Errors Effectively](/en/learn/swe/prog-lang/golang/how-to/handle-errors-effectively) for config validation errors.
 
 **Related Cookbook**: See Cookbook recipes "Environment Variables", "Viper Configuration", "Configuration Validation" for ready-to-use config patterns.
 
-**Related Explanation**: See [Best Practices](../explanation/best-practices.md) for configuration principles.
+**Related Explanation**: See [Best Practices](/en/learn/swe/prog-lang/golang/explanation/best-practices) for configuration principles.

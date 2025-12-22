@@ -516,13 +516,13 @@ large.parallelStream()
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Functional Programming](../tutorials/intermediate.md#functional-programming) for functional programming basics and [Advanced Tutorial - Stream API Deep Dive](../tutorials/advanced.md#stream-api) for advanced stream patterns.
+**Related Tutorial**: See [Intermediate Tutorial - Functional Programming](/en/learn/swe/prog-lang/python/tutorials/intermediate#functional-programming) for functional programming basics and [Advanced Tutorial - Stream API Deep Dive](/en/learn/swe/prog-lang/python/tutorials/advanced#stream-api) for advanced stream patterns.
 
-**Related How-To**: See [Optimize Performance](./optimize-performance.md) for stream performance tuning and [Use Collections Effectively](./use-collections-effectively.md) for collection best practices.
+**Related How-To**: See [Optimize Performance](/en/learn/swe/prog-lang/java/how-to/optimize-performance) for stream performance tuning and [Use Collections Effectively](/en/learn/swe/prog-lang/java/how-to/use-collections-effectively) for collection best practices.
 
 **Related Cookbook**: See Cookbook recipes "Stream Processing Patterns", "Custom Collectors", and "Parallel Stream Optimization" for copy-paste ready stream implementations.
 
-**Related Explanation**: See [Best Practices - Functional Programming](../explanation/best-practices.md#functional-programming) for functional programming principles.
+**Related Explanation**: See [Best Practices - Functional Programming](/en/learn/swe/prog-lang/python/explanation/best-practices#functional-programming) for functional programming principles.
 
 ## Further Reading
 

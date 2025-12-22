@@ -43,7 +43,7 @@ Use references when you know what you're looking for but need a quick reminder.
 
 Format: Side-by-side examples with brief notes.
 
-[View Cheat Sheet →](/learn/swe/prog-lang/elixir/reference/cheat-sheet)
+[View Cheat Sheet →](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet)
 
 ### Glossary
 
@@ -71,7 +71,7 @@ Each entry includes:
 - **Context**: Where it's used
 - **Related Terms**: Cross-references
 
-[Browse Glossary →](/learn/swe/prog-lang/elixir/reference/glossary)
+[Browse Glossary →](/en/learn/swe/prog-lang/elixir/reference/glossary)
 
 ### Resources
 
@@ -111,7 +111,7 @@ Each entry includes:
 - ElixirConf EU
 - Code BEAM
 
-[Explore Resources →](/learn/swe/prog-lang/elixir/reference/resources)
+[Explore Resources →](/en/learn/swe/prog-lang/elixir/reference/resources)
 
 ## How to Use References
 
@@ -155,4 +155,4 @@ Each entry includes:
 
 Use references alongside tutorials and how-to guides for complete coverage.
 
-Need a quick lookup? [Start with the Cheat Sheet →](/learn/swe/prog-lang/elixir/reference/cheat-sheet)
+Need a quick lookup? [Start with the Cheat Sheet →](/en/learn/swe/prog-lang/elixir/reference/cheat-sheet)

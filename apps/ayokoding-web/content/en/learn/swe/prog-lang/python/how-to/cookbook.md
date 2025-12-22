@@ -4322,7 +4322,7 @@ for result in results:
 
 **See Also**:
 
-- [How to Use Advanced Async Patterns](./async-patterns-advanced.md) - Complete async guide
+- [How to Use Advanced Async Patterns](/en/learn/swe/prog-lang/python/how-to/async-patterns-advanced) - Complete async guide
 - [Recipe: Async Context Managers](#recipe-2-context-managers-for-resources) - Resource management
 
 ---
@@ -4472,7 +4472,7 @@ asyncio.run(main())
 
 **See Also**:
 
-- [How to Use Advanced Async Patterns](./async-patterns-advanced.md#6-background-task-management) - Complete background task guide
+- [How to Use Advanced Async Patterns](/en/learn/swe/prog-lang/python/how-to/async-patterns-advanced#6-background-task-management) - Complete background task guide
 
 ---
 
@@ -4603,7 +4603,7 @@ class InMemoryRepository(Repository[T]):
 
 **See Also**:
 
-- [How to Work with Databases](./work-with-databases.md#repository-pattern-for-clean-architecture) - Complete database guide
+- [How to Work with Databases](/en/learn/swe/prog-lang/python/how-to/work-with-databases#repository-pattern-for-clean-architecture) - Complete database guide
 
 ---
 
@@ -4842,8 +4842,8 @@ async def list_users(
 
 **See Also**:
 
-- [How to Build REST APIs](./build-rest-apis.md) - Complete FastAPI guide
-- [How to Implement Data Validation](./data-validation-patterns.md) - Pydantic patterns
+- [How to Build REST APIs](/en/learn/swe/prog-lang/python/how-to/build-rest-apis) - Complete FastAPI guide
+- [How to Implement Data Validation](/en/learn/swe/prog-lang/python/how-to/data-validation-patterns) - Pydantic patterns
 
 ---
 
@@ -5082,7 +5082,7 @@ REDIS_URL=redis://localhost:6379/0
 
 **See Also**:
 
-- [How to Implement Security Best Practices](./security-best-practices.md) - Complete security guide
+- [How to Implement Security Best Practices](/en/learn/swe/prog-lang/python/how-to/security-best-practices) - Complete security guide
 
 ---
 

@@ -1197,6 +1197,15 @@ Explore domain-specific Rust:
 - Help with Rust documentation
 - Answer questions on users.rust-lang.org
 
+### Internal Resources
+
+- [Intermediate Rust](/en/learn/swe/prog-lang/rust/tutorials/intermediate) - Review production patterns
+- [Complete Beginner's Guide](/en/learn/swe/prog-lang/rust/tutorials/beginner) - Refresh fundamentals
+- [Quick Start](/en/learn/swe/prog-lang/rust/tutorials/quick-start) - Quick syntax review
+- [Rust Best Practices](/en/learn/swe/prog-lang/rust/explanation/best-practices) - Expert standards
+- [Rust Anti-Patterns](/en/learn/swe/prog-lang/rust/explanation/anti-patterns) - Advanced pitfalls
+- [Rust Glossary](/en/learn/swe/prog-lang/rust/reference/glossary) - Expert terminology
+
 ### External Resources
 
 - [Rustonomicon](https://doc.rust-lang.org/nomicon/) - Dark arts of unsafe Rust

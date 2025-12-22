@@ -32,6 +32,24 @@ By the end of this tutorial, you will:
 - Configure your IDE for Rust development
 - Know where to find help and documentation
 
+## Learning Path
+
+```mermaid
+graph TD
+    A["1. Install rustup"] --> B["2. Verify Installation"]
+    B --> C["3. Create Hello World"]
+    C --> D["4. Run with Cargo"]
+    D --> E["5. Configure IDE"]
+    E --> F["Ready for Quick Start!"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
 ---
 
 ## Installation
@@ -82,7 +100,7 @@ By the end of this tutorial, you will:
 
 3. **Follow the prompts**:
    - Press 1 and Enter to proceed with default installation
-   - Installation takes 2-3 minutes
+   - Installation completes shortly
 
 4. **Configure PATH**:
    ```bash
@@ -115,7 +133,7 @@ rustup-init
 
 3. **Follow the prompts**:
    - Press 1 and Enter for default installation
-   - Installation completes in 2-3 minutes
+   - Installation completes shortly
 
 4. **Configure PATH**:
    ```bash
@@ -489,9 +507,15 @@ Congratulations! You have:
 
 **Continue learning**:
 
-1. **Quick Start Tutorial** - Learn 12 essential Rust concepts rapidly
-2. **Beginner Tutorial** - Deep dive into Rust fundamentals and ownership
-3. **Official Rust Book** - Comprehensive free online book: [https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/)
+1. **[Rust Quick Start](/en/learn/swe/prog-lang/rust/tutorials/quick-start)** - Learn 12 essential Rust concepts rapidly
+2. **[Complete Beginner's Guide to Rust](/en/learn/swe/prog-lang/rust/tutorials/beginner)** - Deep dive into Rust fundamentals and ownership
+3. **[Intermediate Rust](/en/learn/swe/prog-lang/rust/tutorials/intermediate)** - Production-grade features and patterns
+4. **[Advanced Rust](/en/learn/swe/prog-lang/rust/tutorials/advanced)** - Expert-level topics
+5. **[Rust Cookbook](/en/learn/swe/prog-lang/rust/how-to/cookbook)** - Ready-to-use code recipes
+6. **[Rust Best Practices](/en/learn/swe/prog-lang/rust/explanation/best-practices)** - Professional coding standards
+7. **[Rust Anti-Patterns](/en/learn/swe/prog-lang/rust/explanation/anti-patterns)** - Common mistakes to avoid
+8. **[Rust Cheat Sheet](/en/learn/swe/prog-lang/rust/reference/cheat-sheet)** - Quick syntax reference
+9. **Official Rust Book** - Comprehensive free online book: [https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/)
 
 ---
 

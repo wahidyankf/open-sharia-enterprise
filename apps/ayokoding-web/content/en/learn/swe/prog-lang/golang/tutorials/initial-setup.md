@@ -245,7 +245,7 @@ go mod init example.com/hello
 # This creates go.mod file tracking your dependencies
 ```
 
-You'll learn more about modules in the [Quick Start tutorial](/learn/swe/prog-lang/golang/tutorials/quick-start) and [Manage Go modules effectively](/learn/swe/prog-lang/golang/how-to/manage-go-modules).
+You'll learn more about modules in the [Quick Start tutorial](/en/learn/swe/prog-lang/golang/tutorials/quick-start) and [Manage Go modules effectively](/en/learn/swe/prog-lang/golang/how-to/manage-go-modules).
 
 ## ✔️ Verification Checklist
 
@@ -265,18 +265,18 @@ You've successfully installed Go and run your first program. You're ready for th
 
 Now that Go is working, you have two paths:
 
-**Quick learner**: [Golang Quick Start](/learn/swe/prog-lang/golang/tutorials/quick-start)
+**Quick learner**: [Golang Quick Start](/en/learn/swe/prog-lang/golang/tutorials/quick-start)
 
 - Learn core syntax and basic patterns
 - Understand enough to explore Go independently
 
-**Comprehensive learner**: [Complete Beginner's Guide to Go](/learn/swe/prog-lang/golang/tutorials/beginner)
+**Comprehensive learner**: [Complete Beginner's Guide to Go](/en/learn/swe/prog-lang/golang/tutorials/beginner)
 
 - Comprehensive coverage of Go fundamentals
 - Hands-on exercises and practice
 - Ready to build real applications
 
-**Problem solver**: [Golang Cookbook](/learn/swe/prog-lang/golang/how-to/cookbook)
+**Problem solver**: [Golang Cookbook](/en/learn/swe/prog-lang/golang/how-to/cookbook)
 
 - Practical recipes for common patterns
 - Real-world problem solving
@@ -337,7 +337,7 @@ Download the correct installer for your architecture.
 
 **Problem**: "go: cannot find main module" error
 
-**Solution**: You don't need a module for simple programs. Just run `go run hello.go` without initializing a module. Modules are covered in [Quick Start tutorial](/learn/swe/prog-lang/golang/tutorials/quick-start).
+**Solution**: You don't need a module for simple programs. Just run `go run hello.go` without initializing a module. Modules are covered in [Quick Start tutorial](/en/learn/swe/prog-lang/golang/tutorials/quick-start).
 
 **Problem**: Antivirus blocks Go installation (Windows)
 

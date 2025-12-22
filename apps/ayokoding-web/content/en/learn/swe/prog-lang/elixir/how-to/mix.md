@@ -750,7 +750,7 @@ _build/prod/rel/my_app/bin/my_app eval "Application.get_all_env(:my_app)"
 
 ## Related Resources
 
-- [Configuration Guide](/learn/swe/prog-lang/elixir/how-to/configuration)
-- [Deployment Guide](/learn/swe/prog-lang/elixir/how-to/deployment)
-- [Dependencies Guide](/learn/swe/prog-lang/elixir/how-to/dependencies)
-- [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing)
+- [Configuration Guide](/en/learn/swe/prog-lang/elixir/how-to/configuration)
+- [Deployment Guide](/en/learn/swe/prog-lang/elixir/how-to/deployment)
+- [Dependencies Guide](/en/learn/swe/prog-lang/elixir/how-to/dependencies)
+- [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)

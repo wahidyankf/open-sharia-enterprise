@@ -24,8 +24,8 @@ Elixir processes are lightweight (thousands per core), isolated (no shared memor
 
 ## Prerequisites
 
-- [Beginner Tutorial - Processes](/learn/swe/prog-lang/elixir/tutorials/beginner#processes)
-- [Quick Start Tutorial](/learn/swe/prog-lang/elixir/tutorials/quick-start)
+- [Beginner Tutorial - Processes](/en/learn/swe/prog-lang/elixir/tutorials/beginner#processes)
+- [Quick Start Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)
 
 ## Solution Overview
 
@@ -636,7 +636,7 @@ end
 
 ## See Also
 
-- [Cookbook - Concurrency Recipes](/learn/swe/prog-lang/elixir/how-to/cookbook#concurrency)
-- [Beginner Tutorial - Processes](/learn/swe/prog-lang/elixir/tutorials/beginner#processes)
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-patterns)
-- [Task and Agent Guide](/learn/swe/prog-lang/elixir/how-to/concurrency-task-agent)
+- [Cookbook - Concurrency Recipes](/en/learn/swe/prog-lang/elixir/how-to/cookbook#concurrency)
+- [Beginner Tutorial - Processes](/en/learn/swe/prog-lang/elixir/tutorials/beginner#processes)
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
+- [Task and Agent Guide](/en/learn/swe/prog-lang/elixir/how-to/task-agent)

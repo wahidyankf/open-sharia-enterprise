@@ -84,7 +84,7 @@ MapHelper.atomize_keys(json_user)
 
 **Use Cases**: JSON serialization, API responses, database records.
 
-**See Also**: [Beginner Tutorial - Data Structures](/learn/swe/prog-lang/elixir/tutorials/beginner#data-structures), [Pattern Matching Guide](/learn/swe/prog-lang/elixir/how-to/pattern-matching)
+**See Also**: [Beginner Tutorial - Data Structures](/en/learn/swe/prog-lang/elixir/tutorials/beginner#data-structures), [Pattern Matching Guide](/en/learn/swe/prog-lang/elixir/how-to/pattern-matching)
 
 ---
 
@@ -132,7 +132,7 @@ DeepMerge.deep_merge(config1, config2)
 
 **Use Cases**: Configuration merging, data aggregation, API responses.
 
-**See Also**: [Beginner Tutorial - Maps](/learn/swe/prog-lang/elixir/tutorials/beginner#maps)
+**See Also**: [Beginner Tutorial - Maps](/en/learn/swe/prog-lang/elixir/tutorials/beginner#maps)
 
 ---
 
@@ -173,7 +173,7 @@ Enum.group_by(words, &String.first/1)
 
 **Use Cases**: Data categorization, reporting, aggregation.
 
-**See Also**: [Beginner Tutorial - Enum](/learn/swe/prog-lang/elixir/tutorials/beginner#enum-stream)
+**See Also**: [Beginner Tutorial - Enum](/en/learn/swe/prog-lang/elixir/tutorials/beginner#enum-stream)
 
 ---
 
@@ -204,7 +204,7 @@ Map.to_list(options)
 
 **Use Cases**: Function options, configuration, API parameters.
 
-**See Also**: [Beginner Tutorial - Keyword Lists](/learn/swe/prog-lang/elixir/tutorials/beginner#keyword-lists)
+**See Also**: [Beginner Tutorial - Keyword Lists](/en/learn/swe/prog-lang/elixir/tutorials/beginner#keyword-lists)
 
 ---
 
@@ -257,7 +257,7 @@ end)
 
 **Use Cases**: Configuration updates, state management, data migration.
 
-**See Also**: [Beginner Tutorial - Data Structures](/learn/swe/prog-lang/elixir/tutorials/beginner#data-structures)
+**See Also**: [Beginner Tutorial - Data Structures](/en/learn/swe/prog-lang/elixir/tutorials/beginner#data-structures)
 
 ---
 
@@ -311,7 +311,7 @@ Extractor.extract_user_info(user)
 
 **Use Cases**: Data extraction, API response parsing, validation.
 
-**See Also**: [Pattern Matching Guide](/learn/swe/prog-lang/elixir/how-to/pattern-matching), [Beginner Tutorial](/learn/swe/prog-lang/elixir/tutorials/beginner#pattern-matching)
+**See Also**: [Pattern Matching Guide](/en/learn/swe/prog-lang/elixir/how-to/pattern-matching), [Beginner Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/beginner#pattern-matching)
 
 ---
 
@@ -361,7 +361,7 @@ ResponseHandler.handle_response({:error, %{reason: :timeout}})
 
 **Use Cases**: HTTP response handling, state machines, error handling.
 
-**See Also**: [Error Handling Guide](/learn/swe/prog-lang/elixir/how-to/error-handling), [Beginner Tutorial - Control Flow](/learn/swe/prog-lang/elixir/tutorials/beginner#control-flow)
+**See Also**: [Error Handling Guide](/en/learn/swe/prog-lang/elixir/how-to/error-handling), [Beginner Tutorial - Control Flow](/en/learn/swe/prog-lang/elixir/tutorials/beginner#control-flow)
 
 ---
 
@@ -408,7 +408,7 @@ Matcher.process_event(event, :user_updated)
 
 **Use Cases**: List filtering, event processing, state validation.
 
-**See Also**: [Pattern Matching Guide](/learn/swe/prog-lang/elixir/how-to/pattern-matching)
+**See Also**: [Pattern Matching Guide](/en/learn/swe/prog-lang/elixir/how-to/pattern-matching)
 
 ---
 
@@ -465,7 +465,7 @@ DataPipeline.process_user_input(input)
 
 **Use Cases**: Data transformation, validation pipelines, ETL processes.
 
-**See Also**: [Beginner Tutorial - Pipe Operator](/learn/swe/prog-lang/elixir/tutorials/beginner#pipe-operator)
+**See Also**: [Beginner Tutorial - Pipe Operator](/en/learn/swe/prog-lang/elixir/tutorials/beginner#pipe-operator)
 
 ---
 
@@ -524,7 +524,7 @@ add_5.(3)  # => 8
 
 **Use Cases**: Functional composition, callbacks, strategy pattern, middleware.
 
-**See Also**: [Beginner Tutorial - Functions](/learn/swe/prog-lang/elixir/tutorials/beginner#functions)
+**See Also**: [Beginner Tutorial - Functions](/en/learn/swe/prog-lang/elixir/tutorials/beginner#functions)
 
 ---
 
@@ -589,7 +589,7 @@ CaptureExamples.complex_example(users)
 
 **Use Cases**: Enum operations, transformations, filtering.
 
-**See Also**: [Beginner Tutorial - Anonymous Functions](/learn/swe/prog-lang/elixir/tutorials/beginner#anonymous-functions)
+**See Also**: [Beginner Tutorial - Anonymous Functions](/en/learn/swe/prog-lang/elixir/tutorials/beginner#anonymous-functions)
 
 ---
 
@@ -651,7 +651,7 @@ StringParser.build_query_string(params)
 
 **Use Cases**: Log parsing, CSV processing, URL building, data extraction.
 
-**See Also**: [Beginner Tutorial - Strings](/learn/swe/prog-lang/elixir/tutorials/beginner#strings-binaries), [String Handling Guide](/learn/swe/prog-lang/elixir/how-to/strings-binaries)
+**See Also**: [Beginner Tutorial - Strings](/en/learn/swe/prog-lang/elixir/tutorials/beginner#strings-binaries), [String Handling Guide](/en/learn/swe/prog-lang/elixir/how-to/strings-binaries)
 
 ---
 
@@ -715,7 +715,7 @@ StringValidator.valid_phone?("123-456-7890")    # => true
 
 **Use Cases**: Form validation, user input sanitization, data cleaning.
 
-**See Also**: [Beginner Tutorial - Strings](/learn/swe/prog-lang/elixir/tutorials/beginner#strings-binaries)
+**See Also**: [Beginner Tutorial - Strings](/en/learn/swe/prog-lang/elixir/tutorials/beginner#strings-binaries)
 
 ---
 
@@ -781,7 +781,7 @@ ParallelProcessor.safe_parallel_map([1, 2, 3, 4, 5], compute, 1000)
 
 **Use Cases**: HTTP requests, file processing, data transformation, I/O operations.
 
-**See Also**: [Concurrency Guide](/learn/swe/prog-lang/elixir/how-to/concurrency-task-agent), [Intermediate Tutorial - Task](/learn/swe/prog-lang/elixir/tutorials/intermediate#task-agent)
+**See Also**: [Concurrency Guide](/en/learn/swe/prog-lang/elixir/how-to/task-agent), [Intermediate Tutorial - Task](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#task-agent)
 
 ---
 
@@ -856,7 +856,7 @@ GenServer.call(cache_pid, {:put, "key", "value"})
 
 **Use Cases**: Process discovery, distributed caching, session management.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-patterns), [Intermediate Tutorial - GenServer](/learn/swe/prog-lang/elixir/tutorials/intermediate#genserver)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Intermediate Tutorial - GenServer](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#genserver)
 
 ---
 
@@ -952,7 +952,7 @@ RateLimiter.debounce(fn -> IO.puts("Debounced 3") end)
 
 **Use Cases**: Search autocomplete, API rate limiting, event handling, scroll events.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-patterns)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
 
 ---
 
@@ -1044,7 +1044,7 @@ OrderStateMachine.transition(order, :delivered)
 
 **Use Cases**: Order processing, workflow management, game state, approval flows.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-patterns), [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate#genserver)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#genserver)
 
 ---
 
@@ -1146,7 +1146,7 @@ WorkerSupervisor.stop_worker("worker_1")
 
 **Use Cases**: Connection pools, user sessions, background jobs, WebSocket handlers.
 
-**See Also**: [Supervision Guide](/learn/swe/prog-lang/elixir/how-to/supervision-trees), [Intermediate Tutorial - Supervisor](/learn/swe/prog-lang/elixir/tutorials/intermediate#supervisor)
+**See Also**: [Supervision Guide](/en/learn/swe/prog-lang/elixir/how-to/supervision), [Intermediate Tutorial - Supervisor](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#supervisor)
 
 ---
 
@@ -1237,7 +1237,7 @@ end
 
 **Use Cases**: Cache cleanup, health checks, metrics collection, scheduled reports.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-patterns)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)
 
 ---
 
@@ -1324,7 +1324,7 @@ UserService.create_user(%{name: "Charlie"})
 
 **Use Cases**: Business logic, API handlers, data pipelines, validation flows.
 
-**See Also**: [Error Handling Guide](/learn/swe/prog-lang/elixir/how-to/error-handling), [Beginner Tutorial - Error Handling](/learn/swe/prog-lang/elixir/tutorials/beginner#error-handling)
+**See Also**: [Error Handling Guide](/en/learn/swe/prog-lang/elixir/how-to/error-handling), [Beginner Tutorial - Error Handling](/en/learn/swe/prog-lang/elixir/tutorials/beginner#error-handling)
 
 ---
 
@@ -1409,7 +1409,7 @@ end
 
 **Use Cases**: Network connections, external services, unreliable operations, background jobs.
 
-**See Also**: [Supervision Guide](/learn/swe/prog-lang/elixir/how-to/supervision-trees), [Intermediate Tutorial - Supervisor](/learn/swe/prog-lang/elixir/tutorials/intermediate#supervisor)
+**See Also**: [Supervision Guide](/en/learn/swe/prog-lang/elixir/how-to/supervision), [Intermediate Tutorial - Supervisor](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#supervisor)
 
 ---
 
@@ -1499,7 +1499,7 @@ FileHelper.append_to_file("app.log", "#{DateTime.utc_now()} - Server started\n")
 
 **Use Cases**: Configuration files, data import/export, logging, file processing.
 
-**See Also**: [File I/O Guide](/learn/swe/prog-lang/elixir/how-to/file-io), [Beginner Tutorial - File I/O](/learn/swe/prog-lang/elixir/tutorials/beginner#file-io)
+**See Also**: [File I/O Guide](/en/learn/swe/prog-lang/elixir/how-to/file-io), [Beginner Tutorial - File I/O](/en/learn/swe/prog-lang/elixir/tutorials/beginner#file-io)
 
 ---
 
@@ -1589,7 +1589,7 @@ end)
 
 **Use Cases**: Data import/export, reporting, data migration, ETL.
 
-**See Also**: [File I/O Guide](/learn/swe/prog-lang/elixir/how-to/file-io)
+**See Also**: [File I/O Guide](/en/learn/swe/prog-lang/elixir/how-to/file-io)
 
 ---
 
@@ -1729,7 +1729,7 @@ end
 
 **Use Cases**: REST APIs, mobile backends, microservices.
 
-**See Also**: [Phoenix REST API Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
+**See Also**: [Phoenix REST API Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
 
 ---
 
@@ -1856,7 +1856,7 @@ end
 
 **Use Cases**: API authentication, role-based access, session management.
 
-**See Also**: [Phoenix REST API Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
+**See Also**: [Phoenix REST API Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
 
 ---
 
@@ -1960,7 +1960,7 @@ end
 
 **Use Cases**: Forms, user input, data entry, interactive UIs.
 
-**See Also**: [LiveView Guide](/learn/swe/prog-lang/elixir/how-to/liveview-patterns), [Intermediate Tutorial - LiveView](/learn/swe/prog-lang/elixir/tutorials/intermediate#liveview)
+**See Also**: [LiveView Guide](/en/learn/swe/prog-lang/elixir/how-to/liveview), [Intermediate Tutorial - LiveView](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#liveview)
 
 ---
 
@@ -2137,7 +2137,7 @@ end
 
 **Use Cases**: Chat applications, collaborative editing, real-time dashboards, multiplayer games, live notifications.
 
-**See Also**: [Phoenix REST API Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
+**See Also**: [Phoenix REST API Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
 
 ---
 
@@ -2306,7 +2306,7 @@ end
 
 **Use Cases**: User login, protected routes, session management, authentication flows.
 
-**See Also**: [Authentication Guide](/learn/swe/prog-lang/elixir/how-to/authentication-patterns), [Phoenix REST API Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
+**See Also**: [Authentication Guide](/en/learn/swe/prog-lang/elixir/how-to/authentication-patterns), [Phoenix REST API Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
 
 ---
 
@@ -2432,7 +2432,7 @@ end
 
 **Use Cases**: Dashboards, chat apps, notifications, collaborative editing, live feeds.
 
-**See Also**: [LiveView Guide](/learn/swe/prog-lang/elixir/how-to/liveview-patterns), [Intermediate Tutorial - LiveView](/learn/swe/prog-lang/elixir/tutorials/intermediate#liveview)
+**See Also**: [LiveView Guide](/en/learn/swe/prog-lang/elixir/how-to/liveview), [Intermediate Tutorial - LiveView](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#liveview)
 
 ---
 
@@ -2528,7 +2528,7 @@ stats = MyApp.Queries.UserQueries.user_post_statistics() |> Repo.all()
 
 **Use Cases**: Reports, analytics, complex data retrieval, dashboards.
 
-**See Also**: [Ecto Guide](/learn/swe/prog-lang/elixir/how-to/ecto-database), [Intermediate Tutorial - Ecto](/learn/swe/prog-lang/elixir/tutorials/intermediate#ecto)
+**See Also**: [Ecto Guide](/en/learn/swe/prog-lang/elixir/how-to/ecto), [Intermediate Tutorial - Ecto](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#ecto)
 
 ---
 
@@ -2672,7 +2672,7 @@ end
 
 **Use Cases**: Orders, payments, multi-step workflows, data consistency.
 
-**See Also**: [Ecto Guide](/learn/swe/prog-lang/elixir/how-to/ecto-database), [Intermediate Tutorial - Ecto](/learn/swe/prog-lang/elixir/tutorials/intermediate#ecto)
+**See Also**: [Ecto Guide](/en/learn/swe/prog-lang/elixir/how-to/ecto), [Intermediate Tutorial - Ecto](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#ecto)
 
 ---
 
@@ -2767,7 +2767,7 @@ end
 
 **Use Cases**: GenServer testing, concurrent behavior, async operations.
 
-**See Also**: [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing-exunit), [Beginner Tutorial - Testing](/learn/swe/prog-lang/elixir/tutorials/beginner#testing-exunit)
+**See Also**: [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing), [Beginner Tutorial - Testing](/en/learn/swe/prog-lang/elixir/tutorials/beginner#testing-exunit)
 
 ---
 
@@ -2873,7 +2873,7 @@ end
 
 **Use Cases**: External API testing, service integration, CI/CD testing.
 
-**See Also**: [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing-exunit)
+**See Also**: [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing)
 
 ---
 
@@ -2991,7 +2991,7 @@ end
 
 **Use Cases**: Performance optimization, bottleneck identification, regression testing.
 
-**See Also**: [Performance Guide](/learn/swe/prog-lang/elixir/how-to/performance-optimization), [Advanced Tutorial - Performance](/learn/swe/prog-lang/elixir/tutorials/advanced#performance-optimization)
+**See Also**: [Performance Guide](/en/learn/swe/prog-lang/elixir/how-to/performance), [Advanced Tutorial - Performance](/en/learn/swe/prog-lang/elixir/tutorials/advanced#performance-optimization)
 
 ---
 
@@ -3102,7 +3102,7 @@ end
 
 **Use Cases**: Database optimization, query performance, large dataset processing.
 
-**See Also**: [Ecto Guide](/learn/swe/prog-lang/elixir/how-to/ecto-database), [Performance Guide](/learn/swe/prog-lang/elixir/how-to/performance-optimization)
+**See Also**: [Ecto Guide](/en/learn/swe/prog-lang/elixir/how-to/ecto), [Performance Guide](/en/learn/swe/prog-lang/elixir/how-to/performance)
 
 ---
 
@@ -3218,7 +3218,7 @@ MyApp.Config.feature_enabled?(:new_dashboard)
 
 **Use Cases**: Multi-environment deployment, secret management, feature flags.
 
-**See Also**: [Configuration Guide](/learn/swe/prog-lang/elixir/how-to/configuration-management), [Intermediate Tutorial - Configuration](/learn/swe/prog-lang/elixir/tutorials/intermediate#configuration-management)
+**See Also**: [Configuration Guide](/en/learn/swe/prog-lang/elixir/how-to/configuration-management), [Intermediate Tutorial - Configuration](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#configuration-management)
 
 ---
 
@@ -3341,7 +3341,7 @@ end
 
 **Use Cases**: Development debugging, production troubleshooting, performance analysis.
 
-**See Also**: [Debugging Guide](/learn/swe/prog-lang/elixir/how-to/debugging-logging), [Beginner Tutorial - Debugging](/learn/swe/prog-lang/elixir/tutorials/beginner#debugging-tools)
+**See Also**: [Debugging Guide](/en/learn/swe/prog-lang/elixir/how-to/debugging-logging), [Beginner Tutorial - Debugging](/en/learn/swe/prog-lang/elixir/tutorials/beginner#debugging-tools)
 
 ---
 
@@ -3550,7 +3550,7 @@ MyApp.JobQueue.get_status(job_id)
 
 **Use Cases**: Email sending, file processing, report generation, data exports, webhook delivery.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-state-management), [Task Guide](/learn/swe/prog-lang/elixir/how-to/task-agent-concurrency), [Intermediate Tutorial - OTP](/learn/swe/prog-lang/elixir/tutorials/intermediate#otp-platform)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Task Guide](/en/learn/swe/prog-lang/elixir/how-to/task-agent-concurrency), [Intermediate Tutorial - OTP](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#otp-platform)
 
 ---
 
@@ -3697,7 +3697,7 @@ end
 
 **Use Cases**: Schema evolution, data migrations, index management, constraint additions, table refactoring.
 
-**See Also**: [Ecto Guide](/learn/swe/prog-lang/elixir/how-to/ecto-database-patterns), [Intermediate Tutorial - Ecto](/learn/swe/prog-lang/elixir/tutorials/intermediate#ecto)
+**See Also**: [Ecto Guide](/en/learn/swe/prog-lang/elixir/how-to/ecto-patterns), [Intermediate Tutorial - Ecto](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#ecto)
 
 ---
 
@@ -3888,7 +3888,7 @@ end
 
 **Use Cases**: Public APIs, mobile app backends, third-party integrations, gradual feature rollouts.
 
-**See Also**: [Phoenix REST API Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
+**See Also**: [Phoenix REST API Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
 
 ---
 
@@ -4076,7 +4076,7 @@ end
 
 **Use Cases**: API rate limiting, DDoS prevention, resource protection, fair usage enforcement.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-state-management), [Phoenix REST API Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Phoenix REST API Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api)
 
 ---
 
@@ -4246,7 +4246,7 @@ end
 
 **Use Cases**: Multi-language websites, internationalized apps, localized error messages, region-specific content.
 
-**See Also**: [Phoenix Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
+**See Also**: [Phoenix Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
 
 ---
 
@@ -4473,7 +4473,7 @@ end
 
 **Use Cases**: Profile pictures, document uploads, media sharing, file attachments.
 
-**See Also**: [Phoenix Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [LiveView Guide](/learn/swe/prog-lang/elixir/how-to/liveview-patterns)
+**See Also**: [Phoenix Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [LiveView Guide](/en/learn/swe/prog-lang/elixir/how-to/liveview)
 
 ---
 
@@ -4674,7 +4674,7 @@ end
 
 **Use Cases**: Welcome emails, password resets, notifications, newsletters, transactional receipts.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-state-management), [Intermediate Tutorial - Phoenix](/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Intermediate Tutorial - Phoenix](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
 
 ---
 
@@ -4857,7 +4857,7 @@ MyApp.JobManager.remove_job(:custom_task)
 
 **Use Cases**: Data cleanup, report generation, health checks, cache warming, backup tasks.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-state-management), [Intermediate Tutorial - OTP](/learn/swe/prog-lang/elixir/tutorials/intermediate#otp-platform)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Intermediate Tutorial - OTP](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#otp-platform)
 
 ---
 
@@ -5099,7 +5099,7 @@ end
 
 **Use Cases**: Flexible APIs, mobile apps, SPAs, real-time dashboards, data aggregation.
 
-**See Also**: [Phoenix REST API Guide](/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
+**See Also**: [Phoenix REST API Guide](/en/learn/swe/prog-lang/elixir/how-to/phoenix-rest-api), [Intermediate Tutorial - Phoenix](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#phoenix-framework)
 
 ---
 
@@ -5306,7 +5306,7 @@ end
 
 **Use Cases**: Unit testing, integration testing, external service mocking, test isolation.
 
-**See Also**: [Testing Guide](/learn/swe/prog-lang/elixir/how-to/testing-strategies), [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-state-management), [Beginner Tutorial - Testing](/learn/swe/prog-lang/elixir/tutorials/beginner#testing-with-exunit)
+**See Also**: [Testing Guide](/en/learn/swe/prog-lang/elixir/how-to/testing-strategies), [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Beginner Tutorial - Testing](/en/learn/swe/prog-lang/elixir/tutorials/beginner#testing-with-exunit)
 
 ---
 
@@ -5583,7 +5583,7 @@ MyApp.ClusterUtils.cluster_stats()
 
 **Use Cases**: High availability systems, horizontal scaling, distributed caching, multi-region deployment, load balancing.
 
-**See Also**: [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver-state-management), [Advanced Tutorial - Distributed Systems](/learn/swe/prog-lang/elixir/tutorials/advanced#distributed-elixir), [Intermediate Tutorial - OTP](/learn/swe/prog-lang/elixir/tutorials/intermediate#otp-platform)
+**See Also**: [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver), [Advanced Tutorial - Distributed Systems](/en/learn/swe/prog-lang/elixir/tutorials/advanced#distributed-elixir), [Intermediate Tutorial - OTP](/en/learn/swe/prog-lang/elixir/tutorials/intermediate#otp-platform)
 
 ---
 
@@ -5619,7 +5619,7 @@ All recipes include:
 
 **Next Steps**:
 
-- Explore [specific how-to guides](/learn/swe/prog-lang/elixir/how-to) for deeper dives
-- Review [best practices](/learn/swe/prog-lang/elixir/explanation/best-practices) for quality code
-- Study [tutorials](/learn/swe/prog-lang/elixir/tutorials) for comprehensive learning
-- Consult [reference materials](/learn/swe/prog-lang/elixir/reference) for quick lookups
+- Explore [specific how-to guides](/en/learn/swe/prog-lang/elixir/how-to) for deeper dives
+- Review [best practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices) for quality code
+- Study [tutorials](/en/learn/swe/prog-lang/elixir/tutorials) for comprehensive learning
+- Consult [reference materials](/en/learn/swe/prog-lang/elixir/reference) for quick lookups

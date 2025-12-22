@@ -19,7 +19,7 @@ This guide shows how to select the right collection for your use case and use it
 ### Decision Tree
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     Start[What are you storing?] --> Type{Need unique<br/>elements?}
     Type -->|Yes| Set[Use Set]

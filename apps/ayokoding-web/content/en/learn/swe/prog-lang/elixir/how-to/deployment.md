@@ -25,7 +25,7 @@ tags:
 - Working Elixir application
 - Basic Docker knowledge (optional)
 - Understanding of environment variables
-- Completed [Intermediate Tutorial](/learn/swe/prog-lang/elixir/tutorials/intermediate)
+- Completed [Intermediate Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
 
 ## Problem
 
@@ -696,8 +696,8 @@ kill -9 <PID>
 
 ## Related Resources
 
-- [Configuration Guide](/learn/swe/prog-lang/elixir/how-to/configuration)
-- [Monitoring Guide](/learn/swe/prog-lang/elixir/how-to/monitoring)
+- [Configuration Guide](/en/learn/swe/prog-lang/elixir/how-to/configuration)
+- [Monitoring Guide](/en/learn/swe/prog-lang/elixir/how-to/monitoring)
 - [Docker Guide](https://docs.docker.com/)
 - [Kubernetes Guide](https://kubernetes.io/docs/)
 - [Mix Release Documentation](https://hexdocs.pm/mix/Mix.Tasks.Release.html)

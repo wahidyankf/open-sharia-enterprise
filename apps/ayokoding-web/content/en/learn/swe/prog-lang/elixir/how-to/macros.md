@@ -16,7 +16,7 @@ tags: ["elixir", "macros", "metaprogramming", "ast", "dsl", "how-to"]
 - Strong understanding of Elixir syntax
 - Familiarity with AST (Abstract Syntax Trees)
 - Knowledge of quote and unquote
-- Completed [Advanced Tutorial](/learn/swe/prog-lang/elixir/tutorials/advanced)
+- Completed [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced)
 
 ## Problem
 
@@ -631,7 +631,7 @@ end
 
 ## Related Resources
 
-- [Advanced Tutorial](/learn/swe/prog-lang/elixir/tutorials/advanced)
-- [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices)
-- [Protocols Guide](/learn/swe/prog-lang/elixir/how-to/protocols)
-- [GenServer Guide](/learn/swe/prog-lang/elixir/how-to/genserver)
+- [Advanced Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/advanced)
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices)
+- [Protocols Guide](/en/learn/swe/prog-lang/elixir/how-to/protocols)
+- [GenServer Guide](/en/learn/swe/prog-lang/elixir/how-to/genserver)

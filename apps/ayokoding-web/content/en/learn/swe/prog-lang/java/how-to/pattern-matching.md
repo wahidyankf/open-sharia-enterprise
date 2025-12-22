@@ -520,13 +520,13 @@ public static void handle(Result r) {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Modern Java Features](../tutorials/advanced.md#modern-java) for pattern matching and [Intermediate Tutorial - Control Flow](../tutorials/intermediate.md#control-flow) for switch expressions.
+**Related Tutorial**: See [Advanced Tutorial - Modern Java Features](/en/learn/swe/prog-lang/python/tutorials/advanced#modern-java) for pattern matching and [Intermediate Tutorial - Control Flow](/en/learn/swe/prog-lang/python/tutorials/intermediate#control-flow) for switch expressions.
 
-**Related How-To**: See [Use Records Effectively](./use-records-effectively.md) for record patterns and [Use Sealed Classes](./use-sealed-classes.md) for exhaustive pattern matching with sealed types.
+**Related How-To**: See [Use Records Effectively](/en/learn/swe/prog-lang/java/how-to/use-records-effectively) for record patterns and [Use Sealed Classes](/en/learn/swe/prog-lang/java/how-to/use-sealed-classes) for exhaustive pattern matching with sealed types.
 
 **Related Cookbook**: See Cookbook recipes "Pattern Matching for Data Processing", "Exhaustive Switch Patterns", and "Expression Evaluation with Patterns" for copy-paste ready pattern matching implementations.
 
-**Related Explanation**: See [Best Practices - Modern Java](../explanation/best-practices.md#modern-java) for modern Java feature usage.
+**Related Explanation**: See [Best Practices - Modern Java](/en/learn/swe/prog-lang/python/explanation/best-practices#modern-java) for modern Java feature usage.
 
 ## Further Reading
 

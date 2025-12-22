@@ -601,8 +601,8 @@ func BenchmarkDirectSum(b *testing.B) {
 
 ## Related Patterns
 
-**Related Tutorial**: See [Advanced Tutorial - Generics](../tutorials/advanced.md#generics) for generic fundamentals.
+**Related Tutorial**: See [Advanced Tutorial - Generics](/en/learn/swe/prog-lang/golang/tutorials/advanced#generics) for generic fundamentals.
 
-**Related How-To**: See [Design Interfaces Properly](./design-interfaces-properly.md) for interface design, [Handle Errors Effectively](./handle-errors-effectively.md) for generic error handling.
+**Related How-To**: See [Design Interfaces Properly](/en/learn/swe/prog-lang/golang/how-to/design-interfaces-properly) for interface design, [Handle Errors Effectively](/en/learn/swe/prog-lang/golang/how-to/handle-errors-effectively) for generic error handling.
 
 **Related Cookbook**: See Cookbook recipes "Generic Data Structures", "Type Constraints", "Generic Algorithms" for ready-to-use generic patterns.

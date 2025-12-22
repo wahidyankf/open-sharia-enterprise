@@ -15,7 +15,7 @@ tags: ["elixir", "hex", "dependencies", "packages", "versioning", "how-to"]
 
 - Elixir and Mix installed
 - Basic understanding of Mix projects
-- Completed [Quick Start Tutorial](/learn/swe/prog-lang/elixir/tutorials/quick-start)
+- Completed [Quick Start Tutorial](/en/learn/swe/prog-lang/elixir/tutorials/quick-start)
 
 ## Problem
 
@@ -484,8 +484,8 @@ mix deps.get
 
 ## Related Resources
 
-- [Mix Guide](/learn/swe/prog-lang/elixir/how-to/mix)
-- [Configuration Guide](/learn/swe/prog-lang/elixir/how-to/configuration)
-- [Deployment Guide](/learn/swe/prog-lang/elixir/how-to/deployment)
-- [Best Practices](/learn/swe/prog-lang/elixir/explanation/best-practices)
+- [Mix Guide](/en/learn/swe/prog-lang/elixir/how-to/mix)
+- [Configuration Guide](/en/learn/swe/prog-lang/elixir/how-to/configuration)
+- [Deployment Guide](/en/learn/swe/prog-lang/elixir/how-to/deployment)
+- [Best Practices](/en/learn/swe/prog-lang/elixir/explanation/best-practices)
 - [Hex.pm Documentation](https://hex.pm/docs)

@@ -580,6 +580,6 @@ except OperationalError as e:
 
 ## Related Patterns
 
-**Related Tutorial**: See [Intermediate Tutorial - Database Integration](../tutorials/intermediate.md#database).
-**Related How-To**: See [Use Advanced Async Patterns](./async-patterns-advanced.md).
+**Related Tutorial**: See [Intermediate Tutorial - Database Integration](/en/learn/swe/prog-lang/python/tutorials/intermediate#database).
+**Related How-To**: See [Use Advanced Async Patterns](/en/learn/swe/prog-lang/python/how-to/async-patterns-advanced).
 **Related Cookbook**: See Cookbook recipe "Database Patterns".
