@@ -1,6 +1,6 @@
 # Programming Language Content Parity Plan
 
-**Status:** In Progress
+**Status:** Done
 
 **Git Workflow:** Trunk Based Development (main branch)
 
