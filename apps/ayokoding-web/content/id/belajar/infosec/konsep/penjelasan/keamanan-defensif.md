@@ -4,14 +4,6 @@ date: 2025-12-22T19:18:06+07:00
 draft: false
 description: Memahami strategi, praktik keamanan defensif, dan peran fundamentalnya dalam melindungi sistem dari ancaman siber
 weight: 10002
-tags:
-  [
-    "keamanan-defensif",
-    "blue-team",
-    "incident-response",
-    "security-monitoring",
-    "infosec",
-  ]
 ---
 
 Keamanan defensif adalah praktik melindungi sistem komputer, jaringan, dan data dari serangan siber melalui langkah-langkah proaktif, pemantauan berkelanjutan, dan respons insiden yang cepat. Berbeda dengan keamanan ofensif yang mensimulasikan serangan untuk menemukan kerentanan, keamanan defensif fokus membangun perlindungan yang kuat dan mendeteksi ancaman saat terjadi.

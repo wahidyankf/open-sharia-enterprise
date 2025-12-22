@@ -4,14 +4,6 @@ date: 2025-12-22T19:18:06+07:00
 draft: false
 description: Understanding defensive security strategies, practices, and its fundamental role in protecting systems from cyber threats
 weight: 10002
-tags:
-  [
-    "defensive-security",
-    "blue-team",
-    "incident-response",
-    "security-monitoring",
-    "infosec",
-  ]
 ---
 
 Defensive security is the practice of protecting computer systems, networks, and data from cyber attacks through proactive measures, continuous monitoring, and rapid incident response. Unlike offensive security, which simulates attacks to find vulnerabilities, defensive security focuses on building robust protections and detecting threats as they occur.

@@ -4,14 +4,6 @@ date: 2025-12-22T19:00:17+07:00
 draft: false
 description: Memahami metodologi, praktik keamanan ofensif, dan peran kritisnya dalam strategi pertahanan keamanan siber modern
 weight: 10001
-tags:
-  [
-    "keamanan-ofensif",
-    "penetration-testing",
-    "red-team",
-    "ethical-hacking",
-    "infosec",
-  ]
 ---
 
 Keamanan ofensif adalah praktik proaktif untuk menguji dan menyerang sistem komputer, jaringan, dan aplikasi guna mengidentifikasi kerentanan sebelum pelaku jahat mengeksploitasinya. Berbeda dengan keamanan defensif yang fokus membangun penghalang pelindung, keamanan ofensif mensimulasikan serangan dunia nyata untuk menemukan dan memperbaiki kelemahan.
