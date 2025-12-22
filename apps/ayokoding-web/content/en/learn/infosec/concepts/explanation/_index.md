@@ -7,3 +7,5 @@ description: Deep dives into security concepts and principles
 ---
 
 - [Overview](/en/learn/infosec/concepts/explanation/overview)
+- [Offensive Security](/en/learn/infosec/concepts/explanation/offensive-security)
+- [Defensive Security](/en/learn/infosec/concepts/explanation/defensive-security)
