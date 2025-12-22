@@ -11,7 +11,7 @@ tags:
   - frontmatter
   - shared
 created: 2025-12-13
-updated: 2025-12-18
+updated: 2025-12-22
 ---
 
 # Hugo Content Convention - Shared
@@ -37,7 +37,7 @@ This shared document contains conventions that apply to **both sites**:
 
 1. **Inherited Conventions** (8) - Standards from `docs/` that apply to Hugo content
 2. **Adapted Conventions** (5) - Standards modified for Hugo's requirements
-3. **Hugo-Specific Conventions** (6) - Basic Hugo concepts that apply to both sites
+3. **Hugo-Specific Conventions** (7) - Basic Hugo concepts that apply to both sites
 
 **Site-specific patterns** (themes, configurations, workflows) are documented in separate files:
 
@@ -53,7 +53,7 @@ graph TD
 
     B --> B1[Inherited<br/>8 standards]
     B --> B2[Adapted<br/>5 standards]
-    B --> B3[Hugo-Specific<br/>6 concepts]
+    B --> B3[Hugo-Specific<br/>7 concepts]
 
     C --> C1[Hextra Theme]
     C --> C2[Bilingual Educational]
@@ -644,7 +644,73 @@ lastmod: 2025-12-07T15:45:00+07:00
 
 These conventions are unique to Hugo static site generation and apply to both sites.
 
-### 1. Archetypes
+### 1. No Duplicate H1 Headings
+
+**CRITICAL**: Hugo content markdown files MUST NOT include H1 headings (`# ...`) that duplicate the frontmatter `title` field.
+
+**Why this matters**: Hugo themes (Hextra for ayokoding-web, PaperMod for ose-platform-web) automatically render the `title` field from frontmatter as the page heading (H1). When markdown content also includes an H1 heading, it creates duplicate heading display on the rendered page.
+
+**Rule**: Content should start with introduction text or H2 headings (`## ...`). If an H1 is needed for structural reasons, it must be semantically different from the title.
+
+**Applies to**: ALL Hugo content files in both ayokoding-web and ose-platform-web.
+
+✅ **Good (no duplicate H1)**:
+
+```markdown
+---
+title: "Beginner Tutorial - Elixir"
+date: 2025-12-22T10:00:00+07:00
+draft: false
+---
+
+This tutorial covers the fundamentals of Elixir programming...
+
+## What You'll Learn
+
+- Pattern matching
+- Functional programming concepts
+- Basic syntax
+
+## Prerequisites
+
+Before starting, ensure you have...
+```
+
+❌ **Bad (duplicate H1)**:
+
+```markdown
+---
+title: "Beginner Tutorial - Elixir"
+date: 2025-12-22T10:00:00+07:00
+draft: false
+---
+
+# Beginner Tutorial - Elixir
+
+This tutorial covers the fundamentals...
+```
+
+**Issue**: The title "Beginner Tutorial - Elixir" appears twice on the rendered page (once from frontmatter auto-rendering, once from markdown H1).
+
+**Valid Use Case for H1** (semantically different from title):
+
+```markdown
+---
+title: "Software Engineering Best Practices"
+---
+
+# Introduction to Code Quality
+
+This section discusses foundational concepts...
+
+# Design Patterns Overview
+
+This section covers common patterns...
+```
+
+**Note**: While multiple H1s are technically allowed when semantically different from the title, most Hugo content should avoid H1s entirely and start with H2s.
+
+### 2. Archetypes
 
 **Definition**: Content templates used to generate new files with pre-populated frontmatter.
 
@@ -659,7 +725,7 @@ These conventions are unique to Hugo static site generation and apply to both si
 - [ayokoding-web archetypes](./ex-co__hugo-content-ayokoding.md#archetypes)
 - [ose-platform-web archetypes](./ex-co__hugo-content-ose-platform.md#archetypes)
 
-### 2. Shortcodes
+### 3. Shortcodes
 
 **Definition**: Reusable content snippets that generate HTML dynamically.
 
@@ -737,7 +803,7 @@ Run `npm install`
 - Using wrong delimiter causes content to display as plain text
 - Theme shortcodes often require Markdown processing (steps, callouts, cards)
 
-### 3. Taxonomy
+### 4. Taxonomy
 
 **Definition**: Classification system for content (tags, categories, series).
 
@@ -761,7 +827,7 @@ categories: ["learn"]
 ---
 ```
 
-### 4. Asset Organization
+### 5. Asset Organization
 
 **Static Assets Location**: `static/` directory (served at site root)
 
@@ -797,7 +863,7 @@ static/
 
 **Site-Specific Asset Organization**: Each site may have additional subdirectories - see site-specific convention documents.
 
-### 5. Content Types
+### 6. Content Types
 
 **Regular Content Files**: `file-name.md`
 
@@ -845,7 +911,7 @@ This tutorial covers...
 
 **Site-Specific Content Type Patterns**: Each site has specific rules for index files and content organization - see site-specific convention documents.
 
-### 6. URL Structure
+### 7. URL Structure
 
 **Hugo URL Generation**:
 
@@ -892,6 +958,7 @@ Before publishing Hugo content, verify:
 - [ ] Frontmatter uses YAML format with 2-space indentation
 - [ ] Date format is `YYYY-MM-DDTHH:MM:SS+07:00`
 - [ ] Description length is 150-160 characters (if present)
+- [ ] **No duplicate H1 headings** - Content does NOT include H1 (`# ...`) that duplicates frontmatter title
 - [ ] Internal links use absolute paths without `.md` extension
 - [ ] All images have descriptive alt text
 - [ ] Mermaid diagrams use accessible color palette

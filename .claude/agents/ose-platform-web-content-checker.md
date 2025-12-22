@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-20
+updated: 2025-12-22
 ---
 
 # ose-platform-web-content-checker Agent
@@ -162,7 +162,7 @@ showtoc: false
 
 **Heading Hierarchy**:
 
-- [ ] **Single H1** - Exactly one H1 (the document title)
+- [ ] **No duplicate H1 headings** - Content does NOT include H1 (`# ...`) that duplicates frontmatter title (Hugo themes auto-render title as H1)
 - [ ] **Proper nesting** - H1 → H2 → H3 → H4 (no skipped levels)
 - [ ] **Descriptive headings** - Headings are specific, not vague
 - [ ] **Semantic structure** - Headings used for structure, not styling
@@ -170,7 +170,11 @@ showtoc: false
 **Example Valid Hierarchy**:
 
 ```markdown
-# OSE Platform Beta Release (H1 - title)
+---
+title: "OSE Platform Beta Release"
+---
+
+Introducing the beta version of Open Sharia Enterprise Platform... (no H1 in content)
 
 ## What's New (H2 - section)
 
@@ -186,7 +190,11 @@ showtoc: false
 **Example Invalid Hierarchy**:
 
 ```markdown
-# OSE Platform Beta Release (H1)
+---
+title: "OSE Platform Beta Release"
+---
+
+# OSE Platform Beta Release (H1 - WRONG! Duplicates frontmatter title)
 
 ### What's New (H3 - WRONG! Skipped H2)
 
