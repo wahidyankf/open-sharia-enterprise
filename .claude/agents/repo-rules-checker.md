@@ -167,11 +167,12 @@ For each practice in `docs/explanation/development/`:
 
 Validate against [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage:
 
-- [ ] All Mermaid diagrams use ONLY verified accessible palette colors (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Black #000000, White #FFFFFF, Gray #808080)
+- [ ] All Mermaid diagrams use accessible hex codes in `classDef` from verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Black #000000, White #FFFFFF, Gray #808080)
 - [ ] No use of inaccessible colors (red, green, yellow, light pink, bright magenta)
 - [ ] Diagrams include shape differentiation (not color alone)
 - [ ] Diagrams include black borders (#000000) for visual definition
-- [ ] Color scheme documented in HTML comment above diagram
+- [ ] WCAG AA contrast ratios met (4.5:1 for text, 3:1 for UI components)
+- [ ] Color palette comment recommended but not required (aids documentation, somewhat redundant with classDef hex codes)
 - [ ] AI agent color categorization uses correct colors (blue/green/yellow/purple from accessible palette)
 - [ ] Colored square emojis (🟦🟩🟨🟪) used with supplementary text labels (not color alone)
 - [ ] Agent identification includes multiple methods (name, role suffix, emoji shape, description, color field)

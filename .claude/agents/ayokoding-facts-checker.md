@@ -152,11 +152,12 @@ Verify LaTeX notation compliance per [Mathematical Notation Convention](../../do
 
 Verify color accessibility per [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md):
 
-- Mermaid diagrams use color-blind friendly palette
+- Mermaid diagrams use accessible hex codes in `classDef` from verified palette
 - No red, green, or yellow colors
 - Black borders (#000000) for definition
-- Color scheme documented in comments
-- Contrast ratios meet WCAG AA (4.5:1)
+- Shape differentiation (not color alone)
+- Contrast ratios meet WCAG AA (4.5:1 for text, 3:1 for UI components)
+- Color palette comment recommended for documentation (aids verification, somewhat redundant with classDef hex codes)
 
 ## File Output Strategy
 

@@ -12,7 +12,7 @@ tags:
   - mermaid-diagrams
   - color-palette
 created: 2025-12-04
-updated: 2025-12-04
+updated: 2025-12-22
 ---
 
 # Color Accessibility Convention
@@ -221,10 +221,11 @@ graph TD
 3. **Use black text on light fills**: `color:#000000` for light-colored backgrounds
 4. **Define colors in classDef**: Don't use inline color specifications
 5. **Use hex codes**: Never use CSS color names like "red", "green"
-6. **Document color scheme**: Add HTML comment above diagram explaining colors
-7. **Provide text labels**: Never rely on color alone; include descriptive node labels
-8. **Use shape differentiation**: Rectangles, circles, diamonds, hexagons provide additional visual distinction
-9. **Test vertical orientation**: Prefer `graph TD` (top-down) for mobile-friendly viewing
+6. **Use accessible palette in classDef** (REQUIRED FOR ACCESSIBILITY): The `classDef` must contain the correct accessible hex codes from the verified palette - this is what makes diagrams accessible
+7. **Document color scheme** (RECOMMENDED FOR TRANSPARENCY): Add HTML comment above diagram listing which colors are used - this aids verification and signals intent, but is somewhat redundant if `classDef` already uses correct hex codes
+8. **Provide text labels**: Never rely on color alone; include descriptive node labels
+9. **Use shape differentiation**: Rectangles, circles, diamonds, hexagons provide additional visual distinction
+10. **Test vertical orientation**: Prefer `graph TD` (top-down) for mobile-friendly viewing
 
 #### Complete Mermaid Template with Accessibility
 
@@ -450,9 +451,16 @@ Never use color alone. Combine:
 - ✅ Color + position (spatial organization)
 - ✅ Color + icons (additional markers)
 
-### 4. Document Your Color Choices
+### 4. Document Your Color Choices (Recommended for Transparency)
 
-Add HTML comments in diagrams explaining the color scheme:
+**IMPORTANT DISTINCTION:**
+
+- **REQUIRED FOR ACCESSIBILITY**: Using accessible hex codes in `classDef` (e.g., `fill:#0173B2`)
+- **RECOMMENDED FOR DOCUMENTATION**: Adding comments listing colors used (aids verification, signals intent)
+
+The comment is helpful for transparency and verification, but the accessible hex codes in `classDef` are what actually make the diagram accessible.
+
+**Example:**
 
 ```mermaid
 <!-- Uses accessible colors: blue (#0173B2) for primary, orange (#DE8F05) for warnings -->
@@ -460,6 +468,8 @@ graph TD
     A[Item]:::blue
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
+
+**Note**: The comment above is somewhat redundant since the `classDef` already contains the hex codes. However, it aids quick verification and signals accessibility intent to readers.
 
 ### 5. Test Before Publishing
 
