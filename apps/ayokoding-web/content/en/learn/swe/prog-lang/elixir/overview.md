@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 100000
+weight: 10000
 description: Learn Elixir from basics to advanced - functional programming, OTP platform, Phoenix framework, and fault-tolerant systems
 ---
 
@@ -127,4 +127,4 @@ All examples run on Elixir 1.14+ and are forward-compatible with newer versions.
 
 Each tutorial builds on previous knowledge. Cross-references link related content.
 
-Ready to start? Begin with the [Initial Setup tutorial](/learn/swe/prog-lang/elixir/tutorials/initial-setup).
+Ready to start? Begin with the [Initial Setup tutorial](/en/learn/swe/prog-lang/elixir/tutorials/initial-setup).
