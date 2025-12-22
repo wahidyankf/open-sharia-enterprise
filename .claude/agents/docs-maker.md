@@ -88,7 +88,8 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - **ASCII art**: Optional fallback for rare edge cases (simple directory trees, terminal-only environments)
 - **Diagram Orientation (CRITICAL)**: ALL Mermaid diagrams MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
 - **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for the complete verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, testing methodology with color blindness simulators, and implementation guidance. Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone). Always test diagrams with color blindness simulators before publishing
-- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete diagram standards including color palette comment guidance
+- **Mermaid Comment Syntax (CRITICAL)**: Use `%%` for comments, NOT `%%{ }%%` (causes syntax errors). Example: `%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73`. Exception: `%%{init:...}%%` is valid for Mermaid initialization directives only
+- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete diagram standards including comment syntax, color palette guidance, and initialization directives
 
 ### Emoji Usage Convention
 

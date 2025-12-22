@@ -278,7 +278,7 @@ When scanning content, flag any internal links using relative paths (`./` or `..
 
 ````markdown
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     A[Start] --> B[Process]
     B --> C[End]
@@ -1316,7 +1316,7 @@ Provide structured feedback:
 ### Warnings (Should Fix)
 
 1. **Line 67**: Add color palette comment to Mermaid diagram
-   - Add: `%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%`
+   - Add: `%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161`
 
 2. **Description Length**: Expand description to 150-160 characters for better SEO
    - Current: 145 characters
@@ -1514,7 +1514,7 @@ categories: ["learn"]
 **Line 120**: Add color palette comment at start of Mermaid diagram
 
 ```
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 ```
 
 ## Overall Assessment
