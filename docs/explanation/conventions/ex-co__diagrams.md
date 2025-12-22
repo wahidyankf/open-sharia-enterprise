@@ -12,7 +12,7 @@ tags:
   - accessibility
   - color-blindness
 created: 2025-11-24
-updated: 2025-12-04
+updated: 2025-12-22
 ---
 
 # Diagram and Schema Convention
@@ -341,6 +341,54 @@ graph TD
 6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
 7. **Use Color-Blind Friendly Colors** - Ensure diagrams are accessible to all users (see Color Accessibility below)
 8. **Single Color Palette Comment** - Each Mermaid diagram should have exactly ONE color palette comment at the start (no duplicate comments). Multiple identical comments add unnecessary clutter and create maintenance burden
+9. **Correct Comment Syntax** - Use `%%` for comments, NOT `%%{ }%%` (see Comment Syntax below)
+
+### Mermaid Comment Syntax
+
+**CRITICAL**: Mermaid comments MUST use `%%` syntax, NOT `%%{ }%%` syntax.
+
+**Correct Syntax** (✅):
+
+```mermaid
+%% This is a comment
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph TD
+    A[Start] --> B[End]
+```
+
+**Incorrect Syntax** (❌):
+
+```mermaid
+%%{ This is a comment }%%
+%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73 }%%
+graph TD
+    A[Start] --> B[End]
+```
+
+**Why**: The `%%{ }%%` syntax causes "Syntax error in text" in Mermaid rendering. The correct syntax is simply `%%` followed by the comment text.
+
+**Common Mistake**: Adding curly braces around comments is invalid Mermaid syntax. Always use plain `%%` comments.
+
+**Example (Color Palette Comment)**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph TD
+    A[Start] --> B[Process] --> C[End]
+```
+
+**Exception - Mermaid Initialization Directives**:
+
+The `%%{init:...}%%` syntax is VALID when used for Mermaid initialization directives (theme configuration, variables). This is DIFFERENT from comments:
+
+- **Valid Init Directive**: `%%{init: {'theme': 'base', 'themeVariables': {...}}}%%` - For theme customization
+- **Invalid Comment**: `%%{ Color Palette: ... }%%` - WRONG syntax for comments
+- **Valid Comment**: `%% Color Palette: ...` - Correct syntax for comments
+
+**Key Distinction**: `%%{...}%%` is ONLY valid when containing `init:` directive for Mermaid configuration. Never use it for general comments, color palette notes, or documentation.
+
+**When to Use Init Directives**: Rarely needed. Most diagrams use default theming. Use only when you need to customize Mermaid's theme variables or configuration. See [Hugo Development Convention](../development/ex-de__hugo-development.md) for examples of valid init directive usage.
 
 ### Color Accessibility for Color Blindness
 
@@ -918,6 +966,7 @@ Before committing documentation with diagrams:
 - [ ] Contrast ratios meet WCAG AA standards (4.5:1 for text)
 - [ ] Color scheme documented in comment above diagram
 - [ ] **Each diagram has exactly ONE color palette comment** (no duplicates)
+- [ ] **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (correct comment syntax)
 - [ ] Mermaid diagrams tested in GitHub preview or Obsidian
 - [ ] ASCII art (if used) verified in monospace font
 - [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)
