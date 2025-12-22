@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-20
+updated: 2025-12-22
 ---
 
 # ayokoding-content-checker Agent
@@ -150,7 +150,7 @@ categories: ["learn"]
 
 **Heading Hierarchy**:
 
-- [ ] **Single H1** - Exactly one H1 (the document title)
+- [ ] **No duplicate H1 headings** - Content does NOT include H1 (`# ...`) that duplicates frontmatter title (Hugo themes auto-render title as H1)
 - [ ] **Proper nesting** - H1 → H2 → H3 → H4 (no skipped levels)
 - [ ] **Descriptive headings** - Headings are specific, not vague
 - [ ] **Semantic structure** - Headings used for structure, not styling
@@ -158,7 +158,11 @@ categories: ["learn"]
 **Example Valid Hierarchy**:
 
 ```markdown
-# Getting Started with Node.js (H1 - title)
+---
+title: "Getting Started with Node.js"
+---
+
+Introduction to Node.js fundamentals... (no H1 in content)
 
 ## What You'll Learn (H2 - section)
 
@@ -174,7 +178,11 @@ categories: ["learn"]
 **Example Invalid Hierarchy**:
 
 ```markdown
-# Getting Started with Node.js (H1)
+---
+title: "Getting Started with Node.js"
+---
+
+# Getting Started with Node.js (H1 - WRONG! Duplicates frontmatter title)
 
 ### What You'll Learn (H3 - WRONG! Skipped H2)
 
@@ -278,7 +286,7 @@ When scanning content, flag any internal links using relative paths (`./` or `..
 
 **Recommended**:
 
-- [ ] **Color palette comment** - Single comment at start of diagram listing colors used (aids documentation/verification, but somewhat redundant since hex codes are in classDef)
+- [ ] **Color palette comment** - Single comment at start of diagram listing colors used (aids quick verification and signals accessibility intent, though hex codes in classDef are what make diagrams accessible)
 
 **Valid Mermaid Diagram**:
 
