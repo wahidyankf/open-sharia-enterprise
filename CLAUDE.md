@@ -153,7 +153,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram Convention
 
-Use Mermaid diagrams (vertical orientation for mobile). **CRITICAL: Use only color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow. See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) for complete palette and [Diagrams Convention](./docs/explanation/conventions/ex-co__diagrams.md) for implementation.
+Use Mermaid diagrams (vertical orientation for mobile). **CRITICAL: Use only color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow. **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (causes syntax errors). See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) for complete palette and [Diagrams Convention](./docs/explanation/conventions/ex-co__diagrams.md) for implementation and comment syntax.
 
 ### Emoji Usage Convention
 

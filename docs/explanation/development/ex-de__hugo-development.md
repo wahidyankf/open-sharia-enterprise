@@ -72,7 +72,7 @@ This convention builds upon and references:
 - [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web content standards
 - [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web content standards
 - [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Accessible color palette for themes
-- [Diagram Convention](../conventions/ex-co__diagrams.md) - Mermaid diagrams in documentation
+- [Diagram Convention](../conventions/ex-co__diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
 - [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal markdown standards
 
 ## 🏗️ Theme Development
@@ -1443,6 +1443,30 @@ $js = $js | minify | fingerprint }} {{ end }}
 **Why:** Fingerprinting generates unique filenames based on content hash, enabling long cache times while ensuring users get updated assets.
 
 **Source:** [Hugo Pipes](https://gohugo.io/hugo-pipes/)
+
+### 11. Use Correct Mermaid Comment Syntax
+
+**Always use `%%` for Mermaid comments, NOT `%%{ }%%`:**
+
+**Correct:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph TD
+    A[Start] --> B[End]
+```
+
+**Incorrect (causes "Syntax error in text"):**
+
+```mermaid
+%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73 }%%
+graph TD
+    A[Start] --> B[End]
+```
+
+**Why:** The `%%{ }%%` syntax is invalid in Mermaid and causes rendering errors. Always use plain `%%` comments.
+
+**Reference:** See [Diagram Convention - Mermaid Comment Syntax](../conventions/ex-co__diagrams.md#mermaid-comment-syntax) for complete details.
 
 ## ⚠️ Antipatterns to Avoid
 

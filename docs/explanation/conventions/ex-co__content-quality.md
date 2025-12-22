@@ -10,7 +10,7 @@ tags:
   - accessibility
   - documentation
 created: 2025-12-07
-updated: 2025-12-09
+updated: 2025-12-22
 ---
 
 # Content Quality Principles
@@ -871,6 +871,7 @@ Before committing markdown content, verify:
   - Lists use proper markdown syntax
   - Blockquotes and callouts formatted consistently
   - Tables aligned and readable
+  - Mermaid diagrams use correct comment syntax (`%%`, not `%%{ }%%`)
 
 - [ ] **Readability**
   - Lines ≤80-100 characters (prose)
@@ -884,7 +885,7 @@ Before committing markdown content, verify:
 
 - [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - LaTeX in markdown
 - [Color Accessibility Convention](./ex-co__color-accessibility.md) - Accessible color palette for diagrams
-- [Diagrams and Schema Convention](./ex-co__diagrams.md) - Mermaid diagram standards
+- [Diagrams and Schema Convention](./ex-co__diagrams.md) - Mermaid diagram standards (includes comment syntax requirements)
 - [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji use
 
 **Context-Specific Conventions**:
