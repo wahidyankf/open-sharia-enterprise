@@ -52,12 +52,7 @@ Use this agent when:
 
 ### Prerequisites
 
-The `ayokoding-cli` tool must be built before use:
-
-```bash
-# Build the CLI tool (if not already built)
-cd apps/ayokoding-cli && go build -o dist/ayokoding-cli
-```
+The `ayokoding-cli` tool is automatically rebuilt before each run to ensure a fresh binary. No manual build step is required.
 
 ### Full Regeneration (All Files)
 
@@ -156,13 +151,11 @@ Common errors:
 
 When invoked, follow these steps:
 
-1. **Check if CLI is built**:
+1. **Rebuild CLI tool** (always rebuild to ensure fresh binary):
 
    ```bash
-   if [ ! -f apps/ayokoding-cli/dist/ayokoding-cli ]; then
-     echo "Building ayokoding-cli..."
-     cd apps/ayokoding-cli && go build -o dist/ayokoding-cli && cd ../..
-   fi
+   echo "Rebuilding ayokoding-cli..."
+   cd apps/ayokoding-cli && go build -o dist/ayokoding-cli && cd ../..
    ```
 
 2. **Run navigation regeneration**:
