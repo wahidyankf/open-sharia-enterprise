@@ -150,8 +150,8 @@ categories: ["learn"]
 
 **Heading Hierarchy**:
 
-- [ ] **No duplicate H1 headings** - Content does NOT include H1 (`# ...`) that duplicates frontmatter title (Hugo themes auto-render title as H1)
-- [ ] **Proper nesting** - H1 → H2 → H3 → H4 (no skipped levels)
+- [ ] **No H1 headings at all** - Content does NOT include ANY H1 (`# ...`) headings. ayokoding-web has a STRICTER rule than shared convention: ALL H1s are prohibited (not just duplicates). Hextra theme auto-renders title as H1, so content must start with intro text or H2.
+- [ ] **Proper nesting** - H2 → H3 → H4 (no skipped levels, no H1)
 - [ ] **Descriptive headings** - Headings are specific, not vague
 - [ ] **Semantic structure** - Headings used for structure, not styling
 
@@ -182,11 +182,11 @@ Introduction to Node.js fundamentals... (no H1 in content)
 title: "Getting Started with Node.js"
 ---
 
-# Getting Started with Node.js (H1 - WRONG! Duplicates frontmatter title)
+# Getting Started with Node.js (H1 - WRONG! ALL H1s prohibited in ayokoding-web)
 
 ### What You'll Learn (H3 - WRONG! Skipped H2)
 
-# Installation (H1 - WRONG! Multiple H1s)
+# Installation (H1 - WRONG! ALL H1s prohibited in ayokoding-web)
 ```
 
 ### Linking Validation
