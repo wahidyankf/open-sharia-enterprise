@@ -7,8 +7,6 @@ weight: 1000006
 tags: ["elixir", "task", "agent", "concurrency", "async", "how-to"]
 ---
 
-# Concurrent Programming with Task and Agent
-
 **Need lightweight concurrency without GenServer complexity?** This guide teaches you Task for async operations and Agent for simple state containers with practical patterns for parallel processing and state management.
 
 ## Prerequisites

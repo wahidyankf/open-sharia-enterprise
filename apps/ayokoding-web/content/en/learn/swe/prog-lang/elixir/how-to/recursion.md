@@ -8,8 +8,6 @@ tags:
   ["elixir", "recursion", "tail-recursion", "functional-programming", "how-to"]
 ---
 
-# Recursive Programming Patterns
-
 **Need to process lists or trees efficiently in Elixir?** This guide teaches you recursive programming patterns with tail-recursion optimization, accumulator techniques, and practical examples for common data processing tasks.
 
 ## Prerequisites

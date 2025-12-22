@@ -7,8 +7,6 @@ weight: 1000017
 tags: ["elixir", "protocols", "polymorphism", "extensibility", "how-to"]
 ---
 
-# Polymorphism with Protocols
-
 **Need polymorphic behavior across types?** Protocols enable type-based dispatch for extensible APIs without modifying existing code, providing powerful polymorphism in functional programming.
 
 ## Prerequisites

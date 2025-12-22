@@ -6,8 +6,6 @@ weight: 1000
 description: Pelajari rekayasa perangkat lunak dari dasar hingga mahir - bahasa pemrograman, desain sistem, dan praktik terbaik pengembangan
 ---
 
-# Ikhtisar Rekayasa Perangkat Lunak
-
 Selamat datang di bagian Rekayasa Perangkat Lunak ayokoding. Di sini Anda akan menemukan panduan komprehensif untuk menjadi software engineer yang mahir.
 
 ## Apa yang Akan Anda Pelajari

@@ -7,8 +7,6 @@ weight: 1000007
 tags: ["elixir", "phoenix", "rest-api", "web-development", "how-to"]
 ---
 
-# Phoenix REST API Development
-
 **Need to build RESTful APIs with Phoenix?** This guide covers routing, controllers, JSON responses, authentication, versioning, and production patterns.
 
 ## Prerequisites

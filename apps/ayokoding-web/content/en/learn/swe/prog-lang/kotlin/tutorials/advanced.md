@@ -19,8 +19,6 @@ categories:
 
 ---
 
-# Advanced Kotlin
-
 **Achieve expert-level Kotlin mastery.** This tutorial covers advanced topics that separate intermediate developers from experts. You'll explore compiler internals, master reflection and metaprogramming, optimize performance at a deep level, debug complex issues, and contribute to the Kotlin ecosystem.
 
 ## What You'll Achieve

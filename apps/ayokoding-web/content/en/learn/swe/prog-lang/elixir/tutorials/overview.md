@@ -6,8 +6,6 @@ weight: 1000000
 description: Progressive Elixir tutorials from installation to advanced topics - functional programming, OTP, Phoenix, and production systems
 ---
 
-# Overview
-
 Master Elixir through progressive tutorials covering 95% of the language. From installation to advanced distributed systems.
 
 ## Tutorial Levels

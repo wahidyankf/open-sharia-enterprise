@@ -8,8 +8,6 @@ tags:
   ["elixir", "supervisor", "otp", "fault-tolerance", "supervision", "how-to"]
 ---
 
-# Building Supervision Trees
-
 **Need fault-tolerant applications that recover from crashes automatically?** This guide teaches you OTP supervision patterns with restart strategies, child specifications, and hierarchical trees for building resilient systems.
 
 ## Prerequisites

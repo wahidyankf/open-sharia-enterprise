@@ -8,8 +8,6 @@ tags:
   ["elixir", "genserver", "otp", "state-management", "concurrency", "how-to"]
 ---
 
-# Managing State with GenServer
-
 **Need to manage state in concurrent Elixir applications?** This guide teaches you GenServer patterns for building robust stateful processes with synchronous calls, asynchronous casts, and proper error handling.
 
 ## Prerequisites

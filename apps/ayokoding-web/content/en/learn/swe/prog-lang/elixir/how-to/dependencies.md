@@ -7,8 +7,6 @@ weight: 1000020
 tags: ["elixir", "hex", "dependencies", "packages", "versioning", "how-to"]
 ---
 
-# Dependency Management with Hex
-
 **Need to manage external libraries?** Hex is Elixir's package manager for dependency management and publishing.
 
 ## Prerequisites

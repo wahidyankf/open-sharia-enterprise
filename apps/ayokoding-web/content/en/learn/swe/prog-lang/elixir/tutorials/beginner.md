@@ -7,8 +7,6 @@ weight: 1000003
 tags: ["elixir", "tutorial", "beginner", "comprehensive", "otp"]
 ---
 
-# Beginner Tutorial - Elixir
-
 **Ready to master Elixir and build real applications?** This comprehensive beginner tutorial takes you from basic syntax to OTP fundamentals, covering 0-60% of what you need to write production-quality Elixir code.
 
 ## Prerequisites

@@ -7,8 +7,6 @@ weight: 1000003
 tags: ["elixir", "tutorial", "pemula", "komprehensif", "otp"]
 ---
 
-# Tutorial Pemula - Elixir
-
 **Siap menguasai Elixir dan membangun aplikasi nyata?** Tutorial pemula komprehensif ini membawa Anda dari sintaks dasar hingga fundamental OTP, mencakup 0-60% dari yang Anda butuhkan untuk menulis kode Elixir berkualitas produksi.
 
 ## Prasyarat

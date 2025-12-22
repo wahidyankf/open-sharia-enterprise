@@ -7,8 +7,6 @@ weight: 1000003
 tags: ["elixir", "error-handling", "result-tuples", "with", "try-catch"]
 ---
 
-# Handle Errors with Result Tuples
-
 **Tired of null pointer exceptions and scattered error handling?** This guide teaches Elixir's idiomatic error handling using result tuples, with expressions, pattern matching, and supervision for fault tolerance.
 
 ## Problem

@@ -7,8 +7,6 @@ weight: 1000016
 tags: ["elixir", "strings", "binaries", "text-processing", "unicode", "how-to"]
 ---
 
-# Working with Strings and Binaries
-
 **Need efficient text processing in Elixir?** This guide teaches you to work with UTF-8 strings and binaries using pattern matching, the String module, and binary syntax for high-performance text manipulation in production applications.
 
 ## Prerequisites

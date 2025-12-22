@@ -16,8 +16,6 @@ tags:
   ]
 ---
 
-# Deployment and Releases
-
 **Ready to deploy Elixir apps to production?** Mix releases create self-contained packages with BEAM runtime.
 
 ## Prerequisites

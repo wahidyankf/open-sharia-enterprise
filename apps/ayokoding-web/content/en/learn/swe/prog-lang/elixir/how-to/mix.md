@@ -15,8 +15,6 @@ tags:
   ]
 ---
 
-# Mix Project Management
-
 **Need to manage Elixir projects effectively?** Mix is Elixir's build tool for dependencies, compilation, testing, and releases, providing a complete project lifecycle management solution.
 
 ## Prerequisites

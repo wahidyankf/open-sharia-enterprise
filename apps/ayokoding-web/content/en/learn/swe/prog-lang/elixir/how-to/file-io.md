@@ -7,8 +7,6 @@ weight: 1000015
 tags: ["elixir", "file-io", "filesystem", "streams", "system", "how-to"]
 ---
 
-# File I/O and System Interaction
-
 **Need to work with files and system efficiently?** This guide covers Elixir's File and Path modules for robust file operations, streaming large files without memory issues, and executing system commands safely.
 
 ## Prerequisites

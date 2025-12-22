@@ -7,8 +7,6 @@ weight: 1000001
 tags: ["elixir", "tutorial", "initial-setup", "beginner", "installation"]
 ---
 
-# Initial Setup - Elixir
-
 **Want to start learning Elixir but not sure how to set up your development environment?** This initial setup tutorial walks you through installing Elixir, verifying your installation, and running your first "Hello, World!" program.
 
 ## Prerequisites
