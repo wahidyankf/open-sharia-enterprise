@@ -339,8 +339,8 @@ graph TD
 4. **Test Rendering** - Preview in Obsidian before committing
 5. **Version Control Friendly** - Use consistent formatting for easier diffs
 6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
-7. **Use Color-Blind Friendly Colors** - Ensure diagrams are accessible to all users (see Color Accessibility below)
-8. **Single Color Palette Comment** - Each Mermaid diagram should have exactly ONE color palette comment at the start (no duplicate comments). Multiple identical comments add unnecessary clutter and create maintenance burden
+7. **Use Color-Blind Friendly Colors** - REQUIRED: Use accessible hex codes in `classDef` from verified palette (see Color Accessibility below)
+8. **Document Color Scheme** - RECOMMENDED: Add ONE color palette comment at the start listing colors used (aids verification, but somewhat redundant if `classDef` already has correct hex codes). No duplicate comments
 9. **Correct Comment Syntax** - Use `%%` for comments, NOT `%%{ }%%` (see Comment Syntax below)
 
 ### Mermaid Comment Syntax
@@ -504,14 +504,24 @@ All diagrams SHOULD be tested with color blindness simulators before publishing:
 
 #### Documentation Requirements
 
+**IMPORTANT DISTINCTION:**
+
+- **REQUIRED FOR ACCESSIBILITY**: Using accessible hex codes in `classDef` from the verified palette - this is what makes diagrams accessible
+- **RECOMMENDED FOR DOCUMENTATION**: Adding a color palette comment listing which colors are used - this aids verification and signals intent, but is somewhat redundant
+
 For each diagram using colors:
 
-1. **Add ONE color palette comment** above diagram explaining the color scheme
+1. **Use accessible hex codes in `classDef`** (REQUIRED)
+   - Example: `classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF`
+   - This is the functional accessibility requirement
+2. **Add ONE color palette comment** (RECOMMENDED)
    - Example: `<!-- Uses colors #0173B2 (blue), #DE8F05 (orange) for accessibility -->`
+   - This is a documentation/transparency practice
    - **CRITICAL**: Each diagram should have exactly ONE color palette comment (no duplicates)
    - Multiple identical comments add unnecessary clutter and create maintenance burden
-2. **Include labels** that don't rely solely on color
-3. **Test verification** noted in diagram documentation (if applicable)
+   - Comment is helpful for quick verification but is redundant with the hex codes in `classDef`
+3. **Include labels** that don't rely solely on color
+4. **Test verification** noted in diagram documentation (if applicable)
 
 #### Key Implementation Points
 

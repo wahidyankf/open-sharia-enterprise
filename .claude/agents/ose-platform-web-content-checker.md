@@ -298,10 +298,16 @@ cover:
 
 **Required**:
 
-- [ ] **Color palette comment** - Single comment at start of diagram
-- [ ] **Accessible colors only** - Uses verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161)
+- [ ] **Accessible hex codes in classDef** - Uses verified palette colors in `classDef` definitions (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161)
 - [ ] **No forbidden colors** - Avoids red, green, yellow (color-blind invisible)
+- [ ] **Shape differentiation** - Not relying on color alone
+- [ ] **Black borders** - Uses #000000 for visual definition
+- [ ] **WCAG AA contrast** - Minimum 4.5:1 ratio for text
 - [ ] **Proper syntax** - Valid Mermaid code
+
+**Recommended**:
+
+- [ ] **Color palette comment** - Single comment at start of diagram listing colors used (aids documentation/verification, but somewhat redundant since hex codes are in classDef)
 
 **Valid Mermaid Diagram**:
 

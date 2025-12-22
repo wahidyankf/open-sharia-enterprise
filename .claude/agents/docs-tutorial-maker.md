@@ -447,14 +447,18 @@ flowchart TD
 - ❌ Green (#00FF00, #27AE60, #2ECC71) - Invisible to protanopia/deuteranopia
 - ❌ Yellow (#FFFF00, #F1C40F) - Invisible to tritanopia
 
-**Requirements:**
+**Requirements (CRITICAL for accessibility):**
 
+- **Use accessible hex codes in classDef** - REQUIRED: All `classDef` definitions must contain hex codes from verified palette (e.g., `fill:#0173B2`) - this is what makes diagrams accessible
 - Always use shape differentiation (not color alone)
 - Include black borders (#000000) for definition
-- Meet WCAG AA contrast ratios (4.5:1 for text)
-- Add ONE color palette comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->`
-- **No duplicate color palette comments** - Each diagram should have exactly one comment (not multiple identical comments)
+- Meet WCAG AA contrast ratios (4.5:1 for text, 3:1 for UI components)
 - Test with color blindness simulators before publishing (see Color Accessibility Convention)
+
+**Recommendations (helpful for documentation):**
+
+- Add ONE color palette comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->` - aids documentation/verification, but somewhat redundant since hex codes are already in classDef
+- **No duplicate color palette comments** - Each diagram should have exactly one comment (not multiple identical comments)
 
 See [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
 

@@ -223,7 +223,7 @@ When planning, ask:
 
 Use **Mermaid diagrams** as primary format. ASCII art is optional for simple directory trees.
 
-**CRITICAL - Color Accessibility**: ALL Mermaid diagrams MUST use color-blind friendly colors from verified accessible palette: Blue (#0173B2), Orange (#DE8F05), Teal (#029E73), Purple (#CC78BC), Brown (#CA9161). DO NOT USE red, green, or yellow. Use shape differentiation, black borders (#000000), WCAG AA contrast (4.5:1), and single color palette comment per diagram.
+**CRITICAL - Color Accessibility**: ALL Mermaid diagrams MUST use accessible hex codes in `classDef` from verified palette: Blue (#0173B2), Orange (#DE8F05), Teal (#029E73), Purple (#CC78BC), Brown (#CA9161). DO NOT USE red, green, or yellow. REQUIRED: Shape differentiation (not color alone), black borders (#000000), WCAG AA contrast (4.5:1 for text, 3:1 for UI). RECOMMENDED: Color palette comment per diagram (aids documentation, somewhat redundant with classDef hex codes).
 
 See [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) (master reference) and [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples.
 
