@@ -4,14 +4,6 @@ date: 2025-12-22T19:00:17+07:00
 draft: false
 description: Understanding offensive security methodologies, practices, and its critical role in modern cybersecurity defense strategies
 weight: 10001
-tags:
-  [
-    "offensive-security",
-    "penetration-testing",
-    "red-team",
-    "ethical-hacking",
-    "infosec",
-  ]
 ---
 
 Offensive security is the proactive practice of testing and attacking computer systems, networks, and applications to identify vulnerabilities before malicious actors exploit them. Unlike defensive security, which focuses on building protective barriers, offensive security simulates real-world attacks to find and fix weaknesses.
