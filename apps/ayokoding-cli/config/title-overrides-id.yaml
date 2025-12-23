@@ -36,6 +36,7 @@ overrides:
   gitlab: "GitLab"
   vscode: "VSCode"
   ide: "IDE"
+  ai: "AI"
 
 # Words that should remain lowercase in titles (unless first word)
 # Kata-kata yang harus tetap huruf kecil (kecuali kata pertama)
