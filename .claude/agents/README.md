@@ -147,9 +147,9 @@ Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates
 
 ### 🟩 `ayokoding-navigation-maker.md`
 
-Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md files from file structure.
+Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md files from file structure. **⚠️ Now automated via pre-commit hook** - runs automatically when committing ayokoding-web content changes (see [Pre-commit Automation](../apps/ayokoding-cli/README.md#pre-commit-automation)).
 
-- **Primary Use:** Regenerating navigation listings in \_index.md files after content changes
+- **Primary Use:** Batch updates or manual corrections outside commit workflow (most updates now automated via pre-commit hook)
 - **Specialization:** File structure scanning (2 layers deep), weight-based sorting, frontmatter preservation, title extraction, markdown navigation generation, mechanical content regeneration
 - **Tools:** Read, Write, Glob, Grep, Bash
 - **Model:** Haiku (efficient mechanical task)
@@ -166,9 +166,9 @@ Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md
 
 ### 🟪 `ayokoding-title-maker.md`
 
-Automatically update title fields in ayokoding-web markdown files based on filenames and configuration.
+Automatically update title fields in ayokoding-web markdown files based on filenames and configuration. **⚠️ Now automated via pre-commit hook** - runs automatically when committing ayokoding-web content changes (see [Pre-commit Automation](../apps/ayokoding-cli/README.md#pre-commit-automation)).
 
-- **Primary Use:** Standardizing title frontmatter fields across all markdown files
+- **Primary Use:** Batch updates or manual corrections outside commit workflow (most updates now automated via pre-commit hook)
 - **Specialization:** Title generation from filenames (Title Case), custom overrides (special cases), lowercase article/preposition handling, bilingual support (English/Indonesian), idempotent updates (skip if already correct)
 - **Tools:** Bash
 - **Model:** Haiku (efficient mechanical task)
