@@ -1,0 +1,58 @@
+---
+title: Java
+date: 2025-12-12T00:00:00+07:00
+draft: false
+description: Complete learning path from zero to expert Java development - organized using the Diátaxis framework
+weight: 12000
+type: docs
+layout: list
+---
+
+- [Overview](/en/learn/software-engineering/programming-language/java/overview)
+- [Tutorials](/en/learn/software-engineering/programming-language/java/tutorials)
+  - [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
+    - [Overview](/en/learn/software-engineering/programming-language/java/tutorials/by-example/overview)
+    - [Beginner Examples - Java By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example/beginner)
+    - [Intermediate Examples - Java By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example/intermediate)
+    - [Advanced Examples - Java By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example/advanced)
+  - [Overview](/en/learn/software-engineering/programming-language/java/tutorials/overview)
+  - [Initial Setup](/en/learn/software-engineering/programming-language/java/tutorials/initial-setup)
+  - [Quick Start](/en/learn/software-engineering/programming-language/java/tutorials/quick-start)
+  - [Beginner](/en/learn/software-engineering/programming-language/java/tutorials/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-language/java/tutorials/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-language/java/tutorials/advanced)
+- [How-To Guides](/en/learn/software-engineering/programming-language/java/how-to)
+  - [Overview](/en/learn/software-engineering/programming-language/java/how-to/overview)
+  - [Cookbook](/en/learn/software-engineering/programming-language/java/how-to/cookbook)
+  - [How to Implement Proper Exception Handling](/en/learn/software-engineering/programming-language/java/how-to/exception-handling)
+  - [How to Avoid NullPointerException](/en/learn/software-engineering/programming-language/java/how-to/avoid-nullpointerexception)
+  - [How to Use Java Collections Effectively](/en/learn/software-engineering/programming-language/java/how-to/use-collections-effectively)
+  - [How to Work with Strings Effectively](/en/learn/software-engineering/programming-language/java/how-to/work-with-strings-effectively)
+  - [How to Handle Files and Resources](/en/learn/software-engineering/programming-language/java/how-to/handle-files-and-resources)
+  - [How to Manage Configuration](/en/learn/software-engineering/programming-language/java/how-to/manage-configuration)
+  - [How to Refactor God Classes](/en/learn/software-engineering/programming-language/java/how-to/refactor-god-classes)
+  - [How to Write Effective Tests](/en/learn/software-engineering/programming-language/java/how-to/write-effective-tests)
+  - [How to Debug and Log Effectively](/en/learn/software-engineering/programming-language/java/how-to/debug-and-log-effectively)
+  - [How to Document Code Effectively](/en/learn/software-engineering/programming-language/java/how-to/document-code-effectively)
+  - [How to Build CLI Applications](/en/learn/software-engineering/programming-language/java/how-to/build-cli-applications)
+  - [How to Optimize Performance](/en/learn/software-engineering/programming-language/java/how-to/optimize-performance)
+  - [How to Work with Databases](/en/learn/software-engineering/programming-language/java/how-to/work-with-databases)
+  - [How to Build REST APIs with Spring](/en/learn/software-engineering/programming-language/java/how-to/build-rest-apis-spring)
+  - [How to Use Dependency Injection with Spring](/en/learn/software-engineering/programming-language/java/how-to/dependency-injection-spring)
+  - [How to Work with Streams Effectively](/en/learn/software-engineering/programming-language/java/how-to/work-with-streams-effectively)
+  - [How to Use Records Effectively](/en/learn/software-engineering/programming-language/java/how-to/use-records-effectively)
+  - [How to Use Sealed Classes](/en/learn/software-engineering/programming-language/java/how-to/use-sealed-classes)
+  - [How to Use Pattern Matching](/en/learn/software-engineering/programming-language/java/how-to/pattern-matching)
+  - [How to Use Reactive Programming](/en/learn/software-engineering/programming-language/java/how-to/reactive-programming)
+  - [How to Organize Packages Properly](/en/learn/software-engineering/programming-language/java/how-to/organize-packages-properly)
+  - [How to Use Virtual Threads](/en/learn/software-engineering/programming-language/java/how-to/virtual-threads)
+  - [How to Implement Testing Strategies](/en/learn/software-engineering/programming-language/java/how-to/testing-strategies)
+- [Explanation](/en/learn/software-engineering/programming-language/java/explanation)
+  - [Overview](/en/learn/software-engineering/programming-language/java/explanation/overview)
+  - [Java Best Practices and Design Principles](/en/learn/software-engineering/programming-language/java/explanation/best-practices)
+  - [Common Java Anti-Patterns](/en/learn/software-engineering/programming-language/java/explanation/anti-patterns)
+- [Reference](/en/learn/software-engineering/programming-language/java/reference)
+  - [Overview](/en/learn/software-engineering/programming-language/java/reference/overview)
+  - [Java Cheat Sheet](/en/learn/software-engineering/programming-language/java/reference/cheat-sheet)
+  - [Java Glossary](/en/learn/software-engineering/programming-language/java/reference/glossary)
+  - [Java Resources](/en/learn/software-engineering/programming-language/java/reference/resources)
