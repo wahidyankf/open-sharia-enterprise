@@ -29,6 +29,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "nx build ayokoding-cli",
           "./apps/ayokoding-cli/dist/ayokoding-cli titles update --quiet",
           "./apps/ayokoding-cli/dist/ayokoding-cli nav regen --quiet"
         ],
