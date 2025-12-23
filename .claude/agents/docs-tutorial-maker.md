@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 model: sonnet
 color: blue
 created: 2025-12-01
-updated: 2025-12-15
+updated: 2025-12-23
 ---
 
 # Tutorial Content Creator
@@ -29,8 +29,9 @@ The Tutorial Convention is the source of truth for:
 
 The Tutorial Naming Convention defines:
 
-- Six standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+- Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (90% through 60+ annotated examples for experienced developers)
 - "Full Set" concept: 5 sequential learning levels (Initial Setup through Advanced)
+- "Parallel Tracks": Cookbook (problem-solving) and By Example (example-driven learning for experienced developers)
 - Coverage percentages for each type (depth indicators, NOT time estimates)
 - When to use each tutorial type based on audience and goals
 - Naming patterns and examples

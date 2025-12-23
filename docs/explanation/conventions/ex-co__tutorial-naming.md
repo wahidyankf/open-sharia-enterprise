@@ -9,7 +9,7 @@ tags:
   - naming
   - learning-paths
 created: 2025-12-03
-updated: 2025-12-09
+updated: 2025-12-23
 ---
 
 # Tutorial Naming Convention
@@ -47,6 +47,7 @@ graph TB
 	D["<b>Intermediate</b><br/>60-85%"]
 	E["<b>Advanced</b><br/>85-95%"]
 	F["<b>Cookbook</b><br/>Practical"]
+	G["<b>By Example</b><br/>90%"]
 
 	A --> B
 	B --> C
@@ -57,24 +58,30 @@ graph TB
 	D -.-> F
 	E -.-> F
 
+	B -.-> G
+	C -.-> G
+	D -.-> G
+
 	style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style F fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style G fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Legend**:
 
 - Solid arrows (→) show linear progression within the "Full Set" (5 sequential levels)
-- Dotted arrows (⋯→) show cookbook can be used at multiple levels (parallel track)
+- Dotted arrows (⋯→) show parallel tracks that can be used at multiple skill levels
 - Percentages indicate depth of domain knowledge coverage
 
-**Full Set vs Cookbook**:
+**Full Set vs Parallel Tracks**:
 
 - **Full Set**: The 5 sequential learning levels (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) that provide comprehensive mastery from 0% to 95% coverage
-- **Cookbook**: A parallel, practical reference track (not part of the Full Set) for solving specific problems at any skill level
+- **Cookbook**: A parallel, practical reference track for solving specific problems at any skill level
+- **By Example**: A parallel, example-driven learning track for experienced developers who want to quickly pick up a new language through 60+ annotated code examples (90% coverage)
 
 ---
 
@@ -291,6 +298,58 @@ Collection of practical recipes and patterns for solving common real-world probl
 
 ---
 
+### 📖 By Example
+
+**Coverage**: 90% of domain knowledge through annotated examples
+**Goal**: Quick pickup for experienced developers learning new languages
+
+**Description**:
+Example-driven learning path for experienced developers (seasonal programmers/software engineers) who want to quickly pick up a new language through heavily annotated code examples. Covers 90% of language concepts through 60+ progressively complex examples organized into three levels.
+
+**Prerequisites**: Programming experience required (not for complete beginners)
+
+**Structure**:
+
+- Total: 60+ annotated examples organized into 3 files
+- **beginner.md**: Examples 1-15 (Basics) - fundamental syntax and core concepts
+- **intermediate.md**: Examples 16-35 (Intermediate) - practical patterns and common tasks
+- **advanced.md**: Examples 36-60 (Advanced) - complex features and internals
+
+**Content includes**:
+
+- Concise explanation of concept before each example
+- Mermaid diagrams showing concept relationships (when helpful)
+- Heavily commented code with:
+  - What each line does
+  - Expected output (as comments)
+  - Intermediate values for variables/processes
+- Progressive complexity (simple → advanced within each level)
+- 90% coverage of language features
+
+**What it does NOT include**:
+
+- Deep explanations for complete beginners (see Beginner tutorial for that)
+- Problem-solving recipes (see Cookbook for that)
+- Production patterns and architecture (see Intermediate/Advanced tutorials for that)
+- Setup instructions (see Initial Setup for that)
+
+**Example titles**:
+
+- "Elixir By Example: Learn Through Code"
+- "Rust By Example: Annotated Examples"
+- "Kotlin By Example: Quick Language Pickup"
+
+**When to use**: When an experienced developer wants to quickly understand a new language's syntax and patterns through working examples without extensive narrative.
+
+**Relationship to other tutorial types**:
+
+- **NOT a replacement** for comprehensive tutorials (Beginner/Intermediate/Advanced) - those provide deep explanations for complete beginners
+- **NOT a replacement** for Quick Start - Quick Start is 5-30% coverage with touchpoints, By Example is 90% coverage with comprehensive examples
+- **NOT a replacement** for Cookbook - Cookbook is problem-solving oriented, By Example is learning-oriented
+- **Complements** the Full Set by providing an alternative learning path for experienced developers
+
+---
+
 ## 🎓 Choosing the Right Tutorial Type
 
 ### Decision Tree
@@ -301,32 +360,36 @@ graph TB
 	START[Need to learn a topic?]
 	Q1{Never used before?}
 	Q2{Quick 5-min verification?}
-	Q3{Learn enough to explore?}
-	Q4{Need comprehensive foundation?}
-	Q5{Building production systems?}
-	Q6{Need expert mastery?}
-	Q7{Solving specific problem?}
+	Q3{Experienced developer?}
+	Q4{Learn enough to explore?}
+	Q5{Need comprehensive foundation?}
+	Q6{Building production systems?}
+	Q7{Need expert mastery?}
+	Q8{Solving specific problem?}
 
 	START --> Q1
 	Q1 -->|Yes| Q2
-	Q1 -->|No| Q7
+	Q1 -->|No| Q8
 
 	Q2 -->|Yes| IS[Initial Setup]
 	Q2 -->|No| Q3
 
-	Q3 -->|Yes| QS[Quick Start]
+	Q3 -->|Yes| BE[By Example]
 	Q3 -->|No| Q4
 
-	Q4 -->|Yes| BEG[Beginner]
+	Q4 -->|Yes| QS[Quick Start]
 	Q4 -->|No| Q5
 
-	Q5 -->|Yes| INT[Intermediate]
+	Q5 -->|Yes| BEG[Beginner]
 	Q5 -->|No| Q6
 
-	Q6 -->|Yes| ADV[Advanced]
-	Q6 -->|No| CB[Cookbook]
+	Q6 -->|Yes| INT[Intermediate]
+	Q6 -->|No| Q7
 
-	Q7 -->|Yes| CB
+	Q7 -->|Yes| ADV[Advanced]
+	Q7 -->|No| CB[Cookbook]
+
+	Q8 -->|Yes| CB
 
 	style IS fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style QS fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -334,20 +397,22 @@ graph TB
 	style INT fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style ADV fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style CB fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style BE fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Quick Reference Table
 
-| Tutorial Type     | Coverage  | Use When                            |
-| ----------------- | --------- | ----------------------------------- |
-| **Initial Setup** | 0-5%      | Need quick verification setup works |
-| **Quick Start**   | 5-30%     | Want to explore independently       |
-| **Beginner**      | 0-60%     | Complete beginner, need foundation  |
-| **Intermediate**  | 60-85%    | Building production systems         |
-| **Advanced**      | 85-95%    | Need expert-level mastery           |
-| **Cookbook**      | Practical | Solving specific problems           |
+| Tutorial Type     | Coverage  | Use When                                                 |
+| ----------------- | --------- | -------------------------------------------------------- |
+| **Initial Setup** | 0-5%      | Need quick verification setup works                      |
+| **Quick Start**   | 5-30%     | Want to explore independently                            |
+| **Beginner**      | 0-60%     | Complete beginner, need foundation                       |
+| **Intermediate**  | 60-85%    | Building production systems                              |
+| **Advanced**      | 85-95%    | Need expert-level mastery                                |
+| **Cookbook**      | Practical | Solving specific problems                                |
+| **By Example**    | 90%       | Experienced dev, learn new language through 60+ examples |
 
-**Note**: The first 5 types (Initial Setup through Advanced) form the "Full Set" - a sequential learning path from 0% to 95% coverage. Cookbook is a parallel track for practical problem-solving.
+**Note**: The first 5 types (Initial Setup through Advanced) form the "Full Set" - a sequential learning path from 0% to 95% coverage. Cookbook and By Example are parallel tracks for different learning approaches.
 
 ---
 
@@ -361,6 +426,7 @@ graph TB
 - **Intermediate Python: Professional Techniques**
 - **Advanced Python: Internals and Optimization**
 - **Python Cookbook: Practical Recipes**
+- **Python By Example: Learn Through Code**
 
 ### Frameworks and Tools
 
@@ -370,6 +436,7 @@ graph TB
 - **Intermediate React: Production Patterns**
 - **Advanced React: Performance and Internals**
 - **React Cookbook: Common Solutions**
+- **React By Example: Annotated Examples**
 
 ### Domain Topics
 
@@ -379,6 +446,8 @@ graph TB
 - **Intermediate Accounting: Financial Reporting**
 - **Advanced Accounting: Complex Transactions**
 - **Accounting Cookbook: Common Scenarios**
+
+**Note**: By Example is primarily used for programming languages and frameworks where heavily annotated code examples provide effective learning. It's less applicable to domain topics like accounting or business concepts.
 
 ---
 
@@ -414,4 +483,4 @@ graph TB
 
 ---
 
-**Last Updated**: 2025-12-03
+**Last Updated**: 2025-12-23

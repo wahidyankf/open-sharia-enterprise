@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-20
+updated: 2025-12-23
 ---
 
 # Repository Rule Checker Agent
@@ -362,12 +362,12 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 ### Tutorial Naming Convention Compliance
 
 - [ ] Tutorial naming convention comprehensively documented in `ex-co__tutorial-naming.md`
-- [ ] Convention defines six standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+- [ ] Convention defines seven standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example)
 - [ ] Each tutorial type has coverage percentage, time estimate, and clear definition
 - [ ] Naming patterns provided for each tutorial type with examples
 - [ ] Decision tree or guidance for choosing tutorial type included
 - [ ] CLAUDE.md references tutorial naming convention in Documentation Standards section
-- [ ] CLAUDE.md summarizes six tutorial types with coverage and time estimates
+- [ ] CLAUDE.md summarizes seven tutorial types with coverage percentages (NOT time estimates)
 - [ ] docs-tutorial-maker.md references tutorial naming convention
 - [ ] docs-tutorial-maker.md includes tutorial type selection guidance in writing process
 - [ ] docs-tutorial-maker.md provides naming patterns for each tutorial type
