@@ -58,6 +58,7 @@ draft: false
     - [Beginner](/en/learn/swe/prog-lang/golang/tutorials/beginner)
     - [Intermediate](/en/learn/swe/prog-lang/golang/tutorials/intermediate)
     - [Advanced](/en/learn/swe/prog-lang/golang/tutorials/advanced)
+    - [By Example](/en/learn/swe/prog-lang/golang/tutorials/by-example)
   - [How-To Guides](/en/learn/swe/prog-lang/golang/how-to)
     - [Overview](/en/learn/swe/prog-lang/golang/how-to/overview)
     - [Cookbook](/en/learn/swe/prog-lang/golang/how-to/cookbook)
