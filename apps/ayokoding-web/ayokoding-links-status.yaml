@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-23T14:17:25+07:00"
+lastFullScan: "2025-12-23T14:47:33+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -9,7 +9,7 @@ links:
     finalUrl: http://highscalability.com/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+      - content/en/learn/software-engineering/system-design/ai-personal-finance-advisor.md
 
   - url: http://super.so/
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -26,8 +26,8 @@ links:
     finalUrl: https://adoptium.net/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/java/tutorials/initial-setup.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/java/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup.md
 
   - url: https://adventofcode.com/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -35,7 +35,7 @@ links:
     finalUrl: https://adventofcode.com/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://apps.detik.com/detik/
     lastChecked: "2025-12-13T14:30:00+07:00"
@@ -51,7 +51,7 @@ links:
     finalUrl: https://blog.jetbrains.com/kotlin/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://blog.omnistrate.com/posts/30
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -59,7 +59,7 @@ links:
     finalUrl: https://blog.omnistrate.com/posts/30
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/system-design/overview.md
+      - content/en/learn/software-engineering/system-design/overview.md
 
   - url: https://blog.rust-lang.org/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -67,7 +67,7 @@ links:
     finalUrl: https://blog.rust-lang.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://bytebytego.com/
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -75,7 +75,7 @@ links:
     finalUrl: https://bytebytego.com/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+      - content/en/learn/software-engineering/system-design/ai-personal-finance-advisor.md
 
   - url: https://code.visualstudio.com/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -83,7 +83,7 @@ links:
     finalUrl: https://code.visualstudio.com/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://dataintensive.net/
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -91,7 +91,7 @@ links:
     finalUrl: https://dataintensive.net/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/system-design/ai-personal-finance-advisor.md
+      - content/en/learn/software-engineering/system-design/ai-personal-finance-advisor.md
 
   - url: https://developer.android.com/studio
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -99,7 +99,7 @@ links:
     finalUrl: https://developer.android.com/studio
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://diataxis.fr/
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -107,7 +107,7 @@ links:
     finalUrl: https://diataxis.fr/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/overview.md
+      - content/en/learn/software-engineering/programming-language/golang/overview.md
 
   - url: https://discord.gg/rust-lang
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -118,8 +118,8 @@ links:
         to: https://discord.com/invite/rust-lang
         status: 301
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://discuss.kotlinlang.org/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -127,7 +127,7 @@ links:
     finalUrl: https://discuss.kotlinlang.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://doc.rust-lang.org/book/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -135,10 +135,10 @@ links:
     finalUrl: https://doc.rust-lang.org/book/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/beginner.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/beginner.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/quick-start.md
 
   - url: https://doc.rust-lang.org/cargo/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -146,9 +146,9 @@ links:
     finalUrl: https://doc.rust-lang.org/cargo/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/how-to/manage-dependencies-cargo.md
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/how-to/manage-dependencies-cargo.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://doc.rust-lang.org/nomicon/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -156,9 +156,9 @@ links:
     finalUrl: https://doc.rust-lang.org/nomicon/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/how-to/unsafe-rust-safely.md
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/advanced.md
+      - content/en/learn/software-engineering/programming-language/rust/how-to/unsafe-rust-safely.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/advanced.md
 
   - url: https://doc.rust-lang.org/rust-by-example/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -166,10 +166,10 @@ links:
     finalUrl: https://doc.rust-lang.org/rust-by-example/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/beginner.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/beginner.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/quick-start.md
 
   - url: https://doc.rust-lang.org/std/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -177,8 +177,8 @@ links:
     finalUrl: https://doc.rust-lang.org/std/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://docs.aws.amazon.com/neptune/latest/userguide/intro.html
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -194,7 +194,7 @@ links:
     finalUrl: https://docs.gradle.org/current/userguide/kotlin_dsl.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -225,8 +225,8 @@ links:
     finalUrl: https://docs.oracle.com/en/java/javase/21/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/java/tutorials/initial-setup.md
-      - content/en/learn/swe/prog-lang/java/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/java/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/java/tutorials/quick-start.md
 
   - url: https://docs.python.org/
     lastChecked: "2025-12-18T07:46:24+07:00"
@@ -234,7 +234,7 @@ links:
     finalUrl: https://docs.python.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/python/how-to/cookbook.md
 
   - url: https://docs.python.org/3/library/asyncio.html
     lastChecked: "2025-12-18T07:46:24+07:00"
@@ -242,7 +242,7 @@ links:
     finalUrl: https://docs.python.org/3/library/asyncio.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/python/how-to/cookbook.md
 
   - url: https://docs.pytest.org/
     lastChecked: "2025-12-18T07:46:24+07:00"
@@ -250,7 +250,7 @@ links:
     finalUrl: https://docs.pytest.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/python/how-to/cookbook.md
 
   - url: https://docs.rs/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -258,7 +258,7 @@ links:
     finalUrl: https://docs.rs/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://docs.rust-embedded.org/book/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -266,8 +266,8 @@ links:
     finalUrl: https://docs.rust-embedded.org/book/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/how-to/embedded-rust.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/advanced.md
+      - content/en/learn/software-engineering/programming-language/rust/how-to/embedded-rust.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/advanced.md
 
   - url: https://drive.google.com/drive/folders/1seVOuX8zsx4jyi3zFlIs6n0OtYKkVWRN?usp=sharing
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -286,7 +286,7 @@ links:
         to: https://hexdocs.pm/elixir/introduction.html
         status: 301
     usedIn:
-      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
+      - content/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced.md
 
   - url: https://elixirforum.com/
     lastChecked: "2025-12-23T08:45:20+07:00"
@@ -294,7 +294,7 @@ links:
     finalUrl: https://elixirforum.com/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
+      - content/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced.md
 
   - url: https://en.wikipedia.org/wiki/Linus's_law
     lastChecked: "2025-12-13T14:30:00+07:00"
@@ -310,8 +310,8 @@ links:
     finalUrl: https://exercism.org/tracks/rust
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/beginner.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/beginner.md
 
   - url: https://github.com/JetBrains/Exposed
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -319,7 +319,7 @@ links:
     finalUrl: https://github.com/JetBrains/Exposed
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://github.com/JetBrains/kotlin
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -327,7 +327,7 @@ links:
     finalUrl: https://github.com/JetBrains/kotlin
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/advanced.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced.md
 
   - url: https://github.com/Kotlin/KEEP
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -335,8 +335,8 @@ links:
     finalUrl: https://github.com/Kotlin/KEEP
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/advanced.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced.md
 
   - url: https://github.com/Kotlin/kotlin-examples
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -344,7 +344,7 @@ links:
     finalUrl: https://github.com/Kotlin/kotlin-examples
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://github.com/Kotlin/kotlinx.serialization
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -352,7 +352,7 @@ links:
     finalUrl: https://github.com/Kotlin/kotlinx.serialization
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://github.com/bheisler/criterion.rs
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -360,7 +360,7 @@ links:
     finalUrl: https://github.com/bheisler/criterion.rs
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://github.com/dtolnay/cargo-expand
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -368,7 +368,7 @@ links:
     finalUrl: https://github.com/dtolnay/cargo-expand
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://github.com/google/gson
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -376,7 +376,7 @@ links:
     finalUrl: https://github.com/google/gson
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://github.com/h4cc/awesome-elixir
     lastChecked: "2025-12-23T08:45:20+07:00"
@@ -384,7 +384,7 @@ links:
     finalUrl: https://github.com/h4cc/awesome-elixir
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
+      - content/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced.md
 
   - url: https://github.com/jlleitschuh/ktlint-gradle
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -392,7 +392,7 @@ links:
     finalUrl: https://github.com/jlleitschuh/ktlint-gradle
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://github.com/killercup/cargo-edit
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -400,7 +400,7 @@ links:
     finalUrl: https://github.com/killercup/cargo-edit
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://github.com/microsoft/pyright/blob/main/docs/type-concepts.md
     lastChecked: "2025-12-11T20:15:00+07:00"
@@ -461,7 +461,7 @@ links:
     finalUrl: https://github.com/rust-lang/rfcs
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://github.com/rust-lang/rust
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -469,7 +469,7 @@ links:
     finalUrl: https://github.com/rust-lang/rust
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://github.com/rust-lang/rust-clippy
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -477,8 +477,8 @@ links:
     finalUrl: https://github.com/rust-lang/rust-clippy
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://github.com/rust-lang/rustfmt
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -486,8 +486,8 @@ links:
     finalUrl: https://github.com/rust-lang/rustfmt
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://github.com/rust-lang/rustlings
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -495,9 +495,9 @@ links:
     finalUrl: https://github.com/rust-lang/rustlings
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/beginner.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/beginner.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/quick-start.md
 
   - url: https://github.com/watchexec/cargo-watch
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -505,7 +505,7 @@ links:
     finalUrl: https://github.com/watchexec/cargo-watch
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://go.dev/blog
     lastChecked: "2025-12-18T07:46:24+07:00"
@@ -513,7 +513,7 @@ links:
     finalUrl: https://go.dev/blog
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/golang/how-to/cookbook.md
 
   - url: https://go.dev/dl
     lastChecked: "2025-12-13T14:30:00+07:00"
@@ -521,9 +521,9 @@ links:
     finalUrl: https://go.dev/dl
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/tutorials/beginner.md
-      - content/en/learn/swe/prog-lang/golang/tutorials/initial-setup.md
-      - content/en/learn/swe/prog-lang/golang/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/golang/tutorials/beginner.md
+      - content/en/learn/software-engineering/programming-language/golang/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/golang/tutorials/quick-start.md
 
   - url: https://go.dev/doc
     lastChecked: "2025-12-13T14:30:00+07:00"
@@ -531,8 +531,8 @@ links:
     finalUrl: https://go.dev/doc
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
-      - content/en/learn/swe/prog-lang/golang/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/golang/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/golang/tutorials/initial-setup.md
 
   - url: https://go.dev/doc/effective_go
     lastChecked: "2025-12-18T07:46:24+07:00"
@@ -540,7 +540,7 @@ links:
     finalUrl: https://go.dev/doc/effective_go
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/golang/how-to/cookbook.md
 
   - url: https://go.dev/wiki/
     lastChecked: "2025-12-18T07:46:24+07:00"
@@ -548,7 +548,7 @@ links:
     finalUrl: https://go.dev/wiki/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/golang/how-to/cookbook.md
 
   - url: https://golang.org/help
     lastChecked: "2025-12-13T14:30:00+07:00"
@@ -559,7 +559,7 @@ links:
         to: https://go.dev/help
         status: 301
     usedIn:
-      - content/en/learn/swe/prog-lang/golang/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/golang/tutorials/initial-setup.md
 
   - url: https://google.github.io/comprehensive-rust/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -567,7 +567,7 @@ links:
     finalUrl: https://google.github.io/comprehensive-rust/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://gradle.org/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -575,7 +575,7 @@ links:
     finalUrl: https://gradle.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://hbr.org/2011/01/the-most-important-practice-i
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -592,7 +592,7 @@ links:
     finalUrl: https://hexdocs.pm/elixir/introduction.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
+      - content/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced.md
 
   - url: https://jitpack.io/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -600,7 +600,7 @@ links:
     finalUrl: https://jitpack.io/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kafka.apache.org/
     lastChecked: "2025-12-13T16:45:00+07:00"
@@ -616,7 +616,7 @@ links:
     finalUrl: https://kotest.io/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/api/latest/jvm/stdlib/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -624,10 +624,10 @@ links:
     finalUrl: https://kotlinlang.org/api/latest/jvm/stdlib/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet.md
-      - content/en/learn/swe/prog-lang/kotlin/reference/overview.md
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/cheat-sheet.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/overview.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start.md
 
   - url: https://kotlinlang.org/docs/coding-conventions.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -635,7 +635,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/coding-conventions.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/docs/home.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -643,9 +643,9 @@ links:
     finalUrl: https://kotlinlang.org/docs/home.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/overview.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/initial-setup.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/overview.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start.md
 
   - url: https://kotlinlang.org/docs/java-interop.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -653,7 +653,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/java-interop.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/docs/js-overview.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -661,7 +661,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/js-overview.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/docs/keyword-reference.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -669,7 +669,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/keyword-reference.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/glossary.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/glossary.md
 
   - url: https://kotlinlang.org/docs/kotlin-tour-welcome.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -677,7 +677,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/kotlin-tour-welcome.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/docs/maven.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -685,7 +685,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/maven.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/docs/multiplatform.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -693,7 +693,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/multiplatform.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/docs/native-overview.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -701,7 +701,7 @@ links:
     finalUrl: https://kotlinlang.org/docs/native-overview.html
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/docs/reference/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -709,9 +709,9 @@ links:
     finalUrl: https://kotlinlang.org/docs/reference/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet.md
-      - content/en/learn/swe/prog-lang/kotlin/reference/glossary.md
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/cheat-sheet.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/glossary.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://kotlinlang.org/spec/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -719,10 +719,10 @@ links:
     finalUrl: https://kotlinlang.org/spec/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/overview.md
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/advanced.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/overview.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup.md
 
   - url: https://kotlinweekly.net/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -730,7 +730,7 @@ links:
     finalUrl: https://kotlinweekly.net/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://lukaswirth.dev/tlborm/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -738,7 +738,7 @@ links:
     finalUrl: https://lukaswirth.dev/tlborm/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://m.signalvnoise.com/
     lastChecked: "2025-12-13T16:45:00+07:00"
@@ -757,7 +757,7 @@ links:
     finalUrl: https://maven.apache.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://mockk.io/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -765,7 +765,7 @@ links:
     finalUrl: https://mockk.io/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://mypy.readthedocs.io/
     lastChecked: "2025-12-18T07:46:24+07:00"
@@ -773,7 +773,7 @@ links:
     finalUrl: https://mypy.readthedocs.io/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/python/how-to/cookbook.md
+      - content/en/learn/software-engineering/programming-language/python/how-to/cookbook.md
 
   - url: https://neo4j.com/docs/
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -789,7 +789,7 @@ links:
     finalUrl: https://nnethercote.github.io/perf-book/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/tutorials/advanced.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/advanced.md
 
   - url: https://onecompiler.com/kotlin
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -797,7 +797,7 @@ links:
     finalUrl: https://onecompiler.com/kotlin
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://play.kotlinlang.org/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -805,8 +805,8 @@ links:
     finalUrl: https://play.kotlinlang.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup.md
 
   - url: https://play.kotlinlang.org/byExample/overview
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -817,9 +817,9 @@ links:
         to: https://kotlinlang.org/docs/kotlin-tour-welcome.html
         status: 302
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/initial-setup.md
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start.md
 
   - url: https://play.kotlinlang.org/koans
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -827,7 +827,7 @@ links:
     finalUrl: https://play.kotlinlang.org/koans
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/quick-start.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start.md
 
   - url: https://rust-analyzer.github.io/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -835,7 +835,7 @@ links:
     finalUrl: https://rust-analyzer.github.io/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://rust-cli.github.io/book/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -843,7 +843,7 @@ links:
     finalUrl: https://rust-cli.github.io/book/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://rust-lang-nursery.github.io/rust-cookbook/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -851,7 +851,7 @@ links:
     finalUrl: https://rust-lang-nursery.github.io/rust-cookbook/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://rust-lang.github.io/async-book/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -859,8 +859,8 @@ links:
     finalUrl: https://rust-lang.github.io/async-book/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/advanced.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/advanced.md
 
   - url: https://rust-lang.github.io/rustup/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -868,8 +868,8 @@ links:
     finalUrl: https://rust-lang.github.io/rustup/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://rustup.rs/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -877,7 +877,7 @@ links:
     finalUrl: https://rustup.rs/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://rustwasm.github.io/docs/book/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -885,7 +885,7 @@ links:
     finalUrl: https://rustwasm.github.io/docs/book/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
   - url: https://spring.io/guides/tutorials/spring-boot-kotlin/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -893,7 +893,7 @@ links:
     finalUrl: https://spring.io/guides/tutorials/spring-boot-kotlin/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://surveys.jetbrains.com/s3/kotlin-slack-sign-up
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -901,7 +901,7 @@ links:
     finalUrl: https://surveys.jetbrains.com/s3/kotlin-slack-sign-up
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://this-week-in-rust.org/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -909,8 +909,8 @@ links:
     finalUrl: https://this-week-in-rust.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://users.rust-lang.org/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -918,8 +918,8 @@ links:
     finalUrl: https://users.rust-lang.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://visualstudio.microsoft.com/downloads/
     lastChecked: "2025-12-19T08:37:57+07:00"
@@ -927,7 +927,7 @@ links:
     finalUrl: https://visualstudio.microsoft.com/downloads/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://www.amazon.com/4-Hour-Workweek-Escape-Live-Anywhere/dp/0307465357
     lastChecked: "2025-12-13T16:45:00+07:00"
@@ -983,7 +983,7 @@ links:
     finalUrl: https://www.atomickotlin.com/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
     lastChecked: "2025-12-11T18:45:00+07:00"
@@ -1000,7 +1000,7 @@ links:
     finalUrl: https://www.coursera.org/learn/kotlin-for-java-developers
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://www.detik.com/hikmah/doa-dan-hadits/d-6665987/tulisan-arab-bismillahirrahmanirrahim-beserta-arti-dan-keutamaan
     lastChecked: "2025-12-13T14:30:00+07:00"
@@ -1025,7 +1025,7 @@ links:
     finalUrl: https://www.erlang.org/doc/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
+      - content/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced.md
 
   - url: https://www.ibm.com/cloud/learn/object-storage
     lastChecked: "2025-12-13T16:45:00+07:00"
@@ -1050,8 +1050,8 @@ links:
     finalUrl: https://www.jetbrains.com/idea/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
-      - content/en/learn/swe/prog-lang/rust/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
 
   - url: https://www.jetbrains.com/idea/download/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -1059,7 +1059,7 @@ links:
     finalUrl: https://www.jetbrains.com/idea/download/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/tutorials/initial-setup.md
+      - content/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup.md
 
   - url: https://www.ktorm.org/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -1067,7 +1067,7 @@ links:
     finalUrl: https://www.ktorm.org/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://www.levels.fyi/companies/google/salaries/software-engineer
     lastChecked: "2025-12-09T22:30:00+07:00"
@@ -1092,7 +1092,7 @@ links:
     finalUrl: https://www.manning.com/books/kotlin-in-action
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://www.oreilly.com/library/view/head-first-kotlin/9781491996683/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -1100,7 +1100,7 @@ links:
     finalUrl: https://www.oreilly.com/library/view/head-first-kotlin/9781491996683/
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://www.packtpub.com/product/programming-kotlin/9781787126367
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -1108,7 +1108,7 @@ links:
     finalUrl: https://www.packtpub.com/product/programming-kotlin/9781787126367
     redirectChain: null
     usedIn:
-      - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
   - url: https://www.ted.com/talks/jason_fried_why_work_doesn_t_happen_at_work
     lastChecked: "2025-12-13T16:45:00+07:00"
