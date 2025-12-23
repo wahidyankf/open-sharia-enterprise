@@ -19,7 +19,7 @@ type Item struct {
 	RawContent string // For non-directory files
 }
 
-// ScanDirectory scans a directory and returns navigation items up to 3 layers deep
+// ScanDirectory scans a directory and returns navigation items up to 2 layers deep
 // basePath is the absolute URL path to this directory (e.g., "/en/learn/swe")
 func ScanDirectory(dirPath string, basePath string, currentLayer int, maxLayers int) ([]Item, error) {
 	if currentLayer > maxLayers {

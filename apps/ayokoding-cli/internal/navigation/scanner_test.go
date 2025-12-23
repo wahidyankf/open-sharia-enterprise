@@ -41,7 +41,7 @@ title: Installation
 weight: 2
 ---`)
 
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -98,7 +98,7 @@ title: Advanced
 weight: 2
 ---`)
 
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -130,17 +130,17 @@ weight: 2
 	}
 }
 
-func TestScanDirectory_ThreeLayers(t *testing.T) {
+func TestScanDirectory_TwoLayers(t *testing.T) {
 	tmpDir := t.TempDir()
 
-	// Create structure with 3 layers:
+	// Create structure with 2 layers (layer 3 should not be scanned):
 	// tmpDir/
 	//   learn/
 	//     _index.md (weight: 1)
 	//     programming/
 	//       _index.md (weight: 1)
 	//       python/
-	//         _index.md (weight: 1)
+	//         _index.md (weight: 1) - should NOT be scanned
 
 	createTestFile(t, filepath.Join(tmpDir, "learn/_index.md"), `---
 title: Learn
@@ -157,7 +157,7 @@ title: Python
 weight: 1
 ---`)
 
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -172,14 +172,9 @@ weight: 1
 		t.Fatalf("Learn should have 1 child, got %d", len(items[0].Children))
 	}
 
-	// Programming should have 1 child (python)
-	if len(items[0].Children[0].Children) != 1 {
-		t.Fatalf("Programming should have 1 child, got %d", len(items[0].Children[0].Children))
-	}
-
-	// Verify the full path
-	if items[0].Children[0].Children[0].Title != "Python" {
-		t.Errorf("Third layer should be Python, got %s", items[0].Children[0].Children[0].Title)
+	// Programming should have NO children (layer 3 not scanned with maxLayers=2)
+	if len(items[0].Children[0].Children) != 0 {
+		t.Fatalf("Programming should have no children (layer 3 not scanned), got %d", len(items[0].Children[0].Children))
 	}
 }
 
@@ -193,9 +188,7 @@ func TestScanDirectory_MaxDepthLimit(t *testing.T) {
 	//     l2/
 	//       _index.md
 	//       l3/
-	//         _index.md
-	//         l4/
-	//           _index.md (should not be scanned)
+	//         _index.md (should not be scanned with maxLayers=2)
 
 	createTestFile(t, filepath.Join(tmpDir, "l1/_index.md"), `---
 title: Layer 1
@@ -212,28 +205,23 @@ title: Layer 3
 weight: 1
 ---`)
 
-	createTestFile(t, filepath.Join(tmpDir, "l1/l2/l3/l4/_index.md"), `---
-title: Layer 4
-weight: 1
----`)
-
-	// Scan with maxLayers = 3
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	// Scan with maxLayers = 2
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
 
-	// Navigate to layer 3
-	l3Items := items[0].Children[0].Children
+	// Navigate to layer 2
+	l2Items := items[0].Children
 
-	// Layer 3 should exist and have 1 item (l3)
-	if len(l3Items) != 1 {
-		t.Fatalf("Expected 1 item at layer 3, got %d", len(l3Items))
+	// Layer 2 should exist and have 1 item (l2)
+	if len(l2Items) != 1 {
+		t.Fatalf("Expected 1 item at layer 2, got %d", len(l2Items))
 	}
 
-	// Layer 3 item should NOT have children (layer 4 should not be scanned)
-	if len(l3Items[0].Children) != 0 {
-		t.Errorf("Layer 3 item should have no children (layer 4 not scanned), got %d children", len(l3Items[0].Children))
+	// Layer 2 item should NOT have children (layer 3 should not be scanned)
+	if len(l2Items[0].Children) != 0 {
+		t.Errorf("Layer 2 item should have no children (layer 3 not scanned), got %d children", len(l2Items[0].Children))
 	}
 }
 
@@ -257,7 +245,7 @@ weight: 1
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -290,7 +278,7 @@ title: Hidden
 weight: 2
 ---`)
 
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -324,7 +312,7 @@ title: Medium Weight
 weight: 50
 ---`)
 
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -358,7 +346,7 @@ title: With Weight
 weight: 10
 ---`)
 
-	items, err := ScanDirectory(tmpDir, "/test", 1, 3)
+	items, err := ScanDirectory(tmpDir, "/test", 1, 2)
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}

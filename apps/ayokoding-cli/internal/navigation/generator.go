@@ -8,7 +8,6 @@ import (
 // GenerateMarkdown creates a DFS navigation tree in markdown format
 // Layer 1: no indentation
 // Layer 2: 2 spaces
-// Layer 3: 4 spaces
 func GenerateMarkdown(items []Item, currentLayer int) string {
 	var sb strings.Builder
 

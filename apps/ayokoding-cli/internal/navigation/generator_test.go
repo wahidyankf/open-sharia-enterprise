@@ -56,7 +56,7 @@ func TestGenerateMarkdown(t *testing.T) {
 `,
 		},
 		{
-			name: "nested children (3 layers)",
+			name: "nested children (2 layers)",
 			items: []Item{
 				{
 					Title:  "Learn",
@@ -65,14 +65,11 @@ func TestGenerateMarkdown(t *testing.T) {
 					IsDir:  true,
 					Children: []Item{
 						{
-							Title:  "Programming",
-							Path:   "/test/learn/programming",
-							Weight: 1,
-							IsDir:  true,
-							Children: []Item{
-								{Title: "Python", Path: "/test/learn/programming/python", Weight: 1, IsDir: false},
-								{Title: "Go", Path: "/test/learn/programming/go", Weight: 2, IsDir: false},
-							},
+							Title:    "Programming",
+							Path:     "/test/learn/programming",
+							Weight:   1,
+							IsDir:    true,
+							Children: []Item{}, // No Layer 3
 						},
 					},
 				},
@@ -80,8 +77,6 @@ func TestGenerateMarkdown(t *testing.T) {
 			layer: 0,
 			expected: `- [Learn](/test/learn)
   - [Programming](/test/learn/programming)
-    - [Python](/test/learn/programming/python)
-    - [Go](/test/learn/programming/go)
 `,
 		},
 		{
@@ -187,13 +182,11 @@ func TestGenerateMarkdown_Indentation(t *testing.T) {
 			IsDir:  true,
 			Children: []Item{
 				{
-					Title:  "L2",
-					Path:   "/test/l1/l2",
-					Weight: 1,
-					IsDir:  true,
-					Children: []Item{
-						{Title: "L3", Path: "/test/l1/l2/l3", Weight: 1, IsDir: false},
-					},
+					Title:    "L2",
+					Path:     "/test/l1/l2",
+					Weight:   1,
+					IsDir:    true,
+					Children: []Item{}, // No Layer 3
 				},
 			},
 		},
@@ -213,8 +206,5 @@ func TestGenerateMarkdown_Indentation(t *testing.T) {
 		t.Error("Layer 2 should have 2-space indentation")
 	}
 
-	// Layer 3: 4 spaces
-	if !strings.HasPrefix(lines[2], "    - [L3]") {
-		t.Error("Layer 3 should have 4-space indentation")
-	}
+	// No Layer 3 - only 2 layers are generated
 }

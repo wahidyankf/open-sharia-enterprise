@@ -58,7 +58,7 @@ ayokoding-cli nav regen --verbose
 - Scans all `_index.md` files in `apps/ayokoding-web/content/`
 - Excludes root language files (`en/_index.md`, `id/_index.md`)
 - Extracts frontmatter from each file (preserves exactly)
-- Scans file structure 3 layers deep
+- Scans file structure 2 layers deep
 - Generates DFS navigation tree with proper indentation
 - Sorts items by weight within each level
 - **Generates absolute paths with language prefix** for all navigation links (e.g., `/en/learn/swe/prog-lang/python`)
