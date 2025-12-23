@@ -6,6 +6,7 @@
 overrides:
   ayokoding: "AyoKoding"
   cliftonstrengths: "CliftonStrengths"
+  id: "Konten Bahasa Indonesia"
   javascript: "JavaScript"
   typescript: "TypeScript"
   nodejs: "Node.js"

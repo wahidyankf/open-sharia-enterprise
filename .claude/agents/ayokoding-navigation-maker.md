@@ -161,8 +161,7 @@ When invoked, follow these steps:
 1. **Rebuild CLI tool** (always rebuild to ensure fresh binary):
 
    ```bash
-   echo "Rebuilding ayokoding-cli..."
-   cd apps/ayokoding-cli && go build -o dist/ayokoding-cli && cd ../..
+   nx build ayokoding-cli
    ```
 
 2. **Run navigation regeneration**:

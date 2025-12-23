@@ -25,7 +25,7 @@
         "cwd": "apps/ayokoding-web"
       }
     },
-    "pre-commit-script": {
+    "run-pre-commit": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
