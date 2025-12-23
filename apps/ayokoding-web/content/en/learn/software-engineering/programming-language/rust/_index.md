@@ -1,5 +1,5 @@
 ---
-title: "Index"
+title: "Rust"
 date: 2025-12-19T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Rust development - organized using the Diátaxis framework
@@ -9,14 +9,14 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/rust/overview)
-- [Index](/en/learn/software-engineering/programming-language/rust/tutorials)
+- [Tutorials](/en/learn/software-engineering/programming-language/rust/tutorials)
   - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/rust/tutorials/quick-start)
   - [Beginner](/en/learn/software-engineering/programming-language/rust/tutorials/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/rust/tutorials/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/rust/tutorials/advanced)
-- [Index](/en/learn/software-engineering/programming-language/rust/how-to)
+- [How to](/en/learn/software-engineering/programming-language/rust/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/rust/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/rust/how-to/cookbook)
   - [Working with Ownership](/en/learn/software-engineering/programming-language/rust/how-to/working-with-ownership)
@@ -42,11 +42,11 @@ layout: list
   - [Code Documentation](/en/learn/software-engineering/programming-language/rust/how-to/code-documentation)
   - [Async Programming Patterns](/en/learn/software-engineering/programming-language/rust/how-to/async-programming-patterns)
   - [Testing Patterns](/en/learn/software-engineering/programming-language/rust/how-to/testing-patterns)
-- [Index](/en/learn/software-engineering/programming-language/rust/explanation)
+- [Explanation](/en/learn/software-engineering/programming-language/rust/explanation)
   - [Overview](/en/learn/software-engineering/programming-language/rust/explanation/overview)
   - [Best Practices](/en/learn/software-engineering/programming-language/rust/explanation/best-practices)
   - [Anti Patterns](/en/learn/software-engineering/programming-language/rust/explanation/anti-patterns)
-- [Index](/en/learn/software-engineering/programming-language/rust/reference)
+- [Reference](/en/learn/software-engineering/programming-language/rust/reference)
   - [Overview](/en/learn/software-engineering/programming-language/rust/reference/overview)
   - [Cheat Sheet](/en/learn/software-engineering/programming-language/rust/reference/cheat-sheet)
   - [Glossary](/en/learn/software-engineering/programming-language/rust/reference/glossary)

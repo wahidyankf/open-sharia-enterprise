@@ -1,5 +1,5 @@
 ---
-title: "I Migrated Ayokoding Com from Gitbook to Notion and Super"
+title: "I Migrated AyoKoding Com from Gitbook to Notion and Super"
 weight: 10050
 date: 2023-06-01T07:20:00+07:00
 draft: false

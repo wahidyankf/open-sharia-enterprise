@@ -1,5 +1,5 @@
 ---
-title: "Index"
+title: "By Example"
 weight: 1000006
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Index"
+title: "Kotlin"
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Kotlin development - organized using the Diátaxis framework
@@ -9,14 +9,14 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/kotlin/overview)
-- [Index](/en/learn/software-engineering/programming-language/kotlin/tutorials)
+- [Tutorials](/en/learn/software-engineering/programming-language/kotlin/tutorials)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start)
   - [Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/kotlin/tutorials/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced)
-- [Index](/en/learn/software-engineering/programming-language/kotlin/how-to)
+- [How to](/en/learn/software-engineering/programming-language/kotlin/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/kotlin/how-to/cookbook)
   - [Working with Nullable Types](/en/learn/software-engineering/programming-language/kotlin/how-to/working-with-nullable-types)
@@ -42,11 +42,11 @@ layout: list
   - [Optimize Performance](/en/learn/software-engineering/programming-language/kotlin/how-to/optimize-performance)
   - [Multiplatform Development](/en/learn/software-engineering/programming-language/kotlin/how-to/multiplatform-development)
   - [Coroutines Advanced](/en/learn/software-engineering/programming-language/kotlin/how-to/coroutines-advanced)
-- [Index](/en/learn/software-engineering/programming-language/kotlin/explanation)
+- [Explanation](/en/learn/software-engineering/programming-language/kotlin/explanation)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/explanation/overview)
   - [Best Practices](/en/learn/software-engineering/programming-language/kotlin/explanation/best-practices)
   - [Anti Patterns](/en/learn/software-engineering/programming-language/kotlin/explanation/anti-patterns)
-- [Index](/en/learn/software-engineering/programming-language/kotlin/reference)
+- [Reference](/en/learn/software-engineering/programming-language/kotlin/reference)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/reference/overview)
   - [Cheat Sheet](/en/learn/software-engineering/programming-language/kotlin/reference/cheat-sheet)
   - [Glossary](/en/learn/software-engineering/programming-language/kotlin/reference/glossary)

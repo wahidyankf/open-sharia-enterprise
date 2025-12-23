@@ -1,5 +1,5 @@
 ---
-title: "Migrasi Ayokoding Com dari Gitbook ke Notion dan Super"
+title: "Migrasi AyoKoding Com dari Gitbook ke Notion dan Super"
 weight: 10050
 date: 2023-06-01T07:20:00+07:00
 draft: false

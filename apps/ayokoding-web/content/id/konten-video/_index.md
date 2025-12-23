@@ -1,11 +1,11 @@
 ---
-title: "Index"
+title: "Konten Video"
 date: 2025-03-16T07:20:00+07:00
 draft: false
 weight: 30
 ---
 
-- [Index](/id/konten-video/cerita-programmer)
+- [Cerita Programmer](/id/konten-video/cerita-programmer)
   - [Cerita Programmer 0000012 Apa Kabar Dunia Lama Gak Ketemu](/id/konten-video/cerita-programmer/cerita-programmer-0000012-apa-kabar-dunia-lama-gak-ketemu)
   - [Cerita Programmer 0000001 Initial Commit](/id/konten-video/cerita-programmer/cerita-programmer-0000001-initial-commit)
   - [Cerita Programmer 0000011 Cerita Programmer Retrospeksi 1](/id/konten-video/cerita-programmer/cerita-programmer-0000011-cerita-programmer-retrospeksi-1)
@@ -26,11 +26,11 @@ weight: 30
   - [Cerita Programmer 0000016 Wajib Hukumnya Kita Punya Integritas Boleh Bego Tapi Gak Boleh Culas](/id/konten-video/cerita-programmer/cerita-programmer-0000016-wajib-hukumnya-kita-punya-integritas-boleh-bego-tapi-gak-boleh-culas)
   - [Cerita Programmer 0000009 Transisi Jadi Programmer Pilih Jadi Programmer Bagian Mana](/id/konten-video/cerita-programmer/cerita-programmer-0000009-transisi-jadi-programmer-pilih-jadi-programmer-bagian-mana)
   - [Cerita Programmer 0000021 Update November 2023](/id/konten-video/cerita-programmer/cerita-programmer-0000021-update-november-2023)
-- [Index](/id/konten-video/jam-kantor)
+- [Jam Kantor](/id/konten-video/jam-kantor)
   - [Apakah Bukan Lulusan Kuliah It Bisa Ngelamar Jadi Programmer Kalo Udah Ada Portfolio](/id/konten-video/jam-kantor/apakah-bukan-lulusan-kuliah-it-bisa-ngelamar-jadi-programmer-kalo-udah-ada-portfolio)
   - [Saya dari Test Engineer Te Mau Ngelamar Frontend Pengalaman Jadi Te Dihitung Gak](/id/konten-video/jam-kantor/saya-dari-test-engineer-te-mau-ngelamar-frontend-pengalaman-jadi-te-dihitung-gak)
   - [Apakah Kalau Pemula Harus Jadi Frontend dan Jangan Backend Kalau Mau ke Industri](/id/konten-video/jam-kantor/apakah-kalau-pemula-harus-jadi-frontend-dan-jangan-backend-kalau-mau-ke-industri)
-- [Index](/id/konten-video/pengen-jadi-programmer)
+- [Pengen Jadi Programmer](/id/konten-video/pengen-jadi-programmer)
   - [Butuh Belajar Berapa Lama Sampe Bisa Kerja](/id/konten-video/pengen-jadi-programmer/butuh-belajar-berapa-lama-sampe-bisa-kerja)
   - [Pro dan Kontra Jadi Programmer Lewat Jalur Bootcamp](/id/konten-video/pengen-jadi-programmer/pro-dan-kontra-jadi-programmer-lewat-jalur-bootcamp)
   - [Tapi Gak Hafal Hafal Sintaks Tolong Gimana Caranya Biar Hafal](/id/konten-video/pengen-jadi-programmer/tapi-gak-hafal-hafal-sintaks-tolong-gimana-caranya-biar-hafal)
@@ -42,14 +42,14 @@ weight: 30
   - [Pro dan Kontra Jadi Programmer Lewat Jalur Kuliah](/id/konten-video/pengen-jadi-programmer/pro-dan-kontra-jadi-programmer-lewat-jalur-kuliah)
   - [Pro dan Kontra Jadi Programmer Lewat Jalur Otodidak](/id/konten-video/pengen-jadi-programmer/pro-dan-kontra-jadi-programmer-lewat-jalur-otodidak)
   - [Umur Gw Udah Segini Bisakah](/id/konten-video/pengen-jadi-programmer/umur-gw-udah-segini-bisakah)
-- [Index](/id/konten-video/klub-belajar)
+- [Klub Belajar](/id/konten-video/klub-belajar)
   - [Online Course Build A Backend REST API With Django Advanced Udemy](/id/konten-video/klub-belajar/online-course-build-a-backend-rest-api-with-django-advanced-udemy)
   - [Website Go By Example](/id/konten-video/klub-belajar/website-go-by-example)
   - [Online Course Frontend Masters Intermediate TypeScript Mike North](/id/konten-video/klub-belajar/online-course-frontend-masters-intermediate-typescript-mike-north)
   - [Buku Why Does The Stock Market Go Up](/id/konten-video/klub-belajar/buku-why-does-the-stock-market-go-up)
   - [Online Course Frontend Masters Complete Intro To SQL PostgreSQL Brian Holt](/id/konten-video/klub-belajar/online-course-frontend-masters-complete-intro-to-sql-postgresql-brian-holt)
   - [Online Course AWS Certified Cloud Practitioner Clf C01 AWS Essentials Udemy](/id/konten-video/klub-belajar/online-course-aws-certified-cloud-practitioner-clf-c01-aws-essentials-udemy)
-- [Index](/id/konten-video/karir-programmer)
+- [Karir Programmer](/id/konten-video/karir-programmer)
   - [Tips Gimana Cara Menghadapi Gelombang Layoff dan Ketidakpastian Ekonomi](/id/konten-video/karir-programmer/tips-gimana-cara-menghadapi-gelombang-layoff-dan-ketidakpastian-ekonomi)
   - [Tips Interview Jangan Kasih Tau Gaji Kita Kalo Mau Dapet Tawaran yang Oke Adil](/id/konten-video/karir-programmer/tips-interview-jangan-kasih-tau-gaji-kita-kalo-mau-dapet-tawaran-yang-oke-adil)
   - [Fokus di Impact Kalo Pengen Cepet Naek Gaji dan Hidup Lebih Tenang](/id/konten-video/karir-programmer/fokus-di-impact-kalo-pengen-cepet-naek-gaji-dan-hidup-lebih-tenang)

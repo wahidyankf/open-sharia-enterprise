@@ -1,5 +1,5 @@
 ---
-title: "Index"
+title: "Python"
 date: 2025-12-17T10:54:44+07:00
 draft: false
 description: Complete learning path from zero to expert Python development - organized using the Diátaxis framework
@@ -9,14 +9,14 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/python/overview)
-- [Index](/en/learn/software-engineering/programming-language/python/tutorials)
+- [Tutorials](/en/learn/software-engineering/programming-language/python/tutorials)
   - [Overview](/en/learn/software-engineering/programming-language/python/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/python/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/python/tutorials/quick-start)
   - [Beginner](/en/learn/software-engineering/programming-language/python/tutorials/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/python/tutorials/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/python/tutorials/advanced)
-- [Index](/en/learn/software-engineering/programming-language/python/how-to)
+- [How to](/en/learn/software-engineering/programming-language/python/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/python/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/python/how-to/cookbook)
   - [Write Pythonic Code](/en/learn/software-engineering/programming-language/python/how-to/write-pythonic-code)
@@ -41,11 +41,11 @@ layout: list
   - [Data Validation Patterns](/en/learn/software-engineering/programming-language/python/how-to/data-validation-patterns)
   - [Security Best Practices](/en/learn/software-engineering/programming-language/python/how-to/security-best-practices)
   - [Package Management](/en/learn/software-engineering/programming-language/python/how-to/package-management)
-- [Index](/en/learn/software-engineering/programming-language/python/explanation)
+- [Explanation](/en/learn/software-engineering/programming-language/python/explanation)
   - [Overview](/en/learn/software-engineering/programming-language/python/explanation/overview)
   - [Best Practices](/en/learn/software-engineering/programming-language/python/explanation/best-practices)
   - [Anti Patterns](/en/learn/software-engineering/programming-language/python/explanation/anti-patterns)
-- [Index](/en/learn/software-engineering/programming-language/python/reference)
+- [Reference](/en/learn/software-engineering/programming-language/python/reference)
   - [Overview](/en/learn/software-engineering/programming-language/python/reference/overview)
   - [Cheat Sheet](/en/learn/software-engineering/programming-language/python/reference/cheat-sheet)
   - [Glossary](/en/learn/software-engineering/programming-language/python/reference/glossary)
