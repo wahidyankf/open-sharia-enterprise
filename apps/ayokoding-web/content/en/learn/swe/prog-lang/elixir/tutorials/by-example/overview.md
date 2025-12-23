@@ -139,11 +139,9 @@ end
 # Usage example showing how to call the function
 Example.function(input) # => output
 ```
-````
 
 **Key Takeaway**: 1-2 sentence summary highlighting the most important insight or pattern from this example.
-
-```
+````
 
 The **brief explanation** provides context. The **code** is heavily annotated with inline comments and `# =>` output notation. The **key takeaway** distills the concept to its essence.
 
@@ -158,4 +156,3 @@ Jump into the beginner examples to start learning Elixir through code:
 - [Advanced Examples (36-60)](/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced) - GenServer, Supervisor, metaprogramming, OTP
 
 Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.
-```
