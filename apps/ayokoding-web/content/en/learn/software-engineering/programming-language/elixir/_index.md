@@ -1,20 +1,20 @@
 ---
-title: "Index"
+title: "Elixir"
 date: 2025-12-21T00:00:00+07:00
 draft: false
 weight: 15000
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/elixir/overview)
-- [Index](/en/learn/software-engineering/programming-language/elixir/tutorials)
+- [Tutorials](/en/learn/software-engineering/programming-language/elixir/tutorials)
   - [Overview](/en/learn/software-engineering/programming-language/elixir/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/elixir/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/elixir/tutorials/quick-start)
   - [Beginner](/en/learn/software-engineering/programming-language/elixir/tutorials/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/elixir/tutorials/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/elixir/tutorials/advanced)
-  - [Index](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example)
-- [Index](/en/learn/software-engineering/programming-language/elixir/how-to)
+  - [By Example](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example)
+- [How to](/en/learn/software-engineering/programming-language/elixir/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/elixir/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/elixir/how-to/cookbook)
   - [Pattern Matching](/en/learn/software-engineering/programming-language/elixir/how-to/pattern-matching)
@@ -41,11 +41,11 @@ weight: 15000
   - [Caching](/en/learn/software-engineering/programming-language/elixir/how-to/caching)
   - [Debugging](/en/learn/software-engineering/programming-language/elixir/how-to/debugging)
   - [Monitoring](/en/learn/software-engineering/programming-language/elixir/how-to/monitoring)
-- [Index](/en/learn/software-engineering/programming-language/elixir/explanation)
+- [Explanation](/en/learn/software-engineering/programming-language/elixir/explanation)
   - [Overview](/en/learn/software-engineering/programming-language/elixir/explanation/overview)
   - [Best Practices](/en/learn/software-engineering/programming-language/elixir/explanation/best-practices)
   - [Anti Patterns](/en/learn/software-engineering/programming-language/elixir/explanation/anti-patterns)
-- [Index](/en/learn/software-engineering/programming-language/elixir/reference)
+- [Reference](/en/learn/software-engineering/programming-language/elixir/reference)
   - [Overview](/en/learn/software-engineering/programming-language/elixir/reference/overview)
   - [Cheat Sheet](/en/learn/software-engineering/programming-language/elixir/reference/cheat-sheet)
   - [Glossary](/en/learn/software-engineering/programming-language/elixir/reference/glossary)

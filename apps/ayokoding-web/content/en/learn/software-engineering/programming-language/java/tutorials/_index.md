@@ -1,12 +1,12 @@
 ---
-title: "Index"
+title: "Tutorials"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 weight: 100002
 description: Step-by-step learning path from installation to expert Java mastery
 ---
 
-- [Index](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
+- [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/programming-language/java/tutorials/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-language/java/tutorials/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/java/tutorials/by-example/intermediate)

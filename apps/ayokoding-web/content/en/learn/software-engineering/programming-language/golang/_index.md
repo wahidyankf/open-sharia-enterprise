@@ -1,5 +1,5 @@
 ---
-title: "Index"
+title: "Golang"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Complete learning path from installation to expert mastery - organized using the Diátaxis framework
@@ -9,15 +9,15 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/golang/overview)
-- [Index](/en/learn/software-engineering/programming-language/golang/tutorials)
+- [Tutorials](/en/learn/software-engineering/programming-language/golang/tutorials)
   - [Overview](/en/learn/software-engineering/programming-language/golang/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/golang/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/golang/tutorials/quick-start)
   - [Beginner](/en/learn/software-engineering/programming-language/golang/tutorials/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/golang/tutorials/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/golang/tutorials/advanced)
-  - [Index](/en/learn/software-engineering/programming-language/golang/tutorials/by-example)
-- [Index](/en/learn/software-engineering/programming-language/golang/how-to)
+  - [By Example](/en/learn/software-engineering/programming-language/golang/tutorials/by-example)
+- [How to](/en/learn/software-engineering/programming-language/golang/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/golang/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/golang/how-to/cookbook)
   - [Handle Errors Effectively](/en/learn/software-engineering/programming-language/golang/how-to/handle-errors-effectively)
@@ -43,11 +43,11 @@ layout: list
   - [Rate Limiting Patterns](/en/learn/software-engineering/programming-language/golang/how-to/rate-limiting-patterns)
   - [Table Driven Tests](/en/learn/software-engineering/programming-language/golang/how-to/table-driven-tests)
   - [Generics Patterns](/en/learn/software-engineering/programming-language/golang/how-to/generics-patterns)
-- [Index](/en/learn/software-engineering/programming-language/golang/explanation)
+- [Explanation](/en/learn/software-engineering/programming-language/golang/explanation)
   - [Overview](/en/learn/software-engineering/programming-language/golang/explanation/overview)
   - [Best Practices](/en/learn/software-engineering/programming-language/golang/explanation/best-practices)
   - [Anti Patterns](/en/learn/software-engineering/programming-language/golang/explanation/anti-patterns)
-- [Index](/en/learn/software-engineering/programming-language/golang/reference)
+- [Reference](/en/learn/software-engineering/programming-language/golang/reference)
   - [Overview](/en/learn/software-engineering/programming-language/golang/reference/overview)
   - [Cheat Sheet](/en/learn/software-engineering/programming-language/golang/reference/cheat-sheet)
   - [Glossary](/en/learn/software-engineering/programming-language/golang/reference/glossary)

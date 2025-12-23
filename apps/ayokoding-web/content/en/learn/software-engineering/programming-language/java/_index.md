@@ -1,5 +1,5 @@
 ---
-title: "Index"
+title: "Java"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Java development - organized using the Diátaxis framework
@@ -9,15 +9,15 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/java/overview)
-- [Index](/en/learn/software-engineering/programming-language/java/tutorials)
-  - [Index](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
+- [Tutorials](/en/learn/software-engineering/programming-language/java/tutorials)
+  - [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/programming-language/java/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/java/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/java/tutorials/quick-start)
   - [Beginner](/en/learn/software-engineering/programming-language/java/tutorials/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/java/tutorials/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/java/tutorials/advanced)
-- [Index](/en/learn/software-engineering/programming-language/java/how-to)
+- [How to](/en/learn/software-engineering/programming-language/java/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/java/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/java/how-to/cookbook)
   - [Exception Handling](/en/learn/software-engineering/programming-language/java/how-to/exception-handling)
@@ -43,11 +43,11 @@ layout: list
   - [Organize Packages Properly](/en/learn/software-engineering/programming-language/java/how-to/organize-packages-properly)
   - [Virtual Threads](/en/learn/software-engineering/programming-language/java/how-to/virtual-threads)
   - [Testing Strategies](/en/learn/software-engineering/programming-language/java/how-to/testing-strategies)
-- [Index](/en/learn/software-engineering/programming-language/java/explanation)
+- [Explanation](/en/learn/software-engineering/programming-language/java/explanation)
   - [Overview](/en/learn/software-engineering/programming-language/java/explanation/overview)
   - [Best Practices](/en/learn/software-engineering/programming-language/java/explanation/best-practices)
   - [Anti Patterns](/en/learn/software-engineering/programming-language/java/explanation/anti-patterns)
-- [Index](/en/learn/software-engineering/programming-language/java/reference)
+- [Reference](/en/learn/software-engineering/programming-language/java/reference)
   - [Overview](/en/learn/software-engineering/programming-language/java/reference/overview)
   - [Cheat Sheet](/en/learn/software-engineering/programming-language/java/reference/cheat-sheet)
   - [Glossary](/en/learn/software-engineering/programming-language/java/reference/glossary)

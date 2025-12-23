@@ -1,12 +1,12 @@
 ---
-title: "Index"
+title: "Themes"
 date: 2025-03-16T07:20:00+07:00
 draft: false
 weight: 100000
 ---
 
 - [Overview](/en/learn/human/tools/cliftonstrengths/themes/overview)
-- [Index](/en/learn/human/tools/cliftonstrengths/themes/executing)
+- [Executing](/en/learn/human/tools/cliftonstrengths/themes/executing)
   - [Overview](/en/learn/human/tools/cliftonstrengths/themes/executing/overview)
   - [Achiever](/en/learn/human/tools/cliftonstrengths/themes/executing/achiever)
   - [Arranger](/en/learn/human/tools/cliftonstrengths/themes/executing/arranger)
@@ -17,7 +17,7 @@ weight: 100000
   - [Restorative](/en/learn/human/tools/cliftonstrengths/themes/executing/restorative)
   - [Belief](/en/learn/human/tools/cliftonstrengths/themes/executing/belief)
   - [Consistency](/en/learn/human/tools/cliftonstrengths/themes/executing/consistency)
-- [Index](/en/learn/human/tools/cliftonstrengths/themes/influencing)
+- [Influencing](/en/learn/human/tools/cliftonstrengths/themes/influencing)
   - [Overview](/en/learn/human/tools/cliftonstrengths/themes/influencing/overview)
   - [Significance](/en/learn/human/tools/cliftonstrengths/themes/influencing/significance)
   - [Communication](/en/learn/human/tools/cliftonstrengths/themes/influencing/communication)
@@ -27,7 +27,7 @@ weight: 100000
   - [Command](/en/learn/human/tools/cliftonstrengths/themes/influencing/command)
   - [Activator](/en/learn/human/tools/cliftonstrengths/themes/influencing/activator)
   - [Competition](/en/learn/human/tools/cliftonstrengths/themes/influencing/competition)
-- [Index](/en/learn/human/tools/cliftonstrengths/themes/relationship-building)
+- [Relationship Building](/en/learn/human/tools/cliftonstrengths/themes/relationship-building)
   - [Overview](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/overview)
   - [Relator](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/relator)
   - [Harmony](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/harmony)
@@ -38,7 +38,7 @@ weight: 100000
   - [Empathy](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/empathy)
   - [Individualization](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/individualization)
   - [Includer](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/includer)
-- [Index](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking)
+- [Strategic Thinking](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking)
   - [Overview](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/overview)
   - [Strategic](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/strategic)
   - [Input](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking/input)
