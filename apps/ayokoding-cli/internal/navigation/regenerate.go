@@ -28,8 +28,12 @@ func RegenerateNavigation(contentDir string) (*RegenerateResult, error) {
 		return nil, fmt.Errorf("content directory not found: %s", contentDir)
 	}
 
-	// Find all _index.md files
-	indexFiles, err := findIndexFiles(contentDir)
+	// Find the actual content root directory
+	// If contentDir is a subdirectory like content/en/learn/swe, we need to find the actual root
+	contentRoot := findContentRoot(contentDir)
+
+	// Find all _index.md files within contentDir (not the root)
+	indexFiles, err := findIndexFilesInDir(contentDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find index files: %w", err)
 	}
@@ -40,7 +44,7 @@ func RegenerateNavigation(contentDir string) (*RegenerateResult, error) {
 
 	// Process each _index.md file
 	for _, indexFile := range indexFiles {
-		if err := processIndexFile(indexFile, contentDir); err != nil {
+		if err := processIndexFile(indexFile, contentRoot); err != nil {
 			result.ErrorCount++
 			result.Errors = append(result.Errors, fmt.Sprintf("%s: %v", indexFile, err))
 		} else {
@@ -51,7 +55,28 @@ func RegenerateNavigation(contentDir string) (*RegenerateResult, error) {
 	return result, nil
 }
 
-// findIndexFiles finds all _index.md files, excluding root language files
+// findContentRoot finds the actual ayokoding-web content directory
+// Returns the path that contains "en" and "id" subdirectories
+func findContentRoot(path string) string {
+	// Check if this path or any parent contains "content" directory
+	current := path
+	for {
+		base := filepath.Base(current)
+		if base == "content" {
+			return current
+		}
+
+		parent := filepath.Dir(current)
+		if parent == current {
+			// Reached root, return original path
+			return path
+		}
+		current = parent
+	}
+}
+
+// findIndexFiles finds all _index.md files within a specific directory
+// Excludes root language index files only if we're processing the full content directory
 func findIndexFiles(contentDir string) ([]string, error) {
 	var indexFiles []string
 
@@ -80,8 +105,27 @@ func findIndexFiles(contentDir string) ([]string, error) {
 	return indexFiles, err
 }
 
+// findIndexFilesInDir finds all _index.md files within a specific directory
+func findIndexFilesInDir(startDir string) ([]string, error) {
+	var indexFiles []string
+
+	err := filepath.Walk(startDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && info.Name() == "_index.md" {
+			indexFiles = append(indexFiles, path)
+		}
+
+		return nil
+	})
+
+	return indexFiles, err
+}
+
 // processIndexFile processes a single _index.md file
-func processIndexFile(indexPath string, contentDir string) error {
+func processIndexFile(indexPath string, contentRoot string) error {
 	// Extract frontmatter
 	fm, err := markdown.ExtractFrontmatter(indexPath)
 	if err != nil {
@@ -92,14 +136,15 @@ func processIndexFile(indexPath string, contentDir string) error {
 	parentDir := filepath.Dir(indexPath)
 
 	// Calculate base URL path from content root
-	// Example: content/en/learn/swe -> /en/learn/swe
-	relPath, err := filepath.Rel(contentDir, parentDir)
+	// Example: contentRoot = /content, parentDir = /content/en/learn/swe
+	// Result should be: /en/learn/swe
+	relPath, err := filepath.Rel(contentRoot, parentDir)
 	if err != nil {
 		return fmt.Errorf("failed to calculate relative path: %w", err)
 	}
 
 	// Convert filesystem path to URL path (replace backslashes with forward slashes on Windows)
-	// Handle edge case where relPath is "." (same directory as contentDir)
+	// Handle edge case where relPath is "." (same directory as contentRoot)
 	var basePath string
 	if relPath == "." {
 		basePath = ""
