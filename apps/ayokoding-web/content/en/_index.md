@@ -3,7 +3,7 @@ bookCollapseSection: false
 bookFlatSection: false
 date: 2025-03-16T07:20:00+07:00
 draft: false
-title: "En"
+title: "English Content"
 weight: 1
 cascade:
   type: docs
