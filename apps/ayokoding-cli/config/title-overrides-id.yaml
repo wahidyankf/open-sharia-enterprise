@@ -4,6 +4,7 @@
 # Special case overrides - exact matches (case-insensitive)
 # Format: nama-file-atau-kata: "Judul yang Diinginkan"
 overrides:
+  ayokoding: "AyoKoding"
   cliftonstrengths: "CliftonStrengths"
   javascript: "JavaScript"
   typescript: "TypeScript"

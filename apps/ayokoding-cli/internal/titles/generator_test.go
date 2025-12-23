@@ -8,6 +8,7 @@ func TestGenerateTitle(t *testing.T) {
 	// Create test config
 	config := &Config{
 		Overrides: map[string]string{
+			"ayokoding":        "AyoKoding",
 			"javascript":       "JavaScript",
 			"typescript":       "TypeScript",
 			"cliftonstrengths": "CliftonStrengths",
@@ -107,9 +108,19 @@ func TestGenerateTitle(t *testing.T) {
 			expected: "Hello World Test",
 		},
 		{
-			name:     "leading underscore (_index)",
-			filePath: "/path/to/_index.md",
-			expected: "Index",
+			name:     "_index.md uses parent folder name",
+			filePath: "/path/to/learn/_index.md",
+			expected: "Learn",
+		},
+		{
+			name:     "_index.md with multi-word parent folder",
+			filePath: "/path/to/software-engineering/_index.md",
+			expected: "Software Engineering",
+		},
+		{
+			name:     "_index.md with override in parent folder name",
+			filePath: "/path/to/about-ayokoding/_index.md",
+			expected: "About AyoKoding",
 		},
 		{
 			name:     "multiple consecutive hyphens",
@@ -168,9 +179,9 @@ func TestGenerateTitle(t *testing.T) {
 			expected: "Corporate Finance",
 		},
 		{
-			name:     "about ayokoding",
+			name:     "about ayokoding (with override)",
 			filePath: "/path/to/about-ayokoding.md",
-			expected: "About Ayokoding",
+			expected: "About AyoKoding",
 		},
 	}
 
