@@ -1,5 +1,5 @@
 ---
-title: "Deployment and Releases"
+title: "Deployment"
 date: 2025-12-21T18:15:00+07:00
 draft: false
 description: "Deploy Elixir applications using Mix releases, Docker, environment configuration, and production best practices for reliable deployments."

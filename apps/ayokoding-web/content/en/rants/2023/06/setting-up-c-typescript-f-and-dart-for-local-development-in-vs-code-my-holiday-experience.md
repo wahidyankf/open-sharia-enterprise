@@ -1,5 +1,5 @@
 ---
-title: "Setting Up C, TypeScript, F#, and Dart for Local Development in VS Code: My Holiday Experience"
+title: "Setting Up C TypeScript F and Dart for Local Development in vs Code My Holiday Experience"
 weight: 10020
 date: 2023-06-29T07:20:00+07:00
 draft: false

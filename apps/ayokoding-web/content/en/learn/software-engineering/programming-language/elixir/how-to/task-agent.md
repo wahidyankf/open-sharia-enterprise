@@ -1,5 +1,5 @@
 ---
-title: "Concurrent Programming with Task and Agent"
+title: "Task Agent"
 date: 2025-12-21T17:10:00+07:00
 draft: false
 description: "Master lightweight concurrency in Elixir using Task for async operations and Agent for simple state management without full GenServer complexity."

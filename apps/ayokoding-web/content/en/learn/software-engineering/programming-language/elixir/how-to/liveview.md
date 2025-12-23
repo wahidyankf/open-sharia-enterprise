@@ -1,5 +1,5 @@
 ---
-title: "LiveView Real-Time Interfaces"
+title: "Liveview"
 date: 2025-12-21T17:20:00+07:00
 draft: false
 description: "Build interactive real-time web interfaces with Phoenix LiveView using server-side rendering, WebSocket updates, and zero JavaScript."

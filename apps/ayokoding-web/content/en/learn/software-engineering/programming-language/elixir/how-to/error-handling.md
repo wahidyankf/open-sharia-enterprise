@@ -1,5 +1,5 @@
 ---
-title: "Handle Errors with Result Tuples"
+title: "Error Handling"
 date: 2025-12-21T10:00:00+07:00
 draft: false
 description: "Master Elixir error handling using result tuples, with expressions, try-catch-rescue, and supervision strategies"

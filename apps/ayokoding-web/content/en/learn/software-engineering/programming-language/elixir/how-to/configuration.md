@@ -1,5 +1,5 @@
 ---
-title: "Configuration and Environment Management"
+title: "Configuration"
 date: 2025-12-21T17:40:00+07:00
 draft: false
 description: "Manage Elixir application configuration with runtime config, environment variables, and secrets for development, staging, and production."

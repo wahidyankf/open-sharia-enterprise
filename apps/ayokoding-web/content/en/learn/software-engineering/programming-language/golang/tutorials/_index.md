@@ -1,5 +1,5 @@
 ---
-title: Tutorials
+title: "Index"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 weight: 100002
@@ -12,8 +12,8 @@ description: Step-by-step learning path from installation to expert Go mastery
 - [Beginner](/en/learn/software-engineering/programming-language/golang/tutorials/beginner)
 - [Intermediate](/en/learn/software-engineering/programming-language/golang/tutorials/intermediate)
 - [Advanced](/en/learn/software-engineering/programming-language/golang/tutorials/advanced)
-- [By Example](/en/learn/software-engineering/programming-language/golang/tutorials/by-example)
+- [Index](/en/learn/software-engineering/programming-language/golang/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/overview)
-  - [Beginner Examples - Go By Example](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/beginner)
-  - [Intermediate Examples - Go By Example](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/intermediate)
-  - [Advanced Examples - Go By Example](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/advanced)
+  - [Beginner](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/advanced)

@@ -1,5 +1,5 @@
 ---
-title: "Mix Project Management"
+title: "Mix"
 date: 2025-12-21T17:35:00+07:00
 draft: false
 description: "Manage Elixir projects with Mix build tool covering dependencies, tasks, releases, and project organization for development and production."

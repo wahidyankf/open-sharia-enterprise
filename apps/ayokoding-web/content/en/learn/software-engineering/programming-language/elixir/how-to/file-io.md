@@ -1,5 +1,5 @@
 ---
-title: "File I/O and System Interaction"
+title: "File Io"
 date: 2025-12-21T17:55:00+07:00
 draft: false
 description: "Work with files and system in Elixir using File module, Path utilities, streams for large files, and system commands."

@@ -1,5 +1,5 @@
 ---
-title: Complete Beginner's Guide to Kotlin
+title: "Beginner"
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Master Kotlin fundamentals from zero - comprehensive coverage of types, OOP, functional programming, collections, error handling, and testing

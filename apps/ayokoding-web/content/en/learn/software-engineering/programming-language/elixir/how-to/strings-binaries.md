@@ -1,5 +1,5 @@
 ---
-title: "Working with Strings and Binaries"
+title: "Strings Binaries"
 date: 2025-12-21T18:00:00+07:00
 draft: false
 description: "Master string manipulation and binary handling in Elixir with pattern matching, String module functions, and binary protocols."

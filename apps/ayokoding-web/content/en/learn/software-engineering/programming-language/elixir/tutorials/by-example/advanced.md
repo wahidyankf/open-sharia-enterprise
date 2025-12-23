@@ -1,5 +1,5 @@
 ---
-title: "Advanced Examples - Elixir By Example"
+title: "Advanced"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000003

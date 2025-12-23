@@ -1,5 +1,5 @@
 ---
-title: "Cerita Programmer - 1 - Initial Commit"
+title: "Cerita Programmer 0000001 Initial Commit"
 date: 2025-03-16T07:20:00+07:00
 draft: false
 weight: 1030

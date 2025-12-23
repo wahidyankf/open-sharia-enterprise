@@ -1,5 +1,5 @@
 ---
-title: "Managing State with GenServer"
+title: "Genserver"
 date: 2025-12-21T17:00:00+07:00
 draft: false
 description: "Build robust stateful processes in Elixir using GenServer with synchronous calls, asynchronous casts, state management patterns, and proper error handling."

@@ -1,5 +1,5 @@
 ---
-title: "How to Manage Configuration"
+title: "Manage Configuration"
 date: 2025-12-17T13:19:07+07:00
 draft: false
 weight: 1000009

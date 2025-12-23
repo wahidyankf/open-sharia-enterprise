@@ -1,5 +1,5 @@
 ---
-title: "How to Avoid NullPointerException"
+title: "Avoid Nullpointerexception"
 date: 2025-12-17T07:06:48+07:00
 draft: false
 weight: 1000003

@@ -1,5 +1,5 @@
 ---
-title: "Elixir Cookbook"
+title: "Cookbook"
 date: 2025-12-21T10:00:00+07:00
 draft: false
 description: "Comprehensive collection of practical Elixir recipes covering data structures, concurrency, OTP, Phoenix, Ecto, testing, and performance optimization"

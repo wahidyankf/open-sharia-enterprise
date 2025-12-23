@@ -1,5 +1,5 @@
 ---
-title: "Work with Processes and Message Passing"
+title: "Processes Message Passing"
 date: 2025-12-21T10:00:00+07:00
 draft: false
 description: "Master Elixir processes, message passing, spawn, send/receive, process linking, and concurrent programming fundamentals"

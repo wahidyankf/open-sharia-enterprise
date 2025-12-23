@@ -1,5 +1,5 @@
 ---
-title: Pengaruh
+title: "Index"
 weight: 10000010
 date: 2025-03-16T07:20:00+07:00
 draft: false
@@ -12,5 +12,5 @@ draft: false
 - [Komando](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/komando)
 - [Kompetisi](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/kompetisi)
 - [Signifikansi](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/signifikansi)
-- [Mengajak (Menarik Hati)](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/mengajak-menarik-hati)
+- [Mengajak Menarik Hati](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/mengajak-menarik-hati)
 - [Maksimalisasi](/id/belajar/manusia/peralatan/cliftonstrengths/tema/pengaruh/maksimalisasi)

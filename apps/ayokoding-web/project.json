@@ -24,6 +24,16 @@
         "command": "rm -rf public resources .hugo_build.lock",
         "cwd": "apps/ayokoding-web"
       }
+    },
+    "pre-commit-script": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "./apps/ayokoding-cli/dist/ayokoding-cli titles update --quiet",
+          "./apps/ayokoding-cli/dist/ayokoding-cli nav regen --quiet"
+        ],
+        "parallel": false
+      }
     }
   }
 }

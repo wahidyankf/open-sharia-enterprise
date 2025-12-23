@@ -1,5 +1,5 @@
 ---
-title: "How to Handle Files and Resources"
+title: "Handle Files and Resources"
 date: 2025-12-17T13:19:07+07:00
 draft: false
 weight: 1000006

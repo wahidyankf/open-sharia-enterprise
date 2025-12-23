@@ -1,5 +1,5 @@
 ---
-title: "Go Best Practices and Idioms"
+title: "Best Practices"
 date: 2025-12-17T10:00:00+07:00
 draft: false
 weight: 1000030

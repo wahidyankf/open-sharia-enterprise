@@ -1,5 +1,5 @@
 ---
-title: "Perjalanan Gw dengan ChatGPT Plus: Kenapa Layak Diinvestasikan"
+title: "Perjalanan Gw dengan Chatgpt Plus Kenapa Layak Diinvestasikan"
 weight: 10020
 date: 2023-04-30T07:20:00+07:00
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: "How to Implement Error Handling Patterns"
+title: "Error Handling Patterns"
 date: 2025-12-18T00:00:00+07:00
 draft: false
 weight: 1000004

@@ -1,5 +1,5 @@
 ---
-title: "How to Use Slices and Maps Effectively"
+title: "Use Slices and Maps Effectively"
 date: 2025-12-17T10:00:00+07:00
 draft: false
 weight: 1000004

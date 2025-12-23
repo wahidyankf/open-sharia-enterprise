@@ -1,5 +1,5 @@
 ---
-title: "Java Best Practices and Design Principles"
+title: "Best Practices"
 date: 2025-12-17T07:06:48+07:00
 draft: false
 weight: 1000030

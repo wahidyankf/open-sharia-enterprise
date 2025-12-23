@@ -1,5 +1,5 @@
 ---
-title: "Caching Strategies"
+title: "Caching"
 date: 2025-12-21T18:25:00+07:00
 draft: false
 description: "Implement efficient caching in Elixir using ETS, Agent, GenServer, and external stores like Redis for performance optimization."

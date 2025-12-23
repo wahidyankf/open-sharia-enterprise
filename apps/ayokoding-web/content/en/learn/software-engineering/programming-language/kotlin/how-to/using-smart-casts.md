@@ -1,5 +1,5 @@
 ---
-title: "How to Use Smart Casts"
+title: "Using Smart Casts"
 date: 2025-12-18T00:00:00+07:00
 draft: false
 weight: 1000005

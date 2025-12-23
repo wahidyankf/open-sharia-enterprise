@@ -1,5 +1,5 @@
 ---
-title: "Testing with ExUnit"
+title: "Testing"
 date: 2025-12-21T17:30:00+07:00
 draft: false
 description: "Write comprehensive tests in Elixir using ExUnit with assertions, setup callbacks, async tests, mocks, and property-based testing."

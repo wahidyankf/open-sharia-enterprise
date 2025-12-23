@@ -1,5 +1,5 @@
 ---
-title: "Monitoring and Logging"
+title: "Monitoring"
 date: 2025-12-21T18:35:00+07:00
 draft: false
 description: "Implement comprehensive monitoring and logging in Elixir using Telemetry, Logger, metrics collection, and observability for production systems."

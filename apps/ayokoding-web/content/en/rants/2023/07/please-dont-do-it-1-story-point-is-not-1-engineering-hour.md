@@ -1,5 +1,5 @@
 ---
-title: "Please don't do it! 1 Story Point is not 1 Engineering Hour!"
+title: "Please Dont Do It 1 Story Point Is Not 1 Engineering Hour"
 weight: 10040
 date: 2023-07-14T07:20:00+07:00
 draft: false

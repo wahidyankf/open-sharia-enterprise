@@ -1,5 +1,5 @@
 ---
-title: "Performance Profiling and Optimization"
+title: "Performance"
 date: 2025-12-21T17:45:00+07:00
 draft: false
 description: "Profile and optimize Elixir applications using fprof, benchee, Observer, and performance best practices for production systems."

@@ -1,5 +1,5 @@
 ---
-title: "How to Manage Dependencies and Environments"
+title: "Manage Dependencies and Environments"
 date: 2025-12-17T10:54:44+07:00
 draft: false
 weight: 1000012

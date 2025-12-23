@@ -1,5 +1,5 @@
 ---
-title: "Perjalanan Meningkatkan Kemampuan Seumur Hidup: Kisah Taman Kanak-Kanak dan Hubungannya dengan Dunia Rekayasa Perangkat Lunak dan AI"
+title: "Perjalanan Meningkatkan Kemampuan Seumur Hidup Kisah Taman Kanak Kanak dan Hubungannya dengan Dunia Rekayasa Perangkat Lunak dan Ai"
 weight: 10040
 date: 2023-06-18T07:20:00+07:00
 draft: false

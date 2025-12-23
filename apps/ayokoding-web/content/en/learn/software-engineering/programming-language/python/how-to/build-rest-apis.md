@@ -1,5 +1,5 @@
 ---
-title: "How to Build REST APIs"
+title: "Build REST Apis"
 date: 2025-12-21T00:00:00+07:00
 draft: false
 weight: 1000020

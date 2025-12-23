@@ -1,5 +1,5 @@
 ---
-title: "Debugging and Troubleshooting"
+title: "Debugging"
 date: 2025-12-21T18:30:00+07:00
 draft: false
 description: "Debug Elixir applications using IEx, dbg, Observer, logging, and tracing tools for effective problem diagnosis and resolution."

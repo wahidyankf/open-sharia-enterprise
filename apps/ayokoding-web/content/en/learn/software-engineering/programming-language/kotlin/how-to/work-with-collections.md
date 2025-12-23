@@ -1,5 +1,5 @@
 ---
-title: "How to Work with Collections Idiomatically"
+title: "Work with Collections"
 date: 2025-12-18T14:50:04+07:00
 draft: false
 weight: 1000007

@@ -1,5 +1,5 @@
 ---
-title: "Time Management Strategies for Software Engineers: Maximizing Productivity and Success"
+title: "Time Management Strategies for Software Engineers Maximizing Productivity and Success"
 weight: 10030
 date: 2023-07-14T07:20:00+07:00
 draft: false
