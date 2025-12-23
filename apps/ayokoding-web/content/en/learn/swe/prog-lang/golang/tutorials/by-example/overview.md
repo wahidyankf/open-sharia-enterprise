@@ -7,13 +7,27 @@ description: "Learn Go through 60+ annotated code examples covering 90% of the l
 tags: ["golang", "go", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-By-example learning is a code-first approach designed for experienced developers. Rather than lengthy explanations, you learn through working, annotated code examples that demonstrate how language features work in practice.
+**Want to quickly master Go through working examples?** This by-example guide teaches 90% of Go through 60+ annotated code examples organized by complexity level.
+
+## What Is By-Example Learning?
+
+By-example learning is an **example-first approach** where you learn through annotated, runnable code rather than narrative explanations. Each example is self-contained, immediately executable with `go run`, and heavily commented to show:
+
+- **What each line does** - Inline comments explain the purpose and mechanism
+- **Expected outputs** - Using `// =>` notation to show results
+- **Intermediate values** - Variable states and control flow made visible
+- **Key takeaways** - 1-2 sentence summaries of core concepts
+
+This approach is **ideal for experienced developers** (seasonal programmers or software engineers) who are familiar with at least one programming language and want to quickly understand Go's syntax, idioms, and unique features through working code.
+
+Unlike narrative tutorials that build understanding through explanation and storytelling, by-example learning lets you **see the code first, run it second, and understand it through direct interaction**. You learn by doing, not by reading about doing.
 
 ## Learning Path
 
 The Go by-example tutorial guides you through 60 carefully selected examples organized into three progressive levels, from fundamental concepts to advanced patterns.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["Beginner (Examples 1-15)<br/>0-40% Coverage<br/>Fundamentals"]
     B["Intermediate (Examples 16-35)<br/>40-70% Coverage<br/>Production Ready"]
@@ -27,33 +41,25 @@ graph LR
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 
-## What This Tutorial Covers
+## Coverage Philosophy
 
-**Language Fundamentals**: Go syntax, type system, variable declaration, constants, and the compilation model
+This by-example guide provides **90% coverage of Go** through practical, annotated examples. The 90% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
-**Core Data Structures**: Arrays, slices, maps, structs, and their underlying mechanics (backing arrays, capacity, zero values)
+### What's Covered
 
-**Functions and Methods**: Function declarations, multiple returns, methods, receivers (value vs pointer), and when to use each
-
-**Interfaces and Composition**: Interface definition, implicit satisfaction, type assertions, and Go's composition-over-inheritance philosophy
-
-**Error Handling**: The `error` interface, custom error types, error wrapping, and the error handling idiom that pervades Go code
-
-**Concurrency Fundamentals**: Goroutines, channels (buffered and unbuffered), the `select` statement, and synchronization primitives (`sync.WaitGroup`, `sync.Mutex`)
-
-**Standard Library**: Deep dive into `fmt`, `strings`, `encoding/json`, `net/http`, `time`, `regexp`, `context`, and other essential packages
-
-**I/O and HTTP**: File operations, HTTP clients and servers, handler functions, and middleware patterns
-
-**Production Patterns**: HTTP middleware chains (request/response decoration), graceful shutdown with signal handling, worker pools, and options pattern for configuration
-
-**Testing and Benchmarking**: Table-driven tests, subtests, benchmarking, fuzzing, and test coverage measurement
-
-**Advanced Concurrency**: Pipeline patterns, fan-out/fan-in, rate limiting, semaphores, and atomic operations
-
-**Modern Go Features**: Generics (Go 1.18+), embed directive (Go 1.16+), fuzzing (Go 1.18+), and workspaces (Go 1.18+)
-
-**Advanced Tools**: Reflection, CGO, build tags, custom sorting, dependency injection, memory profiling, and the race detector
+- **Core syntax** - Variables, types, operators, control flow, methods
+- **Data structures** - Arrays, slices, maps, structs, and their underlying mechanics (backing arrays, capacity, zero values)
+- **Functions and methods** - Function declarations, multiple returns, methods, receivers (value vs pointer), and when to use each
+- **Interfaces and composition** - Interface definition, implicit satisfaction, type assertions, and Go's composition-over-inheritance philosophy
+- **Error handling** - The `error` interface, custom error types, error wrapping, and the error handling idiom
+- **Concurrency fundamentals** - Goroutines, channels (buffered and unbuffered), the `select` statement, synchronization primitives (`sync.WaitGroup`, `sync.Mutex`)
+- **Standard library** - Deep dive into `fmt`, `strings`, `encoding/json`, `net/http`, `time`, `regexp`, `context`, and other essential packages
+- **I/O and HTTP** - File operations, HTTP clients and servers, handler functions, middleware patterns
+- **Production patterns** - HTTP middleware chains (request/response decoration), graceful shutdown with signal handling, worker pools, options pattern for configuration
+- **Testing and benchmarking** - Table-driven tests, subtests, benchmarking, fuzzing, test coverage measurement
+- **Advanced concurrency** - Pipeline patterns, fan-out/fan-in, rate limiting, semaphores, atomic operations
+- **Modern Go features** - Generics (Go 1.18+), embed directive (Go 1.16+), fuzzing (Go 1.18+), workspaces (Go 1.18+)
+- **Advanced tools** - Reflection, CGO, build tags, custom sorting, dependency injection, memory profiling, race detector
 
 ## What This Tutorial Does NOT Cover
 
@@ -69,13 +75,13 @@ graph LR
 
 ## How to Use This Guide
 
-**Code-First Approach**: Each example is self-contained and runnable. Copy the code, run it, modify it, and experiment. This hands-on interaction is essential for learning.
+1. **Sequential or selective** - Read examples in order for progressive learning, or jump to specific topics when switching from another language
+2. **Run everything** - Copy and paste examples into a file and execute with `go run`. Experimentation solidifies understanding.
+3. **Modify and explore** - Change values, add print statements, break things intentionally. Learn through experimentation.
+4. **Use as reference** - Bookmark examples for quick lookups when you forget syntax or patterns
+5. **Complement with narrative tutorials** - By-example learning is code-first; pair with comprehensive tutorials for deeper explanations
 
-**Running Examples**: All examples are Go programs that you can run with `go run filename.go`. No special setup or dependencies required for beginner and intermediate examples.
-
-**Expected Output**: Code comments show expected output using `// => value` notation. Compare the output with your expectations to build intuition.
-
-**Modify and Experiment**: Don't just read - change values, add debugging output, remove lines and see what fails. This active learning reveals how Go features interact.
+**Best workflow**: Open your editor or terminal in one window, this guide in another. Run each example as you read it. When you encounter something unfamiliar, run the example, modify it, see what changes.
 
 **Reference System**: Examples are numbered (1-60) and grouped by level. This numbering appears in other Go content at ayokoding.com, allowing you to reference specific examples elsewhere.
 
@@ -109,7 +115,7 @@ The 90% coverage represents depth and breadth of topics you'll encounter in prod
 ## Prerequisites
 
 - Basic programming experience in any language (Python, JavaScript, Java, C++, etc.)
-- Go installed and verified (follow the [initial-setup](/en/learn/swe/prog-lang/golang/initial-setup) tutorial if needed)
+- Go installed and verified (follow the [initial-setup](/en/learn/swe/prog-lang/golang/tutorials/initial-setup) tutorial if needed)
 - A code editor you're comfortable with (VS Code with Go extension, GoLand, Vim, etc.)
 
 You don't need to understand Go's internals, philosophy, or ecosystem yet - this tutorial teaches those through examples. You just need comfort reading and running code.

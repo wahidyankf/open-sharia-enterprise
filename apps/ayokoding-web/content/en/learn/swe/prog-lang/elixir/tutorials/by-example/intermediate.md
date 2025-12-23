@@ -2199,6 +2199,243 @@ name = "Alice"
 
 ---
 
+### Example 36: GenServer Session Manager (Production Pattern)
+
+GenServer is OTP's generic server behavior - a process that maintains state and handles synchronous/asynchronous requests. Production systems use GenServer for session storage, caches, connection pools, and stateful services. This example demonstrates a thread-safe session manager with TTL cleanup.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    Client1["Client 1"] --> Put["put(key, value)"]
+    Client2["Client 2"] --> Get["get(key)"]
+    Client3["Client 3"] --> Delete["delete(key)"]
+
+    Put --> GenServer["GenServer Process<br/>State: %{sessions: map, ttl: 300}"]
+    Get --> GenServer
+    Delete --> GenServer
+
+    GenServer --> Handle["handle_call/cast<br/>Thread-safe operations"]
+    Handle --> State["Updated State"]
+
+    Timer["Periodic Cleanup<br/>:cleanup_expired"] --> GenServer
+
+    style Client1 fill:#0173B2,color:#fff
+    style Client2 fill:#0173B2,color:#fff
+    style Client3 fill:#0173B2,color:#fff
+    style Put fill:#DE8F05,color:#fff
+    style Get fill:#DE8F05,color:#fff
+    style Delete fill:#DE8F05,color:#fff
+    style GenServer fill:#029E73,color:#fff
+    style Handle fill:#CC78BC,color:#fff
+    style State fill:#CA9161,color:#fff
+    style Timer fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```elixir
+defmodule SessionManager do
+  @moduledoc """
+  GenServer-based session manager with TTL-based cleanup.
+  Provides thread-safe concurrent access to session data.
+  """
+
+  use GenServer  # => Use GenServer behavior (implements init, handle_call, handle_cast, etc.)
+
+  # Client API - public interface
+
+  @doc "Starts the session manager with optional TTL (default: 300 seconds)"
+  def start_link(opts \\ []) do
+    ttl = Keyword.get(opts, :ttl, 300)  # => Default 5 minutes
+    GenServer.start_link(__MODULE__, ttl, name: __MODULE__)
+    # => __MODULE__ = SessionManager, name registers process globally
+  end
+
+  @doc "Stores a session with given key and value"
+  def put(key, value) do
+    GenServer.call(__MODULE__, {:put, key, value})  # => Synchronous call
+    # => Blocks until server responds
+  end
+
+  @doc "Retrieves session by key, returns {:ok, value} or {:error, :not_found}"
+  def get(key) do
+    GenServer.call(__MODULE__, {:get, key})  # => Synchronous call
+  end
+
+  @doc "Deletes session by key"
+  def delete(key) do
+    GenServer.cast(__MODULE__, {:delete, key})  # => Asynchronous cast
+    # => Returns immediately without waiting for completion
+  end
+
+  @doc "Returns all active sessions (for debugging)"
+  def list_all do
+    GenServer.call(__MODULE__, :list_all)  # => Synchronous call
+  end
+
+  @doc "Returns session count"
+  def count do
+    GenServer.call(__MODULE__, :count)  # => Synchronous call
+  end
+
+  # Server Callbacks - GenServer implementation
+
+  @impl true
+  def init(ttl) do
+    # => Called when GenServer starts
+    # Initialize state with empty sessions map and TTL
+    state = %{
+      sessions: %{},  # => key -> {value, inserted_at}
+      ttl: ttl        # => Time-to-live in seconds
+    }
+
+    # Schedule periodic cleanup every 60 seconds
+    schedule_cleanup()  # => Sends message to self after delay
+
+    {:ok, state}  # => Return {:ok, initial_state}
+  end
+
+  @impl true
+  def handle_call({:put, key, value}, _from, state) do
+    # => Synchronous request handler
+    # _from = {pid, ref} of caller (unused here)
+
+    # Store session with current timestamp
+    session_data = {value, System.system_time(:second)}
+    updated_sessions = Map.put(state.sessions, key, session_data)
+
+    new_state = %{state | sessions: updated_sessions}  # => Update state
+
+    {:reply, :ok, new_state}  # => Reply to caller with :ok, update state
+  end
+
+  @impl true
+  def handle_call({:get, key}, _from, state) do
+    # => Synchronous request handler for get
+
+    case Map.get(state.sessions, key) do
+      nil ->
+        {:reply, {:error, :not_found}, state}  # => Session doesn't exist
+
+      {value, inserted_at} ->
+        # Check if session expired
+        current_time = System.system_time(:second)
+        age = current_time - inserted_at
+
+        if age > state.ttl do
+          # Session expired - remove it
+          updated_sessions = Map.delete(state.sessions, key)
+          new_state = %{state | sessions: updated_sessions}
+          {:reply, {:error, :expired}, new_state}
+        else
+          # Session valid - return value
+          {:reply, {:ok, value}, state}  # => State unchanged
+        end
+    end
+  end
+
+  @impl true
+  def handle_call(:list_all, _from, state) do
+    # => Return all sessions (for debugging)
+    sessions = state.sessions
+               |> Enum.map(fn {key, {value, _ts}} -> {key, value} end)
+               |> Enum.into(%{})
+
+    {:reply, sessions, state}  # => Return map without timestamps
+  end
+
+  @impl true
+  def handle_call(:count, _from, state) do
+    # => Return session count
+    count = map_size(state.sessions)
+    {:reply, count, state}
+  end
+
+  @impl true
+  def handle_cast({:delete, key}, state) do
+    # => Asynchronous request handler (no reply sent)
+    updated_sessions = Map.delete(state.sessions, key)
+    new_state = %{state | sessions: updated_sessions}
+
+    {:noreply, new_state}  # => No reply for cast, just update state
+  end
+
+  @impl true
+  def handle_info(:cleanup_expired, state) do
+    # => Handle messages sent to process (not call/cast)
+    # Cleanup expired sessions
+
+    current_time = System.system_time(:second)
+
+    # Filter out expired sessions
+    active_sessions = state.sessions
+                      |> Enum.filter(fn {_key, {_value, inserted_at}} ->
+                        age = current_time - inserted_at
+                        age <= state.ttl  # => Keep only non-expired
+                      end)
+                      |> Enum.into(%{})
+
+    removed_count = map_size(state.sessions) - map_size(active_sessions)
+    if removed_count > 0 do
+      IO.puts("Cleaned up #{removed_count} expired sessions")
+    end
+
+    new_state = %{state | sessions: active_sessions}
+
+    # Schedule next cleanup
+    schedule_cleanup()
+
+    {:noreply, new_state}  # => Update state, no reply
+  end
+
+  # Private helpers
+
+  defp schedule_cleanup do
+    # Send :cleanup_expired message to self after 60 seconds
+    Process.send_after(self(), :cleanup_expired, 60_000)  # => 60 seconds
+  end
+end
+
+# Usage example
+{:ok, _pid} = SessionManager.start_link(ttl: 10)  # => 10 second TTL for demo
+
+# Store sessions
+SessionManager.put("user_123", %{name: "Alice", role: :admin})
+SessionManager.put("user_456", %{name: "Bob", role: :user})
+SessionManager.put("user_789", %{name: "Charlie", role: :guest})
+
+# Retrieve sessions
+SessionManager.get("user_123")  # => {:ok, %{name: "Alice", role: :admin}}
+SessionManager.get("user_999")  # => {:error, :not_found}
+
+# Delete session
+SessionManager.delete("user_456")
+SessionManager.get("user_456")  # => {:error, :not_found}
+
+# List all sessions
+SessionManager.list_all()  # => %{"user_123" => %{...}, "user_789" => %{...}}
+SessionManager.count()  # => 2
+
+# Wait for TTL expiration
+:timer.sleep(11_000)  # => 11 seconds
+SessionManager.get("user_123")  # => {:error, :expired}
+
+# Automatic cleanup runs every 60 seconds (or immediately on get if expired)
+
+# Production considerations:
+# 1. Supervision: Add to supervision tree for fault tolerance
+# 2. Persistence: Optionally persist to database or ETS
+# 3. Distributed: Use :global name or distributed registry
+# 4. Metrics: Add telemetry for session creation/deletion/expiration
+# 5. Limits: Add max session count to prevent memory exhaustion
+```
+
+**Key Takeaway**: GenServer provides thread-safe stateful processes via callbacks. Use `GenServer.call/2` for synchronous requests that need replies, `GenServer.cast/2` for asynchronous fire-and-forget operations. State is immutable - callbacks return new state. `handle_info/2` handles arbitrary messages like timers. GenServer processes run concurrently and isolate state, enabling millions of concurrent sessions.
+
+**Why This Matters**: GenServer is the foundation of OTP applications. It handles concurrency, state management, and fault tolerance automatically. Production Elixir systems use GenServer for caches, connection pools, rate limiters, session stores, and background workers. Understanding the GenServer pattern (client API calling server callbacks that update state) is essential for building scalable, concurrent systems. Add GenServers to supervision trees for automatic restart on crashes.
+
+---
+
 ## What's Next?
 
 You've completed the intermediate examples covering advanced pattern matching, data structures, module organization, error handling, processes, and testing. You now understand:

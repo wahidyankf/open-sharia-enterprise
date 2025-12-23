@@ -24,6 +24,7 @@ tags:
 Embedding allows structs to inherit fields and methods from other types without inheritance chains. This composition-over-inheritance pattern is Go's philosophy - simpler and more flexible than traditional OOP inheritance.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     A["struct Person<br/>Name, Age"]
     B["embedded"]
@@ -235,6 +236,7 @@ type APIResponse struct {
 Goroutines are lightweight threads managed by the Go runtime. Unlike OS threads, thousands of goroutines can run concurrently without overwhelming system resources. The `go` keyword starts a goroutine that runs concurrently with code that follows.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     A["func main"]
     B["go someFunc"]
@@ -303,6 +305,7 @@ func printNumbers() {
 Channels enable safe communication between goroutines. Send data on one end, receive on the other. Unbuffered channels synchronize goroutines - a send blocks until a receive happens. Buffered channels decouple send and receive.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["Goroutine 1<br/>send on channel"]
     B["Channel<br/>message"]
@@ -801,6 +804,7 @@ func main() {
 The `context` package manages deadlines, cancellation, and request-scoped values. It's essential for building responsive systems that can be cancelled and respect timeouts. Context flows through function calls to coordinate cancellation.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     A["func main<br/>ctx, cancel := context.WithTimeout"]
     B["func doWork<br/>receives ctx"]
@@ -1256,3 +1260,198 @@ func processValue(x int) int {
 ```
 
 **Key Takeaway**: Run `go test -cover` to see coverage percentage. Use `go test -coverprofile=coverage.out` to generate detailed reports. High coverage is good but doesn't replace thoughtful tests.
+
+### Example 36: HTTP Middleware Chain (Production Pattern)
+
+Middleware chains are essential in production HTTP services. They compose cross-cutting concerns (logging, authentication, rate limiting) by wrapping handlers. Each middleware can inspect/modify requests and responses, short-circuit the chain, or pass control to the next handler.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    Request["HTTP Request"] --> M1["Middleware 1:<br/>Logging"]
+    M1 --> M2["Middleware 2:<br/>Authentication"]
+    M2 --> M3["Middleware 3:<br/>Rate Limiting"]
+    M3 --> Handler["Final Handler:<br/>Business Logic"]
+    Handler --> Response["HTTP Response"]
+
+    M1 -.->|"Log request/response"| Response
+    M2 -.->|"401 if unauthorized"| ShortCircuit["Early Response"]
+    M3 -.->|"429 if rate exceeded"| ShortCircuit
+
+    style Request fill:#0173B2,stroke:#000,color:#fff
+    style M1 fill:#DE8F05,stroke:#000,color:#fff
+    style M2 fill:#DE8F05,stroke:#000,color:#fff
+    style M3 fill:#DE8F05,stroke:#000,color:#fff
+    style Handler fill:#029E73,stroke:#000,color:#fff
+    style Response fill:#CC78BC,stroke:#000,color:#fff
+    style ShortCircuit fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "time"
+)
+
+func main() {
+    // Build middleware chain - order matters!
+    handler := http.HandlerFunc(businessHandler)
+    handler = loggingMiddleware(handler)        // => Outermost: logs everything
+    handler = authMiddleware(handler)           // => Checks auth before business logic
+    handler = rateLimitMiddleware(handler)      // => Rate limit before auth
+    handler = recoveryMiddleware(handler)       // => Recover from panics in any layer
+
+    // Register handler
+    mux := http.NewServeMux()
+    mux.Handle("/api/data", handler)
+
+    // Start server
+    fmt.Println("Server listening on :8080")
+    http.ListenAndServe(":8080", mux)
+}
+
+// Middleware type - wraps http.Handler and returns http.Handler
+type Middleware func(http.Handler) http.Handler
+
+// 1. Logging Middleware - logs request/response details
+func loggingMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()                     // => Capture start time
+
+        // Create custom ResponseWriter to capture status code
+        wrapped := &responseWriter{
+            ResponseWriter: w,
+            statusCode:     http.StatusOK,      // => Default 200
+        }
+
+        log.Printf("[%s] %s %s - Started", r.Method, r.URL.Path, r.RemoteAddr)
+
+        next.ServeHTTP(wrapped, r)              // => Call next handler in chain
+
+        duration := time.Since(start)
+        log.Printf("[%s] %s %s - Completed %d in %v",
+            r.Method, r.URL.Path, r.RemoteAddr, wrapped.statusCode, duration)
+    })
+}
+
+// Custom ResponseWriter to capture status code
+type responseWriter struct {
+    http.ResponseWriter                         // => Embed standard ResponseWriter
+    statusCode          int
+}
+
+func (rw *responseWriter) WriteHeader(code int) {
+    rw.statusCode = code                        // => Capture status code
+    rw.ResponseWriter.WriteHeader(code)         // => Call original WriteHeader
+}
+
+// 2. Authentication Middleware - validates auth token
+func authMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        token := r.Header.Get("Authorization")  // => Extract token from header
+
+        if token == "" {
+            http.Error(w, "Missing Authorization header", http.StatusUnauthorized)
+            return                              // => Short-circuit: don't call next
+        }
+
+        // Validate token (simplified - production would check signature, expiry)
+        if !isValidToken(token) {
+            http.Error(w, "Invalid token", http.StatusUnauthorized)
+            return                              // => Short-circuit
+        }
+
+        // Token valid - add user info to request context
+        // In production: ctx := context.WithValue(r.Context(), "user_id", userID)
+        // r = r.WithContext(ctx)
+
+        next.ServeHTTP(w, r)                    // => Proceed to next handler
+    })
+}
+
+func isValidToken(token string) bool {
+    // Simplified validation - production checks JWT signature, expiry
+    return token == "Bearer valid-token-123"    // => Mock validation
+}
+
+// 3. Rate Limiting Middleware - prevent abuse
+func rateLimitMiddleware(next http.Handler) http.Handler {
+    // Simple in-memory rate limiter (production uses Redis/distributed cache)
+    requests := make(map[string][]time.Time)    // => IP -> request timestamps
+
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        ip := r.RemoteAddr                      // => Client IP
+
+        now := time.Now()
+        // Remove requests older than 1 minute
+        var recent []time.Time
+        for _, t := range requests[ip] {
+            if now.Sub(t) < time.Minute {       // => Keep only recent requests
+                recent = append(recent, t)
+            }
+        }
+
+        // Check rate limit (10 requests per minute)
+        if len(recent) >= 10 {
+            http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
+            return                              // => Short-circuit: reject request
+        }
+
+        // Add this request to history
+        requests[ip] = append(recent, now)
+
+        next.ServeHTTP(w, r)                    // => Proceed to next handler
+    })
+}
+
+// 4. Recovery Middleware - catch panics and return 500
+func recoveryMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        defer func() {
+            if err := recover(); err != nil {   // => Catch panic
+                log.Printf("PANIC: %v", err)
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+            }
+        }()
+
+        next.ServeHTTP(w, r)                    // => Execute handler (may panic)
+    })
+}
+
+// Final business logic handler
+func businessHandler(w http.ResponseWriter, r *http.Request) {
+    // This is where actual business logic lives
+    // Middleware has already handled logging, auth, rate limiting, recovery
+
+    w.Header().Set("Content-Type", "application/json")
+    fmt.Fprint(w, `{"status": "success", "data": {"message": "Hello, authenticated user!"}}`)
+}
+
+// Alternative: Chainable middleware builder
+func chain(handler http.Handler, middlewares ...Middleware) http.Handler {
+    // Apply middlewares in reverse order
+    for i := len(middlewares) - 1; i >= 0; i-- {
+        handler = middlewares[i](handler)       // => Wrap handler with middleware
+    }
+    return handler
+}
+
+// Usage with chain builder:
+// handler := chain(
+//     http.HandlerFunc(businessHandler),
+//     loggingMiddleware,
+//     authMiddleware,
+//     rateLimitMiddleware,
+//     recoveryMiddleware,
+// )
+```
+
+**Key Takeaway**: Middleware chains compose cross-cutting concerns by wrapping handlers. Each middleware can inspect/modify requests, short-circuit the chain (return early), or pass control to the next handler. Order matters - outermost middleware executes first. Production services use middleware for logging, auth, rate limiting, recovery, CORS, compression, and metrics.
+
+**Why This Matters**: In production Go services, middleware chains are ubiquitous. They separate business logic from infrastructure concerns, making code modular and testable. Understanding the wrapping pattern (each middleware returns a handler that calls `next.ServeHTTP`) is essential for building scalable HTTP services. Popular frameworks (Gorilla, Chi, Echo) all use this pattern.
