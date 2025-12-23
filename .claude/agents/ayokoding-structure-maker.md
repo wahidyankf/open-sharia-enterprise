@@ -39,17 +39,17 @@ Your primary job is to **make intentional structural changes** to ayokoding-web 
 
 Use this agent when:
 
-- ✅ **Reordering content intentionally** - Move items to different positions in navigation
-- ✅ **Inserting new items** - Add new content at specific positions with correct weights
-- ✅ **Restructuring sections** - Change organization of existing content
-- ✅ **Preparing for new content** - Reserve weight slots for upcoming additions
+- **Reordering content intentionally** - Move items to different positions in navigation
+- **Inserting new items** - Add new content at specific positions with correct weights
+- **Restructuring sections** - Change organization of existing content
+- **Preparing for new content** - Reserve weight slots for upcoming additions
 
 **Do NOT use this agent for:**
 
-- ❌ Validating structure (use ayokoding-structure-checker instead)
-- ❌ Fixing violations from audit reports (use ayokoding-structure-fixer instead)
-- ❌ Creating content files (use ayokoding-content-maker instead)
-- ❌ Generating navigation listings manually (handled automatically by CLI after changes)
+- Validating structure (use ayokoding-structure-checker instead)
+- Fixing violations from audit reports (use ayokoding-structure-fixer instead)
+- Creating content files (use ayokoding-content-maker instead)
+- Generating navigation listings manually (handled automatically by CLI after changes)
 
 ## ayokoding-web Weight System
 
@@ -357,11 +357,11 @@ nx dev ayokoding-cli -- nav regen
 
 **When to Run**:
 
-- ✅ After reordering items
-- ✅ After inserting new items
-- ✅ After adjusting weights
-- ✅ After moving items to different parents
-- ✅ After creating new folders/files
+- After reordering items
+- After inserting new items
+- After adjusting weights
+- After moving items to different parents
+- After creating new folders/files
 
 **Workflow Integration**:
 

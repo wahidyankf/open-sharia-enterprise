@@ -37,17 +37,17 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running ose-platform-web-content-checker** - You have an audit report to process
-- ✅ **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
-- ✅ **Automated fixing needed** - You want validated issues fixed automatically
-- ✅ **Safety is critical** - You need validation before changes are applied
+- **After running ose-platform-web-content-checker** - You have an audit report to process
+- **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
+- **Automated fixing needed** - You want validated issues fixed automatically
+- **Safety is critical** - You need validation before changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Initial validation (use ose-platform-web-content-checker for detection)
-- ❌ Creating new content (use ose-platform-web-content-maker for content creation)
-- ❌ Manual fixes (just use Edit tool directly)
-- ❌ When no audit report exists
+- Initial validation (use ose-platform-web-content-checker for detection)
+- Creating new content (use ose-platform-web-content-maker for content creation)
+- Manual fixes (just use Edit tool directly)
+- When no audit report exists
 
 ## How This Agent Works
 
@@ -391,21 +391,21 @@ Create comprehensive report in `generated-reports/`:
 
 ### Missing Draft Field (3 files)
 
-✅ **apps/ose-platform-web/content/updates/2025-12-07-beta-release.md**
+**apps/ose-platform-web/content/updates/2025-12-07-beta-release.md**
 
 - **Issue:** Missing `draft: false` field in frontmatter
 - **Validation:** Confirmed field missing
 - **Fix:** Added `draft: false` at line 4
 - **Confidence:** HIGH
 
-✅ **apps/ose-platform-web/content/updates/2025-11-20-announcement.md**
+  **apps/ose-platform-web/content/updates/2025-11-20-announcement.md**
 
 - **Issue:** Missing `draft: false` field in frontmatter
 - **Validation:** Confirmed field missing
 - **Fix:** Added `draft: false` at line 4
 - **Confidence:** HIGH
 
-✅ **apps/ose-platform-web/content/about.md**
+  **apps/ose-platform-web/content/about.md**
 
 - **Issue:** Missing `draft: false` field in frontmatter
 - **Validation:** Confirmed field missing
@@ -414,14 +414,14 @@ Create comprehensive report in `generated-reports/`:
 
 ### Wrong Date Format (2 files)
 
-✅ **apps/ose-platform-web/content/updates/2025-11-20-announcement.md**
+**apps/ose-platform-web/content/updates/2025-11-20-announcement.md**
 
 - **Issue:** Date format `2025-11-20T10:00:00` missing timezone (+07:00)
 - **Validation:** Confirmed invalid format via regex
 - **Fix:** Updated to `2025-11-20T10:00:00+07:00`
 - **Confidence:** HIGH
 
-✅ **apps/ose-platform-web/content/updates/2025-10-15-initial-post.md**
+  **apps/ose-platform-web/content/updates/2025-10-15-initial-post.md**
 
 - **Issue:** Date format `2025-10-15` missing time and timezone
 - **Validation:** Confirmed invalid format
@@ -430,21 +430,21 @@ Create comprehensive report in `generated-reports/`:
 
 ### Multiple H1 Headings (3 files)
 
-✅ **apps/ose-platform-web/content/updates/2025-11-20-announcement.md**
+**apps/ose-platform-web/content/updates/2025-11-20-announcement.md**
 
 - **Issue:** Found 2 H1 headings (lines 1, 56) - should be only 1
 - **Validation:** Confirmed multiple H1s via counting
 - **Fix:** Converted H1 at line 56 to H2
 - **Confidence:** HIGH
 
-✅ **apps/ose-platform-web/content/updates/2025-09-30-project-update.md**
+  **apps/ose-platform-web/content/updates/2025-09-30-project-update.md**
 
 - **Issue:** Found 2 H1 headings
 - **Validation:** Confirmed multiple H1s
 - **Fix:** Converted second H1 to H2
 - **Confidence:** HIGH
 
-✅ **apps/ose-platform-web/content/about.md**
+  **apps/ose-platform-web/content/about.md**
 
 - **Issue:** Found 3 H1 headings
 - **Validation:** Confirmed multiple H1s
@@ -455,7 +455,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (2)
 
-❌ **apps/ose-platform-web/content/updates/2025-12-07-beta-release.md - Broken link**
+**apps/ose-platform-web/content/updates/2025-12-07-beta-release.md - Broken link**
 
 - **Checker finding:** Internal link `/updates/getting-started` not found
 - **Re-validation:** Link uses Hugo ref shortcode `{{< ref "/updates/getting-started" >}}`, not direct markdown
@@ -463,7 +463,7 @@ Create comprehensive report in `generated-reports/`:
 - **Reason:** Checker doesn't recognize Hugo shortcodes
 - **Recommendation:** Update checker to skip Hugo shortcode links or validate differently
 
-❌ **apps/ose-platform-web/content/about.md - Missing date field**
+  **apps/ose-platform-web/content/about.md - Missing date field**
 
 - **Checker finding:** About page missing `date` field
 - **Re-validation:** About page is a static page, date field is optional for non-post content
@@ -475,35 +475,35 @@ Create comprehensive report in `generated-reports/`:
 
 ## Needs Manual Review (5)
 
-⚠️ **apps/ose-platform-web/content/updates/2025-11-20-announcement.md - Missing cover alt**
+**apps/ose-platform-web/content/updates/2025-11-20-announcement.md - Missing cover alt**
 
 - **Issue:** Has `cover.image` but missing `cover.alt`
 - **Validation:** Confirmed missing alt text
 - **Confidence:** MEDIUM (can't auto-generate descriptive alt text)
 - **Action Required:** Manually add descriptive alt text based on image content
 
-⚠️ **apps/ose-platform-web/content/updates/2025-10-15-initial-post.md - Vague alt text**
+  **apps/ose-platform-web/content/updates/2025-10-15-initial-post.md - Vague alt text**
 
 - **Issue:** Image has alt text "screenshot" (too vague)
 - **Validation:** Confirmed vague alt text
 - **Confidence:** MEDIUM (need to see image to write better description)
 - **Action Required:** Replace with descriptive alt text explaining what screenshot shows
 
-⚠️ **apps/ose-platform-web/content/updates/2025-09-30-project-update.md - Short summary**
+  **apps/ose-platform-web/content/updates/2025-09-30-project-update.md - Short summary**
 
 - **Issue:** Summary is 85 characters (recommended: 150-160 for SEO)
 - **Validation:** Confirmed short summary
 - **Confidence:** MEDIUM (summary is functional but could be improved)
 - **Action Required:** Expand summary for better SEO
 
-⚠️ **apps/ose-platform-web/content/updates/2025-08-20-roadmap.md - Broken link**
+  **apps/ose-platform-web/content/updates/2025-08-20-roadmap.md - Broken link**
 
 - **Issue:** Link to `/updates/previous-roadmap` not found
 - **Validation:** Confirmed file doesn't exist
 - **Confidence:** MEDIUM (can't determine correct target automatically)
 - **Action Required:** Fix link target or remove if obsolete
 
-⚠️ **apps/ose-platform-web/content/about.md - Line length**
+  **apps/ose-platform-web/content/about.md - Line length**
 
 - **Issue:** Lines 45, 67, 89 exceed 100 characters
 - **Validation:** Confirmed long lines

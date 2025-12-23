@@ -337,7 +337,8 @@ background: #ffffff;
 **Location**: All `docs/` and convention documents
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
     A["Primary Flow<br/>(Blue)"]:::blue
     B["Decision Point<br/>(Orange)"]:::orange

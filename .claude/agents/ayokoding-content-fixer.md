@@ -37,17 +37,17 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running ayokoding-content-checker** - You have an audit report to process
-- ✅ **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
-- ✅ **Automated fixing needed** - You want validated issues fixed automatically
-- ✅ **Safety is critical** - You need validation before changes are applied
+- **After running ayokoding-content-checker** - You have an audit report to process
+- **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
+- **Automated fixing needed** - You want validated issues fixed automatically
+- **Safety is critical** - You need validation before changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Initial validation (use ayokoding-content-checker for detection)
-- ❌ Content creation (use ayokoding-content-maker for new content)
-- ❌ Manual fixes (just use Edit tool directly)
-- ❌ When no audit report exists
+- Initial validation (use ayokoding-content-checker for detection)
+- Content creation (use ayokoding-content-maker for new content)
+- Manual fixes (just use Edit tool directly)
+- When no audit report exists
 
 ## How This Agent Works
 
@@ -400,14 +400,14 @@ Create comprehensive report in `generated-reports/`:
 
 ### Missing Draft Field (5 files)
 
-✅ **apps/ayokoding-web/content/en/learn/nodejs/getting-started.md**
+**apps/ayokoding-web/content/en/learn/nodejs/getting-started.md**
 
 - **Issue:** Missing `draft: false` field
 - **Validation:** Confirmed field missing in frontmatter
 - **Fix:** Added `draft: false` at line 4
 - **Confidence:** HIGH
 
-✅ **apps/ayokoding-web/content/id/belajar/python/basics.md**
+  **apps/ayokoding-web/content/id/belajar/python/basics.md**
 
 - **Issue:** Missing `draft: false` field
 - **Validation:** Confirmed field missing in frontmatter
@@ -418,7 +418,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Wrong Weight Field (7 files)
 
-✅ **apps/ayokoding-web/content/en/learn/swe/\_index.md**
+**apps/ayokoding-web/content/en/learn/swe/\_index.md**
 
 - **Issue:** Weight should be 1 for \_index.md, found weight: 10
 - **Validation:** Confirmed \_index.md with incorrect weight
@@ -429,7 +429,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Relative Path in Internal Link (6 files)
 
-✅ **apps/ayokoding-web/content/en/learn/ai/chat-with-pdf.md**
+**apps/ayokoding-web/content/en/learn/ai/chat-with-pdf.md**
 
 - **Issue:** Relative link `./overview` should use absolute path with language prefix
 - **Validation:** Confirmed relative link in navigation content
@@ -442,13 +442,14 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (3)
 
-❌ **apps/ayokoding-web/content/en/learn/golang/overview.md - Wrong filename**
+**apps/ayokoding-web/content/en/learn/golang/overview.md - Wrong filename**
 
 - **Checker finding:** English folder should not have overview.md (should use ikhtisar.md)
 - **Re-validation:** File is in /en/learn/ (English), overview.md is CORRECT
 - **Conclusion:** FALSE POSITIVE
 - **Reason:** Checker misidentified language path (confused /en/ with /id/)
 - **Recommendation:** Update checker to verify language in path before flagging filename:
+
   ```bash
   if [[ "$path" =~ /content/en/learn/ ]] && [ -f "overview.md" ]; then
     # VALID - English uses overview.md
@@ -457,7 +458,7 @@ Create comprehensive report in `generated-reports/`:
   fi
   ```
 
-❌ **apps/ayokoding-web/content/id/celoteh/2023/07/\_index.md - Missing overview**
+  **apps/ayokoding-web/content/id/celoteh/2023/07/\_index.md - Missing overview**
 
 - **Checker finding:** Missing ikhtisar.md in learning content folder
 - **Re-validation:** File is in /celoteh/ (blogging content), NOT /belajar/ (learning)
@@ -478,14 +479,14 @@ Create comprehensive report in `generated-reports/`:
 
 ## Needs Manual Review (4)
 
-⚠️ **apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorial.md - Description length**
+**apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorial.md - Description length**
 
 - **Issue:** Description is 145 characters (recommended: 150-160 for SEO)
 - **Validation:** Confirmed description is slightly short
 - **Confidence:** MEDIUM (acceptable but not optimal)
 - **Action Required:** Consider expanding description by 5-15 characters
 
-⚠️ **apps/ayokoding-web/content/id/belajar/nodejs/basics.md - Alt text quality**
+  **apps/ayokoding-web/content/id/belajar/nodejs/basics.md - Alt text quality**
 
 - **Issue:** Image alt text "Node.js diagram" could be more descriptive
 - **Validation:** Alt text exists but lacks detail

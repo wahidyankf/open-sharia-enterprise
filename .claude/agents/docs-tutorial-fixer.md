@@ -39,17 +39,17 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running docs-tutorial-checker** - You have an audit report to process
-- ✅ **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
-- ✅ **Automated fixing needed** - You want validated issues fixed automatically
-- ✅ **Safety is critical** - You need validation before changes are applied
+- **After running docs-tutorial-checker** - You have an audit report to process
+- **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
+- **Automated fixing needed** - You want validated issues fixed automatically
+- **Safety is critical** - You need validation before changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Initial validation (use docs-tutorial-checker for detection)
-- ❌ Creating new tutorials (use docs-tutorial-maker)
-- ❌ Manual fixes (just use Edit tool directly)
-- ❌ When no audit report exists
+- Initial validation (use docs-tutorial-checker for detection)
+- Creating new tutorials (use docs-tutorial-maker)
+- Manual fixes (just use Edit tool directly)
+- When no audit report exists
 
 ## How This Agent Works
 
@@ -444,14 +444,14 @@ Create comprehensive report in `generated-reports/`:
 
 ### Missing Required Sections (5 files)
 
-✅ **docs/tutorials/tu-ai-engineering\_\_llm-basics.md**
+**docs/tutorials/tu-ai-engineering\_\_llm-basics.md**
 
 - **Issue:** Missing "Prerequisites" section
 - **Validation:** Confirmed section missing (grep found no match)
 - **Fix:** Added "Prerequisites" section at line 25 with placeholder content
 - **Confidence:** HIGH
 
-✅ **docs/tutorials/tu-business\_\_accounting-quickstart.md**
+**docs/tutorials/tu-business\_\_accounting-quickstart.md**
 
 - **Issue:** Missing "Learning Objectives" section
 - **Validation:** Confirmed section missing (grep found no match)
@@ -462,7 +462,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### LaTeX Delimiter Errors (3 files)
 
-✅ **docs/tutorials/tu-business\_\_wacc-calculation.md**
+**docs/tutorials/tu-business\_\_wacc-calculation.md**
 
 - **Issue:** Display equation using single `$` instead of `$$`
 - **Validation:** Confirmed incorrect delimiter at line 145
@@ -473,7 +473,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Tutorial Type Naming (2 files)
 
-✅ **docs/tutorials/tu-ai-engineering\_\_transformer-intro.md**
+**docs/tutorials/tu-ai-engineering\_\_transformer-intro.md**
 
 - **Issue:** Title "Introduction to Transformers" doesn't match Beginner tutorial pattern
 - **Validation:** Confirmed title doesn't follow "Tutorial: [Topic] for Beginners" convention
@@ -484,7 +484,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Time Estimate Violations (2 files)
 
-✅ **docs/tutorials/tu-software\_\_git-quickstart.md**
+**docs/tutorials/tu-software\_\_git-quickstart.md**
 
 - **Issue:** Contains time estimate "30 minutes to complete"
 - **Validation:** Confirmed time estimate present at line 12
@@ -497,7 +497,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (2)
 
-❌ **`docs/tutorials/tu-business__dcf-valuation.md` - Missing Introduction**
+**`docs/tutorials/tu-business__dcf-valuation.md` - Missing Introduction**
 
 - **Checker finding:** Tutorial missing Introduction section
 - **Re-validation:** Introduction section exists at line 15 (titled "Introduction to DCF Valuation")
@@ -505,7 +505,7 @@ Create comprehensive report in `generated-reports/`:
 - **Reason:** Checker looked for exact "Introduction" heading, but section was titled "Introduction to DCF Valuation"
 - **Recommendation:** Update checker to match on "## .\*[Ii]ntroduction" pattern instead of exact match
 
-❌ **`docs/tutorials/tu-ai-engineering__rag-basics.md` - Missing Diagram**
+**`docs/tutorials/tu-ai-engineering__rag-basics.md` - Missing Diagram**
 
 - **Checker finding:** Section needs architecture diagram
 - **Re-validation:** Architecture diagram exists at line 85 (Mermaid flowchart)
@@ -517,21 +517,21 @@ Create comprehensive report in `generated-reports/`:
 
 ## Needs Manual Review (11)
 
-⚠️ **`docs/tutorials/tu-business__accounting-quickstart.md` - Narrative Flow**
+**`docs/tutorials/tu-business__accounting-quickstart.md` - Narrative Flow**
 
 - **Issue:** Section "Recording Transactions" is too list-heavy (needs narrative)
 - **Validation:** Confirmed section uses bullet lists extensively
 - **Confidence:** MEDIUM (narrative quality is subjective)
 - **Action Required:** Manually review and improve narrative flow if needed
 
-⚠️ **`docs/tutorials/tu-ai-engineering__llm-basics.md` - Diagram Placement**
+**`docs/tutorials/tu-ai-engineering__llm-basics.md` - Diagram Placement**
 
 - **Issue:** Section "Transformer Architecture" needs diagram
 - **Validation:** No diagram found in section
 - **Confidence:** MEDIUM (diagram necessity is subjective)
 - **Action Required:** Manually assess if diagram would improve learning
 
-⚠️ **`docs/tutorials/tu-software__git-quickstart.md` - Writing Style**
+**`docs/tutorials/tu-software__git-quickstart.md` - Writing Style**
 
 - **Issue:** Writing is too dry (needs more engaging voice)
 - **Validation:** Writing style is conversational but could be improved

@@ -359,8 +359,10 @@ graph TD
 **Incorrect Syntax** (❌):
 
 ```mermaid
-%%{ This is a comment }%%
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73 }%%
+%% WRONG EXAMPLE - DO NOT USE
+%% The %%{ }%% syntax below is INVALID and will cause errors
+%% %%{ This is a comment }%%
+%% %%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73 }%%
 graph TD
     A[Start] --> B[End]
 ```

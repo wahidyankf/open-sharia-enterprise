@@ -111,7 +111,7 @@ Verification:
 1. WebSearch: "React latest version 2025"
 2. WebFetch: https://www.npmjs.com/package/react
 3. Check: Latest version, release date, any newer versions
-4. Result: ✅ Verified or 📅 Outdated
+4. Result:  Verified or 📅 Outdated
 ```
 
 ### 4. Tutorial-Specific Validation
@@ -184,8 +184,8 @@ This progressive approach ensures findings persist even if context is compacted 
 3. **Write initial header** with:
    - Validation date/time
    - Scope (files to check)
-   - Status: "⏳ In Progress"
-   - Progress tracker section (all validation phases marked as "⏳ Pending")
+   - Status: " In Progress"
+   - Progress tracker section (all validation phases marked as " Pending")
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Discovery Phase
@@ -205,7 +205,7 @@ glob "apps/ayokoding-web/content/*/learn/*/typescript/*.md"
 glob "apps/ayokoding-web/content/*/belajar/*/typescript/*.md"
 ```
 
-**Update progress tracker**: Mark "Discovery Phase" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Discovery Phase" as In Progress → Complete
 
 ### Step 2: Code Validation Phase
 
@@ -239,11 +239,11 @@ Verification:
 1. WebFetch: https://react.dev/reference/react/useState
 2. Check: useState signature, TypeScript typing
 3. Verify: Import path, generic syntax
-4. Result: ✅ Verified (correct React 18+ API)
+4. Result: Verified (correct React 18+ API)
    **Immediately append** to report file
 ````
 
-**Update progress tracker**: Mark "Code Validation" as 🔄 In Progress, update count as each example is checked
+**Update progress tracker**: Mark "Code Validation" as In Progress, update count as each example is checked
 
 ### Step 3: Bilingual Consistency Check
 
@@ -268,15 +268,15 @@ Indonesian: id/belajar/typescript/generics.md
 English: en/learn/typescript/generics.md
 
 Compare:
-- Code Example 1: ✅ Identical
-- Code Example 2: ❌ Different (Indonesian uses Array<T>, English uses T[])
-- Difficulty: ✅ Same (Intermediate)
-- Prerequisites: ⚠️ Indonesian lists "TypeScript Basics", English doesn't mention
-- External Links: ✅ Same documentation references
+- Code Example 1:  Identical
+- Code Example 2:  Different (Indonesian uses Array<T>, English uses T[])
+- Difficulty:  Same (Intermediate)
+- Prerequisites:  Indonesian lists "TypeScript Basics", English doesn't mention
+- External Links:  Same documentation references
 **Immediately append** findings to report file
 ```
 
-**Update progress tracker**: Mark "Bilingual Consistency" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Bilingual Consistency" as In Progress → Complete
 
 ### Step 4: Tutorial Sequence Validation
 
@@ -297,13 +297,13 @@ Compare:
 Learning Path: TypeScript Fundamentals → Generics → Advanced Types
 
 Check:
-1. Fundamentals covers: Variables, types, functions ✅
-2. Generics requires: Functions, types (from Fundamentals) ✅
-3. Advanced Types requires: Generics knowledge ✅
-4. Difficulty progression: Beginner → Intermediate → Advanced ✅
+1. Fundamentals covers: Variables, types, functions
+2. Generics requires: Functions, types (from Fundamentals)
+3. Advanced Types requires: Generics knowledge
+4. Difficulty progression: Beginner → Intermediate → Advanced
 ```
 
-**Update progress tracker**: Mark "Tutorial Sequence" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Tutorial Sequence" as In Progress → Complete
 
 ### Step 5: External Reference Verification
 
@@ -326,16 +326,16 @@ Verification:
 1. WebFetch: URL accessible (200 OK)
 2. Confirm: Content covers generics as referenced
 3. Check: Documentation is current version
-4. Result: ✅ Verified
+4. Result:  Verified
 ```
 
-**Update progress tracker**: Mark "External References" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "External References" as In Progress → Complete
 
 ### Step 6: Finalize Validation Report
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics**:
    - Files checked
    - Code examples validated
@@ -361,14 +361,14 @@ Verification:
 - **Outdated Information**: B
 - **Bilingual Inconsistencies**: C
 
-## ✅ Verified Facts
+## Verified Facts
 
 1. **TypeScript Generic Syntax** at `en/learn/typescript/generics.md:45`
    - Claim: Generic constraint syntax `<T extends U>`
-   - Status: ✅ Verified
+   - Status: Verified
    - Source: https://www.typescriptlang.org/docs/handbook/2/generics.html
 
-## ❌ Factual Errors
+## Factual Errors
 
 ### Error 1: Incorrect API Usage
 
@@ -390,7 +390,7 @@ const [state, setState] = useState(initialValue);
 **Source**: https://react.dev/reference/react/useState
 **Severity**: High (code won't work)
 
-## ⚠️ Bilingual Inconsistencies
+## Bilingual Inconsistencies
 
 ### Inconsistency 1: Different Code Examples
 
@@ -427,9 +427,9 @@ You MUST execute the bash command to get the actual current time:
 TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 ````
 
-**❌ WRONG**: `ayokoding-facts__2025-12-16--00-00__validation.md` (placeholder time - never use this!)
+** WRONG**: `ayokoding-facts__2025-12-16--00-00__validation.md` (placeholder time - never use this!)
 
-**✅ CORRECT**: `ayokoding-facts__2025-12-16--14-23__validation.md` (actual time from executed bash command)
+** CORRECT**: `ayokoding-facts__2025-12-16--14-23__validation.md` (actual time from executed bash command)
 
 ## Domain-Specific Validation Checks
 
@@ -457,12 +457,12 @@ Verify content complexity matches declared level:
 Verify Hextra shortcodes are used correctly:
 
 ```markdown
-✅ Correct:
+Correct:
 {{< callout type="info" >}}
 Important concept explanation
 {{< /callout >}}
 
-❌ Incorrect:
+Incorrect:
 {{< callout type="information" >}} # Wrong type
 ```
 
@@ -521,7 +521,7 @@ Important concept explanation
 
 1. **State limitation**: "Unable to verify tutorial sequence without testing"
 2. **Provide verification steps**: "Test by following tutorial steps manually"
-3. **Flag as uncertain**: "⚠️ Unverified: Learning path - requires manual walkthrough"
+3. **Flag as uncertain**: " Unverified: Learning path - requires manual walkthrough"
 4. **Never assume**: Mark clearly as "unverified" if not validated via web research
 
 ## Tools Usage

@@ -83,6 +83,8 @@ Hugo uses a cascading override system. Understanding the lookup order is critica
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0173B2', 'secondaryColor': '#DE8F05', 'tertiaryColor': '#029E73'}}}%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
 	A[Hugo Template Lookup] --> B[Project layouts/]
 	B --> C[Theme layouts/]
@@ -298,6 +300,8 @@ Hugo Pipes processes assets at build time. Use for CSS, JavaScript, images.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0173B2', 'secondaryColor': '#DE8F05', 'tertiaryColor': '#029E73'}}}%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph LR
 	A[Source Assets] --> B[Hugo Pipes]
 	B --> C[Processing]
@@ -1459,7 +1463,9 @@ graph TD
 **Incorrect (causes "Syntax error in text"):**
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73 }%%
+%% WRONG EXAMPLE - DO NOT USE
+%% The %%{ }%% syntax below is INVALID and will cause errors
+%% %%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73 }%%
 graph TD
     A[Start] --> B[End]
 ```

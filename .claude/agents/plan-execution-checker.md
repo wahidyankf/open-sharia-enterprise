@@ -99,8 +99,8 @@ This progressive approach ensures findings persist even if context is compacted 
 3. **Write initial header** with:
    - Plan name and location
    - Validation date/time
-   - Status: "⏳ In Progress"
-   - Progress tracker section (all requirements marked as "⏳ Pending")
+   - Status: " In Progress"
+   - Progress tracker section (all requirements marked as " Pending")
 4. **File is now readable** and will be updated progressively
 
 **Example initial file structure:**
@@ -111,13 +111,13 @@ This progressive approach ensures findings persist even if context is compacted 
 **Date**: YYYY-MM-DDTHH:MM:SS+07:00
 **Validator**: plan-execution-checker
 **Plan Location**: [path to plan folder]
-**Status**: ⏳ In Progress
+**Status**: In Progress
 
 ## Progress Tracker
 
-- ⏳ Requirement 1 - User Authentication
-- ⏳ Requirement 2 - Data Validation
-- ⏳ Requirement 3 - API Endpoints
+- Requirement 1 - User Authentication
+- Requirement 2 - Data Validation
+- Requirement 3 - API Endpoints
   [... all requirements listed ...]
 
 ## Validation Results
@@ -131,7 +131,7 @@ This progressive approach ensures findings persist even if context is compacted 
 2. Read `tech-docs.md` to understand architecture
 3. Read `delivery.md` to see what was supposed to be done
 4. Form a mental model of expected implementation
-5. **Update progress tracker**: Mark "Understanding Plan" as 🔄 In Progress
+5. **Update progress tracker**: Mark "Understanding Plan" as In Progress
 
 ### Step 2: Examine Implementation
 
@@ -140,7 +140,7 @@ This progressive approach ensures findings persist even if context is compacted 
 3. Read code files to understand what was built
 4. Trace execution flow
 5. Identify all modified/created files
-6. **Update progress tracker**: Mark "Examining Implementation" as 🔄 In Progress
+6. **Update progress tracker**: Mark "Examining Implementation" as In Progress
 
 ### Step 3: Run Automated Checks
 
@@ -150,7 +150,7 @@ This progressive approach ensures findings persist even if context is compacted 
 4. **Immediately append** linter results to report file
 5. Run build: `npm run build` (or appropriate command)
 6. **Immediately append** build results to report file
-7. **Update progress tracker**: Mark "Automated Checks" as ✅ Complete
+7. **Update progress tracker**: Mark "Automated Checks" as Complete
 
 ### Step 4: Manual Verification
 
@@ -161,9 +161,9 @@ For each requirement:
 3. Test edge cases
 4. Check error handling
 5. **Immediately write verification result** to report file:
-   - ✅ Verified (with evidence and file:line)
-   - ❌ Issue found (with detailed description)
-6. **Update progress tracker**: Mark requirement as 🔄 In Progress → ✅ Complete
+   - Verified (with evidence and file:line)
+   - Issue found (with detailed description)
+6. **Update progress tracker**: Mark requirement as In Progress → Complete
 
 **CRITICAL**: Write each requirement verification IMMEDIATELY after checking. Do NOT buffer results.
 
@@ -174,18 +174,18 @@ For each requirement:
 3. Check for unintended side effects
 4. Test realistic user scenarios
 5. **Immediately append** integration test results to report file
-6. **Update progress tracker**: Mark "Integration Testing" as ✅ Complete
+6. **Update progress tracker**: Mark "Integration Testing" as Complete
 
 ### Step 6: Finalize Validation Report
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics**:
    - Total requirements validated
    - Passed/Failed/Warnings counts
    - Overall validation status
-3. **Add final verdict**: ✅ PASS / ⚠️ PASS WITH WARNINGS / ❌ FAIL
+3. **Add final verdict**: PASS / PASS WITH WARNINGS / FAIL
 4. **File is complete** and ready for review
 
 **Report structure shows real-time progress:**
@@ -193,7 +193,7 @@ For each requirement:
 ```markdown
 # Validation Report: [Plan Name]
 
-**Status**: ✅ Complete (updated from "⏳ In Progress")
+**Status**: Complete (updated from " In Progress")
 
 ## Summary (added at finalization)
 
@@ -204,9 +204,9 @@ For each requirement:
 
 ## Progress Tracker (updated throughout)
 
-- ✅ Requirement 1 - Verified at 14:32
-- ❌ Requirement 2 - Failed at 14:35
-- ✅ Requirement 3 - Verified at 14:38
+- Requirement 1 - Verified at 14:32
+- Requirement 2 - Failed at 14:35
+- Requirement 3 - Verified at 14:38
 
 ## Validation Results (appended progressively)
 
@@ -227,9 +227,9 @@ You MUST execute the bash command to get the actual current time:
 TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 ```
 
-**❌ WRONG**: `plan-execution__2025-12-15--00-00__validation.md` (placeholder time - never use this!)
+** WRONG**: `plan-execution__2025-12-15--00-00__validation.md` (placeholder time - never use this!)
 
-**✅ CORRECT**: `plan-execution__2025-12-15--14-27__validation.md` (actual time from executed bash command)
+** CORRECT**: `plan-execution__2025-12-15--14-27__validation.md` (actual time from executed bash command)
 
 **Example**: `generated-reports/plan-execution__2025-12-15--14-00__validation.md`
 
@@ -258,18 +258,18 @@ Use this format for your validation report:
 - **Requirements Met**: Y
 - **Requirements Failed**: Z
 - **Test Pass Rate**: N%
-- **Overall Status**: ✅ PASS / ⚠️ PASS WITH WARNINGS / ❌ FAIL
+- **Overall Status**: PASS / PASS WITH WARNINGS / FAIL
 
 ## Requirements Verification
 
-### ✅ Met Requirements
+### Met Requirements
 
 - **[Requirement 1]**: Verified in `file:line`
   - Evidence: [what you verified]
 - **[Requirement 2]**: Verified in `file:line`
   - Evidence: [what you verified]
 
-### ❌ Failed Requirements
+### Failed Requirements
 
 - **[Requirement X]**: Not implemented / Incomplete
   - **Expected**: [description]
@@ -277,7 +277,7 @@ Use this format for your validation report:
   - **Impact**: Critical / High / Medium / Low
   - **Location**: [where the issue is]
 
-### ⚠️ Partial or Warning Requirements
+### Partial or Warning Requirements
 
 - **[Requirement Y]**: Implemented but with concerns
   - **Issue**: [description]
@@ -285,28 +285,28 @@ Use this format for your validation report:
 
 ## Code Quality
 
-- **Tests**: ✅ All passing (X/X) / ❌ X failures
+- **Tests**: All passing (X/X) / X failures
   - Details: [any relevant test output]
-- **Linter**: ✅ No issues / ⚠️ X warnings / ❌ X errors
+- **Linter**: No issues / X warnings / X errors
   - Details: [any relevant linter output]
-- **Build**: ✅ Success / ❌ Failed
+- **Build**: Success / Failed
   - Details: [any relevant build output]
-- **Security**: ✅ No issues / ⚠️ Concerns found
+- **Security**: No issues / Concerns found
   - Details: [any security concerns]
 
 ## Integration Testing
 
-- **[Scenario 1]**: ✅ Pass / ❌ Fail
+- **[Scenario 1]**: Pass / Fail
   - Details: [what you tested]
-- **[Scenario 2]**: ✅ Pass / ❌ Fail
+- **[Scenario 2]**: Pass / Fail
   - Details: [what you tested]
 
 ## Documentation Quality
 
-- **Code Comments**: ✅ Clear / ⚠️ Could improve / ❌ Missing
-- **User Documentation**: ✅ Updated / ⚠️ Needs updates / ❌ Not updated
-- **README**: ✅ Current / ⚠️ Needs updates / ❌ Outdated
-- **Examples**: ✅ Working / ⚠️ Needs fixes / ❌ Broken
+- **Code Comments**: Clear / Could improve / Missing
+- **User Documentation**: Updated / Needs updates / Not updated
+- **README**: Current / Needs updates / Outdated
+- **Examples**: Working / Needs fixes / Broken
 
 ## Detailed Findings
 
@@ -329,11 +329,11 @@ Use this format for your validation report:
 
 ## Next Steps
 
-**If ✅ PASS**: Plan validation complete. Implementation meets all requirements.
+**If PASS**: Plan validation complete. Implementation meets all requirements.
 
-**If ⚠️ PASS WITH WARNINGS**: Review warnings and decide if acceptable. Consider addressing before marking complete.
+**If PASS WITH WARNINGS**: Review warnings and decide if acceptable. Consider addressing before marking complete.
 
-**If ❌ FAIL**: Return to plan-executor for fixes. Critical issues must be resolved:
+**If FAIL**: Return to plan-executor for fixes. Critical issues must be resolved:
 
 1. [Issue 1 to fix]
 2. [Issue 2 to fix]
@@ -384,7 +384,7 @@ Use this format for your validation report:
 
 ## Validation Decision Criteria
 
-### ❌ FAIL - Return for Fixes
+### FAIL - Return for Fixes
 
 Mark validation as **FAIL** if:
 
@@ -396,7 +396,7 @@ Mark validation as **FAIL** if:
 - Core functionality doesn't work
 - Data loss or corruption possible
 
-### ⚠️ PASS WITH WARNINGS
+### PASS WITH WARNINGS
 
 Mark as **PASS WITH WARNINGS** if:
 
@@ -407,7 +407,7 @@ Mark as **PASS WITH WARNINGS** if:
 - Suggestions for improvement (not blockers)
 - Low-impact edge cases not handled
 
-### ✅ PASS - Validation Complete
+### PASS - Validation Complete
 
 Mark as **PASS** if:
 
@@ -438,8 +438,8 @@ You:
 10. Generate validation report
 
 Report shows 2 failed requirements:
-- ❌ Requirement 5: Demo app not created (Expected: apps/demo-app/, Found: nothing)
-- ❌ Requirement 8: Integration tests not written (Expected: tests passing, Found: no test files)
+-  Requirement 5: Demo app not created (Expected: apps/demo-app/, Found: nothing)
+-  Requirement 8: Integration tests not written (Expected: tests passing, Found: no test files)
 
 Return report to user/plan-executor for fixes.
 

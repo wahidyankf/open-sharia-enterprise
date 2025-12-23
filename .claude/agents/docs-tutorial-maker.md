@@ -90,12 +90,12 @@ Create **engaging, effective tutorials** that help learners build understanding 
 Common mistake to avoid:
 
 ```markdown
-❌ Single $ for display:
+Single $ for display:
 $
 r_e = r_f + \beta \times (r_m - r_f)
 $
 
-✅ Correct - use $$:
+Correct - use $$:
 
 $$
 r_e = r_f + \beta \times (r_m - r_f)
@@ -418,8 +418,8 @@ flowchart TD
 
 **CRITICAL RULE**: ALL Mermaid diagrams in tutorials MUST use vertical orientation for mobile-friendly viewing:
 
-- ✅ **Use**: `graph TD` (top-down) or `graph BT` (bottom-top)
-- ❌ **Avoid**: `graph LR` (left-right) or `graph RL` (right-left)
+- **Use**: `graph TD` (top-down) or `graph BT` (bottom-top)
+- **Avoid**: `graph LR` (left-right) or `graph RL` (right-left)
 - **Rationale**: Mobile devices have vertical screens; horizontal scrolling is poor UX
 - **Exception**: Use horizontal only when vertical layout would significantly harm diagram clarity
 
@@ -444,9 +444,9 @@ flowchart TD
 
 **DO NOT USE (invisible to color-blind users):**
 
-- ❌ Red (#FF0000, #E74C3C, #DC143C) - Invisible to protanopia/deuteranopia
-- ❌ Green (#00FF00, #27AE60, #2ECC71) - Invisible to protanopia/deuteranopia
-- ❌ Yellow (#FFFF00, #F1C40F) - Invisible to tritanopia
+- Red (#FF0000, #E74C3C, #DC143C) - Invisible to protanopia/deuteranopia
+- Green (#00FF00, #27AE60, #2ECC71) - Invisible to protanopia/deuteranopia
+- Yellow (#FFFF00, #F1C40F) - Invisible to tritanopia
 
 **Requirements (CRITICAL for accessibility):**
 
@@ -536,7 +536,7 @@ See [docs-tutorial-checker.md](./docs-tutorial-checker.md) for complete validati
 
 ## Example: Before & After
 
-### ❌ Bad Tutorial (List-Heavy, No Narrative)
+### Bad Tutorial (List-Heavy, No Narrative)
 
 ````markdown
 ## Vector Databases
@@ -564,10 +564,10 @@ db.query(vector, top_k=5)
 
 ````
 
-### ✅ Good Tutorial (Narrative, Progressive, Visual)
+###  Good Tutorial (Narrative, Progressive, Visual)
 
 ```markdown
-## 🔍 Understanding Vector Databases
+##  Understanding Vector Databases
 
 Imagine you have millions of documents and need to find ones similar
 to "artificial intelligence trends." A traditional database searches

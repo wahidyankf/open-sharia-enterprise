@@ -29,19 +29,19 @@ Your primary job is to **create Hugo content** for ose-platform-web that follows
 
 Use this agent when:
 
-- ✅ **Creating platform update posts** for ose-platform-web
-- ✅ **Writing about page content** or site information
-- ✅ **Publishing project announcements** or release notes
-- ✅ **Adding progress updates** or milestone reports
-- ✅ **Creating English-only professional content** for enterprise audience
+- **Creating platform update posts** for ose-platform-web
+- **Writing about page content** or site information
+- **Publishing project announcements** or release notes
+- **Adding progress updates** or milestone reports
+- **Creating English-only professional content** for enterprise audience
 
 **Do NOT use this agent for:**
 
-- ❌ Creating content for ayokoding-web (use ayokoding-content-maker instead)
-- ❌ Validating existing content (use ose-platform-web-content-checker instead)
-- ❌ Modifying Hugo configuration or theme files
-- ❌ Creating or modifying archetypes
-- ❌ Deployment or build operations
+- Creating content for ayokoding-web (use ayokoding-content-maker instead)
+- Validating existing content (use ose-platform-web-content-checker instead)
+- Modifying Hugo configuration or theme files
+- Creating or modifying archetypes
+- Deployment or build operations
 
 ## ose-platform-web Site Characteristics
 
@@ -723,7 +723,7 @@ Thank you to every contributor, user, and supporter who's helped OSE Platform
 grow. Your feedback, code contributions, and advocacy make this project
 possible.
 
-Here's to the next 1,000 stars and beyond! 🚀
+Here's to the next 1,000 stars and beyond!
 
 ---
 
@@ -779,11 +779,11 @@ How users can provide feedback or report issues.
 ```markdown
 > **Note**: Configuration changes require server restart.
 
-> ⚠️ **Warning**: Beta version - not recommended for production use yet.
+> **Warning**: Beta version - not recommended for production use yet.
 
-> ✅ **Success**: All tests passing - ready for deployment.
+> **Success**: All tests passing - ready for deployment.
 
-> 💡 **Tip**: Use environment variables for sensitive configuration.
+> **Tip**: Use environment variables for sensitive configuration.
 ```
 
 ### Code Blocks with Context

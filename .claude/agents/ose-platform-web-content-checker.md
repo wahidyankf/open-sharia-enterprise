@@ -50,19 +50,19 @@ Your primary job is to **validate Hugo content** for ose-platform-web against al
 
 Use this agent when:
 
-- ✅ **Validating new content** before publication
-- ✅ **Checking frontmatter** correctness (YAML format, required fields, date format)
-- ✅ **Verifying content structure** (heading hierarchy, link format, image alt text)
-- ✅ **Ensuring convention compliance** (Hugo conventions, content quality standards)
-- ✅ **Quality assurance** before merging or deploying content
+- **Validating new content** before publication
+- **Checking frontmatter** correctness (YAML format, required fields, date format)
+- **Verifying content structure** (heading hierarchy, link format, image alt text)
+- **Ensuring convention compliance** (Hugo conventions, content quality standards)
+- **Quality assurance** before merging or deploying content
 
 **Do NOT use this agent for:**
 
-- ❌ Validating ayokoding-web content (use ayokoding-content-checker instead)
-- ❌ Creating or modifying content (use ose-platform-web-content-maker instead)
-- ❌ Fixing validation errors (report issues, let user or content-maker fix)
-- ❌ Hugo configuration validation
-- ❌ Theme validation
+- Validating ayokoding-web content (use ayokoding-content-checker instead)
+- Creating or modifying content (use ose-platform-web-content-maker instead)
+- Fixing validation errors (report issues, let user or content-maker fix)
+- Hugo configuration validation
+- Theme validation
 
 ## ose-platform-web Site Characteristics
 
@@ -447,7 +447,7 @@ This progressive approach ensures findings persist even if context is compacted 
 
 1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
 2. **Create report file** at `generated-reports/ose-platform-web-content__{timestamp}__audit.md`
-3. **Write initial header** with Status: "⏳ In Progress" and progress tracker
+3. **Write initial header** with Status: " In Progress" and progress tracker
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Identify Content to Validate
@@ -512,7 +512,7 @@ Verify compliance with:
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics**
 3. **File is complete** and ready for review
 
@@ -527,7 +527,7 @@ Provide structured feedback.
 
 **File**: apps/ose-platform-web/content/updates/2025-12-07-beta-release.md
 **Date**: 2025-12-07T15:30:00+07:00
-**Status**: ✅ Pass | ⚠️ Pass with Warnings | ❌ Fail
+**Status**: Pass | Pass with Warnings | Fail
 
 ## Summary
 
@@ -538,22 +538,22 @@ Provide structured feedback.
 
 ## Frontmatter Validation
 
-✅ **Required Fields**: All required fields present
-✅ **Date Format**: Correct ISO 8601 with UTC+7 format
-✅ **Cover Image**: Present with descriptive alt text
-⚠️ **Summary**: Could be more descriptive for better SEO
+**Required Fields**: All required fields present
+**Date Format**: Correct ISO 8601 with UTC+7 format
+**Cover Image**: Present with descriptive alt text
+**Summary**: Could be more descriptive for better SEO
 
 ## Content Structure
 
-✅ **Heading Hierarchy**: Proper nesting (single H1, no skipped levels)
-✅ **Internal Links**: All use correct Hugo format
-❌ **Image Alt Text**: Missing descriptive alt text on line 45
+**Heading Hierarchy**: Proper nesting (single H1, no skipped levels)
+**Internal Links**: All use correct Hugo format
+**Image Alt Text**: Missing descriptive alt text on line 45
 
 ## Content Quality
 
-✅ **Writing Style**: Active voice, professional tone
-✅ **English Language**: Proper grammar and spelling
-⚠️ **Line Length**: Some lines exceed 100 characters (lines 67, 89)
+**Writing Style**: Active voice, professional tone
+**English Language**: Proper grammar and spelling
+**Line Length**: Some lines exceed 100 characters (lines 67, 89)
 
 ## Recommendations
 
@@ -588,7 +588,7 @@ Content is high quality. Fix critical issue (image alt text) before publishing.
 
 **File**: apps/ose-platform-web/content/updates/2025-12-07-beta-release.md
 **Date**: 2025-12-07T16:00:00+07:00
-**Status**: ✅ Pass
+**Status**: Pass
 
 ## Summary
 
@@ -599,27 +599,27 @@ Content is high quality. Fix critical issue (image alt text) before publishing.
 
 ## Frontmatter Validation
 
-✅ All required fields present
-✅ Date format: `2025-12-07T14:30:00+07:00` (valid)
-✅ Summary: Descriptive and appropriate length
-✅ Cover image with alt text and caption
-✅ Tags and categories: Properly formatted arrays
+All required fields present
+Date format: `2025-12-07T14:30:00+07:00` (valid)
+Summary: Descriptive and appropriate length
+Cover image with alt text and caption
+Tags and categories: Properly formatted arrays
 
 ## Content Structure
 
-✅ Single H1 heading (document title)
-✅ Proper H2-H4 nesting
-✅ All internal links use Hugo format
-✅ All images have descriptive alt text
-✅ Mermaid diagrams use accessible color palette
+Single H1 heading (document title)
+Proper H2-H4 nesting
+All internal links use Hugo format
+All images have descriptive alt text
+Mermaid diagrams use accessible color palette
 
 ## Content Quality
 
-✅ Active voice throughout
-✅ Professional English tone
-✅ Clear, concise writing
-✅ Proper code blocks (language specified)
-✅ Excellent line length (average: 82 characters)
+Active voice throughout
+Professional English tone
+Clear, concise writing
+Proper code blocks (language specified)
+Excellent line length (average: 82 characters)
 
 ## Overall Assessment
 
@@ -639,7 +639,7 @@ Excellent content! No issues found. Ready for immediate publication.
 
 **File**: apps/ose-platform-web/content/updates/2025-11-20-announcement.md
 **Date**: 2025-12-07T16:15:00+07:00
-**Status**: ❌ Fail
+**Status**: Fail
 
 ## Summary
 
@@ -650,22 +650,22 @@ Excellent content! No issues found. Ready for immediate publication.
 
 ## Frontmatter Validation
 
-✅ Required fields present
-❌ **Date Format Error**: `2025-11-20T10:00:00` (missing timezone +07:00)
-⚠️ **Summary**: Only 80 characters (recommended: 150-160 for SEO)
-❌ **Cover Image**: Has `cover.image` but missing `cover.alt`
-✅ Tags format correct
+Required fields present
+**Date Format Error**: `2025-11-20T10:00:00` (missing timezone +07:00)
+**Summary**: Only 80 characters (recommended: 150-160 for SEO)
+**Cover Image**: Has `cover.image` but missing `cover.alt`
+Tags format correct
 
 ## Content Structure
 
-❌ **Multiple H1 Headings**: Found 2 H1 headings (lines 1, 56) - should be only 1
-✅ Internal links use correct format
-⚠️ **Image Alt Text**: 1 image has generic alt text (line 78)
+**Multiple H1 Headings**: Found 2 H1 headings (lines 1, 56) - should be only 1
+Internal links use correct format
+**Image Alt Text**: 1 image has generic alt text (line 78)
 
 ## Content Quality
 
-✅ Professional tone
-✅ Clear writing
+Professional tone
+Clear writing
 
 ## Critical Issues (Must Fix)
 
@@ -729,9 +729,9 @@ Content has critical errors that must be fixed before publication.
 
 ### Status Indicators
 
-- ✅ **Pass** - Meets all requirements
-- ⚠️ **Pass with Warnings** - Acceptable but could be improved
-- ❌ **Fail** - Has critical errors, must be fixed
+-  **Pass** - Meets all requirements
+-  **Pass with Warnings** - Acceptable but could be improved
+-  **Fail** - Has critical errors, must be fixed
 
 ### Priority Levels
 

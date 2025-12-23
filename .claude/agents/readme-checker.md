@@ -117,10 +117,10 @@ Validate README.md content against quality standards defined in the README Quali
 
 **Examples**:
 
-- ❌ Bad: "OJK (Otoritas Jasa Keuangan)"
-- ✅ Good: "Indonesian Banking Authority (OJK)"
-- ❌ Bad: "AAOIFI, IFSB standards"
-- ✅ Good: "Accounting (AAOIFI) and prudential (IFSB) standards"
+- Bad: "OJK (Otoritas Jasa Keuangan)"
+- Good: "Indonesian Banking Authority (OJK)"
+- Bad: "AAOIFI, IFSB standards"
+- Good: "Accounting (AAOIFI) and prudential (IFSB) standards"
 
 **Red Flags**:
 
@@ -182,7 +182,7 @@ This progressive approach ensures findings persist even if context is compacted 
 
 1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
 2. **Create report file** at `generated-reports/readme__{timestamp}__audit.md`
-3. **Write initial header** with Status: "⏳ In Progress" and progress tracker
+3. **Write initial header** with Status: " In Progress" and progress tracker
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Initial Read
@@ -288,7 +288,7 @@ Provide validation report in this structure:
 # README Validation Report
 
 **Date**: YYYY-MM-DD
-**Status**: ✅ Excellent | ⚠️ Needs Improvement | ❌ Significant Issues
+**Status**: Excellent | Needs Improvement | Significant Issues
 
 ## Executive Summary
 
@@ -302,11 +302,11 @@ Provide validation report in this structure:
 
 ## Findings by Category
 
-### ✅ Strengths
+### Strengths
 
 [List 3-5 things that are done well]
 
-### ⚠️ Issues Found
+### Issues Found
 
 #### 1. [Issue Category]
 
@@ -480,15 +480,15 @@ Use README Quality Convention as authoritative source. Key standards:
 
 A README passes validation when:
 
-- ✅ All paragraphs ≤5 lines
-- ✅ Problem-solution hook present
-- ✅ No unexplained jargon or acronyms
-- ✅ Conversational, benefits-focused tone
-- ✅ Navigation structure (summary + links)
-- ✅ Length <400 lines (ideally)
-- ✅ No duplicate content from detailed docs
-- ✅ Engagement score ≥8/10
-- ✅ Accessibility score ≥8/10
+- All paragraphs ≤5 lines
+- Problem-solution hook present
+- No unexplained jargon or acronyms
+- Conversational, benefits-focused tone
+- Navigation structure (summary + links)
+- Length <400 lines (ideally)
+- No duplicate content from detailed docs
+- Engagement score ≥8/10
+- Accessibility score ≥8/10
 
 ## Example Validation
 

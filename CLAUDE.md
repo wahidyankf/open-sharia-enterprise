@@ -30,7 +30,8 @@ open-sharia-enterprise/
 │   ├── explanation/         # Conceptual
 │   │   ├── principles/     # Foundational values
 │   │   ├── conventions/    # Documentation standards
-│   │   └── development/    # Software practices
+│   │   ├── development/    # Software practices
+│   │   └── workflows/      # Multi-step orchestrated processes
 │   └── metadata/           # Operational metadata (link caches)
 ├── plans/                   # Project planning (in-progress/, backlog/, done/)
 ├── .husky/                  # Git hooks
@@ -95,20 +96,20 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `backlog/` (future), `in-progress/` (active), `done/` (archived). Folder naming: `YYYY-MM-DD__[project-identifier]/`. See [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md) for details.
 
-## Repository Architecture: Four-Layer Hierarchy
+## Repository Architecture: Five-Layer Hierarchy
 
-The repository follows a four-layer architecture where each layer builds on the foundation of the layer above:
+The repository follows a five-layer architecture where each layer builds on the foundation of the layer above:
 
 ```
-Principles (WHY - foundational values)
+Layer 1: Principles (WHY - foundational values)
     ↓ governs
-    ├─→ Conventions (WHAT - documentation rules)
-    │       ↓ implemented by
-    │       AI Agents (IMPLEMENT and ENFORCE)
-    │
-    └─→ Development (HOW - software practices)
-            ↓ implemented by
-            AI Agents (IMPLEMENT and ENFORCE)
+Layer 2: Conventions (WHAT - documentation rules)
+    ↓ governs
+Layer 3: Development (HOW - software practices)
+    ↓ governs
+Layer 4: AI Agents (WHO - atomic task executors)
+    ↓ orchestrated by
+Layer 5: Workflows (WHEN - multi-step processes)
 ```
 
 **Layer 1: Core Principles** (`docs/explanation/principles/`)
@@ -127,13 +128,17 @@ Software practices that implement core principles. Defines HOW we develop, test,
 
 Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3. See [Agents Index](./.claude/agents/README.md) for all agents and their responsibilities.
 
+**Layer 5: Workflows** (`docs/explanation/workflows/`)
+
+Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria. Workflows define sequences (sequential/parallel/conditional), manage state between steps, and include human approval checkpoints. The Maker-Checker-Fixer pattern is the canonical workflow. See [Workflows Index](./docs/explanation/workflows/README.md) for all workflows and [Workflow Pattern Convention](./docs/explanation/workflows/ex-wf__workflow-pattern.md) for structure details.
+
 **Traceability Example:**
 
-Principle → Convention → Agent flow:
+Principle → Convention → Development → Agent → Workflow flow:
 
-- **Accessibility First** (principle) → **Color Accessibility Convention** (defines palette) → **docs-maker**, **hugo-developer** (enforce palette in content and diagrams)
+- **Automation Over Manual** (principle) → **Content Quality Principles** (convention) → **Maker-Checker-Fixer Pattern** (development) → **docs-checker**, **docs-fixer** (agents) → **Maker-Checker-Fixer Workflow** (orchestrates agents)
+- **Accessibility First** (principle) → **Color Accessibility Convention** (defines palette) → **docs-maker**, **hugo-developer** (enforce palette in content)
 - **Explicit Over Implicit** (principle) → **AI Agents Convention** (explicit tool permissions) → **agent-maker** (validates tool lists during creation)
-- **Automation Over Manual** (principle) → **Code Quality Convention** (automated formatting) → Git hooks (enforce on commit)
 
 ## Documentation Standards
 
@@ -181,7 +186,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 ### Factual Validation Convention
 
-Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated). See [Factual Validation Convention](./docs/explanation/conventions/ex-co__factual-validation.md) for complete methodology.
+Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification ([Verified], [Unverified], [Error], [Outdated]). See [Factual Validation Convention](./docs/explanation/conventions/ex-co__factual-validation.md) for complete methodology.
 
 ### Hugo Content Convention
 
@@ -250,6 +255,8 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 **Operations**: docs-file-manager, ayokoding-deployer, ose-platform-web-deployer
 
+**Workflows**: workflow-maker, workflow-checker, workflow-fixer
+
 **Meta**: agent-maker, repo-rules-maker
 
 See [Agents Index](./.claude/agents/README.md) for descriptions and workflows.
@@ -290,7 +297,7 @@ When adding new conventions, rules, or standards:
 - Use `repo-rules-fixer` to apply validated fixes from audit reports (after user review)
 - `repo-rules-maker` should check CLAUDE.md size when adding rules (warn if approaching limits)
 
-**Example**: ❌ Bad - Detailed examples duplicating convention docs. ✅ Good - Brief summary with link to detailed documentation.
+**Example**: Bad - Detailed examples duplicating convention docs. Good - Brief summary with link to detailed documentation.
 
 ## Planning Without Timelines
 

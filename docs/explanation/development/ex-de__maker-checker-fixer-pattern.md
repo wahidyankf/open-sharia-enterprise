@@ -11,7 +11,7 @@ tags:
   - validation
   - automation
 created: 2025-12-14
-updated: 2025-12-15
+updated: 2025-12-23
 ---
 
 # Maker-Checker-Fixer Pattern Convention
@@ -628,6 +628,11 @@ The maker-checker-fixer pattern integrates with repository conventions:
 - [Repository Validation Methodology](./ex-de__repository-validation.md) - Validation patterns and techniques
 - [Temporary Files Convention](./ex-de__temporary-files.md) - Report storage and naming
 
+**Workflow Orchestration**:
+
+- [Workflow Pattern Convention](../workflows/ex-wf__workflow-pattern.md) - How workflows orchestrate agents
+- [Maker-Checker-Fixer Workflow](../workflows/ex-wf__maker-checker-fixer.md) - This pattern as a workflow
+
 **Domain-Specific Standards**:
 
 - [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal content standards
@@ -648,3 +653,5 @@ The maker-checker-fixer pattern integrates with repository conventions:
 ---
 
 This pattern provides a **systematic, scalable, and safe approach** to content quality management across multiple domains. By separating creation, validation, and remediation into distinct stages, we achieve high-quality content through iterative improvement and automated safeguards.
+
+**Note**: This development practice document describes the **pattern concept**. The executable orchestration is formalized in [Maker-Checker-Fixer Workflow](../workflows/ex-wf__maker-checker-fixer.md) (Layer 5: Workflows).

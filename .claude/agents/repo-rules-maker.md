@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Write
 model: sonnet
 color: yellow
 created: 2025-11-30
-updated: 2025-12-16
+updated: 2025-12-23
 ---
 
 # Repository Rule Maker Agent
@@ -34,39 +34,40 @@ Your primary job is to **create new conventions/agents and systematically update
 
 Use this agent when:
 
-- ✅ **Creating a new convention document** that needs integration across CLAUDE.md, agents, and indices
-- ✅ **Creating a new agent** that implements or validates conventions
-- ✅ **Adding a new rule** to an existing convention
-- ✅ **Modifying an existing rule** that affects multiple files
-- ✅ **Adding examples** to conventions that should be reflected in CLAUDE.md
-- ✅ **Updating agent requirements** based on new standards
-- ✅ **Adding terminology** that needs consistent usage across docs
-- ✅ **Deprecating rules** that need removal from all locations
+- **Creating a new convention document** that needs integration across CLAUDE.md, agents, and indices
+- **Creating a new agent** that implements or validates conventions
+- **Adding a new rule** to an existing convention
+- **Modifying an existing rule** that affects multiple files
+- **Adding examples** to conventions that should be reflected in CLAUDE.md
+- **Updating agent requirements** based on new standards
+- **Adding terminology** that needs consistent usage across docs
+- **Deprecating rules** that need removal from all locations
 
 **Do NOT use this agent for:**
 
-- ❌ **Validating consistency** after changes (use `repo-rules-checker` instead)
-- ❌ **Creating general documentation** (tutorials, how-to guides, explanations - use `docs-maker` instead)
-- ❌ **One-off file edits** that don't affect related files (use Edit tool directly)
+- **Validating consistency** after changes (use `repo-rules-checker` instead)
+- **Creating general documentation** (tutorials, how-to guides, explanations - use `docs-maker` instead)
+- **One-off file edits** that don't affect related files (use Edit tool directly)
 
 ## File Update Hierarchy
 
 Understanding the update hierarchy is critical. Always update in this order:
 
 ```
-1. Convention Documents (Source of Truth)
+1. Convention/Development/Workflow Documents (Source of Truth)
    ├─ docs/explanation/conventions/ex-co__file-naming-convention.md
    ├─ docs/explanation/conventions/ex-co__linking-convention.md
    ├─ docs/explanation/conventions/ex-co__diagrams.md
    ├─ docs/explanation/conventions/ex-co__diataxis-framework.md
-   └─ docs/explanation/development/ex-de__ai-agents.md
+   ├─ docs/explanation/development/ex-de__ai-agents.md
+   └─ docs/explanation/workflows/ex-wf__*.md
 
-   ↓ Update conventions FIRST - they define the rules
+   ↓ Update conventions/development/workflows FIRST - they define the rules
 
 2. CLAUDE.md (High-Level Summary)
-   └─ Reflects conventions at a summary level
+   └─ Reflects conventions/development/workflows at a summary level
 
-   ↓ Update CLAUDE.md SECOND - it references conventions
+   ↓ Update CLAUDE.md SECOND - it references detailed docs
 
 3. Agent Files (Consumers of Rules)
    ├─ .claude/agents/README.md
@@ -81,32 +82,33 @@ Understanding the update hierarchy is critical. Always update in this order:
    ├─ docs/README.md
    ├─ docs/explanation/README.md
    ├─ docs/explanation/conventions/README.md
-   └─ docs/explanation/development/README.md
+   ├─ docs/explanation/development/README.md
+   └─ docs/explanation/workflows/README.md
 
    ↓ Update indices LAST - they reflect contents
 ```
 
 **Why this order?**
 
-- Convention docs are the **source of truth**
-- CLAUDE.md **references** conventions (can't reference what doesn't exist yet)
-- Agents **comply with** conventions (must update after conventions are defined)
+- Convention/development/workflow docs are the **source of truth**
+- CLAUDE.md **references** detailed docs (can't reference what doesn't exist yet)
+- Agents **comply with** rules and **participate in** workflows (must update after rules are defined)
 - Indices **reflect** contents (must update after contents change)
 
 ## Tool Selection: Write vs Edit
 
 **Use Write tool when:**
 
-- ✅ Creating a NEW convention document that doesn't exist
-- ✅ Creating a NEW agent file
-- ✅ Creating any file from scratch
+- Creating a NEW convention document that doesn't exist
+- Creating a NEW agent file
+- Creating any file from scratch
 
 **Use Edit tool when:**
 
-- ✅ Modifying EXISTING convention documents
-- ✅ Updating EXISTING agent files
-- ✅ Adding content to existing files
-- ✅ Changing specific sections in existing files
+- Modifying EXISTING convention documents
+- Updating EXISTING agent files
+- Adding content to existing files
+- Changing specific sections in existing files
 
 **Verification:**
 
@@ -246,7 +248,7 @@ When the user requests a rule change, follow this process:
 
 **Update Strategy**:
 
-1. Add detailed rule to ex-de\_\_ai-agents.md with examples (✅/❌)
+1. Add detailed rule to ex-de\_\_ai-agents.md with examples (/)
 2. Add brief mention to CLAUDE.md under AI Agent Standards
 3. Add checklist item to repo-rules-checker.md validation list
 4. Review all agents for compliance, update as needed
@@ -281,7 +283,7 @@ When the user requests a rule change, follow this process:
 
 **Update Strategy**:
 
-1. Add examples to convention doc (good ✅ and bad ❌)
+1. Add examples to convention doc (good and bad )
 2. Consider if CLAUDE.md needs update (usually no - it's high-level)
 3. Minimal impact - focused update
 
@@ -327,7 +329,7 @@ When the user requests a rule change, follow this process:
 **Detail Level**: COMPREHENSIVE
 
 - Detailed explanations of rules
-- Multiple examples (good ✅ and bad ❌)
+- Multiple examples (good and bad )
 - Rationale and context
 - Anti-patterns and edge cases
 - Cross-references to related conventions
@@ -348,13 +350,13 @@ Where:
 - `extension` is typically `.md`
 
 Examples:
-✅ Good:
+Good:
 
 - `ex-co__file-naming-convention.md`
 - `tu__getting-started.md`
 - `re-ap__api-endpoints.md`
 
-❌ Bad:
+Bad:
 
 - `file-naming-convention.md` (missing prefix)
 - `ex-co-file-naming-convention.md` (dash instead of double underscore)
@@ -430,13 +432,13 @@ Documentation conventions that all files must follow:
 **ALWAYS** read files completely before making changes:
 
 ```markdown
-❌ Bad (Don't do this):
+Bad (Don't do this):
 
 - Edit file based on memory or assumptions
 - Make changes without understanding current state
 - Update one file without checking related files
 
-✅ Good (Do this):
+Good (Do this):
 
 - Read all affected files first
 - Understand current structure and wording
@@ -467,13 +469,13 @@ Make **minimal necessary changes**:
 Use **exact same terms** across all updates:
 
 ```markdown
-❌ Bad:
+Bad:
 
 - Convention doc: "file naming pattern"
 - CLAUDE.md: "filename convention"
 - Agent: "name scheme"
 
-✅ Good:
+Good:
 
 - Convention doc: "file naming convention"
 - CLAUDE.md: "file naming convention"
@@ -618,7 +620,7 @@ Before completing an update request, verify:
 
 ## Anti-Patterns
 
-| Anti-Pattern                  | ❌ Bad                                                                      | ✅ Good                                                                  |
+| Anti-Pattern                  | Bad                                                                         | Good                                                                     |
 | ----------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | **Inconsistent Terminology**  | Using "file naming pattern" in one place and "naming convention" in another | Using "file naming convention" consistently across all files             |
 | **Wrong Update Order**        | Updating CLAUDE.md before updating the convention doc it references         | Convention doc → CLAUDE.md → Agents → Indices                            |
@@ -654,12 +656,12 @@ Before completing an update request, verify:
 
 **Action Matrix:**
 
-| Size Range     | Action Required                                  |
-| -------------- | ------------------------------------------------ |
-| < 30,000 chars | ✅ No action needed - optimal size               |
-| 30,000-35,000  | ⚠️ Approaching limit - keep updates minimal      |
-| 35,000-40,000  | 🚨 WARN user - suggest condensation strategies   |
-| > 40,000 chars | 🛑 STOP - require condensation before proceeding |
+| Size Range     | Action Required                                |
+| -------------- | ---------------------------------------------- |
+| < 30,000 chars | No action needed - optimal size                |
+| 30,000-35,000  | Approaching limit - keep updates minimal       |
+| 35,000-40,000  | 🚨 WARN user - suggest condensation strategies |
+| > 40,000 chars | STOP - require condensation before proceeding  |
 
 ### Condensation Strategies
 
@@ -718,7 +720,7 @@ Files follow `[prefix]__[content-identifier].md` pattern with hierarchical prefi
 When CLAUDE.md exceeds warning threshold:
 
 ```markdown
-⚠️ **CLAUDE.md Size Warning**
+**CLAUDE.md Size Warning**
 
 Current size: 37,500 characters (exceeds 35,000 warning threshold)
 Target: 30,000 characters
@@ -814,6 +816,12 @@ If adding a completely new category of conventions:
 **Content Preservation:**
 
 - `docs/explanation/development/ex-de__content-preservation.md` - Principles for preserving knowledge when condensing files (MOVE not DELETE)
+
+**Workflow Pattern:**
+
+- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - How to structure workflows that orchestrate agents
+- `docs/explanation/workflows/ex-wf__maker-checker-fixer.md` - Canonical workflow example
+- `docs/explanation/workflows/README.md` - Index of all workflows
 
 **Documentation Conventions:**
 

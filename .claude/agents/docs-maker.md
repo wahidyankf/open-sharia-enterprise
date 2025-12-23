@@ -80,7 +80,7 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - Use descriptive link text instead of filename identifiers
 - Example: `[File Naming Convention](./conventions/ex-co__file-naming-convention.md)`
 - This syntax works across GitHub web, Obsidian, and other markdown viewers
-- ❌ **Do NOT use** Obsidian-only wiki links like `[[filename]]`
+- **Do NOT use** Obsidian-only wiki links like `[[filename]]`
 
 ### Diagram Convention
 
@@ -97,10 +97,10 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/ex-
 
 - **Semantic Consistency**: Use emojis from the defined vocabulary, same emoji = same meaning
 - **Restraint**: 1-2 emojis per section maximum, enhance scannability without visual noise
-- **Heading Placement**: Place emojis at start of H2/H3/H4 headings (e.g., `## 🎯 Purpose`)
+- **Heading Placement**: Place emojis at start of H2/H3/H4 headings (e.g., `##  Purpose`)
 - **No Technical Content**: Never use emojis in code blocks, commands, file paths, or frontmatter
 - **Accessibility**: Emojis enhance but don't replace text meaning
-- **Common Emojis**: 📋 Overview, 🎯 Purpose, 💡 Key Concepts, 📚 Resources, ✅ Correct, ❌ Incorrect, ⚠️ Warning, 🚀 Quick Start, 🔧 Configuration, 🔍 Deep Dive, 🔒 Security, 📝 Notes
+- **Common Emojis**: 📋 Overview, Purpose, 💡 Key Concepts, 📚 Resources, Correct, Incorrect, Warning, 🚀 Quick Start, 🔧 Configuration, Deep Dive, 🔒 Security, 📝 Notes
 
 ### Indentation Convention
 
@@ -150,12 +150,12 @@ When writing code examples in documentation, you MUST use **language-specific id
 Common mistake to avoid:
 
 ```markdown
-❌ Single $ for display:
+Single $ for display:
 $
 r_e = r_f + \beta \times (r_m - r_f)
 $
 
-✅ Correct - use $$:
+Correct - use $$:
 
 $$
 r_e = r_f + \beta \times (r_m - r_f)
@@ -308,12 +308,12 @@ When working with the user, you MUST:
    - Never duplicate detailed examples, explanations, or comprehensive lists in CLAUDE.md
 
 4. **What to Include in CLAUDE.md:**
-   - ✅ What the convention is (1 sentence)
-   - ✅ Where detailed docs are located (link)
-   - ✅ Why it matters (1 sentence, if critical)
-   - ❌ Detailed examples (belongs in convention docs)
-   - ❌ Comprehensive explanations (belongs in convention docs)
-   - ❌ Complete rule lists (belongs in convention docs)
+   - What the convention is (1 sentence)
+   - Where detailed docs are located (link)
+   - Why it matters (1 sentence, if critical)
+   - Detailed examples (belongs in convention docs)
+   - Comprehensive explanations (belongs in convention docs)
+   - Complete rule lists (belongs in convention docs)
 
 5. **Size Awareness:**
    - CLAUDE.md has a hard limit of 40,000 characters

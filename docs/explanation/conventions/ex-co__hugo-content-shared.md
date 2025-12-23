@@ -45,7 +45,8 @@ This shared document contains conventions that apply to **both sites**:
 - [ose-platform-web specific conventions](./ex-co__hugo-content-ose-platform.md)
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
     A[Hugo Content] --> B[Shared Conventions<br/>This Document]
     A --> C[ayokoding-web<br/>Site-Specific]
@@ -116,7 +117,8 @@ where $\pi$ represents the expected inflation rate.
 
 ````markdown
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph LR
     A[Start] --> B[Process]
     B --> C[End]
@@ -148,7 +150,8 @@ graph LR
 
 ````markdown
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 flowchart TD
     A[User Request] --> B{Authentication?}
     B -->|Yes| C[Access Granted]

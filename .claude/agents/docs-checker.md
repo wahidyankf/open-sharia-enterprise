@@ -97,12 +97,12 @@ When validating mathematical notation:
 **Common error pattern to detect:**
 
 ```markdown
-❌ BROKEN - Single $ on its own line:
+BROKEN - Single $ on its own line:
 $
 WACC = \frac{E}{V} \times r_e
 $
 
-✅ CORRECT - Use $$:
+CORRECT - Use $$:
 
 $$
 WACC = \frac{E}{V} \times r_e
@@ -139,7 +139,7 @@ See [Indentation Convention](../../docs/explanation/conventions/ex-co__indentati
 
 **Common error to detect:**
 
-- ❌ `-  Text` (spaces AFTER dash) is WRONG - should be `  - Text` (spaces BEFORE dash)
+- `-  Text` (spaces AFTER dash) is WRONG - should be `  - Text` (spaces BEFORE dash)
 
 **Validation:**
 
@@ -149,12 +149,12 @@ See [Indentation Convention](../../docs/explanation/conventions/ex-co__indentati
 **Error pattern example:**
 
 ```markdown
-❌ WRONG - Spaces after dash:
+WRONG - Spaces after dash:
 
 - First level (spaces after dash - WRONG!)
 - Nested level (spaces after dash - WRONG!)
 
-✅ CORRECT - Spaces before dash:
+CORRECT - Spaces before dash:
 
 - First level
   - Nested level (2 spaces before dash)
@@ -177,7 +177,7 @@ See [Indentation Convention](../../docs/explanation/conventions/ex-co__indentati
 **Common error pattern to detect:**
 
 ````markdown
-❌ INCORRECT - JavaScript using tabs:
+INCORRECT - JavaScript using tabs:
 
 ```javascript
 function example() {
@@ -188,7 +188,7 @@ function example() {
 }
 ```
 
-✅ CORRECT - JavaScript using 2 spaces:
+CORRECT - JavaScript using 2 spaces:
 
 ```javascript
 function example() {
@@ -323,8 +323,8 @@ This progressive approach ensures findings persist even if context is compacted 
 3. **Write initial header** with:
    - Audit date/time
    - Scope (files to check)
-   - Status: "⏳ In Progress"
-   - Progress tracker section (all validation phases marked as "⏳ Pending")
+   - Status: " In Progress"
+   - Progress tracker section (all validation phases marked as " Pending")
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Discovery Phase
@@ -335,7 +335,7 @@ This progressive approach ensures findings persist even if context is compacted 
 2. **Use Glob** to find all markdown files in specified path
 3. **Read each file** to extract content for analysis
 
-**Update progress tracker**: Mark "Discovery Phase" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Discovery Phase" as In Progress → Complete
 
 ### Step 2: Claim Extraction Phase
 
@@ -370,7 +370,7 @@ This progressive approach ensures findings persist even if context is compacted 
 - Citations to third-party sources
 - References to other tools or libraries
 
-**Update progress tracker**: Mark "Claim Extraction" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Claim Extraction" as In Progress → Complete
 
 ### Step 3: Web Verification Phase
 
@@ -395,7 +395,7 @@ Verification:
 1. WebSearch: "gobuster dir mode documentation"
 2. WebFetch: https://github.com/OJ/gobuster (official repo)
 3. Check: -u flag exists, -w for wordlist, -x for extensions
-4. Result: ✅ Verified or ❌ Flag -x is actually --extensions
+4. Result:  Verified or  Flag -x is actually --extensions
 **Immediately append** verification result to report file
 ```
 
@@ -417,7 +417,7 @@ Verification:
 1. WebFetch: https://github.com/OJ/gobuster/README.md
 2. Extract: Actual mode list from official docs
 3. Compare: Claimed vs. actual modes
-4. Result: ✅ All 7 modes verified or ❌ Only 6 modes exist (missing fuzz)
+4. Result:  All 7 modes verified or  Only 6 modes exist (missing fuzz)
 **Immediately append** verification result to report file
 ```
 
@@ -441,7 +441,7 @@ Verification:
 1. WebSearch: "Prisma latest version 2025"
 2. WebFetch: https://www.npmjs.com/package/prisma
 3. Check: Latest version is 6.1.0 (released 2025-11-20)
-4. Result: ⚠️ Outdated - 6.0.2 is not latest (6.1.0 is)
+4. Result:  Outdated - 6.0.2 is not latest (6.1.0 is)
 ```
 
 #### Code Example Verification
@@ -470,7 +470,7 @@ Verification:
 1. WebFetch: https://www.prisma.io/docs/reference/api-reference
 2. Check: Prisma Client doesn't export `createUser` directly
 3. Actual API: `prisma.user.create({ data: { name: 'John' } })`
-4. Result: ❌ Incorrect API usage
+4. Result: Incorrect API usage
 
 ```
 
@@ -491,7 +491,7 @@ Verification:
 1. WebFetch: Original URL returns 404
 2. WebSearch: "NIST [topic] guidelines"
 3. Find: New URL for same guideline
-4. Result: ⚠️ URL outdated, suggest replacement
+4. Result: URL outdated, suggest replacement
 
 ```
 
@@ -512,7 +512,7 @@ Contradiction in same file:
 
 - Line 45: "Use HTTP for local development"
 - Line 123: "Always use HTTPS, even in development"
-  Result: ❌ Contradictory security guidance
+  Result: Contradictory security guidance
 
 ```
 
@@ -531,7 +531,7 @@ Inconsistency across files:
 
 - docs/tutorial/installation.md:12: "Run `npm install -g tool`"
 - docs/how-to/setup.md:34: "Run `npm install --save-dev tool`"
-  Result: ⚠️ Inconsistent installation instructions (global vs. local)
+  Result: Inconsistent installation instructions (global vs. local)
 
 ```
 
@@ -546,7 +546,7 @@ Inconsistency across files:
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics**:
    - Total claims checked
    - Verified / Outdated / Incorrect counts
@@ -573,7 +573,7 @@ Inconsistency across files:
 
 ```
 
-✅ Verified: Gobuster supports 7 modes (dir, dns, vhost, s3, gcs, tftp, fuzz)
+Verified: Gobuster supports 7 modes (dir, dns, vhost, s3, gcs, tftp, fuzz)
 Source: https://github.com/OJ/gobuster (verified 2025-12-01)
 
 ```
@@ -589,7 +589,7 @@ Source: https://github.com/OJ/gobuster (verified 2025-12-01)
 
 ```
 
-❌ Factual Error at docs/guide.md:45
+Factual Error at docs/guide.md:45
 Current: "Use flag -x to specify extensions"
 Issue: Flag -x does not exist in gobuster dir mode
 Correction: Use --extensions or -x (different tool)
@@ -608,7 +608,7 @@ Source: https://github.com/OJ/gobuster#dir-mode
 
 ```
 
-⚠️ Contradiction Found
+Contradiction Found
 File 1: docs/tutorial.md:23 - "Use HTTP for local development"
 File 2: docs/security.md:67 - "Always use HTTPS"
 Conflict: Inconsistent security guidance
@@ -647,9 +647,9 @@ You MUST execute the bash command to get the actual current time:
 TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 ```
 
-**❌ WRONG**: `docs__2025-12-15--00-00__validation.md` (placeholder time - never use this!)
+** WRONG**: `docs__2025-12-15--00-00__validation.md` (placeholder time - never use this!)
 
-**✅ CORRECT**: `docs__2025-12-15--10-23__validation.md` (actual time from executed bash command)
+** CORRECT**: `docs__2025-12-15--10-23__validation.md` (actual time from executed bash command)
 
 **Example**: `generated-reports/docs__2025-12-15--10-00__validation.md`
 
@@ -676,7 +676,7 @@ This ensures temporary validation reports are:
 - **Factual Errors**: A
 - **Contradictions**: B
 - **Outdated Information**: C
-- **Overall Status**: ✅ Accurate / ⚠️ Minor Issues / ❌ Critical Errors
+- **Overall Status**:  Accurate /  Minor Issues /  Critical Errors
 
 ## Verification Statistics
 
@@ -686,21 +686,21 @@ This ensures temporary validation reports are:
 - **External References Validated**: L
 - **Version Numbers Checked**: P
 
-## ✅ Verified Facts (showing first 10, X total)
+##  Verified Facts (showing first 10, X total)
 
 1. **Gobuster modes** at `docs/tools/gobuster.md:12`
    - Claim: Supports 7 modes (dir, dns, vhost, s3, gcs, tftp, fuzz)
-   - Status: ✅ Verified
+   - Status:  Verified
    - Source: https://github.com/OJ/gobuster (2025-12-01)
 
 2. **Next.js version** at `docs/setup.md:45`
    - Claim: Next.js 15.0.0 is latest stable
-   - Status: ✅ Verified
+   - Status:  Verified
    - Source: https://www.npmjs.com/package/next (2025-12-01)
 
 [List all verified facts...]
 
-## ❌ Factual Errors
+##  Factual Errors
 
 ### Error 1: Incorrect Command Flag
 
@@ -803,7 +803,7 @@ gobuster dir -u http://example.com --extensions php,html
 
 **Source**: [Prisma on npm](https://www.npmjs.com/package/prisma)
 
-## ℹ️ Recommendations
+## ℹ Recommendations
 
 ### High Priority (Accuracy Issues)
 
@@ -827,27 +827,27 @@ gobuster dir -u http://example.com --extensions php,html
 
 ### docs/tools/gobuster.md
 
-- ✅ 12 facts verified
-- ❌ 1 factual error (line 67: incorrect flag)
-- ⚠️ 0 contradictions
+- 12 facts verified
+- 1 factual error (line 67: incorrect flag)
+- 0 contradictions
 - 📅 1 outdated (line 23: old version number)
 
 ### docs/setup.md
 
-- ✅ 8 facts verified
-- ❌ 0 factual errors
-- ⚠️ 1 contradiction (line 34: installation method)
+- 8 facts verified
+- 0 factual errors
+- 1 contradiction (line 34: installation method)
 - 📅 2 outdated (lines 23, 67: old versions)
 
 [Continue for all checked files...]
 
 ## Next Steps
 
-**If ✅ Accurate**: Documentation is factually correct and consistent. No changes needed.
+**If Accurate**: Documentation is factually correct and consistent. No changes needed.
 
-**If ⚠️ Minor Issues**: Documentation is mostly accurate but has some inconsistencies or outdated references. Address when convenient.
+**If Minor Issues**: Documentation is mostly accurate but has some inconsistencies or outdated references. Address when convenient.
 
-**If ❌ Critical Errors**: Documentation has factual errors that will mislead users or cause failures. Fix immediately:
+**If Critical Errors**: Documentation has factual errors that will mislead users or cause failures. Fix immediately:
 
 1. [Critical error 1 with file:line]
 2. [Critical error 2 with file:line]
@@ -1010,7 +1010,7 @@ All facts verified against authoritative sources:
    - "Test this by running: [command]"
 
 3. **Flag as uncertain in report**
-   - "⚠️ Unverified: [claim] - requires [action]"
+   - " Unverified: [claim] - requires [action]"
 
 4. **Never present unverified info as verified**
    - Mark clearly as "unverified" or "assumed correct"

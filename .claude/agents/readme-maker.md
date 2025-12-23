@@ -58,11 +58,11 @@ Always start with problem-solution narrative:
 **Format**: English-first naming + context
 
 ```markdown
-❌ Bad: OJK (Otoritas Jasa Keuangan)
-✅ Good: Indonesian Banking Authority (OJK)
+Bad: OJK (Otoritas Jasa Keuangan)
+Good: Indonesian Banking Authority (OJK)
 
-❌ Bad: AAOIFI, IFSB standards
-✅ Good: Accounting (AAOIFI) and prudential (IFSB) standards
+Bad: AAOIFI, IFSB standards
+Good: Accounting (AAOIFI) and prudential (IFSB) standards
 ```
 
 ### 5. Benefits-Focused Language
@@ -70,15 +70,15 @@ Always start with problem-solution narrative:
 **Transform feature lists into user benefits**:
 
 ```markdown
-❌ Bad (features):
+Bad (features):
 
 - Data stored in portable formats
 - No vendor dependencies
 
-✅ Good (benefits):
+Good (benefits):
 
-- 📁 **Your data is portable** - Plain text you can read anywhere
-- ☁️ **No forced dependencies** - Pick your own infrastructure
+- **Your data is portable** - Plain text you can read anywhere
+- **No forced dependencies** - Pick your own infrastructure
 ```
 
 ### 6. Navigation Focus
@@ -184,15 +184,15 @@ Ensure:
 2. Draft section following quality principles:
 
 ```markdown
-## 🔐 Security
+## Security
 
 We take security seriously—it's built in from day one, not added later.
 
 **What We Do**:
 
-- 🛡️ **Secure by default** - Safe configurations out of the box
-- 🔍 **Regular audits** - Automated security scans on every commit
-- 📢 **Transparent reporting** - Public disclosure of fixed issues
+- **Secure by default** - Safe configurations out of the box
+- **Regular audits** - Automated security scans on every commit
+- **Transparent reporting** - Public disclosure of fixed issues
 
 Found a security issue? See our [Security Policy](./SECURITY.md) for how to report it responsibly.
 ```
@@ -241,7 +241,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible...
 3. Rewrite with clear structure:
 
 ```markdown
-## 🎯 Motivation
+## Motivation
 
 **The Challenge**: Organizations worldwide need enterprise software that respects Islamic principles, but most solutions treat Sharia-compliance as an afterthought—bolted on rather than built in.
 
@@ -316,9 +316,9 @@ Features:
 ```markdown
 **What You Get**:
 
-- 📁 **Your data is portable** - Plain text and open formats you can read anywhere
-- ☁️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
-- 📤 **Easy migration** - Export and move to alternatives anytime
+- **Your data is portable** - Plain text and open formats you can read anywhere
+- **No forced dependencies** - Pick your own hosting, database, or infrastructure
+- **Easy migration** - Export and move to alternatives anytime
 ```
 
 ## Writing Guidelines
@@ -327,35 +327,35 @@ Features:
 
 **Conversational, Not Corporate**:
 
-- ✅ "You can use this code for anything you want"
-- ❌ "Users are granted broad rights as specified in the license agreement"
+- "You can use this code for anything you want"
+- "Users are granted broad rights as specified in the license agreement"
 
 **Friendly, Not Pushy**:
 
-- ✅ "Here's how to get started:"
-- ❌ "You must follow these steps exactly"
+- "Here's how to get started:"
+- "You must follow these steps exactly"
 
 **Clear, Not Clever**:
 
-- ✅ "No vendor traps"
-- ❌ "Liberating you from the shackles of proprietary ecosystems"
+- "No vendor traps"
+- "Liberating you from the shackles of proprietary ecosystems"
 
 ### Voice
 
 **Active Voice**:
 
-- ✅ "You control your data"
-- ❌ "Data is controlled by users"
+- "You control your data"
+- "Data is controlled by users"
 
 **Second Person**:
 
-- ✅ "Your data stays portable"
-- ❌ "User data remains portable"
+- "Your data stays portable"
+- "User data remains portable"
 
 **Present Tense**:
 
-- ✅ "We're building"
-- ❌ "We will be building"
+- "We're building"
+- "We will be building"
 
 ### Structure
 
@@ -386,7 +386,7 @@ Features:
 ### Good: Motivation Section
 
 ```markdown
-## 🎯 Motivation
+## Motivation
 
 **The Challenge**: Organizations worldwide need enterprise software that respects Islamic principles, but most solutions treat Sharia-compliance as an afterthought—bolted on rather than built in.
 
@@ -394,11 +394,11 @@ Features:
 
 **What We Believe:**
 
-- 🕌 **Sharia-compliance as a foundation** should be built into enterprise solutions from the ground up, not bolted on later
-- 🔓 **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
-- 🌐 **Open source by default** - We believe in radical transparency unless it compromises security and/or privacy protection
+- **Sharia-compliance as a foundation** should be built into enterprise solutions from the ground up, not bolted on later
+- **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
+- **Open source by default** - We believe in radical transparency unless it compromises security and/or privacy protection
 
-🚀 Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
+Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 ```
 
 **Why this works**:
@@ -412,21 +412,21 @@ Features:
 ### Good: Tech Stack Section
 
 ```markdown
-## 🛠️ Tech Stack
+## Tech Stack
 
-🎯 **Guiding Principle:**
+**Guiding Principle:**
 We choose technologies that keep you free. Your data stays yours, in open formats you can take anywhere. No vendor traps, no proprietary formats, no forced dependencies.
 
 **What this means:**
 
-- 📁 **Your data is portable** - Plain text and open formats you can read anywhere
-- ☁️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
-- 📤 **Easy migration** - Export and move to alternatives anytime
-- 🔐 **Community ownership** - You control your technology choices
+- **Your data is portable** - Plain text and open formats you can read anywhere
+- **No forced dependencies** - Pick your own hosting, database, or infrastructure
+- **Easy migration** - Export and move to alternatives anytime
+- **Community ownership** - You control your technology choices
 
 We prefer open-source tools, but we'll use non-open-source software if it respects these principles.
 
-💡 **Example:** We use [Obsidian](https://obsidian.md/) for documentation (not open-source), but all docs are plain markdown files. You can open them in any text editor—no lock-in, complete freedom.
+**Example:** We use [Obsidian](https://obsidian.md/) for documentation (not open-source), but all docs are plain markdown files. You can open them in any text editor—no lock-in, complete freedom.
 ```
 
 **Why this works**:
@@ -486,13 +486,13 @@ Before completing work, verify:
 
 Content is ready when:
 
-- ✅ Engages readers immediately (hook/problem-solution)
-- ✅ Scannable (short paragraphs, visual hierarchy)
-- ✅ Accessible (no jargon, plain language)
-- ✅ Benefits-focused (user perspective)
-- ✅ Navigation structure (summary + links)
-- ✅ Technically accurate
-- ✅ Consistent with convention standards
+- Engages readers immediately (hook/problem-solution)
+- Scannable (short paragraphs, visual hierarchy)
+- Accessible (no jargon, plain language)
+- Benefits-focused (user perspective)
+- Navigation structure (summary + links)
+- Technically accurate
+- Consistent with convention standards
 
 ## Remember
 

@@ -7,7 +7,7 @@ tags:
   - explanation
   - concepts
 created: 2025-11-22
-updated: 2025-12-15
+updated: 2025-12-23
 ---
 
 # Explanation
@@ -17,22 +17,25 @@ Conceptual documentation for the open-sharia-enterprise project. These documents
 ## 🎯 Understanding the Hierarchy
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
 	A[Core Principles]
 	B[Conventions]
 	C[Development]
-	D[Implementation]
+	D[AI Agents]
+	E[Workflows]
 
 	A --> B
 	A --> C
 	B --> D
 	C --> D
+	D --> E
 
 	style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Documentation Layers** (Hierarchy):
@@ -59,13 +62,21 @@ graph TD
    - **Role**: Software practices layer - implements principles in concrete HOW standards
    - **Implemented by**: AI agents (hugo-developer, plan-executor, etc.) and automation (git hooks, build tools)
 
-4. **AI Agents** (IMPLEMENT) - Automated implementers in `.claude/agents/`
+4. **AI Agents** (WHO) - Automated implementers in `.claude/agents/`
    - Enforce conventions from layer 2 (documentation rules)
    - Enforce practices from layer 3 (software standards)
    - Validate compliance and apply fixes
    - **Role**: Implementation and enforcement layer - ensures principles are followed
 
-**Traceability**: Every rule should trace through the hierarchy: Principle (WHY) → Convention/Practice (WHAT/HOW) → Agent/Automation (IMPLEMENT). See [Core Principles](./principles/README.md) for complete traceability examples.
+5. **[Workflows](./workflows/README.md)** (WHEN) - Multi-step orchestrated processes
+   - Compose AI agents into reusable sequences
+   - Define goals, steps, and termination criteria
+   - Support sequential, parallel, and conditional execution
+   - Include human approval checkpoints
+   - **Role**: Orchestration layer - coordinates agents to achieve complex goals
+   - **Example**: Maker-Checker-Fixer workflow orchestrates creation, validation, and fixing
+
+**Traceability**: Every rule should trace through the hierarchy: Principle (WHY) → Convention/Practice (WHAT/HOW) → Agent (WHO) → Workflow (WHEN). See [Core Principles](./principles/README.md) for complete traceability examples.
 
 ## 🧪 The Layer Test: Where Does My Document Belong?
 
@@ -102,13 +113,26 @@ Use these questions to determine the correct directory for a new document:
 **Question**: Can you ask "**HOW do we develop software?**" about the content?
 
 - ✅ **YES** → Place in `development/` - It's a software practice
-- ❌ **NO** → It doesn't belong in explanation/ - consider how-to/ or reference/
+- ❌ **NO** → It's not a development practice, continue to next test
 
 **Examples**:
 
 - "How do I commit code?" → Development (Commit Messages)
 - "How do I develop Hugo themes?" → Development (Hugo Development)
 - "Why do we automate?" → Not a development practice (it's a principle)
+
+### Workflows Test
+
+**Question**: Can you ask "**WHEN do we orchestrate multiple agents?**" about the content?
+
+- ✅ **YES** → Place in `workflows/` - It's a multi-step process
+- ❌ **NO** → It doesn't belong in explanation/ - consider how-to/ or reference/
+
+**Examples**:
+
+- "When do we run maker, checker, and fixer in sequence?" → Workflow (Maker-Checker-Fixer)
+- "When do we validate all documentation?" → Workflow (Full Docs Validation)
+- "How does a single agent work?" → Not a workflow (it's about agents, covered in development/)
 
 ### Quick Decision Tree
 
@@ -119,7 +143,9 @@ Is it about WHY we value something?
     ├─ YES → conventions/
     └─ NO → Is it about HOW to develop software?
         ├─ YES → development/
-        └─ NO → Wrong category (try how-to/ or reference/)
+        └─ NO → Is it about WHEN to orchestrate multiple agents?
+            ├─ YES → workflows/
+            └─ NO → Wrong category (try how-to/ or reference/)
 ```
 
 ## 📋 Contents
@@ -127,7 +153,8 @@ Is it about WHY we value something?
 - [Core Principles](./principles/README.md) - Foundational principles guiding all conventions and development
 - [Conventions](./conventions/README.md) - Documentation writing and organization standards
 - [Development](./development/README.md) - Software development practices and workflows
+- [Workflows](./workflows/README.md) - Multi-step orchestrated processes composing AI agents
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2025-12-23

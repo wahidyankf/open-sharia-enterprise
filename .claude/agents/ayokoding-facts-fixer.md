@@ -403,7 +403,7 @@ This separation enables faster execution, clearer audit trail, and better separa
 - **False Positives Detected**: 3
 - **Needs Manual Review** (MEDIUM confidence): 4
 
-## ✅ Fixes Applied (18)
+## Fixes Applied (18)
 
 ### 1. Code Syntax Error - useState API
 
@@ -439,7 +439,7 @@ const [state, setState] = useState(initialValue);
 
 [... continue for all HIGH confidence fixes ...]
 
-## ❌ False Positives Detected (3)
+## False Positives Detected (3)
 
 ### 1. Bilingual Code Comparison Error
 
@@ -473,7 +473,7 @@ awk '/```typescript$/,/^```$/' file.md  # Exact fence match
 
 **Impact**: Prevents false positive on any pre-release version detection
 
-## ⚠️ Needs Manual Review (4)
+## Needs Manual Review (4)
 
 ### 1. Tutorial Difficulty Assessment
 
@@ -495,7 +495,7 @@ awk '/```typescript$/,/^```$/' file.md  # Exact fence match
 
 [... continue for all MEDIUM confidence items ...]
 
-## 📊 Files Modified
+## Files Modified
 
 **Total**: 12 files
 

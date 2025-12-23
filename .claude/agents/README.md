@@ -547,6 +547,65 @@ Creates and updates README.md content while maintaining engagement, accessibilit
 - **Works with:** `readme-checker` for quality validation
 - **References:** README Quality Convention
 
+### 🟦 `workflow-maker.md`
+
+Expert at creating and updating workflow definition files in docs/explanation/workflows/ following Workflow Pattern Convention.
+
+- **Primary Use:** Defining multi-agent orchestration processes with clear termination criteria
+- **Specialization:** Workflow structure design, agent orchestration, execution modes (Sequential/Parallel/Conditional), state management, error handling, principle alignment, agent reference validation
+- **Tools:** Read, Write, Edit, Glob, Grep
+- **Model:** Sonnet (complex reasoning for workflow orchestration patterns)
+- **When to Use:**
+  - Creating new workflow files with structured Markdown + YAML frontmatter
+  - Updating existing workflow definitions
+  - Documenting multi-step processes that compose multiple agents
+  - Defining execution modes, termination criteria, and human checkpoints
+  - Validating agent references exist in .claude/agents/
+  - Tracing workflows back to foundational principles
+  - Implementing common patterns (Maker-Checker-Fixer, Parallel Validation, Conditional Deployment)
+- **Works with:** All agents (workflows orchestrate agents)
+- **References:** Workflow Pattern Convention, Maker-Checker-Fixer Pattern, AI Agents Convention
+
+### 🟩 `workflow-checker.md`
+
+Expert at validating workflow definition files in docs/explanation/workflows/ against Workflow Pattern Convention and quality standards.
+
+- **Primary Use:** Validating workflow files for structure, semantics, and completeness
+- **Specialization:** YAML frontmatter schema validation, agent reference verification, state reference checking, termination criteria validation, principle traceability, execution mode consistency, dependency cycle detection
+- **Tools:** Read, Glob, Grep, Write, Bash
+- **When to Use:**
+  - Validating new workflow files before committing
+  - Checking workflow structure follows Workflow Pattern Convention
+  - Verifying all agent references exist in .claude/agents/
+  - Validating state references ({input.x}, {stepN.outputs.y}) are correct
+  - Ensuring termination criteria are well-defined
+  - Checking execution modes (Sequential/Parallel/Conditional) are consistent
+  - Detecting circular dependencies between steps
+  - Verifying workflows trace back to principles
+  - Periodic workflow quality audits
+- **Output:** Generates `workflow__{timestamp}__audit.md` report in `generated-reports/`
+- **Works with:** `workflow-maker` for workflow creation, `workflow-fixer` for applying validated fixes
+- **References:** Workflow Pattern Convention, Repository Validation Methodology, Temporary Files Convention
+
+### 🟨 `workflow-fixer.md`
+
+Applies validated fixes from workflow-checker audit reports. Re-validates workflow definition findings before applying changes.
+
+- **Primary Use:** Applying validated fixes from workflow-checker audit reports after user review
+- **Specialization:** Workflow structure fix application, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective distinction, frontmatter/agent reference/state reference corrections
+- **Tools:** Read, Edit, Glob, Grep, Write, Bash
+- **When to Use:**
+  - After reviewing workflow-checker audit report
+  - Fixing objective structural issues (missing fields, invalid syntax, broken references) automatically
+  - Flagging subjective improvements (execution mode choices, agent selection) for manual review
+  - Detecting and reporting false positives to improve checker accuracy
+  - Generating comprehensive fix reports with audit trail
+- **Workflow:** workflow-checker (validate) → User review → workflow-fixer (apply validated structural fixes)
+- **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence objective fixes automatically)
+- **Output:** Generates `workflow__{timestamp}__fix.md` report in `generated-reports/`
+- **Note:** Many workflow "issues" are design decisions - this agent applies only objective structural errors (verifiable violations) and flags subjective improvements for human judgment
+- **Works with:** `workflow-checker` for audit report generation, `workflow-maker` for workflow creation
+
 ### 🟩 `repo-rules-checker.md`
 
 Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation. Generates detailed audit reports in `generated-reports/repo-rules-audit-{timestamp}.md` for historical tracking.
