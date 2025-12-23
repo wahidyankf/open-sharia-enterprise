@@ -6,6 +6,7 @@ weight: 10000001
 description: "Learn Elixir basics through 15 annotated examples: variables, pattern matching, data structures, functions, and control flow - perfect first examples"
 tags:
   ["elixir", "tutorial", "by-example", "beginner", "basics", "pattern-matching"]
+categories: ["learn"]
 ---
 
 Learn Elixir fundamentals through 15 annotated code examples. Each example is self-contained, runnable in IEx, and heavily commented to show what each line does, expected outputs, and intermediate values.
@@ -150,9 +151,42 @@ is_binary("hello") # => true (strings are binaries)
 
 # Get type name
 i 42 # In IEx, shows: Term: 42, Data type: Integer
+
+# Dynamic typing - same variable can hold any type at runtime
+x = 42 # => 42 (x holds an integer)
+x = "hello" # => "hello" (x now holds a string, no error!)
+x = :atom # => :atom (x now holds an atom)
+# This works because types are checked at runtime, not compile time
+
+# Runtime type errors occur when operations expect a specific type
+# This will fail: String.length(42)
+# Error: FunctionClauseError - String.length/1 expects a binary/string
+
+# Type safety with guards - ensure function receives correct types
+defmodule TypeChecker do
+  def process_number(value) when is_number(value) do
+    value * 2
+  end
+
+  # Guards provide runtime type checking in function clauses
+  def format_value(val) when is_binary(val) do
+    "String: #{val}"
+  end
+
+  def format_value(val) when is_integer(val) do
+    "Number: #{val}"
+  end
+end
+
+TypeChecker.process_number(21) # => 42 (works - is_number(21) is true)
+# TypeChecker.process_number("21") # => Error - guard fails because "21" is not a number
+TypeChecker.format_value("hello") # => "String: hello"
+TypeChecker.format_value(42) # => "Number: 42"
 ```
 
-**Key Takeaway**: Elixir's basic types are simple and consistent. Atoms (`:name`) are efficient constants, strings support UTF-8 and interpolation, and integers have arbitrary precision.
+**Dynamic Typing Explained**: Elixir checks types at runtime, not compile time. This gives flexibility—the same variable can hold any type. However, functions expect specific types, so runtime errors occur if you pass the wrong type. Use **guards** (the `when` keyword in function clauses) to enforce type safety and pattern match on multiple type signatures. For complex scenarios, optional type specs with `@spec` (covered in advanced sections) document expected types.
+
+**Key Takeaway**: Elixir is dynamically typed—types are checked at runtime, giving flexibility to work with different types. The basic types are simple and consistent: atoms (`:name`) are efficient constants, strings support UTF-8 and interpolation, and integers have arbitrary precision. Use type checking functions and guards for runtime type safety.
 
 ---
 
@@ -250,16 +284,25 @@ result # => 42
 # {^status, result} = {:error, "failed"} # => ** (MatchError)
 
 # Pin in function arguments (preview - covered in functions)
+expected_status = :ok # => :ok
+
 defmodule Matcher do
-  def match_value(^x, y) when x == :test do
-    # ^ pins x to :test value in function head
-    y
+  def match_value(^expected_status, result) do
+    # ^ pins expected_status from outer scope - only matches if first arg is :ok
+    result
   end
 end
 
+Matcher.match_value(:ok, 42) # => 42 (works - first arg matches pinned :ok)
+# Matcher.match_value(:error, 42) # => FunctionClauseError (first arg is :error, not :ok)
+
 # Pin in list matching
 list = [1, 2, 3] # => [1, 2, 3]
-[^first | _] = list # first must equal 1
+[first | _] = list # => [1, 2, 3]
+first # => 1
+
+# Later, verify first element is still 1
+[^first | _] = list # => [1, 2, 3] (works - first element matches pinned value)
 # [^first | _] = [999, 2, 3] # => ** (MatchError) - 999 doesn't match 1
 ```
 
@@ -360,7 +403,7 @@ list # => [1, 2, 3] (unchanged, immutability!)
 [1, 2] ++ [3, 4] # => [1, 2, 3, 4]
 
 # Subtract with -- - O(n*m) removes elements
-[1, 2, 3, 2, 1] -- [2] # => [1, 3, 2, 1] (removes first occurrence)
+[1, 2, 3, 2, 1] -- [2] # => [1, 3, 2, 1] (removes first 2)
 [1, 2, 3] -- [3, 2] # => [1]
 
 # Access by index - O(n) linear time (slow!)
