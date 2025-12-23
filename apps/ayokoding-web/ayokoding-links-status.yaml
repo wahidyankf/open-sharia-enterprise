@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-22T01:02:00+07:00"
+lastFullScan: "2025-12-23T08:59:23+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -277,6 +277,25 @@ links:
     usedIn:
       - content/id/konten-video/_index.md
 
+  - url: https://elixir-lang.org/getting-started/introduction.html
+    lastChecked: "2025-12-23T08:45:20+07:00"
+    statusCode: 301
+    finalUrl: https://hexdocs.pm/elixir/introduction.html
+    redirectChain:
+      - from: https://elixir-lang.org/getting-started/introduction.html
+        to: https://hexdocs.pm/elixir/introduction.html
+        status: 301
+    usedIn:
+      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
+
+  - url: https://elixirforum.com/
+    lastChecked: "2025-12-23T08:45:20+07:00"
+    statusCode: 200
+    finalUrl: https://elixirforum.com/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
+
   - url: https://en.wikipedia.org/wiki/Linus's_law
     lastChecked: "2025-12-13T14:30:00+07:00"
     statusCode: 200
@@ -358,6 +377,14 @@ links:
     redirectChain: null
     usedIn:
       - content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+
+  - url: https://github.com/h4cc/awesome-elixir
+    lastChecked: "2025-12-23T08:45:20+07:00"
+    statusCode: 200
+    finalUrl: https://github.com/h4cc/awesome-elixir
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
 
   - url: https://github.com/jlleitschuh/ktlint-gradle
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -558,6 +585,14 @@ links:
     usedIn:
       - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
       - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
+
+  - url: https://hexdocs.pm/elixir/introduction.html
+    lastChecked: "2025-12-23T08:45:20+07:00"
+    statusCode: 200
+    finalUrl: https://hexdocs.pm/elixir/introduction.html
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
 
   - url: https://jitpack.io/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -983,6 +1018,14 @@ links:
     usedIn:
       - content/en/rants/2023/time-management-strategies-for-software-engineers-maximizing-productivity-and-success.md
       - content/id/celoteh/2023/strategi-manajemen-waktu-untuk-insinyur-perangkat-lunak-memaksimalkan-produktivitas-dan-kesuksesan.md
+
+  - url: https://www.erlang.org/doc/
+    lastChecked: "2025-12-23T08:45:20+07:00"
+    statusCode: 200
+    finalUrl: https://www.erlang.org/doc/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/swe/prog-lang/elixir/tutorials/by-example/advanced.md
 
   - url: https://www.ibm.com/cloud/learn/object-storage
     lastChecked: "2025-12-13T16:45:00+07:00"

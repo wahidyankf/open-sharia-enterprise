@@ -234,6 +234,7 @@ draft: false
     - [Beginner Tutorial - Elixir](/en/learn/swe/prog-lang/elixir/tutorials/beginner)
     - [Intermediate Elixir](/en/learn/swe/prog-lang/elixir/tutorials/intermediate)
     - [Advanced Elixir](/en/learn/swe/prog-lang/elixir/tutorials/advanced)
+    - [By Example](/en/learn/swe/prog-lang/elixir/tutorials/by-example)
   - [Elixir How-To Guides](/en/learn/swe/prog-lang/elixir/how-to)
     - [Overview](/en/learn/swe/prog-lang/elixir/how-to/overview)
     - [Elixir Cookbook](/en/learn/swe/prog-lang/elixir/how-to/cookbook)
