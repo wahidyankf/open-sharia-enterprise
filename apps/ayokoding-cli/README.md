@@ -78,6 +78,91 @@ ayokoding-cli nav regen --verbose
 - `--output, -o` - Output format: text, json, markdown
 - `--no-color` - Disable colored output
 
+### Title Management
+
+#### Update Titles
+
+```bash
+# Update all titles (both English and Indonesian)
+ayokoding-cli titles update
+
+# Update specific language
+ayokoding-cli titles update --lang en
+ayokoding-cli titles update --lang id
+
+# Preview changes without writing (dry-run)
+ayokoding-cli titles update --dry-run
+
+# Verbose output
+ayokoding-cli titles update --verbose
+
+# JSON output
+ayokoding-cli titles update -o json
+```
+
+**What it does:**
+
+- Scans all `.md` files in `apps/ayokoding-web/content/en/` and `apps/ayokoding-web/content/id/`
+- Generates titles from filenames using Title Case
+- Applies custom overrides for special cases (e.g., "cliftonstrengths" → "CliftonStrengths")
+- Handles lowercase articles/prepositions (e.g., "terms-and-conditions" → "Terms and Conditions")
+- Updates frontmatter title field only if it differs from expected
+- Skips files that already have correct titles (idempotent, cleaner git diffs)
+
+**Title Generation Algorithm:**
+
+1. Extract filename (without extension, strip leading underscores)
+2. Check for exact filename override in config
+3. Split on hyphens and underscores
+4. For each word:
+   - Check for per-word override (e.g., "javascript" → "JavaScript")
+   - Capitalize first letter
+   - Apply lowercase rules for articles/prepositions (except first word)
+5. Join with spaces
+
+**Examples:**
+
+- `programming-language` → "Programming Language"
+- `corporate-finance` → "Corporate Finance"
+- `terms-and-conditions` → "Terms and Conditions" (not "Terms And Conditions")
+- `cliftonstrengths` → "CliftonStrengths" (exact override)
+- `javascript-basics` → "JavaScript Basics" (per-word override)
+
+**Flags:**
+
+- `--lang` - Language to process: en, id, or both (default: both)
+- `--dry-run` - Preview changes without writing files
+- `--config-en` - Path to English config (default: apps/ayokoding-cli/config/title-overrides-en.yaml)
+- `--config-id` - Path to Indonesian config (default: apps/ayokoding-cli/config/title-overrides-id.yaml)
+
+**Configuration:**
+
+The CLI uses two YAML configuration files for overrides:
+
+- `apps/ayokoding-cli/config/title-overrides-en.yaml` - English overrides
+- `apps/ayokoding-cli/config/title-overrides-id.yaml` - Indonesian overrides
+
+Each config file defines:
+
+1. **Overrides**: Special cases for exact filename matches or per-word replacements
+2. **Lowercase words**: Articles/prepositions that should stay lowercase (except first word)
+
+**Example config:**
+
+```yaml
+overrides:
+  cliftonstrengths: "CliftonStrengths"
+  javascript: "JavaScript"
+  typescript: "TypeScript"
+
+lowercase_words:
+  - and
+  - or
+  - the
+  - of
+  - in
+```
+
 ## Help Commands
 
 ```bash
@@ -144,13 +229,35 @@ ayokoding-cli nav regen [--path=path]
 
 ## Integration with AI Agents
 
-The `ayokoding-navigation-maker` agent calls this CLI tool using the current syntax:
+### ayokoding-navigation-maker
+
+The `ayokoding-navigation-maker` agent regenerates navigation listings by calling:
 
 ```bash
 ./apps/ayokoding-cli/dist/ayokoding-cli nav regen
 ```
 
 **Performance**: ~25ms for 74 files
+
+### ayokoding-title-maker
+
+The `ayokoding-title-maker` agent updates title fields by calling:
+
+```bash
+./apps/ayokoding-cli/dist/ayokoding-cli titles update
+```
+
+**Performance**: ~40ms for 150 files
+
+### Workflow Integration
+
+Typical workflow when adding new content:
+
+1. **Create content**: `ayokoding-content-maker` creates new markdown files
+2. **Update titles**: `ayokoding-title-maker` standardizes titles from filenames
+3. **Generate navigation**: `ayokoding-navigation-maker` regenerates navigation listings
+4. **Validate structure**: `ayokoding-structure-checker` validates structure and ordering
+5. **Fix issues**: `ayokoding-structure-fixer` fixes any validation issues
 
 ## Development
 
