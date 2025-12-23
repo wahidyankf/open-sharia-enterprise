@@ -17,11 +17,11 @@ var (
 
 var navRegenCmd = &cobra.Command{
 	Use:   "regen [path]",
-	Short: "Regenerate 3-layer navigation in _index.md files",
-	Long: `Regenerate 3-layer navigation listings in all _index.md files.
+	Short: "Regenerate 2-layer navigation in _index.md files",
+	Long: `Regenerate 2-layer navigation listings in all _index.md files.
 
 Scans all _index.md files (excluding root language files) and regenerates
-navigation trees based on file structure 3 layers deep. Items are sorted
+navigation trees based on file structure 2 layers deep. Items are sorted
 by weight within each level.`,
 	Example: `  ayokoding-cli nav regen
   ayokoding-cli nav regen --path apps/ayokoding-web/content/en/learn

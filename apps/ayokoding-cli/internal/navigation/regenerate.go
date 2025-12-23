@@ -152,8 +152,8 @@ func processIndexFile(indexPath string, contentRoot string) error {
 		basePath = "/" + filepath.ToSlash(relPath)
 	}
 
-	// Scan directory structure (3 layers deep, starting from layer 1)
-	items, err := ScanDirectory(parentDir, basePath, 1, 3)
+	// Scan directory structure (2 layers deep, starting from layer 1)
+	items, err := ScanDirectory(parentDir, basePath, 1, 2)
 	if err != nil {
 		return fmt.Errorf("failed to scan directory: %w", err)
 	}
