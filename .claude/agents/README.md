@@ -164,6 +164,26 @@ Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md
 - **Works with:** `ayokoding-content-maker` creates files → `ayokoding-navigation-maker` generates navigation → `ayokoding-structure-checker` validates → `ayokoding-structure-fixer` fixes issues
 - **References:** Hugo Content Convention - ayokoding (weight system, navigation depth)
 
+### 🟪 `ayokoding-title-maker.md`
+
+Automatically update title fields in ayokoding-web markdown files based on filenames and configuration.
+
+- **Primary Use:** Standardizing title frontmatter fields across all markdown files
+- **Specialization:** Title generation from filenames (Title Case), custom overrides (special cases), lowercase article/preposition handling, bilingual support (English/Indonesian), idempotent updates (skip if already correct)
+- **Tools:** Bash
+- **Model:** Haiku (efficient mechanical task)
+- **When to Use:**
+  - After adding new content files to ayokoding-web
+  - After renaming files to regenerate titles from new filenames
+  - Bulk title standardization needed across all content
+  - Before navigation regeneration to ensure titles are consistent
+  - Semi-automatic workflow (suggested after content changes detected)
+- **Do NOT use for:** Creating new files, validating structure, fixing weights, writing custom content, manual title editing
+- **Idempotency:** Only updates files where title differs from expected (faster execution, cleaner git diffs)
+- **Works with:** `ayokoding-content-maker` creates files → `ayokoding-title-maker` updates titles → `ayokoding-navigation-maker` generates navigation → `ayokoding-structure-checker` validates
+- **Configuration:** Uses `config/title-overrides-en.yaml` and `config/title-overrides-id.yaml` for special cases
+- **References:** Hugo Content Convention - ayokoding, Content Quality Principles
+
 ### 🟨 `ayokoding-structure-maker.md`
 
 Expert at proactively modifying ayokoding-web content structure by adjusting weights to reorder content, insert new items at specific positions, and maintain weight conventions. Automatically regenerates navigation listings after structural changes using ayokoding-navigation-maker CLI.
