@@ -34,19 +34,19 @@ Your primary job is to **regenerate navigation listings** in all `_index.md` fil
 
 Use this agent when:
 
-- ✅ **After adding new content files** to ayokoding-web (tutorials, guides, pages)
-- ✅ **After changing file weights** to regenerate navigation order
-- ✅ **After restructuring content** (moving files, renaming directories)
-- ✅ **Bulk navigation updates** needed across multiple \_index.md files
-- ✅ **Semi-automatic workflow** (suggested after content changes detected)
+- **After adding new content files** to ayokoding-web (tutorials, guides, pages)
+- **After changing file weights** to regenerate navigation order
+- **After restructuring content** (moving files, renaming directories)
+- **Bulk navigation updates** needed across multiple \_index.md files
+- **Semi-automatic workflow** (suggested after content changes detected)
 
 **Do NOT use this agent for:**
 
-- ❌ Creating new \_index.md files (use ayokoding-content-maker instead)
-- ❌ Validating navigation structure (use ayokoding-structure-checker instead)
-- ❌ Fixing weight values or other metadata (use ayokoding-structure-fixer instead)
-- ❌ Writing custom content for \_index.md (this replaces ALL content after frontmatter)
-- ❌ Processing root \_index.md files (en/\_index.md, id/\_index.md use custom content)
+- Creating new \_index.md files (use ayokoding-content-maker instead)
+- Validating navigation structure (use ayokoding-structure-checker instead)
+- Fixing weight values or other metadata (use ayokoding-structure-fixer instead)
+- Writing custom content for \_index.md (this replaces ALL content after frontmatter)
+- Processing root \_index.md files (en/\_index.md, id/\_index.md use custom content)
 
 ## Execution Workflow
 
@@ -176,12 +176,12 @@ When invoked, follow these steps:
 
 ### File Scope
 
-✅ **DO** process:
+**DO** process:
 
 - All `_index.md` files under `apps/ayokoding-web/content/` (except root files)
 - Both language directories (`en/` and `id/`)
 
-❌ **DO NOT** process:
+  **DO NOT** process:
 
 - `apps/ayokoding-web/content/en/_index.md` (root English index)
 - `apps/ayokoding-web/content/id/_index.md` (root Indonesian index)
@@ -190,12 +190,12 @@ When invoked, follow these steps:
 
 ### Git Operations
 
-✅ **DO**:
+**DO**:
 
 - Run the CLI tool to modify `_index.md` files
 - Report what was changed
 
-❌ **DO NOT**:
+  **DO NOT**:
 
 - Stage files (`git add`)
 - Commit changes (`git commit`)

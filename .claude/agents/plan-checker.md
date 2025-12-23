@@ -116,7 +116,7 @@ This progressive approach ensures findings persist even if context is compacted 
 
 1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
 2. **Create report file** at `generated-reports/plan__{timestamp}__validation.md`
-3. **Write initial header** with Status: "⏳ In Progress" and progress tracker
+3. **Write initial header** with Status: " In Progress" and progress tracker
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Locate and Read Plan
@@ -253,7 +253,7 @@ Validation steps:
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics** and overall verdict
 3. **File is complete** and ready for review
 
@@ -261,9 +261,9 @@ Validation steps:
 
 Provide detailed report with:
 
-- ✅ **Pass**: Plan is ready for implementation
-- ⚠️ **Pass with Warnings**: Minor issues, can proceed but should address
-- ❌ **Fail**: Critical issues, must fix before implementation
+- **Pass**: Plan is ready for implementation
+- **Pass with Warnings**: Minor issues, can proceed but should address
+- **Fail**: Critical issues, must fix before implementation
 
 ## Temporary Report Files
 
@@ -279,9 +279,9 @@ You MUST execute the bash command to get the actual current time:
 TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 ```
 
-**❌ WRONG**: `plan__2025-12-15--00-00__validation.md` (placeholder time - never use this!)
+** WRONG**: `plan__2025-12-15--00-00__validation.md` (placeholder time - never use this!)
 
-**✅ CORRECT**: `plan__2025-12-15--11-43__validation.md` (actual time from executed bash command)
+** CORRECT**: `plan__2025-12-15--11-43__validation.md` (actual time from executed bash command)
 
 **Example**: `generated-reports/plan__2025-12-15--11-30__validation.md`
 
@@ -304,39 +304,39 @@ This ensures temporary validation reports are:
 
 ## Summary
 
-- **Plan Structure**: ✅ Valid / ❌ Invalid
-- **Requirements**: ✅ Complete / ⚠️ Minor Issues / ❌ Critical Issues
-- **Codebase Alignment**: ✅ Aligned / ⚠️ Assumptions Need Verification / ❌ Mismatched
-- **Technical Accuracy**: ✅ Verified / ⚠️ Some Concerns / ❌ Invalid Choices
-- **Delivery Checklist**: ✅ Actionable / ⚠️ Needs Refinement / ❌ Incomplete
-- **Overall Status**: ✅ READY / ⚠️ READY WITH WARNINGS / ❌ NOT READY
+- **Plan Structure**: Valid / Invalid
+- **Requirements**: Complete / Minor Issues / Critical Issues
+- **Codebase Alignment**: Aligned / Assumptions Need Verification / Mismatched
+- **Technical Accuracy**: Verified / Some Concerns / Invalid Choices
+- **Delivery Checklist**: Actionable / Needs Refinement / Incomplete
+- **Overall Status**: READY / READY WITH WARNINGS / NOT READY
 
 ## Plan Structure Validation
 
-### ✅ Structure Checks Passed
+### Structure Checks Passed
 
 - [x] Naming convention follows YYYY-MM-DD\_\_identifier
 - [x] All required files present
 - [x] Proper markdown formatting
 
-### ❌ Structure Issues Found
+### Structure Issues Found
 
 - [ ] Issue 1: [description]
 
 ## Requirements Validation
 
-### ✅ Complete Requirements
+### Complete Requirements
 
 - **Requirement 1**: Clear and testable
 - **Requirement 2**: Has Gherkin acceptance criteria
 
-### ❌ Issues Found
+### Issues Found
 
 - **Requirement X**: Missing acceptance criteria
   - **Impact**: Cannot validate implementation success
   - **Fix**: Add specific Gherkin scenarios
 
-### ⚠️ Warnings
+### Warnings
 
 - **Requirement Y**: Acceptance criteria could be more specific
   - **Current**: "System should be fast"
@@ -344,20 +344,20 @@ This ensures temporary validation reports are:
 
 ## Codebase Alignment
 
-### ✅ Verified Assumptions
+### Verified Assumptions
 
 - Current stack: Node.js 24.11.1, npm 11.6.2 (matches plan)
 - Package.json has: [list dependencies mentioned in plan]
 - Directory structure: apps/, libs/ exist (as assumed)
 
-### ❌ Mismatches Found
+### Mismatches Found
 
 - **Plan assumes**: `apps/user-service/` exists
   - **Reality**: Directory does not exist
   - **Impact**: Plan references modifying existing service, but it needs to be created
   - **Fix**: Update plan to reflect creating new service
 
-### ⚠️ Assumptions to Verify
+### Assumptions to Verify
 
 - **Plan states**: "Using existing authentication system"
   - **Found**: libs/ts-auth/ exists but needs verification it has required features
@@ -365,46 +365,46 @@ This ensures temporary validation reports are:
 
 ## Technical Documentation Validation
 
-### ✅ Verified Technology Choices
+### Verified Technology Choices
 
 **Prisma 6.0.2**:
 
-- ✅ Latest stable version (verified via WebSearch)
-- ✅ Compatible with Node.js 24 (verified via docs)
-- ✅ Documentation accessible: https://www.prisma.io/docs
-- ✅ Actively maintained (last release: 2025-11-15)
+- Latest stable version (verified via WebSearch)
+- Compatible with Node.js 24 (verified via docs)
+- Documentation accessible: https://www.prisma.io/docs
+- Actively maintained (last release: 2025-11-15)
 
 **Next.js 15.0.0**:
 
-- ✅ Current stable version
-- ✅ Compatible with React 19 (as specified in plan)
-- ✅ No breaking changes from current version (14.x)
+- Current stable version
+- Compatible with React 19 (as specified in plan)
+- No breaking changes from current version (14.x)
 
-### ❌ Invalid Technical Choices
+### Invalid Technical Choices
 
 **Library "react-auth-pro"**:
 
-- ❌ Package does not exist on npm (verified via WebSearch)
-- ❌ Documentation URL returns 404: https://example.com/react-auth-pro
+- Package does not exist on npm (verified via WebSearch)
+- Documentation URL returns 404: https://example.com/react-auth-pro
 - **Impact**: Cannot implement authentication as planned
 - **Fix**: Replace with valid library (suggest: NextAuth.js, Clerk, Auth0)
 
-### ⚠️ Technical Concerns
+### Technical Concerns
 
 **Using MongoDB for this use case**:
 
-- ⚠️ Plan specifies relational data model with complex joins
-- ⚠️ MongoDB is document-based (better for non-relational data)
+- Plan specifies relational data model with complex joins
+- MongoDB is document-based (better for non-relational data)
 - **Recommendation**: Consider PostgreSQL for relational data requirements
 
 ## Delivery Checklist Validation
 
-### ✅ Actionable Tasks
+### Actionable Tasks
 
 - [x] Task 1: "Create user model in Prisma schema" - Clear and specific
 - [x] Task 2: "Implement login endpoint" - Has acceptance criteria
 
-### ❌ Vague or Missing Tasks
+### Vague or Missing Tasks
 
 - [ ] "Set up authentication" - TOO VAGUE
   - **Issue**: Not specific enough to implement
@@ -416,19 +416,19 @@ This ensures temporary validation reports are:
 
 ### Coverage Check
 
-- ✅ All requirements mapped to delivery tasks
-- ❌ **MISSING**: Integration testing task for Requirement 5
-  - **Fix**: Add task "Validate end-to-end user registration flow"
+- All requirements mapped to delivery tasks
+- **MISSING**: Integration testing task for Requirement 5
+- **Fix**: Add task "Validate end-to-end user registration flow"
 
 ## Cross-Document Consistency
 
-### ✅ Consistent References
+### Consistent References
 
 - Tech-docs architecture supports all requirements
 - Delivery checklist covers all requirements
 - Version numbers consistent across documents
 
-### ❌ Contradictions Found
+### Contradictions Found
 
 - **Requirements.md**: States "Use REST API"
 - **Tech-docs.md**: Describes GraphQL implementation
@@ -437,13 +437,13 @@ This ensures temporary validation reports are:
 
 ## Implementability Assessment
 
-### ✅ Ready to Implement
+### Ready to Implement
 
 - All information needed is present
 - No TBD placeholders in critical sections
 - External dependencies verified and available
 
-### ❌ Blockers Found
+### Blockers Found
 
 - **Missing**: Database connection configuration details
 - **Missing**: Environment variables specification
@@ -476,11 +476,11 @@ This ensures temporary validation reports are:
 
 ## Next Steps
 
-**If ✅ READY**: Plan is ready for implementation. Move to in-progress/ and start implementation with plan-executor.
+**If READY**: Plan is ready for implementation. Move to in-progress/ and start implementation with plan-executor.
 
-**If ⚠️ READY WITH WARNINGS**: Plan can proceed but address warnings during implementation. Review warnings with team first.
+**If READY WITH WARNINGS**: Plan can proceed but address warnings during implementation. Review warnings with team first.
 
-**If ❌ NOT READY**: Plan needs fixes before implementation. Return to plan-maker to address:
+**If NOT READY**: Plan needs fixes before implementation. Return to plan-maker to address:
 
 1. [Critical issue 1]
 2. [Critical issue 2]
@@ -559,7 +559,7 @@ This ensures temporary validation reports are:
 
 ### Decision Criteria
 
-**❌ FAIL - Not Ready for Implementation**
+** FAIL - Not Ready for Implementation**
 
 Mark as **NOT READY** if:
 
@@ -571,7 +571,7 @@ Mark as **NOT READY** if:
 - Delivery checklist missing critical tasks
 - Blockers prevent implementation from starting
 
-**⚠️ PASS WITH WARNINGS - Can Proceed with Caution**
+** PASS WITH WARNINGS - Can Proceed with Caution**
 
 Mark as **READY WITH WARNINGS** if:
 
@@ -582,7 +582,7 @@ Mark as **READY WITH WARNINGS** if:
 - Non-critical documentation URLs are broken
 - Suggestions for improvement (not blockers)
 
-**✅ PASS - Ready for Implementation**
+** PASS - Ready for Implementation**
 
 Mark as **READY** if:
 
@@ -688,10 +688,10 @@ You:
 8. Generate validation report showing all issues
 
 Report shows:
-- ❌ Critical: Library directory assumed but doesn't exist
-- ❌ Critical: Delivery task doesn't map to requirement
-- ⚠️ Warning: Plan uses beta version of NextAuth
-- ⚠️ Warning: Upgrade path for Next.js not documented
+-  Critical: Library directory assumed but doesn't exist
+-  Critical: Delivery task doesn't map to requirement
+-  Warning: Plan uses beta version of NextAuth
+-  Warning: Upgrade path for Next.js not documented
 
 Return report to user/plan-maker for fixes.
 ```

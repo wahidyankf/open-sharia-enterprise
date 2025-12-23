@@ -113,7 +113,7 @@ See convention for complete validation checklist and scoring rubrics.
 
 **MUST validate LaTeX delimiters:**
 
-✅ **Correct display math:**
+**Correct display math:**
 
 ```markdown
 $$
@@ -121,7 +121,7 @@ r_e = r_f + \beta \times (r_m - r_f)
 $$
 ```
 
-❌ **Incorrect (single $ for display):**
+**Incorrect (single $ for display):**
 
 ```markdown
 $
@@ -155,7 +155,7 @@ This progressive approach ensures findings persist even if context is compacted 
 
 1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
 2. **Create report file** at `generated-reports/docs-tutorial__{timestamp}__audit.md`
-3. **Write initial header** with Status: "⏳ In Progress" and progress tracker
+3. **Write initial header** with Status: " In Progress" and progress tracker
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Read and Understand
@@ -224,12 +224,12 @@ This progressive approach ensures findings persist even if context is compacted 
    - Is shape differentiation used (not color alone)?
 
 3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md))
-   - ✅ Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
-   - ❌ Avoids inaccessible colors: red, green, yellow
-   - ✅ Includes black borders (#000000) for definition
-   - ✅ Meets WCAG AA contrast ratios (4.5:1)
-   - ✅ Has comment documenting color scheme
-   - ✅ Uses shape differentiation (not color alone)
+   - Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
+   - Avoids inaccessible colors: red, green, yellow
+   - Includes black borders (#000000) for definition
+   - Meets WCAG AA contrast ratios (4.5:1)
+   - Has comment documenting color scheme
+   - Uses shape differentiation (not color alone)
 
 4. **Note missing diagrams**
    - Specific types needed
@@ -255,7 +255,7 @@ This progressive approach ensures findings persist even if context is compacted 
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics** and final scores
 3. **File is complete** and ready for review
 

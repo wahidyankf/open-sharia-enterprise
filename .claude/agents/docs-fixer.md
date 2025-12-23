@@ -38,17 +38,17 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running docs-checker** - You have an audit report to process
-- ✅ **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
-- ✅ **Automated fixing needed** - You want validated issues fixed automatically
-- ✅ **Safety is critical** - You need validation before changes are applied
+- **After running docs-checker** - You have an audit report to process
+- **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
+- **Automated fixing needed** - You want validated issues fixed automatically
+- **Safety is critical** - You need validation before changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Initial validation (use docs-checker for detection)
-- ❌ Content creation (use docs-maker for new documentation)
-- ❌ Manual fixes (just use Edit tool directly)
-- ❌ When no audit report exists
+- Initial validation (use docs-checker for detection)
+- Content creation (use docs-maker for new documentation)
+- Manual fixes (just use Edit tool directly)
+- When no audit report exists
 
 ## How This Agent Works
 
@@ -583,7 +583,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Incorrect Command Syntax (5 files)
 
-✅ **docs/tools/gobuster.md:67**
+**docs/tools/gobuster.md:67**
 
 - **Issue:** Command uses invalid flag `-x` (should be `--extensions`)
 - **Validation:** Checker verified flag doesn't exist via https://github.com/OJ/gobuster
@@ -591,7 +591,7 @@ Create comprehensive report in `generated-reports/`:
 - **Confidence:** HIGH
 - **Source:** Gobuster GitHub documentation (verified by checker 2025-12-14)
 
-✅ **docs/api/usage.md:45**
+**docs/api/usage.md:45**
 
 - **Issue:** API method `createUser()` doesn't exist in Prisma Client
 - **Validation:** Checker verified correct API via https://www.prisma.io/docs/reference/api-reference
@@ -603,7 +603,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Outdated Version Numbers (7 files)
 
-✅ **docs/setup.md:23**
+**docs/setup.md:23**
 
 - **Issue:** References Node.js 18 LTS (outdated)
 - **Validation:** Checker verified Node.js 24 is current LTS via https://nodejs.org/en/about/releases/
@@ -615,7 +615,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### LaTeX Rendering Errors (3 files)
 
-✅ **docs/tutorials/finance.md:156**
+**docs/tutorials/finance.md:156**
 
 - **Issue:** Display math using single `$` delimiter (won't render)
 - **Validation:** Confirmed single `$` on own line at line 156
@@ -627,7 +627,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Diagram Color Accessibility (3 files)
 
-✅ **docs/explanation/architecture.md:89**
+**docs/explanation/architecture.md:89**
 
 - **Issue:** Mermaid diagram uses red and green (inaccessible for color-blind users)
 - **Validation:** Extracted colors, found #FF0000 (red) and #00FF00 (green) in diagram
@@ -641,7 +641,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (3)
 
-❌ **docs/tutorials/setup.md:67 - Contradiction claim**
+**docs/tutorials/setup.md:67 - Contradiction claim**
 
 - **Checker finding:** "Use HTTP for local" contradicts "Always use HTTPS"
 - **Re-validation:** Read full context - first quote is for tool config, second is for user-facing endpoints (different contexts)
@@ -652,7 +652,7 @@ Create comprehensive report in `generated-reports/`:
   - Check if statements apply to different scenarios
   - Only flag contradictions within same context
 
-❌ **docs/reference/api.md:123 - LaTeX in code block**
+**docs/reference/api.md:123 - LaTeX in code block**
 
 - **Checker finding:** LaTeX delimiter error (single $ in display math)
 - **Re-validation:** Line 123 is inside markdown code block (```typescript)
@@ -665,7 +665,7 @@ Create comprehensive report in `generated-reports/`:
   ````
 `````
 
-❌ **docs/tools/npm.md:45 - Valid version flagged as wrong**
+**docs/tools/npm.md:45 - Valid version flagged as wrong**
 
 - **Checker finding:** npm version 10.8.0 is outdated (latest is 11.6.3)
 - **Re-validation:** Line 45 says "As of November 2024, npm 10.8.0..." (historical reference, not recommendation)
@@ -682,7 +682,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## Needs Manual Review (4)
 
-⚠️ **docs/guide.md:89 - Content duplication**
+**docs/guide.md:89 - Content duplication**
 
 - **Issue:** Paragraph duplicated between docs/guide.md and docs/tutorial/intro.md
 - **Validation:** Confirmed exact text match in both files
@@ -690,7 +690,7 @@ Create comprehensive report in `generated-reports/`:
 - **Action Required:** Manually review if duplication serves pedagogical purpose or should be removed
 - **Context:** Tutorials often repeat explanation content for self-contained learning
 
-⚠️ **docs/api/endpoints.md:156 - Terminology inconsistency**
+**docs/api/endpoints.md:156 - Terminology inconsistency**
 
 - **Issue:** Uses both "repository" (30 times) and "repo" (12 times)
 - **Validation:** Confirmed usage of both terms
@@ -698,7 +698,7 @@ Create comprehensive report in `generated-reports/`:
 - **Action Required:** Decide on preferred term for consistency
 - **Note:** "Repository" is more formal, "repo" is common in dev contexts
 
-⚠️ **docs/setup.md:67 - Outdated best practice claim**
+**docs/setup.md:67 - Outdated best practice claim**
 
 - **Issue:** Recommends installing dependencies globally
 - **Validation:** Global install pattern is older practice, local install preferred in 2025
@@ -706,7 +706,7 @@ Create comprehensive report in `generated-reports/`:
 - **Action Required:** Manually review if recommendation should be updated to local install
 - **Context:** Best practices evolve, but old approaches may still be valid for specific cases
 
-⚠️ **docs/tools/docker.md:234 - Broken link alternative unclear**
+**docs/tools/docker.md:234 - Broken link alternative unclear**
 
 - **Issue:** Link to https://old-domain.com/docker-guide returns 404
 - **Validation:** Checker confirmed 404, found multiple possible alternatives

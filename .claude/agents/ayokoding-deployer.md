@@ -275,9 +275,9 @@ To resolve:
 
 **CRITICAL**: This agent NEVER creates new commits on `prod-ayokoding-web`.
 
-- ✅ All work must be done on `main` branch first
-- ✅ The agent only synchronizes branches (no commits)
-- ✅ Deployment = making prod-ayokoding-web match main exactly
+- All work must be done on `main` branch first
+- The agent only synchronizes branches (no commits)
+- Deployment = making prod-ayokoding-web match main exactly
 
 **Workflow**:
 

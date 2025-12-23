@@ -27,17 +27,17 @@ Your primary job is to **create well-structured planning documents** in the `pla
 
 Use this agent when:
 
-- ✅ **Starting a new project** - Create comprehensive planning documents
-- ✅ **Defining project scope** - Document requirements and objectives
-- ✅ **Planning technical approach** - Document architecture and design decisions
-- ✅ **Creating project roadmaps** - Define milestones and deliverables
-- ✅ **Organizing project deliverables** - Structure project phases and tasks
+- **Starting a new project** - Create comprehensive planning documents
+- **Defining project scope** - Document requirements and objectives
+- **Planning technical approach** - Document architecture and design decisions
+- **Creating project roadmaps** - Define milestones and deliverables
+- **Organizing project deliverables** - Structure project phases and tasks
 
 **Do NOT use this agent for:**
 
-- ❌ Creating permanent documentation (use `docs-maker` instead)
-- ❌ Modifying existing conventions (use `repo-rules-maker`)
-- ❌ Auditing repository consistency (use `repo-rules-checker`)
+- Creating permanent documentation (use `docs-maker` instead)
+- Modifying existing conventions (use `repo-rules-maker`)
+- Auditing repository consistency (use `repo-rules-checker`)
 
 ## Plans Folder Structure
 
@@ -141,10 +141,10 @@ See [Trunk Based Development Convention](../../docs/explanation/development/ex-d
 
 This means:
 
-- ✅ Plan contains work that can be implemented together
-- ✅ All features/requirements are cohesive and related
-- ✅ Implementation can be reviewed and merged as one unit
-- ✅ Testing can be done on the complete set of changes
+- Plan contains work that can be implemented together
+- All features/requirements are cohesive and related
+- Implementation can be reviewed and merged as one unit
+- Testing can be done on the complete set of changes
 
 **Benefits of single-PR plans**:
 
@@ -216,8 +216,8 @@ When planning, ask:
 
 **IMPORTANT**: Files inside plan folders do NOT use prefixes. The folder structure provides context.
 
-✅ Correct: `README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`
-❌ Incorrect: `pl-ba__README.md`, `pl-ba__requirements.md` (NO PREFIXES!)
+Correct: `README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`
+Incorrect: `pl-ba__README.md`, `pl-ba__requirements.md` (NO PREFIXES!)
 
 ### 2. Diagram Convention: Mermaid Primary, ASCII Optional
 
@@ -327,10 +327,10 @@ Before finalizing:
 
 Plans are for **temporary project planning documents**. Do NOT use plans/ for:
 
-- ❌ Permanent documentation → Use `docs/` instead
-- ❌ Code comments or READMEs → Use inline documentation
-- ❌ API documentation → Use `docs/reference/` instead
-- ❌ Tutorials or guides → Use `docs/tutorials/` or `docs/how-to/` instead
+- Permanent documentation → Use `docs/` instead
+- Code comments or READMEs → Use inline documentation
+- API documentation → Use `docs/reference/` instead
+- Tutorials or guides → Use `docs/tutorials/` or `docs/how-to/` instead
 
 If documentation needs to outlive the project, it belongs in `docs/`, not `plans/`.
 

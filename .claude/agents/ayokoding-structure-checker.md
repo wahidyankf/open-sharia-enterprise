@@ -71,18 +71,18 @@ This agent produces TWO outputs:
 
 Use this agent when:
 
-- ✅ **Validating navigation architecture** across ayokoding-web content
-- ✅ **Checking weight ordering** follows level-based system with per-parent resets
-- ✅ **Verifying overview/ikhtisar presence** in learning content folders
-- ✅ **Auditing navigation depth** (3 layers deep requirement)
-- ✅ **Ensuring structural compliance** with Hugo Content Convention - ayokoding
+- **Validating navigation architecture** across ayokoding-web content
+- **Checking weight ordering** follows level-based system with per-parent resets
+- **Verifying overview/ikhtisar presence** in learning content folders
+- **Auditing navigation depth** (3 layers deep requirement)
+- **Ensuring structural compliance** with Hugo Content Convention - ayokoding
 
 **Do NOT use this agent for:**
 
-- ❌ Content quality validation (use ayokoding-content-checker instead)
-- ❌ Factual accuracy validation (use ayokoding-facts-checker instead)
-- ❌ Link validation (use ayokoding-link-checker instead)
-- ❌ Frontmatter YAML syntax validation (use ayokoding-content-checker instead)
+- Content quality validation (use ayokoding-content-checker instead)
+- Factual accuracy validation (use ayokoding-facts-checker instead)
+- Link validation (use ayokoding-link-checker instead)
+- Frontmatter YAML syntax validation (use ayokoding-content-checker instead)
 
 ## ayokoding-web Content Architecture
 
@@ -391,7 +391,7 @@ content/en/learn/swe/prog-lang/golang/
 **Report Finding Format**:
 
 ```markdown
-❌ Overview Link Position: NOT FIRST or MISSING
+Overview Link Position: NOT FIRST or MISSING
 
 - File: apps/ayokoding-web/content/en/learn/swe/\_index.md
 - Overview File: apps/ayokoding-web/content/en/learn/swe/overview.md (exists)
@@ -626,12 +626,10 @@ weight: 1000002  # Should be higher than beginner
 title: "Basic Syntax"
 weight: 1001 # Foundational
 ---
-
 ---
 title: "Control Flow"
 weight: 1002 # Foundational
 ---
-
 ---
 title: "Advanced Patterns" # Gap justified - advanced topic
 weight: 1010
@@ -646,7 +644,6 @@ weight: 1010
 title: "Advanced Concurrency Patterns"
 weight: 1001 # Should come AFTER basic concepts
 ---
-
 ---
 title: "Basic Syntax" # Beginner topic
 weight: 1002 # Should come BEFORE advanced
@@ -678,8 +675,8 @@ This progressive approach ensures findings persist even if context is compacted 
 3. **Write initial header** with:
    - Audit date/time
    - Audit ID (timestamp)
-   - Status: "⏳ In Progress"
-   - Progress tracker section (all validation checks marked as "⏳ Pending")
+   - Status: " In Progress"
+   - Progress tracker section (all validation checks marked as " Pending")
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Scan Content Directories
@@ -710,7 +707,7 @@ This includes:
 2. Directory location (e.g., `tutorials/`, `how-to/`, `reference/`)
 3. Presence of weight field in frontmatter
 
-**Update progress tracker**: Mark "Scanning Directories" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Scanning Directories" as In Progress → Complete
 
 ### Step 2: Read and Parse Files
 
@@ -721,7 +718,7 @@ For each file found:
 3. Parse navigation lists from `_index.md` files
 4. Extract linked paths from navigation items
 
-**Update progress tracker**: Mark "Reading Files" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Reading Files" as In Progress → Complete
 
 ### Step 3: Validate Structure
 
@@ -761,18 +758,18 @@ Apply all validation rules, **writing findings immediately after each check**:
 
 **CRITICAL**: Write each file's validation result IMMEDIATELY after checking. Do NOT buffer results.
 
-**Update progress tracker**: Mark each validation rule as 🔄 In Progress → ✅ Complete as it finishes
+**Update progress tracker**: Mark each validation rule as In Progress → Complete as it finishes
 
 ### Step 4: Finalize Audit Report
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics**:
    - Files checked
    - Issues found (Critical/Important/Minor)
-   - Status (✅ Pass | ⚠️ Pass with Warnings | ❌ Fail)
-3. **Add verification results**: Checklist with ✅/❌ indicators
+   - Status ( Pass | Pass with Warnings | Fail)
+3. **Add verification results**: Checklist with / indicators
 4. **Add priority recommendations**: Actionable fixes with file paths
 5. **File is complete** and ready for review
 
@@ -783,13 +780,13 @@ Apply all validation rules, **writing findings immediately after each check**:
 **Conversation Output Format**:
 
 ```markdown
-✅ Audit report generated: `generated-reports/ayokoding-structure__{timestamp}__audit.md`
+Audit report generated: `generated-reports/ayokoding-structure__{timestamp}__audit.md`
 
 ## Summary
 
 - Files Checked: [N]
 - Issues Found: [N]
-- Status: [✅ Pass | ⚠️ Pass with Warnings | ❌ Fail]
+- Status: [ Pass | Pass with Warnings | Fail]
 
 ## Critical Issues
 
@@ -817,12 +814,12 @@ See full audit report for complete details and recommendations.
 **Validation Result**:
 
 ```markdown
-✅ Navigation Depth: 3 layers deep (valid)
-✅ Navigation Ordering: Ordered by weight
-✅ Overview Presence: overview.md exists
-✅ Overview Link Position: First in navigation
-✅ Weight Compliance: All weights follow level-based system
-✅ Pedagogical Progression: Sequential ordering is logical
+Navigation Depth: 3 layers deep (valid)
+Navigation Ordering: Ordered by weight
+Overview Presence: overview.md exists
+Overview Link Position: First in navigation
+Weight Compliance: All weights follow level-based system
+Pedagogical Progression: Sequential ordering is logical
 
 Status: PASS
 ```
@@ -834,7 +831,7 @@ Status: PASS
 **Validation Result**:
 
 ```markdown
-❌ Overview Presence: overview.md MISSING
+Overview Presence: overview.md MISSING
 
 - Folder: apps/ayokoding-web/content/en/learn/swe/prog-lang/python/
 - Expected: overview.md
@@ -856,7 +853,7 @@ Status: FAIL
 **Validation Result**:
 
 ```markdown
-❌ Weight Compliance: Level 3 folder using wrong weight
+Weight Compliance: Level 3 folder using wrong weight
 
 - File: apps/ayokoding-web/content/en/learn/swe/\_index.md
 - Current Weight: 10
@@ -872,9 +869,9 @@ Status: FAIL
 
 ### Status Indicators
 
-- ✅ **Pass** - Meets all requirements
-- ⚠️ **Pass with Warnings** - Acceptable but could be improved
-- ❌ **Fail** - Has critical errors, must be fixed
+- **Pass** - Meets all requirements
+- **Pass with Warnings** - Acceptable but could be improved
+- **Fail** - Has critical errors, must be fixed
 
 ### Issue Categorization
 

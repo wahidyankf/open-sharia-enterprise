@@ -29,19 +29,19 @@ Your primary job is to **validate Hugo content** for ayokoding-web against all r
 
 Use this agent when:
 
-- ✅ **Validating new content** before publication
-- ✅ **Checking frontmatter** correctness (YAML format, required fields, date format)
-- ✅ **Verifying content structure** (heading hierarchy, link format, image alt text)
-- ✅ **Ensuring convention compliance** (Hugo conventions, content quality standards)
-- ✅ **Quality assurance** before merging or deploying content
+- **Validating new content** before publication
+- **Checking frontmatter** correctness (YAML format, required fields, date format)
+- **Verifying content structure** (heading hierarchy, link format, image alt text)
+- **Ensuring convention compliance** (Hugo conventions, content quality standards)
+- **Quality assurance** before merging or deploying content
 
 **Do NOT use this agent for:**
 
-- ❌ Validating ose-platform-web content (use ose-platform-web-content-checker instead)
-- ❌ Creating or modifying content (use ayokoding-content-maker instead)
-- ❌ Fixing validation errors (report issues, let user or content-maker fix)
-- ❌ Hugo configuration validation
-- ❌ Theme or archetype validation
+- Validating ose-platform-web content (use ose-platform-web-content-checker instead)
+- Creating or modifying content (use ayokoding-content-maker instead)
+- Fixing validation errors (report issues, let user or content-maker fix)
+- Hugo configuration validation
+- Theme or archetype validation
 
 ## ayokoding-web Site Characteristics
 
@@ -77,7 +77,7 @@ Use this agent when:
 
 **Violation Examples**:
 
-❌ **Flag these as errors**:
+**Flag these as errors**:
 
 ```markdown
 This tutorial takes 2-3 hours to complete.
@@ -86,7 +86,7 @@ Learn TypeScript in 30 minutes
 Time needed: 1-2 hrs
 ```
 
-✅ **Acceptable**:
+**Acceptable**:
 
 ```markdown
 By the end of this tutorial, you'll be able to...
@@ -476,10 +476,10 @@ title: business # WRONG! No capitalization, too generic
 
 **Error Cases**:
 
-- ❌ **Missing intro file** - Folder has `_index.md` but NO `overview.md` (English) or `ikhtisar.md` (Indonesian)
-- ❌ **Wrong language filename** - `overview.md` in Indonesian folder or `ikhtisar.md` in English folder
-- ❌ **Descriptive title** - Title is "Programming Languages Overview" instead of just "Overview"
-- ❌ **Empty file** - Intro file exists but has no content
+- **Missing intro file** - Folder has `_index.md` but NO `overview.md` (English) or `ikhtisar.md` (Indonesian)
+- **Wrong language filename** - `overview.md` in Indonesian folder or `ikhtisar.md` in English folder
+- **Descriptive title** - Title is "Programming Languages Overview" instead of just "Overview"
+- **Empty file** - Intro file exists but has no content
 
 **Validation Logic**:
 
@@ -630,17 +630,17 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 # /en/learn/swe/_index.md (level 3)
 ---
 title: "Software Engineering"
-weight: 10 # ❌ WRONG! Should be weight: 100 (level 3 base)
+weight: 10 #  WRONG! Should be weight: 100 (level 3 base)
 ---
 # /en/learn/swe/overview.md (level 3)
 ---
 title: "Overview"
-weight: 1 # ❌ WRONG! Should be weight: 101 (level 3 base + 1)
+weight: 1 #  WRONG! Should be weight: 101 (level 3 base + 1)
 ---
 # /en/learn/swe/prog-lang/ (level 3)
 ---
 title: "Programming Languages"
-# ❌ WRONG! Missing weight field (should be weight: 102)
+#  WRONG! Missing weight field (should be weight: 102)
 ---
 ```
 
@@ -650,22 +650,22 @@ title: "Programming Languages"
 # /en/learn/swe/_index.md (level 3)
 ---
 title: "Software Engineering"
-weight: 100 # ✅ Level 3 base
+weight: 100 #  Level 3 base
 ---
 # /en/learn/swe/overview.md (level 3)
 ---
 title: "Overview"
-weight: 101 # ✅ Level 3 base + 1 (immediately after index)
+weight: 101 #  Level 3 base + 1 (immediately after index)
 ---
 # /en/learn/swe/prog-lang/ (level 3)
 ---
 title: "Programming Languages"
-weight: 102 # ✅ Level 3 base + 2 (first content item)
+weight: 102 #  Level 3 base + 2 (first content item)
 ---
 # /en/learn/swe/infosec/ (level 3)
 ---
 title: "Information Security"
-weight: 103 # ✅ Level 3 base + 3 (second content item)
+weight: 103 #  Level 3 base + 3 (second content item)
 ---
 ```
 
@@ -837,7 +837,7 @@ Setelah 5 tahun menggunakan Vim, saya akhirnya pindah ke Neovim...
 
 **Invalid Cross-Reference Examples**:
 
-❌ **Missing cross-reference** (bilingual content without link):
+**Missing cross-reference** (bilingual content without link):
 
 ```markdown
 ---
@@ -849,7 +849,7 @@ After 5 years of using Vim...
 <!-- WRONG! Missing cross-reference to Indonesian version -->
 ```
 
-❌ **Wrong format for English** (missing bold or different text):
+**Wrong format for English** (missing bold or different text):
 
 ```markdown
 Similar article: [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
@@ -857,7 +857,7 @@ Similar article: [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovi
 <!-- WRONG! Should be **Similar article:** with bold -->
 ```
 
-❌ **Wrong format for Indonesian** (missing disclaimer):
+**Wrong format for Indonesian** (missing disclaimer):
 
 ```markdown
 **Artikel serupa:** [Why I Switched to Neovim](/en/rants/2023/07/why-neovim)
@@ -865,7 +865,7 @@ Similar article: [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovi
 <!-- WRONG! Should use blockquote disclaimer about machine translation -->
 ```
 
-❌ **Relative path** (breaks in different contexts):
+**Relative path** (breaks in different contexts):
 
 ```markdown
 **Similar article:** [Kenapa Saya Pindah ke Neovim](../../celoteh/2023/07/kenapa-neovim)
@@ -873,7 +873,7 @@ Similar article: [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovi
 <!-- WRONG! Should use absolute path with language prefix -->
 ```
 
-❌ **Missing language prefix**:
+**Missing language prefix**:
 
 ```markdown
 **Similar article:** [Kenapa Saya Pindah ke Neovim](/celoteh/2023/07/kenapa-neovim)
@@ -881,7 +881,7 @@ Similar article: [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovi
 <!-- WRONG! Missing /id/ language prefix -->
 ```
 
-❌ **Includes .md extension**:
+**Includes .md extension**:
 
 ```markdown
 **Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim.md)
@@ -894,7 +894,7 @@ Similar article: [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovi
 When cross-reference violations detected:
 
 ```markdown
-❌ **Cross-Reference Missing** (Line 8-10)
+**Cross-Reference Missing** (Line 8-10)
 
 This article has a corresponding Indonesian translation at:
 `apps/ayokoding-web/content/id/celoteh/2023/07/kenapa-neovim.md`
@@ -946,7 +946,7 @@ But cross-reference link is missing.
 
 **Common Archetype Violations**:
 
-❌ **Wrong (learning content with author field)**:
+**Wrong (learning content with author field)**:
 
 ```yaml
 ---
@@ -956,7 +956,7 @@ author: "Wahidyan Kresna Fridayoka" # WRONG! Should not exist
 ---
 ```
 
-✅ **Correct (learning content without author)**:
+**Correct (learning content without author)**:
 
 ```yaml
 ---
@@ -966,7 +966,7 @@ categories: ["learn"]
 ---
 ```
 
-❌ **Wrong (\_index.md with unreadable/poorly capitalized title)**:
+**Wrong (\_index.md with unreadable/poorly capitalized title)**:
 
 ```yaml
 # File: content/en/learn/swe/prog-lang/_index.md
@@ -979,7 +979,7 @@ title: "Ai" # WRONG! Incorrect acronym capitalization (should be "AI")
 ---
 ```
 
-✅ **Correct (\_index.md with descriptive, readable title)**:
+**Correct (\_index.md with descriptive, readable title)**:
 
 ```yaml
 # File: content/en/learn/swe/prog-lang/_index.md
@@ -992,7 +992,7 @@ title: "AI Engineering" # Correct - proper acronym capitalization with context
 ---
 ```
 
-❌ **Wrong (video content missing videoUrl)**:
+**Wrong (video content missing videoUrl)**:
 
 ```yaml
 ---
@@ -1002,7 +1002,7 @@ categories: ["video"]
 ---
 ```
 
-✅ **Correct (video content with videoUrl)**:
+**Correct (video content with videoUrl)**:
 
 ```yaml
 ---
@@ -1173,8 +1173,8 @@ This progressive approach ensures findings persist even if context is compacted 
 3. **Write initial header** with:
    - Audit date/time
    - Scope (files to validate)
-   - Status: "⏳ In Progress"
-   - Progress tracker section (all files marked as "⏳ Pending")
+   - Status: " In Progress"
+   - Progress tracker section (all files marked as " Pending")
 4. **File is now readable** and will be updated progressively
 
 ### Step 1: Identify Content to Validate
@@ -1198,7 +1198,7 @@ apps/ayokoding-web/content/id/belajar/**/*.md
 apps/ayokoding-web/content/**/*.md
 ```
 
-**Update progress tracker**: Mark "Identifying Content" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Identifying Content" as In Progress → Complete
 
 ### Step 2: Read Content Files
 
@@ -1212,7 +1212,7 @@ Read: apps/ayokoding-web/content/id/belajar/nodejs/getting-started.md
 Glob: "apps/ayokoding-web/content/id/belajar/**/*.md"
 ```
 
-**Update progress tracker**: Mark "Reading Files" as 🔄 In Progress → ✅ Complete
+**Update progress tracker**: Mark "Reading Files" as In Progress → Complete
 
 ### Step 3: Parse Frontmatter
 
@@ -1228,7 +1228,7 @@ For each file, extract and validate frontmatter:
 
 **CRITICAL**: Do NOT buffer results. Write immediately after validating each file's frontmatter.
 
-**Update progress tracker**: Mark each file as 🔄 In Progress → ✅ Complete as frontmatter is validated
+**Update progress tracker**: Mark each file as In Progress → Complete as frontmatter is validated
 
 ### Step 4: Validate Content Structure
 
@@ -1265,7 +1265,7 @@ For each file, verify compliance with:
 
 **Final update to existing report file:**
 
-1. **Update status**: Change "⏳ In Progress" to "✅ Complete"
+1. **Update status**: Change " In Progress" to " Complete"
 2. **Add summary statistics**:
    - Total checks performed
    - Passed/Warnings/Errors counts
@@ -1281,7 +1281,7 @@ Provide structured feedback:
 
 **File**: apps/ayokoding-web/content/id/belajar/nodejs/getting-started.md
 **Date**: 2025-12-07T15:30:00+07:00
-**Status**: ✅ Pass | ⚠️ Pass with Warnings | ❌ Fail
+**Status**: Pass | Pass with Warnings | Fail
 
 ## Summary
 
@@ -1292,32 +1292,32 @@ Provide structured feedback:
 
 ## Frontmatter Validation
 
-✅ **Required Fields**: All required fields present
-✅ **Date Format**: Correct ISO 8601 with UTC+7 format
-⚠️ **Description Length**: 145 characters (recommended: 150-160 for SEO)
-✅ **YAML Indentation**: Correct 2-space indentation
-✅ **Author Field**: Not present (learning content - correct)
+**Required Fields**: All required fields present
+**Date Format**: Correct ISO 8601 with UTC+7 format
+**Description Length**: 145 characters (recommended: 150-160 for SEO)
+**YAML Indentation**: Correct 2-space indentation
+**Author Field**: Not present (learning content - correct)
 
 ## Content Structure
 
-✅ **Heading Hierarchy**: Proper nesting (single H1, no skipped levels)
-✅ **Internal Links**: All use correct Hugo format (no .md extensions)
-❌ **Image Alt Text**: Missing descriptive alt text on line 45
-⚠️ **Mermaid Diagram**: Color palette comment missing on line 67
+**Heading Hierarchy**: Proper nesting (single H1, no skipped levels)
+**Internal Links**: All use correct Hugo format (no .md extensions)
+**Image Alt Text**: Missing descriptive alt text on line 45
+**Mermaid Diagram**: Color palette comment missing on line 67
 
 ## Content Quality
 
-✅ **Writing Style**: Active voice, professional tone
-✅ **Formatting**: Proper code blocks, list syntax
-⚠️ **Line Length**: Some lines exceed 100 characters (lines 89, 102)
+**Writing Style**: Active voice, professional tone
+**Formatting**: Proper code blocks, list syntax
+**Line Length**: Some lines exceed 100 characters (lines 89, 102)
 
 ## Tutorial-Specific (Learning Content)
 
-✅ **Learning Objectives**: Clearly stated
-✅ **Prerequisites**: Listed with context
-✅ **Progressive Scaffolding**: Content builds logically
-✅ **Visual Aids**: Includes diagrams and code examples
-⚠️ **Summary Section**: Could be more comprehensive
+**Learning Objectives**: Clearly stated
+**Prerequisites**: Listed with context
+**Progressive Scaffolding**: Content builds logically
+**Visual Aids**: Includes diagrams and code examples
+**Summary Section**: Could be more comprehensive
 
 ## Recommendations
 
@@ -1364,7 +1364,7 @@ Warnings can be addressed to improve SEO and readability.
 
 **File**: apps/ayokoding-web/content/en/learn/nodejs/getting-started.md
 **Date**: 2025-12-07T16:00:00+07:00
-**Status**: ✅ Pass
+**Status**: Pass
 
 ## Summary
 
@@ -1375,35 +1375,35 @@ Warnings can be addressed to improve SEO and readability.
 
 ## Frontmatter Validation
 
-✅ All required fields present and correctly formatted
-✅ Date format: `2025-12-07T09:00:00+07:00` (valid)
-✅ Description: 158 characters (optimal for SEO)
-✅ Tags and categories: Properly formatted arrays
+All required fields present and correctly formatted
+Date format: `2025-12-07T09:00:00+07:00` (valid)
+Description: 158 characters (optimal for SEO)
+Tags and categories: Properly formatted arrays
 
 ## Content Structure
 
-✅ Single H1 heading (document title)
-✅ Proper H2-H6 nesting (no skipped levels)
-✅ All internal links use Hugo format (no .md extensions)
-✅ All images have descriptive alt text
-✅ Mermaid diagrams use accessible color palette
+Single H1 heading (document title)
+Proper H2-H6 nesting (no skipped levels)
+All internal links use Hugo format (no .md extensions)
+All images have descriptive alt text
+Mermaid diagrams use accessible color palette
 
 ## Content Quality
 
-✅ Active voice throughout
-✅ Professional and approachable tone
-✅ Clear, concise writing
-✅ Proper code block formatting (language specified)
-✅ Excellent line length (average: 85 characters)
+Active voice throughout
+Professional and approachable tone
+Clear, concise writing
+Proper code block formatting (language specified)
+Excellent line length (average: 85 characters)
 
 ## Tutorial-Specific
 
-✅ Clear learning objectives
-✅ Well-defined prerequisites
-✅ Progressive scaffolding evident
-✅ Multiple code examples with explanations
-✅ Visual aids (diagrams and screenshots)
-✅ Comprehensive summary section
+Clear learning objectives
+Well-defined prerequisites
+Progressive scaffolding evident
+Multiple code examples with explanations
+Visual aids (diagrams and screenshots)
+Comprehensive summary section
 
 ## Overall Assessment
 
@@ -1423,7 +1423,7 @@ Excellent content! No issues found. Ready for immediate publication.
 
 **File**: apps/ayokoding-web/content/id/belajar/python/basics.md
 **Date**: 2025-12-07T16:15:00+07:00
-**Status**: ❌ Fail
+**Status**: Fail
 
 ## Summary
 
@@ -1434,30 +1434,30 @@ Excellent content! No issues found. Ready for immediate publication.
 
 ## Frontmatter Validation
 
-✅ Required fields present
-❌ **Date Format Error**: `2025-12-7T10:00:00` (missing timezone +07:00)
-⚠️ **Description**: Only 95 characters (recommended: 150-160)
-❌ **YAML Indentation**: Uses tabs instead of 2 spaces (lines 4-6)
-❌ **Categories**: `["tutorials"]` (invalid category, should be `["learn"]`)
-⚠️ **Author Field**: Present in learning content (should not exist - uses site-level config)
+Required fields present
+**Date Format Error**: `2025-12-7T10:00:00` (missing timezone +07:00)
+**Description**: Only 95 characters (recommended: 150-160)
+**YAML Indentation**: Uses tabs instead of 2 spaces (lines 4-6)
+**Categories**: `["tutorials"]` (invalid category, should be `["learn"]`)
+**Author Field**: Present in learning content (should not exist - uses site-level config)
 
 ## Content Structure
 
-❌ **Multiple H1 Headings**: Found 3 H1 headings (lines 1, 45, 89) - should be only 1
-✅ Internal links use correct format
-⚠️ **Image Alt Text**: 2 images have generic alt text (lines 67, 102)
-⚠️ **Mermaid Diagram**: Missing color palette comment (line 120)
+**Multiple H1 Headings**: Found 3 H1 headings (lines 1, 45, 89) - should be only 1
+Internal links use correct format
+**Image Alt Text**: 2 images have generic alt text (lines 67, 102)
+**Mermaid Diagram**: Missing color palette comment (line 120)
 
 ## Content Quality
 
-✅ Writing style is good
-✅ Code blocks specify language
-✅ Formatting generally correct
+Writing style is good
+Code blocks specify language
+Formatting generally correct
 
 ## Tutorial-Specific
 
-✅ Learning objectives present
-✅ Prerequisites listed
+Learning objectives present
+Prerequisites listed
 
 ## Critical Issues (Must Fix)
 
@@ -1562,9 +1562,9 @@ Every validation report should include:
 ### Status Indicators
 
 Use clear visual indicators:
-- ✅ **Pass** - Meets all requirements
-- ⚠️ **Pass with Warnings** - Acceptable but could be improved
-- ❌ **Fail** - Has critical errors, must be fixed
+-  **Pass** - Meets all requirements
+-  **Pass with Warnings** - Acceptable but could be improved
+-  **Fail** - Has critical errors, must be fixed
 
 ### Actionable Feedback
 

@@ -23,7 +23,8 @@ Core principles establish the philosophical foundation for how we build software
 **Principles are immutable values.** When creating or modifying any convention or practice, you must verify it aligns with these principles. If a proposed change conflicts with a principle, either revise the change or document why the principle itself needs reconsideration (rare).
 
 ```mermaid
-%%{ Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 }%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
 	A[Core Principles]
 	B[Conventions]

@@ -161,7 +161,7 @@ You work with two Hugo sites in this repository:
    <!-- layouts/shortcodes/note.html -->
    <div class="note note--{{ .Get "type" | default "info" }}" role="note">
      <div class="note__icon" aria-hidden="true">
-       {{ if eq (.Get "type") "warning" }}⚠️{{ else }}ℹ️{{ end }}
+       {{ if eq (.Get "type") "warning" }}{{ else }}ℹ{{ end }}
      </div>
      <div class="note__content">
        {{ .Inner | .Page.RenderString }}
@@ -490,9 +490,9 @@ You work with two Hugo sites in this repository:
 ### Always Follow These Rules
 
 1. **Never Modify Theme Files Directly:**
-   - ❌ Don't edit `themes/hextra/layouts/...`
-   - ❌ Don't edit `themes/PaperMod/layouts/...`
-   - ✅ Override by creating same path in `layouts/`
+   - Don't edit `themes/hextra/layouts/...`
+   - Don't edit `themes/PaperMod/layouts/...`
+   - Override by creating same path in `layouts/`
 
 2. **Use Accessible Colors:**
    - Always reference [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md)
@@ -524,7 +524,7 @@ You work with two Hugo sites in this repository:
    - Update README if adding new features
    - Keep hugo.yaml organized with comments
 
-## 🧪 Testing Checklist
+## Testing Checklist
 
 Before marking work complete, verify:
 
@@ -1137,61 +1137,61 @@ When developing Hugo sites, always follow these best practices:
 
 Watch out for these common mistakes that can cause problems:
 
-### 1. ❌ Editing themes/directory
+### 1. Editing themes/directory
 
 **Never modify files in `themes/` directly.** Override in your `layouts/` instead.
 
 **Problem:** Breaks theme updates, causes merge conflicts.
 
-### 2. ❌ Putting Processed Assets in static/
+### 2. Putting Processed Assets in static/
 
 **Never put CSS/JS/images in `static/` if they need processing.** Use `assets/` instead.
 
 **Problem:** Bypasses Hugo Pipes, no optimization or fingerprinting.
 
-### 3. ❌ Hardcoding URLs
+### 3. Hardcoding URLs
 
 **Never use absolute URLs.** Use `.Permalink`, `.RelPermalink`, or `relref` instead.
 
 **Problem:** Breaks on different domains, localhost, staging environments.
 
-### 4. ❌ Ignoring Build Warnings
+### 4. Ignoring Build Warnings
 
 **Never ignore Hugo build warnings.** Fix them immediately.
 
 **Problem:** Warnings today become errors tomorrow.
 
-### 5. ❌ Not Using .RelPermalink
+### 5. Not Using .RelPermalink
 
 **Never hardcode asset paths like `/css/main.css`.** Always use `.RelPermalink` on resources.
 
 **Problem:** Doesn't work with CDN, subdirectory deployments, or asset pipeline.
 
-### 6. ❌ Skipping Lazy Loading
+### 6. Skipping Lazy Loading
 
 **Never load all images immediately.** Use `loading="lazy"` for below-fold images.
 
 **Problem:** Slows initial page load, wastes bandwidth.
 
-### 7. ❌ Creating Single-Use Shortcodes
+### 7. Creating Single-Use Shortcodes
 
 **Never create shortcodes for one-off layouts.** Use HTML directly in content or partials.
 
 **Problem:** Adds unnecessary complexity.
 
-### 8. ❌ Same Build for Dev and Prod
+### 8. Same Build for Dev and Prod
 
 **Never use same build configuration for development and production.** Use environment-specific configs.
 
 **Problem:** Development builds include drafts; production needs minification.
 
-### 9. ❌ Not Specifying Code Block Language
+### 9. Not Specifying Code Block Language
 
 **Never omit language in code blocks.** Always specify for syntax highlighting and accessibility.
 
 **Problem:** Poor readability, accessibility issues.
 
-### 10. ❌ Ignoring Hugo Pipes Caching
+### 10. Ignoring Hugo Pipes Caching
 
 **Never reprocess assets on every build.** Leverage Hugo's caching.
 

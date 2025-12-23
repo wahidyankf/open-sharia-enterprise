@@ -132,23 +132,23 @@ Your primary job is to verify that all links in ayokoding-web Hugo content files
 **Common Hugo Linking Mistakes**:
 
 ```markdown
-❌ WRONG: Relative paths (break in navigation contexts)
+WRONG: Relative paths (break in navigation contexts)
 [Tutorial](./nodejs/getting-started)
 [Guide](../swe/basics)
 
-❌ WRONG: .md extension (breaks in production)
+WRONG: .md extension (breaks in production)
 [Tutorial](/en/learn/nodejs.md)
 [Guide](/id/belajar/tutorial.md)
 
-❌ WRONG: Missing language prefix (REQUIRED for this Hugo setup)
+WRONG: Missing language prefix (REQUIRED for this Hugo setup)
 [Tutorial](/learn/nodejs)
 [Tutorial](/belajar/nodejs)
 
-❌ WRONG: Trailing slash on content (only for sections)
+WRONG: Trailing slash on content (only for sections)
 [Tutorial](/en/learn/nodejs/)
 [Guide](/id/belajar/getting-started/)
 
-✅ CORRECT: Absolute path with language prefix, no .md extension
+CORRECT: Absolute path with language prefix, no .md extension
 [Tutorial](/en/learn/nodejs)
 [Guide](/id/belajar/getting-started)
 [Section Index](/en/learn/)
@@ -618,8 +618,8 @@ When content uses relative paths (`./` or `../`):
 1. **Explain the problem**: Relative paths break when navigation is rendered in different contexts (sidebar, mobile menu, homepage)
 2. **Show the fix**: Convert to absolute path starting with `/`
 3. **Example**:
-   - ❌ Wrong: `[Tutorial](./nodejs/getting-started)`
-   - ✅ Correct: `[Tutorial](/learn/nodejs/getting-started)`
+   - Wrong: `[Tutorial](./nodejs/getting-started)`
+   - Correct: `[Tutorial](/learn/nodejs/getting-started)`
 
 #### .md Extension
 
@@ -628,8 +628,8 @@ When content includes `.md` extension:
 1. **Explain the problem**: Hugo generates URLs without `.md` - including it breaks production builds
 2. **Show the fix**: Remove `.md` extension
 3. **Example**:
-   - ❌ Wrong: `[Tutorial](/learn/nodejs.md)`
-   - ✅ Correct: `[Tutorial](/learn/nodejs)`
+   - Wrong: `[Tutorial](/learn/nodejs.md)`
+   - Correct: `[Tutorial](/learn/nodejs)`
 
 #### Missing Language Prefix
 
@@ -638,10 +638,10 @@ When content is missing the required language prefix:
 1. **Explain the problem**: With `defaultContentLanguageInSubdir: true`, all internal links MUST include the language prefix (`/en/` or `/id/`)
 2. **Show the fix**: Add `/en/` or `/id/` prefix based on the content's language directory
 3. **Example**:
-   - ❌ Wrong: `[Tutorial](/learn/nodejs)` (in English content)
-   - ✅ Correct: `[Tutorial](/en/learn/nodejs)` (in English content)
-   - ❌ Wrong: `[Tutorial](/belajar/nodejs)` (in Indonesian content)
-   - ✅ Correct: `[Tutorial](/id/belajar/nodejs)` (in Indonesian content)
+   - Wrong: `[Tutorial](/learn/nodejs)` (in English content)
+   - Correct: `[Tutorial](/en/learn/nodejs)` (in English content)
+   - Wrong: `[Tutorial](/belajar/nodejs)` (in Indonesian content)
+   - Correct: `[Tutorial](/id/belajar/nodejs)` (in Indonesian content)
 
 #### Incorrect Trailing Slashes
 
@@ -650,9 +650,9 @@ When content links have trailing slashes:
 1. **Explain the problem**: Hugo reserves trailing slash for section indices (`_index.md`)
 2. **Show the fix**: Remove trailing slash for content files
 3. **Example**:
-   - ❌ Wrong: `[Tutorial](/learn/nodejs/)`
-   - ✅ Correct: `[Tutorial](/learn/nodejs)`
-   - ✅ Section: `[Learn Section](/learn/)`
+   - Wrong: `[Tutorial](/learn/nodejs/)`
+   - Correct: `[Tutorial](/learn/nodejs)`
+   - Section: `[Learn Section](/learn/)`
 
 ### External Link Issues
 

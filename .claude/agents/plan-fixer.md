@@ -43,18 +43,18 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running plan-checker** - You have a validation audit report to process
-- ✅ **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
-- ✅ **Automated fixing needed** - You want validated structural/format issues fixed automatically
-- ✅ **Safety is critical** - You need re-validation before changes are applied
+- **After running plan-checker** - You have a validation audit report to process
+- **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
+- **Automated fixing needed** - You want validated structural/format issues fixed automatically
+- **Safety is critical** - You need re-validation before changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Initial plan validation (use plan-checker for detection)
-- ❌ Creating new plans (use plan-maker)
-- ❌ Executing plans (use plan-executor)
-- ❌ Manual fixes (just use Edit tool directly)
-- ❌ When no audit report exists
+- Initial plan validation (use plan-checker for detection)
+- Creating new plans (use plan-maker)
+- Executing plans (use plan-executor)
+- Manual fixes (just use Edit tool directly)
+- When no audit report exists
 
 ## How This Agent Works
 
@@ -442,14 +442,14 @@ Create comprehensive report in `generated-reports/`:
 
 ### Missing Required Sections (3 files)
 
-✅ **plans/backlog/2025-12-01\_\_feature-x/requirements.md**
+**plans/backlog/2025-12-01\_\_feature-x/requirements.md**
 
 - **Issue:** Missing "Acceptance Criteria" section for User Story #2
 - **Validation:** Confirmed section missing by heading search
 - **Fix:** Added "#### Acceptance Criteria" heading after User Story #2
 - **Confidence:** HIGH (structural requirement)
 
-✅ **plans/backlog/2025-12-01\_\_feature-x/delivery.md**
+**plans/backlog/2025-12-01\_\_feature-x/delivery.md**
 
 - **Issue:** Missing "Validation Checkpoints" section
 - **Validation:** Confirmed section missing (required by convention)
@@ -458,7 +458,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Broken Internal Links (4 files)
 
-✅ **plans/backlog/2025-12-01\_\_feature-x/tech-docs.md**
+**plans/backlog/2025-12-01\_\_feature-x/tech-docs.md**
 
 - **Issue:** Link to `../../docs/explanation/conventions/ex-co__missing-file.md` broken
 - **Validation:** Confirmed file doesn't exist at target path
@@ -467,7 +467,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Format Violations (5 files)
 
-✅ **plans/backlog/2025-12-01\_\_feature-x/requirements.md**
+**plans/backlog/2025-12-01\_\_feature-x/requirements.md**
 
 - **Issue:** User Story #3 missing Gherkin format acceptance criteria
 - **Validation:** Confirmed no Given/When/Then structure
@@ -478,7 +478,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## Needs Manual Review (9) - Strategic/Architectural Decisions
 
-⚠️ **Technology Choice - MongoDB vs PostgreSQL**
+**Technology Choice - MongoDB vs PostgreSQL**
 
 - **Checker finding:** "Plan uses MongoDB but requirements suggest relational data"
 - **Re-validation:** Confirmed plan specifies MongoDB, requirements have joins
@@ -490,7 +490,7 @@ Create comprehensive report in `generated-reports/`:
   - Performance requirements analysis
 - **Action Required:** Manual review by architect/tech lead
 
-⚠️ **Scope Definition - Feature Scope**
+**Scope Definition - Feature Scope**
 
 - **Checker finding:** "Plan scope too broad for single implementation"
 - **Re-validation:** Confirmed plan has 15 user stories across 3 domains
@@ -502,7 +502,7 @@ Create comprehensive report in `generated-reports/`:
   - Risk tolerance analysis
 - **Action Required:** Manual review with product owner/stakeholder
 
-⚠️ **Implementation Approach - Microservices**
+**Implementation Approach - Microservices**
 
 - **Checker finding:** "Microservices approach may be premature"
 - **Re-validation:** Confirmed plan proposes microservices architecture
@@ -514,7 +514,7 @@ Create comprehensive report in `generated-reports/`:
   - Existing system integration considerations
 - **Action Required:** Manual review by architect/engineering lead
 
-⚠️ **Timeline Assessment - 3-week estimate**
+**Timeline Assessment - 3-week estimate**
 
 - **Checker finding:** "Timeline may be unrealistic given complexity"
 - **Re-validation:** Confirmed plan estimates 3 weeks for 15 user stories
@@ -532,7 +532,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (4)
 
-❌ **plans/backlog/2025-12-01\_\_feature-x/tech-docs.md - Missing Introduction**
+**plans/backlog/2025-12-01\_\_feature-x/tech-docs.md - Missing Introduction**
 
 - **Checker finding:** "Technical documentation missing Introduction section"
 - **Re-validation:** Found "## Technical Overview" section serving same purpose
@@ -541,7 +541,7 @@ Create comprehensive report in `generated-reports/`:
 - **Recommendation:** Update checker to accept heading variations:
   - "Introduction", "Technical Overview", "Technical Introduction", "Overview"
 
-❌ **plans/backlog/2025-12-01\_\_feature-x/requirements.md - Deprecated Library**
+**plans/backlog/2025-12-01\_\_feature-x/requirements.md - Deprecated Library**
 
 - **Checker finding:** "Library 'react-query' is deprecated, use @tanstack/react-query"
 - **Re-validation:** WebSearch confirms react-query IS @tanstack/react-query (rebranded, not deprecated)

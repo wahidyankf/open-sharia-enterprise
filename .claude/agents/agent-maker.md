@@ -238,10 +238,10 @@ Your primary job is to [clear purpose statement based on user description and ro
 
 Note: Replace [COLOR_EMOJI] with actual emoji in README.md:
 
-- Blue writers use 🟦
-- Green checkers use 🟩
-- Yellow updaters use 🟨
-- Purple implementors use 🟪
+- Blue writers use blue square emoji
+- Green checkers use green square emoji
+- Yellow updaters use yellow square emoji
+- Purple implementors use purple square emoji
 
 [User-provided description]
 
@@ -256,12 +256,12 @@ Note: Replace [COLOR_EMOJI] with actual emoji in README.md:
 
 **Color Emoji Mapping** (for README.md only):
 
-- Blue (Writer)
-- Green (Checker)
-- Yellow (Updater)
-- Purple (Implementor)
+- Blue (Writer) - blue square emoji
+- Green (Checker) - green square emoji
+- Yellow (Updater) - yellow square emoji
+- Purple (Implementor) - purple square emoji
 
-Note: Color emojis (🟦🟩🟨🟪) are ONLY used in README.md, not in agent prompt files.
+Note: Color emojis (colored squares) are ONLY used in README.md, not in agent prompt files.
 
 **Alphabetical Insertion**:
 
@@ -274,10 +274,10 @@ Note: Color emojis (🟦🟩🟨🟪) are ONLY used in README.md, not in agent p
 
 Verify emoji matches color assignment:
 
-- blue → 🟦 (Blue writers)
-- green → 🟩 (Green checkers)
-- yellow → 🟨 (Yellow updaters)
-- purple → 🟪 (Purple implementors)
+- blue - blue square (Blue writers)
+- green - green square (Green checkers)
+- yellow - yellow square (Yellow updaters)
+- purple - purple square (Purple implementors)
 
 ### Step 4: Check Agent File Size
 
@@ -291,9 +291,9 @@ Verify emoji matches color assignment:
 
 3. Compare agent size to tier limits
 4. Display size status:
-   - ✅ Within target: "Agent size: X lines (within target for [tier] tier)"
-   - ⚠️ Approaching warning: "Agent size: X lines (approaching warning threshold)"
-   - 🚨 Exceeds limit: "Agent size: X lines (exceeds hard limit for [tier] tier)"
+   - Within target: "Agent size: X lines (within target for [tier] tier)"
+   - Approaching warning: "Agent size: X lines (approaching warning threshold)"
+   - Exceeds limit: "Agent size: X lines (exceeds hard limit for [tier] tier)"
 
 **If Approaching Limits**:
 

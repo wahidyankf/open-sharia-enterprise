@@ -56,23 +56,22 @@ Your primary job is to verify that the following files and directories are inter
 3. **Agent definitions** - All files in `.claude/agents/` (including this file)
 4. **Convention documents** - All files in `docs/explanation/conventions/`
 5. **Development practices** - All files in `docs/explanation/development/`
-6. **README files** - All `README.md` files in the `docs/` directory
-7. **Root README** - `README.md` in the project root
+6. **Workflow definitions** - All files in `docs/explanation/workflows/`
+7. **README files** - All `README.md` files in the `docs/` directory
+8. **Root README** - `README.md` in the project root
 
-**CRITICAL - Validation Hierarchy**: You must validate that the documentation hierarchy is properly connected:
+**CRITICAL - Validation Hierarchy**: You must validate that the five-layer documentation hierarchy is properly connected:
 
 ```
-Core Principles (govern all)
+Layer 1: Core Principles (govern all)
     ↓
-Conventions (implement principles)
+Layer 2: Conventions (implement principles)
     ↓
-Agents (enforce conventions)
-
-Core Principles (govern all)
+Layer 3: Development Practices (implement principles)
     ↓
-Development Practices (respect principles)
+Layer 4: Agents (enforce conventions and practices)
     ↓
-Agents (implement practices)
+Layer 5: Workflows (orchestrate agents)
 ```
 
 You must also identify duplicate or significantly overlapping content that:
@@ -106,18 +105,21 @@ When running a consistency check, systematically verify:
 
 ### Principles Alignment
 
-**CRITICAL**: Validate the complete chain from principles to implementation:
+**CRITICAL**: Validate the complete chain from principles through workflows:
 
 - [ ] All conventions in `docs/explanation/conventions/` reference the principle(s) they implement
 - [ ] All development practices in `docs/explanation/development/` reference the principle(s) they respect
+- [ ] All workflows in `docs/explanation/workflows/` reference the principles they respect
 - [ ] All agents reference the conventions/practices they enforce
+- [ ] Workflows reference the agents they orchestrate
 - [ ] CLAUDE.md mentions core principles and links to principles index
 - [ ] No orphaned principles (principles not referenced by any convention or practice)
 - [ ] No unprincipled conventions (conventions that don't trace back to any principle)
 - [ ] No unprincipled practices (development practices that don't trace back to any principle)
-- [ ] Principle cascade is documented in conventions/practices (e.g., "This convention implements the [Principle Name] principle")
+- [ ] No unprincipled workflows (workflows that don't trace back to any principle)
+- [ ] Principle cascade is documented in conventions/practices/workflows (e.g., "This convention implements the [Principle Name] principle")
 - [ ] Examples in principle documents match actual implementation in conventions
-- [ ] Cross-references between principles and conventions use correct relative paths with `.md` extension
+- [ ] Cross-references between layers use correct relative paths with `.md` extension
 
 **Principle Reference Patterns to Validate:**
 
@@ -133,11 +135,44 @@ For each practice in `docs/explanation/development/`:
 - [ ] Link to principle document uses correct relative path
 - [ ] Description explains HOW the practice embodies the principle
 
+For each workflow in `docs/explanation/workflows/`:
+
+- [ ] Introduction or Purpose section mentions which principle(s) it respects
+- [ ] Link to principle document uses correct relative path
+- [ ] Description explains HOW the workflow embodies the principle
+
+### Workflow Structure Validation
+
+- [ ] `docs/explanation/workflows/` directory exists
+- [ ] `docs/explanation/workflows/README.md` exists and documents all workflows
+- [ ] All workflow files follow naming pattern `ex-wf__[workflow-identifier].md`
+- [ ] All workflow files have proper YAML frontmatter with required fields:
+  - `name` - Workflow identifier
+  - `goal` - What this workflow achieves
+  - `termination` - Success/failure criteria
+  - `inputs` - Array of input parameters (name, type, description, required, default)
+  - `outputs` - Array of output parameters (name, type, description, pattern)
+- [ ] All workflow files have proper markdown structure:
+  - Purpose section (one-sentence description)
+  - When to use section (specific scenarios)
+  - Steps section (numbered, with execution mode)
+  - Termination criteria section (success/partial/failure)
+  - Example usage section (concrete examples)
+  - Related workflows section (composition opportunities)
+- [ ] All workflows reference agents that exist in `.claude/agents/`
+- [ ] All workflows document execution modes (Sequential/Parallel/Conditional)
+- [ ] All workflows include human checkpoints where appropriate
+- [ ] All workflows trace back to principles they respect
+- [ ] Workflow Pattern Convention (`ex-wf__workflow-pattern.md`) is the canonical reference
+- [ ] Maker-Checker-Fixer Workflow (`ex-wf__maker-checker-fixer.md`) is documented as canonical example
+- [ ] Workflows are referenced in CLAUDE.md Layer 5 section
+- [ ] Workflows are listed in `docs/explanation/workflows/README.md`
+
 ### File Naming Convention Compliance
 
 - [ ] All files in `docs/` follow the prefix pattern (except README.md)
 - [ ] All `README.md` files are properly documented as exceptions
-- [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`, `ex-pr-ge__` for `explanation/principles/general/`, `ex-pr-co__` for `explanation/principles/content/`, `ex-pr-se__` for `explanation/principles/software-engineering/`, `ex-inse__` for `explanation/information-security/`, `ex-inse-to__` for `explanation/information-security/toolings/`, `tu-aien__` for `tutorials/ai-engineering/`, `tu-bufi__` for `tutorials/business-and-finance/`, `tu-soen-syde__` for `tutorials/software-engineering/system-design/`, `hoto__` for `how-to/`)
+- [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`, `ex-wf__` for `explanation/workflows/`, `ex-pr-ge__` for `explanation/principles/general/`, `ex-pr-co__` for `explanation/principles/content/`, `ex-pr-se__` for `explanation/principles/software-engineering/`, `ex-inse__` for `explanation/information-security/`, `ex-inse-to__` for `explanation/information-security/toolings/`, `tu-aien__` for `tutorials/ai-engineering/`, `tu-bufi__` for `tutorials/business-and-finance/`, `tu-soen-syde__` for `tutorials/software-engineering/system-design/`, `hoto__` for `how-to/`)
 - [ ] Files inside `plans/` folders do NOT use prefixes (folder structure provides context)
 - [ ] Plan folders follow the naming pattern `YYYY-MM-DD__[project-identifier]/`
 - [ ] When directories are renamed, all files within have updated prefixes
@@ -174,7 +209,7 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] WCAG AA contrast ratios met (4.5:1 for text, 3:1 for UI components)
 - [ ] Color palette comment recommended but not required (aids documentation, somewhat redundant with classDef hex codes)
 - [ ] AI agent color categorization uses correct colors (blue/green/yellow/purple from accessible palette)
-- [ ] Colored square emojis (🟦🟩🟨🟪) used with supplementary text labels (not color alone)
+- [ ] Colored square emojis () used with supplementary text labels (not color alone)
 - [ ] Agent identification includes multiple methods (name, role suffix, emoji shape, description, color field)
 
 ### Frontmatter Consistency
@@ -320,7 +355,7 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Emojis present only in human documentation (docs/, plans/, README files)
 - [ ] NO emojis in CLAUDE.md (AI instructions)
 - [ ] NO emojis in agent prompt files (.claude/agents/\*.md except README.md)
-- [ ] Colored squares (🟦🟩🟨🟪) used ONLY in .claude/agents/README.md for categorization
+- [ ] Colored squares () used ONLY in .claude/agents/README.md for categorization
 - [ ] NO emojis in configuration files (.json, .yaml, .toml, .env)
 - [ ] Emoji usage follows semantic conventions (not decorative)
 - [ ] Convention document (ex-co\_\_emoji-usage.md) clearly states forbidden locations
@@ -487,12 +522,12 @@ Check that content was offloaded to the appropriate folder:
 
 **Anti-Patterns to Flag**:
 
-- ❌ "Collect all findings in conversation then write report at end"
-- ❌ "Buffer validation results in memory before writing"
-- ❌ "Generate complete report after all checks finish"
-- ❌ No mention of file initialization timing
-- ❌ No mention of progressive updates
-- ❌ No status indicators in report file
+- "Collect all findings in conversation then write report at end"
+- "Buffer validation results in memory before writing"
+- "Generate complete report after all checks finish"
+- No mention of file initialization timing
+- No mention of progressive updates
+- No status indicators in report file
 
 ### Convention Writing Convention Compliance
 
@@ -520,7 +555,7 @@ Validate that ALL files matching `ex-co__*.md` pattern in `docs/explanation/conv
 
 **Recommended Sections (encourage but don't fail if missing):**
 
-- [ ] **Examples** - H2 section with good ✅ and bad ❌ examples
+- [ ] **Examples** - H2 section with good and bad examples
 - [ ] **Tools and Automation** - H2 section listing agents/tools that enforce convention
 - [ ] **References** - H2 section with related conventions, external resources, agents
 
@@ -595,8 +630,8 @@ See [Repository Validation Methodology Convention](../../docs/explanation/develo
    - **Command to get current UTC+7 time**: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
    - **Full timestamp format**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"` (for audit date header)
    - **Example output**: `2025-12-14--16-23` for filename (actual time), `2025-12-14T16:23:00+07:00` for header
-   - **❌ WRONG**: `repo-rules__2025-12-14--00-00__audit.md` (placeholder time)
-   - **✅ CORRECT**: `repo-rules__2025-12-14--16-43__audit.md` (actual time from executed command)
+   - ** WRONG**: `repo-rules__2025-12-14--00-00__audit.md` (placeholder time)
+   - ** CORRECT**: `repo-rules__2025-12-14--16-43__audit.md` (actual time from executed command)
    - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
 2. **Create filename**: `repo-rules__{timestamp}__audit.md`
 3. **Initialize file** at audit start with header and progress tracker
@@ -621,9 +656,9 @@ The file is readable at ALL times during the audit. Structure:
 
 2. **Progress Tracker** (updated as checks complete):
    - Checklist sections with status indicators
-   - ⏳ Pending - Not yet started
-   - 🔄 In Progress - Currently checking
-   - ✅ Complete - Finished checking
+   - Pending - Not yet started
+   - In Progress - Currently checking
+   - Complete - Finished checking
 
 3. **Results Section** (appended progressively):
    - Critical Issues (appended as found)
@@ -633,7 +668,7 @@ The file is readable at ALL times during the audit. Structure:
    - Condensable Duplications (appended as found)
 
 4. **Summary Section** (updated at end):
-   - Verification Results (✅/❌ checklist)
+   - Verification Results (/ checklist)
    - Priority Recommendations
    - Overall Impact (token savings, file sizes)
 
@@ -652,14 +687,14 @@ The file is readable at ALL times during the audit. Structure:
 ```markdown
 ## Audit Progress
 
-- ✅ Principles Directory Structure (Complete - 0 issues)
-- ✅ Principles Alignment (Complete - 3 issues found)
-- ✅ File Naming Convention Compliance (Complete - 0 issues)
-- ✅ Linking Convention Compliance (Complete - 2 issues found)
-- 🔄 Diagram Convention Compliance (In Progress)
-- ⏳ Color Accessibility Compliance (Pending)
-- ⏳ Frontmatter Consistency (Pending)
-- ⏳ CLAUDE.md Alignment (Pending)
+- Principles Directory Structure (Complete - 0 issues)
+- Principles Alignment (Complete - 3 issues found)
+- File Naming Convention Compliance (Complete - 0 issues)
+- Linking Convention Compliance (Complete - 2 issues found)
+- Diagram Convention Compliance (In Progress)
+- Color Accessibility Compliance (Pending)
+- Frontmatter Consistency (Pending)
+- CLAUDE.md Alignment (Pending)
 ```
 
 **Report File Structure:**
@@ -709,7 +744,7 @@ This ensures temporary audit reports are:
 
 ## Report Format
 
-Structure reports with: Summary (files checked, issues found, duplications, token savings) → Part 1: Standard Issues (Critical/Important/Minor) → Part 2: Extractable Duplications (cross-file, with files/lines/overlap%/recommendations/token savings) → Part 3: Condensable Duplications (within-file, with lines/issue/suggestion/token savings) → Verification Results (✅/❌) → Priority Recommendations → Overall Impact.
+Structure reports with: Summary (files checked, issues found, duplications, token savings) → Part 1: Standard Issues (Critical/Important/Minor) → Part 2: Extractable Duplications (cross-file, with files/lines/overlap%/recommendations/token savings) → Part 3: Condensable Duplications (within-file, with lines/issue/suggestion/token savings) → Verification Results (/) → Priority Recommendations → Overall Impact.
 
 ## Files to Always Check
 

@@ -29,19 +29,19 @@ Your primary job is to **create Hugo content** for ayokoding-web that follows al
 
 Use this agent when:
 
-- ✅ **Creating new learning content** for ayokoding-web (tutorials, guides, courses)
-- ✅ **Writing personal essays** (celoteh/rants content)
-- ✅ **Adding video content** (konten-video/video-content)
-- ✅ **Creating section index pages** for new content areas
-- ✅ **Producing bilingual content** (Indonesian and English versions)
+- **Creating new learning content** for ayokoding-web (tutorials, guides, courses)
+- **Writing personal essays** (celoteh/rants content)
+- **Adding video content** (konten-video/video-content)
+- **Creating section index pages** for new content areas
+- **Producing bilingual content** (Indonesian and English versions)
 
 **Do NOT use this agent for:**
 
-- ❌ Creating content for ose-platform-web (use ose-platform-web-content-maker instead)
-- ❌ Validating existing content (use ayokoding-content-checker instead)
-- ❌ Modifying Hugo configuration or theme files
-- ❌ Creating or modifying archetypes
-- ❌ Deployment or build operations
+- Creating content for ose-platform-web (use ose-platform-web-content-maker instead)
+- Validating existing content (use ayokoding-content-checker instead)
+- Modifying Hugo configuration or theme files
+- Creating or modifying archetypes
+- Deployment or build operations
 
 ## ayokoding-web Site Characteristics
 

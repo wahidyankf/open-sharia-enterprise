@@ -46,18 +46,18 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running ayokoding-structure-checker** - You have a structural audit report to process
-- ✅ **Structural issues found** - Navigation lists, weight values, or file presence violations detected
-- ✅ **Automated fixing needed** - You want validated structural issues fixed automatically
-- ✅ **Safety is critical** - You need re-validation before structural changes are applied
+- **After running ayokoding-structure-checker** - You have a structural audit report to process
+- **Structural issues found** - Navigation lists, weight values, or file presence violations detected
+- **Automated fixing needed** - You want validated structural issues fixed automatically
+- **Safety is critical** - You need re-validation before structural changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Content quality validation (use ayokoding-content-checker)
-- ❌ Writing overview content (use ayokoding-content-maker)
-- ❌ Regenerating navigation listings (use ayokoding-navigation-maker)
-- ❌ Initial structure detection (use ayokoding-structure-checker)
-- ❌ When no structural audit report exists
+- Content quality validation (use ayokoding-content-checker)
+- Writing overview content (use ayokoding-content-maker)
+- Regenerating navigation listings (use ayokoding-navigation-maker)
+- Initial structure detection (use ayokoding-structure-checker)
+- When no structural audit report exists
 
 ## How This Agent Works
 
@@ -645,7 +645,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Wrong Weight Values (3 files)
 
-✅ **apps/ayokoding-web/content/en/learn/swe/prog-lang/\_index.md**
+**apps/ayokoding-web/content/en/learn/swe/prog-lang/\_index.md**
 
 - **Issue:** Weight should be 1002 (level 4 folder), found 100
 - **Validation:** Confirmed level 4 folder with incorrect weight
@@ -656,7 +656,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Wrong Overview Titles (2 files)
 
-✅ **apps/ayokoding-web/content/en/learn/swe/prog-lang/overview.md**
+**apps/ayokoding-web/content/en/learn/swe/prog-lang/overview.md**
 
 - **Issue:** Title should be "Overview", found "Programming Languages Overview"
 - **Validation:** Confirmed descriptive title instead of simple "Overview"
@@ -667,14 +667,14 @@ Create comprehensive report in `generated-reports/`:
 
 ### Cookbook Weight Ordering (2 files)
 
-✅ **apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/how-to/cookbook.md**
+**apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/how-to/cookbook.md**
 
 - **Issue:** Cookbook weight (999999) is lower than overview weight (1000000)
 - **Validation:** Confirmed cookbook appears before overview in navigation
 - **Fix:** Changed cookbook weight from 999999 to 1000001 (appears after overview)
 - **Confidence:** HIGH
 
-✅ **apps/ayokoding-web/content/id/belajar/swe/prog-lang/python/how-to/cookbook.md**
+  **apps/ayokoding-web/content/id/belajar/swe/prog-lang/python/how-to/cookbook.md**
 
 - **Issue:** Cookbook weight (1000000) equals overview weight (1000000)
 - **Validation:** Confirmed cookbook at same position as overview
@@ -685,7 +685,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (1)
 
-❌ **apps/ayokoding-web/content/id/celoteh/2024/\_index.md - Missing overview**
+**apps/ayokoding-web/content/id/celoteh/2024/\_index.md - Missing overview**
 
 - **Checker finding:** Missing ikhtisar.md in content folder
 - **Re-validation:** File is in /celoteh/ (blogging), NOT /belajar/ (learning)
@@ -704,21 +704,21 @@ Create comprehensive report in `generated-reports/`:
 
 ## Needs Manual Review (2)
 
-⚠️ **apps/ayokoding-web/content/en/learn/swe/overview.md - Overview content missing**
+**apps/ayokoding-web/content/en/learn/swe/overview.md - Overview content missing**
 
 - **Issue:** Overview file exists but has no content (empty after frontmatter)
 - **Validation:** Confirmed file is empty
 - **Confidence:** MEDIUM (requires content writing)
 - **Action Required:** Use ayokoding-content-maker to write overview content
 
-⚠️ **apps/ayokoding-web/content/en/learn/swe/prog-lang/\_index.md - Navigation listing needs regeneration**
+  **apps/ayokoding-web/content/en/learn/swe/prog-lang/\_index.md - Navigation listing needs regeneration**
 
 - **Issue:** Navigation listing may be incomplete or out of date
 - **Validation:** Structure exists but listings need regeneration from file system
 - **Confidence:** MEDIUM (requires navigation regeneration)
 - **Action Required:** Use ayokoding-navigation-maker to regenerate navigation listings from file structure
 
-⚠️ **apps/ayokoding-web/content/id/belajar/swe/ikhtisar.md - Ikhtisar content quality**
+  **apps/ayokoding-web/content/id/belajar/swe/ikhtisar.md - Ikhtisar content quality**
 
 - **Issue:** Ikhtisar content is very short (2 sentences)
 - **Validation:** Confirmed content is minimal

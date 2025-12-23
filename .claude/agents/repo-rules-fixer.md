@@ -37,17 +37,17 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running repo-rules-checker** - You have an audit report to process
-- ✅ **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
-- ✅ **Automated fixing needed** - You want validated issues fixed automatically
-- ✅ **Safety is critical** - You need validation before changes are applied
+- **After running repo-rules-checker** - You have an audit report to process
+- **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
+- **Automated fixing needed** - You want validated issues fixed automatically
+- **Safety is critical** - You need validation before changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Initial validation (use repo-rules-checker for detection)
-- ❌ Propagating new rules (use repo-rules-maker for rule changes)
-- ❌ Manual fixes (just use Edit tool directly)
-- ❌ When no audit report exists
+- Initial validation (use repo-rules-checker for detection)
+- Propagating new rules (use repo-rules-maker for rule changes)
+- Manual fixes (just use Edit tool directly)
+- When no audit report exists
 
 ## How This Agent Works
 
@@ -256,14 +256,14 @@ Create comprehensive report in `generated-reports/`:
 
 ### Missing Subcategory Field (7 files)
 
-✅ **docs/explanation/development/ex-de\_\_ai-agents.md**
+**docs/explanation/development/ex-de\_\_ai-agents.md**
 
 - **Issue:** Missing `subcategory: development` field
 - **Validation:** Confirmed field missing in frontmatter
 - **Fix:** Added `subcategory: development` at line 5
 - **Confidence:** HIGH
 
-✅ **docs/explanation/development/ex-de\_\_acceptance-criteria.md**
+  **docs/explanation/development/ex-de\_\_acceptance-criteria.md**
 
 - **Issue:** Missing `subcategory: development` field
 - **Validation:** Confirmed field missing in frontmatter
@@ -276,7 +276,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (3)
 
-❌ **`.claude/agents/ayokoding-content-checker.md` - Frontmatter comment**
+**`.claude/agents/ayokoding-content-checker.md` - Frontmatter comment**
 
 - **Checker finding:** Agent frontmatter contains YAML comment (# symbol)
 - **Re-validation:** Extracted frontmatter, no # found (only in markdown body)
@@ -288,7 +288,7 @@ Create comprehensive report in `generated-reports/`:
   ```
 ````
 
-❌ **`.claude/agents/hugo-developer.md` - Frontmatter comment**
+**`.claude/agents/hugo-developer.md` - Frontmatter comment**
 
 - **Checker finding:** Agent frontmatter contains YAML comment
 - **Re-validation:** No # found in frontmatter (confirmed clean)
@@ -301,14 +301,14 @@ Create comprehensive report in `generated-reports/`:
 
 ## Needs Manual Review (4)
 
-⚠️ **`docs/explanation/conventions/README.md` - Broken link**
+**`docs/explanation/conventions/README.md` - Broken link**
 
 - **Issue:** Link to ./ex-co\_\_missing-file.md not found
 - **Validation:** Confirmed file doesn't exist
 - **Confidence:** MEDIUM (can't determine correct target automatically)
 - **Action Required:** Manually fix link or remove if obsolete
 
-⚠️ **`CLAUDE.md` - Content duplication**
+  **`CLAUDE.md` - Content duplication**
 
 - **Issue:** Possible duplication with convention file
 - **Validation:** Content similarity detected but context differs

@@ -37,17 +37,17 @@ Your primary job is to:
 
 Use this agent when:
 
-- ✅ **After running readme-checker** - You have an audit report to process
-- ✅ **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
-- ✅ **Objective fixes needed** - You want validated objective issues (paragraph breaks, acronym expansions) fixed automatically
-- ✅ **Safety is critical** - You need validation before changes are applied
+- **After running readme-checker** - You have an audit report to process
+- **Issues found and reviewed** - You've reviewed checker's findings and want to apply fixes
+- **Objective fixes needed** - You want validated objective issues (paragraph breaks, acronym expansions) fixed automatically
+- **Safety is critical** - You need validation before changes are applied
 
 **Do NOT use this agent for:**
 
-- ❌ Initial validation (use readme-checker for detection)
-- ❌ Creating new README content (use readme-maker for that)
-- ❌ Manual fixes (just use Edit tool directly)
-- ❌ When no audit report exists
+- Initial validation (use readme-checker for detection)
+- Creating new README content (use readme-maker for that)
+- Manual fixes (just use Edit tool directly)
+- When no audit report exists
 
 ## Understanding README Quality Subjectivity
 
@@ -382,7 +382,7 @@ Create comprehensive report in `generated-reports/`:
 
 ### Paragraph Length Issues (4)
 
-✅ **README.md - Motivation Section (lines 14-20)**
+**README.md - Motivation Section (lines 14-20)**
 
 - **Issue:** Opening paragraph is 7 lines long (exceeds 5-line maximum)
 - **Validation:** Confirmed paragraph length (objective measurement)
@@ -405,7 +405,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 ```
 
-✅ **README.md - Tech Stack Section (lines 45-51)**
+ **README.md - Tech Stack Section (lines 45-51)**
 
 - **Issue:** Dense paragraph (6 lines) explaining vendor neutrality
 - **Validation:** Confirmed paragraph length violation
@@ -416,14 +416,14 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 ### Missing Acronym Context (3)
 
-✅ **README.md - Roadmap Section (line 78)**
+ **README.md - Roadmap Section (line 78)**
 
 - **Issue:** "AAOIFI, IFSB" with no context
 - **Validation:** Confirmed missing context (acronym alone without explanation)
 - **Fix:** Changed to "Accounting (AAOIFI) and prudential (IFSB) standards"
 - **Confidence:** HIGH (objective missing context)
 
-✅ **README.md - Roadmap Section (line 82)**
+ **README.md - Roadmap Section (line 82)**
 
 - **Issue:** "OJK (Otoritas Jasa Keuangan)" - non-English first
 - **Validation:** Confirmed non-English-first ordering
@@ -434,7 +434,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 ### Broken Links (1)
 
-✅ **README.md - Getting Started Section (line 120)**
+ **README.md - Getting Started Section (line 120)**
 
 - **Issue:** Link to ./docs/tutorials/tu__setup.md not found
 - **Validation:** Confirmed file doesn't exist
@@ -445,7 +445,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 ## False Positives Detected (2)
 
-❌ **README.md - "utilize" in technical section (line 95)**
+ **README.md - "utilize" in technical section (line 95)**
 
 - **Checker finding:** Jargon term "utilize" should be "use"
 - **Re-validation:** Used in technical API context where "utilize" is appropriate
@@ -453,7 +453,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 - **Reason:** Checker applied plain language rule too broadly (acceptable in technical sections)
 - **Recommendation:** Update checker to allow technical terms in technical sections
 
-❌ **README.md - Paragraph length in code example (lines 105-112)**
+ **README.md - Paragraph length in code example (lines 105-112)**
 
 - **Checker finding:** Paragraph exceeds 5 lines
 - **Re-validation:** Content is code block, not prose paragraph
@@ -465,7 +465,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 ## Needs Manual Review (5 - All Subjective)
 
-⚠️ **README.md - Opening tagline tone (line 3)**
+ **README.md - Opening tagline tone (line 3)**
 
 - **Issue:** "Tagline not engaging enough, lacks emotional hook"
 - **Validation:** This is SUBJECTIVE tone judgment
@@ -475,7 +475,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 - **Checker Suggestion:** "Build trustworthy Islamic finance systems with complete freedom"
 - **Note:** Both versions are valid—choice depends on desired brand voice
 
-⚠️ **README.md - Motivation section tone (lines 14-17)**
+ **README.md - Motivation section tone (lines 14-17)**
 
 - **Issue:** "Too formal, needs friendlier conversational tone"
 - **Validation:** This is SUBJECTIVE style preference
@@ -483,7 +483,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 - **Action Required:** Decide if current formal tone is intentional or should be more casual
 - **Note:** Current tone may be appropriate for enterprise B2B audience
 
-⚠️ **README.md - Tech stack benefits framing (lines 50-55)**
+ **README.md - Tech stack benefits framing (lines 50-55)**
 
 - **Issue:** "Features list should be more benefits-focused"
 - **Validation:** This is SUBJECTIVE content improvement
@@ -493,7 +493,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 - **Checker Suggestion:** "You control your choices, your data stays portable"
 - **Note:** Both approaches are valid—depends on target audience preference
 
-⚠️ **README.md - Word choice "leverage" (line 88)**
+ **README.md - Word choice "leverage" (line 88)**
 
 - **Issue:** Jargon term "leverage" should be "use"
 - **Validation:** This is SUBJECTIVE word choice (both are clear)
@@ -503,7 +503,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 - **Checker Suggestion:** "Use Nx workspace for efficient builds"
 - **Note:** Both are clear—"leverage" adds slight emphasis on utilizing capabilities
 
-⚠️ **README.md - Section length - Getting Started (lines 115-140)**
+ **README.md - Section length - Getting Started (lines 115-140)**
 
 - **Issue:** "Section too detailed, should link to docs instead"
 - **Validation:** This is SUBJECTIVE judgment call (25 lines is borderline)

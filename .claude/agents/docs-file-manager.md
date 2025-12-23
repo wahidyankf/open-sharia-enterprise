@@ -36,19 +36,19 @@ Your primary job is to **safely manage files and directories in docs/** while:
 
 Use this agent when:
 
-- ✅ **Renaming a directory** in `docs/` (e.g., `security/` → `information-security/`)
-- ✅ **Moving a file** between directories in `docs/` (changes prefix)
-- ✅ **Renaming a file** in `docs/` (may need prefix update if content-identifier changes)
-- ✅ **Deleting a file or directory** in `docs/` (verify no broken links first)
-- ✅ **Reorganizing documentation** structure with multiple renames/moves/deletions
-- ✅ **Fixing incorrect file prefixes** that don't match directory location
+- **Renaming a directory** in `docs/` (e.g., `security/` → `information-security/`)
+- **Moving a file** between directories in `docs/` (changes prefix)
+- **Renaming a file** in `docs/` (may need prefix update if content-identifier changes)
+- **Deleting a file or directory** in `docs/` (verify no broken links first)
+- **Reorganizing documentation** structure with multiple renames/moves/deletions
+- **Fixing incorrect file prefixes** that don't match directory location
 
 **Do NOT use this agent for:**
 
-- ❌ **Files outside docs/** (different conventions apply)
-- ❌ **Creating new files** (use `docs-maker` instead)
-- ❌ **Editing file content** (use `docs-maker` or Edit tool directly)
-- ❌ **Validating links** after operations (use `docs-link-checker` for final validation)
+- **Files outside docs/** (different conventions apply)
+- **Creating new files** (use `docs-maker` instead)
+- **Editing file content** (use `docs-maker` or Edit tool directly)
+- **Validating links** after operations (use `docs-link-checker` for final validation)
 
 ## File Naming Convention Review
 
@@ -535,12 +535,12 @@ All links must follow [Linking Convention](../../docs/explanation/conventions/ex
 **NEVER** use regular `mv` or `rm` commands. Always use `git mv` and `git rm`:
 
 ```bash
-✅ Good:
+Good:
 git mv old-path.md new-path.md
 git rm file-to-delete.md
 git rm -r directory-to-delete/
 
-❌ Bad:
+Bad:
 mv old-path.md new-path.md
 rm file-to-delete.md
 rm -r directory-to-delete/
@@ -668,13 +668,13 @@ Before marking an operation complete, verify:
 **ALWAYS** read files before making changes:
 
 ```markdown
-❌ Bad:
+Bad:
 
 - Edit file based on assumptions
 - Update links without reading source file
 - Delete files without checking references
 
-✅ Good:
+Good:
 
 - Read all affected files first
 - Verify current state before editing
@@ -718,7 +718,7 @@ When deleting files:
 **Example**:
 
 ```
-⚠️ Deletion Warning
+[Warning] Deletion Warning
 
 File to delete: docs/how-to/ht__old-guide.md
 
@@ -862,7 +862,7 @@ After completing file management operation:
 If `git status` shows other uncommitted changes:
 
 ```
-⚠️ Warning: You have other uncommitted changes in your working directory.
+[Warning] You have other uncommitted changes in your working directory.
 
 I recommend committing or stashing those changes before proceeding with this operation to avoid confusion in git history.
 
@@ -871,7 +871,7 @@ Proceed anyway? (Please confirm)
 
 ## Anti-Patterns
 
-| Anti-Pattern                   | ❌ Bad                                | ✅ Good                                           |
+| Anti-Pattern                   | Bad                                   | Good                                              |
 | ------------------------------ | ------------------------------------- | ------------------------------------------------- |
 | **Using mv/rm instead of git** | `mv old.md new.md`, `rm file.md`      | `git mv old.md new.md`, `git rm file.md`          |
 | **Missing prefix updates**     | Rename directory but not files inside | Rename directory AND update all file prefixes     |

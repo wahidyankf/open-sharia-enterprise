@@ -33,33 +33,33 @@ Phase: Y
 
 [Opening summary paragraph connecting to last week]
 
-📍 Where we were (Month DD):
+Where we were (Month DD):
 
 - [Factual state items - NO opinions]
 - [Use bullet points]
 - [Keep concise]
 
-✅ Where we are (Month DD):
+Where we are (Month DD):
 
-- 🗑️ [Deletions/removals item with emoji]
-- 🤖 [AI agents item: "37 AI agents (added 7 new agents for navigation generation, structure enforcement, and factual validation: agent-name-1, agent-name-2, ...)"]
-- ⚙️ [CLI/tooling item with emoji]
-- 🧭 [Navigation item with emoji]
-- 📄 [CLAUDE.md item with emoji]
-- 📚 [Documentation item with emoji]
-- 🎓 [Content/learning item with emoji]
+- [Deletions/removals item - use trash can emoji]
+- [AI agents item: "37 AI agents (added 7 new agents for navigation generation, structure enforcement, and factual validation: agent-name-1, agent-name-2, ...)" - use robot emoji]
+- [CLI/tooling item - use gear emoji]
+- [Navigation item - use compass emoji]
+- [CLAUDE.md item - use document emoji]
+- [Documentation item - use books emoji]
+- [Content/learning item - use graduation cap emoji]
 
-💭 Personal Notes:
+Personal Notes:
 
 - [Narrative bullet points with opinions allowed]
 - [Use "I built...", "I tested...", etc.]
 - [Only include observations NOT already in "Where we are"]
 
-📅 Next Week Plan:
+Next Week Plan:
 
 - [Bullet list of planned work]
 
-🔗 Links:
+Links:
 
 - Monthly Reports: https://www.oseplatform.com/
 - Learning Content: https://www.ayokoding.com/
@@ -75,8 +75,8 @@ Phase: Y
 
 - **NO markdown bold (`**text**`)** - LinkedIn doesn't support this
 - **USE emojis** - Add visual engagement with semantic emojis
-- **Section headers**: Use emojis at start (📍, ✅, 💭, 📅, 🔗)
-- **Content items**: Add relevant emojis (🗑️ deletions, 🤖 agents, ⚙️ CLI, 🧭 navigation, 📄 files, 📚 docs, 🎓 content)
+- **Section headers**: Use emojis at start (location pin for "Where we were", checkmark for "Where we are", thought bubble for "Personal Notes", calendar for "Next Week Plan", link for "Links")
+- **Content items**: Add relevant emojis (trash can for deletions, robot for agents, gear for CLI, compass for navigation, document for files, books for docs, graduation cap for content)
 - **Links section**: NO bold labels, just plain text with emojis
 
 ## Section-Specific Rules
@@ -123,14 +123,14 @@ Phase: Y
 
 ### Next Week Plan
 
-- Use header "📅 Next Week Plan:" (NOT "Next week")
+- Use header "Next Week Plan:" with calendar emoji at start (NOT "Next week")
 - Bullet list format
 - Brief, factual plans
 - NO wishy-washy language ("without committing", "might explore")
 
 ### Links
 
-- Use header "🔗 Links:" with emoji
+- Use header " Links:" with emoji
 - Itemized list with plain text labels (NO bold)
 - Use exact URLs provided in template above
 
@@ -138,23 +138,23 @@ Phase: Y
 
 ### DO Include
 
-- ✅ Specific numbers verified from git
-- ✅ Context summaries for complex changes
-- ✅ Personal narrative voice
-- ✅ Factual before/after comparisons
-- ✅ Brief explanations in parentheses
-- ✅ Itemized lists for structure
+- Specific numbers verified from git
+- Context summaries for complex changes
+- Personal narrative voice
+- Factual before/after comparisons
+- Brief explanations in parentheses
+- Itemized lists for structure
 
 ### DO NOT Include
 
-- ❌ Commit counts (focus on outputs, not metrics)
-- ❌ Unnecessary time details ("Friday night", "Saturday morning")
-- ❌ Repetition across sections
-- ❌ Philosophy or wisdom statements
-- ❌ Marketing speak ("ecosystem", "leverage", "significantly")
-- ❌ Unverifiable future claims ("will prevent drift")
-- ❌ Boasting or subjective opinions in state sections
-- ❌ Redundant facts (if in "Where we are", don't repeat in "Personal Notes")
+- Commit counts (focus on outputs, not metrics)
+- Unnecessary time details ("Friday night", "Saturday morning")
+- Repetition across sections
+- Philosophy or wisdom statements
+- Marketing speak ("ecosystem", "leverage", "significantly")
+- Unverifiable future claims ("will prevent drift")
+- Boasting or subjective opinions in state sections
+- Redundant facts (if in "Where we are", don't repeat in "Personal Notes")
 
 ## Fact-Checking Requirements
 
@@ -202,7 +202,7 @@ Phase: Y
 
 ## Examples
 
-### ✅ Good Context Summary
+### Good Context Summary
 
 ```markdown
 - 38 AI agents (added 6 new agents for navigation generation, structure enforcement, and factual validation: ayokoding-navigation-maker, ayokoding-structure-checker, ayokoding-structure-fixer, ayokoding-structure-maker, ayokoding-facts-checker, ayokoding-facts-fixer)
@@ -210,7 +210,7 @@ Phase: Y
 
 **Why good**: States count, adds brief summary of what they do, then lists specific names.
 
-### ❌ Bad - Just Lists Names
+### Bad - Just Lists Names
 
 ```markdown
 - 38 AI agents (added: ayokoding-navigation-maker, ayokoding-structure-checker, ayokoding-structure-fixer, ayokoding-structure-maker, ayokoding-facts-checker, ayokoding-facts-fixer)
@@ -218,7 +218,7 @@ Phase: Y
 
 **Why bad**: No context about what these agents do.
 
-### ✅ Good Personal Note
+### Good Personal Note
 
 ```markdown
 - Tested switching navigation from 3-layer to 2-layer, decided against it, switched back.
@@ -226,7 +226,7 @@ Phase: Y
 
 **Why good**: Narrative, shows decision-making, not redundant with "Where we are".
 
-### ❌ Bad - Redundant Personal Note
+### Bad - Redundant Personal Note
 
 ```markdown
 - I built the ayokoding-cli and added 6 new agents.
@@ -234,7 +234,7 @@ Phase: Y
 
 **Why bad**: Already stated in "Where we are" section.
 
-### ✅ Good Where We Are Item
+### Good Where We Are Item
 
 ```markdown
 - Documentation: Added core-principles section (6 foundational principles), four-layer architecture (principles → conventions/development → agents), implementation workflow convention, and factual validation system
@@ -242,7 +242,7 @@ Phase: Y
 
 **Why good**: Groups related changes, adds context summaries in parentheses, factual.
 
-### ❌ Bad - Opinion in Where We Are
+### Bad - Opinion in Where We Are
 
 ```markdown
 - Documentation: Significantly improved with new principles that will make the codebase much better
@@ -281,8 +281,8 @@ Before finalizing a post:
 - [ ] Verified all numbers with actual git commands
 - [ ] Used exact structure with separate Week/Phase lines
 - [ ] NO markdown bold (`**text**`) anywhere in LinkedIn content
-- [ ] Added emojis to all section headers (📍, ✅, 💭, 📅, 🔗)
-- [ ] Added emojis to content items (🗑️, 🤖, ⚙️, 🧭, 📄, 📚, 🎓)
+- [ ] Added emojis to all section headers (location pin, checkmark, thought bubble, calendar, link)
+- [ ] Added emojis to content items (trash can, robot, gear, compass, document, books, graduation cap)
 - [ ] "Where we were" is purely factual (no opinions)
 - [ ] "Where we are" is purely factual with context summaries
 - [ ] Added brief explanations for agents, docs, content changes

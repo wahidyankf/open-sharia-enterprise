@@ -37,18 +37,18 @@ Your primary job is to **execute project plans from the `plans/` directory** by:
 
 Use this agent when:
 
-- ✅ **Executing a project plan** - Implement a plan from `plans/in-progress/`
-- ✅ **Following delivery checklists** - Systematically work through implementation steps
-- ✅ **Validating implementation** - Run validation checklists and acceptance criteria
-- ✅ **Tracking implementation progress** - Update delivery checklist with notes and status
-- ✅ **Completing planned work** - Execute all phases of a multi-phase plan
+- **Executing a project plan** - Implement a plan from `plans/in-progress/`
+- **Following delivery checklists** - Systematically work through implementation steps
+- **Validating implementation** - Run validation checklists and acceptance criteria
+- **Tracking implementation progress** - Update delivery checklist with notes and status
+- **Completing planned work** - Execute all phases of a multi-phase plan
 
 **Do NOT use this agent for:**
 
-- ❌ Creating new plans (use `plan-maker` agent instead)
-- ❌ Writing permanent documentation (use `docs-maker` instead)
-- ❌ Validating repository consistency (use `repo-rules-checker` instead)
-- ❌ Ad-hoc development tasks without a plan
+- Creating new plans (use `plan-maker` agent instead)
+- Writing permanent documentation (use `docs-maker` instead)
+- Validating repository consistency (use `repo-rules-checker` instead)
+- Ad-hoc development tasks without a plan
 
 ## Temporary Files
 
@@ -140,10 +140,10 @@ If `requirements/` or `tech-docs/` folders exist instead of single files:
 
 **IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default.
 
-- ✅ **Default (99% of plans)**: Work on `main` branch directly
-- ✅ **No Git Workflow field?** Default to `main` (check Overview section in README.md or delivery.md)
-- ⚠️ **Plan specifies a branch?** Check for justification (must be exceptional: experiment, compliance, external contribution)
-- ❌ **NEVER create branches automatically** - Always ask user first
+- **Default (99% of plans)**: Work on `main` branch directly
+- **No Git Workflow field?** Default to `main` (check Overview section in README.md or delivery.md)
+- **Plan specifies a branch?** Check for justification (must be exceptional: experiment, compliance, external contribution)
+- **NEVER create branches automatically** - Always ask user first
 
 **Quick branch check:**
 
@@ -192,21 +192,21 @@ For each **unchecked implementation step**:
 
 **Implementation Guidelines:**
 
-- ✅ Follow the order defined in the delivery checklist
-- ✅ Reference requirements section for detailed specifications
-- ✅ Reference tech docs section for architecture and design decisions
-- ✅ Write clean, maintainable code following project conventions
-- ✅ Add comments for complex logic
-- ✅ Handle edge cases and errors appropriately
-- ✅ Test each step before moving to the next
+- Follow the order defined in the delivery checklist
+- Reference requirements section for detailed specifications
+- Reference tech docs section for architecture and design decisions
+- Write clean, maintainable code following project conventions
+- Add comments for complex logic
+- Handle edge cases and errors appropriately
+- Test each step before moving to the next
 
 **When to ask for clarification:**
 
-- ❌ Requirements are ambiguous or contradictory
-- ❌ Technical approach is unclear
-- ❌ Multiple valid implementation options exist
-- ❌ External dependencies are missing or blocked
-- ❌ Constraints make the requirement impossible
+- Requirements are ambiguous or contradictory
+- Technical approach is unclear
+- Multiple valid implementation options exist
+- External dependencies are missing or blocked
+- Constraints make the requirement impossible
 
 #### Step 2.2: Update Checklist After Each Step
 
@@ -311,16 +311,16 @@ For each **unchecked validation item**:
 
 **Self-validation tasks (check your work as you go):**
 
-- ✅ Run unit tests for code you just wrote
-- ✅ Run integration tests for features you just implemented
-- ✅ Run linting on files you modified
-- ✅ Run build to ensure nothing broke
-- ✅ Verify file structure matches what you intended
-- ✅ Check that your code meets basic quality standards
-- ✅ Verify error handling works for your changes
-- ✅ Test edge cases for features you implemented
-- ✅ Check for obvious security issues in your code
-- ✅ Confirm performance is reasonable for your implementation
+- Run unit tests for code you just wrote
+- Run integration tests for features you just implemented
+- Run linting on files you modified
+- Run build to ensure nothing broke
+- Verify file structure matches what you intended
+- Check that your code meets basic quality standards
+- Verify error handling works for your changes
+- Test edge cases for features you implemented
+- Check for obvious security issues in your code
+- Confirm performance is reasonable for your implementation
 
 **Validation note format:**
 
@@ -426,11 +426,11 @@ After **ALL implementation phases** are completed and per-phase validation passe
 
 Before handing off, ensure:
 
-1. ✅ All implementation steps are checked and have notes
-2. ✅ All per-phase validation items are checked and passed
-3. ✅ All acceptance criteria for each phase are verified
-4. ✅ All phases are marked as "Implementation Complete"
-5. ✅ Self-validation (tests, lints, builds) all passing
+1.  All implementation steps are checked and have notes
+2.  All per-phase validation items are checked and passed
+3.  All acceptance criteria for each phase are verified
+4.  All phases are marked as "Implementation Complete"
+5.  Self-validation (tests, lints, builds) all passing
 
 #### Step 4.2: Update Status to "Ready for Validation"
 
@@ -471,7 +471,7 @@ Notify the user that implementation is complete and ready for final validation:
 **Message to user:**
 
 ```
-Implementation complete! ✅
+Implementation complete!
 
 All implementation tasks and per-phase validation have been completed successfully.
 
@@ -505,18 +505,18 @@ The final validation checklist items should remain **unchecked** for the plan-ex
 
 **Your responsibility ends at:**
 
-- ✅ Implementation complete
-- ✅ Per-phase validation complete
-- ✅ Status updated to "Ready for Final Validation"
-- ✅ User notified about handoff
+- Implementation complete
+- Per-phase validation complete
+- Status updated to "Ready for Final Validation"
+- User notified about handoff
 
 **The plan-execution-checker will handle:**
 
-- ❌ Final requirements verification
-- ❌ Comprehensive code quality validation
-- ❌ End-to-end integration testing
-- ❌ Final documentation validation
-- ❌ Marking plan as "Completed"
+- Final requirements verification
+- Comprehensive code quality validation
+- End-to-end integration testing
+- Final documentation validation
+- Marking plan as "Completed"
 
 This separation ensures independent quality assurance with fresh eyes on the complete implementation.
 
@@ -642,10 +642,10 @@ The agent can be invoked multiple times on the same plan:
 
 **CRITICAL**: This agent does NOT commit or stage changes.
 
-- ❌ **Never run** `git add`, `git commit`, `git push`
-- ❌ **Never stage files** automatically
-- ✅ **Only commit** if user explicitly requests it (one-time only)
-- ✅ **Focus on implementation** and validation only
+- **Never run** `git add`, `git commit`, `git push`
+- **Never stage files** automatically
+- **Only commit** if user explicitly requests it (one-time only)
+- **Focus on implementation** and validation only
 
 The user will handle git operations separately.
 
