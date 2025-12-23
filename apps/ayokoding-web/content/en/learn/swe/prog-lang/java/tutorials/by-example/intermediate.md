@@ -146,205 +146,201 @@ double f = temp.fahrenheit(); // => 212.0
 
 ---
 
-### Example 17: Composition vs Inheritance
+### Example 17: HTTP Filter Chain Pattern
 
-Composition (HAS-A) creates relationships by containing other objects. Often more flexible than inheritance (IS-A) because it avoids tight coupling and fragile base class problems.
+Production middleware systems use filter chains to process requests through multiple stages (authentication, rate limiting, logging). This pattern demonstrates composition, delegation, and the Chain of Responsibility pattern in real-world HTTP request processing.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
-    subgraph Inheritance["Inheritance (IS-A)"]
-        Vehicle["Vehicle"] --> Car["Car extends Vehicle"]
-    end
+    Request["HTTP Request"] --> Auth["AuthFilter<br/>Check token"]
+    Auth -->|Unauthorized| Resp1["401 Response"]
+    Auth -->|Authorized| Rate["RateLimitFilter<br/>Check quota"]
+    Rate -->|Exceeded| Resp2["429 Response"]
+    Rate -->|OK| Log["LoggingFilter<br/>Record request"]
+    Log --> Handler["Request Handler"]
+    Handler --> Response["200 Response"]
 
-    subgraph Composition["Composition (HAS-A)"]
-        Car2["Car"] --> Engine["has Engine"]
-        Car2 --> Wheels["has Wheels[]"]
-    end
-
-    style Vehicle fill:#0173B2,color:#fff
-    style Car fill:#DE8F05,color:#fff
-    style Car2 fill:#029E73,color:#fff
-    style Engine fill:#CC78BC,color:#fff
-    style Wheels fill:#CA9161,color:#fff
+    style Request fill:#0173B2,color:#fff
+    style Auth fill:#DE8F05,color:#fff
+    style Rate fill:#029E73,color:#fff
+    style Log fill:#CC78BC,color:#fff
+    style Handler fill:#CA9161,color:#fff
+    style Resp1 fill:#DE8F05,color:#fff
+    style Resp2 fill:#DE8F05,color:#fff
+    style Response fill:#029E73,color:#fff
 ```
 
 **Code**:
 
 ```java
-// Engine class - component to be composed
-class Engine {
-    private int horsepower;
+// Request and Response models
+class Request {
+    private String path;
+    private String method;
+    private Map<String, String> headers;
+    private String clientId;
 
-    public Engine(int horsepower) {
-        this.horsepower = horsepower;
+    public Request(String path, String method) {
+        this.path = path;
+        this.method = method;
+        this.headers = new HashMap<>();
     }
 
-    public void start() {
-        System.out.println(horsepower + " HP engine started");
+    public String getHeader(String name) {
+        return headers.get(name);
+    }
+
+    public void setHeader(String name, String value) {
+        headers.put(name, value);
+    }
+
+    public String getClientId() { return clientId; }
+    public void setClientId(String id) { this.clientId = id; }
+    public String getPath() { return path; }
+}
+
+class Response {
+    private int statusCode;
+    private String body;
+
+    public Response(int statusCode, String body) {
+        this.statusCode = statusCode;
+        this.body = body;
+    }
+
+    public static Response ok(String body) {
+        return new Response(200, body); // => 200 OK
+    }
+
+    public static Response unauthorized() {
+        return new Response(401, "Unauthorized"); // => 401 Unauthorized
+    }
+
+    public static Response tooManyRequests() {
+        return new Response(429, "Too Many Requests"); // => 429 Rate Limited
+    }
+
+    public int getStatusCode() { return statusCode; }
+    public String getBody() { return body; }
+}
+
+// Filter interface - chain of responsibility pattern
+interface RequestFilter {
+    Response filter(Request request, FilterChain chain);
+}
+
+// Filter chain manages execution flow
+class FilterChain {
+    private List<RequestFilter> filters;
+    private int position = 0;
+
+    public FilterChain(List<RequestFilter> filters) {
+        this.filters = new ArrayList<>(filters);
+    }
+
+    public Response next(Request request) {
+        if (position >= filters.size()) {
+            // All filters passed - handle the request
+            return handleRequest(request); // => Final handler
+        }
+        RequestFilter filter = filters.get(position++);
+        return filter.filter(request, this); // => Delegate to next filter
+    }
+
+    private Response handleRequest(Request request) {
+        // Actual request processing logic
+        return Response.ok("Processed: " + request.getPath());
     }
 }
 
-// Transmission class - another component
-class Transmission {
-    private String type;
+// Authentication filter - validates tokens
+class AuthenticationFilter implements RequestFilter {
+    private Set<String> validTokens = Set.of("token123", "token456");
 
-    public Transmission(String type) {
-        this.type = type;
-    }
+    @Override
+    public Response filter(Request request, FilterChain chain) {
+        String token = request.getHeader("Authorization");
 
-    public void shift(int gear) {
-        System.out.println(type + " transmission: Shifting to gear " + gear);
-    }
-}
+        if (token == null || !validTokens.contains(token)) {
+            System.out.println("Auth failed: Invalid token");
+            return Response.unauthorized(); // => 401, chain stops here
+        }
 
-// Car using composition - HAS-A relationships
-class Car {
-    private Engine engine; // Car HAS-A Engine
-    private Transmission transmission; // Car HAS-A Transmission
-    private String model;
-
-    public Car(String model, int horsepower, String transType) {
-        this.model = model;
-        this.engine = new Engine(horsepower); // Composition
-        this.transmission = new Transmission(transType); // Composition
-    }
-
-    // Delegation - forward calls to composed objects
-    public void start() {
-        engine.start(); // => Delegates to engine
-    }
-
-    public void drive() {
-        engine.start();
-        transmission.shift(1);
-        System.out.println(model + " is driving");
+        // Extract client ID from token for downstream filters
+        request.setClientId("user_" + token.hashCode());
+        System.out.println("Auth passed: " + request.getClientId());
+        return chain.next(request); // => Continue to next filter
     }
 }
 
-Car car = new Car("Sedan", 200, "Automatic");
-car.drive();
+// Rate limiting filter - prevents abuse
+class RateLimitFilter implements RequestFilter {
+    private Map<String, Integer> requestCounts = new HashMap<>();
+    private int maxRequests = 100;
+
+    @Override
+    public Response filter(Request request, FilterChain chain) {
+        String clientId = request.getClientId();
+        int count = requestCounts.getOrDefault(clientId, 0);
+
+        if (count >= maxRequests) {
+            System.out.println("Rate limit exceeded for: " + clientId);
+            return Response.tooManyRequests(); // => 429, chain stops
+        }
+
+        requestCounts.put(clientId, count + 1); // => Increment counter
+        System.out.println("Rate limit check passed: " + count + "/" + maxRequests);
+        return chain.next(request); // => Continue to next filter
+    }
+}
+
+// Logging filter - records requests
+class LoggingFilter implements RequestFilter {
+    @Override
+    public Response filter(Request request, FilterChain chain) {
+        long startTime = System.currentTimeMillis();
+        System.out.println("Request started: " + request.getPath());
+
+        Response response = chain.next(request); // => Continue chain
+
+        long duration = System.currentTimeMillis() - startTime;
+        System.out.println("Request completed: " + response.getStatusCode() +
+                         " in " + duration + "ms");
+        return response; // => Return response unchanged
+    }
+}
+
+// Building and using the filter chain
+List<RequestFilter> filters = List.of(
+    new AuthenticationFilter(),
+    new RateLimitFilter(),
+    new LoggingFilter()
+);
+
+FilterChain chain = new FilterChain(filters);
+
+// Successful request
+Request req1 = new Request("/api/users", "GET");
+req1.setHeader("Authorization", "token123");
+Response resp1 = chain.next(req1);
 // Output:
-// 200 HP engine started
-// Automatic transmission: Shifting to gear 1
-// Sedan is driving
+// Auth passed: user_XXXXXX
+// Rate limit check passed: 0/100
+// Request started: /api/users
+// Request completed: 200 in 1ms
+// => Response: 200 "Processed: /api/users"
 
-// Decorator pattern - composition for adding behavior dynamically
-interface Coffee {
-    double cost();
-    String description();
-}
-
-class SimpleCoffee implements Coffee {
-    public double cost() {
-        return 2.0; // Base price
-    }
-
-    public String description() {
-        return "Simple coffee";
-    }
-}
-
-// Decorator - wraps another Coffee
-abstract class CoffeeDecorator implements Coffee {
-    protected Coffee coffee; // Composition
-
-    public CoffeeDecorator(Coffee coffee) {
-        this.coffee = coffee;
-    }
-}
-
-class MilkDecorator extends CoffeeDecorator {
-    public MilkDecorator(Coffee coffee) {
-        super(coffee);
-    }
-
-    public double cost() {
-        return coffee.cost() + 0.5; // Add milk cost
-    }
-
-    public String description() {
-        return coffee.description() + ", milk";
-    }
-}
-
-class SugarDecorator extends CoffeeDecorator {
-    public SugarDecorator(Coffee coffee) {
-        super(coffee);
-    }
-
-    public double cost() {
-        return coffee.cost() + 0.2;
-    }
-
-    public String description() {
-        return coffee.description() + ", sugar";
-    }
-}
-
-// Composing decorators
-Coffee coffee = new SimpleCoffee(); // => $2.00, "Simple coffee"
-coffee = new MilkDecorator(coffee); // => $2.50, "Simple coffee, milk"
-coffee = new SugarDecorator(coffee); // => $2.70, "Simple coffee, milk, sugar"
-
-System.out.println(coffee.description() + ": $" + coffee.cost());
-// => "Simple coffee, milk, sugar: $2.7"
-
-// Liskov Substitution Principle (LSP) violation example
-class Rectangle {
-    protected int width, height;
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int area() {
-        return width * height;
-    }
-}
-
-class Square extends Rectangle {
-    @Override
-    public void setWidth(int width) {
-        this.width = width;
-        this.height = width; // Square: width == height
-    }
-
-    @Override
-    public void setHeight(int height) {
-        this.width = height;
-        this.height = height;
-    }
-}
-
-// LSP violation - Square breaks expectations of Rectangle
-void testRectangle(Rectangle rect) {
-    rect.setWidth(5);
-    rect.setHeight(4);
-    int expected = 20; // Expecting 5 * 4
-    int actual = rect.area();
-    // If rect is Square: actual = 16 (4 * 4), not 20!
-}
-
-// Better: use composition instead
-class Square2 {
-    private int side; // Composition: HAS-A side
-
-    public void setSide(int side) {
-        this.side = side;
-    }
-
-    public int area() {
-        return side * side;
-    }
-}
+// Failed authentication
+Request req2 = new Request("/api/data", "GET");
+req2.setHeader("Authorization", "invalid");
+Response resp2 = chain.next(req2);
+// Output:
+// Auth failed: Invalid token
+// => Response: 401 "Unauthorized" (chain stops at first filter)
 ```
 
-**Key Takeaway**: Composition (HAS-A) is often more flexible than inheritance (IS-A). Delegation forwards calls to composed objects. Decorator pattern adds behavior dynamically through composition. Liskov Substitution Principle violations indicate inheritance misuse—composition often provides better alternatives.
+**Key Takeaway**: Filter chains demonstrate composition and the Chain of Responsibility pattern. Each filter decides whether to continue the chain or return early. This pattern enables modular, testable middleware—add/remove filters without changing core logic. Production systems use this for authentication, rate limiting, logging, compression, and error handling. Filters compose through delegation, avoiding inheritance coupling.
 
 ---
 
@@ -1876,55 +1872,162 @@ class UserServiceTest {
 
 ---
 
-### Example 33: Synchronization and Thread Safety
+### Example 33: Thread-Safe Session Management
 
-`synchronized` prevents concurrent access to shared data. Locks ensure thread safety but risk deadlock. `volatile` ensures visibility across threads.
+Production applications need thread-safe session management where multiple threads concurrently create, access, and clean up user sessions. `ConcurrentHashMap` with atomic operations enables lock-free, high-performance session handling.
 
 **Code**:
 
 ```java
-class Counter {
-    private int count = 0;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.*;
 
-    // synchronized method - only one thread can execute at a time
-    public synchronized void increment() {
-        count++; // Thread-safe
+// Session data model
+class Session {
+    private final String userId;
+    private final Instant createdAt;
+    private Instant expiresAt;
+    private final ConcurrentHashMap<String, Object> attributes;
+
+    public Session(String userId, int expiryMinutes) {
+        this.userId = userId;
+        this.createdAt = Instant.now();
+        this.expiresAt = Instant.now().plus(expiryMinutes, ChronoUnit.MINUTES);
+        this.attributes = new ConcurrentHashMap<>();
     }
 
-    public synchronized int getCount() {
-        return count;
+    public boolean isExpired() {
+        return Instant.now().isAfter(expiresAt); // => true if expired
     }
+
+    public void renewExpiry(int minutes) {
+        this.expiresAt = Instant.now().plus(minutes, ChronoUnit.MINUTES);
+    }
+
+    public void setAttribute(String key, Object value) {
+        attributes.put(key, value); // Thread-safe put
+    }
+
+    public Object getAttribute(String key) {
+        return attributes.get(key);
+    }
+
+    public String getUserId() { return userId; }
+    public Instant getExpiresAt() { return expiresAt; }
 }
 
-// synchronized block - finer-grained control
-class Account {
-    private int balance = 0;
-    private final Object lock = new Object();
+// Thread-safe session manager using ConcurrentHashMap
+class UserSessionManager {
+    private final ConcurrentHashMap<String, Session> sessions;
+    private final int defaultExpiryMinutes;
 
-    public void deposit(int amount) {
-        synchronized (lock) { // Only this block is synchronized
-            balance += amount;
+    public UserSessionManager(int expiryMinutes) {
+        this.sessions = new ConcurrentHashMap<>();
+        this.defaultExpiryMinutes = expiryMinutes;
+    }
+
+    // Atomic get-or-create pattern using computeIfAbsent
+    public Session getOrCreateSession(String userId) {
+        return sessions.computeIfAbsent(userId, id -> {
+            Session session = new Session(id, defaultExpiryMinutes);
+            System.out.println("Created new session for: " + id);
+            return session; // => Atomically creates if absent
+        });
+    }
+
+    // Get existing session (no creation)
+    public Session getSession(String userId) {
+        Session session = sessions.get(userId);
+        if (session != null && session.isExpired()) {
+            sessions.remove(userId); // Clean up expired
+            return null; // => Session expired
+        }
+        return session;
+    }
+
+    // Renew session expiry
+    public void renewSession(String userId, int minutes) {
+        sessions.computeIfPresent(userId, (id, session) -> {
+            session.renewExpiry(minutes);
+            System.out.println("Renewed session for: " + id);
+            return session; // => Returns updated session
+        });
+    }
+
+    // Invalidate (logout)
+    public void invalidateSession(String userId) {
+        Session removed = sessions.remove(userId);
+        if (removed != null) {
+            System.out.println("Invalidated session for: " + userId);
         }
     }
-}
 
-// volatile - ensures visibility across threads
-class Flag {
-    private volatile boolean running = true; // volatile ensures changes visible
-
-    public void stop() {
-        running = false; // Change visible to all threads immediately
-    }
-
-    public void run() {
-        while (running) { // Reads latest value
-            // Do work
+    // Clean up all expired sessions (periodic cleanup task)
+    public int cleanupExpiredSessions() {
+        int cleaned = 0;
+        for (var entry : sessions.entrySet()) {
+            if (entry.getValue().isExpired()) {
+                sessions.remove(entry.getKey()); // Thread-safe removal
+                cleaned++;
+            }
         }
+        System.out.println("Cleaned up " + cleaned + " expired sessions");
+        return cleaned; // => Number of sessions removed
+    }
+
+    // Get active session count
+    public int getActiveSessionCount() {
+        return sessions.size();
+    }
+
+    // Atomic merge operation - update session attributes
+    public void updateSessionAttribute(String userId, String key, Object value) {
+        sessions.computeIfPresent(userId, (id, session) -> {
+            session.setAttribute(key, value);
+            return session; // => Updated session
+        });
     }
 }
+
+// Example usage with multiple concurrent threads
+UserSessionManager sessionManager = new UserSessionManager(30); // 30-minute expiry
+
+// Thread 1: User login
+new Thread(() -> {
+    Session session = sessionManager.getOrCreateSession("user123");
+    session.setAttribute("role", "admin");
+    // => Created new session for: user123
+}).start();
+
+// Thread 2: Same user (concurrent access)
+new Thread(() -> {
+    Session session = sessionManager.getOrCreateSession("user123");
+    // => Returns existing session (no duplicate creation)
+    String role = (String) session.getAttribute("role");
+    System.out.println("Role: " + role); // => "admin"
+}).start();
+
+// Thread 3: Periodic cleanup task
+ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+scheduler.scheduleAtFixedRate(
+    () -> sessionManager.cleanupExpiredSessions(),
+    1, 5, TimeUnit.MINUTES // => Run every 5 minutes
+);
+
+// Graceful shutdown
+scheduler.shutdown();
+
+// Demonstrating atomic operations
+Session s1 = sessionManager.getOrCreateSession("alice"); // => Creates new
+Session s2 = sessionManager.getOrCreateSession("alice"); // => Returns same instance
+System.out.println(s1 == s2); // => true (atomic operation ensures single instance)
+
+sessionManager.invalidateSession("alice"); // => Logout
+Session s3 = sessionManager.getSession("alice"); // => null (invalidated)
 ```
 
-**Key Takeaway**: `synchronized` methods/blocks prevent concurrent access. Intrinsic locks ensure thread safety. `volatile` ensures visibility across threads without locking. Synchronization risks deadlock if locks acquired in different orders.
+**Key Takeaway**: `ConcurrentHashMap` provides thread-safe operations without explicit locking. `computeIfAbsent()` atomically creates sessions (get-or-create pattern). `computeIfPresent()` atomically updates existing entries. This pattern scales better than `synchronized` for read-heavy workloads because `ConcurrentHashMap` uses lock striping. Use scheduled tasks for periodic cleanup of expired sessions. Production systems use this pattern for user sessions, caches, and connection pools.
 
 ---
 
