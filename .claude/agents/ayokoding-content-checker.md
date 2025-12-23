@@ -318,7 +318,7 @@ flowchart TD
     style C fill:#FFFF00  <!-- WRONG! Yellow is forbidden -->
 ````
 
-````
+``````
 
 ### Code Block Validation
 
@@ -327,9 +327,43 @@ flowchart TD
 - [ ] **Proper indentation** - Follows language conventions (JS/TS: 2 spaces, Python: 4 spaces)
 - [ ] **Syntax highlighting** - Language name is valid
 
+#### Nested Code Fence Validation
+
+**CRITICAL for By-Example tutorials and markdown documentation**:
+
+When content shows "how to write markdown" (documenting markdown structure), validate proper nesting:
+
+- [ ] **Outer fence uses 4 backticks** - When showing markdown structure containing code blocks
+- [ ] **Inner fence uses 3 backticks** - For code blocks within the markdown example
+- [ ] **No orphaned fences** - Every opening fence has exactly one matching closing fence
+- [ ] **No extra fences after closure** - Flag any orphaned ``` after a proper 4-backtick closure
+
+**Common error pattern to detect:**
+
+`````markdown
+BROKEN - Orphaned closing fence:
+
+````markdown
+### Example N: Title
+
+```java
+code here
+```
+``````
+
+```← ORPHANED FENCE (breaks rendering - flag as error!)
+
+```
+
+**Symptom**: Content like `**bold**` displays as literal text instead of formatted **bold** after the orphaned fence.
+
+**Fix**: Remove orphaned closing fences.
+
+See [Nested Code Fence Convention](../../docs/explanation/conventions/ex-co__nested-code-fences.md) for complete nesting rules.
+
 **Valid Code Block**:
 
-```markdown
+````markdown
 ```javascript
 function authenticate(user) {
   if (user.isValid) {
@@ -337,6 +371,7 @@ function authenticate(user) {
   }
   return null;
 }
+```
 ````
 
 ````
