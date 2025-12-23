@@ -118,7 +118,7 @@ Foundational values that govern all conventions and development practices. Six p
 
 **Layer 2: Conventions** (`docs/explanation/conventions/`)
 
-Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 21 documentation conventions.
+Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 22 documentation conventions.
 
 **Layer 3: Development** (`docs/explanation/development/`)
 
@@ -176,6 +176,10 @@ All timestamps use **UTC+7** with ISO 8601 format: `YYYY-MM-DDTHH:MM:SS+07:00` (
 
 Use **LaTeX notation** for equations: `$...$` (inline), `$$...$$` (display). NOT in code blocks/Mermaid/ASCII art. See [Mathematical Notation Convention](./docs/explanation/conventions/ex-co__mathematical-notation.md) for details.
 
+### Nested Code Fence Convention
+
+When documenting markdown structure, use **4 backticks for outer fence, 3 for inner**. Prevents orphaned fences that break rendering. See [Nested Code Fence Convention](./docs/explanation/conventions/ex-co__nested-code-fences.md) for complete nesting rules.
+
 ### Tutorial Standards
 
 Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (90% through 60+ annotated examples for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details.
@@ -204,7 +208,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (21 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
+For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (22 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
 
 ## AI Agent Standards
 

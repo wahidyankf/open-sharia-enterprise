@@ -345,7 +345,7 @@ flowchart LR
     style B fill:#00FF00  <!-- WRONG! Green is forbidden -->
 ````
 
-````
+``````
 
 ### Code Block Validation
 
@@ -354,12 +354,43 @@ flowchart LR
 - [ ] **Proper indentation** - Follows language conventions
 - [ ] **Syntax highlighting** - Language name is valid
 
+#### Nested Code Fence Validation
+
+**When content shows markdown examples** (rare for ose-platform-web but possible in technical updates):
+
+- [ ] **Outer fence uses 4 backticks** - When documenting markdown structure
+- [ ] **Inner fence uses 3 backticks** - For code blocks within the example
+- [ ] **No orphaned fences** - Every opening fence has exactly one matching closing fence
+- [ ] **No extra fences after closure** - Flag any orphaned ``` after proper closure
+
+**Common error pattern**:
+
+`````markdown
+BROKEN - Orphaned closing fence:
+
+````markdown
+### Example
+
+```bash
+code here
+```
+``````
+
+```← ORPHANED FENCE (breaks rendering!)
+
+```
+
+**Fix**: Remove orphaned closing fences.
+
+See [Nested Code Fence Convention](../../docs/explanation/conventions/ex-co__nested-code-fences.md) for details.
+
 **Valid Code Block**:
 
-```markdown
+````markdown
 ```bash
 npm install
 npm run dev
+```
 ````
 
 ````

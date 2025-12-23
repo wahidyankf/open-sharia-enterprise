@@ -12,7 +12,7 @@ updated: 2025-12-19
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 21 conventions covering all aspects of documentation writing and formatting.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 22 conventions covering all aspects of documentation writing and formatting.
 
 **Governance**: All conventions in this directory implement and embody the [Core Principles](../principles/README.md). Each convention should trace back to one or more foundational principles (Accessibility First, Simplicity Over Complexity, Progressive Disclosure, etc.).
 
@@ -81,6 +81,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme). Covers PaperMod features, English-only requirements, simple update patterns, cover image standards, and flat content structure. Use with shared convention
 - [Indentation Convention](./ex-co__indentation.md) - Standard markdown indentation for all files using 2 spaces per indentation level. YAML frontmatter uses 2 spaces. Code blocks use language-specific conventions
 - [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas in GitHub-compatible markdown. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), and Obsidian/GitHub dual compatibility
+- [Nested Code Fence Convention](./ex-co__nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure within markdown content. Defines fence depth rules (outer = 4 backticks, inner = 3 backticks), orphaned fence detection, and validation checklist. Prevents rendering bugs where bold/italic markdown displays as literal text
 - [OSS Documentation Convention](./ex-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
 - [Plans Organization Convention](./ex-co__plans-organization.md) - Standards for organizing project planning documents in plans/ folder including structure, naming, and workflow
 - [Programming Language Content Standard](./ex-co__programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web. Defines mandatory structure (5 tutorial levels, cookbook at position 3 in how-to/ for optimal engagement, how-to guides), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), quality metrics (line counts, pedagogical patterns), and completeness criteria. Benchmarked from Golang, Python, Java implementations. Includes replication formula for adding new languages (Kotlin, TypeScript, Rust, Clojure). **See also**: [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md)

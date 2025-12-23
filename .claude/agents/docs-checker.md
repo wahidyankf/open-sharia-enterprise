@@ -202,6 +202,48 @@ function example() {
 
 **Rationale**: Code blocks must use language-specific idiomatic indentation to ensure examples can be copied and pasted correctly into actual code files. TAB characters in most languages (except Go) break this requirement.
 
+#### Nested Code Fence Validation
+
+**CRITICAL**: Validate correct nested code fence structure when documenting markdown examples:
+
+**Correct nesting pattern:**
+
+- Outer fence: 4 backticks (````) when showing markdown structure
+- Inner fence: 3 backticks (```) for code blocks within the example
+- Every opening fence has exactly one matching closing fence
+- No orphaned closing fences after proper closure
+
+**Common error pattern to detect:**
+
+`````markdown
+BROKEN - Orphaned closing fence:
+
+````markdown
+### Example
+
+```javascript
+code here
+```
+````
+
+```← ORPHANED FENCE (breaks rendering - flag as error!)
+
+```
+`````
+
+**Validation:**
+
+- Count opening and closing fence pairs in content
+- Flag any orphaned ``` after a 4-backtick closure
+- Verify fence pairs match (3-3 or 4-4, not 3-4)
+- Check that content after fences renders correctly (bold/italic not showing as literals)
+
+**Symptom of orphaned fence**: Content like `**bold**` displays as literal text instead of formatted **bold**.
+
+**Fix**: Remove orphaned closing fences. Every opening fence must have exactly one matching closing fence.
+
+See [Nested Code Fence Convention](../../docs/explanation/conventions/ex-co__nested-code-fences.md) for complete nesting rules.
+
 ### 2. Code Example Validation
 
 **Syntax Correctness:**
