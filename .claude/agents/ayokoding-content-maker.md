@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
 created: 2025-12-15
-updated: 2025-12-15
+updated: 2025-12-24
 ---
 
 # ayokoding-content-maker Agent
@@ -42,6 +42,18 @@ Use this agent when:
 - Modifying Hugo configuration or theme files
 - Creating or modifying archetypes
 - Deployment or build operations
+
+## Default Language Policy
+
+**CRITICAL**: When creating content for ayokoding-web:
+
+- **Default language is English ("en")**
+- Create English content FIRST in `/en/learn/` or `/en/rants/`
+- **DO NOT automatically mirror** to Indonesian during initial creation
+- Indonesian translation is a separate, deliberate step
+- Only create Indonesian versions when explicitly requested or when bilingual content is specifically needed
+
+**Rationale**: Focus on quality English content first, then translate intentionally. This prevents premature bilingual generation and reduces maintenance burden.
 
 ## ayokoding-web Site Characteristics
 
@@ -505,7 +517,9 @@ Add `tsconfig.json` configuration...
 
 ### 6. Bilingual Content
 
-For bilingual content, create both Indonesian and English versions:
+**IMPORTANT**: By default, create ONLY English content. Indonesian versions should be created separately when explicitly requested.
+
+For bilingual content (when specifically requested), create both Indonesian and English versions:
 
 **Indonesian** (`content/id/belajar/typescript/generics.md`):
 

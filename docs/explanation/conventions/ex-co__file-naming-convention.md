@@ -56,13 +56,13 @@ All documentation files (except index files) follow this pattern:
 [hierarchical-prefix]__[content-identifier].[extension]
 ```
 
-**Example**: `tu-au-se__oauth2-flow.md`
+**Example**: `ex-co__file-naming-convention.md`
 
 Breaking this down:
 
-- `tu-au-se` = hierarchical prefix (tutorials → authentication → security)
+- `ex-co` = hierarchical prefix (explanation → conventions)
 - `__` = double underscore separator
-- `oauth2-flow` = content identifier (the actual name)
+- `file-naming-convention` = content identifier (the actual name)
 - `.md` = file extension
 
 **Why this pattern?**
@@ -112,7 +112,7 @@ Use a systematic encoding rule based on directory characteristics:
 
 **Key Rule**: For hyphenated directory names, take first 2 letters of EACH word and concatenate them WITHOUT inserting a dash. The dash in the directory name does NOT appear in the abbreviation.
 
-Examples: `tu__getting-started.md` (tutorials), `tu-aien__chat-with-pdf.md` (tutorials/ai-engineering), `hoto__deploy-app.md` (how-to), `re__api-reference.md` (reference), `ex-co__file-naming-convention.md` (explanation/conventions), `ex-inse__infosec.md` (explanation/information-security)
+Examples: `tu__getting-started.md` (tutorials), `hoto__deploy-app.md` (how-to), `re__monorepo-structure.md` (reference), `ex-co__file-naming-convention.md` (explanation/conventions), `ex-de__ai-agents.md` (explanation/development)
 
 ## The `__` Separator
 
@@ -201,11 +201,12 @@ Each category and subcategory should have an index file named `README.md`. This 
 
 ```
 docs/tutorials/README.md                          # Main category index
-docs/tutorials/authentication/README.md          # Subcategory index (also uses README.md)
 docs/how-to/README.md                            # Main category index
 docs/reference/README.md                         # Main category index
 docs/explanation/README.md                       # Main category index
-docs/explanation/conventions/README.md           # Subcategory index
+docs/explanation/conventions/README.md           # Subcategory index (conventions)
+docs/explanation/development/README.md           # Subcategory index (development)
+docs/explanation/principles/README.md            # Subcategory index (principles)
 ```
 
 **Key Points:**
@@ -248,8 +249,8 @@ docs/metadata/search-index.json              # Generated search index
 Images follow the same prefix pattern as their related documentation:
 
 ```
-docs/explanation/sharia-compliance/ex-shco__murabaha-flow.md
-docs/explanation/sharia-compliance/ex-shco__murabaha-flow-diagram.png
+docs/explanation/conventions/ex-co__diagrams.md
+docs/explanation/conventions/ex-co__diagrams-example.png
 ```
 
 ## 🔄 Maintenance and Scalability
@@ -262,11 +263,11 @@ When creating a new subdirectory:
 2. Add this abbreviation to the prefix of all files in that directory
 3. Update any related index files
 
-**Example**: Creating `docs/how-to/deployment/`:
+**Example**: Creating a hypothetical `docs/how-to/[new-category]/`:
 
-- Directory: `docs/how-to/deployment/`
-- Prefix: `hoto-de__` (hoto = how-to, de = deployment)
-- Files: `hoto-de__deploy-to-production.md`, `hoto-de__configure-ci-cd.md`
+- Directory pattern: `docs/how-to/[new-category]/`
+- Prefix pattern: `hoto-[xx]__` (hoto = how-to, [xx] = first 2 letters of category)
+- Files pattern: `hoto-[xx]__[content-name].md`
 
 ### Renaming Directories
 
@@ -281,33 +282,35 @@ When renaming a directory in `docs/`, you **must rename all files within that di
 3. Update any markdown links that reference those files
 4. Update related index files (`README.md`)
 
-**Example**: Renaming `docs/explanation/security/` to `docs/explanation/information-security/`:
+**Example**: Renaming `docs/explanation/[old-name]/` to `docs/explanation/[new-name]/`:
 
 **Before**:
 
 ```
-docs/explanation/security/
+docs/explanation/[old-name]/
 ├── README.md
-├── ex-se__authentication.md
-└── ex-se__authorization.md
+├── ex-[ol]__document-one.md
+└── ex-[ol]__document-two.md
 ```
 
 **After**:
 
 ```
-docs/explanation/information-security/
+docs/explanation/[new-name]/
 ├── README.md
-├── ex-inse__authentication.md
-└── ex-inse__authorization.md
+├── ex-[ne]__document-one.md
+└── ex-[ne]__document-two.md
 ```
 
 **Changes required**:
 
-- Directory: `security/` → `information-security/`
-- Prefix: `ex-se__` → `ex-inse__` (se = security, inse = in + se concatenated WITHOUT dash)
-- All files: `ex-se__*.md` → `ex-inse__*.md`
-- Links: Update all references from `./security/ex-se__*.md` to `./information-security/ex-inse__*.md`
+- Directory: `[old-name]/` → `[new-name]/`
+- Prefix: `ex-[ol]__` → `ex-[ne]__` ([ol] = first 2 letters of old-name, [ne] = first 2 letters of new-name)
+- All files: `ex-[ol]__*.md` → `ex-[ne]__*.md`
+- Links: Update all references from `./[old-name]/ex-[ol]__*.md` to `./[new-name]/ex-[ne]__*.md`
 - Index: Update `docs/explanation/README.md` to reflect new directory name
+
+**Real Example**: Renaming `conventions/` to `standards/` would change prefix from `ex-co__` to `ex-st__`
 
 ### Reorganizing Directories
 
@@ -322,9 +325,9 @@ When moving files between directories:
 This system scales to any nesting depth:
 
 ```
-tu-au-oa-fl__authorization-code-flow.md
-└─ tutorials → authentication → oauth → flows
-   (tu+au+oa+fl)
+ex-pr-se__explicit-over-implicit.md
+└─ explanation → principles → software-engineering
+   (ex+pr+se)
 ```
 
 ## 📖 Quick Reference
@@ -338,16 +341,15 @@ tu-au-oa-fl__authorization-code-flow.md
 
 **Common Subdirectory Prefixes:**
 
-| Directory Path                                              | Prefix                | Example                                        |
-| ----------------------------------------------------------- | --------------------- | ---------------------------------------------- |
-| explanation/conventions                                     | `ex-co__`             | `ex-co__file-naming-convention.md`             |
-| explanation/development                                     | `ex-de__`             | `ex-de__ai-agents.md`                          |
-| explanation/information-security                            | `ex-inse__`           | `ex-inse__infosec.md`                          |
-| explanation/information-security/toolings                   | `ex-inse-to__`        | `ex-inse-to__gobuster.md`                      |
-| tutorials/ai-engineering                                    | `tu-aien__`           | `tu-aien__chat-with-pdf.md`                    |
-| tutorials/business-and-finance                              | `tu-bufi__`           | `tu-bufi__accounting.md`                       |
-| tutorials/software-engineering/system-design                | `tu-soen-syde__`      | `tu-soen-syde__ai-personal-finance-advisor.md` |
-| tutorials/software-engineering/programming-languages/golang | `tu-soen-prla-gola__` | `tu-soen-prla-gola__quick-start.md`            |
+| Directory Path                              | Prefix       | Example                                             |
+| ------------------------------------------- | ------------ | --------------------------------------------------- |
+| explanation/conventions                     | `ex-co__`    | `ex-co__file-naming-convention.md`                  |
+| explanation/development                     | `ex-de__`    | `ex-de__ai-agents.md`                               |
+| explanation/workflows                       | `ex-wf__`    | `ex-wf__workflow-pattern.md`                        |
+| explanation/principles                      | `ex-pr__`    | `ex-pr-ge__simplicity-over-complexity.md` (general) |
+| explanation/principles/content              | `ex-pr-co__` | `ex-pr-co__accessibility-first.md`                  |
+| explanation/principles/software-engineering | `ex-pr-se__` | `ex-pr-se__explicit-over-implicit.md`               |
+| reference/eval-app-specs                    | `re-eas__`   | `re-eas__iam-overview.md`                           |
 
 ## 🔗 Related Documentation
 

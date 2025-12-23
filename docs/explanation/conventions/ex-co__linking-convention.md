@@ -129,13 +129,13 @@ Use standard markdown link syntax with relative paths:
 <!-- Descriptive text with relative path and .md extension -->
 
 [Understanding the Diátaxis Framework](./ex-co__diataxis-framework.md)
-[How to Configure API](../how-to/hoto__configure-api.md)
-[Transaction Endpoints Reference](../../reference/api/re-ap__endpoints.md)
+[Monorepo Structure](../../reference/re__monorepo-structure.md)
+[AI Agents Convention](../development/ex-de__ai-agents.md)
 
 <!-- Links with context -->
 
 See the [file naming convention](./ex-co__file-naming-convention.md) for details.
-For more information, refer to our [authentication tutorial](../../tutorials/auth/tu-au__getting-started.md).
+For more information, refer to our [automation principle](../principles/software-engineering/ex-pr-se__automation-over-manual.md).
 ```
 
 ### ❌ Incorrect Examples
@@ -193,12 +193,12 @@ Understanding relative paths is crucial when linking from files at different nes
 
 ### Nesting Depth Reference
 
-| File Location                                            | Depth from `docs/` | To reach `docs/` root |
-| -------------------------------------------------------- | ------------------ | --------------------- |
-| `docs/README.md`                                         | 0 (at root)        | `.` (current dir)     |
-| `docs/tutorials/README.md`                               | 1 level deep       | `../`                 |
-| `docs/explanation/conventions/ex-co__linking.md`         | 2 levels deep      | `../../`              |
-| `docs/reference/api/endpoints/re-ap-en__transactions.md` | 3 levels deep      | `../../../`           |
+| File Location                                                     | Depth from `docs/` | To reach `docs/` root |
+| ----------------------------------------------------------------- | ------------------ | --------------------- |
+| `docs/README.md`                                                  | 0 (at root)        | `.` (current dir)     |
+| `docs/tutorials/README.md`                                        | 1 level deep       | `../`                 |
+| `docs/explanation/conventions/ex-co__linking.md`                  | 2 levels deep      | `../../`              |
+| `docs/explanation/principles/software-engineering/ex-pr-se__*.md` | 3 levels deep      | `../../../`           |
 
 ### Common Linking Patterns
 
@@ -237,22 +237,23 @@ Understanding relative paths is crucial when linking from files at different nes
 [File Naming Convention](./ex-co__file-naming-convention.md)
 ```
 
-#### From 3-Level Deep Files (`docs/reference/api/endpoints/re-ap-en__transactions.md`)
+#### From 3-Level Deep Files (`docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md`)
 
 ```markdown
 <!-- To docs/ root (up 3 levels) -->
 
 [Documentation Home](../../../README.md)
 
-<!-- To other categories (up 3, down 1) -->
+<!-- To other categories (up 3, down 1 or 2) -->
 
 [Tutorials](../../../tutorials/README.md)
+[Conventions](../../conventions/README.md)
 
 <!-- To parent categories (up 1, 2, or 3) -->
 
-[Endpoints Index](../README.md) <!-- Parent directory -->
-[API Index](../../README.md) <!-- Grandparent directory -->
-[Reference Index](../../../reference/README.md) <!-- Great-grandparent -->
+[Software Engineering Principles](../README.md) <!-- Parent directory -->
+[All Principles](../../README.md) <!-- Grandparent directory -->
+[Explanation Index](../../../README.md) <!-- Great-grandparent -->
 ```
 
 ### Verification Tip

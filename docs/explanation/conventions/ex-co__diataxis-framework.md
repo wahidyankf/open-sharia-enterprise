@@ -331,21 +331,21 @@ Start here
 5. Troubleshooting common issues
 6. Related guides
 
-### Reference Example: API Endpoints
+### Reference Example: Monorepo Structure
 
-**Location**: `docs/reference/api/re-ap__endpoints.md`
+**Location**: `docs/reference/re__monorepo-structure.md`
 
 **Structure**:
 
 1. Overview
-2. Endpoint listing (alphabetical)
-3. For each endpoint:
-   - Method and path
-   - Parameters
-   - Request body
-   - Response format
-   - Example
-4. Common response codes
+2. Directory structure
+3. For each component:
+   - Purpose and responsibility
+   - Naming conventions
+   - Dependencies
+   - Import patterns
+   - Example usage
+4. Configuration reference
 
 ### Explanation Example: This Document
 
