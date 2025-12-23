@@ -8,7 +8,7 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/platforms/web/overview)
-- [Jvm Spring Boot](/en/learn/software-engineering/platforms/web/jvm-spring-boot)
-  - [Overview](/en/learn/software-engineering/platforms/web/jvm-spring-boot/overview)
+- [Java Spring Boot](/en/learn/software-engineering/platforms/web/java-spring-boot)
+  - [Overview](/en/learn/software-engineering/platforms/web/java-spring-boot/overview)
 - [Elixir Phoenix](/en/learn/software-engineering/platforms/web/elixir-phoenix)
   - [Overview](/en/learn/software-engineering/platforms/web/elixir-phoenix/overview)

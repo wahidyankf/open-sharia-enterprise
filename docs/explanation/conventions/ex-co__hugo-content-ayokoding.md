@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-22
+updated: 2025-12-24
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -244,6 +244,39 @@ This section covers common patterns...
 content/
 ├── id/belajar/nodejs/getting-started.md     # Indonesian
 └── en/learn/nodejs/getting-started.md       # English
+```
+
+### Default Language and Mirroring Policy
+
+**CRITICAL RULE**: When creating content for ayokoding-web, the default language is **English ("en")**. Content should be created in English first.
+
+**Mirroring Policy**:
+
+- **DO NOT automatically mirror** English content to Indonesian during initial content creation
+- Indonesian translation/mirroring is a **separate, deliberate step**
+- Content creators should focus on producing quality English content first
+- Indonesian versions should be created intentionally when needed, not automatically
+
+**Rationale**:
+
+- Prevents premature bilingual content generation before English content is validated
+- Allows focus on content quality in one language before translation
+- Reduces maintenance burden (updating two versions simultaneously)
+- Enables strategic decision-making about which content to translate
+
+**Workflow**:
+
+1. Create English content in `/en/learn/` or `/en/rants/`
+2. Review and validate English content
+3. Decide whether Indonesian version is needed
+4. If needed, create Indonesian version as separate task in `/id/belajar/` or `/id/celoteh/`
+
+**Example**:
+
+```markdown
+User: "Create a tutorial about TypeScript generics"
+Agent: Creates /en/learn/typescript/generics.md ONLY
+Agent: Does NOT automatically create /id/belajar/typescript/generics.md
 ```
 
 ### Author Field Rules

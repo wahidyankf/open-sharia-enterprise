@@ -267,7 +267,7 @@ Before deleting any file or directory:
 
 ### Scenario 1: Renaming a Directory
 
-**Example**: Rename `docs/explanation/security/` → `docs/explanation/information-security/`
+**Example**: Rename `docs/explanation/[old-name]/` → `docs/explanation/[new-name]/`
 
 **Impact**:
 
@@ -278,45 +278,47 @@ Before deleting any file or directory:
 **Process**:
 
 1. **Calculate new prefix**:
-   - Old: `ex-se__` (explanation + security)
-   - New: `ex-inse__` (explanation + inse, where "inse" is "in" + "se" concatenated)
+   - Old: `ex-[ol]__` (explanation + [old-name])
+   - New: `ex-[ne]__` (explanation + [new-name], where abbreviations follow 2-letter rule)
 
 2. **Find affected files**:
 
    ```bash
-   # Use Glob: docs/explanation/security/**/*.md
+   # Use Glob: docs/explanation/[old-name]/**/*.md
    ```
 
 3. **Rename directory**:
 
    ```bash
-   git mv docs/explanation/security docs/explanation/information-security
+   git mv docs/explanation/[old-name] docs/explanation/[new-name]
    ```
 
 4. **Rename all files inside**:
 
    ```bash
-   # For each file: ex-se__*.md → ex-inse__*.md
-   git mv ex-se__file.md ex-inse__file.md
+   # For each file: ex-[ol]__*.md → ex-[ne]__*.md
+   git mv ex-[ol]__file.md ex-[ne]__file.md
    ```
 
 5. **Update all links**:
 
    ```bash
-   # Use Grep to find: \]\(.*security/ex-se__
-   # Update each link: ./security/ex-se__file.md → ./information-security/ex-inse__file.md
+   # Use Grep to find: \]\(.*[old-name]/ex-[ol]__
+   # Update each link: ./[old-name]/ex-[ol]__file.md → ./[new-name]/ex-[ne]__file.md
    ```
 
 6. **Update parent index**:
    ```bash
    # Edit docs/explanation/README.md
-   # Change: [Security](./security/README.md)
-   # To: [Information Security](./information-security/README.md)
+   # Change: [[Old Name]](./[old-name]/README.md)
+   # To: [[New Name]](./[new-name]/README.md)
    ```
+
+**Real Example**: Renaming `conventions/` to `standards/` changes prefix from `ex-co__` to `ex-st__`
 
 ### Scenario 2: Moving a File Between Directories
 
-**Example**: Move `docs/tutorials/tu__auth-basics.md` → `docs/tutorials/authentication/tu-au__auth-basics.md`
+**Example**: Move `docs/explanation/ex__topic.md` → `docs/explanation/conventions/ex-co__topic.md`
 
 **Impact**:
 
@@ -330,30 +332,30 @@ Before deleting any file or directory:
 1. **Ensure destination directory exists**:
 
    ```bash
-   # Check if docs/tutorials/authentication/ exists
-   # Create if needed: mkdir -p docs/tutorials/authentication
+   # Check if docs/explanation/conventions/ exists (it does in this case)
+   # Create if needed: mkdir -p docs/explanation/[new-subdirectory]
    ```
 
 2. **Calculate new prefix**:
-   - Old: `tu__` (tutorials, root level)
-   - New: `tu-au__` (tutorials + authentication)
+   - Old: `ex__` (explanation, root level)
+   - New: `ex-co__` (explanation + conventions)
 
 3. **Rename and move**:
 
    ```bash
-   git mv docs/tutorials/tu__auth-basics.md docs/tutorials/authentication/tu-au__auth-basics.md
+   git mv docs/explanation/ex__topic.md docs/explanation/conventions/ex-co__topic.md
    ```
 
 4. **Update links**:
 
    ```bash
-   # Use Grep to find: \]\(.*tu__auth-basics\.md\)
+   # Use Grep to find: \]\(.*ex__topic\.md\)
    # Update relative paths based on each file's location
    ```
 
 5. **Update both index files**:
-   - Update `docs/tutorials/README.md` (remove entry)
-   - Update `docs/tutorials/authentication/README.md` (add entry)
+   - Update `docs/explanation/README.md` (remove or move entry)
+   - Update `docs/explanation/conventions/README.md` (add entry)
 
 ### Scenario 3: Deleting an Outdated File
 
@@ -469,17 +471,17 @@ When updating links, calculate the new relative path based on:
 **Example**:
 
 Source: `docs/explanation/README.md` (1 level deep)
-Old target: `./security/ex-se__auth.md`
-New target: `./information-security/ex-in-se__auth.md`
+Old target: `./conventions/ex-co__linking.md`
+New target: `./conventions/ex-co__linking-convention.md`
 
 ```markdown
 # Before
 
-[Authentication](./security/ex-se__auth.md)
+[Linking](./conventions/ex-co__linking.md)
 
 # After
 
-[Authentication](./information-security/ex-in-se__auth.md)
+[Linking Convention](./conventions/ex-co__linking-convention.md)
 ```
 
 ### Removing Links to Deleted Files
@@ -693,12 +695,12 @@ For operations affecting many files:
 **Example**:
 
 ```
-I found 15 files in docs/explanation/security/ that will be renamed:
-- ex-se__authentication.md → ex-in-se__authentication.md
-- ex-se__authorization.md → ex-in-se__authorization.md
-- ... (13 more)
+I found 8 files in docs/explanation/conventions/ that will be renamed:
+- ex-co__linking.md → ex-co__linking-convention.md
+- ex-co__diagrams.md → ex-co__diagram-standards.md
+- ... (6 more)
 
-I also found 42 links across 18 files that reference these files.
+I also found 23 links across 12 files that reference these files.
 
 All links will be updated automatically.
 
@@ -829,20 +831,20 @@ After completing file management operation:
 
 ### Operations Performed
 
-- Renamed 15 files in docs/explanation/security/ → information-security/
-- Updated all file prefixes: ex-se** → ex-in-se**
-- Deleted 3 deprecated files
-- Moved 2 files to new locations
+- Renamed 8 files in docs/explanation/conventions/
+- Updated all file prefixes: ex-co**[old] → ex-co**[new]
+- Deleted 2 deprecated files
+- Moved 1 file to new location
 
 ### Links Updated
 
-- Updated 42 links across 18 files
-- Removed 7 links to deleted files
+- Updated 23 links across 12 files
+- Removed 3 links to deleted files
 
 ### Indices Updated
 
 - Updated docs/explanation/README.md
-- Updated docs/explanation/information-security/README.md
+- Updated docs/explanation/conventions/README.md
 - Removed entries for deleted files
 
 ### Git Operations

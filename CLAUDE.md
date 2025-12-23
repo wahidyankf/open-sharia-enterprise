@@ -197,7 +197,7 @@ Universal methodology for verifying factual correctness using WebSearch/WebFetch
 Three specialized documents:
 
 - [Shared](./docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common conventions for all Hugo sites
-- [ayokoding-web](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual, level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**
+- [ayokoding-web](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual (default English, no automatic mirroring), level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**
 - [ose-platform-web](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, English-only landing page
 
 Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/ex-co__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).

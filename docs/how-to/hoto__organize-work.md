@@ -250,14 +250,14 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 3. **Document in docs/**
 
    ```
-   docs/explanation/ex-sys__authentication.md  # How it works
-   docs/how-to/ht__setup-auth.md              # How to use it
-   docs/reference/re-api__auth-endpoints.md   # API reference
+   docs/explanation/ex-de__[feature-name].md  # How it works
+   docs/how-to/hoto__[task-name].md          # How to use it
+   docs/reference/re__[component-name].md     # Reference documentation
    ```
 
    - Create permanent documentation
    - Write tutorials for users
-   - Document API for developers
+   - Document reference materials for developers
 
 4. **Archive plan**
 
@@ -316,15 +316,15 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 **Example:**
 
 ```markdown
-<!-- In plans/done/2025-11-25__auth-system/README.md -->
+<!-- In plans/done/YYYY-MM-DD__[project-name]/README.md -->
 
 ## Permanent Documentation
 
 This project is complete. See the following documentation:
 
-- [Authentication System Explanation](../../docs/explanation/ex-sys__authentication.md)
-- [How to Setup Auth](../../docs/how-to/ht__setup-auth.md)
-- [Auth API Reference](../../docs/reference/re-api__auth-endpoints.md)
+- [[Feature] Explanation](../../docs/explanation/ex-de__[feature-name].md)
+- [How to [Task]](../../docs/how-to/hoto__[task-name].md)
+- [[Component] Reference](../../docs/reference/re__[component-name].md)
 ```
 
 ## Quick Reference Table
@@ -336,10 +336,10 @@ This project is complete. See the following documentation:
 | Working on a project                       | `plans/in-progress/` | Move from backlog when starting                 |
 | Archiving completed project                | `plans/done/`        | Move from in-progress when done                 |
 | Writing a tutorial                         | `docs/tutorials/`    | `tu__getting-started.md`                        |
-| Creating a how-to guide                    | `docs/how-to/`       | `ht__setup-dev-environment.md`                  |
-| Documenting an API                         | `docs/reference/`    | `re-api__endpoints.md`                          |
-| Explaining a concept                       | `docs/explanation/`  | `ex-sys__authentication.md`                     |
-| Recording project conventions              | `docs/explanation/`  | `ex-co__naming-convention.md`                   |
+| Creating a how-to guide                    | `docs/how-to/`       | `hoto__add-new-app.md`                          |
+| Documenting reference material             | `docs/reference/`    | `re__monorepo-structure.md`                     |
+| Explaining a concept                       | `docs/explanation/`  | `ex-de__ai-agents.md`                           |
+| Recording project conventions              | `docs/explanation/`  | `ex-co__file-naming-convention.md`              |
 | Research documentation                     | `docs/explanation/`  | Final decision and rationale                    |
 | Sprint planning                            | `plans/backlog/`     | One plan per sprint goal                        |
 | Technical specifications                   | `plans/` or `docs/`  | Plans if temporary, docs/ if permanent standard |

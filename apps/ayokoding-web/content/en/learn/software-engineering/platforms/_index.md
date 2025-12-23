@@ -8,5 +8,5 @@ draft: false
 - [Overview](/en/learn/software-engineering/platforms/overview)
 - [Web](/en/learn/software-engineering/platforms/web)
   - [Overview](/en/learn/software-engineering/platforms/web/overview)
-  - [Jvm Spring Boot](/en/learn/software-engineering/platforms/web/jvm-spring-boot)
+  - [Java Spring Boot](/en/learn/software-engineering/platforms/web/java-spring-boot)
   - [Elixir Phoenix](/en/learn/software-engineering/platforms/web/elixir-phoenix)
