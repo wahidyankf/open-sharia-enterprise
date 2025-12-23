@@ -158,15 +158,12 @@ Use this agent when:
    - `{{< icon >}}` - Icon insertion
 
 3. **Index File Navigation Depth**:
-   - `_index.md` files MUST show **3 layers deep** (parent, children, and grandchildren)
+   - `_index.md` files MUST show **2 layers deep** (parent and immediate children)
    - Provides clear navigation hierarchy for content discovery
    - Example structure:
      ```markdown
      - [Overview](/learn/swe/overview)
      - [Programming Languages](/learn/swe/prog-lang)
-       - [Overview](/learn/swe/prog-lang/overview)
-       - [Golang](/learn/swe/prog-lang/golang)
-       - [Python](/learn/swe/prog-lang/python)
      - [System Design](/learn/swe/system-design)
      - [Information Security](/learn/swe/infosec)
      ```
@@ -188,7 +185,7 @@ Use this agent when:
 
 5. **Index File Content Separation** (learn/belajar directories ONLY):
    - **Scope**: Applies ONLY to `_index.md` files in `content/en/learn/` and `content/id/belajar/`
-   - **Rule**: `_index.md` should contain ONLY navigation lists (3 layers deep) - NO introduction or overview content
+   - **Rule**: `_index.md` should contain ONLY navigation lists (2 layers deep) - NO introduction or overview content
    - **Introduction/Overview**: Goes in separate `overview.md` or `ikhtisar.md` file per "Overview/Ikhtisar File Requirement" above
    - **Overview/Ikhtisar Link Requirement**: When `overview.md` or `ikhtisar.md` exists, `_index.md` MUST include a link to that overview/ikhtisar page as the FIRST item in the navigation list
    - **Navigation Ordering**: When folder contains both `_index.md` and intro content:
@@ -250,7 +247,7 @@ Use this agent when:
    - **Scope**: ONLY applies to `/en/rants/` and `/id/celoteh/` directories
    - **Organization**: Year/month hierarchy (not topic-based like learning content)
    - **Directory pattern**: `/rants/YYYY/MM/article-slug.md`
-   - **Year index**: 3-layer tree (year → months → articles)
+   - **Year index**: 2-layer tree (year → months → articles)
    - **Month index**: Flat list of articles in that month
    - **NO overview/ikhtisar files**: Unlike learning content, blogging does NOT require separate overview files
    - **Index can include intro**: Month/year `_index.md` files MAY include introductory text (not restricted to navigation only)
@@ -267,7 +264,7 @@ Use this agent when:
      content/en/rants/
      ├── _index.md                    # Main rants index
      ├── 2023/
-     │   ├── _index.md                # Year index (3-layer tree)
+     │   ├── _index.md                # Year index (2-layer tree)
      │   └── 07/
      │       ├── _index.md            # Month index (flat list)
      │       ├── why-neovim.md        # Article (weight: 402, cross-ref to ID)
@@ -574,7 +571,7 @@ Before completing, verify:
   - [ ] NO author field in video content (`content/en/video-content/`, `content/id/konten-video/`)
   - [ ] Author field OPTIONAL in rants/celoteh (`content/en/rants/`, `content/id/celoteh/`)
 - [ ] **For `_index.md` files**: Title is descriptive and readable (proper capitalization, acronyms, context)
-- [ ] **For `_index.md` files**: Navigation shows 3 layers deep (parent, children, and grandchildren)
+- [ ] **For `_index.md` files**: Navigation shows 2 layers deep (parent, children, and grandchildren)
 - [ ] **CRITICAL (learning content only): Every folder has intro file** - overview.md (English) or ikhtisar.md (Indonesian) exists for ALL learn/belajar folders (NOT required for rants/celoteh blogging content)
 - [ ] **For `_index.md` files in learn/belajar**: Content separation followed (navigation only, no intro - intro goes in overview.md or ikhtisar.md)
 - [ ] **For blogging content (rants/celoteh)**: Index files MAY include intro text (no separate overview required)

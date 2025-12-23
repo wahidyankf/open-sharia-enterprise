@@ -23,7 +23,7 @@ You are an expert content structure validator specialized in checking ayokoding-
 
 Your primary job is to **validate the structural integrity and navigation architecture** of ayokoding-web content by:
 
-1. **Verifying** `_index.md` files HAVE navigation structure 3 layers deep (structure exists, not validating the generated listings)
+1. **Verifying** `_index.md` files HAVE navigation structure 2 layers deep (structure exists, not validating the generated listings)
 2. **Validating** navigation lists are ordered by weight using itemized lists
 3. **Checking** overview.md and ikhtisar.md exist with correct titles ("Overview" and "Ikhtisar")
 4. **Confirming** overview.md and ikhtisar.md summarize their folder scope (presence only, not quality)
@@ -74,7 +74,7 @@ Use this agent when:
 - **Validating navigation architecture** across ayokoding-web content
 - **Checking weight ordering** follows level-based system with per-parent resets
 - **Verifying overview/ikhtisar presence** in learning content folders
-- **Auditing navigation depth** (3 layers deep requirement)
+- **Auditing navigation depth** (2 layers deep requirement)
 - **Ensuring structural compliance** with Hugo Content Convention - ayokoding
 
 **Do NOT use this agent for:**
@@ -100,7 +100,7 @@ Use this agent when:
 
 ### 1. Navigation Depth Validation (3 Layers Deep)
 
-**CRITICAL RULE**: All `_index.md` files (except language roots and terminal directories) MUST display navigation 3 layers deep with COMPLETE coverage.
+**CRITICAL RULE**: All `_index.md` files (except language roots and terminal directories) MUST display navigation 2 layers deep with COMPLETE coverage.
 
 **Exemptions**:
 
@@ -108,16 +108,17 @@ Use this agent when:
    - `/en/_index.md` (level 1: language root)
    - `/id/_index.md` (level 1: language root)
 
-2. **Terminal directories** (exempt from 3-layer requirement):
+2. **Terminal directories** (exempt from 2-layer requirement):
    - **Definition**: Folders containing ONLY content files (no subdirectories)
    - **Examples**: `/en/learn/swe/prog-lang/golang/`, `/en/learn/swe/infosec/concepts/tutorials/`
-   - **Rationale**: Cannot structurally support 3-layer navigation (no subdirectories to show as Layer 2 and Layer 3)
+   - **Rationale**: Cannot structurally support 2-layer navigation (no subdirectories to show as Layer 2)
 
 **Required Structure for Non-Terminal Directories**:
 
 - **Layer 1**: Current level (parent section/category)
 - **Layer 2**: ALL immediate children (subdirectories and direct content files) - COMPLETE COVERAGE REQUIRED
-- **Layer 3**: ALL grandchildren (subdirectories and content files 2 levels down) - COMPLETE COVERAGE REQUIRED
+
+**Note**: Grandchildren (Layer 3) are NOT shown. Users navigate to a child page to see its children.
 
 **Completeness Requirement**:
 
@@ -131,30 +132,26 @@ Partial coverage (showing only some children) is a violation.
 
 1. Find all `_index.md` files (exclude language roots)
 2. Determine if directory is terminal (contains only content files, no subdirectories)
-3. **For terminal directories**: Exempt from 3-layer requirement (structural limitation)
+3. **For terminal directories**: Exempt from 2-layer requirement (structural limitation)
 4. **For non-terminal directories**:
    - Parse navigation lists
-   - Verify 3-layer nested bullet structure exists (or flat list for direct children)
-   - Verify COMPLETE coverage of all immediate children and grandchildren
-   - Flag missing children/grandchildren as errors
+   - Verify 2-layer nested bullet structure exists (or flat list for direct children)
+   - Verify COMPLETE coverage of all immediate children
+   - Flag missing children as errors
 5. Report specific file paths and missing content
 
-**Valid Example** (3 layers deep):
+**Valid Example** (2 layers deep):
 
 ```markdown
 <!-- File: /en/learn/_index.md -->
 
 - [Overview](/en/learn/overview)
 - [Software Engineering](/en/learn/swe)
-  - [Overview](/en/learn/swe/overview)
-  - [Programming Languages](/en/learn/swe/prog-lang)
-    - [Overview](/en/learn/swe/prog-lang/overview)
-    - [Golang](/en/learn/swe/prog-lang/golang)
-  - [System Design](/en/learn/swe/system-design)
 - [AI Engineering](/en/learn/ai)
-  - [Overview](/en/learn/ai/overview)
 - [Business and Finance](/en/learn/business)
 - [Human Skills](/en/learn/human)
+- [Gobuster](/en/learn/gobuster)
+- [System Design](/en/learn/system-design)
 ```
 
 **Invalid Examples**:
@@ -177,7 +174,7 @@ Partial coverage (showing only some children) is a violation.
 - [AI Engineering](/en/learn/ai)
 
 <!-- NOTE: Terminal directories like /en/learn/swe/prog-lang/golang/ are EXEMPT -->
-<!-- They contain only content files, so showing < 3 layers is NOT a violation -->
+<!-- They contain only content files, so showing < 2 layers is NOT a violation -->
 ```
 
 ### 2. Navigation Ordering Validation
@@ -724,7 +721,7 @@ For each file found:
 
 Apply all validation rules, **writing findings immediately after each check**:
 
-1. **Navigation Depth**: Check 3-layer nesting in ALL `_index.md` files
+1. **Navigation Depth**: Check 2-layer nesting in ALL `_index.md` files
    - **Immediately append** findings to report file
 
 2. **Navigation Ordering**: Verify weight-based order in ALL `_index.md` files
@@ -814,7 +811,7 @@ See full audit report for complete details and recommendations.
 **Validation Result**:
 
 ```markdown
-Navigation Depth: 3 layers deep (valid)
+Navigation Depth: 2 layers deep (valid)
 Navigation Ordering: Ordered by weight
 Overview Presence: overview.md exists
 Overview Link Position: First in navigation

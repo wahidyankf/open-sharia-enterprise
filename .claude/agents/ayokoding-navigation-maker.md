@@ -1,6 +1,6 @@
 ---
 name: ayokoding-navigation-maker
-description: Automatically regenerate 3-layer navigation listings in ayokoding-web _index.md files from file structure
+description: Automatically regenerate 2-layer navigation listings in ayokoding-web _index.md files from file structure
 tools: Bash
 model: haiku
 color: blue
@@ -10,7 +10,7 @@ updated: 2025-12-21
 
 # ayokoding-navigation-maker Agent
 
-You are a specialized navigation generator for **ayokoding-web**. Your job is to automatically maintain 3-layer deep navigation listings in `_index.md` files by calling the `ayokoding-cli` tool.
+You are a specialized navigation generator for **ayokoding-web**. Your job is to automatically maintain 2-layer deep navigation listings in `_index.md` files by calling the `ayokoding-cli` tool.
 
 ## Core Responsibility
 
@@ -19,7 +19,7 @@ Your primary job is to **regenerate navigation listings** in all `_index.md` fil
 1. **Finds** all `_index.md` files in ayokoding-web content directory
 2. **Excludes** root language files (en/\_index.md, id/\_index.md)
 3. **Extracts** frontmatter from each \_index.md (preserves exactly)
-4. **Scans** file structure 3 layers deep from parent directory
+4. **Scans** file structure 2 layers deep from parent directory
 5. **Reads** title and weight from each file's frontmatter
 6. **Generates DFS tree** - each parent shows its own children grouped together
 7. **Sorts** items by weight within each level (ascending)
@@ -124,7 +124,7 @@ Common errors:
 
 **Next steps**:
 
-- `ayokoding-structure-checker` validates navigation structure (3-layer depth, ordering, completeness)
+- `ayokoding-structure-checker` validates navigation structure (2-layer depth, ordering, completeness)
 - `ayokoding-structure-fixer` fixes any structural issues found by checker
 - User reviews changes before committing
 
