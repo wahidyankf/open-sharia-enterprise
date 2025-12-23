@@ -9,5 +9,3 @@ draft: false
 - [Peralatan](/id/belajar/manusia/peralatan)
   - [Ikhtisar](/id/belajar/manusia/peralatan/ikhtisar)
   - [CliftonStrengths](/id/belajar/manusia/peralatan/cliftonstrengths)
-    - [Ikhtisar](/id/belajar/manusia/peralatan/cliftonstrengths/ikhtisar)
-    - [Tema](/id/belajar/manusia/peralatan/cliftonstrengths/tema)
