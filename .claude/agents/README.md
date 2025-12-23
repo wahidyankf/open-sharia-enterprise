@@ -147,10 +147,10 @@ Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates
 
 ### 🟩 `ayokoding-navigation-maker.md`
 
-Automatically regenerate 3-layer navigation listings in ayokoding-web \_index.md files from file structure.
+Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md files from file structure.
 
 - **Primary Use:** Regenerating navigation listings in \_index.md files after content changes
-- **Specialization:** File structure scanning (3 layers deep), weight-based sorting, frontmatter preservation, title extraction, markdown navigation generation, mechanical content regeneration
+- **Specialization:** File structure scanning (2 layers deep), weight-based sorting, frontmatter preservation, title extraction, markdown navigation generation, mechanical content regeneration
 - **Tools:** Read, Write, Glob, Grep, Bash
 - **Model:** Haiku (efficient mechanical task)
 - **When to Use:**
@@ -205,7 +205,7 @@ Expert at validating ALL ayokoding-web content files including navigation archit
   - Validating navigation architecture across ayokoding-web content
   - Checking weight ordering follows level-based system across ALL content files
   - Verifying overview/ikhtisar presence in learning content folders
-  - Auditing navigation depth (3 layers deep requirement)
+  - Auditing navigation depth (2 layers deep requirement)
   - Validating tutorial pedagogical progression (initial-setup → quick-start → beginner → intermediate → advanced)
   - Ensuring structural compliance with Hugo Content Convention - ayokoding
 - **Output:** Generates `ayokoding-structure__{timestamp}__audit.md` report in `generated-reports/`

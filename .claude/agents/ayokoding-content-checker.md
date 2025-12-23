@@ -473,10 +473,9 @@ title: business # WRONG! No capitalization, too generic
 
 **For `_index.md` files in ayokoding-web**:
 
-- [ ] Navigation links display **3 layers deep** (parent + children + grandchildren)
+- [ ] Navigation links display **2 layers deep** (parent + children)
 - [ ] Layer 1: Parent section/category (current level)
 - [ ] Layer 2: Children (immediate subsections and direct content files)
-- [ ] Layer 3: Grandchildren (subsections and content files 2 levels down)
 
 ### Overview/Ikhtisar File Requirement Validation (Learning Content Only)
 
@@ -547,7 +546,7 @@ Folders in `/en/rants/` and `/id/celoteh/` do NOT require overview/ikhtisar file
 
 **Validation Checklist** (learning content only):
 
-- [ ] `_index.md` contains ONLY navigation lists (3 layers deep)
+- [ ] `_index.md` contains ONLY navigation lists (2 layers deep)
 - [ ] NO introduction paragraphs in `_index.md`
 - [ ] NO overview content in `_index.md`
 - [ ] NO explanatory text beyond navigation links
@@ -788,10 +787,10 @@ content/en/learn/swe/prog-lang/golang/ikhtisar.md # Should be overview.md
 
 **Rationale**: Clear separation of concerns - `_index.md` handles navigation with overview link first for visibility, `overview.md`/`ikhtisar.md` handles content. Language-appropriate filenames maintain bilingual consistency
 
-**Valid Navigation (3 layers deep)**:
+**Invalid Navigation (3 layers deep - TOO DEEP)**:
 
 ```markdown
-<!-- File: apps/ayokoding-web/content/en/learn/_index.md -->
+<!-- WRONG! Shows 3 layers when only 2 are allowed -->
 
 - [Software Engineering](/learn/swe)
   - [Programming Languages](/learn/swe/prog-lang)
@@ -801,10 +800,10 @@ content/en/learn/swe/prog-lang/golang/ikhtisar.md # Should be overview.md
     - [Fundamentals](/learn/swe/system-design/fundamentals)
 ```
 
-**Invalid Navigation (only 2 layers deep - missing Layer 3 grandchildren)**:
+**Valid Navigation (2 layers deep)**:
 
 ```markdown
-<!-- WRONG! Stops at children -->
+<!-- CORRECT! Shows parent + immediate children -->
 
 - [Software Engineering](/learn/swe)
   - [Programming Languages](/learn/swe/prog-lang)

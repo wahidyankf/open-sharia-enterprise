@@ -351,7 +351,7 @@ nx dev ayokoding-cli -- nav regen
 
 # The CLI will:
 # 1. Scan all folders in content/en/ and content/id/
-# 2. Generate 3-layer navigation listings ordered by weight
+# 2. Generate 2-layer navigation listings ordered by weight
 # 3. Update all _index.md files with correct navigation structure
 ```
 
