@@ -1322,184 +1322,293 @@ Map<String, String> cache = new LinkedHashMap<>(100, 0.75f, true) {
 
 ## Group 4: Design Patterns
 
-### Example 49: Singleton, Factory, Builder
+### Example 49: Connection Pool Factory Pattern
 
-Creational patterns control object creation. Singleton ensures one instance. Factory decouples creation from use. Builder enables flexible construction of complex objects.
+Production database applications use connection pooling to reuse expensive database connections. This example demonstrates Singleton (pool manager), Factory (connection creation), and Builder (configuration) patterns in a real-world context.
 
 **Code**:
 
 ```java
-// Singleton - ensure single instance
+import java.sql.*;
+import java.util.*;
+import java.util.concurrent.*;
 
-// Eager initialization
-class EagerSingleton {
-    private static final EagerSingleton INSTANCE = new EagerSingleton();
-
-    private EagerSingleton() {} // Private constructor
-
-    public static EagerSingleton getInstance() {
-        return INSTANCE;
-    }
+// Database connection interface
+interface DatabaseConnection {
+    void connect() throws SQLException;
+    void disconnect();
+    ResultSet executeQuery(String sql) throws SQLException;
+    boolean isConnected();
+    String getConnectionString();
 }
 
-// Lazy initialization (not thread-safe)
-class LazySingleton {
-    private static LazySingleton instance;
+// PostgreSQL connection implementation
+class PostgresConnection implements DatabaseConnection {
+    private Connection connection;
+    private final String connString;
 
-    private LazySingleton() {}
+    public PostgresConnection(String host, int port, String database) {
+        this.connString = String.format("jdbc:postgresql://%s:%d/%s",
+                                       host, port, database);
+    }
 
-    public static LazySingleton getInstance() {
-        if (instance == null) {
-            instance = new LazySingleton();
+    @Override
+    public void connect() throws SQLException {
+        connection = DriverManager.getConnection(connString);
+        System.out.println("Connected to PostgreSQL: " + connString);
+    }
+
+    @Override
+    public void disconnect() {
+        try {
+            if (connection != null) connection.close();
+            System.out.println("Disconnected from PostgreSQL");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return instance;
+    }
+
+    @Override
+    public ResultSet executeQuery(String sql) throws SQLException {
+        return connection.createStatement().executeQuery(sql);
+    }
+
+    @Override
+    public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getConnectionString() { return connString; }
+}
+
+// MySQL connection implementation
+class MySQLConnection implements DatabaseConnection {
+    private Connection connection;
+    private final String connString;
+
+    public MySQLConnection(String host, int port, String database) {
+        this.connString = String.format("jdbc:mysql://%s:%d/%s",
+                                       host, port, database);
+    }
+
+    @Override
+    public void connect() throws SQLException {
+        connection = DriverManager.getConnection(connString);
+        System.out.println("Connected to MySQL: " + connString);
+    }
+
+    @Override
+    public void disconnect() {
+        try {
+            if (connection != null) connection.close();
+            System.out.println("Disconnected from MySQL");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public ResultSet executeQuery(String sql) throws SQLException {
+        return connection.createStatement().executeQuery(sql);
+    }
+
+    @Override
+    public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getConnectionString() { return connString; }
+}
+
+// Factory for creating database connections
+class ConnectionFactory {
+    public static DatabaseConnection create(String dbType, String host,
+                                           int port, String database) {
+        return switch (dbType.toLowerCase()) {
+            case "postgres", "postgresql" ->
+                new PostgresConnection(host, port, database);
+            case "mysql" ->
+                new MySQLConnection(host, port, database);
+            default ->
+                throw new IllegalArgumentException("Unsupported database: " + dbType);
+        };
     }
 }
 
-// Thread-safe lazy (double-checked locking)
-class ThreadSafeSingleton {
-    private static volatile ThreadSafeSingleton instance;
+// Connection configuration using Builder pattern
+class ConnectionConfig {
+    private final String dbType;
+    private final String host;
+    private final int port;
+    private final String database;
+    private final int poolSize;
+    private final int timeout;
 
-    private ThreadSafeSingleton() {}
+    private ConnectionConfig(Builder builder) {
+        this.dbType = builder.dbType;
+        this.host = builder.host;
+        this.port = builder.port;
+        this.database = builder.database;
+        this.poolSize = builder.poolSize;
+        this.timeout = builder.timeout;
+    }
 
-    public static ThreadSafeSingleton getInstance() {
+    // Fluent Builder
+    public static class Builder {
+        private final String dbType;
+        private final String host;
+        private final String database;
+        private int port = 5432; // Default for Postgres
+        private int poolSize = 10;
+        private int timeout = 30;
+
+        public Builder(String dbType, String host, String database) {
+            this.dbType = dbType;
+            this.host = host;
+            this.database = database;
+        }
+
+        public Builder port(int port) {
+            this.port = port;
+            return this; // => Fluent API
+        }
+
+        public Builder poolSize(int size) {
+            this.poolSize = size;
+            return this;
+        }
+
+        public Builder timeout(int seconds) {
+            this.timeout = seconds;
+            return this;
+        }
+
+        public ConnectionConfig build() {
+            return new ConnectionConfig(this);
+        }
+    }
+
+    public String getDbType() { return dbType; }
+    public String getHost() { return host; }
+    public int getPort() { return port; }
+    public String getDatabase() { return database; }
+    public int getPoolSize() { return poolSize; }
+    public int getTimeout() { return timeout; }
+}
+
+// Connection Pool using Singleton pattern
+class ConnectionPool {
+    private static volatile ConnectionPool instance; // Singleton instance
+    private final Queue<DatabaseConnection> availableConnections;
+    private final Set<DatabaseConnection> inUseConnections;
+    private final ConnectionConfig config;
+
+    private ConnectionPool(ConnectionConfig config) {
+        this.config = config;
+        this.availableConnections = new ConcurrentLinkedQueue<>();
+        this.inUseConnections = ConcurrentHashMap.newKeySet();
+
+        // Pre-create pool connections
+        for (int i = 0; i < config.getPoolSize(); i++) {
+            DatabaseConnection conn = ConnectionFactory.create(
+                config.getDbType(),
+                config.getHost(),
+                config.getPort(),
+                config.getDatabase()
+            );
+            availableConnections.offer(conn);
+        }
+        System.out.println("Connection pool initialized with " +
+                         config.getPoolSize() + " connections");
+    }
+
+    // Thread-safe Singleton with double-checked locking
+    public static ConnectionPool getInstance(ConnectionConfig config) {
         if (instance == null) {
-            synchronized (ThreadSafeSingleton.class) {
+            synchronized (ConnectionPool.class) {
                 if (instance == null) {
-                    instance = new ThreadSafeSingleton();
+                    instance = new ConnectionPool(config);
                 }
             }
         }
         return instance;
     }
-}
 
-// Enum singleton (best practice - thread-safe, serialization-safe)
-enum EnumSingleton {
-    INSTANCE;
-
-    public void doSomething() {
-        System.out.println("Singleton action");
-    }
-}
-
-EnumSingleton.INSTANCE.doSomething();
-
-// Factory pattern - encapsulate object creation
-
-interface Shape {
-    void draw();
-}
-
-class Circle implements Shape {
-    @Override
-    public void draw() { System.out.println("Drawing Circle"); }
-}
-
-class Rectangle implements Shape {
-    @Override
-    public void draw() { System.out.println("Drawing Rectangle"); }
-}
-
-// Factory method
-class ShapeFactory {
-    public static Shape createShape(String type) {
-        return switch (type.toLowerCase()) {
-            case "circle" -> new Circle();
-            case "rectangle" -> new Rectangle();
-            default -> throw new IllegalArgumentException("Unknown shape: " + type);
-        };
-    }
-}
-
-Shape shape = ShapeFactory.createShape("circle");
-shape.draw(); // => "Drawing Circle"
-
-// Abstract Factory - families of related objects
-interface GUIFactory {
-    Button createButton();
-    Checkbox createCheckbox();
-}
-
-class WindowsFactory implements GUIFactory {
-    public Button createButton() { return new WindowsButton(); }
-    public Checkbox createCheckbox() { return new WindowsCheckbox(); }
-}
-
-class MacFactory implements GUIFactory {
-    public Button createButton() { return new MacButton(); }
-    public Checkbox createCheckbox() { return new MacCheckbox(); }
-}
-
-// Builder pattern - construct complex objects step-by-step
-
-class User {
-    private final String firstName; // Required
-    private final String lastName;  // Required
-    private final int age;          // Optional
-    private final String phone;     // Optional
-    private final String address;   // Optional
-
-    private User(Builder builder) {
-        this.firstName = builder.firstName;
-        this.lastName = builder.lastName;
-        this.age = builder.age;
-        this.phone = builder.phone;
-        this.address = builder.address;
+    public DatabaseConnection acquire() throws InterruptedException {
+        DatabaseConnection conn = availableConnections.poll();
+        if (conn == null) {
+            System.out.println("Pool exhausted, creating new connection");
+            conn = ConnectionFactory.create(
+                config.getDbType(),
+                config.getHost(),
+                config.getPort(),
+                config.getDatabase()
+            );
+        }
+        inUseConnections.add(conn);
+        return conn; // => Connection from pool or newly created
     }
 
-    // Builder class
-    public static class Builder {
-        private final String firstName;
-        private final String lastName;
-        private int age = 0;
-        private String phone = "";
-        private String address = "";
-
-        public Builder(String firstName, String lastName) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-        }
-
-        public Builder age(int age) {
-            this.age = age;
-            return this;
-        }
-
-        public Builder phone(String phone) {
-            this.phone = phone;
-            return this;
-        }
-
-        public Builder address(String address) {
-            this.address = address;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
+    public void release(DatabaseConnection conn) {
+        if (inUseConnections.remove(conn)) {
+            availableConnections.offer(conn);
+            System.out.println("Connection returned to pool");
         }
     }
+
+    public void shutdown() {
+        for (DatabaseConnection conn : availableConnections) {
+            conn.disconnect();
+        }
+        for (DatabaseConnection conn : inUseConnections) {
+            conn.disconnect();
+        }
+        System.out.println("Connection pool shut down");
+    }
+
+    public int getAvailableCount() { return availableConnections.size(); }
+    public int getInUseCount() { return inUseConnections.size(); }
 }
 
-// Using the builder
-User user = new User.Builder("John", "Doe")
-    .age(30)
-    .phone("555-1234")
-    .address("123 Main St")
-    .build();
+// Usage example combining all patterns
+ConnectionConfig config = new ConnectionConfig.Builder("postgres", "localhost", "mydb")
+    .port(5432)
+    .poolSize(20)
+    .timeout(60)
+    .build(); // => Builder pattern
 
-// Telescoping constructor anti-pattern (avoid)
-class BadUser {
-    BadUser(String first, String last) {}
-    BadUser(String first, String last, int age) {}
-    BadUser(String first, String last, int age, String phone) {}
-    BadUser(String first, String last, int age, String phone, String address) {}
-    // Hard to read, error-prone
+ConnectionPool pool = ConnectionPool.getInstance(config); // => Singleton
+
+// Acquire connection from pool
+DatabaseConnection conn = pool.acquire(); // => Factory creates connection
+try {
+    conn.connect();
+    ResultSet rs = conn.executeQuery("SELECT * FROM users");
+    // Process results...
+} catch (SQLException e) {
+    e.printStackTrace();
+} finally {
+    pool.release(conn); // => Return to pool for reuse
 }
+
+// Pool statistics
+System.out.println("Available: " + pool.getAvailableCount());
+System.out.println("In use: " + pool.getInUseCount());
+
+pool.shutdown(); // Cleanup
 ```
 
-**Key Takeaway**: Singleton controls instantiation—prefer enum implementation for thread safety. Factory Method decouples creation, enabling polymorphism. Abstract Factory creates families of related objects. Builder enables flexible, readable construction with fluent API. Avoid telescoping constructors.
+**Key Takeaway**: This demonstrates all three creational patterns in production context. **Singleton** ensures one connection pool instance (thread-safe with double-checked locking). **Factory** creates database connections by type (Postgres, MySQL) enabling polymorphism. **Builder** constructs complex configuration with fluent API, avoiding telescoping constructors. Connection pooling is essential for production databases—creating connections is expensive (100-1000ms), reusing them is fast (1ms). This pattern appears in all production database libraries (HikariCP, C3P0, Apache DBCP).
 
 ---
 

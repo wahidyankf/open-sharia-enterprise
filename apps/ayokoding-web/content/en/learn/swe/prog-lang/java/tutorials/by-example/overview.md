@@ -86,10 +86,13 @@ Understanding where by-example fits in the tutorial ecosystem helps you choose t
 | **Beginner**     | 0-60% comprehensive      | Narrative, explanatory         | Complete beginners     | Deep understanding, first programming language       |
 | **Intermediate** | 60-85%                   | Practical applications         | Past basics            | Production patterns, frameworks                      |
 | **Advanced**     | 85-95%                   | Complex systems                | Experienced Java devs  | JVM internals, distributed systems                   |
+| **Cookbook**     | Problem-oriented         | Recipe, solution-focused       | All levels             | Specific problems, common tasks                      |
 
 **By Example vs. Quick Start**: By Example provides 90% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
 
 **By Example vs. Beginner Tutorial**: By Example is code-first for experienced developers; Beginner Tutorial is narrative-first for complete beginners. By Example shows patterns; Beginner Tutorial explains concepts.
+
+**By Example vs. Cookbook**: By Example is learning-oriented with progressive examples building language knowledge. Cookbook is problem-solving oriented with standalone recipes for specific tasks. By Example teaches concepts; Cookbook solves problems.
 
 ## Prerequisites
 
