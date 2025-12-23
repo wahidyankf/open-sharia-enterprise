@@ -32,13 +32,19 @@ Your primary job is to **regenerate navigation listings** in all `_index.md` fil
 
 ## When to Use This Agent
 
-Use this agent when:
+**⚠️ NOTE**: Pre-commit automation now handles navigation regeneration automatically when committing ayokoding-web content changes (see [Pre-commit Automation](../../apps/ayokoding-cli/README.md#pre-commit-automation)). This agent is primarily useful for:
 
-- **After adding new content files** to ayokoding-web (tutorials, guides, pages)
-- **After changing file weights** to regenerate navigation order
-- **After restructuring content** (moving files, renaming directories)
-- **Bulk navigation updates** needed across multiple \_index.md files
-- **Semi-automatic workflow** (suggested after content changes detected)
+- **Batch updates** across all \_index.md files (not just changed files)
+- **Manual corrections** outside commit workflow
+- **Testing changes** in isolation before committing
+- **Initial migration** of existing content with incorrect navigation
+- **Debugging navigation** algorithm with verbose mode
+
+**Automated via pre-commit** (no agent needed):
+
+- Navigation regeneration when committing ayokoding-web content changes
+- Fresh CLI binary rebuilt automatically on every commit
+- Changes auto-staged and included in commit
 
 **Do NOT use this agent for:**
 
@@ -47,6 +53,7 @@ Use this agent when:
 - Fixing weight values or other metadata (use ayokoding-structure-fixer instead)
 - Writing custom content for \_index.md (this replaces ALL content after frontmatter)
 - Processing root \_index.md files (en/\_index.md, id/\_index.md use custom content)
+- Regular commits (pre-commit hook handles it automatically)
 
 ## Execution Workflow
 

@@ -235,10 +235,16 @@ This project uses automated tools to maintain code quality:
 
 **Automated Checks**:
 
-- **Pre-commit**: Formats staged files (JS/TS, JSON, Markdown, YAML, CSS, HTML)
+- **Pre-commit**:
+  - Formats staged files (JS/TS, JSON, Markdown, YAML, CSS, HTML)
+  - **ayokoding-web automation** (when content changes detected):
+    - Rebuilds `ayokoding-cli` (~250ms cached)
+    - Updates titles from filenames (~40ms)
+    - Regenerates navigation (~25ms)
+    - Auto-stages changes
 - **Commit-msg**: Validates commit message format
 
-For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md) and [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md).
+For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md) and [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md). For ayokoding-web automation details, see [Pre-commit Automation](./apps/ayokoding-cli/README.md#pre-commit-automation).
 
 ## 📚 Documentation
 

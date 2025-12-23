@@ -259,6 +259,48 @@ Typical workflow when adding new content:
 4. **Validate structure**: `ayokoding-structure-checker` validates structure and ordering
 5. **Fix issues**: `ayokoding-structure-fixer` fixes any validation issues
 
+### Pre-commit Automation
+
+**Automatic title and navigation updates** are enabled via git pre-commit hook when committing ayokoding-web content changes:
+
+```json
+// apps/ayokoding-web/project.json
+"pre-commit-script": {
+  "commands": [
+    "nx build ayokoding-cli",           // Rebuild CLI (Nx cached: ~250ms)
+    "titles update --quiet",             // Update titles (~40ms)
+    "nav regen --quiet"                  // Regenerate navigation (~25ms)
+  ]
+}
+```
+
+**How it works:**
+
+1. Developer commits changes to `apps/ayokoding-web/content/`
+2. Pre-commit hook detects changes via `nx affected -t pre-commit-script`
+3. CLI is rebuilt (Nx cache hit: ~250ms, with changes: ~674ms)
+4. Titles and navigation updated automatically
+5. Modified files auto-staged and included in commit
+
+**Performance benchmarks:**
+
+- Total hook time (cached): **~725ms** ✨
+- Total hook time (with CLI changes): **~1.3s**
+- Acceptable overhead for ensuring consistency
+
+**Benefits:**
+
+- Zero manual steps for developers
+- Titles and navigation always up-to-date
+- Fresh CLI binary on every commit
+- Nx caching keeps it fast
+
+**Note:** Agents (`ayokoding-title-maker`, `ayokoding-navigation-maker`) are still useful for:
+
+- Batch updates across all content
+- Manual corrections outside commit workflow
+- Testing changes in isolation
+
 ## Development
 
 ### Build

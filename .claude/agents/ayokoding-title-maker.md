@@ -33,13 +33,19 @@ Your primary job is to **update title frontmatter fields** in all markdown files
 
 ## When to Use This Agent
 
-Use this agent when:
+**⚠️ NOTE**: Pre-commit automation now handles title updates automatically when committing ayokoding-web content changes (see [Pre-commit Automation](../../apps/ayokoding-cli/README.md#pre-commit-automation)). This agent is primarily useful for:
 
-- **After adding new content files** to ayokoding-web (tutorials, guides, pages)
-- **After renaming files** to regenerate titles from new filenames
-- **Bulk title standardization** needed across all content
-- **Before navigation regeneration** to ensure titles are consistent
-- **Semi-automatic workflow** (suggested after content changes detected)
+- **Batch updates** across all content (not just changed files)
+- **Manual corrections** outside commit workflow
+- **Testing changes** in isolation before committing
+- **Initial migration** of existing content with incorrect titles
+- **Debugging title generation** algorithm with dry-run mode
+
+**Automated via pre-commit** (no agent needed):
+
+- Title updates when committing ayokoding-web content changes
+- Fresh CLI binary rebuilt automatically on every commit
+- Changes auto-staged and included in commit
 
 **Do NOT use this agent for:**
 
@@ -47,7 +53,7 @@ Use this agent when:
 - Validating navigation structure (use ayokoding-structure-checker instead)
 - Fixing weight values or other metadata (use ayokoding-structure-fixer instead)
 - Writing custom content for markdown (this only updates title frontmatter)
-- Manually editing titles (this automates based on filename)
+- Regular commits (pre-commit hook handles it automatically)
 
 ## Title Generation Logic
 
