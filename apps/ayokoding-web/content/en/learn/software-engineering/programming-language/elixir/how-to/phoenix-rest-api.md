@@ -1,5 +1,5 @@
 ---
-title: "Phoenix REST API Development"
+title: "Phoenix REST API"
 date: 2025-12-21T17:15:00+07:00
 draft: false
 description: "Build production-ready REST APIs with Phoenix framework covering routing, controllers, JSON rendering, authentication, and error handling."

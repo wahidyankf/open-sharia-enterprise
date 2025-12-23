@@ -1,5 +1,5 @@
 ---
-title: "How to Organize Code with Packages and Modules"
+title: "Organize Code Packages"
 date: 2025-12-18T14:50:04+07:00
 draft: false
 weight: 1000015

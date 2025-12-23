@@ -1,5 +1,5 @@
 ---
-title: "How to Debug and Log Effectively"
+title: "Debug and Log Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
 weight: 1000014

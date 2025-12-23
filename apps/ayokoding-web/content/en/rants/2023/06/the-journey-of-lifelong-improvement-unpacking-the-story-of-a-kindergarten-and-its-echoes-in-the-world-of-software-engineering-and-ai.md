@@ -1,5 +1,5 @@
 ---
-title: "The Journey of Lifelong Improvement: Unpacking the Story of a Kindergarten and its Echoes in the World of Software Engineering and AI"
+title: "The Journey of Lifelong Improvement Unpacking the Story of a Kindergarten and Its Echoes in the World of Software Engineering and Ai"
 weight: 10040
 date: 2023-06-18T07:20:00+07:00
 draft: false

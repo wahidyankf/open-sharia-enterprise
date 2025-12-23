@@ -1,5 +1,5 @@
 ---
-title: "Pattern Matching Effectively"
+title: "Pattern Matching"
 date: 2025-12-21T10:00:00+07:00
 draft: false
 description: "Master Elixir pattern matching for data extraction, control flow, function dispatch, and destructuring complex structures"

@@ -1,5 +1,5 @@
 ---
-title: "Ecto Database Patterns"
+title: "Ecto"
 date: 2025-12-21T17:25:00+07:00
 draft: false
 description: "Master Ecto for database operations with schemas, changesets, queries, associations, and migrations for robust data persistence."

@@ -1,5 +1,5 @@
 ---
-title: "How to Use Type Hints Effectively"
+title: "Use Type Hints Effectively"
 date: 2025-12-17T10:54:44+07:00
 draft: false
 weight: 1000005

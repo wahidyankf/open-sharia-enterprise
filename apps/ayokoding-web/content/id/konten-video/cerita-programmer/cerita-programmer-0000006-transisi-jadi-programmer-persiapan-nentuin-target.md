@@ -1,5 +1,5 @@
 ---
-title: "Cerita Programmer - 6 - Transisi Jadi Programmer - Persiapan - Nentuin Target"
+title: "Cerita Programmer 0000006 Transisi Jadi Programmer Persiapan Nentuin Target"
 date: 2025-03-16T07:20:00+07:00
 draft: false
 weight: 1140

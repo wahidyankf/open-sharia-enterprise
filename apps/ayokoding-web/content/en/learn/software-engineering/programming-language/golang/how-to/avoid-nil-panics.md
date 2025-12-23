@@ -1,5 +1,5 @@
 ---
-title: "How to Avoid Nil Panics"
+title: "Avoid Nil Panics"
 date: 2025-12-17T10:00:00+07:00
 draft: false
 weight: 1000003

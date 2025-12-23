@@ -1,5 +1,5 @@
 ---
-title: "Polymorphism with Protocols"
+title: "Protocols"
 date: 2025-12-21T18:05:00+07:00
 draft: false
 description: "Implement polymorphic behavior in Elixir using protocols for type-based dispatch and extensible APIs without modifying existing code."

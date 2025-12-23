@@ -1,5 +1,5 @@
 ---
-title: "Menyiapkan C, TypeScript, F#, dan Dart untuk Pengembangan Lokal dalam VS Code: Pengalaman Liburan Saya"
+title: "Menyiapkan C TypeScript F dan Dart untuk Pengembangan Lokal Dalam vs Code Pengalaman Liburan Saya"
 weight: 10020
 date: 2023-06-29T07:20:00+07:00
 draft: false

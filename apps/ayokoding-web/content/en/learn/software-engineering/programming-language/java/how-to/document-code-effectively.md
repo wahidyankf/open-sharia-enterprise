@@ -1,5 +1,5 @@
 ---
-title: "How to Document Code Effectively"
+title: "Document Code Effectively"
 date: 2025-12-17T13:19:07+07:00
 draft: false
 weight: 1000011

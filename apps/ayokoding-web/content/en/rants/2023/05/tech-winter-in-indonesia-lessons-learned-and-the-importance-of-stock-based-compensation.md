@@ -1,5 +1,5 @@
 ---
-title: "Tech Winter in Indonesia: Lessons Learned and the Importance of Stock-Based Compensation"
+title: "Tech Winter in Indonesia Lessons Learned and the Importance of Stock Based Compensation"
 weight: 10020
 date: 2023-05-04T07:20:00+07:00
 draft: false

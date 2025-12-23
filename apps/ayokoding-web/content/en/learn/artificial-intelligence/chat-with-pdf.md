@@ -1,5 +1,5 @@
 ---
-title: "Chat with PDF"
+title: "Chat with Pdf"
 weight: 1020
 date: 2025-12-02T00:00:00+07:00
 draft: false

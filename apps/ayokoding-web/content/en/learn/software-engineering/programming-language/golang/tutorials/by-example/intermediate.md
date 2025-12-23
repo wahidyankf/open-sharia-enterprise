@@ -1,5 +1,5 @@
 ---
-title: "Intermediate Examples - Go By Example"
+title: "Intermediate"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000002

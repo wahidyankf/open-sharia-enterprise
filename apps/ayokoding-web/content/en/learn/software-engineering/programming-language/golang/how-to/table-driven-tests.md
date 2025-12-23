@@ -1,5 +1,5 @@
 ---
-title: "How to Write Table-Driven Tests"
+title: "Table Driven Tests"
 date: 2025-12-21T00:00:00+07:00
 draft: false
 weight: 1000023

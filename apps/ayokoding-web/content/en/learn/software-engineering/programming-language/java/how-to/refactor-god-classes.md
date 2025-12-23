@@ -1,5 +1,5 @@
 ---
-title: "How to Refactor God Classes"
+title: "Refactor God Classes"
 date: 2025-12-17T07:06:48+07:00
 draft: false
 weight: 1000008

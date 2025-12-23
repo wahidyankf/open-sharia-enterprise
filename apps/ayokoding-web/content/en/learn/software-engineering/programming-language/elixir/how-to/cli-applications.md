@@ -1,5 +1,5 @@
 ---
-title: "Building CLI Applications"
+title: "Cli Applications"
 date: 2025-12-21T18:10:00+07:00
 draft: false
 description: "Create command-line tools in Elixir with escript, argument parsing, output formatting, and distribution as standalone executables."

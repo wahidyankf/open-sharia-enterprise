@@ -1,11 +1,11 @@
 ---
-title: Human
+title: "Index"
 date: 2025-03-16T07:20:00+07:00
 draft: false
 weight: 106
 ---
 
 - [Overview](/en/learn/human/overview)
-- [Tools](/en/learn/human/tools)
+- [Index](/en/learn/human/tools)
   - [Overview](/en/learn/human/tools/overview)
-  - [CliftonStrengths](/en/learn/human/tools/cliftonstrengths)
+  - [Index](/en/learn/human/tools/cliftonstrengths)

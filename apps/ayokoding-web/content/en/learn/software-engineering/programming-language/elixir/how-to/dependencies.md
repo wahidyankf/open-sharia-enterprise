@@ -1,5 +1,5 @@
 ---
-title: "Dependency Management with Hex"
+title: "Dependencies"
 date: 2025-12-21T18:20:00+07:00
 draft: false
 description: "Manage Elixir dependencies using Hex package manager with version constraints, dependency resolution, and publishing packages."

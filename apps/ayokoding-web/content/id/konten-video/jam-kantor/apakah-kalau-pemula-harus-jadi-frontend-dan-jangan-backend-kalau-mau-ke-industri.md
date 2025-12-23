@@ -1,5 +1,5 @@
 ---
-title: "Jam Kantor - Apakah kalau pemula harus jadi frontend dan jangan backend kalau mau ke industri?"
+title: "Apakah Kalau Pemula Harus Jadi Frontend dan Jangan Backend Kalau Mau ke Industri"
 weight: 1040
 date: 2025-03-16T07:20:00+07:00
 draft: false

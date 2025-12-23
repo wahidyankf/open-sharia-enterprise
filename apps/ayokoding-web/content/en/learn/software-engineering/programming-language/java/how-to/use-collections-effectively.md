@@ -1,5 +1,5 @@
 ---
-title: "How to Use Java Collections Effectively"
+title: "Use Collections Effectively"
 date: 2025-12-17T07:06:48+07:00
 draft: false
 weight: 1000004

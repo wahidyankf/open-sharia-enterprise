@@ -1,5 +1,5 @@
 ---
-title: "Quick Start - Elixir"
+title: "Quick Start"
 date: 2025-12-21T16:00:00+07:00
 draft: false
 description: "Master core Elixir concepts fast: pattern matching, immutability, functions, and modules. Build working programs in your first session."

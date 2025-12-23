@@ -1,5 +1,5 @@
 ---
-title: "Strategi Manajemen Waktu untuk Insinyur Perangkat Lunak: Memaksimalkan Produktivitas dan Kesuksesan"
+title: "Strategi Manajemen Waktu untuk Insinyur Perangkat Lunak Memaksimalkan Produktivitas dan Kesuksesan"
 weight: 10030
 date: 2023-07-14T07:20:00+07:00
 draft: false

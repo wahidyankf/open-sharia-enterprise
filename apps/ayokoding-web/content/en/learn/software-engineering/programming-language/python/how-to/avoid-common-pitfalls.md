@@ -1,5 +1,5 @@
 ---
-title: "How to Avoid Common Pitfalls"
+title: "Avoid Common Pitfalls"
 date: 2025-12-17T10:54:44+07:00
 draft: false
 weight: 1000004

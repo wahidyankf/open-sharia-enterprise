@@ -1,5 +1,5 @@
 ---
-title: Intermediate Kotlin
+title: "Intermediate"
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Master production Kotlin - advanced coroutines, design patterns, databases, REST APIs, performance optimization, and testing strategies

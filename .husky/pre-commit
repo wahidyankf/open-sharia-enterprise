@@ -1,1 +1,8 @@
+# Run ayokoding-web pre-commit scripts if affected (titles update + nav regen)
+nx affected -t pre-commit-script --skip-nx-cache 2>/dev/null || echo "⚠️  Skipping pre-commit-script (not affected or binary missing)"
+
+# Stage any changes made by the scripts
+git add apps/ayokoding-web/content/ 2>/dev/null || true
+
+# Run lint-staged for formatting
 npx lint-staged

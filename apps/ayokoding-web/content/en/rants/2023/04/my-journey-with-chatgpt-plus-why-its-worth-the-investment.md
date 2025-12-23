@@ -1,5 +1,5 @@
 ---
-title: "My Journey with ChatGPT Plus: Why It's Worth the Investment"
+title: "My Journey with Chatgpt Plus why Its Worth the Investment"
 weight: 10020
 date: 2023-04-30T07:20:00+07:00
 draft: false

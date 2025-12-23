@@ -1,5 +1,5 @@
 ---
-title: "Recursive Programming Patterns"
+title: "Recursion"
 date: 2025-12-21T16:55:00+07:00
 draft: false
 description: "Master recursive programming in Elixir with tail-recursive patterns, accumulator techniques, and practical list processing examples for efficient functional code."

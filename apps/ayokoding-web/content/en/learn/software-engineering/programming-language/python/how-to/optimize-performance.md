@@ -1,5 +1,5 @@
 ---
-title: "How to Optimize Performance"
+title: "Optimize Performance"
 date: 2025-12-21T00:00:00+07:00
 draft: false
 weight: 1000017

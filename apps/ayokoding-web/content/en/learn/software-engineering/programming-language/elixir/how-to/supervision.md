@@ -1,5 +1,5 @@
 ---
-title: "Building Supervision Trees"
+title: "Supervision"
 date: 2025-12-21T17:05:00+07:00
 draft: false
 description: "Design fault-tolerant Elixir applications using Supervisor with restart strategies, child specifications, and hierarchical supervision for automatic crash recovery."

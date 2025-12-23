@@ -1,5 +1,5 @@
 ---
-title: "Metaprogramming with Macros"
+title: "Macros"
 date: 2025-12-21T17:50:00+07:00
 draft: false
 description: "Write macros in Elixir for code generation, DSLs, and compile-time transformations using AST manipulation and quote/unquote."
