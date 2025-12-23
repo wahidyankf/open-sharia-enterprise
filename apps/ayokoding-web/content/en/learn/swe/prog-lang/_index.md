@@ -96,6 +96,7 @@ draft: false
 - [Java](/en/learn/swe/prog-lang/java)
   - [Overview](/en/learn/swe/prog-lang/java/overview)
   - [Tutorials](/en/learn/swe/prog-lang/java/tutorials)
+    - [By Example](/en/learn/swe/prog-lang/java/tutorials/by-example)
     - [Overview](/en/learn/swe/prog-lang/java/tutorials/overview)
     - [Initial Setup](/en/learn/swe/prog-lang/java/tutorials/initial-setup)
     - [Quick Start](/en/learn/swe/prog-lang/java/tutorials/quick-start)
