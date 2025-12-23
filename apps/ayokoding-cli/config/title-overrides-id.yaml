@@ -1,0 +1,58 @@
+# Indonesian Title Overrides Configuration
+# Konfigurasi override untuk judul dalam bahasa Indonesia
+
+# Special case overrides - exact matches (case-insensitive)
+# Format: nama-file-atau-kata: "Judul yang Diinginkan"
+overrides:
+  cliftonstrengths: "CliftonStrengths"
+  javascript: "JavaScript"
+  typescript: "TypeScript"
+  nodejs: "Node.js"
+  mongodb: "MongoDB"
+  postgresql: "PostgreSQL"
+  mysql: "MySQL"
+  api: "API"
+  rest: "REST"
+  graphql: "GraphQL"
+  html: "HTML"
+  css: "CSS"
+  json: "JSON"
+  yaml: "YAML"
+  xml: "XML"
+  sql: "SQL"
+  nosql: "NoSQL"
+  ui: "UI"
+  ux: "UX"
+  devops: "DevOps"
+  cicd: "CI/CD"
+  aws: "AWS"
+  gcp: "GCP"
+  docker: "Docker"
+  kubernetes: "Kubernetes"
+  git: "Git"
+  github: "GitHub"
+  gitlab: "GitLab"
+  vscode: "VSCode"
+  ide: "IDE"
+
+# Words that should remain lowercase in titles (unless first word)
+# Kata-kata yang harus tetap huruf kecil (kecuali kata pertama)
+lowercase_words:
+  - dan
+  - atau
+  - di
+  - ke
+  - dari
+  - untuk
+  - dengan
+  - yang
+  - oleh
+  - pada
+  - sebagai
+  - tetapi
+  - jika
+  - ketika
+  - dimana
+  - bagaimana
+  - mengapa
+  - vs
