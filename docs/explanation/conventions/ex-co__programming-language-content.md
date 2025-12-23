@@ -10,7 +10,7 @@ tags:
   - education
   - content-standards
 created: 2025-12-18
-updated: 2025-12-21
+updated: 2025-12-23
 ---
 
 # Programming Language Content Standard
@@ -61,7 +61,13 @@ Every programming language MUST follow this structure:
 │   ├── quick-start.md                        # Content (weight: 1000002, level 7 - Level 2: 5-30%)
 │   ├── beginner.md                           # Content (weight: 1000003, level 7 - Level 3: 0-60%)
 │   ├── intermediate.md                       # Content (weight: 1000004, level 7 - Level 4: 60-85%)
-│   └── advanced.md                           # Content (weight: 1000005, level 7 - Level 5: 85-95%)
+│   ├── advanced.md                           # Content (weight: 1000005, level 7 - Level 5: 85-95%)
+│   └── by-example/                           # Folder (weight: 1000006, level 7 - 7th item in tutorials/, represents the folder)
+│       ├── _index.md                         # Folder (weight: 1000006, level 7 - represents the folder)
+│       ├── overview.md                       # Content (weight: 10000000, level 8 - content inside level 7 folder)
+│       ├── beginner.md                       # Content (weight: 10000001, level 8 - Examples 1-15)
+│       ├── intermediate.md                   # Content (weight: 10000002, level 8 - Examples 16-35)
+│       └── advanced.md                       # Content (weight: 10000003, level 8 - Examples 36-60)
 ├── how-to/                                    # Folder (weight: 100003, level 6 - represents the folder)
 │   ├── _index.md                             # Folder (weight: 100003, level 6 - represents the folder)
 │   ├── overview.md                           # Content (weight: 1000000, level 7 - content inside level 6 folder)
@@ -226,14 +232,15 @@ reference/
 
 Each tutorial level targets a specific knowledge coverage range:
 
-| Level             | Coverage       | Purpose                           | Target Learner                                 | Typical Length    |
-| ----------------- | -------------- | --------------------------------- | ---------------------------------------------- | ----------------- |
-| **Initial Setup** | 0-5%           | Installation and verification     | Complete beginners with no language experience | 300-500 lines     |
-| **Quick Start**   | 5-30%          | Touchpoints for rapid exploration | Experienced developers learning new language   | 600-900 lines     |
-| **Beginner**      | 0-60%          | Comprehensive fundamentals        | Developers wanting deep foundation             | 1,200-2,300 lines |
-| **Intermediate**  | 60-85%         | Production-grade techniques       | Building real-world projects                   | 1,000-1,700 lines |
-| **Advanced**      | 85-95%         | Expert mastery and internals      | Optimization and deep understanding            | 1,000-1,500 lines |
-| **Cookbook**      | Parallel track | Practical recipes for daily use   | Reference alongside tutorials                  | 4,000-5,500 lines |
+| Level             | Coverage       | Purpose                              | Target Learner                                 | Typical Length    |
+| ----------------- | -------------- | ------------------------------------ | ---------------------------------------------- | ----------------- |
+| **Initial Setup** | 0-5%           | Installation and verification        | Complete beginners with no language experience | 300-500 lines     |
+| **Quick Start**   | 5-30%          | Touchpoints for rapid exploration    | Experienced developers learning new language   | 600-900 lines     |
+| **Beginner**      | 0-60%          | Comprehensive fundamentals           | Developers wanting deep foundation             | 1,200-2,300 lines |
+| **Intermediate**  | 60-85%         | Production-grade techniques          | Building real-world projects                   | 1,000-1,700 lines |
+| **Advanced**      | 85-95%         | Expert mastery and internals         | Optimization and deep understanding            | 1,000-1,500 lines |
+| **Cookbook**      | Parallel track | Practical recipes for daily use      | Reference alongside tutorials                  | 4,000-5,500 lines |
+| **By Example**    | 90%            | Learn through 60+ annotated examples | Experienced developers picking up new language | 3,500-4,500 lines |
 
 **Critical Understanding:**
 
@@ -379,6 +386,55 @@ Each tutorial level targets a specific knowledge coverage range:
 
 **Success criteria:** Learner can solve common problems quickly.
 
+#### By Example (Parallel Track)
+
+**Goal:** Quick language pickup for experienced developers through annotated code examples.
+
+**Structure:** 60+ examples organized into 3 level-based files
+
+- **beginner.md**: Examples 1-15 (Basics) - fundamental syntax, variables, control flow, functions
+- **intermediate.md**: Examples 16-35 (Intermediate) - data structures, OOP/functional patterns, error handling, modules
+- **advanced.md**: Examples 36-60 (Advanced) - concurrency, metaprogramming, internals, optimization
+
+**Format per example:**
+
+1. **Concept Name and Brief Explanation** (2-3 sentences)
+2. **Mermaid Diagram** (when helpful for concept relationships)
+3. **Heavily Commented Code:**
+   - What each line does
+   - Expected output (as comments)
+   - Intermediate values for variables/processes
+4. **Key Takeaway** (1-2 sentences summarizing the concept)
+
+**Mandatory coverage areas:**
+
+- Core syntax (variables, types, operators)
+- Control flow (conditionals, loops, pattern matching)
+- Functions and methods
+- Data structures (arrays, lists, maps, sets, structs/classes)
+- Error handling patterns
+- Modules and packages
+- Testing basics
+- Concurrency primitives
+- Common standard library patterns
+- Language-specific features (e.g., Go channels, Python comprehensions, Rust ownership)
+
+**Success criteria:** Experienced developer can read language code fluently and write basic programs after studying all 60+ examples.
+
+**Target audience:** Experienced developers (seasonal programmers or software engineers) who:
+
+- Already know at least one programming language well
+- Want to quickly pick up a new language without extensive narrative
+- Prefer learning through working code examples
+- Need 90% language coverage efficiently
+
+**Relationship to other tutorials:**
+
+- **NOT a replacement** for Beginner tutorial (which provides deep explanations for complete beginners)
+- **NOT a replacement** for Quick Start (which is 5-30% coverage touchpoints)
+- **NOT a replacement** for Cookbook (which is problem-solving oriented, not learning-oriented)
+- **Complements** the Full Set by providing an alternative learning path for experienced developers
+
 ## Pedagogical Requirements
 
 ### Mandatory Patterns for All Tutorials
@@ -482,6 +538,8 @@ A programming language is **production-ready** when it has:
 
 - ✅ All 5 tutorial levels (initial-setup, quick-start, beginner, intermediate, advanced)
 - ✅ Tutorial overview.md explaining the full set and learning paths
+- ✅ By-example track with 3 files (beginner, intermediate, advanced) containing 60+ annotated examples
+- ✅ By-example overview.md explaining example-driven learning approach
 - ✅ Cookbook with 30+ recipes (4,000+ lines)
 - ✅ 12+ how-to guides covering language-specific patterns
 - ✅ Best practices document (500+ lines)
@@ -500,6 +558,7 @@ If resources are limited, minimum viable content is:
 - 8 how-to guides
 - Cookbook with 20 recipes
 - Best practices document
+- **OR** By-example track (if target audience is experienced developers) instead of Quick Start + Beginner
 
 This provides value while allowing iterative expansion.
 
@@ -517,6 +576,12 @@ Based on Golang, Python, and Java implementations:
 | Beginner                  | 1,200 lines | 1,700 lines | 2,300 lines |
 | Intermediate              | 1,000 lines | 1,350 lines | 1,700 lines |
 | Advanced                  | 1,000 lines | 1,250 lines | 1,500 lines |
+| **By Example**            |
+| Beginner examples         | 1,000 lines | 1,200 lines | 1,400 lines |
+| Intermediate examples     | 1,400 lines | 1,600 lines | 1,800 lines |
+| Advanced examples         | 1,100 lines | 1,400 lines | 1,700 lines |
+| Total examples            | 60          | 65          | 70+         |
+| Mermaid diagrams          | 3           | 5           | 8+          |
 | **How-To Guides**         |
 | Total count               | 12          | 15          | 18+         |
 | Per guide                 | 200 lines   | 350 lines   | 500 lines   |
@@ -525,7 +590,7 @@ Based on Golang, Python, and Java implementations:
 | Best practices            | 500 lines   | 650 lines   | 750 lines   |
 | Anti-patterns             | 500 lines   | 650 lines   | 750 lines   |
 | **Quality**               |
-| Mermaid diagrams          | 3 minimum   | 5+          | 8+          |
+| Mermaid diagrams/tutorial | 3 minimum   | 5+          | 8+          |
 | Cross-references/tutorial | 10          | 15          | 20+         |
 | Code examples/tutorial    | 15          | 25          | 35+         |
 

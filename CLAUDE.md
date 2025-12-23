@@ -173,7 +173,7 @@ Use **LaTeX notation** for equations: `$...$` (inline), `$$...$$` (display). NOT
 
 ### Tutorial Standards
 
-Six tutorial levels: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes). Coverage percentages indicate depth, NOT time. No time estimates in educational content (everyone learns at different speeds). See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details.
+Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (90% through 60+ annotated examples for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details.
 
 ### Content Quality Principles
 

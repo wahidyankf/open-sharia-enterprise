@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-20
+updated: 2025-12-23
 ---
 
 # Tutorial Quality Validator
@@ -50,8 +50,9 @@ The Tutorial Convention defines what to validate:
 
 The Tutorial Naming Convention defines:
 
-- Six standardized tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+- Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (90% through 60+ annotated examples for experienced developers)
 - "Full Set" concept: 5 sequential learning levels (Initial Setup through Advanced)
+- "Parallel Tracks": Cookbook (problem-solving) and By Example (example-driven learning for experienced developers)
 - Expected coverage percentages for each type (depth indicators, NOT time estimates)
 - Proper naming patterns for each tutorial type
 - When each tutorial type should be used
