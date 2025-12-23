@@ -7,7 +7,9 @@ import (
 
 // GenerateTitle generates a title from a filename using the provided config
 // Algorithm:
-// 1. Extract filename/directory name (without extension, strip leading underscores)
+// 1. Extract filename/directory name (without extension)
+//    - Special case: _index.md files use parent directory name instead
+//    - Other files: strip leading underscores
 // 2. Normalize: lowercase the extracted name
 // 3. Exact filename override check: if entire normalized name is in overrides, use it and STOP
 // 4. Split on hyphens and underscores into words
@@ -21,8 +23,16 @@ func GenerateTitle(filePath string, config *Config) string {
 	filename := filepath.Base(filePath)
 	nameWithoutExt := strings.TrimSuffix(filename, filepath.Ext(filename))
 
-	// Strip leading underscores (e.g., _index → index)
-	nameWithoutExt = strings.TrimPrefix(nameWithoutExt, "_")
+	// Special case: _index.md files should use parent directory name
+	// Example: apps/ayokoding-web/content/en/learn/_index.md → uses "learn" from parent dir
+	if nameWithoutExt == "_index" {
+		parentDir := filepath.Dir(filePath)
+		parentName := filepath.Base(parentDir)
+		nameWithoutExt = parentName
+	} else {
+		// Strip leading underscores for other files (e.g., _foo → foo)
+		nameWithoutExt = strings.TrimPrefix(nameWithoutExt, "_")
+	}
 
 	// Trim leading/trailing hyphens
 	nameWithoutExt = strings.Trim(nameWithoutExt, "-_")

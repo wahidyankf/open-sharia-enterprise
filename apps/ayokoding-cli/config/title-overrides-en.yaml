@@ -4,6 +4,7 @@
 # Special case overrides - exact matches (case-insensitive)
 # Format: filename-or-word: "Desired Title"
 overrides:
+  ayokoding: "AyoKoding"
   cliftonstrengths: "CliftonStrengths"
   javascript: "JavaScript"
   typescript: "TypeScript"
