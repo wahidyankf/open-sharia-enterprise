@@ -9,7 +9,7 @@ Learning-oriented guides for building AI and machine learning systems. These tut
 
 ## 📋 Available Tutorials
 
-- [**Chat with PDF**](/en/learn/ai/chat-with-pdf) - Understanding how PDF chat applications work
+- [**Chat with PDF**](/en/learn/artificial-intelligence/chat-with-pdf) - Understanding how PDF chat applications work
 
 ## 🎯 Target Audience
 
