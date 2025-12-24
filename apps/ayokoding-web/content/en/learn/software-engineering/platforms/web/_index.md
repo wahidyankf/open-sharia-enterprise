@@ -13,3 +13,4 @@ layout: list
   - [By Example](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example)
 - [Elixir Phoenix](/en/learn/software-engineering/platforms/web/elixir-phoenix)
   - [Overview](/en/learn/software-engineering/platforms/web/elixir-phoenix/overview)
+  - [By Example](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example)
