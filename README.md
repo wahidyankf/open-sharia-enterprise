@@ -11,9 +11,9 @@
 
 ## 🎯 Motivation
 
-**The Opportunity**: Islamic finance is a multi-trillion dollar industry growing at double-digit rates, creating massive demand for Sharia-compliant enterprise systems. While purpose-built platforms exist, they're typically proprietary and expensive. Many organizations still struggle with legacy systems retrofitted for Sharia compliance. The gap? Accessible, open-source solutions with built-in compliance and radical transparency.
+**The Opportunity**: Islamic enterprise (finance, commerce, cooperatives, and beyond) represents a multi-trillion dollar global market, creating massive demand for Sharia-compliant business systems. While purpose-built platforms exist, they're typically proprietary, expensive, and limited to specific domains. Many organizations struggle with legacy systems retrofitted for Sharia compliance. The gap? Accessible, open-source solutions with built-in compliance and radical transparency—serving the entire spectrum of Islamic business needs.
 
-**Our Solution**: We're building an open-source platform with Sharia-compliance at its core—starting with Indonesian regulations and ERP foundations, expanding to fintech and global markets. We're making trustworthy, transparent business systems accessible to any organization—regardless of size, region, or industry.
+**Our Solution**: We're building a global open-source platform with Sharia-compliance at its core—starting with ERP foundations and expanding across enterprise domains (finance, commerce, cooperatives, supply chain, and more). We're making trustworthy, transparent business systems accessible to any organization worldwide—regardless of size, region, or industry.
 
 **What We Believe:**
 
@@ -58,7 +58,7 @@ Establishing the foundational infrastructure and conducting research to inform a
 - 🛠️ **Development Tooling & Processes** - Infrastructure (Volta, formatting, git hooks), documentation framework (Diátaxis, Obsidian), AI agents, planning system
 - 🏗️ **Architecture & Design** - Monorepo architecture (Nx workspace), core patterns, technology evaluation
 - 🤖 **AI Research** - AI/ML applications, LLM integration, intelligent automation, AI-assisted development
-- 🔍 **Sharia Compliance Research** - Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
+- 🔍 **Sharia Compliance Research** - Evaluating global Islamic standards, regional variations, and multi-jurisdiction requirements
 - ☁️ **Infrastructure Creation** - Cloud infrastructure, deployment pipelines, CI/CD setup
 
 **🔐 Security & Compliance Infrastructure Track (IN PARALLEL):**
@@ -77,23 +77,37 @@ Building a solid enterprise foundation with ERP capabilities to support core bus
 - 👥 **People & Customer Management** - HR & payroll (Sharia-compliant), sales & CRM, customer relationships
 - 🕌 **Execution & Compliance** - Project management, resource allocation, Sharia compliance framework
 
-### 🇮🇩 Phase 2: Indonesian Fintech Integration
+### 🌍 Phase 2: Enterprise Domain Expansion
 
-Expand into fintech capabilities with Indonesian regulatory alignment:
+Expand across all enterprise domains following established Islamic standards:
 
-- 🏦 **Regulatory Compliance** - Indonesian Banking Authority (OJK) and National Sharia Board (DSN-MUI) integration
-- 📚 **Fintech Standards** - Indonesian best practices and implementation guidelines
-- 📈 **Market Monitoring** - Fintech market trends, regulatory changes, and competitive landscape
-- 💳 **Fintech Domain Implementation** - Payments, lending, and banking services
+**🏦 Financial Services:**
 
-### 🌍 Phase 3: Global Expansion
+- 💳 Payments and transaction processing (halal-compliant)
+- 🏦 Banking services and lending (Sharia-compliant contracts: murabaha, ijarah, etc.)
+- 📊 Investment and wealth management (Islamic finance principles)
+- 💰 Zakat calculation and distribution systems
 
-Extend the platform to support multiple jurisdictions and regions:
+**🛍️ Commerce & Trade:**
 
-- 🕌 **International Islamic finance standards** - Accounting (AAOIFI) and prudential (IFSB) standards
-- 🌏 **Multi-jurisdiction compliance** for various countries and regions
-- 📖 **Regional variations** in Sharia interpretations and requirements
-- ✈️ **Cross-border enterprise operations** support
+- 🛒 E-commerce platforms (halal product verification)
+- 📦 Supply chain management (halal certification tracking)
+- 🤝 B2B marketplaces (Shariah-compliant contracts)
+- 🌐 Cross-border trade (Islamic trade finance)
+
+**🤝 Cooperatives & Community:**
+
+- 🏘️ Islamic cooperatives management (musharakah, mudharabah)
+- 💝 Community finance and mutual aid (takaful principles)
+- 📱 Microfinance and social impact (Shariah-compliant)
+- 🎯 Waqf and endowment management
+
+**🌏 Global Compliance Framework:**
+
+- 🕌 International Islamic standards (based on Phase 0 research)
+- 🌍 Multi-jurisdiction compliance (various countries and regions)
+- 📖 Regional Shariah interpretations and requirements
+- ✈️ Cross-border operations and regulatory harmonization
 
 ### 🔐 Security & Compliance Infrastructure (Evolving in Parallel)
 
@@ -104,19 +118,19 @@ Extend the platform to support multiple jurisdictions and regions:
 - 📋 **Compliance Automation** - Automated validation, audit trails, and regulatory reporting to maintain Sharia and regulatory compliance across the platform
 - 🔐 **Enterprise-Grade Security** - Robust security operations built-in from the start, not bolted on later
 
-**Parallel Development Approach:** As we build each platform feature (ERP modules, fintech capabilities), the corresponding security monitoring, compliance validation, and testing tools are developed in tandem. Security and compliance infrastructure evolves with the platform, ensuring they're architected together from day one.
+**Parallel Development Approach:** As we build each platform feature (ERP modules, financial services, commerce, cooperatives), the corresponding security monitoring, compliance validation, and testing tools are developed in tandem. Security and compliance infrastructure evolves with the platform, ensuring they're architected together from day one.
 
 ### 💭 Why This Approach?
 
-- 🔬 **Research before building** - Phase 0 establishes foundations through compliance, security, and AI research before implementation
-- 🇮🇩 **Indonesian market first** - Deep focus on local regulations (OJK, DSN-MUI, PBI, PDP) before global expansion
-- 🏗️ **ERP as foundation** - Enterprise Resource Planning provides core infrastructure for all business operations
-- 🕌 **Sharia-compliance from day one** - Built-in compliance architecture, not bolt-on features
+- 🔬 **Research before building** - Phase 0 establishes foundations through global compliance, security, and AI research before implementation
+- 🌍 **Global from the start** - Designed for multi-jurisdiction support and international Islamic standards from day one
+- 🏗️ **ERP as foundation** - Enterprise Resource Planning provides core infrastructure for all business operations across domains
+- 🕌 **Sharia-compliance from day one** - Built-in compliance architecture following established Islamic standards, not bolt-on features
 - 🔐 **Parallel security infrastructure** - Security operations, red teaming tools, and compliance automation are developed ALONGSIDE platform features from Phase 0 onward—not added later, but built together from the start
 - 🛡️ **Security by design** - DevSecOps and compliance-as-code integrated from the start, ensuring security and compliance are architectural foundations
-- 📈 **Scalable architecture** - Standards-based design enables extension to new regions and capabilities
-- ⚖️ **Gradual expansion** - Phased approach reduces complexity while ensuring quality
-- 🏗️ **Long-term thinking** - Building solid enterprise foundations now, with security and compliance infrastructure that evolves in parallel with the platform
+- 📈 **Domain expansion over geographic expansion** - Start with ERP core, then expand to finance, commerce, cooperatives globally rather than one region at a time
+- ⚖️ **Gradual expansion** - Phased approach reduces complexity while ensuring quality across all enterprise domains
+- 🏗️ **Long-term thinking** - Building solid global enterprise foundations now, with security and compliance infrastructure that evolves in parallel with the platform
 
 ## 🤝 Contributing
 
@@ -278,7 +292,7 @@ We are establishing foundational infrastructure and conducting research to infor
 - 🔨 Core infrastructure setup (Volta, code formatting, commit validation, documentation structure)
 - 📋 Project planning and architecture design
 - 🏗️ Foundation patterns being established
-- 🔍 Researching Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
+- 🔍 Researching global Islamic standards and multi-jurisdiction compliance frameworks
 - 🤖 AI research and integration exploration
 
 **Security & Compliance Infrastructure Track (IN PARALLEL):**
