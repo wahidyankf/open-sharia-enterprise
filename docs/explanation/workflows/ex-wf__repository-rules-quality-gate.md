@@ -1,13 +1,8 @@
 ---
-name: plan-check-fix
-goal: Validate plan completeness and technical accuracy, apply fixes until all issues are resolved
+name: repository-rules-quality-gate
+goal: Validate repository consistency and apply fixes until all issues are resolved
 termination: Zero findings remain after validation
 inputs:
-  - name: scope
-    type: string
-    description: Plan files to validate (e.g., "all", "plans/in-progress/", "specific-plan.md")
-    required: false
-    default: all
   - name: max-iterations
     type: number
     description: Maximum number of check-fix cycles to prevent infinite loops
@@ -23,30 +18,30 @@ outputs:
     description: Number of check-fix cycles executed
   - name: final-report
     type: file
-    pattern: generated-reports/plan__*__audit.md
+    pattern: generated-reports/repo-rules__*__audit.md
     description: Final audit report
 ---
 
-# Plan Check-Fix Workflow
+# Repository Rules Quality Gate Workflow
 
-**Purpose**: Automatically validate plan completeness, technical accuracy, and implementation readiness, then apply fixes iteratively until all issues are resolved.
+**Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agents, and CLAUDE.md, then apply fixes iteratively until all issues are resolved.
 
 **When to use**:
 
-- After creating new project plans
-- Before starting plan execution
-- When updating existing plans with new requirements
-- Periodically to ensure plan quality and accuracy
+- After making changes to conventions, principles, or development practices
+- Before major releases or deployments
+- Periodically to ensure repository health
+- After adding or modifying agents
 
 ## Steps
 
 ### 1. Initial Validation (Sequential)
 
-Run plan validation to identify completeness and accuracy issues.
+Run repository-wide consistency check to identify all issues.
 
-**Agent**: `plan-checker`
+**Agent**: `repo-rules-checker`
 
-- **Args**: `scope: {input.scope}`
+- **Args**: `scope: all`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
 
 **Success criteria**: Checker completes and generates audit report.
@@ -68,13 +63,13 @@ Analyze audit report to determine if fixes are needed.
 
 - Fixes ALL findings, not just critical ones
 - Includes minor issues like formatting, style improvements
-- Ensures plans achieve perfect quality state
+- Ensures repository achieves perfect quality state
 
 ### 3. Apply Fixes (Sequential, Conditional)
 
 Apply all validated fixes from the audit report.
 
-**Agent**: `plan-fixer`
+**Agent**: `repo-rules-fixer`
 
 - **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
 - **Output**: `{fixes-applied}`
@@ -89,15 +84,15 @@ Apply all validated fixes from the audit report.
 
 - Fixer re-validates findings before applying (prevents false positives)
 - Fixes ALL confidence levels: HIGH (objective), MEDIUM (structural), MINOR (style/formatting)
-- Achieves perfect plan quality with zero findings
+- Achieves perfect repository state with zero findings
 
 ### 4. Re-validate (Sequential)
 
 Run checker again to verify fixes resolved issues and no new issues introduced.
 
-**Agent**: `plan-checker`
+**Agent**: `repo-rules-checker`
 
-- **Args**: `scope: {input.scope}`
+- **Args**: `scope: all`
 - **Output**: `{audit-report-N}` - Verification audit report
 - **Depends on**: Step 3 completion
 
@@ -147,39 +142,25 @@ Report final status and summary.
 
 ## Example Usage
 
-### Validate All Plans
+### Standard Check-Fix
 
 ```bash
-# Run full plan validation with default settings
-workflow run plan-check-fix
+# Run full repository rules check-fix with default settings
+workflow run repository-rules-quality-gate
 ```
 
-### Validate Specific Plan Folder
-
-```bash
-# Validate only in-progress plans
-workflow run plan-check-fix --scope=plans/in-progress/
-```
-
-### Validate Single Plan
-
-```bash
-# Validate specific plan file
-workflow run plan-check-fix --scope=plans/in-progress/2025-01-15__new-feature/plan.md
-```
-
-### Extended Validation
+### Extended Check-Fix
 
 ```bash
 # Allow up to 10 iterations for complex fixes
-workflow run plan-check-fix --scope=all --max-iterations=10
+workflow run repository-rules-quality-gate --max-iterations=10
 ```
 
-### Quick Validation Only
+### Quick Validation
 
 ```bash
 # Check only, don't fix (set max-iterations=0)
-workflow run plan-check-fix --scope=all --max-iterations=0
+workflow run repository-rules-quality-gate --max-iterations=0
 ```
 
 ## Iteration Example
@@ -188,13 +169,13 @@ Typical execution flow:
 
 ```
 Iteration 1:
-  Check → 12 findings (missing requirements, incomplete checklists) → Fix → Re-check → 5 findings
+  Check → 15 findings → Fix → Re-check → 8 findings
 
 Iteration 2:
-  Check (reuse) → 5 findings (technical inaccuracies) → Fix → Re-check → 1 finding
+  Check (reuse) → 8 findings → Fix → Re-check → 2 findings
 
 Iteration 3:
-  Check (reuse) → 1 finding (formatting) → Fix → Re-check → 0 findings
+  Check (reuse) → 2 findings → Fix → Re-check → 0 findings
 
 Result: SUCCESS (3 iterations)
 ```
@@ -219,23 +200,13 @@ Result: SUCCESS (3 iterations)
 - Reports which fixes succeeded/failed
 - Generates final report regardless of status
 
-## Plan-Specific Validation
-
-The plan-checker validates:
-
-- **Completeness**: All required sections present (requirements, deliverables, checklists)
-- **Technical Accuracy**: Commands, versions, tool names verified via web search
-- **Implementation Readiness**: Plans are actionable and executable
-- **Codebase Alignment**: References to existing files, patterns, and conventions
-- **Clarity**: Clear problem statements, well-defined scope, unambiguous requirements
-
 ## Related Workflows
 
 This workflow can be composed with:
 
-- Content creation workflows (validate plans before creating content)
-- Execution workflows (validate before starting implementation)
-- Release workflows (validate plan completeness before release planning)
+- Deployment workflows (validate before deploy)
+- Release workflows (audit before version bump)
+- Content creation workflows (validate after bulk changes)
 
 ## Success Metrics
 
@@ -243,19 +214,18 @@ Track across executions:
 
 - **Average iterations to completion**: How many cycles typically needed
 - **Success rate**: Percentage reaching zero findings
-- **Common finding categories**: What issues appear most often in plans
+- **Common finding categories**: What issues appear most often
 - **Fix success rate**: Percentage of fixes applied without errors
 
 ## Notes
 
 - **Fully automated**: No human checkpoints, runs to completion
-- **Idempotent**: Safe to run multiple times, won't break working plans
-- **Conservative**: Fixer skips uncertain changes (preserves plan intent)
+- **Idempotent**: Safe to run multiple times, won't break working state
+- **Conservative**: Fixer skips uncertain changes (preserves correctness)
 - **Observable**: Generates audit reports for every iteration
 - **Bounded**: Max-iterations prevents runaway execution
-- **Scope-aware**: Can validate all plans or specific subsets
 
-This workflow ensures plan quality and implementation readiness through iterative validation and fixing, making it ideal for maintaining high-quality project planning.
+This workflow ensures repository consistency through iterative validation and fixing, making it ideal for maintenance and quality assurance.
 
 ## Principles Respected
 
@@ -263,5 +233,5 @@ This workflow ensures plan quality and implementation readiness through iterativ
 - ✅ **Automation Over Manual**: Fully automated validation and fixing without human intervention
 - ✅ **Simplicity Over Complexity**: Clear linear flow with loop control
 - ✅ **Accessibility First**: Generates human-readable audit reports
-- ✅ **Progressive Disclosure**: Can run with different scopes and iteration limits
+- ✅ **Progressive Disclosure**: Can run with different iteration limits
 - ✅ **No Time Estimates**: Focus on quality outcomes, not duration

@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-content-check-fix
+name: ayokoding-web-content-quality-gate
 goal: Validate all ayokoding-web content quality, apply fixes iteratively, then regenerate titles and navigation
 termination: Zero findings across all validators and navigation regenerated
 inputs:
@@ -39,7 +39,7 @@ outputs:
     description: Final links validation report
 ---
 
-# AyoKoding Web Content Check-Fix Workflow
+# AyoKoding Web Content Quality Gate Workflow
 
 **Purpose**: Comprehensively validate all ayokoding-web content (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until all issues are resolved, then regenerate titles and navigation.
 
@@ -269,35 +269,35 @@ Report final status and summary.
 
 ```bash
 # Run complete ayokoding-web content validation and fixing
-workflow run ayokoding-web-content-check-fix
+workflow run ayokoding-web-content-quality-gate
 ```
 
 ### Validate Specific Language
 
 ```bash
 # Validate only English content
-workflow run ayokoding-web-content-check-fix --scope=ayokoding-web/content/en/
+workflow run ayokoding-web-content-quality-gate --scope=ayokoding-web/content/en/
 ```
 
 ### Validate Specific Section
 
 ```bash
 # Validate only programming section
-workflow run ayokoding-web-content-check-fix --scope=ayokoding-web/content/en/programming/
+workflow run ayokoding-web-content-quality-gate --scope=ayokoding-web/content/en/programming/
 ```
 
 ### Extended Validation
 
 ```bash
 # Allow up to 10 iterations for complex content issues
-workflow run ayokoding-web-content-check-fix --scope=all --max-iterations=10
+workflow run ayokoding-web-content-quality-gate --scope=all --max-iterations=10
 ```
 
 ### Quick Validation Only
 
 ```bash
 # Check only, don't fix or regenerate (set max-iterations=0)
-workflow run ayokoding-web-content-check-fix --scope=all --max-iterations=0
+workflow run ayokoding-web-content-quality-gate --scope=all --max-iterations=0
 ```
 
 ## Iteration Example
