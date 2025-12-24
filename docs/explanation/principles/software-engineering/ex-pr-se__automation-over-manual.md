@@ -19,7 +19,7 @@ updated: 2025-12-24
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of scaling Islamic fintech knowledge and quality assurance across a global community.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of scaling Islamic enterprise knowledge and quality assurance across a global community.
 
 **How this principle serves the vision:**
 
@@ -29,7 +29,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__op
 - **Frees Human Creativity**: Developers spend time understanding Shariah principles and building innovative solutions, not manual testing and formatting. Automation handles the tedious, humans handle the meaningful
 - **Continuous Quality Improvement**: Automated checks run on every commit, catching issues early. Maintains professional standards that attract serious contributors
 
-**Vision alignment**: Open-source thrives when contribution is easy and quality is automatic. Automation democratizes quality - everyone can produce professional-grade Islamic fintech without requiring elite expertise in every domain.
+**Vision alignment**: Open-source thrives when contribution is easy and quality is automatic. Automation democratizes quality - everyone can produce professional-grade Islamic enterprise without requiring elite expertise in every domain.
 
 ## 🎯 What
 

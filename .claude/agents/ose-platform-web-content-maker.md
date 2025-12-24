@@ -232,7 +232,7 @@ cover:
 ---
 title: "About OSE Platform"
 url: "/about/"
-summary: "Learn about Open Sharia Enterprise Platform - an open-source fintech solution"
+summary: "Learn about Open Sharia Enterprise Platform - an open-source enterprise solution"
 showtoc: false
 ---
 ```
@@ -254,7 +254,7 @@ showtoc: false
 
 ````markdown
 We're excited to announce the beta release of OSE Platform, bringing powerful
-new features for enterprise fintech management.
+new features for enterprise management.
 
 ## What's New
 
@@ -344,13 +344,13 @@ We value your feedback! Try the beta and let us know your thoughts:
 ```markdown
 # About OSE Platform
 
-Open Sharia Enterprise (OSE) Platform is an open-source fintech application
-built with Node.js, designed to provide enterprise-grade financial
-management capabilities.
+Open Sharia Enterprise (OSE) Platform is an open-source enterprise platform
+built with Node.js, designed to provide enterprise-grade management
+capabilities across multiple domains (finance, commerce, cooperatives).
 
 ## Vision
 
-Our vision is to democratize enterprise fintech by providing a robust,
+Our vision is to democratize Shariah-compliant enterprise technology by providing a robust,
 open-source platform that organizations can use and customize for their
 specific needs.
 
@@ -443,7 +443,7 @@ OSE Platform is released under the [MIT License](https://github.com/wahidyankf/o
 
 ---
 
-_Building the future of open-source enterprise fintech._
+_Building the future of open-source Shariah-compliant enterprise technology._
 
 ````
 
@@ -662,7 +662,7 @@ showtoc: false
 
 We're thrilled to announce that OSE Platform has reached **1,000 stars** on
 GitHub! This milestone represents the growing community support for open-source
-enterprise fintech.
+Shariah-compliant enterprise technology.
 
 ## Community Growth
 
@@ -711,7 +711,7 @@ With strong community support, we're accelerating development:
 
 ## Join the Community
 
-We welcome developers, designers, and fintech enthusiasts to join us:
+We welcome developers, designers, and enterprise technology enthusiasts to join us:
 
 - [GitHub Repository](https://github.com/wahidyankf/open-sharia-enterprise)
 - [Discussions Forum](https://github.com/wahidyankf/open-sharia-enterprise/discussions)

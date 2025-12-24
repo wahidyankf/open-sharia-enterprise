@@ -13,13 +13,13 @@ updated: 2025-12-24
 
 # Vision
 
-The foundational purpose and change we seek through Open Sharia Enterprise - democratizing Shariah-compliant fintech and making ethical Islamic finance accessible to everyone.
+The foundational purpose and change we seek through Open Sharia Enterprise - democratizing Shariah-compliant enterprise and making ethical Islamic business solutions accessible to everyone.
 
 ## Purpose
 
 This directory contains the vision documents that establish **WHY** the Open Sharia Enterprise project exists and **WHAT CHANGE** we seek to create in the world. Vision is the top layer (Layer 0) of our six-layer architecture - it governs and gives purpose to all principles, conventions, development practices, agents, and workflows.
 
-See [Repository Governance Architecture](../ex__repository-governance-architecture.md) for complete understanding of how vision fits into the governance hierarchy and how it inspires all other layers.
+See [Repository Architecture](../ex__repository-governance-architecture.md) for complete understanding of how vision fits into the governance hierarchy and how it inspires all other layers.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -78,7 +78,7 @@ graph TD
 
 **Examples:**
 
-- "Democratize Shariah-compliant fintech for everyone" → ✅ Vision (foundational purpose)
+- "Democratize Shariah-compliant enterprise for everyone" → ✅ Vision (foundational purpose)
 - "Traditional Islamic finance is locked in closed systems - we exist to open it" → ✅ Vision (problem and change)
 - "Why we value simplicity in all solutions" → ❌ Principle (operational value)
 - "File naming must use prefix\_\_identifier format" → ❌ Convention (specific rule)
@@ -91,7 +91,7 @@ The foundational vision document answering WHY we exist and WHAT change we seek.
 
 **Contents:**
 
-- **Why We Exist**: Democratize Shariah-compliant fintech
+- **Why We Exist**: Democratize Shariah-compliant enterprise
 - **The Problem**: Traditional Islamic finance is closed, expensive, inaccessible
 - **The Change We Seek**: Anyone can build, deploy, and benefit from Shariah-compliant solutions
 - **Islamic Foundation**: How this serves Islamic values and principles
@@ -106,9 +106,9 @@ Every decision in this project - from principles to conventions to code - should
 
 Each core principle supports specific aspects of the vision:
 
-- **Accessibility First** → Makes Shariah-compliant fintech accessible to everyone
+- **Accessibility First** → Makes Shariah-compliant enterprise accessible to everyone
 - **Explicit Over Implicit** → Transparent, verifiable Islamic finance implementations
-- **Simplicity Over Complexity** → Lowers barriers for developers to build halal fintech
+- **Simplicity Over Complexity** → Lowers barriers for developers to build halal enterprise solutions
 - **Automation Over Manual** → Scales knowledge-sharing across the ummah
 - **Progressive Disclosure** → Supports learners at all skill levels
 - **No Time Estimates** → Respects individual learning and working pace
@@ -146,7 +146,7 @@ Automation serves the mission:
 
 - **Why should I contribute?** → You're democratizing ethical finance for the ummah
 - **Who benefits?** → Developers, businesses, individuals worldwide
-- **What's the impact?** → Breaking down barriers to Shariah-compliant fintech
+- **What's the impact?** → Breaking down barriers to Shariah-compliant enterprise
 
 ### For Users
 
@@ -156,7 +156,7 @@ Automation serves the mission:
 
 ### For the Project
 
-- **Why this principle?** → Does it serve the vision of democratizing Islamic fintech?
+- **Why this principle?** → Does it serve the vision of democratizing Islamic enterprise?
 - **Why this convention?** → Does it make knowledge more accessible?
 - **Why this practice?** → Does it embody Islamic values of transparency and service?
 
@@ -164,7 +164,7 @@ Automation serves the mission:
 
 ### Architecture
 
-- [Repository Governance Architecture](../ex__repository-governance-architecture.md) - Complete six-layer architecture (Layer 0: Vision)
+- [Repository Architecture](../ex__repository-governance-architecture.md) - Complete six-layer architecture (Layer 0: Vision)
 
 ### Lower Layers (Governed by Vision)
 

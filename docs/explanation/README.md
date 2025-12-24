@@ -48,7 +48,7 @@ graph TD
 0. **[Vision](./vision/README.md)** (WHY WE EXIST) - Foundational purpose that **inspires** everything
    - WHY the project exists, WHAT change we seek
    - Nearly immutable - changes only if mission fundamentally shifts
-   - **Vision**: Democratize Shariah-compliant fintech, making ethical Islamic finance accessible to everyone
+   - **Vision**: Democratize Shariah-compliant enterprise, making ethical Islamic business solutions accessible to everyone
 
 1. **[Core Principles](./principles/README.md)** (WHY) - Foundational values that **govern** everything
    - The WHY behind our decisions (serve the vision)

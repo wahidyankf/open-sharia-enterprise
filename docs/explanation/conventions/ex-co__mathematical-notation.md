@@ -27,7 +27,7 @@ This convention implements the following core principles:
 
 ## 📋 Overview
 
-Mathematical notation appears throughout fintech documentation - from financial formulas like WACC and CAPM to statistical models and algorithmic complexity analysis. This convention ensures all mathematical expressions are:
+Mathematical notation appears throughout enterprise documentation - from financial formulas like WACC and CAPM to statistical models and algorithmic complexity analysis. This convention ensures all mathematical expressions are:
 
 1. **Readable** - Clear notation that renders properly
 2. **Consistent** - Same syntax across all documentation

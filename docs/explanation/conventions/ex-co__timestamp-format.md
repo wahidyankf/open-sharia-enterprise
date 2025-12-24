@@ -40,7 +40,7 @@ All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** 
 **Reasons for standardizing on Indonesian time:**
 
 1. **Team location** - Development team operates in Indonesian timezone
-2. **Business context** - Fintech application serves Indonesian market
+2. **Business context** - Enterprise platform serves Indonesian market
 3. **Clarity** - Eliminates timezone confusion in logs and cache files
 4. **Consistency** - Single timezone across all project artifacts
 

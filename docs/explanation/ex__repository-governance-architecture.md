@@ -64,10 +64,10 @@ graph TD
 
 **Core Vision**:
 
-- **Democratize Shariah-compliant fintech** - Making ethical Islamic finance accessible to everyone
+- **Democratize Shariah-compliant enterprise** - Making ethical Islamic business solutions accessible to everyone
 - **Problem**: Islamic finance locked in closed, expensive, proprietary systems
-- **Solution**: Open-source halal fintech that anyone can build, deploy, and benefit from
-- **Success metric**: When anyone globally can access, understand, and contribute to Islamic fintech
+- **Solution**: Open-source halal enterprise solutions that anyone can build, deploy, and benefit from
+- **Success metric**: When anyone globally can access, understand, and contribute to Islamic enterprise
 
 **Characteristics**:
 
@@ -78,7 +78,7 @@ graph TD
 
 **Example**:
 
-> "We exist to democratize Islamic finance by providing open-source, accessible, and verifiable fintech solutions that anyone can use, understand, and contribute to."
+> "We exist to democratize Islamic finance by providing open-source, accessible, and verifiable enterprise solutions that anyone can use, understand, and contribute to."
 
 ### Layer 1: Principles (WHY - Foundational Values)
 
@@ -267,7 +267,7 @@ Maker-Checker-Fixer Workflow:
 
 ### Example 1: Color Accessibility
 
-**Layer 0 - Vision**: Democratize Islamic fintech → accessible to everyone
+**Layer 0 - Vision**: Democratize Islamic enterprise → accessible to everyone
 
 **Layer 1 - Principle**: [Accessibility First](./principles/content/ex-pr-co__accessibility-first.md)
 
@@ -299,7 +299,7 @@ Maker-Checker-Fixer Workflow:
 
 ### Example 2: Explicit Configuration
 
-**Layer 0 - Vision**: Transparent, verifiable Islamic fintech
+**Layer 0 - Vision**: Transparent, verifiable Islamic enterprise
 
 **Layer 1 - Principle**: [Explicit Over Implicit](./principles/software-engineering/ex-pr-se__explicit-over-implicit.md)
 
@@ -330,7 +330,7 @@ Maker-Checker-Fixer Workflow:
 
 ### Example 3: Automation for Consistency
 
-**Layer 0 - Vision**: Reliable, trustworthy Islamic fintech systems
+**Layer 0 - Vision**: Reliable, trustworthy Islamic enterprise systems
 
 **Layer 1 - Principle**: [Automation Over Manual](./principles/software-engineering/ex-pr-se__automation-over-manual.md)
 
