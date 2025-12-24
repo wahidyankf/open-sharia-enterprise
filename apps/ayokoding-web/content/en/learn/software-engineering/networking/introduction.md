@@ -38,11 +38,47 @@ Networks don't send data as continuous streams. Instead, they break data into sm
 - **Header**: Metadata including source address, destination address, and protocol information
 - **Trailer**: Error-checking information to detect corruption
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    A[Header] --> B[Payload]
+    B --> C[Trailer]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#029E73,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#000
+```
+
 When you download a file, it's divided into thousands of packets that travel independently across the network. The receiving device reassembles them in the correct order. This packet-switching approach makes networks efficient and resilient - if one path fails, packets can take alternate routes.
 
 ## Network Addressing
 
 Networks use two types of addresses to identify and locate devices: MAC addresses at the physical level and IP addresses at the network level.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    A[Network Addressing] --> B[MAC Address]
+    A --> C[IP Address]
+
+    B --> D[Layer 2: Data Link]
+    B --> E[Local network]
+    B --> F[48-bit hardware ID]
+
+    C --> G[Layer 3: Network]
+    C --> H[Global routing]
+    C --> I[IPv4: 32-bit<br/>IPv6: 128-bit]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#029E73,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CC78BC,stroke:#000,color:#000
+    style F fill:#CC78BC,stroke:#000,color:#000
+    style G fill:#CA9161,stroke:#000,color:#000
+    style H fill:#CA9161,stroke:#000,color:#000
+    style I fill:#CA9161,stroke:#000,color:#000
+```
 
 ### MAC Addresses
 
@@ -84,13 +120,24 @@ Private networks enable organizations to reuse these addresses internally. Your 
 
 The OSI (Open Systems Interconnection) model organizes networking into seven conceptual layers, each handling specific responsibilities:
 
-1. **Physical Layer**: Hardware transmission (cables, radio waves)
-2. **Data Link Layer**: Direct node-to-node communication using MAC addresses (Ethernet, Wi-Fi)
-3. **Network Layer**: Routing across networks using IP addresses
-4. **Transport Layer**: End-to-end communication (TCP, UDP)
-5. **Session Layer**: Managing connections
-6. **Presentation Layer**: Data format translation
-7. **Application Layer**: User-facing protocols (HTTP, FTP, SMTP)
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    L7[Layer 7: Application<br/>HTTP, FTP, SMTP] --> L6[Layer 6: Presentation<br/>Data format translation]
+    L6 --> L5[Layer 5: Session<br/>Managing connections]
+    L5 --> L4[Layer 4: Transport<br/>TCP, UDP]
+    L4 --> L3[Layer 3: Network<br/>IP addresses, routing]
+    L3 --> L2[Layer 2: Data Link<br/>MAC addresses, Ethernet, Wi-Fi]
+    L2 --> L1[Layer 1: Physical<br/>Cables, radio waves]
+
+    style L7 fill:#0173B2,stroke:#000,color:#fff
+    style L6 fill:#029E73,stroke:#000,color:#fff
+    style L5 fill:#DE8F05,stroke:#000,color:#000
+    style L4 fill:#CC78BC,stroke:#000,color:#000
+    style L3 fill:#CA9161,stroke:#000,color:#000
+    style L2 fill:#0173B2,stroke:#000,color:#fff
+    style L1 fill:#029E73,stroke:#000,color:#fff
+```
 
 In practice, most engineers work primarily with the application, transport, and network layers. Understanding that MAC addresses operate at Layer 2 while IP addresses operate at Layer 3 clarifies why both are necessary.
 
@@ -165,6 +212,30 @@ Modern networks implement port security, 802.1X authentication, and network acce
 
 Networks are categorized by geographic scope:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    A[Network Types by Scope] --> B[PAN]
+    A --> C[LAN]
+    A --> D[MAN]
+    A --> E[WAN]
+
+    B --> F[Personal Area<br/>Bluetooth, phone-headphones]
+    C --> G[Local Area<br/>Home, office, building]
+    D --> H[Metropolitan Area<br/>City, large campus]
+    E --> I[Wide Area<br/>Countries, continents<br/>The Internet]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#029E73,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#000
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#DE8F05,stroke:#000,color:#000
+    style H fill:#CC78BC,stroke:#000,color:#000
+    style I fill:#CA9161,stroke:#000,color:#000
+```
+
 **LAN (Local Area Network)**: Covers a small geographic area like a home, office, or building. Your home Wi-Fi is a LAN where devices communicate directly using MAC addresses and private IP addresses.
 
 **WAN (Wide Area Network)**: Spans large geographic areas, connecting multiple LANs. The internet is the largest WAN, using public IP addresses and routing protocols to connect networks worldwide.
@@ -184,6 +255,23 @@ The key difference: switches operate at Layer 2 using MAC addresses for local co
 ## Client-Server Architecture
 
 Most networked applications follow the client-server model:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    C1[Client 1<br/>Web Browser] --> S[Server<br/>Web Server<br/>Database<br/>API]
+    C2[Client 2<br/>Mobile App] --> S
+    C3[Client 3<br/>Desktop App] --> S
+
+    S --> C1
+    S --> C2
+    S --> C3
+
+    style C1 fill:#0173B2,stroke:#000,color:#fff
+    style C2 fill:#0173B2,stroke:#000,color:#fff
+    style C3 fill:#0173B2,stroke:#000,color:#fff
+    style S fill:#029E73,stroke:#000,color:#fff
+```
 
 **Clients** initiate requests (your web browser, mobile app).
 
@@ -206,6 +294,39 @@ Software engineers interact with networks through various abstractions:
 ## Real-World Example
 
 Consider what happens when you type a URL into your browser:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    A[Type URL] --> B[DNS Resolution<br/>www.example.com → 93.184.216.34]
+    B --> C[ARP Resolution<br/>Find router MAC address]
+    C --> D[Packet Creation<br/>HTTP request packets]
+    D --> E[Local Delivery<br/>Using MAC addresses]
+    E --> F[Internet Routing<br/>Using IP addresses]
+    F --> G[Firewall Inspection<br/>Allow/Block packets]
+    G --> H{Routing<br/>Success?}
+    H -->|No| I[ICMP Error Messages]
+    H -->|Yes| J[TCP Connection<br/>Three-way handshake]
+    J --> K[HTTP Request<br/>GET webpage]
+    K --> L[HTTP Response<br/>HTML, CSS, JS, images]
+    L --> M[Packet Reassembly<br/>Correct order]
+    M --> N[Rendering<br/>Display webpage]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#029E73,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#000
+    style F fill:#0173B2,stroke:#000,color:#fff
+    style G fill:#029E73,stroke:#000,color:#fff
+    style H fill:#DE8F05,stroke:#000,color:#000
+    style I fill:#CC78BC,stroke:#000,color:#000
+    style J fill:#CA9161,stroke:#000,color:#000
+    style K fill:#0173B2,stroke:#000,color:#fff
+    style L fill:#029E73,stroke:#000,color:#fff
+    style M fill:#DE8F05,stroke:#000,color:#000
+    style N fill:#CC78BC,stroke:#000,color:#000
+```
 
 1. **DNS Resolution**: Your computer queries DNS servers to convert `www.example.com` into an IP address like `93.184.216.34`
 
