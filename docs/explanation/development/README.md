@@ -16,7 +16,7 @@ updated: 2025-12-24
 
 Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
-**Governance**: All development practices in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md), implement the [Core Principles](../principles/README.md), and implement/enforce [Documentation Conventions](../conventions/README.md). Each practice MUST include TWO mandatory sections: "Principles Respected" (traces to foundational values) and "Conventions Implemented/Respected" (traces to documentation standards). Both sections require working links and explanations of HOW the practice implements/respects them. This creates the traceability chain: Vision → Principles → Development Practices. See [AI Agents Convention](./ex-de__ai-agents.md) and [Maker-Checker-Fixer Pattern](./ex-de__maker-checker-fixer-pattern.md) for examples.
+**Governance**: All development practices in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0), implement the [Core Principles](../principles/README.md) (Layer 1), and implement/enforce [Documentation Conventions](../conventions/README.md) (Layer 2) as part of the six-layer architecture. Each practice MUST include TWO mandatory sections: "Principles Respected" and "Conventions Implemented/Respected". See [Repository Architecture](../ex__repository-architecture.md) for complete governance model and [AI Agents Convention](./ex-de__ai-agents.md) for structure requirements.
 
 ## 🎯 Scope
 
@@ -113,8 +113,11 @@ Development practices in this directory fall into several categories:
 
 ## 🔗 Related Documentation
 
-- [Documentation Conventions](../conventions/README.md) - File naming, linking, and Diátaxis framework standards
+- [Repository Architecture](../ex__repository-architecture.md) - Complete six-layer architecture (Layer 3: Development)
+- [Core Principles](../principles/README.md) - Layer 1: Foundational values that govern development practices
+- [Conventions](../conventions/README.md) - Layer 2: Documentation conventions (parallel governance with development)
+- [Workflows](../workflows/README.md) - Layer 5: Multi-step processes orchestrating agents
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2025-12-24

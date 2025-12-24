@@ -18,7 +18,9 @@ Foundational principles that guide all conventions and development practices in 
 
 ## 🎯 Purpose
 
-Core principles establish the philosophical foundation for how we build software and write documentation. These principles are the **governance layer** (Layer 1 in the six-layer hierarchy) - they serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and govern all conventions in `docs/explanation/conventions/` and development practices in `docs/explanation/development/`.
+Core principles establish the philosophical foundation for how we build software and write documentation. These principles are **Layer 1 in the six-layer architecture** - they serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and govern all conventions and development practices (Layers 2-3).
+
+See [Repository Architecture](../ex__repository-architecture.md) for complete understanding of how principles fit into the governance hierarchy and how changes propagate through layers.
 
 **Principles serve the vision and are stable values.** When creating or modifying any convention or practice, you must verify:
 
@@ -321,9 +323,10 @@ Check that changes:
 
 ## 📚 Related Documentation
 
-- [Vision](../vision/ex-vi__open-sharia-enterprise.md) - Foundational purpose that inspires all principles
-- [Conventions Index](../conventions/README.md) - Documentation conventions embodying these principles
-- [Development Index](../development/README.md) - Development practices embodying these principles
+- [Repository Architecture](../ex__repository-architecture.md) - Complete six-layer architecture explanation
+- [Vision](../vision/ex-vi__open-sharia-enterprise.md) - Layer 0: Foundational purpose that inspires all principles
+- [Conventions Index](../conventions/README.md) - Layer 2: Documentation conventions embodying these principles
+- [Development Index](../development/README.md) - Layer 3: Development practices embodying these principles
 - [Explanation Index](../README.md) - All conceptual documentation
 
 ---

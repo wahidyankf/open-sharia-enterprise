@@ -14,50 +14,58 @@ updated: 2025-12-23
 
 Conceptual documentation for the open-sharia-enterprise project. These documents provide context, deep dives, and understanding of how systems work and why design decisions were made.
 
-## 🎯 Understanding the Hierarchy
+## 🎯 Understanding the Six-Layer Architecture
+
+The repository follows a **six-layer architecture** where each layer builds on the foundation of the layer above. See [Repository Architecture](./ex__repository-architecture.md) for comprehensive explanation.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-	A[Core Principles]
-	B[Conventions]
-	C[Development]
-	D[AI Agents]
-	E[Workflows]
+	L0[Layer 0: Vision<br/>WHY WE EXIST]
+	L1[Layer 1: Principles<br/>WHY - Values]
+	L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
+	L3[Layer 3: Development<br/>HOW - Software Practices]
+	L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
+	L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
 
-	A --> B
-	A --> C
-	B --> D
-	C --> D
-	D --> E
+	L0 -->|inspires| L1
+	L1 -->|governs| L2
+	L1 -->|governs| L3
+	L2 -->|governs| L4
+	L3 -->|governs| L4
+	L4 -->|orchestrated by| L5
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
+	style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+	style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-**Documentation Layers** (Hierarchy):
+**Documentation Layers**:
+
+0. **[Vision](./vision/README.md)** (WHY WE EXIST) - Foundational purpose that **inspires** everything
+   - WHY the project exists, WHAT change we seek
+   - Nearly immutable - changes only if mission fundamentally shifts
+   - **Vision**: Democratize Shariah-compliant fintech, making ethical Islamic finance accessible to everyone
 
 1. **[Core Principles](./principles/README.md)** (WHY) - Foundational values that **govern** everything
-   - The **why** behind our decisions
-   - Immutable principles that conventions and development must respect
+   - The WHY behind our decisions (serve the vision)
    - Six principles: Explicit Over Implicit, Accessibility First, Simplicity Over Complexity, Automation Over Manual, Progressive Disclosure, No Time Estimates
+   - Each principle includes "Vision Supported" section
    - **Role**: Governance layer - all lower layers must align with these principles
 
 2. **[Conventions](./conventions/README.md)** (WHAT) - How we **write and structure documentation**
-   - Documentation format, style, and organization rules
-   - Markdown writing standards implementing principles
-   - File naming, linking, and content quality implementing principles
+   - Documentation format, style, and organization rules implementing principles
+   - File naming, linking, content quality implementing principles
    - Applies to: docs/, Hugo content, plans/, README files
    - **Role**: Documentation rules layer - implements principles in concrete WHAT standards
    - **Implemented by**: AI agents (docs-maker, docs-checker, etc.)
 
 3. **[Development](./development/README.md)** (HOW) - How we **develop software and systems**
    - Software development practices implementing principles
-   - Build processes, tooling, and workflows implementing principles
-   - Testing, deployment, and code management implementing principles
+   - Build processes, tooling, workflows implementing principles
    - Applies to: source code, Hugo themes/layouts, build systems, AI agents
    - **Role**: Software practices layer - implements principles in concrete HOW standards
    - **Implemented by**: AI agents (hugo-developer, plan-executor, etc.) and automation (git hooks, build tools)
@@ -70,13 +78,12 @@ graph TD
 
 5. **[Workflows](./workflows/README.md)** (WHEN) - Multi-step orchestrated processes
    - Compose AI agents into reusable sequences
-   - Define goals, steps, and termination criteria
-   - Support sequential, parallel, and conditional execution
-   - Include human approval checkpoints
+   - Define goals, steps, termination criteria
+   - Support sequential, parallel, conditional execution
    - **Role**: Orchestration layer - coordinates agents to achieve complex goals
-   - **Example**: Maker-Checker-Fixer workflow orchestrates creation, validation, and fixing
+   - **Example**: Maker-Checker-Fixer workflow orchestrates creation, validation, fixing
 
-**Traceability**: Every rule should trace through the hierarchy: Principle (WHY) → Convention/Practice (WHAT/HOW) → Agent (WHO) → Workflow (WHEN). See [Core Principles](./principles/README.md) for complete traceability examples.
+**Complete Architecture**: See [Repository Architecture](./ex__repository-architecture.md) for layer characteristics, complete traceability examples, usage guidance, troubleshooting, and verification methods.
 
 ## 🧪 The Layer Test: Where Does My Document Belong?
 
@@ -150,11 +157,18 @@ Is it about WHY we value something?
 
 ## 📋 Contents
 
-- [Core Principles](./principles/README.md) - Foundational principles guiding all conventions and development
-- [Conventions](./conventions/README.md) - Documentation writing and organization standards
-- [Development](./development/README.md) - Software development practices and workflows
-- [Workflows](./workflows/README.md) - Multi-step orchestrated processes composing AI agents
+### Architecture
+
+- [Repository Architecture](./ex__repository-architecture.md) - Comprehensive guide to the six-layer architecture (Vision → Principles → Conventions → Development → Agents → Workflows)
+
+### Layer Documentation
+
+- [Vision](./vision/README.md) - Layer 0: Foundational purpose (WHY we exist)
+- [Core Principles](./principles/README.md) - Layer 1: Foundational values guiding all conventions and development
+- [Conventions](./conventions/README.md) - Layer 2: Documentation writing and organization standards
+- [Development](./development/README.md) - Layer 3: Software development practices and workflows
+- [Workflows](./workflows/README.md) - Layer 5: Multi-step orchestrated processes composing AI agents
 
 ---
 
-**Last Updated**: 2025-12-23
+**Last Updated**: 2025-12-24

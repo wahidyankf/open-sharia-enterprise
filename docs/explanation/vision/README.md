@@ -17,7 +17,9 @@ The foundational purpose and change we seek through Open Sharia Enterprise - dem
 
 ## Purpose
 
-This directory contains the vision documents that establish **WHY** the Open Sharia Enterprise project exists and **WHAT CHANGE** we seek to create in the world. Vision is the top layer (Layer 0) of our repository hierarchy - it governs and gives purpose to all principles, conventions, development practices, agents, and workflows.
+This directory contains the vision documents that establish **WHY** the Open Sharia Enterprise project exists and **WHAT CHANGE** we seek to create in the world. Vision is the top layer (Layer 0) of our six-layer architecture - it governs and gives purpose to all principles, conventions, development practices, agents, and workflows.
+
+See [Repository Architecture](../ex__repository-architecture.md) for complete understanding of how vision fits into the governance hierarchy and how it inspires all other layers.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -160,13 +162,17 @@ Automation serves the mission:
 
 ## Related Documentation
 
+### Architecture
+
+- [Repository Architecture](../ex__repository-architecture.md) - Complete six-layer architecture (Layer 0: Vision)
+
 ### Lower Layers (Governed by Vision)
 
-- [Core Principles](../principles/README.md) - Values serving this vision
-- [Conventions](../conventions/README.md) - Standards supporting the vision
-- [Development](../development/README.md) - Practices aligned with the vision
-- [AI Agents](../../../.claude/agents/README.md) - Automation serving the mission
-- [Workflows](../workflows/README.md) - Processes supporting our goals
+- [Core Principles](../principles/README.md) - Layer 1: Values serving this vision
+- [Conventions](../conventions/README.md) - Layer 2: Standards supporting the vision
+- [Development](../development/README.md) - Layer 3: Practices aligned with the vision
+- [AI Agents](../../../.claude/agents/README.md) - Layer 4: Automation serving the mission
+- [Workflows](../workflows/README.md) - Layer 5: Processes supporting our goals
 
 ### Project Context
 

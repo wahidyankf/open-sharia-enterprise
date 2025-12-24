@@ -99,53 +99,27 @@ Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `ba
 
 ## Repository Architecture: Six-Layer Hierarchy
 
-The repository follows a six-layer architecture where each layer builds on the foundation of the layer above:
+The repository follows a six-layer architecture where each layer builds on the foundation of the layer above. Each layer governs the layer below, creating complete traceability from foundational purpose (Layer 0: Vision) through values (Layer 1: Principles) to concrete standards (Layers 2-3), automated enforcement (Layer 4: Agents), and orchestrated processes (Layer 5: Workflows).
 
-```
-Layer 0: Vision (WHY WE EXIST - foundational purpose)
-    ↓ inspires
-Layer 1: Principles (WHY - foundational values)
-    ↓ governs
-Layer 2: Conventions (WHAT - documentation rules)
-    ↓ governs
-Layer 3: Development (HOW - software practices)
-    ↓ governs
-Layer 4: AI Agents (WHO - atomic task executors)
-    ↓ orchestrated by
-Layer 5: Workflows (WHEN - multi-step processes)
-```
+See [Repository Architecture](./docs/explanation/ex__repository-architecture.md) for comprehensive explanation including layer characteristics, complete traceability examples, usage guidance, and verification methods.
 
-**Layer 0: Vision** (`docs/explanation/vision/`)
+**Layer 0: Vision** - WHY we exist, WHAT change we seek
+**Layer 1: Principles** - WHY we value specific approaches (governs layers 2-3)
+**Layer 2: Conventions** - WHAT documentation rules (implemented by layer 4)
+**Layer 3: Development** - HOW we develop software (implemented by layer 4)
+**Layer 4: AI Agents** - WHO enforces rules (orchestrated by layer 5)
+**Layer 5: Workflows** - WHEN we run multi-step processes
 
-Foundational purpose establishing WHY the project exists and WHAT change we seek. Vision: Democratize Shariah-compliant fintech, making ethical Islamic finance accessible to everyone. Solves the problem of Islamic finance locked in closed, expensive, proprietary systems. When we succeed, anyone can build, deploy, and benefit from open-source halal fintech. See [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) for complete vision.
+**Quick Traceability Example**: Vision (democratize fintech) → Automation Over Manual (principle) → Content Quality Principles (convention) → Maker-Checker-Fixer Pattern (development) → docs-checker, docs-fixer (agents) → Maker-Checker-Fixer Workflow (orchestrates agents)
 
-**Layer 1: Core Principles** (`docs/explanation/principles/`)
+**Key Documents**:
 
-Foundational values that serve the vision and govern all conventions and development practices. Six principles establish the "why" behind our standards: **Explicit Over Implicit** (transparent configuration, no magic), **Accessibility First** (WCAG compliance, universal design), **Simplicity Over Complexity** (flat structures, KISS/YAGNI), **Automation Over Manual** (git hooks, AI agents), **Progressive Disclosure** (layer complexity gradually), **No Time Estimates** (outcomes over duration). All principles trace back to serving the vision. See [Core Principles Index](./docs/explanation/principles/README.md) for complete details.
-
-**Layer 2: Conventions** (`docs/explanation/conventions/`)
-
-Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation. Each convention traces back to specific principles it embodies. See [Conventions Index](./docs/explanation/conventions/README.md) for 22 documentation conventions.
-
-**Layer 3: Development** (`docs/explanation/development/`)
-
-Software practices that implement core principles. Defines HOW we develop, test, and deploy software. Each practice traces back to specific principles it respects. See [Development Index](./docs/explanation/development/README.md) for 12 development practices.
-
-**Layer 4: AI Agents** (`.claude/agents/`)
-
-Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3. See [Agents Index](./.claude/agents/README.md) for all agents and their responsibilities.
-
-**Layer 5: Workflows** (`docs/explanation/workflows/`)
-
-Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria. Workflows define sequences (sequential/parallel/conditional), manage state between steps, and include human approval checkpoints. Use workflows when orchestrating 2+ agents in repeated sequences or when complex multi-step validation with state management is needed. The Maker-Checker-Fixer pattern is the canonical workflow. The \*-check-fix workflow pattern achieves perfect quality state by fixing ALL findings (HIGH, MEDIUM, MINOR) and iterating until ZERO findings remain. See [Workflows Index](./docs/explanation/workflows/README.md) for all workflows and [Workflow Pattern Convention](./docs/explanation/workflows/ex-wf__workflow-pattern.md) for pattern details.
-
-**Traceability Example:**
-
-Vision → Principle → Convention → Development → Agent → Workflow flow:
-
-- **Vision** (democratize Islamic fintech) → **Automation Over Manual** (principle) → **Content Quality Principles** (convention) → **Maker-Checker-Fixer Pattern** (development) → **docs-checker**, **docs-fixer** (agents) → **Maker-Checker-Fixer Workflow** (orchestrates agents)
-- **Vision** (accessible to everyone) → **Accessibility First** (principle) → **Color Accessibility Convention** (defines palette) → **docs-maker**, **hugo-developer** (enforce palette in content)
-- **Vision** (transparent, verifiable) → **Explicit Over Implicit** (principle) → **AI Agents Convention** (explicit tool permissions) → **agent-maker** (validates tool lists during creation)
+- [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) - Foundational purpose
+- [Core Principles Index](./docs/explanation/principles/README.md) - 6 foundational values
+- [Conventions Index](./docs/explanation/conventions/README.md) - 22 documentation standards
+- [Development Index](./docs/explanation/development/README.md) - 12 software practices
+- [Agents Index](./.claude/agents/README.md) - All agents and responsibilities
+- [Workflows Index](./docs/explanation/workflows/README.md) - All orchestrated processes
 
 ## Documentation Standards
 
