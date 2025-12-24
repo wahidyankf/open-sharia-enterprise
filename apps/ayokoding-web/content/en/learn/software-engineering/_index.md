@@ -19,6 +19,8 @@ weight: 102
   - [Concepts](/en/learn/software-engineering/data/concepts)
   - [Tools](/en/learn/software-engineering/data/tools)
   - [Databases](/en/learn/software-engineering/data/databases)
+- [Networking](/en/learn/software-engineering/networking)
+  - [Overview](/en/learn/software-engineering/networking/overview)
 - [Platforms](/en/learn/software-engineering/platforms)
   - [Overview](/en/learn/software-engineering/platforms/overview)
   - [Web](/en/learn/software-engineering/platforms/web)
