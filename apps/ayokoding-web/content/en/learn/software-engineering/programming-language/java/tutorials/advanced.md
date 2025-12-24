@@ -19,8 +19,6 @@ categories:
 
 ## created: 2025-12-04
 
-# Advanced Java - Expert Mastery
-
 Want to understand how Java actually works under the hood? This tutorial covers the deep internals of Java, advanced concurrency patterns, reflection, bytecode analysis, and optimization techniques used by top-tier developers.
 
 ## What You'll Achieve
@@ -488,10 +486,8 @@ Java source code is compiled to bytecode, not machine code.
 ```bash
 javac MyClass.java
 
-# View bytecode
 javap -c MyClass
 
-# Output shows JVM instructions (aload, iadd, return, etc.)
 ```
 
 ```java
@@ -515,11 +511,8 @@ public class BytecodeExample {
 The **Just-In-Time (JIT)** compiler optimizes hot code at runtime.
 
 ```bash
-# Enable JIT logging
 java -XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+PrintCompilation MyApp
 
-# Shows which methods are compiled
-# Warning: intensive logging, slows execution
 ```
 
 ---
@@ -529,28 +522,20 @@ java -XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+PrintCompilation
 ### 6.1 Profiling with JProfiler
 
 ```bash
-# Install JProfiler (commercial, 10-day trial)
-# Profile CPU, memory, threading
 
-# Free alternative: Async-profiler
 java -agentpath=/path/to/libasyncProfiler.so=start,file=profile.jfr MyApp
 
-# Analyze with JFR Viewer
 ```
 
 ### 6.2 JVM Flags for Optimization
 
 ```bash
-# Heap sizing
 java -Xms2G -Xmx2G MyApp
 
-# G1GC configuration
 java -XX:+UseG1GC -XX:MaxGCPauseMillis=200 MyApp
 
-# Low latency (ZGC)
 java -XX:+UseZGC -XX:ZCollectionInterval=120 MyApp
 
-# Adaptive sizing
 java -XX:+UseAdaptiveSizingPolicy MyApp
 ```
 

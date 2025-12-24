@@ -48,24 +48,19 @@ Elixir strings are **UTF-8 binaries** with powerful pattern matching and a compr
 #### String Creation and Concatenation
 
 ```elixir
-# Double quotes create strings (UTF-8 binaries)
 greeting = "Hello, World!"
 
-# String concatenation with <>
 full_name = "John" <> " " <> "Doe"
 
-# String interpolation (preferred)
 name = "Alice"
 message = "Hello, #{name}!"  # "Hello, Alice!"
 
-# Multi-line strings
 text = """
 This is a
 multi-line
 string.
 """
 
-# Heredocs with sigils
 sql = ~s"""
 SELECT * FROM users
 WHERE age > 18
@@ -76,35 +71,28 @@ ORDER BY name
 #### String Module Operations
 
 ```elixir
-# Length (counts graphemes)
 String.length("café")  # 4 (not 5!)
 byte_size("café")      # 5 (é is 2 bytes in UTF-8)
 
-# Case conversion
 String.upcase("hello")     # "HELLO"
 String.downcase("WORLD")   # "world"
 String.capitalize("alice") # "Alice"
 
-# Trimming whitespace
 String.trim("  hello  ")        # "hello"
 String.trim_leading("  hello") # "hello"
 String.trim_trailing("hello  ")# "hello"
 
-# Splitting strings
 String.split("a,b,c", ",")           # ["a", "b", "c"]
 String.split("hello world", " ")      # ["hello", "world"]
 String.split("a|b|c", "|", parts: 2)  # ["a", "b|c"]
 
-# Replacing
 String.replace("hello", "l", "L")          # "heLLo"
 String.replace("hello", "l", "L", global: false) # "heLlo" (first only)
 
-# Checking contents
 String.contains?("hello world", "world")  # true
 String.starts_with?("hello", "he")        # true
 String.ends_with?("hello", "lo")          # true
 
-# Joining
 Enum.join(["a", "b", "c"], ",")  # "a,b,c"
 ```
 
@@ -115,11 +103,9 @@ Binary pattern matching enables efficient parsing without string allocations.
 #### Basic Binary Patterns
 
 ```elixir
-# Match string prefix
 <<"GET ", path::binary>> = "GET /users"
 path  # "/users"
 
-# Match HTTP request
 def parse_request(request) do
   case request do
     <<"GET ", rest::binary>> ->
@@ -136,13 +122,11 @@ def parse_request(request) do
   end
 end
 
-# Match specific bytes
 <<version::8, flags::8, rest::binary>> = <<1, 0, 100, 200>>
 version  # 1
 flags    # 0
 rest     # <<100, 200>>
 
-# Match fixed-size chunks
 <<r::8, g::8, b::8>> = <<255, 128, 0>>  # RGB color
 r  # 255 (red)
 g  # 128 (green)
@@ -152,7 +136,6 @@ b  # 0   (blue)
 #### Parsing Text Protocols
 
 ```elixir
-# Parse CSV line
 defmodule CSV do
   def parse_line(line) do
     line
@@ -181,7 +164,6 @@ defmodule CSV do
   end
 end
 
-# Parse key-value pairs
 def parse_query_string(query) do
   query
   |> String.split("&")
@@ -195,7 +177,6 @@ def parse_query_string(query) do
 end
 
 parse_query_string("name=Alice&age=30")
-# %{"name" => "Alice", "age" => "30"}
 ```
 
 ### 3. Unicode and Graphemes
@@ -207,16 +188,11 @@ Understanding Unicode is crucial for correct string handling.
 ```elixir
 text = "café"
 
-# Graphemes (user-perceived characters)
 String.length(text)           # 4
 String.graphemes(text)        # ["c", "a", "f", "é"]
 
-# Codepoints (Unicode code points)
 String.codepoints(text)       # ["c", "a", "f", "é"]
-# Note: é can be represented as single codepoint or
-# e + combining accent (normalization matters)
 
-# Bytes (UTF-8 encoded)
 byte_size(text)               # 5 (é is 2 bytes)
 :binary.bin_to_list(text)     # [99, 97, 102, 195, 169]
 ```
@@ -224,14 +200,12 @@ byte_size(text)               # 5 (é is 2 bytes)
 #### Unicode Normalization
 
 ```elixir
-# Two ways to represent é:
 nfc = "é"        # Single codepoint (NFC normalized)
 nfd = "e\u0301"  # e + combining acute accent (NFD normalized)
 
 String.length(nfc)  # 1
 String.length(nfd)  # 2 (different representation)
 
-# Normalize for comparison
 String.normalize(nfc, :nfc) == String.normalize(nfd, :nfc)  # true
 ```
 
@@ -244,7 +218,6 @@ String.length(text)      # 7 (6 chars + 1 emoji grapheme)
 String.codepoints(text)  # [..., "👋", "🏽"] (wave + modifier)
 String.graphemes(text)   # [..., "👋🏽"] (perceived as single unit)
 
-# Splitting at grapheme boundaries
 String.split_at(text, 6)  # {"Hello ", "👋🏽"}
 ```
 
@@ -255,16 +228,13 @@ String.split_at(text, 6)  # {"Hello ", "👋🏽"}
 ```elixir
 text = "Hello, World!"
 
-# Slice by range
 String.slice(text, 0, 5)    # "Hello"
 String.slice(text, 7, 5)    # "World"
 String.slice(text, 0..4)    # "Hello"
 String.slice(text, 7..-1)   # "World!"
 
-# Negative indices
 String.slice(text, -6, 6)   # "World!"
 
-# At specific position
 String.at(text, 0)   # "H"
 String.at(text, -1)  # "!"
 ```
@@ -272,20 +242,14 @@ String.at(text, -1)  # "!"
 #### Pattern-Based Operations
 
 ```elixir
-# Find and replace with regex
 text = "The year is 2024"
 Regex.replace(~r/\d+/, text, "XXXX")  # "The year is XXXX"
 
-# Extract matches
 Regex.scan(~r/\d+/, "Port: 8080, Timeout: 30")
-# [["8080"], ["30"]]
 
-# Named captures
 regex = ~r/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/
 Regex.named_captures(regex, "Date: 2024-12-21")
-# %{"year" => "2024", "month" => "12", "day" => "21"}
 
-# Check match
 Regex.match?(~r/@/, "alice@example.com")  # true
 ```
 
@@ -316,7 +280,6 @@ end
 #### IO Lists for Concatenation
 
 ```elixir
-# Bad: Creates many intermediate strings
 html =
   "<html>" <>
   "<head>" <>
@@ -325,7 +288,6 @@ html =
   "<body>Content</body>" <>
   "</html>"
 
-# Good: Build IO list, convert once
 html =
   ["<html>",
    "<head>",
@@ -335,7 +297,6 @@ html =
    "</html>"]
   |> IO.iodata_to_binary()
 
-# Even better: Use interpolation (builds IO list internally)
 title = "Page"
 content = "Content"
 
@@ -350,21 +311,18 @@ html = """
 #### Efficient String Building
 
 ```elixir
-# Bad: O(n²) complexity
 def join_bad(items) do
   Enum.reduce(items, "", fn item, acc ->
     acc <> item <> ", "
   end)
 end
 
-# Good: O(n) with IO list
 def join_good(items) do
   items
   |> Enum.intersperse(", ")
   |> IO.iodata_to_binary()
 end
 
-# Best: Use built-in
 Enum.join(items, ", ")
 ```
 
@@ -393,11 +351,8 @@ Total: 5 bytes for 4 characters
 Pattern matching on binaries is highly optimized:
 
 ```elixir
-# This doesn't allocate new memory:
 <<"GET ", path::binary>> = request
 
-# 'path' references the original binary
-# No copy made until modification
 ```
 
 ### String Immutability
@@ -492,7 +447,6 @@ String.upcase(list)  # ERROR
 string = "hello"  # String
 String.upcase(string)  # "HELLO"
 
-# Convert charlist to string
 list = ~c"hello"
 String.Chars.to_string(list)  # "hello"
 ```
@@ -541,7 +495,6 @@ end
 **Bad:**
 
 ```elixir
-# Trying to slice UTF-8 by bytes
 <<head::binary-size(3), _::binary>> = "café"
 head  # <<99, 97, 102>> = "caf" (corrupted é!)
 ```
@@ -549,7 +502,6 @@ head  # <<99, 97, 102>> = "caf" (corrupted é!)
 **Good:**
 
 ```elixir
-# Use grapheme-aware operations
 String.slice("café", 0, 3)  # "caf"
 ```
 

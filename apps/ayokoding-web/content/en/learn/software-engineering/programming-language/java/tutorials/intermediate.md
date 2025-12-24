@@ -18,8 +18,6 @@ categories:
 
 ---
 
-# Intermediate Java - Production-Ready Development
-
 Ever wondered how enterprise systems handle millions of users without crashing? This tutorial bridges the gap between basic understanding and professional development. You'll learn design patterns, advanced concurrency, performance optimization, and integration with databases and build tools.
 
 ## What You'll Achieve
@@ -851,13 +849,10 @@ public int expensiveOperation(int n) {
 JVisualVM comes with Java and helps identify performance bottlenecks.
 
 ```bash
-# Start your Java application
 java -jar myapp.jar
 
-# In another terminal, launch JVisualVM
 jvisualvm
 
-# Monitor CPU, memory, threads
 ```
 
 ---

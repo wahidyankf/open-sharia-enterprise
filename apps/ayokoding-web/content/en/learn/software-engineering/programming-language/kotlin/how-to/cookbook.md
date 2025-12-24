@@ -8,8 +8,6 @@ weight: 1000001
 
 ---
 
-# Kotlin Cookbook - Practical Recipes
-
 **Solve common problems with ready-to-use recipes.** This cookbook contains practical, copy-paste-ready solutions for everyday Kotlin development. Perfect for finding solutions to problems you encounter in real projects.
 
 ## How to Use This Cookbook

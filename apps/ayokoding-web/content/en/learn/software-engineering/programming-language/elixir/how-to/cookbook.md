@@ -68,14 +68,11 @@ defmodule MapHelper do
   def stringify_keys(value), do: value
 end
 
-# Usage
 user = %{name: "Alice", age: 30, address: %{city: "NYC"}}
 MapHelper.stringify_keys(user)
-# => %{"name" => "Alice", "age" => 30, "address" => %{"city" => "NYC"}}
 
 json_user = %{"name" => "Bob", "age" => 25}
 MapHelper.atomize_keys(json_user)
-# => %{name: "Bob", age: 25}
 ```
 
 **How It Works**: `Map.new/2` reconstructs the map with transformed keys. Recursively processes nested maps.
@@ -107,7 +104,6 @@ defmodule DeepMerge do
   end
 end
 
-# Usage
 config1 = %{
   database: %{host: "localhost", port: 5432},
   cache: %{ttl: 300}
@@ -119,11 +115,6 @@ config2 = %{
 }
 
 DeepMerge.deep_merge(config1, config2)
-# => %{
-#   database: %{host: "localhost", port: 5433, pool_size: 10},
-#   cache: %{ttl: 300},
-#   logging: %{level: :info}
-# }
 ```
 
 **How It Works**: `Map.merge/3` accepts resolver function. Recursively merges when both values are maps.
@@ -147,7 +138,6 @@ defmodule ListHelper do
   end
 end
 
-# Usage
 users = [
   %{name: "Alice", role: :admin},
   %{name: "Bob", role: :user},
@@ -156,15 +146,9 @@ users = [
 ]
 
 Enum.group_by(users, & &1.role)
-# => %{
-#   admin: [%{name: "Alice", role: :admin}, %{name: "Charlie", role: :admin}],
-#   user: [%{name: "Bob", role: :user}, %{name: "Diana", role: :user}]
-# }
 
-# Group by first letter
 words = ["apple", "apricot", "banana", "blueberry", "cherry"]
 Enum.group_by(words, &String.first/1)
-# => %{"a" => ["apple", "apricot"], "b" => ["banana", "blueberry"], "c" => ["cherry"]}
 ```
 
 **How It Works**: `Enum.group_by/2` applies function to each element, groups by result.
@@ -188,14 +172,10 @@ defmodule KeywordHelper do
   end
 end
 
-# Usage
 options = %{timeout: 5000, retry: 3, async: true}
 KeywordHelper.from_map(options)
-# => [timeout: 5000, retry: 3, async: true]
 
-# Direct usage with Enum
 Map.to_list(options)
-# => [async: true, retry: 3, timeout: 5000] (order may vary)
 ```
 
 **How It Works**: Maps to list of tuples, maintaining keyword list format.
@@ -232,23 +212,17 @@ defmodule SafeUpdate do
   end
 end
 
-# Usage
 config = %{database: %{pool: %{size: 10}}}
 
-# Safe increment
 put_in(config, [:database, :pool, :size],
   get_in(config, [:database, :pool, :size]) + 5)
-# => %{database: %{pool: %{size: 15}}}
 
-# Update with default
 update_in(config, [:cache, :ttl], &(&1 || 300))
-# Would fail! Use get_and_update_in instead
 
 {old_val, new_config} = get_and_update_in(config, [:cache, :ttl], fn
   nil -> {nil, 300}
   val -> {val, val * 2}
 end)
-# => {nil, %{database: %{pool: %{size: 10}}, cache: %{ttl: 300}}}
 ```
 
 **How It Works**: `get_and_update_in/3` allows conditional updates. Returns tuple with old value and new structure.
@@ -294,7 +268,6 @@ defmodule Extractor do
   end
 end
 
-# Usage
 user = %{
   name: "Alice",
   profile: %{age: 30, city: "NYC"},
@@ -302,7 +275,6 @@ user = %{
 }
 
 Extractor.extract_user_info(user)
-# => {"Alice", 30, "NYC", :dark}
 ```
 
 **How It Works**: Pattern matching binds variables from nested structures in single expression.
@@ -344,15 +316,11 @@ defmodule ResponseHandler do
   end
 end
 
-# Usage
 ResponseHandler.handle_response({:ok, %{status: 200, body: ~s({"id": 1})}})
-# => {:success, %{"id" => 1}}
 
 ResponseHandler.handle_response({:ok, %{status: 404, body: "Not found"}})
-# => {:client_error, 404, "Not found"}
 
 ResponseHandler.handle_response({:error, %{reason: :timeout}})
-# => {:timeout, "Request timed out"}
 ```
 
 **How It Works**: `case` evaluates patterns sequentially with guards. First match wins.
@@ -387,19 +355,15 @@ defmodule Matcher do
   end
 end
 
-# Usage
 users = [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]
 search_id = 2
 
 Matcher.find_user(users, search_id)
-# => %{id: 2, name: "Bob"}
 
 event = %{type: :user_created, data: %{name: "Charlie"}}
 Matcher.process_event(event, :user_created)
-# => {:ok, %{name: "Charlie"}}
 
 Matcher.process_event(event, :user_updated)
-# => {:error, "Expected user_updated, got user_created"}
 ```
 
 **How It Works**: Pin operator `^` matches existing value instead of rebinding variable.
@@ -453,10 +417,8 @@ defmodule DataPipeline do
   end
 end
 
-# Usage
 input = "  apple, banana,  apple, cherry,  , banana  "
 DataPipeline.process_user_input(input)
-# => ["apple", "banana", "cherry"]
 ```
 
 **How It Works**: Pipe operator `|>` passes result as first argument to next function. `with` chains operations with error handling.
@@ -496,7 +458,6 @@ defmodule FunctionHelper do
   end
 end
 
-# Usage
 double = FunctionHelper.multiplier(2)
 triple = FunctionHelper.multiplier(3)
 
@@ -505,14 +466,12 @@ triple.(5)   # => 15
 
 FunctionHelper.apply_twice(5, double)  # => 20
 
-# Composition
 add_one = fn x -> x + 1 end
 square = fn x -> x * x end
 add_one_then_square = FunctionHelper.compose(square, add_one)
 
 add_one_then_square.(4)  # => 25 (4+1=5, 5*5=25)
 
-# Partial application
 add = fn a, b -> a + b end
 add_5 = FunctionHelper.partial(add, 5)
 add_5.(3)  # => 8
@@ -571,16 +530,12 @@ defmodule CaptureExamples do
   end
 end
 
-# Usage
 CaptureExamples.example_transforms([1, 2, 3])
-# => {[2, 4, 6], [2, 4, 6]}
 
 CaptureExamples.string_operations(["hello", "world"])
-# => {["HELLO", "WORLD"], ["Item: hello", "Item: world"]}
 
 users = [%{name: "Alice"}, %{name: "Bob"}]
 CaptureExamples.complex_example(users)
-# => {["Alice", "Bob"], [5, 3], 10}
 ```
 
 **How It Works**: `&` creates anonymous function. `&1, &2, ...` are positional arguments.
@@ -627,22 +582,16 @@ defmodule StringParser do
   end
 end
 
-# Usage
 log = "[ERROR] 2024-12-21 10:30:45 - Database connection failed"
 StringParser.parse_log_line(log)
-# => %{"level" => "ERROR", "timestamp" => "2024-12-21 10:30:45",
-#      "message" => "Database connection failed"}
 
 user = %{name: "Alice", id: 123, age: 30}
 StringParser.format_user(user)
-# => "User: Alice (ID: 123, Age: 30)"
 
 StringParser.parse_csv("apple, banana,  cherry  ")
-# => ["apple", "banana", "cherry"]
 
 params = %{query: "elixir programming", page: 2, limit: 10}
 StringParser.build_query_string(params)
-# => "limit=10&page=2&query=elixir+programming" (order may vary)
 ```
 
 **How It Works**: Regex for pattern extraction. String interpolation for formatting. URI encoding for safe URLs.
@@ -694,13 +643,11 @@ defmodule StringValidator do
   end
 end
 
-# Usage
 StringValidator.valid_email?("user@example.com")  # => true
 StringValidator.valid_email?("invalid.email")     # => false
 
 html = "<script>alert('xss')</script>Hello <b>World</b>"
 StringValidator.sanitize_html(html)
-# => "alert('xss')Hello World"
 
 StringValidator.valid_length?("password123", 8, 20)  # => true
 StringValidator.alphanumeric_only("hello-world_123!")  # => "helloworld123"
@@ -752,27 +699,21 @@ defmodule ParallelProcessor do
   end
 end
 
-# Usage
-# Expensive operation (e.g., HTTP requests)
 fetch_user = fn id ->
   :timer.sleep(100)  # Simulate delay
   %{id: id, name: "User #{id}"}
 end
 
-# Sequential: ~1000ms for 10 items
 Enum.map(1..10, fetch_user)
 
-# Parallel: ~100ms for 10 items (if enough cores)
 ParallelProcessor.parallel_map(1..10, fetch_user)
 
-# With timeout handling
 compute = fn x ->
   :timer.sleep(x * 100)
   x * x
 end
 
 ParallelProcessor.safe_parallel_map([1, 2, 3, 4, 5], compute, 1000)
-# => [1, 4, 9, 16, 25] or some {:error, :timeout} for slow items
 ```
 
 **How It Works**: `Task.async/1` spawns concurrent process. `Task.await/2` waits for result. `Task.async_stream/3` provides built-in timeout and concurrency control.
@@ -822,7 +763,6 @@ defmodule UserCache do
   end
 end
 
-# Using Registry
 defmodule DynamicCache do
   def start_cache(user_id) do
     name = {:via, Registry, {MyApp.Registry, {:cache, user_id}}}
@@ -835,16 +775,11 @@ defmodule DynamicCache do
   end
 end
 
-# Usage
-# Start Registry first (in application.ex)
-# {:ok, _} = Registry.start_link(keys: :unique, name: MyApp.Registry)
 
 {:ok, _pid} = UserCache.start_link(name: :my_cache)
 UserCache.put(:my_cache, "user_1", %{name: "Alice"})
 UserCache.get(:my_cache, "user_1")
-# => %{name: "Alice"}
 
-# Dynamic registration
 {:ok, _pid} = DynamicCache.start_cache(123)
 cache_pid = DynamicCache.get_cache(123)
 GenServer.call(cache_pid, {:put, "key", "value"})
@@ -924,26 +859,18 @@ defmodule RateLimiter do
   end
 end
 
-# Usage
 {:ok, _} = RateLimiter.start_link(1000)  # 1 second interval
 
-# Throttle: Only first call executes immediately
 RateLimiter.throttle(fn -> IO.puts("Call 1") end)  # Executes
-# => {:ok, :ok}
 
 RateLimiter.throttle(fn -> IO.puts("Call 2") end)  # Throttled
-# => {:throttled, 995}
 
-# Wait 1 second
 :timer.sleep(1000)
 RateLimiter.throttle(fn -> IO.puts("Call 3") end)  # Executes
-# => {:ok, :ok}
 
-# Debounce: Only last call executes after interval
 RateLimiter.debounce(fn -> IO.puts("Debounced 1") end)
 RateLimiter.debounce(fn -> IO.puts("Debounced 2") end)
 RateLimiter.debounce(fn -> IO.puts("Debounced 3") end)
-# After 1 second: "Debounced 3" prints
 ```
 
 **How It Works**: Throttle checks elapsed time since last execution. Debounce cancels pending timer and reschedules.
@@ -1019,23 +946,17 @@ defmodule OrderStateMachine do
   defp valid_transition?(_, _), do: false
 end
 
-# Usage
 {:ok, order} = OrderStateMachine.start_link("ORD-123")
 
 OrderStateMachine.get_state(order)
-# => :pending
 
 OrderStateMachine.transition(order, :confirmed)
-# => {:ok, :confirmed}
 
 OrderStateMachine.transition(order, :delivered)
-# => {:error, :invalid_transition} (must ship first)
 
 OrderStateMachine.transition(order, :shipped)
-# => {:ok, :shipped}
 
 OrderStateMachine.transition(order, :delivered)
-# => {:ok, :delivered}
 ```
 
 **How It Works**: GenServer maintains state. Validates transitions before applying. Stores history of state changes.
@@ -1108,7 +1029,6 @@ defmodule WorkerSupervisor do
   end
 end
 
-# In application.ex
 defmodule MyApp.Application do
   use Application
 
@@ -1123,21 +1043,14 @@ defmodule MyApp.Application do
   end
 end
 
-# Usage
 {:ok, _pid} = WorkerSupervisor.start_worker("worker_1")
 {:ok, _pid} = WorkerSupervisor.start_worker("worker_2")
 
 Worker.get_state("worker_1")
-# => %{id: "worker_1", data: %{}, started_at: ~U[...]}
 
 WorkerSupervisor.list_workers()
-# => [
-#   {:undefined, #PID<0.123.0>, :worker, [Worker]},
-#   {:undefined, #PID<0.124.0>, :worker, [Worker]}
-# ]
 
 WorkerSupervisor.stop_worker("worker_1")
-# => :ok
 ```
 
 **How It Works**: DynamicSupervisor manages children added at runtime. Registry for process discovery. `:one_for_one` strategy restarts only failed child.
@@ -1196,7 +1109,6 @@ defmodule PeriodicWorker do
   end
 end
 
-# Alternative: Using :timer module
 defmodule SimplePeriodicWorker do
   use GenServer
 
@@ -1217,18 +1129,14 @@ defmodule SimplePeriodicWorker do
   end
 end
 
-# Usage
 task = fn ->
   Logger.info("Periodic task executed at #{DateTime.utc_now()}")
   # Cleanup, health checks, metrics collection, etc.
 end
 
 {:ok, _pid} = PeriodicWorker.start_link(interval: 5000, task: task)
-# Task executes every 5 seconds
 
-# Alternative with :timer
 {:ok, _pid} = SimplePeriodicWorker.start_link(10_000, task)
-# Task executes every 10 seconds
 ```
 
 **How It Works**: `Process.send_after/3` schedules message to self. Reschedules after execution for continuous loop. `:timer.send_interval/2` simpler but less flexible.
@@ -1287,7 +1195,6 @@ defmodule UserService do
   end
 end
 
-# Pattern matching results
 defmodule UserController do
   def create(params) do
     case UserService.create_user(params) do
@@ -1307,15 +1214,11 @@ defmodule UserController do
   end
 end
 
-# Usage
 UserService.create_user(%{email: "alice@example.com", name: "Alice"})
-# => {:ok, %{email: "alice@example.com", name: "Alice", id: 42}}
 
 UserService.create_user(%{email: "invalid", name: "Bob"})
-# => {:error, :db_error}
 
 UserService.create_user(%{name: "Charlie"})
-# => {:error, :invalid_attrs}
 ```
 
 **How It Works**: `with` chains operations, short-circuits on first `{:error, _}`. Pattern match in `else` clause for specific error handling.
@@ -1382,10 +1285,8 @@ defmodule MyApp.Supervisor do
   end
 end
 
-# Usage
 {:ok, _sup} = MyApp.Supervisor.start_link([])
 
-# Call multiple times - some will crash and restart
 for i <- 1..10 do
   try do
     case RiskyWorker.do_risky_work("Task #{i}") do
@@ -1399,8 +1300,6 @@ for i <- 1..10 do
   :timer.sleep(100)
 end
 
-# Worker automatically restarts after crashes
-# If crashes too frequently (>3 in 5s), supervisor terminates
 ```
 
 **How It Works**: Supervisor monitors child processes. Restarts crashed children per strategy. Max restarts prevents crash loops.
@@ -1471,25 +1370,17 @@ defmodule FileHelper do
   end
 end
 
-# Usage
-# Read
 {:ok, content} = FileHelper.read_file("config.txt")
 
-# Write (creates directory if needed)
 FileHelper.write_file("output/results.txt", "Hello, World!")
-# => {:ok, "output/results.txt"}
 
-# Read large file line by line (memory efficient)
 lines = FileHelper.read_lines("large_file.txt")
 
-# JSON operations
 data = %{users: [%{name: "Alice", age: 30}, %{name: "Bob", age: 25}]}
 FileHelper.write_json("data/users.json", data)
 
 {:ok, loaded} = FileHelper.read_json("data/users.json")
-# => {:ok, %{"users" => [%{"name" => "Alice", "age" => 30}, ...]}}
 
-# Append to log file
 FileHelper.append_to_file("app.log", "#{DateTime.utc_now()} - Server started\n")
 ```
 
@@ -1559,16 +1450,10 @@ defmodule CSVHelper do
   end
 end
 
-# Usage
-# Simple parsing
 rows = CSVHelper.parse_csv("users.csv")
-# => [["name", "age", "city"], ["Alice", "30", "NYC"], ["Bob", "25", "LA"]]
 
-# Parse to maps
 users = CSVHelper.parse_csv_to_maps("users.csv")
-# => [%{name: "Alice", age: "30", city: "NYC"}, %{name: "Bob", age: "25", city: "LA"}]
 
-# Write CSV
 data = [
   %{name: "Alice", age: 30, city: "NYC"},
   %{name: "Bob", age: 25, city: "LA"}
@@ -1576,7 +1461,6 @@ data = [
 headers = [:name, :age, :city]
 CSVHelper.write_csv("output.csv", data, headers)
 
-# Process large CSV in stream (memory efficient)
 CSVHelper.stream_csv("large_data.csv", fn row ->
   # Process each row without loading entire file
   IO.inspect(row)
@@ -1686,7 +1570,6 @@ defmodule MyAppWeb.UserController do
   end
 end
 
-# JSON view
 defmodule MyAppWeb.UserJSON do
   def index(%{users: users}) do
     %{data: Enum.map(users, &user_json/1)}
@@ -1707,7 +1590,6 @@ defmodule MyAppWeb.UserJSON do
   end
 end
 
-# Router
 defmodule MyAppWeb.Router do
   use MyAppWeb, :router
 
@@ -1773,7 +1655,6 @@ defmodule MyAppWeb.Plugs.Auth do
   end
 end
 
-# Optional auth plug
 defmodule MyAppWeb.Plugs.OptionalAuth do
   import Plug.Conn
 
@@ -1796,7 +1677,6 @@ defmodule MyAppWeb.Plugs.OptionalAuth do
   end
 end
 
-# Usage in router
 defmodule MyAppWeb.Router do
   use MyAppWeb, :router
 
@@ -1833,7 +1713,6 @@ defmodule MyAppWeb.Router do
   end
 end
 
-# Token verification module
 defmodule MyApp.Auth do
   @secret "your-secret-key"
 
@@ -1969,7 +1848,6 @@ end
 **Solution**:
 
 ```elixir
-# lib/my_app_web/channels/room_channel.ex
 defmodule MyAppWeb.RoomChannel do
   use MyAppWeb, :channel
   require Logger
@@ -2070,7 +1948,6 @@ defmodule MyAppWeb.RoomChannel do
   defp generate_id, do: :crypto.strong_rand_bytes(16) |> Base.encode16()
 end
 
-# lib/my_app_web/channels/user_socket.ex
 defmodule MyAppWeb.UserSocket do
   use Phoenix.Socket
 
@@ -2099,36 +1976,12 @@ defmodule MyAppWeb.UserSocket do
   end
 end
 
-# Client-side JavaScript
-# assets/js/socket.js
-# import {Socket} from "phoenix"
 #
-# let socket = new Socket("/socket", {params: {token: window.userToken}})
-# socket.connect()
 #
-# let channel = socket.channel("room:lobby", {})
-# channel.join()
-#   .receive("ok", resp => { console.log("Joined successfully", resp) })
-#   .receive("error", resp => { console.log("Unable to join", resp) })
 #
-# channel.on("new_message", msg => {
-#   console.log("New message:", msg)
-#   renderMessage(msg)
-# })
 #
-# channel.on("user_typing", data => {
-#   showTypingIndicator(data.user_id)
-# })
 #
-# // Send message
-# channel.push("new_message", {body: "Hello!"})
-#   .receive("ok", msg => console.log("Message sent", msg))
-#   .receive("error", reasons => console.log("Failed", reasons))
 #
-# // Typing indicator
-# input.addEventListener("input", () => {
-#   channel.push("typing", {typing: true})
-# })
 ```
 
 **How It Works**: Phoenix Channels provide WebSocket abstraction. `join/3` authorizes connection. `handle_in/3` processes incoming messages. `broadcast!/3` sends to all subscribers. `push/3` sends to specific client. Socket maintains user state.
@@ -2146,7 +1999,6 @@ end
 **Solution**:
 
 ```elixir
-# lib/my_app_web/controllers/session_controller.ex
 defmodule MyAppWeb.SessionController do
   use MyAppWeb, :controller
   alias MyApp.Accounts
@@ -2179,7 +2031,6 @@ defmodule MyAppWeb.SessionController do
   end
 end
 
-# lib/my_app/accounts.ex
 defmodule MyApp.Accounts do
   import Ecto.Query
   alias MyApp.Repo
@@ -2210,7 +2061,6 @@ defmodule MyApp.Accounts do
   end
 end
 
-# lib/my_app/accounts/user.ex
 defmodule MyApp.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
@@ -2264,7 +2114,6 @@ defmodule MyApp.Accounts.User do
   end
 end
 
-# lib/my_app_web/plugs/require_auth.ex
 defmodule MyAppWeb.Plugs.RequireAuth do
   import Plug.Conn
   import Phoenix.Controller
@@ -2287,17 +2136,7 @@ defmodule MyAppWeb.Plugs.RequireAuth do
   end
 end
 
-# Usage in router
-# lib/my_app_web/router.ex
-# pipeline :auth do
-#   plug MyAppWeb.Plugs.RequireAuth
-# end
 #
-# scope "/", MyAppWeb do
-#   pipe_through [:browser, :auth]
-#   get "/dashboard", DashboardController, :index
-#   get "/profile", ProfileController, :show
-# end
 ```
 
 **How It Works**: `put_session/3` stores user ID in encrypted cookie. `configure_session(renew: true)` prevents session fixation. Bcrypt hashes passwords with salt. Plug checks session on each request. `halt/1` stops pipeline on auth failure.
@@ -2392,7 +2231,6 @@ defmodule MyAppWeb.DashboardLive do
   end
 end
 
-# Background worker broadcasting updates
 defmodule MyApp.MetricsCollector do
   use GenServer
 
@@ -2500,26 +2338,18 @@ defmodule MyApp.Queries.UserQueries do
   end
 end
 
-# Usage
 import Ecto.Query
 alias MyApp.Repo
 
-# Users who have published posts
 users = MyApp.Queries.UserQueries.users_with_posts() |> Repo.all()
 
-# All users with post count
 results = MyApp.Queries.UserQueries.all_users_with_post_count() |> Repo.all()
-# => [{%User{...}, 5}, {%User{...}, 0}, ...]
 
-# Posts with full associations
 posts = MyApp.Queries.UserQueries.posts_with_author_and_comments() |> Repo.all()
 
-# Users active in last 7 days
 active_users = MyApp.Queries.UserQueries.users_with_recent_posts(7) |> Repo.all()
 
-# Statistics
 stats = MyApp.Queries.UserQueries.user_post_statistics() |> Repo.all()
-# => [%{user_id: 1, name: "Alice", post_count: 5, comment_count: 12}, ...]
 ```
 
 **How It Works**: `join` combines tables. `assoc` uses schema associations. `preload` loads related data. `group_by` and aggregate functions for statistics.
@@ -2647,7 +2477,6 @@ defmodule MyApp.Orders do
   end
 end
 
-# Usage
 user = Repo.get!(User, 1)
 cart_items = [
   %{product_id: 1, price: 10.00, quantity: 2},
@@ -2731,7 +2560,6 @@ defmodule MyApp.CacheTest do
   end
 end
 
-# Testing async operations
 defmodule MyApp.AsyncWorkerTest do
   use ExUnit.Case, async: true
   alias MyApp.AsyncWorker
@@ -2776,13 +2604,11 @@ end
 **Solution**:
 
 ```elixir
-# Define behavior
 defmodule MyApp.EmailService do
   @callback send_email(to :: String.t(), subject :: String.t(), body :: String.t()) ::
               {:ok, term()} | {:error, term()}
 end
 
-# Real implementation
 defmodule MyApp.EmailService.SMTP do
   @behaviour MyApp.EmailService
 
@@ -2793,7 +2619,6 @@ defmodule MyApp.EmailService.SMTP do
   end
 end
 
-# Mock implementation
 defmodule MyApp.EmailService.Mock do
   @behaviour MyApp.EmailService
 
@@ -2805,7 +2630,6 @@ defmodule MyApp.EmailService.Mock do
   end
 end
 
-# Module using email service
 defmodule MyApp.UserNotifier do
   def notify_welcome(user) do
     email_service().send_email(
@@ -2820,7 +2644,6 @@ defmodule MyApp.UserNotifier do
   end
 end
 
-# Test
 defmodule MyApp.UserNotifierTest do
   use ExUnit.Case
 
@@ -2843,7 +2666,6 @@ defmodule MyApp.UserNotifierTest do
   end
 end
 
-# Using Mox library (recommended)
 defmodule MyApp.EmailServiceTest do
   use ExUnit.Case, async: true
   import Mox
@@ -2939,30 +2761,22 @@ defmodule MyApp.Performance do
   end
 end
 
-# Usage
-# Simple benchmark
 MyApp.Performance.benchmark("List processing", fn ->
   Enum.map(1..10_000, &(&1 * 2))
 end)
-# => List processing: 2.5 ms
 
-# Compare implementations
 MyApp.Performance.compare_implementations()
-# Outputs detailed benchmark comparison
 
-# Profile function
 MyApp.Performance.profile_function(fn ->
   # Your expensive operation
   expensive_operation()
 end)
 
-# Measure memory
 MyApp.Performance.measure_memory(fn ->
   # Operation that allocates memory
   large_list = Enum.map(1..1_000_000, &(&1 * 2))
 end)
 
-# Using ExProf (wrapper around :fprof)
 defmodule MyApp.Expensive do
   import ExProf.Macro
 
@@ -3113,7 +2927,6 @@ end
 **Solution**:
 
 ```elixir
-# config/config.exs (base configuration)
 import Config
 
 config :my_app,
@@ -3124,10 +2937,8 @@ config :my_app, MyApp.Repo,
   hostname: "localhost",
   pool_size: 10
 
-# Import environment-specific config
 import_config "#{config_env()}.exs"
 
-# config/dev.exs
 import Config
 
 config :my_app, MyApp.Repo,
@@ -3141,7 +2952,6 @@ config :my_app, MyAppWeb.Endpoint,
   debug_errors: true,
   code_reloader: true
 
-# config/test.exs
 import Config
 
 config :my_app, MyApp.Repo,
@@ -3154,10 +2964,8 @@ config :my_app, MyAppWeb.Endpoint,
   http: [port: 4002],
   server: false
 
-# config/prod.exs
 import Config
 
-# Runtime configuration (config/runtime.exs)
 import Config
 
 if config_env() == :prod do
@@ -3185,7 +2993,6 @@ if config_env() == :prod do
     server: true
 end
 
-# Accessing configuration in code
 defmodule MyApp.Config do
   def database_url do
     Application.get_env(:my_app, MyApp.Repo)[:url]
@@ -3201,15 +3008,11 @@ defmodule MyApp.Config do
   end
 end
 
-# Usage
 MyApp.Config.database_url()
-# => "ecto://user:pass@localhost/my_app_dev"
 
 MyApp.Config.pool_size()
-# => 10
 
 MyApp.Config.feature_enabled?(:new_dashboard)
-# => false
 ```
 
 **How It Works**: `config.exs` loads base config. Environment-specific files override. `runtime.exs` loads after compilation (for env vars). `Application.get_env/3` retrieves config.
@@ -3315,24 +3118,10 @@ defmodule MyApp.Debugging do
   defp perform_action(_user, _action), do: {:ok, "result"}
 end
 
-# Usage in IEx
-# iex> MyApp.Debugging.debug_with_pry(%{id: 1})
 # # Execution pauses, you can inspect variables:
-# iex(1)> transformed
-# iex(1)> self()
 
-# Using Observer
-# iex> MyApp.Debugging.start_observer()
-# Opens GUI showing processes, memory, applications
 
-# Production debugging with Logger
-# Configure in config/prod.exs:
-# config :logger, :console,
-#   format: "$time $metadata[$level] $message\n",
-#   metadata: [:request_id, :user_id]
 
-# Set log level
-# config :logger, level: :info  # :debug, :info, :warn, :error
 ```
 
 **How It Works**: `IO.inspect/2` shows values without breaking flow. `IEx.pry/0` pauses execution for inspection. Logger records events. `dbg/1` traces pipe operations. Observer visualizes runtime state.
@@ -3530,18 +3319,13 @@ defmodule MyApp.JobQueue do
   end
 end
 
-# Usage
 MyApp.JobQueue.start_link()
 
 {:ok, job_id} = MyApp.JobQueue.enqueue(:send_email, %{to: "user@example.com", subject: "Welcome"})
-# => {:ok, "A1B2C3D4E5F6G7H8"}
 
 MyApp.JobQueue.get_status(job_id)
-# => {:processing, %{id: "A1B2C3...", type: :send_email, ...}}
 
-# After job completes
 MyApp.JobQueue.get_status(job_id)
-# => {:completed, %{id: "A1B2C3...", result: {:ok, "Email sent..."}, ...}}
 ```
 
 **How It Works**: GenServer maintains queue of pending jobs. `:process_jobs` message triggers batch processing. `max_concurrent` limits parallel jobs. Task spawns worker process for each job. Worker sends completion/failure message back to GenServer.
@@ -3559,10 +3343,7 @@ MyApp.JobQueue.get_status(job_id)
 **Solution**:
 
 ```elixir
-# Generate migration
-# mix ecto.gen.migration create_users_table
 
-# priv/repo/migrations/20241221_create_users_table.exs
 defmodule MyApp.Repo.Migrations.CreateUsersTable do
   use Ecto.Migration
 
@@ -3584,8 +3365,6 @@ defmodule MyApp.Repo.Migrations.CreateUsersTable do
   end
 end
 
-# Add column migration
-# mix ecto.gen.migration add_confirmed_at_to_users
 
 defmodule MyApp.Repo.Migrations.AddConfirmedAtToUsers do
   use Ecto.Migration
@@ -3599,8 +3378,6 @@ defmodule MyApp.Repo.Migrations.AddConfirmedAtToUsers do
   end
 end
 
-# Data migration (separate from schema changes)
-# mix ecto.gen.migration migrate_user_roles
 
 defmodule MyApp.Repo.Migrations.MigrateUserRoles do
   use Ecto.Migration
@@ -3632,7 +3409,6 @@ defmodule MyApp.Repo.Migrations.MigrateUserRoles do
   end
 end
 
-# Complex migration with multiple operations
 defmodule MyApp.Repo.Migrations.RefactorUserProfiles do
   use Ecto.Migration
 
@@ -3682,13 +3458,6 @@ defmodule MyApp.Repo.Migrations.RefactorUserProfiles do
   end
 end
 
-# Migration commands:
-# mix ecto.create          # Create database
-# mix ecto.migrate          # Run pending migrations
-# mix ecto.rollback         # Rollback last migration
-# mix ecto.rollback --step 3  # Rollback 3 migrations
-# mix ecto.reset            # Drop, create, migrate
-# mix ecto.migrations       # List migration status
 ```
 
 **How It Works**: `change/0` defines reversible migrations. `up/0` and `down/0` for custom logic. `execute/1` runs raw SQL. `repo().update_all/2` for data migrations. Migrations run in transaction by default (except for some DDL operations).
@@ -3706,8 +3475,6 @@ end
 **Solution**:
 
 ```elixir
-# Strategy 1: URL Path Versioning
-# lib/my_app_web/router.ex
 defmodule MyAppWeb.Router do
   use MyAppWeb, :router
 
@@ -3732,7 +3499,6 @@ defmodule MyAppWeb.Router do
   end
 end
 
-# lib/my_app_web/controllers/v1/user_controller.ex
 defmodule MyAppWeb.V1.UserController do
   use MyAppWeb, :controller
 
@@ -3747,7 +3513,6 @@ defmodule MyAppWeb.V1.UserController do
   end
 end
 
-# lib/my_app_web/views/v1/user_view.ex
 defmodule MyAppWeb.V1.UserView do
   use MyAppWeb, :view
 
@@ -3768,7 +3533,6 @@ defmodule MyAppWeb.V1.UserView do
   end
 end
 
-# lib/my_app_web/controllers/v2/user_controller.ex (updated structure)
 defmodule MyAppWeb.V2.UserController do
   use MyAppWeb, :controller
 
@@ -3783,7 +3547,6 @@ defmodule MyAppWeb.V2.UserController do
   end
 end
 
-# lib/my_app_web/views/v2/user_view.ex (enhanced response)
 defmodule MyAppWeb.V2.UserView do
   use MyAppWeb, :view
 
@@ -3810,7 +3573,6 @@ defmodule MyAppWeb.V2.UserView do
   end
 end
 
-# Strategy 2: Header Versioning
 defmodule MyAppWeb.Plugs.APIVersion do
   import Plug.Conn
 
@@ -3829,7 +3591,6 @@ defmodule MyAppWeb.Plugs.APIVersion do
   defp parse_version(_), do: :v2  # Default to latest
 end
 
-# lib/my_app_web/controllers/user_controller.ex (version-aware)
 defmodule MyAppWeb.UserController do
   use MyAppWeb, :controller
 
@@ -3852,7 +3613,6 @@ defmodule MyAppWeb.UserController do
   end
 end
 
-# Strategy 3: Shared Code with Version-Specific Overrides
 defmodule MyAppWeb.Shared.UserController do
   # Common functionality
   def get_user(id) do
@@ -3897,7 +3657,6 @@ end
 **Solution**:
 
 ```elixir
-# Token Bucket Algorithm with ETS
 defmodule MyApp.RateLimiter do
   use GenServer
 
@@ -3980,7 +3739,6 @@ defmodule MyApp.RateLimiter do
   end
 end
 
-# Plug for rate limiting
 defmodule MyAppWeb.Plugs.RateLimit do
   import Plug.Conn
   import Phoenix.Controller
@@ -4023,7 +3781,6 @@ defmodule MyAppWeb.Plugs.RateLimit do
   end
 end
 
-# Sliding Window Algorithm (more accurate)
 defmodule MyApp.SlidingWindowRateLimiter do
   @window_size 60_000  # 60 seconds
   @max_requests 100
@@ -4057,17 +3814,7 @@ defmodule MyApp.SlidingWindowRateLimiter do
   end
 end
 
-# Usage in router
-# lib/my_app_web/router.ex
-# pipeline :api do
-#   plug :accepts, ["json"]
-#   plug MyAppWeb.Plugs.RateLimit, max_requests: 100, interval_seconds: 60
-# end
 #
-# scope "/api", MyAppWeb do
-#   pipe_through :api
-#   resources "/users", UserController
-# end
 ```
 
 **How It Works**: Token bucket algorithm grants tokens at fixed rate. Each request consumes tokens. ETS stores per-user buckets. Refill process adds tokens periodically. Plug checks rate before controller execution. Returns 429 status when limit exceeded.
@@ -4085,26 +3832,16 @@ end
 **Solution**:
 
 ```elixir
-# Install gettext (already in Phoenix by default)
-# mix.exs
-# {:gettext, "~> 0.20"}
 
-# Configure locales
-# config/config.exs
 config :my_app, MyAppWeb.Gettext,
   default_locale: "en",
   locales: ~w(en id es fr)
 
-# Generate translation files
-# mix gettext.extract
-# mix gettext.merge priv/gettext
 
-# lib/my_app_web/gettext.ex
 defmodule MyAppWeb.Gettext do
   use Gettext, otp_app: :my_app
 end
 
-# Plug to set locale from params/headers/session
 defmodule MyAppWeb.Plugs.SetLocale do
   import Plug.Conn
 
@@ -4162,8 +3899,6 @@ defmodule MyAppWeb.Plugs.SetLocale do
   end
 end
 
-# Translation files
-# priv/gettext/en/LC_MESSAGES/default.po
 msgid "Welcome"
 msgstr "Welcome"
 
@@ -4175,7 +3910,6 @@ msgid_plural "You have %{count} unread messages"
 msgstr[0] "You have one unread message"
 msgstr[1] "You have %{count} unread messages"
 
-# priv/gettext/id/LC_MESSAGES/default.po
 msgid "Welcome"
 msgstr "Selamat Datang"
 
@@ -4187,7 +3921,6 @@ msgid_plural "You have %{count} unread messages"
 msgstr[0] "Anda memiliki satu pesan belum dibaca"
 msgstr[1] "Anda memiliki %{count} pesan belum dibaca"
 
-# Usage in controllers
 defmodule MyAppWeb.PageController do
   use MyAppWeb, :controller
   import MyAppWeb.Gettext
@@ -4203,30 +3936,19 @@ defmodule MyAppWeb.PageController do
   end
 end
 
-# Usage in templates
-# lib/my_app_web/templates/page/index.html.heex
-# <div>
-#   <h1><%= gettext("Welcome") %></h1>
-#   <p><%= gettext("Hello %{name}!", name: @current_user.name) %></p>
-#   <%= ngettext("You have %{count} unread message", "You have %{count} unread messages", @unread_count) %>
-# </div>
 
-# Domain-specific translations
-# priv/gettext/en/LC_MESSAGES/errors.po
 msgid "Invalid email"
 msgstr "Invalid email address"
 
 msgid "Password too short"
 msgstr "Password must be at least 8 characters"
 
-# priv/gettext/id/LC_MESSAGES/errors.po
 msgid "Invalid email"
 msgstr "Alamat email tidak valid"
 
 msgid "Password too short"
 msgstr "Kata sandi harus minimal 8 karakter"
 
-# Usage in changesets
 defmodule MyApp.Accounts.User do
   import MyAppWeb.Gettext
 
@@ -4255,7 +3977,6 @@ end
 **Solution**:
 
 ```elixir
-# lib/my_app_web/controllers/upload_controller.ex
 defmodule MyAppWeb.UploadController do
   use MyAppWeb, :controller
   require Logger
@@ -4352,7 +4073,6 @@ defmodule MyAppWeb.UploadController do
   end
 end
 
-# lib/my_app_web/live/upload_live.ex (LiveView with progress)
 defmodule MyAppWeb.UploadLive do
   use MyAppWeb, :live_view
 
@@ -4427,7 +4147,6 @@ defmodule MyAppWeb.UploadLive do
   defp error_to_string(:too_many_files), do: "Too many files"
 end
 
-# lib/my_app_web/templates/upload/new.html.heex (traditional upload)
 <div>
   <h1>Upload File</h1>
 
@@ -4442,7 +4161,6 @@ end
   <% end %>
 </div>
 
-# lib/my_app/accounts/user.ex (with avatar)
 defmodule MyApp.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
@@ -4482,7 +4200,6 @@ end
 **Solution**:
 
 ```elixir
-# mix.exs
 defp deps do
   [
     {:swoosh, "~> 1.11"},
@@ -4491,7 +4208,6 @@ defp deps do
   ]
 end
 
-# config/config.exs
 config :my_app, MyApp.Mailer,
   adapter: Swoosh.Adapters.SMTP,
   relay: "smtp.gmail.com",
@@ -4501,19 +4217,16 @@ config :my_app, MyApp.Mailer,
   tls: :always,
   auth: :always
 
-# For development (preview emails in browser)
 config :swoosh, :api_client, Swoosh.ApiClient.Finch
 
 if Mix.env() == :dev do
   config :my_app, MyApp.Mailer, adapter: Swoosh.Adapters.Local
 end
 
-# lib/my_app/mailer.ex
 defmodule MyApp.Mailer do
   use Swoosh.Mailer, otp_app: :my_app
 end
 
-# lib/my_app/emails/user_email.ex
 defmodule MyApp.Emails.UserEmail do
   import Swoosh.Email
 
@@ -4570,7 +4283,6 @@ defmodule MyApp.Emails.UserEmail do
   end
 end
 
-# Sending emails
 defmodule MyApp.Accounts do
   alias MyApp.Mailer
   alias MyApp.Emails.UserEmail
@@ -4608,7 +4320,6 @@ defmodule MyApp.Accounts do
   defp generate_reset_token(_user), do: "token123"
 end
 
-# Background email delivery with Oban
 defmodule MyApp.Workers.EmailWorker do
   use Oban.Worker, queue: :emails, max_attempts: 3
 
@@ -4634,12 +4345,10 @@ defmodule MyApp.Workers.EmailWorker do
   end
 end
 
-# Enqueue background email
 %{email_type: "welcome", user_id: user.id}
 |> MyApp.Workers.EmailWorker.new()
 |> Oban.insert()
 
-# Testing emails
 defmodule MyApp.Emails.UserEmailTest do
   use ExUnit.Case, async: true
   import Swoosh.TestAssertions
@@ -4683,7 +4392,6 @@ end
 **Solution**:
 
 ```elixir
-# mix.exs
 defp deps do
   [
     {:quantum, "~> 3.5"},
@@ -4691,7 +4399,6 @@ defp deps do
   ]
 end
 
-# config/config.exs
 config :my_app, MyApp.Scheduler,
   jobs: [
     # Every minute
@@ -4704,12 +4411,10 @@ config :my_app, MyApp.Scheduler,
     {"*/15 * * * *", {MyApp.Tasks, :check_health, []}},
   ]
 
-# lib/my_app/scheduler.ex
 defmodule MyApp.Scheduler do
   use Quantum, otp_app: :my_app
 end
 
-# lib/my_app/tasks.ex
 defmodule MyApp.Tasks do
   require Logger
 
@@ -4790,7 +4495,6 @@ defmodule MyApp.Tasks do
   defp alert_ops_team(_failures), do: :ok
 end
 
-# Dynamic job management
 defmodule MyApp.JobManager do
   alias MyApp.Scheduler
 
@@ -4819,36 +4523,20 @@ defmodule MyApp.JobManager do
   end
 end
 
-# Usage in IEx or controller
-# Add job dynamically
 MyApp.JobManager.add_job(
   :custom_task,
   "0 3 * * *",  # Every day at 3 AM
   fn -> IO.puts("Custom task running") end
 )
 
-# List all jobs
 MyApp.JobManager.list_jobs()
-# => [%Quantum.Job{name: :cleanup_old_sessions, ...}, ...]
 
-# Pause job
 MyApp.JobManager.pause_job(:cleanup_old_sessions)
 
-# Resume job
 MyApp.JobManager.resume_job(:cleanup_old_sessions)
 
-# Remove job
 MyApp.JobManager.remove_job(:custom_task)
 
-# Cron schedule examples
-# "* * * * *"        - Every minute
-# "0 * * * *"        - Every hour
-# "0 */2 * * *"      - Every 2 hours
-# "0 0 * * *"        - Every day at midnight
-# "0 0 * * 0"        - Every Sunday at midnight
-# "0 0 1 * *"        - First day of month at midnight
-# "0 9-17 * * 1-5"   - Weekdays 9 AM to 5 PM
-# "*/15 9-17 * * 1-5" - Every 15 min, weekdays, 9 AM-5 PM
 ```
 
 **How It Works**: Quantum schedules tasks using cron syntax. Jobs run in separate processes. `Quantum.Job` defines task configuration. Dynamic job management allows runtime scheduling. Tasks should be idempotent (safe to retry).
@@ -4866,7 +4554,6 @@ MyApp.JobManager.remove_job(:custom_task)
 **Solution**:
 
 ```elixir
-# mix.exs
 defp deps do
   [
     {:absinthe, "~> 1.7"},
@@ -4875,7 +4562,6 @@ defp deps do
   ]
 end
 
-# lib/my_app_web/schema.ex
 defmodule MyAppWeb.Schema do
   use Absinthe.Schema
   import Absinthe.Resolution.Helpers
@@ -4994,7 +4680,6 @@ defmodule MyAppWeb.Schema do
   end
 end
 
-# lib/my_app_web/resolvers/accounts.ex
 defmodule MyAppWeb.Resolvers.Accounts do
   alias MyApp.Accounts
 
@@ -5029,7 +4714,6 @@ defmodule MyAppWeb.Resolvers.Accounts do
   end
 end
 
-# lib/my_app_web/middleware/authenticate.ex
 defmodule MyAppWeb.Middleware.Authenticate do
   @behaviour Absinthe.Middleware
 
@@ -5045,7 +4729,6 @@ defmodule MyAppWeb.Middleware.Authenticate do
   end
 end
 
-# lib/my_app_web/router.ex (add GraphQL endpoints)
 scope "/api" do
   pipe_through :api
 
@@ -5059,38 +4742,8 @@ scope "/api" do
   end
 end
 
-# Example GraphQL queries
-# query GetUser {
-#   user(id: "1") {
-#     id
-#     email
-#     name
-#     posts {
-#       id
-#       title
-#     }
-#   }
-# }
 
-# mutation CreatePost {
-#   createPost(input: {title: "Hello", body: "World"}) {
-#     id
-#     title
-#     author {
-#       name
-#     }
-#   }
-# }
 
-# subscription PostCreated {
-#   postCreated {
-#     id
-#     title
-#     author {
-#       name
-#     }
-#   }
-# }
 ```
 
 **How It Works**: Absinthe provides GraphQL implementation. Schema defines types, queries, mutations, subscriptions. Resolvers fetch data. Dataloader prevents N+1 queries. Middleware handles authentication. Subscriptions enable real-time updates via Phoenix Channels.
@@ -5108,12 +4761,10 @@ end
 **Solution**:
 
 ```elixir
-# Using behavior-based dependency injection
 defmodule MyApp.EmailService do
   @callback send_email(recipient :: String.t(), subject :: String.t(), body :: String.t()) :: :ok | {:error, term()}
 end
 
-# Production implementation
 defmodule MyApp.EmailService.Swoosh do
   @behaviour MyApp.EmailService
 
@@ -5131,7 +4782,6 @@ defmodule MyApp.EmailService.Swoosh do
   end
 end
 
-# Test implementation (mock)
 defmodule MyApp.EmailService.Mock do
   @behaviour MyApp.EmailService
 
@@ -5151,14 +4801,10 @@ defmodule MyApp.EmailService.Mock do
   end
 end
 
-# Configuration-based dependency injection
-# config/config.exs
 config :my_app, :email_service, MyApp.EmailService.Swoosh
 
-# config/test.exs
 config :my_app, :email_service, MyApp.EmailService.Mock
 
-# Usage in application code
 defmodule MyApp.Accounts do
   def email_service do
     Application.get_env(:my_app, :email_service)
@@ -5180,7 +4826,6 @@ defmodule MyApp.Accounts do
   defp create_user(_attrs), do: {:ok, %{email: "user@example.com"}}
 end
 
-# Test
 defmodule MyApp.AccountsTest do
   use ExUnit.Case, async: true
   alias MyApp.EmailService.Mock
@@ -5199,17 +4844,11 @@ defmodule MyApp.AccountsTest do
   end
 end
 
-# Using Mox for more sophisticated mocking
-# mix.exs
-# {:mox, "~> 1.0", only: :test}
 
-# test/support/mocks.ex
 Mox.defmock(MyApp.EmailServiceMock, for: MyApp.EmailService)
 
-# config/test.exs
 config :my_app, :email_service, MyApp.EmailServiceMock
 
-# Test with Mox
 defmodule MyApp.AccountsTest do
   use ExUnit.Case, async: true
   import Mox
@@ -5239,7 +4878,6 @@ defmodule MyApp.AccountsTest do
   end
 end
 
-# GenServer with dependency injection
 defmodule MyApp.UserCache do
   use GenServer
 
@@ -5278,7 +4916,6 @@ defmodule MyApp.UserCache do
   defp cache_put(:ets, _id, _user), do: :ok
 end
 
-# Test with mock dependencies
 test "UserCache fetches from repo on cache miss" do
   # Create mock implementations
   mock_repo = fn ->
@@ -5315,14 +4952,12 @@ end
 **Solution**:
 
 ```elixir
-# mix.exs
 defp deps do
   [
     {:libcluster, "~> 3.3"}
   ]
 end
 
-# config/config.exs (for development - Gossip strategy)
 config :libcluster,
   topologies: [
     local: [
@@ -5337,7 +4972,6 @@ config :libcluster,
     ]
   ]
 
-# config/prod.exs (for production - Kubernetes strategy)
 config :libcluster,
   topologies: [
     k8s: [
@@ -5352,7 +4986,6 @@ config :libcluster,
     ]
   ]
 
-# lib/my_app/application.ex
 defmodule MyApp.Application do
   use Application
 
@@ -5380,7 +5013,6 @@ defmodule MyApp.Application do
   end
 end
 
-# Distributed GenServer example
 defmodule MyApp.DistributedCache do
   use GenServer
 
@@ -5419,7 +5051,6 @@ defmodule MyApp.DistributedCache do
   end
 end
 
-# Distributed task execution
 defmodule MyApp.DistributedTasks do
   # Execute function on all nodes
   def run_on_all_nodes(func) do
@@ -5457,7 +5088,6 @@ defmodule MyApp.DistributedTasks do
   end
 end
 
-# Distributed PubSub with Phoenix.PubSub
 defmodule MyApp.Events do
   def broadcast(topic, message) do
     Phoenix.PubSub.broadcast(MyApp.PubSub, topic, message)
@@ -5481,7 +5111,6 @@ defmodule MyApp.Events do
   end
 end
 
-# Using Horde for distributed process management
 defmodule MyApp.HordeWorker do
   use GenServer
 
@@ -5507,7 +5136,6 @@ defmodule MyApp.HordeWorker do
   end
 end
 
-# Node connection utilities
 defmodule MyApp.ClusterUtils do
   def list_nodes do
     Node.list()
@@ -5547,34 +5175,18 @@ defmodule MyApp.ClusterUtils do
   end
 end
 
-# Running distributed application
-# Start multiple nodes:
-# iex --name node1@127.0.0.1 --cookie secret -S mix
-# iex --name node2@127.0.0.1 --cookie secret -S mix
-# iex --name node3@127.0.0.1 --cookie secret -S mix
 
-# Check cluster status
 MyApp.ClusterUtils.list_nodes()
-# => [:node2@127.0.0.1, :node3@127.0.0.1]
 
 MyApp.ClusterUtils.cluster_size()
-# => 3
 
-# Run task on all nodes
 MyApp.DistributedTasks.run_on_all_nodes(fn ->
   IO.puts("Running on #{Node.self()}")
 end)
 
-# Broadcast event to cluster
 MyApp.Events.broadcast_to_cluster(:deployment, %{version: "1.0.0"})
 
-# Get cluster statistics
 MyApp.ClusterUtils.cluster_stats()
-# => [
-#   %{node: :node1@127.0.0.1, uptime_ms: 120000, memory: [...], process_count: 245},
-#   %{node: :node2@127.0.0.1, uptime_ms: 118000, memory: [...], process_count: 238},
-#   %{node: :node3@127.0.0.1, uptime_ms: 115000, memory: [...], process_count: 241}
-# ]
 ```
 
 **How It Works**: libcluster automatically discovers and connects nodes using various strategies (Gossip, Kubernetes, DNS, static). Horde provides distributed process registry and supervision. Global registry ensures single process instance across cluster. Phoenix.PubSub broadcasts messages to all nodes. RPC executes functions on remote nodes.

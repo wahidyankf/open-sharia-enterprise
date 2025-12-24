@@ -1128,19 +1128,14 @@ func main() {
 Production applications use modules for dependency management:
 
 ```bash
-# Initialize a module
 go mod init github.com/username/myapp
 
-# Add dependencies
 go get github.com/some/package@v1.2.3
 
-# Update dependencies
 go get -u ./...
 
-# Clean up unused dependencies
 go mod tidy
 
-# Verify dependencies
 go mod verify
 ```
 
@@ -1192,10 +1187,8 @@ This allows local development of interdependent modules without publishing to a 
 Concurrency bugs are hard to find. Go's race detector helps:
 
 ```bash
-# Run tests with race detector
 go test -race ./...
 
-# Run application with race detector
 go run -race main.go
 ```
 

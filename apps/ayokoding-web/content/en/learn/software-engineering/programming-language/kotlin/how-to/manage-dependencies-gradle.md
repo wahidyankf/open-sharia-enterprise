@@ -101,7 +101,6 @@ dependencies {
 Centralize dependency versions.
 
 ```toml
-# ✅ gradle/libs.versions.toml
 [versions]
 kotlin = "2.3.0"
 ktor = "2.3.7"

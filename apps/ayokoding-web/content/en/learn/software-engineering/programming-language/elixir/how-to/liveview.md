@@ -76,7 +76,6 @@ end
 Route configuration:
 
 ```elixir
-# lib/my_app_web/router.ex
 scope "/", MyAppWeb do
   pipe_through :browser
 
@@ -558,7 +557,6 @@ def on_mount(:ensure_authenticated, _params, session, socket) do
   end
 end
 
-# In router
 live_session :authenticated, on_mount: MyAppWeb.Hooks.EnsureAuthenticated do
   live "/dashboard", DashboardLive
 end
@@ -606,7 +604,6 @@ end
 ### WebSocket Disconnects
 
 ```elixir
-# Increase timeout
 config :phoenix, :live_view,
   signing_salt: "...",
   timeout: 60_000  # 60 seconds
@@ -615,7 +612,6 @@ config :phoenix, :live_view,
 ### Memory Leaks
 
 ```elixir
-# Clean up on terminate
 def terminate(_reason, socket) do
   Phoenix.PubSub.unsubscribe(MyApp.PubSub, "topic")
   :ok
@@ -625,10 +621,8 @@ end
 ### Slow Updates
 
 ```elixir
-# Use streams for large lists
 stream(:items, items)
 
-# Debounce rapid events
 handle_event with timers
 ```
 

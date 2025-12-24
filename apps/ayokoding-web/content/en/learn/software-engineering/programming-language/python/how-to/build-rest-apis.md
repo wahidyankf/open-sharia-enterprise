@@ -25,7 +25,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Pydantic models for validation
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
@@ -40,7 +39,6 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True  # Enable ORM mode
 
-# In-memory storage (use database in production)
 users_db = {}
 user_id_counter = 1
 
@@ -112,12 +110,10 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from typing import AsyncGenerator
 
-# Database setup
 DATABASE_URL = "postgresql+asyncpg://user:password@localhost/dbname"
 engine = create_async_engine(DATABASE_URL, echo=True)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
-# Dependency for database sessions
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Provide database session for request."""
     async with AsyncSessionLocal() as session:
@@ -128,7 +124,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             await session.rollback()
             raise
 
-# Use dependency in endpoints
 @app.post("/users", response_model=UserResponse)
 async def create_user(
     user: UserCreate,
@@ -165,7 +160,6 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 
-# Security configuration
 SECRET_KEY = "your-secret-key-keep-it-secret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -173,7 +167,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
-# Token models
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -181,21 +174,18 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
 
-# Password hashing
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
-# JWT token creation
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# Authentication dependency
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: AsyncSession = Depends(get_db)
@@ -227,7 +217,6 @@ async def get_current_user(
 
     return user
 
-# Login endpoint
 @app.post("/auth/login", response_model=Token)
 async def login(
     username: str,
@@ -254,7 +243,6 @@ async def login(
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-# Protected endpoint
 @app.get("/users/me", response_model=UserResponse)
 async def read_users_me(current_user: User = Depends(get_current_user)):
     """Get current authenticated user."""
@@ -269,7 +257,6 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from pydantic import validator
 
-# Custom validation in Pydantic models
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
@@ -289,7 +276,6 @@ class UserCreate(BaseModel):
             raise ValueError('Password must contain at least one uppercase letter')
         return v
 
-# Global exception handlers
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Handle validation errors with custom response."""
@@ -320,25 +306,21 @@ async def general_exception_handler(request: Request, exc: Exception):
 ```python
 from fastapi import APIRouter
 
-# API v1
 router_v1 = APIRouter(prefix="/api/v1", tags=["v1"])
 
 @router_v1.get("/users")
 async def list_users_v1():
     return {"version": "1.0", "users": []}
 
-# API v2 with breaking changes
 router_v2 = APIRouter(prefix="/api/v2", tags=["v2"])
 
 @router_v2.get("/users")
 async def list_users_v2(include_inactive: bool = False):
     return {"version": "2.0", "users": [], "includes_inactive": include_inactive}
 
-# Include routers in app
 app.include_router(router_v1)
 app.include_router(router_v2)
 
-# Customize OpenAPI documentation
 from fastapi.openapi.utils import get_openapi
 
 def custom_openapi():
@@ -371,7 +353,6 @@ from fastapi import BackgroundTasks
 import smtplib
 from email.message import EmailMessage
 
-# Background task function
 def send_email(email: str, message: str):
     """Send email in background."""
     msg = EmailMessage()
@@ -476,7 +457,6 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         return response
 
-# Add middleware
 app.add_middleware(RateLimitMiddleware, requests_per_minute=100)
 ```
 
@@ -526,19 +506,16 @@ async def upload_file(file: UploadFile = File(...)):
 **Problem**: Blocking calls freeze the event loop.
 
 ```python
-# ❌ Bad: Blocking I/O in async handler
 @app.get("/slow")
 async def slow_endpoint():
     time.sleep(5)  # Blocks event loop!
     return {"status": "done"}
 
-# ✅ Good: Use async sleep
 @app.get("/fast")
 async def fast_endpoint():
     await asyncio.sleep(5)  # Non-blocking
     return {"status": "done"}
 
-# ✅ Better: Run blocking code in executor
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
 
@@ -556,12 +533,10 @@ async def blocking_endpoint():
 **Problem**: Returning data that doesn't match schema.
 
 ```python
-# ❌ Bad: No response validation
 @app.get("/users/{user_id}")
 async def get_user(user_id: int):
     return users_db.get(user_id)  # Could return None!
 
-# ✅ Good: Use response_model
 @app.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int):
     user = users_db.get(user_id)
@@ -575,7 +550,6 @@ async def get_user(user_id: int):
 **Problem**: Uncommitted changes or resource leaks.
 
 ```python
-# ❌ Bad: Manual session management
 @app.post("/users")
 async def create_user(user: UserCreate):
     session = AsyncSessionLocal()
@@ -584,7 +558,6 @@ async def create_user(user: UserCreate):
     # Forgot to commit! Changes lost
     return db_user
 
-# ✅ Good: Use dependency with proper lifecycle
 @app.post("/users", response_model=UserResponse)
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
     db_user = User(**user.dict())
@@ -598,12 +571,10 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
 **Problem**: Database models leak implementation details.
 
 ```python
-# ❌ Bad: Return ORM models directly
 @app.get("/users/{user_id}")
 async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
     return await db.get(User, user_id)  # Exposes all fields, relations
 
-# ✅ Good: Use separate response models
 class UserResponse(BaseModel):
     id: int
     username: str
@@ -624,7 +595,6 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
 **Problem**: Vulnerable to common attacks.
 
 ```python
-# ❌ Bad: No input sanitization, hardcoded secrets
 SECRET_KEY = "password123"
 
 @app.get("/search")
@@ -632,7 +602,6 @@ async def search(query: str):
     # SQL injection risk!
     return await db.execute(f"SELECT * FROM users WHERE name = '{query}'")
 
-# ✅ Good: Use parameterized queries, environment variables
 import os
 from sqlalchemy import select
 

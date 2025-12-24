@@ -82,12 +82,10 @@ Elixir 1.19 introduced set-theoretic types for enhanced compile-time checking.
 Set-theoretic types treat types as sets of values:
 
 ```elixir
-# Traditional dynamic typing
 def add(a, b) do
   a + b
 end
 
-# With type annotations (Elixir 1.19+)
 def add(a :: integer(), b :: integer()) :: integer() do
   a + b
 end
@@ -124,14 +122,12 @@ end
 ### Type Checking with Dialyzer
 
 ```elixir
-# mix.exs
 defp deps do
   [
     {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
   ]
 end
 
-# Run type checking
 mix dialyzer
 ```
 
@@ -187,10 +183,8 @@ end
 **Intersection types**:
 
 ```elixir
-# Type that is both a map and has specific keys
 @type user :: %{name: String.t(), age: integer()} & map()
 
-# Function accepts any map with at least these keys
 @spec greet(user()) :: String.t()
 def greet(%{name: name}), do: "Hello, #{name}!"
 ```
@@ -198,7 +192,6 @@ def greet(%{name: name}), do: "Hello, #{name}!"
 **Negation types**:
 
 ```elixir
-# Type that excludes nil
 @type non_nil_string :: String.t() and not nil
 
 @spec upcase(non_nil_string()) :: non_nil_string()
@@ -227,12 +220,10 @@ end
 **Enhanced warnings**:
 
 ```elixir
-# Unused variable warning
 def unused(a, b) do
   a + a  # Warning: variable b is unused
 end
 
-# Unreachable code warning
 def unreachable do
   if true do
     :always_true
@@ -261,7 +252,6 @@ defmodule Container do
   end
 end
 
-# Usage
 Container.new(5) |> Container.map(&(&1 * 2))  # %Container{value: 10}
 ```
 
@@ -282,10 +272,7 @@ defmodule SecureToken do
   end
 end
 
-# Outside module can't inspect token internals
 token = SecureToken.generate()
-# This would be a Dialyzer error:
-# String.length(token)  # t() is opaque, not known to be String.t()
 ```
 
 **Behaviours with typespecs**:
@@ -325,7 +312,6 @@ end
 **Compilation performance** (Elixir 1.19 improvement):
 
 ```elixir
-# Measure compilation time
 time_before = :os.system_time(:millisecond)
 Code.compile_file("lib/my_large_module.ex")
 time_after = :os.system_time(:millisecond)
@@ -343,7 +329,6 @@ IO.puts("Compiled in #{time_after - time_before}ms")
 **Type checking does NOT affect runtime**:
 
 ```elixir
-# Types erased at runtime
 @spec slow_function(integer()) :: integer()
 def slow_function(n) do
   # No runtime overhead from type specs
@@ -382,19 +367,16 @@ end
 **Pragmatic type specs**:
 
 ```elixir
-# Over-specified (too rigid)
 @spec process(String.t(), integer(), boolean(), atom()) :: :ok
 def process(str, num, flag, type) do
   # Hard to maintain
 end
 
-# Under-specified (too loose)
 @spec process(any(), any(), any(), any()) :: any()
 def process(str, num, flag, type) do
   # Loses type safety
 end
 
-# Balanced (useful types)
 @spec process(String.t(), pos_integer(), opts :: keyword()) :: :ok | {:error, term()}
 def process(str, num, opts) do
   # Clear intent, practical constraints
@@ -429,17 +411,14 @@ Understanding the BEAM VM unlocks Elixir's concurrency and fault tolerance.
 Every Elixir process runs on the BEAM VM:
 
 ```elixir
-# Spawn a process
 pid = spawn(fn ->
   receive do
     {:hello, sender} -> send(sender, :world)
   end
 end)
 
-# Send message
 send(pid, {:hello, self()})
 
-# Receive response
 receive do
   :world -> IO.puts("Received world!")
 end
@@ -457,10 +436,8 @@ end
 BEAM uses **M:N scheduling** - multiple processes on multiple schedulers:
 
 ```elixir
-# Number of schedulers (usually = CPU cores)
 IO.inspect(System.schedulers_online())  # 8 on 8-core machine
 
-# Process info
 pid = spawn(fn -> :timer.sleep(5000) end)
 Process.info(pid, :current_stacktrace)
 Process.info(pid, :reductions)  # Work done by process
@@ -489,7 +466,6 @@ Run Queues:    [P1]    [P4]    [P7]    [P10]
 Each process has its own heap:
 
 ```elixir
-# Check process memory
 pid = spawn(fn ->
   # Allocate large list
   list = Enum.to_list(1..1_000_000)
@@ -509,7 +485,6 @@ Process.info(pid, :total_heap_size) # Total heap (including old heap)
 - Process blocks only itself during GC
 
 ```elixir
-# Force GC on process
 :erlang.garbage_collect(pid)
 ```
 
@@ -533,20 +508,15 @@ defmodule MessageBench do
   end
 end
 
-# Small messages: Fast (copying integers is cheap)
-# Large messages: Slower (copying 10K item list)
 ```
 
 **Optimization**: Use ETS for shared data instead of copying:
 
 ```elixir
-# Create ETS table (shared memory)
 table = :ets.new(:shared_data, [:set, :public, :named_table])
 
-# Store large data once
 :ets.insert(table, {:data, Enum.to_list(1..10_000)})
 
-# Processes read without copying
 [{:data, data}] = :ets.lookup(table, :data)
 ```
 
@@ -555,14 +525,12 @@ table = :ets.new(:shared_data, [:set, :public, :named_table])
 **Links**: Bidirectional, crashes propagate:
 
 ```elixir
-# Link processes
 parent = self()
 child = spawn_link(fn ->
   :timer.sleep(1000)
   raise "Child crashed!"
 end)
 
-# Child crash kills parent unless trapped
 Process.flag(:trap_exit, true)
 
 receive do
@@ -598,10 +566,8 @@ Connect multiple BEAM nodes for distributed systems.
 Start named nodes:
 
 ```bash
-# Terminal 1
 iex --name node1@127.0.0.1 --cookie secret
 
-# Terminal 2
 iex --name node2@127.0.0.1 --cookie secret
 ```
 
@@ -610,13 +576,10 @@ iex --name node2@127.0.0.1 --cookie secret
 ### Connecting Nodes
 
 ```elixir
-# On node1
 Node.connect(:"node2@127.0.0.1")
 
-# List connected nodes
 Node.list()  # [:"node2@127.0.0.1"]
 
-# List all nodes including self
 Node.list([:this, :visible])  # [:"node1@127.0.0.1", :"node2@127.0.0.1"]
 ```
 
@@ -625,13 +588,11 @@ Node.list([:this, :visible])  # [:"node1@127.0.0.1", :"node2@127.0.0.1"]
 Spawn processes on remote nodes:
 
 ```elixir
-# On node1
 pid = Node.spawn(:"node2@127.0.0.1", fn ->
   IO.puts("Running on #{inspect(Node.self())}")
   :timer.sleep(5000)
 end)
 
-# pid runs on node2
 ```
 
 ### Distributed Message Passing
@@ -639,7 +600,6 @@ end)
 Send messages across nodes:
 
 ```elixir
-# On node2, register a process
 defmodule RemoteServer do
   def start do
     pid = spawn(fn -> loop() end)
@@ -658,7 +618,6 @@ end
 
 RemoteServer.start()
 
-# On node1, send message to node2
 send({:remote_server, :"node2@127.0.0.1"}, {:request, self(), 42})
 
 receive do
@@ -705,7 +664,6 @@ defmodule DistributedCounter do
   end
 end
 
-# On node1
 DistributedCounter.start_link(:"node2@127.0.0.1", 0)
 DistributedCounter.increment(:"node2@127.0.0.1")  # 1
 DistributedCounter.get_value(:"node2@127.0.0.1")  # 1
@@ -716,7 +674,6 @@ DistributedCounter.get_value(:"node2@127.0.0.1")  # 1
 Register processes globally across cluster:
 
 ```elixir
-# On node1
 defmodule GlobalService do
   def start_link do
     pid = spawn(fn -> loop() end)
@@ -735,7 +692,6 @@ end
 
 GlobalService.start_link()
 
-# On node2
 pid = :global.whereis_name(:my_service)
 send(pid, {:ping, self()})
 receive do
@@ -746,18 +702,14 @@ end
 ### Distributed PubSub (Phoenix.PubSub)
 
 ```elixir
-# Add to application supervision tree
 children = [
   {Phoenix.PubSub, name: MyApp.PubSub}
 ]
 
-# Subscribe on node1
 Phoenix.PubSub.subscribe(MyApp.PubSub, "events")
 
-# Publish on node2
 Phoenix.PubSub.broadcast(MyApp.PubSub, "events", {:event, "data"})
 
-# Receive on node1
 receive do
   {:event, data} -> IO.puts("Received: #{data}")
 end
@@ -814,19 +766,14 @@ Macros enable compile-time code generation.
 Elixir code is represented as Abstract Syntax Tree:
 
 ```elixir
-# Convert code to AST
 quote do
   1 + 2
 end
-# {:+, [context: Elixir, import: Kernel], [1, 2]}
 
-# AST structure: {function, metadata, arguments}
 
 quote do
   if true, do: "yes", else: "no"
 end
-# {:if, [context: Elixir, import: Kernel],
-#  [true, [do: "yes", else: "no"]]}
 ```
 
 ### Basic Macros
@@ -875,7 +822,6 @@ end
 require MathMacros
 MathMacros.multiply(2, 3)  # 6
 
-# Problem with multiple evaluation
 defmodule Unsafe do
   defmacro double(x) do
     quote do
@@ -887,7 +833,6 @@ end
 require Unsafe
 Unsafe.double(IO.puts("hi"))  # Prints "hi" twice! ❌
 
-# Solution with bind_quoted
 defmodule Safe do
   defmacro double(x) do
     quote bind_quoted: [x: x] do
@@ -974,11 +919,6 @@ defmodule MyRouter do
 end
 
 MyRouter.routes()
-# [
-#   {:get, "/", :index},
-#   {:get, "/about", :about},
-#   {:post, "/users", :create_user}
-# ]
 ```
 
 ### Compile-Time Configuration
@@ -1011,7 +951,6 @@ require Hygienic
 Hygienic.set_x()
 x  # ❌ Undefined variable (hygiene prevents leakage)
 
-# Intentionally break hygiene with var!
 defmodule NonHygienic do
   defmacro set_x do
     quote do
@@ -1050,7 +989,6 @@ defmodule Fibonacci do
   def fib(n), do: fib(n - 1) + fib(n - 2)
 end
 
-# Profile fib/1
 :fprof.trace([:start])
 Fibonacci.fib(20)
 :fprof.trace([:stop])
@@ -1069,7 +1007,6 @@ Time-based profiling:
 :eprof.start()
 :eprof.start_profiling([self()])
 
-# Run code to profile
 result = expensive_function()
 
 :eprof.stop_profiling()
@@ -1079,14 +1016,12 @@ result = expensive_function()
 ### Benchmarking with Benchee
 
 ```elixir
-# mix.exs
 defp deps do
   [
     {:benchee, "~> 1.0", only: :dev}
   ]
 end
 
-# Benchmark different implementations
 Benchee.run(%{
   "Enum.map" => fn input -> Enum.map(input, &(&1 * 2)) end,
   "for comprehension" => fn input -> for x <- input, do: x * 2 end,
@@ -1103,10 +1038,8 @@ Benchee.run(%{
 Track memory usage:
 
 ```elixir
-# Check process memory
 Process.info(self(), :memory)
 
-# Profile memory allocations
 :recon_alloc.memory(:allocated)
 :recon_alloc.memory(:used)
 ```
@@ -1116,11 +1049,9 @@ Process.info(self(), :memory)
 **1. Tail Call Optimization**:
 
 ```elixir
-# Not tail recursive (builds stack)
 def sum_slow([]), do: 0
 def sum_slow([h | t]), do: h + sum_slow(t)
 
-# Tail recursive (constant stack)
 def sum_fast(list), do: sum_fast(list, 0)
 defp sum_fast([], acc), do: acc
 defp sum_fast([h | t], acc), do: sum_fast(t, acc + h)
@@ -1129,13 +1060,11 @@ defp sum_fast([h | t], acc), do: sum_fast(t, acc + h)
 **2. Lazy Evaluation with Streams**:
 
 ```elixir
-# Eager (allocates intermediate lists)
 result = 1..1_000_000
   |> Enum.map(&(&1 * 2))
   |> Enum.filter(&rem(&1, 3) == 0)
   |> Enum.take(10)
 
-# Lazy (single pass, minimal allocation)
 result = 1..1_000_000
   |> Stream.map(&(&1 * 2))
   |> Stream.filter(&rem(&1, 3) == 0)
@@ -1145,7 +1074,6 @@ result = 1..1_000_000
 **3. ETS for Shared State**:
 
 ```elixir
-# Slow: GenServer serializes access
 defmodule CacheSlow do
   use GenServer
 
@@ -1154,7 +1082,6 @@ defmodule CacheSlow do
   end
 end
 
-# Fast: ETS allows concurrent reads
 defmodule CacheFast do
   def get(key) do
     case :ets.lookup(:cache, key) do
@@ -1168,14 +1095,12 @@ end
 **4. Avoid String Concatenation in Loops**:
 
 ```elixir
-# Slow (O(n²) - creates new string each iteration)
 def build_slow(n) do
   Enum.reduce(1..n, "", fn i, acc ->
     acc <> Integer.to_string(i)
   end)
 end
 
-# Fast (O(n) - iolist, converted once at end)
 def build_fast(n) do
   1..n
   |> Enum.map(&Integer.to_string/1)
@@ -1186,7 +1111,6 @@ end
 **5. Pattern Match in Function Head**:
 
 ```elixir
-# Slower (pattern match inside body)
 def process(data) do
   case data do
     {:ok, value} -> value * 2
@@ -1194,7 +1118,6 @@ def process(data) do
   end
 end
 
-# Faster (pattern match in function head)
 def process({:ok, value}), do: value * 2
 def process({:error, _}), do: 0
 ```
@@ -1204,7 +1127,6 @@ def process({:error, _}), do: 0
 Elixir 1.19 introduced 4x faster compilation:
 
 ```elixir
-# Check compilation time
 time = :timer.tc(fn ->
   Code.compile_file("lib/my_app.ex")
 end)
@@ -1231,7 +1153,6 @@ Manage monorepos with umbrella projects.
 mix new my_app --umbrella
 cd my_app
 
-# Create child apps
 cd apps
 mix new core
 mix new web --sup
@@ -1253,7 +1174,6 @@ my_app/
 ### Umbrella Configuration
 
 ```elixir
-# Root mix.exs
 defmodule MyApp.MixProject do
   use Mix.Project
 
@@ -1271,7 +1191,6 @@ defmodule MyApp.MixProject do
   end
 end
 
-# apps/web/mix.exs
 defmodule Web.MixProject do
   use Mix.Project
 
@@ -1301,14 +1220,11 @@ end
 ### Working with Umbrella Apps
 
 ```bash
-# Run command in all apps
 mix compile
 mix test
 
-# Run command in specific app
 mix cmd --app core mix test
 
-# Start all apps
 iex -S mix
 ```
 
@@ -1317,14 +1233,12 @@ iex -S mix
 Configure shared dependencies in root:
 
 ```elixir
-# Root mix.exs
 defp deps do
   [
     {:jason, "~> 1.4"}  # Shared by all apps
   ]
 end
 
-# apps/core/mix.exs
 defp deps do
   [
     {:ecto, "~> 3.11"}  # Core-specific
@@ -1343,8 +1257,6 @@ Deploy Elixir applications to production.
 Build production release:
 
 ```bash
-# Configure release
-# mix.exs
 def project do
   [
     # ...
@@ -1357,10 +1269,8 @@ def project do
   ]
 end
 
-# Build release
 MIX_ENV=prod mix release
 
-# Run release
 _build/prod/rel/my_app/bin/my_app start
 _build/prod/rel/my_app/bin/my_app daemon  # Background
 _build/prod/rel/my_app/bin/my_app stop
@@ -1369,7 +1279,6 @@ _build/prod/rel/my_app/bin/my_app stop
 ### Release Configuration
 
 ```elixir
-# config/runtime.exs
 import Config
 
 if config_env() == :prod do
@@ -1390,32 +1299,24 @@ end
 ### Docker Deployment
 
 ```dockerfile
-# Dockerfile
 FROM hexpm/elixir:1.19.4-erlang-28.2.5-alpine-3.21.3 AS build
 
-# Install build dependencies
 RUN apk add --no-cache build-base git
 
 WORKDIR /app
 
-# Install hex + rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# Copy mix files
 COPY mix.exs mix.lock ./
 RUN mix deps.get --only prod
 
-# Copy source
 COPY . .
 
-# Compile
 RUN MIX_ENV=prod mix compile
 
-# Build release
 RUN MIX_ENV=prod mix release
 
-# Production image
 FROM alpine:3.21.3
 
 RUN apk add --no-cache libstdc++ openssl ncurses-libs
@@ -1430,13 +1331,11 @@ CMD ["bin/my_app", "start"]
 ### Environment Variables
 
 ```bash
-# .env.prod
 export DATABASE_URL="ecto://user:pass@localhost/db"
 export SECRET_KEY_BASE="long-secret-key"
 export PORT="4000"
 export POOL_SIZE="10"
 
-# Load and run
 source .env.prod
 _build/prod/rel/my_app/bin/my_app start
 ```
@@ -1444,7 +1343,6 @@ _build/prod/rel/my_app/bin/my_app start
 ### Health Checks and Graceful Shutdown
 
 ```elixir
-# lib/my_app_web/controllers/health_controller.ex
 defmodule MyAppWeb.HealthController do
   use MyAppWeb, :controller
 
@@ -1453,8 +1351,6 @@ defmodule MyAppWeb.HealthController do
   end
 end
 
-# Graceful shutdown
-# config/config.exs
 config :my_app, MyAppWeb.Endpoint,
   shutdown_timeout: 30_000  # 30 seconds for graceful shutdown
 ```
@@ -1475,7 +1371,6 @@ Logger.info("User logged in: #{user_id}")
 Logger.warning("Rate limit approaching")
 Logger.error("Database connection failed")
 
-# Structured logging
 Logger.info("User action",
   user_id: user_id,
   action: "login",
@@ -1486,14 +1381,12 @@ Logger.info("User action",
 ### Telemetry
 
 ```elixir
-# Emit custom events
 :telemetry.execute(
   [:my_app, :payment, :processed],
   %{amount: 100},
   %{user_id: 123}
 )
 
-# Attach handler
 :telemetry.attach(
   "payment-logger",
   [:my_app, :payment, :processed],
@@ -1510,7 +1403,6 @@ Logger.info("User action",
 ### Observer
 
 ```elixir
-# Start observer (GUI)
 :observer.start()
 ```
 
@@ -1525,16 +1417,12 @@ Logger.info("User action",
 ### Recon for Production
 
 ```elixir
-# Top memory-consuming processes
 :recon.proc_count(:memory, 10)
 
-# Top message queue sizes
 :recon.proc_count(:message_queue_len, 10)
 
-# Process info
 :recon.info(pid)
 
-# Trace function calls (live debugging)
 :recon_trace.calls({Module, :function, :_}, 10)
 ```
 

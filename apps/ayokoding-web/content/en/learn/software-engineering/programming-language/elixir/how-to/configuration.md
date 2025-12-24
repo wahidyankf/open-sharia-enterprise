@@ -36,27 +36,22 @@ Use **Config** module with compile-time config files and runtime.exs for environ
 ### 1. Compile-Time Configuration
 
 ```elixir
-# config/config.exs
 import Config
 
-# Application-wide configuration
 config :my_app,
   ecto_repos: [MyApp.Repo],
   generators: [timestamp_type: :utc_datetime]
 
-# Logger configuration
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-# Import environment-specific config
 import_config "#{config_env()}.exs"
 ```
 
 **Development config:**
 
 ```elixir
-# config/dev.exs
 import Config
 
 config :my_app, MyApp.Repo,
@@ -86,7 +81,6 @@ config :phoenix, :plug_init_mode, :runtime
 **Test config:**
 
 ```elixir
-# config/test.exs
 import Config
 
 config :my_app, MyApp.Repo,
@@ -109,26 +103,20 @@ config :phoenix, :plug_init_mode, :runtime
 **Production config:**
 
 ```elixir
-# config/prod.exs
 import Config
 
-# Don't include passwords or secrets here
 config :my_app, MyAppWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 config :logger, level: :info
 
-# Runtime configuration should go in config/runtime.exs
 ```
 
 ### 2. Runtime Configuration
 
 ```elixir
-# config/runtime.exs
 import Config
 
-# This file is executed during runtime, not compile time
-# Perfect for reading environment variables
 
 if config_env() == :prod do
   database_url =
@@ -178,20 +166,15 @@ end
 ### 3. Environment Variables
 
 ```elixir
-# Reading environment variables
 database_url = System.get_env("DATABASE_URL")
 
-# With default value
 port = System.get_env("PORT", "4000")
 
-# Fetch! (raises if missing)
 secret = System.fetch_env!("SECRET_KEY_BASE")
 
-# Type conversion
 pool_size = System.get_env("POOL_SIZE", "10") |> String.to_integer()
 enable_feature = System.get_env("ENABLE_FEATURE") in ["true", "1"]
 
-# Multiple fallbacks
 api_key =
   System.get_env("API_KEY") ||
   System.get_env("LEGACY_API_KEY") ||
@@ -201,7 +184,6 @@ api_key =
 **Using with ExUnit:**
 
 ```elixir
-# test/test_helper.exs
 System.put_env("DATABASE_URL", "ecto://postgres:postgres@localhost/my_app_test")
 System.put_env("SECRET_KEY_BASE", "test_secret_key_base_at_least_64_bytes_long_test")
 
@@ -213,13 +195,11 @@ ExUnit.start()
 ### 1. Application Environment
 
 ```elixir
-# Setting configuration
 config :my_app, :settings,
   timeout: 5000,
   retries: 3,
   api_url: "https://api.example.com"
 
-# Reading configuration
 defmodule MyApp.Client do
   @timeout Application.compile_env(:my_app, [:settings, :timeout])
   @retries Application.compile_env(:my_app, [:settings, :retries])
@@ -233,7 +213,6 @@ defmodule MyApp.Client do
   end
 end
 
-# Runtime config access
 def get_setting(key) do
   Application.get_env(:my_app, :settings)
   |> Keyword.get(key)
@@ -243,13 +222,11 @@ end
 ### 2. Feature Flags
 
 ```elixir
-# config/config.exs
 config :my_app, :features,
   new_dashboard: false,
   experimental_api: false,
   beta_features: false
 
-# config/runtime.exs
 if config_env() == :prod do
   config :my_app, :features,
     new_dashboard: System.get_env("FEATURE_NEW_DASHBOARD") == "true",
@@ -257,7 +234,6 @@ if config_env() == :prod do
     beta_features: System.get_env("FEATURE_BETA") == "true"
 end
 
-# Usage
 defmodule MyAppWeb.DashboardLive do
   def mount(_params, _session, socket) do
     if Application.get_env(:my_app, :features)[:new_dashboard] do
@@ -272,7 +248,6 @@ end
 ### 3. Multi-Tenant Configuration
 
 ```elixir
-# config/runtime.exs
 config :my_app, :tenants, [
   %{
     id: "tenant_a",
@@ -286,7 +261,6 @@ config :my_app, :tenants, [
   }
 ]
 
-# Usage
 defmodule MyApp.Tenants do
   def get_config(tenant_id) do
     Application.get_env(:my_app, :tenants)
@@ -303,7 +277,6 @@ end
 ### 4. Configuration Providers
 
 ```elixir
-# Custom configuration provider
 defmodule MyApp.ConfigProvider do
   @behaviour Config.Provider
 
@@ -334,7 +307,6 @@ defmodule MyApp.ConfigProvider do
   end
 end
 
-# In releases configuration (mix.exs)
 def project do
   [
     releases: [
@@ -353,7 +325,6 @@ end
 ### 1. Database Configuration
 
 ```elixir
-# config/runtime.exs
 if config_env() == :prod do
   # Parse DATABASE_URL
   database_url = System.get_env("DATABASE_URL") || raise "DATABASE_URL not set"
@@ -382,7 +353,6 @@ end
 ### 2. External Services Configuration
 
 ```elixir
-# config/runtime.exs
 config :my_app, :services,
   stripe: %{
     api_key: System.get_env("STRIPE_API_KEY"),
@@ -404,7 +374,6 @@ config :my_app, :services,
     pool_size: String.to_integer(System.get_env("REDIS_POOL_SIZE") || "10")
   }
 
-# Usage module
 defmodule MyApp.Services do
   def stripe_config do
     Application.get_env(:my_app, :services)[:stripe]
@@ -423,7 +392,6 @@ end
 ### 3. Logging Configuration
 
 ```elixir
-# config/runtime.exs
 log_level =
   case System.get_env("LOG_LEVEL") do
     "debug" -> :debug
@@ -435,12 +403,10 @@ log_level =
 
 config :logger, level: log_level
 
-# Structured logging
 config :logger, :console,
   format: {MyApp.LogFormatter, :format},
   metadata: [:request_id, :user_id, :tenant_id]
 
-# External logging services
 if config_env() == :prod do
   if sentry_dsn = System.get_env("SENTRY_DSN") do
     config :sentry,
@@ -464,7 +430,6 @@ end
 ### 4. Phoenix Endpoint Configuration
 
 ```elixir
-# config/runtime.exs
 if config_env() == :prod do
   host = System.get_env("PHX_HOST") || raise "PHX_HOST not set"
   port = String.to_integer(System.get_env("PORT") || "4000")
@@ -505,7 +470,6 @@ end
 ## Configuration Validation
 
 ```elixir
-# lib/my_app/config.ex
 defmodule MyApp.Config do
   @required_env_vars [
     "DATABASE_URL",
@@ -536,7 +500,6 @@ defmodule MyApp.Config do
   def optional_vars, do: @optional_env_vars
 end
 
-# In application.ex
 def start(_type, _args) do
   MyApp.Config.validate!()
 
@@ -551,7 +514,6 @@ end
 **Problem:**
 
 ```elixir
-# BAD - secrets in code
 config :my_app, :stripe,
   api_key: "sk_live_abc123..."  # Never do this!
 ```
@@ -559,7 +521,6 @@ config :my_app, :stripe,
 **Solution:**
 
 ```elixir
-# GOOD - secrets from environment
 config :my_app, :stripe,
   api_key: System.get_env("STRIPE_API_KEY")
 ```
@@ -569,16 +530,12 @@ config :my_app, :stripe,
 **Problem:**
 
 ```elixir
-# config/prod.exs - BAD
-# This reads at compile time, not runtime
 config :my_app, :api_url, System.get_env("API_URL")
 ```
 
 **Solution:**
 
 ```elixir
-# config/runtime.exs - GOOD
-# This reads at runtime
 if config_env() == :prod do
   config :my_app, :api_url, System.get_env("API_URL")
 end
@@ -589,19 +546,16 @@ end
 **Problem:**
 
 ```elixir
-# Silently falls back to nil
 database_url = System.get_env("DATABASE_URL")
 ```
 
 **Solution:**
 
 ```elixir
-# Explicit error if missing
 database_url =
   System.get_env("DATABASE_URL") ||
     raise "DATABASE_URL environment variable is required"
 
-# Or use fetch_env!
 database_url = System.fetch_env!("DATABASE_URL")
 ```
 
@@ -621,34 +575,26 @@ database_url = System.fetch_env!("DATABASE_URL")
 Create a `.env.example` file:
 
 ```bash
-# .env.example
-# Copy to .env and fill in values
 
-# Database
 DATABASE_URL=ecto://postgres:postgres@localhost/my_app_dev
 POOL_SIZE=10
 
-# Application
 SECRET_KEY_BASE=
 PHX_HOST=localhost
 PORT=4000
 
-# External Services
 STRIPE_API_KEY=
 STRIPE_WEBHOOK_SECRET=
 SENDGRID_API_KEY=
 
-# AWS
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_REGION=us-east-1
 S3_BUCKET=
 
-# Feature Flags
 FEATURE_NEW_DASHBOARD=false
 FEATURE_EXPERIMENTAL_API=false
 
-# Logging
 LOG_LEVEL=info
 SENTRY_DSN=
 ```
@@ -656,7 +602,6 @@ SENTRY_DSN=
 ## Testing Configuration
 
 ```elixir
-# test/my_app/config_test.exs
 defmodule MyApp.ConfigTest do
   use ExUnit.Case
 

@@ -581,61 +581,49 @@ mod tests {
 ## Cargo Commands
 
 ```bash
-# Project management
 cargo new my_project          # Create new binary project
 cargo new --lib my_lib        # Create new library
 cargo init                    # Initialize in existing directory
 
-# Building and running
 cargo build                   # Build debug
 cargo build --release         # Build optimized release
 cargo run                     # Build and run
 cargo run --release           # Run release build
 cargo check                   # Check compilation (faster than build)
 
-# Testing
 cargo test                    # Run all tests
 cargo test test_name          # Run specific test
 cargo test --lib              # Run library tests only
 cargo test --doc              # Run doc tests only
 
-# Documentation
 cargo doc                     # Build documentation
 cargo doc --open              # Build and open in browser
 
-# Dependencies
 cargo add rand                # Add dependency (requires cargo-edit)
 cargo update                  # Update dependencies
 cargo tree                    # Show dependency tree
 
-# Publishing
 cargo publish                 # Publish to crates.io
 cargo yank --vers 1.0.0       # Yank version from crates.io
 
-# Workspace
 cargo new --workspace         # Create workspace
 ```
 
 ## Tooling Commands
 
 ```bash
-# rustup (toolchain manager)
 rustup update                 # Update Rust
 rustup default stable         # Set default to stable
 rustup override set nightly   # Use nightly in current directory
 rustup component add rustfmt  # Add rustfmt
 rustup component add clippy   # Add clippy
 
-# rustfmt (code formatter)
 cargo fmt                     # Format all code
 rustfmt src/main.rs           # Format specific file
 
-# clippy (linter)
 cargo clippy                  # Run linter
 cargo clippy --fix            # Apply automatic fixes
 
-# rust-analyzer (LSP)
-# Install via VS Code extension or editor plugin
 ```
 
 ## Common Patterns

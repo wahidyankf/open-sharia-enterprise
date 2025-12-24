@@ -64,10 +64,7 @@ defmodule MyApp.Supervisor do
   end
 end
 
-# Usage
 {:ok, _pid} = MyApp.Supervisor.start_link([])
-# All three children (Counter, KeyValueStore, SessionStore) started
-# If any child crashes, Supervisor restarts it automatically
 ```
 
 **Anatomy:**
@@ -167,7 +164,6 @@ end
 #### Simple Format
 
 ```elixir
-# {Module, args} - uses Module.start_link(args)
 {Counter, 0}
 {KeyValueStore, [name: :kv_store]}
 ```
@@ -209,7 +205,6 @@ defmodule ConfigurableWorker do
   def init(opts), do: {:ok, opts}
 end
 
-# Usage in Supervisor
 children = [
   {ConfigurableWorker, name: :worker1, restart: :transient},
   {ConfigurableWorker, name: :worker2, restart: :permanent}
@@ -291,7 +286,6 @@ defmodule TaskSupervisor do
   end
 end
 
-# Usage
 {:ok, _sup_pid} = TaskSupervisor.start_link([])
 
 {:ok, task_pid} = TaskSupervisor.start_task(fn ->
@@ -467,7 +461,6 @@ defmodule SessionSupervisor do
   end
 end
 
-# With Registry for name lookup
 defmodule SessionRegistry do
   def start_session(user_id) do
     case SessionSupervisor.start_session(user_id) do
@@ -490,12 +483,10 @@ end
 ### Task.Supervisor for Concurrent Tasks
 
 ```elixir
-# In application.ex
 children = [
   {Task.Supervisor, name: MyApp.TaskSupervisor}
 ]
 
-# Usage
 Task.Supervisor.start_child(MyApp.TaskSupervisor, fn ->
   # Supervised task (crashes isolated)
   perform_work()
@@ -512,7 +503,6 @@ end) |> Task.await()
 ### Wrong Restart Strategy
 
 ```elixir
-# BAD: Using :one_for_one for dependent processes
 children = [
   {Database, []},       # 1
   {Cache, []},          # 2 (needs Database)
@@ -520,20 +510,15 @@ children = [
 ]
 
 Supervisor.init(children, strategy: :one_for_one)
-# If Database crashes and restarts, Cache still references old connection!
 
-# GOOD: Use :rest_for_one for dependencies
 Supervisor.init(children, strategy: :rest_for_one)
-# Database crash restarts Cache and APIHandler too
 ```
 
 ### Restart Loops (No Intensity Limit)
 
 ```elixir
-# BAD: Default 3 restarts/5s may be too lenient
 Supervisor.init(children, strategy: :one_for_one)
 
-# GOOD: Tune for flaky services
 Supervisor.init(
   children,
   strategy: :one_for_one,
@@ -545,7 +530,6 @@ Supervisor.init(
 ### Blocking `init/1`
 
 ```elixir
-# BAD: Slow initialization blocks supervisor
 def init(:ok) do
   # This blocks supervision tree startup!
   result = HTTPoison.get!("http://slow-service.com/config")
@@ -555,13 +539,11 @@ def init(:ok) do
   Supervisor.init(children, strategy: :one_for_one)
 end
 
-# GOOD: Move slow init to child process
 def init(:ok) do
   children = [{Worker, :fetch_config_async}]
   Supervisor.init(children, strategy: :one_for_one)
 end
 
-# In Worker
 def init(:fetch_config_async) do
   # Fetch config after process started
   config = HTTPoison.get!("http://slow-service.com/config") |> parse_config()
@@ -572,7 +554,6 @@ end
 ### Not Using Hierarchical Trees
 
 ```elixir
-# BAD: Flat supervision (all children at top level)
 children = [
   {DatabaseConnection, []},
   {DatabaseMonitor, []},
@@ -582,7 +563,6 @@ children = [
   {Worker3, []}
 ]
 
-# GOOD: Hierarchical (group related processes)
 children = [
   {DatabaseSupervisor, []},  # Manages DB connection + monitor
   {CacheSupervisor, []},     # Manages cache-related processes

@@ -426,10 +426,8 @@ public ResponseEntity<User> getUser(@PathVariable Long id) {
 **Request example**:
 
 ```bash
-# JSON response
 curl -H "Accept: application/json" http://localhost:8080/api/users/1
 
-# XML response
 curl -H "Accept: application/xml" http://localhost:8080/api/users/1
 ```
 

@@ -288,7 +288,7 @@ Structured methodology ensures consistent, effective incident handling:
 5. **Recovery**: Restore systems to normal operation safely
 6. **Post-Incident Activity**: Document lessons learned and improve defenses
 
-{{< callout type="tip" >}}
+{{< callout type="info" >}}
 Regular incident response exercises (tabletop exercises, simulations) ensure teams can respond effectively when real incidents occur. Practice reveals gaps in procedures, tools, and communication before they become critical failures.
 {{< /callout >}}
 

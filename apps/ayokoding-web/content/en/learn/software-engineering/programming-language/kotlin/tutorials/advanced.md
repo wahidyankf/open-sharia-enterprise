@@ -611,19 +611,14 @@ fun main() {
 **Key JVM flags**:
 
 ```bash
-# Heap size
 -Xms2g -Xmx4g
 
-# Garbage collector (G1GC recommended for most cases)
 -XX:+UseG1GC
 
-# GC logging
 -Xlog:gc*:file=gc.log
 
-# Enable JIT compilation logging
 -XX:+PrintCompilation
 
-# Aggressive optimization
 -XX:+AggressiveOpts
 ```
 

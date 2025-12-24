@@ -108,51 +108,30 @@ Pattern matching lets you:
 ### Example
 
 ```elixir
-# In most languages, this is simple assignment
 x = 5
-# => 5
 
-# But Elixir tries to MATCH the left side to the right side
 5 = x
-# => 5 (works! Both sides match)
 
 10 = x
-# => ** (MatchError) no match of right hand side value: 5
 
-# Extract values from tuples
 {status, result} = {:ok, "Success!"}
-# => {:ok, "Success!"}
 status
-# => :ok
 result
-# => "Success!"
 
-# Ignore values you don't need with _
 {:ok, _} = {:ok, "Don't care about this"}
-# => {:ok, "Don't care about this"}
 
-# Match on specific values
 {:ok, value} = {:ok, 42}
-# => {:ok, 42} - works!
 
 {:error, value} = {:ok, 42}
-# => ** (MatchError) - doesn't match!
 
-# Match list heads and tails
 [first | rest] = [1, 2, 3, 4, 5]
 first
-# => 1
 rest
-# => [2, 3, 4, 5]
 
-# Match multiple elements
 [a, b | tail] = [1, 2, 3, 4]
 a
-# => 1
 b
-# => 2
 tail
-# => [3, 4]
 ```
 
 ### Try It
@@ -160,26 +139,19 @@ tail
 Open IEx and try:
 
 ```elixir
-# Create a tuple representing a user
 user = {"Alice", 28, "alice@example.com"}
 
-# Extract values using pattern matching
 {name, age, email} = user
 
-# Now use the variables
 IO.puts("Name: #{name}, Age: #{age}, Email: #{email}")
 ```
 
 ### Common Pitfall
 
 ```elixir
-# DON'T: Try to match when values don't align
 {a, b} = {1, 2, 3}
-# => ** (MatchError) - left has 2 elements, right has 3
 
-# DO: Use _ to ignore extras or match the right shape
 {a, b, _} = {1, 2, 3}
-# => Works!
 ```
 
 ## 2. Immutability - Data Never Changes
@@ -198,65 +170,43 @@ Why immutability matters:
 ### Example
 
 ```elixir
-# Create a list
 numbers = [1, 2, 3]
-# => [1, 2, 3]
 
-# "Add" an element - actually creates NEW list
 new_numbers = [0 | numbers]
-# => [0, 1, 2, 3]
 
-# Original list UNCHANGED
 numbers
-# => [1, 2, 3]
 
-# Maps (dictionaries) are also immutable
 person = %{name: "Alice", age: 28}
-# => %{name: "Alice", age: 28}
 
-# "Update" creates NEW map
 older_person = %{person | age: 29}
-# => %{name: "Alice", age: 29}
 
-# Original UNCHANGED
 person
-# => %{name: "Alice", age: 28}
 
-# List transformations create new lists
 doubled = Enum.map([1, 2, 3], fn x -> x * 2 end)
-# => [2, 4, 6]
 ```
 
 ### Try It
 
 ```elixir
-# Create a shopping cart
 cart = ["apple", "banana"]
 
-# Add an item
 new_cart = ["orange" | cart]
 
-# Check both lists
 IO.inspect(cart, label: "Original")
 IO.inspect(new_cart, label: "New")
 
-# Notice: original unchanged!
 ```
 
 ### Common Pitfall
 
 ```elixir
-# DON'T: Expect mutation like other languages
 list = [1, 2, 3]
 List.delete(list, 2)  # Returns new list
 list
-# => [1, 2, 3] - still the same!
 
-# DO: Capture the returned value
 list = [1, 2, 3]
 list = List.delete(list, 2)
 list
-# => [1, 3] - now updated (actually rebound to new list)
 ```
 
 ## 3. Functions - Anonymous and Named
@@ -275,39 +225,28 @@ Functions are first-class citizens in Elixir. You can:
 ### Example - Anonymous Functions
 
 ```elixir
-# Define anonymous function
 add = fn a, b -> a + b end
 
-# Call it
 add.(5, 3)
-# => 8
 
-# Shorthand syntax
 add = &(&1 + &2)
 add.(5, 3)
-# => 8
 
-# Pass functions to other functions
 Enum.map([1, 2, 3], fn x -> x * 2 end)
-# => [2, 4, 6]
 
-# Multiple clauses with pattern matching
 handle_result = fn
   {:ok, value} -> "Success: #{value}"
   {:error, reason} -> "Failed: #{reason}"
 end
 
 handle_result.({:ok, "Data loaded"})
-# => "Success: Data loaded"
 
 handle_result.({:error, "Network timeout"})
-# => "Failed: Network timeout"
 ```
 
 ### Example - Named Functions
 
 ```elixir
-# Named functions live in modules
 defmodule Math do
   # Public function (accessible outside module)
   def add(a, b) do
@@ -330,24 +269,18 @@ defmodule Math do
   end
 end
 
-# Use the module
 Math.add(5, 3)
-# => 8
 
 Math.describe(-5)
-# => "negative"
 
 Math.greet()
-# => "Hello, World!"
 
 Math.greet("Alice")
-# => "Hello, Alice!"
 ```
 
 ### Try It
 
 ```elixir
-# Create a module with temperature conversion
 defmodule Temperature do
   def c_to_f(celsius) do
     celsius * 9 / 5 + 32
@@ -358,7 +291,6 @@ defmodule Temperature do
   end
 end
 
-# Try conversions
 Temperature.c_to_f(0)    # => 32.0
 Temperature.c_to_f(100)  # => 212.0
 Temperature.f_to_c(32)   # => 0.0
@@ -367,14 +299,11 @@ Temperature.f_to_c(32)   # => 0.0
 ### Common Pitfall
 
 ```elixir
-# DON'T: Forget the dot for anonymous functions
 add = fn a, b -> a + b end
 add(5, 3)  # ** (CompileError) - missing dot!
 
-# DO: Use dot for anonymous functions
 add.(5, 3)  # => 8
 
-# Named functions DON'T need dot
 Math.add(5, 3)  # => 8 - no dot needed
 ```
 
@@ -394,7 +323,6 @@ Modules group related functions together. They're your primary organization tool
 ### Example
 
 ```elixir
-# Basic module
 defmodule Calculator do
   def add(a, b), do: a + b
   def subtract(a, b), do: a - b
@@ -403,7 +331,6 @@ defmodule Calculator do
   def divide(a, b), do: {:ok, a / b}
 end
 
-# Nested modules
 defmodule Shop do
   defmodule Cart do
     def new, do: []
@@ -416,25 +343,20 @@ defmodule Shop do
   end
 end
 
-# Use nested modules
 cart = Shop.Cart.new()
 cart = Shop.Cart.add_item(cart, 10.50)
 cart = Shop.Cart.add_item(cart, 25.00)
 Shop.Cart.total(cart)
-# => 35.50
 
-# Alias for shorter names
 alias Shop.Cart
 
 cart = Cart.new()
 cart = Cart.add_item(cart, 10.50)
-# Same as Shop.Cart.new() and Shop.Cart.add_item(...)
 ```
 
 ### Try It
 
 ```elixir
-# Create a simple User module
 defmodule User do
   defstruct name: "", age: 0, email: ""
 
@@ -451,26 +373,21 @@ defmodule User do
   end
 end
 
-# Create and use a user
 alice = User.new("Alice", 28, "alice@example.com")
 User.display(alice)
-# => "Alice (28) - alice@example.com"
 
 User.adult?(alice)
-# => true
 ```
 
 ### Common Pitfall
 
 ```elixir
-# DON'T: Define modules inside functions
 def some_function do
   defmodule BadIdea do  # Won't work!
     def hello, do: "hi"
   end
 end
 
-# DO: Define modules at the top level
 defmodule GoodIdea do
   def hello, do: "hi"
 end
@@ -491,26 +408,17 @@ The pipe operator (`|>`) takes the result of one expression and passes it as the
 ### Example
 
 ```elixir
-# Without pipe - hard to read (inside-out)
 String.upcase(String.trim("  hello world  "))
-# => "HELLO WORLD"
 
-# With pipe - reads naturally (top to bottom)
 "  hello world  "
 |> String.trim()
 |> String.upcase()
-# => "HELLO WORLD"
 
-# Complex transformation
 [1, 2, 3, 4, 5, 6]
 |> Enum.filter(fn x -> rem(x, 2) == 0 end)
 |> Enum.map(fn x -> x * x end)
 |> Enum.sum()
-# => 56
-# Step by step:
-# [1, 2, 3, 4, 5, 6] -> [2, 4, 6] -> [4, 16, 36] -> 56
 
-# Real-world example: processing user input
 defmodule InputProcessor do
   def process(input) do
     input
@@ -523,38 +431,28 @@ defmodule InputProcessor do
 end
 
 InputProcessor.process("  Apple, Banana,  , Orange  ")
-# => ["apple", "banana", "orange"]
 ```
 
 ### Try It
 
 ```elixir
-# Transform a list of numbers
 [1, 2, 3, 4, 5]
 |> Enum.map(fn x -> x * 2 end)     # Double each
 |> Enum.filter(fn x -> x > 5 end)  # Keep > 5
 |> Enum.sum()                      # Sum them
-# => 18
-# [1,2,3,4,5] -> [2,4,6,8,10] -> [6,8,10] -> 24
 
-# String manipulation pipeline
 "elixir is awesome"
 |> String.split()
 |> Enum.map(&String.capitalize/1)
 |> Enum.join(" ")
-# => "Elixir Is Awesome"
 ```
 
 ### Common Pitfall
 
 ```elixir
-# DON'T: Pipe into functions expecting different argument positions
-# Bad: Enum.map expects collection first, then function
 [1, 2, 3] |> Enum.map([4, 5, 6], fn x -> x * 2 end)  # Wrong!
 
-# DO: Pipe passes value as FIRST argument
 [1, 2, 3] |> Enum.map(fn x -> x * 2 end)  # Correct!
-# => [2, 4, 6]
 ```
 
 ## 6. Lists and Basic Recursion
@@ -572,37 +470,23 @@ Lists are Elixir's fundamental data structure. They're implemented as linked lis
 ### Example - Lists
 
 ```elixir
-# List basics
 numbers = [1, 2, 3, 4, 5]
 
-# Prepend (fast - O(1))
 [0 | numbers]
-# => [0, 1, 2, 3, 4, 5]
 
-# Append (slow - O(n))
 numbers ++ [6]
-# => [1, 2, 3, 4, 5, 6]
 
-# Concatenate
 [1, 2] ++ [3, 4]
-# => [1, 2, 3, 4]
 
-# Subtract
 [1, 2, 3, 4] -- [2, 4]
-# => [1, 3]
 
-# Head and tail
 [head | tail] = [1, 2, 3, 4, 5]
 head  # => 1
 tail  # => [2, 3, 4, 5]
 
-# Check membership
 2 in [1, 2, 3]
-# => true
 
-# Length
 length([1, 2, 3])
-# => 3
 ```
 
 ### Example - Recursion
@@ -635,24 +519,18 @@ defmodule ListUtils do
   end
 end
 
-# Use them
 ListUtils.sum([1, 2, 3, 4, 5])
-# => 15
 
 ListUtils.count([:a, :b, :c])
-# => 3
 
 ListUtils.double([1, 2, 3])
-# => [2, 4, 6]
 
 ListUtils.max([3, 7, 2, 9, 4])
-# => 9
 ```
 
 ### Try It
 
 ```elixir
-# Write a recursive function to reverse a list
 defmodule MyList do
   def reverse([]), do: []
   def reverse([head | tail]) do
@@ -661,9 +539,7 @@ defmodule MyList do
 end
 
 MyList.reverse([1, 2, 3, 4, 5])
-# => [5, 4, 3, 2, 1]
 
-# Filter even numbers recursively
 defmodule MyFilter do
   def evens([]), do: []
   def evens([head | tail]) when rem(head, 2) == 0 do
@@ -675,19 +551,16 @@ defmodule MyFilter do
 end
 
 MyFilter.evens([1, 2, 3, 4, 5, 6])
-# => [2, 4, 6]
 ```
 
 ### Common Pitfall
 
 ```elixir
-# DON'T: Append in recursive functions (slow!)
 def slow_reverse([]), do: []
 def slow_reverse([head | tail]) do
   slow_reverse(tail) ++ [head]  # O(n²) - rebuilds list each time
 end
 
-# DO: Use accumulator pattern (covered in Beginner tutorial)
 def fast_reverse(list), do: reverse_acc(list, [])
 
 defp reverse_acc([], acc), do: acc
@@ -711,19 +584,12 @@ Comprehensions provide a concise way to transform and filter collections. They'r
 ### Example
 
 ```elixir
-# Basic comprehension - squares
 for n <- [1, 2, 3, 4, 5], do: n * n
-# => [1, 4, 9, 16, 25]
 
-# With filter
 for n <- [1, 2, 3, 4, 5], rem(n, 2) == 0, do: n * n
-# => [4, 16]
 
-# Multiple generators (cartesian product)
 for x <- [1, 2], y <- [:a, :b], do: {x, y}
-# => [{1, :a}, {1, :b}, {2, :a}, {2, :b}]
 
-# Pattern matching in generator
 users = [
   {:user, "Alice", 28},
   {:user, "Bob", 35},
@@ -731,14 +597,9 @@ users = [
 ]
 
 for {:user, name, age} <- users, do: {name, age}
-# => [{"Alice", 28}, {"Bob", 35}]
-# Note: {:admin, ...} filtered out automatically
 
-# Into different collection
 for x <- [1, 2, 3], into: %{}, do: {x, x * x}
-# => %{1 => 1, 2 => 4, 3 => 9}
 
-# Real example: FizzBuzz
 for n <- 1..15 do
   cond do
     rem(n, 15) == 0 -> "FizzBuzz"
@@ -747,17 +608,13 @@ for n <- 1..15 do
     true -> n
   end
 end
-# => [1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]
 ```
 
 ### Try It
 
 ```elixir
-# Create multiplication table
 for x <- 1..5, y <- 1..5, do: {x, y, x * y}
-# => [{1, 1, 1}, {1, 2, 2}, ..., {5, 5, 25}]
 
-# Extract emails from users
 users = [
   %{name: "Alice", email: "alice@example.com", active: true},
   %{name: "Bob", email: "bob@example.com", active: false},
@@ -765,25 +622,17 @@ users = [
 ]
 
 for %{email: email, active: true} <- users, do: email
-# => ["alice@example.com", "carol@example.com"]
 
-# Generate coordinates
 for x <- 0..2, y <- 0..2, do: {x, y}
-# => [{0, 0}, {0, 1}, {0, 2}, {1, 0}, ...]
 ```
 
 ### Common Pitfall
 
 ```elixir
-# DON'T: Use comprehensions for side effects
 for n <- [1, 2, 3], do: IO.puts(n)  # Bad practice!
-# Returns [ok, ok, ok] - not what you want
 
-# DO: Use Enum.each for side effects
 Enum.each([1, 2, 3], &IO.puts/1)  # Correct!
-# Returns :ok after printing
 
-# Comprehensions are for TRANSFORMING data
 ```
 
 ## 8. Working with Maps
@@ -799,37 +648,24 @@ Maps are Elixir's key-value data structures. Use them when you need:
 ### Example
 
 ```elixir
-# Create map
 person = %{name: "Alice", age: 28, city: "Portland"}
-# => %{name: "Alice", age: 28, city: "Portland"}
 
-# Access values
 person[:name]
-# => "Alice"
 
 person.name  # Only works with atom keys
-# => "Alice"
 
 Map.get(person, :age)
-# => 28
 
 Map.get(person, :country, "Unknown")  # With default
-# => "Unknown"
 
-# Update map (creates new map!)
 person = %{person | age: 29}
-# => %{name: "Alice", age: 29, city: "Portland"}
 
-# Add new key
 person = Map.put(person, :email, "alice@example.com")
-# => %{name: "Alice", age: 29, city: "Portland", email: "alice@example.com"}
 
-# Pattern match on maps
 %{name: name, age: age} = person
 name  # => "Alice"
 age   # => 29
 
-# Nested maps
 company = %{
   name: "TechCorp",
   employees: %{
@@ -839,51 +675,37 @@ company = %{
   }
 }
 
-# Access nested
 company[:employees][:engineering]
-# => 50
 
 get_in(company, [:employees, :engineering])
-# => 50
 
-# Update nested
 company = put_in(company, [:employees, :engineering], 55)
-# => %{name: "TechCorp", employees: %{engineering: 55, sales: 30, support: 20}}
 ```
 
 ### Try It
 
 ```elixir
-# Create a product catalog
 products = %{
   "apple" => %{price: 1.50, stock: 100},
   "banana" => %{price: 0.80, stock: 150},
   "orange" => %{price: 1.20, stock: 80}
 }
 
-# Get apple price
 products["apple"].price
-# => 1.50
 
-# Update banana stock
 products = put_in(products, ["banana", :stock], 140)
 
-# List all products with price > 1.00
 for {name, %{price: price}} <- products, price > 1.00, do: name
-# => ["apple", "orange"]
 ```
 
 ### Common Pitfall
 
 ```elixir
-# DON'T: Use update syntax for new keys
 person = %{name: "Alice"}
 person = %{person | age: 28}  # ** (KeyError) - age doesn't exist!
 
-# DO: Use Map.put for new keys
 person = Map.put(person, :age, 28)  # Works!
 
-# Update syntax ONLY for existing keys
 person = %{person | name: "Alicia"}  # Works - name exists
 ```
 
@@ -901,7 +723,6 @@ This is more explicit than exceptions and encourages handling errors.
 ### Example
 
 ```elixir
-# Function returning {:ok, result} or {:error, reason}
 defmodule FileReader do
   def read(filename) do
     case File.read(filename) do
@@ -911,13 +732,11 @@ defmodule FileReader do
   end
 end
 
-# Pattern match on result
 case FileReader.read("existing.txt") do
   {:ok, content} -> IO.puts("Content: #{content}")
   {:error, reason} -> IO.puts("Error: #{reason}")
 end
 
-# Using with statement for cleaner flow
 defmodule UserProcessor do
   def process(user_id) do
     with {:ok, user} <- fetch_user(user_id),
@@ -935,15 +754,12 @@ defmodule UserProcessor do
 end
 
 UserProcessor.process(123)
-# => {:ok, %{user: %{id: 123, name: "Alice"}, profile: %{bio: "Developer"}, posts: ["Post 1", "Post 2"]}}
 
-# Exceptions for truly exceptional cases
 defmodule Calculator do
   def divide!(_a, 0), do: raise("Division by zero!")
   def divide!(a, b), do: a / b
 end
 
-# Safe version with tagged tuples
 defmodule SafeCalculator do
   def divide(_a, 0), do: {:error, :division_by_zero}
   def divide(a, b), do: {:ok, a / b}
@@ -953,7 +769,6 @@ end
 ### Try It
 
 ```elixir
-# Validate user input
 defmodule Validator do
   def validate_age(age) when age >= 0 and age <= 120 do
     {:ok, age}
@@ -971,13 +786,11 @@ defmodule Validator do
   end
 end
 
-# Use validation
 case Validator.validate_age(25) do
   {:ok, age} -> IO.puts("Valid age: #{age}")
   {:error, msg} -> IO.puts("Error: #{msg}")
 end
 
-# Chain validations
 with {:ok, age} <- Validator.validate_age(25),
      {:ok, email} <- Validator.validate_email("alice@example.com") do
   {:ok, %{age: age, email: email}}
@@ -987,17 +800,14 @@ end
 ### Common Pitfall
 
 ```elixir
-# DON'T: Use exceptions for control flow
 def find_user(id) do
   raise "User not found"  # Bad!
 end
 
-# DO: Use tagged tuples for expected failures
 def find_user(id) do
   {:error, :not_found}  # Good!
 end
 
-# Exceptions for UNEXPECTED errors only
 ```
 
 ## 10. Mix Projects
@@ -1015,29 +825,16 @@ Mix is Elixir's build tool. It manages:
 ### Example
 
 ```bash
-# Create new project
 mix new my_app
 cd my_app
 
-# Project structure:
-# my_app/
-# ├── lib/
-# │   └── my_app.ex       # Your code
-# ├── test/
-# │   └── my_app_test.exs # Tests
-# ├── mix.exs             # Project config
-# └── README.md
 
-# Run tests
 mix test
 
-# Compile
 mix compile
 
-# Interactive shell with project loaded
 iex -S mix
 
-# Format code
 mix format
 ```
 
@@ -1074,7 +871,6 @@ end
 **Adding Dependencies:**
 
 ```elixir
-# In mix.exs, add to deps():
 defp deps do
   [
     {:jason, "~> 1.4"}  # JSON library
@@ -1083,22 +879,17 @@ end
 ```
 
 ```bash
-# Install dependencies
 mix deps.get
 
-# Now use in code
 Jason.encode!(%{name: "Alice", age: 28})
-# => "{\"age\":28,\"name\":\"Alice\"}"
 ```
 
 ### Try It
 
 ```bash
-# Create a calculator project
 mix new calculator
 cd calculator
 
-# Edit lib/calculator.ex:
 defmodule Calculator do
   def add(a, b), do: a + b
   def subtract(a, b), do: a - b
@@ -1107,7 +898,6 @@ defmodule Calculator do
   def divide(a, b), do: {:ok, a / b}
 end
 
-# Edit test/calculator_test.exs:
 defmodule CalculatorTest do
   use ExUnit.Case
 
@@ -1120,10 +910,8 @@ defmodule CalculatorTest do
   end
 end
 
-# Run tests
 mix test
 
-# Use in IEx
 iex -S mix
 Calculator.add(5, 3)  # => 8
 ```
@@ -1131,16 +919,10 @@ Calculator.add(5, 3)  # => 8
 ### Common Pitfall
 
 ```bash
-# DON'T: Forget to get dependencies after adding to mix.exs
-# Just editing mix.exs doesn't install deps!
 
-# DO: Run mix deps.get after changes
 mix deps.get
 
-# DON'T: Edit files in _build/ or deps/
-# These are generated - your changes will be lost!
 
-# DO: Only edit files in lib/ and test/
 ```
 
 ## Hands-On Exercises
@@ -1157,7 +939,6 @@ defmodule Greeter do
   def greet(name), do: "Hello, #{name}!"
 end
 
-# Test it
 Greeter.greet({:morning, "Alice"})  # => "Good morning, Alice!"
 Greeter.greet("Bob")                # => "Hello, Bob!"
 ```
@@ -1242,16 +1023,13 @@ defmodule ContactManager do
   end
 end
 
-# Use it
 manager = ContactManager.new()
 manager = ContactManager.add_contact(manager, "Alice", "alice@example.com", "555-1234")
 manager = ContactManager.add_contact(manager, "Bob", "bob@example.com", "555-5678")
 
 ContactManager.list_contacts(manager)
-# => ["Alice: alice@example.com, 555-1234", "Bob: bob@example.com, 555-5678"]
 
 {:ok, contact} = ContactManager.get_contact(manager, "Alice")
-# => {:ok, %{email: "alice@example.com", phone: "555-1234"}}
 ```
 
 ## Related Content

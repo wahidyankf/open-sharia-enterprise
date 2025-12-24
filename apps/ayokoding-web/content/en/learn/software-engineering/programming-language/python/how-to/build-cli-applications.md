@@ -21,7 +21,6 @@ This guide shows effective CLI application development in Python.
 ```python
 import argparse
 
-# ✅ Simple argument parser
 def create_parser():
     parser = argparse.ArgumentParser(
         description='Process data files',
@@ -47,7 +46,6 @@ def create_parser():
 
     return parser
 
-# Usage
 parser = create_parser()
 args = parser.parse_args()
 
@@ -84,10 +82,8 @@ def existing_file(value):
         raise argparse.ArgumentTypeError(f"{value} is not a file")
     return path
 
-# ✅ Parser with custom types
 parser = argparse.ArgumentParser()
 
-# Integer with validation
 parser.add_argument(
     '--count',
     type=positive_int,
@@ -95,14 +91,12 @@ parser.add_argument(
     help='Number of items (must be positive)'
 )
 
-# File validation
 parser.add_argument(
     '--config',
     type=existing_file,
     help='Configuration file path'
 )
 
-# Choices
 parser.add_argument(
     '--format',
     choices=['json', 'xml', 'csv'],
@@ -110,7 +104,6 @@ parser.add_argument(
     help='Output format'
 )
 
-# Multiple values
 parser.add_argument(
     '--tags',
     nargs='+',
@@ -125,7 +118,6 @@ args = parser.parse_args()
 ```python
 import argparse
 
-# ✅ Git-style subcommands
 def create_parser():
     parser = argparse.ArgumentParser(description='Data management tool')
     subparsers = parser.add_subparsers(dest='command', required=True)
@@ -145,7 +137,6 @@ def create_parser():
 
     return parser
 
-# ✅ Handle subcommands
 def main():
     parser = create_parser()
     args = parser.parse_args()
@@ -179,7 +170,6 @@ if __name__ == '__main__':
 ```python
 import click
 
-# ✅ Simple Click command
 @click.command()
 @click.argument('input_file', type=click.Path(exists=True))
 @click.option('--output', '-o', default='output.txt', help='Output file')
@@ -209,7 +199,6 @@ if __name__ == '__main__':
 ```python
 import click
 
-# ✅ Various Click options
 @click.command()
 @click.option('--count', type=int, default=1, help='Number of iterations')
 @click.option('--name', prompt='Your name', help='Name to greet')
@@ -239,7 +228,6 @@ def greet(count, name, greeting, loud, format, config):
     if config:
         click.echo(f"Config: {config.read()}")
 
-# ✅ Password prompt
 @click.command()
 @click.option('--username', prompt=True)
 @click.option('--password', prompt=True, hide_input=True,
@@ -248,7 +236,6 @@ def login(username, password):
     """Login with credentials."""
     click.echo(f"Logging in as {username}")
 
-# ✅ Confirmation prompt
 @click.command()
 @click.confirmation_option(prompt='Are you sure you want to delete?')
 def delete():
@@ -261,7 +248,6 @@ def delete():
 ```python
 import click
 
-# ✅ Command groups (Git-style)
 @click.group()
 def cli():
     """Data management tool."""
@@ -289,10 +275,6 @@ def delete(record_id):
 if __name__ == '__main__':
     cli()
 
-# Usage:
-# python app.py add "task 1" --priority 5
-# python app.py list --filter "urgent"
-# python app.py delete 42
 ```
 
 ### Click Utilities
@@ -301,7 +283,6 @@ if __name__ == '__main__':
 import click
 import time
 
-# ✅ Progress bar
 @click.command()
 def download():
     """Download files."""
@@ -310,7 +291,6 @@ def download():
         for item in bar:
             time.sleep(0.01)  # Simulate work
 
-# ✅ Styled output
 @click.command()
 def status():
     """Show status with colors."""
@@ -321,7 +301,6 @@ def status():
     # Conditional styling
     click.echo(click.style('Info', fg='blue'))
 
-# ✅ Confirmation
 @click.command()
 @click.option('--yes', is_flag=True, help='Skip confirmation')
 def dangerous(yes):
@@ -331,7 +310,6 @@ def dangerous(yes):
 
     click.echo('Performing operation...')
 
-# ✅ Pagination
 @click.command()
 def logs():
     """Show logs with pagination."""
@@ -347,7 +325,6 @@ def logs():
 import typer
 from pathlib import Path
 
-# ✅ Simple Typer application
 app = typer.Typer()
 
 @app.command()
@@ -387,7 +364,6 @@ class Format(str, Enum):
 
 app = typer.Typer()
 
-# ✅ Type hints for validation
 @app.command()
 def convert(
     input_file: Path,
@@ -406,7 +382,6 @@ def convert(
 
     typer.echo(f"Processing {count} times...")
 
-# ✅ Interactive prompts
 @app.command()
 def login(
     username: str = typer.Option(..., prompt=True),
@@ -424,7 +399,6 @@ if __name__ == "__main__":
 ```python
 import typer
 
-# ✅ Typer with subcommands
 app = typer.Typer()
 
 @app.command()
@@ -467,7 +441,6 @@ if __name__ == "__main__":
 import sys
 import argparse
 
-# ✅ Read from stdin or file
 def read_input(filename=None):
     if filename and filename != '-':
         with open(filename) as f:
@@ -476,13 +449,11 @@ def read_input(filename=None):
         # Read from stdin
         return sys.stdin.read()
 
-# ✅ Line-by-line stdin processing
 def process_lines():
     for line in sys.stdin:
         # Process each line
         print(line.upper(), end='')
 
-# ✅ argparse with stdin support
 parser = argparse.ArgumentParser()
 parser.add_argument('input', nargs='?', default='-', help='Input file or - for stdin')
 args = parser.parse_args()
@@ -490,10 +461,6 @@ args = parser.parse_args()
 data = read_input(args.input)
 print(data)
 
-# Usage:
-# cat input.txt | python app.py
-# python app.py input.txt
-# python app.py -  # Explicit stdin
 ```
 
 ### Writing to stdout and stderr
@@ -501,15 +468,12 @@ print(data)
 ```python
 import sys
 
-# ✅ Write to stdout (normal output)
 print("Normal output")
 sys.stdout.write("Output to stdout\n")
 
-# ✅ Write to stderr (errors and diagnostics)
 print("Error message", file=sys.stderr)
 sys.stderr.write("Error to stderr\n")
 
-# ✅ Status messages to stderr, data to stdout
 def process_data(data):
     # Progress/status to stderr (won't interfere with piping)
     print(f"Processing {len(data)} items...", file=sys.stderr)
@@ -518,7 +482,6 @@ def process_data(data):
     for item in data:
         print(item)  # Goes to stdout
 
-# ✅ Exit codes
 def main():
     try:
         process_data(data)
@@ -533,7 +496,6 @@ def main():
 ```python
 import click
 
-# ✅ Click stdin support
 @click.command()
 @click.argument('input', type=click.File('r'), default='-')
 @click.argument('output', type=click.File('w'), default='-')
@@ -543,10 +505,6 @@ def transform(input, output):
     result = data.upper()
     output.write(result)
 
-# Usage:
-# cat input.txt | python app.py - -
-# python app.py input.txt output.txt
-# python app.py input.txt - > output.txt
 ```
 
 ## Entry Points with setuptools
@@ -554,7 +512,6 @@ def transform(input, output):
 ### Creating Entry Points
 
 ```python
-# setup.py
 from setuptools import setup, find_packages
 
 setup(
@@ -573,7 +530,6 @@ setup(
     },
 )
 
-# mytool/cli.py
 import click
 
 @click.command()
@@ -584,13 +540,11 @@ def main():
 if __name__ == '__main__':
     main()
 
-# After installation: mytool command available globally
 ```
 
 ### pyproject.toml Entry Points
 
 ```toml
-# pyproject.toml
 [project]
 name = "mytool"
 version = "1.0.0"
@@ -603,9 +557,6 @@ dependencies = [
 mytool = "mytool.cli:main"
 mytool-admin = "mytool.admin:admin_main"
 
-# Build and install:
-# pip install -e .  # Development mode
-# pip install .     # Normal installation
 ```
 
 ## Testing CLI Applications
@@ -618,14 +569,12 @@ import pytest
 from io import StringIO
 import sys
 
-# Function under test
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('input')
     parser.add_argument('--output', default='output.txt')
     return parser
 
-# ✅ Test argument parsing
 def test_parser_with_all_args():
     parser = create_parser()
     args = parser.parse_args(['input.txt', '--output', 'result.txt'])
@@ -640,7 +589,6 @@ def test_parser_with_defaults():
     assert args.input == 'input.txt'
     assert args.output == 'output.txt'
 
-# ✅ Test invalid arguments
 def test_parser_missing_required():
     parser = create_parser()
 
@@ -654,7 +602,6 @@ def test_parser_missing_required():
 import click
 from click.testing import CliRunner
 
-# Command under test
 @click.command()
 @click.argument('name')
 @click.option('--greeting', default='Hello')
@@ -662,7 +609,6 @@ def greet(name, greeting):
     """Greet NAME."""
     click.echo(f"{greeting}, {name}!")
 
-# ✅ Test Click command
 def test_greet_default():
     runner = CliRunner()
     result = runner.invoke(greet, ['Alice'])
@@ -677,7 +623,6 @@ def test_greet_custom():
     assert result.exit_code == 0
     assert result.output == "Hi, Bob!\n"
 
-# ✅ Test with file input
 @click.command()
 @click.argument('input', type=click.File('r'))
 def process_file(input):
@@ -712,7 +657,6 @@ def hello(name: str, greeting: str = "Hello"):
     """Greet NAME."""
     typer.echo(f"{greeting}, {name}!")
 
-# ✅ Test Typer command
 def test_hello_default():
     runner = CliRunner()
     result = runner.invoke(app, ["Alice"])
@@ -736,7 +680,6 @@ def test_hello_custom():
 import click
 import sys
 
-# ✅ Graceful error handling
 @click.command()
 @click.argument('filename', type=click.Path(exists=True))
 def process(filename):
@@ -770,7 +713,6 @@ import click
 from pathlib import Path
 import yaml
 
-# ✅ Support config file
 @click.command()
 @click.option('--config', type=click.Path(), help='Config file path')
 @click.option('--api-key', help='API key')
@@ -801,7 +743,6 @@ def api_client(config, api_key, endpoint):
 ```python
 import click
 
-# ✅ Enable shell completion for Click
 @click.command()
 @click.argument('name')
 def greet(name):
@@ -811,12 +752,7 @@ def greet(name):
 if __name__ == '__main__':
     greet()
 
-# Install completion:
-# Bash: eval "$(_GREET_COMPLETE=bash_source greet)"
-# Zsh: eval "$(_GREET_COMPLETE=zsh_source greet)"
-# Fish: eval (env _GREET_COMPLETE=fish_source greet)
 
-# For Typer (built-in):
 import typer
 
 app = typer.Typer()
@@ -829,7 +765,6 @@ def main():
 if __name__ == "__main__":
     app()
 
-# Typer provides --install-completion and --show-completion flags
 ```
 
 ## Summary

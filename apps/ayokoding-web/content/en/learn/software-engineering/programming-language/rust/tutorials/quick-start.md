@@ -1107,13 +1107,10 @@ mod tests {
 ### Running Tests
 
 ```bash
-# Run all tests
 cargo test
 
-# Run specific test
 cargo test it_works
 
-# Show println! output
 cargo test -- --show-output
 ```
 

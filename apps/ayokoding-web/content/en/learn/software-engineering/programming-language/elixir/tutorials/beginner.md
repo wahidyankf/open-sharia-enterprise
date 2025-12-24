@@ -116,26 +116,21 @@ This tutorial covers **0-60%** of Elixir - everything you need to build complete
 Pattern matching is Elixir's most powerful feature. Let's go deeper than the Quick Start.
 
 ```elixir
-# Basic review
 {:ok, value} = {:ok, 42}
 value  # => 42
 
-# Nested patterns
 {:ok, {x, y}} = {:ok, {10, 20}}
 x  # => 10
 y  # => 20
 
-# List patterns
 [first, second | rest] = [1, 2, 3, 4, 5]
 first   # => 1
 second  # => 2
 rest    # => [3, 4, 5]
 
-# Map patterns
 %{name: name, age: age} = %{name: "Alice", age: 28, city: "Portland"}
 name  # => "Alice"
 age   # => 28
-# Note: city is ignored (not extracted)
 ```
 
 ### 1.2 The Pin Operator (^)
@@ -143,17 +138,14 @@ age   # => 28
 The pin operator `^` uses the **existing value** of a variable instead of rebinding.
 
 ```elixir
-# Without pin - rebinds x
 x = 1
 x = 2  # x is now 2
 x  # => 2
 
-# With pin - matches against existing value
 x = 1
 ^x = 1  # Works! 1 matches 1
 ^x = 2  # ** (MatchError) - 2 doesn't match 1
 
-# Real use case: finding specific value in list
 x = 42
 [^x, y, z] = [42, 10, 20]  # Works! First element matches 42
 y  # => 10
@@ -161,7 +153,6 @@ z  # => 20
 
 [^x, y, z] = [99, 10, 20]  # ** (MatchError) - 99 doesn't match 42
 
-# Pin in function clauses
 defmodule Matcher do
   def check(value, ^value), do: "Same!"
   def check(_value1, _value2), do: "Different"
@@ -170,11 +161,9 @@ end
 Matcher.check(5, 5)  # => "Same!"
 Matcher.check(5, 3)  # => "Different"
 
-# Pin in comprehensions
 numbers = [1, 2, 3, 4, 5]
 target = 3
 for ^target <- numbers, do: :found
-# => [:found] - only matches where value is 3
 ```
 
 **When to use pin:**
@@ -200,7 +189,6 @@ Number.describe(-5)  # => "negative"
 Number.describe(0)   # => "zero"
 Number.describe(10)  # => "positive"
 
-# Multiple guards with `and`
 def adult?(age) when is_integer(age) and age >= 18, do: true
 def adult?(_), do: false
 
@@ -208,7 +196,6 @@ adult?(25)    # => true
 adult?(15)    # => false
 adult?("25")  # => false (not an integer)
 
-# Multiple guards with `or`
 def vowel?(letter) when letter == "a" or letter == "e" or letter == "i" do
   true
 end
@@ -221,7 +208,6 @@ vowel?("b")  # => false
 **Allowed in guards:**
 
 ```elixir
-# Type checks
 is_atom(x)
 is_binary(x)
 is_boolean(x)
@@ -232,16 +218,12 @@ is_map(x)
 is_number(x)
 is_tuple(x)
 
-# Comparisons
 ==, !=, ===, !==, <, >, <=, >=
 
-# Boolean operators
 and, or, not
 
-# Arithmetic
 +, -, *, /
 
-# Other
 in, length, map_size, tuple_size
 ```
 
@@ -278,7 +260,6 @@ Validator.non_empty_list?([1, 2, 3])         # => true
 **Case expressions:**
 
 ```elixir
-# Case with patterns
 result = {:ok, %{name: "Alice", age: 28}}
 
 message = case result do
@@ -295,7 +276,6 @@ message = case result do
     "Unknown result"
 end
 
-# Real example: HTTP response handling
 defmodule HTTPClient do
   def handle_response(response) do
     case response do
@@ -318,7 +298,6 @@ end
 **Cond expressions (multiple conditions):**
 
 ```elixir
-# Cond evaluates conditions top to bottom
 defmodule Grade do
   def letter(score) do
     cond do
@@ -335,7 +314,6 @@ Grade.letter(95)  # => "A"
 Grade.letter(75)  # => "C"
 Grade.letter(55)  # => "F"
 
-# Cond with complex conditions
 defmodule Weather do
   def advice(temp, weather) do
     cond do
@@ -372,7 +350,6 @@ end
 Calculator.calc(:add, 5, 3)      # => 8
 Calculator.calc(:divide, 10, 0)  # => {:error, :division_by_zero}
 
-# Process different data structures
 defmodule Formatter do
   def format({:user, name, age}) do
     "User: #{name} (#{age} years old)"
@@ -392,10 +369,8 @@ defmodule Formatter do
 end
 
 Formatter.format({:user, "Alice", 28})
-# => "User: Alice (28 years old)"
 
 Formatter.format(%{a: 1, b: 2})
-# => "Map with 2 keys"
 ```
 
 **Recursive patterns:**
@@ -439,32 +414,23 @@ Lists are linked lists - understand their performance characteristics.
 **List operations:**
 
 ```elixir
-# Creation
 list = [1, 2, 3, 4, 5]
 
-# Prepend (O(1) - fast!)
 [0 | list]  # => [0, 1, 2, 3, 4, 5]
 
-# Append (O(n) - slow!)
 list ++ [6]  # => [1, 2, 3, 4, 5, 6]
 
-# Concatenation
 [1, 2] ++ [3, 4]  # => [1, 2, 3, 4]
 
-# Subtraction
 [1, 2, 3, 4] -- [2, 4]  # => [1, 3]
 
-# Access by index (O(n) - slow!)
 Enum.at([1, 2, 3, 4], 2)  # => 3
 
-# Head and tail
 hd([1, 2, 3])  # => 1
 tl([1, 2, 3])  # => [2, 3]
 
-# Check membership (O(n))
 2 in [1, 2, 3]  # => true
 
-# Length (O(n))
 length([1, 2, 3])  # => 3
 ```
 
@@ -482,24 +448,17 @@ length([1, 2, 3])  # => 3
 **List comprehensions mastery:**
 
 ```elixir
-# Basic comprehension
 for n <- 1..10, do: n * n
-# => [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-# Multiple filters
 for n <- 1..20,
     rem(n, 2) == 0,    # Only even
     rem(n, 3) == 0,    # Only divisible by 3
     do: n
-# => [6, 12, 18]
 
-# Multiple generators
 for x <- [1, 2, 3],
     y <- [:a, :b],
     do: {x, y}
-# => [{1, :a}, {1, :b}, {2, :a}, {2, :b}, {3, :a}, {3, :b}]
 
-# Pattern matching in generator
 users = [
   %{name: "Alice", role: :admin},
   %{name: "Bob", role: :user},
@@ -507,17 +466,12 @@ users = [
 ]
 
 for %{name: name, role: :admin} <- users, do: name
-# => ["Alice", "Carol"]
 
-# Into different collection
 for {k, v} <- %{a: 1, b: 2, c: 3}, into: %{}, do: {v, k}
-# => %{1 => :a, 2 => :b, 3 => :c}
 
-# Reduce comprehension
 for n <- 1..5, reduce: 0 do
   sum -> sum + n
 end
-# => 15
 ```
 
 ### 2.2 Tuples
@@ -525,22 +479,16 @@ end
 Tuples store fixed-size collections with fast access.
 
 ```elixir
-# Creation
 tuple = {:ok, "Success", 42}
 
-# Access by index (O(1) - fast!)
 elem(tuple, 0)  # => :ok
 elem(tuple, 1)  # => "Success"
 elem(tuple, 2)  # => 42
 
-# Size
 tuple_size(tuple)  # => 3
 
-# Update (creates new tuple)
 put_elem(tuple, 1, "Updated")
-# => {:ok, "Updated", 42}
 
-# Pattern matching (most common usage)
 {:ok, message, code} = {:ok, "Success", 200}
 message  # => "Success"
 code     # => 200
@@ -549,15 +497,12 @@ code     # => 200
 **Common tuple patterns:**
 
 ```elixir
-# Return values
 def divide(a, b) when b != 0, do: {:ok, a / b}
 def divide(_a, 0), do: {:error, :division_by_zero}
 
-# Tagged tuples
 {:user, "Alice", 28}
 {:product, "Widget", 9.99}
 
-# Coordinates
 {10, 20}  # {x, y}
 {10, 20, 30}  # {x, y, z}
 ```
@@ -576,10 +521,8 @@ Maps are key-value stores with fast access.
 **Creating and accessing maps:**
 
 ```elixir
-# With atom keys
 person = %{name: "Alice", age: 28, city: "Portland"}
 
-# Access
 person[:name]   # => "Alice"
 person.name     # => "Alice" (only works with atom keys)
 person[:email]  # => nil
@@ -587,14 +530,11 @@ person[:email]  # => nil
 Map.get(person, :name)              # => "Alice"
 Map.get(person, :email, "unknown")  # => "unknown" (default)
 
-# With string keys
 data = %{"name" => "Bob", "age" => 35}
 data["name"]  # => "Bob"
 
-# Mixed keys (valid but discouraged)
 mixed = %{:atom_key => 1, "string_key" => 2}
 
-# Dynamic keys
 key = :dynamic
 %{key => "value"}  # => %{dynamic: "value"}
 ```
@@ -604,22 +544,15 @@ key = :dynamic
 ```elixir
 person = %{name: "Alice", age: 28}
 
-# Update existing key
 person = %{person | age: 29}
-# => %{name: "Alice", age: 29}
 
-# Add new key (use Map.put)
 person = Map.put(person, :email, "alice@example.com")
-# => %{name: "Alice", age: 29, email: "alice@example.com"}
 
-# Update multiple keys
 person = %{person | name: "Alicia", age: 30}
 
-# Merge maps
 defaults = %{role: "user", active: true}
 person = Map.merge(defaults, person)
 
-# Delete key
 person = Map.delete(person, :email)
 ```
 
@@ -638,15 +571,12 @@ user = %{
   }
 }
 
-# Access nested
 user[:contact][:email]  # => "alice@example.com"
 get_in(user, [:contact, :email])  # => "alice@example.com"
 
-# Update nested
 user = put_in(user, [:contact, :email], "newemail@example.com")
 user = update_in(user, [:contact, :phone], &("1-" <> &1))
 
-# Get and update
 {old_email, user} = pop_in(user, [:contact, :email])
 ```
 
@@ -655,17 +585,13 @@ user = update_in(user, [:contact, :phone], &("1-" <> &1))
 ```elixir
 map = %{a: 1, b: 2, c: 3}
 
-# Keys and values
 Map.keys(map)    # => [:a, :b, :c]
 Map.values(map)  # => [1, 2, 3]
 
-# Check key
 Map.has_key?(map, :a)  # => true
 
-# Transform values
 Map.update!(map, :a, &(&1 * 10))  # => %{a: 10, b: 2, c: 3}
 
-# Filter
 Map.take(map, [:a, :c])  # => %{a: 1, c: 3}
 Map.drop(map, [:b])      # => %{a: 1, c: 3}
 ```
@@ -682,27 +608,20 @@ Map.drop(map, [:b])      # => %{a: 1, c: 3}
 Keyword lists are lists of `{key, value}` tuples with atom keys.
 
 ```elixir
-# Creation
 opts = [size: 10, color: "red", border: true]
-# Syntactic sugar for: [{:size, 10}, {:color, "red"}, {:border, true}]
 
-# Access
 opts[:size]   # => 10
 opts[:color]  # => "red"
 
 Keyword.get(opts, :size)              # => 10
 Keyword.get(opts, :missing, "default") # => "default"
 
-# Update
 opts = Keyword.put(opts, :size, 20)
 
-# Duplicate keys allowed!
 opts = [size: 10, size: 20]  # Valid!
 opts[:size]  # => 10 (first occurrence)
 
-# Merge
 Keyword.merge([a: 1, b: 2], [b: 3, c: 4])
-# => [a: 1, b: 3, c: 4]
 ```
 
 **When to use keyword lists:**
@@ -725,10 +644,8 @@ defmodule Database do
 end
 
 Database.query("SELECT * FROM users")
-# => "Querying with timeout: 5000, pool: default"
 
 Database.query("SELECT * FROM users", timeout: 10000, pool: :replica)
-# => "Querying with timeout: 10000, pool: replica"
 ```
 
 ### 2.5 Structs
@@ -745,18 +662,13 @@ defmodule User do
   # defstruct [:name, :email, age: 0, role: :user]
 end
 
-# Create struct
 user = %User{name: "Alice", email: "alice@example.com", age: 28}
-# => %User{name: "Alice", email: "alice@example.com", age: 28, role: :user}
 
-# Access (same as maps)
 user.name   # => "Alice"
 user[:age]  # => 28
 
-# Update
 user = %{user | age: 29}
 
-# Pattern match
 %User{name: name, age: age} = user
 name  # => "Alice"
 ```
@@ -764,14 +676,10 @@ name  # => "Alice"
 **Why structs over maps:**
 
 ```elixir
-# Maps allow any keys
 person = %{name: "Alice", agee: 28}  # Typo! No error
 
-# Structs enforce defined keys
 user = %User{name: "Alice", agee: 28}
-# ** (KeyError) key :agee not found in: %User{}
 
-# Structs have compile-time checks
 defmodule Service do
   def process(%User{} = user) do
     # Type-checked at compile time
@@ -817,48 +725,35 @@ User.adult?(user)  # => true
 Ranges represent sequences of numbers.
 
 ```elixir
-# Creation
 range = 1..10
 range = 1..10//2  # Step of 2 (Elixir 1.12+)
 
-# Check membership
 5 in 1..10   # => true
 15 in 1..10  # => false
 
-# Convert to list
 Enum.to_list(1..5)  # => [1, 2, 3, 4, 5]
 
-# Use in comprehensions
 for n <- 1..10, do: n * n
-# => [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-# Descending range
 10..1  # Descending
 
-# Character ranges
 ?a..?z  # => 97..122 (ASCII values)
 ```
 
 ### 2.7 Choosing the Right Data Structure
 
 ```elixir
-# List - ordered collection, frequent prepending
 shopping_cart = ["apple", "banana", "orange"]
 
-# Tuple - fixed size, fast indexed access
 coordinate = {10.5, 20.3}
 result = {:ok, data}
 
-# Map - dynamic key-value, fast lookup
 user = %{name: "Alice", email: "alice@example.com"}
 
-# Keyword list - function options, order matters
 opts = [timeout: 5000, retry: 3]
 
-# Struct - domain model, type safety
 user = %User{name: "Alice", age: 28}
 
-# Range - sequence of numbers
 for page <- 1..10, do: fetch_page(page)
 ```
 
@@ -869,23 +764,15 @@ for page <- 1..10, do: fetch_page(page)
 **Capture operator (&):**
 
 ```elixir
-# Long form
 Enum.map([1, 2, 3], fn x -> x * 2 end)
-# => [2, 4, 6]
 
-# Short form with capture
 Enum.map([1, 2, 3], &(&1 * 2))
-# => [2, 4, 6]
 
-# Capture existing function
 Enum.map(["hello", "world"], &String.upcase/1)
-# => ["HELLO", "WORLD"]
 
-# Multiple arguments
 add = &(&1 + &2)
 add.(5, 3)  # => 8
 
-# Capture with expression
 multiply_by_10 = &(&1 * 10)
 multiply_by_10.(5)  # => 50
 ```
@@ -893,7 +780,6 @@ multiply_by_10.(5)  # => 50
 **Closures:**
 
 ```elixir
-# Functions capture outer scope
 defmodule Counter do
   def create(initial) do
     fn -> initial end
@@ -911,7 +797,6 @@ inc_from_5 = Counter.create_incrementer(5)
 inc_from_5.(3)  # => 8
 inc_from_5.(10) # => 15
 
-# Practical closure
 defmodule Filter do
   def greater_than(threshold) do
     fn value -> value > threshold end
@@ -920,7 +805,6 @@ end
 
 greater_than_10 = Filter.greater_than(10)
 Enum.filter([5, 15, 8, 20, 12], greater_than_10)
-# => [15, 20, 12]
 ```
 
 ### 3.2 Named Functions Advanced
@@ -936,7 +820,6 @@ defmodule FizzBuzz do
 end
 
 Enum.map(1..15, &FizzBuzz.convert/1)
-# => [1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]
 ```
 
 **Default arguments:**
@@ -982,7 +865,6 @@ defmodule Math do
   def add(a, b, c), do: a + b + c
 end
 
-# Reference by name/arity
 add_two = &Math.add/2
 add_three = &Math.add/3
 
@@ -1035,7 +917,6 @@ end
 user = MyApp.User.new("Alice", "alice@example.com")
 product = MyApp.Product.new("Widget", 9.99)
 
-# Alias for convenience
 alias MyApp.User
 user = User.new("Bob", "bob@example.com")
 ```
@@ -1068,24 +949,19 @@ end
 **Advanced piping:**
 
 ```elixir
-# Pipe to non-first argument (use anonymous function)
 "hello"
 |> String.upcase()
 |> String.duplicate(3)
-# => "HELLOHELLOHELLO"
 
-# When you need non-first argument
 data
 |> process()
 |> then(&save_to_db(:users, &1))  # Pipe into second arg
 
-# Pipe with pattern matching
 {:ok, result} =
   data
   |> validate()
   |> transform()
 
-# Debugging in pipeline with IO.inspect
 [1, 2, 3, 4, 5]
 |> Enum.map(&(&1 * 2))
 |> IO.inspect(label: "After map")
@@ -1132,27 +1008,20 @@ end
 ### 4.1 If and Unless
 
 ```elixir
-# Basic if
 if true do
   "Yes"
 else
   "No"
 end
-# => "Yes"
 
-# One-line if
 if true, do: "Yes", else: "No"
 
-# Unless (opposite of if)
 unless false do
   "Executed"
 end
-# => "Executed"
 
-# If with pattern matching
 result = {:ok, 42}
 if {:ok, value} = result, do: value, else: nil
-# => 42
 ```
 
 **When to use if/unless:**
@@ -1164,7 +1033,6 @@ if {:ok, value} = result, do: value, else: nil
 ### 4.2 Case - Pattern Matching
 
 ```elixir
-# Basic case
 result = {:ok, "data"}
 
 case result do
@@ -1173,7 +1041,6 @@ case result do
   _ -> "Unknown"
 end
 
-# Case with guards
 value = 15
 
 case value do
@@ -1183,9 +1050,7 @@ case value do
   n when n < 100 -> "Medium positive"
   _ -> "Large positive"
 end
-# => "Medium positive"
 
-# Nested case
 case File.read("data.txt") do
   {:ok, content} ->
     case Jason.decode(content) do
@@ -1201,7 +1066,6 @@ end
 ### 4.3 Cond - Multiple Conditions
 
 ```elixir
-# Cond for multiple conditions
 defmodule Weather do
   def advice(temp, humidity) do
     cond do
@@ -1219,7 +1083,6 @@ end
 ### 4.4 With - Happy Path Pipeline
 
 ```elixir
-# With for happy path scenarios
 defmodule UserService do
   def create_user(params) do
     with {:ok, validated} <- validate(params),
@@ -1259,7 +1122,6 @@ defmodule UserService do
 end
 
 UserService.create_user(%{name: "Alice", email: "alice@example.com"})
-# => {:ok, %{name: "Alice", email: "alice@example.com", id: 123}}
 ```
 
 ## Section 5: Enum and Stream
@@ -1269,56 +1131,38 @@ UserService.create_user(%{name: "Alice", email: "alice@example.com"})
 **Mapping and filtering:**
 
 ```elixir
-# Map
 Enum.map([1, 2, 3], &(&1 * 2))
-# => [2, 4, 6]
 
-# Filter
 Enum.filter([1, 2, 3, 4, 5], &rem(&1, 2) == 0)
-# => [2, 4]
 
-# Reject (opposite of filter)
 Enum.reject([1, 2, 3, 4, 5], &rem(&1, 2) == 0)
-# => [1, 3, 5]
 
-# Map and filter combined
 [1, 2, 3, 4, 5]
 |> Enum.filter(&rem(&1, 2) == 0)
 |> Enum.map(&(&1 * &1))
-# => [4, 16]
 ```
 
 **Reducing:**
 
 ```elixir
-# Sum
 Enum.sum([1, 2, 3, 4, 5])  # => 15
 
-# Custom reduce
 Enum.reduce([1, 2, 3, 4], 0, fn x, acc -> x + acc end)
-# => 10
 
-# Reduce to map
 ["apple", "banana", "apricot"]
 |> Enum.reduce(%{}, fn fruit, acc ->
   first_letter = String.first(fruit)
   Map.update(acc, first_letter, [fruit], &[fruit | &1])
 end)
-# => %{"a" => ["apricot", "apple"], "b" => ["banana"]}
 ```
 
 **Sorting:**
 
 ```elixir
-# Simple sort
 Enum.sort([3, 1, 4, 1, 5, 9])
-# => [1, 1, 3, 4, 5, 9]
 
-# Sort descending
 Enum.sort([3, 1, 4], :desc)
-# => [4, 3, 1]
 
-# Sort by custom function
 users = [
   %{name: "Bob", age: 35},
   %{name: "Alice", age: 28},
@@ -1326,25 +1170,17 @@ users = [
 ]
 
 Enum.sort_by(users, & &1.age)
-# => [%{name: "Alice", age: 28}, %{name: "Bob", age: 35}, %{name: "Carol", age: 42}]
 ```
 
 **Finding:**
 
 ```elixir
-# Find first matching
 Enum.find([1, 2, 3, 4, 5], &(&1 > 3))
-# => 4
 
-# Find with default
 Enum.find([1, 2, 3], &(&1 > 10), :not_found)
-# => :not_found
 
-# At index
 Enum.at([1, 2, 3, 4], 2)
-# => 3
 
-# Take/drop
 Enum.take([1, 2, 3, 4, 5], 3)  # => [1, 2, 3]
 Enum.drop([1, 2, 3, 4, 5], 2)  # => [3, 4, 5]
 ```
@@ -1352,7 +1188,6 @@ Enum.drop([1, 2, 3, 4, 5], 2)  # => [3, 4, 5]
 **Grouping and splitting:**
 
 ```elixir
-# Group by
 users = [
   %{name: "Alice", city: "Portland"},
   %{name: "Bob", city: "Seattle"},
@@ -1360,18 +1195,10 @@ users = [
 ]
 
 Enum.group_by(users, & &1.city)
-# => %{
-#   "Portland" => [%{name: "Alice", city: "Portland"}, %{name: "Carol", city: "Portland"}],
-#   "Seattle" => [%{name: "Bob", city: "Seattle"}]
-# }
 
-# Chunk
 Enum.chunk_every([1, 2, 3, 4, 5, 6], 2)
-# => [[1, 2], [3, 4], [5, 6]]
 
-# Split
 Enum.split([1, 2, 3, 4, 5], 3)
-# => {[1, 2, 3], [4, 5]}
 ```
 
 ### 5.2 Stream - Lazy Enumeration
@@ -1379,34 +1206,23 @@ Enum.split([1, 2, 3, 4, 5], 3)
 Streams defer computation until needed - great for large datasets.
 
 ```elixir
-# Eager (Enum) - processes immediately
 [1, 2, 3]
 |> Enum.map(&(&1 * 2))
 |> Enum.filter(&(&1 > 3))
-# => [4, 6]
-# Creates intermediate list [2, 4, 6] then filters
 
-# Lazy (Stream) - no intermediate lists
 [1, 2, 3]
 |> Stream.map(&(&1 * 2))
 |> Stream.filter(&(&1 > 3))
 |> Enum.to_list()
-# => [4, 6]
-# Processes each element through entire pipeline
 
-# Infinite streams
 Stream.iterate(0, &(&1 + 1))
 |> Stream.take(10)
 |> Enum.to_list()
-# => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-# Cycle infinitely
 Stream.cycle([:a, :b, :c])
 |> Stream.take(7)
 |> Enum.to_list()
-# => [:a, :b, :c, :a, :b, :c, :a]
 
-# Practical: process large file
 File.stream!("large_file.csv")
 |> Stream.map(&String.trim/1)
 |> Stream.reject(&(&1 == ""))
@@ -1426,25 +1242,19 @@ File.stream!("large_file.csv")
 ### 6.1 String Basics
 
 ```elixir
-# Creation
 str = "Hello, World!"
 
-# Concatenation
 "Hello, " <> "World!"  # => "Hello, World!"
 
-# Interpolation
 name = "Alice"
 "Hello, #{name}!"  # => "Hello, Alice!"
 
-# Length
 String.length("Hello")  # => 5
 
-# Case conversion
 String.upcase("hello")    # => "HELLO"
 String.downcase("HELLO")  # => "hello"
 String.capitalize("hello world")  # => "Hello world"
 
-# Trimming
 String.trim("  hello  ")  # => "hello"
 String.trim_leading("  hello")  # => "hello"
 String.trim_trailing("hello  ")  # => "hello"
@@ -1453,43 +1263,33 @@ String.trim_trailing("hello  ")  # => "hello"
 ### 6.2 String Operations
 
 ```elixir
-# Splitting
 String.split("a,b,c", ",")  # => ["a", "b", "c"]
 String.split("hello world")  # => ["hello", "world"]
 
-# Joining
 Enum.join(["a", "b", "c"], ",")  # => "a,b,c"
 
-# Replace
 String.replace("hello world", "world", "Elixir")
-# => "hello Elixir"
 
-# Contains
 String.contains?("hello world", "world")  # => true
 String.starts_with?("hello", "he")  # => true
 String.ends_with?("world", "ld")  # => true
 
-# Slicing
 String.slice("hello", 0..2)  # => "hel"
 String.slice("hello", 1, 3)  # => "ell"
 
-# Reverse
 String.reverse("hello")  # => "olleh"
 ```
 
 ### 6.3 Pattern Matching with Strings
 
 ```elixir
-# Match beginning
 "Hello " <> rest = "Hello World"
 rest  # => "World"
 
-# Binary pattern matching (advanced)
 <<head, rest::binary>> = "Hello"
 head  # => 72 (ASCII 'H')
 rest  # => "ello"
 
-# Extract first character
 String.first("Hello")  # => "H"
 String.last("Hello")   # => "o"
 ```
@@ -1529,7 +1329,6 @@ defmodule ListProcessor do
 end
 
 ListProcessor.my_map([1, 2, 3], &(&1 * 2))
-# => [2, 4, 6]
 ```
 
 ### 7.2 Error Handling Patterns
@@ -1546,7 +1345,6 @@ defmodule FileHandler do
   end
 end
 
-# Caller handles errors
 case FileHandler.read_and_parse("data.json") do
   {:ok, data} -> process(data)
   {:error, _} -> handle_error()
@@ -1620,7 +1418,6 @@ end
 ### 8.1 Basic Testing
 
 ```elixir
-# test/calculator_test.exs
 defmodule CalculatorTest do
   use ExUnit.Case
 
@@ -1669,19 +1466,15 @@ end
 ### 8.3 Assertions
 
 ```elixir
-# Equality
 assert 1 + 1 == 2
 refute 1 + 1 == 3
 
-# Pattern matching
 assert {:ok, value} = some_function()
 
-# Exceptions
 assert_raise ArithmeticError, fn ->
   1 / 0
 end
 
-# Close enough (floats)
 assert_in_delta 0.1 + 0.2, 0.3, 0.0001
 ```
 
@@ -1690,13 +1483,10 @@ assert_in_delta 0.1 + 0.2, 0.3, 0.0001
 ### 9.1 Spawning Processes
 
 ```elixir
-# Spawn a process
 pid = spawn(fn -> IO.puts("Hello from process!") end)
 
-# Send message
 send(pid, {:hello, "World"})
 
-# Receive messages
 receive do
   {:hello, msg} -> IO.puts("Received: #{msg}")
 after
@@ -1720,10 +1510,8 @@ defmodule Messenger do
   end
 end
 
-# Start listener
 pid = spawn(&Messenger.listen/0)
 
-# Send messages
 send(pid, {:say, "Hello"})
 send(pid, {:say, "World"})
 send(pid, :stop)
@@ -1764,7 +1552,6 @@ defmodule Counter do
   end
 end
 
-# Usage
 {:ok, _pid} = Counter.start_link(0)
 Counter.increment()  # => 1
 Counter.increment()  # => 2
@@ -1814,13 +1601,11 @@ defmodule TodoList do
   end
 end
 
-# Usage
 list = TodoList.new()
 list = TodoList.add_item(list, "Buy groceries")
 list = TodoList.add_item(list, "Write code")
 list = TodoList.mark_done(list, 1)
 TodoList.list_pending(list)
-# => [%{id: 2, description: "Write code", done: false}]
 ```
 
 ### Project 2: CSV Parser
@@ -1851,16 +1636,8 @@ defmodule CSVParser do
   end
 end
 
-# Usage with data.csv:
-# name,age,city
-# Alice,28,Portland
-# Bob,35,Seattle
 
 CSVParser.parse("data.csv")
-# => [
-#   %{"name" => "Alice", "age" => "28", "city" => "Portland"},
-#   %{"name" => "Bob", "age" => "35", "city" => "Seattle"}
-# ]
 ```
 
 ### Project 3: Bank Account with GenServer
@@ -1936,13 +1713,11 @@ defmodule BankAccount do
   end
 end
 
-# Usage
 {:ok, account} = BankAccount.start_link(1000.0)
 BankAccount.deposit(account, 500.0)    # => {:ok, 1500.0}
 BankAccount.withdraw(account, 200.0)   # => {:ok, 1300.0}
 BankAccount.balance(account)           # => 1300.0
 BankAccount.transaction_history(account)
-# => [{:deposit, 500.0, ~U[...]}, {:withdraw, 200.0, ~U[...]}]
 ```
 
 ## Section 11: Protocols and Behaviours
@@ -1959,7 +1734,6 @@ defprotocol Drawable do
   def draw(shape)
 end
 
-# Implement for different types
 defimpl Drawable, for: Circle do
   def draw(%Circle{radius: radius}) do
     "Drawing circle with radius #{radius}"
@@ -1972,7 +1746,6 @@ defimpl Drawable, for: Rectangle do
   end
 end
 
-# Usage
 defmodule Circle do
   defstruct [:radius]
 end
@@ -1991,7 +1764,6 @@ Drawable.draw(rectangle)   # => "Drawing rectangle 10x20"
 **Built-in protocols:**
 
 ```elixir
-# String.Chars - implements to_string/1
 defimpl String.Chars, for: User do
   def to_string(%User{name: name, email: email}) do
     "#{name} <#{email}>"
@@ -2002,7 +1774,6 @@ user = %User{name: "Alice", email: "alice@example.com"}
 to_string(user)  # => "Alice <alice@example.com>"
 "User: #{user}"  # => "User: Alice <alice@example.com>"
 
-# Inspect - implements inspect/2 (for debugging)
 defimpl Inspect, for: User do
   def inspect(%User{name: name}, _opts) do
     "#User<#{name}>"
@@ -2011,7 +1782,6 @@ end
 
 user  # => #User<Alice> (in IEx)
 
-# Enumerable - makes your type work with Enum
 defmodule MyRange do
   defstruct [:from, :to]
 end
@@ -2072,12 +1842,10 @@ defimpl Serializable, for: Product do
   end
 end
 
-# Use with Jason for JSON encoding
 user = %User{name: "Alice", email: "alice@example.com", age: 28}
 user
 |> Serializable.serialize()
 |> Jason.encode!()
-# => "{\"type\":\"user\",\"data\":{\"name\":\"Alice\",\"email\":\"alice@example.com\",\"age\":28}}"
 ```
 
 ### 11.2 Behaviours - Defining Contracts
@@ -2092,7 +1860,6 @@ defmodule Parser do
   @callback format(term()) :: String.t()
 end
 
-# Implement the behaviour
 defmodule JSONParser do
   @behaviour Parser
 
@@ -2121,7 +1888,6 @@ defmodule CSVParser do
   end
 end
 
-# Use parsers interchangeably
 defmodule DataProcessor do
   def process(data, parser_module) do
     with {:ok, parsed} <- parser_module.parse(data) do
@@ -2136,7 +1902,6 @@ end
 **GenServer is a behaviour:**
 
 ```elixir
-# When you use GenServer, you implement its behaviour
 defmodule MyServer do
   use GenServer
 
@@ -2168,19 +1933,15 @@ end
 **Reading files:**
 
 ```elixir
-# Read entire file
 {:ok, content} = File.read("data.txt")
 
-# Read with error handling
 case File.read("data.txt") do
   {:ok, content} -> IO.puts(content)
   {:error, reason} -> IO.puts("Error: #{reason}")
 end
 
-# Read! - raises on error
 content = File.read!("data.txt")
 
-# Read line by line (efficient for large files)
 File.stream!("large_file.txt")
 |> Stream.map(&String.trim/1)
 |> Enum.each(&IO.puts/1)
@@ -2189,16 +1950,12 @@ File.stream!("large_file.txt")
 **Writing files:**
 
 ```elixir
-# Write entire content
 File.write("output.txt", "Hello, World!")
 
-# Write! - raises on error
 File.write!("output.txt", "Hello, World!")
 
-# Append to file
 File.write("log.txt", "New entry\n", [:append])
 
-# Write list of lines
 lines = ["Line 1", "Line 2", "Line 3"]
 content = Enum.join(lines, "\n")
 File.write("output.txt", content)
@@ -2207,51 +1964,36 @@ File.write("output.txt", content)
 **File operations:**
 
 ```elixir
-# Check if file exists
 File.exists?("data.txt")  # => true/false
 
-# Get file info
 {:ok, info} = File.stat("data.txt")
 info.size  # File size in bytes
 
-# Copy file
 File.cp("source.txt", "destination.txt")
 
-# Delete file
 File.rm("temp.txt")
 
-# Create directory
 File.mkdir("new_folder")
 
-# List directory
 {:ok, files} = File.ls(".")
 files  # => ["file1.txt", "file2.txt", ...]
 
-# Read directory recursively
 Path.wildcard("**/*.ex")
-# => ["lib/app.ex", "lib/utils.ex", "test/app_test.exs", ...]
 ```
 
 ### 12.2 Path Operations
 
 ```elixir
-# Join paths
 Path.join(["home", "user", "documents", "file.txt"])
-# => "home/user/documents/file.txt"
 
-# Get directory name
 Path.dirname("/home/user/file.txt")  # => "/home/user"
 
-# Get file name
 Path.basename("/home/user/file.txt")  # => "file.txt"
 
-# Get extension
 Path.extname("file.txt")  # => ".txt"
 
-# Expand relative paths
 Path.expand("../file.txt")  # => "/full/path/to/file.txt"
 
-# Check if absolute
 Path.absname?("/home/user")  # => true
 Path.absname?("relative")    # => false
 ```
@@ -2259,20 +2001,14 @@ Path.absname?("relative")    # => false
 ### 12.3 System Commands
 
 ```elixir
-# Run system command
 System.cmd("ls", ["-la"])
-# => {"file listing...", 0}
 
-# Get environment variable
 System.get_env("HOME")  # => "/home/user"
 
-# Set environment variable
 System.put_env("MY_VAR", "value")
 
-# Get current working directory
 File.cwd!()  # => "/current/directory"
 
-# Change directory
 File.cd("new_directory")
 ```
 
@@ -2283,20 +2019,15 @@ File.cd("new_directory")
 **Nested comprehensions:**
 
 ```elixir
-# Generate all coordinates in grid
 for x <- 1..3, y <- 1..3 do
   {x, y}
 end
-# => [{1, 1}, {1, 2}, {1, 3}, {2, 1}, {2, 2}, {2, 3}, {3, 1}, {3, 2}, {3, 3}]
 
-# With filters
 for x <- 1..5,
     y <- 1..5,
     x + y == 6,
     do: {x, y}
-# => [{1, 5}, {2, 4}, {3, 3}, {4, 2}, {5, 1}]
 
-# Multiple generators with pattern matching
 users = [
   %{name: "Alice", posts: [%{title: "Post 1"}, %{title: "Post 2"}]},
   %{name: "Bob", posts: [%{title: "Post 3"}]}
@@ -2305,13 +2036,11 @@ users = [
 for %{name: name, posts: posts} <- users,
     %{title: title} <- posts,
     do: {name, title}
-# => [{"Alice", "Post 1"}, {"Alice", "Post 2"}, {"Bob", "Post 3"}]
 ```
 
 **Comprehensions with reduce:**
 
 ```elixir
-# Build map from list
 users = [
   %{id: 1, name: "Alice"},
   %{id: 2, name: "Bob"}
@@ -2320,35 +2049,24 @@ users = [
 for %{id: id, name: name} <- users, into: %{} do
   {id, name}
 end
-# => %{1 => "Alice", 2 => "Bob"}
 
-# Sum with reduce option
 for n <- 1..10, reduce: 0 do
   sum -> sum + n
 end
-# => 55
 
-# Build accumulated result
 for word <- ["hello", "world"], reduce: "" do
   acc -> acc <> String.upcase(word) <> " "
 end
-# => "HELLO WORLD "
 ```
 
 ### 13.2 Bitstring Comprehensions
 
 ```elixir
-# Process binary data
 for <<byte <- "Hello">>, do: byte
-# => [72, 101, 108, 108, 111] (ASCII values)
 
-# Filter bytes
 for <<byte <- "Hello">>, byte > 100, do: byte
-# => [101, 108, 108, 111] (letters > 'd')
 
-# Convert to uppercase binary
 for <<char <- "hello">>, into: "", do: <<char - 32>>
-# => "HELLO"
 ```
 
 ## Section 14: Debugging and Troubleshooting
@@ -2356,7 +2074,6 @@ for <<char <- "hello">>, into: "", do: <<char - 32>>
 ### 14.1 IO.inspect - Your Best Friend
 
 ```elixir
-# Inspect values in pipeline
 [1, 2, 3, 4, 5]
 |> Enum.map(&(&1 * 2))
 |> IO.inspect(label: "After map")
@@ -2364,7 +2081,6 @@ for <<char <- "hello">>, into: "", do: <<char - 32>>
 |> IO.inspect(label: "After filter")
 |> Enum.sum()
 
-# Inspect returns the value, so it doesn't break pipeline
 result = [1, 2, 3]
          |> IO.inspect(label: "Input")
          |> Enum.sum()
@@ -2385,37 +2101,25 @@ defmodule Debug do
   defp finalize(data), do: data + 10
 end
 
-# In IEx
 Debug.complex_function(5)
-# Pauses at pry, you can inspect variables, try code, etc.
 ```
 
 ### 14.3 Common Error Messages
 
 ```elixir
-# MatchError
 {:ok, value} = {:error, :reason}
-# ** (MatchError) no match of right hand side value: {:error, :reason}
 
-# FunctionClauseError
 defmodule Math do
   def double(n) when is_number(n), do: n * 2
 end
 
 Math.double("not a number")
-# ** (FunctionClauseError) no function clause matching
 
-# ArgumentError
 Enum.at([1, 2, 3], "invalid index")
-# ** (ArgumentError) ...
 
-# KeyError
 %{a: 1} |> Map.fetch!(:b)
-# ** (KeyError) key :b not found
 
-# ArithmeticError
 1 / 0
-# ** (ArithmeticError) bad argument in arithmetic expression
 ```
 
 ## Section 15: Mix Projects Deep Dive
@@ -2423,7 +2127,6 @@ Enum.at([1, 2, 3], "invalid index")
 ### 15.1 Project Configuration
 
 ```elixir
-# mix.exs
 defmodule MyApp.MixProject do
   use Mix.Project
 
@@ -2467,7 +2170,6 @@ end
 ### 15.2 Mix Tasks
 
 ```bash
-# Common tasks
 mix compile        # Compile project
 mix test           # Run tests
 mix format         # Format code
@@ -2475,26 +2177,20 @@ mix deps.get       # Get dependencies
 mix deps.update    # Update dependencies
 mix clean          # Remove build artifacts
 
-# Run specific test
 mix test test/my_test.exs
 
-# Run tests with coverage
 mix test --cover
 
-# Generate documentation
 mix docs
 
-# Interactive shell with project loaded
 iex -S mix
 
-# Run in production mode
 MIX_ENV=prod mix compile
 ```
 
 ### 15.3 Custom Mix Tasks
 
 ```elixir
-# lib/mix/tasks/hello.ex
 defmodule Mix.Tasks.Hello do
   use Mix.Task
 
@@ -2504,8 +2200,6 @@ defmodule Mix.Tasks.Hello do
   end
 end
 
-# Run:
-# mix hello
 ```
 
 ## Section 16: Documentation with ExDoc
@@ -2565,13 +2259,11 @@ end
 ### 16.2 Doctests
 
 ```elixir
-# Examples in @doc are executable tests!
 defmodule MathTest do
   use ExUnit.Case
   doctest Calculator  # Runs all examples in Calculator docs
 end
 
-# Run with: mix test
 ```
 
 ## Exercises

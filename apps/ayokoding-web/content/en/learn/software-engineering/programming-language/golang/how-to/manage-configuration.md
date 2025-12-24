@@ -160,15 +160,12 @@ func loadEnvFiles() error {
 **.env file format:**
 
 ```bash
-# Database configuration
 DATABASE_URL=postgresql://localhost:5432/mydb
 DB_MAX_CONNECTIONS=20
 
-# API configuration
 API_KEY=sk_test_abc123
 API_BASE_URL=https://api.example.com
 
-# Application settings
 PORT=8080
 DEBUG=true
 LOG_LEVEL=info
@@ -177,19 +174,16 @@ LOG_LEVEL=info
 **.gitignore:**
 
 ```gitignore
-# Don't commit actual secrets
 .env
 .env.local
 .env.*.local
 
-# Commit template
 !.env.example
 ```
 
 **.env.example (committed to repo):**
 
 ```bash
-# Copy to .env and fill in values
 DATABASE_URL=
 DB_MAX_CONNECTIONS=20
 API_KEY=
@@ -226,13 +220,10 @@ func main() {
 **Usage:**
 
 ```bash
-# Use defaults
 ./app
 
-# Override values
 ./app -port 3000 -debug
 
-# Long form
 ./app --port=3000 --debug=true --config=/etc/app/config.yaml
 ```
 
@@ -313,24 +304,20 @@ func main() {
 ### config.yaml Format
 
 ```yaml
-# Application settings
 port: 8080
 debug: false
 log_level: info
 
-# Database configuration
 database:
   url: postgresql://localhost:5432/mydb
   max_connections: 20
   timeout: 30s
 
-# API configuration
 api:
   base_url: https://api.example.com
   key: ${API_KEY} # From environment variable
   timeout: 10s
 
-# Feature flags
 features:
   new_ui: true
   beta_features: false

@@ -244,11 +244,9 @@ func demonstrateGC() {
 **GC Tuning**:
 
 ```bash
-# Control GC frequency (0-100, default 100)
 GOGC=50 go run main.go  # GC more frequently (lower latency, more CPU)
 GOGC=200 go run main.go # GC less frequently (higher throughput, more memory)
 
-# View GC activity
 GODEBUG=gctrace=1 go run main.go
 ```
 
@@ -984,10 +982,8 @@ func withTimeout(ch <-chan int, timeout time.Duration) {
 Go's debugger for complex issues:
 
 ```bash
-# Start debugger
 dlv debug main.go
 
-# Commands
 (dlv) break main.main          # Set breakpoint
 (dlv) continue                 # Run to breakpoint
 (dlv) next                     # Step over
@@ -1231,13 +1227,10 @@ func TestSortIsStable(t *testing.T) {
 ### Test Coverage Analysis
 
 ```bash
-# Generate coverage
 go test -cover ./...
 
-# Detailed coverage file
 go test -coverprofile=coverage.out ./...
 
-# View coverage in HTML
 go tool cover -html=coverage.out
 ```
 
@@ -1283,7 +1276,6 @@ func ManualStringJoin(parts []string) string {
 ### Inlining Optimizations
 
 ```bash
-# View inlining decisions
 go build -gcflags="-m=2" main.go 2>&1 | grep inline
 ```
 

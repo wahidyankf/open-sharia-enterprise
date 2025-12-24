@@ -40,7 +40,6 @@ def main():
     slow_function()
     another_function()
 
-# Method 1: Profile entire program
 if __name__ == '__main__':
     profiler = cProfile.Profile()
     profiler.enable()
@@ -52,10 +51,8 @@ if __name__ == '__main__':
     stats.sort_stats(SortKey.CUMULATIVE)
     stats.print_stats(10)  # Show top 10 functions
 
-# Method 2: Profile specific function
 cProfile.run('slow_function()', 'profile_stats')
 
-# Method 3: Context manager approach
 with cProfile.Profile() as pr:
     main()
 
@@ -63,13 +60,11 @@ with cProfile.Profile() as pr:
     stats.sort_stats(SortKey.TIME)
     stats.print_stats()
 
-# Analyze results programmatically
 stats = pstats.Stats('profile_stats')
 stats.strip_dirs()
 stats.sort_stats('cumulative')
 stats.print_stats(10)
 
-# Filter specific functions
 stats.print_stats('slow_function')
 ```
 
@@ -96,14 +91,11 @@ def memory_intensive():
 
     return sum(data)
 
-# Run: python -m memory_profiler script.py
 
-# Alternative: Manual memory tracking
 import tracemalloc
 
 tracemalloc.start()
 
-# Your code here
 data = [i for i in range(1000000)]
 
 current, peak = tracemalloc.get_traced_memory()
@@ -121,26 +113,21 @@ Replace pure Python loops with vectorized NumPy operations for massive speed gai
 import numpy as np
 import time
 
-# Slow: Pure Python
 def python_sum(n):
     total = 0
     for i in range(n):
         total += i
     return total
 
-# Fast: NumPy vectorization
 def numpy_sum(n):
     return np.arange(n).sum()
 
-# Benchmark comparison
 n = 1_000_000
 
-# Python approach
 start = time.perf_counter()
 result1 = python_sum(n)
 python_time = time.perf_counter() - start
 
-# NumPy approach
 start = time.perf_counter()
 result2 = numpy_sum(n)
 numpy_time = time.perf_counter() - start
@@ -149,13 +136,10 @@ print(f"Python: {python_time:.4f}s")
 print(f"NumPy: {numpy_time:.4f}s")
 print(f"Speedup: {python_time / numpy_time:.1f}x")
 
-# Array operations
 data = np.random.rand(1000, 1000)
 
-# Vectorized operations (fast)
 result = (data * 2 + 3) / 5  # All at once
 
-# Element-wise loops (slow)
 result_slow = np.zeros_like(data)
 for i in range(data.shape[0]):
     for j in range(data.shape[1]):
@@ -167,19 +151,16 @@ for i in range(data.shape[0]):
 Choose the right data structure for your use case.
 
 ```python
-# List vs Set for membership testing
 import time
 
 data_list = list(range(10000))
 data_set = set(range(10000))
 
-# List lookup: O(n)
 start = time.perf_counter()
 for _ in range(1000):
     9999 in data_list
 list_time = time.perf_counter() - start
 
-# Set lookup: O(1)
 start = time.perf_counter()
 for _ in range(1000):
     9999 in data_set
@@ -188,17 +169,14 @@ set_time = time.perf_counter() - start
 print(f"List: {list_time:.4f}s, Set: {set_time:.4f}s")
 print(f"Set is {list_time / set_time:.1f}x faster")
 
-# collections.deque for queue operations
 from collections import deque
 
-# Slow: List as queue
 queue_list = []
 for i in range(10000):
     queue_list.append(i)
     if len(queue_list) > 100:
         queue_list.pop(0)  # O(n) operation
 
-# Fast: deque as queue
 queue_deque = deque(maxlen=100)
 for i in range(10000):
     queue_deque.append(i)  # O(1) operation
@@ -209,15 +187,12 @@ for i in range(10000):
 Use generators instead of list comprehensions for large datasets.
 
 ```python
-# Memory-intensive: List comprehension
 large_list = [x**2 for x in range(1_000_000)]
 total = sum(large_list)
 
-# Memory-efficient: Generator expression
 large_gen = (x**2 for x in range(1_000_000))
 total = sum(large_gen)
 
-# Real-world example: Processing large files
 def read_large_file_list(filepath):
     """Loads entire file into memory"""
     with open(filepath) as f:
@@ -229,7 +204,6 @@ def read_large_file_gen(filepath):
         for line in f:
             yield line.strip()
 
-# Generator allows processing without loading all data
 for line in read_large_file_gen('large_file.txt'):
     process(line)
 ```
@@ -242,20 +216,17 @@ Cache expensive function calls to avoid redundant computation.
 from functools import lru_cache
 import time
 
-# Without caching
 def fibonacci_slow(n):
     if n < 2:
         return n
     return fibonacci_slow(n-1) + fibonacci_slow(n-2)
 
-# With caching
 @lru_cache(maxsize=None)
 def fibonacci_fast(n):
     if n < 2:
         return n
     return fibonacci_fast(n-1) + fibonacci_fast(n-2)
 
-# Benchmark
 start = time.perf_counter()
 result1 = fibonacci_slow(30)
 slow_time = time.perf_counter() - start
@@ -268,7 +239,6 @@ print(f"Without cache: {slow_time:.4f}s")
 print(f"With cache: {fast_time:.4f}s")
 print(f"Speedup: {slow_time / fast_time:.1f}x")
 
-# Manual caching for custom logic
 _cache = {}
 
 def expensive_computation(x, y):
@@ -286,25 +256,21 @@ Optimize string operations for performance.
 ```python
 import time
 
-# Slow: String concatenation in loop
 def concatenate_slow(n):
     result = ""
     for i in range(n):
         result += str(i)
     return result
 
-# Fast: Join with list
 def concatenate_fast(n):
     parts = []
     for i in range(n):
         parts.append(str(i))
     return ''.join(parts)
 
-# Fastest: Generator with join
 def concatenate_fastest(n):
     return ''.join(str(i) for i in range(n))
 
-# Benchmark
 n = 10000
 
 start = time.perf_counter()
@@ -329,18 +295,15 @@ print(f"Fastest: {fastest_time:.4f}s")
 Leverage C-optimized built-in functions instead of reimplementing.
 
 ```python
-# Slow: Manual implementation
 def manual_sum(data):
     total = 0
     for item in data:
         total += item
     return total
 
-# Fast: Built-in function
 data = list(range(1_000_000))
 result = sum(data)
 
-# Slow: Manual max finding
 def manual_max(data):
     maximum = data[0]
     for item in data:
@@ -348,10 +311,8 @@ def manual_max(data):
             maximum = item
     return maximum
 
-# Fast: Built-in max
 result = max(data)
 
-# Slow: Manual sorting
 def bubble_sort(arr):
     n = len(arr)
     for i in range(n):
@@ -360,7 +321,6 @@ def bubble_sort(arr):
                 arr[j], arr[j+1] = arr[j+1], arr[j]
     return arr
 
-# Fast: Built-in sort (Timsort algorithm)
 sorted_data = sorted(data)
 ```
 
@@ -395,7 +355,6 @@ sorted_data = sorted(data)
 Use `line_profiler` for detailed line-by-line CPU profiling:
 
 ```python
-# Install: pip install line_profiler
 
 from line_profiler import LineProfiler
 
@@ -405,7 +364,6 @@ def process_data(data):
         result.append(item ** 2)
     return sum(result)
 
-# Profile specific function
 profiler = LineProfiler()
 profiler.add_function(process_data)
 
@@ -413,8 +371,6 @@ data = list(range(10000))
 profiler.runcall(process_data, data)
 profiler.print_stats()
 
-# Alternative: Use decorator
-# Run: kernprof -l -v script.py
 
 @profile  # noqa
 def process_data_decorated(data):
@@ -429,14 +385,8 @@ def process_data_decorated(data):
 Use PyPy as drop-in replacement for CPython for automatic speed improvements:
 
 ```bash
-# Install PyPy
-# Linux/Mac: Download from pypy.org
-# Run with PyPy instead of Python
 pypy3 script.py
 
-# PyPy typically 4-10x faster for pure Python code
-# Best for: CPU-bound pure Python workloads
-# Not ideal for: NumPy-heavy code (use CPython + NumPy instead)
 ```
 
 ### Cython for C-Speed Extensions
@@ -444,14 +394,12 @@ pypy3 script.py
 Compile Python code to C for near-native performance:
 
 ```python
-# example.pyx (Cython file)
 def compute_sum(int n):
     cdef int i, total = 0
     for i in range(n):
         total += i
     return total
 
-# setup.py
 from setuptools import setup
 from Cython.Build import cythonize
 
@@ -459,8 +407,6 @@ setup(
     ext_modules=cythonize("example.pyx")
 )
 
-# Build: python setup.py build_ext --inplace
-# Use: import example; result = example.compute_sum(1000000)
 ```
 
 ### Multiprocessing for CPU-Bound Tasks
@@ -478,12 +424,10 @@ def cpu_intensive(n):
         total += i ** 2
     return total
 
-# Sequential
 start = time.perf_counter()
 results = [cpu_intensive(1_000_000) for _ in range(4)]
 sequential_time = time.perf_counter() - start
 
-# Parallel with multiprocessing
 start = time.perf_counter()
 with Pool(processes=4) as pool:
     results = pool.map(cpu_intensive, [1_000_000] * 4)
@@ -514,12 +458,10 @@ def fetch_url(url):
     response = requests.get(url)
     return response.status_code
 
-# Sequential
 start = time.perf_counter()
 results = [fetch_url(url) for url in urls]
 sequential_time = time.perf_counter() - start
 
-# Parallel with threading
 start = time.perf_counter()
 with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
     results = list(executor.map(fetch_url, urls))
@@ -539,19 +481,16 @@ print(f"Speedup: {sequential_time / parallel_time:.1f}x")
 **Solution**: Always profile first. Optimize only measured hotspots.
 
 ```python
-# Don't do this first
 def optimized_function(data):
     # Complex, hard-to-read optimized code
     return sum(x**2 for x in data if x % 2 == 0)
 
-# Do this first
 def readable_function(data):
     # Simple, readable code
     evens = [x for x in data if x % 2 == 0]
     squares = [x**2 for x in evens]
     return sum(squares)
 
-# Profile, then optimize ONLY if needed
 ```
 
 ### Ignoring Algorithm Complexity
@@ -561,7 +500,6 @@ def readable_function(data):
 **Solution**: Choose appropriate algorithms before micro-optimizing.
 
 ```python
-# Bad: O(n²) bubble sort
 def bubble_sort(arr):
     n = len(arr)
     for i in range(n):
@@ -570,10 +508,8 @@ def bubble_sort(arr):
                 arr[j], arr[j+1] = arr[j+1], arr[j]
     return arr
 
-# Good: O(n log n) built-in sort
 sorted_arr = sorted(arr)
 
-# For large datasets, algorithm choice matters more than implementation details
 ```
 
 ### Over-Caching
@@ -585,12 +521,10 @@ sorted_arr = sorted(arr)
 ```python
 from functools import lru_cache
 
-# Bad: Unlimited cache for simple function
 @lru_cache(maxsize=None)
 def simple_multiply(a, b):
     return a * b  # Too simple to benefit from caching
 
-# Good: Bounded cache for expensive function
 @lru_cache(maxsize=128)
 def expensive_computation(n):
     # Complex calculation that benefits from caching
@@ -604,17 +538,14 @@ def expensive_computation(n):
 **Solution**: Use generators for large datasets or single-pass iteration only.
 
 ```python
-# Bad: Using generator for multiple iterations
 data_gen = (x**2 for x in range(10))
 sum1 = sum(data_gen)
 sum2 = sum(data_gen)  # Returns 0! Generator exhausted
 
-# Good: Use list for multiple iterations
 data_list = [x**2 for x in range(10)]
 sum1 = sum(data_list)
 sum2 = sum(data_list)  # Works correctly
 
-# Good: Use generator for single large iteration
 large_gen = (x**2 for x in range(1_000_000))
 result = sum(large_gen)
 ```
@@ -626,10 +557,8 @@ result = sum(large_gen)
 **Solution**: Profile production-optimized code without debug flags.
 
 ```bash
-# Bad: Profiling with assertions enabled
 python -m cProfile script.py
 
-# Good: Profiling optimized code
 python -O -m cProfile script.py  # -O disables assertions
 ```
 
@@ -640,22 +569,16 @@ python -O -m cProfile script.py  # -O disables assertions
 **Solution**: Balance speed, memory, and maintainability based on actual requirements.
 
 ```python
-# Space-efficient but slower
 def process_large_file_gen(filepath):
     with open(filepath) as f:
         for line in f:
             yield expensive_transform(line)
 
-# Time-efficient but memory-intensive
 def process_large_file_list(filepath):
     with open(filepath) as f:
         data = [expensive_transform(line) for line in f]
     return data
 
-# Choose based on actual constraints:
-# - Limited memory? Use generator
-# - Need multiple passes? Use list
-# - Single pass OK? Use generator
 ```
 
 ### Ignoring GIL for CPU-Bound Tasks
@@ -665,7 +588,6 @@ def process_large_file_list(filepath):
 **Solution**: Use multiprocessing or async I/O based on workload type.
 
 ```python
-# Bad: Threading for CPU-bound work (no speedup due to GIL)
 import threading
 
 def cpu_work(n):
@@ -677,7 +599,6 @@ for t in threads:
 for t in threads:
     t.join()
 
-# Good: Multiprocessing for CPU-bound work (bypasses GIL)
 from multiprocessing import Pool
 
 with Pool(4) as pool:

@@ -17,7 +17,6 @@ Security vulnerabilities lead to data breaches, unauthorized access, and comprom
 ```python
 from passlib.context import CryptContext
 
-# Configure password hashing
 pwd_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto",
@@ -37,13 +36,10 @@ class PasswordManager:
         """Verify password against hash."""
         return pwd_context.verify(plain_password, hashed_password)
 
-# Usage
 password = "SecureP@ssw0rd123"
 hashed = PasswordManager.hash_password(password)
 print(f"Hashed: {hashed}")
-# $2b$12$... (different each time due to salt)
 
-# Verify password
 is_valid = PasswordManager.verify_password(password, hashed)
 print(f"Valid: {is_valid}")  # True
 
@@ -59,7 +55,6 @@ from sqlalchemy.orm import Session
 
 engine = create_engine("postgresql://user:password@localhost/dbname")
 
-# ❌ NEVER: String concatenation (SQL injection vulnerable)
 def unsafe_query(username: str):
     with Session(engine) as session:
         # Attacker can inject: ' OR '1'='1
@@ -67,7 +62,6 @@ def unsafe_query(username: str):
         result = session.execute(text(query))
         return result.fetchall()
 
-# ✅ ALWAYS: Parameterized queries
 def safe_query_text(username: str):
     """Safe query using bound parameters."""
     with Session(engine) as session:
@@ -75,7 +69,6 @@ def safe_query_text(username: str):
         result = session.execute(query, {"username": username})
         return result.fetchall()
 
-# ✅ BETTER: ORM queries (inherently safe)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class Base(DeclarativeBase):
@@ -126,7 +119,6 @@ class UserInput(BaseModel):
         """Escape HTML to prevent XSS."""
         return escape(v)
 
-# Usage
 safe_input = UserInput(
     username="john_doe",
     email="john@example.com",
@@ -134,7 +126,6 @@ safe_input = UserInput(
 )
 
 print(safe_input.bio)
-# &lt;script&gt;alert(&#x27;XSS&#x27;)&lt;/script&gt;
 ```
 
 ### 4. Secure Token Generation with Secrets Module
@@ -183,14 +174,11 @@ class SecureTokenManager:
         # Use constant-time comparison to prevent timing attacks
         return hmac.compare_digest(signature, expected_signature)
 
-# Usage
 token_manager = SecureTokenManager(secret_key="your-secret-key-from-env")
 
-# API token
 api_token = token_manager.generate_token()
 print(f"API Token: {api_token}")
 
-# Password reset token
 reset_token = token_manager.generate_reset_token(user_id=123, expires_hours=1)
 print(f"Reset Token: {reset_token}")
 ```
@@ -241,21 +229,16 @@ class DataEncryption:
         decrypted = self.cipher.decrypt(encrypted_data.encode())
         return decrypted.decode()
 
-# Usage
-# Generate key (store securely, don't hardcode!)
 key = DataEncryption.generate_key()
 encryptor = DataEncryption(key)
 
-# Encrypt sensitive data
 sensitive_data = "SSN: 123-45-6789"
 encrypted = encryptor.encrypt(sensitive_data)
 print(f"Encrypted: {encrypted}")
 
-# Decrypt when needed
 decrypted = encryptor.decrypt(encrypted)
 print(f"Decrypted: {decrypted}")
 
-# Password-based encryption
 password = "SecurePassword123"
 key, salt = DataEncryption.derive_key_from_password(password)
 encryptor2 = DataEncryption(key)
@@ -327,21 +310,17 @@ class SessionManager:
         for token in expired:
             del self.sessions[token]
 
-# Usage
 session_manager = SessionManager(session_lifetime_minutes=30)
 
-# Login creates session
 session_token = session_manager.create_session(user_id=123)
 print(f"Session created: {session_token}")
 
-# Validate session on subsequent requests
 user_id = session_manager.validate_session(session_token)
 if user_id:
     print(f"Valid session for user: {user_id}")
 else:
     print("Invalid or expired session")
 
-# Logout destroys session
 session_manager.destroy_session(session_token)
 ```
 
@@ -410,7 +389,6 @@ class RateLimiter:
         self.attempts[identifier].append(now)
         return True
 
-# Usage
 rate_limiter = RateLimiter(max_attempts=5, window_minutes=15)
 
 username = "john_doe"
@@ -459,7 +437,6 @@ class SecureFileUpload:
 
         return True, "File valid"
 
-# Usage
 file_path = Path("upload.jpg")
 file_size = file_path.stat().st_size
 
@@ -516,16 +493,13 @@ class CSRFProtection:
         # Constant-time comparison
         return hmac.compare_digest(signature, expected_signature)
 
-# Usage
 csrf = CSRFProtection(secret_key="your-secret-key")
 
 session_id = "user-session-123"
 csrf_token = csrf.generate_token(session_id)
 
-# In form
 print(f'<input type="hidden" name="csrf_token" value="{csrf_token}">')
 
-# Validate on submission
 is_valid = csrf.validate_token(session_id, csrf_token)
 if not is_valid:
     print("CSRF validation failed!")
@@ -538,13 +512,11 @@ if not is_valid:
 **Problem**: Database breach exposes all passwords.
 
 ```python
-# ❌ NEVER: Plain text passwords
 class BadUserStorage:
     def store_user(self, username: str, password: str):
         # NEVER store plain text!
         db.execute("INSERT INTO users VALUES (?, ?)", (username, password))
 
-# ✅ ALWAYS: Hash passwords
 class GoodUserStorage:
     def store_user(self, username: str, password: str):
         hashed = pwd_context.hash(password)
@@ -558,11 +530,9 @@ class GoodUserStorage:
 ```python
 import random
 
-# ❌ Bad: random module is NOT cryptographically secure
 def bad_token():
     return ''.join(random.choices('0123456789', k=32))  # Predictable!
 
-# ✅ Good: Use secrets module
 import secrets
 
 def good_token():
@@ -574,11 +544,9 @@ def good_token():
 **Problem**: Secrets in source code leak via version control.
 
 ```python
-# ❌ Bad: Hardcoded secrets
 SECRET_KEY = "my-secret-key-123"  # Committed to git!
 DATABASE_PASSWORD = "password123"
 
-# ✅ Good: Environment variables
 import os
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -593,7 +561,6 @@ DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 **Problem**: Too much information aids attackers.
 
 ```python
-# ❌ Bad: Reveals if username exists
 def bad_login(username: str, password: str):
     user = get_user(username)
     if not user:
@@ -602,7 +569,6 @@ def bad_login(username: str, password: str):
         return "Incorrect password"  # Confirms username exists!
     return "Success"
 
-# ✅ Good: Generic error message
 def good_login(username: str, password: str):
     user = get_user(username)
     if not user or not verify_password(password, user.password_hash):
@@ -615,7 +581,6 @@ def good_login(username: str, password: str):
 **Problem**: Data transmitted in clear text.
 
 ```python
-# ❌ Bad: HTTP API (credentials exposed)
 import requests
 
 response = requests.post(
@@ -623,13 +588,11 @@ response = requests.post(
     json={"username": "user", "password": "pass"}
 )
 
-# ✅ Good: HTTPS only
 response = requests.post(
     "https://api.example.com/login",  # Encrypted
     json={"username": "user", "password": "pass"}
 )
 
-# ✅ Better: Enforce HTTPS in application
 from fastapi import FastAPI, Request, HTTPException
 
 app = FastAPI()

@@ -10,6 +10,7 @@ cascade:
 breadcrumbs: false
 ---
 
+- [Syarat dan Ketentuan](/id/syarat-dan-ketentuan)
 - [Belajar](/id/belajar)
   - [Ikhtisar](/id/belajar/ikhtisar)
   - [Manusia](/id/belajar/manusia)
@@ -25,4 +26,3 @@ breadcrumbs: false
   - [Klub Belajar](/id/konten-video/klub-belajar)
   - [Karir Programmer](/id/konten-video/karir-programmer)
 - [Tentang AyoKoding](/id/tentang-ayokoding)
-- [Syarat dan Ketentuan](/id/syarat-dan-ketentuan)

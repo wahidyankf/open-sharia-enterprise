@@ -96,7 +96,6 @@ Decorators modify or enhance functions and methods:
 import functools
 import time
 
-# Simple decorator
 def timer(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -113,9 +112,7 @@ def slow_function():
     return "Done"
 
 slow_function()
-# Output: slow_function took 1.0001s
 
-# Decorator with arguments
 def repeat(times):
     def decorator(func):
         @functools.wraps(func)
@@ -131,11 +128,7 @@ def greet(name):
     print(f"Hello, {name}!")
 
 greet("Alice")
-# Output: Hello, Alice!
-#         Hello, Alice!
-#         Hello, Alice!
 
-# Class decorator
 def singleton(cls):
     instances = {}
     @functools.wraps(cls)
@@ -191,8 +184,6 @@ class Person:
 person = Person(30, 50000)
 print(person.age)  # 30
 
-# person.age = -5  # ValueError: age must be >= 0
-# person.age = 200  # ValueError: age must be <= 150
 ```
 
 ### Context Managers
@@ -202,7 +193,6 @@ Custom context managers for resource management:
 ```python
 from contextlib import contextmanager
 
-# Using class
 class FileManager:
     def __init__(self, filename, mode):
         self.filename = filename
@@ -222,7 +212,6 @@ class FileManager:
 with FileManager("test.txt", "w") as f:
     f.write("Hello, World!")
 
-# Using generator (contextmanager decorator)
 @contextmanager
 def database_connection(db_url):
     # Setup
@@ -258,7 +247,6 @@ db1 = Database()  # Database initialized
 db2 = Database()  # No output
 print(db1 is db2)  # True
 
-# Validation metaclass
 class ValidatedMeta(type):
     def __new__(mcs, name, bases, namespace):
         # Ensure class has required methods
@@ -289,7 +277,6 @@ import threading
 import time
 import queue
 
-# Basic threading
 def worker(name, delay):
     print(f"{name} starting")
     time.sleep(delay)
@@ -304,7 +291,6 @@ for i in range(3):
 for t in threads:
     t.join()
 
-# Thread-safe queue
 def producer(q, items):
     for item in items:
         print(f"Producing {item}")
@@ -340,18 +326,15 @@ Python's multiprocessing for CPU-bound tasks:
 from multiprocessing import Pool, Process, Queue
 import os
 
-# Basic multiprocessing
 def cpu_bound_task(n):
     pid = os.getpid()
     result = sum(i * i for i in range(n))
     return f"Process {pid}: {result}"
 
-# Using Pool
 with Pool(processes=4) as pool:
     results = pool.map(cpu_bound_task, [1000000, 2000000, 3000000])
     print(results)
 
-# Process communication with Queue
 def worker(q):
     while True:
         item = q.get()
@@ -383,7 +366,6 @@ Modern async/await for concurrent I/O:
 import asyncio
 import aiohttp
 
-# Basic async function
 async def fetch_data(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -401,10 +383,8 @@ async def main():
     results = await asyncio.gather(*tasks)
     return results
 
-# Run async code
 asyncio.run(main())
 
-# Async generator
 async def async_range(count):
     for i in range(count):
         await asyncio.sleep(0.1)
@@ -416,7 +396,6 @@ async def consume_async_generator():
 
 asyncio.run(consume_async_generator())
 
-# Task management
 async def task_example():
     async def task(name, delay):
         await asyncio.sleep(delay)
@@ -449,7 +428,6 @@ asyncio.run(task_example())
 ```python
 import pytest
 
-# Fixtures
 @pytest.fixture
 def database():
     # Setup
@@ -462,7 +440,6 @@ def test_user_creation(database):
     user = database.create_user("Alice")
     assert user.name == "Alice"
 
-# Parametrize
 @pytest.mark.parametrize("input,expected", [
     (2, 4),
     (3, 9),
@@ -472,7 +449,6 @@ def test_user_creation(database):
 def test_square(input, expected):
     assert input ** 2 == expected
 
-# Marks
 @pytest.mark.slow
 def test_slow_operation():
     # Long-running test
@@ -482,13 +458,11 @@ def test_slow_operation():
 def test_future_feature():
     pass
 
-# Fixtures with scope
 @pytest.fixture(scope="module")
 def expensive_setup():
     # Runs once per test module
     return setup_expensive_resource()
 
-# Fixture dependencies
 @pytest.fixture
 def user():
     return {"name": "Alice", "email": "alice@example.com"}
@@ -507,7 +481,6 @@ def test_user_access(authenticated_user):
 ```python
 from unittest.mock import Mock, patch, MagicMock
 
-# Basic mock
 def test_api_call():
     mock_api = Mock()
     mock_api.get_user.return_value = {"name": "Alice", "id": 1}
@@ -516,7 +489,6 @@ def test_api_call():
     assert result["name"] == "Alice"
     mock_api.get_user.assert_called_once_with(1)
 
-# Patching
 class EmailService:
     def send_email(self, to, subject, body):
         # Actually sends email
@@ -538,7 +510,6 @@ def test_notify_user(mock_email_service):
         "Hello!"
     )
 
-# Mock side effects
 def test_retry_logic():
     mock_api = Mock()
     mock_api.fetch.side_effect = [
@@ -573,7 +544,6 @@ class Singleton:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-# Thread-safe singleton
 import threading
 
 class ThreadSafeSingleton:
@@ -626,7 +596,6 @@ class DataSourceFactory:
         else:
             raise ValueError(f"Unknown database type: {db_type}")
 
-# Usage
 db = DataSourceFactory.create("mysql")
 db.connect()
 ```
@@ -655,7 +624,6 @@ class Observer:
     def update(self, message):
         print(f"{self.name} received: {message}")
 
-# Usage
 subject = Subject()
 observer1 = Observer("Observer1")
 observer2 = Observer("Observer2")
@@ -664,8 +632,6 @@ subject.attach(observer1)
 subject.attach(observer2)
 
 subject.notify("Event occurred!")
-# Output: Observer1 received: Event occurred!
-#         Observer2 received: Event occurred!
 ```
 
 ### Strategy Pattern
@@ -698,7 +664,6 @@ class ShoppingCart:
         total = sum(price for _, price in self.items)
         self.payment_strategy.pay(total)
 
-# Usage
 cart = ShoppingCart(CreditCardPayment())
 cart.add_item("Book", 29.99)
 cart.add_item("Pen", 4.99)
@@ -722,25 +687,20 @@ def slow_function():
         result += i
     return result
 
-# Profile function
 profiler = cProfile.Profile()
 profiler.enable()
 slow_function()
 profiler.disable()
 
-# Print stats
 stats = pstats.Stats(profiler)
 stats.sort_stats('cumulative')
 stats.print_stats(10)
 
-# Line profiler (install: pip install line_profiler)
-# @profile decorator and run: kernprof -l -v script.py
 ```
 
 ### Memory Profiling
 
 ```python
-# Using memory_profiler (install: pip install memory_profiler)
 from memory_profiler import profile
 
 @profile
@@ -748,19 +708,16 @@ def memory_intensive():
     large_list = [i for i in range(1000000)]
     return sum(large_list)
 
-# Run: python -m memory_profiler script.py
 ```
 
 ### Optimization Techniques
 
 ```python
-# Use generators for large datasets
 def read_large_file(filename):
     with open(filename) as f:
         for line in f:
             yield line.strip()
 
-# Use __slots__ to reduce memory
 class OptimizedPerson:
     __slots__ = ['name', 'age']  # No __dict__, less memory
 
@@ -768,7 +725,6 @@ class OptimizedPerson:
         self.name = name
         self.age = age
 
-# Use lru_cache for expensive functions
 from functools import lru_cache
 
 @lru_cache(maxsize=128)
@@ -777,13 +733,9 @@ def fibonacci(n):
         return n
     return fibonacci(n-1) + fibonacci(n-2)
 
-# Use set for membership tests
-# O(1) instead of O(n) for lists
 large_set = set(range(1000000))
 1000 in large_set  # Fast
 
-# Use list comprehensions instead of loops
-# Faster and more Pythonic
 squares = [x**2 for x in range(1000)]
 ```
 
@@ -817,23 +769,19 @@ class Post(Base):
     author_id = Column(Integer, ForeignKey('users.id'))
     author = relationship("User", back_populates="posts")
 
-# Create engine and session
 engine = create_engine('sqlite:///blog.db')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Create user
 user = User(name="Alice", email="alice@example.com")
 session.add(user)
 session.commit()
 
-# Create post
 post = Post(title="First Post", content="Hello, World!", author=user)
 session.add(post)
 session.commit()
 
-# Query
 users = session.query(User).filter_by(name="Alice").all()
 user_with_posts = session.query(User).filter(User.id == 1).first()
 print(user_with_posts.posts)
@@ -893,7 +841,6 @@ def delete_user(user_id: int):
     users_db = [u for u in users_db if u["id"] != user_id]
     return {"message": "User deleted"}
 
-# Run with: uvicorn main:app --reload
 ```
 
 ---
@@ -917,10 +864,6 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# .env file
-# DATABASE_URL=postgresql://localhost/mydb
-# SECRET_KEY=super-secret
-# DEBUG=True
 ```
 
 ### Logging
@@ -929,7 +872,6 @@ settings = Settings()
 import logging
 from logging.handlers import RotatingFileHandler
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

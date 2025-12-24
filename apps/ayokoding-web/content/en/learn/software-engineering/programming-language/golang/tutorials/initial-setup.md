@@ -93,13 +93,10 @@ This diagram shows every verification checkpoint - you'll know immediately if so
 Using package manager (Ubuntu/Debian):
 
 ```bash
-# Update package list
 sudo apt update
 
-# Install Go
 sudo apt install golang-go
 
-# Verify (see next section)
 go version
 ```
 
@@ -160,12 +157,8 @@ go version go1.25.5 linux/amd64
 **Additional verification**:
 
 ```bash
-# Check Go environment
 go env
 
-# Important variables to verify:
-# GOROOT: where Go is installed (e.g., /usr/local/go)
-# GOPATH: where your Go workspace is (default: ~/go)
 ```
 
 ## 🚀 Step 3: Create Your First Program
@@ -221,10 +214,8 @@ This creates an executable:
 Run the executable:
 
 ```bash
-# Windows
 hello.exe
 
-# macOS/Linux
 ./hello
 ```
 
@@ -239,10 +230,8 @@ Hello, World!
 Go uses modules to manage dependencies. For simple programs like hello.go, you don't need a module. But as you advance, you'll use:
 
 ```bash
-# Create a new module
 go mod init example.com/hello
 
-# This creates go.mod file tracking your dependencies
 ```
 
 You'll learn more about modules in the [Quick Start tutorial](/en/learn/software-engineering/programming-language/golang/tutorials/quick-start) and [Manage Go modules effectively](/en/learn/software-engineering/programming-language/golang/how-to/manage-go-modules).
@@ -330,7 +319,6 @@ chmod +x hello
 
 ```bash
 uname -m
-# arm64 = Apple Silicon, x86_64 = Intel
 ```
 
 Download the correct installer for your architecture.
@@ -348,10 +336,8 @@ Download the correct installer for your architecture.
 **Solution**: GOPATH defaults to `$HOME/go` (or `%USERPROFILE%\go` on Windows). To change it:
 
 ```bash
-# Linux/macOS: add to ~/.bashrc or ~/.zshrc
 export GOPATH=$HOME/mygopath
 
-# Windows: use System Properties → Environment Variables
 ```
 
 Then restart your terminal.
@@ -363,10 +349,8 @@ Then restart your terminal.
 **Fix**: Use manual installation to get the latest version. Remove package manager version first:
 
 ```bash
-# Ubuntu/Debian
 sudo apt remove golang-go
 
-# Then follow manual installation steps above
 ```
 
 **Issue**: Go compiles but programs crash immediately
@@ -382,10 +366,8 @@ sudo apt remove golang-go
 **Fix**: GOPATH should be in your home directory (where you have write permissions). Don't use `/usr/local/go` as GOPATH - that's GOROOT (where Go itself is installed).
 
 ```bash
-# Correct:
 export GOPATH=$HOME/go
 
-# Incorrect (don't do this):
 export GOPATH=/usr/local/go
 ```
 

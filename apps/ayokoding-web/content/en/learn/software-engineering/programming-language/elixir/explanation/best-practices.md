@@ -25,14 +25,12 @@ tags: ["elixir", "best-practices", "idiomatic", "patterns", "design-principles"]
 **Example**:
 
 ```elixir
-# Bad (thinking imperatively)
 defmodule Counter do
   def increment(state) do
     state.count = state.count + 1  # ❌ Error: cannot mutate
   end
 end
 
-# Good (functional)
 defmodule Counter do
   def increment(state) do
     %{state | count: state.count + 1}  # ✅ Returns new state
@@ -54,11 +52,9 @@ end
 **Example**:
 
 ```elixir
-# Each user session in separate process
 {:ok, session1} = UserSession.start_link(user_id: 1)
 {:ok, session2} = UserSession.start_link(user_id: 2)
 
-# session1 crash doesn't affect session2
 ```
 
 ### Philosophy: "Let It Crash"
@@ -75,7 +71,6 @@ end
 **Example**:
 
 ```elixir
-# Bad (defensive)
 defmodule Parser do
   def parse(data) do
     try do
@@ -94,7 +89,6 @@ defmodule Parser do
   end
 end
 
-# Good (let it crash)
 defmodule Parser do
   def parse(data) do
     data
@@ -103,7 +97,6 @@ defmodule Parser do
   end
 end
 
-# Supervisor handles crashes and restarts
 ```
 
 ### Philosophy: Message Passing Over Shared State
@@ -120,11 +113,9 @@ end
 **Example**:
 
 ```elixir
-# Good
 GenServer.call(pid, {:get_value, key})
 GenServer.cast(pid, {:update_value, key, new_value})
 
-# Messages are explicit contracts
 ```
 
 ## Pattern Matching Best Practices
@@ -142,7 +133,6 @@ def process_user(%User{role: :user, id: id}) do
   # User-specific logic
 end
 
-# Pattern match in function head for clarity
 ```
 
 **Why**: Function signatures document expected input structure.
@@ -297,7 +287,6 @@ end
 **Good**:
 
 ```elixir
-# Each WebSocket connection = one process
 defmodule ChatSocket do
   use Phoenix.Channel
 
@@ -306,7 +295,6 @@ defmodule ChatSocket do
   end
 end
 
-# Each user session = one process
 defmodule UserSession do
   use GenServer
 
@@ -353,10 +341,8 @@ end
 **Good**:
 
 ```elixir
-# Don't care about result
 Task.start(fn -> send_email(user) end)
 
-# Or supervised
 Task.Supervisor.start_child(MyApp.TaskSupervisor, fn ->
   send_email(user)
 end)
@@ -375,7 +361,6 @@ end)
 **Good**:
 
 ```elixir
-# Simple counter
 {:ok, counter} = Agent.start_link(fn -> 0 end)
 Agent.get(counter, & &1)          # 0
 Agent.update(counter, &(&1 + 1))
@@ -461,7 +446,6 @@ end
 **:one_for_one** (most common):
 
 ```elixir
-# Independent children (one failure doesn't affect others)
 Supervisor.init(children, strategy: :one_for_one)
 ```
 
@@ -470,7 +454,6 @@ Supervisor.init(children, strategy: :one_for_one)
 **:rest_for_one**:
 
 ```elixir
-# Chain of dependencies (restart this child and all started after it)
 Supervisor.init(children, strategy: :rest_for_one)
 ```
 
@@ -479,7 +462,6 @@ Supervisor.init(children, strategy: :rest_for_one)
 **:one_for_all**:
 
 ```elixir
-# All children interdependent (restart all on any failure)
 Supervisor.init(children, strategy: :one_for_all)
 ```
 
@@ -492,13 +474,10 @@ Supervisor.init(children, strategy: :one_for_all)
 **Good**:
 
 ```elixir
-# Global singleton
 GenServer.start_link(Cache, [], name: Cache)
 
-# Via Registry for many instances
 {:ok, pid} = GenServer.start_link(UserSession, user_id, name: {:via, Registry, {MyApp.Registry, user_id}})
 
-# No name for dynamic workers
 GenServer.start_link(Worker, [])
 ```
 
@@ -544,7 +523,6 @@ end
 **Good**:
 
 ```elixir
-# Controller (thin)
 defmodule MyAppWeb.UserController do
   use MyAppWeb, :controller
 
@@ -561,7 +539,6 @@ defmodule MyAppWeb.UserController do
   end
 end
 
-# Context (rich)
 defmodule MyApp.Accounts do
   def create_user(attrs) do
     %User{}
@@ -606,7 +583,6 @@ defmodule User do
   end
 end
 
-# Usage
 %User{}
 |> User.changeset(params)
 |> Repo.insert()
@@ -667,7 +643,6 @@ defmodule MyAppWeb.AuthPlug do
   end
 end
 
-# In router
 pipeline :authenticated do
   plug MyAppWeb.AuthPlug
 end
@@ -807,24 +782,19 @@ end
 **Good**:
 
 ```elixir
-# Define behavior
 defmodule EmailSender do
   @callback send(String.t(), String.t()) :: :ok | {:error, term()}
 end
 
-# Production implementation
 defmodule RealEmailSender do
   @behaviour EmailSender
   def send(to, body), do: # ... actual sending
 end
 
-# Test mock
 Mox.defmock(MockEmailSender, for: EmailSender)
 
-# In config/test.exs
 config :my_app, email_sender: MockEmailSender
 
-# In test
 test "sends email" do
   expect(MockEmailSender, :send, fn to, body ->
     assert to == "user@example.com"
@@ -844,7 +814,6 @@ end
 **Good**:
 
 ```elixir
-# Memory-efficient (lazy evaluation)
 File.stream!("large_file.csv")
 |> Stream.map(&parse_line/1)
 |> Stream.filter(&valid?/1)
@@ -855,7 +824,6 @@ File.stream!("large_file.csv")
 **Avoid**:
 
 ```elixir
-# Loads entire file into memory
 File.read!("large_file.csv")
 |> String.split("\n")
 |> Enum.map(&parse_line/1)
@@ -922,7 +890,6 @@ end
 **Good**:
 
 ```elixir
-# Single query
 user_ids = [1, 2, 3, 4, 5]
 users = Repo.all(from u in User, where: u.id in ^user_ids)
 ```
@@ -930,7 +897,6 @@ users = Repo.all(from u in User, where: u.id in ^user_ids)
 **Avoid**:
 
 ```elixir
-# N queries (N+1 problem)
 users = Enum.map(user_ids, &Repo.get(User, &1))
 ```
 
@@ -1065,7 +1031,6 @@ end
 
 ```elixir
 for x <- 1..10, rem(x, 2) == 0, do: x * 2
-# [4, 8, 12, 16, 20]
 ```
 
 **When to use**: Simple transformations with filters, generating collections.

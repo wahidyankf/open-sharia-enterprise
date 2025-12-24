@@ -141,15 +141,12 @@ end
 Usage:
 
 ```elixir
-# Start the server
 {:ok, _pid} = Counter.start_link(0)
 
-# Synchronous calls - wait for response
 Counter.increment()  # Returns 1
 Counter.increment()  # Returns 2
 Counter.get_value()  # Returns 2
 
-# Asynchronous cast - don't wait
 Counter.reset()
 Counter.get_value()  # Returns 0
 ```
@@ -274,10 +271,8 @@ end
 ```elixir
 Worker.start_link([])
 
-# Default 5 second timeout
 Worker.process_with_timeout("hello")  # "HELLO" after 1 second
 
-# Custom timeout
 Worker.process_with_timeout("world", 500)  # Might raise timeout error
 ```
 
@@ -468,14 +463,11 @@ end
 Usage:
 
 ```elixir
-# Start the dynamic supervisor
 {:ok, _pid} = MyApp.WorkerSupervisor.start_link([])
 
-# Start workers dynamically
 {:ok, worker1} = MyApp.WorkerSupervisor.start_worker("job1")
 {:ok, worker2} = MyApp.WorkerSupervisor.start_worker("job2")
 
-# Stop a worker
 MyApp.WorkerSupervisor.stop_worker(worker1)
 ```
 
@@ -571,7 +563,6 @@ OTP Application is the standard unit of deployment.
 Every Mix project can be an application:
 
 ```elixir
-# mix.exs
 defmodule MyApp.MixProject do
   use Mix.Project
 
@@ -601,7 +592,6 @@ end
 ### Application Callback
 
 ```elixir
-# lib/my_app/application.ex
 defmodule MyApp.Application do
   use Application
 
@@ -631,14 +621,12 @@ end
 Configure your application:
 
 ```elixir
-# config/config.exs
 import Config
 
 config :my_app,
   api_key: "dev-key",
   timeout: 5000
 
-# config/prod.exs
 import Config
 
 config :my_app,
@@ -656,7 +644,6 @@ timeout = Application.get_env(:my_app, :timeout, 5000)  # Default 5000
 Runtime configuration (Elixir 1.11+):
 
 ```elixir
-# config/runtime.exs
 import Config
 
 if config_env() == :prod do
@@ -697,16 +684,13 @@ Task and Agent provide simpler abstractions for common patterns.
 Execute work concurrently:
 
 ```elixir
-# Async/await pattern
 task = Task.async(fn ->
   :timer.sleep(1000)
   "Result"
 end)
 
-# Do other work...
 IO.puts("Doing other work...")
 
-# Wait for result (blocks)
 result = Task.await(task)
 IO.puts(result)  # "Result" after 1 second
 ```
@@ -743,13 +727,11 @@ defmodule MyApp.Application do
   end
 end
 
-# Start supervised task
 Task.Supervisor.start_child(MyApp.TaskSupervisor, fn ->
   # This task is supervised - if it crashes, supervisor handles it
   perform_work()
 end)
 
-# Async supervised task with await
 task = Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
   fetch_data()
 end)
@@ -761,22 +743,18 @@ result = Task.await(task)
 Agent wraps state in a process:
 
 ```elixir
-# Start an agent with initial state
 {:ok, agent} = Agent.start_link(fn -> %{} end)
 
-# Update state
 Agent.update(agent, fn state ->
   Map.put(state, :count, 1)
 end)
 
-# Get state
 count = Agent.get(agent, fn state ->
   Map.get(state, :count)
 end)
 
 IO.puts(count)  # 1
 
-# Get and update atomically
 {old_count, new_count} = Agent.get_and_update(agent, fn state ->
   old = Map.get(state, :count, 0)
   new = old + 1
@@ -822,14 +800,11 @@ Phoenix is the leading Elixir web framework.
 ### Creating a Phoenix Project
 
 ```bash
-# Install Phoenix
 mix archive.install hex phx_new
 
-# Create new project
 mix phx.new my_app
 cd my_app
 
-# Start server
 mix phx.server
 ```
 
@@ -1023,14 +998,12 @@ end
 Use in router or controller:
 
 ```elixir
-# In router
 scope "/admin", MyAppWeb.Admin do
   pipe_through [:browser, MyAppWeb.Plugs.RequireAuth]
 
   resources "/posts", PostController
 end
 
-# In controller
 defmodule MyAppWeb.AdminController do
   use MyAppWeb, :controller
 
@@ -1264,7 +1237,6 @@ end
 ### Migrations
 
 ```elixir
-# Generated with: mix ecto.gen.migration create_users
 defmodule MyApp.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
@@ -1297,36 +1269,29 @@ import Ecto.Query
 alias MyApp.Accounts.User
 alias MyApp.Repo
 
-# Get all users
 users = Repo.all(User)
 
-# Get by ID
 user = Repo.get(User, 1)
 user = Repo.get!(User, 1)  # Raises if not found
 
-# Get by field
 user = Repo.get_by(User, email: "alice@example.com")
 
-# Query with conditions
 query = from u in User,
   where: u.age > 18,
   select: u
 
 adults = Repo.all(query)
 
-# Pipe syntax
 adults = User
   |> where([u], u.age > 18)
   |> order_by([u], desc: u.inserted_at)
   |> limit(10)
   |> Repo.all()
 
-# Aggregate
 count = User
   |> where([u], u.confirmed == true)
   |> Repo.aggregate(:count)
 
-# Update all
 {count, _} = User
   |> where([u], u.age < 18)
   |> Repo.update_all(set: [confirmed: false])
@@ -1335,7 +1300,6 @@ count = User
 ### Changesets and Validation
 
 ```elixir
-# Create
 changeset = User.changeset(%User{}, %{
   name: "Alice",
   email: "alice@example.com",
@@ -1349,12 +1313,10 @@ case Repo.insert(changeset) do
     IO.inspect(changeset.errors)
 end
 
-# Update
 user = Repo.get!(User, 1)
 changeset = User.changeset(user, %{age: 31})
 Repo.update(changeset)
 
-# Delete
 user = Repo.get!(User, 1)
 Repo.delete(user)
 ```
@@ -1389,19 +1351,16 @@ end
 Preloading associations:
 
 ```elixir
-# Lazy load (N+1 query problem)
 users = Repo.all(User)
 Enum.each(users, fn user ->
   posts = Repo.preload(user, :posts).posts
   IO.inspect(posts)
 end)
 
-# Eager load (single query with join)
 users = User
   |> preload(:posts)
   |> Repo.all()
 
-# Selective preload
 users = User
   |> join(:inner, [u], p in assoc(u, :posts))
   |> where([u, p], p.published == true)
@@ -1467,20 +1426,16 @@ end
 ### Testing with Mocks
 
 ```elixir
-# Use Mox for mocking
-# mix.exs
 defp deps do
   [
     {:mox, "~> 1.0", only: :test}
   ]
 end
 
-# Define behaviour
 defmodule MyApp.HTTPClient do
   @callback get(url :: String.t()) :: {:ok, map()} | {:error, term()}
 end
 
-# Production implementation
 defmodule MyApp.HTTPClient.HTTPoison do
   @behaviour MyApp.HTTPClient
 
@@ -1492,11 +1447,8 @@ defmodule MyApp.HTTPClient.HTTPoison do
   end
 end
 
-# Define mock
-# test/support/mocks.ex
 Mox.defmock(MyApp.HTTPClient.Mock, for: MyApp.HTTPClient)
 
-# Test
 defmodule MyApp.APITest do
   use ExUnit.Case, async: true
   import Mox
@@ -1583,7 +1535,6 @@ Manage configuration across environments.
 ### Compile-Time Configuration
 
 ```elixir
-# config/config.exs
 import Config
 
 config :my_app,
@@ -1591,12 +1542,10 @@ config :my_app,
   timeout: 5000,
   retry_attempts: 3
 
-# Environment-specific
 import_config "#{config_env()}.exs"
 ```
 
 ```elixir
-# config/dev.exs
 import Config
 
 config :my_app,
@@ -1605,7 +1554,6 @@ config :my_app,
 ```
 
 ```elixir
-# config/prod.exs
 import Config
 
 config :my_app,
@@ -1615,7 +1563,6 @@ config :my_app,
 ### Runtime Configuration
 
 ```elixir
-# config/runtime.exs (Elixir 1.11+)
 import Config
 
 if config_env() == :prod do
@@ -1814,7 +1761,6 @@ end
 ### Telemetry and Metrics
 
 ```elixir
-# lib/my_app/application.ex
 defmodule MyApp.Application do
   use Application
 
@@ -1833,7 +1779,6 @@ defmodule MyApp.Application do
   end
 end
 
-# lib/my_app_web/telemetry.ex
 defmodule MyAppWeb.Telemetry do
   use Supervisor
   import Telemetry.Metrics

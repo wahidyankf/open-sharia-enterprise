@@ -327,8 +327,6 @@ var (
 ### Package README
 
 ````markdown
-# User Package
-
 User management and authentication for MyApp.
 
 ## Features
@@ -427,26 +425,20 @@ func NewServiceV2(db *sql.DB) (*Service, error) {
 ### godoc Command
 
 ```bash
-# Install godoc
 go install golang.org/x/tools/cmd/godoc@latest
 
-# Run local godoc server
 godoc -http=:6060
 
-# View in browser
 open http://localhost:6060/pkg/github.com/yourorg/yourproject/
 ```
 
 ### pkgsite (Modern Alternative)
 
 ```bash
-# Install pkgsite
 go install golang.org/x/pkgsite/cmd/pkgsite@latest
 
-# Run local pkgsite server
 pkgsite -http=:8080
 
-# View in browser
 open http://localhost:8080/github.com/yourorg/yourproject
 ```
 

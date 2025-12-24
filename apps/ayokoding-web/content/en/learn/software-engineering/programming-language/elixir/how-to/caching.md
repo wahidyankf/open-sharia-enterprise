@@ -322,7 +322,6 @@ defmodule MemoCache do
   end
 end
 
-# Usage
 defmodule ExpensiveCalculations do
   def fibonacci(n) do
     MemoCache.memoize({:fib, n}, fn ->
@@ -384,7 +383,6 @@ defmodule MyCachex do
   end
 end
 
-# Usage with automatic fallback
 MyCachex.fetch("user:123", fn ->
   Repo.get(User, 123)
 end)
@@ -393,7 +391,6 @@ end)
 Advanced Cachex features:
 
 ```elixir
-# Warming cache on startup
 defmodule CacheWarmer do
   def warm_cache do
     users = Repo.all(User)
@@ -404,7 +401,6 @@ defmodule CacheWarmer do
   end
 end
 
-# Hooks for logging
 Cachex.start_link(:my_cache, [
   hooks: [
     %Cachex.Hook{
@@ -691,7 +687,6 @@ defmodule TaggedCache do
   end
 end
 
-# Usage
 TaggedCache.put("post:1", post, tags: [:posts, "user:#{post.user_id}"])
 TaggedCache.invalidate_tag("user:123")  # Invalidates all posts by user 123
 ```
@@ -801,27 +796,21 @@ end
 ### Memory Usage
 
 ```elixir
-# Check ETS memory
 :ets.info(:my_cache, :memory) * :erlang.system_info(:wordsize)
 
-# Implement size limits
 Cachex.start_link(:my_cache, limit: 1000)
 ```
 
 ### Cache Not Expiring
 
 ```elixir
-# Verify TTL
 Cachex.ttl(:my_cache, key)
 
-# Enable background cleanup for ETS
-# (See ETSCache.Server example above)
 ```
 
 ### Serialization Errors
 
 ```elixir
-# Ensure data is JSON-serializable for Redis
 defimpl Jason.Encoder, for: MyStruct do
   def encode(value, opts) do
     Jason.Encode.map(Map.from_struct(value), opts)

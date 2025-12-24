@@ -241,16 +241,12 @@ func TestUserOperations(t *testing.T) {
 **Running specific subtests:**
 
 ```bash
-# Run all tests
 go test
 
-# Run specific test function
 go test -run TestUserOperations
 
-# Run specific subtest
 go test -run TestUserOperations/Create
 
-# Run nested subtest
 go test -run TestUserOperations/Validate/valid_user
 ```
 
@@ -569,18 +565,13 @@ func BenchmarkStringOperations(b *testing.B) {
 **Running benchmarks:**
 
 ```bash
-# Run all benchmarks
 go test -bench=.
 
-# Run specific benchmark
 go test -bench=BenchmarkStringConcat
 
-# With memory stats
 go test -bench=. -benchmem
 
-# Compare benchmarks
 go test -bench=. -benchmem > old.txt
-# Make changes
 go test -bench=. -benchmem > new.txt
 benchcmp old.txt new.txt
 ```

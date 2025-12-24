@@ -19,11 +19,9 @@ This guide shows effective testing patterns in Python.
 ### Simple Test Functions
 
 ```python
-# test_calculator.py
 def add(a, b):
     return a + b
 
-# ✅ Test functions start with test_
 def test_add_positive_numbers():
     assert add(2, 3) == 5
 
@@ -33,7 +31,6 @@ def test_add_negative_numbers():
 def test_add_zero():
     assert add(5, 0) == 5
 
-# ✅ Descriptive assertions with messages
 def test_add_floats():
     result = add(0.1, 0.2)
     assert result == pytest.approx(0.3), f"Expected 0.3, got {result}"
@@ -42,26 +39,20 @@ def test_add_floats():
 **Running tests:**
 
 ```bash
-# Run all tests
 pytest
 
-# Run specific file
 pytest test_calculator.py
 
-# Run specific test
 pytest test_calculator.py::test_add_positive_numbers
 
-# Verbose output
 pytest -v
 
-# Show print statements
 pytest -s
 ```
 
 ### Test Classes
 
 ```python
-# ✅ Group related tests in classes
 class TestUser:
     def test_create_user(self):
         user = User("alice@example.com")
@@ -85,19 +76,16 @@ class TestUser:
 ```python
 import pytest
 
-# ✅ Setup fixture
 @pytest.fixture
 def user():
     return User("alice@example.com", age=25)
 
-# ✅ Use fixture in tests
 def test_user_email(user):
     assert user.email == "alice@example.com"
 
 def test_user_age(user):
     assert user.age == 25
 
-# ✅ Fixture with setup and teardown
 @pytest.fixture
 def database():
     db = Database()
@@ -113,12 +101,10 @@ def test_query_users(database):
 ### Fixture Scope
 
 ```python
-# ✅ Function scope (default) - new instance per test
 @pytest.fixture
 def user():
     return User("test@example.com")
 
-# ✅ Class scope - shared within test class
 @pytest.fixture(scope="class")
 def database():
     db = Database()
@@ -126,12 +112,10 @@ def database():
     yield db
     db.disconnect()
 
-# ✅ Module scope - shared across module
 @pytest.fixture(scope="module")
 def app_config():
     return load_config("test_config.yaml")
 
-# ✅ Session scope - shared across all tests
 @pytest.fixture(scope="session")
 def browser():
     driver = webdriver.Chrome()
@@ -142,7 +126,6 @@ def browser():
 ### conftest.py for Shared Fixtures
 
 ```python
-# conftest.py - fixtures available to all tests in directory
 import pytest
 
 @pytest.fixture
@@ -157,7 +140,6 @@ def sample_user():
     """Sample user for testing"""
     return User("test@example.com", age=25)
 
-# test_models.py
 def test_save_user(db_connection, sample_user):
     # Fixtures automatically available
     db_connection.save(sample_user)
@@ -169,7 +151,6 @@ def test_save_user(db_connection, sample_user):
 ### Basic Parametrization
 
 ```python
-# ✅ Test multiple inputs
 @pytest.mark.parametrize("a,b,expected", [
     (2, 3, 5),
     (-1, 1, 0),
@@ -179,7 +160,6 @@ def test_save_user(db_connection, sample_user):
 def test_add(a, b, expected):
     assert add(a, b) == expected
 
-# ✅ Named parameters for clarity
 @pytest.mark.parametrize("email,valid", [
     ("alice@example.com", True),
     ("invalid.email", False),
@@ -190,7 +170,6 @@ def test_add(a, b, expected):
 def test_email_validation(email, valid):
     assert is_valid_email(email) == valid
 
-# ✅ Multiple parameters
 @pytest.mark.parametrize("age", [16, 17, -1, 0])
 @pytest.mark.parametrize("email", ["valid@example.com", ""])
 def test_user_validation(age, email):
@@ -203,7 +182,6 @@ def test_user_validation(age, email):
 ### Parametrize with IDs
 
 ```python
-# ✅ Custom test IDs for readability
 @pytest.mark.parametrize("input,expected", [
     ("hello", "HELLO"),
     ("World", "WORLD"),
@@ -212,10 +190,6 @@ def test_user_validation(age, email):
 def test_uppercase(input, expected):
     assert input.upper() == expected
 
-# Test output:
-# test_uppercase[lowercase] PASSED
-# test_uppercase[mixed] PASSED
-# test_uppercase[numbers] PASSED
 ```
 
 ## Mocking
@@ -225,7 +199,6 @@ def test_uppercase(input, expected):
 ```python
 from unittest.mock import Mock, patch, MagicMock
 
-# ✅ Mock object
 def test_api_call():
     mock_api = Mock()
     mock_api.get_user.return_value = {"name": "Alice", "age": 25}
@@ -236,7 +209,6 @@ def test_api_call():
     assert user.name == "Alice"
     mock_api.get_user.assert_called_once_with("123")
 
-# ✅ Mock with side effects
 def test_retry_logic():
     mock_api = Mock()
     # First call fails, second succeeds
@@ -248,7 +220,6 @@ def test_retry_logic():
     assert result == {"data": "success"}
     assert mock_api.fetch_data.call_count == 2
 
-# ✅ Patch function
 @patch('myapp.send_email')
 def test_user_registration(mock_send_email):
     register_user("alice@example.com", "password")
@@ -257,7 +228,6 @@ def test_user_registration(mock_send_email):
     args, kwargs = mock_send_email.call_args
     assert "alice@example.com" in args
 
-# ✅ Patch as context manager
 def test_external_api():
     with patch('requests.get') as mock_get:
         mock_response = Mock()
@@ -273,7 +243,6 @@ def test_external_api():
 ### Mock Classes and Methods
 
 ```python
-# ✅ Mock entire class
 @patch('myapp.database.Database')
 def test_save_user(MockDatabase):
     mock_db_instance = MockDatabase.return_value
@@ -285,7 +254,6 @@ def test_save_user(MockDatabase):
     assert result is True
     mock_db_instance.save.assert_called_once()
 
-# ✅ Patch object method
 def test_user_method():
     user = User("test@example.com")
 
@@ -302,17 +270,14 @@ def test_user_method():
 ```python
 import pytest
 
-# ✅ Assert exception is raised
 def test_divide_by_zero():
     with pytest.raises(ZeroDivisionError):
         divide(10, 0)
 
-# ✅ Check exception message
 def test_invalid_email():
     with pytest.raises(ValueError, match="Invalid email"):
         User("invalid-email")
 
-# ✅ Capture exception for inspection
 def test_validation_error():
     with pytest.raises(ValidationError) as exc_info:
         validate_age(-5)
@@ -320,7 +285,6 @@ def test_validation_error():
     assert "age" in str(exc_info.value)
     assert exc_info.value.field == "age"
 
-# ✅ Test no exception raised
 def test_valid_input():
     # No assertion needed - test passes if no exception
     process_data({"valid": "data"})
@@ -346,23 +310,19 @@ tests/
 ```python
 import pytest
 
-# ✅ Mark slow tests
 @pytest.mark.slow
 def test_large_dataset():
     # Long-running test
     pass
 
-# ✅ Mark integration tests
 @pytest.mark.integration
 def test_database_connection():
     pass
 
-# ✅ Skip tests conditionally
 @pytest.mark.skipif(sys.platform == "win32", reason="Unix only")
 def test_unix_specific():
     pass
 
-# ✅ Expected failure
 @pytest.mark.xfail(reason="Known bug #123")
 def test_known_issue():
     pass
@@ -371,13 +331,10 @@ def test_known_issue():
 **Run specific marks:**
 
 ```bash
-# Run only fast tests
 pytest -m "not slow"
 
-# Run integration tests
 pytest -m integration
 
-# Run specific marks
 pytest -m "slow or integration"
 ```
 
@@ -386,26 +343,20 @@ pytest -m "slow or integration"
 ### Running with Coverage
 
 ```bash
-# Install pytest-cov
 pip install pytest-cov
 
-# Run with coverage
 pytest --cov=myapp
 
-# Generate HTML report
 pytest --cov=myapp --cov-report=html
 
-# Show missing lines
 pytest --cov=myapp --cov-report=term-missing
 
-# Fail if coverage below threshold
 pytest --cov=myapp --cov-fail-under=80
 ```
 
 ### Coverage Configuration
 
 ```ini
-# .coveragerc or pyproject.toml
 [coverage:run]
 omit =
     */tests/*

@@ -53,26 +53,21 @@ Each section introduces ONE essential concept with ONE example. After completing
 Python uses dynamic typing with type hints for clarity:
 
 ```python
-# Simple assignment (dynamic typing)
 name = "Alice"
 age = 30
 height = 1.65
 is_active = True
 
-# Type hints (optional, for clarity)
 city: str = "Jakarta"
 count: int = 42
 price: float = 99.99
 
-# Multiple assignment
 x, y, z = 10, 20, 30
 
-# Constants (by convention, ALL_CAPS)
 MAX_RETRIES = 3
 API_URL = "https://api.example.com"
 
 print(name, age, height, is_active)
-# Output: Alice 30 1.65 True
 ```
 
 **Key Types**:
@@ -92,7 +87,6 @@ Python uses duck typing: "If it walks like a duck and quacks like a duck, it's a
 Python uses indentation (not braces) for code blocks:
 
 ```python
-# If/elif/else
 age = 18
 if age >= 18:
     print("Adult")
@@ -101,22 +95,18 @@ elif age >= 13:
 else:
     print("Child")
 
-# For loop (range)
 for i in range(3):
     print(i)  # Prints: 0, 1, 2
 
-# For loop (iterate over list)
 fruits = ["apple", "banana", "cherry"]
 for fruit in fruits:
     print(fruit)
 
-# While loop
 count = 0
 while count < 3:
     print(count)
     count += 1
 
-# Break and continue
 for i in range(10):
     if i == 3:
         continue  # Skip 3
@@ -140,28 +130,22 @@ For advanced control flow patterns, see [Use control structures effectively](/en
 Functions are first-class objects in Python:
 
 ```python
-# Simple function
 def greet(name):
     return f"Hello, {name}"
 
-# Function with type hints
 def add(a: int, b: int) -> int:
     return a + b
 
-# Function with default arguments
 def power(base, exponent=2):
     return base ** exponent
 
-# Multiple return values (using tuple unpacking)
 def divide(a, b):
     quotient = a // b
     remainder = a % b
     return quotient, remainder
 
-# Lambda (anonymous function)
 square = lambda x: x ** 2
 
-# Usage
 print(greet("Alice"))       # Hello, Alice
 print(add(5, 3))            # 8
 print(power(5))             # 25 (default exponent=2)
@@ -187,7 +171,6 @@ Deep dive into functions in the [Beginner tutorial](/en/learn/software-engineeri
 Python's built-in collections are powerful:
 
 ```python
-# List (ordered, mutable)
 numbers = [1, 2, 3, 4, 5]
 numbers.append(6)           # Add to end
 numbers.insert(0, 0)        # Insert at position
@@ -197,22 +180,18 @@ slice_nums = numbers[1:4]   # Slicing [1, 2, 3]
 
 print(numbers)              # [0, 1, 2, 3, 4, 5, 6]
 
-# Dictionary (key-value pairs)
 person = {
     "name": "Alice",
     "age": 30,
     "city": "Jakarta"
 }
 
-# Access values
 print(person["name"])       # Alice
 print(person.get("age"))    # 30 (safe access)
 
-# Add/modify
 person["email"] = "alice@example.com"
 person["age"] = 31
 
-# Iterate
 for key, value in person.items():
     print(f"{key}: {value}")
 ```
@@ -237,19 +216,15 @@ name = "Alice"
 age = 30
 price = 19.99
 
-# f-strings (Python 3.6+, recommended)
 print(f"Hello, {name}!")
 print(f"{name} is {age} years old")
 print(f"Price: ${price:.2f}")  # Format to 2 decimal places
 
-# str.format() (older style)
 print("Hello, {}!".format(name))
 print("{} is {} years old".format(name, age))
 
-# % formatting (legacy, avoid)
 print("Hello, %s!" % name)
 
-# Multi-line strings
 message = f"""
 Dear {name},
 
@@ -275,14 +250,12 @@ print(message)
 Python uses exceptions for error handling:
 
 ```python
-# Try/except
 try:
     number = int("abc")  # This will raise ValueError
 except ValueError as e:
     print(f"Error: {e}")
     # Output: Error: invalid literal for int() with base 10: 'abc'
 
-# Multiple exceptions
 try:
     result = 10 / 0
 except ZeroDivisionError:
@@ -290,7 +263,6 @@ except ZeroDivisionError:
 except Exception as e:
     print(f"Unexpected error: {e}")
 
-# Try/except/else/finally
 try:
     file = open("data.txt", "r")
 except FileNotFoundError:
@@ -304,13 +276,11 @@ finally:
     if 'file' in locals():
         file.close()
 
-# EAFP style (Easier to Ask for Forgiveness than Permission)
 try:
     value = my_dict["key"]
 except KeyError:
     value = "default"
 
-# vs LBYL style (Look Before You Leap) - less Pythonic
 if "key" in my_dict:
     value = my_dict["key"]
 else:
@@ -332,30 +302,21 @@ For comprehensive error handling strategies, see [Handle errors effectively](/en
 Concise way to create lists:
 
 ```python
-# Traditional loop
 squares = []
 for i in range(10):
     squares.append(i ** 2)
 
-# List comprehension (more Pythonic)
 squares = [i ** 2 for i in range(10)]
 print(squares)
-# Output: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 
-# With condition (filter)
 even_squares = [i ** 2 for i in range(10) if i % 2 == 0]
 print(even_squares)
-# Output: [0, 4, 16, 36, 64]
 
-# Dictionary comprehension
 squares_dict = {i: i ** 2 for i in range(5)}
 print(squares_dict)
-# Output: {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
 
-# Nested list comprehension
 matrix = [[i * j for j in range(3)] for i in range(3)]
 print(matrix)
-# Output: [[0, 0, 0], [0, 1, 2], [0, 2, 4]]
 ```
 
 **Key Points**:
@@ -371,33 +332,27 @@ print(matrix)
 Python code is organized in modules:
 
 ```python
-# Import entire module
 import math
 print(math.pi)           # 3.141592653589793
 print(math.sqrt(16))     # 4.0
 
-# Import specific items
 from math import pi, sqrt
 print(pi)                # 3.141592653589793
 print(sqrt(16))          # 4.0
 
-# Import with alias
 import datetime as dt
 now = dt.datetime.now()
 print(now)
 
-# Import all (avoid in production)
 from math import *
 print(cos(0))            # 1.0
 
-# Common standard library modules
 import os                # Operating system functions
 import sys               # System-specific parameters
 import json              # JSON parsing
 import random            # Random number generation
 import re                # Regular expressions
 
-# Example usage
 random_number = random.randint(1, 10)
 current_dir = os.getcwd()
 print(f"Random: {random_number}, Directory: {current_dir}")
@@ -421,22 +376,18 @@ print(f"Random: {random_number}, Directory: {current_dir}")
 Reading and writing files is simple in Python:
 
 ```python
-# Writing to a file
 with open('data.txt', 'w') as f:
     f.write("Hello, file!\n")
     f.write("Second line\n")
 
-# Reading from a file
 with open('data.txt', 'r') as f:
     content = f.read()
     print(content)
 
-# Reading line by line
 with open('data.txt', 'r') as f:
     for line in f:
         print(line.strip())  # strip() removes newline
 
-# Appending to a file
 with open('data.txt', 'a') as f:
     f.write("Appended line\n")
 ```
@@ -459,7 +410,6 @@ with open('data.txt', 'a') as f:
 ```python
 from pathlib import Path
 
-# Modern path handling
 file_path = Path('data') / 'users.txt'
 if file_path.exists():
     text = file_path.read_text()
@@ -475,7 +425,6 @@ JSON is Python's most common data interchange format:
 ```python
 import json
 
-# Python dict to JSON
 data = {
     'name': 'Alice',
     'age': 30,
@@ -483,20 +432,16 @@ data = {
     'active': True
 }
 
-# Convert to JSON string
 json_string = json.dumps(data, indent=2)
 print(json_string)
 
-# Write JSON to file
 with open('user.json', 'w') as f:
     json.dump(data, f, indent=2)
 
-# Read JSON from file
 with open('user.json', 'r') as f:
     loaded_data = json.load(f)
     print(loaded_data['name'])  # Alice
 
-# Parse JSON string
 json_text = '{"status": "success", "count": 42}'
 result = json.loads(json_text)
 print(result['count'])  # 42
@@ -525,30 +470,20 @@ print(result['count'])  # 42
 Virtual environments isolate project dependencies:
 
 ```bash
-# Create a virtual environment
 python -m venv venv
 
-# Activate it
-# Windows:
 venv\Scripts\activate
-# macOS/Linux:
 source venv/bin/activate
 
-# Your prompt changes to show (venv)
 
-# Install packages (isolated to this project)
 pip install requests
 
-# List installed packages
 pip list
 
-# Save dependencies
 pip freeze > requirements.txt
 
-# Install from requirements file
 pip install -r requirements.txt
 
-# Deactivate when done
 deactivate
 ```
 
@@ -572,15 +507,12 @@ For more details, see [Use virtual environments](/en/learn/software-engineering/
 ```python
 fruits = ['apple', 'banana', 'cherry']
 
-# Without enumerate (not Pythonic)
 for i in range(len(fruits)):
     print(f"{i}: {fruits[i]}")
 
-# With enumerate (Pythonic!)
 for i, fruit in enumerate(fruits):
     print(f"{i}: {fruit}")
 
-# Start index at 1
 for i, fruit in enumerate(fruits, start=1):
     print(f"{i}. {fruit}")
 ```
@@ -591,11 +523,9 @@ for i, fruit in enumerate(fruits, start=1):
 names = ['Alice', 'Bob', 'Charlie']
 ages = [25, 30, 35]
 
-# Combine lists
 for name, age in zip(names, ages):
     print(f"{name} is {age} years old")
 
-# Create dict from two lists
 user_dict = dict(zip(names, ages))
 print(user_dict)  # {'Alice': 25, 'Bob': 30, 'Charlie': 35}
 ```
@@ -605,25 +535,20 @@ print(user_dict)  # {'Alice': 25, 'Bob': 30, 'Charlie': 35}
 ```python
 numbers = [1, 2, 3, 4, 5]
 
-# Check if any element is even
 has_even = any(n % 2 == 0 for n in numbers)  # True
 
-# Check if all elements are positive
 all_positive = all(n > 0 for n in numbers)  # True
 
-# Check if list is empty
 is_empty = not any(numbers)  # False
 ```
 
 ### Default Dictionary Values
 
 ```python
-# Using dict.get() for safe access
 config = {'timeout': 30}
 timeout = config.get('timeout', 10)  # 30
 retries = config.get('retries', 3)   # 3 (default)
 
-# Using dict.setdefault()
 config.setdefault('retries', 3)  # Sets retries=3 if not exists
 print(config)  # {'timeout': 30, 'retries': 3}
 ```
@@ -635,11 +560,9 @@ print(config)  # {'timeout': 30, 'retries': 3}
 **Use in for Membership**:
 
 ```python
-# Not Pythonic
 if name == 'Alice' or name == 'Bob' or name == 'Charlie':
     print("Known user")
 
-# Pythonic
 if name in ['Alice', 'Bob', 'Charlie']:
     print("Known user")
 ```
@@ -647,14 +570,12 @@ if name in ['Alice', 'Bob', 'Charlie']:
 **Use with for Resources**:
 
 ```python
-# Not Pythonic
 f = open('file.txt', 'r')
 try:
     content = f.read()
 finally:
     f.close()
 
-# Pythonic
 with open('file.txt', 'r') as f:
     content = f.read()
 ```
@@ -662,24 +583,20 @@ with open('file.txt', 'r') as f:
 **Use Comprehensions**:
 
 ```python
-# Not Pythonic
 squares = []
 for i in range(10):
     squares.append(i**2)
 
-# Pythonic
 squares = [i**2 for i in range(10)]
 ```
 
 **Use Multiple Assignment**:
 
 ```python
-# Not Pythonic
 temp = a
 a = b
 b = temp
 
-# Pythonic
 a, b = b, a
 ```
 

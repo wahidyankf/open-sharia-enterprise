@@ -124,19 +124,14 @@ end
 ### 4. Protocol Usage
 
 ```elixir
-# Works with any type that implements Serializable
 user = %User{id: 1, name: "Alice", email: "alice@example.com"}
 Serializable.to_json(user)
-# => "{\"id\":1,\"name\":\"Alice\",\"email\":\"alice@example.com\",\"type\":\"user\"}"
 
 Serializable.to_json([1, 2, 3])
-# => "[1,2,3]"
 
 Serializable.to_json(%{key: "value"})
-# => "{\"key\":\"value\"}"
 
 Serializable.to_xml(user)
-# => "<user>\n  <id>1</id>\n  <name>Alice</name>\n  <email>alice@example.com</email>\n</user>"
 ```
 
 ## Advanced Patterns
@@ -144,7 +139,6 @@ Serializable.to_xml(user)
 ### 1. Protocol Consolidation
 
 ```elixir
-# In mix.exs for production performance
 def project do
   [
     app: :my_app,
@@ -164,14 +158,12 @@ defprotocol Inspectable do
   def inspect(data)
 end
 
-# Default implementation for any type
 defimpl Inspectable, for: Any do
   def inspect(data) do
     "Unknown type: #{Kernel.inspect(data)}"
   end
 end
 
-# Specific implementation
 defimpl Inspectable, for: User do
   def inspect(%User{name: name}) do
     "User: #{name}"
@@ -333,7 +325,6 @@ end
 **Problem:**
 
 ```elixir
-# Don't create protocols for single implementations
 defprotocol SingleUse do
   def process(data)
 end
@@ -346,19 +337,16 @@ end
 **Solution:**
 
 ```elixir
-# Use regular functions instead
 def process_user(%User{} = user), do: user.name
 ```
 
 ### 2. Forgetting @fallback_to_any
 
 ```elixir
-# Without fallback - raises Protocol.UndefinedError
 defprotocol Printer do
   def print(data)
 end
 
-# With fallback - graceful handling
 defprotocol Printer do
   @fallback_to_any true
   def print(data)
@@ -372,8 +360,6 @@ end
 ### 3. Protocol Implementation Conflicts
 
 ```elixir
-# Be careful with duplicate implementations
-# This will raise a compilation error
 defimpl MyProtocol, for: User do
   def my_func(user), do: :first
 end
@@ -388,13 +374,10 @@ end
 ### Protocol Dispatch Cost
 
 ```elixir
-# Protocol dispatch (dynamic)
 Serializable.to_json(data)  # ~50-100ns overhead
 
-# Direct function call
 User.to_json(data)  # No overhead
 
-# Consolidation reduces protocol overhead in production
 ```
 
 ### When to Use Protocols
@@ -417,18 +400,14 @@ User.to_json(data)  # No overhead
 Elixir includes several built-in protocols:
 
 ```elixir
-# Enumerable - iterate over collections
 Enum.map([1, 2, 3], &(&1 * 2))
 Enum.map(%{a: 1, b: 2}, fn {k, v} -> {k, v * 2} end)
 
-# String.Chars - convert to string (to_string/1)
 to_string(123)
 to_string(:atom)
 
-# Inspect - inspect representation (inspect/1)
 inspect(%User{name: "Alice"})
 
-# Collectable - collect items into structure (Enum.into/2)
 Enum.into([a: 1], %{})
 ```
 
@@ -486,12 +465,10 @@ end
 - Static dispatch
 
 ```elixir
-# Protocol - dispatch on data type
 defprotocol Serializable do
   def to_json(data)
 end
 
-# Behavior - module must implement functions
 defmodule MyBehaviour do
   @callback handle(term()) :: term()
 end

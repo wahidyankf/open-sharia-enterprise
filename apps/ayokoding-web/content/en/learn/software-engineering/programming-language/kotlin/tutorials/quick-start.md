@@ -17,8 +17,6 @@ categories:
 
 ---
 
-# Kotlin Quick Start
-
 **Learn enough Kotlin to explore independently.** This tutorial gives you a quick tour of Kotlin's essential features. You'll explore variables, null safety, functions, classes, collections, and basic coroutines through practical examples. Perfect for getting a quick overview before diving into comprehensive learning.
 
 ## What You'll Achieve

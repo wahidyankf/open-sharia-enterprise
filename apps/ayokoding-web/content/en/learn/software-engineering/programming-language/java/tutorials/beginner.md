@@ -18,8 +18,6 @@ categories:
 
 ---
 
-# Complete Beginner's Guide to Java
-
 Ever wondered how professional developers transform simple code into robust, maintainable applications? This is a complete journey from zero to solid Java expertise. You'll learn object-oriented programming, the collections framework, testing, and modern Java features through structured lessons and practice exercises.
 
 ## What You'll Achieve

@@ -423,11 +423,9 @@ inherits = "release"
 ```
 
 ```bash
-# Generate profile data
 RUSTFLAGS="-Cprofile-generate=/tmp/pgo-data" cargo build --release
 ./target/release/my_app  # Run with representative workload
 
-# Use profile data
 llvm-profdata merge -o /tmp/pgo-data/merged.profdata /tmp/pgo-data
 RUSTFLAGS="-Cprofile-use=/tmp/pgo-data/merged.profdata" cargo build --release
 ```

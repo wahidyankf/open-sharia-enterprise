@@ -38,7 +38,6 @@ Use **Ecto** for type-safe database operations with schemas for structure, chang
 ### 1. Basic Schema
 
 ```elixir
-# lib/my_app/accounts/user.ex
 defmodule MyApp.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
@@ -71,7 +70,6 @@ end
 Migration:
 
 ```elixir
-# priv/repo/migrations/20250101120000_create_users.exs
 defmodule MyApp.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
@@ -94,7 +92,6 @@ end
 ### 2. CRUD Operations
 
 ```elixir
-# lib/my_app/accounts.ex
 defmodule MyApp.Accounts do
   import Ecto.Query
   alias MyApp.Repo
@@ -166,22 +163,16 @@ Basic queries:
 ```elixir
 import Ecto.Query
 
-# All users
 Repo.all(User)
 
-# Filter by age
 Repo.all(from u in User, where: u.age > 18)
 
-# Order by name
 Repo.all(from u in User, order_by: [asc: u.name])
 
-# Limit results
 Repo.all(from u in User, limit: 10)
 
-# Select specific fields
 Repo.all(from u in User, select: {u.id, u.name})
 
-# Count
 Repo.aggregate(User, :count)
 ```
 
@@ -196,7 +187,6 @@ def list_active_users_by_age(min_age) do
   |> Repo.all()
 end
 
-# Build query incrementally
 def search_users(criteria) do
   query = from u in User
 
@@ -225,17 +215,14 @@ end
 Aggregations and grouping:
 
 ```elixir
-# Average age
 Repo.one(from u in User, select: avg(u.age))
 
-# Group by status
 Repo.all(
   from u in User,
   group_by: u.active,
   select: {u.active, count(u.id)}
 )
 
-# Age distribution
 Repo.all(
   from u in User,
   group_by: fragment("CASE WHEN age < 30 THEN '< 30' ELSE '>= 30' END"),
@@ -248,7 +235,6 @@ Repo.all(
 One-to-many:
 
 ```elixir
-# Schema
 defmodule MyApp.Accounts.User do
   use Ecto.Schema
 
@@ -272,7 +258,6 @@ defmodule MyApp.Blog.Post do
   end
 end
 
-# Migration
 defmodule MyApp.Repo.Migrations.CreatePosts do
   use Ecto.Migration
 
@@ -289,22 +274,18 @@ defmodule MyApp.Repo.Migrations.CreatePosts do
   end
 end
 
-# Queries with preload
 user = Repo.get!(User, 1) |> Repo.preload(:posts)
 user.posts  # List of posts
 
-# Preload with query
 user = Repo.get!(User, 1)
 |> Repo.preload(posts: from(p in Post, order_by: [desc: p.inserted_at]))
 
-# Preload multiple associations
 user = Repo.get!(User, 1) |> Repo.preload([:posts, :comments])
 ```
 
 Many-to-many:
 
 ```elixir
-# Schema
 defmodule MyApp.Blog.Post do
   use Ecto.Schema
 
@@ -327,7 +308,6 @@ defmodule MyApp.Blog.Tag do
   end
 end
 
-# Migration
 defmodule MyApp.Repo.Migrations.CreatePostsTags do
   use Ecto.Migration
 
@@ -350,10 +330,8 @@ defmodule MyApp.Repo.Migrations.CreatePostsTags do
   end
 end
 
-# Usage
 post = Repo.get!(Post, 1) |> Repo.preload(:tags)
 
-# Associate tags
 tag_ids = [1, 2, 3]
 tags = Repo.all(from t in Tag, where: t.id in ^tag_ids)
 changeset = post
@@ -477,10 +455,6 @@ def create_user_with_profile(user_attrs, profile_attrs) do
   |> Repo.transaction()
 end
 
-# Returns:
-# {:ok, %{user: user, profile: profile}}
-# or
-# {:error, :user, changeset, %{}}
 ```
 
 Complex multi:
@@ -554,7 +528,6 @@ defmodule MyApp.Accounts.User do
   end
 end
 
-# Usage
 attrs = %{
   name: "Alice",
   address: %{
@@ -590,7 +563,6 @@ defmodule Post do
   end
 end
 
-# Update
 case Repo.update(Post.changeset(post, %{title: "New Title"})) do
   {:ok, updated_post} -> {:ok, updated_post}
   {:error, changeset} ->
@@ -641,7 +613,6 @@ defmodule Comment do
   end
 end
 
-# Migration
 create table(:comments) do
   add :body, :text, null: false
   add :commentable_id, :integer, null: false
@@ -652,7 +623,6 @@ end
 
 create index(:comments, [:commentable_id, :commentable_type])
 
-# Usage
 def create_comment(commentable, attrs) do
   attrs = attrs
   |> Map.put(:commentable_id, commentable.id)
@@ -671,19 +641,16 @@ end
 Problem:
 
 ```elixir
-# N+1 query - BAD
 users = Repo.all(User)
 Enum.each(users, fn user ->
   posts = Repo.all(from p in Post, where: p.user_id == ^user.id)
   IO.inspect(posts)
 end)
-# Executes 1 + N queries
 ```
 
 Solution:
 
 ```elixir
-# Preload - GOOD
 users = User
 |> Repo.all()
 |> Repo.preload(:posts)
@@ -691,7 +658,6 @@ users = User
 Enum.each(users, fn user ->
   IO.inspect(user.posts)
 end)
-# Executes 2 queries total
 ```
 
 ### 2. Dynamic Queries
@@ -716,14 +682,12 @@ def search(filters) do
   |> Repo.all()
 end
 
-# Usage
 search(name: "John", min_age: 18, status: :active)
 ```
 
 ### 3. Batch Operations
 
 ```elixir
-# Insert multiple records
 users = [
   %{name: "Alice", email: "alice@example.com"},
   %{name: "Bob", email: "bob@example.com"}
@@ -731,11 +695,9 @@ users = [
 
 {count, _} = Repo.insert_all(User, users)
 
-# Update multiple records
 from(u in User, where: u.age < 18)
 |> Repo.update_all(set: [status: :minor])
 
-# Delete multiple records
 from(u in User, where: is_nil(u.email))
 |> Repo.delete_all()
 ```
@@ -797,10 +759,8 @@ from(u in User, where: is_nil(u.email))
 ### Association Not Loaded
 
 ```elixir
-# Error: association :posts is not loaded
 user.posts
 
-# Fix: Preload first
 user = Repo.preload(user, :posts)
 user.posts
 ```
@@ -808,20 +768,16 @@ user.posts
 ### Unique Constraint Not Working
 
 ```bash
-# Add unique constraint to migration
 create unique_index(:users, [:email])
 
-# Add to changeset
 |> unique_constraint(:email)
 ```
 
 ### Slow Queries
 
 ```elixir
-# Enable query logging
 config :logger, level: :debug
 
-# Add indexes
 create index(:posts, [:user_id])
 create index(:posts, [:inserted_at])
 ```

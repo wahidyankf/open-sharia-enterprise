@@ -21,13 +21,10 @@ This guide shows effective configuration management in Python.
 ```python
 import os
 
-# ✅ Read environment variable
 database_url = os.getenv('DATABASE_URL')
 
-# ✅ With default value
 port = os.getenv('PORT', '8080')
 
-# ✅ Required variable
 def get_required_env(key):
     value = os.getenv(key)
     if value is None:
@@ -36,10 +33,8 @@ def get_required_env(key):
 
 api_key = get_required_env('API_KEY')
 
-# ✅ Parse as integer
 max_connections = int(os.getenv('MAX_CONNECTIONS', '10'))
 
-# ✅ Parse as boolean
 debug = os.getenv('DEBUG', 'false').lower() in ('true', '1', 'yes')
 ```
 
@@ -72,7 +67,6 @@ def get_required_env(key):
         raise ValueError(f"Required: {key}")
     return value
 
-# Usage
 config = load_config()
 print(f"Server running on port {config.port}")
 ```
@@ -85,22 +79,16 @@ print(f"Server running on port {config.port}")
 from dotenv import load_dotenv
 import os
 
-# ✅ Load .env file
 load_dotenv()  # Loads .env from current directory
 
-# Now environment variables are available
 database_url = os.getenv('DATABASE_URL')
 
-# ✅ Load specific file
 load_dotenv('.env.development')
 
-# ✅ Load with override
 load_dotenv(override=True)  # Override existing env vars
 
-# ✅ Find and load .env
 from pathlib import Path
 
-# Find .env in current or parent directories
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 ```
@@ -108,15 +96,12 @@ load_dotenv(dotenv_path=env_path)
 **.env file format:**
 
 ```bash
-# Database configuration
 DATABASE_URL=postgresql://localhost:5432/mydb
 DB_MAX_CONNECTIONS=20
 
-# API configuration
 API_KEY=sk_test_abc123
 API_BASE_URL=https://api.example.com
 
-# Application settings
 PORT=8080
 DEBUG=true
 LOG_LEVEL=info
@@ -125,12 +110,10 @@ LOG_LEVEL=info
 **.gitignore:**
 
 ```gitignore
-# Don't commit secrets
 .env
 .env.local
 .env.*.local
 
-# Commit template
 !.env.example
 ```
 
@@ -142,13 +125,11 @@ LOG_LEVEL=info
 import yaml
 from pathlib import Path
 
-# ✅ Read YAML config
 def load_yaml_config(filename):
     path = Path(filename)
     with path.open() as f:
         return yaml.safe_load(f)
 
-# config.yaml
 """
 database:
   url: postgresql://localhost:5432/mydb
@@ -165,7 +146,6 @@ logging:
   format: json
 """
 
-# Usage
 config = load_yaml_config('config.yaml')
 db_url = config['database']['url']
 api_timeout = config['api']['timeout']
@@ -177,19 +157,16 @@ api_timeout = config['api']['timeout']
 import json
 from pathlib import Path
 
-# ✅ Read JSON config
 def load_json_config(filename):
     path = Path(filename)
     with path.open() as f:
         return json.load(f)
 
-# ✅ Write JSON config
 def save_json_config(filename, config):
     path = Path(filename)
     with path.open('w') as f:
         json.dump(config, f, indent=2)
 
-# config.json
 """
 {
   "database": {
@@ -207,16 +184,13 @@ config = load_json_config('config.json')
 
 ```python
 import tomli  # Python < 3.11
-# import tomllib  # Python 3.11+
 from pathlib import Path
 
-# ✅ Read TOML config
 def load_toml_config(filename):
     path = Path(filename)
     with path.open('rb') as f:
         return tomli.load(f)
 
-# config.toml
 """
 [database]
 url = "postgresql://localhost:5432/mydb"
@@ -241,7 +215,6 @@ config = load_toml_config('config.toml')
 from pydantic_settings import BaseSettings
 from pydantic import Field, validator
 
-# ✅ Pydantic Settings class
 class Settings(BaseSettings):
     # Database
     database_url: str
@@ -268,14 +241,11 @@ class Settings(BaseSettings):
         env_file_encoding = 'utf-8'
         case_sensitive = False
 
-# ✅ Load settings
 settings = Settings()
 
-# Access with type safety and autocomplete
 print(f"Database: {settings.database_url}")
 print(f"Port: {settings.port}")
 
-# ✅ Load from specific file
 settings = Settings(_env_file='.env.production')
 ```
 
@@ -285,7 +255,6 @@ settings = Settings(_env_file='.env.production')
 from pydantic_settings import BaseSettings
 from pydantic import BaseModel
 
-# ✅ Nested models
 class DatabaseConfig(BaseModel):
     url: str
     max_connections: int = 10
@@ -305,11 +274,6 @@ class Settings(BaseSettings):
         env_file = '.env'
         env_nested_delimiter = '__'
 
-# .env file:
-# DATABASE__URL=postgresql://localhost/db
-# DATABASE__MAX_CONNECTIONS=20
-# API__BASE_URL=https://api.example.com
-# API__KEY=secret
 
 settings = Settings()
 print(settings.database.url)
@@ -335,8 +299,6 @@ class Settings(BaseSettings):
         # 3. Class defaults
         env_file = '.env'
 
-# Environment variable DATABASE_URL overrides .env
-# .env DATABASE_URL overrides class default
 ```
 
 ### Multiple Configuration Sources
@@ -431,7 +393,6 @@ def parse_args():
 
     return parser.parse_args()
 
-# Usage
 args = parse_args()
 print(f"Input: {args.input}")
 print(f"Output: {args.output}")
@@ -445,18 +406,15 @@ print(f"Verbose: {args.verbose}")
 ```python
 import os
 
-# ❌ Hardcoded secrets
 API_KEY = "sk_live_secret123"  # NEVER
 DATABASE_PASSWORD = "password"  # NEVER
 
-# ✅ Load from environment
 def get_api_key():
     key = os.getenv('API_KEY')
     if not key:
         raise ValueError("API_KEY not set")
     return key
 
-# ✅ Fail fast on missing secrets
 class Settings(BaseSettings):
     api_key: str  # Required - will raise error if missing
     db_password: str  # Required
@@ -464,14 +422,12 @@ class Settings(BaseSettings):
     class Config:
         env_file = '.env'
 
-# This raises error if API_KEY or DB_PASSWORD missing
 settings = Settings()
 ```
 
 ### Secret Management
 
 ```python
-# ✅ AWS Secrets Manager example
 import boto3
 import json
 
@@ -480,12 +436,10 @@ def get_secret(secret_name):
     response = client.get_secret_value(SecretId=secret_name)
     return json.loads(response['SecretString'])
 
-# Usage
 db_credentials = get_secret('prod/database')
 database_url = db_credentials['url']
 password = db_credentials['password']
 
-# ✅ Cache secrets
 class SecretCache:
     def __init__(self):
         self._cache = {}
@@ -527,7 +481,6 @@ class Settings(BaseSettings):
             raise ValueError('Max 10 connections in debug mode')
         return v
 
-# Validation happens automatically
 try:
     settings = Settings()
 except ValueError as e:

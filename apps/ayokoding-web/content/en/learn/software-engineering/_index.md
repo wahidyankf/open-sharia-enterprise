@@ -24,4 +24,4 @@ weight: 102
   - [Web](/en/learn/software-engineering/platforms/web)
 - [System Design](/en/learn/software-engineering/system-design)
   - [Overview](/en/learn/software-engineering/system-design/overview)
-  - [Ai Personal Finance Advisor](/en/learn/software-engineering/system-design/ai-personal-finance-advisor)
+  - [AI Personal Finance Advisor](/en/learn/software-engineering/system-design/ai-personal-finance-advisor)

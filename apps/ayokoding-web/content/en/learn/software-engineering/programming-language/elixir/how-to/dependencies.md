@@ -38,7 +38,6 @@ Use **Hex.pm** package manager integrated with Mix for comprehensive dependency 
 Edit your `mix.exs` file to declare dependencies:
 
 ```elixir
-# mix.exs
 defmodule MyApp.MixProject do
   use Mix.Project
 
@@ -80,13 +79,10 @@ end
 ### 2. Fetching Dependencies
 
 ```bash
-# Download dependencies
 mix deps.get
 
-# Compile dependencies
 mix deps.compile
 
-# Both in one command
 mix do deps.get, deps.compile
 ```
 
@@ -95,19 +91,15 @@ mix do deps.get, deps.compile
 Hex uses semantic versioning (SemVer):
 
 ```elixir
-# Pessimistic operator (recommended)
 {:package, "~> 1.2"}      # >= 1.2.0 and < 2.0.0
 {:package, "~> 1.2.3"}    # >= 1.2.3 and < 1.3.0
 {:package, "~> 1.2.3-rc"} # >= 1.2.3-rc and < 1.3.0
 
-# Comparison operators
 {:package, ">= 1.0.0"}    # Any version >= 1.0.0
 {:package, ">= 1.2.0 and < 2.0.0"}
 
-# Exact version (not recommended)
 {:package, "== 1.2.3"}    # Exactly 1.2.3
 
-# Any version (dangerous)
 {:package, ">= 0.0.0"}
 ```
 
@@ -128,17 +120,13 @@ Hex uses semantic versioning (SemVer):
 #### From Git Repository
 
 ```elixir
-# By tag (recommended for production)
 {:my_lib, git: "https://github.com/user/my_lib.git", tag: "v1.0.0"}
 
-# By branch (for development)
 {:my_lib, git: "https://github.com/user/my_lib.git", branch: "main"}
 
-# By commit SHA (immutable)
 {:my_lib, git: "https://github.com/user/my_lib.git",
   ref: "abc123def456"}
 
-# GitHub shorthand
 {:my_lib, github: "user/my_lib", tag: "v1.0.0"}
 ```
 
@@ -193,27 +181,20 @@ The application can use either JSON library without requiring both.
 ### 7. Dependency Management Commands
 
 ```bash
-# View dependency tree
 mix deps.tree
 
-# Check for outdated dependencies
 mix hex.outdated
 
-# Update specific dependency
 mix deps.update phoenix
 
-# Update all dependencies
 mix deps.update --all
 
-# Clean and recompile dependencies
 mix deps.clean --all
 mix deps.get
 mix deps.compile
 
-# View dependency information
 mix hex.info phoenix
 
-# Remove unused dependencies
 mix deps.unlock --unused
 mix deps.clean --unused
 ```
@@ -223,7 +204,6 @@ mix deps.clean --unused
 `mix.lock` ensures reproducible builds:
 
 ```elixir
-# Generated automatically
 %{
   "phoenix": {:hex, :phoenix, "1.7.10", "..."},
   "plug": {:hex, :plug, "1.15.2", "..."},
@@ -242,12 +222,10 @@ mix deps.clean --unused
 For company-internal packages:
 
 ```elixir
-# config/config.exs
 config :hex,
   api_url: "https://hex.mycompany.com/api",
   api_key: System.get_env("HEX_API_KEY")
 
-# mix.exs
 defp deps do
   [
     {:internal_lib, "~> 1.0", organization: "mycompany"}
@@ -258,10 +236,8 @@ end
 ### 10. Publishing Your Package
 
 ```bash
-# Create account
 mix hex.user register
 
-# Add package metadata to mix.exs
 ```
 
 ```elixir
@@ -287,10 +263,8 @@ end
 ```
 
 ```bash
-# Build package
 mix hex.build
 
-# Publish to Hex.pm
 mix hex.publish
 ```
 
@@ -299,7 +273,6 @@ mix hex.publish
 ### Umbrella Application Dependencies
 
 ```elixir
-# apps/app_a/mix.exs
 defp deps do
   [
     {:app_b, in_umbrella: true},
@@ -351,7 +324,6 @@ defp env_deps(_), do: []
 ### 2. Dependency Aliases
 
 ```bash
-# mix.exs
 def project do
   [
     aliases: aliases()
@@ -370,13 +342,10 @@ end
 ### 3. Hex Organization Management
 
 ```bash
-# Create organization
 mix hex.organization create mycompany
 
-# Add team member
 mix hex.organization member add mycompany user@example.com
 
-# Publish to organization
 mix hex.publish --organization=mycompany
 ```
 
@@ -408,9 +377,7 @@ mix hex.publish --organization=mycompany
 ### Dependency Conflicts
 
 ```bash
-# Error: Failed to use "package" (version) because...
 
-# Solutions:
 1. Check dependency tree
    mix deps.tree
 
@@ -424,7 +391,6 @@ mix hex.publish --organization=mycompany
 ### Compilation Errors
 
 ```bash
-# Clean and rebuild
 mix deps.clean --all
 mix deps.get
 mix compile --force
@@ -433,7 +399,6 @@ mix compile --force
 ### Lock File Issues
 
 ```bash
-# Regenerate lock file
 rm mix.lock
 mix deps.get
 ```

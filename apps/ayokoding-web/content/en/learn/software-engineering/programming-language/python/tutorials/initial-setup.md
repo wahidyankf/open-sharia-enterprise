@@ -90,13 +90,10 @@ This diagram shows every verification checkpoint - you'll know immediately if so
 **Option 2: Homebrew**
 
 ```bash
-# Install Homebrew if not already installed
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install Python
 brew install python
 
-# Verify (see next section)
 python3 --version
 ```
 
@@ -114,13 +111,10 @@ python3 --version
 Using package manager (Ubuntu/Debian):
 
 ```bash
-# Update package list
 sudo apt update
 
-# Install Python 3
 sudo apt install python3 python3-pip
 
-# Verify (see next section)
 python3 --version
 ```
 
@@ -145,10 +139,8 @@ For other distributions:
 Open a new terminal/command prompt and run:
 
 ```bash
-# Windows
 python --version
 
-# macOS/Linux
 python3 --version
 ```
 
@@ -179,10 +171,8 @@ Create a new file called `hello.py` using any text editor:
 **Using Command Line**:
 
 ```bash
-# Windows (Command Prompt)
 echo print("Hello, World!") > hello.py
 
-# macOS/Linux (Terminal)
 echo 'print("Hello, World!")' > hello.py
 ```
 
@@ -207,10 +197,8 @@ print("Hello, World!")
 In the same directory as `hello.py`:
 
 ```bash
-# Windows
 python hello.py
 
-# macOS/Linux
 python3 hello.py
 ```
 
@@ -227,10 +215,8 @@ Congratulations! You've run your first Python program!
 Python includes an interactive shell (REPL - Read-Eval-Print Loop) for experimenting:
 
 ```bash
-# Windows
 python
 
-# macOS/Linux
 python3
 ```
 
@@ -256,10 +242,8 @@ The interactive shell is perfect for experimenting - you'll use it extensively i
 Python includes `pip`, the package installer. Verify it works:
 
 ```bash
-# Windows
 python -m pip --version
 
-# macOS/Linux
 python3 -m pip --version
 ```
 
@@ -282,13 +266,10 @@ For best practices on managing packages, see [Manage Python packages effectively
 **Common pip commands** (you'll use these later):
 
 ```bash
-# Install a package
 python -m pip install package_name
 
-# List installed packages
 python -m pip list
 
-# Upgrade pip itself
 python -m pip install --upgrade pip
 ```
 
@@ -356,11 +337,9 @@ Now that Python is working, choose your learning path:
 **Solution**: Verify which Python is in use:
 
 ```bash
-# Check Python location
 which python3  # macOS/Linux
 where python   # Windows
 
-# Check all installed versions
 python3 --version
 python3.11 --version
 python3.12 --version
@@ -418,10 +397,8 @@ chmod +x hello.py
 **Solution**: Upgrade pip:
 
 ```bash
-# Windows
 python -m pip install --upgrade pip
 
-# macOS/Linux
 python3 -m pip install --upgrade pip
 ```
 
@@ -430,7 +407,6 @@ python3 -m pip install --upgrade pip
 **Solution**: Install certificates:
 
 ```bash
-# Find and run the certificate installer
 /Applications/Python\ 3.13/Install\ Certificates.command
 ```
 
@@ -456,7 +432,6 @@ This is common after fresh Python installation on macOS.
 **macOS**: If Homebrew Python conflicts with system Python:
 
 ```bash
-# Use Homebrew Python explicitly
 /opt/homebrew/bin/python3  # Apple Silicon
 /usr/local/bin/python3     # Intel
 ```
@@ -464,8 +439,6 @@ This is common after fresh Python installation on macOS.
 **Linux**: If `pip` requires sudo:
 
 ```bash
-# Don't use sudo with pip!
-# Instead, install packages for user only:
 python3 -m pip install --user package_name
 ```
 

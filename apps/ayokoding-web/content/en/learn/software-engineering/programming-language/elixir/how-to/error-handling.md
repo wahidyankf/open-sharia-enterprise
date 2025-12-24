@@ -69,12 +69,9 @@ defmodule UserService do
   defp generate_id, do: :rand.uniform(10000)
 end
 
-# Usage
 UserService.create_user(%{name: "Alice", email: "alice@example.com"})
-# => {:ok, %{id: 1234, name: "Alice", email: "alice@example.com"}}
 
 UserService.create_user(%{invalid: "data"})
-# => {:error, :invalid_params}
 ```
 
 **How It Works**: Functions return tuples indicating success or failure. Callers pattern match to handle each case explicitly.
@@ -124,14 +121,11 @@ defmodule AccountService do
   defp notify_success(_account, _amount), do: :ok
 end
 
-# Usage
 account = %{id: 1, balance: 100.0, status: :active}
 
 AccountService.withdraw(account, 50.0)
-# => {:ok, %{id: 1, balance: 50.0, status: :active}}
 
 AccountService.withdraw(account, 200.0)
-# => {:error, :insufficient_funds}
 ```
 
 ### Nested Result Handling
@@ -240,15 +234,12 @@ defmodule RegistrationService do
   defp send_confirmation(_user), do: {:ok, "sent"}
 end
 
-# Usage
 RegistrationService.register_user(%{
   email: "alice@example.com",
   password: "secure_password"
 })
-# => {:ok, %{id: 123, email: "alice@example.com", password: "..."}}
 
 RegistrationService.register_user(%{email: "bob@example.com", password: "weak"})
-# => {:error, "Password must be at least 8 characters"}
 ```
 
 ### With Guards
@@ -377,12 +368,9 @@ defmodule SafeOperations do
   end
 end
 
-# Usage
 SafeOperations.safe_divide(10, 2)
-# => {:ok, 5.0}
 
 SafeOperations.safe_divide(10, 0)
-# => {:error, :division_by_zero}
 ```
 
 ### When to Use Try-Rescue
@@ -400,7 +388,6 @@ SafeOperations.safe_divide(10, 0)
 - Business logic errors
 
 ```elixir
-# Bad: Using exceptions for control flow
 def find_user(id) do
   try do
     user = Repo.get!(User, id)
@@ -410,7 +397,6 @@ def find_user(id) do
   end
 end
 
-# Good: Use result tuples
 def find_user(id) do
   case Repo.get(User, id) do
     nil -> {:error, :not_found}
@@ -552,17 +538,13 @@ defmodule BangExamples do
   defp process_content(content), do: {:ok, content}
 end
 
-# Usage
-# Safe version
 case BangExamples.fetch_user(123) do
   {:ok, user} -> IO.puts("Found: #{user.name}")
   {:error, :not_found} -> IO.puts("User not found")
 end
 
-# Bang version (use when error is unexpected)
 user = BangExamples.fetch_user!(123)
 IO.puts("Found: #{user.name}")
-# Raises if user not found
 ```
 
 ## Supervision and Let It Crash
@@ -605,7 +587,6 @@ defmodule Worker do
   end
 end
 
-# Supervisor will restart worker if it crashes
 defmodule WorkerSupervisor do
   use Supervisor
 
@@ -696,7 +677,6 @@ end
 ### Do: Return Consistent Result Types
 
 ```elixir
-# Good: Always return result tuple
 def fetch_user(id) do
   case Repo.get(User, id) do
     nil -> {:error, :not_found}
@@ -704,7 +684,6 @@ def fetch_user(id) do
   end
 end
 
-# Bad: Mixed return types
 def fetch_user(id) do
   case Repo.get(User, id) do
     nil -> nil  # Inconsistent!
@@ -716,7 +695,6 @@ end
 ### Do: Use With for Error Chains
 
 ```elixir
-# Good: with expression
 def create_order(params) do
   with {:ok, validated} <- validate(params),
        {:ok, order} <- insert_order(validated),
@@ -725,7 +703,6 @@ def create_order(params) do
   end
 end
 
-# Bad: Nested case statements
 def create_order(params) do
   case validate(params) do
     {:ok, validated} ->
@@ -745,17 +722,14 @@ end
 ### Do: Add Context to Errors
 
 ```elixir
-# Good: Descriptive errors
 {:error, {:validation_failed, %{email: ["has already been taken"]}}}
 
-# Bad: Generic errors
 {:error, :failed}
 ```
 
 ### Don't: Overuse Try-Rescue
 
 ```elixir
-# Good: Use result tuples
 def parse_json(string) do
   case Jason.decode(string) do
     {:ok, decoded} -> {:ok, decoded}
@@ -763,7 +737,6 @@ def parse_json(string) do
   end
 end
 
-# Bad: Exception for control flow
 def parse_json(string) do
   try do
     {:ok, Jason.decode!(string)}

@@ -17,8 +17,6 @@ categories:
 
 ---
 
-# Java Quick Start
-
 Want to build real applications without spending months on theory? This tutorial gives you a quick tour of Java's essential features - just enough to start creating working programs. You'll explore variables, methods, classes, collections, and error handling through practical examples. Perfect for getting a quick overview before diving into comprehensive learning.
 
 ## What You'll Achieve

@@ -58,12 +58,10 @@ Benchee provides statistical benchmarking with warmup, multiple runs, and compar
 #### Basic Benchmark
 
 ```elixir
-# Add to mix.exs
 defp deps do
   [{:benchee, "~> 1.0", only: :dev}]
 end
 
-# Run benchmark
 Benchee.run(%{
   "Enum.map" => fn -> Enum.map(1..1000, &(&1 * 2)) end,
   "for comprehension" => fn -> for x <- 1..1000, do: x * 2 end,
@@ -131,7 +129,6 @@ end
 #### Basic Profiling
 
 ```elixir
-# Profile a function
 :fprof.apply(&MyModule.slow_function/0, [])
 :fprof.profile()
 :fprof.analyse()
@@ -175,7 +172,6 @@ end
 ```elixir
 :fprof.start()
 
-# Code to profile
 result = Enum.map(1..10000, fn x ->
   expensive_computation(x)
 end)
@@ -189,11 +185,9 @@ end)
 :eprof focuses on execution time per function, simpler than :fprof.
 
 ```elixir
-# Profile with eprof
 :eprof.start()
 :eprof.start_profiling([self()])
 
-# Run code
 MyModule.slow_operation()
 
 :eprof.stop_profiling()
@@ -215,7 +209,6 @@ Enum.map/2                        1   15.67    42890  [42890]
 Observer provides real-time system visualization.
 
 ```elixir
-# Start Observer GUI
 :observer.start()
 ```
 
@@ -242,31 +235,23 @@ In Processes tab, sort by:
 :recon provides production-safe profiling without impacting performance.
 
 ```elixir
-# Find top memory consumers
 :recon.proc_count(:memory, 10)
-# [{<0.123.0>, 15234567, [...]}]
 
-# Find top CPU consumers
 :recon.proc_count(:reductions, 10)
 
-# Find processes with large message queues
 :recon.proc_count(:message_queue_len, 10)
 
-# Get process info
 :recon.info(<0.123.0>)
 ```
 
 #### Memory Analysis
 
 ```elixir
-# System memory breakdown
 :recon_alloc.memory(:allocated)
 :recon_alloc.memory(:used)
 
-# ETS table memory usage
 :recon.ets_memory()
 
-# Binary memory (often culprit for memory leaks)
 :recon.bin_leak(10)
 ```
 
@@ -337,7 +322,6 @@ Understanding BEAM performance model is crucial:
 ### 1. Continuous Benchmarking
 
 ```elixir
-# benchmark/my_benchmark.exs
 defmodule MyBenchmark do
   def run do
     Benchee.run(
@@ -351,19 +335,15 @@ defmodule MyBenchmark do
   end
 end
 
-# Compare with previous results
 MyBenchmark.run()
 ```
 
 ### 2. Profiling Specific Processes
 
 ```elixir
-# Find process by registered name
 pid = Process.whereis(MyApp.Worker)
 
-# Profile only that process
 :eprof.start_profiling([pid])
-# ... let it run ...
 :eprof.stop_profiling()
 :eprof.analyze()
 ```
@@ -401,7 +381,6 @@ end
 **Bad:**
 
 ```elixir
-# Optimizing before profiling
 def process(items) do
   # Complex, unreadable optimization
   :ets.foldl(fn {k, v}, acc ->
@@ -413,15 +392,10 @@ end
 **Good:**
 
 ```elixir
-# Clear code first, profile, then optimize if needed
 def process(items) do
   Enum.map(items, &process_item/1)
 end
 
-# After profiling shows this is bottleneck:
-# - Benchmark alternative implementations
-# - Optimize only if needed
-# - Keep old version in comments for comparison
 ```
 
 **2. Benchmarking in Development Environment**
@@ -429,14 +403,12 @@ end
 **Bad:**
 
 ```bash
-# MIX_ENV=dev is default (includes debugger overhead)
 mix run benchmark.exs
 ```
 
 **Good:**
 
 ```bash
-# Use prod environment for realistic results
 MIX_ENV=prod mix run benchmark.exs
 ```
 
@@ -465,7 +437,6 @@ Benchee.run(%{
 **Good:**
 
 ```elixir
-# Profile small representative sample
 :fprof.apply(&MyModule.process_batch/1, [Enum.take(large_dataset, 100)])
 ```
 
@@ -474,13 +445,11 @@ Benchee.run(%{
 **1. Use Streams for Large Datasets**
 
 ```elixir
-# Bad: Loads entire file into memory
 File.read!("large.csv")
 |> String.split("\n")
 |> Enum.map(&parse_line/1)
 |> Enum.filter(&valid?/1)
 
-# Good: Processes line by line
 File.stream!("large.csv")
 |> Stream.map(&parse_line/1)
 |> Stream.filter(&valid?/1)
@@ -490,12 +459,10 @@ File.stream!("large.csv")
 **2. Leverage ETS for Shared State**
 
 ```elixir
-# Bad: GenServer becomes bottleneck for reads
 def get_config(key) do
   GenServer.call(ConfigServer, {:get, key})
 end
 
-# Good: Lock-free ETS reads
 def get_config(key) do
   case :ets.lookup(:config, key) do
     [{^key, value}] -> value
@@ -507,12 +474,10 @@ end
 **3. Batch Database Operations**
 
 ```elixir
-# Bad: N+1 queries
 Enum.each(user_ids, fn id ->
   Repo.get(User, id) |> update_user()
 end)
 
-# Good: Single query with preload
 Repo.all(from u in User, where: u.id in ^user_ids, preload: :posts)
 |> Enum.each(&update_user/1)
 ```

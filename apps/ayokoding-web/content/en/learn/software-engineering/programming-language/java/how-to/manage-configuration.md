@@ -66,22 +66,18 @@ int maxConnections = config.getInt("database.max.connections");
 ### application.properties Format
 
 ```properties
-# Database configuration
 database.url=jdbc:postgresql://localhost:5432/mydb
 database.username=dbuser
 database.password=dbpass
 database.max.connections=20
 
-# API configuration
 api.base.url=https://api.example.com
 api.timeout.seconds=30
 api.retry.attempts=3
 
-# Feature flags
 feature.new.dashboard.enabled=true
 feature.beta.checkout.enabled=false
 
-# Application settings
 app.name=MyApplication
 app.version=1.0.0
 app.environment=development
@@ -131,15 +127,11 @@ int port = EnvConfig.getPort();
 ### Environment Variable Naming
 
 ```bash
-# ✅ Naming conventions
 DATABASE_URL=jdbc:postgresql://localhost:5432/mydb
 API_KEY=sk_live_abc123xyz
 MAX_CONNECTIONS=20
 ENABLE_DEBUG=true
 
-# Uppercase with underscores
-# Descriptive names
-# No spaces
 ```
 
 **Why environment variables**: Cloud platforms (Heroku, AWS, etc.) use environment variables for configuration. Secrets stay out of version control. Same codebase runs in different environments with different values.
@@ -349,7 +341,6 @@ public class TypeSafeConfigExample {
 ### application.conf Format
 
 ```hocon
-# TypeSafe Config format (HOCON)
 database {
   url = "jdbc:postgresql://localhost:5432/mydb"
   username = "dbuser"
@@ -457,17 +448,14 @@ public class SecretManager {
 ### .gitignore for Configuration
 
 ```gitignore
-# ✅ Ignore environment-specific configs
 application-local.properties
 application-*.properties
 !application.properties      # Keep base config
 
-# Ignore environment files
 .env
 .env.local
 .env.*.local
 
-# Ignore sensitive data
 secrets.properties
 private-key.pem
 ```
@@ -475,8 +463,6 @@ private-key.pem
 ### Environment File Template
 
 ```properties
-# .env.template (committed to version control)
-# Copy to .env and fill in values
 
 DATABASE_URL=jdbc:postgresql://localhost:5432/mydb
 DATABASE_USERNAME=
@@ -485,7 +471,6 @@ DATABASE_PASSWORD=
 API_KEY=
 API_SECRET=
 
-# .env (NOT committed - in .gitignore)
 DATABASE_URL=jdbc:postgresql://prod-db:5432/proddb
 DATABASE_USERNAME=prod_user
 DATABASE_PASSWORD=actual_secret_password

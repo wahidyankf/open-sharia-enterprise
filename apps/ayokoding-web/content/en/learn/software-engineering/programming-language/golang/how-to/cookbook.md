@@ -13,8 +13,6 @@ tags:
   - concurrency
 ---
 
-# Golang Cookbook - Practical Recipes
-
 **Ready to level up your Go skills?** This cookbook provides practical, battle-tested recipes for solving real-world problems with idiomatic Go code. Whether you're building concurrent systems, designing APIs, or optimizing performance, you'll find proven patterns and techniques used in production by companies like Google, Uber, and Docker.
 
 ## 🎯 What You'll Learn
@@ -5008,14 +5006,9 @@ func goodPipeline() {
 **1. Detect Race Conditions**
 
 ```bash
-# Run with race detector
 go test -race ./...
 go run -race main.go
 
-# Will report:
-# WARNING: DATA RACE
-# Write at 0x... by goroutine 7:
-#   main.(*BadCounter).Increment()
 ```
 
 **2. Find Goroutine Leaks**

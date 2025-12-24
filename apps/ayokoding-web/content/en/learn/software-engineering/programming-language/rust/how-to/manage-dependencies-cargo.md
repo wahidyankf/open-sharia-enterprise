@@ -483,10 +483,8 @@ cargo build
 Only include needed features.
 
 ```toml
-# Bad - includes everything
 tokio = { version = "1.0", features = ["full"] }
 
-# Good - only what you need
 tokio = { version = "1.0", features = ["rt-multi-thread", "macros"] }
 ```
 
@@ -560,14 +558,12 @@ repository = "https://github.com/user/my_crate"
 **Problem**: Including `features = ["full"]` increases compile time.
 
 ```toml
-# Slow
 tokio = { version = "1.0", features = ["full"] }
 ```
 
 **Solution**: Only include needed features.
 
 ```toml
-# Fast
 tokio = { version = "1.0", features = ["rt-multi-thread", "net"] }
 ```
 
@@ -576,14 +572,12 @@ tokio = { version = "1.0", features = ["rt-multi-thread", "net"] }
 **Problem**: Using `*` or no version allows breaking changes.
 
 ```toml
-# Bad
 serde = "*"
 ```
 
 **Solution**: Use specific version requirements.
 
 ```toml
-# Good
 serde = "1.0"
 ```
 

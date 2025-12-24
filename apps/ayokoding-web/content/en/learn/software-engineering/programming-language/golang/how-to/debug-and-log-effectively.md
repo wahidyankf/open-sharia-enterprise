@@ -19,19 +19,14 @@ This guide shows effective debugging and logging practices in Go.
 ### Basic Delve Commands
 
 ```bash
-# Install Delve
 go install github.com/go-delve/delve/cmd/dlv@latest
 
-# Debug current package
 dlv debug
 
-# Debug with arguments
 dlv debug -- --config=prod.json
 
-# Debug test
 dlv test
 
-# Attach to running process
 dlv attach <pid>
 ```
 
@@ -61,27 +56,23 @@ func processOrder(order *Order) error {
 **Common Delve commands:**
 
 ```bash
-# Breakpoints
 break main.go:25              # Break at line 25
 break main.processOrder       # Break at function entry
 break main.go:30 if x > 100   # Conditional breakpoint
 breakpoints                   # List all breakpoints
 clear 1                       # Remove breakpoint 1
 
-# Execution control
 continue                      # Resume execution
 next                         # Step over
 step                         # Step into
 stepout                      # Step out of function
 
-# Inspection
 print order                   # Print variable
 print order.Total            # Print field
 locals                       # Show local variables
 args                         # Show function arguments
 stack                        # Show call stack
 
-# Goroutines
 goroutines                   # List all goroutines
 goroutine 5                  # Switch to goroutine 5
 ```
@@ -111,13 +102,10 @@ func main() {
 **Debugging race conditions:**
 
 ```bash
-# Run with race detector
 go run -race main.go
 
-# Test with race detector
 go test -race
 
-# Build with race detector
 go build -race
 ```
 
@@ -495,16 +483,12 @@ func main() {
 **Access profiles:**
 
 ```bash
-# CPU profile
 go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
 
-# Memory profile
 go tool pprof http://localhost:6060/debug/pprof/heap
 
-# Goroutine profile
 go tool pprof http://localhost:6060/debug/pprof/goroutine
 
-# View in browser
 go tool pprof -http=:8080 http://localhost:6060/debug/pprof/profile
 ```
 

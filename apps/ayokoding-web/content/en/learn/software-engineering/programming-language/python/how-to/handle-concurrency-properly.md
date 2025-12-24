@@ -20,11 +20,7 @@ This guide shows how to handle concurrency in Python based on workload type.
 The Global Interpreter Lock ensures only one thread executes Python bytecode at a time.
 
 ```python
-# The GIL means:
-# ✅ Threading works for I/O-bound tasks (network, disk, database)
-# ❌ Threading doesn't help CPU-bound tasks (computation)
-# ✅ Multiprocessing works for CPU-bound tasks
-# ✅ asyncio works for I/O-bound tasks (single-threaded)
+
 ```
 
 ## Threading for I/O-Bound Tasks
@@ -36,7 +32,6 @@ import threading
 import time
 import requests
 
-# ✅ Threading for I/O-bound tasks
 def fetch_url(url):
     response = requests.get(url)
     print(f"Fetched {url}: {len(response.content)} bytes")
@@ -47,13 +42,11 @@ urls = [
     "https://example.net"
 ]
 
-# Without threading - sequential (slow)
 start = time.time()
 for url in urls:
     fetch_url(url)
 print(f"Sequential: {time.time() - start:.2f}s")  # ~3s
 
-# With threading - concurrent (fast)
 start = time.time()
 threads = []
 for url in urls:
@@ -71,20 +64,17 @@ print(f"Threaded: {time.time() - start:.2f}s")  # ~1s
 ```python
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# ✅ Thread pool - manages threads automatically
 def fetch_url(url):
     response = requests.get(url)
     return url, len(response.content)
 
 urls = ["https://example.com", "https://example.org", "https://example.net"]
 
-# Map pattern - preserves order
 with ThreadPoolExecutor(max_workers=3) as executor:
     results = executor.map(fetch_url, urls)
     for url, size in results:
         print(f"{url}: {size} bytes")
 
-# Submit pattern - process as they complete
 with ThreadPoolExecutor(max_workers=3) as executor:
     futures = {executor.submit(fetch_url, url): url for url in urls}
 
@@ -102,7 +92,6 @@ with ThreadPoolExecutor(max_workers=3) as executor:
 ```python
 import threading
 
-# ❌ Race condition - unsafe
 counter = 0
 
 def increment():
@@ -118,7 +107,6 @@ for t in threads:
 
 print(counter)  # Wrong! Should be 1,000,000
 
-# ✅ Use locks for thread safety
 counter = 0
 lock = threading.Lock()
 
@@ -136,7 +124,6 @@ for t in threads:
 
 print(counter)  # Correct: 1,000,000
 
-# ✅ Thread-safe queue for producer-consumer
 from queue import Queue
 
 def producer(queue, items):
@@ -170,17 +157,14 @@ Use multiprocessing to bypass the GIL for CPU-intensive work.
 import multiprocessing
 import time
 
-# ❌ Threading doesn't help CPU-bound tasks (GIL)
 def cpu_bound(n):
     return sum(i ** 2 for i in range(n))
 
-# With threading - slow (GIL limits to one core)
 start = time.time()
 with ThreadPoolExecutor(max_workers=4) as executor:
     results = list(executor.map(cpu_bound, [10_000_000] * 4))
 print(f"Threading: {time.time() - start:.2f}s")  # ~8s on 4 cores
 
-# ✅ With multiprocessing - fast (uses all cores)
 from concurrent.futures import ProcessPoolExecutor
 
 start = time.time()
@@ -194,7 +178,6 @@ print(f"Multiprocessing: {time.time() - start:.2f}s")  # ~2s on 4 cores
 ```python
 from multiprocessing import Pool
 
-# ✅ Map pattern
 def square(x):
     return x ** 2
 
@@ -202,13 +185,11 @@ with Pool(processes=4) as pool:
     results = pool.map(square, range(10))
     print(results)
 
-# ✅ Async map (non-blocking)
 with Pool(processes=4) as pool:
     result = pool.map_async(square, range(10))
     # Do other work
     print(result.get())  # Wait for results
 
-# ✅ Starmap for multiple arguments
 def multiply(x, y):
     return x * y
 
@@ -222,7 +203,6 @@ with Pool(processes=4) as pool:
 ```python
 from multiprocessing import Queue, Process
 
-# ✅ Queue for process communication
 def worker(queue):
     while True:
         item = queue.get()
@@ -237,11 +217,9 @@ processes = [Process(target=worker, args=(q,)) for _ in range(4)]
 for p in processes:
     p.start()
 
-# Send work
 for item in range(100):
     q.put(item)
 
-# Send stop signals
 for _ in range(4):
     q.put(None)
 
@@ -257,7 +235,6 @@ Use asyncio for I/O-bound tasks with a single-threaded event loop.
 import asyncio
 import aiohttp
 
-# ✅ Async I/O with asyncio
 async def fetch_url(session, url):
     async with session.get(url) as response:
         content = await response.read()
@@ -277,14 +254,12 @@ async def main():
         results = await asyncio.gather(*tasks)
         print(f"Fetched {len(results)} URLs")
 
-# Run async function
 asyncio.run(main())
 ```
 
 ### Async Patterns
 
 ```python
-# ✅ Async context managers
 async def fetch_with_timeout(url, timeout=5):
     async with aiohttp.ClientSession() as session:
         try:
@@ -293,7 +268,6 @@ async def fetch_with_timeout(url, timeout=5):
         except asyncio.TimeoutError:
             return None
 
-# ✅ Gather with error handling
 async def fetch_all(urls):
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_url(session, url) for url in urls]
@@ -305,7 +279,6 @@ async def fetch_all(urls):
             else:
                 print(f"{url} succeeded")
 
-# ✅ as_completed for processing results as they arrive
 async def fetch_as_completed(urls):
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_url(session, url) for url in urls]
@@ -319,17 +292,14 @@ async def fetch_as_completed(urls):
 ### Async/Await Best Practices
 
 ```python
-# ✅ Always await async functions
 async def good():
     result = await async_operation()  # ✓ Waits for completion
     return result
 
-# ❌ Forgetting await
 async def bad():
     result = async_operation()  # ✗ Returns coroutine, doesn't execute!
     return result
 
-# ✅ Run CPU-bound tasks in executor
 async def mixed_workload():
     loop = asyncio.get_event_loop()
 
@@ -345,40 +315,21 @@ async def mixed_workload():
 ## Choosing the Right Concurrency Model
 
 ```python
-# Decision guide:
 
-# I/O-bound (network, disk, database):
-# - Few tasks: asyncio (single-threaded, low overhead)
-# - Many tasks: ThreadPoolExecutor (simpler than asyncio)
-# - Mixed sync/async libraries: threading
 
-# CPU-bound (computation, image processing):
-# - Always use multiprocessing (bypasses GIL)
 
-# Mixed workload:
-# - Use asyncio for I/O, run_in_executor for CPU tasks
-# - Or multiprocessing with queues
 ```
 
 ### Examples by Use Case
 
 ```python
-# ✅ Web scraping (I/O-bound)
 from concurrent.futures import ThreadPoolExecutor
-# Or asyncio with aiohttp
 
-# ✅ Image processing (CPU-bound)
 from concurrent.futures import ProcessPoolExecutor
 
-# ✅ Web server (I/O-bound, many connections)
-# Use asyncio (aiohttp, FastAPI)
 
-# ✅ Data processing pipeline
-# Use multiprocessing.Pool
 
-# ✅ Database queries (I/O-bound)
 from concurrent.futures import ThreadPoolExecutor
-# Or asyncio with aiomysql/asyncpg
 ```
 
 ## Summary

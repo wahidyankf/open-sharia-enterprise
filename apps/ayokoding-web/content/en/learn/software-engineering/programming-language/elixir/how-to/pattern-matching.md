@@ -38,68 +38,44 @@ Pattern matching in Elixir:
 ### Simple Value Matching
 
 ```elixir
-# Match exact values
 {:ok, value} = {:ok, 42}
-# value is 42
 
 {:error, reason} = {:error, :not_found}
-# reason is :not_found
 
-# Assertion: structure must match
 {:ok, result} = {:error, "fail"}
-# ** (MatchError) no match of right hand side value: {:error, "fail"}
 ```
 
 ### List Patterns
 
 ```elixir
-# Head and tail
 [head | tail] = [1, 2, 3, 4, 5]
-# head = 1, tail = [2, 3, 4, 5]
 
-# Multiple elements
 [first, second | rest] = [1, 2, 3, 4]
-# first = 1, second = 2, rest = [3, 4]
 
-# Empty list
 [] = []
-# Matches
 
-# Specific length
 [a, b, c] = [1, 2, 3]
-# a = 1, b = 2, c = 3
 
 [x, y] = [1, 2, 3]
-# ** (MatchError) - list too long
 ```
 
 ### Map Patterns
 
 ```elixir
-# Extract specific keys
 %{name: name, age: age} = %{name: "Alice", age: 30, city: "NYC"}
-# name = "Alice", age = 30
-# city is not extracted but doesn't cause error
 
-# Map must contain matched keys
 %{id: id} = %{name: "Bob"}
-# ** (MatchError) - :id key not found
 
-# Match specific values
 %{status: :ok, data: data} = %{status: :ok, data: [1, 2, 3]}
-# data = [1, 2, 3]
 ```
 
 ### Tuple Patterns
 
 ```elixir
-# Fixed-size structures
 {:ok, value, timestamp} = {:ok, 42, ~U[2024-12-21 10:00:00Z]}
 
-# Nested tuples
 {:user, {name, age}, {city, country}} =
   {:user, {"Alice", 30}, {"NYC", "USA"}}
-# name = "Alice", age = 30, city = "NYC", country = "USA"
 ```
 
 ## Advanced Patterns
@@ -155,7 +131,6 @@ defmodule UserExtractor do
   end
 end
 
-# Usage
 response = %{
   status: 200,
   body: %{
@@ -171,8 +146,6 @@ response = %{
 }
 
 UserExtractor.extract_user_data(response)
-# => %{id: 123, name: "Alice", email: "alice@example.com",
-#      phone: "555-1234", theme: :dark}
 ```
 
 **How It Works**: Nested pattern matches entire structure. Binds only needed variables. Validates structure in one expression.
@@ -196,13 +169,11 @@ defmodule Calculator do
   def calculate(_), do: {:error, :unknown_operation}
 end
 
-# Usage
 Calculator.calculate({:add, 5, 3})        # => 8
 Calculator.calculate({:divide, 10, 2})    # => 5.0
 Calculator.calculate({:divide, 10, 0})    # => {:error, :division_by_zero}
 Calculator.calculate({:unknown, 1, 2})    # => {:error, :unknown_operation}
 
-# More complex dispatch
 defmodule EventHandler do
   # Different event types
   def handle_event(%{type: :user_created, data: %{name: name, email: email}}) do
@@ -268,15 +239,11 @@ defmodule Validator do
   end
 end
 
-# Usage
 response = %{status: 200, body: "Success"}
 Validator.validate_status(response, 200)
-# => {:ok, "Success"}
 
 Validator.validate_status(response, 404)
-# => {:error, "Expected 404, got 200"}
 
-# Pin in comprehensions
 target = :admin
 users = [
   %{id: 1, role: :admin},
@@ -285,7 +252,6 @@ users = [
 ]
 
 for %{role: ^target} = user <- users, do: user
-# => [%{id: 1, role: :admin}, %{id: 3, role: :admin}]
 ```
 
 **How It Works**: `^var` uses variable's current value in pattern. Without pin, variable would rebind to new value.
@@ -339,7 +305,6 @@ defmodule GuardExamples do
   end
 end
 
-# Usage
 GuardExamples.process(42)           # => {:int, 84}
 GuardExamples.process("hello")      # => {:string, "HELLO"}
 GuardExamples.process([1, 2, 3])    # => {:list, 3}
@@ -349,10 +314,8 @@ GuardExamples.categorize_age(15)    # => :teenager
 GuardExamples.categorize_age(30)    # => :adult
 
 GuardExamples.valid_user?(%{age: 25, email: "user@example.com"})
-# => true
 
 GuardExamples.can_vote?(%{age: 21, country: "USA"})
-# => true
 ```
 
 **How It Works**: Guards execute after pattern match succeeds. Limited to safe expressions (no side effects). Multiple conditions with `and`, `or`.
@@ -478,10 +441,8 @@ defmodule ComprehensionPatterns do
   end
 end
 
-# Usage
 results = [{:ok, 1}, {:error, "fail"}, {:ok, 2}, {:ok, 3}]
 ComprehensionPatterns.extract_successes(results)
-# => [1, 2, 3]
 
 data = [
   %{type: :user, payload: %{name: "Alice", email: "alice@example.com"}},
@@ -489,8 +450,6 @@ data = [
   %{type: :user, payload: %{name: "Bob", email: "bob@example.com"}}
 ]
 ComprehensionPatterns.extract_users(data)
-# => [%{name: "Alice", email: "alice@example.com"},
-#     %{name: "Bob", email: "bob@example.com"}]
 ```
 
 ## Common Patterns
@@ -595,17 +554,13 @@ defmodule StructPatterns do
   def promote_user(user), do: user
 end
 
-# Usage
 user = %User{id: 1, name: "Alice", email: "alice@example.com", role: :user}
 
 StructPatterns.greet(user)
-# => "Hello, Alice!"
 
 StructPatterns.is_admin?(user)
-# => false
 
 StructPatterns.promote_user(user)
-# => %User{id: 1, name: "Alice", email: "alice@example.com", role: :admin}
 ```
 
 ## Best Practices
@@ -613,13 +568,11 @@ StructPatterns.promote_user(user)
 ### Do: Use Specific Patterns First
 
 ```elixir
-# Good: Specific to general
 def process({:ok, %{status: 200, data: data}}), do: {:success, data}
 def process({:ok, %{status: status}}) when status >= 400, do: {:error, status}
 def process({:ok, response}), do: {:unknown, response}
 def process({:error, reason}), do: {:failed, reason}
 
-# Bad: General pattern first (unreachable clauses)
 def process({:ok, _}), do: :ok  # This matches everything!
 def process({:ok, %{status: 200, data: data}}), do: {:success, data}  # Never reached
 ```
@@ -627,7 +580,6 @@ def process({:ok, %{status: 200, data: data}}), do: {:success, data}  # Never re
 ### Do: Keep Patterns Readable
 
 ```elixir
-# Good: Clear structure
 def extract_user(%{
   id: id,
   profile: %{name: name, email: email},
@@ -636,19 +588,16 @@ def extract_user(%{
   %{id: id, name: name, email: email, theme: theme}
 end
 
-# Bad: Dense and hard to read
 def extract_user(%{id: id, profile: %{name: name, email: email}, settings: %{theme: theme}}), do: %{id: id, name: name, email: email, theme: theme}
 ```
 
 ### Do: Use Guards for Validation
 
 ```elixir
-# Good: Guard expresses intent
 def divide(a, b) when is_number(a) and is_number(b) and b != 0 do
   a / b
 end
 
-# Bad: Conditional inside function
 def divide(a, b) do
   if is_number(a) and is_number(b) and b != 0 do
     a / b
@@ -661,10 +610,8 @@ end
 ### Don't: Overuse Pattern Matching
 
 ```elixir
-# Good: Simple access
 def get_name(user), do: user.name
 
-# Bad: Unnecessary pattern match
 def get_name(%{name: name}), do: name
 ```
 
@@ -677,12 +624,10 @@ def get_name(%{name: name}), do: name
 **Solution**: Use `IO.inspect` to see actual structure.
 
 ```elixir
-# Inspect data structure
 data
 |> IO.inspect(label: "Actual data")
 |> process()
 
-# Or in IEx
 iex> response = get_data()
 iex> IO.inspect(response)
 ```
@@ -692,15 +637,11 @@ iex> IO.inspect(response)
 **Problem**: Reusing variable name in same pattern.
 
 ```elixir
-# Bad: x appears twice
 {x, x} = {1, 2}
-# ** (MatchError)
 
-# Good: Use guard
 {x, y} = {1, 2}
 if x == y, do: :equal, else: :different
 
-# Or pin operator
 x = 1
 {^x, y} = {1, 2}  # y = 2, x must be 1
 ```
@@ -714,7 +655,6 @@ Pattern matching is optimized by the compiler:
 3. **Nested Patterns**: No performance penalty vs manual extraction
 
 ```elixir
-# Both equally performant
 def extract1(%{user: %{name: name}}), do: name
 def extract2(data), do: data.user.name
 ```

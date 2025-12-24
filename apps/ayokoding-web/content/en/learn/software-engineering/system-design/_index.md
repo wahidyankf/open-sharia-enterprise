@@ -6,4 +6,4 @@ draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/system-design/overview)
-- [Ai Personal Finance Advisor](/en/learn/software-engineering/system-design/ai-personal-finance-advisor)
+- [AI Personal Finance Advisor](/en/learn/software-engineering/system-design/ai-personal-finance-advisor)

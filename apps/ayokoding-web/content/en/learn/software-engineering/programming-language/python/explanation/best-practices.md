@@ -28,7 +28,6 @@ Easier to Ask for Forgiveness than Permission (EAFP) embodies Python's pragmatic
 **Example:**
 
 ```python
-# ❌ LBYL - Look Before You Leap (defensive)
 def get_user_age(user_data):
     if user_data is not None:
         if 'age' in user_data:
@@ -37,7 +36,6 @@ def get_user_age(user_data):
                     return user_data['age']
     return None
 
-# ✅ EAFP - Easier to Ask for Forgiveness than Permission
 def get_user_age(user_data):
     try:
         age = user_data['age']
@@ -68,25 +66,20 @@ Focus on what an object can do, not what type it is. Python's dynamic typing ena
 **Example:**
 
 ```python
-# ❌ Type checking restricts flexibility
 def save_data(database: MySQLDatabase, data: dict):
     database.save(data)
 
-# Only works with MySQLDatabase
 save_data(mysql_db, data)  # OK
 save_data(postgres_db, data)  # Type error!
 
-# ✅ Duck typing - accepts any object with save method
 def save_data(database, data):
     """Save data to any database that implements save()."""
     database.save(data)
 
-# Works with any database
 save_data(mysql_db, data)
 save_data(postgres_db, data)
 save_data(mock_db, data)  # Easy testing
 
-# ✅ Protocol (Python 3.8+) - explicit interface without inheritance
 from typing import Protocol
 
 class Saveable(Protocol):
@@ -111,7 +104,6 @@ Modern Python embraces optional static typing for better tooling and documentati
 **Example:**
 
 ```python
-# ❌ No type hints - unclear expectations
 def process_order(order, discount, notify):
     total = calculate_total(order)
     final = apply_discount(total, discount)
@@ -119,7 +111,6 @@ def process_order(order, discount, notify):
         send_email(order)
     return final
 
-# ✅ Type hints clarify expectations
 from typing import Optional
 
 def process_order(
@@ -133,7 +124,6 @@ def process_order(
         send_email(order)
     return final
 
-# ✅ Better - domain types with type hints
 from dataclasses import dataclass
 
 @dataclass
@@ -175,7 +165,6 @@ List, dict, and set comprehensions express transformations concisely and efficie
 **Example:**
 
 ```python
-# ❌ Verbose loops
 squares = []
 for x in range(10):
     squares.append(x ** 2)
@@ -185,23 +174,19 @@ for user in users:
     if user.is_active:
         active_users[user.id] = user
 
-# ✅ List comprehension
 squares = [x ** 2 for x in range(10)]
 
-# ✅ Dict comprehension
 active_users = {
     user.id: user
     for user in users
     if user.is_active
 }
 
-# ✅ Set comprehension (for uniqueness)
 unique_domains = {
     email.split('@')[1]
     for email in email_list
 }
 
-# ✅ Generator expression (memory efficient)
 total = sum(x ** 2 for x in range(1_000_000))  # No intermediate list
 ```
 
@@ -226,7 +211,6 @@ Use `with` statements to manage resources automatically.
 **Example:**
 
 ```python
-# ❌ Manual cleanup - error prone
 def read_config():
     f = open('config.json')
     try:
@@ -235,17 +219,14 @@ def read_config():
     finally:
         f.close()  # Might forget this
 
-# ✅ Context manager handles cleanup
 def read_config():
     with open('config.json') as f:
         return json.load(f)
 
-# ✅ Multiple resources
 def copy_file(src, dest):
     with open(src, 'rb') as source, open(dest, 'wb') as target:
         target.write(source.read())
 
-# ✅ Custom context manager
 from contextlib import contextmanager
 import time
 
@@ -279,20 +260,15 @@ name = "Alice"
 age = 30
 balance = 1234.5678
 
-# ❌ Old-style % formatting
 msg = "Hello %s, you are %d years old" % (name, age)
 
-# ❌ str.format() - verbose
 msg = "Hello {}, you are {} years old".format(name, age)
 
-# ✅ F-strings - clear and concise
 msg = f"Hello {name}, you are {age} years old"
 
-# ✅ Expressions and formatting
 msg = f"Balance: ${balance:.2f}"  # Balance: $1234.57
 msg = f"In 5 years: {age + 5}"     # In 5 years: 35
 
-# ✅ Multi-line f-strings
 report = f"""
 User Report:
   Name: {name}
@@ -300,7 +276,6 @@ User Report:
   Status: {'Active' if balance > 0 else 'Inactive'}
 """
 
-# ✅ Debugging with = (Python 3.8+)
 print(f"{name=}, {age=}")  # name='Alice', age=30
 ```
 
@@ -321,7 +296,6 @@ Decorators modify function behavior without changing function code.
 import functools
 import time
 
-# ✅ Timing decorator
 def timer(func):
     @functools.wraps(func)  # Preserves func metadata
     def wrapper(*args, **kwargs):
@@ -336,7 +310,6 @@ def fetch_data():
     time.sleep(2)
     return {"data": "loaded"}
 
-# ✅ Caching decorator (stdlib)
 from functools import lru_cache
 
 @lru_cache(maxsize=128)
@@ -345,7 +318,6 @@ def fibonacci(n):
         return n
     return fibonacci(n - 1) + fibonacci(n - 2)
 
-# ✅ Validation decorator
 def validate_positive(func):
     @functools.wraps(func)
     def wrapper(x):
@@ -375,7 +347,6 @@ Dataclasses reduce boilerplate for classes that primarily hold data.
 **Example:**
 
 ```python
-# ❌ Manual class - boilerplate heavy
 class User:
     def __init__(self, id, name, email, age):
         self.id = id
@@ -392,7 +363,6 @@ class User:
         return (self.id == other.id and
                 self.name == other.name and ...)
 
-# ✅ Dataclass - concise and clear
 from dataclasses import dataclass
 
 @dataclass
@@ -402,11 +372,9 @@ class User:
     email: str
     age: int
 
-# Gets __init__, __repr__, __eq__ automatically
 user = User(1, "Alice", "alice@example.com", 30)
 print(user)  # User(id=1, name='Alice', email='alice@example.com', age=30)
 
-# ✅ With defaults and validation
 from dataclasses import dataclass, field
 
 @dataclass
@@ -437,7 +405,6 @@ Named tuples provide lightweight immutable containers with named fields.
 ```python
 from typing import NamedTuple
 
-# ✅ Named tuple for simple data
 class Point(NamedTuple):
     x: float
     y: float
@@ -450,11 +417,8 @@ print(p.x, p.y)  # Named access
 print(p[0], p[1])  # Also supports indexing
 print(p.distance())  # 5.0
 
-# ✅ Can be unpacked
 x, y = p
 
-# ❌ Cannot modify (immutable)
-# p.x = 5  # AttributeError
 ```
 
 **When to use dataclass vs namedtuple:**
@@ -478,19 +442,14 @@ Isolate project dependencies to avoid conflicts and ensure reproducibility.
 **Example:**
 
 ```bash
-# ✅ Create virtual environment
 python -m venv venv
 
-# ✅ Activate (Unix/macOS)
 source venv/bin/activate
 
-# ✅ Activate (Windows)
 venv\Scripts\activate
 
-# ✅ Install dependencies
 pip install -r requirements.txt
 
-# ✅ Freeze exact versions
 pip freeze > requirements.txt
 ```
 
@@ -501,19 +460,14 @@ Lock files ensure reproducible installations across environments.
 **Example:**
 
 ```python
-# requirements.txt - specify ranges
 requests>=2.28.0,<3.0.0
 flask>=2.3.0
 
-# requirements-lock.txt - exact versions from pip freeze
 requests==2.31.0
 certifi==2023.7.22
 charset-normalizer==3.2.0
 flask==2.3.3
-# ... all transitive dependencies
 
-# ✅ Development dependencies separate
-# requirements-dev.txt
 -r requirements.txt
 pytest>=7.4.0
 black>=23.0.0
@@ -536,7 +490,6 @@ Each function should do one thing well.
 **Example:**
 
 ```python
-# ❌ Large function doing too much
 def process_order(order_data):
     # Validate
     if not order_data.get('items'):
@@ -566,7 +519,6 @@ def process_order(order_data):
         body=f"Total: ${total:.2f}"
     )
 
-# ✅ Small, focused functions
 def validate_order(order_data):
     if not order_data.get('items'):
         raise ValueError("Empty order")
@@ -619,7 +571,6 @@ Properties provide attribute syntax for computed values.
 **Example:**
 
 ```python
-# ❌ Getter methods break attribute syntax
 class Rectangle:
     def __init__(self, width, height):
         self.width = width
@@ -637,7 +588,6 @@ rect = Rectangle(10, 5)
 print(rect.get_area())  # Method call syntax
 rect.set_width(20)
 
-# ✅ Properties provide attribute syntax
 class Rectangle:
     def __init__(self, width, height):
         self._width = width

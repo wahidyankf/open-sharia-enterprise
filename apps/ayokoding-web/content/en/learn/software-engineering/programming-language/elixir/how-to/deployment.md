@@ -77,41 +77,30 @@ end
 Build release:
 
 ```bash
-# Set production environment
 export MIX_ENV=prod
 
-# Fetch and compile dependencies
 mix deps.get --only prod
 mix deps.compile
 
-# Compile application
 mix compile
 
-# Generate release
 mix release
 
-# Output: _build/prod/rel/my_app/
 ```
 
 ### 2. Running Releases
 
 ```bash
-# Start in foreground
 _build/prod/rel/my_app/bin/my_app start
 
-# Start as daemon
 _build/prod/rel/my_app/bin/my_app daemon
 
-# Stop application
 _build/prod/rel/my_app/bin/my_app stop
 
-# Restart application
 _build/prod/rel/my_app/bin/my_app restart
 
-# Remote console
 _build/prod/rel/my_app/bin/my_app remote
 
-# Check version
 _build/prod/rel/my_app/bin/my_app version
 ```
 
@@ -147,51 +136,40 @@ end
 Multi-stage Dockerfile:
 
 ```dockerfile
-# Build stage
 FROM elixir:1.14-alpine AS build
 
-# Install build dependencies
 RUN apk add --no-cache build-base git
 
 WORKDIR /app
 
-# Install hex and rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# Copy dependency files
 COPY mix.exs mix.lock ./
 RUN mix deps.get --only prod
 
-# Copy application code
 COPY config config
 COPY lib lib
 COPY priv priv
 
-# Compile dependencies and application
 RUN mix deps.compile
 RUN mix compile
 
-# Build release
 RUN mix release
 
-# Runtime stage
 FROM alpine:3.18 AS app
 
-# Install runtime dependencies
 RUN apk add --no-cache \
     libstdc++ \
     openssl \
     ncurses-libs \
     libgcc
 
-# Create app user
 RUN addgroup -g 1000 app && \
     adduser -u 1000 -G app -s /bin/sh -D app
 
 WORKDIR /app
 
-# Copy release from build stage
 COPY --from=build --chown=app:app /app/_build/prod/rel/my_app ./
 
 USER app
@@ -204,10 +182,8 @@ CMD ["/app/bin/my_app", "start"]
 Build and run:
 
 ```bash
-# Build image
 docker build -t my_app:latest .
 
-# Run container
 docker run -d \
   -p 4000:4000 \
   -e DATABASE_URL="postgres://user:pass@db/myapp" \
@@ -215,10 +191,8 @@ docker run -d \
   --name my_app \
   my_app:latest
 
-# View logs
 docker logs -f my_app
 
-# Remote console
 docker exec -it my_app /app/bin/my_app remote
 ```
 
@@ -227,14 +201,12 @@ docker exec -it my_app /app/bin/my_app remote
 Additional Phoenix configuration:
 
 ```elixir
-# config/runtime.exs
 config :my_app, MyAppWeb.Endpoint,
   url: [host: System.get_env("HOST", "example.com"), port: 443, scheme: "https"],
   http: [port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base,
   server: true  # Start endpoint on release start
 
-# Enable static file serving
 config :my_app, MyAppWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 ```
@@ -242,13 +214,10 @@ config :my_app, MyAppWeb.Endpoint,
 Build assets before release:
 
 ```bash
-# Install Node dependencies
 cd assets && npm install && cd ..
 
-# Build assets
 mix assets.deploy
 
-# Build release
 MIX_ENV=prod mix release
 ```
 
@@ -257,7 +226,6 @@ MIX_ENV=prod mix release
 Run migrations during deployment:
 
 ```elixir
-# lib/my_app/release.ex
 defmodule MyApp.Release do
   @moduledoc """
   Tasks to run in production releases
@@ -290,10 +258,8 @@ end
 Run migration:
 
 ```bash
-# In release
 _build/prod/rel/my_app/bin/my_app eval "MyApp.Release.migrate()"
 
-# In Docker
 docker exec my_app /app/bin/my_app eval "MyApp.Release.migrate()"
 ```
 
@@ -302,25 +268,20 @@ docker exec my_app /app/bin/my_app eval "MyApp.Release.migrate()"
 Generate upgrade:
 
 ```elixir
-# Update version in mix.exs
 def project do
   [version: "0.2.0"]
 end
 
-# Build new release
 MIX_ENV=prod mix release --upgrade
 
-# Generate upgrade package
 mix release.gen.appup --from=0.1.0 --to=0.2.0
 ```
 
 Apply upgrade:
 
 ```bash
-# Copy upgrade to releases directory
 cp _build/prod/rel/my_app/releases/0.2.0/my_app.tar.gz /path/to/production/releases/
 
-# Apply upgrade (no downtime)
 bin/my_app upgrade 0.2.0
 ```
 
@@ -329,7 +290,6 @@ bin/my_app upgrade 0.2.0
 Configure clustering:
 
 ```elixir
-# config/runtime.exs
 config :libcluster,
   topologies: [
     k8s: [
@@ -389,7 +349,6 @@ spec:
 Add health check endpoint:
 
 ```elixir
-# lib/my_app_web/controllers/health_controller.ex
 defmodule MyAppWeb.HealthController do
   use MyAppWeb, :controller
 
@@ -406,7 +365,6 @@ defmodule MyAppWeb.HealthController do
   end
 end
 
-# router.ex
 scope "/", MyAppWeb do
   get "/health", HealthController, :index
 end
@@ -424,27 +382,22 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 Use `.env` file for local development:
 
 ```bash
-# .env
 export DATABASE_URL="postgres://localhost/myapp_dev"
 export SECRET_KEY_BASE="local_secret"
 export PORT="4000"
 
-# Source it
 source .env
 ```
 
 Production environment:
 
 ```bash
-# systemd service file
 Environment="DATABASE_URL=postgres://..."
 Environment="SECRET_KEY_BASE=..."
 Environment="PORT=4000"
 
-# Docker
 docker run -e DATABASE_URL="..." my_app
 
-# Kubernetes ConfigMap
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -452,7 +405,6 @@ metadata:
 data:
   PORT: "4000"
 ---
-# Then reference in deployment
 envFrom:
 - configMapRef:
     name: my-app-config
@@ -463,48 +415,36 @@ envFrom:
 ### Deploying to Fly.io
 
 ```bash
-# Install flyctl
 curl -L https://fly.io/install.sh | sh
 
-# Launch app
 fly launch
 
-# Deploy
 fly deploy
 
-# Open app
 fly open
 
-# View logs
 fly logs
 
-# Scale
 fly scale count 3
 ```
 
 ### Deploying to Gigalixir
 
 ```bash
-# Install CLI
 pip3 install gigalixir
 
-# Create app
 gigalixir create my_app
 
-# Deploy
 git push gigalixir main
 
-# Run migrations
 gigalixir ps:migrate
 
-# Scale
 gigalixir ps:scale --replicas=3
 ```
 
 ### Systemd Service
 
 ```ini
-# /etc/systemd/system/my_app.service
 [Unit]
 Description=My Elixir App
 After=network.target
@@ -539,16 +479,12 @@ sudo journalctl -u my_app -f
 ### 1. Blue-Green Deployment
 
 ```bash
-# Deploy new version as "green"
 docker run -d --name my_app_green my_app:v2
 
-# Health check
 curl http://green:4000/health
 
-# Switch nginx upstream
 nginx -s reload
 
-# Remove old "blue"
 docker stop my_app_blue
 docker rm my_app_blue
 ```
@@ -556,7 +492,6 @@ docker rm my_app_blue
 ### 2. Canary Deployment
 
 ```yaml
-# Kubernetes
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -575,7 +510,6 @@ spec:
 ### 3. Release Commands
 
 ```elixir
-# rel/config.exs
 release :my_app do
   set commands: [
     migrate: "rel/commands/migrate.sh",
@@ -586,7 +520,6 @@ end
 
 ```bash
 #!/bin/sh
-# rel/commands/migrate.sh
 bin/my_app eval "MyApp.Release.migrate()"
 ```
 
@@ -617,25 +550,20 @@ bin/my_app eval "MyApp.Release.migrate()"
 ### Release Won't Start
 
 ```bash
-# Check logs
 tail -f _build/prod/rel/my_app/tmp/log/erlang.log.*
 
-# Check environment
 _build/prod/rel/my_app/bin/my_app eval "System.get_env()"
 
-# Verify config
 _build/prod/rel/my_app/bin/my_app eval ":sys.get_state(MyApp.Endpoint)"
 ```
 
 ### Missing Compile-Time Configuration
 
 ```elixir
-# Don't do this (won't work in releases)
 def my_function do
   Application.get_env(:my_app, :some_value)  # Compile-time value
 end
 
-# Do this instead
 def my_function do
   Application.fetch_env!(:my_app, :some_value)  # Runtime value
 end
@@ -644,10 +572,8 @@ end
 ### Port Already in Use
 
 ```bash
-# Find process using port
 lsof -i :4000
 
-# Kill it
 kill -9 <PID>
 ```
 

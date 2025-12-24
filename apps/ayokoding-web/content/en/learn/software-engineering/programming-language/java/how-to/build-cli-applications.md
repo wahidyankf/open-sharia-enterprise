@@ -77,24 +77,13 @@ public class GreetCommand implements Callable<Integer> {
 **Usage:**
 
 ```bash
-# Basic usage
 java -jar greet.jar Alice
-# Output: Hello, Alice!
 
-# With options
 java -jar greet.jar --capitalized --repeat 3 Bob
-# Output:
-# HELLO, BOB!
-# HELLO, BOB!
-# HELLO, BOB!
 
-# Help text (automatically generated)
 java -jar greet.jar --help
-# Shows usage, parameters, and options
 
-# Version
 java -jar greet.jar --version
-# Shows: 1.0
 ```
 
 **Why picocli**: Annotation-based configuration, automatic help generation, type-safe option handling, subcommands support, and comprehensive validation.
@@ -287,16 +276,12 @@ class UserDeleteCommand implements Callable<Integer> {
 **Usage:**
 
 ```bash
-# List subcommands
 java -jar user.jar --help
 
-# Create user
 java -jar user.jar create --email alice@example.com --name Alice
 
-# List users
 java -jar user.jar list --admin-only --limit 5
 
-# Delete user
 java -jar user.jar delete user-123 --force
 ```
 
@@ -457,13 +442,10 @@ public class FilterCommand implements Callable<Integer> {
 **Usage:**
 
 ```bash
-# From file
 java -jar filter.jar --pattern "ERROR" --input app.log
 
-# From stdin (pipe)
 cat app.log | java -jar filter.jar --pattern "ERROR"
 
-# From stdin (redirect)
 java -jar filter.jar --pattern "ERROR" < app.log
 ```
 
@@ -558,10 +540,8 @@ public class ProcessCommand implements Callable<Integer> {
 **Build and run:**
 
 ```bash
-# Build JAR
 mvn clean package
 
-# Run JAR
 java -jar target/myapp-1.0.jar --help
 ```
 
@@ -569,39 +549,31 @@ java -jar target/myapp-1.0.jar --help
 
 ```bash
 #!/bin/bash
-# mycli - Wrapper script for Java CLI application
 
-# Find Java
 if [ -n "$JAVA_HOME" ]; then
   JAVA="$JAVA_HOME/bin/java"
 else
   JAVA="java"
 fi
 
-# Get script directory
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 JAR_FILE="$SCRIPT_DIR/myapp.jar"
 
-# Check JAR exists
 if [ ! -f "$JAR_FILE" ]; then
   echo "Error: JAR file not found: $JAR_FILE" >&2
   exit 1
 fi
 
-# Run application
 exec "$JAVA" -jar "$JAR_FILE" "$@"
 ```
 
 **Installation:**
 
 ```bash
-# Make executable
 chmod +x mycli
 
-# Install to PATH
 sudo cp mycli /usr/local/bin/
 
-# Use like native command
 mycli --help
 mycli process input.txt
 ```
@@ -645,15 +617,11 @@ mycli process input.txt
 **Build native binary:**
 
 ```bash
-# Requires GraalVM installed
 mvn clean package -Pnative
 
-# Creates native executable
 ./target/mycli --help
 
-# Fast startup, no JVM required
 time ./target/mycli --version
-# ~0.01s startup time (vs ~0.5s for JAR)
 ```
 
 **Benefits of native image:**
