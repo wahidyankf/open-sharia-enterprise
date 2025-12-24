@@ -376,8 +376,8 @@ A specialized workflow pattern that achieves **perfect quality state** by fixing
 
 **When to use**:
 
-- Repository-wide validation (repo-rules-check-fix)
-- Content quality assurance (plan-check-fix, ayokoding-web-content-check-fix)
+- Repository-wide validation (repository-rules-quality-gate)
+- Content quality assurance (plan-quality-gate, ayokoding-web-content-quality-gate)
 - Pre-release quality gates
 - Periodic health checks
 
@@ -483,7 +483,7 @@ All \*-check-fix workflows MUST use this exact termination criteria:
 
 ### Example Implementation
 
-See [Repository Rules Check-Fix Workflow](./ex-wf__repository-rules-check-fix.md) for canonical implementation.
+See [Repository Rules Quality Gate Workflow](./ex-wf__repository-rules-quality-gate.md) for canonical implementation.
 
 ### Key Differences from Basic Validation Workflow
 
