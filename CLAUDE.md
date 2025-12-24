@@ -130,7 +130,7 @@ Automated implementers that enforce conventions and development practices. Each 
 
 **Layer 5: Workflows** (`docs/explanation/workflows/`)
 
-Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria. Workflows define sequences (sequential/parallel/conditional), manage state between steps, and include human approval checkpoints. The Maker-Checker-Fixer pattern is the canonical workflow. See [Workflows Index](./docs/explanation/workflows/README.md) for all workflows and [Workflow Pattern Convention](./docs/explanation/workflows/ex-wf__workflow-pattern.md) for structure details.
+Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria. Workflows define sequences (sequential/parallel/conditional), manage state between steps, and include human approval checkpoints. Use workflows when orchestrating 2+ agents in repeated sequences or when complex multi-step validation with state management is needed. The Maker-Checker-Fixer pattern is the canonical workflow. The \*-check-fix workflow pattern achieves perfect quality state by fixing ALL findings (HIGH, MEDIUM, MINOR) and iterating until ZERO findings remain. See [Workflows Index](./docs/explanation/workflows/README.md) for all workflows and [Workflow Pattern Convention](./docs/explanation/workflows/ex-wf__workflow-pattern.md) for pattern details.
 
 **Traceability Example:**
 
@@ -223,6 +223,10 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. Agent frontmatter must be comment-free (no # symbols in YAML).
 
 **Agent File Sizes**: Three tiers based on complexity - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Agents approaching limits should link to convention docs instead of duplicating content.
+
+**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction. Focus on execution quality over token efficiency. See [AI Agents Convention - Token Budget Philosophy](./docs/explanation/development/ex-de__ai-agents.md#token-budget-philosophy) for details.
+
+**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. Ensures traceability from practices back to foundational values. See [Convention Writing Convention](./docs/explanation/conventions/ex-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for requirements.
 
 See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 

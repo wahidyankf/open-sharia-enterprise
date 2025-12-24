@@ -9,7 +9,7 @@ tags:
   - standards
   - documentation
 created: 2025-12-07
-updated: 2025-12-07
+updated: 2025-12-24
 ---
 
 # Convention Writing Convention
@@ -115,7 +115,29 @@ Brief overview explaining what this convention covers and why it exists.
 
 **Purpose:** Immediately orient readers to the convention's scope and value.
 
-#### 3. Purpose Section (H2)
+#### 3. Principles Implemented/Respected Section (H2)
+
+```markdown
+## Principles Implemented/Respected
+
+This convention implements/respects the following core principles:
+
+- **[Principle Name](../principles/[category]/ex-pr-[category]__[name].md)**: Brief explanation of HOW this convention implements or respects this principle. What specific aspect of the principle does this convention embody?
+- **[Another Principle](../principles/[category]/ex-pr-[category]__[name].md)**: Another explanation.
+```
+
+**Purpose:** Explicit traceability from documentation standards back to foundational values. Makes governance hierarchy visible and verifiable.
+
+**Requirements:**
+
+- List ALL principles this convention implements or respects
+- Include working link to each principle document
+- Explain HOW the convention embodies each principle (not just listing names)
+- Use relative paths: `../principles/[category]/ex-pr-[category]__[name].md`
+
+**Note:** This section is MANDATORY for all convention documents. It enables traceability validation and ensures conventions trace back to foundational values.
+
+#### 4. Purpose Section (H2)
 
 ```markdown
 ## Purpose
@@ -124,7 +146,7 @@ Clearly state WHY this convention exists and what problems it solves.
 Include the intended audience and use cases.
 ```
 
-#### 4. Scope Section (H2)
+#### 5. Scope Section (H2)
 
 ```markdown
 ## Scope
@@ -140,7 +162,7 @@ Include the intended audience and use cases.
 
 **Note:** Explicit exclusions prevent scope creep and guide readers to related conventions.
 
-#### 5. Standards/Rules Section (H2)
+#### 6. Standards/Rules Section (H2)
 
 ```markdown
 ## Standards
@@ -164,7 +186,7 @@ Content with examples
 
 ### Recommended Sections
 
-#### 6. Examples Section (H2)
+#### 7. Examples Section (H2)
 
 ```markdown
 ## Examples
@@ -180,7 +202,7 @@ Concrete examples showing what to avoid (with explanations)
 
 **Value:** Examples make abstract rules concrete and immediately actionable.
 
-#### 7. Comparison Tables
+#### 8. Comparison Tables
 
 Use tables to contrast approaches:
 
@@ -190,7 +212,7 @@ Use tables to contrast approaches:
 | Example 1 | Good way   | Bad way      | Explanation |
 ```
 
-#### 8. Edge Cases / Special Considerations (H2)
+#### 9. Edge Cases / Special Considerations (H2)
 
 ```markdown
 ## Special Considerations
@@ -198,7 +220,7 @@ Use tables to contrast approaches:
 Address nuanced scenarios, exceptions, or edge cases.
 ```
 
-#### 9. Tools and Automation (H2)
+#### 10. Tools and Automation (H2)
 
 ```markdown
 ## Tools and Automation
@@ -208,7 +230,7 @@ Reference agents or tools that enforce or assist with this convention:
 - **agent-name** - What it does related to this convention
 ```
 
-#### 10. References Section (H2)
+#### 11. References Section (H2)
 
 ```markdown
 ## References
@@ -241,7 +263,8 @@ Before publishing a convention document, verify:
 
 ### Completeness
 
-- [ ] Has all required sections (frontmatter, introduction, purpose, scope, standards)
+- [ ] Has all required sections (frontmatter, introduction, Principles Implemented/Respected, purpose, scope, standards)
+- [ ] Principles Implemented/Respected section lists ALL relevant principles with links and explanations
 - [ ] Includes concrete examples (not just abstract rules)
 - [ ] Cross-references related conventions
 - [ ] Specifies what is OUT of scope (prevents confusion)
@@ -404,6 +427,14 @@ If a convention becomes obsolete:
 2. Provide migration path to replacement convention
 3. Keep file for 6 months before considering deletion
 4. Update all references in other docs and CLAUDE.md
+
+## Example Conventions
+
+Looking for inspiration? These conventions exemplify different structural approaches:
+
+- **[Color Accessibility Convention](./ex-co__color-accessibility.md)** - Comprehensive reference convention with detailed palette specifications, contrast ratios, and tool-specific guidance
+- **[Tutorial Naming Convention](./ex-co__tutorial-naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
+- **[Indentation Convention](./ex-co__indentation.md)** - Simple, focused convention addressing a single technical standard with clear examples
 
 ## Examples
 

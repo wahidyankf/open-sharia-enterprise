@@ -11,7 +11,7 @@ tags:
   - validation
   - automation
 created: 2025-12-14
-updated: 2025-12-23
+updated: 2025-12-24
 ---
 
 # Maker-Checker-Fixer Pattern Convention
@@ -20,11 +20,25 @@ This document defines the **maker-checker-fixer pattern**, a three-stage content
 
 ## Principles Respected
 
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices back to foundational values.
+
 This practice respects the following core principles:
 
 - **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Checker agents automatically validate content against conventions. Fixer agents apply validated fixes without manual intervention. Human effort focuses on content creation and subjective improvements, not mechanical validation.
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Three clear stages (make, check, fix) instead of complex, multi-phase workflows. Each agent has single, well-defined responsibility. Separation of concerns keeps the workflow simple and predictable.
+
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices to documentation standards.
+
+This practice implements/respects the following conventions:
+
+- **[Temporary Files Convention](./ex-de__temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
+
+- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
+
+- **[Content Quality Principles](../conventions/ex-co__content-quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
 
 ## 📋 Overview
 
@@ -631,7 +645,6 @@ The maker-checker-fixer pattern integrates with repository conventions:
 **Workflow Orchestration**:
 
 - [Workflow Pattern Convention](../workflows/ex-wf__workflow-pattern.md) - How workflows orchestrate agents
-- [Maker-Checker-Fixer Workflow](../workflows/ex-wf__maker-checker-fixer.md) - This pattern as a workflow
 
 **Domain-Specific Standards**:
 
@@ -653,5 +666,3 @@ The maker-checker-fixer pattern integrates with repository conventions:
 ---
 
 This pattern provides a **systematic, scalable, and safe approach** to content quality management across multiple domains. By separating creation, validation, and remediation into distinct stages, we achieve high-quality content through iterative improvement and automated safeguards.
-
-**Note**: This development practice document describes the **pattern concept**. The executable orchestration is formalized in [Maker-Checker-Fixer Workflow](../workflows/ex-wf__maker-checker-fixer.md) (Layer 5: Workflows).

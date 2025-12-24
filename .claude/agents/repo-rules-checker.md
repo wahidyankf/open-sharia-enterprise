@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-23
+updated: 2025-12-24
 ---
 
 # Repository Rule Checker Agent
@@ -84,6 +84,13 @@ You must also identify duplicate or significantly overlapping content that:
 
 Systematically verify internal consistency, cross-document alignment, factual correctness, completeness, principle adherence, and identify both extractable (cross-file) and condensable (within-file) duplications. Use the detailed verification checklist below to ensure thorough coverage.
 
+**CRITICAL - Four Core Validation Rules**:
+
+1. **Unlimited Token Budget**: Validate that AI Agents Convention and Workflow Pattern Convention document unlimited token budget mindset (quality over efficiency)
+2. **Principles Traceability in Conventions**: Validate ALL convention documents have mandatory "Principles Implemented/Respected" section
+3. **Principles and Conventions Traceability in Development**: Validate ALL development documents have BOTH "Principles Respected" and "Conventions Implemented/Respected" sections
+4. **repo-rules-\* Self-Validation**: Ensure repo-rules-checker (this agent), repo-rules-fixer, and repo-rules-maker enforce all three rules above
+
 ## Verification Checklist
 
 When running a consistency check, systematically verify:
@@ -125,15 +132,24 @@ When running a consistency check, systematically verify:
 
 For each convention in `docs/explanation/conventions/`:
 
-- [ ] Introduction or Purpose section mentions which principle(s) it implements
-- [ ] Link to principle document uses format: `[Principle Name](../principles/[category]/ex-pr-[category]__[name].md)`
-- [ ] Description explains HOW the convention implements the principle
+- [ ] **MANDATORY**: Has "Principles Implemented/Respected" section (H2 heading)
+- [ ] Section appears BEFORE "Purpose" section in document structure
+- [ ] Lists ALL relevant principles this convention implements or respects
+- [ ] Each principle includes working link: `[Principle Name](../principles/[category]/ex-pr-[category]__[name].md)`
+- [ ] Each principle includes explanation of HOW the convention implements/respects it
+- [ ] No orphaned principles (convention doesn't reference principles that don't exist)
+- [ ] Section includes "REQUIRED SECTION" note explaining its mandatory nature
 
 For each practice in `docs/explanation/development/`:
 
-- [ ] Introduction or Purpose section mentions which principle(s) it respects
-- [ ] Link to principle document uses correct relative path
-- [ ] Description explains HOW the practice embodies the principle
+- [ ] **MANDATORY**: Has "Principles Respected" section (H2 heading)
+- [ ] **MANDATORY**: Has "Conventions Implemented/Respected" section (H2 heading)
+- [ ] Both sections exist and appear BEFORE main content sections
+- [ ] Principles section lists ALL relevant principles this practice respects
+- [ ] Conventions section lists ALL relevant conventions this practice implements/enforces
+- [ ] Each entry includes working link with proper relative path and `.md` extension
+- [ ] Each entry includes explanation of HOW the practice implements/respects it
+- [ ] Both sections include "REQUIRED SECTION" notes explaining their mandatory nature
 
 For each workflow in `docs/explanation/workflows/`:
 
@@ -163,8 +179,7 @@ For each workflow in `docs/explanation/workflows/`:
 - [ ] All workflows document execution modes (Sequential/Parallel/Conditional)
 - [ ] All workflows include human checkpoints where appropriate
 - [ ] All workflows trace back to principles they respect
-- [ ] Workflow Pattern Convention (`ex-wf__workflow-pattern.md`) is the canonical reference
-- [ ] Maker-Checker-Fixer Workflow (`ex-wf__maker-checker-fixer.md`) is documented as canonical example
+- [ ] Workflow Pattern Convention (`ex-wf__workflow-pattern.md`) is the canonical reference with examples
 - [ ] Workflows are referenced in CLAUDE.md Layer 5 section
 - [ ] Workflows are listed in `docs/explanation/workflows/README.md`
 
@@ -278,6 +293,10 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Tool permissions follow principle of least privilege
 - [ ] No tool permission creep (unnecessary tools granted)
 - [ ] Agent responsibilities don't significantly overlap with other agents
+- [ ] AI Agents Convention document (`ex-de__ai-agents.md`) includes "Token Budget Philosophy" section
+- [ ] Token Budget section emphasizes unlimited budget mindset (quality over efficiency)
+- [ ] Token Budget section mentions reliable compaction mechanism
+- [ ] Agents and workflows don't contain language suggesting token budget constraints
 
 ### Agent Definition Alignment
 
@@ -303,6 +322,15 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Development practices don't contradict principles
 - [ ] Development practices don't contradict conventions
 - [ ] Cross-references between development and principles use correct paths
+
+### Workflow Alignment
+
+- [ ] All workflow documents in `docs/explanation/workflows/` reference the principles they respect
+- [ ] Workflow Pattern Convention (`ex-wf__workflow-pattern.md`) includes "Token Budget Philosophy" section
+- [ ] Token Budget section in workflows emphasizes unlimited budget for multi-step orchestration
+- [ ] Workflows don't contain artificial token-saving measures or constraints
+- [ ] Workflows properly reference agents they orchestrate
+- [ ] Workflow documentation follows structured Markdown + YAML frontmatter pattern
 
 ### Directory Structure
 

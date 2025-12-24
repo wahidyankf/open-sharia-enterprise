@@ -7,14 +7,14 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2025-12-19
+updated: 2025-12-24
 ---
 
 # Conventions
 
 Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 22 conventions covering all aspects of documentation writing and formatting.
 
-**Governance**: All conventions in this directory implement and embody the [Core Principles](../principles/README.md). Each convention should trace back to one or more foundational principles (Accessibility First, Simplicity Over Complexity, Progressive Disclosure, etc.).
+**Governance**: All conventions in this directory implement and embody the [Core Principles](../principles/README.md). Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to one or more foundational principles with links and explanations of HOW the convention implements them. See [Convention Writing Convention](./ex-co__convention-writing.md) for complete structure requirements.
 
 ## 🎯 Scope
 

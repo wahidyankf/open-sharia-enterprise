@@ -24,6 +24,18 @@ This practice respects the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Prettier uses default settings - no custom configuration file. Commitlint uses standard Conventional Commits spec. Minimal tooling configuration reduces complexity.
 
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices to documentation standards.
+
+This practice implements/respects the following conventions:
+
+- **[Commit Message Convention](./ex-de__commit-messages.md)**: Git hooks enforce Conventional Commits format through Commitlint, validating commit message structure before commits are created.
+
+- **[Indentation Convention](../conventions/ex-co__indentation.md)**: Prettier enforces consistent indentation (2 spaces for YAML frontmatter) across all formatted file types.
+
+- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Pre-commit hook formats all files matching the repository's file naming patterns without altering the naming structure.
+
 ## Overview
 
 This project enforces code quality through automated tools that run during the development workflow:
