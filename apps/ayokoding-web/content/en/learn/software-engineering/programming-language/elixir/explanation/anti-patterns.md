@@ -16,7 +16,6 @@ tags: ["elixir", "anti-patterns", "mistakes", "pitfalls", "code-smells"]
 **The Mistake**:
 
 ```elixir
-# Trying to make Elixir object-oriented
 defmodule User do
   defstruct name: "", balance: 0
 
@@ -29,7 +28,6 @@ defmodule User do
   # Treating struct like object with methods
 end
 
-# Sharing mutable "object"
 user = User.new("Alice")
 user = User.deposit(user, 100)  # Confusing "mutation"
 ```
@@ -43,7 +41,6 @@ user = User.deposit(user, 100)  # Confusing "mutation"
 **Better Approach**:
 
 ```elixir
-# Process for stateful resource (bank account)
 defmodule Account do
   use GenServer
 
@@ -73,7 +70,6 @@ defmodule Account do
   end
 end
 
-# Usage
 {:ok, account} = Account.start_link("Alice")
 Account.deposit(account, 100)
 Account.balance(account)  # 100
@@ -92,7 +88,6 @@ Account.balance(account)  # 100
 **The Mistake**:
 
 ```elixir
-# Using GenServer for simple calculations
 defmodule Calculator do
   use GenServer
 
@@ -117,7 +112,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Pure functions don't need processes
 defmodule Calculator do
   def add(a, b), do: a + b
 end
@@ -142,7 +136,6 @@ end
 **The Mistake**:
 
 ```elixir
-# Trying to mutate data
 defmodule ShoppingCart do
   def add_item(cart, item) do
     cart.items = [item | cart.items]  # ❌ Error: can't mutate
@@ -165,7 +158,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Embrace immutability (return new data)
 defmodule ShoppingCart do
   def add_item(cart, item) do
     %{cart | items: [item | cart.items]}
@@ -177,7 +169,6 @@ defmodule ShoppingCart do
   end
 end
 
-# Usage (immutable)
 cart = %{items: []}
 cart = ShoppingCart.add_item(cart, "Book")
 cart = ShoppingCart.add_item(cart, "Pen")
@@ -196,7 +187,6 @@ cart = ShoppingCart.add_item(cart, "Pen")
 **The Mistake**:
 
 ```elixir
-# Imperative style
 def process_response(response) do
   if response.status == :ok do
     data = response.data
@@ -217,11 +207,9 @@ end
 **Better Approach**:
 
 ```elixir
-# Declarative with pattern matching
 def process_response(%{status: :ok, data: data}), do: process(data)
 def process_response(%{status: :error, error: error}), do: handle_error(error)
 
-# Or with case
 def process_response(response) do
   case response do
     {:ok, data} -> process(data)
@@ -243,7 +231,6 @@ end
 **The Mistake**:
 
 ```elixir
-# Spawning process for every HTTP request
 def handle_request(conn) do
   spawn(fn ->
     # Process request
@@ -262,14 +249,12 @@ end
 **Better Approach**:
 
 ```elixir
-# Use Task for async work
 def handle_request(conn) do
   task = Task.async(fn -> expensive_computation() end)
   result = Task.await(task)
   send_response(conn, result)
 end
 
-# Or Task.Supervisor for supervision
 Task.Supervisor.async_nolink(MySupervisor, fn ->
   expensive_computation()
 end)
@@ -284,7 +269,6 @@ end)
 **The Mistake**:
 
 ```elixir
-# Using process dictionary for shared state
 defmodule Cache do
   def put(key, value) do
     Process.put(key, value)
@@ -306,7 +290,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Use ETS for shared cache
 defmodule Cache do
   def init do
     :ets.new(:cache, [:set, :public, :named_table])
@@ -324,7 +307,6 @@ defmodule Cache do
   end
 end
 
-# Or GenServer for managed state
 defmodule Cache do
   use GenServer
   # ... proper state management
@@ -340,7 +322,6 @@ end
 **The Mistake**:
 
 ```elixir
-# Spawning without linking
 defmodule Worker do
   def start do
     spawn(fn ->
@@ -366,7 +347,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Use spawn_link or GenServer.start_link
 defmodule Worker do
   use GenServer
 
@@ -382,7 +362,6 @@ defmodule Worker do
   end
 end
 
-# Supervised
 defmodule MyApp.Supervisor do
   use Supervisor
 
@@ -414,7 +393,6 @@ defmodule Fetcher do
   end
 end
 
-# All other calls blocked while HTTP request in progress
 ```
 
 **Why It's Bad**:
@@ -426,7 +404,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Delegate blocking work to Task
 defmodule Fetcher do
   use GenServer
 
@@ -441,7 +418,6 @@ defmodule Fetcher do
   end
 end
 
-# Or use cast + handle_info pattern
 defmodule Fetcher do
   use GenServer
 
@@ -478,7 +454,6 @@ end
 **The Mistake**:
 
 ```elixir
-# Optimizing without measuring
 defmodule Processor do
   # Using ETS for everything "because it's fast"
   def process(data) do
@@ -504,7 +479,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Write clear code first
 defmodule Processor do
   def process(data) do
     data
@@ -516,13 +490,11 @@ defmodule Processor do
   def sum(list), do: Enum.sum(list)
 end
 
-# Measure with Benchee
 Benchee.run(%{
   "enum" => fn -> Enum.sum(1..10_000) end,
   "manual" => fn -> manual_sum(1..10_000) end
 })
 
-# Optimize only if needed based on measurements
 ```
 
 **Rule**: Make it work, make it right, make it fast (in that order).
@@ -534,7 +506,6 @@ Benchee.run(%{
 **The Mistake**:
 
 ```elixir
-# Fetching posts, then author for each post
 posts = Repo.all(Post)
 
 posts_with_authors = Enum.map(posts, fn post ->
@@ -552,13 +523,10 @@ end)
 **Better Approach**:
 
 ```elixir
-# Preload associations
 posts = Repo.all(Post) |> Repo.preload(:author)
 
-# Or with query
 posts = from(p in Post, preload: [:author]) |> Repo.all()
 
-# Or manual join
 posts = from(p in Post,
   join: u in User, on: u.id == p.author_id,
   select: %{post: p, author: u}
@@ -578,7 +546,6 @@ posts = from(p in Post,
 **The Mistake**:
 
 ```elixir
-# Processing large file entirely in memory
 File.read!("huge_file.csv")
 |> String.split("\n")
 |> Enum.map(&parse_line/1)
@@ -595,7 +562,6 @@ File.read!("huge_file.csv")
 **Better Approach**:
 
 ```elixir
-# Stream for lazy evaluation
 File.stream!("huge_file.csv")
 |> Stream.map(&parse_line/1)
 |> Stream.filter(&valid?/1)
@@ -623,11 +589,9 @@ File.stream!("huge_file.csv")
 **The Mistake**:
 
 ```elixir
-# Non-tail-recursive (grows stack)
 def factorial(0), do: 1
 def factorial(n), do: n * factorial(n - 1)
 
-# Stack overflow on large N
 factorial(100_000)  # ❌ Crash
 ```
 
@@ -639,12 +603,10 @@ factorial(100_000)  # ❌ Crash
 **Better Approach**:
 
 ```elixir
-# Tail-recursive (constant stack)
 def factorial(n, acc \\ 1)
 def factorial(0, acc), do: acc
 def factorial(n, acc), do: factorial(n - 1, n * acc)
 
-# Works on large N
 factorial(100_000)  # ✅ OK
 ```
 
@@ -657,7 +619,6 @@ factorial(100_000)  # ✅ OK
 **The Mistake**:
 
 ```elixir
-# Process per item (millions of processes)
 Enum.each(items, fn item ->
   spawn(fn -> process_item(item) end)
 end)
@@ -672,12 +633,10 @@ end)
 **Better Approach**:
 
 ```elixir
-# Pool of worker processes
 items
 |> Task.async_stream(&process_item/1, max_concurrency: 10)
 |> Stream.run()
 
-# Or GenStage/Flow for complex pipelines
 Flow.from_enumerable(items)
 |> Flow.map(&process_item/1)
 |> Enum.to_list()
@@ -734,7 +693,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Thin controller
 defmodule MyAppWeb.UserController do
   use MyAppWeb, :controller
 
@@ -751,7 +709,6 @@ defmodule MyAppWeb.UserController do
   end
 end
 
-# Rich context
 defmodule MyApp.Accounts do
   def create_user(attrs) do
     %User{}
@@ -785,7 +742,6 @@ end
 **The Mistake**:
 
 ```elixir
-# Manual validation
 defmodule MyAppWeb.UserController do
   def create(conn, %{"user" => params}) do
     cond do
@@ -819,7 +775,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Changeset-based validation
 defmodule User do
   use Ecto.Schema
   import Ecto.Changeset
@@ -850,7 +805,6 @@ defmodule User do
   end
 end
 
-# Usage
 %User{}
 |> User.changeset(params)
 |> Repo.insert()
@@ -869,11 +823,7 @@ end
 **The Mistake**:
 
 ```elixir
-# Building SPA with separate React frontend
-# - Elixir backend (Phoenix API)
-# - React frontend (separate repo)
-# - Complex state synchronization
-# - WebSocket plumbing
+
 ```
 
 **Why It's Bad**:
@@ -886,7 +836,6 @@ end
 **Better Approach**:
 
 ```elixir
-# LiveView for real-time UIs
 defmodule MyAppWeb.DashboardLive do
   use Phoenix.LiveView
 
@@ -927,7 +876,6 @@ end
 **The Mistake**:
 
 ```elixir
-# Mocking everything
 test "create_user sends welcome email" do
   mock(Repo, :insert, fn _ -> {:ok, %User{id: 1}} end)
   mock(Mailer, :send_email, fn _, _ -> :ok end)
@@ -949,7 +897,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Test behavior with real dependencies where possible
 test "create_user sends welcome email" do
   {:ok, user} = Accounts.create_user(%{email: "user@example.com", password: "password123"})
 
@@ -957,7 +904,6 @@ test "create_user sends welcome email" do
   assert Repo.get(User, user.id)
 end
 
-# Use Mox only for external boundaries
 defmock(EmailSenderMock, for: EmailSender)
 
 test "create_user handles email failure" do
@@ -981,7 +927,6 @@ end
 **The Mistake**:
 
 ```elixir
-# Testing internal function calls
 test "create_user calls validate_email" do
   assert_called(Accounts, :validate_email, ["user@example.com"])
 end
@@ -996,7 +941,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Test observable behavior
 test "create_user rejects invalid email" do
   assert {:error, changeset} = Accounts.create_user(%{email: "invalid"})
   assert "is invalid" in errors_on(changeset).email
@@ -1012,7 +956,6 @@ end
 **The Mistake**:
 
 ```elixir
-# All tests run sequentially
 defmodule UserTest do
   use ExUnit.Case  # No async: true
 
@@ -1030,7 +973,6 @@ end
 **Better Approach**:
 
 ```elixir
-# Run tests in parallel
 defmodule UserTest do
   use ExUnit.Case, async: true
 

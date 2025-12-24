@@ -131,10 +131,8 @@ int value = list.get(0);  // Unboxing
 **Example**:
 
 ```bash
-# Compile Java source to bytecode
 javac HelloWorld.java  # Produces HelloWorld.class
 
-# View bytecode
 javap -c HelloWorld
 ```
 
@@ -723,16 +721,12 @@ class Circle implements Drawable {
 **Example**:
 
 ```bash
-# Create JAR
 jar cf myapp.jar com/example/*.class
 
-# Create executable JAR with manifest
 jar cfe myapp.jar com.example.Main com/example/*.class
 
-# Extract JAR
 jar xf myapp.jar
 
-# Run executable JAR
 java -jar myapp.jar
 ```
 

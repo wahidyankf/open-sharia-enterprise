@@ -132,7 +132,6 @@ public class StringConcatenationBenchmark {
 **Running the benchmark**:
 
 ```bash
-# Compile and run
 mvn clean install
 java -jar target/benchmarks.jar
 ```
@@ -153,7 +152,6 @@ Configure GC based on application characteristics.
 **G1GC (Default in Java 9+)** - Good balance for most applications:
 
 ```bash
-# G1GC with tuning
 java -XX:+UseG1GC \
      -XX:MaxGCPauseMillis=200 \
      -XX:InitiatingHeapOccupancyPercent=45 \
@@ -168,7 +166,6 @@ java -XX:+UseG1GC \
 **ZGC** - Low-latency collector (Java 15+):
 
 ```bash
-# ZGC for low-latency requirements
 java -XX:+UseZGC \
      -XX:ZCollectionInterval=5 \
      -Xms8g -Xmx8g \
@@ -179,7 +176,6 @@ java -XX:+UseZGC \
 **Shenandoah** - Low-pause collector:
 
 ```bash
-# Shenandoah for pause-sensitive applications
 java -XX:+UseShenandoahGC \
      -Xms4g -Xmx4g \
      -XX:+PrintGCDetails \
@@ -300,14 +296,11 @@ Choose GC based on application characteristics:
 For deeper CPU profiling, use async-profiler (external tool):
 
 ```bash
-# Download async-profiler
 wget https://github.com/jvm-profiling-tools/async-profiler/releases/download/v2.9/async-profiler-2.9-linux-x64.tar.gz
 tar -xzf async-profiler-2.9-linux-x64.tar.gz
 
-# Profile running application (PID=12345)
 ./profiler.sh -d 60 -f flamegraph.html 12345
 
-# Profile with specific event (CPU, allocation, lock)
 ./profiler.sh -e cpu -d 60 -f cpu-flamegraph.html 12345
 ./profiler.sh -e alloc -d 60 -f alloc-flamegraph.html 12345
 ```
@@ -317,12 +310,9 @@ tar -xzf async-profiler-2.9-linux-x64.tar.gz
 Analyze memory usage with jmap and jhat:
 
 ```bash
-# Dump heap
 jmap -dump:format=b,file=heap.bin <pid>
 
-# Analyze with Eclipse Memory Analyzer (MAT) or jhat
 jhat -port 7000 heap.bin
-# Open browser: http://localhost:7000
 ```
 
 ### Native Memory Tracking
@@ -330,15 +320,11 @@ jhat -port 7000 heap.bin
 Track native memory usage (Java 8+):
 
 ```bash
-# Enable NMT at startup
 java -XX:NativeMemoryTracking=summary MyApp
 
-# Check native memory at runtime
 jcmd <pid> VM.native_memory summary
 
-# Compare memory usage over time
 jcmd <pid> VM.native_memory baseline
-# ... wait ...
 jcmd <pid> VM.native_memory summary.diff
 ```
 
@@ -392,14 +378,10 @@ public void goodBenchmarkBlackhole(Blackhole bh) {
 Always analyze GC logs to understand pause times and throughput:
 
 ```bash
-# Enable detailed GC logging (Java 9+)
 java -Xlog:gc*:file=gc.log:time,uptime,level,tags \
      -XX:+UseG1GC \
      MyApp
 
-# Analyze with GCViewer or GCEasy
-# GCEasy: Upload gc.log to https://gceasy.io
-# GCViewer: java -jar gcviewer.jar gc.log
 ```
 
 **Pitfall 4: Object Pooling Overhead**

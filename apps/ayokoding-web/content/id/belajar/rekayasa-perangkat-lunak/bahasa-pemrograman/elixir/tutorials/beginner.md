@@ -13,7 +13,7 @@ tags: ["elixir", "tutorial", "pemula", "komprehensif", "otp"]
 
 **Wajib:**
 
-- Sudah menyelesaikan [Pengaturan Awal](/belajar/swe/prog-lang/elixir/tutorials/initial-setup) dan [Panduan Cepat](/belajar/swe/prog-lang/elixir/tutorials/quick-start)
+- Sudah menyelesaikan [Pengaturan Awal](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/elixir/tutorials/initial-setup) dan [Panduan Cepat](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/elixir/tutorials/quick-start)
 - Elixir 1.14+ terinstal
 - Editor teks sudah dikonfigurasi
 - Pengalaman dengan shell IEx
@@ -115,26 +115,21 @@ Tutorial ini mencakup **0-60%** dari Elixir - semua yang Anda butuhkan untuk mem
 Pattern matching adalah fitur paling powerful di Elixir. Mari kita pelajari lebih dalam dari Panduan Cepat.
 
 ```elixir
-# Review dasar
 {:ok, value} = {:ok, 42}
 value  # => 42
 
-# Pola bersarang
 {:ok, {x, y}} = {:ok, {10, 20}}
 x  # => 10
 y  # => 20
 
-# Pola list
 [first, second | rest] = [1, 2, 3, 4, 5]
 first   # => 1
 second  # => 2
 rest    # => [3, 4, 5]
 
-# Pola map
 %{name: name, age: age} = %{name: "Alice", age: 28, city: "Portland"}
 name  # => "Alice"
 age   # => 28
-# Catatan: city diabaikan (tidak diekstrak)
 ```
 
 ### 1.2 Pin Operator (^)
@@ -142,17 +137,14 @@ age   # => 28
 Pin operator `^` menggunakan **nilai yang sudah ada** dari variabel alih-alih rebinding.
 
 ```elixir
-# Tanpa pin - rebind x
 x = 1
 x = 2  # x sekarang 2
 x  # => 2
 
-# Dengan pin - match terhadap nilai yang ada
 x = 1
 ^x = 1  # Berhasil! 1 cocok dengan 1
 ^x = 2  # ** (MatchError) - 2 tidak cocok dengan 1
 
-# Use case nyata: menemukan nilai spesifik dalam list
 x = 42
 [^x, y, z] = [42, 10, 20]  # Berhasil! Elemen pertama cocok dengan 42
 y  # => 10
@@ -160,7 +152,6 @@ z  # => 20
 
 [^x, y, z] = [99, 10, 20]  # ** (MatchError) - 99 tidak cocok dengan 42
 
-# Pin dalam function clause
 defmodule Matcher do
   def check(value, ^value), do: "Sama!"
   def check(_value1, _value2), do: "Berbeda"
@@ -169,11 +160,9 @@ end
 Matcher.check(5, 5)  # => "Sama!"
 Matcher.check(5, 3)  # => "Berbeda"
 
-# Pin dalam comprehension
 numbers = [1, 2, 3, 4, 5]
 target = 3
 for ^target <- numbers, do: :found
-# => [:found] - hanya cocok dimana nilainya 3
 ```
 
 **Kapan menggunakan pin:**
@@ -199,7 +188,6 @@ Number.describe(-5)  # => "negatif"
 Number.describe(0)   # => "nol"
 Number.describe(10)  # => "positif"
 
-# Multiple guards dengan `and`
 def adult?(age) when is_integer(age) and age >= 18, do: true
 def adult?(_), do: false
 
@@ -207,7 +195,6 @@ adult?(25)    # => true
 adult?(15)    # => false
 adult?("25")  # => false (bukan integer)
 
-# Multiple guards dengan `or`
 def vowel?(letter) when letter == "a" or letter == "e" or letter == "i" do
   true
 end
@@ -220,7 +207,6 @@ vowel?("b")  # => false
 **Yang diperbolehkan dalam guards:**
 
 ```elixir
-# Pengecekan tipe
 is_atom(x)
 is_binary(x)
 is_boolean(x)
@@ -231,16 +217,12 @@ is_map(x)
 is_number(x)
 is_tuple(x)
 
-# Perbandingan
 ==, !=, ===, !==, <, >, <=, >=
 
-# Operator boolean
 and, or, not
 
-# Aritmatika
 +, -, *, /
 
-# Lainnya
 in, length, map_size, tuple_size
 ```
 
@@ -277,7 +259,6 @@ Validator.non_empty_list?([1, 2, 3])         # => true
 **Ekspresi case:**
 
 ```elixir
-# Case dengan pola
 result = {:ok, %{name: "Alice", age: 28}}
 
 message = case result do
@@ -294,7 +275,6 @@ message = case result do
     "Hasil tidak diketahui"
 end
 
-# Contoh nyata: penanganan respon HTTP
 defmodule HTTPClient do
   def handle_response(response) do
     case response do
@@ -317,7 +297,6 @@ end
 **Ekspresi cond (multiple kondisi):**
 
 ```elixir
-# Cond mengevaluasi kondisi dari atas ke bawah
 defmodule Grade do
   def letter(score) do
     cond do
@@ -334,7 +313,6 @@ Grade.letter(95)  # => "A"
 Grade.letter(75)  # => "C"
 Grade.letter(55)  # => "F"
 
-# Cond dengan kondisi kompleks
 defmodule Weather do
   def advice(temp, weather) do
     cond do
@@ -371,7 +349,6 @@ end
 Calculator.calc(:add, 5, 3)      # => 8
 Calculator.calc(:divide, 10, 0)  # => {:error, :division_by_zero}
 
-# Proses struktur data berbeda
 defmodule Formatter do
   def format({:user, name, age}) do
     "Pengguna: #{name} (#{age} tahun)"
@@ -391,10 +368,8 @@ defmodule Formatter do
 end
 
 Formatter.format({:user, "Alice", 28})
-# => "Pengguna: Alice (28 tahun)"
 
 Formatter.format(%{a: 1, b: 2})
-# => "Map dengan 2 key"
 ```
 
 **Pola rekursif:**
@@ -438,32 +413,23 @@ List adalah linked list - pahami karakteristik performanya.
 **Operasi list:**
 
 ```elixir
-# Pembuatan
 list = [1, 2, 3, 4, 5]
 
-# Prepend (O(1) - cepat!)
 [0 | list]  # => [0, 1, 2, 3, 4, 5]
 
-# Append (O(n) - lambat!)
 list ++ [6]  # => [1, 2, 3, 4, 5, 6]
 
-# Concatenation
 [1, 2] ++ [3, 4]  # => [1, 2, 3, 4]
 
-# Subtraction
 [1, 2, 3, 4] -- [2, 4]  # => [1, 3]
 
-# Akses berdasarkan indeks (O(n) - lambat!)
 Enum.at([1, 2, 3, 4], 2)  # => 3
 
-# Head dan tail
 hd([1, 2, 3])  # => 1
 tl([1, 2, 3])  # => [2, 3]
 
-# Cek keanggotaan (O(n))
 2 in [1, 2, 3]  # => true
 
-# Panjang (O(n))
 length([1, 2, 3])  # => 3
 ```
 
@@ -481,24 +447,17 @@ length([1, 2, 3])  # => 3
 **Penguasaan list comprehension:**
 
 ```elixir
-# Comprehension dasar
 for n <- 1..10, do: n * n
-# => [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-# Multiple filter
 for n <- 1..20,
     rem(n, 2) == 0,    # Hanya genap
     rem(n, 3) == 0,    # Hanya habis dibagi 3
     do: n
-# => [6, 12, 18]
 
-# Multiple generator
 for x <- [1, 2, 3],
     y <- [:a, :b],
     do: {x, y}
-# => [{1, :a}, {1, :b}, {2, :a}, {2, :b}, {3, :a}, {3, :b}]
 
-# Pattern matching dalam generator
 users = [
   %{name: "Alice", role: :admin},
   %{name: "Bob", role: :user},
@@ -506,17 +465,12 @@ users = [
 ]
 
 for %{name: name, role: :admin} <- users, do: name
-# => ["Alice", "Carol"]
 
-# Ke koleksi berbeda
 for {k, v} <- %{a: 1, b: 2, c: 3}, into: %{}, do: {v, k}
-# => %{1 => :a, 2 => :b, 3 => :c}
 
-# Reduce comprehension
 for n <- 1..5, reduce: 0 do
   sum -> sum + n
 end
-# => 15
 ```
 
 ### 2.2 Tuple
@@ -524,22 +478,16 @@ end
 Tuple menyimpan koleksi fixed-size dengan akses cepat.
 
 ```elixir
-# Pembuatan
 tuple = {:ok, "Sukses", 42}
 
-# Akses berdasarkan indeks (O(1) - cepat!)
 elem(tuple, 0)  # => :ok
 elem(tuple, 1)  # => "Sukses"
 elem(tuple, 2)  # => 42
 
-# Ukuran
 tuple_size(tuple)  # => 3
 
-# Update (membuat tuple baru)
 put_elem(tuple, 1, "Diupdate")
-# => {:ok, "Diupdate", 42}
 
-# Pattern matching (penggunaan paling umum)
 {:ok, message, code} = {:ok, "Sukses", 200}
 message  # => "Sukses"
 code     # => 200
@@ -548,15 +496,12 @@ code     # => 200
 **Pola tuple umum:**
 
 ```elixir
-# Return value
 def divide(a, b) when b != 0, do: {:ok, a / b}
 def divide(_a, 0), do: {:error, :division_by_zero}
 
-# Tagged tuple
 {:user, "Alice", 28}
 {:product, "Widget", 9.99}
 
-# Koordinat
 {10, 20}  # {x, y}
 {10, 20, 30}  # {x, y, z}
 ```
@@ -575,10 +520,8 @@ Map adalah key-value store dengan akses cepat.
 **Membuat dan mengakses map:**
 
 ```elixir
-# Dengan atom key
 person = %{name: "Alice", age: 28, city: "Portland"}
 
-# Akses
 person[:name]   # => "Alice"
 person.name     # => "Alice" (hanya bekerja dengan atom key)
 person[:email]  # => nil
@@ -586,14 +529,11 @@ person[:email]  # => nil
 Map.get(person, :name)              # => "Alice"
 Map.get(person, :email, "unknown")  # => "unknown" (default)
 
-# Dengan string key
 data = %{"name" => "Bob", "age" => 35}
 data["name"]  # => "Bob"
 
-# Mixed key (valid tapi tidak disarankan)
 mixed = %{:atom_key => 1, "string_key" => 2}
 
-# Dynamic key
 key = :dynamic
 %{key => "value"}  # => %{dynamic: "value"}
 ```
@@ -603,22 +543,15 @@ key = :dynamic
 ```elixir
 person = %{name: "Alice", age: 28}
 
-# Update key yang ada
 person = %{person | age: 29}
-# => %{name: "Alice", age: 29}
 
-# Tambah key baru (gunakan Map.put)
 person = Map.put(person, :email, "alice@example.com")
-# => %{name: "Alice", age: 29, email: "alice@example.com"}
 
-# Update multiple key
 person = %{person | name: "Alicia", age: 30}
 
-# Merge map
 defaults = %{role: "user", active: true}
 person = Map.merge(defaults, person)
 
-# Hapus key
 person = Map.delete(person, :email)
 ```
 
@@ -637,15 +570,12 @@ user = %{
   }
 }
 
-# Akses bersarang
 user[:contact][:email]  # => "alice@example.com"
 get_in(user, [:contact, :email])  # => "alice@example.com"
 
-# Update bersarang
 user = put_in(user, [:contact, :email], "newemail@example.com")
 user = update_in(user, [:contact, :phone], &("1-" <> &1))
 
-# Get dan update
 {old_email, user} = pop_in(user, [:contact, :email])
 ```
 
@@ -654,17 +584,13 @@ user = update_in(user, [:contact, :phone], &("1-" <> &1))
 ```elixir
 map = %{a: 1, b: 2, c: 3}
 
-# Key dan value
 Map.keys(map)    # => [:a, :b, :c]
 Map.values(map)  # => [1, 2, 3]
 
-# Cek key
 Map.has_key?(map, :a)  # => true
 
-# Transform value
 Map.update!(map, :a, &(&1 * 10))  # => %{a: 10, b: 2, c: 3}
 
-# Filter
 Map.take(map, [:a, :c])  # => %{a: 1, c: 3}
 Map.drop(map, [:b])      # => %{a: 1, c: 3}
 ```
@@ -681,27 +607,20 @@ Map.drop(map, [:b])      # => %{a: 1, c: 3}
 Keyword list adalah list dari tuple `{key, value}` dengan atom key.
 
 ```elixir
-# Pembuatan
 opts = [size: 10, color: "red", border: true]
-# Syntactic sugar untuk: [{:size, 10}, {:color, "red"}, {:border, true}]
 
-# Akses
 opts[:size]   # => 10
 opts[:color]  # => "red"
 
 Keyword.get(opts, :size)              # => 10
 Keyword.get(opts, :missing, "default") # => "default"
 
-# Update
 opts = Keyword.put(opts, :size, 20)
 
-# Duplicate key diperbolehkan!
 opts = [size: 10, size: 20]  # Valid!
 opts[:size]  # => 10 (occurrence pertama)
 
-# Merge
 Keyword.merge([a: 1, b: 2], [b: 3, c: 4])
-# => [a: 1, b: 3, c: 4]
 ```
 
 **Kapan menggunakan keyword list:**
@@ -724,10 +643,8 @@ defmodule Database do
 end
 
 Database.query("SELECT * FROM users")
-# => "Querying dengan timeout: 5000, pool: default"
 
 Database.query("SELECT * FROM users", timeout: 10000, pool: :replica)
-# => "Querying dengan timeout: 10000, pool: replica"
 ```
 
 ### 2.5 Struct
@@ -744,18 +661,13 @@ defmodule User do
   # defstruct [:name, :email, age: 0, role: :user]
 end
 
-# Buat struct
 user = %User{name: "Alice", email: "alice@example.com", age: 28}
-# => %User{name: "Alice", email: "alice@example.com", age: 28, role: :user}
 
-# Akses (sama seperti map)
 user.name   # => "Alice"
 user[:age]  # => 28
 
-# Update
 user = %{user | age: 29}
 
-# Pattern match
 %User{name: name, age: age} = user
 name  # => "Alice"
 ```
@@ -763,14 +675,10 @@ name  # => "Alice"
 **Mengapa struct daripada map:**
 
 ```elixir
-# Map memperbolehkan key apapun
 person = %{name: "Alice", agee: 28}  # Typo! Tidak ada error
 
-# Struct menegakkan key terdefinisi
 user = %User{name: "Alice", agee: 28}
-# ** (KeyError) key :agee not found in: %User{}
 
-# Struct memiliki pengecekan compile-time
 defmodule Service do
   def process(%User{} = user) do
     # Type-checked saat compile time
@@ -816,48 +724,35 @@ User.adult?(user)  # => true
 Range merepresentasikan urutan angka.
 
 ```elixir
-# Pembuatan
 range = 1..10
 range = 1..10//2  # Step 2 (Elixir 1.12+)
 
-# Cek keanggotaan
 5 in 1..10   # => true
 15 in 1..10  # => false
 
-# Konversi ke list
 Enum.to_list(1..5)  # => [1, 2, 3, 4, 5]
 
-# Gunakan dalam comprehension
 for n <- 1..10, do: n * n
-# => [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-# Range descending
 10..1  # Descending
 
-# Character range
 ?a..?z  # => 97..122 (nilai ASCII)
 ```
 
 ### 2.7 Memilih Struktur Data yang Tepat
 
 ```elixir
-# List - koleksi berurutan, prepending sering
 shopping_cart = ["apel", "pisang", "jeruk"]
 
-# Tuple - ukuran tetap, akses indeks cepat
 coordinate = {10.5, 20.3}
 result = {:ok, data}
 
-# Map - key-value dinamis, lookup cepat
 user = %{name: "Alice", email: "alice@example.com"}
 
-# Keyword list - opsi fungsi, urutan penting
 opts = [timeout: 5000, retry: 3]
 
-# Struct - model domain, type safety
 user = %User{name: "Alice", age: 28}
 
-# Range - urutan angka
 for page <- 1..10, do: fetch_page(page)
 ```
 
@@ -868,23 +763,15 @@ for page <- 1..10, do: fetch_page(page)
 **Capture operator (&):**
 
 ```elixir
-# Long form
 Enum.map([1, 2, 3], fn x -> x * 2 end)
-# => [2, 4, 6]
 
-# Short form dengan capture
 Enum.map([1, 2, 3], &(&1 * 2))
-# => [2, 4, 6]
 
-# Capture fungsi yang ada
 Enum.map(["hello", "world"], &String.upcase/1)
-# => ["HELLO", "WORLD"]
 
-# Multiple argumen
 add = &(&1 + &2)
 add.(5, 3)  # => 8
 
-# Capture dengan ekspresi
 multiply_by_10 = &(&1 * 10)
 multiply_by_10.(5)  # => 50
 ```
@@ -892,7 +779,6 @@ multiply_by_10.(5)  # => 50
 **Closure:**
 
 ```elixir
-# Fungsi menangkap outer scope
 defmodule Counter do
   def create(initial) do
     fn -> initial end
@@ -910,7 +796,6 @@ inc_from_5 = Counter.create_incrementer(5)
 inc_from_5.(3)  # => 8
 inc_from_5.(10) # => 15
 
-# Closure praktis
 defmodule Filter do
   def greater_than(threshold) do
     fn value -> value > threshold end
@@ -919,7 +804,6 @@ end
 
 greater_than_10 = Filter.greater_than(10)
 Enum.filter([5, 15, 8, 20, 12], greater_than_10)
-# => [15, 20, 12]
 ```
 
 ### 3.2 Named Function Lanjutan
@@ -935,7 +819,6 @@ defmodule FizzBuzz do
 end
 
 Enum.map(1..15, &FizzBuzz.convert/1)
-# => [1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]
 ```
 
 **Default argument:**
@@ -981,7 +864,6 @@ defmodule Math do
   def add(a, b, c), do: a + b + c
 end
 
-# Referensi berdasarkan nama/arity
 add_two = &Math.add/2
 add_three = &Math.add/3
 
@@ -1034,7 +916,6 @@ end
 user = MyApp.User.new("Alice", "alice@example.com")
 product = MyApp.Product.new("Widget", 9.99)
 
-# Alias untuk kemudahan
 alias MyApp.User
 user = User.new("Bob", "bob@example.com")
 ```
@@ -1067,24 +948,19 @@ end
 **Piping lanjutan:**
 
 ```elixir
-# Pipe ke argumen non-pertama (gunakan anonymous function)
 "hello"
 |> String.upcase()
 |> String.duplicate(3)
-# => "HELLOHELLOHELLO"
 
-# Ketika Anda perlu argumen non-pertama
 data
 |> process()
 |> then(&save_to_db(:users, &1))  # Pipe ke arg kedua
 
-# Pipe dengan pattern matching
 {:ok, result} =
   data
   |> validate()
   |> transform()
 
-# Debugging dalam pipeline dengan IO.inspect
 [1, 2, 3, 4, 5]
 |> Enum.map(&(&1 * 2))
 |> IO.inspect(label: "Setelah map")
@@ -1131,27 +1007,20 @@ end
 ### 4.1 If dan Unless
 
 ```elixir
-# If dasar
 if true do
   "Ya"
 else
   "Tidak"
 end
-# => "Ya"
 
-# If satu baris
 if true, do: "Ya", else: "Tidak"
 
-# Unless (kebalikan if)
 unless false do
   "Dieksekusi"
 end
-# => "Dieksekusi"
 
-# If dengan pattern matching
 result = {:ok, 42}
 if {:ok, value} = result, do: value, else: nil
-# => 42
 ```
 
 **Kapan menggunakan if/unless:**
@@ -1163,7 +1032,6 @@ if {:ok, value} = result, do: value, else: nil
 ### 4.2 Case - Pattern Matching
 
 ```elixir
-# Case dasar
 result = {:ok, "data"}
 
 case result do
@@ -1172,7 +1040,6 @@ case result do
   _ -> "Tidak diketahui"
 end
 
-# Case dengan guard
 value = 15
 
 case value do
@@ -1182,9 +1049,7 @@ case value do
   n when n < 100 -> "Positif sedang"
   _ -> "Positif besar"
 end
-# => "Positif sedang"
 
-# Case bersarang
 case File.read("data.txt") do
   {:ok, content} ->
     case Jason.decode(content) do
@@ -1200,7 +1065,6 @@ end
 ### 4.3 Cond - Multiple Kondisi
 
 ```elixir
-# Cond untuk multiple kondisi
 defmodule Weather do
   def advice(temp, humidity) do
     cond do
@@ -1218,7 +1082,6 @@ end
 ### 4.4 With - Happy Path Pipeline
 
 ```elixir
-# With untuk skenario happy path
 defmodule UserService do
   def create_user(params) do
     with {:ok, validated} <- validate(params),
@@ -1258,7 +1121,6 @@ defmodule UserService do
 end
 
 UserService.create_user(%{name: "Alice", email: "alice@example.com"})
-# => {:ok, %{name: "Alice", email: "alice@example.com", id: 123}}
 ```
 
 ## Bagian 5: Enum dan Stream
@@ -1268,56 +1130,38 @@ UserService.create_user(%{name: "Alice", email: "alice@example.com"})
 **Mapping dan filtering:**
 
 ```elixir
-# Map
 Enum.map([1, 2, 3], &(&1 * 2))
-# => [2, 4, 6]
 
-# Filter
 Enum.filter([1, 2, 3, 4, 5], &rem(&1, 2) == 0)
-# => [2, 4]
 
-# Reject (kebalikan filter)
 Enum.reject([1, 2, 3, 4, 5], &rem(&1, 2) == 0)
-# => [1, 3, 5]
 
-# Map dan filter digabung
 [1, 2, 3, 4, 5]
 |> Enum.filter(&rem(&1, 2) == 0)
 |> Enum.map(&(&1 * &1))
-# => [4, 16]
 ```
 
 **Reducing:**
 
 ```elixir
-# Sum
 Enum.sum([1, 2, 3, 4, 5])  # => 15
 
-# Custom reduce
 Enum.reduce([1, 2, 3, 4], 0, fn x, acc -> x + acc end)
-# => 10
 
-# Reduce ke map
 ["apel", "pisang", "aprikot"]
 |> Enum.reduce(%{}, fn fruit, acc ->
   first_letter = String.first(fruit)
   Map.update(acc, first_letter, [fruit], &[fruit | &1])
 end)
-# => %{"a" => ["aprikot", "apel"], "p" => ["pisang"]}
 ```
 
 **Sorting:**
 
 ```elixir
-# Sort sederhana
 Enum.sort([3, 1, 4, 1, 5, 9])
-# => [1, 1, 3, 4, 5, 9]
 
-# Sort descending
 Enum.sort([3, 1, 4], :desc)
-# => [4, 3, 1]
 
-# Sort dengan fungsi custom
 users = [
   %{name: "Bob", age: 35},
   %{name: "Alice", age: 28},
@@ -1325,25 +1169,17 @@ users = [
 ]
 
 Enum.sort_by(users, & &1.age)
-# => [%{name: "Alice", age: 28}, %{name: "Bob", age: 35}, %{name: "Carol", age: 42}]
 ```
 
 **Finding:**
 
 ```elixir
-# Cari yang pertama cocok
 Enum.find([1, 2, 3, 4, 5], &(&1 > 3))
-# => 4
 
-# Find dengan default
 Enum.find([1, 2, 3], &(&1 > 10), :not_found)
-# => :not_found
 
-# Di indeks
 Enum.at([1, 2, 3, 4], 2)
-# => 3
 
-# Take/drop
 Enum.take([1, 2, 3, 4, 5], 3)  # => [1, 2, 3]
 Enum.drop([1, 2, 3, 4, 5], 2)  # => [3, 4, 5]
 ```
@@ -1351,7 +1187,6 @@ Enum.drop([1, 2, 3, 4, 5], 2)  # => [3, 4, 5]
 **Grouping dan splitting:**
 
 ```elixir
-# Group by
 users = [
   %{name: "Alice", city: "Portland"},
   %{name: "Bob", city: "Seattle"},
@@ -1359,18 +1194,10 @@ users = [
 ]
 
 Enum.group_by(users, & &1.city)
-# => %{
-#   "Portland" => [%{name: "Alice", city: "Portland"}, %{name: "Carol", city: "Portland"}],
-#   "Seattle" => [%{name: "Bob", city: "Seattle"}]
-# }
 
-# Chunk
 Enum.chunk_every([1, 2, 3, 4, 5, 6], 2)
-# => [[1, 2], [3, 4], [5, 6]]
 
-# Split
 Enum.split([1, 2, 3, 4, 5], 3)
-# => {[1, 2, 3], [4, 5]}
 ```
 
 ### 5.2 Stream - Lazy Enumeration
@@ -1378,34 +1205,23 @@ Enum.split([1, 2, 3, 4, 5], 3)
 Stream menunda komputasi hingga diperlukan - bagus untuk dataset besar.
 
 ```elixir
-# Eager (Enum) - proses segera
 [1, 2, 3]
 |> Enum.map(&(&1 * 2))
 |> Enum.filter(&(&1 > 3))
-# => [4, 6]
-# Membuat list intermediate [2, 4, 6] lalu filter
 
-# Lazy (Stream) - tanpa list intermediate
 [1, 2, 3]
 |> Stream.map(&(&1 * 2))
 |> Stream.filter(&(&1 > 3))
 |> Enum.to_list()
-# => [4, 6]
-# Proses setiap elemen melalui seluruh pipeline
 
-# Stream infinite
 Stream.iterate(0, &(&1 + 1))
 |> Stream.take(10)
 |> Enum.to_list()
-# => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-# Cycle tanpa batas
 Stream.cycle([:a, :b, :c])
 |> Stream.take(7)
 |> Enum.to_list()
-# => [:a, :b, :c, :a, :b, :c, :a]
 
-# Praktis: proses file besar
 File.stream!("large_file.csv")
 |> Stream.map(&String.trim/1)
 |> Stream.reject(&(&1 == ""))
@@ -1425,25 +1241,19 @@ File.stream!("large_file.csv")
 ### 6.1 String Dasar
 
 ```elixir
-# Pembuatan
 str = "Halo, Dunia!"
 
-# Concatenation
 "Halo, " <> "Dunia!"  # => "Halo, Dunia!"
 
-# Interpolation
 name = "Alice"
 "Halo, #{name}!"  # => "Halo, Alice!"
 
-# Panjang
 String.length("Halo")  # => 4
 
-# Konversi case
 String.upcase("halo")    # => "HALO"
 String.downcase("HALO")  # => "halo"
 String.capitalize("halo dunia")  # => "Halo dunia"
 
-# Trimming
 String.trim("  halo  ")  # => "halo"
 String.trim_leading("  halo")  # => "halo"
 String.trim_trailing("halo  ")  # => "halo"
@@ -1452,43 +1262,33 @@ String.trim_trailing("halo  ")  # => "halo"
 ### 6.2 Operasi String
 
 ```elixir
-# Splitting
 String.split("a,b,c", ",")  # => ["a", "b", "c"]
 String.split("halo dunia")  # => ["halo", "dunia"]
 
-# Joining
 Enum.join(["a", "b", "c"], ",")  # => "a,b,c"
 
-# Replace
 String.replace("halo dunia", "dunia", "Elixir")
-# => "halo Elixir"
 
-# Contains
 String.contains?("halo dunia", "dunia")  # => true
 String.starts_with?("halo", "ha")  # => true
 String.ends_with?("dunia", "ia")  # => true
 
-# Slicing
 String.slice("halo", 0..2)  # => "hal"
 String.slice("halo", 1, 3)  # => "alo"
 
-# Reverse
 String.reverse("halo")  # => "olah"
 ```
 
 ### 6.3 Pattern Matching dengan String
 
 ```elixir
-# Match awal
 "Halo " <> rest = "Halo Dunia"
 rest  # => "Dunia"
 
-# Binary pattern matching (lanjutan)
 <<head, rest::binary>> = "Halo"
 head  # => 72 (ASCII 'H')
 rest  # => "alo"
 
-# Ekstrak karakter pertama
 String.first("Halo")  # => "H"
 String.last("Halo")   # => "o"
 ```
@@ -1528,7 +1328,6 @@ defmodule ListProcessor do
 end
 
 ListProcessor.my_map([1, 2, 3], &(&1 * 2))
-# => [2, 4, 6]
 ```
 
 ### 7.2 Pola Error Handling
@@ -1545,7 +1344,6 @@ defmodule FileHandler do
   end
 end
 
-# Caller menangani error
 case FileHandler.read_and_parse("data.json") do
   {:ok, data} -> process(data)
   {:error, _} -> handle_error()
@@ -1619,7 +1417,6 @@ end
 ### 8.1 Pengujian Dasar
 
 ```elixir
-# test/calculator_test.exs
 defmodule CalculatorTest do
   use ExUnit.Case
 
@@ -1668,19 +1465,15 @@ end
 ### 8.3 Assertion
 
 ```elixir
-# Equality
 assert 1 + 1 == 2
 refute 1 + 1 == 3
 
-# Pattern matching
 assert {:ok, value} = some_function()
 
-# Exception
 assert_raise ArithmeticError, fn ->
   1 / 0
 end
 
-# Close enough (float)
 assert_in_delta 0.1 + 0.2, 0.3, 0.0001
 ```
 
@@ -1689,13 +1482,10 @@ assert_in_delta 0.1 + 0.2, 0.3, 0.0001
 ### 9.1 Spawning Proses
 
 ```elixir
-# Spawn sebuah proses
 pid = spawn(fn -> IO.puts("Halo dari proses!") end)
 
-# Kirim pesan
 send(pid, {:hello, "Dunia"})
 
-# Terima pesan
 receive do
   {:hello, msg} -> IO.puts("Diterima: #{msg}")
 after
@@ -1719,10 +1509,8 @@ defmodule Messenger do
   end
 end
 
-# Mulai listener
 pid = spawn(&Messenger.listen/0)
 
-# Kirim pesan
 send(pid, {:say, "Halo"})
 send(pid, {:say, "Dunia"})
 send(pid, :stop)
@@ -1763,7 +1551,6 @@ defmodule Counter do
   end
 end
 
-# Penggunaan
 {:ok, _pid} = Counter.start_link(0)
 Counter.increment()  # => 1
 Counter.increment()  # => 2
@@ -1813,13 +1600,11 @@ defmodule TodoList do
   end
 end
 
-# Penggunaan
 list = TodoList.new()
 list = TodoList.add_item(list, "Beli bahan makanan")
 list = TodoList.add_item(list, "Tulis kode")
 list = TodoList.mark_done(list, 1)
 TodoList.list_pending(list)
-# => [%{id: 2, description: "Tulis kode", done: false}]
 ```
 
 ### Proyek 2: CSV Parser
@@ -1850,16 +1635,8 @@ defmodule CSVParser do
   end
 end
 
-# Penggunaan dengan data.csv:
-# name,age,city
-# Alice,28,Portland
-# Bob,35,Seattle
 
 CSVParser.parse("data.csv")
-# => [
-#   %{"name" => "Alice", "age" => "28", "city" => "Portland"},
-#   %{"name" => "Bob", "age" => "35", "city" => "Seattle"}
-# ]
 ```
 
 ### Proyek 3: Bank Account dengan GenServer
@@ -1935,13 +1712,11 @@ defmodule BankAccount do
   end
 end
 
-# Penggunaan
 {:ok, account} = BankAccount.start_link(1000.0)
 BankAccount.deposit(account, 500.0)    # => {:ok, 1500.0}
 BankAccount.withdraw(account, 200.0)   # => {:ok, 1300.0}
 BankAccount.balance(account)           # => 1300.0
 BankAccount.transaction_history(account)
-# => [{:deposit, 500.0, ~U[...]}, {:withdraw, 200.0, ~U[...]}]
 ```
 
 ## Bagian 11: Protocol dan Behaviour
@@ -1958,7 +1733,6 @@ defprotocol Drawable do
   def draw(shape)
 end
 
-# Implementasi untuk tipe berbeda
 defimpl Drawable, for: Circle do
   def draw(%Circle{radius: radius}) do
     "Menggambar lingkaran dengan radius #{radius}"
@@ -1971,7 +1745,6 @@ defimpl Drawable, for: Rectangle do
   end
 end
 
-# Penggunaan
 defmodule Circle do
   defstruct [:radius]
 end
@@ -1990,7 +1763,6 @@ Drawable.draw(rectangle)   # => "Menggambar persegi panjang 10x20"
 **Protocol built-in:**
 
 ```elixir
-# String.Chars - implementasi to_string/1
 defimpl String.Chars, for: User do
   def to_string(%User{name: name, email: email}) do
     "#{name} <#{email}>"
@@ -2001,7 +1773,6 @@ user = %User{name: "Alice", email: "alice@example.com"}
 to_string(user)  # => "Alice <alice@example.com>"
 "Pengguna: #{user}"  # => "Pengguna: Alice <alice@example.com>"
 
-# Inspect - implementasi inspect/2 (untuk debugging)
 defimpl Inspect, for: User do
   def inspect(%User{name: name}, _opts) do
     "#User<#{name}>"
@@ -2010,7 +1781,6 @@ end
 
 user  # => #User<Alice> (di IEx)
 
-# Enumerable - membuat tipe Anda bekerja dengan Enum
 defmodule MyRange do
   defstruct [:from, :to]
 end
@@ -2071,12 +1841,10 @@ defimpl Serializable, for: Product do
   end
 end
 
-# Gunakan dengan Jason untuk encoding JSON
 user = %User{name: "Alice", email: "alice@example.com", age: 28}
 user
 |> Serializable.serialize()
 |> Jason.encode!()
-# => "{\"type\":\"user\",\"data\":{\"name\":\"Alice\",\"email\":\"alice@example.com\",\"age\":28}}"
 ```
 
 ### 11.2 Behaviour - Mendefinisikan Kontrak
@@ -2091,7 +1859,6 @@ defmodule Parser do
   @callback format(term()) :: String.t()
 end
 
-# Implementasi behaviour
 defmodule JSONParser do
   @behaviour Parser
 
@@ -2120,7 +1887,6 @@ defmodule CSVParser do
   end
 end
 
-# Gunakan parser secara bergantian
 defmodule DataProcessor do
   def process(data, parser_module) do
     with {:ok, parsed} <- parser_module.parse(data) do
@@ -2135,7 +1901,6 @@ end
 **GenServer adalah behaviour:**
 
 ```elixir
-# Ketika Anda use GenServer, Anda mengimplementasi behaviournya
 defmodule MyServer do
   use GenServer
 
@@ -2167,19 +1932,15 @@ end
 **Membaca file:**
 
 ```elixir
-# Baca seluruh file
 {:ok, content} = File.read("data.txt")
 
-# Baca dengan error handling
 case File.read("data.txt") do
   {:ok, content} -> IO.puts(content)
   {:error, reason} -> IO.puts("Error: #{reason}")
 end
 
-# Read! - raise jika error
 content = File.read!("data.txt")
 
-# Baca baris demi baris (efisien untuk file besar)
 File.stream!("large_file.txt")
 |> Stream.map(&String.trim/1)
 |> Enum.each(&IO.puts/1)
@@ -2188,16 +1949,12 @@ File.stream!("large_file.txt")
 **Menulis file:**
 
 ```elixir
-# Tulis seluruh konten
 File.write("output.txt", "Halo, Dunia!")
 
-# Write! - raise jika error
 File.write!("output.txt", "Halo, Dunia!")
 
-# Append ke file
 File.write("log.txt", "Entry baru\n", [:append])
 
-# Tulis list baris
 lines = ["Baris 1", "Baris 2", "Baris 3"]
 content = Enum.join(lines, "\n")
 File.write("output.txt", content)
@@ -2206,51 +1963,36 @@ File.write("output.txt", content)
 **Operasi file:**
 
 ```elixir
-# Cek apakah file ada
 File.exists?("data.txt")  # => true/false
 
-# Dapatkan info file
 {:ok, info} = File.stat("data.txt")
 info.size  # Ukuran file dalam byte
 
-# Copy file
 File.cp("source.txt", "destination.txt")
 
-# Hapus file
 File.rm("temp.txt")
 
-# Buat direktori
 File.mkdir("new_folder")
 
-# List direktori
 {:ok, files} = File.ls(".")
 files  # => ["file1.txt", "file2.txt", ...]
 
-# Baca direktori secara rekursif
 Path.wildcard("**/*.ex")
-# => ["lib/app.ex", "lib/utils.ex", "test/app_test.exs", ...]
 ```
 
 ### 12.2 Operasi Path
 
 ```elixir
-# Join path
 Path.join(["home", "user", "documents", "file.txt"])
-# => "home/user/documents/file.txt"
 
-# Dapatkan nama direktori
 Path.dirname("/home/user/file.txt")  # => "/home/user"
 
-# Dapatkan nama file
 Path.basename("/home/user/file.txt")  # => "file.txt"
 
-# Dapatkan ekstensi
 Path.extname("file.txt")  # => ".txt"
 
-# Expand relative path
 Path.expand("../file.txt")  # => "/full/path/to/file.txt"
 
-# Cek apakah absolute
 Path.absname?("/home/user")  # => true
 Path.absname?("relative")    # => false
 ```
@@ -2258,20 +2000,14 @@ Path.absname?("relative")    # => false
 ### 12.3 Perintah Sistem
 
 ```elixir
-# Jalankan perintah sistem
 System.cmd("ls", ["-la"])
-# => {"file listing...", 0}
 
-# Dapatkan variabel lingkungan
 System.get_env("HOME")  # => "/home/user"
 
-# Set variabel lingkungan
 System.put_env("MY_VAR", "value")
 
-# Dapatkan current working directory
 File.cwd!()  # => "/current/directory"
 
-# Ganti direktori
 File.cd("new_directory")
 ```
 
@@ -2282,20 +2018,15 @@ File.cd("new_directory")
 **Comprehension bersarang:**
 
 ```elixir
-# Generate semua koordinat dalam grid
 for x <- 1..3, y <- 1..3 do
   {x, y}
 end
-# => [{1, 1}, {1, 2}, {1, 3}, {2, 1}, {2, 2}, {2, 3}, {3, 1}, {3, 2}, {3, 3}]
 
-# Dengan filter
 for x <- 1..5,
     y <- 1..5,
     x + y == 6,
     do: {x, y}
-# => [{1, 5}, {2, 4}, {3, 3}, {4, 2}, {5, 1}]
 
-# Multiple generator dengan pattern matching
 users = [
   %{name: "Alice", posts: [%{title: "Post 1"}, %{title: "Post 2"}]},
   %{name: "Bob", posts: [%{title: "Post 3"}]}
@@ -2304,13 +2035,11 @@ users = [
 for %{name: name, posts: posts} <- users,
     %{title: title} <- posts,
     do: {name, title}
-# => [{"Alice", "Post 1"}, {"Alice", "Post 2"}, {"Bob", "Post 3"}]
 ```
 
 **Comprehension dengan reduce:**
 
 ```elixir
-# Bangun map dari list
 users = [
   %{id: 1, name: "Alice"},
   %{id: 2, name: "Bob"}
@@ -2319,35 +2048,24 @@ users = [
 for %{id: id, name: name} <- users, into: %{} do
   {id, name}
 end
-# => %{1 => "Alice", 2 => "Bob"}
 
-# Sum dengan opsi reduce
 for n <- 1..10, reduce: 0 do
   sum -> sum + n
 end
-# => 55
 
-# Bangun hasil terakumulasi
 for word <- ["halo", "dunia"], reduce: "" do
   acc -> acc <> String.upcase(word) <> " "
 end
-# => "HALO DUNIA "
 ```
 
 ### 13.2 Bitstring Comprehension
 
 ```elixir
-# Proses data binary
 for <<byte <- "Halo">>, do: byte
-# => [72, 97, 108, 111] (nilai ASCII)
 
-# Filter byte
 for <<byte <- "Halo">>, byte > 100, do: byte
-# => [108, 111] (huruf > 'd')
 
-# Konversi ke uppercase binary
 for <<char <- "halo">>, into: "", do: <<char - 32>>
-# => "HALO"
 ```
 
 ## Bagian 14: Debugging dan Troubleshooting
@@ -2355,7 +2073,6 @@ for <<char <- "halo">>, into: "", do: <<char - 32>>
 ### 14.1 IO.inspect - Sahabat Terbaik Anda
 
 ```elixir
-# Inspect value dalam pipeline
 [1, 2, 3, 4, 5]
 |> Enum.map(&(&1 * 2))
 |> IO.inspect(label: "Setelah map")
@@ -2363,7 +2080,6 @@ for <<char <- "halo">>, into: "", do: <<char - 32>>
 |> IO.inspect(label: "Setelah filter")
 |> Enum.sum()
 
-# Inspect mengembalikan nilai, jadi tidak merusak pipeline
 result = [1, 2, 3]
          |> IO.inspect(label: "Input")
          |> Enum.sum()
@@ -2384,37 +2100,25 @@ defmodule Debug do
   defp finalize(data), do: data + 10
 end
 
-# Di IEx
 Debug.complex_function(5)
-# Berhenti di pry, Anda bisa inspect variabel, coba kode, dll.
 ```
 
 ### 14.3 Pesan Error Umum
 
 ```elixir
-# MatchError
 {:ok, value} = {:error, :reason}
-# ** (MatchError) no match of right hand side value: {:error, :reason}
 
-# FunctionClauseError
 defmodule Math do
   def double(n) when is_number(n), do: n * 2
 end
 
 Math.double("bukan angka")
-# ** (FunctionClauseError) no function clause matching
 
-# ArgumentError
 Enum.at([1, 2, 3], "indeks tidak valid")
-# ** (ArgumentError) ...
 
-# KeyError
 %{a: 1} |> Map.fetch!(:b)
-# ** (KeyError) key :b not found
 
-# ArithmeticError
 1 / 0
-# ** (ArithmeticError) bad argument in arithmetic expression
 ```
 
 ## Bagian 15: Deep Dive Proyek Mix
@@ -2422,7 +2126,6 @@ Enum.at([1, 2, 3], "indeks tidak valid")
 ### 15.1 Konfigurasi Proyek
 
 ```elixir
-# mix.exs
 defmodule MyApp.MixProject do
   use Mix.Project
 
@@ -2466,7 +2169,6 @@ end
 ### 15.2 Task Mix
 
 ```bash
-# Task umum
 mix compile        # Compile proyek
 mix test           # Jalankan test
 mix format         # Format kode
@@ -2474,26 +2176,20 @@ mix deps.get       # Dapatkan dependensi
 mix deps.update    # Update dependensi
 mix clean          # Hapus build artifact
 
-# Jalankan test spesifik
 mix test test/my_test.exs
 
-# Jalankan test dengan coverage
 mix test --cover
 
-# Generate dokumentasi
 mix docs
 
-# Shell interaktif dengan proyek dimuat
 iex -S mix
 
-# Jalankan dalam mode produksi
 MIX_ENV=prod mix compile
 ```
 
 ### 15.3 Custom Mix Task
 
 ```elixir
-# lib/mix/tasks/hello.ex
 defmodule Mix.Tasks.Hello do
   use Mix.Task
 
@@ -2503,8 +2199,6 @@ defmodule Mix.Tasks.Hello do
   end
 end
 
-# Jalankan:
-# mix hello
 ```
 
 ## Bagian 16: Dokumentasi dengan ExDoc
@@ -2564,13 +2258,11 @@ end
 ### 16.2 Doctest
 
 ```elixir
-# Contoh dalam @doc adalah test yang bisa dieksekusi!
 defmodule MathTest do
   use ExUnit.Case
   doctest Calculator  # Jalankan semua contoh dalam docs Calculator
 end
 
-# Jalankan dengan: mix test
 ```
 
 ## Latihan
@@ -2607,13 +2299,13 @@ Selamat! Anda telah menguasai fundamental Elixir (cakupan 0-60%).
 
 **Lanjutkan perjalanan Anda:**
 
-1. **[Tutorial Intermediate](/belajar/swe/prog-lang/elixir/tutorials/intermediate)** - Deep dive OTP (60-85%)
+1. **[Tutorial Intermediate](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/elixir/tutorials/intermediate)** - Deep dive OTP (60-85%)
    - Pola GenServer
    - Supervision tree
    - Framework Phoenix
    - Pola database Ecto
 
-2. **[Cookbook](/belajar/swe/prog-lang/elixir/how-to/cookbook)** - Solusi untuk masalah umum
+2. **[Cookbook](/id/belajar/rekayasa-perangkat-lunak/bahasa-pemrograman/elixir/how-to/cookbook)** - Solusi untuk masalah umum
 3. **Bangun Proyek** - Terapkan pengetahuan Anda ke aplikasi nyata
 
 **Anda sekarang siap untuk:**

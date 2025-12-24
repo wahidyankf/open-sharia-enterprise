@@ -29,7 +29,6 @@ class User(BaseModel):
     tags: List[str] = Field(default_factory=list, max_items=10)
     created_at: datetime
 
-# Valid data
 user = User(
     id=1,
     username="john_doe",
@@ -40,7 +39,6 @@ user = User(
     created_at=datetime.now()
 )
 
-# Invalid data raises ValidationError
 try:
     invalid_user = User(
         id=1,
@@ -100,7 +98,6 @@ class PasswordPolicy(BaseModel):
 
         return values
 
-# Usage
 valid_password = PasswordPolicy(
     password='SecureP@ss123',
     confirm_password='SecureP@ss123'
@@ -142,7 +139,6 @@ class Company(BaseModel):
             raise ValueError('Registration must be REG-XXXXXX format')
         return v
 
-# Usage
 company = Company(
     name="Tech Corp",
     registration_number="REG-123456",
@@ -199,7 +195,6 @@ class UserPermissions(BaseModel):
             raise ValueError('Guests cannot have edit permission')
         return v
 
-# Valid configurations
 admin = UserPermissions(
     username="admin",
     role=UserRole.ADMIN,
@@ -213,7 +208,6 @@ user = UserPermissions(
     can_edit=True
 )
 
-# Invalid - guest trying to edit
 try:
     invalid = UserPermissions(
         username="guest",
@@ -259,7 +253,6 @@ class Vector:
         dz = self.end.z - self.start.z
         self.magnitude = (dx**2 + dy**2 + dz**2) ** 0.5
 
-# Usage
 vector = Vector(
     start=Point(x=0, y=0, z=0),
     end=Point(x=3, y=4, z=0)
@@ -290,20 +283,8 @@ class Product(BaseModel):
             }
         }
 
-# Generate JSON Schema
 schema = Product.schema()
 print(json.dumps(schema, indent=2))
-# {
-#   "title": "Product",
-#   "type": "object",
-#   "properties": {
-#     "id": {"title": "Id", "description": "Unique product identifier", "type": "integer"},
-#     "name": {"title": "Name", "description": "Product name", "minLength": 1, "maxLength": 200, "type": "string"},
-#     "price": {"title": "Price", "description": "Product price in USD", "exclusiveMinimum": 0, "type": "number"},
-#     "in_stock": {"title": "In Stock", "description": "Stock availability", "default": true, "type": "boolean"}
-#   },
-#   "required": ["id", "name", "price"]
-# }
 ```
 
 ## How It Works
@@ -421,7 +402,6 @@ class NormalizedUser(BaseModel):
             return v.strip().lower()
         return v
 
-# Usage
 user = NormalizedUser(
     username="  JohnDoe  ",  # Becomes "johndoe"
     email="  JOHN@EXAMPLE.COM  "  # Becomes "john@example.com"
@@ -435,7 +415,6 @@ user = NormalizedUser(
 **Problem**: Validators shouldn't have side effects.
 
 ```python
-# ❌ Bad: Mutating external state
 class BadModel(BaseModel):
     value: int
 
@@ -445,7 +424,6 @@ class BadModel(BaseModel):
         save_to_database(v)  # Don't do this!
         return v
 
-# ✅ Good: Pure validation, side effects elsewhere
 class GoodModel(BaseModel):
     value: int
 
@@ -455,7 +433,6 @@ class GoodModel(BaseModel):
             raise ValueError('Value must be non-negative')
         return v
 
-# Handle side effects after validation
 model = GoodModel(value=42)
 save_to_database(model.value)  # Side effect after validation
 ```
@@ -465,7 +442,6 @@ save_to_database(model.value)  # Side effect after validation
 **Problem**: Validator must return the value.
 
 ```python
-# ❌ Bad: Forgot to return
 class BadModel(BaseModel):
     name: str
 
@@ -475,7 +451,6 @@ class BadModel(BaseModel):
             raise ValueError('Name too short')
         # Forgot to return v!
 
-# ✅ Good: Always return
 class GoodModel(BaseModel):
     name: str
 
@@ -491,7 +466,6 @@ class GoodModel(BaseModel):
 **Problem**: Validators should validate, not transform (use pre=True cautiously).
 
 ```python
-# ❌ Bad: Transforming in regular validator
 class BadModel(BaseModel):
     age: int
 
@@ -499,7 +473,6 @@ class BadModel(BaseModel):
     def make_positive(cls, v):
         return abs(v)  # Silently changing data!
 
-# ✅ Good: Validate and reject invalid data
 class GoodModel(BaseModel):
     age: int
 
@@ -509,7 +482,6 @@ class GoodModel(BaseModel):
             raise ValueError('Age must be positive')
         return v
 
-# ✅ Acceptable: Explicit normalization with pre=True
 class NormalizingModel(BaseModel):
     age: int
 
@@ -526,13 +498,11 @@ class NormalizingModel(BaseModel):
 **Problem**: Catching generic Exception hides validation details.
 
 ```python
-# ❌ Bad: Generic exception handling
 try:
     user = User(**user_data)
 except Exception as e:  # Too broad!
     print("Something went wrong")
 
-# ✅ Good: Specific error handling
 from pydantic import ValidationError
 
 try:
@@ -548,18 +518,15 @@ except ValidationError as e:
 **Problem**: Validating already-validated data wastes resources.
 
 ```python
-# ❌ Bad: Re-validating internal data
 def process_user(user_dict: dict):
     # Data already validated when created!
     user = User(**user_dict)  # Wasteful re-validation
     return user.username
 
-# ✅ Good: Skip validation for trusted data
 def process_user(user: User):
     # Accept already-validated User object
     return user.username
 
-# ✅ Alternative: Use construct for trusted data
 def load_from_database(user_dict: dict) -> User:
     # Skip validation for database data
     return User.construct(**user_dict)

@@ -31,14 +31,6 @@ def calculate_total(items):
         total += item['price'] * item['quantity']
     return total
 
-# When breakpoint hits:
-# (Pdb) p item           # Print variable
-# (Pdb) pp items         # Pretty print
-# (Pdb) l                # List source code
-# (Pdb) n                # Next line
-# (Pdb) s                # Step into function
-# (Pdb) c                # Continue execution
-# (Pdb) q                # Quit debugger
 ```
 
 ### Common pdb Commands
@@ -84,9 +76,6 @@ def process_items(items):
 
         process_item(item)
 
-# ✅ Conditional breakpoint in pdb
-# (Pdb) b 10, item['price'] > 1000
-# Breakpoint 1 at line 10
 ```
 
 ## ipdb for Enhanced Debugging
@@ -94,7 +83,6 @@ def process_items(items):
 ### Using ipdb
 
 ```python
-# Install: pip install ipdb
 import ipdb
 
 def complex_function(data):
@@ -108,7 +96,6 @@ def complex_function(data):
     result = process_data(data)
     return result
 
-# ✅ Post-mortem debugging
 try:
     risky_operation()
 except Exception:
@@ -122,7 +109,6 @@ except Exception:
 ```python
 import logging
 
-# ✅ Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -130,7 +116,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# ✅ Log messages
 def process_payment(amount):
     logger.debug(f"Processing payment: ${amount}")
     logger.info(f"Payment initiated: ${amount}")
@@ -145,12 +130,6 @@ def process_payment(amount):
         logger.exception("Unexpected error during payment")
         raise
 
-# Log levels (lowest to highest):
-# DEBUG: Detailed diagnostic info
-# INFO: General informational messages
-# WARNING: Warning messages
-# ERROR: Error messages
-# CRITICAL: Critical errors
 ```
 
 ### Logging Configuration
@@ -159,7 +138,6 @@ def process_payment(amount):
 import logging
 import logging.handlers
 
-# ✅ Advanced configuration
 def setup_logging():
     # Create logger
     logger = logging.getLogger('myapp')
@@ -205,7 +183,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# ✅ Include context in logs
 def process_user(user_id, action):
     logger.info(
         "Processing user action",
@@ -216,7 +193,6 @@ def process_user(user_id, action):
         }
     )
 
-# ✅ With structlog for better structure
 import structlog
 
 structlog.configure(
@@ -228,7 +204,6 @@ structlog.configure(
 
 log = structlog.get_logger()
 log.info("user_action", user_id="123", action="login", success=True)
-# Output: {"event": "user_action", "user_id": "123", "action": "login", "success": true, "timestamp": "2025-12-17T13:19:07"}
 ```
 
 ### Logging Best Practices
@@ -238,7 +213,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# ✅ Log at appropriate levels
 def process_order(order_id):
     logger.debug(f"Starting order processing: {order_id}")
 
@@ -261,19 +235,14 @@ def process_order(order_id):
         logger.exception(f"Unexpected error processing order {order_id}")
         raise
 
-# ✅ Use logger.exception for exceptions
 try:
     risky_operation()
 except Exception:
     logger.exception("Operation failed")  # Includes stack trace
 
-# ❌ Don't log sensitive data
 logger.info(f"User login: {username}")  # OK
-# logger.debug(f"Password: {password}")  # NEVER!
 
-# ✅ Use lazy formatting
 logger.debug("Processing %d items", item_count)  # Formatted only if logged
-# logger.debug(f"Processing {item_count} items")  # Formatted always
 ```
 
 ## Debugging Strategies
@@ -281,7 +250,6 @@ logger.debug("Processing %d items", item_count)  # Formatted only if logged
 ### Print Debugging
 
 ```python
-# ✅ Temporary debug prints (remove before commit)
 def calculate_discount(price, customer_type):
     print(f"DEBUG: price={price}, customer_type={customer_type}")
 
@@ -293,7 +261,6 @@ def calculate_discount(price, customer_type):
     print(f"DEBUG: no discount")
     return 0
 
-# ✅ Better: Use logging for debug prints
 logger.debug(f"price={price}, customer_type={customer_type}")
 ```
 
@@ -309,8 +276,6 @@ def calculate_total(items):
 
     return total
 
-# Assertions disabled with python -O (optimized mode)
-# Use for development checks, not production validation
 ```
 
 ### Debugging Decorators
@@ -321,7 +286,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# ✅ Debug decorator
 def debug(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -342,9 +306,6 @@ def debug(func):
 def calculate_total(price, quantity):
     return price * quantity
 
-# Logs:
-# Calling calculate_total(10, 5)
-# calculate_total returned 50
 ```
 
 ## Profiling
@@ -355,7 +316,6 @@ def calculate_total(price, quantity):
 import cProfile
 import pstats
 
-# ✅ Profile function
 def profile_function():
     cProfile.run('expensive_operation()', 'profile_stats')
 
@@ -365,7 +325,6 @@ def profile_function():
     stats.sort_stats('cumulative')
     stats.print_stats(10)  # Top 10 functions
 
-# ✅ Profile with decorator
 import functools
 import time
 
@@ -384,9 +343,6 @@ def slow_function():
     time.sleep(1)
     return "done"
 
-# ✅ Line profiling with line_profiler
-# Install: pip install line_profiler
-# Usage: kernprof -l -v script.py
 
 @profile  # Added by line_profiler
 def function_to_profile():
@@ -399,7 +355,6 @@ def function_to_profile():
 ### Memory Profiling
 
 ```python
-# Install: pip install memory_profiler
 from memory_profiler import profile
 
 @profile
@@ -407,8 +362,6 @@ def memory_intensive():
     big_list = [i for i in range(1000000)]
     return sum(big_list)
 
-# Run: python -m memory_profiler script.py
-# Shows memory usage line by line
 ```
 
 ## Exception Debugging
@@ -424,7 +377,6 @@ def risky_operation():
     y = 0
     return x / y  # Raises ZeroDivisionError
 
-# ✅ Automatic post-mortem on uncaught exception
 def main():
     try:
         risky_operation()
@@ -433,7 +385,6 @@ def main():
         traceback.print_exc()
         pdb.post_mortem()  # Debug at exception point
 
-# ✅ Global exception handler
 def debug_hook(type, value, tb):
     if hasattr(sys, 'ps1') or not sys.stderr.isatty():
         # Interactive mode or no terminal
@@ -463,7 +414,6 @@ def test_logging_output(caplog):
     assert len(caplog.records) == 1
     assert caplog.records[0].levelname == "INFO"
 
-# ✅ Test specific logger
 def test_app_logger(caplog):
     with caplog.at_level(logging.DEBUG, logger='myapp'):
         app_logger = logging.getLogger('myapp')

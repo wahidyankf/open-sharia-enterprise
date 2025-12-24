@@ -39,48 +39,37 @@ myproject/
 ### Absolute Imports (Preferred)
 
 ```python
-# ✅ Absolute imports - explicit and clear
 from mypackage import module1
 from mypackage.subpackage import module3
 from mypackage.module2 import SomeClass
 
-# Works from anywhere in the project
-# Clear where imports come from
 ```
 
 ### Relative Imports
 
 ```python
-# ✅ Relative imports within package
-# mypackage/module1.py
 from . import module2         # Same level
 from .subpackage import module3  # Subdirectory
 from ..otherpackage import module4  # Parent directory
 
-# ⚠️ Only work inside packages (files with __init__.py)
-# ❌ Don't work in scripts run directly
 ```
 
 ### Import Patterns
 
 ```python
-# ✅ Import module
 import mypackage.module1
 result = mypackage.module1.function()
 
-# ✅ Import specific items
 from mypackage.module1 import function, SomeClass
 result = function()
 obj = SomeClass()
 
-# ✅ Import with alias
 import mypackage.very_long_module_name as vlmn
 vlmn.function()
 
 from mypackage.module1 import VeryLongClassName as VLCN
 obj = VLCN()
 
-# ❌ Wildcard imports (avoid)
 from mypackage.module1 import *  # Pollutes namespace
 ```
 
@@ -89,44 +78,33 @@ from mypackage.module1 import *  # Pollutes namespace
 ### Empty **init**.py
 
 ```python
-# mypackage/__init__.py
-# Empty file just marks directory as package
+
 ```
 
 ### Exposing Package API
 
 ```python
-# mypackage/__init__.py
-# ✅ Expose public API
 from .module1 import PublicClass, public_function
 from .module2 import AnotherClass
 
-# Users can import from package directly
-# from mypackage import PublicClass
 
-# ✅ Define __all__ for star imports
 __all__ = ["PublicClass", "public_function", "AnotherClass"]
 ```
 
 ### Package Initialization
 
 ```python
-# mypackage/__init__.py
-# ✅ Package-level configuration
 import logging
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
-# ✅ Version info
 __version__ = "1.0.0"
 
-# ✅ Lazy imports (performance)
 def _import_heavy_module():
     from . import heavy_module
     return heavy_module
 
-# Only imported when actually used
 ```
 
 ## Avoiding Circular Imports
@@ -134,14 +112,11 @@ def _import_heavy_module():
 ### The Problem
 
 ```python
-# ❌ Circular import
-# module_a.py
 from module_b import function_b
 
 def function_a():
     return function_b()
 
-# module_b.py
 from module_a import function_a  # Circular!
 
 def function_b():
@@ -151,33 +126,24 @@ def function_b():
 ### Solutions
 
 ```python
-# ✅ Solution 1: Restructure code
-# shared.py
 def shared_function():
     return "shared"
 
-# module_a.py
 from shared import shared_function
 def function_a():
     return shared_function()
 
-# module_b.py
 from shared import shared_function
 def function_b():
     return shared_function()
 
-# ✅ Solution 2: Import inside function
-# module_a.py
 def function_a():
     from module_b import function_b  # Delayed import
     return function_b()
 
-# ✅ Solution 3: Dependency injection
-# module_a.py
 def function_a(dependency):
     return dependency()
 
-# Usage
 from module_b import function_b
 result = function_a(function_b)
 ```
@@ -211,10 +177,6 @@ myproject/
 ├── setup.py or pyproject.toml
 └── README.md
 
-# ✅ Advantages:
-# - Forces installation for testing
-# - Clear separation of source and other files
-# - Prevents accidentally importing from wrong location
 ```
 
 ### Application Layout
@@ -245,8 +207,6 @@ myapp/
 ## **main**.py for Entry Points
 
 ```python
-# mypackage/__main__.py
-# ✅ Allows: python -m mypackage
 
 def main():
     print("Running mypackage")
@@ -255,10 +215,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Or in __init__.py
-# if __name__ == "__main__":
-#     from .cli import main
-#     main()
 ```
 
 ## Managing Dependencies
@@ -266,27 +222,22 @@ if __name__ == "__main__":
 ### Import Order (PEP 8)
 
 ```python
-# ✅ Standard library imports
 import os
 import sys
 from pathlib import Path
 
-# ✅ Third-party imports
 import numpy as np
 import requests
 from flask import Flask
 
-# ✅ Local application imports
 from mypackage import module1
 from mypackage.utils import helper
 
-# Use blank lines to separate groups
 ```
 
 ### Conditional Imports
 
 ```python
-# ✅ Optional dependencies
 try:
     import pandas as pd
     HAS_PANDAS = True
@@ -299,7 +250,6 @@ def process_data(data):
     else:
         return process_without_pandas(data)
 
-# ✅ Type checking imports
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -313,21 +263,9 @@ def function(obj: 'HeavyClass'):  # String annotation
 ## Namespace Packages
 
 ```python
-# ✅ Namespace packages (PEP 420)
-# Allow splitting package across multiple directories
-# No __init__.py needed
 
-# Directory 1:
-# mynamespace/
-#   └── package1/
-#       └── module.py
 
-# Directory 2:
-# mynamespace/
-#   └── package2/
-#       └── module.py
 
-# Both can be imported:
 from mynamespace.package1 import module
 from mynamespace.package2 import module
 ```
@@ -337,23 +275,17 @@ from mynamespace.package2 import module
 ### Keep **init**.py Minimal
 
 ```python
-# mypackage/__init__.py
-# ✅ Minimal - just expose public API
 from .core import MainClass, main_function
 from .utils import helper_function
 
 __version__ = "1.0.0"
 __all__ = ["MainClass", "main_function", "helper_function"]
 
-# ❌ Don't put business logic in __init__.py
-# ❌ Don't import everything from all modules
 ```
 
 ### Use Explicit Exports
 
 ```python
-# module.py
-# ✅ Define what's public
 __all__ = ["public_function", "PublicClass"]
 
 def public_function():
@@ -372,7 +304,6 @@ class _PrivateClass:
 ### Organize by Feature, Not Type
 
 ```python
-# ❌ Organize by type
 myapp/
 ├── models/
 │   ├── user.py
@@ -384,7 +315,6 @@ myapp/
     ├── user.py
     └── order.py
 
-# ✅ Organize by feature
 myapp/
 ├── users/
 │   ├── __init__.py
@@ -413,8 +343,6 @@ myproject/
         ├── __init__.py
         └── test_api.py
 
-# ✅ Mirror source structure in tests
-# tests/test_mypackage_module1.py tests src/mypackage/module1.py
 ```
 
 ## Package Distribution

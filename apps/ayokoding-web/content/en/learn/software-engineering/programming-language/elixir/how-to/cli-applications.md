@@ -38,7 +38,6 @@ Use **escript** to build self-contained executable files, **OptionParser** for a
 Configure escript in mix.exs:
 
 ```elixir
-# mix.exs
 defmodule MyCLI.MixProject do
   use Mix.Project
 
@@ -61,7 +60,6 @@ end
 Main module:
 
 ```elixir
-# lib/my_cli.ex
 defmodule MyCLI do
   @moduledoc """
   Command-line interface for My Application.
@@ -564,7 +562,6 @@ defmodule TableCLI do
   end
 end
 
-# Usage
 TableCLI.print_table(
   ["Name", "Age", "City"],
   [
@@ -630,7 +627,6 @@ end
 ### 2. Testing CLI Applications
 
 ```elixir
-# test/my_cli_test.exs
 defmodule MyCLITest do
   use ExUnit.Case
 
@@ -675,16 +671,12 @@ end
 ### 3. Building for Distribution
 
 ```bash
-# Build escript
 mix escript.build
 
-# Make executable
 chmod +x my_cli
 
-# Install to system path
 sudo cp my_cli /usr/local/bin/
 
-# Or use Mix task for releases
 mix release
 ```
 

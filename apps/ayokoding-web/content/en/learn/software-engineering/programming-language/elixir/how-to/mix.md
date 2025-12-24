@@ -44,17 +44,13 @@ Use **Mix** for complete project lifecycle management from creation to deploymen
 ### 1. Create New Project
 
 ```bash
-# Regular application
 mix new my_app
 cd my_app
 
-# Supervised application (with supervision tree)
 mix new my_app --sup
 
-# Library (no supervisor)
 mix new my_library --module MyLibrary
 
-# Umbrella project (monorepo)
 mix new my_umbrella --umbrella
 ```
 
@@ -143,24 +139,18 @@ end
 ### 3. Dependency Management
 
 ```bash
-# Install dependencies
 mix deps.get
 
-# Update dependencies
 mix deps.update --all
 mix deps.update phoenix ecto  # Specific packages
 
-# Check outdated dependencies
 mix hex.outdated
 
-# View dependency tree
 mix deps.tree
 
-# Clean dependencies
 mix deps.clean --all
 mix deps.clean --unused
 
-# Compile dependencies
 mix deps.compile
 ```
 
@@ -195,33 +185,27 @@ end
 ### 4. Common Mix Commands
 
 ```bash
-# Compilation
 mix compile                    # Compile project
 mix compile --force           # Force recompilation
 mix clean                     # Clean build artifacts
 
-# Testing
 mix test                      # Run all tests
 mix test test/my_test.exs     # Run specific test file
 mix test test/my_test.exs:42  # Run test at line 42
 mix test --trace              # Run with detailed trace
 mix test --cover              # Run with coverage
 
-# Code Quality
 mix format                    # Format code
 mix format --check-formatted  # Check if formatted
 mix credo                     # Static code analysis
 mix dialyzer                  # Type checking
 
-# Interactive Console
 mix run -e 'IO.puts("Hello")' # Run expression
 iex -S mix                    # Start IEx with project loaded
 
-# Documentation
 mix docs                      # Generate HTML docs
 mix hex.docs open             # Open published docs
 
-# Releases
 mix release                   # Build production release
 mix release --overwrite       # Overwrite existing release
 ```
@@ -231,7 +215,6 @@ mix release --overwrite       # Overwrite existing release
 ### 1. Custom Mix Tasks
 
 ```elixir
-# lib/mix/tasks/hello.ex
 defmodule Mix.Tasks.Hello do
   use Mix.Task
 
@@ -255,7 +238,6 @@ defmodule Mix.Tasks.Hello do
   end
 end
 
-# Run with: mix hello Alice
 ```
 
 **Complex task with options:**
@@ -345,7 +327,6 @@ end
 ### 3. Environment-Specific Configuration
 
 ```elixir
-# config/config.exs
 import Config
 
 config :my_app,
@@ -353,12 +334,10 @@ config :my_app,
 
 config :logger, level: :info
 
-# Import environment specific config
 import_config "#{config_env()}.exs"
 ```
 
 ```elixir
-# config/dev.exs
 import Config
 
 config :my_app, MyApp.Repo,
@@ -373,13 +352,10 @@ config :logger, level: :debug
 ```
 
 ```elixir
-# config/prod.exs
 import Config
 
 config :logger, level: :info
 
-# Runtime configuration
-# config/runtime.exs
 import Config
 
 if config_env() == :prod do
@@ -409,11 +385,9 @@ end
 ### 4. Umbrella Projects
 
 ```bash
-# Create umbrella
 mix new my_umbrella --umbrella
 cd my_umbrella
 
-# Create apps within umbrella
 cd apps
 mix new web_app --sup
 mix new data_layer --sup
@@ -435,7 +409,6 @@ my_umbrella/
 **Dependencies between apps:**
 
 ```elixir
-# apps/web_app/mix.exs
 defp deps do
   [
     {:business_logic, in_umbrella: true},
@@ -443,7 +416,6 @@ defp deps do
   ]
 end
 
-# apps/business_logic/mix.exs
 defp deps do
   [
     {:data_layer, in_umbrella: true}
@@ -454,16 +426,12 @@ end
 **Umbrella commands:**
 
 ```bash
-# Run command in all apps
 mix test
 
-# Run command in specific app
 mix cmd --app web_app mix test
 
-# Compile specific app
 mix compile --app data_layer
 
-# Get dependencies for all apps
 mix deps.get
 ```
 
@@ -472,7 +440,6 @@ mix deps.get
 ### 1. Mix Release Configuration
 
 ```elixir
-# mix.exs
 def project do
   [
     releases: [
@@ -493,42 +460,32 @@ end
 ### 2. Building Releases
 
 ```bash
-# Build release
 MIX_ENV=prod mix release
 
-# Build specific release
 MIX_ENV=prod mix release my_app_minimal
 
-# Build with overwrite
 MIX_ENV=prod mix release --overwrite
 
-# Release location
 _build/prod/rel/my_app/
 ```
 
 ### 3. Running Releases
 
 ```bash
-# Start release
 _build/prod/rel/my_app/bin/my_app start
 
-# Start in daemon mode
 _build/prod/rel/my_app/bin/my_app daemon
 
-# Remote console
 _build/prod/rel/my_app/bin/my_app remote
 
-# Run migrations
 _build/prod/rel/my_app/bin/my_app eval "MyApp.Release.migrate()"
 
-# Custom command
 _build/prod/rel/my_app/bin/my_app rpc "Application.get_env(:my_app, :version)"
 ```
 
 ### 4. Release Commands
 
 ```elixir
-# lib/my_app/release.ex
 defmodule MyApp.Release do
   @app :my_app
 
@@ -560,10 +517,8 @@ end
 ### 1. Test Configuration
 
 ```elixir
-# test/test_helper.exs
 ExUnit.start()
 
-# Set test async globally
 ExUnit.configure(exclude: [integration: true], timeout: :infinity)
 
 Ecto.Adapters.SQL.Sandbox.mode(MyApp.Repo, :manual)
@@ -572,35 +527,25 @@ Ecto.Adapters.SQL.Sandbox.mode(MyApp.Repo, :manual)
 ### 2. Running Tests
 
 ```bash
-# All tests
 mix test
 
-# Specific file
 mix test test/my_app/accounts_test.exs
 
-# Specific line
 mix test test/my_app/accounts_test.exs:42
 
-# Failed tests only
 mix test --failed
 
-# Stale tests only
 mix test --stale
 
-# With coverage
 mix test --cover
 mix coveralls.html  # If using excoveralls
 
-# Trace mode (no async)
 mix test --trace
 
-# Seed for reproducibility
 mix test --seed 12345
 
-# Include excluded tests
 mix test --include integration
 
-# Max failures
 mix test --max-failures 3
 ```
 
@@ -657,10 +602,8 @@ end
 ### 1. Compilation
 
 ```bash
-# Parallel compilation
 MIX_ENV=prod mix compile --force --jobs 4
 
-# Compiler diagnostics
 mix compile --warnings-as-errors
 mix compile --all-warnings
 ```
@@ -668,17 +611,13 @@ mix compile --all-warnings
 ### 2. Dependency Resolution
 
 ```elixir
-# Lock exact versions
-# mix.lock is committed to version control
 
-# Update cautiously
 mix deps.update specific_package  # Not --all
 ```
 
 ### 3. Build Caching
 
 ```bash
-# CI caching strategy
 _build/
 deps/
 ```
@@ -688,14 +627,12 @@ deps/
 ### 1. Forgetting to Run mix deps.get
 
 ```bash
-# Always after cloning or pulling dependency changes
 mix deps.get
 ```
 
 ### 2. Not Cleaning After Major Changes
 
 ```bash
-# Clean build artifacts
 mix clean
 mix deps.clean --all
 mix compile
@@ -704,7 +641,6 @@ mix compile
 ### 3. Wrong Environment
 
 ```bash
-# Ensure correct environment
 MIX_ENV=prod mix compile  # Production
 MIX_ENV=test mix test     # Test (default for test)
 mix compile               # Development (default)
@@ -715,13 +651,10 @@ mix compile               # Development (default)
 ### 1. Dependency Conflicts
 
 ```bash
-# View dependency tree
 mix deps.tree
 
-# Unlock specific dependency
 mix deps.unlock phoenix
 
-# Clean and reinstall
 mix deps.clean --all
 mix deps.get
 ```
@@ -729,20 +662,16 @@ mix deps.get
 ### 2. Compilation Errors
 
 ```bash
-# Force clean rebuild
 mix do clean, compile --force
 
-# Check for warnings
 mix compile --warnings-as-errors
 ```
 
 ### 3. Release Issues
 
 ```bash
-# Debug release
 _build/prod/rel/my_app/bin/my_app version
 
-# Check runtime config
 _build/prod/rel/my_app/bin/my_app eval "Application.get_all_env(:my_app)"
 ```
 

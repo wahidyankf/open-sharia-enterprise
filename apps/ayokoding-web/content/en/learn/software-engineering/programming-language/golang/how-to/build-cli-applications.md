@@ -165,15 +165,12 @@ func init() {
 **Usage:**
 
 ```bash
-# Create user
 myapp user create alice@example.com --name "Alice Smith"
 myapp user create bob@example.com --name "Bob" --admin
 
-# List users
 myapp user list
 myapp user list --limit 5 --admin-only
 
-# Delete user
 myapp user delete alice@example.com
 myapp user delete bob@example.com --force
 ```
@@ -348,13 +345,10 @@ func processLine(line string) string {
 **Usage:**
 
 ```bash
-# From file
 myapp process input.txt
 
-# From stdin
 echo "hello" | myapp process
 
-# From stdin (interactive)
 myapp process
 hello
 HELLO
@@ -459,13 +453,10 @@ func init() {
 ### Building Binaries
 
 ```bash
-# Build for current platform
 go build -o myapp
 
-# Build with version info
 go build -ldflags="-X 'main.Version=1.0.0'" -o myapp
 
-# Cross-compile for different platforms
 GOOS=linux GOARCH=amd64 go build -o myapp-linux
 GOOS=darwin GOARCH=arm64 go build -o myapp-mac
 GOOS=windows GOARCH=amd64 go build -o myapp.exe

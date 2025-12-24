@@ -19,24 +19,20 @@ This guide shows how to use type hints effectively for better code quality and t
 Start with simple type annotations for function parameters and return values.
 
 ```python
-# ❌ No type hints - unclear expectations
 def calculate_discount(price, rate, apply):
     if apply:
         return price * (1 - rate)
     return price
 
-# ✅ Type hints clarify contract
 def calculate_discount(price: float, rate: float, apply: bool) -> float:
     if apply:
         return price * (1 - rate)
     return price
 
-# ✅ Variable annotations
 username: str = "alice"
 age: int = 30
 is_active: bool = True
 
-# ✅ Collection types
 names: list[str] = ["Alice", "Bob"]
 scores: dict[str, int] = {"alice": 95, "bob": 87}
 unique_ids: set[int] = {1, 2, 3}
@@ -49,13 +45,11 @@ Handle values that might be None or multiple types.
 ```python
 from typing import Optional, Union
 
-# ✅ Optional for nullable values
 def find_user(user_id: int) -> Optional[dict]:
     """Returns user dict or None if not found."""
     user = database.query(user_id)
     return user if user else None
 
-# Modern Python 3.10+ uses | instead of Union
 def parse_value(input: str) -> int | float | None:
     try:
         return int(input)
@@ -65,11 +59,9 @@ def parse_value(input: str) -> int | float | None:
         except ValueError:
             return None
 
-# ✅ Union for multiple possible types
 def format_id(id: int | str) -> str:
     return str(id)
 
-# ✅ Literal for specific values
 from typing import Literal
 
 def set_log_level(level: Literal["DEBUG", "INFO", "WARNING", "ERROR"]):
@@ -86,20 +78,17 @@ Create reusable type-safe functions and classes.
 ```python
 from typing import TypeVar, Generic
 
-# ✅ Generic function
 T = TypeVar('T')
 
 def first_element(items: list[T]) -> T | None:
     return items[0] if items else None
 
-# Type checker infers return type
 numbers = [1, 2, 3]
 first_num: int | None = first_element(numbers)  # int inferred
 
 strings = ["a", "b", "c"]
 first_str: str | None = first_element(strings)  # str inferred
 
-# ✅ Generic class
 class Stack(Generic[T]):
     def __init__(self) -> None:
         self._items: list[T] = []
@@ -110,12 +99,10 @@ class Stack(Generic[T]):
     def pop(self) -> T:
         return self._items.pop()
 
-# Type-safe usage
 int_stack: Stack[int] = Stack()
 int_stack.push(42)
 value: int = int_stack.pop()
 
-# ✅ Multiple type parameters
 K = TypeVar('K')
 V = TypeVar('V')
 
@@ -137,7 +124,6 @@ Define interfaces without inheritance (duck typing with type checking).
 ```python
 from typing import Protocol
 
-# ✅ Protocol defines interface
 class Drawable(Protocol):
     def draw(self) -> str:
         ...
@@ -156,15 +142,12 @@ class Square:
     def draw(self) -> str:
         return f"Square(s={self.side})"
 
-# Function accepts any object with draw() method
 def render(shape: Drawable) -> None:
     print(shape.draw())
 
-# Both work - no inheritance needed
 render(Circle(5.0))
 render(Square(10.0))
 
-# ✅ Runtime checkable protocol
 from typing import runtime_checkable
 
 @runtime_checkable
@@ -184,7 +167,6 @@ Type dictionaries with known structure.
 ```python
 from typing import TypedDict
 
-# ✅ TypedDict for dict structure
 class UserDict(TypedDict):
     id: int
     name: str
@@ -203,7 +185,6 @@ user: UserDict = {
     "age": 30
 }
 
-# ✅ All fields optional with total=False
 class UserDictOptional(TypedDict, total=False):
     id: int
     name: str
@@ -211,7 +192,6 @@ class UserDictOptional(TypedDict, total=False):
     age: int
     phone: str
 
-# ✅ Better alternative: dataclass
 from dataclasses import dataclass
 
 @dataclass
@@ -221,7 +201,6 @@ class User:
     email: str
     age: int = 0  # Optional with default
 
-# Dataclasses provide better IDE support and validation
 ```
 
 ## Callable Types
@@ -231,7 +210,6 @@ Type functions and callbacks.
 ```python
 from typing import Callable
 
-# ✅ Callable type hints
 def apply_operation(
     value: int,
     operation: Callable[[int], int]
@@ -243,7 +221,6 @@ def double(x: int) -> int:
 
 result = apply_operation(5, double)  # 10
 
-# ✅ Multiple parameters
 def process_items(
     items: list[str],
     processor: Callable[[str, int], str]
@@ -253,7 +230,6 @@ def process_items(
 def add_index(item: str, index: int) -> str:
     return f"{index}: {item}"
 
-# ✅ Callback with any arguments
 from typing import Any
 
 def register_callback(
@@ -269,7 +245,6 @@ Create readable names for complex types.
 ```python
 from typing import TypeAlias
 
-# ✅ Type aliases for clarity
 UserId: TypeAlias = int
 UserName: TypeAlias = str
 UserData: TypeAlias = dict[str, int | str]
@@ -281,7 +256,6 @@ def get_user(user_id: UserId) -> UserData:
         "age": 30
     }
 
-# ✅ Complex type aliases
 from typing import Callable
 
 Handler: TypeAlias = Callable[[str], None]
@@ -302,18 +276,14 @@ def create_middleware(handler: Handler) -> Middleware:
 Use mypy to verify type correctness.
 
 ```bash
-# Install mypy
 pip install mypy
 
-# Run type checker
 mypy your_script.py
 
-# Run with strict mode
 mypy --strict your_script.py
 ```
 
 ```python
-# mypy configuration - mypy.ini
 [mypy]
 python_version = 3.10
 warn_return_any = True
@@ -328,34 +298,28 @@ check_untyped_defs = True
 Add type hints incrementally without breaking existing code.
 
 ```python
-# ✅ Start with critical functions
 def calculate_total(items: list[dict]) -> float:
     return sum(item['price'] * item['quantity'] for item in items)
 
-# ✅ Add types to new code
 def validate_email(email: str) -> bool:
     return '@' in email and '.' in email
 
-# ✅ Use Any for complex types initially
 from typing import Any
 
 def process_legacy_data(data: Any) -> Any:
     # TODO: Add proper types later
     return transform(data)
 
-# ✅ Ignore specific lines if needed
 result = complex_legacy_function()  # type: ignore
 ```
 
 ## Type Checking Best Practices
 
 ```python
-# ✅ Use reveal_type for debugging (mypy only)
 def example() -> None:
     value = [1, 2, 3]
     reveal_type(value)  # Revealed type is "builtins.list[builtins.int]"
 
-# ✅ Use assert_type to verify expectations
 from typing import assert_type
 
 def get_number() -> int:
@@ -364,7 +328,6 @@ def get_number() -> int:
 value = get_number()
 assert_type(value, int)  # Passes type check
 
-# ✅ Mark incomplete types with TYPE_CHECKING
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

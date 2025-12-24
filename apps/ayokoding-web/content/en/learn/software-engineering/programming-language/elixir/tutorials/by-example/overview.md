@@ -125,7 +125,6 @@ Brief explanation of the concept in 2-3 sentences. Explains **what** the concept
 **Code**:
 
 ```elixir
-# Comment explaining what this section does
 defmodule Example do
   # Inline comment for each significant line
   def function(arg) do
@@ -136,7 +135,6 @@ defmodule Example do
   end
 end
 
-# Usage example showing how to call the function
 Example.function(input) # => output
 ```
 

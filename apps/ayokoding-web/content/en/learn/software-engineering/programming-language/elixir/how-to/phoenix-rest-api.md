@@ -40,7 +40,6 @@ Use **Phoenix controllers** with JSON rendering, **Plug** for middleware, **Guar
 Configure routes:
 
 ```elixir
-# lib/my_app_web/router.ex
 defmodule MyAppWeb.Router do
   use MyAppWeb, :router
 
@@ -60,7 +59,6 @@ end
 Controller implementation:
 
 ```elixir
-# lib/my_app_web/controllers/user_controller.ex
 defmodule MyAppWeb.UserController do
   use MyAppWeb, :controller
 
@@ -109,7 +107,6 @@ end
 JSON view:
 
 ```elixir
-# lib/my_app_web/controllers/user_json.ex
 defmodule MyAppWeb.UserJSON do
   alias MyApp.Accounts.User
 
@@ -142,7 +139,6 @@ end
 ### 2. Error Handling with Fallback Controller
 
 ```elixir
-# lib/my_app_web/controllers/fallback_controller.ex
 defmodule MyAppWeb.FallbackController do
   use MyAppWeb, :controller
 
@@ -172,7 +168,6 @@ end
 Changeset error renderer:
 
 ```elixir
-# lib/my_app_web/controllers/changeset_json.ex
 defmodule MyAppWeb.ChangesetJSON do
   @doc """
   Renders changeset errors.
@@ -196,14 +191,12 @@ end
 Add dependency:
 
 ```elixir
-# mix.exs
 {:guardian, "~> 2.3"}
 ```
 
 Guardian implementation:
 
 ```elixir
-# lib/my_app/guardian.ex
 defmodule MyApp.Guardian do
   use Guardian, otp_app: :my_app
 
@@ -225,7 +218,6 @@ end
 Authentication controller:
 
 ```elixir
-# lib/my_app_web/controllers/auth_controller.ex
 defmodule MyAppWeb.AuthController do
   use MyAppWeb, :controller
 
@@ -274,7 +266,6 @@ end
 Authentication pipeline:
 
 ```elixir
-# lib/my_app_web/router.ex
 pipeline :api_auth do
   plug MyAppWeb.AuthPipeline
 end
@@ -294,7 +285,6 @@ end
 ### 4. Pagination
 
 ```elixir
-# lib/my_app/repo.ex
 defmodule MyApp.Repo do
   use Ecto.Repo,
     otp_app: :my_app,
@@ -393,12 +383,10 @@ end
 ### 6. Nested Resources
 
 ```elixir
-# Router
 resources "/users", UserController do
   resources "/posts", PostController
 end
 
-# Controller
 defmodule MyAppWeb.PostController do
   use MyAppWeb, :controller
 
@@ -426,7 +414,6 @@ end
 URL versioning:
 
 ```elixir
-# Router
 scope "/api/v1", MyAppWeb.V1, as: :v1 do
   pipe_through :api
 
@@ -443,7 +430,6 @@ end
 Header versioning:
 
 ```elixir
-# Plug
 defmodule MyAppWeb.APIVersion do
   import Plug.Conn
 
@@ -471,10 +457,8 @@ end
 ### Rate Limiting with Hammer
 
 ```elixir
-# mix.exs
 {:hammer, "~> 6.1"}
 
-# Plug
 defmodule MyAppWeb.RateLimiter do
   import Plug.Conn
 
@@ -513,7 +497,6 @@ defmodule MyAppWeb.RateLimiter do
   end
 end
 
-# Apply to routes
 pipeline :api_limited do
   plug :api
   plug MyAppWeb.RateLimiter, rate_limit: 100, time_window: 60_000
@@ -523,10 +506,8 @@ end
 ### CORS Support
 
 ```elixir
-# mix.exs
 {:cors_plug, "~> 3.0"}
 
-# Router
 pipeline :api do
   plug CORSPlug,
     origin: ["http://localhost:3000", "https://example.com"],
@@ -540,10 +521,8 @@ end
 ### API Documentation with OpenAPI
 
 ```elixir
-# mix.exs
 {:open_api_spex, "~> 3.16"}
 
-# Schema
 defmodule MyAppWeb.Schemas.User do
   require OpenApiSpex
   alias OpenApiSpex.Schema
@@ -566,7 +545,6 @@ defmodule MyAppWeb.Schemas.User do
   })
 end
 
-# Controller with specs
 defmodule MyAppWeb.UserController do
   use MyAppWeb, :controller
   use OpenApiSpex.ControllerSpecs
@@ -636,7 +614,6 @@ defmodule MyAppWeb.UserJSON do
   end
 end
 
-# Controller
 def show(conn, %{"id" => id} = params) do
   user = Accounts.get_user!(id)
   fields = params["fields"]
@@ -644,7 +621,6 @@ def show(conn, %{"id" => id} = params) do
   render(conn, :show, user: user, fields: fields)
 end
 
-# Usage: GET /api/users/1?fields=id,name,email
 ```
 
 ### 3. Batch Operations
@@ -745,14 +721,12 @@ end
 ### CORS Issues
 
 ```elixir
-# Ensure OPTIONS requests are handled
 plug CORSPlug, origin: ["*"]
 ```
 
 ### Authentication Not Working
 
 ```bash
-# Check Guardian configuration
 config :my_app, MyApp.Guardian,
   issuer: "my_app",
   secret_key: "secret"
@@ -761,7 +735,6 @@ config :my_app, MyApp.Guardian,
 ### JSON Encoding Errors
 
 ```elixir
-# Implement Jason.Encoder for custom types
 defimpl Jason.Encoder, for: MyApp.CustomType do
   def encode(value, opts) do
     Jason.Encode.map(%{id: value.id, name: value.name}, opts)

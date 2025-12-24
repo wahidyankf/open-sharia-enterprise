@@ -213,13 +213,10 @@ rustup installs:
 Install helpful development tools:
 
 ```bash
-# Install rustfmt (code formatter)
 rustup component add rustfmt
 
-# Install clippy (linter)
 rustup component add clippy
 
-# Install rust-analyzer (IDE support - installed separately, see IDE Setup)
 rustup component add rust-src
 ```
 
@@ -238,17 +235,11 @@ rustup component add rust-src
 Verify Rust is installed correctly:
 
 ```bash
-# Check Rust compiler version
 rustc --version
-# Output: rustc 1.92.0 (2025-12-11)
 
-# Check cargo version
 cargo --version
-# Output: cargo 1.92.0 (2025-12-11)
 
-# Check rustup version
 rustup --version
-# Output: rustup 1.27.0 (2024-12-10)
 ```
 
 Version numbers will differ - ensure commands run without errors.
@@ -258,10 +249,8 @@ Version numbers will differ - ensure commands run without errors.
 Keep Rust up to date:
 
 ```bash
-# Update all installed toolchains and components
 rustup update
 
-# Check for updates without installing
 rustup check
 ```
 
@@ -284,10 +273,8 @@ Rust stable updates every 6 weeks. Run `rustup update` regularly.
 ### Create a New Project
 
 ```bash
-# Create new binary (executable) project named "hello-rust"
 cargo new hello-rust
 
-# Navigate into project directory
 cd hello-rust
 ```
 
@@ -321,7 +308,6 @@ fn main() {
 ### Compile and Run
 
 ```bash
-# Compile and run in one command
 cargo run
 ```
 
@@ -344,10 +330,8 @@ Hello, world!
 ### Build Only (No Run)
 
 ```bash
-# Compile without running
 cargo build
 
-# Compile optimized release build
 cargo build --release
 ```
 

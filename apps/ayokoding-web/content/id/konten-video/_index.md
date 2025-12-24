@@ -21,7 +21,7 @@ weight: 30
   - [Cerita Programmer 0000006 Transisi Jadi Programmer Persiapan Nentuin Target](/id/konten-video/cerita-programmer/cerita-programmer-0000006-transisi-jadi-programmer-persiapan-nentuin-target)
   - [Cerita Programmer 0000005 Stop Pake Bajakan](/id/konten-video/cerita-programmer/cerita-programmer-0000005-stop-pake-bajakan)
   - [Cerita Programmer 0000017 Ngomongin Tentang Layoff Phk Massal](/id/konten-video/cerita-programmer/cerita-programmer-0000017-ngomongin-tentang-layoff-phk-massal)
-  - [Cerita Programmer 0000020 Ngomongin Openai dan Chatgpt Kerjaan Programmer Terancam oleh Ai](/id/konten-video/cerita-programmer/cerita-programmer-0000020-ngomongin-openai-dan-chatgpt-kerjaan-programmer-terancam-oleh-ai)
+  - [Cerita Programmer 0000020 Ngomongin Openai dan Chatgpt Kerjaan Programmer Terancam oleh AI](/id/konten-video/cerita-programmer/cerita-programmer-0000020-ngomongin-openai-dan-chatgpt-kerjaan-programmer-terancam-oleh-ai)
   - [Cerita Programmer 0000002 Transisi Jadi Programmer Init](/id/konten-video/cerita-programmer/cerita-programmer-0000002-transisi-jadi-programmer-init)
   - [Cerita Programmer 0000016 Wajib Hukumnya Kita Punya Integritas Boleh Bego Tapi Gak Boleh Culas](/id/konten-video/cerita-programmer/cerita-programmer-0000016-wajib-hukumnya-kita-punya-integritas-boleh-bego-tapi-gak-boleh-culas)
   - [Cerita Programmer 0000009 Transisi Jadi Programmer Pilih Jadi Programmer Bagian Mana](/id/konten-video/cerita-programmer/cerita-programmer-0000009-transisi-jadi-programmer-pilih-jadi-programmer-bagian-mana)

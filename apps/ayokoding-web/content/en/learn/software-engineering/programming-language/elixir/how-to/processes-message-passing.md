@@ -80,13 +80,9 @@ defmodule ProcessExamples do
   end
 end
 
-# Usage
 ProcessExamples.spawn_basic()
-# => Spawned process: #PID<0.123.0>
-# => Hello from process #PID<0.123.0>
 
 ProcessExamples.spawn_and_wait()
-# After 1 second: "Received: result"
 ```
 
 **How It Works**: `spawn/1` creates new process executing given function. Returns PID (process identifier). Process runs concurrently with parent.
@@ -135,16 +131,10 @@ defmodule SpawnComparison do
   end
 end
 
-# Usage
 SpawnComparison.spawn_independent()
-# Parent still alive
 
-# SpawnComparison.spawn_linked()
-# ** (EXIT) Crash! - parent also crashes
 
 SpawnComparison.spawn_link_trapped()
-# Child crashed: ...
-# Parent handled crash and continues
 ```
 
 ## Message Passing
@@ -197,14 +187,10 @@ defmodule Messenger do
   end
 end
 
-# Usage
 Messenger.ping_pong()
-# Child: received ping
-# Parent: received pong from #PID<0.124.0>
 
 pid = spawn(Messenger, :message_patterns, [])
 send(pid, {:hello, "Alice"})
-# => Hello, Alice!
 ```
 
 ### Mailbox and Message Queue
@@ -317,7 +303,6 @@ defmodule Counter do
   end
 end
 
-# Usage
 counter = Counter.start(0)
 
 Counter.increment(counter)  # => 1
@@ -326,7 +311,6 @@ Counter.get(counter)        # => 2
 Counter.increment(counter)  # => 3
 
 Counter.stop(counter)
-# => Counter stopping with value: 3
 ```
 
 ### Key-Value Store
@@ -410,7 +394,6 @@ defmodule KVStore do
   end
 end
 
-# Usage
 store = KVStore.start()
 
 KVStore.put(store, :name, "Alice")
@@ -473,11 +456,7 @@ defmodule ProcessMonitoring do
   end
 end
 
-# Usage
 ProcessMonitoring.monitor_example()
-# After 1 second:
-# Process #PID<...> crashed: ...
-# Monitor continues running
 ```
 
 ## Concurrent Patterns
@@ -512,14 +491,10 @@ defmodule ParallelProcessing do
   end
 end
 
-# Usage
-# Sequential: 5 seconds
 Enum.map([1, 2, 3, 4, 5], &ParallelProcessing.expensive_computation/1)
 
-# Parallel: ~1 second (if 5+ cores)
 ParallelProcessing.parallel_map([1, 2, 3, 4, 5],
   &ParallelProcessing.expensive_computation/1)
-# => [1, 4, 9, 16, 25]
 ```
 
 ### Worker Pool
@@ -586,7 +561,6 @@ end
 ### Do: Keep Processes Small and Focused
 
 ```elixir
-# Good: Single responsibility
 defmodule Cache do
   def start, do: spawn(fn -> loop(%{}) end)
   defp loop(state), do: # ... cache operations
@@ -601,14 +575,12 @@ end
 ### Do: Use Timeout on Receive
 
 ```elixir
-# Good: Prevents infinite wait
 receive do
   msg -> handle(msg)
 after
   5000 -> {:error, :timeout}
 end
 
-# Bad: Blocks forever if no message
 receive do
   msg -> handle(msg)
 end
@@ -617,7 +589,6 @@ end
 ### Do: Match Specific Messages
 
 ```elixir
-# Good: Explicit patterns
 receive do
   {:ok, value} -> handle_success(value)
   {:error, reason} -> handle_error(reason)
@@ -626,7 +597,6 @@ after
   1000 -> :timeout
 end
 
-# Bad: Catch-all hides errors
 receive do
   msg -> handle(msg)
 end

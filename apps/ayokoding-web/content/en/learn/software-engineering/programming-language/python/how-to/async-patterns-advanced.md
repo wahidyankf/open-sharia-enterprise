@@ -18,7 +18,6 @@ Modern Python applications require efficient concurrent I/O operations. Simple s
 import asyncio
 from typing import List, Any
 
-# Async context managers
 class AsyncDatabaseConnection:
     async def __aenter__(self):
         self.conn = await self._connect()
@@ -32,7 +31,6 @@ class AsyncDatabaseConnection:
         await asyncio.sleep(0.1)
         return {"status": "connected"}
 
-# Usage
 async def fetch_data():
     async with AsyncDatabaseConnection() as conn:
         # Connection automatically closed after block
@@ -66,7 +64,6 @@ async def fetch_multiple_urls(urls: List[str]) -> List[Dict]:
         tasks = [fetch_url(session, url) for url in urls]
         return await asyncio.gather(*tasks)
 
-# Usage
 urls = [
     "https://api.example.com/users/1",
     "https://api.example.com/users/2",
@@ -104,7 +101,6 @@ async def fetch_page(page: int, size: int) -> List[Dict]:
         return []
     return [{"id": i, "page": page} for i in range(size)]
 
-# Usage - process items as they arrive
 async def process_all_items():
     async for item in fetch_paginated_data(page_size=50):
         await process_item(item)
@@ -137,7 +133,6 @@ async def download_files_structured(urls: List[str]):
     # All tasks complete or all cancelled if one fails
     return [task.result() for task in tasks]
 
-# Python 3.11+ feature - automatic cleanup
 urls = ["http://example.com/file1", "http://example.com/file2"]
 try:
     results = asyncio.run(download_files_structured(urls))
@@ -184,7 +179,6 @@ async def rate_limited_fetch(
         await asyncio.sleep(0.1)  # Simulate request
         return {"url": url, "status": "success"}
 
-# Usage: Max 5 concurrent, 10 requests/second
 async def fetch_with_limits():
     limiter = RateLimiter(max_concurrent=5, requests_per_second=10)
     urls = [f"https://api.example.com/item/{i}" for i in range(100)]
@@ -219,7 +213,6 @@ class BackgroundTasks:
 
         await asyncio.gather(*self.tasks, return_exceptions=True)
 
-# Usage
 async def background_worker(name: str):
     """Long-running background task."""
     try:
@@ -275,14 +268,8 @@ graph TD
 **Execution Flow:**
 
 ```python
-# When you call await:
 result = await some_async_function()
 
-# 1. Current coroutine suspends
-# 2. Control returns to event loop
-# 3. Event loop schedules other tasks
-# 4. When some_async_function() completes, current coroutine resumes
-# 5. Result assigned to variable
 ```
 
 ## Variations
@@ -318,7 +305,6 @@ class AsyncCursor:
             return []
         return [{"id": i} for i in range(offset, offset + limit)]
 
-# Usage
 async def process_large_resultset():
     cursor = AsyncCursor("SELECT * FROM large_table")
 
@@ -347,7 +333,6 @@ async def fetch_data(url: str):
     await asyncio.sleep(10)
     return {"data": "result"}
 
-# Usage
 result = await fetch_with_timeout("https://slow-api.com", timeout=3.0)
 ```
 
@@ -379,7 +364,6 @@ async def retry_with_backoff(
             print(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay}s...")
             await asyncio.sleep(delay)
 
-# Usage
 async def unreliable_api_call():
     # Simulated flaky API
     import random
@@ -400,12 +384,10 @@ result = await retry_with_backoff(unreliable_api_call, max_retries=5)
 import asyncio
 import time
 
-# ❌ Bad: Blocks event loop
 async def bad_sleep():
     time.sleep(5)  # Blocks entire event loop!
     return "done"
 
-# ✅ Good: Non-blocking sleep
 async def good_sleep():
     await asyncio.sleep(5)  # Suspends coroutine only
     return "done"
@@ -436,7 +418,6 @@ async def run_blocking_safely():
 **Problem**: Forgetting `await` creates unawaited coroutine warnings.
 
 ```python
-# ❌ Bad: Coroutine never executes
 async def fetch_data():
     return {"data": "value"}
 
@@ -444,7 +425,6 @@ async def main():
     result = fetch_data()  # Warning: coroutine was never awaited
     print(result)  # Prints: <coroutine object fetch_data>
 
-# ✅ Good: Await the coroutine
 async def main():
     result = await fetch_data()  # Properly awaited
     print(result)  # Prints: {'data': 'value'}
@@ -455,16 +435,13 @@ async def main():
 **Problem**: Can't call async functions from sync code without event loop.
 
 ```python
-# ❌ Bad: Can't await in sync function
 def sync_function():
     result = await async_function()  # SyntaxError!
     return result
 
-# ✅ Good: Use asyncio.run or create event loop
 def sync_function():
     return asyncio.run(async_function())
 
-# ✅ Better: Keep async chain intact
 async def async_wrapper():
     return await async_function()
 ```
@@ -474,13 +451,11 @@ async def async_wrapper():
 **Problem**: Tasks can be cancelled - cleanup code might not run.
 
 ```python
-# ❌ Bad: Resource leak on cancellation
 async def bad_resource_handling():
     resource = await acquire_resource()
     await long_operation()
     await resource.close()  # Never called if cancelled!
 
-# ✅ Good: Always cleanup resources
 async def good_resource_handling():
     resource = await acquire_resource()
     try:
@@ -488,7 +463,6 @@ async def good_resource_handling():
     finally:
         await resource.close()  # Always called
 
-# ✅ Better: Use async context managers
 async def best_resource_handling():
     async with acquire_resource() as resource:
         await long_operation()
@@ -500,13 +474,11 @@ async def best_resource_handling():
 **Problem**: Unlimited concurrency overwhelms system resources.
 
 ```python
-# ❌ Bad: 10000 concurrent connections!
 async def bad_concurrent_requests():
     urls = [f"http://api.com/item/{i}" for i in range(10000)]
     tasks = [fetch_url(url) for url in urls]
     return await asyncio.gather(*tasks)
 
-# ✅ Good: Limit concurrency with semaphore
 async def good_concurrent_requests():
     semaphore = asyncio.Semaphore(10)  # Max 10 concurrent
     urls = [f"http://api.com/item/{i}" for i in range(10000)]

@@ -122,15 +122,8 @@ import dis
 def add(a, b):
     return a + b
 
-# View bytecode
 dis.dis(add)
-# Output:
-#   2           0 LOAD_FAST                0 (a)
-#               2 LOAD_FAST                1 (b)
-#               4 BINARY_ADD
-#               6 RETURN_VALUE
 
-# Compile and inspect
 code = compile("x = 1 + 2", "<string>", "exec")
 print(code.co_code)  # Raw bytecode
 dis.dis(code)
@@ -177,20 +170,17 @@ graph TB
 import threading
 import time
 
-# CPU-bound task (GIL blocks parallelism)
 def cpu_bound():
     count = 0
     for _ in range(10**7):
         count += 1
     return count
 
-# Single threaded
 start = time.time()
 cpu_bound()
 cpu_bound()
 print(f"Single thread: {time.time() - start:.2f}s")
 
-# Multi-threaded (not faster due to GIL!)
 start = time.time()
 t1 = threading.Thread(target=cpu_bound)
 t2 = threading.Thread(target=cpu_bound)
@@ -200,11 +190,9 @@ t1.join()
 t2.join()
 print(f"Multi-threaded: {time.time() - start:.2f}s")
 
-# I/O-bound task (GIL releases during I/O)
 def io_bound():
     time.sleep(1)
 
-# Multi-threaded I/O is faster
 start = time.time()
 threads = [threading.Thread(target=io_bound) for _ in range(5)]
 for t in threads:
@@ -228,7 +216,6 @@ Python uses reference counting with cyclic garbage collection:
 import sys
 import gc
 
-# Reference counting
 x = [1, 2, 3]
 print(sys.getrefcount(x))  # 2 (x itself + argument to getrefcount)
 
@@ -238,25 +225,20 @@ print(sys.getrefcount(x))  # 3 (x, y, argument)
 del y
 print(sys.getrefcount(x))  # 2
 
-# Cyclic references
 class Node:
     def __init__(self, value):
         self.value = value
         self.next = None
 
-# Create cycle
 a = Node(1)
 b = Node(2)
 a.next = b
 b.next = a  # Cycle!
 
-# Reference counting can't clean this up
-# Garbage collector detects and collects cycles
 print(gc.get_count())  # (count0, count1, count2)
 collected = gc.collect()
 print(f"Collected {collected} objects")
 
-# Weak references (don't increase refcount)
 import weakref
 
 class Cache:
@@ -291,7 +273,6 @@ Abstract Syntax Trees allow programmatic code analysis and modification:
 import ast
 import inspect
 
-# Parse source code
 code = """
 def add(a, b):
     return a + b
@@ -300,7 +281,6 @@ def add(a, b):
 tree = ast.parse(code)
 print(ast.dump(tree, indent=2))
 
-# Custom AST visitor
 class FunctionFinder(ast.NodeVisitor):
     def __init__(self):
         self.functions = []
@@ -313,7 +293,6 @@ finder = FunctionFinder()
 finder.visit(tree)
 print(finder.functions)  # ['add']
 
-# AST transformation
 class DoubleReturn(ast.NodeTransformer):
     def visit_Return(self, node):
         # Double the return value
@@ -329,7 +308,6 @@ transformer = DoubleReturn()
 new_tree = transformer.visit(tree)
 ast.fix_missing_locations(new_tree)
 
-# Compile and execute modified AST
 code_obj = compile(new_tree, "<ast>", "exec")
 namespace = {}
 exec(code_obj, namespace)
@@ -417,7 +395,6 @@ def create_getter_setter(class_name, attributes):
     exec(code, namespace)
     return namespace[class_name]
 
-# Generate Person class with getters/setters
 Person = create_getter_setter("Person", ["name", "age"])
 p = Person()
 p.set_name("Alice")
@@ -455,7 +432,6 @@ class UpperCaseFinder(importlib.abc.MetaPathFinder):
             )
         return None
 
-# Install custom importer
 sys.meta_path.insert(0, UpperCaseFinder())
 ```
 
@@ -481,7 +457,6 @@ def profile_function(func):
     stats.print_stats(20)
     return result
 
-# Memory profiling
 from memory_profiler import profile as mem_profile
 
 @mem_profile
@@ -489,21 +464,17 @@ def memory_intensive():
     large_list = [i**2 for i in range(10**6)]
     return sum(large_list)
 
-# Line profiling with kernprof
-# @profile decorator (no import needed)
 def line_by_line():
     result = []
     for i in range(1000):
         result.append(i**2)
     return sum(result)
 
-# Run: kernprof -l -v script.py
 ```
 
 ### Optimization Techniques
 
 ```python
-# 1. Use __slots__ to reduce memory
 class RegularPerson:
     def __init__(self, name, age):
         self.name = name
@@ -516,28 +487,21 @@ class OptimizedPerson:
         self.name = name
         self.age = age
 
-# 2. Generators for lazy evaluation
 def read_large_file(filename):
     with open(filename) as f:
         for line in f:
             yield process_line(line)  # Lazy processing
 
-# 3. Use itertools for efficient iteration
 from itertools import islice, chain, groupby
 
-# Get first 100 items without loading entire dataset
 first_100 = list(islice(large_generator(), 100))
 
-# Chain multiple iterables efficiently
 combined = chain(list1, list2, list3)
 
-# 4. Use array for numeric data
 from array import array
 
-# array is more memory-efficient than list for numbers
 numbers = array('i', range(10**6))  # 'i' = signed int
 
-# 5. Use numba for numerical computation
 from numba import jit
 
 @jit(nopython=True)
@@ -547,7 +511,6 @@ def fast_computation(n):
         total += i ** 2
     return total
 
-# 6. Caching with functools
 from functools import lru_cache, cache
 
 @lru_cache(maxsize=128)
@@ -565,7 +528,6 @@ def fibonacci(n):
 ### C Extensions with Cython
 
 ```python
-# example.pyx (Cython file)
 def fast_sum(int n):
     cdef int i
     cdef int total = 0
@@ -573,7 +535,6 @@ def fast_sum(int n):
         total += i
     return total
 
-# setup.py
 from setuptools import setup
 from Cython.Build import cythonize
 
@@ -581,8 +542,6 @@ setup(
     ext_modules=cythonize("example.pyx")
 )
 
-# Build: python setup.py build_ext --inplace
-# Use: import example; example.fast_sum(1000000)
 ```
 
 ---
@@ -609,11 +568,9 @@ class Stack(Generic[T]):
     def peek(self) -> T:
         return self._items[-1]
 
-# Type-safe usage
 int_stack: Stack[int] = Stack()
 int_stack.push(1)
 int_stack.push(2)
-# int_stack.push("string")  # Type checker error
 
 str_stack: Stack[str] = Stack()
 str_stack.push("hello")
@@ -636,8 +593,6 @@ class Square:
     def draw(self) -> None:
         print("Drawing square")
 
-# Both Circle and Square satisfy the Drawable protocol
-# without explicit inheritance
 def render(shape: Drawable) -> None:
     shape.draw()
 
@@ -650,23 +605,19 @@ render(Square())  # OK
 ```python
 from typing import Union, Optional, Literal, TypedDict, Callable
 
-# Union types
 def process(value: Union[int, str]) -> str:
     if isinstance(value, int):
         return str(value)
     return value.upper()
 
-# Optional (shorthand for Union[T, None])
 def find_user(id: int) -> Optional[User]:
     # May return User or None
     pass
 
-# Literal types
 def set_mode(mode: Literal["read", "write"]) -> None:
     # Only accepts "read" or "write"
     pass
 
-# TypedDict
 class UserDict(TypedDict):
     name: str
     age: int
@@ -676,11 +627,9 @@ def create_user(data: UserDict) -> User:
     # data must have name, age, email keys
     pass
 
-# Callable types
 def apply(func: Callable[[int, int], int], a: int, b: int) -> int:
     return func(a, b)
 
-# Python 3.10+ - Union operator
 def process_value(value: int | str) -> str:
     pass
 ```
@@ -702,10 +651,8 @@ def process_image(image_path):
     # Process image...
     return {"status": "processed", "path": image_path}
 
-# Async execution
 result = process_image.delay("/path/to/image.jpg")
 
-# Check status
 if result.ready():
     print(result.get())
 ```
@@ -715,7 +662,6 @@ if result.ready():
 ```python
 import pika
 
-# Producer
 connection = pika.BlockingConnection(
     pika.ConnectionParameters('localhost')
 )
@@ -728,7 +674,6 @@ channel.basic_publish(
     body='Task data'
 )
 
-# Consumer
 def callback(ch, method, properties, body):
     print(f"Received: {body}")
     # Process task
@@ -756,14 +701,6 @@ def complex_function(x, y):
     result += y
     return result
 
-# PDB commands:
-# n - next line
-# s - step into function
-# c - continue execution
-# p variable - print variable
-# l - list source code
-# w - where (call stack)
-# u/d - up/down stack frame
 ```
 
 ### Post-mortem Debugging

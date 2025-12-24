@@ -45,7 +45,6 @@ defmodule MyMacros do
   end
 end
 
-# Usage
 require MyMacros
 MyMacros.say_hello("World")  # Prints: Hello, World!
 ```
@@ -59,14 +58,10 @@ MyMacros.say_hello("World")  # Prints: Hello, World!
 ### 2. Understanding AST
 
 ```elixir
-# View AST structure
 quote do: 1 + 2
-# => {:+, [context: Elixir, import: Kernel], [1, 2]}
 
 quote do: foo(a, b)
-# => {:foo, [], [{:a, [], Elixir}, {:b, [], Elixir}]}
 
-# AST is just tuples and lists
 {function_name, metadata, arguments}
 ```
 
@@ -129,7 +124,6 @@ defmodule Router do
   end
 end
 
-# Usage
 defmodule MyRouter do
   use Router
 
@@ -139,7 +133,6 @@ defmodule MyRouter do
 end
 
 MyRouter.routes()
-# => [get: "/users", ..., post: "/users", ...]
 ```
 
 ## Advanced Patterns
@@ -184,13 +177,11 @@ defmodule User do
 end
 
 User.fields()
-# => [name: :string, email: :string, age: :integer]
 ```
 
 ### 2. Hygiene and Variable Scoping
 
 ```elixir
-# Hygienic macro - variables don't leak
 defmodule Hygienic do
   defmacro safe do
     quote do
@@ -205,7 +196,6 @@ require Hygienic
 Hygienic.safe()  # 84
 x  # Still 1 - not affected by macro
 
-# Unhygienic macro - explicit variable injection
 defmodule Unhygienic do
   defmacro unsafe do
     quote do
@@ -367,10 +357,8 @@ defmodule UserValidator do
 end
 
 UserValidator.validate(%{name: "Al", email: "al@example.com", age: 30})
-# => {:ok, %{...}}
 
 UserValidator.validate(%{name: "", email: "invalid", age: 30})
-# => {:error, {:name, "is required"}}
 ```
 
 ### 3. Pipeline Debugging Macro
@@ -411,7 +399,6 @@ defmodule Pipeline do
   defp extract_pipeline_steps(expr), do: [expr]
 end
 
-# Usage
 require Pipeline
 
 Pipeline.trace(
@@ -420,11 +407,6 @@ Pipeline.trace(
   |> Enum.filter(&(&1 > 3))
   |> Enum.sum()
 )
-# Pipeline trace:
-#   [1, 2, 3] => [1, 2, 3]
-#   Enum.map(&(&1 * 2)) => [2, 4, 6]
-#   Enum.filter(&(&1 > 3)) => [4, 6]
-#   Enum.sum() => 10
 ```
 
 ### 4. Configuration DSL
@@ -480,7 +462,6 @@ AppConfig.get(:database_url)  # From env or default
 **Problem:**
 
 ```elixir
-# Unnecessary macro
 defmacro add(a, b) do
   quote do
     unquote(a) + unquote(b)
@@ -491,7 +472,6 @@ end
 **Solution:**
 
 ```elixir
-# Use a function instead
 def add(a, b), do: a + b
 ```
 
@@ -500,7 +480,6 @@ def add(a, b), do: a + b
 ### 2. Variable Hygiene Issues
 
 ```elixir
-# Problem - variable name collision
 defmodule Broken do
   defmacro set_x do
     quote do
@@ -509,7 +488,6 @@ defmodule Broken do
   end
 end
 
-# Solution - use unique variable names or var!
 defmodule Fixed do
   defmacro set_x do
     quote do
@@ -522,14 +500,12 @@ end
 ### 3. Not Understanding AST
 
 ```elixir
-# Problem - trying to manipulate runtime values
 defmacro broken(list) do
   quote do
     Enum.map(unquote(list), &(&1 * 2))  # list isn't available at compile time
   end
 end
 
-# Solution - pass the AST, not the value
 defmacro fixed(list) do
   quote do
     unquote(list) |> Enum.map(&(&1 * 2))
@@ -542,7 +518,6 @@ end
 ### 1. Inspecting Macro Expansion
 
 ```elixir
-# Use Macro.expand/2 to see expanded code
 ast = quote do: MyMacro.my_macro(42)
 Macro.expand(ast, __ENV__)
 ```
@@ -589,13 +564,11 @@ end
 ### Compile-Time vs. Runtime
 
 ```elixir
-# Macro - work done at compile time
 defmacro compile_time_work(n) do
   result = expensive_computation(n)  # Runs once at compile time
   quote do: unquote(result)
 end
 
-# Function - work done at runtime
 def runtime_work(n) do
   expensive_computation(n)  # Runs every call
 end

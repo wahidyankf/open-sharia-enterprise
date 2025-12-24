@@ -317,10 +317,8 @@ end
 Mock in test:
 
 ```elixir
-# test/test_helper.exs
 Mox.defmock(MyApp.WeatherAPI.Mock, for: MyApp.WeatherAPI)
 
-# test/my_app/weather_test.exs
 defmodule MyApp.WeatherTest do
   use ExUnit.Case, async: true
 
@@ -350,13 +348,10 @@ end
 Configure mock in config:
 
 ```elixir
-# config/test.exs
 config :my_app, :weather_api, MyApp.WeatherAPI.Mock
 
-# config/prod.exs
 config :my_app, :weather_api, MyApp.WeatherAPI.HTTP
 
-# In application code
 @weather_api Application.compile_env(:my_app, :weather_api)
 
 def get_temperature(city) do
@@ -418,7 +413,6 @@ defmodule MyGenerators do
   end
 end
 
-# Usage
 property "user creation" do
   check all user <- MyGenerators.user() do
     assert {:ok, _} = Accounts.create_user(user)
@@ -549,7 +543,6 @@ defmodule MyApp.Factory do
   end
 end
 
-# Usage in tests
 user = insert(:user)
 admin = insert(:admin)
 users = insert_list(3, :user)
@@ -559,14 +552,11 @@ params = params_for(:user)
 ### Coverage Reports
 
 ```bash
-# Run with coverage
 mix test --cover
 
-# Generate HTML report
 mix test --cover --export-coverage default
 mix test.coverage
 
-# View report
 open cover/excoveralls.html
 ```
 
@@ -575,7 +565,6 @@ Add excoveralls:
 ```elixir
 {:excoveralls, "~> 0.18", only: :test}
 
-# mix.exs
 def project do
   [
     test_coverage: [tool: ExCoveralls],
@@ -638,9 +627,6 @@ test "external API call" do
   # Integration test
 end
 
-# Run only tagged tests
-# mix test --only slow
-# mix test --exclude integration
 ```
 
 ## Use Cases
@@ -668,7 +654,6 @@ end
 ### Tests Hang
 
 ```elixir
-# Add timeout to test
 @tag timeout: 1000  # milliseconds
 test "completes quickly" do
   # ...
@@ -678,11 +663,8 @@ end
 ### Database Issues
 
 ```bash
-# Reset test database
 mix ecto.reset
 
-# Check sandbox mode
-# config/test.exs
 config :my_app, MyApp.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 ```
@@ -690,10 +672,8 @@ config :my_app, MyApp.Repo,
 ### Flaky Tests
 
 ```elixir
-# Use assert_receive instead of assert_received
 assert_receive :message, 100  # Wait up to 100ms
 
-# Add delays for async operations
 Process.sleep(10)
 ```
 

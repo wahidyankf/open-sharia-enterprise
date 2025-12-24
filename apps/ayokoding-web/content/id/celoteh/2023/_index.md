@@ -13,7 +13,7 @@ draft: false
 - [06](/id/celoteh/2023/06)
   - [Menyiapkan C TypeScript F dan Dart untuk Pengembangan Lokal Dalam vs Code Pengalaman Liburan Saya](/id/celoteh/2023/06/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya)
   - [Kepemimpinan Itu Sepi Perspektif Pribadi sebagai Engineering Manager](/id/celoteh/2023/06/kepemimpinan-itu-sepi-perspektif-pribadi-sebagai-engineering-manager)
-  - [Perjalanan Meningkatkan Kemampuan Seumur Hidup Kisah Taman Kanak Kanak dan Hubungannya dengan Dunia Rekayasa Perangkat Lunak dan Ai](/id/celoteh/2023/06/perjalanan-meningkatkan-kemampuan-seumur-hidup-kisah-taman-kanak-kanak-dan-hubungannya-dengan-dunia-rekayasa-perangkat-lunak-dan-ai)
+  - [Perjalanan Meningkatkan Kemampuan Seumur Hidup Kisah Taman Kanak Kanak dan Hubungannya dengan Dunia Rekayasa Perangkat Lunak dan AI](/id/celoteh/2023/06/perjalanan-meningkatkan-kemampuan-seumur-hidup-kisah-taman-kanak-kanak-dan-hubungannya-dengan-dunia-rekayasa-perangkat-lunak-dan-ai)
   - [Migrasi AyoKoding Com dari Gitbook ke Notion dan Super](/id/celoteh/2023/06/migrasi-ayokoding-com-dari-gitbook-ke-notion-dan-super)
 - [07](/id/celoteh/2023/07)
   - [Menyeimbangkan Menjadi Orang Tua dan Belajar Memanfaatkan Kekuatan Buku Audio](/id/celoteh/2023/07/menyeimbangkan-menjadi-orang-tua-dan-belajar-memanfaatkan-kekuatan-buku-audio)

@@ -398,8 +398,6 @@ public class CreditCardValidator {
 ### Project README Structure
 
 ````markdown
-# MyApplication
-
 Brief description of what the application does and why it exists.
 
 ## Features
@@ -418,14 +416,11 @@ Brief description of what the application does and why it exists.
 ## Installation
 
 ```bash
-# Clone repository
 git clone https://github.com/example/myapp.git
 cd myapp
 
-# Build project
 mvn clean install
 
-# Run tests
 mvn test
 ```
 ````
@@ -467,13 +462,10 @@ MIT License - see LICENSE file for details.
 ### Generating Javadoc
 
 ```bash
-# Generate Javadoc for entire project
 mvn javadoc:javadoc
 
-# Generate Javadoc for single package
 javadoc -d docs/api -sourcepath src/main/java com.example.user
 
-# With Maven in pom.xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-javadoc-plugin</artifactId>

@@ -430,12 +430,8 @@ func main() {
 Check if variables escape to heap:
 
 ```bash
-# Build with escape analysis
 go build -gcflags="-m" main.go
 
-# Output shows allocations:
-# ./main.go:10:13: ... escapes to heap
-# ./main.go:15:2: moved to heap: x
 ```
 
 ### Compiler Optimizations
@@ -443,13 +439,10 @@ go build -gcflags="-m" main.go
 View compiler optimizations:
 
 ```bash
-# Show inlining decisions
 go build -gcflags="-m -m"
 
-# Disable optimizations for debugging
 go build -gcflags="-N -l"
 
-# View assembly
 go tool compile -S main.go
 ```
 
@@ -478,16 +471,12 @@ func processItems(items []int) {
 Run benchmarks multiple times:
 
 ```bash
-# Single run - unreliable
 go test -bench=.
 
-# Better: Multiple runs and statistics
 go test -bench=. -count=10 | tee bench.txt
 benchstat bench.txt
 
-# Compare before/after
 go test -bench=. -count=10 > old.txt
-# Make changes
 go test -bench=. -count=10 > new.txt
 benchstat old.txt new.txt
 ```

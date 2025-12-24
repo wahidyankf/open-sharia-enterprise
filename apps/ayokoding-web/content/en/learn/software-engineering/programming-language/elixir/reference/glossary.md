@@ -114,13 +114,10 @@ end
 
 ```elixir
 for x <- 1..5, do: x * 2
-# [2, 4, 6, 8, 10]
 
 for x <- 1..10, rem(x, 2) == 0, do: x
-# [2, 4, 6, 8, 10]
 
 for {k, v} <- %{a: 1, b: 2}, into: %{}, do: {k, v * 2}
-# %{a: 2, b: 4}
 ```
 
 **See also**: [Beginner Tutorial - Comprehensions](/en/learn/software-engineering/programming-language/elixir/tutorials/beginner#section-14-comprehensions-advanced)
@@ -156,8 +153,6 @@ def check(x) when x < 0, do: :negative
 ```elixir
 list = [1, 2, 3]
 new_list = [0 | list]  # Creates new list
-# list is still [1, 2, 3]
-# new_list is [0, 1, 2, 3]
 ```
 
 **Benefits**: Thread safety, predictability, easier reasoning.
@@ -172,12 +167,9 @@ new_list = [0 | list]  # Creates new list
 
 ```elixir
 [name: "Alice", age: 30]
-# Actually [{:name, "Alice"}, {:age, 30}]
 
-# Access
 opts[:name]  # "Alice"
 
-# Duplicates allowed (unlike maps)
 [color: :red, color: :blue]  # Valid
 ```
 
@@ -220,7 +212,6 @@ end
 %{name: "Alice", age: 30}          # Atom keys
 %{1 => "one", 2 => "two"}          # Integer keys
 
-# Access
 map[:name]    # Atom key
 map["name"]   # String key
 map.name      # Atom key only
@@ -280,14 +271,11 @@ end
 **Example**:
 
 ```elixir
-# Without pipe
 String.upcase(String.trim("  hello  "))
 
-# With pipe
 "  hello  "
 |> String.trim()
 |> String.upcase()
-# "HELLO"
 ```
 
 **Convention**: Enables readable data transformation pipelines.
@@ -352,7 +340,6 @@ end
 def sum([]), do: 0
 def sum([head | tail]), do: head + sum(tail)
 
-# Tail recursive (optimized)
 def sum(list, acc \\ 0)
 def sum([], acc), do: acc
 def sum([head | tail], acc), do: sum(tail, head + acc)
@@ -389,13 +376,10 @@ def sum([head | tail], acc), do: sum(tail, head + acc)
 **Example**:
 
 ```elixir
-# Lazy (not evaluated yet)
 stream = Stream.map([1, 2, 3], &(&1 * 2))
 
-# Evaluated when consumed
 Enum.to_list(stream)  # [2, 4, 6]
 
-# Infinite streams
 Stream.cycle([1, 2, 3])
 |> Stream.take(5)
 |> Enum.to_list()  # [1, 2, 3, 1, 2]
@@ -421,7 +405,6 @@ end
 user = %User{name: "Alice", age: 30}
 user.name  # "Alice"
 
-# Pattern match
 %User{name: name} = user
 ```
 
@@ -442,10 +425,8 @@ user.name  # "Alice"
 {:error, "not found"}
 {1, 2, 3}
 
-# Pattern matching
 {:ok, value} = {:ok, 42}
 
-# Access
 elem({:ok, 42}, 1)  # 42
 ```
 
@@ -544,11 +525,9 @@ end
 **Example**:
 
 ```elixir
-# Local registration
 GenServer.start_link(Counter, 0, name: Counter)
 GenServer.call(Counter, :increment)
 
-# Custom registry
 {:ok, _} = Registry.start_link(keys: :unique, name: MyRegistry)
 Registry.register(MyRegistry, :my_key, nil)
 ```
@@ -616,10 +595,8 @@ Application
 **Example**:
 
 ```elixir
-# Fire and forget
 Task.start(fn -> IO.puts("Background work") end)
 
-# Async/await
 task = Task.async(fn -> expensive_computation() end)
 result = Task.await(task)
 ```
@@ -705,7 +682,6 @@ end
 **Example**:
 
 ```elixir
-# Schema
 defmodule User do
   use Ecto.Schema
   schema "users" do
@@ -714,7 +690,6 @@ defmodule User do
   end
 end
 
-# Query
 import Ecto.Query
 query = from u in User, where: u.age > 18, select: u
 Repo.all(query)
@@ -808,13 +783,10 @@ end
 **Example**:
 
 ```elixir
-# Subscribe
 Phoenix.PubSub.subscribe(MyApp.PubSub, "topic:updates")
 
-# Publish
 Phoenix.PubSub.broadcast(MyApp.PubSub, "topic:updates", {:new_data, data})
 
-# Receive
 def handle_info({:new_data, data}, socket) do
   {:noreply, assign(socket, data: data)}
 end
@@ -873,13 +845,10 @@ end
 **Example**:
 
 ```elixir
-# Start node
 iex --sname node1
 
-# Connect nodes
 Node.connect(:"node2@hostname")
 
-# Send messages
 pid = Node.spawn(:"node2@hostname", fn -> IO.puts("Remote") end)
 ```
 
@@ -904,11 +873,8 @@ pid = Node.spawn(:"node2@hostname", fn -> IO.puts("Remote") end)
 **Example**:
 
 ```elixir
-# Load new version
 :code.load_file(MyModule)
 
-# Old code continues until processes finish
-# New processes use new code
 ```
 
 **Use case**: Zero-downtime deployments.
@@ -1032,7 +998,6 @@ iex
 iex> 1 + 2
 3
 iex> h Enum.map
-# Documentation displayed
 ```
 
 **See also**: [Initial Setup - IEx Basics](/en/learn/software-engineering/programming-language/elixir/tutorials/initial-setup#section-4-interactive-elixir-iex)

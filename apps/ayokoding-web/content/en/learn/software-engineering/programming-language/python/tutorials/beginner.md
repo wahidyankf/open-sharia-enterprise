@@ -88,12 +88,9 @@ If you haven't installed Python yet, follow the [Initial Setup](/en/learn/softwa
 Quick verification:
 
 ```bash
-# Windows
 python --version
 
-# macOS/Linux
 python3 --version
-# Should output: Python 3.13.x or 3.14.x (3.12.x also supported)
 ```
 
 ### Your First Program
@@ -107,12 +104,9 @@ print("Hello, World!")
 Run it:
 
 ```bash
-# Windows
 python hello.py
 
-# macOS/Linux
 python3 hello.py
-# Output: Hello, World!
 ```
 
 ## 🔤 Basic Syntax
@@ -120,58 +114,46 @@ python3 hello.py
 ### Variables and Dynamic Typing
 
 ```python
-# Dynamic typing (type inferred at runtime)
 name = "Alice"
 age = 30
 height = 1.65
 is_active = True
 
-# Type hints (optional, for clarity)
 city: str = "Jakarta"
 count: int = 42
 price: float = 99.99
 
-# Multiple assignment
 x, y, z = 10, 20, 30
 
-# Swap variables (Pythonic way)
 a, b = 5, 10
 a, b = b, a  # Now a=10, b=5
 
-# Constants (by convention, ALL_CAPS)
 MAX_RETRIES = 3
 PI = 3.14159
 
 print(name, age, height, is_active)
-# Output: Alice 30 1.65 True
 ```
 
 ### Basic Types
 
 ```python
-# Integers (unlimited precision!)
 small_int = 42
 big_int = 12345678901234567890  # No overflow!
 
-# Floats
 price = 19.99
 scientific = 1.5e-4  # 0.00015
 
-# Strings
 single_quote = 'Hello'
 double_quote = "World"
 multi_line = """This is
 a multi-line
 string"""
 
-# Booleans (capitalized!)
 is_ready = True
 is_done = False
 
-# None (like null in other languages)
 result = None
 
-# Type checking
 print(type(name))        # <class 'str'>
 print(type(age))         # <class 'int'>
 print(isinstance(age, int))  # True
@@ -180,22 +162,17 @@ print(isinstance(age, int))  # True
 ### String Operations
 
 ```python
-# String concatenation
 first = "Hello"
 last = "World"
 full = first + " " + last  # "Hello World"
 
-# String repetition
 repeat = "Ha" * 3  # "HaHaHa"
 
-# String formatting
 name = "Alice"
 age = 30
 
-# f-strings (Python 3.6+, recommended)
 message = f"{name} is {age} years old"
 
-# String methods
 text = "  Hello, World!  "
 print(text.strip())       # "Hello, World!" (remove whitespace)
 print(text.upper())       # "  HELLO, WORLD!  "
@@ -203,7 +180,6 @@ print(text.lower())       # "  hello, world!  "
 print(text.replace("World", "Python"))  # "  Hello, Python!  "
 print("Hello" in text)    # True (substring check)
 
-# String slicing
 text = "Python"
 print(text[0])      # "P" (first character)
 print(text[-1])     # "n" (last character)
@@ -219,17 +195,14 @@ print(text[:4])     # "Pyth" (slice from start to 3)
 ```python
 age = 18
 
-# Basic if
 if age >= 18:
     print("Adult")  # Output: Adult
 
-# If with else
 if age >= 18:
     print("Adult")
 else:
     print("Minor")
 
-# If/elif/else chain
 score = 85
 if score >= 90:
     grade = "A"
@@ -242,7 +215,6 @@ else:
 
 print(f"Grade: {grade}")  # Grade: B
 
-# Ternary operator (conditional expression)
 status = "Adult" if age >= 18 else "Minor"
 print(status)  # Adult
 ```
@@ -252,29 +224,24 @@ print(status)  # Adult
 ### Loops
 
 ```python
-# For loop (range)
 for i in range(5):
     print(i)  # Prints: 0, 1, 2, 3, 4
 
-# For loop (iterate over list)
 fruits = ["apple", "banana", "cherry"]
 for fruit in fruits:
     print(fruit)
 
-# For loop with index (enumerate)
 for index, fruit in enumerate(fruits):
     print(f"{index}: {fruit}")
     # Output: 0: apple
     #         1: banana
     #         2: cherry
 
-# While loop
 count = 0
 while count < 3:
     print(count)
     count += 1  # Output: 0, 1, 2
 
-# Break and continue
 for i in range(10):
     if i == 3:
         continue  # Skip 3
@@ -282,7 +249,6 @@ for i in range(10):
         break     # Stop at 5
     print(i)      # Prints: 0, 1, 2, 4
 
-# For-else (executes if loop completes without break)
 for i in range(5):
     if i == 10:
         break
@@ -310,11 +276,9 @@ Before moving forward, ensure you can:
 Ordered, mutable collections:
 
 ```python
-# Create list
 numbers = [1, 2, 3, 4, 5]
 mixed = [1, "hello", 3.14, True]  # Can hold different types
 
-# List methods
 numbers.append(6)           # Add to end: [1, 2, 3, 4, 5, 6]
 numbers.insert(0, 0)        # Insert at position: [0, 1, 2, 3, 4, 5, 6]
 numbers.extend([7, 8, 9])   # Add multiple: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -322,18 +286,15 @@ numbers.remove(0)           # Remove first occurrence: [1, 2, 3, 4, 5, 6, 7, 8, 
 popped = numbers.pop()      # Remove and return last: 9
 popped_at = numbers.pop(0)  # Remove at index: 1
 
-# Indexing and slicing
 first = numbers[0]          # 2
 last = numbers[-1]          # 8
 slice_nums = numbers[1:4]   # [3, 4, 5] (from index 1 to 3)
 every_second = numbers[::2] # [2, 4, 6, 8] (every 2nd element)
 reversed_nums = numbers[::-1]  # [8, 7, 6, 5, 4, 3, 2] (reversed)
 
-# List comprehension (concise list creation)
 squares = [x**2 for x in range(10)]  # [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 even_squares = [x**2 for x in range(10) if x % 2 == 0]  # [0, 4, 16, 36, 64]
 
-# Common operations
 print(len(numbers))         # 7 (length)
 print(max(numbers))         # 8 (maximum)
 print(min(numbers))         # 2 (minimum)
@@ -348,29 +309,21 @@ numbers.reverse()           # Reverse in place
 Ordered, **immutable** collections:
 
 ```python
-# Create tuple
 coordinates = (10, 20)
 person = ("Alice", 30, "Jakarta")
 
-# Tuple unpacking
 x, y = coordinates
 name, age, city = person
 
-# Single element tuple (note the comma)
 single = (42,)  # With comma: tuple
 not_tuple = (42)  # Without comma: int
 
-# Tuples are immutable
-# coordinates[0] = 15  # ERROR: TypeError
 
-# Use cases
-# 1. Return multiple values from function
 def get_dimensions():
     return 100, 200  # Returns tuple
 
 width, height = get_dimensions()
 
-# 2. Dictionary keys (must be immutable)
 locations = {
     (0, 0): "Origin",
     (10, 20): "Point A"
@@ -382,15 +335,12 @@ locations = {
 Unordered, unique collections:
 
 ```python
-# Create set
 numbers = {1, 2, 3, 4, 5}
 unique = {1, 2, 2, 3, 3, 3}  # {1, 2, 3} (duplicates removed)
 
-# Create from list
 nums = [1, 2, 2, 3, 3, 3]
 unique_nums = set(nums)  # {1, 2, 3}
 
-# Set operations
 a = {1, 2, 3, 4}
 b = {3, 4, 5, 6}
 
@@ -399,7 +349,6 @@ print(a & b)  # {3, 4} (intersection)
 print(a - b)  # {1, 2} (difference)
 print(a ^ b)  # {1, 2, 5, 6} (symmetric difference)
 
-# Set methods
 numbers.add(6)          # Add element
 numbers.remove(1)       # Remove (raises KeyError if not found)
 numbers.discard(10)     # Remove (no error if not found)
@@ -411,47 +360,36 @@ numbers.clear()         # Remove all elements
 Key-value pairs (like maps/hashmaps):
 
 ```python
-# Create dictionary
 person = {
     "name": "Alice",
     "age": 30,
     "city": "Jakarta"
 }
 
-# Dictionary literal
 scores = {"Alice": 90, "Bob": 85, "Carol": 92}
 
-# Access values
 print(person["name"])       # "Alice"
 print(person.get("age"))    # 30 (safe access)
 print(person.get("email", "N/A"))  # "N/A" (default value)
 
-# Add/modify
 person["email"] = "alice@example.com"
 person["age"] = 31
 
-# Delete
 del person["city"]
 removed = person.pop("email")  # Remove and return value
 
-# Dictionary methods
 keys = person.keys()          # dict_keys(['name', 'age'])
 values = person.values()      # dict_values(['Alice', 31])
 items = person.items()        # dict_items([('name', 'Alice'), ('age', 31)])
 
-# Iterate
 for key, value in person.items():
     print(f"{key}: {value}")
 
-# Dictionary comprehension
 squares_dict = {x: x**2 for x in range(5)}
-# {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
 
-# Check key existence
 if "name" in person:
     print("Name exists")
 
-# Merge dictionaries (Python 3.9+)
 defaults = {"theme": "dark", "lang": "en"}
 user_prefs = {"lang": "id"}
 merged = defaults | user_prefs  # {'theme': 'dark', 'lang': 'id'}
@@ -462,23 +400,18 @@ merged = defaults | user_prefs  # {'theme': 'dark', 'lang': 'id'}
 ### Basic Functions
 
 ```python
-# Simple function
 def greet(name):
     print(f"Hello, {name}")
 
-# Function with return
 def add(a, b):
     return a + b
 
-# Type hints (optional, for clarity)
 def multiply(a: int, b: int) -> int:
     return a * b
 
-# Default arguments
 def power(base, exponent=2):
     return base ** exponent
 
-# Keyword arguments
 def describe_person(name, age, city="Unknown"):
     print(f"{name}, {age} years old, from {city}")
 
@@ -486,7 +419,6 @@ describe_person("Alice", 30)                    # city="Unknown"
 describe_person("Bob", 25, city="Jakarta")      # Using keyword
 describe_person(age=28, name="Carol")           # Keywords, different order
 
-# Multiple return values (tuple unpacking)
 def divide(a, b):
     quotient = a // b
     remainder = a % b
@@ -495,21 +427,16 @@ def divide(a, b):
 q, r = divide(10, 3)
 print(q, r)  # 3 1
 
-# Variable arguments (*args)
 def sum_all(*numbers):
     return sum(numbers)
 
 print(sum_all(1, 2, 3, 4, 5))  # 15
 
-# Keyword arguments (**kwargs)
 def print_info(**kwargs):
     for key, value in kwargs.items():
         print(f"{key}: {value}")
 
 print_info(name="Alice", age=30, city="Jakarta")
-# Output: name: Alice
-#         age: 30
-#         city: Jakarta
 ```
 
 ### Lambda Functions
@@ -517,33 +444,24 @@ print_info(name="Alice", age=30, city="Jakarta")
 Anonymous, one-line functions:
 
 ```python
-# Basic lambda
 square = lambda x: x ** 2
 print(square(5))  # 25
 
-# Lambda with multiple arguments
 add = lambda a, b: a + b
 print(add(3, 4))  # 7
 
-# Common use: with map(), filter(), sorted()
 numbers = [1, 2, 3, 4, 5]
 
-# Map (apply function to each element)
 squared = list(map(lambda x: x**2, numbers))
-# [1, 4, 9, 16, 25]
 
-# Filter (keep elements where function returns True)
 evens = list(filter(lambda x: x % 2 == 0, numbers))
-# [2, 4]
 
-# Sorted with key function
 people = [
     {"name": "Alice", "age": 30},
     {"name": "Bob", "age": 25},
     {"name": "Carol", "age": 35}
 ]
 sorted_by_age = sorted(people, key=lambda p: p["age"])
-# [{'name': 'Bob', 'age': 25}, ...]
 ```
 
 ### ✅ Checkpoint: Functions
@@ -566,7 +484,6 @@ Object-oriented programming is central to Python. For deeper coverage, see the [
 ### Classes and Objects
 
 ```python
-# Define a class
 class Person:
     # Class variable (shared by all instances)
     species = "Homo sapiens"
@@ -590,15 +507,12 @@ class Person:
     def __str__(self):
         return f"Person(name={self.name}, age={self.age})"
 
-# Create instances
 alice = Person("Alice", 30)
 bob = Person("Bob", 25)
 
-# Call methods
 alice.greet()           # Hello, I'm Alice
 alice.have_birthday()   # Alice is now 31 years old
 
-# Access attributes
 print(alice.name)       # Alice
 print(alice.species)    # Homo sapiens
 print(alice)            # Person(name=Alice, age=31)
@@ -607,7 +521,6 @@ print(alice)            # Person(name=Alice, age=31)
 ### Inheritance
 
 ```python
-# Base class
 class Animal:
     def __init__(self, name):
         self.name = name
@@ -615,7 +528,6 @@ class Animal:
     def speak(self):
         pass  # Abstract method (to be overridden)
 
-# Derived class
 class Dog(Animal):
     def __init__(self, name, breed):
         super().__init__(name)  # Call parent constructor
@@ -632,14 +544,12 @@ class Cat(Animal):
     def speak(self):
         return f"{self.name} says Meow!"
 
-# Create instances
 dog = Dog("Buddy", "Golden Retriever")
 cat = Cat("Whiskers", "Orange")
 
 print(dog.speak())  # Buddy says Woof!
 print(cat.speak())  # Whiskers says Meow!
 
-# Polymorphism
 animals = [dog, cat]
 for animal in animals:
     print(animal.speak())
@@ -675,9 +585,6 @@ account.deposit(500)    # Deposited $500. New balance: $1500
 account.withdraw(200)   # Withdrew $200. New balance: $1300
 print(account.get_balance())  # 1300
 
-# Direct access to private attribute fails (name mangling)
-# print(account.__balance)  # ERROR: AttributeError
-# But name mangling allows: account._BankAccount__balance (not recommended)
 ```
 
 ### Properties
@@ -715,7 +622,6 @@ print(temp.fahrenheit)   # 77.0
 temp.fahrenheit = 86     # Set via Fahrenheit
 print(temp.celsius)      # 30.0
 
-# temp.celsius = -300    # ERROR: ValueError
 ```
 
 ### Class Methods and Static Methods
@@ -734,7 +640,6 @@ class MathUtils:
         """Class method - receives class as first argument"""
         return cls.PI * radius ** 2
 
-# Call without creating instance
 print(MathUtils.add(5, 3))           # 8
 print(MathUtils.circle_area(10))     # 314.159
 ```
@@ -744,14 +649,12 @@ print(MathUtils.circle_area(10))     # 314.159
 ### Try/Except
 
 ```python
-# Basic try/except
 try:
     number = int("abc")
 except ValueError as e:
     print(f"Error: {e}")
     # Output: Error: invalid literal for int() with base 10: 'abc'
 
-# Multiple exceptions
 try:
     result = 10 / 0
 except ZeroDivisionError:
@@ -761,7 +664,6 @@ except ValueError:
 except Exception as e:
     print(f"Unexpected error: {e}")
 
-# Try/except/else/finally
 try:
     file = open("data.txt", "r")
 except FileNotFoundError:
@@ -792,7 +694,6 @@ except ValueError as e:
     print(f"Validation error: {e}")
     # Output: Validation error: Age cannot be negative
 
-# Custom exceptions
 class InsufficientFundsError(Exception):
     """Raised when withdrawal exceeds balance"""
     pass
@@ -813,18 +714,13 @@ except InsufficientFundsError as e:
 ### Context Managers
 
 ```python
-# Using 'with' for automatic resource management
-# The file is automatically closed after the block
 with open("data.txt", "w") as file:
     file.write("Hello, World!")
-# File is closed here automatically
 
-# Multiple context managers
 with open("input.txt", "r") as infile, open("output.txt", "w") as outfile:
     content = infile.read()
     outfile.write(content.upper())
 
-# Custom context manager
 class Timer:
     def __enter__(self):
         import time
@@ -839,7 +735,6 @@ class Timer:
 with Timer():
     # Some operation
     sum(range(1000000))
-# Output: Elapsed: 0.03s
 ```
 
 ## 📁 File I/O
@@ -847,21 +742,17 @@ with Timer():
 ### Reading Files
 
 ```python
-# Read entire file
 with open("data.txt", "r") as file:
     content = file.read()
     print(content)
 
-# Read line by line
 with open("data.txt", "r") as file:
     for line in file:
         print(line.strip())  # Remove newline
 
-# Read all lines into list
 with open("data.txt", "r") as file:
     lines = file.readlines()
 
-# Read with encoding
 with open("data.txt", "r", encoding="utf-8") as file:
     content = file.read()
 ```
@@ -869,16 +760,13 @@ with open("data.txt", "r", encoding="utf-8") as file:
 ### Writing Files
 
 ```python
-# Write (overwrite)
 with open("output.txt", "w") as file:
     file.write("Hello, World!\n")
     file.write("Second line\n")
 
-# Append
 with open("output.txt", "a") as file:
     file.write("Appended line\n")
 
-# Write multiple lines
 lines = ["Line 1\n", "Line 2\n", "Line 3\n"]
 with open("output.txt", "w") as file:
     file.writelines(lines)
@@ -889,26 +777,21 @@ with open("output.txt", "w") as file:
 ```python
 import json
 
-# Dictionary to JSON
 data = {
     "name": "Alice",
     "age": 30,
     "skills": ["Python", "JavaScript", "SQL"]
 }
 
-# Write JSON to file
 with open("data.json", "w") as file:
     json.dump(data, file, indent=2)
 
-# Convert to JSON string
 json_string = json.dumps(data, indent=2)
 print(json_string)
 
-# Read JSON from file
 with open("data.json", "r") as file:
     loaded_data = json.load(file)
 
-# Parse JSON string
 data_from_string = json.loads(json_string)
 ```
 
@@ -917,7 +800,6 @@ data_from_string = json.loads(json_string)
 ```python
 import csv
 
-# Write CSV
 data = [
     ["Name", "Age", "City"],
     ["Alice", 30, "Jakarta"],
@@ -928,13 +810,11 @@ with open("people.csv", "w", newline="") as file:
     writer = csv.writer(file)
     writer.writerows(data)
 
-# Read CSV
 with open("people.csv", "r") as file:
     reader = csv.reader(file)
     for row in reader:
         print(row)
 
-# CSV with dictionaries
 with open("people.csv", "w", newline="") as file:
     fieldnames = ["Name", "Age", "City"]
     writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -949,7 +829,6 @@ with open("people.csv", "w", newline="") as file:
 Create `mymath.py`:
 
 ```python
-# mymath.py
 def add(a, b):
     return a + b
 
@@ -962,19 +841,16 @@ PI = 3.14159
 Use in another file:
 
 ```python
-# main.py
 import mymath
 
 result = mymath.add(5, 3)
 print(result)  # 8
 print(mymath.PI)  # 3.14159
 
-# Or import specific items
 from mymath import add, PI
 result = add(10, 5)
 print(result)  # 15
 
-# Import with alias
 import mymath as mm
 result = mm.multiply(4, 5)
 ```
@@ -982,7 +858,6 @@ result = mm.multiply(4, 5)
 ### Standard Library Modules
 
 ```python
-# datetime - Date and time
 from datetime import datetime, timedelta
 
 now = datetime.now()
@@ -991,21 +866,18 @@ print(now)  # 2025-12-17 15:00:24.123456
 tomorrow = now + timedelta(days=1)
 formatted = now.strftime("%Y-%m-%d %H:%M:%S")
 
-# random - Random numbers
 import random
 
 print(random.randint(1, 10))           # Random int between 1 and 10
 print(random.choice(["a", "b", "c"]))  # Random choice
 print(random.random())                  # Random float between 0 and 1
 
-# os - Operating system interface
 import os
 
 print(os.getcwd())                 # Current directory
 os.makedirs("new_folder", exist_ok=True)
 print(os.listdir("."))             # List directory contents
 
-# pathlib - Object-oriented paths (Python 3.4+)
 from pathlib import Path
 
 path = Path("data/file.txt")
@@ -1019,42 +891,30 @@ print(path.name)                   # File name
 ### Virtual Environments
 
 ```bash
-# Create virtual environment
 python -m venv venv
 
-# Activate virtual environment
-# Windows
 venv\Scripts\activate
 
-# macOS/Linux
 source venv/bin/activate
 
-# Deactivate
 deactivate
 ```
 
 ### pip - Package Manager
 
 ```bash
-# Install package
 pip install requests
 
-# Install specific version
 pip install requests==2.28.0
 
-# Install from requirements.txt
 pip install -r requirements.txt
 
-# List installed packages
 pip list
 
-# Show package info
 pip show requests
 
-# Uninstall package
 pip uninstall requests
 
-# Freeze dependencies
 pip freeze > requirements.txt
 ```
 
@@ -1073,7 +933,6 @@ pip install pytest
 Create `calculator.py`:
 
 ```python
-# calculator.py
 def add(a, b):
     return a + b
 
@@ -1086,7 +945,6 @@ def divide(a, b):
 Create `test_calculator.py`:
 
 ```python
-# test_calculator.py
 import pytest
 from calculator import add, divide
 
@@ -1108,7 +966,6 @@ Run tests:
 
 ```bash
 pytest test_calculator.py
-# Or run all tests
 pytest
 ```
 
@@ -1131,9 +988,7 @@ Write a function `is_palindrome(text)` that returns `True` if the text is a pali
 Write a function that takes a string and returns a dictionary with word frequencies.
 
 ```python
-# Example
 text = "hello world hello"
-# Should return: {"hello": 2, "world": 1}
 ```
 
 **Exercise 4**: List Flattener
@@ -1141,9 +996,7 @@ text = "hello world hello"
 Write a function that flattens a nested list.
 
 ```python
-# Example
 nested = [1, [2, 3], [4, [5, 6]], 7]
-# Should return: [1, 2, 3, 4, 5, 6, 7]
 ```
 
 ### Level 3: Object-Oriented
@@ -1176,13 +1029,11 @@ Create a class that fetches data from a public API (e.g., JSONPlaceholder), pars
 ### EAFP vs LBYL
 
 ```python
-# EAFP: Easier to Ask for Forgiveness than Permission (Pythonic)
 try:
     value = my_dict["key"]
 except KeyError:
     value = "default"
 
-# LBYL: Look Before You Leap (less Pythonic)
 if "key" in my_dict:
     value = my_dict["key"]
 else:
@@ -1192,12 +1043,10 @@ else:
 ### List Comprehensions vs Loops
 
 ```python
-# Using loop
 squares = []
 for i in range(10):
     squares.append(i ** 2)
 
-# Using list comprehension (more Pythonic)
 squares = [i ** 2 for i in range(10)]
 ```
 
@@ -1206,11 +1055,9 @@ squares = [i ** 2 for i in range(10)]
 ```python
 items = ["a", "b", "c"]
 
-# Not Pythonic
 for i in range(len(items)):
     print(i, items[i])
 
-# Pythonic
 for i, item in enumerate(items):
     print(i, item)
 ```
@@ -1218,13 +1065,11 @@ for i, item in enumerate(items):
 ### Dictionary get() with Default
 
 ```python
-# Not Pythonic (can raise KeyError)
 if "key" in my_dict:
     value = my_dict["key"]
 else:
     value = "default"
 
-# Pythonic
 value = my_dict.get("key", "default")
 ```
 

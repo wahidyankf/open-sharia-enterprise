@@ -89,7 +89,6 @@ defmodule Counter do
   end
 end
 
-# Usage
 {:ok, _pid} = Counter.start_link(10)
 Counter.increment()        # 11
 Counter.increment()        # 12
@@ -171,7 +170,6 @@ defmodule Stack do
   end
 end
 
-# Usage
 {:ok, pid} = Stack.start_link([1, 2, 3])
 Stack.push(pid, 4)
 Stack.peek(pid)           # {:ok, 4}
@@ -251,7 +249,6 @@ defmodule KeyValueStore do
   end
 end
 
-# Usage
 {:ok, pid} = KeyValueStore.start_link()
 KeyValueStore.put(pid, :name, "Alice")
 KeyValueStore.put(pid, :age, 30)
@@ -468,7 +465,6 @@ defmodule ConfigurableCache do
   end
 end
 
-# Usage
 {:ok, _pid} = ConfigurableCache.start_link(max_size: 3, ttl: 10)
 ConfigurableCache.put(:a, 1)
 ConfigurableCache.put(:b, 2)
@@ -523,31 +519,24 @@ end
 ### Named vs Unnamed GenServers
 
 ```elixir
-# Named (singleton pattern)
 GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
 GenServer.call(__MODULE__, :get_value)
 
-# Unnamed (multiple instances)
 {:ok, pid} = GenServer.start_link(__MODULE__, :ok)
 GenServer.call(pid, :get_value)
 
-# Named with via tuple (Registry)
 GenServer.start_link(__MODULE__, :ok, name: {:via, Registry, {MyRegistry, key}})
 ```
 
 ### Reply Formats
 
 ```elixir
-# Standard reply
 {:reply, reply_value, new_state}
 
-# Reply with timeout (hibernate after)
 {:reply, reply_value, new_state, :hibernate}
 
-# Stop GenServer after reply
 {:stop, reason, reply_value, new_state}
 
-# No reply (respond later with GenServer.reply/2)
 {:noreply, new_state}
 ```
 
@@ -569,13 +558,11 @@ end
 ### Blocking the GenServer
 
 ```elixir
-# BAD: Blocks GenServer for 5 seconds
 def handle_call(:slow_fetch, _from, state) do
   result = HTTPoison.get!("http://slow-api.com")  # Blocks!
   {:reply, result, state}
 end
 
-# GOOD: Offload to Task
 def handle_call(:slow_fetch, from, state) do
   Task.start(fn ->
     result = HTTPoison.get!("http://slow-api.com")
@@ -588,13 +575,11 @@ end
 ### Forgetting to Update State
 
 ```elixir
-# BAD: State not updated
 def handle_cast({:increment, amount}, state) do
   state.counter + amount  # Oops! Just computes, doesn't return
   {:noreply, state}  # Old state returned
 end
 
-# GOOD: Return updated state
 def handle_cast({:increment, amount}, state) do
   new_counter = state.counter + amount
   {:noreply, %{state | counter: new_counter}}
@@ -604,12 +589,10 @@ end
 ### Using `call` When `cast` Would Work
 
 ```elixir
-# BAD: Unnecessary blocking
 def log_event(event) do
   GenServer.call(__MODULE__, {:log, event})  # Blocks caller
 end
 
-# GOOD: Fire and forget
 def log_event(event) do
   GenServer.cast(__MODULE__, {:log, event})
 end
@@ -618,13 +601,11 @@ end
 ### Not Handling Crashes Properly
 
 ```elixir
-# BAD: Unhandled error crashes GenServer
 def handle_call({:divide, a, b}, _from, state) do
   result = div(a, b)  # Crashes on b = 0!
   {:reply, result, state}
 end
 
-# GOOD: Handle errors
 def handle_call({:divide, a, b}, _from, state) do
   case b do
     0 -> {:reply, {:error, :division_by_zero}, state}

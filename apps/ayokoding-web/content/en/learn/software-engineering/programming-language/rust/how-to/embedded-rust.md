@@ -30,7 +30,6 @@ You're targeting a microcontroller without an operating system.
 
 ```toml
 [dependencies]
-# No std library
 cortex-m = "0.7"
 cortex-m-rt = "0.7"
 panic-halt = "0.2"

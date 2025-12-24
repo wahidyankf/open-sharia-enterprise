@@ -48,7 +48,6 @@ Use **File module** for file operations, **Path module** for cross-platform path
 #### Reading Files
 
 ```elixir
-# Read entire file (for small files)
 case File.read("config.txt") do
   {:ok, content} ->
     IO.puts("File content: #{content}")
@@ -60,13 +59,10 @@ case File.read("config.txt") do
     IO.puts("Error: #{reason}")
 end
 
-# Read with bang (raises on error)
 content = File.read!("config.txt")
 
-# Read lines into list
 {:ok, lines} = File.read("data.txt") |> elem(1) |> String.split("\n")
 
-# Or more safely:
 lines =
   case File.read("data.txt") do
     {:ok, content} -> String.split(content, "\n")
@@ -77,22 +73,17 @@ lines =
 #### Writing Files
 
 ```elixir
-# Write string to file (overwrites)
 File.write("output.txt", "Hello, World!")
 
-# Write with error handling
 case File.write("output.txt", "Hello, World!") do
   :ok -> IO.puts("Write successful")
   {:error, reason} -> IO.puts("Write failed: #{reason}")
 end
 
-# Write with bang (raises on error)
 File.write!("output.txt", "Hello, World!")
 
-# Append to file
 File.write("log.txt", "New entry\n", [:append])
 
-# Write binary data
 binary_data = <<0xFF, 0xD8, 0xFF, 0xE0>>
 File.write("image.jpg", binary_data, [:binary])
 ```
@@ -100,17 +91,14 @@ File.write("image.jpg", binary_data, [:binary])
 #### File Metadata
 
 ```elixir
-# Check if file exists
 File.exists?("config.txt")  # true/false
 
-# Get file stats
 {:ok, stat} = File.stat("data.txt")
 stat.size        # File size in bytes
 stat.type        # :regular | :directory | :symlink
 stat.access      # :read | :write | :read_write | :none
 stat.mtime       # Modification time (Erlang timestamp)
 
-# Safer check
 case File.stat("data.txt") do
   {:ok, %{size: size, mtime: mtime}} ->
     IO.puts("Size: #{size} bytes, Modified: #{inspect(mtime)}")
@@ -123,31 +111,24 @@ end
 #### File Manipulation
 
 ```elixir
-# Copy file
 File.cp("source.txt", "destination.txt")
 
-# Copy with overwrite check
 case File.cp("source.txt", "destination.txt") do
   :ok -> IO.puts("Copied")
   {:error, :eexist} -> IO.puts("Destination already exists")
 end
 
-# Move/rename file
 File.rename("old_name.txt", "new_name.txt")
 
-# Delete file
 File.rm("temp.txt")
 
-# Delete with error handling
 case File.rm("temp.txt") do
   :ok -> IO.puts("Deleted")
   {:error, :enoent} -> IO.puts("File not found")
 end
 
-# Delete directory (must be empty)
 File.rmdir("empty_dir")
 
-# Delete directory recursively
 File.rm_rf("directory_with_contents")
 ```
 
@@ -158,13 +139,11 @@ Streaming processes files line-by-line without loading into memory.
 #### Basic File Streaming
 
 ```elixir
-# Read large file line by line
 File.stream!("large_log.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.filter(fn line -> String.contains?(line, "ERROR") end)
 |> Enum.each(&IO.puts/1)
 
-# Lazy evaluation - only reads what's needed
 error_count =
   File.stream!("large_log.txt")
   |> Enum.count(fn line -> String.contains?(line, "ERROR") end)
@@ -173,13 +152,11 @@ error_count =
 #### Transform and Write
 
 ```elixir
-# Read, transform, write (memory-efficient)
 File.stream!("input.csv")
 |> Stream.map(&String.upcase/1)
 |> Stream.into(File.stream!("output.csv"))
 |> Stream.run()
 
-# Process CSV with transformations
 File.stream!("data.csv")
 |> Stream.drop(1)  # Skip header
 |> Stream.map(fn line ->
@@ -197,10 +174,8 @@ end)
 #### Custom Line Separators
 
 ```elixir
-# Read file with custom delimiter
 File.stream!("data.txt", [:read], :line)  # Default: \n delimiter
 
-# Read in chunks (bytes)
 File.stream!("binary_data.bin", [], 1024)
 |> Enum.each(fn chunk ->
   process_chunk(chunk)
@@ -214,20 +189,13 @@ Cross-platform path manipulation.
 #### Path Construction
 
 ```elixir
-# Join path components
 Path.join(["home", "user", "documents", "file.txt"])
-# "home/user/documents/file.txt"
 
-# Join with current directory
 Path.join(File.cwd!(), "config.txt")
 
-# Expand relative paths
 Path.expand("../config.txt")
-# "/absolute/path/to/config.txt"
 
 Path.expand("~/Documents")
-# "/Users/username/Documents" (Unix/Mac)
-# "C:/Users/username/Documents" (Windows)
 ```
 
 #### Path Inspection
@@ -242,26 +210,19 @@ Path.extname(path)            # ".pdf"
 Path.rootname(path)           # "/home/user/documents/report"
 Path.rootname(path, ".pdf")   # "/home/user/documents/report"
 
-# Split path into components
 Path.split(path)
-# ["/", "home", "user", "documents", "report.pdf"]
 
-# Get absolute path
 Path.absname("../../config.txt")
 ```
 
 #### Path Validation
 
 ```elixir
-# Check if path is absolute
 Path.absname?("/home/user/file.txt")  # true
 Path.absname?("relative/path.txt")     # false
 
-# Relative path between two paths
 Path.relative_to("/home/user/docs/file.txt", "/home/user")
-# "docs/file.txt"
 
-# Type of path
 Path.type("/absolute/path")   # :absolute
 Path.type("relative/path")    # :relative
 Path.type("~/home")           # :relative (~ requires expansion)
@@ -270,30 +231,21 @@ Path.type("~/home")           # :relative (~ requires expansion)
 ### 4. Directory Operations
 
 ```elixir
-# Create directory
 File.mkdir("new_directory")
 
-# Create directory with parents
 File.mkdir_p("path/to/nested/directory")
 
-# List directory contents
 {:ok, files} = File.ls(".")
-# ["file1.txt", "file2.txt", "subdir"]
 
-# List with bang
 files = File.ls!(".")
 
-# Check if directory
 File.dir?("path/to/directory")  # true/false
 
-# Get current working directory
 {:ok, cwd} = File.cwd()
 cwd = File.cwd!()
 
-# Change directory (use with caution in concurrent systems)
 File.cd("other_directory")
 
-# List files recursively
 def list_files_recursive(path) do
   cond do
     File.regular?(path) ->
@@ -320,12 +272,10 @@ Execute shell commands safely.
 #### Basic Command Execution
 
 ```elixir
-# Run command, get output
 {output, exit_code} = System.cmd("ls", ["-la"])
 IO.puts("Output: #{output}")
 IO.puts("Exit code: #{exit_code}")
 
-# Command with error handling
 case System.cmd("git", ["status"]) do
   {output, 0} ->
     IO.puts("Git status:\n#{output}")
@@ -334,23 +284,17 @@ case System.cmd("git", ["status"]) do
     IO.puts("Command failed with code #{code}:\n#{error}")
 end
 
-# Run command in specific directory
 System.cmd("ls", ["-la"], cd: "/home/user")
 
-# Set environment variables
 System.cmd("echo", ["$MY_VAR"], env: [{"MY_VAR", "hello"}])
 ```
 
 #### Shell Execution
 
 ```elixir
-# Execute shell command (CAUTION: security risk with user input)
 {output, 0} = System.shell("ls -la | grep txt")
 
-# Never do this with user input:
-# System.shell("rm -rf #{user_input}")  # DANGEROUS!
 
-# Instead, use System.cmd with arguments:
 System.cmd("rm", ["-rf", user_provided_path])
 ```
 
@@ -359,29 +303,23 @@ System.cmd("rm", ["-rf", user_provided_path])
 For more control over file operations.
 
 ```elixir
-# Open file for reading
 {:ok, file} = File.open("data.txt", [:read])
 
-# Read line by line
 line1 = IO.read(file, :line)
 line2 = IO.read(file, :line)
 
-# Close file
 File.close(file)
 
-# Safe file handle with automatic cleanup
 result =
   File.open("data.txt", [:read], fn file ->
     IO.read(file, :all)
   end)
 
-# Open for writing
 File.open("output.txt", [:write], fn file ->
   IO.write(file, "Line 1\n")
   IO.write(file, "Line 2\n")
 end)
 
-# Open with multiple modes
 File.open("file.txt", [:read, :write, :utf8], fn file ->
   # Read and write operations
 end)
@@ -411,7 +349,6 @@ Common error atoms:
 ```elixir
 stream = File.stream!("huge.txt")  # No I/O yet
 
-# I/O happens only when consumed
 Enum.take(stream, 5)  # Reads only first 5 lines
 ```
 
@@ -430,7 +367,6 @@ Path module abstracts these differences.
 ### 1. Atomic File Writes
 
 ```elixir
-# Write to temporary file, then rename (atomic on Unix)
 defmodule AtomicWrite do
   def write(path, content) do
     tmp_path = path <> ".tmp"
@@ -450,7 +386,6 @@ end
 ### 2. File Watching
 
 ```elixir
-# Using FileSystem library
 {:ok, pid} = FileSystem.start_link(dirs: ["/path/to/watch"])
 
 FileSystem.subscribe(pid)
@@ -464,12 +399,9 @@ end
 ### 3. Temporary Files
 
 ```elixir
-# Create temporary file
 {:ok, tmp_path} = Briefly.create()
 File.write!(tmp_path, "temp data")
-# File automatically deleted when process exits
 
-# Or manually manage:
 tmp_path = Path.join(System.tmp_dir!(), "myapp_#{:rand.uniform(1000000)}")
 File.write!(tmp_path, "data")
 File.rm!(tmp_path)  # Cleanup
@@ -484,7 +416,6 @@ File.rm!(tmp_path)  # Cleanup
 **Bad:**
 
 ```elixir
-# Loads entire 10GB file into memory
 content = File.read!("huge_log.txt")
 lines = String.split(content, "\n")
 Enum.filter(lines, &interesting?/1)
@@ -493,7 +424,6 @@ Enum.filter(lines, &interesting?/1)
 **Good:**
 
 ```elixir
-# Processes line by line
 File.stream!("huge_log.txt")
 |> Stream.filter(&interesting?/1)
 |> Enum.to_list()
@@ -538,15 +468,12 @@ path = Path.join(["home", "user", "file.txt"])  # Cross-platform
 **Bad:**
 
 ```elixir
-# DANGEROUS! User input can execute arbitrary commands
 System.shell("rm #{filename}")
-# If filename = "; rm -rf /", disaster!
 ```
 
 **Good:**
 
 ```elixir
-# Safe: arguments are properly escaped
 System.cmd("rm", [filename])
 ```
 
@@ -557,14 +484,12 @@ System.cmd("rm", [filename])
 ```elixir
 {:ok, file} = File.open("data.txt")
 content = IO.read(file, :all)
-# File handle leaks if exception occurs before close
 File.close(file)
 ```
 
 **Good:**
 
 ```elixir
-# Automatic cleanup
 File.open("data.txt", fn file ->
   IO.read(file, :all)
 end)

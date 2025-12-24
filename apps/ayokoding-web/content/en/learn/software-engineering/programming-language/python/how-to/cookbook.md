@@ -6,8 +6,6 @@ description: Practical recipes and patterns for idiomatic Python programming
 weight: 1000001
 ---
 
-# Python Cookbook - Practical Recipes
-
 **Ready to level up your Python skills?** This cookbook provides practical, battle-tested recipes for solving real-world problems with idiomatic Python code. Whether you're building web services, data pipelines, or automation tools, you'll find proven patterns and techniques used in production by companies like Google, Spotify, and Instagram.
 
 ## 🎯 What You'll Learn
@@ -60,30 +58,19 @@ Python's collection operations are powerful and expressive. Master these pattern
 **Solution**:
 
 ```python
-# Basic list comprehension
 numbers = [1, 2, 3, 4, 5]
 squares = [n ** 2 for n in numbers]
-# Result: [1, 4, 9, 16, 25]
 
-# With condition
 evens = [n for n in numbers if n % 2 == 0]
-# Result: [2, 4]
 
-# Nested comprehension
 matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 flattened = [item for row in matrix for item in row]
-# Result: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-# Transform with condition
 positive_squares = [n ** 2 for n in [-2, -1, 0, 1, 2] if n > 0]
-# Result: [1, 4]
 
-# Multiple lists (cartesian product)
 colors = ['red', 'blue']
 sizes = ['S', 'M', 'L']
 combinations = [(color, size) for color in colors for size in sizes]
-# Result: [('red', 'S'), ('red', 'M'), ('red', 'L'),
-#          ('blue', 'S'), ('blue', 'M'), ('blue', 'L')]
 ```
 
 **When to use**: When you need to create a new list from an existing iterable with transformation or filtering.
@@ -102,31 +89,21 @@ combinations = [(color, size) for color in colors for size in sizes]
 **Solution**:
 
 ```python
-# Basic dict comprehension
 numbers = [1, 2, 3, 4, 5]
 squares_dict = {n: n ** 2 for n in numbers}
-# Result: {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
 
-# From two lists
 keys = ['name', 'age', 'city']
 values = ['Alice', 30, 'NYC']
 person = {k: v for k, v in zip(keys, values)}
-# Result: {'name': 'Alice', 'age': 30, 'city': 'NYC'}
 
-# Filter dictionary
 scores = {'Alice': 85, 'Bob': 92, 'Charlie': 78, 'Diana': 95}
 high_scores = {name: score for name, score in scores.items() if score >= 90}
-# Result: {'Bob': 92, 'Diana': 95}
 
-# Transform dictionary values
 celsius = {'morning': 20, 'afternoon': 25, 'evening': 22}
 fahrenheit = {time: (temp * 9/5) + 32 for time, temp in celsius.items()}
-# Result: {'morning': 68.0, 'afternoon': 77.0, 'evening': 71.6}
 
-# Swap keys and values
 original = {'a': 1, 'b': 2, 'c': 3}
 swapped = {v: k for k, v in original.items()}
-# Result: {1: 'a', 2: 'b', 3: 'c'}
 ```
 
 **When to use**: When building or transforming dictionaries, especially for data processing.
@@ -140,37 +117,23 @@ swapped = {v: k for k, v in original.items()}
 **Solution**:
 
 ```python
-# Set comprehension
 numbers = [1, 2, 2, 3, 3, 3, 4, 5]
 unique_squares = {n ** 2 for n in numbers}
-# Result: {1, 4, 9, 16, 25}
 
-# Remove duplicates while preserving order (Python 3.7+)
 items = ['apple', 'banana', 'apple', 'cherry', 'banana']
 unique_items = list(dict.fromkeys(items))
-# Result: ['apple', 'banana', 'cherry']
 
-# Set operations
 set_a = {1, 2, 3, 4, 5}
 set_b = {4, 5, 6, 7, 8}
 
-# Union (all items)
 union = set_a | set_b
-# Result: {1, 2, 3, 4, 5, 6, 7, 8}
 
-# Intersection (common items)
 intersection = set_a & set_b
-# Result: {4, 5}
 
-# Difference (in A but not B)
 difference = set_a - set_b
-# Result: {1, 2, 3}
 
-# Symmetric difference (in A or B but not both)
 sym_diff = set_a ^ set_b
-# Result: {1, 2, 3, 6, 7, 8}
 
-# Check membership
 is_subset = {1, 2} <= set_a  # True
 is_superset = set_a >= {1, 2}  # True
 ```
@@ -188,39 +151,27 @@ is_superset = set_a >= {1, 2}  # True
 ```python
 from collections import defaultdict, Counter
 
-# defaultdict - automatic default values
 word_lists = defaultdict(list)
 words = [('fruit', 'apple'), ('fruit', 'banana'), ('veggie', 'carrot')]
 for category, item in words:
     word_lists[category].append(item)
-# Result: {'fruit': ['apple', 'banana'], 'veggie': ['carrot']}
 
-# defaultdict with int (counting)
 word_counts = defaultdict(int)
 sentence = "the quick brown fox jumps over the lazy dog"
 for word in sentence.split():
     word_counts[word] += 1
-# Result: {'the': 2, 'quick': 1, 'brown': 1, ...}
 
-# Counter - specialized for counting
 text = "hello world"
 letter_counts = Counter(text)
-# Result: Counter({'l': 3, 'o': 2, 'h': 1, 'e': 1, ' ': 1, ...})
 
-# Most common elements
 letter_counts.most_common(3)
-# Result: [('l', 3), ('o', 2), ('h', 1)]
 
-# Combine counters
 c1 = Counter(['a', 'b', 'c', 'a'])
 c2 = Counter(['b', 'c', 'd', 'b'])
 combined = c1 + c2
-# Result: Counter({'b': 3, 'c': 2, 'a': 2, 'd': 1})
 
-# Count from iterable
 words = ['apple', 'banana', 'apple', 'cherry', 'banana', 'apple']
 fruit_counts = Counter(words)
-# Result: Counter({'apple': 3, 'banana': 2, 'cherry': 1})
 ```
 
 **When to use**: When you need default values in dicts or counting frequencies.
@@ -234,17 +185,14 @@ fruit_counts = Counter(words)
 **Solution**:
 
 ```python
-# Generator expression (lazy evaluation)
 numbers = range(1, 1000000)
 squares_gen = (n ** 2 for n in numbers)  # No computation yet
 
-# Iterate when needed
 for square in squares_gen:
     if square > 100:
         print(square)
         break  # Only computed up to this point
 
-# Generator function
 def fibonacci():
     """Generate fibonacci sequence infinitely"""
     a, b = 0, 1
@@ -252,23 +200,18 @@ def fibonacci():
         yield a
         a, b = b, a + b
 
-# Use generator
 fib = fibonacci()
 first_ten = [next(fib) for _ in range(10)]
-# Result: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 
-# File reading generator
 def read_large_file(filepath):
     """Memory-efficient file reading"""
     with open(filepath, 'r') as f:
         for line in f:
             yield line.strip()
 
-# Process file line by line
 for line in read_large_file('data.txt'):
     process(line)  # Only one line in memory at a time
 
-# Generator pipeline
 def read_csv(filepath):
     with open(filepath) as f:
         for line in f:
@@ -279,7 +222,6 @@ def filter_rows(rows, min_value):
         if int(row[1]) >= min_value:
             yield row
 
-# Chain generators
 rows = read_csv('data.csv')
 filtered = filter_rows(rows, 100)
 for row in filtered:
@@ -299,7 +241,6 @@ for row in filtered:
 ```python
 from itertools import groupby, chain, combinations, product
 
-# Group by key
 data = [
     {'name': 'Alice', 'dept': 'Engineering'},
     {'name': 'Bob', 'dept': 'Sales'},
@@ -307,37 +248,27 @@ data = [
     {'name': 'Diana', 'dept': 'Sales'}
 ]
 
-# Using dict comprehension
 from collections import defaultdict
 grouped = defaultdict(list)
 for person in data:
     grouped[person['dept']].append(person['name'])
-# Result: {'Engineering': ['Alice', 'Charlie'], 'Sales': ['Bob', 'Diana']}
 
-# Using itertools.groupby (requires sorted data)
 data_sorted = sorted(data, key=lambda x: x['dept'])
 for dept, group in groupby(data_sorted, key=lambda x: x['dept']):
     people = [person['name'] for person in group]
     print(f"{dept}: {people}")
 
-# Flatten nested lists
 nested = [[1, 2, 3], [4, 5], [6, 7, 8]]
 flattened = list(chain.from_iterable(nested))
-# Result: [1, 2, 3, 4, 5, 6, 7, 8]
 
-# Or using chain(*nested)
 flattened = list(chain(*nested))
 
-# Combinations
 items = ['A', 'B', 'C']
 pairs = list(combinations(items, 2))
-# Result: [('A', 'B'), ('A', 'C'), ('B', 'C')]
 
-# Cartesian product
 colors = ['red', 'blue']
 sizes = ['S', 'M']
 variants = list(product(colors, sizes))
-# Result: [('red', 'S'), ('red', 'M'), ('blue', 'S'), ('blue', 'M')]
 ```
 
 **When to use**: When grouping data, flattening lists, or generating combinations/permutations.
@@ -355,13 +286,10 @@ Python 3.5+ supports type hints for static type checking with tools like mypy.
 **Solution**:
 
 ```python
-# No import needed for built-in types in Python 3.9+
 
-# Basic types
 def greet(name: str) -> str:
     return f"Hello, {name}"
 
-# Collection types
 def sum_numbers(numbers: list[int]) -> int:
     return sum(numbers)
 
@@ -371,26 +299,21 @@ def get_scores() -> dict[str, int]:
 def unique_items(items: list[str]) -> set[str]:
     return set(items)
 
-# Optional (can be None) - using | None syntax
 def find_user(user_id: int) -> str | None:
     users = {1: 'Alice', 2: 'Bob'}
     return users.get(user_id)  # Returns str or None
 
-# Union (multiple types) - using | syntax
 def parse_value(value: int | str) -> int:
     if isinstance(value, str):
         return int(value)
     return value
 
-# Tuple with specific types
 def get_coordinates() -> tuple[float, float]:
     return (40.7128, -74.0060)
 
-# Multiple return values
 def divide(a: int, b: int) -> tuple[int, int]:
     return a // b, a % b  # quotient, remainder
 
-# Complex nested types
 def process_data() -> dict[str, list[tuple[int, str]]]:
     return {
         'users': [(1, 'Alice'), (2, 'Bob')],
@@ -411,20 +334,17 @@ def process_data() -> dict[str, list[tuple[int, str]]]:
 ```python
 from typing import TypeVar, Generic, Protocol, Callable, Any, NewType
 
-# Type variables
 T = TypeVar('T')
 
 def first_element(items: list[T]) -> T | None:
     return items[0] if items else None
 
-# Works with any type
 numbers = [1, 2, 3]
 first_num = first_element(numbers)  # Type: int | None
 
 strings = ['a', 'b', 'c']
 first_str = first_element(strings)  # Type: str | None
 
-# Generic class
 class Stack(Generic[T]):
     def __init__(self) -> None:
         self.items: list[T] = []
@@ -438,13 +358,11 @@ class Stack(Generic[T]):
     def is_empty(self) -> bool:
         return len(self.items) == 0
 
-# Type-safe stack usage
 int_stack: Stack[int] = Stack()
 int_stack.push(1)
 int_stack.push(2)
 value: int | None = int_stack.pop()
 
-# Protocol (structural typing)
 class Drawable(Protocol):
     def draw(self) -> str:
         ...
@@ -463,24 +381,20 @@ def render(shape: Drawable) -> None:
 render(Circle())  # ✅ Works - has draw() method
 render(Square())  # ✅ Works - has draw() method
 
-# Callable types
 def apply_operation(x: int, operation: Callable[[int], int]) -> int:
     return operation(x)
 
 result = apply_operation(5, lambda x: x ** 2)  # 25
 
-# NewType for semantic clarity
 UserId = NewType('UserId', int)
 OrderId = NewType('OrderId', int)
 
 def get_user(user_id: UserId) -> str:
     return f"User {user_id}"
 
-# Type-safe usage
 user_id = UserId(123)
 order_id = OrderId(456)
 get_user(user_id)  # ✅ OK
-# get_user(order_id)  # ❌ Type error (if using mypy)
 ```
 
 **When to use**: When building reusable generic code or defining structural types.
@@ -519,9 +433,7 @@ def slow_function():
     return "Done"
 
 result = slow_function()
-# Output: slow_function took 1.0012 seconds
 
-# Decorator with arguments
 def retry(max_attempts: int = 3, delay: float = 1.0):
     """Retry function on exception"""
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -561,7 +473,6 @@ def unreliable_network_call():
 import functools
 from typing import Any
 
-# Built-in LRU cache
 @functools.lru_cache(maxsize=128)
 def fibonacci(n: int) -> int:
     """Fibonacci with memoization"""
@@ -569,10 +480,8 @@ def fibonacci(n: int) -> int:
         return n
     return fibonacci(n - 1) + fibonacci(n - 2)
 
-# Fast computation due to caching
 result = fibonacci(100)
 
-# Custom cache decorator
 def memoize(func: Callable[..., Any]) -> Callable[..., Any]:
     """Simple memoization decorator"""
     cache: dict[str, Any] = {}
@@ -632,9 +541,7 @@ def calculate_area(width: float, height: float) -> float:
     return width * height
 
 area = calculate_area(5, 10)  # ✅ OK: 50
-# area = calculate_area(-5, 10)  # ❌ ValueError
 
-# Type validation decorator
 def validate_types(**type_hints: type):
     """Validate argument types at runtime"""
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -663,7 +570,6 @@ def create_user(name: str, age: int) -> str:
     return f"{name} is {age} years old"
 
 user = create_user("Alice", 30)  # ✅ OK
-# user = create_user("Alice", "30")  # ❌ TypeError
 ```
 
 **When to use**: When you need runtime validation of function arguments.
@@ -681,17 +587,14 @@ Context managers ensure proper resource cleanup using `with` statements.
 **Solution**:
 
 ```python
-# Built-in file context manager
 with open('data.txt', 'r') as f:
     content = f.read()
     # File automatically closed, even if exception occurs
 
-# Multiple files
 with open('input.txt', 'r') as infile, open('output.txt', 'w') as outfile:
     for line in infile:
         outfile.write(line.upper())
 
-# Custom context manager using class
 class DatabaseConnection:
     def __init__(self, connection_string: str):
         self.connection_string = connection_string
@@ -708,15 +611,9 @@ class DatabaseConnection:
         # Return False to propagate exceptions
         return False
 
-# Usage
 with DatabaseConnection("postgresql://localhost") as conn:
     print(f"Using {conn}")
-# Output:
-# Connecting to postgresql://localhost
-# Using Connection(postgresql://localhost)
-# Closing connection
 
-# Context manager using contextlib
 from contextlib import contextmanager
 
 @contextmanager
@@ -764,13 +661,10 @@ def timer(label: str = "Operation") -> Generator[None, None, None]:
         end = time.perf_counter()
         print(f"{label} took {end - start:.4f} seconds")
 
-# Usage
 with timer("Database query"):
     time.sleep(0.5)
     result = "data"
-# Output: Database query took 0.5012 seconds
 
-# More sophisticated timer with result capture
 class Timer:
     def __init__(self, label: str = "Operation"):
         self.label = label
@@ -786,7 +680,6 @@ class Timer:
         print(f"{self.label} took {self.elapsed:.4f} seconds")
         return False
 
-# Usage with access to elapsed time
 with Timer("Complex operation") as t:
     time.sleep(1)
 
@@ -810,22 +703,18 @@ Python's async/await enables efficient concurrent I/O operations.
 ```python
 import asyncio
 
-# Basic async function
 async def fetch_data(url: str) -> str:
     """Simulate async data fetching"""
     print(f"Fetching {url}")
     await asyncio.sleep(1)  # Simulate network delay
     return f"Data from {url}"
 
-# Run single async function
 async def main():
     result = await fetch_data("https://api.example.com")
     print(result)
 
-# Run async function
 asyncio.run(main())
 
-# Concurrent execution with gather
 async def fetch_all():
     urls = [
         "https://api.example.com/users",
@@ -837,11 +726,8 @@ async def fetch_all():
     results = await asyncio.gather(*[fetch_data(url) for url in urls])
     return results
 
-# Run concurrent operations
 results = asyncio.run(fetch_all())
-# All three requests run in parallel, total time ~1 second instead of 3
 
-# Create tasks for more control
 async def main_with_tasks():
     task1 = asyncio.create_task(fetch_data("url1"))
     task2 = asyncio.create_task(fetch_data("url2"))
@@ -879,16 +765,13 @@ async def fetch_multiple_urls(urls: list[str]) -> list[str]:
         results = await asyncio.gather(*tasks)
         return results
 
-# Usage
 urls = [
     'https://httpbin.org/delay/1',
     'https://httpbin.org/delay/1',
     'https://httpbin.org/delay/1'
 ]
 results = asyncio.run(fetch_multiple_urls(urls))
-# Total time ~1 second (concurrent) instead of 3 seconds (sequential)
 
-# With error handling
 async def fetch_with_error_handling(url: str) -> dict[str, Any]:
     """Fetch URL with error handling"""
     try:
@@ -904,7 +787,6 @@ async def fetch_with_error_handling(url: str) -> dict[str, Any]:
     except Exception as e:
         return {'url': url, 'error': str(e)}
 
-# Async generator for streaming
 async def fetch_stream(url: str):
     """Stream large response line by line"""
     async with aiohttp.ClientSession() as session:
@@ -994,19 +876,16 @@ Robust error handling is critical for production code.
 **Solution**:
 
 ```python
-# Basic try-except
 try:
     result = 10 / 0
 except ZeroDivisionError:
     print("Cannot divide by zero")
 
-# Multiple exceptions
 try:
     value = int("not a number")
 except (ValueError, TypeError) as e:
     print(f"Conversion error: {e}")
 
-# Catch all with logging
 import logging
 
 try:
@@ -1015,7 +894,6 @@ except Exception as e:
     logging.error(f"Operation failed: {e}", exc_info=True)
     raise  # Re-raise after logging
 
-# try-except-else-finally
 try:
     file = open('data.txt', 'r')
     content = file.read()
@@ -1033,7 +911,6 @@ finally:
     if 'file' in locals():
         file.close()
 
-# Custom exceptions
 class ValidationError(Exception):
     """Custom exception for validation failures"""
     def __init__(self, field: str, message: str):
@@ -1054,7 +931,6 @@ try:
 except InvalidEmailError as e:
     print(f"Validation failed - {e.field}: {e.message}")
 
-# Context manager for error handling
 from contextlib import contextmanager
 
 @contextmanager
@@ -1089,7 +965,6 @@ with handle_errors(log_error):
 **Solution**:
 
 ```python
-# Basic exception chaining with 'from'
 def load_config(filename: str):
     try:
         with open(filename) as f:
@@ -1099,7 +974,6 @@ def load_config(filename: str):
     except json.JSONDecodeError as e:
         raise ConfigError(f"Invalid JSON in config: {filename}") from e
 
-# Usage
 try:
     config = load_config("config.json")
 except ConfigError as e:
@@ -1154,7 +1028,6 @@ def initialize_app():
         # Output: Main error: Failed to parse database URL
         #         Root cause: Invalid URL format: invalid://localhost
 
-# Suppress context with 'from None'
 def safe_conversion(value: str) -> int | None:
     """Convert string to int, hide implementation details."""
     try:
@@ -1163,7 +1036,6 @@ def safe_conversion(value: str) -> int | None:
         # Hide internal error, raise clean error
         raise TypeError(f"Cannot convert '{value}' to integer") from None
 
-# Usage
 try:
     result = safe_conversion("abc")
 except TypeError as e:
@@ -1194,21 +1066,17 @@ Modern Python uses `pathlib` for path handling and provides robust file operatio
 ```python
 from pathlib import Path
 
-# Create Path object
 path = Path('data/files/document.txt')
 
-# Get parts
 print(path.name)       # document.txt
 print(path.stem)       # document
 print(path.suffix)     # .txt
 print(path.parent)     # data/files
 print(path.parts)      # ('data', 'files', 'document.txt')
 
-# Join paths (works on all platforms)
 base = Path('data')
 full_path = base / 'files' / 'document.txt'  # Pythonic!
 
-# Check existence
 if path.exists():
     print("File exists")
 
@@ -1218,41 +1086,32 @@ if path.is_file():
 if path.is_dir():
     print("It's a directory")
 
-# Create directory
 output_dir = Path('output/results')
 output_dir.mkdir(parents=True, exist_ok=True)  # Create all parent dirs
 
-# List directory contents
 data_dir = Path('data')
 for item in data_dir.iterdir():
     print(item)
 
-# Find files by pattern
 for txt_file in data_dir.glob('*.txt'):
     print(txt_file)
 
-# Recursive search
 for py_file in data_dir.rglob('*.py'):
     print(py_file)
 
-# Read/write files
 path = Path('config.txt')
 path.write_text('key=value')
 content = path.read_text()
 
-# Binary files
 data = b'\x00\x01\x02'
 path.write_bytes(data)
 binary_content = path.read_bytes()
 
-# Get absolute path
 absolute = path.resolve()
 
-# Home directory
 home = Path.home()
 config_file = home / '.config' / 'app' / 'settings.ini'
 
-# Temporary directory
 import tempfile
 with tempfile.TemporaryDirectory() as temp_dir:
     temp_path = Path(temp_dir)
@@ -1274,10 +1133,8 @@ with tempfile.TemporaryDirectory() as temp_dir:
 from pathlib import Path
 from typing import Iterator
 
-# Read entire file
 content = Path('data.txt').read_text()
 
-# Read file line by line (memory efficient)
 def read_lines(filepath: Path) -> Iterator[str]:
     with filepath.open('r') as f:
         for line in f:
@@ -1286,10 +1143,8 @@ def read_lines(filepath: Path) -> Iterator[str]:
 for line in read_lines(Path('large_file.txt')):
     process(line)
 
-# Read file as list
 lines: list[str] = Path('data.txt').read_text().splitlines()
 
-# Read CSV
 import csv
 from pathlib import Path
 
@@ -1298,30 +1153,24 @@ def read_csv(filepath: Path) -> list[dict[str, str]]:
         reader = csv.DictReader(f)
         return list(reader)
 
-# Read JSON
 import json
 
 def read_json(filepath: Path) -> dict:
     return json.loads(filepath.read_text())
 
-# Or using json.load
 def read_json_stream(filepath: Path) -> dict:
     with filepath.open('r') as f:
         return json.load(f)
 
-# Read YAML (requires PyYAML)
 import yaml
 
 def read_yaml(filepath: Path) -> dict:
     return yaml.safe_load(filepath.read_text())
 
-# Read with specific encoding
 content = Path('data.txt').read_text(encoding='utf-8')
 
-# Read binary file
 data = Path('image.png').read_bytes()
 
-# Context manager for multiple operations
 def process_file(filepath: Path):
     with filepath.open('r') as f:
         header = f.readline()
@@ -1350,40 +1199,28 @@ name = "Alice"
 age = 30
 balance = 1234.5678
 
-# f-strings (Python 3.6+) - RECOMMENDED
 message = f"Hello, {name}! You are {age} years old."
-# Result: "Hello, Alice! You are 30 years old."
 
-# Expressions in f-strings
 status = f"{name} has ${balance:.2f} in account"
-# Result: "Alice has $1234.57 in account"
 
-# Calling functions in f-strings
 upper_name = f"Name: {name.upper()}"
-# Result: "Name: ALICE"
 
-# Format specifiers
 pi = 3.14159
 formatted = f"Pi is approximately {pi:.2f}"  # 3.14
 
-# Number formatting
 num = 1234567
 formatted_num = f"{num:,}"  # 1,234,567
 formatted_num = f"{num:_}"  # 1_234_567
 
-# Padding and alignment
 text = "hello"
 print(f"|{text:>10}|")  # Right-align:  |     hello|
 print(f"|{text:<10}|")  # Left-align:   |hello     |
 print(f"|{text:^10}|")  # Center:       |  hello   |
 
-# Date formatting
 from datetime import datetime
 now = datetime.now()
 formatted_date = f"{now:%Y-%m-%d %H:%M:%S}"
-# Result: "2025-12-17 14:30:45"
 
-# Multiline f-strings
 person = {
     'name': 'Alice',
     'age': 30,
@@ -1395,11 +1232,9 @@ Age: {person['age']}
 City: {person['city']}
 """
 
-# str.format() (older style)
 message = "Hello, {}! You are {} years old.".format(name, age)
 message = "Hello, {name}! You are {age} years old.".format(name=name, age=age)
 
-# Template strings (for user-provided templates)
 from string import Template
 template = Template("Hello, $name! You are $age years old.")
 result = template.substitute(name=name, age=age)
@@ -1416,23 +1251,19 @@ result = template.substitute(name=name, age=age)
 **Solution**:
 
 ```python
-# Split and join
 text = "apple,banana,cherry"
 fruits = text.split(',')  # ['apple', 'banana', 'cherry']
 joined = ', '.join(fruits)  # 'apple, banana, cherry'
 
-# Strip whitespace
 dirty = "  hello world  "
 clean = dirty.strip()  # "hello world"
 left_clean = dirty.lstrip()  # "hello world  "
 right_clean = dirty.rstrip()  # "  hello world"
 
-# Replace
 text = "Hello World"
 replaced = text.replace("World", "Python")  # "Hello Python"
 replaced_all = text.replace("l", "L")  # "HeLLo WorLd"
 
-# Case conversion
 text = "Hello World"
 print(text.lower())      # hello world
 print(text.upper())      # HELLO WORLD
@@ -1440,7 +1271,6 @@ print(text.capitalize()) # Hello world
 print(text.title())      # Hello World
 print(text.swapcase())   # hELLO wORLD
 
-# Check string properties
 text = "hello123"
 print(text.isalnum())    # True (alphanumeric)
 print(text.isalpha())    # False (has numbers)
@@ -1448,7 +1278,6 @@ print(text.isdigit())    # False (has letters)
 print(text.islower())    # True
 print(text.isupper())    # False
 
-# starts/endswith
 filename = "document.txt"
 if filename.endswith('.txt'):
     print("Text file")
@@ -1457,21 +1286,17 @@ url = "https://example.com"
 if url.startswith('https://'):
     print("Secure URL")
 
-# Count occurrences
 text = "hello world hello"
 count = text.count('hello')  # 2
 
-# Find position
 position = text.find('world')  # 6
 position = text.rfind('hello')  # 12 (last occurrence)
 
-# Padding
 text = "42"
 padded = text.zfill(5)  # "00042"
 padded = text.rjust(5, '0')  # "00042"
 padded = text.ljust(5, '0')  # "42000"
 
-# Remove prefix/suffix (Python 3.9+)
 text = "https://example.com"
 without_protocol = text.removeprefix('https://')  # "example.com"
 
@@ -1492,7 +1317,6 @@ without_ext = filename.removesuffix('.txt')  # "document"
 ```python
 import re
 
-# Basic pattern matching
 text = "My email is john@example.com"
 pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
@@ -1501,13 +1325,10 @@ if match:
     print(f"Found email: {match.group()}")
     # Output: Found email: john@example.com
 
-# Find all matches
 text = "Contact us: info@company.com or support@company.com"
 emails = re.findall(pattern, text)
 print(f"Found {len(emails)} emails: {emails}")
-# Output: Found 2 emails: ['info@company.com', 'support@company.com']
 
-# Extract with groups
 phone_text = "Call me at (555) 123-4567"
 phone_pattern = r'\((\d{3})\)\s*(\d{3})-(\d{4})'
 
@@ -1523,7 +1344,6 @@ if match:
 ```python
 import re
 
-# Extract structured data from logs
 log_line = "2025-12-18 14:30:45 ERROR [UserService] Failed to authenticate user_id=123"
 
 log_pattern = r'(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<time>\d{2}:\d{2}:\d{2})\s+(?P<level>\w+)\s+\[(?P<component>\w+)\]\s+(?P<message>.+)'
@@ -1534,13 +1354,10 @@ if match:
     print(f"Level: {log_data['level']}, Component: {log_data['component']}")
     # Output: Level: ERROR, Component: UserService
 
-# Replace patterns
 text = "Price: $100, Discount: $20"
 cleaned = re.sub(r'\$(\d+)', r'\1 USD', text)
 print(cleaned)
-# Output: Price: 100 USD, Discount: 20 USD
 
-# Validate and extract version numbers
 version_text = "App version: 2.5.3-beta"
 version_pattern = r'(\d+)\.(\d+)\.(\d+)(?:-(\w+))?'
 
@@ -1584,7 +1401,6 @@ def validate_email(email: str) -> tuple[bool, str]:
 
     return True, "Valid"
 
-# Test validation
 test_emails = [
     "user@example.com",
     "invalid.email",
@@ -1595,10 +1411,6 @@ for email in test_emails:
     is_valid, message = validate_email(email)
     status = "✓" if is_valid else "✗"
     print(f"{status} {email}: {message}")
-# Output:
-# ✓ user@example.com: Valid
-# ✗ invalid.email: Invalid email format
-# ✓ user@domain.co.uk: Valid
 ```
 
 **Advanced example - Validation suite**:
@@ -1656,21 +1468,17 @@ class StringValidator:
 
         return ValidationResult(len(errors) == 0, errors)
 
-# Usage
 validator = StringValidator()
 
-# Validate weak password
 pwd_result = validator.validate_password("weak")
 if not pwd_result:
     print("Password errors:")
     for error in pwd_result.errors:
         print(f"  - {error}")
 
-# Validate strong password
 strong_pwd = validator.validate_password("MyP@ssw0rd!")
 print(f"Strong password valid: {strong_pwd.is_valid}")  # True
 
-# Validate username
 user_result = validator.validate_username("user_123")
 print(f"Username valid: {user_result.is_valid}")  # True
 ```
@@ -1698,27 +1506,21 @@ Python's `datetime` module provides comprehensive date/time handling.
 from datetime import datetime, date, time, timedelta
 from zoneinfo import ZoneInfo  # Python 3.9+
 
-# Current date and time
 now = datetime.now()
 today = date.today()
 current_time = datetime.now().time()
 
-# Create specific date/time
 specific = datetime(2025, 12, 17, 14, 30, 0)
 specific_date = date(2025, 12, 17)
 
-# Parse from string
 date_str = "2025-12-17"
 parsed = datetime.strptime(date_str, "%Y-%m-%d")
 
 time_str = "2025-12-17 14:30:45"
 parsed_time = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S")
 
-# Format to string
 formatted = now.strftime("%Y-%m-%d %H:%M:%S")
-# Result: "2025-12-17 14:30:45"
 
-# Common formats
 formats = {
     'ISO': now.isoformat(),  # "2025-12-17T14:30:45.123456"
     'US': now.strftime("%m/%d/%Y"),  # "12/17/2025"
@@ -1726,32 +1528,26 @@ formats = {
     'Long': now.strftime("%B %d, %Y"),  # "December 17, 2025"
 }
 
-# Date arithmetic
 tomorrow = today + timedelta(days=1)
 yesterday = today - timedelta(days=1)
 next_week = today + timedelta(weeks=1)
 three_hours_ago = now - timedelta(hours=3)
 
-# Difference between dates
 start = datetime(2025, 1, 1)
 end = datetime(2025, 12, 31)
 difference = end - start
 print(f"Days: {difference.days}")
 print(f"Total seconds: {difference.total_seconds()}")
 
-# Timezone-aware datetime (Python 3.9+)
 utc_now = datetime.now(ZoneInfo("UTC"))
 jakarta_now = datetime.now(ZoneInfo("Asia/Jakarta"))
 
-# Convert timezone
 utc_time = datetime.now(ZoneInfo("UTC"))
 jakarta_time = utc_time.astimezone(ZoneInfo("Asia/Jakarta"))
 
-# Compare dates
 if date.today() < date(2026, 1, 1):
     print("Still in 2025")
 
-# Get date components
 now = datetime.now()
 print(f"Year: {now.year}")
 print(f"Month: {now.month}")
@@ -1778,24 +1574,19 @@ Loading and validating configuration is essential for applications.
 ```python
 import os
 
-# Get environment variable
 api_key = os.getenv('API_KEY')
 port = os.getenv('PORT', '8000')  # Default value
 
-# Convert types
 port_int = int(os.getenv('PORT', '8000'))
 debug_mode = os.getenv('DEBUG', 'false').lower() == 'true'
 
-# Using python-decouple (recommended)
 from decouple import config
 
-# Load from .env file or environment
 api_key = config('API_KEY')
 port = config('PORT', default=8000, cast=int)
 debug = config('DEBUG', default=False, cast=bool)
 database_url = config('DATABASE_URL')
 
-# Pydantic for validation (recommended for production)
 from pydantic_settings import BaseSettings
 from pydantic import Field
 
@@ -1810,18 +1601,15 @@ class Settings(BaseSettings):
         env_file = '.env'
         env_file_encoding = 'utf-8'
 
-# Load and validate settings
 settings = Settings()
 print(f"API Key: {settings.api_key}")
 print(f"Port: {settings.port}")
 
-# Type-safe access
 def connect_to_db(url: str):
     print(f"Connecting to {url}")
 
 connect_to_db(settings.database_url)  # Type-checked!
 
-# Environment-specific config
 class DevelopmentSettings(Settings):
     debug: bool = True
     log_level: str = "DEBUG"
@@ -1855,19 +1643,16 @@ import yaml
 from pathlib import Path
 from typing import Any
 
-# Load JSON config
 def load_json_config(filepath: Path) -> dict[str, Any]:
     return json.loads(filepath.read_text())
 
 config = load_json_config(Path('config.json'))
 
-# Load YAML config
 def load_yaml_config(filepath: Path) -> dict[str, Any]:
     return yaml.safe_load(filepath.read_text())
 
 config = load_yaml_config(Path('config.yaml'))
 
-# Configuration class
 class Config:
     def __init__(self, config_path: Path):
         self.config = self._load_config(config_path)
@@ -1886,12 +1671,10 @@ class Config:
     def __getitem__(self, key: str) -> Any:
         return self.config[key]
 
-# Usage
 config = Config(Path('config.yaml'))
 database_url = config.get('database_url', 'sqlite:///default.db')
 api_key = config['api_key']
 
-# Layered configuration (environment overrides file)
 def load_layered_config(config_file: Path) -> dict[str, Any]:
     # Load from file
     config = load_yaml_config(config_file)
@@ -1920,7 +1703,6 @@ pytest is the de facto standard for Python testing.
 **Solution**:
 
 ```python
-# test_calculator.py
 import pytest
 
 def add(a: int, b: int) -> int:
@@ -1931,24 +1713,20 @@ def divide(a: int, b: int) -> float:
         raise ValueError("Cannot divide by zero")
     return a / b
 
-# Basic test
 def test_add():
     assert add(2, 3) == 5
     assert add(-1, 1) == 0
     assert add(0, 0) == 0
 
-# Test with multiple assertions
 def test_add_multiple():
     assert add(1, 1) == 2
     assert add(2, 2) == 4
     assert add(3, 3) == 6
 
-# Test exceptions
 def test_divide_by_zero():
     with pytest.raises(ValueError, match="Cannot divide by zero"):
         divide(10, 0)
 
-# Parametrized tests (multiple inputs)
 @pytest.mark.parametrize("a,b,expected", [
     (2, 3, 5),
     (-1, 1, 0),
@@ -1958,7 +1736,6 @@ def test_divide_by_zero():
 def test_add_parametrized(a, b, expected):
     assert add(a, b) == expected
 
-# Fixtures for setup/teardown
 @pytest.fixture
 def sample_data():
     """Provide sample data for tests"""
@@ -1968,7 +1745,6 @@ def test_with_fixture(sample_data):
     assert len(sample_data) == 5
     assert sum(sample_data) == 15
 
-# Fixture with cleanup
 @pytest.fixture
 def temp_file(tmp_path):
     """Create temporary file"""
@@ -1981,7 +1757,6 @@ def test_file_operations(temp_file):
     content = temp_file.read_text()
     assert content == "test content"
 
-# Class-based tests
 class TestCalculator:
     def test_add(self):
         assert add(1, 1) == 2
@@ -1993,7 +1768,6 @@ class TestCalculator:
         with pytest.raises(ValueError):
             divide(10, 0)
 
-# Markers for test organization
 @pytest.mark.slow
 def test_slow_operation():
     import time
@@ -2005,7 +1779,6 @@ def test_database_connection():
     # Integration test code
     pass
 
-# Run specific markers: pytest -m slow
 ```
 
 **When to use**: For all unit testing (pytest is preferred over unittest).
@@ -2023,7 +1796,6 @@ import pytest
 from unittest.mock import Mock, patch, MagicMock
 import asyncio
 
-# Mocking
 def fetch_data(api_client):
     response = api_client.get('/users')
     return response.json()
@@ -2038,7 +1810,6 @@ def test_fetch_data_with_mock():
     assert result == {'users': ['Alice', 'Bob']}
     mock_client.get.assert_called_once_with('/users')
 
-# Patching
 @patch('requests.get')
 def test_with_patch(mock_get):
     mock_get.return_value.status_code = 200
@@ -2048,7 +1819,6 @@ def test_with_patch(mock_get):
     response = requests.get('http://api.example.com')
     assert response.status_code == 200
 
-# Async tests
 @pytest.mark.asyncio
 async def test_async_function():
     async def async_add(a, b):
@@ -2058,7 +1828,6 @@ async def test_async_function():
     result = await async_add(2, 3)
     assert result == 5
 
-# Complex fixture with dependencies
 @pytest.fixture
 def database():
     """Database connection fixture"""
@@ -2086,7 +1855,6 @@ def test_user_service(user_service):
     user_service.add_user('Alice')
     assert 'Alice' in user_service.get_users()
 
-# Fixture scope (function, class, module, session)
 @pytest.fixture(scope="module")
 def expensive_setup():
     """Setup once per module"""
@@ -2094,7 +1862,6 @@ def expensive_setup():
     yield "resource"
     print("Expensive teardown")
 
-# Parametrized fixtures
 @pytest.fixture(params=[1, 2, 3])
 def number(request):
     return request.param
@@ -2162,10 +1929,6 @@ def process_file(input_path, output_path, format, number):
 if __name__ == '__main__':
     main()
 
-# Usage examples:
-# python script.py input.txt
-# python script.py input.txt -o result.txt -v
-# python script.py input.txt --format csv --number 20
 ```
 
 **When to use**: For building command-line tools with simple argument parsing.
@@ -2226,11 +1989,6 @@ def merge(files):
 if __name__ == '__main__':
     cli()
 
-# Usage:
-# python script.py process input.txt -v -f csv
-# python script.py generate -n 20
-# python script.py merge file1.txt file2.txt file3.txt
-# python script.py --help
 ```
 
 **When to use**: For complex CLIs with subcommands, progress bars, or interactive prompts.
@@ -2251,7 +2009,6 @@ Proper logging is essential for debugging and monitoring production applications
 import logging
 from pathlib import Path
 
-# Basic logging setup
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -2260,20 +2017,17 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Log messages at different levels
 logger.debug("Debug message")      # Not shown (level is INFO)
 logger.info("Info message")        # Shown
 logger.warning("Warning message")  # Shown
 logger.error("Error message")      # Shown
 logger.critical("Critical message") # Shown
 
-# Log with exception info
 try:
     result = 10 / 0
 except ZeroDivisionError:
     logger.exception("Division error occurred")  # Includes traceback
 
-# Advanced logging configuration
 def setup_logging(log_file: Path, level: str = 'INFO'):
     """Configure logging with file and console handlers"""
     # Create logger
@@ -2300,22 +2054,17 @@ def setup_logging(log_file: Path, level: str = 'INFO'):
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
-# Usage
 setup_logging(Path('app.log'), level='DEBUG')
 logger = logging.getLogger(__name__)
 logger.info("Application started")
 
-# Structured logging with extra fields
 logger.info("User login", extra={
     'user_id': 123,
     'ip_address': '192.168.1.1'
 })
 
-# Module-specific loggers
-# module1.py
 logger = logging.getLogger(__name__)  # __name__ is 'module1'
 
-# Different log levels per module
 logging.getLogger('module1').setLevel(logging.DEBUG)
 logging.getLogger('module2').setLevel(logging.WARNING)
 ```
@@ -2337,7 +2086,6 @@ Master HTTP requests and API interactions using the `requests` library.
 ```python
 import requests
 
-# Basic example - Simple GET request
 def main():
     # Make GET request
     response = requests.get('https://api.github.com/users/octocat')
@@ -2371,7 +2119,6 @@ import requests
 from typing import Any
 import time
 
-# Advanced example - GET with headers, parameters, and error handling
 def fetch_user_repos(username: str, per_page: int = 30) -> list | None:
     """Fetch GitHub repos with proper error handling."""
 
@@ -2473,7 +2220,6 @@ if __name__ == '__main__':
 import requests
 import json
 
-# Basic example - POST request with JSON data
 def main():
     # API endpoint
     url = 'https://httpbin.org/post'
@@ -2515,7 +2261,6 @@ import requests
 from typing import Any
 from pathlib import Path
 
-# Advanced example - POST with different content types and authentication
 def create_user(api_url: str, user_data: dict[str, Any], api_key: str) -> dict | None:
     """Create user via API with authentication."""
 
@@ -2670,7 +2415,6 @@ if __name__ == '__main__':
 import requests
 from typing import Any
 
-# Basic example - Parse JSON with error handling
 def fetch_and_parse(url: str) -> dict[str, Any] | None:
     """Fetch JSON data with safe parsing."""
 
@@ -2726,7 +2470,6 @@ from typing import Any, TypedDict
 from dataclasses import dataclass
 from datetime import datetime
 
-# Advanced example - Parse with validation and type safety
 class UserData(TypedDict):
     """Type definition for user data."""
     id: int
@@ -2901,37 +2644,30 @@ if __name__ == '__main__':
 ```python
 from enum import Enum, auto
 
-# Basic enum
 class Status(Enum):
     PENDING = 'pending'
     PROCESSING = 'processing'
     COMPLETED = 'completed'
     FAILED = 'failed'
 
-# Usage
 current_status = Status.PENDING
 print(current_status)  # Status.PENDING
 print(current_status.value)  # 'pending'
 
-# Compare enums
 if current_status == Status.PENDING:
     print("Waiting to start")
 
-# Auto-assign values
 class Color(Enum):
     RED = auto()     # 1
     GREEN = auto()   # 2
     BLUE = auto()    # 3
 
-# Iterate over enum
 for color in Color:
     print(f"{color.name}: {color.value}")
 
-# Access by name or value
 color = Color['RED']
 color = Color(1)
 
-# IntEnum for integer enums
 from enum import IntEnum
 
 class Priority(IntEnum):
@@ -2940,11 +2676,9 @@ class Priority(IntEnum):
     HIGH = 3
     CRITICAL = 4
 
-# Can compare with integers
 if Priority.HIGH >= 3:
     print("High priority or above")
 
-# Flag for bitwise operations
 from enum import Flag
 
 class Permission(Flag):
@@ -2952,7 +2686,6 @@ class Permission(Flag):
     WRITE = auto()
     EXECUTE = auto()
 
-# Combine flags
 user_permissions = Permission.READ | Permission.WRITE
 if Permission.READ in user_permissions:
     print("Can read")
@@ -2975,19 +2708,10 @@ Common Python errors and their solutions.
 **Basic Example - Install Missing Package**:
 
 ```python
-# Error:
-# ModuleNotFoundError: No module named 'requests'
 
-# Solution 1: Install the package
-# pip install requests
 
-# Solution 2: Check installed packages
-# pip list | grep requests
 
-# Solution 3: Install from requirements.txt
-# pip install -r requirements.txt
 
-# Verify installation
 try:
     import requests
     print(f"requests version: {requests.__version__}")
@@ -3006,25 +2730,16 @@ except ImportError as e:
 **Advanced Example - Virtual Environment Setup**:
 
 ```python
-# Check which Python is being used
 import sys
 print(f"Python executable: {sys.executable}")
 print(f"Python version: {sys.version}")
 print(f"Python path: {sys.path}")
 
-# Create and activate virtual environment (terminal commands)
-# python -m venv venv
-# source venv/bin/activate  # On Unix/macOS
-# venv\Scripts\activate     # On Windows
 
-# Install packages in virtual environment
-# pip install requests pandas numpy
 
-# Verify package location
 import requests
 print(f"requests location: {requests.__file__}")
 
-# Check if using virtual environment
 if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
     print("Running in virtual environment")
 else:
@@ -3056,23 +2771,18 @@ else:
 **Basic Example - Check for None**:
 
 ```python
-# Error-prone code
 user_data = get_user(user_id)  # Might return None
 name = user_data.name  # AttributeError if user_data is None
 
-# Solution 1: Check before accessing
 user_data = get_user(user_id)
 if user_data is not None:
     name = user_data.name
 else:
     name = "Unknown"
 
-# Solution 2: Use getattr with default
 user_data = get_user(user_id)
 name = getattr(user_data, 'name', 'Unknown')
 
-# Solution 3: Optional chaining (Python 3.8+)
-# Optional type uses | None syntax (Python 3.10+)
 
 def get_user_name(user: object | None) -> str:
     return getattr(user, 'name', 'Unknown')
@@ -3116,22 +2826,17 @@ def safe_get_attr(obj: Any, attr_path: str, default: Any = None) -> Any:
 
     return current if current is not None else default
 
-# Usage
 user = User(name="Alice", email="alice@example.com")
 
-# Safe access
 name = safe_get_attr(user, 'name', 'Unknown')  # "Alice"
 age = safe_get_attr(user, 'age', 0)  # 0 (None → default)
 city = safe_get_attr(user, 'profile.address.city', 'N/A')  # "N/A"
 
 print(f"User: {name}, Age: {age}, City: {city}")
-# Output: User: Alice, Age: 0, City: N/A
 
-# Type-safe alternative with hasattr
 if hasattr(user, 'name'):
     print(f"Name exists: {user.name}")
 
-# Check multiple attributes
 required_attrs = ['name', 'email']
 missing = [attr for attr in required_attrs if not hasattr(user, attr)]
 if missing:
@@ -3163,20 +2868,16 @@ if missing:
 **Basic Example - Safe Dictionary Access**:
 
 ```python
-# Error-prone code
 config = {'host': 'localhost', 'port': 8080}
 database = config['database']  # KeyError: 'database'
 
-# Solution 1: Use get() with default
 database = config.get('database', 'default.db')
 
-# Solution 2: Check key existence
 if 'database' in config:
     database = config['database']
 else:
     database = 'default.db'
 
-# Solution 3: Use setdefault()
 database = config.setdefault('database', 'default.db')
 print(config)  # Now includes 'database': 'default.db'
 ```
@@ -3209,7 +2910,6 @@ def safe_get_nested(data: dict[str, Any], *keys: str, default: Any = None) -> An
             return default
     return current
 
-# Usage with API response
 api_response = {
     'status': 'success',
     'data': {
@@ -3222,21 +2922,18 @@ api_response = {
     }
 }
 
-# Safe nested access
 email = safe_get_nested(api_response, 'data', 'user', 'profile', 'email', default='no-email')
 phone = safe_get_nested(api_response, 'data', 'user', 'profile', 'phone', default='no-phone')
 
 print(f"Email: {email}")  # alice@example.com
 print(f"Phone: {phone}")  # no-phone
 
-# Use defaultdict for auto-creation
 from collections import defaultdict
 
 counts = defaultdict(int)
 counts['apples'] += 1  # No KeyError, starts at 0
 counts['oranges'] += 2
 
-# Nested defaultdict
 nested = defaultdict(lambda: defaultdict(list))
 nested['user1']['orders'].append('item1')  # No KeyError
 nested['user2']['orders'].append('item2')
@@ -3267,23 +2964,19 @@ nested['user2']['orders'].append('item2')
 **Basic Example - Safe List Access**:
 
 ```python
-# Error-prone code
 items = [1, 2, 3]
 fourth = items[3]  # IndexError: list index out of range
 
-# Solution 1: Check length first
 if len(items) > 3:
     fourth = items[3]
 else:
     fourth = None
 
-# Solution 2: Use try-except
 try:
     fourth = items[3]
 except IndexError:
     fourth = None
 
-# Solution 3: Use slice (returns empty list if out of range)
 fourth_list = items[3:4]  # Returns [] if index 3 doesn't exist
 fourth = fourth_list[0] if fourth_list else None
 ```
@@ -3328,10 +3021,8 @@ def safe_slice(lst: list[T], start: int = 0, end: int | None = None,
 
     return lst[start:end:step]
 
-# Usage
 numbers = [10, 20, 30, 40, 50]
 
-# Safe index access
 first = safe_get_index(numbers, 0, default=0)  # 10
 tenth = safe_get_index(numbers, 10, default=0)  # 0 (out of range)
 last = safe_get_index(numbers, -1, default=0)  # 50
@@ -3339,13 +3030,11 @@ invalid = safe_get_index(numbers, -10, default=0)  # 0 (out of range)
 
 print(f"First: {first}, Tenth: {tenth}, Last: {last}, Invalid: {invalid}")
 
-# Safe slicing
 empty_list: list[int] = []
 slice1 = safe_slice(empty_list, 0, 5)  # [] (empty input)
 slice2 = safe_slice(numbers, 2, 10)  # [30, 40, 50] (end beyond length)
 slice3 = safe_slice(numbers, -2)  # [40, 50] (negative start)
 
-# Iterate safely with enumerate
 for index, value in enumerate(numbers):
     next_value = safe_get_index(numbers, index + 1, default='End')
     print(f"Current: {value}, Next: {next_value}")
@@ -3371,25 +3060,20 @@ for index, value in enumerate(numbers):
 **Basic Example - Type Mismatches**:
 
 ```python
-# Error: Adding incompatible types
 age = "25"
 next_year = age + 1  # TypeError: can only concatenate str (not "int") to str
 
-# Solution 1: Convert types explicitly
 age = "25"
 next_year = int(age) + 1  # 26
 
-# Solution 2: Type checking
 def add_one(value):
     if isinstance(value, str):
         value = int(value)
     return value + 1
 
-# Error: Calling non-callable
 data = {'name': 'Alice'}
 result = data()  # TypeError: 'dict' object is not callable
 
-# Solution: Check if callable
 if callable(data):
     result = data()
 else:
@@ -3437,18 +3121,15 @@ def ensure_type(expected_type: type, convert: bool = True):
         return wrapper
     return decorator
 
-# Usage
 @ensure_type(int, convert=True)
 def add_one(x: int) -> int:
     return x + 1
 
-# Auto-converts string to int
 result1 = add_one("42")  # 43
 result2 = add_one(42)  # 43
 
 print(f"Results: {result1}, {result2}")
 
-# Safe type conversion with fallback
 def safe_convert(value: Any, target_type: type, default: Any = None) -> Any:
     """
     Safely convert value to target type with fallback.
@@ -3461,12 +3142,10 @@ def safe_convert(value: Any, target_type: type, default: Any = None) -> Any:
     except (ValueError, TypeError):
         return default
 
-# Examples
 num1 = safe_convert("123", int, default=0)  # 123
 num2 = safe_convert("abc", int, default=0)  # 0
 num3 = safe_convert([1, 2], str, default="")  # "[1, 2]"
 
-# Check if object is callable before calling
 def safe_call(obj: Any, *args, **kwargs) -> Any:
     """
     Safely call object if callable, otherwise return it.
@@ -3475,7 +3154,6 @@ def safe_call(obj: Any, *args, **kwargs) -> Any:
         return obj(*args, **kwargs)
     return obj
 
-# Usage
 func = lambda x: x * 2
 value = 42
 
@@ -3503,11 +3181,9 @@ result2 = safe_call(value)  # 42 (not callable, returned as-is)
 **Basic Example - Input Validation**:
 
 ```python
-# Error: Converting invalid string to int
 user_input = "abc"
 age = int(user_input)  # ValueError: invalid literal for int() with base 10: 'abc'
 
-# Solution 1: Try-except
 user_input = "abc"
 try:
     age = int(user_input)
@@ -3515,14 +3191,12 @@ except ValueError:
     age = 0
     print("Invalid input, using default age")
 
-# Solution 2: Validation before conversion
 user_input = "abc"
 if user_input.isdigit():
     age = int(user_input)
 else:
     age = 0
 
-# Solution 3: Regular expression validation
 import re
 
 def is_valid_age(value: str) -> bool:
@@ -3542,7 +3216,6 @@ if is_valid_age(user_input):
 **Advanced Example - Robust Input Parsing**:
 
 ```python
-# Optional type uses | None syntax (Python 3.10+), Union, TypeVar, Callable
 import re
 
 T = TypeVar('T')
@@ -3564,14 +3237,12 @@ def safe_parse(value: str, parser: Callable[[str], T],
     except (ValueError, TypeError):
         return default
 
-# Usage examples
 age = safe_parse("25", int, lambda x: 0 <= x <= 120, default=0)  # 25
 invalid_age = safe_parse("200", int, lambda x: 0 <= x <= 120, default=0)  # 0
 price = safe_parse("19.99", float, lambda x: x > 0, default=0.0)  # 19.99
 
 print(f"Age: {age}, Invalid Age: {invalid_age}, Price: {price}")
 
-# Validate and parse complex formats
 def parse_phone(phone: str) -> str | None:
     """
     Parse phone number to standard format.
@@ -3588,18 +3259,11 @@ def parse_phone(phone: str) -> str | None:
 
     return digits
 
-# Test phone parsing
 phones = ["(123) 456-7890", "123-456-7890", "1234567890", "invalid"]
 for phone in phones:
     parsed = parse_phone(phone)
     print(f"{phone} → {parsed}")
-# Output:
-# (123) 456-7890 → 1234567890
-# 123-456-7890 → 1234567890
-# 1234567890 → 1234567890
-# invalid → None
 
-# Unpacking with validation
 def safe_unpack(data: str, separator: str = ',', expected_count: int | None = None):
     """
     Safely unpack delimited string.
@@ -3611,7 +3275,6 @@ def safe_unpack(data: str, separator: str = ',', expected_count: int | None = No
 
     return parts
 
-# Usage
 try:
     name, age, city = safe_unpack("Alice,25,NYC", expected_count=3)
     print(f"Name: {name}, Age: {age}, City: {city}")
@@ -3639,28 +3302,22 @@ except ValueError as e:
 **Basic Example - Undefined Variables**:
 
 ```python
-# Error: Using undefined variable
 print(message)  # NameError: name 'message' is not defined
 
-# Solution 1: Define before use
 message = "Hello, World!"
 print(message)
 
-# Error: Typo in variable name
 greeting = "Hello"
 print(greting)  # NameError: name 'greting' is not defined
 
-# Solution 2: Check spelling
 greeting = "Hello"
 print(greeting)  # Correct spelling
 
-# Error: Variable in wrong scope
 def my_function():
     local_var = 42
 
 print(local_var)  # NameError: name 'local_var' is not defined
 
-# Solution 3: Return value from function
 def my_function():
     local_var = 42
     return local_var
@@ -3681,7 +3338,6 @@ print(result)
 ```python
 from typing import Any
 
-# Global vs Local scope
 global_var = "I'm global"
 
 def demonstrate_scope():
@@ -3698,9 +3354,7 @@ def demonstrate_scope():
 
 result = demonstrate_scope()
 print(global_var)  # "Modified global"
-# print(local_var)  # NameError
 
-# Safe attribute/variable checking
 def safe_eval(expr: str, context: dict[str, Any]) -> Any | None:
     """
     Safely evaluate expression with given context.
@@ -3714,21 +3368,18 @@ def safe_eval(expr: str, context: dict[str, Any]) -> Any | None:
         print(f"Undefined variable in '{expr}': {e}")
         return None
 
-# Usage
 context = {"x": 10, "y": 20, "z": 30}
 result1 = safe_eval("x + y", context)  # 30
 result2 = safe_eval("x + undefined", context)  # None (catches NameError)
 
 print(f"Result 1: {result1}, Result 2: {result2}")
 
-# Check if variable exists in scope
 def is_defined(var_name: str, scope: dict[str, Any]) -> bool:
     """
     Check if variable is defined in given scope.
     """
     return var_name in scope
 
-# Usage with globals() and locals()
 x = 42
 
 print(is_defined('x', globals()))  # True
@@ -3741,7 +3392,6 @@ def my_function():
 
 my_function()
 
-# Lazy initialization with getattr
 class Config:
     """Configuration with lazy initialization."""
 
@@ -3780,21 +3430,17 @@ print(config.cache)  # None (doesn't exist, __getattr__ called)
 **Basic Example - Consistent Indentation**:
 
 ```python
-# Error: Missing indentation
 def my_function():
 print("Hello")  # IndentationError: expected an indented block
 
-# Solution: Add proper indentation
 def my_function():
     print("Hello")  # Correct: 4 spaces
 
-# Error: Mixed tabs and spaces
 def another_function():
     x = 1  # 4 spaces
 	y = 2  # Tab (looks like spaces but isn't)
     # IndentationError: unindent does not match
 
-# Solution: Use spaces consistently (PEP 8: 4 spaces)
 def another_function():
     x = 1  # 4 spaces
     y = 2  # 4 spaces
@@ -3810,7 +3456,6 @@ def another_function():
 **Advanced Example - Indentation Best Practices**:
 
 ```python
-# Correct multi-level indentation
 def process_data(items):
     """
     Process items with proper indentation.
@@ -3828,7 +3473,6 @@ def process_data(items):
 
     return results
 
-# Correct indentation for long lines (PEP 8)
 def function_with_many_parameters(
         param1,
         param2,
@@ -3837,7 +3481,6 @@ def function_with_many_parameters(
     """Parameters aligned or indented."""
     return param1 + param2 + param3 + param4
 
-# Alternative style (hanging indent)
 result = function_with_many_parameters(
     param1=1,
     param2=2,
@@ -3845,14 +3488,12 @@ result = function_with_many_parameters(
     param4=4
 )
 
-# List comprehension with proper indentation
 filtered_and_processed = [
     item * 2
     for item in range(100)
     if item % 2 == 0
 ]
 
-# Dictionary with proper indentation
 config = {
     'database': {
         'host': 'localhost',
@@ -3865,7 +3506,6 @@ config = {
     }
 }
 
-# Class with proper indentation
 class DataProcessor:
     """Example class with correct indentation."""
 
@@ -3888,7 +3528,6 @@ class DataProcessor:
         """Private method."""
         return item is not None
 
-# Context manager with proper indentation
 with open('file.txt', 'r') as f:
     for line in f:
         if line.strip():
@@ -3928,11 +3567,9 @@ trim_trailing_whitespace = true
 import os
 from pathlib import Path
 
-# Error: File doesn't exist
 with open('nonexistent.txt', 'r') as f:
     content = f.read()  # FileNotFoundError
 
-# Solution 1: Check existence first
 if os.path.exists('config.txt'):
     with open('config.txt', 'r') as f:
         content = f.read()
@@ -3940,14 +3577,12 @@ else:
     print("File not found, using defaults")
     content = ""
 
-# Solution 2: Use Path (modern approach)
 config_path = Path('config.txt')
 if config_path.exists():
     content = config_path.read_text()
 else:
     content = ""
 
-# Solution 3: Try-except
 try:
     with open('config.txt', 'r') as f:
         content = f.read()
@@ -3969,7 +3604,6 @@ except FileNotFoundError:
 
 ```python
 from pathlib import Path
-# Optional type uses | None syntax (Python 3.10+), Union
 import os
 
 def safe_read_file(filepath: str | Path,
@@ -4001,11 +3635,9 @@ def safe_read_file(filepath: str | Path,
         print(f"Permission denied: {path}")
         return default
 
-# Usage
 config = safe_read_file('config/settings.txt', default='{}', create_if_missing=True)
 print(f"Config: {config}")
 
-# Find file in multiple locations
 def find_file(filename: str, search_paths: list[str]) -> Path | None:
     """
     Search for file in multiple directories.
@@ -4018,7 +3650,6 @@ def find_file(filename: str, search_paths: list[str]) -> Path | None:
             return path
     return None
 
-# Usage
 search_locations = [
     '.',
     './config',
@@ -4033,7 +3664,6 @@ if config_file:
 else:
     print("Config not found in any location")
 
-# Safe file operations with context
 class SafeFileHandler:
     """Handle files with automatic fallback and logging."""
 
@@ -4065,7 +3695,6 @@ class SafeFileHandler:
         """Check if file exists."""
         return (self.base_path / filename).exists()
 
-# Usage
 handler = SafeFileHandler('./data')
 content = handler.read('users.json', default='[]')
 success = handler.write('users.json', '["Alice", "Bob"]')
@@ -4098,24 +3727,20 @@ print(f"File exists: {handler.exists('users.json')}")
 **Basic Example - Check for Zero**:
 
 ```python
-# Error: Division by zero
 result = 10 / 0  # ZeroDivisionError
 
-# Solution 1: Check before dividing
 denominator = 0
 if denominator != 0:
     result = 10 / denominator
 else:
     result = float('inf')  # or None, or 0, depending on context
 
-# Solution 2: Try-except
 try:
     result = 10 / denominator
 except ZeroDivisionError:
     result = None
     print("Cannot divide by zero")
 
-# Solution 3: Use default value
 denominator = 0
 result = 10 / denominator if denominator != 0 else 0
 ```
@@ -4130,7 +3755,6 @@ result = 10 / denominator if denominator != 0 else 0
 **Advanced Example - Safe Mathematical Operations**:
 
 ```python
-# Optional type uses | None syntax (Python 3.10+), List, Union
 import math
 
 def safe_divide(numerator: float, denominator: float,
@@ -4144,14 +3768,12 @@ def safe_divide(numerator: float, denominator: float,
         return default
     return numerator / denominator
 
-# Usage
 result1 = safe_divide(10, 2)  # 5.0
 result2 = safe_divide(10, 0, default=0)  # 0
 result3 = safe_divide(10, 0, default=float('inf'))  # inf
 
 print(f"Results: {result1}, {result2}, {result3}")
 
-# Safe average calculation
 def safe_average(numbers: list[float], default: float = 0.0) -> float:
     """
     Calculate average with empty list handling.
@@ -4160,12 +3782,10 @@ def safe_average(numbers: list[float], default: float = 0.0) -> float:
         return default
     return sum(numbers) / len(numbers)
 
-# Usage
 avg1 = safe_average([10, 20, 30])  # 20.0
 avg2 = safe_average([])  # 0.0 (default)
 avg3 = safe_average([], default=float('nan'))  # nan
 
-# Statistical operations with validation
 def calculate_statistics(data: list[float]) -> dict:
     """
     Calculate statistics with zero-division protection.
@@ -4194,14 +3814,12 @@ def calculate_statistics(data: list[float]) -> dict:
         'coefficient_of_variation': cv
     }
 
-# Usage
 data = [10, 20, 30, 40, 50]
 stats = calculate_statistics(data)
 print(f"Mean: {stats['mean']:.2f}")
 print(f"Std Dev: {stats['std_dev']:.2f}")
 print(f"CV: {stats['coefficient_of_variation']:.2f if stats['coefficient_of_variation'] else 'N/A'}")
 
-# Percentage calculation with zero protection
 def calculate_percentage(part: float, total: float,
                          decimal_places: int = 2) -> float | None:
     """
@@ -4214,12 +3832,10 @@ def calculate_percentage(part: float, total: float,
     percentage = (part / total) * 100
     return round(percentage, decimal_places)
 
-# Usage
 pct1 = calculate_percentage(25, 100)  # 25.0
 pct2 = calculate_percentage(25, 0)  # None
 print(f"Percentage 1: {pct1}%, Percentage 2: {pct2}")
 
-# Rate calculation (e.g., items per second)
 def calculate_rate(items: int, duration_seconds: float,
                    default: float = 0.0) -> float:
     """
@@ -4229,7 +3845,6 @@ def calculate_rate(items: int, duration_seconds: float,
         return default
     return items / duration_seconds
 
-# Usage
 rate1 = calculate_rate(100, 10)  # 10.0 items/second
 rate2 = calculate_rate(100, 0)  # 0.0 (default)
 ```
@@ -4302,7 +3917,6 @@ async def fetch_multiple_apis(urls: List[str]) -> List[Dict]:
         tasks = [client.fetch(session, url) for url in urls]
         return await asyncio.gather(*tasks)
 
-# Usage
 urls = [
     "https://api.example.com/users/1",
     "https://api.example.com/users/2",
@@ -4363,7 +3977,6 @@ async def fetch_page(page: int, size: int) -> List[Dict]:
         return []
     return [{"id": i + (page - 1) * size, "page": page} for i in range(size)]
 
-# Usage - process items as they arrive
 async def process_large_dataset():
     """Process items one at a time without loading all into memory."""
     item_count = 0
@@ -4380,7 +3993,6 @@ async def process_item(item: Dict):
     await asyncio.sleep(0.01)  # Simulate processing
     print(f"Processing {item['id']}")
 
-# Run
 asyncio.run(process_large_dataset())
 ```
 
@@ -4437,7 +4049,6 @@ class BackgroundTaskManager:
         except asyncio.TimeoutError:
             print(f"Warning: {len(self.tasks)} tasks did not complete in {timeout}s")
 
-# Usage
 async def background_worker(name: str, interval: float):
     """Long-running background task."""
     try:
@@ -4492,7 +4103,6 @@ from typing import Optional, List, Generic, TypeVar
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-# Domain model
 T = TypeVar('T')
 
 class Repository(ABC, Generic[T]):
@@ -4548,7 +4158,6 @@ class SQLAlchemyRepository(Repository[T]):
             self.session.delete(entity)
             self.session.flush()
 
-# Usage with dependency injection
 from contextlib import contextmanager
 
 @contextmanager
@@ -4573,7 +4182,6 @@ def create_user_service(username: str, email: str):
         user = User(username=username, email=email)
         return user_repo.create(user)
 
-# Testing is easier with repository pattern
 class InMemoryRepository(Repository[T]):
     """In-memory repository for testing."""
 
@@ -4619,7 +4227,6 @@ from sqlalchemy.orm import selectinload
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
-# Configure async engine with connection pooling
 engine = create_async_engine(
     "postgresql+asyncpg://user:password@localhost/dbname",
     pool_size=20,           # Maintain 20 connections
@@ -4629,7 +4236,6 @@ engine = create_async_engine(
     echo=True               # Log SQL (disable in production)
 )
 
-# Create session factory
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
@@ -4647,7 +4253,6 @@ async def get_db_session() -> AsyncIterator[AsyncSession]:
             await session.rollback()
             raise
 
-# CRUD operations
 async def create_user(username: str, email: str):
     """Create user asynchronously."""
     async with get_db_session() as session:
@@ -4671,7 +4276,6 @@ async def bulk_create_users(users_data: List[Dict]):
         session.add_all(users)
         # Bulk insert is faster than individual inserts
 
-# Usage
 import asyncio
 
 async def main():
@@ -4721,7 +4325,6 @@ from typing import List, Optional
 
 app = FastAPI(title="User API", version="1.0.0")
 
-# Request/Response models
 class UserCreate(BaseModel):
     """User creation request."""
     username: str = Field(..., min_length=3, max_length=50, pattern=r'^[a-zA-Z0-9_]+$')
@@ -4752,7 +4355,6 @@ class ErrorResponse(BaseModel):
     detail: str
     error_code: str
 
-# Global exception handlers
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc: RequestValidationError):
     """Handle validation errors."""
@@ -4777,13 +4379,11 @@ async def general_exception_handler(request, exc: Exception):
         content={"detail": "Internal server error", "error_code": "INTERNAL_ERROR"}
     )
 
-# Dependency injection
 async def get_db() -> AsyncSession:
     """Provide database session."""
     async with get_db_session() as session:
         yield session
 
-# Endpoints
 @app.post(
     "/users",
     response_model=UserResponse,
@@ -4861,7 +4461,6 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 
-# Configuration
 SECRET_KEY = "your-secret-key-keep-it-secret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -4869,21 +4468,18 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
-# Password utilities
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
-# Token utilities
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# Authentication dependency
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: AsyncSession = Depends(get_db)
@@ -4913,7 +4509,6 @@ async def get_current_user(
 
     return user
 
-# Login endpoint
 @app.post("/auth/login")
 async def login(username: str, password: str, db: AsyncSession = Depends(get_db)):
     """Authenticate and return JWT token."""
@@ -4934,13 +4529,11 @@ async def login(username: str, password: str, db: AsyncSession = Depends(get_db)
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-# Protected endpoint
 @app.get("/users/me", response_model=UserResponse)
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     """Get current authenticated user."""
     return current_user
 
-# Protected endpoint with permission check
 async def require_admin(current_user: User = Depends(get_current_user)) -> User:
     """Require admin role."""
     if not current_user.is_admin:
@@ -5029,10 +4622,8 @@ class Settings(BaseSettings):
         env_file_encoding = 'utf-8'
         case_sensitive = False
 
-# Load settings (automatically reads from environment)
 settings = Settings()
 
-# Usage in application
 from sqlalchemy import create_engine
 
 engine = create_engine(
@@ -5040,7 +4631,6 @@ engine = create_engine(
     pool_size=settings.database_pool_size
 )
 
-# .env file example (never commit to git!)
 """
 DATABASE_URL=postgresql://user:password@localhost/dbname
 DB_POOL_SIZE=20
@@ -5051,7 +4641,6 @@ LOG_LEVEL=INFO
 REDIS_URL=redis://localhost:6379/0
 """
 
-# .env.example file (commit this for documentation)
 """
 DATABASE_URL=postgresql://user:password@localhost/dbname
 DB_POOL_SIZE=10
@@ -5062,7 +4651,6 @@ LOG_LEVEL=INFO
 REDIS_URL=redis://localhost:6379/0
 """
 
-# .gitignore (always ignore actual .env)
 """
 .env
 .env.local

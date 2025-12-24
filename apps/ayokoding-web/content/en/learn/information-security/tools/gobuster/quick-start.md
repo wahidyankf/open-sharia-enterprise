@@ -3,7 +3,7 @@ title: "Quick Start"
 date: 2025-12-18T14:00:16+07:00
 draft: false
 weight: 100002
-description: "Get started with Gobuster for web directory discovery and DNS enumeration in minutes"
+description: "Get started with Gobuster for web directory discovery and DNS enumeration"
 tags:
   [
     "infosec",
@@ -118,10 +118,8 @@ Gobuster v3.6.0
 Gobuster requires wordlists to function. Download a common wordlist:
 
 ```bash
-# Create wordlists directory
 mkdir -p ~/wordlists
 
-# Download common.txt from SecLists
 curl -o ~/wordlists/common.txt \
   https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt
 ```
@@ -129,9 +127,7 @@ curl -o ~/wordlists/common.txt \
 Alternatively, if you have SecLists installed:
 
 ```bash
-# SecLists is typically located at:
-# /usr/share/seclists (Kali Linux)
-# /opt/SecLists (manual installation)
+
 ```
 
 {{% /steps %}}
@@ -297,11 +293,9 @@ Finished
 For DNS enumeration, use subdomain-specific wordlists:
 
 ```bash
-# Download subdomain wordlist
 curl -o ~/wordlists/subdomains.txt \
   https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-5000.txt
 
-# Run DNS scan with subdomain wordlist
 gobuster dns -d example.com -w ~/wordlists/subdomains.txt
 ```
 
@@ -310,14 +304,12 @@ gobuster dns -d example.com -w ~/wordlists/subdomains.txt
 Let's combine what we've learned to enumerate a web application thoroughly.
 
 ```bash
-# Step 1: Directory scan with common extensions
 gobuster dir -u http://testphp.vulnweb.com \
   -w ~/wordlists/common.txt \
   -x php,html,txt,zip \
   -t 30 \
   -s 200,301,302
 
-# Step 2: Scan discovered directories
 gobuster dir -u http://testphp.vulnweb.com/admin \
   -w ~/wordlists/common.txt \
   -x php,html \

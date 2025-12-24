@@ -4897,12 +4897,9 @@ fn main() {
 // Post-build optimization with wasm-opt
 /*
 #!/bin/bash
-# optimize.sh
 
-# Build release binary
 cargo build --release --target wasm32-unknown-unknown
 
-# Optimize with wasm-opt
 wasm-opt -Oz \
     --strip-debug \
     --strip-dwarf \
@@ -4910,12 +4907,10 @@ wasm-opt -Oz \
     target/wasm32-unknown-unknown/release/my_wasm.wasm \
     -o target/optimized.wasm
 
-# Generate bindings
 wasm-bindgen target/optimized.wasm \
     --out-dir pkg \
     --target web
 
-# Compress with gzip
 gzip -9 -k pkg/my_wasm_bg.wasm
 */
 

@@ -1676,18 +1676,13 @@ Building and operating a complex AI system comes with challenges. Here's how to 
 **Diagnosis Steps:**
 
 ```bash
-# 1. Check OCR worker health
 kubectl get pods -l app=ocr-service
-# Look for: CrashLoopBackOff, ImagePullBackOff, OOMKilled
 
-# 2. Check queue depth
 aws sqs get-queue-attributes --queue-url <OCR_QUEUE_URL> \
   --attribute-names ApproximateNumberOfMessages
 
-# 3. Check OCR service logs
 kubectl logs -l app=ocr-service --tail=100
 
-# 4. Check resource utilization
 kubectl top pods -l app=ocr-service
 ```
 
@@ -1713,17 +1708,10 @@ kubectl top pods -l app=ocr-service
 **Diagnosis:**
 
 ```bash
-# Check active database connections
 SELECT count(*) FROM pg_stat_activity WHERE state = 'active';
 
-# Check connection pool metrics
-# Application metrics endpoint
 curl http://localhost:8080/metrics | grep db_pool
 
-# Expected output:
-# db_pool_active_connections 90
-# db_pool_max_connections 100  # ← At limit!
-# db_pool_wait_time_ms 5000    # ← High wait time
 ```
 
 **Fixes:**
@@ -1731,7 +1719,6 @@ curl http://localhost:8080/metrics | grep db_pool
 1. **Increase pool size** (short-term):
 
 ```yaml
-# config/database.yml
 pool_size: 200 # Increase from 100
 max_overflow: 50
 ```
@@ -1774,15 +1761,11 @@ db_config:
 **Diagnosis:**
 
 ```bash
-# 1. Profile the request
 curl -w "@curl-format.txt" -o /dev/null -s \
   "http://api/v1/insights?user_id=123"
 
-# 2. Check cache hit rate
 redis-cli INFO stats | grep keyspace_hits
-# Low hit rate means cache not being used effectively
 
-# 3. Check database query performance
 EXPLAIN ANALYZE SELECT * FROM transactions
 WHERE user_id = 'uuid' AND date > NOW() - INTERVAL '30 days';
 ```
@@ -1805,10 +1788,8 @@ WHERE user_id = 'uuid' AND transaction_date > '2025-11-01';
 2. **Optimize cache strategy**:
 
 ```python
-# ❌ Wrong - Cache key too granular (low hit rate)
 cache_key = f"insights:{user_id}:{start_date}:{end_date}:{category}"
 
-# ✅ Better - Round to hour for better hit rate
 hour = datetime.now().replace(minute=0, second=0)
 cache_key = f"insights:{user_id}:{period}:{hour}"
 ```
@@ -1816,7 +1797,6 @@ cache_key = f"insights:{user_id}:{period}:{hour}"
 3. **Pre-compute insights**:
 
 ```python
-# Background job runs daily at 2 AM
 def precompute_daily_insights():
     active_users = get_active_users()
     for user in active_users:
@@ -1837,13 +1817,10 @@ def precompute_daily_insights():
 **Diagnosis:**
 
 ```bash
-# 1. Check memory usage by pod
 kubectl top pods -l app=ocr-service
 
-# 2. Get detailed memory metrics
 kubectl exec -it <pod-name> -- cat /proc/meminfo
 
-# 3. Profile memory usage (if running Go)
 go tool pprof http://localhost:6060/debug/pprof/heap
 ```
 
@@ -1874,11 +1851,9 @@ func validateFileSize(file io.Reader) error {
 2. **Process images in chunks**:
 
 ```python
-# ❌ Wrong - Load entire image in memory
 image = Image.open(receipt_path)
 processed = ocr_engine.process(image)
 
-# ✅ Better - Stream processing
 with Image.open(receipt_path) as image:
     # Process in tiles for large images
     if image.width > 4000 or image.height > 4000:
@@ -1890,7 +1865,6 @@ with Image.open(receipt_path) as image:
 3. **Increase resource limits**:
 
 ```yaml
-# k8s/ocr-service.yaml
 resources:
   requests:
     memory: "512Mi"
@@ -1946,10 +1920,8 @@ import structlog
 
 logger = structlog.get_logger()
 
-# ❌ Wrong - Unstructured log
 logger.info(f"User {user_id} uploaded receipt {receipt_id}")
 
-# ✅ Better - Structured log
 logger.info("receipt_uploaded",
     user_id=user_id,
     receipt_id=receipt_id,
@@ -1961,11 +1933,9 @@ logger.info("receipt_uploaded",
 **Query logs efficiently:**
 
 ```bash
-# Find all failed OCR jobs for user
 kubectl logs -l app=ocr-service | \
   jq 'select(.user_id=="123" and .status=="failed")'
 
-# Calculate average processing time
 kubectl logs -l app=ocr-service | \
   jq -s 'map(.processing_time_ms) | add/length'
 ```
@@ -1973,7 +1943,6 @@ kubectl logs -l app=ocr-service | \
 **3. Health Checks & Readiness Probes**
 
 ```yaml
-# k8s/deployment.yaml
 livenessProbe:
   httpGet:
     path: /health/live
@@ -2014,18 +1983,12 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 Test resilience by intentionally breaking things:
 
 ```bash
-# Kill random pod to test pod restart handling
 kubectl delete pod -l app=ocr-service \
   $(kubectl get pods -l app=ocr-service -o name | shuf -n 1)
 
-# Inject network latency
 tc qdisc add dev eth0 root netem delay 100ms
 
-# Simulate database failure
-# Temporarily revoke database permissions to test error handling
 
-# Simulate third-party API failure
-# Use Nginx proxy to return 503 for OCR API calls
 ```
 
 ---
@@ -2035,7 +1998,6 @@ tc qdisc add dev eth0 root netem delay 100ms
 **Critical Alerts (PagerDuty)**:
 
 ```yaml
-# prometheus/alerts.yml
 groups:
   - name: critical
     rules:

@@ -95,16 +95,12 @@ class User:
 **Example**:
 
 ```python
-# List comprehension
 squares = [x**2 for x in range(10)]
 
-# Dict comprehension
 word_lengths = {word: len(word) for word in ["hello", "world"]}
 
-# Set comprehension
 unique_squares = {x**2 for x in [1, 2, 2, 3, 3, 3]}
 
-# With condition
 evens = [x for x in range(20) if x % 2 == 0]
 ```
 
@@ -119,9 +115,7 @@ evens = [x for x in range(20) if x % 2 == 0]
 ```python
 with open("file.txt", "r") as f:
     content = f.read()
-# File automatically closed
 
-# Custom context manager
 class Timer:
     def __enter__(self):
         self.start = time.time()
@@ -234,7 +228,6 @@ user = {"name": "Alice", "age": 30}
 user["email"] = "alice@example.com"
 age = user.get("age", 0)
 
-# Dictionary methods
 keys = user.keys()
 values = user.values()
 items = user.items()
@@ -271,7 +264,6 @@ def calculate_area(radius):
 **Example**:
 
 ```python
-# If it walks like a duck and quacks like a duck, it's a duck
 class Duck:
     def quack(self):
         print("Quack!")
@@ -323,13 +315,11 @@ v3 = v1 + v2  # Vector(4, 6)
 **Example**:
 
 ```python
-# EAFP style (Pythonic)
 try:
     value = my_dict[key]
 except KeyError:
     value = default_value
 
-# LBYL style (not recommended)
 if key in my_dict:
     value = my_dict[key]
 else:
@@ -350,7 +340,6 @@ fruits = ["apple", "banana", "cherry"]
 for index, fruit in enumerate(fruits):
     print(f"{index}: {fruit}")
 
-# Start from custom index
 for i, fruit in enumerate(fruits, start=1):
     print(f"{i}. {fruit}")
 ```
@@ -389,11 +378,9 @@ name = "Alice"
 age = 30
 greeting = f"Hello, {name}! You are {age} years old."
 
-# Expressions and formatting
 price = 19.99
 message = f"Total: ${price * 1.1:.2f}"  # Total: $21.99
 
-# Multi-line f-strings
 info = f"""
 Name: {name}
 Age: {age}
@@ -426,14 +413,11 @@ evens = list(filter(lambda x: x % 2 == 0, numbers))  # [2, 4, 6]
 def add(a, b):
     return a + b
 
-# Assign to variable
 operation = add
 
-# Pass as argument
 def apply_twice(func, x):
     return func(func(x, x), x)
 
-# Return from function
 def make_multiplier(n):
     def multiplier(x):
         return x * n
@@ -460,7 +444,6 @@ def fibonacci(n):
 for num in fibonacci(10):
     print(num)
 
-# Generator expression
 squares = (x**2 for x in range(1000000))  # Memory efficient
 ```
 
@@ -473,13 +456,10 @@ squares = (x**2 for x in range(1000000))  # Memory efficient
 **Example**:
 
 ```python
-# List comprehension (creates list in memory)
 squares_list = [x**2 for x in range(1000000)]
 
-# Generator expression (lazy evaluation)
 squares_gen = (x**2 for x in range(1000000))
 
-# Use in functions
 total = sum(x**2 for x in range(100))
 ```
 
@@ -492,13 +472,10 @@ total = sum(x**2 for x in range(100))
 **Example**:
 
 ```python
-# GIL limits CPU-bound multi-threading
 import threading
 
-# Not truly parallel for CPU tasks
 threads = [threading.Thread(target=cpu_intensive) for _ in range(4)]
 
-# Use multiprocessing for parallel CPU tasks
 import multiprocessing
 processes = [multiprocessing.Process(target=cpu_intensive) for _ in range(4)]
 ```
@@ -514,15 +491,11 @@ processes = [multiprocessing.Process(target=cpu_intensive) for _ in range(4)]
 **Example**:
 
 ```python
-# Immutable objects are hashable
 hash("hello")
 hash(42)
 hash((1, 2, 3))
 
-# Mutable objects are not hashable
-# hash([1, 2, 3])  # TypeError
 
-# Custom hash
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -546,7 +519,6 @@ def apply_operation(func, x, y):
 
 result = apply_operation(lambda a, b: a + b, 5, 3)  # 8
 
-# Returning functions
 def make_adder(n):
     def adder(x):
         return x + n
@@ -567,14 +539,11 @@ print(add_5(10))  # 15
 **Example**:
 
 ```python
-# Immutable types
 text = "hello"
-# text[0] = "H"  # TypeError
 
 number = 42
 coordinates = (10, 20)
 
-# Mutable types
 my_list = [1, 2, 3]
 my_list[0] = 10  # OK
 ```
@@ -588,18 +557,14 @@ my_list[0] = 10  # OK
 **Example**:
 
 ```python
-# Module import
 import math
 print(math.pi)
 
-# Specific imports
 from datetime import datetime, timedelta
 
-# Aliasing
 import numpy as np
 from collections import defaultdict as dd
 
-# Relative imports (in packages)
 from . import sibling_module
 from .. import parent_module
 ```
@@ -631,14 +596,12 @@ person = Person("Alice", 30)
 **Example**:
 
 ```python
-# Built-in iterables
 for char in "hello":  # String is iterable
     print(char)
 
 for num in [1, 2, 3]:  # List is iterable
     print(num)
 
-# Custom iterable
 class Countdown:
     def __init__(self, start):
         self.start = start
@@ -662,9 +625,7 @@ iterator = iter(my_list)
 print(next(iterator))  # 1
 print(next(iterator))  # 2
 print(next(iterator))  # 3
-# next(iterator)  # StopIteration
 
-# Custom iterator
 class CountdownIterator:
     def __init__(self, start):
         self.current = start
@@ -711,19 +672,15 @@ user = create_user(name="Alice", age=30, city="NYC")
 **Example**:
 
 ```python
-# Simple lambda
 square = lambda x: x ** 2
 print(square(5))  # 25
 
-# With multiple arguments
 add = lambda a, b: a + b
 
-# In higher-order functions
 numbers = [1, 2, 3, 4, 5]
 squares = list(map(lambda x: x**2, numbers))
 evens = list(filter(lambda x: x % 2 == 0, numbers))
 
-# Sorting with key
 users = [("Alice", 30), ("Bob", 25)]
 sorted_users = sorted(users, key=lambda x: x[1])
 ```
@@ -737,18 +694,15 @@ sorted_users = sorted(users, key=lambda x: x[1])
 **Example**:
 
 ```python
-# Creating lists
 numbers = [1, 2, 3, 4, 5]
 mixed = [1, "hello", 3.14, True]
 
-# List operations
 numbers.append(6)
 numbers.extend([7, 8])
 numbers.insert(0, 0)
 numbers.remove(3)
 popped = numbers.pop()
 
-# List methods
 numbers.sort()
 numbers.reverse()
 count = numbers.count(2)
@@ -763,16 +717,12 @@ count = numbers.count(2)
 **Example**:
 
 ```python
-# Basic comprehension
 squares = [x**2 for x in range(10)]
 
-# With condition
 evens = [x for x in range(20) if x % 2 == 0]
 
-# Nested comprehension
 matrix = [[i*j for j in range(3)] for i in range(3)]
 
-# Multiple conditions
 values = [x for x in range(100) if x % 2 == 0 if x % 3 == 0]
 ```
 
@@ -806,7 +756,6 @@ if __name__ == "__main__":
 numbers = [1, 2, 3, 4, 5]
 squares = list(map(lambda x: x**2, numbers))  # [1, 4, 9, 16, 25]
 
-# Multiple iterables
 a = [1, 2, 3]
 b = [4, 5, 6]
 sums = list(map(lambda x, y: x + y, a, b))  # [5, 7, 9]
@@ -869,13 +818,11 @@ D().method()  # Prints: B
 **Example**:
 
 ```python
-# mymodule.py
 def greet(name):
     return f"Hello, {name}"
 
 PI = 3.14159
 
-# Using the module
 import mymodule
 print(mymodule.greet("Alice"))
 print(mymodule.PI)
@@ -890,7 +837,6 @@ print(mymodule.PI)
 **Example**:
 
 ```python
-# Mutable types
 my_list = [1, 2, 3]
 my_list[0] = 10
 my_list.append(4)
@@ -898,12 +844,10 @@ my_list.append(4)
 my_dict = {"a": 1}
 my_dict["b"] = 2
 
-# Be careful with mutable default arguments
 def bad_function(items=[]):  # Dangerous!
     items.append(1)
     return items
 
-# Better approach
 def good_function(items=None):
     if items is None:
         items = []
@@ -922,7 +866,6 @@ def good_function(items=None):
 **Example**:
 
 ```python
-# Global namespace
 global_var = "global"
 
 def outer():
@@ -934,7 +877,6 @@ def outer():
         local_var = "local"
         print(locals())
 
-# Built-in namespace (always available)
 print(len([1, 2, 3]))
 ```
 
@@ -956,7 +898,6 @@ result = find_user(0)
 if result is None:
     print("User not found")
 
-# Default arguments
 def greet(name=None):
     if name is None:
         name = "Guest"
@@ -974,16 +915,7 @@ def greet(name=None):
 **Example**:
 
 ```python
-# Directory structure:
-# mypackage/
-#   __init__.py
-#   module1.py
-#   module2.py
-#   subpackage/
-#     __init__.py
-#     module3.py
 
-# Using the package
 from mypackage import module1
 from mypackage.subpackage import module3
 import mypackage.module2
@@ -998,15 +930,11 @@ import mypackage.module2
 **Example**:
 
 ```python
-# PEP 8: Style Guide for Python Code
-# PEP 20: The Zen of Python
 import this
 
-# PEP 484: Type Hints
 def greet(name: str) -> str:
     return f"Hello, {name}"
 
-# PEP 498: F-strings
 message = f"Hello, {name}"
 ```
 
@@ -1019,19 +947,14 @@ message = f"Hello, {name}"
 **Example**:
 
 ```bash
-# Install package
 pip install requests
 
-# Install specific version
 pip install requests==2.28.0
 
-# Install from requirements file
 pip install -r requirements.txt
 
-# List installed packages
 pip list
 
-# Show package info
 pip show requests
 ```
 
@@ -1077,20 +1000,16 @@ print(temp.fahrenheit)  # 86.0
 **Example**:
 
 ```python
-# Pythonic
 names = [person.name for person in people if person.age >= 18]
 
-# Not Pythonic
 names = []
 for person in people:
     if person.age >= 18:
         names.append(person.name)
 
-# Pythonic
 with open("file.txt") as f:
     content = f.read()
 
-# Not Pythonic
 f = open("file.txt")
 content = f.read()
 f.close()
@@ -1113,19 +1032,15 @@ f.close()
 **Example**:
 
 ```python
-# range(stop)
 for i in range(5):
     print(i)  # 0, 1, 2, 3, 4
 
-# range(start, stop)
 for i in range(2, 7):
     print(i)  # 2, 3, 4, 5, 6
 
-# range(start, stop, step)
 for i in range(0, 10, 2):
     print(i)  # 0, 2, 4, 6, 8
 
-# Create list from range
 numbers = list(range(5))  # [0, 1, 2, 3, 4]
 ```
 
@@ -1138,7 +1053,6 @@ numbers = list(range(5))  # [0, 1, 2, 3, 4]
 **Example**:
 
 ```python
-# In terminal, run: python
 >>> x = 10
 >>> y = 20
 >>> x + y
@@ -1181,11 +1095,9 @@ class Circle:
 **Example**:
 
 ```python
-# Creating sets
 fruits = {"apple", "banana", "cherry"}
 numbers = set([1, 2, 2, 3, 3, 3])  # {1, 2, 3}
 
-# Set operations
 a = {1, 2, 3, 4}
 b = {3, 4, 5, 6}
 
@@ -1194,7 +1106,6 @@ intersection = a & b    # {3, 4}
 difference = a - b      # {1, 2}
 symmetric_diff = a ^ b  # {1, 2, 5, 6}
 
-# Set methods
 fruits.add("date")
 fruits.remove("apple")
 ```
@@ -1210,18 +1121,15 @@ fruits.remove("apple")
 ```python
 numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-# Basic slicing
 numbers[2:5]      # [2, 3, 4]
 numbers[:5]       # [0, 1, 2, 3, 4]
 numbers[5:]       # [5, 6, 7, 8, 9]
 numbers[:]        # Copy of entire list
 
-# Step slicing
 numbers[::2]      # [0, 2, 4, 6, 8]
 numbers[1::2]     # [1, 3, 5, 7, 9]
 numbers[::-1]     # [9, 8, 7, 6, 5, 4, 3, 2, 1, 0] (reverse)
 
-# Slice object
 s = slice(2, 7, 2)
 numbers[s]        # [2, 4, 6]
 ```
@@ -1257,19 +1165,16 @@ print(MathUtils.is_even(4))  # True
 **Example**:
 
 ```python
-# Creating strings
 text = "Hello, World!"
 multiline = """This is
 a multiline
 string"""
 
-# String methods
 upper = text.upper()
 lower = text.lower()
 stripped = "  hello  ".strip()
 replaced = text.replace("World", "Python")
 
-# String operations
 concatenated = "Hello" + " " + "World"
 repeated = "Ha" * 3  # "HaHaHa"
 ```
@@ -1285,16 +1190,13 @@ repeated = "Ha" * 3  # "HaHaHa"
 **Example**:
 
 ```python
-# Creating tuples
 coordinates = (10, 20)
 single = (42,)  # Note the comma
 point3d = (1, 2, 3)
 
-# Tuple unpacking
 x, y = coordinates
 first, *rest = (1, 2, 3, 4, 5)
 
-# Named tuples
 from collections import namedtuple
 Point = namedtuple('Point', ['x', 'y'])
 p = Point(11, 22)
@@ -1323,7 +1225,6 @@ def find_user(user_id: int) -> Optional[Dict[str, str]]:
         return None
     return {"name": "Alice"}
 
-# Complex types
 def combine(x: Union[int, float], y: Union[int, float]) -> float:
     return x + y
 ```
@@ -1339,25 +1240,21 @@ def combine(x: Union[int, float], y: Union[int, float]) -> float:
 **Example**:
 
 ```python
-# Tuple unpacking
 x, y = (10, 20)
 first, *rest, last = [1, 2, 3, 4, 5]
 
-# Function arguments
 def add(a, b, c):
     return a + b + c
 
 numbers = [1, 2, 3]
 result = add(*numbers)  # Unpacking positional args
 
-# Dictionary unpacking
 kwargs = {"name": "Alice", "age": 30}
 def greet(name, age):
     return f"{name} is {age}"
 
 greeting = greet(**kwargs)  # Unpacking keyword args
 
-# Extended unpacking
 a, *middle, b = range(10)
 ```
 
@@ -1372,19 +1269,14 @@ a, *middle, b = range(10)
 **Example**:
 
 ```bash
-# Create virtual environment
 python -m venv myenv
 
-# Activate (Unix/macOS)
 source myenv/bin/activate
 
-# Activate (Windows)
 myenv\Scripts\activate
 
-# Install packages in virtual environment
 pip install requests
 
-# Deactivate
 deactivate
 ```
 
@@ -1399,19 +1291,15 @@ deactivate
 **Example**:
 
 ```python
-# Without walrus operator
 data = fetch_data()
 if data:
     process(data)
 
-# With walrus operator
 if (data := fetch_data()):
     process(data)
 
-# In list comprehension
 results = [y for x in range(10) if (y := expensive_func(x)) > 5]
 
-# In while loop
 while (line := file.readline()):
     process(line)
 ```
@@ -1425,16 +1313,12 @@ while (line := file.readline()):
 **Example**:
 
 ```python
-# File handling
 with open("file.txt", "r") as f:
     content = f.read()
-# File automatically closed
 
-# Multiple context managers
 with open("input.txt") as infile, open("output.txt", "w") as outfile:
     outfile.write(infile.read())
 
-# Custom context manager
 from contextlib import contextmanager
 
 @contextmanager
@@ -1466,7 +1350,6 @@ def countdown(n):
 for i in countdown(5):
     print(i)  # 5, 4, 3, 2, 1
 
-# Yield from (delegation)
 def flatten(nested_list):
     for sublist in nested_list:
         yield from sublist
@@ -1487,13 +1370,6 @@ list(flatten([[1, 2], [3, 4]]))  # [1, 2, 3, 4]
 ```python
 import this
 
-# Prints:
-# Beautiful is better than ugly.
-# Explicit is better than implicit.
-# Simple is better than complex.
-# Complex is better than complicated.
-# Readability counts.
-# ...
 ```
 
 **See Also**: PEP 20, Pythonic, Philosophy
@@ -1508,18 +1384,13 @@ import this
 names = ["Alice", "Bob", "Charlie"]
 ages = [25, 30, 35]
 
-# Basic zip
 pairs = list(zip(names, ages))
-# [('Alice', 25), ('Bob', 30), ('Charlie', 35)]
 
-# Unzip with unpacking
 names2, ages2 = zip(*pairs)
 
-# Multiple iterables
 for name, age, city in zip(names, ages, ["NYC", "LA", "SF"]):
     print(f"{name}, {age}, {city}")
 
-# Different lengths (stops at shortest)
 zip([1, 2, 3], [4, 5])  # [(1, 4), (2, 5)]
 ```
 

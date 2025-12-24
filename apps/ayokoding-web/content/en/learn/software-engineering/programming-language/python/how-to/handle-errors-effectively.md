@@ -41,13 +41,11 @@ graph TD
 ### Exception Categories
 
 ```python
-# System exceptions (don't catch)
 BaseException
 ├── SystemExit      # sys.exit() was called
 ├── KeyboardInterrupt  # Ctrl+C pressed
 └── GeneratorExit   # Generator closed
 
-# Application exceptions (catch these)
 Exception
 ├── ValueError      # Invalid value (wrong type OK, value bad)
 ├── TypeError       # Wrong type
@@ -66,7 +64,6 @@ Python favors EAFP (Easier to Ask for Forgiveness than Permission) over LBYL (Lo
 ### EAFP Approach
 
 ```python
-# ✅ EAFP - Try operation, handle failure
 def get_user_email(users, user_id):
     try:
         return users[user_id].email
@@ -75,7 +72,6 @@ def get_user_email(users, user_id):
     except AttributeError:
         return None  # User has no email
 
-# Clean code focused on happy path
 email = get_user_email(users, 123)
 if email:
     send_notification(email)
@@ -84,7 +80,6 @@ if email:
 ### LBYL Approach
 
 ```python
-# ❌ LBYL - Check before operating (verbose and racy)
 def get_user_email(users, user_id):
     if user_id in users:
         user = users[user_id]
@@ -92,14 +87,11 @@ def get_user_email(users, user_id):
             return user.email
     return None
 
-# Still vulnerable to race conditions in concurrent code
-# Between check and use, state might change
 ```
 
 ### When to Use Each
 
 ```python
-# ✅ Use EAFP for normal operations
 def read_config(filename):
     try:
         with open(filename) as f:
@@ -109,7 +101,6 @@ def read_config(filename):
     except json.JSONDecodeError as e:
         raise ConfigError(f"Invalid JSON in {filename}: {e}")
 
-# ✅ Use LBYL when exceptions are expensive in tight loops
 def process_large_dataset(items):
     # Pre-validate to avoid exception overhead
     if not all(isinstance(item, dict) for item in items):
@@ -125,21 +116,18 @@ def process_large_dataset(items):
 Always catch specific exceptions, never use bare except.
 
 ```python
-# ❌ Bare except catches everything (including KeyboardInterrupt!)
 def load_data():
     try:
         return json.load(open('data.json'))
     except:  # NEVER do this
         return None
 
-# ❌ Catching Exception is too broad
 def load_data():
     try:
         return json.load(open('data.json'))
     except Exception:  # Catches too much
         return None
 
-# ✅ Catch specific exceptions
 def load_data():
     try:
         with open('data.json') as f:
@@ -153,7 +141,6 @@ def load_data():
     except PermissionError:
         raise ConfigError("Cannot read config file - permission denied")
 
-# ✅ Multiple exceptions with same handler
 def process_user_input(value):
     try:
         return int(value)
@@ -167,7 +154,6 @@ def process_user_input(value):
 Custom exceptions provide semantic context and enable targeted catching.
 
 ```python
-# ✅ Custom exception hierarchy
 class ApplicationError(Exception):
     """Base exception for all application errors."""
     pass
@@ -186,7 +172,6 @@ class AuthenticationError(ApplicationError):
     """Authentication failures."""
     pass
 
-# Usage
 def validate_email(email):
     if '@' not in email:
         raise ValidationError('email', 'Must contain @')
@@ -194,7 +179,6 @@ def validate_email(email):
         raise ValidationError('email', 'Must end with .com')
     return email
 
-# Caller can catch specific errors
 try:
     email = validate_email(user_input)
 except ValidationError as e:
@@ -209,7 +193,6 @@ except ApplicationError as e:
 Preserve exception context when wrapping or re-raising.
 
 ```python
-# ❌ Lost exception context
 def fetch_user(user_id):
     try:
         response = requests.get(f'/users/{user_id}')
@@ -218,7 +201,6 @@ def fetch_user(user_id):
         raise UserNotFoundError(f"User {user_id} not found")
         # Original exception lost!
 
-# ✅ Chain exceptions with 'from'
 def fetch_user(user_id):
     try:
         response = requests.get(f'/users/{user_id}')
@@ -227,7 +209,6 @@ def fetch_user(user_id):
         raise UserNotFoundError(f"User {user_id} not found") from e
         # Preserves original exception as __cause__
 
-# ✅ Implicit chaining (exception raised while handling another)
 def process_order(order_id):
     try:
         order = fetch_order(order_id)
@@ -235,7 +216,6 @@ def process_order(order_id):
         send_alert("Order not found")  # If this raises, chained automatically
         raise
 
-# ✅ Suppress chaining when not relevant
 def parse_config(text):
     try:
         return json.loads(text)
@@ -249,7 +229,6 @@ def parse_config(text):
 Python's try statement has four clauses with specific purposes.
 
 ```python
-# ✅ Complete try statement structure
 def process_file(filename):
     try:
         f = open(filename)
@@ -271,7 +250,6 @@ def process_file(filename):
         except:
             pass  # Ignore errors when cleaning up
 
-# ✅ Else clause for operations after try
 def update_cache(key, value):
     try:
         lock.acquire()
@@ -293,17 +271,14 @@ def update_cache(key, value):
 Context managers guarantee cleanup even with exceptions.
 
 ```python
-# ✅ Built-in context managers
 def process_file(filename):
     with open(filename) as f:
         return f.read()  # File closed even if exception occurs
 
-# ✅ Multiple resources
 def copy_file(source, dest):
     with open(source, 'rb') as src, open(dest, 'wb') as dst:
         dst.write(src.read())
 
-# ✅ Custom context manager (class-based)
 class DatabaseTransaction:
     def __init__(self, connection):
         self.connection = connection
@@ -324,7 +299,6 @@ with DatabaseTransaction(conn) as db:
     db.execute("UPDATE accounts ...")
     # Commits if successful, rolls back if exception
 
-# ✅ Custom context manager (generator-based)
 from contextlib import contextmanager
 
 @contextmanager
@@ -350,7 +324,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# ❌ Lost stack trace
 def process_request():
     try:
         result = perform_operation()
@@ -358,7 +331,6 @@ def process_request():
         logger.error(f"Operation failed: {e}")  # Only message, no stack trace
         return None
 
-# ✅ Log with stack trace
 def process_request():
     try:
         result = perform_operation()
@@ -366,7 +338,6 @@ def process_request():
         logger.exception("Operation failed")  # Logs full stack trace
         return None
 
-# ✅ Log with context
 def process_request(request_id):
     try:
         result = perform_operation()
@@ -374,7 +345,6 @@ def process_request(request_id):
         logger.exception(f"Operation failed for request {request_id}")
         raise  # Re-raise after logging
 
-# ✅ Different log levels for different exceptions
 def fetch_data(url):
     try:
         response = requests.get(url, timeout=5)
@@ -392,7 +362,6 @@ def fetch_data(url):
 Different patterns for different validation scenarios.
 
 ```python
-# ✅ Validate and raise for invalid input
 def create_user(name, age, email):
     if not name:
         raise ValueError("Name is required")
@@ -403,7 +372,6 @@ def create_user(name, age, email):
 
     return User(name, age, email)
 
-# ✅ Collect multiple validation errors
 def validate_user_data(data):
     errors = []
 
@@ -419,7 +387,6 @@ def validate_user_data(data):
 
     return data
 
-# ✅ Return result object for validation
 from dataclasses import dataclass
 from typing import Optional
 
@@ -442,7 +409,6 @@ def validate_user(data):
 
     return ValidationResult(True, [], data)
 
-# Usage
 result = validate_user(user_data)
 if result.is_valid:
     create_user(**result.value)
@@ -458,7 +424,6 @@ Handle transient failures with retry logic.
 import time
 from functools import wraps
 
-# ✅ Simple retry decorator
 def retry(max_attempts=3, delay=1, exceptions=(Exception,)):
     def decorator(func):
         @wraps(func)
@@ -482,7 +447,6 @@ def fetch_api_data(url):
     response.raise_for_status()
     return response.json()
 
-# ✅ Exponential backoff
 def retry_with_backoff(max_attempts=5, base_delay=1):
     def decorator(func):
         @wraps(func)

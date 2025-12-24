@@ -201,9 +201,7 @@ FunctionMatching.process_response({:ok, %{status: 404, body: "Not Found"}}) # =>
 FunctionMatching.process_response({:error, %{reason: :timeout}}) # => {:failed, :timeout}
 
 FunctionMatching.send_message(%{email: "a@example.com"}, "Hello", priority: :high)
-# => "Urgent email to a@example.com: Hello"
 FunctionMatching.send_message(%{email: "b@example.com"}, "Hi", [])
-# => "Email to b@example.com: Hi"
 ```
 
 **Key Takeaway**: Pattern matching in function heads enables elegant multi-clause logic. Place specific patterns before general ones, and combine with guards for precise control flow.
@@ -377,51 +375,32 @@ defmodule Account do
   defstruct [:id, :balance, status: :active, transactions: []]
 end
 
-# Create struct
 user = %User{name: "Alice", age: 30, email: "alice@example.com"}
-# => %User{active: true, age: 30, email: "alice@example.com", name: "Alice"}
 
-# Default values are used
 user_partial = %User{name: "Bob", age: 25}
-# => %User{active: true, age: 25, email: nil, name: "Bob"}
 
-# Access like maps
 user.name # => "Alice"
 user.age # => 30
 user.active # => true
 
-# Update struct (creates new struct)
 updated_user = %{user | age: 31, email: "alice.new@example.com"}
-# => %User{active: true, age: 31, email: "alice.new@example.com", name: "Alice"}
 user.age # => 30 (unchanged!)
 
-# Update syntax requires existing keys
-# %{user | country: "USA"} # => ** (KeyError) key :country not found
 
-# Structs are maps with __struct__ key
 user.__struct__ # => User
 is_map(user) # => true
 Map.keys(user) # => [:__struct__, :active, :age, :email, :name]
 
-# Pattern matching on structs
 %User{name: name, age: age} = user
 name # => "Alice"
 age # => 30
 
-# Struct tag in pattern
 def greet_user(%User{name: name}), do: "Hello, #{name}!"
 greet_user(user) # => "Hello, Alice!"
 
-# Enforced keys example
 account = %Account{id: 1, balance: 1000}
-# => %Account{balance: 1000, id: 1, status: :active, transactions: []}
 
-# Missing enforced key causes error
-# %Account{id: 1} # => ** (ArgumentError) the following keys must also be given when building struct Account: [:balance]
 
-# Structs vs maps: when to use each
-# Structs: domain data with fixed schema (User, Account, Product)
-# Maps: dynamic data, API responses, configuration
 ```
 
 **Key Takeaway**: Structs are tagged maps with enforced keys and default values. They provide compile-time guarantees and clearer domain modeling compared to plain maps.
@@ -458,7 +437,6 @@ graph TB
 **Code**:
 
 ```elixir
-# Eager evaluation with Enum (processes entire list each time)
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 eager_result = numbers
@@ -466,34 +444,23 @@ eager_result = numbers
                |> Enum.filter(fn x -> rem(x, 4) == 0 end) # => [4, 8, 12, 16, 20] (processes all)
                |> Enum.take(2)                      # => [4, 8] (already computed all)
 
-# Lazy evaluation with Stream (builds recipe, executes once at the end)
 lazy_result = numbers
               |> Stream.map(fn x -> x * 2 end)       # => #Stream<...> (no execution)
               |> Stream.filter(fn x -> rem(x, 4) == 0 end) # => #Stream<...> (no execution)
               |> Enum.take(2)                        # => [4, 8] (executes pipeline once)
 
-# Infinite streams
 infinite_numbers = Stream.iterate(1, fn x -> x + 1 end) # => 1, 2, 3, 4, ...
 
-# Take first 10 even numbers from infinite stream
 first_evens = infinite_numbers
               |> Stream.filter(fn x -> rem(x, 2) == 0 end)
               |> Enum.take(10)
-# => [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 
-# Stream.cycle - repeats list infinitely
 Stream.cycle([1, 2, 3]) |> Enum.take(7) # => [1, 2, 3, 1, 2, 3, 1]
 
-# Stream.unfold - generate stream from function
 fibonacci = Stream.unfold({0, 1}, fn {a, b} -> {a, {b, a + b}} end)
 Enum.take(fibonacci, 10) # => [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 
-# File streaming (lazy, memory efficient)
-# Stream.map(File.stream!("large_file.txt"), &String.upcase/1)
-# |> Enum.into(File.stream!("output.txt"))
-# Processes line by line without loading entire file into memory
 
-# Performance comparison for large datasets
 defmodule Performance do
   def eager_pipeline(n) do
     1..n
@@ -510,13 +477,8 @@ defmodule Performance do
   end
 end
 
-# Eager processes all 1_000_000 numbers at each step
-# Performance.eager_pipeline(1_000_000)
 
-# Lazy only processes until 100 results found (much faster!)
-# Performance.lazy_pipeline(1_000_000)
 
-# Stream.resource for resource management (files, sockets)
 stream_resource = Stream.resource(
   fn -> {:ok, "initial state"} end,        # Start function
   fn state -> {[state], "next state"} end, # Next function
@@ -536,65 +498,49 @@ MapSets are unordered collections of unique values. They provide efficient membe
 **Code**:
 
 ```elixir
-# Create MapSet
 set1 = MapSet.new([1, 2, 3, 3, 4, 4, 5]) # => #MapSet<[1, 2, 3, 4, 5]> (duplicates removed)
 
-# From range
 set_range = MapSet.new(1..10) # => #MapSet<[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>
 
-# Add element
 set2 = MapSet.put(set1, 6) # => #MapSet<[1, 2, 3, 4, 5, 6]>
 set1 # => #MapSet<[1, 2, 3, 4, 5]> (unchanged!)
 
-# Adding duplicate has no effect
 set3 = MapSet.put(set1, 3) # => #MapSet<[1, 2, 3, 4, 5]> (3 already exists)
 
-# Delete element
 set4 = MapSet.delete(set1, 3) # => #MapSet<[1, 2, 4, 5]>
 
-# Membership test - O(log n) fast!
 MapSet.member?(set1, 3) # => true
 MapSet.member?(set1, 10) # => false
 
-# Size
 MapSet.size(set1) # => 5
 
-# Union (all elements from both sets)
 setA = MapSet.new([1, 2, 3])
 setB = MapSet.new([3, 4, 5])
 MapSet.union(setA, setB) # => #MapSet<[1, 2, 3, 4, 5]>
 
-# Intersection (common elements)
 MapSet.intersection(setA, setB) # => #MapSet<[3]>
 
-# Difference (elements in A but not in B)
 MapSet.difference(setA, setB) # => #MapSet<[1, 2]>
 MapSet.difference(setB, setA) # => #MapSet<[4, 5]>
 
-# Subset and superset checks
 setX = MapSet.new([1, 2])
 setY = MapSet.new([1, 2, 3, 4])
 MapSet.subset?(setX, setY) # => true (X is subset of Y)
 MapSet.subset?(setY, setX) # => false
 MapSet.disjoint?(setA, MapSet.new([6, 7])) # => true (no common elements)
 
-# Convert to list
 MapSet.to_list(set1) # => [1, 2, 3, 4, 5] (order not guaranteed)
 
-# Practical example: unique tags
 posts = [
   %{id: 1, tags: ["elixir", "functional", "programming"]},
   %{id: 2, tags: ["elixir", "otp", "concurrency"]},
   %{id: 3, tags: ["functional", "fp", "programming"]}
 ]
 
-# Get all unique tags
 all_tags = posts
            |> Enum.flat_map(fn post -> post.tags end)
            |> MapSet.new()
-# => #MapSet<["concurrency", "elixir", "fp", "functional", "otp", "programming"]>
 
-# Find posts with common tags
 post1_tags = MapSet.new(["elixir", "functional"])
 post2_tags = MapSet.new(["elixir", "otp"])
 MapSet.intersection(post1_tags, post2_tags) # => #MapSet<["elixir"]>
@@ -687,9 +633,6 @@ MyModule.supported_languages() # => ["Elixir", "Erlang", "LFE"]
 MyModule.language_count() # => 3
 MyModule.colors() # => [:yellow, :green, :red, :blue]
 
-# Access module documentation in IEx
-# h MyModule  # Shows @moduledoc
-# h MyModule.wait  # Shows @doc for wait/1
 ```
 
 **Key Takeaway**: Module attributes (`@name`) are compile-time constants useful for documentation, configuration, and computed values. They're evaluated during compilation, not runtime.
@@ -749,7 +692,6 @@ defmodule ImportAliasRequire do
   end
 end
 
-# Example module structure
 defmodule MyApp.Accounts.User do
   defstruct name: nil, email: nil
 end
@@ -758,7 +700,6 @@ defmodule MyApp.Accounts.Admin do
   defstruct name: nil, role: :admin
 end
 
-# Scope of import/alias/require
 defmodule ScopingExample do
   def func1 do
     import Enum  # Only available in func1
@@ -777,11 +718,6 @@ defmodule ScopingExample do
   def func4, do: downcase("WORLD")
 end
 
-# Best practices:
-# - alias for shortening module names
-# - import sparingly (only commonly used functions) to avoid namespace pollution
-# - require for macros (Logger, ExUnit, custom macros)
-# - Use `only:` or `except:` with import to be explicit
 ```
 
 **Key Takeaway**: Use `alias` to shorten module names, `import` to bring functions into scope (sparingly!), and `require` for macros. These directives manage namespaces and reduce verbosity.
@@ -815,13 +751,11 @@ graph TB
 **Code**:
 
 ```elixir
-# Define protocol
 defprotocol Printable do
   @doc "Converts data to a printable string"
   def print(data)
 end
 
-# Implement for different types
 defimpl Printable, for: Integer do
   def print(int), do: "Number: #{int}"
 end
@@ -834,12 +768,10 @@ defimpl Printable, for: Map do
   def print(map), do: "Map with #{map_size(map)} keys"
 end
 
-# Use protocol
 Printable.print(42) # => "Number: 42"
 Printable.print([1, 2, 3]) # => "List with 3 items: [1, 2, 3]"
 Printable.print(%{a: 1, b: 2}) # => "Map with 2 keys"
 
-# Protocol for custom struct
 defmodule User do
   defstruct name: nil, age: nil
 end
@@ -851,8 +783,6 @@ end
 user = %User{name: "Alice", age: 30}
 Printable.print(user) # => "User: Alice, age 30"
 
-# Built-in protocols
-# String.Chars - implements to_string/1
 defimpl String.Chars, for: User do
   def to_string(user), do: user.name
 end
@@ -860,7 +790,6 @@ end
 to_string(user) # => "Alice"
 "Hello, #{user}" # => "Hello, Alice" (uses String.Chars protocol)
 
-# Enumerable - enables Enum functions
 defmodule Range do
   defstruct first: nil, last: nil
 end
@@ -879,7 +808,6 @@ Enum.count(my_range) # => 5
 Enum.member?(my_range, 3) # => true
 Enum.map(my_range, fn x -> x * 2 end) # => [2, 4, 6, 8, 10]
 
-# Protocol fallback (for types without implementation)
 defprotocol Describable do
   @fallback_to_any true
   def describe(data)
@@ -951,17 +879,14 @@ defmodule ResultTuples do
   end
 end
 
-# Success cases
 ResultTuples.divide(10, 2) # => {:ok, 5.0}
 ResultTuples.parse_int("42") # => {:ok, 42}
 ResultTuples.fetch_user(1) # => {:ok, %{id: 1, name: "User 1"}}
 
-# Error cases
 ResultTuples.divide(10, 0) # => {:error, :division_by_zero}
 ResultTuples.parse_int("abc") # => {:error, :invalid_integer}
 ResultTuples.fetch_user(999) # => {:error, :user_not_found}
 
-# Chained operations
 ResultTuples.get_user_name(1) # => {:ok, "User 1"}
 ResultTuples.get_user_name(999) # => {:error, :user_not_found}
 
@@ -969,17 +894,14 @@ ResultTuples.calculate("10", "2") # => {:ok, 5.0}
 ResultTuples.calculate("10", "0") # => {:error, :division_by_zero}
 ResultTuples.calculate("abc", "2") # => {:error, :invalid_integer}
 
-# Pattern matching to handle results
 case ResultTuples.divide(10, 2) do
   {:ok, result} -> IO.puts("Result: #{result}")
   {:error, :division_by_zero} -> IO.puts("Cannot divide by zero")
 end
 
-# Unwrap with confidence (when you know it will succeed)
 {:ok, value} = ResultTuples.divide(10, 2)
 value # => 5.0
 
-# Common pattern: functions ending with !
 defmodule Bang do
   def divide!(a, b) do
     case ResultTuples.divide(a, b) do
@@ -990,7 +912,6 @@ defmodule Bang do
 end
 
 Bang.divide!(10, 2) # => 5.0
-# Bang.divide!(10, 0) # => ** (RuntimeError) Division failed: division_by_zero
 ```
 
 **Key Takeaway**: Use tagged tuples `{:ok, value}` and `{:error, reason}` for expected error cases. Functions ending with `!` unwrap results or raise exceptions. Pattern match to handle both success and failure cases.
@@ -1081,16 +1002,8 @@ TryRescue.complex_operation()  # Prints "Cleanup happens here", returns {:error,
 
 TryRescue.handle_specific_error() # => "Caught: Invalid argument"
 
-# When to use try/rescue:
-# 1. Interacting with code that raises (libraries, Erlang functions)
-# 2. Cleanup with `after` (files, connections, locks)
-# 3. Converting exceptions to result tuples
 
-# When NOT to use:
-# 1. Expected error cases (use result tuples instead)
-# 2. Control flow (don't use exceptions for normal logic)
 
-# Example: wrapping library that raises
 defmodule HTTPClient do
   def get(url) do
     try do
@@ -1115,13 +1028,8 @@ Use `raise` to throw exceptions. Define custom exception modules for domain-spec
 **Code**:
 
 ```elixir
-# Raise with message
-# raise "Something went wrong"  # => ** (RuntimeError) Something went wrong
 
-# Raise specific exception type
-# raise ArgumentError, message: "Invalid input"  # => ** (ArgumentError) Invalid input
 
-# Define custom exception
 defmodule MyApp.ValidationError do
   defexception message: "Validation failed", field: nil
 
@@ -1140,12 +1048,7 @@ defmodule MyApp.NotFoundError do
   end
 end
 
-# Raise custom exception
-# raise MyApp.ValidationError, field: :email
-# => ** (MyApp.ValidationError) Validation failed for field: email
 
-# raise MyApp.NotFoundError, resource: "User", id: 123
-# => ** (MyApp.NotFoundError) User with id 123 not found
 
 defmodule UserValidator do
   def validate_age!(age) when is_integer(age) and age >= 0 and age < 150, do: :ok
@@ -1169,13 +1072,9 @@ defmodule UserValidator do
 end
 
 UserValidator.validate_age!(30) # => :ok
-# UserValidator.validate_age!(200) # => ** (MyApp.ValidationError) Age must be between 0 and 150, got: 200
-# UserValidator.validate_age!("thirty") # => ** (MyApp.ValidationError) Age must be an integer
 
 UserValidator.validate_email!("alice@example.com") # => :ok
-# UserValidator.validate_email!("invalid") # => ** (MyApp.ValidationError) Email must contain @
 
-# Pattern: bang (!) functions raise, non-bang return tuples
 defmodule UserRepo do
   def fetch(id) when id > 0 and id < 100 do
     {:ok, %{id: id, name: "User #{id}"}}
@@ -1194,17 +1093,8 @@ UserRepo.fetch(1) # => {:ok, %{id: 1, name: "User 1"}}
 UserRepo.fetch(999) # => {:error, :not_found}
 
 UserRepo.fetch!(1) # => %{id: 1, name: "User 1"}
-# UserRepo.fetch!(999) # => ** (MyApp.NotFoundError) User with id 999 not found
 
-# When to raise exceptions:
-# 1. Programmer errors (wrong function usage)
-# 2. Assertion failures in tests
-# 3. Unrecoverable errors (configuration missing)
 
-# When NOT to raise:
-# 1. Expected error cases (use result tuples)
-# 2. Control flow
-# 3. Validation errors in user input (return {:error, reason})
 ```
 
 **Key Takeaway**: Raise exceptions for unexpected, unrecoverable errors. Define custom exceptions for domain-specific errors. Use the `!` convention: functions ending with `!` raise exceptions, non-bang versions return result tuples.
@@ -1241,15 +1131,10 @@ graph TB
 **Code**:
 
 ```elixir
-# Spawn a process
 pid = spawn(fn -> IO.puts("Hello from spawned process!") end)
-# Prints: Hello from spawned process!
-# => #PID<0.123.0>
 
-# Process executes and terminates immediately
 Process.alive?(pid) # => false (usually, it runs so fast)
 
-# Spawn process that runs longer
 long_process = spawn(fn ->
   :timer.sleep(1000)
   IO.puts("Finished after 1 second")
@@ -1258,21 +1143,12 @@ Process.alive?(long_process) # => true (for about 1 second)
 :timer.sleep(1500)
 Process.alive?(long_process) # => false
 
-# Get current process PID
 self() # => #PID<0.100.0> (varies)
 
-# Spawn multiple processes
 pids = Enum.map(1..5, fn i ->
   spawn(fn -> IO.puts("Process #{i}") end)
 end)
-# Prints (order not guaranteed):
-# Process 1
-# Process 3
-# Process 2
-# Process 5
-# Process 4
 
-# spawn/3 with module, function, arguments
 defmodule Worker do
   def work(n) do
     IO.puts("Working on task #{n}")
@@ -1283,27 +1159,20 @@ end
 
 spawn(Worker, :work, [1])  # Same as spawn(fn -> Worker.work(1) end)
 
-# spawn_link - linked processes (if one crashes, parent is notified)
 parent_pid = self()
 child = spawn_link(fn ->
   :timer.sleep(500)
   raise "Child process crashed!"
 end)
-# After 500ms, parent receives exit signal
-# (without trapping exits, parent would crash too)
 
-# Process info
 pid = spawn(fn -> :timer.sleep(5000) end)
 Process.info(pid) # => [{:registered_name, []}, {:current_function, ...}, ...]
 Process.info(pid, :status) # => {:status, :waiting}
 
-# Lightweight processes - millions possible!
 Enum.each(1..10_000, fn _ ->
   spawn(fn -> :timer.sleep(10_000) end)
 end)
-# Creates 10,000 processes, minimal memory usage!
 
-# Process isolation - no shared memory
 defmodule Isolation do
   def demonstrate do
     list = [1, 2, 3]
@@ -1318,8 +1187,6 @@ defmodule Isolation do
 end
 
 Isolation.demonstrate()
-# Child process: [0, 1, 2, 3]
-# Parent process: [1, 2, 3]
 ```
 
 **Key Takeaway**: Processes are lightweight, isolated, and communicate via messages. Use `spawn/1` for independent processes, `spawn_link/1` for linked processes. Elixir can run millions of processes concurrently.
@@ -1348,7 +1215,6 @@ graph TB
 **Code**:
 
 ```elixir
-# Basic send and receive
 receiver = spawn(fn ->
   receive do
     {:hello, sender} -> send(sender, {:hi, self()})
@@ -1361,9 +1227,7 @@ send(receiver, {:hello, self()})  # Send message to receiver
 receive do
   {:hi, pid} -> IO.puts("Received hi from #{inspect(pid)}")
 end
-# Prints: Received hi from #PID<...>
 
-# Receive with timeout
 spawn(fn ->
   receive do
     :message -> IO.puts("Got message")
@@ -1371,9 +1235,7 @@ spawn(fn ->
     1000 -> IO.puts("No message received after 1 second")
   end
 end)
-# After 1 second, prints: No message received after 1 second
 
-# Selective receive - pattern matching on messages
 receiver = spawn(fn ->
   receive do
     {:add, a, b} -> IO.puts("Sum: #{a + b}")
@@ -1384,7 +1246,6 @@ end)
 
 send(receiver, {:add, 5, 3})  # Prints: Sum: 8
 
-# Receive loop - process multiple messages
 defmodule Echo do
   def loop do
     receive do
@@ -1402,17 +1263,14 @@ send(echo_pid, {:echo, "Hello", self()})
 receive do
   {:reply, msg} -> IO.puts("Echo replied: #{msg}")
 end
-# Prints: Echo replied: Hello
 
 send(echo_pid, {:echo, "World", self()})
 receive do
   {:reply, msg} -> IO.puts("Echo replied: #{msg}")
 end
-# Prints: Echo replied: World
 
 send(echo_pid, :stop)  # Stop the echo process
 
-# Process mailbox ordering - FIFO (first in, first out)
 pid = self()
 send(pid, :first)
 send(pid, :second)
@@ -1422,12 +1280,10 @@ receive do: (:first -> IO.puts("1"))  # Prints: 1
 receive do: (:second -> IO.puts("2"))  # Prints: 2
 receive do: (:third -> IO.puts("3"))  # Prints: 3
 
-# Flush mailbox (useful in IEx)
 send(self(), :msg1)
 send(self(), :msg2)
 flush()  # Prints all messages and removes them from mailbox
 
-# Message passing is asynchronous
 pid = spawn(fn ->
   :timer.sleep(2000)  # Simulate slow processing
   receive do
@@ -1437,10 +1293,7 @@ end)
 
 send(pid, :hello)  # Returns immediately, doesn't wait for processing
 IO.puts("Sent message, continuing...")
-# Prints: Sent message, continuing...
-# (2 seconds later) Prints: Received: :hello
 
-# Messages can be any Elixir term
 send(self(), {:tuple, 1, 2})
 send(self(), [1, 2, 3])
 send(self(), %{key: "value"})
@@ -1460,26 +1313,20 @@ Process monitoring allows you to detect when other processes crash or exit. Use 
 **Code**:
 
 ```elixir
-# Spawn a process that will crash
 pid = spawn(fn ->
   :timer.sleep(1000)
   raise "Process crashed!"
 end)
 
-# Monitor the process
 ref = Process.monitor(pid)
-# => #Reference<0.1234.5678.9>
 
-# Receive the DOWN message when process exits
 receive do
   {:DOWN, ^ref, :process, ^pid, reason} ->
     IO.puts("Process #{inspect(pid)} exited with reason: #{inspect(reason)}")
 after
   2000 -> IO.puts("No exit message received")
 end
-# Prints: Process #PID<...> exited with reason: {%RuntimeError{message: "Process crashed!"}, [...]}
 
-# Monitor normal exit
 pid = spawn(fn ->
   :timer.sleep(500)
   :ok  # Normal exit
@@ -1493,16 +1340,12 @@ receive do
 after
   1000 -> IO.puts("No exit")
 end
-# Prints: Process exited normally with reason: :normal
 
-# Demonitor - stop monitoring
 pid = spawn(fn -> :timer.sleep(10_000) end)
 ref = Process.monitor(pid)
 Process.demonitor(ref)  # Stop monitoring
 Process.exit(pid, :kill)  # Kill the process
-# No DOWN message received because we demonitored
 
-# Monitor multiple processes
 pids = Enum.map(1..5, fn i ->
   spawn(fn ->
     :timer.sleep(i * 100)
@@ -1512,7 +1355,6 @@ end)
 
 refs = Enum.map(pids, &Process.monitor/1)
 
-# Wait for all to exit
 Enum.each(refs, fn ref ->
   receive do
     {:DOWN, ^ref, :process, _pid, :normal} -> :ok
@@ -1520,11 +1362,7 @@ Enum.each(refs, fn ref ->
 end)
 IO.puts("All processes finished")
 
-# Monitor vs. link
-# Link: bidirectional, crashes propagate (use for supervision)
-# Monitor: unidirectional, sends message on exit (use for notification)
 
-# Example: timeout pattern with monitor
 defmodule TimeoutHelper do
   def call_with_timeout(fun, timeout) do
     parent = self()
@@ -1564,20 +1402,16 @@ The `Task` module provides a simple abstraction for spawning processes and await
 **Code**:
 
 ```elixir
-# Async/await pattern
 task = Task.async(fn ->
   :timer.sleep(1000)
   42
 end)
 
-# Do other work while task runs
 IO.puts("Task started, doing other work...")
 
-# Wait for task to complete (default timeout: 5000ms)
 result = Task.await(task)  # => 42
 IO.puts("Task result: #{result}")
 
-# Multiple async tasks in parallel
 tasks = Enum.map(1..5, fn i ->
   Task.async(fn ->
     :timer.sleep(i * 200)
@@ -1585,11 +1419,9 @@ tasks = Enum.map(1..5, fn i ->
   end)
 end)
 
-# Await all tasks
 results = Enum.map(tasks, &Task.await/1)  # => [1, 4, 9, 16, 25]
 IO.inspect(results)
 
-# Timeout handling
 task = Task.async(fn ->
   :timer.sleep(10_000)
   :done
@@ -1602,7 +1434,6 @@ rescue
     IO.puts("Task timed out: #{inspect(e)}")
 end
 
-# Task.yield - check without blocking
 task = Task.async(fn ->
   :timer.sleep(2000)
   :result
@@ -1612,35 +1443,25 @@ case Task.yield(task, 500) do
   {:ok, result} -> IO.puts("Got result: #{result}")
   nil -> IO.puts("Task still running after 500ms")
 end
-# Prints: Task still running after 500ms
 
-# Wait another 2 seconds
 case Task.yield(task, 2000) do
   {:ok, result} -> IO.puts("Got result: #{result}")
   nil -> IO.puts("Still running")
 end
-# Prints: Got result: :result
 
-# Task.start - fire and forget (no await)
 Task.start(fn ->
   :timer.sleep(1000)
   IO.puts("Background task completed")
 end)
 IO.puts("Main process continues immediately")
-# Prints: Main process continues immediately
-# (1 second later) Prints: Background task completed
 
-# Task.async_stream - process enumerable in parallel
 results = 1..10
           |> Task.async_stream(fn i ->
             :timer.sleep(100)
             i * i
           end, max_concurrency: 4)
           |> Enum.to_list()
-# => [ok: 1, ok: 4, ok: 9, ok: 16, ok: 25, ok: 36, ok: 49, ok: 64, ok: 81, ok: 100]
-# Processes 4 items at a time in parallel
 
-# Error handling with tasks
 task = Task.async(fn ->
   raise "Task error!"
 end)
@@ -1650,11 +1471,8 @@ try do
 rescue
   e -> IO.puts("Caught error: #{inspect(e)}")
 end
-# Prints: Caught error: %RuntimeError{message: "Task error!"}
 
-# Supervised tasks (covered more in Advanced)
 {:ok, result} = Task.Supervisor.start_link()
-# Start tasks under supervision for fault tolerance
 ```
 
 **Key Takeaway**: `Task` provides async/await abstraction over processes. Use `Task.async/1` and `Task.await/1` for parallel work with results. Use `Task.async_stream/3` for processing collections in parallel.
@@ -1689,7 +1507,6 @@ graph TB
 **Code**:
 
 ```elixir
-# Test module (usually in test/ directory)
 defmodule MathTest do
   use ExUnit.Case  # Makes this a test module
 
@@ -1753,7 +1570,6 @@ defmodule MathTest do
   # on_exit - cleanup after test
 end
 
-# Testing modules
 defmodule Calculator do
   def add(a, b), do: a + b
   def subtract(a, b), do: a - b
@@ -1792,21 +1608,7 @@ defmodule CalculatorTest do
   end
 end
 
-# Run tests with: mix test
-# Run specific test file: mix test test/calculator_test.exs
-# Run tests with tag: mix test --only slow
-# Exclude tests with tag: mix test --exclude slow
 
-# Useful assertions:
-# assert value
-# assert value == expected
-# assert value === expected  # Strict equality
-# refute value
-# assert_in_delta 1.0, 1.1, 0.2  # Float comparison
-# assert_raise ExceptionType, fn -> ... end
-# assert_receive message  # For async message testing
-# assert_received message  # For already received messages
-# refute_receive message
 ```
 
 **Key Takeaway**: ExUnit provides testing with `assert`, `refute`, and `assert_raise`. Tests are organized in modules with `use ExUnit.Case`. Use `setup` for per-test initialization and tags to organize tests.
@@ -1820,20 +1622,7 @@ Mix is Elixir's build tool. It manages dependencies, compiles code, runs tests, 
 **Code**:
 
 ```bash
-# Create new project
-# mix new my_app
-# Creates directory structure:
-# my_app/
-# ├── lib/
-# │   └── my_app.ex         # Main application code
-# ├── test/
-# │   ├── my_app_test.exs   # Tests
-# │   └── test_helper.exs   # Test configuration
-# ├── mix.exs               # Project configuration
-# ├── README.md
-# └── .gitignore
 
-# mix.exs - project configuration
 defmodule MyApp.MixProject do
   use Mix.Project
 
@@ -1862,18 +1651,7 @@ defmodule MyApp.MixProject do
   end
 end
 
-# Common mix commands:
-# mix compile          # Compile the project
-# mix test             # Run tests
-# mix test.watch       # Run tests on file changes (requires mix_test_watch)
-# mix run              # Run the project
-# mix deps.get         # Fetch dependencies
-# mix deps.update      # Update dependencies
-# mix format           # Format code
-# mix docs             # Generate documentation
-# mix escript.build    # Build executable
 
-# lib/my_app.ex - application entry point
 defmodule MyApp do
   @moduledoc """
   Documentation for `MyApp`.
@@ -1887,7 +1665,6 @@ defmodule MyApp do
   end
 end
 
-# test/my_app_test.exs - tests
 defmodule MyAppTest do
   use ExUnit.Case
   doctest MyApp  # Runs doctests from @doc
@@ -1897,34 +1674,7 @@ defmodule MyAppTest do
   end
 end
 
-# Directory structure for larger projects:
-# my_app/
-# ├── lib/
-# │   ├── my_app/
-# │   │   ├── accounts/       # Domain: user accounts
-# │   │   │   ├── user.ex
-# │   │   │   └── session.ex
-# │   │   ├── billing/        # Domain: billing
-# │   │   │   └── invoice.ex
-# │   │   └── repo.ex         # Database repository
-# │   ├── my_app.ex           # Application entry
-# │   └── my_app_web/         # Phoenix web (if using Phoenix)
-# │       ├── controllers/
-# │       ├── views/
-# │       └── router.ex
-# ├── test/
-# │   ├── my_app/
-# │   │   ├── accounts/
-# │   │   └── billing/
-# │   └── test_helper.exs
-# ├── config/
-# │   ├── config.exs          # General configuration
-# │   ├── dev.exs             # Development environment
-# │   ├── test.exs            # Test environment
-# │   └── prod.exs            # Production environment
-# └── mix.exs
 
-# Configuration (config/config.exs)
 import Config
 
 config :my_app,
@@ -1933,7 +1683,6 @@ config :my_app,
 
 import_config "#{Mix.env()}.exs"  # Environment-specific config
 
-# Access configuration
 api_key = Application.get_env(:my_app, :api_key)
 timeout = Application.get_env(:my_app, :timeout, 3000)  # Default 3000
 ```
@@ -2029,7 +1778,6 @@ defmodule StringHelper do
   end
 end
 
-# Test file - test/string_helper_test.exs
 defmodule StringHelperTest do
   use ExUnit.Case
   doctest StringHelper  # Runs all doctests from @doc comments
@@ -2040,10 +1788,7 @@ defmodule StringHelperTest do
   end
 end
 
-# Run with: mix test
-# Doctests are extracted from @doc and run as normal tests
 
-# Doctest with multiple lines
 defmodule Calculator do
   @doc """
   Performs calculation based on operator.
@@ -2073,18 +1818,8 @@ defmodule Calculator do
   def calculate(a, :divide, b), do: a / b
 end
 
-# Benefits of doctests:
-# 1. Documentation stays accurate (tests break if docs are wrong)
-# 2. Examples are always valid code
-# 3. Serves as both documentation and tests
-# 4. Encourages writing clear examples
 
-# Limitations:
-# 1. Not suitable for complex test scenarios
-# 2. No setup/teardown
-# 3. Limited assertions (just equality)
 
-# Best practice: Use doctests for simple examples, regular tests for complex logic
 ```
 
 **Key Takeaway**: Doctests embed executable examples in `@doc` comments using `iex>` prompts. Enable with `doctest ModuleName` in tests. They keep documentation accurate and provide basic test coverage.
@@ -2098,94 +1833,73 @@ Elixir strings are UTF-8 binaries. The `String` module provides extensive manipu
 **Code**:
 
 ```elixir
-# Strings are UTF-8 binaries
 string = "Hello, 世界!"  # => "Hello, 世界!"
 is_binary(string)  # => true
 
-# String length (grapheme count, NOT byte size)
 String.length("Hello")  # => 5
 String.length("世界")  # => 2
 byte_size("世界")  # => 6 (3 bytes per character)
 
-# Charlists (lists of codepoints) - use single quotes
 charlist = 'hello'  # => 'hello'
 is_list(charlist)  # => true
 charlist === [104, 101, 108, 108, 111]  # => true
 
-# Convert between strings and charlists
 String.to_charlist("hello")  # => 'hello'
 List.to_string('hello')  # => "hello"
 
-# String slicing (grapheme-aware)
 String.slice("Hello", 0, 3)  # => "Hel"
 String.slice("Hello", 1..-1)  # => "ello"
 String.slice("Hello", -3, 3)  # => "llo"
 
-# String at position
 String.at("Hello", 1)  # => "e"
 String.at("Hello", -1)  # => "o"
 
-# Contains and starts/ends with
 String.contains?("Hello World", "World")  # => true
 String.contains?("Hello World", ["Hi", "Hello"])  # => true
 String.starts_with?("Hello", "He")  # => true
 String.ends_with?("Hello", "lo")  # => true
 
-# Case transformation
 String.upcase("hello")  # => "HELLO"
 String.downcase("HELLO")  # => "hello"
 String.capitalize("hello world")  # => "Hello world"
 
-# Trim whitespace
 String.trim("  hello  ")  # => "hello"
 String.trim_leading("  hello  ")  # => "hello  "
 String.trim_trailing("  hello  ")  # => "  hello"
 
-# Split and join
 String.split("one,two,three", ",")  # => ["one", "two", "three"]
 String.split("hello world")  # => ["hello", "world"] (splits on whitespace)
 Enum.join(["a", "b", "c"], "-")  # => "a-b-c"
 
-# Replace
 String.replace("hello world", "world", "Elixir")  # => "hello Elixir"
 String.replace("aaa", "a", "b")  # => "bbb" (replaces all)
 String.replace("aaa", "a", "b", global: false)  # => "baa" (first only)
 
-# Pad strings
 String.pad_leading("42", 5, "0")  # => "00042"
 String.pad_trailing("42", 5, "0")  # => "42000"
 
-# Regex (Elixir uses PCRE - Perl Compatible Regular Expressions)
 Regex.match?(~r/hello/, "hello world")  # => true
 Regex.match?(~r/\d+/, "abc123")  # => true
 
-# Regex scan (extract all matches)
 Regex.scan(~r/\d+/, "abc 123 def 456")  # => [["123"], ["456"]]
 
-# Regex replace
 Regex.replace(~r/\d/, "Room 123", "X")  # => "Room XXX"
 
-# Named captures
 ~r/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/
 |> Regex.named_captures("Date: 2024-12-23")
-# => %{"day" => "23", "month" => "12", "year" => "2024"}
 
-# String to integer/float
 String.to_integer("42")  # => 42
 String.to_integer("2A", 16)  # => 42 (hexadecimal)
 String.to_float("3.14")  # => 3.14
 Integer.parse("42 units")  # => {42, " units"}
 Float.parse("3.14 pi")  # => {3.14, " pi"}
 
-# Graphemes (Unicode awareness)
 String.graphemes("Hello")  # => ["H", "e", "l", "l", "o"]
 String.graphemes("👨‍👩‍👧‍👦")  # => ["👨‍👩‍👧‍👦"] (family emoji as single grapheme!)
 
-# Codepoints (individual Unicode codepoints)
 String.codepoints("Hello")  # => ["H", "e", "l", "l", "o"]
 String.codepoints("👨‍👩‍👧‍👦")  # => ["👨", "‍", "👩", "‍", "👧", "‍", "👦"] (multiple codepoints)
 
-# Interpolation and sigils
 name = "Alice"
 "Hello, #{name}!"  # => "Hello, Alice!"
 
@@ -2396,38 +2110,25 @@ defmodule SessionManager do
   end
 end
 
-# Usage example
 {:ok, _pid} = SessionManager.start_link(ttl: 10)  # => 10 second TTL for demo
 
-# Store sessions
 SessionManager.put("user_123", %{name: "Alice", role: :admin})
 SessionManager.put("user_456", %{name: "Bob", role: :user})
 SessionManager.put("user_789", %{name: "Charlie", role: :guest})
 
-# Retrieve sessions
 SessionManager.get("user_123")  # => {:ok, %{name: "Alice", role: :admin}}
 SessionManager.get("user_999")  # => {:error, :not_found}
 
-# Delete session
 SessionManager.delete("user_456")
 SessionManager.get("user_456")  # => {:error, :not_found}
 
-# List all sessions
 SessionManager.list_all()  # => %{"user_123" => %{...}, "user_789" => %{...}}
 SessionManager.count()  # => 2
 
-# Wait for TTL expiration
 :timer.sleep(11_000)  # => 11 seconds
 SessionManager.get("user_123")  # => {:error, :expired}
 
-# Automatic cleanup runs every 60 seconds (or immediately on get if expired)
 
-# Production considerations:
-# 1. Supervision: Add to supervision tree for fault tolerance
-# 2. Persistence: Optionally persist to database or ETS
-# 3. Distributed: Use :global name or distributed registry
-# 4. Metrics: Add telemetry for session creation/deletion/expiration
-# 5. Limits: Add max session count to prevent memory exhaustion
 ```
 
 **Key Takeaway**: GenServer provides thread-safe stateful processes via callbacks. Use `GenServer.call/2` for synchronous requests that need replies, `GenServer.cast/2` for asynchronous fire-and-forget operations. State is immutable - callbacks return new state. `handle_info/2` handles arbitrary messages like timers. GenServer processes run concurrently and isolate state, enabling millions of concurrent sessions.

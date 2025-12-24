@@ -159,14 +159,11 @@ Use your distribution's package manager (see Method 3 below)
 **macOS/Linux:**
 
 ```bash
-# Clone asdf repository
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
 
-# Add to your shell profile
 echo '. "$HOME/.asdf/asdf.sh"' >> ~/.bashrc  # For bash
 echo '. "$HOME/.asdf/asdf.sh"' >> ~/.zshrc   # For zsh
 
-# Reload shell
 source ~/.bashrc  # or source ~/.zshrc
 ```
 
@@ -177,13 +174,10 @@ Use WSL (Windows Subsystem for Linux) and follow macOS/Linux instructions.
 ### Step 2: Install Erlang
 
 ```bash
-# Add Erlang plugin
 asdf plugin add erlang
 
-# Install Erlang OTP 28
 asdf install erlang 28.1
 
-# Set global version
 asdf global erlang 28.1
 ```
 
@@ -192,13 +186,10 @@ Erlang compiles from source (compilation may take some time depending on your sy
 ### Step 3: Install Elixir
 
 ```bash
-# Add Elixir plugin
 asdf plugin add elixir
 
-# Install Elixir 1.19
 asdf install elixir 1.19.4
 
-# Set global version
 asdf global elixir 1.19.4
 ```
 
@@ -221,53 +212,41 @@ Elixir 1.19.4 (compiled with Erlang/OTP 28)
 ### macOS (Homebrew)
 
 ```bash
-# Install Homebrew if not installed
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install Elixir (includes Erlang)
 brew install elixir
 
-# Verify
 elixir --version
 ```
 
 ### Ubuntu/Debian (apt)
 
 ```bash
-# Add Erlang Solutions repository
 wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
 sudo dpkg -i erlang-solutions_2.0_all.deb
 sudo apt-get update
 
-# Install Erlang and Elixir
 sudo apt-get install esl-erlang
 sudo apt-get install elixir
 
-# Verify
 elixir --version
 ```
 
 ### Fedora/CentOS (yum)
 
 ```bash
-# Install Erlang and Elixir
 sudo yum install erlang elixir
 
-# Verify
 elixir --version
 ```
 
 ### Windows (Chocolatey)
 
 ```powershell
-# Install Chocolatey if not installed
-# (Run PowerShell as Administrator)
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-# Install Elixir
 choco install elixir
 
-# Verify
 elixir --version
 ```
 
@@ -348,7 +327,6 @@ Let's create your first Elixir program!
 Open your text editor and create a file named `hello.exs`:
 
 ```elixir
-# hello.exs
 IO.puts("Hello, World!")
 IO.puts("Welcome to Elixir!")
 ```

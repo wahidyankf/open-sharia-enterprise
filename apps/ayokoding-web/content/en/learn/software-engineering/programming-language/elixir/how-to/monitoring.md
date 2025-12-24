@@ -84,7 +84,6 @@ end
 Configure Logger:
 
 ```elixir
-# config/runtime.exs
 config :logger,
   backends: [:console],
   level: :info,
@@ -97,7 +96,6 @@ config :logger, :console,
   metadata: [:request_id, :user_id, :module, :function, :file, :line],
   colors: [enabled: false]  # Disable in production
 
-# JSON formatting for production
 config :logger, :console,
   format: {MyApp.LogFormatter, :format},
   metadata: :all
@@ -307,13 +305,11 @@ end
 Expose metrics endpoint:
 
 ```elixir
-# Add to router.ex
 scope "/metrics" do
   pipe_through :api
   get "/", MyAppWeb.MetricsController, :index
 end
 
-# metrics_controller.ex
 defmodule MyAppWeb.MetricsController do
   use MyAppWeb, :controller
 
@@ -337,7 +333,6 @@ Add to dependencies:
 Configure:
 
 ```elixir
-# lib/my_app_web/router.ex
 import Phoenix.LiveDashboard.Router
 
 scope "/" do
@@ -422,7 +417,6 @@ defmodule MyAppWeb.Plugs.RequestID do
   end
 end
 
-# Add to endpoint.ex
 plug MyAppWeb.Plugs.RequestID
 ```
 
@@ -437,7 +431,6 @@ Add Sentry:
 Configure:
 
 ```elixir
-# config/runtime.exs
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
   environment_name: System.get_env("ENV", "production"),
@@ -448,7 +441,6 @@ config :sentry,
     version: Application.spec(:my_app, :vsn)
   }
 
-# Attach to Logger
 config :logger,
   backends: [:console, Sentry.LoggerBackend]
 ```
@@ -477,12 +469,10 @@ New Relic integration:
 ```
 
 ```elixir
-# config/runtime.exs
 config :new_relic_agent,
   app_name: "MyApp",
   license_key: System.get_env("NEW_RELIC_LICENSE_KEY")
 
-# Automatic instrumentation for Phoenix and Ecto
 config :new_relic_agent,
   automatic_attributes: [:request_id, :user_id]
 ```
@@ -629,12 +619,10 @@ end
 ```elixir
 {:statix, "~> 1.4"}
 
-# config/runtime.exs
 config :statix,
   host: System.get_env("STATSD_HOST", "localhost"),
   port: String.to_integer(System.get_env("STATSD_PORT", "8125"))
 
-# Usage
 Statix.increment("user.signup", 1, tags: ["plan:premium"])
 Statix.histogram("api.request.duration", duration_ms)
 Statix.gauge("queue.size", queue_length)
@@ -670,7 +658,6 @@ end
 {:opentelemetry_phoenix, "~> 1.0"},
 {:opentelemetry_ecto, "~> 1.0"}
 
-# config/runtime.exs
 config :opentelemetry,
   span_processor: :batch,
   traces_exporter: :otlp
@@ -684,12 +671,10 @@ config :opentelemetry_exporter,
 Centralized logging with structured JSON:
 
 ```elixir
-# Ship logs to Elasticsearch/Datadog/Splunk
 config :logger, :console,
   format: {MyApp.LogFormatter, :format},
   metadata: :all
 
-# Add context to all logs
 Logger.metadata(
   deployment: "production",
   region: "us-east-1",
@@ -744,20 +729,16 @@ end
 ### Missing Metrics
 
 ```elixir
-# Verify telemetry is attached
 :telemetry.list_handlers([:my_app, :accounts, :create_user])
 
-# Check if events are emitted
 :telemetry.list_handlers(:all)
 ```
 
 ### High Memory Usage from Logs
 
 ```elixir
-# Reduce log level in production
 config :logger, level: :info
 
-# Use async logging
 config :logger, :console, format: "$message\n"
 ```
 

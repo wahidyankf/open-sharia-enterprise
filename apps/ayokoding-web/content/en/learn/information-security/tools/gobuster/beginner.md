@@ -209,12 +209,7 @@ Useful when the server returns custom 404 pages with consistent length.
 Use pattern files to apply transformations to wordlist entries:
 
 ```bash
-# Create a pattern file (patterns.txt):
-# /api/{GOBUSTER}
-# /admin/{GOBUSTER}.php
-# /{GOBUSTER}/config
 
-# Use pattern file
 gobuster dir -u http://testphp.vulnweb.com \
   -w /usr/share/wordlists/dirb/common.txt \
   -p patterns.txt
@@ -384,15 +379,10 @@ gobuster vhost -u http://192.0.2.100 \
 Test different domain patterns:
 
 ```bash
-# Test without appending domain
 gobuster vhost -u http://192.0.2.100 \
   -w wordlist-custom.txt \
   --domain example.com
 
-# wordlist-custom.txt contains:
-# admin.example.com
-# dev.example.com
-# staging.example.com
 ```
 
 ### Virtual Host vs DNS Enumeration
@@ -500,16 +490,13 @@ Choosing the right wordlist significantly impacts scan effectiveness.
 Target specific platforms:
 
 ```bash
-# WordPress
 gobuster dir -u http://wordpress-site.com \
   -w /usr/share/seclists/Discovery/Web-Content/CMS/wordpress.fuzz.txt \
   -x php
 
-# Joomla
 gobuster dir -u http://joomla-site.com \
   -w /usr/share/seclists/Discovery/Web-Content/CMS/joomla.fuzz.txt
 
-# API endpoints
 gobuster dir -u http://api.example.com \
   -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
   -x json,xml
@@ -520,13 +507,10 @@ gobuster dir -u http://api.example.com \
 Create custom wordlists based on reconnaissance:
 
 ```bash
-# Extract keywords from website
 cewl http://example.com -m 5 -w custom-wordlist.txt
 
-# Combine multiple wordlists
 cat common.txt medium.txt | sort -u > combined.txt
 
-# Use custom wordlist
 gobuster dir -u http://example.com -w combined.txt
 ```
 
@@ -571,7 +555,6 @@ Apply Gobuster in practical penetration testing workflows.
 **Enumeration Workflow**:
 
 ```bash
-# Step 1: Initial directory scan
 gobuster dir -u https://webapp.example.com \
   -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt \
   -x php,html,js,json,xml,txt,zip,bak \
@@ -579,21 +562,18 @@ gobuster dir -u https://webapp.example.com \
   -s 200,204,301,302,307,401,403 \
   -o webapp-initial.txt
 
-# Step 2: Scan discovered admin directory
 gobuster dir -u https://webapp.example.com/admin \
   -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt \
   -x php,html \
   -t 20 \
   -o webapp-admin.txt
 
-# Step 3: Search for backup files
 gobuster dir -u https://webapp.example.com \
   -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
   -x zip,tar.gz,bak,sql,old,txt \
   -t 20 \
   -o webapp-backups.txt
 
-# Step 4: API endpoint discovery
 gobuster dir -u https://webapp.example.com/api \
   -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
   -t 20 \
@@ -620,28 +600,24 @@ gobuster dir -u https://webapp.example.com/api \
 **Enumeration Workflow**:
 
 ```bash
-# Step 1: Quick DNS enumeration
 gobuster dns -d example.com \
   -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
   -i \
   -c \
   -o dns-quick.txt
 
-# Step 2: Thorough DNS scan
 gobuster dns -d example.com \
   -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt \
   -i \
   -t 50 \
   -o dns-thorough.txt
 
-# Step 3: Virtual host discovery on main server
 gobuster vhost -u http://192.0.2.100 \
   -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
   --append-domain \
   --domain example.com \
   -o vhost-results.txt
 
-# Step 4: Enumerate each discovered subdomain
 for subdomain in $(cat dns-quick.txt | grep Found | awk '{print $2}'); do
   echo "Scanning: $subdomain"
   gobuster dir -u https://$subdomain \
@@ -672,25 +648,19 @@ done
 **Enumeration Workflow**:
 
 ```bash
-# Identify technology stack first (using other tools)
-# whatweb https://example.com
-# wappalyzer https://example.com
 
-# PHP application scan
 gobuster dir -u https://example.com \
   -w /usr/share/seclists/Discovery/Web-Content/CMS/wordpress.fuzz.txt \
   -x php \
   -t 30 \
   -o scan-php.txt
 
-# Java/JSP application scan
 gobuster dir -u https://example.com \
   -w /usr/share/seclists/Discovery/Web-Content/tomcat.txt \
   -x jsp,jsf,do,action \
   -t 30 \
   -o scan-java.txt
 
-# ASP.NET application scan
 gobuster dir -u https://example.com \
   -w /usr/share/seclists/Discovery/Web-Content/IIS.fuzz.txt \
   -x aspx,asp,asmx,ashx \
@@ -707,7 +677,6 @@ gobuster dir -u https://example.com \
 **Diagnosis**:
 
 ```bash
-# Test with random string
 curl -I http://example.com/this-definitely-does-not-exist-12345
 ```
 
@@ -718,10 +687,8 @@ If this returns 200 OK, the server has wildcard configuration.
 1. **Filter by response length**:
 
 ```bash
-# Find default response length
 curl -s http://example.com/random12345 | wc -c
 
-# Use exclude-length flag
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   --exclude-length 4523
@@ -742,18 +709,15 @@ gobuster dir -u http://example.com \
 **Solutions**:
 
 ```bash
-# Reduce threads
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   -t 5
 
-# Add delay between requests
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   -t 10 \
   --delay 200ms
 
-# Change User-Agent
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   -a "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0"
@@ -766,7 +730,6 @@ gobuster dir -u http://example.com \
 **Solution**:
 
 ```bash
-# Skip SSL certificate verification
 gobuster dir -u https://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   -k
@@ -797,7 +760,6 @@ gobuster dir -u http://example.com -w <(echo "index")
 3. **Try different wordlist**:
 
 ```bash
-# Switch from common.txt to another wordlist
 gobuster dir -u http://example.com \
   -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt
 ```
@@ -805,7 +767,6 @@ gobuster dir -u http://example.com \
 4. **Check status code filtering**:
 
 ```bash
-# Show all status codes
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   -s 200,204,301,302,307,401,403,405,500
@@ -880,12 +841,10 @@ gobuster dir -u http://example.com \
 Adjust timeouts based on target responsiveness:
 
 ```bash
-# Fast servers
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   --timeout 5s
 
-# Slow servers
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   --timeout 30s
@@ -898,10 +857,8 @@ Combine Gobuster with other reconnaissance tools for comprehensive enumeration.
 ### Gobuster + Nmap
 
 ```bash
-# Step 1: Discover web services with Nmap
 nmap -p- -sV 192.0.2.100 -oA nmap-scan
 
-# Step 2: Enumerate each web service
 for port in 80 443 8080 8443; do
   gobuster dir -u http://192.0.2.100:$port \
     -w /usr/share/wordlists/dirb/common.txt \
@@ -912,27 +869,22 @@ done
 ### Gobuster + Amass (DNS Enumeration)
 
 ```bash
-# Step 1: Passive subdomain discovery with Amass
 amass enum -passive -d example.com -o amass-passive.txt
 
-# Step 2: Active DNS brute-forcing with Gobuster
 gobuster dns -d example.com \
   -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt \
   -o gobuster-dns.txt
 
-# Step 3: Combine results
 cat amass-passive.txt gobuster-dns.txt | sort -u > all-subdomains.txt
 ```
 
 ### Gobuster + Nikto (Vulnerability Scanning)
 
 ```bash
-# Step 1: Directory enumeration
 gobuster dir -u http://example.com \
   -w /usr/share/wordlists/dirb/common.txt \
   -o gobuster-dirs.txt
 
-# Step 2: Scan discovered paths with Nikto
 nikto -h http://example.com -o nikto-results.html -Format html
 ```
 

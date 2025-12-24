@@ -56,15 +56,12 @@ end
 **In IEx:**
 
 ```elixir
-# See local variables
 iex> step1
 20
 
-# Test expressions
 iex> step1 * 3
 60
 
-# Continue execution
 iex> respawn()
 ```
 
@@ -77,13 +74,11 @@ iex> respawn()
 ### 2. dbg - Pipeline Debugging
 
 ```elixir
-# Before (hard to debug)
 result = [1, 2, 3]
 |> Enum.map(&(&1 * 2))
 |> Enum.filter(&(&1 > 2))
 |> Enum.sum()
 
-# After (with dbg)
 result = [1, 2, 3]
 |> Enum.map(&(&1 * 2))
 |> dbg()  # Shows: [2, 4, 6]
@@ -96,7 +91,6 @@ result = [1, 2, 3]
 **Advanced dbg usage:**
 
 ```elixir
-# Debug specific expressions
 def process(user) do
   dbg(user.name)  # Just the name
   dbg(user.age > 18)  # Boolean result
@@ -110,14 +104,12 @@ end
 ### 3. IO.inspect - Quick Inspection
 
 ```elixir
-# Inspect and return value (chainable)
 [1, 2, 3]
 |> Enum.map(&(&1 * 2))
 |> IO.inspect(label: "After map")
 |> Enum.sum()
 |> IO.inspect(label: "Final result")
 
-# Custom formatting
 %User{name: "Alice", age: 30}
 |> IO.inspect(limit: :infinity, pretty: true)
 ```
@@ -156,7 +148,6 @@ end
 **Structured logging:**
 
 ```elixir
-# config/config.exs
 config :logger,
   backends: [:console],
   compile_time_purge_matching: [
@@ -167,7 +158,6 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id, :user_id, :module, :function]
 
-# Usage
 Logger.info("User logged in",
   user_id: 123,
   ip_address: "192.168.1.1",
@@ -178,7 +168,6 @@ Logger.info("User logged in",
 ### 5. Observer - System Visualization
 
 ```elixir
-# Start Observer GUI
 :observer.start()
 ```
 
@@ -194,10 +183,8 @@ Logger.info("User logged in",
 **Remote observation:**
 
 ```elixir
-# In production node
 iex --name prod@host --cookie secret
 
-# From local machine
 iex --name debug@local --cookie secret
 Node.connect(:"prod@host")
 :observer.start()
@@ -206,21 +193,14 @@ Node.connect(:"prod@host")
 ### 6. Tracing with :sys
 
 ```elixir
-# Trace GenServer calls
 {:ok, pid} = MyServer.start_link()
 :sys.trace(pid, true)
 
-# All messages shown:
-# *DBG* MyServer got call get_state from <0.123.0>
-# *DBG* MyServer sent "current_state" to <0.123.0>
 
-# Stop tracing
 :sys.trace(pid, false)
 
-# Get state without API
 :sys.get_state(pid)
 
-# Suspend process (pause)
 :sys.suspend(pid)
 :sys.resume(pid)
 ```
@@ -228,19 +208,14 @@ Node.connect(:"prod@host")
 ### 7. Erlang's :dbg Module
 
 ```elixir
-# Start tracer
 :dbg.tracer()
 
-# Trace all calls to specific function
 :dbg.tp(MyModule, :my_function, :cx)
 
-# Trace specific process
 :dbg.p(pid, [:call, :return_to])
 
-# Trace all processes
 :dbg.p(:all, :call)
 
-# Stop tracing
 :dbg.stop_clear()
 ```
 
@@ -251,47 +226,36 @@ Node.connect(:"prod@host")
 :dbg.tp(MyApp.Accounts, :create_user, [])
 :dbg.p(:all, :call)
 
-# Now call function
 MyApp.Accounts.create_user(%{name: "Bob"})
 
-# Output shows all calls
 ```
 
 ### 8. Process Information
 
 ```elixir
-# List all processes
 Process.list()
 
-# Process info
 Process.info(pid)
 Process.info(pid, :messages)  # Message queue
 Process.info(pid, :memory)     # Memory usage
 Process.info(pid, :current_stacktrace)
 
-# Find processes by name
 Process.whereis(MyApp.Server)
 
-# Find processes by registered name
 Process.registered()
 ```
 
 ### 9. Recon - Production Debugging
 
 ```elixir
-# Add to deps
 {:recon, "~> 2.5"}
 
-# Top memory consumers
 :recon.proc_count(:memory, 10)
 
-# Top CPU consumers (reductions)
 :recon.proc_count(:reductions, 10)
 
-# Process info
 :recon.info(pid)
 
-# Get all ports (files, sockets)
 :recon.port_info()
 ```
 
@@ -317,10 +281,8 @@ end
 ### Remote Console for Production
 
 ```bash
-# Connect to running release
 bin/my_app remote
 
-# Or using IEx
 iex --remsh my_app@hostname
 ```
 
@@ -337,21 +299,16 @@ defimpl Inspect, for: User do
   end
 end
 
-# Now IO.inspect hides password
 IO.inspect(%User{id: 1, name: "Alice", password_hash: "secret"})
-# Output: #User<id: 1, name: Alice, password: [REDACTED]>
 ```
 
 ### Crash Dump Analysis
 
 ```bash
-# Generate crash dump
 :erlang.halt(1)
 
-# Analyze dump
 erl_crash.dump
 
-# Use Crashdump Viewer
 crashdump_viewer.start()
 ```
 
@@ -360,10 +317,8 @@ crashdump_viewer.start()
 ### 1. Distributed Debugging
 
 ```elixir
-# On node A
 Node.connect(:"node_b@host")
 
-# Debug process on node B
 pid = :rpc.call(:"node_b@host", Process, :whereis, [MyServer])
 :sys.get_state(pid)
 ```
@@ -391,26 +346,20 @@ end
 ### 3. Memory Leak Detection
 
 ```elixir
-# Before operation
 before = :erlang.memory()
 
-# Run suspected operation
 run_operation()
 
-# After operation
 after_mem = :erlang.memory()
 
-# Compare
 IO.inspect(after_mem[:total] - before[:total], label: "Memory delta")
 
-# Or use recon
 :recon_alloc.memory(:allocated)
 ```
 
 ### 4. Deadlock Detection
 
 ```elixir
-# Find processes waiting on messages
 waiting = Process.list()
 |> Enum.map(&{&1, Process.info(&1, :current_function)})
 |> Enum.filter(fn {_pid, {:current_function, {mod, fun, _}}} ->
@@ -448,35 +397,27 @@ IO.inspect(waiting, label: "Processes waiting")
 ### IEx.pry Not Working
 
 ```elixir
-# Ensure IEx.pry is required
 require IEx
 
-# Run with --trace
 iex -S mix phx.server --trace
 
-# Or manually break
 IEx.break!(MyModule, :function_name, 2)  # arity 2
 ```
 
 ### Observer Crashes
 
 ```bash
-# Install wxWidgets (macOS)
 brew install wxwidgets
 
-# Linux
 apt-get install libwxgtk3.0-dev
 ```
 
 ### Can't See Logs
 
 ```elixir
-# Check log level
 Logger.configure(level: :debug)
 
-# Ensure Logger backend running
 Application.get_env(:logger, :backends)
-# Should include :console
 ```
 
 ## Best Practices
@@ -527,16 +468,12 @@ Application.get_env(:logger, :backends)
 ## Performance Impact
 
 ```elixir
-# Low impact
 Logger.info("Event occurred")  # Async
 
-# Medium impact
 IO.inspect(large_data)  # Blocks
 
-# High impact
 :dbg.p(:all, :call)  # Traces everything
 
-# Very high impact
 :observer.start()  # GUI + polling
 ```
 

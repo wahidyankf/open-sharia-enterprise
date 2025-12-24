@@ -17,7 +17,6 @@ Python applications need efficient database interaction with proper connection m
 ```python
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select
 
-# Create engine with connection pooling
 engine = create_engine(
     "postgresql://user:password@localhost/dbname",
     pool_size=10,
@@ -25,7 +24,6 @@ engine = create_engine(
     pool_pre_ping=True  # Verify connections before use
 )
 
-# Define table schema
 metadata = MetaData()
 users = Table(
     'users',
@@ -36,10 +34,8 @@ users = Table(
     Column('age', Integer)
 )
 
-# Create tables
 metadata.create_all(engine)
 
-# Insert data
 with engine.connect() as conn:
     stmt = users.insert().values(
         username="john_doe",
@@ -50,7 +46,6 @@ with engine.connect() as conn:
     conn.commit()
     print(f"Inserted user with id: {result.inserted_primary_key[0]}")
 
-# Query data
 with engine.connect() as conn:
     stmt = select(users).where(users.c.age > 25)
     result = conn.execute(stmt)
@@ -66,11 +61,9 @@ from sqlalchemy import create_engine, String, Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session, relationship
 from typing import List
 
-# Define base class
 class Base(DeclarativeBase):
     pass
 
-# Define models
 class User(Base):
     __tablename__ = "users"
 
@@ -96,11 +89,9 @@ class Post(Base):
     # Relationship
     author: Mapped["User"] = relationship(back_populates="posts")
 
-# Create engine and tables
 engine = create_engine("sqlite:///example.db", echo=True)
 Base.metadata.create_all(engine)
 
-# CRUD operations
 with Session(engine) as session:
     # Create
     new_user = User(username="jane_doe", email="jane@example.com", age=28)
@@ -127,7 +118,6 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy import select
 import asyncio
 
-# Create async engine
 async_engine = create_async_engine(
     "postgresql+asyncpg://user:password@localhost/dbname",
     echo=True,
@@ -135,14 +125,12 @@ async_engine = create_async_engine(
     max_overflow=40
 )
 
-# Create async session factory
 AsyncSessionLocal = async_sessionmaker(
     async_engine,
     class_=AsyncSession,
     expire_on_commit=False
 )
 
-# Async CRUD operations
 async def create_user(username: str, email: str):
     async with AsyncSessionLocal() as session:
         user = User(username=username, email=email)
@@ -166,7 +154,6 @@ async def get_users_with_posts():
         for user in users:
             print(f"{user.username} has {len(user.posts)} posts")
 
-# Usage
 async def main():
     user = await create_user("async_user", "async@example.com")
     found_user = await get_user_by_username("async_user")
@@ -178,31 +165,23 @@ asyncio.run(main())
 ### 4. Database Migrations with Alembic
 
 ```bash
-# Initialize Alembic in your project
 alembic init alembic
 
-# Edit alembic.ini to set database URL
-# sqlalchemy.url = postgresql://user:password@localhost/dbname
 ```
 
 ```python
-# alembic/env.py - Configure target metadata
 from myapp.models import Base
 
 target_metadata = Base.metadata
 ```
 
 ```bash
-# Create migration
 alembic revision --autogenerate -m "Add users table"
 
-# Apply migration
 alembic upgrade head
 
-# Rollback migration
 alembic downgrade -1
 
-# View migration history
 alembic history
 ```
 
@@ -219,7 +198,6 @@ Create Date: 2025-12-21
 from alembic import op
 import sqlalchemy as sa
 
-# revision identifiers
 revision = '001'
 down_revision = None
 branch_labels = None
@@ -247,7 +225,6 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.pool import QueuePool
 import logging
 
-# Configure connection pooling
 engine = create_engine(
     "postgresql://user:password@localhost/dbname",
     poolclass=QueuePool,
@@ -259,7 +236,6 @@ engine = create_engine(
     echo_pool=True         # Log pool checkouts/checkins
 )
 
-# Listen to connection events
 @event.listens_for(engine, "connect")
 def receive_connect(dbapi_conn, connection_record):
     """Called when connection is created."""
@@ -270,7 +246,6 @@ def receive_checkout(dbapi_conn, connection_record, connection_proxy):
     """Called when connection is checked out from pool."""
     logging.debug("Connection checked out from pool")
 
-# Context manager for session lifecycle
 from contextlib import contextmanager
 from sqlalchemy.orm import Session
 
@@ -287,7 +262,6 @@ def get_db_session():
     finally:
         session.close()
 
-# Usage
 with get_db_session() as session:
     user = session.query(User).first()
     user.age += 1
@@ -299,26 +273,21 @@ with get_db_session() as session:
 ```python
 from sqlalchemy.orm import joinedload, selectinload, subqueryload
 
-# ❌ N+1 Query Problem
 users = session.query(User).all()
 for user in users:
     # Each iteration executes separate query!
     print(f"{user.username} has {len(user.posts)} posts")
 
-# ✅ Solution 1: Joined Load (single query with JOIN)
 users = session.query(User).options(joinedload(User.posts)).all()
 for user in users:
     print(f"{user.username} has {len(user.posts)} posts")
 
-# ✅ Solution 2: Select In Load (2 queries total)
 users = session.query(User).options(selectinload(User.posts)).all()
 for user in users:
     print(f"{user.username} has {len(user.posts)} posts")
 
-# ✅ Solution 3: Subquery Load
 users = session.query(User).options(subqueryload(User.posts)).all()
 
-# Complex queries with multiple relationships
 from sqlalchemy import func
 
 users_with_stats = (
@@ -418,7 +387,6 @@ class SQLAlchemyUserRepository(UserRepository):
             self.session.delete(user)
             self.session.flush()
 
-# Usage with dependency injection
 def create_user_service(username: str, email: str):
     with get_db_session() as session:
         repo = SQLAlchemyUserRepository(session)
@@ -429,7 +397,6 @@ def create_user_service(username: str, email: str):
 ### Bulk Operations for Performance
 
 ```python
-# Bulk insert (efficient for large datasets)
 users_data = [
     {"username": f"user_{i}", "email": f"user_{i}@example.com"}
     for i in range(10000)
@@ -439,7 +406,6 @@ with Session(engine) as session:
     session.bulk_insert_mappings(User, users_data)
     session.commit()
 
-# Bulk update
 session.bulk_update_mappings(
     User,
     [{"id": 1, "age": 31}, {"id": 2, "age": 32}]
@@ -453,10 +419,8 @@ session.commit()
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-# Primary database for writes
 primary_engine = create_engine("postgresql://primary/dbname")
 
-# Read replica for reads
 replica_engine = create_engine("postgresql://replica/dbname")
 
 class DatabaseRouter:
@@ -466,14 +430,11 @@ class DatabaseRouter:
         engine = primary_engine if for_write else replica_engine
         return Session(engine)
 
-# Usage
 router = DatabaseRouter()
 
-# Read from replica
 with router.get_session(for_write=False) as session:
     users = session.query(User).all()
 
-# Write to primary
 with router.get_session(for_write=True) as session:
     user = User(username="new_user", email="new@example.com")
     session.add(user)
@@ -487,17 +448,13 @@ with router.get_session(for_write=True) as session:
 **Problem**: Keeping sessions open too long causes memory leaks.
 
 ```python
-# ❌ Bad: Long-lived session
 session = Session(engine)
 user = session.query(User).first()
-# ... many operations later ...
 session.commit()  # Memory accumulated!
 
-# ✅ Good: Short-lived sessions
 with Session(engine) as session:
     user = session.query(User).first()
     session.commit()
-# Automatic cleanup
 ```
 
 ### 2. Forgetting to Commit Transactions
@@ -505,13 +462,10 @@ with Session(engine) as session:
 **Problem**: Changes not persisted to database.
 
 ```python
-# ❌ Bad: No commit
 session = Session(engine)
 user = User(username="test")
 session.add(user)
-# Changes lost when session closes!
 
-# ✅ Good: Always commit
 with Session(engine) as session:
     user = User(username="test")
     session.add(user)
@@ -523,12 +477,10 @@ with Session(engine) as session:
 **Problem**: Executing separate query for each relationship.
 
 ```python
-# ❌ Bad: N+1 queries (1 for users + N for posts)
 users = session.query(User).all()
 for user in users:
     print(len(user.posts))  # Separate query each iteration!
 
-# ✅ Good: Eager loading
 users = session.query(User).options(selectinload(User.posts)).all()
 for user in users:
     print(len(user.posts))  # No additional queries
@@ -539,12 +491,10 @@ for user in users:
 **Problem**: Shared mutable default values across instances.
 
 ```python
-# ❌ Bad: Mutable default
 class User(Base):
     __tablename__ = "users"
     tags = Column(JSON, default=[])  # Shared across instances!
 
-# ✅ Good: Use server_default or callable
 class User(Base):
     __tablename__ = "users"
     tags = Column(JSON, server_default='[]')
@@ -560,12 +510,10 @@ class User(Base):
 from sqlalchemy.exc import IntegrityError, OperationalError
 import logging
 
-# ❌ Bad: No error handling
 user = User(username="duplicate")
 session.add(user)
 session.commit()  # Crashes on duplicate username!
 
-# ✅ Good: Handle specific exceptions
 try:
     user = User(username="duplicate")
     session.add(user)

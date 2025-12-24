@@ -59,7 +59,6 @@ defmodule BasicRecursion do
   def reverse([head | tail]), do: reverse(tail) ++ [head]
 end
 
-# Usage
 BasicRecursion.sum([1, 2, 3, 4])      # 10
 BasicRecursion.length([1, 2, 3])       # 3
 BasicRecursion.reverse([1, 2, 3])      # [3, 2, 1]
@@ -107,7 +106,6 @@ defmodule TailRecursion do
   end
 end
 
-# Usage
 TailRecursion.sum([1, 2, 3, 4])                   # 10
 TailRecursion.reverse([1, 2, 3])                   # [3, 2, 1]
 TailRecursion.map([1, 2, 3], fn x -> x * 2 end)   # [2, 4, 6]
@@ -149,7 +147,6 @@ defmodule ReducePattern do
   end
 end
 
-# Usage
 ReducePattern.reduce([1, 2, 3], 0, fn x, acc -> x + acc end)  # 6
 ReducePattern.sum([1, 2, 3, 4])                                # 10
 ReducePattern.product([2, 3, 4])                               # 24
@@ -196,7 +193,6 @@ defmodule TreeRecursion do
   end
 end
 
-# Usage
 tree = {:node, 5,
          {:node, 3,
            {:node, 1, :leaf, :leaf},
@@ -275,7 +271,6 @@ defmodule DivideConquer do
   end
 end
 
-# Usage
 DivideConquer.merge_sort([5, 2, 8, 1, 9])       # [1, 2, 5, 8, 9]
 DivideConquer.quick_sort([5, 2, 8, 1, 9])       # [1, 2, 5, 8, 9]
 
@@ -316,7 +311,6 @@ defmodule MutualRecursion do
   defp parse_expr_rest(result, rest), do: {result, rest}
 end
 
-# Usage
 MutualRecursion.even?(4)   # true
 MutualRecursion.odd?(5)    # true
 MutualRecursion.even?(7)   # false
@@ -366,11 +360,9 @@ defmodule MultipleAccumulators do
   end
 end
 
-# Usage
 MultipleAccumulators.count_parity([1, 2, 3, 4, 5, 6])  # {3, 3}
 MultipleAccumulators.min_max([5, 2, 8, 1, 9])          # {1, 9}
 MultipleAccumulators.partition_by_pivot([5, 2, 8, 5, 1, 9, 5], 5)
-# {[2, 1], [5, 5, 5], [8, 9]}
 ```
 
 ## Variations
@@ -391,7 +383,6 @@ MultipleAccumulators.partition_by_pivot([5, 2, 8, 5, 1, 9, 5], 5)
 - One-off data processing
 
 ```elixir
-# Recursion (custom logic)
 def take_while([], _predicate), do: []
 def take_while([head | tail], predicate) do
   if predicate.(head) do
@@ -401,7 +392,6 @@ def take_while([head | tail], predicate) do
   end
 end
 
-# Enum (standard operations)
 list = [1, 2, 3, 4, 5]
 Enum.take_while(list, fn x -> x < 4 end)  # [1, 2, 3]
 ```
@@ -447,13 +437,11 @@ GuardedRecursion.fib_fast(10)      # 55 (much faster for large n)
 ### Stack Overflow from Non-Tail Recursion
 
 ```elixir
-# BAD: Non-tail-recursive for large lists
 def sum([]), do: 0
 def sum([head | tail]), do: head + sum(tail)
 
 sum(Enum.to_list(1..100_000))  # Stack overflow!
 
-# GOOD: Tail-recursive
 def sum(list), do: sum(list, 0)
 defp sum([], acc), do: acc
 defp sum([head | tail], acc), do: sum(tail, acc + head)
@@ -464,11 +452,9 @@ sum(Enum.to_list(1..100_000))  # 5000050000 (no stack overflow)
 ### Inefficient List Concatenation
 
 ```elixir
-# BAD: O(n²) - appending to end repeatedly
 def reverse([]), do: []
 def reverse([head | tail]), do: reverse(tail) ++ [head]
 
-# GOOD: O(n) - prepend with accumulator
 def reverse(list), do: reverse(list, [])
 defp reverse([], acc), do: acc
 defp reverse([head | tail], acc), do: reverse(tail, [head | acc])
@@ -477,7 +463,6 @@ defp reverse([head | tail], acc), do: reverse(tail, [head | acc])
 ### Forgetting to Reverse Accumulator
 
 ```elixir
-# BAD: Order reversed
 def map(list, func), do: map(list, func, [])
 defp map([], _func, acc), do: acc  # Oops! Reversed order
 defp map([head | tail], func, acc) do
@@ -486,7 +471,6 @@ end
 
 map([1, 2, 3], fn x -> x * 2 end)  # [6, 4, 2] (WRONG!)
 
-# GOOD: Reverse accumulator in base case
 def map(list, func), do: map(list, func, [])
 defp map([], _func, acc), do: Enum.reverse(acc)
 defp map([head | tail], func, acc) do
@@ -499,14 +483,12 @@ map([1, 2, 3], fn x -> x * 2 end)  # [2, 4, 6] (CORRECT!)
 ### Inefficient Fibonacci (Exponential Time)
 
 ```elixir
-# BAD: O(2^n) - recalculates same values
 def fib(0), do: 0
 def fib(1), do: 1
 def fib(n), do: fib(n - 1) + fib(n - 2)
 
 fib(35)  # Takes seconds!
 
-# GOOD: O(n) - linear with accumulator
 def fib(n), do: fib(n, 0, 1)
 defp fib(0, a, _b), do: a
 defp fib(n, a, b), do: fib(n - 1, b, a + b)

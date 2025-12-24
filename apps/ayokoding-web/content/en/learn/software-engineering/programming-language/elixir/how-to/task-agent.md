@@ -39,16 +39,13 @@ Use **Task** for concurrent computations with built-in supervision and **Agent**
 #### 1. Basic Async/Await
 
 ```elixir
-# Start async task
 task = Task.async(fn ->
   :timer.sleep(1000)
   "Result"
 end)
 
-# Do other work...
 IO.puts "Working on other things..."
 
-# Wait for result (default 5s timeout)
 result = Task.await(task)  # "Result"
 ```
 
@@ -92,7 +89,6 @@ defmodule ParallelProcessor do
   end
 end
 
-# Usage
 ParallelProcessor.fetch_all_users([1, 2, 3, 4, 5])
 ```
 
@@ -114,7 +110,6 @@ end
 Add to application supervisor:
 
 ```elixir
-# lib/my_app/application.ex
 defmodule MyApp.Application do
   use Application
 
@@ -158,12 +153,10 @@ end
 Unsupervised (use with caution):
 
 ```elixir
-# Task completes in background, no result needed
 Task.start(fn ->
   send_email(user)
 end)
 
-# Continue without waiting
 :ok
 ```
 
@@ -174,7 +167,6 @@ Task.Supervisor.start_child(MyApp.TaskSupervisor, fn ->
   cleanup_old_data()
 end)
 
-# If task crashes, supervisor handles restart
 ```
 
 #### 5. Task.async_stream for Enumerable Processing
@@ -198,7 +190,6 @@ defmodule BatchProcessor do
   end
 end
 
-# Processes up to 10 URLs concurrently
 BatchProcessor.process_urls([
   "https://example.com/1",
   "https://example.com/2",
@@ -278,7 +269,6 @@ defmodule Counter do
   end
 end
 
-# Usage
 {:ok, _pid} = Counter.start_link(10)
 Counter.increment()  # 11
 Counter.increment()  # 12
@@ -350,7 +340,6 @@ defmodule Config do
   end
 end
 
-# Usage
 Config.start_link(%{
   database: %{host: "localhost", port: 5432},
   cache: %{ttl: 3600}
@@ -559,7 +548,6 @@ defmodule TaskPool do
   end
 end
 
-# Usage - Process 1000 items with max 20 concurrent tasks
 TaskPool.parallel_map(1..1000, fn n ->
   expensive_operation(n)
 end, max_concurrency: 20)
@@ -616,7 +604,6 @@ defmodule RetryTask do
   end
 end
 
-# Usage
 task = RetryTask.async_with_retry(fn ->
   unreliable_api_call()
 end, 5)
@@ -644,7 +631,6 @@ defmodule DistributedCounter do
   end
 end
 
-# Works across connected Elixir nodes
 ```
 
 ## Use Cases
@@ -737,17 +723,14 @@ end
 ### Task Timeout
 
 ```elixir
-# Increase timeout
 Task.await(task, 30_000)
 
-# Or shutdown gracefully
 Task.shutdown(task, 5_000)
 ```
 
 ### Agent Bottleneck
 
 ```elixir
-# If Agent is slow, use ETS or GenServer instead
 :ets.new(:my_table, [:named_table, :public])
 :ets.insert(:my_table, {:key, :value})
 :ets.lookup(:my_table, :key)
@@ -756,7 +739,6 @@ Task.shutdown(task, 5_000)
 ### Memory Leaks in Agents
 
 ```elixir
-# Regularly cleanup stale data
 def cleanup_old_entries do
   Agent.update(__MODULE__, fn state ->
     Enum.filter(state, &is_recent?/1)

@@ -10,6 +10,8 @@ cascade:
 breadcrumbs: false
 ---
 
+- [About AyoKoding](/en/about-ayokoding)
+- [Terms and Conditions](/en/terms-and-conditions)
 - [Learn](/en/learn)
   - [Overview](/en/learn/overview)
   - [Software Engineering](/en/learn/software-engineering)
@@ -19,5 +21,3 @@ breadcrumbs: false
   - [Human](/en/learn/human)
 - [Rants](/en/rants)
   - [2023](/en/rants/2023)
-- [About AyoKoding](/en/about-ayokoding)
-- [Terms and Conditions](/en/terms-and-conditions)

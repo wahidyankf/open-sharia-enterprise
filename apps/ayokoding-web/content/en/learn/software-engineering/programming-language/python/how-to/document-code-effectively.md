@@ -195,11 +195,6 @@ def process_items(
             result[item] = result.get(item, 0) + 1
     return result
 
-# Type hints show:
-# - items must be list of strings
-# - max_count is integer with default
-# - filter_fn is optional callable
-# - Returns dict with string keys and int values
 ```
 
 ### Class Type Hints
@@ -236,7 +231,6 @@ class User:
 ### When to Comment
 
 ```python
-# ✅ Explain WHY, not WHAT
 def calculate_price(base_price, customer_type):
     # Apply 20% premium discount to match competitor pricing
     if customer_type == "premium":
@@ -248,14 +242,12 @@ def calculate_price(base_price, customer_type):
 
     return base_price
 
-# ✅ Document complex algorithms
 def hash_password(password):
     # Use bcrypt with cost factor 12 for strong hashing.
     # Higher cost = slower but more secure against brute force.
     # Cost 12 takes ~0.3s on modern hardware.
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12))
 
-# ✅ Warn about gotchas
 def process_list(items):
     # Note: This function modifies the input list!
     # Pass a copy if you need to preserve the original.
@@ -263,12 +255,9 @@ def process_list(items):
     items.pop(0)
     return items
 
-# ❌ Don't state the obvious
 x = 5  # Set x to 5
 user.name = "Alice"  # Set user name to Alice
 
-# ❌ Don't leave outdated comments
-# TODO: Add caching (implemented 6 months ago!)
 def fetch_data():
     return cached_fetch()
 ```
@@ -276,28 +265,24 @@ def fetch_data():
 ### TODO and FIXME Comments
 
 ```python
-# ✅ TODO for future enhancements
 def authenticate(email, password):
     # TODO: Add rate limiting to prevent brute force
     # TODO: Implement OAuth2 support (issue #123)
     user = find_user(email)
     return user.check_password(password)
 
-# ✅ FIXME for known bugs
 def process_concurrent(items):
     # FIXME: Race condition when multiple threads access cache
     # See issue #456
     for item in items:
         update_cache(item)
 
-# ✅ HACK for temporary workarounds
 def parse_date(date_str):
     # HACK: Workaround for library bug #789
     # Remove when library updates to v2.0
     date_str = date_str.replace('Z', '+00:00')
     return datetime.fromisoformat(date_str)
 
-# ✅ NOTE for important information
 def save_user(user):
     # NOTE: This function assumes user is already validated.
     # Caller must call user.validate() first.
@@ -309,8 +294,6 @@ def save_user(user):
 ### Package README
 
 ````markdown
-# MyPackage
-
 User management and authentication for Python applications.
 
 ## Features
@@ -332,10 +315,8 @@ pip install mypackage
 ```python
 from mypackage import User, register, authenticate
 
-# Register new user
 user = register("alice@example.com", "password123")
 
-# Authenticate
 if authenticate("alice@example.com", "password123"):
     print("Login successful")
 ```
@@ -355,26 +336,21 @@ MIT License
 ### Sphinx Setup
 
 ```bash
-# Install Sphinx
 pip install sphinx
 
-# Initialize Sphinx
 cd docs
 sphinx-quickstart
 
-# Build HTML documentation
 make html
 ````
 
 ### conf.py Configuration
 
 ```python
-# docs/conf.py
 project = 'MyProject'
 author = 'Your Name'
 release = '1.0.0'
 
-# Add extensions
 extensions = [
     'sphinx.ext.autodoc',      # Auto-generate from docstrings
     'sphinx.ext.napoleon',     # Google/NumPy style docstrings
@@ -382,11 +358,9 @@ extensions = [
     'sphinx.ext.intersphinx',  # Link to other projects
 ]
 
-# Napoleon settings
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 
-# Theme
 html_theme = 'sphinx_rtd_theme'
 ```
 
@@ -431,7 +405,6 @@ def old_function(x):
     )
     return new_function(x)
 
-# With decorator
 from functools import wraps
 
 def deprecated(message):
@@ -470,7 +443,6 @@ def add(a, b):
     """
     return a + b
 
-# Run doctests
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

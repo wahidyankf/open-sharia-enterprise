@@ -60,7 +60,6 @@ Verify installation:
 
 ```bash
 go version
-# Should output: go version go1.25.x ... (or go1.24.x - current stable versions)
 ```
 
 ### Your First Program
@@ -81,7 +80,6 @@ Run it:
 
 ```bash
 go run hello.go
-# Output: Hello, World!
 ```
 
 ## 🔤 Basic Syntax
@@ -1972,10 +1970,8 @@ func fixedGoroutine() {
 **1. Use `go run -race` to detect race conditions**
 
 ```bash
-# Compile and run with race detector
 go run -race main.go
 
-# Build with race detector
 go build -race -o myapp
 ./myapp
 ```
@@ -1993,13 +1989,10 @@ func process(data []int) {
 **3. Use `delve` debugger for advanced debugging**
 
 ```bash
-# Install delve
 go install github.com/go-delve/delve/cmd/dlv@latest
 
-# Debug your program
 dlv debug main.go
 
-# Set breakpoints, inspect variables, step through code
 (dlv) break main.main
 (dlv) continue
 (dlv) print myVariable
@@ -2022,13 +2015,8 @@ if err != nil {
 **5. Use `go vet` to catch common mistakes**
 
 ```bash
-# Static analysis tool
 go vet ./...
 
-# Common issues it catches:
-# - Printf format mismatches
-# - Unreachable code
-# - Suspicious constructs
 ```
 
 ### Common Gotchas

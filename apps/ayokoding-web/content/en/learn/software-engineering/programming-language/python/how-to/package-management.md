@@ -15,26 +15,18 @@ Python projects require dependency isolation, version control, and reproducible 
 ### 1. Virtual Environments with venv
 
 ```bash
-# Create virtual environment
 python -m venv venv
 
-# Activate virtual environment
-# On Linux/macOS:
 source venv/bin/activate
 
-# On Windows:
 venv\Scripts\activate
 
-# Install packages (isolated from system)
 pip install requests pandas numpy
 
-# Freeze dependencies
 pip freeze > requirements.txt
 
-# Install from requirements
 pip install -r requirements.txt
 
-# Deactivate environment
 deactivate
 ```
 
@@ -61,44 +53,33 @@ def create_virtual_environment(path: str) -> None:
     # Install packages
     subprocess.run([str(pip_path), "install", "requests", "pytest"])
 
-# Usage
 create_virtual_environment("./my_venv")
 ```
 
 ### 2. Modern Package Management with Poetry
 
 ```bash
-# Install Poetry
 curl -sSL https://install.python-poetry.org | python3 -
 
-# Create new project
 poetry new my-project
 cd my-project
 
-# Or initialize in existing project
 poetry init
 
-# Add dependencies
 poetry add requests pandas
 poetry add --group dev pytest black mypy
 
-# Install dependencies
 poetry install
 
-# Update dependencies
 poetry update
 
-# Show dependency tree
 poetry show --tree
 
-# Run scripts in venv
 poetry run python script.py
 poetry run pytest
 
-# Build distribution
 poetry build
 
-# Publish to PyPI
 poetry publish
 ```
 
@@ -134,35 +115,24 @@ my-cli = "my_project.cli:main"
 ### 3. Dependency Version Pinning
 
 ```python
-# requirements.txt - Different pinning strategies
 
-# Exact version (reproducible but inflexible)
 requests==2.31.0
 pandas==2.1.0
 
-# Compatible version (minor/patch updates)
 requests~=2.31.0  # >=2.31.0, <2.32.0
 pandas~=2.1       # >=2.1.0, <2.2.0
 
-# Minimum version (flexible but risky)
 requests>=2.31.0
 pandas>=2.1.0
 
-# Version range
 numpy>=1.24.0,<2.0.0
 
-# Platform-specific dependencies
 pywin32==306 ; sys_platform == 'win32'
 uvloop==0.17.0 ; sys_platform != 'win32'
 
-# Environment markers
 cryptography>=41.0.0 ; python_version >= '3.11'
 
-# Git dependencies
-# git+https://github.com/user/repo.git@main#egg=package-name
 
-# Local dependencies
-# -e /path/to/local/package
 ```
 
 **requirements-dev.txt for development dependencies**:
@@ -170,14 +140,12 @@ cryptography>=41.0.0 ; python_version >= '3.11'
 ```txt
 -r requirements.txt
 
-# Development tools
 pytest>=7.4.0
 pytest-cov>=4.1.0
 black>=23.7.0
 ruff>=0.0.287
 mypy>=1.5.0
 
-# Documentation
 sphinx>=7.2.0
 sphinx-rtd-theme>=1.3.0
 ```
@@ -185,21 +153,14 @@ sphinx-rtd-theme>=1.3.0
 ### 4. Dependency Resolution and Lock Files
 
 ```python
-# Use pip-tools for deterministic builds
-# Install pip-tools
-# pip install pip-tools
 
-# requirements.in - High-level dependencies
 """
 requests
 pandas
 numpy
 """
 
-# Generate locked requirements.txt
-# pip-compile requirements.in
 
-# This creates requirements.txt with exact versions:
 """
 certifi==2023.7.22
 charset-normalizer==3.2.0
@@ -214,17 +175,12 @@ tzdata==2023.3
 urllib3==2.0.4
 """
 
-# Upgrade dependencies
-# pip-compile --upgrade requirements.in
 
-# Sync environment with lock file
-# pip-sync requirements.txt
 ```
 
 **Poetry automatically creates poetry.lock**:
 
 ```bash
-# poetry.lock is automatically generated
 poetry install  # Uses poetry.lock for exact versions
 poetry lock --no-update  # Regenerate lock without updating
 poetry lock  # Update lock file with latest compatible versions
@@ -301,48 +257,33 @@ where = ["src"]
 **Building and publishing**:
 
 ```bash
-# Build distribution
 python -m build
 
-# This creates:
-# dist/my-package-0.1.0.tar.gz (source)
-# dist/my_package-0.1.0-py3-none-any.whl (wheel)
 
-# Install locally for testing
 pip install -e .
 
-# Upload to PyPI
 python -m twine upload dist/*
 
-# Upload to Test PyPI first
 python -m twine upload --repository testpypi dist/*
 ```
 
 ### 6. Dependency Security Scanning
 
 ```bash
-# Install safety
 pip install safety
 
-# Check for known vulnerabilities
 safety check
 
-# Check specific requirements file
 safety check -r requirements.txt
 
-# Generate JSON report
 safety check --json
 
-# Use pip-audit (more comprehensive)
 pip install pip-audit
 
-# Audit installed packages
 pip-audit
 
-# Audit requirements file
 pip-audit -r requirements.txt
 
-# Fix vulnerabilities automatically
 pip-audit --fix
 ```
 
@@ -409,45 +350,34 @@ graph TD
 ### Conda for Scientific Computing
 
 ```bash
-# Create conda environment
 conda create -n myenv python=3.11
 
-# Activate environment
 conda activate myenv
 
-# Install packages
 conda install numpy pandas scikit-learn
 
-# Install from conda-forge
 conda install -c conda-forge xgboost
 
-# Mix conda and pip
 conda install numpy
 pip install custom-package
 
-# Export environment
 conda env export > environment.yml
 
-# Create from environment file
 conda env create -f environment.yml
 
-# Deactivate
 conda deactivate
 ```
 
 ### Docker for Complete Isolation
 
 ```dockerfile
-# Dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application
 COPY . .
 
 CMD ["python", "app.py"]
@@ -456,22 +386,17 @@ CMD ["python", "app.py"]
 ### pipx for CLI Tools
 
 ```bash
-# Install pipx
 python -m pip install --user pipx
 python -m pipx ensurepath
 
-# Install CLI tools in isolated environments
 pipx install black
 pipx install pytest
 pipx install poetry
 
-# Run tool
 black myfile.py
 
-# Upgrade tool
 pipx upgrade black
 
-# Uninstall
 pipx uninstall black
 ```
 
@@ -482,10 +407,8 @@ pipx uninstall black
 **Problem**: Global package installations cause conflicts.
 
 ```bash
-# ❌ Bad: Installing globally
 pip install requests  # Affects system Python!
 
-# ✅ Good: Use virtual environment
 python -m venv venv
 source venv/bin/activate
 pip install requests  # Isolated
@@ -496,7 +419,6 @@ pip install requests  # Isolated
 **Problem**: Large venv directories bloat repository.
 
 ```gitignore
-# ✅ Always add to .gitignore
 venv/
 env/
 .venv/
@@ -514,17 +436,14 @@ build/
 **Problem**: Builds become non-reproducible.
 
 ```txt
-# ❌ Bad: No version constraints
 requests
 pandas
 numpy
 
-# ✅ Good: Pin versions
 requests==2.31.0
 pandas==2.1.0
 numpy==1.25.2
 
-# ✅ Better: Use lock file (poetry.lock or pip-compile)
 ```
 
 ### 4. Mixing Package Managers
@@ -532,15 +451,11 @@ numpy==1.25.2
 **Problem**: Dependency conflicts between pip and conda.
 
 ```bash
-# ❌ Bad: Mixing managers carelessly
 conda install numpy
 pip install pandas  # May conflict with conda's numpy
 
-# ✅ Good: Choose one primary manager
-# If using conda, prefer conda packages
 conda install numpy pandas
 
-# Only use pip for packages not in conda
 conda install numpy
 pip install custom-package-not-in-conda
 ```
@@ -550,15 +465,12 @@ pip install custom-package-not-in-conda
 **Problem**: Outdated packages have security issues.
 
 ```bash
-# ❌ Bad: Never updating or checking security
 pip install old-package==1.0.0
 
-# ✅ Good: Regular security audits
 pip install pip-audit
 pip-audit  # Check for vulnerabilities
 pip-audit --fix  # Auto-upgrade vulnerable packages
 
-# Schedule regular dependency updates
 ```
 
 ## Related Patterns

@@ -28,7 +28,6 @@ Python evaluates default arguments once when defining the function, not each tim
 **Example:**
 
 ```python
-# ❌ Mutable default - shared across calls
 def add_item(item, items=[]):
     items.append(item)
     return items
@@ -37,7 +36,6 @@ print(add_item(1))  # [1]
 print(add_item(2))  # [1, 2] - Unexpected!
 print(add_item(3))  # [1, 2, 3] - List persists
 
-# ✅ Use None as sentinel
 def add_item(item, items=None):
     if items is None:
         items = []
@@ -48,7 +46,6 @@ print(add_item(1))  # [1]
 print(add_item(2))  # [2] - Fresh list each time
 print(add_item(3))  # [3]
 
-# ✅ Or make it explicit
 def add_item(item, items=None):
     items = items if items is not None else []
     items.append(item)
@@ -58,7 +55,6 @@ def add_item(item, items=None):
 **When mutable defaults are okay:**
 
 ```python
-# ✅ Intentional cache or state (document it!)
 def create_logger(name, _cache={}):
     """Creates or returns cached logger.
 
@@ -83,21 +79,17 @@ Lists require O(n) linear search for membership checks. For frequent lookups, th
 **Example:**
 
 ```python
-# ❌ List for frequent membership checks
 ADMIN_USERS = ['alice', 'bob', 'charlie', 'david']
 
 def is_admin(username):
     return username in ADMIN_USERS  # O(n) search
 
-# With 1000 checks on 1000-item list = 1,000,000 comparisons
 
-# ✅ Set for O(1) membership checks
 ADMIN_USERS = {'alice', 'bob', 'charlie', 'david'}
 
 def is_admin(username):
     return username in ADMIN_USERS  # O(1) lookup
 
-# ✅ Frozen set if truly constant
 ADMIN_USERS = frozenset(['alice', 'bob', 'charlie', 'david'])
 ```
 
@@ -106,11 +98,9 @@ ADMIN_USERS = frozenset(['alice', 'bob', 'charlie', 'david'])
 ```python
 import timeit
 
-# List with 1000 items
 users_list = list(range(1000))
 print(timeit.timeit(lambda: 999 in users_list, number=100000))  # ~0.5s
 
-# Set with 1000 items
 users_set = set(range(1000))
 print(timeit.timeit(lambda: 999 in users_set, number=100000))   # ~0.005s
 ```
@@ -129,38 +119,30 @@ Writing loops to build lists when comprehensions would be clearer and faster.
 **Example:**
 
 ```python
-# ❌ Verbose loop to build list
 squares = []
 for x in range(10):
     squares.append(x ** 2)
 
-# ❌ Verbose loop with condition
 evens = []
 for x in range(20):
     if x % 2 == 0:
         evens.append(x)
 
-# ✅ List comprehension - clear and fast
 squares = [x ** 2 for x in range(10)]
 
-# ✅ Filtering with comprehension
 evens = [x for x in range(20) if x % 2 == 0]
 
-# ✅ Transforming with comprehension
 words = ['hello', 'world', 'python']
 upper_words = [w.upper() for w in words]
 
-# ✅ Dict comprehension
 word_lengths = {word: len(word) for word in words}
 
-# ✅ Generator for memory efficiency
 sum_of_squares = sum(x ** 2 for x in range(1_000_000))
 ```
 
 **When loops are better:**
 
 ```python
-# ✅ Complex logic doesn't fit comprehension cleanly
 results = []
 for item in items:
     try:
@@ -188,7 +170,6 @@ Catching all exceptions without specifying which ones hides bugs and makes debug
 **Example:**
 
 ```python
-# ❌ Bare except - catches everything
 def load_config():
     try:
         with open('config.json') as f:
@@ -196,7 +177,6 @@ def load_config():
     except:  # Catches KeyboardInterrupt, SystemExit, etc.
         return {}  # Silently fails
 
-# ✅ Catch specific exceptions
 def load_config():
     try:
         with open('config.json') as f:
@@ -207,7 +187,6 @@ def load_config():
         logger.error(f"Invalid JSON in config: {e}")
         raise  # Re-raise to surface the error
 
-# ✅ If you must catch all, be explicit
 def load_config():
     try:
         with open('config.json') as f:
@@ -231,23 +210,19 @@ Catching exceptions but doing nothing with them hides problems and makes debuggi
 **Example:**
 
 ```python
-# ❌ Swallowing exceptions
 def fetch_user(user_id):
     try:
         return database.query(f"SELECT * FROM users WHERE id = {user_id}")
     except:
         pass  # Silent failure - caller gets None
 
-# Later code assumes user exists - crashes mysteriously
 user = fetch_user(123)
 print(user.name)  # AttributeError: 'NoneType' has no attribute 'name'
 
-# ✅ Let exceptions propagate
 def fetch_user(user_id):
     return database.query(f"SELECT * FROM users WHERE id = {user_id}")
     # Caller handles exceptions or lets them propagate
 
-# ✅ Or handle explicitly with context
 def fetch_user(user_id):
     try:
         return database.query(f"SELECT * FROM users WHERE id = {user_id}")
@@ -255,7 +230,6 @@ def fetch_user(user_id):
         logger.error(f"Failed to fetch user {user_id}: {e}")
         raise  # Re-raise with context logged
 
-# ✅ Return explicit failure
 from typing import Optional
 
 def fetch_user(user_id) -> Optional[User]:
@@ -279,32 +253,27 @@ Exceptions should represent exceptional conditions, not normal program flow.
 **Example:**
 
 ```python
-# ❌ Exception for control flow
 def get_user_age(users, user_id):
     try:
         return users[user_id].age
     except KeyError:
         return None  # Normal case, not exceptional
 
-# Caller forced to use try/except for normal flow
 try:
     age = get_user_age(users, 123)
 except KeyError:
     age = None
 
-# ✅ Return Optional for normal cases
 from typing import Optional
 
 def get_user_age(users, user_id) -> Optional[int]:
     user = users.get(user_id)
     return user.age if user else None
 
-# Clean handling
 age = get_user_age(users, 123)
 if age is not None:
     print(f"Age: {age}")
 
-# ✅ Or use EAFP when exceptions are truly rare
 def get_user_age(users, user_id):
     try:
         return users[user_id].age
@@ -328,7 +297,6 @@ Manually managing resources with try/finally when context managers provide autom
 **Example:**
 
 ```python
-# ❌ Manual resource management
 def process_file(filename):
     f = open(filename)
     try:
@@ -337,7 +305,6 @@ def process_file(filename):
     finally:
         f.close()  # Easy to forget
 
-# ❌ Multiple resources - messy
 def copy_file(src, dest):
     f1 = open(src, 'rb')
     try:
@@ -349,18 +316,15 @@ def copy_file(src, dest):
     finally:
         f1.close()
 
-# ✅ Context manager handles cleanup
 def process_file(filename):
     with open(filename) as f:
         data = f.read()
         return process(data)
 
-# ✅ Multiple resources cleanly
 def copy_file(src, dest):
     with open(src, 'rb') as source, open(dest, 'wb') as target:
         target.write(source.read())
 
-# ✅ Custom context manager
 from contextlib import contextmanager
 
 @contextmanager
@@ -390,21 +354,17 @@ Forgetting to close files, connections, or other resources leads to leaks.
 **Example:**
 
 ```python
-# ❌ Forgetting to close
 def read_config():
     f = open('config.json')
     return json.load(f)  # File never closed!
 
-# In long-running process
 for i in range(10000):
     config = read_config()  # Eventually runs out of file handles
 
-# ✅ Context manager guarantees closure
 def read_config():
     with open('config.json') as f:
         return json.load(f)
 
-# ✅ pathlib handles resources
 from pathlib import Path
 
 def read_config():
@@ -427,45 +387,35 @@ Modules that import each other create initialization problems and tight coupling
 **Example:**
 
 ```python
-# ❌ Circular import - module_a.py
 from module_b import function_b
 
 def function_a():
     return function_b()
 
-# ❌ Circular import - module_b.py
 from module_a import function_a  # ImportError!
 
 def function_b():
     return function_a()
 
-# ✅ Extract common code to third module
-# shared.py
 def shared_function():
     return "shared"
 
-# module_a.py
 from shared import shared_function
 
 def function_a():
     return shared_function()
 
-# module_b.py
 from shared import shared_function
 
 def function_b():
     return shared_function()
 
-# ✅ Or use dependency injection
-# module_a.py
 def function_a(dependency):
     return dependency()
 
-# module_b.py
 def function_b():
     return "result"
 
-# Usage
 from module_a import function_a
 from module_b import function_b
 
@@ -486,24 +436,20 @@ Using `from module import *` pollutes namespace and makes code unclear.
 **Example:**
 
 ```python
-# ❌ Wildcard import
 from math import *
 from statistics import *
 
 result = mean([1, 2, 3])  # Which mean? math.mean or statistics.mean?
 
-# ✅ Explicit imports
 from statistics import mean, median
 from math import sqrt, pi
 
 result = mean([1, 2, 3])  # Clear origin
 
-# ✅ Import module for many items
 import math
 
 result = math.sqrt(math.pi)  # Clear namespace
 
-# ✅ Alias if needed
 import statistics as stats
 
 result = stats.mean([1, 2, 3])
@@ -525,21 +471,17 @@ Building strings with `+=` in loops creates many intermediate strings.
 **Example:**
 
 ```python
-# ❌ String concatenation in loop - O(n²)
 result = ""
 for i in range(1000):
     result += str(i) + ","  # Creates 1000 intermediate strings
 
-# ✅ List join - O(n)
 parts = []
 for i in range(1000):
     parts.append(str(i))
 result = ",".join(parts)
 
-# ✅ Even better - generator expression
 result = ",".join(str(i) for i in range(1000))
 
-# ✅ For complex building, use StringIO
 from io import StringIO
 
 output = StringIO()
@@ -554,13 +496,11 @@ result = output.getvalue()
 ```python
 import timeit
 
-# Concatenation
 print(timeit.timeit(
     '".".join(str(i) for i in range(1000))',
     number=1000
 ))  # ~0.15s
 
-# Join
 print(timeit.timeit(
     'result = ""; [result := result + str(i) for i in range(1000)]',
     number=1000
@@ -584,26 +524,19 @@ Using old-style string formatting when f-strings are clearer and faster.
 name = "Alice"
 age = 30
 
-# ❌ % formatting - error-prone
 msg = "Hello %s, you are %d years old" % (name, age)
 
-# ❌ .format() - verbose
 msg = "Hello {}, you are {} years old".format(name, age)
 
-# ❌ Manual concatenation - ugly
 msg = "Hello " + name + ", you are " + str(age) + " years old"
 
-# ✅ F-strings - clear, fast, safe
 msg = f"Hello {name}, you are {age} years old"
 
-# ✅ With expressions
 msg = f"In 5 years: {age + 5}"
 
-# ✅ With formatting
 price = 19.99
 msg = f"Price: ${price:.2f}"
 
-# ✅ Debugging
 print(f"{name=}, {age=}")  # name='Alice', age=30
 ```
 
@@ -623,7 +556,6 @@ Classes that do too much violate Single Responsibility Principle and become unma
 **Example:**
 
 ```python
-# ❌ God class - too many responsibilities
 class UserManager:
     def create_user(self, data): ...
     def validate_email(self, email): ...
@@ -636,7 +568,6 @@ class UserManager:
     def authenticate(self, email, password): ...
     # ... 20 more methods
 
-# ✅ Split by responsibility
 class UserValidator:
     def validate_email(self, email): ...
     def validate_password(self, password): ...
@@ -682,7 +613,6 @@ Creating classes when functions or simpler structures would suffice (Java-itis).
 **Example:**
 
 ```python
-# ❌ Unnecessary class for simple utility
 class StringUtils:
     @staticmethod
     def reverse(s):
@@ -694,7 +624,6 @@ class StringUtils:
 
 result = StringUtils.reverse("hello")
 
-# ✅ Simple functions
 def reverse_string(s):
     return s[::-1]
 
@@ -703,7 +632,6 @@ def capitalize_words(s):
 
 result = reverse_string("hello")
 
-# ❌ Class for single operation
 class DiscountCalculator:
     def __init__(self, rate):
         self.rate = rate
@@ -714,7 +642,6 @@ class DiscountCalculator:
 calc = DiscountCalculator(0.1)
 result = calc.calculate(100)
 
-# ✅ Simple function
 def calculate_discount(amount, rate):
     return amount * (1 - rate)
 
@@ -744,7 +671,6 @@ Optimizing code before profiling shows it's a bottleneck.
 **Example:**
 
 ```python
-# ❌ Premature optimization - complex and unclear
 def calculate_total(items):
     # "Optimized" with caching and pre-allocation
     _cache = {}
@@ -756,16 +682,10 @@ def calculate_total(items):
         result[i] = _cache[key]
     return sum(result)
 
-# ✅ Start simple and readable
 def calculate_total(items):
     return sum(item['price'] * item['qty'] for item in items)
 
-# ✅ Optimize ONLY if profiling shows it's slow
-# Profile first:
-# import cProfile
-# cProfile.run('calculate_total(items)')
 #
-# If it's a bottleneck, then optimize with measurements
 ```
 
 **Optimization workflow:**
@@ -789,17 +709,14 @@ Reimplementing functionality that exists in standard library.
 **Example:**
 
 ```python
-# ❌ Reimplementing sum
 def calculate_sum(numbers):
     total = 0
     for num in numbers:
         total += num
     return total
 
-# ✅ Use built-in
 total = sum(numbers)
 
-# ❌ Reimplementing max
 def find_maximum(numbers):
     max_val = numbers[0]
     for num in numbers[1:]:
@@ -807,10 +724,8 @@ def find_maximum(numbers):
             max_val = num
     return max_val
 
-# ✅ Use built-in
 max_val = max(numbers)
 
-# ❌ Reimplementing filtering
 def get_evens(numbers):
     result = []
     for num in numbers:
@@ -818,7 +733,6 @@ def get_evens(numbers):
             result.append(num)
     return result
 
-# ✅ Use filter or comprehension
 evens = [num for num in numbers if num % 2 == 0]
 evens = list(filter(lambda x: x % 2 == 0, numbers))
 ```

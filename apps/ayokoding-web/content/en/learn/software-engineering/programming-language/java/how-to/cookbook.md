@@ -15,8 +15,6 @@ tags:
 
 ---
 
-# Java Cookbook - Practical Recipes
-
 **Solve common problems with ready-to-use recipes.** This cookbook contains practical, copy-paste-ready solutions for everyday Java development. Perfect for finding solutions to problems you encounter in real projects.
 
 ## How to Use This Cookbook
