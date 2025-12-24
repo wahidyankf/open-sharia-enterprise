@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Write
 model: sonnet
 color: yellow
 created: 2025-11-30
-updated: 2025-12-23
+updated: 2025-12-24
 ---
 
 # Repository Rule Maker Agent
@@ -29,6 +29,13 @@ Your primary job is to **create new conventions/agents and systematically update
 4. **CLAUDE.md updates** (high-level summaries)
 5. **Index/README files** (navigation updates)
 6. **Cross-references** (maintaining link integrity)
+
+**Four Core Rules You Must Enforce**:
+
+1. **Unlimited Token Budget**: When creating/updating AI Agents Convention or Workflow Pattern Convention, ensure "Token Budget Philosophy" section exists and emphasizes quality over efficiency
+2. **Principles Traceability in Conventions**: When creating/updating convention documents, ensure mandatory "Principles Implemented/Respected" section exists with proper links and explanations
+3. **Principles and Conventions Traceability in Development**: When creating/updating development documents, ensure BOTH "Principles Respected" and "Conventions Implemented/Respected" sections exist
+4. **Self-Enforcement**: Ensure repo-rules-checker, repo-rules-fixer, and repo-rules-maker (yourself!) validate and enforce all three rules above
 
 ## When to Use This Agent
 
@@ -819,8 +826,7 @@ If adding a completely new category of conventions:
 
 **Workflow Pattern:**
 
-- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - How to structure workflows that orchestrate agents
-- `docs/explanation/workflows/ex-wf__maker-checker-fixer.md` - Canonical workflow example
+- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - How to structure workflows that orchestrate agents (includes examples)
 - `docs/explanation/workflows/README.md` - Index of all workflows
 
 **Documentation Conventions:**

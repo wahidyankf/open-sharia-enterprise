@@ -25,6 +25,22 @@ This practice respects the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Hugo's template lookup order is explicitly documented. Configuration in `hugo.yaml` uses clear, stated values - no reliance on undocumented defaults. Theme overrides are visible in `layouts/` directory structure.
 
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices to documentation standards.
+
+This practice implements/respects the following conventions:
+
+- **[Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md)**: Theme development supports content conventions (frontmatter processing, multilingual support, navigation rendering) defined for Hugo sites.
+
+- **[Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md)**: ayokoding-web theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
+
+- **[Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md)**: ose-platform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
+
+- **[Color Accessibility Convention](../conventions/ex-co__color-accessibility.md)**: Theme CSS and components use verified accessible color palette (#0173B2, #DE8F05, #029E73, #CC78BC) meeting WCAG AA standards.
+
+- **[Diagrams Convention](../conventions/ex-co__diagrams.md)**: Documentation diagrams in this convention use Mermaid with accessible colors and proper comment syntax.
+
 ## 📋 Purpose
 
 This convention defines standards for:

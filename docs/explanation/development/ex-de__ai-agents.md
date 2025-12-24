@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-20
+updated: 2025-12-24
 ---
 
 # AI Agents Convention
@@ -27,6 +27,7 @@ AI agents in this project are specialized Claude Code assistants defined in the 
 - **Defined tool permissions** limiting what operations it can perform
 - **Clear responsibilities** to avoid overlap with other agents
 - **Integration with project conventions** through references to CLAUDE.md and convention documents
+- **Unlimited token budget** - Focus on execution quality, not token usage (reliable compaction mechanism handles context management)
 
 ### Why We Need Agent Conventions
 
@@ -54,6 +55,8 @@ This convention applies to:
 
 ## Principles Respected
 
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices back to foundational values.
+
 This practice respects the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Agent tool permissions are explicitly whitelisted in frontmatter (not implicitly granted). Each agent declares exactly which tools it can access. Agent responsibilities are explicitly documented, not inferred. Frontmatter fields (name, description, tools, model, color) make agent capabilities transparent and discoverable through simple grep operations.
@@ -61,6 +64,53 @@ This practice respects the following core principles:
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Agents follow single-responsibility principle - one clear, focused purpose per agent. Flat directory structure (no subdirectories). Simple naming convention (kebab-case). Standard document structure across all agents. Rather than creating "Swiss Army knife" agents with dozens of capabilities, we create focused agents that do one thing well.
 
 - **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: AI agents themselves embody this principle - they automate repetitive tasks (documentation writing, validation, consistency checking, deployment) that would otherwise require manual effort. The `agent-maker` automates agent creation. `repo-rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
+
+## Token Budget Philosophy
+
+**CRITICAL GUIDELINE**: When invoking agents (`.claude/agents/`) and workflows (`docs/explanation/workflows/`), **do NOT think about token budget constraints**.
+
+### Why Unlimited Budget Mindset
+
+- **Reliable compaction mechanism**: Claude Code handles context management through proven compaction
+- **Quality is king**: Execution thoroughness matters more than token efficiency
+- **No artificial constraints**: Agents should complete their work properly, not cut corners to save tokens
+- **Workflow orchestration**: Multi-step workflows naturally require more tokens - this is expected and acceptable
+
+### What This Means in Practice
+
+When working with agents:
+
+- ✅ **Do**: Let agents complete comprehensive validations, generate detailed reports, iterate until quality gates pass
+- ✅ **Do**: Use multi-step workflows (check-fix iterations) without worrying about token usage
+- ✅ **Do**: Focus on correct, thorough execution
+- ❌ **Don't**: Skip steps to save tokens
+- ❌ **Don't**: Reduce validation scope due to token concerns
+- ❌ **Don't**: Avoid iteration loops because of token budget fears
+
+### Compaction Handles Scale
+
+- Large repository audits → Compaction preserves key findings
+- Multi-iteration workflows → Compaction maintains essential state
+- Comprehensive reports → Written to files, conversation can be compacted
+- Long validation runs → Progressive writing ensures nothing is lost
+
+**Bottom line**: Trust the compaction mechanism. Execute quality work. Token budget is effectively unlimited for agent and workflow operations.
+
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices to documentation standards.
+
+This practice implements/respects the following conventions:
+
+- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
+
+- **[Linking Convention](../conventions/ex-co__linking-convention.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
+
+- **[Emoji Usage Convention](../conventions/ex-co__emoji-usage.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). Only `.claude/agents/README.md` uses colored square emojis for categorization.
+
+- **[Color Accessibility Convention](../conventions/ex-co__color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
+
+- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report-generating agents use UTC+7 timestamps in filename pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 ## Agent File Structure
 

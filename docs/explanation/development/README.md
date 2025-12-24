@@ -9,14 +9,14 @@ tags:
   - conventions
   - ai-agents
 created: 2025-11-23
-updated: 2025-12-15
+updated: 2025-12-24
 ---
 
 # Development
 
 Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
-**Governance**: All development practices in this directory implement and embody the [Core Principles](../principles/README.md). Each practice should trace back to one or more foundational principles (Explicit Over Implicit, Automation Over Manual, Simplicity Over Complexity, etc.).
+**Governance**: All development practices in this directory implement and embody the [Core Principles](../principles/README.md) and implement/enforce [Documentation Conventions](../conventions/README.md). Each practice MUST include TWO mandatory sections: "Principles Respected" (traces to foundational values) and "Conventions Implemented/Respected" (traces to documentation standards). Both sections require working links and explanations of HOW the practice implements/respects them. See [AI Agents Convention](./ex-de__ai-agents.md) and [Maker-Checker-Fixer Pattern](./ex-de__maker-checker-fixer-pattern.md) for examples.
 
 ## 🎯 Scope
 

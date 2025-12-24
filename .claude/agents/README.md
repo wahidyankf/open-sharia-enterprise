@@ -6,6 +6,8 @@ This directory contains specialized AI agents for repository maintenance and doc
 
 **Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Principle → Convention/Practice → Agent.
 
+**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../docs/explanation/development/ex-de__ai-agents.md#token-budget-philosophy) for complete details.
+
 ## Available Agents
 
 ### 🟦 `agent-maker.md`
@@ -1010,6 +1012,40 @@ The repository uses a three-stage workflow for content creation and quality assu
 - [CLAUDE.md](../CLAUDE.md) - Project guidance for all agents
 - [Documentation Conventions](../docs/explanation/conventions/README.md) - File naming, linking, and Diátaxis framework
 - [Plans Organization](../plans/README.md) - Planning document structure and conventions
+
+## 🔄 Agent Lifecycle
+
+Agents follow a structured lifecycle from creation to deprecation:
+
+### Creation
+
+1. Use `agent-maker` to scaffold new agent with proper structure
+2. Validate with `repo-rules-checker` to ensure convention compliance
+3. Update CLAUDE.md if agent affects project guidance (use `repo-rules-maker`)
+4. Test agent behavior matches specification
+
+### Updates
+
+1. Edit agent file with required changes
+2. Update `updated` field in frontmatter (YYYY-MM-DD format)
+3. Validate changes with `repo-rules-checker`
+4. Apply fixes if needed using `repo-rules-fixer`
+5. Update CLAUDE.md and convention docs if agent behavior changed
+
+### Maintenance
+
+- Review agent periodically (quarterly or when conventions change)
+- Update references to conventions/practices if they move or change
+- Verify tool permissions still match agent responsibilities
+- Check agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
+
+### Deprecation
+
+1. Add deprecation notice at top of agent file
+2. Document replacement agent or workflow (if applicable)
+3. Update CLAUDE.md to remove or replace deprecated agent references
+4. Keep deprecated agent for 6 months before deletion (migration period)
+5. Update all references in workflows, conventions, and documentation
 
 ## 🆕 Adding New Agents
 

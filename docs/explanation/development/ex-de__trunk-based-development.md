@@ -35,6 +35,16 @@ This practice respects the following core principles:
 
 - **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Every commit to `main` triggers automated CI testing. Integration issues caught immediately by machines, not discovered weeks later through manual testing. Continuous automated validation replaces manual integration phases.
 
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices to documentation standards.
+
+This practice implements/respects the following conventions:
+
+- **[Commit Message Convention](./ex-de__commit-messages.md)**: TBD workflow requires small, frequent commits with clear conventional commit messages to maintain navigable history.
+
+- **[Code Quality Convention](./ex-de__code-quality.md)**: Pre-push hooks run affected tests before pushing to main, enforcing quality gates in the TBD workflow.
+
 ## What is Trunk Based Development?
 
 **Trunk Based Development** is a source control branching model where developers work primarily on a single branch called the "trunk" (in Git, this is typically the `main` branch). Unlike feature-branch workflows, TBD minimizes long-lived branches and emphasizes frequent integration.

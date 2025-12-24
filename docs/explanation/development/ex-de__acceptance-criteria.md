@@ -24,6 +24,18 @@ This practice respects the following core principles:
 
 - **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Gherkin scenarios translate directly to automated tests (BDD frameworks). Requirements become executable specifications. Machines verify correctness automatically instead of manual testing.
 
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices to documentation standards.
+
+This practice implements/respects the following conventions:
+
+- **[Plans Organization Convention](../conventions/ex-co__plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
+
+- **[Content Quality Principles](../conventions/ex-co__content-quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
+
+- **[Diagrams Convention](../conventions/ex-co__diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
+
 ## Purpose
 
 Acceptance criteria define the conditions that must be met for a feature, story, or requirement to be considered complete. Using structured Gherkin format provides:

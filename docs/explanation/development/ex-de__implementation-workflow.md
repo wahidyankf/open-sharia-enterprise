@@ -37,6 +37,16 @@ This workflow respects three core principles:
 - **[YAGNI (You Aren't Gonna Need It)](../principles/general/ex-pr-ge__simplicity-over-complexity.md#yagni-principles)** - Don't optimize prematurely
 - **[Progressive Disclosure](../principles/content/ex-pr-co__progressive-disclosure.md)** - Layer refinement gradually
 
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices to documentation standards.
+
+This practice implements/respects the following conventions:
+
+- **[Code Quality Convention](./ex-de__code-quality.md)**: The "make it right" stage applies code quality standards (Prettier formatting, linting) before the "make it fast" stage to ensure clean code before optimization.
+
+- **[Content Quality Principles](../conventions/ex-co__content-quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
+
 ### Benefits of This Workflow
 
 1. **Faster to Working Software**: Focus on functionality first gets you to a working state quickly
