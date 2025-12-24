@@ -267,15 +267,133 @@ Based on analysis of existing agents, policies must support seven distinct rule 
 
 #### 5. Workflow Rules
 
-**Purpose**: Multi-step process definitions
-**Examples**: Progressive writing, maker-checker-fixer sequence
-**Validation**: State machine, agent prompt analysis
+**Purpose**: Multi-step orchestration process definitions (Layer 5)
+**Examples**: Frontmatter structure, agent references, state validation, termination criteria
+**Validation**: Schema validation, reference checking, dependency analysis
+
+Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow family (workflow-maker, workflow-checker, workflow-fixer) validates workflow definitions in `docs/explanation/workflows/`.
+
+**Example 1: Frontmatter Structure**
 
 ```yaml
-- id: workflow-progressive-writing
+- id: WF001
+  name: "Required workflow frontmatter fields"
+  severity: blocking
+  description: "Workflow files must have complete frontmatter with all required fields"
+
+  validation:
+    type: schema
+    schema:
+      required: [name, goal, termination, inputs, outputs]
+      properties:
+        name:
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$" # Kebab-case
+        goal:
+          type: string
+          minLength: 20 # Must explain purpose
+        termination:
+          type: string
+          minLength: 15 # Clear exit condition
+        inputs:
+          type: array
+          items:
+            required: [name, type, description]
+        outputs:
+          type: array
+          items:
+            required: [name, type, description]
+
+  examples:
+    valid:
+      - "name: docs-check-fix, goal: Validate and fix documentation..., termination: Zero findings remain"
+    invalid:
+      - "name: DocsCheckFix (PascalCase not allowed)"
+      - "goal: Fix docs (too short, not descriptive)"
+
+  autofix: false
+  confidence: high # Objective structural requirement
+```
+
+**Example 2: Agent Reference Validation**
+
+```yaml
+- id: WF002
+  name: "Agent references must exist"
+  severity: high
+  description: "All agent names in workflow steps must correspond to actual agent files"
+
   validation:
     type: function
-    function: libs/ts-policy-engine/validators/progressive-writing.ts
+    function: |
+      For each step in workflow:
+        1. Extract agent name from step definition
+        2. Check if file exists: .claude/agents/{agent-name}.md
+        3. If not found, report violation
+
+  examples:
+    valid:
+      - "agent: docs-checker (file: .claude/agents/docs-checker.md exists)"
+    invalid:
+      - "agent: nonexistent-agent (file not found)"
+      - "agent: docs_checker (wrong naming convention)"
+
+  autofix: false
+  confidence: high # Objectively verifiable
+```
+
+**Example 3: State Reference Validation**
+
+```yaml
+- id: WF003
+  name: "State references must be valid"
+  severity: high
+  description: "References like {input.x} and {stepN.outputs.y} must use correct syntax and refer to defined states"
+
+  validation:
+    type: function
+    function: |
+      Parse workflow for state references:
+        - {input.varname} must match defined input names
+        - {step1.outputs.varname} must match step1's declared outputs
+        - {step2.outputs.x} can only reference previous steps (step1), not future steps (step3)
+
+  examples:
+    valid:
+      - "{input.scope} where scope is defined in inputs"
+      - "{step1.outputs.report} where step1 declares report in outputs"
+    invalid:
+      - "{input.undefined} where undefined is not in inputs"
+      - "{step3.outputs.x} referenced in step1 (future reference)"
+
+  autofix: false
+  confidence: high # Syntax and scope are objective
+```
+
+**Example 4: Termination Criteria Clarity**
+
+```yaml
+- id: WF004
+  name: "Clear termination criteria required"
+  severity: medium
+  description: "Workflows must specify measurable exit conditions"
+
+  validation:
+    type: regex
+    pattern: |
+      (?i)(zero|no|all|complete|pass|fail|success|error|threshold|when|until|after)
+
+  examples:
+    valid:
+      - "Zero findings remain after validation"
+      - "All tasks completed successfully"
+      - "Error count below threshold"
+    invalid:
+      - "Done" (too vague)
+      - "Finished" (not measurable)
+
+  autofix: false
+  confidence: medium  # Some subjectivity in what's "clear enough"
 ```
 
 #### 6. Agent Configuration Rules

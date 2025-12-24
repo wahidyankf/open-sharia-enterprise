@@ -470,11 +470,11 @@ policy:
 
 ---
 
-## Phase 4: Remaining Families - readme, plan, docs-tutorial
+## Phase 4: Remaining Families - readme, plan, docs-tutorial, workflow
 
 ### Goal
 
-Complete migration of all seven agent families
+Complete migration of all eight agent families
 
 ### Batch Migration Strategy
 
@@ -496,21 +496,56 @@ Complete migration of all seven agent families
 - Agents: docs-tutorial-maker, docs-tutorial-checker, docs-tutorial-fixer
 - Reduction: ~50%
 
+**workflow family (3 agents):**
+
+- Policies: 5-8 (frontmatter structure, agent references, state validation, termination criteria)
+- Agents: workflow-maker, workflow-checker, workflow-fixer
+- Reduction: ~50%
+
+### Why Include Workflows?
+
+Workflows are **Layer 5** of the repository architecture and orchestrate agents (Layer 4). They have the same maker-checker-fixer pattern and similar validation complexity:
+
+1. **Structural validation**: YAML frontmatter schema (name, goal, termination, inputs, outputs)
+2. **Reference validation**: Agent names must exist in `.claude/agents/`
+3. **State validation**: Correct syntax for `{input.x}` and `{stepN.outputs.y}` references
+4. **Semantic validation**: Termination criteria clarity, execution mode consistency
+5. **Dependency validation**: Detect circular dependencies between steps
+6. **Traceability**: Workflows must link back to principles
+
+**Policy Schema Already Supports Workflows**: The `category` enum includes `workflow` as one of seven rule types (tech-docs.md:162).
+
+### Workflow-Specific Policies
+
+**Policies to Extract:**
+
+- `workflow__frontmatter-structure` - Required fields (name, goal, termination, inputs, outputs)
+- `workflow__agent-references` - Agent names must exist in `.claude/agents/`
+- `workflow__state-references` - Valid state reference syntax and scope
+- `workflow__termination-criteria` - Clear, measurable termination conditions
+- `workflow__execution-modes` - Consistent Sequential/Parallel/Conditional usage
+- `workflow__dependency-cycles` - No circular step dependencies
+- `workflow__principle-traceability` - Links to foundational principles
+- (Optional) `workflow__human-checkpoints` - When user approval is required
+
 ### Tasks
 
 - [ ] Extract readme family policies (5-7)
 - [ ] Extract plan family policies (8-10)
 - [ ] Extract docs-tutorial family policies (10-12)
-- [ ] Update all 10 agents
-- [ ] Integration testing
+- [ ] Extract workflow family policies (5-8)
+- [ ] Update all 13 agents (readme: 3, plan: 4, tutorial: 3, workflow: 3)
+- [ ] Integration testing across all four families
 - [ ] Performance benchmarking
+- [ ] Validate workflow orchestration patterns still function
 
 ### Success Criteria
 
-- ✅ All 7 agent families migrated to policy-as-code
+- ✅ All 8 agent families migrated to policy-as-code
 - ✅ Overall agent line count reduced by 50%+
-- ✅ Policy library has 40-50 well-structured policies
+- ✅ Policy library has 50-60 well-structured policies
 - ✅ All agents pass integration tests
+- ✅ Workflow orchestration patterns verified (Maker-Checker-Fixer, Parallel Validation, etc.)
 - ✅ User acceptance testing complete
 
 ---
@@ -812,8 +847,8 @@ Phase 5 (consolidation)
 **Migration Progress:**
 | Metric | Baseline | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Target |
 |--------|----------|---------|---------|---------|---------|--------|
-| Policies extracted | 0 | 10-15 | 20-25 | 40-45 | 50 | 50 |
-| Families migrated | 0/7 | 1/7 | 2/7 | 4/7 | 7/7 | 7/7 |
+| Policies extracted | 0 | 10-15 | 20-25 | 40-45 | 55-60 | 55-60 |
+| Families migrated | 0/8 | 1/8 | 2/8 | 4/8 | 8/8 | 8/8 |
 | Agent lines reduced | 0% | 57% | 51% | 58% | 50% | 50-58% |
 
 **Accuracy:**
@@ -884,9 +919,9 @@ Phase 5 (consolidation)
 
 ### Phase 4
 
-- [ ] All remaining families migrated
-- [ ] 40-50 policies total
-- [ ] All agents passing tests
+- [ ] All remaining families migrated (8/8 families complete)
+- [ ] 55-60 policies total extracted
+- [ ] All 13 agents (readme: 3, plan: 4, tutorial: 3, workflow: 3) passing tests
 - [ ] Performance benchmarks met
 
 ### Phase 5
@@ -986,13 +1021,35 @@ Phase 5 (consolidation)
 
 ### Phase 4
 
+**readme family:**
+
 - `.claude/agents/readme-checker.md` (MODIFY)
 - `.claude/agents/readme-fixer.md` (MODIFY)
+- `.claude/agents/readme-maker.md` (MODIFY)
+
+**plan family:**
+
 - `.claude/agents/plan-checker.md` (MODIFY)
 - `.claude/agents/plan-fixer.md` (MODIFY)
+- `.claude/agents/plan-maker.md` (MODIFY)
+- `.claude/agents/plan-executor.md` (MODIFY)
+
+**docs-tutorial family:**
+
 - `.claude/agents/docs-tutorial-checker.md` (MODIFY)
 - `.claude/agents/docs-tutorial-fixer.md` (MODIFY)
-- 20+ convention files (MODIFY: add policy YAML)
+- `.claude/agents/docs-tutorial-maker.md` (MODIFY)
+
+**workflow family:**
+
+- `.claude/agents/workflow-checker.md` (MODIFY)
+- `.claude/agents/workflow-fixer.md` (MODIFY)
+- `.claude/agents/workflow-maker.md` (MODIFY)
+- `docs/explanation/workflows/*.md` (SOURCE: workflow definitions that will have embedded policies)
+
+**Convention files:**
+
+- 25+ convention files (MODIFY: add policy YAML for readme, plan, tutorial, workflow domains)
 
 ### Phase 5
 

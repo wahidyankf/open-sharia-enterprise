@@ -7,7 +7,7 @@
 The user plans to scale the repository's governance architecture with these specific objectives:
 
 1. **Scale agent ecosystem significantly**
-   - Current: 34+ agents across 7 families
+   - Current: 34+ agents across 8 families (repo-rules, docs, ayokoding-content, ose-platform-web-content, readme, plan, docs-tutorial, workflow)
    - Future: Expect significant growth as new domains added
    - Need: System that scales without proportional complexity increase
 
@@ -333,8 +333,8 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Migration Progress:**
 
-- Policies extracted: 0 → 50-60 (target by Phase 4)
-- Agent families migrated: 0/7 → 7/7 (100% by Phase 4)
+- Policies extracted: 0 → 55-65 (target by Phase 4)
+- Agent families migrated: 0/8 → 8/8 (100% by Phase 4)
 
 **Duplication Reduction:**
 
