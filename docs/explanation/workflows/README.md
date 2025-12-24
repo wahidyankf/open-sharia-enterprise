@@ -32,50 +32,24 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 ### Understanding Workflows
 
 1. Read [Workflow Pattern Convention](./ex-wf__workflow-pattern.md) for structure and rules
-2. Study [Maker-Checker-Fixer Workflow](./ex-wf__maker-checker-fixer.md) as canonical example
-3. Review available workflows below
+2. Create workflows as needed following the convention patterns
+3. Review workflow families below
 
 ### Using Workflows
 
-Workflows define processes but currently require manual orchestration:
-
-```bash
-# Example: Run maker-checker-fixer workflow for docs
-# Step 1: Run maker
-task docs-maker --scope=docs/tutorials/new-tutorial.md
-
-# Step 2: Run checker (generates audit report)
-task docs-checker --scope=docs/tutorials/new-tutorial.md
-
-# Step 3: Review audit report (human)
-# Review generated-reports/docs__YYYY-MM-DD--HH-MM__audit.md
-
-# Step 4: Run fixer (if approved)
-task docs-fixer --report=generated-reports/docs__YYYY-MM-DD--HH-MM__audit.md
-
-# Step 5: Verify (run checker again)
-task docs-checker --scope=docs/tutorials/new-tutorial.md --expect=zero-issues
-```
+Workflows are executed by orchestrating agents in sequence, parallel, or conditionally as defined in workflow definitions. Currently, workflows require manual orchestration.
 
 Future enhancement: Automated workflow executor agent.
 
 ## Available Workflows
 
-### Core Workflows
+| Workflow                                                                       | Purpose                                                                                                                | Agents Used                                                                                                                                                                                                                           | Complexity |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| [Repository Rules Check-Fix](./ex-wf__repository-rules-check-fix.md)           | Validate repository consistency and apply fixes iteratively until ZERO findings                                        | repo-rules-checker, repo-rules-fixer                                                                                                                                                                                                  | Medium     |
+| [Plan Check-Fix](./ex-wf__plan-check-fix.md)                                   | Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings                                   | plan-checker, plan-fixer                                                                                                                                                                                                              | Medium     |
+| [AyoKoding Web Content Check-Fix](./ex-wf__ayokoding-web-content-check-fix.md) | Validate ayokoding-web content across all dimensions, fix issues, regenerate titles and navigation until ZERO findings | ayokoding-content-checker, ayokoding-facts-checker, ayokoding-structure-checker, ayokoding-link-checker, ayokoding-content-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, ayokoding-title-maker, ayokoding-navigation-maker | High       |
 
-| Workflow                                               | Purpose                                 | Agents Used                                                    | Complexity |
-| ------------------------------------------------------ | --------------------------------------- | -------------------------------------------------------------- | ---------- |
-| [Maker-Checker-Fixer](./ex-wf__maker-checker-fixer.md) | Create content, validate, apply fixes   | 3 per family (7 families)                                      | Medium     |
-| [Full Documentation Validation](./EXAMPLE-FORMAT.md)   | Validate all docs for quality and links | docs-checker, docs-tutorial-checker, docs-link-checker, fixers | High       |
-
-### Planned Workflows
-
-These workflows are documented as patterns but not yet formalized:
-
-- **Content Creation** - Plan → Make → Check → Fix → Deploy
-- **Deployment Pipeline** - Build → Test → Validate → Deploy → Verify
-- **Repository Validation** - Run all checkers → Collect reports → Generate summary
-- **Release Process** - Version bump → Changelog → Build → Test → Tag → Deploy
+All _-check-fix workflows follow the [_-check-fix Workflow Pattern](./ex-wf\_\_workflow-pattern.md#-check-fix-workflow-pattern) which fixes ALL findings (HIGH, MEDIUM, MINOR) and iterates until ZERO findings remain.
 
 ## Workflow Families
 
@@ -116,6 +90,8 @@ Step 1 → Step 2 → Step 3 → Step 4
 
 Later steps can reference outputs from earlier steps.
 
+**Use when:** Step N requires outputs from step N-1 (e.g., Maker-Checker-Fixer where fixer needs checker's audit report).
+
 ### Parallel
 
 Steps execute simultaneously:
@@ -128,6 +104,8 @@ Step 1 ─┼─ Step 2b ─┼─ Step 3
 
 Improves efficiency when steps are independent.
 
+**Use when:** Steps are independent and can run simultaneously for speed (e.g., validating multiple content types in parallel).
+
 ### Conditional
 
 Steps execute only if conditions are met:
@@ -138,6 +116,8 @@ Step 1 → Step 2 (checkpoint) → Step 3 (if approved)
 ```
 
 Enables branching logic and human decision points.
+
+**Use when:** Workflow branches based on user decisions or validation results (e.g., deploy to production only if tests pass).
 
 ## Human Checkpoints
 

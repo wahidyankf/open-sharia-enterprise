@@ -145,10 +145,9 @@ ex-wf__[workflow-identifier].md
 
 **Examples**:
 
-- `ex-wf__full-docs-validation.md`
-- `ex-wf__maker-checker-fixer.md`
-- `ex-wf__content-creation.md`
+- `ex-wf__content-validation.md`
 - `ex-wf__deployment-pipeline.md`
+- `ex-wf__full-repository-check.md`
 
 ## Execution Modes
 
@@ -413,7 +412,7 @@ The canonical pattern for content creation:
    → Agent: {family}-checker (re-run)
 ```
 
-See `ex-wf__maker-checker-fixer.md` for complete example.
+See `ex-wf__workflow-pattern.md` for complete structural examples.
 
 ### Parallel Validation
 
@@ -505,8 +504,7 @@ Deploy only if validation passes:
 
 **Workflow Conventions:**
 
-- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - Workflow Pattern Convention (master reference for workflow structure)
-- `docs/explanation/workflows/ex-wf__maker-checker-fixer.md` - Canonical workflow pattern example
+- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - Workflow Pattern Convention (master reference for workflow structure and examples)
 
 **Domain-Specific Conventions:**
 

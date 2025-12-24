@@ -426,8 +426,7 @@ fi
 
 **Workflow Standards:**
 
-- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - Workflow Pattern Convention (THE canonical reference for workflow structure)
-- `docs/explanation/workflows/ex-wf__maker-checker-fixer.md` - Example workflow following all conventions
+- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - Workflow Pattern Convention (THE canonical reference for workflow structure with examples)
 
 **Validation Methodology:**
 
