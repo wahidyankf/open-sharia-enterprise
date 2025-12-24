@@ -101,7 +101,7 @@ Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `ba
 
 The repository follows a six-layer architecture where each layer builds on the foundation of the layer above. Each layer governs the layer below, creating complete traceability from foundational purpose (Layer 0: Vision) through values (Layer 1: Principles) to concrete standards (Layers 2-3), automated enforcement (Layer 4: Agents), and orchestrated processes (Layer 5: Workflows).
 
-See [Repository Architecture](./docs/explanation/ex__repository-architecture.md) for comprehensive explanation including layer characteristics, complete traceability examples, usage guidance, and verification methods.
+See [Repository Governance Architecture](./docs/explanation/ex__repository-governance-architecture.md) for comprehensive explanation including layer characteristics, complete traceability examples, usage guidance, and verification methods.
 
 **Layer 0: Vision** - WHY we exist, WHAT change we seek
 **Layer 1: Principles** - WHY we value specific approaches (governs layers 2-3)
