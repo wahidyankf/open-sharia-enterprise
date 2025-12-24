@@ -484,10 +484,10 @@ Complete migration of all eight agent families
 - Agents: readme-maker, readme-checker, readme-fixer
 - Reduction: ~50%
 
-**plan family (4 agents):**
+**plan family (5 agents):**
 
 - Policies: 8-10 (structure requirements, acceptance criteria, Gherkin format)
-- Agents: plan-maker, plan-checker, plan-executor, plan-execution-checker
+- Agents: plan-maker, plan-checker, plan-fixer, plan-executor, plan-execution-checker
 - Reduction: ~45%
 
 **docs-tutorial family (3 agents):**

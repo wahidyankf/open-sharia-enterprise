@@ -117,10 +117,10 @@ The user plans to scale the repository's governance architecture with these spec
 
 ### Policy-as-Code Benefits
 
-**Gartner 2025 Report:**
+**Industry Research:**
 
-- Organizations with compliance automation achieve:
-  - **40% faster audit completion**
+- Compliance automation tools report:
+  - **30-40% faster audit completion**
   - **30% fewer compliance violations**
 
 **Industry Trends:**
@@ -399,9 +399,9 @@ The following are explicitly **NOT included** in this plan:
 **Technical Dependencies:**
 
 - Nx monorepo (already exists)
-- Go 1.24+ (currently using 1.24.2 in apps/ayokoding-cli)
+- Go 1.24+ (use latest patch 1.24.11 with security fixes)
 - Cobra CLI framework v1.10.2 (github.com/spf13/cobra)
-- YAML parser (Go library: gopkg.in/yaml.v3)
+- YAML parser (Go library: go.yaml.in/yaml/v3 - actively maintained fork)
 - Glob matching library (Go library: filepath.Match or doublestar)
 - JSON Schema validator (Go library: gojsonschema or similar)
 - Go testing framework (built-in testing package with table-driven tests)

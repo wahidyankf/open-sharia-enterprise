@@ -837,12 +837,12 @@ func (e *PolicyEngine) GetCoverageReport(evaluatedRules []string) *CoverageRepor
 
 module github.com/wahidyankf/open-sharia-enterprise/apps/governance-cli
 
-go 1.24 // Match ayokoding-cli infrastructure (currently using 1.24.2)
+go 1.24.11 // Security fixes for CVE-2025-61729, CVE-2025-61727 (crypto/x509)
 
 require (
 	github.com/spf13/cobra v1.10.2           // CLI framework
-	github.com/bmatcuk/doublestar/v4 v4.6.1  // Glob pattern matching
-	gopkg.in/yaml.v3 v3.0.1                  // YAML parsing
+	github.com/bmatcuk/doublestar/v4 v4.8.1  // Glob pattern matching
+	go.yaml.in/yaml/v3 v3.0.1                // YAML parsing (actively maintained fork)
 	github.com/xeipuuv/gojsonschema v1.2.0   // JSON Schema validation
 	github.com/stretchr/testify v1.8.4       // Testing assertions
 )
