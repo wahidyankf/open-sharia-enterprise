@@ -16,7 +16,7 @@ Conceptual documentation for the open-sharia-enterprise project. These documents
 
 ## 🎯 Understanding the Six-Layer Architecture
 
-The repository follows a **six-layer architecture** where each layer builds on the foundation of the layer above. See [Repository Architecture](./ex__repository-architecture.md) for comprehensive explanation.
+The repository follows a **six-layer architecture** where each layer builds on the foundation of the layer above. See [Repository Governance Architecture](./ex__repository-governance-architecture.md) for comprehensive explanation.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -83,7 +83,7 @@ graph TD
    - **Role**: Orchestration layer - coordinates agents to achieve complex goals
    - **Example**: Maker-Checker-Fixer workflow orchestrates creation, validation, fixing
 
-**Complete Architecture**: See [Repository Architecture](./ex__repository-architecture.md) for layer characteristics, complete traceability examples, usage guidance, troubleshooting, and verification methods.
+**Complete Architecture**: See [Repository Governance Architecture](./ex__repository-governance-architecture.md) for layer characteristics, complete traceability examples, usage guidance, troubleshooting, and verification methods.
 
 ## 🧪 The Layer Test: Where Does My Document Belong?
 
@@ -159,7 +159,7 @@ Is it about WHY we value something?
 
 ### Architecture
 
-- [Repository Architecture](./ex__repository-architecture.md) - Comprehensive guide to the six-layer architecture (Vision → Principles → Conventions → Development → Agents → Workflows)
+- [Repository Governance Architecture](./ex__repository-governance-architecture.md) - Comprehensive guide to the six-layer architecture (Vision → Principles → Conventions → Development → Agents → Workflows)
 
 ### Layer Documentation
 
