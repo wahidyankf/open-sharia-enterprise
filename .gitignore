@@ -36,6 +36,7 @@ docs/.obsidian/cache/
 docs/.obsidian-git-data
 docs/.trash/
 docs/.smart-connections/
+docs/journals/
 
 # Excalidraw files in docs
 docs/**/*.excalidraw.md
