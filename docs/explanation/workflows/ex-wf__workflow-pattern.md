@@ -10,7 +10,7 @@ tags:
   - patterns
   - conventions
 created: 2025-12-23
-updated: 2025-12-23
+updated: 2025-12-24
 ---
 
 # Workflow Pattern Convention
@@ -149,10 +149,9 @@ ex-wf__[workflow-identifier].md
 
 **Examples**:
 
-- `ex-wf__full-docs-validation.md`
-- `ex-wf__maker-checker-fixer.md`
-- `ex-wf__content-creation.md`
+- `ex-wf__content-validation.md`
 - `ex-wf__deployment-pipeline.md`
+- `ex-wf__full-repository-check.md`
 
 ## Execution Modes
 
@@ -367,14 +366,145 @@ full-docs-validation-workflow
 deployment-workflow (uses validation-passed)
 ```
 
-## Example: Maker-Checker-Fixer Workflow
+## \*-check-fix Workflow Pattern
 
-The canonical workflow pattern in this repository:
+A specialized workflow pattern that achieves **perfect quality state** by fixing ALL findings (HIGH, MEDIUM, and MINOR confidence levels) and iterating until ZERO findings remain.
+
+### Pattern Characteristics
+
+**Purpose**: Achieve zero findings across all confidence levels, not "good enough" state.
+
+**When to use**:
+
+- Repository-wide validation (repo-rules-check-fix)
+- Content quality assurance (plan-check-fix, ayokoding-web-content-check-fix)
+- Pre-release quality gates
+- Periodic health checks
+
+**Key Differentiators**:
+
+1. **ALL findings count** - Not just HIGH or MEDIUM confidence, includes MINOR (style, formatting)
+2. **Zero findings goal** - Terminates with SUCCESS only when zero findings of any level
+3. **Iterative fixing** - Continues check-fix cycles until perfect state or max-iterations
+4. **Perfect quality state** - Achieves comprehensive quality, not minimal compliance
+
+### Standard Structure
+
+All \*-check-fix workflows follow this pattern:
+
+```yaml
+inputs:
+  - name: max-iterations
+    type: number
+    description: Maximum check-fix cycles to prevent infinite loops
+    required: false
+    default: 5
+
+outputs:
+  - name: final-status
+    type: enum
+    values: [pass, partial, fail]
+  - name: iterations-completed
+    type: number
+  - name: final-report
+    type: file
+```
+
+### Required Steps
+
+**Step 1: Initial Validation**
+
+```markdown
+**Agent**: `{domain}-checker`
+
+- Count ALL findings (HIGH, MEDIUM, MINOR)
+- Generate audit report
+```
+
+**Step 2: Check for Findings**
+
+```markdown
+**Condition**: Count all findings (any confidence level)
+
+- If findings > 0: Proceed to fixing
+- If findings = 0: Skip to success
+```
+
+**Step 3: Apply Fixes**
+
+```markdown
+**Agent**: `{domain}-fixer`
+
+- Fix ALL confidence levels (HIGH, MEDIUM, MINOR)
+- Re-validate before applying each fix
+```
+
+**Step 4: Re-validate**
+
+```markdown
+**Agent**: `{domain}-checker`
+
+- Verify fixes resolved issues
+- Detect any new issues introduced
+```
+
+**Step 5: Iteration Control**
+
+```markdown
+**Logic**:
+
+- Count ALL findings in latest audit report
+- If findings = 0: Success
+- If findings > 0 AND iterations < max-iterations: Loop to step 3
+- If findings > 0 AND iterations >= max-iterations: Partial (safety limit)
+```
+
+### Termination Criteria (Mandatory)
+
+All \*-check-fix workflows MUST use this exact termination criteria:
+
+- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR)
+- ⚠️ **Partial** (`partial`): Findings remain after max-iterations safety limit
+- ❌ **Failure** (`fail`): Technical errors during check or fix
+
+### Safety Features (Mandatory)
+
+**Infinite Loop Prevention**:
+
+- MUST include `max-iterations` parameter (default: 5)
+- MUST terminate with `partial` if limit reached
+- MUST track iteration count
+
+**False Positive Protection**:
+
+- Fixer MUST re-validate each finding before applying
+- Fixer MUST skip FALSE_POSITIVE findings
+- Checker MUST use progressive writing
+
+### Example Implementation
+
+See [Repository Rules Check-Fix Workflow](./ex-wf__repository-rules-check-fix.md) for canonical implementation.
+
+### Key Differences from Basic Validation Workflow
+
+| Aspect             | Basic Validation Workflow        | \*-check-fix Workflow Pattern      |
+| ------------------ | -------------------------------- | ---------------------------------- |
+| **Goal**           | Identify issues                  | Achieve zero findings              |
+| **Iteration**      | Single pass                      | Iterative until zero or max-limit  |
+| **Findings Scope** | May focus on HIGH/MEDIUM only    | ALL findings (HIGH, MEDIUM, MINOR) |
+| **Termination**    | After single check               | Zero findings or max-iterations    |
+| **Quality Target** | Good enough (major issues fixed) | Perfect state (all issues fixed)   |
+| **Human Approval** | May require checkpoints          | Fully automated                    |
+| **Safety Limit**   | Not required                     | REQUIRED (max-iterations)          |
+
+## Example Workflow Structure
+
+Here's a simplified example of a multi-step validation workflow:
 
 ```markdown
 ---
-name: maker-checker-fixer
-goal: Create content, validate quality, apply fixes
+name: content-validation
+goal: Validate content quality and apply fixes
 termination: Content passes all quality checks
 inputs:
   - name: content-type
@@ -384,55 +514,41 @@ inputs:
   - name: scope
     type: string
     required: true
+outputs:
+  - name: validation-status
+    type: enum
+    values: [pass, partial, fail]
 ---
 
-# Maker-Checker-Fixer Workflow
+# Content Validation Workflow
 
 ## Steps
 
-### 1. Create/Update Content (Sequential)
-
-**Agent**: `{input.content-type}-maker`
-
-- **Args**: `scope: {input.scope}`
-- **Output**: `{created-files}`
-
-### 2. Validate Content (Sequential)
+### 1. Validate Content (Sequential)
 
 **Agent**: `{input.content-type}-checker`
 
-- **Args**: `scope: {step1.outputs.created-files}`
+- **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report}`
-- **Depends on**: Step 1
 
-### 3. User Review (Human Checkpoint)
-
-**Prompt**: "Review {step2.outputs.audit-report}. Approve fixes?"
-
-**Options**:
-
-- Approve → Step 4
-- Reject → Terminate (fail)
-
-### 4. Apply Fixes (Conditional)
+### 2. Apply Fixes (Sequential)
 
 **Agent**: `{input.content-type}-fixer`
 
-- **Args**: `report: {step2.outputs.audit-report}`
-- **Condition**: `{step3.user-approved} == true`
-- **Depends on**: Step 3
+- **Args**: `report: {step1.outputs.audit-report}`
+- **Depends on**: Step 1
 
-### 5. Verify (Sequential)
+### 3. Verify (Sequential)
 
 **Agent**: `{input.content-type}-checker`
 
-- **Args**: `scope: {step1.outputs.created-files}, expect: zero-issues`
-- **Depends on**: Step 4
+- **Args**: `scope: {input.scope}, expect: zero-issues`
+- **Depends on**: Step 2
 
 ## Termination Criteria
 
-- ✅ Success: Step 5 reports zero issues
-- ❌ Failure: User rejected fixes or verification failed
+- ✅ Success: Step 3 reports zero issues
+- ❌ Failure: Verification failed
 ```
 
 ## Documentation Requirements
@@ -458,7 +574,23 @@ Potential workflow features (not yet implemented):
 - **Visualization**: Auto-generate diagrams from workflow definitions
 - **Testing**: Workflow validation and dry-run mode
 
+## Token Budget Philosophy
+
+**CRITICAL GUIDELINE**: When orchestrating workflows (`docs/explanation/workflows/`), **do NOT think about token budget constraints**.
+
+Workflows naturally consume more tokens than single agent invocations because they:
+
+- Execute multiple agents in sequence
+- Maintain state between steps
+- Generate multiple reports
+- Iterate until quality goals are met
+- Handle conditional logic and parallel execution
+
+**This is expected and acceptable.** The reliable compaction mechanism handles context management. Focus on correct, thorough workflow execution quality, not token usage.
+
 ## Principles Respected
+
+**REQUIRED SECTION**: All workflow documents MUST include this section to ensure traceability from workflow patterns back to foundational values.
 
 This convention respects:
 
