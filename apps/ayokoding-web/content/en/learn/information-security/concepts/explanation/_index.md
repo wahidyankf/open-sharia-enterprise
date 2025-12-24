@@ -9,3 +9,4 @@ description: Deep dives into security concepts and principles
 - [Overview](/en/learn/information-security/concepts/explanation/overview)
 - [Offensive Security](/en/learn/information-security/concepts/explanation/offensive-security)
 - [Defensive Security](/en/learn/information-security/concepts/explanation/defensive-security)
+- [Security Roles](/en/learn/information-security/concepts/explanation/security-roles)
