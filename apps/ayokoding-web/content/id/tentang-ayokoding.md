@@ -15,7 +15,7 @@ Isi AyoKoding sangat beragam, tapi fokusnya adalah tentang kehidupan programmer,
 
 ## Hubungan dengan Open Sharia Enterprise
 
-AyoKoding punya hubungan unik dengan proyek yang gw kerjakan sekarang: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - sebuah platform fintech yang mematuhi prinsip-prinsip Syariah. Platform ini gw kembangkan secara open-source dan transparan.
+AyoKoding punya hubungan unik dengan proyek yang gw kerjakan sekarang: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - sebuah platform enterprise yang mematuhi prinsip-prinsip Syariah. Platform ini gw kembangkan secara open-source dan transparan.
 
 Kenapa ini penting buat kalian sebagai pembaca?
 

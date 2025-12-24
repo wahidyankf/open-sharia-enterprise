@@ -13,7 +13,7 @@ We release security updates for the following versions:
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-We take security seriously, especially as a fintech application. If you discover a security vulnerability, please report it responsibly.
+We take security seriously, especially as an enterprise platform with financial services. If you discover a security vulnerability, please report it responsibly.
 
 ### How to Report
 
@@ -57,7 +57,7 @@ We assess vulnerabilities using the following severity levels:
 
 ## Security Best Practices
 
-As a fintech application, we follow these security principles:
+As an enterprise platform with financial services, we follow these security principles:
 
 - **Secure by Default**: Security features enabled out of the box
 - **Principle of Least Privilege**: Components have minimal necessary permissions

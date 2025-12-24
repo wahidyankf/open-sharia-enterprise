@@ -19,17 +19,17 @@ Design for **universal access from the start**. Accessibility is not an aftertho
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Shariah-compliant fintech accessible to everyone - literally and practically.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Shariah-compliant enterprise accessible to everyone - literally and practically.
 
 **How this principle serves the vision:**
 
 - **Universal Islamic Finance Access**: Color-blind friendly diagrams and accessible documentation ensure Islamic finance education reaches developers with all abilities. No one excluded from learning or contributing
-- **Global Reach**: Proper internationalization and semantic structure mean Islamic fintech knowledge spreads across languages and cultures. Accessibility enables worldwide adoption
-- **Inclusive Community**: When documentation, code, and tools are accessible, the community welcomes contributors from all backgrounds. Diversity strengthens the open-source Islamic fintech movement
+- **Global Reach**: Proper internationalization and semantic structure mean Islamic enterprise knowledge spreads across languages and cultures. Accessibility enables worldwide adoption
+- **Inclusive Community**: When documentation, code, and tools are accessible, the community welcomes contributors from all backgrounds. Diversity strengthens the open-source Islamic enterprise movement
 - **Alignment with Islamic Values**: Universal access embodies Islamic principles of justice ('Adl) and benefit to the ummah (Maslahah). Accessibility is not just good practice - it's an Islamic obligation
-- **Professional Standards**: Accessible, WCAG-compliant projects attract serious developers and organizations. Raises the credibility and adoption of open-source halal fintech
+- **Professional Standards**: Accessible, WCAG-compliant projects attract serious developers and organizations. Raises the credibility and adoption of open-source halal enterprise
 
-**Vision alignment**: Accessibility is integral to "democratizing" Islamic fintech. If the technology is accessible but the documentation and tools are not, we haven't truly democratized anything. Universal design ensures universal benefit.
+**Vision alignment**: Accessibility is integral to "democratizing" Islamic enterprise. If the technology is accessible but the documentation and tools are not, we haven't truly democratized anything. Universal design ensures universal benefit.
 
 ## 🎯 What
 

@@ -514,7 +514,7 @@ Accepted
 
 ## Context
 
-We are building a fintech application that will consist of multiple applications (web, mobile, APIs) and shared libraries (utilities, components, domain logic). We need to decide how to organize and build this codebase.
+We are building an enterprise platform that will consist of multiple applications (web, mobile, APIs) and shared libraries (utilities, components, domain logic). We need to decide how to organize and build this codebase.
 
 Options considered:
 
@@ -646,7 +646,7 @@ Subscribe to GitHub releases to be notified of security updates.
 
 ### Security Best Practices
 
-**For Fintech Projects:**
+**For Enterprise Platforms with Financial Services:**
 
 - Explicitly document compliance standards (PCI DSS, SOC 2, etc.)
 - Describe data protection measures
@@ -656,7 +656,7 @@ Subscribe to GitHub releases to be notified of security updates.
 **References:**
 
 - [GitHub Security Advisories](https://docs.github.com/en/code-security/security-advisories)
-- [FINOS Security Standards](https://www.finos.org/)
+- [FINOS Security Standards](https://www.finos.org/) (financial services as one enterprise domain)
 
 ## 🤝 Code of Conduct
 
@@ -916,9 +916,9 @@ When setting up a new repository:
 - [AWS ADR Best Practices](https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/best-practices.html)
 - [Microsoft Azure ADR Guide](https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record)
 
-**Fintech Open Source:**
+**Financial Services Open Source:**
 
-- [FINOS - Fintech Open Source Foundation](https://www.finos.org/)
+- [FINOS - Financial Services Open Source Foundation](https://www.finos.org/) (financial services as one enterprise domain)
 - [State of Open Source in Financial Services](https://www.linuxfoundation.org/research/the-2023-state-of-open-source-in-financial-services)
 
 ---

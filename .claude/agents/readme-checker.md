@@ -504,7 +504,7 @@ A README passes validation when:
 **Current** (lines 14-20):
 ```
 
-This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems (fintech, ERP, and beyond) that serve communities with specific religious and ethical requirements.
+This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems across multiple domains (ERP, finance, commerce, cooperatives) that serve communities with specific religious and ethical requirements.
 
 ```
 
@@ -513,7 +513,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 **The Challenge**: Organizations worldwide need enterprise software that respects Islamic principles, but most solutions treat Sharia-compliance as an afterthought—bolted on rather than built in.
 
-**Our Solution**: We're building an open-source platform with Sharia-compliance at its core. Starting with ERP foundations, we'll expand to fintech and beyond.
+**Our Solution**: We're building an open-source platform with Sharia-compliance at its core. Starting with ERP foundations, we'll expand across enterprise domains (finance, commerce, cooperatives).
 
 ```
 

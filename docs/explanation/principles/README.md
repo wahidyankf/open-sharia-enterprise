@@ -14,17 +14,17 @@ updated: 2025-12-24
 
 # Core Principles
 
-Foundational principles that guide all conventions and development practices in the open-sharia-enterprise project. These principles represent the **why** behind our conventions and methodologies, and they serve the foundational [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant fintech.
+Foundational principles that guide all conventions and development practices in the open-sharia-enterprise project. These principles represent the **why** behind our conventions and methodologies, and they serve the foundational [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise.
 
 ## 🎯 Purpose
 
 Core principles establish the philosophical foundation for how we build software and write documentation. These principles are **Layer 1 in the six-layer architecture** - they serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and govern all conventions and development practices (Layers 2-3).
 
-See [Repository Governance Architecture](../ex__repository-governance-architecture.md) for complete understanding of how principles fit into the governance hierarchy and how changes propagate through layers.
+See [Repository Architecture](../ex__repository-governance-architecture.md) for complete understanding of how principles fit into the governance hierarchy and how changes propagate through layers.
 
 **Principles serve the vision and are stable values.** When creating or modifying any convention or practice, you must verify:
 
-1. It serves the [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant fintech
+1. It serves the [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise
 2. It aligns with these principles
 
 If a proposed change conflicts with a principle, either revise the change or document why the principle itself needs reconsideration (rare). All principles must include a "Vision Supported" section showing HOW the principle serves the foundational vision.
@@ -323,7 +323,7 @@ Check that changes:
 
 ## 📚 Related Documentation
 
-- [Repository Governance Architecture](../ex__repository-governance-architecture.md) - Complete six-layer architecture explanation
+- [Repository Architecture](../ex__repository-governance-architecture.md) - Complete six-layer architecture explanation
 - [Vision](../vision/ex-vi__open-sharia-enterprise.md) - Layer 0: Foundational purpose that inspires all principles
 - [Conventions Index](../conventions/README.md) - Layer 2: Documentation conventions embodying these principles
 - [Development Index](../development/README.md) - Layer 3: Development practices embodying these principles

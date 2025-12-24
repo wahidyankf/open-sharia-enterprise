@@ -15,7 +15,7 @@ Explore a range of topics on AyoKoding, from the life of a programmer and softwa
 
 ## The Connection to Open Sharia Enterprise
 
-AyoKoding has a unique relationship with a project I'm actively building: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - a Sharia-compliant fintech platform that I'm developing as an open-source project with full transparency.
+AyoKoding has a unique relationship with a project I'm actively building: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - a Sharia-compliant enterprise platform that I'm developing as an open-source project with full transparency.
 
 Why does this matter to you as a reader?
 

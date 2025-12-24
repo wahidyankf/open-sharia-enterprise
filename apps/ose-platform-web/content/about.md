@@ -20,7 +20,7 @@ Islamic finance is a multi-trillion dollar industry growing at double-digit rate
 
 Our mission is to democratize access to **trustworthy**, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-We're building an open-source platform with Sharia-compliance at its core—starting with Indonesian regulations and ERP foundations, expanding to fintech and global markets.
+We're building an open-source platform with Sharia-compliance at its core—starting with Indonesian regulations and ERP foundations, expanding across enterprise domains (finance, commerce, cooperatives) and global markets.
 
 ## Why Open Source Matters
 
@@ -100,14 +100,14 @@ Building a solid enterprise foundation with ERP capabilities:
 - 👥 **People & Customer Management** - HR & payroll (Sharia-compliant), sales & CRM, customer relationships
 - 🕌 **Execution & Compliance** - Project management, resource allocation, Sharia compliance framework
 
-### Phase 2: Indonesian Fintech Integration
+### Phase 2: Enterprise Domain Expansion
 
-Expanding into fintech with Indonesian regulatory alignment:
+Expanding across enterprise domains with Indonesian regulatory alignment:
 
 - 🏦 **Regulatory Compliance** - Indonesian Banking Authority (OJK) and National Sharia Board (DSN-MUI) integration
-- 📚 **Fintech Standards** - Indonesian best practices and implementation guidelines
-- 📈 **Market Monitoring** - Fintech market trends, regulatory changes, and competitive landscape
-- 💳 **Fintech Domain Implementation** - Payments, lending, and banking services
+- 📚 **Financial Services Standards** - Indonesian best practices and implementation guidelines for banking, payments, and cooperatives
+- 📈 **Market Monitoring** - Enterprise technology trends, regulatory changes, and market needs
+- 💳 **Domain Implementation** - Financial services (payments, lending, banking), commerce, and cooperative management
 
 ### Phase 3: Global Expansion
 

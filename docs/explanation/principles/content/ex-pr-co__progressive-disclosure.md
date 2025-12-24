@@ -19,7 +19,7 @@ updated: 2025-12-24
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Islamic fintech accessible to developers at all skill levels - from beginners to experts.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Islamic enterprise accessible to developers at all skill levels - from beginners to experts.
 
 **How this principle serves the vision:**
 
@@ -29,7 +29,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__op
 - **Serves Multiple Audiences**: Same codebase serves both junior developers (need simple examples) and senior engineers (want advanced features). Inclusivity through layered design
 - **Encourages Contribution**: Simple entry points mean more developers can contribute. As they learn, they contribute more sophisticated improvements
 
-**Vision alignment**: Democratization requires meeting people at their current skill level. Progressive disclosure ensures Islamic fintech is accessible whether you're learning your first "Hello World" or architecting enterprise systems.
+**Vision alignment**: Democratization requires meeting people at their current skill level. Progressive disclosure ensures Islamic enterprise is accessible whether you're learning your first "Hello World" or architecting enterprise systems.
 
 ## 🎯 What
 

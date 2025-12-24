@@ -23,7 +23,7 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 ## Getting Started
 
-Open Sharia Enterprise is a fintech application built with Node.js and organized as an Nx monorepo. Before contributing, please:
+Open Sharia Enterprise is an enterprise platform built with Node.js and organized as an Nx monorepo. Before contributing, please:
 
 1. Read this contributing guide completely
 2. Review our [documentation](./docs/README.md)
@@ -414,4 +414,4 @@ nx test [project-name]
 
 ---
 
-Thank you for contributing to Open Sharia Enterprise! Your contributions help build better, more secure fintech solutions. 🚀
+Thank you for contributing to Open Sharia Enterprise! Your contributions help build better, more secure enterprise solutions. 🚀
