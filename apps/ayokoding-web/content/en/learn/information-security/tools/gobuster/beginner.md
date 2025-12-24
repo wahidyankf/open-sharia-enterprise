@@ -4,16 +4,7 @@ date: 2025-12-18T14:00:16+07:00
 draft: false
 weight: 100003
 description: "Complete guide to Gobuster's three modes, advanced options, and real-world web application enumeration"
-tags:
-  [
-    "infosec",
-    "tools",
-    "gobuster",
-    "beginner",
-    "brute-forcing",
-    "dns-enumeration",
-    "vhost-discovery",
-  ]
+tags: ["infosec", "tools", "gobuster", "beginner", "brute-forcing", "dns-enumeration", "vhost-discovery"]
 ---
 
 ## What You'll Learn

@@ -4,17 +4,7 @@ date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000002
 description: "Examples 16-35: Advanced types, concurrency fundamentals, I/O, HTTP, standard library, production patterns, and testing (40-70% coverage)"
-tags:
-  [
-    "golang",
-    "go",
-    "tutorial",
-    "by-example",
-    "intermediate",
-    "concurrency",
-    "http",
-    "testing",
-  ]
+tags: ["golang", "go", "tutorial", "by-example", "intermediate", "concurrency", "http", "testing"]
 ---
 
 ## Group 1: Advanced Interfaces and Types

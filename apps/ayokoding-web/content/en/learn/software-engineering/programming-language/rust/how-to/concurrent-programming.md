@@ -4,17 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000008
 description: Practical guide to writing concurrent Rust programs with threads, channels, and shared state
-tags:
-  [
-    "rust",
-    "how-to",
-    "concurrency",
-    "threads",
-    "channels",
-    "mutex",
-    "arc",
-    "parallelism",
-  ]
+tags: ["rust", "how-to", "concurrency", "threads", "channels", "mutex", "arc", "parallelism"]
 ---
 
 **Need to write concurrent Rust programs?** This guide covers spawning threads, message passing with channels, shared state with Arc and Mutex, and common concurrency patterns.

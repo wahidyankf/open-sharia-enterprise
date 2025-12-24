@@ -4,8 +4,7 @@ date: 2025-12-17T10:54:44+07:00
 draft: false
 weight: 1000010
 description: "Navigate Python's GIL with threading, multiprocessing, and asyncio"
-tags:
-  ["python", "concurrency", "threading", "multiprocessing", "asyncio", "gil"]
+tags: ["python", "concurrency", "threading", "multiprocessing", "asyncio", "gil"]
 categories: ["learn"]
 ---
 

@@ -4,16 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000003
 description: Comprehensive Rust fundamentals with deep ownership system coverage, borrowing rules, lifetimes, pattern matching, error handling, and testing
-tags:
-  [
-    "rust",
-    "tutorial",
-    "beginner",
-    "ownership",
-    "borrowing",
-    "lifetimes",
-    "fundamentals",
-  ]
+tags: ["rust", "tutorial", "beginner", "ownership", "borrowing", "lifetimes", "fundamentals"]
 ---
 
 **Want to master Rust fundamentals?** This comprehensive tutorial covers everything from variables to testing, with extensive ownership system explanation and visual diagrams.

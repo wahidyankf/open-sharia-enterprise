@@ -70,13 +70,13 @@ const x = 5;
 
 When showing markdown examples that contain code blocks, the outer fence MUST use **4 backticks**:
 
-`````markdown
+````markdown
 ```markdown
 ### Example Content
 
 This is markdown content being documented.
 ```
-`````
+````
 
 ### Rule 2: Inner Fence Uses 3 Backticks
 
@@ -133,14 +133,17 @@ console.log("Hello, World!");
 1. ```(4 backticks) - Opens outer fence
 
    ```
+
 2. `### Example 1:` - Markdown heading being documented
 3. ```(3 backticks) - Opens inner fence for code block
 
    ```
+
 4. `console.log(...)` - Code content
 5. ```(3 backticks) - Closes inner fence
 
    ```
+
 6. `**Key Takeaway**:` - More markdown content being documented
 7. ```(4 backticks) - Closes outer fence
 
@@ -176,6 +179,7 @@ const person = { name, age };
 1. ```(4 backticks) - Opens outer fence
 
    ```
+
 2. First ``` pair - First code block (3 backticks open/close)
 3. `**Explanation**:` - Markdown content
 4. Second ``` pair - Second code block (3 backticks open/close)
@@ -187,7 +191,7 @@ const person = { name, age };
 
 **Correct** (documenting markdown structure without code blocks):
 
-`````markdown
+````markdown
 ```markdown
 ## Tutorial Structure
 
@@ -203,7 +207,7 @@ By the end of this tutorial, you'll understand:
 
 You should have basic knowledge of...
 ```
-`````
+````
 
 **Note**: Even without inner code blocks, use 4 backticks for outer fence when documenting markdown structure.
 
@@ -245,7 +249,7 @@ code here
 
 **Broken** (using 3 backticks for outer fence):
 
-````markdown
+`````markdown
 ````markdown
 ### Example
 
@@ -253,11 +257,13 @@ code here
 code here
 ```
 ````
+`````
 
 ```
 
 ```
-````
+
+``````
 
 **Problem**: Parser can't distinguish outer from inner fences. Rendering is unpredictable.
 
@@ -270,8 +276,9 @@ code here
 ```javascript
 code here
 ```
-````
-`````
+``````
+
+``````
 
 ### Mistake 3: Mismatched Fence Pairs
 
@@ -285,9 +292,11 @@ code here
 code here
 ````   ← WRONG! Closes with 4 backticks (should be 3)
 ````   ← WRONG! Extra 4-backtick fence
-`````
-`````
-`````
+``````
+
+```
+
+```
 
 **Fixed**:
 

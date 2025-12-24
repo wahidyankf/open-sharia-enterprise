@@ -4,17 +4,7 @@ date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000003
 description: "Examples 36-60: Advanced concurrency, generics, reflection, advanced patterns, testing strategies, and modern Go features (70-90% coverage)"
-tags:
-  [
-    "golang",
-    "go",
-    "tutorial",
-    "by-example",
-    "advanced",
-    "generics",
-    "concurrency",
-    "profiling",
-  ]
+tags: ["golang", "go", "tutorial", "by-example", "advanced", "generics", "concurrency", "profiling"]
 ---
 
 ## Group 1: Advanced Concurrency Patterns

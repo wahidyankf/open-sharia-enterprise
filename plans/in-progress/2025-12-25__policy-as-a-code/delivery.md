@@ -845,19 +845,21 @@ Phase 5 (consolidation)
 ### Quantitative Metrics
 
 **Migration Progress:**
-| Metric | Baseline | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Target |
-|--------|----------|---------|---------|---------|---------|--------|
-| Policies extracted | 0 | 10-15 | 20-25 | 40-45 | 55-60 | 55-60 |
-| Families migrated | 0/8 | 1/8 | 2/8 | 4/8 | 8/8 | 8/8 |
-| Agent lines reduced | 0% | 57% | 51% | 58% | 50% | 50-58% |
+
+| Metric              | Baseline | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Target |
+| ------------------- | -------- | ------- | ------- | ------- | ------- | ------ |
+| Policies extracted  | 0        | 10-15   | 20-25   | 40-45   | 55-60   | 55-60  |
+| Families migrated   | 0/8      | 1/8     | 2/8     | 4/8     | 8/8     | 8/8    |
+| Agent lines reduced | 0%       | 57%     | 51%     | 58%     | 50%     | 50-58% |
 
 **Accuracy:**
-| Metric | Target | Measurement |
-|--------|--------|-------------|
+
+| Metric              | Target          | Measurement                |
+| ------------------- | --------------- | -------------------------- |
 | False positive rate | ±5% of baseline | Compare findings per-phase |
-| Regression match | >95% | Baseline vs. new findings |
-| Execution overhead | <5% | Timing benchmarks |
-| Policy loading time | <200ms | Per-agent measurement |
+| Regression match    | >95%            | Baseline vs. new findings  |
+| Execution overhead  | <5%             | Timing benchmarks          |
+| Policy loading time | <200ms          | Per-agent measurement      |
 
 ### Qualitative Metrics
 

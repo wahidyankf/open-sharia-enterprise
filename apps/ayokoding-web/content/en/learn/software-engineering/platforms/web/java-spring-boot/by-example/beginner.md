@@ -5,16 +5,7 @@ draft: false
 weight: 1000001
 description: "Spring Boot basics through 20 examples: dependency injection, beans, auto-configuration, REST controllers, and data access fundamentals"
 categories: ["learn"]
-tags:
-  [
-    "spring-boot",
-    "tutorial",
-    "by-example",
-    "beginner",
-    "dependency-injection",
-    "rest-api",
-    "spring-data",
-  ]
+tags: ["spring-boot", "tutorial", "by-example", "beginner", "dependency-injection", "rest-api", "spring-data"]
 ---
 
 Learn Spring Boot fundamentals through 20 annotated code examples. Each example is self-contained, runnable, and heavily commented to show what each line does, expected outputs, and key takeaways.

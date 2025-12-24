@@ -5,16 +5,7 @@ draft: false
 weight: 1000000
 description: "Learn Spring Boot through 60+ annotated code examples covering dependency injection, REST APIs, data access, security, and production patterns"
 categories: ["learn"]
-tags:
-  [
-    "spring-boot",
-    "java",
-    "tutorial",
-    "by-example",
-    "rest-api",
-    "microservices",
-    "web-framework",
-  ]
+tags: ["spring-boot", "java", "tutorial", "by-example", "rest-api", "microservices", "web-framework"]
 ---
 
 **Want to master Spring Boot through working examples?** This by-example guide teaches 90% of Spring Boot through 60+ annotated code examples organized by complexity level.

@@ -4,8 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000011
 description: Practical guide to building REST APIs with Rust using Axum or Actix-web
-tags:
-  ["rust", "how-to", "rest-api", "web", "axum", "actix-web", "http", "backend"]
+tags: ["rust", "how-to", "rest-api", "web", "axum", "actix-web", "http", "backend"]
 ---
 
 **Need to build a REST API in Rust?** This guide covers setting up a web server, routing, request handling, JSON serialization, middleware, and deployment.

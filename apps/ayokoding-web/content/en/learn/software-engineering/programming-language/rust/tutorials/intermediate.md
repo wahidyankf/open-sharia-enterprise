@@ -4,18 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000004
 description: Production-grade Rust with generics, traits, lifetime annotations, smart pointers, concurrency, async/await, iterators, and advanced error handling
-tags:
-  [
-    "rust",
-    "tutorial",
-    "intermediate",
-    "generics",
-    "traits",
-    "lifetimes",
-    "concurrency",
-    "async",
-    "smart-pointers",
-  ]
+tags: ["rust", "tutorial", "intermediate", "generics", "traits", "lifetimes", "concurrency", "async", "smart-pointers"]
 ---
 
 **Want to build production-ready Rust applications?** This tutorial covers advanced language features needed for real-world Rust development.

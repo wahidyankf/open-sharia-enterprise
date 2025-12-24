@@ -4,8 +4,7 @@ date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000001
 description: "Learn Java basics through 15 annotated examples: variables, OOP fundamentals, collections, control flow, and streams - perfect first examples for Java"
-tags:
-  ["java", "tutorial", "by-example", "beginner", "basics", "oop", "collections"]
+tags: ["java", "tutorial", "by-example", "beginner", "basics", "oop", "collections"]
 ---
 
 Learn Java fundamentals through 15 annotated code examples. Each example is self-contained, runnable in JShell or as standalone classes, and heavily commented to show what each line does, expected outputs, and intermediate values.

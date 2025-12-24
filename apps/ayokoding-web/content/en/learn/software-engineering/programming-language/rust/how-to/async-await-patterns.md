@@ -4,17 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000009
 description: Practical guide to asynchronous programming in Rust with async/await
-tags:
-  [
-    "rust",
-    "how-to",
-    "async",
-    "await",
-    "tokio",
-    "futures",
-    "async-std",
-    "async-programming",
-  ]
+tags: ["rust", "how-to", "async", "await", "tokio", "futures", "async-std", "async-programming"]
 ---
 
 **Need to write asynchronous Rust code?** This guide covers async functions, futures, runtimes like Tokio, concurrent async operations, and common async patterns.

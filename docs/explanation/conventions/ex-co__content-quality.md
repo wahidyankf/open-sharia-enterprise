@@ -409,9 +409,7 @@ More content continues here...
 
 ```html
 <details>
-  <summary aria-label="Expand to see advanced configuration options">
-    Advanced Configuration
-  </summary>
+  <summary aria-label="Expand to see advanced configuration options">Advanced Configuration</summary>
   <p>Advanced options content here...</p>
 </details>
 ```

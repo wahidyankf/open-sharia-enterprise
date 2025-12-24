@@ -4,8 +4,7 @@ date: 2025-12-21T17:05:00+07:00
 draft: false
 description: "Design fault-tolerant Elixir applications using Supervisor with restart strategies, child specifications, and hierarchical supervision for automatic crash recovery."
 weight: 1000005
-tags:
-  ["elixir", "supervisor", "otp", "fault-tolerance", "supervision", "how-to"]
+tags: ["elixir", "supervisor", "otp", "fault-tolerance", "supervision", "how-to"]
 ---
 
 **Need fault-tolerant applications that recover from crashes automatically?** This guide teaches you OTP supervision patterns with restart strategies, child specifications, and hierarchical trees for building resilient systems.

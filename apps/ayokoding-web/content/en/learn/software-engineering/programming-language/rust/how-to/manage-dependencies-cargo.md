@@ -4,16 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000004
 description: Practical guide to managing Rust dependencies using Cargo
-tags:
-  [
-    "rust",
-    "how-to",
-    "cargo",
-    "dependencies",
-    "crates",
-    "package-management",
-    "versioning",
-  ]
+tags: ["rust", "how-to", "cargo", "dependencies", "crates", "package-management", "versioning"]
 ---
 
 **Need to manage dependencies in your Rust project?** This guide covers adding dependencies, version management, workspaces, and common Cargo operations.

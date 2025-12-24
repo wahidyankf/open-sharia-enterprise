@@ -4,8 +4,7 @@ date: 2025-12-21T17:00:00+07:00
 draft: false
 description: "Build robust stateful processes in Elixir using GenServer with synchronous calls, asynchronous casts, state management patterns, and proper error handling."
 weight: 1000004
-tags:
-  ["elixir", "genserver", "otp", "state-management", "concurrency", "how-to"]
+tags: ["elixir", "genserver", "otp", "state-management", "concurrency", "how-to"]
 ---
 
 **Need to manage state in concurrent Elixir applications?** This guide teaches you GenServer patterns for building robust stateful processes with synchronous calls, asynchronous casts, and proper error handling.

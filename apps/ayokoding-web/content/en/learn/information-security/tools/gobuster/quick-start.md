@@ -4,15 +4,7 @@ date: 2025-12-18T14:00:16+07:00
 draft: false
 weight: 100002
 description: "Get started with Gobuster for web directory discovery and DNS enumeration"
-tags:
-  [
-    "infosec",
-    "tools",
-    "gobuster",
-    "quick-start",
-    "brute-forcing",
-    "web-security",
-  ]
+tags: ["infosec", "tools", "gobuster", "quick-start", "brute-forcing", "web-security"]
 ---
 
 ## What You'll Learn
