@@ -10,12 +10,26 @@ tags:
   - productivity
   - outcomes
 created: 2025-12-15
-updated: 2025-12-15
+updated: 2025-12-24
 ---
 
 # No Time Estimates
 
 People work and learn at **vastly different speeds**. Focus on **outcomes and deliverables**, not arbitrary time constraints. Time estimates create pressure, anxiety, and artificial deadlines that harm learning and productivity.
+
+## 🌟 Vision Supported
+
+This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Islamic fintech accessible to developers, businesses, and individuals working at their own pace worldwide.
+
+**How this principle serves the vision:**
+
+- **Respects Individual Context**: Developers in different timezones, with different work schedules, and different life circumstances can contribute meaningfully. No one excluded because they can't work "fast enough"
+- **Encourages Thorough Learning**: Learners can master Islamic finance principles deeply without artificial pressure. Quality understanding over speed produces better Shariah-compliant implementations
+- **Reduces Anxiety**: Removing time pressure makes the community welcoming. Developers focus on building halal fintech correctly, not quickly
+- **Sustainable Contribution**: Open-source thrives on consistent contribution over time, not sprints. Respecting pace enables long-term, sustainable participation
+- **Global Inclusivity**: Not everyone has 40-hour workweeks or fast internet. No time estimates means no one left behind due to circumstances
+
+**Vision alignment**: Democratization means meeting people where they are - in skill, time, and pace. Time estimates create artificial barriers that contradict the vision of universal accessibility.
 
 ## 🎯 What
 

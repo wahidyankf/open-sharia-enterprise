@@ -20,6 +20,7 @@ Workflows are **composed processes** that:
 ## Repository Hierarchy
 
 ```
+Layer 0: Vision (WHY WE EXIST)     → Foundational purpose
 Layer 1: Principles (WHY)          → Foundational values
 Layer 2: Conventions (WHAT)        → Documentation rules
 Layer 3: Development (HOW)         → Software practices
@@ -218,6 +219,7 @@ All workflows must respect core principles:
 
 ### Layer Documentation
 
+- [Vision](../vision/ex-vi__open-sharia-enterprise.md) - Layer 0: Foundational purpose
 - [Core Principles](../principles/README.md) - Layer 1: Foundational values
 - [Conventions](../conventions/README.md) - Layer 2: Documentation rules
 - [Development](../development/README.md) - Layer 3: Software practices

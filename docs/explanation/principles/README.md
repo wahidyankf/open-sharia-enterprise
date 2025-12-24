@@ -9,33 +9,41 @@ tags:
   - philosophy
   - index
 created: 2025-12-15
-updated: 2025-12-15
+updated: 2025-12-24
 ---
 
 # Core Principles
 
-Foundational principles that guide all conventions and development practices in the open-sharia-enterprise project. These principles represent the **why** behind our conventions and methodologies.
+Foundational principles that guide all conventions and development practices in the open-sharia-enterprise project. These principles represent the **why** behind our conventions and methodologies, and they serve the foundational [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant fintech.
 
 ## 🎯 Purpose
 
-Core principles establish the philosophical foundation for how we build software and write documentation. These principles are the **governance layer** - all conventions in `docs/explanation/conventions/` and development practices in `docs/explanation/development/` must respect and embody these principles.
+Core principles establish the philosophical foundation for how we build software and write documentation. These principles are the **governance layer** (Layer 1 in the six-layer hierarchy) - they serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and govern all conventions in `docs/explanation/conventions/` and development practices in `docs/explanation/development/`.
 
-**Principles are immutable values.** When creating or modifying any convention or practice, you must verify it aligns with these principles. If a proposed change conflicts with a principle, either revise the change or document why the principle itself needs reconsideration (rare).
+**Principles serve the vision and are stable values.** When creating or modifying any convention or practice, you must verify:
+
+1. It serves the [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant fintech
+2. It aligns with these principles
+
+If a proposed change conflicts with a principle, either revise the change or document why the principle itself needs reconsideration (rare). All principles must include a "Vision Supported" section showing HOW the principle serves the foundational vision.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
+	V[Vision]
 	A[Core Principles]
 	B[Conventions]
 	C[Development]
 	D[Implementation]
 
+	V --> A
 	A --> B
 	A --> C
 	B --> D
 	C --> D
 
+	style V fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
 	style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -44,10 +52,11 @@ graph TD
 
 **Principle Hierarchy**:
 
-- **Core Principles** (this section) - Foundational values that guide everything
-- **Conventions** - Documentation standards embodying these principles
-- **Development** - Software practices embodying these principles
-- **Implementation** - Actual code and content following conventions and practices
+- **Vision** (Layer 0) - Foundational purpose (WHY we exist, WHAT change we seek)
+- **Core Principles** (Layer 1 - this section) - Foundational values that serve the vision and guide everything
+- **Conventions** (Layer 2) - Documentation standards embodying these principles
+- **Development** (Layer 3) - Software practices embodying these principles
+- **Implementation** (Layer 4+) - Actual code, agents, workflows, and content following conventions and practices
 
 ## 🧪 The Layer Test for Principles
 
@@ -312,10 +321,11 @@ Check that changes:
 
 ## 📚 Related Documentation
 
+- [Vision](../vision/ex-vi__open-sharia-enterprise.md) - Foundational purpose that inspires all principles
 - [Conventions Index](../conventions/README.md) - Documentation conventions embodying these principles
 - [Development Index](../development/README.md) - Development practices embodying these principles
 - [Explanation Index](../README.md) - All conceptual documentation
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2025-12-24
