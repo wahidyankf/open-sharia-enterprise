@@ -4,18 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000005
 description: Expert-level Rust with unsafe code, macros, advanced traits, memory layout, performance optimization, type-level programming, and WebAssembly
-tags:
-  [
-    "rust",
-    "tutorial",
-    "advanced",
-    "unsafe",
-    "macros",
-    "ffi",
-    "optimization",
-    "webassembly",
-    "expert",
-  ]
+tags: ["rust", "tutorial", "advanced", "unsafe", "macros", "ffi", "optimization", "webassembly", "expert"]
 ---
 
 **Want to master expert-level Rust?** This tutorial covers advanced topics for systems programming, optimization, and specialized use cases.

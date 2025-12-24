@@ -4,8 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000040
 description: Java-specific terminology and definitions for learners and developers
-tags:
-  ["java", "glossary", "reference", "terminology", "jvm", "oop", "programming"]
+tags: ["java", "glossary", "reference", "terminology", "jvm", "oop", "programming"]
 ---
 
 **Comprehensive glossary** of Java-specific terms, concepts, and language features. Organized alphabetically for quick reference.

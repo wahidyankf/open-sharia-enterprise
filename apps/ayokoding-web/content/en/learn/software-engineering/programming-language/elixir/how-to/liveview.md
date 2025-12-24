@@ -4,8 +4,7 @@ date: 2025-12-21T17:20:00+07:00
 draft: false
 description: "Build interactive real-time web interfaces with Phoenix LiveView using server-side rendering, WebSocket updates, and zero JavaScript."
 weight: 1000008
-tags:
-  ["elixir", "phoenix", "liveview", "real-time", "web-development", "how-to"]
+tags: ["elixir", "phoenix", "liveview", "real-time", "web-development", "how-to"]
 ---
 
 **Want interactive UIs without writing JavaScript?** Phoenix LiveView enables real-time features with server-side rendering over WebSockets.

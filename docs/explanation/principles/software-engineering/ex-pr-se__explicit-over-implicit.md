@@ -406,9 +406,7 @@ npx lint-staged
 {
   "compilerOptions": {
     "paths": {
-      "@open-sharia-enterprise/ts-validation": [
-        "libs/ts-validation/src/index.ts"
-      ]
+      "@open-sharia-enterprise/ts-validation": ["libs/ts-validation/src/index.ts"]
     }
   }
 }

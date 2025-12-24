@@ -4,16 +4,7 @@ date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000002
 description: "Master intermediate Elixir through 20 examples: advanced pattern matching, structs, protocols, error handling, processes, and testing patterns"
-tags:
-  [
-    "elixir",
-    "tutorial",
-    "by-example",
-    "intermediate",
-    "otp",
-    "processes",
-    "testing",
-  ]
+tags: ["elixir", "tutorial", "by-example", "intermediate", "otp", "processes", "testing"]
 ---
 
 Build on your Elixir foundations with 20 intermediate examples covering advanced patterns, practical OTP usage, error handling, and testing strategies. Each example is self-contained and heavily annotated.

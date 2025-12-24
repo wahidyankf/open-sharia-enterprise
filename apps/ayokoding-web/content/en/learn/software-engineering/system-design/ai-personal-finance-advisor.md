@@ -4,16 +4,7 @@ date: 2025-12-08T10:00:00+07:00
 draft: false
 description: "Design a system where users upload payment receipts and receive AI-generated financial insights"
 weight: 10030
-tags:
-  [
-    "system-design",
-    "ai-ml",
-    "finance",
-    "ocr",
-    "data-analysis",
-    "advanced",
-    "tutorial",
-  ]
+tags: ["system-design", "ai-ml", "finance", "ocr", "data-analysis", "advanced", "tutorial"]
 categories: ["learn"]
 ---
 

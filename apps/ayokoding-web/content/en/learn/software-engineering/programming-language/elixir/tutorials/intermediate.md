@@ -4,18 +4,7 @@ date: 2025-12-21T00:00:00+07:00
 draft: false
 weight: 1000004
 description: Production-grade Elixir with OTP platform, GenServer, Supervisor, Phoenix framework, LiveView, Ecto, and testing strategies
-tags:
-  [
-    "elixir",
-    "tutorial",
-    "intermediate",
-    "otp",
-    "genserver",
-    "supervisor",
-    "phoenix",
-    "liveview",
-    "ecto",
-  ]
+tags: ["elixir", "tutorial", "intermediate", "otp", "genserver", "supervisor", "phoenix", "liveview", "ecto"]
 ---
 
 **Want to build production-ready Elixir applications?** This tutorial covers OTP platform essentials, Phoenix web development, and production patterns needed for real-world Elixir systems.

@@ -4,16 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000005
 description: Practical guide to writing unit tests, integration tests, and benchmarks in Rust
-tags:
-  [
-    "rust",
-    "how-to",
-    "testing",
-    "unit-tests",
-    "integration-tests",
-    "benchmarks",
-    "test-driven-development",
-  ]
+tags: ["rust", "how-to", "testing", "unit-tests", "integration-tests", "benchmarks", "test-driven-development"]
 ---
 
 **Need to test your Rust code effectively?** This guide covers writing unit tests, integration tests, test organization, mocking, and benchmarking.

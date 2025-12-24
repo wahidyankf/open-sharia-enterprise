@@ -4,17 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000018
 description: Practical guide to advanced type system techniques in Rust
-tags:
-  [
-    "rust",
-    "how-to",
-    "types",
-    "generics",
-    "phantom-types",
-    "type-state",
-    "gats",
-    "hkt",
-  ]
+tags: ["rust", "how-to", "types", "generics", "phantom-types", "type-state", "gats", "hkt"]
 ---
 
 **Need advanced type system techniques?** This guide covers newtype pattern, phantom types, type-state pattern, GATs, and type-level programming.

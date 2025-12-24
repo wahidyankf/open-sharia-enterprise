@@ -195,10 +195,7 @@ function calculateOrderTotalOptimized(items: OrderItem[]): number {
   const cached = orderCache.get(items);
   if (cached) return cached;
 
-  const total = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   orderCache.set(items, total);
   return total;
 }

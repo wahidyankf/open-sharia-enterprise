@@ -4,16 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000002
 description: Practical guide to solving common ownership challenges in Rust
-tags:
-  [
-    "rust",
-    "how-to",
-    "ownership",
-    "borrowing",
-    "lifetimes",
-    "move-semantics",
-    "memory-management",
-  ]
+tags: ["rust", "how-to", "ownership", "borrowing", "lifetimes", "move-semantics", "memory-management"]
 ---
 
 **Having trouble with ownership in Rust?** This guide provides practical solutions to common ownership challenges including avoiding unnecessary clones, working with multiple owners, and solving borrow checker errors.

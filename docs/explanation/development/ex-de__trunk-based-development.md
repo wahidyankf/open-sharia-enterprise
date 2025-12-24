@@ -200,9 +200,7 @@ if (FEATURES.NEW_DASHBOARD) {
 
 ```javascript
 // Only enable in development/staging
-const FEATURE_ENABLED = ["development", "staging"].includes(
-  process.env.NODE_ENV,
-);
+const FEATURE_ENABLED = ["development", "staging"].includes(process.env.NODE_ENV);
 
 if (FEATURE_ENABLED) {
   // New feature code (not ready for production)

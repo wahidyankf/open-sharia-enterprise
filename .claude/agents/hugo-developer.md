@@ -276,8 +276,7 @@ You work with two Hugo sites in this repository:
    <img src="/images/large.jpg" alt="Photo" />
 
    <!-- After -->
-   {{ $image := resources.Get "images/large.jpg" }} {{ $resized := $image.Resize
-   "800x webp q85" }}
+   {{ $image := resources.Get "images/large.jpg" }} {{ $resized := $image.Resize "800x webp q85" }}
    <img src="{{ $resized.RelPermalink }}" alt="Photo" loading="lazy" />
    ```
 
@@ -285,8 +284,8 @@ You work with two Hugo sites in this repository:
 
    ```html
    <!-- Ensure minification and fingerprinting -->
-   {{ $css := resources.Get "css/main.css" | resources.PostCSS }} {{ if
-   hugo.IsProduction }} {{ $css = $css | minify | fingerprint }} {{ end }}
+   {{ $css := resources.Get "css/main.css" | resources.PostCSS }} {{ if hugo.IsProduction }} {{ $css = $css | minify |
+   fingerprint }} {{ end }}
    <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
    ```
 
@@ -635,8 +634,8 @@ grep -r "partial \"partials/header" layouts/
 
 ```html
 <!-- 1. Check asset processing in template -->
-{{ $css := resources.Get "css/main.css" }} {{ if not $css }} {{ errorf "CSS file
-not found: css/main.css in assets/ directory" }} {{ end }}
+{{ $css := resources.Get "css/main.css" }} {{ if not $css }} {{ errorf "CSS file not found: css/main.css in assets/
+directory" }} {{ end }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
 
 <!-- 2. Verify file location -->
@@ -743,8 +742,7 @@ hugo version  # Should show "+extended"
 
 ```html
 <!-- 1. Ensure fingerprint is called -->
-{{ $css := resources.Get "css/main.css" }} {{ $css = $css | resources.PostCSS |
-minify | fingerprint }}
+{{ $css := resources.Get "css/main.css" }} {{ $css = $css | resources.PostCSS | minify | fingerprint }}
 <!-- Generated: /css/main.abc123.min.css -->
 
 <!-- 2. Check production environment -->

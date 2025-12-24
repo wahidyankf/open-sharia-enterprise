@@ -4,17 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000003
 description: Practical guide to handling errors effectively in Rust applications
-tags:
-  [
-    "rust",
-    "how-to",
-    "error-handling",
-    "result",
-    "option",
-    "thiserror",
-    "anyhow",
-    "panic",
-  ]
+tags: ["rust", "how-to", "error-handling", "result", "option", "thiserror", "anyhow", "panic"]
 ---
 
 **Need to handle errors properly in Rust?** This guide provides practical strategies for working with `Result` and `Option`, creating custom errors, propagating errors elegantly, and choosing the right error handling approach.

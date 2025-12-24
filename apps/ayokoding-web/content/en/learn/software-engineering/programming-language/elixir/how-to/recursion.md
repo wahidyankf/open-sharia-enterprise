@@ -4,8 +4,7 @@ date: 2025-12-21T16:55:00+07:00
 draft: false
 description: "Master recursive programming in Elixir with tail-recursive patterns, accumulator techniques, and practical list processing examples for efficient functional code."
 weight: 1000003
-tags:
-  ["elixir", "recursion", "tail-recursion", "functional-programming", "how-to"]
+tags: ["elixir", "recursion", "tail-recursion", "functional-programming", "how-to"]
 ---
 
 **Need to process lists or trees efficiently in Elixir?** This guide teaches you recursive programming patterns with tail-recursion optimization, accumulator techniques, and practical examples for common data processing tasks.

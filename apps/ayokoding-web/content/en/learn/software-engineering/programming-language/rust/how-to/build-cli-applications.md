@@ -4,16 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000010
 description: Practical guide to building command-line applications in Rust
-tags:
-  [
-    "rust",
-    "how-to",
-    "cli",
-    "command-line",
-    "clap",
-    "terminal",
-    "user-interface",
-  ]
+tags: ["rust", "how-to", "cli", "command-line", "clap", "terminal", "user-interface"]
 ---
 
 **Need to build a CLI application in Rust?** This guide covers argument parsing, configuration, error handling, output formatting, and testing for command-line tools.

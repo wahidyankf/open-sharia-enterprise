@@ -4,15 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000013
 description: Practical guide to writing declarative and procedural macros in Rust
-tags:
-  [
-    "rust",
-    "how-to",
-    "macros",
-    "procedural-macros",
-    "derive-macros",
-    "metaprogramming",
-  ]
+tags: ["rust", "how-to", "macros", "procedural-macros", "derive-macros", "metaprogramming"]
 ---
 
 **Need to write macros in Rust?** This guide covers declarative macros (`macro_rules!`), derive macros, attribute macros, and function-like procedural macros.

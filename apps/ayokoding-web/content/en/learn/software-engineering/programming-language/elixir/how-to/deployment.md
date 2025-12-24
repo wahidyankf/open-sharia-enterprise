@@ -4,16 +4,7 @@ date: 2025-12-21T18:15:00+07:00
 draft: false
 description: "Deploy Elixir applications using Mix releases, Docker, environment configuration, and production best practices for reliable deployments."
 weight: 1000019
-tags:
-  [
-    "elixir",
-    "deployment",
-    "releases",
-    "docker",
-    "production",
-    "devops",
-    "how-to",
-  ]
+tags: ["elixir", "deployment", "releases", "docker", "production", "devops", "how-to"]
 ---
 
 **Ready to deploy Elixir apps to production?** Mix releases create self-contained packages with BEAM runtime.

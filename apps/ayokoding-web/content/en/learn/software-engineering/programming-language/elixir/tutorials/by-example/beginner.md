@@ -4,8 +4,7 @@ date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000001
 description: "Learn Elixir basics through 15 annotated examples: variables, pattern matching, data structures, functions, and control flow - perfect first examples"
-tags:
-  ["elixir", "tutorial", "by-example", "beginner", "basics", "pattern-matching"]
+tags: ["elixir", "tutorial", "by-example", "beginner", "basics", "pattern-matching"]
 categories: ["learn"]
 ---
 

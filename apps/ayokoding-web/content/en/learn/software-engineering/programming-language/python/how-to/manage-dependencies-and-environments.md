@@ -4,8 +4,7 @@ date: 2025-12-17T10:54:44+07:00
 draft: false
 weight: 1000012
 description: "Set up reproducible Python environments with virtual environments and modern dependency management"
-tags:
-  ["python", "dependencies", "venv", "pip", "poetry", "virtual-environments"]
+tags: ["python", "dependencies", "venv", "pip", "poetry", "virtual-environments"]
 categories: ["learn"]
 ---
 

@@ -5,17 +5,7 @@ draft: false
 weight: 1000005
 description: Master-level Elixir with BEAM VM internals, distributed systems, metaprogramming, macros, performance optimization, and deployment strategies
 tags:
-  [
-    "elixir",
-    "tutorial",
-    "advanced",
-    "beam-vm",
-    "distributed",
-    "metaprogramming",
-    "macros",
-    "performance",
-    "deployment",
-  ]
+  ["elixir", "tutorial", "advanced", "beam-vm", "distributed", "metaprogramming", "macros", "performance", "deployment"]
 ---
 
 **Want to master Elixir for distributed, high-performance systems?** This tutorial covers BEAM VM internals, distributed Elixir, metaprogramming with macros, performance optimization, and production deployment.

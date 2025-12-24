@@ -4,16 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000015
 description: Practical guide to measuring and optimizing Rust code performance
-tags:
-  [
-    "rust",
-    "how-to",
-    "performance",
-    "benchmarking",
-    "optimization",
-    "profiling",
-    "criterion",
-  ]
+tags: ["rust", "how-to", "performance", "benchmarking", "optimization", "profiling", "criterion"]
 ---
 
 **Need to optimize your Rust code?** This guide covers benchmarking, profiling, common optimization techniques, and avoiding performance pitfalls.

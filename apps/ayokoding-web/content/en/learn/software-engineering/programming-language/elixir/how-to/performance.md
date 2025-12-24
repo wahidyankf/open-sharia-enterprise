@@ -4,15 +4,7 @@ date: 2025-12-21T17:45:00+07:00
 draft: false
 description: "Profile and optimize Elixir applications using fprof, benchee, Observer, and performance best practices for production systems."
 weight: 1000013
-tags:
-  [
-    "elixir",
-    "performance",
-    "profiling",
-    "optimization",
-    "benchmarking",
-    "how-to",
-  ]
+tags: ["elixir", "performance", "profiling", "optimization", "benchmarking", "how-to"]
 ---
 
 **Need to optimize slow Elixir code?** This guide teaches systematic profiling and optimization techniques using benchmarking, profiling tools, and BEAM VM insights to identify and eliminate bottlenecks in production applications.

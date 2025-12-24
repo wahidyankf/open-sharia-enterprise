@@ -4,18 +4,7 @@ date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000003
 description: "Master advanced Elixir through 25 examples: GenServer, Supervisor, OTP applications, metaprogramming, macros, and advanced concurrency"
-tags:
-  [
-    "elixir",
-    "tutorial",
-    "by-example",
-    "advanced",
-    "genserver",
-    "supervisor",
-    "metaprogramming",
-    "macros",
-    "otp",
-  ]
+tags: ["elixir", "tutorial", "by-example", "advanced", "genserver", "supervisor", "metaprogramming", "macros", "otp"]
 ---
 
 Master advanced Elixir concepts with 25 examples covering OTP, GenServer, Supervisor, metaprogramming, macros, and advanced concurrency patterns. These examples assume familiarity with intermediate Elixir.

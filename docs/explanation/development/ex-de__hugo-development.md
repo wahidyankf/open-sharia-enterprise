@@ -354,16 +354,15 @@ module.exports = {
 
 ```html
 <!-- layouts/partials/head.html -->
-{{ $css := resources.Get "css/main.css" }} {{ $css = $css | resources.PostCSS }}
-{{ if hugo.IsProduction }} {{ $css = $css | minify | fingerprint }} {{ end }}
+{{ $css := resources.Get "css/main.css" }} {{ $css = $css | resources.PostCSS }} {{ if hugo.IsProduction }} {{ $css =
+$css | minify | fingerprint }} {{ end }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
 ```
 
 **SCSS/SASS:**
 
 ```html
-{{ $scss := resources.Get "scss/main.scss" }} {{ $css := $scss | resources.ToCSS
-| minify | fingerprint }}
+{{ $scss := resources.Get "scss/main.scss" }} {{ $css := $scss | resources.ToCSS | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
 ```
 
@@ -374,8 +373,8 @@ module.exports = {
 **Bundling:**
 
 ```html
-{{ $js := resources.Get "js/main.js" }} {{ $js = $js | js.Build }} {{ if
-hugo.IsProduction }} {{ $js = $js | minify | fingerprint }} {{ end }}
+{{ $js := resources.Get "js/main.js" }} {{ $js = $js | js.Build }} {{ if hugo.IsProduction }} {{ $js = $js | minify |
+fingerprint }} {{ end }}
 <script src="{{ $js.RelPermalink }}"></script>
 ```
 
@@ -393,16 +392,15 @@ myFunction();
 **Resize Images:**
 
 ```html
-{{ $image := resources.Get "images/hero.jpg" }} {{ $resized := $image.Resize
-"800x" }} <img src="{{ $resized.RelPermalink }}" alt="Hero image" />
+{{ $image := resources.Get "images/hero.jpg" }} {{ $resized := $image.Resize "800x" }}
+<img src="{{ $resized.RelPermalink }}" alt="Hero image" />
 ```
 
 **Responsive Images:**
 
 ```html
-{{ $image := resources.Get "images/hero.jpg" }} {{ $small := $image.Resize
-"400x" }} {{ $medium := $image.Resize "800x" }} {{ $large := $image.Resize
-"1200x" }}
+{{ $image := resources.Get "images/hero.jpg" }} {{ $small := $image.Resize "400x" }} {{ $medium := $image.Resize "800x"
+}} {{ $large := $image.Resize "1200x" }}
 
 <img
   src="{{ $medium.RelPermalink }}"
@@ -419,8 +417,7 @@ myFunction();
 **WebP Conversion:**
 
 ```html
-{{ $image := resources.Get "images/photo.jpg" }} {{ $webp := $image.Resize "800x
-webp" }}
+{{ $image := resources.Get "images/photo.jpg" }} {{ $webp := $image.Resize "800x webp" }}
 <picture>
   <source srcset="{{ $webp.RelPermalink }}" type="image/webp" />
   <img src="{{ $image.RelPermalink }}" alt="Photo" />
@@ -677,8 +674,7 @@ content/
 <img src="/images/hero.jpg" alt="Hero" />
 
 <!-- ✅ Good: Resized and optimized -->
-{{ $image := resources.Get "images/hero.jpg" }} {{ $resized := $image.Resize
-"800x webp q85" }}
+{{ $image := resources.Get "images/hero.jpg" }} {{ $resized := $image.Resize "800x webp q85" }}
 <img src="{{ $resized.RelPermalink }}" alt="Hero" />
 ```
 
@@ -693,9 +689,8 @@ content/
 **Always Minify in Production:**
 
 ```html
-{{ $css := resources.Get "css/main.css" | resources.PostCSS }} {{ if
-hugo.IsProduction }} {{ $css = $css | minify | fingerprint }} {{ end }}
-<link rel="stylesheet" href="{{ $css.RelPermalink }}" />
+{{ $css := resources.Get "css/main.css" | resources.PostCSS }} {{ if hugo.IsProduction }} {{ $css = $css | minify |
+fingerprint }} {{ end }} <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
 ```
 
 ### Caching Strategy
@@ -754,22 +749,13 @@ build:
 <!-- Basic Meta -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta
-  name="description"
-  content="{{ .Description | default .Site.Params.description }}"
-/>
+<meta name="description" content="{{ .Description | default .Site.Params.description }}" />
 <meta name="author" content="{{ .Site.Params.author }}" />
 
 <!-- Open Graph -->
 <meta property="og:title" content="{{ .Title }}" />
-<meta
-  property="og:description"
-  content="{{ .Description | default .Site.Params.description }}"
-/>
-<meta
-  property="og:type"
-  content="{{ if .IsPage }}article{{ else }}website{{ end }}"
-/>
+<meta property="og:description" content="{{ .Description | default .Site.Params.description }}" />
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
 <meta property="og:url" content="{{ .Permalink }}" />
 {{ with .Params.cover.image }}
 <meta property="og:image" content="{{ . | absURL }}" />
@@ -778,10 +764,7 @@ build:
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="{{ .Title }}" />
-<meta
-  name="twitter:description"
-  content="{{ .Description | default .Site.Params.description }}"
-/>
+<meta name="twitter:description" content="{{ .Description | default .Site.Params.description }}" />
 {{ with .Site.Params.social.twitter }}
 <meta name="twitter:site" content="@{{ . }}" />
 {{ end }}
@@ -947,10 +930,7 @@ Refer to [Color Accessibility Convention](../conventions/ex-co__color-accessibil
 
 ```html
 <!-- ✅ Good: Descriptive alt text -->
-<img
-  src="chart.jpg"
-  alt="Bar chart showing 40% increase in user engagement from 2024 to 2025"
-/>
+<img src="chart.jpg" alt="Bar chart showing 40% increase in user engagement from 2024 to 2025" />
 
 <!-- ❌ Bad: Generic alt text -->
 <img src="chart.jpg" alt="Chart" />
@@ -1328,9 +1308,8 @@ static/           # Files served as-is (no processing)
 **Cache processed assets:**
 
 ```html
-{{ $css := resources.Get "css/main.css" | resources.PostCSS }} {{ if
-hugo.IsProduction }} {{ $css = $css | minify | fingerprint }} {{ end }}
-<link rel="stylesheet" href="{{ $css.RelPermalink }}" />
+{{ $css := resources.Get "css/main.css" | resources.PostCSS }} {{ if hugo.IsProduction }} {{ $css = $css | minify |
+fingerprint }} {{ end }} <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
 ```
 
 **Why:** Hugo Pipes caches processed assets. The pipe chain is only invoked the first time, then loaded from cache on subsequent builds.
@@ -1371,8 +1350,7 @@ git commit -m "chore: add Hugo resources cache"
 </div>
 
 <!-- Use in layouts and shortcodes -->
-{{ partial "components/card.html" (dict "title" "My Title" "description"
-"Description") }}
+{{ partial "components/card.html" (dict "title" "My Title" "description" "Description") }}
 ```
 
 **Why:** Partials can be used in both layouts and shortcodes, promoting reusability.
@@ -1404,8 +1382,7 @@ touch content/blog/my-post.md
 <img src="/images/photo.jpg" alt="Photo" />
 
 <!-- ✅ Good: Resized and optimized -->
-{{ $image := resources.Get "images/photo.jpg" }} {{ $resized := $image.Resize
-"800x webp q85" }}
+{{ $image := resources.Get "images/photo.jpg" }} {{ $resized := $image.Resize "800x webp q85" }}
 <img src="{{ $resized.RelPermalink }}" alt="Photo" loading="lazy" />
 ```
 
@@ -1424,9 +1401,8 @@ touch content/blog/my-post.md
 
 ```html
 <!-- layouts/shortcodes/image.html -->
-{{ $src := .Get "src" }} {{ if not $src }} {{ errorf "image shortcode missing
-required 'src' parameter in %s" .Position }} {{ end }} {{ $alt := .Get "alt" |
-default "Image" }}
+{{ $src := .Get "src" }} {{ if not $src }} {{ errorf "image shortcode missing required 'src' parameter in %s" .Position
+}} {{ end }} {{ $alt := .Get "alt" | default "Image" }}
 <img src="{{ $src }}" alt="{{ $alt }}" />
 ```
 
@@ -1454,8 +1430,8 @@ module:
 **Cache busting with fingerprinting:**
 
 ```html
-{{ $js := resources.Get "js/main.js" | js.Build }} {{ if hugo.IsProduction }} {{
-$js = $js | minify | fingerprint }} {{ end }}
+{{ $js := resources.Get "js/main.js" | js.Build }} {{ if hugo.IsProduction }} {{ $js = $js | minify | fingerprint }} {{
+end }}
 <!-- Generates: /js/main.a1b2c3d4.min.js -->
 <script src="{{ $js.RelPermalink }}"></script>
 ```
@@ -1597,8 +1573,7 @@ static/
 
 ```html
 <!-- ✅ Good: Use RelPermalink -->
-{{ $css := resources.Get "css/main.css" | resources.PostCSS | minify |
-fingerprint }}
+{{ $css := resources.Get "css/main.css" | resources.PostCSS | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
 ```
 

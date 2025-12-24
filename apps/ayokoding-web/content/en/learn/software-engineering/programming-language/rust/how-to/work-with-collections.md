@@ -4,17 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000006
 description: Practical guide to using Vec, HashMap, HashSet, and other Rust collections
-tags:
-  [
-    "rust",
-    "how-to",
-    "collections",
-    "vec",
-    "hashmap",
-    "hashset",
-    "btree",
-    "iterators",
-  ]
+tags: ["rust", "how-to", "collections", "vec", "hashmap", "hashset", "btree", "iterators"]
 ---
 
 **Need to work with collections in Rust?** This guide covers vectors, hash maps, sets, and common collection operations with practical examples.

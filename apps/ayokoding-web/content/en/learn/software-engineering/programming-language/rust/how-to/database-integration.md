@@ -4,18 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000012
 description: Practical guide to integrating databases in Rust applications
-tags:
-  [
-    "rust",
-    "how-to",
-    "database",
-    "sqlx",
-    "diesel",
-    "orm",
-    "sql",
-    "postgres",
-    "sqlite",
-  ]
+tags: ["rust", "how-to", "database", "sqlx", "diesel", "orm", "sql", "postgres", "sqlite"]
 ---
 
 **Need to integrate a database in your Rust application?** This guide covers async database queries with SQLx, ORM with Diesel, migrations, connection pooling, and transactions.

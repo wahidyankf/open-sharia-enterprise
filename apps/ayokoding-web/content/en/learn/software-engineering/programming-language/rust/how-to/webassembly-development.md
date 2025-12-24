@@ -4,8 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000016
 description: Practical guide to compiling Rust to WebAssembly for browser applications
-tags:
-  ["rust", "how-to", "webassembly", "wasm", "web", "javascript", "wasm-bindgen"]
+tags: ["rust", "how-to", "webassembly", "wasm", "web", "javascript", "wasm-bindgen"]
 ---
 
 **Need to run Rust in the browser?** This guide covers compiling Rust to WebAssembly, JavaScript interop with wasm-bindgen, and deploying WASM applications.

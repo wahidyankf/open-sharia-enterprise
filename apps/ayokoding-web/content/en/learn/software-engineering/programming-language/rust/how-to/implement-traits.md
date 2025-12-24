@@ -4,16 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000007
 description: Practical guide to defining and implementing traits in Rust
-tags:
-  [
-    "rust",
-    "how-to",
-    "traits",
-    "generics",
-    "trait-bounds",
-    "associated-types",
-    "polymorphism",
-  ]
+tags: ["rust", "how-to", "traits", "generics", "trait-bounds", "associated-types", "polymorphism"]
 ---
 
 **Need to work with traits in Rust?** This guide covers defining traits, implementing standard traits, using trait bounds, and advanced trait patterns.

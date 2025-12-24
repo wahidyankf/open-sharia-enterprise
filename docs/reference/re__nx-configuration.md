@@ -62,11 +62,7 @@ Complete reference for Nx workspace configuration files, options, and settings.
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "production": [
-      "default",
-      "!{projectRoot}/**/*.spec.ts",
-      "!{projectRoot}/**/*.test.ts"
-    ],
+    "production": ["default", "!{projectRoot}/**/*.spec.ts", "!{projectRoot}/**/*.test.ts"],
     "sharedGlobals": ["{workspaceRoot}/tsconfig.base.json"]
   },
   "generators": {},
@@ -188,11 +184,7 @@ Define sets of files that affect cache invalidation.
 {
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "production": [
-      "default",
-      "!{projectRoot}/**/*.spec.ts",
-      "!{projectRoot}/**/*.test.ts"
-    ],
+    "production": ["default", "!{projectRoot}/**/*.spec.ts", "!{projectRoot}/**/*.test.ts"],
     "sharedGlobals": ["{workspaceRoot}/tsconfig.base.json"]
   }
 }

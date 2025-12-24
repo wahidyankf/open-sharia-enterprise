@@ -419,11 +419,7 @@ ts-lib-a ← ts-lib-b ← ts-lib-c ← ts-lib-d ← ts-lib-e
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "production": [
-      "default",
-      "!{projectRoot}/**/*.spec.ts",
-      "!{projectRoot}/**/*.test.ts"
-    ],
+    "production": ["default", "!{projectRoot}/**/*.spec.ts", "!{projectRoot}/**/*.test.ts"],
     "sharedGlobals": ["{workspaceRoot}/tsconfig.base.json"]
   },
   "generators": {},

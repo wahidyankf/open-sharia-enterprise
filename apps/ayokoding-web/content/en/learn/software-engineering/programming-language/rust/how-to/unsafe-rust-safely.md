@@ -4,8 +4,7 @@ date: 2025-12-19T00:00:00+07:00
 draft: false
 weight: 1000019
 description: Practical guide to writing safe unsafe Rust code
-tags:
-  ["rust", "how-to", "unsafe", "raw-pointers", "ffi", "safety", "invariants"]
+tags: ["rust", "how-to", "unsafe", "raw-pointers", "ffi", "safety", "invariants"]
 ---
 
 **Need to use unsafe Rust?** This guide covers when to use unsafe, raw pointers, safety invariants, and minimizing unsafe code.

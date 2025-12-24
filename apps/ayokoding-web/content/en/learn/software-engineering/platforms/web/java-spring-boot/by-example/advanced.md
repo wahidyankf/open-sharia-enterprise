@@ -5,16 +5,7 @@ draft: false
 weight: 1000003
 description: "Advanced Spring Boot through 20 examples: metrics, distributed tracing, resilience patterns, custom auto-configuration, and production deployment"
 tags:
-  [
-    "spring-boot",
-    "tutorial",
-    "by-example",
-    "advanced",
-    "microservices",
-    "observability",
-    "resilience",
-    "production",
-  ]
+  ["spring-boot", "tutorial", "by-example", "advanced", "microservices", "observability", "resilience", "production"]
 categories: ["learn"]
 ---
 
