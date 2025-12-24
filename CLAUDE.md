@@ -28,6 +28,7 @@ open-sharia-enterprise/
 │   ├── how-to/              # Problem-solving
 │   ├── reference/           # Technical reference
 │   ├── explanation/         # Conceptual
+│   │   ├── vision/         # Foundational purpose (WHY we exist)
 │   │   ├── principles/     # Foundational values
 │   │   ├── conventions/    # Documentation standards
 │   │   ├── development/    # Software practices
@@ -96,11 +97,13 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `backlog/` (future), `in-progress/` (active), `done/` (archived). Folder naming: `YYYY-MM-DD__[project-identifier]/`. See [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md) for details.
 
-## Repository Architecture: Five-Layer Hierarchy
+## Repository Architecture: Six-Layer Hierarchy
 
-The repository follows a five-layer architecture where each layer builds on the foundation of the layer above:
+The repository follows a six-layer architecture where each layer builds on the foundation of the layer above:
 
 ```
+Layer 0: Vision (WHY WE EXIST - foundational purpose)
+    ↓ inspires
 Layer 1: Principles (WHY - foundational values)
     ↓ governs
 Layer 2: Conventions (WHAT - documentation rules)
@@ -112,9 +115,13 @@ Layer 4: AI Agents (WHO - atomic task executors)
 Layer 5: Workflows (WHEN - multi-step processes)
 ```
 
+**Layer 0: Vision** (`docs/explanation/vision/`)
+
+Foundational purpose establishing WHY the project exists and WHAT change we seek. Vision: Democratize Shariah-compliant fintech, making ethical Islamic finance accessible to everyone. Solves the problem of Islamic finance locked in closed, expensive, proprietary systems. When we succeed, anyone can build, deploy, and benefit from open-source halal fintech. See [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) for complete vision.
+
 **Layer 1: Core Principles** (`docs/explanation/principles/`)
 
-Foundational values that govern all conventions and development practices. Six principles establish the "why" behind our standards: **Explicit Over Implicit** (transparent configuration, no magic), **Accessibility First** (WCAG compliance, universal design), **Simplicity Over Complexity** (flat structures, KISS/YAGNI), **Automation Over Manual** (git hooks, AI agents), **Progressive Disclosure** (layer complexity gradually), **No Time Estimates** (outcomes over duration). All conventions and development practices must respect these principles. See [Core Principles Index](./docs/explanation/principles/README.md) for complete details.
+Foundational values that serve the vision and govern all conventions and development practices. Six principles establish the "why" behind our standards: **Explicit Over Implicit** (transparent configuration, no magic), **Accessibility First** (WCAG compliance, universal design), **Simplicity Over Complexity** (flat structures, KISS/YAGNI), **Automation Over Manual** (git hooks, AI agents), **Progressive Disclosure** (layer complexity gradually), **No Time Estimates** (outcomes over duration). All principles trace back to serving the vision. See [Core Principles Index](./docs/explanation/principles/README.md) for complete details.
 
 **Layer 2: Conventions** (`docs/explanation/conventions/`)
 
@@ -134,11 +141,11 @@ Orchestrated multi-step processes that compose AI agents to achieve specific goa
 
 **Traceability Example:**
 
-Principle → Convention → Development → Agent → Workflow flow:
+Vision → Principle → Convention → Development → Agent → Workflow flow:
 
-- **Automation Over Manual** (principle) → **Content Quality Principles** (convention) → **Maker-Checker-Fixer Pattern** (development) → **docs-checker**, **docs-fixer** (agents) → **Maker-Checker-Fixer Workflow** (orchestrates agents)
-- **Accessibility First** (principle) → **Color Accessibility Convention** (defines palette) → **docs-maker**, **hugo-developer** (enforce palette in content)
-- **Explicit Over Implicit** (principle) → **AI Agents Convention** (explicit tool permissions) → **agent-maker** (validates tool lists during creation)
+- **Vision** (democratize Islamic fintech) → **Automation Over Manual** (principle) → **Content Quality Principles** (convention) → **Maker-Checker-Fixer Pattern** (development) → **docs-checker**, **docs-fixer** (agents) → **Maker-Checker-Fixer Workflow** (orchestrates agents)
+- **Vision** (accessible to everyone) → **Accessibility First** (principle) → **Color Accessibility Convention** (defines palette) → **docs-maker**, **hugo-developer** (enforce palette in content)
+- **Vision** (transparent, verifiable) → **Explicit Over Implicit** (principle) → **AI Agents Convention** (explicit tool permissions) → **agent-maker** (validates tool lists during creation)
 
 ## Documentation Standards
 
@@ -208,7 +215,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (22 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
+For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (22 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
 
 ## AI Agent Standards
 

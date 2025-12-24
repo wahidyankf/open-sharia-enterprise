@@ -9,12 +9,26 @@ tags:
   - transparency
   - clarity
 created: 2025-12-15
-updated: 2025-12-15
+updated: 2025-12-24
 ---
 
 # Explicit Over Implicit
 
 Choose **explicit composition and configuration** over magic, convenience, and hidden behavior. Code and configuration should be transparent and understandable without requiring deep knowledge of defaults or conventions.
+
+## 🌟 Vision Supported
+
+This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of creating transparent, verifiable Shariah-compliant fintech that anyone can audit and trust.
+
+**How this principle serves the vision:**
+
+- **Verifiable Shariah Compliance**: Explicit code makes Islamic finance logic visible and auditable. Anyone can verify implementations follow Shariah principles, not just claim they do
+- **Builds Trust**: Transparent configuration and behavior build confidence in halal fintech. No hidden assumptions or "magic" that could violate Islamic principles
+- **Educational Value**: Explicit implementations serve as learning resources. Developers understand HOW Shariah compliance is achieved, not just THAT it's claimed
+- **Community Auditing**: Open, explicit code enables peer review by both developers and Islamic scholars. Shared verification strengthens reliability
+- **Alignment with Islamic Values**: Transparency (Amanah) and honesty are Islamic values. Explicit-over-implicit embodies these values in code
+
+**Vision alignment**: Democratizing Islamic fintech requires trust. Explicit, transparent implementations enable independent verification - essential when financial transactions must be Shariah-compliant. No black boxes in halal finance.
 
 ## 🎯 What
 

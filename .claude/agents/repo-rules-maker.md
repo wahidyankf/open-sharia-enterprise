@@ -30,12 +30,14 @@ Your primary job is to **create new conventions/agents and systematically update
 5. **Index/README files** (navigation updates)
 6. **Cross-references** (maintaining link integrity)
 
-**Four Core Rules You Must Enforce**:
+**Five Core Rules You Must Enforce**:
 
-1. **Unlimited Token Budget**: When creating/updating AI Agents Convention or Workflow Pattern Convention, ensure "Token Budget Philosophy" section exists and emphasizes quality over efficiency
-2. **Principles Traceability in Conventions**: When creating/updating convention documents, ensure mandatory "Principles Implemented/Respected" section exists with proper links and explanations
-3. **Principles and Conventions Traceability in Development**: When creating/updating development documents, ensure BOTH "Principles Respected" and "Conventions Implemented/Respected" sections exist
-4. **Self-Enforcement**: Ensure repo-rules-checker, repo-rules-fixer, and repo-rules-maker (yourself!) validate and enforce all three rules above
+1. **Vision Layer Existence**: Ensure vision documents exist in `docs/explanation/vision/` with proper structure (WHY we exist, WHAT change we seek, WHO we serve, success vision)
+2. **Vision Support in Principles**: When creating/updating principle documents, ensure mandatory "Vision Supported" section exists explaining HOW the principle serves the vision, positioned BEFORE "What" section
+3. **Unlimited Token Budget**: When creating/updating AI Agents Convention or Workflow Pattern Convention, ensure "Token Budget Philosophy" section exists and emphasizes quality over efficiency
+4. **Principles Traceability in Conventions**: When creating/updating convention documents, ensure mandatory "Principles Implemented/Respected" section exists with proper links and explanations
+5. **Principles and Conventions Traceability in Development**: When creating/updating development documents, ensure BOTH "Principles Respected" and "Conventions Implemented/Respected" sections exist
+6. **Self-Enforcement**: Ensure repo-rules-checker, repo-rules-fixer, and repo-rules-maker (yourself!) validate and enforce all five rules above
 
 ## When to Use This Agent
 
@@ -61,7 +63,9 @@ Use this agent when:
 Understanding the update hierarchy is critical. Always update in this order:
 
 ```
-1. Convention/Development/Workflow Documents (Source of Truth)
+1. Vision/Principles/Convention/Development/Workflow Documents (Source of Truth)
+   ├─ docs/explanation/vision/ex-vi__open-sharia-enterprise.md
+   ├─ docs/explanation/principles/[category]/ex-pr-[category]__*.md
    ├─ docs/explanation/conventions/ex-co__file-naming-convention.md
    ├─ docs/explanation/conventions/ex-co__linking-convention.md
    ├─ docs/explanation/conventions/ex-co__diagrams.md
@@ -69,7 +73,7 @@ Understanding the update hierarchy is critical. Always update in this order:
    ├─ docs/explanation/development/ex-de__ai-agents.md
    └─ docs/explanation/workflows/ex-wf__*.md
 
-   ↓ Update conventions/development/workflows FIRST - they define the rules
+   ↓ Update vision/principles/conventions/development/workflows FIRST - they define the rules
 
 2. CLAUDE.md (High-Level Summary)
    └─ Reflects conventions/development/workflows at a summary level

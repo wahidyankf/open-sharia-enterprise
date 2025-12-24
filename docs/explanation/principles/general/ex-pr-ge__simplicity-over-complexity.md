@@ -10,12 +10,26 @@ tags:
   - yagni
   - over-engineering
 created: 2025-12-15
-updated: 2025-12-15
+updated: 2025-12-24
 ---
 
 # Simplicity Over Complexity
 
 Favor **minimum viable abstraction** and avoid over-engineering. Start simple and add complexity **only when proven necessary** through actual use and pain points.
+
+## 🌟 Vision Supported
+
+This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant fintech by lowering barriers to entry for developers worldwide.
+
+**How this principle serves the vision:**
+
+- **Accessible to All Skill Levels**: Simple code and flat structures mean junior developers can contribute, not just senior engineers. Lowers the knowledge barrier to building Islamic fintech
+- **Faster Learning Curve**: Developers new to Islamic finance can understand implementations quickly without fighting unnecessary complexity. Speeds adoption and contribution
+- **Easier Auditing**: Simple, direct code makes Shariah compliance easier to verify. Transparency through simplicity builds trust in halal fintech
+- **Lower Maintenance Costs**: Simple systems require less expertise to maintain. Makes sustainable open-source Islamic fintech viable for the long term
+- **Focus on Islamic Finance Logic**: By avoiding technical over-engineering, developers spend time understanding Shariah principles, not wrestling with complex abstractions
+
+**Vision alignment**: When building Shariah-compliant fintech is simple and straightforward, more developers will choose it. Simplicity democratizes access - both to building and to understanding Islamic finance technology.
 
 ## 🎯 What
 

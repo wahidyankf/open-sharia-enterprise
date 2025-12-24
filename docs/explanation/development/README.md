@@ -16,7 +16,7 @@ updated: 2025-12-24
 
 Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
-**Governance**: All development practices in this directory implement and embody the [Core Principles](../principles/README.md) and implement/enforce [Documentation Conventions](../conventions/README.md). Each practice MUST include TWO mandatory sections: "Principles Respected" (traces to foundational values) and "Conventions Implemented/Respected" (traces to documentation standards). Both sections require working links and explanations of HOW the practice implements/respects them. See [AI Agents Convention](./ex-de__ai-agents.md) and [Maker-Checker-Fixer Pattern](./ex-de__maker-checker-fixer-pattern.md) for examples.
+**Governance**: All development practices in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md), implement the [Core Principles](../principles/README.md), and implement/enforce [Documentation Conventions](../conventions/README.md). Each practice MUST include TWO mandatory sections: "Principles Respected" (traces to foundational values) and "Conventions Implemented/Respected" (traces to documentation standards). Both sections require working links and explanations of HOW the practice implements/respects them. This creates the traceability chain: Vision → Principles → Development Practices. See [AI Agents Convention](./ex-de__ai-agents.md) and [Maker-Checker-Fixer Pattern](./ex-de__maker-checker-fixer-pattern.md) for examples.
 
 ## 🎯 Scope
 

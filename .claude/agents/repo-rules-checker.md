@@ -51,19 +51,22 @@ This agent produces TWO outputs:
 
 Your primary job is to verify that the following files and directories are internally consistent, aligned with each other, and free of unnecessary duplication:
 
-1. **Core Principles** - All files in `docs/explanation/principles/` (foundation layer)
-2. **CLAUDE.md** - Project guidance for all agents
-3. **Agent definitions** - All files in `.claude/agents/` (including this file)
-4. **Convention documents** - All files in `docs/explanation/conventions/`
-5. **Development practices** - All files in `docs/explanation/development/`
-6. **Workflow definitions** - All files in `docs/explanation/workflows/`
-7. **README files** - All `README.md` files in the `docs/` directory
-8. **Root README** - `README.md` in the project root
+1. **Vision** - All files in `docs/explanation/vision/` (foundational purpose layer)
+2. **Core Principles** - All files in `docs/explanation/principles/` (values layer)
+3. **CLAUDE.md** - Project guidance for all agents
+4. **Agent definitions** - All files in `.claude/agents/` (including this file)
+5. **Convention documents** - All files in `docs/explanation/conventions/`
+6. **Development practices** - All files in `docs/explanation/development/`
+7. **Workflow definitions** - All files in `docs/explanation/workflows/`
+8. **README files** - All `README.md` files in the `docs/` directory
+9. **Root README** - `README.md` in the project root
 
-**CRITICAL - Validation Hierarchy**: You must validate that the five-layer documentation hierarchy is properly connected:
+**CRITICAL - Validation Hierarchy**: You must validate that the six-layer documentation hierarchy is properly connected:
 
 ```
-Layer 1: Core Principles (govern all)
+Layer 0: Vision (inspires all)
+    ↓
+Layer 1: Core Principles (serve vision, govern all)
     ↓
 Layer 2: Conventions (implement principles)
     ↓
@@ -84,16 +87,36 @@ You must also identify duplicate or significantly overlapping content that:
 
 Systematically verify internal consistency, cross-document alignment, factual correctness, completeness, principle adherence, and identify both extractable (cross-file) and condensable (within-file) duplications. Use the detailed verification checklist below to ensure thorough coverage.
 
-**CRITICAL - Four Core Validation Rules**:
+**CRITICAL - Five Core Validation Rules**:
 
-1. **Unlimited Token Budget**: Validate that AI Agents Convention and Workflow Pattern Convention document unlimited token budget mindset (quality over efficiency)
-2. **Principles Traceability in Conventions**: Validate ALL convention documents have mandatory "Principles Implemented/Respected" section
-3. **Principles and Conventions Traceability in Development**: Validate ALL development documents have BOTH "Principles Respected" and "Conventions Implemented/Respected" sections
-4. **repo-rules-\* Self-Validation**: Ensure repo-rules-checker (this agent), repo-rules-fixer, and repo-rules-maker enforce all three rules above
+1. **Vision Existence and Structure**: Validate that vision documents exist in `docs/explanation/vision/` with proper structure (WHY we exist, WHAT change we seek, WHO we serve, success vision)
+2. **Vision Support in Principles**: Validate ALL principle documents have mandatory "Vision Supported" section explaining HOW the principle serves the vision
+3. **Unlimited Token Budget**: Validate that AI Agents Convention and Workflow Pattern Convention document unlimited token budget mindset (quality over efficiency)
+4. **Principles Traceability in Conventions**: Validate ALL convention documents have mandatory "Principles Implemented/Respected" section
+5. **Principles and Conventions Traceability in Development**: Validate ALL development documents have BOTH "Principles Respected" and "Conventions Implemented/Respected" sections
+6. **repo-rules-\* Self-Validation**: Ensure repo-rules-checker (this agent), repo-rules-fixer, and repo-rules-maker enforce all five rules above
 
 ## Verification Checklist
 
 When running a consistency check, systematically verify:
+
+### Vision Directory Structure
+
+- [ ] `docs/explanation/vision/` directory exists
+- [ ] `docs/explanation/vision/README.md` exists
+- [ ] At least one vision document exists (e.g., `ex-vi__open-sharia-enterprise.md`)
+
+### Vision Document Structure
+
+For each vision document in `docs/explanation/vision/`:
+
+- [ ] Has proper frontmatter (title, description, category: explanation, subcategory: vision, created, updated)
+- [ ] Contains "Why We Exist" section
+- [ ] Contains "The Problem We Solve" section
+- [ ] Contains "The Change We Seek" section
+- [ ] Contains "Target Audience" section (who we serve)
+- [ ] Contains "Success Vision" section (what the world looks like when we succeed)
+- [ ] Contains "Islamic Foundation" section (if applicable to Open Sharia Enterprise)
 
 ### Principles Directory Structure
 
@@ -109,6 +132,10 @@ When running a consistency check, systematically verify:
   - `ex-pr-se__` for `principles/software-engineering/`
 - [ ] All principle files have proper frontmatter (title, description, category, subcategory, tags, created, updated)
 - [ ] Subcategory field is `principles` (not `principle`)
+- [ ] **CRITICAL**: ALL principle documents have "Vision Supported" section explaining HOW the principle serves the vision
+- [ ] Vision Supported section includes link to vision document
+- [ ] Vision Supported section explains concrete ways the principle enables the vision
+- [ ] Vision Supported section positioned BEFORE the main "What" section
 
 ### Principles Alignment
 

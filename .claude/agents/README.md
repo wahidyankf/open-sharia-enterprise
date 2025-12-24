@@ -2,9 +2,9 @@
 
 This directory contains specialized AI agents for repository maintenance and documentation tasks. Each agent has specific responsibilities and tools to ensure consistency, quality, and adherence to project conventions.
 
-**Hierarchy Position**: AI agents are the **implementation layer** that enforces conventions (from `docs/explanation/conventions/`) and development practices (from `docs/explanation/development/`). Each agent implements and validates specific rules, which ultimately trace back to [Core Principles](../docs/explanation/principles/README.md).
+**Hierarchy Position**: AI agents are the **implementation layer** (Layer 4 in the six-layer hierarchy) that enforces conventions (Layer 2) and development practices (Layer 3). Each agent implements and validates specific rules, which ultimately trace back through [Core Principles](../docs/explanation/principles/README.md) (Layer 1) to the [Vision](../docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (Layer 0) of democratizing Shariah-compliant fintech.
 
-**Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Principle → Convention/Practice → Agent.
+**Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Vision → Principle → Convention/Practice → Agent.
 
 **Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../docs/explanation/development/ex-de__ai-agents.md#token-budget-philosophy) for complete details.
 
@@ -768,6 +768,8 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 1: Color Accessibility
 
+**Vision**: [Democratize Shariah-compliant fintech](../docs/explanation/vision/ex-vi__open-sharia-enterprise.md) - accessible to everyone
+
 **Principle**: [Accessibility First](../docs/explanation/principles/content/ex-pr-co__accessibility-first.md)
 
 **Convention**: [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md)
@@ -781,6 +783,8 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 2: Explicit Configuration
 
+**Vision**: [Transparent, verifiable Islamic finance](../docs/explanation/vision/ex-vi__open-sharia-enterprise.md)
+
 **Principle**: [Explicit Over Implicit](../docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md)
 
 **Practice**: [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md)
@@ -792,6 +796,8 @@ Understanding which agents enforce which conventions helps trace decisions from 
 - **repo-rules-fixer**: Adds missing frontmatter fields when validated by user
 
 ### Example 3: Automation
+
+**Vision**: [Scale Islamic fintech knowledge globally](../docs/explanation/vision/ex-vi__open-sharia-enterprise.md)
 
 **Principle**: [Automation Over Manual](../docs/explanation/principles/software-engineering/ex-pr-se__automation-over-manual.md)
 
