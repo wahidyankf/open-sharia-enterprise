@@ -1,5 +1,5 @@
 ---
-name: ayokoding-content-by-example-maker
+name: ayokoding-web-by-example-maker
 description: Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses four-part format (explanation, diagram, annotated code, takeaway) with self-contained examples.
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 model: sonnet
@@ -8,7 +8,7 @@ created: 2025-12-25
 updated: 2025-12-25
 ---
 
-# ayokoding-content-by-example-maker Agent
+# ayokoding-web-by-example-maker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -59,9 +59,9 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- Creating general narrative tutorials (use ayokoding-content-general-maker instead)
-- Validating by-example content (use ayokoding-content-by-example-checker instead)
-- Fixing by-example content issues (use ayokoding-content-by-example-fixer instead)
+- Creating general narrative tutorials (use ayokoding-web-general-maker instead)
+- Validating by-example content (use ayokoding-web-by-example-checker instead)
+- Fixing by-example content issues (use ayokoding-web-by-example-fixer instead)
 - Creating content for ose-platform-web (different site, different agent)
 
 ## By-Example Tutorial Characteristics
@@ -829,9 +829,9 @@ func main() {
 
 **Related Agents:**
 
-- [ayokoding-content-by-example-checker](./ayokoding-content-by-example-checker.md) - Validates by-example content quality
-- [ayokoding-content-by-example-fixer](./ayokoding-content-by-example-fixer.md) - Applies validated fixes
-- [ayokoding-content-general-maker](./ayokoding-content-general-maker.md) - Creates general ayokoding content (not by-example)
+- [ayokoding-web-by-example-checker](./ayokoding-web-by-example-checker.md) - Validates by-example content quality
+- [ayokoding-web-by-example-fixer](./ayokoding-web-by-example-fixer.md) - Applies validated fixes
+- [ayokoding-web-general-maker](./ayokoding-web-general-maker.md) - Creates general ayokoding content (not by-example)
 
 **External Resources:**
 

@@ -283,7 +283,7 @@ Create comprehensive report in `generated-reports/`:
 
 ## False Positives Detected (3)
 
-**`.claude/agents/ayokoding-content-general-checker.md` - Frontmatter comment**
+**`.claude/agents/ayokoding-web-general-checker.md` - Frontmatter comment**
 
 - **Checker finding:** Agent frontmatter contains YAML comment (# symbol)
 - **Re-validation:** Extracted frontmatter, no # found (only in markdown body)

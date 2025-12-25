@@ -7,7 +7,7 @@
 The user plans to scale the repository's governance architecture with these specific objectives:
 
 1. **Scale agent ecosystem significantly**
-   - Current: 34+ agents across 8 families (repo-rules, docs, ayokoding-content, ose-platform-web-content, readme, plan, docs-tutorial, workflow)
+   - Current: 34+ agents across 8 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial, workflow)
    - Future: Expect significant growth as new domains added
    - Need: System that scales without proportional complexity increase
 
@@ -32,10 +32,10 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Evidence:**
 
-- **ayokoding-content family**: 3,349 total lines
-  - ayokoding-content-checker: 1,644 lines
-  - ayokoding-content-maker: 1,090 lines
-  - ayokoding-content-fixer: 615 lines
+- **ayokoding-web family**: 3,349 total lines
+  - ayokoding-web-general-checker: 1,644 lines
+  - ayokoding-web-general-maker: 1,090 lines
+  - ayokoding-web-general-fixer: 615 lines
 
 - **repo-rules family**: 2,314 total lines
   - repo-rules-checker: 953 lines
@@ -65,7 +65,7 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Evidence:**
 
-- False positive reports from ayokoding-content-fixer
+- False positive reports from ayokoding-web-general-fixer
 - Suggestions to improve checker accuracy (documented in fix reports)
 - Manual verification needed for subjective rule interpretations
 
@@ -94,7 +94,7 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Current State:**
 
-- ayokoding-content-checker: 1,644 lines (approaching complex limit)
+- ayokoding-web-general-checker: 1,644 lines (approaching complex limit)
 - docs-checker: 1,185 lines (standard, but growing)
 - repo-rules-checker: 953 lines (standard)
 
@@ -108,7 +108,7 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Target Reduction Through Policy Centralization:**
 
-- ayokoding-content family: 3,349 → ~1,400 lines (58% reduction)
+- ayokoding-web family: 3,349 → ~1,400 lines (58% reduction)
 - repo-rules family: 2,314 → ~1,000 lines (57% reduction)
 - docs family: ~1,800 → ~800 lines (56% reduction)
 - **Overall target**: 50-58% line reduction per family
@@ -340,7 +340,7 @@ The user plans to scale the repository's governance architecture with these spec
 
 - Total agent lines: Baseline → -50% (target)
 - repo-rules family: 2,314 → ~1,000 lines (57%)
-- ayokoding-content family: 3,349 → ~1,400 lines (58%)
+- ayokoding-web family: 3,349 → ~1,400 lines (58%)
 
 **Accuracy:**
 

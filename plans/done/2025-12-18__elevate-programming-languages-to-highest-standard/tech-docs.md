@@ -91,9 +91,9 @@ graph LR
 
 ### Validation Tools
 
-- **ayokoding-content-checker**: Structural and quality validation
-- **ayokoding-facts-checker**: Factual accuracy verification
-- **ayokoding-link-checker**: Link integrity validation
+- **ayokoding-web-general-checker**: Structural and quality validation
+- **ayokoding-web-facts-checker**: Factual accuracy verification
+- **ayokoding-web-link-checker**: Link integrity validation
 - **Prettier**: JSON array format enforcement for tags
 
 ### Development Tools
@@ -314,9 +314,9 @@ graph LR
 
 **Activities**:
 
-1. Run ayokoding-content-checker (structural validation)
-2. Run ayokoding-facts-checker (factual verification)
-3. Run ayokoding-link-checker (link integrity)
+1. Run ayokoding-web-general-checker (structural validation)
+2. Run ayokoding-web-facts-checker (factual verification)
+3. Run ayokoding-web-link-checker (link integrity)
 4. Fix all identified issues
 5. Manual quality review
 6. Test all code examples
@@ -532,9 +532,9 @@ Three-tier validation ensures content quality:
 ```mermaid
 graph TD
     A[Content Creation] --> B{Tier 1: Automated}
-    B -->|ayokoding-content-checker| C[Structure Valid?]
-    B -->|ayokoding-facts-checker| D[Facts Correct?]
-    B -->|ayokoding-link-checker| E[Links Working?]
+    B -->|ayokoding-web-general-checker| C[Structure Valid?]
+    B -->|ayokoding-web-facts-checker| D[Facts Correct?]
+    B -->|ayokoding-web-link-checker| E[Links Working?]
 
     C -->|Pass| F{Tier 2: Code Examples}
     D -->|Pass| F
@@ -576,7 +576,7 @@ graph TD
 
 #### Tier 1: Automated Validation
 
-**ayokoding-content-checker** validates:
+**ayokoding-web-general-checker** validates:
 
 - File naming conventions
 - Frontmatter structure
@@ -588,7 +588,7 @@ graph TD
 - Mermaid diagram syntax
 - Color palette compliance
 
-**ayokoding-facts-checker** verifies:
+**ayokoding-web-facts-checker** verifies:
 
 - Command syntax correctness
 - Version number accuracy
@@ -596,7 +596,7 @@ graph TD
 - Standard library references
 - Language feature accuracy
 
-**ayokoding-link-checker** validates:
+**ayokoding-web-link-checker** validates:
 
 - Internal links point to existing files
 - External links return 200 status
@@ -760,9 +760,9 @@ Elevate [Language] content to highest standard per Programming Language Content 
 
 ## Validation
 
-- ✅ ayokoding-content-checker: PASS
-- ✅ ayokoding-facts-checker: PASS
-- ✅ ayokoding-link-checker: PASS
+- ✅ ayokoding-web-general-checker: PASS
+- ✅ ayokoding-web-facts-checker: PASS
+- ✅ ayokoding-web-link-checker: PASS
 - ✅ Code examples tested on macOS/Linux/Windows
 - ✅ Manual quality review complete
 
@@ -950,7 +950,7 @@ interface Issue {
 
 ### AI Agents
 
-- [ayokoding-content-maker](../../../.claude/agents/ayokoding-content-maker.md) - Content creation agent
-- [ayokoding-content-checker](../../../.claude/agents/ayokoding-content-checker.md) - Validation agent
-- [ayokoding-facts-checker](../../../.claude/agents/ayokoding-facts-checker.md) - Fact verification agent
-- [ayokoding-link-checker](../../../.claude/agents/ayokoding-link-checker.md) - Link validation agent
+- [ayokoding-web-general-maker](../../../.claude/agents/ayokoding-web-general-maker.md) - Content creation agent
+- [ayokoding-web-general-checker](../../../.claude/agents/ayokoding-web-general-checker.md) - Validation agent
+- [ayokoding-web-facts-checker](../../../.claude/agents/ayokoding-web-facts-checker.md) - Fact verification agent
+- [ayokoding-web-link-checker](../../../.claude/agents/ayokoding-web-link-checker.md) - Link validation agent

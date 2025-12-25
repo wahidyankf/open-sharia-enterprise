@@ -752,7 +752,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 - Indonesian/English consistency
 - Educational sequences are logical
 
-**Agent:** `ayokoding-facts-checker`, `ayokoding-facts-fixer`
+**Agent:** `ayokoding-web-facts-checker`, `ayokoding-web-facts-fixer`
 
 ### Hugo Platform Content (ose-platform-web)
 
@@ -790,7 +790,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 **Implementation Agents:**
 
 - `docs-checker.md` - Documentation factual accuracy validator (implements this convention for `docs/`)
-- `ayokoding-facts-checker.md` - Educational content factual validator (implements this convention for ayokoding-web)
+- `ayokoding-web-facts-checker.md` - Educational content factual validator (implements this convention for ayokoding-web)
 - `plan-checker.md` - Plan accuracy validator (implements portions of this convention)
 
 **Quality Standards:**

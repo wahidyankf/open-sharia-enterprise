@@ -502,16 +502,16 @@ Use Blue (#0173B2) for foundational concepts, Orange (#DE8F05) for Kotlin-specif
 
 **Phase 5: Validation and Quality Assurance**
 
-1. **ayokoding-content-checker**: Validate Hugo conventions, structure compliance
-2. **ayokoding-facts-checker**: Verify all code examples, commands, versions
-3. **ayokoding-link-checker**: Validate all internal and external links
+1. **ayokoding-web-general-checker**: Validate Hugo conventions, structure compliance
+2. **ayokoding-web-facts-checker**: Verify all code examples, commands, versions
+3. **ayokoding-web-link-checker**: Validate all internal and external links
 4. **Manual review**: Pedagogical flow, clarity, completeness
 
 **Phase 6: Deployment**
 
 1. Final validation passes
 2. Commit to main branch (Trunk Based Development)
-3. Run ayokoding-deployer for production deployment
+3. Run ayokoding-web-deployer for production deployment
 4. Verify live on ayokoding.com
 5. Monitor for feedback
 
@@ -526,9 +526,9 @@ Use Blue (#0173B2) for foundational concepts, Orange (#DE8F05) for Kotlin-specif
 
 **Content Quality Testing**:
 
-- Automated: ayokoding-content-checker for Hugo conventions
-- Automated: ayokoding-facts-checker for factual accuracy
-- Automated: ayokoding-link-checker for broken links
+- Automated: ayokoding-web-general-checker for Hugo conventions
+- Automated: ayokoding-web-facts-checker for factual accuracy
+- Automated: ayokoding-web-link-checker for broken links
 - Manual: Pedagogical review for flow and clarity
 
 **Cross-Reference Testing**:

@@ -543,7 +543,7 @@ Check that content was offloaded to the appropriate folder:
 
 **CRITICAL**: ALL \*-checker agents MUST write audit reports to `generated-reports/`. This is a hard requirement with NO EXCEPTIONS.
 
-- [ ] **All checker agents have Write + Bash tools**: repo-rules-checker, ayokoding-content-general-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker
+- [ ] **All checker agents have Write + Bash tools**: repo-rules-checker, ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker
 - [ ] **All checker agents specify generated-reports/ output**: Each checker explicitly documents it writes to `generated-reports/` (not conversation-only)
 - [ ] **All checker agents use correct naming pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md` (agent name without -checker suffix)
 - [ ] **All checker agents generate timestamps with Bash**: Use `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"` (no placeholder "00-00")
@@ -812,9 +812,9 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 
 - `.claude/agents/README.md`
 - `.claude/agents/agent-maker.md`
-- `.claude/agents/ayokoding-deployer.md`
-- `.claude/agents/ayokoding-content-general-maker.md`
-- `.claude/agents/ayokoding-content-general-checker.md`
+- `.claude/agents/ayokoding-web-deployer.md`
+- `.claude/agents/ayokoding-web-general-maker.md`
+- `.claude/agents/ayokoding-web-general-checker.md`
 - `.claude/agents/ose-platform-web-deployer.md`
 - `.claude/agents/ose-platform-web-content-maker.md`
 - `.claude/agents/ose-platform-web-content-checker.md`

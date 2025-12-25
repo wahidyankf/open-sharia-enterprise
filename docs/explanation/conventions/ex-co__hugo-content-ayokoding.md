@@ -1106,8 +1106,8 @@ title: Business # WRONG! Too generic (missing context)
 
 **Agent Responsibilities**:
 
-- `ayokoding-structure-maker` agent proactively modifies weights following this system when making intentional structural changes
-- `ayokoding-structure-checker` agent validates compliance with this system for ALL `_index.md` files
+- `ayokoding-web-structure-maker` agent proactively modifies weights following this system when making intentional structural changes
+- `ayokoding-web-structure-checker` agent validates compliance with this system for ALL `_index.md` files
 - Violations are flagged as CRITICAL errors in audit reports
 
 #### Cookbook Weight Ordering Requirement
@@ -1269,7 +1269,7 @@ Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini mem
 
 ### Optional Topic-Level Diátaxis Structure
 
-**Status**: OPTIONAL pattern (not required, not validated by ayokoding-content-general-checker)
+**Status**: OPTIONAL pattern (not required, not validated by ayokoding-web-general-checker)
 
 Topics in ayokoding-web MAY optionally organize content using Diátaxis framework at the topic level.
 
@@ -1638,7 +1638,7 @@ Examples:
 
 **ayokoding-cli Generates Absolute Paths**:
 
-The `ayokoding-cli` tool (used by `ayokoding-navigation-maker` agent) automatically generates absolute paths in navigation listings:
+The `ayokoding-cli` tool (used by `ayokoding-web-navigation-maker` agent) automatically generates absolute paths in navigation listings:
 
 **Location**: `apps/ayokoding-cli/internal/navigation/`
 
@@ -1675,8 +1675,8 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 
 **Automated Validation**:
 
-- `ayokoding-link-checker` agent validates link format and targets
-- `ayokoding-structure-checker` agent validates navigation structure
+- `ayokoding-web-link-checker` agent validates link format and targets
+- `ayokoding-web-structure-checker` agent validates navigation structure
 
 ### Common Mistakes
 
@@ -1738,7 +1738,7 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 
 **After 2025-12-21**: All navigation links use absolute paths with language prefixes, ensuring consistent link resolution from any page context.
 
-**If you encounter relative paths**: Update them to absolute paths with language prefix. Run `ayokoding-navigation-maker` agent to regenerate navigation listings automatically.
+**If you encounter relative paths**: Update them to absolute paths with language prefix. Run `ayokoding-web-navigation-maker` agent to regenerate navigation listings automatically.
 
 ---
 
@@ -2021,9 +2021,9 @@ static/
 
 **Related AI Agents**:
 
-- [ayokoding-content-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-general-maker.md) - Creates general ayokoding-web content
-- [ayokoding-content-by-example-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-by-example-maker.md) - Creates by-example tutorials
-- [ayokoding-content-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-general-checker.md) - Validates general ayokoding-web content
-- [ayokoding-content-by-example-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-by-example-checker.md) - Validates by-example tutorials
-- [ayokoding-link-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-link-checker.md) - Validates links in ayokoding-web
-- [ayokoding-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-deployer.md) - Deploys ayokoding-web to production
+- [ayokoding-web-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-general-maker.md) - Creates general ayokoding-web content
+- [ayokoding-web-by-example-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-by-example-maker.md) - Creates by-example tutorials
+- [ayokoding-web-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-general-checker.md) - Validates general ayokoding-web content
+- [ayokoding-web-by-example-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-by-example-checker.md) - Validates by-example tutorials
+- [ayokoding-web-link-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-link-checker.md) - Validates links in ayokoding-web
+- [ayokoding-web-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-deployer.md) - Deploys ayokoding-web to production

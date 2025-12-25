@@ -78,9 +78,9 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 - ✅ All 5 languages have exactly 23 how-to guides
 - ✅ All 5 languages have 5,000+ line cookbooks
-- ✅ All content passes ayokoding-content-checker validation
-- ✅ All content passes ayokoding-facts-checker verification
-- ✅ All links validated by ayokoding-link-checker
+- ✅ All content passes ayokoding-web-general-checker validation
+- ✅ All content passes ayokoding-web-facts-checker verification
+- ✅ All links validated by ayokoding-web-link-checker
 - ✅ All Mermaid diagrams use color-blind friendly palette
 - ✅ Cross-references properly connect related content
 - ✅ No time estimates in any educational content

@@ -1,5 +1,5 @@
 ---
-name: ayokoding-structure-checker
+name: ayokoding-web-structure-checker
 description: Expert at validating ALL ayokoding-web content files including navigation STRUCTURE existence (not listings), weight conventions across all markdown files, overview completeness, and pedagogical progression. Generates audit reports to generated-reports/.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -8,7 +8,7 @@ created: 2025-12-20
 updated: 2025-12-20
 ---
 
-# ayokoding-structure-checker Agent
+# ayokoding-web-structure-checker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -31,7 +31,7 @@ Your primary job is to **validate the structural integrity and navigation archit
 6. **Checking** ALL content files follow pedagogical ordering (tutorials, how-to guides, reference files, etc.)
 7. **Assessing** pedagogical progression for non-conventional weights (must not violate conventions)
 
-**NOTE**: Navigation listing generation is handled by `ayokoding-navigation-maker`. This agent validates that the STRUCTURE exists and is correct (depth, ordering, completeness), not that the listings are perfectly generated.
+**NOTE**: Navigation listing generation is handled by `ayokoding-web-navigation-maker`. This agent validates that the STRUCTURE exists and is correct (depth, ordering, completeness), not that the listings are perfectly generated.
 
 **Validation Scope**: ALL markdown files in `apps/ayokoding-web/content/en/` and `apps/ayokoding-web/content/id/`
 
@@ -51,12 +51,12 @@ Your primary job is to **validate the structural integrity and navigation archit
 
 **CRITICAL**: This agent generates audit report files to `generated-reports/` on EVERY run.
 
-**Report Output**: `generated-reports/ayokoding-structure__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report Output**: `generated-reports/ayokoding-web-structure__{YYYY-MM-DD--HH-MM}__audit.md`
 
 This agent produces TWO outputs:
 
 1. **Audit Report File** (always generated):
-   - Location: `generated-reports/ayokoding-structure__{YYYY-MM-DD--HH-MM}__audit.md`
+   - Location: `generated-reports/ayokoding-web-structure__{YYYY-MM-DD--HH-MM}__audit.md`
    - Content: Full detailed validation results with all findings
    - Timestamp: Validation start time in UTC+7 (YYYY-MM-DD--HH-MM format)
    - Purpose: Persistent record for historical tracking and detailed review
@@ -79,10 +79,10 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- Content quality validation (use ayokoding-content-general-checker instead)
-- Factual accuracy validation (use ayokoding-facts-checker instead)
-- Link validation (use ayokoding-link-checker instead)
-- Frontmatter YAML syntax validation (use ayokoding-content-general-checker instead)
+- Content quality validation (use ayokoding-web-general-checker instead)
+- Factual accuracy validation (use ayokoding-web-facts-checker instead)
+- Link validation (use ayokoding-web-link-checker instead)
+- Frontmatter YAML syntax validation (use ayokoding-web-general-checker instead)
 
 ## ayokoding-web Content Architecture
 
@@ -657,7 +657,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 4. **Finalize** with completion status and summary statistics
 5. **Never** buffer findings in memory - write immediately after each validation
 
-Report file: `generated-reports/ayokoding-structure__{YYYY-MM-DD--HH-MM}__audit.md`
+Report file: `generated-reports/ayokoding-web-structure__{YYYY-MM-DD--HH-MM}__audit.md`
 
 This progressive approach ensures findings persist even if context is compacted during long audits (hundreds of files).
 
@@ -668,7 +668,7 @@ This progressive approach ensures findings persist even if context is compacted 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
 1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
-2. **Create report file** at `generated-reports/ayokoding-structure__{timestamp}__audit.md`
+2. **Create report file** at `generated-reports/ayokoding-web-structure__{timestamp}__audit.md`
 3. **Write initial header** with:
    - Audit date/time
    - Audit ID (timestamp)
@@ -777,7 +777,7 @@ Apply all validation rules, **writing findings immediately after each check**:
 **Conversation Output Format**:
 
 ```markdown
-Audit report generated: `generated-reports/ayokoding-structure__{timestamp}__audit.md`
+Audit report generated: `generated-reports/ayokoding-web-structure__{timestamp}__audit.md`
 
 ## Summary
 
@@ -907,14 +907,14 @@ Always provide:
 
 **Related Agents:**
 
-- `ayokoding-structure-maker.md` - Proactively modifies weights and structure (intentional structural changes)
-- `ayokoding-navigation-maker.md` - Generates navigation listings (complementary - maker generates, structure-checker validates)
-- `ayokoding-structure-fixer.md` - Applies validated fixes from audit reports (reactive fixes after validation)
-- `ayokoding-content-general-checker.md` - Content quality validation (complementary)
-- `ayokoding-facts-checker.md` - Factual accuracy validation (complementary)
-- `ayokoding-link-checker.md` - Link validation (complementary)
+- `ayokoding-web-structure-maker.md` - Proactively modifies weights and structure (intentional structural changes)
+- `ayokoding-web-navigation-maker.md` - Generates navigation listings (complementary - maker generates, structure-checker validates)
+- `ayokoding-web-structure-fixer.md` - Applies validated fixes from audit reports (reactive fixes after validation)
+- `ayokoding-web-general-checker.md` - Content quality validation (complementary)
+- `ayokoding-web-facts-checker.md` - Factual accuracy validation (complementary)
+- `ayokoding-web-link-checker.md` - Link validation (complementary)
 - `repo-rules-checker.md` - Repository consistency validation (similar pattern)
 
 ---
 
-**Remember**: You are a structure validator, not a content quality checker. Focus on navigation architecture, weight ordering, and required file presence. Leave content quality assessment to ayokoding-content-general-checker.
+**Remember**: You are a structure validator, not a content quality checker. Focus on navigation architecture, weight ordering, and required file presence. Leave content quality assessment to ayokoding-web-general-checker.

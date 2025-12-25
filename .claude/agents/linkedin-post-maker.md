@@ -205,7 +205,7 @@ Links:
 ### Good Context Summary
 
 ```markdown
-- 38 AI agents (added 6 new agents for navigation generation, structure enforcement, and factual validation: ayokoding-navigation-maker, ayokoding-structure-checker, ayokoding-structure-fixer, ayokoding-structure-maker, ayokoding-facts-checker, ayokoding-facts-fixer)
+- 38 AI agents (added 6 new agents for navigation generation, structure enforcement, and factual validation: ayokoding-web-navigation-maker, ayokoding-web-structure-checker, ayokoding-web-structure-fixer, ayokoding-web-structure-maker, ayokoding-web-facts-checker, ayokoding-web-facts-fixer)
 ```
 
 **Why good**: States count, adds brief summary of what they do, then lists specific names.
@@ -213,7 +213,7 @@ Links:
 ### Bad - Just Lists Names
 
 ```markdown
-- 38 AI agents (added: ayokoding-navigation-maker, ayokoding-structure-checker, ayokoding-structure-fixer, ayokoding-structure-maker, ayokoding-facts-checker, ayokoding-facts-fixer)
+- 38 AI agents (added: ayokoding-web-navigation-maker, ayokoding-web-structure-checker, ayokoding-web-structure-fixer, ayokoding-web-structure-maker, ayokoding-web-facts-checker, ayokoding-web-facts-fixer)
 ```
 
 **Why bad**: No context about what these agents do.

@@ -84,11 +84,11 @@ graph TD
 
 **AI Agents**:
 
-- **ayokoding-content-maker**: Create how-to guides and cookbook recipes
-- **ayokoding-content-checker**: Validate Hugo conventions and quality
-- **ayokoding-facts-checker**: Verify technical accuracy
-- **ayokoding-link-checker**: Validate internal/external links
-- **ayokoding-content-fixer**: Apply validated fixes from audit reports
+- **ayokoding-web-general-maker**: Create how-to guides and cookbook recipes
+- **ayokoding-web-general-checker**: Validate Hugo conventions and quality
+- **ayokoding-web-facts-checker**: Verify technical accuracy
+- **ayokoding-web-link-checker**: Validate internal/external links
+- **ayokoding-web-general-fixer**: Apply validated fixes from audit reports
 
 ### Validation Stack
 
@@ -297,12 +297,12 @@ See [Delivery Plan](./delivery.md) for detailed implementation steps per phase.
 For each how-to guide:
 
 1. **Research**: Review language documentation, identify common patterns
-2. **Draft**: Use ayokoding-content-maker to create initial content
+2. **Draft**: Use ayokoding-web-general-maker to create initial content
 3. **Code Testing**: Test all code examples in development environment
 4. **Diagram Creation**: Create Mermaid diagrams with color-blind friendly palette
 5. **Cross-Reference**: Add links to related tutorials and cookbook recipes
-6. **Validation**: Run ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker
-7. **Fix**: Use ayokoding-content-fixer to apply validated fixes
+6. **Validation**: Run ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker
+7. **Fix**: Use ayokoding-web-general-fixer to apply validated fixes
 8. **Review**: Manual review for pedagogical effectiveness and clarity
 
 For each cookbook recipe:
@@ -363,7 +363,7 @@ New guide "optimize-performance.md" gets weight: 1000014 (next available positio
 2. Identify related how-to guides (check existing guides in same language)
 3. Identify related cookbook recipes (check cookbook categories)
 4. Add markdown links with descriptive text
-5. Validate links using ayokoding-link-checker
+5. Validate links using ayokoding-web-link-checker
 
 ### Diagram Creation Guidelines
 
@@ -418,9 +418,9 @@ graph TD
 
 **Automated Validation**:
 
-1. **ayokoding-content-checker**: Run on entire language directory
-2. **ayokoding-facts-checker**: Verify factual accuracy of guides
-3. **ayokoding-link-checker**: Validate all internal/external links
+1. **ayokoding-web-general-checker**: Run on entire language directory
+2. **ayokoding-web-facts-checker**: Verify factual accuracy of guides
+3. **ayokoding-web-link-checker**: Validate all internal/external links
 4. **Hugo Build**: Ensure content builds without errors
 
 **Manual Validation**:
@@ -496,15 +496,15 @@ graph TD
 
 **Validation Reports**:
 
-- ayokoding-content-checker generates audit reports in `generated-reports/`
-- ayokoding-facts-checker generates factual accuracy reports
-- ayokoding-link-checker generates link validation reports
+- ayokoding-web-general-checker generates audit reports in `generated-reports/`
+- ayokoding-web-facts-checker generates factual accuracy reports
+- ayokoding-web-link-checker generates link validation reports
 
 **Report Review Process**:
 
 1. Run validation agents after content creation
 2. Review audit reports for critical/high issues
-3. Use ayokoding-content-fixer to apply validated fixes
+3. Use ayokoding-web-general-fixer to apply validated fixes
 4. Re-run validation to confirm fixes
 5. Archive reports for future reference
 
@@ -541,7 +541,7 @@ graph TD
 
 **Mitigation**:
 
-- Validate all external links using ayokoding-link-checker
+- Validate all external links using ayokoding-web-link-checker
 - Prefer official documentation sources
 - Use HTTPS links where available
 - Review external sites for trustworthiness

@@ -58,7 +58,7 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- Validating ayokoding-web content (use ayokoding-content-general-checker instead)
+- Validating ayokoding-web content (use ayokoding-web-general-checker instead)
 - Creating or modifying content (use ose-platform-web-content-maker instead)
 - Fixing validation errors (report issues, let user or content-maker fix)
 - Hugo configuration validation

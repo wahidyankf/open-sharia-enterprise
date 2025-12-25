@@ -209,8 +209,8 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 - **Makers** - Create/update content (docs-maker, readme-maker, plan-maker)
 - **Checkers** - Validate quality (docs-checker, repo-rules-checker, plan-checker)
 - **Fixers** - Apply validated fixes (docs-fixer, repo-rules-fixer, plan-fixer)
-- **Navigation** - Manage structure (ayokoding-navigation-maker, ayokoding-structure-maker)
-- **Operations** - Deploy and manage (ayokoding-deployer, docs-file-manager)
+- **Navigation** - Manage structure (ayokoding-web-navigation-maker, ayokoding-web-structure-maker)
+- **Operations** - Deploy and manage (ayokoding-web-deployer, docs-file-manager)
 
 **Characteristics**:
 
@@ -351,13 +351,13 @@ Maker-Checker-Fixer Workflow:
 **Layer 4 - Agents**:
 
 - **docs-checker**: Automated content quality validation
-- **ayokoding-content-general-checker**: Automated general Hugo content validation
-- **ayokoding-content-by-example-checker**: Automated by-example tutorial validation
+- **ayokoding-web-general-checker**: Automated general Hugo content validation
+- **ayokoding-web-by-example-checker**: Automated by-example tutorial validation
 - **plan-checker**: Automated plan completeness validation
 
 **Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ex-wf__ayokoding-check-fix.md)
 
-- Orchestrates: ayokoding-content-general-checker → ayokoding-content-general-fixer
+- Orchestrates: ayokoding-web-general-checker → ayokoding-web-general-fixer
 - Ensures: All Hugo content meets quality standards through automated iteration
 
 ## 🏗️ Using the Architecture

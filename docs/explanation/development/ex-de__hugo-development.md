@@ -1161,7 +1161,7 @@ chmod +x build.sh
 
 **Use Deployment Agents:**
 
-- `ayokoding-deployer` - Automates ayokoding-web deployment
+- `ayokoding-web-deployer` - Automates ayokoding-web deployment
 - `ose-platform-web-deployer` - Automates ose-platform-web deployment
 
 ## 🧪 Testing and Validation

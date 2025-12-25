@@ -552,8 +552,8 @@ Conventions are most effective when enforced or assisted by agents:
 
 - **docs-checker** - Validates documentation follows conventions
 - **docs-link-checker** - Enforces linking convention
-- **ayokoding-content-general-checker** - Validates general Hugo content conventions
-- **ayokoding-content-by-example-checker** - Validates by-example tutorial conventions
+- **ayokoding-web-general-checker** - Validates general Hugo content conventions
+- **ayokoding-web-by-example-checker** - Validates by-example tutorial conventions
 - **repo-rules-checker** - Audits convention compliance
 
 ### Agent Integration Checklist

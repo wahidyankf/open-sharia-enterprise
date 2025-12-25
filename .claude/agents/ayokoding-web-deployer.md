@@ -1,5 +1,5 @@
 ---
-name: ayokoding-deployer
+name: ayokoding-web-deployer
 description: Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web branch with main and pushes to origin to trigger automatic deployment to ayokoding.com via Vercel. Includes safety checks, user confirmation, and clear status reporting.
 tools: Bash
 model: haiku

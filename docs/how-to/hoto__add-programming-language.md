@@ -29,12 +29,12 @@ Before starting, ensure you have:
   - [Hugo Content Convention - ayokoding](../explanation/conventions/ex-co__hugo-content-ayokoding.md)
   - [Content Quality Principles](../explanation/conventions/ex-co__content-quality.md)
 - [ ] **AI agents available**:
-  - `ayokoding-content-general-maker` (general content creation)
-  - `ayokoding-content-by-example-maker` (by-example tutorial creation)
-  - `ayokoding-content-general-checker` (general quality validation)
-  - `ayokoding-content-by-example-checker` (by-example tutorial validation)
-  - `ayokoding-facts-checker` (factual verification)
-  - `ayokoding-link-checker` (link validation)
+  - `ayokoding-web-general-maker` (general content creation)
+  - `ayokoding-web-by-example-maker` (by-example tutorial creation)
+  - `ayokoding-web-general-checker` (general quality validation)
+  - `ayokoding-web-by-example-checker` (by-example tutorial validation)
+  - `ayokoding-web-facts-checker` (factual verification)
+  - `ayokoding-web-link-checker` (link validation)
 - [ ] **Reference implementations** studied (review Golang, Python, or Java content)
 
 **Time Investment:** Adding a complete programming language requires creating 12,000-15,000 lines of high-quality content. Plan accordingly.
@@ -221,10 +221,10 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Use ayokoding-content-general-maker agent**:
+1. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Initial Setup tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/initial-setup.md
 
    Coverage: 0-5% (Installation and verification)
@@ -270,10 +270,10 @@ Before starting, ensure you have:
    - Use color-blind friendly palette (#0173B2, #DE8F05, #029E73)
    - Show progression: Concept A → Concept B → ... → Ready!
 
-3. **Use ayokoding-content-general-maker agent**:
+3. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Quick Start tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/quick-start.md
 
    Coverage: 5-30% (Touchpoints and core concepts)
@@ -317,10 +317,10 @@ Before starting, ensure you have:
    - Level 3: Combine concepts
    - Level 4: Problem-solving challenges
 
-3. **Use ayokoding-content-general-maker agent**:
+3. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Beginner tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/beginner.md
 
    Coverage: 0-60% (Comprehensive fundamentals)
@@ -358,10 +358,10 @@ Before starting, ensure you have:
    - Security best practices
    - Deployment patterns
 
-2. **Use ayokoding-content-general-maker agent**:
+2. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Intermediate tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/intermediate.md
 
    Coverage: 60-85% (Production-grade techniques)
@@ -397,10 +397,10 @@ Before starting, ensure you have:
    - Debugging strategies
    - Tooling and ecosystem
 
-2. **Use ayokoding-content-general-maker agent**:
+2. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Advanced tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/advanced.md
 
    Coverage: 85-95% (Expert mastery)
@@ -460,10 +460,10 @@ Before starting, ensure you have:
 
    ```
 
-3. **Use ayokoding-content-general-maker agent**:
+3. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Cookbook for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/how-to/cookbook.md
 
    Include: 30-40 recipes organized by category
@@ -508,7 +508,7 @@ Before starting, ensure you have:
 3. **Create each guide** (can parallelize with agent):
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create how-to guide: [Guide Title] for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/how-to/[filename].md
 
    Include: Problem statement, solution (step-by-step), how it works, variations, common pitfalls
@@ -552,10 +552,10 @@ Before starting, ensure you have:
 
 3. **Include "What Makes [Language] Special" section**
 
-4. **Use ayokoding-content-general-maker agent**:
+4. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Best Practices document for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/explanation/best-practices.md
 
    Include: Language philosophy, idiomatic patterns, good/bad examples, category organization
@@ -590,10 +590,10 @@ Before starting, ensure you have:
    - Major (performance, maintainability)
    - Minor (style, idioms)
 
-4. **Use ayokoding-content-general-maker agent**:
+4. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-content-general-maker agent:
+   Spawn ayokoding-web-general-maker agent:
    "Create Anti-Patterns document for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/explanation/anti-patterns.md
 
    Include: Common mistakes, bad/better examples, severity categorization
@@ -630,10 +630,10 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Run ayokoding-content-general-checker**:
+1. **Run ayokoding-web-general-checker**:
 
    ```
-   Spawn ayokoding-content-general-checker agent:
+   Spawn ayokoding-web-general-checker agent:
    "Validate all [Language] content at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/
 
    Check: Hugo conventions, content quality principles, structure compliance"
@@ -653,10 +653,10 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Run ayokoding-facts-checker**:
+1. **Run ayokoding-web-facts-checker**:
 
    ```
-   Spawn ayokoding-facts-checker agent:
+   Spawn ayokoding-web-facts-checker agent:
    "Verify factual accuracy for [Language] content at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/
 
    Validate: Code examples, command syntax, version numbers, external references, technical claims"
@@ -676,10 +676,10 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Run ayokoding-link-checker**:
+1. **Run ayokoding-web-link-checker**:
 
    ```
-   Spawn ayokoding-link-checker agent:
+   Spawn ayokoding-web-link-checker agent:
    "Validate links in [Language] content at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/
 
    Check: Internal links, external URLs, cross-references"
@@ -744,10 +744,10 @@ Before starting, ensure you have:
 
 1. **Verify on main branch**: Ensure all changes are committed to `main`
 
-2. **Run ayokoding-deployer**:
+2. **Run ayokoding-web-deployer**:
 
    ```
-   Spawn ayokoding-deployer agent:
+   Spawn ayokoding-web-deployer agent:
    "Deploy ayokoding-web to production (ayokoding.com)
 
    This will sync prod-ayokoding-web branch with main and trigger Vercel deployment."
@@ -788,14 +788,14 @@ Before starting, ensure you have:
 
 1. Make updates on `main` branch (Trunk Based Development)
 2. Run validation agents (content-checker, facts-checker, link-checker)
-3. Deploy via ayokoding-deployer
+3. Deploy via ayokoding-web-deployer
 4. No need for feature branches for small updates
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Issue:** ayokoding-content-general-checker reports Hugo convention violations
+**Issue:** ayokoding-web-general-checker reports Hugo convention violations
 
 **Solution:** Review [Hugo Content Convention - ayokoding](../explanation/conventions/ex-co__hugo-content-ayokoding.md) and fix violations. Common issues:
 
@@ -816,7 +816,7 @@ Before starting, ensure you have:
   - `tutorials/overview.md`: **1000000** (level 7)
   - `how-to/overview.md`: **1000000** (RESET - different parent)
 
-**Issue:** ayokoding-facts-checker reports ❌ Error or 📅 Outdated
+**Issue:** ayokoding-web-facts-checker reports ❌ Error or 📅 Outdated
 
 **Solution:** Update technical claims with current information:
 
@@ -876,9 +876,9 @@ Use this final checklist to verify completion:
 
 ### Quality
 
-- [ ] ayokoding-content-general-checker audit clean
-- [ ] ayokoding-facts-checker audit clean (✅ Verified)
-- [ ] ayokoding-link-checker validation passed
+- [ ] ayokoding-web-general-checker audit clean
+- [ ] ayokoding-web-facts-checker audit clean (✅ Verified)
+- [ ] ayokoding-web-link-checker validation passed
 - [ ] Manual quality review complete
 - [ ] All code examples tested and runnable
 - [ ] Mermaid diagrams use approved color palette
@@ -887,7 +887,7 @@ Use this final checklist to verify completion:
 ### Publishing
 
 - [ ] Content committed to main branch
-- [ ] Deployed to production via ayokoding-deployer
+- [ ] Deployed to production via ayokoding-web-deployer
 - [ ] Verified live on ayokoding.com
 - [ ] Announcement published
 

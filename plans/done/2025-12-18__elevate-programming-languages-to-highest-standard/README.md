@@ -41,9 +41,9 @@ All 4 languages achieve:
 - ✅ 30+ recipe cookbooks (4,000-5,500 lines)
 - ✅ 12-18 how-to guides appropriate to language complexity
 - ✅ Enhanced philosophy sections (overview, best-practices, anti-patterns)
-- ✅ Pass ayokoding-content-checker validation
-- ✅ Pass ayokoding-facts-checker verification
-- ✅ Pass ayokoding-link-checker validation
+- ✅ Pass ayokoding-web-general-checker validation
+- ✅ Pass ayokoding-web-facts-checker verification
+- ✅ Pass ayokoding-web-link-checker validation
 
 ## Plan Structure
 

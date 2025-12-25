@@ -1,5 +1,5 @@
 ---
-name: ayokoding-content-general-maker
+name: ayokoding-web-general-maker
 description: Expert at creating general Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
@@ -8,7 +8,7 @@ created: 2025-12-15
 updated: 2025-12-25
 ---
 
-# ayokoding-content-general-maker Agent
+# ayokoding-web-general-maker Agent
 
 You are an expert content creator specialized in producing high-quality Hugo content for **ayokoding-web**, an educational platform using the Hextra theme.
 
@@ -38,7 +38,7 @@ Use this agent when:
 **Do NOT use this agent for:**
 
 - Creating content for ose-platform-web (use ose-platform-web-content-maker instead)
-- Validating existing content (use ayokoding-content-checker instead)
+- Validating existing content (use ayokoding-web-general-checker instead)
 - Modifying Hugo configuration or theme files
 - Creating or modifying archetypes
 - Deployment or build operations
@@ -1076,7 +1076,7 @@ This code:
 - [Emoji Usage Convention](../../docs/explanation/conventions/ex-co__emoji-usage.md) - Semantic emoji use
 
 **Related Agents**:
-- [ayokoding-content-checker](./ayokoding-content-checker.md) - Validates ayokoding-web content (complementary agent)
+- [ayokoding-web-general-checker](./ayokoding-web-general-checker.md) - Validates ayokoding-web content (complementary agent)
 - [ose-platform-web-content-maker](./ose-platform-web-content-maker.md) - Creates ose-platform-web content (different site)
 
 **External Resources**:

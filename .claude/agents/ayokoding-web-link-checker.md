@@ -1,5 +1,5 @@
 ---
-name: ayokoding-link-checker
+name: ayokoding-web-link-checker
 description: Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths with language prefix, no .md extension). Detects common linking mistakes and maintains external link cache. Use when checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: sonnet
@@ -34,7 +34,7 @@ This agent produces TWO outputs on every run:
    - Purpose: Permanent operational link status tracking (NOT a temporary report)
 
 2. **Audit Report** (always generated):
-   - Location: `generated-reports/ayokoding-link__{YYYY-MM-DD--HH-MM}__audit.md`
+   - Location: `generated-reports/ayokoding-web-link__{YYYY-MM-DD--HH-MM}__audit.md`
    - Content: Validation findings, broken links, Hugo format violations
    - Purpose: Temporary audit trail for historical tracking and fixer integration
 
@@ -54,7 +54,7 @@ This agent writes validation findings to temporary report files in `generated-re
 - Integration with fixer agents (ayokoding-link-fixer)
 - Traceability of validation results
 
-**Report Location**: `generated-reports/ayokoding-link__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report Location**: `generated-reports/ayokoding-web-link__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Example Filename**: `ayokoding-link__2025-12-20--14-30__audit.md`
 
@@ -67,7 +67,7 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 **Note**: This agent maintains TWO separate outputs:
 
 - **Cache File** (`apps/ayokoding-web/ayokoding-links-status.yaml`): Link status tracking for operational use
-- **Audit Report** (`generated-reports/ayokoding-link__{timestamp}__audit.md`): Validation findings and summary for audit trail
+- **Audit Report** (`generated-reports/ayokoding-web-link__{timestamp}__audit.md`): Validation findings and summary for audit trail
 
 ## CRITICAL REQUIREMENTS
 
@@ -86,7 +86,7 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
    - This file MUST be updated on every run
 
 3. **ALWAYS generate audit report file**
-   - You MUST create audit report in `generated-reports/ayokoding-link__{YYYY-MM-DD--HH-MM}__audit.md`
+   - You MUST create audit report in `generated-reports/ayokoding-web-link__{YYYY-MM-DD--HH-MM}__audit.md`
    - Report contains validation findings and broken link details
    - This is separate from the cache file (different purpose)
    - Audit report integrates with ayokoding-link-fixer agent
@@ -114,7 +114,7 @@ Your primary job is to verify that all links in ayokoding-web Hugo content files
 5. **Validate each link** - Check external links for accessibility (respecting 6-month cache) and internal links for file existence
 6. **Prune orphaned cache entries** - Automatically remove cached links no longer present in any content
 7. **Update cache and lastFullScan** - Add newly verified links, update location metadata (usedIn), and ALWAYS update lastFullScan timestamp
-8. **Generate audit report** - Write validation findings to `generated-reports/ayokoding-link__{timestamp}__audit.md`
+8. **Generate audit report** - Write validation findings to `generated-reports/ayokoding-web-link__{timestamp}__audit.md`
 9. **Suggest fixes** - Recommend replacements or removal for broken links
 
 ## What You Check
@@ -763,7 +763,7 @@ When you find broken internal links:
    - Stores status, redirects, usedIn, timestamps
    - Updated on EVERY run (including lastFullScan)
 
-2. **Audit Report** (`generated-reports/ayokoding-link__{timestamp}__audit.md`):
+2. **Audit Report** (`generated-reports/ayokoding-web-link__{timestamp}__audit.md`):
    - Temporary validation findings
    - Integration with ayokoding-link-fixer agent
    - Historical tracking of link health audits
@@ -785,7 +785,7 @@ When you find broken internal links:
 - **Required path** - You MUST use this exact file path for all external link caching
 - **Updated on every run** - Including the `lastFullScan` timestamp (MANDATORY)
 
-**The audit report `generated-reports/ayokoding-link__{timestamp}__audit.md` is:**
+**The audit report `generated-reports/ayokoding-web-link__{timestamp}__audit.md` is:**
 
 - **Temporary validation report** - Stored in `generated-reports/` directory
 - **Audit trail** - Historical record of link health checks
@@ -944,8 +944,8 @@ Before starting work, familiarize yourself with:
 **Related Agents:**
 
 - `docs-link-checker.md` - Link checker for docs/ directory (different conventions)
-- `ayokoding-content-general-checker.md` - Content quality validator for ayokoding-web
-- `ayokoding-content-general-maker.md` - Content creator for ayokoding-web
+- `ayokoding-web-general-checker.md` - Content quality validator for ayokoding-web
+- `ayokoding-web-general-maker.md` - Content creator for ayokoding-web
 
 ---
 

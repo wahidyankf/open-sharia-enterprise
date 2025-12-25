@@ -359,7 +359,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-content-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct (title, date, draft, description, weight)
   - [ ] Weight numbering follows hundred-range pattern
   - [ ] All Mermaid diagrams use color-blind friendly palette
@@ -367,14 +367,14 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - [ ] Single H1 per file
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Python 3.11+ syntax verified
   - [ ] Standard library references accurate
   - [ ] Version-specific information marked
   - [ ] All commands tested on macOS, Linux, Windows
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal links point to existing files
   - [ ] All external links return 200 status
   - [ ] All anchor links target valid headings
@@ -401,9 +401,9 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
 Scenario: Python content meets highest standard
   Given the Python language content is complete
   When validation agents run
-  Then ayokoding-content-checker reports zero issues
-  And ayokoding-facts-checker reports zero issues
-  And ayokoding-link-checker reports zero issues
+  Then ayokoding-web-general-checker reports zero issues
+  And ayokoding-web-facts-checker reports zero issues
+  And ayokoding-web-link-checker reports zero issues
   And all tutorials meet minimum line count benchmarks
   And reference section has all three files (cheat-sheet, glossary, resources)
   And all code examples work on macOS, Linux, and Windows
@@ -567,21 +567,21 @@ Scenario: Python tutorials cover stated ranges
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-content-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct
   - [ ] Weight numbering correct (cookbook at 603)
   - [ ] Mermaid diagrams use accessible colors
   - [ ] Heading hierarchy proper
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Kotlin 1.9+ syntax verified
   - [ ] Coroutine patterns accurate
   - [ ] Java interop examples correct
   - [ ] Standard library references accurate
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal links valid
   - [ ] All external links working
 
@@ -630,7 +630,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - anti-patterns.md: 636 → 952 lines (+316 lines, +50%)
   - overview.md: 74 → 153 lines (+79 lines, +107%)
   - Total expansion: +2,537 lines
-- **Validation**: Ready for ayokoding-content-checker and ayokoding-facts-checker
+- **Validation**: Ready for ayokoding-web-general-checker and ayokoding-web-facts-checker
 - **PR Status**: Not submitted (implementation complete, ready for validation)
 - **Note**: Reference section already complete from commit 4495e22 (no work required)
 
@@ -781,19 +781,19 @@ Scenario: Kotlin philosophy content is comprehensive
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-content-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct
   - [ ] Weight numbering correct
   - [ ] Mermaid diagrams use accessible colors
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Java 17 LTS syntax verified
   - [ ] JVM concepts accurate
   - [ ] Enterprise framework references correct
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal and external links working
 
 - [ ] **Code Example Validation**
@@ -985,19 +985,19 @@ Scenario: Java has 18 how-to guides
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-content-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct
   - [ ] Weight numbering correct
   - [ ] Mermaid diagrams use accessible colors
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Go 1.21+ syntax verified (generics era)
   - [ ] Concurrency patterns accurate
   - [ ] Module system references correct
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal and external links working
 
 - [ ] **Code Example Validation**
@@ -1038,7 +1038,7 @@ Scenario: Golang has 18 how-to guides
   - **Reference Files**: cheat-sheet.md (575 lines), glossary.md (349 lines), resources.md (337 lines)
   - **How-To Guides**: concurrency-patterns.md (628), error-handling.md (432), http-server-patterns.md (485), testing-strategies.md (423), performance-optimization.md (382)
   - **Best Practices**: best-practices.md (+278 lines, +37% expansion)
-- **Validation**: Pending (ready for ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker)
+- **Validation**: Pending (ready for ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker)
 - **PR Status**: Ready to submit after validation
 
 ---
@@ -1082,9 +1082,9 @@ graph LR
 - **Hugo 0.119.0+**: Static site generator (required for build)
 - **Node.js + npm**: Development environment via Volta (required for Prettier)
 - **Git**: Version control (required for commits and PRs)
-- **ayokoding-content-checker**: Validation agent (required for structural checks)
-- **ayokoding-facts-checker**: Validation agent (required for factual verification)
-- **ayokoding-link-checker**: Validation agent (required for link validation)
+- **ayokoding-web-general-checker**: Validation agent (required for structural checks)
+- **ayokoding-web-facts-checker**: Validation agent (required for factual verification)
+- **ayokoding-web-link-checker**: Validation agent (required for link validation)
 
 **Official Documentation**:
 
@@ -1144,7 +1144,7 @@ graph LR
 **Mitigation**:
 
 - Test ALL code examples on multiple platforms
-- Use ayokoding-facts-checker for verification
+- Use ayokoding-web-facts-checker for verification
 - Reference official documentation for every fact
 - Run examples in clean environments (fresh venvs, new projects)
 
@@ -1239,9 +1239,9 @@ Before marking entire plan as complete:
 
 ### Quality Benchmarks Met
 
-- [ ] All content passes ayokoding-content-checker
-- [ ] All content passes ayokoding-facts-checker
-- [ ] All content passes ayokoding-link-checker
+- [ ] All content passes ayokoding-web-general-checker
+- [ ] All content passes ayokoding-web-facts-checker
+- [ ] All content passes ayokoding-web-link-checker
 - [ ] All code examples tested on macOS, Linux, Windows
 - [ ] All Mermaid diagrams use color-blind friendly palette
 - [ ] All cross-references are valid and helpful
@@ -1338,7 +1338,7 @@ Before marking entire plan as complete:
 
 ### Next Actions
 
-1. **Immediate**: Run validation agents on all 4 languages (ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker)
+1. **Immediate**: Run validation agents on all 4 languages (ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker)
 2. **Next**: Address any validation issues found
 3. **Then**: Submit PRs for each language (separate PRs as planned)
 4. **Final**: Move plan to done/ after all PRs merged

@@ -44,9 +44,9 @@ Rust language achieves:
 - ✅ 30-35 recipe cookbook (4,000-5,500 lines)
 - ✅ 18 how-to guides covering Rust-specific patterns
 - ✅ Enhanced philosophy sections (overview, best-practices, anti-patterns)
-- ✅ Pass ayokoding-content-checker validation
-- ✅ Pass ayokoding-facts-checker verification
-- ✅ Pass ayokoding-link-checker validation
+- ✅ Pass ayokoding-web-general-checker validation
+- ✅ Pass ayokoding-web-facts-checker verification
+- ✅ Pass ayokoding-web-link-checker validation
 
 ## Plan Structure
 

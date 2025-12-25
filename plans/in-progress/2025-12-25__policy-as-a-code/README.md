@@ -11,7 +11,7 @@ This plan introduces a **Policy Layer 3.5** between Conventions/Development (Lay
 
 ## Problem Statement
 
-The current governance architecture relies on prose-based rules embedded in 34+ AI agents across 8 families (repo-rules, docs, ayokoding-content, ose-platform-web-content, readme, plan, docs-tutorial, workflow). This creates:
+The current governance architecture relies on prose-based rules embedded in 34+ AI agents across 8 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial, workflow). This creates:
 
 - **3x duplication**: Same rule embedded in maker, checker, and fixer agents
 - **Inconsistency risk**: Each agent interprets prose rules differently

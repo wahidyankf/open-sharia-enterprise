@@ -24,7 +24,7 @@ Expert at creating new AI agents following all repository conventions.
   - Automatically updating agents README with new agent listing
   - Running validation via repo-rules-checker
 
-### 🟦 `ayokoding-content-by-example-maker.md`
+### 🟦 `ayokoding-web-by-example-maker.md`
 
 Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses four-part format (explanation, diagram, annotated code, takeaway) with self-contained examples.
 
@@ -38,10 +38,10 @@ Expert at creating by-example tutorials with 75-90 annotated code examples achie
   - Targeting experienced developers who prefer code-first learning
   - Generating 75-90 annotated examples with educational value
   - Aiming for comprehensive 95% coverage of language/framework features
-- **Works with:** `ayokoding-content-by-example-checker` for validation, `ayokoding-content-by-example-fixer` for fixes
+- **Works with:** `ayokoding-web-by-example-checker` for validation, `ayokoding-web-by-example-fixer` for fixes
 - **References:** By-Example Tutorial Convention (master reference), Hugo Content Convention, Content Quality Principles, Tutorial Convention, Color Accessibility Convention
 
-### 🟦 `ayokoding-content-general-maker.md`
+### 🟦 `ayokoding-web-general-maker.md`
 
 Expert at creating general Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles.
 
@@ -55,10 +55,10 @@ Expert at creating general Hugo content for ayokoding-web (Hextra theme) followi
   - Adding video content (konten-video/video-content)
   - Creating section index pages (\_index.md)
   - Producing bilingual content (Indonesian and English versions)
-- **Works with:** `ayokoding-content-general-checker` for validation before publication
+- **Works with:** `ayokoding-web-general-checker` for validation before publication
 - **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention, Tutorial Naming Convention
 
-### 🟩 `ayokoding-content-general-checker.md`
+### 🟩 `ayokoding-web-general-checker.md`
 
 Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles.
 
@@ -71,10 +71,10 @@ Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo 
   - Verifying content structure (heading hierarchy, link format, image alt text)
   - Ensuring convention compliance (Hugo conventions, content quality standards)
   - Quality assurance before merging or deploying content
-- **Works with:** `ayokoding-content-general-maker` for content creation
+- **Works with:** `ayokoding-web-general-maker` for content creation
 - **References:** Hugo Content Convention, Content Quality Principles, Tutorial Convention
 
-### 🟩 `ayokoding-facts-checker.md`
+### 🟩 `ayokoding-web-facts-checker.md`
 
 Expert at validating factual correctness of ayokoding-web educational content using web verification. Checks technical accuracy, code examples, tutorial sequences, and bilingual consistency.
 
@@ -88,26 +88,26 @@ Expert at validating factual correctness of ayokoding-web educational content us
   - Ensuring learning sequences are logical and achievable
   - Auditing educational content for technical accuracy
   - After framework/library version updates
-- **Works with:** `ayokoding-facts-fixer` for applying validated fixes
+- **Works with:** `ayokoding-web-facts-fixer` for applying validated fixes
 - **References:** Factual Validation Convention, Hugo Content Convention, Tutorial Convention
 
-### 🟪 `ayokoding-content-general-fixer.md`
+### 🟪 `ayokoding-web-general-fixer.md`
 
-Applies validated fixes from ayokoding-content-general-checker audit reports. Re-validates findings before applying changes to prevent false positives.
+Applies validated fixes from ayokoding-web-general-checker audit reports. Re-validates findings before applying changes to prevent false positives.
 
-- **Primary Use:** Applying validated fixes from ayokoding-content-general-checker audit reports after user review
+- **Primary Use:** Applying validated fixes from ayokoding-web-general-checker audit reports after user review
 - **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks for Hugo content
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - After reviewing ayokoding-content-general-checker audit report
+  - After reviewing ayokoding-web-general-checker audit report
   - Applying validated fixes automatically with re-validation
   - Detecting false positives in checker findings
   - Generating fix audit trail for transparency
-- **Workflow:** ayokoding-content-general-checker (detect) → User review → ayokoding-content-general-fixer (apply validated fixes)
+- **Workflow:** ayokoding-web-general-checker (detect) → User review → ayokoding-web-general-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
-- **Output:** Generates `ayokoding-content__{timestamp}__fix.md` report in `generated-reports/`
+- **Output:** Generates `ayokoding-web__{timestamp}__fix.md` report in `generated-reports/`
 
-### 🟦 `ayokoding-content-by-example-maker.md`
+### 🟦 `ayokoding-web-by-example-maker.md`
 
 Expert at creating by-example tutorials with 75-90 annotated examples achieving 95% coverage for ayokoding-web.
 
@@ -119,10 +119,10 @@ Expert at creating by-example tutorials with 75-90 annotated examples achieving 
   - Generating 75-90 progressive examples (beginner, intermediate, advanced)
   - Building code-first learning resources with extensive annotations
   - Achieving 95% coverage through practical examples
-- **Works with:** `ayokoding-content-by-example-checker` for validation
+- **Works with:** `ayokoding-web-by-example-checker` for validation
 - **References:** By-Example Tutorial Convention, Hugo Content Convention, Content Quality Principles
 
-### 🟩 `ayokoding-content-by-example-checker.md`
+### 🟩 `ayokoding-web-by-example-checker.md`
 
 Validates by-example tutorial quality focusing on 95% coverage, self-containment, educational annotations, and diagram presence.
 
@@ -135,27 +135,27 @@ Validates by-example tutorial quality focusing on 95% coverage, self-containment
   - Checking self-containment (imports present, runnable)
   - Verifying annotation quality and diagram presence
   - Quality assurance before publication
-- **Works with:** `ayokoding-content-by-example-maker` for content creation, `ayokoding-content-by-example-fixer` for fixing issues
+- **Works with:** `ayokoding-web-by-example-maker` for content creation, `ayokoding-web-by-example-fixer` for fixing issues
 - **References:** By-Example Tutorial Convention, Content Quality Principles
 - **Output:** Generates `by-example-checker__{timestamp}__audit.md` report in `generated-reports/`
 
-### 🟪 `ayokoding-content-by-example-fixer.md`
+### 🟪 `ayokoding-web-by-example-fixer.md`
 
-Applies validated fixes from ayokoding-content-by-example-checker audit reports. Re-validates findings before applying changes to prevent false positives.
+Applies validated fixes from ayokoding-web-by-example-checker audit reports. Re-validates findings before applying changes to prevent false positives.
 
 - **Primary Use:** Applying validated fixes from by-example tutorial audits after user review
 - **Specialization:** Fix validation for by-example tutorials, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - After reviewing ayokoding-content-by-example-checker audit report
+  - After reviewing ayokoding-web-by-example-checker audit report
   - Applying validated fixes automatically with re-validation
   - Detecting false positives in checker findings
   - Generating fix audit trail for transparency
-- **Workflow:** ayokoding-content-by-example-checker (detect) → User review → ayokoding-content-by-example-fixer (apply validated fixes)
+- **Workflow:** ayokoding-web-by-example-checker (detect) → User review → ayokoding-web-by-example-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
 - **Output:** Generates `by-example-fixer__{timestamp}__fix.md` report in `generated-reports/`
 
-### 🟪 `ayokoding-deployer.md`
+### 🟪 `ayokoding-web-deployer.md`
 
 Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web branch with main and pushes to origin to trigger automatic deployment to ayokoding.com via Vercel.
 
@@ -170,24 +170,24 @@ Expert at deploying ayokoding-web to production. Synchronizes prod-ayokoding-web
   - Syncing prod-ayokoding-web branch with origin/main
 - **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ayokoding-web
 
-### 🟪 `ayokoding-facts-fixer.md`
+### 🟪 `ayokoding-web-facts-fixer.md`
 
-Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates factual findings before applying changes.
+Applies validated fixes from ayokoding-web-facts-checker audit reports. Re-validates factual findings before applying changes.
 
-- **Primary Use:** Applying validated factual accuracy fixes from ayokoding-facts-checker reports after user review
+- **Primary Use:** Applying validated factual accuracy fixes from ayokoding-web-facts-checker reports after user review
 - **Specialization:** Factual accuracy fix application, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective distinction, code/version corrections
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - After reviewing ayokoding-facts-checker validation report
+  - After reviewing ayokoding-web-facts-checker validation report
   - Fixing objective factual errors (code syntax, API usage, version numbers) automatically
   - Flagging subjective improvements (difficulty levels, pedagogical choices) for manual review
   - Detecting and reporting false positives to improve checker accuracy
   - Generating comprehensive fix reports with audit trail
-- **Workflow:** ayokoding-facts-checker (validate) → User review → ayokoding-facts-fixer (apply validated factual fixes)
+- **Workflow:** ayokoding-web-facts-checker (validate) → User review → ayokoding-web-facts-fixer (apply validated factual fixes)
 - **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence objective fixes automatically)
 - **Output:** Generates `ayokoding-facts__{timestamp}__fix.md` report in `generated-reports/`
 
-### 🟪 `ayokoding-link-checker.md`
+### 🟪 `ayokoding-web-link-checker.md`
 
 **HYBRID AGENT** (Validator + State Manager): Validates internal and external links in ayokoding-web Hugo content while maintaining operational cache file. Enforces Hugo-specific linking conventions (absolute paths without .md extension). Detects common linking mistakes and maintains external link cache.
 
@@ -209,11 +209,11 @@ Applies validated fixes from ayokoding-facts-checker audit reports. Re-validates
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations, updates lastFullScan)
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
-- **Works with:** `ayokoding-content-general-maker` for content creation, `ayokoding-content-general-checker` for content quality
+- **Works with:** `ayokoding-web-general-maker` for content creation, `ayokoding-web-general-checker` for content quality
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
 - **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/ex-de__ai-agents.md#hybrid-agents-exception) for complete rationale
 
-### 🟩 `ayokoding-navigation-maker.md`
+### 🟩 `ayokoding-web-navigation-maker.md`
 
 Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md files from file structure. **⚠️ Now automated via pre-commit hook** - runs automatically when committing ayokoding-web content changes (see [Pre-commit Automation](../apps/ayokoding-cli/README.md#pre-commit-automation)).
 
@@ -229,10 +229,10 @@ Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md
   - Semi-automatic workflow (suggested after content changes detected)
 - **Exclusions:** Root \_index.md files (en/\_index.md, id/\_index.md) use custom Hugo shortcodes
 - **Content Replacement:** Completely replaces everything after frontmatter with generated navigation list
-- **Works with:** `ayokoding-content-general-maker` creates files → `ayokoding-navigation-maker` generates navigation → `ayokoding-structure-checker` validates → `ayokoding-structure-fixer` fixes issues
+- **Works with:** `ayokoding-web-general-maker` creates files → `ayokoding-web-navigation-maker` generates navigation → `ayokoding-web-structure-checker` validates → `ayokoding-web-structure-fixer` fixes issues
 - **References:** Hugo Content Convention - ayokoding (weight system, navigation depth)
 
-### 🟪 `ayokoding-title-maker.md`
+### 🟪 `ayokoding-web-title-maker.md`
 
 Automatically update title fields in ayokoding-web markdown files based on filenames and configuration. **⚠️ Now automated via pre-commit hook** - runs automatically when committing ayokoding-web content changes (see [Pre-commit Automation](../apps/ayokoding-cli/README.md#pre-commit-automation)).
 
@@ -248,13 +248,13 @@ Automatically update title fields in ayokoding-web markdown files based on filen
   - Semi-automatic workflow (suggested after content changes detected)
 - **Do NOT use for:** Creating new files, validating structure, fixing weights, writing custom content, manual title editing
 - **Idempotency:** Only updates files where title differs from expected (faster execution, cleaner git diffs)
-- **Works with:** `ayokoding-content-general-maker` creates files → `ayokoding-title-maker` updates titles → `ayokoding-navigation-maker` generates navigation → `ayokoding-structure-checker` validates
+- **Works with:** `ayokoding-web-general-maker` creates files → `ayokoding-web-title-maker` updates titles → `ayokoding-web-navigation-maker` generates navigation → `ayokoding-web-structure-checker` validates
 - **Configuration:** Uses `config/title-overrides-en.yaml` and `config/title-overrides-id.yaml` for special cases
 - **References:** Hugo Content Convention - ayokoding, Content Quality Principles
 
-### 🟨 `ayokoding-structure-maker.md`
+### 🟨 `ayokoding-web-structure-maker.md`
 
-Expert at proactively modifying ayokoding-web content structure by adjusting weights to reorder content, insert new items at specific positions, and maintain weight conventions. Automatically regenerates navigation listings after structural changes using ayokoding-navigation-maker CLI.
+Expert at proactively modifying ayokoding-web content structure by adjusting weights to reorder content, insert new items at specific positions, and maintain weight conventions. Automatically regenerates navigation listings after structural changes using ayokoding-web-navigation-maker CLI.
 
 - **Primary Use:** Intentionally restructuring ayokoding-web content by adjusting weights
 - **When to Use:**
@@ -267,12 +267,12 @@ Expert at proactively modifying ayokoding-web content structure by adjusting wei
   - Insert new items at specific positions with cascading updates
   - Create gaps for future content insertions
   - Move items to different parent folders with level recalculation
-  - Invoke ayokoding-navigation-maker CLI automatically after changes
-- **Works with:** `ayokoding-content-general-maker` creates files → `ayokoding-structure-maker` adjusts weights → `ayokoding-navigation-maker` regenerates navigation → `ayokoding-structure-checker` validates → `ayokoding-structure-fixer` fixes issues
+  - Invoke ayokoding-web-navigation-maker CLI automatically after changes
+- **Works with:** `ayokoding-web-general-maker` creates files → `ayokoding-web-structure-maker` adjusts weights → `ayokoding-web-navigation-maker` regenerates navigation → `ayokoding-web-structure-checker` validates → `ayokoding-web-structure-fixer` fixes issues
 - **Workflow:** Proactive structural changes (this agent) → Navigation Regeneration (CLI) → Validation (checker) → Reactive fixes (fixer if needed)
 - **References:** Hugo Content Convention - ayokoding (weight system, level-based ordering)
 
-### 🟩 `ayokoding-structure-checker.md`
+### 🟩 `ayokoding-web-structure-checker.md`
 
 Expert at validating ALL ayokoding-web content files including navigation architecture, weight conventions across all markdown files, overview completeness, and pedagogical progression.
 
@@ -297,14 +297,14 @@ Expert at validating ALL ayokoding-web content files including navigation archit
   - Validating tutorial pedagogical progression (initial-setup → quick-start → beginner → intermediate → advanced)
   - Ensuring structural compliance with Hugo Content Convention - ayokoding
 - **Output:** Generates `ayokoding-structure__{timestamp}__audit.md` report in `generated-reports/`
-- **Works with:** `ayokoding-content-general-checker` for content quality, `ayokoding-facts-checker` for factual accuracy, `ayokoding-link-checker` for link validation
+- **Works with:** `ayokoding-web-general-checker` for content quality, `ayokoding-web-facts-checker` for factual accuracy, `ayokoding-web-link-checker` for link validation
 - **References:** Hugo Content Convention - ayokoding (weight system), Programming Language Content Standard (structure requirements)
 
-### 🟪 `ayokoding-structure-fixer.md`
+### 🟪 `ayokoding-web-structure-fixer.md`
 
-Applies validated fixes from ayokoding-structure-checker audit reports for ALL content files. Re-validates structural findings before applying weight corrections and ordering fixes across all markdown files. CANNOT regenerate navigation listings (use ayokoding-navigation-maker).
+Applies validated fixes from ayokoding-web-structure-checker audit reports for ALL content files. Re-validates structural findings before applying weight corrections and ordering fixes across all markdown files. CANNOT regenerate navigation listings (use ayokoding-web-navigation-maker).
 
-- **Primary Use:** Applying validated structural fixes from ayokoding-structure-checker reports after user review
+- **Primary Use:** Applying validated structural fixes from ayokoding-web-structure-checker reports after user review
 - **Specialization:** Structural fix application for ALL content files (weight values across all file types, file presence, tutorial progression), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective fix automation, content creation and navigation regeneration boundary awareness
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **Expanded Scope:** Now fixes weight issues in ALL markdown files with frontmatter, including:
@@ -315,17 +315,17 @@ Applies validated fixes from ayokoding-structure-checker audit reports for ALL c
   - Topic content files (standalone content with weight fields)
   - Static pages (about-ayokoding.md, terms-and-conditions.md, etc.)
 - **When to Use:**
-  - After reviewing ayokoding-structure-checker structural audit report
+  - After reviewing ayokoding-web-structure-checker structural audit report
   - Fixing objective structural issues (weight values across ALL files, file presence) automatically
   - Correcting tutorial progression violations (wrong pedagogical order)
-  - Flagging content creation tasks (overview writing) for ayokoding-content-general-maker
-  - Flagging navigation regeneration tasks for ayokoding-navigation-maker
+  - Flagging content creation tasks (overview writing) for ayokoding-web-general-maker
+  - Flagging navigation regeneration tasks for ayokoding-web-navigation-maker
   - Detecting and reporting false positives to improve checker accuracy
   - Generating comprehensive fix reports with audit trail
-- **Workflow:** ayokoding-structure-checker (detect) → User review → ayokoding-structure-fixer (apply validated structural fixes)
+- **Workflow:** ayokoding-web-structure-checker (detect) → User review → ayokoding-web-structure-fixer (apply validated structural fixes)
 - **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence structural fixes automatically)
 - **Output:** Generates `ayokoding-structure__{timestamp}__fix.md` report in `generated-reports/`
-- **Limitations:** CANNOT write overview content (requires ayokoding-content-general-maker), CANNOT regenerate navigation listings (requires ayokoding-navigation-maker)
+- **Limitations:** CANNOT write overview content (requires ayokoding-web-general-maker), CANNOT regenerate navigation listings (requires ayokoding-web-navigation-maker)
 
 ### 🟦 `ose-platform-web-content-maker.md`
 
@@ -845,7 +845,7 @@ Understanding which agents enforce which conventions helps trace decisions from 
 - **docs-maker**: Validates Mermaid diagram colors against accessible palette
 - **docs-tutorial-maker**: Ensures tutorial diagrams use color-blind friendly colors
 - **hugo-developer**: Implements accessible color palette in theme development
-- **ayokoding-content-general-maker**, **ose-platform-web-content-maker**: Apply accessible colors in Hugo content
+- **ayokoding-web-general-maker**, **ose-platform-web-content-maker**: Apply accessible colors in Hugo content
 
 ### Example 2: Explicit Configuration
 
@@ -874,12 +874,12 @@ Understanding which agents enforce which conventions helps trace decisions from 
 - **docs-checker**: Automated factual accuracy validation
 - **docs-tutorial-checker**: Automated pedagogical quality validation
 - **repo-rules-checker**: Automated consistency validation
-- **ayokoding-content-general-checker**, **ose-platform-web-content-checker**: Automated Hugo content validation
+- **ayokoding-web-general-checker**, **ose-platform-web-content-checker**: Automated Hugo content validation
 - **readme-checker**: Automated README quality validation
 
 **Enforcing Agents** (Fixer family):
 
-- **docs-fixer**, **docs-tutorial-fixer**, **repo-rules-fixer**, **ayokoding-content-general-fixer**, **ose-platform-web-content-fixer**, **readme-fixer**, **plan-fixer**: Automated fix application with confidence levels
+- **docs-fixer**, **docs-tutorial-fixer**, **repo-rules-fixer**, **ayokoding-web-general-fixer**, **ose-platform-web-content-fixer**, **readme-fixer**, **plan-fixer**: Automated fix application with confidence levels
 
 ## 🔄 Agent Workflow
 
@@ -895,13 +895,13 @@ The repository uses a three-stage workflow for content creation and quality assu
 1. Creation Stage (Maker Agents)
    └─> Create content following conventions
         └─> Makers: docs-maker, docs-tutorial-maker, readme-maker,
-                    ayokoding-content-general-maker, ose-platform-web-content-maker
+                    ayokoding-web-general-maker, ose-platform-web-content-maker
 
 2. Detection Stage (Checker Agents)
    └─> Validate content quality and convention compliance
         └─> Generate audit report in generated-reports/
         └─> Checkers: docs-checker, docs-tutorial-checker, readme-checker,
-                      ayokoding-content-general-checker, ose-platform-web-content-checker,
+                      ayokoding-web-general-checker, ose-platform-web-content-checker,
                       repo-rules-checker
 
 3. User Review Stage
@@ -915,7 +915,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Skip FALSE_POSITIVE (report to improve checker)
         └─> Generate fix report in generated-reports/
         └─> Fixers: docs-fixer, docs-tutorial-fixer, readme-fixer,
-                    ayokoding-content-general-fixer, ose-platform-web-content-fixer,
+                    ayokoding-web-general-fixer, ose-platform-web-content-fixer,
                     repo-rules-fixer, plan-fixer
 
 5. Verification Stage (Re-run Checker)

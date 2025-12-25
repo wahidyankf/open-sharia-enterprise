@@ -218,7 +218,7 @@ ayokoding-cli nav regen [--path=path]
 **Impact**:
 
 - All scripts and agents must be updated to use new syntax
-- `ayokoding-navigation-maker` agent updated to use `nav regen`
+- `ayokoding-web-navigation-maker` agent updated to use `nav regen`
 
 ### v0.1.0 → v0.2.0
 
@@ -229,9 +229,9 @@ ayokoding-cli nav regen [--path=path]
 
 ## Integration with AI Agents
 
-### ayokoding-navigation-maker
+### ayokoding-web-navigation-maker
 
-The `ayokoding-navigation-maker` agent regenerates navigation listings by calling:
+The `ayokoding-web-navigation-maker` agent regenerates navigation listings by calling:
 
 ```bash
 ./apps/ayokoding-cli/dist/ayokoding-cli nav regen
@@ -239,9 +239,9 @@ The `ayokoding-navigation-maker` agent regenerates navigation listings by callin
 
 **Performance**: ~25ms for 74 files
 
-### ayokoding-title-maker
+### ayokoding-web-title-maker
 
-The `ayokoding-title-maker` agent updates title fields by calling:
+The `ayokoding-web-title-maker` agent updates title fields by calling:
 
 ```bash
 ./apps/ayokoding-cli/dist/ayokoding-cli titles update
@@ -253,11 +253,11 @@ The `ayokoding-title-maker` agent updates title fields by calling:
 
 Typical workflow when adding new content:
 
-1. **Create content**: `ayokoding-content-maker` creates new markdown files
-2. **Update titles**: `ayokoding-title-maker` standardizes titles from filenames
-3. **Generate navigation**: `ayokoding-navigation-maker` regenerates navigation listings
-4. **Validate structure**: `ayokoding-structure-checker` validates structure and ordering
-5. **Fix issues**: `ayokoding-structure-fixer` fixes any validation issues
+1. **Create content**: `ayokoding-web-general-maker` creates new markdown files
+2. **Update titles**: `ayokoding-web-title-maker` standardizes titles from filenames
+3. **Generate navigation**: `ayokoding-web-navigation-maker` regenerates navigation listings
+4. **Validate structure**: `ayokoding-web-structure-checker` validates structure and ordering
+5. **Fix issues**: `ayokoding-web-structure-fixer` fixes any validation issues
 
 ### Pre-commit Automation
 
@@ -295,7 +295,7 @@ Typical workflow when adding new content:
 - Fresh CLI binary on every commit
 - Nx caching keeps it fast
 
-**Note:** Agents (`ayokoding-title-maker`, `ayokoding-navigation-maker`) are still useful for:
+**Note:** Agents (`ayokoding-web-title-maker`, `ayokoding-web-navigation-maker`) are still useful for:
 
 - Batch updates across all content
 - Manual corrections outside commit workflow
@@ -367,6 +367,6 @@ Navigation regeneration performance comparison:
 
 ## References
 
-- [ayokoding-navigation-maker Agent](../../.claude/agents/ayokoding-navigation-maker.md)
+- [ayokoding-web-navigation-maker Agent](../../.claude/agents/ayokoding-web-navigation-maker.md)
 - [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md)
 - [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md)

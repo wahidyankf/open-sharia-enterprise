@@ -83,9 +83,9 @@ graph LR
 
 ### Validation Tools
 
-- **ayokoding-content-checker**: Structural and quality validation
-- **ayokoding-facts-checker**: Factual accuracy verification (Rust edition-specific)
-- **ayokoding-link-checker**: Link integrity validation
+- **ayokoding-web-general-checker**: Structural and quality validation
+- **ayokoding-web-facts-checker**: Factual accuracy verification (Rust edition-specific)
+- **ayokoding-web-link-checker**: Link integrity validation
 - **Prettier**: JSON array format enforcement for tags
 
 ### Rust Toolchain
@@ -361,9 +361,9 @@ graph LR
 **Activities**:
 
 1. **Automated Validation**:
-   - Run ayokoding-content-checker (structure, formatting)
-   - Run ayokoding-facts-checker (Rust 2024 edition verification)
-   - Run ayokoding-link-checker (internal and external links)
+   - Run ayokoding-web-general-checker (structure, formatting)
+   - Run ayokoding-web-facts-checker (Rust 2024 edition verification)
+   - Run ayokoding-web-link-checker (internal and external links)
 2. **Code Example Testing**:
    - Test all examples with rustc stable
    - Verify cargo commands (new, build, test, run)
@@ -769,9 +769,9 @@ Three-tier validation ensures Rust content quality:
 ```mermaid
 graph TD
     A[Content Creation] --> B{Tier 1: Automated}
-    B -->|ayokoding-content-checker| C[Structure Valid?]
-    B -->|ayokoding-facts-checker| D[Facts Correct?]
-    B -->|ayokoding-link-checker| E[Links Working?]
+    B -->|ayokoding-web-general-checker| C[Structure Valid?]
+    B -->|ayokoding-web-facts-checker| D[Facts Correct?]
+    B -->|ayokoding-web-link-checker| E[Links Working?]
 
     C -->|Pass| F{Tier 2: Rust Compilation}
     D -->|Pass| F
@@ -816,7 +816,7 @@ graph TD
 
 #### Tier 1: Automated Validation
 
-**ayokoding-content-checker** validates:
+**ayokoding-web-general-checker** validates:
 
 - File naming conventions
 - Directory structure
@@ -827,7 +827,7 @@ graph TD
 - Mermaid syntax
 - Color palette compliance
 
-**ayokoding-facts-checker** verifies:
+**ayokoding-web-facts-checker** verifies:
 
 - Rust syntax correctness (2024 edition)
 - Ownership rules accuracy
@@ -835,7 +835,7 @@ graph TD
 - Standard library API correctness
 - Cargo command syntax
 
-**ayokoding-link-checker** validates:
+**ayokoding-web-link-checker** validates:
 
 - Internal links (to other tutorials, guides)
 - External links (rust-lang.org, docs.rs, crates.io)
@@ -1019,9 +1019,9 @@ Add comprehensive Rust programming language content to ayokoding-web per Program
 
 ## Validation
 
-- ✅ ayokoding-content-checker: PASS (structure, formatting, weight numbering)
-- ✅ ayokoding-facts-checker: PASS (Rust 2024 edition syntax verified)
-- ✅ ayokoding-link-checker: PASS (all internal and external links valid)
+- ✅ ayokoding-web-general-checker: PASS (structure, formatting, weight numbering)
+- ✅ ayokoding-web-facts-checker: PASS (Rust 2024 edition syntax verified)
+- ✅ ayokoding-web-link-checker: PASS (all internal and external links valid)
 - ✅ Code compilation: PASS (all examples compile with rustc stable)
 - ✅ Cargo commands: PASS (all cargo workflows tested)
 - ✅ Clippy: PASS (code follows Rust idioms)
@@ -1146,10 +1146,10 @@ interface RustQualityMetrics {
 
 ### AI Agents
 
-- [ayokoding-content-maker](../../../.claude/agents/ayokoding-content-maker.md) - Content creation agent
-- [ayokoding-content-checker](../../../.claude/agents/ayokoding-content-checker.md) - Validation agent
-- [ayokoding-facts-checker](../../../.claude/agents/ayokoding-facts-checker.md) - Fact verification agent
-- [ayokoding-link-checker](../../../.claude/agents/ayokoding-link-checker.md) - Link validation agent
+- [ayokoding-web-general-maker](../../../.claude/agents/ayokoding-web-general-maker.md) - Content creation agent
+- [ayokoding-web-general-checker](../../../.claude/agents/ayokoding-web-general-checker.md) - Validation agent
+- [ayokoding-web-facts-checker](../../../.claude/agents/ayokoding-web-facts-checker.md) - Fact verification agent
+- [ayokoding-web-link-checker](../../../.claude/agents/ayokoding-web-link-checker.md) - Link validation agent
 
 ### Rust Official Resources
 

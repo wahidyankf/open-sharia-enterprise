@@ -58,11 +58,11 @@ This convention establishes designated directories for temporary files created b
 All checker agents in the following families MUST write audit reports to `generated-reports/`:
 
 1. **repo-rules-checker** - Repository consistency validation
-2. **ayokoding-content-general-checker** - General Hugo content validation (ayokoding-web)
-3. **ayokoding-content-by-example-checker** - By-example tutorial validation (ayokoding-web)
-4. **ayokoding-facts-checker** - Educational content factual accuracy validation
-5. **ayokoding-link-checker** - Link validation (ayokoding-web)
-6. **ayokoding-structure-checker** - Content structure validation (ayokoding-web)
+2. **ayokoding-web-general-checker** - General Hugo content validation (ayokoding-web)
+3. **ayokoding-web-by-example-checker** - By-example tutorial validation (ayokoding-web)
+4. **ayokoding-web-facts-checker** - Educational content factual accuracy validation
+5. **ayokoding-web-link-checker** - Link validation (ayokoding-web)
+6. **ayokoding-web-structure-checker** - Content structure validation (ayokoding-web)
 7. **ose-platform-web-content-checker** - Hugo content validation (ose-platform-web)
 8. **docs-checker** - Documentation factual accuracy validation
 9. **docs-tutorial-checker** - Tutorial quality validation
@@ -101,7 +101,7 @@ All checker agents MUST follow the universal naming pattern:
 
 **Components**:
 
-- `{agent-family}`: Agent name WITHOUT the `-checker` suffix (e.g., `repo-rules`, `ayokoding-content`, `docs`, `plan`)
+- `{agent-family}`: Agent name WITHOUT the `-checker` suffix (e.g., `repo-rules`, `ayokoding-web`, `docs`, `plan`)
 - `__`: Double underscore separator
 - `{YYYY-MM-DD--HH-MM}`: Timestamp in UTC+7 (double dash between date and time)
 - `__`: Double underscore separator
@@ -111,8 +111,8 @@ All checker agents MUST follow the universal naming pattern:
 
 ```
 generated-reports/repo-rules__2025-12-14--20-45__audit.md
-generated-reports/ayokoding-content-general__2025-12-14--15-30__audit.md
-generated-reports/ayokoding-content-by-example__2025-12-14--15-45__audit.md
+generated-reports/ayokoding-web-general__2025-12-14--15-30__audit.md
+generated-reports/ayokoding-web-by-example__2025-12-14--15-45__audit.md
 generated-reports/ose-platform-web-content__2025-12-14--16-00__audit.md
 generated-reports/docs__2025-12-15--10-00__audit.md
 generated-reports/plan__2025-12-15--11-30__audit.md
@@ -241,11 +241,11 @@ This progressive approach ensures findings persist even if context is compacted 
 ALL \*-checker agents must implement progressive writing:
 
 1. repo-rules-checker
-2. ayokoding-content-general-checker
-3. ayokoding-content-by-example-checker
-4. ayokoding-facts-checker
-5. ayokoding-link-checker
-6. ayokoding-structure-checker
+2. ayokoding-web-general-checker
+3. ayokoding-web-by-example-checker
+4. ayokoding-web-facts-checker
+5. ayokoding-web-link-checker
+6. ayokoding-web-structure-checker
 7. ose-platform-web-content-checker
 8. docs-checker
 9. docs-tutorial-checker
@@ -263,7 +263,7 @@ ALL \*-checker agents must implement progressive writing:
 
 **Components**:
 
-- `{agent-family}`: Agent name WITHOUT checker/fixer/maker suffix (e.g., `repo-rules`, `ayokoding-content`, `docs`, `plan`, `plan-execution`)
+- `{agent-family}`: Agent name WITHOUT checker/fixer/maker suffix (e.g., `repo-rules`, `ayokoding-web`, `docs`, `plan`, `plan-execution`)
 - `__`: Double underscore separator (aligns with repository file naming convention)
 - `{YYYY-MM-DD--HH-MM}`: Timestamp in UTC+7 with double dash between date and time
 - `__`: Double underscore separator
@@ -290,7 +290,7 @@ ALL \*-checker agents must implement progressive writing:
 ```
 generated-reports/repo-rules__2025-12-14--20-45__audit.md
 generated-reports/repo-rules__2025-12-14--20-45__fix.md
-generated-reports/ayokoding-content__2025-12-14--15-30__audit.md
+generated-reports/ayokoding-web__2025-12-14--15-30__audit.md
 generated-reports/ose-platform-web-content__2025-12-14--15-30__audit.md
 generated-reports/docs__2025-12-15--10-00__validation.md
 generated-reports/plan__2025-12-15--11-30__validation.md
@@ -348,7 +348,7 @@ filename="repo-rules__${timestamp}__audit.md"
 
 #### Fixer Reports (Universal Pattern)
 
-**Agents**: All fixer agents (repo-rules-fixer, ayokoding-content-general-fixer, ayokoding-content-by-example-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
+**Agents**: All fixer agents (repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
 
 **Pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__fix.md`
 
@@ -365,7 +365,7 @@ filename="repo-rules__${timestamp}__audit.md"
 | Agent Family             | Audit Report                                            | Fix Report                                            |
 | ------------------------ | ------------------------------------------------------- | ----------------------------------------------------- |
 | repo-rules               | `repo-rules__2025-12-14--20-45__audit.md`               | `repo-rules__2025-12-14--20-45__fix.md`               |
-| ayokoding-content        | `ayokoding-content__2025-12-14--15-30__audit.md`        | `ayokoding-content__2025-12-14--15-30__fix.md`        |
+| ayokoding-web            | `ayokoding-web__2025-12-14--15-30__audit.md`            | `ayokoding-web__2025-12-14--15-30__fix.md`            |
 | ose-platform-web-content | `ose-platform-web-content__2025-12-14--16-00__audit.md` | `ose-platform-web-content__2025-12-14--16-00__fix.md` |
 | docs-tutorial            | `docs-tutorial__2025-12-14--10-15__audit.md`            | `docs-tutorial__2025-12-14--10-15__fix.md`            |
 | readme                   | `readme__2025-12-14--09-45__audit.md`                   | `readme__2025-12-14--09-45__fix.md`                   |
@@ -430,12 +430,12 @@ All fixer reports include these sections:
 
 #### Content Validation Reports
 
-**Agents**: ayokoding-content-general-checker, ayokoding-content-by-example-checker, ose-platform-web-content-checker
+**Agents**: ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-checker
 **Pattern**: `{site}-content__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Examples**:
 
-- `ayokoding-content__2025-12-14--15-30__audit.md`
+- `ayokoding-web__2025-12-14--15-30__audit.md`
 - `ose-platform-web-content__2025-12-14--15-30__audit.md`
 
 **Content**: Hugo content validation results (frontmatter, structure, quality)
