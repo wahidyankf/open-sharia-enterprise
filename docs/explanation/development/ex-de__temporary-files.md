@@ -58,16 +58,17 @@ This convention establishes designated directories for temporary files created b
 All checker agents in the following families MUST write audit reports to `generated-reports/`:
 
 1. **repo-rules-checker** - Repository consistency validation
-2. **ayokoding-content-checker** - Hugo content validation (ayokoding-web)
-3. **ayokoding-facts-checker** - Educational content factual accuracy validation
-4. **ayokoding-link-checker** - Link validation (ayokoding-web)
-5. **ayokoding-structure-checker** - Content structure validation (ayokoding-web)
-6. **ose-platform-web-content-checker** - Hugo content validation (ose-platform-web)
-7. **docs-checker** - Documentation factual accuracy validation
-8. **docs-tutorial-checker** - Tutorial quality validation
-9. **readme-checker** - README quality validation
-10. **plan-checker** - Plan readiness validation
-11. **plan-execution-checker** - Implementation validation
+2. **ayokoding-content-general-checker** - General Hugo content validation (ayokoding-web)
+3. **ayokoding-content-by-example-checker** - By-example tutorial validation (ayokoding-web)
+4. **ayokoding-facts-checker** - Educational content factual accuracy validation
+5. **ayokoding-link-checker** - Link validation (ayokoding-web)
+6. **ayokoding-structure-checker** - Content structure validation (ayokoding-web)
+7. **ose-platform-web-content-checker** - Hugo content validation (ose-platform-web)
+8. **docs-checker** - Documentation factual accuracy validation
+9. **docs-tutorial-checker** - Tutorial quality validation
+10. **readme-checker** - README quality validation
+11. **plan-checker** - Plan readiness validation
+12. **plan-execution-checker** - Implementation validation
 
 **NO EXCEPTIONS**: Checker agents MUST NOT output results in conversation only. All validation findings MUST be written to audit report files.
 
@@ -110,7 +111,8 @@ All checker agents MUST follow the universal naming pattern:
 
 ```
 generated-reports/repo-rules__2025-12-14--20-45__audit.md
-generated-reports/ayokoding-content__2025-12-14--15-30__audit.md
+generated-reports/ayokoding-content-general__2025-12-14--15-30__audit.md
+generated-reports/ayokoding-content-by-example__2025-12-14--15-45__audit.md
 generated-reports/ose-platform-web-content__2025-12-14--16-00__audit.md
 generated-reports/docs__2025-12-15--10-00__audit.md
 generated-reports/plan__2025-12-15--11-30__audit.md
@@ -239,16 +241,17 @@ This progressive approach ensures findings persist even if context is compacted 
 ALL \*-checker agents must implement progressive writing:
 
 1. repo-rules-checker
-2. ayokoding-content-checker
-3. ayokoding-facts-checker
-4. ayokoding-link-checker
-5. ayokoding-structure-checker
-6. ose-platform-web-content-checker
-7. docs-checker
-8. docs-tutorial-checker
-9. readme-checker
-10. plan-checker
-11. plan-execution-checker
+2. ayokoding-content-general-checker
+3. ayokoding-content-by-example-checker
+4. ayokoding-facts-checker
+5. ayokoding-link-checker
+6. ayokoding-structure-checker
+7. ose-platform-web-content-checker
+8. docs-checker
+9. docs-tutorial-checker
+10. readme-checker
+11. plan-checker
+12. plan-execution-checker
 
 **Validation**: See repo-rules-checker agent for validation rules that verify progressive writing compliance across all checker agents.
 
@@ -345,7 +348,7 @@ filename="repo-rules__${timestamp}__audit.md"
 
 #### Fixer Reports (Universal Pattern)
 
-**Agents**: All fixer agents (repo-rules-fixer, ayokoding-content-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
+**Agents**: All fixer agents (repo-rules-fixer, ayokoding-content-general-fixer, ayokoding-content-by-example-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
 
 **Pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__fix.md`
 
@@ -427,7 +430,7 @@ All fixer reports include these sections:
 
 #### Content Validation Reports
 
-**Agents**: ayokoding-content-checker, ose-platform-web-content-checker
+**Agents**: ayokoding-content-general-checker, ayokoding-content-by-example-checker, ose-platform-web-content-checker
 **Pattern**: `{site}-content__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Examples**:

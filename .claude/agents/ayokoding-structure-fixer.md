@@ -29,7 +29,7 @@ Your primary job is to:
 
 **LIMITATIONS**:
 
-- This agent CANNOT write overview content (subjective task requiring ayokoding-content-maker)
+- This agent CANNOT write overview content (subjective task requiring ayokoding-content-general-maker)
 - This agent CANNOT regenerate navigation listings (use ayokoding-navigation-maker instead)
 - It only fixes structural issues like incorrect weight values across ALL content files, cookbook weight ordering, tutorial progression violations, and file presence violations
 
@@ -53,8 +53,8 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- Content quality validation (use ayokoding-content-checker)
-- Writing overview content (use ayokoding-content-maker)
+- Content quality validation (use ayokoding-content-general-checker)
+- Writing overview content (use ayokoding-content-general-maker)
 - Regenerating navigation listings (use ayokoding-navigation-maker)
 - Initial structure detection (use ayokoding-structure-checker)
 - When no structural audit report exists
@@ -152,7 +152,7 @@ This agent uses the universal three-level confidence system defined in [Fixer Co
 
 **MEDIUM Confidence** (Manual review):
 
-- Overview content quality issues (requires content writing by ayokoding-content-maker)
+- Overview content quality issues (requires content writing by ayokoding-content-general-maker)
 - Navigation listing regeneration (requires ayokoding-navigation-maker)
 - Weight value borderline acceptable (within valid range but not optimal)
 - Structural ambiguity requiring pedagogical judgment
@@ -249,7 +249,7 @@ tags: []
 # Overview content goes here
 ```
 
-**Confidence**: MEDIUM for overview/ikhtisar (requires content writing - flag for ayokoding-content-maker)
+**Confidence**: MEDIUM for overview/ikhtisar (requires content writing - flag for ayokoding-content-general-maker)
 
 **Confidence**: HIGH for `_index.md` (can create basic structure)
 
@@ -709,7 +709,7 @@ Create comprehensive report in `generated-reports/`:
 - **Issue:** Overview file exists but has no content (empty after frontmatter)
 - **Validation:** Confirmed file is empty
 - **Confidence:** MEDIUM (requires content writing)
-- **Action Required:** Use ayokoding-content-maker to write overview content
+- **Action Required:** Use ayokoding-content-general-maker to write overview content
 
   **apps/ayokoding-web/content/en/learn/swe/prog-lang/\_index.md - Navigation listing needs regeneration**
 
@@ -723,7 +723,7 @@ Create comprehensive report in `generated-reports/`:
 - **Issue:** Ikhtisar content is very short (2 sentences)
 - **Validation:** Confirmed content is minimal
 - **Confidence:** MEDIUM (content quality is subjective)
-- **Action Required:** Use ayokoding-content-maker to expand ikhtisar content
+- **Action Required:** Use ayokoding-content-general-maker to expand ikhtisar content
 
 ---
 
@@ -765,7 +765,7 @@ apps/ayokoding-web/content/id/belajar/swe/_index.md
 
 ## Next Steps
 
-1. **Review manual items:** Address 2 findings flagged as "needs manual review" (use ayokoding-content-maker for content writing, ayokoding-navigation-maker for navigation regeneration)
+1. **Review manual items:** Address 2 findings flagged as "needs manual review" (use ayokoding-content-general-maker for content writing, ayokoding-navigation-maker for navigation regeneration)
 2. **Improve checker:** Apply recommendations to ayokoding-structure-checker
 3. **Re-run audit:** Verify false positives are eliminated after checker improvements
 
@@ -778,7 +778,7 @@ apps/ayokoding-web/content/id/belajar/swe/_index.md
 
 1. **Re-validation is mandatory** - NEVER skip validation step
 2. **Confidence matters** - Apply fixes only when confidence is HIGH
-3. **Content creation boundary** - Cannot write overview content (flag for ayokoding-content-maker)
+3. **Content creation boundary** - Cannot write overview content (flag for ayokoding-content-general-maker)
 4. **Navigation regeneration boundary** - Cannot regenerate navigation listings (flag for ayokoding-navigation-maker)
 5. **Report everything** - Document all decisions (fixed/skipped/flagged)
 6. **Improve checker** - Provide actionable feedback on false positives
@@ -791,7 +791,7 @@ You should refuse to:
 
 - Apply fixes without re-validation
 - Modify files without HIGH confidence
-- Write overview/ikhtisar content (use ayokoding-content-maker)
+- Write overview/ikhtisar content (use ayokoding-content-general-maker)
 - Regenerate navigation listings (use ayokoding-navigation-maker)
 - Skip reporting false positives
 - Proceed without readable audit report
@@ -803,7 +803,7 @@ Always provide:
 
 1. **Fix summary** - What was fixed, skipped, flagged
 2. **False positive report** - Detailed analysis of checker errors
-3. **Manual review list** - Items needing ayokoding-content-maker (content), ayokoding-navigation-maker (navigation), or human judgment (structure)
+3. **Manual review list** - Items needing ayokoding-content-general-maker (content), ayokoding-navigation-maker (navigation), or human judgment (structure)
 4. **Recommendations** - How to improve ayokoding-structure-checker
 5. **Fix report file** - Complete audit trail in generated-reports/
 
@@ -822,8 +822,8 @@ Always provide:
 - [ayokoding-structure-maker.md](./ayokoding-structure-maker.md) - Proactively modifies weights and structure (intentional changes, different workflow)
 - [ayokoding-structure-checker.md](./ayokoding-structure-checker.md) - Generates structural audit reports that this agent processes
 - [ayokoding-navigation-maker.md](./ayokoding-navigation-maker.md) - Regenerates navigation listings from file structure (complementary - handles what this agent cannot)
-- [ayokoding-content-maker.md](./ayokoding-content-maker.md) - Creates overview content (different purpose)
-- [ayokoding-content-fixer.md](./ayokoding-content-fixer.md) - Handles content quality fixes (complementary agent)
+- [ayokoding-content-general-maker.md](./ayokoding-content-general-maker.md) - Creates overview content (different purpose)
+- [ayokoding-content-general-fixer.md](./ayokoding-content-general-fixer.md) - Handles content quality fixes (complementary agent)
 
 **Related Conventions:**
 

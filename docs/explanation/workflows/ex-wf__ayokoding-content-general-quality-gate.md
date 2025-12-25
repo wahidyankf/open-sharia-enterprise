@@ -1,18 +1,21 @@
 ---
-name: ayokoding-web-content-quality-gate
-goal: Validate all ayokoding-web content quality, apply fixes iteratively, then regenerate titles and navigation
-termination: Zero findings across all validators and navigation regenerated
+name: ayokoding-content-general-quality-gate
+goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings, then regenerate titles and navigation
+termination: Zero findings across all validators and navigation regenerated (runs indefinitely until achieved unless max-iterations provided)
 inputs:
   - name: scope
     type: string
     description: Content to validate (e.g., "all", "ayokoding-web/content/en/", "specific-file.md")
     required: false
     default: all
+  - name: min-iterations
+    type: number
+    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
+    required: false
   - name: max-iterations
     type: number
-    description: Maximum number of check-fix cycles to prevent infinite loops
+    description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
-    default: 5
 outputs:
   - name: final-status
     type: enum
@@ -23,7 +26,7 @@ outputs:
     description: Number of check-fix cycles executed
   - name: content-report
     type: file
-    pattern: generated-reports/ayokoding-content__*__audit.md
+    pattern: generated-reports/ayokoding-content-general__*__audit.md
     description: Final content validation report
   - name: facts-report
     type: file
@@ -39,7 +42,7 @@ outputs:
     description: Final links validation report
 ---
 
-# AyoKoding Web Content Quality Gate Workflow
+# AyoKoding Content General Quality Gate Workflow
 
 **Purpose**: Comprehensively validate all ayokoding-web content (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until all issues are resolved, then regenerate titles and navigation.
 
@@ -56,7 +59,7 @@ outputs:
 
 Run all ayokoding validators concurrently to identify all issues across different quality dimensions.
 
-**Agent 1a**: `ayokoding-content-checker`
+**Agent 1a**: `ayokoding-content-general-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{content-report-N}` - Hugo conventions, bilingual consistency, navigation validation
@@ -108,7 +111,7 @@ Analyze all audit reports to determine if fixes are needed.
 
 Fix Hugo convention violations, frontmatter issues, and content quality problems.
 
-**Agent**: `ayokoding-content-fixer`
+**Agent**: `ayokoding-content-general-fixer`
 
 - **Args**: `report: {step1.outputs.content-report-N}, approved: all`
 - **Output**: `{content-fixes-applied}`
@@ -169,17 +172,19 @@ Determine whether to continue fixing or move to finalization.
 
 - Re-run all checkers (step 1) to get fresh reports
 - Count ALL findings (HIGH, MEDIUM, MINOR) across all new reports
-- If findings = 0: Proceed to step 7 (Finalization)
-- If findings > 0 AND iterations < max-iterations: Loop back to step 3 with new reports
-- If findings > 0 AND iterations >= max-iterations: Proceed to step 7 with status `partial`
+- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 7 (Finalization)
+- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 7 with status `partial`
+- If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
 **Depends on**: Step 5 completion
 
 **Notes**:
 
-- Prevents infinite loops with max-iterations limit
-- Continues until ZERO findings of any confidence level across all validators
-- Each iteration gets fresh validation reports
+- **Default behavior**: Runs indefinitely until zero findings (no max-iterations limit)
+- **Optional min-iterations**: Prevents premature termination before sufficient iterations
+- **Optional max-iterations**: Prevents infinite loops when explicitly provided
+- Each iteration gets fresh validation reports across all four validators
 - Tracks iteration count and finding trends
 
 ### 7. Regenerate Titles (Sequential)
@@ -228,7 +233,7 @@ Run all checkers one final time to confirm zero issues remain.
 
 **Agents**: All four checkers in parallel
 
-- ayokoding-content-checker
+- ayokoding-content-general-checker
 - ayokoding-facts-checker
 - ayokoding-structure-checker
 - ayokoding-link-checker
@@ -269,35 +274,42 @@ Report final status and summary.
 
 ```bash
 # Run complete ayokoding-web content validation and fixing
-workflow run ayokoding-web-content-quality-gate
+workflow run ayokoding-content-general-quality-gate
 ```
 
 ### Validate Specific Language
 
 ```bash
 # Validate only English content
-workflow run ayokoding-web-content-quality-gate --scope=ayokoding-web/content/en/
+workflow run ayokoding-content-general-quality-gate --scope=ayokoding-web/content/en/
 ```
 
 ### Validate Specific Section
 
 ```bash
 # Validate only programming section
-workflow run ayokoding-web-content-quality-gate --scope=ayokoding-web/content/en/programming/
+workflow run ayokoding-content-general-quality-gate --scope=ayokoding-web/content/en/programming/
 ```
 
-### Extended Validation
+### With Iteration Bounds
 
 ```bash
-# Allow up to 10 iterations for complex content issues
-workflow run ayokoding-web-content-quality-gate --scope=all --max-iterations=10
+# Require at least 2 iterations, cap at 10 maximum
+workflow run ayokoding-content-general-quality-gate --scope=all --min-iterations=2 --max-iterations=10
 ```
 
-### Quick Validation Only
+### Prevent Infinite Loops
 
 ```bash
-# Check only, don't fix or regenerate (set max-iterations=0)
-workflow run ayokoding-web-content-quality-gate --scope=all --max-iterations=0
+# Set maximum iterations when unsure about fix convergence
+workflow run ayokoding-content-general-quality-gate --scope=all --max-iterations=10
+```
+
+### Require Minimum Iterations
+
+```bash
+# Ensure at least 3 check-fix cycles before accepting zero findings
+workflow run ayokoding-content-general-quality-gate --scope=all --min-iterations=3
 ```
 
 ## Iteration Example
@@ -331,9 +343,10 @@ Result: SUCCESS (2 iterations)
 
 **Infinite Loop Prevention**:
 
-- Max-iterations parameter (default: 5)
-- Workflow terminates with `partial` if limit reached
+- Optional max-iterations parameter (no default - runs until zero findings)
+- When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count and finding trends
+- Use max-iterations when fix convergence is uncertain
 
 **False Positive Protection**:
 
@@ -357,7 +370,7 @@ Result: SUCCESS (2 iterations)
 
 ## Validation Dimensions
 
-### Content Validation (ayokoding-content-checker)
+### Content Validation (ayokoding-content-general-checker)
 
 - Hugo conventions (frontmatter, theme-specific)
 - Bilingual consistency

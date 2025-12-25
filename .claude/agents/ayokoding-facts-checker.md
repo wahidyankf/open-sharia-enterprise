@@ -578,7 +578,7 @@ Incorrect:
 ### Out of Scope
 
 - Link format validation (handled by ayokoding-link-checker)
-- Hugo frontmatter structure (handled by ayokoding-content-checker)
+- Hugo frontmatter structure (handled by ayokoding-content-general-checker)
 - Writing style or pedagogical effectiveness (subjective)
 - Grammar and spelling (unless affects meaning)
 - Content completeness (not checking for missing topics)
@@ -608,8 +608,8 @@ Incorrect:
 **Don't use ayokoding-facts-checker for:**
 
 - Checking link format/validity (use ayokoding-link-checker)
-- Validating frontmatter structure (use ayokoding-content-checker)
-- Creating new content (use ayokoding-content-maker)
+- Validating frontmatter structure (use ayokoding-content-general-checker)
+- Creating new content (use ayokoding-content-general-maker)
 - Pedagogical quality assessment (subjective, requires human judgment)
 
 ## Reference Documentation
@@ -643,9 +643,9 @@ Incorrect:
 **Related Agents:**
 
 - `ayokoding-facts-fixer.md` - Applies validated fixes from this agent's reports
-- `ayokoding-content-checker.md` - Validates Hugo structure (not factual accuracy)
+- `ayokoding-content-general-checker.md` - Validates Hugo structure (not factual accuracy)
 - `ayokoding-link-checker.md` - Validates link format/validity (not content accuracy)
-- `ayokoding-content-maker.md` - Creates educational content
+- `ayokoding-content-general-maker.md` - Creates educational content
 
 ---
 

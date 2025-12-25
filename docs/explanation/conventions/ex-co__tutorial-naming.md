@@ -9,7 +9,7 @@ tags:
   - naming
   - learning-paths
 created: 2025-12-03
-updated: 2025-12-23
+updated: 2025-12-25
 ---
 
 # Tutorial Naming Convention
@@ -47,7 +47,7 @@ graph TB
 	D["<b>Intermediate</b><br/>60-85%"]
 	E["<b>Advanced</b><br/>85-95%"]
 	F["<b>Cookbook</b><br/>Practical"]
-	G["<b>By Example</b><br/>90%"]
+	G["<b>By Example</b><br/>95%"]
 
 	A --> B
 	B --> C
@@ -81,7 +81,7 @@ graph TB
 
 - **Full Set**: The 5 sequential learning levels (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) that provide comprehensive mastery from 0% to 95% coverage
 - **Cookbook**: A parallel, practical reference track for solving specific problems at any skill level
-- **By Example**: A parallel, example-driven learning track for experienced developers who want to quickly pick up a new language through 60+ annotated code examples (90% coverage)
+- **By Example**: A parallel, example-driven learning track for experienced developers who want to quickly pick up a new language through 75-90 annotated, self-contained code examples (95% coverage)
 
 ---
 
@@ -300,53 +300,62 @@ Collection of practical recipes and patterns for solving common real-world probl
 
 ### 📖 By Example
 
-**Coverage**: 90% of domain knowledge through annotated examples
+**Coverage**: 95% of domain knowledge through annotated examples
 **Goal**: Quick pickup for experienced developers learning new languages
 
 **Description**:
-Example-driven learning path for experienced developers (seasonal programmers/software engineers) who want to quickly pick up a new language through heavily annotated code examples. Covers 90% of language concepts through 60+ progressively complex examples organized into three levels.
+Example-driven learning path for experienced developers (seasonal programmers/software engineers) who want to quickly pick up a new language through heavily annotated code examples. Covers 95% of language concepts through 75-90 self-contained, progressively complex examples organized into three levels.
 
 **Prerequisites**: Programming experience required (not for complete beginners)
 
 **Structure**:
 
-- Total: 60+ annotated examples organized into 3 files
-- **beginner.md**: Examples 1-15 (Basics) - fundamental syntax and core concepts
-- **intermediate.md**: Examples 16-35 (Intermediate) - practical patterns and common tasks
-- **advanced.md**: Examples 36-60 (Advanced) - complex features and internals
+- Total: 75-90 annotated examples organized into 3 files
+- **beginner.md**: Examples 1-25/30 (Basics, 0-40% coverage) - fundamental syntax and core concepts
+- **intermediate.md**: Examples 26-50/60 (Intermediate, 40-75% coverage) - practical patterns and production features
+- **advanced.md**: Examples 51-75/90 (Advanced, 75-95% coverage) - complex features, optimization, and internals
 
 **Content includes**:
 
-- Concise explanation of concept before each example
-- Mermaid diagrams showing concept relationships (when helpful)
-- Heavily commented code with:
-  - What each line does
-  - Expected output (as comments)
-  - Intermediate values for variables/processes
-- Progressive complexity (simple → advanced within each level)
-- 90% coverage of language features
+- **Four-part format** for every example:
+  1. Brief explanation (2-3 sentences) of concept and why it matters
+  2. Mermaid diagram (when visualization clarifies concept relationships)
+  3. Heavily annotated code with `// =>` or `# =>` notation showing:
+     - What each line does
+     - Expected outputs
+     - Variable states and intermediate values
+     - Side effects and state changes
+  4. Key takeaway (1-2 sentences) distilling the core insight
+- **Self-contained examples**: Copy-paste-runnable within chapter scope
+- **Diagram frequency**: 30-50% of examples include visualizations
+- **Color-blind friendly**: All diagrams use accessible color palette
+- **Progressive complexity**: Simple → advanced within each level
+- **95% coverage**: Production patterns, modern features, testing, optimization
 
 **What it does NOT include**:
 
 - Deep explanations for complete beginners (see Beginner tutorial for that)
 - Problem-solving recipes (see Cookbook for that)
-- Production patterns and architecture (see Intermediate/Advanced tutorials for that)
+- Framework-specific advanced patterns (see Intermediate/Advanced tutorials for comprehensive coverage)
 - Setup instructions (see Initial Setup for that)
+- The final 5% (highly specialized topics, research areas)
 
 **Example titles**:
 
 - "Elixir By Example: Learn Through Code"
 - "Rust By Example: Annotated Examples"
 - "Kotlin By Example: Quick Language Pickup"
+- "Go By Example: 95% Coverage Through Annotated Code"
 
-**When to use**: When an experienced developer wants to quickly understand a new language's syntax and patterns through working examples without extensive narrative.
+**When to use**: When an experienced developer wants to quickly understand a new language's syntax, patterns, and production features through working examples without extensive narrative.
 
 **Relationship to other tutorial types**:
 
 - **NOT a replacement** for comprehensive tutorials (Beginner/Intermediate/Advanced) - those provide deep explanations for complete beginners
-- **NOT a replacement** for Quick Start - Quick Start is 5-30% coverage with touchpoints, By Example is 90% coverage with comprehensive examples
+- **NOT a replacement** for Quick Start - Quick Start is 5-30% coverage with touchpoints, By Example is 95% coverage with comprehensive examples
 - **NOT a replacement** for Cookbook - Cookbook is problem-solving oriented, By Example is learning-oriented
 - **Complements** the Full Set by providing an alternative learning path for experienced developers
+- **Higher coverage than Advanced tutorials**: By Example reaches 95% through examples while Advanced tutorials reach 85-95% through deep dives
 
 ---
 
@@ -402,15 +411,15 @@ graph TB
 
 ### Quick Reference Table
 
-| Tutorial Type     | Coverage  | Use When                                                 |
-| ----------------- | --------- | -------------------------------------------------------- |
-| **Initial Setup** | 0-5%      | Need quick verification setup works                      |
-| **Quick Start**   | 5-30%     | Want to explore independently                            |
-| **Beginner**      | 0-60%     | Complete beginner, need foundation                       |
-| **Intermediate**  | 60-85%    | Building production systems                              |
-| **Advanced**      | 85-95%    | Need expert-level mastery                                |
-| **Cookbook**      | Practical | Solving specific problems                                |
-| **By Example**    | 90%       | Experienced dev, learn new language through 60+ examples |
+| Tutorial Type     | Coverage  | Use When                                                   |
+| ----------------- | --------- | ---------------------------------------------------------- |
+| **Initial Setup** | 0-5%      | Need quick verification setup works                        |
+| **Quick Start**   | 5-30%     | Want to explore independently                              |
+| **Beginner**      | 0-60%     | Complete beginner, need foundation                         |
+| **Intermediate**  | 60-85%    | Building production systems                                |
+| **Advanced**      | 85-95%    | Need expert-level mastery                                  |
+| **Cookbook**      | Practical | Solving specific problems                                  |
+| **By Example**    | 95%       | Experienced dev, learn new language through 75-90 examples |
 
 **Note**: The first 5 types (Initial Setup through Advanced) form the "Full Set" - a sequential learning path from 0% to 95% coverage. Cookbook and By Example are parallel tracks for different learning approaches.
 
@@ -483,4 +492,4 @@ graph TB
 
 ---
 
-**Last Updated**: 2025-12-23
+**Last Updated**: 2025-12-25

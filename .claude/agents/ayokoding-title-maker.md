@@ -49,7 +49,7 @@ Your primary job is to **update title frontmatter fields** in all markdown files
 
 **Do NOT use this agent for:**
 
-- Creating new markdown files (use ayokoding-content-maker instead)
+- Creating new markdown files (use ayokoding-content-general-maker instead)
 - Validating navigation structure (use ayokoding-structure-checker instead)
 - Fixing weight values or other metadata (use ayokoding-structure-fixer instead)
 - Writing custom content for markdown (this only updates title frontmatter)
@@ -160,7 +160,7 @@ Common errors:
 
 **Prerequisites**:
 
-- `ayokoding-content-maker` should create new content files with proper frontmatter (may have placeholder titles)
+- `ayokoding-content-general-maker` should create new content files with proper frontmatter (may have placeholder titles)
 - File structure should be organized (files in proper directories)
 - `ayokoding-cli` tool should be built
 
@@ -177,7 +177,7 @@ Common errors:
 
 ```
 1. Content Creation
-   ayokoding-content-maker → Create new files with frontmatter
+   ayokoding-content-general-maker → Create new files with frontmatter
 
 2. Title Standardization (THIS AGENT)
    ayokoding-title-maker → Update all titles based on filenames
@@ -285,5 +285,5 @@ lowercase_words:
 - [ayokoding-navigation-maker Agent](./ayokoding-navigation-maker.md)
 - [ayokoding-structure-checker Agent](./ayokoding-structure-checker.md)
 - [ayokoding-structure-fixer Agent](./ayokoding-structure-fixer.md)
-- [ayokoding-content-maker Agent](./ayokoding-content-maker.md)
+- [ayokoding-content-general-maker Agent](./ayokoding-content-general-maker.md)
 - [ayokoding-cli README](../../apps/ayokoding-cli/README.md)

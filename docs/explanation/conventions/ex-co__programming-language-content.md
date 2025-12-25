@@ -44,7 +44,7 @@ This convention applies to:
 
 - All programming language content under `apps/ayokoding-web/content/[lang]/learn/swe/prog-lang/[language]/`
 - Includes: tutorials, how-to guides, cookbooks, best practices, anti-patterns
-- Enforced by: `ayokoding-content-checker`, `ayokoding-content-maker`, `ayokoding-facts-checker` agents
+- Enforced by: `ayokoding-content-general-checker`, `ayokoding-content-by-example-checker`, `ayokoding-content-general-maker`, `ayokoding-content-by-example-maker`, `ayokoding-facts-checker` agents
 
 ## Universal Directory Structure
 
@@ -663,7 +663,7 @@ From benchmark analysis:
 
 Content creators MUST:
 
-1. **Use ayokoding-content-maker agent** for initial content creation
+1. **Use ayokoding-content-general-maker or ayokoding-content-by-example-maker agent** for initial content creation
 2. **Follow this standard exactly** (don't improvise structure)
 3. **Test all code examples** (ensure they run)
 4. **Verify factual accuracy** (check documentation, official sources)
@@ -673,7 +673,7 @@ Content creators MUST:
 
 Content MUST pass:
 
-1. **ayokoding-content-checker** validation (Hugo conventions, quality principles)
+1. **ayokoding-content-general-checker** or **ayokoding-content-by-example-checker** validation (Hugo conventions, quality principles)
 2. **ayokoding-facts-checker** verification (factual correctness)
 3. **ayokoding-link-checker** validation (all links work)
 4. **Manual review** (pedagogical effectiveness, clarity)

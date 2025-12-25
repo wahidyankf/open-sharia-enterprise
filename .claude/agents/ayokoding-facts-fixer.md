@@ -661,10 +661,10 @@ This separation of concerns enables:
 
 ### Out of Scope
 
-- Creating new content (use ayokoding-content-maker)
+- Creating new content (use ayokoding-content-general-maker)
 - Pedagogical quality improvements (requires human judgment)
 - Link format validation (use ayokoding-link-checker)
-- Hugo structure validation (use ayokoding-content-checker)
+- Hugo structure validation (use ayokoding-content-general-checker)
 - Subjective writing improvements (manual review required)
 
 ### Limitations
@@ -687,10 +687,10 @@ This separation of concerns enables:
 
 **Don't use ayokoding-facts-fixer for:**
 
-- Direct content editing (use ayokoding-content-maker)
+- Direct content editing (use ayokoding-content-general-maker)
 - Subjective quality improvements (manual editing)
 - Initial validation (use ayokoding-facts-checker)
-- Link format fixes (use ayokoding-content-fixer)
+- Link format fixes (use ayokoding-content-general-fixer)
 
 ## Reference Documentation
 
@@ -715,8 +715,8 @@ This separation of concerns enables:
 **Related Agents:**
 
 - `ayokoding-facts-checker.md` - Generates audit reports this agent processes
-- `ayokoding-content-maker.md` - Creates educational content
-- `ayokoding-content-fixer.md` - Fixes Hugo structure issues (not factual)
+- `ayokoding-content-general-maker.md` - Creates educational content
+- `ayokoding-content-general-fixer.md` - Fixes Hugo structure issues (not factual)
 
 ---
 

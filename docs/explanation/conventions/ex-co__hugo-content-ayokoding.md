@@ -1269,7 +1269,7 @@ Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini mem
 
 ### Optional Topic-Level Diátaxis Structure
 
-**Status**: OPTIONAL pattern (not required, not validated by ayokoding-content-checker)
+**Status**: OPTIONAL pattern (not required, not validated by ayokoding-content-general-checker)
 
 Topics in ayokoding-web MAY optionally organize content using Diátaxis framework at the topic level.
 
@@ -2021,7 +2021,9 @@ static/
 
 **Related AI Agents**:
 
-- [ayokoding-content-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-maker.md) - Creates ayokoding-web content
-- [ayokoding-content-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-checker.md) - Validates ayokoding-web content
+- [ayokoding-content-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-general-maker.md) - Creates general ayokoding-web content
+- [ayokoding-content-by-example-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-by-example-maker.md) - Creates by-example tutorials
+- [ayokoding-content-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-general-checker.md) - Validates general ayokoding-web content
+- [ayokoding-content-by-example-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-by-example-checker.md) - Validates by-example tutorials
 - [ayokoding-link-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-link-checker.md) - Validates links in ayokoding-web
 - [ayokoding-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-deployer.md) - Deploys ayokoding-web to production
