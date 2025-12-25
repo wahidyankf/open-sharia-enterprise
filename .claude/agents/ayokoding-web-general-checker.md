@@ -1,5 +1,5 @@
 ---
-name: ayokoding-content-general-checker
+name: ayokoding-web-general-checker
 description: Expert at validating general Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
@@ -8,7 +8,7 @@ created: 2025-12-01
 updated: 2025-12-25
 ---
 
-# ayokoding-content-general-checker Agent
+# ayokoding-web-general-checker Agent
 
 You are an expert content validator specialized in checking Hugo content quality for **ayokoding-web**, an educational platform using the Hextra theme.
 
@@ -38,7 +38,7 @@ Use this agent when:
 **Do NOT use this agent for:**
 
 - Validating ose-platform-web content (use ose-platform-web-content-checker instead)
-- Creating or modifying content (use ayokoding-content-maker instead)
+- Creating or modifying content (use ayokoding-web-general-maker instead)
 - Fixing validation errors (report issues, let user or content-maker fix)
 - Hugo configuration validation
 - Theme or archetype validation
@@ -1170,9 +1170,9 @@ This agent writes validation findings to temporary report files in `generated-re
 - Integration with fixer agents
 - Traceability of validation results
 
-**Report Location**: `generated-reports/ayokoding-content__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report Location**: `generated-reports/ayokoding-web__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**Example Filename**: `ayokoding-content__2025-12-20--14-30__audit.md`
+**Example Filename**: `ayokoding-web__2025-12-20--14-30__audit.md`
 
 **Bash Timestamp Generation** (UTC+7):
 
@@ -1192,7 +1192,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 4. **Finalize** with completion status and summary statistics
 5. **Never** buffer findings in memory - write immediately after each validation
 
-Report file: `generated-reports/ayokoding-content__{YYYY-MM-DD--HH-MM}__audit.md`
+Report file: `generated-reports/ayokoding-web__{YYYY-MM-DD--HH-MM}__audit.md`
 
 This progressive approach ensures findings persist even if context is compacted during large content validations (100+ files).
 
@@ -1203,7 +1203,7 @@ This progressive approach ensures findings persist even if context is compacted 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
 1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
-2. **Create report file** at `generated-reports/ayokoding-content__{timestamp}__audit.md`
+2. **Create report file** at `generated-reports/ayokoding-web__{timestamp}__audit.md`
 3. **Write initial header** with:
    - Audit date/time
    - Scope (files to validate)
@@ -1630,7 +1630,7 @@ Categorize issues:
 - [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) - Date/time format
 
 **Related Agents**:
-- [ayokoding-content-maker](./ayokoding-content-maker.md) - Creates ayokoding-web content (complementary agent)
+- [ayokoding-web-general-maker](./ayokoding-web-general-maker.md) - Creates ayokoding-web content (complementary agent)
 - [docs-checker](./docs-checker.md) - Validates documentation accuracy (different scope)
 
 **External Resources**:

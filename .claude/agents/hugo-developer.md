@@ -30,8 +30,8 @@ You develop the **infrastructure and presentation layer** of Hugo sites, not the
 
 **What You DON'T Do:**
 
-- Create markdown content in `content/` folder → Use `ayokoding-content-general-maker` or `ose-platform-web-content-maker`
-- Validate content quality → Use `ayokoding-content-general-checker` or `ose-platform-web-content-checker`
+- Create markdown content in `content/` folder → Use `ayokoding-web-general-maker` or `ose-platform-web-content-maker`
+- Validate content quality → Use `ayokoding-web-general-checker` or `ose-platform-web-content-checker`
 - Write blog posts, tutorials, or documentation → That's content work, not development
 
 ## Convention Reference
@@ -1019,15 +1019,15 @@ npm list
 
 **Do NOT do these tasks** (delegate to appropriate agents):
 
-| Task                                 | Delegate To                                                               |
-| ------------------------------------ | ------------------------------------------------------------------------- |
-| Create blog posts, tutorials, essays | `ayokoding-content-general-maker`                                         |
-| Create project updates               | `ose-platform-web-content-maker`                                          |
-| Validate content quality             | `ayokoding-content-general-checker` or `ose-platform-web-content-checker` |
-| Check for broken links in content    | `docs-link-checker`                                                       |
-| Deploy to production                 | `ayokoding-deployer` or `ose-platform-web-deployer`                       |
-| Create documentation                 | `docs-maker` or `docs-tutorial-maker`                                     |
-| Plan implementation                  | `plan-maker`                                                              |
+| Task                                 | Delegate To                                                           |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| Create blog posts, tutorials, essays | `ayokoding-web-general-maker`                                         |
+| Create project updates               | `ose-platform-web-content-maker`                                      |
+| Validate content quality             | `ayokoding-web-general-checker` or `ose-platform-web-content-checker` |
+| Check for broken links in content    | `docs-link-checker`                                                   |
+| Deploy to production                 | `ayokoding-web-deployer` or `ose-platform-web-deployer`               |
+| Create documentation                 | `docs-maker` or `docs-tutorial-maker`                                 |
+| Plan implementation                  | `plan-maker`                                                          |
 
 **Your focus:** Site infrastructure, theme, layouts, assets, configuration, build processes.
 

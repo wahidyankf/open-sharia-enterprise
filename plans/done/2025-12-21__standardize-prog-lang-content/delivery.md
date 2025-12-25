@@ -188,9 +188,9 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Validation Notes**: All diagrams verified using color-blind friendly palette with documented colors
   - **Date**: 2025-12-21
 - [ ] All cross-references valid (≥2 tutorial refs, ≥1 cookbook ref per guide)
-- [ ] ayokoding-content-checker: Pending execution
-- [ ] ayokoding-facts-checker: Pending execution
-- [ ] ayokoding-link-checker: Pending execution
+- [ ] ayokoding-web-general-checker: Pending execution
+- [ ] ayokoding-web-facts-checker: Pending execution
+- [ ] ayokoding-web-link-checker: Pending execution
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -304,9 +304,9 @@ Scenario: Java reaches exceptional standard for how-to guides
 - [x] All code examples follow Go best practices (syntax-checked)
 - [x] All Mermaid diagrams use color-blind friendly palette (streamlined approach - no diagrams)
 - [x] All cross-references valid (all guides include Related Patterns sections)
-- [ ] ayokoding-content-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -483,9 +483,9 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Validation Notes**: All 7 diagrams verified using color-blind friendly palette
   - **Date**: 2025-12-21
 - [ ] All cross-references valid
-- [ ] ayokoding-content-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -570,9 +570,9 @@ Scenario: Python reaches exceptional standard for cookbook
 - [x] All code examples follow Kotlin best practices (syntax-checked)
 - [x] All cross-references valid (guides and recipes include Related Patterns/Learn More sections)
 - [x] Cookbook organized by clear categories (16 categories with table of contents, 61 total recipes)
-- [ ] ayokoding-content-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -698,9 +698,9 @@ Scenario: Kotlin reaches exceptional standard for cookbook
 - [x] All Mermaid diagrams use color-blind friendly palette (streamlined approach - no diagrams added this phase)
 - [x] All cross-references valid (Related Patterns sections in all new guides)
 - [x] Cookbook organized by clear categories (16 categories with table of contents)
-- [ ] ayokoding-content-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -762,11 +762,11 @@ Scenario: Rust reaches exceptional standard for cookbook
 
 **AI Agents**:
 
-- ayokoding-content-maker available and functional
-- ayokoding-content-checker available and functional
-- ayokoding-facts-checker available and functional
-- ayokoding-link-checker available and functional
-- ayokoding-content-fixer available and functional
+- ayokoding-web-general-maker available and functional
+- ayokoding-web-general-checker available and functional
+- ayokoding-web-facts-checker available and functional
+- ayokoding-web-link-checker available and functional
+- ayokoding-web-general-fixer available and functional
 
 **Hugo Build**:
 
@@ -859,7 +859,7 @@ Scenario: Rust reaches exceptional standard for cookbook
 
 **Mitigation**:
 
-- Use ayokoding-link-checker to validate all links
+- Use ayokoding-web-link-checker to validate all links
 - Follow consistent linking pattern (relative paths with .md extension)
 - Document cross-reference strategy per phase
 - Review cross-references manually in addition to automated checks
@@ -881,14 +881,14 @@ Scenario: Rust reaches exceptional standard for cookbook
 - [x] All Mermaid diagrams use color-blind friendly palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161)
   - **Status**: COMPLETE - All diagrams verified (Java: 12, Python: 7, Kotlin: 1)
 - [ ] All cross-references valid and logical (≥2 tutorial refs, ≥1 cookbook ref per guide; ≥1 how-to ref, ≥1 tutorial ref per recipe)
-  - **Status**: PENDING - Requires ayokoding-link-checker validation
+  - **Status**: PENDING - Requires ayokoding-web-link-checker validation
 - [x] No time estimates in any educational content
   - **Status**: COMPLETE - Verified in sampled guides
-- [ ] ayokoding-content-checker: Zero critical issues (run on full language directory)
+- [ ] ayokoding-web-general-checker: Zero critical issues (run on full language directory)
   - **Status**: PENDING - Requires separate agent invocation
-- [ ] ayokoding-facts-checker: Zero critical issues (verify technical accuracy)
+- [ ] ayokoding-web-facts-checker: Zero critical issues (verify technical accuracy)
   - **Status**: PENDING - Requires separate agent invocation
-- [ ] ayokoding-link-checker: Zero broken links (all internal/external links valid)
+- [ ] ayokoding-web-link-checker: Zero broken links (all internal/external links valid)
   - **Status**: PENDING - Requires separate agent invocation
 - [x] Hugo build succeeds without errors or warnings
   - **Status**: COMPLETE - Build successful (27.6s, 1,118 EN pages, 152 ID pages)
@@ -904,13 +904,13 @@ Scenario: Rust reaches exceptional standard for cookbook
 - [x] All 5 languages have 5,000+ line cookbooks
   - **Status**: COMPLETE - Java: 5,367, Golang: 5,169, Python: 5,191, Kotlin: 5,030, Rust: 5,011 (all exceeded target)
 - [ ] All content validated against Programming Language Content Standard
-  - **Status**: PENDING - Requires ayokoding-content-checker validation
+  - **Status**: PENDING - Requires ayokoding-web-general-checker validation
 - [x] All Mermaid diagrams use accessible color palette
   - **Status**: COMPLETE - All diagrams verified (color-blind friendly palette)
 - [ ] All code examples runnable and tested
   - **Status**: PENDING - Requires manual testing in dev environments
 - [ ] Cross-references properly connect related content across all languages
-  - **Status**: PENDING - Requires ayokoding-link-checker validation
+  - **Status**: PENDING - Requires ayokoding-web-link-checker validation
 - [x] No time estimates in any educational content
   - **Status**: COMPLETE - Verified in sampled guides
 - [ ] Deployment to production successful (ayokoding.com)
@@ -972,9 +972,9 @@ Scenario: Rust reaches exceptional standard for cookbook
 The implementation is complete and ready for comprehensive final validation. To proceed:
 
 1. **Run Validation Agents** (requires user to invoke separately):
-   - `ayokoding-content-checker` on each language directory to validate Hugo conventions, frontmatter, and structure
-   - `ayokoding-facts-checker` on all new guides to verify code examples, versions, and commands
-   - `ayokoding-link-checker` on all new guides to verify cross-references meet minimum requirements
+   - `ayokoding-web-general-checker` on each language directory to validate Hugo conventions, frontmatter, and structure
+   - `ayokoding-web-facts-checker` on all new guides to verify code examples, versions, and commands
+   - `ayokoding-web-link-checker` on all new guides to verify cross-references meet minimum requirements
 
 2. **Address Issues**: Review validation reports and fix any critical issues found
 

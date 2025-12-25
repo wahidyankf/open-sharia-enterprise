@@ -52,7 +52,7 @@ Examples prioritize:
 - Platform-specific advanced features
 - Deprecated features
 
-**Coverage verification**: The ayokoding-content-by-example-checker agent validates coverage against comprehensive checklists for each language/framework.
+**Coverage verification**: The ayokoding-web-by-example-checker agent validates coverage against comprehensive checklists for each language/framework.
 
 ### 3. Example Count: 75-90 Total
 
@@ -598,7 +598,7 @@ Before publishing by-example content, verify:
 
 ### Automated Validation
 
-The **ayokoding-content-by-example-checker** agent validates:
+The **ayokoding-web-by-example-checker** agent validates:
 
 - Coverage percentage against target (95%)
 - Example count within range (75-90)
@@ -612,10 +612,10 @@ The **ayokoding-content-by-example-checker** agent validates:
 
 The **by-example-quality-gate** workflow orchestrates:
 
-1. **ayokoding-content-by-example-maker**: Creates/updates examples
-2. **ayokoding-content-by-example-checker**: Validates against standards
+1. **ayokoding-web-by-example-maker**: Creates/updates examples
+2. **ayokoding-web-by-example-checker**: Validates against standards
 3. **User review**: Reviews audit report
-4. **ayokoding-content-by-example-fixer**: Applies validated fixes
+4. **ayokoding-web-by-example-fixer**: Applies validated fixes
 
 ## Relationship to Other Tutorial Types
 
@@ -658,7 +658,7 @@ When creating by-example tutorials for multiple languages:
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-content-by-example-checker agent
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
 - **[Progressive Disclosure](../principles/content/ex-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
 - **[No Time Estimates](../principles/content/ex-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
 - **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting

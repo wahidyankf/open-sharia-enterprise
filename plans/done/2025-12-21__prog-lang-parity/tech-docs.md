@@ -52,15 +52,15 @@ graph TD
 
 ### Validation Tools
 
-- **ayokoding-structure-checker**: Validates directory structure, file presence, weight ordering
-- **ayokoding-content-checker**: Validates Hugo conventions, quality principles, pedagogical patterns
-- **ayokoding-facts-checker**: Validates factual correctness (command syntax, versions, code examples)
-- **ayokoding-link-checker**: Validates all internal and external links
+- **ayokoding-web-structure-checker**: Validates directory structure, file presence, weight ordering
+- **ayokoding-web-general-checker**: Validates Hugo conventions, quality principles, pedagogical patterns
+- **ayokoding-web-facts-checker**: Validates factual correctness (command syntax, versions, code examples)
+- **ayokoding-web-link-checker**: Validates all internal and external links
 
 ### Content Tools
 
-- **ayokoding-content-maker**: Creates new content following conventions
-- **ayokoding-content-fixer**: Applies automated fixes from audit reports
+- **ayokoding-web-general-maker**: Creates new content following conventions
+- **ayokoding-web-general-fixer**: Applies automated fixes from audit reports
 - **Manual editing**: For content requiring human judgment
 
 ### Analysis Tools
@@ -304,8 +304,8 @@ graph TD
    - Commit: `fix(ayokoding-web): [language] structural parity (files, weights, naming)`
 
 2. **Content Additions**
-   - Add missing tutorials (use ayokoding-content-maker)
-   - Add missing how-to guides (use ayokoding-content-maker)
+   - Add missing tutorials (use ayokoding-web-general-maker)
+   - Add missing how-to guides (use ayokoding-web-general-maker)
    - Add missing explanation content (best-practices, anti-patterns)
    - Add missing reference content (cheat-sheet, glossary, resources)
    - Expand short content to meet minimum line counts
@@ -333,8 +333,8 @@ Process in this order (easiest to hardest):
 
 **Tools:**
 
-- **ayokoding-content-maker**: Generate new content following conventions
-- **ayokoding-content-fixer**: Apply automated fixes from checker audits
+- **ayokoding-web-general-maker**: Generate new content following conventions
+- **ayokoding-web-general-fixer**: Apply automated fixes from checker audits
 - **Manual editing**: For nuanced content requiring judgment
 - **Template files**: Create templates for common structures (tutorial outline, cookbook recipe, how-to guide)
 
@@ -348,12 +348,12 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for each language
-   ayokoding-structure-checker --language python
-   ayokoding-structure-checker --language golang
-   ayokoding-structure-checker --language java
-   ayokoding-structure-checker --language kotlin
-   ayokoding-structure-checker --language rust
-   ayokoding-structure-checker --language elixir
+   ayokoding-web-structure-checker --language python
+   ayokoding-web-structure-checker --language golang
+   ayokoding-web-structure-checker --language java
+   ayokoding-web-structure-checker --language kotlin
+   ayokoding-web-structure-checker --language rust
+   ayokoding-web-structure-checker --language elixir
    ```
 
    - Expected: Zero violations for all languages
@@ -363,12 +363,12 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for each language
-   ayokoding-content-checker --language python
-   ayokoding-content-checker --language golang
-   ayokoding-content-checker --language java
-   ayokoding-content-checker --language kotlin
-   ayokoding-content-checker --language rust
-   ayokoding-content-checker --language elixir
+   ayokoding-web-general-checker --language python
+   ayokoding-web-general-checker --language golang
+   ayokoding-web-general-checker --language java
+   ayokoding-web-general-checker --language kotlin
+   ayokoding-web-general-checker --language rust
+   ayokoding-web-general-checker --language elixir
    ```
 
    - Expected: Zero violations for all languages
@@ -378,8 +378,8 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for each language (focuses on code examples, commands, versions)
-   ayokoding-facts-checker --language python --scope tutorials
-   ayokoding-facts-checker --language golang --scope tutorials
+   ayokoding-web-facts-checker --language python --scope tutorials
+   ayokoding-web-facts-checker --language golang --scope tutorials
    # ... etc for all languages
    ```
 
@@ -390,7 +390,7 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for entire site
-   ayokoding-link-checker --scope prog-lang
+   ayokoding-web-link-checker --scope prog-lang
    ```
 
    - Expected: Zero broken links
@@ -546,7 +546,7 @@ highest_standards:
 ### Content Security
 
 - **CS-1**: All code examples are educational and do not contain security vulnerabilities
-- **CS-2**: External links verified for safety (ayokoding-link-checker validates against known-safe domains)
+- **CS-2**: External links verified for safety (ayokoding-web-link-checker validates against known-safe domains)
 - **CS-3**: No personally identifiable information in examples
 
 ### Process Security
@@ -559,23 +559,23 @@ highest_standards:
 
 ### Automated Testing
 
-1. **Structure Tests**: ayokoding-structure-checker
+1. **Structure Tests**: ayokoding-web-structure-checker
    - File presence validation
    - Weight ordering validation
    - Naming convention validation
 
-2. **Content Tests**: ayokoding-content-checker
+2. **Content Tests**: ayokoding-web-general-checker
    - Hugo convention compliance
    - Quality principle compliance
    - Pedagogical pattern presence
    - Color palette compliance
 
-3. **Factual Tests**: ayokoding-facts-checker
+3. **Factual Tests**: ayokoding-web-facts-checker
    - Command syntax validation
    - Version accuracy validation
    - Code example syntax validation
 
-4. **Link Tests**: ayokoding-link-checker
+4. **Link Tests**: ayokoding-web-link-checker
    - Internal link validation
    - External link validation (with cache)
 

@@ -1,16 +1,16 @@
 ---
-name: ayokoding-content-by-example-fixer
-description: Applies validated fixes from ayokoding-content-by-example-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing ayokoding-content-by-example-checker output.
+name: ayokoding-web-by-example-fixer
+description: Applies validated fixes from ayokoding-web-by-example-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing ayokoding-web-by-example-checker output.
 tools: [Read, Edit, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
 ---
 
-# ayokoding-content-by-example-fixer
+# ayokoding-web-by-example-fixer
 
 ## Purpose
 
-You are an expert fixer for **by-example tutorials** that applies validated improvements from ayokoding-content-by-example-checker audit reports.
+You are an expert fixer for **by-example tutorials** that applies validated improvements from ayokoding-web-by-example-checker audit reports.
 
 Your role:
 
@@ -465,7 +465,7 @@ new_string: |
 **Generated**: {ISO 8601 timestamp +07:00}
 **Source audit**: by-example-checker**{original-timestamp}**audit.md
 **Tutorial**: {language/framework}
-**Fixer**: ayokoding-content-by-example-fixer
+**Fixer**: ayokoding-web-by-example-fixer
 
 ## Fixes Applied
 
@@ -619,7 +619,7 @@ new_string: |
 
 ```bash
 # User invokes after reviewing audit report
-subagent_type: ayokoding-content-by-example-fixer
+subagent_type: ayokoding-web-by-example-fixer
 prompt: "Apply fixes from generated-reports/by-example-checker__2025-12-25--14-30__audit.md"
 ```
 

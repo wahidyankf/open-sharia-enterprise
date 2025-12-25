@@ -15,7 +15,7 @@ updated: 2025-12-15
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (repo-rules-fixer, ayokoding-content-general-fixer, ayokoding-content-by-example-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## Principles Respected
 
@@ -109,10 +109,10 @@ Confidence levels serve multiple critical purposes:
 All fixer agents implement this confidence level system:
 
 - **repo-rules-fixer** - Repository-wide structural consistency fixes
-- **ayokoding-content-general-fixer** - ayokoding-web general Hugo content fixes
-- **ayokoding-content-by-example-fixer** - ayokoding-web by-example tutorial fixes
-- **ayokoding-facts-fixer** - ayokoding-web factual accuracy fixes
-- **ayokoding-structure-fixer** - ayokoding-web structure fixes
+- **ayokoding-web-general-fixer** - ayokoding-web general Hugo content fixes
+- **ayokoding-web-by-example-fixer** - ayokoding-web by-example tutorial fixes
+- **ayokoding-web-facts-fixer** - ayokoding-web factual accuracy fixes
+- **ayokoding-web-structure-fixer** - ayokoding-web structure fixes
 - **docs-tutorial-fixer** - Tutorial quality fixes
 - **ose-platform-web-content-fixer** - ose-platform-web Hugo content fixes
 - **readme-fixer** - README quality fixes
@@ -154,7 +154,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Wrong field value verified by comparing actual vs expected value
 - File naming convention violation verified by prefix analysis
 
-**ayokoding-content-general-fixer:**
+**ayokoding-web-general-fixer:**
 
 - Missing `draft: false` field verified by re-reading frontmatter
 - Wrong date format verified by regex pattern match (missing UTC+7 timezone)
@@ -221,7 +221,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Link target unclear (file missing, but can't determine correct target automatically)
 - Field value could be valid in specific context (non-standard but potentially intentional)
 
-**ayokoding-content-general-fixer:**
+**ayokoding-web-general-fixer:**
 
 - Description length borderline (145 chars vs 150-160 optimal - functional but could improve)
 - Line length slightly over 100 characters (breaking might harm readability)
@@ -289,7 +289,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker reported missing field that actually exists (case sensitivity issue)
 - Checker misinterpreted file content (wrong pattern match)
 
-**ayokoding-content-general-fixer:**
+**ayokoding-web-general-fixer:**
 
 - Checker flagged overview.md in English folder but file is correct (checker confused /en/ with /id/)
 - Checker flagged missing ikhtisar.md in blogging content (learning-only rule applied to wrong directory)
@@ -471,7 +471,7 @@ Each fixer agent has domain-specific validation checks:
 - File naming convention compliance
 - Structural consistency across repository
 
-**ayokoding-content-general-fixer:**
+**ayokoding-web-general-fixer:**
 
 - Hugo frontmatter for Hextra theme
 - Bilingual content validation (en/id)
@@ -672,10 +672,10 @@ repo-rules-fixer re-validates:
 ### Fixer Agents Using This Convention
 
 - [repo-rules-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/repo-rules-fixer.md) - Repository structural consistency fixer
-- [ayokoding-content-general-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-general-fixer.md) - ayokoding-web general Hugo content fixer
-- [ayokoding-content-by-example-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-content-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
-- [ayokoding-facts-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-facts-fixer.md) - ayokoding-web factual accuracy fixer
-- [ayokoding-structure-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-structure-fixer.md) - ayokoding-web structure fixer
+- [ayokoding-web-general-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
+- [ayokoding-web-by-example-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
+- [ayokoding-web-facts-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
+- [ayokoding-web-structure-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
 - [docs-tutorial-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
 - [ose-platform-web-content-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
 - [readme-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/readme-fixer.md) - README quality fixer
@@ -723,7 +723,7 @@ When this convention is updated:
 
 ### Version History
 
-- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-content, docs-tutorial, ose-platform-web-content, readme)
+- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme)
 
 ---
 

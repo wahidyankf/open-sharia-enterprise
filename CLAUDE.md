@@ -218,7 +218,7 @@ AI agents creating temporary uncommitted files must use designated directories t
 - **`generated-reports/`** - For validation, audit, and check reports (report-generating agents). **CRITICAL**: Any agent writing to this directory MUST have both Write and Bash tools (Write for files, Bash for UTC+7 timestamps).
 - **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
 
-**MANDATORY for ALL \*-checker agents**: All checker agents (repo-rules-checker, ayokoding-content-general-checker, ayokoding-content-by-example-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker) MUST write validation/audit reports to `generated-reports/` using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. NO conversation-only output. All validation findings MUST be persisted in report files.
+**MANDATORY for ALL \*-checker agents**: All checker agents (repo-rules-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker) MUST write validation/audit reports to `generated-reports/` using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. NO conversation-only output. All validation findings MUST be persisted in report files.
 
 **PROGRESSIVE WRITING REQUIREMENT**: All \*-checker agents MUST initialize report files at execution start and write findings progressively throughout execution (not buffer and write once at the end). This ensures audit history survives context compaction during long validation runs.
 
@@ -226,23 +226,23 @@ These directories are gitignored and provide organized storage for temporary out
 
 ### Maker-Checker-Fixer Pattern
 
-Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-content, docs-tutorial, ose-platform-web-content, readme, docs, plan. Fixers use universal HIGH/MEDIUM/FALSE_POSITIVE confidence system to distinguish objective fixes from subjective improvements. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal assessment criteria.
+Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme, docs, plan. Fixers use universal HIGH/MEDIUM/FALSE_POSITIVE confidence system to distinguish objective fixes from subjective improvements. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal assessment criteria.
 
 ### Available Agents
 
-**Content**: docs-maker, docs-tutorial-maker, readme-maker, linkedin-post-maker, ayokoding-content-general-maker, ayokoding-content-by-example-maker, ose-platform-web-content-maker
+**Content**: docs-maker, docs-tutorial-maker, readme-maker, linkedin-post-maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ose-platform-web-content-maker
 
-**Navigation**: ayokoding-navigation-maker, ayokoding-structure-maker
+**Navigation**: ayokoding-web-navigation-maker, ayokoding-web-structure-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, readme-checker, ayokoding-content-general-checker, ayokoding-content-by-example-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, repo-rules-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, readme-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, repo-rules-checker
 
-**Fixing**: repo-rules-fixer, ayokoding-content-general-fixer, ayokoding-content-by-example-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer
+**Fixing**: repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
 **Development**: hugo-developer
 
-**Operations**: docs-file-manager, ayokoding-deployer, ose-platform-web-deployer
+**Operations**: docs-file-manager, ayokoding-web-deployer, ose-platform-web-deployer
 
 **Workflows**: workflow-maker, workflow-checker, workflow-fixer
 

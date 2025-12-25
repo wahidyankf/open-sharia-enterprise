@@ -314,11 +314,11 @@ Tool permissions follow the **principle of least privilege**: agents should only
 ALL checker agents MUST write their validation/audit reports to `generated-reports/` directory. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
 
 1. repo-rules-checker
-2. ayokoding-content-general-checker
-3. ayokoding-content-by-example-checker
-4. ayokoding-facts-checker
-5. ayokoding-link-checker
-6. ayokoding-structure-checker
+2. ayokoding-web-general-checker
+3. ayokoding-web-by-example-checker
+4. ayokoding-web-facts-checker
+5. ayokoding-web-link-checker
+6. ayokoding-web-structure-checker
 7. ose-platform-web-content-checker
 8. docs-checker
 9. docs-tutorial-checker
@@ -423,17 +423,17 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                      |
-| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                             |
-| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-rules-checker<br>plan-checker<br>docs-checker                          |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-rules-maker\*<br>docs-file-manager                                     |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-checker<br>ayokoding-link-checker<br>deployers\* |
+| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                          |
+| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                                 |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-rules-checker<br>plan-checker<br>docs-checker                              |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-rules-maker\*<br>docs-file-manager                                         |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-checker<br>ayokoding-web-link-checker<br>deployers\* |
 
 **Edge Case Notes:**
 
 - **\*Yellow with Write**: repo-rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
-- **\*Purple Bash-only**: Deployers (ayokoding-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
+- **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
@@ -454,7 +454,7 @@ This role-based categorization was chosen because it:
 **Hybrid Link Checkers:**
 
 - **docs-link-checker** - Validates documentation links + manages external-links-status.yaml cache
-- **ayokoding-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
+- **ayokoding-web-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
 
 **Why hybrid status?**
 
@@ -472,7 +472,7 @@ This role-based categorization was chosen because it:
 
 **Cache files are NOT temporary:**
 
-- Location: `docs/metadata/` (docs-link-checker) and `apps/ayokoding-web/` (ayokoding-link-checker)
+- Location: `docs/metadata/` (docs-link-checker) and `apps/ayokoding-web/` (ayokoding-web-link-checker)
 - Purpose: Long-term link status tracking (6-month expiry), shared across team
 - Committed to git: Yes (operational metadata)
 - Updated every run: Yes (including lastFullScan timestamp)
@@ -522,12 +522,12 @@ Start: What is the agent's primary capability?
   - Write tool needed for cache file updates (external-links-status.yaml)
   - Edit tool needed for fixing broken links in content
   - Bash tool needed for UTC+7 timestamps
-  - Examples: docs-link-checker, ayokoding-link-checker
+  - Examples: docs-link-checker, ayokoding-web-link-checker
 - **Deployers with Bash only**: Use `purple` (Implementor)
   - Execute deployment orchestration (purple's "executes plans/orchestrates tasks")
   - Don't create or edit files, only run git/deployment commands
   - Edge case: purple without Write/Edit tools (Bash-only orchestration)
-  - Examples: ayokoding-deployer, ose-platform-web-deployer
+  - Examples: ayokoding-web-deployer, ose-platform-web-deployer
 - **Updaters with Write tool**: Investigate actual usage
   - Yellow (Updaters) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
@@ -800,7 +800,7 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 **Examples**:
 
-- ayokoding-deployer (deployment automation)
+- ayokoding-web-deployer (deployment automation)
 - ose-platform-web-deployer (deployment automation)
 
 **When to use this tier**:
@@ -830,8 +830,8 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - docs-checker (factual verification)
 - docs-tutorial-checker (tutorial quality validation)
 - agent-maker (agent creation automation)
-- ayokoding-content-general-maker (general Hugo content creation)
-- ayokoding-content-by-example-maker (by-example tutorial creation)
+- ayokoding-web-general-maker (general Hugo content creation)
+- ayokoding-web-by-example-maker (by-example tutorial creation)
 - ose-platform-web-content-maker (Hugo content creation)
 
 **When to use this tier**:
@@ -879,11 +879,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                                                                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier 1: Simple**   | ayokoding-deployer, ose-platform-web-deployer                                                                                                                                                                                                                                                                                   |
-| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, ayokoding-content-general-maker, ayokoding-content-by-example-maker, ayokoding-content-general-checker, ayokoding-content-by-example-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                                                                                                                                     |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                          |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | ayokoding-web-deployer, ose-platform-web-deployer                                                                                                                                                                                                                                                               |
+| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                                                                                                                     |
 
 ### When to Condense or Split Agents
 

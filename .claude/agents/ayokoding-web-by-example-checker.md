@@ -1,12 +1,12 @@
 ---
-name: ayokoding-content-by-example-checker
+name: ayokoding-web-by-example-checker
 description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, educational annotations, and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: yellow
 ---
 
-# ayokoding-content-by-example-checker
+# ayokoding-web-by-example-checker
 
 ## Purpose
 
@@ -50,7 +50,7 @@ TZ='Asia/Bangkok' date '+%Y-%m-%d--%H-%M'
 
 **Generated**: {ISO 8601 timestamp with +07:00}
 **Tutorial**: {language/framework name}
-**Validator**: ayokoding-content-by-example-checker
+**Validator**: ayokoding-web-by-example-checker
 
 ## Executive Summary
 
@@ -526,7 +526,7 @@ Use three-tier confidence system:
 
 ```bash
 # User invokes via Task tool
-subagent_type: ayokoding-content-by-example-checker
+subagent_type: ayokoding-web-by-example-checker
 prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/programming-language/golang/tutorials/by-example/ for compliance with by-example standards"
 ```
 

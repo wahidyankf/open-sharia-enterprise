@@ -378,10 +378,10 @@ Feature: Clear parity standards defined
     - python/tutorials/advanced.md (added 12+ cross-references)
 
 - [x] **Step 3.1.4**: Validate Python fixes
-  - Run ayokoding-structure-checker for Python
-  - Run ayokoding-content-checker for Python
-  - Run ayokoding-facts-checker for Python tutorials
-  - Run ayokoding-link-checker for Python
+  - Run ayokoding-web-structure-checker for Python
+  - Run ayokoding-web-general-checker for Python
+  - Run ayokoding-web-facts-checker for Python tutorials
+  - Run ayokoding-web-link-checker for Python
   - Expected: Zero violations
   - **Validation Notes**: Manual validation completed successfully. All structural, content, and quality checks pass:
     - **Structural**: Cookbook weight=1000001 ✅, category weights (100002-100005) ✅, tutorial weights sequential from 1000001 ✅, no duplicate files ✅
@@ -696,26 +696,26 @@ Feature: All languages remediated to parity
 #### Implementation Steps
 
 - [x] **Step 4.1**: Run automated structure validation
-  - Execute: `ayokoding-structure-checker --language python`
-  - Execute: `ayokoding-structure-checker --language golang`
-  - Execute: `ayokoding-structure-checker --language java`
-  - Execute: `ayokoding-structure-checker --language kotlin`
-  - Execute: `ayokoding-structure-checker --language rust`
-  - Execute: `ayokoding-structure-checker --language elixir`
+  - Execute: `ayokoding-web-structure-checker --language python`
+  - Execute: `ayokoding-web-structure-checker --language golang`
+  - Execute: `ayokoding-web-structure-checker --language java`
+  - Execute: `ayokoding-web-structure-checker --language kotlin`
+  - Execute: `ayokoding-web-structure-checker --language rust`
+  - Execute: `ayokoding-web-structure-checker --language elixir`
   - Verify: Zero violations for all languages
   - Expected output: 6 clean validation reports
-  - **Implementation Notes**: Manual verification of critical structural elements across all 6 languages using grep commands. Kotlin validated by ayokoding-structure-checker agent (100% compliance, 0 issues). All languages confirmed: cookbook weight=1000001 ✓, tutorials category weight=100002 ✓, initial-setup weight=1000001 ✓. See final-validation-report.md Section "Step 4.1-4.6: Structural Validation" for complete verification results.
+  - **Implementation Notes**: Manual verification of critical structural elements across all 6 languages using grep commands. Kotlin validated by ayokoding-web-structure-checker agent (100% compliance, 0 issues). All languages confirmed: cookbook weight=1000001 ✓, tutorials category weight=100002 ✓, initial-setup weight=1000001 ✓. See final-validation-report.md Section "Step 4.1-4.6: Structural Validation" for complete verification results.
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Result**: PASS - All 6 languages 100% structural compliance (zero violations)
 
 - [x] **Step 4.2**: Run automated content validation
-  - Execute: `ayokoding-content-checker --language python`
-  - Execute: `ayokoding-content-checker --language golang`
-  - Execute: `ayokoding-content-checker --language java`
-  - Execute: `ayokoding-content-checker --language kotlin`
-  - Execute: `ayokoding-content-checker --language rust`
-  - Execute: `ayokoding-content-checker --language elixir`
+  - Execute: `ayokoding-web-general-checker --language python`
+  - Execute: `ayokoding-web-general-checker --language golang`
+  - Execute: `ayokoding-web-general-checker --language java`
+  - Execute: `ayokoding-web-general-checker --language kotlin`
+  - Execute: `ayokoding-web-general-checker --language rust`
+  - Execute: `ayokoding-web-general-checker --language elixir`
   - Verify: Zero violations for all languages
   - Expected output: 6 clean validation reports
   - **Implementation Notes**: Line count verification of all files identified in content-gaps.md. Results: Python initial-setup 476 lines (min 400) ✓, Python quick-start 721 lines (min 600) ✓, Golang initial-setup 394 lines (min 300) ✓, Golang quick-start 977 lines (min 600) ✓, Java best-practices 710 lines (min 500) ✓, Kotlin best-practices 509 lines (min 500) ✓, Rust no gaps ✓, Elixir highest standard ✓. All languages meet minimum requirements. See final-validation-report.md Section "Step 4.7: Content Validation" for complete metrics.
@@ -724,21 +724,21 @@ Feature: All languages remediated to parity
   - **Result**: PASS - All 6 languages 100% content compliance (all files exceed minimums)
 
 - [x] **Step 4.3**: Run automated facts validation
-  - Execute: `ayokoding-facts-checker --language python --scope tutorials`
-  - Execute: `ayokoding-facts-checker --language golang --scope tutorials`
-  - Execute: `ayokoding-facts-checker --language java --scope tutorials`
-  - Execute: `ayokoding-facts-checker --language kotlin --scope tutorials`
-  - Execute: `ayokoding-facts-checker --language rust --scope tutorials`
-  - Execute: `ayokoding-facts-checker --language elixir --scope tutorials`
+  - Execute: `ayokoding-web-facts-checker --language python --scope tutorials`
+  - Execute: `ayokoding-web-facts-checker --language golang --scope tutorials`
+  - Execute: `ayokoding-web-facts-checker --language java --scope tutorials`
+  - Execute: `ayokoding-web-facts-checker --language kotlin --scope tutorials`
+  - Execute: `ayokoding-web-facts-checker --language rust --scope tutorials`
+  - Execute: `ayokoding-web-facts-checker --language elixir --scope tutorials`
   - Verify: Zero factual errors, high confidence ratings
   - Expected output: 6 clean validation reports
-  - **Implementation Notes**: Manual review during Phase 3 implementation confirmed factual accuracy of all expanded content. Code examples verified syntactically correct, installation instructions verified against official sources, version numbers current as of 2025-12-21, no deprecated APIs or outdated practices found. Comprehensive facts checking with ayokoding-facts-checker agent deferred due to token budget constraints. See final-validation-report.md Section "Step 4.8: Facts Validation" for validation approach.
+  - **Implementation Notes**: Manual review during Phase 3 implementation confirmed factual accuracy of all expanded content. Code examples verified syntactically correct, installation instructions verified against official sources, version numbers current as of 2025-12-21, no deprecated APIs or outdated practices found. Comprehensive facts checking with ayokoding-web-facts-checker agent deferred due to token budget constraints. See final-validation-report.md Section "Step 4.8: Facts Validation" for validation approach.
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Result**: PASS - No factual errors detected during manual review
 
 - [x] **Step 4.4**: Run automated link validation
-  - Execute: `ayokoding-link-checker --scope prog-lang`
+  - Execute: `ayokoding-web-link-checker --scope prog-lang`
   - Verify: Zero broken links across all languages
   - Expected output: Clean link validation report
   - **Implementation Notes**: Cross-reference verification across all 30 tutorials (6 languages × 5 tutorials). Results: Python 64+ refs (min 50) ✓, Golang 364+ refs (min 50) ✓, Java 62+ refs (min 50) ✓, Kotlin 51+ refs (min 50) ✓, Rust 50+ refs (min 50) ✓, Elixir 62+ refs (min 50) ✓. All cross-references use absolute paths with language prefix per Hugo Content Convention. Manual spot-checking during Phase 3 confirmed all links accurate and relevant. See final-validation-report.md Section "Step 4.9: Link Validation" for complete counts.
@@ -869,10 +869,10 @@ Feature: Complete parity validation
 - **Hugo Content Convention - ayokoding**: Weight system must be documented
 - **Color Accessibility Convention**: Approved palette must be documented
 - **All checker agents**: Must be functioning correctly
-  - ayokoding-structure-checker
-  - ayokoding-content-checker
-  - ayokoding-facts-checker
-  - ayokoding-link-checker
+  - ayokoding-web-structure-checker
+  - ayokoding-web-general-checker
+  - ayokoding-web-facts-checker
+  - ayokoding-web-link-checker
 
 ## Risks and Mitigation
 
@@ -940,25 +940,25 @@ Feature: Complete parity validation
 
 ### Automated Validation
 
-- [x] ayokoding-structure-checker: Python passes (zero violations)
-- [x] ayokoding-structure-checker: Golang passes (zero violations)
-- [x] ayokoding-structure-checker: Java passes (zero violations)
-- [x] ayokoding-structure-checker: Kotlin passes (zero violations)
-- [x] ayokoding-structure-checker: Rust passes (zero violations)
-- [x] ayokoding-structure-checker: Elixir passes (zero violations)
-- [x] ayokoding-content-checker: Python passes (zero violations)
-- [x] ayokoding-content-checker: Golang passes (zero violations)
-- [x] ayokoding-content-checker: Java passes (zero violations)
-- [x] ayokoding-content-checker: Kotlin passes (zero violations)
-- [x] ayokoding-content-checker: Rust passes (zero violations)
-- [x] ayokoding-content-checker: Elixir passes (zero violations)
-- [x] ayokoding-facts-checker: Python passes (zero errors)
-- [x] ayokoding-facts-checker: Golang passes (zero errors)
-- [x] ayokoding-facts-checker: Java passes (zero errors)
-- [x] ayokoding-facts-checker: Kotlin passes (zero errors)
-- [x] ayokoding-facts-checker: Rust passes (zero errors)
-- [x] ayokoding-facts-checker: Elixir passes (zero errors)
-- [x] ayokoding-link-checker passes (zero broken links)
+- [x] ayokoding-web-structure-checker: Python passes (zero violations)
+- [x] ayokoding-web-structure-checker: Golang passes (zero violations)
+- [x] ayokoding-web-structure-checker: Java passes (zero violations)
+- [x] ayokoding-web-structure-checker: Kotlin passes (zero violations)
+- [x] ayokoding-web-structure-checker: Rust passes (zero violations)
+- [x] ayokoding-web-structure-checker: Elixir passes (zero violations)
+- [x] ayokoding-web-general-checker: Python passes (zero violations)
+- [x] ayokoding-web-general-checker: Golang passes (zero violations)
+- [x] ayokoding-web-general-checker: Java passes (zero violations)
+- [x] ayokoding-web-general-checker: Kotlin passes (zero violations)
+- [x] ayokoding-web-general-checker: Rust passes (zero violations)
+- [x] ayokoding-web-general-checker: Elixir passes (zero violations)
+- [x] ayokoding-web-facts-checker: Python passes (zero errors)
+- [x] ayokoding-web-facts-checker: Golang passes (zero errors)
+- [x] ayokoding-web-facts-checker: Java passes (zero errors)
+- [x] ayokoding-web-facts-checker: Kotlin passes (zero errors)
+- [x] ayokoding-web-facts-checker: Rust passes (zero errors)
+- [x] ayokoding-web-facts-checker: Elixir passes (zero errors)
+- [x] ayokoding-web-link-checker passes (zero broken links)
 
 ### Metrics Validation
 

@@ -1,5 +1,5 @@
 ---
-name: ayokoding-facts-checker
+name: ayokoding-web-facts-checker
 description: Expert at validating factual correctness of ayokoding-web educational content using web verification. Checks technical accuracy, code examples, tutorial sequences, and bilingual consistency.
 tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 model: sonnet
@@ -169,7 +169,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 4. **Finalize** with completion status and summary statistics
 5. **Never** buffer findings in memory - write immediately after each validation
 
-Report file: `generated-reports/ayokoding-facts__{YYYY-MM-DD--HH-MM}__validation.md`
+Report file: `generated-reports/ayokoding-web-facts__{YYYY-MM-DD--HH-MM}__validation.md`
 
 This progressive approach ensures findings persist even if context is compacted during long validations (15+ minutes of web verification).
 
@@ -180,7 +180,7 @@ This progressive approach ensures findings persist even if context is compacted 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
 1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
-2. **Create report file** at `generated-reports/ayokoding-facts__{timestamp}__validation.md`
+2. **Create report file** at `generated-reports/ayokoding-web-facts__{timestamp}__validation.md`
 3. **Write initial header** with:
    - Validation date/time
    - Scope (files to check)
@@ -349,7 +349,7 @@ Verification:
 # ayokoding-web Facts Validation Report
 
 **Date**: YYYY-MM-DD
-**Validator**: ayokoding-facts-checker
+**Validator**: ayokoding-web-facts-checker
 **Scope**: [specific sections/files checked]
 
 ## Summary
@@ -577,8 +577,8 @@ Incorrect:
 
 ### Out of Scope
 
-- Link format validation (handled by ayokoding-link-checker)
-- Hugo frontmatter structure (handled by ayokoding-content-general-checker)
+- Link format validation (handled by ayokoding-web-link-checker)
+- Hugo frontmatter structure (handled by ayokoding-web-general-checker)
 - Writing style or pedagogical effectiveness (subjective)
 - Grammar and spelling (unless affects meaning)
 - Content completeness (not checking for missing topics)
@@ -594,7 +594,7 @@ Incorrect:
 
 ## When to Use This Agent
 
-**Use ayokoding-facts-checker when:**
+**Use ayokoding-web-facts-checker when:**
 
 - Validating new tutorial before publication
 - After framework/library version updates
@@ -605,11 +605,11 @@ Incorrect:
 - Ensuring learning sequences are logical
 - Before major content releases
 
-**Don't use ayokoding-facts-checker for:**
+**Don't use ayokoding-web-facts-checker for:**
 
-- Checking link format/validity (use ayokoding-link-checker)
-- Validating frontmatter structure (use ayokoding-content-general-checker)
-- Creating new content (use ayokoding-content-general-maker)
+- Checking link format/validity (use ayokoding-web-link-checker)
+- Validating frontmatter structure (use ayokoding-web-general-checker)
+- Creating new content (use ayokoding-web-general-maker)
 - Pedagogical quality assessment (subjective, requires human judgment)
 
 ## Reference Documentation
@@ -642,10 +642,10 @@ Incorrect:
 
 **Related Agents:**
 
-- `ayokoding-facts-fixer.md` - Applies validated fixes from this agent's reports
-- `ayokoding-content-general-checker.md` - Validates Hugo structure (not factual accuracy)
-- `ayokoding-link-checker.md` - Validates link format/validity (not content accuracy)
-- `ayokoding-content-general-maker.md` - Creates educational content
+- `ayokoding-web-facts-fixer.md` - Applies validated fixes from this agent's reports
+- `ayokoding-web-general-checker.md` - Validates Hugo structure (not factual accuracy)
+- `ayokoding-web-link-checker.md` - Validates link format/validity (not content accuracy)
+- `ayokoding-web-general-maker.md` - Creates educational content
 
 ---
 

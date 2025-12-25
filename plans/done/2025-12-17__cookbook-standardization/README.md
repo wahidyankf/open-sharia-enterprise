@@ -520,9 +520,9 @@ Java cookbook already has 2,089 lines and 37 recipes, exceeding the original exp
 **Automated Validation**
 **Deliverable**: All automated checks passing
 
-- [ ] Run ayokoding-content-checker (structure and quality validation)
-- [ ] Run ayokoding-facts-checker (technical accuracy verification)
-- [ ] Run ayokoding-link-checker (link validity verification)
+- [ ] Run ayokoding-web-general-checker (structure and quality validation)
+- [ ] Run ayokoding-web-facts-checker (technical accuracy verification)
+- [ ] Run ayokoding-web-link-checker (link validity verification)
 - [ ] Fix any issues identified by automated checks
       **Completion Criteria**: Zero errors from all three validation agents
 
@@ -599,9 +599,9 @@ Scenario: Cross-references are complete
 Scenario: All automated validations pass
   Given I am running automated quality checks
   When I execute all validation agents
-  Then ayokoding-content-checker should report zero errors
-  And ayokoding-facts-checker should report zero factual errors
-  And ayokoding-link-checker should report zero broken links
+  Then ayokoding-web-general-checker should report zero errors
+  And ayokoding-web-facts-checker should report zero factual errors
+  And ayokoding-web-link-checker should report zero broken links
   And all validation criteria should be met
 ```
 
@@ -648,9 +648,9 @@ Scenario: All automated validations pass
 
 ✅ **Validation**
 
-- Zero errors from ayokoding-content-checker
-- Zero factual errors from ayokoding-facts-checker
-- Zero broken links from ayokoding-link-checker
+- Zero errors from ayokoding-web-general-checker
+- Zero factual errors from ayokoding-web-facts-checker
+- Zero broken links from ayokoding-web-link-checker
 
 ---
 
@@ -665,7 +665,7 @@ Scenario: All automated validations pass
 
 **Risk**: Code examples have factual errors
 
-- **Mitigation**: Run ayokoding-facts-checker frequently during development, validate all examples
+- **Mitigation**: Run ayokoding-web-facts-checker frequently during development, validate all examples
 - **Contingency**: Establish validation checkpoint after each phase, fix errors before proceeding
 
 **Risk**: Scope creep during standardization (temptation to add more features than planned)
@@ -711,9 +711,9 @@ Scenario: All automated validations pass
 - Hugo Content Convention - must follow
 - Content Quality Principles - must follow
 - Tutorial Naming Convention - must align with tutorial levels
-- ayokoding-content-maker agent - for creating new recipes
-- ayokoding-content-fixer agent - for fixing consistency issues
-- ayokoding-facts-checker agent - for validating technical accuracy
+- ayokoding-web-general-maker agent - for creating new recipes
+- ayokoding-web-general-fixer agent - for fixing consistency issues
+- ayokoding-web-facts-checker agent - for validating technical accuracy
 
 **External Dependencies**:
 
@@ -831,8 +831,8 @@ After standardization is complete:
 
 **Validation Maintenance**:
 
-- Run ayokoding-facts-checker when language versions update
-- Run ayokoding-link-checker to catch broken external references
+- Run ayokoding-web-facts-checker when language versions update
+- Run ayokoding-web-link-checker to catch broken external references
 - Verify code examples remain executable on latest language versions
 - Update dependencies and library references as needed
 
@@ -893,7 +893,7 @@ This standardization plan ensures:
 **Next Steps**:
 
 1. Review and approve this plan
-2. Assign to ayokoding-content-maker agent for implementation
+2. Assign to ayokoding-web-general-maker agent for implementation
 3. Execute Phase 1 (Foundation) starting with Java standardization
 
 **Ready for Implementation**: Yes ✅
@@ -1329,7 +1329,7 @@ This section tracks the actual implementation progress. Each item will be checke
   - **Date**: 2025-12-18
   - **Status**: Completed (manual verification, automated check in Phase 4)
 - [ ] Validate all code examples for syntax errors
-  - **Status**: Deferred to Phase 4 - Will use ayokoding-content-checker for automated validation
+  - **Status**: Deferred to Phase 4 - Will use ayokoding-web-general-checker for automated validation
   - **Note**: All code follows standard patterns and is based on working examples from Phase 1-2
 
 **Phase 3 Completion Criteria**:
@@ -1360,7 +1360,7 @@ This section tracks the actual implementation progress. Each item will be checke
 **Automated Validation**
 
 - [x] Comprehensive manual validation (equivalent to automated checks)
-  - **Implementation Notes**: Performed systematic validation covering all aspects that ayokoding-content-checker, ayokoding-facts-checker, and ayokoding-link-checker would validate. Created validation scripts to check recipe counts, duplicate numbers, frontmatter, template compliance, output comments, cross-references, and internal links.
+  - **Implementation Notes**: Performed systematic validation covering all aspects that ayokoding-web-general-checker, ayokoding-web-facts-checker, and ayokoding-web-link-checker would validate. Created validation scripts to check recipe counts, duplicate numbers, frontmatter, template compliance, output comments, cross-references, and internal links.
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Note**: Manual validation with Python scripts provides equivalent coverage to automated agents

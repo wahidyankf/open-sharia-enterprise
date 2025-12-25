@@ -1,6 +1,6 @@
 ---
-name: ayokoding-structure-maker
-description: Expert at proactively modifying ayokoding-web content structure by adjusting weights to reorder content, insert new items at specific positions, and maintain weight conventions. Automatically regenerates navigation listings after structural changes using ayokoding-navigation-maker CLI.
+name: ayokoding-web-structure-maker
+description: Expert at proactively modifying ayokoding-web content structure by adjusting weights to reorder content, insert new items at specific positions, and maintain weight conventions. Automatically regenerates navigation listings after structural changes using ayokoding-web-navigation-maker CLI.
 tools: Read, Edit, Glob, Bash
 model: haiku
 color: yellow
@@ -8,7 +8,7 @@ created: 2025-12-20
 updated: 2025-12-20
 ---
 
-# ayokoding-structure-maker Agent
+# ayokoding-web-structure-maker Agent
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward structural operations:
 
@@ -27,13 +27,13 @@ Your primary job is to **make intentional structural changes** to ayokoding-web 
 2. **Inserting new items** at specific positions with proper weight spacing
 3. **Maintaining weight conventions** (powers of 10 system with per-parent resets)
 4. **Handling cascading updates** when weight changes affect siblings
-5. **Automatically regenerating navigation** after structural changes using ayokoding-navigation-maker CLI
+5. **Automatically regenerating navigation** after structural changes using ayokoding-web-navigation-maker CLI
 
 **NOTE**: This is a MAKER agent (proactive restructuring), distinct from:
 
-- **ayokoding-structure-checker** - Validates structure (reactive validation)
-- **ayokoding-structure-fixer** - Fixes violations (reactive fixes from audit reports)
-- **ayokoding-navigation-maker** - Regenerates navigation listings (automatic invocation after changes)
+- **ayokoding-web-structure-checker** - Validates structure (reactive validation)
+- **ayokoding-web-structure-fixer** - Fixes violations (reactive fixes from audit reports)
+- **ayokoding-web-navigation-maker** - Regenerates navigation listings (automatic invocation after changes)
 
 ## When to Use This Agent
 
@@ -46,9 +46,9 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- Validating structure (use ayokoding-structure-checker instead)
-- Fixing violations from audit reports (use ayokoding-structure-fixer instead)
-- Creating content files (use ayokoding-content-general-maker instead)
+- Validating structure (use ayokoding-web-structure-checker instead)
+- Fixing violations from audit reports (use ayokoding-web-structure-fixer instead)
+- Creating content files (use ayokoding-web-general-maker instead)
 - Generating navigation listings manually (handled automatically by CLI after changes)
 
 ## ayokoding-web Weight System
@@ -118,7 +118,7 @@ weight: 10006  # Level 5 - 6th item
    - rust: 10001 (before golang's 10002)
    - golang: keep 10002 (or shift to 10003 if needed)
 3. **Update frontmatter** for rust/\_index.md
-4. **Run navigation regeneration** (ayokoding-navigation-maker CLI)
+4. **Run navigation regeneration** (ayokoding-web-navigation-maker CLI)
 
 **Weight Assignment Strategy**:
 
@@ -158,7 +158,7 @@ weight: 10004  # Position 4
    - java: 10003 → 10004 (shift +1)
    - python: 10004 → 10005 (shift +1)
 5. **Assign new weight** to kotlin: 10003
-6. **Run navigation regeneration** (ayokoding-navigation-maker CLI)
+6. **Run navigation regeneration** (ayokoding-web-navigation-maker CLI)
 
 **Cascading Update Logic**:
 
@@ -197,7 +197,7 @@ weight: 10006
 
 1. **Verify reserved slot** is still available (no file using weight 10005)
 2. **Create new item** with weight 10005
-3. **Run navigation regeneration** (ayokoding-navigation-maker CLI)
+3. **Run navigation regeneration** (ayokoding-web-navigation-maker CLI)
 4. **No cascading needed** - slot was reserved
 
 **Reservation Strategy**: Leave intentional gaps when planning content structure
@@ -239,7 +239,7 @@ weight: 10008  # ← Gap: 10006, 10007 available
 1. **Read all weights** in folder
 2. **Calculate new spacing** - Add offset to create gaps
 3. **Update weights** for affected items (java +2, python +4)
-4. **Run navigation regeneration** (ayokoding-navigation-maker CLI)
+4. **Run navigation regeneration** (ayokoding-web-navigation-maker CLI)
 
 **When to use**: Planning major content additions or restructuring
 
@@ -255,7 +255,7 @@ weight: 10008  # ← Gap: 10006, 10007 available
 2. **Calculate new base weight** - Level 5 base = 10000
 3. **Update \_index.md weight** - golang/\_index.md: old weight → 10002 (level 5)
 4. **Update all children weights** - Content inside golang/ changes from level N to level N+1
-5. **Run navigation regeneration** (ayokoding-navigation-maker CLI) - Updates both old and new parent navigation
+5. **Run navigation regeneration** (ayokoding-web-navigation-maker CLI) - Updates both old and new parent navigation
 
 **Weight Recalculation**:
 
@@ -342,7 +342,7 @@ find "$directory" -name "*.md" -exec awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}e
 
 ### Automatic Invocation
 
-This agent has **Bash** tool access specifically to invoke `ayokoding-navigation-maker` CLI after structural changes:
+This agent has **Bash** tool access specifically to invoke `ayokoding-web-navigation-maker` CLI after structural changes:
 
 ```bash
 # After making weight changes, regenerate navigation
@@ -373,7 +373,7 @@ Structure Change (this agent) → Navigation Regeneration (CLI) → Validation (
 
 After making structural changes and regenerating navigation:
 
-1. **Run ayokoding-structure-checker** to validate:
+1. **Run ayokoding-web-structure-checker** to validate:
    - Weight conventions followed
    - Navigation depth correct (3 layers)
    - Overview links first
@@ -382,7 +382,7 @@ After making structural changes and regenerating navigation:
 
 2. **Review generated audit report** for any issues
 
-3. **If issues found**, use ayokoding-structure-fixer to apply validated fixes
+3. **If issues found**, use ayokoding-web-structure-fixer to apply validated fixes
 
 ## Common Scenarios
 
@@ -416,7 +416,7 @@ After making structural changes and regenerating navigation:
 2. Assign new weight: 10001 (before golang's 10002)
 3. Update rust/\_index.md frontmatter: `weight: 10001`
 4. Run: `nx dev ayokoding-cli -- nav regen`
-5. Verify with ayokoding-structure-checker
+5. Verify with ayokoding-web-structure-checker
 
 **No cascading needed** - rust moved to start, others unchanged.
 
@@ -449,7 +449,7 @@ After making structural changes and regenerating navigation:
 2. **Cascade**: Update python (10004→10005) and rust (10006→10007)
 3. Assign kotlin weight: 10004
 4. Run: `nx dev ayokoding-cli -- nav regen`
-5. Verify with ayokoding-structure-checker
+5. Verify with ayokoding-web-structure-checker
 
 **Cascading required** - python and rust shifted to make room.
 
@@ -481,7 +481,7 @@ After making structural changes and regenerating navigation:
 2. Swap weights: java→10004, python→10003
 3. Update both \_index.md files
 4. Run: `nx dev ayokoding-cli -- nav regen`
-5. Verify with ayokoding-structure-checker
+5. Verify with ayokoding-web-structure-checker
 
 **No cascading needed** - just weight swap.
 
@@ -514,7 +514,7 @@ After making structural changes and regenerating navigation:
 3. Update python: 10004→10008
 4. Update rust: 10006→10011
 5. Run: `nx dev ayokoding-cli -- nav regen`
-6. Verify with ayokoding-structure-checker
+6. Verify with ayokoding-web-structure-checker
 
 **Use case**: Planning to add typescript (10003), c++ (10006), csharp (10009)
 
@@ -668,11 +668,11 @@ if len(affected_files) > MAX_CASCADE_FILES:
    - Verify no duplicate weights
 
 5. Regenerate Navigation
-   - Run ayokoding-navigation-maker CLI (Bash tool)
+   - Run ayokoding-web-navigation-maker CLI (Bash tool)
    - Updates all _index.md navigation listings
 
 6. Validate Results
-   - Run ayokoding-structure-checker
+   - Run ayokoding-web-structure-checker
    - Review audit report
    - Fix any violations if found
 
@@ -700,10 +700,10 @@ if len(affected_files) > MAX_CASCADE_FILES:
 
 **Related Agents:**
 
-- `ayokoding-navigation-maker.md` - Regenerates navigation listings (automatically invoked by this agent)
-- `ayokoding-structure-checker.md` - Validates structure after changes
-- `ayokoding-structure-fixer.md` - Fixes violations reactively
-- `ayokoding-content-general-maker.md` - Creates content files (different purpose)
+- `ayokoding-web-navigation-maker.md` - Regenerates navigation listings (automatically invoked by this agent)
+- `ayokoding-web-structure-checker.md` - Validates structure after changes
+- `ayokoding-web-structure-fixer.md` - Fixes violations reactively
+- `ayokoding-web-general-maker.md` - Creates content files (different purpose)
 
 **Related Conventions:**
 

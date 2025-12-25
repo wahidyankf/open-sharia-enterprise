@@ -10,7 +10,7 @@ Establish standardized Hugo content conventions, create universal Content Qualit
 
 - 1 Hugo Content Convention (docs/explanation/conventions/ex-co\_\_hugo-content.md)
 - 1 Content Quality Principles Convention (docs/explanation/conventions/ex-co\_\_content-quality.md)
-- 4 AI Agents (ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker)
+- 4 AI Agents (ayokoding-web-general-maker, ayokoding-web-general-checker, ose-platform-web-content-maker, ose-platform-web-content-checker)
 
 **Git Workflow**: Commit to `main`
 
@@ -39,8 +39,8 @@ Establish standardized Hugo content conventions, create universal Content Qualit
    - Success criteria: Convention provides clear quality standards applicable across all markdown contexts
 
 3. **Create 4 specialized Hugo content agents**
-   - ayokoding-content-maker (Green - creator agent)
-   - ayokoding-content-checker (Yellow - validator agent)
+   - ayokoding-web-general-maker (Green - creator agent)
+   - ayokoding-web-general-checker (Yellow - validator agent)
    - ose-platform-web-content-maker (Green - creator agent)
    - ose-platform-web-content-checker (Yellow - validator agent)
    - Success criteria: All agents follow AI Agents Convention and reference Hugo content convention
@@ -90,7 +90,7 @@ Scenario: Content creator uses site-specific archetype
 
 #### Story 2: AI Agent Creates Hugo Content
 
-**As an** AI agent (ayokoding-content-maker or ose-platform-web-content-maker)
+**As an** AI agent (ayokoding-web-general-maker or ose-platform-web-content-maker)
 **I want** to reference the Hugo content convention
 **So that** I can create properly structured, convention-compliant content
 
@@ -98,7 +98,7 @@ Scenario: Content creator uses site-specific archetype
 
 ```gherkin
 Scenario: Agent creates new Hugo content
-  Given I'm ayokoding-content-maker agent
+  Given I'm ayokoding-web-general-maker agent
   When I create new content in apps/ayokoding-web/content/
   Then I use correct frontmatter format (YAML with 2-space indentation)
   And I use correct timestamp format (YYYY-MM-DDTHH:MM:SS+07:00)
@@ -118,7 +118,7 @@ Scenario: Agent references site-specific conventions
 
 #### Story 3: AI Agent Validates Hugo Content
 
-**As an** AI agent (ayokoding-content-checker or ose-platform-web-content-checker)
+**As an** AI agent (ayokoding-web-general-checker or ose-platform-web-content-checker)
 **I want** to validate Hugo content against conventions
 **So that** content quality and consistency are maintained
 
@@ -126,7 +126,7 @@ Scenario: Agent references site-specific conventions
 
 ```gherkin
 Scenario: Agent validates frontmatter correctness
-  Given I'm ayokoding-content-checker agent
+  Given I'm ayokoding-web-general-checker agent
   When I validate content in apps/ayokoding-web/content/
   Then I verify frontmatter uses YAML format with 2-space indentation
   And I verify required fields are present (title, date, draft)
@@ -258,13 +258,13 @@ Scenario: Writer creates accessible content
 
 #### AI Agent Creation
 
-**REQ-012**: Create ayokoding-content-maker agent
+**REQ-012**: Create ayokoding-web-general-maker agent
 
 - **Priority**: High
 - **User Stories**: Story 2
 - **Details**: Green (creator) agent for ayokoding-web content creation, references Hugo convention
 
-**REQ-013**: Create ayokoding-content-checker agent
+**REQ-013**: Create ayokoding-web-general-checker agent
 
 - **Priority**: High
 - **User Stories**: Story 3
@@ -400,12 +400,12 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
 
 **Content Makers (Green - Creators)**:
 
-- ayokoding-content-maker: Creates content for ayokoding-web (Hextra theme)
+- ayokoding-web-general-maker: Creates content for ayokoding-web (Hextra theme)
 - ose-platform-web-content-maker: Creates content for ose-platform-web (PaperMod theme)
 
 **Content Checkers (Yellow - Validators)**:
 
-- ayokoding-content-checker: Validates ayokoding-web content
+- ayokoding-web-general-checker: Validates ayokoding-web content
 - ose-platform-web-content-checker: Validates ose-platform-web content
 
 ### Technology Stack
@@ -698,8 +698,8 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
    - Use accessible color palette in diagrams
 
 3. **Agent Creation**
-   - Create ayokoding-content-maker.md (green)
-   - Create ayokoding-content-checker.md (yellow)
+   - Create ayokoding-web-general-maker.md (green)
+   - Create ayokoding-web-general-checker.md (yellow)
    - Create ose-platform-web-content-maker.md (green)
    - Create ose-platform-web-content-checker.md (yellow)
    - Each agent references Hugo content convention
@@ -756,17 +756,17 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - **Date**: 2025-12-07
   - **Status**: Completed
 
-- [x] Step 6: Create ayokoding-content-maker agent
-  - **Implementation Notes**: Created ayokoding-content-maker.md with complete frontmatter (green color for creator). Documented: Core Responsibility (create Hugo content for ayokoding-web), When to Use (learning, essays, video content), Site Characteristics (Hextra theme, bilingual, 5 archetypes), Hugo convention compliance (7 inherited, 5 adapted, 4 Hugo-specific), Content Quality compliance, Creation Workflow (6 steps), and 2 complete examples (beginner tutorial, personal essay). References Hugo Content Convention and Content Quality Principles. Includes extensive Hextra shortcode usage examples.
+- [x] Step 6: Create ayokoding-web-general-maker agent
+  - **Implementation Notes**: Created ayokoding-web-general-maker.md with complete frontmatter (green color for creator). Documented: Core Responsibility (create Hugo content for ayokoding-web), When to Use (learning, essays, video content), Site Characteristics (Hextra theme, bilingual, 5 archetypes), Hugo convention compliance (7 inherited, 5 adapted, 4 Hugo-specific), Content Quality compliance, Creation Workflow (6 steps), and 2 complete examples (beginner tutorial, personal essay). References Hugo Content Convention and Content Quality Principles. Includes extensive Hextra shortcode usage examples.
   - **Date**: 2025-12-07
   - **Status**: Completed
-  - **Files Changed**: .claude/agents/ayokoding-content-maker.md (new)
+  - **Files Changed**: .claude/agents/ayokoding-web-general-maker.md (new)
 
-- [x] Step 7: Create ayokoding-content-checker agent
-  - **Implementation Notes**: Created ayokoding-content-checker.md with complete frontmatter (yellow color for validator). Documented: Core Responsibility (validate ayokoding-web content), Validation Checklist (frontmatter, structure, links, images, Mermaid, code blocks, Hextra shortcodes, taxonomy, content quality, tutorial-specific), Validation Process (6 steps), Report format with status indicators (✅ Pass, ⚠️ Warning, ❌ Fail), and 2 validation scenarios (valid content, content with errors). Emphasizes read-only validation with actionable feedback. References Hugo and Content Quality conventions.
+- [x] Step 7: Create ayokoding-web-general-checker agent
+  - **Implementation Notes**: Created ayokoding-web-general-checker.md with complete frontmatter (yellow color for validator). Documented: Core Responsibility (validate ayokoding-web content), Validation Checklist (frontmatter, structure, links, images, Mermaid, code blocks, Hextra shortcodes, taxonomy, content quality, tutorial-specific), Validation Process (6 steps), Report format with status indicators (✅ Pass, ⚠️ Warning, ❌ Fail), and 2 validation scenarios (valid content, content with errors). Emphasizes read-only validation with actionable feedback. References Hugo and Content Quality conventions.
   - **Date**: 2025-12-07
   - **Status**: Completed
-  - **Files Changed**: .claude/agents/ayokoding-content-checker.md (new)
+  - **Files Changed**: .claude/agents/ayokoding-web-general-checker.md (new)
 
 - [x] Step 8: Create ose-platform-web-content-maker agent
   - **Implementation Notes**: Created ose-platform-web-content-maker.md with complete frontmatter (green color for creator). Documented: Core Responsibility (create ose-platform-web content), When to Use (updates, about page, announcements), Site Characteristics (PaperMod v7.0+ theme, English-only, 1 archetype, flat structure), Hugo convention compliance (5 inherited - no tutorials, 5 adapted, 3 Hugo-specific), Content Quality compliance, Creation Workflow (6 steps), and 2 complete examples (feature release update, project milestone). References Hugo and Content Quality conventions. Includes PaperMod-specific frontmatter and shortcode patterns.
@@ -787,7 +787,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - **Files Changed**: docs/explanation/conventions/README.md (modified)
 
 - [x] Step 11: Update agents index
-  - **Implementation Notes**: Updated .claude/agents/README.md with 4 new Hugo content agents inserted after deployer agents, before docs-checker. Added: (1) ayokoding-content-maker (🟦 green) with description, specialization (Hextra, bilingual, 5 archetypes, Tutorial Convention), tools, when to use, works with ayokoding-content-checker; (2) ayokoding-content-checker (🟨 yellow) with validation specialization, tools, when to use; (3) ose-platform-web-content-maker (🟦 green) with PaperMod v7.0+, English-only, enterprise tone; (4) ose-platform-web-content-checker (🟨 yellow) with PaperMod validation, cover image checking. All include references to Hugo Content Convention and Content Quality Principles.
+  - **Implementation Notes**: Updated .claude/agents/README.md with 4 new Hugo content agents inserted after deployer agents, before docs-checker. Added: (1) ayokoding-web-general-maker (🟦 green) with description, specialization (Hextra, bilingual, 5 archetypes, Tutorial Convention), tools, when to use, works with ayokoding-web-general-checker; (2) ayokoding-web-general-checker (🟨 yellow) with validation specialization, tools, when to use; (3) ose-platform-web-content-maker (🟦 green) with PaperMod v7.0+, English-only, enterprise tone; (4) ose-platform-web-content-checker (🟨 yellow) with PaperMod validation, cover image checking. All include references to Hugo Content Convention and Content Quality Principles.
   - **Date**: 2025-12-07
   - **Status**: Completed
   - **Files Changed**: .claude/agents/README.md (modified)
@@ -934,7 +934,7 @@ All theme information validated from official sources:
 - **Total Implementation Steps Completed**: 19/19
 - **Files Created**:
   - 2 convention documents (ex-co**hugo-content.md, ex-co**content-quality.md)
-  - 4 AI agent files (ayokoding-content-maker.md, ayokoding-content-checker.md, ose-platform-web-content-maker.md, ose-platform-web-content-checker.md)
+  - 4 AI agent files (ayokoding-web-general-maker.md, ayokoding-web-general-checker.md, ose-platform-web-content-maker.md, ose-platform-web-content-checker.md)
 - **Files Updated**:
   - docs/explanation/conventions/README.md (added 2 conventions)
   - .claude/agents/README.md (added 4 agents)

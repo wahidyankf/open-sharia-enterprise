@@ -70,9 +70,9 @@ Feature: Clear quality benchmarks for content creation
 
   Scenario: Validating content quality
     Given I have completed a cookbook for a new language
-    When I run ayokoding-content-checker
+    When I run ayokoding-web-general-checker
     Then I receive specific feedback on structural compliance
-    When I run ayokoding-facts-checker
+    When I run ayokoding-web-facts-checker
     Then I receive specific feedback on factual correctness
     And I can compare my metrics against documented benchmarks
 ```
@@ -90,7 +90,7 @@ Feature: Automated quality validation
 
   Scenario: Structural validation
     Given a programming language content folder exists
-    When I run ayokoding-structure-checker
+    When I run ayokoding-web-structure-checker
     Then I see validation of all required files (tutorials, how-to, explanation, reference)
     And I see validation of weight ordering (cookbook at 1000001)
     And I see validation of file naming patterns
@@ -98,7 +98,7 @@ Feature: Automated quality validation
 
   Scenario: Content quality validation
     Given a programming language has all required content files
-    When I run ayokoding-content-checker
+    When I run ayokoding-web-general-checker
     Then I see validation of color palette usage (accessible colors only)
     And I see validation of pedagogical patterns (front hooks, learning paths)
     And I see validation of quality metrics (minimum line counts, cross-references)
@@ -106,7 +106,7 @@ Feature: Automated quality validation
 
   Scenario: Factual accuracy validation
     Given a programming language tutorial contains code examples
-    When I run ayokoding-facts-checker
+    When I run ayokoding-web-facts-checker
     Then I see validation of command syntax correctness
     And I see validation of version accuracy
     And I see validation of code example correctness
@@ -170,10 +170,10 @@ All content MUST meet quality benchmarks:
 
 Content MUST pass automated validation:
 
-- **FR-4.1**: `ayokoding-structure-checker` with zero violations (file presence, naming, weight ordering)
-- **FR-4.2**: `ayokoding-content-checker` with zero violations (Hugo conventions, quality principles)
-- **FR-4.3**: `ayokoding-facts-checker` with zero factual errors (command syntax, versions, code correctness)
-- **FR-4.4**: `ayokoding-link-checker` with zero broken links
+- **FR-4.1**: `ayokoding-web-structure-checker` with zero violations (file presence, naming, weight ordering)
+- **FR-4.2**: `ayokoding-web-general-checker` with zero violations (Hugo conventions, quality principles)
+- **FR-4.3**: `ayokoding-web-facts-checker` with zero factual errors (command syntax, versions, code correctness)
+- **FR-4.4**: `ayokoding-web-link-checker` with zero broken links
 
 ## Non-Functional Requirements
 
@@ -209,7 +209,7 @@ Content MUST pass automated validation:
 
 ### Resource Constraints
 
-- **C-R1**: Implementation uses existing AI agents (ayokoding-content-maker, ayokoding-content-checker, etc.)
+- **C-R1**: Implementation uses existing AI agents (ayokoding-web-general-maker, ayokoding-web-general-checker, etc.)
 - **C-R2**: Single PR delivery (all changes reviewed together for consistency)
 
 ### Policy Constraints
@@ -251,12 +251,12 @@ The following are explicitly OUT OF SCOPE for this plan:
 
 ### External Dependencies
 
-- **D-E1**: ayokoding-content-checker agent (structural validation)
-- **D-E2**: ayokoding-structure-checker agent (navigation validation)
-- **D-E3**: ayokoding-facts-checker agent (factual validation)
-- **D-E4**: ayokoding-link-checker agent (link validation)
-- **D-E5**: ayokoding-content-maker agent (content creation/updates)
-- **D-E6**: ayokoding-content-fixer agent (automated fixes)
+- **D-E1**: ayokoding-web-general-checker agent (structural validation)
+- **D-E2**: ayokoding-web-structure-checker agent (navigation validation)
+- **D-E3**: ayokoding-web-facts-checker agent (factual validation)
+- **D-E4**: ayokoding-web-link-checker agent (link validation)
+- **D-E5**: ayokoding-web-general-maker agent (content creation/updates)
+- **D-E6**: ayokoding-web-general-fixer agent (automated fixes)
 
 ### Tool Dependencies
 

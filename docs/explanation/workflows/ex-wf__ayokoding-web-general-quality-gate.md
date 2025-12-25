@@ -1,5 +1,5 @@
 ---
-name: ayokoding-content-general-quality-gate
+name: ayokoding-web-general-quality-gate
 goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings, then regenerate titles and navigation
 termination: Zero findings across all validators and navigation regenerated (runs indefinitely until achieved unless max-iterations provided)
 inputs:
@@ -26,19 +26,19 @@ outputs:
     description: Number of check-fix cycles executed
   - name: content-report
     type: file
-    pattern: generated-reports/ayokoding-content-general__*__audit.md
+    pattern: generated-reports/ayokoding-web-general__*__audit.md
     description: Final content validation report
   - name: facts-report
     type: file
-    pattern: generated-reports/ayokoding-facts__*__audit.md
+    pattern: generated-reports/ayokoding-web-facts__*__audit.md
     description: Final facts validation report
   - name: structure-report
     type: file
-    pattern: generated-reports/ayokoding-structure__*__audit.md
+    pattern: generated-reports/ayokoding-web-structure__*__audit.md
     description: Final structure validation report
   - name: links-report
     type: file
-    pattern: generated-reports/ayokoding-link__*__audit.md
+    pattern: generated-reports/ayokoding-web-link__*__audit.md
     description: Final links validation report
 ---
 
@@ -59,22 +59,22 @@ outputs:
 
 Run all ayokoding validators concurrently to identify all issues across different quality dimensions.
 
-**Agent 1a**: `ayokoding-content-general-checker`
+**Agent 1a**: `ayokoding-web-general-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{content-report-N}` - Hugo conventions, bilingual consistency, navigation validation
 
-**Agent 1b**: `ayokoding-facts-checker`
+**Agent 1b**: `ayokoding-web-facts-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{facts-report-N}` - Factual accuracy, code examples, tutorial sequences
 
-**Agent 1c**: `ayokoding-structure-checker`
+**Agent 1c**: `ayokoding-web-structure-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{structure-report-N}` - Weight conventions, ordering, navigation structure
 
-**Agent 1d**: `ayokoding-link-checker`
+**Agent 1d**: `ayokoding-web-link-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{links-report-N}` - Internal/external link validation, Hugo link format
@@ -111,7 +111,7 @@ Analyze all audit reports to determine if fixes are needed.
 
 Fix Hugo convention violations, frontmatter issues, and content quality problems.
 
-**Agent**: `ayokoding-content-general-fixer`
+**Agent**: `ayokoding-web-general-fixer`
 
 - **Args**: `report: {step1.outputs.content-report-N}, approved: all`
 - **Output**: `{content-fixes-applied}`
@@ -126,7 +126,7 @@ Fix Hugo convention violations, frontmatter issues, and content quality problems
 
 Fix factual errors, outdated information, and incorrect code examples.
 
-**Agent**: `ayokoding-facts-fixer`
+**Agent**: `ayokoding-web-facts-fixer`
 
 - **Args**: `report: {step1.outputs.facts-report-N}, approved: all`
 - **Output**: `{facts-fixes-applied}`
@@ -147,7 +147,7 @@ Fix factual errors, outdated information, and incorrect code examples.
 
 Fix weight ordering, navigation structure, and coverage issues.
 
-**Agent**: `ayokoding-structure-fixer`
+**Agent**: `ayokoding-web-structure-fixer`
 
 - **Args**: `report: {step1.outputs.structure-report-N}, approved: all`
 - **Output**: `{structure-fixes-applied}`
@@ -191,7 +191,7 @@ Determine whether to continue fixing or move to finalization.
 
 Update title fields in all ayokoding-web markdown files based on filenames and configuration.
 
-**Agent**: `ayokoding-title-maker`
+**Agent**: `ayokoding-web-title-maker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{titles-updated}`
@@ -211,7 +211,7 @@ Update title fields in all ayokoding-web markdown files based on filenames and c
 
 Regenerate 2-layer navigation listings in all \_index.md files from file structure.
 
-**Agent**: `ayokoding-navigation-maker`
+**Agent**: `ayokoding-web-navigation-maker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{navigation-updated}`
@@ -233,10 +233,10 @@ Run all checkers one final time to confirm zero issues remain.
 
 **Agents**: All four checkers in parallel
 
-- ayokoding-content-general-checker
-- ayokoding-facts-checker
-- ayokoding-structure-checker
-- ayokoding-link-checker
+- ayokoding-web-general-checker
+- ayokoding-web-facts-checker
+- ayokoding-web-structure-checker
+- ayokoding-web-link-checker
 
 **Args**: `scope: {input.scope}, expect: zero-issues`
 
@@ -274,42 +274,42 @@ Report final status and summary.
 
 ```bash
 # Run complete ayokoding-web content validation and fixing
-workflow run ayokoding-content-general-quality-gate
+workflow run ayokoding-web-general-quality-gate
 ```
 
 ### Validate Specific Language
 
 ```bash
 # Validate only English content
-workflow run ayokoding-content-general-quality-gate --scope=ayokoding-web/content/en/
+workflow run ayokoding-web-general-quality-gate --scope=ayokoding-web/content/en/
 ```
 
 ### Validate Specific Section
 
 ```bash
 # Validate only programming section
-workflow run ayokoding-content-general-quality-gate --scope=ayokoding-web/content/en/programming/
+workflow run ayokoding-web-general-quality-gate --scope=ayokoding-web/content/en/programming/
 ```
 
 ### With Iteration Bounds
 
 ```bash
 # Require at least 2 iterations, cap at 10 maximum
-workflow run ayokoding-content-general-quality-gate --scope=all --min-iterations=2 --max-iterations=10
+workflow run ayokoding-web-general-quality-gate --scope=all --min-iterations=2 --max-iterations=10
 ```
 
 ### Prevent Infinite Loops
 
 ```bash
 # Set maximum iterations when unsure about fix convergence
-workflow run ayokoding-content-general-quality-gate --scope=all --max-iterations=10
+workflow run ayokoding-web-general-quality-gate --scope=all --max-iterations=10
 ```
 
 ### Require Minimum Iterations
 
 ```bash
 # Ensure at least 3 check-fix cycles before accepting zero findings
-workflow run ayokoding-content-general-quality-gate --scope=all --min-iterations=3
+workflow run ayokoding-web-general-quality-gate --scope=all --min-iterations=3
 ```
 
 ## Iteration Example
@@ -370,28 +370,28 @@ Result: SUCCESS (2 iterations)
 
 ## Validation Dimensions
 
-### Content Validation (ayokoding-content-general-checker)
+### Content Validation (ayokoding-web-general-checker)
 
 - Hugo conventions (frontmatter, theme-specific)
 - Bilingual consistency
 - Navigation structure
 - Content quality principles
 
-### Facts Validation (ayokoding-facts-checker)
+### Facts Validation (ayokoding-web-facts-checker)
 
 - Technical accuracy using web verification
 - Code examples correctness
 - Tutorial sequences validity
 - Bilingual factual consistency
 
-### Structure Validation (ayokoding-structure-checker)
+### Structure Validation (ayokoding-web-structure-checker)
 
 - Weight conventions and ordering
 - Navigation structure completeness
 - Coverage gaps
 - Pedagogical progression
 
-### Links Validation (ayokoding-link-checker)
+### Links Validation (ayokoding-web-link-checker)
 
 - Internal link validity
 - External link accessibility

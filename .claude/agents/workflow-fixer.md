@@ -551,7 +551,7 @@ Create comprehensive report in `generated-reports/`:
 - **Validation:** Confirmed agent file not found in `.claude/agents/`
 - **Confidence:** MEDIUM (agent may need to be created, or different agent intended)
 - **Action Required:** Manually specify which agent should be used for this step
-- **Options:** Create `release-automation` agent OR use existing agent like `ayokoding-deployer`
+- **Options:** Create `release-automation` agent OR use existing agent like `ayokoding-web-deployer`
 
   **docs/explanation/workflows/ex-wf\_\_data-migration.md - File naming**
 

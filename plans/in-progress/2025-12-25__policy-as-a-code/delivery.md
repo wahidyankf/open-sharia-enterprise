@@ -394,7 +394,7 @@ Achieve largest impact through biggest agent families
 
 ### Why Content Domains Third?
 
-1. **Largest duplication**: ayokoding-content family = 3,349 lines
+1. **Largest duplication**: ayokoding-web family = 3,349 lines
 2. **Hugo-specific rules**: Tests policy schema with framework conventions
 3. **Bilingual complexity**: ayokoding has en/id validation (policy reuse opportunity)
 4. **Proven architecture**: Success in Phases 1-2 de-risks this larger migration
@@ -443,12 +443,12 @@ policy:
 
 ### Tasks
 
-**ayokoding-content family:**
+**ayokoding-web family:**
 
 - [ ] Extract 15-20 policies
-- [ ] Update ayokoding-content-checker (1,644 → ~700 lines, 57% reduction)
-- [ ] Update ayokoding-content-maker (1,090 → ~500 lines, 54% reduction)
-- [ ] Update ayokoding-content-fixer (615 → ~200 lines, 67% reduction)
+- [ ] Update ayokoding-web-general-checker (1,644 → ~700 lines, 57% reduction)
+- [ ] Update ayokoding-web-general-maker (1,090 → ~500 lines, 54% reduction)
+- [ ] Update ayokoding-web-general-fixer (615 → ~200 lines, 67% reduction)
 - [ ] Test bilingual validation
 - [ ] Measure coverage improvements
 
@@ -1014,9 +1014,9 @@ Phase 5 (consolidation)
 
 ### Phase 3
 
-- `.claude/agents/ayokoding-content-checker.md` (MODIFY)
-- `.claude/agents/ayokoding-content-maker.md` (MODIFY)
-- `.claude/agents/ayokoding-content-fixer.md` (MODIFY)
+- `.claude/agents/ayokoding-web-general-checker.md` (MODIFY)
+- `.claude/agents/ayokoding-web-general-maker.md` (MODIFY)
+- `.claude/agents/ayokoding-web-general-fixer.md` (MODIFY)
 - `.claude/agents/ose-platform-web-content-checker.md` (MODIFY)
 - `.claude/agents/ose-platform-web-content-fixer.md` (MODIFY)
 - 15+ convention files (MODIFY: add policy YAML)

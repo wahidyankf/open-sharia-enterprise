@@ -53,9 +53,9 @@ This plan establishes the highest standard from each language and brings all oth
 
 ## Success Criteria
 
-1. All 6 languages pass `ayokoding-content-checker` with zero violations
-2. All 6 languages pass `ayokoding-structure-checker` with zero violations
-3. All 6 languages pass `ayokoding-facts-checker` with zero factual errors
+1. All 6 languages pass `ayokoding-web-general-checker` with zero violations
+2. All 6 languages pass `ayokoding-web-structure-checker` with zero violations
+3. All 6 languages pass `ayokoding-web-facts-checker` with zero factual errors
 4. All 6 languages have identical file counts for structural files (tutorials, explanation, reference overview files)
 5. Cookbook positioned at weight 1000001 in all languages
 6. All languages meet or exceed quality benchmarks from Programming Language Content Standard

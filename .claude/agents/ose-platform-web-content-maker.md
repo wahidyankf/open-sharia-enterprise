@@ -37,7 +37,7 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- Creating content for ayokoding-web (use ayokoding-content-general-maker instead)
+- Creating content for ayokoding-web (use ayokoding-web-general-maker instead)
 - Validating existing content (use ose-platform-web-content-checker instead)
 - Modifying Hugo configuration or theme files
 - Creating or modifying archetypes
@@ -823,7 +823,7 @@ npm run dev
 
 **Related Agents**:
 - [ose-platform-web-content-checker](./ose-platform-web-content-checker.md) - Validates ose-platform-web content (complementary agent)
-- [ayokoding-content-general-maker](./ayokoding-content-general-maker.md) - Creates ayokoding-web content (different site)
+- [ayokoding-web-general-maker](./ayokoding-web-general-maker.md) - Creates ayokoding-web content (different site)
 
 **External Resources**:
 - [PaperMod Theme Documentation](https://adityatelange.github.io/hugo-PaperMod/)

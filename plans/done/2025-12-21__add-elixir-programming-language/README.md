@@ -51,7 +51,7 @@ Add Elixir as the 6th programming language to ayokoding-web with comprehensive e
 - Content volume: 30,000-32,000 lines (match/exceed Rust benchmark)
 - Both /en/ and /id/ paths fully populated
 - Positioned after Rust in navigation (weight: 10005 for level 5 folder)
-- All quality validations passing (ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker)
+- All quality validations passing (ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker)
 
 **Why Elixir:**
 
@@ -316,7 +316,7 @@ And I understand BEAM VM characteristics affecting performance
 #### Maintainability Requirements
 
 - All examples MUST specify Elixir version compatibility (e.g., Elixir 1.19+, OTP 28+)
-- External links MUST be validated by ayokoding-link-checker
+- External links MUST be validated by ayokoding-web-link-checker
 - Code examples MUST include comments explaining key concepts
 - Cross-references MUST link to related content (tutorials ↔ how-to ↔ cookbook)
 
@@ -341,11 +341,11 @@ And I understand BEAM VM characteristics affecting performance
 - MUST use Elixir 1.19+ and OTP 28+ for all examples (current stable versions as of 2024-12-21)
 - MUST follow Programming Language Content Standard exactly (no structural deviations)
 - MUST adhere to ayokoding-web Hugo Content Convention (weight system, bilingual, Hextra theme)
-- MUST pass all validation agents (ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker)
+- MUST pass all validation agents (ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker)
 
 #### Resource Constraints
 
-- Content creation by single content creator (ayokoding-content-maker agent)
+- Content creation by single content creator (ayokoding-web-general-maker agent)
 - Validation by automated agents (4 checker agents: content, facts, links, structure)
 - Translation for Indonesian version requires bilingual expertise (software developer with Elixir experience)
 - Code examples require Elixir 1.19+ and OTP 28+ development environment for testing
@@ -569,7 +569,7 @@ apps/ayokoding-web/content/
 
 **Consequences:**
 
-- Translation workflow: ayokoding-content-maker (English) → machine translate → human review → final Indonesian version
+- Translation workflow: ayokoding-web-general-maker (English) → machine translate → human review → final Indonesian version
 - Terminology consistency checked across all Indonesian content
 - Code comments use Indonesian where pedagogically valuable
 - Review focuses on clarity, not just literal accuracy
@@ -621,7 +621,7 @@ apps/ayokoding-web/content/
 - 32 Elixir-specific files created (16 navigation + 16 overview)
 - Navigation hierarchy functional with 3-layer depth
 - Elixir visible in programming languages list (both /en/ and /id/)
-- All ayokoding-structure-checker validations passing
+- All ayokoding-web-structure-checker validations passing
 
 **Dependencies:** None (foundational work)
 
@@ -757,9 +757,9 @@ apps/ayokoding-web/content/
 
 **Tasks:**
 
-1. Run ayokoding-content-checker for Hugo conventions and structure
-2. Run ayokoding-facts-checker for factual accuracy (commands, versions, syntax)
-3. Run ayokoding-link-checker for broken links
+1. Run ayokoding-web-general-checker for Hugo conventions and structure
+2. Run ayokoding-web-facts-checker for factual accuracy (commands, versions, syntax)
+3. Run ayokoding-web-link-checker for broken links
 4. Fix all validation errors and warnings
 5. Cross-reference audit (ensure all internal links work)
 6. Code example testing (verify all examples run successfully)
@@ -887,7 +887,7 @@ Links to next tutorial level...
 
 **Content Security:**
 
-- All external links verified by ayokoding-link-checker
+- All external links verified by ayokoding-web-link-checker
 - No links to suspicious or unmaintained resources
 - Official documentation sources prioritized
 - Community resources vetted for reputation
@@ -901,13 +901,13 @@ Links to next tutorial level...
    - Examples must run without errors
    - Output matches documented behavior
 2. Link Testing
-   - ayokoding-link-checker validates all internal and external links
+   - ayokoding-web-link-checker validates all internal and external links
    - Broken links fixed before PR merge
 3. Structure Testing
-   - ayokoding-content-checker validates Hugo conventions
-   - ayokoding-structure-checker validates 3-layer navigation, weight ordering
+   - ayokoding-web-general-checker validates Hugo conventions
+   - ayokoding-web-structure-checker validates 3-layer navigation, weight ordering
 4. Factual Testing
-   - ayokoding-facts-checker validates commands, versions, syntax
+   - ayokoding-web-facts-checker validates commands, versions, syntax
    - Web verification for all technical claims
 5. Diagram Testing
    - Mermaid diagrams render correctly in Hugo build
@@ -932,7 +932,7 @@ Links to next tutorial level...
 
 ### Deployment Strategy
 
-**Not applicable** (content deployment handled by ayokoding-deployer agent, not part of this plan)
+**Not applicable** (content deployment handled by ayokoding-web-deployer agent, not part of this plan)
 
 Content will be deployed to ayokoding-web production via standard deployment workflow after PR merge.
 
@@ -941,10 +941,10 @@ Content will be deployed to ayokoding-web production via standard deployment wor
 **Content Health Monitoring:**
 
 1. Link Health
-   - ayokoding-link-checker runs quarterly
+   - ayokoding-web-link-checker runs quarterly
    - Broken links reported and fixed promptly
 2. Factual Accuracy
-   - ayokoding-facts-checker runs quarterly
+   - ayokoding-web-facts-checker runs quarterly
    - Version updates (Elixir 1.18+, Phoenix 1.8+) trigger content review
 3. User Feedback
    - GitHub issues for content corrections
@@ -971,7 +971,7 @@ Content will be deployed to ayokoding-web production via standard deployment wor
 
 **Estimated Content Volume:** 31,000 total lines (15,500 English + 15,500 Indonesian)
 
-**Validation Required:** All PRs must pass ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker before merge.
+**Validation Required:** All PRs must pass ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker before merge.
 
 ### Implementation Phases
 
@@ -985,7 +985,7 @@ Content will be deployed to ayokoding-web production via standard deployment wor
 
 - **Completed**: 2025-12-21
 - **Implementation**: All structural tasks completed successfully (6/6 implementation steps done, 1 blocked on environment)
-- **Validation**: 8/9 validation items passed, 1 pending agent run (ayokoding-structure-checker)
+- **Validation**: 8/9 validation items passed, 1 pending agent run (ayokoding-web-structure-checker)
 - **Summary**: Complete foundation established with 36 files created (4 Indonesian parent + 32 Elixir-specific). Navigation hierarchy functional with 3-layer depth. Overview/ikhtisar content provides comprehensive introduction to Elixir learning path. Development environment blocked on version mismatch but doesn't affect Phase 1 structural deliverables.
 
 **Implementation Steps:**
@@ -1097,7 +1097,7 @@ Content will be deployed to ayokoding-web production via standard deployment wor
   - [x] `/id/belajar/swe/` directory structure created
   - [x] `/id/belajar/swe/prog-lang/` directory structure created
   - [x] `/id/belajar/_index.md` updated with swe/ navigation
-- [ ] ayokoding-structure-checker passes (3-layer navigation, weight ordering, overview links first) - PENDING (agent run needed)
+- [ ] ayokoding-web-structure-checker passes (3-layer navigation, weight ordering, overview links first) - PENDING (agent run needed)
 - [x] All _index.md files show 3 layers deep
   - **Validation Notes**: Manually verified all _index.md files show 3-layer navigation with complete coverage.
   - **Date**: 2025-12-21
@@ -1143,7 +1143,7 @@ Given I navigate to /id/belajar/swe/prog-lang/elixir/
 Then I see Elixir in the Indonesian programming languages list
 And the navigation structure shows 3 layers deep with ikhtisar links first
 
-Given I run ayokoding-structure-checker
+Given I run ayokoding-web-structure-checker
 When I validate Elixir directories (both /en/ and /id/)
 Then all structure validations pass with 0 errors
 ````
@@ -1271,9 +1271,9 @@ Then all structure validations pass with 0 errors
 - [ ] Progressive disclosure verified (simple → complex)
 - [ ] Cross-references between tutorials work
 - [ ] Line count targets met (13,600 lines total)
-- [ ] ayokoding-content-checker passes
-- [ ] ayokoding-facts-checker passes
-- [ ] ayokoding-link-checker passes
+- [ ] ayokoding-web-general-checker passes
+- [ ] ayokoding-web-facts-checker passes
+- [ ] ayokoding-web-link-checker passes
 
 **Acceptance Criteria:**
 
@@ -1388,8 +1388,8 @@ Then I can build production-ready Phoenix applications
 - [ ] All recipes tested and runnable
 - [ ] Line count target met (23,600 lines total)
 - [ ] Cross-references to tutorials work
-- [ ] ayokoding-content-checker passes
-- [ ] ayokoding-facts-checker passes
+- [ ] ayokoding-web-general-checker passes
+- [ ] ayokoding-web-facts-checker passes
 
 **Acceptance Criteria:**
 
@@ -1495,8 +1495,8 @@ And recipes link back to tutorial sections
 - [x] Line count target met (4,000 lines total) - EXCEEDED: 4,740 lines English (18% over target)
 - [x] Philosophy section explains Elixir design principles - COMPLETED: "What Makes Elixir Special" section in best-practices.md
 - [ ] All good/bad examples tested
-- [ ] All external links work (ayokoding-link-checker)
-- [ ] ayokoding-content-checker passes
+- [ ] All external links work (ayokoding-web-link-checker)
+- [ ] ayokoding-web-general-checker passes
 
 **Acceptance Criteria:**
 
@@ -1525,10 +1525,10 @@ And the glossary defines unfamiliar terms
 **Implementation Steps:**
 
 - [ ] Run validation agents
-  - [ ] ayokoding-content-checker (Hugo conventions, structure)
-  - [ ] ayokoding-facts-checker (factual accuracy)
-  - [ ] ayokoding-link-checker (broken links)
-  - [ ] ayokoding-structure-checker (3-layer navigation, weight ordering)
+  - [ ] ayokoding-web-general-checker (Hugo conventions, structure)
+  - [ ] ayokoding-web-facts-checker (factual accuracy)
+  - [ ] ayokoding-web-link-checker (broken links)
+  - [ ] ayokoding-web-structure-checker (3-layer navigation, weight ordering)
 - [ ] Fix validation errors
   - [ ] Address all errors from checker agents
   - [ ] Re-run checkers until 0 errors
@@ -1572,10 +1572,10 @@ And the glossary defines unfamiliar terms
 
 **Validation Checklist:**
 
-- [ ] ayokoding-content-checker: 0 errors, 0 warnings
-- [ ] ayokoding-facts-checker: 0 errors
-- [ ] ayokoding-link-checker: 0 broken links
-- [ ] ayokoding-structure-checker: 0 errors
+- [ ] ayokoding-web-general-checker: 0 errors, 0 warnings
+- [ ] ayokoding-web-facts-checker: 0 errors
+- [ ] ayokoding-web-link-checker: 0 broken links
+- [ ] ayokoding-web-structure-checker: 0 errors
 - [ ] All code examples run successfully (Elixir 1.19+ and OTP 28+)
 - [ ] All Mermaid diagrams render correctly
 - [ ] Translation quality validated
@@ -1632,11 +1632,11 @@ And the quality matches or exceeds existing languages
 
 **Tooling Dependencies:**
 
-- ayokoding-content-maker agent for content creation
-- ayokoding-content-checker for Hugo convention validation
-- ayokoding-facts-checker for factual accuracy
-- ayokoding-link-checker for link validation
-- ayokoding-structure-checker for 3-layer navigation validation
+- ayokoding-web-general-maker agent for content creation
+- ayokoding-web-general-checker for Hugo convention validation
+- ayokoding-web-facts-checker for factual accuracy
+- ayokoding-web-link-checker for link validation
+- ayokoding-web-structure-checker for 3-layer navigation validation
 
 ### Risks and Mitigation
 
@@ -1697,7 +1697,7 @@ And the quality matches or exceeds existing languages
 - **Probability:** Medium
 - **Mitigation:**
   - Document cross-reference patterns in tech-docs
-  - Validate links programmatically (ayokoding-link-checker)
+  - Validate links programmatically (ayokoding-web-link-checker)
   - Audit cross-references in Phase 5
   - Use consistent link format (absolute paths with /learn/ prefix)
 
@@ -1734,10 +1734,10 @@ And the quality matches or exceeds existing languages
 
 **Validation Passing:**
 
-- [x] ayokoding-content-checker: 0 errors ✅ (100% compliance)
-- [x] ayokoding-facts-checker: 0 errors ✅ (100% factual accuracy)
-- [x] ayokoding-link-checker: 0 broken links ✅ (all internal/external links valid)
-- [x] ayokoding-structure-checker: 0 errors ✅ (100% structure compliance)
+- [x] ayokoding-web-general-checker: 0 errors ✅ (100% compliance)
+- [x] ayokoding-web-facts-checker: 0 errors ✅ (100% factual accuracy)
+- [x] ayokoding-web-link-checker: 0 broken links ✅ (all internal/external links valid)
+- [x] ayokoding-web-structure-checker: 0 errors ✅ (100% structure compliance)
 
 **Bilingual Quality:**
 

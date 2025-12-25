@@ -41,7 +41,7 @@ Ensure all content meets quality benchmarks defined in the standard.
 - All how-to guides follow mandatory pattern (Problem → Solution → How It Works → Variations → Common Pitfalls → Related Patterns)
 - Cross-references properly connect tutorials, how-to guides, and cookbooks
 - No time estimates in any educational content
-- All content passes ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker validation
+- All content passes ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker validation
 
 ### Secondary Objectives
 
@@ -405,11 +405,11 @@ All content must be created and validated using designated AI agents.
 
 **Impact**:
 
-- Use ayokoding-content-maker for content creation
-- Use ayokoding-content-checker for Hugo validation
-- Use ayokoding-facts-checker for factual verification
-- Use ayokoding-link-checker for link validation
-- Use ayokoding-content-fixer for applying validated fixes
+- Use ayokoding-web-general-maker for content creation
+- Use ayokoding-web-general-checker for Hugo validation
+- Use ayokoding-web-facts-checker for factual verification
+- Use ayokoding-web-link-checker for link validation
+- Use ayokoding-web-general-fixer for applying validated fixes
 
 **CONST-5: Quality Gates**
 
