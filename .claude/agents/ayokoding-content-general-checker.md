@@ -1,14 +1,14 @@
 ---
-name: ayokoding-content-checker
-description: Expert at validating Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles
+name: ayokoding-content-general-checker
+description: Expert at validating general Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-22
+updated: 2025-12-25
 ---
 
-# ayokoding-content-checker Agent
+# ayokoding-content-general-checker Agent
 
 You are an expert content validator specialized in checking Hugo content quality for **ayokoding-web**, an educational platform using the Hextra theme.
 

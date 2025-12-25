@@ -3,11 +3,11 @@ title: "Overview"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Go through 60+ annotated code examples covering 90% of the language - ideal for experienced developers switching from other languages"
+description: "Learn Go through 75+ annotated code examples covering 95% of the language - ideal for experienced developers switching from other languages"
 tags: ["golang", "go", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-**Want to quickly master Go through working examples?** This by-example guide teaches 90% of Go through 60+ annotated code examples organized by complexity level.
+**Want to quickly master Go through working examples?** This by-example guide teaches 95% of Go through 75+ annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -24,14 +24,14 @@ Unlike narrative tutorials that build understanding through explanation and stor
 
 ## Learning Path
 
-The Go by-example tutorial guides you through 60 carefully selected examples organized into three progressive levels, from fundamental concepts to advanced patterns.
+The Go by-example tutorial guides you through 75-90 examples organized into three progressive levels, from fundamental concepts to advanced patterns.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
-    A["Beginner (Examples 1-15)<br/>0-40% Coverage<br/>Fundamentals"]
-    B["Intermediate (Examples 16-35)<br/>40-70% Coverage<br/>Production Ready"]
-    C["Advanced (Examples 36-60)<br/>70-90% Coverage<br/>Expert Mastery"]
+    A["Beginner (Examples 1-30)<br/>0-40% Coverage<br/>Fundamentals"]
+    B["Intermediate (Examples 31-60)<br/>40-75% Coverage<br/>Production Ready"]
+    C["Advanced (Examples 61-90)<br/>75-95% Coverage<br/>Expert Mastery"]
 
     A -->|Master foundations| B
     B -->|Advanced patterns| C
@@ -43,7 +43,7 @@ graph LR
 
 ## Coverage Philosophy
 
-This by-example guide provides **90% coverage of Go** through practical, annotated examples. The 90% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This by-example guide provides **95% coverage of Go** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -83,7 +83,7 @@ This by-example guide provides **90% coverage of Go** through practical, annotat
 
 **Best workflow**: Open your editor or terminal in one window, this guide in another. Run each example as you read it. When you encounter something unfamiliar, run the example, modify it, see what changes.
 
-**Reference System**: Examples are numbered (1-60) and grouped by level. This numbering appears in other Go content at ayokoding.com, allowing you to reference specific examples elsewhere.
+**Reference System**: Examples are numbered (1-90) and grouped by level. This numbering appears in other Go content at ayokoding.com, allowing you to reference specific examples elsewhere.
 
 ## Structure of Each Example
 
@@ -104,13 +104,13 @@ This by-example tutorial complements other learning approaches. Choose based on 
 | -------------------- | -------- | --------------------------------- | ------------------------------------ |
 | **Quick Start**      | 5-30%    | Getting something working quickly | Hands-on with guided structure       |
 | **Beginner**         | 0-60%    | Learning from scratch             | Narrative explanations with examples |
-| **This: By Example** | 90%      | Rapid depth for experienced devs  | Code-first, minimal explanation      |
+| **This: By Example** | 95%      | Rapid depth for experienced devs  | Code-first, minimal explanation      |
 | **Cookbook**         | Parallel | Solving specific problems         | Problem-solution recipes             |
 | **Advanced**         | 85-95%   | Expert mastery                    | Deep dives and edge cases            |
 
 By-example is ideal if you have programming experience in other languages. It accelerates learning by leveraging your existing knowledge - you focus on "how Go does this" rather than learning programming concepts from scratch.
 
-The 90% coverage represents depth and breadth of topics you'll encounter in production Go code. It explicitly acknowledges that no tutorial covers everything, but these examples provide the foundation to understand the remaining 10% through official documentation, source code, and community resources.
+The 95% coverage represents depth and breadth of topics you'll encounter in production Go code. It explicitly acknowledges that no tutorial covers everything, but these examples provide the foundation to understand the remaining 5% through official documentation, source code, and community resources.
 
 ## Prerequisites
 
@@ -124,7 +124,7 @@ You don't need to understand Go's internals, philosophy, or ecosystem yet - this
 
 Other languages at ayokoding.com have similar by-example tutorials:
 
-- **Java By-Example**: 60 examples covering OOP, streams, concurrency, JVM patterns
-- **Elixir By-Example**: 60 examples covering functional programming, pattern matching, concurrency, OTP
+- **Java By-Example**: 75-90 examples covering OOP, streams, concurrency, JVM patterns
+- **Elixir By-Example**: 75-90 examples covering functional programming, pattern matching, concurrency, OTP
 
 The Go version follows the same philosophy and structure but emphasizes Go-specific strengths: simplicity, concurrency, static compilation, and the extensive standard library.

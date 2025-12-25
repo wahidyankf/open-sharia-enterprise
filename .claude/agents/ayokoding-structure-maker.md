@@ -48,7 +48,7 @@ Use this agent when:
 
 - Validating structure (use ayokoding-structure-checker instead)
 - Fixing violations from audit reports (use ayokoding-structure-fixer instead)
-- Creating content files (use ayokoding-content-maker instead)
+- Creating content files (use ayokoding-content-general-maker instead)
 - Generating navigation listings manually (handled automatically by CLI after changes)
 
 ## ayokoding-web Weight System
@@ -703,7 +703,7 @@ if len(affected_files) > MAX_CASCADE_FILES:
 - `ayokoding-navigation-maker.md` - Regenerates navigation listings (automatically invoked by this agent)
 - `ayokoding-structure-checker.md` - Validates structure after changes
 - `ayokoding-structure-fixer.md` - Fixes violations reactively
-- `ayokoding-content-maker.md` - Creates content files (different purpose)
+- `ayokoding-content-general-maker.md` - Creates content files (different purpose)
 
 **Related Conventions:**
 

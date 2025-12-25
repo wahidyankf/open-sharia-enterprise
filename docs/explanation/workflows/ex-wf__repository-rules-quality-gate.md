@@ -1,13 +1,16 @@
 ---
 name: repository-rules-quality-gate
-goal: Validate repository consistency and apply fixes until all issues are resolved
-termination: Zero findings remain after validation
+goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
+termination: Zero findings remain after validation (runs indefinitely until achieved unless max-iterations provided)
 inputs:
+  - name: min-iterations
+    type: number
+    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
+    required: false
   - name: max-iterations
     type: number
-    description: Maximum number of check-fix cycles to prevent infinite loops
+    description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
-    default: 5
 outputs:
   - name: final-status
     type: enum
@@ -107,16 +110,18 @@ Determine whether to continue fixing or terminate.
 **Logic**:
 
 - Count ALL findings in `{step4.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
-- If findings = 0: Proceed to step 6 (Success)
-- If findings > 0 AND iterations < max-iterations: Loop back to step 3 with new report
-- If findings > 0 AND iterations >= max-iterations: Proceed to step 6 (Partial)
+- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
+- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
+- If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
 **Depends on**: Step 4 completion
 
 **Notes**:
 
-- Prevents infinite loops with max-iterations limit
-- Continues until ZERO findings of any confidence level
+- **Default behavior**: Runs indefinitely until zero findings (no max-iterations limit)
+- **Optional min-iterations**: Prevents premature termination before sufficient iterations
+- **Optional max-iterations**: Prevents infinite loops when explicitly provided
 - Each iteration uses the latest audit report
 - Tracks iteration count for observability
 
@@ -149,18 +154,25 @@ Report final status and summary.
 workflow run repository-rules-quality-gate
 ```
 
-### Extended Check-Fix
+### With Iteration Bounds
 
 ```bash
-# Allow up to 10 iterations for complex fixes
+# Require at least 2 iterations, cap at 10 maximum
+workflow run repository-rules-quality-gate --min-iterations=2 --max-iterations=10
+```
+
+### Prevent Infinite Loops
+
+```bash
+# Set maximum iterations when unsure about fix convergence
 workflow run repository-rules-quality-gate --max-iterations=10
 ```
 
-### Quick Validation
+### Require Minimum Iterations
 
 ```bash
-# Check only, don't fix (set max-iterations=0)
-workflow run repository-rules-quality-gate --max-iterations=0
+# Ensure at least 3 check-fix cycles before accepting zero findings
+workflow run repository-rules-quality-gate --min-iterations=3
 ```
 
 ## Iteration Example
@@ -184,9 +196,10 @@ Result: SUCCESS (3 iterations)
 
 **Infinite Loop Prevention**:
 
-- Max-iterations parameter (default: 5)
-- Workflow terminates with `partial` if limit reached
+- Optional max-iterations parameter (no default - runs until zero findings)
+- When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count for monitoring
+- Use max-iterations when fix convergence is uncertain
 
 **False Positive Protection**:
 

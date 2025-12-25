@@ -218,7 +218,7 @@ AI agents creating temporary uncommitted files must use designated directories t
 - **`generated-reports/`** - For validation, audit, and check reports (report-generating agents). **CRITICAL**: Any agent writing to this directory MUST have both Write and Bash tools (Write for files, Bash for UTC+7 timestamps).
 - **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
 
-**MANDATORY for ALL \*-checker agents**: All checker agents (repo-rules-checker, ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker) MUST write validation/audit reports to `generated-reports/` using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. NO conversation-only output. All validation findings MUST be persisted in report files.
+**MANDATORY for ALL \*-checker agents**: All checker agents (repo-rules-checker, ayokoding-content-general-checker, ayokoding-content-by-example-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker) MUST write validation/audit reports to `generated-reports/` using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. NO conversation-only output. All validation findings MUST be persisted in report files.
 
 **PROGRESSIVE WRITING REQUIREMENT**: All \*-checker agents MUST initialize report files at execution start and write findings progressively throughout execution (not buffer and write once at the end). This ensures audit history survives context compaction during long validation runs.
 
@@ -230,13 +230,13 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 ### Available Agents
 
-**Content**: docs-maker, docs-tutorial-maker, readme-maker, linkedin-post-maker, ayokoding-content-maker, ose-platform-web-content-maker
+**Content**: docs-maker, docs-tutorial-maker, readme-maker, linkedin-post-maker, ayokoding-content-general-maker, ayokoding-content-by-example-maker, ose-platform-web-content-maker
 
 **Navigation**: ayokoding-navigation-maker, ayokoding-structure-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, readme-checker, ayokoding-content-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, repo-rules-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, readme-checker, ayokoding-content-general-checker, ayokoding-content-by-example-checker, ayokoding-facts-checker, ayokoding-link-checker, ayokoding-structure-checker, ose-platform-web-content-checker, repo-rules-checker
 
-**Fixing**: repo-rules-fixer, ayokoding-content-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer
+**Fixing**: repo-rules-fixer, ayokoding-content-general-fixer, ayokoding-content-by-example-fixer, ayokoding-facts-fixer, ayokoding-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 

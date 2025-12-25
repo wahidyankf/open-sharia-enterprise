@@ -351,12 +351,13 @@ Maker-Checker-Fixer Workflow:
 **Layer 4 - Agents**:
 
 - **docs-checker**: Automated content quality validation
-- **ayokoding-content-checker**: Automated Hugo content validation
+- **ayokoding-content-general-checker**: Automated general Hugo content validation
+- **ayokoding-content-by-example-checker**: Automated by-example tutorial validation
 - **plan-checker**: Automated plan completeness validation
 
 **Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ex-wf__ayokoding-check-fix.md)
 
-- Orchestrates: ayokoding-content-checker → ayokoding-content-fixer
+- Orchestrates: ayokoding-content-general-checker → ayokoding-content-general-fixer
 - Ensures: All Hugo content meets quality standards through automated iteration
 
 ## 🏗️ Using the Architecture

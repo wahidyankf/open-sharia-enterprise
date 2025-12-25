@@ -314,16 +314,17 @@ Tool permissions follow the **principle of least privilege**: agents should only
 ALL checker agents MUST write their validation/audit reports to `generated-reports/` directory. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
 
 1. repo-rules-checker
-2. ayokoding-content-checker
-3. ayokoding-facts-checker
-4. ayokoding-link-checker
-5. ayokoding-structure-checker
-6. ose-platform-web-content-checker
-7. docs-checker
-8. docs-tutorial-checker
-9. readme-checker
-10. plan-checker
-11. plan-execution-checker
+2. ayokoding-content-general-checker
+3. ayokoding-content-by-example-checker
+4. ayokoding-facts-checker
+5. ayokoding-link-checker
+6. ayokoding-structure-checker
+7. ose-platform-web-content-checker
+8. docs-checker
+9. docs-tutorial-checker
+10. readme-checker
+11. plan-checker
+12. plan-execution-checker
 
 **NO conversation-only output**: Checker agents MUST NOT output validation results in conversation only. All validation findings MUST be written to audit report files following the pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
@@ -829,7 +830,8 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - docs-checker (factual verification)
 - docs-tutorial-checker (tutorial quality validation)
 - agent-maker (agent creation automation)
-- ayokoding-content-maker (Hugo content creation)
+- ayokoding-content-general-maker (general Hugo content creation)
+- ayokoding-content-by-example-maker (by-example tutorial creation)
 - ose-platform-web-content-maker (Hugo content creation)
 
 **When to use this tier**:
@@ -877,11 +879,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier 1: Simple**   | ayokoding-deployer, ose-platform-web-deployer                                                                                                                                                                                         |
-| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, ayokoding-content-maker, ayokoding-content-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                                           |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | ayokoding-deployer, ose-platform-web-deployer                                                                                                                                                                                                                                                                                   |
+| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, ayokoding-content-general-maker, ayokoding-content-by-example-maker, ayokoding-content-general-checker, ayokoding-content-by-example-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                                                                                                                                     |
 
 ### When to Condense or Split Agents
 

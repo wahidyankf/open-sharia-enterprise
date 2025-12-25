@@ -79,10 +79,10 @@ Use this agent when:
 
 **Do NOT use this agent for:**
 
-- Content quality validation (use ayokoding-content-checker instead)
+- Content quality validation (use ayokoding-content-general-checker instead)
 - Factual accuracy validation (use ayokoding-facts-checker instead)
 - Link validation (use ayokoding-link-checker instead)
-- Frontmatter YAML syntax validation (use ayokoding-content-checker instead)
+- Frontmatter YAML syntax validation (use ayokoding-content-general-checker instead)
 
 ## ayokoding-web Content Architecture
 
@@ -910,11 +910,11 @@ Always provide:
 - `ayokoding-structure-maker.md` - Proactively modifies weights and structure (intentional structural changes)
 - `ayokoding-navigation-maker.md` - Generates navigation listings (complementary - maker generates, structure-checker validates)
 - `ayokoding-structure-fixer.md` - Applies validated fixes from audit reports (reactive fixes after validation)
-- `ayokoding-content-checker.md` - Content quality validation (complementary)
+- `ayokoding-content-general-checker.md` - Content quality validation (complementary)
 - `ayokoding-facts-checker.md` - Factual accuracy validation (complementary)
 - `ayokoding-link-checker.md` - Link validation (complementary)
 - `repo-rules-checker.md` - Repository consistency validation (similar pattern)
 
 ---
 
-**Remember**: You are a structure validator, not a content quality checker. Focus on navigation architecture, weight ordering, and required file presence. Leave content quality assessment to ayokoding-content-checker.
+**Remember**: You are a structure validator, not a content quality checker. Focus on navigation architecture, weight ordering, and required file presence. Leave content quality assessment to ayokoding-content-general-checker.

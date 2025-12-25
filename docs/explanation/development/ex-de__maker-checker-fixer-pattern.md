@@ -100,13 +100,14 @@ This pattern is used across **seven agent families**:
 
 **Examples**:
 
-| Agent                          | Creates/Updates                                    | Also Manages                                     |
-| ------------------------------ | -------------------------------------------------- | ------------------------------------------------ |
-| repo-rules-maker               | Convention docs, CLAUDE.md sections, agent prompts | Cross-references, indices, related documentation |
-| ayokoding-content-maker        | Hugo learning content, blog posts                  | Navigation files, overview pages, indices        |
-| docs-tutorial-maker            | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples     |
-| ose-platform-web-content-maker | Platform update posts, about pages                 | Navigation, asset references                     |
-| readme-maker                   | README sections with engaging content              | Links to detailed docs, cross-references         |
+| Agent                              | Creates/Updates                                    | Also Manages                                      |
+| ---------------------------------- | -------------------------------------------------- | ------------------------------------------------- |
+| repo-rules-maker                   | Convention docs, CLAUDE.md sections, agent prompts | Cross-references, indices, related documentation  |
+| ayokoding-content-general-maker    | General Hugo learning content, blog posts          | Navigation files, overview pages, indices         |
+| ayokoding-content-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations |
+| docs-tutorial-maker                | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      |
+| ose-platform-web-content-maker     | Platform update posts, about pages                 | Navigation, asset references                      |
+| readme-maker                       | README sections with engaging content              | Links to detailed docs, cross-references          |
 
 **Key Responsibilities**:
 
@@ -123,7 +124,7 @@ This pattern is used across **seven agent families**:
 ```markdown
 User: "Add a new Hugo tutorial to ayokoding-web about TypeScript generics"
 
-Maker Agent (ayokoding-content-maker):
+Maker Agent (ayokoding-content-general-maker):
 
 1. Creates content/en/learn/swe/prog-lang/typescript/generics.md
 2. Creates content/id/belajar/swe/prog-lang/typescript/generics.md (bilingual)
@@ -156,13 +157,14 @@ Maker Agent (ayokoding-content-maker):
 
 **Examples**:
 
-| Agent                            | Validates                                       | Generates Report                           |
-| -------------------------------- | ----------------------------------------------- | ------------------------------------------ |
-| repo-rules-checker               | CLAUDE.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`        |
-| ayokoding-content-checker        | Hugo content (frontmatter, links, quality)      | `ayokoding-content__{timestamp}__audit.md` |
-| docs-tutorial-checker            | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`     |
-| ose-platform-web-content-checker | Platform content (structure, formatting, links) | `ose-platform-web__{timestamp}__audit.md`  |
-| readme-checker                   | README engagement, accessibility, jargon        | `readme__{timestamp}__audit.md`            |
+| Agent                                | Validates                                       | Generates Report                            |
+| ------------------------------------ | ----------------------------------------------- | ------------------------------------------- |
+| repo-rules-checker                   | CLAUDE.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`         |
+| ayokoding-content-general-checker    | General Hugo content (frontmatter, links)       | `ayokoding-content__{timestamp}__audit.md`  |
+| ayokoding-content-by-example-checker | By-example tutorials (coverage, annotations)    | `by-example-checker__{timestamp}__audit.md` |
+| docs-tutorial-checker                | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`      |
+| ose-platform-web-content-checker     | Platform content (structure, formatting, links) | `ose-platform-web__{timestamp}__audit.md`   |
+| readme-checker                       | README engagement, accessibility, jargon        | `readme__{timestamp}__audit.md`             |
 
 **Key Responsibilities**:
 
@@ -179,7 +181,7 @@ Maker Agent (ayokoding-content-maker):
 ```markdown
 User: "Check the new TypeScript tutorial for quality issues"
 
-Checker Agent (ayokoding-content-checker):
+Checker Agent (ayokoding-content-general-checker):
 
 1. Reads content/en/learn/swe/prog-lang/typescript/generics.md
 2. Validates frontmatter (date format, required fields, weight ordering)
@@ -213,11 +215,12 @@ Checker Agent (ayokoding-content-checker):
 
 **Examples**:
 
-| Agent                            | Fixes                                              | Generates Report                         |
-| -------------------------------- | -------------------------------------------------- | ---------------------------------------- |
-| repo-rules-fixer                 | Convention violations from repo-rules-checker      | `repo-rules__{timestamp}__fix.md`        |
-| (Future) ayokoding-content-fixer | Hugo content issues from ayokoding-content-checker | `ayokoding-content__{timestamp}__fix.md` |
-| (Future) readme-fixer            | README quality issues from readme-checker          | `readme__{timestamp}__fix.md`            |
+| Agent                              | Fixes                                              | Generates Report                         |
+| ---------------------------------- | -------------------------------------------------- | ---------------------------------------- |
+| repo-rules-fixer                   | Convention violations from repo-rules-checker      | `repo-rules__{timestamp}__fix.md`        |
+| ayokoding-content-general-fixer    | General Hugo content issues from general-checker   | `ayokoding-content__{timestamp}__fix.md` |
+| ayokoding-content-by-example-fixer | By-example tutorial issues from by-example-checker | `by-example-fixer__{timestamp}__fix.md`  |
+| readme-fixer                       | README quality issues from readme-checker          | `readme__{timestamp}__fix.md`            |
 
 **Key Responsibilities**:
 
@@ -235,7 +238,7 @@ Checker Agent (ayokoding-content-checker):
 ```markdown
 User: "Apply fixes from the latest ayokoding-content audit report"
 
-Fixer Agent (ayokoding-content-fixer):
+Fixer Agent (ayokoding-content-general-fixer):
 
 1. Auto-detects latest: generated-reports/ayokoding-content**2025-12-14--20-45**audit.md
 2. Parses findings (25 issues found)
@@ -275,15 +278,15 @@ Fixer Agent (ayokoding-content-fixer):
 ```bash
 # Step 1: Create content
 User: "Create TypeScript generics tutorial for ayokoding-web"
-Agent: ayokoding-content-maker (creates tutorial + navigation updates)
+Agent: ayokoding-content-general-maker (creates tutorial + navigation updates)
 
 # Step 2: Validate
 User: "Check the new tutorial"
-Agent: ayokoding-content-checker (generates audit report)
+Agent: ayokoding-content-general-checker (generates audit report)
 
 # Step 3: Fix
 User: "Apply the fixes"
-Agent: ayokoding-content-fixer (applies validated fixes from audit)
+Agent: ayokoding-content-general-fixer (applies validated fixes from audit)
 ```
 
 ### Iterative Workflow: Maker → Checker → Fixer → Checker
@@ -328,11 +331,11 @@ Agent: ayokoding-content-fixer (applies validated fixes from audit)
 
 The maker-checker-fixer pattern aligns with the agent color categorization system:
 
-| Color         | Role     | Stage   | Tool Pattern                    | Examples                                  |
-| ------------- | -------- | ------- | ------------------------------- | ----------------------------------------- |
-| 🟦 **Blue**   | Writers  | Maker   | Has `Write` (creates new files) | ayokoding-content-maker, readme-maker     |
-| 🟩 **Green**  | Checkers | Checker | Has `Write`, `Bash` (no `Edit`) | ayokoding-content-checker, readme-checker |
-| 🟨 **Yellow** | Updaters | Fixer   | Has `Edit` (not `Write`)        | repo-rules-fixer                          |
+| Color         | Role     | Stage   | Tool Pattern                    | Examples                                                                                |
+| ------------- | -------- | ------- | ------------------------------- | --------------------------------------------------------------------------------------- |
+| 🟦 **Blue**   | Writers  | Maker   | Has `Write` (creates new files) | ayokoding-content-general-maker, ayokoding-content-by-example-maker, readme-maker       |
+| 🟩 **Green**  | Checkers | Checker | Has `Write`, `Bash` (no `Edit`) | ayokoding-content-general-checker, ayokoding-content-by-example-checker, readme-checker |
+| 🟨 **Yellow** | Updaters | Fixer   | Has `Edit` (not `Write`)        | repo-rules-fixer                                                                        |
 
 **Note**: Purple (🟪 Implementors) agents execute plans and use all tools, falling outside the maker-checker-fixer pattern.
 
@@ -362,23 +365,34 @@ See [AI Agents Convention - Agent Color Categorization](./ex-de__ai-agents.md#ag
 
 ### 2. ayokoding-content-\* (Hugo Content for ayokoding-web)
 
-**Domain**: Hugo content for ayokoding-web (Hextra theme) - learning content, blog posts
+**Domain**: Hugo content for ayokoding-web (Hextra theme) - learning content, blog posts, by-example tutorials
 
 **Agents**:
 
-- **ayokoding-content-maker** (🟦 Maker) - Creates Hugo content following conventions
-- **ayokoding-content-checker** (🟩 Checker) - Validates Hugo frontmatter, links, quality
+- **ayokoding-content-general-maker** (🟦 Maker) - Creates general Hugo content following conventions
+- **ayokoding-content-by-example-maker** (🟦 Maker) - Creates by-example tutorials with annotated code
+- **ayokoding-content-general-checker** (🟩 Checker) - Validates general Hugo frontmatter, links, quality
+- **ayokoding-content-by-example-checker** (🟩 Checker) - Validates by-example tutorial quality (coverage, annotations)
+- **ayokoding-content-general-fixer** (🟨 Fixer) - Fixes general Hugo content issues
+- **ayokoding-content-by-example-fixer** (🟨 Fixer) - Fixes by-example tutorial issues
 
 **Use Case**: Creating and validating educational content for ayokoding-web
 
-**Example**:
+**Example (General Content)**:
 
 ```
-1. ayokoding-content-maker: Create TypeScript tutorial with bilingual content
-2. ayokoding-content-checker: Validate frontmatter, links, navigation, weight ordering
+1. ayokoding-content-general-maker: Create TypeScript tutorial with bilingual content
+2. ayokoding-content-general-checker: Validate frontmatter, links, navigation, weight ordering
+3. ayokoding-content-general-fixer: Apply validated fixes from audit
 ```
 
-**Future**: ayokoding-content-fixer (🟨 Fixer) for automated fix application
+**Example (By-Example Tutorial)**:
+
+```
+1. ayokoding-content-by-example-maker: Create Golang by-example with 75-90 annotated examples
+2. ayokoding-content-by-example-checker: Validate 95% coverage, annotations, self-containment
+3. ayokoding-content-by-example-fixer: Apply validated fixes from audit
+```
 
 ### 3. docs-tutorial-\* (Tutorial Quality)
 
@@ -660,8 +674,12 @@ The maker-checker-fixer pattern integrates with repository conventions:
 - `.claude/agents/repo-rules-maker.md` - Example maker agent
 - `.claude/agents/repo-rules-checker.md` - Example checker agent
 - `.claude/agents/repo-rules-fixer.md` - Example fixer agent
-- `.claude/agents/ayokoding-content-maker.md` - Hugo content maker
-- `.claude/agents/ayokoding-content-checker.md` - Hugo content checker
+- `.claude/agents/ayokoding-content-general-maker.md` - General Hugo content maker
+- `.claude/agents/ayokoding-content-by-example-maker.md` - By-example tutorial maker
+- `.claude/agents/ayokoding-content-general-checker.md` - General Hugo content checker
+- `.claude/agents/ayokoding-content-by-example-checker.md` - By-example tutorial checker
+- `.claude/agents/ayokoding-content-general-fixer.md` - General Hugo content fixer
+- `.claude/agents/ayokoding-content-by-example-fixer.md` - By-example tutorial fixer
 
 ---
 

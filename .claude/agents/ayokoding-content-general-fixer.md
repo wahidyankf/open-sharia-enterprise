@@ -1,14 +1,14 @@
 ---
-name: ayokoding-content-fixer
-description: Applies validated fixes from ayokoding-content-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing ayokoding-content-checker output.
+name: ayokoding-content-general-fixer
+description: Applies validated fixes from ayokoding-content-general-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing ayokoding-content-general-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
 created: 2025-12-14
-updated: 2025-12-14
+updated: 2025-12-25
 ---
 
-# ayokoding-content-fixer Agent
+# ayokoding-content-general-fixer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:
 

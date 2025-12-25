@@ -48,7 +48,7 @@ Your primary job is to **regenerate navigation listings** in all `_index.md` fil
 
 **Do NOT use this agent for:**
 
-- Creating new \_index.md files (use ayokoding-content-maker instead)
+- Creating new \_index.md files (use ayokoding-content-general-maker instead)
 - Validating navigation structure (use ayokoding-structure-checker instead)
 - Fixing weight values or other metadata (use ayokoding-structure-fixer instead)
 - Writing custom content for \_index.md (this replaces ALL content after frontmatter)
@@ -123,7 +123,7 @@ Common errors:
 
 **Prerequisites**:
 
-- `ayokoding-content-maker` should create new content files with proper frontmatter (title, weight)
+- `ayokoding-content-general-maker` should create new content files with proper frontmatter (title, weight)
 - File structure should be organized (directories, files in proper locations)
 - `ayokoding-cli` tool should be built
 
@@ -139,7 +139,7 @@ Common errors:
 
 ```
 1. Content Creation
-   ayokoding-content-maker → Create new files with frontmatter
+   ayokoding-content-general-maker → Create new files with frontmatter
 
 2. Navigation Generation (THIS AGENT)
    ayokoding-navigation-maker → Calls ayokoding-cli to regenerate all _index.md navigation lists
@@ -218,5 +218,5 @@ When invoked, follow these steps:
 - [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md)
 - [ayokoding-structure-checker Agent](./ayokoding-structure-checker.md)
 - [ayokoding-structure-fixer Agent](./ayokoding-structure-fixer.md)
-- [ayokoding-content-maker Agent](./ayokoding-content-maker.md)
+- [ayokoding-content-general-maker Agent](./ayokoding-content-general-maker.md)
 - [ayokoding-cli README](../../apps/ayokoding-cli/README.md)
