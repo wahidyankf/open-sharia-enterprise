@@ -11,7 +11,7 @@ Master advanced Elixir concepts with 25 examples covering OTP, GenServer, Superv
 
 ## Group 1: GenServer Deep Dive
 
-### Example 36: GenServer Basics
+### Example 61: GenServer Basics
 
 GenServer (Generic Server) is OTP's abstraction for stateful processes with synchronous and asynchronous message handling. It provides a standardized way to build servers that maintain state and handle concurrent requests.
 
@@ -145,9 +145,33 @@ UserRegistry.list_all()  # => %{"alice" => %{...}, "bob" => %{...}}
 
 ---
 
-### Example 37: GenServer State Management
+### Example 62: GenServer State Management
 
 GenServer state is immutable. Updates return new state, and the GenServer maintains the current state across calls. Understanding state transitions is crucial for building reliable servers.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    Init["init/1<br/>Initial State"] --> State1["State: balance=1000"]
+
+    State1 --> Deposit["handle_call {:deposit, 500}"]
+    Deposit --> State2["State: balance=1500<br/>transactions=[{:deposit, 500, ...}]"]
+
+    State2 --> Withdraw["handle_call {:withdraw, 200}"]
+    Withdraw --> State3["State: balance=1300<br/>transactions=[{:withdrawal, 200, ...}, {...}]"]
+
+    State3 --> InvalidWithdraw["handle_call {:withdraw, 2000}"]
+    InvalidWithdraw --> State3b["State unchanged<br/>balance=1300<br/>Return: {:error, :insufficient_funds}"]
+
+    style Init fill:#0173B2,color:#fff
+    style State1 fill:#029E73,color:#fff
+    style State2 fill:#029E73,color:#fff
+    style State3 fill:#029E73,color:#fff
+    style State3b fill:#029E73,color:#fff
+    style Deposit fill:#DE8F05,color:#fff
+    style Withdraw fill:#DE8F05,color:#fff
+    style InvalidWithdraw fill:#CC78BC,color:#fff
+```
 
 **Code**:
 
@@ -284,7 +308,7 @@ TodoList.list_items(todo)  # => [%{id: 1, description: "Buy groceries", complete
 
 ---
 
-### Example 38: GenServer Error Handling
+### Example 63: GenServer Error Handling
 
 GenServers can timeout, crash, or handle unexpected messages. Understanding error handling patterns ensures robust servers that fail gracefully.
 
@@ -403,7 +427,7 @@ SafeServer.divide(pid, 10, 0)  # => {:error, :division_by_zero}
 
 ---
 
-### Example 39: GenServer Named Processes
+### Example 64: GenServer Named Processes
 
 Named GenServers can be referenced by atom name instead of PID. This enables easier process discovery and module-level APIs that don't require passing PIDs around.
 
@@ -491,7 +515,7 @@ Worker.ping(:worker_2)  # => :pong
 
 ---
 
-### Example 40: GenServer Best Practices
+### Example 65: GenServer Best Practices
 
 Well-designed GenServers separate client API from server implementation, keep callbacks simple, and provide clear error handling. Following patterns improves maintainability and testability.
 
@@ -617,7 +641,7 @@ end
 
 ## Group 2: Supervision
 
-### Example 41: Supervisor Basics
+### Example 66: Supervisor Basics
 
 Supervisors monitor child processes and restart them on failure. They're the foundation of OTP's fault tolerance—processes are organized into supervision trees where supervisors restart failed children.
 
@@ -720,7 +744,7 @@ child_spec = %{
 
 ---
 
-### Example 42: Restart Strategies
+### Example 67: Restart Strategies
 
 Supervisors support different restart strategies based on child process dependencies. Choose the strategy that matches your process relationships.
 
@@ -841,9 +865,38 @@ end
 
 ---
 
-### Example 43: Dynamic Supervisors
+### Example 68: Dynamic Supervisors
 
 DynamicSupervisors start children on demand rather than at supervisor init. Use them for variable numbers of workers (connection pools, user sessions, task queues).
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    Supervisor["DynamicSupervisor<br/>Started with 0 children"]
+
+    Request1["start_child(worker1)"] --> Worker1["Worker 1"]
+    Request2["start_child(worker2)"] --> Worker2["Worker 2"]
+    Request3["start_child(worker3)"] --> Worker3["Worker 3"]
+
+    Supervisor --> Worker1
+    Supervisor --> Worker2
+    Supervisor --> Worker3
+
+    Terminate["terminate_child(worker2)"] --> Remove["Worker 2 stopped"]
+
+    Pool["Use Case:<br/>Connection Pool"] --> Dynamic["Add connections<br/>on demand"]
+    Pool --> Scale["Remove idle<br/>connections"]
+
+    style Supervisor fill:#0173B2,color:#fff
+    style Worker1 fill:#029E73,color:#fff
+    style Worker2 fill:#029E73,color:#fff
+    style Worker3 fill:#029E73,color:#fff
+    style Request1 fill:#DE8F05,color:#fff
+    style Request2 fill:#DE8F05,color:#fff
+    style Request3 fill:#DE8F05,color:#fff
+    style Terminate fill:#CC78BC,color:#fff
+    style Pool fill:#CA9161,color:#fff
+```
 
 **Code**:
 
@@ -962,7 +1015,7 @@ ConnectionPool.remove_connection(conn1)
 
 ## Group 3: OTP Applications
 
-### Example 44: Application Module
+### Example 69: Application Module
 
 Applications are OTP's top-level component. They bundle code, define dependencies, and specify a supervision tree. Every Mix project is an application.
 
@@ -1049,9 +1102,36 @@ end
 
 ---
 
-### Example 45: Application Configuration
+### Example 70: Application Configuration
 
 Application configuration uses `config/*.exs` files to manage environment-specific settings. Access config with `Application.get_env/3` and use runtime config for deployment.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    ConfigBase["config/config.exs<br/>(Compile time)"] --> Dev["config/dev.exs"]
+    ConfigBase --> Test["config/test.exs"]
+    ConfigBase --> Prod["config/prod.exs"]
+
+    Dev --> Runtime["config/runtime.exs<br/>(Application startup)"]
+    Test --> Runtime
+    Prod --> Runtime
+
+    Runtime --> ENV["System.get_env()<br/>Environment Variables"]
+    ENV --> App["Application.get_env()<br/>Access in code"]
+
+    Warning["⚠️ Never commit secrets<br/>to config.exs"] --> UseRuntime["✓ Use runtime.exs<br/>with ENV vars"]
+
+    style ConfigBase fill:#0173B2,color:#fff
+    style Dev fill:#029E73,color:#fff
+    style Test fill:#029E73,color:#fff
+    style Prod fill:#029E73,color:#fff
+    style Runtime fill:#DE8F05,color:#fff
+    style ENV fill:#CC78BC,color:#fff
+    style App fill:#CA9161,color:#fff
+    style Warning fill:#CC78BC,color:#000
+    style UseRuntime fill:#029E73,color:#fff
+```
 
 **Code**:
 
@@ -1116,7 +1196,7 @@ Application.get_all_env(:my_app)
 
 ---
 
-### Example 46: Umbrella Projects
+### Example 71: Umbrella Projects
 
 Umbrella projects bundle multiple applications that share code and dependencies. Use them for large systems with distinct domains or to separate web interface from business logic.
 
@@ -1186,7 +1266,7 @@ end
 
 ## Group 4: Metaprogramming and Macros
 
-### Example 47: Quote and Unquote
+### Example 72: Quote and Unquote
 
 `quote` captures code as an Abstract Syntax Tree (AST). `unquote` injects values into quoted expressions. Understanding AST is fundamental to metaprogramming.
 
@@ -1262,7 +1342,7 @@ Macro.expand(quote(do: unless true, do: :no), __ENV__)
 
 ---
 
-### Example 48: Writing Simple Macros
+### Example 73: Writing Simple Macros
 
 Macros receive code as AST and return transformed AST. They run at compile time, enabling code generation and custom syntax.
 
@@ -1384,7 +1464,7 @@ MiniTest.assert(1 + 1 == 2)  # Passes
 
 ---
 
-### Example 49: Use Macro Pattern
+### Example 74: Use Macro Pattern
 
 The `use` macro is Elixir's mechanism for injecting code into modules. When you `use SomeModule`, it calls `SomeModule.__using__/1`, which typically injects functions or configuration.
 
@@ -1487,7 +1567,7 @@ end
 
 ---
 
-### Example 50: Macro Best Practices
+### Example 75: Macro Best Practices
 
 Macros are powerful but overuse leads to complex, hard-to-debug code. Follow best practices: prefer functions, use macros only when necessary, and keep them simple.
 
@@ -1608,7 +1688,7 @@ end
 
 ---
 
-### Example 51: Reflection and Module Introspection
+### Example 76: Reflection and Module Introspection
 
 Elixir provides functions to introspect modules at runtime. Use `__info__/1`, `Module` functions, and code reflection to discover functions, attributes, and module properties.
 
@@ -1684,7 +1764,7 @@ implementations = Protocol.consolidated?(Enumerable)
 
 ## Group 5: Advanced Concurrency
 
-### Example 52: Agent for Simple State
+### Example 77: Agent for Simple State
 
 Agent wraps GenServer for simple state storage with functional API. Use for caches, configuration, or any simple state that doesn't need custom message handling.
 
@@ -1766,7 +1846,7 @@ Agent.stop(agent)
 
 ---
 
-### Example 53: Registry for Process Discovery
+### Example 78: Registry for Process Discovery
 
 Registry maps keys to processes, enabling process lookup and pub/sub patterns. Use it to avoid global names and support multiple processes per key.
 
@@ -1835,7 +1915,7 @@ Registry.count_match(MyRegistry, :user, %{role: :admin})  # => 1
 
 ---
 
-### Example 54: ETS Tables (In-Memory Storage)
+### Example 79: ETS Tables (In-Memory Storage)
 
 ETS (Erlang Term Storage) provides fast in-memory key-value storage. Tables are owned by processes and survive process crashes (if heir is set). Use for caches, lookup tables, and shared state.
 
@@ -1918,7 +1998,7 @@ Enum.each(1..1_000_000, fn i -> :ets.insert(large_table, {i, i * 2}) end)
 
 ---
 
-### Example 55: Erlang Interop
+### Example 80: Erlang Interop
 
 Elixir runs on the BEAM and can call Erlang modules directly. Use `:module_name` atom syntax to call Erlang functions. Access powerful Erlang libraries like `:timer`, `:crypto`, `:observer`.
 
@@ -1971,7 +2051,7 @@ tree = :gb_trees.insert(:b, 2, tree)
 
 ## Group 6: Advanced Language Features
 
-### Example 56: Behaviours (Contracts)
+### Example 81: Behaviours (Contracts)
 
 Behaviours define contracts for modules. They specify required callbacks, enabling compile-time verification and polymorphism. Built-in behaviours include GenServer, Supervisor, and Application.
 
@@ -2080,9 +2160,33 @@ end
 
 ---
 
-### Example 57: Comprehensions Deep Dive
+### Example 82: Comprehensions Deep Dive
 
 Comprehensions generate collections from enumerables with filtering and transformations. They support lists, maps, and binaries with optional filters.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    Input["Input: [1, 2, 3, 4, 5, 6]"] --> Generator["Generator: x <- list"]
+    Generator --> Filter1["Filter 1: rem(x, 2) == 0"]
+    Filter1 --> Filter2["Filter 2: x > 2"]
+    Filter2 --> Transform["Transform: x * 2"]
+    Transform --> Output["Output: [8, 12]"]
+
+    Details["Process Flow"] --> G1["1 → fails filter 1"]
+    Details --> G2["2 → fails filter 2"]
+    Details --> G3["3 → fails filter 1"]
+    Details --> G4["4 → passes both → 4*2 = 8"]
+    Details --> G5["5 → fails filter 1"]
+    Details --> G6["6 → passes both → 6*2 = 12"]
+
+    style Input fill:#0173B2,color:#fff
+    style Generator fill:#DE8F05,color:#fff
+    style Filter1 fill:#CC78BC,color:#fff
+    style Filter2 fill:#CC78BC,color:#fff
+    style Transform fill:#029E73,color:#fff
+    style Output fill:#029E73,color:#fff
+```
 
 **Code**:
 
@@ -2140,7 +2244,7 @@ for x <- [1, 2, 2, 3, 3, 3], uniq: true, do: x
 
 ---
 
-### Example 58: Bitstring Pattern Matching
+### Example 83: Bitstring Pattern Matching
 
 Bitstrings enable binary pattern matching with precise control over bit sizes and types. Use for parsing binary protocols, image manipulation, and low-level data processing.
 
@@ -2240,7 +2344,7 @@ c  # => 0 (remaining 6 bits)
 
 ---
 
-### Example 59: Performance: Profiling and Optimization
+### Example 84: Performance: Profiling and Optimization
 
 Profiling identifies bottlenecks. Use `:timer.tc/1` for timing, `:observer.start()` for system monitoring, and Benchee for comprehensive benchmarking.
 
@@ -2300,7 +2404,7 @@ end)
 
 ---
 
-### Example 60: Debugging Tools
+### Example 85: Debugging Tools
 
 Elixir provides tools for debugging: `IEx.pry` for breakpoints, `IO.inspect` with labels, `dbg` for pipeline debugging (Elixir 1.14+), and `:debugger` for GUI debugging.
 

@@ -14,7 +14,7 @@ tags: ["elixir", "tutorial", "beginner", "comprehensive", "otp"]
 **Required:**
 
 - Completed [Initial Setup](/en/learn/software-engineering/programming-language/elixir/tutorials/initial-setup) and [Quick Start](/en/learn/software-engineering/programming-language/elixir/tutorials/quick-start)
-- Elixir 1.14+ installed
+- Elixir 1.19+ installed
 - Text editor configured
 - IEx shell experience
 

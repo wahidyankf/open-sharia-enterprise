@@ -3,11 +3,11 @@ title: "Overview"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Java through 60+ annotated code examples covering 90% of the language - ideal for experienced developers switching to Java"
+description: "Learn Java through 75+ annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
 tags: ["java", "tutorial", "by-example", "examples", "code-first", "jvm", "oop"]
 ---
 
-**Want to quickly master Java through working examples?** This by-example guide teaches 90% of Java through 60+ annotated code examples organized by complexity level.
+**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 75+ annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -27,8 +27,8 @@ Unlike narrative tutorials that build understanding through explanation and stor
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
-    A["Beginner<br/>Examples 1-15<br/>OOP Basics"] --> B["Intermediate<br/>Examples 16-35<br/>Practical Patterns"]
-    B --> C["Advanced<br/>Examples 36-60<br/>Complex Features"]
+    A["Beginner<br/>Examples 1-25<br/>OOP Basics"] --> B["Intermediate<br/>Examples 26-50<br/>Practical Patterns"]
+    B --> C["Advanced<br/>Examples 51-75<br/>Complex Features"]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#fff
@@ -39,7 +39,7 @@ Progress from fundamentals through practical patterns to advanced JVM features a
 
 ## Coverage Philosophy
 
-This by-example guide provides **90% coverage of Java** through practical, annotated examples. The 90% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This by-example guide provides **95% coverage of Java** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -63,7 +63,7 @@ This guide focuses on **learning-oriented examples**, not problem-solving recipe
 - **Deep framework knowledge** - Spring, Hibernate, JavaFX covered at introductory level only
 - **Real-world project architecture** - See [Explanation: Best Practices](/en/learn/software-engineering/programming-language/java/explanation/best-practices)
 
-The 90% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 10%** through your own exploration and project work.
+The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
 
 ## How to Use This Guide
 
@@ -81,14 +81,14 @@ Understanding where by-example fits in the tutorial ecosystem helps you choose t
 
 | Tutorial Type    | Coverage                 | Approach                       | Target Audience        | When to Use                                          |
 | ---------------- | ------------------------ | ------------------------------ | ---------------------- | ---------------------------------------------------- |
-| **By Example**   | 90% through 60+ examples | Code-first, annotated examples | Experienced developers | Quick language pickup, reference, language switching |
+| **By Example**   | 95% through 75+ examples | Code-first, annotated examples | Experienced developers | Quick language pickup, reference, language switching |
 | **Quick Start**  | 5-30% touchpoints        | Hands-on project               | Newcomers to Java      | First taste, decide if worth learning                |
 | **Beginner**     | 0-60% comprehensive      | Narrative, explanatory         | Complete beginners     | Deep understanding, first programming language       |
 | **Intermediate** | 60-85%                   | Practical applications         | Past basics            | Production patterns, frameworks                      |
 | **Advanced**     | 85-95%                   | Complex systems                | Experienced Java devs  | JVM internals, distributed systems                   |
 | **Cookbook**     | Problem-oriented         | Recipe, solution-focused       | All levels             | Specific problems, common tasks                      |
 
-**By Example vs. Quick Start**: By Example provides 90% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
+**By Example vs. Quick Start**: By Example provides 95% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
 
 **By Example vs. Beginner Tutorial**: By Example is code-first for experienced developers; Beginner Tutorial is narrative-first for complete beginners. By Example shows patterns; Beginner Tutorial explains concepts.
 
@@ -147,8 +147,8 @@ Mermaid diagrams appear when **visual representation clarifies concept relations
 
 Jump into the beginner examples to start learning Java through code:
 
-- [Beginner Examples (1-15)](/en/learn/software-engineering/programming-language/java/tutorials/by-example/beginner) - Basic syntax, OOP fundamentals, collections, control flow
-- [Intermediate Examples (16-35)](/en/learn/software-engineering/programming-language/java/tutorials/by-example/intermediate) - Advanced OOP, generics, functional programming, concurrency
-- [Advanced Examples (36-60)](/en/learn/software-engineering/programming-language/java/tutorials/by-example/advanced) - JVM internals, design patterns, modern Java features
+- [Beginner Examples (1-25)](/en/learn/software-engineering/programming-language/java/tutorials/by-example/beginner) - Basic syntax, OOP fundamentals, collections, control flow
+- [Intermediate Examples (26-50)](/en/learn/software-engineering/programming-language/java/tutorials/by-example/intermediate) - Advanced OOP, generics, functional programming, concurrency
+- [Advanced Examples (51-75)](/en/learn/software-engineering/programming-language/java/tutorials/by-example/advanced) - JVM internals, design patterns, modern Java features
 
 Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.

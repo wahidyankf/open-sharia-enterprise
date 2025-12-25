@@ -1,13 +1,13 @@
 ---
 title: "Overview"
-date: 2025-12-23T00:00:00+07:00
+date: 2025-12-25T08:49:14+07:00
 draft: false
 weight: 10000000
-description: "Learn Go through 75+ annotated code examples covering 95% of the language - ideal for experienced developers switching from other languages"
+description: "Learn Go through 85+ annotated code examples covering 95% of the language - ideal for experienced developers switching from other languages"
 tags: ["golang", "go", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-**Want to quickly master Go through working examples?** This by-example guide teaches 95% of Go through 75+ annotated code examples organized by complexity level.
+**Want to quickly master Go through working examples?** This by-example guide teaches 95% of Go through 85+ annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 

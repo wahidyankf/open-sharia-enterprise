@@ -322,6 +322,30 @@ func main() {
 
 Reflection inspects types and values at runtime. The `reflect` package enables dynamic code - examine struct fields, call methods, or build values whose type isn't known until runtime. Use sparingly - reflection is powerful but slow and hard to understand.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Value<br/>Person{Name, Age}"]
+    B["reflect.ValueOf(p)"]
+    C["reflect.Type<br/>main.Person"]
+    D["Iterate Fields"]
+    E["Field 0: Name<br/>string"]
+    F["Field 1: Age<br/>int"]
+
+    A --> B
+    B --> C
+    B --> D
+    D --> E
+    D --> F
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#CA9161,stroke:#000,color:#fff
+```
+
 **Code**:
 
 ```go
@@ -489,6 +513,30 @@ func main() {
 
 Templates generate text (HTML, email, config files). The `text/template` package provides template syntax with variables, functions, and control flow. Use `html/template` for HTML to prevent injection attacks.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["Template String<br/>Hello {{.Name}}"]
+    B["template.Parse()"]
+    C["Compiled Template"]
+    D["Data<br/>{Name: Alice}"]
+    E["template.Execute()"]
+    F["Output<br/>Hello Alice"]
+
+    A --> B
+    B --> C
+    C --> E
+    D --> E
+    E --> F
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#0173B2,stroke:#000,color:#fff
+```
+
 **Code**:
 
 ```go
@@ -564,6 +612,33 @@ Users:
 
 Generics enable functions to work with different types while maintaining type safety. Type parameters in square brackets define constraints. Go 1.18+ introduces this powerful feature.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Generic Function<br/>max[T Ordered]"]
+    B["Called with []int"]
+    C["Called with []string"]
+    D["Called with []float64"]
+    E["Compiler generates<br/>max_int version"]
+    F["Compiler generates<br/>max_string version"]
+    G["Compiler generates<br/>max_float64 version"]
+
+    A --> B
+    A --> C
+    A --> D
+    B --> E
+    C --> F
+    D --> G
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#029E73,stroke:#000,color:#fff
+```
+
 **Code**:
 
 ```go
@@ -631,6 +706,31 @@ func bestMax[T constraints.Ordered](slice []T) T { // => Standard constraint
 ### Example 46: Generic Types
 
 Generic struct types work similarly to generic functions. Define type parameters, and the compiler instantiates them for each type used. Useful for containers, queues, trees, and data structures.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Generic Type<br/>Stack[T any]"]
+    B["Stack[int]<br/>items []int"]
+    C["Stack[string]<br/>items []string"]
+    D["Stack[Person]<br/>items []Person"]
+
+    A -->|instantiate| B
+    A -->|instantiate| C
+    A -->|instantiate| D
+
+    B --> E["Push(10)<br/>Pop() int"]
+    C --> F["Push(\"hi\")<br/>Pop() string"]
+    D --> G["Push(person)<br/>Pop() Person"]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#029E73,stroke:#000,color:#fff
+```
 
 **Code**:
 
@@ -756,6 +856,30 @@ func getValue[K MapKey, V any](m map[K]V, key K) V { // => Two type parameters
 ### Example 48: Options Pattern
 
 The options pattern provides flexible configuration through functional options. Each option function modifies configuration without requiring many constructors or mutating shared state.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["NewServer()"]
+    B["Default Config<br/>Host: 0.0.0.0<br/>Port: 80"]
+    C["WithHost(\"localhost\")"]
+    D["WithPort(8080)"]
+    E["WithTimeout(30)"]
+    F["Final Config<br/>Host: localhost<br/>Port: 8080<br/>Timeout: 30"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#fff
+```
 
 **Code**:
 
@@ -1001,6 +1125,30 @@ func (b ByScoreDesc) Less(i, j int) bool { return b[i].Score > b[j].Score }
 ### Example 52: Dependency Injection
 
 Dependency injection passes dependencies to functions/types instead of creating them internally. Enables testing with mock dependencies and decouples implementations.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["UserService<br/>depends on Database"]
+    B["Production:<br/>Inject RealDB"]
+    C["Testing:<br/>Inject MockDB"]
+    D["UserService uses<br/>Database interface"]
+    E["RealDB.Query()<br/>Real SQL"]
+    F["MockDB.Query()<br/>Hardcoded data"]
+
+    A --> D
+    B --> E
+    C --> F
+    D -.->|production| E
+    D -.->|testing| F
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#fff
+    style F fill:#CA9161,stroke:#000,color:#fff
+```
 
 **Code**:
 

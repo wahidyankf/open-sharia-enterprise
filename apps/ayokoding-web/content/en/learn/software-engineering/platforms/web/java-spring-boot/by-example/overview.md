@@ -3,12 +3,12 @@ title: "Overview"
 date: 2025-12-24T00:00:00+07:00
 draft: false
 weight: 1000000
-description: "Learn Spring Boot through 60+ annotated code examples covering dependency injection, REST APIs, data access, security, and production patterns"
+description: "Learn Spring Boot through 75-90 annotated code examples covering dependency injection, REST APIs, data access, security, and production patterns"
 categories: ["learn"]
 tags: ["spring-boot", "java", "tutorial", "by-example", "rest-api", "microservices", "web-framework"]
 ---
 
-**Want to master Spring Boot through working examples?** This by-example guide teaches 90% of Spring Boot through 60+ annotated code examples organized by complexity level.
+**Want to master Spring Boot through working examples?** This by-example guide teaches 95% of Spring Boot through 75-90 annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -40,8 +40,8 @@ Unlike narrative tutorials that build understanding through explanation and stor
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
-    A["Beginner<br/>Examples 1-20<br/>Core Concepts & APIs"] --> B["Intermediate<br/>Examples 21-40<br/>Production Patterns"]
-    B --> C["Advanced<br/>Examples 41-60<br/>Microservices & Ops"]
+    A["Beginner<br/>Examples 1-25<br/>Core Concepts & APIs"] --> B["Intermediate<br/>Examples 26-55<br/>Production Patterns"]
+    B --> C["Advanced<br/>Examples 56-85<br/>Microservices & Cloud-Native"]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#fff
@@ -52,7 +52,7 @@ Progress from Spring Boot fundamentals (dependency injection, REST APIs, data ac
 
 ## Coverage Philosophy
 
-This by-example guide provides **90% coverage of Spring Boot** through practical, annotated examples. The 90% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This by-example guide provides **95% coverage of Spring Boot** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -77,7 +77,7 @@ This guide focuses on **Spring Boot essentials and production patterns**, not sp
 - **Spring Cloud exhaustive coverage** - Config Server, Sleuth, Gateway covered at introductory level only
 - **Framework internals customization** - Custom auto-configuration, bean post-processors, advanced AOP
 
-The 90% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core patterns that unlock the remaining 10%** through your own exploration and Spring documentation.
+The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core patterns that unlock the remaining 5%** through your own exploration and Spring documentation.
 
 ## How to Use This Guide
 
@@ -93,16 +93,16 @@ The 90% coverage goal maintains humility—no tutorial can cover everything. Thi
 
 Understanding where by-example fits in the tutorial ecosystem helps you choose the right learning path:
 
-| Tutorial Type    | Coverage                 | Approach                       | Target Audience             | When to Use                                                 |
-| ---------------- | ------------------------ | ------------------------------ | --------------------------- | ----------------------------------------------------------- |
-| **By Example**   | 90% through 60+ examples | Code-first, annotated examples | Experienced Java developers | Quick framework pickup, reference, switching to Spring Boot |
-| **Quick Start**  | 5-30% touchpoints        | Hands-on project               | Spring Boot newcomers       | First taste, decide if worth learning                       |
-| **Beginner**     | 0-60% comprehensive      | Narrative, explanatory         | New to frameworks           | Deep understanding, first web framework                     |
-| **Intermediate** | 60-85%                   | Production applications        | Past basics                 | Production patterns, microservices architecture             |
-| **Advanced**     | 85-95%                   | Complex systems                | Experienced Spring devs     | Framework internals, advanced customization                 |
-| **Cookbook**     | Problem-oriented         | Recipe, solution-focused       | All levels                  | Specific problems, common tasks                             |
+| Tutorial Type    | Coverage                   | Approach                       | Target Audience             | When to Use                                                 |
+| ---------------- | -------------------------- | ------------------------------ | --------------------------- | ----------------------------------------------------------- |
+| **By Example**   | 95% through 75-90 examples | Code-first, annotated examples | Experienced Java developers | Quick framework pickup, reference, switching to Spring Boot |
+| **Quick Start**  | 5-30% touchpoints          | Hands-on project               | Spring Boot newcomers       | First taste, decide if worth learning                       |
+| **Beginner**     | 0-60% comprehensive        | Narrative, explanatory         | New to frameworks           | Deep understanding, first web framework                     |
+| **Intermediate** | 60-85%                     | Production applications        | Past basics                 | Production patterns, microservices architecture             |
+| **Advanced**     | 85-95%                     | Complex systems                | Experienced Spring devs     | Framework internals, advanced customization                 |
+| **Cookbook**     | Problem-oriented           | Recipe, solution-focused       | All levels                  | Specific problems, common tasks                             |
 
-**By Example vs. Quick Start**: By Example provides 90% coverage through isolated examples vs. Quick Start's 5-30% through a single REST API project. By Example is code-first reference; Quick Start is hands-on introduction.
+**By Example vs. Quick Start**: By Example provides 95% coverage through isolated examples vs. Quick Start's 5-30% through a single REST API project. By Example is code-first reference; Quick Start is hands-on introduction.
 
 **By Example vs. Beginner Tutorial**: By Example is code-first for experienced Java developers; Beginner Tutorial is narrative-first for framework newcomers. By Example shows patterns; Beginner Tutorial explains Spring Boot architecture.
 
@@ -177,8 +177,8 @@ Mermaid diagrams appear when **visual representation clarifies request flows, be
 
 Jump into the beginner examples to start learning Spring Boot through code:
 
-- [Beginner Examples (1-20)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/beginner) - Dependency injection, REST controllers, Spring Data JPA, configuration
-- [Intermediate Examples (21-40)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/intermediate) - Security, testing, caching, async processing, resilience patterns
-- [Advanced Examples (41-60)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/advanced) - Microservices, observability, production deployment, custom auto-configuration
+- [Beginner Examples (1-25)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/beginner) - Dependency injection, REST controllers, Spring Data JPA, configuration, file handling, CORS
+- [Intermediate Examples (26-55)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/intermediate) - Security, testing, caching, async processing, WebSocket, API versioning, advanced patterns
+- [Advanced Examples (56-85)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/advanced) - Microservices, Kubernetes, event sourcing, CQRS, API Gateway, performance tuning, observability
 
 Each example is self-contained and runnable as a Spring Boot application or test class. Start with Example 1, or jump to topics that interest you most.
