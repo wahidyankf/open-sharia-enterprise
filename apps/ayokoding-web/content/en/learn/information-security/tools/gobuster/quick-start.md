@@ -101,9 +101,13 @@ gobuster version
 **Expected Output**:
 
 ```
-Gobuster v3.6.0
+Gobuster v3.x.x
               by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
 ```
+
+{{< callout type="info" >}}
+The version number may vary depending on your installation method and when you installed Gobuster. As of late 2025, versions 3.6.0 through 3.8+ are common.
+{{< /callout >}}
 
 ### Step 3: Download a Basic Wordlist
 

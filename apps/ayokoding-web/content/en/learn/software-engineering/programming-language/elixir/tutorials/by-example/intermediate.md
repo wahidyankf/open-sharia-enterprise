@@ -3,15 +3,15 @@ title: "Intermediate"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Master intermediate Elixir through 20 examples: advanced pattern matching, structs, protocols, error handling, processes, and testing patterns"
+description: "Master intermediate Elixir through 30 examples: advanced pattern matching, structs, protocols, error handling, processes, and testing patterns"
 tags: ["elixir", "tutorial", "by-example", "intermediate", "otp", "processes", "testing"]
 ---
 
-Build on your Elixir foundations with 20 intermediate examples covering advanced patterns, practical OTP usage, error handling, and testing strategies. Each example is self-contained and heavily annotated.
+Build on your Elixir foundations with 30 intermediate examples covering advanced patterns, practical OTP usage, error handling, and testing strategies. Each example is self-contained and heavily annotated.
 
 ## Group 1: Advanced Pattern Matching
 
-### Example 16: Guards in Depth
+### Example 31: Guards in Depth
 
 Guards are boolean expressions that add additional constraints to pattern matches in function heads, case clauses, and other contexts. They enable more precise pattern matching based on types and values.
 
@@ -96,7 +96,7 @@ Guards.can_vote(16) # => false
 
 ---
 
-### Example 17: Pattern Matching in Function Heads
+### Example 32: Pattern Matching in Function Heads
 
 Multi-clause functions use pattern matching in function heads to elegantly handle different input shapes. Clauses are tried in order from top to bottom until one matches.
 
@@ -199,7 +199,7 @@ FunctionMatching.send_message(%{email: "b@example.com"}, "Hi", [])
 
 ---
 
-### Example 18: With Expression (Happy Path)
+### Example 33: With Expression (Happy Path)
 
 The `with` expression chains pattern matches, short-circuiting on the first mismatch. It's ideal for "happy path" coding where you expect success and want to handle errors at the end.
 
@@ -330,7 +330,7 @@ WithExamples.process_number(-10) # => {:error, "Number out of range"}
 
 ## Group 2: Data Structures Advanced
 
-### Example 19: Structs
+### Example 34: Structs
 
 Structs are extensions of maps with compile-time guarantees and default values. They enforce a predefined set of keys, enabling clearer data modeling and better error messages.
 
@@ -398,7 +398,7 @@ account = %Account{id: 1, balance: 1000}
 
 ---
 
-### Example 20: Streams (Lazy Enumeration)
+### Example 35: Streams (Lazy Enumeration)
 
 Streams are lazy enumerables that build a recipe for computation without executing it immediately. They enable efficient processing of large or infinite datasets by composing transformations.
 
@@ -482,7 +482,7 @@ Enum.take(stream_resource, 3) # => ["initial state", "next state", "next state"]
 
 ---
 
-### Example 21: MapSet for Uniqueness
+### Example 36: MapSet for Uniqueness
 
 MapSets are unordered collections of unique values. They provide efficient membership testing and set operations (union, intersection, difference). Use them when uniqueness matters and order doesn't.
 
@@ -543,7 +543,7 @@ MapSet.intersection(post1_tags, post2_tags) # => #MapSet<["elixir"]>
 
 ## Group 3: Module Organization
 
-### Example 22: Module Attributes
+### Example 37: Module Attributes
 
 Module attributes are compile-time constants defined with `@`. They're commonly used for documentation (`@moduledoc`, `@doc`), compile-time configuration, and storing values computed during compilation.
 
@@ -630,7 +630,7 @@ MyModule.colors() # => [:yellow, :green, :red, :blue]
 
 ---
 
-### Example 23: Import, Alias, Require
+### Example 38: Import, Alias, Require
 
 `import`, `alias`, and `require` control how modules are referenced in your code. They reduce verbosity and manage namespaces cleanly.
 
@@ -715,7 +715,7 @@ end
 
 ---
 
-### Example 24: Protocols (Polymorphism)
+### Example 39: Protocols (Polymorphism)
 
 Protocols enable polymorphism—defining a function that works differently for different data types. They're Elixir's mechanism for ad-hoc polymorphism, similar to interfaces in other languages.
 
@@ -823,7 +823,7 @@ Describable.describe([1, 2, 3]) # => "No description available" (fallback)
 
 ## Group 4: Error Handling
 
-### Example 25: Result Tuples (:ok/:error)
+### Example 40: Result Tuples (:ok/:error)
 
 Elixir idiomatically uses tagged tuples `{:ok, value}` or `{:error, reason}` to represent success and failure. This explicit error handling is preferred over exceptions for expected error cases.
 
@@ -909,7 +909,7 @@ Bang.divide!(10, 2) # => 5.0
 
 ---
 
-### Example 26: Try/Rescue/After
+### Example 41: Try/Rescue/After
 
 `try/rescue/after` handles exceptions. Use `rescue` to catch exceptions, `after` for cleanup code that always runs (like `finally` in other languages). Prefer result tuples for expected errors.
 
@@ -1012,7 +1012,7 @@ end
 
 ---
 
-### Example 27: Raise and Custom Exceptions
+### Example 42: Raise and Custom Exceptions
 
 Use `raise` to throw exceptions. Define custom exception modules for domain-specific errors. Exceptions should be for unexpected situations, not control flow.
 
@@ -1094,7 +1094,7 @@ UserRepo.fetch!(1) # => %{id: 1, name: "User 1"}
 
 ## Group 5: Processes and Concurrency
 
-### Example 28: Spawning Processes
+### Example 43: Spawning Processes
 
 Processes are Elixir's lightweight concurrency primitive. Each process has its own memory and communicates via message passing. Use `spawn/1` or `spawn_link/1` to create processes.
 
@@ -1184,7 +1184,7 @@ Isolation.demonstrate()
 
 ---
 
-### Example 29: Send and Receive
+### Example 44: Send and Receive
 
 Processes communicate by sending and receiving messages. Messages go into a process mailbox and are processed with `receive`. This is asynchronous message passing—the sender doesn't block.
 
@@ -1297,7 +1297,7 @@ flush()  # Prints all messages
 
 ---
 
-### Example 30: Process Monitoring
+### Example 45: Process Monitoring
 
 Process monitoring allows you to detect when other processes crash or exit. Use `Process.monitor/1` to watch a process and receive a message when it exits.
 
@@ -1386,7 +1386,7 @@ TimeoutHelper.call_with_timeout(fn -> :timer.sleep(2000); 42 end, 1000)  # => {:
 
 ---
 
-### Example 31: Task Module (Async/Await)
+### Example 46: Task Module (Async/Await)
 
 The `Task` module provides a simple abstraction for spawning processes and awaiting results. It's built on processes but handles boilerplate for async/await patterns.
 
@@ -1472,7 +1472,7 @@ end
 
 ## Group 6: Testing and Tools
 
-### Example 32: ExUnit Basics
+### Example 47: ExUnit Basics
 
 ExUnit is Elixir's built-in testing framework. Tests are organized into test modules, and assertions verify expected behavior. Running `mix test` executes all tests in your project.
 
@@ -1606,7 +1606,7 @@ end
 
 ---
 
-### Example 33: Mix Project Structure
+### Example 48: Mix Project Structure
 
 Mix is Elixir's build tool. It manages dependencies, compiles code, runs tests, and provides project scaffolding. Understanding the standard project structure is essential for Elixir development.
 
@@ -1682,7 +1682,7 @@ timeout = Application.get_env(:my_app, :timeout, 3000)  # Default 3000
 
 ---
 
-### Example 34: Doctests
+### Example 49: Doctests
 
 Doctests embed tests in documentation using `@doc` comments. They verify that code examples in documentation actually work, keeping docs accurate and tested.
 
@@ -1817,7 +1817,7 @@ end
 
 ---
 
-### Example 35: String Manipulation Advanced
+### Example 50: String Manipulation Advanced
 
 Elixir strings are UTF-8 binaries. The `String` module provides extensive manipulation functions. Understanding binaries, charlists, and Unicode handling is essential for text processing.
 
@@ -1904,7 +1904,7 @@ name = "Alice"
 
 ---
 
-### Example 36: GenServer Session Manager (Production Pattern)
+### Example 51: GenServer Session Manager (Production Pattern)
 
 GenServer is OTP's generic server behavior - a process that maintains state and handles synchronous/asynchronous requests. Production systems use GenServer for session storage, caches, connection pools, and stateful services. This example demonstrates a thread-safe session manager with TTL cleanup.
 
@@ -2128,9 +2128,809 @@ SessionManager.get("user_123")  # => {:error, :expired}
 
 ---
 
+### Example 52: Supervisor Child Specifications
+
+Supervisors define child processes using child specifications that control restart behavior, shutdown timeouts, and process types. Understanding child specs enables fine-grained control over supervision trees.
+
+**Code**:
+
+```elixir
+# Basic child specification
+child_spec = %{
+  id: MyWorker,  # => Unique identifier for child
+  start: {MyWorker, :start_link, [[name: :worker_1]]},  # => {module, function, args}
+  restart: :permanent,  # => Always restart (:permanent | :temporary | :transient)
+  shutdown: 5000,  # => Wait 5s for graceful shutdown before kill
+  type: :worker  # => :worker or :supervisor
+}
+
+# Worker module implementing child_spec/1
+defmodule MyWorker do
+  use GenServer
+
+  def start_link(opts) do
+    name = Keyword.get(opts, :name, __MODULE__)
+    GenServer.start_link(__MODULE__, opts, name: name)
+  end
+
+  # Override default child spec
+  def child_spec(opts) do
+    %{
+      id: Keyword.get(opts, :name, __MODULE__),
+      start: {__MODULE__, :start_link, [opts]},
+      restart: :permanent,  # => Custom restart strategy
+      shutdown: 10_000  # => Custom shutdown timeout
+    }
+  end
+
+  @impl true
+  def init(opts), do: {:ok, opts}
+end
+
+# Restart strategies
+# :permanent - Always restart (default for critical workers)
+# :temporary - Never restart (one-time tasks)
+# :transient - Restart only on abnormal exit (expected failures are OK)
+
+defmodule Database do
+  use GenServer
+
+  def child_spec(_opts) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []},
+      restart: :permanent,  # => Critical - must always run
+      shutdown: 30_000  # => Long shutdown for cleanup
+    }
+  end
+
+  def start_link, do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  @impl true
+  def init(_), do: {:ok, %{}}
+end
+
+defmodule Cache do
+  use GenServer
+
+  def child_spec(_opts) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []},
+      restart: :transient,  # => Restart on crash, not on normal exit
+      shutdown: 5_000
+    }
+  end
+
+  def start_link, do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  @impl true
+  def init(_), do: {:ok, %{}}
+end
+
+# Supervisor with child specs
+defmodule MyApp.Supervisor do
+  use Supervisor
+
+  def start_link(opts) do
+    Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_opts) do
+    children = [
+      Database,  # => Uses Database.child_spec/1
+      Cache,  # => Uses Cache.child_spec/1
+      {MyWorker, name: :worker_1},  # => Tuple form passes args
+      {MyWorker, name: :worker_2}
+    ]
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
+end
+```
+
+**Key Takeaway**: Child specs control how supervisors manage children. Use `:permanent` for critical processes, `:transient` for expected failures, `:temporary` for one-time tasks. Implement `child_spec/1` to customize restart and shutdown behavior.
+
+---
+
+### Example 53: Application Callbacks and Lifecycle
+
+Applications are OTP's top-level abstraction. Implement `start/2` and `stop/1` callbacks to manage supervision trees and resources during app lifecycle.
+
+**Code**:
+
+```elixir
+defmodule MyApp.Application do
+  use Application  # => Application behavior
+
+  @impl true
+  def start(_type, _args) do
+    # => Called when application starts
+    # _type = :normal | {:takeover, node} | {:failover, node}
+    # _args from mix.exs application/0
+
+    IO.puts("Starting MyApp...")
+
+    children = [
+      # List of child processes to supervise
+      {Registry, keys: :unique, name: MyApp.Registry},
+      MyApp.Cache,
+      MyApp.Workers.Supervisor
+    ]
+
+    opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+    Supervisor.start_link(children, opts)  # => Returns {:ok, pid}
+  end
+
+  @impl true
+  def stop(_state) do
+    # => Called before application stops
+    # Perform cleanup here
+    IO.puts("Stopping MyApp...")
+    :ok
+  end
+end
+
+# mix.exs configuration
+defmodule MyApp.MixProject do
+  use Mix.Project
+
+  def application do
+    [
+      mod: {MyApp.Application, []},  # => Application module and args
+      extra_applications: [:logger, :runtime_tools]
+    ]
+  end
+end
+
+# Application environment config
+def start(_type, _args) do
+  port = Application.get_env(:my_app, :port, 4000)  # => Get config with default
+  env = Application.get_env(:my_app, :env, :dev)
+
+  IO.puts("Starting on port #{port} in #{env} environment")
+
+  children = [
+    {MyApp.Server, port: port}
+  ]
+
+  Supervisor.start_link(children, strategy: :one_for_one)
+end
+
+# Conditional children based on environment
+def start(_type, _args) do
+  children = base_children()
+
+  children =
+    if Application.get_env(:my_app, :enable_metrics, false) do
+      children ++ [MyApp.MetricsReporter]
+    else
+      children
+    end
+
+  Supervisor.start_link(children, strategy: :one_for_one)
+end
+
+defp base_children do
+  [MyApp.Cache, MyApp.Database]
+end
+```
+
+**Key Takeaway**: Applications start supervision trees via `start/2` callback and clean up in `stop/1`. Configure children based on environment. The return value of `start/2` becomes the supervision tree root.
+
+---
+
+### Example 54: Custom Mix Tasks
+
+Mix tasks automate project operations. Create custom tasks for deployment, seeding, migrations, or cleanup operations.
+
+**Code**:
+
+```elixir
+defmodule Mix.Tasks.MyApp.Hello do
+  @moduledoc "Prints hello message"
+  @shortdoc "Say hello"
+
+  use Mix.Task  # => Mix.Task behavior
+
+  @impl Mix.Task
+  def run(args) do
+    # => Called when running: mix my_app.hello
+    # args = command line arguments as list
+
+    {opts, args, _invalid} = OptionParser.parse(args,
+      switches: [name: :string, upcase: :boolean],
+      aliases: [n: :name, u: :upcase]
+    )
+
+    name = opts[:name] || "World"
+    message = "Hello, #{name}!"
+
+    message = if opts[:upcase], do: String.upcase(message), else: message
+
+    IO.puts(message)
+  end
+end
+
+# Run: mix my_app.hello --name Alice --upcase
+# Output: HELLO, ALICE!
+
+defmodule Mix.Tasks.MyApp.Db.Seed do
+  @moduledoc "Seeds database with sample data"
+  use Mix.Task
+
+  @requirements ["app.start"]  # => Ensure app started before task
+
+  @impl Mix.Task
+  def run(_args) do
+    # App and its dependencies are started
+    MyApp.Repo.insert!(%User{name: "Alice", email: "alice@example.com"})
+    MyApp.Repo.insert!(%User{name: "Bob", email: "bob@example.com"})
+
+    IO.puts("Database seeded successfully")
+  end
+end
+
+defmodule Mix.Tasks.MyApp.Stats do
+  @moduledoc "Show application statistics"
+  use Mix.Task
+
+  @impl Mix.Task
+  def run(_args) do
+    Mix.Task.run("app.start")  # => Manually start app
+
+    # Gather stats
+    user_count = MyApp.Users.count()
+    active_sessions = MyApp.SessionManager.count()
+
+    IO.puts("""
+    Application Statistics:
+    - Users: #{user_count}
+    - Active Sessions: #{active_sessions}
+    """)
+  end
+end
+```
+
+**Key Takeaway**: Custom Mix tasks extend build tool functionality. Use `@requirements` to ensure app dependencies are met. Parse arguments with `OptionParser` for flexible CLI interfaces.
+
+---
+
+### Example 55: Runtime Configuration
+
+Runtime configuration loads settings when the application starts (not compile time). Use `config/runtime.exs` for environment variables and production secrets.
+
+**Code**:
+
+```elixir
+# config/runtime.exs - runs at application startup
+import Config
+
+config :my_app,
+  secret_key: System.get_env("SECRET_KEY") || raise("SECRET_KEY not set"),
+  database_url: System.get_env("DATABASE_URL") || raise("DATABASE_URL not set"),
+  port: String.to_integer(System.get_env("PORT") || "4000")
+
+if config_env() == :prod do
+  config :my_app, MyApp.Repo,
+    url: System.get_env("DATABASE_URL"),
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+end
+
+# Application reads runtime config
+defmodule MyApp.Application do
+  use Application
+
+  def start(_type, _args) do
+    port = Application.get_env(:my_app, :port)  # => From runtime.exs
+    secret = Application.get_env(:my_app, :secret_key)
+
+    IO.puts("Starting on port #{port}")
+
+    children = [
+      {MyApp.Server, port: port, secret: secret}
+    ]
+
+    Supervisor.start_link(children, strategy: :one_for_one)
+  end
+end
+
+# Helper module for config access
+defmodule MyApp.Config do
+  def port, do: Application.get_env(:my_app, :port, 4000)
+  def secret_key, do: Application.fetch_env!(:my_app, :secret_key)  # => Raises if missing
+  def database_url, do: Application.fetch_env!(:my_app, :database_url)
+
+  def timeout, do: Application.get_env(:my_app, :timeout, 5000)
+end
+
+# Compile-time vs Runtime config
+# config/config.exs (compile time - DON'T use for secrets)
+config :my_app,
+  default_locale: "en",  # => OK - not secret
+  api_version: "v1"
+
+# config/runtime.exs (runtime - USE for secrets)
+config :my_app,
+  api_key: System.get_env("API_KEY")  # => OK - loaded at runtime
+```
+
+**Key Takeaway**: Use `config/runtime.exs` for environment-dependent configuration and secrets. Runtime config loads when app starts, not at compile time. Never commit secrets to `config.exs`—use environment variables in `runtime.exs`.
+
+---
+
+### Example 56: Process Links and Crash Propagation
+
+Linked processes crash together—when one exits abnormally, linked processes receive exit signals. Use linking for tightly-coupled processes that should fail together.
+
+**Code**:
+
+```elixir
+# spawn_link creates linked process
+parent = self()
+
+child = spawn_link(fn ->
+  :timer.sleep(1000)
+  raise "Child crashed!"  # => Parent will crash too!
+end)
+
+Process.alive?(child)  # => true
+:timer.sleep(1500)
+Process.alive?(child)  # => false
+# Parent process also crashed!
+
+# Manual linking
+pid1 = spawn(fn -> :timer.sleep(10_000) end)
+pid2 = spawn(fn -> :timer.sleep(10_000) end)
+
+Process.link(pid1)  # => Link current process to pid1
+Process.link(pid2)  # => Link to pid2
+
+Process.exit(pid1, :kill)  # => Kills pid1, current process also receives exit signal
+
+# Trap exits to handle linked process crashes
+Process.flag(:trap_exit, true)  # => Convert exit signals to messages
+
+linked_pid = spawn_link(fn ->
+  :timer.sleep(500)
+  raise "Linked process error!"
+end)
+
+receive do
+  {:EXIT, ^linked_pid, reason} ->
+    IO.puts("Linked process exited with reason: #{inspect(reason)}")
+    # => Current process continues running!
+end
+
+# Supervisor uses links internally
+defmodule Worker do
+  use GenServer
+
+  def start_link(id) do
+    GenServer.start_link(__MODULE__, id)
+  end
+
+  @impl true
+  def init(id) do
+    IO.puts("Worker #{id} started")
+    {:ok, id}
+  end
+
+  @impl true
+  def handle_cast(:crash, _state) do
+    raise "Worker crashed!"  # => Supervisor will restart this worker
+  end
+end
+
+# Exit reasons
+# :normal - graceful exit (doesn't crash linked processes)
+# :kill - forceful kill (cannot be trapped)
+# any other - abnormal exit (crashes linked processes)
+
+spawn_link(fn -> exit(:normal) end)  # => Won't crash parent
+spawn_link(fn -> exit(:abnormal) end)  # => Will crash parent
+```
+
+**Key Takeaway**: Linked processes crash together. Use `spawn_link/1` for coupled processes. Trap exits with `Process.flag(:trap_exit, true)` to handle crashes gracefully. Supervisors use links to detect worker crashes.
+
+---
+
+### Example 57: Message Mailbox Management
+
+Process mailboxes queue incoming messages. Understanding mailbox behavior prevents memory leaks and enables selective message processing.
+
+**Code**:
+
+```elixir
+# Messages accumulate in mailbox
+pid = self()
+send(pid, :msg1)
+send(pid, :msg2)
+send(pid, :msg3)
+
+Process.info(pid, :message_queue_len)  # => {:message_queue_len, 3}
+
+# receive processes messages in FIFO order
+receive do
+  msg -> IO.inspect(msg, label: "Received")  # => :msg1
+end
+
+Process.info(pid, :message_queue_len)  # => {:message_queue_len, 2}
+
+# Selective receive with pattern matching
+send(self(), {:priority, "urgent"})
+send(self(), {:normal, "task1"})
+send(self(), {:normal, "task2"})
+
+receive do
+  {:priority, msg} -> IO.puts("Priority: #{msg}")  # => Matches first
+end
+
+# flush/0 clears entire mailbox
+send(self(), :a)
+send(self(), :b)
+send(self(), :c)
+flush()  # => Prints all and clears mailbox
+
+# Timeout prevents infinite blocking
+receive do
+  :expected_message -> IO.puts("Got it")
+after
+  1000 -> IO.puts("Timeout after 1 second")
+end
+
+# Mailbox scanning (inefficient for large mailboxes)
+defmodule Mailbox do
+  def drain do
+    receive do
+      msg ->
+        IO.inspect(msg)
+        drain()  # => Recursive drain
+    after
+      0 -> :ok  # => Immediate timeout = no more messages
+    end
+  end
+end
+
+send(self(), 1)
+send(self(), 2)
+send(self(), 3)
+Mailbox.drain()  # => Prints: 1, 2, 3
+
+# Handle unexpected messages
+defmodule Worker do
+  use GenServer
+
+  @impl true
+  def handle_info(msg, state) do
+    # => Catches all unexpected messages
+    IO.warn("Unexpected message: #{inspect(msg)}")
+    {:noreply, state}  # => Ignore and continue
+  end
+end
+
+# Mailbox memory leaks (avoid!)
+defmodule BadWorker do
+  def loop do
+    # => Never processes messages - mailbox grows forever!
+    :timer.sleep(1000)
+    loop()
+  end
+end
+
+pid = spawn(&BadWorker.loop/0)
+Enum.each(1..10_000, fn i -> send(pid, {:task, i}) end)
+Process.info(pid, :message_queue_len)  # => {:message_queue_len, 10000} - LEAK!
+```
+
+**Key Takeaway**: Messages queue in mailbox until processed. Use `receive` with timeouts to prevent blocking. Implement `handle_info/2` in GenServer to handle unexpected messages. Avoid mailbox leaks by processing all messages.
+
+---
+
+### Example 58: Anonymous GenServers and Local Names
+
+GenServers can run anonymously (PID-based) or with local/global names. Anonymous GenServers prevent name conflicts and enable multiple instances.
+
+**Code**:
+
+```elixir
+defmodule Counter do
+  use GenServer
+
+  # Start anonymous GenServer (no name)
+  def start_link(initial) do
+    GenServer.start_link(__MODULE__, initial)  # => No name: option
+    # => Returns {:ok, pid}
+  end
+
+  def increment(pid) do
+    GenServer.call(pid, :increment)  # => Must pass PID explicitly
+  end
+
+  def get(pid) do
+    GenServer.call(pid, :get)
+  end
+
+  @impl true
+  def init(initial), do: {:ok, initial}
+
+  @impl true
+  def handle_call(:increment, _from, state) do
+    {:reply, state + 1, state + 1}
+  end
+
+  @impl true
+  def handle_call(:get, _from, state) do
+    {:reply, state, state}
+  end
+end
+
+# Multiple anonymous instances
+{:ok, counter1} = Counter.start_link(0)
+{:ok, counter2} = Counter.start_link(100)
+
+Counter.increment(counter1)  # => 1
+Counter.increment(counter2)  # => 101
+
+Counter.get(counter1)  # => 1
+Counter.get(counter2)  # => 101
+
+# Named GenServer (local to node)
+defmodule NamedCounter do
+  use GenServer
+
+  def start_link(name, initial) do
+    GenServer.start_link(__MODULE__, initial, name: name)
+  end
+
+  def increment(name), do: GenServer.call(name, :increment)
+  def get(name), do: GenServer.call(name, :get)
+
+  @impl true
+  def init(initial), do: {:ok, initial}
+
+  @impl true
+  def handle_call(:increment, _from, state), do: {:reply, state + 1, state + 1}
+  @impl true
+  def handle_call(:get, _from, state), do: {:reply, state, state}
+end
+
+{:ok, _} = NamedCounter.start_link(:counter_a, 0)
+{:ok, _} = NamedCounter.start_link(:counter_b, 50)
+
+NamedCounter.increment(:counter_a)  # => 1
+NamedCounter.get(:counter_b)  # => 50
+
+# Using Registry for dynamic names
+{:ok, _} = Registry.start_link(keys: :unique, name: MyRegistry)
+
+defmodule RegistryCounter do
+  use GenServer
+
+  def start_link(id, initial) do
+    GenServer.start_link(__MODULE__, initial, name: via_tuple(id))
+  end
+
+  defp via_tuple(id) do
+    {:via, Registry, {MyRegistry, {:counter, id}}}
+  end
+
+  def increment(id), do: GenServer.call(via_tuple(id), :increment)
+  def get(id), do: GenServer.call(via_tuple(id), :get)
+
+  @impl true
+  def init(initial), do: {:ok, initial}
+
+  @impl true
+  def handle_call(:increment, _from, state), do: {:reply, state + 1, state + 1}
+  @impl true
+  def handle_call(:get, _from, state), do: {:reply, state, state}
+end
+
+RegistryCounter.start_link("user_123", 0)
+RegistryCounter.start_link("user_456", 10)
+
+RegistryCounter.increment("user_123")  # => 1
+RegistryCounter.get("user_456")  # => 10
+```
+
+**Key Takeaway**: Anonymous GenServers use PIDs for identification, enabling multiple instances. Named GenServers use atoms (limited) or Registry (unlimited dynamic names). Use Registry via-tuples for scalable process registration.
+
+---
+
+### Example 59: Telemetry Events and Metrics
+
+Telemetry provides instrumentation for measuring application behavior. Emit events for metrics, logging, and observability without coupling code to specific reporters.
+
+**Code**:
+
+```elixir
+# Attach telemetry handler
+:telemetry.attach(
+  "my-handler-id",  # => Unique handler ID
+  [:my_app, :request, :stop],  # => Event name
+  fn event_name, measurements, metadata, _config ->
+    # => Callback receives event data
+    IO.puts("Event: #{inspect(event_name)}")
+    IO.puts("Duration: #{measurements.duration}ms")
+    IO.puts("Metadata: #{inspect(metadata)}")
+  end,
+  nil  # => Config (passed to callback)
+)
+
+# Emit telemetry event
+defmodule MyApp.API do
+  def handle_request(path) do
+    start_time = System.monotonic_time()
+
+    # Perform work
+    result = process_request(path)
+
+    duration = System.monotonic_time() - start_time
+
+    # Emit telemetry event
+    :telemetry.execute(
+      [:my_app, :request, :stop],  # => Event name
+      %{duration: duration},  # => Measurements (numeric)
+      %{path: path, result: result}  # => Metadata (any term)
+    )
+
+    result
+  end
+
+  defp process_request(path) do
+    :timer.sleep(100)
+    {:ok, "Response for #{path}"}
+  end
+end
+
+MyApp.API.handle_request("/users")
+# Prints:
+# Event: [:my_app, :request, :stop]
+# Duration: 100000000ms
+# Metadata: %{path: "/users", result: {:ok, "Response for /users"}}
+
+# Span measurement pattern
+defmodule MyApp.Database do
+  def query(sql) do
+    :telemetry.span(
+      [:my_app, :db, :query],  # => Event prefix
+      %{sql: sql},  # => Metadata
+      fn ->
+        # Perform work
+        result = execute_query(sql)
+
+        # Return {result, extra_metadata}
+        {result, %{rows: length(result)}}
+      end
+    )
+  end
+
+  defp execute_query(_sql) do
+    :timer.sleep(50)
+    [{:id, 1, :name, "Alice"}, {:id, 2, :name, "Bob"}]
+  end
+end
+
+# Attach handler for database queries
+:telemetry.attach(
+  "db-handler",
+  [:my_app, :db, :query, :stop],
+  fn _event, measurements, metadata, _config ->
+    IO.puts("Query took #{measurements.duration}ns")
+    IO.puts("Returned #{metadata.rows} rows")
+  end,
+  nil
+)
+
+MyApp.Database.query("SELECT * FROM users")
+
+# Multiple handlers for same event
+:telemetry.attach_many(
+  "multi-handler",
+  [
+    [:my_app, :request, :start],
+    [:my_app, :request, :stop],
+    [:my_app, :request, :exception]
+  ],
+  fn event, measurements, metadata, _config ->
+    Logger.info("Event: #{inspect(event)}", measurements: measurements, metadata: metadata)
+  end,
+  nil
+)
+```
+
+**Key Takeaway**: Telemetry decouples instrumentation from reporting. Emit events with `:telemetry.execute/3` for measurements and `:telemetry.span/3` for start/stop events. Attach handlers to process events for metrics, logging, or monitoring.
+
+---
+
+### Example 60: Type Specifications with @spec
+
+Type specs document function signatures and enable static analysis with Dialyzer. They improve code documentation and catch type errors at compile time.
+
+**Code**:
+
+```elixir
+defmodule Calculator do
+  @spec add(integer(), integer()) :: integer()
+  def add(a, b), do: a + b
+
+  @spec divide(number(), number()) :: {:ok, float()} | {:error, atom()}
+  def divide(_a, 0), do: {:error, :division_by_zero}
+  def divide(a, b), do: {:ok, a / b}
+
+  @spec sum(list(number())) :: number()
+  def sum(numbers), do: Enum.sum(numbers)
+
+  # Multiple clauses with same spec
+  @spec abs(integer()) :: integer()
+  def abs(n) when n < 0, do: -n
+  def abs(n), do: n
+end
+
+defmodule User do
+  @type t :: %__MODULE__{
+    id: integer(),
+    name: String.t(),
+    email: String.t(),
+    age: integer() | nil
+  }
+
+  defstruct [:id, :name, :email, :age]
+
+  @spec new(integer(), String.t(), String.t()) :: t()
+  def new(id, name, email) do
+    %__MODULE__{id: id, name: name, email: email}
+  end
+
+  @spec update_age(t(), integer()) :: t()
+  def update_age(user, age) do
+    %{user | age: age}
+  end
+
+  @spec display(t()) :: String.t()
+  def display(%__MODULE__{name: name, email: email}) do
+    "#{name} (#{email})"
+  end
+end
+
+defmodule StringHelper do
+  @spec reverse(String.t()) :: String.t()
+  def reverse(string), do: String.reverse(string)
+
+  @spec split(String.t(), String.t()) :: list(String.t())
+  def split(string, separator), do: String.split(string, separator)
+
+  @spec join(list(String.t()), String.t()) :: String.t()
+  def join(parts, separator), do: Enum.join(parts, separator)
+end
+
+# Common type specs
+@spec func(integer()) :: String.t()  # Integer to string
+@spec func(list(atom())) :: map()  # List of atoms to map
+@spec func(pid()) :: :ok | {:error, term()}  # Process-related
+@spec func(keyword()) :: any()  # Keyword list input
+@spec func(tuple()) :: boolean()  # Any tuple
+
+# Complex types
+@type result :: {:ok, String.t()} | {:error, atom()}
+@type user_id :: integer()
+@type user_map :: %{id: user_id(), name: String.t()}
+
+@spec find_user(user_id()) :: result()
+def find_user(id) when id > 0, do: {:ok, "User #{id}"}
+def find_user(_id), do: {:error, :invalid_id}
+
+# Run Dialyzer (in terminal)
+# mix dialyzer
+```
+
+**Key Takeaway**: Use `@spec` to document function types. Define custom types with `@type`. Type specs enable Dialyzer to catch type errors and improve documentation. Common types: `integer()`, `String.t()`, `list(type)`, `map()`, `{:ok, type} | {:error, reason}`.
+
+---
+
 ## What's Next?
 
-You've completed the intermediate examples covering advanced pattern matching, data structures, module organization, error handling, processes, and testing. You now understand:
+You've completed the intermediate examples covering advanced pattern matching, data structures, module organization, error handling, processes, testing, and OTP fundamentals. You now understand:
 
 - Advanced pattern matching with guards and `with`
 - Structs, streams, and MapSets
@@ -2138,11 +2938,15 @@ You've completed the intermediate examples covering advanced pattern matching, d
 - Error handling with result tuples and try/rescue
 - Process spawning, message passing, and monitoring
 - Task abstraction and testing with ExUnit
+- Supervisor child specs and application lifecycle
+- Custom Mix tasks and runtime configuration
+- Process links, mailbox management, and GenServer patterns
+- Telemetry instrumentation and type specifications
 
 **Continue your learning**:
 
-- [Advanced Examples (36-60)](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced) - GenServer, Supervisor, metaprogramming, OTP mastery
-- [Beginner Examples (1-15)](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/beginner) - Review fundamentals if needed
+- [Advanced Examples (61-90)](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced) - GenServer deep dive, Supervisor patterns, metaprogramming, OTP mastery
+- [Beginner Examples (1-30)](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/beginner) - Review fundamentals if needed
 
 **Deepen your understanding**:
 

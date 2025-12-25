@@ -1,6 +1,7 @@
 ---
 title: "By Example"
 weight: 1000006
+draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/overview)

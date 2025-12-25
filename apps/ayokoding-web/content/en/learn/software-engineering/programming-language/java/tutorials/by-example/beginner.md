@@ -3,11 +3,11 @@ title: "Beginner"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000001
-description: "Learn Java basics through 15 annotated examples: variables, OOP fundamentals, collections, control flow, and streams - perfect first examples for Java"
+description: "Learn Java basics through 25 annotated examples: variables, OOP fundamentals, collections, control flow, and streams - perfect first examples for Java"
 tags: ["java", "tutorial", "by-example", "beginner", "basics", "oop", "collections"]
 ---
 
-Learn Java fundamentals through 15 annotated code examples. Each example is self-contained, runnable in JShell or as standalone classes, and heavily commented to show what each line does, expected outputs, and intermediate values.
+Learn Java fundamentals through 25 annotated code examples. Each example is self-contained, runnable in JShell or as standalone classes, and heavily commented to show what each line does, expected outputs, and intermediate values.
 
 ## Group 1: First Steps
 
@@ -1544,3 +1544,1562 @@ List<Integer> eager = lazy.collect(Collectors.toList());
 ```
 
 **Key Takeaway**: Streams enable functional-style operations on collections. Intermediate operations (`filter`, `map`, `sorted`, `distinct`, `limit`) are lazy and return streams. Terminal operations (`collect`, `forEach`, `count`, `reduce`) trigger execution and produce results. Lambda expressions provide concise syntax. Streams are single-use and must be recreated for multiple operations.
+
+---
+
+## Group 6: Additional Core Features
+
+### Example 16: Switch Expressions and Pattern Matching
+
+Modern Java switch expressions (Java 12+) reduce boilerplate and support pattern matching. They return values directly and eliminate fall-through bugs with arrow syntax.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    Input["Input Value"] --> Switch{"Switch Expression"}
+    Switch -->|case 1| Result1["Return value 1"]
+    Switch -->|case 2| Result2["Return value 2"]
+    Switch -->|default| Result3["Default value"]
+    Result1 --> Output["Assigned to Variable"]
+    Result2 --> Output
+    Result3 --> Output
+
+    style Input fill:#0173B2,color:#fff
+    style Switch fill:#DE8F05,color:#fff
+    style Result1 fill:#029E73,color:#fff
+    style Result2 fill:#029E73,color:#fff
+    style Result3 fill:#029E73,color:#fff
+    style Output fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+// Switch expression with arrow syntax (Java 12+)
+int dayNum = 3; // => 3 (represents Wednesday)
+
+// Returns value directly - no break needed
+String dayType = switch (dayNum) {
+    case 1, 7 -> "Weekend"; // => Multiple values in one case
+    case 2, 3, 4, 5, 6 -> "Weekday"; // => This case executes
+    default -> "Invalid";
+}; // => dayType is "Weekday"
+
+System.out.println("Day type: " + dayType); // => "Day type: Weekday"
+
+// Switch expression with yield for blocks
+int quarter = switch (dayNum) {
+    case 1, 2, 3 -> {
+        System.out.println("Q1"); // => Can have statements in block
+        yield 1; // => yield returns value from block
+    }
+    case 4, 5, 6 -> {
+        System.out.println("Q2");
+        yield 2;
+    }
+    case 7, 8, 9 -> {
+        System.out.println("Q3");
+        yield 3;
+    }
+    case 10, 11, 12 -> {
+        System.out.println("Q4");
+        yield 4;
+    }
+    default -> {
+        yield 0; // => Must yield in every case
+    }
+}; // => quarter is 1 (because dayNum 3 is in Q1)
+
+// Enhanced instanceof with pattern variables (Java 16+)
+Object obj = "Hello World"; // => obj is String
+
+// Traditional instanceof (verbose)
+if (obj instanceof String) {
+    String str = (String) obj; // => Need explicit cast
+    System.out.println(str.toUpperCase()); // => "HELLO WORLD"
+}
+
+// Pattern matching instanceof (concise)
+if (obj instanceof String s) { // => s is automatically cast
+    System.out.println(s.toUpperCase()); // => "HELLO WORLD" (no cast needed)
+    System.out.println("Length: " + s.length()); // => "Length: 11"
+} // => s only in scope within if block
+
+// Pattern matching in switch (Java 17+, preview in 17-20, standard in 21+)
+Object value = 42; // => value is Integer
+
+String result = switch (value) {
+    case Integer i -> "Integer: " + i; // => Pattern matches and binds to i
+    case String s -> "String: " + s;
+    case Double d -> "Double: " + d;
+    case null -> "Null value"; // => Can match null explicitly
+    default -> "Unknown type";
+}; // => result is "Integer: 42"
+
+// Switch with guards (when clause) - Java 21+
+int num = 15; // => num is 15
+
+String category = switch (num) {
+    case Integer i when i < 0 -> "Negative"; // => Guard condition
+    case Integer i when i == 0 -> "Zero";
+    case Integer i when i > 0 && i < 10 -> "Small positive";
+    case Integer i when i >= 10 && i < 100 -> "Medium positive"; // => This executes
+    case Integer i when i >= 100 -> "Large positive";
+    default -> "Unknown";
+}; // => category is "Medium positive"
+
+// Exhaustiveness checking - compiler ensures all cases covered
+sealed interface Shape permits Circle, Rectangle, Triangle {}
+record Circle(double radius) implements Shape {}
+record Rectangle(double width, double height) implements Shape {}
+record Triangle(double base, double height) implements Shape {}
+
+double area = switch (shape) { // => Compiler checks all Shape types covered
+    case Circle c -> Math.PI * c.radius() * c.radius(); // => πr²
+    case Rectangle r -> r.width() * r.height(); // => width × height
+    case Triangle t -> 0.5 * t.base() * t.height(); // => ½ × base × height
+    // No default needed - compiler knows all cases covered
+};
+```
+
+**Key Takeaway**: Switch expressions return values and use `->` arrow syntax (no `break` needed). `yield` returns values from block expressions. Pattern matching `instanceof` combines type check and cast in one step. Switch pattern matching (Java 17+/21+) enables type-based switching with guards. Exhaustiveness checking prevents missing cases with sealed types.
+
+---
+
+### Example 17: Text Blocks and String Manipulation
+
+Text blocks (Java 15+) provide multiline strings with proper formatting. String methods offer rich manipulation capabilities for real-world text processing.
+
+**Code**:
+
+```java
+// Text block (Java 15+) - preserves formatting
+String json = """
+    {
+        "name": "Alice",
+        "age": 30,
+        "city": "New York"
+    }
+    """; // => Multiline string with preserved formatting
+
+System.out.println(json);
+// => Prints:
+// {
+//     "name": "Alice",
+//     "age": 30,
+//     "city": "New York"
+// }
+
+// Text block indentation - leftmost content determines baseline
+String html = """
+        <html>
+            <body>
+                <h1>Title</h1>
+            </body>
+        </html>
+        """; // => Indentation relative to closing delimiter
+
+// Escape sequences in text blocks
+String formatted = """
+    Line 1\n\
+    Line 2 (no newline after Line 1)
+    Line 3 "with quotes"
+    """; // => \n for explicit newline, \ for line continuation
+
+// String interpolation alternatives (formatted, format)
+String name = "Bob"; // => name is "Bob"
+int age = 25; // => age is 25
+
+String message = String.format("Name: %s, Age: %d", name, age);
+// => "Name: Bob, Age: 25"
+
+String formatted2 = "Name: %s, Age: %d".formatted(name, age);
+// => Same as above (Java 15+)
+
+// String manipulation methods
+String text = "  Hello, World!  "; // => text with leading/trailing spaces
+
+String trimmed = text.trim(); // => "Hello, World!" (removes whitespace)
+String stripped = text.strip(); // => "Hello, World!" (Unicode-aware trim)
+boolean blank = "   ".isBlank(); // => true (only whitespace)
+boolean empty = "".isEmpty(); // => true (zero length)
+
+// String splitting and joining
+String csv = "apple,banana,cherry"; // => CSV data
+String[] fruits = csv.split(","); // => ["apple", "banana", "cherry"]
+
+String joined = String.join(" | ", fruits); // => "apple | banana | cherry"
+
+// Repeat (Java 11+)
+String repeated = "Ha".repeat(3); // => "HaHaHa"
+String line = "=".repeat(20); // => "===================="
+
+// Lines (Java 11+) - stream of lines
+String multiline = "Line 1\nLine 2\nLine 3"; // => multiline string
+multiline.lines() // => Stream<String> of lines
+    .forEach(line -> System.out.println(line)); // => Prints each line
+
+// indent (Java 12+)
+String indented = "Hello\nWorld".indent(4);
+// => "    Hello\n    World\n" (adds 4 spaces to each line)
+
+// Character methods
+char ch = 'A'; // => ch is 'A'
+boolean isDigit = Character.isDigit(ch); // => false
+boolean isLetter = Character.isLetter(ch); // => true
+boolean isUpperCase = Character.isUpperCase(ch); // => true
+char toLowerCase = Character.toLowerCase(ch); // => 'a'
+
+// String comparison
+String s1 = "hello"; // => s1 is "hello"
+String s2 = "HELLO"; // => s2 is "HELLO"
+boolean equals = s1.equals(s2); // => false (case-sensitive)
+boolean equalsIgnoreCase = s1.equalsIgnoreCase(s2); // => true
+int compared = s1.compareTo(s2); // => positive number (s1 > s2 lexicographically)
+
+// contains, startsWith, endsWith
+String sentence = "Java is awesome"; // => sentence
+boolean contains = sentence.contains("is"); // => true
+boolean starts = sentence.startsWith("Java"); // => true
+boolean ends = sentence.endsWith("awesome"); // => true
+
+// replace variations
+String original = "Hello World Hello"; // => original
+String replaced = original.replace("Hello", "Hi"); // => "Hi World Hi" (all occurrences)
+String replacedFirst = original.replaceFirst("Hello", "Hi"); // => "Hi World Hello" (first only)
+String regex = "a1b2c3".replaceAll("\\d", "X"); // => "aXbXcX" (regex replacement)
+
+// substring
+String sub = "Java Programming".substring(5); // => "Programming" (from index 5)
+String range = "Java Programming".substring(0, 4); // => "Java" (index 0 to 3)
+
+// indexOf and lastIndexOf
+int firstIndex = "Hello World".indexOf("o"); // => 4 (first 'o')
+int lastIndex = "Hello World".lastIndexOf("o"); // => 7 (last 'o')
+int notFound = "Hello".indexOf("z"); // => -1 (not found)
+```
+
+**Key Takeaway**: Text blocks (`"""..."""`) provide multiline strings with preserved formatting. `strip()` is Unicode-aware trim. `lines()` creates stream of lines. `repeat()` duplicates strings. `formatted()` provides template formatting. String methods (`split`, `join`, `replace`, `substring`, `indexOf`) handle common text operations.
+
+---
+
+### Example 18: Varargs and Overloading
+
+Varargs (`...`) accept variable number of arguments as array. Method overloading allows same name with different signatures. Compiler selects most specific match at compile-time.
+
+**Code**:
+
+```java
+// Varargs - variable number of arguments
+public static int sum(int... numbers) { // => numbers is int[]
+    int total = 0; // => total starts at 0
+    for (int num : numbers) {
+        total += num; // => Add each number
+    }
+    return total; // => Return accumulated sum
+}
+
+int result1 = sum(); // => 0 (no arguments, empty array)
+int result2 = sum(5); // => 5 (one argument)
+int result3 = sum(1, 2, 3); // => 6 (three arguments)
+int result4 = sum(1, 2, 3, 4, 5); // => 15 (five arguments)
+
+// Varargs must be last parameter
+public static void print(String prefix, int... numbers) {
+    System.out.print(prefix + ": "); // => prefix is "Numbers"
+    for (int num : numbers) {
+        System.out.print(num + " "); // => Print each number
+    }
+    System.out.println(); // => Newline
+}
+
+print("Numbers", 1, 2, 3); // => "Numbers: 1 2 3 "
+
+// Can pass array to varargs
+int[] array = {10, 20, 30}; // => array of 3 integers
+int arraySum = sum(array); // => 60 (same as sum(10, 20, 30))
+
+// Method overloading - same name, different parameters
+public static int multiply(int a, int b) {
+    return a * b; // => Two parameters
+}
+
+public static int multiply(int a, int b, int c) {
+    return a * b * c; // => Three parameters
+}
+
+public static double multiply(double a, double b) {
+    return a * b; // => Different types
+}
+
+// Compiler selects method based on arguments
+int m1 = multiply(2, 3); // => 6 (calls two-parameter int version)
+int m2 = multiply(2, 3, 4); // => 24 (calls three-parameter version)
+double m3 = multiply(2.5, 3.0); // => 7.5 (calls double version)
+
+// Overloading with automatic widening
+public static void display(int num) {
+    System.out.println("int: " + num);
+}
+
+public static void display(long num) {
+    System.out.println("long: " + num);
+}
+
+public static void display(double num) {
+    System.out.println("double: " + num);
+}
+
+byte b = 10; // => b is byte
+display(b); // => "int: 10" (byte widened to int)
+
+int i = 20; // => i is int
+display(i); // => "int: 20" (exact match)
+
+long l = 30L; // => l is long
+display(l); // => "long: 30" (exact match)
+
+float f = 40.0f; // => f is float
+display(f); // => "double: 40.0" (float widened to double)
+
+// Overloading resolution priority:
+// 1. Exact match
+// 2. Primitive widening (byte -> short -> int -> long -> float -> double)
+// 3. Autoboxing (int -> Integer)
+// 4. Varargs
+
+// Ambiguous overloading (compile error)
+// public static void process(int a, double b) {}
+// public static void process(double a, int b) {}
+// process(1, 2); // ERROR: ambiguous (both could match with widening)
+
+// Constructor overloading
+class Rectangle {
+    private double width; // => width field
+    private double height; // => height field
+
+    // Default constructor
+    public Rectangle() {
+        this(1.0, 1.0); // => Delegates to two-parameter constructor
+    }
+
+    // One parameter (square)
+    public Rectangle(double side) {
+        this(side, side); // => Delegates to two-parameter constructor
+    }
+
+    // Two parameters
+    public Rectangle(double width, double height) {
+        this.width = width; // => Sets width
+        this.height = height; // => Sets height
+    }
+
+    public double area() {
+        return width * height; // => Calculates area
+    }
+}
+
+Rectangle r1 = new Rectangle(); // => 1.0 × 1.0 square
+double area1 = r1.area(); // => 1.0
+
+Rectangle r2 = new Rectangle(5.0); // => 5.0 × 5.0 square
+double area2 = r2.area(); // => 25.0
+
+Rectangle r3 = new Rectangle(3.0, 4.0); // => 3.0 × 4.0 rectangle
+double area3 = r3.area(); // => 12.0
+
+// Varargs with overloading
+public static String format(String s) {
+    return "[" + s + "]"; // => Single string
+}
+
+public static String format(String... strings) {
+    return "[" + String.join(", ", strings) + "]"; // => Multiple strings
+}
+
+String f1 = format("A"); // => "[A]" (exact match, calls single-parameter)
+String f2 = format("A", "B"); // => "[A, B]" (calls varargs)
+String f3 = format("A", "B", "C"); // => "[A, B, C]" (calls varargs)
+```
+
+**Key Takeaway**: Varargs (`type... name`) accept zero or more arguments as array. Must be last parameter. Method overloading allows same name with different signatures (parameter count or types). Compiler selects method based on: exact match, primitive widening, autoboxing, then varargs. Constructor overloading enables multiple initialization patterns with `this()` delegation.
+
+---
+
+### Example 19: Wrapper Classes and Autoboxing
+
+Wrapper classes (Integer, Double, Boolean, etc.) box primitives into objects for collections and generics. Autoboxing converts automatically. Understand performance implications and caching behavior.
+
+**Code**:
+
+```java
+// Wrapper classes - object representations of primitives
+Integer objInt = Integer.valueOf(42); // => Integer object wrapping 42
+int primitive = objInt.intValue(); // => 42 (extract primitive)
+
+// Autoboxing - automatic primitive to wrapper conversion
+Integer auto = 100; // => Autoboxing: int -> Integer
+int unboxed = auto; // => Unboxing: Integer -> int (value is 100)
+
+// Why wrappers exist: collections require objects
+ArrayList<Integer> numbers = new ArrayList<>(); // => List of Integer, NOT int
+numbers.add(10); // => Autoboxing: 10 -> Integer.valueOf(10)
+numbers.add(20); // => Autoboxing: 20 -> Integer.valueOf(20)
+int value = numbers.get(0); // => Unboxing: Integer -> int (value is 10)
+
+// All primitive wrapper classes
+Byte byteObj = 127; // => byte wrapper
+Short shortObj = 32000; // => short wrapper
+Integer intObj = 42; // => int wrapper
+Long longObj = 1000L; // => long wrapper
+Float floatObj = 3.14f; // => float wrapper
+Double doubleObj = 3.14159; // => double wrapper
+Character charObj = 'A'; // => char wrapper
+Boolean boolObj = true; // => boolean wrapper
+
+// Integer caching (-128 to 127)
+Integer a = 100; // => Cached
+Integer b = 100; // => Same cached instance
+System.out.println(a == b); // => true (same object reference!)
+
+Integer c = 200; // => Not cached
+Integer d = 200; // => Different instance
+System.out.println(c == d); // => false (different objects)
+System.out.println(c.equals(d)); // => true (same value)
+
+// CRITICAL: Always use .equals() for wrapper comparison
+Integer x = 42; // => x wraps 42
+Integer y = 42; // => y wraps 42 (cached, same instance)
+Integer z = Integer.valueOf(42); // => z also refers to cached instance
+
+System.out.println(x == y); // => true (cached range)
+System.out.println(x.equals(y)); // => true (correct comparison)
+
+// Null pointers with autoboxing
+Integer nullInt = null; // => Wrapper can be null
+// int value = nullInt; // => NullPointerException! (unboxing null fails)
+
+// Safe unboxing with null check
+if (nullInt != null) {
+    int safe = nullInt; // => Only unbox if not null
+}
+
+// Wrapper utility methods
+int parsed = Integer.parseInt("123"); // => 123 (String -> int)
+Integer parsedObj = Integer.valueOf("456"); // => Integer(456) (String -> Integer)
+
+String binary = Integer.toBinaryString(10); // => "1010"
+String hex = Integer.toHexString(255); // => "ff"
+String octal = Integer.toOctalString(8); // => "10"
+
+int max = Integer.MAX_VALUE; // => 2147483647
+int min = Integer.MIN_VALUE; // => -2147483648
+
+// Double special values
+double inf = Double.POSITIVE_INFINITY; // => Infinity
+double ninf = Double.NEGATIVE_INFINITY; // => -Infinity
+double nan = Double.NaN; // => Not a Number
+
+boolean isNaN = Double.isNaN(0.0 / 0.0); // => true
+boolean isInfinite = Double.isInfinite(1.0 / 0.0); // => true
+
+// Character utility methods
+boolean isDigit = Character.isDigit('5'); // => true
+boolean isLetter = Character.isLetter('A'); // => true
+boolean isWhitespace = Character.isWhitespace(' '); // => true
+char upper = Character.toUpperCase('a'); // => 'A'
+int numeric = Character.getNumericValue('5'); // => 5
+
+// Boolean parsing
+Boolean bool1 = Boolean.valueOf("true"); // => true
+Boolean bool2 = Boolean.valueOf("false"); // => false
+Boolean bool3 = Boolean.valueOf("yes"); // => false (anything except "true" is false)
+
+// Performance consideration
+long sum1 = 0; // => Primitive (FAST)
+for (int i = 0; i < 1000000; i++) {
+    sum1 += i; // => No boxing/unboxing
+}
+
+Long sum2 = 0L; // => Wrapper (SLOW - autoboxing overhead)
+for (int i = 0; i < 1000000; i++) {
+    sum2 += i; // => Each iteration: unbox sum2, add, box result
+    // Creates 1,000,000 temporary Long objects!
+}
+// Use primitives for performance-critical code
+
+// Wrapper immutability
+Integer num = 10; // => num refers to Integer(10)
+num = 20; // => num now refers to NEW Integer(20), old object unchanged
+// Wrappers are immutable - cannot modify value after creation
+```
+
+**Key Takeaway**: Wrapper classes (Integer, Double, Boolean, etc.) box primitives into objects for collections and generics. Autoboxing converts automatically but creates objects. Integer caches -128 to 127. Always use `.equals()` for wrapper comparison (not `==`). Null wrappers throw NullPointerException when unboxed. Use primitives for performance-critical code to avoid boxing overhead.
+
+---
+
+### Example 20: Static Members and Blocks
+
+Static members belong to the class, not instances. Static methods can't access instance members. Static blocks initialize class-level state. Understanding static helps with utility classes and singletons.
+
+**Code**:
+
+```java
+// Static fields - shared across all instances
+class Counter {
+    private static int count = 0; // => Class-level variable (one copy for all instances)
+    private int instanceId; // => Instance-level variable (each object has its own)
+
+    public Counter() {
+        count++; // => Increment shared counter
+        this.instanceId = count; // => Assign instance ID
+    }
+
+    public int getInstanceId() {
+        return instanceId; // => Return this instance's ID
+    }
+
+    public static int getCount() {
+        return count; // => Return total count (static method)
+    }
+}
+
+Counter c1 = new Counter(); // => count becomes 1, c1.instanceId = 1
+Counter c2 = new Counter(); // => count becomes 2, c2.instanceId = 2
+Counter c3 = new Counter(); // => count becomes 3, c3.instanceId = 3
+
+System.out.println(c1.getInstanceId()); // => 1
+System.out.println(c2.getInstanceId()); // => 2
+System.out.println(Counter.getCount()); // => 3 (accessed via class name)
+
+// Static methods - belong to class
+class MathUtils {
+    // Static method - no access to instance members
+    public static int add(int a, int b) {
+        return a + b; // => Pure function, no instance state
+    }
+
+    public static int multiply(int a, int b) {
+        return a * b; // => Another static utility method
+    }
+}
+
+int sum = MathUtils.add(5, 3); // => 8 (call via class name)
+int product = MathUtils.multiply(4, 7); // => 28
+
+// Static cannot access instance members
+class Example {
+    private int instanceVar = 10; // => Instance variable
+    private static int staticVar = 20; // => Static variable
+
+    public static void staticMethod() {
+        System.out.println(staticVar); // => OK: static can access static
+        // System.out.println(instanceVar); // => ERROR: static can't access instance
+        // this.instanceVar; // => ERROR: no 'this' in static context
+    }
+
+    public void instanceMethod() {
+        System.out.println(instanceVar); // => OK: instance can access instance
+        System.out.println(staticVar); // => OK: instance can access static
+    }
+}
+
+// Static initialization block - runs once when class loaded
+class DatabaseConfig {
+    private static String url; // => Static field
+    private static String username; // => Static field
+    private static String password; // => Static field
+
+    // Static block - runs when class first loaded
+    static {
+        System.out.println("Loading database config..."); // => Executes once
+        url = "jdbc:mysql://localhost:3306/db"; // => Initialize static field
+        username = "admin"; // => Initialize static field
+        password = "secret"; // => Initialize static field
+        System.out.println("Config loaded"); // => Executes once
+    }
+
+    public static String getUrl() {
+        return url; // => Return initialized value
+    }
+}
+
+String dbUrl = DatabaseConfig.getUrl(); // => Triggers class loading and static block
+// => Prints: "Loading database config..." and "Config loaded"
+String dbUrl2 = DatabaseConfig.getUrl(); // => Static block does NOT run again
+
+// Multiple static blocks - execute in order
+class InitOrder {
+    private static int a; // => Uninitialized
+    private static int b; // => Uninitialized
+
+    static {
+        a = 10; // => First block: a = 10
+        System.out.println("First static block: a = " + a); // => "First static block: a = 10"
+    }
+
+    static {
+        b = a * 2; // => Second block: b = 20 (uses a from first block)
+        System.out.println("Second static block: b = " + b); // => "Second static block: b = 20"
+    }
+}
+
+// Initialization order: static fields -> static blocks -> instance fields -> constructors
+
+// Static imports - import static members
+import static java.lang.Math.PI; // => Import constant
+import static java.lang.Math.sqrt; // => Import method
+
+double radius = 5.0; // => radius is 5.0
+double area = PI * radius * radius; // => Use PI directly (no Math. prefix)
+double result = sqrt(16); // => 4.0 (use sqrt directly)
+
+// Static inner classes - nested class that doesn't need outer instance
+class Outer {
+    private static String staticOuter = "Static Outer"; // => Outer static field
+    private String instanceOuter = "Instance Outer"; // => Outer instance field
+
+    // Static nested class
+    public static class StaticNested {
+        public void display() {
+            System.out.println(staticOuter); // => OK: can access outer static
+            // System.out.println(instanceOuter); // => ERROR: can't access outer instance
+        }
+    }
+}
+
+// Create static nested class - no outer instance needed
+Outer.StaticNested nested = new Outer.StaticNested(); // => Create without Outer instance
+nested.display(); // => "Static Outer"
+
+// Constants pattern - public static final
+class Constants {
+    public static final double PI = 3.14159; // => Constant (cannot be changed)
+    public static final int MAX_SIZE = 1000; // => Constant
+    public static final String APP_NAME = "MyApp"; // => Constant
+
+    // Prevent instantiation
+    private Constants() {
+        throw new AssertionError("Cannot instantiate constants class");
+    }
+}
+
+double pi = Constants.PI; // => 3.14159
+// Constants.PI = 3.0; // => ERROR: cannot assign to final variable
+```
+
+**Key Takeaway**: Static members belong to the class (shared across all instances). Static methods accessed via class name (not instance). Static can't access instance members. Static blocks initialize class-level state once when class loads. Use static for utility methods, constants, and counters. Static imports allow using static members without class prefix.
+
+---
+
+### Example 21: Packages and Access Modifiers
+
+Packages organize classes into namespaces. Access modifiers (`public`, `private`, `protected`, package-private) control visibility. Understanding access control is essential for encapsulation and API design.
+
+**Code**:
+
+```java
+// Package declaration - must be first statement
+package com.example.myapp; // => This class belongs to com.example.myapp package
+
+// Import statements - come after package declaration
+import java.util.ArrayList; // => Import specific class
+import java.util.List; // => Import specific class
+import java.io.*; // => Import all classes from java.io (wildcard)
+import static java.lang.Math.PI; // => Static import for constants/methods
+
+// Access modifiers control visibility
+
+// PUBLIC - accessible from anywhere
+public class PublicClass {
+    public int publicField = 10; // => Accessible from any package
+
+    public void publicMethod() {
+        System.out.println("Public method"); // => Accessible from anywhere
+    }
+}
+
+// PRIVATE - accessible only within same class
+class PrivateExample {
+    private int privateField = 20; // => Only accessible within this class
+
+    private void privateMethod() {
+        System.out.println("Private method"); // => Only within this class
+    }
+
+    public void accessPrivate() {
+        System.out.println(privateField); // => OK: same class
+        privateMethod(); // => OK: same class
+    }
+}
+
+// PROTECTED - accessible within package and by subclasses
+class ProtectedExample {
+    protected int protectedField = 30; // => Package + subclasses
+
+    protected void protectedMethod() {
+        System.out.println("Protected method"); // => Package + subclasses
+    }
+}
+
+// PACKAGE-PRIVATE (default) - accessible only within same package
+class PackagePrivateClass { // => No modifier = package-private
+    int packageField = 40; // => No modifier = package-private
+
+    void packageMethod() {
+        System.out.println("Package-private method"); // => Same package only
+    }
+}
+
+// Access modifier visibility summary:
+//                      | Class | Package | Subclass | World |
+// -----------------------------------------------------------|
+// public               |  ✓    |    ✓    |    ✓     |   ✓   |
+// protected            |  ✓    |    ✓    |    ✓     |   ✗   |
+// (package-private)    |  ✓    |    ✓    |    ✗     |   ✗   |
+// private              |  ✓    |    ✗    |    ✗     |   ✗   |
+
+// Typical access pattern for classes
+public class Person {
+    // Private fields - internal state hidden
+    private String name; // => Only accessible within Person
+    private int age; // => Only accessible within Person
+
+    // Public constructor - allows creation from anywhere
+    public Person(String name, int age) {
+        this.name = name; // => Initialize private field
+        this.age = age; // => Initialize private field
+    }
+
+    // Public getters - controlled read access
+    public String getName() {
+        return name; // => Expose name via method
+    }
+
+    public int getAge() {
+        return age; // => Expose age via method
+    }
+
+    // Public setters with validation - controlled write access
+    public void setAge(int age) {
+        if (age >= 0 && age <= 150) { // => Validation logic
+            this.age = age; // => Only set if valid
+        } else {
+            throw new IllegalArgumentException("Invalid age"); // => Reject invalid
+        }
+    }
+
+    // Private helper method - implementation detail
+    private boolean isAdult() {
+        return age >= 18; // => Internal logic, not exposed
+    }
+
+    // Public method using private helper
+    public String getCategory() {
+        return isAdult() ? "Adult" : "Minor"; // => Uses private helper
+    }
+}
+
+Person person = new Person("Alice", 25); // => OK: public constructor
+String name = person.getName(); // => "Alice" (public getter)
+// String directName = person.name; // => ERROR: name is private
+person.setAge(30); // => OK: public setter
+// boolean adult = person.isAdult(); // => ERROR: isAdult is private
+
+// Package structure example:
+// com/example/myapp/
+//   ├── Main.java (public class Main)
+//   ├── util/
+//   │   ├── StringUtils.java (public class StringUtils)
+//   │   └── Helper.java (package-private class Helper)
+//   └── model/
+//       ├── User.java (public class User)
+//       └── UserRepository.java (public interface UserRepository)
+
+// Importing from different packages
+// package com.example.myapp;
+// import com.example.myapp.util.StringUtils; // Import from util package
+// import com.example.myapp.model.User; // Import from model package
+
+// Static import for constants
+// import static com.example.myapp.Constants.MAX_SIZE;
+// int size = MAX_SIZE; // Use constant without Constants. prefix
+
+// Constructor access modifiers
+class ConstructorAccess {
+    // Private constructor - prevents external instantiation
+    private ConstructorAccess() {
+        // Singleton pattern or utility class
+    }
+
+    // Public static factory method - only way to create instance
+    public static ConstructorAccess create() {
+        return new ConstructorAccess(); // => Can access private constructor from same class
+    }
+}
+
+// ConstructorAccess obj = new ConstructorAccess(); // => ERROR: constructor is private
+ConstructorAccess obj = ConstructorAccess.create(); // => OK: use factory method
+
+// Package-private classes and interfaces
+// Only visible within same package - implementation details hidden
+interface InternalApi { // => Package-private (no public modifier)
+    void internalMethod();
+}
+
+class InternalImpl implements InternalApi { // => Package-private
+    @Override
+    public void internalMethod() {
+        // Implementation
+    }
+}
+
+// Public facade exposes only what's needed
+public class PublicApi {
+    private InternalApi internal = new InternalImpl(); // => Private field
+
+    public void publicMethod() {
+        internal.internalMethod(); // => Use internal implementation
+    }
+}
+```
+
+**Key Takeaway**: Packages organize classes (`package com.example`). Import statements bring classes into scope. Access modifiers control visibility: `public` (everywhere), `protected` (package + subclasses), package-private (same package), `private` (same class). Typical pattern: private fields, public getters/setters, private helpers. Package-private classes hide implementation details. Use access control for encapsulation and API design.
+
+---
+
+### Example 22: The `var` Keyword
+
+The `var` keyword (Java 10+) provides local variable type inference. Compiler infers type from initializer. Improves readability for complex types while maintaining compile-time type safety.
+
+**Code**:
+
+```java
+// Traditional explicit types (verbose)
+ArrayList<String> list1 = new ArrayList<String>(); // => Type repeated
+HashMap<String, Integer> map1 = new HashMap<String, Integer>(); // => Verbose
+String message1 = "Hello World"; // => Simple case
+
+// var with type inference (concise)
+var list2 = new ArrayList<String>(); // => Compiler infers ArrayList<String>
+var map2 = new HashMap<String, Integer>(); // => Inferred HashMap<String, Integer>
+var message2 = "Hello World"; // => Inferred String
+
+// Type is still static and checked at compile-time
+// list2 = 42; // => ERROR: incompatible types (can't assign int to ArrayList)
+list2.add("Java"); // => OK: add is a valid ArrayList method
+// list2.add(123); // => ERROR: type mismatch (expects String, got int)
+
+// var works with primitives
+var count = 0; // => int (inferred from 0)
+var price = 19.99; // => double (inferred from 19.99)
+var flag = true; // => boolean (inferred from true)
+var letter = 'A'; // => char (inferred from 'A')
+
+// var with method return types
+var now = java.time.LocalDateTime.now(); // => LocalDateTime (inferred from return type)
+var random = Math.random(); // => double (Math.random() returns double)
+var length = "Hello".length(); // => int (String.length() returns int)
+
+// var in loops (very useful)
+// Traditional for-each
+for (String item : list2) {
+    System.out.println(item); // => item is String
+}
+
+// var for-each (cleaner)
+var items = List.of("Java", "Python", "Go"); // => List<String>
+for (var item : items) { // => item inferred as String
+    System.out.println(item); // => Prints each language
+}
+
+// var in traditional for loop
+for (var i = 0; i < 10; i++) { // => i inferred as int
+    System.out.println(i); // => Prints 0 to 9
+}
+
+// var with complex generic types (readability win)
+// Traditional (very verbose)
+Map<String, List<Map<String, Integer>>> traditional =
+    new HashMap<String, List<Map<String, Integer>>>();
+
+// var (much cleaner)
+var modern = new HashMap<String, List<Map<String, Integer>>>();
+// => Type is still HashMap<String, List<Map<String, Integer>>>
+
+// var with diamond operator
+var list3 = new ArrayList<>(); // => ERROR: cannot infer type from <> alone
+var list4 = new ArrayList<String>(); // => OK: explicit type argument
+
+// var with lambda expressions - type inferred from context
+// Predicate<String> filter = s -> s.length() > 5; // Traditional
+Predicate<String> traditional2 = s -> s.length() > 5;
+var filtered = items.stream()
+    .filter(s -> s.length() > 5) // => s type inferred within lambda
+    .collect(Collectors.toList()); // => filtered inferred as List<String>
+
+// var limitations and restrictions:
+
+// 1. MUST have initializer
+// var x; // => ERROR: cannot infer type without initializer
+var y = 10; // => OK: inferred as int
+
+// 2. Cannot use with null
+// var nullVar = null; // => ERROR: cannot infer type from null
+var nullableString = (String) null; // => OK: explicit type cast
+
+// 3. Cannot use for fields (only local variables)
+class Example {
+    // var field = 10; // => ERROR: var not allowed for fields
+    private int field = 10; // => Must use explicit type
+}
+
+// 4. Cannot use for method parameters
+// public void method(var param) {} // => ERROR: var not allowed for parameters
+public void method(String param) {} // => Must use explicit type
+
+// 5. Cannot use for method return types
+// public var getValue() { return 42; } // => ERROR: var not allowed for return type
+public int getValue() { return 42; } // => Must use explicit type
+
+// 6. Array initializer needs explicit type
+// var array = {1, 2, 3}; // => ERROR: cannot infer type from array initializer
+var array = new int[]{1, 2, 3}; // => OK: int[] inferred
+
+// When to use var vs explicit types:
+
+// Use var when type is obvious from right-hand side
+var builder = new StringBuilder(); // => GOOD: obvious it's StringBuilder
+var user = userService.getUser(id); // => GOOD: method name indicates User
+
+// Avoid var when type is not obvious
+var result = calculate(); // => BAD: what type does calculate() return?
+CalculationResult result2 = calculate(); // => GOOD: explicit type clarifies
+
+// var with var keyword itself (Java 11+ - reserved keyword)
+// var var = 10; // => ERROR in Java 11+: var is reserved keyword in certain contexts
+// Can still use as identifier in some cases for backward compatibility
+
+// Practical example: improving code readability
+// Traditional (type info repeated)
+Entry<String, List<Integer>> entry1 =
+    new AbstractMap.SimpleEntry<String, List<Integer>>("key", List.of(1, 2, 3));
+
+// With var (type still enforced, less visual noise)
+var entry2 = new AbstractMap.SimpleEntry<>("key", List.of(1, 2, 3));
+// => Type is Entry<String, List<Integer>> (inferred from constructor)
+
+String key = entry2.getKey(); // => "key"
+List<Integer> values = entry2.getValue(); // => [1, 2, 3]
+```
+
+**Key Takeaway**: `var` provides local variable type inference (Java 10+). Compiler infers type from initializer—compile-time type safety maintained. Reduces boilerplate for complex generic types. Restrictions: requires initializer, local variables only (not fields/parameters/return types), cannot infer from null or array initializers. Use when type is obvious from right-hand side. Improves readability without sacrificing type safety.
+
+---
+
+### Example 23: Nested and Inner Classes
+
+Java supports four types of nested classes: static nested, non-static inner, local (inside methods), and anonymous. Each serves different purposes for organization, encapsulation, and callback patterns.
+
+**Code**:
+
+```java
+// 1. Static nested class - doesn't need outer instance
+class Outer {
+    private static String staticField = "Static Outer"; // => Outer static field
+    private String instanceField = "Instance Outer"; // => Outer instance field
+
+    // Static nested class
+    public static class StaticNested {
+        public void display() {
+            System.out.println(staticField); // => OK: access outer static
+            // System.out.println(instanceField); // => ERROR: no outer instance
+        }
+    }
+}
+
+// Create static nested class - no outer instance needed
+Outer.StaticNested nested = new Outer.StaticNested(); // => Create directly
+nested.display(); // => "Static Outer"
+
+// 2. Non-static inner class - tied to outer instance
+class Outer2 {
+    private String outerField = "Outer Field"; // => Outer instance field
+
+    // Inner class (non-static)
+    public class Inner {
+        public void display() {
+            System.out.println(outerField); // => OK: access outer instance member
+            System.out.println(Outer2.this.outerField); // => Explicit outer this reference
+        }
+
+        public void shadowing() {
+            String outerField = "Inner Local"; // => Shadows outer field
+            System.out.println(outerField); // => "Inner Local" (local variable)
+            System.out.println(Outer2.this.outerField); // => "Outer Field" (outer field)
+        }
+    }
+
+    public Inner createInner() {
+        return new Inner(); // => Outer can create inner directly
+    }
+}
+
+// Create inner class - MUST have outer instance first
+Outer2 outer = new Outer2(); // => Create outer instance
+Outer2.Inner inner = outer.new Inner(); // => Create inner from outer instance
+inner.display(); // => "Outer Field"
+
+// Or create via outer method
+Outer2.Inner inner2 = outer.createInner(); // => Alternative creation
+
+// 3. Local class - defined inside method
+class LocalClassExample {
+    public void demonstrateLocal() {
+        final String localVar = "Local Variable"; // => Effectively final
+
+        // Local class - only visible within this method
+        class LocalClass {
+            public void display() {
+                System.out.println(localVar); // => OK: capture effectively final variable
+                // localVar = "Modified"; // => ERROR: local class captures final/effectively final only
+            }
+        }
+
+        LocalClass local = new LocalClass(); // => Create local class
+        local.display(); // => "Local Variable"
+    }
+}
+
+LocalClassExample example = new LocalClassExample();
+example.demonstrateLocal(); // => Creates and uses local class
+
+// 4. Anonymous inner class - class without name
+interface Greeting {
+    void greet(String name);
+}
+
+class AnonymousExample {
+    public void demonstrate() {
+        // Anonymous class implementing interface
+        Greeting greeting = new Greeting() {
+            @Override
+            public void greet(String name) {
+                System.out.println("Hello, " + name + "!"); // => Implementation
+            }
+        };
+
+        greeting.greet("Alice"); // => "Hello, Alice!"
+
+        // Anonymous class extending class
+        Object obj = new Object() {
+            @Override
+            public String toString() {
+                return "Custom toString"; // => Override method
+            }
+        };
+
+        System.out.println(obj); // => "Custom toString"
+    }
+}
+
+AnonymousExample anonEx = new AnonymousExample();
+anonEx.demonstrate(); // => Uses anonymous classes
+
+// Anonymous class vs lambda (modern alternative)
+// Anonymous class (verbose)
+Runnable runnable1 = new Runnable() {
+    @Override
+    public void run() {
+        System.out.println("Running"); // => Implementation
+    }
+};
+
+// Lambda (concise) - only works for functional interfaces
+Runnable runnable2 = () -> System.out.println("Running");
+
+// Practical use case: Event listeners
+interface ClickListener {
+    void onClick();
+}
+
+class Button {
+    private ClickListener listener; // => Store listener
+
+    public void setOnClickListener(ClickListener listener) {
+        this.listener = listener; // => Set listener
+    }
+
+    public void click() {
+        if (listener != null) {
+            listener.onClick(); // => Trigger callback
+        }
+    }
+}
+
+Button button = new Button(); // => Create button
+
+// Anonymous inner class as callback
+button.setOnClickListener(new ClickListener() {
+    @Override
+    public void onClick() {
+        System.out.println("Button clicked!"); // => Callback implementation
+    }
+});
+
+button.click(); // => "Button clicked!"
+
+// Or with lambda (cleaner)
+button.setOnClickListener(() -> System.out.println("Button clicked!")); // => Same behavior
+button.click(); // => "Button clicked!"
+
+// Nested class access levels
+class OuterAccess {
+    // All access modifiers work for nested classes
+    public static class PublicNested {} // => Accessible anywhere
+    protected static class ProtectedNested {} // => Package + subclasses
+    static class PackageNested {} // => Same package only
+    private static class PrivateNested {} // => Only within OuterAccess
+
+    public void usePrivateNested() {
+        PrivateNested pn = new PrivateNested(); // => OK: same outer class
+    }
+}
+
+// OuterAccess.PrivateNested pn = new OuterAccess.PrivateNested(); // => ERROR: private
+OuterAccess.PublicNested pub = new OuterAccess.PublicNested(); // => OK: public
+
+// Capturing variables - effectively final requirement
+class EffectivelyFinalExample {
+    public void demonstrate() {
+        int x = 10; // => Effectively final (not modified)
+        // x = 20; // => Would make x NOT effectively final
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(x); // => OK: x is effectively final
+            }
+        };
+
+        // x = 30; // => ERROR: would make x not effectively final (captured by r)
+
+        r.run(); // => "10"
+    }
+}
+```
+
+**Key Takeaway**: Four nested class types: static nested (no outer instance), non-static inner (tied to outer), local (in method), anonymous (no name). Static nested accessed via `Outer.StaticNested`. Inner accessed via `outer.new Inner()`. Local and anonymous capture effectively final variables. Anonymous classes are verbose—prefer lambdas for functional interfaces. Nested classes provide encapsulation and organization for tightly coupled logic.
+
+---
+
+### Example 24: Final Keyword
+
+The `final` keyword prevents modification: final variables can't be reassigned, final methods can't be overridden, final classes can't be extended. Essential for immutability and security.
+
+**Code**:
+
+```java
+// Final variables - cannot be reassigned after initialization
+final int CONST = 42; // => CONST is 42, cannot change
+// CONST = 50; // => ERROR: cannot assign to final variable
+
+final String name; // => Declaration without initialization
+name = "Alice"; // => OK: first assignment (initialization)
+// name = "Bob"; // => ERROR: cannot reassign final variable
+
+// Final with objects - reference is final, not object state
+final List<String> list = new ArrayList<>(); // => list reference is final
+list.add("Java"); // => OK: modify object state (list is mutable)
+list.add("Python"); // => OK: add more elements
+// list = new ArrayList<>(); // => ERROR: cannot reassign final reference
+// => final makes REFERENCE immutable, not OBJECT
+
+// Final parameters - cannot be modified inside method
+public static void process(final int value) {
+    // value = 10; // => ERROR: cannot assign to final parameter
+    System.out.println(value * 2); // => OK: read final parameter
+}
+
+// Final in loops - each iteration gets new final variable
+for (final String item : List.of("A", "B", "C")) {
+    System.out.println(item); // => "A", "B", "C"
+    // item = "X"; // => ERROR: cannot modify final variable
+}
+
+// Final instance fields - must be initialized
+class Person {
+    private final String name; // => Must initialize in constructor
+    private final int birthYear; // => Must initialize in constructor
+    private int age; // => Not final, can change
+
+    // Final fields MUST be initialized by end of constructor
+    public Person(String name, int birthYear) {
+        this.name = name; // => Initialize final field
+        this.birthYear = birthYear; // => Initialize final field
+        this.age = 0; // => Initialize non-final field
+    }
+
+    public void celebrateBirthday() {
+        this.age++; // => OK: age is not final
+        // this.birthYear++; // => ERROR: cannot modify final field
+    }
+
+    public String getName() {
+        return name; // => Return final field
+    }
+}
+
+// Blank final - final field without initializer at declaration
+class BlankFinal {
+    private final int value; // => Blank final (no initializer)
+
+    // Must initialize in constructor
+    public BlankFinal(int value) {
+        this.value = value; // => Initialize blank final
+    }
+}
+
+// Final methods - cannot be overridden in subclasses
+class Parent {
+    // Final method - prevents override
+    public final void finalMethod() {
+        System.out.println("Parent final method"); // => Cannot be overridden
+    }
+
+    // Non-final method - can be overridden
+    public void regularMethod() {
+        System.out.println("Parent regular method"); // => Can be overridden
+    }
+}
+
+class Child extends Parent {
+    // @Override
+    // public void finalMethod() {} // => ERROR: cannot override final method
+
+    @Override
+    public void regularMethod() {
+        System.out.println("Child regular method"); // => OK: override non-final
+    }
+}
+
+// Final classes - cannot be extended
+final class FinalClass {
+    public void method() {
+        System.out.println("Final class method"); // => Class cannot be subclassed
+    }
+}
+
+// class SubClass extends FinalClass {} // => ERROR: cannot extend final class
+
+// Practical uses of final classes: String, Integer, Math (from Java standard library)
+// final class String - prevents subclassing to maintain security and performance guarantees
+// final class Integer - wrapper class cannot be extended
+// final class Math - utility class with only static methods
+
+// Effectively final - not declared final, but never modified
+public static void effectivelyFinal() {
+    int x = 10; // => Not declared final, but never modified
+    int y = 20; // => Not declared final
+
+    Runnable r = () -> {
+        System.out.println(x); // => OK: x is effectively final (never modified)
+        // System.out.println(y); // => Would be ERROR if y modified later
+    };
+
+    // x = 30; // => Uncommenting this would make x NOT effectively final
+    // => Lambdas and anonymous classes can only capture final/effectively final variables
+}
+
+// Final static fields - class constants
+class Constants {
+    // Public constants - final and static
+    public static final double PI = 3.14159; // => Cannot change, shared across instances
+    public static final int MAX_SIZE = 1000; // => Constant
+    public static final String APP_NAME = "MyApp"; // => Constant
+
+    // Private constructor prevents instantiation
+    private Constants() {}
+}
+
+double area = Constants.PI * 5 * 5; // => Use constant
+// Constants.PI = 3.0; // => ERROR: cannot assign to final static field
+
+// Final for immutability - defensive copying
+class ImmutablePerson {
+    private final String name; // => Final field
+    private final List<String> hobbies; // => Final reference
+
+    public ImmutablePerson(String name, List<String> hobbies) {
+        this.name = name; // => Assign final
+        // Defensive copy to prevent external modification
+        this.hobbies = new ArrayList<>(hobbies); // => Create new list (copy)
+    }
+
+    public String getName() {
+        return name; // => Return final field (String is immutable)
+    }
+
+    public List<String> getHobbies() {
+        // Return unmodifiable view to preserve immutability
+        return Collections.unmodifiableList(hobbies); // => Prevent external modification
+    }
+}
+
+List<String> originalHobbies = new ArrayList<>();
+originalHobbies.add("Reading");
+ImmutablePerson person = new ImmutablePerson("Alice", originalHobbies);
+
+originalHobbies.add("Gaming"); // => Modifies original list
+System.out.println(person.getHobbies()); // => [Reading] (person's copy unaffected)
+
+// person.getHobbies().add("Cooking"); // => ERROR: UnsupportedOperationException (unmodifiable)
+
+// Final vs const in other languages:
+// Java final is runtime constant (value determined at runtime)
+// compile-time constants use "static final" together
+class CompileTimeConstants {
+    // Compile-time constant - value known at compile time
+    public static final int COMPILE_CONST = 100; // => Known at compile time
+
+    // Runtime constant - value determined at runtime
+    public final int runtimeConst; // => Not known until object created
+
+    public CompileTimeConstants(int value) {
+        this.runtimeConst = value; // => Set at runtime
+    }
+}
+```
+
+**Key Takeaway**: `final` prevents modification: variables can't be reassigned, methods can't be overridden, classes can't be extended. Final variables require initialization (declaration or constructor). Final reference makes pointer immutable, not object state. Effectively final variables (not modified after initialization) can be captured by lambdas. Use final for constants (`static final`), immutability (final fields), and security (final methods/classes). Final helps compiler optimize and prevents accidental modification.
+
+---
+
+### Example 25: This and Super Keywords
+
+The `this` keyword references the current instance. The `super` keyword references the parent class. Both are essential for constructors, method calls, and resolving name conflicts.
+
+**Code**:
+
+```java
+// this keyword - reference to current instance
+class Person {
+    private String name; // => Instance field
+    private int age; // => Instance field
+
+    // Constructor with same parameter names as fields
+    public Person(String name, int age) {
+        this.name = name; // => this.name refers to field, name refers to parameter
+        this.age = age; // => Distinguish field from parameter using this
+    }
+
+    // Method returning current instance (fluent API)
+    public Person setName(String name) {
+        this.name = name; // => Update field
+        return this; // => Return current instance for method chaining
+    }
+
+    public Person setAge(int age) {
+        this.age = age; // => Update field
+        return this; // => Return current instance
+    }
+
+    public void display() {
+        System.out.println("Name: " + this.name + ", Age: " + this.age);
+        // this is optional when no ambiguity
+        System.out.println("Name: " + name + ", Age: " + age); // => Same as above
+    }
+}
+
+// Method chaining with this
+Person person = new Person("Alice", 30);
+person.setName("Bob").setAge(25).display(); // => Chained calls
+// => "Name: Bob, Age: 25"
+
+// this() - call another constructor in same class
+class Rectangle {
+    private double width; // => width field
+    private double height; // => height field
+
+    // Default constructor
+    public Rectangle() {
+        this(1.0, 1.0); // => Calls two-parameter constructor
+        // this() MUST be first statement in constructor
+    }
+
+    // One parameter (square)
+    public Rectangle(double side) {
+        this(side, side); // => Calls two-parameter constructor
+    }
+
+    // Two parameters (primary constructor)
+    public Rectangle(double width, double height) {
+        this.width = width; // => Initialize fields
+        this.height = height;
+    }
+
+    public double area() {
+        return this.width * this.height; // => Calculate area
+    }
+}
+
+Rectangle r1 = new Rectangle(); // => Calls default constructor -> this(1.0, 1.0)
+Rectangle r2 = new Rectangle(5.0); // => Calls one-param constructor -> this(5.0, 5.0)
+Rectangle r3 = new Rectangle(3.0, 4.0); // => Calls two-param constructor directly
+
+// this as method parameter - pass current instance
+class Node {
+    private int value; // => Node value
+    private Node next; // => Reference to next node
+
+    public Node(int value) {
+        this.value = value; // => Initialize value
+    }
+
+    public void setNext(Node next) {
+        this.next = next; // => Set next node
+    }
+
+    public void appendSelf(Node head) {
+        head.setNext(this); // => Pass current instance to another object
+    }
+}
+
+// super keyword - reference to parent class
+class Animal {
+    protected String name; // => Accessible to subclasses
+
+    public Animal(String name) {
+        this.name = name; // => Initialize name
+    }
+
+    public void makeSound() {
+        System.out.println(name + " makes a sound"); // => Generic sound
+    }
+
+    public void eat() {
+        System.out.println(name + " is eating"); // => Eating behavior
+    }
+}
+
+class Dog extends Animal {
+    private String breed; // => Dog-specific field
+
+    // Constructor calling parent constructor
+    public Dog(String name, String breed) {
+        super(name); // => MUST be first statement, calls Animal(name)
+        this.breed = breed; // => Initialize subclass field
+    }
+
+    // Override parent method
+    @Override
+    public void makeSound() {
+        System.out.println(name + " barks: Woof!"); // => Specific sound
+    }
+
+    // Method using both this and super
+    public void displayInfo() {
+        System.out.println("Dog: " + this.name); // => this.name (current instance)
+        super.makeSound(); // => Call parent version: "Rex makes a sound"
+        this.makeSound(); // => Call current version: "Rex barks: Woof!"
+        // Without super, would call overridden version
+    }
+
+    // Calling parent method explicitly
+    public void eatWithMessage() {
+        super.eat(); // => Call parent's eat() method
+        System.out.println("Dog is full!"); // => Additional behavior
+    }
+}
+
+Dog dog = new Dog("Rex", "Labrador"); // => Calls super(name), then initializes breed
+dog.displayInfo();
+// => "Dog: Rex"
+// => "Rex makes a sound" (super.makeSound())
+// => "Rex barks: Woof!" (this.makeSound())
+
+dog.eatWithMessage();
+// => "Rex is eating" (super.eat())
+// => "Dog is full!"
+
+// super vs this in constructors
+class GrandParent {
+    public GrandParent() {
+        System.out.println("GrandParent constructor"); // => First
+    }
+}
+
+class Parent2 extends GrandParent {
+    public Parent2() {
+        super(); // => Implicit if not specified, calls GrandParent()
+        System.out.println("Parent constructor"); // => Second
+    }
+}
+
+class Child2 extends Parent2 {
+    public Child2() {
+        super(); // => Calls Parent2(), which calls GrandParent()
+        System.out.println("Child constructor"); // => Third
+    }
+}
+
+Child2 child = new Child2();
+// => Output:
+// => "GrandParent constructor"
+// => "Parent constructor"
+// => "Child constructor"
+
+// Implicit super() call - added by compiler if not specified
+class ImplicitSuper {
+    public ImplicitSuper() {
+        // super(); // => Implicitly added by compiler
+        System.out.println("Constructor"); // => Executes after super()
+    }
+}
+
+// this vs super summary:
+// this:
+//   - References current instance
+//   - this.field accesses instance field
+//   - this.method() calls instance method
+//   - this() calls another constructor in SAME class
+//   - return this enables method chaining
+
+// super:
+//   - References parent class
+//   - super.field accesses parent field (if accessible)
+//   - super.method() calls parent method
+//   - super() calls parent constructor
+//   - super MUST be first statement in constructor if used
+
+// Common error: super/this() not first statement
+class ConstructorError {
+    // public ConstructorError() {
+    //     int x = 10; // Some code
+    //     super(); // => ERROR: super() must be first statement
+    // }
+
+    public ConstructorError() {
+        super(); // => Correct: first statement
+        int x = 10; // => Other code after super()
+    }
+}
+
+// Cannot use both this() and super() in same constructor
+class BothError {
+    // public BothError() {
+    //     super(); // Call parent
+    //     this(10); // ERROR: cannot have both this() and super()
+    // }
+
+    public BothError() {
+        this(10); // => OK: call another constructor (which will call super())
+    }
+
+    public BothError(int value) {
+        super(); // => This constructor calls super()
+    }
+}
+```
+
+**Key Takeaway**: `this` references current instance. Use `this.field` to distinguish fields from parameters. `this()` calls another constructor in same class (must be first statement). `return this` enables method chaining. `super` references parent class. Use `super()` to call parent constructor (must be first statement). `super.method()` calls parent method version. Cannot use both `this()` and `super()` in same constructor—choose one delegation path. Implicit `super()` added by compiler if no explicit `super()` or `this()` call.

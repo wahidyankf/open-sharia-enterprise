@@ -3,7 +3,7 @@ title: "Intermediate"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Master intermediate Java through 20 examples: advanced OOP, generics, functional programming, streams, file I/O, testing, and concurrency patterns"
+description: "Master intermediate Java through 30 examples: advanced OOP, generics, functional programming, streams, file I/O, testing, and concurrency patterns"
 tags:
   [
     "java",
@@ -18,7 +18,7 @@ tags:
   ]
 ---
 
-Master intermediate Java concepts through 20 annotated code examples. Each example builds on beginner foundations, introducing advanced OOP, generics, functional programming, and concurrency patterns.
+Master intermediate Java concepts through 30 annotated code examples. Each example builds on beginner foundations, introducing advanced OOP, generics, functional programming, and concurrency patterns.
 
 ## Group 1: Advanced OOP
 
@@ -2131,3 +2131,2245 @@ all.join(); // Waits for both to complete
 ```
 
 **Key Takeaway**: `CompletableFuture` enables async programming. `supplyAsync()` starts async computation. `thenApply()` transforms, `thenAccept()` consumes. `exceptionally()` handles errors. `thenCombine()` combines futures. `allOf()`/`anyOf()` wait for multiple futures.
+
+---
+
+## Group 6: Advanced Streams and Collectors
+
+### Example 36: Custom Collectors
+
+Custom collectors enable specialized aggregation logic beyond built-in collectors. Implement `Collector` interface for domain-specific operations. Use `Collector.of()` for simple cases.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Stream["Stream Elements"] --> Supplier["supplier()<br/>Create container"]
+    Supplier --> Accumulator["accumulator()<br/>Add elements"]
+    Accumulator --> Combiner["combiner()<br/>Merge containers"]
+    Combiner --> Finisher["finisher()<br/>Transform result"]
+    Finisher --> Result["Final Result"]
+
+    style Stream fill:#0173B2,color:#fff
+    style Supplier fill:#DE8F05,color:#fff
+    style Accumulator fill:#029E73,color:#fff
+    style Combiner fill:#CC78BC,color:#fff
+    style Finisher fill:#CA9161,color:#fff
+    style Result fill:#0173B2,color:#fff
+```
+
+**Code**:
+
+```java
+import java.util.stream.*;
+import java.util.*;
+import java.util.function.*;
+
+// Built-in collectors - common patterns
+List<String> names = List.of("Alice", "Bob", "Charlie", "David"); // => 4 names
+
+// toList - collect to ArrayList
+List<String> list = names.stream()
+    .filter(s -> s.length() > 3) // => Filter: Alice, Charlie, David
+    .collect(Collectors.toList()); // => [Alice, Charlie, David]
+
+// toSet - collect to HashSet (removes duplicates)
+Set<Integer> lengths = names.stream()
+    .map(String::length) // => [5, 3, 7, 5]
+    .collect(Collectors.toSet()); // => [3, 5, 7] (unique lengths)
+
+// toMap - collect to HashMap
+Map<String, Integer> nameToLength = names.stream()
+    .collect(Collectors.toMap(
+        name -> name, // => Key function
+        String::length // => Value function
+    )); // => {Alice=5, Bob=3, Charlie=7, David=5}
+
+// joining - concatenate strings
+String joined = names.stream()
+    .collect(Collectors.joining(", ")); // => "Alice, Bob, Charlie, David"
+
+String withPrefix = names.stream()
+    .collect(Collectors.joining(", ", "[", "]")); // => "[Alice, Bob, Charlie, David]"
+
+// groupingBy - group elements by classifier
+Map<Integer, List<String>> byLength = names.stream()
+    .collect(Collectors.groupingBy(String::length));
+// => {3=[Bob], 5=[Alice, David], 7=[Charlie]}
+
+// partitioningBy - split into two groups (true/false)
+Map<Boolean, List<String>> partition = names.stream()
+    .collect(Collectors.partitioningBy(s -> s.length() > 4));
+// => {false=[Bob], true=[Alice, Charlie, David]}
+
+// counting - count elements
+long count = names.stream()
+    .collect(Collectors.counting()); // => 4
+
+// summingInt - sum integer values
+int totalLength = names.stream()
+    .collect(Collectors.summingInt(String::length)); // => 5+3+7+5 = 20
+
+// averagingInt - average of integer values
+double avgLength = names.stream()
+    .collect(Collectors.averagingInt(String::length)); // => 20/4 = 5.0
+
+// summarizingInt - statistics (count, sum, min, max, average)
+IntSummaryStatistics stats = names.stream()
+    .collect(Collectors.summarizingInt(String::length));
+System.out.println(stats.getCount()); // => 4
+System.out.println(stats.getSum()); // => 20
+System.out.println(stats.getMin()); // => 3
+System.out.println(stats.getMax()); // => 7
+System.out.println(stats.getAverage()); // => 5.0
+
+// Custom collector using Collector.of()
+// Example: collect to immutable list
+Collector<String, List<String>, List<String>> toImmutableList = Collector.of(
+    ArrayList::new, // => Supplier: create mutable container
+    List::add, // => Accumulator: add element to container
+    (list1, list2) -> { // => Combiner: merge two containers
+        list1.addAll(list2); // => Combine lists
+        return list1; // => Return merged list
+    },
+    Collections::unmodifiableList // => Finisher: make immutable
+);
+
+List<String> immutable = names.stream()
+    .collect(toImmutableList); // => Immutable list
+// immutable.add("Eve"); // => Throws UnsupportedOperationException
+
+// Custom collector: concatenate with custom separator and brackets
+Collector<String, StringBuilder, String> customJoin = Collector.of(
+    StringBuilder::new, // => Supplier: create StringBuilder
+    (sb, s) -> { // => Accumulator: add element
+        if (sb.length() > 0) sb.append(" | "); // => Add separator if not first
+        sb.append(s); // => Append element
+    },
+    (sb1, sb2) -> { // => Combiner: merge StringBuilders
+        if (sb1.length() > 0 && sb2.length() > 0) {
+            sb1.append(" | "); // => Add separator between merged parts
+        }
+        return sb1.append(sb2); // => Combine and return
+    },
+    sb -> "[" + sb.toString() + "]" // => Finisher: wrap in brackets
+);
+
+String custom = names.stream()
+    .collect(customJoin); // => "[Alice | Bob | Charlie | David]"
+
+// Downstream collectors - combine collectors
+Map<Integer, Long> lengthCounts = names.stream()
+    .collect(Collectors.groupingBy(
+        String::length, // => Group by length
+        Collectors.counting() // => Count elements in each group
+    )); // => {3=1, 5=2, 7=1}
+
+Map<Integer, String> lengthToNames = names.stream()
+    .collect(Collectors.groupingBy(
+        String::length, // => Group by length
+        Collectors.joining(", ") // => Join names in each group
+    )); // => {3=Bob, 5=Alice, David, 7=Charlie}
+
+// collectingAndThen - transform collector result
+List<String> unmodifiable = names.stream()
+    .collect(Collectors.collectingAndThen(
+        Collectors.toList(), // => Collect to list first
+        Collections::unmodifiableList // => Then make immutable
+    )); // => Immutable list
+
+// teeing - apply two collectors and combine results (Java 12+)
+record MinMax(String min, String max) {} // => Record for result
+
+MinMax minMax = names.stream()
+    .collect(Collectors.teeing(
+        Collectors.minBy(Comparator.naturalOrder()), // => First collector: min
+        Collectors.maxBy(Comparator.naturalOrder()), // => Second collector: max
+        (min, max) -> new MinMax(min.orElse(""), max.orElse("")) // => Combine results
+    )); // => MinMax[min=Alice, max=David]
+
+// filtering - filter before collecting (Java 9+)
+Map<Integer, List<String>> longNamesGrouped = names.stream()
+    .collect(Collectors.groupingBy(
+        String::length,
+        Collectors.filtering(s -> s.length() > 4, Collectors.toList()) // => Filter in collector
+    )); // => {3=[], 5=[Alice, David], 7=[Charlie]}
+
+// mapping - map before collecting
+Map<Integer, List<Integer>> lengthToChars = names.stream()
+    .collect(Collectors.groupingBy(
+        String::length,
+        Collectors.mapping(s -> s.charAt(0) - 'A', Collectors.toList()) // => Map to first char
+    )); // => {3=[1], 5=[0, 3], 7=[2]}
+```
+
+**Key Takeaway**: Built-in collectors handle common aggregations: `toList()`, `toSet()`, `toMap()`, `joining()`, `groupingBy()`, `partitioningBy()`. Collectors compose with downstream collectors. Custom collectors use `Collector.of()` with supplier, accumulator, combiner, and finisher. Use `collectingAndThen()` to transform final result. `teeing()` applies two collectors simultaneously.
+
+---
+
+### Example 37: Method References Deep Dive
+
+Method references provide concise syntax for lambda expressions that call existing methods. Four types: static, instance, constructor, and arbitrary object. Understand when to use each type.
+
+**Code**:
+
+```java
+import java.util.*;
+import java.util.function.*;
+
+// 1. Static method reference - ClassName::staticMethod
+List<String> numbers = List.of("1", "2", "3", "4"); // => String numbers
+
+// Lambda version
+List<Integer> parsed1 = numbers.stream()
+    .map(s -> Integer.parseInt(s)) // => Lambda calling static method
+    .toList(); // => [1, 2, 3, 4]
+
+// Method reference version
+List<Integer> parsed2 = numbers.stream()
+    .map(Integer::parseInt) // => Static method reference (cleaner)
+    .toList(); // => [1, 2, 3, 4]
+
+// 2. Instance method reference on specific object - object::instanceMethod
+String prefix = "Number: "; // => Specific String object
+
+// Lambda version
+List<String> prefixed1 = numbers.stream()
+    .map(s -> prefix.concat(s)) // => Lambda calling instance method on prefix
+    .toList(); // => ["Number: 1", "Number: 2", "Number: 3", "Number: 4"]
+
+// Method reference version
+List<String> prefixed2 = numbers.stream()
+    .map(prefix::concat) // => Instance method reference on prefix object
+    .toList(); // => ["Number: 1", "Number: 2", "Number: 3", "Number: 4"]
+
+// 3. Instance method reference on arbitrary object - ClassName::instanceMethod
+List<String> names = List.of("alice", "BOB", "Charlie"); // => Mixed case names
+
+// Lambda version
+List<String> upper1 = names.stream()
+    .map(s -> s.toUpperCase()) // => Lambda calling instance method on each element
+    .toList(); // => ["ALICE", "BOB", "CHARLIE"]
+
+// Method reference version
+List<String> upper2 = names.stream()
+    .map(String::toUpperCase) // => Instance method reference (each element calls toUpperCase)
+    .toList(); // => ["ALICE", "BOB", "CHARLIE"]
+
+// Sorting with instance method reference
+List<String> sorted = names.stream()
+    .sorted(String::compareToIgnoreCase) // => Instance method reference for comparator
+    .toList(); // => ["alice", "BOB", "Charlie"] (case-insensitive sort)
+
+// 4. Constructor reference - ClassName::new
+List<Integer> lengths = List.of(5, 3, 7, 4); // => Integer list
+
+// Lambda version
+List<String> strings1 = lengths.stream()
+    .map(len -> new String(new char[len]).replace('\0', 'x')) // => Lambda creating objects
+    .toList(); // => ["xxxxx", "xxx", "xxxxxxx", "xxxx"]
+
+// Constructor reference for simple cases
+class Person {
+    private String name; // => Person field
+
+    public Person(String name) {
+        this.name = name; // => Constructor initializes name
+    }
+
+    public String getName() { return name; } // => Getter
+}
+
+// Constructor reference
+List<Person> people = names.stream()
+    .map(Person::new) // => Constructor reference (equivalent to s -> new Person(s))
+    .toList(); // => List of Person objects
+
+// Array constructor reference
+String[] array = names.stream()
+    .toArray(String[]::new); // => Array constructor reference
+// => Creates String[] of appropriate size: ["alice", "BOB", "Charlie"]
+
+// Method reference with multiple parameters
+BiFunction<String, String, String> concat1 = (a, b) -> a.concat(b); // => Lambda
+BiFunction<String, String, String> concat2 = String::concat; // => Method reference
+
+String result = concat2.apply("Hello", " World"); // => "Hello World"
+
+// Method reference in forEach
+names.stream()
+    .forEach(System.out::println); // => Instance method reference on System.out
+// => Prints: alice, BOB, Charlie
+
+// Method reference with Comparator
+List<String> byLength = names.stream()
+    .sorted(Comparator.comparing(String::length)) // => Method reference in comparing()
+    .toList(); // => ["BOB", "alice", "Charlie"] (sorted by length)
+
+List<String> byLengthReversed = names.stream()
+    .sorted(Comparator.comparing(String::length).reversed()) // => Reversed comparator
+    .toList(); // => ["Charlie", "alice", "BOB"]
+
+// Chained comparators with method references
+record Employee(String name, int age, double salary) {} // => Employee record
+
+List<Employee> employees = List.of(
+    new Employee("Alice", 30, 50000), // => Employee 1
+    new Employee("Bob", 25, 45000), // => Employee 2
+    new Employee("Charlie", 30, 55000) // => Employee 3
+);
+
+List<Employee> sorted2 = employees.stream()
+    .sorted(Comparator
+        .comparing(Employee::age) // => Sort by age first
+        .thenComparing(Employee::salary) // => Then by salary
+        .reversed()) // => Reverse entire order
+    .toList(); // => [Charlie(30, 55000), Alice(30, 50000), Bob(25, 45000)]
+
+// Method reference with Optional
+Optional<String> opt = Optional.of("hello"); // => Optional containing "hello"
+
+// Lambda version
+opt.map(s -> s.toUpperCase()).ifPresent(s -> System.out.println(s)); // => "HELLO"
+
+// Method reference version
+opt.map(String::toUpperCase) // => Method reference for map
+   .ifPresent(System.out::println); // => Method reference for ifPresent: "HELLO"
+
+// Method reference limitations
+// Cannot use when:
+// 1. Lambda has additional logic beyond method call
+List<String> withLogic = names.stream()
+    .map(s -> {
+        System.out.println("Processing: " + s); // => Extra logic
+        return s.toUpperCase(); // => Cannot use method reference here
+    })
+    .toList();
+
+// 2. Lambda modifies parameters before passing
+List<String> modified = names.stream()
+    .map(s -> Integer.parseInt(s.trim())) // => Can't use Integer::parseInt (needs trim first)
+    .toList();
+
+// Practical patterns with method references
+class StringUtils {
+    public static String reverse(String s) {
+        return new StringBuilder(s).reverse().toString(); // => Reverse string
+    }
+}
+
+List<String> reversed = names.stream()
+    .map(StringUtils::reverse) // => Static method reference to custom utility
+    .toList(); // => ["ecila", "BOB", "eilrahC"]
+
+// Supplier with constructor reference
+Supplier<List<String>> listSupplier = ArrayList::new; // => Constructor reference
+List<String> newList = listSupplier.get(); // => Creates new ArrayList
+newList.add("item"); // => Add to new list
+
+// Consumer with method reference
+Consumer<String> printer = System.out::println; // => Method reference to println
+names.forEach(printer); // => Prints each name
+```
+
+**Key Takeaway**: Four method reference types: static (`ClassName::staticMethod`), instance on object (`object::method`), instance on arbitrary (`ClassName::method`), constructor (`ClassName::new`). Method references are shorthand for lambdas that only call one method. Use when lambda body is a single method call with matching parameters. Cannot use when lambda has additional logic or parameter transformation. Array constructors use `Type[]::new`.
+
+---
+
+### Example 38: Date and Time API (java.time)
+
+Modern Date-Time API (Java 8+) provides immutable, thread-safe date/time handling. Replaces legacy `Date` and `Calendar`. Understand `LocalDate`, `LocalTime`, `LocalDateTime`, `ZonedDateTime`, and `Duration`/`Period`.
+
+**Code**:
+
+```java
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.*;
+
+// LocalDate - date without time (year-month-day)
+LocalDate today = LocalDate.now(); // => Current date: 2025-12-25
+LocalDate specificDate = LocalDate.of(2024, 1, 15); // => 2024-01-15
+LocalDate parsed = LocalDate.parse("2024-03-20"); // => 2024-03-20
+
+System.out.println(today.getYear()); // => 2025
+System.out.println(today.getMonth()); // => DECEMBER (enum)
+System.out.println(today.getMonthValue()); // => 12
+System.out.println(today.getDayOfMonth()); // => 25
+System.out.println(today.getDayOfWeek()); // => WEDNESDAY (enum)
+System.out.println(today.getDayOfYear()); // => 359
+
+// LocalTime - time without date (hour:minute:second.nanosecond)
+LocalTime now = LocalTime.now(); // => Current time: 14:30:45.123456789
+LocalTime specificTime = LocalTime.of(10, 30); // => 10:30:00
+LocalTime withSeconds = LocalTime.of(10, 30, 45); // => 10:30:45
+LocalTime withNanos = LocalTime.of(10, 30, 45, 123456789); // => 10:30:45.123456789
+
+System.out.println(now.getHour()); // => 14
+System.out.println(now.getMinute()); // => 30
+System.out.println(now.getSecond()); // => 45
+System.out.println(now.getNano()); // => 123456789
+
+// LocalDateTime - date and time without timezone
+LocalDateTime datetime = LocalDateTime.now(); // => Current date-time: 2025-12-25T14:30:45.123
+LocalDateTime specific = LocalDateTime.of(2024, 1, 15, 10, 30); // => 2024-01-15T10:30
+LocalDateTime combined = LocalDateTime.of(today, now); // => Combine date and time
+
+// ZonedDateTime - date-time with timezone
+ZonedDateTime zoned = ZonedDateTime.now(); // => Current with default timezone
+ZonedDateTime newYork = ZonedDateTime.now(ZoneId.of("America/New_York"));
+// => Current time in New York: 2025-12-25T09:30:45.123-05:00[America/New_York]
+
+ZonedDateTime tokyo = zoned.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+// => Same instant converted to Tokyo timezone
+
+// Instant - timestamp (seconds since Unix epoch: 1970-01-01T00:00:00Z)
+Instant timestamp = Instant.now(); // => Current timestamp: 2025-12-25T14:30:45.123Z
+long epochSeconds = timestamp.getEpochSecond(); // => Seconds since epoch: 1735139445
+long epochMillis = timestamp.toEpochMilli(); // => Milliseconds since epoch
+
+// Arithmetic operations - immutable (returns new instances)
+LocalDate tomorrow = today.plusDays(1); // => 2025-12-26 (today unchanged)
+LocalDate nextWeek = today.plusWeeks(1); // => 2026-01-01
+LocalDate nextMonth = today.plusMonths(1); // => 2026-01-25
+LocalDate nextYear = today.plusYears(1); // => 2026-12-25
+
+LocalDate yesterday = today.minusDays(1); // => 2025-12-24
+LocalDate lastMonth = today.minusMonths(1); // => 2025-11-25
+
+LocalTime later = now.plusHours(2).plusMinutes(30); // => 17:00:45.123 (2.5 hours later)
+LocalTime earlier = now.minusHours(1); // => 13:30:45.123 (1 hour earlier)
+
+// with methods - modify specific fields
+LocalDate modified = today
+    .withYear(2030) // => Change year to 2030
+    .withMonth(6) // => Change month to June
+    .withDayOfMonth(15); // => Change day to 15th: 2030-06-15
+
+LocalTime modifiedTime = now
+    .withHour(9) // => Change hour to 9
+    .withMinute(0) // => Change minute to 0
+    .withSecond(0) // => Change second to 0: 09:00:00
+
+// TemporalAdjusters - complex date adjustments
+LocalDate firstDayOfMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+// => 2025-12-01
+
+LocalDate lastDayOfMonth = today.with(TemporalAdjusters.lastDayOfMonth());
+// => 2025-12-31
+
+LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+// => Next Monday after today
+
+LocalDate firstMonday = today.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
+// => First Monday of current month
+
+// Period - date-based duration (years, months, days)
+Period period = Period.between(specificDate, today); // => Period from 2024-01-15 to today
+System.out.println(period.getYears()); // => 1 (year difference)
+System.out.println(period.getMonths()); // => 11 (month difference)
+System.out.println(period.getDays()); // => 10 (day difference)
+
+Period twoWeeks = Period.ofWeeks(2); // => 14 days
+Period threeMonths = Period.ofMonths(3); // => 3 months
+LocalDate future = today.plus(threeMonths); // => 2026-03-25
+
+// Duration - time-based duration (hours, minutes, seconds, nanos)
+Duration duration = Duration.between(specificTime, now); // => Duration from 10:30 to now
+System.out.println(duration.toHours()); // => Hours difference: 4
+System.out.println(duration.toMinutes()); // => Minutes difference: 240
+System.out.println(duration.getSeconds()); // => Total seconds
+
+Duration oneHour = Duration.ofHours(1); // => 1 hour
+Duration thirtyMinutes = Duration.ofMinutes(30); // => 30 minutes
+LocalTime laterTime = now.plus(oneHour); // => 15:30:45.123
+
+// Formatting and parsing
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+String formatted = datetime.format(formatter); // => "2025-12-25 14:30:45"
+
+LocalDateTime parsedDateTime = LocalDateTime.parse("2024-03-20 10:30:00", formatter);
+// => 2024-03-20T10:30:00
+
+// Predefined formatters
+String iso = today.format(DateTimeFormatter.ISO_DATE); // => "2025-12-25"
+String custom = today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); // => "25/12/2025"
+
+// Comparison
+boolean isBefore = specificDate.isBefore(today); // => true (2024-01-15 before today)
+boolean isAfter = specificDate.isAfter(today); // => false
+boolean isEqual = today.isEqual(today); // => true
+
+// ChronoUnit - calculate time units between dates
+long daysBetween = ChronoUnit.DAYS.between(specificDate, today); // => Days: 709
+long monthsBetween = ChronoUnit.MONTHS.between(specificDate, today); // => Months: 23
+long hoursBetween = ChronoUnit.HOURS.between(specificTime, now); // => Hours: 4
+
+// Leap year check
+boolean isLeapYear = today.isLeapYear(); // => false (2025 is not leap year)
+boolean was2024Leap = specificDate.isLeapYear(); // => true (2024 is leap year)
+
+// Length of month
+int daysInMonth = today.lengthOfMonth(); // => 31 (December has 31 days)
+int daysInYear = today.lengthOfYear(); // => 365 (2025 is not leap year)
+
+// Practical example: calculate age
+LocalDate birthDate = LocalDate.of(1990, 5, 15); // => Birth: 1990-05-15
+Period age = Period.between(birthDate, today); // => Age period
+System.out.println("Age: " + age.getYears() + " years, " +
+                   age.getMonths() + " months, " +
+                   age.getDays() + " days");
+// => "Age: 35 years, 7 months, 10 days"
+
+// Working with different timezones
+ZoneId londonZone = ZoneId.of("Europe/London"); // => London timezone
+ZoneId sydneyZone = ZoneId.of("Australia/Sydney"); // => Sydney timezone
+
+ZonedDateTime londonTime = ZonedDateTime.now(londonZone);
+ZonedDateTime sydneyTime = londonTime.withZoneSameInstant(sydneyZone);
+// => Same instant, different timezone display
+
+// Time until specific event
+LocalDateTime event = LocalDateTime.of(2026, 1, 1, 0, 0); // => New Year 2026
+Duration timeUntil = Duration.between(LocalDateTime.now(), event);
+System.out.println("Days until event: " + timeUntil.toDays()); // => Days remaining
+```
+
+**Key Takeaway**: Modern Date-Time API is immutable and thread-safe. `LocalDate` for dates, `LocalTime` for times, `LocalDateTime` for both (no timezone). `ZonedDateTime` includes timezone. `Instant` for Unix timestamps. `Period` for date-based durations (years/months/days), `Duration` for time-based (hours/minutes/seconds). All operations return new instances. Use `DateTimeFormatter` for formatting/parsing. `TemporalAdjusters` for complex date math. `ChronoUnit` for calculating differences.
+
+---
+
+### Example 39: Regular Expressions
+
+Regular expressions (regex) enable pattern matching in strings. Java's `Pattern` and `Matcher` provide powerful text processing. Understand basic patterns, groups, and replacements for validation and extraction.
+
+**Code**:
+
+```java
+import java.util.regex.*;
+import java.util.*;
+
+// Basic pattern matching
+String text = "Hello World 123"; // => Input text
+
+// matches() - entire string must match pattern
+boolean matches1 = text.matches("Hello World \\d+"); // => true (\\d+ = one or more digits)
+boolean matches2 = text.matches("Hello"); // => false (doesn't match entire string)
+
+// Pattern compilation - reuse patterns efficiently
+Pattern pattern = Pattern.compile("\\d+"); // => Compile pattern once
+Matcher matcher = pattern.matcher(text); // => Create matcher for text
+
+// find() - find substring matching pattern
+if (matcher.find()) {
+    System.out.println("Found: " + matcher.group()); // => "123" (matched digits)
+    System.out.println("Start: " + matcher.start()); // => 12 (start index)
+    System.out.println("End: " + matcher.end()); // => 15 (end index)
+}
+
+// Find all matches
+String multipleNumbers = "Order 123 has 45 items and costs 67 dollars"; // => Multiple numbers
+Matcher numberMatcher = Pattern.compile("\\d+").matcher(multipleNumbers);
+
+while (numberMatcher.find()) {
+    System.out.println("Found number: " + numberMatcher.group());
+}
+// => Prints: "123", "45", "67"
+
+// Capturing groups - extract parts of match
+String email = "user@example.com"; // => Email address
+Pattern emailPattern = Pattern.compile("([a-zA-Z0-9]+)@([a-zA-Z0-9.]+)");
+// => Group 1: username, Group 2: domain
+
+Matcher emailMatcher = emailPattern.matcher(email);
+if (emailMatcher.matches()) {
+    System.out.println("Full match: " + emailMatcher.group(0)); // => "user@example.com"
+    System.out.println("Username: " + emailMatcher.group(1)); // => "user"
+    System.out.println("Domain: " + emailMatcher.group(2)); // => "example.com"
+}
+
+// Named groups (Java 7+)
+Pattern namedPattern = Pattern.compile("(?<user>[a-zA-Z0-9]+)@(?<domain>[a-zA-Z0-9.]+)");
+Matcher namedMatcher = namedPattern.matcher(email);
+
+if (namedMatcher.matches()) {
+    System.out.println("User: " + namedMatcher.group("user")); // => "user"
+    System.out.println("Domain: " + namedMatcher.group("domain")); // => "example.com"
+}
+
+// Common patterns
+String phonePattern = "\\d{3}-\\d{3}-\\d{4}"; // => 123-456-7890 format
+boolean validPhone = "555-123-4567".matches(phonePattern); // => true
+
+String zipPattern = "\\d{5}(-\\d{4})?"; // => 12345 or 12345-6789 format
+boolean validZip1 = "12345".matches(zipPattern); // => true
+boolean validZip2 = "12345-6789".matches(zipPattern); // => true
+boolean validZip3 = "123".matches(zipPattern); // => false
+
+// URL pattern (simplified)
+String urlPattern = "https?://[a-zA-Z0-9.-]+\\.[a-z]{2,}(/.*)?";
+boolean validUrl = "https://example.com/path".matches(urlPattern); // => true
+
+// replaceAll() - replace all matches
+String withSpaces = "hello   world  test"; // => Multiple spaces
+String normalized = withSpaces.replaceAll("\\s+", " "); // => "hello world test" (single spaces)
+
+String text2 = "Error: code 123, Error: code 456"; // => Multiple errors
+String replaced = text2.replaceAll("Error: code (\\d+)", "Bug #$1");
+// => "Bug #123, Bug #456" ($1 references group 1)
+
+// replaceFirst() - replace only first match
+String onlyFirst = text2.replaceFirst("Error", "Warning");
+// => "Warning: code 123, Error: code 456"
+
+// split() - split by pattern
+String csv = "apple,banana,cherry,date"; // => CSV data
+String[] fruits = csv.split(","); // => ["apple", "banana", "cherry", "date"]
+
+String irregular = "one  two   three    four"; // => Irregular spacing
+String[] words = irregular.split("\\s+"); // => ["one", "two", "three", "four"]
+
+// Pattern flags
+Pattern caseInsensitive = Pattern.compile("hello", Pattern.CASE_INSENSITIVE);
+boolean matches3 = caseInsensitive.matcher("HELLO").matches(); // => true
+
+Pattern multiline = Pattern.compile("^Hello", Pattern.MULTILINE);
+// => ^ matches start of each line, not just start of string
+
+Pattern dotall = Pattern.compile(".*", Pattern.DOTALL);
+// => . matches newlines too
+
+// Greedy vs reluctant quantifiers
+String html = "<div>Content</div><span>More</span>"; // => HTML tags
+
+// Greedy (default) - matches as much as possible
+Matcher greedy = Pattern.compile("<.*>").matcher(html);
+if (greedy.find()) {
+    System.out.println(greedy.group()); // => "<div>Content</div><span>More</span>"
+    // => Matches from first < to last >
+}
+
+// Reluctant (lazy) - matches as little as possible
+Matcher reluctant = Pattern.compile("<.*?>").matcher(html);
+while (reluctant.find()) {
+    System.out.println(reluctant.group());
+}
+// => Prints: "<div>", "</div>", "<span>", "</span>"
+// => Each match is minimal
+
+// Lookahead and lookbehind
+String prices = "Price: $100, $200, $300"; // => Prices with $ prefix
+
+// Positive lookahead - match followed by pattern
+Matcher lookahead = Pattern.compile("\\d+(?= dollars)").matcher("10 dollars");
+// => Matches "10" only if followed by " dollars"
+
+// Positive lookbehind - match preceded by pattern
+Matcher lookbehind = Pattern.compile("(?<=\\$)\\d+").matcher(prices);
+while (lookbehind.find()) {
+    System.out.println(lookbehind.group());
+}
+// => Prints: "100", "200", "300" (numbers after $)
+
+// Validation patterns
+class Validators {
+    public static boolean isEmail(String email) {
+        String pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return email.matches(pattern); // => Validates email format
+    }
+
+    public static boolean isStrongPassword(String password) {
+        // At least 8 chars, one uppercase, one lowercase, one digit, one special char
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        return password.matches(pattern); // => Validates password strength
+    }
+
+    public static boolean isIPv4(String ip) {
+        String pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+        return ip.matches(pattern); // => Validates IPv4 address
+    }
+}
+
+boolean validEmail = Validators.isEmail("user@example.com"); // => true
+boolean invalidEmail = Validators.isEmail("invalid@"); // => false
+
+boolean strongPass = Validators.isStrongPassword("Pass123!"); // => true
+boolean weakPass = Validators.isStrongPassword("password"); // => false
+
+boolean validIP = Validators.isIPv4("192.168.1.1"); // => true
+boolean invalidIP = Validators.isIPv4("999.999.999.999"); // => false
+
+// Extract all matches into list
+String sentence = "The price is $100 and the tax is $15"; // => Sentence with prices
+Pattern pricePattern = Pattern.compile("\\$\\d+"); // => $ followed by digits
+Matcher priceMatcher = pricePattern.matcher(sentence);
+
+List<String> allPrices = new ArrayList<>();
+while (priceMatcher.find()) {
+    allPrices.add(priceMatcher.group()); // => Add each match
+}
+// => allPrices: ["$100", "$15"]
+
+// Or using results() stream (Java 9+)
+List<String> pricesStream = pricePattern.matcher(sentence)
+    .results() // => Stream of MatchResult
+    .map(MatchResult::group) // => Extract matched text
+    .toList(); // => ["$100", "$15"]
+
+// Quote literal strings for regex
+String literal = "Price: $100 (special)"; // => String with special regex chars
+String escaped = Pattern.quote(literal); // => Escapes all special chars
+Pattern literalPattern = Pattern.compile(escaped); // => Matches literal string exactly
+```
+
+**Key Takeaway**: `Pattern.compile()` compiles regex patterns. `Matcher` finds matches with `find()`, `matches()`, `replaceAll()`. Capturing groups `()` extract substrings (access with `group(n)` or named `group("name")`). Common quantifiers: `*` (0+), `+` (1+), `?` (0-1), `{n,m}` (n to m). Character classes: `\\d` (digit), `\\w` (word), `\\s` (space). Use `?` for reluctant matching. Lookahead `(?=)` and lookbehind `(?<=)` match positions. `Pattern.quote()` escapes special characters for literal matching.
+
+---
+
+### Example 40: NIO.2 File Operations
+
+NIO.2 (New I/O, Java 7+) provides modern file operations with `Path`, `Files`, and `FileSystem`. Replaces legacy `File` class with better error handling and more features. Essential for production file handling.
+
+**Code**:
+
+```java
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.io.*;
+import java.util.*;
+import java.util.stream.*;
+
+// Path creation - modern alternative to File
+Path path1 = Paths.get("/home/user/file.txt"); // => Absolute path
+Path path2 = Paths.get("relative", "path", "file.txt"); // => relative/path/file.txt
+Path path3 = Path.of("/tmp", "data.txt"); // => Java 11+ factory method
+
+// Current working directory
+Path currentDir = Paths.get("").toAbsolutePath(); // => Current directory
+Path userHome = Paths.get(System.getProperty("user.home")); // => User home directory
+
+// Path operations
+Path absolute = path2.toAbsolutePath(); // => Convert to absolute path
+Path normalized = Paths.get("/home/user/../data/./file.txt").normalize();
+// => /home/data/file.txt (removes . and ..)
+
+Path parent = path1.getParent(); // => /home/user
+Path fileName = path1.getFileName(); // => file.txt
+Path root = path1.getRoot(); // => / (Unix) or C:\ (Windows)
+
+// Join paths
+Path base = Paths.get("/home/user"); // => Base directory
+Path joined = base.resolve("documents/file.txt"); // => /home/user/documents/file.txt
+Path relative = base.relativize(joined); // => documents/file.txt
+
+// File existence and type checks
+Path testFile = Paths.get("test.txt"); // => Test file path
+
+boolean exists = Files.exists(testFile); // => true/false
+boolean notExists = Files.notExists(testFile); // => true/false
+boolean isRegularFile = Files.isRegularFile(testFile); // => true if regular file
+boolean isDirectory = Files.isDirectory(testFile); // => true if directory
+boolean isSymbolicLink = Files.isSymbolicLink(testFile); // => true if symlink
+boolean isReadable = Files.isReadable(testFile); // => true if readable
+boolean isWritable = Files.isWritable(testFile); // => true if writable
+boolean isExecutable = Files.isExecutable(testFile); // => true if executable
+
+// Reading files
+// 1. Read all bytes
+byte[] bytes = Files.readAllBytes(testFile); // => All bytes as array
+String content1 = new String(bytes); // => Convert to string
+
+// 2. Read all lines
+List<String> lines = Files.readAllLines(testFile); // => All lines as List<String>
+
+// 3. Stream lines (memory efficient for large files)
+try (Stream<String> lineStream = Files.lines(testFile)) {
+    lineStream.filter(line -> line.contains("important")) // => Filter lines
+              .forEach(System.out::println); // => Print matching lines
+}
+
+// 4. Read as String (Java 11+)
+String content2 = Files.readString(testFile); // => Entire file as String
+
+// Writing files
+// 1. Write bytes
+byte[] data = "Hello World".getBytes(); // => Convert string to bytes
+Files.write(testFile, data); // => Write bytes (creates or overwrites)
+
+// 2. Write lines
+List<String> linesToWrite = List.of("Line 1", "Line 2", "Line 3");
+Files.write(testFile, linesToWrite); // => Write lines (overwrites)
+
+// Append to file
+Files.write(testFile, "New line\n".getBytes(), StandardOpenOption.APPEND);
+// => Append bytes to existing file
+
+// 3. Write string (Java 11+)
+Files.writeString(testFile, "Content"); // => Write string (overwrites)
+
+// Creating directories
+Path newDir = Paths.get("parent/child/grandchild"); // => Directory path
+
+Files.createDirectory(Paths.get("parent")); // => Create single directory (parent must exist)
+Files.createDirectories(newDir); // => Create all parent directories if needed
+
+// Copying files
+Path source = Paths.get("source.txt"); // => Source file
+Path destination = Paths.get("destination.txt"); // => Destination file
+
+Files.copy(source, destination); // => Copy (fails if destination exists)
+Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+// => Copy and replace if exists
+
+// Copy directory (shallow - doesn't copy contents)
+Files.copy(Paths.get("sourceDir"), Paths.get("destDir"));
+
+// Moving/renaming files
+Path oldName = Paths.get("old.txt"); // => Old path
+Path newName = Paths.get("new.txt"); // => New path
+
+Files.move(oldName, newName); // => Move/rename (fails if destination exists)
+Files.move(oldName, newName, StandardCopyOption.REPLACE_EXISTING);
+// => Move and replace if exists
+
+// Deleting files
+Files.delete(testFile); // => Delete file (throws exception if not exists)
+Files.deleteIfExists(testFile); // => Delete if exists (returns true if deleted)
+
+// File attributes
+BasicFileAttributes attrs = Files.readAttributes(testFile, BasicFileAttributes.class);
+
+long size = attrs.size(); // => File size in bytes
+FileTime created = attrs.creationTime(); // => Creation time
+FileTime modified = attrs.lastModifiedTime(); // => Last modified time
+FileTime accessed = attrs.lastAccessTime(); // => Last access time
+boolean isDir = attrs.isDirectory(); // => true if directory
+boolean isFile = attrs.isRegularFile(); // => true if regular file
+
+// Or get individual attributes
+long size2 = Files.size(testFile); // => File size
+FileTime modified2 = Files.getLastModifiedTime(testFile); // => Last modified
+
+// Set last modified time
+FileTime newTime = FileTime.fromMillis(System.currentTimeMillis());
+Files.setLastModifiedTime(testFile, newTime); // => Update modified time
+
+// List directory contents
+Path directory = Paths.get("."); // => Current directory
+
+// 1. List all entries (not recursive)
+try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+    for (Path entry : stream) {
+        System.out.println(entry); // => Print each entry
+    }
+}
+
+// 2. List with glob pattern filter
+try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, "*.txt")) {
+    for (Path entry : stream) {
+        System.out.println(entry); // => Print only .txt files
+    }
+}
+
+// 3. Stream directory entries (Java 8+)
+try (Stream<Path> paths = Files.list(directory)) {
+    paths.filter(Files::isRegularFile) // => Only regular files
+         .forEach(System.out::println); // => Print each file
+}
+
+// 4. Walk directory tree (recursive)
+try (Stream<Path> paths = Files.walk(directory)) {
+    paths.filter(p -> p.toString().endsWith(".java")) // => Find all .java files
+         .forEach(System.out::println); // => Print each Java file
+}
+
+// Walk with max depth
+try (Stream<Path> paths = Files.walk(directory, 2)) { // => Max 2 levels deep
+    paths.forEach(System.out::println);
+}
+
+// Find files matching predicate
+try (Stream<Path> paths = Files.find(directory, 3,
+        (path, attrs) -> attrs.isRegularFile() && attrs.size() > 1024)) {
+    paths.forEach(System.out::println); // => Files > 1KB, max 3 levels deep
+}
+
+// Temporary files and directories
+Path tempFile = Files.createTempFile("prefix-", "-suffix.txt");
+// => Creates temp file: prefix-1234567890-suffix.txt in temp directory
+
+Path tempDir = Files.createTempDirectory("myapp-");
+// => Creates temp directory: myapp-1234567890 in temp directory
+
+// Delete temporary files on exit
+tempFile.toFile().deleteOnExit(); // => Delete when JVM exits
+
+// File watching (monitor file system changes)
+WatchService watcher = FileSystems.getDefault().newWatchService();
+Path dirToWatch = Paths.get("."); // => Directory to watch
+
+dirToWatch.register(watcher,
+    StandardWatchEventKinds.ENTRY_CREATE, // => Watch for new files
+    StandardWatchEventKinds.ENTRY_DELETE, // => Watch for deletions
+    StandardWatchEventKinds.ENTRY_MODIFY); // => Watch for modifications
+
+// Watch loop (runs until interrupted)
+// WatchKey key;
+// while ((key = watcher.take()) != null) {
+//     for (WatchEvent<?> event : key.pollEvents()) {
+//         System.out.println("Event: " + event.kind() + " - " + event.context());
+//     }
+//     key.reset();
+// }
+
+// Symbolic links
+Path link = Paths.get("link.txt"); // => Link path
+Path target = Paths.get("target.txt"); // => Target path
+
+// Files.createSymbolicLink(link, target); // => Create symbolic link (Unix/Linux)
+
+// Read link target
+if (Files.isSymbolicLink(link)) {
+    Path linkTarget = Files.readSymbolicLink(link); // => Get target path
+    System.out.println("Link points to: " + linkTarget);
+}
+
+// POSIX file permissions (Unix/Linux)
+// Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rw-r--r--");
+// Files.setPosixFilePermissions(testFile, perms);
+
+// Practical: copy directory recursively
+void copyDirectory(Path source, Path target) throws IOException {
+    Files.walk(source)
+         .forEach(sourcePath -> {
+             try {
+                 Path targetPath = target.resolve(source.relativize(sourcePath));
+                 if (Files.isDirectory(sourcePath)) {
+                     Files.createDirectories(targetPath); // => Create directories
+                 } else {
+                     Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                     // => Copy files
+                 }
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+         });
+}
+
+// Practical: delete directory recursively
+void deleteDirectory(Path directory) throws IOException {
+    Files.walk(directory)
+         .sorted(Comparator.reverseOrder()) // => Delete children before parents
+         .forEach(path -> {
+             try {
+                 Files.delete(path); // => Delete each path
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+         });
+}
+```
+
+**Key Takeaway**: NIO.2 uses `Path` (not `File`) for paths. `Files` class provides static methods for all operations. `Files.exists()`, `isDirectory()`, `isRegularFile()` check status. Reading: `readAllBytes()`, `readAllLines()`, `lines()` (stream), `readString()`. Writing: `write()`, `writeString()`. `copy()`, `move()`, `delete()` with options. `createDirectories()` creates all parents. `Files.walk()` traverses recursively. `Files.list()` lists directory. Attributes via `readAttributes()`. `WatchService` monitors changes. Always use try-with-resources for streams.
+
+---
+
+### Example 41: Annotations in Practice
+
+Annotations add metadata to code for frameworks, tools, and runtime processing. Built-in annotations (`@Override`, `@Deprecated`, `@SuppressWarnings`) ensure code quality. Custom annotations enable framework magic.
+
+**Code**:
+
+```java
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+// Built-in annotations - code quality and compiler checks
+class Parent {
+    public void process() {
+        System.out.println("Parent process"); // => Parent method
+    }
+
+    @Deprecated(since = "2.0", forRemoval = true) // => Mark for removal
+    public void oldMethod() {
+        System.out.println("Old method"); // => Deprecated method
+    }
+}
+
+class Child extends Parent {
+    @Override // => Compiler verifies this overrides parent method
+    public void process() {
+        System.out.println("Child process"); // => Child override
+    }
+
+    // @Override
+    // public void typoMethod() {} // => ERROR: no such method in parent
+
+    @SuppressWarnings("deprecation") // => Suppress deprecation warning
+    public void useOldMethod() {
+        oldMethod(); // => No warning despite calling deprecated method
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"}) // => Multiple warnings
+    public void rawTypes() {
+        List list = new ArrayList(); // => Raw type (normally warns)
+        list.add("item"); // => Unchecked operation (normally warns)
+    }
+}
+
+// @FunctionalInterface - marks interface as functional (single abstract method)
+@FunctionalInterface
+interface Calculator {
+    int calculate(int a, int b); // => Single abstract method
+
+    // int anotherMethod(int x); // => ERROR: multiple abstract methods not allowed
+
+    default void log() { // => Default methods allowed
+        System.out.println("Calculating");
+    }
+
+    static void helper() { // => Static methods allowed
+        System.out.println("Helper");
+    }
+}
+
+// Lambda works because of single abstract method
+Calculator adder = (a, b) -> a + b; // => Lambda implementation
+int sum = adder.calculate(5, 3); // => 8
+
+// Custom annotation definition
+@Retention(RetentionPolicy.RUNTIME) // => Available at runtime (for reflection)
+@Target(ElementType.METHOD) // => Can be applied to methods only
+@interface Test {
+    String description() default ""; // => Annotation parameter with default
+    int timeout() default 0; // => Timeout in milliseconds
+    String[] tags() default {}; // => Array parameter
+}
+
+// Multiple target types
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD}) // => Apply to classes or methods
+@interface Audited {
+    String value(); // => Required parameter (no default)
+}
+
+// Annotation with no parameters (marker annotation)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@interface Benchmark {}
+
+// Using custom annotations
+@Audited("UserService") // => Class-level annotation
+class UserService {
+    @Test(description = "Test user creation", timeout = 5000, tags = {"integration", "database"})
+    public void testCreateUser() {
+        System.out.println("Testing user creation"); // => Test method
+    }
+
+    @Test(description = "Test user deletion", tags = {"integration"})
+    public void testDeleteUser() {
+        System.out.println("Testing user deletion"); // => Test method
+    }
+
+    @Benchmark // => Marker annotation (no parameters)
+    public void performanceTest() {
+        System.out.println("Performance test"); // => Benchmark method
+    }
+
+    public void regularMethod() {
+        // No annotations
+    }
+}
+
+// Processing annotations with reflection
+void runTests(Class<?> testClass) throws Exception {
+    Object instance = testClass.getDeclaredConstructor().newInstance(); // => Create instance
+
+    for (Method method : testClass.getDeclaredMethods()) {
+        if (method.isAnnotationPresent(Test.class)) { // => Check if @Test present
+            Test test = method.getAnnotation(Test.class); // => Get annotation
+
+            System.out.println("Running test: " + method.getName());
+            System.out.println("  Description: " + test.description());
+            System.out.println("  Timeout: " + test.timeout() + "ms");
+            System.out.println("  Tags: " + Arrays.toString(test.tags()));
+
+            try {
+                method.invoke(instance); // => Invoke test method
+                System.out.println("  Result: PASSED");
+            } catch (Exception e) {
+                System.out.println("  Result: FAILED - " + e.getCause());
+            }
+        }
+    }
+}
+
+// Run tests
+runTests(UserService.class);
+// => Outputs:
+// Running test: testCreateUser
+//   Description: Test user creation
+//   Timeout: 5000ms
+//   Tags: [integration, database]
+//   Testing user creation
+//   Result: PASSED
+// Running test: testDeleteUser
+//   Description: Test user deletion
+//   Timeout: 0ms
+//   Tags: [integration]
+//   Testing user deletion
+//   Result: PASSED
+
+// Retention policies
+@Retention(RetentionPolicy.SOURCE) // => Discarded by compiler (e.g., @Override)
+@interface SourceOnly {}
+
+@Retention(RetentionPolicy.CLASS) // => Stored in class file, not available at runtime (default)
+@interface ClassOnly {}
+
+@Retention(RetentionPolicy.RUNTIME) // => Available at runtime via reflection
+@interface RuntimeAccessible {}
+
+// Target types (where annotations can be applied)
+@Target(ElementType.TYPE) // => Classes, interfaces, enums
+@interface TypeAnnotation {}
+
+@Target(ElementType.FIELD) // => Fields
+@interface FieldAnnotation {}
+
+@Target(ElementType.METHOD) // => Methods
+@interface MethodAnnotation {}
+
+@Target(ElementType.PARAMETER) // => Method parameters
+@interface ParameterAnnotation {}
+
+@Target(ElementType.CONSTRUCTOR) // => Constructors
+@interface ConstructorAnnotation {}
+
+@Target(ElementType.LOCAL_VARIABLE) // => Local variables
+@interface LocalVarAnnotation {}
+
+@Target(ElementType.ANNOTATION_TYPE) // => Other annotations (meta-annotation)
+@interface MetaAnnotation {}
+
+@Target(ElementType.PACKAGE) // => Packages (in package-info.java)
+@interface PackageAnnotation {}
+
+// Java 8+ type annotations
+@Target(ElementType.TYPE_USE) // => Any type use (variables, casts, generics, etc.)
+@interface NonNull {}
+
+@Target(ElementType.TYPE_PARAMETER) // => Type parameters in generics
+@interface TypeParam {}
+
+// Type annotation examples
+class TypeAnnotations {
+    @NonNull String name; // => Field with type annotation
+
+    public @NonNull String getName() { // => Return type annotation
+        return name;
+    }
+
+    public void process(@NonNull String input) { // => Parameter type annotation
+        @NonNull String local = input; // => Local variable type annotation
+    }
+
+    List<@NonNull String> names; // => Generic type argument annotation
+
+    public <@TypeParam T> void generic(T value) { // => Type parameter annotation
+    }
+}
+
+// Repeatable annotations (Java 8+)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@Repeatable(Schedules.class) // => Container annotation
+@interface Schedule {
+    String day();
+    int hour();
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@interface Schedules {
+    Schedule[] value(); // => Array of repeatable annotation
+}
+
+// Using repeatable annotations
+class ScheduledTasks {
+    @Schedule(day = "Monday", hour = 9)
+    @Schedule(day = "Wednesday", hour = 14)
+    @Schedule(day = "Friday", hour = 11)
+    public void backupData() {
+        System.out.println("Backing up data"); // => Scheduled task
+    }
+}
+
+// Accessing repeatable annotations
+Method backupMethod = ScheduledTasks.class.getMethod("backupData");
+Schedule[] schedules = backupMethod.getAnnotationsByType(Schedule.class);
+// => Returns all @Schedule annotations
+
+for (Schedule schedule : schedules) {
+    System.out.println("Scheduled: " + schedule.day() + " at " + schedule.hour() + ":00");
+}
+// => Prints:
+// Scheduled: Monday at 9:00
+// Scheduled: Wednesday at 14:00
+// Scheduled: Friday at 11:00
+
+// Practical annotation: dependency injection
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@interface Inject {}
+
+class SimpleInjector {
+    public static void inject(Object instance) throws Exception {
+        Class<?> clazz = instance.getClass();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Inject.class)) {
+                field.setAccessible(true); // => Allow access to private field
+
+                // Simple DI: create instance of field type
+                Object dependency = field.getType().getDeclaredConstructor().newInstance();
+                field.set(instance, dependency); // => Inject dependency
+
+                System.out.println("Injected: " + field.getName());
+            }
+        }
+    }
+}
+
+class Database {
+    public void connect() {
+        System.out.println("Database connected"); // => Database method
+    }
+}
+
+class Service {
+    @Inject
+    private Database database; // => Field to be injected
+
+    public void useDatabase() {
+        database.connect(); // => Use injected dependency
+    }
+}
+
+// Use simple DI
+Service service = new Service();
+SimpleInjector.inject(service); // => Injects Database instance
+service.useDatabase(); // => "Database connected"
+```
+
+**Key Takeaway**: Built-in annotations: `@Override` (verify override), `@Deprecated` (mark obsolete), `@SuppressWarnings` (suppress warnings), `@FunctionalInterface` (enforce single abstract method). Custom annotations use `@interface`. `@Retention` controls lifecycle (SOURCE/CLASS/RUNTIME). `@Target` specifies where annotation applies. Access via reflection with `isAnnotationPresent()`, `getAnnotation()`. `@Repeatable` allows multiple instances. Type annotations (`@Target(TYPE_USE)`) annotate any type use. Annotations enable framework magic (testing, DI, validation).
+
+---
+
+### Example 42: Optional Deep Dive
+
+`Optional` represents potentially absent values, replacing null checks. Functional methods (`map`, `flatMap`, `filter`, `orElse`) compose operations. Use to make nullability explicit in APIs.
+
+**Code**:
+
+```java
+import java.util.*;
+import java.util.stream.*;
+
+// Creating Optional instances
+Optional<String> present = Optional.of("Hello"); // => Optional with value
+// Optional<String> nullError = Optional.of(null); // => ERROR: NullPointerException
+
+Optional<String> nullable = Optional.ofNullable("World"); // => Optional with value
+Optional<String> empty = Optional.ofNullable(null); // => Optional.empty (no NPE)
+Optional<String> explicitEmpty = Optional.empty(); // => Explicitly empty
+
+// Checking presence
+boolean hasValue = present.isPresent(); // => true (value present)
+boolean isEmpty = empty.isEmpty(); // => true (Java 11+, no value)
+
+// Getting values
+String value1 = present.get(); // => "Hello" (throws if empty - avoid!)
+String value2 = present.orElse("Default"); // => "Hello" (returns value)
+String value3 = empty.orElse("Default"); // => "Default" (fallback when empty)
+
+// orElseGet - lazy evaluation (supplier called only if empty)
+String value4 = present.orElseGet(() -> "Computed Default"); // => "Hello" (supplier not called)
+String value5 = empty.orElseGet(() -> {
+    System.out.println("Computing default"); // => Executes only if empty
+    return "Computed Default";
+}); // => "Computed Default"
+
+// orElseThrow - throw exception if empty
+String value6 = present.orElseThrow(); // => "Hello" (Java 10+)
+String value7 = present.orElseThrow(() -> new IllegalStateException("No value!"));
+// => "Hello" (custom exception)
+
+// String value8 = empty.orElseThrow(); // => NoSuchElementException
+
+// ifPresent - execute if value present
+present.ifPresent(val -> System.out.println("Value: " + val)); // => "Value: Hello"
+empty.ifPresent(val -> System.out.println("Value: " + val)); // => Nothing printed
+
+// ifPresentOrElse - execute one action if present, another if empty (Java 9+)
+present.ifPresentOrElse(
+    val -> System.out.println("Present: " + val), // => Executed: "Present: Hello"
+    () -> System.out.println("Empty") // => Not executed
+);
+
+empty.ifPresentOrElse(
+    val -> System.out.println("Present: " + val), // => Not executed
+    () -> System.out.println("Empty") // => Executed: "Empty"
+);
+
+// map - transform value if present
+Optional<String> mapped = present.map(String::toUpperCase); // => Optional["HELLO"]
+Optional<String> emptyMapped = empty.map(String::toUpperCase); // => Optional.empty (no-op)
+
+Optional<Integer> length = present.map(String::length); // => Optional[5]
+
+// Chaining maps
+Optional<String> result = present
+    .map(String::toUpperCase) // => Optional["HELLO"]
+    .map(s -> s + "!") // => Optional["HELLO!"]
+    .map(s -> s.repeat(2)); // => Optional["HELLO!HELLO!"]
+
+// flatMap - avoid nested Optionals
+class User {
+    private Optional<String> email; // => User may have email
+
+    public User(String email) {
+        this.email = Optional.ofNullable(email);
+    }
+
+    public Optional<String> getEmail() {
+        return email; // => Returns Optional
+    }
+}
+
+Optional<User> user = Optional.of(new User("user@example.com"));
+
+// Wrong: nested Optional (Optional<Optional<String>>)
+// Optional<Optional<String>> nestedEmail = user.map(User::getEmail);
+
+// Correct: flatMap unwraps
+Optional<String> email = user.flatMap(User::getEmail); // => Optional["user@example.com"]
+
+Optional<String> emailUpper = user
+    .flatMap(User::getEmail) // => Optional["user@example.com"]
+    .map(String::toUpperCase); // => Optional["USER@EXAMPLE.COM"]
+
+// filter - keep value only if matches predicate
+Optional<String> filtered = present.filter(s -> s.length() > 3);
+// => Optional["Hello"] (length 5 > 3, passes filter)
+
+Optional<String> filtered2 = present.filter(s -> s.length() > 10);
+// => Optional.empty (length 5 not > 10, fails filter)
+
+// Chaining filter
+Optional<String> result2 = present
+    .filter(s -> s.startsWith("H")) // => Passes
+    .filter(s -> s.length() == 5) // => Passes
+    .map(String::toUpperCase); // => Optional["HELLO"]
+
+// or - return alternative Optional if empty (Java 9+)
+Optional<String> first = Optional.empty(); // => Empty
+Optional<String> second = Optional.of("Second"); // => Has value
+
+Optional<String> combined = first.or(() -> second); // => Optional["Second"]
+Optional<String> combined2 = present.or(() -> second); // => Optional["Hello"] (first wins)
+
+// stream - convert Optional to Stream (Java 9+)
+Stream<String> stream1 = present.stream(); // => Stream with one element
+Stream<String> stream2 = empty.stream(); // => Empty stream
+
+// Practical: filter list to only present values
+List<Optional<String>> optionals = List.of(
+    Optional.of("A"), // => Present
+    Optional.empty(), // => Empty
+    Optional.of("B"), // => Present
+    Optional.empty(), // => Empty
+    Optional.of("C") // => Present
+);
+
+List<String> values = optionals.stream()
+    .flatMap(Optional::stream) // => Flatten Optionals to values only
+    .toList(); // => ["A", "B", "C"] (empties removed)
+
+// equals and hashCode
+Optional<String> opt1 = Optional.of("Hello"); // => Optional with "Hello"
+Optional<String> opt2 = Optional.of("Hello"); // => Optional with "Hello"
+Optional<String> opt3 = Optional.of("World"); // => Optional with "World"
+
+boolean equal = opt1.equals(opt2); // => true (same value)
+boolean notEqual = opt1.equals(opt3); // => false (different values)
+boolean emptyEquals = Optional.empty().equals(Optional.empty()); // => true
+
+// Anti-patterns - what NOT to do
+
+// BAD: Using get() without checking
+// String bad1 = optional.get(); // => Can throw NoSuchElementException
+
+// BAD: Checking with isPresent before get (defeats purpose)
+if (present.isPresent()) {
+    String bad2 = present.get(); // => Better to use orElse, ifPresent, or map
+}
+
+// GOOD: Use functional methods
+String good1 = present.orElse("Default"); // => Functional approach
+
+// BAD: Optional for collections (use empty collection instead)
+// Optional<List<String>> bad3 = Optional.of(new ArrayList<>());
+List<String> good2 = new ArrayList<>(); // => Just use empty list
+
+// BAD: Optional fields in classes (serialization issues)
+class BadClass {
+    // private Optional<String> name; // => Don't do this (use null or @Nullable)
+}
+
+// GOOD: Optional in return types
+class GoodClass {
+    public Optional<String> findName(int id) {
+        // Return Optional to indicate possible absence
+        return id > 0 ? Optional.of("Name") : Optional.empty();
+    }
+}
+
+// Practical: repository pattern with Optional
+interface UserRepository {
+    Optional<User> findById(int id); // => May not find user
+    Optional<User> findByEmail(String email); // => May not find user
+}
+
+class UserService {
+    private UserRepository repository;
+
+    public String getUserEmail(int id) {
+        return repository.findById(id) // => Optional<User>
+            .flatMap(User::getEmail) // => Optional<String>
+            .orElse("No email"); // => String (fallback if user not found or no email)
+    }
+
+    public void processUser(int id) {
+        repository.findById(id) // => Optional<User>
+            .filter(u -> u.getEmail().isPresent()) // => Only users with email
+            .flatMap(User::getEmail) // => Get email
+            .map(String::toUpperCase) // => Uppercase
+            .ifPresent(email -> System.out.println("Processing: " + email));
+            // => Only executes if user found and has email
+    }
+}
+
+// Combining multiple Optionals
+Optional<String> firstName = Optional.of("John"); // => First name
+Optional<String> lastName = Optional.of("Doe"); // => Last name
+
+// Using map and flatMap to combine
+Optional<String> fullName = firstName.flatMap(first ->
+    lastName.map(last -> first + " " + last)
+); // => Optional["John Doe"]
+
+// If either is empty, result is empty
+Optional<String> fullName2 = firstName.flatMap(first ->
+    Optional.<String>empty().map(last -> first + " " + last)
+); // => Optional.empty
+
+// Converting null-returning methods to Optional
+String nullableResult = legacyMethod(); // => May return null
+Optional<String> safe = Optional.ofNullable(nullableResult); // => Wraps in Optional
+
+// Migrating from null checks
+// OLD:
+String oldValue = getValue();
+if (oldValue != null) {
+    System.out.println(oldValue.toUpperCase());
+}
+
+// NEW:
+Optional.ofNullable(getValue())
+    .map(String::toUpperCase)
+    .ifPresent(System.out::println);
+```
+
+**Key Takeaway**: Create with `of()` (non-null), `ofNullable()` (nullable), `empty()`. Get values: `orElse()` (default), `orElseGet()` (lazy supplier), `orElseThrow()` (exception). Transform: `map()` (unwrapped), `flatMap()` (nested Optionals). Filter: `filter()` (predicate). Conditionals: `ifPresent()`, `ifPresentOrElse()`. Combine: `or()` (alternative). Convert: `stream()`. Avoid: `get()` without check, `isPresent()`+`get()` pattern, Optional fields. Use in return types to make nullability explicit. Chain operations functionally instead of imperative null checks.
+
+---
+
+### Example 43: Sealed Classes and Pattern Matching
+
+Sealed classes (Java 17+) restrict inheritance to known subclasses. Combined with pattern matching in switch expressions, they enable exhaustive type checking. Essential for domain modeling with finite type hierarchies.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Sealed["sealed interface Shape<br/>permits Circle, Rectangle, Triangle"] --> Circle["record Circle(double radius)<br/>implements Shape"]
+    Sealed --> Rectangle["record Rectangle(double width, double height)<br/>implements Shape"]
+    Sealed --> Triangle["record Triangle(double base, double height)<br/>implements Shape"]
+
+    Switch["switch(shape)"] --> CaseC["case Circle c -> ..."]
+    Switch --> CaseR["case Rectangle r -> ..."]
+    Switch --> CaseT["case Triangle t -> ..."]
+    CaseC --> Result["Exhaustive<br/>No default needed"]
+    CaseR --> Result
+    CaseT --> Result
+
+    style Sealed fill:#0173B2,color:#fff
+    style Circle fill:#029E73,color:#fff
+    style Rectangle fill:#029E73,color:#fff
+    style Triangle fill:#029E73,color:#fff
+    style Switch fill:#DE8F05,color:#fff
+    style Result fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+// Sealed interface - restricts implementations
+sealed interface Shape
+    permits Circle, Rectangle, Triangle {} // => Only these 3 can implement
+
+// Records implementing sealed interface
+record Circle(double radius) implements Shape {}
+record Rectangle(double width, double height) implements Shape {}
+record Triangle(double base, double height) implements Shape {}
+
+// Attempting to implement Shape from outside permitted types
+// class Pentagon implements Shape {} // => ERROR: not permitted
+
+// Pattern matching switch with exhaustiveness checking
+double area(Shape shape) {
+    return switch (shape) {
+        case Circle c -> Math.PI * c.radius() * c.radius(); // => πr²
+        case Rectangle r -> r.width() * r.height(); // => width × height
+        case Triangle t -> 0.5 * t.base() * t.height(); // => ½ × base × height
+        // No default needed - compiler knows all cases covered!
+    };
+}
+
+Circle circle = new Circle(5.0); // => Circle with radius 5.0
+double circleArea = area(circle); // => 78.54 (π × 5²)
+
+Rectangle rect = new Rectangle(4.0, 6.0); // => Rectangle 4×6
+double rectArea = area(rect); // => 24.0
+
+// Sealed classes (not interfaces)
+sealed abstract class Vehicle
+    permits Car, Truck, Motorcycle {
+
+    private final String licensePlate; // => Common field
+
+    protected Vehicle(String licensePlate) {
+        this.licensePlate = licensePlate; // => Constructor
+    }
+
+    public String getLicensePlate() {
+        return licensePlate; // => Getter
+    }
+}
+
+// Final subclass (cannot be further extended)
+final class Car extends Vehicle {
+    private final int seats; // => Car-specific field
+
+    public Car(String licensePlate, int seats) {
+        super(licensePlate); // => Call parent constructor
+        this.seats = seats; // => Initialize seats
+    }
+
+    public int getSeats() {
+        return seats; // => Getter
+    }
+}
+
+// Non-sealed subclass (can be extended by anyone)
+non-sealed class Truck extends Vehicle {
+    private final double capacity; // => Truck-specific field
+
+    public Truck(String licensePlate, double capacity) {
+        super(licensePlate);
+        this.capacity = capacity;
+    }
+
+    public double getCapacity() {
+        return capacity;
+    }
+}
+
+// Can extend non-sealed class
+class PickupTruck extends Truck {
+    public PickupTruck(String licensePlate) {
+        super(licensePlate, 1000.0); // => Fixed capacity
+    }
+}
+
+// Sealed subclass (further restricts)
+sealed class Motorcycle extends Vehicle
+    permits SportBike, Cruiser {
+
+    protected Motorcycle(String licensePlate) {
+        super(licensePlate);
+    }
+}
+
+final class SportBike extends Motorcycle {
+    public SportBike(String licensePlate) {
+        super(licensePlate);
+    }
+}
+
+final class Cruiser extends Motorcycle {
+    public Cruiser(String licensePlate) {
+        super(licensePlate);
+    }
+}
+
+// Pattern matching with sealed classes
+String describe(Vehicle vehicle) {
+    return switch (vehicle) {
+        case Car c -> "Car with " + c.getSeats() + " seats"; // => Car pattern
+        case Truck t -> "Truck with capacity " + t.getCapacity() + " kg"; // => Truck pattern
+        case Motorcycle m -> "Motorcycle: " + m.getLicensePlate(); // => Motorcycle pattern
+        // No default needed - all Vehicle types covered
+    };
+}
+
+Car myCar = new Car("ABC-123", 5); // => 5-seater car
+String desc = describe(myCar); // => "Car with 5 seats"
+
+// Nested pattern matching with sealed types
+String detailedDescribe(Vehicle vehicle) {
+    return switch (vehicle) {
+        case Car c -> "Car with " + c.getSeats() + " seats";
+        case Truck t -> "Truck with capacity " + t.getCapacity() + " kg";
+        case SportBike sb -> "Sport bike: " + sb.getLicensePlate(); // => Specific motorcycle type
+        case Cruiser cr -> "Cruiser: " + cr.getLicensePlate(); // => Specific motorcycle type
+        // Compiler ensures all cases covered (including Motorcycle subtypes)
+    };
+}
+
+// Guards in pattern matching (when clauses)
+String categorizeVehicle(Vehicle vehicle) {
+    return switch (vehicle) {
+        case Car c when c.getSeats() > 5 -> "Large car"; // => Guard condition
+        case Car c when c.getSeats() <= 5 -> "Small car";
+        case Truck t when t.getCapacity() > 5000 -> "Heavy truck";
+        case Truck t -> "Light truck"; // => Catches remaining trucks
+        case Motorcycle m -> "Motorcycle";
+    };
+}
+
+Car largeCar = new Car("XYZ-789", 7); // => 7-seater
+String category = categorizeVehicle(largeCar); // => "Large car"
+
+// Sealed enum alternative (traditional approach)
+enum TraditionalShape {
+    CIRCLE, RECTANGLE, TRIANGLE // => Fixed set of constants
+}
+
+// vs sealed types (modern approach with data)
+// Sealed types carry data (radius, width, height)
+// Enums just represent constants without associated data
+
+// Practical: Result type (success or error)
+sealed interface Result<T, E>
+    permits Success, Failure {
+}
+
+record Success<T, E>(T value) implements Result<T, E> {}
+record Failure<T, E>(E error) implements Result<T, E> {}
+
+// Using Result type
+Result<Integer, String> divide(int a, int b) {
+    if (b == 0) {
+        return new Failure<>("Division by zero"); // => Error case
+    }
+    return new Success<>(a / b); // => Success case
+}
+
+Result<Integer, String> result = divide(10, 2); // => Success(5)
+
+String message = switch (result) {
+    case Success<Integer, String> s -> "Result: " + s.value(); // => "Result: 5"
+    case Failure<Integer, String> f -> "Error: " + f.error(); // => Not executed
+};
+
+Result<Integer, String> error = divide(10, 0); // => Failure("Division by zero")
+
+String errorMessage = switch (error) {
+    case Success<Integer, String> s -> "Result: " + s.value(); // => Not executed
+    case Failure<Integer, String> f -> "Error: " + f.error(); // => "Error: Division by zero"
+};
+
+// Practical: JSON AST (Abstract Syntax Tree)
+sealed interface Json
+    permits JsonObject, JsonArray, JsonString, JsonNumber, JsonBoolean, JsonNull {}
+
+record JsonObject(Map<String, Json> fields) implements Json {}
+record JsonArray(List<Json> elements) implements Json {}
+record JsonString(String value) implements Json {}
+record JsonNumber(double value) implements Json {}
+record JsonBoolean(boolean value) implements Json {}
+record JsonNull() implements Json {}
+
+// Pattern matching for JSON processing
+String toJsonString(Json json) {
+    return switch (json) {
+        case JsonObject obj -> "{" + obj.fields().entrySet().stream()
+            .map(e -> "\"" + e.getKey() + "\":" + toJsonString(e.getValue()))
+            .collect(Collectors.joining(",")) + "}";
+        case JsonArray arr -> "[" + arr.elements().stream()
+            .map(this::toJsonString)
+            .collect(Collectors.joining(",")) + "]";
+        case JsonString str -> "\"" + str.value() + "\"";
+        case JsonNumber num -> String.valueOf(num.value());
+        case JsonBoolean bool -> String.valueOf(bool.value());
+        case JsonNull n -> "null";
+    };
+}
+
+// Create JSON structure
+Json json = new JsonObject(Map.of(
+    "name", new JsonString("Alice"),
+    "age", new JsonNumber(30),
+    "active", new JsonBoolean(true),
+    "address", new JsonNull()
+));
+
+String jsonStr = toJsonString(json); // => {"name":"Alice","age":30.0,"active":true,"address":null}
+
+// Benefits of sealed types:
+// 1. Exhaustiveness checking - compiler ensures all cases handled
+// 2. Domain modeling - express finite type hierarchies explicitly
+// 3. Pattern matching - switch expressions with no default
+// 4. Maintainability - adding new subtype causes compile errors in all switches
+// 5. Documentation - permitted types are explicit in interface/class declaration
+
+// Restrictions:
+// - Sealed type and permitted subtypes must be in same package (or module)
+// - Permitted subtypes must be final, sealed, or non-sealed
+// - Cannot extend sealed type outside permitted list
+```
+
+**Key Takeaway**: Sealed classes/interfaces use `sealed` with `permits` clause to restrict subclasses. Permitted types must be `final` (no further extension), `sealed` (controlled extension), or `non-sealed` (open extension). Pattern matching switch with sealed types enables exhaustiveness checking (no `default` needed). Guards (`when` clauses) add conditions to patterns. Ideal for finite type hierarchies (shapes, results, ASTs). Compiler ensures all cases covered—adding new type causes compile errors in all switches. Must be in same package/module as sealed parent.
+
+---
+
+### Example 44: Records Advanced Patterns
+
+Records (Java 14+) are immutable data carriers with automatic constructor, getters, `equals`, `hashCode`, and `toString`. Compact constructors validate data. Records work with sealed types and pattern matching for powerful domain modeling.
+
+**Code**:
+
+```java
+// Basic record - immutable data class
+record Point(int x, int y) {} // => Automatic constructor, getters, equals, hashCode, toString
+
+Point p1 = new Point(3, 4); // => Create record instance
+int x = p1.x(); // => 3 (accessor method, not field)
+int y = p1.y(); // => 4
+
+System.out.println(p1); // => "Point[x=3, y=4]" (automatic toString)
+
+Point p2 = new Point(3, 4); // => Same values as p1
+boolean equal = p1.equals(p2); // => true (automatic equals based on fields)
+int hash1 = p1.hashCode(); // => Consistent with equals
+int hash2 = p2.hashCode(); // => Same as hash1
+
+// Compact constructor - validation and normalization
+record Range(int start, int end) {
+    // Compact constructor - implicit parameters
+    public Range {
+        if (start > end) {
+            // Swap if inverted
+            int temp = start; // => Store start temporarily
+            start = end; // => Assign end to start
+            end = temp; // => Assign temp to end
+        }
+        // Fields automatically assigned after compact constructor
+    }
+}
+
+Range range1 = new Range(10, 20); // => start=10, end=20 (no swap)
+Range range2 = new Range(20, 10); // => start=10, end=20 (swapped automatically)
+
+// Validation in compact constructor
+record Person(String name, int age) {
+    public Person {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name required"); // => Validation
+        }
+        if (age < 0 || age > 150) {
+            throw new IllegalArgumentException("Invalid age"); // => Validation
+        }
+        // Normalization
+        name = name.trim(); // => Remove whitespace
+    }
+}
+
+Person alice = new Person("  Alice  ", 30); // => name trimmed to "Alice"
+// Person invalid = new Person("", 200); // => IllegalArgumentException
+
+// Canonical constructor - explicit parameters
+record Employee(String name, int id, double salary) {
+    // Explicit canonical constructor
+    public Employee(String name, int id, double salary) {
+        this.name = name; // => Explicit assignment
+        this.id = id;
+        this.salary = Math.max(0, salary); // => Ensure non-negative
+    }
+}
+
+// Additional constructors
+record Book(String title, String author, int year) {
+    // Compact constructor
+    public Book {
+        if (title == null || author == null) {
+            throw new IllegalArgumentException("Title and author required");
+        }
+    }
+
+    // Additional constructor - must call canonical constructor
+    public Book(String title, String author) {
+        this(title, author, 2024); // => Delegate to canonical with default year
+    }
+}
+
+Book book1 = new Book("Java Guide", "Smith", 2023); // => Canonical constructor
+Book book2 = new Book("Python Guide", "Jones"); // => Additional constructor (year=2024)
+
+// Static methods and fields
+record MathUtils(int value) {
+    public static final double PI = 3.14159; // => Static constant
+
+    public static int add(int a, int b) {
+        return a + b; // => Static method
+    }
+
+    public int square() {
+        return value * value; // => Instance method using field
+    }
+}
+
+int sum = MathUtils.add(5, 3); // => 8 (static method)
+MathUtils m = new MathUtils(5);
+int squared = m.square(); // => 25 (instance method)
+
+// Overriding accessor methods
+record Temperature(double celsius) {
+    // Override accessor to provide computed value
+    public double fahrenheit() {
+        return celsius * 9.0 / 5.0 + 32; // => Convert to Fahrenheit
+    }
+
+    @Override
+    public double celsius() {
+        return Math.round(celsius * 10) / 10.0; // => Round to 1 decimal place
+    }
+}
+
+Temperature temp = new Temperature(25.67); // => 25.67°C
+double c = temp.celsius(); // => 25.7 (rounded by overridden accessor)
+double f = temp.fahrenheit(); // => 78.206 (computed)
+
+// Generic records
+record Pair<T, U>(T first, U second) {} // => Generic record
+
+Pair<String, Integer> pair = new Pair<>("Age", 30); // => Pair of String and Integer
+String key = pair.first(); // => "Age"
+Integer value = pair.second(); // => 30
+
+// Record with collections (defensive copying)
+record Playlist(String name, List<String> songs) {
+    // Compact constructor with defensive copy
+    public Playlist {
+        songs = List.copyOf(songs); // => Create immutable copy (defensive)
+    }
+
+    // Accessor already returns immutable list
+}
+
+List<String> mySongs = new ArrayList<>(List.of("Song 1", "Song 2"));
+Playlist playlist = new Playlist("Favorites", mySongs);
+
+mySongs.add("Song 3"); // => Modify original list
+System.out.println(playlist.songs().size()); // => 2 (playlist unaffected, has immutable copy)
+
+// playlist.songs().add("Song 4"); // => UnsupportedOperationException (immutable)
+
+// Nested records
+record Address(String street, String city, String zip) {}
+
+record Customer(String name, Address address, List<String> phoneNumbers) {
+    public Customer {
+        phoneNumbers = List.copyOf(phoneNumbers); // => Defensive copy
+    }
+}
+
+Address addr = new Address("123 Main St", "Springfield", "12345");
+Customer customer = new Customer("Alice", addr, List.of("555-1234", "555-5678"));
+
+String city = customer.address().city(); // => "Springfield" (nested access)
+
+// Pattern matching with records (Java 16+)
+record Rectangle(double width, double height) {}
+record Circle(double radius) {}
+
+// Deconstruction in switch (Java 19+, preview in 19-20, standard in 21+)
+double area(Object shape) {
+    return switch (shape) {
+        case Rectangle(double w, double h) -> w * h; // => Deconstruct Rectangle
+        case Circle(double r) -> Math.PI * r * r; // => Deconstruct Circle
+        case null -> 0; // => Handle null
+        default -> throw new IllegalArgumentException("Unknown shape");
+    };
+}
+
+Rectangle rect = new Rectangle(5, 10);
+double rectArea = area(rect); // => 50.0 (5 × 10)
+
+Circle circ = new Circle(3);
+double circArea = area(circ); // => 28.27 (π × 3²)
+
+// Nested pattern matching (Java 21+)
+record Point3D(int x, int y, int z) {}
+record Line(Point3D start, Point3D end) {}
+
+String describeLine(Line line) {
+    return switch (line) {
+        case Line(Point3D(int x1, int y1, int z1), Point3D(int x2, int y2, int z2)) ->
+            "Line from (" + x1 + "," + y1 + "," + z1 + ") to (" + x2 + "," + y2 + "," + z2 + ")";
+        // => Deconstructs Line AND both Point3D records
+    };
+}
+
+Line line = new Line(new Point3D(0, 0, 0), new Point3D(10, 20, 30));
+String desc = describeLine(line); // => "Line from (0,0,0) to (10,20,30)"
+
+// Records with sealed types (powerful combination)
+sealed interface JsonValue permits JsonText, JsonNum, JsonBool {}
+record JsonText(String value) implements JsonValue {}
+record JsonNum(double value) implements JsonValue {}
+record JsonBool(boolean value) implements JsonValue {}
+
+String formatJson(JsonValue json) {
+    return switch (json) {
+        case JsonText(String s) -> "\"" + s + "\""; // => Deconstruct and use value
+        case JsonNum(double n) -> String.valueOf(n);
+        case JsonBool(boolean b) -> String.valueOf(b);
+        // No default needed (sealed + exhaustive)
+    };
+}
+
+JsonValue text = new JsonText("hello");
+String formatted = formatJson(text); // => "\"hello\""
+
+// Record limitations
+// - Cannot extend other classes (implicit extends Record)
+// - Cannot declare instance fields beyond components
+// - All fields are final (immutable)
+// - Cannot be abstract
+// - Cannot have native methods
+
+// What you CAN do:
+// - Implement interfaces ✓
+// - Have static fields and methods ✓
+// - Override methods (including accessors) ✓
+// - Have instance methods ✓
+// - Have nested types ✓
+// - Use generics ✓
+
+// Implementing interface
+interface Drawable {
+    void draw();
+}
+
+record Shape(String name) implements Drawable {
+    @Override
+    public void draw() {
+        System.out.println("Drawing " + name); // => Instance method from interface
+    }
+}
+
+Shape shape = new Shape("Circle");
+shape.draw(); // => "Drawing Circle"
+
+// Immutability with mutable components (anti-pattern)
+record BadRecord(List<String> items) {} // => DON'T: mutable component
+
+List<String> list = new ArrayList<>(List.of("A", "B"));
+BadRecord bad = new BadRecord(list);
+list.add("C"); // => Modifies record's internal state! (bad)
+
+// Better: defensive copy in constructor
+record GoodRecord(List<String> items) {
+    public GoodRecord {
+        items = List.copyOf(items); // => Immutable copy
+    }
+}
+
+List<String> list2 = new ArrayList<>(List.of("X", "Y"));
+GoodRecord good = new GoodRecord(list2);
+list2.add("Z"); // => Doesn't affect record (good)
+```
+
+**Key Takeaway**: Records are immutable data classes with automatic constructor, accessors, `equals`, `hashCode`, `toString`. Compact constructor validates/normalizes without parameter list. Additional constructors must delegate to canonical. Override accessors for computed values. Use defensive copying for mutable components. Pattern matching deconstructs records. Combine with sealed types for exhaustive checking. Cannot extend classes or add instance fields. Ideal for DTOs, value objects, and domain models. Enforce immutability by using `List.copyOf()` for collections.
+
+---
+
+### Example 45: Stream Performance and Parallelization
+
+Streams provide functional operations but have performance characteristics. Understand when to use sequential vs parallel streams, performance pitfalls, and optimization techniques for production code.
+
+**Code**:
+
+```java
+import java.util.*;
+import java.util.stream.*;
+import java.util.concurrent.*;
+
+// Sequential vs Parallel streams
+List<Integer> numbers = IntStream.rangeClosed(1, 1000000) // => 1 million numbers
+    .boxed()
+    .toList(); // => [1, 2, 3, ..., 1000000]
+
+// Sequential stream - single thread
+long start = System.nanoTime();
+long sum1 = numbers.stream() // => Sequential stream
+    .mapToLong(Integer::longValue) // => Convert to long
+    .sum(); // => Sum all numbers: 500000500000
+long end = System.nanoTime();
+System.out.println("Sequential: " + (end - start) / 1_000_000 + "ms"); // => ~50ms
+
+// Parallel stream - multiple threads
+start = System.nanoTime();
+long sum2 = numbers.parallelStream() // => Parallel stream (uses ForkJoinPool)
+    .mapToLong(Integer::longValue)
+    .sum(); // => Same result: 500000500000
+end = System.nanoTime();
+System.out.println("Parallel: " + (end - start) / 1_000_000 + "ms"); // => ~15ms (faster)
+
+// Creating parallel streams
+Stream<Integer> parallel1 = numbers.parallelStream(); // => From collection
+Stream<Integer> parallel2 = Stream.of(1, 2, 3).parallel(); // => Make stream parallel
+Stream<Integer> parallel3 = IntStream.range(0, 100).parallel().boxed(); // => Primitive stream
+
+// Check if stream is parallel
+boolean isParallel = parallel1.isParallel(); // => true
+
+// Convert between sequential and parallel
+Stream<Integer> sequential = parallel1.sequential(); // => Make sequential
+Stream<Integer> parallelAgain = sequential.parallel(); // => Make parallel again
+
+// When parallel is faster (CPU-bound operations)
+List<String> words = IntStream.range(0, 10000)
+    .mapToObj(i -> "word" + i)
+    .toList(); // => 10,000 words
+
+// CPU-intensive operation
+start = System.nanoTime();
+long count1 = words.stream()
+    .filter(s -> s.length() > 3) // => Simple filter
+    .map(String::toUpperCase) // => CPU-intensive transformation
+    .count();
+end = System.nanoTime();
+System.out.println("Sequential: " + (end - start) / 1_000_000 + "ms");
+
+start = System.nanoTime();
+long count2 = words.parallelStream()
+    .filter(s -> s.length() > 3)
+    .map(String::toUpperCase)
+    .count();
+end = System.nanoTime();
+System.out.println("Parallel: " + (end - start) / 1_000_000 + "ms"); // => Usually faster
+
+// When parallel is slower (small datasets or cheap operations)
+List<Integer> small = List.of(1, 2, 3, 4, 5); // => Small dataset
+
+start = System.nanoTime();
+int sum3 = small.stream().mapToInt(i -> i).sum(); // => Sequential
+end = System.nanoTime();
+long seqTime = end - start;
+
+start = System.nanoTime();
+int sum4 = small.parallelStream().mapToInt(i -> i).sum(); // => Parallel
+end = System.nanoTime();
+long parTime = end - start;
+
+// Parallel has overhead (thread coordination) - slower for small datasets
+System.out.println("Parallel overhead: " + (parTime - seqTime) / 1000 + "μs");
+
+// Thread safety issues with parallel streams
+List<Integer> unsafeList = new ArrayList<>(); // => NOT thread-safe
+
+// WRONG: ArrayList not thread-safe for parallel writes
+numbers.parallelStream()
+    .forEach(unsafeList::add); // => Race condition! Results unpredictable
+
+System.out.println("Unsafe size: " + unsafeList.size()); // => NOT 1000000 (some lost)
+
+// CORRECT: Use thread-safe collection
+List<Integer> safeList = numbers.parallelStream()
+    .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+// => Thread-safe collection
+
+System.out.println("Safe size: " + safeList.size()); // => 1000000 (all present)
+
+// BEST: Use collectors (designed for parallel)
+List<Integer> collected = numbers.parallelStream()
+    .filter(n -> n % 2 == 0) // => Even numbers only
+    .collect(Collectors.toList()); // => Thread-safe collector
+
+// Order preservation with parallel streams
+List<Integer> ordered = IntStream.range(0, 100)
+    .parallel() // => Parallel stream
+    .boxed()
+    .collect(Collectors.toList()); // => Maintains encounter order: [0,1,2,...,99]
+
+List<Integer> unordered = IntStream.range(0, 100)
+    .parallel()
+    .unordered() // => Hint: order not important (can improve performance)
+    .boxed()
+    .collect(Collectors.toList()); // => May not maintain order (but faster)
+
+// forEachOrdered vs forEach in parallel
+System.out.println("forEach (unordered):");
+IntStream.range(0, 10)
+    .parallel()
+    .forEach(System.out::print); // => 4723061598 (unpredictable order)
+
+System.out.println("\nforEachOrdered (ordered):");
+IntStream.range(0, 10)
+    .parallel()
+    .forEachOrdered(System.out::print); // => 0123456789 (guaranteed order, slower)
+
+// Spliterator - controls parallel splitting
+List<Integer> list = new ArrayList<>(numbers);
+Spliterator<Integer> spliterator = list.spliterator();
+
+// Characteristics affect parallel performance
+int characteristics = spliterator.characteristics();
+boolean sized = spliterator.hasCharacteristics(Spliterator.SIZED); // => true (known size)
+boolean ordered = spliterator.hasCharacteristics(Spliterator.ORDERED); // => true (has order)
+
+// Custom ForkJoinPool for parallel streams
+ForkJoinPool customPool = new ForkJoinPool(4); // => 4 threads (default uses all cores)
+
+try {
+    long customSum = customPool.submit(() ->
+        numbers.parallelStream()
+            .mapToLong(Integer::longValue)
+            .sum()
+    ).get(); // => Execute in custom pool (4 threads)
+
+    System.out.println("Custom pool result: " + customSum);
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    customPool.shutdown(); // => Clean up custom pool
+}
+
+// Performance anti-patterns
+
+// 1. Boxing/unboxing overhead
+// SLOW: Boxing Integer to int repeatedly
+long slowSum = numbers.stream()
+    .map(i -> i * 2) // => Boxing/unboxing on each operation
+    .reduce(0, Integer::sum); // => Inefficient
+
+// FAST: Use primitive streams
+long fastSum = numbers.stream()
+    .mapToInt(Integer::intValue) // => Convert to IntStream once
+    .map(i -> i * 2) // => Primitive operations (no boxing)
+    .sum(); // => Efficient
+
+// 2. Stateful operations in parallel (problematic)
+AtomicInteger counter = new AtomicInteger(0); // => Shared mutable state
+
+// AVOID: Stateful lambda in parallel
+numbers.parallelStream()
+    .map(n -> n * counter.incrementAndGet()) // => Race condition risk
+    .collect(Collectors.toList()); // => Unpredictable results
+
+// BETTER: Stateless operations
+List<Integer> doubled = numbers.parallelStream()
+    .map(n -> n * 2) // => Stateless (no shared mutable state)
+    .collect(Collectors.toList()); // => Predictable, thread-safe
+
+// 3. Interference during stream operations
+List<Integer> source = new ArrayList<>(List.of(1, 2, 3, 4, 5));
+
+// WRONG: Modifying source during stream
+// source.stream()
+//     .forEach(n -> source.add(n * 2)); // => ConcurrentModificationException
+
+// CORRECT: Don't modify source, create new collection
+List<Integer> result = source.stream()
+    .map(n -> n * 2)
+    .collect(Collectors.toList()); // => [2, 4, 6, 8, 10]
+
+// Stream reuse (not allowed)
+Stream<Integer> stream = numbers.stream();
+long count3 = stream.count(); // => First terminal operation: 1000000
+// long count4 = stream.count(); // => ERROR: stream already operated on
+
+// Best practices for parallel streams:
+
+// 1. Use for large datasets (10,000+ elements)
+boolean useFarkJoinPool = numbers.size() > 10_000; // => Heuristic for parallelization
+
+// 2. Use for CPU-intensive operations (not I/O)
+// GOOD for parallel: complex calculations, transformations
+// BAD for parallel: database queries, file I/O (use CompletableFuture instead)
+
+// 3. Ensure thread safety
+// Use Collectors, avoid shared mutable state, use thread-safe data structures
+
+// 4. Prefer stateless operations
+// map, filter, flatMap are stateless and parallelize well
+// sorted, distinct are stateful and may reduce parallel performance
+
+// 5. Measure performance
+// Always benchmark sequential vs parallel for your specific workload
+
+// Performance comparison: collect vs reduce
+// collect is designed for parallelism
+List<String> collected2 = numbers.parallelStream()
+    .map(String::valueOf)
+    .collect(Collectors.toList()); // => Efficient parallel collection
+
+// reduce may have overhead for complex accumulation
+String concatenated = numbers.stream()
+    .limit(100)
+    .map(String::valueOf)
+    .reduce("", (a, b) -> a + "," + b); // => Inefficient for strings (use joining instead)
+
+String joined = numbers.stream()
+    .limit(100)
+    .map(String::valueOf)
+    .collect(Collectors.joining(",")); // => Efficient (designed for this use case)
+
+// Primitive streams for performance
+// BAD: Stream<Integer> with boxing
+double avg1 = numbers.stream()
+    .mapToDouble(Integer::doubleValue) // => Boxing/unboxing
+    .average()
+    .orElse(0.0);
+
+// GOOD: IntStream without boxing
+double avg2 = numbers.stream()
+    .mapToInt(Integer::intValue) // => Convert to primitive once
+    .average()
+    .orElse(0.0); // => No boxing during operations
+
+// Summary statistics (efficient)
+IntSummaryStatistics stats = numbers.stream()
+    .mapToInt(Integer::intValue)
+    .summaryStatistics();
+
+System.out.println("Count: " + stats.getCount()); // => 1000000
+System.out.println("Sum: " + stats.getSum()); // => 500000500000
+System.out.println("Min: " + stats.getMin()); // => 1
+System.out.println("Max: " + stats.getMax()); // => 1000000
+System.out.println("Average: " + stats.getAverage()); // => 500000.5
+```
+
+**Key Takeaway**: Parallel streams use `parallelStream()` or `.parallel()`. Best for large datasets (10k+ elements) with CPU-intensive operations. Overhead makes parallel slower for small data or cheap operations. Use `Collectors` for thread-safe accumulation. Avoid shared mutable state in parallel lambdas. `forEachOrdered()` maintains order (slower than `forEach()`). Primitive streams (`IntStream`, `LongStream`, `DoubleStream`) avoid boxing overhead. Custom `ForkJoinPool` controls thread count. Always benchmark sequential vs parallel. Stream reuse not allowed. Prefer stateless operations (`map`, `filter`) over stateful (`sorted`, `distinct`) for parallelism.

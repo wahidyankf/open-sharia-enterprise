@@ -3,12 +3,12 @@ title: "Beginner"
 date: 2025-12-24T00:00:00+07:00
 draft: false
 weight: 1000001
-description: "Spring Boot basics through 20 examples: dependency injection, beans, auto-configuration, REST controllers, and data access fundamentals"
+description: "Spring Boot basics through 25 examples: dependency injection, beans, auto-configuration, REST controllers, data access, file handling, and CORS"
 categories: ["learn"]
 tags: ["spring-boot", "tutorial", "by-example", "beginner", "dependency-injection", "rest-api", "spring-data"]
 ---
 
-Learn Spring Boot fundamentals through 20 annotated code examples. Each example is self-contained, runnable, and heavily commented to show what each line does, expected outputs, and key takeaways.
+Learn Spring Boot fundamentals through 25 annotated code examples. Each example is self-contained, runnable, and heavily commented to show what each line does, expected outputs, and key takeaways.
 
 ## Group 1: Core Spring Concepts
 
@@ -1173,3 +1173,658 @@ record ChangePasswordRequest(
 ```
 
 **Key Takeaway**: Create custom `@interface` annotations with `@Constraint` and implement `ConstraintValidator<AnnotationType, FieldType>` for reusable complex validation logic.
+
+---
+
+### Example 21: Exception Hierarchy - Custom Exceptions
+
+Organize exceptions into a hierarchy for different error scenarios in your domain.
+
+```java
+package com.example.demo.exception;
+
+// Base domain exception
+public abstract class DomainException extends RuntimeException {
+    private final String errorCode;
+
+    public DomainException(String errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode; // => E.g., "USER_001"
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+}
+
+// Business logic exceptions
+public class ResourceNotFoundException extends DomainException {
+    public ResourceNotFoundException(String resource, Long id) {
+        super("NOT_FOUND", resource + " not found with id: " + id);
+        // => Error code: NOT_FOUND, Message: "User not found with id: 123"
+    }
+}
+
+public class ValidationException extends DomainException {
+    private final Map<String, String> fieldErrors;
+
+    public ValidationException(Map<String, String> fieldErrors) {
+        super("VALIDATION_ERROR", "Validation failed");
+        this.fieldErrors = fieldErrors; // => {"email": "Invalid format", "age": "Must be 18+"}
+    }
+
+    public Map<String, String> getFieldErrors() {
+        return fieldErrors;
+    }
+}
+
+public class BusinessRuleException extends DomainException {
+    public BusinessRuleException(String message) {
+        super("BUSINESS_RULE", message);
+        // => Used for domain-specific rules like "Insufficient balance"
+    }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.exception.*;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderService {
+    public void placeOrder(Long userId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessRuleException("Order amount must be positive");
+            // => Throws with code BUSINESS_RULE
+        }
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+            // => Throws with code NOT_FOUND if user doesn't exist
+
+        if (user.getBalance().compareTo(amount) < 0) {
+            throw new BusinessRuleException("Insufficient balance for order");
+        }
+
+        // Process order...
+    }
+}
+```
+
+```java
+package com.example.demo.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+record ErrorDetail(String errorCode, String message, Map<String, String> details) {}
+
+@ControllerAdvice
+public class DomainExceptionHandler {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorDetail> handleNotFound(ResourceNotFoundException ex) {
+        ErrorDetail error = new ErrorDetail(ex.getErrorCode(), ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        // => 404 {"errorCode":"NOT_FOUND","message":"User not found...","details":null}
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorDetail> handleValidation(ValidationException ex) {
+        ErrorDetail error = new ErrorDetail(
+            ex.getErrorCode(),
+            ex.getMessage(),
+            ex.getFieldErrors()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        // => 400 with field-level error details
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ErrorDetail> handleBusinessRule(BusinessRuleException ex) {
+        ErrorDetail error = new ErrorDetail(ex.getErrorCode(), ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+        // => 422 Unprocessable Entity
+    }
+}
+```
+
+**Key Takeaway**: Organize exceptions into a domain-specific hierarchy with error codes—use abstract base exceptions to enforce consistent structure and handle different exception types appropriately in `@ControllerAdvice`.
+
+---
+
+### Example 22: File Upload & Download
+
+Handle multipart file uploads and stream file downloads efficiently.
+
+```java
+package com.example.demo.controller;
+
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.*;
+
+@RestController
+@RequestMapping("/api/files")
+public class FileController {
+    private final Path uploadDir = Paths.get("uploads");
+
+    public FileController() throws IOException {
+        Files.createDirectories(uploadDir); // => Creates uploads directory if not exists
+    }
+
+    // Single file upload
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> uploadFile(
+        @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", "File is empty"));
+        }
+
+        // Generate unique filename
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        // => e.g., "1703433600000_document.pdf"
+
+        Path filePath = uploadDir.resolve(filename);
+        file.transferTo(filePath); // => Saves file to uploads/1703433600000_document.pdf
+
+        return ResponseEntity.ok(Map.of(
+            "filename", filename,
+            "size", String.valueOf(file.getSize()),
+            "contentType", file.getContentType()
+        ));
+        // => {"filename":"1703433600000_document.pdf","size":"15360","contentType":"application/pdf"}
+    }
+
+    // Multiple file upload
+    @PostMapping("/upload-multiple")
+    public ResponseEntity<List<String>> uploadMultipleFiles(
+        @RequestParam("files") MultipartFile[] files
+    ) throws IOException {
+        List<String> uploadedFiles = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                Path filePath = uploadDir.resolve(filename);
+                file.transferTo(filePath);
+                uploadedFiles.add(filename);
+            }
+        }
+
+        return ResponseEntity.ok(uploadedFiles);
+        // => ["1703433600000_file1.jpg", "1703433601000_file2.png"]
+    }
+
+    // File download
+    @GetMapping("/download/{filename}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws IOException {
+        Path filePath = uploadDir.resolve(filename).normalize();
+
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.notFound().build(); // => 404 if file doesn't exist
+        }
+
+        Resource resource = new UrlResource(filePath.toUri());
+
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + resource.getFilename() + "\"")
+            .body(resource);
+        // => Streams file with Content-Disposition header for download
+    }
+
+    // List uploaded files
+    @GetMapping("/list")
+    public ResponseEntity<List<String>> listFiles() throws IOException {
+        List<String> files = Files.list(uploadDir)
+            .map(Path::getFileName)
+            .map(Path::toString)
+            .toList();
+
+        return ResponseEntity.ok(files);
+        // => ["1703433600000_document.pdf", "1703433601000_image.jpg"]
+    }
+}
+```
+
+```properties
+# application.properties - Configure max file size
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
+```
+
+**Key Takeaway**: Use `MultipartFile` for uploads and `Resource` with `UrlResource` for downloads—configure max file size limits and always validate/sanitize filenames to prevent directory traversal attacks.
+
+---
+
+### Example 23: Logging Configuration
+
+Configure logging levels, patterns, and file output for different environments.
+
+```java
+package com.example.demo.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/demo")
+public class LoggingController {
+    // Create logger for this class
+    private static final Logger log = LoggerFactory.getLogger(LoggingController.class);
+
+    @GetMapping("/process")
+    public String process(@RequestParam String data) {
+        log.trace("TRACE: Processing started with data: {}", data);
+        // => Lowest level, very detailed, rarely enabled in production
+
+        log.debug("DEBUG: Validating input data: {}", data);
+        // => Detailed information for debugging, disabled in production
+
+        log.info("INFO: Processing request for data: {}", data);
+        // => General informational messages, default production level
+
+        log.warn("WARN: Processing time exceeded threshold for: {}", data);
+        // => Warning messages for potentially harmful situations
+
+        try {
+            if (data.equals("error")) {
+                throw new IllegalArgumentException("Invalid data");
+            }
+        } catch (Exception e) {
+            log.error("ERROR: Failed to process data: {}", data, e);
+            // => Error events, application can continue
+        }
+
+        return "Processed: " + data;
+    }
+}
+```
+
+```properties
+# application.properties - Logging configuration
+
+# Root logging level
+logging.level.root=INFO
+
+# Package-specific logging levels
+logging.level.com.example.demo=DEBUG
+logging.level.com.example.demo.controller=TRACE
+logging.level.org.springframework.web=DEBUG
+logging.level.org.hibernate.SQL=DEBUG
+
+# Console output pattern
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n
+
+# File output
+logging.file.name=logs/application.log
+logging.file.max-size=10MB
+logging.file.max-history=30
+
+# Log file pattern
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+```
+
+```yaml
+# application-dev.yml - Development profile
+logging:
+  level:
+    root: DEBUG
+    com.example.demo: TRACE
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n"
+```
+
+```yaml
+# application-prod.yml - Production profile
+logging:
+  level:
+    root: WARN
+    com.example.demo: INFO
+  file:
+    name: /var/log/myapp/application.log
+    max-size: 100MB
+    max-history: 90
+```
+
+```xml
+<!-- logback-spring.xml - Advanced logging configuration -->
+<configuration>
+    <property name="LOG_PATH" value="logs"/>
+    <property name="LOG_FILE" value="application"/>
+
+    <!-- Console appender with colors -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Rolling file appender -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${LOG_FILE}.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <!-- Package-specific loggers -->
+    <logger name="com.example.demo" level="DEBUG"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+</configuration>
+```
+
+**Key Takeaway**: Use SLF4J with Logback for flexible logging—configure different levels per package, use parameterized logging for performance, and set up rolling file appenders to prevent disk space exhaustion in production.
+
+---
+
+### Example 24: Request/Response Interceptors
+
+Intercept HTTP requests and responses for cross-cutting concerns like logging, authentication, and metrics.
+
+```java
+package com.example.demo.interceptor;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+@Component
+public class RequestLoggingInterceptor implements HandlerInterceptor {
+    private static final Logger log = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
+
+    // Called BEFORE controller method execution
+    @Override
+    public boolean preHandle(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler
+    ) {
+        long startTime = System.currentTimeMillis();
+        request.setAttribute("startTime", startTime); // => Store for later use
+
+        log.info("==> Incoming request: {} {} from {}",
+            request.getMethod(),
+            request.getRequestURI(),
+            request.getRemoteAddr()
+        );
+        // => "==> Incoming request: GET /api/users from 127.0.0.1"
+
+        return true; // => true = continue to controller, false = stop processing
+    }
+
+    // Called AFTER controller method execution, BEFORE view rendering
+    @Override
+    public void postHandle(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler,
+        ModelAndView modelAndView
+    ) {
+        log.debug("Controller method completed, status: {}", response.getStatus());
+        // => Called only if controller succeeds (no exception)
+    }
+
+    // Called AFTER response is sent (always executed, even if exception occurred)
+    @Override
+    public void afterCompletion(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler,
+        Exception ex
+    ) {
+        long startTime = (Long) request.getAttribute("startTime");
+        long duration = System.currentTimeMillis() - startTime;
+
+        log.info("<== Completed: {} {} - Status: {} - Duration: {}ms",
+            request.getMethod(),
+            request.getRequestURI(),
+            response.getStatus(),
+            duration
+        );
+        // => "<== Completed: GET /api/users - Status: 200 - Duration: 45ms"
+
+        if (ex != null) {
+            log.error("Request failed with exception", ex);
+        }
+    }
+}
+```
+
+```java
+package com.example.demo.interceptor;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+@Component
+public class AuthenticationInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler
+    ) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false; // => Stops processing, returns 401
+        }
+
+        String token = authHeader.substring(7);
+        if (!isValidToken(token)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return false; // => Stops processing, returns 403
+        }
+
+        request.setAttribute("userId", extractUserId(token));
+        return true; // => Continue to controller
+    }
+
+    private boolean isValidToken(String token) {
+        return token != null && !token.isEmpty(); // => Simplified validation
+    }
+
+    private String extractUserId(String token) {
+        return "user123"; // => Simplified extraction
+    }
+}
+```
+
+```java
+package com.example.demo.config;
+
+import com.example.demo.interceptor.*;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.*;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    private final RequestLoggingInterceptor loggingInterceptor;
+    private final AuthenticationInterceptor authInterceptor;
+
+    public WebConfig(
+        RequestLoggingInterceptor loggingInterceptor,
+        AuthenticationInterceptor authInterceptor
+    ) {
+        this.loggingInterceptor = loggingInterceptor;
+        this.authInterceptor = authInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // Apply logging to all requests
+        registry.addInterceptor(loggingInterceptor)
+            .addPathPatterns("/**");
+        // => Intercepts all paths
+
+        // Apply authentication only to /api/** paths
+        registry.addInterceptor(authInterceptor)
+            .addPathPatterns("/api/**")
+            .excludePathPatterns("/api/public/**");
+        // => Intercepts /api/** but excludes /api/public/**
+    }
+}
+```
+
+**Key Takeaway**: Interceptors implement cross-cutting concerns across multiple controllers—use `preHandle` for authentication/authorization, `postHandle` for response modification, and `afterCompletion` for cleanup and metrics regardless of success or failure.
+
+---
+
+### Example 25: CORS Configuration
+
+Configure Cross-Origin Resource Sharing to allow frontend applications from different domains.
+
+```java
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.*;
+import org.springframework.web.filter.CorsFilter;
+
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Allow specific origins (don't use "*" in production with credentials)
+        config.addAllowedOrigin("http://localhost:3000"); // => React dev server
+        config.addAllowedOrigin("http://localhost:4200"); // => Angular dev server
+        config.addAllowedOrigin("https://myapp.com"); // => Production frontend
+
+        // Allow specific HTTP methods
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS"); // => Required for preflight requests
+
+        // Allow specific headers
+        config.addAllowedHeader("Authorization");
+        config.addAllowedHeader("Content-Type");
+        config.addAllowedHeader("X-Requested-With");
+
+        // Expose headers to frontend
+        config.addExposedHeader("X-Total-Count");
+        config.addExposedHeader("X-Custom-Header");
+
+        // Allow credentials (cookies, authorization headers)
+        config.setAllowCredentials(true); // => Enables cookies and auth headers
+
+        // Cache preflight response for 1 hour
+        config.setMaxAge(3600L); // => Reduces preflight OPTIONS requests
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config); // => Apply to all paths
+
+        return new CorsFilter(source);
+    }
+}
+```
+
+```java
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.*;
+
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+
+    // Alternative: Configure CORS via WebMvcConfigurer
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**") // => Apply to /api/** paths only
+            .allowedOrigins("http://localhost:3000", "https://myapp.com")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
+            .exposedHeaders("X-Total-Count")
+            .allowCredentials(true)
+            .maxAge(3600);
+    }
+}
+```
+
+```java
+package com.example.demo.controller;
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/products")
+// Controller-level CORS (overrides global configuration)
+@CrossOrigin(
+    origins = {"http://localhost:3000"},
+    methods = {RequestMethod.GET, RequestMethod.POST},
+    maxAge = 3600,
+    allowCredentials = "true"
+)
+public class ProductController {
+
+    @GetMapping
+    public List<Product> getProducts() {
+        // CORS headers automatically added to response
+        return List.of(new Product(1L, "Laptop"));
+    }
+
+    // Method-level CORS (most specific, overrides controller-level)
+    @PostMapping
+    @CrossOrigin(origins = "*") // => Allow all origins for this endpoint only
+    public Product createProduct(@RequestBody Product product) {
+        return product;
+    }
+}
+
+record Product(Long id, String name) {}
+```
+
+```yaml
+# application.yml - CORS via properties (Spring Boot 2.4+)
+spring:
+  web:
+    cors:
+      allowed-origins: http://localhost:3000,https://myapp.com
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+      allowed-headers: "*"
+      exposed-headers: X-Total-Count
+      allow-credentials: true
+      max-age: 3600
+```
+
+**Key Takeaway**: Configure CORS at the appropriate level—global filter for application-wide settings, `WebMvcConfigurer` for path-specific rules, or `@CrossOrigin` for fine-grained controller/method control. Never use `allowedOrigins("*")` with `allowCredentials(true)` in production.
+
+---

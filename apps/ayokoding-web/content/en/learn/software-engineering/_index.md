@@ -5,7 +5,6 @@ draft: false
 weight: 102
 ---
 
-- [Overview](/en/learn/software-engineering/overview)
 - [Programming Language](/en/learn/software-engineering/programming-language)
   - [Overview](/en/learn/software-engineering/programming-language/overview)
   - [Python](/en/learn/software-engineering/programming-language/python)
@@ -21,9 +20,11 @@ weight: 102
   - [Databases](/en/learn/software-engineering/data/databases)
 - [Networking](/en/learn/software-engineering/networking)
   - [Overview](/en/learn/software-engineering/networking/overview)
+  - [Introduction](/en/learn/software-engineering/networking/introduction)
 - [Platforms](/en/learn/software-engineering/platforms)
   - [Overview](/en/learn/software-engineering/platforms/overview)
   - [Web](/en/learn/software-engineering/platforms/web)
 - [System Design](/en/learn/software-engineering/system-design)
   - [Overview](/en/learn/software-engineering/system-design/overview)
   - [AI Personal Finance Advisor](/en/learn/software-engineering/system-design/ai-personal-finance-advisor)
+- [Overview](/en/learn/software-engineering/overview)

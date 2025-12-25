@@ -1,9 +1,9 @@
 ---
 title: "Beginner"
 weight: 11000001
-date: 2025-12-24T00:00:00+07:00
+date: 2025-12-25T16:18:56+07:00
 draft: false
-description: Master fundamental Elixir Phoenix concepts through 20 annotated examples covering routing, controllers, LiveView basics, Ecto, and forms
+description: Master fundamental Elixir Phoenix concepts through 25 annotated examples covering routing, controllers, LiveView basics, Ecto, forms, and components
 tags:
   - phoenix
   - elixir
@@ -15,6 +15,7 @@ tags:
   - controllers
   - liveview
   - ecto
+  - forms
 ---
 
 ## Group 1: Phoenix Fundamentals
@@ -22,6 +23,25 @@ tags:
 ### Example 1: Phoenix Application Starter
 
 A Phoenix application starts with a Mix project that sets up your supervision tree, configuration, and application endpoint. This example shows the basic structure you get from `mix phx.new`.
+
+```mermaid
+%% Phoenix application supervision tree
+graph TD
+    A[MyApp.Application] --> B[MyApp.Repo]
+    A --> C[MyAppWeb.Telemetry]
+    A --> D[Phoenix.PubSub]
+    A --> E[MyAppWeb.Endpoint]
+    E --> F[HTTP Server]
+    E --> G[WebSocket Handler]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#000
+```
 
 ```elixir
 # mix.exs - Defines your Phoenix application
@@ -84,6 +104,25 @@ end
 ### Example 2: Routing Basics
 
 The router defines URL patterns and maps them to controller actions. Phoenix 1.7 uses verified routes (~p sigil) for compile-time safety.
+
+```mermaid
+%% Request pipeline flow through router
+graph LR
+    A[HTTP Request] --> B[Router]
+    B --> C[Pipeline :browser]
+    C --> D[accepts html]
+    D --> E[fetch_session]
+    E --> F[protect_from_forgery]
+    F --> G[put_secure_headers]
+    G --> H[Controller Action]
+    H --> I[Response]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#000
+    style I fill:#0173B2,color:#fff
+```
 
 ```elixir
 # lib/my_app_web/router.ex
@@ -170,6 +209,26 @@ end
 ### Example 4: Plugs - Request Transformation
 
 Plugs are middleware that transform the connection. They're composable building blocks for request handling.
+
+```mermaid
+%% Plug transformation chain
+graph LR
+    A[conn] --> B[SetCurrentUser]
+    B --> C[conn with :current_user]
+    C --> D[require_login]
+    D --> E{User logged in?}
+    E -->|Yes| F[conn continues]
+    E -->|No| G[halt conn]
+    G --> H[redirect to /login]
+    F --> I[Controller Action]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style F fill:#029E73,color:#fff
+    style G fill:#CA9161,color:#000
+    style H fill:#CC78BC,color:#000
+    style I fill:#029E73,color:#fff
+```
 
 ```elixir
 # Custom plug - Set current user in assigns
@@ -306,6 +365,26 @@ config :esbuild,
 ### Example 7: First LiveView Component
 
 LiveView components render HTML and respond to events in real-time using WebSockets. This is a stateless function component.
+
+```mermaid
+%% LiveView lifecycle flow
+graph TD
+    A[Client Request] --> B[mount/3]
+    B --> C[assign socket]
+    C --> D[render/1]
+    D --> E[HTML to Client]
+    E --> F[WebSocket Connection]
+    F --> G[User Event]
+    G --> H[handle_event/3]
+    H --> I[Update assigns]
+    I --> D
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#000
+    style H fill:#DE8F05,color:#000
+```
 
 ```elixir
 # lib/my_app_web/live/posts_live/list.ex
@@ -603,6 +682,22 @@ end
 ### Example 14: Associations - One-to-Many
 
 Database associations relate tables. A post has many comments, a comment belongs to a post.
+
+```mermaid
+%% One-to-many association structure
+erDiagram
+    POST ||--o{ COMMENT : has
+    POST {
+        int id PK
+        string title
+        string body
+    }
+    COMMENT {
+        int id PK
+        int post_id FK
+        string body
+    }
+```
 
 ```elixir
 # lib/my_app/blog/post.ex
@@ -948,3 +1043,355 @@ end
 ```
 
 **Key Takeaway**: Use json/2 to return JSON responses. Use put_status/2 for HTTP status codes (201, 204, 422). Convert changesets to error maps for API responses.
+
+### Example 21: Nested Resources and Scoped Routes
+
+Organize related resources hierarchically. Nest routes under parent resources for cleaner URLs and better organization.
+
+```mermaid
+%% Nested routes structure
+graph TD
+    A[/posts/:post_id] --> B[/posts/:post_id/comments]
+    B --> C[GET index - list comments]
+    B --> D[POST create - new comment]
+    B --> E[GET :id/show - view comment]
+    B --> F[PUT :id/update - edit comment]
+    B --> G[DELETE :id/delete - remove comment]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+```
+
+```elixir
+# Router with nested resources
+defmodule MyAppWeb.Router do
+  use MyAppWeb, :router
+
+  scope "/", MyAppWeb do
+    pipe_through :browser
+
+    # Nested resources - comments belong to posts
+    resources "/posts", PostController do
+      resources "/comments", CommentController  # => /posts/:post_id/comments
+    end
+  end
+end
+
+# Controller accesses parent resource via params
+defmodule MyAppWeb.CommentController do
+  use MyAppWeb, :controller
+
+  def index(conn, %{"post_id" => post_id}) do
+    post = MyApp.Blog.get_post!(post_id)                # => Load parent
+    comments = MyApp.Blog.list_comments_for_post(post)  # => Filter by parent
+    render(conn, "index.html", post: post, comments: comments)
+  end
+
+  def create(conn, %{"post_id" => post_id, "comment" => comment_params}) do
+    post = MyApp.Blog.get_post!(post_id)
+
+    # Associate comment with post
+    comment_params = Map.put(comment_params, "post_id", post_id)
+
+    case MyApp.Blog.create_comment(comment_params) do
+      {:ok, comment} ->
+        conn
+        |> put_flash(:info, "Comment added!")                    # => Success message
+        |> redirect(to: ~p"/posts/#{post_id}/comments")          # => Back to list
+
+      {:error, changeset} ->
+        render(conn, "new.html", changeset: changeset, post: post)  # => Re-render
+    end
+  end
+end
+
+# Query comments filtered by post
+defmodule MyApp.Blog do
+  def list_comments_for_post(post) do
+    from(c in Comment, where: c.post_id == ^post.id, order_by: [desc: c.inserted_at])
+    |> Repo.all()  # => SELECT * FROM comments WHERE post_id = ? ORDER BY inserted_at DESC
+  end
+end
+```
+
+**Key Takeaway**: Nest resources to express parent-child relationships. Access parent via params["post_id"]. Use scoped queries to filter by parent. Maintains clean URL structure like /posts/123/comments.
+
+### Example 22: Error Handling and Custom Error Pages
+
+Handle errors gracefully with custom error views. Display friendly messages for 404, 500, and other HTTP errors.
+
+```elixir
+# lib/my_app_web/views/error_view.ex
+defmodule MyAppWeb.ErrorView do
+  use MyAppWeb, :view
+
+  # Render specific error templates
+  def render("404.html", _assigns) do
+    ~H"""
+    <div class="error-page">
+      <h1>404 - Page Not Found</h1>               # => Custom 404 page
+      <p>The page you're looking for doesn't exist.</p>
+      <a href={~p"/"}>Go back home</a>
+    </div>
+    """
+  end
+
+  def render("500.html", _assigns) do
+    ~H"""
+    <div class="error-page">
+      <h1>500 - Server Error</h1>                  # => Custom 500 page
+      <p>Something went wrong on our end.</p>
+    </div>
+    """
+  end
+
+  # Fallback for any other status code
+  def template_not_found(template, _assigns) do
+    Phoenix.Controller.status_message_from_template(template)
+  end
+end
+
+# In controller - raise specific errors
+defmodule MyAppWeb.PostController do
+  def show(conn, %{"id" => id}) do
+    case MyApp.Blog.get_post(id) do
+      nil ->
+        conn
+        |> put_status(:not_found)                  # => Set 404 status
+        |> put_view(MyAppWeb.ErrorView)
+        |> render("404.html")
+
+      post ->
+        render(conn, "show.html", post: post)      # => Normal render
+    end
+  end
+end
+
+# Or use Plug.Exception for custom errors
+defmodule MyApp.ResourceNotFound do
+  defexception message: "Resource not found", plug_status: 404
+end
+
+def show(conn, %{"id" => id}) do
+  post = MyApp.Blog.get_post!(id) || raise MyApp.ResourceNotFound
+  render(conn, "show.html", post: post)
+end
+```
+
+**Key Takeaway**: ErrorView renders custom error pages. Template name matches HTTP status (404.html, 500.html). Raise exceptions or set status manually. Phoenix catches errors and renders appropriate template.
+
+### Example 23: Flash Messages for User Feedback
+
+Display temporary messages to users after actions. Flash messages persist across redirects but disappear after being shown.
+
+```elixir
+defmodule MyAppWeb.SessionController do
+  use MyAppWeb, :controller
+
+  def create(conn, %{"session" => %{"email" => email, "password" => password}}) do
+    case MyApp.Accounts.authenticate(email, password) do
+      {:ok, user} ->
+        conn
+        |> put_flash(:info, "Welcome back, #{user.name}!")     # => Success flash
+        |> put_session(:user_id, user.id)                      # => Store session
+        |> redirect(to: ~p"/dashboard")
+
+      {:error, :invalid_credentials} ->
+        conn
+        |> put_flash(:error, "Invalid email or password")      # => Error flash
+        |> render("new.html")
+
+      {:error, :account_locked} ->
+        conn
+        |> put_flash(:warning, "Account locked. Contact support")  # => Warning flash
+        |> render("new.html")
+    end
+  end
+end
+
+# Display flash in layout
+# lib/my_app_web/layouts/app.html.heex
+<header>
+  <!-- Display all flash messages -->
+  <%= if info = Phoenix.Flash.get(@flash, :info) do %>
+    <div class="alert alert-info">
+      <%= info %>                                              # => Show info message
+    </div>
+  <% end %>
+
+  <%= if error = Phoenix.Flash.get(@flash, :error) do %>
+    <div class="alert alert-error">
+      <%= error %>                                             # => Show error message
+    </div>
+  <% end %>
+
+  <%= if warning = Phoenix.Flash.get(@flash, :warning) do %>
+    <div class="alert alert-warning">
+      <%= warning %>                                           # => Show warning message
+    </div>
+  <% end %>
+</header>
+
+# In LiveView
+def handle_event("delete", %{"id" => id}, socket) do
+  case MyApp.Blog.delete_post(id) do
+    {:ok, _post} ->
+      {:noreply, put_flash(socket, :info, "Post deleted")}    # => Flash in LiveView
+
+    {:error, _changeset} ->
+      {:noreply, put_flash(socket, :error, "Could not delete post")}
+  end
+end
+```
+
+**Key Takeaway**: put_flash/3 sets temporary messages (:info, :error, :warning). Phoenix.Flash.get/2 retrieves messages in templates. Flash survives redirects but clears after display. Works in both controllers and LiveView.
+
+### Example 24: Query Parameters and Filtering
+
+Handle query parameters for filtering, sorting, and pagination. Build dynamic queries based on user input.
+
+```elixir
+defmodule MyAppWeb.PostController do
+  use MyAppWeb, :controller
+
+  def index(conn, params) do
+    posts = MyApp.Blog.list_posts(params)  # => Pass all params to context
+    render(conn, "index.html", posts: posts)
+  end
+end
+
+# Context builds query dynamically
+defmodule MyApp.Blog do
+  import Ecto.Query
+
+  def list_posts(params) do
+    Post
+    |> filter_by_status(params["status"])           # => Filter if status param present
+    |> filter_by_category(params["category"])       # => Filter if category param present
+    |> sort_by(params["sort"])                      # => Sort if sort param present
+    |> paginate(params["page"], params["per_page"]) # => Paginate
+    |> Repo.all()
+  end
+
+  defp filter_by_status(query, nil), do: query
+  defp filter_by_status(query, status) do
+    where(query, [p], p.status == ^status)          # => WHERE status = ?
+  end
+
+  defp filter_by_category(query, nil), do: query
+  defp filter_by_category(query, category) do
+    where(query, [p], p.category == ^category)      # => WHERE category = ?
+  end
+
+  defp sort_by(query, "newest") do
+    order_by(query, [p], desc: p.inserted_at)       # => ORDER BY inserted_at DESC
+  end
+  defp sort_by(query, "oldest") do
+    order_by(query, [p], asc: p.inserted_at)        # => ORDER BY inserted_at ASC
+  end
+  defp sort_by(query, _), do: query
+
+  defp paginate(query, page, per_page) do
+    page = String.to_integer(page || "1")           # => Default to page 1
+    per_page = String.to_integer(per_page || "20")  # => Default 20 per page
+
+    query
+    |> limit(^per_page)                             # => LIMIT 20
+    |> offset(^((page - 1) * per_page))             # => OFFSET (page-1)*20
+  end
+end
+
+# URL examples:
+# /posts?status=published
+# /posts?category=elixir&sort=newest
+# /posts?page=2&per_page=10
+```
+
+**Key Takeaway**: Build queries dynamically using pattern matching. Check for nil params before applying filters. Use limit/offset for pagination. Query functions compose cleanly with pipes.
+
+### Example 25: Content Negotiation - HTML vs JSON
+
+Serve different response formats based on Accept header. Same controller action can return HTML or JSON.
+
+```elixir
+defmodule MyAppWeb.PostController do
+  use MyAppWeb, :controller
+
+  def show(conn, %{"id" => id}) do
+    post = MyApp.Blog.get_post!(id)
+
+    # Phoenix automatically negotiates based on Accept header
+    render(conn, "show.html", post: post)           # => Default to HTML
+  end
+
+  # Explicit format handling
+  def index(conn, params) do
+    posts = MyApp.Blog.list_posts()
+
+    case get_format(conn) do
+      "html" ->
+        render(conn, "index.html", posts: posts)    # => HTML response
+
+      "json" ->
+        json(conn, %{posts: posts})                 # => JSON response
+
+      _ ->
+        send_resp(conn, 406, "Not Acceptable")      # => Unsupported format
+    end
+  end
+end
+
+# Using with responds_to style pattern
+defmodule MyAppWeb.API.PostController do
+  use MyAppWeb, :controller
+  action_fallback MyAppWeb.FallbackController
+
+  def show(conn, %{"id" => id}) do
+    with {:ok, post} <- MyApp.Blog.fetch_post(id) do
+      render(conn, "show.#{get_format(conn)}", post: post)  # => Render matching format
+    end
+  end
+end
+
+# In router - specify accepted formats
+scope "/api", MyAppWeb.API do
+  pipe_through :api
+
+  resources "/posts", PostController, only: [:index, :show]
+end
+
+# JSON view
+defmodule MyAppWeb.PostView do
+  use MyAppWeb, :view
+
+  # Render JSON format
+  def render("show.json", %{post: post}) do
+    %{
+      id: post.id,                                  # => JSON response shape
+      title: post.title,
+      body: post.body,
+      inserted_at: post.inserted_at
+    }
+  end
+
+  def render("index.json", %{posts: posts}) do
+    %{data: Enum.map(posts, &show_json/1)}          # => Array of posts
+  end
+
+  defp show_json(post) do
+    %{id: post.id, title: post.title}
+  end
+end
+
+# Client requests:
+# GET /posts/1 with Accept: text/html => HTML response
+# GET /posts/1 with Accept: application/json => JSON response
+# GET /posts/1.json => JSON (format in URL)
+```
+
+**Key Takeaway**: Phoenix negotiates format based on Accept header or file extension. Define view functions for each format (show.json, show.html). Use get_format/1 to check requested format. Return 406 for unsupported formats.

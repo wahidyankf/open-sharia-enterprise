@@ -1,9 +1,9 @@
 ---
 title: "Overview"
 weight: 11000000
-date: 2025-12-24T00:00:00+07:00
+date: 2025-12-25T16:18:56+07:00
 draft: false
-description: Learn Elixir Phoenix through 60+ production-ready annotated examples covering routing, LiveView, authentication, and deployment
+description: Learn Elixir Phoenix through 80+ production-ready annotated examples covering routing, LiveView, authentication, and deployment - achieving 95% framework mastery
 tags:
   - phoenix
   - elixir
@@ -16,7 +16,7 @@ tags:
 
 ## Want to Master Phoenix Through Working Code?
 
-This guide teaches you Elixir Phoenix through **60 production-ready code examples** rather than lengthy explanations. If you're an experienced developer switching to Phoenix, or want to deepen your framework mastery, you'll build intuition through actual working patterns.
+This guide teaches you Elixir Phoenix through **80+ production-ready code examples** rather than lengthy explanations. If you're an experienced developer switching to Phoenix, or want to deepen your framework mastery, you'll build intuition through actual working patterns.
 
 ## What Is By-Example Learning?
 
@@ -42,23 +42,29 @@ Phoenix is a **web framework for Elixir** that prioritizes developer productivit
 
 ```mermaid
 graph LR
-  A["Beginner<br/>Core Phoenix Concepts<br/>Examples 1-20"] --> B["Intermediate<br/>Production Patterns<br/>Examples 21-40"]
-  B --> C["Advanced<br/>Scale & Resilience<br/>Examples 41-60"]
+  A["Beginner<br/>Core Phoenix Concepts<br/>Examples 1-25"] --> B["Intermediate<br/>Production Patterns<br/>Examples 26-50"]
+  B --> C["Advanced<br/>Scale & Resilience<br/>Examples 51-80"]
   D["0%<br/>No Phoenix Knowledge"] -.-> A
-  C -.-> E["90%<br/>Framework Mastery"]
+  C -.-> E["95%<br/>Framework Mastery"]
+
+  style A fill:#0173B2,color:#fff
+  style B fill:#DE8F05,color:#000
+  style C fill:#029E73,color:#fff
+  style D fill:#CC78BC,color:#000
+  style E fill:#029E73,color:#fff
 ```
 
-## Coverage Philosophy: 90% Through 60+ Examples
+## Coverage Philosophy: 95% Through 80+ Examples
 
-The **90% coverage** means you'll understand Phoenix deeply enough to build production systems. It doesn't mean you'll know every edge case or advanced feature—those come with experience.
+The **95% coverage** means you'll understand Phoenix deeply enough to build production systems with confidence. It doesn't mean you'll know every edge case or advanced feature—those come with experience.
 
-The 60 examples are organized progressively:
+The 80 examples are organized progressively:
 
-- **Beginner (Examples 1-20)**: Foundation concepts (routing, controllers, LiveView basics, Ecto fundamentals, forms)
-- **Intermediate (Examples 21-40)**: Production patterns (advanced LiveView, real-time features, authentication, testing)
-- **Advanced (Examples 41-60)**: Scale and resilience (database optimization, performance, deployment, monitoring)
+- **Beginner (Examples 1-25)**: Foundation concepts (routing, controllers, LiveView basics, Ecto fundamentals, forms, components)
+- **Intermediate (Examples 26-50)**: Production patterns (advanced LiveView, real-time features, authentication, testing, APIs)
+- **Advanced (Examples 51-80)**: Scale and resilience (database optimization, performance, deployment, monitoring, distributed systems)
 
-Together, these examples cover **90% of what you'll use** in production Phoenix applications.
+Together, these examples cover **95% of what you'll use** in production Phoenix applications.
 
 ## What's Covered
 

@@ -1,9 +1,9 @@
 ---
 title: "Beginner"
-date: 2025-12-23T00:00:00+07:00
+date: 2025-12-25T08:49:14+07:00
 draft: false
 weight: 10000001
-description: "Examples 1-15: Go fundamentals covering syntax, data structures, functions, methods, interfaces, and basic testing (0-40% coverage)"
+description: "Examples 1-30: Go fundamentals covering syntax, data structures, functions, methods, interfaces, operators, strings, time handling, and basic testing (0-40% coverage)"
 tags: ["golang", "go", "tutorial", "by-example", "beginner", "fundamentals"]
 ---
 
@@ -802,3 +802,1011 @@ func main() {
 ```
 
 **Key Takeaway**: Strings are immutable. Use `strings` package for common operations like `Split`, `Join`, `Contains`. Use `strings.Builder` for efficient concatenation in loops. Use `fmt.Sprintf` to format strings without printing.
+
+## Group 6: Operators and More Basics
+
+### Example 16: Bitwise and Compound Assignment Operators
+
+Go supports bitwise operations on integers and compound assignment operators that combine arithmetic with assignment. These operators are essential for low-level programming, bit manipulation, and concise code.
+
+**Code**:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    // Compound assignment operators
+    x := 10                    // => x is 10
+    x += 5                     // => x = x + 5, now x is 15
+    fmt.Println(x)             // => 15
+
+    x -= 3                     // => x = x - 3, now x is 12
+    fmt.Println(x)             // => 12
+
+    x *= 2                     // => x = x * 2, now x is 24
+    fmt.Println(x)             // => 24
+
+    x /= 4                     // => x = x / 4, now x is 6
+    fmt.Println(x)             // => 6
+
+    x %= 4                     // => x = x % 4 (remainder), now x is 2
+    fmt.Println(x)             // => 2
+
+    // Bitwise operators on integers
+    a := 12                    // => Binary: 1100
+    b := 10                    // => Binary: 1010
+
+    fmt.Println(a & b)         // => AND: 8 (1000 in binary)
+    fmt.Println(a | b)         // => OR: 14 (1110 in binary)
+    fmt.Println(a ^ b)         // => XOR: 6 (0110 in binary)
+    fmt.Println(^a)            // => NOT: -13 (bitwise complement)
+
+    // Bit shifting
+    fmt.Println(a << 1)        // => Left shift: 24 (11000 in binary, multiplies by 2)
+    fmt.Println(a >> 1)        // => Right shift: 6 (0110 in binary, divides by 2)
+
+    // Compound bitwise assignment
+    c := 5                     // => Binary: 0101
+    c &= 3                     // => c = c & 3, now c is 1 (0001)
+    fmt.Println(c)             // => 1
+}
+```
+
+**Key Takeaway**: Compound assignment operators (`+=`, `-=`, `*=`, `/=`, `%=`) combine arithmetic with assignment for concise code. Bitwise operators (`&`, `|`, `^`, `^`, `<<`, `>>`) manipulate individual bits and are useful for flags, masks, and low-level operations.
+
+### Example 17: Variadic Functions
+
+Variadic functions accept a variable number of arguments using the `...` syntax. The variadic parameter becomes a slice inside the function. This pattern is useful for functions like `fmt.Println` that accept any number of arguments.
+
+**Code**:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    // Call with different numbers of arguments
+    result1 := sum(1, 2)           // => Two arguments
+    fmt.Println(result1)           // => 3
+
+    result2 := sum(1, 2, 3, 4, 5) // => Five arguments
+    fmt.Println(result2)           // => 15
+
+    // Pass slice to variadic function using ...
+    numbers := []int{10, 20, 30}
+    result3 := sum(numbers...)     // => ... unpacks slice into arguments
+    fmt.Println(result3)           // => 60
+
+    // Mix normal and variadic parameters
+    printWithPrefix("INFO", "Server started", "Port 8080", "Ready")
+    // => Output:
+    // => INFO: Server started
+    // => INFO: Port 8080
+    // => INFO: Ready
+}
+
+// Variadic function - nums becomes []int inside function
+func sum(nums ...int) int {        // => ...int accepts 0 or more int arguments
+    total := 0
+    for _, num := range nums {     // => nums is a slice []int
+        total += num
+    }
+    return total
+}
+
+// Mix normal and variadic parameters (variadic must be last)
+func printWithPrefix(prefix string, messages ...string) {
+    for _, msg := range messages { // => messages is []string
+        fmt.Printf("%s: %s\n", prefix, msg)
+    }
+}
+```
+
+**Key Takeaway**: Variadic functions use `...Type` to accept any number of arguments of that type, which become a slice inside the function. Use `slice...` to unpack a slice into variadic arguments. Variadic parameters must be the last parameter in the function signature.
+
+### Example 18: Anonymous Functions and Closures
+
+Anonymous functions (functions without names) can be assigned to variables or executed immediately. Closures capture variables from their surrounding scope, enabling powerful patterns like creating function factories.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Outer Function<br/>counter := 0"]
+    B["Closure Function<br/>accesses counter"]
+    C["Each call increments<br/>shared counter"]
+
+    A -->|creates| B
+    B -->|maintains access| A
+    B --> C
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    // Anonymous function assigned to variable
+    greet := func(name string) string { // => Function without name
+        return fmt.Sprintf("Hello, %s!", name)
+    }
+    fmt.Println(greet("Alice"))    // => Hello, Alice!
+
+    // Immediately invoked function
+    func() {
+        fmt.Println("I run immediately") // => Executes right away
+    }()                            // => () invokes the function
+    // => Output: I run immediately
+
+    // Closure - captures variable from outer scope
+    counter := makeCounter()       // => Create closure
+    fmt.Println(counter())         // => 1 (count increments)
+    fmt.Println(counter())         // => 2
+    fmt.Println(counter())         // => 3
+
+    // Each closure has independent state
+    counter2 := makeCounter()      // => New closure, independent count
+    fmt.Println(counter2())        // => 1 (separate from first counter)
+
+    // Closure capturing loop variable (common pitfall)
+    funcs := []func(){}
+    for i := 0; i < 3; i++ {
+        i := i                     // => CRITICAL: copy loop variable
+        funcs = append(funcs, func() {
+            fmt.Println("Loop var:", i) // => Closure captures copied i
+        })
+    }
+    for _, f := range funcs {
+        f()                        // => Output: 0, 1, 2 (correct)
+    }
+}
+
+// Function that returns a closure
+func makeCounter() func() int {    // => Returns a function
+    count := 0                     // => Variable captured by closure
+    return func() int {            // => Closure accesses count
+        count++                    // => Modifies captured variable
+        return count
+    }
+}
+```
+
+**Key Takeaway**: Anonymous functions can be assigned to variables or invoked immediately. Closures capture variables from their surrounding scope and maintain access to those variables even after the outer function returns. Always copy loop variables when creating closures in loops to avoid capturing the wrong value.
+
+### Example 19: Defer, Panic, and Recover
+
+`defer` schedules function calls to run when the surrounding function returns. `panic` stops execution and starts unwinding the stack. `recover` catches panics in deferred functions, enabling graceful error recovery.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Function starts"]
+    B["defer cleanup"]
+    C["Normal execution"]
+    D["panic occurs"]
+    E["defer runs with recover"]
+    F["Panic caught or<br/>propagates up"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+func main() {
+    // defer runs when function returns (LIFO order)
+    fmt.Println("Start")
+    defer fmt.Println("Deferred 1") // => Runs last (LIFO)
+    defer fmt.Println("Deferred 2") // => Runs second
+    defer fmt.Println("Deferred 3") // => Runs first
+    fmt.Println("End")
+    // => Output:
+    // => Start
+    // => End
+    // => Deferred 3
+    // => Deferred 2
+    // => Deferred 1
+
+    // defer with function call arguments (evaluated immediately)
+    x := 10
+    defer fmt.Println("Deferred x:", x) // => x=10 captured NOW
+    x = 20
+    fmt.Println("Current x:", x)        // => 20
+    // => Output:
+    // => Current x: 20
+    // => Deferred x: 10
+
+    // panic and recover
+    safeDivide(10, 2)              // => Normal execution
+    safeDivide(10, 0)              // => Panic caught by recover
+    fmt.Println("Program continues after panic") // => Executes (panic recovered)
+}
+
+func safeDivide(a, b int) {
+    defer func() {                 // => Deferred function
+        if r := recover(); r != nil { // => recover() returns panic value
+            fmt.Println("Recovered from panic:", r)
+        }
+    }()
+
+    if b == 0 {
+        panic("division by zero")  // => Trigger panic
+    }
+    fmt.Printf("%d / %d = %d\n", a, b, a/b)
+}
+```
+
+**Key Takeaway**: `defer` schedules cleanup code that runs when the function returns, in LIFO order. `panic` stops execution and starts unwinding the stack. `recover()` in a deferred function catches panics, enabling graceful error handling. Use panic/recover sparingly - explicit error returns are idiomatic.
+
+### Example 20: File Reading and Writing
+
+Go's `os` and `io/ioutil` (now `os` in Go 1.16+) packages provide file operations. Reading and writing files requires error handling at each step. Understanding file modes and permissions is essential for production code.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    // Write to file
+    content := []byte("Hello, Go file I/O!") // => Convert string to []byte
+    err := os.WriteFile("test.txt", content, 0644) // => 0644 = rw-r--r--
+    if err != nil {
+        fmt.Println("Write error:", err)
+        return
+    }
+    fmt.Println("File written successfully")
+
+    // Read from file
+    data, err := os.ReadFile("test.txt") // => Returns []byte and error
+    if err != nil {
+        fmt.Println("Read error:", err)
+        return
+    }
+    fmt.Println("File content:", string(data)) // => Convert []byte to string
+    // => Output: File content: Hello, Go file I/O!
+
+    // Append to file
+    file, err := os.OpenFile("test.txt", os.O_APPEND|os.O_WRONLY, 0644)
+    if err != nil {
+        fmt.Println("Open error:", err)
+        return
+    }
+    defer file.Close()             // => Ensure file closes
+
+    _, err = file.WriteString("\nAppended line") // => Write more content
+    if err != nil {
+        fmt.Println("Append error:", err)
+        return
+    }
+    fmt.Println("Content appended")
+
+    // Check if file exists
+    if _, err := os.Stat("test.txt"); err == nil {
+        fmt.Println("File exists")
+    } else if os.IsNotExist(err) {
+        fmt.Println("File does not exist")
+    }
+
+    // Delete file
+    err = os.Remove("test.txt")    // => Delete file
+    if err != nil {
+        fmt.Println("Delete error:", err)
+        return
+    }
+    fmt.Println("File deleted")
+}
+```
+
+**Key Takeaway**: Use `os.WriteFile()` for simple writes and `os.ReadFile()` for reads. For more control, use `os.OpenFile()` with flags (`O_APPEND`, `O_WRONLY`, `O_CREATE`). Always use `defer file.Close()` to ensure files close properly. File permissions use Unix octal notation (0644 = owner read/write, group/others read).
+
+### Example 21: Command-Line Arguments
+
+Command-line programs parse arguments from `os.Args`. The `flag` package provides structured argument parsing with type checking, default values, and automatic help messages.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "flag"
+    "fmt"
+    "os"
+)
+
+func main() {
+    // Raw arguments from os.Args
+    fmt.Println("Raw args:", os.Args) // => []string including program name
+    // => os.Args[0] is program name
+    // => os.Args[1:] are arguments
+
+    if len(os.Args) > 1 {
+        fmt.Println("First arg:", os.Args[1])
+    }
+
+    // Structured argument parsing with flag package
+    name := flag.String("name", "Guest", "your name") // => String flag
+    age := flag.Int("age", 0, "your age")             // => Int flag
+    verbose := flag.Bool("verbose", false, "verbose output") // => Bool flag
+
+    flag.Parse()                   // => Parse command-line flags
+
+    fmt.Printf("Name: %s\n", *name)    // => Dereference pointer
+    fmt.Printf("Age: %d\n", *age)
+    fmt.Printf("Verbose: %t\n", *verbose)
+
+    // Non-flag arguments (after flags)
+    remainingArgs := flag.Args()   // => Arguments after all flags
+    fmt.Println("Remaining args:", remainingArgs)
+
+    // Example usage:
+    // go run main.go -name=Alice -age=30 -verbose file1.txt file2.txt
+    // => Name: Alice
+    // => Age: 30
+    // => Verbose: true
+    // => Remaining args: [file1.txt file2.txt]
+}
+```
+
+**Key Takeaway**: Use `os.Args` for raw argument access or `flag` package for structured parsing. Flag functions return pointers - dereference with `*`. Call `flag.Parse()` before reading flag values. Use `flag.Args()` for non-flag arguments.
+
+### Example 22: Time Manipulation
+
+The `time` package handles dates, durations, timers, and time zones. Understanding duration arithmetic and time formatting is essential for scheduling, timeouts, and timestamp handling.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    // Current time
+    now := time.Now()              // => Current local time
+    fmt.Println("Now:", now)
+
+    // Time components
+    fmt.Println("Year:", now.Year())       // => Extract year
+    fmt.Println("Month:", now.Month())     // => Month as constant
+    fmt.Println("Day:", now.Day())         // => Day of month
+    fmt.Println("Hour:", now.Hour())       // => Hour (0-23)
+    fmt.Println("Weekday:", now.Weekday()) // => Day of week
+
+    // Create specific time
+    past := time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC)
+    fmt.Println("Past:", past)     // => 2020-01-01 00:00:00 +0000 UTC
+
+    // Duration arithmetic
+    oneHour := time.Hour           // => Duration constant
+    twoHours := 2 * time.Hour      // => 2 hours
+    fmt.Println("Duration:", twoHours) // => 2h0m0s
+
+    future := now.Add(twoHours)    // => Add duration to time
+    fmt.Println("Future:", future)
+
+    // Time difference
+    diff := future.Sub(now)        // => Duration between times
+    fmt.Println("Difference:", diff) // => 2h0m0s
+
+    // Comparison
+    if future.After(now) {
+        fmt.Println("Future is after now")
+    }
+
+    // Formatting time (Go uses reference time: Mon Jan 2 15:04:05 MST 2006)
+    formatted := now.Format("2006-01-02 15:04:05") // => Custom format
+    fmt.Println("Formatted:", formatted) // => 2025-12-25 08:49:14
+
+    // Common formats
+    fmt.Println("RFC3339:", now.Format(time.RFC3339))
+    fmt.Println("Kitchen:", now.Format(time.Kitchen)) // => 3:04PM format
+
+    // Parse time from string
+    parsed, err := time.Parse("2006-01-02", "2025-12-25")
+    if err != nil {
+        fmt.Println("Parse error:", err)
+    } else {
+        fmt.Println("Parsed:", parsed)
+    }
+
+    // Sleep (pause execution)
+    fmt.Println("Sleeping 100ms...")
+    time.Sleep(100 * time.Millisecond) // => Pause for duration
+    fmt.Println("Awake!")
+}
+```
+
+**Key Takeaway**: Use `time.Now()` for current time, `time.Date()` to create specific times. Duration arithmetic uses `Add()` and `Sub()`. Format times with reference layout `2006-01-02 15:04:05`. Use `time.Sleep()` to pause execution.
+
+### Example 23: Regular Expressions
+
+The `regexp` package provides pattern matching and extraction. Regular expressions find, match, and extract text based on patterns. Understanding regex fundamentals unlocks powerful text processing.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "regexp"
+)
+
+func main() {
+    // Compile regex pattern
+    pattern := `\d+`               // => Match one or more digits
+    re := regexp.MustCompile(pattern) // => Compile or panic if invalid
+
+    // Match test
+    matched := re.MatchString("abc123def") // => true (contains digits)
+    fmt.Println("Matched:", matched)       // => true
+
+    // Find first match
+    found := re.FindString("abc123def456") // => First match: "123"
+    fmt.Println("Found:", found)
+
+    // Find all matches
+    all := re.FindAllString("abc123def456ghi789", -1) // => -1 means all matches
+    fmt.Println("All matches:", all) // => [123 456 789]
+
+    // Extract with capture groups
+    emailPattern := `(\w+)@(\w+\.\w+)` // => Capture username and domain
+    emailRe := regexp.MustCompile(emailPattern)
+    matches := emailRe.FindStringSubmatch("contact: alice@example.com")
+    // => matches[0] = full match, matches[1] = first group, matches[2] = second group
+    if len(matches) > 2 {
+        fmt.Println("Username:", matches[1]) // => alice
+        fmt.Println("Domain:", matches[2])   // => example.com
+    }
+
+    // Replace with regex
+    replaced := re.ReplaceAllString("abc123def456", "XXX") // => Replace all matches
+    fmt.Println("Replaced:", replaced) // => abcXXXdefXXX
+
+    // Split with regex
+    splitter := regexp.MustCompile(`\s+`) // => Split on whitespace
+    parts := splitter.Split("hello   world  go", -1)
+    fmt.Println("Split:", parts) // => [hello world go]
+}
+```
+
+**Key Takeaway**: Use `regexp.MustCompile()` to compile patterns. `MatchString()` tests for matches, `FindString()` extracts first match, `FindAllString()` gets all matches. Capture groups in patterns enable extraction. `ReplaceAllString()` performs regex-based replacement.
+
+### Example 24: String Rune Iteration
+
+Strings in Go are UTF-8 encoded byte sequences. Iterating by index gives bytes, but `range` gives runes (Unicode code points). Understanding this distinction prevents bugs when handling international text.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "unicode/utf8"
+)
+
+func main() {
+    // String with multi-byte characters
+    s := "Hello, 世界"              // => Mixed ASCII and Chinese characters
+
+    // Length in bytes vs runes
+    fmt.Println("Bytes:", len(s))  // => 13 (bytes)
+    fmt.Println("Runes:", utf8.RuneCountInString(s)) // => 9 (code points)
+
+    // Iterate by index (gives bytes)
+    fmt.Println("Byte iteration:")
+    for i := 0; i < len(s); i++ {
+        fmt.Printf("  [%d] = %d\n", i, s[i]) // => s[i] is byte value
+    }
+
+    // Iterate with range (gives runes)
+    fmt.Println("Rune iteration:")
+    for i, r := range s {          // => i=byte index, r=rune value
+        fmt.Printf("  [%d] = %c (U+%04X)\n", i, r, r)
+    }
+    // => Output shows Unicode code points correctly
+
+    // Convert string to rune slice
+    runes := []rune(s)             // => Explicit conversion to []rune
+    fmt.Println("Rune slice:", runes)
+    fmt.Println("First rune:", string(runes[0])) // => H
+
+    // Get specific rune
+    r, size := utf8.DecodeRuneInString(s) // => First rune and its byte size
+    fmt.Printf("First rune: %c (size: %d bytes)\n", r, size)
+
+    // Check if valid UTF-8
+    valid := utf8.ValidString(s)   // => Check if string is valid UTF-8
+    fmt.Println("Valid UTF-8:", valid) // => true
+}
+```
+
+**Key Takeaway**: String `len()` returns bytes, not characters. Use `utf8.RuneCountInString()` for character count. Iterate with `range` to get runes (Unicode code points), not bytes. Convert to `[]rune` for random access to characters. Always use rune iteration for international text.
+
+### Example 25: Map Manipulation Patterns
+
+Maps support advanced patterns beyond basic get/set. Checking existence, deleting keys, iterating in deterministic order, and using structs as keys unlock powerful data organization.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func main() {
+    // Map initialization
+    scores := map[string]int{  // => Composite literal
+        "Alice": 95,
+        "Bob":   87,
+        "Charlie": 92,
+    }
+
+    // Comma-ok idiom (safe key access)
+    score, exists := scores["Alice"] // => exists=true, score=95
+    fmt.Println("Alice:", score, "Exists:", exists)
+
+    score, exists = scores["David"]  // => exists=false, score=0
+    fmt.Println("David:", score, "Exists:", exists)
+
+    // Update vs insert
+    scores["Alice"] = 98             // => Update existing key
+    scores["Eve"] = 89               // => Insert new key
+    fmt.Println(scores)
+
+    // Delete key
+    delete(scores, "Bob")            // => Remove key (safe even if key doesn't exist)
+    fmt.Println("After delete:", scores)
+
+    // Iterate in deterministic order (maps are unordered)
+    // Step 1: Collect keys
+    keys := make([]string, 0, len(scores))
+    for k := range scores {
+        keys = append(keys, k)
+    }
+
+    // Step 2: Sort keys
+    sort.Strings(keys)               // => Alphabetical order
+
+    // Step 3: Iterate using sorted keys
+    fmt.Println("Sorted iteration:")
+    for _, k := range keys {
+        fmt.Printf("  %s: %d\n", k, scores[k])
+    }
+
+    // Map with struct keys
+    type Point struct {
+        X, Y int
+    }
+    locations := map[Point]string{
+        {0, 0}:  "origin",           // => Struct as key
+        {10, 5}: "northeast",
+    }
+    fmt.Println(locations[Point{0, 0}]) // => origin
+
+    // Map of maps (nested)
+    nested := map[string]map[string]int{
+        "scores": {
+            "math": 90,
+            "english": 85,
+        },
+    }
+    fmt.Println("Math score:", nested["scores"]["math"]) // => 90
+}
+```
+
+**Key Takeaway**: Use comma-ok idiom to check key existence safely. Maps are unordered - collect and sort keys for deterministic iteration. Structs can be map keys if all fields are comparable. Nested maps require initialization of inner maps before use.
+
+### Example 26: Array vs Slice Deep Dive
+
+Arrays and slices have critical differences in behavior, especially when passing to functions. Arrays are values (copied), slices are references (shared). Understanding backing arrays prevents subtle bugs.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Array [3]int<br/>Fixed size<br/>Passed by value"]
+    B["Slice []int<br/>Dynamic size<br/>Passed by reference"]
+    C["Backing Array<br/>Actual data storage"]
+
+    A -->|"Full copy on<br/>function call"| A
+    B -->|"Points to"| C
+    B -->|"Only header<br/>copied on call"| B
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    // Array - fixed size, value type
+    arr := [3]int{1, 2, 3}         // => [3]int is the type (size matters)
+    modifyArray(arr)               // => Pass by value (copy)
+    fmt.Println("After modifyArray:", arr) // => [1 2 3] (unchanged!)
+
+    // Slice - dynamic, reference type
+    slice := []int{1, 2, 3}        // => []int is the type
+    modifySlice(slice)             // => Slice header copied, but points to same backing array
+    fmt.Println("After modifySlice:", slice) // => [100 2 3] (changed!)
+
+    // Slice capacity and backing array
+    s1 := make([]int, 3, 5)        // => len=3, cap=5
+    fmt.Println("s1:", s1, "len:", len(s1), "cap:", cap(s1))
+    // => s1: [0 0 0] len: 3 cap: 5
+
+    s1[0] = 10
+    s2 := s1[0:2]                  // => Reslice (shares backing array)
+    fmt.Println("s2:", s2)         // => [10 0]
+
+    s2[0] = 99                     // => Modify s2
+    fmt.Println("s1:", s1)         // => [99 0 0] (s1 affected! shared backing array)
+
+    // Append can reallocate
+    s3 := []int{1, 2}              // => len=2, cap=2
+    s4 := append(s3, 3, 4, 5)      // => Exceeds capacity, new backing array allocated
+    s4[0] = 100
+    fmt.Println("s3:", s3)         // => [1 2] (s3 unaffected, different backing array now)
+    fmt.Println("s4:", s4)         // => [100 2 3 4 5]
+
+    // Copy to avoid sharing
+    original := []int{1, 2, 3}
+    copied := make([]int, len(original))
+    copy(copied, original)         // => Deep copy values
+    copied[0] = 999
+    fmt.Println("original:", original) // => [1 2 3]
+    fmt.Println("copied:", copied)     // => [999 2 3]
+}
+
+func modifyArray(arr [3]int) {     // => Receives copy of array
+    arr[0] = 100                   // => Modifies copy only
+}
+
+func modifySlice(slice []int) {    // => Receives slice header (pointer to backing array)
+    slice[0] = 100                 // => Modifies shared backing array
+}
+```
+
+**Key Takeaway**: Arrays are value types - functions receive copies. Slices are reference types - functions receive header pointing to shared backing array. Reslicing shares backing arrays. `append()` may reallocate when capacity exceeded. Use `copy()` for independent slice copies.
+
+### Example 27: Type Assertions and Type Switches
+
+Interfaces hold values of any type. Type assertions extract the underlying concrete type. Type switches enable pattern matching on type. This is essential when working with `interface{}` or generic interfaces.
+
+**Code**:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    // Type assertion - extract concrete type from interface
+    var i interface{} = "hello"    // => interface{} holds string
+
+    s := i.(string)                // => Type assertion (panics if wrong type)
+    fmt.Println("String:", s)      // => hello
+
+    // Safe type assertion with comma-ok
+    s, ok := i.(string)            // => ok=true if assertion succeeds
+    if ok {
+        fmt.Println("String (safe):", s)
+    }
+
+    n, ok := i.(int)               // => ok=false (i is not int)
+    fmt.Println("Int:", n, "OK:", ok) // => Int: 0 OK: false
+
+    // Type switch - pattern match on type
+    checkType(42)
+    checkType("text")
+    checkType(3.14)
+    checkType(true)
+    checkType([]int{1, 2, 3})
+
+    // Interface with method, type switch on implementers
+    var w Writer
+    w = &File{Name: "test.txt"}
+    handleWriter(w)                // => Detected File
+
+    w = &Buffer{}
+    handleWriter(w)                // => Detected Buffer
+}
+
+func checkType(v interface{}) {    // => Accepts any type
+    switch v := v.(type) {         // => Type switch
+    case int:
+        fmt.Printf("Integer: %d\n", v)
+    case string:
+        fmt.Printf("String: %s\n", v)
+    case float64:
+        fmt.Printf("Float: %.2f\n", v)
+    case bool:
+        fmt.Printf("Boolean: %t\n", v)
+    default:
+        fmt.Printf("Unknown type: %T\n", v) // => %T prints type
+    }
+}
+
+type Writer interface {
+    Write(data string)
+}
+
+type File struct {
+    Name string
+}
+
+func (f *File) Write(data string) {
+    fmt.Println("Writing to file:", f.Name)
+}
+
+type Buffer struct{}
+
+func (b *Buffer) Write(data string) {
+    fmt.Println("Writing to buffer")
+}
+
+func handleWriter(w Writer) {
+    switch v := w.(type) {         // => Type switch on interface
+    case *File:
+        fmt.Println("Detected File:", v.Name)
+    case *Buffer:
+        fmt.Println("Detected Buffer")
+    default:
+        fmt.Println("Unknown Writer")
+    }
+}
+```
+
+**Key Takeaway**: Use type assertion `v.(Type)` to extract concrete type from interface. Use comma-ok pattern for safe assertions. Type switches (`v.(type)`) enable pattern matching on types. `%T` format verb prints a value's type.
+
+### Example 28: Package Initialization and init Functions
+
+Package-level variables initialize before `main()`. The `init()` function runs once per package at program startup, useful for setup tasks. Understanding initialization order prevents subtle bugs.
+
+**Code**:
+
+```go
+package main
+
+import "fmt"
+
+// Package-level variables initialize before init() and main()
+var globalVar = initialize()   // => Runs before init()
+
+func initialize() string {
+    fmt.Println("1. Initializing globalVar")
+    return "initialized"
+}
+
+// init() runs after package-level variables, before main()
+func init() {
+    fmt.Println("2. First init() function")
+}
+
+// Multiple init() functions run in order of appearance
+func init() {
+    fmt.Println("3. Second init() function")
+}
+
+func main() {
+    fmt.Println("4. main() function")
+    fmt.Println("globalVar:", globalVar)
+}
+
+// => Output:
+// => 1. Initializing globalVar
+// => 2. First init() function
+// => 3. Second init() function
+// => 4. main() function
+// => globalVar: initialized
+```
+
+**Key Takeaway**: Initialization order: package-level variables → `init()` functions → `main()`. Multiple `init()` functions execute in order of appearance. Use `init()` for setup that must run once before `main()`, like initializing caches, registering drivers, or loading configuration.
+
+### Example 29: Formatted Printing Verbs
+
+The `fmt` package provides powerful formatting verbs for printing. Understanding `%v`, `%T`, `%#v`, `%+v` and others enables precise output control for debugging and logging.
+
+**Code**:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    type Person struct {
+        Name string
+        Age  int
+    }
+
+    p := Person{"Alice", 30}
+    num := 255
+    pi := 3.14159
+
+    // Common formatting verbs
+    fmt.Printf("%v\n", p)          // => Default format: {Alice 30}
+    fmt.Printf("%+v\n", p)         // => Include field names: {Name:Alice Age:30}
+    fmt.Printf("%#v\n", p)         // => Go syntax: main.Person{Name:"Alice", Age:30}
+    fmt.Printf("%T\n", p)          // => Type: main.Person
+
+    // Integer formatting
+    fmt.Printf("%d\n", num)        // => Decimal: 255
+    fmt.Printf("%b\n", num)        // => Binary: 11111111
+    fmt.Printf("%o\n", num)        // => Octal: 377
+    fmt.Printf("%x\n", num)        // => Hex lowercase: ff
+    fmt.Printf("%X\n", num)        // => Hex uppercase: FF
+    fmt.Printf("%c\n", num)        // => Character: ÿ
+
+    // Float formatting
+    fmt.Printf("%f\n", pi)         // => Default: 3.141590
+    fmt.Printf("%.2f\n", pi)       // => 2 decimals: 3.14
+    fmt.Printf("%e\n", pi)         // => Scientific: 3.141590e+00
+    fmt.Printf("%E\n", pi)         // => Scientific uppercase: 3.141590E+00
+
+    // String formatting
+    fmt.Printf("%s\n", "hello")    // => String: hello
+    fmt.Printf("%q\n", "hello")    // => Quoted: "hello"
+    fmt.Printf("%10s\n", "hello")  // => Right-padded: "     hello"
+    fmt.Printf("%-10s\n", "hello") // => Left-padded: "hello     "
+
+    // Pointer formatting
+    fmt.Printf("%p\n", &p)         // => Pointer address: 0xc0000a0000
+
+    // Boolean formatting
+    fmt.Printf("%t\n", true)       // => Boolean: true
+
+    // Width and precision
+    fmt.Printf("|%5d|\n", 42)      // => Width 5: |   42|
+    fmt.Printf("|%-5d|\n", 42)     // => Left-align: |42   |
+    fmt.Printf("|%05d|\n", 42)     // => Zero-pad: |00042|
+}
+```
+
+**Key Takeaway**: Use `%v` for default format, `%+v` to include field names, `%#v` for Go syntax representation, `%T` for type. Numeric formatting: `%d` (decimal), `%x` (hex), `%b` (binary). Float precision: `%.2f`. Width and alignment control output formatting precisely.
+
+### Example 30: Testing Subtests and Helpers
+
+Go 1.7+ introduced subtests for organizing related test cases. Test helpers mark functions as helpers to improve failure messages. Table-driven tests with subtests enable precise test organization.
+
+**Code**:
+
+```go
+package main
+
+import "testing"
+
+// Run tests: go test -v
+// Run specific subtest: go test -v -run TestCalculations/addition
+
+func TestCalculations(t *testing.T) {
+    // Subtests organize related test cases
+    t.Run("addition", func(t *testing.T) { // => Subtest for addition
+        result := add(2, 3)
+        if result != 5 {
+            t.Errorf("Expected 5, got %d", result)
+        }
+    })
+
+    t.Run("subtraction", func(t *testing.T) { // => Subtest for subtraction
+        result := subtract(10, 4)
+        if result != 6 {
+            t.Errorf("Expected 6, got %d", result)
+        }
+    })
+
+    t.Run("multiplication", func(t *testing.T) {
+        result := multiply(3, 7)
+        if result != 21 {
+            t.Errorf("Expected 21, got %d", result)
+        }
+    })
+}
+
+// Table-driven tests with subtests
+func TestDivision(t *testing.T) {
+    tests := []struct {
+        name     string
+        a, b     int
+        expected int
+        hasError bool
+    }{
+        {"normal division", 10, 2, 5, false},
+        {"division by zero", 10, 0, 0, true},
+        {"negative result", -10, 2, -5, false},
+    }
+
+    for _, tc := range tests {
+        t.Run(tc.name, func(t *testing.T) { // => Each test case becomes subtest
+            result, err := divide(tc.a, tc.b)
+
+            if tc.hasError {
+                if err == nil {
+                    t.Error("Expected error, got nil")
+                }
+            } else {
+                if err != nil {
+                    t.Errorf("Unexpected error: %v", err)
+                }
+                if result != tc.expected {
+                    t.Errorf("Expected %d, got %d", tc.expected, result)
+                }
+            }
+        })
+    }
+}
+
+// Test helper - marked with t.Helper()
+func assertNoError(t *testing.T, err error) {
+    t.Helper()                     // => Mark as helper (improves error messages)
+    if err != nil {
+        t.Fatalf("Unexpected error: %v", err) // => Fail test immediately
+    }
+}
+
+func TestWithHelper(t *testing.T) {
+    err := doSomething()
+    assertNoError(t, err)          // => Use helper
+
+    // If assertion fails, error points to this line, not helper internals
+}
+
+// Functions being tested
+func add(a, b int) int      { return a + b }
+func subtract(a, b int) int { return a - b }
+func multiply(a, b int) int { return a * b }
+func divide(a, b int) (int, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("division by zero")
+    }
+    return a / b, nil
+}
+func doSomething() error { return nil }
+```
+
+**Key Takeaway**: Use `t.Run(name, func(t *testing.T))` to create subtests for better organization. Run specific subtests with `-run TestName/SubtestName`. Mark helpers with `t.Helper()` to improve error line reporting. Combine table-driven tests with subtests for maximum clarity.

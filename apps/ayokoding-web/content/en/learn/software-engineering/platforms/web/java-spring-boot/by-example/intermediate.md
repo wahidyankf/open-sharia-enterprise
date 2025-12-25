@@ -3,12 +3,12 @@ title: "Intermediate"
 date: 2025-12-24T00:00:00+07:00
 draft: false
 weight: 1000002
-description: "Intermediate Spring Boot through 20 examples: transactions, validation, security, caching, async processing, and testing patterns"
+description: "Intermediate Spring Boot through 30 examples: transactions, validation, security, caching, async processing, WebSocket, API versioning, and advanced patterns"
 tags: ["spring-boot", "tutorial", "by-example", "intermediate", "spring-security", "transactions", "testing", "caching"]
 categories: ["learn"]
 ---
 
-Learn intermediate Spring Boot patterns through 20 annotated examples covering production-ready techniques: transactions, security, testing, caching, and async processing.
+Learn intermediate Spring Boot patterns through 30 annotated examples covering production-ready techniques: transactions, security, testing, caching, async processing, WebSocket, API versioning, and advanced architectural patterns.
 
 ## Prerequisites
 
@@ -1601,9 +1601,817 @@ public class ScheduledTasks {
 
 ---
 
+### Example 31: WebSocket - Real-Time Communication
+
+WebSocket enables bidirectional, real-time communication between server and clients for chat, notifications, and live updates.
+
+```java
+// pom.xml: spring-boot-starter-websocket
+
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/topic", "/queue"); // => Broadcast and P2P channels
+        config.setApplicationDestinationPrefixes("/app");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws")
+            .setAllowedOrigins("http://localhost:3000")
+            .withSockJS(); // => Fallback for browsers without WebSocket
+    }
+}
+
+@Controller
+public class ChatController {
+    @MessageMapping("/chat.send") // Client sends to /app/chat.send
+    @SendTo("/topic/messages") // Broadcast to all subscribers of /topic/messages
+    public ChatMessage sendMessage(ChatMessage message) {
+        message.setTimestamp(LocalDateTime.now());
+        return message; // => Broadcasts to all connected clients
+    }
+
+    @MessageMapping("/chat.private")
+    @SendToUser("/queue/private") // Send to specific user's queue
+    public ChatMessage sendPrivateMessage(ChatMessage message, Principal principal) {
+        message.setRecipient(principal.getName());
+        return message; // => Only recipient receives this
+    }
+}
+
+record ChatMessage(String sender, String content, String recipient, LocalDateTime timestamp) {}
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant C1 as Client 1
+    participant S as Spring Server
+    participant C2 as Client 2
+
+    C1->>S: Connect /ws (WebSocket handshake)
+    C2->>S: Connect /ws (WebSocket handshake)
+    C1->>S: Subscribe /topic/messages
+    C2->>S: Subscribe /topic/messages
+
+    C1->>S: Send /app/chat.send {"sender":"Alice","content":"Hello"}
+    S->>C1: Broadcast /topic/messages
+    S->>C2: Broadcast /topic/messages
+
+    Note over C1,C2: Both clients receive message in real-time
+
+    style C1 fill:#0173B2,color:#fff
+    style S fill:#029E73,color:#fff
+    style C2 fill:#DE8F05,color:#000
+```
+
+**Key Takeaway**: WebSocket enables real-time bidirectional communication—use `@MessageMapping` for client messages, `@SendTo` for broadcast to all subscribers, and `@SendToUser` for user-specific messages.
+
+---
+
+### Example 32: Server-Sent Events (SSE) - Unidirectional Streaming
+
+SSE streams server updates to clients over HTTP, simpler than WebSocket for one-way communication.
+
+```java
+@RestController
+@RequestMapping("/api/sse")
+public class SseController {
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<String>> streamEvents() {
+        return Flux.interval(Duration.ofSeconds(1))
+            .map(seq -> ServerSentEvent.<String>builder()
+                .id(String.valueOf(seq))
+                .event("message")
+                .data("Server time: " + LocalDateTime.now())
+                .build()
+            );
+        // => Sends event every second: data: Server time: 2024-12-24T10:00:00
+    }
+
+    @GetMapping(value = "/stock-prices", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<StockPrice>> streamStockPrices() {
+        return Flux.interval(Duration.ofSeconds(2))
+            .map(i -> ServerSentEvent.<StockPrice>builder()
+                .data(new StockPrice("AAPL", 150.0 + Math.random() * 10))
+                .build()
+            );
+        // => Streams stock updates every 2 seconds
+    }
+}
+
+record StockPrice(String symbol, double price) {}
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    Server[Spring Server] -->|SSE Stream| C1[Client 1]
+    Server -->|SSE Stream| C2[Client 2]
+    Server -->|SSE Stream| C3[Client 3]
+
+    Note1[data: event 1] --> Server
+    Note2[data: event 2] --> Server
+    Note3[data: event 3] --> Server
+
+    style Server fill:#0173B2,color:#fff
+    style C1 fill:#029E73,color:#fff
+    style C2 fill:#DE8F05,color:#000
+    style C3 fill:#CC78BC,color:#000
+```
+
+**Key Takeaway**: SSE provides unidirectional server-to-client streaming over HTTP—simpler than WebSocket for use cases like live dashboards, notifications, and progress updates where bidirectional communication isn't needed.
+
+---
+
+### Example 33: API Versioning Strategies
+
+Manage API evolution while maintaining backward compatibility through URL, header, or parameter versioning.
+
+```java
+// Strategy 1: URL Path Versioning
+@RestController
+@RequestMapping("/api/v1/users")
+public class UserV1Controller {
+    @GetMapping("/{id}")
+    public UserV1 getUser(@PathVariable Long id) {
+        return new UserV1(id, "Alice", "alice@example.com");
+        // => /api/v1/users/1 returns version 1 format
+    }
+}
+
+@RestController
+@RequestMapping("/api/v2/users")
+public class UserV2Controller {
+    @GetMapping("/{id}")
+    public UserV2 getUser(@PathVariable Long id) {
+        return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+        // => /api/v2/users/1 returns version 2 format (added lastName, phone)
+    }
+}
+
+record UserV1(Long id, String name, String email) {}
+record UserV2(Long id, String firstName, String lastName, String email, String phone) {}
+
+// Strategy 2: Header Versioning
+@RestController
+@RequestMapping("/api/users")
+public class UserHeaderVersionController {
+    @GetMapping(value = "/{id}", headers = "X-API-Version=1")
+    public UserV1 getUserV1(@PathVariable Long id) {
+        return new UserV1(id, "Alice", "alice@example.com");
+        // => Header: X-API-Version: 1
+    }
+
+    @GetMapping(value = "/{id}", headers = "X-API-Version=2")
+    public UserV2 getUserV2(@PathVariable Long id) {
+        return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+        // => Header: X-API-Version: 2
+    }
+}
+
+// Strategy 3: Content Negotiation (Accept Header)
+@RestController
+@RequestMapping("/api/users")
+public class UserContentNegotiationController {
+    @GetMapping(value = "/{id}", produces = "application/vnd.myapp.v1+json")
+    public UserV1 getUserV1(@PathVariable Long id) {
+        return new UserV1(id, "Alice", "alice@example.com");
+        // => Header: Accept: application/vnd.myapp.v1+json
+    }
+
+    @GetMapping(value = "/{id}", produces = "application/vnd.myapp.v2+json")
+    public UserV2 getUserV2(@PathVariable Long id) {
+        return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+        // => Header: Accept: application/vnd.myapp.v2+json
+    }
+}
+
+// Strategy 4: Request Parameter Versioning
+@RestController
+@RequestMapping("/api/users")
+public class UserParamVersionController {
+    @GetMapping("/{id}")
+    public Object getUser(@PathVariable Long id, @RequestParam(defaultValue = "1") int version) {
+        if (version == 2) {
+            return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+        }
+        return new UserV1(id, "Alice", "alice@example.com");
+        // => /api/users/1?version=2
+    }
+}
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Client[API Client] --> V1[/api/v1/users]
+    Client --> V2[/api/v2/users]
+
+    V1 --> R1["UserV1<br/>{id, name, email}"]
+    V2 --> R2["UserV2<br/>{id, firstName, lastName,<br/>email, phone}"]
+
+    Note1["URL Versioning<br/>Most visible"] --> V1
+    Note2["Backward Compatible<br/>New fields added"] --> V2
+
+    style Client fill:#0173B2,color:#fff
+    style V1 fill:#029E73,color:#fff
+    style V2 fill:#DE8F05,color:#000
+    style R1 fill:#CC78BC,color:#000
+    style R2 fill:#CA9161,color:#000
+```
+
+**Key Takeaway**: Choose versioning strategy based on client capabilities—URL versioning is most visible and cacheable, header versioning keeps URLs clean, content negotiation follows REST standards, and parameter versioning is simplest for internal APIs.
+
+---
+
+### Example 34: Custom Argument Resolvers
+
+Create custom argument resolvers to extract and inject domain objects from requests.
+
+```java
+// Custom annotation
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CurrentUser {}
+
+// Argument resolver
+@Component
+public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolver {
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.hasParameterAnnotation(CurrentUser.class)
+            && parameter.getParameterType().equals(User.class);
+        // => Activates when @CurrentUser User parameter detected
+    }
+
+    @Override
+    public Object resolveArgument(
+        MethodParameter parameter,
+        ModelAndViewContainer mavContainer,
+        NativeWebRequest webRequest,
+        WebDataBinderFactory binderFactory
+    ) {
+        String authHeader = webRequest.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            return extractUserFromToken(token);
+            // => Extracts user from JWT token
+        }
+        return null;
+    }
+
+    private User extractUserFromToken(String token) {
+        return new User(1L, "alice", "alice@example.com");
+        // => Simplified token parsing
+    }
+}
+
+// Register resolver
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    @Autowired
+    private CurrentUserArgumentResolver currentUserArgumentResolver;
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(currentUserArgumentResolver);
+    }
+}
+
+// Usage in controller
+@RestController
+@RequestMapping("/api/profile")
+public class ProfileController {
+    @GetMapping
+    public User getProfile(@CurrentUser User user) {
+        // user automatically resolved from JWT token
+        return user; // => No need to manually parse Authorization header
+    }
+
+    @PutMapping
+    public User updateProfile(@CurrentUser User user, @RequestBody ProfileUpdate update) {
+        // Both user and request body available
+        return user;
+    }
+}
+
+record User(Long id, String username, String email) {}
+record ProfileUpdate(String email, String phone) {}
+```
+
+**Key Takeaway**: Custom argument resolvers eliminate repetitive parameter extraction—implement `HandlerMethodArgumentResolver` to automatically inject domain objects from headers, cookies, or custom authentication mechanisms.
+
+---
+
+### Example 35: Filter vs Interceptor vs AOP
+
+Understand the differences and use cases for filters, interceptors, and AOP for cross-cutting concerns.
+
+```java
+// 1. Servlet Filter - Operates at servlet container level
+@Component
+@Order(1)
+public class RequestResponseLoggingFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) request;
+        System.out.println("FILTER: Before request - " + req.getRequestURI());
+        // => Executes before DispatcherServlet
+
+        chain.doFilter(request, response);
+
+        System.out.println("FILTER: After response");
+        // => Executes after response sent
+    }
+}
+
+// 2. HandlerInterceptor - Operates at Spring MVC level
+@Component
+public class PerformanceInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        request.setAttribute("startTime", System.currentTimeMillis());
+        System.out.println("INTERCEPTOR: Before controller method");
+        return true;
+        // => Executes after DispatcherServlet, before controller
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response,
+                          Object handler, ModelAndView modelAndView) {
+        System.out.println("INTERCEPTOR: After controller method, before view");
+        // => Executes after controller, only if no exception
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                               Object handler, Exception ex) {
+        long duration = System.currentTimeMillis() - (Long) request.getAttribute("startTime");
+        System.out.println("INTERCEPTOR: Request completed in " + duration + "ms");
+        // => Always executes, even if exception occurred
+    }
+}
+
+// 3. AOP Aspect - Operates at method level
+@Aspect
+@Component
+public class LoggingAspect {
+    @Before("execution(* com.example.demo.service.*.*(..))")
+    public void logBefore(JoinPoint joinPoint) {
+        System.out.println("AOP: Before method - " + joinPoint.getSignature().getName());
+        // => Executes before any service method
+    }
+
+    @AfterReturning(pointcut = "execution(* com.example.demo.service.*.*(..))", returning = "result")
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        System.out.println("AOP: Method returned - " + result);
+        // => Executes after successful method execution
+    }
+
+    @Around("@annotation(org.springframework.transaction.annotation.Transactional)")
+    public Object logTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("AOP: Transaction starting");
+        Object result = joinPoint.proceed();
+        System.out.println("AOP: Transaction completed");
+        return result;
+        // => Wraps @Transactional methods
+    }
+}
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Request[HTTP Request] --> Filter[Servlet Filter]
+    Filter --> DispatcherServlet[DispatcherServlet]
+    DispatcherServlet --> InterceptorPre[Interceptor preHandle]
+    InterceptorPre --> AOP_Before[AOP @Before]
+    AOP_Before --> Controller[Controller Method]
+    Controller --> AOP_After[AOP @AfterReturning]
+    AOP_After --> InterceptorPost[Interceptor postHandle]
+    InterceptorPost --> View[View Rendering]
+    View --> InterceptorAfter[Interceptor afterCompletion]
+    InterceptorAfter --> FilterAfter[Filter doFilter return]
+    FilterAfter --> Response[HTTP Response]
+
+    style Request fill:#0173B2,color:#fff
+    style Filter fill:#DE8F05,color:#000
+    style DispatcherServlet fill:#029E73,color:#fff
+    style InterceptorPre fill:#CC78BC,color:#000
+    style AOP_Before fill:#CA9161,color:#000
+    style Controller fill:#0173B2,color:#fff
+    style Response fill:#029E73,color:#fff
+```
+
+**Key Takeaway**: Use **Filters** for servlet-level concerns (encoding, security, CORS), **Interceptors** for Spring MVC concerns (authentication, logging, request/response modification), and **AOP** for business logic concerns (transactions, caching, auditing) targeting specific methods.
+
+---
+
+### Example 36: Custom Annotations with AOP
+
+Combine custom annotations with AOP for declarative cross-cutting concerns.
+
+```java
+// Custom annotation
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LogExecutionTime {}
+
+// AOP Aspect
+@Aspect
+@Component
+@Slf4j
+public class ExecutionTimeAspect {
+    @Around("@annotation(LogExecutionTime)")
+    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+
+        Object result = joinPoint.proceed(); // => Execute method
+
+        long duration = System.currentTimeMillis() - start;
+        log.info("{} executed in {}ms", joinPoint.getSignature(), duration);
+        // => Logs: com.example.demo.service.UserService.findUser(..) executed in 45ms
+
+        return result;
+    }
+}
+
+// Custom audit annotation
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Audit {
+    String action();
+}
+
+@Aspect
+@Component
+public class AuditAspect {
+    @Autowired
+    private AuditLogRepository auditLogRepository;
+
+    @AfterReturning("@annotation(audit)")
+    public void logAudit(JoinPoint joinPoint, Audit audit) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String methodName = joinPoint.getSignature().getName();
+
+        AuditLog log = new AuditLog(
+            username,
+            audit.action(),
+            methodName,
+            LocalDateTime.now()
+        );
+        auditLogRepository.save(log);
+        // => Automatically logs all audited operations
+    }
+}
+
+// Usage in service
+@Service
+public class UserService {
+    @LogExecutionTime
+    @Audit(action = "USER_CREATED")
+    public User createUser(User user) {
+        // Method automatically timed and audited
+        return userRepository.save(user);
+    }
+
+    @LogExecutionTime
+    public List<User> findAll() {
+        // Only execution time logged (no audit)
+        return userRepository.findAll();
+    }
+}
+```
+
+**Key Takeaway**: Combine custom annotations with AOP for declarative cross-cutting concerns—create domain-specific annotations (`@LogExecutionTime`, `@Audit`, `@RateLimit`) and implement behavior in aspects for clean, reusable functionality.
+
+---
+
+### Example 37: Bean Post Processors
+
+Modify or enhance beans during initialization with BeanPostProcessor.
+
+```java
+// Custom annotation for initialization
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface InitializeOnStartup {}
+
+// Bean post processor
+@Component
+public class InitializationBeanPostProcessor implements BeanPostProcessor {
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) {
+        // Called before @PostConstruct
+        if (bean.getClass().isAnnotationPresent(InitializeOnStartup.class)) {
+            System.out.println("Initializing bean: " + beanName);
+        }
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        // Called after @PostConstruct
+        if (bean instanceof CacheManager) {
+            System.out.println("CacheManager bean ready: " + beanName);
+            ((CacheManager) bean).warmUpCache();
+            // => Automatically warm up cache after initialization
+        }
+        return bean;
+    }
+}
+
+// Auto-proxy creation example
+@Component
+public class PerformanceProxyBeanPostProcessor implements BeanPostProcessor {
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        if (bean.getClass().getPackageName().startsWith("com.example.demo.service")) {
+            // Wrap service beans in performance monitoring proxy
+            return createProxy(bean);
+        }
+        return bean;
+    }
+
+    private Object createProxy(Object target) {
+        return Proxy.newProxyInstance(
+            target.getClass().getClassLoader(),
+            target.getClass().getInterfaces(),
+            (proxy, method, args) -> {
+                long start = System.currentTimeMillis();
+                Object result = method.invoke(target, args);
+                long duration = System.currentTimeMillis() - start;
+                System.out.println(method.getName() + " took " + duration + "ms");
+                return result;
+            }
+        );
+    }
+}
+
+@InitializeOnStartup
+@Service
+public class DataPreloadService {
+    @PostConstruct
+    public void init() {
+        System.out.println("Preloading data...");
+    }
+}
+```
+
+**Key Takeaway**: BeanPostProcessors enable bean customization during initialization—use `postProcessBeforeInitialization` for pre-init configuration and `postProcessAfterInitialization` for auto-proxying, validation, or post-init setup.
+
+---
+
+### Example 38: Custom Spring Boot Starter (Simplified)
+
+Create a lightweight auto-configuration module for reusable functionality.
+
+```java
+// 1. Create auto-configuration class
+@Configuration
+@ConditionalOnClass(EmailService.class)
+@EnableConfigurationProperties(EmailProperties.class)
+public class EmailAutoConfiguration {
+    @Bean
+    @ConditionalOnMissingBean
+    public EmailService emailService(EmailProperties properties) {
+        return new EmailService(properties);
+    }
+}
+
+// 2. Configuration properties
+@ConfigurationProperties(prefix = "app.email")
+public class EmailProperties {
+    private String host = "smtp.gmail.com";
+    private int port = 587;
+    private String username;
+    private String password;
+    // getters/setters
+}
+
+// 3. Service implementation
+public class EmailService {
+    private final EmailProperties properties;
+
+    public EmailService(EmailProperties properties) {
+        this.properties = properties;
+    }
+
+    public void sendEmail(String to, String subject, String body) {
+        System.out.println("Sending email to " + to + " via " + properties.getHost());
+        // Actual email sending logic
+    }
+}
+
+// 4. Register auto-configuration
+// Create: META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+// Add line: com.example.starter.EmailAutoConfiguration
+
+// 5. Usage in application
+// Just add dependency and configure:
+// app.email.username=user@gmail.com
+// app.email.password=secret
+
+@Service
+public class NotificationService {
+    @Autowired
+    private EmailService emailService; // Automatically available!
+
+    public void notifyUser(String email) {
+        emailService.sendEmail(email, "Welcome", "Thanks for signing up!");
+    }
+}
+```
+
+**Key Takeaway**: Create Spring Boot starters for reusable auto-configuration—define `@Configuration` with `@ConditionalOnClass` and `@EnableConfigurationProperties`, register in `AutoConfiguration.imports`, and users get automatic bean registration with type-safe properties.
+
+---
+
+### Example 39: Reactive Repositories with R2DBC
+
+Use R2DBC for reactive, non-blocking database access.
+
+```java
+// pom.xml: spring-boot-starter-data-r2dbc, r2dbc-h2
+
+@Entity
+@Table(name = "products")
+public class Product {
+    @Id
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    // getters/setters
+}
+
+// Reactive repository
+public interface ProductRepository extends ReactiveCrudRepository<Product, Long> {
+    Flux<Product> findByNameContaining(String name); // => Returns Flux (0..N items)
+    Mono<Product> findByName(String name); // => Returns Mono (0..1 item)
+
+    @Query("SELECT * FROM products WHERE price > :minPrice")
+    Flux<Product> findExpensiveProducts(BigDecimal minPrice);
+}
+
+@Service
+public class ProductService {
+    @Autowired
+    private ProductRepository productRepository;
+
+    public Flux<Product> getAllProducts() {
+        return productRepository.findAll();
+        // => Non-blocking stream of products
+    }
+
+    public Mono<Product> createProduct(Product product) {
+        return productRepository.save(product);
+        // => Non-blocking save operation
+    }
+
+    public Flux<Product> searchProducts(String keyword) {
+        return productRepository.findByNameContaining(keyword)
+            .filter(p -> p.getPrice().compareTo(BigDecimal.ZERO) > 0)
+            .map(p -> {
+                p.setName(p.getName().toUpperCase());
+                return p;
+            });
+        // => Reactive pipeline: fetch → filter → transform
+    }
+}
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+    @Autowired
+    private ProductService productService;
+
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<Product> streamProducts() {
+        return productService.getAllProducts();
+        // => Streams products as Server-Sent Events
+    }
+
+    @PostMapping
+    public Mono<Product> createProduct(@RequestBody Product product) {
+        return productService.createProduct(product);
+        // => Non-blocking POST handling
+    }
+}
+
+// application.yml
+// spring:
+//   r2dbc:
+//     url: r2dbc:h2:mem:///testdb
+//     username: sa
+//     password:
+```
+
+**Key Takeaway**: R2DBC enables reactive database access—use `ReactiveCrudRepository` for non-blocking queries returning `Mono<T>` (0..1) or `Flux<T>` (0..N), enabling end-to-end reactive pipelines from database to HTTP response.
+
+---
+
+### Example 40: Composite Keys and Embedded IDs
+
+Handle composite primary keys with `@IdClass` or `@EmbeddedId`.
+
+```java
+// Strategy 1: @IdClass
+@IdClass(OrderItemId.class)
+@Entity
+public class OrderItem {
+    @Id
+    private Long orderId;
+
+    @Id
+    private Long productId;
+
+    private int quantity;
+    private BigDecimal price;
+
+    // Constructors, getters, setters
+}
+
+// Composite key class
+public class OrderItemId implements Serializable {
+    private Long orderId;
+    private Long productId;
+
+    // Must have equals() and hashCode()
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderItemId)) return false;
+        OrderItemId that = (OrderItemId) o;
+        return Objects.equals(orderId, that.orderId) &&
+               Objects.equals(productId, that.productId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId, productId);
+    }
+}
+
+// Repository with composite key
+public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemId> {
+    List<OrderItem> findByOrderId(Long orderId);
+}
+
+// Usage
+OrderItemId id = new OrderItemId();
+id.setOrderId(1L);
+id.setProductId(100L);
+Optional<OrderItem> item = orderItemRepository.findById(id);
+
+// Strategy 2: @EmbeddedId (recommended)
+@Embeddable
+public class OrderItemKey implements Serializable {
+    private Long orderId;
+    private Long productId;
+
+    // equals(), hashCode(), getters, setters
+}
+
+@Entity
+public class OrderItemEmbedded {
+    @EmbeddedId
+    private OrderItemKey id;
+
+    private int quantity;
+    private BigDecimal price;
+
+    // Access composite key fields
+    public Long getOrderId() {
+        return id.getOrderId();
+    }
+}
+
+// Repository
+public interface OrderItemEmbeddedRepository extends JpaRepository<OrderItemEmbedded, OrderItemKey> {
+    @Query("SELECT o FROM OrderItemEmbedded o WHERE o.id.orderId = :orderId")
+    List<OrderItemEmbedded> findByOrderId(Long orderId);
+}
+
+// Usage
+OrderItemKey key = new OrderItemKey(1L, 100L);
+OrderItemEmbedded item = new OrderItemEmbedded();
+item.setId(key);
+item.setQuantity(5);
+orderItemEmbeddedRepository.save(item);
+```
+
+**Key Takeaway**: Use `@EmbeddedId` over `@IdClass` for composite keys—it encapsulates key fields in a single object, provides better type safety, and makes queries clearer by explicitly referencing the embedded ID.
+
+---
+
 ## Summary
 
-You've learned 20 intermediate Spring Boot patterns:
+You've learned 30 intermediate Spring Boot patterns:
 
 **Transactions & Data**:
 
@@ -1638,6 +2446,19 @@ You've learned 20 intermediate Spring Boot patterns:
 - Custom thread pools with TaskExecutor
 - Application events for decoupling
 - `@Scheduled` tasks for automation
+
+**Real-Time & Advanced Patterns**:
+
+- WebSocket for bidirectional real-time communication
+- Server-Sent Events for unidirectional streaming
+- API versioning strategies (URL, header, content negotiation)
+- Custom argument resolvers for parameter extraction
+- Filter vs Interceptor vs AOP comparisons
+- Custom annotations with AOP for declarative concerns
+- Bean post processors for bean customization
+- Custom Spring Boot starters
+- Reactive repositories with R2DBC
+- Composite keys and embedded IDs
 
 ## Next Steps
 

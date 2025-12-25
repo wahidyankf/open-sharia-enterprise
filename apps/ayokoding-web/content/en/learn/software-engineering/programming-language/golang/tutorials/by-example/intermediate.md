@@ -1,10 +1,11 @@
 ---
 title: "Intermediate"
-date: 2025-12-23T00:00:00+07:00
+date: 2025-12-25T08:49:14+07:00
 draft: false
 weight: 10000002
-description: "Examples 16-35: Advanced types, concurrency fundamentals, I/O, HTTP, standard library, production patterns, and testing (40-70% coverage)"
-tags: ["golang", "go", "tutorial", "by-example", "intermediate", "concurrency", "http", "testing"]
+description: "Examples 31-60: Advanced types, concurrency fundamentals, I/O, HTTP, standard library, production patterns, context, database access, and advanced testing (40-75% coverage)"
+tags:
+  ["golang", "go", "tutorial", "by-example", "intermediate", "concurrency", "http", "testing", "database", "context"]
 ---
 
 ## Group 1: Advanced Interfaces and Types
@@ -142,6 +143,27 @@ func divideWithWrapping(a, b int) error {
 ### Example 18: JSON Handling
 
 JSON is ubiquitous in Go APIs. The `encoding/json` package marshals (structs to JSON) and unmarshals (JSON to structs). Struct tags control JSON field mapping - critical for API compatibility when Go field names don't match JSON field names.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["Go Struct<br/>User{Name, Age}"]
+    B["json.Marshal"]
+    C["JSON String<br/>{\"name\":\"Alice\"}"]
+    D["json.Unmarshal"]
+    E["Go Struct<br/>Person{Name, Age}"]
+
+    A -->|Marshal| B
+    B --> C
+    C -->|Unmarshal| D
+    D --> E
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+```
 
 **Code**:
 
@@ -1445,3 +1467,890 @@ func chain(handler http.Handler, middlewares ...Middleware) http.Handler {
 **Key Takeaway**: Middleware chains compose cross-cutting concerns by wrapping handlers. Each middleware can inspect/modify requests, short-circuit the chain (return early), or pass control to the next handler. Order matters - outermost middleware executes first. Production services use middleware for logging, auth, rate limiting, recovery, CORS, compression, and metrics.
 
 **Why This Matters**: In production Go services, middleware chains are ubiquitous. They separate business logic from infrastructure concerns, making code modular and testable. Understanding the wrapping pattern (each middleware returns a handler that calls `next.ServeHTTP`) is essential for building scalable HTTP services. Popular frameworks (Gorilla, Chi, Echo) all use this pattern.
+
+### Example 37: Context Cancellation Patterns
+
+Context enables graceful cancellation of long-running operations. When a context is cancelled (due to timeout, deadline, or manual cancellation), all goroutines respecting that context should clean up and exit promptly.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Parent Context<br/>WithTimeout(2s)"]
+    B["Child Goroutine 1<br/>Checks ctx.Done()"]
+    C["Child Goroutine 2<br/>Checks ctx.Done()"]
+    D["Timeout Expires"]
+    E["All Goroutines<br/>Exit Gracefully"]
+
+    A -->|spawns| B
+    A -->|spawns| C
+    D -->|signals| A
+    A -->|cancels| B
+    A -->|cancels| C
+    B --> E
+    C --> E
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func main() {
+    // Context with timeout
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()                     // => Always defer cancel to prevent leaks
+
+    // Start long-running operation
+    result := make(chan string)
+    go longOperation(ctx, result)
+
+    select {
+    case res := <-result:
+        fmt.Println("Result:", res)    // => Operation completed
+    case <-ctx.Done():
+        fmt.Println("Timeout:", ctx.Err()) // => Context timeout or cancelled
+    }
+
+    // Context with manual cancellation
+    ctx2, cancel2 := context.WithCancel(context.Background())
+
+    go func() {
+        time.Sleep(500 * time.Millisecond)
+        cancel2()                      // => Manually cancel context
+    }()
+
+    select {
+    case <-time.After(1 * time.Second):
+        fmt.Println("Never reached")
+    case <-ctx2.Done():
+        fmt.Println("Cancelled:", ctx2.Err()) // => context canceled
+    }
+
+    // Context with deadline
+    deadline := time.Now().Add(100 * time.Millisecond)
+    ctx3, cancel3 := context.WithDeadline(context.Background(), deadline)
+    defer cancel3()
+
+    select {
+    case <-time.After(200 * time.Millisecond):
+        fmt.Println("Never reached")
+    case <-ctx3.Done():
+        fmt.Println("Deadline exceeded:", ctx3.Err())
+    }
+}
+
+func longOperation(ctx context.Context, result chan<- string) {
+    // Simulate work with periodic context checking
+    for i := 0; i < 10; i++ {
+        select {
+        case <-ctx.Done():             // => Check if context cancelled
+            fmt.Println("Operation cancelled early")
+            return
+        case <-time.After(300 * time.Millisecond):
+            fmt.Printf("Working... %d/10\n", i+1)
+        }
+    }
+    result <- "completed"              // => Send result if not cancelled
+}
+```
+
+**Key Takeaway**: Always use `defer cancel()` after creating contexts to prevent leaks. Check `ctx.Done()` in loops and long-running operations. Context cancellation propagates to all derived contexts, enabling cascading cancellation of operations.
+
+### Example 38: JSON Streaming with Encoder/Decoder
+
+For large JSON datasets, streaming with `json.Encoder` and `json.Decoder` is more memory-efficient than loading entire payloads. This pattern enables processing massive JSON arrays or streams without loading everything into memory.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+    "strings"
+)
+
+func main() {
+    // Write JSON stream with Encoder
+    file, err := os.Create("users.json")
+    if err != nil {
+        fmt.Println("Create error:", err)
+        return
+    }
+    defer file.Close()
+
+    encoder := json.NewEncoder(file)   // => Create encoder writing to file
+    encoder.SetIndent("", "  ")        // => Pretty print with 2-space indent
+
+    // Stream multiple JSON objects
+    users := []User{
+        {Name: "Alice", Age: 30, Email: "alice@example.com"},
+        {Name: "Bob", Age: 25, Email: "bob@example.com"},
+        {Name: "Charlie", Age: 35, Email: "charlie@example.com"},
+    }
+
+    for _, user := range users {
+        if err := encoder.Encode(user); err != nil { // => Write one JSON object
+            fmt.Println("Encode error:", err)
+            return
+        }
+    }
+
+    fmt.Println("JSON stream written to users.json")
+
+    // Read JSON stream with Decoder
+    jsonStream := `
+    {"Name":"David","Age":28,"Email":"david@example.com"}
+    {"Name":"Eve","Age":32,"Email":"eve@example.com"}
+    `
+
+    decoder := json.NewDecoder(strings.NewReader(jsonStream))
+
+    for decoder.More() {               // => Check if more JSON objects available
+        var user User
+        if err := decoder.Decode(&user); err != nil { // => Decode one object
+            fmt.Println("Decode error:", err)
+            break
+        }
+        fmt.Printf("Decoded: %s (Age: %d)\n", user.Name, user.Age)
+    }
+
+    // Decoder with HTTP response body (common pattern)
+    // resp, _ := http.Get("https://api.example.com/users")
+    // decoder := json.NewDecoder(resp.Body)
+    // for decoder.More() {
+    //     var user User
+    //     decoder.Decode(&user)
+    //     processUser(user)
+    // }
+}
+
+type User struct {
+    Name  string `json:"Name"`
+    Age   int    `json:"Age"`
+    Email string `json:"Email"`
+}
+```
+
+**Key Takeaway**: Use `json.NewEncoder(writer)` to stream JSON output and `json.NewDecoder(reader)` to stream JSON input. Decoders process JSON incrementally with `decoder.More()` and `decoder.Decode()`, avoiding memory overhead of loading entire payloads. Essential for large datasets or HTTP streaming.
+
+### Example 39: HTTP Client with Timeouts and Retries
+
+Production HTTP clients need timeouts (prevent hanging), retries (handle transient failures), and connection pooling (reuse connections). Understanding these patterns prevents service outages and cascading failures.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["HTTP Request<br/>with timeout"]
+    B["Connection Pool"]
+    C["Request Succeeds"]
+    D["Request Fails"]
+    E["Retry Logic<br/>Exponential Backoff"]
+    F["Final Result"]
+
+    A --> B
+    B --> C
+    B --> D
+    C --> F
+    D --> E
+    E -->|"Retry 1, 2, 3..."| B
+    E -->|"Max retries"| F
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Code**:
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "net/http"
+    "time"
+)
+
+func main() {
+    // Create HTTP client with timeouts
+    client := &http.Client{
+        Timeout: 5 * time.Second,      // => Overall request timeout
+        Transport: &http.Transport{
+            MaxIdleConns:        100,  // => Connection pool size
+            MaxIdleConnsPerHost: 10,
+            IdleConnTimeout:     90 * time.Second,
+            DialContext: (&net.Dialer{
+                Timeout:   2 * time.Second, // => Connection timeout
+                KeepAlive: 30 * time.Second,
+            }).DialContext,
+            TLSHandshakeTimeout:   3 * time.Second,
+            ResponseHeaderTimeout: 3 * time.Second,
+        },
+    }
+
+    // Make request with context timeout
+    ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+    defer cancel()
+
+    req, err := http.NewRequestWithContext(ctx, "GET", "https://example.com", nil)
+    if err != nil {
+        fmt.Println("Request creation error:", err)
+        return
+    }
+
+    resp, err := client.Do(req)
+    if err != nil {
+        fmt.Println("Request error:", err)
+        return
+    }
+    defer resp.Body.Close()
+
+    fmt.Println("Status:", resp.Status)
+
+    // Retry with exponential backoff
+    maxRetries := 3
+    backoff := time.Second
+
+    for attempt := 0; attempt < maxRetries; attempt++ {
+        resp, err := makeRequestWithRetry(client, "https://example.com")
+        if err == nil && resp.StatusCode == http.StatusOK {
+            fmt.Println("Request succeeded on attempt", attempt+1)
+            resp.Body.Close()
+            break
+        }
+
+        if attempt < maxRetries-1 {
+            fmt.Printf("Attempt %d failed, retrying in %v\n", attempt+1, backoff)
+            time.Sleep(backoff)
+            backoff *= 2               // => Exponential backoff: 1s, 2s, 4s
+        } else {
+            fmt.Println("All retries exhausted")
+        }
+    }
+}
+
+func makeRequestWithRetry(client *http.Client, url string) (*http.Response, error) {
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+
+    req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+    if err != nil {
+        return nil, err
+    }
+
+    return client.Do(req)
+}
+```
+
+**Key Takeaway**: Configure HTTP client timeouts at multiple levels (overall, connection, TLS, response header) to prevent hanging. Use connection pooling (`MaxIdleConns`) for efficiency. Implement retry logic with exponential backoff for transient failures. Always use `context.WithTimeout` for individual requests to enable cancellation.
+
+### Example 40: Table-Driven Test Patterns
+
+Table-driven tests parameterize test cases, enabling comprehensive coverage with minimal code duplication. This pattern is idiomatic in Go and scales better than individual test functions for each scenario.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "strings"
+    "testing"
+)
+
+// Function to test - validates email format
+func isValidEmail(email string) bool {
+    return strings.Contains(email, "@") &&
+        strings.Contains(email, ".") &&
+        len(email) > 3
+}
+
+// Table-driven test with subtests
+func TestIsValidEmail(t *testing.T) {
+    tests := []struct {
+        name     string             // => Test case name
+        input    string             // => Input value
+        expected bool               // => Expected result
+    }{
+        {"valid email", "alice@example.com", true},
+        {"valid email with subdomain", "bob@mail.example.com", true},
+        {"missing @", "aliceexample.com", false},
+        {"missing dot", "alice@examplecom", false},
+        {"too short", "a@b", false},
+        {"empty string", "", false},
+        {"@ only", "@", false},
+        {"dot only", ".", false},
+        {"@ at start", "@example.com", false},
+        {"@ at end", "alice@", false},
+    }
+
+    for _, tc := range tests {
+        t.Run(tc.name, func(t *testing.T) { // => Create subtest for each case
+            result := isValidEmail(tc.input)
+            if result != tc.expected {
+                t.Errorf("isValidEmail(%q) = %v, expected %v",
+                    tc.input, result, tc.expected)
+            }
+        })
+    }
+}
+
+// Advanced: Testing error cases with error type checking
+func TestDivideErrors(t *testing.T) {
+    tests := []struct {
+        name      string
+        a, b      int
+        wantErr   bool
+        errString string         // => Expected error message substring
+    }{
+        {"normal division", 10, 2, false, ""},
+        {"division by zero", 10, 0, true, "cannot divide by zero"},
+        {"negative numbers", -10, -2, false, ""},
+    }
+
+    for _, tc := range tests {
+        t.Run(tc.name, func(t *testing.T) {
+            _, err := divide(tc.a, tc.b)
+
+            if tc.wantErr {
+                if err == nil {
+                    t.Errorf("Expected error but got nil")
+                    return
+                }
+                if !strings.Contains(err.Error(), tc.errString) {
+                    t.Errorf("Error %q does not contain %q", err.Error(), tc.errString)
+                }
+            } else {
+                if err != nil {
+                    t.Errorf("Unexpected error: %v", err)
+                }
+            }
+        })
+    }
+}
+
+func divide(a, b int) (int, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("cannot divide by zero")
+    }
+    return a / b, nil
+}
+```
+
+**Key Takeaway**: Use table-driven tests with anonymous struct slices to parameterize test cases. Name each test case for clarity. Use `t.Run()` to create subtests for each case, enabling precise failure reporting and selective test execution with `-run` flag. This pattern scales to hundreds of test cases with minimal code.
+
+### Example 41: Buffered I/O for Performance
+
+Buffered readers and writers reduce system calls by batching data. For file I/O or network streams, buffering dramatically improves performance. Understanding when to use buffering prevents performance bottlenecks.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+    "strings"
+)
+
+func main() {
+    // Write with buffering
+    file, err := os.Create("buffered.txt")
+    if err != nil {
+        fmt.Println("Create error:", err)
+        return
+    }
+    defer file.Close()
+
+    writer := bufio.NewWriter(file)    // => Create buffered writer
+    defer writer.Flush()               // => CRITICAL: Flush buffer on exit
+
+    for i := 0; i < 1000; i++ {
+        writer.WriteString(fmt.Sprintf("Line %d\n", i)) // => Write to buffer
+    }
+    // => Data written to disk in batches, not 1000 individual writes
+
+    fmt.Println("Buffered write complete")
+
+    // Read with buffering (line by line)
+    file2, err := os.Open("buffered.txt")
+    if err != nil {
+        fmt.Println("Open error:", err)
+        return
+    }
+    defer file2.Close()
+
+    scanner := bufio.NewScanner(file2) // => Create scanner for line-by-line reading
+    lineCount := 0
+
+    for scanner.Scan() {               // => Read next line (handles buffering internally)
+        line := scanner.Text()         // => Get current line
+        if strings.HasPrefix(line, "Line 100") {
+            fmt.Println("Found:", line)
+        }
+        lineCount++
+    }
+
+    if err := scanner.Err(); err != nil { // => Check for scan errors
+        fmt.Println("Scanner error:", err)
+    }
+
+    fmt.Printf("Read %d lines\n", lineCount)
+
+    // Buffered reader with custom operations
+    reader := bufio.NewReader(file2)
+
+    // Read until delimiter
+    text, err := reader.ReadString('\n') // => Read until newline
+    if err != nil {
+        fmt.Println("ReadString error:", err)
+    } else {
+        fmt.Println("First line:", text)
+    }
+
+    // Peek at next bytes without consuming
+    bytes, err := reader.Peek(10)      // => Peek at next 10 bytes
+    if err != nil {
+        fmt.Println("Peek error:", err)
+    } else {
+        fmt.Printf("Next 10 bytes: %s\n", bytes)
+    }
+}
+```
+
+**Key Takeaway**: Use `bufio.Writer` to buffer writes (remember `defer writer.Flush()`). Use `bufio.Scanner` for line-by-line reading (simplest API). Use `bufio.Reader` for custom operations like `ReadString()`, `Peek()`, or reading fixed byte counts. Buffering reduces system calls and dramatically improves I/O performance.
+
+### Example 42: Worker Pool with Graceful Shutdown
+
+Worker pools distribute work across fixed number of goroutines. This pattern controls concurrency, prevents overwhelming resources, and enables graceful shutdown when work is done or context is cancelled.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    A["Job Queue<br/>Buffered Channel"]
+    B["Worker 1"]
+    C["Worker 2"]
+    D["Worker 3"]
+    E["Results Channel"]
+    F["Coordinator<br/>Waits for completion"]
+
+    A -->|"Read jobs"| B
+    A -->|"Read jobs"| C
+    A -->|"Read jobs"| D
+    B --> E
+    C --> E
+    D --> E
+    E --> F
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Code**:
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "sync"
+    "time"
+)
+
+func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
+
+    // Create job and result channels
+    jobs := make(chan int, 100)        // => Buffered job queue
+    results := make(chan int, 100)     // => Buffered results
+
+    numWorkers := 3
+    var wg sync.WaitGroup
+
+    // Start worker pool
+    for i := 1; i <= numWorkers; i++ {
+        wg.Add(1)
+        go worker(ctx, i, jobs, results, &wg)
+    }
+
+    // Send jobs
+    go func() {
+        for i := 1; i <= 10; i++ {
+            jobs <- i                  // => Send job to queue
+            time.Sleep(100 * time.Millisecond)
+        }
+        close(jobs)                    // => Signal no more jobs
+    }()
+
+    // Collect results
+    go func() {
+        wg.Wait()                      // => Wait for all workers to finish
+        close(results)                 // => Signal no more results
+    }()
+
+    // Process results
+    for result := range results {
+        fmt.Printf("Result: %d\n", result)
+    }
+
+    fmt.Println("All work complete")
+}
+
+func worker(ctx context.Context, id int, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
+    defer wg.Done()
+
+    for {
+        select {
+        case job, ok := <-jobs:        // => Receive job from queue
+            if !ok {                   // => Channel closed, no more jobs
+                fmt.Printf("Worker %d: Shutting down\n", id)
+                return
+            }
+
+            // Process job
+            fmt.Printf("Worker %d: Processing job %d\n", id, job)
+            time.Sleep(500 * time.Millisecond) // => Simulate work
+            results <- job * 2         // => Send result
+
+        case <-ctx.Done():             // => Context cancelled
+            fmt.Printf("Worker %d: Cancelled\n", id)
+            return
+        }
+    }
+}
+```
+
+**Key Takeaway**: Worker pool pattern: buffered job channel + fixed workers reading from it + `sync.WaitGroup` for completion tracking. Close job channel to signal shutdown. Workers check `ctx.Done()` for cancellation. This pattern controls concurrency and prevents spawning unbounded goroutines.
+
+### Example 43: Custom Error Types with Stack Context
+
+Production error handling needs context (what operation failed, why, when). Custom error types with fields enable structured logging and debugging. This pattern makes error diagnosis faster in production.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "errors"
+    "fmt"
+    "time"
+)
+
+func main() {
+    // Create and handle custom errors
+    err := processPayment(100, "invalid-token")
+    if err != nil {
+        // Check if it's our custom error
+        var paymentErr *PaymentError
+        if errors.As(err, &paymentErr) { // => Extract custom error
+            fmt.Printf("Payment failed: %s\n", paymentErr)
+            fmt.Printf("  Amount: $%.2f\n", paymentErr.Amount)
+            fmt.Printf("  Reason: %s\n", paymentErr.Reason)
+            fmt.Printf("  Time: %s\n", paymentErr.Timestamp.Format(time.RFC3339))
+            fmt.Printf("  Retry: %t\n", paymentErr.IsRetryable())
+        }
+    }
+
+    // Error wrapping with context
+    err2 := performTransaction()
+    if err2 != nil {
+        fmt.Println("\nWrapped error chain:")
+        fmt.Println(err2)              // => Shows full error chain
+
+        // Unwrap to check root cause
+        if errors.Is(err2, ErrInsufficientFunds) {
+            fmt.Println("Root cause: Insufficient funds")
+        }
+    }
+}
+
+// Custom error type with fields
+type PaymentError struct {
+    Amount    float64
+    Reason    string
+    Timestamp time.Time
+    Code      int
+}
+
+// Implement error interface
+func (e *PaymentError) Error() string {
+    return fmt.Sprintf("payment error [%d]: %s ($%.2f) at %s",
+        e.Code, e.Reason, e.Amount, e.Timestamp.Format(time.RFC3339))
+}
+
+// Custom method on error type
+func (e *PaymentError) IsRetryable() bool {
+    return e.Code >= 500               // => Server errors are retryable
+}
+
+func processPayment(amount float64, token string) error {
+    if token == "invalid-token" {
+        return &PaymentError{
+            Amount:    amount,
+            Reason:    "Invalid authentication token",
+            Timestamp: time.Now(),
+            Code:      401,
+        }
+    }
+    return nil
+}
+
+// Sentinel errors - predefined error values
+var (
+    ErrInsufficientFunds = errors.New("insufficient funds")
+    ErrAccountLocked     = errors.New("account locked")
+    ErrInvalidAmount     = errors.New("invalid amount")
+)
+
+// Error wrapping preserves error chain
+func performTransaction() error {
+    if err := checkBalance(); err != nil {
+        return fmt.Errorf("transaction failed: %w", err) // => Wrap error
+    }
+    return nil
+}
+
+func checkBalance() error {
+    return ErrInsufficientFunds        // => Return sentinel error
+}
+```
+
+**Key Takeaway**: Custom error types add structured context (fields). Implement `Error()` method and add custom methods. Use sentinel errors (`var Err = errors.New()`) for common errors. Wrap errors with `fmt.Errorf("%w", err)` to preserve chains. Use `errors.Is()` to check sentinel errors and `errors.As()` to extract custom types.
+
+### Example 44: Rate Limiting with Token Bucket
+
+Rate limiting prevents abuse and controls resource consumption. Token bucket algorithm: tokens replenish at fixed rate, operations consume tokens. When no tokens available, operations wait or fail.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+    "time"
+)
+
+func main() {
+    // Create rate limiter: 5 tokens per second, burst of 10
+    limiter := NewTokenBucket(5, 10)
+
+    // Try to consume tokens
+    for i := 0; i < 15; i++ {
+        if limiter.TryConsume(1) {
+            fmt.Printf("Request %d: Allowed\n", i+1)
+        } else {
+            fmt.Printf("Request %d: Rate limited\n", i+1)
+        }
+        time.Sleep(100 * time.Millisecond)
+    }
+
+    // Wait-based consumption (blocks until token available)
+    fmt.Println("\nWait-based consumption:")
+    for i := 0; i < 5; i++ {
+        limiter.Consume(2)             // => Wait for 2 tokens
+        fmt.Printf("Consumed 2 tokens at %s\n", time.Now().Format("15:04:05.000"))
+    }
+}
+
+// TokenBucket implements rate limiting
+type TokenBucket struct {
+    tokens     float64                // => Current tokens available
+    maxTokens  float64                // => Burst capacity
+    refillRate float64                // => Tokens added per second
+    lastRefill time.Time              // => Last refill timestamp
+    mu         sync.Mutex
+}
+
+func NewTokenBucket(refillRate, maxTokens float64) *TokenBucket {
+    return &TokenBucket{
+        tokens:     maxTokens,
+        maxTokens:  maxTokens,
+        refillRate: refillRate,
+        lastRefill: time.Now(),
+    }
+}
+
+// TryConsume attempts to consume tokens, returns false if insufficient
+func (tb *TokenBucket) TryConsume(tokens float64) bool {
+    tb.mu.Lock()
+    defer tb.mu.Unlock()
+
+    tb.refill()                        // => Refill before checking
+
+    if tb.tokens >= tokens {
+        tb.tokens -= tokens            // => Consume tokens
+        return true
+    }
+    return false                       // => Insufficient tokens
+}
+
+// Consume waits until sufficient tokens available
+func (tb *TokenBucket) Consume(tokens float64) {
+    for {
+        tb.mu.Lock()
+        tb.refill()
+
+        if tb.tokens >= tokens {
+            tb.tokens -= tokens
+            tb.mu.Unlock()
+            return
+        }
+
+        // Calculate wait time for needed tokens
+        needed := tokens - tb.tokens
+        waitTime := time.Duration(needed/tb.refillRate*1000) * time.Millisecond
+        tb.mu.Unlock()
+
+        time.Sleep(waitTime)
+    }
+}
+
+// refill adds tokens based on elapsed time (must be called with lock held)
+func (tb *TokenBucket) refill() {
+    now := time.Now()
+    elapsed := now.Sub(tb.lastRefill).Seconds()
+    tokensToAdd := elapsed * tb.refillRate
+
+    tb.tokens += tokensToAdd
+    if tb.tokens > tb.maxTokens {      // => Cap at max capacity
+        tb.tokens = tb.maxTokens
+    }
+
+    tb.lastRefill = now
+}
+```
+
+**Key Takeaway**: Token bucket rate limiting: maintain token count, refill at fixed rate, consume tokens for operations. `TryConsume()` fails immediately when tokens unavailable. `Consume()` waits until tokens available. Production systems use `golang.org/x/time/rate` package, but understanding the algorithm helps debug rate limiting issues.
+
+### Example 45: Benchmarking and Optimization
+
+Benchmarks measure performance and guide optimization. Understanding `b.N`, `b.ResetTimer()`, and `b.Run()` enables precise performance measurement. Never optimize without benchmarks - measure before and after.
+
+**Code**:
+
+```go
+package main
+
+import (
+    "strings"
+    "testing"
+)
+
+// Function to benchmark
+func concatStrings(n int) string {
+    var result string
+    for i := 0; i < n; i++ {
+        result += "x"                  // => String concatenation (inefficient)
+    }
+    return result
+}
+
+func concatStringsBuilder(n int) string {
+    var builder strings.Builder
+    for i := 0; i < n; i++ {
+        builder.WriteString("x")       // => Builder (efficient)
+    }
+    return builder.String()
+}
+
+// Basic benchmark
+func BenchmarkConcatStrings(b *testing.B) {
+    for i := 0; i < b.N; i++ {         // => b.N adjusted automatically for timing
+        concatStrings(100)
+    }
+}
+
+func BenchmarkConcatStringsBuilder(b *testing.B) {
+    for i := 0; i < b.N; i++ {
+        concatStringsBuilder(100)
+    }
+}
+
+// Benchmark with subtests (different input sizes)
+func BenchmarkStringOperations(b *testing.B) {
+    sizes := []int{10, 100, 1000}
+
+    for _, size := range sizes {
+        b.Run(fmt.Sprintf("Concat-%d", size), func(b *testing.B) {
+            for i := 0; i < b.N; i++ {
+                concatStrings(size)
+            }
+        })
+
+        b.Run(fmt.Sprintf("Builder-%d", size), func(b *testing.B) {
+            for i := 0; i < b.N; i++ {
+                concatStringsBuilder(size)
+            }
+        })
+    }
+}
+
+// Benchmark with setup
+func BenchmarkWithSetup(b *testing.B) {
+    // Setup (not timed)
+    data := make([]int, 10000)
+    for i := range data {
+        data[i] = i
+    }
+
+    b.ResetTimer()                     // => Reset timer after setup
+
+    // Benchmarked code
+    for i := 0; i < b.N; i++ {
+        sum := 0
+        for _, v := range data {
+            sum += v
+        }
+    }
+}
+
+// Memory allocation benchmark
+func BenchmarkMemoryAllocation(b *testing.B) {
+    b.ReportAllocs()                   // => Report memory allocations
+
+    for i := 0; i < b.N; i++ {
+        _ = make([]int, 1000)          // => Allocate slice
+    }
+}
+
+// Run benchmarks:
+// go test -bench=. -benchmem
+// => Output shows ns/op, allocations/op, bytes/op
+//
+// Compare benchmarks:
+// go test -bench=Concat -benchmem
+// => Concat-100         500000   3000 ns/op   9900 B/op   99 allocs/op
+// => Builder-100       5000000    300 ns/op    512 B/op    1 allocs/op
+```
+
+**Key Takeaway**: Use `b.N` in benchmarks - Go adjusts it for accurate timing. Use `b.ResetTimer()` to exclude setup. Use `b.Run()` for sub-benchmarks. Run with `-benchmem` to see memory allocations. Compare before/after benchmarks to validate optimizations. String concatenation with `+` is 10x slower than `strings.Builder` for loops.

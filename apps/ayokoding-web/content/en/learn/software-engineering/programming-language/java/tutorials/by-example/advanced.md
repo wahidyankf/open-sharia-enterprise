@@ -27,6 +27,25 @@ Master advanced Java concepts through 25 annotated code examples. Build on inter
 
 Concurrent collections provide thread safety with better performance than synchronized wrappers. `ConcurrentHashMap` offers lock striping. `BlockingQueue` supports producer-consumer patterns.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Producer["Producer Thread<br/>put() elements"] --> Queue["BlockingQueue<br/>(bounded capacity)"]
+    Queue --> Consumer["Consumer Thread<br/>take() elements"]
+
+    CHM["ConcurrentHashMap<br/>(lock striping)"] --> Segment1["Segment 1<br/>locks independently"]
+    CHM --> Segment2["Segment 2<br/>locks independently"]
+    CHM --> Segment3["Segment N<br/>locks independently"]
+
+    style Producer fill:#0173B2,color:#fff
+    style Queue fill:#DE8F05,color:#fff
+    style Consumer fill:#029E73,color:#fff
+    style CHM fill:#CC78BC,color:#fff
+    style Segment1 fill:#CA9161,color:#fff
+    style Segment2 fill:#CA9161,color:#fff
+    style Segment3 fill:#CA9161,color:#fff
+```
+
 **Code**:
 
 ```java
@@ -34,61 +53,79 @@ import java.util.concurrent.*;
 import java.util.*;
 
 // ConcurrentHashMap - thread-safe without blocking entire map
-ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>(); // => Empty map, uses lock striping for segments
 
 // putIfAbsent - atomic operation
-map.putIfAbsent("key1", 100); // => null (key added)
-Integer existing = map.putIfAbsent("key1", 200); // => 100 (key exists, not replaced)
+Integer result1 = map.putIfAbsent("key1", 100); // => null (key didn't exist, now added with value 100)
+System.out.println(map.get("key1")); // => 100
+Integer existing = map.putIfAbsent("key1", 200); // => 100 (key exists, not replaced, returns existing value)
+System.out.println(map.get("key1")); // => 100 (unchanged)
 
 // computeIfAbsent - compute value if absent
-map.computeIfAbsent("key2", k -> k.length() * 10); // => 40 (key2.length() * 10)
+Integer computed = map.computeIfAbsent("key2", k -> k.length() * 10); // => 40 (key2.length() is 4, * 10 = 40)
+System.out.println(map.get("key2")); // => 40 (stored in map)
+Integer recompute = map.computeIfAbsent("key2", k -> k.length() * 20); // => 40 (key exists, function NOT called)
 
-// merge - combine values
-map.put("count", 1);
-map.merge("count", 5, (old, val) -> old + val); // => 6 (1 + 5)
+// merge - combine values atomically
+map.put("count", 1); // => count = 1
+Integer merged = map.merge("count", 5, (old, val) -> old + val); // => 6 (1 + 5, atomically combined)
+System.out.println(map.get("count")); // => 6 (updated value)
 
-// CopyOnWriteArrayList - thread-safe list, copy-on-write
-CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
-list.add("A");
-list.add("B");
+// CopyOnWriteArrayList - thread-safe list, copy-on-write semantics
+CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>(); // => Empty list, writes create new array copy
+list.add("A"); // => Creates new internal array with ["A"]
+list.add("B"); // => Creates new internal array with ["A", "B"]
+System.out.println(list.size()); // => 2
 
 // Safe iteration even if list modified during iteration
-for (String s : list) {
-    System.out.println(s);
-    list.add("C"); // Safe - iterator uses snapshot
-}
+for (String s : list) { // => Iterator uses snapshot of list at iteration start
+    System.out.println(s); // => Prints "A", then "B" (original snapshot)
+    list.add("C"); // => Safe - iterator uses snapshot, won't see "C" in this loop
+} // => Loop completes with 2 iterations (A, B), not affected by concurrent adds
+System.out.println(list.size()); // => 4 (A, B, C, C - two "C"s added during loop)
 
-// ConcurrentLinkedQueue - non-blocking FIFO queue
-ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
-queue.offer("First");
-queue.offer("Second");
-String head = queue.poll(); // => "First"
+// ConcurrentLinkedQueue - non-blocking FIFO queue (lock-free)
+ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>(); // => Empty queue, uses CAS operations
+boolean offered1 = queue.offer("First"); // => true (element added to tail)
+boolean offered2 = queue.offer("Second"); // => true (element added after "First")
+System.out.println(queue.size()); // => 2 (weakly consistent size, may be stale in concurrent env)
+String head = queue.poll(); // => "First" (removed from head, queue now has ["Second"])
+String head2 = queue.poll(); // => "Second" (removed from head, queue now empty)
+String head3 = queue.poll(); // => null (queue empty)
 
-// BlockingQueue - producer-consumer pattern
-BlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<>(10);
+// BlockingQueue - producer-consumer pattern with blocking
+BlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<>(10); // => Bounded queue, capacity 10
 
 // Producer thread
-Thread producer = new Thread(() -> {
+Thread producer = new Thread(() -> { // => Creates producer thread (not started yet)
     try {
-        for (int i = 0; i < 5; i++) {
-            blockingQueue.put(i); // Blocks if queue full
-            System.out.println("Produced: " + i);
+        for (int i = 0; i < 5; i++) { // => Will produce items 0-4
+            blockingQueue.put(i); // => Blocks if queue full (capacity 10), waits until space available
+            System.out.println("Produced: " + i); // => Output: "Produced: 0", "Produced: 1", etc.
+            Thread.sleep(100); // => Simulate production work (100ms delay)
         }
-    } catch (InterruptedException e) {}
-});
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt(); // => Restore interrupted status
+    }
+}); // => Thread created but not running
 
 // Consumer thread
-Thread consumer = new Thread(() -> {
+Thread consumer = new Thread(() -> { // => Creates consumer thread (not started yet)
     try {
-        for (int i = 0; i < 5; i++) {
-            Integer item = blockingQueue.take(); // Blocks if queue empty
-            System.out.println("Consumed: " + item);
+        for (int i = 0; i < 5; i++) { // => Will consume 5 items
+            Integer item = blockingQueue.take(); // => Blocks if queue empty, waits until item available
+            System.out.println("Consumed: " + item); // => Output: "Consumed: 0", "Consumed: 1", etc.
+            Thread.sleep(150); // => Simulate consumption work (150ms delay, slower than producer)
         }
-    } catch (InterruptedException e) {}
-});
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt(); // => Restore interrupted status
+    }
+}); // => Thread created but not running
 
-producer.start();
-consumer.start();
+producer.start(); // => Start producer thread, begins producing items
+consumer.start(); // => Start consumer thread, begins consuming items
+// => Both threads run concurrently, queue coordinates between them
+// => Output order may vary due to concurrent execution
 ```
 
 **Key Takeaway**: `ConcurrentHashMap` provides thread-safe operations with lock striping. `CopyOnWriteArrayList` is safe for iteration-heavy workloads. `BlockingQueue` enables producer-consumer patterns with blocking operations. These collections offer better performance than `Collections.synchronizedXxx()` wrappers.
@@ -99,58 +136,107 @@ consumer.start();
 
 Atomic variables use hardware-level Compare-And-Swap (CAS) operations for lock-free concurrency. They provide better performance than synchronized blocks for simple state updates. Ideal for counters, flags, and references.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Thread1["Thread 1"] --> CAS1["compareAndSet<br/>(expected, new)"]
+    Thread2["Thread 2"] --> CAS2["compareAndSet<br/>(expected, new)"]
+
+    CAS1 --> Check1{"Current == expected?"}
+    CAS2 --> Check2{"Current == expected?"}
+
+    Check1 -->|Yes| Update1["Update atomically<br/>Return true"]
+    Check1 -->|No| Retry1["Return false<br/>(retry)"]
+
+    Check2 -->|Yes| Update2["Update atomically<br/>Return true"]
+    Check2 -->|No| Retry2["Return false<br/>(retry)"]
+
+    Update1 --> Value["Shared AtomicInteger"]
+    Update2 --> Value
+    Retry1 -.->|Read again| CAS1
+    Retry2 -.->|Read again| CAS2
+
+    style Thread1 fill:#0173B2,color:#fff
+    style Thread2 fill:#0173B2,color:#fff
+    style Check1 fill:#DE8F05,color:#fff
+    style Check2 fill:#DE8F05,color:#fff
+    style Update1 fill:#029E73,color:#fff
+    style Update2 fill:#029E73,color:#fff
+    style Value fill:#CC78BC,color:#fff
+```
+
 **Code**:
 
 ```java
 import java.util.concurrent.atomic.*;
 
-// AtomicInteger - thread-safe integer operations
-AtomicInteger counter = new AtomicInteger(0);
+// AtomicInteger - thread-safe integer operations without locks
+AtomicInteger counter = new AtomicInteger(0); // => Initialized to 0, uses CAS internally
 
-// Atomic operations
-int current = counter.get(); // => 0
-counter.set(10); // Set to 10
-int previous = counter.getAndIncrement(); // => 10 (returns old value, increments to 11)
-int newValue = counter.incrementAndGet(); // => 12 (increments, returns new value)
+// Atomic read and write operations
+int current = counter.get(); // => 0 (volatile read, guaranteed visibility across threads)
+counter.set(10); // => Set to 10 (volatile write, visible to all threads)
+System.out.println(counter.get()); // => 10
 
-// compareAndSet - atomic compare-and-swap
-boolean success = counter.compareAndSet(12, 20); // => true (if current == 12, set to 20)
-boolean failure = counter.compareAndSet(12, 30); // => false (current is 20, not 12)
+// Atomic increment operations
+int previous = counter.getAndIncrement(); // => 10 (returns old value, then increments to 11)
+System.out.println(counter.get()); // => 11 (counter now 11)
+int newValue = counter.incrementAndGet(); // => 12 (increments first, then returns new value)
+System.out.println(counter.get()); // => 12 (counter now 12)
 
-// updateAndGet - atomic update with lambda
-counter.updateAndGet(v -> v * 2); // => 40 (20 * 2)
+// compareAndSet - atomic compare-and-swap (CAS operation)
+boolean success = counter.compareAndSet(12, 20); // => true (current was 12, set to 20 atomically)
+System.out.println(counter.get()); // => 20 (successfully updated)
+boolean failure = counter.compareAndSet(12, 30); // => false (current is 20, not 12, no update)
+System.out.println(counter.get()); // => 20 (unchanged, CAS failed)
 
-// accumulateAndGet - atomic accumulation
-counter.accumulateAndGet(5, (current, update) -> current + update); // => 45 (40 + 5)
+// updateAndGet - atomic update with lambda function
+int updated = counter.updateAndGet(v -> v * 2); // => 40 (20 * 2, atomically applied)
+System.out.println(counter.get()); // => 40 (new value)
+// => Internally uses CAS loop: read, apply function, compareAndSet, retry if failed
 
-// AtomicLong - for long values
-AtomicLong longCounter = new AtomicLong(1000L);
-longCounter.addAndGet(500); // => 1500
+// accumulateAndGet - atomic accumulation with binary operator
+int accumulated = counter.accumulateAndGet(5, (curr, update) -> curr + update);
+// => 45 (40 + 5, atomically combined)
+System.out.println(counter.get()); // => 45 (accumulated value)
 
-// AtomicBoolean - for flags
-AtomicBoolean flag = new AtomicBoolean(false);
-boolean wasSet = flag.getAndSet(true); // => false (old value), now true
+// AtomicLong - for long values (same API as AtomicInteger)
+AtomicLong longCounter = new AtomicLong(1000L); // => Initialized to 1000
+long result = longCounter.addAndGet(500); // => 1500 (atomically adds 500, returns new value)
+System.out.println(longCounter.get()); // => 1500
 
-// AtomicReference - for object references
-AtomicReference<String> ref = new AtomicReference<>("Hello");
-ref.compareAndSet("Hello", "World"); // => true, ref now "World"
-String value = ref.get(); // => "World"
+// AtomicBoolean - for thread-safe flags
+AtomicBoolean flag = new AtomicBoolean(false); // => Initialized to false
+boolean wasSet = flag.getAndSet(true); // => false (old value), flag now true
+System.out.println(flag.get()); // => true (flag flipped atomically)
+boolean swapped = flag.compareAndSet(true, false); // => true (was true, now false)
+System.out.println(flag.get()); // => false (back to false)
+
+// AtomicReference - for object references (any object type)
+AtomicReference<String> ref = new AtomicReference<>("Hello"); // => Reference to "Hello"
+boolean updated2 = ref.compareAndSet("Hello", "World"); // => true (swapped to "World")
+String value = ref.get(); // => "World" (new reference)
+ref.set("Java"); // => Reference now points to "Java"
+System.out.println(ref.get()); // => "Java"
 
 // Practical example: thread-safe counter without locks
-AtomicInteger sharedCounter = new AtomicInteger(0);
-Runnable task = () -> {
+AtomicInteger sharedCounter = new AtomicInteger(0); // => Shared between threads, starts at 0
+Runnable task = () -> { // => Each thread runs this task
     for (int i = 0; i < 1000; i++) {
-        sharedCounter.incrementAndGet(); // Thread-safe increment
+        sharedCounter.incrementAndGet(); // => Thread-safe atomic increment (CAS-based)
+        // => No synchronized block needed, no lock contention
     }
-};
+}; // => Task increments counter 1000 times
 
-Thread t1 = new Thread(task);
-Thread t2 = new Thread(task);
-t1.start();
-t2.start();
-t1.join();
-t2.join();
-System.out.println("Final count: " + sharedCounter.get()); // => 2000 (always correct)
+Thread t1 = new Thread(task); // => First thread
+Thread t2 = new Thread(task); // => Second thread
+t1.start(); // => Start thread 1 (runs concurrently)
+t2.start(); // => Start thread 2 (runs concurrently)
+t1.join(); // => Wait for thread 1 to complete
+t2.join(); // => Wait for thread 2 to complete
+System.out.println("Final count: " + sharedCounter.get());
+// => Output: "Final count: 2000" (always correct, 1000 + 1000)
+// => With non-atomic int, result would be unpredictable (lost updates)
 ```
 
 **Key Takeaway**: Atomic variables use CAS for lock-free thread safety. Better performance than synchronized for simple operations. Use `incrementAndGet()` for post-increment, `getAndIncrement()` for pre-increment behavior. `compareAndSet()` enables atomic conditional updates.
@@ -856,32 +942,36 @@ graph TD
 ```java
 // Object lifecycle
 class MyObject {
-    private byte[] data = new byte[1024]; // 1KB
+    private byte[] data = new byte[1024]; // => 1KB per object, allocated on heap
 }
 
 // Objects created in Eden space (Young Gen)
-MyObject obj1 = new MyObject(); // Allocated in Eden
-MyObject obj2 = new MyObject();
+MyObject obj1 = new MyObject(); // => Allocated in Eden space (Young Generation)
+MyObject obj2 = new MyObject(); // => Also allocated in Eden space
+System.out.println("Created obj1 and obj2"); // => Both objects reachable via local variables
 
 // obj1 becomes unreachable
-obj1 = null; // Eligible for GC
+obj1 = null; // => obj1 now eligible for GC (no references), obj2 still reachable
+// => GC will reclaim obj1's memory during next Minor GC
 
 // Minor GC occurs when Eden fills
-// Surviving objects move to Survivor space
-// After multiple survivals, promoted to Old Gen
+// => Surviving objects move to Survivor S0 or S1
+// => After multiple survivals (age threshold, typically 15), promoted to Old Generation
+// => Objects that die young (majority) never leave Eden
 
-// GC roots (always reachable):
-// 1. Local variables in active methods
-// 2. Static fields
-// 3. Active threads
-// 4. JNI references
+// GC roots (always reachable, prevent GC):
+// 1. Local variables in active methods (stack references)
+// 2. Static fields (Class metadata references)
+// 3. Active threads (Thread objects and their stacks)
+// 4. JNI references (native code references)
 
 // Example: memory leak via static collection
 class MemoryLeakExample {
-    private static List<byte[]> cache = new ArrayList<>();
+    private static List<byte[]> cache = new ArrayList<>(); // => Static field is GC root
 
     public static void addToCache(byte[] data) {
-        cache.add(data); // Never removed, eventually OutOfMemoryError
+        cache.add(data); // => Never removed, always reachable, grows indefinitely
+        // => Eventually leads to OutOfMemoryError: Java heap space
     }
 }
 
@@ -889,25 +979,34 @@ class MemoryLeakExample {
 import java.lang.ref.*;
 
 // Strong reference (default) - prevents GC
-String strongRef = new String("Will not be collected");
+String strongRef = new String("Will not be collected"); // => Object not collected while strongRef exists
+// => strongRef is GC root (local variable), prevents collection
 
 // Soft reference - collected only if memory pressure
 SoftReference<String> softRef = new SoftReference<>(new String("Collected if needed"));
-String value = softRef.get(); // May return null if collected
+// => Object inside SoftReference can be collected if JVM needs memory
+String value = softRef.get(); // => May return null if object was collected
+if (value != null) {
+    System.out.println(value); // => Only prints if object still in memory
+}
 
 // Weak reference - collected at next GC
 WeakReference<String> weakRef = new WeakReference<>(new String("Collected soon"));
-String weakValue = weakRef.get(); // May return null after GC
+// => Object will be collected at next GC, regardless of memory pressure
+String weakValue = weakRef.get(); // => May return null after GC runs
+System.out.println(weakValue); // => Prints string or throws NPE if collected
 
 // Phantom reference - for cleanup hooks
-ReferenceQueue<String> queue = new ReferenceQueue<>();
+ReferenceQueue<String> queue = new ReferenceQueue<>(); // => Queue for GC notifications
 PhantomReference<String> phantomRef = new PhantomReference<>(
-    new String("For cleanup"), queue
+    new String("For cleanup"), queue // => Object for cleanup tracking
 );
-// get() always returns null, used with ReferenceQueue for notifications
+// => get() always returns null, used with ReferenceQueue for post-finalization cleanup
+// => Useful for resource cleanup (file handles, native memory, etc.)
 
 // System.gc() suggests GC (doesn't guarantee it)
-System.gc(); // Hint to JVM, not a command
+System.gc(); // => Hint to JVM to run GC, not a command (JVM may ignore)
+// => Never rely on System.gc() for deterministic cleanup
 
 // Monitoring GC (via JVM flags)
 // -XX:+PrintGCDetails - Print GC logs
@@ -1325,6 +1424,33 @@ Map<String, String> cache = new LinkedHashMap<>(100, 0.75f, true) {
 ### Example 49: Connection Pool Factory Pattern
 
 Production database applications use connection pooling to reuse expensive database connections. This example demonstrates Singleton (pool manager), Factory (connection creation), and Builder (configuration) patterns in a real-world context.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Client1["Client Thread 1"] --> Pool["ConnectionPool<br/>(Singleton)"]
+    Client2["Client Thread 2"] --> Pool
+    Client3["Client Thread 3"] --> Pool
+
+    Pool --> Available["Available<br/>Connections"]
+    Pool --> InUse["In-Use<br/>Connections"]
+
+    Available --> Conn1["Connection 1"]
+    Available --> Conn2["Connection 2"]
+    InUse --> Conn3["Connection 3"]
+
+    Pool --> Factory["ConnectionFactory<br/>(creates connections)"]
+    Factory --> DB["Database"]
+
+    style Client1 fill:#0173B2,color:#fff
+    style Client2 fill:#0173B2,color:#fff
+    style Client3 fill:#0173B2,color:#fff
+    style Pool fill:#DE8F05,color:#fff
+    style Available fill:#029E73,color:#fff
+    style InUse fill:#CC78BC,color:#fff
+    style Factory fill:#CA9161,color:#fff
+    style DB fill:#0173B2,color:#fff
+```
 
 **Code**:
 
@@ -2287,6 +2413,30 @@ class OrderProcessor {
 
 ClassLoaders dynamically load classes into the JVM. The delegation model ensures core classes load first. Custom loaders enable plugins, hot-reloading, and bytecode manipulation. Each loader creates an isolation boundary.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Custom["Custom ClassLoader<br/>(app-specific)"] --> System["System ClassLoader<br/>(classpath)"]
+    System --> Platform["Platform ClassLoader<br/>(Java SE modules)"]
+    Platform --> Bootstrap["Bootstrap ClassLoader<br/>(core Java classes)"]
+
+    Request["Load MyClass"] --> Custom
+    Custom -->|Delegate| System
+    System -->|Delegate| Platform
+    Platform -->|Delegate| Bootstrap
+    Bootstrap -->|Not found| Platform
+    Platform -->|Not found| System
+    System -->|Not found| Custom
+    Custom -->|Load| MyClass["MyClass.class"]
+
+    style Custom fill:#0173B2,color:#fff
+    style System fill:#DE8F05,color:#fff
+    style Platform fill:#029E73,color:#fff
+    style Bootstrap fill:#CC78BC,color:#fff
+    style Request fill:#CA9161,color:#fff
+    style MyClass fill:#0173B2,color:#fff
+```
+
 **Code**:
 
 ```java
@@ -2396,6 +2546,28 @@ thread.setContextClassLoader(new CustomClassLoader("/custom/path"));
 ### Example 55: Bytecode Manipulation with ASM/ByteBuddy
 
 Bytecode manipulation enables runtime code generation, proxying, and instrumentation. ASM provides low-level bytecode control. ByteBuddy offers high-level API. Used in AOP frameworks, mocking libraries, and profilers.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Java["Java Source<br/>.java"] --> Compiler["javac<br/>Compiler"]
+    Compiler --> Bytecode["Bytecode<br/>.class"]
+    Bytecode --> JVM["JVM<br/>Execution"]
+
+    ASM["ASM Library<br/>(low-level)"] -->|Generate| Bytecode
+    ByteBuddy["ByteBuddy<br/>(high-level)"] -->|Generate| Bytecode
+
+    Bytecode --> Agent["Java Agent<br/>(Instrumentation)"]
+    Agent -->|Modify at<br/>load time| JVM
+
+    style Java fill:#0173B2,color:#fff
+    style Compiler fill:#DE8F05,color:#fff
+    style Bytecode fill:#029E73,color:#fff
+    style JVM fill:#CC78BC,color:#fff
+    style ASM fill:#CA9161,color:#fff
+    style ByteBuddy fill:#CA9161,color:#fff
+    style Agent fill:#0173B2,color:#fff
+```
 
 **Code**:
 
@@ -2543,6 +2715,23 @@ public class Agent {
 ### Example 56: JNI and Native Code
 
 Java Native Interface (JNI) bridges Java and native code (C/C++). Useful for legacy system integration, hardware access, and performance-critical operations. Adds complexity and platform dependency.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    JavaApp["Java Application<br/>(managed code)"] --> JNI["JNI Boundary"]
+    JNI --> NativeLib["Native Library<br/>(.so/.dll/.dylib)"]
+    NativeLib --> Hardware["Hardware/<br/>OS Resources"]
+
+    JavaApp -->|Declare<br/>native methods| JNI
+    JNI -->|Type conversion<br/>Java ↔ C| NativeLib
+    NativeLib -->|Direct access| Hardware
+
+    style JavaApp fill:#0173B2,color:#fff
+    style JNI fill:#DE8F05,color:#fff
+    style NativeLib fill:#029E73,color:#fff
+    style Hardware fill:#CC78BC,color:#fff
+```
 
 **Code**:
 

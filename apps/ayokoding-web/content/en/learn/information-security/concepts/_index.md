@@ -12,6 +12,7 @@ weight: 11000
   - [Overview](/en/learn/information-security/concepts/explanation/overview)
   - [Offensive Security](/en/learn/information-security/concepts/explanation/offensive-security)
   - [Defensive Security](/en/learn/information-security/concepts/explanation/defensive-security)
+  - [Security Roles](/en/learn/information-security/concepts/explanation/security-roles)
 - [How to](/en/learn/information-security/concepts/how-to)
   - [Overview](/en/learn/information-security/concepts/how-to/overview)
 - [Reference](/en/learn/information-security/concepts/reference)
