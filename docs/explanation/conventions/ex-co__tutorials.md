@@ -18,7 +18,7 @@ updated: 2025-12-03
 
 Standards for creating effective, engaging, and pedagogically sound tutorials in the open-sharia-enterprise project.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

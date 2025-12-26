@@ -16,7 +16,7 @@ updated: 2025-12-25
 
 This document defines the standard tutorial types and naming conventions used across the open-sharia-enterprise documentation. Each tutorial type represents a specific learning depth and audience, ensuring learners can easily find content appropriate for their skill level.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

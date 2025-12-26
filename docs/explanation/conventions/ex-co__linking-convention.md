@@ -16,7 +16,7 @@ updated: 2025-11-27
 
 This document defines the standard syntax and practices for linking between documentation files in the open-sharia-enterprise project. Following these conventions ensures links work consistently across GitHub web, Obsidian, and other markdown viewers.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

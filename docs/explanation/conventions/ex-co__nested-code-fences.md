@@ -17,7 +17,7 @@ updated: 2025-12-23
 
 This convention defines how to properly nest code fences when documenting markdown structure within markdown content. Understanding the correct nesting pattern prevents rendering bugs that break markdown formatting.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

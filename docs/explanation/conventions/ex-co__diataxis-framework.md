@@ -16,7 +16,7 @@ updated: 2025-12-05
 
 The open-sharia-enterprise project uses the [Diátaxis framework](https://diataxis.fr/) to organize all documentation. This document explains what Diátaxis is, why we use it, and how it's implemented in our project.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

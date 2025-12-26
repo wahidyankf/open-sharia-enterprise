@@ -16,7 +16,7 @@ updated: 2025-12-15
 
 This convention establishes standard markdown indentation for all files in the repository to ensure compatibility with standard markdown tools and Obsidian.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

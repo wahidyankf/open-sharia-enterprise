@@ -17,7 +17,7 @@ updated: 2025-12-13
 
 This document defines Hugo content conventions specific to **ose-platform-web** - an English-only project landing page using the PaperMod theme.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

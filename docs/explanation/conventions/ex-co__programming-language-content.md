@@ -19,7 +19,7 @@ updated: 2025-12-23
 
 All programming language content on ayokoding-web follows a standardized structure, coverage model, and quality baseline. This convention establishes the benchmark derived from Golang, Python, and Java implementations - a production-tested framework that scales across different programming paradigms.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

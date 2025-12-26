@@ -16,7 +16,7 @@ updated: 2025-12-05
 
 Standards for creating and maintaining repository-level documentation files that follow open source best practices. This convention defines requirements for README, CONTRIBUTING.md, Architecture Decision Records (ADRs), security documentation, and other repository-level files.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

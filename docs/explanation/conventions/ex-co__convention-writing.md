@@ -16,7 +16,7 @@ updated: 2025-12-24
 
 This meta-convention defines how to write convention documents in the `docs/explanation/conventions/` directory. It ensures consistency, clarity, and completeness across all convention documentation.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

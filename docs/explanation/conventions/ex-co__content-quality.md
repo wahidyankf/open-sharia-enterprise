@@ -17,7 +17,7 @@ updated: 2025-12-22
 
 This convention establishes universal content quality standards for **ALL markdown content** in this repository.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 
