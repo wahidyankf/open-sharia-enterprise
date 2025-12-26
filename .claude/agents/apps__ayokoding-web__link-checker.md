@@ -34,7 +34,8 @@ This agent produces TWO outputs on every run:
    - Purpose: Permanent operational link status tracking (NOT a temporary report)
 
 2. **Audit Report** (always generated):
-   - Location: `generated-reports/ayokoding-web-link__{YYYY-MM-DD--HH-MM}__audit.md`
+   - Location: `generated-reports/ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+   - **UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child)
    - Content: Validation findings, broken links, Hugo format violations
    - Purpose: Temporary audit trail for historical tracking and fixer integration
 
@@ -54,9 +55,11 @@ This agent writes validation findings to temporary report files in `generated-re
 - Integration with fixer agents (ayokoding-link-fixer)
 - Traceability of validation results
 
-**Report Location**: `generated-reports/ayokoding-web-link__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report Location**: `generated-reports/ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**Example Filename**: `ayokoding-link__2025-12-20--14-30__audit.md`
+**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
+
+**Example Filename**: `ayokoding-link__a1b2c3__2025-12-20--14-30__audit.md`
 
 **Bash Timestamp Generation** (UTC+7):
 
@@ -67,7 +70,7 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 **Note**: This agent maintains TWO separate outputs:
 
 - **Cache File** (`apps/ayokoding-web/ayokoding-links-status.yaml`): Link status tracking for operational use
-- **Audit Report** (`generated-reports/ayokoding-web-link__{timestamp}__audit.md`): Validation findings and summary for audit trail
+- **Audit Report** (`generated-reports/ayokoding-web-link__{uuid-chain}__{timestamp}__audit.md`): Validation findings and summary for audit trail
 
 ## CRITICAL REQUIREMENTS
 
@@ -86,7 +89,7 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
    - This file MUST be updated on every run
 
 3. **ALWAYS generate audit report file**
-   - You MUST create audit report in `generated-reports/ayokoding-web-link__{YYYY-MM-DD--HH-MM}__audit.md`
+   - You MUST create audit report in `generated-reports/ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
    - Report contains validation findings and broken link details
    - This is separate from the cache file (different purpose)
    - Audit report integrates with ayokoding-link-fixer agent

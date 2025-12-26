@@ -31,8 +31,9 @@ This agent produces TWO outputs:
 
 1. **Audit Report File** (MANDATORY - always generated):
    - **CRITICAL**: ONLY ONE file per audit run
-   - Location: `generated-reports/workflow__{YYYY-MM-DD--HH-MM}__audit.md`
+   - Location: `generated-reports/workflow__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
    - Content: Full detailed audit report with all findings
+   - UUID Chain: 6-char hex UUID(s) for parallel execution support (e.g., `a1b2c3` or `a1b2c3_d4e5f6`). Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild)
    - Timestamp: Audit start time in UTC+7 (YYYY-MM-DD--HH-MM format)
    - **Behavior**: File is updated PROGRESSIVELY during audit (not just at end)
    - Purpose: Persistent record for historical tracking with real-time visibility
@@ -45,9 +46,10 @@ This agent produces TWO outputs:
 
 **Workflow**: workflow-checker (detect) → User review → (future: workflow-fixer)
 
-**File Naming Convention**: `workflow__{YYYY-MM-DD--HH-MM}__audit.md`
+**File Naming Convention**: `workflow__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-- Example: `workflow__2025-12-23--14-30__audit.md` (audit started December 23, 2025 at 2:30 PM UTC+7)
+- Example: `workflow__a1b2c3__2025-12-23--14-30__audit.md` (audit started December 23, 2025 at 2:30 PM UTC+7)
+- **UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic
 
 **PROGRESSIVE WRITING REQUIREMENT**:
 
@@ -255,10 +257,12 @@ This workflow respects the [Automation Over Manual](../principles/software-engin
 
 When the user requests workflow validation:
 
-1. **Generate timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
-2. **Initialize report file** in `generated-reports/workflow__{timestamp}__audit.md`
-3. **Read all workflow files** using Glob: `docs/explanation/workflows/ex-wf__*.md`
-4. **For each workflow file**:
+1. **Generate 6-char UUID** using Bash: `uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6`
+2. **Determine UUID chain**: Check for parent chain in `generated-reports/.execution-chain-workflow` (if exists and <30 seconds old, append to chain; otherwise start new chain)
+3. **Generate timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+4. **Initialize report file** in `generated-reports/workflow__{uuid-chain}__{timestamp}__audit.md`
+5. **Read all workflow files** using Glob: `docs/explanation/workflows/ex-wf__*.md`
+6. **For each workflow file**:
    - Extract and validate frontmatter
    - Validate markdown structure
    - Check agent references
@@ -266,9 +270,9 @@ When the user requests workflow validation:
    - Check termination criteria
    - Validate principle traceability
    - **Write findings immediately** to report file (progressive writing)
-5. **Update progress tracker** in report file after each checklist section
-6. **Finalize report** with summary and recommendations
-7. **Output conversation summary** with link to full report
+7. **Update progress tracker** in report file after each checklist section
+8. **Finalize report** with summary and recommendations
+9. **Output conversation summary** with link to full report
 
 ### Severity Classification
 
@@ -359,11 +363,14 @@ The audit report file follows this structure:
 **CRITICAL**: ALWAYS execute bash command to get actual current time. NEVER use placeholder timestamps.
 
 ```bash
+# Generate 6-char UUID
+uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
+
 # Get current UTC+7 timestamp for report filename
 timestamp=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
-filename="workflow__${timestamp}__audit.md"
+filename="workflow__${uuid}__${timestamp}__audit.md"
 
-# Example output: workflow__2025-12-23--14-30__audit.md
+# Example output: workflow__a1b2c3__2025-12-23--14-30__audit.md
 ```
 
 **Example full timestamp for audit header**:

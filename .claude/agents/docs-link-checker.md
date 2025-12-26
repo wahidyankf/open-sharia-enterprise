@@ -49,10 +49,11 @@ This agent produces a **conversation-only output** (no progressive streaming):
    - The `lastFullScan` field MUST be updated on every run
    - Purpose: Link status tracking for operational use
 
-2. **Audit Report** (`generated-reports/docs-link__{YYYY-MM-DD--HH-MM}__audit.md`):
+2. **Audit Report** (`generated-reports/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`):
    - Temporary validation report for audit trail
    - Contains validation findings, broken links, format violations
    - Purpose: Integration with fixer agents and historical tracking
+   - **UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic
 
 **CRITICAL DISTINCTION**: Cache file ≠ Audit report
 
@@ -76,7 +77,7 @@ This agent produces a **conversation-only output** (no progressive streaming):
    - This file MUST be updated on every run
 
 3. **ALWAYS generate audit report file**
-   - You MUST create audit report in `generated-reports/docs-link__{YYYY-MM-DD--HH-MM}__audit.md`
+   - You MUST create audit report in `generated-reports/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
    - Report contains validation findings and broken link details
    - This is separate from the cache file (different purpose)
    - Audit report integrates with docs-link-fixer agent
@@ -102,9 +103,11 @@ This agent writes validation findings to temporary report files in `generated-re
 - Integration with fixer agents (docs-link-fixer)
 - Traceability of validation results
 
-**Report Location**: `generated-reports/docs-link__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report Location**: `generated-reports/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**Example Filename**: `docs-link__2025-12-20--14-30__audit.md`
+**UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking.
+
+**Example Filename**: `docs-link__a1b2c3__2025-12-20--14-30__audit.md`
 
 **Bash Timestamp Generation** (UTC+7):
 
@@ -115,7 +118,7 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 **Note**: This agent maintains TWO separate outputs:
 
 - **Cache File** (`docs/metadata/external-links-status.yaml`): Link status tracking for operational use
-- **Audit Report** (`generated-reports/docs-link__{timestamp}__audit.md`): Validation findings and summary for audit trail
+- **Audit Report** (`generated-reports/docs-link__{uuid-chain}__{timestamp}__audit.md`): Validation findings and summary for audit trail
 
 ## Core Responsibility
 
@@ -628,7 +631,7 @@ When you find broken internal links:
    - Stores status, redirects, usedIn, timestamps
    - Updated on EVERY run (including lastFullScan)
 
-2. **Audit Report** (`generated-reports/docs-link__{timestamp}__audit.md`):
+2. **Audit Report** (`generated-reports/docs-link__{uuid-chain}__{timestamp}__audit.md`):
    - Temporary validation findings
    - Integration with docs-link-fixer agent
    - Historical tracking of link health audits

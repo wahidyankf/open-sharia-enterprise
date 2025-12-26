@@ -35,13 +35,19 @@ Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-
 
 ### Step 1: Initialize Audit Report
 
-**CRITICAL**: Create audit report file IMMEDIATELY at execution start using UTC+7 timestamp:
+**CRITICAL**: Create audit report file IMMEDIATELY at execution start using 6-char UUID and UTC+7 timestamp:
 
 ```bash
+# Generate 6-char UUID
+uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
+
+# Generate UTC+7 timestamp
 TZ='Asia/Bangkok' date '+%Y-%m-%d--%H-%M'
 ```
 
-**Report path**: `generated-reports/by-example-checker__{timestamp}__audit.md`
+**Report path**: `generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md`
+
+**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
 
 **Initial report structure**:
 
@@ -486,7 +492,7 @@ Use three-tier confidence system:
 
 **Generate audit report ONLY** - no conversation output needed.
 
-**Report location**: `generated-reports/by-example-checker__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report location**: `generated-reports/ayokoding-web-by-example__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Report must include**:
 
@@ -532,7 +538,7 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 **Agent execution**:
 
-1. Creates `generated-reports/by-example-checker__2025-12-25--14-30__audit.md`
+1. Creates `generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md`
 2. Writes initial structure
 3. Progressively validates and writes findings
 4. Generates executive summary
