@@ -110,7 +110,7 @@ This practice implements/respects the following conventions:
 
 - **[Color Accessibility Convention](../conventions/ex-co__color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
 
-- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report-generating agents use UTC+7 timestamps in filename pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`.
+- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report-generating agents use UTC+7 timestamps in 4-part filename pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 ## Agent File Structure
 
@@ -388,7 +388,7 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 11. plan-checker
 12. plan-execution-checker
 
-**NO conversation-only output**: Checker agents MUST NOT output validation results in conversation only. All validation findings MUST be written to audit report files following the pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`.
+**NO conversation-only output**: Checker agents MUST NOT output validation results in conversation only. All validation findings MUST be written to audit report files following the 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain enables parallel execution without file collisions.
 
 **PROGRESSIVE WRITING REQUIREMENT**:
 
