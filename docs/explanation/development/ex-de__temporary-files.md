@@ -9,7 +9,7 @@ tags:
   - file-organization
   - best-practices
 created: 2025-12-01
-updated: 2025-12-20
+updated: 2025-12-26
 ---
 
 # Temporary Files Convention
@@ -34,7 +34,7 @@ This practice implements/respects the following conventions:
 
 - **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
-- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Report files follow pattern {agent-family}**{timestamp}**{type}.md with double-underscore separators.
+- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
 
 ## 📋 Overview
 
@@ -96,27 +96,179 @@ color: green
 All checker agents MUST follow the universal naming pattern:
 
 ```
-{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md
+{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md
 ```
 
-**Components**:
+**Components** (4 parts separated by `__`):
 
 - `{agent-family}`: Agent name WITHOUT the `-checker` suffix (e.g., `repo-rules`, `ayokoding-web`, `docs`, `plan`)
-- `__`: Double underscore separator
+- `{uuid-chain}`: Execution hierarchy as underscore-separated 6-char UUIDs (e.g., `a1b2c3`, `a1b2c3_d4e5f6`)
 - `{YYYY-MM-DD--HH-MM}`: Timestamp in UTC+7 (double dash between date and time)
-- `__`: Double underscore separator
-- `audit`: Report type suffix
+- `{type}`: Report type suffix (`audit`, `validation`, `fix`)
 
-**Examples**:
+**UUID Chain Examples**:
+
+- `a1b2c3` - Root execution (no parent)
+- `a1b2c3_d4e5f6` - Child of a1b2c3
+- `a1b2c3_d4e5f6_g7h8i9` - Grandchild (2 levels deep)
+
+**Full Filename Examples**:
 
 ```
-generated-reports/repo-rules__2025-12-14--20-45__audit.md
-generated-reports/ayokoding-web-general__2025-12-14--15-30__audit.md
-generated-reports/ayokoding-web-by-example__2025-12-14--15-45__audit.md
-generated-reports/ose-platform-web-content__2025-12-14--16-00__audit.md
-generated-reports/docs__2025-12-15--10-00__audit.md
-generated-reports/plan__2025-12-15--11-30__audit.md
-generated-reports/plan-execution__2025-12-15--14-00__audit.md
+generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
+generated-reports/ayokoding-web-general__d4e5f6__2025-12-14--15-30__audit.md
+generated-reports/ayokoding-web-by-example__a1b2c3_d4e5f6__2025-12-14--15-45__audit.md
+generated-reports/ose-platform-web-content__g7h8i9__2025-12-14--16-00__audit.md
+generated-reports/docs__a1b2c3_d4e5f6_g7h8i9__2025-12-15--10-00__audit.md
+generated-reports/plan__b2c3d4__2025-12-15--11-30__validation.md
+generated-reports/plan-execution__c3d4e5__2025-12-15--14-00__validation.md
+```
+
+**Why UUID Chain?**
+
+- **Parallelization**: Unique UUID per execution prevents file collisions when multiple agents run simultaneously
+- **Traceability**: Underscore-separated chain shows parent-child execution hierarchy
+- **Debugging**: Can trace back from any report to its root execution
+
+### UUID Generation
+
+All checker agents MUST generate a 6-character hexadecimal UUID at startup:
+
+```bash
+MY_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
+# Example output: a1b2c3
+```
+
+**Why 6 characters?**
+
+- 16^6 = 16,777,216 possible combinations
+- Collision probability for 1000 parallel executions: ~0.003%
+- Short enough for readable filenames, long enough for uniqueness
+
+### Scope-Based Execution Tracking
+
+To enable accurate parent-child hierarchy tracking across concurrent workflow runs, agents use **scope-based tracking files**.
+
+**Tracking File Pattern**: `generated-reports/.execution-chain-{scope}`
+
+**Scope Definitions**:
+
+| Workflow/Agent            | Scope           | Tracking File                    |
+| ------------------------- | --------------- | -------------------------------- |
+| repo-rules-checker        | `repo-rules`    | `.execution-chain-repo-rules`    |
+| docs-checker              | `docs`          | `.execution-chain-docs`          |
+| docs-tutorial-checker     | `docs-tutorial` | `.execution-chain-docs-tutorial` |
+| readme-checker            | `readme`        | `.execution-chain-readme`        |
+| plan-checker              | `plan`          | `.execution-chain-plan`          |
+| ayokoding-web-\* (golang) | `golang`        | `.execution-chain-golang`        |
+| ayokoding-web-\* (elixir) | `elixir`        | `.execution-chain-elixir`        |
+| ose-platform-web-\*       | `ose-platform`  | `.execution-chain-ose-platform`  |
+
+**Tracking File Format**: `{unix-timestamp} {uuid-chain}`
+
+**Example**: `1703594400 a1b2c3_d4e5f6`
+
+### Scope Passing
+
+When spawning child agents, include `EXECUTION_SCOPE` in the prompt:
+
+```bash
+Task(
+  subagent_type="docs-checker",
+  prompt="Validate documentation. EXECUTION_SCOPE: docs"
+)
+```
+
+### Agent Startup Logic
+
+All checker agents MUST implement this startup logic:
+
+```bash
+# 1. Generate own UUID (6 hex chars)
+MY_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
+
+# 2. Determine scope (from prompt or default to agent-family)
+# If EXECUTION_SCOPE found in prompt, use it; otherwise use agent-family
+SCOPE="${EXECUTION_SCOPE:-${AGENT_FAMILY}}"
+
+# 3. Read parent chain from scope-specific tracking file
+CHAIN_FILE="generated-reports/.execution-chain-${SCOPE}"
+if [ -f "$CHAIN_FILE" ]; then
+  read PARENT_TIME PARENT_CHAIN < "$CHAIN_FILE"
+  CURRENT_TIME=$(date +%s)
+  TIME_DIFF=$((CURRENT_TIME - PARENT_TIME))
+
+  if [ $TIME_DIFF -lt 30 ]; then
+    # Recent parent, append to chain
+    UUID_CHAIN="${PARENT_CHAIN}_${MY_UUID}"
+  else
+    # Stale parent (>30 seconds), treat as root
+    UUID_CHAIN="${MY_UUID}"
+  fi
+else
+  # No tracking file, we're root
+  UUID_CHAIN="${MY_UUID}"
+fi
+
+# 4. Generate timestamp
+TIMESTAMP=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
+
+# 5. Create report filename
+REPORT_FILE="generated-reports/${AGENT_FAMILY}__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
+
+# 6. Write tracking file ONLY if about to spawn children
+# Most checker/fixer agents skip this step (they don't spawn children)
+```
+
+### Write Tracking File Rule
+
+**CRITICAL**: Only write to `.execution-chain-{scope}` when **about to spawn child agents**.
+
+- ✅ Workflows write before spawning checkers
+- ✅ Orchestrating agents write before spawning sub-agents
+- ❌ Checker agents do NOT write (they don't spawn children)
+- ❌ Fixer agents do NOT write (they don't spawn children)
+
+This prevents race conditions when multiple children run in parallel.
+
+### Concurrent Workflow Isolation
+
+Scope-based tracking enables correct parent tracking for concurrent workflows:
+
+```
+T0: golang-workflow writes .execution-chain-golang = "aaa111"
+T1: elixir-workflow writes .execution-chain-elixir = "bbb222"
+T2: golang-checker reads .execution-chain-golang → "aaa111" ✅
+T3: elixir-checker reads .execution-chain-elixir → "bbb222" ✅
+```
+
+Each workflow scope is isolated, preventing cross-contamination.
+
+### Documented Limitation
+
+> **Edge case:** If the same workflow with the same scope runs concurrently (e.g., two golang by-example validations simultaneously), parent tracking may be imperfect within that scope. This is expected behavior for concurrent operations on the same resource. The unique UUID still ensures no file collisions.
+
+### Backward Compatibility
+
+Fixer agents MUST handle both old (3-part) and new (4-part) filename formats:
+
+```bash
+BASENAME=$(basename "$AUDIT_FILE" .md)
+PART_COUNT=$(echo "$BASENAME" | awk -F'__' '{print NF}')
+
+if [ "$PART_COUNT" -eq 3 ]; then
+  # Old format: agent__timestamp__type
+  AGENT=$(echo "$BASENAME" | awk -F'__' '{print $1}')
+  TIMESTAMP=$(echo "$BASENAME" | awk -F'__' '{print $2}')
+  TYPE=$(echo "$BASENAME" | awk -F'__' '{print $3}')
+  UUID_CHAIN=""
+elif [ "$PART_COUNT" -eq 4 ]; then
+  # New format: agent__uuid__timestamp__type
+  AGENT=$(echo "$BASENAME" | awk -F'__' '{print $1}')
+  UUID_CHAIN=$(echo "$BASENAME" | awk -F'__' '{print $2}')
+  TIMESTAMP=$(echo "$BASENAME" | awk -F'__' '{print $3}')
+  TYPE=$(echo "$BASENAME" | awk -F'__' '{print $4}')
+fi
 ```
 
 ### Why This is Mandatory
@@ -259,19 +411,19 @@ ALL \*-checker agents must implement progressive writing:
 
 **CRITICAL REQUIREMENT**: All checker/fixer agents use standardized report naming pattern aligned with repository file naming convention.
 
-**Pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__{suffix}.md`
+**Pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{suffix}.md`
 
-**Components**:
+**Components** (4 parts):
 
 - `{agent-family}`: Agent name WITHOUT checker/fixer/maker suffix (e.g., `repo-rules`, `ayokoding-web`, `docs`, `plan`, `plan-execution`)
-- `__`: Double underscore separator (aligns with repository file naming convention)
+- `{uuid-chain}`: Execution hierarchy as underscore-separated 6-char UUIDs (e.g., `a1b2c3`, `a1b2c3_d4e5f6`)
 - `{YYYY-MM-DD--HH-MM}`: Timestamp in UTC+7 with double dash between date and time
-- `__`: Double underscore separator
-- `{suffix}`: Optional suffix (`audit`, `fix`, `validation`, `summary`)
+- `{suffix}`: Report type suffix (`audit`, `fix`, `validation`)
 
 **Separator Rules**:
 
-- Double underscore (`__`) separates major components (agent-family, timestamp, suffix)
+- Double underscore (`__`) separates the 4 major components
+- Dot (`.`) separates UUIDs within the uuid-chain
 - Double dash (`--`) separates date from time within timestamp
 - Single dash (`-`) separates components within date (YYYY-MM-DD) and time (HH-MM)
 - NO "report" keyword in filename (redundant - location in `generated-reports/` makes purpose clear)
@@ -280,49 +432,52 @@ ALL \*-checker agents must implement progressive writing:
 
 - **Alignment**: Follows repository file naming convention (`[prefix]__[content-identifier].md`)
 - **Consistency**: Same separator style as documentation files (double underscore for major segments)
-- **Clarity**: Agent family, timestamp, and suffix all clearly separated
-- **Sortability**: Chronological sorting works naturally (YYYY-MM-DD first)
-- **Flexibility**: Optional suffix supports different report types from same agent family
-- **No Redundancy**: "report" keyword omitted (directory name already indicates purpose)
+- **Clarity**: Agent family, UUID chain, timestamp, and suffix all clearly separated
+- **Parallelization**: UUID prevents file collisions when multiple agents run simultaneously
+- **Traceability**: UUID chain shows parent-child execution hierarchy
+- **Sortability**: Agent family first enables grouping; timestamp enables chronological sorting within groups
 
 **Example files**:
 
 ```
-generated-reports/repo-rules__2025-12-14--20-45__audit.md
-generated-reports/repo-rules__2025-12-14--20-45__fix.md
-generated-reports/ayokoding-web__2025-12-14--15-30__audit.md
-generated-reports/ose-platform-web-content__2025-12-14--15-30__audit.md
-generated-reports/docs__2025-12-15--10-00__validation.md
-generated-reports/plan__2025-12-15--11-30__validation.md
-generated-reports/plan-execution__2025-12-15--14-00__validation.md
+generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
+generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__fix.md
+generated-reports/ayokoding-web__d4e5f6__2025-12-14--15-30__audit.md
+generated-reports/ayokoding-web__a1b2c3_d4e5f6__2025-12-14--15-30__audit.md
+generated-reports/ose-platform-web-content__g7h8i9__2025-12-14--15-30__audit.md
+generated-reports/docs__b2c3d4__2025-12-15--10-00__validation.md
+generated-reports/plan__c3d4e5__2025-12-15--11-30__validation.md
+generated-reports/plan-execution__d4e5f6__2025-12-15--14-00__validation.md
 ```
 
 **Pattern Rules**:
 
-- Use double underscore (`__`) to separate agent-family, timestamp, and suffix
+- Use double underscore (`__`) to separate the 4 components (agent-family, uuid-chain, timestamp, suffix)
+- Use dot (`.`) to separate UUIDs within the uuid-chain
 - Use double dash (`--`) to separate date from time in timestamp
+- UUID MUST be 6 lowercase hex characters (generated via `uuidgen | head -c 6`)
 - Timestamp MUST be UTC+7 (YYYY-MM-DD--HH-MM format)
 - Zero-pad all timestamp components (01 not 1, 09 not 9)
 - Agent family is lowercase with single dashes (multi-word: `ose-platform-web-content`, `plan-execution`)
 - Suffix is lowercase, no plurals (`audit` not `audits`)
-- Suffix is optional (may be omitted if report type is obvious from context)
 
-**CRITICAL - Timestamp Generation:**
+**CRITICAL - UUID and Timestamp Generation:**
 
-**❌ WRONG - Using placeholder timestamps:**
+**❌ WRONG - Using placeholder values:**
 
 ```bash
 # DO NOT use placeholder values
-filename="repo-rules__2025-12-14--00-00__audit.md"  # WRONG!
+filename="repo-rules__abc123__2025-12-14--00-00__audit.md"  # WRONG!
 ```
 
-**✅ CORRECT - Execute bash command for actual current time:**
+**✅ CORRECT - Execute bash commands for actual UUID and current time:**
 
 ```bash
-# MUST execute bash command to get real time
+# MUST generate real UUID and timestamp
+uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 timestamp=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
-filename="repo-rules__${timestamp}__audit.md"
-# Example: repo-rules__2025-12-14--16-43__audit.md (actual time!)
+filename="repo-rules__${uuid}__${timestamp}__audit.md"
+# Example: repo-rules__a1b2c3__2025-12-14--16-43__audit.md (actual values!)
 ```
 
 **Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../conventions/ex-co__timestamp-format.md) for complete details.
@@ -330,8 +485,8 @@ filename="repo-rules__${timestamp}__audit.md"
 #### Repository Audit Reports
 
 **Agent**: repo-rules-checker
-**Pattern**: `repo-rules__{YYYY-MM-DD--HH-MM}__audit.md`
-**Example**: `repo-rules__2025-12-14--20-45__audit.md`
+**Pattern**: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+**Example**: `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`
 
 **Content**: Comprehensive consistency audit covering:
 
@@ -350,32 +505,32 @@ filename="repo-rules__${timestamp}__audit.md"
 
 **Agents**: All fixer agents (repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
 
-**Pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__fix.md`
+**Pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
 
 **Universal Structure**: All fixer agents follow the same report structure:
 
 **Naming Convention**:
 
 - Replaces `__audit` suffix with `__fix` suffix
-- **CRITICAL**: Uses SAME timestamp as source audit report
+- **CRITICAL**: Uses SAME uuid-chain AND timestamp as source audit report
 - This creates clear audit-fix report pairing for traceability
 
 **Report Pairing Examples**:
 
-| Agent Family             | Audit Report                                            | Fix Report                                            |
-| ------------------------ | ------------------------------------------------------- | ----------------------------------------------------- |
-| repo-rules               | `repo-rules__2025-12-14--20-45__audit.md`               | `repo-rules__2025-12-14--20-45__fix.md`               |
-| ayokoding-web            | `ayokoding-web__2025-12-14--15-30__audit.md`            | `ayokoding-web__2025-12-14--15-30__fix.md`            |
-| ose-platform-web-content | `ose-platform-web-content__2025-12-14--16-00__audit.md` | `ose-platform-web-content__2025-12-14--16-00__fix.md` |
-| docs-tutorial            | `docs-tutorial__2025-12-14--10-15__audit.md`            | `docs-tutorial__2025-12-14--10-15__fix.md`            |
-| readme                   | `readme__2025-12-14--09-45__audit.md`                   | `readme__2025-12-14--09-45__fix.md`                   |
-| docs                     | `docs__2025-12-15--10-00__validation.md`                | `docs__2025-12-15--10-00__fix.md`                     |
-| plan                     | `plan__2025-12-15--11-30__validation.md`                | `plan__2025-12-15--11-30__fix.md`                     |
+| Agent Family             | Audit Report                                                    | Fix Report                                                    |
+| ------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------- |
+| repo-rules               | `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`               | `repo-rules__a1b2c3__2025-12-14--20-45__fix.md`               |
+| ayokoding-web            | `ayokoding-web__d4e5f6__2025-12-14--15-30__audit.md`            | `ayokoding-web__d4e5f6__2025-12-14--15-30__fix.md`            |
+| ose-platform-web-content | `ose-platform-web-content__g7h8i9__2025-12-14--16-00__audit.md` | `ose-platform-web-content__g7h8i9__2025-12-14--16-00__fix.md` |
+| docs-tutorial            | `docs-tutorial__a1b2c3_d4e5f6__2025-12-14--10-15__audit.md`     | `docs-tutorial__a1b2c3_d4e5f6__2025-12-14--10-15__fix.md`     |
+| readme                   | `readme__b2c3d4__2025-12-14--09-45__audit.md`                   | `readme__b2c3d4__2025-12-14--09-45__fix.md`                   |
+| docs                     | `docs__c3d4e5__2025-12-15--10-00__validation.md`                | `docs__c3d4e5__2025-12-15--10-00__fix.md`                     |
+| plan                     | `plan__d4e5f6__2025-12-15--11-30__validation.md`                | `plan__d4e5f6__2025-12-15--11-30__fix.md`                     |
 
-**Why Same Timestamp?**
+**Why Same UUID and Timestamp?**
 
-- Enables matching audit report with corresponding fix report
-- Chronological sorting keeps related reports together
+- UUID chain enables exact matching of audit to fix report
+- Timestamp enables chronological tracking
 - Audit trail shows what was detected vs what was fixed
 - Supports debugging (compare checker findings vs fixer actions)
 
@@ -431,36 +586,37 @@ All fixer reports include these sections:
 #### Content Validation Reports
 
 **Agents**: ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-checker
-**Pattern**: `{site}-content__{YYYY-MM-DD--HH-MM}__audit.md`
+**Pattern**: `{site}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Examples**:
 
-- `ayokoding-web__2025-12-14--15-30__audit.md`
-- `ose-platform-web-content__2025-12-14--15-30__audit.md`
+- `ayokoding-web-general__a1b2c3__2025-12-14--15-30__audit.md`
+- `ayokoding-web-by-example__d4e5f6__2025-12-14--15-45__audit.md`
+- `ose-platform-web-content__g7h8i9__2025-12-14--16-00__audit.md`
 
 **Content**: Hugo content validation results (frontmatter, structure, quality)
 
 #### Documentation Validation Reports
 
 **Agent**: docs-checker
-**Pattern**: `docs__{YYYY-MM-DD--HH-MM}__validation.md`
-**Example**: `docs__2025-12-15--10-00__validation.md`
+**Pattern**: `docs__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`
+**Example**: `docs__a1b2c3__2025-12-15--10-00__validation.md`
 
 **Content**: Documentation factual accuracy and consistency validation
 
 #### Plan Validation Reports
 
 **Agent**: plan-checker
-**Pattern**: `plan__{YYYY-MM-DD--HH-MM}__validation.md`
-**Example**: `plan__2025-12-15--11-30__validation.md`
+**Pattern**: `plan__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`
+**Example**: `plan__b2c3d4__2025-12-15--11-30__validation.md`
 
 **Content**: Plan readiness validation (completeness, accuracy, implementability)
 
 #### Plan Execution Validation Reports
 
 **Agent**: plan-execution-checker
-**Pattern**: `plan-execution__{YYYY-MM-DD--HH-MM}__validation.md`
-**Example**: `plan-execution__2025-12-15--14-00__validation.md`
+**Pattern**: `plan-execution__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`
+**Example**: `plan-execution__c3d4e5__2025-12-15--14-00__validation.md`
 
 **Content**: Implementation validation against requirements
 
@@ -571,7 +727,13 @@ Under the "Generated reports" section (line 73):
 
 - `generated-reports/`
 
+Under the "Execution tracking files" section:
+
+- `generated-reports/.execution-chain-*`
+
 Files in these directories will not be committed to the repository.
+
+**Note**: The `.execution-chain-{scope}` files are hidden files within `generated-reports/` used for parent-child execution tracking. They are automatically gitignored via the `generated-reports/` pattern.
 
 ## 🔄 Exception Handling
 

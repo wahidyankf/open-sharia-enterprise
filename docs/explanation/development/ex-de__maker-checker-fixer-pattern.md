@@ -96,18 +96,20 @@ This pattern is used across **seven agent families**:
 
 **Tool Pattern**: `Write`, `Edit` (content modification tools)
 
-**Color**: 🟦 Blue (Writer agents)
+**Color**: 🟦 Blue (Writer agents) or 🟨 Yellow (repo-rules-maker uses bash)
 
 **Examples**:
 
-| Agent                          | Creates/Updates                                    | Also Manages                                      |
-| ------------------------------ | -------------------------------------------------- | ------------------------------------------------- |
-| repo-rules-maker               | Convention docs, CLAUDE.md sections, agent prompts | Cross-references, indices, related documentation  |
-| ayokoding-web-general-maker    | General Hugo learning content, blog posts          | Navigation files, overview pages, indices         |
-| ayokoding-web-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations |
-| docs-tutorial-maker            | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      |
-| ose-platform-web-content-maker | Platform update posts, about pages                 | Navigation, asset references                      |
-| readme-maker                   | README sections with engaging content              | Links to detailed docs, cross-references          |
+| Agent                          | Creates/Updates                                    | Also Manages                                      | Tools Used            |
+| ------------------------------ | -------------------------------------------------- | ------------------------------------------------- | --------------------- |
+| repo-rules-maker               | Convention docs, CLAUDE.md sections, agent prompts | Cross-references, indices, related documentation  | Bash (not Edit/Write) |
+| ayokoding-web-general-maker    | General Hugo learning content, blog posts          | Navigation files, overview pages, indices         | Write, Edit           |
+| ayokoding-web-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations | Write, Edit           |
+| docs-tutorial-maker            | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      | Write, Edit           |
+| ose-platform-web-content-maker | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
+| readme-maker                   | README sections with engaging content              | Links to detailed docs, cross-references          | Write, Edit           |
+
+**Note**: `repo-rules-maker` is a special case that uses bash commands (cat, sed, awk) instead of Edit/Write tools for file operations.
 
 **Key Responsibilities**:
 
@@ -157,14 +159,14 @@ Maker Agent (ayokoding-web-general-maker):
 
 **Examples**:
 
-| Agent                            | Validates                                       | Generates Report                            |
-| -------------------------------- | ----------------------------------------------- | ------------------------------------------- |
-| repo-rules-checker               | CLAUDE.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`         |
-| ayokoding-web-general-checker    | General Hugo content (frontmatter, links)       | `ayokoding-web__{timestamp}__audit.md`      |
-| ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)    | `by-example-checker__{timestamp}__audit.md` |
-| docs-tutorial-checker            | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`      |
-| ose-platform-web-content-checker | Platform content (structure, formatting, links) | `ose-platform-web__{timestamp}__audit.md`   |
-| readme-checker                   | README engagement, accessibility, jargon        | `readme__{timestamp}__audit.md`             |
+| Agent                            | Validates                                       | Generates Report                                                |
+| -------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| repo-rules-checker               | CLAUDE.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`                             |
+| ayokoding-web-general-checker    | General Hugo content (frontmatter, links)       | `ayokoding-web__{timestamp}__audit.md`                          |
+| ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)    | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
+| docs-tutorial-checker            | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`                          |
+| ose-platform-web-content-checker | Platform content (structure, formatting, links) | `ose-platform-web__{timestamp}__audit.md`                       |
+| readme-checker                   | README engagement, accessibility, jargon        | `readme__{timestamp}__audit.md`                                 |
 
 **Key Responsibilities**:
 
@@ -211,16 +213,18 @@ Checker Agent (ayokoding-web-general-checker):
 - `Write` for fix report generation
 - `Bash` for timestamps
 
-**Color**: 🟨 Yellow (Updater agents) - Modifies existing content
+**Color**: 🟪 Purple (Fixer agents) - Applies validated fixes
 
 **Examples**:
 
-| Agent                          | Fixes                                              | Generates Report                        |
-| ------------------------------ | -------------------------------------------------- | --------------------------------------- |
-| repo-rules-fixer               | Convention violations from repo-rules-checker      | `repo-rules__{timestamp}__fix.md`       |
-| ayokoding-web-general-fixer    | General Hugo content issues from general-checker   | `ayokoding-web__{timestamp}__fix.md`    |
-| ayokoding-web-by-example-fixer | By-example tutorial issues from by-example-checker | `by-example-fixer__{timestamp}__fix.md` |
-| readme-fixer                   | README quality issues from readme-checker          | `readme__{timestamp}__fix.md`           |
+| Agent                          | Fixes                                              | Generates Report                                              | Tools Used            |
+| ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------- | --------------------- |
+| repo-rules-fixer               | Convention violations from repo-rules-checker      | `repo-rules__{timestamp}__fix.md`                             | Bash (not Edit/Write) |
+| ayokoding-web-general-fixer    | General Hugo content issues from general-checker   | `ayokoding-web__{timestamp}__fix.md`                          | Edit, Write, Bash     |
+| ayokoding-web-by-example-fixer | By-example tutorial issues from by-example-checker | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md` | Edit, Write, Bash     |
+| readme-fixer                   | README quality issues from readme-checker          | `readme__{timestamp}__fix.md`                                 | Edit, Write, Bash     |
+
+**Note**: `repo-rules-fixer` is a special case that uses bash commands (sed, awk, cat) instead of Edit/Write tools for file modifications. It still needs bash for report generation and timestamps.
 
 **Key Responsibilities**:
 
