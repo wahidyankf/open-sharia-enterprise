@@ -31,12 +31,16 @@ outputs:
     description: Number of check-fix cycles executed
   - name: checker-report
     type: file
-    pattern: generated-reports/ayokoding-web-by-example__*__audit.md
-    description: Final validation report from apps__ayokoding-web__by-example-checker
+    pattern: generated-reports/ayokoding-web-by-example__*__*__audit.md
+    description: Final validation report from ayokoding-web-by-example-checker (4-part format with UUID chain)
   - name: fixer-report
     type: file
-    pattern: generated-reports/ayokoding-web-by-example__*__fixes-applied.md
-    description: Final fixes report from apps__ayokoding-web__by-example-fixer
+    pattern: generated-reports/ayokoding-web-by-example__*__*__fix.md
+    description: Final fixes report from ayokoding-web-by-example-fixer (4-part format with UUID chain)
+  - name: execution-scope
+    type: string
+    description: Scope identifier for UUID chain tracking (derived from tutorial-path, e.g., "golang" for golang tutorials)
+    required: false
   - name: examples-count
     type: number
     description: Total number of examples in tutorial
@@ -140,11 +144,13 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 **Outputs**:
 
-- Audit report: `generated-reports/by-example-checker__{timestamp}__audit.md`
+- Audit report: `generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md`
 - Executive summary with overall status
 - Detailed findings with confidence levels
 - Specific line numbers for issues
 - Actionable recommendations
+
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../development/ex-de__temporary-files.md#uuid-chain-generation) for details.
 
 **Depends on**: Step 1 completion
 
@@ -217,8 +223,8 @@ graph TD
 
 ```bash
 # Invoke via Task tool with audit report
-subagent_type: apps__ayokoding-web__by-example-fixer
-prompt: "Apply fixes from generated-reports/by-example-checker__2025-12-25--14-30__audit.md"
+subagent_type: ayokoding-web-by-example-fixer
+prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md"
 ```
 
 **Fix application strategy**:
@@ -247,7 +253,7 @@ prompt: "Apply fixes from generated-reports/by-example-checker__2025-12-25--14-3
 **Outputs**:
 
 - Modified tutorial files with fixes applied
-- Fix report: `generated-reports/by-example-fixer__{timestamp}__fixes-applied.md`
+- Fix report: `generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md` (uses same UUID chain as source audit)
 - List of deferred issues requiring user decision
 
 **Depends on**: Step 3 approval
@@ -513,7 +519,7 @@ subagent_type: apps__ayokoding-web__by-example-checker
 prompt: "Validate golang by-example tutorial"
 
 # Phase 3: Review
-# User reads generated-reports/by-example-checker__*.md
+# User reads generated-reports/ayokoding-web-by-example__*.md
 
 # Phase 4: Fix
 subagent_type: apps__ayokoding-web__by-example-fixer
