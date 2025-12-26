@@ -99,7 +99,7 @@ Development practices in this directory fall into several categories:
 ## 📋 Contents
 
 - [Acceptance Criteria Convention](./ex-de__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation. Covers Gherkin syntax (Scenario, Given, When, Then), best practices, common patterns (CRUD, auth, errors), and integration with BDD test frameworks
-- [AI Agents Convention](./ex-de__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory
+- [AI Agents Convention](./ex-de__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory. Covers agent naming (general vs scoped with `apps__`, `libs__`, `apps-labs__` prefixes), file structure, frontmatter requirements, tool access patterns, model selection, color categorization, and size limits
 - [Code Quality Convention](./ex-de__code-quality.md) - Automated code quality tools and git hooks (Prettier, Husky, lint-staged) for consistent formatting and commit validation
 - [Commit Message Convention](./ex-de__commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
 - [Content Preservation Convention](./ex-de__content-preservation.md) - Principles and processes for preserving knowledge when condensing files and extracting duplications. Covers the fundamental MOVE NOT DELETE principle, offload decision tree, four offload options (create new, merge existing, extract common, add to development), verification checklist, and when NOT to offload
