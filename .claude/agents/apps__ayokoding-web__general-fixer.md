@@ -66,9 +66,11 @@ The agent will:
 2. **Allow manual override** if user specifies a report:
 
    ```
-   User: "Use ayokoding-web__2025-12-14--20-45__audit.md"
+   User: "Use ayokoding-web__a1b2c3__2025-12-14--20-45__audit.md"
    Agent: "Using specified report instead of auto-detected latest"
    ```
+
+   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for details.
 
 3. **Verify report exists** and is readable before proceeding
 
@@ -104,12 +106,14 @@ FALSE_POSITIVE:
 
 Generate comprehensive fix report in `generated-reports/`:
 
-**File naming pattern**: Replace `__audit` suffix with `__fix` (same timestamp)
+**File naming pattern**: Replace `__audit` suffix with `__fix` (preserve UUID chain and timestamp)
 
 **Examples:**
 
-- Input: `ayokoding-web__2025-12-14--20-45__audit.md`
-- Output: `ayokoding-web__2025-12-14--20-45__fix.md`
+- Input: `ayokoding-web__a1b2c3__2025-12-14--20-45__audit.md`
+- Output: `ayokoding-web__a1b2c3__2025-12-14--20-45__fix.md`
+
+**Backward Compatibility**: Fixer also handles 3-part old format (`agent__timestamp__type.md`) for legacy reports.
 
 ## Confidence Level Assessment
 
