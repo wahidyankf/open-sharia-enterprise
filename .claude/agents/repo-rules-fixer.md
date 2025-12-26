@@ -1,11 +1,11 @@
 ---
 name: repo-rules-fixer
 description: Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing repo-rules-checker output.
-tools: Read, Edit, Glob, Grep, Write, Bash
+tools: Read, Glob, Grep, Bash
 model: sonnet
 color: purple
 created: 2025-12-14
-updated: 2025-12-24
+updated: 2025-12-26
 ---
 
 # Repository Rules Fixer Agent
@@ -53,7 +53,7 @@ Use this agent when:
 
 - Initial validation (use repo-rules-checker for detection)
 - Propagating new rules (use repo-rules-maker for rule changes)
-- Manual fixes (just use Edit tool directly)
+- Manual fixes (use bash commands directly)
 - When no audit report exists
 
 ## How This Agent Works
@@ -73,9 +73,11 @@ The agent will:
 2. **Allow manual override** if user specifies a report:
 
    ```
-   User: "Use repo-rules__2025-12-14--20-45__audit.md"
+   User: "Use repo-rules__a1b2c3__2025-12-14--20-45__audit.md"
    Agent: "Using specified report instead of auto-detected latest"
    ```
+
+   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for details.
 
 3. **Verify report exists** and is readable before proceeding
 
@@ -111,12 +113,14 @@ FALSE_POSITIVE:
 
 Generate comprehensive fix report in `generated-reports/`:
 
-**File naming pattern**: Replace `__audit` suffix with `__fix` (same timestamp)
+**File naming pattern**: Replace `__audit` suffix with `__fix` (preserve UUID chain and timestamp)
 
 **Examples:**
 
-- Input: `repo-rules__2025-12-14--20-45__audit.md`
-- Output: `repo-rules__2025-12-14--20-45__fix.md`
+- Input: `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`
+- Output: `repo-rules__a1b2c3__2025-12-14--20-45__fix.md`
+
+**Backward Compatibility**: Fixer also handles 3-part old format (`agent__timestamp__type.md`) for legacy reports.
 
 ## Confidence Level Assessment
 

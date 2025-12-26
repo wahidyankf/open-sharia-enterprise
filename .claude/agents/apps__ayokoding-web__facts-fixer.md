@@ -235,8 +235,10 @@ ls -t generated-reports/ayokoding-web-facts__*__validation.md | head -1
 
 **Allow manual override:**
 
-- User can specify specific report path
+- User can specify specific report path (e.g., `ayokoding-web-facts__a1b2c3__2025-12-16--14-23__validation.md`)
 - Verify report exists and is readable
+
+**Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for details.
 
 ### Step 2: Findings Parsing
 
@@ -332,19 +334,23 @@ Action: Use Edit tool to update version number
 
 **Create comprehensive fix report:**
 
-File: `generated-reports/ayokoding-web-facts__{YYYY-MM-DD--HH-MM}__fix.md`
+File: `generated-reports/ayokoding-web-facts__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
 
-**CRITICAL**: Use SAME timestamp as source audit report for traceability.
+**CRITICAL**: Use SAME UUID chain and timestamp as source audit report for traceability.
 
-**Timestamp Generation:**
+**Filename Generation:**
 
 ```bash
-# Extract timestamp from audit report filename
-# Example: ayokoding-facts__2025-12-16--14-23__validation.md
-# Use: 2025-12-16--14-23
-timestamp=$(basename "$audit_report" | sed 's/ayokoding-facts__\(.*\)__validation.md/\1/')
-fix_report="generated-reports/ayokoding-web-facts__${timestamp}__fix.md"
+# Extract UUID chain and timestamp from audit report filename
+# Example: ayokoding-web-facts__a1b2c3__2025-12-16--14-23__validation.md
+basename=$(basename "$audit_report" .md)
+# Parse 4-part format: agent__uuid__timestamp__type
+uuid_chain=$(echo "$basename" | awk -F'__' '{print $2}')
+timestamp=$(echo "$basename" | awk -F'__' '{print $3}')
+fix_report="generated-reports/ayokoding-web-facts__${uuid_chain}__${timestamp}__fix.md"
 ```
+
+**Backward Compatibility**: Fixer also handles 3-part old format (`agent__timestamp__type.md`) for legacy reports.
 
 ## Trust Model: Checker Verifies, Fixer Applies
 

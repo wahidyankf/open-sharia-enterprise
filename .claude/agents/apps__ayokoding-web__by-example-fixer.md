@@ -206,7 +206,7 @@ Read the audit report from generated-reports/:
 
 ```bash
 # Find most recent by-example-checker report
-ls -t generated-reports/by-example-checker__*.md | head -1
+ls -t generated-reports/ayokoding-web-by-example__*.md | head -1
 ```
 
 Parse executive summary to understand scope:
@@ -457,7 +457,11 @@ new_string: |
 
 **Create fix report**:
 
-`generated-reports/by-example-fixer__{timestamp}__fixes-applied.md`
+`generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md`
+
+**UUID Chain Generation**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for complete UUID chain generation logic.
+
+**Backward Compatibility**: Fixer also handles 3-part old format (`agent__timestamp__type.md`) for legacy reports.
 
 ```markdown
 # By-Example Tutorial Fixes Applied
@@ -620,7 +624,7 @@ new_string: |
 ```bash
 # User invokes after reviewing audit report
 subagent_type: ayokoding-web-by-example-fixer
-prompt: "Apply fixes from generated-reports/by-example-checker__2025-12-25--14-30__audit.md"
+prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md"
 ```
 
 **Agent execution**:
