@@ -12,7 +12,7 @@ updated: 2025-12-24
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 22 conventions covering all aspects of documentation writing and formatting.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 23 conventions covering all aspects of documentation writing and formatting.
 
 **Governance**: All conventions in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../ex__repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./ex-co__convention-writing.md) for structure requirements.
 
@@ -67,6 +67,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ## 📋 Contents
 
+- [By Example Tutorial Convention](./ex-co__by-example-tutorial.md) - Standards for creating code-first by-example tutorials with 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage. Defines four-part example structure (brief explanation, Mermaid diagram when appropriate, heavily annotated code with `// =>` notation, key takeaway), self-containment rules across beginner/intermediate/advanced levels, educational comment standards for outputs/states/collections/concurrency, and coverage progression (0-40%, 40-75%, 75-95%). Validated by ayokoding-web-by-example-checker agent
 - [Color Accessibility Convention](./ex-co__color-accessibility.md) - MASTER REFERENCE for all color-related decisions in the repository. Defines verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), supports all color blindness types (protanopia, deuteranopia, tritanopia), meets WCAG AA standards, provides complete implementation guidance for Mermaid diagrams and AI agent categorization, and includes testing methodology with color blindness simulators and contrast checkers. All color usage must reference this convention as the authoritative source
 - [Content Quality Principles](./ex-co__content-quality.md) - Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style and tone (active voice, professional, concise), heading hierarchy (single H1, proper nesting), accessibility (alt text, semantic HTML, color contrast, screen readers), and formatting (code blocks, text formatting, lists, blockquotes, tables, line length, paragraphs)
 - [Convention Writing Convention](./ex-co__convention-writing.md) - **Meta-convention** defining how to write and organize convention documents. Covers document structure, scope boundaries, quality checklist, when to create new vs update existing, length guidelines, and integration with agents. Essential reading for creating or updating conventions

@@ -116,7 +116,7 @@ See [Repository Architecture](./docs/explanation/ex__repository-governance-archi
 
 - [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) - Foundational purpose
 - [Core Principles Index](./docs/explanation/principles/README.md) - 6 foundational values
-- [Conventions Index](./docs/explanation/conventions/README.md) - 22 documentation standards
+- [Conventions Index](./docs/explanation/conventions/README.md) - 23 documentation standards
 - [Development Index](./docs/explanation/development/README.md) - 12 software practices
 - [Agents Index](./.claude/agents/README.md) - All agents and responsibilities
 - [Workflows Index](./docs/explanation/workflows/README.md) - All orchestrated processes
@@ -189,14 +189,15 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (22 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
+For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (23 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
 
 ## AI Agent Standards
 
 All AI agents in `.claude/agents/` must follow the convention defined in `docs/explanation/development/`:
 
 - **AI Agents Convention:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
-- Defines agent file structure, naming, tool access patterns, and model selection
+- Defines agent file structure, naming (including scope prefixes), tool access patterns, and model selection
+- **Agent naming**: General agents use `agent-name.md`, app-scoped agents use `apps__[app-name]__agent-name.md`
 - Required reading for all agent creators and maintainers
 
 ### Key Requirements

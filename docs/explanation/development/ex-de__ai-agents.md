@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-24
+updated: 2025-12-26
 ---
 
 # AI Agents Convention
@@ -243,39 +243,101 @@ After frontmatter, agents should follow this structure:
 
 ### File Naming
 
-Agent files follow kebab-case naming:
+Agent files follow kebab-case naming with **optional scope prefixes** for app-specific or lib-specific agents:
+
+**Pattern**: `[scope__]agent-name.md`
+
+Where:
+
+- `scope` (optional): `apps__[app-name]__`, `libs__[lib-name]__`, or `apps-labs__[app-name]__`
+- `agent-name`: descriptive kebab-case identifier
 
 ```
-✅ Good:
-- doc-writer.md
+✅ Good - General agents (no scope prefix):
+- docs-maker.md
 - repo-rules-checker.md
-- api-validator.md
-- test-runner.md
+- plan-executor.md
+- readme-maker.md
+
+✅ Good - App-scoped agents:
+- apps__ayokoding-web__general-maker.md
+- apps__ayokoding-web__by-example-checker.md
+- apps__ose-platform-web__content-maker.md
+- apps__ose-platform-web__deployer.md
+
+✅ Good - Lib-scoped agents (future):
+- libs__ts-auth__validator.md
+- libs__ts-payment__checker.md
+
+✅ Good - Apps-labs scoped agents (future):
+- apps-labs__prototype-x__tester.md
 
 ❌ Bad:
 - DocWriter.md (PascalCase)
 - doc_writer.md (snake_case)
 - documentation-writer-agent.md (redundant suffix)
+- ayokoding-general-maker.md (missing scope delimiter)
+- apps_ayokoding-web_general-maker.md (wrong delimiter - use double underscore)
 ```
+
+### Scope Prefix Guidelines
+
+**When to use scope prefixes:**
+
+1. **`apps__[app-name]__`** - Agent works ONLY with a specific app
+   - Content creation for Hugo sites (ayokoding-web, ose-platform-web)
+   - App-specific validation, deployment, structure management
+   - Examples: `apps__ayokoding-web__general-maker`, `apps__ose-platform-web__deployer`
+
+2. **`libs__[lib-name]__`** - Agent works ONLY with a specific library
+   - Future use when monorepo has libraries with specific agents
+   - Library-specific validation, testing, documentation
+   - Examples: `libs__ts-auth__validator`, `libs__ts-payment__checker`
+
+3. **`apps-labs__[app-name]__`** - Agent works with experimental apps
+   - Future use for prototype-specific agents
+   - Experimental validation, testing workflows
+   - Examples: `apps-labs__prototype-x__tester`
+
+**When NOT to use scope prefixes:**
+
+- **General-purpose agents**: Work across entire repository (docs-maker, repo-rules-checker, plan-executor)
+- **Cross-cutting agents**: Apply to multiple apps/libs (readme-maker, agent-maker, workflow-maker)
+- **Meta-agents**: Manage repository structure (docs-file-manager, repo-rules-maker)
+
+**Scope naming rules:**
+
+- App/lib names must match directory names exactly (e.g., `ayokoding-web` matches `apps/ayokoding-web/`)
+- Use kebab-case throughout (no camelCase, PascalCase, or snake_case)
+- Double underscore `__` separates scope from agent name (NOT single underscore `_`)
+- Agent name after scope uses standard kebab-case patterns
 
 ### Naming Guidelines
 
 1. **Be descriptive** - Name should indicate the agent's purpose
 2. **Be concise** - Avoid unnecessary words
-3. **Be action-oriented** - Use verbs when appropriate (`writer`, `checker`, `validator`)
+3. **Be action-oriented** - Use verbs when appropriate (`maker`, `checker`, `validator`, `fixer`, `deployer`)
 4. **Avoid redundancy** - Don't add `-agent` suffix (implied by location)
-5. **Match frontmatter** - `name` field must match filename
+5. **Match frontmatter** - `name` field must match filename exactly (including scope prefix)
+6. **Use scope when appropriate** - Add `apps__[app-name]__` prefix for app-specific agents
 
 ### Agent Name vs Description
 
-- **Name**: Short identifier used in file system and frontmatter
+- **Name**: Short identifier used in file system and frontmatter (includes scope prefix if applicable)
 - **Description**: Detailed explanation of when and how to use
 
-Example:
+Example - General agent:
 
 ```yaml
-name: doc-writer # Short, kebab-case
+name: docs-maker # Short, kebab-case, no scope (general-purpose)
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation. # Detailed usage guidance
+```
+
+Example - App-scoped agent:
+
+```yaml
+name: apps__ayokoding-web__general-maker # Includes scope prefix
+description: Expert at creating general Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles. # Detailed usage guidance
 ```
 
 ## Tool Access Patterns
@@ -1372,4 +1434,4 @@ Before committing a new agent:
 
 ---
 
-**Last Updated**: 2025-12-04
+**Last Updated**: 2025-12-26
