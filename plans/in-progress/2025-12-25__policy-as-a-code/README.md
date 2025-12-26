@@ -4,10 +4,26 @@
 
 This plan introduces a **Policy Layer 3.5** between Conventions/Development (Layer 2-3) and AI Agents (Layer 4) to enable machine-readable, version-controlled governance rules. This addresses the critical pain point of **3x rule duplication** across maker-checker-fixer agent families (3,350+ lines for one domain alone) while preserving the strong existing six-layer architecture.
 
-**Status**: Backlog
+**Status**: In Progress
 **Created**: 2025-12-25
+**Last Updated**: 2025-12-26
 **Project Type**: Architectural Enhancement
 **Estimated Complexity**: Large (1500+ lines total across 4 files)
+
+## Recent Progress
+
+**2025-12-26**:
+
+- Plan moved to `in-progress/` directory after initial quality review
+- Workflow family (8th family) added to Phase 4 migration scope
+- Enhanced scope includes all maker-checker-fixer families plus workflow orchestration
+- Repository governance architecture documentation completed (Layer 0-5 with Vision)
+
+**Next Steps**:
+
+- Validate plan completeness and technical accuracy via plan-quality-gate workflow
+- Address any findings from quality gate validation
+- Begin Phase 0 implementation upon plan approval
 
 ## Problem Statement
 
