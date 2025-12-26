@@ -21,8 +21,12 @@ outputs:
     description: Number of check-fix cycles executed
   - name: final-report
     type: file
-    pattern: generated-reports/repo-rules__*__audit.md
-    description: Final audit report
+    pattern: generated-reports/repo-rules__*__*__audit.md
+    description: Final audit report (4-part format with UUID chain)
+  - name: execution-scope
+    type: string
+    description: Scope identifier for UUID chain tracking (default "repo-rules")
+    required: false
 ---
 
 # Repository Rules Quality Gate Workflow
@@ -44,8 +48,10 @@ Run repository-wide consistency check to identify all issues.
 
 **Agent**: `repo-rules-checker`
 
-- **Args**: `scope: all`
-- **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
+- **Args**: `scope: all, EXECUTION_SCOPE: repo-rules`
+- **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (4-part format: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
+
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../development/ex-de__temporary-files.md#uuid-chain-generation) for details.
 
 **Success criteria**: Checker completes and generates audit report.
 
@@ -74,8 +80,8 @@ Apply all validated fixes from the audit report.
 
 **Agent**: `repo-rules-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
-- **Output**: `{fixes-applied}`
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, EXECUTION_SCOPE: repo-rules`
+- **Output**: `{fixes-applied}` - Fix report with same UUID chain as source audit
 - **Condition**: Findings exist from step 2
 - **Depends on**: Step 2 completion
 
