@@ -1,5 +1,5 @@
 ---
-name: ose-platform-web-content-checker
+name: apps__ose-platform-web__content-checker
 description: Expert at validating Hugo content for ose-platform-web (PaperMod theme) against Hugo Content Convention and Content Quality Principles
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

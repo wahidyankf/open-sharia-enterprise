@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-structure-maker
+name: apps__ayokoding-web__structure-maker
 description: Expert at proactively modifying ayokoding-web content structure by adjusting weights to reorder content, insert new items at specific positions, and maintain weight conventions. Automatically regenerates navigation listings after structural changes using ayokoding-web-navigation-maker CLI.
 tools: Read, Edit, Glob, Bash
 model: haiku

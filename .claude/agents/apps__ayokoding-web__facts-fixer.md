@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-facts-fixer
+name: apps__ayokoding-web__facts-fixer
 description: Applies validated fixes from ayokoding-web-facts-checker audit reports. Re-validates factual findings before applying changes. Use after reviewing ayokoding-web-facts-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet

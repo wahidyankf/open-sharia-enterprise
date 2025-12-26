@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-by-example-checker
+name: apps__ayokoding-web__by-example-checker
 description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, educational annotations, and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet

@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-link-checker
+name: apps__ayokoding-web__link-checker
 description: Validates internal and external links in ayokoding-web Hugo content, enforcing Hugo-specific linking conventions (absolute paths with language prefix, no .md extension). Detects common linking mistakes and maintains external link cache. Use when checking for dead links, verifying URL accessibility, validating Hugo link format compliance, or auditing link health in ayokoding-web.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: sonnet

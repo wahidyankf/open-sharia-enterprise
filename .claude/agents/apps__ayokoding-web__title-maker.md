@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-title-maker
+name: apps__ayokoding-web__title-maker
 description: Automatically update title fields in ayokoding-web markdown files based on filenames and configuration
 tools: Bash
 model: haiku

@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-by-example-maker
+name: apps__ayokoding-web__by-example-maker
 description: Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses four-part format (explanation, diagram, annotated code, takeaway) with self-contained examples.
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 model: sonnet

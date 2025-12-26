@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-structure-checker
+name: apps__ayokoding-web__structure-checker
 description: Expert at validating ALL ayokoding-web content files including navigation STRUCTURE existence (not listings), weight conventions across all markdown files, overview completeness, and pedagogical progression. Generates audit reports to generated-reports/.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

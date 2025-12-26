@@ -204,6 +204,8 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. Agent frontmatter must be comment-free (no # symbols in YAML).
 
+**Name-Filename Matching**: Agent `name` field MUST exactly match the filename (without .md extension). Example: `agent-maker.md` → `name: agent-maker`.
+
 **Bash Tools for .claude Writes**: Agents creating/updating files in `.claude/` folders must use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](./docs/explanation/development/ex-de__ai-agents.md#writing-to-claude-folders).
 
 **Agent File Sizes**: Three tiers based on complexity - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Agents approaching limits should link to convention docs instead of duplicating content.

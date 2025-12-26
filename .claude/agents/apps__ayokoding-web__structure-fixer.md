@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-structure-fixer
+name: apps__ayokoding-web__structure-fixer
 description: Applies validated fixes from ayokoding-web-structure-checker audit reports for ALL content files. Re-validates structural findings before applying weight corrections and ordering fixes across all markdown files. CANNOT regenerate navigation listings (use ayokoding-web-navigation-maker).
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: haiku

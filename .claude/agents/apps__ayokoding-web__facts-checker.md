@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-facts-checker
+name: apps__ayokoding-web__facts-checker
 description: Expert at validating factual correctness of ayokoding-web educational content using web verification. Checks technical accuracy, code examples, tutorial sequences, and bilingual consistency.
 tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 model: sonnet
