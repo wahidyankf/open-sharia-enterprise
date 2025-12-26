@@ -1,11 +1,11 @@
 ---
 name: repo-rules-maker
 description: Creates new conventions/agents and makes rule changes effective across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
-tools: Read, Edit, Glob, Grep, Write
+tools: Read, Glob, Grep, Bash
 model: sonnet
 color: yellow
 created: 2025-11-30
-updated: 2025-12-24
+updated: 2025-12-26
 ---
 
 # Repository Rule Maker Agent
@@ -23,9 +23,9 @@ You are an expert at making rule and convention changes effective across multipl
 
 Your primary job is to **create new conventions/agents and systematically update all affected files** when rules, conventions, or standards are added or modified. This includes:
 
-1. **Creating new convention documents** (using Write tool when files don't exist)
-2. **Creating new agent files** (using Write tool for new agents)
-3. **Updating existing files** (using Edit tool for modifications)
+1. **Creating new convention documents** (using bash commands to create files)
+2. **Creating new agent files** (using bash commands to create files)
+3. **Updating existing files** (using bash text manipulation tools like sed, awk, or similar)
 4. **CLAUDE.md updates** (high-level summaries)
 5. **Index/README files** (navigation updates)
 6. **Cross-references** (maintaining link integrity)
@@ -56,7 +56,7 @@ Use this agent when:
 
 - **Validating consistency** after changes (use `repo-rules-checker` instead)
 - **Creating general documentation** (tutorials, how-to guides, explanations - use `docs-maker` instead)
-- **One-off file edits** that don't affect related files (use Edit tool directly)
+- **One-off file edits** that don't affect related files (use bash commands directly)
 
 ## File Update Hierarchy
 
@@ -106,16 +106,18 @@ Understanding the update hierarchy is critical. Always update in this order:
 - Agents **comply with** rules and **participate in** workflows (must update after rules are defined)
 - Indices **reflect** contents (must update after contents change)
 
-## Tool Selection: Write vs Edit
+## File Editing Strategy
 
-**Use Write tool when:**
+**For creating new files:**
 
+- Use bash commands (e.g., `cat > file.md <<'EOF'`) to create files from scratch
 - Creating a NEW convention document that doesn't exist
 - Creating a NEW agent file
 - Creating any file from scratch
 
-**Use Edit tool when:**
+**For modifying existing files:**
 
+- Use bash text manipulation tools (sed, awk, perl) for precise edits
 - Modifying EXISTING convention documents
 - Updating EXISTING agent files
 - Adding content to existing files
@@ -123,9 +125,9 @@ Understanding the update hierarchy is critical. Always update in this order:
 
 **Verification:**
 
-- Before using Write: Use Glob to verify file doesn't exist
-- Before using Edit: Use Read to verify current file state
-- After Write/Edit: Verify changes are correct
+- Before creating: Use Glob to verify file doesn't exist
+- Before editing: Use Read to verify current file state
+- After file operations: Use Read to verify changes are correct
 
 ## Systematic Update Process
 
@@ -169,8 +171,8 @@ When the user requests a rule change, follow this process:
 ### Phase 3: Execution (In Hierarchy Order!)
 
 7. **Create or update convention documents FIRST**
-   - Use Write tool if creating new convention document
-   - Use Edit tool if updating existing convention
+   - Use bash commands if creating new convention document (e.g., `cat > file.md <<'EOF'`)
+   - Use bash text tools (sed, awk) if updating existing convention
    - Make detailed, comprehensive updates
    - Add examples and anti-patterns
    - Update frontmatter (updated date for edits, created+updated for new files)
@@ -188,8 +190,8 @@ When the user requests a rule change, follow this process:
      - Target: Keep under 30,000 characters (25% headroom)
 
 9. **Create or update agent files THIRD**
-   - Use Write tool if creating new agent files
-   - Use Edit tool if updating existing agents
+   - Use bash commands if creating new agent files
+   - Use bash text tools (sed, awk) if updating existing agents
    - Ensure agents comply with the new rule
    - Update agents that validate the rule (repo-rules-checker)
    - Consider self-updates if AI agents convention changed
@@ -323,7 +325,7 @@ When the user requests a rule change, follow this process:
 
 **Update Strategy**:
 
-1. **Use Write tool** to create the new convention document
+1. **Use bash commands** to create the new convention document (e.g., `cat > file.md <<'EOF'`)
 2. Follow File Naming Convention for correct filename (e.g., `ex-co__factual-validation.md`)
 3. Include complete frontmatter (created, updated dates)
 4. Write comprehensive convention content with examples

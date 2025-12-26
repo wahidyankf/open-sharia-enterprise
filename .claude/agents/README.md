@@ -16,7 +16,7 @@ Expert at creating new AI agents following all repository conventions.
 
 - **Primary Use:** Adding a new agent to .claude/agents/ directory
 - **Specialization:** Agent scaffolding, automatic README updates, convention compliance, validation integration
-- **Tools:** Read, Write, Edit, Glob, Grep
+- **Tools:** Read, Glob, Grep, Bash
 - **When to Use:**
   - Creating a new AI agent with proper structure and frontmatter
   - Auto-generating agent files following all naming and format conventions
@@ -137,7 +137,7 @@ Validates by-example tutorial quality focusing on 95% coverage, self-containment
   - Quality assurance before publication
 - **Works with:** `ayokoding-web-by-example-maker` for content creation, `ayokoding-web-by-example-fixer` for fixing issues
 - **References:** By-Example Tutorial Convention, Content Quality Principles
-- **Output:** Generates `by-example-checker__{timestamp}__audit.md` report in `generated-reports/`
+- **Output:** Generates `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` report in `generated-reports/`
 
 ### 🟪 `ayokoding-web-by-example-fixer.md`
 
@@ -153,7 +153,7 @@ Applies validated fixes from ayokoding-web-by-example-checker audit reports. Re-
   - Generating fix audit trail for transparency
 - **Workflow:** ayokoding-web-by-example-checker (detect) → User review → ayokoding-web-by-example-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
-- **Output:** Generates `by-example-fixer__{timestamp}__fix.md` report in `generated-reports/`
+- **Output:** Generates `ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md` report in `generated-reports/`
 
 ### 🟪 `ayokoding-web-deployer.md`
 
@@ -712,11 +712,11 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
 
 ### 🟪 `repo-rules-fixer.md`
 
-Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives.
+Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives. Uses bash commands for file editing.
 
 - **Primary Use:** Applying validated fixes from repo-rules-checker audit reports after user review
-- **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks
-- **Tools:** Read, Edit, Glob, Grep, Write
+- **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks using bash text manipulation
+- **Tools:** Read, Glob, Grep, Bash
 - **When to Use:**
   - After reviewing repo-rules-checker audit report
   - Applying validated fixes automatically with re-validation
@@ -728,11 +728,11 @@ Applies validated fixes from repo-rules-checker audit reports. Re-validates find
 
 ### 🟨 `repo-rules-maker.md`
 
-Expert at making rule and convention changes effective across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits.
+Expert at making rule and convention changes effective across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits. Uses bash commands for file creation and editing.
 
 - **Primary Use:** Adding/modifying rules, conventions, or standards affecting multiple files
-- **Specialization:** Systematic propagation, cascade updates, consistency maintenance, CLAUDE.md size management (40k hard limit, 30k target)
-- **Tools:** Read, Edit, Glob, Grep
+- **Specialization:** Systematic propagation, cascade updates, consistency maintenance, CLAUDE.md size management (40k hard limit, 30k target), bash-based file operations
+- **Tools:** Read, Glob, Grep, Bash
 - **When to Use:**
   - Adding new conventions or standards (including emoji vocabulary)
   - Modifying existing rules that affect multiple files

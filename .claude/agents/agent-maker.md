@@ -1,11 +1,11 @@
 ---
 name: agent-maker
 description: Expert at creating new AI agents following all repository conventions. Use when adding a new agent to .claude/agents/ directory.
-tools: Read, Write, Edit, Glob, Grep
+tools: Read, Glob, Grep, Bash
 model: sonnet
 color: blue
 created: 2025-11-29
-updated: 2025-12-14
+updated: 2025-12-26
 ---
 
 # Agent Creator Agent
@@ -71,10 +71,10 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 
 **Validation (Auto-Assignment Based on Role)**:
 
-- **Writer** - color: blue, base tools: Read, Write, Edit, Glob, Grep (must have Write tool)
-- **Checker** - color: green, tools: Read, Glob, Grep (read-only, no Write or Edit)
-- **Updater** - color: yellow, tools: Read, Edit, Glob, Grep (has Edit but NOT Write)
-- **Implementor** - color: purple, tools: Read, Write, Edit, Glob, Grep, Bash (has Write, Edit, AND Bash)
+- **Writer** - color: blue, base tools: Read, Glob, Grep, Bash (must have Bash tool for file creation)
+- **Checker** - color: green, tools: Read, Glob, Grep, Write, Bash (Write for reports, Bash for timestamps)
+- **Updater** - color: yellow, tools: Read, Glob, Grep, Bash (uses Bash for editing, NOT file creation)
+- **Implementor** - color: purple, tools: Read, Glob, Grep, Bash (has Bash for comprehensive operations)
 
 #### Question 3: Additional Tools
 
@@ -95,9 +95,9 @@ Basic validation:
 
 Edge case handling:
 
-- If agent has both Write and Edit, confirm primary purpose: "Agent has both Write and Edit. Is its primary purpose to create new content (blue Writer) or execute plans/tasks (purple Implementor)?"
+- If agent needs both file creation and editing, confirm primary purpose: "Agent has both Write and Edit. Is its primary purpose to create new content (blue Writer) or execute plans/tasks (purple Implementor)?"
 - If agent doesn't fit any category, warn: "This agent doesn't fit standard categories. Consider if it should be split into multiple agents." Offer option to omit color field or manually override with justification
-- If agent has Edit but also Write, it should be Writer (blue) or Implementor (purple), not Updater (yellow)
+- Bash tool is universal - role determined by primary purpose (create new vs modify existing)
 
 #### Question 4: Model Selection
 
@@ -163,10 +163,10 @@ updated: YYYY-MM-DD
 
 **Color Assignment**: Auto-assigned based on agent role and tools:
 
-- blue (writers): Has Write tool
-- green (checkers): Read-only tools (no Write or Edit)
-- yellow (updaters): Has Edit but NOT Write
-- purple (implementors): Has Write, Edit, AND Bash
+- blue (writers): Has Bash tool for file creation
+- green (checkers): Has Write and Bash for report generation
+- yellow (updaters): Uses Bash for editing existing files
+- purple (implementors): Has Bash for comprehensive orchestration
 
 **Field Order Rationale**: Consistent field order improves readability and grep-ability across all agents.
 
@@ -415,15 +415,48 @@ Note: These are domain-specific applications of standard tools. For general tool
 - Read README.md to parse structure before updating
 - Check if agent name already exists
 
-### Write Tool
+### Bash Tool
 
-- Create new agent file at `.claude/agents/[agent-name].md`
-- Write complete agent content with frontmatter and body
+**For creating new agent files:**
 
-### Edit Tool
+- Use heredoc pattern to create complete agent file: `cat > .claude/agents/[agent-name].md <<'EOF'`
+- Write complete agent content including frontmatter and body sections in single command
+- Ensures atomic file creation with proper formatting
 
-- Update `.claude/agents/README.md` by inserting new agent entry
-- Make targeted insertions without disrupting existing content
+**For updating README.md:**
+
+- Use sed for targeted insertions: Find section marker, insert new entry alphabetically
+- Preserve existing content with careful pattern matching
+- Alternative: Read entire file, modify in-memory, write back using heredoc
+
+**For timestamp generation:**
+
+- Use `TZ='Asia/Jakarta' date +"%Y-%m-%d"` for UTC+7 timestamps in frontmatter
+- See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+
+**Example patterns:**
+
+```bash
+# Create new agent file
+cat > .claude/agents/new-agent.md <<'EOF'
+---
+name: new-agent
+description: Description here
+tools: Read, Glob, Grep
+model: inherit
+color: blue
+created: 2025-12-26
+updated: 2025-12-26
+---
+
+# New Agent
+
+Content here...
+EOF
+
+# Get current date for frontmatter
+TODAY=$(TZ='Asia/Jakarta' date +"%Y-%m-%d")
+```
 
 ### Glob Tool
 
