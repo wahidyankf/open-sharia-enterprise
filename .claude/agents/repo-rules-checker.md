@@ -29,8 +29,9 @@ This agent produces TWO outputs:
 
 1. **Audit Report File** (always generated):
    - **CRITICAL**: ONLY ONE file per audit run
-   - Location: `generated-reports/repo-rules__{YYYY-MM-DD--HH-MM}__audit.md`
+   - Location: `generated-reports/repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
    - Content: Full detailed audit report with all findings
+   - UUID Chain: 6-char hex UUID(s) for parallel execution support (e.g., `a1b2c3` or `a1b2c3_d4e5f6`). Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild)
    - Timestamp: Audit start time in UTC+7 (YYYY-MM-DD--HH-MM format)
    - **Behavior**: File is updated PROGRESSIVELY during audit (not just at end)
    - Purpose: Persistent record for historical tracking with real-time visibility
@@ -43,9 +44,10 @@ This agent produces TWO outputs:
 
 **Workflow**: repo-rules-checker (detect) → User review → [repo-rules-fixer](./repo-rules-fixer.md) (apply validated fixes)
 
-**File Naming Convention**: `repo-rules__{YYYY-MM-DD--HH-MM}__audit.md`
+**File Naming Convention**: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-- Example: `repo-rules__2025-12-14--20-45__audit.md` (audit started December 14, 2025 at 8:45 PM UTC+7)
+- Example: `repo-rules__a1b2c3__2025-12-14--20-45__audit.md` (audit started December 14, 2025 at 8:45 PM UTC+7)
+- UUID Chain: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking
 
 ## Core Responsibility
 
@@ -545,7 +547,7 @@ Check that content was offloaded to the appropriate folder:
 
 - [ ] **All checker agents have Write + Bash tools**: repo-rules-checker, ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker
 - [ ] **All checker agents specify generated-reports/ output**: Each checker explicitly documents it writes to `generated-reports/` (not conversation-only)
-- [ ] **All checker agents use correct naming pattern**: `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md` (agent name without -checker suffix)
+- [ ] **All checker agents use correct naming pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md` (agent name without -checker suffix, 6-char UUID chain)
 - [ ] **All checker agents generate timestamps with Bash**: Use `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"` (no placeholder "00-00")
 - [ ] **NO conversation-only output**: No checker agent outputs results only in conversation without file persistence
 - [ ] **Temporary Files Convention documents mandatory requirement**: ex-de\_\_temporary-files.md includes section "Mandatory Report Generation for Checker Agents"
@@ -938,20 +940,22 @@ Include workflow agent reference findings in the "Workflow Structure Validation"
 
 ### File Creation and Streaming
 
-1. **Generate timestamp** at start of audit (UTC+7): `YYYY-MM-DD--HH-MM` (double dash separates date from time)
+1. **Generate 6-char UUID** using Bash: `uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6`
+2. **Determine UUID chain**: Check for parent chain in `generated-reports/.execution-chain-repo-rules` (if exists and <30 seconds old, append to chain; otherwise start new chain)
+3. **Generate timestamp** at start of audit (UTC+7): `YYYY-MM-DD--HH-MM` (double dash separates date from time)
    - **CRITICAL:** EXECUTE the bash command to get actual current time - NEVER use placeholder "00-00"
    - **Command to get current UTC+7 time**: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
    - **Full timestamp format**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"` (for audit date header)
    - **Example output**: `2025-12-14--16-23` for filename (actual time), `2025-12-14T16:23:00+07:00` for header
-   - ** WRONG**: `repo-rules__2025-12-14--00-00__audit.md` (placeholder time)
-   - ** CORRECT**: `repo-rules__2025-12-14--16-43__audit.md` (actual time from executed command)
+   - ** WRONG**: `repo-rules__abc123__2025-12-14--00-00__audit.md` (placeholder time)
+   - ** CORRECT**: `repo-rules__a1b2c3__2025-12-14--16-43__audit.md` (actual UUID and time from executed commands)
    - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
-2. **Create filename**: `repo-rules__{timestamp}__audit.md`
-3. **Initialize file** at audit start with header and progress tracker
-4. **Update progressively** as each checklist section completes
-5. **Append findings** to Results section as discovered
-6. **Final update** with summary and recommendations
-7. **Output to conversation**:
+4. **Create filename**: `repo-rules__{uuid-chain}__{timestamp}__audit.md`
+5. **Initialize file** at audit start with header and progress tracker
+6. **Update progressively** as each checklist section completes
+7. **Append findings** to Results section as discovered
+8. **Final update** with summary and recommendations
+9. **Output to conversation**:
    - "Audit report generated: `generated-reports/{filename}`"
    - Executive summary (files checked, issues found, status)
    - Critical issues (if any)
@@ -1037,14 +1041,14 @@ All consistency audit reports generated by this agent must be saved to the `gene
 
 **CRITICAL File Behavior:**
 
-- **ONLY ONE file per audit run**: `generated-reports/repo-rules__{YYYY-MM-DD--HH-MM}__audit.md`
+- **ONLY ONE file per audit run**: `generated-reports/repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 - **Progressive streaming**: File is updated DURING audit (not just at end)
 - **Always readable**: File maintains valid markdown structure at all times
 - **Never multiple files**: Do NOT create separate files for different audit sections
 
-**Report file naming pattern**: `generated-reports/repo-rules__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report file naming pattern**: `generated-reports/repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**Example**: `generated-reports/repo-rules__2025-12-14--20-45__audit.md`
+**Example**: `generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__audit.md`
 
 This ensures temporary audit reports are:
 

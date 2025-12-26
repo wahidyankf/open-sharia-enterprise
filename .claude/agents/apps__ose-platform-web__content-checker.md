@@ -21,9 +21,11 @@ This agent writes validation findings to temporary report files in `generated-re
 - Integration with fixer agents
 - Traceability of validation results
 
-**Report Location**: `generated-reports/ose-platform-web-content__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report Location**: `generated-reports/ose-platform-web-content__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**Example Filename**: `ose-platform-web-content__2025-12-20--14-30__audit.md`
+**Example Filename**: `ose-platform-web-content__a1b2c3__2025-12-20--14-30__audit.md`
+
+**UUID Chain Generation**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for complete UUID chain generation logic including scope-based tracking and parent chain reading.
 
 **Bash Timestamp Generation** (UTC+7):
 
@@ -466,7 +468,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 4. **Finalize** with completion status and summary statistics
 5. **Never** buffer findings in memory - write immediately after each validation
 
-Report file: `generated-reports/ose-platform-web-content__{YYYY-MM-DD--HH-MM}__audit.md`
+Report file: `generated-reports/ose-platform-web-content__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 This progressive approach ensures findings persist even if context is compacted during validations.
 
@@ -476,10 +478,12 @@ This progressive approach ensures findings persist even if context is compacted 
 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
-1. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
-2. **Create report file** at `generated-reports/ose-platform-web-content__{timestamp}__audit.md`
-3. **Write initial header** with Status: " In Progress" and progress tracker
-4. **File is now readable** and will be updated progressively
+1. **Generate 6-char UUID** using Bash: `uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6`
+2. **Determine UUID chain** by reading scope-based tracking file (if exists and recent <30s) and appending own UUID
+3. **Generate UTC+7 timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
+4. **Create report file** at `generated-reports/ose-platform-web-content__{uuid-chain}__{timestamp}__audit.md`
+5. **Write initial header** with Status: " In Progress" and progress tracker
+6. **File is now readable** and will be updated progressively
 
 ### Step 1: Identify Content to Validate
 
