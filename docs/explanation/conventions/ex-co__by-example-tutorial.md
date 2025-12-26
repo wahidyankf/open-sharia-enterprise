@@ -1,11 +1,18 @@
 ---
 title: By-Example Tutorial Convention
+description: Standards for creating code-first by-example tutorials with 95% coverage, self-contained examples, and educational annotations
+category: explanation
+subcategory: conventions
+tags:
+  - convention
+  - tutorial
+  - by-example
+  - education
+  - code-first
 date: 2025-12-25T00:00:00+07:00
-lastmod: 2025-12-25T00:00:00+07:00
+lastmod: 2025-12-26T00:00:00+07:00
 draft: false
 weight: 2300
-description: Standards for creating code-first by-example tutorials with 95% coverage, self-contained examples, and educational annotations
-tags: [convention, tutorial, by-example, education, code-first]
 ---
 
 ## Purpose

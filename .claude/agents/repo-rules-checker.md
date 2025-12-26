@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-24
+updated: 2025-12-26
 ---
 
 # Repository Rule Checker Agent
@@ -671,6 +671,264 @@ When the user requests a consistency check:
 - **File Naming Validation** - Compute expected prefix from directory path
 
 See [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for complete patterns, examples, and common pitfalls.
+
+#### Workflow Agent Reference Validation
+
+**PURPOSE**: Detect when workflow files reference agent names that don't exist in `.claude/agents/`, preventing broken orchestrations and catching agent rename/deletion issues.
+
+**DETECTION PATTERNS** (Extract agent references from workflows):
+
+Workflows reference agents in several ways. Search for ALL of these patterns:
+
+1. **Backtick-quoted agent invocation** (most common):
+
+   ```markdown
+   **Agent**: `agent-name`
+   **Agent 1a**: `agent-name`
+   **Agent 1b**: `apps__ayokoding-web__general-checker`
+   ```
+
+   Pattern: `^\*\*Agent( [0-9]+[a-z])?\*\*: \`([^`]+)\``
+   Extract group 2 for agent name
+
+2. **YAML-like subagent invocation** (used in Mermaid diagrams and structured specs):
+
+   ```
+   subagent_type: agent-name
+   subagent_type: apps__ayokoding-web__by-example-checker
+   ```
+
+   Pattern: `^subagent_type: (.+)$`
+   Extract group 1 for agent name
+
+3. **Markdown links to agent files** (references sections):
+
+   ```markdown
+   [agent-name](../../.claude/agents/agent-name.md)
+   [apps**ayokoding-web**by-example-checker](../../.claude/agents/apps__ayokoding-web__by-example-checker.md)
+   ```
+
+   Pattern: `\[([^\]]+)\]\(\.\.\/\.\.\/\.claude\/agents\/([^.]+)\.md\)`
+   Extract group 2 for agent filename (should match group 1)
+
+4. **Mermaid diagram annotations** (less common, may use agent names in labels):
+   ```mermaid
+   A -->|agent-name| B
+   ```
+   Pattern: `\|([a-z0-9_-]+)\|` (context-dependent, check if it's an agent name)
+
+**VALIDATION LOGIC**:
+
+For each workflow file in `docs/explanation/workflows/*.md`:
+
+```bash
+# 1. Extract all agent references using patterns above
+workflow_file="docs/explanation/workflows/ex-wf__some-workflow.md"
+
+# Pattern 1: Backtick-quoted agent invocations
+grep -oP '^\*\*Agent( [0-9]+[a-z])?\*\*: \`\K[^`]+' "$workflow_file"
+
+# Pattern 2: YAML-like subagent_type
+grep -oP '^subagent_type: \K.+' "$workflow_file"
+
+# Pattern 3: Markdown links to agents
+grep -oP '\[([^\]]+)\]\(\.\.\/\.\.\/\.claude\/agents\/\K[^.]+(?=\.md\))' "$workflow_file"
+
+# 2. For each extracted agent name, check if file exists
+agent_name="apps__ayokoding-web__general-checker"
+agent_file=".claude/agents/${agent_name}.md"
+
+if [ ! -f "$agent_file" ]; then
+  echo "CRITICAL: Workflow references non-existent agent: $agent_name"
+  echo "  - Workflow: $workflow_file"
+  echo "  - Expected: $agent_file"
+fi
+
+# 3. Verify agent name consistency in links
+# Extract both display name and filename from markdown links
+grep -oP '\[\K[^\]]+(?=\]\(\.\.\/\.\.\/\.claude\/agents\/[^.]+\.md\))' "$workflow_file" > display_names.txt
+grep -oP '\[[^\]]+\]\(\.\.\/\.\.\/\.claude\/agents\/\K[^.]+(?=\.md\))' "$workflow_file" > filenames.txt
+# Compare: display names should match filenames
+paste display_names.txt filenames.txt | awk '$1 != $2 { print "WARNING: Link mismatch - Display: "$1" vs File: "$2 }'
+```
+
+**COMMON ISSUES TO DETECT**:
+
+1. **Agent renames not propagated to workflows** (PRIMARY ISSUE):
+   - Example: Workflow still references `ayokoding-web-general-checker` but agent renamed to `apps__ayokoding-web__general-checker`
+   - Detection: Agent file `.claude/agents/ayokoding-web-general-checker.md` doesn't exist
+   - Severity: CRITICAL - workflow will fail to execute
+
+2. **Deleted agents still referenced**:
+   - Example: Workflow references `old-agent` that was removed from repository
+   - Detection: Agent file doesn't exist, no similar agent found
+   - Severity: CRITICAL - workflow broken
+
+3. **Typos in agent names**:
+   - Example: Workflow references `apps__ayokoding-web__genral-checker` (typo: genral)
+   - Detection: Agent file doesn't exist, similar agent exists (fuzzy match)
+   - Severity: CRITICAL - workflow broken, suggest correct name
+
+4. **Inconsistent references within same workflow**:
+   - Example: Step 1 uses `agent-name` but Step 5 uses `agent_name` (different format)
+   - Detection: Multiple forms reference same logical agent
+   - Severity: IMPORTANT - indicates confusion
+
+5. **Markdown link display/filename mismatch**:
+   - Example: `[old-name](../../.claude/agents/new-name.md)`
+   - Detection: Display text doesn't match filename
+   - Severity: MINOR - confusing but functional
+
+**IMPLEMENTATION EXAMPLE** (pseudo-code for clarity):
+
+```python
+def validate_workflow_agent_references(workflow_file):
+    findings = []
+
+    # Read workflow content
+    with open(workflow_file) as f:
+        content = f.read()
+
+    # Extract all agent references
+    agent_refs = set()
+
+    # Pattern 1: **Agent**: `agent-name`
+    for match in re.finditer(r'^\*\*Agent( [0-9]+[a-z])?\*\*: `([^`]+)`', content, re.MULTILINE):
+        agent_refs.add(match.group(2))
+
+    # Pattern 2: subagent_type: agent-name
+    for match in re.finditer(r'^subagent_type: (.+)$', content, re.MULTILINE):
+        agent_refs.add(match.group(1).strip())
+
+    # Pattern 3: Markdown links
+    for match in re.finditer(r'\[([^\]]+)\]\(\.\.\/\.\.\/\.claude\/agents\/([^.]+)\.md\)', content):
+        agent_refs.add(match.group(2))
+
+    # Validate each reference
+    for agent_name in agent_refs:
+        agent_path = f".claude/agents/{agent_name}.md"
+
+        if not os.path.exists(agent_path):
+            findings.append({
+                'severity': 'CRITICAL',
+                'workflow': workflow_file,
+                'agent_name': agent_name,
+                'issue': f"Agent file does not exist: {agent_path}",
+                'suggestion': find_similar_agents(agent_name)  # Fuzzy match
+            })
+
+    return findings
+```
+
+**BASH IMPLEMENTATION** (for actual execution):
+
+```bash
+#!/bin/bash
+
+# Validate workflow agent references
+validate_workflows() {
+    local findings=0
+
+    for workflow in docs/explanation/workflows/ex-wf__*.md; do
+        # Skip README
+        [ "$(basename "$workflow")" = "README.md" ] && continue
+
+        echo "Checking workflow: $workflow"
+
+        # Extract agent references (pattern 1: backtick-quoted)
+        while IFS= read -r agent_name; do
+            agent_file=".claude/agents/${agent_name}.md"
+
+            if [ ! -f "$agent_file" ]; then
+                echo "  CRITICAL: Non-existent agent referenced: $agent_name"
+                echo "    Expected file: $agent_file"
+
+                # Suggest similar agents
+                find .claude/agents -name "*${agent_name}*" -o -name "*$(echo $agent_name | sed 's/__/-/g')*"
+
+                ((findings++))
+            fi
+        done < <(grep -oP '^\*\*Agent( [0-9]+[a-z])?\*\*: \`\K[^`]+' "$workflow" 2>/dev/null || true)
+
+        # Extract agent references (pattern 2: subagent_type)
+        while IFS= read -r agent_name; do
+            agent_file=".claude/agents/${agent_name}.md"
+
+            if [ ! -f "$agent_file" ]; then
+                echo "  CRITICAL: Non-existent subagent referenced: $agent_name"
+                echo "    Expected file: $agent_file"
+                ((findings++))
+            fi
+        done < <(grep -oP '^subagent_type: \K.+' "$workflow" 2>/dev/null | sed 's/[[:space:]]*$//' || true)
+
+        # Extract agent references (pattern 3: markdown links)
+        while IFS= read -r agent_name; do
+            agent_file=".claude/agents/${agent_name}.md"
+
+            if [ ! -f "$agent_file" ]; then
+                echo "  CRITICAL: Broken agent link: $agent_name"
+                echo "    Expected file: $agent_file"
+                ((findings++))
+            fi
+        done < <(grep -oP '\[[^\]]+\]\(\.\.\/\.\.\/\.claude\/agents\/\K[^.]+(?=\.md\))' "$workflow" 2>/dev/null || true)
+    done
+
+    if [ $findings -eq 0 ]; then
+        echo "✓ All workflow agent references are valid"
+    else
+        echo "✗ Found $findings invalid agent reference(s)"
+    fi
+
+    return $findings
+}
+
+# Run validation
+validate_workflows
+```
+
+**EXAMPLE OUTPUT**:
+
+```
+Checking workflow: docs/explanation/workflows/ex-wf__ayokoding-web-general-quality-gate.md
+  CRITICAL: Non-existent agent referenced: ayokoding-web-general-checker
+    Expected file: .claude/agents/ayokoding-web-general-checker.md
+    Did you mean: .claude/agents/apps__ayokoding-web__general-checker.md?
+
+  CRITICAL: Non-existent agent referenced: ayokoding-web-facts-checker
+    Expected file: .claude/agents/ayokoding-web-facts-checker.md
+    Did you mean: .claude/agents/apps__ayokoding-web__facts-checker.md?
+
+Checking workflow: docs/explanation/workflows/ex-wf__plan-execution.md
+  ✓ All agent references valid
+
+✗ Found 2 invalid agent reference(s)
+```
+
+**INTEGRATION WITH AUDIT REPORT**:
+
+Include workflow agent reference findings in the "Workflow Structure Validation" section of audit report:
+
+```markdown
+### Workflow Structure Validation - Agent References
+
+**CRITICAL Issues**:
+
+1. **ex-wf\_\_ayokoding-web-general-quality-gate.md** - References non-existent agent `ayokoding-web-general-checker`
+   - Expected file: `.claude/agents/ayokoding-web-general-checker.md`
+   - Actual file: Does not exist
+   - Suggestion: Agent renamed to `apps__ayokoding-web__general-checker.md`
+   - Fix: Update workflow to use correct agent name
+   - Lines: 62, 114, 236 (multiple references)
+
+2. **ex-wf\_\_ayokoding-web-general-quality-gate.md** - References non-existent agent `ayokoding-web-facts-checker`
+   - Expected file: `.claude/agents/ayokoding-web-facts-checker.md`
+   - Actual file: Does not exist
+   - Suggestion: Agent renamed to `apps__ayokoding-web__facts-checker.md`
+   - Fix: Update workflow to use correct agent name
+   - Lines: 67, 129
+```
+
+**PRIORITY**: CRITICAL - This validation must run on EVERY audit to catch agent renames/deletions that break workflows.
 
 ## File Output Requirements
 

@@ -59,22 +59,22 @@ outputs:
 
 Run all ayokoding validators concurrently to identify all issues across different quality dimensions.
 
-**Agent 1a**: `ayokoding-web-general-checker`
+**Agent 1a**: `apps__ayokoding-web__general-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{content-report-N}` - Hugo conventions, bilingual consistency, navigation validation
 
-**Agent 1b**: `ayokoding-web-facts-checker`
+**Agent 1b**: `apps__ayokoding-web__facts-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{facts-report-N}` - Factual accuracy, code examples, tutorial sequences
 
-**Agent 1c**: `ayokoding-web-structure-checker`
+**Agent 1c**: `apps__ayokoding-web__structure-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{structure-report-N}` - Weight conventions, ordering, navigation structure
 
-**Agent 1d**: `ayokoding-web-link-checker`
+**Agent 1d**: `apps__ayokoding-web__link-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{links-report-N}` - Internal/external link validation, Hugo link format
@@ -111,7 +111,7 @@ Analyze all audit reports to determine if fixes are needed.
 
 Fix Hugo convention violations, frontmatter issues, and content quality problems.
 
-**Agent**: `ayokoding-web-general-fixer`
+**Agent**: `apps__ayokoding-web__general-fixer`
 
 - **Args**: `report: {step1.outputs.content-report-N}, approved: all`
 - **Output**: `{content-fixes-applied}`
@@ -126,7 +126,7 @@ Fix Hugo convention violations, frontmatter issues, and content quality problems
 
 Fix factual errors, outdated information, and incorrect code examples.
 
-**Agent**: `ayokoding-web-facts-fixer`
+**Agent**: `apps__ayokoding-web__facts-fixer`
 
 - **Args**: `report: {step1.outputs.facts-report-N}, approved: all`
 - **Output**: `{facts-fixes-applied}`
@@ -147,7 +147,7 @@ Fix factual errors, outdated information, and incorrect code examples.
 
 Fix weight ordering, navigation structure, and coverage issues.
 
-**Agent**: `ayokoding-web-structure-fixer`
+**Agent**: `apps__ayokoding-web__structure-fixer`
 
 - **Args**: `report: {step1.outputs.structure-report-N}, approved: all`
 - **Output**: `{structure-fixes-applied}`
@@ -191,7 +191,7 @@ Determine whether to continue fixing or move to finalization.
 
 Update title fields in all ayokoding-web markdown files based on filenames and configuration.
 
-**Agent**: `ayokoding-web-title-maker`
+**Agent**: `apps__ayokoding-web__title-maker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{titles-updated}`
@@ -211,7 +211,7 @@ Update title fields in all ayokoding-web markdown files based on filenames and c
 
 Regenerate 2-layer navigation listings in all \_index.md files from file structure.
 
-**Agent**: `ayokoding-web-navigation-maker`
+**Agent**: `apps__ayokoding-web__navigation-maker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{navigation-updated}`
@@ -233,10 +233,10 @@ Run all checkers one final time to confirm zero issues remain.
 
 **Agents**: All four checkers in parallel
 
-- ayokoding-web-general-checker
-- ayokoding-web-facts-checker
-- ayokoding-web-structure-checker
-- ayokoding-web-link-checker
+- apps**ayokoding-web**general-checker
+- apps**ayokoding-web**facts-checker
+- apps**ayokoding-web**structure-checker
+- apps**ayokoding-web**link-checker
 
 **Args**: `scope: {input.scope}, expect: zero-issues`
 
@@ -370,28 +370,28 @@ Result: SUCCESS (2 iterations)
 
 ## Validation Dimensions
 
-### Content Validation (ayokoding-web-general-checker)
+### Content Validation (apps**ayokoding-web**general-checker)
 
 - Hugo conventions (frontmatter, theme-specific)
 - Bilingual consistency
 - Navigation structure
 - Content quality principles
 
-### Facts Validation (ayokoding-web-facts-checker)
+### Facts Validation (apps**ayokoding-web**facts-checker)
 
 - Technical accuracy using web verification
 - Code examples correctness
 - Tutorial sequences validity
 - Bilingual factual consistency
 
-### Structure Validation (ayokoding-web-structure-checker)
+### Structure Validation (apps**ayokoding-web**structure-checker)
 
 - Weight conventions and ordering
 - Navigation structure completeness
 - Coverage gaps
 - Pedagogical progression
 
-### Links Validation (ayokoding-web-link-checker)
+### Links Validation (apps**ayokoding-web**link-checker)
 
 - Internal link validity
 - External link accessibility
