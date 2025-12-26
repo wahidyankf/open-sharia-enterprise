@@ -1,5 +1,5 @@
 ---
-name: ose-platform-web-deployer
+name: apps__ose-platform-web__deployer
 description: Expert at deploying ose-platform-web to production. Synchronizes prod-ose-platform-web branch with main and pushes to origin to trigger automatic deployment to oseplatform.com via Vercel. Includes safety checks, user confirmation, and clear status reporting.
 tools: Bash
 model: haiku

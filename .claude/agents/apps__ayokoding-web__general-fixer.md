@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-general-fixer
+name: apps__ayokoding-web__general-fixer
 description: Applies validated fixes from ayokoding-web-general-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing ayokoding-web-general-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet

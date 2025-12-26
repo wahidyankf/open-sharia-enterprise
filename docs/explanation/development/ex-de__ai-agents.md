@@ -135,7 +135,7 @@ color: blue
 **Field Definitions:**
 
 1. **`name`** (required)
-   - Must match the filename (without `.md` extension)
+   - MUST exactly match the filename (without `.md` extension)
    - Use kebab-case format
    - Should be descriptive and action-oriented
    - Examples: `doc-writer`, `repo-rules-checker`, `api-validator`

@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-general-checker
+name: apps__ayokoding-web__general-checker
 description: Expert at validating general Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet

@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Bash
 model: sonnet
 color: blue
 created: 2025-11-29
-updated: 2025-12-26
+updated: 2025-12-27
 ---
 
 # Agent Creator Agent
@@ -43,6 +43,8 @@ Ask the user **5 focused questions** to collect all necessary information:
 **Input**: Free text (two fields: name and description)
 
 **Validation**:
+
+- **CRITICAL**: Agent name MUST exactly match the filename (without .md extension)
 
 - Check if agent name follows kebab-case format (lowercase, hyphens, no spaces/underscores)
 - Use Glob to check if `[agent-name].md` already exists in `.claude/agents/` directory
@@ -88,6 +90,8 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 
 **Validation**:
 
+- **CRITICAL**: Agent name MUST exactly match the filename (without .md extension)
+
 Basic validation:
 
 - If user selects Bash for Checker role, warn: "Checkers are read-only and typically don't need Bash. Are you sure?"
@@ -110,6 +114,8 @@ Edge case handling:
 
 **Validation**:
 
+- **CRITICAL**: Agent name MUST exactly match the filename (without .md extension)
+
 Provide guidance to user:
 
 ```
@@ -128,6 +134,8 @@ Use 'sonnet' only if the agent requires:
 **Input**: Free text
 
 **Validation**:
+
+- **CRITICAL**: Agent name MUST exactly match the filename (without .md extension)
 
 This input is optional and will be used for:
 
@@ -150,7 +158,7 @@ tools: [base-tools-from-role + additional-selections]
 model: [user-selected: inherit or sonnet]
 color: blue
 created: YYYY-MM-DD
-updated: YYYY-MM-DD
+updated: 2025-12-27
 ---
 ```
 
@@ -220,6 +228,8 @@ Your primary job is to [clear purpose statement based on user description and ro
 
 - [Suggest related agents based on role type]
 ```
+
+**CRITICAL - Name Field**: The `name` field MUST exactly match the filename (without .md extension). Example: Creating `docs-maker.md` → `name: docs-maker`. This ensures consistency between filesystem and metadata.
 
 ### Step 3: Update README Automatically
 
@@ -450,7 +460,7 @@ tools: Read, Glob, Grep
 model: inherit
 color: blue
 created: 2025-12-26
-updated: 2025-12-26
+updated: 2025-12-27
 ---
 
 # New Agent

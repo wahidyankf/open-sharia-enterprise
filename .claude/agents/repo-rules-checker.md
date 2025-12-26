@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-26
+updated: 2025-12-27
 ---
 
 # Repository Rule Checker Agent
@@ -298,7 +298,7 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 ### AI Agent Convention Compliance
 
 - [ ] All agent files in `.claude/agents/` have required frontmatter (name, description, tools, model, color)
-- [ ] Agent `name` field matches filename (without .md extension)
+- [ ] Agent `name` field MUST exactly match filename (without .md extension) - Example: `agent-maker.md` → `name: agent-maker`
 - [ ] Agent `description` provides clear usage guidance ("Use when...")
 - [ ] Agent `tools` field explicitly lists allowed tools only
 - [ ] Agent `model` field uses either `inherit` or specific model with justification

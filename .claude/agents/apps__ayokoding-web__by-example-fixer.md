@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-by-example-fixer
+name: apps__ayokoding-web__by-example-fixer
 description: Applies validated fixes from ayokoding-web-by-example-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing ayokoding-web-by-example-checker output.
 tools: [Read, Edit, Glob, Grep, Write, Bash]
 model: sonnet

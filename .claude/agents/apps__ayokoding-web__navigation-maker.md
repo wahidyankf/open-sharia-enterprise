@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-navigation-maker
+name: apps__ayokoding-web__navigation-maker
 description: Automatically regenerate 2-layer navigation listings in ayokoding-web _index.md files from file structure
 tools: Bash
 model: haiku

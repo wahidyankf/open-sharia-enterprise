@@ -1,5 +1,5 @@
 ---
-name: ayokoding-web-general-maker
+name: apps__ayokoding-web__general-maker
 description: Expert at creating general Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
