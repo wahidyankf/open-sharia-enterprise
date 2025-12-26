@@ -18,7 +18,7 @@ updated: 2025-12-24
 
 This document defines Hugo content conventions specific to **ayokoding-web** - a bilingual educational platform using the Hextra theme.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

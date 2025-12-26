@@ -322,6 +322,10 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Tool permissions follow principle of least privilege
 - [ ] No tool permission creep (unnecessary tools granted)
 - [ ] Agent responsibilities don't significantly overlap with other agents
+- [ ] **Bash tools for .claude writes**: Agents that create/modify files in `.claude/` folders use only Bash tools (NOT Write/Edit)
+- [ ] `agent-maker` uses Bash tools for creating `.claude/agents/*.md` files
+- [ ] `repo-rules-maker` uses Bash tools for updating `.claude/agents/*.md` files
+- [ ] No agent uses Write/Edit tools to modify `.claude/` folder files (breaks autonomous operation)
 - [ ] AI Agents Convention document (`ex-de__ai-agents.md`) includes "Token Budget Philosophy" section
 - [ ] Token Budget section emphasizes unlimited budget mindset (quality over efficiency)
 - [ ] Token Budget section mentions reliable compaction mechanism

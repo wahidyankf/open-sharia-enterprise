@@ -19,7 +19,7 @@ updated: 2025-12-22
 
 This document defines standards ensuring all colors used in the open-sharia-enterprise repository are accessible to users with color blindness and meet Web Content Accessibility Guidelines (WCAG) standards. Colors are used in Mermaid diagrams, AI agent categorization, emoji representation, and future CSS/styling.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

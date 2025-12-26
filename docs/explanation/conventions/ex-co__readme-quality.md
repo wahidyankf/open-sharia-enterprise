@@ -25,7 +25,7 @@ This document defines quality standards for README.md files to ensure they are e
 
 **Plain Language**: Use conversational, benefits-focused language. Avoid jargon, corporate speak, and unnecessarily technical terms.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

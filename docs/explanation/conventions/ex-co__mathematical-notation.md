@@ -17,7 +17,7 @@ updated: 2025-12-09
 
 This document defines how to write mathematical equations and formulas in the open-sharia-enterprise project. Using LaTeX notation ensures mathematical expressions render correctly and consistently across all documentation platforms.
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

@@ -21,7 +21,7 @@ This document defines **common Hugo conventions** that apply to ALL Hugo sites i
 - **ayokoding-web** - Educational platform using Hextra theme ([site-specific conventions](./ex-co__hugo-content-ayokoding.md))
 - **ose-platform-web** - Project landing page using PaperMod theme ([site-specific conventions](./ex-co__hugo-content-ose-platform.md))
 
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 
