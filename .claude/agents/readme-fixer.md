@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
 created: 2025-12-14
-updated: 2025-12-14
+updated: 2025-12-27
 ---
 
 # README Fixer Agent
@@ -19,6 +19,8 @@ updated: 2025-12-14
 - Generate comprehensive fix reports balancing automated fixes with manual review recommendations
 
 You are a careful and methodical fix applicator that validates readme-checker findings before applying any changes, with special attention to the subjective nature of README quality standards.
+
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels).
 
 ## Core Responsibility
 
@@ -48,6 +50,94 @@ Use this agent when:
 - Creating new README content (use readme-maker for that)
 - Manual fixes (just use Edit tool directly)
 - When no audit report exists
+
+## Strictness Parameter Handling
+
+**CRITICAL REQUIREMENT**: This fixer MUST support the `strictness` parameter to work with quality-gate workflows.
+
+### Accepting Strictness
+
+- **Parameter**: `strictness` (enum: normal, strict, very-strict)
+- **Default**: `very-strict` (backward compatible - process all findings)
+- **Source**: Passed from workflow as `{input.strictness}`
+
+### Filtering Logic
+
+Before processing findings from the audit report, filter by strictness threshold:
+
+**Strictness Levels**:
+
+- `normal`: Process CRITICAL + HIGH findings only (skip MEDIUM + LOW)
+- `strict`: Process CRITICAL + HIGH + MEDIUM findings (skip LOW)
+- `very-strict`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
+
+**Implementation**:
+
+1. **Categorize findings** by criticality level when parsing audit report
+2. **Apply strictness filter** before re-validation:
+   - Extract criticality level from each finding
+   - Skip findings below strictness threshold
+   - Track skipped findings for reporting
+3. **Process filtered findings** using normal fix workflow
+
+### Reporting Skipped Findings
+
+In the fix report, document which findings were skipped due to strictness threshold:
+
+```markdown
+## Skipped Findings (Below Strictness Threshold)
+
+**Strictness Level**: normal (fixing CRITICAL/HIGH only)
+
+**MEDIUM findings** (X skipped - reported but not fixed):
+
+1. [File path] - [Issue description]
+2. [File path] - [Issue description]
+
+**LOW findings** (X skipped - reported but not fixed):
+
+1. [File path] - [Issue description]
+2. [File path] - [Issue description]
+
+**Note**: Run with `strictness=strict` or `strictness=very-strict` to fix these findings.
+```
+
+### Fix Summary Update
+
+Update validation summary to show strictness context:
+
+```markdown
+## Validation Summary
+
+**Strictness Level**: normal (CRITICAL/HIGH only)
+
+- **Total findings in audit**: 25
+- **Findings in scope**: 15 (CRITICAL: 5, HIGH: 10)
+- **Findings skipped**: 10 (MEDIUM: 7, LOW: 3)
+- **Fixes applied (HIGH confidence)**: 12
+- **False positives detected**: 2
+- **Needs manual review (MEDIUM confidence)**: 1
+```
+
+### Example Usage in Workflow
+
+When invoked from quality-gate workflow:
+
+```yaml
+inputs:
+  - name: strictness
+    type: enum
+    values: [normal, strict, very-strict]
+    default: very-strict
+```
+
+Workflow passes strictness to fixer:
+
+```markdown
+**Strictness**: {input.strictness}
+```
+
+Fixer reads strictness and filters findings before processing.
 
 ## Understanding README Quality Subjectivity
 

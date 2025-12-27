@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
 created: 2025-12-14
-updated: 2025-12-14
+updated: 2025-12-27
 ---
 
 # Documentation Fixer Agent
@@ -33,6 +33,94 @@ Your primary job is to:
 6. **Generate fix reports** for audit trail and transparency
 
 **CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.
+
+## Strictness Parameter Handling
+
+**CRITICAL REQUIREMENT**: This fixer MUST support the `strictness` parameter to work with quality-gate workflows.
+
+### Accepting Strictness
+
+- **Parameter**: `strictness` (enum: normal, strict, very-strict)
+- **Default**: `very-strict` (backward compatible - process all findings)
+- **Source**: Passed from workflow as `{input.strictness}`
+
+### Filtering Logic
+
+Before processing findings from the audit report, filter by strictness threshold:
+
+**Strictness Levels**:
+
+- `normal`: Process CRITICAL + HIGH findings only (skip MEDIUM + LOW)
+- `strict`: Process CRITICAL + HIGH + MEDIUM findings (skip LOW)
+- `very-strict`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
+
+**Implementation**:
+
+1. **Categorize findings** by criticality level when parsing audit report
+2. **Apply strictness filter** before re-validation:
+   - Extract criticality level from each finding
+   - Skip findings below strictness threshold
+   - Track skipped findings for reporting
+3. **Process filtered findings** using normal fix workflow
+
+### Reporting Skipped Findings
+
+In the fix report, document which findings were skipped due to strictness threshold:
+
+```markdown
+## Skipped Findings (Below Strictness Threshold)
+
+**Strictness Level**: normal (fixing CRITICAL/HIGH only)
+
+**MEDIUM findings** (X skipped - reported but not fixed):
+
+1. [File path] - [Issue description]
+2. [File path] - [Issue description]
+
+**LOW findings** (X skipped - reported but not fixed):
+
+1. [File path] - [Issue description]
+2. [File path] - [Issue description]
+
+**Note**: Run with `strictness=strict` or `strictness=very-strict` to fix these findings.
+```
+
+### Fix Summary Update
+
+Update validation summary to show strictness context:
+
+```markdown
+## Validation Summary
+
+**Strictness Level**: normal (CRITICAL/HIGH only)
+
+- **Total findings in audit**: 25
+- **Findings in scope**: 15 (CRITICAL: 5, HIGH: 10)
+- **Findings skipped**: 10 (MEDIUM: 7, LOW: 3)
+- **Fixes applied (HIGH confidence)**: 12
+- **False positives detected**: 2
+- **Needs manual review (MEDIUM confidence)**: 1
+```
+
+### Example Usage in Workflow
+
+When invoked from quality-gate workflow:
+
+```yaml
+inputs:
+  - name: strictness
+    type: enum
+    values: [normal, strict, very-strict]
+    default: very-strict
+```
+
+Workflow passes strictness to fixer:
+
+```markdown
+**Strictness**: {input.strictness}
+```
+
+Fixer reads strictness and filters findings before processing.
 
 ## When to Use This Agent
 
@@ -125,10 +213,8 @@ Generate comprehensive fix report in `generated-reports/`:
 **Why No Web Tools?**
 
 1. **Separation of Concerns**: Checker does expensive web verification once, fixer applies validated fixes
-2. **Performance**: Avoid duplicate web requests (checker already verified everything)
-3. **Clear Responsibility**: Checker = research and verification, Fixer = application and execution
-4. **Audit Trail**: Checker documents all verification sources in audit report
-5. **Trust Model**: Fixer trusts checker's verification work (documented in audit)
+
+This agent uses **priority-based execution** that combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix order. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels) for complete details. 2. **Performance**: Avoid duplicate web requests (checker already verified everything) 3. **Clear Responsibility**: Checker = research and verification, Fixer = application and execution 4. **Audit Trail**: Checker documents all verification sources in audit report 5. **Trust Model**: Fixer trusts checker's verification work (documented in audit)
 
 **How Fixer Re-validates Without Web Access:**
 

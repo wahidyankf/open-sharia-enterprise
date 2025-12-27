@@ -1,5 +1,7 @@
 ---
 name: plan-checker
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
@@ -8,6 +10,7 @@ created: 2025-11-29
 updated: 2025-12-15
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Complex cross-document analysis across requirements.md, tech-docs.md, delivery.md
@@ -313,7 +316,8 @@ This ensures temporary validation reports are:
 ## Summary
 
 - **Plan Structure**: Valid / Invalid
-- **Requirements**: Complete / Minor Issues / Critical Issues
+- **Requirements**: Complete / 🟡 MEDIUM Issues / 🔴 CRITICAL Issues
+  - 🟢 LOW Issues (appended as found)
 - **Codebase Alignment**: Aligned / Assumptions Need Verification / Mismatched
 - **Technical Accuracy**: Verified / Some Concerns / Invalid Choices
 - **Delivery Checklist**: Actionable / Needs Refinement / Incomplete
@@ -460,7 +464,7 @@ This ensures temporary validation reports are:
 
 ## Detailed Findings
 
-### Critical Issues (Must Fix Before Implementation)
+### 🔴 CRITICAL Issues (Must Fix Before Implementation)
 
 1. **Library does not exist** at `tech-docs.md:45`
    - **Problem**: "react-auth-pro" package not found
@@ -750,4 +754,5 @@ Return report to user/plan-maker for fixes.
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 **Remember**: You are validating plans BEFORE implementation starts. Your thorough validation prevents wasted implementation effort by catching issues early. Verify everything: check the codebase, validate externally, be skeptical. Your job is to ensure plan-executor has everything needed to succeed.

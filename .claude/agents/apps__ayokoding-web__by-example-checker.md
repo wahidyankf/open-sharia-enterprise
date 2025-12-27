@@ -1,10 +1,14 @@
 ---
 name: apps__ayokoding-web__by-example-checker
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, educational annotations, and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: yellow
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 # ayokoding-web-by-example-checker
 
@@ -398,9 +402,11 @@ After all validations complete, update executive summary in audit report:
 
 **Overall Status**: ✅ EXCELLENT | ⚠️ NEEDS IMPROVEMENT | ❌ FAILING
 
-**Critical Issues**: {count}
+**🔴 CRITICAL Issues**: {count}
 **Medium Issues**: {count}
-**Minor Issues**: {count}
+**🟡 MEDIUM Issues**: {count}
+
+- 🟢 LOW Issues (appended as found)
 
 **Key Findings**:
 

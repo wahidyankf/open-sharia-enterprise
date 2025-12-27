@@ -40,8 +40,9 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 
 ### Using Workflows
 
-Workflows are executed by orchestrating agents in sequence, parallel, or conditionally as defined in workflow definitions. Currently, workflows require manual orchestration.
+Workflows are executed by orchestrating agents in sequence, parallel, or conditionally as defined in workflow definitions. All workflows support a standard **max-parallelization** input parameter (optional, default: 2) to control parallel execution limits.
 
+Currently, workflows require manual orchestration.
 Future enhancement: Automated workflow executor agent.
 
 ## Available Workflows
@@ -53,7 +54,7 @@ Future enhancement: Automated workflow executor agent.
 | [AyoKoding Web General Quality Gate](./ex-wf__ayokoding-web-general-quality-gate.md)       | Validate all ayokoding-web content quality (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until ZERO findings, then regenerate titles and navigation | apps**ayokoding-web**general-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**structure-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**general-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**structure-fixer, apps**ayokoding-web**title-maker, apps**ayokoding-web**navigation-maker | High       |
 | [AyoKoding Web By-Example Quality Gate](./ex-wf__ayokoding-web-by-example-quality-gate.md) | Validate by-example tutorial quality (95% coverage through 75-90 examples) and apply fixes iteratively until EXCELLENT status achieved                                                | apps**ayokoding-web**by-example-checker, apps**ayokoding-web**by-example-fixer                                                                                                                                                                                                                                                           | Medium     |
 
-All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./ex-wf\_\_workflow-pattern.md#-check-fix-workflow-pattern) which fixes ALL findings (HIGH, MEDIUM, MINOR) and iterates until ZERO findings remain.
+All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./ex-wf\_\_workflow-pattern.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
 
 ## Workflow Families
 

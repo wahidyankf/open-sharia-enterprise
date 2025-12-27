@@ -12,6 +12,11 @@ inputs:
     description: Maximum number of execute-check cycles to prevent infinite loops
     required: false
     default: 10
+  - name: max-parallelization
+    type: number
+    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    required: false
+    default: 2
 outputs:
   - name: final-status
     type: enum
@@ -78,13 +83,13 @@ Validate the implementation against plan requirements.
 - Validates implementation against plan requirements
 - Checks all deliverables meet quality standards
 - Verifies delivery checklist completion
-- Generates progressive report with all findings (HIGH, MEDIUM, MINOR)
+- Generates progressive report with all findings (CRITICAL, HIGH, MEDIUM, LOW)
 
 ### 3. Check for Findings (Sequential)
 
 Analyze validation report to determine if further execution is needed.
 
-**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) in `{step2.outputs.audit-report-1}`
+**Condition Check**: Count ALL findings (CRITICAL, HIGH, MEDIUM, LOW) in `{step2.outputs.audit-report-1}`
 
 - If findings > 0: Proceed to step 4 (Continue Execution)
 - If findings = 0: Skip to step 7 (Finalization - Success)
@@ -145,7 +150,7 @@ Determine whether to continue execution or terminate.
 
 **Logic**:
 
-- Count ALL findings in `{step5.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
+- Count ALL findings in {step5.outputs.audit-report-N} (CRITICAL, HIGH, MEDIUM, LOW)
 - If findings = 0: Proceed to step 7 (Finalization - Success)
 - If findings > 0 AND iterations < max-iterations: Loop back to step 4 with new report
 - If findings > 0 AND iterations >= max-iterations: Proceed to step 7 (Finalization - Partial)
@@ -183,7 +188,7 @@ Report final status and archive plan if successful.
 
 ## Termination Criteria
 
-- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation, all deliverables complete, plan archived to `plans/done/`
+- ✅ **Success** (`pass`): Zero findings of ANY criticality level (CRITICAL, HIGH, MEDIUM, LOW) in final validation, all deliverables complete, plan archived to `plans/done/`
 - ⚠️ **Partial** (`partial`): Findings remain after max-iterations cycles, plan requires manual intervention
 - ❌ **Failure** (`fail`): Executor or checker encountered technical errors preventing completion
 
@@ -317,6 +322,8 @@ Track across executions:
 5. **Higher default iterations**: Default 10 (vs 5) since implementation is more complex than document fixes
 
 This workflow ensures complete plan execution with validated quality, making it ideal for systematically implementing project plans from start to archive.
+
+**Parallelization**: Currently executes sequentially (executor → checker loops). The `max-parallelization` parameter is reserved for future enhancements where execution and validation steps could run concurrently.
 
 ## Principles Respected
 

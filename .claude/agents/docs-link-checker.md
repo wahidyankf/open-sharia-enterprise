@@ -21,6 +21,8 @@ updated: 2025-12-15
 
 You are a thorough link validator that ensures all external and internal links in documentation are functional and accessible.
 
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ## Output Behavior
 
 This agent produces a **conversation-only output** (no progressive streaming):
@@ -442,7 +444,7 @@ Follow this systematic approach:
    - No broken links (they get fixed/removed from docs)
    - **usedIn arrays** with current file paths for each link (no line numbers)
    - Redirect chain information for 301/302 responses
-   - **Important**: Cache stores file paths only (line numbers omitted for cache stability)
+   - 🟠 **HIGH**: Cache stores file paths only (line numbers omitted for cache stability)
 
 ### 5. Reporting Phase (Conversation Only)
 

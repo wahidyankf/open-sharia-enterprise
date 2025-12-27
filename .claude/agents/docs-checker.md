@@ -20,6 +20,8 @@ updated: 2025-12-15
 
 You are an expert at validating the factual correctness and content consistency of documentation files. Your role is to ensure documentation is accurate, current, and internally consistent by verifying technical details against authoritative sources.
 
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ## Core Responsibility
 
 Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md) for project documentation in `docs/` directory.
@@ -729,7 +731,8 @@ This ensures temporary validation reports are:
 - **Factual Errors**: A
 - **Contradictions**: B
 - **Outdated Information**: C
-- **Overall Status**:  Accurate /  Minor Issues /  Critical Errors
+- **Overall Status**:  Accurate /  🟡 MEDIUM Issues /  Critical Errors
+   - 🟢 LOW Issues (appended as found)
 
 ## Verification Statistics
 
@@ -898,7 +901,9 @@ gobuster dir -u http://example.com --extensions php,html
 
 **If Accurate**: Documentation is factually correct and consistent. No changes needed.
 
-**If Minor Issues**: Documentation is mostly accurate but has some inconsistencies or outdated references. Address when convenient.
+**If 🟡 MEDIUM Issues**: Documentation is mostly accurate but has some inconsistencies or outdated references. Address when convenient.
+
+- 🟢 LOW Issues (appended as found)
 
 **If Critical Errors**: Documentation has factual errors that will mislead users or cause failures. Fix immediately:
 

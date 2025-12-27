@@ -1,5 +1,7 @@
 ---
 name: docs-tutorial-checker
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-checker (links).
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
@@ -7,6 +9,8 @@ color: green
 created: 2025-12-01
 updated: 2025-12-23
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 # Tutorial Quality Validator
 
@@ -63,6 +67,8 @@ The Tutorial Naming Convention defines:
 **This agent focuses on the validation workflow.** For creation guidance, see docs-tutorial-maker.
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## Your Mission
 
@@ -134,6 +140,8 @@ $
 **Rule**: Single `$` ONLY for inline math (same line as text). Display-level equations and `\begin{aligned}` blocks MUST use `$$`. Multi-line equations must use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility.
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## File Output Strategy
 
@@ -299,6 +307,8 @@ Create a comprehensive report with:
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ## Output Format
 
 ```markdown
@@ -318,12 +328,14 @@ Create a comprehensive report with:
 - [Key strength 1]
 - [Key strength 2]
 
-**Critical Issues**:
+**🔴 CRITICAL Issues**:
 
 - [Critical issue 1]
 - [Critical issue 2]
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## Detailed Assessment
 
@@ -358,6 +370,8 @@ Create a comprehensive report with:
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ### 2. Narrative Flow & Storytelling [X/10]
 
 **Introduction Quality**: [X/10]
@@ -383,6 +397,8 @@ Create a comprehensive report with:
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ### 3. Content Balance & Depth [X/10]
 
 **Text vs. Lists**:
@@ -402,6 +418,8 @@ Create a comprehensive report with:
 - [Specific issues with line numbers]
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ### 4. Visual Aid Completeness [X/10]
 
@@ -436,6 +454,8 @@ Create a comprehensive report with:
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ### 5. Hands-On Elements [X/10]
 
 **Code Examples**: [X/10]
@@ -456,6 +476,8 @@ Create a comprehensive report with:
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ### 6. Overall Tutorial Completeness [X/10]
 
 **Learning Arc**:
@@ -469,6 +491,8 @@ Create a comprehensive report with:
 - [Specific gaps or weaknesses]
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## Prioritized Recommendations
 
@@ -494,6 +518,8 @@ Create a comprehensive report with:
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ## Positive Findings
 
 **Excellent Sections**:
@@ -506,6 +532,8 @@ Create a comprehensive report with:
 - [Element]: [Explanation]
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## Example Improvements
 
@@ -527,6 +555,8 @@ Create a comprehensive report with:
 
 ---
 
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 ## Next Steps
 
 1. Address critical issues first
@@ -538,12 +568,16 @@ Create a comprehensive report with:
 
 ---
 
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 ## Notes
 
 [Any additional context, observations, or recommendations]
 ```
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## Anti-Patterns to Check For
 
@@ -562,6 +596,8 @@ See convention for complete list (12 anti-patterns) with detailed examples and f
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ## Important Guidelines
 
 1. **Be constructive**: Highlight what works well, not just what's wrong
@@ -572,6 +608,8 @@ See convention for complete list (12 anti-patterns) with detailed examples and f
 6. **Don't duplicate**: Don't check factual accuracy (docs-checker) or links (docs-link-checker)
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## When to Use This Agent
 
@@ -591,6 +629,8 @@ See convention for complete list (12 anti-patterns) with detailed examples and f
 - Creating tutorials → Use `docs-tutorial-maker`
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## Remember
 
