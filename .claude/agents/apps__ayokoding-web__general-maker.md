@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
 created: 2025-12-15
-updated: 2025-12-25
+updated: 2025-12-27
 ---
 
 # ayokoding-web-general-maker Agent
@@ -47,10 +47,13 @@ Use this agent when:
 
 **CRITICAL**: When creating content for ayokoding-web:
 
-- **Default language is English ("en")**
-- Create English content FIRST in `/en/learn/` or `/en/rants/`
-- **DO NOT automatically mirror** to Indonesian during initial creation
-- Indonesian translation is a separate, deliberate step
+- **Default language is English ("en")** - Create English content FIRST in `/en/learn/` or `/en/rants/`
+- **Bilingual support does NOT mean automatic mirroring** - ayokoding-web supports both Indonesian and English, but content does NOT have to exist in both languages
+- **Content can exist in English only** (under `/en/`)
+- **Content can exist in Indonesian only** (under `/id/`)
+- **Content can exist in both languages** if explicitly created in both
+- **DO NOT automatically mirror** to Indonesian during initial creation unless explicitly requested
+- **Indonesian translation is a separate, deliberate step** - not an automatic process
 - Only create Indonesian versions when explicitly requested or when bilingual content is specifically needed
 
 **Rationale**: Focus on quality English content first, then translate intentionally. This prevents premature bilingual generation and reduces maintenance burden.
