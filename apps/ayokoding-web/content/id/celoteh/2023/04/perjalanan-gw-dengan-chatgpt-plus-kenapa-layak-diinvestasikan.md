@@ -5,6 +5,8 @@ date: 2023-04-30T07:20:00+07:00
 draft: false
 ---
 
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [My Journey with Chatgpt Plus why Its Worth the Investment](/en/rants/2023/04/my-journey-with-chatgpt-plus-why-its-worth-the-investment)_
+
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 
 Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.

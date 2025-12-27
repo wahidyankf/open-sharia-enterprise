@@ -7,6 +7,7 @@ weight: 100002
 type: docs
 ---
 
+- [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/overview)
 - [By Concept](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/overview)
   - [Beginner](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner)

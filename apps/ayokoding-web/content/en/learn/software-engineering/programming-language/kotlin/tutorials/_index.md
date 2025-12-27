@@ -8,6 +8,7 @@ type: docs
 layout: list
 ---
 
+- [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/overview)
 - [By Concept](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/overview)
   - [Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/beginner)

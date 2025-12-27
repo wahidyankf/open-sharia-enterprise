@@ -7,12 +7,12 @@ weight: 10
 
 - [Overview](/en/learn/overview)
 - [Software Engineering](/en/learn/software-engineering)
+  - [Overview](/en/learn/software-engineering/overview)
   - [Programming Language](/en/learn/software-engineering/programming-language)
   - [Data](/en/learn/software-engineering/data)
   - [Networking](/en/learn/software-engineering/networking)
   - [Platforms](/en/learn/software-engineering/platforms)
   - [System Design](/en/learn/software-engineering/system-design)
-  - [Overview](/en/learn/software-engineering/overview)
 - [Information Security](/en/learn/information-security)
   - [Overview](/en/learn/information-security/overview)
   - [Tools](/en/learn/information-security/tools)

@@ -39,11 +39,11 @@ graph TD
     C --> D[Intermediate<br/>Advanced OOP]
     D --> E[Advanced<br/>Concurrency & Patterns]
 
-    style A fill:#0173B2,stroke:#0173B2,color:#fff
-    style B fill:#029E73,stroke:#029E73,color:#fff
-    style C fill:#DE8F05,stroke:#DE8F05,color:#fff
-    style D fill:#CC78BC,stroke:#CC78BC,color:#fff
-    style E fill:#CA9161,stroke:#CA9161,color:#fff
+    style A fill:#0173B2,stroke:#000000,color:#fff
+    style B fill:#029E73,stroke:#000000,color:#fff
+    style C fill:#DE8F05,stroke:#000000,color:#fff
+    style D fill:#CC78BC,stroke:#000000,color:#fff
+    style E fill:#CA9161,stroke:#000000,color:#fff
 ```
 
 ## Why Learn Java?

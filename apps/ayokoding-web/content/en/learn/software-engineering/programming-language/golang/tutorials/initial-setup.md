@@ -39,9 +39,9 @@ graph TD
     H -->|No| J[Check File Location]
     J --> G
 
-    style I fill:#029E73,stroke:#029E73,stroke-width:2px
-    style D fill:#DE8F05,stroke:#DE8F05,stroke-width:2px
-    style H fill:#DE8F05,stroke:#DE8F05,stroke-width:2px
+    style I fill:#029E73,stroke:#000000,stroke-width:2px
+    style D fill:#DE8F05,stroke:#000000,stroke-width:2px
+    style H fill:#DE8F05,stroke:#000000,stroke-width:2px
 ```
 
 This diagram shows every verification checkpoint - you'll know immediately if something's wrong and where to look.

@@ -5,7 +5,7 @@ date: 2023-04-24T07:20:00+07:00
 draft: false
 ---
 
-**Similar article:** [My CliftonStrengths Journey: It makes me more confident to take the engineering management path](/en/rants/2023/04/my-cliftonstrengths-journey-it-makes-me-more-confident-to-take-the-engineering-management-path)
+> _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [My CliftonStrengths Journey It Makes Me More Confident to Take the Engineering Management Path](/en/rants/2023/04/my-cliftonstrengths-journey-it-makes-me-more-confident-to-take-the-engineering-management-path)_
 
 بِسْــــــــــــــــــمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ
 

@@ -26,6 +26,7 @@ By the end of this tutorial, you'll have:
 Here's the simple path from download to running code:
 
 ```mermaid
+%% Color Palette: Teal #029E73, Orange #DE8F05
 graph TD
     A[Download Python from python.org] --> B[Install on Your OS]
     B --> C[Verify: python --version]
@@ -39,9 +40,9 @@ graph TD
     H -->|No| J[Check File Location]
     J --> G
 
-    style I fill:#029E73,stroke:#029E73,stroke-width:2px
-    style D fill:#DE8F05,stroke:#DE8F05,stroke-width:2px
-    style H fill:#DE8F05,stroke:#DE8F05,stroke-width:2px
+    style I fill:#029E73,stroke:#000000,stroke-width:2px
+    style D fill:#DE8F05,stroke:#000000,stroke-width:2px
+    style H fill:#DE8F05,stroke:#000000,stroke-width:2px
 ```
 
 This diagram shows every verification checkpoint - you'll know immediately if something's wrong and where to look.
@@ -147,10 +148,10 @@ python3 --version
 **Expected output**:
 
 ```
-Python 3.13.7
+Python 3.14.2
 ```
 
-(Version number will vary - Python 3.12.x, 3.13.x, or 3.14.x are all current and supported)
+(Version number will vary - Python 3.13.x, 3.14.x are current and supported)
 
 **If you get an error**:
 
@@ -250,7 +251,7 @@ python3 -m pip --version
 **Expected output**:
 
 ```
-pip 23.3.1 from /path/to/pip (python 3.12)
+pip 25.3 from /path/to/pip (python 3.14)
 ```
 
 **What is pip?**:

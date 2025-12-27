@@ -5,6 +5,7 @@ draft: false
 weight: 102
 ---
 
+- [Overview](/en/learn/software-engineering/overview)
 - [Programming Language](/en/learn/software-engineering/programming-language)
   - [Overview](/en/learn/software-engineering/programming-language/overview)
   - [Python](/en/learn/software-engineering/programming-language/python)
@@ -27,4 +28,3 @@ weight: 102
 - [System Design](/en/learn/software-engineering/system-design)
   - [Overview](/en/learn/software-engineering/system-design/overview)
   - [AI Personal Finance Advisor](/en/learn/software-engineering/system-design/ai-personal-finance-advisor)
-- [Overview](/en/learn/software-engineering/overview)

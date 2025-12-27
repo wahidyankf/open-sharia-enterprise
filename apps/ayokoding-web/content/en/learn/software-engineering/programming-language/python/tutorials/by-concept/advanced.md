@@ -85,9 +85,9 @@ graph TB
     style C1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style C2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style C3 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style D1 fill:#CC78BC,stroke:#CC78BC,stroke-width:2px
-    style D2 fill:#CC78BC,stroke:#CC78BC,stroke-width:2px
-    style D3 fill:#CC78BC,stroke:#CC78BC,stroke-width:2px
+    style D1 fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style D2 fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style D3 fill:#CC78BC,stroke:#000000,stroke-width:2px
 ```
 
 Each layer builds on the previous, taking you from understanding Python's internals to designing sophisticated systems. For practical applications of these concepts, see the [Python Cookbook](/en/learn/software-engineering/programming-language/python/how-to/cookbook) and [How-To Guides](/en/learn/software-engineering/programming-language/python/how-to/overview).
