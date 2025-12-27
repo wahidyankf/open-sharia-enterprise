@@ -36,43 +36,44 @@ Your primary job is to:
 
 **CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.
 
-## Strictness Parameter Handling
+## Mode Parameter Handling
 
-**CRITICAL REQUIREMENT**: This fixer MUST support the `strictness` parameter to work with quality-gate workflows.
+**CRITICAL REQUIREMENT**: This fixer MUST support the `mode` parameter to work with quality-gate workflows.
 
-### Accepting Strictness
+### Accepting Mode
 
-- **Parameter**: `strictness` (enum: normal, strict, very-strict)
-- **Default**: `very-strict` (backward compatible - process all findings)
-- **Source**: Passed from workflow as `{input.strictness}`
+- **Parameter**: `mode` (enum: lax, normal, strict, ultra)
+- **Default**: `ultra` (backward compatible - process all findings)
+- **Source**: Passed from workflow as `{input.mode}`
 
 ### Filtering Logic
 
-Before processing findings from the audit report, filter by strictness threshold:
+Before processing findings from the audit report, filter by mode threshold:
 
-**Strictness Levels**:
+**Mode Levels**:
 
+- `lax`: Process CRITICAL findings only (skip HIGH + MEDIUM + LOW)
 - `normal`: Process CRITICAL + HIGH findings only (skip MEDIUM + LOW)
 - `strict`: Process CRITICAL + HIGH + MEDIUM findings (skip LOW)
-- `very-strict`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
+- `ultra`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
 
 **Implementation**:
 
 1. **Categorize findings** by criticality level when parsing audit report
-2. **Apply strictness filter** before re-validation:
+2. **Apply mode filter** before re-validation:
    - Extract criticality level from each finding
-   - Skip findings below strictness threshold
+   - Skip findings below mode threshold
    - Track skipped findings for reporting
 3. **Process filtered findings** using normal fix workflow
 
 ### Reporting Skipped Findings
 
-In the fix report, document which findings were skipped due to strictness threshold:
+In the fix report, document which findings were skipped due to mode threshold:
 
 ```markdown
-## Skipped Findings (Below Strictness Threshold)
+## Skipped Findings (Below Mode Threshold)
 
-**Strictness Level**: normal (fixing CRITICAL/HIGH only)
+**Mode Level**: normal (fixing CRITICAL/HIGH only)
 
 **MEDIUM findings** (X skipped - reported but not fixed):
 
@@ -84,17 +85,17 @@ In the fix report, document which findings were skipped due to strictness thresh
 1. [File path] - [Issue description]
 2. [File path] - [Issue description]
 
-**Note**: Run with `strictness=strict` or `strictness=very-strict` to fix these findings.
+**Note**: Run with `mode=strict` or `mode=ultra` to fix these findings.
 ```
 
 ### Fix Summary Update
 
-Update validation summary to show strictness context:
+Update validation summary to show mode context:
 
 ```markdown
 ## Validation Summary
 
-**Strictness Level**: normal (CRITICAL/HIGH only)
+**Mode Level**: normal (CRITICAL/HIGH only)
 
 - **Total findings in audit**: 25
 - **Findings in scope**: 15 (CRITICAL: 5, HIGH: 10)
@@ -110,19 +111,19 @@ When invoked from quality-gate workflow:
 
 ```yaml
 inputs:
-  - name: strictness
+  - name: mode
     type: enum
-    values: [normal, strict, very-strict]
-    default: very-strict
+    values: [lax, normal, strict, ultra]
+    default: ultra
 ```
 
-Workflow passes strictness to fixer:
+Workflow passes mode to fixer:
 
 ```markdown
-**Strictness**: {input.strictness}
+**Strictness**: {input.mode}
 ```
 
-Fixer reads strictness and filters findings before processing.
+Fixer reads mode and filters findings before processing.
 
 ## When to Use This Agent
 

@@ -30,6 +30,95 @@ Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-
 
 Follow **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)** for determining which fixes to apply.
 
+## Mode Parameter Handling
+
+**CRITICAL REQUIREMENT**: This fixer MUST support the `mode` parameter to work with quality-gate workflows.
+
+### Accepting Mode
+
+- **Parameter**: `mode` (enum: lax, normal, strict, ultra)
+- **Default**: `ultra` (backward compatible - process all findings)
+- **Source**: Passed from workflow as `{input.mode}`
+
+### Filtering Logic
+
+Before processing findings from the audit report, filter by mode threshold:
+
+**Mode Levels**:
+
+- `lax`: Process CRITICAL findings only (skip HIGH + MEDIUM + LOW)
+- `normal`: Process CRITICAL + HIGH findings only (skip MEDIUM + LOW)
+- `strict`: Process CRITICAL + HIGH + MEDIUM findings (skip LOW)
+- `ultra`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
+
+**Implementation**:
+
+1. **Categorize findings** by criticality level when parsing audit report
+2. **Apply mode filter** before re-validation:
+   - Extract criticality level from each finding
+   - Skip findings below mode threshold
+   - Track skipped findings for reporting
+3. **Process filtered findings** using normal fix workflow
+
+### Reporting Skipped Findings
+
+In the fix report, document which findings were skipped due to mode threshold:
+
+```markdown
+## Skipped Findings (Below Mode Threshold)
+
+**Mode Level**: normal (fixing CRITICAL/HIGH only)
+
+**MEDIUM findings** (X skipped - reported but not fixed):
+
+1. [File path] - [Issue description]
+2. [File path] - [Issue description]
+
+**LOW findings** (X skipped - reported but not fixed):
+
+1. [File path] - [Issue description]
+2. [File path] - [Issue description]
+
+**Note**: Run with `mode=strict` or `mode=ultra` to fix these findings.
+```
+
+### Fix Summary Update
+
+Update validation summary to show mode context:
+
+```markdown
+## Validation Summary
+
+**Mode Level**: normal (CRITICAL/HIGH only)
+
+- **Total findings in audit**: 25
+- **Findings in scope**: 15 (CRITICAL: 5, HIGH: 10)
+- **Findings skipped**: 10 (MEDIUM: 7, LOW: 3)
+- **Fixes applied (HIGH confidence)**: 12
+- **False positives detected**: 2
+- **Needs manual review (MEDIUM confidence)**: 1
+```
+
+### Example Usage in Workflow
+
+When invoked from quality-gate workflow:
+
+```yaml
+inputs:
+  - name: mode
+    type: enum
+    values: [lax, normal, strict, ultra]
+    default: ultra
+```
+
+Workflow passes mode to fixer:
+
+```markdown
+**Mode**: {input.mode}
+```
+
+Fixer reads mode and filters findings before processing.
+
 ## Confidence-Based Fix Strategy
 
 ### HIGH Confidence Fixes (Apply Automatically)

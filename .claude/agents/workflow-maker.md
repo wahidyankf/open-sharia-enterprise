@@ -77,7 +77,7 @@ inputs:
     description: What this input is for
     required: true | false
     default: value (if not required)
-  - name: max-parallelization
+  - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run in parallel during workflow execution
     required: false

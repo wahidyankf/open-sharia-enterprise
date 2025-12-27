@@ -40,7 +40,7 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 
 ### Using Workflows
 
-Workflows are executed by orchestrating agents in sequence, parallel, or conditionally as defined in workflow definitions. All workflows support a standard **max-parallelization** input parameter (optional, default: 2) to control parallel execution limits.
+Workflows are executed by orchestrating agents in sequence, parallel, or conditionally as defined in workflow definitions. All workflows support a standard **max-concurrency** input parameter (optional, default: 2) to control concurrent execution limits.
 
 Currently, workflows require manual orchestration.
 Future enhancement: Automated workflow executor agent.

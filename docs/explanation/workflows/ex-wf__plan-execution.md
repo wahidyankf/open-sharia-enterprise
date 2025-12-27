@@ -12,9 +12,9 @@ inputs:
     description: Maximum number of execute-check cycles to prevent infinite loops
     required: false
     default: 10
-  - name: max-parallelization
+  - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    description: Maximum number of agents/tasks that can run concurrently during workflow execution
     required: false
     default: 2
 outputs:
@@ -323,7 +323,7 @@ Track across executions:
 
 This workflow ensures complete plan execution with validated quality, making it ideal for systematically implementing project plans from start to archive.
 
-**Parallelization**: Currently executes sequentially (executor → checker loops). The `max-parallelization` parameter is reserved for future enhancements where execution and validation steps could run concurrently.
+**Parallelization**: Currently executes sequentially (executor → checker loops). The `max-concurrency` parameter is reserved for future enhancements where execution and validation steps could run concurrently.
 
 ## Principles Respected
 
