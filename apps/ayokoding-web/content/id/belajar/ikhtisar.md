@@ -10,7 +10,6 @@ Selamat datang di pusat pembelajaran AyoKoding! Jelajahi tutorial komprehensif, 
 
 ## Yang Akan Anda Temukan
 
-- **Rekayasa Perangkat Lunak** - Bahasa pemrograman, desain sistem, dan praktik engineering
 - **Pelajaran Kunci** - Ringkasan dari buku dan esai penting
 - **Manusia** - Alat dan framework untuk pertumbuhan pribadi
 - **Contekan** - Referensi cepat untuk konsep umum
