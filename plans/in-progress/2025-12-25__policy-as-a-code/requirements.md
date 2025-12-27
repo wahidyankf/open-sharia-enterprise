@@ -7,7 +7,7 @@
 The user plans to scale the repository's governance architecture with these specific objectives:
 
 1. **Scale agent ecosystem significantly**
-   - Current: 34+ agents across 8 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial, workflow)
+   - Current: 45 agents across 8 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial, workflow)
    - Future: Expect significant growth as new domains added
    - Need: System that scales without proportional complexity increase
 
@@ -37,10 +37,10 @@ The user plans to scale the repository's governance architecture with these spec
   - ayokoding-web-general-maker: 1,090 lines
   - ayokoding-web-general-fixer: 615 lines
 
-- **repo-rules family**: 2,314 total lines
-  - repo-rules-checker: 953 lines
-  - repo-rules-maker: 851 lines
-  - repo-rules-fixer: 510 lines
+- **repo-rules family**: 2,586 total lines
+  - repo-rules-checker: ~1,050 lines
+  - repo-rules-maker: ~1,020 lines
+  - repo-rules-fixer: ~516 lines
 
 **Specific Examples:**
 
@@ -108,8 +108,8 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Target Reduction Through Policy Centralization:**
 
-- ayokoding-web family: 3,349 → ~1,400 lines (58% reduction)
-- repo-rules family: 2,314 → ~1,000 lines (57% reduction)
+- ayokoding-web family: 3,362 → ~1,400 lines (58% reduction)
+- repo-rules family: 2,586 → ~1,100 lines (57% reduction)
 - docs family: ~1,800 → ~800 lines (56% reduction)
 - **Overall target**: 50-58% line reduction per family
 
@@ -339,8 +339,8 @@ The user plans to scale the repository's governance architecture with these spec
 **Duplication Reduction:**
 
 - Total agent lines: Baseline → -50% (target)
-- repo-rules family: 2,314 → ~1,000 lines (57%)
-- ayokoding-web family: 3,349 → ~1,400 lines (58%)
+- repo-rules family: 2,586 → ~1,100 lines (57%)
+- ayokoding-web family: 3,362 → ~1,400 lines (58%)
 
 **Accuracy:**
 
@@ -401,7 +401,7 @@ The following are explicitly **NOT included** in this plan:
 - Nx monorepo (already exists)
 - Go 1.24+ (use latest patch 1.24.11 with security fixes)
 - Cobra CLI framework v1.10.2 (github.com/spf13/cobra)
-- YAML parser (Go library: go.yaml.in/yaml/v3 - actively maintained fork)
+- YAML parser (Go library: github.com/goccy/go-yaml v1.15.14 - actively maintained, better parsing than archived gopkg.in/yaml.v3)
 - Glob matching library (Go library: filepath.Match or doublestar)
 - JSON Schema validator (Go library: gojsonschema or similar)
 - Go testing framework (built-in testing package with table-driven tests)

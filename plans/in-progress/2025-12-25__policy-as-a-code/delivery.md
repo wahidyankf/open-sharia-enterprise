@@ -59,7 +59,7 @@ Design policy schema and establish governance model
      - `cmd/root.go` - Cobra root command with global flags
      - `cmd/policy.go` - Policy subcommand (validate, list, test-rule, docs, coverage)
    - Implementation:
-     - YAML parsing from markdown using gopkg.in/yaml.v3
+     - YAML parsing from markdown using github.com/goccy/go-yaml
      - Policy loading and caching
      - Basic validation (regex, schema)
      - Cobra command structure with proper help text
@@ -95,10 +95,20 @@ Design policy schema and establish governance model
   - Testing approach (table-driven tests)
   - Nx integration patterns (project.json reference)
 - [ ] Create `docs/explanation/development/ex-de__policy-as-code.md`
+- [ ] Create `apps/governance-cli/internal/policy/policy-schema.json` (JSON Schema for policy validation)
+  - Define schema for policy YAML structure
+  - Include required fields validation
+  - Add traceability fields validation
+  - Document all seven rule types
 - [ ] Implement `apps/governance-cli/internal/policy/types.go` with Go structs
 - [ ] Implement `apps/governance-cli/internal/policy/engine.go` with core methods
+  - Integrate JSON Schema validation in parsePolicy()
+  - Add external-check security constraints (allowlist, timeout, sandboxing)
+  - Implement policy loading and caching
 - [ ] Implement `apps/governance-cli/cmd/policy.go` with Cobra subcommands
 - [ ] Write comprehensive unit tests (engine_test.go with table-driven tests)
+  - Add JSON Schema validation tests
+  - Add external-check security tests
 - [ ] Add policy YAML to 3 convention files
 - [ ] Create policy-validator agent
 - [ ] Test end-to-end: load policies via CLI, validate files
@@ -115,7 +125,7 @@ Prove architecture with highest-value, lowest-risk family
 ### Why repo-rules First?
 
 1. **Clearest rules**: Structural validation (frontmatter, file naming) is most objective
-2. **High duplication**: 2,314 lines across 3 agents = 59% potential reduction
+2. **High duplication**: 2,586 lines across 3 agents = 57% potential reduction
 3. **Meta-validation**: repo-rules-checker can validate policy compliance itself
 4. **Foundational**: Success here proves architecture for all other families
 
@@ -193,7 +203,7 @@ Consistent validation, centralized rules, single source of truth
 
 This section details how the three repo-rules agents must be adapted to consume policies from the new PolicyEngine instead of embedding rules in their prompts.
 
-**repo-rules-checker (953 → ~400 lines, 58% reduction):**
+**repo-rules-checker (~1,050 → ~450 lines, 57% reduction):**
 
 _Architectural Changes:_
 
@@ -228,7 +238,7 @@ _Key Behavior Change:_
 
 - Agent no longer interprets prose rules → delegates to PolicyEngine for consistent validation
 
-**repo-rules-maker (851 → ~350 lines, 59% reduction):**
+**repo-rules-maker (~1,020 → ~440 lines, 57% reduction):**
 
 _Architectural Changes:_
 
@@ -265,7 +275,7 @@ _Key Behavior Change:_
 
 - Agent maintains prose-policy synchronization → single source of truth enforced
 
-**repo-rules-fixer (510 → ~250 lines, 51% reduction):**
+**repo-rules-fixer (~516 → ~210 lines, 59% reduction):**
 
 _Architectural Changes:_
 
@@ -306,7 +316,7 @@ _Key Behavior Change:_
 **Deliverables:**
 
 - 3 agents rewritten and tested
-- 55%+ line reduction achieved
+- 57% line reduction achieved (2,586 → ~1,100 lines)
 - All agents pass integration tests
 
 ### Validation & Refinement
@@ -394,10 +404,11 @@ Achieve largest impact through biggest agent families
 
 ### Why Content Domains Third?
 
-1. **Largest duplication**: ayokoding-web family = 3,349 lines
+1. **Largest duplication**: ayokoding-web family = 3,362 lines
 2. **Hugo-specific rules**: Tests policy schema with framework conventions
 3. **Bilingual complexity**: ayokoding has en/id validation (policy reuse opportunity)
-4. **Proven architecture**: Success in Phases 1-2 de-risks this larger migration
+4. **Bilingual non-mirroring**: Content can exist in one language only (recent clarification affects policy design)
+5. **Proven architecture**: Success in Phases 1-2 de-risks this larger migration
 
 ### Hugo-Specific Policies
 
@@ -449,7 +460,7 @@ policy:
 - [ ] Update ayokoding-web-general-checker (1,644 → ~700 lines, 57% reduction)
 - [ ] Update ayokoding-web-general-maker (1,090 → ~500 lines, 54% reduction)
 - [ ] Update ayokoding-web-general-fixer (615 → ~200 lines, 67% reduction)
-- [ ] Test bilingual validation
+- [ ] Test bilingual validation with non-mirroring policy (content can exist in one language only)
 - [ ] Measure coverage improvements
 
 **ose-platform-web-content family:**
@@ -462,9 +473,10 @@ policy:
 ### Success Criteria
 
 - ✅ 15-20 policies extracted for Hugo content
-- ✅ ayokoding family reduced by 50%+ lines (3,349 → ~1,400)
+- ✅ ayokoding family reduced by 58% lines (3,362 → ~1,400)
 - ✅ ose-platform family reduced by 45%+ lines
 - ✅ Bilingual policies reusable for future content sites
+- ✅ Bilingual non-mirroring policy enforced (content can exist in one language only)
 - ✅ Hugo theme validation working
 - ✅ Navigation validation automated
 
@@ -560,13 +572,15 @@ Finalize architecture and enable future scaling
 
 **1. Policy Catalog**
 
-- File: `policies/README.md` (documentation index, not storage)
+- File: `policies/README.md` (INDEX ONLY - actual policies embedded in convention docs)
+- Purpose: Documentation and cross-reference index (NOT storage directory)
 - Content:
-  - Index of all policies by domain
+  - Index of all policies by domain (points to convention docs where policies are embedded)
   - Policy dependency graph (which policies reference others)
   - Coverage map (which agents consume which policies)
   - Usage examples
   - Best practices
+- Note: This is NOT a storage directory - policies remain embedded in `docs/explanation/conventions/*.md` and `docs/explanation/development/*.md`
 
 **2. policy-coverage-analyzer Agent**
 
@@ -898,10 +912,11 @@ Phase 5 (consolidation)
 
 - [ ] 10-15 policies extracted
 - [ ] repo-rules family migrated
-- [ ] 55%+ line reduction achieved
+- [ ] 57% line reduction achieved (2,586 → ~1,100 lines)
 - [ ] Zero detection regression verified
 - [ ] Performance overhead <5%
 - [ ] User acceptance testing passed
+- [ ] UUID chain tracking preserved for parallel execution coordination
 
 ### Phase 2
 
@@ -916,8 +931,8 @@ Phase 5 (consolidation)
 - [ ] 15-20 policies extracted
 - [ ] ayokoding family migrated
 - [ ] ose-platform family migrated
-- [ ] Bilingual policies working
-- [ ] 50%+ line reduction achieved
+- [ ] Bilingual policies working with non-mirroring enforcement
+- [ ] 58% line reduction achieved (3,362 → ~1,400 lines)
 
 ### Phase 4
 

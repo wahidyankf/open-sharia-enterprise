@@ -470,7 +470,7 @@ traceability:
 - ✅ **Proper CLI UX**: Subcommands, flags, help text, auto-completion
 - ✅ Strong typing for policy definitions (Go structs)
 - ✅ No separate service deployment (standalone binary)
-- ✅ Rich ecosystem for YAML parsing (gopkg.in/yaml.v3), glob matching (filepath, doublestar)
+- ✅ Rich ecosystem for YAML parsing (github.com/goccy/go-yaml), glob matching (filepath, doublestar)
 - ✅ Can be invoked from agents via CLI
 - ✅ Single binary distribution (easy deployment)
 - ✅ Comprehensive testing with Go's built-in testing framework
@@ -600,7 +600,7 @@ import (
 	"regexp"
 
 	"github.com/bmatcuk/doublestar/v4"
-	"gopkg.in/yaml.v3"
+	"github.com/goccy/go-yaml"
 )
 
 // PolicyEngine manages policy loading, validation, and fixing
@@ -842,7 +842,7 @@ go 1.24.11 // Security fixes for CVE-2025-61729, CVE-2025-61727 (crypto/x509)
 require (
 	github.com/spf13/cobra v1.10.2           // CLI framework
 	github.com/bmatcuk/doublestar/v4 v4.8.1  // Glob pattern matching
-	go.yaml.in/yaml/v3 v3.0.1                // YAML parsing (actively maintained fork)
+	github.com/goccy/go-yaml v1.15.14        // YAML parsing (actively maintained, better than archived gopkg.in/yaml.v3)
 	github.com/xeipuuv/gojsonschema v1.2.0   // JSON Schema validation
 	github.com/stretchr/testify v1.8.4       // Testing assertions
 )
