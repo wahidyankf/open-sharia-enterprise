@@ -7,10 +7,10 @@ inputs:
     type: string
     description: Path to by-example tutorial (e.g., "golang/tutorials/by-example/", "elixir/tutorials/by-example/")
     required: true
-  - name: strictness
+  - name: mode
     type: enum
-    values: [normal, strict, very-strict]
-    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    values: [lax, normal, strict, ultra]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
     required: false
     default: normal
   - name: min-iterations
@@ -21,9 +21,9 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
-  - name: max-parallelization
+  - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    description: Maximum number of agents/tasks that can run concurrently during workflow execution
     required: false
     default: 2
   - name: auto-fix-level
@@ -175,19 +175,21 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 **1. Read audit report** from generated-reports/
 
-**2. Count findings based on strictness level** (default: `{input.strictness}` or `normal`):
+**2. Count findings based on mode level** (default: `{input.mode}` or `normal`):
 
 **Strictness-based counting**:
 
-- **normal**: Count CRITICAL + HIGH only
+- **lax**: Count CRITICAL only
+- **normal**: Count CRITICAL + HIGH
 - **strict**: Count CRITICAL + HIGH + MEDIUM
-- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **Below-threshold findings**: Reported but don't block success
 
+- **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **very-strict**: All findings counted
+- **ultra**: All findings counted
 
 **3. Assess overall status**:
 
@@ -247,20 +249,21 @@ graph TD
 **Execution**:
 
 ```bash
-# Invoke via Task tool with audit report and strictness parameter
+# Invoke via Task tool with audit report and mode parameter
 subagent_type: ayokoding-web-by-example-fixer
-prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md with strictness={input.strictness}"
+prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md with mode={input.mode}"
 ```
 
 **Fix application strategy**:
 
-**Fixer respects strictness level** (`{input.strictness}` from workflow):
+**Fixer respects mode level** (`{input.mode}` from workflow):
 
-- **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
+- **lax**: Fix CRITICAL only (skip HIGH/MEDIUM/LOW)
+- **normal**: Fix CRITICAL + HIGH (skip MEDIUM/LOW)
 - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-- **very-strict**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
-**HIGH confidence fixes** (auto-apply within strictness scope):
+**HIGH confidence fixes** (auto-apply within mode scope):
 
 - Add missing imports
 - Fix color palette violations
@@ -268,7 +271,7 @@ prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__20
 - Fix incorrect weights
 - Add example numbering
 
-**MEDIUM confidence fixes** (re-validate first, only if strictness includes MEDIUM):
+**MEDIUM confidence fixes** (re-validate first, only if mode includes MEDIUM):
 
 - Add `// =>` annotations
 - Add missing key takeaways
@@ -302,10 +305,11 @@ Determine whether to continue fixing or finalize.
 **Logic**:
 
 - Re-run checker (step 2) to get fresh report
-- Count findings based on strictness level (same as Step 3):
+- Count findings based on mode level (same as Step 3):
+  - **lax**: Count CRITICAL only
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization)
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `needs-improvement`
@@ -363,9 +367,10 @@ Report final status and summary.
 
 **Success** (`excellent`):
 
+- **lax**: Zero CRITICAL findings, 75-90 examples, 95% coverage (HIGH/MEDIUM/LOW may exist)
 - **normal**: Zero CRITICAL/HIGH findings, 75-90 examples, 95% coverage (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings, 75-90 examples, 95% coverage (LOW may exist)
-- **very-strict**: Zero findings at all levels, 75-90 examples, 95% coverage
+- **ultra**: Zero findings at all levels, 75-90 examples, 95% coverage
 
 **Partial** (`needs-improvement`):
 
@@ -562,7 +567,7 @@ apps__ayokoding-web__by-example-checker re-validates
 **Invocation**:
 
 ```bash
-# Default strictness (normal) - fixes CRITICAL/HIGH only
+# Default mode (normal) - fixes CRITICAL/HIGH only
 workflow run ayokoding-web-by-example-quality-gate \
   --tutorial-path=golang/tutorials/by-example/
 ```
@@ -596,7 +601,7 @@ workflow run ayokoding-web-by-example-quality-gate \
 # Strict mode - fixes CRITICAL/HIGH/MEDIUM
 workflow run ayokoding-web-by-example-quality-gate \
   --tutorial-path=elixir/tutorials/by-example/ \
-  --strictness=strict
+  --mode=strict
 ```
 
 **Checker results**:
@@ -627,7 +632,7 @@ workflow run ayokoding-web-by-example-quality-gate \
 # Very strict mode - fixes all levels
 workflow run ayokoding-web-by-example-quality-gate \
   --tutorial-path=java/tutorials/by-example/ \
-  --strictness=very-strict \
+  --mode=ultra \
   --max-iterations=10
 ```
 
@@ -647,7 +652,7 @@ workflow run ayokoding-web-by-example-quality-gate \
 **Final audit**:
 
 - Zero findings at all levels ✅
-- Equivalent to pre-strictness parameter behavior
+- Equivalent to pre-mode parameter behavior
 
 ## Workflow Invocation
 
@@ -749,7 +754,7 @@ This workflow is part of the **Tutorial Quality Family**:
 - **Flexible**: Auto-fix-level parameter controls automation degree
 - **Focused**: Specialized for by-example tutorials only (not general tutorials)
 
-**Parallelization**: Currently executes sequentially due to user decision points (maker-checker-fixer pattern). The `max-parallelization` parameter is reserved for future enhancements where validation dimensions could run concurrently after user approval.
+**Parallelization**: Currently executes sequentially due to user decision points (maker-checker-fixer pattern). The `max-concurrency` parameter is reserved for future enhancements where validation dimensions could run concurrently after user approval.
 
 ## Principles Respected
 

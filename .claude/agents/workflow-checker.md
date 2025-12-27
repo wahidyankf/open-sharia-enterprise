@@ -7,7 +7,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-23
-updated: 2025-12-23
+updated: 2025-12-27
 ---
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
@@ -104,11 +104,11 @@ Validate frontmatter contains all required fields:
 
 **Input field validation** (for each item in `inputs` array):
 
-**Standard max-parallelization parameter validation**:
+**Standard max-concurrency parameter validation**:
 
-All workflows SHOULD include standard `max-parallelization` input:
+All workflows SHOULD include standard `max-concurrency` input:
 
-- [ ] `max-parallelization` parameter present in inputs array
+- [ ] `max-concurrency` parameter present in inputs array
 - [ ] Type is `number`
 - [ ] Description mentions "parallel execution" or "concurrent"
 - [ ] Required is `false`

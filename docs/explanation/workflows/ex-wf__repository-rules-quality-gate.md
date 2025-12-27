@@ -3,10 +3,10 @@ name: repository-rules-quality-gate
 goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
 termination: Zero findings remain after validation (runs indefinitely until achieved unless max-iterations provided)
 inputs:
-  - name: strictness
+  - name: mode
     type: enum
-    values: [normal, strict, very-strict]
-    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    values: [lax, normal, strict, ultra]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
     required: false
     default: normal
   - name: min-iterations
@@ -17,9 +17,9 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
-  - name: max-parallelization
+  - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    description: Maximum number of agents/tasks that can run concurrently during workflow execution
     required: false
     default: 2
 outputs:
@@ -72,17 +72,19 @@ Run repository-wide consistency check to identify all issues.
 
 Analyze audit report to determine if fixes are needed.
 
-**Condition Check**: Count findings based on strictness level in `{step1.outputs.audit-report-1}`
+**Condition Check**: Count findings based on mode level in `{step1.outputs.audit-report-1}`
 
-- **normal**: Count CRITICAL + HIGH only
+- **lax**: Count CRITICAL only
+- **normal**: Count CRITICAL + HIGH
 - **strict**: Count CRITICAL + HIGH + MEDIUM
-- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **Below-threshold findings**: Report but don't block success
 
+- **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **very-strict**: All findings counted
+- **ultra**: All findings counted
 
 **Decision**:
 
@@ -93,17 +95,17 @@ Analyze audit report to determine if fixes are needed.
 
 **Notes**:
 
-- Fix scope determined by strictness level
+- Fix scope determined by mode level
 - Below-threshold findings remain visible in audit reports
 - Enables progressive quality improvement
 
 ### 3. Apply Fixes (Sequential, Conditional)
 
-Apply validated fixes from the audit report based on strictness level.
+Apply validated fixes from the audit report based on mode level.
 
 **Agent**: `repo-rules-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, strictness: {input.strictness}, EXECUTION_SCOPE: repo-rules`
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, mode: {input.mode}, EXECUTION_SCOPE: repo-rules`
 - **Output**: `{fixes-applied}` - Fix report with same UUID chain as source audit
 - **Condition**: Threshold-level findings exist from step 2
 - **Depends on**: Step 2 completion
@@ -115,10 +117,11 @@ Apply validated fixes from the audit report based on strictness level.
 **Notes**:
 
 - Fixer re-validates findings before applying (prevents false positives)
-- **Fix scope based on strictness**:
-  - **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
+- **Fix scope based on mode**:
+  - **lax**: Fix CRITICAL only (skip HIGH/MEDIUM/LOW)
+  - **normal**: Fix CRITICAL + HIGH (skip MEDIUM/LOW)
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-  - **very-strict**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Below-threshold findings remain untouched
 
 ### 4. Re-validate (Sequential)
@@ -141,10 +144,11 @@ Determine whether to continue fixing or terminate.
 
 **Logic**:
 
-- Count findings based on strictness level in {step4.outputs.audit-report-N} (same as Step 2):
+- Count findings based on mode level in {step4.outputs.audit-report-N} (same as Step 2):
+  - **lax**: Count CRITICAL only
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **very-strict**: Count all levels
+  - **ultra**: Count all levels
 - If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
@@ -180,9 +184,10 @@ Report final status and summary.
 
 **Success** (`pass`):
 
+- **lax**: Zero CRITICAL findings (HIGH/MEDIUM/LOW may exist)
 - **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **very-strict**: Zero findings at all levels
+- **ultra**: Zero findings at all levels
 
 **Partial** (`partial`):
 
@@ -204,27 +209,27 @@ Report final status and summary.
 workflow run repository-rules-quality-gate
 
 # Equivalent explicit form
-workflow run repository-rules-quality-gate --strictness=normal
+workflow run repository-rules-quality-gate --mode=normal
 ```
 
 ### Pre-Release Validation (Strict)
 
 ```bash
 # Fixes CRITICAL/HIGH/MEDIUM, reports LOW
-workflow run repository-rules-quality-gate --strictness=strict
+workflow run repository-rules-quality-gate --mode=strict
 
 # Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
 # LOW findings reported but don't block
 ```
 
-### Comprehensive Audit (Very Strict)
+### Comprehensive Audit (Ultra)
 
 ```bash
 # Fixes all levels, zero tolerance
-workflow run repository-rules-quality-gate --strictness=very-strict
+workflow run repository-rules-quality-gate --mode=ultra
 
 # Success criteria: Zero findings at all levels
-# Equivalent to pre-strictness parameter behavior
+# Equivalent to pre-mode parameter behavior
 ```
 
 ### With Iteration Bounds
@@ -232,7 +237,7 @@ workflow run repository-rules-quality-gate --strictness=very-strict
 ```bash
 # Require at least 2 iterations, cap at 10 maximum
 workflow run repository-rules-quality-gate \
-  --strictness=normal \
+  --mode=normal \
   --min-iterations=2 \
   --max-iterations=10
 ```
@@ -242,7 +247,7 @@ workflow run repository-rules-quality-gate \
 ```bash
 # Pre-release check with iteration bounds
 workflow run repository-rules-quality-gate \
-  --strictness=strict \
+  --mode=strict \
   --max-iterations=10
 ```
 
@@ -309,7 +314,7 @@ Track across executions:
 - **Observable**: Generates audit reports for every iteration
 - **Bounded**: Max-iterations prevents runaway execution
 
-**Parallelization**: Currently validates and fixes sequentially. The `max-parallelization` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents, CLAUDE.md) could run concurrently.
+**Concurrency**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents, CLAUDE.md) could run concurrently.
 
 This workflow ensures repository consistency through iterative validation and fixing, making it ideal for maintenance and quality assurance.
 

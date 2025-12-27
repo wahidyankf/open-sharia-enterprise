@@ -8,10 +8,10 @@ inputs:
     description: Content to validate (e.g., "all", "ayokoding-web/content/en/", "specific-file.md")
     required: false
     default: all
-  - name: strictness
+  - name: mode
     type: enum
-    values: [normal, strict, very-strict]
-    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    values: [lax, normal, strict, ultra]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
     required: false
     default: normal
   - name: min-iterations
@@ -22,9 +22,9 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
-  - name: max-parallelization
+  - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    description: Maximum number of agents/tasks that can run concurrently during workflow execution
     required: false
     default: 2
 outputs:
@@ -96,7 +96,7 @@ Run all ayokoding validators concurrently to identify all issues across differen
 
 **Notes**:
 
-- All checkers run in parallel for efficiency (max parallelization: {input.max-parallelization})
+- All checkers run in parallel for efficiency (max concurrency: {input.max-concurrency})
 - Default parallelization: 2 concurrent agents, can be increased for faster validation
 - Recommend setting to 4 for this workflow (matches number of checkers)
 - Each generates independent audit report in `generated-reports/`
@@ -106,17 +106,19 @@ Run all ayokoding validators concurrently to identify all issues across differen
 
 Analyze all audit reports to determine if fixes are needed.
 
-**Condition Check**: Count findings based on strictness level across all four reports
+**Condition Check**: Count findings based on mode level across all four reports
 
-- **normal**: Count CRITICAL + HIGH only (aggregate across all 4 validators)
+- **lax**: Count CRITICAL only (aggregate across all 4 validators)
+- **normal**: Count CRITICAL + HIGH (aggregate across all 4 validators)
 - **strict**: Count CRITICAL + HIGH + MEDIUM (aggregate across all 4 validators)
-- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW) (aggregate across all 4 validators)
+- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW) (aggregate across all 4 validators)
 
 **Below-threshold findings**: Report but don't block success
 
+- **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **very-strict**: All findings counted
+- **ultra**: All findings counted
 
 **Decision**:
 
@@ -128,7 +130,7 @@ Analyze all audit reports to determine if fixes are needed.
 **Notes**:
 
 - Aggregates findings across all four validation dimensions (content, facts, structure, links)
-- Fix scope determined by strictness level
+- Fix scope determined by mode level
 - Below-threshold findings remain visible in audit reports
 - Enables progressive quality improvement
 
@@ -138,7 +140,7 @@ Fix Hugo convention violations, frontmatter issues, and content quality problems
 
 **Agent**: `apps__ayokoding-web__general-fixer`
 
-- **Args**: `report: {step1.outputs.content-report-N}, approved: all, strictness: {input.strictness}`
+- **Args**: `report: {step1.outputs.content-report-N}, approved: all, mode: {input.mode}`
 - **Output**: `{content-fixes-applied}`
 - **Condition**: Content findings exist from step 2
 - **Depends on**: Step 2 completion
@@ -149,10 +151,11 @@ Fix Hugo convention violations, frontmatter issues, and content quality problems
 
 **Notes**:
 
-- **Fix scope based on strictness**:
-  - **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
+- **Fix scope based on mode**:
+  - **lax**: Fix CRITICAL only (skip HIGH/MEDIUM/LOW)
+  - **normal**: Fix CRITICAL + HIGH (skip MEDIUM/LOW)
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-  - **very-strict**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Below-threshold findings remain untouched
 
 ### 4. Apply Facts Fixes (Sequential, Conditional)
@@ -161,7 +164,7 @@ Fix factual errors, outdated information, and incorrect code examples.
 
 **Agent**: `apps__ayokoding-web__facts-fixer`
 
-- **Args**: `report: {step1.outputs.facts-report-N}, approved: all, strictness: {input.strictness}`
+- **Args**: `report: {step1.outputs.facts-report-N}, approved: all, mode: {input.mode}`
 - **Output**: `{facts-fixes-applied}`
 - **Condition**: Facts findings exist from step 2
 - **Depends on**: Step 3 completion
@@ -175,7 +178,7 @@ Fix factual errors, outdated information, and incorrect code examples.
 - Uses web verification to ensure accuracy
 - Re-validates findings before applying
 - Preserves educational content intent
-- Fix scope respects strictness level (same as step 3)
+- Fix scope respects mode level (same as step 3)
 
 ### 5. Apply Structure Fixes (Sequential, Conditional)
 
@@ -183,7 +186,7 @@ Fix weight ordering, navigation structure, and coverage issues.
 
 **Agent**: `apps__ayokoding-web__structure-fixer`
 
-- **Args**: `report: {step1.outputs.structure-report-N}, approved: all, strictness: {input.strictness}`
+- **Args**: `report: {step1.outputs.structure-report-N}, approved: all, mode: {input.mode}`
 - **Output**: `{structure-fixes-applied}`
 - **Condition**: Structure findings exist from step 2
 - **Depends on**: Step 4 completion
@@ -197,7 +200,7 @@ Fix weight ordering, navigation structure, and coverage issues.
 - Adjusts weights to maintain proper ordering
 - Fixes navigation structure issues
 - Does NOT regenerate navigation (that happens in step 8)
-- Fix scope respects strictness level (same as step 3)
+- Fix scope respects mode level (same as step 3)
 
 ### 6. Iteration Control (Sequential)
 
@@ -205,11 +208,12 @@ Determine whether to continue fixing or move to finalization.
 
 **Logic**:
 
-- Re-run all checkers (step 1) to get fresh reports (respects max-parallelization limit)
-- Count findings based on strictness level across all new reports (same as Step 2):
+- Re-run all checkers (step 1) to get fresh reports (respects max-concurrency limit)
+- Count findings based on mode level across all new reports (same as Step 2):
+  - **lax**: Count CRITICAL only (aggregate across all 4 validators)
   - **normal**: Count CRITICAL + HIGH (aggregate across all 4 validators)
   - **strict**: Count CRITICAL + HIGH + MEDIUM (aggregate across all 4 validators)
-  - **very-strict**: Count all levels (aggregate across all 4 validators)
+  - **ultra**: Count all levels (aggregate across all 4 validators)
 - If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 7 (Finalization)
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 7 with status `partial`
@@ -289,7 +293,7 @@ Run all checkers one final time to confirm zero issues remain.
 
 **Depends on**: Step 8 completion
 
-**Notes**: Parallelization controlled by max-parallelization parameter (default: 2, recommend: 4 for this workflow).
+**Notes**: Concurrency controlled by max-concurrency parameter (default: 2, recommend: 4 for this workflow).
 
 ### 10. Finalization (Sequential)
 
@@ -309,9 +313,10 @@ Report final status and summary.
 
 **Success** (`pass`):
 
+- **lax**: Zero CRITICAL findings across all validators (HIGH/MEDIUM/LOW may exist)
 - **normal**: Zero CRITICAL/HIGH findings across all validators (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings across all validators (LOW may exist)
-- **very-strict**: Zero findings at all levels across all validators
+- **ultra**: Zero findings at all levels across all validators
 
 **Partial** (`partial`):
 
@@ -333,36 +338,36 @@ Report final status and summary.
 workflow run ayokoding-web-general-quality-gate
 
 # Equivalent explicit form
-workflow run ayokoding-web-general-quality-gate --strictness=normal
+workflow run ayokoding-web-general-quality-gate --mode=normal
 ```
 
 ### Pre-Deployment Validation (Strict)
 
 ```bash
 # Fixes CRITICAL/HIGH/MEDIUM, reports LOW
-workflow run ayokoding-web-general-quality-gate --strictness=strict
+workflow run ayokoding-web-general-quality-gate --mode=strict
 
 # Success criteria: Zero CRITICAL/HIGH/MEDIUM findings across all 4 validators
 # LOW findings reported but don't block
 ```
 
-### Comprehensive Audit (Very Strict)
+### Comprehensive Audit (Ultra)
 
 ```bash
 # Fixes all levels, zero tolerance
-workflow run ayokoding-web-general-quality-gate --strictness=very-strict
+workflow run ayokoding-web-general-quality-gate --mode=ultra
 
 # Success criteria: Zero findings at all levels across all 4 validators
-# Equivalent to pre-strictness parameter behavior
+# Equivalent to pre-mode parameter behavior
 ```
 
 ### Validate Specific Language
 
 ```bash
-# Validate only English content with normal strictness
+# Validate only English content with normal mode
 workflow run ayokoding-web-general-quality-gate \
   --scope=ayokoding-web/content/en/ \
-  --strictness=normal
+  --mode=normal
 ```
 
 ### Validate Specific Section
@@ -371,7 +376,7 @@ workflow run ayokoding-web-general-quality-gate \
 # Validate only programming section with strict mode
 workflow run ayokoding-web-general-quality-gate \
   --scope=ayokoding-web/content/en/programming/ \
-  --strictness=strict
+  --mode=strict
 ```
 
 ### With Iteration Bounds
@@ -379,7 +384,7 @@ workflow run ayokoding-web-general-quality-gate \
 ```bash
 # Require at least 2 iterations, cap at 10 maximum
 workflow run ayokoding-web-general-quality-gate \
-  --strictness=normal \
+  --mode=normal \
   --min-iterations=2 \
   --max-iterations=10
 ```
@@ -389,25 +394,25 @@ workflow run ayokoding-web-general-quality-gate \
 ```bash
 # Pre-deployment check with iteration bounds
 workflow run ayokoding-web-general-quality-gate \
-  --strictness=strict \
+  --mode=strict \
   --max-iterations=10
 ```
 
-### Fast Validation with Increased Parallelization
+### Fast Validation with Increased Concurrency
 
 ```bash
-# Run all 4 checkers in parallel for faster validation
+# Run all 4 checkers concurrently for faster validation
 workflow run ayokoding-web-general-quality-gate \
-  --max-parallelization=4
+  --max-concurrency=4
 
-# Pre-deployment with strict mode and full parallelization
+# Pre-deployment with strict mode and full concurrency
 workflow run ayokoding-web-general-quality-gate \
-  --strictness=strict \
-  --max-parallelization=4
+  --mode=strict \
+  --max-concurrency=4
 
-# Conservative parallelization for resource-limited environments
+# Conservative concurrency for resource-limited environments
 workflow run ayokoding-web-general-quality-gate \
-  --max-parallelization=1  # Sequential execution
+  --max-concurrency=1  # Sequential execution
 ```
 
 ## Iteration Example

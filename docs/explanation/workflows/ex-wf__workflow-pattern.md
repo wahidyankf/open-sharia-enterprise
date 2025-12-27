@@ -85,7 +85,7 @@ inputs:
     description: What this input is for
     required: true | false
     default: value (if not required)
-  - name: max-parallelization
+  - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run in parallel
     required: false
@@ -226,7 +226,7 @@ Only runs if user approved fixes in step 2.
 
 **Parallelization Control**:
 
-The `max-parallelization` input parameter controls concurrent execution:
+The `max-concurrency` input parameter controls concurrent execution:
 
 - **Default: 2** - Conservative, suitable for most workflows
 - **Increase** - Faster execution on capable systems (e.g., 4-8 for multi-validator workflows)
@@ -415,15 +415,15 @@ All \*-check-fix workflows follow this pattern:
 
 ```yaml
 inputs:
-  - name: strictness
+  - name: mode
     type: enum
-    values: [normal, strict, very-strict]
-    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    values: [lax, normal, strict, ultra]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
     required: false
     default: normal
-  - name: max-parallelization
+  - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    description: Maximum number of agents/tasks that can run concurrently during workflow execution
     required: false
     default: 2
   - name: min-iterations
@@ -460,17 +460,17 @@ outputs:
 **Step 2: Check for Findings**
 
 ```markdown
-**Condition**: Count findings based on strictness level
+**Condition**: Count findings based on mode level
 
 - **normal**: Count CRITICAL + HIGH only
 - **strict**: Count CRITICAL + HIGH + MEDIUM
-- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **Below-threshold findings**: Report but don't block success
 
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **very-strict**: All findings counted
+- **ultra**: All findings counted
 
 **Decision**:
 
@@ -483,11 +483,11 @@ outputs:
 ```markdown
 **Agent**: `{domain}-fixer`
 
-- **Args**: `report: {audit-report}, approved: all, strictness: {input.strictness}`
-- **Fix scope based on strictness**:
+- **Args**: `report: {audit-report}, approved: all, mode: {input.mode}`
+- **Fix scope based on mode**:
   - **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-  - **very-strict**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Re-validate before applying each fix
 - Apply HIGH confidence fixes automatically within scope
 - Flag MEDIUM confidence for manual review
@@ -507,10 +507,10 @@ outputs:
 ```markdown
 **Logic**:
 
-- Count findings based on strictness level (same as Step 2):
+- Count findings based on mode level (same as Step 2):
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **very-strict**: Count all levels
+  - **ultra**: Count all levels
 - If threshold-level findings = 0 AND iterations >= min-iterations: Success
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back
 - If threshold-level findings > 0 AND iterations >= max-iterations: Partial
@@ -521,13 +521,13 @@ outputs:
 
 ### Termination Criteria (Mandatory)
 
-All \*-check-fix workflows MUST use termination criteria based on strictness level:
+All \*-check-fix workflows MUST use termination criteria based on mode level:
 
 **Success** (`pass`):
 
 - **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **very-strict**: Zero findings at all levels
+- **ultra**: Zero findings at all levels
 
 **Partial** (`partial`):
 
@@ -555,13 +555,23 @@ All \*-check-fix workflows MUST use termination criteria based on strictness lev
 
 ### Strictness Parameter Usage
 
-The `strictness` parameter controls which criticality levels must reach zero for workflow success.
+The `mode` parameter controls which criticality levels must reach zero for workflow success.
+
+**Lax Mode** (minimal validation):
+
+```bash
+# Fixes CRITICAL only, reports HIGH/MEDIUM/LOW
+workflow run content-validation --mode=lax
+
+# Success criteria: Zero CRITICAL findings
+# HIGH/MEDIUM/LOW findings reported but don't block
+```
 
 **Normal Mode** (default - everyday validation):
 
 ```bash
-# Fixes CRITICAL/HIGH only, reports MEDIUM/LOW
-workflow run content-validation --strictness=normal
+# Fixes CRITICAL/HIGH, reports MEDIUM/LOW
+workflow run content-validation --mode=normal
 
 # Success criteria: Zero CRITICAL/HIGH findings
 # MEDIUM/LOW findings reported but don't block
@@ -571,20 +581,20 @@ workflow run content-validation --strictness=normal
 
 ```bash
 # Fixes CRITICAL/HIGH/MEDIUM, reports LOW
-workflow run content-validation --strictness=strict
+workflow run content-validation --mode=strict
 
 # Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
 # LOW findings reported but don't block
 ```
 
-**Very Strict Mode** (comprehensive audit):
+**Ultra Mode** (comprehensive audit):
 
 ```bash
 # Fixes all levels, zero tolerance
-workflow run content-validation --strictness=very-strict
+workflow run content-validation --mode=ultra
 
 # Success criteria: Zero findings at all levels
-# Equivalent to pre-strictness parameter behavior
+# Equivalent to pre-mode parameter behavior
 ```
 
 **Combined with iteration bounds**:
@@ -592,15 +602,15 @@ workflow run content-validation --strictness=very-strict
 ```bash
 # Strict mode with iteration limits
 workflow run content-validation \
-  --strictness=strict \
+  --mode=strict \
   --min-iterations=2 \
   --max-iterations=10
 ```
 
-**Migration from pre-strictness workflows**:
+**Migration from pre-mode workflows**:
 
-- Old behavior (implicit very-strict): Add `--strictness=very-strict`
-- New default (normal): Omit strictness parameter or use `--strictness=normal`
+- Old behavior (implicit ultra): Add `--mode=ultra`
+- New default (normal): Omit mode parameter or use `--mode=normal`
 
 ### Example Implementation
 
