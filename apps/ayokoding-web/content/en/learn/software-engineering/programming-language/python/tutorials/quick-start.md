@@ -20,6 +20,7 @@ For comprehensive coverage and hands-on practice, see the [Complete Beginner's G
 This Quick Start gives you exposure to Python's core concepts in order of importance:
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph TB
     A[Variables & Types] --> B[Control Flow]
     B --> C[Functions]

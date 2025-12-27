@@ -10,6 +10,7 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/rust/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/rust/tutorials)
+  - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/overview)
   - [By Concept](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept)
   - [Initial Setup](/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/rust/tutorials/quick-start)
