@@ -15,7 +15,7 @@ This tutorial covers **60-85%** of Elixir knowledge - production-grade OTP and w
 
 ## Prerequisites
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/beginner) complete
+- [Beginner Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/beginner) complete
 - Strong understanding of processes and message passing
 - Familiarity with pattern matching and functional programming
 - Comfortable with recursion and immutability
@@ -1820,12 +1820,12 @@ end
 
 **Previous Tutorials:**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/beginner) - Elixir fundamentals
+- [Beginner Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/beginner) - Elixir fundamentals
 - [Quick Start](/en/learn/software-engineering/programming-language/elixir/tutorials/quick-start) - Core concepts
 
 **Next Steps:**
 
-- [Advanced Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/advanced) - Expert topics
+- [Advanced Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/advanced) - Expert topics
 
 **How-To Guides:**
 
@@ -1859,7 +1859,7 @@ end
 
 **Continue Learning**:
 
-- [Advanced Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/advanced) - BEAM VM, distributed systems, metaprogramming
+- [Advanced Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/advanced) - BEAM VM, distributed systems, metaprogramming
 - [How-To Guides](/en/learn/software-engineering/programming-language/elixir/how-to) - Practical patterns and solutions
 - [Cookbook](/en/learn/software-engineering/programming-language/elixir/how-to/cookbook) - Ready-to-use recipes
 

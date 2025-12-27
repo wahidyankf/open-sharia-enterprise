@@ -1773,7 +1773,7 @@ fun main() {
 
 ### Continue Your Kotlin Journey
 
-1. **[Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/intermediate)** - Production patterns: advanced coroutines, design patterns, databases, REST APIs, performance optimization
+1. **[Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/intermediate)** - Production patterns: advanced coroutines, design patterns, databases, REST APIs, performance optimization
 
 2. **[Kotlin How-To Guides](/en/learn/software-engineering/programming-language/kotlin/how-to/)** - Problem-solving guides for specific tasks like null safety patterns, coroutines, data classes, Java migration
 
@@ -1819,7 +1819,7 @@ You've now mastered Kotlin fundamentals:
 
 Continue your Kotlin journey with these resources:
 
-- **[Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/intermediate)** - Master production patterns and advanced topics
+- **[Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/intermediate)** - Master production patterns and advanced topics
 - **[Kotlin Cookbook](/en/learn/software-engineering/programming-language/kotlin/how-to/cookbook)** - Ready-to-use code recipes for common tasks
 - **[Kotlin Best Practices](/en/learn/software-engineering/programming-language/kotlin/explanation/best-practices)** - Professional coding standards
 - **[Kotlin Anti-Patterns](/en/learn/software-engineering/programming-language/kotlin/explanation/anti-patterns)** - Common mistakes and how to avoid them

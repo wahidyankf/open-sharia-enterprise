@@ -40,7 +40,7 @@ description: Choose your Java learning path - 5 tutorial levels from 0% to 95% k
 
 ### Level 3: Beginner (0-60%)
 
-[Complete Beginner's Guide to Java](/en/learn/software-engineering/programming-language/java/tutorials/beginner)
+[Complete Beginner's Guide to Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/beginner)
 
 **Coverage**: 0-60% of Java knowledge
 
@@ -54,7 +54,7 @@ description: Choose your Java learning path - 5 tutorial levels from 0% to 95% k
 
 ### Level 4: Intermediate (60-85%)
 
-[Intermediate Java](/en/learn/software-engineering/programming-language/java/tutorials/intermediate)
+[Intermediate Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/intermediate)
 
 **Coverage**: 60-85% of Java knowledge
 
@@ -68,7 +68,7 @@ description: Choose your Java learning path - 5 tutorial levels from 0% to 95% k
 
 ### Level 5: Advanced (85-95%)
 
-[Advanced Java](/en/learn/software-engineering/programming-language/java/tutorials/advanced)
+[Advanced Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/advanced)
 
 **Coverage**: 85-95% of Java knowledge
 

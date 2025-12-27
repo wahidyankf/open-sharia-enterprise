@@ -63,7 +63,7 @@ Complete foundation in Elixir fundamentals.
 
 **Prerequisites:** None (comprehensive from basics)
 
-[Study Beginner Tutorial →](/en/learn/software-engineering/programming-language/elixir/tutorials/beginner)
+[Study Beginner Tutorial →](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/beginner)
 
 ### Intermediate Tutorial (60-85% Coverage)
 
@@ -82,7 +82,7 @@ Production-ready skills with OTP and Phoenix.
 
 **Prerequisites:** Beginner tutorial or equivalent experience
 
-[Advance to Intermediate →](/en/learn/software-engineering/programming-language/elixir/tutorials/intermediate)
+[Advance to Intermediate →](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/intermediate)
 
 ### Advanced Tutorial (85-95% Coverage)
 
@@ -101,7 +101,7 @@ Expert-level optimization and distributed systems.
 
 **Prerequisites:** Intermediate tutorial mastery
 
-[Master Advanced Topics →](/en/learn/software-engineering/programming-language/elixir/tutorials/advanced)
+[Master Advanced Topics →](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/advanced)
 
 ## Learning Path Visualization
 

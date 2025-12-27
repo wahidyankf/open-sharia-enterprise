@@ -1085,12 +1085,12 @@ public class Config {
 
 **Previous Tutorials:**
 
-- [Beginner Java](/en/learn/software-engineering/programming-language/java/tutorials/beginner) - Java fundamentals and OOP
+- [Beginner Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/beginner) - Java fundamentals and OOP
 - [Quick Start](/en/learn/software-engineering/programming-language/java/tutorials/quick-start) - Quick overview
 
 **Next Steps:**
 
-- [Advanced Java](/en/learn/software-engineering/programming-language/java/tutorials/advanced) - JVM internals and expert topics
+- [Advanced Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/advanced) - JVM internals and expert topics
 
 **How-To Guides:**
 

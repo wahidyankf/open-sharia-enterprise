@@ -33,7 +33,7 @@ This Beginner tutorial teaches **comprehensive Python fundamentals** - everythin
 - Practical exercises at 4 difficulty levels
 - Common patterns and troubleshooting
 
-**After this Beginner tutorial**, check out the [Python Cookbook](/en/learn/software-engineering/programming-language/python/how-to/cookbook) and [How-To Guides](/en/learn/software-engineering/programming-language/python/how-to/overview) for practical patterns and real-world problem solving, or progress to the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/intermediate) for production-level techniques.
+**After this Beginner tutorial**, check out the [Python Cookbook](/en/learn/software-engineering/programming-language/python/how-to/cookbook) and [How-To Guides](/en/learn/software-engineering/programming-language/python/how-to/overview) for practical patterns and real-world problem solving, or progress to the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate) for production-level techniques.
 
 ## 📋 Prerequisites
 
@@ -67,7 +67,7 @@ graph TB
     style Advanced fill:#CC78BC
 ```
 
-This tutorial provides **0-60% coverage** of Python knowledge, giving you a solid foundation to build real applications and progress to [Intermediate](/en/learn/software-engineering/programming-language/python/tutorials/intermediate) and [Advanced](/en/learn/software-engineering/programming-language/python/tutorials/advanced) topics.
+This tutorial provides **0-60% coverage** of Python knowledge, giving you a solid foundation to build real applications and progress to [Intermediate](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate) and [Advanced](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/advanced) topics.
 
 ## 🚀 Why Python?
 
@@ -479,7 +479,7 @@ Before moving forward, ensure you can:
 
 ## 🎭 Object-Oriented Programming
 
-Object-oriented programming is central to Python. For deeper coverage, see the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/intermediate) for decorators, metaclasses, and design patterns, or check [Work with classes effectively](/en/learn/software-engineering/programming-language/python/how-to/work-with-classes-effectively) for practical patterns.
+Object-oriented programming is central to Python. For deeper coverage, see the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate) for decorators, metaclasses, and design patterns, or check [Work with classes effectively](/en/learn/software-engineering/programming-language/python/how-to/work-with-classes-effectively) for practical patterns.
 
 ### Classes and Objects
 
@@ -920,7 +920,7 @@ pip freeze > requirements.txt
 
 ## 🧪 Testing Basics
 
-Testing is essential for reliable software. For comprehensive testing strategies, see [Write effective tests](/en/learn/software-engineering/programming-language/python/how-to/write-effective-tests) and the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/intermediate).
+Testing is essential for reliable software. For comprehensive testing strategies, see [Write effective tests](/en/learn/software-engineering/programming-language/python/how-to/write-effective-tests) and the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate).
 
 ### Writing Tests with pytest
 
@@ -1089,7 +1089,7 @@ Congratulations! You've completed the Python Beginner tutorial. You've learned:
 
 ## 📚 What's Next?
 
-**Intermediate Tutorial**: [Python Intermediate](/en/learn/software-engineering/programming-language/python/tutorials/intermediate)
+**Intermediate Tutorial**: [Python Intermediate](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate)
 
 - Advanced OOP (decorators, metaclasses, descriptors)
 - Concurrency and parallelism (threading, multiprocessing, asyncio)
@@ -1110,7 +1110,7 @@ Congratulations! You've completed the Python Beginner tutorial. You've learned:
 - Best practices and patterns
 - Deep dives into Python features
 
-**Advanced Tutorial**: [Python Advanced](/en/learn/software-engineering/programming-language/python/tutorials/advanced)
+**Advanced Tutorial**: [Python Advanced](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/advanced)
 
 - Python internals (GIL, memory management)
 - Advanced metaprogramming

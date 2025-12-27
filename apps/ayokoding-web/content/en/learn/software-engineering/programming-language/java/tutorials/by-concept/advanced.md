@@ -777,8 +777,8 @@ Create a cache that:
 
 **Previous Tutorials:**
 
-- [Intermediate Java](/en/learn/software-engineering/programming-language/java/tutorials/intermediate) - Design patterns and production techniques
-- [Beginner Java](/en/learn/software-engineering/programming-language/java/tutorials/beginner) - Foundational concepts
+- [Intermediate Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/intermediate) - Design patterns and production techniques
+- [Beginner Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/beginner) - Foundational concepts
 
 **How-To Guides:**
 

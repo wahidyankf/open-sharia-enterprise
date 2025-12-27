@@ -183,6 +183,8 @@ Three specialized documents:
 
 Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/ex-co__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).
 
+**Tutorial Structure**: All languages use [dual-path organization](./docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md) - by-concept (narrative-driven) and optional by-example (code-first, 75-90 annotated examples for experienced developers). Foundational tutorials (Initial Setup, Quick Start) at root level.
+
 ### README Quality Convention
 
 All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language (no jargon), acronym context, paragraph limits (≤5 lines), benefits-focused language. See [README Quality Convention](./docs/explanation/conventions/ex-co__readme-quality.md) for complete standards.

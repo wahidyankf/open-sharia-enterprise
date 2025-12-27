@@ -17,7 +17,7 @@ tags:
 
 **Achieve Python mastery.** This tutorial dives deep into Python's internals, advanced optimization techniques, sophisticated patterns, and system design. You'll understand how Python works under the hood and when to push its boundaries.
 
-**Prerequisites**: Complete the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/intermediate) or have professional Python experience. Review the [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/beginner) if you need to refresh fundamentals.
+**Prerequisites**: Complete the [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate) or have professional Python experience. Review the [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/beginner) if you need to refresh fundamentals.
 
 ## 🎯 Learning Objectives
 
@@ -768,8 +768,8 @@ Congratulations! You've completed the Python Advanced tutorial. You've learned:
 
 **Review Foundation**: If you encounter unfamiliar concepts:
 
-- [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/beginner) - Core Python fundamentals
-- [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/intermediate) - Production patterns
+- [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/beginner) - Core Python fundamentals
+- [Intermediate tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate) - Production patterns
 - [Quick Start](/en/learn/software-engineering/programming-language/python/tutorials/quick-start) - Quick refresher on syntax
 
 ---

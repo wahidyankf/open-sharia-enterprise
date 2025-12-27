@@ -2303,8 +2303,8 @@ end
 
 **Next Steps:**
 
-- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/intermediate) - OTP and Phoenix
-- [Advanced Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/advanced) - Expert topics
+- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/intermediate) - OTP and Phoenix
+- [Advanced Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/advanced) - Expert topics
 
 **How-To Guides:**
 
@@ -2332,7 +2332,7 @@ Congratulations! You've mastered Elixir fundamentals (0-60% coverage).
 
 **Continue your journey:**
 
-1. **[Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/intermediate)** - OTP deep dive (60-85%)
+1. **[Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/intermediate)** - OTP deep dive (60-85%)
    - GenServer patterns
    - Supervision trees
    - Phoenix framework

@@ -41,7 +41,7 @@ tags: ["python", "tutorials", "overview"]
 
 ### Level 3: Beginner (0-60%)
 
-[Complete Beginner's Guide to Python](/en/learn/software-engineering/programming-language/python/tutorials/beginner)
+[Complete Beginner's Guide to Python](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/beginner)
 
 **Coverage**: 0-60% of Python knowledge
 
@@ -55,7 +55,7 @@ tags: ["python", "tutorials", "overview"]
 
 ### Level 4: Intermediate (60-85%)
 
-[Intermediate Python Programming](/en/learn/software-engineering/programming-language/python/tutorials/intermediate)
+[Intermediate Python Programming](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/intermediate)
 
 **Coverage**: 60-85% of Python knowledge
 
@@ -69,7 +69,7 @@ tags: ["python", "tutorials", "overview"]
 
 ### Level 5: Advanced (85-95%)
 
-[Advanced Python Programming](/en/learn/software-engineering/programming-language/python/tutorials/advanced)
+[Advanced Python Programming](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/advanced)
 
 **Coverage**: 85-95% of Python knowledge
 

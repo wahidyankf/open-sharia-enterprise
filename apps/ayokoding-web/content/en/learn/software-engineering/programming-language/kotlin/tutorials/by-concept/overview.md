@@ -66,7 +66,7 @@ Each tutorial level targets a specific **knowledge depth**:
 
 ### Level 3: Beginner (0-60%)
 
-[Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/beginner)
+[Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/beginner)
 
 **Goal**: Build a solid foundation for real applications.
 
@@ -85,7 +85,7 @@ Each tutorial level targets a specific **knowledge depth**:
 
 ### Level 4: Intermediate (60-85%)
 
-[Intermediate](/en/learn/software-engineering/programming-language/kotlin/tutorials/intermediate)
+[Intermediate](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/intermediate)
 
 **Goal**: Build production-grade systems.
 
@@ -104,7 +104,7 @@ Each tutorial level targets a specific **knowledge depth**:
 
 ### Level 5: Advanced (85-95%)
 
-[Advanced](/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced)
+[Advanced](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/advanced)
 
 **Goal**: Achieve expert-level mastery.
 
@@ -121,13 +121,13 @@ Each tutorial level targets a specific **knowledge depth**:
 
 ## Choosing Your Starting Point
 
-| Your Background                          | Start Here                                                                                          |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| **New to programming**                   | [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup) |
-| **Experienced developer, new to Kotlin** | [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start)     |
-| **Want comprehensive foundation**        | [Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/beginner)           |
-| **Building production systems**          | [Intermediate](/en/learn/software-engineering/programming-language/kotlin/tutorials/intermediate)   |
-| **Seeking expert mastery**               | [Advanced](/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced)           |
+| Your Background                          | Start Here                                                                                                   |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **New to programming**                   | [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup)          |
+| **Experienced developer, new to Kotlin** | [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start)              |
+| **Want comprehensive foundation**        | [Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/beginner)         |
+| **Building production systems**          | [Intermediate](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/intermediate) |
+| **Seeking expert mastery**               | [Advanced](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/advanced)         |
 
 ## Tutorial Structure
 
