@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-24
+updated: 2025-12-27
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -249,6 +249,15 @@ content/
 ### Default Language and Mirroring Policy
 
 **CRITICAL RULE**: When creating content for ayokoding-web, the default language is **English ("en")**. Content should be created in English first.
+
+**Bilingual Support Does NOT Mean Automatic Mirroring:**
+
+ayokoding-web is a bilingual website (English and Indonesian), but **content does NOT have to be mirrored between languages**. This means:
+
+- ✅ **Content can exist in English only** (under `/en/`)
+- ✅ **Content can exist in Indonesian only** (under `/id/`)
+- ✅ **Content can exist in both languages** if explicitly created in both
+- ❌ **AI agents should NOT automatically create matching/mirror content** in the other language unless explicitly instructed to do so
 
 **Mirroring Policy**:
 
