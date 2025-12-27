@@ -40,7 +40,7 @@ description: Choose your Rust learning path - 5 tutorial levels from 0% to 95% k
 
 ### Level 3: Beginner (0-60%)
 
-[Complete Beginner's Guide to Rust](/en/learn/software-engineering/programming-language/rust/tutorials/beginner)
+[Complete Beginner's Guide to Rust](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner)
 
 **Coverage**: 0-60% of Rust knowledge
 
@@ -54,7 +54,7 @@ description: Choose your Rust learning path - 5 tutorial levels from 0% to 95% k
 
 ### Level 4: Intermediate (60-85%)
 
-[Intermediate Rust](/en/learn/software-engineering/programming-language/rust/tutorials/intermediate)
+[Intermediate Rust](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate)
 
 **Coverage**: 60-85% of Rust knowledge
 
@@ -68,7 +68,7 @@ description: Choose your Rust learning path - 5 tutorial levels from 0% to 95% k
 
 ### Level 5: Advanced (85-95%)
 
-[Advanced Rust](/en/learn/software-engineering/programming-language/rust/tutorials/advanced)
+[Advanced Rust](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced)
 
 **Coverage**: 85-95% of Rust knowledge
 

@@ -2339,7 +2339,7 @@ Ready to continue?
 
 ### Intermediate Tutorial
 
-**[Intermediate Rust](/en/learn/software-engineering/programming-language/rust/tutorials/intermediate)** covers:
+**[Intermediate Rust](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate)** covers:
 
 - Generics and trait bounds
 - Lifetime annotations deep-dive
@@ -2368,7 +2368,7 @@ Build something to solidify your knowledge:
 - [Rust Cookbook](/en/learn/software-engineering/programming-language/rust/how-to/cookbook) - Ready-to-use code recipes
 - [Rust Best Practices](/en/learn/software-engineering/programming-language/rust/explanation/best-practices) - Professional standards
 - [Rust Cheat Sheet](/en/learn/software-engineering/programming-language/rust/reference/cheat-sheet) - Quick reference
-- [Advanced Rust](/en/learn/software-engineering/programming-language/rust/tutorials/advanced) - Expert topics
+- [Advanced Rust](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced) - Expert topics
 
 ### External Resources
 
@@ -2379,4 +2379,4 @@ Build something to solidify your knowledge:
 
 ---
 
-**You've mastered Rust fundamentals!** Continue to [Intermediate Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/intermediate) for production-ready Rust skills.
+**You've mastered Rust fundamentals!** Continue to [Intermediate Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate) for production-ready Rust skills.

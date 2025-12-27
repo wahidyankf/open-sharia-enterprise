@@ -15,7 +15,7 @@ This tutorial covers **60-85%** of Rust knowledge - production-grade features an
 
 ## Prerequisites
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/beginner) complete
+- [Beginner Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner) complete
 - Strong understanding of ownership, borrowing, and lifetimes
 - Familiarity with structs, enums, and pattern matching
 - Comfortable with Result and error handling
@@ -1338,7 +1338,7 @@ You've completed Intermediate Rust, covering **60-85% of Rust knowledge**!
 
 ### Advanced Tutorial
 
-**[Advanced Rust](/en/learn/software-engineering/programming-language/rust/tutorials/advanced)** covers:
+**[Advanced Rust](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced)** covers:
 
 - Unsafe Rust and FFI
 - Macros (declarative and procedural)
@@ -1355,7 +1355,7 @@ You've completed Intermediate Rust, covering **60-85% of Rust knowledge**!
 - **[Rust Anti-Patterns](/en/learn/software-engineering/programming-language/rust/explanation/anti-patterns)** - Common mistakes to avoid
 - **[Rust Cheat Sheet](/en/learn/software-engineering/programming-language/rust/reference/cheat-sheet)** - Advanced syntax reference
 - **[Rust Glossary](/en/learn/software-engineering/programming-language/rust/reference/glossary)** - Technical terminology
-- **[Complete Beginner's Guide](/en/learn/software-engineering/programming-language/rust/tutorials/beginner)** - Review fundamentals
+- **[Complete Beginner's Guide](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner)** - Review fundamentals
 
 ### Build Projects
 
@@ -1364,4 +1364,4 @@ You've completed Intermediate Rust, covering **60-85% of Rust knowledge**!
 - CLI tool with structured error handling
 - Multi-threaded data processor
 
-**You're ready for production Rust!** Continue to [Advanced Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/advanced) for expert-level mastery.
+**You're ready for production Rust!** Continue to [Advanced Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced) for expert-level mastery.

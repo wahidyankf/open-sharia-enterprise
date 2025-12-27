@@ -38,7 +38,7 @@ By the end of this tutorial, you'll be able to:
 
 ## Prerequisites
 
-- **Completed** [Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/intermediate) - You understand production patterns
+- **Completed** [Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/intermediate) - You understand production patterns
 - **Experience** Building real Kotlin applications
 - **Familiarity** With JVM basics (bytecode, garbage collection)
 
@@ -1115,8 +1115,8 @@ You've achieved expert Kotlin mastery:
 ### Resources
 
 - **Internal Resources**:
-  - [Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/intermediate) - Review production patterns
-  - [Complete Beginner's Guide](/en/learn/software-engineering/programming-language/kotlin/tutorials/beginner) - Refresh fundamentals
+  - [Intermediate Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/intermediate) - Review production patterns
+  - [Complete Beginner's Guide](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/beginner) - Refresh fundamentals
   - [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start) - Quick syntax review
   - [Kotlin Cookbook](/en/learn/software-engineering/programming-language/kotlin/how-to/cookbook) - Advanced recipes
   - [Kotlin Best Practices](/en/learn/software-engineering/programming-language/kotlin/explanation/best-practices) - Expert standards

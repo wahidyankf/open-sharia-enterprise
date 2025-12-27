@@ -40,7 +40,7 @@ description: Choose your Go learning path - 5 tutorial levels from 0% to 95% kno
 
 ### Level 3: Beginner (0-60%)
 
-[Complete Beginner's Guide to Go](/en/learn/software-engineering/programming-language/golang/tutorials/beginner)
+[Complete Beginner's Guide to Go](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept/beginner)
 
 **Coverage**: 0-60% of Go knowledge
 
@@ -54,7 +54,7 @@ description: Choose your Go learning path - 5 tutorial levels from 0% to 95% kno
 
 ### Level 4: Intermediate (60-85%)
 
-[Intermediate Go Programming](/en/learn/software-engineering/programming-language/golang/tutorials/intermediate)
+[Intermediate Go Programming](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept/intermediate)
 
 **Coverage**: 60-85% of Go knowledge
 
@@ -68,7 +68,7 @@ description: Choose your Go learning path - 5 tutorial levels from 0% to 95% kno
 
 ### Level 5: Advanced (85-95%)
 
-[Advanced Go Programming](/en/learn/software-engineering/programming-language/golang/tutorials/advanced)
+[Advanced Go Programming](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept/advanced)
 
 **Coverage**: 85-95% of Go knowledge
 

@@ -38,7 +38,7 @@ By the end of this tutorial, you'll be able to:
 
 ## Prerequisites
 
-- **Completed** [Complete Beginner's Guide to Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/beginner) - You understand fundamentals
+- **Completed** [Complete Beginner's Guide to Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/beginner) - You understand fundamentals
 - **Familiarity with** Basic coroutines concept (from Quick Start or Beginner)
 - **Optional** Experience with backend development helps but isn't required
 
@@ -1417,7 +1417,7 @@ Build a complete REST API for a blog.
 
 ### Continue Your Kotlin Journey
 
-1. **[Advanced Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced)** - Expert mastery: compiler internals, reflection, metaprogramming, advanced performance optimization
+1. **[Advanced Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/advanced)** - Expert mastery: compiler internals, reflection, metaprogramming, advanced performance optimization
 
 2. **[Kotlin How-To Guides](/en/learn/software-engineering/programming-language/kotlin/how-to/)** - Problem-solving guides for specific production tasks
 
@@ -1459,10 +1459,10 @@ You've mastered production Kotlin patterns:
 
 Continue advancing your Kotlin expertise:
 
-- **[Advanced Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/advanced)** - Compiler internals, reflection, metaprogramming
+- **[Advanced Kotlin](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/advanced)** - Compiler internals, reflection, metaprogramming
 - **[Kotlin Cookbook](/en/learn/software-engineering/programming-language/kotlin/how-to/cookbook)** - Advanced code recipes
 - **[Kotlin Best Practices](/en/learn/software-engineering/programming-language/kotlin/explanation/best-practices)** - Production coding standards
-- **[Complete Beginner's Guide](/en/learn/software-engineering/programming-language/kotlin/tutorials/beginner)** - Review fundamentals
+- **[Complete Beginner's Guide](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/beginner)** - Review fundamentals
 - **[Kotlin Glossary](/en/learn/software-engineering/programming-language/kotlin/reference/glossary)** - Technical terminology
 - **[Kotlin Cheat Sheet](/en/learn/software-engineering/programming-language/kotlin/reference/cheat-sheet)** - Quick reference
 

@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-25T20:12:58+07:00"
+lastFullScan: "2025-12-27T10:13:32+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -175,6 +175,14 @@ links:
     usedIn:
       - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
       - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
+
+  - url: https://docs.google.com/presentation/d/1K3ju4rHycwaLd4Knb0FNdFgS6-WTyZKk7SFDkU0TT9s/edit?usp=sharing
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://docs.google.com/presentation/d/1K3ju4rHycwaLd4Knb0FNdFgS6-WTyZKk7SFDkU0TT9s/edit?usp=sharing
+    redirectChain: null
+    usedIn:
+      - content/id/konten-video/cerita-programmer/cerita-programmer-0000021-update-november-2023.md
 
   - url: https://docs.gradle.org/current/userguide/kotlin_dsl.html
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -444,6 +452,15 @@ links:
       - content/en/learn/software-engineering/programming-language/rust/tutorials/beginner.md
       - content/en/learn/software-engineering/programming-language/rust/tutorials/quick-start.md
 
+  - url: https://github.com/wahidyankf/open-sharia-enterprise
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://github.com/wahidyankf/open-sharia-enterprise
+    redirectChain: null
+    usedIn:
+      - content/en/about-ayokoding.md
+      - content/id/tentang-ayokoding.md
+
   - url: https://github.com/watchexec/cargo-watch
     lastChecked: "2025-12-19T08:37:57+07:00"
     statusCode: 200
@@ -649,6 +666,100 @@ links:
     usedIn:
       - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
+  - url: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/06/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/06/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=Ionide.Ionide-fsharp
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=Ionide.Ionide-fsharp
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/06/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/programming-language/elixir/reference/resources.md
+      - content/en/learn/software-engineering/programming-language/elixir/tutorials/initial-setup.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/06/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/06/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/06/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/06/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=golang.go
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=golang.go
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/programming-language/golang/reference/resources.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=mathiasfrohlich.Kotlin
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=mathiasfrohlich.Kotlin
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=ms-python.python
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=ms-python.python
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/programming-language/python/reference/resources.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/06/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/06/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=ryuta46.multi-command
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=ryuta46.multi-command
+    redirectChain: null
+    usedIn:
+      - content/en/rants/2023/06/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
+      - content/id/celoteh/2023/06/menyiapkan-c-typescript-f-dan-dart-untuk-pengembangan-lokal-dalam-vs-code-pengalaman-liburan-saya.md
+
+  - url: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/programming-language/java/reference/resources.md
+
   - url: https://maven.apache.org/
     lastChecked: "2025-12-18T17:25:25+07:00"
     statusCode: 200
@@ -657,6 +768,14 @@ links:
     usedIn:
       - content/en/learn/software-engineering/programming-language/java/reference/resources.md
       - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+
+  - url: https://medium.com/ayokoding
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 403
+    finalUrl: https://medium.com/ayokoding
+    redirectChain: null
+    usedIn:
+      - content/id/konten-video/cerita-programmer/cerita-programmer-0000021-update-november-2023.md
 
   - url: https://mockk.io/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -829,6 +948,14 @@ links:
     redirectChain: null
     usedIn:
       - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+
+  - url: https://www.ayokoding.com/
+    lastChecked: "2025-12-27T10:13:32+07:00"
+    statusCode: 200
+    finalUrl: https://www.ayokoding.com/
+    redirectChain: null
+    usedIn:
+      - content/id/konten-video/cerita-programmer/cerita-programmer-0000021-update-november-2023.md
 
   - url: https://www.cdc.gov/physical-activity-basics/guidelines/adults.html
     lastChecked: "2025-12-11T18:45:00+07:00"

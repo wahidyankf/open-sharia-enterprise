@@ -6,12 +6,13 @@ weight: 100002
 description: Step-by-step learning path from installation to expert Go mastery
 ---
 
-- [Overview](/en/learn/software-engineering/programming-language/golang/tutorials/overview)
+- [By Concept](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept)
+  - [Overview](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept/overview)
+  - [Beginner](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept/advanced)
 - [Initial Setup](/en/learn/software-engineering/programming-language/golang/tutorials/initial-setup)
 - [Quick Start](/en/learn/software-engineering/programming-language/golang/tutorials/quick-start)
-- [Beginner](/en/learn/software-engineering/programming-language/golang/tutorials/beginner)
-- [Intermediate](/en/learn/software-engineering/programming-language/golang/tutorials/intermediate)
-- [Advanced](/en/learn/software-engineering/programming-language/golang/tutorials/advanced)
 - [By Example](/en/learn/software-engineering/programming-language/golang/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-language/golang/tutorials/by-example/beginner)

@@ -1557,8 +1557,8 @@ Congratulations! You've mastered Java fundamentals (0-60% coverage).
 
 **Next Steps:**
 
-- [Intermediate Java](/en/learn/software-engineering/programming-language/java/tutorials/intermediate) - Design patterns and concurrency
-- [Advanced Java](/en/learn/software-engineering/programming-language/java/tutorials/advanced) - JVM internals and advanced topics
+- [Intermediate Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/intermediate) - Design patterns and concurrency
+- [Advanced Java](/en/learn/software-engineering/programming-language/java/tutorials/by-concept/advanced) - JVM internals and advanced topics
 
 **How-To Guides:**
 

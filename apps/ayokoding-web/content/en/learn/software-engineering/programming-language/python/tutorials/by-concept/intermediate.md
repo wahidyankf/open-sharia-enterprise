@@ -16,7 +16,7 @@ tags:
 
 **Ready to build production-grade systems?** This tutorial teaches professional Python techniques used in companies like Instagram, Spotify, and Dropbox. You'll learn advanced OOP patterns, concurrency with asyncio, testing strategies, and deployment practices.
 
-**Prerequisites**: Complete the [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/beginner) or have equivalent Python experience. For even deeper expertise, progress to the [Advanced tutorial](/en/learn/software-engineering/programming-language/python/tutorials/advanced).
+**Prerequisites**: Complete the [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/beginner) or have equivalent Python experience. For even deeper expertise, progress to the [Advanced tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/advanced).
 
 ## 🎯 Learning Objectives
 
@@ -80,7 +80,7 @@ graph TB
     style H fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-This tutorial covers techniques for building each layer and implementing cross-cutting concerns professionally. For foundational concepts, review the [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/beginner).
+This tutorial covers techniques for building each layer and implementing cross-cutting concerns professionally. For foundational concepts, review the [Beginner tutorial](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/beginner).
 
 ---
 
@@ -903,7 +903,7 @@ Congratulations! You've completed the Python Intermediate tutorial. You've learn
 
 ## 📚 What's Next?
 
-**Advanced Tutorial**: [Python Advanced](/en/learn/software-engineering/programming-language/python/tutorials/advanced)
+**Advanced Tutorial**: [Python Advanced](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/advanced)
 
 - Python internals (GIL, memory management, bytecode)
 - Advanced metaprogramming and AST manipulation

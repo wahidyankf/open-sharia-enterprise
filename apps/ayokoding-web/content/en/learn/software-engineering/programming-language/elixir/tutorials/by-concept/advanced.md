@@ -16,7 +16,7 @@ This tutorial covers **85-95%** of Elixir knowledge - master-level topics for di
 
 ## Prerequisites
 
-- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/intermediate) complete
+- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/intermediate) complete
 - Strong understanding of OTP (GenServer, Supervisor, Application)
 - Experience building Phoenix applications
 - Proficiency with Ecto and testing
@@ -1422,8 +1422,8 @@ Logger.info("User action",
 
 **Previous Tutorials:**
 
-- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/intermediate) - OTP and Phoenix
-- [Beginner Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/beginner) - Fundamentals
+- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/intermediate) - OTP and Phoenix
+- [Beginner Tutorial](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/beginner) - Fundamentals
 
 **How-To Guides:**
 

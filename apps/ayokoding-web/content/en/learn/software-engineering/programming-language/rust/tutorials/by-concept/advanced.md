@@ -15,7 +15,7 @@ This tutorial covers **85-95%** of Rust knowledge - expert-level topics for spec
 
 ## Prerequisites
 
-- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/intermediate) complete
+- [Intermediate Tutorial](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate) complete
 - Strong understanding of lifetimes, traits, and smart pointers
 - Experience with concurrent and async Rust
 - Production Rust project experience recommended
@@ -1188,8 +1188,8 @@ Explore domain-specific Rust:
 
 ### Internal Resources
 
-- [Intermediate Rust](/en/learn/software-engineering/programming-language/rust/tutorials/intermediate) - Review production patterns
-- [Complete Beginner's Guide](/en/learn/software-engineering/programming-language/rust/tutorials/beginner) - Refresh fundamentals
+- [Intermediate Rust](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate) - Review production patterns
+- [Complete Beginner's Guide](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner) - Refresh fundamentals
 - [Quick Start](/en/learn/software-engineering/programming-language/rust/tutorials/quick-start) - Quick syntax review
 - [Rust Best Practices](/en/learn/software-engineering/programming-language/rust/explanation/best-practices) - Expert standards
 - [Rust Anti-Patterns](/en/learn/software-engineering/programming-language/rust/explanation/anti-patterns) - Advanced pitfalls

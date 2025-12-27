@@ -14,8 +14,6 @@ breadcrumbs: false
 - [Belajar](/id/belajar)
   - [Ikhtisar](/id/belajar/ikhtisar)
   - [Manusia](/id/belajar/manusia)
-  - [Rekayasa Perangkat Lunak](/id/belajar/rekayasa-perangkat-lunak)
-  - [Keamanan Informasi](/id/belajar/keamanan-informasi)
   - [Perkenalan](/id/belajar/perkenalan)
 - [Celoteh](/id/celoteh)
   - [2023](/id/celoteh/2023)
