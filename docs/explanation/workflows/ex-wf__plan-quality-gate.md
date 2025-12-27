@@ -8,6 +8,12 @@ inputs:
     description: Plan files to validate (e.g., "all", "plans/in-progress/", "specific-plan.md")
     required: false
     default: all
+  - name: strictness
+    type: enum
+    values: [normal, strict, very-strict]
+    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    required: false
+    default: normal
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
@@ -16,6 +22,11 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
+  - name: max-parallelization
+    type: number
+    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    required: false
+    default: 2
 outputs:
   - name: final-status
     type: enum
@@ -60,18 +71,30 @@ Run plan validation to identify completeness and accuracy issues.
 
 Analyze audit report to determine if fixes are needed.
 
-**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) in `{step1.outputs.audit-report-1}`
+**Condition Check**: Count findings based on strictness level in `{step1.outputs.audit-report-1}`
 
-- If findings > 0: Proceed to step 3
-- If findings = 0: Skip to step 6 (Success)
+- **normal**: Count CRITICAL + HIGH only
+- **strict**: Count CRITICAL + HIGH + MEDIUM
+- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+
+**Below-threshold findings**: Report but don't block success
+
+- **normal**: MEDIUM/LOW reported, not counted
+- **strict**: LOW reported, not counted
+- **very-strict**: All findings counted
+
+**Decision**:
+
+- If threshold-level findings > 0: Proceed to step 3
+- If threshold-level findings = 0: Skip to step 6 (Success)
 
 **Depends on**: Step 1 completion
 
 **Notes**:
 
-- Fixes ALL findings, not just critical ones
-- Includes minor issues like formatting, style improvements
-- Ensures plans achieve perfect quality state
+- Fix scope determined by strictness level
+- Below-threshold findings remain visible in audit reports
+- Enables progressive quality improvement
 
 ### 3. Apply Fixes (Sequential, Conditional)
 
@@ -79,7 +102,7 @@ Apply all validated fixes from the audit report.
 
 **Agent**: `plan-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, strictness: {input.strictness}`
 - **Output**: `{fixes-applied}`
 - **Condition**: Findings exist from step 2
 - **Depends on**: Step 2 completion
@@ -91,8 +114,12 @@ Apply all validated fixes from the audit report.
 **Notes**:
 
 - Fixer re-validates findings before applying (prevents false positives)
-- Fixes ALL confidence levels: HIGH (objective), MEDIUM (structural), MINOR (style/formatting)
-- Achieves perfect plan quality with zero findings
+- **Fix scope based on strictness parameter**:
+  - **normal**: Fixes CRITICAL/HIGH only (skips MEDIUM/LOW)
+  - **strict**: Fixes CRITICAL/HIGH/MEDIUM (skips LOW)
+  - **very-strict**: Fixes all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- Within scope, applies HIGH confidence fixes automatically
+- Flags MEDIUM confidence for manual review
 
 ### 4. Re-validate (Sequential)
 
@@ -114,11 +141,14 @@ Determine whether to continue fixing or terminate.
 
 **Logic**:
 
-- Count ALL findings in `{step4.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
-- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
-- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
-- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
-- If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
+- Count findings based on strictness level in `{step4.outputs.audit-report-N}` (same as Step 2):
+  - **normal**: Count CRITICAL + HIGH
+  - **strict**: Count CRITICAL + HIGH + MEDIUM
+  - **very-strict**: Count all levels
+- If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
+- If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
+- If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
 **Depends on**: Step 4 completion
 
@@ -146,9 +176,17 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation
-- ⚠️ **Partial** (`partial`): Any findings remain after max-iterations cycles
-- ❌ **Failure** (`fail`): Checker or fixer encountered technical errors
+**Success** (`pass`): Zero threshold-level findings in final validation
+
+- **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
+- **very-strict**: Zero findings at all levels
+
+**Partial** (`partial`): Threshold-level findings remain after max-iterations
+
+**Failure** (`fail`): Checker or fixer encountered technical errors
+
+**Note**: Below-threshold findings reported in final audit but don't prevent success.
 
 ## Example Usage
 
@@ -192,6 +230,47 @@ workflow run plan-quality-gate --scope=all --max-iterations=10
 ```bash
 # Ensure at least 3 check-fix cycles before accepting zero findings
 workflow run plan-quality-gate --scope=all --min-iterations=3
+```
+
+### Standard Check-Fix (Normal Strictness)
+
+```bash
+# Run full plan validation with default settings
+# Fixes CRITICAL/HIGH only, reports MEDIUM/LOW
+workflow run plan-quality-gate --scope=all
+
+# Equivalent explicit form
+workflow run plan-quality-gate --scope=all --strictness=normal
+```
+
+### Pre-Release Validation (Strict)
+
+```bash
+# Fixes CRITICAL/HIGH/MEDIUM, reports LOW
+workflow run plan-quality-gate --scope=all --strictness=strict
+
+# Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
+# LOW findings reported but don't block
+```
+
+### Comprehensive Audit (Very Strict)
+
+```bash
+# Fixes all levels, zero tolerance
+workflow run plan-quality-gate --scope=all --strictness=very-strict
+
+# Success criteria: Zero findings at all levels
+# Equivalent to pre-strictness parameter behavior
+```
+
+### Strict Mode with Safety Limits
+
+```bash
+# Pre-release check with iteration bounds
+workflow run plan-quality-gate \
+  --scope=all \
+  --strictness=strict \
+  --max-iterations=10
 ```
 
 ## Iteration Example
@@ -267,6 +346,8 @@ Track across executions:
 - **Observable**: Generates audit reports for every iteration
 - **Bounded**: Max-iterations prevents runaway execution
 - **Scope-aware**: Can validate all plans or specific subsets
+
+**Parallelization**: Currently validates and fixes sequentially. The `max-parallelization` parameter is reserved for future enhancements where different plan validation aspects (completeness, technical accuracy, implementation readiness) could run concurrently.
 
 This workflow ensures plan quality and implementation readiness through iterative validation and fixing, making it ideal for maintaining high-quality project planning.
 

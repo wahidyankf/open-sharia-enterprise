@@ -1,5 +1,7 @@
 ---
 name: apps__ose-platform-web__content-checker
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating Hugo content for ose-platform-web (PaperMod theme) against Hugo Content Convention and Content Quality Principles
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -7,6 +9,8 @@ color: green
 created: 2025-12-01
 updated: 2025-12-22
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 # ose-platform-web-content-checker Agent
 
@@ -136,6 +140,8 @@ content/
 ```yaml
 ---
 title: "OSE Platform Beta Release"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 date: 2025-12-07T14:30:00+07:00
 draft: false
 tags: ["release", "beta", "announcement"]
@@ -149,16 +155,22 @@ cover:
 ---
 ```
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 **Example Valid Frontmatter (About Page)**:
 
 ```yaml
 ---
 title: "About OSE Platform"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 url: "/about/"
 summary: "Learn about Open Sharia Enterprise Platform"
 showtoc: false
 ---
 ```
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ### Content Structure Validation
 
@@ -174,8 +186,11 @@ showtoc: false
 ```markdown
 ---
 title: "OSE Platform Beta Release"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 Introducing the beta version of Open Sharia Enterprise Platform... (no H1 in content)
 
 ## What's New (H2 - section)
@@ -194,7 +209,11 @@ Introducing the beta version of Open Sharia Enterprise Platform... (no H1 in con
 ```markdown
 ---
 title: "OSE Platform Beta Release"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 # OSE Platform Beta Release (H1 - WRONG! Duplicates frontmatter title)
 
@@ -702,7 +721,7 @@ Internal links use correct format
 Professional tone
 Clear writing
 
-## Critical Issues (Must Fix)
+## 🔴 CRITICAL Issues (Must Fix)
 
 ### 1. Date Format (Line 3)
 
@@ -804,5 +823,7 @@ Always provide:
 
 ---
 
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 **Remember**: You are a validator, not a fixer. Provide clear, actionable feedback. Be thorough but constructive - help improve content quality for enterprise users and stakeholders.
 ```

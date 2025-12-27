@@ -190,7 +190,38 @@ For quick copy-paste in code:
 
 ## Application Contexts
 
-### Mermaid Diagrams in docs/
+This section distinguishes between two different color usage contexts with different accessibility requirements.
+
+### Context 1: Emoji Indicators with Text Labels
+
+**Use Case**: Status indicators, criticality levels, validation findings that ALWAYS include text labels.
+
+**Accessibility Approach**: Color is supplementary to text - standard emoji colors acceptable.
+
+**Examples**:
+
+- Criticality levels: 🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW
+- Status markers: ✅ Success, ❌ Error, ⚠️ Warning
+- Validation results: [Verified] ✅, [Error] ❌, [Broken] 🔴
+
+**Why standard emoji colors (red/green/yellow) are acceptable here**:
+
+1. **Text labels are MANDATORY** - Color never appears without descriptive text
+2. **Text provides primary identification** - Users can understand meaning from text alone
+3. **Color is supplementary enhancement** - Adds visual scannability but not required for comprehension
+4. **Screen readers announce text** - "CRITICAL" is read aloud, not just "red circle emoji"
+
+**Critical Rule**: Emoji indicators MUST ALWAYS include text labels. Never use colored emojis alone without text context.
+
+✅ **Acceptable**: `🔴 CRITICAL Issues (Must Fix)` - Color + text
+❌ **Not Acceptable**: `🔴 Issues` - Color without clear severity text
+❌ **Not Acceptable**: Section marked only with 🔴 - Color-only identification
+
+### Context 2: Mermaid Diagrams in docs/
+
+**Use Case**: Visual diagrams, flowcharts, architecture diagrams where color may be a primary visual differentiator.
+
+**Accessibility Approach**: MUST use verified accessible color palette - no red/green/yellow.
 
 **Requirement**: All Mermaid diagrams in `docs/` directory MUST use the verified accessible color palette.
 

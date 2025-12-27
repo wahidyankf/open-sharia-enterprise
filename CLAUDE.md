@@ -139,7 +139,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram Convention
 
-Use Mermaid diagrams (vertical orientation for mobile). **CRITICAL: Use only color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow. **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (causes syntax errors). See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) for complete palette and [Diagrams Convention](./docs/explanation/conventions/ex-co__diagrams.md) for implementation and comment syntax.
+Use Mermaid diagrams (vertical orientation for mobile). **CRITICAL: Mermaid diagrams MUST use color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow in diagrams. **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (causes syntax errors). Note: Emoji indicators (🔴🟠🟡🟢) can use standard colors when ALWAYS paired with text labels. See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) for complete palette and context-specific rules, and [Diagrams Convention](./docs/explanation/conventions/ex-co__diagrams.md) for implementation and comment syntax.
 
 ### Emoji Usage Convention
 
@@ -233,7 +233,7 @@ These directories are gitignored and provide organized storage for temporary out
 
 ### Maker-Checker-Fixer Pattern
 
-Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme, docs, plan. Fixers use universal HIGH/MEDIUM/FALSE_POSITIVE confidence system to distinguish objective fixes from subjective improvements. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal assessment criteria.
+Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme, docs, plan. Checkers categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency. Fixers combine criticality with confidence (HIGH/MEDIUM/FALSE_POSITIVE) to determine priority (P0-P4) and execution order. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow, [Criticality Levels](./docs/explanation/development/ex-de__criticality-levels.md) for severity classification, and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for assessment criteria.
 
 ### Available Agents
 
@@ -256,6 +256,14 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 **Meta**: agent-maker, repo-rules-maker
 
 See [Agents Index](./.claude/agents/README.md) for descriptions and workflows.
+
+### Workflow Invocation
+
+Workflows orchestrate multiple agents in sequence, parallel, or conditionally. All workflows support standard input parameters:
+
+- **max-parallelization** (optional, default: 2) - Maximum number of agents/tasks that can run in parallel during workflow execution
+
+Currently, workflows require manual orchestration (run agents in order). Future enhancement: Automated workflow executor agent. See [Workflow Pattern Convention](./docs/explanation/workflows/ex-wf__workflow-pattern.md) for complete structure and [Workflows Index](./docs/explanation/workflows/README.md) for available workflows.
 
 ### Resources
 

@@ -1,5 +1,7 @@
 ---
 name: workflow-checker
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Validates workflow definition files in docs/explanation/workflows/ against Workflow Pattern Convention and quality standards. Generates audit reports in generated-reports/.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -7,6 +9,8 @@ color: green
 created: 2025-12-23
 updated: 2025-12-23
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 # Workflow Checker Agent
 
@@ -99,6 +103,18 @@ Validate frontmatter contains all required fields:
 - [ ] Frontmatter uses 2 spaces per indentation level (not tabs)
 
 **Input field validation** (for each item in `inputs` array):
+
+**Standard max-parallelization parameter validation**:
+
+All workflows SHOULD include standard `max-parallelization` input:
+
+- [ ] `max-parallelization` parameter present in inputs array
+- [ ] Type is `number`
+- [ ] Description mentions "parallel execution" or "concurrent"
+- [ ] Required is `false`
+- [ ] Default is `2` (or justification for different default if workflow needs more parallelism)
+
+**Per-workflow input field validation** (for each item in `inputs` array):
 
 - [ ] `name` field present (lowercase, hyphen-separated)
 - [ ] `type` field present (valid values: `string`, `number`, `boolean`, `file`, `file-list`, `enum`)
@@ -276,7 +292,7 @@ When the user requests workflow validation:
 
 ### Severity Classification
 
-**Critical Issues** (must fix before use):
+**🔴 CRITICAL Issues** (must fix before use):
 
 - Missing required frontmatter fields
 - Invalid agent references (non-existent agents)
@@ -285,7 +301,7 @@ When the user requests workflow validation:
 - Invalid state references (undefined inputs/outputs)
 - Broken links to principles or related workflows
 
-**Important Issues** (reduce usability):
+**🟠 HIGH Issues** (reduce usability):
 
 - Incomplete step definitions (missing success criteria or failure handling)
 - Ambiguous conditions or criteria
@@ -293,7 +309,9 @@ When the user requests workflow validation:
 - No principle traceability
 - Missing or incomplete human checkpoints
 
-**Minor Issues** (style/quality):
+**🟡 MEDIUM Issues** (style/quality):
+
+- 🟢 LOW Issues (appended as found)
 
 - Vague descriptions
 - Missing optional fields (e.g., `default` for non-required inputs)
@@ -326,20 +344,23 @@ The audit report file follows this structure:
 ## Summary
 
 - **Workflows Checked**: N files
-- **Critical Issues**: X
-- **Important Issues**: Y
-- **Minor Issues**: Z
+- **🔴 CRITICAL Issues**: X
+- **🟠 HIGH Issues**: Y
+- **🟡 MEDIUM Issues**: Z
+  - 🟢 LOW Issues (appended as found)
 - **Total Issues**: X+Y+Z
 
-## Critical Issues
+## 🔴 CRITICAL Issues
 
 [List of critical issues with file, line number, and fix recommendations]
 
-## Important Issues
+## 🟠 HIGH Issues
 
 [List of important issues with file, line number, and suggestions]
 
-## Minor Issues
+## 🟡 MEDIUM Issues
+
+- 🟢 LOW Issues (appended as found)
 
 [List of minor issues with file and improvement suggestions]
 

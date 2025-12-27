@@ -85,6 +85,11 @@ inputs:
     description: What this input is for
     required: true | false
     default: value (if not required)
+  - name: max-parallelization
+    type: number
+    description: Maximum number of agents/tasks that can run in parallel
+    required: false
+    default: 2
 outputs:
   - name: output-name
     type: string | number | boolean | file | file-list | enum
@@ -218,6 +223,22 @@ Steps execute only if conditions are met.
 
 Only runs if user approved fixes in step 2.
 ```
+
+**Parallelization Control**:
+
+The `max-parallelization` input parameter controls concurrent execution:
+
+- **Default: 2** - Conservative, suitable for most workflows
+- **Increase** - Faster execution on capable systems (e.g., 4-8 for multi-validator workflows)
+- **Decrease to 1** - Force sequential execution for debugging or resource constraints
+- **Set to validator count** - Maximum efficiency when validators are independent
+
+**Notes**:
+
+- System automatically queues excess tasks when limit reached
+- Independent validators with no shared state are ideal parallelization candidates
+- Consider API rate limits and system resources when setting value
+- Monitor execution performance to tune optimal value
 
 ## State Management
 
@@ -368,7 +389,7 @@ deployment-workflow (uses validation-passed)
 
 ## \*-check-fix Workflow Pattern
 
-A specialized workflow pattern that achieves **perfect quality state** by fixing ALL findings (HIGH, MEDIUM, and MINOR confidence levels) and iterating until ZERO findings remain.
+A specialized workflow pattern that achieves **perfect quality state** by fixing ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterating until ZERO findings remain.
 
 ### Pattern Characteristics
 
@@ -383,7 +404,7 @@ A specialized workflow pattern that achieves **perfect quality state** by fixing
 
 **Key Differentiators**:
 
-1. **ALL findings count** - Not just HIGH or MEDIUM confidence, includes MINOR (style, formatting)
+1. **ALL findings count** - Not just CRITICAL or HIGH criticality, includes MEDIUM and LOW (style, formatting)
 2. **Zero findings goal** - Terminates with SUCCESS only when zero findings of any level
 3. **Iterative fixing** - Continues check-fix cycles until perfect state or max-iterations
 4. **Perfect quality state** - Achieves comprehensive quality, not minimal compliance
@@ -394,6 +415,21 @@ All \*-check-fix workflows follow this pattern:
 
 ```yaml
 inputs:
+  - name: strictness
+    type: enum
+    values: [normal, strict, very-strict]
+    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    required: false
+    default: normal
+  - name: max-parallelization
+    type: number
+    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    required: false
+    default: 2
+  - name: min-iterations
+    type: number
+    description: Minimum check-fix cycles before allowing zero-finding termination
+    required: false
   - name: max-iterations
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
@@ -417,17 +453,29 @@ outputs:
 ```markdown
 **Agent**: `{domain}-checker`
 
-- Count ALL findings (HIGH, MEDIUM, MINOR)
+- Count ALL findings (CRITICAL, HIGH, MEDIUM, LOW)
 - Generate audit report
 ```
 
 **Step 2: Check for Findings**
 
 ```markdown
-**Condition**: Count all findings (any confidence level)
+**Condition**: Count findings based on strictness level
 
-- If findings > 0: Proceed to fixing
-- If findings = 0: Skip to success
+- **normal**: Count CRITICAL + HIGH only
+- **strict**: Count CRITICAL + HIGH + MEDIUM
+- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+
+**Below-threshold findings**: Report but don't block success
+
+- **normal**: MEDIUM/LOW reported, not counted
+- **strict**: LOW reported, not counted
+- **very-strict**: All findings counted
+
+**Decision**:
+
+- If threshold-level findings > 0: Proceed to fixing
+- If threshold-level findings = 0: Skip to success
 ```
 
 **Step 3: Apply Fixes**
@@ -435,8 +483,14 @@ outputs:
 ```markdown
 **Agent**: `{domain}-fixer`
 
-- Fix ALL confidence levels (HIGH, MEDIUM, MINOR)
+- **Args**: `report: {audit-report}, approved: all, strictness: {input.strictness}`
+- **Fix scope based on strictness**:
+  - **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
+  - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
+  - **very-strict**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Re-validate before applying each fix
+- Apply HIGH confidence fixes automatically within scope
+- Flag MEDIUM confidence for manual review
 ```
 
 **Step 4: Re-validate**
@@ -453,19 +507,37 @@ outputs:
 ```markdown
 **Logic**:
 
-- Count ALL findings in latest audit report
-- If findings = 0: Success
-- If findings > 0 AND iterations < max-iterations: Loop to step 3
-- If findings > 0 AND iterations >= max-iterations: Partial (safety limit)
+- Count findings based on strictness level (same as Step 2):
+  - **normal**: Count CRITICAL + HIGH
+  - **strict**: Count CRITICAL + HIGH + MEDIUM
+  - **very-strict**: Count all levels
+- If threshold-level findings = 0 AND iterations >= min-iterations: Success
+- If threshold-level findings = 0 AND iterations < min-iterations: Loop back
+- If threshold-level findings > 0 AND iterations >= max-iterations: Partial
+- If threshold-level findings > 0 AND iterations < max-iterations: Loop back
+
+**Below-threshold findings**: Continue to be reported in audit but don't affect iteration logic
 ```
 
 ### Termination Criteria (Mandatory)
 
-All \*-check-fix workflows MUST use this exact termination criteria:
+All \*-check-fix workflows MUST use termination criteria based on strictness level:
 
-- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR)
-- ⚠️ **Partial** (`partial`): Findings remain after max-iterations safety limit
-- ❌ **Failure** (`fail`): Technical errors during check or fix
+**Success** (`pass`):
+
+- **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
+- **very-strict**: Zero findings at all levels
+
+**Partial** (`partial`):
+
+- Threshold-level findings remain after max-iterations safety limit
+
+**Failure** (`fail`):
+
+- Technical errors during check or fix
+
+**Note**: Below-threshold findings are reported in final audit but don't prevent success status.
 
 ### Safety Features (Mandatory)
 
@@ -481,21 +553,70 @@ All \*-check-fix workflows MUST use this exact termination criteria:
 - Fixer MUST skip FALSE_POSITIVE findings
 - Checker MUST use progressive writing
 
+### Strictness Parameter Usage
+
+The `strictness` parameter controls which criticality levels must reach zero for workflow success.
+
+**Normal Mode** (default - everyday validation):
+
+```bash
+# Fixes CRITICAL/HIGH only, reports MEDIUM/LOW
+workflow run content-validation --strictness=normal
+
+# Success criteria: Zero CRITICAL/HIGH findings
+# MEDIUM/LOW findings reported but don't block
+```
+
+**Strict Mode** (pre-release validation):
+
+```bash
+# Fixes CRITICAL/HIGH/MEDIUM, reports LOW
+workflow run content-validation --strictness=strict
+
+# Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
+# LOW findings reported but don't block
+```
+
+**Very Strict Mode** (comprehensive audit):
+
+```bash
+# Fixes all levels, zero tolerance
+workflow run content-validation --strictness=very-strict
+
+# Success criteria: Zero findings at all levels
+# Equivalent to pre-strictness parameter behavior
+```
+
+**Combined with iteration bounds**:
+
+```bash
+# Strict mode with iteration limits
+workflow run content-validation \
+  --strictness=strict \
+  --min-iterations=2 \
+  --max-iterations=10
+```
+
+**Migration from pre-strictness workflows**:
+
+- Old behavior (implicit very-strict): Add `--strictness=very-strict`
+- New default (normal): Omit strictness parameter or use `--strictness=normal`
+
 ### Example Implementation
 
 See [Repository Rules Quality Gate Workflow](./ex-wf__repository-rules-quality-gate.md) for canonical implementation.
 
 ### Key Differences from Basic Validation Workflow
 
-| Aspect             | Basic Validation Workflow        | \*-check-fix Workflow Pattern      |
-| ------------------ | -------------------------------- | ---------------------------------- |
-| **Goal**           | Identify issues                  | Achieve zero findings              |
-| **Iteration**      | Single pass                      | Iterative until zero or max-limit  |
-| **Findings Scope** | May focus on HIGH/MEDIUM only    | ALL findings (HIGH, MEDIUM, MINOR) |
-| **Termination**    | After single check               | Zero findings or max-iterations    |
-| **Quality Target** | Good enough (major issues fixed) | Perfect state (all issues fixed)   |
-| **Human Approval** | May require checkpoints          | Fully automated                    |
-| **Safety Limit**   | Not required                     | REQUIRED (max-iterations)          |
+| Aspect             | Basic Validation Workflow        | \*-check-fix Workflow Pattern              |
+| ------------------ | -------------------------------- | ------------------------------------------ |
+| **Goal**           | Identify issues                  | Achieve zero findings                      |
+| **Iteration**      | Single pass                      | Iterative until zero or max-limit          |
+| **Findings Scope** | May focus on HIGH/MEDIUM only    | ALL findings (CRITICAL, HIGH, MEDIUM, LOW) |
+| **Termination**    | After single check               | Zero findings or max-iterations            |
+| **Quality Target** | Good enough (major issues fixed) | Perfect state (all issues fixed)           |
+| **Human Approval** | May require checkpoints          | Fully automated                            |
+| **Safety Limit**   | Not required                     | REQUIRED (max-iterations)                  |
 
 ## Example Workflow Structure
 

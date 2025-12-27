@@ -1,5 +1,7 @@
 ---
 name: apps__ayokoding-web__structure-checker
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating ALL ayokoding-web content files including navigation STRUCTURE existence (not listings), weight conventions across all markdown files, overview completeness, and pedagogical progression. Generates audit reports to generated-reports/.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -7,6 +9,8 @@ color: green
 created: 2025-12-20
 updated: 2025-12-20
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 # ayokoding-web-structure-checker Agent
 
@@ -248,6 +252,7 @@ Partial coverage (showing only some children) is a violation.
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 title: "Overview"
 date: 2025-12-09T10:00:00+07:00
 draft: false
@@ -257,6 +262,7 @@ tags: ["golang", "programming", "overview"]
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 Welcome to Golang learning path! This comprehensive curriculum...
 ```
 
@@ -267,6 +273,7 @@ Welcome to Golang learning path! This comprehensive curriculum...
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 title: "Ikhtisar"
 date: 2025-12-09T10:00:00+07:00
 draft: false
@@ -276,6 +283,7 @@ tags: ["golang", "programming", "ikhtisar"]
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 Selamat datang di jalur pembelajaran Golang! Kurikulum komprehensif...
 ```
 
@@ -285,6 +293,8 @@ Selamat datang di jalur pembelajaran Golang! Kurikulum komprehensif...
 <!-- WRONG! Descriptive title instead of generic "Overview" -->
 
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## title: "Programming Languages Overview"
 
@@ -448,19 +458,31 @@ Hugo compares siblings only. Weights reset to the appropriate level's base for c
 # /en/learn/swe/_index.md (level 3 folder)
 ---
 title: "Software Engineering"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 weight: 100 # Level 3 base
 ---
 # /en/learn/swe/overview.md (content inside level 3 folder)
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 ---
 title: "Overview"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 weight: 1000 # Level 4 base (content is one level deeper)
 ---
 # /en/learn/swe/prog-lang/_index.md (subfolder of level 3, becomes level 4)
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 ---
 title: "Programming Languages"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 weight: 1001 # Level 4 base + 1 (sibling to overview.md)
 ---
 ```
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 **Invalid Example** (Wrong levels):
 
@@ -469,15 +491,23 @@ weight: 1001 # Level 4 base + 1 (sibling to overview.md)
 # /en/learn/swe/_index.md
 ---
 title: "Software Engineering"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 weight: 10 # Should be 100 (level 3 base)
 ---
 # WRONG! Content inside level 3 folder using level 2 weight
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 # /en/learn/swe/overview.md
 ---
 title: "Overview"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 weight: 11 # Should be 1000 (level 4 base)
 ---
 ```
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ### 6. Cookbook Weight Ordering Validation
 
@@ -621,17 +651,25 @@ weight: 1000002  # Should be higher than beginner
 # Justified gap: separating foundational from advanced topics
 ---
 title: "Basic Syntax"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 weight: 1001 # Foundational
 ---
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 title: "Control Flow"
 weight: 1002 # Foundational
 ---
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 title: "Advanced Patterns" # Gap justified - advanced topic
 weight: 1010
 ---
 ```
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 **Invalid Example** (pedagogical violation):
 
@@ -639,13 +677,19 @@ weight: 1010
 # WRONG! Advanced topic before beginner topic
 ---
 title: "Advanced Concurrency Patterns"
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 weight: 1001 # Should come AFTER basic concepts
 ---
 ---
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 title: "Basic Syntax" # Beginner topic
 weight: 1002 # Should come BEFORE advanced
 ---
 ```
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 
 ## File Output Strategy
 
@@ -789,11 +833,11 @@ Audit report generated: `generated-reports/ayokoding-web-structure__{timestamp}_
 - Issues Found: [N]
 - Status: [ Pass | Pass with Warnings | Fail]
 
-## Critical Issues
+## 🔴 CRITICAL Issues
 
 [List critical issues if any, or "None" if all passed]
 
-## Important Issues
+## 🟠 HIGH Issues
 
 [List important issues if any, or "None" if all passed]
 
@@ -921,4 +965,5 @@ Always provide:
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 **Remember**: You are a structure validator, not a content quality checker. Focus on navigation architecture, weight ordering, and required file presence. Leave content quality assessment to ayokoding-web-general-checker.

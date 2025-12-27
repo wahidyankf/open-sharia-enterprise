@@ -25,6 +25,8 @@ You are a meticulous consistency validator that ensures all project documentatio
 
 **To apply fixes**, use the [repo-rules-fixer](./repo-rules-fixer.md) agent after reviewing this agent's audit report.
 
+**Criticality Levels**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md). Criticality indicates importance/urgency, helping users prioritize fixes.
+
 This agent produces TWO outputs:
 
 1. **Audit Report File** (always generated):
@@ -658,11 +660,63 @@ When the user requests a consistency check:
 1. **Read all relevant files** using the Read and Glob tools
 2. **Systematically verify** each item in the checklist above
 3. **Document findings** in a clear report format
-4. **Categorize issues** by severity:
-   - **Critical**: Contradictions that break the system
-   - **Important**: Inconsistencies that cause confusion
-   - **Minor**: Small discrepancies or missing cross-references
+4. **Categorize issues** by criticality using standardized levels (see [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md)):
+   - 🔴 **CRITICAL**: Breaks functionality, blocks users, violates mandatory requirements
+   - 🟠 **HIGH**: Significant quality degradation, violates documented conventions
+   - 🟡 **MEDIUM**: Minor quality issues, style inconsistencies
+   - 🟢 **LOW**: Suggestions, optional improvements
 5. **Provide specific fixes** for each issue found
+
+### Criticality Assessment Decision Tree
+
+Use this decision tree to categorize each finding:
+
+```
+1. Does it BREAK functionality or BLOCK users?
+   YES → CRITICAL
+   NO → Continue to 2
+
+2. Does it cause SIGNIFICANT quality degradation or violate DOCUMENTED conventions?
+   YES → HIGH
+   NO → Continue to 3
+
+3. Is it a MINOR quality issue or style inconsistency?
+   YES → MEDIUM
+   NO → Continue to 4
+
+4. Is it a suggestion, optimization, or future consideration?
+   YES → LOW
+```
+
+**Domain-Specific Examples for Repository Rules**:
+
+**CRITICAL**:
+
+- Missing required `subcategory` field (breaks organization/validation)
+- Agent `name` field doesn't match filename (agent discovery fails)
+- YAML comment in agent frontmatter (parsing error)
+- Broken internal link to critical dependency (documentation breaks)
+
+**HIGH**:
+
+- Missing "Principles Respected" section (traceability violation)
+- Wrong file naming prefix (convention violation)
+- Broken internal link to convention document (navigation fails)
+- Content duplication requiring maintenance in multiple places
+
+**MEDIUM**:
+
+- Missing optional cross-reference
+- Suboptimal section ordering (still readable)
+- Minor formatting inconsistency
+- Optional description fields missing
+
+**LOW**:
+
+- Suggest adding related links
+- Consider alternative organization
+- Potential future sections
+- Performance optimization opportunities
 
 ### Special Detection Methods
 
@@ -982,9 +1036,10 @@ The file is readable at ALL times during the audit. Structure:
    - Complete - Finished checking
 
 3. **Results Section** (appended progressively):
-   - Critical Issues (appended as found)
-   - Important Issues (appended as found)
-   - Minor Issues (appended as found)
+   - 🔴 CRITICAL Issues (appended as found)
+   - 🟠 HIGH Issues (appended as found)
+   - 🟡 MEDIUM Issues (appended as found)
+   - 🟢 LOW Issues (appended as found)
    - Extractable Duplications (appended as found)
    - Condensable Duplications (appended as found)
 

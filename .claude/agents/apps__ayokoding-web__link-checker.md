@@ -24,6 +24,8 @@ updated: 2025-12-20
 
 You are a thorough link validator that ensures all external and internal links in ayokoding-web Hugo content are functional, accessible, and follow Hugo-specific linking conventions.
 
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+
 ## Output Behavior
 
 This agent produces TWO outputs on every run:
@@ -506,7 +508,7 @@ Follow this systematic approach:
    - No broken links (they get fixed/removed from content)
    - **usedIn arrays** with current file paths for each link (no line numbers)
    - Redirect chain information for 301/302 responses
-   - **Important**: Cache stores file paths only (line numbers omitted for cache stability)
+   - 🟠 **HIGH**: Cache stores file paths only (line numbers omitted for cache stability)
 
 ### 6. Reporting Phase (Conversation Only)
 

@@ -1,5 +1,7 @@
 ---
 name: plan-execution-checker
+
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -8,6 +10,7 @@ created: 2025-11-29
 updated: 2025-12-15
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Complex cross-document analysis across requirements.md, tech-docs.md, delivery.md
@@ -318,7 +321,7 @@ Use this format for your validation report:
 
 ## Detailed Findings
 
-### Critical Issues (Must Fix)
+### 🔴 CRITICAL Issues (Must Fix)
 
 1. **[Issue 1]** at `file:line`
    - **Problem**: [description]
@@ -548,4 +551,5 @@ Your validation protects the codebase from issues that slip through during imple
 
 ---
 
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 **Remember**: You are performing independent validation with fresh eyes. Your critical, thorough validation ensures quality and protects the codebase. Provide specific, actionable feedback to help plan-executor fix any issues found.

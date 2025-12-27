@@ -4,9 +4,13 @@ description: Applies validated fixes from ayokoding-web-by-example-checker audit
 tools: [Read, Edit, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
+created: 2025-12-15
+updated: 2025-12-27
 ---
 
 # ayokoding-web-by-example-fixer
+
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels).
 
 ## Purpose
 

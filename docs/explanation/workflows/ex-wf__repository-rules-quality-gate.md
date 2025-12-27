@@ -3,6 +3,12 @@ name: repository-rules-quality-gate
 goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
 termination: Zero findings remain after validation (runs indefinitely until achieved unless max-iterations provided)
 inputs:
+  - name: strictness
+    type: enum
+    values: [normal, strict, very-strict]
+    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    required: false
+    default: normal
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
@@ -11,6 +17,11 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
+  - name: max-parallelization
+    type: number
+    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    required: false
+    default: 2
 outputs:
   - name: final-status
     type: enum
@@ -61,39 +72,54 @@ Run repository-wide consistency check to identify all issues.
 
 Analyze audit report to determine if fixes are needed.
 
-**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) in `{step1.outputs.audit-report-1}`
+**Condition Check**: Count findings based on strictness level in `{step1.outputs.audit-report-1}`
 
-- If findings > 0: Proceed to step 3
-- If findings = 0: Skip to step 6 (Success)
+- **normal**: Count CRITICAL + HIGH only
+- **strict**: Count CRITICAL + HIGH + MEDIUM
+- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+
+**Below-threshold findings**: Report but don't block success
+
+- **normal**: MEDIUM/LOW reported, not counted
+- **strict**: LOW reported, not counted
+- **very-strict**: All findings counted
+
+**Decision**:
+
+- If threshold-level findings > 0: Proceed to step 3
+- If threshold-level findings = 0: Skip to step 6 (Success)
 
 **Depends on**: Step 1 completion
 
 **Notes**:
 
-- Fixes ALL findings, not just critical ones
-- Includes minor issues like formatting, style improvements
-- Ensures repository achieves perfect quality state
+- Fix scope determined by strictness level
+- Below-threshold findings remain visible in audit reports
+- Enables progressive quality improvement
 
 ### 3. Apply Fixes (Sequential, Conditional)
 
-Apply all validated fixes from the audit report.
+Apply validated fixes from the audit report based on strictness level.
 
 **Agent**: `repo-rules-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, EXECUTION_SCOPE: repo-rules`
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, strictness: {input.strictness}, EXECUTION_SCOPE: repo-rules`
 - **Output**: `{fixes-applied}` - Fix report with same UUID chain as source audit
-- **Condition**: Findings exist from step 2
+- **Condition**: Threshold-level findings exist from step 2
 - **Depends on**: Step 2 completion
 
-**Success criteria**: Fixer successfully applies all fixes without errors.
+**Success criteria**: Fixer successfully applies all threshold-level fixes without errors.
 
 **On failure**: Log errors, proceed to step 4 for verification.
 
 **Notes**:
 
 - Fixer re-validates findings before applying (prevents false positives)
-- Fixes ALL confidence levels: HIGH (objective), MEDIUM (structural), MINOR (style/formatting)
-- Achieves perfect repository state with zero findings
+- **Fix scope based on strictness**:
+  - **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
+  - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
+  - **very-strict**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- Below-threshold findings remain untouched
 
 ### 4. Re-validate (Sequential)
 
@@ -115,17 +141,22 @@ Determine whether to continue fixing or terminate.
 
 **Logic**:
 
-- Count ALL findings in `{step4.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
-- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
-- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
-- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
-- If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
+- Count findings based on strictness level in {step4.outputs.audit-report-N} (same as Step 2):
+  - **normal**: Count CRITICAL + HIGH
+  - **strict**: Count CRITICAL + HIGH + MEDIUM
+  - **very-strict**: Count all levels
+- If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
+- If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
+- If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
+
+**Below-threshold findings**: Continue to be reported in audit but don't affect iteration logic
 
 **Depends on**: Step 4 completion
 
 **Notes**:
 
-- **Default behavior**: Runs indefinitely until zero findings (no max-iterations limit)
+- **Default behavior**: Runs indefinitely until zero threshold-level findings (no max-iterations limit)
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
 - **Optional max-iterations**: Prevents infinite loops when explicitly provided
 - Each iteration uses the latest audit report
@@ -147,38 +178,72 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation
-- ⚠️ **Partial** (`partial`): Any findings remain after max-iterations cycles
-- ❌ **Failure** (`fail`): Checker or fixer encountered technical errors
+**Success** (`pass`):
+
+- **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
+- **very-strict**: Zero findings at all levels
+
+**Partial** (`partial`):
+
+- Threshold-level findings remain after max-iterations safety limit
+
+**Failure** (`fail`):
+
+- Technical errors during check or fix
+
+**Note**: Below-threshold findings are reported in final audit but don't prevent success status.
 
 ## Example Usage
 
-### Standard Check-Fix
+### Standard Check-Fix (Normal Strictness)
 
 ```bash
 # Run full repository rules check-fix with default settings
+# Fixes CRITICAL/HIGH only, reports MEDIUM/LOW
 workflow run repository-rules-quality-gate
+
+# Equivalent explicit form
+workflow run repository-rules-quality-gate --strictness=normal
+```
+
+### Pre-Release Validation (Strict)
+
+```bash
+# Fixes CRITICAL/HIGH/MEDIUM, reports LOW
+workflow run repository-rules-quality-gate --strictness=strict
+
+# Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
+# LOW findings reported but don't block
+```
+
+### Comprehensive Audit (Very Strict)
+
+```bash
+# Fixes all levels, zero tolerance
+workflow run repository-rules-quality-gate --strictness=very-strict
+
+# Success criteria: Zero findings at all levels
+# Equivalent to pre-strictness parameter behavior
 ```
 
 ### With Iteration Bounds
 
 ```bash
 # Require at least 2 iterations, cap at 10 maximum
-workflow run repository-rules-quality-gate --min-iterations=2 --max-iterations=10
+workflow run repository-rules-quality-gate \
+  --strictness=normal \
+  --min-iterations=2 \
+  --max-iterations=10
 ```
 
-### Prevent Infinite Loops
+### Strict Mode with Safety Limits
 
 ```bash
-# Set maximum iterations when unsure about fix convergence
-workflow run repository-rules-quality-gate --max-iterations=10
-```
-
-### Require Minimum Iterations
-
-```bash
-# Ensure at least 3 check-fix cycles before accepting zero findings
-workflow run repository-rules-quality-gate --min-iterations=3
+# Pre-release check with iteration bounds
+workflow run repository-rules-quality-gate \
+  --strictness=strict \
+  --max-iterations=10
 ```
 
 ## Iteration Example
@@ -243,6 +308,8 @@ Track across executions:
 - **Conservative**: Fixer skips uncertain changes (preserves correctness)
 - **Observable**: Generates audit reports for every iteration
 - **Bounded**: Max-iterations prevents runaway execution
+
+**Parallelization**: Currently validates and fixes sequentially. The `max-parallelization` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents, CLAUDE.md) could run concurrently.
 
 This workflow ensures repository consistency through iterative validation and fixing, making it ideal for maintenance and quality assurance.
 

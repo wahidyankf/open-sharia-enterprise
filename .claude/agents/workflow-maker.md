@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
 created: 2025-12-23
-updated: 2025-12-23
+updated: 2025-12-27
 ---
 
 # Workflow Maker Agent
@@ -77,6 +77,11 @@ inputs:
     description: What this input is for
     required: true | false
     default: value (if not required)
+  - name: max-parallelization
+    type: number
+    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    required: false
+    default: 2
 outputs:
   - name: output-name
     type: string | number | boolean | file | file-list | enum

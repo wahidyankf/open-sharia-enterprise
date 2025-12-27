@@ -31,6 +31,8 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
+- **[Criticality Levels Convention](./ex-de__criticality-levels.md)**: Confidence levels work orthogonally with criticality levels to determine fix priority. Criticality measures importance/urgency, confidence measures certainty/fixability.
+
 - **[Repository Validation Methodology Convention](./ex-de__repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
 
 - **[Temporary Files Convention](./ex-de__temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
@@ -571,6 +573,214 @@ All fixer agents MUST:
 - Report false positives with improvement suggestions
 - Document all confidence assessments
 - Never skip re-validation
+
+## 🔀 Integration with Criticality Levels
+
+### Confidence vs Criticality: Orthogonal Dimensions
+
+**Confidence levels (HIGH/MEDIUM/FALSE_POSITIVE)** and **criticality levels (CRITICAL/HIGH/MEDIUM/LOW)** are orthogonal dimensions that work together to determine fix priority.
+
+**Confidence** measures **CERTAINTY**:
+
+- Can we confidently apply this fix?
+- Is re-validation clear and unambiguous?
+- Is the issue objective and verifiable?
+
+**Criticality** measures **IMPORTANCE** (see [Criticality Levels Convention](./ex-de__criticality-levels.md)):
+
+- How urgent is fixing this issue?
+- What breaks if we don't fix it?
+- What's the impact on users/system?
+
+**Example showing both dimensions**:
+
+```markdown
+## 🔴 CRITICAL Issues (Must Fix)
+
+### 1. Missing Required Field Breaks Hugo Build
+
+**File**: `apps/ayokoding-web/content/en/programming/python/_index.md:3`
+**Criticality**: CRITICAL - Breaks Hugo build process
+**Confidence**: HIGH - Field objectively missing from frontmatter
+
+**Finding**: Required `draft` field missing from frontmatter
+**Impact**: Hugo build fails with "required field missing" error
+**Recommendation**: Add `draft: false` to frontmatter
+```
+
+In this example:
+
+- **Criticality = CRITICAL** → Must fix before deployment (breaks functionality)
+- **Confidence = HIGH** → Fixer can apply automatically (objective, verifiable)
+- **Result**: Automatic fix with P0 priority (highest urgency)
+
+### Criticality × Confidence Decision Matrix
+
+When processing audit reports, fixers use this matrix to determine **priority** and **action**:
+
+| Criticality     | HIGH Confidence                                               | MEDIUM Confidence                                   | FALSE_POSITIVE                                             |
+| --------------- | ------------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
+| 🔴 **CRITICAL** | **P0** - Auto-fix immediately<br>Block deployment until fixed | **P1** - URGENT manual review<br>High priority flag | Report with CRITICAL context<br>Improve checker urgently   |
+| 🟠 **HIGH**     | **P1** - Auto-fix after P0<br>Fix before publication          | **P2** - Standard manual review<br>Normal priority  | Report with HIGH context<br>Improve checker soon           |
+| 🟡 **MEDIUM**   | **P2** - Auto-fix after P1<br>Requires user approval          | **P3** - Optional review<br>Low priority            | Report with MEDIUM context<br>Note for checker improvement |
+| 🟢 **LOW**      | **P3** - Include in batch fixes<br>User decides if/when       | **P4** - Suggestions only<br>No urgency             | Report with LOW context<br>Informational only              |
+
+**Priority Levels**:
+
+- **P0** (Blocker) - Must fix before any publication/deployment
+- **P1** (Urgent) - Should fix before publication, can proceed with approval
+- **P2** (Normal) - Fix in current cycle when convenient
+- **P3** (Low) - Fix in future cycle or batch operation
+- **P4** (Optional) - Suggestion only, no action required
+
+### Priority-Based Execution Order
+
+Fixers should process findings in strict priority order:
+
+**1. P0 Fixes First** (CRITICAL + HIGH confidence):
+
+```python
+# Apply immediately without prompts
+for finding in critical_high_confidence:
+    apply_fix(finding)  # Auto-fix
+    if fix_failed:
+        block_deployment()  # Stop if P0 fix fails
+```
+
+**2. P1 Fixes Second** (HIGH + HIGH OR CRITICAL + MEDIUM):
+
+```python
+# AUTO: HIGH criticality + HIGH confidence
+for finding in high_high_confidence:
+    apply_fix(finding)  # Auto-fix
+
+# FLAG: CRITICAL + MEDIUM confidence (urgent review)
+for finding in critical_medium_confidence:
+    flag_for_urgent_review(finding, reason="CRITICAL issue needs manual decision")
+```
+
+**3. P2 Fixes Third** (MEDIUM + HIGH OR HIGH + MEDIUM):
+
+```python
+# AUTO if approved: MEDIUM criticality + HIGH confidence
+if user_approved_batch_mode:
+    for finding in medium_high_confidence:
+        apply_fix(finding)
+
+# FLAG: HIGH + MEDIUM confidence (standard review)
+for finding in high_medium_confidence:
+    flag_for_standard_review(finding, reason="HIGH issue needs clarification")
+```
+
+**4. P3-P4 Last** (LOW priority combinations):
+
+```python
+# Include in summary only, no automatic application
+for finding in low_priority:
+    include_in_summary(finding)  # For user awareness only
+```
+
+### Updated Fix Report Format
+
+Fix reports should now group fixes by priority to show criticality context:
+
+```markdown
+# Repository Rules Fix Report
+
+**Source Audit**: repo-rules**a1b2c3**2025-12-27--10-30\_\_audit.md
+**Fix Date**: 2025-12-27T11:15:00+07:00
+
+---
+
+## Execution Summary
+
+- **P0 Fixes Applied**: 5 (CRITICAL + HIGH confidence)
+- **P1 Fixes Applied**: 12 (HIGH + HIGH confidence)
+- **P1 Flagged for Urgent Review**: 2 (CRITICAL + MEDIUM confidence)
+- **P2 Fixes Applied**: 8 (MEDIUM + HIGH confidence, batch mode)
+- **P2 Flagged for Standard Review**: 3 (HIGH + MEDIUM confidence)
+- **P3-P4 Suggestions**: 15 (LOW priority, no action)
+- **False Positives Detected**: 3
+
+---
+
+## P0 Fixes Applied (CRITICAL + HIGH Confidence)
+
+### 1. Missing Required Subcategory Field
+
+**File**: `docs/explanation/development/ex-de__ai-agents.md`
+**Criticality**: CRITICAL - Breaks organization and validation
+**Confidence**: HIGH - Confirmed field missing in frontmatter
+**Fix Applied**: Added `subcategory: development` at line 5
+
+[... more P0 fixes ...]
+
+---
+
+## P1 Fixes Applied (HIGH + HIGH Confidence)
+
+[Same format showing HIGH criticality + HIGH confidence fixes]
+
+---
+
+## P1 Flagged for Urgent Review (CRITICAL + MEDIUM Confidence)
+
+### 1. Ambiguous Link Target
+
+**File**: `docs/explanation/conventions/ex-co__linking-convention.md:89`
+**Criticality**: CRITICAL - Broken link to convention doc
+**Confidence**: MEDIUM - Multiple possible target files found
+**Reason for Flag**: Cannot determine correct link target automatically
+**Action Required**: Manually select correct target from candidates
+
+---
+
+## P2 Fixes Applied (MEDIUM + HIGH Confidence)
+
+[Medium criticality issues with high confidence fixes]
+
+---
+
+## P3-P4 Suggestions (No Action Taken)
+
+**Total**: 15 findings
+
+[List of LOW criticality suggestions]
+
+---
+
+## False Positives Detected
+
+[Grouped by criticality for context on checker improvement urgency]
+```
+
+### Why Priority-Based Execution Matters
+
+**Before criticality integration**:
+
+```
+Fixer applies all HIGH confidence fixes in discovery order:
+  1. Fix LOW priority style issue
+  2. Fix MEDIUM priority format issue
+  3. Fix CRITICAL build-breaking issue ← Should be first!
+```
+
+**After criticality integration**:
+
+```
+Fixer applies fixes in priority order:
+  1. Fix CRITICAL build-breaking issue (P0)
+  2. Fix HIGH priority issues (P1)
+  3. Fix MEDIUM priority issues (P2)
+  4. LOW priority suggestions last (P3-P4)
+```
+
+**Benefits**:
+
+- CRITICAL issues fixed before deployment proceeds
+- Clear prioritization aligns with user urgency
+- Manual review items properly flagged by importance
+- Low priority suggestions don't clutter urgent work
 
 ## ↩️ False Positive Feedback Loop
 

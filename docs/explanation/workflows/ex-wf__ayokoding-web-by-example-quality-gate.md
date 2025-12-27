@@ -7,6 +7,12 @@ inputs:
     type: string
     description: Path to by-example tutorial (e.g., "golang/tutorials/by-example/", "elixir/tutorials/by-example/")
     required: true
+  - name: strictness
+    type: enum
+    values: [normal, strict, very-strict]
+    description: Quality threshold (normal: CRITICAL/HIGH only, strict: +MEDIUM, very-strict: all levels)
+    required: false
+    default: normal
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
@@ -15,6 +21,11 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
+  - name: max-parallelization
+    type: number
+    description: Maximum number of agents/tasks that can run in parallel during workflow execution
+    required: false
+    default: 2
   - name: auto-fix-level
     type: enum
     values: [high-only, high-and-medium, all]
@@ -164,19 +175,33 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 **1. Read audit report** from generated-reports/
 
-**2. Assess overall status**:
+**2. Count findings based on strictness level** (default: `{input.strictness}` or `normal`):
 
-- ✅ **EXCELLENT**: Minor issues only, proceed to fixer
-- ⚠️ **NEEDS IMPROVEMENT**: Medium issues, proceed to fixer for mechanical fixes
-- ❌ **FAILING**: Major issues, return to maker for rework
+**Strictness-based counting**:
 
-**3. Review confidence levels**:
+- **normal**: Count CRITICAL + HIGH only
+- **strict**: Count CRITICAL + HIGH + MEDIUM
+- **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+
+**Below-threshold findings**: Reported but don't block success
+
+- **normal**: MEDIUM/LOW reported, not counted
+- **strict**: LOW reported, not counted
+- **very-strict**: All findings counted
+
+**3. Assess overall status**:
+
+- ✅ **EXCELLENT**: Zero threshold-level findings, proceed to fixer for below-threshold issues (optional)
+- ⚠️ **NEEDS IMPROVEMENT**: Some threshold-level findings, proceed to fixer for mechanical fixes
+- ❌ **FAILING**: Major structural issues, return to maker for rework
+
+**4. Review confidence levels**:
 
 - **HIGH confidence**: Trust findings, approve auto-fix
 - **MEDIUM confidence**: Review specific examples, approve if valid
 - **FALSE POSITIVE risk**: Decide whether to keep current design or fix
 
-**4. Make decision**:
+**5. Make decision**:
 
 ```mermaid
 graph TD
@@ -222,14 +247,20 @@ graph TD
 **Execution**:
 
 ```bash
-# Invoke via Task tool with audit report
+# Invoke via Task tool with audit report and strictness parameter
 subagent_type: ayokoding-web-by-example-fixer
-prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md"
+prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md with strictness={input.strictness}"
 ```
 
 **Fix application strategy**:
 
-**HIGH confidence fixes** (auto-apply):
+**Fixer respects strictness level** (`{input.strictness}` from workflow):
+
+- **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
+- **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
+- **very-strict**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+
+**HIGH confidence fixes** (auto-apply within strictness scope):
 
 - Add missing imports
 - Fix color palette violations
@@ -237,7 +268,7 @@ prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__20
 - Fix incorrect weights
 - Add example numbering
 
-**MEDIUM confidence fixes** (re-validate first):
+**MEDIUM confidence fixes** (re-validate first, only if strictness includes MEDIUM):
 
 - Add `// =>` annotations
 - Add missing key takeaways
@@ -271,21 +302,27 @@ Determine whether to continue fixing or finalize.
 **Logic**:
 
 - Re-run checker (step 2) to get fresh report
-- Count ALL findings (HIGH, MEDIUM) across new report
-- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization)
-- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
-- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `needs-improvement`
-- If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
+- Count findings based on strictness level (same as Step 3):
+  - **normal**: Count CRITICAL + HIGH
+  - **strict**: Count CRITICAL + HIGH + MEDIUM
+  - **very-strict**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization)
+- If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `needs-improvement`
+- If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
+
+**Below-threshold findings**: Continue to be reported in audit but don't affect iteration logic
 
 **Depends on**: Step 4 completion
 
 **Notes**:
 
-- **Default behavior**: Runs indefinitely until zero findings (no max-iterations limit)
+- **Default behavior**: Runs indefinitely until zero threshold-level findings (no max-iterations limit)
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
 - **Optional max-iterations**: Prevents infinite loops when explicitly provided
 - Each iteration gets fresh validation report
 - Tracks iteration count and finding trends
+- Below-threshold findings remain visible but don't block convergence
 
 **Iteration diagram**:
 
@@ -316,17 +353,29 @@ Report final status and summary.
 
 **Status determination**:
 
-- **Excellent** (`excellent`): Zero findings after final validation, 75-90 examples, 95% coverage achieved
-- **Needs Improvement** (`needs-improvement`): Findings remain after max-iterations OR below example/coverage targets
+- **Excellent** (`excellent`): Zero threshold-level findings after final validation, 75-90 examples, 95% coverage achieved (below-threshold findings may exist and are acceptable)
+- **Needs Improvement** (`needs-improvement`): Threshold-level findings remain after max-iterations OR below example/coverage targets
 - **Failing** (`failing`): Major structural issues prevent auto-fixing, requires maker rework
 
 **Depends on**: Step 5 completion
 
 ## Termination Criteria
 
-- ✅ **Success** (`excellent`): Zero findings, 75-90 examples, 95% coverage achieved
-- ⚠️ **Partial** (`needs-improvement`): Findings remain OR example count/coverage below targets after max-iterations
-- ❌ **Failure** (`failing`): Major structural issues require maker rework, auto-fixing not applicable
+**Success** (`excellent`):
+
+- **normal**: Zero CRITICAL/HIGH findings, 75-90 examples, 95% coverage (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings, 75-90 examples, 95% coverage (LOW may exist)
+- **very-strict**: Zero findings at all levels, 75-90 examples, 95% coverage
+
+**Partial** (`needs-improvement`):
+
+- Threshold-level findings remain after max-iterations OR example count/coverage below targets
+
+**Failure** (`failing`):
+
+- Major structural issues require maker rework, auto-fixing not applicable
+
+**Note**: Below-threshold findings are reported in final audit but don't prevent success status.
 
 ## Iteration Examples
 
@@ -504,6 +553,102 @@ apps__ayokoding-web__by-example-checker re-validates
 
 **Outcome**: Published after major rework and iteration
 
+## Strictness Examples
+
+### Example 4: Normal Strictness (Default)
+
+**Scenario**: Standard by-example validation for Go tutorial
+
+**Invocation**:
+
+```bash
+# Default strictness (normal) - fixes CRITICAL/HIGH only
+workflow run ayokoding-web-by-example-quality-gate \
+  --tutorial-path=golang/tutorials/by-example/
+```
+
+**Checker results**:
+
+- 3 CRITICAL findings (missing imports)
+- 5 HIGH findings (color violations, missing frontmatter)
+- 8 MEDIUM findings (missing annotations)
+- 12 LOW findings (style improvements)
+
+**Fixer behavior**:
+
+- Fixes: 3 CRITICAL + 5 HIGH = 8 fixes applied
+- Skips: 8 MEDIUM + 12 LOW = 20 findings reported but not fixed
+- Status: `excellent` (zero threshold-level findings, below-threshold findings acceptable)
+
+**Final audit**:
+
+- Zero CRITICAL/HIGH findings ✅
+- 8 MEDIUM findings reported (acceptable)
+- 12 LOW findings reported (acceptable)
+
+### Example 5: Strict Mode (Pre-Deployment)
+
+**Scenario**: Pre-deployment validation for Elixir tutorial
+
+**Invocation**:
+
+```bash
+# Strict mode - fixes CRITICAL/HIGH/MEDIUM
+workflow run ayokoding-web-by-example-quality-gate \
+  --tutorial-path=elixir/tutorials/by-example/ \
+  --strictness=strict
+```
+
+**Checker results**:
+
+- 2 CRITICAL findings
+- 4 HIGH findings
+- 10 MEDIUM findings
+- 15 LOW findings
+
+**Fixer behavior**:
+
+- Fixes: 2 CRITICAL + 4 HIGH + 10 MEDIUM = 16 fixes applied
+- Skips: 15 LOW findings reported but not fixed
+- Status: `excellent` (zero CRITICAL/HIGH/MEDIUM, LOW findings acceptable)
+
+**Final audit**:
+
+- Zero CRITICAL/HIGH/MEDIUM findings ✅
+- 15 LOW findings reported (acceptable)
+
+### Example 6: Very Strict Mode (Comprehensive)
+
+**Scenario**: Comprehensive audit for Java tutorial
+
+**Invocation**:
+
+```bash
+# Very strict mode - fixes all levels
+workflow run ayokoding-web-by-example-quality-gate \
+  --tutorial-path=java/tutorials/by-example/ \
+  --strictness=very-strict \
+  --max-iterations=10
+```
+
+**Checker results**:
+
+- 1 CRITICAL finding
+- 3 HIGH findings
+- 6 MEDIUM findings
+- 20 LOW findings
+
+**Fixer behavior**:
+
+- Fixes: 1 CRITICAL + 3 HIGH + 6 MEDIUM + 20 LOW = 30 fixes applied
+- Skips: None
+- Status: `excellent` (zero findings at all levels)
+
+**Final audit**:
+
+- Zero findings at all levels ✅
+- Equivalent to pre-strictness parameter behavior
+
 ## Workflow Invocation
 
 ### Manual Invocation (Step-by-Step)
@@ -604,6 +749,8 @@ This workflow is part of the **Tutorial Quality Family**:
 - **Flexible**: Auto-fix-level parameter controls automation degree
 - **Focused**: Specialized for by-example tutorials only (not general tutorials)
 
+**Parallelization**: Currently executes sequentially due to user decision points (maker-checker-fixer pattern). The `max-parallelization` parameter is reserved for future enhancements where validation dimensions could run concurrently after user approval.
+
 ## Principles Respected
 
 - ✅ **Explicit Over Implicit**: All steps, decisions, and criteria are explicit
@@ -618,6 +765,6 @@ This workflow is part of the **Tutorial Quality Family**:
 - **[By-Example Tutorial Convention](../conventions/ex-co__by-example-tutorial.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md)**: Confidence assessment
-- **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps__ayokoding-web__by-example-checker.md)**: Validation agent
-- **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps__ayokoding-web__by-example-fixer.md)**: Fixing agent
-- **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps__ayokoding-web__by-example-maker.md)**: Content creation agent
+- **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps**ayokoding-web**by-example-checker.md)**: Validation agent
+- **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps**ayokoding-web**by-example-fixer.md)**: Fixing agent
+- **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps**ayokoding-web**by-example-maker.md)**: Content creation agent
