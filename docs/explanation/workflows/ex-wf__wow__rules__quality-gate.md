@@ -57,7 +57,7 @@ outputs:
 
 Run repository-wide consistency check to identify all issues.
 
-**Agent**: `repo-rules-checker`
+**Agent**: `wow__rules-checker`
 
 - **Args**: `scope: all, EXECUTION_SCOPE: repo-rules`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (4-part format: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
@@ -103,7 +103,7 @@ Analyze audit report to determine if fixes are needed.
 
 Apply validated fixes from the audit report based on mode level.
 
-**Agent**: `repo-rules-fixer`
+**Agent**: `wow__rules-fixer`
 
 - **Args**: `report: {step1.outputs.audit-report-1}, approved: all, mode: {input.mode}, EXECUTION_SCOPE: repo-rules`
 - **Output**: `{fixes-applied}` - Fix report with same UUID chain as source audit
@@ -128,7 +128,7 @@ Apply validated fixes from the audit report based on mode level.
 
 Run checker again to verify fixes resolved issues and no new issues introduced.
 
-**Agent**: `repo-rules-checker`
+**Agent**: `wow__rules-checker`
 
 - **Args**: `scope: all`
 - **Output**: `{audit-report-N}` - Verification audit report

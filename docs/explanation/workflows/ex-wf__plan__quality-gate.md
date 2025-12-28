@@ -16,6 +16,11 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
+  - name: max-concurrency
+    type: number
+    description: Maximum number of agents/tasks that can run concurrently during workflow execution
+    required: false
+    default: 2
 outputs:
   - name: final-status
     type: enum
@@ -47,7 +52,7 @@ outputs:
 
 Run plan validation to identify completeness and accuracy issues.
 
-**Agent**: `plan-checker`
+**Agent**: `plan__checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
@@ -77,7 +82,7 @@ Analyze audit report to determine if fixes are needed.
 
 Apply all validated fixes from the audit report.
 
-**Agent**: `plan-fixer`
+**Agent**: `plan__fixer`
 
 - **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
 - **Output**: `{fixes-applied}`
@@ -98,7 +103,7 @@ Apply all validated fixes from the audit report.
 
 Run checker again to verify fixes resolved issues and no new issues introduced.
 
-**Agent**: `plan-checker`
+**Agent**: `plan__checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-N}` - Verification audit report
@@ -234,7 +239,7 @@ Result: SUCCESS (3 iterations)
 
 ## Plan-Specific Validation
 
-The plan-checker validates:
+The plan\_\_checker validates:
 
 - **Completeness**: All required sections present (requirements, deliverables, checklists)
 - **Technical Accuracy**: Commands, versions, tool names verified via web search

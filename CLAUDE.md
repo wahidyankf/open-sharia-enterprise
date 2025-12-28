@@ -225,7 +225,7 @@ AI agents creating temporary uncommitted files must use designated directories t
 - **`generated-reports/`** - For validation, audit, and check reports (report-generating agents). **CRITICAL**: Any agent writing to this directory MUST have both Write and Bash tools (Write for files, Bash for UTC+7 timestamps).
 - **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
 
-**MANDATORY for ALL \*-checker agents**: All checker agents (wow**rules-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, docs**checker, docs**tutorial-checker, readme**checker, plan**checker, plan**execution-checker) MUST write validation/audit reports to `generated-reports/` using 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain (6-char hex UUIDs separated by dots) enables parallel execution without file collisions. NO conversation-only output. All validation findings MUST be persisted in report files.
+**MANDATORY for ALL \*-checker agents**: All checker agents (wow**rules-checker, apps**ayokoding-web**general-checker, apps**ayokoding-web**by-example-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**structure-checker, apps**ose-platform-web**content-checker, docs**checker, docs**tutorial-checker, readme**checker, plan**checker, plan**execution-checker) MUST write validation/audit reports to `generated-reports/` using 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain (6-char hex UUIDs separated by dots) enables parallel execution without file collisions. NO conversation-only output. All validation findings MUST be persisted in report files.
 
 **PROGRESSIVE WRITING REQUIREMENT**: All \*-checker agents MUST initialize report files at execution start and write findings progressively throughout execution (not buffer and write once at the end). This ensures audit history survives context compaction during long validation runs.
 
@@ -237,19 +237,19 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 ### Available Agents
 
-**Content**: docs**maker, docs**tutorial-maker, readme**maker, social**linkedin\_\_post-maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-title-maker, ose-platform-web-content-maker
+**Content**: docs**maker, docs**tutorial-maker, readme**maker, social**linkedin\_\_post-maker, apps**ayokoding-web**general-maker, apps**ayokoding-web**by-example-maker, apps**ayokoding-web**title-maker, apps**ose-platform-web**content-maker
 
-**Navigation**: ayokoding-web-navigation-maker, ayokoding-web-structure-maker
+**Navigation**: apps**ayokoding-web**navigation-maker, apps**ayokoding-web**structure-maker
 
-**Validation**: docs**checker, docs**tutorial-checker, docs**link-general-checker, readme**checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, wow\_\_rules-checker
+**Validation**: docs**checker, docs**tutorial-checker, docs**link-general-checker, readme**checker, apps**ayokoding-web**general-checker, apps**ayokoding-web**by-example-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**structure-checker, apps**ose-platform-web**content-checker, wow\_\_rules-checker
 
-**Fixing**: wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, ose-platform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer
+**Fixing**: wow**rules-fixer, apps**ayokoding-web**general-fixer, apps**ayokoding-web**by-example-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**structure-fixer, docs**tutorial-fixer, apps**ose-platform-web**content-fixer, readme**fixer, docs**fixer, plan\_\_fixer
 
 **Planning**: plan**maker, plan**checker, plan**executor, plan**execution-checker
 
 **Development**: swe**hugo**developer
 
-**Operations**: docs\_\_file-manager, ayokoding-web-deployer, ose-platform-web-deployer
+**Operations**: docs\_\_file-manager, apps**ayokoding-web**deployer, apps**ose-platform-web**deployer
 
 **Workflows**: wow**workflow-maker, wow**workflow-checker, wow\_\_workflow-fixer
 
