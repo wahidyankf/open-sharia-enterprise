@@ -16,7 +16,7 @@ updated: 2025-12-14
 
 # Repository Validation Methodology Convention
 
-This document defines the standard validation methods and patterns used by repository validation agents (repo-rules-checker, repo-rules-fixer, and related tools) to ensure consistency across the codebase. Following these patterns prevents false positives, improves accuracy, and maintains reliable automated checks.
+This document defines the standard validation methods and patterns used by repository validation agents (wow**rules-checker, wow**rules-fixer, and related tools) to ensure consistency across the codebase. Following these patterns prevents false positives, improves accuracy, and maintains reliable automated checks.
 
 ## Principles Respected
 
@@ -62,8 +62,8 @@ Standardized methods ensure:
 
 This convention applies to:
 
-- **Validation agents** - repo-rules-checker, docs-checker, docs-link-general-checker, etc.
-- **Fix agents** - repo-rules-fixer and similar automated fix tools
+- **Validation agents** - wow**rules-checker, docs**checker, docs-link-general-checker, etc.
+- **Fix agents** - wow\_\_rules-fixer and similar automated fix tools
 - **Content agents** - Any agent that validates file structure or conventions
 - **Custom scripts** - Bash scripts performing repository consistency checks
 
@@ -194,7 +194,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | \
 ```bash
 # Check if 'model' field exists
 field_name="model"
-awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs-maker.md | \
+awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs__maker.md | \
   grep "^model:"
 ```
 
@@ -230,7 +230,7 @@ fi
 # Check if model field is 'sonnet'
 field_name="model"
 expected_value="sonnet"
-actual_value=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs-maker.md | \
+actual_value=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs__maker.md | \
   grep "^model:" | cut -d: -f2- | tr -d ' ')
 
 if [ "$actual_value" = "$expected_value" ]; then
@@ -413,7 +413,7 @@ EXPECTED: What should be present instead
 **Example:**
 
 ```
-FILE: .claude/agents/docs-maker.md
+FILE: .claude/agents/docs__maker.md
 LINE: 5
 ISSUE: [FRONTMATTER_COMMENT] YAML comment found in agent frontmatter
 CONTEXT: |

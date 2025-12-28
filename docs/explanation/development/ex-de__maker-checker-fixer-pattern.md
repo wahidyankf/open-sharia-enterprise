@@ -100,20 +100,20 @@ This pattern is used across **seven agent families**:
 
 **Tool Pattern**: `Write`, `Edit` (content modification tools)
 
-**Color**: 🟦 Blue (Writer agents) or 🟨 Yellow (repo-rules-maker uses bash)
+**Color**: 🟦 Blue (Writer agents) or 🟨 Yellow (wow\_\_rules-maker uses bash)
 
 **Examples**:
 
 | Agent                          | Creates/Updates                                    | Also Manages                                      | Tools Used            |
 | ------------------------------ | -------------------------------------------------- | ------------------------------------------------- | --------------------- |
-| repo-rules-maker               | Convention docs, CLAUDE.md sections, agent prompts | Cross-references, indices, related documentation  | Bash (not Edit/Write) |
+| wow\_\_rules-maker             | Convention docs, CLAUDE.md sections, agent prompts | Cross-references, indices, related documentation  | Bash (not Edit/Write) |
 | ayokoding-web-general-maker    | General Hugo learning content, blog posts          | Navigation files, overview pages, indices         | Write, Edit           |
 | ayokoding-web-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations | Write, Edit           |
-| docs-tutorial-maker            | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      | Write, Edit           |
+| docs\_\_tutorial-maker         | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      | Write, Edit           |
 | ose-platform-web-content-maker | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
-| readme-maker                   | README sections with engaging content              | Links to detailed docs, cross-references          | Write, Edit           |
+| readme\_\_maker                | README sections with engaging content              | Links to detailed docs, cross-references          | Write, Edit           |
 
-**Note**: `repo-rules-maker` is a special case that uses bash commands (cat, sed, awk) instead of Edit/Write tools for file operations.
+**Note**: `wow__rules-maker` is a special case that uses bash commands (cat, sed, awk) instead of Edit/Write tools for file operations.
 
 **Key Responsibilities**:
 
@@ -165,12 +165,12 @@ Maker Agent (ayokoding-web-general-maker):
 
 | Agent                            | Validates                                       | Generates Report                                                |
 | -------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
-| repo-rules-checker               | CLAUDE.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`                             |
+| wow\_\_rules-checker             | CLAUDE.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`                             |
 | ayokoding-web-general-checker    | General Hugo content (frontmatter, links)       | `ayokoding-web__{timestamp}__audit.md`                          |
 | ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)    | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
-| docs-tutorial-checker            | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`                          |
+| docs\_\_tutorial-checker         | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`                          |
 | ose-platform-web-content-checker | Platform content (structure, formatting, links) | `ose-platform-web__{timestamp}__audit.md`                       |
-| readme-checker                   | README engagement, accessibility, jargon        | `readme__{timestamp}__audit.md`                                 |
+| readme\_\_checker                | README engagement, accessibility, jargon        | `readme__{timestamp}__audit.md`                                 |
 
 **Key Responsibilities**:
 
@@ -234,12 +234,12 @@ Checker Agent (ayokoding-web-general-checker):
 
 | Agent                          | Fixes                                              | Generates Report                                              | Tools Used            |
 | ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------- | --------------------- |
-| repo-rules-fixer               | Convention violations from repo-rules-checker      | `repo-rules__{timestamp}__fix.md`                             | Bash (not Edit/Write) |
+| wow\_\_rules-fixer             | Convention violations from wow\_\_rules-checker    | `repo-rules__{timestamp}__fix.md`                             | Bash (not Edit/Write) |
 | ayokoding-web-general-fixer    | General Hugo content issues from general-checker   | `ayokoding-web__{timestamp}__fix.md`                          | Edit, Write, Bash     |
 | ayokoding-web-by-example-fixer | By-example tutorial issues from by-example-checker | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md` | Edit, Write, Bash     |
-| readme-fixer                   | README quality issues from readme-checker          | `readme__{timestamp}__fix.md`                                 | Edit, Write, Bash     |
+| readme\_\_fixer                | README quality issues from readme\_\_checker       | `readme__{timestamp}__fix.md`                                 | Edit, Write, Bash     |
 
-**Note**: `repo-rules-fixer` is a special case that uses bash commands (sed, awk, cat) instead of Edit/Write tools for file modifications. It still needs bash for report generation and timestamps.
+**Note**: `wow__rules-fixer` is a special case that uses bash commands (sed, awk, cat) instead of Edit/Write tools for file modifications. It still needs bash for report generation and timestamps.
 
 **Key Responsibilities**:
 
@@ -363,11 +363,11 @@ Agent: ayokoding-web-general-fixer (applies validated fixes from audit)
 
 The maker-checker-fixer pattern aligns with the agent color categorization system:
 
-| Color         | Role     | Stage   | Tool Pattern                    | Examples                                                                        |
-| ------------- | -------- | ------- | ------------------------------- | ------------------------------------------------------------------------------- |
-| 🟦 **Blue**   | Writers  | Maker   | Has `Write` (creates new files) | ayokoding-web-general-maker, ayokoding-web-by-example-maker, readme-maker       |
-| 🟩 **Green**  | Checkers | Checker | Has `Write`, `Bash` (no `Edit`) | ayokoding-web-general-checker, ayokoding-web-by-example-checker, readme-checker |
-| 🟨 **Yellow** | Updaters | Fixer   | Has `Edit` (not `Write`)        | repo-rules-fixer                                                                |
+| Color         | Role     | Stage   | Tool Pattern                    | Examples                                                                           |
+| ------------- | -------- | ------- | ------------------------------- | ---------------------------------------------------------------------------------- |
+| 🟦 **Blue**   | Writers  | Maker   | Has `Write` (creates new files) | ayokoding-web-general-maker, ayokoding-web-by-example-maker, readme\_\_maker       |
+| 🟩 **Green**  | Checkers | Checker | Has `Write`, `Bash` (no `Edit`) | ayokoding-web-general-checker, ayokoding-web-by-example-checker, readme\_\_checker |
+| 🟨 **Yellow** | Updaters | Fixer   | Has `Edit` (not `Write`)        | wow\_\_rules-fixer                                                                 |
 
 **Note**: Purple (🟪 Implementors) agents execute plans and use all tools, falling outside the maker-checker-fixer pattern.
 
@@ -381,18 +381,18 @@ See [AI Agents Convention - Agent Color Categorization](./ex-de__ai-agents.md#ag
 
 **Agents**:
 
-- **repo-rules-maker** (🟦 Maker) - Propagates rule changes across multiple files
-- **repo-rules-checker** (🟩 Checker) - Validates consistency, generates audit reports
-- **repo-rules-fixer** (🟨 Fixer) - Applies validated fixes from audit reports
+- **wow\_\_rules-maker** (🟦 Maker) - Propagates rule changes across multiple files
+- **wow\_\_rules-checker** (🟩 Checker) - Validates consistency, generates audit reports
+- **wow\_\_rules-fixer** (🟨 Fixer) - Applies validated fixes from audit reports
 
 **Use Case**: Maintaining consistency when adding/modifying conventions or standards
 
 **Example**:
 
 ```
-1. repo-rules-maker: Add new emoji usage rule to convention doc + update CLAUDE.md + update agents
-2. repo-rules-checker: Validate all files comply with new rule
-3. repo-rules-fixer: Fix non-compliant files found in audit
+1. wow__rules-maker: Add new emoji usage rule to convention doc + update CLAUDE.md + update agents
+2. wow__rules-checker: Validate all files comply with new rule
+3. wow__rules-fixer: Fix non-compliant files found in audit
 ```
 
 ### 2. ayokoding-web-\* (Hugo Content for ayokoding-web)
@@ -432,16 +432,16 @@ See [AI Agents Convention - Agent Color Categorization](./ex-de__ai-agents.md#ag
 
 **Agents**:
 
-- **docs-tutorial-maker** (🟦 Maker) - Creates tutorials with narrative flow and scaffolding
-- **docs-tutorial-checker** (🟩 Checker) - Validates tutorial quality (pedagogy, visuals, exercises)
+- **docs\_\_tutorial-maker** (🟦 Maker) - Creates tutorials with narrative flow and scaffolding
+- **docs\_\_tutorial-checker** (🟩 Checker) - Validates tutorial quality (pedagogy, visuals, exercises)
 
 **Use Case**: Creating high-quality learning-oriented tutorials
 
 **Example**:
 
 ```
-1. docs-tutorial-maker: Create RAG tutorial with progressive scaffolding, diagrams, code examples
-2. docs-tutorial-checker: Validate narrative flow, visual completeness, hands-on elements
+1. docs__tutorial-maker: Create RAG tutorial with progressive scaffolding, diagrams, code examples
+2. docs__tutorial-checker: Validate narrative flow, visual completeness, hands-on elements
 ```
 
 **Note**: Tutorial fixes are typically manual (narrative quality requires human judgment)
@@ -472,19 +472,19 @@ See [AI Agents Convention - Agent Color Categorization](./ex-de__ai-agents.md#ag
 
 **Agents**:
 
-- **readme-maker** (🟦 Maker) - Creates README content following quality standards
-- **readme-checker** (🟩 Checker) - Validates engagement, accessibility, paragraph length
+- **readme\_\_maker** (🟦 Maker) - Creates README content following quality standards
+- **readme\_\_checker** (🟩 Checker) - Validates engagement, accessibility, paragraph length
 
 **Use Case**: Maintaining high-quality, welcoming README files
 
 **Example**:
 
 ```
-1. readme-maker: Add Security section with problem-solution hook
-2. readme-checker: Validate paragraph length, jargon, acronym context
+1. readme__maker: Add Security section with problem-solution hook
+2. readme__checker: Validate paragraph length, jargon, acronym context
 ```
 
-**Future**: readme-fixer (🟨 Fixer)
+**Future**: readme\_\_fixer (🟨 Fixer)
 
 ### 6. docs-\* (Documentation Factual Accuracy)
 
@@ -492,21 +492,21 @@ See [AI Agents Convention - Agent Color Categorization](./ex-de__ai-agents.md#ag
 
 **Agents**:
 
-- **docs-maker** (🟦 Maker) - Creates and edits documentation following conventions
-- **docs-checker** (🟩 Checker) - Validates factual accuracy using WebSearch/WebFetch
-- **docs-fixer** (🟨 Fixer) - Applies validated factual accuracy fixes
+- **docs\_\_maker** (🟦 Maker) - Creates and edits documentation following conventions
+- **docs\_\_checker** (🟩 Checker) - Validates factual accuracy using WebSearch/WebFetch
+- **docs\_\_fixer** (🟨 Fixer) - Applies validated factual accuracy fixes
 
 **Use Case**: Ensuring documentation is technically accurate and current
 
 **Example**:
 
 ```
-1. docs-maker: Create API documentation with code examples
-2. docs-checker: Validate command syntax, version numbers, API methods against authoritative sources
-3. docs-fixer: Fix incorrect command flags, update outdated versions, correct broken links
+1. docs__maker: Create API documentation with code examples
+2. docs__checker: Validate command syntax, version numbers, API methods against authoritative sources
+3. docs__fixer: Fix incorrect command flags, update outdated versions, correct broken links
 ```
 
-**Note**: docs-fixer distinguishes objective factual errors (command syntax, version numbers - apply automatically) from subjective improvements (narrative quality, terminology - manual review)
+**Note**: docs\_\_fixer distinguishes objective factual errors (command syntax, version numbers - apply automatically) from subjective improvements (narrative quality, terminology - manual review)
 
 ### 7. plan-\* (Plan Completeness and Structure)
 
@@ -514,21 +514,21 @@ See [AI Agents Convention - Agent Color Categorization](./ex-de__ai-agents.md#ag
 
 **Agents**:
 
-- **plan-maker** (🟦 Maker) - Creates project planning documents
-- **plan-checker** (🟩 Checker) - Validates plan readiness for implementation
-- **plan-fixer** (🟨 Fixer) - Applies validated structural/format fixes
+- **plan\_\_maker** (🟦 Maker) - Creates project planning documents
+- **plan\_\_checker** (🟩 Checker) - Validates plan readiness for implementation
+- **plan\_\_fixer** (🟨 Fixer) - Applies validated structural/format fixes
 
 **Use Case**: Ensuring plans are complete and accurate before implementation
 
 **Example**:
 
 ```
-1. plan-maker: Create project plan with requirements, tech-docs, delivery checklist
-2. plan-checker: Validate required sections exist, verify codebase assumptions, check technology choices
-3. plan-fixer: Add missing sections, fix broken file references, correct format violations
+1. plan__maker: Create project plan with requirements, tech-docs, delivery checklist
+2. plan__checker: Validate required sections exist, verify codebase assumptions, check technology choices
+3. plan__fixer: Add missing sections, fix broken file references, correct format violations
 ```
 
-**Note**: plan-fixer distinguishes structural/format issues (missing sections, broken links - apply automatically) from strategic decisions (technology choices, scope, architecture - manual review)
+**Note**: plan\_\_fixer distinguishes structural/format issues (missing sections, broken links - apply automatically) from strategic decisions (technology choices, scope, architecture - manual review)
 
 ## 🔍 When to Use Each Stage
 
@@ -676,8 +676,8 @@ The maker-checker-fixer pattern integrates with repository conventions:
 | [Repository Validation Methodology](./ex-de__repository-validation.md)    | Standard validation patterns used by checker/fixer              |
 | [Content Quality Principles](../conventions/ex-co__content-quality.md)    | What checkers validate (quality standards)                      |
 | [Hugo Content Convention](../conventions/ex-co__hugo-content-shared.md)   | What ayokoding/ose-platform makers/checkers enforce             |
-| [Tutorial Convention](../conventions/ex-co__tutorials.md)                 | What docs-tutorial-maker/checker enforce                        |
-| [README Quality Convention](../conventions/ex-co__readme-quality.md)      | What readme-maker/checker enforce                               |
+| [Tutorial Convention](../conventions/ex-co__tutorials.md)                 | What docs\_\_tutorial-maker/checker enforce                     |
+| [README Quality Convention](../conventions/ex-co__readme-quality.md)      | What readme\_\_maker/checker enforce                            |
 | [Temporary Files Convention](./ex-de__temporary-files.md)                 | Where checker/fixer reports are stored                          |
 
 **Key Point**: The pattern is a **workflow framework**. The conventions define **what** to validate/enforce.
@@ -705,9 +705,9 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Agent Examples**:
 
-- `.claude/agents/repo-rules-maker.md` - Example maker agent
-- `.claude/agents/repo-rules-checker.md` - Example checker agent
-- `.claude/agents/repo-rules-fixer.md` - Example fixer agent
+- `.claude/agents/wow__rules-maker.md` - Example maker agent
+- `.claude/agents/wow__rules-checker.md` - Example checker agent
+- `.claude/agents/wow__rules-fixer.md` - Example fixer agent
 - `.claude/agents/ayokoding-web-general-maker.md` - General Hugo content maker
 - `.claude/agents/ayokoding-web-by-example-maker.md` - By-example tutorial maker
 - `.claude/agents/ayokoding-web-general-checker.md` - General Hugo content checker

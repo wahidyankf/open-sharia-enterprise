@@ -1,5 +1,5 @@
 ---
-name: plan-executor
+name: plan__executor
 description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-maker agent.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
@@ -134,8 +134,8 @@ If `requirements/` or `tech-docs/` folders exist instead of single files:
   When updating TBD workflow, synchronize these files:
   1. docs/explanation/development/ex-de__trunk-based-development.md (master reference)
   2. CLAUDE.md (summary)
-  3. .claude/agents/plan-maker.md (Git Workflow section)
-  4. .claude/agents/plan-executor.md (this section)
+  3. .claude/agents/plan__maker.md (Git Workflow section)
+  4. .claude/agents/plan__executor.md (this section)
 -->
 
 **IMPORTANT**: This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default.
@@ -713,10 +713,10 @@ For **Multi-PR plans**: delivery.md will specify which phase corresponds to whic
 
 **Related Agents:**
 
-- `.claude/agents/plan-maker.md` - Creates plans (complementary agent)
-- `.claude/agents/plan-execution-checker.md` - Validates completed implementations (handoff agent for final validation)
-- `.claude/agents/docs-maker.md` - Writes permanent documentation (for docs/ updates)
-- `.claude/agents/repo-rules-checker.md` - Validates repository consistency (for final checks)
+- `.claude/agents/plan__maker.md` - Creates plans (complementary agent)
+- `.claude/agents/plan__execution-checker.md` - Validates completed implementations (handoff agent for final validation)
+- `.claude/agents/docs__maker.md` - Writes permanent documentation (for docs/ updates)
+- `.claude/agents/wow__rules-checker.md` - Validates repository consistency (for final checks)
 
 ---
 

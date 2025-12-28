@@ -1,5 +1,5 @@
 ---
-name: readme-fixer
+name: readme__fixer
 description: Applies validated fixes from readme-checker audit reports. Re-validates README quality findings before applying changes. Use after reviewing readme-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
@@ -824,9 +824,9 @@ Always provide:
 
 **Related Agents:**
 
-- [readme-checker.md](./readme-checker.md) - Generates audit reports that this agent processes
-- [readme-maker.md](./readme-maker.md) - Creates new README content (different purpose)
-- [repo-rules-fixer.md](./repo-rules-fixer.md) - Similar fixer pattern for repository rules
+- [readme\_\_checker.md](./readme__checker.md) - Generates audit reports that this agent processes
+- [readme\_\_maker.md](./readme__maker.md) - Creates new README content (different purpose)
+- [wow\_\_rules-fixer.md](./wow__rules-fixer.md) - Similar fixer pattern for repository rules
 
 **Related Conventions:**
 

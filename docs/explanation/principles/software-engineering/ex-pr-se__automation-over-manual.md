@@ -23,7 +23,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__op
 
 **How this principle serves the vision:**
 
-- **Scales Knowledge Sharing**: Automated validation (docs-checker, repo-rules-checker) means quality knowledge spreads without requiring manual expert review. One expert creates a checker, thousands benefit
+- **Scales Knowledge Sharing**: Automated validation (docs**checker, wow**rules-checker) means quality knowledge spreads without requiring manual expert review. One expert creates a checker, thousands benefit
 - **Lowers Contribution Barriers**: Automated formatting and linting mean contributors don't need to memorize style guides. Focus on Islamic finance logic, not formatting rules
 - **Maintains Consistency**: As the community grows globally, automation ensures consistent quality across timezones and contributors. No gatekeepers needed
 - **Frees Human Creativity**: Developers spend time understanding Shariah principles and building innovative solutions, not manual testing and formatting. Automation handles the tedious, humans handle the meaningful
@@ -150,7 +150,7 @@ npx commitlint --edit $1
 
 **Context**: Checking documentation quality and consistency.
 
-**Automation**: `docs-checker.md` agent
+**Automation**: `docs__checker.md` agent
 
 **What it automates**:
 
@@ -175,7 +175,7 @@ npx commitlint --edit $1
 
 **Context**: Checking external links without redundant requests.
 
-**Automation**: `docs-link-general-checker.md` agent with cache
+**Automation**: `docs__link-general-checker.md` agent with cache
 
 **Location**: `docs/metadata/external-links-status.yaml`
 
@@ -305,8 +305,8 @@ git push
 **AI agents** for deep validation:
 
 ```bash
-✅ docs-checker: Validate conventions, detect contradictions
-✅ plan-checker: Verify plan completeness
+✅ docs__checker: Validate conventions, detect contradictions
+✅ plan__checker: Verify plan completeness
 ❌ Git hooks: Don't run deep validation pre-commit (too slow)
 ```
 
@@ -408,10 +408,10 @@ The project enforces code quality through automated git hooks:
 
 **Agents**:
 
-- `docs-checker.md` - Validate documentation
-- `docs-link-general-checker.md` - Verify links with cache
-- `repo-rules-checker.md` - Check repository consistency
-- `plan-checker.md` - Validate project plans
+- `docs__checker.md` - Validate documentation
+- `docs__link-general-checker.md` - Verify links with cache
+- `wow__rules-checker.md` - Check repository consistency
+- `plan__checker.md` - Validate project plans
 
 **Automation benefits**:
 

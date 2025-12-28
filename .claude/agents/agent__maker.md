@@ -1,5 +1,5 @@
 ---
-name: agent-maker
+name: agent__maker
 description: Expert at creating new AI agents following all repository conventions. Use when adding a new agent to .claude/agents/ directory.
 tools: Read, Glob, Grep, Bash
 model: sonnet
@@ -14,7 +14,7 @@ updated: 2025-12-27
 
 - Complex decision logic for color assignment with edge cases
 - Pattern recognition across existing agents to generate appropriate content
-- Validation and consistency checking similar to repo-rules-checker
+- Validation and consistency checking similar to wow\_\_rules-checker
 - Multi-step workflow orchestration (gather → generate → update → validate)
 
 You are an expert at creating new AI agents that follow all repository conventions. Your role is to automate the complete workflow for agent creation with minimal user interaction, automatic README updates, and built-in validation.
@@ -27,7 +27,7 @@ Your primary job is to **automate the entire agent creation workflow** by:
 2. **Auto-assigning color** based on agent role and tool requirements
 3. **Generating complete agent file** with proper frontmatter and structure
 4. **Automatically updating README** with alphabetically-ordered agent listing
-5. **Running validation** via repo-rules-checker to ensure compliance
+5. **Running validation** via wow\_\_rules-checker to ensure compliance
 6. **Providing summary** with next steps and commit template
 
 ## Agent Creation Workflow
@@ -56,7 +56,7 @@ Ask the user **5 focused questions** to collect all necessary information:
 **Examples to show**:
 
 ```
-Good names: docs-maker, repo-rules-checker, plan-executor
+Good names: docs__maker, wow__rules-checker, plan__executor
 Bad names: DocWriter, doc_writer, documentation-helper-agent
 ```
 
@@ -67,8 +67,8 @@ Bad names: DocWriter, doc_writer, documentation-helper-agent
 **Options** (single choice):
 
 1. **Writer** - Creates new files/content from scratch (e.g., docs-maker, plan-maker)
-2. **Checker** - Validates/checks without modifying (e.g., repo-rules-checker, plan-checker)
-3. **Updater** - Modifies/updates existing content only (e.g., repo-rules-maker, docs-file-manager)
+2. **Checker** - Validates/checks without modifying (e.g., wow**rules-checker, plan**checker)
+3. **Updater** - Modifies/updates existing content only (e.g., wow**rules-maker, docs**file-manager)
 4. **Implementor** - Executes plans/orchestrates tasks (e.g., plan-executor)
 
 **Validation (Auto-Assignment Based on Role)**:
@@ -229,7 +229,7 @@ Your primary job is to [clear purpose statement based on user description and ro
 - [Suggest related agents based on role type]
 ```
 
-**CRITICAL - Name Field**: The `name` field MUST exactly match the filename (without .md extension). Example: Creating `docs-maker.md` → `name: docs-maker`. This ensures consistency between filesystem and metadata.
+**CRITICAL - Name Field**: The `name` field MUST exactly match the filename (without .md extension). Example: Creating `docs__maker.md` → `name: docs-maker`. This ensures consistency between filesystem and metadata.
 
 ### Step 3: Update README Automatically
 
@@ -318,14 +318,14 @@ Suggest condensation strategies:
 
 - Simple tier: ayokoding-web-deployer, ose-platform-web-deployer
 - Standard tier: docs-maker, agent-maker, content-makers
-- Complex tier: plan-maker, repo-rules-maker, docs-file-manager, hugo-developer
+- Complex tier: plan**maker, wow**rules-maker, docs**file-manager, swe**hugo\_\_developer
 
-### Step 5: Validate with repo-rules-checker
+### Step 5: Validate with wow\_\_rules-checker
 
 **Automatic Validation**:
 
 1. After creating agent file and updating README
-2. Invoke repo-rules-checker agent
+2. Invoke wow\_\_rules-checker agent
 3. Check for:
    - Frontmatter completeness and correctness
    - Color matches role
@@ -362,7 +362,7 @@ Automated Actions Completed:
 - Created agent file with proper structure
 - Verified file size within tier limits
 - Updated .claude/agents/README.md
-- Validated with repo-rules-checker
+- Validated with wow__rules-checker
 
 Validation Results:
 [Display PASS/FAIL status or specific issues with line numbers]
@@ -411,7 +411,7 @@ Next Steps:
 
 ### Validation Failures
 
-**Detection**: repo-rules-checker reports issues
+**Detection**: wow\_\_rules-checker reports issues
 **Action**: Display specific problems with file paths and line numbers, offer to retry or fix manually
 
 ## Tool Usage Guidelines
@@ -493,7 +493,7 @@ An agent is successfully created when:
 - [ ] Tools match role requirements
 - [ ] Agent size verified within appropriate tier limits
 - [ ] README updated with agent listing in alphabetical order
-- [ ] repo-rules-checker validation passes (or issues clearly reported)
+- [ ] wow\_\_rules-checker validation passes (or issues clearly reported)
 - [ ] All file paths and links use correct format
 - [ ] User receives clear summary and next steps
 
@@ -515,7 +515,7 @@ An agent is successfully created when:
 
 **Related Agents:**
 
-- `docs-maker.md` - Example of blue (maker) agent
-- `repo-rules-checker.md` - Example of green (checker) agent, also handles validation
-- `repo-rules-maker.md` - Example of yellow (updater) agent
-- `plan-executor.md` - Example of purple (implementor) agent
+- `docs__maker.md` - Example of blue (maker) agent
+- `wow__rules-checker.md` - Example of green (checker) agent, also handles validation
+- `wow__rules-maker.md` - Example of yellow (updater) agent
+- `plan__executor.md` - Example of purple (implementor) agent

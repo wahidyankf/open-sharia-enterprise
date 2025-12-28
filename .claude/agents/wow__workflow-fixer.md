@@ -1,5 +1,5 @@
 ---
-name: workflow-fixer
+name: wow__workflow-fixer
 description: Applies validated fixes from workflow-checker audit reports. Re-validates workflow definition findings before applying changes. Use after reviewing workflow-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
@@ -785,7 +785,7 @@ Action: Flag for manual review
 
 ```
 Finding: "Agent reference docs-checker doesn't exist"
-Re-validation: File .claude/agents/docs-checker.md exists
+Re-validation: File .claude/agents/docs__checker.md exists
 Confidence: FALSE_POSITIVE (checker error)
 Action: Skip fix, report to improve checker
 ```
@@ -825,10 +825,10 @@ Always provide:
 
 **Related Agents:**
 
-- [workflow-checker.md](./workflow-checker.md) - Generates audit reports that this agent processes
-- [workflow-maker.md](./workflow-maker.md) - Creates and edits workflows
-- [repo-rules-fixer.md](./repo-rules-fixer.md) - Structural fix applier (similar pattern)
-- [docs-fixer.md](./docs-fixer.md) - Documentation fix applier (similar pattern)
+- [wow\_\_workflow-checker.md](./wow__workflow-checker.md) - Generates audit reports that this agent processes
+- [wow\_\_workflow-maker.md](./wow__workflow-maker.md) - Creates and edits workflows
+- [wow\_\_rules-fixer.md](./wow__rules-fixer.md) - Structural fix applier (similar pattern)
+- [docs\_\_fixer.md](./docs__fixer.md) - Documentation fix applier (similar pattern)
 
 **Related Conventions:**
 

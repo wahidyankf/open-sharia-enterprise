@@ -10,7 +10,7 @@ This directory contains specialized AI agents for repository maintenance and doc
 
 ## Available Agents
 
-### 🟦 `agent-maker.md`
+### 🟦 `agent__maker.md`
 
 Expert at creating new AI agents following all repository conventions.
 
@@ -22,7 +22,7 @@ Expert at creating new AI agents following all repository conventions.
   - Auto-generating agent files following all naming and format conventions
   - Automatically assigning color based on agent role
   - Automatically updating agents README with new agent listing
-  - Running validation via repo-rules-checker
+  - Running validation via wow\_\_rules-checker
 
 ### 🟦 `ayokoding-web-by-example-maker.md`
 
@@ -390,7 +390,7 @@ Expert at deploying ose-platform-web to production. Synchronizes prod-ose-platfo
   - Syncing prod-ose-platform-web branch with origin/main
 - **IMPORTANT:** All work must be done on main branch first - this agent only synchronizes branches, never commits directly to prod-ose-platform-web
 
-### 🟦 `hugo-developer.md`
+### 🟦 `swe__hugo__developer.md`
 
 Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web following Hugo Development Convention.
 
@@ -407,10 +407,10 @@ Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayo
   - Optimizing performance and SEO
   - Managing build scripts
 - **Out of Scope:** Creating content (use content-maker agents), validating content (use content-checker agents)
-- **Works with:** Content-maker agents for content, hugo-developer for infrastructure
+- **Works with:** Content-maker agents for content, swe**hugo**developer for infrastructure
 - **References:** Hugo Development Convention, Color Accessibility Convention
 
-### 🟦 `linkedin-post-maker.md`
+### 🟦 `social__linkedin__post-maker.md`
 
 Expert content creator specializing in weekly LinkedIn update posts. Use when generating factual, no-hype weekly summaries of Open Sharia Enterprise development progress.
 
@@ -429,7 +429,7 @@ Expert content creator specializing in weekly LinkedIn update posts. Use when ge
 - **Style:** Factual, conversational personal voice ("I built...", "I added..."), no marketing speak, no platitudes, verifiable numbers only
 - **References:** Content Quality Principles, File Naming Convention
 
-### 🟩 `docs-checker.md`
+### 🟩 `docs__checker.md`
 
 Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information.
 
@@ -445,29 +445,29 @@ Expert at validating factual correctness and content consistency of documentatio
   - Ensuring code examples use current APIs
   - Detecting contradictions across documentation
   - Checking command syntax and flags are correct
-- **Works with:** `docs-fixer` for applying validated fixes, `docs-maker` for content creation
+- **Works with:** `docs__fixer` for applying validated fixes, `docs__maker` for content creation
 
-### 🟪 `docs-fixer.md`
+### 🟪 `docs__fixer.md`
 
-Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
+Applies validated fixes from docs**checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs**checker output.
 
-- **Primary Use:** Applying validated fixes from docs-checker audit reports after user review
+- **Primary Use:** Applying validated fixes from docs\_\_checker audit reports after user review
 - **Specialization:** Factual accuracy fix application, web-based re-validation (WebSearch/WebFetch), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective distinction, false positive detection
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - After reviewing docs-checker audit report and deciding to apply validated fixes
+  - After reviewing docs\_\_checker audit report and deciding to apply validated fixes
   - Fixing objective factual errors (command syntax, version numbers, broken links) automatically
   - Flagging subjective improvements (narrative quality, terminology choices) for manual review
-  - Detecting and reporting false positives to improve docs-checker accuracy
+  - Detecting and reporting false positives to improve docs\_\_checker accuracy
   - Generating comprehensive fix reports with audit trail
   - Re-validating documentation findings using WebSearch and WebFetch before applying changes
-- **Workflow:** docs-checker (detect) → User review → docs-fixer (apply validated fixes)
+- **Workflow:** docs**checker (detect) → User review → docs**fixer (apply validated fixes)
 - **Safety:** Re-executes validation checks using web tools before applying fixes (applies only HIGH confidence objective fixes automatically)
 - **Output:** Generates `docs__{timestamp}__fix.md` report in `generated-reports/`
 - **Note:** Many documentation "issues" are subjective (editorial improvements, style preferences) - this agent applies only objective factual errors (verifiable against authoritative sources) and flags subjective improvements for human judgment
-- **Works with:** `docs-checker` for audit report generation, `docs-maker` for content creation
+- **Works with:** `docs__checker` for audit report generation, `docs__maker` for content creation
 
-### 🟦 `docs-maker.md`
+### 🟦 `docs__maker.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Follows CLAUDE.md content philosophy (navigation document, not knowledge dump).
 
@@ -480,10 +480,10 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
   - Organizing documentation according to Diátaxis framework
   - Ensuring documentation follows file naming, linking, and emoji conventions
   - Adding convention summaries to CLAUDE.md (brief only, link to details)
-- **Works with:** `docs-checker` for accuracy validation, `docs-link-general-checker` for link validation
-- **Note:** For tutorials, use `docs-tutorial-maker` instead
+- **Works with:** `docs__checker` for accuracy validation, `docs-link-general-checker` for link validation
+- **Note:** For tutorials, use `docs__tutorial-maker` instead
 
-### 🟦 `docs-tutorial-maker.md`
+### 🟦 `docs__tutorial-maker.md`
 
 Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements. Follows Tutorial Naming Convention with six standardized types forming "Full Set" (5 sequential levels: Initial Setup, Quick Start, Beginner, Intermediate, Advanced) plus Cookbook (parallel track).
 
@@ -499,9 +499,9 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
   - Creating step-by-step hands-on learning experiences
   - Teaching complex technical concepts progressively
   - Following Diátaxis tutorial principles (learning-oriented, not task-oriented)
-- **Works with:** `docs-tutorial-checker` for quality validation
+- **Works with:** `docs__tutorial-checker` for quality validation
 
-### 🟪 `docs-link-general-checker.md`
+### 🟪 `docs__link-general-checker.md`
 
 **HYBRID AGENT** (Validator + State Manager): Validates both external and internal links in documentation files while maintaining operational cache file. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (spawned by other agents, automated processes, or direct invocation). Outputs results in conversation only (no separate report files).
 
@@ -524,7 +524,7 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
 - **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/ex-de__ai-agents.md#hybrid-agents-exception) for complete rationale
 
-### 🟩 `docs-tutorial-checker.md`
+### 🟩 `docs__tutorial-checker.md`
 
 Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance (Initial Setup through Advanced).
 
@@ -541,28 +541,28 @@ Validates tutorial quality focusing on pedagogical structure, narrative flow, vi
   - Assessing hands-on elements (code examples, checkpoints, exercises)
   - Ensuring progressive scaffolding (simple → complex)
   - Validating tutorial completeness (intro, objectives, prerequisites, next steps)
-- **Works with:** `docs-tutorial-maker` for content creation, `docs-checker` for accuracy, `docs-link-general-checker` for links
-- **Note:** Complements (doesn't duplicate) docs-checker (accuracy) and docs-link-general-checker (links)
+- **Works with:** `docs__tutorial-maker` for content creation, `docs__checker` for accuracy, `docs-link-general-checker` for links
+- **Note:** Complements (doesn't duplicate) docs\_\_checker (accuracy) and docs-link-general-checker (links)
 
-### 🟪 `docs-tutorial-fixer.md`
+### 🟪 `docs__tutorial-fixer.md`
 
-Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes to prevent false positives.
+Applies validated fixes from docs\_\_tutorial-checker audit reports. Re-validates pedagogical findings before applying changes to prevent false positives.
 
 - **Primary Use:** Applying validated fixes from tutorial quality audits
 - **Specialization:** Tutorial quality fix application, pedagogical finding re-validation, confidence level assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective issue distinction, fix report generation, false positive detection
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - Applying fixes from docs-tutorial-checker audit reports automatically
+  - Applying fixes from docs\_\_tutorial-checker audit reports automatically
   - After reviewing checker findings and deciding to apply validated fixes
   - Fixing objective issues (missing sections, LaTeX errors, naming violations) automatically
   - Flagging subjective issues (narrative quality, diagram placement) for manual review
   - Detecting and reporting false positives to improve checker accuracy
   - Generating comprehensive fix reports with audit trail
   - Re-validating tutorial quality findings before applying changes
-- **Works with:** `docs-tutorial-checker` for audit report generation, `docs-tutorial-maker` for content creation
+- **Works with:** `docs__tutorial-checker` for audit report generation, `docs__tutorial-maker` for content creation
 - **Note:** Only applies HIGH confidence fixes (objective issues), flags MEDIUM confidence (subjective quality) for manual review
 
-### 🟨 `docs-file-manager.md`
+### 🟨 `docs__file-manager.md`
 
 Expert at managing files and directories in docs/ directory. Handles renaming, moving, and deleting operations while maintaining conventions.
 
@@ -578,7 +578,7 @@ Expert at managing files and directories in docs/ directory. Handles renaming, m
   - After operations: automatically updates all internal links and indices
   - Uses git mv and git rm to preserve file history
 
-### 🟩 `readme-checker.md`
+### 🟩 `readme__checker.md`
 
 Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation.
 
@@ -594,29 +594,29 @@ Validates README.md for engagement, accessibility, and quality standards. Checks
   - Confirming problem-solution narrative exists
   - Detecting duplicate content from detailed docs
   - Assessing overall engagement and accessibility
-- **Works with:** `readme-maker` for content creation/updates, `readme-fixer` for applying validated fixes
+- **Works with:** `readme__maker` for content creation/updates, `readme__fixer` for applying validated fixes
 - **References:** README Quality Convention
 
-### 🟪 `readme-fixer.md`
+### 🟪 `readme__fixer.md`
 
-Applies validated fixes from readme-checker audit reports. Re-validates README quality findings before applying changes. Conservative approach applies only objective fixes automatically.
+Applies validated fixes from readme\_\_checker audit reports. Re-validates README quality findings before applying changes. Conservative approach applies only objective fixes automatically.
 
-- **Primary Use:** Applying validated fixes from readme-checker audit reports after user review
+- **Primary Use:** Applying validated fixes from readme\_\_checker audit reports after user review
 - **Specialization:** Objective vs subjective fix classification, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application for measurable issues (paragraph length, acronym context, broken links), manual review flagging for subjective improvements (tone, engagement, benefits framing)
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - After reviewing readme-checker audit report
+  - After reviewing readme\_\_checker audit report
   - Applying validated objective fixes automatically (paragraph breaks, acronym expansion, format corrections)
   - Detecting false positives in checker findings
   - Flagging subjective improvements for manual review
   - Generating fix audit trail for transparency
-- **Workflow:** readme-checker (detect) → User review → readme-fixer (apply validated fixes)
+- **Workflow:** readme**checker (detect) → User review → readme**fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence objective fixes automatically)
 - **Output:** Generates `readme__{timestamp}__fix.md` report in `generated-reports/`
 - **Note:** Many README quality issues are subjective - this agent applies only objective fixes (measurable violations) and flags subjective improvements (tone, engagement) for human judgment
-- **Works with:** `readme-checker` for audit report generation, `readme-maker` for content creation
+- **Works with:** `readme__checker` for audit report generation, `readme__maker` for content creation
 
-### 🟦 `readme-maker.md`
+### 🟦 `readme__maker.md`
 
 Creates and updates README.md content while maintaining engagement, accessibility, and quality standards. Rewrites jargony sections, adds context to acronyms, breaks up dense paragraphs.
 
@@ -632,10 +632,10 @@ Creates and updates README.md content while maintaining engagement, accessibilit
   - Creating problem-solution hooks for motivation
   - Ensuring README stays navigation-focused (not comprehensive)
   - Maintaining consistent, welcoming tone throughout
-- **Works with:** `readme-checker` for quality validation
+- **Works with:** `readme__checker` for quality validation
 - **References:** README Quality Convention
 
-### 🟦 `workflow-maker.md`
+### 🟦 `wow__workflow-maker.md`
 
 Expert at creating and updating workflow definition files in docs/explanation/workflows/ following Workflow Pattern Convention.
 
@@ -654,7 +654,7 @@ Expert at creating and updating workflow definition files in docs/explanation/wo
 - **Works with:** All agents (workflows orchestrate agents)
 - **References:** Workflow Pattern Convention, Maker-Checker-Fixer Pattern, AI Agents Convention
 
-### 🟩 `workflow-checker.md`
+### 🟩 `wow__workflow-checker.md`
 
 Expert at validating workflow definition files in docs/explanation/workflows/ against Workflow Pattern Convention and quality standards.
 
@@ -672,29 +672,29 @@ Expert at validating workflow definition files in docs/explanation/workflows/ ag
   - Verifying workflows trace back to principles
   - Periodic workflow quality audits
 - **Output:** Generates `workflow__{timestamp}__audit.md` report in `generated-reports/`
-- **Works with:** `workflow-maker` for workflow creation, `workflow-fixer` for applying validated fixes
+- **Works with:** `wow__workflow-maker` for workflow creation, `wow__workflow-fixer` for applying validated fixes
 - **References:** Workflow Pattern Convention, Repository Validation Methodology, Temporary Files Convention
 
-### 🟨 `workflow-fixer.md`
+### 🟨 `wow__workflow-fixer.md`
 
-Applies validated fixes from workflow-checker audit reports. Re-validates workflow definition findings before applying changes.
+Applies validated fixes from wow\_\_workflow-checker audit reports. Re-validates workflow definition findings before applying changes.
 
-- **Primary Use:** Applying validated fixes from workflow-checker audit reports after user review
+- **Primary Use:** Applying validated fixes from wow\_\_workflow-checker audit reports after user review
 - **Specialization:** Workflow structure fix application, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), objective vs subjective distinction, frontmatter/agent reference/state reference corrections
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - After reviewing workflow-checker audit report
+  - After reviewing wow\_\_workflow-checker audit report
   - Fixing objective structural issues (missing fields, invalid syntax, broken references) automatically
   - Flagging subjective improvements (execution mode choices, agent selection) for manual review
   - Detecting and reporting false positives to improve checker accuracy
   - Generating comprehensive fix reports with audit trail
-- **Workflow:** workflow-checker (validate) → User review → workflow-fixer (apply validated structural fixes)
+- **Workflow:** wow**workflow-checker (validate) → User review → wow**workflow-fixer (apply validated structural fixes)
 - **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence objective fixes automatically)
 - **Output:** Generates `workflow__{timestamp}__fix.md` report in `generated-reports/`
 - **Note:** Many workflow "issues" are design decisions - this agent applies only objective structural errors (verifiable violations) and flags subjective improvements for human judgment
-- **Works with:** `workflow-checker` for audit report generation, `workflow-maker` for workflow creation
+- **Works with:** `wow__workflow-checker` for audit report generation, `wow__workflow-maker` for workflow creation
 
-### 🟩 `repo-rules-checker.md`
+### 🟩 `wow__rules-checker.md`
 
 Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation. Generates detailed audit reports in `generated-reports/repo-rules-audit-{timestamp}.md` for historical tracking.
 
@@ -708,25 +708,25 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
   - Historical tracking of repository consistency over time
-- **Important:** READ-ONLY agent - does not apply fixes. Use `repo-rules-fixer` to apply validated fixes after reviewing audit report.
+- **Important:** READ-ONLY agent - does not apply fixes. Use `wow__rules-fixer` to apply validated fixes after reviewing audit report.
 
-### 🟪 `repo-rules-fixer.md`
+### 🟪 `wow__rules-fixer.md`
 
-Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives. Uses bash commands for file editing.
+Applies validated fixes from wow\_\_rules-checker audit reports. Re-validates findings before applying changes to prevent false positives. Uses bash commands for file editing.
 
-- **Primary Use:** Applying validated fixes from repo-rules-checker audit reports after user review
+- **Primary Use:** Applying validated fixes from wow\_\_rules-checker audit reports after user review
 - **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks using bash text manipulation
 - **Tools:** Read, Glob, Grep, Bash
 - **When to Use:**
-  - After reviewing repo-rules-checker audit report
+  - After reviewing wow\_\_rules-checker audit report
   - Applying validated fixes automatically with re-validation
   - Detecting false positives in checker findings
   - Generating fix audit trail for transparency
-- **Workflow:** repo-rules-checker (detect) → User review → repo-rules-fixer (apply validated fixes)
+- **Workflow:** wow**rules-checker (detect) → User review → wow**rules-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
-- **Output:** Generates `repo-rules-audit-{timestamp}-fix.md` report in `generated-reports/`
+- **Output:** Generates `wow__rules-audit-{timestamp}-fix.md` report in `generated-reports/`
 
-### 🟨 `repo-rules-maker.md`
+### 🟨 `wow__rules-maker.md`
 
 Expert at making rule and convention changes effective across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits. Uses bash commands for file creation and editing.
 
@@ -741,7 +741,7 @@ Expert at making rule and convention changes effective across CLAUDE.md, convent
   - Maintaining consistency across agent definitions
   - Checking CLAUDE.md size and suggesting condensation when needed
 
-### 🟦 `plan-maker.md`
+### 🟦 `plan__maker.md`
 
 Expert at creating structured project planning documents in the plans/ folder.
 
@@ -754,13 +754,13 @@ Expert at creating structured project planning documents in the plans/ folder.
   - Documenting technical approach and architecture decisions
   - Creating project roadmaps with milestones and timelines
   - Organizing project deliverables into structured plans
-- **Works with:** `plan-checker` for pre-implementation validation
+- **Works with:** `plan__checker` for pre-implementation validation
 
-### 🟪 `plan-executor.md`
+### 🟪 `plan__executor.md`
 
 Expert at systematically implementing project plans by following delivery checklists.
 
-- **Primary Use:** Executing plans created by the plan-maker agent
+- **Primary Use:** Executing plans created by the plan\_\_maker agent
 - **Specialization:** Sequential implementation, per-phase validation, progress tracking, checklist management
 - **Tools:** Read, Write, Edit, Glob, Grep, Bash
 - **When to Use:**
@@ -770,9 +770,9 @@ Expert at systematically implementing project plans by following delivery checkl
   - Updating delivery.md with implementation progress and notes
   - Completing all phases of a multi-phase plan
   - Stopping at final validation handoff (does NOT perform final validation)
-- **Works with:** `plan-execution-checker` for final validation
+- **Works with:** `plan__execution-checker` for final validation
 
-### 🟪 `plan-execution-checker.md`
+### 🟪 `plan__execution-checker.md`
 
 Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports.
 
@@ -780,17 +780,17 @@ Expert at validating plan implementations against requirements, performing compr
 - **Specialization:** Requirements verification, code quality assessment, integration testing, comprehensive validation reporting
 - **Tools:** Read, Glob, Grep, Bash
 - **When to Use:**
-  - After plan-executor completes all implementation tasks
+  - After plan\_\_executor completes all implementation tasks
   - Validating implementation meets all requirements from requirements.md
   - Verifying technical documentation alignment (tech-docs.md)
   - Running comprehensive code quality checks (tests, lints, builds)
   - Performing end-to-end integration testing
   - Providing independent quality gate with fresh eyes
   - Generating detailed validation reports with specific findings
-  - Iterating with plan-executor to fix issues until validation passes
-- **Works with:** `plan-executor` for implementation
+  - Iterating with plan\_\_executor to fix issues until validation passes
+- **Works with:** `plan__executor` for implementation
 
-### 🟩 `plan-checker.md`
+### 🟩 `plan__checker.md`
 
 Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification.
 
@@ -798,7 +798,7 @@ Expert at validating plans are ready for implementation by verifying completenes
 - **Specialization:** Plan completeness verification, codebase alignment checking, external verification via web, technical accuracy validation
 - **Tools:** Read, Glob, Grep, WebSearch, WebFetch, Write, Bash
 - **When to Use:**
-  - After plan-maker creates a plan, before implementation begins
+  - After plan\_\_maker creates a plan, before implementation begins
   - Validating plan structure and completeness (requirements, tech-docs, delivery)
   - Verifying codebase assumptions are accurate (check package.json, directory structure)
   - Checking technology choices are current and maintained (WebSearch verification)
@@ -807,26 +807,26 @@ Expert at validating plans are ready for implementation by verifying completenes
   - Identifying contradictions or missing information in plan
   - Preventing implementation blockers by catching plan issues early
 - **Output:** Generates `plan__{timestamp}__validation.md` report in `generated-reports/`
-- **Works with:** `plan-fixer` for applying validated fixes, `plan-maker` for plan creation
+- **Works with:** `plan__fixer` for applying validated fixes, `plan__maker` for plan creation
 
-### 🟪 `plan-fixer.md`
+### 🟪 `plan__fixer.md`
 
-Applies validated fixes from plan-checker audit reports. Re-validates plan completeness and accuracy findings before applying changes. Distinguishes structural/format issues from strategic decisions.
+Applies validated fixes from plan\_\_checker audit reports. Re-validates plan completeness and accuracy findings before applying changes. Distinguishes structural/format issues from strategic decisions.
 
-- **Primary Use:** Applying validated fixes from plan-checker validation reports after user review
+- **Primary Use:** Applying validated fixes from plan\_\_checker validation reports after user review
 - **Specialization:** Structural vs strategic issue classification, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application for objective issues (missing sections, broken links, format errors), manual review flagging for strategic decisions (scope, architecture, technology choices, timelines)
 - **Tools:** Read, Edit, Glob, Grep, Write, Bash
 - **When to Use:**
-  - After reviewing plan-checker validation report
+  - After reviewing plan\_\_checker validation report
   - Applying validated structural/format fixes automatically (missing sections, broken links, format violations)
   - Detecting false positives in checker findings
   - Flagging strategic/architectural decisions for manual review
   - Generating fix audit trail for transparency
-- **Workflow:** plan-checker (validate) → User review → plan-fixer (apply validated structural fixes)
+- **Workflow:** plan**checker (validate) → User review → plan**fixer (apply validated structural fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence objective fixes automatically)
 - **Output:** Generates `plan__{timestamp}__fix.md` report in `generated-reports/`
 - **Note:** Plans contain strategic decisions - this agent applies only structural/format fixes (objective) and flags strategic choices (scope, architecture, timelines) for human judgment
-- **Works with:** `plan-checker` for validation report generation, `plan-maker` for plan creation
+- **Works with:** `plan__checker` for validation report generation, `plan__maker` for plan creation
 
 ## 🔗 Hierarchy Examples: Principles to Agents
 
@@ -842,9 +842,9 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 **Enforcing Agents**:
 
-- **docs-maker**: Validates Mermaid diagram colors against accessible palette
-- **docs-tutorial-maker**: Ensures tutorial diagrams use color-blind friendly colors
-- **hugo-developer**: Implements accessible color palette in theme development
+- **docs\_\_maker**: Validates Mermaid diagram colors against accessible palette
+- **docs\_\_tutorial-maker**: Ensures tutorial diagrams use color-blind friendly colors
+- **swe**hugo**developer**: Implements accessible color palette in theme development
 - **ayokoding-web-general-maker**, **ose-platform-web-content-maker**: Apply accessible colors in Hugo content
 
 ### Example 2: Explicit Configuration
@@ -857,9 +857,9 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 **Enforcing Agents**:
 
-- **agent-maker**: Validates new agents have explicit `tools`, `model`, and `color` frontmatter fields
-- **repo-rules-checker**: Audits all agents for missing or incomplete frontmatter
-- **repo-rules-fixer**: Adds missing frontmatter fields when validated by user
+- **agent\_\_maker**: Validates new agents have explicit `tools`, `model`, and `color` frontmatter fields
+- **wow\_\_rules-checker**: Audits all agents for missing or incomplete frontmatter
+- **wow\_\_rules-fixer**: Adds missing frontmatter fields when validated by user
 
 ### Example 3: Automation
 
@@ -871,15 +871,15 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 **Enforcing Agents** (Checker family):
 
-- **docs-checker**: Automated factual accuracy validation
-- **docs-tutorial-checker**: Automated pedagogical quality validation
-- **repo-rules-checker**: Automated consistency validation
+- **docs\_\_checker**: Automated factual accuracy validation
+- **docs\_\_tutorial-checker**: Automated pedagogical quality validation
+- **wow\_\_rules-checker**: Automated consistency validation
 - **ayokoding-web-general-checker**, **ose-platform-web-content-checker**: Automated Hugo content validation
-- **readme-checker**: Automated README quality validation
+- **readme\_\_checker**: Automated README quality validation
 
 **Enforcing Agents** (Fixer family):
 
-- **docs-fixer**, **docs-tutorial-fixer**, **repo-rules-fixer**, **ayokoding-web-general-fixer**, **ose-platform-web-content-fixer**, **readme-fixer**, **plan-fixer**: Automated fix application with confidence levels
+- **docs\_\_fixer**, **docs\_\_tutorial-fixer**, **wow\_\_rules-fixer**, **ayokoding-web-general-fixer**, **ose-platform-web-content-fixer**, **readme\_\_fixer**, **plan\_\_fixer**: Automated fix application with confidence levels
 
 ## 🔄 Agent Workflow
 
@@ -894,15 +894,15 @@ The repository uses a three-stage workflow for content creation and quality assu
 ```
 1. Creation Stage (Maker Agents)
    └─> Create content following conventions
-        └─> Makers: docs-maker, docs-tutorial-maker, readme-maker,
+        └─> Makers: docs__maker, docs__tutorial-maker, readme__maker,
                     ayokoding-web-general-maker, ose-platform-web-content-maker
 
 2. Detection Stage (Checker Agents)
    └─> Validate content quality and convention compliance
         └─> Generate audit report in generated-reports/
-        └─> Checkers: docs-checker, docs-tutorial-checker, readme-checker,
+        └─> Checkers: docs__checker, docs__tutorial-checker, readme__checker,
                       ayokoding-web-general-checker, ose-platform-web-content-checker,
-                      repo-rules-checker
+                      wow__rules-checker
 
 3. User Review Stage
    └─> Review audit report findings
@@ -914,9 +914,9 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Skip MEDIUM confidence (manual review needed)
         └─> Skip FALSE_POSITIVE (report to improve checker)
         └─> Generate fix report in generated-reports/
-        └─> Fixers: docs-fixer, docs-tutorial-fixer, readme-fixer,
+        └─> Fixers: docs__fixer, docs__tutorial-fixer, readme__fixer,
                     ayokoding-web-general-fixer, ose-platform-web-content-fixer,
-                    repo-rules-fixer, plan-fixer
+                    wow__rules-fixer, plan__fixer
 
 5. Verification Stage (Re-run Checker)
    └─> Re-run checker to verify fixes resolved issues
@@ -937,34 +937,34 @@ The repository uses a three-stage workflow for content creation and quality assu
 
 ```
 1. Plan Creation
-   └─> Use plan-maker to create structured plan in plans/backlog/
+   └─> Use plan__maker to create structured plan in plans/backlog/
         └─> Creates requirements.md, tech-docs.md, delivery.md
 
 2. Plan Validation (Quality Gate for Plans)
-   └─> Use plan-checker with plan path
+   └─> Use plan__checker with plan path
         └─> Validates plan structure and completeness
         └─> Verifies codebase assumptions (checks package.json, directories)
         └─> Validates technology choices via WebSearch
         └─> Checks documentation URLs via WebFetch
         └─> Identifies contradictions or missing information
-        └─> If issues found: Returns to plan-maker for fixes
+        └─> If issues found: Returns to plan__maker for fixes
         └─> If validation passes: Plan ready for implementation
 
 3. Implementation
    └─> Move plan from backlog/ to in-progress/
-   └─> Use plan-executor with plan path
+   └─> Use plan__executor with plan path
         └─> Executes delivery checklist step-by-step
         └─> Updates delivery.md with progress and notes
         └─> Performs per-phase validation (self-validation)
         └─> Marks status as "Ready for Final Validation"
 
 4. Implementation Validation (Quality Gate for Code)
-   └─> Use plan-execution-checker with plan path
+   └─> Use plan__execution-checker with plan path
         └─> Validates all requirements are met
         └─> Runs comprehensive quality checks
         └─> Performs integration testing
         └─> Generates detailed validation report
-        └─> If issues found: Returns to plan-executor for fixes
+        └─> If issues found: Returns to plan__executor for fixes
         └─> If validation passes: Marks plan as complete
 
 5. Complete and Archive
@@ -976,11 +976,11 @@ The repository uses a three-stage workflow for content creation and quality assu
 
 ```
 1. Make Changes
-   └─> Use repo-rules-maker to make changes effective across files
+   └─> Use wow__rules-maker to make changes effective across files
         └─> Ensures consistency in CLAUDE.md, conventions, agents, indices
 
 2. Validate Changes
-   └─> Use repo-rules-checker to verify consistency
+   └─> Use wow__rules-checker to verify consistency
         └─> Detects inconsistencies, contradictions, duplications
         └─> Generates audit report in generated-reports/
 
@@ -989,33 +989,33 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Identify which fixes should be applied
 
 4. Apply Validated Fixes
-   └─> Use repo-rules-fixer to apply fixes automatically
+   └─> Use wow__rules-fixer to apply fixes automatically
         └─> Re-validates findings, applies HIGH confidence fixes
         └─> Skips false positives, reports MEDIUM confidence items
         └─> Generates fix report for audit trail
 
 5. Verify Fixes (if fixes were applied)
-   └─> Use repo-rules-checker to re-validate
+   └─> Use wow__rules-checker to re-validate
         └─> Ensure fixes resolved issues without introducing new ones
 
 6. Write/Update Documentation
-   └─> For tutorials: Use docs-tutorial-maker
+   └─> For tutorials: Use docs__tutorial-maker
         └─> Creates learning-oriented content with narrative flow
         └─> Adds comprehensive diagrams (architecture, sequences, flowcharts)
         └─> Includes hands-on elements and progressive scaffolding
-   └─> For other docs: Use docs-maker
+   └─> For other docs: Use docs__maker
         └─> Creates how-to guides, reference, or explanations
         └─> Ensures proper formatting and convention compliance
 
 5. Validate Tutorial Quality (for tutorials only)
-   └─> Use docs-tutorial-checker to validate tutorial effectiveness
+   └─> Use docs__tutorial-checker to validate tutorial effectiveness
         └─> Checks pedagogical structure and narrative flow
         └─> Validates diagram completeness
         └─> Assesses hands-on elements and learning progression
         └─> Identifies list-heavy sections needing narrative
 
 6. Rename/Move Files (if needed)
-   └─> Use docs-file-manager to reorganize documentation
+   └─> Use docs__file-manager to reorganize documentation
         └─> Renames files/directories with git mv
         └─> Recalculates file prefixes based on new location
         └─> Updates all internal links automatically
@@ -1028,7 +1028,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Fixes broken links with working alternatives
 
 8. Validate Documentation Accuracy
-   └─> Use docs-checker to verify factual correctness
+   └─> Use docs__checker to verify factual correctness
         └─> Validates technical claims against authoritative sources
         └─> Checks command syntax and code examples
         └─> Detects contradictions within and across documents
@@ -1036,7 +1036,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Generates validation report in generated-reports/
 
 9. Apply Documentation Fixes (if issues found)
-   └─> Use docs-fixer to apply validated fixes
+   └─> Use docs__fixer to apply validated fixes
         └─> Re-validates findings using WebSearch and WebFetch
         └─> Applies HIGH confidence objective fixes automatically
         └─> Flags MEDIUM confidence subjective improvements for manual review
@@ -1044,39 +1044,39 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Generates fix report for audit trail
 
 10. Verify Documentation Fixes (if fixes applied)
-   └─> Re-run docs-checker to verify fixes resolved issues
+   └─> Re-run docs__checker to verify fixes resolved issues
         └─> Ensure no new factual errors introduced
 ```
 
 ## ✅ Best Practices
 
-- **When starting a new project:** Use `plan-maker` to create structured plans in plans/backlog/
-- **After creating a plan:** Use `plan-checker` to validate plan before implementation (prevents wasted effort)
-- **When implementing a plan:** Use `plan-executor` with the plan path to execute systematically
-- **After plan-executor completes:** Use `plan-execution-checker` for independent final validation
-- **Full planning workflow:** plan-maker → plan-checker → (fix if needed) → plan-executor → plan-execution-checker
+- **When starting a new project:** Use `plan__maker` to create structured plans in plans/backlog/
+- **After creating a plan:** Use `plan__checker` to validate plan before implementation (prevents wasted effort)
+- **When implementing a plan:** Use `plan__executor` with the plan path to execute systematically
+- **After plan\_\_executor completes:** Use `plan__execution-checker` for independent final validation
+- **Full planning workflow:** plan**maker → plan**checker → (fix if needed) → plan**executor → plan**execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
-- **After adding new conventions:** Use `repo-rules-maker` → `repo-rules-checker` → `repo-rules-fixer` (if issues found)
-- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-rules-maker` to check size when adding rules
+- **After adding new conventions:** Use `wow__rules-maker` → `wow__rules-checker` → `wow__rules-fixer` (if issues found)
+- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `wow__rules-maker` to check size when adding rules
 - **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for complete size guidelines
-- **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-general-checker` to verify all links
-- **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
-- **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
-- **After creating tutorials:** Use `docs-tutorial-checker` to validate pedagogical quality and completeness
-- **When modifying CLAUDE.md:** Use `repo-rules-maker` to cascade changes
-- **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
-- **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
-- **After using docs-file-manager:** Always run `docs-link-general-checker` to verify all links are valid
-- **Monthly or before releases:** Run `docs-link-general-checker` to ensure all links are valid, then `docs-checker` to verify technical accuracy
-- **After major documentation updates:** Use `docs-link-general-checker` to verify link integrity, then `docs-checker` to validate content accuracy
-- **After dependency updates:** Run `docs-checker` to ensure documentation matches new versions
-- **Before releasing technical docs:** Use `docs-checker` to validate all technical claims and code examples
-- **When reviewing contributions:** Use `docs-checker` to verify factual accuracy of new documentation
-- **Documentation accuracy workflow:** docs-checker → (review validation report) → docs-fixer (apply objective fixes) → re-run docs-checker
-- **Documentation validation with automated fixes:** Use `docs-checker` to generate validation report, then `docs-fixer` to apply validated objective fixes (command syntax, version numbers, broken links) while flagging subjective improvements (narrative, terminology) for manual review
-- **When creating/updating README:** Use `readme-maker` for content, then `readme-checker` for validation
-- **README quality workflow:** readme-maker → readme-checker → (review audit) → readme-fixer (apply objective fixes) → commit
-- **README validation with automated fixes:** Use `readme-checker` to generate audit report, then `readme-fixer` to apply validated objective fixes (paragraph breaks, acronym context, format corrections) while flagging subjective improvements for manual review
+- **Before major releases:** Run `wow__rules-checker` for full audit and `docs-link-general-checker` to verify all links
+- **When creating tutorials:** Use `docs__tutorial-maker` for learning-oriented content with narrative flow and diagrams
+- **When creating other documentation:** Use `docs__maker` for how-to guides, reference, or explanations
+- **After creating tutorials:** Use `docs__tutorial-checker` to validate pedagogical quality and completeness
+- **When modifying CLAUDE.md:** Use `wow__rules-maker` to cascade changes
+- **During plan implementation:** Let `plan__executor` update delivery.md - it maintains detailed notes
+- **When managing files in docs/:** Use `docs__file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
+- **After using docs\_\_file-manager:** Always run `docs-link-general-checker` to verify all links are valid
+- **Monthly or before releases:** Run `docs-link-general-checker` to ensure all links are valid, then `docs__checker` to verify technical accuracy
+- **After major documentation updates:** Use `docs-link-general-checker` to verify link integrity, then `docs__checker` to validate content accuracy
+- **After dependency updates:** Run `docs__checker` to ensure documentation matches new versions
+- **Before releasing technical docs:** Use `docs__checker` to validate all technical claims and code examples
+- **When reviewing contributions:** Use `docs__checker` to verify factual accuracy of new documentation
+- **Documentation accuracy workflow:** docs**checker → (review validation report) → docs**fixer (apply objective fixes) → re-run docs\_\_checker
+- **Documentation validation with automated fixes:** Use `docs__checker` to generate validation report, then `docs__fixer` to apply validated objective fixes (command syntax, version numbers, broken links) while flagging subjective improvements (narrative, terminology) for manual review
+- **When creating/updating README:** Use `readme__maker` for content, then `readme__checker` for validation
+- **README quality workflow:** readme**maker → readme**checker → (review audit) → readme\_\_fixer (apply objective fixes) → commit
+- **README validation with automated fixes:** Use `readme__checker` to generate audit report, then `readme__fixer` to apply validated objective fixes (paragraph breaks, acronym context, format corrections) while flagging subjective improvements for manual review
 
 ## 📚 Resources
 
@@ -1091,17 +1091,17 @@ Agents follow a structured lifecycle from creation to deprecation:
 
 ### Creation
 
-1. Use `agent-maker` to scaffold new agent with proper structure
-2. Validate with `repo-rules-checker` to ensure convention compliance
-3. Update CLAUDE.md if agent affects project guidance (use `repo-rules-maker`)
+1. Use `agent__maker` to scaffold new agent with proper structure
+2. Validate with `wow__rules-checker` to ensure convention compliance
+3. Update CLAUDE.md if agent affects project guidance (use `wow__rules-maker`)
 4. Test agent behavior matches specification
 
 ### Updates
 
 1. Edit agent file with required changes
 2. Update `updated` field in frontmatter (YYYY-MM-DD format)
-3. Validate changes with `repo-rules-checker`
-4. Apply fixes if needed using `repo-rules-fixer`
+3. Validate changes with `wow__rules-checker`
+4. Apply fixes if needed using `wow__rules-fixer`
 5. Update CLAUDE.md and convention docs if agent behavior changed
 
 ### Maintenance
@@ -1123,12 +1123,12 @@ Agents follow a structured lifecycle from creation to deprecation:
 
 When creating new agents:
 
-1. Use `agent-maker` to automate creation with proper structure, size verification, and README updates
+1. Use `agent__maker` to automate creation with proper structure, size verification, and README updates
 2. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for all standards
 3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
-4. Use `repo-rules-maker` to propagate references to CLAUDE.md and other files
-5. Use `repo-rules-checker` to validate the new agent follows all conventions
-6. Use `repo-rules-fixer` to apply any validated fixes from the audit report
+4. Use `wow__rules-maker` to propagate references to CLAUDE.md and other files
+5. Use `wow__rules-checker` to validate the new agent follows all conventions
+6. Use `wow__rules-fixer` to apply any validated fixes from the audit report
 7. Update CLAUDE.md if the agent should be mentioned in project guidance
 
 ---

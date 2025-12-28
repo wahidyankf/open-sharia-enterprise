@@ -417,7 +417,7 @@ Where:
 
 - Update `updated` field in frontmatter when making changes
 - Significant changes should update CLAUDE.md if they affect agent behavior
-- Use `repo-rules-maker` to propagate changes across related files
+- Use `wow__rules-maker` to propagate changes across related files
 
 ### Deprecation
 
@@ -545,16 +545,16 @@ Conventions are most effective when enforced or assisted by agents:
 
 ### Agents That Create Conventions
 
-- **docs-maker** - Creates convention documents following this meta-convention
-- **repo-rules-maker** - Propagates convention changes across repository
+- **docs\_\_maker** - Creates convention documents following this meta-convention
+- **wow\_\_rules-maker** - Propagates convention changes across repository
 
 ### Agents That Use Conventions
 
-- **docs-checker** - Validates documentation follows conventions
+- **docs\_\_checker** - Validates documentation follows conventions
 - **docs-link-general-checker** - Enforces linking convention
 - **ayokoding-web-general-checker** - Validates general Hugo content conventions
 - **ayokoding-web-by-example-checker** - Validates by-example tutorial conventions
-- **repo-rules-checker** - Audits convention compliance
+- **wow\_\_rules-checker** - Audits convention compliance
 
 ### Agent Integration Checklist
 
@@ -588,9 +588,9 @@ When creating a convention:
 
 **Agents:**
 
-- `docs-maker` - Creates convention documents following this structure
-- `repo-rules-maker` - Propagates convention changes
-- `repo-rules-checker` - Validates convention compliance
+- `docs__maker` - Creates convention documents following this structure
+- `wow__rules-maker` - Propagates convention changes
+- `wow__rules-checker` - Validates convention compliance
 
 ---
 

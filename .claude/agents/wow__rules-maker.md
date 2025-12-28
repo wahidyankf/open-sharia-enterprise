@@ -1,5 +1,5 @@
 ---
-name: repo-rules-maker
+name: wow__rules-maker
 description: Creates new conventions/agents and makes rule changes effective across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Glob, Grep, Bash
 model: sonnet
@@ -82,10 +82,10 @@ Understanding the update hierarchy is critical. Always update in this order:
 
 3. Agent Files (Consumers of Rules)
    ├─ .claude/agents/README.md
-   ├─ .claude/agents/docs-maker.md
-   ├─ .claude/agents/docs-link-general-checker.md
-   ├─ .claude/agents/repo-rules-checker.md
-   └─ .claude/agents/repo-rules-maker.md (yourself!)
+   ├─ .claude/agents/docs__maker.md
+   ├─ .claude/agents/docs__link-general-checker.md
+   ├─ .claude/agents/wow__rules-checker.md
+   └─ .claude/agents/wow__rules-maker.md (yourself!)
 
    ↓ Update agents THIRD - they must comply with rules
 
@@ -257,15 +257,15 @@ When the user requests a rule change, follow this process:
 
 - `docs/explanation/development/ex-de__ai-agents.md` (add rule with examples)
 - `CLAUDE.md` (update AI agents section summary)
-- `.claude/agents/repo-rules-checker.md` (add validation check)
-- `.claude/agents/docs-maker.md` (add model: inherit justification if needed)
-- `.claude/agents/repo-rules-maker.md` (self-update to comply)
+- `.claude/agents/wow__rules-checker.md` (add validation check)
+- `.claude/agents/docs__maker.md` (add model: inherit justification if needed)
+- `.claude/agents/wow__rules-maker.md` (self-update to comply)
 
 **Update Strategy**:
 
 1. Add detailed rule to ex-de\_\_ai-agents.md with examples (/)
 2. Add brief mention to CLAUDE.md under AI Agent Standards
-3. Add checklist item to repo-rules-checker.md validation list
+3. Add checklist item to wow\_\_rules-checker.md validation list
 4. Review all agents for compliance, update as needed
 
 ### Scenario 2: Modifying an Existing Rule
@@ -276,8 +276,8 @@ When the user requests a rule change, follow this process:
 
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` (update prefix definition)
 - `CLAUDE.md` (update prefix list)
-- `.claude/agents/docs-maker.md` (update file naming examples)
-- `.claude/agents/repo-rules-checker.md` (update validation rules)
+- `.claude/agents/docs__maker.md` (update file naming examples)
+- `.claude/agents/wow__rules-checker.md` (update validation rules)
 - All existing tutorial files (would need renaming - note to user!)
 
 **Update Strategy**:
@@ -310,8 +310,8 @@ When the user requests a rule change, follow this process:
 
 - Convention doc (remove or mark deprecated)
 - `CLAUDE.md` (update frontmatter example)
-- `docs-maker.md` (update frontmatter template)
-- `repo-rules-checker.md` (remove validation check)
+- `docs__maker.md` (update frontmatter template)
+- `wow__rules-checker.md` (remove validation check)
 
 **Update Strategy**:
 
@@ -407,7 +407,7 @@ All documentation follows three core conventions:
 - References to full conventions
 - Checklists for verification
 
-**Example** (in docs-maker.md):
+**Example** (in docs\_\_maker.md):
 
 ```markdown
 ### File Naming Convention
@@ -522,7 +522,7 @@ When editing documentation:
 If the AI Agents Convention (`ex-de__ai-agents.md`) changes in a way that affects this agent:
 
 1. **Recognize the need** for self-update
-2. **Read this file** (repo-rules-maker.md) completely
+2. **Read this file** (wow\_\_rules-maker.md) completely
 3. **Apply changes** to comply with new rules
 4. **Update frontmatter** (updated date)
 5. **Verify** changes maintain agent functionality
@@ -850,5 +850,5 @@ If adding a completely new category of conventions:
 
 **Related Agents:**
 
-- `docs-maker.md` - Creates new documentation (you update existing rules)
-- `repo-rules-checker.md` - Validates consistency (run after your updates)
+- `docs__maker.md` - Creates new documentation (you update existing rules)
+- `wow__rules-checker.md` - Validates consistency (run after your updates)

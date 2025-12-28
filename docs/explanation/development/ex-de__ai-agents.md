@@ -51,7 +51,7 @@ This convention applies to:
 
 - All agent files in `.claude/agents/`
 - References to agents in `CLAUDE.md`
-- Agent validation rules in `repo-rules-checker`
+- Agent validation rules in `wow__rules-checker`
 
 ## Principles Respected
 
@@ -63,7 +63,7 @@ This practice respects the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Agents follow single-responsibility principle - one clear, focused purpose per agent. Flat directory structure (no subdirectories). Simple naming convention (kebab-case). Standard document structure across all agents. Rather than creating "Swiss Army knife" agents with dozens of capabilities, we create focused agents that do one thing well.
 
-- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: AI agents themselves embody this principle - they automate repetitive tasks (documentation writing, validation, consistency checking, deployment) that would otherwise require manual effort. The `agent-maker` automates agent creation. `repo-rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: AI agents themselves embody this principle - they automate repetitive tasks (documentation writing, validation, consistency checking, deployment) that would otherwise require manual effort. The `agent__maker` automates agent creation. `wow__rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
 
 ## Token Budget Philosophy
 
@@ -138,7 +138,7 @@ color: blue
    - MUST exactly match the filename (without `.md` extension)
    - Use kebab-case format
    - Should be descriptive and action-oriented
-   - Examples: `doc-writer`, `repo-rules-checker`, `api-validator`
+   - Examples: `doc-writer`, `wow__rules-checker`, `api-validator`
 
 2. **`description`** (required)
    - One-line summary of when to use this agent
@@ -254,10 +254,10 @@ Where:
 
 ```
 ✅ Good - General agents (no scope prefix):
-- docs-maker.md
-- repo-rules-checker.md
-- plan-executor.md
-- readme-maker.md
+- docs__maker.md
+- wow__rules-checker.md
+- plan__executor.md
+- readme__maker.md
 
 ✅ Good - App-scoped agents:
 - apps__ayokoding-web__general-maker.md
@@ -301,9 +301,9 @@ Where:
 
 **When NOT to use scope prefixes:**
 
-- **General-purpose agents**: Work across entire repository (docs-maker, repo-rules-checker, plan-executor)
-- **Cross-cutting agents**: Apply to multiple apps/libs (readme-maker, agent-maker, workflow-maker)
-- **Meta-agents**: Manage repository structure (docs-file-manager, repo-rules-maker)
+- **General-purpose agents**: Work across entire repository (docs**maker, wow**rules-checker, plan\_\_executor)
+- **Cross-cutting agents**: Apply to multiple apps/libs (readme**maker, agent**maker, wow\_\_workflow-maker)
+- **Meta-agents**: Manage repository structure (docs**file-manager, wow**rules-maker)
 
 **Scope naming rules:**
 
@@ -329,7 +329,7 @@ Where:
 Example - General agent:
 
 ```yaml
-name: docs-maker # Short, kebab-case, no scope (general-purpose)
+name: docs__maker # Short, kebab-case, no scope (general-purpose)
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation. # Detailed usage guidance
 ```
 
@@ -344,12 +344,12 @@ description: Expert at creating general Hugo content for ayokoding-web (Hextra t
 
 Tool permissions follow the **principle of least privilege**: agents should only have access to tools they actually need.
 
-| Pattern           | Tools                               | Use For                                       | Example            | Rationale                                                          |
-| ----------------- | ----------------------------------- | --------------------------------------------- | ------------------ | ------------------------------------------------------------------ |
-| **Read-Only**     | Read, Glob, Grep                    | Analysis without reports                      | (none currently)   | Pure read operations without file output                           |
-| **Checker**       | Read, Glob, Grep, Write, Bash       | Validation with audit report generation       | repo-rules-checker | Needs Write for reports in generated-reports/, Bash for timestamps |
-| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer         | Needs file creation/editing but no shell access                    |
-| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner        | Requires command execution (⚠️ powerful, only when necessary)      |
+| Pattern           | Tools                               | Use For                                       | Example              | Rationale                                                          |
+| ----------------- | ----------------------------------- | --------------------------------------------- | -------------------- | ------------------------------------------------------------------ |
+| **Read-Only**     | Read, Glob, Grep                    | Analysis without reports                      | (none currently)     | Pure read operations without file output                           |
+| **Checker**       | Read, Glob, Grep, Write, Bash       | Validation with audit report generation       | wow\_\_rules-checker | Needs Write for reports in generated-reports/, Bash for timestamps |
+| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer           | Needs file creation/editing but no shell access                    |
+| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner          | Requires command execution (⚠️ powerful, only when necessary)      |
 
 ### Report-Generating Agents: Mandatory Tool Requirements
 
@@ -367,26 +367,26 @@ Tool permissions follow the **principle of least privilege**: agents should only
 
 **Applies to these agent types**:
 
-- All `*-checker` agents (repo-rules-checker, docs-checker, plan-checker, plan-execution-checker, etc.)
-- `repo-rules-fixer` (generates fix reports)
+- All `*-checker` agents (wow**rules-checker, docs**checker, plan**checker, plan**execution-checker, etc.)
+- `wow__rules-fixer` (generates fix reports)
 - Any agent creating validation, audit, or verification reports
 
 **MANDATORY REQUIREMENT FOR ALL \*-CHECKER AGENTS**:
 
 ALL checker agents MUST write their validation/audit reports to `generated-reports/` directory. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
 
-1. repo-rules-checker
+1. wow\_\_rules-checker
 2. ayokoding-web-general-checker
 3. ayokoding-web-by-example-checker
 4. ayokoding-web-facts-checker
 5. ayokoding-web-link-checker
 6. ayokoding-web-structure-checker
 7. ose-platform-web-content-checker
-8. docs-checker
-9. docs-tutorial-checker
-10. readme-checker
-11. plan-checker
-12. plan-execution-checker
+8. docs\_\_checker
+9. docs\_\_tutorial-checker
+10. readme\_\_checker
+11. plan\_\_checker
+12. plan\_\_execution-checker
 
 **NO conversation-only output**: Checker agents MUST NOT output validation results in conversation only. All validation findings MUST be written to audit report files following the 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain enables parallel execution without file collisions.
 
@@ -413,7 +413,7 @@ See [Temporary Files Convention - Progressive Writing Requirement](./ex-de__temp
 
 ```yaml
 ---
-name: repo-rules-checker
+name: wow__rules-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -463,8 +463,8 @@ awk 'pattern { insert_text } { print }' .claude/agents/README.md > temp && mv te
 
 **Agents affected**:
 
-- `agent-maker` - Creates new agents, already complies
-- `repo-rules-maker` - Updates agents, already complies
+- `agent__maker` - Creates new agents, already complies
+- `wow__rules-maker` - Updates agents, already complies
 
 **Verification**: Check that agents writing to `.claude/` use only Bash tool (not Write/Edit).
 
@@ -528,16 +528,16 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                  |
-| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                                         |
-| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-rules-checker<br>plan-checker<br>docs-checker                                      |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-rules-maker\*<br>docs-file-manager                                                 |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-general-checker<br>ayokoding-web-link-checker<br>deployers\* |
+| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                     |
+| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs**maker<br>plan**maker<br>docs\_\_tutorial-maker                                       |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | wow**rules-checker<br>plan**checker<br>docs\_\_checker                                     |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | wow**rules-maker\*<br>docs**file-manager                                                   |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan\_\_executor<br>docs-link-general-checker<br>ayokoding-web-link-checker<br>deployers\* |
 
 **Edge Case Notes:**
 
-- **\*Yellow with Write**: repo-rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
+- **\*Yellow with Write**: wow\_\_rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
 - **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
@@ -603,18 +603,18 @@ Start: What is the agent's primary capability?
     │       - Has `Write`, `Bash` (no Edit)
     │       - Write needed for audit reports in generated-reports/
     │       - Bash needed for UTC+7 timestamps
-    │       - Examples: repo-rules-checker, plan-checker, docs-checker
+    │       - Examples: wow__rules-checker, plan__checker, docs__checker
     │       - EXCEPTION: Link checkers use purple (see Hybrid Agents above)
     │
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: repo-rules-maker, docs-file-manager
+    │       - Examples: wow__rules-maker, docs__file-manager
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
             - Has Write, Edit, AND Bash
-            - Examples: plan-executor
+            - Examples: plan__executor
             - INCLUDES: Hybrid link checkers (validation + state management)
 ```
 
@@ -637,7 +637,7 @@ Start: What is the agent's primary capability?
   - Yellow (Updaters) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
   - If Write can be removed → remove Write to match yellow categorization
-  - Example: repo-rules-maker (creates new conventions, keeps Write + Edit)
+  - Example: wow\_\_rules-maker (creates new conventions, keeps Write + Edit)
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
@@ -653,7 +653,7 @@ Agents are identified through FIVE independent methods:
 
 | Identification Method | Example                          | Purpose                                   |
 | --------------------- | -------------------------------- | ----------------------------------------- |
-| **Agent Name**        | "docs-maker"                     | Primary text-based identifier             |
+| **Agent Name**        | "docs\_\_maker"                  | Primary text-based identifier             |
 | **Role Suffix**       | "-maker" (writer)                | Indicates category through naming pattern |
 | **Emoji Shape**       | 🟦 (square)                      | Shape differentiation (not color)         |
 | **Description**       | "Expert documentation writer..." | Semantic purpose statement                |
@@ -696,11 +696,11 @@ All agent colors are from the verified accessible palette:
 
 #### Agent Identification Example
 
-**Example agent: `docs-maker`**
+**Example agent: `docs__maker`**
 
 ```yaml
 ---
-name: docs-maker
+name: docs__maker
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
@@ -710,7 +710,7 @@ color: blue
 
 **How users identify this agent (without seeing color):**
 
-1. **Name**: "docs-maker" (text identifier)
+1. **Name**: "docs\_\_maker" (text identifier)
 2. **Suffix**: "-maker" implies writer/creator role
 3. **Description**: "Expert documentation writer" (semantic identifier)
 4. **Emoji**: 🟦 appears as a square (shape), regardless of color perception
@@ -760,7 +760,7 @@ color: blue
 
 ```yaml
 ---
-name: repo-rules-checker
+name: wow__rules-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -772,7 +772,7 @@ color: green
 
 ```yaml
 ---
-name: repo-rules-maker
+name: wow__rules-maker
 description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet
@@ -784,8 +784,8 @@ color: yellow
 
 ```yaml
 ---
-name: plan-executor
-description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-maker agent.
+name: plan__executor
+description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan__maker agent.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: purple
@@ -839,7 +839,7 @@ Before creating a new agent, check if existing agents already cover the domain:
 **✅ Good - Specialized Agents:**
 
 - `doc-writer` - Documentation only
-- `repo-rules-checker` - Consistency validation only
+- `wow__rules-checker` - Consistency validation only
 - `test-runner` - Test execution only
 
 **❌ Bad - Over-Generalized:**
@@ -931,10 +931,10 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 **Examples**:
 
-- docs-maker (documentation creation)
-- docs-checker (factual verification)
-- docs-tutorial-checker (tutorial quality validation)
-- agent-maker (agent creation automation)
+- docs\_\_maker (documentation creation)
+- docs\_\_checker (factual verification)
+- docs\_\_tutorial-checker (tutorial quality validation)
+- agent\_\_maker (agent creation automation)
 - ayokoding-web-general-maker (general Hugo content creation)
 - ayokoding-web-by-example-maker (by-example tutorial creation)
 - ose-platform-web-content-maker (Hugo content creation)
@@ -963,13 +963,13 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 **Examples**:
 
-- plan-maker (comprehensive project planning)
-- plan-executor (multi-phase implementation)
-- plan-checker (pre-implementation validation)
-- repo-rules-maker (cascading updates across files)
-- repo-rules-checker (comprehensive consistency validation)
-- docs-file-manager (prefix calculation, link updates, git operations)
-- hugo-developer (theme development, asset pipeline, configuration)
+- plan\_\_maker (comprehensive project planning)
+- plan\_\_executor (multi-phase implementation)
+- plan\_\_checker (pre-implementation validation)
+- wow\_\_rules-maker (cascading updates across files)
+- wow\_\_rules-checker (comprehensive consistency validation)
+- docs\_\_file-manager (prefix calculation, link updates, git operations)
+- swe**hugo**developer (theme development, asset pipeline, configuration)
 - docs-link-general-checker (external/internal link validation with caching)
 
 **When to use this tier**:
@@ -984,11 +984,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                                                                                          |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier 1: Simple**   | ayokoding-web-deployer, ose-platform-web-deployer                                                                                                                                                                                                                                                               |
-| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-general-checker                                                                                                                                             |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Tier 1: Simple**   | ayokoding-web-deployer, ose-platform-web-deployer                                                                                                                                                                                                                                                                        |
+| **Tier 2: Standard** | docs**maker, docs**tutorial-maker, docs**checker, docs**tutorial-checker, readme**maker, readme**checker, agent\_\_maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
+| **Tier 3: Complex**  | plan**maker, plan**executor, plan**checker, plan**execution-checker, wow**rules-maker, wow**rules-checker, docs**file-manager, swe**hugo\_\_developer, docs-link-general-checker                                                                                                                                         |
 
 ### When to Condense or Split Agents
 
@@ -1029,14 +1029,14 @@ Quick categorization for existing agents:
 
 ### Size Checking Process
 
-**For agent-maker**:
+**For agent\_\_maker**:
 
 1. After creating agent file, count lines and characters
 2. Compare to tier limits based on agent type
 3. Warn if approaching warning threshold
 4. Suggest condensation if near limit
 
-**For repo-rules-maker**:
+**For wow\_\_rules-maker**:
 
 1. When updating agents, check file size before/after
 2. If agent crosses warning threshold, notify user
@@ -1161,7 +1161,7 @@ If information cannot be verified: (1) State the limitation explicitly, (2) Prov
 ### Agent-Specific Requirements
 
 - **Documentation agents (doc-writer)**: Verify code examples, file paths, project structure claims, convention references, external library docs
-- **Validation agents (repo-rules-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
+- **Validation agents (wow\_\_rules-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
 - **Development agents**: Read test files, verify command outputs, check error messages, confirm tool availability
 
 ### Verification Checklist for Agents
@@ -1348,13 +1348,13 @@ Your primary job is to [clear, specific purpose statement].
 
 **Agent Responsibilities:**
 
-1. **repo-rules-maker:**
+1. **wow\_\_rules-maker:**
    - MUST check CLAUDE.md size when adding rules
    - Warn user if file exceeds 35,000 characters
    - Suggest condensation strategies (move details to convention docs)
    - Add only 2-5 line summaries to CLAUDE.md, link to detailed docs
 
-2. **docs-maker and related content agents:**
+2. **docs\_\_maker and related content agents:**
    - MUST NOT add verbose content to CLAUDE.md
    - When adding conventions, create detailed doc first, then brief CLAUDE.md summary
    - Maximum CLAUDE.md section length: 3-5 lines + link
@@ -1442,7 +1442,7 @@ If an agent is no longer needed:
 
 ### Repo-Rule-Checker Integration
 
-The `repo-rules-checker` agent validates all agents against this convention.
+The `wow__rules-checker` agent validates all agents against this convention.
 
 **Checks performed:**
 
@@ -1464,7 +1464,7 @@ Before committing a new agent:
 2. **Use the agent creation checklist** - Verify all items
 3. **Test the agent** - Invoke it and verify behavior
 4. **Review existing agents** - Ensure consistency
-5. **Run repo-rules-checker** - Validate compliance
+5. **Run wow\_\_rules-checker** - Validate compliance
 
 ## Related Documentation
 

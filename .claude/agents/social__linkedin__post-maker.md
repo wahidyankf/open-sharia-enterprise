@@ -1,5 +1,5 @@
 ---
-name: linkedin-post-maker
+name: social__linkedin__post-maker
 description: Expert content creator specializing in weekly LinkedIn update posts. Use when generating factual, no-hype weekly summaries of Open Sharia Enterprise development progress.
 tools: Read, Write, Bash, Glob, Grep
 model: haiku

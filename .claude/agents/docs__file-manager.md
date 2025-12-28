@@ -1,5 +1,5 @@
 ---
-name: docs-file-manager
+name: docs__file-manager
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining conventions, updating prefixes, fixing links, and preserving git history.
 tools: Read, Edit, Glob, Grep, Bash
 model: sonnet
@@ -904,6 +904,6 @@ Proceed anyway? (Please confirm)
 
 **Related Agents:**
 
-- `docs-maker.md` - Creates new documentation (use for new index files)
-- `docs-link-general-checker.md` - Validates links (use after file operations to verify)
-- `repo-rules-checker.md` - Validates consistency (use for large reorganizations)
+- `docs__maker.md` - Creates new documentation (use for new index files)
+- `docs__link-general-checker.md` - Validates links (use after file operations to verify)
+- `wow__rules-checker.md` - Validates consistency (use for large reorganizations)

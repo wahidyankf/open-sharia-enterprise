@@ -116,8 +116,8 @@ libs/
 ✅ **Simple (Correct)**:
 
 ```
-docs-maker.md - Creates documentation
-docs-checker.md - Validates documentation
+docs__maker.md - Creates documentation
+docs__checker.md - Validates documentation
 ```
 
 **Why this works**: One agent, one job. Clear responsibility. Easy to invoke.
@@ -427,11 +427,11 @@ docs/          # Flat category directories
 
 Each agent has **one clear job**:
 
-- `docs-maker.md` - Creates documentation
-- `docs-checker.md` - Validates documentation
-- `docs-link-general-checker.md` - Checks links
-- `plan-maker.md` - Creates plans
-- `plan-executor.md` - Executes plans
+- `docs__maker.md` - Creates documentation
+- `docs__checker.md` - Validates documentation
+- `docs__link-general-checker.md` - Checks links
+- `plan__maker.md` - Creates plans
+- `plan__executor.md` - Executes plans
 
 **Not**:
 

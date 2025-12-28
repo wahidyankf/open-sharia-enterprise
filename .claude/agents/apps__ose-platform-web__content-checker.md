@@ -814,7 +814,7 @@ Always provide:
 
 **Related Agents**:
 - [ose-platform-web-content-maker](./ose-platform-web-content-maker.md) - Creates ose-platform-web content (complementary agent)
-- [docs-checker](./docs-checker.md) - Validates documentation accuracy (different scope)
+- [docs-checker](./docs__checker.md) - Validates documentation accuracy (different scope)
 
 **External Resources**:
 - [PaperMod Theme Documentation](https://adityatelange.github.io/hugo-PaperMod/)

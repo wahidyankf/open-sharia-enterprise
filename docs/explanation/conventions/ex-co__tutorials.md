@@ -48,13 +48,13 @@ This convention establishes comprehensive standards for tutorial content across 
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
 - **Hugo site tutorials** - Hextra theme specifics covered in [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md)
 - **Non-tutorial content** - How-To guides, Reference, Explanation covered separately
-- **Tutorial validation** - Covered by docs-tutorial-checker agent
+- **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
 
 ## 📋 Overview
 
 Tutorials are **learning-oriented** documentation that guide learners through acquiring new skills and knowledge. Unlike how-to guides (goal-oriented) or reference material (information-oriented), tutorials focus on the **learning journey** itself.
 
-**Purpose**: This convention defines the requirements and standards for creating tutorials that both `docs-tutorial-maker` creates and `docs-tutorial-checker` validates. It serves as the single source of truth for tutorial quality.
+**Purpose**: This convention defines the requirements and standards for creating tutorials that both `docs__tutorial-maker` creates and `docs__tutorial-checker` validates. It serves as the single source of truth for tutorial quality.
 
 **Scope**: Applies to all tutorials in `docs/tutorials/` directory, including: - Business and Finance tutorials (`docs/tutorials/business-and-finance/`) - AI Engineering tutorials (`docs/tutorials/ai-engineering/`) - Software Engineering tutorials (`docs/tutorials/software-engineering/`) - Domain-specific tutorials organized by subject area
 
@@ -1193,7 +1193,7 @@ If you're new to finance, start with [Accounting](../business-and-finance/tu-buf
 
 ## ✅ Validation Criteria
 
-These criteria define what `docs-tutorial-checker` validates. Every tutorial must pass all checks.
+These criteria define what `docs__tutorial-checker` validates. Every tutorial must pass all checks.
 
 ### Structure Validation
 

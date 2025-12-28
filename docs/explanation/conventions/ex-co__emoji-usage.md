@@ -177,7 +177,7 @@ Use for AI agent categorization in `.claude/agents/README.md`:
 ✅ **Good - Color + Text + Shape:**
 
 ```markdown
-### 🟦 `docs-maker.md`
+### 🟦 `docs__maker.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown.
 ```
@@ -186,7 +186,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown.
 
 - Color: Blue square (accessible color from verified palette)
 - Shape: Square emoji (distinguishable shape)
-- Text: "docs-maker.md" (primary identifier)
+- Text: "docs\_\_maker.md" (primary identifier)
 - Description: "Expert documentation writer..." (semantic meaning)
 
 ❌ **Bad - Color only:**
@@ -379,7 +379,7 @@ category: explanation
 1. **CLAUDE.md** - Root configuration file with instructions for Claude Code AI
 
 2. **Agent prompt files** - `.claude/agents/*.md` (except README.md)
-   - `docs-maker.md`, `plan-executor.md`, `repo-rules-checker.md`, etc.
+   - `docs__maker.md`, `plan__executor.md`, `wow__rules-checker.md`, etc.
    - These are AI prompts/instructions, not human documentation
    - Exception: `.claude/agents/README.md` gets emojis (it's an index for humans)
 

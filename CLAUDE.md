@@ -91,7 +91,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 **Special Directories**:
 
-- **`metadata/`** - Operational metadata committed to git (NOT temporary). Contains `external-links-status.yaml` cache for link verification (6-month expiry, mandatory for docs-link-general-checker agent). See [docs-link-general-checker agent](./.claude/agents/docs-link-general-checker.md) for details.
+- **`metadata/`** - Operational metadata committed to git (NOT temporary). Contains `external-links-status.yaml` cache for link verification (6-month expiry, mandatory for docs**link-general-checker agent). See [docs**link-general-checker agent](./.claude/agents/docs\_\_link-general-checker.md) for details.
 
 ## Plans Organization
 
@@ -110,7 +110,7 @@ See [Repository Architecture](./docs/explanation/ex__repository-governance-archi
 **Layer 4: AI Agents** - WHO enforces rules (orchestrated by layer 5)
 **Layer 5: Workflows** - WHEN we run multi-step processes
 
-**Quick Traceability Example**: Vision (democratize Shariah-compliant enterprise) → Automation Over Manual (principle) → Content Quality Principles (convention) → Maker-Checker-Fixer Pattern (development) → docs-checker, docs-fixer (agents) → Maker-Checker-Fixer Workflow (orchestrates agents)
+**Quick Traceability Example**: Vision (democratize Shariah-compliant enterprise) → Automation Over Manual (principle) → Content Quality Principles (convention) → Maker-Checker-Fixer Pattern (development) → docs**checker, docs**fixer (agents) → Maker-Checker-Fixer Workflow (orchestrates agents)
 
 **Key Documents**:
 
@@ -206,7 +206,7 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. Agent frontmatter must be comment-free (no # symbols in YAML).
 
-**Name-Filename Matching**: Agent `name` field MUST exactly match the filename (without .md extension). Example: `agent-maker.md` → `name: agent-maker`.
+**Name-Filename Matching**: Agent `name` field MUST exactly match the filename (without .md extension). Example: `agent__maker.md` → `name: agent__maker`.
 
 **Bash Tools for .claude Writes**: Agents creating/updating files in `.claude/` folders must use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](./docs/explanation/development/ex-de__ai-agents.md#writing-to-claude-folders).
 
@@ -225,7 +225,7 @@ AI agents creating temporary uncommitted files must use designated directories t
 - **`generated-reports/`** - For validation, audit, and check reports (report-generating agents). **CRITICAL**: Any agent writing to this directory MUST have both Write and Bash tools (Write for files, Bash for UTC+7 timestamps).
 - **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
 
-**MANDATORY for ALL \*-checker agents**: All checker agents (repo-rules-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, docs-checker, docs-tutorial-checker, readme-checker, plan-checker, plan-execution-checker) MUST write validation/audit reports to `generated-reports/` using 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain (6-char hex UUIDs separated by dots) enables parallel execution without file collisions. NO conversation-only output. All validation findings MUST be persisted in report files.
+**MANDATORY for ALL \*-checker agents**: All checker agents (wow**rules-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, docs**checker, docs**tutorial-checker, readme**checker, plan**checker, plan**execution-checker) MUST write validation/audit reports to `generated-reports/` using 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain (6-char hex UUIDs separated by dots) enables parallel execution without file collisions. NO conversation-only output. All validation findings MUST be persisted in report files.
 
 **PROGRESSIVE WRITING REQUIREMENT**: All \*-checker agents MUST initialize report files at execution start and write findings progressively throughout execution (not buffer and write once at the end). This ensures audit history survives context compaction during long validation runs.
 
@@ -237,23 +237,23 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 ### Available Agents
 
-**Content**: docs-maker, docs-tutorial-maker, readme-maker, linkedin-post-maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-title-maker, ose-platform-web-content-maker
+**Content**: docs**maker, docs**tutorial-maker, readme**maker, social**linkedin\_\_post-maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-title-maker, ose-platform-web-content-maker
 
 **Navigation**: ayokoding-web-navigation-maker, ayokoding-web-structure-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, readme-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, repo-rules-checker
+**Validation**: docs**checker, docs**tutorial-checker, docs**link-general-checker, readme**checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, wow\_\_rules-checker
 
-**Fixing**: repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer
+**Fixing**: wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, ose-platform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer
 
-**Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
+**Planning**: plan**maker, plan**checker, plan**executor, plan**execution-checker
 
-**Development**: hugo-developer
+**Development**: swe**hugo**developer
 
-**Operations**: docs-file-manager, ayokoding-web-deployer, ose-platform-web-deployer
+**Operations**: docs\_\_file-manager, ayokoding-web-deployer, ose-platform-web-deployer
 
-**Workflows**: workflow-maker, workflow-checker, workflow-fixer
+**Workflows**: wow**workflow-maker, wow**workflow-checker, wow\_\_workflow-fixer
 
-**Meta**: agent-maker, repo-rules-maker
+**Meta**: agent**maker, wow**rules-maker
 
 See [Agents Index](./.claude/agents/README.md) for descriptions and workflows.
 
@@ -297,9 +297,9 @@ When adding new conventions, rules, or standards:
 
 - When updating convention docs, review CLAUDE.md summary for accuracy (keep it brief)
 - When CLAUDE.md exceeds 35k characters, trigger review and condensation
-- Use `repo-rules-checker` periodically to detect duplication between CLAUDE.md and convention docs
-- Use `repo-rules-fixer` to apply validated fixes from audit reports (after user review)
-- `repo-rules-maker` should check CLAUDE.md size when adding rules (warn if approaching limits)
+- Use `wow__rules-checker` periodically to detect duplication between CLAUDE.md and convention docs
+- Use `wow__rules-fixer` to apply validated fixes from audit reports (after user review)
+- `wow__rules-maker` should check CLAUDE.md size when adding rules (warn if approaching limits)
 
 **Example**: Bad - Detailed examples duplicating convention docs. Good - Brief summary with link to detailed documentation.
 

@@ -836,10 +836,10 @@ stateDiagram-v2
 
 ```mermaid
 graph TD
-    A[Claude Code - Main Agent] --> B[docs-maker.md]
-    A --> C[repo-rules-checker.md]
-    A --> D[repo-rules-maker.md]
-    A --> E[plan-maker.md]
+    A[Claude Code - Main Agent] --> B[docs__maker.md]
+    A --> C[wow__rules-checker.md]
+    A --> D[wow__rules-maker.md]
+    A --> E[plan__maker.md]
 
     B --> F[Documentation]
     C --> G[Validation]
@@ -854,10 +854,10 @@ graph TD
 ## Agent Architecture
 
 Claude Code (Main Agent)
-├── docs-maker.md (Documentation)
-├── repo-rules-checker.md (Validation)
-├── repo-rules-maker.md (Propagation)
-└── plan-maker.md (Planning)
+├── docs**maker.md (Documentation)
+├── wow**rules-checker.md (Validation)
+├── wow**rules-maker.md (Propagation)
+└── plan**maker.md (Planning)
 ```
 
 ## Mixing Formats

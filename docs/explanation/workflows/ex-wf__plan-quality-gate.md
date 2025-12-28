@@ -58,7 +58,7 @@ outputs:
 
 Run plan validation to identify completeness and accuracy issues.
 
-**Agent**: `plan-checker`
+**Agent**: `plan__checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
@@ -102,7 +102,7 @@ Analyze audit report to determine if fixes are needed.
 
 Apply all validated fixes from the audit report.
 
-**Agent**: `plan-fixer`
+**Agent**: `plan__fixer`
 
 - **Args**: `report: {step1.outputs.audit-report-1}, approved: all, mode: {input.mode}`
 - **Output**: `{fixes-applied}`
@@ -128,7 +128,7 @@ Apply all validated fixes from the audit report.
 
 Run checker again to verify fixes resolved issues and no new issues introduced.
 
-**Agent**: `plan-checker`
+**Agent**: `plan__checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-N}` - Verification audit report
@@ -318,7 +318,7 @@ Result: SUCCESS (3 iterations)
 
 ## Plan-Specific Validation
 
-The plan-checker validates:
+The plan\_\_checker validates:
 
 - **Completeness**: All required sections present (requirements, deliverables, checklists)
 - **Technical Accuracy**: Commands, versions, tool names verified via web search

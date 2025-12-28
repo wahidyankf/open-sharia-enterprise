@@ -690,7 +690,7 @@ Always provide:
 
 - [ose-platform-web-content-checker.md](./ose-platform-web-content-checker.md) - Generates audit reports that this agent processes
 - [ose-platform-web-content-maker.md](./ose-platform-web-content-maker.md) - Creates ose-platform-web content (different purpose)
-- [repo-rules-fixer.md](./repo-rules-fixer.md) - Template for fixer agent structure
+- [wow\_\_rules-fixer.md](./wow__rules-fixer.md) - Template for fixer agent structure
 
 **Related Conventions:**
 

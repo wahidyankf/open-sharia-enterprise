@@ -1,5 +1,5 @@
 ---
-name: docs-fixer
+name: docs__fixer
 description: Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
@@ -969,9 +969,9 @@ Always provide:
 
 **Related Agents:**
 
-- [docs-checker.md](./docs-checker.md) - Generates validation reports that this agent processes
-- [docs-maker.md](./docs-maker.md) - Creates and edits documentation
-- [repo-rules-fixer.md](./repo-rules-fixer.md) - Structural fix applier (similar pattern)
+- [docs__checker.md](./docs__checker.md) - Generates validation reports that this agent processes
+- [docs__maker.md](./docs__maker.md) - Creates and edits documentation
+- [wow__rules-fixer.md](./wow__rules-fixer.md) - Structural fix applier (similar pattern)
 
 **Related Conventions:**
 

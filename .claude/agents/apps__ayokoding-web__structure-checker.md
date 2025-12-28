@@ -961,7 +961,7 @@ Always provide:
 - `ayokoding-web-general-checker.md` - Content quality validation (complementary)
 - `ayokoding-web-facts-checker.md` - Factual accuracy validation (complementary)
 - `ayokoding-web-link-checker.md` - Link validation (complementary)
-- `repo-rules-checker.md` - Repository consistency validation (similar pattern)
+- `wow__rules-checker.md` - Repository consistency validation (similar pattern)
 
 ---
 

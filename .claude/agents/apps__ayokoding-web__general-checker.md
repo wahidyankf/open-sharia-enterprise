@@ -1783,7 +1783,7 @@ Categorize issues:
 
 **Related Agents**:
 - [ayokoding-web-general-maker](./ayokoding-web-general-maker.md) - Creates ayokoding-web content (complementary agent)
-- [docs-checker](./docs-checker.md) - Validates documentation accuracy (different scope)
+- [docs-checker](./docs__checker.md) - Validates documentation accuracy (different scope)
 
 **External Resources**:
 - [Hextra Theme Documentation](https://imfing.github.io/hextra/docs/)

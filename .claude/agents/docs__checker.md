@@ -1,5 +1,5 @@
 ---
-name: docs-checker
+name: docs__checker
 description: Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information. Use when verifying technical claims, checking command syntax, detecting contradictions, or auditing documentation accuracy.
 tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 model: sonnet
@@ -1191,9 +1191,9 @@ Some sites block automated tools (Wikipedia, GitHub, etc.):
 
 **Related Agents:**
 
-- `docs-link-general-checker.md` - Validates link accessibility (not content accuracy)
-- `repo-rules-checker.md` - Validates convention compliance (not factual correctness)
-- `docs-maker.md` - Creates and edits documentation
+- `docs__link-general-checker.md` - Validates link accessibility (not content accuracy)
+- `wow__rules-checker.md` - Validates convention compliance (not factual correctness)
+- `docs__maker.md` - Creates and edits documentation
 
 ---
 

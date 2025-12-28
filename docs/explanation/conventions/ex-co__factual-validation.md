@@ -761,7 +761,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 - External links are accessible
 - No contradictions within/across files
 
-**Agent:** `docs-checker`, `docs-fixer`
+**Agent:** `docs__checker`, `docs__fixer`
 
 ### Hugo Educational Content (ayokoding-web)
 
@@ -793,7 +793,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 - Documentation URLs are accessible
 - Version requirements are current
 
-**Agent:** `plan-checker`, `plan-fixer`
+**Agent:** `plan__checker`, `plan__fixer`
 
 ### README Files
 
@@ -804,15 +804,15 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 - Feature claims are accurate
 - Links to documentation are valid
 
-**Agent:** `readme-checker`, `readme-fixer`
+**Agent:** `readme__checker`, `readme__fixer`
 
 ## 📚 Related Documentation
 
 **Implementation Agents:**
 
-- `docs-checker.md` - Documentation factual accuracy validator (implements this convention for `docs/`)
+- `docs__checker.md` - Documentation factual accuracy validator (implements this convention for `docs/`)
 - `ayokoding-web-facts-checker.md` - Educational content factual validator (implements this convention for ayokoding-web)
-- `plan-checker.md` - Plan accuracy validator (implements portions of this convention)
+- `plan__checker.md` - Plan accuracy validator (implements portions of this convention)
 
 **Quality Standards:**
 

@@ -333,7 +333,7 @@ Workflows orchestrate agents and have structural requirements similar to agents 
 
   examples:
     valid:
-      - "agent: docs-checker (file: .claude/agents/docs-checker.md exists)"
+      - "agent: docs-checker (file: .claude/agents/docs__checker.md exists)"
     invalid:
       - "agent: nonexistent-agent (file not found)"
       - "agent: docs_checker (wrong naming convention)"
@@ -1363,15 +1363,15 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
 - `docs/explanation/conventions/ex-co__file-naming-convention.md` (MODIFY)
   - Add ## Policy Definition section with YAML
 
-- `.claude/agents/repo-rules-checker.md` (MODIFY: 953→400 lines)
+- `.claude/agents/wow__rules-checker.md` (MODIFY: 953→400 lines)
   - Add PolicyEngine integration
   - Remove embedded rule definitions
 
-- `.claude/agents/repo-rules-maker.md` (MODIFY: 851→350 lines)
+- `.claude/agents/wow__rules-maker.md` (MODIFY: 851→350 lines)
   - Add policy sync logic
   - Update workflow documentation
 
-- `.claude/agents/repo-rules-fixer.md` (MODIFY: 510→250 lines)
+- `.claude/agents/wow__rules-fixer.md` (MODIFY: 510→250 lines)
   - Add policy-driven fix logic
   - Query policies for autofix eligibility
 

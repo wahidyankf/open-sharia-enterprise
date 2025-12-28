@@ -1,5 +1,5 @@
 ---
-name: hugo-developer
+name: swe__hugo__developer
 description: Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web following Hugo Development Convention
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
