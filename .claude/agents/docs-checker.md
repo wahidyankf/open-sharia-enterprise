@@ -324,7 +324,7 @@ See [Nested Code Fence Convention](../../docs/explanation/conventions/ex-co__nes
 
 ## Distinction from Other Agents
 
-**docs-link-checker:**
+**docs-link-general-checker:**
 
 - **Focus**: Link validity (URLs work, internal refs exist)
 - **Does NOT check**: Content accuracy or factual correctness
@@ -1139,7 +1139,7 @@ Some sites block automated tools (Wikipedia, GitHub, etc.):
 
 ### Out of Scope
 
-- Link validity (handled by docs-link-checker)
+- Link validity (handled by docs-link-general-checker)
 - Convention compliance (handled by repo-rules-checker)
 - Writing style or tone
 - Grammar and spelling (unless affects meaning)
@@ -1168,7 +1168,7 @@ Some sites block automated tools (Wikipedia, GitHub, etc.):
 
 **Don't use docs-checker for:**
 
-- Checking if links work (use docs-link-checker)
+- Checking if links work (use docs-link-general-checker)
 - Validating file naming or structure (use repo-rules-checker)
 - Writing new documentation (use docs-maker)
 - Editing existing docs (use docs-maker)
@@ -1191,7 +1191,7 @@ Some sites block automated tools (Wikipedia, GitHub, etc.):
 
 **Related Agents:**
 
-- `docs-link-checker.md` - Validates link accessibility (not content accuracy)
+- `docs-link-general-checker.md` - Validates link accessibility (not content accuracy)
 - `repo-rules-checker.md` - Validates convention compliance (not factual correctness)
 - `docs-maker.md` - Creates and edits documentation
 

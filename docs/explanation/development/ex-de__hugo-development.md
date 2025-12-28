@@ -1957,7 +1957,7 @@ grep -r "rel=\"canonical\"" public/
 **1. Link Checking:**
 
 ```bash
-# Use docs-link-checker agent
+# Use docs-link-general-checker agent
 # Or use htmltest
 npm install -g htmltest
 htmltest public/
@@ -2086,7 +2086,7 @@ python3 -m http.server 8000
 - **Performance:** Lighthouse, WebPageTest, GTmetrix
 - **Accessibility:** axe DevTools, WAVE, Pa11y
 - **SEO:** Google Rich Results Test, Schema.org Validator
-- **Links:** htmltest, docs-link-checker agent
+- **Links:** htmltest, docs-link-general-checker agent
 - **Browser Testing:** BrowserStack, LambdaTest
 - **Monitoring:** Google Analytics, Plausible, Vercel Analytics
 

@@ -1024,7 +1024,7 @@ npm list
 | Create blog posts, tutorials, essays | `ayokoding-web-general-maker`                                         |
 | Create project updates               | `ose-platform-web-content-maker`                                      |
 | Validate content quality             | `ayokoding-web-general-checker` or `ose-platform-web-content-checker` |
-| Check for broken links in content    | `docs-link-checker`                                                   |
+| Check for broken links in content    | `docs-link-general-checker`                                           |
 | Deploy to production                 | `ayokoding-web-deployer` or `ose-platform-web-deployer`               |
 | Create documentation                 | `docs-maker` or `docs-tutorial-maker`                                 |
 | Plan implementation                  | `plan-maker`                                                          |

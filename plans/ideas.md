@@ -33,7 +33,7 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 
 - Document for CI/CD target of this repository
 - Standardize project's script for this repository
-- Add helper script/cli for @agent-docs-link-checker
+- Add helper script/cli for @agent-docs-link-general-checker
 - Document best practices for gherkin
 - Setup specs folder for gherkin files
 - Create workflow/protocol system to define a series of processes that includes multiple agents and/or processes

@@ -1141,7 +1141,7 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 - `.claude/agents/ose-platform-web-content-checker.md`
 - `.claude/agents/docs-checker.md`
 - `.claude/agents/docs-file-manager.md`
-- `.claude/agents/docs-link-checker.md`
+- `.claude/agents/docs-link-general-checker.md`
 - `.claude/agents/docs-maker.md`
 - `.claude/agents/docs-tutorial-checker.md`
 - `.claude/agents/docs-tutorial-maker.md`

@@ -137,7 +137,7 @@ The Java Full Set structure mirrors the proven Golang approach while adapting co
 - [x] Complete beginner can install Java and run first program in 15 minutes or less
 - [x] Tutorial structure follows Tutorial Convention standards
 - [x] All platform-specific instructions are accurate
-- [x] All quality checks pass (docs-tutorial-checker, docs-link-checker, multi-platform tests)
+- [x] All quality checks pass (docs-tutorial-checker, docs-link-general-checker, multi-platform tests)
 
 **Deliverable**: Initial Setup tutorial (333 lines - NEW file created)
 
@@ -325,7 +325,7 @@ The Java Full Set structure mirrors the proven Golang approach while adapting co
 - [x] Learner achieves 0-60% Java knowledge coverage comprehensively
 - [x] Learner can build complete Java applications with proper OOP design
 - [x] Tutorial quality meets all Convention standards
-- [x] All quality checks pass (docs-tutorial-checker, docs-link-checker, code tests, time validation)
+- [x] All quality checks pass (docs-tutorial-checker, docs-link-general-checker, code tests, time validation)
 
 **Deliverable**: Beginner tutorial (1,360 lines - NEW file)
 
@@ -836,7 +836,7 @@ The Java Full Set structure mirrors the proven Golang approach while adapting co
 - [x] Run docs-tutorial-checker on all 6 tutorials
   - **Status**: Completed - All tutorials follow conventions
   - **Date**: 2025-12-04
-- [x] Run docs-link-checker on all cross-references and links
+- [x] Run docs-link-general-checker on all cross-references and links
   - **Status**: Completed - All links valid
   - **Date**: 2025-12-04
 - [x] Verify all file names follow convention (`tu-se-pl-ja__*.md`)
@@ -874,7 +874,7 @@ The Java Full Set structure mirrors the proven Golang approach while adapting co
 **Validation Checklist**:
 
 - [x] All tutorials pass docs-tutorial-checker
-- [x] All tutorials pass docs-link-checker
+- [x] All tutorials pass docs-link-general-checker
 - [x] All code examples compile and run correctly
 - [x] Time estimates validated with target audience (80% complete within range)
 - [x] Technical accuracy verified

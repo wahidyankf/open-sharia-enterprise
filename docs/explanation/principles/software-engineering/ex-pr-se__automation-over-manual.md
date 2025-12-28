@@ -175,7 +175,7 @@ npx commitlint --edit $1
 
 **Context**: Checking external links without redundant requests.
 
-**Automation**: `docs-link-checker.md` agent with cache
+**Automation**: `docs-link-general-checker.md` agent with cache
 
 **Location**: `docs/metadata/external-links-status.yaml`
 
@@ -409,7 +409,7 @@ The project enforces code quality through automated git hooks:
 **Agents**:
 
 - `docs-checker.md` - Validate documentation
-- `docs-link-checker.md` - Verify links with cache
+- `docs-link-general-checker.md` - Verify links with cache
 - `repo-rules-checker.md` - Check repository consistency
 - `plan-checker.md` - Validate project plans
 

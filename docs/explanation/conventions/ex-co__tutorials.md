@@ -28,6 +28,28 @@ This convention implements the following core principles:
 
 - **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Learning-oriented content with clear structure, encouraging tone, and step-by-step guidance makes knowledge accessible to beginners. Reduces barriers to entry for learners from all backgrounds.
 
+## Purpose
+
+This convention establishes comprehensive standards for tutorial content across all tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). It ensures tutorials are learning-oriented, progressively structured, and free of time estimates, providing effective educational experiences.
+
+## Scope
+
+### What This Convention Covers
+
+- **Seven tutorial types** - Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example
+- **Coverage percentages** - What percentage of topic each level covers
+- **Tutorial structure** - Required sections and content patterns
+- **Learning progression** - How tutorials build on each other
+- **No time estimates** - Why tutorials don't include time-based framing
+- **Tutorial quality** - Standards for effective learning content
+
+### What This Convention Does NOT Cover
+
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
+- **Hugo site tutorials** - Hextra theme specifics covered in [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md)
+- **Non-tutorial content** - How-To guides, Reference, Explanation covered separately
+- **Tutorial validation** - Covered by docs-tutorial-checker agent
+
 ## 📋 Overview
 
 Tutorials are **learning-oriented** documentation that guide learners through acquiring new skills and knowledge. Unlike how-to guides (goal-oriented) or reference material (information-oriented), tutorials focus on the **learning journey** itself.

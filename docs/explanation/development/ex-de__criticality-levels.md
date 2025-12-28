@@ -20,7 +20,7 @@ This convention establishes a universal **four-level criticality system** (CRITI
 - `ayokoding-web-general-checker`: Must Fix/Warnings/Suggestions
 - `readme-checker`: High/Medium/Low Priority
 - `docs-checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
-- `docs-link-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
+- `docs-link-general-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
 - `ayokoding-web-structure-checker`: CRITICAL/IMPORTANT/Warnings
 - `plan-checker`: Critical/Warnings/Recommendations
 
@@ -534,7 +534,7 @@ Run `{agent-family}-fixer` on this audit report:
 - `docs-checker` - Verification labels ([Verified], [Error], [Outdated], [Unverified])
 - `docs-tutorial-checker` - Verification labels
 - `apps__ayokoding-web__facts-checker` - Verification labels
-- `docs-link-checker` - Status labels ([OK], [BROKEN], [REDIRECT])
+- `docs-link-general-checker` - Status labels ([OK], [BROKEN], [REDIRECT])
 - `apps__ayokoding-web__link-checker` - Status labels
 
 **Format for dual-label findings**:
@@ -582,7 +582,7 @@ https://docs.npmjs.com/cli/v9/commands/npm-install
 **Confidence**: HIGH
 ```
 
-**Example from docs-link-checker**:
+**Example from docs-link-general-checker**:
 
 ```markdown
 ### 1. [BROKEN] - Reference Link Returns 404
@@ -696,7 +696,7 @@ Update link to current documentation URL or find alternative resource
 - Consider adding tags
 - Potential cross-reference
 
-### Documentation (docs-checker, docs-tutorial-checker, docs-link-checker)
+### Documentation (docs-checker, docs-tutorial-checker, docs-link-general-checker)
 
 **CRITICAL**:
 
@@ -1372,7 +1372,7 @@ Existing agents using different terminology should migrate to this convention.
 - docs-checker ([Verified]/[Error]/[Outdated] + CRITICAL/HIGH/MEDIUM/LOW)
 - docs-tutorial-checker
 - apps**ayokoding-web**facts-checker
-- docs-link-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
+- docs-link-general-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
 - apps**ayokoding-web**link-checker
 
 **Plan/Priority Family** (3 agents):

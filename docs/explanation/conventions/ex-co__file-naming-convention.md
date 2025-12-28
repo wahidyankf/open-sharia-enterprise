@@ -32,6 +32,10 @@ This convention implements the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Uses straightforward abbreviation rules (2 or 4 characters) and a single separator pattern (`__`). Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
 
+## Purpose
+
+This convention establishes a systematic file naming pattern that encodes directory hierarchy in filenames, ensuring global uniqueness and discoverability across the documentation. It prevents naming conflicts, makes file locations transparent, and enables efficient file management without relying on directory structure alone.
+
 ## 🎯 Scope
 
 This naming convention applies to **all files in the `docs/` directory** (the Obsidian vault):

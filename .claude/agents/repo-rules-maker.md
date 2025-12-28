@@ -83,7 +83,7 @@ Understanding the update hierarchy is critical. Always update in this order:
 3. Agent Files (Consumers of Rules)
    ├─ .claude/agents/README.md
    ├─ .claude/agents/docs-maker.md
-   ├─ .claude/agents/docs-link-checker.md
+   ├─ .claude/agents/docs-link-general-checker.md
    ├─ .claude/agents/repo-rules-checker.md
    └─ .claude/agents/repo-rules-maker.md (yourself!)
 

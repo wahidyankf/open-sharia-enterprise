@@ -31,6 +31,27 @@ This convention implements the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Shared conventions document eliminates duplication between site-specific documents. Common standards in one place, site-specific patterns separated cleanly.
 
+## Purpose
+
+This convention establishes shared standards that apply to **all Hugo sites** in the repository (ayokoding-web and ose-platform-web). It defines universal frontmatter requirements, markdown formatting, and content quality rules that every Hugo site must follow, providing a common foundation before site-specific conventions apply.
+
+## Scope
+
+### What This Convention Covers
+
+- **Universal frontmatter** - YAML fields required by all Hugo sites
+- **Markdown syntax** - How to write content for Hugo markdown processing
+- **Content formatting** - Headings, lists, code blocks, and other markdown elements
+- **Asset management** - Images, diagrams, and other media files
+- **Cross-site standards** - Quality requirements for all Hugo content
+
+### What This Convention Does NOT Cover
+
+- **Site-specific conventions** - See [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md) and [ose-platform-web convention](./ex-co__hugo-content-ose-platform.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
+- **Content strategy** - What content to create (covered in domain conventions)
+- **Deployment** - Covered by site-specific deployer agents
+
 ## Document Structure
 
 This shared document contains conventions that apply to **both sites**:

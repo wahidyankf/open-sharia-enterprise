@@ -25,6 +25,27 @@ This convention implements the following core principles:
 
 - **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: LaTeX notation renders properly in modern browsers and can be parsed by screen readers with math support. Text-based source allows assistive technology to interpret mathematical content.
 
+## Purpose
+
+This convention establishes LaTeX notation as the standard for all mathematical expressions in markdown files. It ensures equations render consistently across GitHub, Obsidian, and Hugo sites using `$...$` (inline) and `$$...$$` (display) syntax, providing professional mathematical typography.
+
+## Scope
+
+### What This Convention Covers
+
+- **LaTeX syntax** - Inline `$...$` and display `$$...$$` notation
+- **Where to use math** - Documentation, tutorials, technical explanations
+- **Math rendering** - How different platforms render LaTeX
+- **Common patterns** - Frequently used mathematical expressions
+- **Equation formatting** - Alignment, multi-line equations, numbering
+
+### What This Convention Does NOT Cover
+
+- **Code blocks** - Math notation is NOT used in code examples (use actual code syntax)
+- **Mermaid diagrams** - Math notation is NOT supported in Mermaid
+- **ASCII art** - Alternative plain-text representations of math
+- **Complex mathematical publishing** - This is for inline documentation math, not research papers
+
 ## 📋 Overview
 
 Mathematical notation appears throughout enterprise documentation - from financial formulas like WACC and CAPM to statistical models and algorithmic complexity analysis. This convention ensures all mathematical expressions are:

@@ -28,6 +28,30 @@ This convention implements the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Weight values explicitly control navigation order - no magic sorting algorithms. Frontmatter fields clearly state language, type, and navigation position.
 
+## Purpose
+
+This convention defines content creation standards specific to the ayokoding-web Hugo site, which uses the Hextra theme and serves bilingual programming tutorials. It establishes frontmatter requirements, navigation structure, weight systems, and linking patterns unique to ayokoding-web, complementing the shared Hugo conventions.
+
+## Scope
+
+### What This Convention Covers
+
+- **Ayokoding-web frontmatter** - Required YAML fields specific to Hextra theme
+- **Bilingual content strategy** - Default English, no automatic mirroring policy
+- **Level-based weight system** - Powers of 10 for navigation ordering
+- **Navigation depth** - 2-layer limit with complete coverage requirements
+- **Overview/Ikhtisar links** - Required link patterns for bilingual support
+- **Absolute path linking** - Language prefix requirements for internal links
+- **Hextra theme specifics** - Sidebar, cards, steps, and other Hextra features
+
+### What This Convention Does NOT Cover
+
+- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-co__hugo-content-shared.md)
+- **Programming language content structure** - Covered in [Programming Language Content Standard](./ex-co__programming-language-content.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
+- **Deployment** - Covered by ayokoding-web-deployer agent
+
 ## Prerequisites
 
 **IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md).

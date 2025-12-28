@@ -24,6 +24,27 @@ This convention implements the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Four clear categories (Tutorials, How-To, Reference, Explanation) instead of complex, nested documentation hierarchies. Each category serves a single, well-defined purpose.
 
+## Purpose
+
+This convention establishes the Diátaxis framework as the organizational structure for all documentation in the repository. It provides a systematic approach to categorizing content into four distinct types (Tutorials, How-To, Reference, Explanation), ensuring documentation serves different user needs effectively. This framework guides where new content belongs and maintains clear boundaries between documentation types.
+
+## Scope
+
+### What This Convention Covers
+
+- **Documentation categorization** - The four Diátaxis categories (Tutorials, How-To, Reference, Explanation)
+- **Category characteristics** - Purpose, audience, and appropriate content for each category
+- **Category boundaries** - What belongs in each category vs. what doesn't
+- **Navigation and discovery** - How categories help users find information
+- **Content creation guidance** - When to create content in each category
+
+### What This Convention Does NOT Cover
+
+- **How to write content within categories** - Covered in category-specific conventions (e.g., [Tutorial Naming Convention](./ex-co__tutorial-naming.md), [README Quality Convention](./ex-co__readme-quality.md))
+- **File naming within categories** - Covered in [File Naming Convention](./ex-co__file-naming-convention.md)
+- **Hugo site structure** - Covered in Hugo content conventions
+- **Content quality standards** - Covered in [Content Quality Principles](./ex-co__content-quality.md)
+
 ## 📋 What is Diátaxis?
 
 Diátaxis is a systematic approach to technical documentation authoring that divides documentation into four distinct categories based on user needs and context:

@@ -91,7 +91,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 **Special Directories**:
 
-- **`metadata/`** - Operational metadata committed to git (NOT temporary). Contains `external-links-status.yaml` cache for link verification (6-month expiry, mandatory for docs-link-checker agent). See [docs-link-checker agent](./.claude/agents/docs-link-checker.md) for details.
+- **`metadata/`** - Operational metadata committed to git (NOT temporary). Contains `external-links-status.yaml` cache for link verification (6-month expiry, mandatory for docs-link-general-checker agent). See [docs-link-general-checker agent](./.claude/agents/docs-link-general-checker.md) for details.
 
 ## Plans Organization
 
@@ -241,7 +241,7 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 **Navigation**: ayokoding-web-navigation-maker, ayokoding-web-structure-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, readme-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, repo-rules-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, readme-checker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker, ayokoding-web-structure-checker, ose-platform-web-content-checker, repo-rules-checker
 
 **Fixing**: repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer
 

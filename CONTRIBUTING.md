@@ -217,7 +217,7 @@ This format is **enforced by commitlint** on every commit. For complete details,
 **Good example**:
 
 ```bash
-git commit -m "feat(agents): add docs-link-checker agent"
+git commit -m "feat(agents): add docs-link-general-checker agent"
 git commit -m "docs(agents): update agent index with new agent"
 git commit -m "fix(docs): correct frontmatter date format"
 ```

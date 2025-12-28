@@ -33,6 +33,27 @@ This convention implements the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Plan folder names encode the date (`YYYY-MM-DD__[identifier]`) making chronological order explicit. File location indicates status - no hidden metadata or databases.
 
+## Purpose
+
+This convention establishes the organizational structure for project planning documents in the `plans/` directory. It defines how to organize ideas, backlog, in-progress work, and completed projects using date-based folder naming and standardized lifecycle stages.
+
+## Scope
+
+### What This Convention Covers
+
+- **Plans directory structure** - ideas.md, backlog/, in-progress/, done/ organization
+- **Folder naming pattern** - `YYYY-MM-DD__[project-identifier]/` format
+- **File organization** - What files belong in each folder
+- **Lifecycle stages** - How plans move from ideas → backlog → in-progress → done
+- **Project identifiers** - How to name projects consistently
+
+### What This Convention Does NOT Cover
+
+- **Plan content format** - How to write plans (covered by plan-checker agent)
+- **Project management methodology** - This is file organization, not PM process
+- **Task tracking** - Covered by plan-executor agent
+- **Deployment scheduling** - Covered in deployment conventions
+
 ## 📋 Overview
 
 The `plans/` folder serves as the workspace for project planning activities:

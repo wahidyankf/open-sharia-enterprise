@@ -528,12 +528,12 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                          |
-| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                                 |
-| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-rules-checker<br>plan-checker<br>docs-checker                              |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-rules-maker\*<br>docs-file-manager                                         |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-checker<br>ayokoding-web-link-checker<br>deployers\* |
+| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                  |
+| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                                         |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-rules-checker<br>plan-checker<br>docs-checker                                      |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-rules-maker\*<br>docs-file-manager                                                 |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-general-checker<br>ayokoding-web-link-checker<br>deployers\* |
 
 **Edge Case Notes:**
 
@@ -558,7 +558,7 @@ This role-based categorization was chosen because it:
 
 **Hybrid Link Checkers:**
 
-- **docs-link-checker** - Validates documentation links + manages external-links-status.yaml cache
+- **docs-link-general-checker** - Validates documentation links + manages external-links-status.yaml cache
 - **ayokoding-web-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
 
 **Why hybrid status?**
@@ -577,7 +577,7 @@ This role-based categorization was chosen because it:
 
 **Cache files are NOT temporary:**
 
-- Location: `docs/metadata/` (docs-link-checker) and `apps/ayokoding-web/` (ayokoding-web-link-checker)
+- Location: `docs/metadata/` (docs-link-general-checker) and `apps/ayokoding-web/` (ayokoding-web-link-checker)
 - Purpose: Long-term link status tracking (6-month expiry), shared across team
 - Committed to git: Yes (operational metadata)
 - Updated every run: Yes (including lastFullScan timestamp)
@@ -627,7 +627,7 @@ Start: What is the agent's primary capability?
   - Write tool needed for cache file updates (external-links-status.yaml)
   - Edit tool needed for fixing broken links in content
   - Bash tool needed for UTC+7 timestamps
-  - Examples: docs-link-checker, ayokoding-web-link-checker
+  - Examples: docs-link-general-checker, ayokoding-web-link-checker
 - **Deployers with Bash only**: Use `purple` (Implementor)
   - Execute deployment orchestration (purple's "executes plans/orchestrates tasks")
   - Don't create or edit files, only run git/deployment commands
@@ -970,7 +970,7 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - repo-rules-checker (comprehensive consistency validation)
 - docs-file-manager (prefix calculation, link updates, git operations)
 - hugo-developer (theme development, asset pipeline, configuration)
-- docs-link-checker (external/internal link validation with caching)
+- docs-link-general-checker (external/internal link validation with caching)
 
 **When to use this tier**:
 
@@ -988,7 +988,7 @@ Quick categorization for existing agents:
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Tier 1: Simple**   | ayokoding-web-deployer, ose-platform-web-deployer                                                                                                                                                                                                                                                               |
 | **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-checker                                                                                                                                                     |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, docs-file-manager, hugo-developer, docs-link-general-checker                                                                                                                                             |
 
 ### When to Condense or Split Agents
 

@@ -25,6 +25,10 @@ This convention implements the following core principles:
 
 - **[No Time Estimates](../principles/content/ex-pr-co__no-time-estimates.md)**: Explicitly forbids time-based framing ("takes 30 minutes", "2-3 weeks to complete"). Focus on outcomes and deliverables, not arbitrary time constraints that create pressure.
 
+## Purpose
+
+This convention establishes universal quality standards that apply to **all markdown content** in the repository. It ensures consistent writing quality, accessibility compliance, and professional presentation across documentation, Hugo sites, planning documents, and repository root files. These standards make content readable, maintainable, and accessible to all users including those using assistive technologies.
+
 ## Scope
 
 These principles apply to markdown content in:

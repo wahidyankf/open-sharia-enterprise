@@ -593,11 +593,11 @@ Split your work into multiple commits when:
 
 ```
 ✅ Good:
-1. feat(agents): add docs-link-checker agent
+1. feat(agents): add docs-link-general-checker agent
 2. docs(agents): update agent index with new agent
 
 ❌ Bad:
-1. feat(agents): add docs-link-checker agent and update agent index
+1. feat(agents): add docs-link-general-checker agent and update agent index
 ```
 
 **Creating vs updating** - Creating new files and updating references to them should be separate commits:
@@ -688,7 +688,7 @@ When you have multiple commits, order them logically:
 **Example of good commit ordering:**
 
 ```
-1. feat(agents): add docs-link-checker agent          # Create new file
+1. feat(agents): add docs-link-general-checker agent          # Create new file
 2. refactor(agents): rename agents for consistency    # Rename existing files
 3. docs(agents): update all references to renamed agents  # Update references
 4. fix(docs): align frontmatter date                  # Fix issues discovered

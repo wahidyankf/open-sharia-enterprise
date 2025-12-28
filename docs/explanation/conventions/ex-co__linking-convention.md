@@ -24,6 +24,27 @@ This convention implements the following core principles:
 
 - **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Descriptive link text (not filenames) improves screen reader experience. Users hear meaningful context like "File Naming Convention" instead of cryptic identifiers like "ex-co\_\_file-naming-convention".
 
+## Purpose
+
+This convention establishes the standard linking format for all markdown files in the repository. It ensures links are GitHub-compatible, use relative paths with `.md` extensions, and follow consistent patterns across documentation and Hugo sites. This prevents broken links and maintains portability.
+
+## Scope
+
+### What This Convention Covers
+
+- **Markdown link syntax** - `[Display Text](./path/to/file.md)` format
+- **Relative vs. absolute paths** - When to use each
+- **Extension requirements** - `.md` extension for docs/, no extension for Hugo sites
+- **Cross-directory linking** - How to link between different documentation areas
+- **External link formatting** - How to format links to external resources
+
+### What This Convention Does NOT Cover
+
+- **Link validation** - Covered by docs-link-checker and ayokoding-web-link-checker agents
+- **Link text quality** - Descriptive link text is covered in [Content Quality Principles](./ex-co__content-quality.md)
+- **Hugo site URLs** - Hugo-specific linking covered in Hugo content conventions
+- **Anchor links** - Deep linking to specific sections (implementation detail)
+
 ## 🎯 Why GitHub-Compatible Links?
 
 We use GitHub-compatible markdown link syntax instead of Obsidian wiki links to ensure:
