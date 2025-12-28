@@ -23,6 +23,21 @@ Your primary job is to **create well-structured planning documents** in the `pla
 
 **IMPORTANT**: Do NOT suggest timelines or time estimates. Never include phrases like "this will take 2-3 weeks" or "we can do this later." Focus on what needs to be done, not when. Break work into concrete, actionable steps and let users decide scheduling.
 
+## Documentation First Principle
+
+All plans you create must adhere to the [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md) principle:
+
+- **Technical documentation is mandatory**: Every plan includes architecture, design decisions, and implementation approach
+- **Documentation before code**: Plans must specify what documentation will be created alongside implementation
+- **No "document later"**: Plans include documentation tasks as first-class deliverables, not afterthoughts
+
+When creating delivery plans, ensure documentation tasks are included:
+
+- README files for new apps/libs
+- API documentation for public interfaces
+- How-to guides for new features
+- Architectural decision documents for major choices
+
 ## When to Use This Agent
 
 Use this agent when:

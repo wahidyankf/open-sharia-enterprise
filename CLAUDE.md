@@ -123,11 +123,23 @@ See [Repository Architecture](./docs/explanation/ex__repository-governance-archi
 **Key Documents**:
 
 - [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) - Foundational purpose
-- [Core Principles Index](./docs/explanation/principles/README.md) - 9 foundational principles
+- [Core Principles Index](./docs/explanation/principles/README.md) - 10 foundational principles
 - [Conventions Index](./docs/explanation/conventions/README.md) - 24 documentation standards
 - [Development Index](./docs/explanation/development/README.md) - 15 software practices
 - [Agents Index](./.claude/agents/README.md) - All agents and responsibilities
 - [Workflows Index](./docs/explanation/workflows/README.md) - All orchestrated processes
+
+## Core Principles
+
+All work in this repository follows foundational principles defined in `docs/explanation/principles/`. Key principles include:
+
+- **Documentation First**: Documentation is mandatory, not optional. Every system, convention, feature, and decision must be documented. Undocumented knowledge is lost knowledge. See [Documentation First](./docs/explanation/principles/content/ex-pr-co__documentation-first.md) for complete requirements.
+- **Accessibility First**: Design for universal access from the start (WCAG compliance, color-blind friendly palettes)
+- **Simplicity Over Complexity**: Favor minimum viable abstraction, avoid over-engineering
+- **Explicit Over Implicit**: Choose explicit configuration over magic and hidden behavior
+- **Automation Over Manual**: Automate repetitive tasks for consistency
+
+See [Core Principles Index](./docs/explanation/principles/README.md) for all 10 foundational principles.
 
 ## Documentation Standards
 
@@ -199,7 +211,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (9 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (24 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (15 development practices).
+For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (10 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (24 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (15 development practices).
 
 ## AI Agent Standards
 

@@ -30,6 +30,16 @@ Your primary job is to **automate the entire agent creation workflow** by:
 5. **Running validation** via wow\_\_rules-checker to ensure compliance
 6. **Providing summary** with next steps and commit template
 
+## Documentation First Principle
+
+All agents you create must adhere to the [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md) principle:
+
+- **Agent files are self-documenting**: Clear descriptions, tool justifications, and usage guidance
+- **README.md updates mandatory**: Every new agent is added to .claude/agents/README.md automatically
+- **No undocumented agents**: Every agent must explain its purpose, when to use it, and what it does
+
+This agent enforces documentation by automatically updating the README and providing complete agent templates.
+
 ## Agent Creation Workflow
 
 ### Step 1: Gather Agent Information

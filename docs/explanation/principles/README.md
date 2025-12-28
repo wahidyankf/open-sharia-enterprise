@@ -122,7 +122,20 @@ Design for universal access from the start - WCAG compliance, color-blind friend
 - Semantic HTML
 - WCAG AA contrast standards
 
-#### 3. [No Time Estimates](./content/ex-pr-co__no-time-estimates.md)
+#### 3. [Documentation First](./content/ex-pr-co__documentation-first.md)
+
+Documentation is not optional - it is mandatory. Every system, convention, feature, and architectural decision must be documented. Undocumented knowledge is lost knowledge.
+
+**Key applications**:
+
+- All code requires README, API docs, inline comments
+- All conventions require explanation documents
+- All features require how-to guides
+- All architectural decisions require explanation documents
+- No "self-documenting code" excuse
+- Documentation written BEFORE or WITH code
+
+#### 4. [No Time Estimates](./content/ex-pr-co__no-time-estimates.md)
 
 People work and learn at vastly different speeds. Focus on outcomes and deliverables, not arbitrary time constraints.
 
@@ -134,7 +147,7 @@ People work and learn at vastly different speeds. Focus on outcomes and delivera
 - Outcomes-focused language
 - Plan deliverables (not timelines)
 
-#### 4. [Progressive Disclosure](./content/ex-pr-co__progressive-disclosure.md)
+#### 5. [Progressive Disclosure](./content/ex-pr-co__progressive-disclosure.md)
 
 Start simple and layer complexity gradually. Beginners see simple patterns, experts access advanced features when needed.
 
@@ -150,7 +163,7 @@ Start simple and layer complexity gradually. Beginners see simple patterns, expe
 
 Principles specific to software development practices - configuration, automation, and code organization.
 
-#### 5. [Automation Over Manual](./software-engineering/ex-pr-se__automation-over-manual.md)
+#### 6. [Automation Over Manual](./software-engineering/ex-pr-se__automation-over-manual.md)
 
 Automate repetitive tasks to ensure consistency and reduce human error. Humans should focus on creative work, machines on repetitive tasks.
 
@@ -162,9 +175,18 @@ Automate repetitive tasks to ensure consistency and reduce human error. Humans s
 - Commitlint (message validation)
 - Link verification cache
 
-#### 6. [Explicit Over Implicit](./software-engineering/ex-pr-se__explicit-over-implicit.md)
+#### 7. [Explicit Over Implicit](./software-engineering/ex-pr-se__explicit-over-implicit.md)
 
-#### 7. [Immutability Over Mutability](./software-engineering/ex-pr-se__immutability.md)
+Choose explicit composition and configuration over magic, convenience, and hidden behavior. Code should be transparent and understandable.
+
+**Key applications**:
+
+- Explicit tool permissions in AI agents (not "all tools")
+- Explicit file naming with prefixes (not "clever" abbreviations)
+- Explicit frontmatter fields (not defaults)
+- Explicit color hex codes (not CSS color names)
+
+#### 8. [Immutability Over Mutability](./software-engineering/ex-pr-se__immutability.md)
 
 Prefer immutable data structures over mutable state. Modifications create new values instead of changing existing ones.
 
@@ -176,7 +198,7 @@ Prefer immutable data structures over mutable state. Modifications create new va
 - Immer library for complex nested updates
 - Object.freeze for runtime immutability
 
-#### 8. [Pure Functions Over Side Effects](./software-engineering/ex-pr-se__pure-functions.md)
+#### 9. [Pure Functions Over Side Effects](./software-engineering/ex-pr-se__pure-functions.md)
 
 Prefer pure functions (deterministic, no side effects) over functions with side effects. Same inputs always produce same outputs.
 
@@ -188,7 +210,7 @@ Prefer pure functions (deterministic, no side effects) over functions with side 
 - Easy testing without mocks
 - Composable function pipelines
 
-#### 9. [Reproducibility First](./software-engineering/ex-pr-se__reproducibility.md)
+#### 10. [Reproducibility First](./software-engineering/ex-pr-se__reproducibility.md)
 
 Development environments and builds should be reproducible from the start. Eliminate "works on my machine" problems.
 
@@ -199,15 +221,6 @@ Development environments and builds should be reproducible from the start. Elimi
 - .env.example for environment configuration
 - Docker for complex service dependencies
 - Documented setup processes
-
-Choose explicit composition and configuration over magic, convenience, and hidden behavior. Code should be transparent and understandable.
-
-**Key applications**:
-
-- Explicit tool permissions in AI agents (not "all tools")
-- Explicit file naming with prefixes (not "clever" abbreviations)
-- Explicit frontmatter fields (not defaults)
-- Explicit color hex codes (not CSS color names)
 
 ## 🔗 Traceability: From Principles to Implementation
 

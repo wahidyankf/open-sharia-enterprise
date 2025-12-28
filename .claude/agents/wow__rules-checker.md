@@ -357,6 +357,34 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] No contradictions between convention documents
 - [ ] No contradictions between conventions and principles
 
+### Documentation First Compliance
+
+Per [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md) principle:
+
+**App/Lib README Validation:**
+
+- [ ] Every directory in apps/ has README.md
+- [ ] Every directory in libs/ has README.md
+- [ ] README files are substantive (not just "TODO" placeholders)
+- [ ] READMEs explain purpose, usage, and setup
+
+**API Documentation:**
+
+- [ ] No "TODO: Add documentation" in committed code
+- [ ] Public exports have JSDoc/TSDoc comments
+
+**Convention Documentation:**
+
+- [ ] All enforced rules have convention documents
+- [ ] Agent validation rules reference convention docs
+
+**Criticality:**
+
+- Missing app/lib README: CRITICAL (blocks onboarding)
+- Placeholder README: HIGH (poor documentation)
+- "Document later" comments: HIGH (principle violation)
+- Missing convention docs: HIGH (undocumented rules)
+
 ### Development Practices Alignment
 
 - [ ] All development practice documents reference the principles they respect
