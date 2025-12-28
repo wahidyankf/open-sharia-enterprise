@@ -34,7 +34,7 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 
 ### Understanding Workflows
 
-1. Read [Workflow Pattern Convention](./ex-wf__workflow-pattern.md) for structure and rules
+1. Read [Workflow Pattern Convention](./ex-wf__meta__workflow-pattern.md) for structure and rules
 2. Create workflows as needed following the convention patterns
 3. Review workflow families below
 
@@ -47,14 +47,14 @@ Future enhancement: Automated workflow executor agent.
 
 ## Available Workflows
 
-| Workflow                                                                                   | Purpose                                                                                                                                                                               | Agents Used                                                                                                                                                                                                                                                                                                                              | Complexity |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [Repository Rules Quality Gate](./ex-wf__repository-rules-quality-gate.md)                 | Validate repository consistency and apply fixes iteratively until ZERO findings                                                                                                       | wow**rules-checker, wow**rules-fixer                                                                                                                                                                                                                                                                                                     | Medium     |
-| [Plan Quality Gate](./ex-wf__plan-quality-gate.md)                                         | Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings                                                                                                  | plan**checker, plan**fixer                                                                                                                                                                                                                                                                                                               | Medium     |
-| [AyoKoding Web General Quality Gate](./ex-wf__ayokoding-web-general-quality-gate.md)       | Validate all ayokoding-web content quality (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until ZERO findings, then regenerate titles and navigation | apps**ayokoding-web**general-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**structure-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**general-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**structure-fixer, apps**ayokoding-web**title-maker, apps**ayokoding-web**navigation-maker | High       |
-| [AyoKoding Web By-Example Quality Gate](./ex-wf__ayokoding-web-by-example-quality-gate.md) | Validate by-example tutorial quality (95% coverage through 75-90 examples) and apply fixes iteratively until EXCELLENT status achieved                                                | apps**ayokoding-web**by-example-checker, apps**ayokoding-web**by-example-fixer                                                                                                                                                                                                                                                           | Medium     |
+| Workflow                                                                                     | Purpose                                                                                                                                                                               | Agents Used                                                                                                                                                                                                                                                                                                                              | Complexity |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| [Repository Rules Quality Gate](./ex-wf__wow__rules__quality-gate.md)                        | Validate repository consistency and apply fixes iteratively until ZERO findings                                                                                                       | wow**rules-checker, wow**rules-fixer                                                                                                                                                                                                                                                                                                     | Medium     |
+| [Plan Quality Gate](./ex-wf__plan__quality-gate.md)                                          | Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings                                                                                                  | plan**checker, plan**fixer                                                                                                                                                                                                                                                                                                               | Medium     |
+| [AyoKoding Web General Quality Gate](./ex-wf__ayokoding-web__general__quality-gate.md)       | Validate all ayokoding-web content quality (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until ZERO findings, then regenerate titles and navigation | apps**ayokoding-web**general-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**structure-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**general-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**structure-fixer, apps**ayokoding-web**title-maker, apps**ayokoding-web**navigation-maker | High       |
+| [AyoKoding Web By-Example Quality Gate](./ex-wf__ayokoding-web__by-example__quality-gate.md) | Validate by-example tutorial quality (95% coverage through 75-90 examples) and apply fixes iteratively until EXCELLENT status achieved                                                | apps**ayokoding-web**by-example-checker, apps**ayokoding-web**by-example-fixer                                                                                                                                                                                                                                                           | Medium     |
 
-All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./ex-wf\_\_workflow-pattern.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
+All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./ex-wf**meta**workflow-pattern.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
 
 ## Workflow Families
 
@@ -169,7 +169,7 @@ To create a new workflow:
 6. **Test manually**: Run workflow steps to verify correctness
 7. **Add to index**: Update this README with workflow description
 
-See [Workflow Pattern Convention](./ex-wf__workflow-pattern.md) for complete requirements.
+See [Workflow Pattern Convention](./ex-wf__meta__workflow-pattern.md) for complete requirements.
 
 ## Validation
 
@@ -210,7 +210,7 @@ All workflows must respect core principles:
 
 ### Core Documentation
 
-- [Workflow Pattern Convention](./ex-wf__workflow-pattern.md) - How workflows are structured
+- [Workflow Pattern Convention](./ex-wf__meta__workflow-pattern.md) - How workflows are structured
 - [Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md) - Core workflow pattern
 - [AI Agents Convention](../development/ex-de__ai-agents.md) - How agents work
 
@@ -251,4 +251,4 @@ Planned workflow features:
 - **Do workflows replace agents?** - No, workflows orchestrate agents
 - **Do workflows replace plans?** - No, plans are strategic, workflows are tactical
 
-See [Workflow Pattern Convention](./ex-wf__workflow-pattern.md) for comprehensive answers.
+See [Workflow Pattern Convention](./ex-wf__meta__workflow-pattern.md) for comprehensive answers.

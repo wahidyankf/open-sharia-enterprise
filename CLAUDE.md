@@ -263,7 +263,7 @@ Workflows orchestrate multiple agents in sequence, parallel, or conditionally. A
 
 - **max-concurrency** (optional, default: 2) - Maximum number of agents/tasks that can run in parallel during workflow execution
 
-Currently, workflows require manual orchestration (run agents in order). Future enhancement: Automated workflow executor agent. See [Workflow Pattern Convention](./docs/explanation/workflows/ex-wf__workflow-pattern.md) for complete structure and [Workflows Index](./docs/explanation/workflows/README.md) for available workflows.
+Currently, workflows require manual orchestration (run agents in order). Future enhancement: Automated workflow executor agent. See [Workflow Pattern Convention](./docs/explanation/workflows/ex-wf__meta__workflow-pattern.md) for complete structure and [Workflows Index](./docs/explanation/workflows/README.md) for available workflows.
 
 ### Resources
 

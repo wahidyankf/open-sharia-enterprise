@@ -692,7 +692,7 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Workflow Orchestration**:
 
-- [Workflow Pattern Convention](../workflows/ex-wf__workflow-pattern.md) - How workflows orchestrate agents
+- [Workflow Pattern Convention](../workflows/ex-wf__meta__workflow-pattern.md) - How workflows orchestrate agents
 
 **Domain-Specific Standards**:
 

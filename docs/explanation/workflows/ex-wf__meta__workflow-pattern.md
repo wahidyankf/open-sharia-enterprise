@@ -397,8 +397,8 @@ A specialized workflow pattern that achieves **perfect quality state** by fixing
 
 **When to use**:
 
-- Repository-wide validation (repository-rules-quality-gate)
-- Content quality assurance (plan-quality-gate, ayokoding-web-content-quality-gate)
+- Repository-wide validation (wow**rules**quality-gate)
+- Content quality assurance (plan\_\_quality-gate, ayokoding-web-content-quality-gate)
 - Pre-release quality gates
 - Periodic health checks
 
@@ -614,7 +614,7 @@ workflow run content-validation \
 
 ### Example Implementation
 
-See [Repository Rules Quality Gate Workflow](./ex-wf__repository-rules-quality-gate.md) for canonical implementation.
+See [Repository Rules Quality Gate Workflow](./ex-wf__wow__rules__quality-gate.md) for canonical implementation.
 
 ### Key Differences from Basic Validation Workflow
 

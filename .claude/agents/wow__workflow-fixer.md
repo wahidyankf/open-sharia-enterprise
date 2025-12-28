@@ -832,7 +832,7 @@ Always provide:
 
 **Related Conventions:**
 
-- [Workflow Pattern Convention](../../docs/explanation/workflows/ex-wf__workflow-pattern.md) - Workflow structure and semantics
+- [Workflow Pattern Convention](../../docs/explanation/workflows/ex-wf__meta__workflow-pattern.md) - Workflow structure and semantics
 - [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
 - [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns

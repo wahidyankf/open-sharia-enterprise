@@ -454,7 +454,7 @@ fi
 
 **Workflow Standards:**
 
-- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - Workflow Pattern Convention (THE canonical reference for workflow structure with examples)
+- `docs/explanation/workflows/ex-wf__meta__workflow-pattern.md` - Workflow Pattern Convention (THE canonical reference for workflow structure with examples)
 
 **Validation Methodology:**
 

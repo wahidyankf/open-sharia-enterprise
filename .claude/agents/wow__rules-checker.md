@@ -210,7 +210,7 @@ For each workflow in `docs/explanation/workflows/`:
 - [ ] All workflows document execution modes (Sequential/Parallel/Conditional)
 - [ ] All workflows include human checkpoints where appropriate
 - [ ] All workflows trace back to principles they respect
-- [ ] Workflow Pattern Convention (`ex-wf__workflow-pattern.md`) is the canonical reference with examples
+- [ ] Workflow Pattern Convention (`ex-wf__meta__workflow-pattern.md`) is the canonical reference with examples
 - [ ] Workflows are referenced in CLAUDE.md Layer 5 section
 - [ ] Workflows are listed in `docs/explanation/workflows/README.md`
 
@@ -367,7 +367,7 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 ### Workflow Alignment
 
 - [ ] All workflow documents in `docs/explanation/workflows/` reference the principles they respect
-- [ ] Workflow Pattern Convention (`ex-wf__workflow-pattern.md`) includes "Token Budget Philosophy" section
+- [ ] Workflow Pattern Convention (`ex-wf__meta__workflow-pattern.md`) includes "Token Budget Philosophy" section
 - [ ] Token Budget section in workflows emphasizes unlimited budget for multi-step orchestration
 - [ ] Workflows don't contain artificial token-saving measures or constraints
 - [ ] Workflows properly reference agents they orchestrate
@@ -955,7 +955,7 @@ validate_workflows
 **EXAMPLE OUTPUT**:
 
 ```
-Checking workflow: docs/explanation/workflows/ex-wf__ayokoding-web-general-quality-gate.md
+Checking workflow: docs/explanation/workflows/ex-wf__ayokoding-web__general__quality-gate.md
   CRITICAL: Non-existent agent referenced: ayokoding-web-general-checker
     Expected file: .claude/agents/ayokoding-web-general-checker.md
     Did you mean: .claude/agents/apps__ayokoding-web__general-checker.md?
@@ -964,7 +964,7 @@ Checking workflow: docs/explanation/workflows/ex-wf__ayokoding-web-general-quali
     Expected file: .claude/agents/ayokoding-web-facts-checker.md
     Did you mean: .claude/agents/apps__ayokoding-web__facts-checker.md?
 
-Checking workflow: docs/explanation/workflows/ex-wf__plan-execution.md
+Checking workflow: docs/explanation/workflows/ex-wf__plan__execution.md
   ✓ All agent references valid
 
 ✗ Found 2 invalid agent reference(s)
