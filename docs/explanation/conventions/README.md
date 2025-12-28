@@ -7,7 +7,7 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2025-12-24
+updated: 2025-12-28
 ---
 
 # Conventions
@@ -74,7 +74,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - [Diagram and Schema Convention](./ex-co__diagrams.md) - Standards for using Mermaid diagrams (primary) and ASCII art (optional) with color-blind friendly colors for accessibility
 - [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the four-category documentation organization framework we use
 - [Documentation File Naming Convention](./ex-co__file-naming-convention.md) - Systematic approach to naming files with hierarchical prefixes
-- [Documentation Linking Convention](./ex-co__linking-convention.md) - Standards for linking between documentation files using GitHub-compatible markdown
+- [Documentation Linking Convention](./ex-co__linking-convention.md) - Standards for linking between documentation files using GitHub-compatible markdown. Defines two-tier formatting for rule references: first mention = markdown link, subsequent mentions = inline code
 - [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
 - [Factual Validation Convention](./ex-co__factual-validation.md) - Universal methodology for validating factual correctness across all repository content using web verification (WebSearch + WebFetch). Defines core validation methodology (command syntax, features, versions, code examples, external refs, mathematical notation, diagram colors), web verification workflow, confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated), and integration guidance for different content types (docs/, Hugo sites, plans/, README)
 - [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository. Covers inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial standards), adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), and Hugo-specific basics (Archetypes, Shortcodes, Taxonomy, Asset Organization). Foundation for all Hugo content work

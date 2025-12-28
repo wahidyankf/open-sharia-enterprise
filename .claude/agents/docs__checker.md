@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-15
+updated: 2025-12-28
 ---
 
 # Documentation Checker Agent
@@ -162,6 +162,94 @@ CORRECT - Spaces before dash:
   - Nested level (2 spaces before dash)
     - Deeper level (4 spaces before dash)
 ```
+
+#### Rule Reference Formatting Validation
+
+**CRITICAL**: Validate two-tier formatting for rule references (visions, principles, conventions, development practices, workflows).
+
+**Correct pattern:**
+
+- **First mention**: MUST use markdown link `[Rule Name](./path/to/rule.md)`
+- **Subsequent mentions**: MUST use inline code `` `rule-name` ``
+
+**Rule categories requiring this treatment:**
+
+- Vision documents (`docs/explanation/vision/`)
+- Core Principles (`docs/explanation/principles/`)
+- Conventions (`docs/explanation/conventions/`)
+- Development practices (`docs/explanation/development/`)
+- Workflows (`docs/explanation/workflows/`)
+
+**Validation checks:**
+
+1. **First mention lacks link** → CRITICAL issue
+   - Example: "This implements Linking Convention" (plain text)
+   - Should be: "This implements [Linking Convention](./ex-co__linking-convention.md)"
+   - Impact: Breaks navigation, users cannot discover the rule document
+
+2. **Subsequent mention lacks inline code** → HIGH issue
+   - Example: "The Linking Convention requires..." (plain text, second mention)
+   - Should be: "The `Linking Convention` requires..."
+   - Impact: Convention violation, reduces scannability
+
+3. **All mentions improperly formatted** → CRITICAL issue
+   - Example: All mentions are plain text (no links or inline code)
+   - Impact: Complete non-compliance with rule reference formatting
+
+**Common error patterns to detect:**
+
+```markdown
+WRONG - All plain text:
+This follows the Linking Convention. The Linking Convention requires .md extensions.
+
+CORRECT - Two-tier formatting:
+This follows the [Linking Convention](./ex-co__linking-convention.md). The `Linking Convention` requires .md extensions.
+
+WRONG - All links (redundant):
+This follows the [Linking Convention](./ex-co__linking-convention.md). The [Linking Convention](./ex-co__linking-convention.md) requires .md extensions.
+
+WRONG - All inline code (first mention not linked):
+This follows the `Linking Convention`. The `Linking Convention` requires .md extensions.
+```
+
+**Exclusions (do NOT flag these):**
+
+- Code blocks (already formatted)
+- Quoted text (preserve original)
+- File path specifications (literal paths like `docs/explanation/conventions/ex-co__linking-convention.md`)
+- Meta-discussion about naming (discussing names as strings)
+
+**Audit report format:**
+
+```markdown
+### Rule Reference Formatting Issues
+
+**CRITICAL: First mention without link**
+
+File: `docs/how-to/hoto__example.md`
+Line: 45
+Current: "This implements Linking Convention by using..."
+Issue: First mention of rule name lacks navigable link
+Fix: "This implements [Linking Convention](../explanation/conventions/ex-co__linking-convention.md) by using..."
+
+**HIGH: Subsequent mention without inline code**
+
+File: `docs/how-to/hoto__example.md`
+Line: 67
+Current: "The Linking Convention requires .md extensions"
+Issue: Subsequent mention (second in section) lacks inline code formatting
+Fix: "The `Linking Convention` requires .md extensions"
+
+**CRITICAL: All mentions improperly formatted**
+
+File: `docs/explanation/ex__example.md`
+Lines: 23, 45, 67, 89
+Current: All mentions are plain text without links or inline code
+Issue: Complete non-compliance with rule reference formatting convention
+Fix: First mention → markdown link, subsequent mentions → inline code
+```
+
+See [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) for complete two-tier formatting rules.
 
 #### Code Block Indentation Validation
 

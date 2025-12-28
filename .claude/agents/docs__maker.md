@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
 created: 2025-11-29
-updated: 2025-12-16
+updated: 2025-12-28
 ---
 
 # Documentation Writer Agent
@@ -81,6 +81,58 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - Example: `[File Naming Convention](./conventions/ex-co__file-naming-convention.md)`
 - This syntax works across GitHub web, Obsidian, and other markdown viewers
 - **Do NOT use** Obsidian-only wiki links like `[[filename]]`
+
+### Rule Reference Formatting
+
+When referencing repository rules (visions, principles, conventions, development practices, workflows), use **two-tier formatting**:
+
+**First mention**: MUST use markdown link
+
+```markdown
+[Rule Name](./path/to/rule.md)
+```
+
+**Subsequent mentions**: MUST use inline code
+
+```markdown
+`rule-name`
+```
+
+**Rule categories requiring this treatment:**
+
+- Vision documents (`docs/explanation/vision/`)
+- Core Principles (`docs/explanation/principles/`)
+- Conventions (`docs/explanation/conventions/`)
+- Development practices (`docs/explanation/development/`)
+- Workflows (`docs/explanation/workflows/`)
+
+**Examples:**
+
+✅ **Correct - Two-tier formatting**:
+
+```markdown
+This implements the [Linking Convention](./ex-co__linking-convention.md) by using relative paths. The `Linking Convention` requires .md extensions.
+```
+
+❌ **Incorrect - All plain text**:
+
+```markdown
+This implements the Linking Convention by using relative paths. The Linking Convention requires .md extensions.
+```
+
+❌ **Incorrect - All links** (redundant):
+
+```markdown
+This implements the [Linking Convention](./ex-co__linking-convention.md) by using relative paths. The [Linking Convention](./ex-co__linking-convention.md) requires .md extensions.
+```
+
+❌ **Incorrect - All inline code** (first mention not linked):
+
+```markdown
+This implements the `Linking Convention` by using relative paths. The `Linking Convention` requires .md extensions.
+```
+
+See [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) for complete two-tier formatting rules.
 
 ### Diagram Convention
 

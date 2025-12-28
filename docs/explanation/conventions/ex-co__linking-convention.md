@@ -9,7 +9,7 @@ tags:
   - conventions
   - github-compatibility
 created: 2025-11-22
-updated: 2025-11-27
+updated: 2025-12-28
 ---
 
 # Documentation Linking Convention
@@ -366,3 +366,134 @@ When creating documentation, verify links by:
 ---
 
 **Last Updated**: 2025-11-27
+
+## 🔗 When to Link Rule References
+
+When referencing repository rules (visions, principles, conventions, development practices, workflows), use a **two-tier formatting approach**:
+
+### First Mention: MUST Use Markdown Link
+
+The **first mention** of a rule in any document section MUST use a markdown link:
+
+```markdown
+[Rule Name](./path/to/rule.md)
+```
+
+**Rule categories requiring this treatment:**
+
+- Vision documents (`docs/explanation/vision/`)
+- Core Principles (`docs/explanation/principles/`)
+- Conventions (`docs/explanation/conventions/`)
+- Development practices (`docs/explanation/development/`)
+- Workflows (`docs/explanation/workflows/`)
+
+### Subsequent Mentions: MUST Use Inline Code
+
+**Subsequent mentions** of the same rule within the same section MUST use inline code formatting:
+
+```markdown
+`rule-name`
+```
+
+### Examples
+
+#### ✅ Correct - Two-Tier Formatting
+
+```markdown
+## Implementation Details
+
+This feature implements the [Linking Convention](./ex-co__linking-convention.md) by using relative paths. The `Linking Convention` requires `.md` extensions, which helps maintain compatibility across viewers. When applying `Linking Convention` rules, verify all paths are relative.
+```
+
+**Analysis:**
+
+- First mention: `[Linking Convention](./ex-co__linking-convention.md)` ✅ (markdown link)
+- Second mention: `` `Linking Convention` `` ✅ (inline code)
+- Third mention: `` `Linking Convention` `` ✅ (inline code)
+
+#### ✅ Correct - Multiple Rules
+
+```markdown
+## Standards Compliance
+
+All documentation follows the [File Naming Convention](./ex-co__file-naming-convention.md) and [Linking Convention](./ex-co__linking-convention.md). The `File Naming Convention` defines prefix patterns, while the `Linking Convention` specifies link syntax. Both `File Naming Convention` and `Linking Convention` are validated by docs-checker.
+```
+
+**Analysis:**
+
+- File Naming Convention: First mention (link) ✅, subsequent mentions (inline code) ✅
+- Linking Convention: First mention (link) ✅, subsequent mentions (inline code) ✅
+
+#### ❌ Incorrect - All Plain Text
+
+```markdown
+## Standards Compliance
+
+All documentation follows the Linking Convention. The Linking Convention requires .md extensions. When applying Linking Convention rules, verify paths.
+```
+
+**Issue:** No links or inline code formatting - readers cannot navigate to convention document.
+
+#### ❌ Incorrect - All Links
+
+```markdown
+## Standards Compliance
+
+All documentation follows the [Linking Convention](./ex-co__linking-convention.md). The [Linking Convention](./ex-co__linking-convention.md) requires .md extensions. When applying [Linking Convention](./ex-co__linking-convention.md) rules, verify paths.
+```
+
+**Issue:** Redundant links create visual clutter and maintenance burden.
+
+#### ❌ Incorrect - All Inline Code
+
+```markdown
+## Standards Compliance
+
+All documentation follows the `Linking Convention`. The `Linking Convention` requires .md extensions. When applying `Linking Convention` rules, verify paths.
+```
+
+**Issue:** First mention lacks navigable link - readers cannot discover the convention document.
+
+### Exclusions
+
+This two-tier formatting does NOT apply to:
+
+- **Code blocks** - Already formatted as code
+- **Quoted text** - Preserve original formatting
+- **File path specifications** - Use literal paths
+- **Meta-discussion about naming** - When discussing rule names as strings
+
+**Example exclusions:**
+
+````markdown
+<!-- Code block - already formatted -->
+
+```bash
+# Apply linking-convention rules
+validate_links
+```
+````
+
+<!-- Quoted text - preserve original -->
+
+> The author wrote "see linking convention for details"
+
+<!-- File path - literal path -->
+
+The rule is defined in `docs/explanation/conventions/ex-co__linking-convention.md`
+
+<!-- Meta-discussion - discussing the name itself -->
+
+We renamed "link-convention" to "linking-convention" for clarity
+
+```
+
+### Validation
+
+The [docs\_\_checker agent](../../.claude/agents/docs\_\_checker.md) validates this two-tier formatting requirement:
+
+- **First mention without link** → CRITICAL issue (breaks navigation)
+- **Subsequent mention without inline code** → HIGH issue (convention violation)
+- **All mentions improperly formatted** → CRITICAL issue (complete non-compliance)
+
+```

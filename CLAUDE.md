@@ -135,7 +135,7 @@ Files follow the pattern `[prefix]__[content-identifier].[extension]` where pref
 
 ### Linking Convention
 
-Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. **Hugo sites use absolute paths without .md**. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
+Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. **Rule references use two-tier formatting**: first mention = markdown link, subsequent mentions = inline code. **Hugo sites use absolute paths without .md**. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
 
 ### Diagram Convention
 
