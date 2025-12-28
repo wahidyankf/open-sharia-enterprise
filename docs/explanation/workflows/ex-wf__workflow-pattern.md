@@ -417,8 +417,8 @@ All \*-check-fix workflows follow this pattern:
 inputs:
   - name: mode
     type: enum
-    values: [lax, normal, strict, ultra]
-    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
+    values: [lax, normal, strict, ocd]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
     required: false
     default: normal
   - name: max-concurrency
@@ -464,13 +464,13 @@ outputs:
 
 - **normal**: Count CRITICAL + HIGH only
 - **strict**: Count CRITICAL + HIGH + MEDIUM
-- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **Below-threshold findings**: Report but don't block success
 
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **ultra**: All findings counted
+- **ocd**: All findings counted
 
 **Decision**:
 
@@ -487,7 +487,7 @@ outputs:
 - **Fix scope based on mode**:
   - **normal**: Fix CRITICAL + HIGH only (skip MEDIUM/LOW)
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-  - **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ocd**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Re-validate before applying each fix
 - Apply HIGH confidence fixes automatically within scope
 - Flag MEDIUM confidence for manual review
@@ -510,7 +510,7 @@ outputs:
 - Count findings based on mode level (same as Step 2):
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **ultra**: Count all levels
+  - **ocd**: Count all levels
 - If threshold-level findings = 0 AND iterations >= min-iterations: Success
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back
 - If threshold-level findings > 0 AND iterations >= max-iterations: Partial
@@ -527,7 +527,7 @@ All \*-check-fix workflows MUST use termination criteria based on mode level:
 
 - **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **ultra**: Zero findings at all levels
+- **ocd**: Zero findings at all levels
 
 **Partial** (`partial`):
 
@@ -591,7 +591,7 @@ workflow run content-validation --mode=strict
 
 ```bash
 # Fixes all levels, zero tolerance
-workflow run content-validation --mode=ultra
+workflow run content-validation --mode=ocd
 
 # Success criteria: Zero findings at all levels
 # Equivalent to pre-mode parameter behavior
@@ -609,7 +609,7 @@ workflow run content-validation \
 
 **Migration from pre-mode workflows**:
 
-- Old behavior (implicit ultra): Add `--mode=ultra`
+- Old behavior (implicit ocd): Add `--mode=ocd`
 - New default (normal): Omit mode parameter or use `--mode=normal`
 
 ### Example Implementation

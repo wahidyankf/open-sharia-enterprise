@@ -10,8 +10,8 @@ inputs:
     default: all
   - name: mode
     type: enum
-    values: [lax, normal, strict, ultra]
-    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
+    values: [lax, normal, strict, ocd]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
     required: false
     default: normal
   - name: min-iterations
@@ -76,14 +76,14 @@ Analyze audit report to determine if fixes are needed.
 - **lax**: Count CRITICAL only
 - **normal**: Count CRITICAL + HIGH
 - **strict**: Count CRITICAL + HIGH + MEDIUM
-- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **Below-threshold findings**: Report but don't block success
 
 - **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **ultra**: All findings counted
+- **ocd**: All findings counted
 
 **Decision**:
 
@@ -120,7 +120,7 @@ Apply all validated fixes from the audit report.
   - **lax**: Fixes CRITICAL only (skips HIGH/MEDIUM/LOW)
   - **normal**: Fixes CRITICAL/HIGH (skips MEDIUM/LOW)
   - **strict**: Fixes CRITICAL/HIGH/MEDIUM (skips LOW)
-  - **ultra**: Fixes all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ocd**: Fixes all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Within scope, applies HIGH confidence fixes automatically
 - Flags MEDIUM confidence for manual review
 
@@ -148,7 +148,7 @@ Determine whether to continue fixing or terminate.
   - **lax**: Count CRITICAL only
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **ultra**: Count all levels
+  - **ocd**: Count all levels
 - If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
@@ -185,7 +185,7 @@ Report final status and summary.
 - **lax**: Zero CRITICAL findings (HIGH/MEDIUM/LOW may exist)
 - **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **ultra**: Zero findings at all levels
+- **ocd**: Zero findings at all levels
 
 **Partial** (`partial`): Threshold-level findings remain after max-iterations
 
@@ -262,7 +262,7 @@ workflow run plan-quality-gate --scope=all --mode=strict
 
 ```bash
 # Fixes all levels, zero tolerance
-workflow run plan-quality-gate --scope=all --mode=ultra
+workflow run plan-quality-gate --scope=all --mode=ocd
 
 # Success criteria: Zero findings at all levels
 # Equivalent to pre-mode parameter behavior

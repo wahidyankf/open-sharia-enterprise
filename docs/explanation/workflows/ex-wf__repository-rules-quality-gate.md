@@ -5,8 +5,8 @@ termination: Zero findings remain after validation (runs indefinitely until achi
 inputs:
   - name: mode
     type: enum
-    values: [lax, normal, strict, ultra]
-    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
+    values: [lax, normal, strict, ocd]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
     required: false
     default: normal
   - name: min-iterations
@@ -77,14 +77,14 @@ Analyze audit report to determine if fixes are needed.
 - **lax**: Count CRITICAL only
 - **normal**: Count CRITICAL + HIGH
 - **strict**: Count CRITICAL + HIGH + MEDIUM
-- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **Below-threshold findings**: Report but don't block success
 
 - **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **ultra**: All findings counted
+- **ocd**: All findings counted
 
 **Decision**:
 
@@ -121,7 +121,7 @@ Apply validated fixes from the audit report based on mode level.
   - **lax**: Fix CRITICAL only (skip HIGH/MEDIUM/LOW)
   - **normal**: Fix CRITICAL + HIGH (skip MEDIUM/LOW)
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-  - **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ocd**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Below-threshold findings remain untouched
 
 ### 4. Re-validate (Sequential)
@@ -148,7 +148,7 @@ Determine whether to continue fixing or terminate.
   - **lax**: Count CRITICAL only
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **ultra**: Count all levels
+  - **ocd**: Count all levels
 - If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
@@ -187,7 +187,7 @@ Report final status and summary.
 - **lax**: Zero CRITICAL findings (HIGH/MEDIUM/LOW may exist)
 - **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **ultra**: Zero findings at all levels
+- **ocd**: Zero findings at all levels
 
 **Partial** (`partial`):
 
@@ -226,7 +226,7 @@ workflow run repository-rules-quality-gate --mode=strict
 
 ```bash
 # Fixes all levels, zero tolerance
-workflow run repository-rules-quality-gate --mode=ultra
+workflow run repository-rules-quality-gate --mode=ocd
 
 # Success criteria: Zero findings at all levels
 # Equivalent to pre-mode parameter behavior

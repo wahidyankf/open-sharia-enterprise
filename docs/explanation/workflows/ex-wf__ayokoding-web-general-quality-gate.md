@@ -10,8 +10,8 @@ inputs:
     default: all
   - name: mode
     type: enum
-    values: [lax, normal, strict, ultra]
-    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
+    values: [lax, normal, strict, ocd]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
     required: false
     default: normal
   - name: min-iterations
@@ -111,14 +111,14 @@ Analyze all audit reports to determine if fixes are needed.
 - **lax**: Count CRITICAL only (aggregate across all 4 validators)
 - **normal**: Count CRITICAL + HIGH (aggregate across all 4 validators)
 - **strict**: Count CRITICAL + HIGH + MEDIUM (aggregate across all 4 validators)
-- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW) (aggregate across all 4 validators)
+- **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW) (aggregate across all 4 validators)
 
 **Below-threshold findings**: Report but don't block success
 
 - **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **ultra**: All findings counted
+- **ocd**: All findings counted
 
 **Decision**:
 
@@ -155,7 +155,7 @@ Fix Hugo convention violations, frontmatter issues, and content quality problems
   - **lax**: Fix CRITICAL only (skip HIGH/MEDIUM/LOW)
   - **normal**: Fix CRITICAL + HIGH (skip MEDIUM/LOW)
   - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-  - **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ocd**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - Below-threshold findings remain untouched
 
 ### 4. Apply Facts Fixes (Sequential, Conditional)
@@ -213,7 +213,7 @@ Determine whether to continue fixing or move to finalization.
   - **lax**: Count CRITICAL only (aggregate across all 4 validators)
   - **normal**: Count CRITICAL + HIGH (aggregate across all 4 validators)
   - **strict**: Count CRITICAL + HIGH + MEDIUM (aggregate across all 4 validators)
-  - **ultra**: Count all levels (aggregate across all 4 validators)
+  - **ocd**: Count all levels (aggregate across all 4 validators)
 - If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 7 (Finalization)
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 7 with status `partial`
@@ -316,7 +316,7 @@ Report final status and summary.
 - **lax**: Zero CRITICAL findings across all validators (HIGH/MEDIUM/LOW may exist)
 - **normal**: Zero CRITICAL/HIGH findings across all validators (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings across all validators (LOW may exist)
-- **ultra**: Zero findings at all levels across all validators
+- **ocd**: Zero findings at all levels across all validators
 
 **Partial** (`partial`):
 
@@ -355,7 +355,7 @@ workflow run ayokoding-web-general-quality-gate --mode=strict
 
 ```bash
 # Fixes all levels, zero tolerance
-workflow run ayokoding-web-general-quality-gate --mode=ultra
+workflow run ayokoding-web-general-quality-gate --mode=ocd
 
 # Success criteria: Zero findings at all levels across all 4 validators
 # Equivalent to pre-mode parameter behavior

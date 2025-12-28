@@ -9,8 +9,8 @@ inputs:
     required: true
   - name: mode
     type: enum
-    values: [lax, normal, strict, ultra]
-    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ultra: all levels)
+    values: [lax, normal, strict, ocd]
+    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
     required: false
     default: normal
   - name: min-iterations
@@ -43,11 +43,11 @@ outputs:
   - name: checker-report
     type: file
     pattern: generated-reports/ayokoding-web-by-example__*__*__audit.md
-    description: Final validation report from ayokoding-web-by-example-checker (4-part format with UUID chain)
+    description: Final validation report from apps__ayokoding-web__by-example-checker (4-part format with UUID chain)
   - name: fixer-report
     type: file
     pattern: generated-reports/ayokoding-web-by-example__*__*__fix.md
-    description: Final fixes report from ayokoding-web-by-example-fixer (4-part format with UUID chain)
+    description: Final fixes report from apps__ayokoding-web__by-example-fixer (4-part format with UUID chain)
   - name: execution-scope
     type: string
     description: Scope identifier for UUID chain tracking (derived from tutorial-path, e.g., "golang" for golang tutorials)
@@ -182,14 +182,14 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 - **lax**: Count CRITICAL only
 - **normal**: Count CRITICAL + HIGH
 - **strict**: Count CRITICAL + HIGH + MEDIUM
-- **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **Below-threshold findings**: Reported but don't block success
 
 - **lax**: HIGH/MEDIUM/LOW reported, not counted
 - **normal**: MEDIUM/LOW reported, not counted
 - **strict**: LOW reported, not counted
-- **ultra**: All findings counted
+- **ocd**: All findings counted
 
 **3. Assess overall status**:
 
@@ -250,7 +250,7 @@ graph TD
 
 ```bash
 # Invoke via Task tool with audit report and mode parameter
-subagent_type: ayokoding-web-by-example-fixer
+subagent_type: apps__ayokoding-web__by-example-fixer
 prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md with mode={input.mode}"
 ```
 
@@ -261,7 +261,7 @@ prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__20
 - **lax**: Fix CRITICAL only (skip HIGH/MEDIUM/LOW)
 - **normal**: Fix CRITICAL + HIGH (skip MEDIUM/LOW)
 - **strict**: Fix CRITICAL + HIGH + MEDIUM (skip LOW)
-- **ultra**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **ocd**: Fix all levels (CRITICAL, HIGH, MEDIUM, LOW)
 
 **HIGH confidence fixes** (auto-apply within mode scope):
 
@@ -309,7 +309,7 @@ Determine whether to continue fixing or finalize.
   - **lax**: Count CRITICAL only
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **ultra**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+  - **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
 - If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization)
 - If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `needs-improvement`
@@ -370,7 +370,7 @@ Report final status and summary.
 - **lax**: Zero CRITICAL findings, 75-90 examples, 95% coverage (HIGH/MEDIUM/LOW may exist)
 - **normal**: Zero CRITICAL/HIGH findings, 75-90 examples, 95% coverage (MEDIUM/LOW may exist)
 - **strict**: Zero CRITICAL/HIGH/MEDIUM findings, 75-90 examples, 95% coverage (LOW may exist)
-- **ultra**: Zero findings at all levels, 75-90 examples, 95% coverage
+- **ocd**: Zero findings at all levels, 75-90 examples, 95% coverage
 
 **Partial** (`needs-improvement`):
 
@@ -632,7 +632,7 @@ workflow run ayokoding-web-by-example-quality-gate \
 # Very strict mode - fixes all levels
 workflow run ayokoding-web-by-example-quality-gate \
   --tutorial-path=java/tutorials/by-example/ \
-  --mode=ultra \
+  --mode=ocd \
   --max-iterations=10
 ```
 
@@ -688,7 +688,7 @@ prompt: "Re-validate golang by-example"
 
 ```bash
 # Not yet implemented - future workflow automation
-subagent_type: apps__ayokoding-web__by-example-quality-gate
+workflow: ayokoding-web-by-example-quality-gate
 prompt: "Run complete quality gate for golang by-example"
 
 # Would orchestrate:
@@ -770,6 +770,6 @@ This workflow is part of the **Tutorial Quality Family**:
 - **[By-Example Tutorial Convention](../conventions/ex-co__by-example-tutorial.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md)**: Confidence assessment
-- **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps**ayokoding-web**by-example-checker.md)**: Validation agent
-- **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps**ayokoding-web**by-example-fixer.md)**: Fixing agent
-- **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps**ayokoding-web**by-example-maker.md)**: Content creation agent
+- **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps__ayokoding-web__by-example-checker.md)**: Validation agent
+- **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps__ayokoding-web__by-example-fixer.md)**: Fixing agent
+- **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps__ayokoding-web__by-example-maker.md)**: Content creation agent
