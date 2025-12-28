@@ -103,8 +103,12 @@ Design policy schema and establish governance model
 - [ ] Implement `apps/governance-cli/internal/policy/types.go` with Go structs
 - [ ] Implement `apps/governance-cli/internal/policy/engine.go` with core methods
   - Integrate JSON Schema validation in parsePolicy()
-  - Add external-check security constraints (allowlist, timeout, sandboxing)
   - Implement policy loading and caching
+- [ ] Design and implement external-check security constraints
+  - Define allowlist of permitted commands (e.g., governance-cli, standard Unix tools)
+  - Implement timeout mechanism (default: 30 seconds, max: 5 minutes)
+  - Add sandboxing constraints (restrict file system access, network access)
+  - Document security review process for external-check policies
 - [ ] Implement `apps/governance-cli/cmd/policy.go` with Cobra subcommands
 - [ ] Write comprehensive unit tests (engine_test.go with table-driven tests)
   - Add JSON Schema validation tests
@@ -125,7 +129,7 @@ Prove architecture with highest-value, lowest-risk family
 ### Why repo-rules First?
 
 1. **Clearest rules**: Structural validation (frontmatter, file naming) is most objective
-2. **High duplication**: 2,586 lines across 3 agents = 57% potential reduction
+2. **High duplication**: 2,815 lines across 3 agents = 57% potential reduction
 3. **Meta-validation**: repo-rules-checker can validate policy compliance itself
 4. **Foundational**: Success here proves architecture for all other families
 
@@ -177,7 +181,7 @@ Consistent validation, centralized rules, single source of truth
 **Tasks:**
 
 - [ ] Analyze repo-rules-checker for all validation rules
-- [ ] Extract 10-15 policies from wow\_\_rules-checker.md:
+- [ ] Extract at least 9 policies from wow\_\_rules-checker.md (target: 10-15 as analysis reveals):
   - `frontmatter__structure` - Required YAML fields
   - `frontmatter__indentation` - 2-space indentation
   - `file-naming__prefix-pattern` - Prefix encoding
@@ -187,8 +191,7 @@ Consistent validation, centralized rules, single source of truth
   - `conventions__traceability` - Principles Implemented section
   - `development__traceability` - Both Principles + Conventions sections
   - `agents__frontmatter-structure` - Agent YAML frontmatter
-  - `agents__tool-permissions` - Least privilege tool access
-  - (5 more policies as identified)
+  - Additional policies identified during repo-rules-checker analysis (target total: 10-15)
 - [ ] Embed YAML in convention markdown files
 - [ ] Validate all policies have traceability links
 - [ ] Run policy-validator on all new policies
@@ -203,7 +206,7 @@ Consistent validation, centralized rules, single source of truth
 
 This section details how the three repo-rules agents must be adapted to consume policies from the new PolicyEngine instead of embedding rules in their prompts.
 
-**repo-rules-checker (~1,050 → ~450 lines, 57% reduction):**
+**repo-rules-checker (1,279 → ~550 lines, 57% reduction):**
 
 _Architectural Changes:_
 
@@ -238,7 +241,7 @@ _Key Behavior Change:_
 
 - Agent no longer interprets prose rules → delegates to PolicyEngine for consistent validation
 
-**repo-rules-maker (~1,020 → ~440 lines, 57% reduction):**
+**repo-rules-maker (1,020 → ~440 lines, 57% reduction):**
 
 _Architectural Changes:_
 
@@ -275,7 +278,7 @@ _Key Behavior Change:_
 
 - Agent maintains prose-policy synchronization → single source of truth enforced
 
-**repo-rules-fixer (~516 → ~210 lines, 59% reduction):**
+**repo-rules-fixer (516 → ~210 lines, 59% reduction):**
 
 _Architectural Changes:_
 
@@ -316,7 +319,7 @@ _Key Behavior Change:_
 **Deliverables:**
 
 - 3 agents rewritten and tested
-- 57% line reduction achieved (2,586 → ~1,100 lines)
+- 57% line reduction achieved (2,815 → ~1,210 lines)
 - All agents pass integration tests
 
 ### Validation & Refinement
@@ -404,7 +407,7 @@ Achieve largest impact through biggest agent families
 
 ### Why Content Domains Third?
 
-1. **Largest duplication**: ayokoding-web family = 3,362 lines
+1. **Largest duplication**: ayokoding-web family = 3,503 lines
 2. **Hugo-specific rules**: Tests policy schema with framework conventions
 3. **Bilingual complexity**: ayokoding has en/id validation (policy reuse opportunity)
 4. **Bilingual non-mirroring**: Content can exist in one language only (recent clarification affects policy design)
@@ -457,9 +460,9 @@ policy:
 **ayokoding-web family:**
 
 - [ ] Extract 15-20 policies
-- [ ] Update ayokoding-web-general-checker (1,644 → ~700 lines, 57% reduction)
-- [ ] Update ayokoding-web-general-maker (1,090 → ~500 lines, 54% reduction)
-- [ ] Update ayokoding-web-general-fixer (615 → ~200 lines, 67% reduction)
+- [ ] Update ayokoding-web-general-checker (1,798 → ~755 lines, 58% reduction)
+- [ ] Update ayokoding-web-general-maker (1,090 → ~458 lines, 58% reduction)
+- [ ] Update ayokoding-web-general-fixer (615 → ~258 lines, 58% reduction)
 - [ ] Test bilingual validation with non-mirroring policy (content can exist in one language only)
 - [ ] Measure coverage improvements
 
@@ -473,7 +476,7 @@ policy:
 ### Success Criteria
 
 - ✅ 15-20 policies extracted for Hugo content
-- ✅ ayokoding family reduced by 58% lines (3,362 → ~1,400)
+- ✅ ayokoding family reduced by 58% lines (3,503 → ~1,470)
 - ✅ ose-platform family reduced by 45%+ lines
 - ✅ Bilingual policies reusable for future content sites
 - ✅ Bilingual non-mirroring policy enforced (content can exist in one language only)
@@ -572,15 +575,16 @@ Finalize architecture and enable future scaling
 
 **1. Policy Catalog**
 
-- File: `policies/README.md` (INDEX ONLY - actual policies embedded in convention docs)
-- Purpose: Documentation and cross-reference index (NOT storage directory)
+- File: `docs/reference/re__policy-catalog.md` (cross-reference index)
+- Location Change: Moved from `policies/README.md` to avoid confusion about policy storage
+- Purpose: Documentation index linking to policies embedded in convention documents
 - Content:
-  - Index of all policies by domain (points to convention docs where policies are embedded)
+  - Index of all policies by domain (links to convention docs where policies are embedded)
   - Policy dependency graph (which policies reference others)
   - Coverage map (which agents consume which policies)
   - Usage examples
   - Best practices
-- Note: This is NOT a storage directory - policies remain embedded in `docs/explanation/conventions/*.md` and `docs/explanation/development/*.md`
+- **Important**: Actual policies remain embedded in `docs/explanation/conventions/*.md` and `docs/explanation/development/*.md`, NOT in a separate policies/ directory
 
 **2. policy-coverage-analyzer Agent**
 
@@ -623,7 +627,7 @@ Finalize architecture and enable future scaling
 
 ### Tasks
 
-- [ ] Create policies/README.md catalog
+- [ ] Create docs/reference/re\_\_policy-catalog.md (index, not storage)
 - [ ] Implement policy-coverage-analyzer agent
 - [ ] Build PolicyEngine CLI tool
 - [ ] Update agent-maker templates
@@ -744,6 +748,29 @@ Finalize architecture and enable future scaling
 - If agents become >20% more complex, revert to hybrid approach
 - Keep simple rules embedded, only extract duplicated rules to policies
 - Create policy-loader utility agent that other agents invoke
+
+### Risk 6: External-Check Command Execution Vulnerability
+
+**Likelihood**: MEDIUM (depends on policy review rigor)
+**Impact**: HIGH (security breach if policies compromised)
+
+**Description:**
+
+Policy schema allows `external-check` validation type that executes arbitrary bash commands. If policies are compromised or poorly reviewed, malicious commands could be executed during validation.
+
+**Mitigation:**
+
+- **Command Allowlist**: Restrict external-check to approved commands only (e.g., governance-cli, standard Unix utilities)
+- **Timeout Enforcement**: Implement mandatory timeout (default: 30 seconds, max: 5 minutes) to prevent infinite loops
+- **Sandboxing**: Restrict file system access (read-only for validation paths, no write access outside temp directories) and network access
+- **Mandatory Security Review**: Document formal security review process for all policies using external-check type
+- **Audit Trail**: Log all external-check executions with command, timestamp, and result
+
+**Fallback:**
+
+- If security cannot be guaranteed, disable external-check type entirely
+- Fall back to prose-based validation for complex rules requiring external validation
+- Create dedicated validator agents for complex rules instead of using external-check
 
 ---
 
@@ -905,14 +932,16 @@ Phase 5 (consolidation)
 - [ ] governance-cli app created with Cobra framework
 - [ ] Three pilot policies embedded
 - [ ] policy-validator agent created
-- [ ] Unit tests passing
+- [ ] External-check security design complete (allowlist, timeout, sandboxing)
+- [ ] Security review process documented for external-check policies
+- [ ] Unit tests passing (including security tests)
 - [ ] Documentation reviewed
 
 ### Phase 1
 
 - [ ] 10-15 policies extracted
 - [ ] repo-rules family migrated
-- [ ] 57% line reduction achieved (2,586 → ~1,100 lines)
+- [ ] 57% line reduction achieved (2,815 → ~1,210 lines)
 - [ ] Zero detection regression verified
 - [ ] Performance overhead <5%
 - [ ] User acceptance testing passed
@@ -932,7 +961,7 @@ Phase 5 (consolidation)
 - [ ] ayokoding family migrated
 - [ ] ose-platform family migrated
 - [ ] Bilingual policies working with non-mirroring enforcement
-- [ ] 58% line reduction achieved (3,362 → ~1,400 lines)
+- [ ] 58% line reduction achieved (3,503 → ~1,470 lines)
 
 ### Phase 4
 
@@ -1070,7 +1099,7 @@ Phase 5 (consolidation)
 
 ### Phase 5
 
-- `policies/README.md` (NEW - documentation index)
+- `docs/reference/re__policy-catalog.md` (NEW - documentation index)
 - `.claude/agents/policy-coverage-analyzer.md` (NEW)
 - `apps/governance-cli/cmd/policy.go` (ENHANCE - add coverage, docs commands)
 - `.claude/agents/agent__maker.md` (MODIFY)

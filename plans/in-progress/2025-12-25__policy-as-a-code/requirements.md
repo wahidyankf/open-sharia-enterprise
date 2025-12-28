@@ -32,15 +32,15 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Evidence:**
 
-- **ayokoding-web family**: 3,349 total lines
-  - ayokoding-web-general-checker: 1,644 lines
+- **ayokoding-web family**: 3,503 total lines
+  - ayokoding-web-general-checker: 1,798 lines
   - ayokoding-web-general-maker: 1,090 lines
   - ayokoding-web-general-fixer: 615 lines
 
-- **repo-rules family**: 2,586 total lines
-  - repo-rules-checker: ~1,050 lines
-  - repo-rules-maker: ~1,020 lines
-  - repo-rules-fixer: ~516 lines
+- **repo-rules family**: 2,815 total lines
+  - repo-rules-checker: 1,279 lines
+  - repo-rules-maker: 1,020 lines
+  - repo-rules-fixer: 516 lines
 
 **Specific Examples:**
 
@@ -94,9 +94,9 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Current State:**
 
-- ayokoding-web-general-checker: 1,644 lines (approaching complex limit)
-- docs-checker: 1,185 lines (standard, but growing)
-- repo-rules-checker: 953 lines (standard)
+- ayokoding-web-general-checker: 1,798 lines (approaching complex limit)
+- docs-checker: 1,289 lines (standard, but growing)
+- repo-rules-checker: 1,279 lines (standard)
 
 **Trajectory:**
 
@@ -108,10 +108,10 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Target Reduction Through Policy Centralization:**
 
-- ayokoding-web family: 3,362 → ~1,400 lines (58% reduction)
-- repo-rules family: 2,586 → ~1,100 lines (57% reduction)
-- docs family: ~1,800 → ~800 lines (56% reduction)
-- **Overall target**: 50-58% line reduction per family
+- ayokoding-web family: 3,503 → ~1,470 lines (58% reduction)
+- repo-rules family: 2,815 → ~1,210 lines (57% reduction)
+- docs family: 1,867 → ~990 lines (47% reduction)
+- **Overall target**: 47-58% line reduction per family
 
 ## Industry Research
 
@@ -333,14 +333,14 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Migration Progress:**
 
-- Policies extracted: 0 → 55-65 (target by Phase 4)
+- Policies extracted: 0 → 55-60 (target by Phase 4)
 - Agent families migrated: 0/8 → 8/8 (100% by Phase 4)
 
 **Duplication Reduction:**
 
 - Total agent lines: Baseline → -50% (target)
-- repo-rules family: 2,586 → ~1,100 lines (57%)
-- ayokoding-web family: 3,362 → ~1,400 lines (58%)
+- repo-rules family: 2,815 → ~1,210 lines (57%)
+- ayokoding-web family: 3,503 → ~1,470 lines (58%)
 
 **Accuracy:**
 
