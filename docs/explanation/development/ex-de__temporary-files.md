@@ -296,7 +296,7 @@ fi
 - Execution verification reports (plan-execution-checker)
 - Todo lists and progress tracking
 
-**Note**: `docs-link-checker` does NOT create report files (outputs in conversation only)
+**Note**: `docs-link-general-checker` does NOT create report files (outputs in conversation only)
 
 ### Progressive Writing Requirement for Checker Agents
 
@@ -746,7 +746,7 @@ The rule includes "unless specified otherwise by other rules/conventions":
 **Example exceptions**:
 
 - **Operational metadata files** - Use `docs/metadata/` instead (e.g., `external-links-status.yaml` is committed to git, not temporary)
-- **docs-link-checker agent** - Outputs results in conversation only (no report files created)
+- **docs-link-general-checker agent** - Outputs results in conversation only (no report files created)
 - Agent-specific conventions may override this rule
 - Task-specific requirements may specify different locations
 - User instructions may explicitly request different locations

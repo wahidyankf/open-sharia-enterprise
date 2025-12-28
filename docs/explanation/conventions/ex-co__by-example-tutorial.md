@@ -671,6 +671,24 @@ This convention implements and respects:
 - **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
 
+## Scope
+
+### What This Convention Covers
+
+- **By Example tutorial structure** - 75-90 annotated code examples
+- **Target audience** - Experienced developers (95% topic coverage)
+- **Example annotation** - How to explain code examples effectively
+- **Code organization** - How to sequence examples for learning
+- **Example selection** - Which examples to include
+- **Dual-path integration** - How By Example works with by-concept tutorials
+
+### What This Convention Does NOT Cover
+
+- **General tutorial standards** - Covered in [Tutorials Convention](./ex-co__tutorials.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
+- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md)
+- **Code quality** - Source code standards in development conventions
+
 ## Related Documentation
 
 - [Tutorial Naming Convention](./ex-co__tutorial-naming.md): Tutorial type definitions and naming standards

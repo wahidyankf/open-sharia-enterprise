@@ -195,7 +195,7 @@ Run all validators concurrently:
 - **Args**: `scope: all`
 - **Output**: `{tutorial-report}`
 
-**Agent**: `docs-link-checker`
+**Agent**: `docs-link-general-checker`
 
 - **Args**: `scope: all`
 - **Output**: `{links-report}`
@@ -427,7 +427,7 @@ Run multiple validators concurrently:
 1. Validation Suite (Parallel)
    → Agent: docs-checker
    → Agent: docs-tutorial-checker
-   → Agent: docs-link-checker
+   → Agent: docs-link-general-checker
 2. Aggregate Results (Sequential)
 3. User Review (Human Checkpoint)
 4. Apply Fixes (Sequential)

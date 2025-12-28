@@ -26,6 +26,24 @@ This convention implements the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Tutorial names explicitly state their level and scope ("Initial Setup", "Beginner Tutorial", "Advanced Guide"). No guessing about difficulty or depth - it's clear from the title.
 
+## Scope
+
+### What This Convention Covers
+
+- **Tutorial type naming** - 00-initial-setup, 01-quick-start, 02-beginner, etc.
+- **Numeric prefixes** - How tutorial order is encoded
+- **Content identifier format** - Kebab-case naming for tutorial content
+- **Coverage percentages** - What each tutorial level covers
+- **Decision tree** - How to choose the right tutorial type
+- **File naming pattern** - Complete tutorial file naming structure
+
+### What This Convention Does NOT Cover
+
+- **Tutorial content structure** - Covered in [Tutorials Convention](./ex-co__tutorials.md)
+- **General file naming** - Non-tutorial files covered in [File Naming Convention](./ex-co__file-naming-convention.md)
+- **Hugo navigation** - Weight and ordering in Hugo sites
+- **Tutorial validation** - Covered by docs-tutorial-checker agent
+
 ## 🎯 Purpose
 
 **Why standardize tutorial naming?**

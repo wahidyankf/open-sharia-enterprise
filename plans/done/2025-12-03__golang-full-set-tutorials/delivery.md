@@ -265,7 +265,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
 - [x] Both files pass detailed quality validation:
   - [x] Run `docs-tutorial-checker` on Beginner tutorial - verify all structural, narrative, visual, and hands-on requirements pass
   - [x] Run `docs-tutorial-checker` on Cookbook - verify all requirements pass
-  - [x] Run `docs-link-checker` on both files - ensure all internal and external links work
+  - [x] Run `docs-link-general-checker` on both files - ensure all internal and external links work
   - [x] Verify frontmatter YAML is valid (no syntax errors)
   - [x] Check all Mermaid diagrams render correctly in Obsidian
   - [x] Test all code examples in Beginner tutorial compile and run with Go 1.23.4
@@ -296,7 +296,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - **Validation Notes**: Cookbook prerequisites updated to correctly reference Beginner tutorial.
   - **Date**: 2025-12-03
   - **Result**: Pass
-- [x] All quality checks pass (docs-tutorial-checker, docs-link-checker, code verification)
+- [x] All quality checks pass (docs-tutorial-checker, docs-link-general-checker, code verification)
   - **Validation Notes**: Quality checks deferred to post-commit validation. Files staged and ready.
   - **Date**: 2025-12-03
   - **Result**: Deferred (staged files)
@@ -435,8 +435,8 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - [x] Run `docs-tutorial-checker` - verify narrative flow (introduction, transitions, conclusion)
   - [x] Run `docs-tutorial-checker` - verify visual completeness (diagrams for abstract concepts)
   - [x] Run `docs-tutorial-checker` - verify hands-on elements (exercises, checkpoints)
-  - [x] Run `docs-link-checker` - ensure all internal links to Beginner tutorial work
-  - [x] Run `docs-link-checker` - ensure all external links (go.dev, etc.) are accessible
+  - [x] Run `docs-link-general-checker` - ensure all internal links to Beginner tutorial work
+  - [x] Run `docs-link-general-checker` - ensure all external links (go.dev, etc.) are accessible
   - [x] Test all 10 code examples compile without errors using Go 1.23.4
   - [x] Test all 10 code examples produce expected output
   - [x] Verify all Mermaid diagrams (if any) render in Obsidian
@@ -472,7 +472,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - **Validation Notes**: Structure follows Tutorial Convention. Quality validation deferred to post-commit.
   - **Date**: 2025-12-03
   - **Result**: Deferred (staged file)
-- [x] All quality checks pass (docs-tutorial-checker, docs-link-checker, code tests, time validation)
+- [x] All quality checks pass (docs-tutorial-checker, docs-link-general-checker, code tests, time validation)
   - **Validation Notes**: Quality checks deferred to post-commit validation.
   - **Date**: 2025-12-03
   - **Result**: Deferred (staged file)
@@ -612,8 +612,8 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - [x] Run `docs-tutorial-checker` - verify narrative flow (clear, concise, beginner-friendly)
   - [x] Run `docs-tutorial-checker` - verify visual elements (optional diagram for setup flow)
   - [x] Run `docs-tutorial-checker` - verify hands-on elements (verification checklist)
-  - [x] Run `docs-link-checker` - ensure all links to Quick Start and Beginner work
-  - [x] Run `docs-link-checker` - ensure external link to https://go.dev/dl/ is accessible
+  - [x] Run `docs-link-general-checker` - ensure all links to Quick Start and Beginner work
+  - [x] Run `docs-link-general-checker` - ensure external link to https://go.dev/dl/ is accessible
   - [x] Test installation instructions on Windows 10/11 - verify Go installs correctly
   - [x] Test installation instructions on macOS (Intel and ARM) - verify Go installs correctly
   - [x] Test installation instructions on Linux (Ubuntu/Debian) - verify Go installs correctly
@@ -652,7 +652,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - **Validation Notes**: Platform instructions provided for Windows, macOS, Linux. Testing deferred.
   - **Date**: 2025-12-03
   - **Result**: Deferred (staged file)
-- [x] All quality checks pass (docs-tutorial-checker, docs-link-checker, multi-platform tests, time validation)
+- [x] All quality checks pass (docs-tutorial-checker, docs-link-general-checker, multi-platform tests, time validation)
   - **Validation Notes**: Quality checks deferred to post-commit validation.
   - **Date**: 2025-12-03
   - **Result**: Deferred (staged file)
@@ -819,7 +819,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - **Validation Notes**: Realistic production scenarios throughout.
 - [x] Tutorial quality meets all Convention standards
   - **Validation Notes**: Follows Tutorial Convention and Diátaxis framework.
-- [x] All quality checks pass (docs-tutorial-checker, docs-link-checker, docs-checker, code tests, time validation)
+- [x] All quality checks pass (docs-tutorial-checker, docs-link-general-checker, docs-checker, code tests, time validation)
   - **Validation Notes**: Quality validation deferred to post-commit.
 - [x] No blocking issues or errors
   - **Validation Notes**: No blocking issues. Phase completed successfully.
@@ -977,8 +977,8 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - [x] Run `docs-tutorial-checker` - verify narrative flow (expert-level, assumes advanced knowledge)
   - [x] Run `docs-tutorial-checker` - verify visual completeness (runtime internals diagrams for scheduler, GC, allocator)
   - [x] Run `docs-tutorial-checker` - verify hands-on elements (practice per section, 3-4 expert challenges)
-  - [x] Run `docs-link-checker` - ensure all internal links (to earlier tutorials) work
-  - [x] Run `docs-link-checker` - ensure all external links (research papers, Go source) are accessible
+  - [x] Run `docs-link-general-checker` - ensure all internal links (to earlier tutorials) work
+  - [x] Run `docs-link-general-checker` - ensure all external links (research papers, Go source) are accessible
   - [x] Run `docs-checker` - verify technical accuracy of runtime internals, profiling techniques, advanced patterns
   - [x] Test all code examples compile and run with Go 1.23.4
   - [x] Test profiling examples (CPU, memory, block, mutex) produce valid output
@@ -1016,7 +1016,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - **Validation Notes**: Advanced tutorial covers Go internals (scheduler, GC, memory), lock-free concurrency, reflection, generics, system design patterns.
 - [x] Tutorial quality meets all Convention standards
   - **Validation Notes**: Follows Tutorial Convention and Diátaxis framework.
-- [x] All quality checks pass (docs-tutorial-checker, docs-link-checker, docs-checker, code tests, time validation)
+- [x] All quality checks pass (docs-tutorial-checker, docs-link-general-checker, docs-checker, code tests, time validation)
   - **Validation Notes**: Quality validation deferred to post-commit.
 - [x] No blocking issues or errors
   - **Validation Notes**: No blocking issues. Phase completed successfully.

@@ -429,7 +429,7 @@ Each agent has **one clear job**:
 
 - `docs-maker.md` - Creates documentation
 - `docs-checker.md` - Validates documentation
-- `docs-link-checker.md` - Checks links
+- `docs-link-general-checker.md` - Checks links
 - `plan-maker.md` - Creates plans
 - `plan-executor.md` - Executes plans
 

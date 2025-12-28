@@ -40,6 +40,28 @@ This convention implements the following core principles:
 **❌ Bad** (jumps straight to solution):
 
 ```markdown
+## Purpose
+
+This convention establishes quality standards for README.md files to make them engaging, accessible, and scannable. It ensures READMEs use problem-solution hooks, plain language, proper structure, and benefits-focused language that welcomes all readers including those new to the project.
+
+## Scope
+
+### What This Convention Covers
+
+- **README structure** - Essential sections and their order
+- **Opening hooks** - Problem-solution framing to engage readers
+- **Plain language** - No jargon, acronym context, accessible writing
+- **Paragraph limits** - Maximum 5 lines per paragraph for scannability
+- **Benefits-focused language** - Emphasizing value to users
+- **Accessibility** - Making READMEs welcoming to all skill levels
+
+### What This Convention Does NOT Cover
+
+- **Technical accuracy** - Factual validation covered in [Factual Validation Convention](./ex-co__factual-validation.md)
+- **Code examples in README** - Code quality covered in development conventions
+- **Hugo site READMEs** - Hugo-specific patterns in Hugo content conventions
+- **OSS compliance** - License, contribution guidelines covered in [OSS Documentation Convention](./ex-co__oss-documentation.md)
+
 ## Motivation
 
 This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform...

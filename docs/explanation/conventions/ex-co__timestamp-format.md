@@ -22,6 +22,27 @@ This convention implements the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: One universal format for all contexts (cache files, metadata, logs, frontmatter). No juggling multiple date formats or converting between systems.
 
+## Purpose
+
+This convention establishes UTC+7 timezone with ISO 8601 format as the standard for all timestamps in the repository. It ensures consistent time representation across cache files, metadata, logs, and frontmatter, enabling reliable date-based operations and avoiding timezone confusion.
+
+## Scope
+
+### What This Convention Covers
+
+- **Timestamp format** - ISO 8601 with UTC+7: `YYYY-MM-DDTHH:MM:SS+07:00`
+- **Where to use** - Cache files, metadata, agent reports, logs
+- **Date-only format** - `YYYY-MM-DD` for frontmatter dates
+- **Timestamp generation** - How to create compliant timestamps
+- **Timezone rationale** - Why UTC+7 is the standard
+
+### What This Convention Does NOT Cover
+
+- **User-facing date display** - UI date formatting (implementation detail)
+- **Relative timestamps** - "2 hours ago" style formatting
+- **Date parsing** - How applications parse timestamps
+- **Historical timezone migration** - Converting old timestamps (one-time operation)
+
 ## 📋 Overview
 
 All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** by default with ISO 8601 format.

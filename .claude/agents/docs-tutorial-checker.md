@@ -2,7 +2,7 @@
 name: docs-tutorial-checker
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
-description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-checker (links).
+description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-general-checker (links).
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
@@ -83,7 +83,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 **You work alongside (but don't duplicate):**
 
 - `docs-checker` → Validates factual accuracy and technical correctness
-- `docs-link-checker` → Validates internal and external links
+- `docs-link-general-checker` → Validates internal and external links
 
 **Your unique focus:** Tutorial pedagogy, narrative quality, visual aids, and learning effectiveness.
 
@@ -564,7 +564,7 @@ Create a comprehensive report with:
 3. Add missing diagrams
 4. Enhance hands-on elements
 5. Optional: Run docs-checker for accuracy validation
-6. Optional: Run docs-link-checker for link validation
+6. Optional: Run docs-link-general-checker for link validation
 
 ---
 
@@ -605,7 +605,7 @@ See convention for complete list (12 anti-patterns) with detailed examples and f
 3. **Be actionable**: Give clear recommendations with examples
 4. **Be balanced**: Consider the tutorial's target audience and scope
 5. **Focus on pedagogy**: This is about learning effectiveness, not just correctness
-6. **Don't duplicate**: Don't check factual accuracy (docs-checker) or links (docs-link-checker)
+6. **Don't duplicate**: Don't check factual accuracy (docs-checker) or links (docs-link-general-checker)
 
 ---
 
@@ -624,7 +624,7 @@ See convention for complete list (12 anti-patterns) with detailed examples and f
 ✗ **Don't use for:**
 
 - Factual accuracy checking → Use `docs-checker`
-- Link validation → Use `docs-link-checker`
+- Link validation → Use `docs-link-general-checker`
 - Non-tutorial documentation → Use `docs-checker`
 - Creating tutorials → Use `docs-tutorial-maker`
 

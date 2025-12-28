@@ -25,6 +25,27 @@ This convention respects the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Clear confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated) with explicit verification sources. No hidden assumptions about factual accuracy - every claim is either verified with source citation or marked as unverified.
 
+## Purpose
+
+This convention establishes a systematic methodology for verifying factual correctness in documentation using WebSearch and WebFetch tools. It ensures command syntax, code examples, version numbers, and external references are accurate and up-to-date, reducing documentation errors that mislead users. This methodology provides confidence classification for verified facts.
+
+## Scope
+
+### What This Convention Covers
+
+- **Validation methodology** - How to use WebSearch/WebFetch to verify facts
+- **Confidence classification** - [Verified], [Unverified], [Error], [Outdated] labels
+- **What to validate** - Command syntax, versions, code examples, API references, external links
+- **When to validate** - During content creation, updates, and periodic reviews
+- **Validation markers** - How to mark validated content in documentation
+
+### What This Convention Does NOT Cover
+
+- **Link checking** - Covered by dedicated link-checker agents
+- **Content accuracy of opinions or recommendations** - This only validates verifiable facts
+- **Hugo site deployment** - Covered in deployment conventions
+- **Automated fact checking** - This is a manual methodology, not automated tooling
+
 ## 📋 Overview
 
 ### What is Factual Validation?

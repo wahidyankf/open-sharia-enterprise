@@ -27,6 +27,29 @@ This convention implements the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Mermaid as the primary format for all markdown files provides a single, universal approach instead of juggling multiple diagram tools. Simple, text-based syntax that's easy to learn and version control.
 
+## Purpose
+
+This convention establishes Mermaid diagrams as the primary visualization format for all markdown files in the repository. It ensures diagrams are accessible, maintainable, and render consistently across GitHub, Obsidian, VS Code, and mobile platforms. This replaces fragmented diagram approaches with a single, universal standard that works everywhere.
+
+## Scope
+
+### What This Convention Covers
+
+- **Mermaid diagram syntax** - Flowcharts, sequence diagrams, class diagrams, state diagrams, and all supported Mermaid types
+- **Color accessibility requirements** - Mandatory color-blind friendly palette for all diagrams
+- **Mobile-friendly orientation** - Vertical diagram orientation for mobile viewing
+- **Mermaid comment syntax** - Correct use of `%%` comments (not `%%{ }%%`)
+- **ASCII art guidelines** - When and how to use ASCII as optional fallback
+- **Diagram placement** - Where to use diagrams in different markdown contexts
+
+### What This Convention Does NOT Cover
+
+- **Hugo theme diagram rendering** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
+- **Diagram content strategy** - What diagrams to create (covered in specific domain conventions)
+- **Vector graphics or images** - This convention is only for text-based diagrams (Mermaid and ASCII)
+- **Interactive diagram features** - Platform-specific interactivity (zoom, pan) is implementation detail
+- **Diagram export formats** - Exporting Mermaid to PNG, SVG, PDF (tool-specific, not repository standard)
+
 ## 🎯 The Core Principle
 
 **Mermaid diagrams are the primary and preferred format for all markdown files** in this repository, both inside and outside the `docs/` directory.

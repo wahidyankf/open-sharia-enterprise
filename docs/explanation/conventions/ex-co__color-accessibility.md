@@ -27,6 +27,24 @@ This convention implements the following core principles:
 
 - **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Rather than maintaining multiple color palettes for different contexts or allowing arbitrary color choices, we provide a single verified accessible palette (8 colors) that works for all use cases. One palette, tested once, used everywhere. No per-context adjustments needed between light and dark modes.
 
+## Scope
+
+### What This Convention Covers
+
+- **Color-blind friendly palette** - Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+- **Palette application** - When and how to use each color
+- **WCAG AA compliance** - Contrast ratios and accessibility requirements
+- **Context-specific rules** - Different requirements for diagrams vs. indicators
+- **Tool-specific guidance** - Mermaid, HTML, CSS color usage
+- **Testing accessibility** - How to verify color accessibility
+
+### What This Convention Does NOT Cover
+
+- **Brand colors** - Marketing or brand identity (this is functional accessibility)
+- **UI design** - Application interface colors (covered in app-specific design docs)
+- **Print colors** - CMYK or print-specific color spaces
+- **Dynamic theming** - Light/dark mode switching (implementation detail)
+
 ## 🎯 Purpose
 
 Color accessibility matters because:
@@ -291,12 +309,12 @@ graph TD
 
 #### Agent Color Assignment
 
-| Emoji | Color  | Hex Code | Role                                                                   | Examples                                                                                 |
-| ----- | ------ | -------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content         | docs-maker, docs-tutorial-maker, agent-maker, plan-maker                                 |
-| 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency    | docs-checker, docs-link-checker, docs-tutorial-checker, plan-checker, repo-rules-checker |
-| 🟨    | Yellow | #F1C40F  | **Updaters/Modifiers** - Agents that update or modify existing content | docs-file-manager, repo-rules-maker                                                      |
-| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans    | plan-executor, plan-execution-checker                                                    |
+| Emoji | Color  | Hex Code | Role                                                                   | Examples                                                                                         |
+| ----- | ------ | -------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content         | docs-maker, docs-tutorial-maker, agent-maker, plan-maker                                         |
+| 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency    | docs-checker, docs-link-general-checker, docs-tutorial-checker, plan-checker, repo-rules-checker |
+| 🟨    | Yellow | #F1C40F  | **Updaters/Modifiers** - Agents that update or modify existing content | docs-file-manager, repo-rules-maker                                                              |
+| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans    | plan-executor, plan-execution-checker                                                            |
 
 #### Implementation in `.claude/agents/README.md`
 

@@ -480,7 +480,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
   - Organizing documentation according to Diátaxis framework
   - Ensuring documentation follows file naming, linking, and emoji conventions
   - Adding convention summaries to CLAUDE.md (brief only, link to details)
-- **Works with:** `docs-checker` for accuracy validation, `docs-link-checker` for link validation
+- **Works with:** `docs-checker` for accuracy validation, `docs-link-general-checker` for link validation
 - **Note:** For tutorials, use `docs-tutorial-maker` instead
 
 ### 🟦 `docs-tutorial-maker.md`
@@ -501,7 +501,7 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
   - Following Diátaxis tutorial principles (learning-oriented, not task-oriented)
 - **Works with:** `docs-tutorial-checker` for quality validation
 
-### 🟪 `docs-link-checker.md`
+### 🟪 `docs-link-general-checker.md`
 
 **HYBRID AGENT** (Validator + State Manager): Validates both external and internal links in documentation files while maintaining operational cache file. Maintains a cache of verified external links in `docs/metadata/external-links-status.yaml` (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. **HARD REQUIREMENT**: Cache file usage is mandatory regardless of how the agent is invoked (spawned by other agents, automated processes, or direct invocation). Outputs results in conversation only (no separate report files).
 
@@ -541,8 +541,8 @@ Validates tutorial quality focusing on pedagogical structure, narrative flow, vi
   - Assessing hands-on elements (code examples, checkpoints, exercises)
   - Ensuring progressive scaffolding (simple → complex)
   - Validating tutorial completeness (intro, objectives, prerequisites, next steps)
-- **Works with:** `docs-tutorial-maker` for content creation, `docs-checker` for accuracy, `docs-link-checker` for links
-- **Note:** Complements (doesn't duplicate) docs-checker (accuracy) and docs-link-checker (links)
+- **Works with:** `docs-tutorial-maker` for content creation, `docs-checker` for accuracy, `docs-link-general-checker` for links
+- **Note:** Complements (doesn't duplicate) docs-checker (accuracy) and docs-link-general-checker (links)
 
 ### 🟪 `docs-tutorial-fixer.md`
 
@@ -1022,7 +1022,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Updates index files (README.md)
 
 7. Verify All Links
-   └─> Use docs-link-checker to audit link health
+   └─> Use docs-link-general-checker to audit link health
         └─> Validates all external URLs are accessible
         └─> Validates all internal markdown links exist
         └─> Fixes broken links with working alternatives
@@ -1059,16 +1059,16 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **After adding new conventions:** Use `repo-rules-maker` → `repo-rules-checker` → `repo-rules-fixer` (if issues found)
 - **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-rules-maker` to check size when adding rules
 - **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for complete size guidelines
-- **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-checker` to verify all links
+- **Before major releases:** Run `repo-rules-checker` for full audit and `docs-link-general-checker` to verify all links
 - **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
 - **After creating tutorials:** Use `docs-tutorial-checker` to validate pedagogical quality and completeness
 - **When modifying CLAUDE.md:** Use `repo-rules-maker` to cascade changes
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
 - **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
-- **After using docs-file-manager:** Always run `docs-link-checker` to verify all links are valid
-- **Monthly or before releases:** Run `docs-link-checker` to ensure all links are valid, then `docs-checker` to verify technical accuracy
-- **After major documentation updates:** Use `docs-link-checker` to verify link integrity, then `docs-checker` to validate content accuracy
+- **After using docs-file-manager:** Always run `docs-link-general-checker` to verify all links are valid
+- **Monthly or before releases:** Run `docs-link-general-checker` to ensure all links are valid, then `docs-checker` to verify technical accuracy
+- **After major documentation updates:** Use `docs-link-general-checker` to verify link integrity, then `docs-checker` to validate content accuracy
 - **After dependency updates:** Run `docs-checker` to ensure documentation matches new versions
 - **Before releasing technical docs:** Use `docs-checker` to validate all technical claims and code examples
 - **When reviewing contributions:** Use `docs-checker` to verify factual accuracy of new documentation

@@ -27,6 +27,23 @@ This convention implements the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Defines a standardized emoji vocabulary where each emoji has explicit, documented meaning. Same emoji = same meaning across all docs. No guessing or implicit conventions.
 
+## Scope
+
+### What This Convention Covers
+
+- **Where emojis are allowed** - docs/, READMEs, plans/, .claude/agents/README.md
+- **Where emojis are forbidden** - CLAUDE.md, agent prompts, config files, source code
+- **Semantic emoji usage** - Using emojis for meaning, not decoration
+- **Emoji consistency** - Standard emojis for common concepts
+- **Accessibility considerations** - How emojis affect screen readers
+
+### What This Convention Does NOT Cover
+
+- **Emoji rendering** - Platform-specific emoji display (implementation detail)
+- **Custom emojis** - Creating custom emoji sets
+- **Emoji in commit messages** - Git commit formatting covered separately
+- **Emoji alternatives** - When emojis aren't available (fallback text)
+
 ## 🎯 Purpose
 
 Emojis in documentation should:

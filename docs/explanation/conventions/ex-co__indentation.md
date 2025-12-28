@@ -24,26 +24,25 @@ This convention implements the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Spaces are visible and consistent across all editors. No hidden tab characters that render differently depending on editor configuration. What you see is what you get.
 
-## 🎯 Scope
+## Purpose
 
-**Applies to**: All markdown files in the repository
+This convention establishes consistent indentation standards for all markdown files in the repository. It ensures bullet points, code blocks, and YAML frontmatter use appropriate indentation (spaces for bullets, 2 spaces for YAML, 4 spaces for code), improving readability and Obsidian compatibility.
 
-**Primary focus**: Files in `docs/` directory (Obsidian vault)
+## Scope
 
-```
-open-sharia-enterprise/
-├── docs/              ← Standard markdown with space indentation
-│   ├── tutorials/     ← Traditional markdown (with H1, sections)
-│   ├── how-to/        ← Traditional markdown (with H1, sections)
-│   ├── reference/     ← Traditional markdown (with H1, sections)
-│   └── explanation/   ← Traditional markdown (with H1, sections)
-├── README.md          ← Standard markdown (spaces)
-├── CLAUDE.md          ← Standard markdown (spaces)
-├── plans/             ← Standard markdown (spaces)
-└── .github/           ← Standard markdown (spaces)
-```
+### What This Convention Covers
 
-**All markdown files** use standard markdown bullet formatting (dash-space-text with space indentation).
+- **Bullet indentation** - Space indentation for nested bullets (2 spaces per level)
+- **YAML frontmatter indentation** - 2-space indentation for YAML
+- **Code block indentation** - How to indent code within markdown
+- **Nested list formatting** - Multi-level bullet and numbered lists
+- **Obsidian compatibility** - Indentation patterns that work in Obsidian
+
+### What This Convention Does NOT Cover
+
+- **Source code indentation** - This convention is for markdown files, not application code
+- **Hugo template indentation** - Covered in Hugo development practices
+- **Diagram indentation** - Mermaid diagrams have their own syntax rules
 
 ## 💡 Core Principle
 

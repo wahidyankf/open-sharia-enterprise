@@ -25,6 +25,27 @@ This convention implements the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Update filenames encode the date (YYYY-MM-DD prefix) making chronological order explicit and sortable.
 
+## Purpose
+
+This convention defines content creation standards specific to the ose-platform-web Hugo site, which uses the PaperMod theme and serves as an English-only landing page. It establishes frontmatter requirements and content patterns unique to ose-platform-web, complementing the shared Hugo conventions.
+
+## Scope
+
+### What This Convention Covers
+
+- **OSE platform frontmatter** - Required YAML fields specific to PaperMod theme
+- **Landing page structure** - English-only single-page design
+- **PaperMod theme specifics** - Cover image, author info, table of contents, and other PaperMod features
+- **Navigation patterns** - Simple navigation structure for landing page
+- **Content organization** - How to structure landing page sections
+
+### What This Convention Does NOT Cover
+
+- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-co__hugo-content-shared.md)
+- **Bilingual content** - This site is English-only, see ayokoding-web for bilingual patterns
+- **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
+- **Deployment** - Covered by ose-platform-web-deployer agent
+
 ## Prerequisites
 
 **IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md).

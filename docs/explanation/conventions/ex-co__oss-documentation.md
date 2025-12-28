@@ -24,6 +24,27 @@ This convention implements the following core principles:
 
 - **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Architecture Decision Records document the "why" behind decisions explicitly. No hidden assumptions or implicit knowledge - reasoning is stated clearly for future maintainers.
 
+## Purpose
+
+This convention defines documentation standards specific to open-source software projects. It establishes requirements for README files, CONTRIBUTING guides, CODE_OF_CONDUCT, SECURITY policies, and LICENSE files that make open-source projects welcoming and professional.
+
+## Scope
+
+### What This Convention Covers
+
+- **Essential OSS files** - README, CONTRIBUTING, LICENSE, CODE_OF_CONDUCT, SECURITY
+- **File content requirements** - What each OSS file must contain
+- **Community guidelines** - How to write contributor-friendly documentation
+- **Legal compliance** - License and attribution requirements
+- **Project metadata** - Badges, status indicators, project health signals
+
+### What This Convention Does NOT Cover
+
+- **Application documentation** - Product docs covered in Diátaxis framework categories
+- **Internal documentation** - Internal practices covered in development conventions
+- **API documentation** - Technical reference covered in reference/ category
+- **Deployment documentation** - Covered in how-to guides
+
 ## 📋 Overview
 
 Repository documentation serves as the primary interface between the project and its users, contributors, and maintainers. Well-structured documentation:
@@ -33,29 +54,6 @@ Repository documentation serves as the primary interface between the project and
 3. **Enables Collaboration** - Explicit guidelines reduce friction in the contribution process
 4. **Documents Decisions** - Architecture Decision Records preserve the reasoning behind key decisions
 5. **Builds Trust** - Professional documentation signals project maturity and maintainability
-
-## 🎯 Scope
-
-This convention covers **repository-level documentation files** at the root or in standard locations:
-
-**Root-level files:**
-
-- `README.md` - Project overview and quick start
-- `CONTRIBUTING.md` - Contribution guidelines
-- `CODE_OF_CONDUCT.md` - Community standards
-- `SECURITY.md` - Security vulnerability reporting
-- `LICENSE` - Project license
-
-**Standard directories:**
-
-- `docs/adr/` - Architecture Decision Records
-- `docs/` - Project documentation (covered by other conventions)
-
-**Out of scope:**
-
-- Internal documentation structure (`docs/` organization) - see [Diátaxis Framework](./ex-co__diataxis-framework.md)
-- File naming within `docs/` - see [File Naming Convention](./ex-co__file-naming-convention.md)
-- Code documentation (docstrings, JSDoc, etc.) - language-specific standards
 
 ## 📖 README Standards
 
