@@ -12,11 +12,6 @@ inputs:
     description: Maximum number of execute-check cycles to prevent infinite loops
     required: false
     default: 10
-  - name: max-concurrency
-    type: number
-    description: Maximum number of agents/tasks that can run concurrently during workflow execution
-    required: false
-    default: 2
 outputs:
   - name: final-status
     type: enum
@@ -28,7 +23,7 @@ outputs:
   - name: final-report
     type: file
     pattern: generated-reports/plan-execution__*__validation.md
-    description: Final validation report from plan__execution-checker
+    description: Final validation report from plan-execution-checker
 ---
 
 # Plan Execution Workflow
@@ -47,9 +42,9 @@ outputs:
 
 ### 1. Initial Execution (Sequential)
 
-Execute the project plan using the plan\_\_executor agent.
+Execute the project plan using the plan-executor agent.
 
-**Agent**: `plan__executor`
+**Agent**: `plan-executor`
 
 - **Args**: `plan: {input.plan-path}`
 - **Output**: `{execution-started}` - Implementation begins, delivery checklist items progressively updated
@@ -68,7 +63,7 @@ Execute the project plan using the plan\_\_executor agent.
 
 Validate the implementation against plan requirements.
 
-**Agent**: `plan__execution-checker`
+**Agent**: `plan-execution-checker`
 
 - **Args**: `plan: {input.plan-path}`
 - **Output**: `{audit-report-1}` - Initial validation report in `generated-reports/`
@@ -83,13 +78,13 @@ Validate the implementation against plan requirements.
 - Validates implementation against plan requirements
 - Checks all deliverables meet quality standards
 - Verifies delivery checklist completion
-- Generates progressive report with all findings (CRITICAL, HIGH, MEDIUM, LOW)
+- Generates progressive report with all findings (HIGH, MEDIUM, MINOR)
 
 ### 3. Check for Findings (Sequential)
 
 Analyze validation report to determine if further execution is needed.
 
-**Condition Check**: Count ALL findings (CRITICAL, HIGH, MEDIUM, LOW) in `{step2.outputs.audit-report-1}`
+**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) in `{step2.outputs.audit-report-1}`
 
 - If findings > 0: Proceed to step 4 (Continue Execution)
 - If findings = 0: Skip to step 7 (Finalization - Success)
@@ -106,7 +101,7 @@ Analyze validation report to determine if further execution is needed.
 
 Address findings and continue implementation.
 
-**Agent**: `plan__executor`
+**Agent**: `plan-executor`
 
 - **Args**: `plan: {input.plan-path}, focus: {findings-from-latest-report}`
 - **Output**: `{additional-work-completed}` - More checklist items completed, findings addressed
@@ -128,7 +123,7 @@ Address findings and continue implementation.
 
 Run validation again to verify findings resolved and no new issues introduced.
 
-**Agent**: `plan__execution-checker`
+**Agent**: `plan-execution-checker`
 
 - **Args**: `plan: {input.plan-path}`
 - **Output**: `{audit-report-N}` - Verification validation report
@@ -150,7 +145,7 @@ Determine whether to continue execution or terminate.
 
 **Logic**:
 
-- Count ALL findings in {step5.outputs.audit-report-N} (CRITICAL, HIGH, MEDIUM, LOW)
+- Count ALL findings in `{step5.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
 - If findings = 0: Proceed to step 7 (Finalization - Success)
 - If findings > 0 AND iterations < max-iterations: Loop back to step 4 with new report
 - If findings > 0 AND iterations >= max-iterations: Proceed to step 7 (Finalization - Partial)
@@ -188,7 +183,7 @@ Report final status and archive plan if successful.
 
 ## Termination Criteria
 
-- ✅ **Success** (`pass`): Zero findings of ANY criticality level (CRITICAL, HIGH, MEDIUM, LOW) in final validation, all deliverables complete, plan archived to `plans/done/`
+- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation, all deliverables complete, plan archived to `plans/done/`
 - ⚠️ **Partial** (`partial`): Findings remain after max-iterations cycles, plan requires manual intervention
 - ❌ **Failure** (`fail`): Executor or checker encountered technical errors preventing completion
 
@@ -267,7 +262,7 @@ Result: SUCCESS (3 iterations) → Plan moved to plans/done/
 
 ## Plan-Specific Validation
 
-The plan\_\_execution-checker validates:
+The plan-execution-checker validates:
 
 - **Requirements Coverage**: All requirements from plan implemented
 - **Deliverables Completeness**: All deliverables created and meet quality standards
@@ -280,17 +275,17 @@ The plan\_\_execution-checker validates:
 
 This workflow can be composed with:
 
-- **plan-quality-gate**: Validate plan quality before executing (recommended pre-step)
+- **plan\_\_quality-gate**: Validate plan quality before executing (recommended pre-step)
 - Content creation workflows: Execute content-focused plans
 - Release workflows: Execute release plans with deployment
-- **repository-rules-quality-gate**: Validate repository consistency after plan execution
+- **wow**rules**quality-gate**: Validate repository consistency after plan execution
 
 **Recommended Workflow Sequence**:
 
 ```
-1. plan-quality-gate → Validate plan completeness and accuracy
+1. plan__quality-gate → Validate plan completeness and accuracy
 2. plan-execution → Execute validated plan
-3. repository-rules-quality-gate → Ensure repository consistency
+3. wow__rules__quality-gate → Ensure repository consistency
 ```
 
 ## Success Metrics
@@ -305,7 +300,7 @@ Track across executions:
 
 ## Notes
 
-- **Semi-automated**: plan\_\_executor may request user input for critical decisions, but execution continues autonomously
+- **Semi-automated**: plan-executor may request user input for critical decisions, but execution continues autonomously
 - **Idempotent**: Safe to re-run on partially completed plans, won't duplicate work
 - **Progressive**: Each iteration builds on previous work, continuously updating checklists
 - **Observable**: Generates validation reports for every validation cycle
@@ -315,15 +310,13 @@ Track across executions:
 
 **Key Differences from plan-quality-gate**:
 
-1. **Execution-focused**: Uses plan**executor (implements code) instead of plan**fixer (fixes plan documents)
+1. **Execution-focused**: Uses plan-executor (implements code) instead of plan-fixer (fixes plan documents)
 2. **End-to-end**: Covers full plan lifecycle from execution through validation to archival
 3. **Progressive delivery**: Continuously updates checklist items throughout execution
 4. **Archival automation**: Moves completed plans to plans/done/ automatically
 5. **Higher default iterations**: Default 10 (vs 5) since implementation is more complex than document fixes
 
 This workflow ensures complete plan execution with validated quality, making it ideal for systematically implementing project plans from start to archive.
-
-**Parallelization**: Currently executes sequentially (executor → checker loops). The `max-concurrency` parameter is reserved for future enhancements where execution and validation steps could run concurrently.
 
 ## Principles Respected
 

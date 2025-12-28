@@ -417,7 +417,7 @@ The canonical pattern for content creation:
    → Agent: {family}-checker (re-run)
 ```
 
-See `ex-wf__workflow-pattern.md` for complete structural examples.
+See `ex-wf__meta__workflow-pattern.md` for complete structural examples.
 
 ### Parallel Validation
 
@@ -509,7 +509,7 @@ Deploy only if validation passes:
 
 **Workflow Conventions:**
 
-- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - Workflow Pattern Convention (master reference for workflow structure and examples)
+- `docs/explanation/workflows/ex-wf__meta__workflow-pattern.md` - Workflow Pattern Convention (master reference for workflow structure and examples)
 
 **Domain-Specific Conventions:**
 

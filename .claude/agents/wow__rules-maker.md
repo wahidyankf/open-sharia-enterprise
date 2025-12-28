@@ -834,7 +834,7 @@ If adding a completely new category of conventions:
 
 **Workflow Pattern:**
 
-- `docs/explanation/workflows/ex-wf__workflow-pattern.md` - How to structure workflows that orchestrate agents (includes examples)
+- `docs/explanation/workflows/ex-wf__meta__workflow-pattern.md` - How to structure workflows that orchestrate agents (includes examples)
 - `docs/explanation/workflows/README.md` - Index of all workflows
 
 **Documentation Conventions:**

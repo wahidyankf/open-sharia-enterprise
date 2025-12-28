@@ -509,7 +509,7 @@ Periodically verify:
 **Layer 5**:
 
 - [Workflows Index](./workflows/README.md)
-- [Workflow Pattern Convention](./workflows/ex-wf__workflow-pattern.md)
+- [Workflow Pattern Convention](./workflows/ex-wf__meta__workflow-pattern.md)
 
 **Meta-Documentation**:
 

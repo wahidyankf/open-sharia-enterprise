@@ -8,12 +8,6 @@ inputs:
     description: Plan files to validate (e.g., "all", "plans/in-progress/", "specific-plan.md")
     required: false
     default: all
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
-    required: false
-    default: normal
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
@@ -22,11 +16,6 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
-  - name: max-concurrency
-    type: number
-    description: Maximum number of agents/tasks that can run concurrently during workflow execution
-    required: false
-    default: 2
 outputs:
   - name: final-status
     type: enum
@@ -58,7 +47,7 @@ outputs:
 
 Run plan validation to identify completeness and accuracy issues.
 
-**Agent**: `plan__checker`
+**Agent**: `plan-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
@@ -71,40 +60,26 @@ Run plan validation to identify completeness and accuracy issues.
 
 Analyze audit report to determine if fixes are needed.
 
-**Condition Check**: Count findings based on mode level in `{step1.outputs.audit-report-1}`
+**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) in `{step1.outputs.audit-report-1}`
 
-- **lax**: Count CRITICAL only
-- **normal**: Count CRITICAL + HIGH
-- **strict**: Count CRITICAL + HIGH + MEDIUM
-- **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
-
-**Below-threshold findings**: Report but don't block success
-
-- **lax**: HIGH/MEDIUM/LOW reported, not counted
-- **normal**: MEDIUM/LOW reported, not counted
-- **strict**: LOW reported, not counted
-- **ocd**: All findings counted
-
-**Decision**:
-
-- If threshold-level findings > 0: Proceed to step 3
-- If threshold-level findings = 0: Skip to step 6 (Success)
+- If findings > 0: Proceed to step 3
+- If findings = 0: Skip to step 6 (Success)
 
 **Depends on**: Step 1 completion
 
 **Notes**:
 
-- Fix scope determined by mode level
-- Below-threshold findings remain visible in audit reports
-- Enables progressive quality improvement
+- Fixes ALL findings, not just critical ones
+- Includes minor issues like formatting, style improvements
+- Ensures plans achieve perfect quality state
 
 ### 3. Apply Fixes (Sequential, Conditional)
 
 Apply all validated fixes from the audit report.
 
-**Agent**: `plan__fixer`
+**Agent**: `plan-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report-1}, approved: all, mode: {input.mode}`
+- **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
 - **Output**: `{fixes-applied}`
 - **Condition**: Findings exist from step 2
 - **Depends on**: Step 2 completion
@@ -116,19 +91,14 @@ Apply all validated fixes from the audit report.
 **Notes**:
 
 - Fixer re-validates findings before applying (prevents false positives)
-- **Fix scope based on mode parameter**:
-  - **lax**: Fixes CRITICAL only (skips HIGH/MEDIUM/LOW)
-  - **normal**: Fixes CRITICAL/HIGH (skips MEDIUM/LOW)
-  - **strict**: Fixes CRITICAL/HIGH/MEDIUM (skips LOW)
-  - **ocd**: Fixes all levels (CRITICAL, HIGH, MEDIUM, LOW)
-- Within scope, applies HIGH confidence fixes automatically
-- Flags MEDIUM confidence for manual review
+- Fixes ALL confidence levels: HIGH (objective), MEDIUM (structural), MINOR (style/formatting)
+- Achieves perfect plan quality with zero findings
 
 ### 4. Re-validate (Sequential)
 
 Run checker again to verify fixes resolved issues and no new issues introduced.
 
-**Agent**: `plan__checker`
+**Agent**: `plan-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-N}` - Verification audit report
@@ -144,15 +114,11 @@ Determine whether to continue fixing or terminate.
 
 **Logic**:
 
-- Count findings based on mode level in `{step4.outputs.audit-report-N}` (same as Step 2):
-  - **lax**: Count CRITICAL only
-  - **normal**: Count CRITICAL + HIGH
-  - **strict**: Count CRITICAL + HIGH + MEDIUM
-  - **ocd**: Count all levels
-- If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
-- If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
-- If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
-- If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
+- Count ALL findings in `{step4.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
+- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
+- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
+- If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
 **Depends on**: Step 4 completion
 
@@ -180,18 +146,9 @@ Report final status and summary.
 
 ## Termination Criteria
 
-**Success** (`pass`): Zero threshold-level findings in final validation
-
-- **lax**: Zero CRITICAL findings (HIGH/MEDIUM/LOW may exist)
-- **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **ocd**: Zero findings at all levels
-
-**Partial** (`partial`): Threshold-level findings remain after max-iterations
-
-**Failure** (`fail`): Checker or fixer encountered technical errors
-
-**Note**: Below-threshold findings reported in final audit but don't prevent success.
+- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation
+- ⚠️ **Partial** (`partial`): Any findings remain after max-iterations cycles
+- ❌ **Failure** (`fail`): Checker or fixer encountered technical errors
 
 ## Example Usage
 
@@ -237,47 +194,6 @@ workflow run plan-quality-gate --scope=all --max-iterations=10
 workflow run plan-quality-gate --scope=all --min-iterations=3
 ```
 
-### Standard Check-Fix (Normal Strictness)
-
-```bash
-# Run full plan validation with default settings
-# Fixes CRITICAL/HIGH only, reports MEDIUM/LOW
-workflow run plan-quality-gate --scope=all
-
-# Equivalent explicit form
-workflow run plan-quality-gate --scope=all --mode=normal
-```
-
-### Pre-Release Validation (Strict)
-
-```bash
-# Fixes CRITICAL/HIGH/MEDIUM, reports LOW
-workflow run plan-quality-gate --scope=all --mode=strict
-
-# Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
-# LOW findings reported but don't block
-```
-
-### Comprehensive Audit (Very Strict)
-
-```bash
-# Fixes all levels, zero tolerance
-workflow run plan-quality-gate --scope=all --mode=ocd
-
-# Success criteria: Zero findings at all levels
-# Equivalent to pre-mode parameter behavior
-```
-
-### Strict Mode with Safety Limits
-
-```bash
-# Pre-release check with iteration bounds
-workflow run plan-quality-gate \
-  --scope=all \
-  --mode=strict \
-  --max-iterations=10
-```
-
 ## Iteration Example
 
 Typical execution flow:
@@ -318,7 +234,7 @@ Result: SUCCESS (3 iterations)
 
 ## Plan-Specific Validation
 
-The plan\_\_checker validates:
+The plan-checker validates:
 
 - **Completeness**: All required sections present (requirements, deliverables, checklists)
 - **Technical Accuracy**: Commands, versions, tool names verified via web search
@@ -351,8 +267,6 @@ Track across executions:
 - **Observable**: Generates audit reports for every iteration
 - **Bounded**: Max-iterations prevents runaway execution
 - **Scope-aware**: Can validate all plans or specific subsets
-
-**Parallelization**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where different plan validation aspects (completeness, technical accuracy, implementation readiness) could run concurrently.
 
 This workflow ensures plan quality and implementation readiness through iterative validation and fixing, making it ideal for maintaining high-quality project planning.
 
