@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-27
+updated: 2025-12-28
 ---
 
 # Repository Rule Checker Agent
@@ -233,6 +233,12 @@ For each workflow in `docs/explanation/workflows/`:
 - [ ] All links point to files that actually exist
 - [ ] Cross-references between principles and conventions use correct paths
 - [ ] Links from conventions to principles use `../principles/[category]/` paths
+- [ ] **Rule references use two-tier formatting**:
+  - [ ] First mention of rule uses markdown link `[Rule Name](./path.md)`
+  - [ ] Subsequent mentions use inline code `` `rule-name` ``
+  - [ ] Rule categories validated: visions, principles, conventions, development practices, workflows
+- [ ] Linking Convention document (`ex-co__linking-convention.md`) contains "When to Link Rule References" section
+- [ ] CLAUDE.md references two-tier formatting requirement in Linking Convention subsection
 
 ### Diagram Convention Compliance
 
