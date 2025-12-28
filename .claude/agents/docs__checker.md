@@ -446,6 +446,34 @@ Report file: `generated-reports/docs__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.m
 
 This progressive approach ensures findings persist even if context is compacted during long factual verifications (15+ minutes of web checking).
 
+### 6. Documentation Completeness Validation
+
+**Documentation First Principle Enforcement:**
+
+Per [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md) principle, validate that documentation is not treated as optional:
+
+- **README Files**: All libraries (libs/) and applications (apps/) MUST have README.md files
+- **API Documentation**: Public functions/classes require JSDoc/TSDoc comments with examples
+- **Convention Documents**: All enforced rules have corresponding convention documents in docs/explanation/conventions/
+- **Architectural Decisions**: Major technical choices are documented in docs/explanation/ with rationale
+- **Feature Documentation**: New features have corresponding how-to guides or tutorials
+
+**What to check:**
+
+- [ ] Every directory in apps/ has README.md
+- [ ] Every directory in libs/ has README.md
+- [ ] README files explain purpose, usage, and setup (not just placeholders)
+- [ ] No "TODO: Add documentation later" comments in committed code
+- [ ] API documentation exists for exported functions/classes
+- [ ] New features mentioned in commits have corresponding docs
+
+**Criticality:**
+
+- Missing README in app/lib: HIGH (blocks onboarding)
+- Missing API docs for public APIs: MEDIUM (hinders usage)
+- "Will document later" comments: HIGH (Documentation First violation)
+- Missing feature docs: MEDIUM (poor user experience)
+
 ## Validation Workflow
 
 ### Step 0: Initialize Report File
