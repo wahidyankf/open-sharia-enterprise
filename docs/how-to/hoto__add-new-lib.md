@@ -17,7 +17,7 @@ This guide shows you how to create a new reusable library in the `libs/` folder 
 
 ## Prerequisites
 
-- Node.js 24.11.1 and npm 11.6.3 (managed by Volta)
+- Node.js 24.12.0 and npm 11.7.0 (managed by Volta)
 - Nx workspace initialized
 - Understanding of the library's purpose and scope
 
