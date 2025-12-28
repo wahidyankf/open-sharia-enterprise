@@ -57,8 +57,8 @@ Use this agent when:
 
 ### Accepting Mode
 
-- **Parameter**: `mode` (enum: lax, normal, strict, ultra)
-- **Default**: `ultra` (backward compatible - process all findings)
+- **Parameter**: `mode` (enum: lax, normal, strict, ocd)
+- **Default**: `ocd` (backward compatible - process all findings)
 - **Source**: Passed from workflow as `{input.mode}`
 
 ### Filtering Logic
@@ -70,7 +70,7 @@ Before processing findings from the audit report, filter by mode threshold:
 - `lax`: Process CRITICAL findings only (skip HIGH + MEDIUM + LOW)
 - `normal`: Process CRITICAL + HIGH findings only (skip MEDIUM + LOW)
 - `strict`: Process CRITICAL + HIGH + MEDIUM findings (skip LOW)
-- `ultra`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
+- `ocd`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
 
 **Implementation**:
 
@@ -100,7 +100,7 @@ In the fix report, document which findings were skipped due to mode threshold:
 1. [File path] - [Issue description]
 2. [File path] - [Issue description]
 
-**Note**: Run with `mode=strict` or `mode=ultra` to fix these findings.
+**Note**: Run with `mode=strict` or `mode=ocd` to fix these findings.
 ```
 
 ### Fix Summary Update
@@ -128,8 +128,8 @@ When invoked from quality-gate workflow:
 inputs:
   - name: mode
     type: enum
-    values: [lax, normal, strict, ultra]
-    default: ultra
+    values: [lax, normal, strict, ocd]
+    default: ocd
 ```
 
 Workflow passes mode to fixer:
