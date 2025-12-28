@@ -16,13 +16,13 @@ This convention establishes a universal **four-level criticality system** (CRITI
 
 **Problem**: Seven different severity classification systems existed across checker agents, causing confusion and inconsistency:
 
-- `repo-rules-checker`: Critical/Important/Minor
+- `wow__rules-checker`: Critical/Important/Minor
 - `ayokoding-web-general-checker`: Must Fix/Warnings/Suggestions
-- `readme-checker`: High/Medium/Low Priority
-- `docs-checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
+- `readme__checker`: High/Medium/Low Priority
+- `docs__checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
 - `docs-link-general-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
 - `ayokoding-web-structure-checker`: CRITICAL/IMPORTANT/Warnings
-- `plan-checker`: Critical/Warnings/Recommendations
+- `plan__checker`: Critical/Warnings/Recommendations
 
 **Solution**: Universal 4-level system that works orthogonally with existing confidence levels.
 
@@ -531,8 +531,8 @@ Run `{agent-family}-fixer` on this audit report:
 
 **Five agents require both verification/status AND criticality labels**:
 
-- `docs-checker` - Verification labels ([Verified], [Error], [Outdated], [Unverified])
-- `docs-tutorial-checker` - Verification labels
+- `docs__checker` - Verification labels ([Verified], [Error], [Outdated], [Unverified])
+- `docs__tutorial-checker` - Verification labels
 - `apps__ayokoding-web__facts-checker` - Verification labels
 - `docs-link-general-checker` - Status labels ([OK], [BROKEN], [REDIRECT])
 - `apps__ayokoding-web__link-checker` - Status labels
@@ -556,7 +556,7 @@ Run `{agent-family}-fixer` on this audit report:
 **Confidence**: HIGH
 ```
 
-**Example from docs-checker**:
+**Example from docs\_\_checker**:
 
 ```markdown
 ### 1. [Error] - Command Syntax Incorrect in Installation Guide
@@ -614,7 +614,7 @@ Update link to current documentation URL or find alternative resource
 
 ## Domain-Specific Examples
 
-### Repository Rules (repo-rules-checker)
+### Repository Rules (wow\_\_rules-checker)
 
 **CRITICAL**:
 
@@ -696,7 +696,7 @@ Update link to current documentation URL or find alternative resource
 - Consider adding tags
 - Potential cross-reference
 
-### Documentation (docs-checker, docs-tutorial-checker, docs-link-general-checker)
+### Documentation (docs**checker, docs**tutorial-checker, docs-link-general-checker)
 
 **CRITICAL**:
 
@@ -726,7 +726,7 @@ Update link to current documentation URL or find alternative resource
 - Potential cross-linking opportunity
 - Alternative phrasing suggestion
 
-### Plans (plan-checker, plan-execution-checker)
+### Plans (plan**checker, plan**execution-checker)
 
 **CRITICAL**:
 
@@ -752,7 +752,7 @@ Update link to current documentation URL or find alternative resource
 - Consider alternative approach
 - Potential refinement
 
-### README (readme-checker)
+### README (readme\_\_checker)
 
 **CRITICAL**:
 
@@ -779,7 +779,7 @@ Update link to current documentation URL or find alternative resource
 - Consider adding badges
 - Potential rewording for clarity
 
-### Workflows (workflow-checker)
+### Workflows (wow\_\_workflow-checker)
 
 **CRITICAL**:
 
@@ -1072,7 +1072,7 @@ def determine_priority(criticality, confidence):
 
 **Source Audit**: repo-rules**a1b2c3**2025-12-27--10-30\_\_audit.md
 **Fix Date**: 2025-12-27T11:15:00+07:00
-**Fixer Version**: repo-rules-fixer v2.0
+**Fixer Version**: wow\_\_rules-fixer v2.0
 
 ---
 
@@ -1352,9 +1352,9 @@ Existing agents using different terminology should migrate to this convention.
 
 ### Phase 2: Pilot Agent (Week 2)
 
-1. Update `repo-rules-checker` to use CRITICAL/HIGH/MEDIUM/LOW sections
+1. Update `wow__rules-checker` to use CRITICAL/HIGH/MEDIUM/LOW sections
 2. Test report generation with standardized format
-3. Validate that `repo-rules-fixer` correctly interprets new format
+3. Validate that `wow__rules-fixer` correctly interprets new format
 4. Identify any issues before broader rollout
 
 ### Phase 3: Checker Agent Families (Week 2-3)
@@ -1365,37 +1365,37 @@ Existing agents using different terminology should migrate to this convention.
 - apps**ayokoding-web**structure-checker
 - apps**ayokoding-web**by-example-checker
 - apps**ose-platform-web**content-checker
-- workflow-checker
+- wow\_\_workflow-checker
 
 **Dual-Label Family** (5 agents - preserve existing labels + add criticality):
 
-- docs-checker ([Verified]/[Error]/[Outdated] + CRITICAL/HIGH/MEDIUM/LOW)
-- docs-tutorial-checker
+- docs\_\_checker ([Verified]/[Error]/[Outdated] + CRITICAL/HIGH/MEDIUM/LOW)
+- docs\_\_tutorial-checker
 - apps**ayokoding-web**facts-checker
 - docs-link-general-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
 - apps**ayokoding-web**link-checker
 
 **Plan/Priority Family** (3 agents):
 
-- plan-checker
-- plan-execution-checker
-- readme-checker
+- plan\_\_checker
+- plan\_\_execution-checker
+- readme\_\_checker
 
 ### Phase 4: Fixer Agents (Week 3)
 
 Update all 11 fixer agents to use priority-based execution:
 
-- repo-rules-fixer (pilot)
+- wow\_\_rules-fixer (pilot)
 - apps**ayokoding-web**general-fixer
 - apps**ayokoding-web**by-example-fixer
 - apps**ayokoding-web**facts-fixer
 - apps**ayokoding-web**structure-fixer
-- docs-tutorial-fixer
+- docs\_\_tutorial-fixer
 - apps**ose-platform-web**content-fixer
-- readme-fixer
-- docs-fixer
-- plan-fixer
-- workflow-fixer
+- readme\_\_fixer
+- docs\_\_fixer
+- plan\_\_fixer
+- wow\_\_workflow-fixer
 
 ### Phase 5: Validation (Week 4)
 

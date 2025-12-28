@@ -1,5 +1,5 @@
 ---
-name: readme-checker
+name: readme__checker
 description: Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation. Use when reviewing README changes or auditing README quality.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

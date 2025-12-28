@@ -1,5 +1,5 @@
 ---
-name: plan-maker
+name: plan__maker
 description: Expert at creating structured project planning documents in the plans/ folder. Use when starting new projects, defining requirements, or organizing project deliverables.
 tools: Read, Write, Edit, Glob, Grep
 model: inherit

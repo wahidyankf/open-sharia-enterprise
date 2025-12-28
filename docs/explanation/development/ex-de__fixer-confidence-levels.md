@@ -15,7 +15,7 @@ updated: 2025-12-15
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, ose-platform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## Principles Respected
 
@@ -110,16 +110,16 @@ Confidence levels serve multiple critical purposes:
 
 All fixer agents implement this confidence level system:
 
-- **repo-rules-fixer** - Repository-wide structural consistency fixes
+- **wow\_\_rules-fixer** - Repository-wide structural consistency fixes
 - **ayokoding-web-general-fixer** - ayokoding-web general Hugo content fixes
 - **ayokoding-web-by-example-fixer** - ayokoding-web by-example tutorial fixes
 - **ayokoding-web-facts-fixer** - ayokoding-web factual accuracy fixes
 - **ayokoding-web-structure-fixer** - ayokoding-web structure fixes
-- **docs-tutorial-fixer** - Tutorial quality fixes
+- **docs\_\_tutorial-fixer** - Tutorial quality fixes
 - **ose-platform-web-content-fixer** - ose-platform-web Hugo content fixes
-- **readme-fixer** - README quality fixes
-- **docs-fixer** - Documentation factual accuracy fixes
-- **plan-fixer** - Plan structural and format fixes
+- **readme\_\_fixer** - README quality fixes
+- **docs\_\_fixer** - Documentation factual accuracy fixes
+- **plan\_\_fixer** - Plan structural and format fixes
 
 ### Universal Application
 
@@ -149,7 +149,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **Examples Across Domains:**
 
-**repo-rules-fixer:**
+**wow\_\_rules-fixer:**
 
 - Missing `subcategory` field verified by re-reading frontmatter
 - Broken internal link verified by checking file doesn't exist at target path
@@ -163,7 +163,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Weight field error verified for \_index.md (should be 1, found 10)
 - Relative link in navigation content verified (should use absolute with language prefix)
 
-**docs-tutorial-fixer:**
+**docs\_\_tutorial-fixer:**
 
 - Missing required section verified by section heading search (Introduction, Prerequisites)
 - Incorrect LaTeX delimiter verified by pattern match (single `$` on own line for display math)
@@ -177,14 +177,14 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Missing cover.alt verified when cover.image exists
 - Multiple H1 headings verified by counting (should be only 1)
 
-**readme-fixer:**
+**readme\_\_fixer:**
 
 - Paragraph exceeding 5 lines verified by objective line count
 - Acronym without context verified by context search (missing expansion/explanation)
 - Broken internal link verified by file existence check
 - Format errors verified by structural analysis (heading hierarchy violations)
 
-**docs-fixer:**
+**docs\_\_fixer:**
 
 - Broken command syntax verified by WebFetch of official documentation
 - Incorrect version number verified by checking package registry (npm, PyPI)
@@ -192,7 +192,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - LaTeX delimiter error verified by pattern match (single `$` on own line for display math)
 - Diagram color accessibility violation verified against accessible palette
 
-**plan-fixer:**
+**plan\_\_fixer:**
 
 - Missing required section verified by heading search (Introduction, Requirements, Technical Documentation)
 - Broken internal link to codebase file verified by file existence check
@@ -217,7 +217,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **Examples Across Domains:**
 
-**repo-rules-fixer:**
+**wow\_\_rules-fixer:**
 
 - Content duplication between CLAUDE.md and convention file (context differs, may be intentional)
 - Link target unclear (file missing, but can't determine correct target automatically)
@@ -230,7 +230,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Alt text could be more descriptive but not completely missing
 - Content structure acceptable but could be improved
 
-**docs-tutorial-fixer:**
+**docs\_\_tutorial-fixer:**
 
 - Narrative flow issues (too list-heavy, needs better storytelling)
 - Diagram placement suggestions (section would benefit from visual aid)
@@ -245,7 +245,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Line length exceeds limit but breaking would harm readability
 - Broken link with unclear correct target (file missing, multiple possibilities)
 
-**readme-fixer:**
+**readme\_\_fixer:**
 
 - Engagement quality ("opening paragraph not engaging enough" - subjective tone judgment)
 - Tone improvements ("sounds too corporate" - style preference)
@@ -253,7 +253,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Word choice preferences ("utilize" vs "use" when both are clear)
 - Section length borderline (25 lines - depends on README philosophy)
 
-**docs-fixer:**
+**docs\_\_fixer:**
 
 - Contradiction that may be context-dependent (HTTP for local, HTTPS for production)
 - Outdated information where "outdated" is subjective or requires judgment
@@ -261,7 +261,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Narrative flow issues or writing style critiques (subjective quality)
 - Terminology inconsistency where both terms are technically correct
 
-**plan-fixer:**
+**plan\_\_fixer:**
 
 - Scope decisions ("plan scope too broad" - requires business judgment)
 - Technology choices ("should use PostgreSQL instead of MongoDB" - architectural expertise)
@@ -285,7 +285,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **Examples Across Domains:**
 
-**repo-rules-fixer:**
+**wow\_\_rules-fixer:**
 
 - Checker flagged markdown headings as YAML comments (searched entire file instead of just frontmatter)
 - Checker reported missing field that actually exists (case sensitivity issue)
@@ -297,7 +297,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker flagged missing ikhtisar.md in blogging content (learning-only rule applied to wrong directory)
 - Checker misidentified language path when validating filenames
 
-**docs-tutorial-fixer:**
+**docs\_\_tutorial-fixer:**
 
 - Checker reported missing Introduction section but section exists (titled "Introduction to Topic")
 - Checker reported missing diagram but diagram exists (different Mermaid syntax or placement)
@@ -309,14 +309,14 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker applied post validation rules to static page (about.md doesn't need date field)
 - Checker counted code block as prose paragraph (wrong content type detection)
 
-**readme-fixer:**
+**readme\_\_fixer:**
 
 - Checker flagged valid acronym expansion as missing (expansion exists nearby)
 - Checker counted lines incorrectly (markdown formatting issues)
 - Checker misinterpreted valid plain language as jargon (context-appropriate technical term)
 - Checker flagged code block as long paragraph (wrong content detection)
 
-**docs-fixer:**
+**docs\_\_fixer:**
 
 - Checker flagged correct LaTeX as incorrect (misunderstood syntax)
 - Checker reported missing field that actually exists in frontmatter
@@ -324,7 +324,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker misinterpreted accessible diagram colors as inaccessible
 - Checker reported contradiction but statements apply to different contexts
 
-**plan-fixer:**
+**plan\_\_fixer:**
 
 - Checker reported missing section that actually exists (different heading variation)
 - Checker flagged technology as "deprecated" but it's still maintained (outdated info)
@@ -467,7 +467,7 @@ These criteria apply across ALL fixer agents:
 
 Each fixer agent has domain-specific validation checks:
 
-**repo-rules-fixer:**
+**wow\_\_rules-fixer:**
 
 - Frontmatter field validation for agent files
 - File naming convention compliance
@@ -480,7 +480,7 @@ Each fixer agent has domain-specific validation checks:
 - Learning content specific rules (overview/ikhtisar, weight ordering)
 - Navigation link format (absolute paths with language prefix)
 
-**docs-tutorial-fixer:**
+**docs\_\_tutorial-fixer:**
 
 - Tutorial-specific structure (Introduction, Prerequisites, Learning Objectives)
 - LaTeX notation compliance
@@ -494,7 +494,7 @@ Each fixer agent has domain-specific validation checks:
 - Cover image alt text requirements
 - Heading hierarchy (single H1 rule)
 
-**readme-fixer:**
+**readme\_\_fixer:**
 
 - README-specific quality standards
 - Paragraph length limits (≤5 lines)
@@ -829,14 +829,14 @@ User or maintainer reviews false positive reports and:
 **Initial State:**
 
 ```
-repo-rules-checker flags:
+wow__rules-checker flags:
   - VIOLATION: 15 agent files have YAML comments in frontmatter
 ```
 
 **Fixer Re-validation:**
 
 ```
-repo-rules-fixer re-validates:
+wow__rules-fixer re-validates:
   - Extracts frontmatter from each file
   - Searches isolated frontmatter for # symbols
   - Result: 0 actual violations found (all # symbols in markdown body)
@@ -866,7 +866,7 @@ repo-rules-fixer re-validates:
 
 **Checker Update:**
 
-- Maintainer updates repo-rules-checker with corrected AWK pattern
+- Maintainer updates wow__rules-checker with corrected AWK pattern
 - Re-runs checker: 0 violations found
 - False positives eliminated
 
@@ -881,14 +881,14 @@ repo-rules-fixer re-validates:
 
 ### Fixer Agents Using This Convention
 
-- [repo-rules-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/repo-rules-fixer.md) - Repository structural consistency fixer
+- [wow__rules-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/wow__rules-fixer.md) - Repository structural consistency fixer
 - [ayokoding-web-general-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
 - [ayokoding-web-by-example-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
 - [ayokoding-web-facts-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
 - [ayokoding-web-structure-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
-- [docs-tutorial-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
+- [docs__tutorial-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/docs__tutorial-fixer.md) - Tutorial quality fixer
 - [ose-platform-web-content-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
-- [readme-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/readme-fixer.md) - README quality fixer
+- [readme__fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/readme__fixer.md) - README quality fixer
 
 ### Related Conventions
 
@@ -899,9 +899,9 @@ repo-rules-fixer re-validates:
 - [AI Agents Convention](./ex-de__ai-agents.md) - Standards for all AI agents including fixers
 
 **Content Standards:**
-- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Tutorial-specific validation criteria (used by docs-tutorial-fixer)
+- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Tutorial-specific validation criteria (used by docs__tutorial-fixer)
 - [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal content quality standards
-- [README Quality Convention](../conventions/ex-co__readme-quality.md) - README-specific standards (used by readme-fixer)
+- [README Quality Convention](../conventions/ex-co__readme-quality.md) - README-specific standards (used by readme__fixer)
 - [Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
 - [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
 - [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards

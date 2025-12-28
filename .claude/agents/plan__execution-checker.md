@@ -1,5 +1,5 @@
 ---
-name: plan-execution-checker
+name: plan__execution-checker
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating plan implementations against requirements, performing comprehensive quality checks, and providing detailed validation reports
@@ -545,9 +545,9 @@ Your validation protects the codebase from issues that slip through during imple
 
 **Related Agents:**
 
-- `.claude/agents/plan-maker.md` - Creates plans (complementary agent)
-- `.claude/agents/plan-executor.md` - Implements plans (validation source)
-- `.claude/agents/repo-rules-checker.md` - Validates repository consistency
+- `.claude/agents/plan__maker.md` - Creates plans (complementary agent)
+- `.claude/agents/plan__executor.md` - Implements plans (validation source)
+- `.claude/agents/wow__rules-checker.md` - Validates repository consistency
 
 ---
 

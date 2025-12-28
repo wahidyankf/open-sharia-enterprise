@@ -76,7 +76,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__op
 
 ```yaml
 ---
-name: docs-checker
+name: docs__checker
 tools: Read, Glob, Grep
 ---
 ```
@@ -87,7 +87,7 @@ tools: Read, Glob, Grep
 
 ```yaml
 ---
-name: docs-checker
+name: docs__checker
 tools: all
 ---
 ```
@@ -279,7 +279,7 @@ pages/
 
 ```yaml
 ---
-name: docs-maker
+name: docs__maker
 description: Expert documentation writer
 tools: Read, Write, Edit, Glob, Grep
 model: inherit

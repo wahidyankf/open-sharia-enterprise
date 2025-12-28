@@ -57,18 +57,18 @@ This convention establishes designated directories for temporary files created b
 
 All checker agents in the following families MUST write audit reports to `generated-reports/`:
 
-1. **repo-rules-checker** - Repository consistency validation
+1. **wow\_\_rules-checker** - Repository consistency validation
 2. **ayokoding-web-general-checker** - General Hugo content validation (ayokoding-web)
 3. **ayokoding-web-by-example-checker** - By-example tutorial validation (ayokoding-web)
 4. **ayokoding-web-facts-checker** - Educational content factual accuracy validation
 5. **ayokoding-web-link-checker** - Link validation (ayokoding-web)
 6. **ayokoding-web-structure-checker** - Content structure validation (ayokoding-web)
 7. **ose-platform-web-content-checker** - Hugo content validation (ose-platform-web)
-8. **docs-checker** - Documentation factual accuracy validation
-9. **docs-tutorial-checker** - Tutorial quality validation
-10. **readme-checker** - README quality validation
-11. **plan-checker** - Plan readiness validation
-12. **plan-execution-checker** - Implementation validation
+8. **docs\_\_checker** - Documentation factual accuracy validation
+9. **docs\_\_tutorial-checker** - Tutorial quality validation
+10. **readme\_\_checker** - README quality validation
+11. **plan\_\_checker** - Plan readiness validation
+12. **plan\_\_execution-checker** - Implementation validation
 
 **NO EXCEPTIONS**: Checker agents MUST NOT output results in conversation only. All validation findings MUST be written to audit report files.
 
@@ -155,11 +155,11 @@ To enable accurate parent-child hierarchy tracking across concurrent workflow ru
 
 | Workflow/Agent            | Scope           | Tracking File                    |
 | ------------------------- | --------------- | -------------------------------- |
-| repo-rules-checker        | `repo-rules`    | `.execution-chain-repo-rules`    |
-| docs-checker              | `docs`          | `.execution-chain-docs`          |
-| docs-tutorial-checker     | `docs-tutorial` | `.execution-chain-docs-tutorial` |
-| readme-checker            | `readme`        | `.execution-chain-readme`        |
-| plan-checker              | `plan`          | `.execution-chain-plan`          |
+| wow\_\_rules-checker      | `repo-rules`    | `.execution-chain-repo-rules`    |
+| docs\_\_checker           | `docs`          | `.execution-chain-docs`          |
+| docs\_\_tutorial-checker  | `docs-tutorial` | `.execution-chain-docs-tutorial` |
+| readme\_\_checker         | `readme`        | `.execution-chain-readme`        |
+| plan\_\_checker           | `plan`          | `.execution-chain-plan`          |
 | ayokoding-web-\* (golang) | `golang`        | `.execution-chain-golang`        |
 | ayokoding-web-\* (elixir) | `elixir`        | `.execution-chain-elixir`        |
 | ose-platform-web-\*       | `ose-platform`  | `.execution-chain-ose-platform`  |
@@ -174,7 +174,7 @@ When spawning child agents, include `EXECUTION_SCOPE` in the prompt:
 
 ```bash
 Task(
-  subagent_type="docs-checker",
+  subagent_type="docs__checker",
   prompt="Validate documentation. EXECUTION_SCOPE: docs"
 )
 ```
@@ -291,9 +291,9 @@ fi
 
 **Examples**:
 
-- Validation reports (docs-checker, plan-checker, etc.)
-- Audit reports (repo-rules-checker)
-- Execution verification reports (plan-execution-checker)
+- Validation reports (docs**checker, plan**checker, etc.)
+- Audit reports (wow\_\_rules-checker)
+- Execution verification reports (plan\_\_execution-checker)
 - Todo lists and progress tracking
 
 **Note**: `docs-link-general-checker` does NOT create report files (outputs in conversation only)
@@ -392,20 +392,20 @@ This progressive approach ensures findings persist even if context is compacted 
 
 ALL \*-checker agents must implement progressive writing:
 
-1. repo-rules-checker
+1. wow\_\_rules-checker
 2. ayokoding-web-general-checker
 3. ayokoding-web-by-example-checker
 4. ayokoding-web-facts-checker
 5. ayokoding-web-link-checker
 6. ayokoding-web-structure-checker
 7. ose-platform-web-content-checker
-8. docs-checker
-9. docs-tutorial-checker
-10. readme-checker
-11. plan-checker
-12. plan-execution-checker
+8. docs\_\_checker
+9. docs\_\_tutorial-checker
+10. readme\_\_checker
+11. plan\_\_checker
+12. plan\_\_execution-checker
 
-**Validation**: See repo-rules-checker agent for validation rules that verify progressive writing compliance across all checker agents.
+**Validation**: See wow\_\_rules-checker agent for validation rules that verify progressive writing compliance across all checker agents.
 
 ### Report File Naming Standard
 
@@ -484,9 +484,8 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 #### Repository Audit Reports
 
-**Agent**: repo-rules-checker
-**Pattern**: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
-**Example**: `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`
+**Agent**: wow**rules-checker
+**Pattern**: `repo-rules**{uuid-chain}**{YYYY-MM-DD--HH-MM}**audit.md`**Example**:`repo-rules**a1b2c3**2025-12-14--20-45\_\_audit.md`
 
 **Content**: Comprehensive consistency audit covering:
 
@@ -503,7 +502,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 #### Fixer Reports (Universal Pattern)
 
-**Agents**: All fixer agents (repo-rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs-tutorial-fixer, ose-platform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
+**Agents**: All fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, ose-platform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer)
 
 **Pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
 
@@ -598,25 +597,22 @@ All fixer reports include these sections:
 
 #### Documentation Validation Reports
 
-**Agent**: docs-checker
-**Pattern**: `docs__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`
-**Example**: `docs__a1b2c3__2025-12-15--10-00__validation.md`
+**Agent**: docs**checker
+**Pattern**: `docs**{uuid-chain}**{YYYY-MM-DD--HH-MM}**validation.md`**Example**:`docs**a1b2c3**2025-12-15--10-00\_\_validation.md`
 
 **Content**: Documentation factual accuracy and consistency validation
 
 #### Plan Validation Reports
 
-**Agent**: plan-checker
-**Pattern**: `plan__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`
-**Example**: `plan__b2c3d4__2025-12-15--11-30__validation.md`
+**Agent**: plan**checker
+**Pattern**: `plan**{uuid-chain}**{YYYY-MM-DD--HH-MM}**validation.md`**Example**:`plan**b2c3d4**2025-12-15--11-30\_\_validation.md`
 
 **Content**: Plan readiness validation (completeness, accuracy, implementability)
 
 #### Plan Execution Validation Reports
 
-**Agent**: plan-execution-checker
-**Pattern**: `plan-execution__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`
-**Example**: `plan-execution__c3d4e5__2025-12-15--14-00__validation.md`
+**Agent**: plan**execution-checker
+**Pattern**: `plan-execution**{uuid-chain}**{YYYY-MM-DD--HH-MM}**validation.md`**Example**:`plan-execution**c3d4e5**2025-12-15--14-00\_\_validation.md`
 
 **Content**: Implementation validation against requirements
 
@@ -668,7 +664,7 @@ Do NOT use these directories for:
 
 ### For Report-Generating Agents
 
-Agents that create validation/audit reports (docs-checker, plan-checker, repo-rules-checker, etc.) should:
+Agents that create validation/audit reports (docs**checker, plan**checker, wow\_\_rules-checker, etc.) should:
 
 1. Use `generated-reports/` directory
 2. Follow naming pattern: `YYYY-MM-DD__[report-type].md`
@@ -687,7 +683,7 @@ Any agent writing to `generated-reports/` MUST have:
 
 ```yaml
 ---
-name: repo-rules-checker
+name: wow__rules-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

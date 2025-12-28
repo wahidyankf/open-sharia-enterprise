@@ -152,7 +152,7 @@ Principle: Explicit Over Implicit
     ↓ governs
 Convention: File Naming Convention (explicit prefixes encode directory path)
     ↓ governs
-Agent: docs-file-manager (enforces naming when renaming files)
+Agent: docs__file-manager (enforces naming when renaming files)
 ```
 
 ### Layer 3: Development (HOW - Software Practices)
@@ -206,11 +206,11 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 
 **Agent Families**:
 
-- **Makers** - Create/update content (docs-maker, readme-maker, plan-maker)
-- **Checkers** - Validate quality (docs-checker, repo-rules-checker, plan-checker)
-- **Fixers** - Apply validated fixes (docs-fixer, repo-rules-fixer, plan-fixer)
+- **Makers** - Create/update content (docs**maker, readme**maker, plan\_\_maker)
+- **Checkers** - Validate quality (docs**checker, wow**rules-checker, plan\_\_checker)
+- **Fixers** - Apply validated fixes (docs**fixer, wow**rules-fixer, plan\_\_fixer)
 - **Navigation** - Manage structure (ayokoding-web-navigation-maker, ayokoding-web-structure-maker)
-- **Operations** - Deploy and manage (ayokoding-web-deployer, docs-file-manager)
+- **Operations** - Deploy and manage (ayokoding-web-deployer, docs\_\_file-manager)
 
 **Characteristics**:
 
@@ -224,8 +224,8 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 ```
 Convention: Color Accessibility Convention
     ↓ implemented by
-Agent: docs-checker (validates diagram colors against palette)
-Agent: docs-fixer (applies color corrections)
+Agent: docs__checker (validates diagram colors against palette)
+Agent: docs__fixer (applies color corrections)
     ↓ orchestrated by
 Workflow: Maker-Checker-Fixer (Layer 5)
 ```
@@ -288,13 +288,13 @@ Maker-Checker-Fixer Workflow:
 
 **Layer 4 - Agents**:
 
-- **docs-checker**: Validates diagram colors against palette
-- **docs-fixer**: Applies color corrections to non-compliant diagrams
-- **agent-maker**: Validates new agents use accessible colors in frontmatter
+- **docs\_\_checker**: Validates diagram colors against palette
+- **docs\_\_fixer**: Applies color corrections to non-compliant diagrams
+- **agent\_\_maker**: Validates new agents use accessible colors in frontmatter
 
 **Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/ex-wf__maker-checker-fixer.md)
 
-- Orchestrates: docs-maker → docs-checker → docs-fixer
+- Orchestrates: docs**maker → docs**checker → docs\_\_fixer
 - Ensures: All diagrams use accessible colors through automated validation and fixing
 
 ### Example 2: Explicit Configuration
@@ -319,13 +319,13 @@ Maker-Checker-Fixer Workflow:
 
 **Layer 4 - Agents**:
 
-- **agent-maker**: Validates new agents have explicit tools field
-- **repo-rules-checker**: Audits agents for missing tool declarations
-- **docs-file-manager**: Enforces naming convention when renaming files
+- **agent\_\_maker**: Validates new agents have explicit tools field
+- **wow\_\_rules-checker**: Audits agents for missing tool declarations
+- **docs\_\_file-manager**: Enforces naming convention when renaming files
 
 **Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/ex-wf__repo-rules-check-fix.md)
 
-- Orchestrates: repo-rules-checker → repo-rules-fixer
+- Orchestrates: wow**rules-checker → wow**rules-fixer
 - Ensures: All agents maintain explicit tool permissions
 
 ### Example 3: Automation for Consistency
@@ -350,10 +350,10 @@ Maker-Checker-Fixer Workflow:
 
 **Layer 4 - Agents**:
 
-- **docs-checker**: Automated content quality validation
+- **docs\_\_checker**: Automated content quality validation
 - **ayokoding-web-general-checker**: Automated general Hugo content validation
 - **ayokoding-web-by-example-checker**: Automated by-example tutorial validation
-- **plan-checker**: Automated plan completeness validation
+- **plan\_\_checker**: Automated plan completeness validation
 
 **Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ex-wf__ayokoding-check-fix.md)
 
@@ -380,7 +380,7 @@ Maker-Checker-Fixer Workflow:
 2. Create document in appropriate directory
 3. Add traceability sections (Principles/Conventions Implemented/Respected)
 4. Update index files
-5. Use repo-rules-maker to propagate changes
+5. Use wow\_\_rules-maker to propagate changes
 
 ### When Making Changes
 
@@ -389,15 +389,15 @@ Maker-Checker-Fixer Workflow:
 1. **Start at the appropriate layer** - Don't modify Vision unless mission changes
 2. **Check dependencies** - What layers depend on this change?
 3. **Update traceability** - Ensure all references are updated
-4. **Propagate changes** - Use repo-rules-maker to update CLAUDE.md, indices, agents
-5. **Validate** - Use repo-rules-checker to verify consistency
+4. **Propagate changes** - Use wow\_\_rules-maker to update CLAUDE.md, indices, agents
+5. **Validate** - Use wow\_\_rules-checker to verify consistency
 
 **Example**: Adding a new principle
 
 1. Create principle document in `docs/explanation/principles/`
 2. Add "Vision Supported" section showing how it serves the vision
 3. Update `docs/explanation/principles/README.md` index
-4. Use repo-rules-maker to propagate to CLAUDE.md
+4. Use wow\_\_rules-maker to propagate to CLAUDE.md
 5. Create conventions/practices that implement the principle
 6. Create/update agents to enforce the principle
 
@@ -456,13 +456,13 @@ When changing a layer, all lower layers may need updates:
 - **Practice change** → May require agent and workflow updates
 - **Agent change** → May require workflow updates
 
-Use **repo-rules-maker** to propagate changes systematically.
+Use **wow\_\_rules-maker** to propagate changes systematically.
 
 ## 🔍 Verification and Validation
 
 ### Layer Alignment Checks
 
-**repo-rules-checker** validates:
+**wow\_\_rules-checker** validates:
 
 1. All conventions reference principles
 2. All practices reference both principles and conventions

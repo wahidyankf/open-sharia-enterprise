@@ -177,7 +177,7 @@ Consistent validation, centralized rules, single source of truth
 **Tasks:**
 
 - [ ] Analyze repo-rules-checker for all validation rules
-- [ ] Extract 10-15 policies from repo-rules-checker.md:
+- [ ] Extract 10-15 policies from wow\_\_rules-checker.md:
   - `frontmatter__structure` - Required YAML fields
   - `frontmatter__indentation` - 2-space indentation
   - `file-naming__prefix-pattern` - Prefix encoding
@@ -603,7 +603,7 @@ Finalize architecture and enable future scaling
 
 **4. Agent Template Updates**
 
-- Update agent-maker.md to generate policy-aware agents
+- Update agent\_\_maker.md to generate policy-aware agents
 - Add policy consumption examples to AI Agents Convention
 - Template includes PolicyEngine import and initialization
 
@@ -1015,16 +1015,16 @@ Phase 5 (consolidation)
 
 ### Phase 1
 
-- `.claude/agents/repo-rules-checker.md` (MODIFY: 953→400 lines)
-- `.claude/agents/repo-rules-maker.md` (MODIFY: 851→350 lines)
-- `.claude/agents/repo-rules-fixer.md` (MODIFY: 510→250 lines)
+- `.claude/agents/wow__rules-checker.md` (MODIFY: 953→400 lines)
+- `.claude/agents/wow__rules-maker.md` (MODIFY: 851→350 lines)
+- `.claude/agents/wow__rules-fixer.md` (MODIFY: 510→250 lines)
 - `CLAUDE.md` (MODIFY)
 - 10+ convention files (MODIFY: add policy YAML)
 
 ### Phase 2
 
-- `.claude/agents/docs-checker.md` (MODIFY)
-- `.claude/agents/docs-fixer.md` (MODIFY)
+- `.claude/agents/docs__checker.md` (MODIFY)
+- `.claude/agents/docs__fixer.md` (MODIFY)
 - 5+ convention files (MODIFY: add policy YAML)
 
 ### Phase 3
@@ -1040,28 +1040,28 @@ Phase 5 (consolidation)
 
 **readme family:**
 
-- `.claude/agents/readme-checker.md` (MODIFY)
-- `.claude/agents/readme-fixer.md` (MODIFY)
-- `.claude/agents/readme-maker.md` (MODIFY)
+- `.claude/agents/readme__checker.md` (MODIFY)
+- `.claude/agents/readme__fixer.md` (MODIFY)
+- `.claude/agents/readme__maker.md` (MODIFY)
 
 **plan family:**
 
-- `.claude/agents/plan-checker.md` (MODIFY)
-- `.claude/agents/plan-fixer.md` (MODIFY)
-- `.claude/agents/plan-maker.md` (MODIFY)
-- `.claude/agents/plan-executor.md` (MODIFY)
+- `.claude/agents/plan__checker.md` (MODIFY)
+- `.claude/agents/plan__fixer.md` (MODIFY)
+- `.claude/agents/plan__maker.md` (MODIFY)
+- `.claude/agents/plan__executor.md` (MODIFY)
 
 **docs-tutorial family:**
 
-- `.claude/agents/docs-tutorial-checker.md` (MODIFY)
-- `.claude/agents/docs-tutorial-fixer.md` (MODIFY)
-- `.claude/agents/docs-tutorial-maker.md` (MODIFY)
+- `.claude/agents/docs__tutorial-checker.md` (MODIFY)
+- `.claude/agents/docs__tutorial-fixer.md` (MODIFY)
+- `.claude/agents/docs__tutorial-maker.md` (MODIFY)
 
 **workflow family:**
 
-- `.claude/agents/workflow-checker.md` (MODIFY)
-- `.claude/agents/workflow-fixer.md` (MODIFY)
-- `.claude/agents/workflow-maker.md` (MODIFY)
+- `.claude/agents/wow__workflow-checker.md` (MODIFY)
+- `.claude/agents/wow__workflow-fixer.md` (MODIFY)
+- `.claude/agents/wow__workflow-maker.md` (MODIFY)
 - `docs/explanation/workflows/*.md` (SOURCE: workflow definitions that will have embedded policies)
 
 **Convention files:**
@@ -1073,6 +1073,6 @@ Phase 5 (consolidation)
 - `policies/README.md` (NEW - documentation index)
 - `.claude/agents/policy-coverage-analyzer.md` (NEW)
 - `apps/governance-cli/cmd/policy.go` (ENHANCE - add coverage, docs commands)
-- `.claude/agents/agent-maker.md` (MODIFY)
+- `.claude/agents/agent__maker.md` (MODIFY)
 - `docs/explanation/ex__repository-governance-architecture.md` (MODIFY)
 - `CLAUDE.md` (MODIFY)

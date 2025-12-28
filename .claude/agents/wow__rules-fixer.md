@@ -1,5 +1,5 @@
 ---
-name: repo-rules-fixer
+name: wow__rules-fixer
 description: Applies validated fixes from repo-rules-checker audit reports. Re-validates findings before applying changes to prevent false positives. Use after reviewing repo-rules-checker output.
 tools: Read, Glob, Grep, Bash
 model: sonnet
@@ -390,7 +390,7 @@ Create comprehensive report in `generated-reports/`:
   ```
 ````
 
-**`.claude/agents/hugo-developer.md` - Frontmatter comment**
+**`.claude/agents/swe__hugo__developer.md` - Frontmatter comment**
 
 - **Checker finding:** Agent frontmatter contains YAML comment
 - **Re-validation:** No # found in frontmatter (confirmed clean)
@@ -587,8 +587,8 @@ Always provide:
 
 **Related Agents:**
 
-- [repo-rules-checker.md](./repo-rules-checker.md) - Generates audit reports that this agent processes
-- [repo-rules-maker.md](./repo-rules-maker.md) - Propagates rule changes (different purpose)
+- [wow__rules-checker.md](./wow__rules-checker.md) - Generates audit reports that this agent processes
+- [wow__rules-maker.md](./wow__rules-maker.md) - Propagates rule changes (different purpose)
 
 **Related Conventions:**
 

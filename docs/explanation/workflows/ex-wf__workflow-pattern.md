@@ -169,14 +169,14 @@ Steps execute one after another. Later steps can reference outputs from earlier 
 ```markdown
 ### 1. Build Project (Sequential)
 
-**Agent**: `hugo-developer`
+**Agent**: `swe__hugo__developer`
 
 - **Args**: `action: build, project: ayokoding-web`
 - **Output**: `{build-artifacts}`
 
 ### 2. Run Tests (Sequential)
 
-**Agent**: `plan-execution-checker`
+**Agent**: `plan__execution-checker`
 
 - **Args**: `target: {step1.outputs.build-artifacts}`
 - **Depends on**: Step 1 completion
@@ -191,12 +191,12 @@ Steps execute simultaneously for efficiency.
 
 Run all validators concurrently:
 
-**Agent**: `docs-checker`
+**Agent**: `docs__checker`
 
 - **Args**: `scope: all`
 - **Output**: `{docs-report}`
 
-**Agent**: `docs-tutorial-checker`
+**Agent**: `docs__tutorial-checker`
 
 - **Args**: `scope: all`
 - **Output**: `{tutorial-report}`
@@ -216,7 +216,7 @@ Steps execute only if conditions are met.
 ```markdown
 ### 3. Apply Fixes (Conditional)
 
-**Agent**: `docs-fixer`
+**Agent**: `docs__fixer`
 
 - **Args**: `report: {step1.outputs.docs-report}`
 - **Condition**: `{step2.user-approved} == true`
@@ -259,7 +259,7 @@ inputs:
 ```
 
 ```markdown
-**Agent**: `docs-checker`
+**Agent**: `docs__checker`
 
 - **Args**: `scope: {input.scope}`
 ```

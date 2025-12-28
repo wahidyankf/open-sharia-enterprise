@@ -1,5 +1,5 @@
 ---
-name: workflow-checker
+name: wow__workflow-checker
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Validates workflow definition files in docs/explanation/workflows/ against Workflow Pattern Convention and quality standards. Generates audit reports in generated-reports/.
@@ -171,7 +171,7 @@ For each agent referenced:
 
 - [ ] Agent file exists: `.claude/agents/{agent-name}.md`
 - [ ] Agent name is valid (lowercase, hyphen-separated, no `.md` extension in reference)
-- [ ] Agent name matches file (e.g., `docs-checker` → `.claude/agents/docs-checker.md`)
+- [ ] Agent name matches file (e.g., `docs-checker` → `.claude/agents/docs__checker.md`)
 - [ ] No references to non-existent agents
 - [ ] No references to deprecated agents
 
@@ -469,7 +469,7 @@ fi
 
 **Related Agents:**
 
-- `repo-rules-checker.md` - Example comprehensive checker agent (similar validation patterns)
-- `docs-checker.md` - Example content checker agent
-- `plan-checker.md` - Example structural checker agent
-- `workflow-maker.md` - Creates workflow files that this agent validates
+- `wow__rules-checker.md` - Example comprehensive checker agent (similar validation patterns)
+- `docs__checker.md` - Example content checker agent
+- `plan__checker.md` - Example structural checker agent
+- `wow__workflow-maker.md` - Creates workflow files that this agent validates

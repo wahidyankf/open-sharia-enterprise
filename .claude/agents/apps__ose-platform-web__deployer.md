@@ -346,7 +346,7 @@ If deployment causes issues:
 
 **Related Agents:**
 
-- `.claude/agents/plan-executor.md` - Implements plans that may include ose-platform-web changes
+- `.claude/agents/plan__executor.md` - Implements plans that may include ose-platform-web changes
 
 ---
 

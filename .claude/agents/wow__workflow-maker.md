@@ -1,5 +1,5 @@
 ---
-name: workflow-maker
+name: wow__workflow-maker
 description: Expert at creating and updating workflow definition files in docs/explanation/workflows/ following Workflow Pattern Convention. Use when defining multi-agent orchestration processes with clear termination criteria.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
@@ -306,7 +306,7 @@ Before adding an agent reference to a workflow:
 
 ```
 Agent reference: `docs-checker`
-Check: glob .claude/agents/docs-checker.md exists
+Check: glob .claude/agents/docs__checker.md exists
 Check: agent has Read, Glob, Grep, Write, Bash tools
 Check: agent color is green (checker role)
 Result: Valid reference
@@ -519,6 +519,6 @@ Deploy only if validation passes:
 
 **Related Agents:**
 
-- `plan-maker.md` - Creates project plans (similar structured document creation)
-- `docs-maker.md` - Creates documentation (similar content creation patterns)
-- `repo-rules-maker.md` - Propagates rules across files (similar multi-file orchestration)
+- `plan__maker.md` - Creates project plans (similar structured document creation)
+- `docs__maker.md` - Creates documentation (similar content creation patterns)
+- `wow__rules-maker.md` - Propagates rules across files (similar multi-file orchestration)

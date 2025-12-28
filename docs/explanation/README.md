@@ -61,14 +61,14 @@ graph TD
    - File naming, linking, content quality implementing principles
    - Applies to: docs/, Hugo content, plans/, README files
    - **Role**: Documentation rules layer - implements principles in concrete WHAT standards
-   - **Implemented by**: AI agents (docs-maker, docs-checker, etc.)
+   - **Implemented by**: AI agents (docs**maker, docs**checker, etc.)
 
 3. **[Development](./development/README.md)** (HOW) - How we **develop software and systems**
    - Software development practices implementing principles
    - Build processes, tooling, workflows implementing principles
    - Applies to: source code, Hugo themes/layouts, build systems, AI agents
    - **Role**: Software practices layer - implements principles in concrete HOW standards
-   - **Implemented by**: AI agents (hugo-developer, plan-executor, etc.) and automation (git hooks, build tools)
+   - **Implemented by**: AI agents (swe**hugo**developer, plan\_\_executor, etc.) and automation (git hooks, build tools)
 
 4. **AI Agents** (WHO) - Automated implementers in `.claude/agents/`
    - Enforce conventions from layer 2 (documentation rules)

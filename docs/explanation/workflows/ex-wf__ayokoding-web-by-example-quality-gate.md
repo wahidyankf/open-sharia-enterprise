@@ -115,9 +115,9 @@ graph TB
 - Focus on educational value and code quality
 - Don't worry about perfect compliance (checker will catch issues)
 
-**Option B: AI-assisted creation** (docs-tutorial-maker or future by-example-maker)
+**Option B: AI-assisted creation** (docs\_\_tutorial-maker or future by-example-maker)
 
-- Use docs-tutorial-maker with by-example specifications
+- Use docs\_\_tutorial-maker with by-example specifications
 - Generate initial examples based on language/framework
 - Human review and refinement
 
@@ -770,6 +770,6 @@ This workflow is part of the **Tutorial Quality Family**:
 - **[By-Example Tutorial Convention](../conventions/ex-co__by-example-tutorial.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md)**: Confidence assessment
-- **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps__ayokoding-web__by-example-checker.md)**: Validation agent
-- **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps__ayokoding-web__by-example-fixer.md)**: Fixing agent
-- **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps__ayokoding-web__by-example-maker.md)**: Content creation agent
+- **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps**ayokoding-web**by-example-checker.md)**: Validation agent
+- **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps**ayokoding-web**by-example-fixer.md)**: Fixing agent
+- **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps**ayokoding-web**by-example-maker.md)**: Content creation agent

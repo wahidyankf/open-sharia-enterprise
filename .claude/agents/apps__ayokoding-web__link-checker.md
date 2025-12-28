@@ -948,7 +948,7 @@ Before starting work, familiarize yourself with:
 
 **Related Agents:**
 
-- `docs-link-general-checker.md` - Link checker for docs/ directory (different conventions)
+- `docs__link-general-checker.md` - Link checker for docs/ directory (different conventions)
 - `ayokoding-web-general-checker.md` - Content quality validator for ayokoding-web
 - `ayokoding-web-general-maker.md` - Content creator for ayokoding-web
 

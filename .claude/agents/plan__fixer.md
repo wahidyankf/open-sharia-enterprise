@@ -1,5 +1,5 @@
 ---
-name: plan-fixer
+name: plan__fixer
 description: Applies validated fixes from plan-checker audit reports. Re-validates plan completeness and accuracy findings before applying changes. Use after reviewing plan-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
@@ -743,9 +743,9 @@ Always provide:
 
 **Related Agents:**
 
-- [plan-checker.md](./plan-checker.md) - Generates validation reports that this agent processes
-- [plan-maker.md](./plan-maker.md) - Creates plans (different purpose)
-- [plan-executor.md](./plan-executor.md) - Executes plans (different purpose)
+- [plan\_\_checker.md](./plan__checker.md) - Generates validation reports that this agent processes
+- [plan\_\_maker.md](./plan__maker.md) - Creates plans (different purpose)
+- [plan\_\_executor.md](./plan__executor.md) - Executes plans (different purpose)
 
 **Related Conventions:**
 

@@ -1,5 +1,5 @@
 ---
-name: repo-rules-checker
+name: wow__rules-checker
 description: Validates consistency between principles, conventions, development practices, agents, and CLAUDE.md. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -23,7 +23,7 @@ You are a meticulous consistency validator that ensures all project documentatio
 
 **CRITICAL**: This agent **does NOT edit the files being audited**. It validates and reports issues but does NOT apply fixes or make edits to checked files. It DOES write audit report files to `generated-reports/`.
 
-**To apply fixes**, use the [repo-rules-fixer](./repo-rules-fixer.md) agent after reviewing this agent's audit report.
+**To apply fixes**, use the [repo-rules-fixer](./wow__rules-fixer.md) agent after reviewing this agent's audit report.
 
 **Criticality Levels**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md). Criticality indicates importance/urgency, helping users prioritize fixes.
 
@@ -44,7 +44,7 @@ This agent produces TWO outputs:
    - Link to full audit report file
    - Purpose: Immediate visibility without conversation clutter
 
-**Workflow**: repo-rules-checker (detect) → User review → [repo-rules-fixer](./repo-rules-fixer.md) (apply validated fixes)
+**Workflow**: repo-rules-checker (detect) → User review → [repo-rules-fixer](./wow__rules-fixer.md) (apply validated fixes)
 
 **File Naming Convention**: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
@@ -300,7 +300,7 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 ### AI Agent Convention Compliance
 
 - [ ] All agent files in `.claude/agents/` have required frontmatter (name, description, tools, model, color)
-- [ ] Agent `name` field MUST exactly match filename (without .md extension) - Example: `agent-maker.md` → `name: agent-maker`
+- [ ] Agent `name` field MUST exactly match filename (without .md extension) - Example: `agent__maker.md` → `name: agent-maker`
 - [ ] Agent `description` provides clear usage guidance ("Use when...")
 - [ ] Agent `tools` field explicitly lists allowed tools only
 - [ ] Agent `model` field uses either `inherit` or specific model with justification
@@ -408,10 +408,10 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 
 - [ ] **Convention clarity**: ex-co\_\_indentation.md clearly documents space indentation for bullets
 - [ ] **CLAUDE.md clarity**: Documentation Organization section explicitly states markdown structure requirements
-- [ ] **Agent clarity**: docs-maker.md emphasizes it creates traditional markdown
-- [ ] **Agent clarity**: docs-tutorial-maker.md emphasizes it creates traditional markdown
-- [ ] **Agent validation**: docs-checker.md validates markdown structure
-- [ ] **Agent validation**: repo-rules-checker.md (this file) validates markdown structure
+- [ ] **Agent clarity**: docs\_\_maker.md emphasizes it creates traditional markdown
+- [ ] **Agent clarity**: docs\_\_tutorial-maker.md emphasizes it creates traditional markdown
+- [ ] **Agent validation**: docs\_\_checker.md validates markdown structure
+- [ ] **Agent validation**: wow\_\_rules-checker.md (this file) validates markdown structure
 
 ### Emoji Usage Convention Compliance
 
@@ -437,9 +437,9 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] CLAUDE.md "Implications for Agents" section accurately reflects TBD workflow
 - [ ] Plans in `plans/` folders correctly document git workflow (default: commit to `main`)
 - [ ] Plans only specify branches when justified per TBD convention
-- [ ] plan-maker.md agent correctly instructs NOT to specify branches by default
-- [ ] plan-executor.md agent correctly defaults to `main` branch
-- [ ] plan-executor.md agent correctly checks delivery.md for branch specification
+- [ ] plan\_\_maker.md agent correctly instructs NOT to specify branches by default
+- [ ] plan\_\_executor.md agent correctly defaults to `main` branch
+- [ ] plan\_\_executor.md agent correctly checks delivery.md for branch specification
 - [ ] Agents reference TBD convention where appropriate
 - [ ] No documentation contradicts TBD principles (e.g., suggesting long-lived feature branches)
 - [ ] Feature flag usage documented as primary mechanism for hiding incomplete work
@@ -466,12 +466,12 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Decision tree or guidance for choosing tutorial type included
 - [ ] CLAUDE.md references tutorial naming convention in Documentation Standards section
 - [ ] CLAUDE.md summarizes seven tutorial types with coverage percentages (NOT time estimates)
-- [ ] docs-tutorial-maker.md references tutorial naming convention
-- [ ] docs-tutorial-maker.md includes tutorial type selection guidance in writing process
-- [ ] docs-tutorial-maker.md provides naming patterns for each tutorial type
-- [ ] docs-tutorial-checker.md references tutorial naming convention
-- [ ] docs-tutorial-checker.md validates tutorial type compliance (title, coverage, time, depth)
-- [ ] docs-tutorial-checker.md includes tutorial type validation in report template
+- [ ] docs\_\_tutorial-maker.md references tutorial naming convention
+- [ ] docs\_\_tutorial-maker.md includes tutorial type selection guidance in writing process
+- [ ] docs\_\_tutorial-maker.md provides naming patterns for each tutorial type
+- [ ] docs\_\_tutorial-checker.md references tutorial naming convention
+- [ ] docs\_\_tutorial-checker.md validates tutorial type compliance (title, coverage, time, depth)
+- [ ] docs\_\_tutorial-checker.md includes tutorial type validation in report template
 - [ ] Conventions README.md lists tutorial naming convention
 - [ ] All tutorial agents (maker, checker) updated to enforce naming convention
 
@@ -480,7 +480,7 @@ Validate against [Color Accessibility Convention](../docs/explanation/convention
 - [ ] Identify conventions/rules duplicated across CLAUDE.md, agents, and convention files
 - [ ] Check for extractable duplications (>50% overlap between files)
 - [ ] Check for condensable duplications (repetitive content within files)
-- [ ] Analyze this file (repo-rules-checker.md) for its own duplications (self-audit: the checker validates itself)
+- [ ] Analyze this file (wow\_\_rules-checker.md) for its own duplications (self-audit: the checker validates itself)
 - [ ] Calculate estimated token savings for each duplication found
 - [ ] Suggest whether to extract to new file or condense existing content
 
@@ -1132,26 +1132,26 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 ### Agent Definitions
 
 - `.claude/agents/README.md`
-- `.claude/agents/agent-maker.md`
+- `.claude/agents/agent__maker.md`
 - `.claude/agents/ayokoding-web-deployer.md`
 - `.claude/agents/ayokoding-web-general-maker.md`
 - `.claude/agents/ayokoding-web-general-checker.md`
 - `.claude/agents/ose-platform-web-deployer.md`
 - `.claude/agents/ose-platform-web-content-maker.md`
 - `.claude/agents/ose-platform-web-content-checker.md`
-- `.claude/agents/docs-checker.md`
-- `.claude/agents/docs-file-manager.md`
-- `.claude/agents/docs-link-general-checker.md`
-- `.claude/agents/docs-maker.md`
-- `.claude/agents/docs-tutorial-checker.md`
-- `.claude/agents/docs-tutorial-maker.md`
-- `.claude/agents/hugo-developer.md`
-- `.claude/agents/plan-checker.md`
-- `.claude/agents/plan-execution-checker.md`
-- `.claude/agents/plan-executor.md`
-- `.claude/agents/plan-maker.md`
-- `.claude/agents/repo-rules-checker.md` (this file)
-- `.claude/agents/repo-rules-maker.md`
+- `.claude/agents/docs__checker.md`
+- `.claude/agents/docs__file-manager.md`
+- `.claude/agents/docs__link-general-checker.md`
+- `.claude/agents/docs__maker.md`
+- `.claude/agents/docs__tutorial-checker.md`
+- `.claude/agents/docs__tutorial-maker.md`
+- `.claude/agents/swe__hugo__developer.md`
+- `.claude/agents/plan__checker.md`
+- `.claude/agents/plan__execution-checker.md`
+- `.claude/agents/plan__executor.md`
+- `.claude/agents/plan__maker.md`
+- `.claude/agents/wow__rules-checker.md` (this file)
+- `.claude/agents/wow__rules-maker.md`
 
 ### Core Principles
 
@@ -1269,5 +1269,5 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 
 **Related Agents:**
 
-- `docs-maker.md` - Creates and edits documentation (this agent validates its output)
-- `repo-rules-maker.md` - Makes rule changes effective (this agent validates the results)
+- `docs__maker.md` - Creates and edits documentation (this agent validates its output)
+- `wow__rules-maker.md` - Makes rule changes effective (this agent validates the results)

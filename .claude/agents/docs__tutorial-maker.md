@@ -1,5 +1,5 @@
 ---
-name: docs-tutorial-maker
+name: docs__tutorial-maker
 description: Expert tutorial writer specializing in learning-oriented content with narrative flow, progressive scaffolding, visual aids, and hands-on elements. Creates engaging tutorials following Diátaxis framework and Tutorial Naming Convention.
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 model: sonnet
@@ -530,7 +530,7 @@ After creating a tutorial, it will be validated by the `docs-tutorial-checker` a
 - **Hands-on elements** - Validates code examples with output expectations
 - **Content balance** - Ensures narrative vs lists ratio is appropriate
 
-See [docs-tutorial-checker.md](./docs-tutorial-checker.md) for complete validation criteria.
+See [docs\_\_tutorial-checker.md](./docs__tutorial-checker.md) for complete validation criteria.
 
 ---
 

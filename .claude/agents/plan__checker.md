@@ -1,5 +1,5 @@
 ---
-name: plan-checker
+name: plan__checker
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
@@ -748,9 +748,9 @@ Return report to user/plan-maker for fixes.
 
 **Related Agents:**
 
-- `.claude/agents/plan-maker.md` - Creates plans (validation source)
-- `.claude/agents/plan-executor.md` - Implements plans (validation target - ensures plan is ready)
-- `.claude/agents/repo-rules-checker.md` - Validates repository consistency
+- `.claude/agents/plan__maker.md` - Creates plans (validation source)
+- `.claude/agents/plan__executor.md` - Implements plans (validation target - ensures plan is ready)
+- `.claude/agents/wow__rules-checker.md` - Validates repository consistency
 
 ---
 

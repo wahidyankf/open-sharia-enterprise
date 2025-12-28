@@ -42,7 +42,7 @@ This convention implements the following core principles:
 - **Tutorial content structure** - Covered in [Tutorials Convention](./ex-co__tutorials.md)
 - **General file naming** - Non-tutorial files covered in [File Naming Convention](./ex-co__file-naming-convention.md)
 - **Hugo navigation** - Weight and ordering in Hugo sites
-- **Tutorial validation** - Covered by docs-tutorial-checker agent
+- **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
 
 ## 🎯 Purpose
 

@@ -692,7 +692,7 @@ Always provide:
 
 - [ayokoding-web-general-checker.md](./ayokoding-web-general-checker.md) - Generates audit reports that this agent processes
 - [ayokoding-web-general-maker.md](./ayokoding-web-general-maker.md) - Creates ayokoding-web content (different purpose)
-- [repo-rules-fixer.md](./repo-rules-fixer.md) - Structural template for this agent
+- [wow\_\_rules-fixer.md](./wow__rules-fixer.md) - Structural template for this agent
 
 **Related Conventions:**
 

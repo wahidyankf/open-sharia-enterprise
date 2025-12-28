@@ -182,7 +182,7 @@ Is this content unique and valuable?
 **Process:**
 
 1. Identify the convention topic (e.g., "acceptance criteria format")
-2. Use `docs-maker` to create new convention doc in `docs/explanation/conventions/` or `docs/explanation/development/`
+2. Use `docs__maker` to create new convention doc in `docs/explanation/conventions/` or `docs/explanation/development/`
 3. Move ALL relevant content to new convention (comprehensive detail)
 4. Replace original content with 2-5 line summary + link
 5. Update appropriate index (`docs/explanation/conventions/README.md` or `docs/explanation/development/README.md`)
@@ -190,10 +190,10 @@ Is this content unique and valuable?
 
 **Example:**
 
-- **Before:** Gherkin acceptance criteria details in `plan-maker.md` (500 lines)
+- **Before:** Gherkin acceptance criteria details in `plan__maker.md` (500 lines)
 - **After:**
   - New file: `docs/explanation/development/ex-de__acceptance-criteria.md` (comprehensive)
-  - `plan-maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
+  - `plan__maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
   - Savings: 497 lines
 
 ### Option B: Merge into Existing Convention
@@ -211,11 +211,11 @@ Is this content unique and valuable?
 
 **Example:**
 
-- **Before:** TBD workflow details duplicated in `plan-maker.md` and `plan-executor.md`
+- **Before:** TBD workflow details duplicated in `plan__maker.md` and `plan__executor.md`
 - **After:**
   - Updated: `docs/explanation/development/ex-de__trunk-based-development.md` (comprehensive)
-  - `plan-maker.md`: "Follow TBD workflow. See [TBD Convention](link)" (2 lines)
-  - `plan-executor.md`: "Default to main branch per TBD. See [TBD Convention](link)" (2 lines)
+  - `plan__maker.md`: "Follow TBD workflow. See [TBD Convention](link)" (2 lines)
+  - `plan__executor.md`: "Default to main branch per TBD. See [TBD Convention](link)" (2 lines)
   - Savings: Duplication eliminated
 
 ### Option C: Extract Common Pattern to Shared Convention
@@ -234,7 +234,7 @@ Is this content unique and valuable?
 
 **Example - Content Format Standard:**
 
-- **Before:** Diagram standards duplicated in `docs-maker.md`, `plan-maker.md`
+- **Before:** Diagram standards duplicated in `docs__maker.md`, `plan__maker.md`
 - **After:**
   - New file: `docs/explanation/conventions/ex-co__diagrams.md` (comprehensive)
   - All agents: "Use Mermaid diagrams. See [Diagram Convention](link)" (2 lines each)
@@ -284,10 +284,10 @@ Is this content unique and valuable?
 
 **Example:**
 
-- **Before:** Commit granularity examples in `plan-executor.md`
+- **Before:** Commit granularity examples in `plan__executor.md`
 - **After:**
   - Updated: `docs/explanation/development/ex-de__commit-messages.md` (comprehensive)
-  - `plan-executor.md`: "Split commits logically. See [Commit Messages Convention](link)" (2 lines)
+  - `plan__executor.md`: "Split commits logically. See [Commit Messages Convention](link)" (2 lines)
   - Savings: 100+ lines
 
 ## Offload Process Workflow
@@ -310,7 +310,7 @@ Follow this systematic process when offloading content:
 
 ### Step 3: Create or Update Convention Document
 
-- Use `docs-maker` for new files
+- Use `docs__maker` for new files
 - Use `Edit` tool for updating existing
 - Move ALL relevant content (be comprehensive)
 - Add examples, rationale, anti-patterns
@@ -461,7 +461,7 @@ When creating documentation files:
 3. Use pattern: [prefix]\_\_[content-identifier].md
 ```
 
-**Why keep:** This is agent-specific application (how docs-maker uses the convention), not the convention itself.
+**Why keep:** This is agent-specific application (how docs\_\_maker uses the convention), not the convention itself.
 
 ## Understanding the Docs Folder Structure
 
@@ -553,9 +553,9 @@ Problem: Convention polluted with implementation details
 
 ## Agent Usage
 
-### repo-rules-maker
+### wow\_\_rules-maker
 
-When condensing files or extracting duplications, `repo-rules-maker` must:
+When condensing files or extracting duplications, `wow__rules-maker` must:
 
 1. Follow the offload decision tree
 2. Choose appropriate option (A/B/C/D)
@@ -563,9 +563,9 @@ When condensing files or extracting duplications, `repo-rules-maker` must:
 4. Complete all verification checklist items
 5. Confirm zero content loss
 
-### repo-rules-checker
+### wow\_\_rules-checker
 
-When validating condensation, `repo-rules-checker` must verify:
+When validating condensation, `wow__rules-checker` must verify:
 
 - Content was MOVED (not deleted)
 - Target convention/development doc exists and is indexed
@@ -573,9 +573,9 @@ When validating condensation, `repo-rules-checker` must verify:
 - Correct folder choice (conventions/ vs development/)
 - No unique content lost
 
-### docs-maker
+### docs\_\_maker
 
-When creating new convention or development documents during offload, `docs-maker` must:
+When creating new convention or development documents during offload, `docs__maker` must:
 
 - Use correct prefix (ex-co** or ex-de**)
 - Include comprehensive content from source

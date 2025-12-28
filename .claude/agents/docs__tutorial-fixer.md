@@ -1,5 +1,5 @@
 ---
-name: docs-tutorial-fixer
+name: docs__tutorial-fixer
 description: Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes. Use after reviewing docs-tutorial-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
@@ -821,9 +821,9 @@ Always provide:
 
 **Related Agents:**
 
-- [docs-tutorial-checker.md](./docs-tutorial-checker.md) - Generates audit reports that this agent processes
-- [docs-tutorial-maker.md](./docs-tutorial-maker.md) - Creates tutorials (different purpose)
-- [repo-rules-fixer.md](./repo-rules-fixer.md) - Similar fixer pattern for repository rules
+- [docs\_\_tutorial-checker.md](./docs__tutorial-checker.md) - Generates audit reports that this agent processes
+- [docs\_\_tutorial-maker.md](./docs__tutorial-maker.md) - Creates tutorials (different purpose)
+- [wow\_\_rules-fixer.md](./wow__rules-fixer.md) - Similar fixer pattern for repository rules
 
 **Related Conventions:**
 

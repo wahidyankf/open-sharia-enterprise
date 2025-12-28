@@ -379,7 +379,7 @@ graph TD
 **Location**: `.claude/agents/README.md`
 
 ```markdown
-### 🟦 docs-maker.md
+### 🟦 docs\_\_maker.md
 
 Expert documentation writer specializing in Obsidian-optimized markdown.
 ```
