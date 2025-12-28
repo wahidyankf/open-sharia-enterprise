@@ -414,19 +414,19 @@ Expert at developing Hugo sites (layouts, themes, assets, configuration) for ayo
 
 Expert content creator specializing in weekly LinkedIn update posts. Use when generating factual, no-hype weekly summaries of Open Sharia Enterprise development progress.
 
-- **Primary Use:** Creating weekly LinkedIn update posts summarizing development progress
-- **Specialization:** Git history analysis, commit counting, before/after comparisons, factual verification, conversational personal voice, narrative continuity with previous posts
+- **Primary Use:** Creating weekly LinkedIn update posts summarizing development progress (2,800-3,000 characters)
+- **Specialization:** Git history analysis, commit counting, before/after comparisons, factual verification, conversational narrative-driven voice, themed reflection subsections (ON NAMING, ON TOOLING PHILOSOPHY, etc.), continuity with previous posts, length optimization (2,800-3,000 character target)
 - **Tools:** Read, Write, Bash, Glob, Grep
 - **Model:** Haiku (cost-effective for straightforward content creation)
 - **When to Use:**
   - Generating weekly progress updates for LinkedIn
   - Analyzing git commits to extract major themes
   - Creating factual, verifiable before/after comparisons
-  - Writing honest, no-hype summaries of work completed
-  - Maintaining consistent personal voice across posts
+  - Writing honest, no-hype summaries with conversational personal voice
+  - Maintaining consistent narrative across posts with themed reflections
   - Connecting current week's progress to previous updates
-- **Output:** Saves posts to `generated-socials/` with naming pattern `YYYY-MM-DD__linkedin__[descriptor].md`
-- **Style:** Factual, conversational personal voice ("I built...", "I added..."), no marketing speak, no platitudes, verifiable numbers only
+- **Output:** Saves posts to `generated-socials/` with naming pattern `YYYY-MM-DD__linkedin__ose-update-phase-X-week-Y.md`
+- **Content Structure:** CAPS headers with emojis (WHERE WE STARTED, WHERE WE ARE NOW, WHY THIS MATTERS with themed subsections, NEXT WEEK, LINKS), conversational tone showing thinking process and decision-making
 - **References:** Content Quality Principles, File Naming Convention
 
 ### 🟩 `docs__checker.md`
