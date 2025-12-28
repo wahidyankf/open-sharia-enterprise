@@ -58,6 +58,14 @@ This repository uses **Trunk Based Development (TBD)**. All development happens 
 
 When developing features or fixing bugs, follow the **three-stage workflow**: make it work, make it right, make it fast. Start with the simplest solution that works, refactor for quality and maintainability, then optimize only if performance measurements prove it necessary. This implements Simplicity Over Complexity and YAGNI principles. See [Implementation Workflow Convention](./docs/explanation/development/ex-de__implementation-workflow.md) for complete workflow details.
 
+## Functional Programming Principles
+
+The codebase follows functional programming principles for safer, more predictable code. **Prefer immutability** (const, spread operators, immutable methods) and **pure functions** (deterministic, no side effects). Functional Core, Imperative Shell pattern isolates side effects at boundaries. See [Functional Programming Practices](./docs/explanation/development/ex-de__functional-programming.md) for complete implementation patterns.
+
+## Reproducible Environments
+
+Development environments are reproducible through **Volta** (Node.js/npm version pinning), **package-lock.json** (deterministic dependencies), and **.env.example** (environment configuration). All contributors get identical setups. See [Reproducible Environments](./docs/explanation/development/ex-de__reproducible-environments.md) for setup details.
+
 ## Common Development Commands
 
 - `npm install` - Install dependencies
@@ -115,9 +123,9 @@ See [Repository Architecture](./docs/explanation/ex__repository-governance-archi
 **Key Documents**:
 
 - [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) - Foundational purpose
-- [Core Principles Index](./docs/explanation/principles/README.md) - 6 foundational values
-- [Conventions Index](./docs/explanation/conventions/README.md) - 23 documentation standards
-- [Development Index](./docs/explanation/development/README.md) - 12 software practices
+- [Core Principles Index](./docs/explanation/principles/README.md) - 9 foundational principles
+- [Conventions Index](./docs/explanation/conventions/README.md) - 24 documentation standards
+- [Development Index](./docs/explanation/development/README.md) - 15 software practices
 - [Agents Index](./.claude/agents/README.md) - All agents and responsibilities
 - [Workflows Index](./docs/explanation/workflows/README.md) - All orchestrated processes
 
@@ -191,7 +199,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (6 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (23 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (12 development practices).
+For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (9 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (24 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (15 development practices).
 
 ## AI Agent Standards
 

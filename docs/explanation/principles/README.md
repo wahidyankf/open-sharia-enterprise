@@ -9,7 +9,7 @@ tags:
   - philosophy
   - index
 created: 2025-12-15
-updated: 2025-12-24
+updated: 2025-12-28
 ---
 
 # Core Principles
@@ -163,6 +163,42 @@ Automate repetitive tasks to ensure consistency and reduce human error. Humans s
 - Link verification cache
 
 #### 6. [Explicit Over Implicit](./software-engineering/ex-pr-se__explicit-over-implicit.md)
+
+#### 7. [Immutability Over Mutability](./software-engineering/ex-pr-se__immutability.md)
+
+Prefer immutable data structures over mutable state. Modifications create new values instead of changing existing ones.
+
+**Key applications**:
+
+- const by default, avoid let and var
+- Spread operators for object/array updates
+- Immutable array methods (map, filter, reduce)
+- Immer library for complex nested updates
+- Object.freeze for runtime immutability
+
+#### 8. [Pure Functions Over Side Effects](./software-engineering/ex-pr-se__pure-functions.md)
+
+Prefer pure functions (deterministic, no side effects) over functions with side effects. Same inputs always produce same outputs.
+
+**Key applications**:
+
+- Business logic as pure functions
+- Functional Core, Imperative Shell pattern
+- Side effects isolated at system boundaries
+- Easy testing without mocks
+- Composable function pipelines
+
+#### 9. [Reproducibility First](./software-engineering/ex-pr-se__reproducibility.md)
+
+Development environments and builds should be reproducible from the start. Eliminate "works on my machine" problems.
+
+**Key applications**:
+
+- Volta for Node.js/npm version pinning
+- package-lock.json for deterministic installs
+- .env.example for environment configuration
+- Docker for complex service dependencies
+- Documented setup processes
 
 Choose explicit composition and configuration over magic, convenience, and hidden behavior. Code should be transparent and understandable.
 

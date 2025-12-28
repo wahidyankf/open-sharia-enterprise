@@ -1,7 +1,6 @@
 ---
 name: plan__checker
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating plans are ready for implementation by verifying completeness, checking codebase alignment, and validating technical accuracy using web verification
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
@@ -754,5 +753,4 @@ Return report to user/plan-maker for fixes.
 
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 **Remember**: You are validating plans BEFORE implementation starts. Your thorough validation prevents wasted implementation effort by catching issues early. Verify everything: check the codebase, validate externally, be skeptical. Your job is to ensure plan-executor has everything needed to succeed.
