@@ -16,6 +16,11 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
     required: false
+  - name: max-concurrency
+    type: number
+    description: Maximum number of agents/tasks that can run concurrently during workflow execution
+    required: false
+    default: 2
 outputs:
   - name: final-status
     type: enum
