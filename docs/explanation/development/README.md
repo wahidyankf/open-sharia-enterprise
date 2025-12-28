@@ -9,7 +9,7 @@ tags:
   - conventions
   - ai-agents
 created: 2025-11-23
-updated: 2025-12-24
+updated: 2025-12-28
 ---
 
 # Development
@@ -110,6 +110,8 @@ Development practices in this directory fall into several categories:
 - [Repository Validation Methodology Convention](./ex-de__repository-validation.md) - Standard validation methods and patterns for repository consistency checking. Covers frontmatter extraction (AWK pattern), validation checks (comments, fields, links, naming), best practices, and common pitfalls to avoid false positives
 - [Temporary Files Convention](./ex-de__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 - [Trunk Based Development Convention](./ex-de__trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
+- [Functional Programming Practices](./ex-de__functional-programming.md) - Guidelines for applying functional programming principles in TypeScript/JavaScript. Covers immutability patterns (const, spread operators, Immer), pure function patterns (deterministic functions, Functional Core/Imperative Shell), function composition (pipe, compose, higher-order functions), and when to use classes vs functions. Includes Islamic finance examples
+- [Reproducible Environments Convention](./ex-de__reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments. Covers runtime version management (Volta), dependency locking (package-lock.json, npm ci), environment configuration (.env.example), containerization (Docker, docker-compose), documentation, automated setup scripts, and troubleshooting common reproducibility issues
 
 ## 🔗 Related Documentation
 
