@@ -3,13 +3,13 @@ title: "Overview"
 date: 2025-12-29T11:09:00+07:00
 draft: false
 weight: 10000000
-description: "Learn n8n through 85+ annotated workflow examples covering 95% of the platform - ideal for experienced developers building production automations"
+description: "Learn n8n through 65+ annotated workflow examples covering 95% of n8n's core features - ideal for experienced developers building production automations"
 tags: ["n8n", "tutorial", "by-example", "examples", "code-first", "workflow", "automation"]
 ---
 
 ## What Is By-Example
 
-This tutorial teaches n8n through **85 heavily annotated workflow examples** that you can copy, run, and modify immediately. Unlike traditional tutorials that explain concepts before showing code, we show working workflows first and explain through inline annotations.
+This tutorial teaches n8n through **65 heavily annotated workflow examples** that you can copy, run, and modify immediately. Unlike traditional tutorials that explain concepts before showing code, we show working workflows first and explain through inline annotations.
 
 **Target audience**: Experienced developers who prefer learning through working code rather than narrative explanations. You should be comfortable with APIs, JSON, and basic programming concepts.
 
@@ -65,7 +65,7 @@ Every example follows a **four-part format**:
 
 1. **Brief explanation** (2-3 sentences) - What, why, when
 2. **Mermaid diagram** (30-50% of examples) - Visual workflow representation
-3. **Annotated workflow JSON** - Copy-paste-runnable with `-- =>` annotations
+3. **Annotated workflow JSON** - Copy-paste-runnable with `// =>` annotations
 4. **Key takeaway** (1-2 sentences) - Core insight and production guidance
 
 ### Self-Containment
@@ -80,23 +80,23 @@ Examples are **self-contained within their level**:
 
 ### Reading Annotations
 
-Workflow JSON annotations use `-- =>` notation to show data flow and state changes:
+Workflow JSON annotations use `// =>` notation to show data flow and state changes:
 
 ```json
 {
   "parameters": {
-    "url": "https://api.example.com/users" // -- => HTTP GET request to API
+    "url": "https://api.example.com/users" // => HTTP GET request to API
   },
-  "position": [250, 300] // -- => Visual position in n8n editor
+  "position": [250, 300] // => Visual position in n8n editor
 }
 ```
 
 **Key annotation patterns**:
 
-- `// -- => Output: {...}` - Shows node execution result
-- `// -- => Data transformed: {...}` - Shows data transformation
-- `// -- => Conditional: true/false` - Shows condition evaluation
-- `// -- => Error: ...` - Shows error handling
+- `// => Output: {...}` - Shows node execution result
+- `// => Data transformed: {...}` - Shows data transformation
+- `// => Conditional: true/false` - Shows condition evaluation
+- `// => Error: ...` - Shows error handling
 
 ## Tutorial Structure
 

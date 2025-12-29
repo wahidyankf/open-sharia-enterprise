@@ -3,7 +3,7 @@ title: "Advanced"
 date: 2025-12-29T11:20:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 61-85: Production deployment, performance optimization, monitoring, and advanced n8n patterns (75-95% coverage)"
+description: "Examples 61-65: Production deployment patterns, error handling, monitoring, and performance optimization (75-95% coverage)"
 tags: ["n8n", "tutorial", "by-example", "advanced", "production", "optimization"]
 ---
 
