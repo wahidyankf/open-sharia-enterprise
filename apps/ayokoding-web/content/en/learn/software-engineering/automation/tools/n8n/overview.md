@@ -1,6 +1,6 @@
 ---
 title: "Overview"
-weight: 1000
+weight: 1000000
 date: 2025-12-29T00:00:00+07:00
 draft: false
 description: "Learn n8n, an open-source workflow automation platform with visual workflow builder, 200+ integrations, and self-hosting capabilities"

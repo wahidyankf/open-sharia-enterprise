@@ -2,14 +2,14 @@
 title: "Overview"
 date: 2025-12-29T11:09:00+07:00
 draft: false
-weight: 10000000
-description: "Learn n8n through 65+ annotated workflow examples covering 95% of n8n's core features - ideal for experienced developers building production automations"
+weight: 100000001
+description: "Learn n8n through 85 annotated workflow examples covering 95% of n8n's core features - ideal for experienced developers building production automations"
 tags: ["n8n", "tutorial", "by-example", "examples", "code-first", "workflow", "automation"]
 ---
 
 ## What Is By-Example
 
-This tutorial teaches n8n through **65 heavily annotated workflow examples** that you can copy, run, and modify immediately. Unlike traditional tutorials that explain concepts before showing code, we show working workflows first and explain through inline annotations.
+This tutorial teaches n8n through **85 heavily annotated workflow examples** that you can copy, run, and modify immediately. Unlike traditional tutorials that explain concepts before showing code, we show working workflows first and explain through inline annotations.
 
 **Target audience**: Experienced developers who prefer learning through working code rather than narrative explanations. You should be comfortable with APIs, JSON, and basic programming concepts.
 
@@ -38,9 +38,9 @@ This tutorial covers **95% of n8n features needed for production workflow automa
 
 - Rare edge case nodes
 - Platform internals and source code
-- Custom node development
 - Specialized integrations outside common use
 - Deprecated features
+- Deep n8n core contribution workflows
 
 ## How to Use This Tutorial
 

@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-29T11:09:00+07:00
 draft: false
-weight: 10000002
+weight: 100000003
 description: "Examples 31-60: Production patterns including advanced transformations, loops, database operations, and error workflows (40-75% coverage)"
 tags: ["n8n", "tutorial", "by-example", "intermediate", "production", "database", "loops"]
 ---
@@ -20,12 +20,12 @@ graph TD
     D --> E[Process Item 3]
     E --> F[Output: All results]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#CC78BC,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
-    style E fill:#DE8F05,color:#000
-    style F fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#CC78BC,stroke:#000,color:#000
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#DE8F05,stroke:#000,color:#000
+    style E fill:#DE8F05,stroke:#000,color:#000
+    style F fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -106,6 +106,30 @@ graph TD
 ## Example 32: Split In Batches for Pagination
 
 Split In Batches processes items in groups. Essential for paginating API requests and avoiding rate limits.
+
+```mermaid
+%% Batch processing flow
+graph TD
+    A[Input: 10 items] --> B[Split In Batches: 3 per batch]
+    B --> C[Batch 1: Items 1-3]
+    B --> D[Batch 2: Items 4-6]
+    B --> E[Batch 3: Items 7-9]
+    B --> F[Batch 4: Item 10]
+    C --> G[Process Batch]
+    D --> G
+    E --> G
+    F --> G
+    G --> H[All Batches Complete]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#CC78BC,stroke:#000,color:#000
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#DE8F05,stroke:#000,color:#000
+    style E fill:#DE8F05,stroke:#000,color:#000
+    style F fill:#DE8F05,stroke:#000,color:#000
+    style G fill:#029E73,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#000
+```
 
 ```json
 {
@@ -277,11 +301,11 @@ graph TD
     C -->|true| D[Process]
     C -->|false| E[Reject]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#029E73,color:#fff
-    style E fill:#CA9161,color:#000
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#000
 ```
 
 ```json
@@ -536,10 +560,10 @@ graph LR
     B --> C[Log Error]
     C --> D[Send Notification]
 
-    style A fill:#CA9161,color:#000
-    style B fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
-    style D fill:#029E73,color:#fff
+    style A fill:#CA9161,stroke:#000,color:#000
+    style B fill:#0173B2,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -623,6 +647,28 @@ graph LR
 ## Example 38: Retry Logic with Continue On Fail
 
 Production workflows should retry transient failures. This example implements retry logic.
+
+```mermaid
+%% Retry flow with fallback
+graph TD
+    A[Start] --> B[API Request]
+    B -->|Success| C[Process Response]
+    B -->|Fail| D{Retry < 3?}
+    D -->|Yes| E[Wait 2s]
+    E --> B
+    D -->|No| F[Fallback Action]
+    C --> G[End Success]
+    F --> H[End Fallback]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#000
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#029E73,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#000
+```
 
 ```json
 {
@@ -1180,10 +1226,10 @@ graph LR
     B --> C[PostgreSQL Insert]
     C --> D[Return ID]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -1340,6 +1386,26 @@ MongoDB provides NoSQL document storage. This example inserts and queries docume
 ## Example 46: API Pagination
 
 APIs limit results per request. This example implements pagination to fetch all data.
+
+```mermaid
+%% API pagination loop
+graph TD
+    A[Start: page=1] --> B[API Request: /api/data?page=N]
+    B --> C[Receive Response]
+    C --> D{More Pages?}
+    D -->|Yes| E[Increment page]
+    E --> B
+    D -->|No| F[Aggregate All Results]
+    F --> G[End]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#000
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#029E73,stroke:#000,color:#fff
+```
 
 ```json
 {
@@ -1710,11 +1776,11 @@ graph TD
     C --> D
     D --> E[Output: 5 items total]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#CC78BC,color:#000
-    style E fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -2175,6 +2241,21 @@ XML data requires parsing to JSON. This example converts XML responses.
 
 CSV data is common in file imports and exports. This example parses CSV strings.
 
+```mermaid
+%% CSV string parsing into structured items
+graph TD
+    A[CSV String] --> B[Parse CSV Code]
+    B --> C[Extract Headers]
+    C --> D[Parse Rows]
+    D --> E[Output: Multiple Items]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#029E73,stroke:#000,color:#fff
+```
+
 ```json
 {
   "name": "CSV Parsing",
@@ -2451,6 +2532,22 @@ Process subsets of items using limit and offset patterns. This example implement
 ## Example 60: Workflow Variables with Set Node
 
 Set nodes can store workflow-level variables for reuse. This example demonstrates variable patterns.
+
+```mermaid
+%% Workflow variables stored and referenced
+graph TD
+    A[Manual Trigger] --> B[Config Variables Set]
+    B --> C[API Request]
+    C -->|Reference: $node['Config Variables'].json.apiBaseUrl| D[Use Variables]
+    C -->|Reference: $node['Config Variables'].json.apiKey| D
+    D --> E[Execute Request]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#000
+```
 
 ```json
 {
