@@ -9,3 +9,4 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/data/databases/sql/overview)
 - [Tutorials](/en/learn/software-engineering/data/databases/sql/tutorials)
+  - [By Example](/en/learn/software-engineering/data/databases/sql/tutorials/by-example)

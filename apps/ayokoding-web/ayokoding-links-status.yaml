@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-29T08:52:17+07:00"
+lastFullScan: "2025-12-29T09:41:47+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -393,7 +393,7 @@ links:
   - url: https://github.com/organiclever/ayokoding/tree/main/contents/fsharp-cookbook/fsharp-cookbook-primary
     lastChecked: "2025-12-09T22:30:00+07:00"
     statusCode: 200
-    finalUrl: https://github.com/organiclever/ayokoding/tree/main/contents/fsharp-cookbook/fsharp-cookbook-primary
+    finalUrl: https://github.com/organiclever/ayokoding/tree/main/contents/fsharp-cookbook/fsharp-primary
     redirectChain: null
     usedIn:
       - content/en/rants/2023/06/setting-up-c-typescript-f-and-dart-for-local-development-in-vs-code-my-holiday-experience.md
@@ -914,6 +914,14 @@ links:
     redirectChain: null
     usedIn:
       - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+
+  - url: https://sqlite.org/docs.html
+    lastChecked: "2025-12-29T09:41:47+07:00"
+    statusCode: 200
+    finalUrl: https://sqlite.org/docs.html
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/data/databases/sql/overview.md
 
   - url: https://stackoverflow.com/questions/tagged/postgresql
     lastChecked: "2025-12-29T08:52:17+07:00"
