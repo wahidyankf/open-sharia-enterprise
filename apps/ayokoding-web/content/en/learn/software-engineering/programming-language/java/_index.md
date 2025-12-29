@@ -10,11 +10,11 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/java/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/java/tutorials)
-  - [By Concept](/en/learn/software-engineering/programming-language/java/tutorials/by-concept)
-  - [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/programming-language/java/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/java/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/java/tutorials/quick-start)
+  - [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
+  - [By Concept](/en/learn/software-engineering/programming-language/java/tutorials/by-concept)
 - [How to](/en/learn/software-engineering/programming-language/java/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/java/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/java/how-to/cookbook)

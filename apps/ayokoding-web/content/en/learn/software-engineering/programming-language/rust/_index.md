@@ -10,11 +10,11 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/rust/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/rust/tutorials)
-  - [By Concept](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/rust/tutorials/quick-start)
   - [By Example](/en/learn/software-engineering/programming-language/rust/tutorials/by-example)
+  - [By Concept](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept)
 - [How to](/en/learn/software-engineering/programming-language/rust/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/rust/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/rust/how-to/cookbook)

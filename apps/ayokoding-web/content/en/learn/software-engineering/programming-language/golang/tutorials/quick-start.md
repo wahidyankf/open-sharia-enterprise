@@ -2,7 +2,7 @@
 title: "Quick Start"
 date: 2025-12-09T00:00:00+07:00
 draft: false
-weight: 1000002
+weight: 100002
 description: "Learn enough Go to explore independently - core syntax and basic patterns"
 tags:
   - golang

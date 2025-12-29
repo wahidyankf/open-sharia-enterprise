@@ -17,7 +17,6 @@ weight: 102
   - [Clojure](/en/learn/software-engineering/programming-language/clojure)
 - [Data](/en/learn/software-engineering/data)
   - [Overview](/en/learn/software-engineering/data/overview)
-  - [Concepts](/en/learn/software-engineering/data/concepts)
   - [Databases](/en/learn/software-engineering/data/databases)
   - [Tools](/en/learn/software-engineering/data/tools)
 - [Automation](/en/learn/software-engineering/automation)

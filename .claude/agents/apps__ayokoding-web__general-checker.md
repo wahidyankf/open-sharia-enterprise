@@ -1,7 +1,5 @@
 ---
 name: apps__ayokoding-web__general-checker
-
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating general Hugo content for ayokoding-web (Hextra theme) against Hugo Content Convention and Content Quality Principles
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet

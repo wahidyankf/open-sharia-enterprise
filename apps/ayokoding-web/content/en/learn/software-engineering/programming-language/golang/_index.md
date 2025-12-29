@@ -10,11 +10,11 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/golang/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/golang/tutorials)
-  - [By Concept](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/golang/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/golang/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/golang/tutorials/quick-start)
   - [By Example](/en/learn/software-engineering/programming-language/golang/tutorials/by-example)
+  - [By Concept](/en/learn/software-engineering/programming-language/golang/tutorials/by-concept)
 - [How to](/en/learn/software-engineering/programming-language/golang/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/golang/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/golang/how-to/cookbook)

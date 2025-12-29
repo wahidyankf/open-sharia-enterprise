@@ -7,6 +7,9 @@ type: docs
 layout: list
 ---
 
+- [Overview](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/overview)
+- [Initial Setup](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/initial-setup)
+- [Quick Start](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/quick-start)
 - [By Example](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/by-example/overview)
   - [Beginner](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/by-example/beginner)

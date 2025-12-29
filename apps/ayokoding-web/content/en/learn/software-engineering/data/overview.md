@@ -6,29 +6,16 @@ draft: false
 description: Master data engineering concepts and tools for building robust data systems
 ---
 
-Data is a fundamental pillar of modern software engineering. This section provides comprehensive coverage of data concepts and the tools used to work with data effectively.
+Data is a fundamental pillar of modern software engineering. This section provides comprehensive coverage of data tools and databases.
 
 ## What You'll Learn
 
-- **Data Concepts** - Understand data structures, modeling, storage patterns, and architectural principles
-- **Data Tools** - Master databases, query languages, data processing frameworks, and ETL pipelines
+- **Databases** - Master relational and NoSQL databases
+- **Data Tools** - Work with query languages, data processing frameworks, and ETL pipelines
 
 ## Learning Path
 
-The content is organized into two main areas:
-
-### Concepts
-
-Focuses on fundamental understanding of data principles:
-
-- Data structures and algorithms
-- Database design and normalization
-- Data modeling techniques
-- Consistency models and transactions
-- Data architecture patterns
-- Data quality and governance
-
-### Tools
+### Databases and Tools
 
 Covers practical tools and technologies:
 

@@ -1,7 +1,5 @@
 ---
 name: apps__ose-platform-web__content-checker
-
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
 description: Expert at validating Hugo content for ose-platform-web (PaperMod theme) against Hugo Content Convention and Content Quality Principles
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

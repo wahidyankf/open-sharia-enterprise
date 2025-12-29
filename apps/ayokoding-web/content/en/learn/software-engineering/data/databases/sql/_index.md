@@ -9,5 +9,7 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/data/databases/sql/overview)
 - [Tutorials](/en/learn/software-engineering/data/databases/sql/tutorials)
-  - [By Example](/en/learn/software-engineering/data/databases/sql/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/data/databases/sql/tutorials/overview)
+  - [Initial Setup](/en/learn/software-engineering/data/databases/sql/tutorials/initial-setup)
+  - [Quick Start](/en/learn/software-engineering/data/databases/sql/tutorials/quick-start)
+  - [By Example](/en/learn/software-engineering/data/databases/sql/tutorials/by-example)

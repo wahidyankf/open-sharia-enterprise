@@ -1,6 +1,6 @@
 ---
 title: "Overview"
-weight: 1000000
+weight: 100000
 date: 2025-12-30T00:00:00+07:00
 draft: false
 description: Choose your Clojure learning path based on experience and goals

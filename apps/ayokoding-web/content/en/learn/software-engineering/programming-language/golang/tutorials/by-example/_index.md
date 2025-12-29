@@ -1,6 +1,6 @@
 ---
 title: "By Example"
-weight: 1000006
+weight: 100003
 date: 2025-12-29T20:00:00+07:00
 draft: false
 ---

@@ -2,7 +2,7 @@
 title: "By Concept"
 date: 2025-12-27T00:00:00+07:00
 draft: false
-weight: 1000000
+weight: 100004
 description: Progressive narrative tutorials teaching Python through conceptual explanations and comprehensive examples
 ---
 

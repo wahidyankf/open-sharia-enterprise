@@ -3,7 +3,7 @@ title: "Initial Setup"
 date: 2025-12-21T15:00:00+07:00
 draft: false
 description: "Get started with Elixir: install the language, verify your setup, and run your first program. Complete setup guide for beginners."
-weight: 1000001
+weight: 100001
 tags: ["elixir", "tutorial", "initial-setup", "beginner", "installation"]
 ---
 

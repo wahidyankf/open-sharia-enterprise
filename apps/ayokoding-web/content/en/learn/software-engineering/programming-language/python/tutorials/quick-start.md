@@ -2,7 +2,7 @@
 title: "Quick Start"
 date: 2025-12-17T15:00:24+07:00
 draft: false
-weight: 1000002
+weight: 100002
 description: "Learn enough Python to explore independently - core syntax and basic patterns"
 tags:
   - python

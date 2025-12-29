@@ -1,6 +1,6 @@
 ---
 title: By Example
-weight: 10000000
+weight: 100003
 date: 2025-12-29T09:07:25+07:00
 draft: false
 type: docs

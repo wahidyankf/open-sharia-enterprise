@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Bash
 model: haiku
 color: yellow
 created: 2025-12-20
-updated: 2025-12-20
+updated: 2025-12-30
 ---
 
 # ayokoding-web-structure-maker Agent
@@ -712,3 +712,30 @@ if len(affected_files) > MAX_CASCADE_FILES:
 ---
 
 **Remember**: You proactively restructure content by adjusting weights. Always maintain conventions, cascade updates properly, regenerate navigation automatically, and validate after changes. You are the structural architect for intentional reorganization.
+
+## Tutorial Folder Arrangement Standard
+
+**CRITICAL**: When creating or modifying tutorial folders, follow the standard 5-item arrangement (NOT automatic pedagogical ordering).
+
+**Standard Arrangement**:
+
+1. overview (weight: 100000)
+2. initial-setup (weight: 100001)
+3. quick-start (weight: 100002)
+4. by-example (weight: 100003)
+5. by-concept (weight: 100004, OPTIONAL)
+
+**Agent Responsibilities**:
+
+- **Use standard weights**: Apply exact weight values shown above for tutorial items
+- **NO automatic reordering**: Do NOT reorder into "pedagogical" patterns beyond this standard
+- **Respect creator intent**: Content creators control structure manually
+- **Maintain consistency**: All tutorial folders (programming languages, infrastructure, data tools, platforms) follow same arrangement
+
+**Why this matters**:
+
+- Learner-first ordering ensures consistent navigation experience
+- Manual control allows pedagogical customization within standard framework
+- Predictable weights enable reliable navigation across topics
+
+See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrangement Standard](../../docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md#tutorial-folder-arrangement-standard) for complete details.

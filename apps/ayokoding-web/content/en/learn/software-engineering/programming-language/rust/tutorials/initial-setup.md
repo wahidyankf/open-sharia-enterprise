@@ -2,7 +2,7 @@
 title: "Initial Setup"
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000001
+weight: 100001
 description: Install Rust toolchain with rustup, configure development environment, and run your first Rust program
 tags: ["rust", "tutorial", "initial-setup", "installation", "rustup", "cargo"]
 ---
