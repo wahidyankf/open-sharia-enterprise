@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-28
+updated: 2025-12-29
 ---
 
 # Repository Rule Checker Agent
@@ -121,6 +121,40 @@ For each vision document in `docs/explanation/vision/`:
 - [ ] Contains "Target Audience" section (who we serve)
 - [ ] Contains "Success Vision" section (what the world looks like when we succeed)
 - [ ] Contains "Islamic Foundation" section (if applicable to Open Sharia Enterprise)
+
+### Repository Architecture Document Validation
+
+Validate that `docs/explanation/ex__repository-governance-architecture.md` is accurate and up-to-date:
+
+- [ ] Document exists at `docs/explanation/ex__repository-governance-architecture.md`
+- [ ] **CRITICAL - Principle count accuracy**: Document states correct number of principles (currently: 10)
+  - Count actual principle files: `find docs/explanation/principles -name "ex-pr-*.md" | wc -l`
+  - Verify count matches document's "Ten Principles" section
+  - Update document if count is stale
+- [ ] **CRITICAL - Convention count accuracy**: Document states correct number of conventions (currently: 24)
+  - Count actual convention files: `find docs/explanation/conventions -name "ex-co__*.md" | wc -l`
+  - Verify count matches "Layer 2" related documentation section
+  - Update document if count is stale
+- [ ] **CRITICAL - Development practice count accuracy**: Document states correct number of practices (currently: 15)
+  - Count actual development files: `find docs/explanation/development -name "ex-de__*.md" | wc -l`
+  - Verify count matches "Layer 3" related documentation section
+  - Update document if count is stale
+- [ ] Principle names listed in "Ten Principles" section match actual principle file names
+- [ ] Principle categorization (General/Content/Software Engineering) matches actual directory structure
+- [ ] All links to principle documents are valid and use correct relative paths
+- [ ] All links to convention documents are valid
+- [ ] All links to development documents are valid
+- [ ] Mermaid diagram shows correct governance relationships:
+  - L0 (Vision) → inspires → L1 (Principles)
+  - L1 (Principles) → governs → L2 (Conventions)
+  - L1 (Principles) → governs → L3 (Development)
+  - L2 (Conventions) → governs → L3 (Development)
+  - L2 (Conventions) → governs → L4 (AI Agents)
+  - L3 (Development) → governs → L4 (AI Agents)
+  - L4 (AI Agents) → orchestrated by → L5 (Workflows)
+- [ ] Document's "updated" date is recent (within last 30 days if counts changed)
+- [ ] Traceability examples are accurate and reference real documents
+- [ ] No broken links in example traceability chains
 
 ### Principles Directory Structure
 
