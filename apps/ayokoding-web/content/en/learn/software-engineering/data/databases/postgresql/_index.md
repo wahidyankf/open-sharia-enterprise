@@ -1,6 +1,6 @@
 ---
 title: PostgreSQL
-weight: 100000
+weight: 100002
 date: 2025-12-29T00:00:00+07:00
 draft: false
 type: docs

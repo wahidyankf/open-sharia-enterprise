@@ -1,6 +1,6 @@
 ---
 title: "Concepts"
-weight: 11000
+weight: 10001
 date: 2025-12-23T00:00:00+07:00
 draft: false
 type: docs
