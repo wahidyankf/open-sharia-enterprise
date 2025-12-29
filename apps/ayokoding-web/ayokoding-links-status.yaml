@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-29T09:41:47+07:00"
+lastFullScan: "2025-12-29T11:46:01+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -469,6 +469,41 @@ links:
     usedIn:
       - content/en/learn/software-engineering/programming-language/rust/reference/resources.md
 
+  - url: https://community.n8n.io
+    lastChecked: "2025-12-29T11:46:01+07:00"
+    statusCode: 200
+    finalUrl: https://community.n8n.io
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/automation/tools/n8n/overview.md
+      - content/en/learn/software-engineering/automation/tools/n8n/tutorials/by-example/overview.md
+
+  - url: https://docs.n8n.io
+    lastChecked: "2025-12-29T11:46:01+07:00"
+    statusCode: 200
+    finalUrl: https://docs.n8n.io
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/automation/tools/n8n/overview.md
+      - content/en/learn/software-engineering/automation/tools/n8n/tutorials/by-example/overview.md
+
+  - url: https://github.com/n8n-io/n8n
+    lastChecked: "2025-12-29T11:46:01+07:00"
+    statusCode: 200
+    finalUrl: https://github.com/n8n-io/n8n
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/automation/tools/n8n/overview.md
+      - content/en/learn/software-engineering/automation/tools/n8n/tutorials/by-example/overview.md
+
+  - url: https://n8n.io/workflows
+    lastChecked: "2025-12-29T11:46:01+07:00"
+    statusCode: 200
+    finalUrl: https://n8n.io/workflows
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/automation/tools/n8n/overview.md
+      - content/en/learn/software-engineering/automation/tools/n8n/tutorials/by-example/overview.md
   - url: https://go.dev/blog
     lastChecked: "2025-12-18T07:46:24+07:00"
     statusCode: 200

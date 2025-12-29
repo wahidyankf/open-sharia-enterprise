@@ -9,6 +9,7 @@ weight: 10
 - [Software Engineering](/en/learn/software-engineering)
   - [Overview](/en/learn/software-engineering/overview)
   - [Programming Language](/en/learn/software-engineering/programming-language)
+  - [Automation](/en/learn/software-engineering/automation)
   - [Data](/en/learn/software-engineering/data)
   - [Networking](/en/learn/software-engineering/networking)
   - [Platforms](/en/learn/software-engineering/platforms)
