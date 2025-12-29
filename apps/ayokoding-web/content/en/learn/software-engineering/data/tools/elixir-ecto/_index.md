@@ -8,3 +8,5 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/overview)
+- [Tutorials](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials)
+  - [By Example](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials/by-example)
