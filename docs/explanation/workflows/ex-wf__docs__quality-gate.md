@@ -11,7 +11,7 @@ inputs:
   - name: mode
     type: enum
     values: [lax, normal, strict, ocd]
-    description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
     required: false
     default: normal
   - name: min-iterations
