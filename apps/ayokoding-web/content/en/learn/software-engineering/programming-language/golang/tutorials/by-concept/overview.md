@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000000
+weight: 10000000
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Choose your Go learning path - 5 tutorial levels from 0% to 95% knowledge coverage

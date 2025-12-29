@@ -1,6 +1,6 @@
 ---
 title: Introduction
-weight: 2000
+weight: 10000
 date: 2025-12-24T00:00:00+07:00
 draft: false
 description: Introduction to computer networking fundamentals and core concepts

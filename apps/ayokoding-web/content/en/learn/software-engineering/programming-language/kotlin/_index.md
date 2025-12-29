@@ -10,8 +10,8 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/kotlin/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/kotlin/tutorials)
-  - [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/overview)
   - [By Concept](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept)
+  - [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start)
 - [How to](/en/learn/software-engineering/programming-language/kotlin/how-to)

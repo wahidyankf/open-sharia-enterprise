@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-12-29T14:00:00+07:00
 draft: false
-weight: 10000002
+weight: 100000000
 description: "Examples 1-30: Spring Data JPA fundamentals including repositories, CRUD operations, simple queries, and basic relationships (0-40% coverage)"
 categories: ["learn"]
 tags: ["spring-data-jpa", "tutorial", "by-example", "beginner", "jpa-repository", "crud", "queries", "relationships"]

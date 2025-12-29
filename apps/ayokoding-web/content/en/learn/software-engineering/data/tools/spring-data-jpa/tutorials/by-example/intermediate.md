@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-29T14:00:00+07:00
 draft: false
-weight: 10000003
+weight: 100000000
 description: "Examples 31-60: Spring Data JPA advanced features including @Query annotation, pagination, complex relationships, transactions, and locking mechanisms (40-75% coverage)"
 categories: ["learn"]
 tags: ["spring-data-jpa", "tutorial", "by-example", "intermediate", "jpql", "pagination", "transactions", "locking"]

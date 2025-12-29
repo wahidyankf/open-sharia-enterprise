@@ -1,6 +1,6 @@
 ---
 title: "Overview"
-weight: 1000
+weight: 100000
 date: 2025-12-29T00:00:00+07:00
 draft: false
 description: "Explore popular workflow automation and integration platforms including n8n, Zapier, Make, and other tools for building automated workflows"

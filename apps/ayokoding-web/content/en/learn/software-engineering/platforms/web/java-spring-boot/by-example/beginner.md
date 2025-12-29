@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-12-24T00:00:00+07:00
 draft: false
-weight: 1000001
+weight: 10000000
 description: "Spring Boot basics through 25 examples: dependency injection, beans, auto-configuration, REST controllers, data access, file handling, and CORS"
 categories: ["learn"]
 tags: ["spring-boot", "tutorial", "by-example", "beginner", "dependency-injection", "rest-api", "spring-data"]

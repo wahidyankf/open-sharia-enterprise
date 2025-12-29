@@ -3,7 +3,7 @@ title: "Beginner"
 date: 2025-12-21T17:00:00+07:00
 draft: false
 description: "Master Elixir fundamentals: data structures, pattern matching, modules, OTP basics, and testing. Build complete applications from scratch."
-weight: 1000003
+weight: 10000000
 tags: ["elixir", "tutorial", "beginner", "comprehensive", "otp"]
 ---
 

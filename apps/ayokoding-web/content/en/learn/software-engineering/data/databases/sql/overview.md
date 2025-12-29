@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000
+weight: 1000000
 date: 2025-12-29T09:07:25+07:00
 draft: false
 description: Learn SQL, the standard language for relational databases

@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-12-29T08:08:50+07:00
 draft: false
-weight: 10000001
+weight: 100000000
 description: "Examples 1-30: PostgreSQL fundamentals covering installation, data types, basic queries, schema design, joins, and data manipulation (0-40% coverage)"
 tags: ["postgresql", "database", "tutorial", "by-example", "beginner", "fundamentals", "sql"]
 ---

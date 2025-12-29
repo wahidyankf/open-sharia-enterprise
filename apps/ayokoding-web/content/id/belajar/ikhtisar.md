@@ -1,6 +1,6 @@
 ---
 title: Ikhtisar
-weight: 10
+weight: 100
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Pusat pembelajaran lengkap untuk rekayasa perangkat lunak, kunci pembelajaran, dan pengembangan diri

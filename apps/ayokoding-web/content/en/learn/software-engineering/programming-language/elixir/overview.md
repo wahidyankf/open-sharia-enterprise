@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 10000
+weight: 100000
 description: Learn Elixir from basics to advanced - functional programming, OTP platform, Phoenix framework, and fault-tolerant systems
 ---
 

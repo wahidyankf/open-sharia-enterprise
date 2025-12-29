@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-29T17:29:25+07:00
 draft: false
-weight: 10000002
+weight: 100000000
 description: "Elixir Ecto intermediate tutorial with 30 annotated examples covering advanced queries, complex associations, transactions, Ecto.Multi, and migrations (40-75% coverage)"
 tags: ["elixir-ecto", "tutorial", "by-example", "intermediate", "transactions", "migrations", "joins", "aggregations"]
 ---

@@ -1,11 +1,10 @@
 ---
 title: "Tema"
-weight: 1000010
+weight: 100000
 date: 2025-03-16T07:20:00+07:00
 draft: false
 ---
 
-- [Ikhtisar](/id/belajar/manusia/peralatan/cliftonstrengths/tema/ikhtisar)
 - [Berpikir Strategis](/id/belajar/manusia/peralatan/cliftonstrengths/tema/berpikir-strategis)
   - [Ikhtisar](/id/belajar/manusia/peralatan/cliftonstrengths/tema/berpikir-strategis/ikhtisar)
   - [Inteleksi](/id/belajar/manusia/peralatan/cliftonstrengths/tema/berpikir-strategis/inteleksi)
@@ -27,6 +26,7 @@ draft: false
   - [Konsistensi](/id/belajar/manusia/peralatan/cliftonstrengths/tema/eksekusi/konsistensi)
   - [Fokus](/id/belajar/manusia/peralatan/cliftonstrengths/tema/eksekusi/fokus)
   - [Restoratif](/id/belajar/manusia/peralatan/cliftonstrengths/tema/eksekusi/restoratif)
+- [Ikhtisar](/id/belajar/manusia/peralatan/cliftonstrengths/tema/ikhtisar)
 - [Membangun Hubungan](/id/belajar/manusia/peralatan/cliftonstrengths/tema/membangun-hubungan)
   - [Ikhtisar](/id/belajar/manusia/peralatan/cliftonstrengths/tema/membangun-hubungan/ikhtisar)
   - [Relator](/id/belajar/manusia/peralatan/cliftonstrengths/tema/membangun-hubungan/relator)

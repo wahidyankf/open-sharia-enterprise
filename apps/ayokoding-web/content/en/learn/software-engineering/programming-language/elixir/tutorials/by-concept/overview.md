@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000000
+weight: 10000000
 description: Progressive Elixir tutorials from installation to advanced topics - functional programming, OTP, Phoenix, and production systems
 ---
 

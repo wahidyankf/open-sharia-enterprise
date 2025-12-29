@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-29T17:29:25+07:00
 draft: false
-weight: 10000003
+weight: 100000000
 description: "Elixir Ecto advanced tutorial with 25 annotated examples covering dynamic queries, custom types, performance optimization, and production best practices (75-95% coverage)"
 tags: ["elixir-ecto", "tutorial", "by-example", "advanced", "performance", "custom-types", "dynamic-queries"]
 ---

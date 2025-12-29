@@ -3,7 +3,7 @@ title: Security Roles
 date: 2025-12-24T00:00:00+07:00
 draft: false
 description: Understanding different roles and career paths in information security
-weight: 10003
+weight: 100000
 ---
 
 Information security encompasses diverse roles, each specializing in different aspects of protecting organizations from cyber threats. Understanding these roles helps aspiring security professionals identify career paths aligned with their interests and strengths, while helping organizations build well-rounded security teams.

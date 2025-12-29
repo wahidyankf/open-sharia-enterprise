@@ -7,5 +7,5 @@ weight: 106
 
 - [Overview](/en/learn/human/overview)
 - [Tools](/en/learn/human/tools)
-  - [Overview](/en/learn/human/tools/overview)
   - [CliftonStrengths](/en/learn/human/tools/cliftonstrengths)
+  - [Overview](/en/learn/human/tools/overview)

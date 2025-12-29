@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-27T11:00:00+07:00
 draft: false
-weight: 10000
+weight: 1000000
 ---
 
 Step-by-step learning guides for Go programming, from installation to expert-level mastery.
