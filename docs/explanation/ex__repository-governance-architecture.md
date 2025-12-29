@@ -11,7 +11,7 @@ tags:
   - workflows
   - governance
 created: 2025-12-24
-updated: 2025-12-24
+updated: 2025-12-29
 ---
 
 # Repository Architecture: Six-Layer Hierarchy
@@ -42,6 +42,7 @@ graph TD
     L0 -->|inspires| L1
     L1 -->|governs| L2
     L1 -->|governs| L3
+    L2 -->|governs| L3
     L2 -->|governs| L4
     L3 -->|governs| L4
     L4 -->|orchestrated by| L5
@@ -88,14 +89,15 @@ graph TD
 
 **Key Document**: [Core Principles Index](./principles/README.md)
 
-**Six Principles**:
+**Ten Principles**:
 
-1. **Explicit Over Implicit** - Transparent configuration, no magic
-2. **Accessibility First** - WCAG compliance, universal design
-3. **Simplicity Over Complexity** - Flat structures, KISS/YAGNI
-4. **Automation Over Manual** - Git hooks, AI agents
-5. **Progressive Disclosure** - Layer complexity gradually
-6. **No Time Estimates** - Outcomes over duration
+**General Principles:**
+
+1. **Simplicity Over Complexity** - Minimum viable abstraction, avoid over-engineering
+
+**Content Principles:** 2. **Accessibility First** - WCAG compliance, universal design from the start 3. **Documentation First** - Documentation is mandatory, not optional 4. **No Time Estimates** - Outcomes over duration, respect different paces 5. **Progressive Disclosure** - Layer complexity gradually
+
+**Software Engineering Principles:** 6. **Automation Over Manual** - Git hooks, AI agents for consistency 7. **Explicit Over Implicit** - Transparent configuration, no magic 8. **Immutability Over Mutability** - Prefer immutable data structures 9. **Pure Functions Over Side Effects** - Deterministic, composable functions 10. **Reproducibility First** - Eliminate "works on my machine" problems
 
 **Characteristics**:
 
@@ -494,12 +496,12 @@ Periodically verify:
 **Layer 2**:
 
 - [Conventions Index](./conventions/README.md)
-- 22 convention documents in `docs/explanation/conventions/`
+- 24 convention documents in `docs/explanation/conventions/`
 
 **Layer 3**:
 
 - [Development Index](./development/README.md)
-- 12 practice documents in `docs/explanation/development/`
+- 15 practice documents in `docs/explanation/development/`
 
 **Layer 4**:
 
@@ -531,4 +533,4 @@ This architecture document implements/respects the following principles:
 
 ---
 
-**Last Updated**: 2025-12-24
+**Last Updated**: 2025-12-29
