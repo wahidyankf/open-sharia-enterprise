@@ -8,5 +8,5 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/data/databases/overview)
-- [PostgreSQL](/en/learn/software-engineering/data/databases/postgresql)
 - [SQL](/en/learn/software-engineering/data/databases/sql)
+- [PostgreSQL](/en/learn/software-engineering/data/databases/postgresql)
