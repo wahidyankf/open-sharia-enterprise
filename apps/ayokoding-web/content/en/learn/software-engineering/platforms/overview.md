@@ -49,8 +49,6 @@ Platforms provide the infrastructure foundation for deploying and running softwa
 
 ## Available Content
 
-- **[Cloud](/en/learn/software-engineering/platforms/cloud)** - Cloud platforms and virtual machine management
-  - [Setup and Secure VM for Development](/en/learn/software-engineering/platforms/cloud/how-to/setup-and-secure-vm-for-development) - Complete guide to VM security hardening
 - **[Web](/en/learn/software-engineering/platforms/web)** - Web application frameworks and platforms
 
 ## Coming Soon

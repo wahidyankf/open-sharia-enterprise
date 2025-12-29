@@ -1,6 +1,6 @@
 ---
 title: "Spring Data Jpa"
-weight: 100000
+weight: 100002
 date: 2025-12-23T00:00:00+07:00
 draft: false
 type: docs
