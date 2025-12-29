@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
 created: 2025-12-23
-updated: 2025-12-27
+updated: 2025-12-29
 ---
 
 # Workflow Maker Agent
@@ -66,7 +66,7 @@ Don't create a workflow when:
 
 All workflow files use **structured Markdown with YAML frontmatter**:
 
-```markdown
+````markdown
 ---
 name: workflow-identifier
 goal: What this workflow achieves
@@ -134,9 +134,53 @@ Which core principles this workflow implements.
 ## Notes
 
 Additional context, limitations, or important considerations.
-```
 
 ### File Naming Convention
+
+### YAML Frontmatter Syntax
+
+**CRITICAL**: When generating workflow frontmatter, ALWAYS quote values containing special characters.
+
+**Characters requiring quotes**: Colon `:`, brackets `[]`, braces `{}`, hash `#`, ampersand `&`, asterisk `*`, exclamation `!`, pipe `|`, greater-than `>`, quotes `'"`, percent `%`, at sign `@`, backtick `` ` ``
+
+**Quoting rules**:
+
+- Use double quotes `"` for all `description` fields
+- Use double quotes for `goal` and `termination` fields if they contain colons or other special characters
+- Escape inner quotes: `"Description with \"quoted\" text"`
+- Quote complex multi-clause descriptions (e.g., mode descriptions with multiple options)
+
+**Example frontmatter generation**:
+
+```yaml
+---
+name: content-validation
+goal: "Validate content quality and apply fixes iteratively until zero findings"
+termination: "Success when zero findings remain; partial if max-iterations reached"
+inputs:
+  - name: mode
+    type: enum
+    values: [lax, normal, strict, ocd]
+    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
+    required: false
+    default: normal
+  - name: max-concurrency
+    type: number
+    description: "Maximum number of agents/tasks that can run concurrently during workflow execution"
+    required: false
+    default: 2
+outputs:
+  - name: final-status
+    type: enum
+    values: [pass, partial, fail]
+    description: "Final validation status"
+---
+```
+````
+
+**Why this matters**: Unquoted colons break Obsidian's YAML parser, causing it to display raw frontmatter instead of the Properties panel.
+
+See [Workflow Pattern Convention - YAML Syntax Requirements](../../docs/explanation/workflows/ex-wf__meta__workflow-pattern.md#yaml-syntax-requirements) for complete details.
 
 All workflow files follow the pattern:
 

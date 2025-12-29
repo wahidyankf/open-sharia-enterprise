@@ -7,7 +7,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-23
-updated: 2025-12-27
+updated: 2025-12-29
 ---
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
@@ -101,6 +101,15 @@ Validate frontmatter contains all required fields:
 - [ ] `outputs` array present (may be empty `[]` if no outputs produced)
 - [ ] No YAML comments (no `#` symbols in frontmatter)
 - [ ] Frontmatter uses 2 spaces per indentation level (not tabs)
+
+**YAML syntax validation**:
+
+- [ ] All `description` fields wrapped in quotes
+- [ ] `goal` field wrapped in quotes if contains colon or special characters
+- [ ] `termination` field wrapped in quotes if contains colon or special characters
+- [ ] Double quotes used consistently (not single quotes)
+- [ ] Inner quotes properly escaped if needed
+- [ ] No unquoted special characters in values (`:`, `[`, `]`, `{`, `}`, `#`, etc.)
 
 **Input field validation** (for each item in `inputs` array):
 
@@ -294,6 +303,7 @@ When the user requests workflow validation:
 
 **🔴 CRITICAL Issues** (must fix before use):
 
+- Unquoted special characters in frontmatter values (breaks Obsidian YAML parser)
 - Missing required frontmatter fields
 - Invalid agent references (non-existent agents)
 - Circular dependencies between steps
