@@ -1,6 +1,6 @@
 ---
 title: "Data"
-weight: 2000
+weight: 1200
 date: 2025-12-23T00:00:00+07:00
 draft: false
 ---
