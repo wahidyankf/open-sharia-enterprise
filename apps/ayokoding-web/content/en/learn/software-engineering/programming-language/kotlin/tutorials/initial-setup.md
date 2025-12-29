@@ -3,7 +3,7 @@ title: Initial Setup
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Get Kotlin running quickly - install JDK, set up IntelliJ IDEA, and create your first Kotlin program
-weight: 1000001
+weight: 100001
 tags:
   - kotlin
   - initial-setup

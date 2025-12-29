@@ -8,6 +8,9 @@ type: docs
 layout: list
 ---
 
+- [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start)
 - [By Example](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-example/beginner)
@@ -18,6 +21,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/intermediate)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept/overview)
-- [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/overview)
-- [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup)
-- [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start)

@@ -7,11 +7,6 @@ weight: 100002
 type: docs
 ---
 
-- [By Concept](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept)
-  - [Advanced](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced)
-  - [Beginner](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate)
-  - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/overview)
 - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/overview)
 - [Initial Setup](/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup)
 - [Quick Start](/en/learn/software-engineering/programming-language/rust/tutorials/quick-start)
@@ -20,3 +15,8 @@ type: docs
   - [Beginner](/en/learn/software-engineering/programming-language/rust/tutorials/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/rust/tutorials/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/rust/tutorials/by-example/advanced)
+- [By Concept](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept)
+  - [Advanced](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced)
+  - [Beginner](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate)
+  - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/overview)

@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-29T20:30:00+07:00
 draft: false
-weight: 10000000
+weight: 100000
 ---
 
 Step-by-step learning guides for Elixir Ecto, from installation to expert-level mastery.

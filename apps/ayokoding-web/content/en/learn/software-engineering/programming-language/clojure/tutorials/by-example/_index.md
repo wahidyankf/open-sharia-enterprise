@@ -2,7 +2,7 @@
 title: "By Example"
 date: 2025-12-30T01:33:16+07:00
 draft: false
-weight: 1000003
+weight: 100003
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/clojure/tutorials/by-example/overview)

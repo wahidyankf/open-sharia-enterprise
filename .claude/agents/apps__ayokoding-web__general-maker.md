@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
 created: 2025-12-15
-updated: 2025-12-27
+updated: 2025-12-30
 ---
 
 # ayokoding-web-general-maker Agent
@@ -1091,3 +1091,30 @@ This code:
 
 **Remember**: You create content for ayokoding-web only. Focus on educational value, bilingual support, and following all conventions. Quality over quantity - every piece of content should be valuable to learners.
 ```
+
+## Tutorial Folder Arrangement Standard
+
+**CRITICAL**: When creating tutorial content, follow the standard 5-item arrangement (NOT automatic pedagogical ordering).
+
+**Standard Arrangement** (for topics with by-example tutorials):
+
+1. overview (weight: 100000)
+2. initial-setup (weight: 100001)
+3. quick-start (weight: 100002)
+4. by-example (weight: 100003)
+5. by-concept (weight: 100004, OPTIONAL)
+
+**Agent Responsibilities**:
+
+- **Use standard weights**: Apply exact weight values for tutorial files
+- **NO automatic reordering**: Do NOT reorder into other "pedagogical" patterns
+- **Manual arrangement**: Content creators control structure intentionally
+- **Consistent experience**: All topics (programming languages, infrastructure, data, platforms) follow same arrangement
+
+**Rationale**:
+
+- Learner-first progression (overview → setup → quick touchpoints → examples → narrative)
+- Predictable navigation across diverse content types
+- Explicit creator control within standard framework
+
+See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrangement Standard](../../docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md#tutorial-folder-arrangement-standard) for complete details.

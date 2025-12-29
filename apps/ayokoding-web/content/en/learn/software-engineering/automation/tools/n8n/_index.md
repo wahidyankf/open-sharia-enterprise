@@ -7,5 +7,7 @@ draft: false
 
 - [Overview](/en/learn/software-engineering/automation/tools/n8n/overview)
 - [Tutorials](/en/learn/software-engineering/automation/tools/n8n/tutorials)
-  - [By Example](/en/learn/software-engineering/automation/tools/n8n/tutorials/by-example)
   - [Overview](/en/learn/software-engineering/automation/tools/n8n/tutorials/overview)
+  - [Initial Setup](/en/learn/software-engineering/automation/tools/n8n/tutorials/initial-setup)
+  - [Quick Start](/en/learn/software-engineering/automation/tools/n8n/tutorials/quick-start)
+  - [By Example](/en/learn/software-engineering/automation/tools/n8n/tutorials/by-example)

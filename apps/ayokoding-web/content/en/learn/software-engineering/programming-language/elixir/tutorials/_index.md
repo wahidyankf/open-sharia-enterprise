@@ -6,11 +6,6 @@ weight: 100002
 description: Step-by-step learning path from installation to expert Elixir mastery
 ---
 
-- [By Concept](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept)
-  - [Advanced](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/advanced)
-  - [Beginner](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/intermediate)
-  - [Overview](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/overview)
 - [Overview](/en/learn/software-engineering/programming-language/elixir/tutorials/overview)
 - [Initial Setup](/en/learn/software-engineering/programming-language/elixir/tutorials/initial-setup)
 - [Quick Start](/en/learn/software-engineering/programming-language/elixir/tutorials/quick-start)
@@ -19,3 +14,8 @@ description: Step-by-step learning path from installation to expert Elixir maste
   - [Beginner](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example/advanced)
+- [By Concept](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept)
+  - [Advanced](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/advanced)
+  - [Beginner](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/intermediate)
+  - [Overview](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept/overview)

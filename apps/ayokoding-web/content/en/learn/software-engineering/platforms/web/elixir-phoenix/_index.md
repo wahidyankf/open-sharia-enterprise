@@ -7,9 +7,11 @@ type: docs
 layout: list
 ---
 
+- [Overview](/en/learn/software-engineering/platforms/web/elixir-phoenix/overview)
+- [Initial Setup](/en/learn/software-engineering/platforms/web/elixir-phoenix/initial-setup)
+- [Quick Start](/en/learn/software-engineering/platforms/web/elixir-phoenix/quick-start)
 - [By Example](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example)
   - [Overview](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example/overview)
   - [Beginner](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example/advanced)
-- [Overview](/en/learn/software-engineering/platforms/web/elixir-phoenix/overview)

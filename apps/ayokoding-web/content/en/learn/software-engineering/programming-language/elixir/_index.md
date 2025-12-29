@@ -7,11 +7,11 @@ weight: 10006
 
 - [Overview](/en/learn/software-engineering/programming-language/elixir/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/elixir/tutorials)
-  - [By Concept](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/elixir/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/elixir/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/elixir/tutorials/quick-start)
   - [By Example](/en/learn/software-engineering/programming-language/elixir/tutorials/by-example)
+  - [By Concept](/en/learn/software-engineering/programming-language/elixir/tutorials/by-concept)
 - [How to](/en/learn/software-engineering/programming-language/elixir/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/elixir/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/elixir/how-to/cookbook)

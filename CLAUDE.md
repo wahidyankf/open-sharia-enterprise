@@ -205,6 +205,8 @@ Programming languages follow [Programming Language Content Standard](./docs/expl
 
 **Tutorial Structure**: All languages use [dual-path organization](./docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md) - by-concept (narrative-driven) and optional by-example (code-first, 75-90 annotated examples for experienced developers). Foundational tutorials (Initial Setup, Quick Start) at root level.
 
+**Tutorial Folder Arrangement**: All topics with by-example tutorials follow standard 5-item arrangement: overview (100000), initial-setup (100001), quick-start (100002), by-example (100003), by-concept (100004, optional). Arrangement is MANUAL by content creators, NOT automatic by agents. See [Programming Language Tutorial Structure Convention](./docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md#tutorial-folder-arrangement-standard) for complete standard.
+
 ### README Quality Convention
 
 All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language (no jargon), acronym context, paragraph limits (≤5 lines), benefits-focused language. See [README Quality Convention](./docs/explanation/conventions/ex-co__readme-quality.md) for complete standards.

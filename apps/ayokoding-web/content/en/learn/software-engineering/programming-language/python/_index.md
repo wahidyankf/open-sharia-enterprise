@@ -10,11 +10,11 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/python/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/python/tutorials)
-  - [Python by Example](/en/learn/software-engineering/programming-language/python/tutorials/by-example)
-  - [By Concept](/en/learn/software-engineering/programming-language/python/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/python/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/python/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/python/tutorials/quick-start)
+  - [Python by Example](/en/learn/software-engineering/programming-language/python/tutorials/by-example)
+  - [By Concept](/en/learn/software-engineering/programming-language/python/tutorials/by-concept)
 - [How to](/en/learn/software-engineering/programming-language/python/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/python/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/python/how-to/cookbook)

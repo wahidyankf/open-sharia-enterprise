@@ -8,6 +8,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/platforms/web/java-spring-boot/overview)
+- [Initial Setup](/en/learn/software-engineering/platforms/web/java-spring-boot/initial-setup)
+- [Quick Start](/en/learn/software-engineering/platforms/web/java-spring-boot/quick-start)
 - [By Example](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example)
   - [Advanced](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/advanced)
   - [Beginner](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/beginner)
