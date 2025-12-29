@@ -3,13 +3,14 @@ title: "Kotlin"
 date: 2025-12-18T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Kotlin development - organized using the Diátaxis framework
-weight: 13000
+weight: 10003
 type: docs
 layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/kotlin/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/kotlin/tutorials)
+  - [By Example](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-example)
   - [By Concept](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/kotlin/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup)

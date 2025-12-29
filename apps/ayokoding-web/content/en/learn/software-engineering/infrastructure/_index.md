@@ -13,3 +13,5 @@ layout: list
 - [Tools](/en/learn/software-engineering/infrastructure/tools)
   - [Ansible](/en/learn/software-engineering/infrastructure/tools/ansible)
   - [Terraform](/en/learn/software-engineering/infrastructure/tools/terraform)
+  - [Docker](/en/learn/software-engineering/infrastructure/tools/docker)
+  - [Kubernetes](/en/learn/software-engineering/infrastructure/tools/kubernetes)

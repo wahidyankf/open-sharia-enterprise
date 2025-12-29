@@ -3,13 +3,14 @@ title: "Python"
 date: 2025-12-17T10:54:44+07:00
 draft: false
 description: Complete learning path from zero to expert Python development - organized using the Diátaxis framework
-weight: 10000
+weight: 10001
 type: docs
 layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-language/python/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/python/tutorials)
+  - [Python by Example](/en/learn/software-engineering/programming-language/python/tutorials/by-example)
   - [By Concept](/en/learn/software-engineering/programming-language/python/tutorials/by-concept)
   - [Overview](/en/learn/software-engineering/programming-language/python/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/python/tutorials/initial-setup)

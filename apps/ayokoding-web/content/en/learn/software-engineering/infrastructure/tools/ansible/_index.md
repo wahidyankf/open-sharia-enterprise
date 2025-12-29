@@ -8,3 +8,4 @@ layout: list
 ---
 
 - [Tutorials](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials)
+  - [By Example](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/by-example)

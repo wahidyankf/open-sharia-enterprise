@@ -8,3 +8,4 @@ layout: list
 ---
 
 - [Tutorials](/en/learn/software-engineering/infrastructure/tools/kubernetes/tutorials)
+  - [By Example](/en/learn/software-engineering/infrastructure/tools/kubernetes/tutorials/by-example)

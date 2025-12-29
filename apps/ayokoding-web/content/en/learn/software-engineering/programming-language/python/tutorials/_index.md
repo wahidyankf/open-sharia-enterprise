@@ -6,6 +6,11 @@ weight: 100002
 description: Step-by-step learning path from installation to expert Python mastery
 ---
 
+- [Python by Example](/en/learn/software-engineering/programming-language/python/tutorials/by-example)
+  - [Overview](/en/learn/software-engineering/programming-language/python/tutorials/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/programming-language/python/tutorials/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-language/python/tutorials/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-language/python/tutorials/by-example/advanced)
 - [By Concept](/en/learn/software-engineering/programming-language/python/tutorials/by-concept)
   - [Advanced](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/advanced)
   - [Beginner](/en/learn/software-engineering/programming-language/python/tutorials/by-concept/beginner)
