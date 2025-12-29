@@ -1,6 +1,6 @@
 ---
 title: "N8n"
-weight: 1000
+weight: 100000
 date: 2025-12-29T00:00:00+07:00
 draft: false
 ---

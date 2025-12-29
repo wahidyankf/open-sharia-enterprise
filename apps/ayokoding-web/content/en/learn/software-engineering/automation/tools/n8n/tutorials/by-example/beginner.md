@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-12-29T11:09:00+07:00
 draft: false
-weight: 10000001
+weight: 100000002
 description: "Examples 1-30: n8n fundamentals including triggers, basic nodes, credentials, and simple workflows (0-40% coverage)"
 tags: ["n8n", "tutorial", "by-example", "beginner", "workflow", "triggers", "nodes"]
 ---
@@ -17,9 +17,9 @@ graph LR
     A[Manual Trigger] --> B[Set Node]
     B --> C[Output]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -135,9 +135,9 @@ graph TD
     A[Manual Trigger] --> B[Set Node]
     B --> C[Data Output]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -296,11 +296,11 @@ graph TD
     C -->|true| D[Adult Path]
     C -->|false| E[Minor Path]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#029E73,color:#fff
-    style E fill:#CA9161,color:#000
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#000
 ```
 
 ```json
@@ -398,6 +398,20 @@ graph TD
 
 Webhook triggers receive HTTP requests from external systems. This example creates a simple webhook endpoint that accepts POST requests.
 
+```mermaid
+%% Webhook trigger receives and responds to HTTP requests
+graph LR
+    A[External System] -->|POST request| B[Webhook Trigger]
+    B --> C[Process Data]
+    C --> D[Respond to Webhook]
+    D -->|JSON response| A
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+```
+
 ```json
 {
   "name": "Webhook Receiver",
@@ -474,9 +488,9 @@ graph LR
     A[Cron: 0 9 * * *] --> B[Execute Task]
     B --> C[Complete]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -889,11 +903,11 @@ graph TD
     C --> D
     D --> E[Combined Output]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#CC78BC,color:#000
-    style E fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
@@ -1024,7 +1038,7 @@ Custom HTTP headers enable authentication and API-specific requirements. This ex
 // =>   User-Agent: n8n-workflow
 // =>   Accept: application/vnd.github.v3+json
 // => Response: Repository data with API version 3 format
-// => { "name": "n8n", "full_name": "n8n-io/n8n", "stargazers_count": 45000, ... }
+// => { "name": "n8n", "full_name": "n8n-io/n8n", "stargazers_count": 165000, ... }
 ```
 
 **Key Takeaway**: Add custom headers in HTTP Request node options. Many APIs require specific headers like User-Agent, Accept, or Content-Type.
@@ -1236,13 +1250,13 @@ graph TD
     C -->|delivered| F[Delivered Handler]
     C -->|default| G[Unknown Handler]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#029E73,color:#fff
-    style E fill:#029E73,color:#fff
-    style F fill:#029E73,color:#fff
-    style G fill:#CA9161,color:#000
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#CA9161,stroke:#000,color:#000
 ```
 
 ```json
@@ -1779,10 +1793,10 @@ graph LR
     B --> C[Wait 5 seconds]
     C --> D[Complete Task]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
 ```
 
 ```json
