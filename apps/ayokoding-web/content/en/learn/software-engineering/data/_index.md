@@ -14,3 +14,5 @@ draft: false
   - [Elixir Ecto](/en/learn/software-engineering/data/tools/elixir-ecto)
 - [Databases](/en/learn/software-engineering/data/databases)
   - [Overview](/en/learn/software-engineering/data/databases/overview)
+  - [SQL](/en/learn/software-engineering/data/databases/sql)
+  - [PostgreSQL](/en/learn/software-engineering/data/databases/postgresql)

@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-27T11:55:58+07:00"
+lastFullScan: "2025-12-29T08:52:17+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:
@@ -810,6 +810,14 @@ links:
     usedIn:
       - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
+  - url: https://planet.postgresql.org/
+    lastChecked: "2025-12-29T08:52:17+07:00"
+    statusCode: 200
+    finalUrl: https://planet.postgresql.org/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/data/databases/postgresql/overview.md
+
   - url: https://play.kotlinlang.org/
     lastChecked: "2025-12-18T17:25:25+07:00"
     statusCode: 200
@@ -907,6 +915,14 @@ links:
     usedIn:
       - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
 
+  - url: https://stackoverflow.com/questions/tagged/postgresql
+    lastChecked: "2025-12-29T08:52:17+07:00"
+    statusCode: 200
+    finalUrl: https://stackoverflow.com/questions/tagged/postgresql
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/data/databases/postgresql/overview.md
+
   - url: https://surveys.jetbrains.com/s3/kotlin-slack-sign-up
     lastChecked: "2025-12-18T17:25:25+07:00"
     statusCode: 200
@@ -940,6 +956,14 @@ links:
     redirectChain: null
     usedIn:
       - content/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup.md
+
+  - url: https://wiki.postgresql.org/
+    lastChecked: "2025-12-29T08:52:17+07:00"
+    statusCode: 200
+    finalUrl: https://wiki.postgresql.org/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/data/databases/postgresql/overview.md
 
   - url: https://www.atomickotlin.com/
     lastChecked: "2025-12-18T17:25:25+07:00"
@@ -1076,6 +1100,23 @@ links:
     redirectChain: null
     usedIn:
       - content/en/learn/software-engineering/programming-language/kotlin/reference/resources.md
+
+  - url: https://www.postgresql.org/docs/
+    lastChecked: "2025-12-29T08:52:17+07:00"
+    statusCode: 200
+    finalUrl: https://www.postgresql.org/docs/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/data/databases/postgresql/overview.md
+      - content/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/advanced.md
+
+  - url: https://www.postgresql.org/list/
+    lastChecked: "2025-12-29T08:52:17+07:00"
+    statusCode: 200
+    finalUrl: https://www.postgresql.org/list/
+    redirectChain: null
+    usedIn:
+      - content/en/learn/software-engineering/data/databases/postgresql/overview.md
 
   - url: https://www.youtube.com/ayokoding
     lastChecked: "2025-12-09T22:30:00+07:00"
