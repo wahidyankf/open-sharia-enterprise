@@ -3,7 +3,7 @@ title: "Rust"
 date: 2025-12-19T00:00:00+07:00
 draft: false
 description: Complete learning path from zero to expert Rust development - organized using the Diátaxis framework
-weight: 14000
+weight: 10005
 type: docs
 layout: list
 ---
@@ -14,6 +14,7 @@ layout: list
   - [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/rust/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/rust/tutorials/quick-start)
+  - [By Example](/en/learn/software-engineering/programming-language/rust/tutorials/by-example)
 - [How to](/en/learn/software-engineering/programming-language/rust/how-to)
   - [Overview](/en/learn/software-engineering/programming-language/rust/how-to/overview)
   - [Cookbook](/en/learn/software-engineering/programming-language/rust/how-to/cookbook)
