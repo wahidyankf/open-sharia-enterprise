@@ -1,0 +1,3089 @@
+---
+title: "Beginner"
+date: 2025-12-29T14:00:00+07:00
+draft: false
+weight: 10000002
+description: "Examples 1-30: Spring Data JPA fundamentals including repositories, CRUD operations, simple queries, and basic relationships (0-40% coverage)"
+categories: ["learn"]
+tags: ["spring-data-jpa", "tutorial", "by-example", "beginner", "jpa-repository", "crud", "queries", "relationships"]
+---
+
+Learn Spring Data JPA fundamentals through 30 annotated code examples. Each example is self-contained, runnable, and heavily commented to show entity states, generated SQL, results, and key takeaways.
+
+## Group 1: Repository Basics
+
+### Example 1: First JPA Repository
+
+JPA repositories provide database operations without writing SQL. Extend `JpaRepository<Entity, ID>` to get built-in CRUD methods like `save()`, `findById()`, and `findAll()`.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A[Application] --> B[UserRepository]
+    B --> C[JpaRepository]
+    C --> D[Database]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity // Marks this class as a JPA entity
+@Table(name = "users") // Maps to "users" table
+public class User {
+    @Id // Primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment
+    private Long id;
+
+    @Column(nullable = false) // NOT NULL constraint
+    private String name;
+
+    private String email;
+
+    // Default constructor required by JPA
+    public User() {}
+
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
+```
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+// JpaRepository<User, Long> provides CRUD operations
+// User = entity type, Long = ID type
+@Repository // Optional - Spring auto-detects repository interfaces
+public interface UserRepository extends JpaRepository<User, Long> {
+    // No methods needed - JpaRepository provides:
+    // - save(User user)
+    // - findById(Long id)
+    // - findAll()
+    // - deleteById(Long id)
+    // - count()
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository; // => Injected by Spring
+    }
+
+    public void demo() {
+        // Create new user
+        User user = new User("Alice", "alice@example.com");
+        // => User state: {id=null, name="Alice", email="alice@example.com"}
+
+        // Save to database
+        User saved = userRepository.save(user);
+        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+        // => Saved state: {id=1, name="Alice", email="alice@example.com"}
+
+        System.out.println("Saved user ID: " + saved.getId()); // => 1
+    }
+}
+```
+
+**Key Takeaway**: Extending `JpaRepository` provides 15+ CRUD methods instantly. No SQL needed for basic operations.
+
+---
+
+### Example 2: Save and Persist Entities
+
+`save()` inserts new entities and updates existing ones. JPA detects new entities by null ID and generates INSERT or UPDATE SQL automatically.
+
+**Code**:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserPersistenceService {
+    private final UserRepository userRepository;
+
+    public UserPersistenceService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateSave() {
+        // CREATE: New entity (id = null)
+        User newUser = new User("Bob", "bob@example.com");
+        // => Entity state: {id=null, name="Bob", email="bob@example.com"}
+        // => Transient state (not in database)
+
+        User savedUser = userRepository.save(newUser);
+        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => Entity state: {id=2, name="Bob", email="bob@example.com"}
+        // => Persistent state (managed by EntityManager)
+
+        System.out.println("Created user with ID: " + savedUser.getId()); // => 2
+
+        // UPDATE: Existing entity (id != null)
+        savedUser.setEmail("bob.updated@example.com");
+        // => Entity state: {id=2, name="Bob", email="bob.updated@example.com"}
+
+        User updatedUser = userRepository.save(savedUser);
+        // => SQL: UPDATE users SET name='Bob', email='bob.updated@example.com' WHERE id=2
+        // => Entity state: {id=2, name="Bob", email="bob.updated@example.com"}
+
+        System.out.println("Updated email: " + updatedUser.getEmail());
+        // => "bob.updated@example.com"
+    }
+}
+```
+
+**Key Takeaway**: `save()` is smart - it inserts entities with null IDs and updates entities with existing IDs. Single method for both operations.
+
+---
+
+### Example 3: Find by ID
+
+`findById()` returns `Optional<Entity>` to handle missing records safely. Use `orElse()`, `orElseThrow()`, or `ifPresent()` to unwrap the result.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A[findById Request] --> B{ID Exists?}
+    B -->|Yes| C[Optional.of Entity]
+    B -->|No| D[Optional.empty]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.Optional;
+
+@Service
+public class UserLookupService {
+    private final UserRepository userRepository;
+
+    public UserLookupService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateFindById() {
+        // FOUND: ID exists in database
+        Optional<User> found = userRepository.findById(1L);
+        // => SQL: SELECT * FROM users WHERE id = 1
+        // => Result: Optional[User{id=1, name="Alice", email="alice@example.com"}]
+
+        found.ifPresent(user -> {
+            System.out.println("Found: " + user.getName()); // => "Alice"
+        });
+
+        // NOT FOUND: ID doesn't exist
+        Optional<User> notFound = userRepository.findById(999L);
+        // => SQL: SELECT * FROM users WHERE id = 999
+        // => Result: Optional.empty
+
+        User defaultUser = notFound.orElse(new User("Guest", "guest@example.com"));
+        System.out.println("User: " + defaultUser.getName()); // => "Guest"
+
+        // THROW EXCEPTION: Handle missing entity
+        try {
+            User user = userRepository.findById(999L)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            // => Throws RuntimeException("User not found")
+        } catch (RuntimeException e) {
+            System.out.println("Error: " + e.getMessage()); // => "User not found"
+        }
+    }
+}
+```
+
+**Key Takeaway**: `Optional<T>` prevents `NullPointerException`. Always use `orElse()`, `orElseThrow()`, or `ifPresent()` instead of `get()`.
+
+---
+
+### Example 4: Find All Entities
+
+`findAll()` retrieves all records from a table. Returns a `List<Entity>` even if the table is empty (returns empty list, never null).
+
+**Code**:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class UserListService {
+    private final UserRepository userRepository;
+
+    public UserListService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateFindAll() {
+        // Setup: Create test data
+        userRepository.save(new User("Alice", "alice@example.com"));
+        userRepository.save(new User("Bob", "bob@example.com"));
+        userRepository.save(new User("Charlie", "charlie@example.com"));
+        // => 3 INSERT statements
+
+        // Retrieve all users
+        List<User> allUsers = userRepository.findAll();
+        // => SQL: SELECT * FROM users
+        // => Result: [
+        // =>   User{id=1, name="Alice", email="alice@example.com"},
+        // =>   User{id=2, name="Bob", email="bob@example.com"},
+        // =>   User{id=3, name="Charlie", email="charlie@example.com"}
+        // => ]
+
+        System.out.println("Total users: " + allUsers.size()); // => 3
+
+        allUsers.forEach(user -> {
+            System.out.println(user.getName()); // => "Alice", "Bob", "Charlie"
+        });
+
+        // Empty table scenario
+        userRepository.deleteAll(); // => DELETE FROM users
+        List<User> emptyList = userRepository.findAll();
+        // => SQL: SELECT * FROM users
+        // => Result: [] (empty list, NOT null)
+
+        System.out.println("Empty list size: " + emptyList.size()); // => 0
+    }
+}
+```
+
+**Key Takeaway**: `findAll()` returns `List<Entity>`, never null. Safe to call `.size()` and `.forEach()` without null checks.
+
+---
+
+### Example 5: Delete Operations
+
+JPA provides three deletion methods: `deleteById()` (by primary key), `delete()` (by entity), and `deleteAll()` (all records). Each has different performance characteristics.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A[Delete Request] --> B{Method?}
+    B -->|deleteById| C[SELECT + DELETE]
+    B -->|delete| D[DELETE by ID]
+    B -->|deleteAll| E[SELECT + DELETE each]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserDeletionService {
+    private final UserRepository userRepository;
+
+    public UserDeletionService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateDelete() {
+        // Setup: Create test users
+        User user1 = userRepository.save(new User("Alice", "alice@example.com"));
+        User user2 = userRepository.save(new User("Bob", "bob@example.com"));
+        User user3 = userRepository.save(new User("Charlie", "charlie@example.com"));
+        // => 3 users in database
+
+        // Method 1: deleteById() - deletes by primary key
+        userRepository.deleteById(1L);
+        // => SQL: SELECT * FROM users WHERE id = 1 (verify existence)
+        // => SQL: DELETE FROM users WHERE id = 1
+        // => user1 deleted
+
+        // Method 2: delete() - deletes by entity object
+        userRepository.delete(user2);
+        // => SQL: DELETE FROM users WHERE id = 2
+        // => user2 deleted (no SELECT needed, uses entity ID)
+
+        System.out.println("Remaining users: " + userRepository.count()); // => 1
+
+        // Method 3: deleteAll() - deletes all records
+        userRepository.deleteAll();
+        // => SQL: SELECT * FROM users (fetch all entities)
+        // => SQL: DELETE FROM users WHERE id = 3
+        // => All users deleted (WARNING: inefficient for large tables)
+
+        System.out.println("Final count: " + userRepository.count()); // => 0
+    }
+}
+```
+
+**Key Takeaway**: `delete(entity)` is most efficient (single DELETE). `deleteById()` requires SELECT first. `deleteAll()` is inefficient for large tables - use custom query instead.
+
+---
+
+### Example 6: Count and Exists
+
+`count()` returns total records. `existsById()` checks existence without fetching the entity (more efficient than `findById().isPresent()`).
+
+**Code**:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserCountService {
+    private final UserRepository userRepository;
+
+    public UserCountService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateCountAndExists() {
+        // Setup: Create test data
+        userRepository.save(new User("Alice", "alice@example.com"));
+        userRepository.save(new User("Bob", "bob@example.com"));
+        // => 2 users in database
+
+        // Count total records
+        long totalUsers = userRepository.count();
+        // => SQL: SELECT COUNT(*) FROM users
+        // => Result: 2
+
+        System.out.println("Total users: " + totalUsers); // => 2
+
+        // Check existence by ID
+        boolean exists = userRepository.existsById(1L);
+        // => SQL: SELECT 1 FROM users WHERE id = 1 LIMIT 1
+        // => Result: true
+
+        System.out.println("User 1 exists: " + exists); // => true
+
+        boolean notExists = userRepository.existsById(999L);
+        // => SQL: SELECT 1 FROM users WHERE id = 999 LIMIT 1
+        // => Result: false
+
+        System.out.println("User 999 exists: " + notExists); // => false
+
+        // INEFFICIENT: Don't use findById() just to check existence
+        boolean inefficient = userRepository.findById(1L).isPresent();
+        // => SQL: SELECT * FROM users WHERE id = 1
+        // => Result: true (but fetches entire entity unnecessarily)
+    }
+}
+```
+
+**Key Takeaway**: Use `existsById()` to check existence - it's more efficient than `findById().isPresent()` because it doesn't fetch the entire entity.
+
+---
+
+### Example 7: Save All Batch Operations
+
+`saveAll()` persists multiple entities in one method call. More efficient than calling `save()` in a loop because it can batch INSERT/UPDATE statements.
+
+**Code**:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.Arrays;
+import java.util.List;
+
+@Service
+public class UserBatchService {
+    private final UserRepository userRepository;
+
+    public UserBatchService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateSaveAll() {
+        // Create multiple users
+        List<User> users = Arrays.asList(
+            new User("Alice", "alice@example.com"),
+            new User("Bob", "bob@example.com"),
+            new User("Charlie", "charlie@example.com"),
+            new User("Diana", "diana@example.com")
+        );
+        // => 4 transient entities (id = null for all)
+
+        // Batch save
+        List<User> savedUsers = userRepository.saveAll(users);
+        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => SQL: INSERT INTO users (name, email) VALUES ('Charlie', 'charlie@example.com')
+        // => SQL: INSERT INTO users (name, email) VALUES ('Diana', 'diana@example.com')
+        // => Note: JPA batches these into fewer database roundtrips with proper config
+
+        System.out.println("Saved " + savedUsers.size() + " users"); // => 4
+
+        savedUsers.forEach(user -> {
+            System.out.println("ID: " + user.getId() + ", Name: " + user.getName());
+            // => ID: 1, Name: Alice
+            // => ID: 2, Name: Bob
+            // => ID: 3, Name: Charlie
+            // => ID: 4, Name: Diana
+        });
+
+        // Update multiple entities
+        savedUsers.forEach(user -> user.setEmail(user.getEmail().toUpperCase()));
+        List<User> updated = userRepository.saveAll(savedUsers);
+        // => 4 UPDATE statements (batched with proper config)
+
+        System.out.println("Updated emails to uppercase");
+    }
+}
+```
+
+**Key Takeaway**: Use `saveAll()` for batch operations. Configure `spring.jpa.properties.hibernate.jdbc.batch_size` to enable true batching for better performance.
+
+---
+
+### Example 8: Flush and Transaction Management
+
+`flush()` forces pending database writes immediately. Normally JPA batches operations until transaction commit. Understanding flush timing prevents subtle bugs.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A[save] --> B[Dirty Checking]
+    B --> C[flush]
+    C --> D[SQL Execution]
+    D --> E[Transaction Commit]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class UserTransactionService {
+    private final UserRepository userRepository;
+
+    public UserTransactionService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Transactional // Required for flush() to work
+    public void demonstrateFlush() {
+        // Create user without flushing
+        User user = new User("Alice", "alice@example.com");
+        userRepository.save(user);
+        // => Entity in persistence context (not yet in database)
+        // => No SQL executed yet
+
+        System.out.println("After save, before flush");
+
+        // Force immediate database write
+        userRepository.flush();
+        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+        // => Now in database, ID assigned
+
+        System.out.println("After flush: ID = " + user.getId()); // => ID assigned
+
+        // Modify entity
+        user.setEmail("alice.updated@example.com");
+        // => Entity marked as dirty in persistence context
+
+        userRepository.flush();
+        // => SQL: UPDATE users SET email='alice.updated@example.com' WHERE id=1
+        // => Changes written to database immediately
+
+        // Transaction commits at method end
+        // => Any remaining dirty entities flushed automatically
+    }
+
+    @Transactional
+    public void demonstrateSaveAndFlush() {
+        User user = new User("Bob", "bob@example.com");
+
+        // saveAndFlush() = save() + flush()
+        User saved = userRepository.saveAndFlush(user);
+        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => Immediately written to database, ID available
+
+        System.out.println("ID immediately available: " + saved.getId()); // => 2
+    }
+}
+```
+
+**Key Takeaway**: JPA batches database writes until transaction commit. Use `flush()` or `saveAndFlush()` when you need the ID immediately or want to trigger constraint violations early.
+
+---
+
+## Group 2: Simple Query Derivation
+
+### Example 9: Find By Single Property
+
+Query derivation creates SQL from method names. `findByPropertyName` generates `WHERE property_name = ?` automatically.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A[findByName] --> B[Parse Method]
+    B --> C[Generate WHERE]
+    C --> D[Execute Query]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Find single user by name
+    Optional<User> findByName(String name);
+    // => SQL: SELECT * FROM users WHERE name = ?
+
+    // Find all users with specific email
+    List<User> findByEmail(String email);
+    // => SQL: SELECT * FROM users WHERE email = ?
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.Optional;
+import java.util.List;
+
+@Service
+public class UserQueryService {
+    private final UserRepository userRepository;
+
+    public UserQueryService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateFindByProperty() {
+        // Setup data
+        userRepository.save(new User("Alice", "alice@example.com"));
+        userRepository.save(new User("Bob", "bob@example.com"));
+        userRepository.save(new User("Alice", "alice2@example.com")); // Duplicate name
+
+        // Find by name (returns Optional for single result)
+        Optional<User> alice = userRepository.findByName("Alice");
+        // => SQL: SELECT * FROM users WHERE name = 'Alice'
+        // => Result: Optional[User{id=1, name="Alice", email="alice@example.com"}]
+        // => WARNING: If multiple "Alice" exist, returns first one found
+
+        alice.ifPresent(user -> {
+            System.out.println("Found: " + user.getEmail()); // => "alice@example.com"
+        });
+
+        // Find by email (returns List for multiple results)
+        List<User> bobUsers = userRepository.findByEmail("bob@example.com");
+        // => SQL: SELECT * FROM users WHERE email = 'bob@example.com'
+        // => Result: [User{id=2, name="Bob", email="bob@example.com"}]
+
+        System.out.println("Users with bob@example.com: " + bobUsers.size()); // => 1
+    }
+}
+```
+
+**Key Takeaway**: Return `Optional<T>` for single results, `List<T>` for multiple. Method names map directly to SQL WHERE clauses.
+
+---
+
+### Example 10: Find By Multiple Properties
+
+Combine multiple properties with `And` and `Or` keywords. Spring Data generates complex WHERE clauses from method names.
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    // AND condition
+    List<User> findByNameAndEmail(String name, String email);
+    // => SQL: SELECT * FROM users WHERE name = ? AND email = ?
+
+    // OR condition
+    List<User> findByNameOrEmail(String name, String email);
+    // => SQL: SELECT * FROM users WHERE name = ? OR email = ?
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class UserMultiQueryService {
+    private final UserRepository userRepository;
+
+    public UserMultiQueryService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateMultiPropertyQueries() {
+        // Setup data
+        userRepository.save(new User("Alice", "alice@example.com"));
+        userRepository.save(new User("Bob", "bob@example.com"));
+        userRepository.save(new User("Alice", "alice2@example.com"));
+
+        // AND query - both conditions must match
+        List<User> exact = userRepository.findByNameAndEmail("Alice", "alice@example.com");
+        // => SQL: SELECT * FROM users WHERE name = 'Alice' AND email = 'alice@example.com'
+        // => Result: [User{id=1, name="Alice", email="alice@example.com"}]
+
+        System.out.println("Exact match: " + exact.size()); // => 1
+
+        // OR query - either condition can match
+        List<User> either = userRepository.findByNameOrEmail("Alice", "bob@example.com");
+        // => SQL: SELECT * FROM users WHERE name = 'Alice' OR email = 'bob@example.com'
+        // => Result: [
+        // =>   User{id=1, name="Alice", email="alice@example.com"},
+        // =>   User{id=2, name="Bob", email="bob@example.com"},
+        // =>   User{id=3, name="Alice", email="alice2@example.com"}
+        // => ]
+
+        System.out.println("OR match: " + either.size()); // => 3
+    }
+}
+```
+
+**Key Takeaway**: `And` and `Or` keywords create multi-condition WHERE clauses. Parameters must match the order of properties in the method name.
+
+---
+
+### Example 11: Comparison Operators
+
+Query keywords like `LessThan`, `GreaterThan`, `Between` map to SQL comparison operators. Essential for numeric and date filtering.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "products")
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private Double price;
+
+    public Product() {}
+    public Product(String name, Double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
+}
+```
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    // Less than
+    List<Product> findByPriceLessThan(Double price);
+    // => SQL: SELECT * FROM products WHERE price < ?
+
+    // Greater than or equal
+    List<Product> findByPriceGreaterThanEqual(Double price);
+    // => SQL: SELECT * FROM products WHERE price >= ?
+
+    // Between (inclusive)
+    List<Product> findByPriceBetween(Double min, Double max);
+    // => SQL: SELECT * FROM products WHERE price BETWEEN ? AND ?
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Product;
+import com.example.demo.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class ProductQueryService {
+    private final ProductRepository productRepository;
+
+    public ProductQueryService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public void demonstrateComparisons() {
+        // Setup data
+        productRepository.save(new Product("Laptop", 999.99));
+        productRepository.save(new Product("Mouse", 29.99));
+        productRepository.save(new Product("Keyboard", 79.99));
+        productRepository.save(new Product("Monitor", 299.99));
+
+        // Find cheap products (< $50)
+        List<Product> cheap = productRepository.findByPriceLessThan(50.0);
+        // => SQL: SELECT * FROM products WHERE price < 50.0
+        // => Result: [Product{name="Mouse", price=29.99}]
+
+        System.out.println("Cheap products: " + cheap.size()); // => 1
+
+        // Find expensive products (>= $100)
+        List<Product> expensive = productRepository.findByPriceGreaterThanEqual(100.0);
+        // => SQL: SELECT * FROM products WHERE price >= 100.0
+        // => Result: [
+        // =>   Product{name="Laptop", price=999.99},
+        // =>   Product{name="Monitor", price=299.99}
+        // => ]
+
+        System.out.println("Expensive products: " + expensive.size()); // => 2
+
+        // Find mid-range products ($50 - $300)
+        List<Product> midRange = productRepository.findByPriceBetween(50.0, 300.0);
+        // => SQL: SELECT * FROM products WHERE price BETWEEN 50.0 AND 300.0
+        // => Result: [
+        // =>   Product{name="Keyboard", price=79.99},
+        // =>   Product{name="Monitor", price=299.99}
+        // => ]
+
+        System.out.println("Mid-range products: " + midRange.size()); // => 2
+    }
+}
+```
+
+**Key Takeaway**: Comparison keywords (`LessThan`, `GreaterThan`, `Between`) map to SQL operators. `Between` is inclusive on both ends.
+
+---
+
+### Example 12: String Matching
+
+`Like`, `StartingWith`, `EndingWith`, `Containing` keywords enable pattern matching. JPA handles wildcard placement automatically.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A[String Query] --> B{Keyword?}
+    B -->|StartingWith| C[name LIKE 'value%']
+    B -->|EndingWith| D[name LIKE '%value']
+    B -->|Containing| E[name LIKE '%value%']
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Starts with prefix
+    List<User> findByNameStartingWith(String prefix);
+    // => SQL: SELECT * FROM users WHERE name LIKE 'prefix%'
+
+    // Ends with suffix
+    List<User> findByNameEndingWith(String suffix);
+    // => SQL: SELECT * FROM users WHERE name LIKE '%suffix'
+
+    // Contains substring
+    List<User> findByNameContaining(String substring);
+    // => SQL: SELECT * FROM users WHERE name LIKE '%substring%'
+
+    // Email domain matching
+    List<User> findByEmailEndingWith(String domain);
+    // => SQL: SELECT * FROM users WHERE email LIKE '%domain'
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class UserPatternService {
+    private final UserRepository userRepository;
+
+    public UserPatternService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateStringMatching() {
+        // Setup data
+        userRepository.save(new User("Alice", "alice@gmail.com"));
+        userRepository.save(new User("Alex", "alex@yahoo.com"));
+        userRepository.save(new User("Bob", "bob@gmail.com"));
+        userRepository.save(new User("Charlie", "charlie@example.com"));
+
+        // Find names starting with "Al"
+        List<User> alNames = userRepository.findByNameStartingWith("Al");
+        // => SQL: SELECT * FROM users WHERE name LIKE 'Al%'
+        // => Result: [
+        // =>   User{name="Alice", email="alice@gmail.com"},
+        // =>   User{name="Alex", email="alex@yahoo.com"}
+        // => ]
+
+        System.out.println("Names starting with 'Al': " + alNames.size()); // => 2
+
+        // Find names ending with "ie"
+        List<User> ieNames = userRepository.findByNameEndingWith("ie");
+        // => SQL: SELECT * FROM users WHERE name LIKE '%ie'
+        // => Result: [User{name="Charlie", email="charlie@example.com"}]
+
+        System.out.println("Names ending with 'ie': " + ieNames.size()); // => 1
+
+        // Find names containing "li"
+        List<User> liNames = userRepository.findByNameContaining("li");
+        // => SQL: SELECT * FROM users WHERE name LIKE '%li%'
+        // => Result: [
+        // =>   User{name="Alice", email="alice@gmail.com"},
+        // =>   User{name="Charlie", email="charlie@example.com"}
+        // => ]
+
+        System.out.println("Names containing 'li': " + liNames.size()); // => 2
+
+        // Find Gmail users
+        List<User> gmailUsers = userRepository.findByEmailEndingWith("@gmail.com");
+        // => SQL: SELECT * FROM users WHERE email LIKE '%@gmail.com'
+        // => Result: [
+        // =>   User{name="Alice", email="alice@gmail.com"},
+        // =>   User{name="Bob", email="bob@gmail.com"}
+        // => ]
+
+        System.out.println("Gmail users: " + gmailUsers.size()); // => 2
+    }
+}
+```
+
+**Key Takeaway**: Spring Data handles wildcard placement - `StartingWith` adds `%` at end, `EndingWith` at start, `Containing` at both ends. No manual wildcards needed.
+
+---
+
+### Example 13: Ordering Results
+
+`OrderBy` keyword sorts query results. Combine multiple properties with `Asc` (ascending) and `Desc` (descending) suffixes.
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    // Single property ascending
+    List<Product> findAllByOrderByPriceAsc();
+    // => SQL: SELECT * FROM products ORDER BY price ASC
+
+    // Single property descending
+    List<Product> findAllByOrderByPriceDesc();
+    // => SQL: SELECT * FROM products ORDER BY price DESC
+
+    // Multiple properties
+    List<Product> findAllByOrderByNameAscPriceDesc();
+    // => SQL: SELECT * FROM products ORDER BY name ASC, price DESC
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Product;
+import com.example.demo.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class ProductSortService {
+    private final ProductRepository productRepository;
+
+    public ProductSortService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public void demonstrateOrdering() {
+        // Setup data
+        productRepository.save(new Product("Laptop", 999.99));
+        productRepository.save(new Product("Mouse", 29.99));
+        productRepository.save(new Product("Keyboard", 79.99));
+        productRepository.save(new Product("Monitor", 299.99));
+
+        // Ascending price order
+        List<Product> cheapFirst = productRepository.findAllByOrderByPriceAsc();
+        // => SQL: SELECT * FROM products ORDER BY price ASC
+        // => Result: [
+        // =>   Product{name="Mouse", price=29.99},
+        // =>   Product{name="Keyboard", price=79.99},
+        // =>   Product{name="Monitor", price=299.99},
+        // =>   Product{name="Laptop", price=999.99}
+        // => ]
+
+        System.out.println("Cheapest: " + cheapFirst.get(0).getName()); // => "Mouse"
+
+        // Descending price order
+        List<Product> expensiveFirst = productRepository.findAllByOrderByPriceDesc();
+        // => SQL: SELECT * FROM products ORDER BY price DESC
+        // => Result: [
+        // =>   Product{name="Laptop", price=999.99},
+        // =>   Product{name="Monitor", price=299.99},
+        // =>   Product{name="Keyboard", price=79.99},
+        // =>   Product{name="Mouse", price=29.99}
+        // => ]
+
+        System.out.println("Most expensive: " + expensiveFirst.get(0).getName());
+        // => "Laptop"
+    }
+}
+```
+
+**Key Takeaway**: `OrderBy` adds SQL `ORDER BY` clause. Combine multiple properties for multi-level sorting. Default is ascending if no suffix specified.
+
+---
+
+### Example 14: Limiting Results
+
+`Top` and `First` keywords limit result size. Essential for pagination and "top N" queries without fetching entire dataset.
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.Optional;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    // First result only
+    Optional<Product> findFirstByOrderByPriceAsc();
+    // => SQL: SELECT * FROM products ORDER BY price ASC LIMIT 1
+
+    // Top 3 results
+    List<Product> findTop3ByOrderByPriceDesc();
+    // => SQL: SELECT * FROM products ORDER BY price DESC LIMIT 3
+
+    // First 5 with condition
+    List<Product> findFirst5ByPriceGreaterThanOrderByPriceAsc(Double price);
+    // => SQL: SELECT * FROM products WHERE price > ? ORDER BY price ASC LIMIT 5
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Product;
+import com.example.demo.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class ProductLimitService {
+    private final ProductRepository productRepository;
+
+    public ProductLimitService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public void demonstrateLimiting() {
+        // Setup data
+        productRepository.save(new Product("Laptop", 999.99));
+        productRepository.save(new Product("Mouse", 29.99));
+        productRepository.save(new Product("Keyboard", 79.99));
+        productRepository.save(new Product("Monitor", 299.99));
+        productRepository.save(new Product("Webcam", 89.99));
+
+        // Get cheapest product
+        Optional<Product> cheapest = productRepository.findFirstByOrderByPriceAsc();
+        // => SQL: SELECT * FROM products ORDER BY price ASC LIMIT 1
+        // => Result: Optional[Product{name="Mouse", price=29.99}]
+
+        cheapest.ifPresent(p -> {
+            System.out.println("Cheapest: " + p.getName() + " - $" + p.getPrice());
+            // => "Cheapest: Mouse - $29.99"
+        });
+
+        // Get top 3 most expensive
+        List<Product> topExpensive = productRepository.findTop3ByOrderByPriceDesc();
+        // => SQL: SELECT * FROM products ORDER BY price DESC LIMIT 3
+        // => Result: [
+        // =>   Product{name="Laptop", price=999.99},
+        // =>   Product{name="Monitor", price=299.99},
+        // =>   Product{name="Webcam", price=89.99}
+        // => ]
+
+        System.out.println("Top 3 expensive products: " + topExpensive.size()); // => 3
+
+        // Get first 5 products over $50
+        List<Product> affordable = productRepository
+            .findFirst5ByPriceGreaterThanOrderByPriceAsc(50.0);
+        // => SQL: SELECT * FROM products WHERE price > 50.0 ORDER BY price ASC LIMIT 5
+        // => Result: [
+        // =>   Product{name="Keyboard", price=79.99},
+        // =>   Product{name="Webcam", price=89.99},
+        // =>   Product{name="Monitor", price=299.99},
+        // =>   Product{name="Laptop", price=999.99}
+        // => ] (only 4 results because only 4 products > $50)
+
+        System.out.println("Products over $50: " + affordable.size()); // => 4
+    }
+}
+```
+
+**Key Takeaway**: `First` and `Top` are synonyms - both add `LIMIT` clause. Always combine with `OrderBy` for deterministic results.
+
+---
+
+### Example 15: Null Handling
+
+`IsNull` and `IsNotNull` keywords filter null values. Critical for optional fields and data quality queries.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    private String email; // Nullable field
+
+    public User() {}
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
+```
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Find users with no email
+    List<User> findByEmailIsNull();
+    // => SQL: SELECT * FROM users WHERE email IS NULL
+
+    // Find users with email
+    List<User> findByEmailIsNotNull();
+    // => SQL: SELECT * FROM users WHERE email IS NOT NULL
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class UserNullService {
+    private final UserRepository userRepository;
+
+    public UserNullService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateNullHandling() {
+        // Setup data with null emails
+        userRepository.save(new User("Alice", "alice@example.com"));
+        userRepository.save(new User("Bob", null)); // No email
+        userRepository.save(new User("Charlie", "charlie@example.com"));
+        userRepository.save(new User("Diana", null)); // No email
+
+        // Find users without email
+        List<User> noEmail = userRepository.findByEmailIsNull();
+        // => SQL: SELECT * FROM users WHERE email IS NULL
+        // => Result: [
+        // =>   User{name="Bob", email=null},
+        // =>   User{name="Diana", email=null}
+        // => ]
+
+        System.out.println("Users without email: " + noEmail.size()); // => 2
+
+        // Find users with email
+        List<User> hasEmail = userRepository.findByEmailIsNotNull();
+        // => SQL: SELECT * FROM users WHERE email IS NOT NULL
+        // => Result: [
+        // =>   User{name="Alice", email="alice@example.com"},
+        // =>   User{name="Charlie", email="charlie@example.com"}
+        // => ]
+
+        System.out.println("Users with email: " + hasEmail.size()); // => 2
+
+        // Verify total count
+        long total = userRepository.count();
+        System.out.println("Total users: " + total); // => 4
+        System.out.println("Sum check: " + (noEmail.size() + hasEmail.size())); // => 4
+    }
+}
+```
+
+**Key Takeaway**: Use `IsNull` and `IsNotNull` for null checks. Never use `= null` or `!= null` in custom queries - SQL requires `IS NULL` / `IS NOT NULL`.
+
+---
+
+### Example 16: Case-Insensitive Queries
+
+`IgnoreCase` keyword performs case-insensitive matching. Database-agnostic - JPA handles UPPER/LOWER conversion automatically.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A[findByNameIgnoreCase] --> B[Convert to SQL]
+    B --> C[UPPER/LOWER Function]
+    C --> D[Case-Insensitive Match]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Case-insensitive exact match
+    Optional<User> findByNameIgnoreCase(String name);
+    // => SQL: SELECT * FROM users WHERE UPPER(name) = UPPER(?)
+
+    // Case-insensitive contains
+    List<User> findByNameContainingIgnoreCase(String substring);
+    // => SQL: SELECT * FROM users WHERE UPPER(name) LIKE UPPER('%substring%')
+
+    // Case-insensitive starts with
+    List<User> findByEmailStartingWithIgnoreCase(String prefix);
+    // => SQL: SELECT * FROM users WHERE UPPER(email) LIKE UPPER('prefix%')
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserCaseService {
+    private final UserRepository userRepository;
+
+    public UserCaseService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void demonstrateCaseInsensitive() {
+        // Setup data with mixed case
+        userRepository.save(new User("Alice", "ALICE@example.com"));
+        userRepository.save(new User("BOB", "bob@example.com"));
+        userRepository.save(new User("Charlie", "Charlie@Example.COM"));
+
+        // Case-insensitive exact match
+        Optional<User> alice = userRepository.findByNameIgnoreCase("alice");
+        // => SQL: SELECT * FROM users WHERE UPPER(name) = UPPER('alice')
+        // => Matches "Alice" (stored as "Alice" in database)
+        // => Result: Optional[User{name="Alice", email="ALICE@example.com"}]
+
+        alice.ifPresent(u -> {
+            System.out.println("Found: " + u.getName()); // => "Alice"
+        });
+
+        Optional<User> bob = userRepository.findByNameIgnoreCase("bob");
+        // => SQL: SELECT * FROM users WHERE UPPER(name) = UPPER('bob')
+        // => Matches "BOB" (stored as "BOB")
+        // => Result: Optional[User{name="BOB", email="bob@example.com"}]
+
+        bob.ifPresent(u -> {
+            System.out.println("Found: " + u.getName()); // => "BOB"
+        });
+
+        // Case-insensitive contains
+        List<User> charlieVariants = userRepository.findByNameContainingIgnoreCase("CHAR");
+        // => SQL: SELECT * FROM users WHERE UPPER(name) LIKE UPPER('%CHAR%')
+        // => Matches "Charlie"
+        // => Result: [User{name="Charlie", email="Charlie@Example.COM"}]
+
+        System.out.println("Names containing 'CHAR': " + charlieVariants.size()); // => 1
+
+        // Case-insensitive email search
+        List<User> exampleEmails = userRepository
+            .findByEmailStartingWithIgnoreCase("alice");
+        // => SQL: SELECT * FROM users WHERE UPPER(email) LIKE UPPER('alice%')
+        // => Matches "ALICE@example.com"
+        // => Result: [User{name="Alice", email="ALICE@example.com"}]
+
+        System.out.println("Emails starting with 'alice': " + exampleEmails.size());
+        // => 1
+    }
+}
+```
+
+**Key Takeaway**: `IgnoreCase` works with all string matching keywords (`Containing`, `StartingWith`, `EndingWith`). Database handles case conversion automatically.
+
+---
+
+## Group 3: Basic Relationships
+
+### Example 17: One-to-Many Relationship Basics
+
+`@OneToMany` maps one entity to many related entities. Common pattern: one department has many employees. The "many" side holds the foreign key.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    D1[Department: Engineering] --> E1[Employee: Alice]
+    D1 --> E2[Employee: Bob]
+    D2[Department: Sales] --> E3[Employee: Charlie]
+
+    style D1 fill:#0173B2,color:#fff
+    style D2 fill:#0173B2,color:#fff
+    style E1 fill:#029E73,color:#fff
+    style E2 fill:#029E73,color:#fff
+    style E3 fill:#029E73,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "departments")
+public class Department {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    // One department has many employees
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    // mappedBy = field name in Employee entity that owns the relationship
+    // cascade = operations propagate to employees
+    private List<Employee> employees = new ArrayList<>();
+
+    public Department() {}
+    public Department(String name) {
+        this.name = name;
+    }
+
+    // Helper method to maintain both sides of relationship
+    public void addEmployee(Employee employee) {
+        employees.add(employee);
+        employee.setDepartment(this); // Set back-reference
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public List<Employee> getEmployees() { return employees; }
+    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+}
+```
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "employees")
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    // Many employees belong to one department
+    @ManyToOne
+    @JoinColumn(name = "department_id") // Foreign key column
+    private Department department;
+
+    public Employee() {}
+    public Employee(String name) {
+        this.name = name;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Department getDepartment() { return department; }
+    public void setDepartment(Department department) { this.department = department; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Employee;
+import com.example.demo.repository.DepartmentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class DepartmentService {
+    private final DepartmentRepository departmentRepository;
+
+    public DepartmentService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
+
+    @Transactional
+    public void demonstrateOneToMany() {
+        // Create department
+        Department engineering = new Department("Engineering");
+        // => Department state: {id=null, name="Engineering", employees=[]}
+
+        // Create employees
+        Employee alice = new Employee("Alice");
+        Employee bob = new Employee("Bob");
+        // => Employee states: {id=null, name="Alice", department=null}
+
+        // Add employees to department
+        engineering.addEmployee(alice);
+        engineering.addEmployee(bob);
+        // => Department: {id=null, name="Engineering", employees=[alice, bob]}
+        // => alice: {id=null, name="Alice", department=engineering}
+        // => bob: {id=null, name="Bob", department=engineering}
+
+        // Save department (cascade saves employees too)
+        Department saved = departmentRepository.save(engineering);
+        // => SQL: INSERT INTO departments (name) VALUES ('Engineering')
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Alice', 1)
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Bob', 1)
+
+        System.out.println("Department ID: " + saved.getId()); // => 1
+        System.out.println("Employees: " + saved.getEmployees().size()); // => 2
+    }
+}
+```
+
+**Key Takeaway**: `@OneToMany` on parent, `@ManyToOne` on child. Always use `mappedBy` to indicate which side owns the relationship. Helper methods maintain bidirectional consistency.
+
+---
+
+### Example 18: Querying Through Relationships
+
+Navigate relationships in query method names using property paths. Spring Data JPA joins tables automatically.
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.Employee;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    // Find employees by department name (navigates relationship)
+    List<Employee> findByDepartmentName(String departmentName);
+    // => SQL: SELECT e.* FROM employees e
+    // =>      JOIN departments d ON e.department_id = d.id
+    // =>      WHERE d.name = ?
+
+    // Find employees by department ID
+    List<Employee> findByDepartmentId(Long departmentId);
+    // => SQL: SELECT * FROM employees WHERE department_id = ?
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Employee;
+import com.example.demo.repository.DepartmentRepository;
+import com.example.demo.repository.EmployeeRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
+@Service
+public class EmployeeQueryService {
+    private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
+
+    public EmployeeQueryService(DepartmentRepository departmentRepository,
+                                EmployeeRepository employeeRepository) {
+        this.departmentRepository = departmentRepository;
+        this.employeeRepository = employeeRepository;
+    }
+
+    @Transactional
+    public void demonstrateRelationshipQueries() {
+        // Setup data
+        Department engineering = new Department("Engineering");
+        engineering.addEmployee(new Employee("Alice"));
+        engineering.addEmployee(new Employee("Bob"));
+        departmentRepository.save(engineering);
+
+        Department sales = new Department("Sales");
+        sales.addEmployee(new Employee("Charlie"));
+        departmentRepository.save(sales);
+
+        // Query by department name (auto-join)
+        List<Employee> engineers = employeeRepository.findByDepartmentName("Engineering");
+        // => SQL: SELECT e.* FROM employees e
+        // =>      JOIN departments d ON e.department_id = d.id
+        // =>      WHERE d.name = 'Engineering'
+        // => Result: [Employee{name="Alice"}, Employee{name="Bob"}]
+
+        System.out.println("Engineers: " + engineers.size()); // => 2
+
+        // Query by department ID (no join needed)
+        List<Employee> salesTeam = employeeRepository.findByDepartmentId(1L);
+        // => SQL: SELECT * FROM employees WHERE department_id = 1
+        // => Result: [Employee{name="Alice"}, Employee{name="Bob"}]
+
+        System.out.println("Sales team: " + salesTeam.size()); // => 2
+    }
+}
+```
+
+**Key Takeaway**: Use property paths (dot notation conceptually) in method names to navigate relationships. Spring Data generates JOIN queries automatically.
+
+---
+
+### Example 19: Many-to-One Relationship
+
+`@ManyToOne` represents the "many" side of a relationship. Each employee belongs to one department - this is the inverse of `@OneToMany`.
+
+**Code**:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.Employee;
+import com.example.demo.entity.Department;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    // Find all employees in specific department
+    List<Employee> findByDepartment(Department department);
+    // => SQL: SELECT * FROM employees WHERE department_id = ?
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Employee;
+import com.example.demo.repository.DepartmentRepository;
+import com.example.demo.repository.EmployeeRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
+@Service
+public class EmployeeRelationService {
+    private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
+
+    public EmployeeRelationService(DepartmentRepository departmentRepository,
+                                   EmployeeRepository employeeRepository) {
+        this.departmentRepository = departmentRepository;
+        this.employeeRepository = employeeRepository;
+    }
+
+    @Transactional
+    public void demonstrateManyToOne() {
+        // Create department first
+        Department engineering = new Department("Engineering");
+        Department saved = departmentRepository.save(engineering);
+        // => SQL: INSERT INTO departments (name) VALUES ('Engineering')
+        // => Saved: {id=1, name="Engineering", employees=[]}
+
+        // Create employees with department reference
+        Employee alice = new Employee("Alice");
+        alice.setDepartment(saved);
+        employeeRepository.save(alice);
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Alice', 1)
+
+        Employee bob = new Employee("Bob");
+        bob.setDepartment(saved);
+        employeeRepository.save(bob);
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Bob', 1)
+
+        // Query by department object
+        List<Employee> engineers = employeeRepository.findByDepartment(saved);
+        // => SQL: SELECT * FROM employees WHERE department_id = 1
+        // => Result: [Employee{name="Alice"}, Employee{name="Bob"}]
+
+        System.out.println("Engineers: " + engineers.size()); // => 2
+
+        // Access department from employee
+        Employee retrievedAlice = employeeRepository.findById(alice.getId()).get();
+        System.out.println("Alice's department: " + retrievedAlice.getDepartment().getName());
+        // => SQL: SELECT * FROM employees WHERE id = 1
+        // => SQL: SELECT * FROM departments WHERE id = 1 (lazy load)
+        // => "Engineering"
+    }
+}
+```
+
+**Key Takeaway**: `@ManyToOne` is the owning side of the relationship - it holds the foreign key. Always save the "one" side before the "many" side to avoid constraint violations.
+
+---
+
+### Example 20: Cascade Types
+
+Cascade operations propagate parent actions to children. `CascadeType.ALL` cascades all operations, while specific types control individual behaviors.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A[Save Department] --> B{CascadeType.ALL?}
+    B -->|Yes| C[Auto-save Employees]
+    B -->|No| D[Manual save needed]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "departments")
+public class Department {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    // CascadeType.PERSIST: save() cascades to employees
+    // CascadeType.MERGE: update() cascades
+    // CascadeType.REMOVE: delete() cascades
+    // CascadeType.REFRESH: refresh() cascades
+    // CascadeType.DETACH: detach() cascades
+    // CascadeType.ALL: all of the above
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    // orphanRemoval = true: delete employees removed from collection
+    private List<Employee> employees = new ArrayList<>();
+
+    public Department() {}
+    public Department(String name) {
+        this.name = name;
+    }
+
+    public void addEmployee(Employee employee) {
+        employees.add(employee);
+        employee.setDepartment(this);
+    }
+
+    public void removeEmployee(Employee employee) {
+        employees.remove(employee);
+        employee.setDepartment(null);
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public List<Employee> getEmployees() { return employees; }
+    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Employee;
+import com.example.demo.repository.DepartmentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class CascadeService {
+    private final DepartmentRepository departmentRepository;
+
+    public CascadeService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
+
+    @Transactional
+    public void demonstrateCascade() {
+        // CASCADE PERSIST: Save department saves employees too
+        Department dept = new Department("Engineering");
+        dept.addEmployee(new Employee("Alice"));
+        dept.addEmployee(new Employee("Bob"));
+
+        departmentRepository.save(dept);
+        // => SQL: INSERT INTO departments (name) VALUES ('Engineering')
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Alice', 1)
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Bob', 1)
+        // => All 3 entities saved with one repository call
+
+        // CASCADE MERGE: Update department updates employees
+        dept.setName("Engineering Team");
+        dept.getEmployees().get(0).setName("Alice Smith");
+        departmentRepository.save(dept);
+        // => SQL: UPDATE departments SET name='Engineering Team' WHERE id=1
+        // => SQL: UPDATE employees SET name='Alice Smith' WHERE id=1
+        // => Changes cascaded to employees
+
+        // ORPHAN REMOVAL: Remove employee from collection
+        Employee bob = dept.getEmployees().get(1);
+        dept.removeEmployee(bob);
+        departmentRepository.save(dept);
+        // => SQL: DELETE FROM employees WHERE id=2
+        // => Bob deleted because removed from collection
+
+        // CASCADE REMOVE: Delete department deletes employees
+        departmentRepository.delete(dept);
+        // => SQL: DELETE FROM employees WHERE department_id=1
+        // => SQL: DELETE FROM departments WHERE id=1
+        // => All employees deleted first, then department
+
+        System.out.println("Cascade operations completed");
+    }
+}
+```
+
+**Key Takeaway**: `CascadeType.ALL` simplifies relationship management but can cause unintended deletes. Use specific cascade types for fine-grained control. `orphanRemoval=true` deletes entities removed from collections.
+
+---
+
+### Example 21: Lazy vs Eager Loading
+
+Fetch strategies control when related entities load. `LAZY` (default for `@OneToMany`) defers loading until accessed. `EAGER` loads immediately.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "departments")
+public class Department {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    // LAZY: Default for @OneToMany - load only when accessed
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    private List<Employee> employees = new ArrayList<>();
+
+    // EAGER: Load immediately with department
+    // @OneToMany(mappedBy = "department", fetch = FetchType.EAGER)
+    // private List<Employee> employees = new ArrayList<>();
+
+    public Department() {}
+    public Department(String name) {
+        this.name = name;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public List<Employee> getEmployees() { return employees; }
+    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.repository.DepartmentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class FetchStrategyService {
+    private final DepartmentRepository departmentRepository;
+
+    public FetchStrategyService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
+
+    @Transactional
+    public void demonstrateLazyLoading() {
+        // Find department (LAZY loading)
+        Department dept = departmentRepository.findById(1L).orElseThrow();
+        // => SQL: SELECT * FROM departments WHERE id = 1
+        // => Employees NOT loaded yet
+
+        System.out.println("Department: " + dept.getName()); // => No SQL
+
+        // Access employees triggers lazy load
+        int count = dept.getEmployees().size();
+        // => SQL: SELECT * FROM employees WHERE department_id = 1
+        // => NOW employees are loaded
+
+        System.out.println("Employee count: " + count); // => 2
+    }
+
+    // MUST be @Transactional for lazy loading to work
+    // Outside transaction, accessing lazy collection throws LazyInitializationException
+    public void demonstrateLazyException() {
+        Department dept = departmentRepository.findById(1L).orElseThrow();
+        // => Transaction ends here
+
+        // FAILS: LazyInitializationException
+        // dept.getEmployees().size(); // => ERROR: no session
+    }
+
+    @Transactional
+    public void demonstrateEagerLoading() {
+        // With FetchType.EAGER on Department.employees:
+        Department dept = departmentRepository.findById(1L).orElseThrow();
+        // => SQL: SELECT d.*, e.* FROM departments d
+        // =>      LEFT JOIN employees e ON d.id = e.department_id
+        // =>      WHERE d.id = 1
+        // => Employees loaded immediately (single JOIN query)
+
+        int count = dept.getEmployees().size(); // => No additional SQL
+        System.out.println("Employee count: " + count); // => 2
+    }
+}
+```
+
+**Key Takeaway**: `LAZY` (default for collections) saves memory and improves performance. Use within `@Transactional` methods to avoid `LazyInitializationException`. `EAGER` causes N+1 query problems - avoid except for small, always-needed relationships.
+
+---
+
+### Example 22: Bidirectional Relationship Synchronization
+
+Bidirectional relationships require keeping both sides in sync. Helper methods ensure consistency between parent and child references.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    D[Department] <-->|Bidirectional| E[Employee]
+    D -->|employees list| E
+    E -->|department ref| D
+
+    style D fill:#0173B2,color:#fff
+    style E fill:#029E73,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "departments")
+public class Department {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Employee> employees = new ArrayList<>();
+
+    public Department() {}
+    public Department(String name) {
+        this.name = name;
+    }
+
+    // CORRECT: Sync both sides
+    public void addEmployee(Employee employee) {
+        employees.add(employee);
+        employee.setDepartment(this); // Maintain bidirectional link
+    }
+
+    public void removeEmployee(Employee employee) {
+        employees.remove(employee);
+        employee.setDepartment(null); // Break bidirectional link
+    }
+
+    // WRONG: Only sets one side
+    // public void addEmployeeWrong(Employee employee) {
+    //     employees.add(employee); // Missing: employee.setDepartment(this)
+    // }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public List<Employee> getEmployees() { return employees; }
+    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+}
+```
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "employees")
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    public Employee() {}
+    public Employee(String name) {
+        this.name = name;
+    }
+
+    // Defensive setter: sync reverse side
+    public void setDepartment(Department department) {
+        if (this.department != null) {
+            this.department.getEmployees().remove(this); // Remove from old dept
+        }
+        this.department = department;
+        if (department != null && !department.getEmployees().contains(this)) {
+            department.getEmployees().add(this); // Add to new dept
+        }
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Department getDepartment() { return department; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Employee;
+import com.example.demo.repository.DepartmentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class BidirectionalSyncService {
+    private final DepartmentRepository departmentRepository;
+
+    public BidirectionalSyncService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
+
+    @Transactional
+    public void demonstrateSynchronization() {
+        Department engineering = new Department("Engineering");
+
+        // CORRECT: Use helper method
+        Employee alice = new Employee("Alice");
+        engineering.addEmployee(alice);
+        // => engineering.employees = [alice]
+        // => alice.department = engineering
+        // => Both sides synchronized
+
+        // WRONG: Direct list manipulation
+        Employee bob = new Employee("Bob");
+        engineering.getEmployees().add(bob);
+        // => engineering.employees = [alice, bob]
+        // => bob.department = null (INCONSISTENT!)
+
+        departmentRepository.save(engineering);
+        // => SQL: INSERT INTO departments (name) VALUES ('Engineering')
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Alice', 1)
+        // => SQL: INSERT INTO employees (name, department_id) VALUES ('Bob', NULL)
+        // => Bob's department_id is NULL because relationship not synced!
+
+        System.out.println("Alice's dept: " + alice.getDepartment().getName()); // => Engineering
+        System.out.println("Bob's dept: " + bob.getDepartment()); // => null (BUG!)
+    }
+}
+```
+
+**Key Takeaway**: Always use helper methods to maintain bidirectional relationships. Direct list manipulation breaks synchronization and causes NULL foreign keys.
+
+---
+
+### Example 23: Join Column Configuration
+
+`@JoinColumn` customizes foreign key columns. Control column name, nullability, and update behavior.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "employees")
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(
+        name = "dept_id",              // Custom column name (default: department_id)
+        nullable = false,              // NOT NULL constraint
+        foreignKey = @ForeignKey(name = "fk_employee_department")  // FK constraint name
+    )
+    private Department department;
+
+    public Employee() {}
+    public Employee(String name) {
+        this.name = name;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Department getDepartment() { return department; }
+    public void setDepartment(Department department) { this.department = department; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Employee;
+import com.example.demo.repository.DepartmentRepository;
+import com.example.demo.repository.EmployeeRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class JoinColumnService {
+    private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
+
+    public JoinColumnService(DepartmentRepository departmentRepository,
+                             EmployeeRepository employeeRepository) {
+        this.departmentRepository = departmentRepository;
+        this.employeeRepository = employeeRepository;
+    }
+
+    @Transactional
+    public void demonstrateJoinColumn() {
+        Department dept = departmentRepository.save(new Department("Engineering"));
+
+        // Create employee with custom FK column
+        Employee alice = new Employee("Alice");
+        alice.setDepartment(dept);
+        employeeRepository.save(alice);
+        // => SQL: INSERT INTO employees (name, dept_id) VALUES ('Alice', 1)
+        // => Uses custom column name "dept_id" instead of "department_id"
+
+        // Try to save employee without department (nullable=false)
+        try {
+            Employee orphan = new Employee("Orphan");
+            // orphan.department is null
+            employeeRepository.save(orphan);
+            // => SQL fails: NOT NULL constraint violation on dept_id
+        } catch (Exception e) {
+            System.out.println("Error: Department required (NOT NULL constraint)");
+        }
+
+        // Generated schema:
+        // CREATE TABLE employees (
+        //   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        //   name VARCHAR(255),
+        //   dept_id BIGINT NOT NULL,
+        //   CONSTRAINT fk_employee_department FOREIGN KEY (dept_id)
+        //     REFERENCES departments(id)
+        // );
+    }
+}
+```
+
+**Key Takeaway**: `@JoinColumn` provides control over foreign key columns. Use `nullable=false` to enforce referential integrity at database level.
+
+---
+
+### Example 24: Collection Types
+
+JPA supports `List`, `Set`, and `Map` for `@OneToMany` relationships. Each has different characteristics and use cases.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.util.*;
+
+@Entity
+@Table(name = "departments")
+public class Department {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    // LIST: Allows duplicates, maintains insertion order
+    @OneToMany(mappedBy = "department")
+    @OrderBy("name ASC") // SQL ORDER BY clause
+    private List<Employee> employeeList = new ArrayList<>();
+
+    // SET: No duplicates, no guaranteed order
+    @OneToMany(mappedBy = "department")
+    private Set<Employee> employeeSet = new HashSet<>();
+
+    // MAP: Key-value pairs
+    @OneToMany(mappedBy = "department")
+    @MapKey(name = "id") // Use employee.id as map key
+    private Map<Long, Employee> employeeMap = new HashMap<>();
+
+    public Department() {}
+    public Department(String name) {
+        this.name = name;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public List<Employee> getEmployeeList() { return employeeList; }
+    public void setEmployeeList(List<Employee> employeeList) { this.employeeList = employeeList; }
+    public Set<Employee> getEmployeeSet() { return employeeSet; }
+    public void setEmployeeSet(Set<Employee> employeeSet) { this.employeeSet = employeeSet; }
+    public Map<Long, Employee> getEmployeeMap() { return employeeMap; }
+    public void setEmployeeMap(Map<Long, Employee> employeeMap) { this.employeeMap = employeeMap; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Employee;
+import com.example.demo.repository.DepartmentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class CollectionTypeService {
+    private final DepartmentRepository departmentRepository;
+
+    public CollectionTypeService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
+
+    @Transactional
+    public void demonstrateCollectionTypes() {
+        Department dept = new Department("Engineering");
+        Employee alice = new Employee("Alice");
+        Employee bob = new Employee("Bob");
+        Employee charlie = new Employee("Charlie");
+
+        // LIST: Ordered, allows duplicates
+        dept.getEmployeeList().add(alice);
+        dept.getEmployeeList().add(bob);
+        dept.getEmployeeList().add(charlie);
+        departmentRepository.save(dept);
+        // => SQL: SELECT * FROM employees WHERE department_id = 1 ORDER BY name ASC
+        // => Result: [Alice, Bob, Charlie] (alphabetically ordered)
+
+        // SET: Unique elements only
+        dept.getEmployeeSet().add(alice);
+        dept.getEmployeeSet().add(alice); // Duplicate ignored
+        dept.getEmployeeSet().add(bob);
+        // => Set size: 2 (Alice, Bob) - duplicate Alice ignored
+
+        // MAP: Key-value access
+        dept.getEmployeeMap().put(alice.getId(), alice);
+        dept.getEmployeeMap().put(bob.getId(), bob);
+        // => Map: {1=Alice, 2=Bob}
+
+        Employee found = dept.getEmployeeMap().get(1L);
+        System.out.println("Employee ID 1: " + found.getName()); // => Alice
+
+        // Performance comparison:
+        // LIST: O(n) for contains(), good for iteration
+        // SET: O(1) for contains(), best for uniqueness
+        // MAP: O(1) for get(key), best for ID lookups
+    }
+}
+```
+
+**Key Takeaway**: Use `List` for ordered collections with duplicates, `Set` for unique elements, `Map` for key-based lookups. `@OrderBy` adds SQL ORDER BY for deterministic ordering.
+
+---
+
+## Group 4: Entity Fundamentals
+
+### Example 25: Column Mapping and Constraints
+
+`@Column` customizes database column properties including name, length, nullability, and uniqueness. These constraints are enforced at database level.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A[Entity Field] --> B[@Column]
+    B --> C[Column Name]
+    B --> D[Constraints]
+    B --> E[Type/Length]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "products")
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(
+        name = "product_name",      // Custom column name (default: name)
+        nullable = false,           // NOT NULL constraint
+        length = 100,               // VARCHAR(100) instead of VARCHAR(255)
+        unique = true               // UNIQUE constraint
+    )
+    private String name;
+
+    @Column(
+        precision = 10,             // Total digits
+        scale = 2                   // Decimal places
+    )
+    private Double price;           // DECIMAL(10,2) in database
+
+    @Column(
+        columnDefinition = "TEXT"   // Custom SQL type
+    )
+    private String description;
+
+    @Column(updatable = false)      // Cannot be updated after insert
+    private String sku;
+
+    @Column(insertable = false, updatable = false)  // Read-only (computed column)
+    private Integer stock;
+
+    public Product() {}
+    public Product(String name, Double price, String sku) {
+        this.name = name;
+        this.price = price;
+        this.sku = sku;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getSku() { return sku; }
+    public void setSku(String sku) { this.sku = sku; }
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Product;
+import com.example.demo.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ColumnMappingService {
+    private final ProductRepository productRepository;
+
+    public ColumnMappingService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    @Transactional
+    public void demonstrateColumnMapping() {
+        // Create product
+        Product laptop = new Product("Gaming Laptop", 1299.99, "SKU-LAPTOP-001");
+        laptop.setDescription("High-performance gaming laptop with RTX 4080");
+        productRepository.save(laptop);
+        // => SQL: INSERT INTO products (product_name, price, description, sku)
+        // =>      VALUES ('Gaming Laptop', 1299.99, 'High-performance...', 'SKU-LAPTOP-001')
+        // => Uses custom column name "product_name"
+
+        // Try to violate unique constraint
+        try {
+            Product duplicate = new Product("Gaming Laptop", 999.99, "SKU-LAPTOP-002");
+            productRepository.save(duplicate);
+            // => SQL fails: UNIQUE constraint violation on product_name
+        } catch (Exception e) {
+            System.out.println("Error: Product name must be unique");
+        }
+
+        // Try to update read-only SKU
+        laptop.setSku("SKU-CHANGED");
+        productRepository.save(laptop);
+        // => SQL: UPDATE products SET product_name=?, price=?, description=?
+        // =>      WHERE id=?
+        // => SKU not included in UPDATE (updatable=false)
+
+        System.out.println("SKU unchanged: " + laptop.getSku()); // => "SKU-LAPTOP-001"
+
+        // Generated schema:
+        // CREATE TABLE products (
+        //   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        //   product_name VARCHAR(100) NOT NULL UNIQUE,
+        //   price DECIMAL(10,2),
+        //   description TEXT,
+        //   sku VARCHAR(255),
+        //   stock INTEGER
+        // );
+    }
+}
+```
+
+**Key Takeaway**: `@Column` maps entity fields to database columns with constraints. Use `nullable=false` for required fields, `unique=true` for unique values, and `updatable=false` for immutable fields.
+
+---
+
+### Example 26: Temporal Types and Dates
+
+JPA supports Java 8 `LocalDate`, `LocalDateTime`, and legacy `Date` types. Modern code should use `java.time` package for better API.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Entity
+@Table(name = "events")
+public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    // Modern Java 8+ date types (RECOMMENDED)
+    @Column(name = "event_date")
+    private LocalDate eventDate;              // DATE column (YYYY-MM-DD)
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;          // DATETIME column (YYYY-MM-DD HH:MM:SS)
+
+    // Legacy java.util.Date (NOT RECOMMENDED - use java.time instead)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private Date updatedAt;                   // TIMESTAMP column
+
+    @Temporal(TemporalType.DATE)
+    private Date legacyDate;                  // DATE column (ignores time)
+
+    @Temporal(TemporalType.TIME)
+    private Date legacyTime;                  // TIME column (ignores date)
+
+    public Event() {}
+    public Event(String name, LocalDate eventDate) {
+        this.name = name;
+        this.eventDate = eventDate;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public LocalDate getEventDate() { return eventDate; }
+    public void setEventDate(LocalDate eventDate) { this.eventDate = eventDate; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Date getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+    public Date getLegacyDate() { return legacyDate; }
+    public void setLegacyDate(Date legacyDate) { this.legacyDate = legacyDate; }
+    public Date getLegacyTime() { return legacyTime; }
+    public void setLegacyTime(Date legacyTime) { this.legacyTime = legacyTime; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Event;
+import com.example.demo.repository.EventRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Service
+public class TemporalTypeService {
+    private final EventRepository eventRepository;
+
+    public TemporalTypeService(EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
+    }
+
+    @Transactional
+    public void demonstrateTemporalTypes() {
+        // Create event with modern date types
+        Event conference = new Event("SpringOne Conference", LocalDate.of(2024, 9, 15));
+        // => eventDate = 2024-09-15
+        // => createdAt = 2024-01-15T10:30:45 (current timestamp)
+
+        eventRepository.save(conference);
+        // => SQL: INSERT INTO events (name, event_date, created_at)
+        // =>      VALUES ('SpringOne Conference', '2024-09-15', '2024-01-15 10:30:45')
+
+        // Query by date
+        Event retrieved = eventRepository.findById(conference.getId()).orElseThrow();
+        System.out.println("Event date: " + retrieved.getEventDate());
+        // => 2024-09-15
+
+        System.out.println("Created at: " + retrieved.getCreatedAt());
+        // => 2024-01-15T10:30:45
+
+        // Date arithmetic with java.time API
+        LocalDate tomorrow = retrieved.getEventDate().plusDays(1);
+        System.out.println("Day after event: " + tomorrow);
+        // => 2024-09-16
+
+        LocalDateTime oneHourLater = retrieved.getCreatedAt().plusHours(1);
+        System.out.println("One hour later: " + oneHourLater);
+        // => 2024-01-15T11:30:45
+    }
+}
+```
+
+**Key Takeaway**: Use `LocalDate` for dates without time, `LocalDateTime` for timestamps. Avoid legacy `java.util.Date` - `java.time` API is immutable and thread-safe.
+
+---
+
+### Example 27: Enumerated Types
+
+`@Enumerated` maps Java enums to database columns. `EnumType.STRING` stores enum names (recommended), `EnumType.ORDINAL` stores positions (fragile).
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+// Define enum outside or inside package
+enum OrderStatus {
+    PENDING,      // Ordinal: 0
+    CONFIRMED,    // Ordinal: 1
+    SHIPPED,      // Ordinal: 2
+    DELIVERED,    // Ordinal: 3
+    CANCELLED     // Ordinal: 4
+}
+
+enum Priority {
+    LOW, MEDIUM, HIGH, CRITICAL
+}
+
+@Entity
+@Table(name = "orders")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String orderNumber;
+
+    // STRING: Stores "PENDING", "CONFIRMED", etc. (RECOMMENDED)
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private OrderStatus status;
+
+    // ORDINAL: Stores 0, 1, 2, etc. (FRAGILE - avoid)
+    @Enumerated(EnumType.ORDINAL)
+    private Priority priority;
+
+    public Order() {}
+    public Order(String orderNumber, OrderStatus status, Priority priority) {
+        this.orderNumber = orderNumber;
+        this.status = status;
+        this.priority = priority;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getOrderNumber() { return orderNumber; }
+    public void setOrderNumber(String orderNumber) { this.orderNumber = orderNumber; }
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
+    public Priority getPriority() { return priority; }
+    public void setPriority(Priority priority) { this.priority = priority; }
+}
+```
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    // Query by enum value
+    List<Order> findByStatus(OrderStatus status);
+    // => SQL: SELECT * FROM orders WHERE status = 'PENDING'
+    // => Uses string value, not ordinal
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderStatus;
+import com.example.demo.entity.Priority;
+import com.example.demo.repository.OrderRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
+@Service
+public class EnumService {
+    private final OrderRepository orderRepository;
+
+    public EnumService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    @Transactional
+    public void demonstrateEnums() {
+        // Create order with enum values
+        Order order1 = new Order("ORD-001", OrderStatus.PENDING, Priority.HIGH);
+        orderRepository.save(order1);
+        // => SQL: INSERT INTO orders (order_number, status, priority)
+        // =>      VALUES ('ORD-001', 'PENDING', 2)
+        // => status stored as string "PENDING"
+        // => priority stored as ordinal 2 (HIGH is 3rd enum value, index 2)
+
+        // Query by enum
+        List<Order> pending = orderRepository.findByStatus(OrderStatus.PENDING);
+        // => SQL: SELECT * FROM orders WHERE status = 'PENDING'
+        // => Type-safe query using enum
+
+        System.out.println("Pending orders: " + pending.size()); // => 1
+
+        // Update status
+        order1.setStatus(OrderStatus.SHIPPED);
+        orderRepository.save(order1);
+        // => SQL: UPDATE orders SET status='SHIPPED', priority=2 WHERE id=1
+
+        // WHY ORDINAL IS DANGEROUS:
+        // If you add new enum value at beginning:
+        // enum Priority { URGENT, LOW, MEDIUM, HIGH, CRITICAL }
+        //                  ^^^^ New value inserted
+        // Now LOW=1, MEDIUM=2, HIGH=3 (previously HIGH=2)
+        // Existing database values (2) now mean MEDIUM instead of HIGH!
+        // => DATA CORRUPTION
+
+        // STRING mode is safe:
+        // Database stores "PENDING", "SHIPPED" regardless of enum order
+    }
+}
+```
+
+**Key Takeaway**: Always use `EnumType.STRING` for enums. `EnumType.ORDINAL` breaks when you reorder enum values, causing silent data corruption.
+
+---
+
+### Example 28: Table and Index Configuration
+
+`@Table` customizes table names, indexes, and unique constraints at entity level. Indexes improve query performance.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(
+    name = "users",
+    indexes = {
+        @Index(name = "idx_email", columnList = "email"),           // Single column index
+        @Index(name = "idx_name_email", columnList = "name,email")  // Composite index
+    },
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uk_email", columnNames = {"email"})
+    }
+)
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, unique = true)  // Alternative to uniqueConstraints
+    private String email;
+
+    public User() {}
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TableConfigService {
+    private final UserRepository userRepository;
+
+    public TableConfigService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
+    public void demonstrateTableConfig() {
+        // Generated schema includes indexes:
+        // CREATE TABLE users (
+        //   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        //   name VARCHAR(255) NOT NULL,
+        //   email VARCHAR(255) NOT NULL UNIQUE,
+        //   CONSTRAINT uk_email UNIQUE (email)
+        // );
+        // CREATE INDEX idx_email ON users(email);
+        // CREATE INDEX idx_name_email ON users(name, email);
+
+        User user = new User("Alice", "alice@example.com");
+        userRepository.save(user);
+
+        // Query using indexed column (fast)
+        userRepository.findByEmail("alice@example.com");
+        // => SQL: SELECT * FROM users WHERE email = 'alice@example.com'
+        // => Uses idx_email for fast lookup
+
+        // Composite index helps queries with both columns
+        userRepository.findByNameAndEmail("Alice", "alice@example.com");
+        // => SQL: SELECT * FROM users WHERE name = 'Alice' AND email = 'alice@example.com'
+        // => Uses idx_name_email for efficient lookup
+
+        System.out.println("Indexes improve query performance on large tables");
+    }
+}
+```
+
+**Key Takeaway**: Use `@Index` for frequently queried columns. Composite indexes help multi-column queries. Unique constraints enforce data integrity at database level.
+
+---
+
+### Example 29: Transient and Computed Fields
+
+`@Transient` marks fields that shouldn't be persisted. Use for calculated values, temporary state, or derived data.
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "products")
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @Column(precision = 10, scale = 2)
+    private Double price;
+
+    @Column(precision = 5, scale = 2)
+    private Double taxRate;  // Stored: 0.08 = 8% tax
+
+    // Transient field - NOT persisted to database
+    @Transient
+    private Double priceWithTax;  // Calculated field
+
+    public Product() {}
+    public Product(String name, Double price, Double taxRate) {
+        this.name = name;
+        this.price = price;
+        this.taxRate = taxRate;
+    }
+
+    // Lifecycle callback to compute transient field after load
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    private void calculatePriceWithTax() {
+        this.priceWithTax = this.price * (1 + this.taxRate);
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) {
+        this.price = price;
+        calculatePriceWithTax();  // Recalculate when price changes
+    }
+    public Double getTaxRate() { return taxRate; }
+    public void setTaxRate(Double taxRate) {
+        this.taxRate = taxRate;
+        calculatePriceWithTax();  // Recalculate when tax rate changes
+    }
+    public Double getPriceWithTax() { return priceWithTax; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.Product;
+import com.example.demo.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TransientFieldService {
+    private final ProductRepository productRepository;
+
+    public TransientFieldService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    @Transactional
+    public void demonstrateTransientFields() {
+        // Create product
+        Product laptop = new Product("Laptop", 1000.0, 0.08);
+        // => price = 1000.0
+        // => taxRate = 0.08
+        // => priceWithTax = null (not yet calculated)
+
+        productRepository.save(laptop);
+        // => SQL: INSERT INTO products (name, price, tax_rate)
+        // =>      VALUES ('Laptop', 1000.0, 0.08)
+        // => priceWithTax NOT included in INSERT (transient field)
+        // => @PostPersist calculates: priceWithTax = 1000.0 * 1.08 = 1080.0
+
+        System.out.println("Price: $" + laptop.getPrice());           // => 1000.0
+        System.out.println("Tax rate: " + laptop.getTaxRate());       // => 0.08
+        System.out.println("Price with tax: $" + laptop.getPriceWithTax());  // => 1080.0
+
+        // Update price
+        laptop.setPrice(1200.0);
+        productRepository.save(laptop);
+        // => SQL: UPDATE products SET price=1200.0, tax_rate=0.08 WHERE id=1
+        // => priceWithTax recalculated: 1200.0 * 1.08 = 1296.0
+
+        System.out.println("New price with tax: $" + laptop.getPriceWithTax());  // => 1296.0
+
+        // Reload from database
+        Product reloaded = productRepository.findById(laptop.getId()).orElseThrow();
+        // => SQL: SELECT * FROM products WHERE id = 1
+        // => Loads: price=1200.0, taxRate=0.08
+        // => @PostLoad calculates: priceWithTax = 1296.0
+
+        System.out.println("Reloaded price with tax: $" + reloaded.getPriceWithTax());
+        // => 1296.0 (recalculated after load)
+    }
+}
+```
+
+**Key Takeaway**: `@Transient` fields are not persisted. Use for derived values, temporary state, or calculations. Lifecycle callbacks (`@PostLoad`, `@PostPersist`) compute values after database operations.
+
+---
+
+### Example 30: Entity Lifecycle Callbacks
+
+JPA provides lifecycle annotations to hook into entity state changes. Use for auditing, validation, or side effects.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A[New Entity] --> B[@PrePersist]
+    B --> C[INSERT SQL]
+    C --> D[@PostPersist]
+    D --> E[Persistent State]
+    E --> F[@PreUpdate]
+    F --> G[UPDATE SQL]
+    G --> H[@PostUpdate]
+    E --> I[@PreRemove]
+    I --> J[DELETE SQL]
+    J --> K[@PostRemove]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+    style F fill:#0173B2,color:#fff
+    style G fill:#DE8F05,color:#fff
+    style H fill:#029E73,color:#fff
+    style I fill:#CC78BC,color:#fff
+    style J fill:#CA9161,color:#fff
+    style K fill:#0173B2,color:#fff
+```
+
+**Code**:
+
+```java
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "audit_logs")
+public class AuditLog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String action;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @Transient
+    private String lifecycleEvent;  // For demonstration only
+
+    public AuditLog() {}
+    public AuditLog(String action) {
+        this.action = action;
+    }
+
+    // Called before INSERT
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.lifecycleEvent = "PrePersist executed";
+        System.out.println("@PrePersist: Setting createdAt timestamp");
+    }
+
+    // Called after INSERT
+    @PostPersist
+    protected void afterCreate() {
+        this.lifecycleEvent = "PostPersist executed";
+        System.out.println("@PostPersist: Entity persisted with ID: " + this.id);
+    }
+
+    // Called before UPDATE
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+        System.out.println("@PreUpdate: Setting updatedAt timestamp");
+    }
+
+    // Called after UPDATE
+    @PostUpdate
+    protected void afterUpdate() {
+        System.out.println("@PostUpdate: Entity updated");
+    }
+
+    // Called after SELECT (entity loaded from database)
+    @PostLoad
+    protected void afterLoad() {
+        System.out.println("@PostLoad: Entity loaded from database");
+    }
+
+    // Called before DELETE
+    @PreRemove
+    protected void onDelete() {
+        System.out.println("@PreRemove: About to delete entity ID: " + this.id);
+    }
+
+    // Called after DELETE
+    @PostRemove
+    protected void afterDelete() {
+        System.out.println("@PostRemove: Entity deleted");
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getLifecycleEvent() { return lifecycleEvent; }
+}
+```
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.AuditLog;
+import com.example.demo.repository.AuditLogRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class LifecycleCallbackService {
+    private final AuditLogRepository auditLogRepository;
+
+    public LifecycleCallbackService(AuditLogRepository auditLogRepository) {
+        this.auditLogRepository = auditLogRepository;
+    }
+
+    @Transactional
+    public void demonstrateLifecycleCallbacks() {
+        // CREATE
+        AuditLog log = new AuditLog("User login");
+        // => createdAt = null, updatedAt = null
+
+        auditLogRepository.save(log);
+        // => @PrePersist: Sets createdAt = 2024-01-15T10:30:45
+        // => SQL: INSERT INTO audit_logs (action, created_at) VALUES ('User login', '2024-01-15 10:30:45')
+        // => @PostPersist: Prints "Entity persisted with ID: 1"
+
+        System.out.println("Created at: " + log.getCreatedAt());  // => 2024-01-15T10:30:45
+
+        // UPDATE
+        log.setAction("User logout");
+        auditLogRepository.save(log);
+        // => @PreUpdate: Sets updatedAt = 2024-01-15T10:35:20
+        // => SQL: UPDATE audit_logs SET action='User logout', updated_at='2024-01-15 10:35:20' WHERE id=1
+        // => @PostUpdate: Prints "Entity updated"
+
+        System.out.println("Updated at: " + log.getUpdatedAt());  // => 2024-01-15T10:35:20
+
+        // LOAD
+        AuditLog loaded = auditLogRepository.findById(log.getId()).orElseThrow();
+        // => SQL: SELECT * FROM audit_logs WHERE id = 1
+        // => @PostLoad: Prints "Entity loaded from database"
+
+        // DELETE
+        auditLogRepository.delete(loaded);
+        // => @PreRemove: Prints "About to delete entity ID: 1"
+        // => SQL: DELETE FROM audit_logs WHERE id = 1
+        // => @PostRemove: Prints "Entity deleted"
+
+        System.out.println("Lifecycle demonstration complete");
+    }
+}
+```
+
+**Key Takeaway**: Lifecycle callbacks execute at specific points in entity lifecycle. Use `@PrePersist` for default values, `@PreUpdate` for audit timestamps, `@PostLoad` for computed fields. These methods must be `void` and take no parameters.
+
+---

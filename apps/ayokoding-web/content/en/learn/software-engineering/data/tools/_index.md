@@ -10,5 +10,6 @@ layout: list
 - [Overview](/en/learn/software-engineering/data/tools/overview)
 - [Spring Data Jpa](/en/learn/software-engineering/data/tools/spring-data-jpa)
   - [Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/overview)
+  - [Tutorials](/en/learn/software-engineering/data/tools/spring-data-jpa/tutorials)
 - [Elixir Ecto](/en/learn/software-engineering/data/tools/elixir-ecto)
   - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/overview)
