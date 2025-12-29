@@ -6,3 +6,5 @@ draft: false
 type: docs
 layout: list
 ---
+
+- [Tutorials](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials)
