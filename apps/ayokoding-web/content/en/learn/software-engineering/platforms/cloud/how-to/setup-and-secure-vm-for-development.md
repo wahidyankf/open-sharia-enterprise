@@ -8,7 +8,38 @@ description: Complete guide to setting up Ubuntu LTS development VM on DigitalOc
 
 This guide walks through setting up a secure Ubuntu 24.04 LTS virtual machine on DigitalOcean for development work, following 2025 security best practices. Includes SSH/Mosh connectivity, Zsh with Oh My Zsh, latest Neovim editor, Volta for Node.js, external storage mounting, firewall configuration, and continuous security monitoring.
 
+## Two Approaches: Manual vs Automated
+
+This guide provides **two ways** to set up your development VM:
+
+1. **Automated Setup (Recommended)** - Use Terraform + Ansible for infrastructure-as-code
+2. **Manual Setup** - Step-by-step commands for learning and understanding
+
+**Choose automated if you:**
+
+- Want reproducible infrastructure
+- Plan to manage multiple VMs
+- Prefer declarative configuration
+- Need version-controlled infrastructure
+
+**Choose manual if you:**
+
+- Want to understand each step deeply
+- Are setting up a single VM
+- Prefer interactive configuration
+- Are learning system administration
+
 ## Prerequisites
+
+### For Automated Setup
+
+- DigitalOcean account with API token
+- [Terraform](https://www.terraform.io/downloads) installed (v1.0+)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) installed (v2.9+)
+- SSH client on your local machine
+- Basic command line familiarity
+
+### For Manual Setup
 
 - DigitalOcean account
 - SSH client on your local machine
@@ -64,6 +95,712 @@ flowchart TD
     style InstallFail2Ban fill:#DE8F05,stroke:#333,stroke-width:2px
     style Optional fill:#CC78BC,stroke:#333,stroke-width:2px
 ```
+
+## Automated Setup with Terraform and Ansible
+
+This section provides complete infrastructure-as-code automation for the entire VM setup process.
+
+### Project Structure
+
+Create the following directory structure for your infrastructure code:
+
+```
+devbox-infra/
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── terraform.tfvars
+└── ansible/
+    ├── playbook.yml
+    ├── inventory/
+    │   └── hosts.ini
+    └── roles/
+        ├── common/
+        ├── security/
+        ├── development/
+        └── monitoring/
+```
+
+### Step 1: Terraform Infrastructure Provisioning
+
+#### Create Terraform Configuration
+
+**`terraform/main.tf`** - Main infrastructure definition:
+
+```hcl
+terraform {
+  required_providers {
+    digitalocean = {
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.0"
+    }
+  }
+}
+
+provider "digitalocean" {
+  token = var.do_token
+}
+
+# SSH Key
+resource "digitalocean_ssh_key" "default" {
+  name       = var.ssh_key_name
+  public_key = file(var.ssh_public_key_path)
+}
+
+# Droplet
+resource "digitalocean_droplet" "devbox" {
+  image    = "ubuntu-24-04-x64"
+  name     = var.droplet_name
+  region   = var.region
+  size     = var.droplet_size
+  ssh_keys = [digitalocean_ssh_key.default.fingerprint]
+
+  # Enable backups
+  backups = var.enable_backups
+
+  # Enable monitoring
+  monitoring = true
+
+  # User data for initial setup
+  user_data = <<-EOF
+    #!/bin/bash
+    # Set timezone
+    timedatectl set-timezone ${var.timezone}
+
+    # Update system
+    apt-get update
+    apt-get upgrade -y
+  EOF
+}
+
+# Firewall
+resource "digitalocean_firewall" "devbox" {
+  name = "${var.droplet_name}-firewall"
+
+  droplet_ids = [digitalocean_droplet.devbox.id]
+
+  # SSH
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = var.ssh_port
+    source_addresses = var.allowed_ssh_sources
+  }
+
+  # Mosh (UDP)
+  inbound_rule {
+    protocol         = "udp"
+    port_range       = "60000-61000"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # HTTP/HTTPS (if needed for web development)
+  dynamic "inbound_rule" {
+    for_each = var.enable_web_ports ? [1] : []
+    content {
+      protocol         = "tcp"
+      port_range       = "80"
+      source_addresses = ["0.0.0.0/0", "::/0"]
+    }
+  }
+
+  dynamic "inbound_rule" {
+    for_each = var.enable_web_ports ? [1] : []
+    content {
+      protocol         = "tcp"
+      port_range       = "443"
+      source_addresses = ["0.0.0.0/0", "::/0"]
+    }
+  }
+
+  # Allow all outbound
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "udp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "icmp"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+}
+
+# Volume (optional external storage)
+resource "digitalocean_volume" "devbox_storage" {
+  count                   = var.create_volume ? 1 : 0
+  region                  = var.region
+  name                    = "${var.droplet_name}-storage"
+  size                    = var.volume_size
+  initial_filesystem_type = "ext4"
+  description             = "External storage for ${var.droplet_name}"
+}
+
+resource "digitalocean_volume_attachment" "devbox_storage" {
+  count      = var.create_volume ? 1 : 0
+  droplet_id = digitalocean_droplet.devbox.id
+  volume_id  = digitalocean_volume.devbox_storage[0].id
+}
+```
+
+**`terraform/variables.tf`** - Variable definitions:
+
+```hcl
+variable "do_token" {
+  description = "DigitalOcean API token"
+  type        = string
+  sensitive   = true
+}
+
+variable "ssh_key_name" {
+  description = "Name for the SSH key"
+  type        = string
+  default     = "devbox-key"
+}
+
+variable "ssh_public_key_path" {
+  description = "Path to SSH public key"
+  type        = string
+  default     = "~/.ssh/id_ed25519.pub"
+}
+
+variable "droplet_name" {
+  description = "Name of the droplet"
+  type        = string
+  default     = "devbox"
+}
+
+variable "region" {
+  description = "DigitalOcean region"
+  type        = string
+  default     = "sgp1"  # Singapore - change to your preferred region
+}
+
+variable "droplet_size" {
+  description = "Droplet size"
+  type        = string
+  default     = "s-2vcpu-4gb"  # $24/month
+}
+
+variable "ssh_port" {
+  description = "SSH port"
+  type        = string
+  default     = "2222"
+}
+
+variable "allowed_ssh_sources" {
+  description = "Allowed source IPs for SSH"
+  type        = list(string)
+  default     = ["0.0.0.0/0", "::/0"]  # Change to your IP for better security
+}
+
+variable "enable_backups" {
+  description = "Enable automated backups"
+  type        = bool
+  default     = true
+}
+
+variable "enable_web_ports" {
+  description = "Enable HTTP/HTTPS ports"
+  type        = bool
+  default     = false
+}
+
+variable "timezone" {
+  description = "System timezone"
+  type        = string
+  default     = "Asia/Jakarta"
+}
+
+variable "create_volume" {
+  description = "Create external volume"
+  type        = bool
+  default     = true
+}
+
+variable "volume_size" {
+  description = "Volume size in GB"
+  type        = number
+  default     = 100
+}
+```
+
+**`terraform/outputs.tf`** - Output values:
+
+```hcl
+output "droplet_ip" {
+  description = "Public IP address of the droplet"
+  value       = digitalocean_droplet.devbox.ipv4_address
+}
+
+output "droplet_id" {
+  description = "ID of the droplet"
+  value       = digitalocean_droplet.devbox.id
+}
+
+output "volume_id" {
+  description = "ID of the attached volume"
+  value       = var.create_volume ? digitalocean_volume.devbox_storage[0].id : null
+}
+
+output "ssh_command" {
+  description = "SSH command to connect"
+  value       = "ssh -p ${var.ssh_port} root@${digitalocean_droplet.devbox.ipv4_address}"
+}
+```
+
+**`terraform/terraform.tfvars`** - Your configuration values:
+
+```hcl
+# IMPORTANT: Add this file to .gitignore!
+do_token             = "your-digitalocean-api-token-here"
+droplet_name         = "my-devbox"
+region               = "sgp1"  # Singapore, change as needed
+ssh_port             = "2222"
+allowed_ssh_sources  = ["YOUR.IP.ADDRESS.HERE/32"]  # Your IP for better security
+enable_backups       = true
+enable_web_ports     = false
+create_volume        = true
+volume_size          = 100
+```
+
+#### Deploy Infrastructure
+
+```bash
+cd terraform/
+
+# Initialize Terraform
+terraform init
+
+# Review the plan
+terraform plan
+
+# Apply the configuration
+terraform apply
+
+# Save the IP address
+export DROPLET_IP=$(terraform output -raw droplet_ip)
+echo "Droplet IP: $DROPLET_IP"
+```
+
+### Step 2: Ansible Configuration Management
+
+#### Create Ansible Playbook
+
+**`ansible/playbook.yml`** - Complete system configuration:
+
+```yaml
+---
+- name: Configure Development VM
+  hosts: devbox
+  become: yes
+  vars:
+    dev_user: devuser
+    ssh_port: 2222
+    timezone: Asia/Jakarta
+    node_version: "20"
+
+  tasks:
+    # ============================================
+    # System Updates and Basic Setup
+    # ============================================
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+
+    - name: Install essential packages
+      apt:
+        name:
+          - build-essential
+          - git
+          - curl
+          - wget
+          - htop
+          - tmux
+          - ripgrep
+          - fd-find
+          - tree
+          - unzip
+          - ca-certificates
+          - gnupg
+          - lsb-release
+        state: present
+
+    # ============================================
+    # User Management
+    # ============================================
+    - name: Create development user
+      user:
+        name: "{{ dev_user }}"
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+        create_home: yes
+
+    - name: Set up SSH directory for dev user
+      file:
+        path: "/home/{{ dev_user }}/.ssh"
+        state: directory
+        owner: "{{ dev_user }}"
+        group: "{{ dev_user }}"
+        mode: "0700"
+
+    - name: Copy authorized keys to dev user
+      copy:
+        src: /root/.ssh/authorized_keys
+        dest: "/home/{{ dev_user }}/.ssh/authorized_keys"
+        owner: "{{ dev_user }}"
+        group: "{{ dev_user }}"
+        mode: "0600"
+        remote_src: yes
+
+    # ============================================
+    # SSH Hardening
+    # ============================================
+    - name: Backup SSH config
+      copy:
+        src: /etc/ssh/sshd_config
+        dest: /etc/ssh/sshd_config.backup
+        remote_src: yes
+
+    - name: Configure SSH daemon
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        state: present
+      loop:
+        - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
+        - { regexp: "^#?PermitRootLogin", line: "PermitRootLogin no" }
+        - { regexp: "^#?PubkeyAuthentication", line: "PubkeyAuthentication yes" }
+        - { regexp: "^#?X11Forwarding", line: "X11Forwarding no" }
+        - { regexp: "^#?PermitEmptyPasswords", line: "PermitEmptyPasswords no" }
+        - { regexp: "^#?MaxAuthTries", line: "MaxAuthTries 3" }
+        - { regexp: "^#?Port ", line: "Port {{ ssh_port }}" }
+        - { regexp: "^#?AllowUsers", line: "AllowUsers {{ dev_user }}" }
+      notify: restart sshd
+
+    # ============================================
+    # Firewall Configuration (UFW)
+    # ============================================
+    - name: Install UFW
+      apt:
+        name: ufw
+        state: present
+
+    - name: Configure UFW defaults
+      ufw:
+        direction: "{{ item.direction }}"
+        policy: "{{ item.policy }}"
+      loop:
+        - { direction: "incoming", policy: "deny" }
+        - { direction: "outgoing", policy: "allow" }
+
+    - name: Allow SSH on custom port
+      ufw:
+        rule: allow
+        port: "{{ ssh_port }}"
+        proto: tcp
+
+    - name: Allow Mosh ports
+      ufw:
+        rule: allow
+        port: 60000:61000
+        proto: udp
+
+    - name: Enable UFW
+      ufw:
+        state: enabled
+
+    # ============================================
+    # Fail2Ban
+    # ============================================
+    - name: Install Fail2Ban
+      apt:
+        name: fail2ban
+        state: present
+
+    - name: Configure Fail2Ban for SSH
+      copy:
+        dest: /etc/fail2ban/jail.local
+        content: |
+          [DEFAULT]
+          bantime = 3600
+          findtime = 600
+          maxretry = 3
+
+          [sshd]
+          enabled = true
+          port = {{ ssh_port }}
+          filter = sshd
+          logpath = /var/log/auth.log
+      notify: restart fail2ban
+
+    # ============================================
+    # Development Tools
+    # ============================================
+    - name: Install Mosh
+      apt:
+        name: mosh
+        state: present
+
+    - name: Download Neovim AppImage
+      get_url:
+        url: https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+        dest: /tmp/nvim.appimage
+        mode: "0755"
+
+    - name: Install Neovim
+      copy:
+        src: /tmp/nvim.appimage
+        dest: /usr/local/bin/nvim
+        mode: "0755"
+        remote_src: yes
+
+    - name: Install Zsh
+      apt:
+        name: zsh
+        state: present
+
+    - name: Install Oh My Zsh for dev user
+      shell: |
+        export RUNZSH=no
+        export CHSH=no
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      args:
+        creates: "/home/{{ dev_user }}/.oh-my-zsh"
+      become_user: "{{ dev_user }}"
+
+    - name: Set Zsh as default shell
+      user:
+        name: "{{ dev_user }}"
+        shell: /usr/bin/zsh
+
+    - name: Configure Oh My Zsh plugins
+      lineinfile:
+        path: "/home/{{ dev_user }}/.zshrc"
+        regexp: "^plugins="
+        line: "plugins=(git docker kubectl npm node volta colored-man-pages command-not-found sudo z)"
+      become_user: "{{ dev_user }}"
+
+    # ============================================
+    # Volta (Node.js Version Manager)
+    # ============================================
+    - name: Install Volta
+      shell: |
+        curl https://get.volta.sh | bash
+        export VOLTA_HOME="/home/{{ dev_user }}/.volta"
+        export PATH="$VOLTA_HOME/bin:$PATH"
+        volta install node@{{ node_version }}
+      args:
+        creates: "/home/{{ dev_user }}/.volta"
+      become_user: "{{ dev_user }}"
+      environment:
+        VOLTA_HOME: "/home/{{ dev_user }}/.volta"
+
+    # ============================================
+    # Additional Tools
+    # ============================================
+    - name: Install bat (with workaround for Ubuntu naming)
+      apt:
+        name: bat
+        state: present
+
+    - name: Create bat symlink
+      file:
+        src: /usr/bin/batcat
+        dest: /usr/local/bin/bat
+        state: link
+
+    # ============================================
+    # External Storage (if volume attached)
+    # ============================================
+    - name: Check if volume is attached
+      stat:
+        path: /dev/disk/by-id/scsi-0DO_Volume_{{ droplet_name }}-storage
+      register: volume_device
+      when: create_volume | default(false)
+
+    - name: Create mount point
+      file:
+        path: /mnt/storage
+        state: directory
+      when: volume_device.stat.exists | default(false)
+
+    - name: Get volume UUID
+      command: blkid -s UUID -o value /dev/disk/by-id/scsi-0DO_Volume_{{ droplet_name }}-storage
+      register: volume_uuid
+      when: volume_device.stat.exists | default(false)
+      changed_when: false
+
+    - name: Mount volume in fstab
+      mount:
+        path: /mnt/storage
+        src: "UUID={{ volume_uuid.stdout }}"
+        fstype: ext4
+        opts: defaults,nofail,discard
+        state: mounted
+      when: volume_device.stat.exists | default(false)
+
+    - name: Set ownership of storage
+      file:
+        path: /mnt/storage
+        owner: "{{ dev_user }}"
+        group: "{{ dev_user }}"
+        mode: "0755"
+      when: volume_device.stat.exists | default(false)
+
+    # ============================================
+    # Automatic Security Updates
+    # ============================================
+    - name: Install unattended-upgrades
+      apt:
+        name: unattended-upgrades
+        state: present
+
+    - name: Configure automatic updates
+      copy:
+        dest: /etc/apt/apt.conf.d/50unattended-upgrades
+        content: |
+          Unattended-Upgrade::Allowed-Origins {
+              "${distro_id}:${distro_codename}";
+              "${distro_id}:${distro_codename}-security";
+              "${distro_id}ESMApps:${distro_codename}-apps-security";
+              "${distro_id}ESM:${distro_codename}-infra-security";
+          };
+          Unattended-Upgrade::AutoFixInterruptedDpkg "true";
+          Unattended-Upgrade::MinimalSteps "true";
+          Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+          Unattended-Upgrade::Remove-Unused-Dependencies "true";
+          Unattended-Upgrade::Automatic-Reboot "false";
+
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted
+
+    - name: restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted
+```
+
+**`ansible/inventory/hosts.ini`** - Inventory file (auto-generated after Terraform):
+
+```ini
+[devbox]
+your-droplet-ip ansible_user=root ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
+
+[devbox:vars]
+droplet_name=my-devbox
+create_volume=true
+```
+
+#### Run Ansible Playbook
+
+```bash
+cd ansible/
+
+# Test connectivity
+ansible devbox -i inventory/hosts.ini -m ping
+
+# Run the playbook (dry-run first)
+ansible-playbook -i inventory/hosts.ini playbook.yml --check
+
+# Apply configuration
+ansible-playbook -i inventory/hosts.ini playbook.yml
+
+# After initial run, update inventory to use custom SSH port and dev user
+# Edit hosts.ini:
+# your-droplet-ip ansible_user=devuser ansible_port=2222 ansible_ssh_private_key_file=~/.ssh/id_ed25519
+```
+
+### Step 3: Post-Deployment Verification
+
+After Terraform and Ansible complete, verify your setup:
+
+```bash
+# Get droplet IP from Terraform
+DROPLET_IP=$(cd terraform && terraform output -raw droplet_ip)
+
+# Test SSH connection (use new port and user)
+ssh -p 2222 devuser@$DROPLET_IP
+
+# Test Mosh connection
+mosh --ssh="ssh -p 2222" devuser@$DROPLET_IP
+
+# Verify installations
+nvim --version
+zsh --version
+volta --version
+node --version
+htop --version
+```
+
+### Step 4: Customization and Dotfiles
+
+Deploy your personal configurations:
+
+```bash
+# On the server (as devuser)
+cd ~
+git clone https://github.com/yourusername/dotfiles.git
+ln -sf ~/dotfiles/.zshrc ~/.zshrc
+ln -sf ~/dotfiles/nvim ~/.config/nvim
+source ~/.zshrc
+```
+
+### Infrastructure Management
+
+**Update infrastructure**:
+
+```bash
+cd terraform/
+terraform plan
+terraform apply
+```
+
+**Update configuration**:
+
+```bash
+cd ansible/
+ansible-playbook -i inventory/hosts.ini playbook.yml
+```
+
+**Destroy infrastructure** (when no longer needed):
+
+```bash
+cd terraform/
+terraform destroy
+```
+
+### Best Practices
+
+1. **Version Control**: Store Terraform and Ansible code in Git
+2. **Secrets Management**: Never commit `terraform.tfvars` or API tokens
+3. **State Backend**: Use remote state (S3, Terraform Cloud) for team collaboration
+4. **Modules**: Break down Terraform into reusable modules for multiple environments
+5. **Roles**: Organize Ansible into roles for better reusability
+6. **Testing**: Use `terraform plan` and `ansible-playbook --check` before applying changes
+7. **Documentation**: Document any customizations to this base configuration
+
+---
+
+## Manual Setup (Alternative Approach)
+
+The following sections provide step-by-step manual instructions for those who want to understand each component in detail or prefer interactive setup.
 
 ## Initial VM Setup
 
