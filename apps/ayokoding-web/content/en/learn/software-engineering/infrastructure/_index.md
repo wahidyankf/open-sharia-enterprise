@@ -8,6 +8,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/infrastructure/overview)
-- [How to](/en/learn/software-engineering/infrastructure/how-to)
-  - [Overview](/en/learn/software-engineering/infrastructure/how-to/overview)
-  - [Setup and Secure Vm for Development](/en/learn/software-engineering/infrastructure/how-to/setup-and-secure-vm-for-development)
+- [Concepts](/en/learn/software-engineering/infrastructure/concepts)
+  - [How to](/en/learn/software-engineering/infrastructure/concepts/how-to)
+- [Tools](/en/learn/software-engineering/infrastructure/tools)
+  - [Ansible](/en/learn/software-engineering/infrastructure/tools/ansible)
+  - [Terraform](/en/learn/software-engineering/infrastructure/tools/terraform)
