@@ -1,15 +1,16 @@
 {
-  "alwaysThinkingEnabled": true,
   "enableAllProjectMcpServers": true,
-  "companyAnnouncements": [
-    "📖 Review CLAUDE.md for repository conventions and guidelines",
-    "🔒 Never commit .env files - use .env.example instead",
-    "✅ All commits must follow Conventional Commits format"
-  ],
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "jdtls-lsp@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true
-  }
+    "gopls-lsp@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true,
+  "companyAnnouncements": [
+    "📖 Review CLAUDE.md for repository conventions and guidelines",
+    "🔒 Never commit .env files - use .env.example instead",
+    "✅ All commits must follow Conventional Commits format"
+  ]
 }
