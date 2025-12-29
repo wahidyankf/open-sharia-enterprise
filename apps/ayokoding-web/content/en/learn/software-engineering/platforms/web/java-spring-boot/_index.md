@@ -1,6 +1,6 @@
 ---
 title: "Java Spring Boot"
-weight: 11000
+weight: 100000
 date: 2025-12-23T00:00:00+07:00
 draft: false
 type: docs
@@ -9,7 +9,7 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/platforms/web/java-spring-boot/overview)
 - [By Example](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example)
-  - [Overview](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/overview)
+  - [Advanced](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/advanced)
   - [Beginner](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/intermediate)
-  - [Advanced](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/advanced)
+  - [Overview](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/overview)

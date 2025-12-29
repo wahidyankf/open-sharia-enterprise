@@ -7,8 +7,8 @@ weight: 10000
 
 - [Overview](/en/learn/human/tools/cliftonstrengths/overview)
 - [Themes](/en/learn/human/tools/cliftonstrengths/themes)
-  - [Overview](/en/learn/human/tools/cliftonstrengths/themes/overview)
   - [Executing](/en/learn/human/tools/cliftonstrengths/themes/executing)
   - [Influencing](/en/learn/human/tools/cliftonstrengths/themes/influencing)
+  - [Overview](/en/learn/human/tools/cliftonstrengths/themes/overview)
   - [Relationship Building](/en/learn/human/tools/cliftonstrengths/themes/relationship-building)
   - [Strategic Thinking](/en/learn/human/tools/cliftonstrengths/themes/strategic-thinking)

@@ -10,9 +10,9 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/java/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/java/tutorials)
-  - [Overview](/en/learn/software-engineering/programming-language/java/tutorials/overview)
   - [By Concept](/en/learn/software-engineering/programming-language/java/tutorials/by-concept)
   - [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
+  - [Overview](/en/learn/software-engineering/programming-language/java/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/java/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/java/tutorials/quick-start)
 - [How to](/en/learn/software-engineering/programming-language/java/how-to)

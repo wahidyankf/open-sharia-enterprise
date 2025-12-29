@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-24T00:00:00+07:00
 draft: false
-weight: 1000002
+weight: 10000000
 description: "Intermediate Spring Boot through 30 examples: transactions, validation, security, caching, async processing, WebSocket, API versioning, and advanced patterns"
 tags: ["spring-boot", "tutorial", "by-example", "intermediate", "spring-security", "transactions", "testing", "caching"]
 categories: ["learn"]

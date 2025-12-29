@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000000
+weight: 10000000
 date: 2025-12-17T15:00:24+07:00
 draft: false
 description: "Step-by-step learning path from installation to expert Python mastery"

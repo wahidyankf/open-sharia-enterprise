@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000
+weight: 10000
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Practical frameworks and assessment tools for personal development

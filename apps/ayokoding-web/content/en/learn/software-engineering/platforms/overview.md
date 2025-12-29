@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000
+weight: 10000
 date: 2025-12-23T00:00:00+07:00
 draft: false
 description: Master cloud platforms, container orchestration, and infrastructure as code
@@ -47,6 +47,12 @@ Platforms provide the infrastructure foundation for deploying and running softwa
 - Jenkins automation
 - ArgoCD for continuous delivery
 
+## Available Content
+
+- **[Cloud](/en/learn/software-engineering/platforms/cloud)** - Cloud platforms and virtual machine management
+  - [Setup and Secure VM for Development](/en/learn/software-engineering/platforms/cloud/how-to/setup-and-secure-vm-for-development) - Complete guide to VM security hardening
+- **[Web](/en/learn/software-engineering/platforms/web)** - Web application frameworks and platforms
+
 ## Coming Soon
 
-Content for platforms is currently under development. Check back soon for tutorials, guides, and best practices covering cloud infrastructure, Kubernetes, and platform engineering.
+Additional content for container orchestration, infrastructure as code, and platform engineering is under development.

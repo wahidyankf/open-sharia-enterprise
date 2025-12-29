@@ -6,7 +6,7 @@ weight: 1000000
 description: Progressive narrative tutorials teaching Rust through conceptual explanations and comprehensive examples
 ---
 
-- [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/overview)
+- [Advanced](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced)
 - [Beginner](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/beginner)
 - [Intermediate](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/intermediate)
-- [Advanced](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/advanced)
+- [Overview](/en/learn/software-engineering/programming-language/rust/tutorials/by-concept/overview)

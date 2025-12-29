@@ -1,5 +1,5 @@
 version: 1.0.0
-lastFullScan: "2025-12-29T17:12:58+07:00"
+lastFullScan: "2025-12-29T20:13:23+07:00"
 description: Cache of verified external links for ayokoding-web. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
 
 links:

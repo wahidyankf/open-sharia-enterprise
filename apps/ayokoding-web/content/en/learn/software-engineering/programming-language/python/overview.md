@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-17T10:54:44+07:00
 draft: false
-weight: 10000
+weight: 100000
 description: Complete learning path from installation to expert mastery - 5 comprehensive tutorials covering 0% to 95% Python proficiency
 ---
 

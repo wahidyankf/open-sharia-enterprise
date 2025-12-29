@@ -10,8 +10,8 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/programming-language/python/overview)
 - [Tutorials](/en/learn/software-engineering/programming-language/python/tutorials)
-  - [Overview](/en/learn/software-engineering/programming-language/python/tutorials/overview)
   - [By Concept](/en/learn/software-engineering/programming-language/python/tutorials/by-concept)
+  - [Overview](/en/learn/software-engineering/programming-language/python/tutorials/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-language/python/tutorials/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-language/python/tutorials/quick-start)
 - [How to](/en/learn/software-engineering/programming-language/python/how-to)

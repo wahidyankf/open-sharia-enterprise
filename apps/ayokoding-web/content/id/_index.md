@@ -10,17 +10,17 @@ cascade:
 breadcrumbs: false
 ---
 
-- [Syarat dan Ketentuan](/id/syarat-dan-ketentuan)
 - [Belajar](/id/belajar)
   - [Ikhtisar](/id/belajar/ikhtisar)
   - [Manusia](/id/belajar/manusia)
   - [Perkenalan](/id/belajar/perkenalan)
+- [Syarat dan Ketentuan](/id/syarat-dan-ketentuan)
 - [Celoteh](/id/celoteh)
   - [2023](/id/celoteh/2023)
 - [Konten Video](/id/konten-video)
   - [Cerita Programmer](/id/konten-video/cerita-programmer)
   - [Jam Kantor](/id/konten-video/jam-kantor)
+  - [Karir Programmer](/id/konten-video/karir-programmer)
   - [Pengen Jadi Programmer](/id/konten-video/pengen-jadi-programmer)
   - [Klub Belajar](/id/konten-video/klub-belajar)
-  - [Karir Programmer](/id/konten-video/karir-programmer)
 - [Tentang AyoKoding](/id/tentang-ayokoding)

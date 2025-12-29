@@ -2,7 +2,7 @@
 title: "Overview"
 date: 2025-12-24T00:00:00+07:00
 draft: false
-weight: 1000000
+weight: 10000000
 description: "Learn Spring Boot through 75-90 annotated code examples covering dependency injection, REST APIs, data access, security, and production patterns"
 categories: ["learn"]
 tags: ["spring-boot", "java", "tutorial", "by-example", "rest-api", "microservices", "web-framework"]

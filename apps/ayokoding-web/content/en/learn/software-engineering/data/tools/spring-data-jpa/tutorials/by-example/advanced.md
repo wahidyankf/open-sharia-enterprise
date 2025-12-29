@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-29T14:00:00+07:00
 draft: false
-weight: 10000004
+weight: 100000000
 description: "Examples 61-85: Spring Data JPA expert techniques including Specifications, Criteria API, custom repositories, auditing, and performance optimization (75-95% coverage)"
 categories: ["learn"]
 tags:

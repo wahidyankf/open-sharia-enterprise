@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-24T00:00:00+07:00
 draft: false
-weight: 1000003
+weight: 10000000
 description: "Advanced Spring Boot through 30 examples: microservices, observability, resilience, Kubernetes, event sourcing, CQRS, API Gateway, and production patterns"
 tags:
   ["spring-boot", "tutorial", "by-example", "advanced", "microservices", "observability", "resilience", "production"]

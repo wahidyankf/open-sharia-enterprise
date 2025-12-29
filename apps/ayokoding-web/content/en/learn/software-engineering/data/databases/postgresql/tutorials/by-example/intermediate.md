@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-29T08:08:50+07:00
 draft: false
-weight: 10000002
+weight: 100000000
 description: "Examples 31-60: PostgreSQL production patterns covering advanced queries, indexes, JSON, transactions, views, and advanced data manipulation (40-75% coverage)"
 tags: ["postgresql", "database", "tutorial", "by-example", "intermediate", "indexes", "json", "transactions"]
 ---

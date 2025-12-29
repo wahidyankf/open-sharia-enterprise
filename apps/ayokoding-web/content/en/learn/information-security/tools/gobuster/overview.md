@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-18T00:00:00+07:00
 draft: false
-weight: 10000
+weight: 100000
 ---
 
 Gobuster is a high-performance tool for directory/file brute-forcing, DNS subdomain enumeration, and virtual host discovery. Written in Go with concurrent processing for rapid enumeration.

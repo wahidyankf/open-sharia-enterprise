@@ -5,7 +5,6 @@ draft: false
 weight: 100000
 ---
 
-- [Overview](/en/learn/human/tools/cliftonstrengths/themes/overview)
 - [Executing](/en/learn/human/tools/cliftonstrengths/themes/executing)
   - [Overview](/en/learn/human/tools/cliftonstrengths/themes/executing/overview)
   - [Achiever](/en/learn/human/tools/cliftonstrengths/themes/executing/achiever)
@@ -27,6 +26,7 @@ weight: 100000
   - [Command](/en/learn/human/tools/cliftonstrengths/themes/influencing/command)
   - [Activator](/en/learn/human/tools/cliftonstrengths/themes/influencing/activator)
   - [Competition](/en/learn/human/tools/cliftonstrengths/themes/influencing/competition)
+- [Overview](/en/learn/human/tools/cliftonstrengths/themes/overview)
 - [Relationship Building](/en/learn/human/tools/cliftonstrengths/themes/relationship-building)
   - [Overview](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/overview)
   - [Relator](/en/learn/human/tools/cliftonstrengths/themes/relationship-building/relator)

@@ -2,7 +2,7 @@
 title: "Overview"
 date: 2025-12-29T15:10:18+07:00
 draft: false
-weight: 10000000
+weight: 100000000
 description: "Learn Spring Data JPA through 85+ annotated code examples covering 95% of the framework - ideal for experienced developers building production data access layers"
 tags: ["spring-data-jpa", "tutorial", "by-example", "examples", "code-first", "jpa", "hibernate", "orm"]
 ---

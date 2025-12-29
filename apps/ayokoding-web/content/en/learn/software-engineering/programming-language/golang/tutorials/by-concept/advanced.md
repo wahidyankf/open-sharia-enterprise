@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-03T00:00:00+07:00
 draft: false
-weight: 1000005
+weight: 10000000
 description: "Expert-level Go mastery - internals, optimization, advanced patterns, and system design"
 tags:
   - golang

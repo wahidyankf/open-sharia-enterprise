@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-29T08:08:50+07:00
 draft: false
-weight: 10000003
+weight: 100000000
 description: "Examples 61-85: PostgreSQL expert mastery covering advanced indexing, query optimization, full-text search, partitioning, and administration (75-95% coverage)"
 tags: ["postgresql", "database", "tutorial", "by-example", "advanced", "optimization", "partitioning", "administration"]
 ---

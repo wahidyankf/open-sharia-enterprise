@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000005
+weight: 10000000
 description: Master-level Elixir with BEAM VM internals, distributed systems, metaprogramming, macros, performance optimization, and deployment strategies
 tags:
   ["elixir", "tutorial", "advanced", "beam-vm", "distributed", "metaprogramming", "macros", "performance", "deployment"]

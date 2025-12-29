@@ -2,7 +2,7 @@
 title: Overview
 date: 2025-12-01T00:00:00+07:00
 draft: false
-weight: 1000
+weight: 10000
 ---
 
 This directory contains hands-on system design study cases and tutorials. Each case walks through the design of a real-world system, covering architectural decisions, trade-offs, and implementation considerations.

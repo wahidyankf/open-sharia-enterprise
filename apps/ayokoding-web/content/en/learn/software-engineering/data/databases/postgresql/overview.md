@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 100000
+weight: 1000000
 date: 2025-12-29T08:08:50+07:00
 draft: false
 description: Learn PostgreSQL, the powerful open-source relational database

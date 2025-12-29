@@ -7,5 +7,5 @@ draft: false
 
 - [Ikhtisar](/id/belajar/manusia/ikhtisar)
 - [Peralatan](/id/belajar/manusia/peralatan)
-  - [Ikhtisar](/id/belajar/manusia/peralatan/ikhtisar)
   - [CliftonStrengths](/id/belajar/manusia/peralatan/cliftonstrengths)
+  - [Ikhtisar](/id/belajar/manusia/peralatan/ikhtisar)

@@ -2,7 +2,7 @@
 title: "Overview"
 date: 2025-12-29T17:29:25+07:00
 draft: false
-weight: 10000000
+weight: 100000000
 description: "Learn Elixir Ecto through 85+ annotated code examples covering 95% of the library - ideal for experienced developers building production data access layers"
 tags: ["elixir-ecto", "tutorial", "by-example", "examples", "code-first", "ecto", "database", "orm"]
 ---

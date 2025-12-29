@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-12-29T17:29:25+07:00
 draft: false
-weight: 10000001
+weight: 100000000
 description: "Elixir Ecto beginner tutorial with 30 annotated examples covering repository basics, schemas, changesets, queries, and simple associations (0-40% coverage)"
 tags: ["elixir-ecto", "tutorial", "by-example", "beginner", "repo", "schema", "changeset", "query"]
 ---

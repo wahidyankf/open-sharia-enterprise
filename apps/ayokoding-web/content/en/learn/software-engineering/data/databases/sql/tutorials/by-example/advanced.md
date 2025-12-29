@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-29T09:07:25+07:00
 draft: false
-weight: 10000003
+weight: 100000000
 description: "Examples 61-85: Query optimization, complex analytics, data modeling, and production patterns (75-95% coverage)"
 tags: ["sql", "database", "tutorial", "by-example", "advanced", "optimization", "analytics"]
 ---

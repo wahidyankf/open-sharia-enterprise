@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-03T00:00:00+07:00
 draft: false
-weight: 1000004
+weight: 10000000
 description: "Professional Go techniques for building production systems - advanced patterns, optimization, and deployment"
 tags:
   - golang

@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-12-29T09:07:25+07:00
 draft: false
-weight: 10000001
+weight: 100000000
 description: "Examples 1-30: SQL fundamentals covering installation, data types, basic queries, schema design, joins, and data manipulation (0-40% coverage)"
 tags: ["sql", "database", "tutorial", "by-example", "beginner", "fundamentals", "standard-sql"]
 ---

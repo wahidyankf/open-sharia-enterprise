@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-29T09:07:25+07:00
 draft: false
-weight: 10000002
+weight: 100000000
 description: "Examples 31-60: Advanced queries, window functions, CTEs, JSON handling, and production patterns (40-75% coverage)"
 tags: ["sql", "database", "tutorial", "by-example", "intermediate", "advanced-queries"]
 ---

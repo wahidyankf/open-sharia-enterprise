@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2025-12-19T00:00:00+07:00
 draft: false
-weight: 1000005
+weight: 10000000
 description: Expert-level Rust with unsafe code, macros, advanced traits, memory layout, performance optimization, type-level programming, and WebAssembly
 tags: ["rust", "tutorial", "advanced", "unsafe", "macros", "ffi", "optimization", "webassembly", "expert"]
 ---

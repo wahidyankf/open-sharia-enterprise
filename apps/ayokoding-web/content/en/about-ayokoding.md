@@ -2,7 +2,7 @@
 title: "About AyoKoding"
 date: 2025-03-16T07:20:00+07:00
 draft: false
-weight: 3
+weight: 10
 ---
 
 In the name of Allah, the Most Gracious, the Most Merciful.

@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-17T15:00:24+07:00
 draft: false
-weight: 1000004
+weight: 10000000
 description: "Professional Python techniques for building production systems - advanced patterns, concurrency, optimization, and deployment"
 tags:
   - python

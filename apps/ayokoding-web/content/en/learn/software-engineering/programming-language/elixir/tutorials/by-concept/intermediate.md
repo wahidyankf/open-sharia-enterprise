@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2025-12-21T00:00:00+07:00
 draft: false
-weight: 1000004
+weight: 10000000
 description: Production-grade Elixir with OTP platform, GenServer, Supervisor, Phoenix framework, LiveView, Ecto, and testing strategies
 tags: ["elixir", "tutorial", "intermediate", "otp", "genserver", "supervisor", "phoenix", "liveview", "ecto"]
 ---
