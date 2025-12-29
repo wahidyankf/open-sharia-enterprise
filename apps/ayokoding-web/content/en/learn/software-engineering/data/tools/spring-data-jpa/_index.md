@@ -8,3 +8,5 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/overview)
+- [Tutorials](/en/learn/software-engineering/data/tools/spring-data-jpa/tutorials)
+  - [By Example](/en/learn/software-engineering/data/tools/spring-data-jpa/tutorials/by-example)
