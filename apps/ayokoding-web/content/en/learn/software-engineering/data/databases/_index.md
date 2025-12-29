@@ -9,4 +9,7 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/data/databases/overview)
 - [SQL](/en/learn/software-engineering/data/databases/sql)
+  - [Overview](/en/learn/software-engineering/data/databases/sql/overview)
 - [PostgreSQL](/en/learn/software-engineering/data/databases/postgresql)
+  - [Overview](/en/learn/software-engineering/data/databases/postgresql/overview)
+  - [Tutorials](/en/learn/software-engineering/data/databases/postgresql/tutorials)
