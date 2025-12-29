@@ -9,4 +9,4 @@ Learn about infrastructure management, cloud computing platforms, virtual machin
 
 ## Available Topics
 
-- [How to](/en/learn/software-engineering/infrastructure/how-to) - Practical guides for infrastructure and cloud platform tasks
+- [Tools](/en/learn/software-engineering/infrastructure/tools) - Infrastructure management tools and practical guides
