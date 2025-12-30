@@ -1,7 +1,7 @@
 ---
 title: "Overview"
 weight: 100000
-date: 2025-12-30T14:30:00+07:00
+date: 2025-12-30T07:30:00+07:00
 draft: false
 description: Understanding Linux command-line, shell environments, and command-line tools
 ---

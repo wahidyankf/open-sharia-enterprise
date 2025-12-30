@@ -1,6 +1,6 @@
 ---
 title: "Tutorials"
-weight: 10000
+weight: 100001
 date: 2025-12-30T08:54:54+07:00
 draft: false
 type: docs

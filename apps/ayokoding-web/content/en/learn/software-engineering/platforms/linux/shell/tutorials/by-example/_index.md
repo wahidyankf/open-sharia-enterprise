@@ -8,3 +8,4 @@ draft: false
 - [Overview](/en/learn/software-engineering/platforms/linux/shell/tutorials/by-example/overview)
 - [Beginner](/en/learn/software-engineering/platforms/linux/shell/tutorials/by-example/beginner)
 - [Intermediate](/en/learn/software-engineering/platforms/linux/shell/tutorials/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/linux/shell/tutorials/by-example/advanced)

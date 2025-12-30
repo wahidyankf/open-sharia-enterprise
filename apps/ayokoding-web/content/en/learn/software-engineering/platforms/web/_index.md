@@ -9,8 +9,8 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/platforms/web/overview)
 - [Elixir Phoenix](/en/learn/software-engineering/platforms/web/elixir-phoenix)
-  - [Tutorials](/en/learn/software-engineering/platforms/web/elixir-phoenix/tutorials)
   - [Overview](/en/learn/software-engineering/platforms/web/elixir-phoenix/overview)
+  - [Tutorials](/en/learn/software-engineering/platforms/web/elixir-phoenix/tutorials)
 - [Java Spring Boot](/en/learn/software-engineering/platforms/web/java-spring-boot)
-  - [Tutorials](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials)
   - [Overview](/en/learn/software-engineering/platforms/web/java-spring-boot/overview)
+  - [Tutorials](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials)
