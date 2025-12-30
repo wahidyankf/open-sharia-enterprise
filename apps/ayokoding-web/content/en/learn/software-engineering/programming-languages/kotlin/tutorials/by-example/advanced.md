@@ -12,6 +12,18 @@ This section covers advanced Kotlin techniques from examples 55-80, achieving 75
 
 Channels enable communication between coroutines with send/receive operations.
 
+```mermaid
+graph TD
+    A[Producer Coroutine] -->|send| B[Unbuffered Channel]
+    B -->|receive| C[Consumer Coroutine]
+    A -->|suspends until receive| B
+    C -->|suspends until send| B
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
@@ -46,6 +58,22 @@ fun main() = runBlocking {
 
 Channel capacity controls buffering behavior and backpressure.
 
+```mermaid
+graph LR
+    A[Producer] -->|send 1| B[Buffer Slot 1]
+    A -->|send 2| C[Buffer Slot 2]
+    A -->|send 3 - BLOCKS| D[Full Buffer]
+    B --> E[Consumer]
+    C --> E
+    D -.->|waits for space| B
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#DE8F05,color:#000
+    style E fill:#CC78BC,color:#000
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
@@ -78,6 +106,24 @@ fun main() = runBlocking {
 ## Example 57: Select Expression
 
 Select awaits multiple suspending operations returning first completed result.
+
+```mermaid
+sequenceDiagram
+    participant S as Select Expression
+    participant C1 as Channel 1
+    participant C2 as Channel 2
+
+    Note over C1: delay 100ms
+    Note over C2: delay 50ms
+
+    C2->>S: completes first
+    S->>S: returns result from C2
+    Note over C1: ignored (too slow)
+
+    style S fill:#0173B2,color:#fff
+    style C1 fill:#DE8F05,color:#000
+    style C2 fill:#029E73,color:#fff
+```
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -112,6 +158,28 @@ fun main() = runBlocking {
 ## Example 58: Hot and Cold Flows
 
 Cold flows create new producer per collector; hot flows share single producer.
+
+```mermaid
+graph TD
+    subgraph Cold Flow
+        CF[Flow Definition] -->|collect| P1[Producer 1]
+        CF -->|collect| P2[Producer 2]
+        P1 --> CL1[Collector 1]
+        P2 --> CL2[Collector 2]
+    end
+
+    subgraph Hot Flow
+        SF[SharedFlow] --> SP[Single Producer]
+        SP --> HL1[Collector 1]
+        SP --> HL2[Collector 2]
+    end
+
+    style CF fill:#0173B2,color:#fff
+    style P1 fill:#029E73,color:#fff
+    style P2 fill:#029E73,color:#fff
+    style SF fill:#DE8F05,color:#000
+    style SP fill:#CC78BC,color:#000
+```
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -194,6 +262,29 @@ fun main() = runBlocking {
 
 Control flow backpressure using buffer, conflate, and collectLatest operators.
 
+```mermaid
+graph LR
+    subgraph No Buffer
+        P1[Producer<br/>100ms] -->|blocks| C1[Consumer<br/>200ms]
+    end
+
+    subgraph With Buffer
+        P2[Producer<br/>100ms] --> B[Buffer]
+        B --> C2[Consumer<br/>200ms]
+    end
+
+    subgraph Conflate
+        P3[Producer<br/>100ms] --> CF[Keep Latest]
+        CF --> C3[Consumer<br/>200ms]
+    end
+
+    style P1 fill:#DE8F05,color:#000
+    style P2 fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style P3 fill:#0173B2,color:#fff
+    style CF fill:#CC78BC,color:#000
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -242,6 +333,25 @@ fun main() = runBlocking {
 ## Example 61: Reflection Basics
 
 Access class metadata at runtime using Kotlin reflection API.
+
+```mermaid
+graph TD
+    A[KClass Reference] --> B[Class Metadata]
+    A --> C[Member Properties]
+    A --> D[Member Functions]
+    A --> E[Primary Constructor]
+
+    B --> B1[simpleName, isData]
+    C --> C1[name, returnType]
+    D --> D1[name, parameters]
+    E --> E1[call to create instance]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#DE8F05,color:#000
+```
 
 ```kotlin
 import kotlin.reflect.full.*
@@ -322,6 +432,26 @@ fun main() {
 ## Example 63: Annotations and Reflection
 
 Define custom annotations and process them reflectively.
+
+```mermaid
+graph TD
+    A[@Entity Annotation] --> B[User Class]
+    C[@Column Annotations] --> D[Properties]
+
+    B --> E[Reflection Processing]
+    D --> E
+
+    E --> F[Extract tableName]
+    E --> G[Extract column names]
+
+    F --> H[Generate SQL Schema]
+    G --> H
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#0173B2,color:#fff
+    style E fill:#DE8F05,color:#000
+    style H fill:#029E73,color:#fff
+```
 
 ```kotlin
 import kotlin.reflect.full.*
@@ -453,6 +583,26 @@ fun main() {
 
 Combine inline and reified for type-safe generic operations.
 
+```mermaid
+graph TD
+    A[parseJson T] -->|inline| B[Compiler Inlines Code]
+    B -->|reified| C[T::class Available]
+    C --> D[JsonParser.parse]
+
+    E[Without Reified] --> F[Must Pass KClass]
+    E --> G[Verbose API]
+
+    A --> H[Type Inferred]
+    A --> I[Clean API]
+
+    style A fill:#029E73,color:#fff
+    style B fill:#0173B2,color:#fff
+    style C fill:#0173B2,color:#fff
+    style E fill:#DE8F05,color:#000
+    style H fill:#029E73,color:#fff
+    style I fill:#029E73,color:#fff
+```
+
 ```kotlin
 import kotlin.reflect.KClass
 
@@ -499,6 +649,27 @@ fun main() {
 ## Example 67: Multiplatform Common Module
 
 Define shared business logic in common module with expect declarations.
+
+```mermaid
+graph TD
+    A[commonMain] -->|expect| B[PlatformLogger]
+    A --> C[UserService]
+
+    B -->|actual| D[jvmMain<br/>println]
+    B -->|actual| E[jsMain<br/>console.log]
+    B -->|actual| F[nativeMain<br/>platform log]
+
+    C --> G[Shared Business Logic]
+    D --> H[JVM Build]
+    E --> I[JS Build]
+    F --> J[Native Build]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+```
 
 ```kotlin
 // commonMain/Platform.kt
@@ -755,6 +926,27 @@ fun Application.module() {
 
 Use Arrow's Either type for functional error handling.
 
+```mermaid
+graph TD
+    A[findUser id] --> B{Validation}
+    B -->|id < 0| C[Left ValidationError]
+    B -->|id = 0| D[Left NotFound]
+    B -->|id > 0| E[Right User]
+
+    C --> F[fold]
+    D --> F
+    E --> F
+
+    F -->|Left| G[Handle Error]
+    F -->|Right| H[Process User]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#000
+```
+
 ```kotlin
 import arrow.core.Either
 import arrow.core.left
@@ -851,6 +1043,24 @@ fun main() {
 
 Use inline classes to eliminate allocation overhead for wrapper types.
 
+```mermaid
+graph LR
+    A[Regular Class] --> B[Heap Allocation]
+    B --> C[Object Overhead]
+    C --> D[GC Pressure]
+
+    E[Inline Class] --> F[No Allocation]
+    F --> G[Direct Value Usage]
+    G --> H[Zero Cost]
+
+    style A fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
 ```kotlin
 @JvmInline
 value class Meters(val value: Double) {
@@ -932,6 +1142,27 @@ data class User(val name: String, val role: String)
 ## Example 78: Testing Coroutines with runTest
 
 Test coroutines with virtual time using runTest from kotlinx-coroutines-test.
+
+```mermaid
+sequenceDiagram
+    participant T as Test Code
+    participant V as Virtual Time
+    participant C as Coroutine
+
+    T->>V: runTest starts
+    T->>C: launch with delay(1000)
+    Note over C: Virtual delay (instant)
+
+    T->>V: advanceUntilIdle()
+    V->>C: fast-forward time
+    C->>C: completes immediately
+
+    T->>T: assert result
+
+    style T fill:#0173B2,color:#fff
+    style V fill:#029E73,color:#fff
+    style C fill:#CC78BC,color:#000
+```
 
 ```kotlin
 import kotlinx.coroutines.*

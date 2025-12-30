@@ -12,6 +12,19 @@ This section covers production Python patterns from examples 28-54, achieving 40
 
 Decorators wrap functions to modify behavior without changing function code.
 
+```mermaid
+%% Decorator wrapping pattern
+graph LR
+    A["Original Function<br/>add(a, b)"] --> B["Decorator<br/>@trace"]
+    B --> C["Wrapper Function<br/>logs calls + result"]
+    C --> D["Returns<br/>wrapped function"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
+
 ```python
 def trace(func):
     """Decorator that logs function calls"""
@@ -34,6 +47,21 @@ result = add(3, 5)  # => Calling add, Returned 8, result = 8
 ## Example 29: Decorator with Arguments
 
 Decorators can accept configuration parameters for flexible behavior modification.
+
+```mermaid
+%% Three-layer decorator factory pattern
+graph TD
+    A["@repeat(3)<br/>Decorator Factory"] --> B["Returns<br/>decorator function"]
+    B --> C["decorator(func)<br/>Actual Decorator"]
+    C --> D["Returns<br/>wrapper function"]
+    D --> E["wrapper(*args)<br/>Executes 3 times"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+```
 
 ```python
 def repeat(times):
@@ -87,6 +115,23 @@ print(calculate.__doc__)   # => 'Adds two numbers'
 
 Generators produce values lazily using yield, enabling memory-efficient iteration.
 
+```mermaid
+%% Generator yield flow and state
+stateDiagram-v2
+    [*] --> Created: countdown(3)
+    Created --> Running: next() called
+    Running --> Suspended: yield 3
+    Suspended --> Running: next() called
+    Running --> Suspended2: yield 2
+    Suspended2 --> Running2: next() called
+    Running2 --> Suspended3: yield 1
+    Suspended3 --> Running3: next() called
+    Running3 --> [*]: StopIteration
+
+    note right of Suspended: Generator pauses<br/>retains state
+    note right of Running: Executes until<br/>next yield
+```
+
 ```python
 def countdown(n):
     """Generate numbers from n down to 1"""
@@ -130,6 +175,31 @@ total = sum(x**2 for x in range(1000000))  # => Memory efficient
 
 Context managers handle setup/cleanup automatically using **enter** and **exit** methods.
 
+```mermaid
+%% Context manager lifecycle
+sequenceDiagram
+    participant Code as with FileManager as f
+    participant CM as Context Manager
+    participant File as File Resource
+
+    Code->>CM: Enter with block
+    CM->>CM: __enter__() called
+    CM->>File: open('data.txt', 'w')
+    File-->>CM: File object
+    CM-->>Code: Return file object to 'f'
+
+    Note over Code,File: Code block executes
+    Code->>File: f.write('Hello')
+
+    Code->>CM: Exit with block
+    CM->>CM: __exit__() called
+    CM->>File: f.close()
+    Note over CM,File: Guaranteed cleanup<br/>even on exception
+
+    style CM fill:#0173B2,color:#fff
+    style File fill:#029E73,color:#fff
+```
+
 ```python
 class FileManager:
     def __init__(self, filename, mode):
@@ -158,6 +228,23 @@ with FileManager('data.txt', 'w') as f:    # => Calls __enter__
 ## Example 34: contextlib for Simple Context Managers
 
 Use @contextmanager decorator to create context managers from generator functions.
+
+```mermaid
+%% Contextlib setup-yield-cleanup flow
+graph TD
+    A["with timer('Processing')"] --> B["Setup Code<br/>start = time.time()"]
+    B --> C["yield<br/>(pause generator)"]
+    C --> D["Execute with block<br/>total = sum(...)"]
+    D --> E["Resume generator<br/>finally block"]
+    E --> F["Cleanup Code<br/>print duration"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CA9161,color:#fff
+```
 
 ```python
 from contextlib import contextmanager
@@ -389,6 +476,25 @@ print(c1 - c2)  # => Counter({'a': 1, 'c': 1}) (removes common counts)
 
 defaultdict provides default values for missing keys, eliminating KeyError checks.
 
+```mermaid
+%% defaultdict key access with factory
+graph TD
+    A["Access groups['a']"] --> B{Key 'a'<br/>exists?}
+    B -->|Yes| C["Return existing<br/>list"]
+    B -->|No| D["Call factory<br/>list()"]
+    D --> E["Create empty list<br/>[]"]
+    E --> F["Store at key 'a'"]
+    F --> G["Return new list"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+    style F fill:#CA9161,color:#fff
+    style G fill:#029E73,color:#fff
+```
+
 ```python
 from collections import defaultdict
 
@@ -414,6 +520,27 @@ print(dict(counts))  # => {'m': 1, 'i': 4, 's': 4, 'p': 2}
 ## Example 43: Collections - deque
 
 deque (double-ended queue) provides O(1) append/pop from both ends.
+
+```mermaid
+%% Deque double-ended operations
+graph LR
+    A["appendleft(0)<br/>O(1)"] --> B["[0, 1, 2, 3]<br/>deque"]
+    B --> C["append(4)<br/>O(1)"]
+
+    D["popleft()<br/>O(1)<br/>returns 0"] --> B
+    B --> E["pop()<br/>O(1)<br/>returns 4"]
+
+    F["rotate(1)"] --> G["[3, 1, 2]<br/>shift right"]
+    G --> H["rotate(-1)"] --> I["[1, 2, 3]<br/>shift left"]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style E fill:#DE8F05,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style H fill:#CC78BC,color:#fff
+```
 
 ```python
 from collections import deque
@@ -471,6 +598,26 @@ doubled = list(map(double, numbers))          # => [2, 4, 6, 8]
 
 lru_cache memoizes function results for repeated calls with same arguments.
 
+```mermaid
+%% LRU cache mechanism
+graph TD
+    A["fibonacci(10) called"] --> B{Result in<br/>cache?}
+    B -->|Yes| C["Return cached<br/>result (hit)"]
+    B -->|No| D["Compute result<br/>fib(9) + fib(8)"]
+    D --> E["Store in cache<br/>max 128 entries"]
+    E --> F["Return result"]
+
+    G["Cache Full?"] --> H{LRU eviction}
+    H -->|Yes| I["Remove least<br/>recently used"]
+    H -->|No| J["Add to cache"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+```
+
 ```python
 from functools import lru_cache
 
@@ -499,6 +646,25 @@ fibonacci.cache_clear()                       # => Remove all cached results
 ## Example 46: itertools - Powerful Iteration
 
 itertools provides composable iterator building blocks for efficient iteration.
+
+```mermaid
+%% Itertools chain and groupby
+graph TD
+    A["[1, 2]"] --> Chain
+    B["[3, 4]"] --> Chain
+    C["[5]"] --> Chain["chain()"]
+    Chain --> D["1, 2, 3, 4, 5<br/>(single iterable)"]
+
+    E["[('A',1), ('A',2),<br/>('B',3), ('B',4)]"] --> GroupBy["groupby(key=lambda x: x[0])"]
+    GroupBy --> F["Group 'A'<br/>[('A',1), ('A',2)]"]
+    GroupBy --> G["Group 'B'<br/>[('B',3), ('B',4)]"]
+
+    style Chain fill:#0173B2,color:#fff
+    style D fill:#029E73,color:#fff
+    style GroupBy fill:#DE8F05,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CC78BC,color:#fff
+```
 
 ```python
 from itertools import chain, cycle, islice, combinations, groupby
@@ -661,6 +827,32 @@ if Status.PENDING == Status.PENDING:  # => True
 ## Example 51: Abstract Base Classes
 
 ABCs define interfaces that subclasses must implement.
+
+```mermaid
+%% Abstract base class inheritance
+classDiagram
+    class PaymentProcessor {
+        <<abstract>>
+        +process_payment(amount)* abstract
+        +refund(transaction_id)* abstract
+    }
+
+    class StripeProcessor {
+        +process_payment(amount) implemented
+        +refund(transaction_id) implemented
+    }
+
+    class PayPalProcessor {
+        +process_payment(amount) implemented
+        +refund(transaction_id) implemented
+    }
+
+    PaymentProcessor <|-- StripeProcessor : implements
+    PaymentProcessor <|-- PayPalProcessor : implements
+
+    note for PaymentProcessor "Cannot instantiate<br/>abstract class directly"
+    note for StripeProcessor "Must implement all<br/>abstract methods"
+```
 
 ```python
 from abc import ABC, abstractmethod

@@ -12,6 +12,28 @@ This section covers production Kotlin patterns from examples 28-54, achieving 40
 
 Coroutines enable asynchronous programming with sequential-looking code.
 
+```mermaid
+%% Coroutine execution flow showing suspension without blocking
+sequenceDiagram
+    participant Main as Main Thread
+    participant Coroutine as Coroutine
+    participant Delay as Delay Scheduler
+
+    Main->>Coroutine: runBlocking { }
+    activate Coroutine
+    Coroutine->>Coroutine: println("Fetching...")
+    Coroutine->>Delay: delay(1000)
+    Note over Coroutine: Suspended (thread free)
+    Delay-->>Coroutine: Resume after 1s
+    Coroutine->>Coroutine: Return user data
+    Coroutine->>Main: Complete
+    deactivate Coroutine
+
+    style Main fill:#0173B2,color:#fff
+    style Coroutine fill:#DE8F05,color:#000
+    style Delay fill:#029E73,color:#fff
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 
@@ -61,6 +83,34 @@ fun main() = runBlocking {
 
 Multiple coroutines run concurrently, not sequentially.
 
+```mermaid
+%% Concurrent execution timeline showing parallel task execution
+graph TD
+    Start[Start Execution] --> A[async Task A]
+    Start --> B[async Task B]
+    Start --> C[async Task C]
+
+    A --> A_Delay[delay 1000ms]
+    B --> B_Delay[delay 1000ms]
+    C --> C_Delay[delay 1000ms]
+
+    A_Delay --> A_Done[Complete A]
+    B_Delay --> B_Done[Complete B]
+    C_Delay --> C_Done[Complete C]
+
+    A_Done --> Wait[await All]
+    B_Done --> Wait
+    C_Done --> Wait
+
+    Wait --> Result[Total: ~1000ms]
+
+    style Start fill:#0173B2,color:#fff
+    style A fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style Result fill:#029E73,color:#fff
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 import kotlin.system.measureTimeMillis
@@ -89,6 +139,29 @@ fun main() = runBlocking {
 ## Example 31: Coroutine Context and Dispatchers
 
 Dispatchers control which thread pool executes coroutines.
+
+```mermaid
+%% Dispatcher thread pool assignment
+graph TD
+    Coroutine[Launch Coroutine] --> Dispatcher{Choose Dispatcher}
+
+    Dispatcher -->|Default| CPU[CPU-Intensive Thread Pool]
+    Dispatcher -->|IO| IOPool[I/O Optimized Pool]
+    Dispatcher -->|Main| UIThread[UI/Main Thread]
+    Dispatcher -->|Unconfined| Caller[Caller Thread]
+
+    CPU --> CPU_Work[Computation Work]
+    IOPool --> IO_Work[Network/File I/O]
+    UIThread --> UI_Work[UI Updates]
+    Caller --> Caller_Work[Flexible Execution]
+
+    style Coroutine fill:#0173B2,color:#fff
+    style Dispatcher fill:#DE8F05,color:#000
+    style CPU fill:#029E73,color:#fff
+    style IOPool fill:#029E73,color:#fff
+    style UIThread fill:#CC78BC,color:#000
+    style Caller fill:#CA9161,color:#000
+```
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -122,6 +195,28 @@ fun main() = runBlocking {
 
 Parent coroutine scopes manage child lifecycle for automatic cleanup.
 
+```mermaid
+%% Structured concurrency hierarchy and cancellation propagation
+graph TD
+    Parent[Parent Coroutine] --> Child1[Child Coroutine 1]
+    Parent --> Child2[Child Coroutine 2]
+
+    Child1 --> Delay1[delay 1000ms]
+    Child2 --> Delay2[delay 500ms]
+
+    Cancel[parent.cancel] --> CancelParent[Cancel Parent]
+    CancelParent -.->|Propagates| CancelChild1[Cancel Child 1]
+    CancelParent -.->|Propagates| CancelChild2[Cancel Child 2]
+
+    style Parent fill:#0173B2,color:#fff
+    style Child1 fill:#DE8F05,color:#000
+    style Child2 fill:#DE8F05,color:#000
+    style Cancel fill:#CC78BC,color:#000
+    style CancelParent fill:#CC78BC,color:#000
+    style CancelChild1 fill:#CA9161,color:#000
+    style CancelChild2 fill:#CA9161,color:#000
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 
@@ -154,6 +249,32 @@ fun main() = runBlocking {
 ## Example 33: Flow for Async Streams
 
 Flow emits multiple values asynchronously, like sequences but cold and suspendable.
+
+```mermaid
+%% Flow pipeline showing emission, transformation, and collection
+graph LR
+    Source[flow emit] --> Emit1[emit 1]
+    Emit1 --> Emit2[emit 2]
+    Emit2 --> Emit3[emit 3]
+
+    Emit1 --> Map1[map *2 = 2]
+    Emit2 --> Map2[map *2 = 4]
+    Emit3 --> Map3[map *2 = 6]
+
+    Map1 --> Filter1[filter > 2: skip]
+    Map2 --> Filter2[filter > 2: pass]
+    Map3 --> Filter3[filter > 2: pass]
+
+    Filter2 --> Collect1[collect 4]
+    Filter3 --> Collect2[collect 6]
+
+    style Source fill:#0173B2,color:#fff
+    style Map1 fill:#DE8F05,color:#000
+    style Map2 fill:#DE8F05,color:#000
+    style Map3 fill:#DE8F05,color:#000
+    style Filter2 fill:#029E73,color:#fff
+    style Filter3 fill:#029E73,color:#fff
+```
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -279,6 +400,30 @@ fun main() {
 ## Example 37: Property Delegation
 
 Delegate property implementations to reusable delegate objects.
+
+```mermaid
+%% Property delegation pattern showing delegate types
+graph TD
+    Property[Property Access] --> Delegate{Delegate Type}
+
+    Delegate -->|lazy| Lazy[Lazy Delegate]
+    Delegate -->|observable| Observable[Observable Delegate]
+    Delegate -->|vetoable| Vetoable[Vetoable Delegate]
+
+    Lazy --> LazyCompute[Compute once on first access]
+    Observable --> ObsCallback[Trigger callback on change]
+    Vetoable --> VetoValidate[Validate before allowing change]
+
+    LazyCompute --> Return[Return value]
+    ObsCallback --> Return
+    VetoValidate --> Return
+
+    style Property fill:#0173B2,color:#fff
+    style Delegate fill:#DE8F05,color:#000
+    style Lazy fill:#029E73,color:#fff
+    style Observable fill:#CC78BC,color:#000
+    style Vetoable fill:#CA9161,color:#000
+```
 
 ```kotlin
 import kotlin.properties.Delegates
@@ -436,6 +581,30 @@ fun main() {
 
 Scope functions provide context for object operations with different receivers.
 
+```mermaid
+%% Scope function characteristics comparison
+graph TD
+    Start[Scope Functions] --> LetCheck{let}
+    Start --> RunCheck{run}
+    Start --> WithCheck{with}
+
+    LetCheck -->|it parameter| LetReturn[Returns lambda result]
+    RunCheck -->|this receiver| RunReturn[Returns lambda result]
+    WithCheck -->|this receiver| WithReturn[Returns lambda result]
+
+    LetReturn --> LetUse[Use: null checks, transformations]
+    RunReturn --> RunUse[Use: object configuration + compute]
+    WithReturn --> WithUse[Use: grouped operations]
+
+    style Start fill:#0173B2,color:#fff
+    style LetCheck fill:#DE8F05,color:#000
+    style RunCheck fill:#029E73,color:#fff
+    style WithCheck fill:#CC78BC,color:#000
+    style LetUse fill:#CA9161,color:#000
+    style RunUse fill:#CA9161,color:#000
+    style WithUse fill:#CA9161,color:#000
+```
+
 ```kotlin
 data class Person(var name: String, var age: Int)
 
@@ -508,6 +677,31 @@ fun main() {
 
 Create type-safe DSLs using lambda with receiver.
 
+```mermaid
+%% DSL builder structure and lambda with receiver flow
+graph TD
+    DSL[html DSL Block] --> Head[head block]
+    DSL --> Body[body block]
+
+    Head --> HeadReceiver[Head.() -> Unit]
+    HeadReceiver --> Title[Set title property]
+
+    Body --> BodyReceiver[Body.() -> Unit]
+    BodyReceiver --> H1[h1 function call]
+    BodyReceiver --> P[p function call]
+
+    Title --> Build[Build HTML string]
+    H1 --> Build
+    P --> Build
+
+    style DSL fill:#0173B2,color:#fff
+    style Head fill:#DE8F05,color:#000
+    style Body fill:#DE8F05,color:#000
+    style HeadReceiver fill:#029E73,color:#fff
+    style BodyReceiver fill:#029E73,color:#fff
+    style Build fill:#CC78BC,color:#000
+```
+
 ```kotlin
 class HTML {
     private val elements = mutableListOf<String>()
@@ -563,6 +757,26 @@ fun main() {
 ## Example 45: Sealed Classes for State
 
 Sealed classes restrict inheritance for exhaustive when expressions.
+
+```mermaid
+%% Sealed class hierarchy showing exhaustive state handling
+stateDiagram-v2
+    [*] --> Result
+
+    Result --> Success: is Success
+    Result --> Error: is Error
+    Result --> Loading: is Loading
+
+    Success --> HandleSuccess: Print value
+    Error --> HandleError: Print message
+    Loading --> HandleLoading: Print loading
+
+    HandleSuccess --> [*]
+    HandleError --> [*]
+    HandleLoading --> [*]
+
+    note right of Result: Sealed class ensures\nexhaustive when
+```
 
 ```kotlin
 sealed class Result<out T> {
@@ -750,6 +964,29 @@ fun main() {
 ## Example 51: Delegation Pattern
 
 Implement interfaces by delegating to contained objects using by keyword.
+
+```mermaid
+%% Class delegation showing method forwarding
+graph LR
+    Client[Client Code] --> Cached[CachedRepository]
+
+    Cached -->|save| Delegate[Delegate to repo]
+    Cached -->|load override| CheckCache{Cache exists?}
+
+    Delegate --> DB[DatabaseRepository]
+    CheckCache -->|Yes| ReturnCache[Return cached]
+    CheckCache -->|No| LoadDB[repo.load]
+
+    DB --> SaveDB[Save to database]
+    LoadDB --> StoreCache[Store in cache]
+    StoreCache --> ReturnCache
+
+    style Client fill:#0173B2,color:#fff
+    style Cached fill:#DE8F05,color:#000
+    style DB fill:#029E73,color:#fff
+    style CheckCache fill:#CC78BC,color:#000
+    style ReturnCache fill:#CA9161,color:#000
+```
 
 ```kotlin
 interface Repository {

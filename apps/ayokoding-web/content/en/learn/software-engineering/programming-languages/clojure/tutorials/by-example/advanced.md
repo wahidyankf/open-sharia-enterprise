@@ -12,6 +12,30 @@ This section covers advanced Clojure techniques from examples 55-80, achieving 7
 
 Macros can recursively transform nested code structures.
 
+```mermaid
+%% Macro code walking process
+graph TD
+    A[Code Form] --> B{Is Seq?}
+    B -->|Yes| C[Map Walk Over Elements]
+    B -->|No| D{Is Vector?}
+    D -->|Yes| E[Vec Map Walk]
+    D -->|No| F{Is Map?}
+    F -->|Yes| G[Map Walk K/V Pairs]
+    F -->|No| H[Transform Leaf Node]
+    C --> I[Recursive Walk]
+    E --> I
+    G --> I
+    H --> J[Return Transformed]
+    I --> J
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#000
+    style H fill:#029E73,color:#fff
+    style J fill:#CC78BC,color:#000
+```
+
 ```clojure
 (defmacro debug-all [& forms]
   `(do
@@ -46,6 +70,24 @@ Macros can recursively transform nested code structures.
 ## Example 56: Macro Debugging with macroexpand
 
 Debug macros by expanding to see generated code.
+
+```mermaid
+%% Macro expansion process
+graph LR
+    A[Macro Form] --> B[macroexpand-1]
+    B --> C[First Level Expansion]
+    C --> D{More Macros?}
+    D -->|Yes| E[macroexpand]
+    D -->|No| F[Final Code]
+    E --> G[Recursive Expansion]
+    G --> F
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+    style E fill:#DE8F05,color:#000
+    style F fill:#CC78BC,color:#000
+```
 
 ```clojure
 (defmacro when-valid [test & body]
@@ -106,6 +148,25 @@ Write portable code targeting Clojure and ClojureScript.
 
 Add type hints to eliminate reflection for performance.
 
+```mermaid
+%% Type hint performance impact
+graph TD
+    A[Method Call] --> B{Type Hinted?}
+    B -->|No| C[Runtime Reflection]
+    B -->|Yes| D[Direct Method Call]
+    C --> E[Slow: Class Lookup]
+    E --> F[Slow: Method Search]
+    F --> G[Finally Execute]
+    D --> H[Fast: Direct Invoke]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#CA9161,color:#000
+    style D fill:#029E73,color:#fff
+    style G fill:#CA9161,color:#000
+    style H fill:#029E73,color:#fff
+```
+
 ```clojure
 ;; Without type hints (reflection warning)
 (defn slow-add [a b]
@@ -135,6 +196,28 @@ Add type hints to eliminate reflection for performance.
 ## Example 59: Stateful Transducers
 
 Transducers can maintain state across transformation steps.
+
+```mermaid
+%% Stateful transducer flow
+sequenceDiagram
+    participant C as Collection
+    participant T as Transducer
+    participant V as Volatile State
+    participant R as Reducing Function
+
+    C->>T: Input 1
+    T->>V: Read State
+    V-->>T: Previous Value
+    T->>V: Update State
+    T->>R: Transform & Emit
+    C->>T: Input 2
+    T->>V: Read State
+    V-->>T: Updated Value
+    T->>V: Update State
+    T->>R: Transform & Emit
+
+    Note over T,V: State persists across steps
+```
 
 ```clojure
 (defn dedupe-consecutive []
@@ -176,6 +259,28 @@ Transducers can maintain state across transformation steps.
 
 Leverage reducers for parallel processing on large datasets.
 
+```mermaid
+%% Fork-join parallel processing
+graph TD
+    A[Large Collection] --> B[Split into Chunks]
+    B --> C[Chunk 1]
+    B --> D[Chunk 2]
+    B --> E[Chunk 3]
+    B --> F[Chunk 4]
+    C --> G[Process in Parallel]
+    D --> G
+    E --> G
+    F --> G
+    G --> H[Combine Results]
+    H --> I[Final Result]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#000
+    style I fill:#029E73,color:#fff
+```
+
 ```clojure
 (require '[clojure.core.reducers :as r])
 
@@ -210,6 +315,26 @@ Leverage reducers for parallel processing on large datasets.
 ## Example 61: Protocols for Polymorphism
 
 Define protocols for extensible polymorphic operations.
+
+```mermaid
+%% Protocol polymorphism
+graph TD
+    A[Protocol Definition] --> B[Serializable]
+    B --> C[serialize method]
+    B --> D[deserialize method]
+    E[String Type] --> F[extend-protocol]
+    G[Vector Type] --> F
+    H[Date Type] --> I[extend-type]
+    F --> C
+    F --> D
+    I --> C
+    I --> D
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style F fill:#029E73,color:#fff
+    style I fill:#029E73,color:#fff
+```
 
 ```clojure
 (defprotocol Serializable
@@ -246,6 +371,26 @@ Define protocols for extensible polymorphic operations.
 
 Define custom type hierarchies for multimethod dispatch.
 
+```mermaid
+%% Type hierarchy for multimethods
+graph TD
+    A[::animal] --> B[::dog]
+    A --> C[::cat]
+    A --> D[::parrot]
+    E[::bird] --> D
+
+    F[speak multimethod] --> G{Dispatch on :type}
+    G -->|::dog| H[Woof!]
+    G -->|::cat| I[Meow!]
+    G -->|::parrot| J[Inherits ::animal]
+    J --> K[Some sound]
+
+    style A fill:#0173B2,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#000
+    style G fill:#029E73,color:#fff
+```
+
 ```clojure
 ;; Define hierarchy
 (derive ::dog ::animal)
@@ -277,6 +422,30 @@ Define custom type hierarchies for multimethod dispatch.
 ## Example 63: Component Architecture
 
 Structure applications using component lifecycle management.
+
+```mermaid
+%% Component dependency graph
+graph TD
+    A[System] --> B[Database Component]
+    A --> C[Web Server Component]
+    C -.depends on.-> B
+
+    B --> D[start: connect]
+    B --> E[stop: disconnect]
+    C --> F[start: bind port]
+    C --> G[stop: unbind]
+
+    H[Start System] --> D
+    D --> F
+    I[Stop System] --> G
+    G --> E
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+```
 
 ```clojure
 (require '[com.stuartsierra.component :as component])
@@ -358,6 +527,29 @@ Alternative to Component using global state with lifecycle.
 ## Example 65: Ring Middleware
 
 Build HTTP middleware for request/response transformation.
+
+```mermaid
+%% Ring middleware stack
+sequenceDiagram
+    participant R as Request
+    participant L as wrap-logging
+    participant A as wrap-auth
+    participant H as Handler
+    participant Res as Response
+
+    R->>L: Incoming Request
+    L->>L: Log request URI
+    L->>A: Forward request
+    A->>A: Check authorization
+    A->>H: Authorized request
+    H->>H: Process request
+    H-->>A: Generate response
+    A-->>L: Pass response
+    L->>L: Log response status
+    L-->>Res: Final response
+
+    Note over L,A: Middleware applied bottom-up
+```
 
 ```clojure
 (require '[ring.adapter.jetty :refer [run-jetty]])
@@ -494,6 +686,30 @@ Access relational databases using next.jdbc.
 
 Generate test data automatically from specs.
 
+```mermaid
+%% Spec generative testing flow
+graph TD
+    A[Spec Definition] --> B[s/def specs]
+    B --> C[s/gen Generator]
+    C --> D[gen/sample]
+    D --> E[Random Valid Data]
+
+    A --> F[s/fdef Function Spec]
+    F --> G[stest/check]
+    G --> H[Generate Inputs]
+    H --> I[Run Function]
+    I --> J[Validate Output]
+    J --> K{Valid?}
+    K -->|Yes| L[Test Passes]
+    K -->|No| M[Counterexample Found]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style G fill:#DE8F05,color:#000
+    style L fill:#029E73,color:#fff
+    style M fill:#CC78BC,color:#000
+```
+
 ```clojure
 (require '[clojure.spec.alpha :as s]
          '[clojure.spec.gen.alpha :as gen]
@@ -564,6 +780,32 @@ Write generative property-based tests.
 
 Profile code to identify performance bottlenecks.
 
+```mermaid
+%% Performance profiling workflow
+graph TD
+    A[Code to Profile] --> B[crit/bench]
+    B --> C[JVM Warmup]
+    C --> D[Multiple Iterations]
+    D --> E[Statistical Analysis]
+    E --> F[Timing Report]
+
+    A --> G[time macro]
+    G --> H[Single Execution]
+    H --> I[Elapsed Time]
+
+    A --> J[Memory Profiling]
+    J --> K[Before Memory]
+    K --> L[Execute Function]
+    L --> M[After Memory]
+    M --> N[Memory Delta]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style F fill:#029E73,color:#fff
+    style I fill:#029E73,color:#fff
+    style N fill:#029E73,color:#fff
+```
+
 ```clojure
 (require '[criterium.core :as crit])
 
@@ -597,6 +839,29 @@ Profile code to identify performance bottlenecks.
 ## Example 72: Memoization for Performance
 
 Cache function results for repeated calls with same arguments.
+
+```mermaid
+%% Memoization cache flow
+graph TD
+    A[Function Call] --> B{In Cache?}
+    B -->|Yes| C[Return Cached Result]
+    B -->|No| D[Compute Result]
+    D --> E[Store in Cache]
+    E --> F[Return Result]
+
+    G[First Call fib 35] --> D
+    D --> H[~5 seconds]
+    H --> E
+    I[Second Call fib 35] --> B
+    B --> C
+    C --> J[Instant: 0ms]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+    style D fill:#CA9161,color:#000
+    style F fill:#029E73,color:#fff
+```
 
 ```clojure
 (defn slow-fib [n]
@@ -788,6 +1053,27 @@ Manage environment-specific configuration.
 ## Example 78: Production Deployment Checklist
 
 Best practices for deploying Clojure applications to production.
+
+```mermaid
+%% Production deployment pipeline
+graph TD
+    A[Development] --> B[AOT Compilation]
+    B --> C[Build Uberjar]
+    C --> D[JVM Tuning]
+    D --> E[Configure Logging]
+    E --> F[Health Checks]
+    F --> G[Graceful Shutdown]
+    G --> H[Error Handling]
+    H --> I[Connection Pooling]
+    I --> J[Deploy to Production]
+    J --> K[Monitor & Alert]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style F fill:#029E73,color:#fff
+    style J fill:#029E73,color:#fff
+    style K fill:#CC78BC,color:#000
+```
 
 ```clojure
 ;; 1. AOT compilation for faster startup

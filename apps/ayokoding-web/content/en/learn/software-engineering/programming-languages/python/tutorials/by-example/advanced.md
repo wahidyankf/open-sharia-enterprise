@@ -12,6 +12,23 @@ This section covers advanced Python techniques from examples 55-80, achieving 75
 
 Metaclasses customize class creation, enabling class-level validation and modification.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Class Definition<br/>class User(Base)"] --> B["Metaclass __new__<br/>called"]
+    B --> C{"Validation<br/>validate() exists?"}
+    C -->|Yes| D["type.__new__<br/>creates class"]
+    C -->|No| E["Raise TypeError"]
+    D --> F["User class<br/>created"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#CA9161,color:#fff
+    style F fill:#029E73,color:#fff
+```
+
 ```python
 class ValidatedMeta(type):
     """Metaclass that validates class attributes"""
@@ -41,6 +58,29 @@ class User(Base):
 
 **init_subclass** provides class customization without metaclasses for most use cases.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["class PDFPlugin(Plugin,<br/>plugin_name='pdf')"] --> B["__init_subclass__<br/>called"]
+    B --> C["Extract plugin_name<br/>from kwargs"]
+    C --> D["Register in<br/>Plugin.plugins dict"]
+    D --> E["plugins['pdf'] = PDFPlugin"]
+
+    F["class CSVPlugin(Plugin,<br/>plugin_name='csv')"] --> G["__init_subclass__<br/>called"]
+    G --> H["Extract plugin_name"]
+    H --> I["plugins['csv'] = CSVPlugin"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#0173B2,color:#fff
+    style G fill:#DE8F05,color:#fff
+    style H fill:#CC78BC,color:#fff
+    style I fill:#029E73,color:#fff
+```
+
 ```python
 class Plugin:
     """Base class with automatic subclass registration"""
@@ -68,6 +108,27 @@ print(Plugin.plugins)  # => {'pdf': PDFPlugin, 'csv': CSVPlugin}
 ## Example 57: Descriptor Protocol
 
 Descriptors customize attribute access using **get**, **set**, and **delete** methods.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["acc.balance = 100"] --> B["Positive.__set__<br/>called"]
+    B --> C{"value < 0?"}
+    C -->|Yes| D["Raise ValueError"]
+    C -->|No| E["Store in<br/>obj.__dict__"]
+
+    F["print(acc.balance)"] --> G["Positive.__get__<br/>called"]
+    G --> H["Return from<br/>obj.__dict__"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#CA9161,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#0173B2,color:#fff
+    style G fill:#DE8F05,color:#fff
+    style H fill:#029E73,color:#fff
+```
 
 ```python
 class Positive:
@@ -140,6 +201,34 @@ c.radius = 10    # => Calls setter
 
 Asyncio enables concurrent I/O operations using async/await syntax.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Main as main()
+    participant Loop as Event Loop
+    participant F1 as fetch_data(api1)
+    participant F2 as fetch_data(api2)
+    participant F3 as fetch_data(api3)
+
+    Main->>Loop: asyncio.gather(...)
+    Loop->>F1: Start fetching
+    Loop->>F2: Start fetching
+    Loop->>F3: Start fetching
+
+    F1->>Loop: await sleep (yield)
+    F2->>Loop: await sleep (yield)
+    F3->>Loop: await sleep (yield)
+
+    Note over Loop: All run concurrently<br/>during I/O wait
+
+    F1->>Loop: Complete
+    F2->>Loop: Complete
+    F3->>Loop: Complete
+    Loop->>Main: Return results list
+
+    %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2'}}}%%
+```
+
 ```python
 import asyncio
 
@@ -173,6 +262,36 @@ asyncio.run(main())  # => Starts event loop, runs main()
 ## Example 60: Asyncio Tasks
 
 Tasks wrap coroutines for concurrent execution with more control than gather.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["create_task(process_item A)"] --> B["Task 1<br/>runs in background"]
+    C["create_task(process_item B)"] --> D["Task 2<br/>runs in background"]
+
+    E["Main coroutine<br/>continues"] --> F["await task1"]
+    E --> G["await task2"]
+
+    B --> F
+    D --> G
+
+    F --> H["Get result A"]
+    G --> I["Get result B"]
+
+    J["asyncio.wait(...,<br/>FIRST_COMPLETED)"] --> K["Wait for<br/>first task"]
+    K --> L["Return done<br/>and pending sets"]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style J fill:#0173B2,color:#fff
+    style K fill:#DE8F05,color:#fff
+    style L fill:#029E73,color:#fff
+```
 
 ```python
 import asyncio
@@ -249,6 +368,26 @@ asyncio.run(main())
 
 Protocols define interfaces checked structurally (duck typing with type hints).
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Drawable Protocol<br/>def draw() -> str"] --> B["Circle<br/>has draw() method"]
+    A --> C["Square<br/>has draw() method"]
+    A -.->|Missing| D["Triangle<br/>no draw() method"]
+
+    B --> E["render(Circle())<br/>✓ Type checks"]
+    C --> F["render(Square())<br/>✓ Type checks"]
+    D --> G["render(Triangle())<br/>✗ mypy error"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CA9161,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#CA9161,color:#fff
+```
+
 ```python
 from typing import Protocol
 
@@ -284,6 +423,35 @@ render(Square())  # => OK, has draw()
 ## Example 63: Generic Types
 
 Generic types enable type-safe containers and functions for multiple types.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Stack[T]<br/>Generic class"] --> B["Stack[int]<br/>Type parameter = int"]
+    A --> C["Stack[str]<br/>Type parameter = str"]
+
+    B --> D["_items: List[int]"]
+    B --> E["push(int) -> None"]
+    B --> F["pop() -> int"]
+
+    C --> G["_items: List[str]"]
+    C --> H["push(str) -> None"]
+    C --> I["pop() -> str"]
+
+    J["int_stack.push('text')"] --> K["mypy error:<br/>Expected int, got str"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#029E73,color:#fff
+    style I fill:#029E73,color:#fff
+    style J fill:#CC78BC,color:#fff
+    style K fill:#CA9161,color:#fff
+```
 
 ```python
 from typing import TypeVar, Generic, List
@@ -383,6 +551,32 @@ def process_large_data():
 
 Use threading for I/O-bound operations bypassing GIL limitations.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Sequential Execution<br/>6 seconds total"] --> B["download_file(url1)<br/>2 seconds"]
+    B --> C["download_file(url2)<br/>2 seconds"]
+    C --> D["download_file(url3)<br/>2 seconds"]
+
+    E["Concurrent with Threads<br/>2 seconds total"] --> F["Thread 1<br/>url1"]
+    E --> G["Thread 2<br/>url2"]
+    E --> H["Thread 3<br/>url3"]
+
+    F --> I["All complete<br/>simultaneously"]
+    G --> I
+    H --> I
+
+    style A fill:#CA9161,color:#fff
+    style B fill:#CA9161,color:#fff
+    style C fill:#CA9161,color:#fff
+    style D fill:#CA9161,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#DE8F05,color:#fff
+    style H fill:#DE8F05,color:#fff
+    style I fill:#029E73,color:#fff
+```
+
 ```python
 import threading
 import time
@@ -417,6 +611,35 @@ print("All downloads complete")
 
 ThreadPoolExecutor simplifies thread management with automatic pooling.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["10 tasks submitted"] --> B["ThreadPoolExecutor<br/>max_workers=3"]
+    B --> C["Worker Thread 1"]
+    B --> D["Worker Thread 2"]
+    B --> E["Worker Thread 3"]
+
+    C --> F["Process tasks<br/>from queue"]
+    D --> F
+    E --> F
+
+    F --> G["as_completed()<br/>yields futures"]
+    G --> H["future.result()<br/>get completed results"]
+
+    I["Context exit"] --> J["Automatic<br/>thread shutdown"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#029E73,color:#fff
+    style I fill:#0173B2,color:#fff
+    style J fill:#029E73,color:#fff
+```
+
 ```python
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
@@ -445,6 +668,38 @@ with ThreadPoolExecutor(max_workers=3) as executor:
 
 Use multiprocessing for CPU-bound tasks to bypass GIL with separate processes.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Main Process"] --> B["Pool(processes=4)"]
+    B --> C["Process 1<br/>Own Python interpreter"]
+    B --> D["Process 2<br/>Own Python interpreter"]
+    B --> E["Process 3<br/>Own Python interpreter"]
+    B --> F["Process 4<br/>Own Python interpreter"]
+
+    C --> G["CPU Core 1<br/>No GIL limitation"]
+    D --> H["CPU Core 2<br/>No GIL limitation"]
+    E --> I["CPU Core 3<br/>No GIL limitation"]
+    F --> J["CPU Core 4<br/>No GIL limitation"]
+
+    G --> K["Results<br/>collected"]
+    H --> K
+    I --> K
+    J --> K
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#029E73,color:#fff
+    style I fill:#029E73,color:#fff
+    style J fill:#029E73,color:#fff
+    style K fill:#029E73,color:#fff
+```
+
 ```python
 from multiprocessing import Pool
 import time
@@ -472,6 +727,31 @@ if __name__ == '__main__':
 ## Example 69: Weak References
 
 Weak references allow object references without preventing garbage collection.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Strong Reference"] --> B["obj = LargeObject('Strong')"]
+    B --> C["ref = obj"]
+    C --> D["del obj"]
+    D --> E["Object still in memory<br/>ref keeps it alive"]
+
+    F["Weak Reference"] --> G["obj2 = LargeObject('Weak')"]
+    G --> H["weak_ref = weakref.ref(obj2)"]
+    H --> I["del obj2"]
+    I --> J["Object garbage collected<br/>weak_ref() returns None"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#CA9161,color:#fff
+    style E fill:#CA9161,color:#fff
+    style F fill:#0173B2,color:#fff
+    style G fill:#DE8F05,color:#fff
+    style H fill:#CC78BC,color:#fff
+    style I fill:#029E73,color:#fff
+    style J fill:#029E73,color:#fff
+```
 
 ```python
 import weakref
@@ -502,6 +782,33 @@ print(weak_ref())                             # => None (object collected)
 ## Example 70: Context Variables for Async Context
 
 ContextVar provides task-local storage for asyncio applications.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["asyncio.gather(...)"] --> B["Task 1<br/>process_request('REQ-1')"]
+    A --> C["Task 2<br/>process_request('REQ-2')"]
+    A --> D["Task 3<br/>process_request('REQ-3')"]
+
+    B --> E["Context:<br/>request_id='REQ-1'"]
+    C --> F["Context:<br/>request_id='REQ-2'"]
+    D --> G["Context:<br/>request_id='REQ-3'"]
+
+    E --> H["request_id.get()<br/>returns 'REQ-1'"]
+    F --> I["request_id.get()<br/>returns 'REQ-2'"]
+    G --> J["request_id.get()<br/>returns 'REQ-3'"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CC78BC,color:#fff
+    style H fill:#029E73,color:#fff
+    style I fill:#029E73,color:#fff
+    style J fill:#029E73,color:#fff
+```
 
 ```python
 import asyncio
@@ -822,6 +1129,29 @@ class Logger(metaclass=SingletonMeta):
 ## Example 79: Observer Pattern
 
 Implement observer pattern for event-driven architectures.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant S as Observable (Subject)
+    participant E as EmailNotifier
+    participant L as LogNotifier
+
+    Note over S: attach(EmailNotifier)
+    S->>E: Register observer
+    Note over S: attach(LogNotifier)
+    S->>L: Register observer
+
+    Note over S: notify("User registered")
+    S->>E: update("User registered")
+    E-->>S: Email sent
+    S->>L: update("User registered")
+    L-->>S: Log written
+
+    style S fill:#0173B2,color:#fff
+    style E fill:#029E73,color:#fff
+    style L fill:#029E73,color:#fff
+```
 
 ```python
 class Observable:

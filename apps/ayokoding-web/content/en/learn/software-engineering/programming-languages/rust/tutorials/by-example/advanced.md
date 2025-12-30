@@ -44,25 +44,51 @@ graph TD
 
 ```rust
 fn main() {
-    let mut num = 5;
+    let mut num = 5;                     // => num is 5 (type: i32, mutable variable on stack)
 
-    // Create raw pointers (safe)
-    let r1 = &num as *const i32;     // => r1 is immutable raw pointer
-    let r2 = &mut num as *mut i32;   // => r2 is mutable raw pointer
+    // Create raw pointers (safe operation - no dereference yet)
+    let r1 = &num as *const i32;         // => r1 is *const i32 (immutable raw pointer to num's address)
+                                         // => Points to stack address of num (e.g., 0x7fff5fbff5bc)
+    let r2 = &mut num as *mut i32;       // => r2 is *mut i32 (mutable raw pointer to num's address)
+                                         // => Both r1 and r2 point to same memory location
+                                         // => Creating raw pointers is SAFE - no borrow checker rules violated
 
-    // Dereference raw pointers (unsafe)
-    unsafe {
-        println!("r1: {}", *r1);     // => Output: r1: 5
-        *r2 = 10;                    // => Modify through raw pointer
-        println!("r2: {}", *r2);     // => Output: r2: 10
-    }
+    // Dereference raw pointers (unsafe operation - requires manual verification)
+    unsafe {                             // => unsafe block: programmer takes responsibility for safety
+        println!("r1: {}", *r1);         // => Dereference r1: reads value 5 from memory
+                                         // => Output: r1: 5
+                                         // => Safe because r1 points to valid num on stack
+        *r2 = 10;                        // => Dereference r2 for write: modifies num through raw pointer
+                                         // => num is now 10 (modified via raw pointer, not direct assignment)
+        println!("r2: {}", *r2);         // => Dereference r2: reads modified value 10
+                                         // => Output: r2: 10
+                                         // => Also safe because r2 points to valid mutable num
+    }                                    // => All dereferences valid: pointers point to live stack variable
 
-    // Invalid pointer (undefined behavior!)
-    let address = 0x012345usize;
-    let _r = address as *const i32;
+    println!("num after unsafe: {}", num); // => Output: num after unsafe: 10
+                                         // => num was modified through r2 raw pointer
+
+    // Invalid pointer (demonstrates undefined behavior - DO NOT DO THIS!)
+    let address = 0x012345usize;         // => arbitrary memory address (likely invalid/unmapped)
+    let _r = address as *const i32;      // => Cast usize to raw pointer (SAFE - just casting)
+                                         // => _r points to potentially invalid memory location
     // unsafe {
-    //     println!("{}", *_r);      // => UNDEFINED BEHAVIOR: dereferencing invalid pointer
-    // }
+    //     println!("{}", *_r);          // => UNDEFINED BEHAVIOR: dereferencing invalid pointer
+    //     // => Could segfault, read garbage, or appear to work (unpredictable)
+    //     // => No guarantee this address is mapped or contains i32
+    //     // => Rust can't verify pointer validity - programmer responsibility
+    // }                                 // => NEVER dereference arbitrary addresses!
+
+    // Demonstrating pointer arithmetic (unsafe)
+    let arr = [1, 2, 3, 4, 5];           // => Array of 5 i32 elements on stack
+    let ptr = arr.as_ptr();              // => ptr is *const i32 pointing to first element (1)
+    unsafe {
+        println!("First: {}", *ptr);     // => Output: First: 1 (dereference first element)
+        let second = ptr.offset(1);      // => Advance pointer by 1 i32 (4 bytes), points to second element
+                                         // => Pointer arithmetic requires unsafe (no bounds checking)
+        println!("Second: {}", *second); // => Output: Second: 2 (dereference second element)
+                                         // => Valid because offset(1) is within array bounds
+    }                                    // => offset() out of bounds would be undefined behavior
 }
 ```
 
@@ -75,35 +101,65 @@ fn main() {
 Unsafe functions require `unsafe` keyword in both definition and call, documenting operations that require manual safety verification.
 
 ```rust
-unsafe fn dangerous() {              // => Unsafe function declaration
-    println!("Doing dangerous things");
-}
+unsafe fn dangerous() {                  // => unsafe function: caller must ensure preconditions
+                                         // => Marking function unsafe documents that it has safety requirements
+    println!("Doing dangerous things");  // => Simple body - unsafety is in the contract, not implementation
+}                                        // => Could access global mutable state, call FFI, etc.
 
 fn split_at_mut(slice: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
-    let len = slice.len();
-    let ptr = slice.as_mut_ptr();    // => Get raw pointer to slice
+                                         // => Safe function: provides safe abstraction over unsafe code
+                                         // => Returns two mutable slices from one - normally violates borrow rules
+    let len = slice.len();               // => len is total length (e.g., 6 for vec![1,2,3,4,5,6])
+    let ptr = slice.as_mut_ptr();        // => ptr is *mut i32 pointing to first element
+                                         // => Getting raw pointer is SAFE - doesn't dereference yet
 
-    assert!(mid <= len);             // => Safety check
+    assert!(mid <= len);                 // => Runtime safety check: mid must be valid split point
+                                         // => Panics if mid > len (prevents out-of-bounds access)
+                                         // => This precondition makes the unsafe code below safe
 
-    unsafe {
+    unsafe {                             // => unsafe block: we've verified mid <= len above
         (
             std::slice::from_raw_parts_mut(ptr, mid),
-                                     // => First half slice
+                                         // => Construct first slice: [0..mid) - ptr to ptr+mid
+                                         // => Returns &mut [i32] with mid elements
+                                         // => SAFE because: ptr valid, mid <= len, no overlap with second slice
             std::slice::from_raw_parts_mut(ptr.add(mid), len - mid),
-                                     // => Second half slice
-        )
-    }
+                                         // => Construct second slice: [mid..len) - ptr+mid to ptr+len
+                                         // => ptr.add(mid) advances pointer by mid elements (mid * size_of::<i32>())
+                                         // => Returns &mut [i32] with (len - mid) elements
+                                         // => SAFE because: ptr+mid valid, len-mid correct, no overlap with first slice
+        )                                // => Returning two &mut slices is safe: they reference disjoint memory
+    }                                    // => Function provides safe API - caller doesn't need unsafe block
 }
 
 fn main() {
+    // Calling unsafe function requires unsafe block
     unsafe {
-        dangerous();                 // => Must call in unsafe block
-    }                                // => Output: Doing dangerous things
+        dangerous();                     // => Call unsafe function (programmer responsibility for safety)
+    }                                    // => Output: Doing dangerous things
+                                         // => unsafe block makes it explicit that safety is on us
 
-    let mut v = vec![1, 2, 3, 4, 5, 6];
+    // Using safe abstraction (split_at_mut) - no unsafe needed!
+    let mut v = vec![1, 2, 3, 4, 5, 6];  // => v is Vec<i32> with 6 elements on heap
     let (left, right) = split_at_mut(&mut v, 3);
-    println!("Left: {:?}", left);    // => Output: Left: [1, 2, 3]
-    println!("Right: {:?}", right);  // => Output: Right: [4, 5, 6]
+                                         // => Split at index 3: left gets [1,2,3], right gets [4,5,6]
+                                         // => No unsafe block needed - split_at_mut encapsulates unsafety
+                                         // => Both left and right are mutable slices (&mut [i32])
+    println!("Left: {:?}", left);        // => Output: Left: [1, 2, 3]
+    println!("Right: {:?}", right);      // => Output: Right: [4, 5, 6]
+
+    // Can modify both slices independently (they're disjoint)
+    left[0] = 10;                        // => Modify first element of left slice
+    right[0] = 40;                       // => Modify first element of right slice
+    println!("Modified left: {:?}", left);   // => Output: Modified left: [10, 2, 3]
+    println!("Modified right: {:?}", right); // => Output: Modified right: [40, 5, 6]
+                                         // => Safe because slices don't overlap (verified by assert in split_at_mut)
+
+    // Compare with std::slice::split_at_mut - same functionality
+    let mut v2 = vec![7, 8, 9, 10];      // => Another vector for demonstration
+    let (left2, right2) = v2.split_at_mut(2); // => Standard library version (also uses unsafe internally)
+    println!("Stdlib left: {:?}", left2);     // => Output: Stdlib left: [7, 8]
+    println!("Stdlib right: {:?}", right2);   // => Output: Stdlib right: [9, 10]
 }
 ```
 
@@ -115,22 +171,116 @@ fn main() {
 
 FFI enables calling functions from other languages like C, using `extern` blocks to declare external function signatures.
 
+```mermaid
+%% FFI boundary showing Rust-C interop
+graph TD
+    A[Rust Code] -->|extern C declaration| B[FFI Boundary]
+    B -->|C ABI calling convention| C[C Library Function]
+    C -->|Return value| B
+    B -->|Unsafe block required| A
+    D[Rust Function] -->|no_mangle attribute| E[C-Compatible Symbol]
+    E -->|Can be called from C| F[C Code]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+    style D fill:#0173B2,color:#fff
+    style E fill:#DE8F05,color:#000
+    style F fill:#029E73,color:#fff
+```
+
 ```rust
-extern "C" {
-    fn abs(input: i32) -> i32;       // => Declare C function
-}
+// Link to C standard library function
+extern "C" {                         // => extern "C" block: declare foreign functions with C ABI
+    fn abs(input: i32) -> i32;       // => Declare C's abs() function from stdlib.h
+                                     // => Signature must match C declaration exactly
+                                     // => No function body - implemented in libc
+}                                    // => Linker resolves this to system's C library
 
 fn main() {
-    unsafe {
+    // Calling C function is unsafe - no Rust safety guarantees
+    unsafe {                         // => unsafe required: C code can do anything
         println!("abs(-3) = {}", abs(-3));
+                                     // => Call C's abs() function with -3
                                      // => Output: abs(-3) = 3
+                                     // => C function returns absolute value
+        let result = abs(-42);       // => result is 42 (C's abs returns i32)
+        println!("abs(-42) = {}", result);
+                                     // => Output: abs(-42) = 42
+    }                                // => Must verify C function is called correctly
+
+    // Example with multiple C functions
+    extern "C" {
+        fn strlen(s: *const i8) -> usize; // => C's strlen from string.h
+                                     // => Takes C string (null-terminated char*)
+        fn malloc(size: usize) -> *mut u8; // => C's malloc for heap allocation
+        fn free(ptr: *mut u8);       // => C's free to deallocate memory
+    }
+
+    unsafe {
+        // Call strlen on C string literal
+        let c_str = b"Hello\0";      // => Byte string with null terminator (C requirement)
+        let len = strlen(c_str.as_ptr() as *const i8);
+                                     // => Cast to *const i8 (C's char*)
+                                     // => len is 5 (excludes null terminator)
+        println!("Length: {}", len); // => Output: Length: 5
+
+        // Allocate memory with malloc (manual memory management!)
+        let ptr = malloc(10);        // => Allocate 10 bytes on heap
+                                     // => ptr is *mut u8 pointing to heap memory
+                                     // => Returns null if allocation fails
+        if !ptr.is_null() {          // => Check for allocation failure
+            println!("Allocated 10 bytes at {:p}", ptr);
+                                     // => Output: Allocated 10 bytes at 0x... (heap address)
+            free(ptr);               // => Must manually free to avoid memory leak
+                                     // => After free, ptr is dangling - don't use it!
+        }
     }
 }
 
-// Expose Rust function to C
-#[no_mangle]                         // => Prevent name mangling
-pub extern "C" fn call_from_c() {
-    println!("Called from C!");
+// Expose Rust function to C (for calling from C code)
+#[no_mangle]                         // => Prevent name mangling: keep function name as "call_from_c"
+                                     // => Rust normally mangles names (e.g., _ZN...), C can't find them
+pub extern "C" fn call_from_c() {    // => pub: visible to other modules/languages
+                                     // => extern "C": use C calling convention (ABI compatibility)
+    println!("Called from C!");      // => Can be called from C like: call_from_c();
+}                                    // => Returns void (unit type () maps to C's void)
+
+// More complex FFI function: pass data between Rust and C
+#[no_mangle]
+pub extern "C" fn add_numbers(a: i32, b: i32) -> i32 {
+                                     // => C-compatible signature: int add_numbers(int a, int b)
+    let result = a + b;              // => result is a + b (e.g., 5 + 3 = 8)
+    println!("Rust adding {} + {} = {}", a, b, result);
+                                     // => Output: Rust adding 5 + 3 = 8 (if called with 5, 3)
+    result                           // => Return i32 to C (compatible with C's int)
+}                                    // => C code can call: int sum = add_numbers(5, 3);
+
+// Handling C strings with proper safety
+use std::ffi::{CStr, CString};       // => std::ffi types for C string interop
+
+#[no_mangle]
+pub extern "C" fn rust_greeting(name: *const i8) -> *mut i8 {
+                                     // => Takes C string (*const char), returns C string (*mut char)
+    if name.is_null() {              // => Null pointer check (defensive programming)
+        return std::ptr::null_mut(); // => Return null if input invalid
+    }
+
+    unsafe {
+        let c_str = CStr::from_ptr(name); // => Wrap C string in Rust's CStr (borrowed)
+                                     // => CStr: borrowed view of null-terminated C string
+        let rust_str = c_str.to_str().unwrap_or("Invalid UTF-8");
+                                     // => Convert to Rust &str (handles UTF-8 validation)
+        let greeting = format!("Hello, {}!", rust_str);
+                                     // => greeting is Rust String (e.g., "Hello, Alice!")
+
+        // Convert back to C string for return
+        let c_greeting = CString::new(greeting).unwrap();
+                                     // => CString: owned null-terminated string
+                                     // => Adds null terminator automatically
+        c_greeting.into_raw()        // => Transfer ownership to caller (C must call free())
+                                     // => Returns *mut i8 for C compatibility
+    }                                // => C code responsible for freeing returned pointer
 }
 ```
 
@@ -143,32 +293,119 @@ pub extern "C" fn call_from_c() {
 Global mutable state requires `unsafe` and careful synchronization, as Rust can't guarantee thread safety for mutable statics.
 
 ```rust
-static mut COUNTER: u32 = 0;         // => Mutable global variable
+static mut COUNTER: u32 = 0;         // => Mutable static: lives for entire program ('static lifetime)
+                                     // => Mutable: can be changed by any thread
+                                     // => UNSAFE: no synchronization guarantees!
 
 fn add_to_count(inc: u32) {
-    unsafe {
-        COUNTER += inc;              // => Modify global state (unsafe)
-    }
+    unsafe {                         // => unsafe required: accessing mutable static
+        COUNTER += inc;              // => Read COUNTER, add inc, write back
+                                     // => NOT atomic: race condition if multiple threads!
+                                     // => inc is added to current value (e.g., 0 + 3 = 3)
+    }                                // => Compiler can't prevent data races here
 }
 
 fn main() {
-    add_to_count(3);
-    add_to_count(7);
+    add_to_count(3);                 // => COUNTER is now 3 (0 + 3)
+    add_to_count(7);                 // => COUNTER is now 10 (3 + 7)
 
-    unsafe {
+    unsafe {                         // => unsafe required: reading mutable static
         println!("COUNTER: {}", COUNTER);
                                      // => Output: COUNTER: 10
+                                     // => Reading also unsafe - could be mid-write by another thread
+    }
+
+    // Demonstrating the danger: non-atomic read-modify-write
+    unsafe {
+        let temp = COUNTER;          // => Read current value (10)
+        // Imagine thread switch here - another thread could modify COUNTER!
+        COUNTER = temp + 5;          // => Write 15 (10 + 5)
+                                     // => If another thread modified between read/write, change is lost!
+        println!("COUNTER after: {}", COUNTER);
+                                     // => Output: COUNTER after: 15
     }
 }
 
-// Better: use atomic types or Mutex for thread-safe globals
+// Better approach 1: Atomic types for thread-safe primitives
 use std::sync::atomic::{AtomicU32, Ordering};
 
 static ATOMIC_COUNTER: AtomicU32 = AtomicU32::new(0);
+                                     // => AtomicU32: thread-safe u32 with atomic operations
+                                     // => Immutable static (no mut) - safe to access from any thread
+                                     // => Initialized to 0 at program start
 
 fn safe_add_to_count(inc: u32) {
     ATOMIC_COUNTER.fetch_add(inc, Ordering::SeqCst);
-                                     // => Thread-safe increment
+                                     // => Atomic read-modify-write (single CPU instruction)
+                                     // => fetch_add: atomically adds inc and returns old value
+                                     // => Ordering::SeqCst: strongest memory ordering (sequential consistency)
+                                     // => No unsafe needed - guaranteed thread-safe!
+}
+
+fn demonstrate_atomics() {
+    safe_add_to_count(3);            // => Atomically: ATOMIC_COUNTER is now 3
+    safe_add_to_count(7);            // => Atomically: ATOMIC_COUNTER is now 10
+
+    let value = ATOMIC_COUNTER.load(Ordering::SeqCst);
+                                     // => Atomic read: value is 10
+                                     // => No unsafe block needed - safe to read from any thread
+    println!("Atomic counter: {}", value);
+                                     // => Output: Atomic counter: 10
+
+    ATOMIC_COUNTER.store(20, Ordering::SeqCst);
+                                     // => Atomic write: set to 20 (replaces current value)
+    println!("After store: {}", ATOMIC_COUNTER.load(Ordering::SeqCst));
+                                     // => Output: After store: 20
+
+    // Compare-and-swap (CAS) operation
+    let old = ATOMIC_COUNTER.compare_exchange(
+        20,                          // => Expected current value (20)
+        30,                          // => New value if current matches (30)
+        Ordering::SeqCst,            // => Success ordering
+        Ordering::SeqCst             // => Failure ordering
+    );                               // => Returns Ok(20) if swap succeeded, Err(actual) if failed
+    println!("CAS result: {:?}", old); // => Output: CAS result: Ok(20) (swap successful)
+    println!("After CAS: {}", ATOMIC_COUNTER.load(Ordering::SeqCst));
+                                     // => Output: After CAS: 30
+}
+
+// Better approach 2: Mutex for complex data structures
+use std::sync::Mutex;
+use std::collections::HashMap;
+
+static GLOBAL_MAP: Mutex<Option<HashMap<String, i32>>> = Mutex::new(None);
+                                     // => Mutex<T>: locks access to T (thread-safe)
+                                     // => Option allows lazy initialization
+                                     // => Must be const-initializable (Mutex::new is const)
+
+fn use_global_map() {
+    let mut map = GLOBAL_MAP.lock().unwrap();
+                                     // => lock() blocks until mutex acquired
+                                     // => Returns MutexGuard (RAII lock - auto-releases on drop)
+                                     // => unwrap() panics if mutex poisoned (previous thread panicked)
+
+    if map.is_none() {               // => First access: initialize the map
+        *map = Some(HashMap::new()); // => Create empty HashMap
+    }                                // => map is now Some(HashMap::new())
+
+    if let Some(ref mut m) = *map {  // => Extract mutable reference to HashMap
+        m.insert("key".to_string(), 42); // => Insert key-value pair
+        println!("Map size: {}", m.len()); // => Output: Map size: 1
+    }
+}                                    // => MutexGuard dropped: mutex automatically released
+
+// Better approach 3: LazyLock for one-time initialization (Rust 1.80+)
+use std::sync::LazyLock;
+
+static LAZY_VALUE: LazyLock<Vec<i32>> = LazyLock::new(|| {
+                                     // => LazyLock: thread-safe lazy initialization
+    println!("Initializing LAZY_VALUE"); // => Runs once on first access
+    vec![1, 2, 3, 4, 5]              // => Returns Vec<i32>
+});                                  // => Subsequent accesses return same instance
+
+fn use_lazy_value() {
+    println!("{:?}", &*LAZY_VALUE);  // => First access: prints "Initializing..." then [1,2,3,4,5]
+    println!("{:?}", &*LAZY_VALUE);  // => Second access: just prints [1,2,3,4,5] (no re-init)
 }
 ```
 
@@ -181,20 +418,108 @@ fn safe_add_to_count(inc: u32) {
 Unions share memory for all fields, enabling low-level memory layouts at the cost of type safety (all field access is unsafe).
 
 ```rust
-#[repr(C)]
-union MyUnion {
-    f1: u32,
-    f2: f32,
-}
+#[repr(C)]                           // => C-compatible memory layout (required for FFI unions)
+                                     // => Without repr(C), Rust can reorder/optimize layout
+union MyUnion {                      // => Union: all fields share same memory location
+    f1: u32,                         // => Field 1: 32-bit unsigned integer (4 bytes)
+    f2: f32,                         // => Field 2: 32-bit float (4 bytes)
+}                                    // => Size of MyUnion is max(sizeof(u32), sizeof(f32)) = 4 bytes
+                                     // => Both fields occupy same 4 bytes in memory
 
 fn main() {
-    let u = MyUnion { f1: 1 };       // => Initialize f1
+    let u = MyUnion { f1: 1 };       // => Initialize union with f1 field set to 1
+                                     // => Memory contains: 0x00000001 (as u32 in little-endian)
+                                     // => f2 is NOT initialized - reading it is undefined behavior
 
+    unsafe {                         // => All union field access requires unsafe
+        println!("u.f1: {}", u.f1);  // => Read f1: safe because we initialized with f1
+                                     // => Output: u.f1: 1
+                                     // => Memory interpretation: 0x00000001 as u32 = 1
+
+        println!("u.f2: {}", u.f2);  // => Read f2: reinterprets f1's bits as f32!
+                                     // => Memory still contains: 0x00000001
+                                     // => Interpreted as f32: 0x00000001 ≈ 1.4e-45 (denormal float)
+                                     // => Output: u.f2: 0.000000000000000000000000000000000000000000001
+                                     // => Reading wrong field = type punning (undefined in Rust!)
+    }                                // => Compiler can't track which field is active
+
+    // Demonstrating type punning with more interesting values
+    let u2 = MyUnion { f2: 1.0 };    // => Initialize with f2 = 1.0 (floating point)
+                                     // => Memory contains: 0x3F800000 (IEEE 754 for 1.0)
     unsafe {
-        println!("u.f1: {}", u.f1);  // => Output: u.f1: 1
-        println!("u.f2: {}", u.f2);  // => Output: u.f2: 0.000000000000000000000000000000000000000000001
-                                     // => Reading f2 interprets f1's bits as float
+        println!("f2 as float: {}", u2.f2); // => Output: f2 as float: 1.0
+        println!("f2 as u32: 0x{:08X}", u2.f1);
+                                     // => Read same memory as u32
+                                     // => Output: f2 as u32: 0x3F800000 (bit pattern of 1.0f32)
+                                     // => Useful for inspecting float representation
     }
+
+    // Practical use case: efficient tagged union (discriminated union)
+    #[repr(C)]
+    union IntOrFloat {
+        i: i32,                      // => Signed 32-bit integer
+        f: f32,                      // => 32-bit float
+    }
+
+    enum Value {                     // => Tagged union: type-safe wrapper
+        Int(i32),                    // => Variant for integer values
+        Float(f32),                  // => Variant for float values
+    }                                // => Compiler tracks active variant (no unsafe access!)
+
+    // Using enum (safe) vs union (unsafe)
+    let safe_value = Value::Int(42); // => Type-safe: compiler knows this is Int
+    match safe_value {
+        Value::Int(i) => println!("Safe int: {}", i),   // => Pattern matching is safe
+        Value::Float(f) => println!("Safe float: {}", f),
+    }                                // => Output: Safe int: 42
+
+    let unsafe_value = IntOrFloat { i: 42 }; // => Union: programmer tracks active field
+    unsafe {
+        println!("Union int: {}", unsafe_value.i);
+                                     // => Output: Union int: 42 (correct - we set i)
+        // println!("{}", unsafe_value.f); // => WRONG: reading f when i is active!
+                                     // => Would give garbage or crash
+    }
+
+    // Unions with Copy types only (Rust requirement)
+    // union NoCopy {
+    //     s: String,                // => ERROR: String is not Copy
+    //     v: Vec<i32>,              // => ERROR: Vec is not Copy
+    // }                             // => Unions can only contain Copy types (Drop could be ambiguous)
+
+    // FFI use case: matching C union
+    #[repr(C)]
+    union CUnion {                   // => Matches C's: union { int i; float f; char c[4]; }
+        i: i32,                      // => int (4 bytes)
+        f: f32,                      // => float (4 bytes)
+        c: [u8; 4],                  // => char[4] (4 bytes)
+    }                                // => Size: 4 bytes, alignment: 4 bytes (matches C)
+
+    let c_union = CUnion { i: 0x41424344 }; // => Initialize with ASCII "DCBA" (little-endian)
+    unsafe {
+        println!("As int: 0x{:08X}", c_union.i);
+                                     // => Output: As int: 0x41424344
+        println!("As bytes: {:?}", c_union.c);
+                                     // => Output: As bytes: [68, 67, 66, 65] (D, C, B, A in ASCII)
+        println!("As chars: {}",
+                 String::from_utf8_lossy(&c_union.c));
+                                     // => Output: As chars: DCBA (reinterpret bytes as chars)
+    }                                // => Useful for low-level serialization/protocol parsing
+
+    // ManuallyDrop for non-Copy types in unions
+    use std::mem::ManuallyDrop;
+    union MaybeString {
+        s: ManuallyDrop<String>,     // => ManuallyDrop prevents automatic Drop
+        i: i32,                      // => Integer alternative
+    }                                // => Programmer must manually drop String when done
+
+    let mut u3 = MaybeString { s: ManuallyDrop::new(String::from("Hello")) };
+    unsafe {
+        println!("String in union: {}", u3.s);
+                                     // => Output: String in union: Hello
+                                     // => Accessing String through ManuallyDrop
+        ManuallyDrop::drop(&mut u3.s); // => Manual Drop call (must do this!)
+    }                                // => Without manual drop, String leaks memory
 }
 ```
 
@@ -206,43 +531,167 @@ fn main() {
 
 Declarative macros enable code generation through pattern matching on syntax trees, reducing boilerplate with compile-time expansion.
 
+```mermaid
+%% Macro expansion process showing compile-time transformation
+graph TD
+    A[Macro Invocation: vec_from!1, 2, 3] -->|Parse tokens| B[Pattern Match]
+    B -->|Capture $x = 1, 2, 3| C[Repetition Expansion]
+    C -->|Generate AST| D[Expanded Code]
+    D -->|Type check & compile| E[Final Machine Code]
+
+    F[Pattern: $x:expr,*] -->|Defines structure| B
+    G[Expansion: temp_vec.push$x*] -->|Template| C
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#000
+```
+
 ```rust
-macro_rules! vec_from {
-    ( $( $x:expr ),* ) => {          // => Pattern: comma-separated expressions
-        {
-            let mut temp_vec = Vec::new();
-            $(
-                temp_vec.push($x);   // => Repeat for each expression
-            )*
-            temp_vec
+macro_rules! vec_from {              // => Define declarative macro named "vec_from"
+    ( $( $x:expr ),* ) => {          // => Pattern: match comma-separated expressions
+                                     // => $(...),* means: repeat pattern for each comma-separated item
+                                     // => $x:expr captures each expression (type: expr fragment)
+        {                            // => Expansion block: generated code
+            let mut temp_vec = Vec::new(); // => Create empty Vec<T> (type inferred from usage)
+            $(                       // => Repetition: repeat for each captured $x
+                temp_vec.push($x);   // => Push each expression into vector
+            )*                       // => End repetition block
+            temp_vec                 // => Return the constructed vector
         }
     };
 }
 
 fn main() {
-    let v = vec_from![1, 2, 3];      // => Expands to Vec::new() + push calls
+    let v = vec_from![1, 2, 3];      // => Macro invocation: matches pattern with $x = 1, 2, 3
+                                     // => Expands to: { let mut temp_vec = Vec::new();
+                                     // =>              temp_vec.push(1);
+                                     // =>              temp_vec.push(2);
+                                     // =>              temp_vec.push(3);
+                                     // =>              temp_vec }
+                                     // => Type inference: Vec<i32> from pushed integers
     println!("{:?}", v);             // => Output: [1, 2, 3]
+
+    let v2 = vec_from!["a", "b"];    // => Same macro with different types
+                                     // => Type inference: Vec<&str> from pushed strings
+    println!("{:?}", v2);            // => Output: ["a", "b"]
+                                     // => Macro is generic through type inference
 }
 
-// Common pattern: DSL creation
-macro_rules! hashmap {
+// Common pattern: DSL creation (Domain-Specific Language)
+macro_rules! hashmap {               // => Macro for HashMap literal syntax
     ( $( $key:expr => $val:expr ),* ) => {
+                                     // => Pattern: key => value pairs, comma-separated
+                                     // => $key:expr captures key expression
+                                     // => $val:expr captures value expression
+                                     // => => is custom separator token (part of pattern)
         {
             let mut map = std::collections::HashMap::new();
-            $(
-                map.insert($key, $val);
-            )*
-            map
+                                     // => Create empty HashMap (types inferred)
+            $(                       // => Repeat for each key-value pair
+                map.insert($key, $val); // => Insert each pair into map
+            )*                       // => End repetition
+            map                      // => Return constructed map
         }
     };
 }
 
-fn main() {
-    let map = hashmap![
-        "a" => 1,
-        "b" => 2
+fn use_hashmap_macro() {
+    let map = hashmap![               // => Macro call with key => value syntax
+        "a" => 1,                     // => First pair: "a" (key) => 1 (value)
+        "b" => 2                      // => Second pair: "b" => 2
+    ];                                // => Type: HashMap<&str, i32>
+    println!("{:?}", map);            // => Output: {"a": 1, "b": 2} (or {"b": 2, "a": 1})
+                                      // => HashMap iteration order is not guaranteed
+
+    // Using with different types
+    let map2 = hashmap![              // => Same macro, different types
+        1 => "one",                   // => Type: HashMap<i32, &str>
+        2 => "two"
     ];
-    println!("{:?}", map);           // => Output: {"a": 1, "b": 2}
+    println!("{:?}", map2);           // => Output: {1: "one", 2: "two"}
+}
+
+// Multiple pattern arms (like match expressions)
+macro_rules! create_function {
+    ($func_name:ident) => {           // => Single identifier pattern
+                                      // => $func_name:ident captures function name
+        fn $func_name() {             // => Generate function with captured name
+            println!("Called function {:?}()", stringify!($func_name));
+                                      // => stringify! converts ident to string literal
+        }
+    };
+
+    ($func_name:ident, $($arg:ident : $arg_type:ty),*) => {
+                                      // => Pattern with parameters
+                                      // => $arg:ident for parameter names
+                                      // => $arg_type:ty for parameter types
+        fn $func_name($($arg: $arg_type),*) {
+                                      // => Generate function signature
+            println!("Called function {:?} with args", stringify!($func_name));
+        }
+    };
+}
+
+create_function!(foo);                // => Expands to: fn foo() { println!(...); }
+create_function!(bar, x: i32, y: i32); // => Expands to: fn bar(x: i32, y: i32) { println!(...); }
+
+fn test_created_functions() {
+    foo();                            // => Output: Called function "foo"()
+    bar(1, 2);                        // => Output: Called function "bar" with args
+}
+
+// Demonstrating fragment specifiers
+macro_rules! show_fragments {
+    ($e:expr) => {                    // => expr: expression (1+2, foo(), etc.)
+        println!("Expression: {}", $e);
+    };
+    ($i:ident) => {                   // => ident: identifier (variable/function name)
+        println!("Identifier: {}", stringify!($i));
+    };
+    ($t:ty) => {                      // => ty: type (i32, String, etc.)
+        println!("Type: {}", stringify!($t));
+    };
+    ($p:pat) => {                     // => pat: pattern (match arm patterns)
+        println!("Pattern: {}", stringify!($p));
+    };
+    ($($x:tt)*) => {                  // => tt: token tree (any token sequence)
+        println!("Token tree: {}", stringify!($($x)*));
+    };
+}
+
+// Advanced: recursive macros
+macro_rules! count {
+    () => { 0 };                      // => Base case: empty input = 0
+    ($head:expr) => { 1 };            // => Single element = 1
+    ($head:expr, $($tail:expr),*) => { // => Multiple elements
+        1 + count!($($tail),*)        // => 1 + count of tail (recursive expansion)
+    };                                // => Compile-time recursion (expanded by compiler)
+}
+
+fn test_count() {
+    let n1 = count!();                // => 0 (empty)
+    let n2 = count!(1);               // => 1 (single element)
+    let n3 = count!(1, 2, 3);         // => 3 (1 + count!(2, 3) = 1 + 1 + 1)
+    println!("Counts: {}, {}, {}", n1, n2, n3);
+                                      // => Output: Counts: 0, 1, 3
+}
+
+// Hygiene: macros have lexical scope hygiene
+macro_rules! make_binding {
+    ($name:ident, $value:expr) => {
+        let $name = $value;           // => Create binding in macro invocation scope
+    };
+}
+
+fn test_hygiene() {
+    make_binding!(x, 42);             // => Expands to: let x = 42; (in this scope)
+    println!("x = {}", x);            // => Output: x = 42 (x is accessible here)
+                                      // => Hygiene: intermediate variables in macro don't leak
 }
 ```
 
@@ -256,39 +705,124 @@ Procedural macros operate on AST (Abstract Syntax Tree) level, enabling custom d
 
 ```rust
 // In a separate crate (proc-macro = true in Cargo.toml)
-use proc_macro::TokenStream;
-use quote::quote;
-use syn;
+// Cargo.toml requires: [lib] proc-macro = true
+use proc_macro::TokenStream;         // => TokenStream: stream of tokens from Rust code
+                                     // => Input: tokens from item being derived
+                                     // => Output: generated Rust code as tokens
+use quote::quote;                    // => quote! macro: generate Rust code easily
+                                     // => Converts Rust syntax to TokenStream
+use syn;                             // => syn: parse TokenStream into AST (Abstract Syntax Tree)
+                                     // => Provides data structures for Rust syntax
 
-#[proc_macro_derive(HelloMacro)]
+#[proc_macro_derive(HelloMacro)]     // => Derive macro: generates impl for #[derive(HelloMacro)]
+                                     // => Registered name: HelloMacro (used in #[derive(...)])
 pub fn hello_macro_derive(input: TokenStream) -> TokenStream {
+                                     // => input: tokens from struct/enum being derived
+                                     // => Example: struct Pancakes; becomes TokenStream
     let ast = syn::parse(input).unwrap();
-    impl_hello_macro(&ast)
+                                     // => Parse input TokenStream into DeriveInput AST
+                                     // => ast contains: struct name, fields, generics, etc.
+                                     // => unwrap() panics on parse error (compile error)
+    impl_hello_macro(&ast)           // => Generate impl code, returns TokenStream
 }
 
 fn impl_hello_macro(ast: &syn::DeriveInput) -> TokenStream {
-    let name = &ast.ident;
-    let gen = quote! {
-        impl HelloMacro for #name {
-            fn hello_macro() {
+                                     // => DeriveInput: parsed representation of item
+                                     // => Contains: ident (name), data (fields), generics, attrs
+    let name = &ast.ident;           // => Extract struct/enum name (e.g., "Pancakes")
+                                     // => Type: &Ident (identifier token)
+    let gen = quote! {               // => quote! macro: generates Rust code
+                                     // => #name interpolates the identifier
+        impl HelloMacro for #name {  // => Generate: impl HelloMacro for Pancakes {
+            fn hello_macro() {       // => Method required by HelloMacro trait
                 println!("Hello, Macro! My name is {}!", stringify!(#name));
-            }
+                                     // => stringify!(#name) converts Pancakes to "Pancakes"
+            }                        // => Final: println!("Hello, Macro! My name is Pancakes!")
         }
-    };
-    gen.into()
+    };                               // => gen is proc_macro2::TokenStream (quote's version)
+    gen.into()                       // => Convert to proc_macro::TokenStream (compiler's version)
+                                     // => Returns generated impl to compiler
 }
 
-// Usage in another crate
-trait HelloMacro {
-    fn hello_macro();
+// Usage in another crate (the one using the derive)
+trait HelloMacro {                   // => Trait that proc macro implements
+    fn hello_macro();                // => Method signature (must match macro output)
 }
 
-#[derive(HelloMacro)]
-struct Pancakes;
+#[derive(HelloMacro)]                // => Invokes hello_macro_derive at compile time
+                                     // => Passes "struct Pancakes;" as TokenStream to macro
+struct Pancakes;                     // => Zero-sized struct (no fields)
+                                     // => Macro generates: impl HelloMacro for Pancakes { ... }
 
 fn main() {
-    Pancakes::hello_macro();         // => Output: Hello, Macro! My name is Pancakes!
+    Pancakes::hello_macro();         // => Call generated method
+                                     // => Output: Hello, Macro! My name is Pancakes!
+                                     // => Method exists because derive macro generated impl
 }
+
+// More complex example: derive with field access
+// #[proc_macro_derive(Builder)]
+// pub fn derive_builder(input: TokenStream) -> TokenStream {
+//     let ast = syn::parse(input).unwrap(); // => Parse struct definition
+//     let name = &ast.ident;                // => Get struct name
+//     let fields = match &ast.data {
+//         syn::Data::Struct(s) => &s.fields, // => Extract fields from struct
+//         _ => panic!("Builder only works on structs"),
+//     };
+//
+//     let builder_fields = fields.iter().map(|f| {
+//         let name = &f.ident;              // => Field name
+//         let ty = &f.ty;                   // => Field type
+//         quote! {
+//             pub fn #name(mut self, #name: #ty) -> Self {
+//                 self.#name = Some(#name);  // => Builder setter method
+//                 self
+//             }
+//         }
+//     });                                    // => Generate setter for each field
+//
+//     let gen = quote! {
+//         impl #name {
+//             #(#builder_fields)*            // => Repeat setter methods
+//         }
+//     };
+//     gen.into()
+// }                                          // => Usage: #[derive(Builder)] struct Config { ... }
+
+// Attribute macro example (different type of proc macro)
+// #[proc_macro_attribute]
+// pub fn log_calls(attr: TokenStream, item: TokenStream) -> TokenStream {
+//                                            // => attr: attributes in #[log_calls(level = "info")]
+//                                            // => item: function being annotated
+//     let input = syn::parse_macro_input!(item as syn::ItemFn);
+//                                            // => Parse as function item
+//     let name = &input.sig.ident;           // => Function name
+//     let block = &input.block;              // => Function body
+//
+//     let gen = quote! {
+//         fn #name() {
+//             println!("Calling function: {}", stringify!(#name));
+//             #block                         // => Original function body
+//         }
+//     };                                     // => Wraps function with logging
+//     gen.into()
+// }                                          // => Usage: #[log_calls] fn foo() { ... }
+
+// Function-like macro example (third type of proc macro)
+// #[proc_macro]
+// pub fn sql(input: TokenStream) -> TokenStream {
+//                                            // => input: everything inside sql!(...)
+//     let query: LitStr = syn::parse(input).unwrap();
+//                                            // => Parse as string literal
+//     let query_str = query.value();         // => Extract string content
+//
+//     // Validate SQL at compile time
+//     validate_sql(&query_str).expect("Invalid SQL");
+//
+//     quote! {
+//         execute_query(#query)              // => Generate runtime code
+//     }.into()
+// }                                          // => Usage: sql!("SELECT * FROM users")
 ```
 
 **Key Takeaway**: Procedural macros operate on parsed syntax trees enabling powerful code generation for custom derives, attributes, and function-like macros, with full access to Rust's AST.
@@ -319,21 +853,96 @@ graph TD
 ```
 
 ```rust
-use std::time::Duration;
+use std::time::Duration;             // => Duration: time span (milliseconds, seconds, etc.)
 
-async fn say_hello() {
-    println!("Hello");
-}
+async fn say_hello() {               // => async fn: returns impl Future<Output = ()>
+                                     // => Calling this function does NOT execute it immediately
+                                     // => Returns a Future that must be .await-ed
+    println!("Hello");               // => Executes when future is polled (not at call site)
+}                                    // => Future completes immediately (no await points)
 
-async fn say_world() {
+async fn say_world() {               // => Another async function
     tokio::time::sleep(Duration::from_millis(100)).await;
-    println!("World");
+                                     // => sleep() returns a Future that completes after 100ms
+                                     // => .await suspends execution until Future is ready
+                                     // => Yields control to Tokio runtime (non-blocking)
+                                     // => Other tasks can run during this 100ms
+    println!("World");               // => Executes after 100ms delay
+}                                    // => Future<Output = ()> completes after printing
+
+#[tokio::main]                       // => Proc macro: creates Tokio runtime and runs async main
+                                     // => Expands to: fn main() { tokio::runtime::Runtime::new()
+                                     // =>                .unwrap().block_on(async { ... }) }
+async fn main() {                    // => Main is async (requires runtime to execute)
+    say_hello().await;               // => Call say_hello(), returns Future
+                                     // => .await polls the Future until completion
+                                     // => Output: Hello (prints immediately - no await points inside)
+                                     // => Execution continues after Future completes
+
+    say_world().await;               // => Call say_world(), returns Future
+                                     // => .await starts executing the Future
+                                     // => Yields to runtime during sleep (100ms)
+                                     // => Output: World (after 100ms delay)
+                                     // => Main thread not blocked - runtime can run other tasks
+}                                    // => Total time: ~100ms (not 0 + 100 sequentially blocked)
+
+// Demonstrating Future is lazy (does nothing until awaited)
+async fn demonstrate_lazy() {
+    let future = say_hello();        // => Create Future (NOT executed yet!)
+                                     // => No "Hello" printed at this line
+    println!("Future created but not executed");
+                                     // => Output: Future created but not executed
+
+    future.await;                    // => NOW Future executes
+                                     // => Output: Hello (happens here, not at creation)
 }
 
-#[tokio::main]
-async fn main() {
-    say_hello().await;               // => Output: Hello
-    say_world().await;               // => Wait 100ms, Output: World
+// Multiple await points in single function
+async fn multi_step() {
+    println!("Step 1");              // => Output: Step 1 (synchronous)
+
+    tokio::time::sleep(Duration::from_millis(50)).await;
+                                     // => First await point: yields for 50ms
+    println!("Step 2");              // => Output: Step 2 (after 50ms)
+
+    tokio::time::sleep(Duration::from_millis(50)).await;
+                                     // => Second await point: yields for another 50ms
+    println!("Step 3");              // => Output: Step 3 (after total 100ms)
+}                                    // => Function suspends/resumes twice during execution
+
+// Return values from async functions
+async fn compute() -> i32 {          // => Returns Future<Output = i32>
+    tokio::time::sleep(Duration::from_millis(10)).await;
+                                     // => Simulate async work (I/O, network, etc.)
+    42                               // => Return value (wrapped in Future)
+}
+
+async fn use_computed_value() {
+    let result = compute().await;    // => .await unwraps Future to get i32
+                                     // => result is i32, not Future<Output = i32>
+    println!("Computed: {}", result); // => Output: Computed: 42
+                                     // => Can use result directly (no Future wrapper)
+}
+
+// Error handling with async
+async fn might_fail() -> Result<String, &'static str> {
+                                     // => Returns Future<Output = Result<String, &str>>
+    tokio::time::sleep(Duration::from_millis(10)).await;
+    Ok(String::from("Success"))      // => Return Ok variant
+    // Err("Something went wrong")   // => Or Err variant
+}
+
+async fn handle_async_result() {
+    match might_fail().await {       // => .await gets Result<String, &str>
+                                     // => Pattern match on Result (not Future)
+        Ok(value) => println!("Got: {}", value),
+                                     // => Output: Got: Success
+        Err(e) => println!("Error: {}", e),
+    }                                // => Error propagation works with ? operator too
+
+    // Using ? operator with async
+    // let value = might_fail().await?; // => Propagate error up the call stack
+    //                                  // => Works like sync code with Result
 }
 ```
 
@@ -345,27 +954,130 @@ async fn main() {
 
 Futures are lazy computations that require an executor to poll them to completion, with Tokio being the most common runtime.
 
+```mermaid
+%% Future state machine and executor polling cycle
+stateDiagram-v2
+    [*] --> Created: Future created (lazy)
+    Created --> Polling: Executor calls poll()
+    Polling --> Pending: Not ready, register waker
+    Polling --> Ready: Computation complete
+    Pending --> Polling: Waker notifies executor
+    Ready --> [*]: Return value consumed
+
+    note right of Created
+        Future is just state machine
+        No execution yet
+    end note
+
+    note right of Pending
+        Future yields control
+        Executor polls other futures
+    end note
+```
+
 ```rust
-use tokio::time::{sleep, Duration};
+use tokio::time::{sleep, Duration};  // => sleep: async sleep function
+                                     // => Returns Future that completes after duration
 
-async fn do_work(id: u32) -> u32 {
-    println!("Task {} started", id);
+async fn do_work(id: u32) -> u32 {   // => Async function: returns Future<Output = u32>
+    println!("Task {} started", id); // => Prints when Future is first polled
+                                     // => id is captured in the Future (closure-like)
     sleep(Duration::from_millis(100)).await;
-    println!("Task {} finished", id);
-    id * 2
-}
+                                     // => Suspends for 100ms (non-blocking)
+                                     // => Future yields control to executor
+    println!("Task {} finished", id); // => Resumes after 100ms, prints completion
+    id * 2                           // => Return value: id doubled (e.g., 1 * 2 = 2)
+}                                    // => Future completes with value id * 2
 
-#[tokio::main]
+#[tokio::main]                       // => Creates Tokio runtime (multi-threaded by default)
+                                     // => Runtime has executor that polls Futures
 async fn main() {
-    let future1 = do_work(1);
-    let future2 = do_work(2);
+    // Creating futures (lazy - not executed yet!)
+    let future1 = do_work(1);        // => future1 is Future<Output = u32>, NOT executed
+                                     // => NO "Task 1 started" printed here
+    let future2 = do_work(2);        // => future2 is Future<Output = u32>, NOT executed
+                                     // => NO "Task 2 started" printed here
+                                     // => Futures are just state machines waiting to be polled
+
+    println!("Futures created, now joining...");
+                                     // => Output: Futures created, now joining...
+                                     // => Neither future has started yet (lazy evaluation)
 
     // Futures are lazy - not executed until awaited
     let (result1, result2) = tokio::join!(future1, future2);
-                                     // => Run concurrently
+                                     // => tokio::join! polls both Futures concurrently
+                                     // => Both start executing (prints "Task 1 started", "Task 2 started")
+                                     // => When one sleeps, executor polls the other
+                                     // => Total time: ~100ms (not 200ms) due to concurrency
+                                     // => Output order: "Task 1 started", "Task 2 started",
+                                     // =>              (100ms later) "Task 1 finished", "Task 2 finished"
+                                     // => result1 is 2 (1 * 2), result2 is 4 (2 * 2)
     println!("Results: {} and {}", result1, result2);
                                      // => Output: Results: 2 and 4
+                                     // => Both futures completed, values extracted
 }
+
+// Understanding polling mechanism (under the hood)
+use std::future::Future;
+use std::pin::Pin;
+use std::task::{Context, Poll};
+
+// Simplified Future implementation (what async fn generates)
+struct DelayedValue {
+    value: u32,
+    ready: bool,                     // => Tracks if Future is ready
+}
+
+impl Future for DelayedValue {       // => Implement Future trait manually
+    type Output = u32;               // => Future completes with u32
+
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+                                     // => Executor calls poll() repeatedly
+                                     // => cx: contains Waker to notify executor when ready
+        if self.ready {              // => Check if Future is ready
+            Poll::Ready(self.value)  // => Return Ready with value (Future completes)
+        } else {
+            self.ready = true;       // => Mark as ready for next poll
+            cx.waker().wake_by_ref(); // => Wake executor to poll again
+            Poll::Pending            // => Not ready yet, return Pending
+        }                            // => Executor will poll again later
+    }
+}
+
+// Demonstrating sequential vs concurrent execution
+async fn demonstrate_timing() {
+    use std::time::Instant;
+
+    // Sequential execution (one after another)
+    let start = Instant::now();      // => Start timer
+    do_work(1).await;                // => Executes first task (100ms)
+    do_work(2).await;                // => Then executes second task (100ms)
+    let seq_time = start.elapsed();  // => Total: ~200ms (100 + 100)
+    println!("Sequential: {:?}", seq_time);
+                                     // => Output: Sequential: ~200ms
+
+    // Concurrent execution (both at same time)
+    let start = Instant::now();      // => Reset timer
+    tokio::join!(do_work(1), do_work(2));
+                                     // => Both execute concurrently
+    let conc_time = start.elapsed(); // => Total: ~100ms (max of 100 and 100)
+    println!("Concurrent: {:?}", conc_time);
+                                     // => Output: Concurrent: ~100ms
+                                     // => 2x faster with concurrency!
+}
+
+// Runtime vs executor vs future relationship
+// 1. Runtime (Tokio): provides executor + timer + I/O reactor
+// 2. Executor: polls Futures until completion
+// 3. Future: state machine that yields when not ready
+//
+// Flow:
+// async fn -> compiler generates Future (state machine)
+// .await -> tells executor to poll Future
+// Executor -> calls Future::poll() repeatedly
+// Future -> returns Pending (yield) or Ready(value) (complete)
+// If Pending -> executor schedules Future for later polling
+// If Ready -> executor extracts value and continues
 ```
 
 **Key Takeaway**: Futures are lazy computations requiring an executor to poll them, with combinators like `tokio::join!` enabling concurrent execution of multiple futures on a single thread.
@@ -376,28 +1088,155 @@ async fn main() {
 
 `tokio::join!` runs multiple futures concurrently on the same task, enabling efficient concurrent execution without spawning threads.
 
-```rust
-use tokio::time::{sleep, Duration};
+```mermaid
+%% tokio::join! concurrent execution timeline
+gantt
+    title Concurrent Execution with tokio::join!
+    dateFormat SSS
+    axisFormat %Lms
 
-async fn task1() -> u32 {
+    section Task 1
+    Sleep 100ms :done, t1, 000, 100ms
+    Complete    :milestone, 100
+
+    section Task 2
+    Sleep 50ms  :done, t2, 000, 50ms
+    Complete    :milestone, 50
+    Wait for Task 1 :crit, 050, 50ms
+
+    section Total
+    Total Time  :active, 000, 100ms
+```
+
+```rust
+use tokio::time::{sleep, Duration};  // => Async sleep (non-blocking)
+
+async fn task1() -> u32 {            // => First async task
     sleep(Duration::from_millis(100)).await;
-    println!("Task 1 done");
-    1
+                                     // => Sleep 100ms (yields to runtime)
+    println!("Task 1 done");         // => Prints after 100ms
+    1                                // => Returns 1
 }
 
-async fn task2() -> u32 {
+async fn task2() -> u32 {            // => Second async task (faster)
     sleep(Duration::from_millis(50)).await;
-    println!("Task 2 done");
-    2
+                                     // => Sleep 50ms (yields to runtime)
+    println!("Task 2 done");         // => Prints after 50ms
+    2                                // => Returns 2
 }
 
 #[tokio::main]
 async fn main() {
+    // tokio::join! runs futures concurrently on SAME task/thread
     let (r1, r2) = tokio::join!(task1(), task2());
-                                     // => Both tasks run concurrently
-                                     // => Output: Task 2 done (then) Task 1 done
+                                     // => Start both tasks at time 0
+                                     // => t=0ms: both tasks start sleeping
+                                     // => t=50ms: task2 completes, prints "Task 2 done"
+                                     // => task1 still sleeping (50ms remaining)
+                                     // => t=100ms: task1 completes, prints "Task 1 done"
+                                     // => Total time: 100ms (not 150ms - concurrent!)
+                                     // => Output order: "Task 2 done" (first), then "Task 1 done"
+                                     // => r1 = 1, r2 = 2 (both values available)
+
     println!("Results: {} + {} = {}", r1, r2, r1 + r2);
                                      // => Output: Results: 1 + 2 = 3
+                                     // => Both tasks completed, sum computed
+}
+
+// Demonstrating join! behavior with multiple tasks
+async fn multi_join() {
+    use std::time::Instant;
+
+    async fn work(id: u32, ms: u64) -> u32 {
+        sleep(Duration::from_millis(ms)).await;
+        println!("Task {} done ({}ms)", id, ms);
+        id
+    }
+
+    let start = Instant::now();
+    let (a, b, c, d) = tokio::join!(
+        work(1, 100),                // => Sleeps 100ms
+        work(2, 50),                 // => Sleeps 50ms (finishes first)
+        work(3, 75),                 // => Sleeps 75ms
+        work(4, 120),                // => Sleeps 120ms (finishes last)
+    );                               // => All run concurrently
+                                     // => Total time: max(100, 50, 75, 120) = 120ms
+                                     // => NOT 100+50+75+120 = 345ms (would be sequential)
+    let elapsed = start.elapsed();
+    println!("Completed {} tasks in {:?}", a+b+c+d, elapsed);
+                                     // => Output: Completed 10 tasks in ~120ms
+                                     // => 10 = 1+2+3+4 (all tasks completed)
+}
+
+// Comparing join! vs spawn (different concurrency models)
+async fn join_vs_spawn() {
+    // tokio::join! - same task, cooperative concurrency
+    let (r1, r2) = tokio::join!(
+        async { sleep(Duration::from_millis(10)).await; 1 },
+        async { sleep(Duration::from_millis(10)).await; 2 },
+    );                               // => Both run on SAME async task
+                                     // => Yields between tasks when awaiting
+                                     // => Single-threaded concurrency (like async/await in JS)
+    println!("join!: {} + {}", r1, r2);
+
+    // tokio::spawn - separate tasks, can run on different threads
+    let h1 = tokio::spawn(async {
+        sleep(Duration::from_millis(10)).await;
+        1
+    });                              // => Spawns independent task (like thread::spawn)
+    let h2 = tokio::spawn(async {
+        sleep(Duration::from_millis(10)).await;
+        2
+    });                              // => Spawns another independent task
+                                     // => Can run on different OS threads (if multi-threaded runtime)
+    let r1 = h1.await.unwrap();      // => Wait for task 1 (JoinHandle)
+    let r2 = h2.await.unwrap();      // => Wait for task 2 (JoinHandle)
+    println!("spawn: {} + {}", r1, r2);
+}
+
+// Error handling with join!
+async fn join_with_errors() {
+    async fn may_fail(id: u32) -> Result<u32, &'static str> {
+        sleep(Duration::from_millis(10)).await;
+        if id == 2 {
+            Err("Task 2 failed!")    // => Second task returns error
+        } else {
+            Ok(id)                   // => Other tasks succeed
+        }
+    }
+
+    let (r1, r2, r3) = tokio::join!(
+        may_fail(1),                 // => Ok(1)
+        may_fail(2),                 // => Err("Task 2 failed!")
+        may_fail(3),                 // => Ok(3)
+    );                               // => All complete, even if some fail
+                                     // => join! waits for ALL futures (not short-circuit)
+
+    println!("Results: {:?}, {:?}, {:?}", r1, r2, r3);
+                                     // => Output: Results: Ok(1), Err("Task 2 failed!"), Ok(3)
+                                     // => All results available (error doesn't cancel others)
+}
+
+// try_join! - short-circuit on error
+async fn try_join_example() {
+    async fn may_fail(id: u32) -> Result<u32, &'static str> {
+        sleep(Duration::from_millis(10 * id as u64)).await;
+        if id == 2 { Err("Failed!") } else { Ok(id) }
+    }
+
+    // try_join! returns Result - Err if ANY future fails
+    let result = tokio::try_join!(
+        may_fail(1),                 // => Ok(1) after 10ms
+        may_fail(2),                 // => Err("Failed!") after 20ms
+        may_fail(3),                 // => Would be Ok(3), but never checked
+    );                               // => Returns Err as soon as may_fail(2) fails
+                                     // => Other futures still run but result ignored
+
+    match result {
+        Ok((a, b, c)) => println!("All succeeded: {}, {}, {}", a, b, c),
+        Err(e) => println!("One failed: {}", e),
+                                     // => Output: One failed: Failed!
+    }
 }
 ```
 
@@ -410,23 +1249,161 @@ async fn main() {
 `tokio::spawn` creates new async tasks that run independently, similar to thread spawning but for async contexts.
 
 ```rust
-use tokio::time::{sleep, Duration};
+use tokio::time::{sleep, Duration};  // => Tokio's async sleep and duration types
 
-async fn independent_task(id: u32) {
+async fn independent_task(id: u32) { // => Async task function: returns Future<Output = ()>
+                                     // => Takes id parameter for task identification
     sleep(Duration::from_millis(100)).await;
+                                     // => Sleep 100ms asynchronously (yields to runtime)
+                                     // => Non-blocking: other tasks can run during sleep
     println!("Independent task {} completed", id);
-}
+                                     // => Prints after 100ms delay
+                                     // => id identifies which task completed (1 or 2)
+}                                    // => Future completes after printing
 
-#[tokio::main]
-async fn main() {
+#[tokio::main]                       // => Creates multi-threaded Tokio runtime
+                                     // => Expands to: Runtime::new().unwrap().block_on(async { ... })
+                                     // => Runtime manages thread pool and task scheduling
+async fn main() {                    // => Main function is async (requires runtime)
     let handle1 = tokio::spawn(independent_task(1));
+                                     // => Spawn task 1 as independent task on runtime
+                                     // => Returns JoinHandle<()> (like thread::JoinHandle)
+                                     // => Task starts executing IMMEDIATELY (not lazy like join!)
+                                     // => Task 1 runs concurrently with main
+                                     // => Can run on different thread from main
     let handle2 = tokio::spawn(independent_task(2));
+                                     // => Spawn task 2 as second independent task
+                                     // => Also starts immediately (concurrent with task 1 and main)
+                                     // => Can run on third thread from runtime pool
+                                     // => Both tasks run in parallel (multi-threaded runtime)
 
     println!("Main continues while tasks run");
+                                     // => Output: Main continues while tasks run (prints immediately)
+                                     // => Main doesn't wait for spawned tasks yet
+                                     // => Tasks 1 and 2 are sleeping in background (100ms each)
+                                     // => Demonstrates spawn is non-blocking
 
+    handle1.await.unwrap();          // => Wait for task 1 to complete
+                                     // => .await on JoinHandle suspends until task finishes
+                                     // => unwrap() extracts () or panics if task panicked
+                                     // => After ~100ms: task 1 completes, prints, returns ()
+    handle2.await.unwrap();          // => Wait for task 2 to complete
+                                     // => Task 2 might already be done (started same time as task 1)
+                                     // => unwrap() panics if task 2 panicked
+                                     // => Total time: ~100ms (both ran concurrently, not sequentially)
+    println!("All tasks completed"); // => Output: All tasks completed (after both tasks done)
+                                     // => Main exits after all spawned tasks finished
+}
+
+// Demonstrating spawn vs join! differences
+async fn spawn_vs_join_comparison() {
+    use std::time::Instant;
+
+    // tokio::spawn - creates independent tasks (can run on different threads)
+    let start = Instant::now();
+    let h1 = tokio::spawn(async {    // => Task 1: independent, can move to another thread
+        sleep(Duration::from_millis(100)).await;
+                                     // => Sleeps 100ms on runtime thread pool
+        println!("Spawned task 1");  // => Might print from different OS thread than main
+        1                            // => Returns 1 (wrapped in JoinHandle<i32>)
+    });
+    let h2 = tokio::spawn(async {    // => Task 2: also independent
+        sleep(Duration::from_millis(100)).await;
+        println!("Spawned task 2");  // => Might print from yet another OS thread
+        2                            // => Returns 2
+    });                              // => Both tasks run on runtime thread pool (truly parallel)
+
+    let r1 = h1.await.unwrap();      // => Wait for task 1, unwrap Result<i32, JoinError>
+                                     // => r1 is i32 (1)
+    let r2 = h2.await.unwrap();      // => Wait for task 2, r2 is 2
+    let spawn_time = start.elapsed();// => Total: ~100ms (parallel execution)
+    println!("Spawned: {} + {} in {:?}", r1, r2, spawn_time);
+                                     // => Output: Spawned: 1 + 2 in ~100ms
+
+    // tokio::join! - same task, cooperative concurrency (single async context)
+    let start = Instant::now();
+    let (r1, r2) = tokio::join!(
+        async { sleep(Duration::from_millis(100)).await; 1 },
+                                     // => Runs on SAME async task as main
+        async { sleep(Duration::from_millis(100)).await; 2 },
+                                     // => Also same task, cooperative multitasking
+    );                               // => Might run on single OS thread (yielding between)
+    let join_time = start.elapsed(); // => Also ~100ms (both sleep concurrently)
+    println!("Joined: {} + {} in {:?}", r1, r2, join_time);
+                                     // => Output: Joined: 1 + 2 in ~100ms
+                                     // => Similar time but different concurrency model
+}
+
+// Handling task panics with JoinHandle
+async fn handle_task_panic() {
+    let handle = tokio::spawn(async {
+        sleep(Duration::from_millis(10)).await;
+        panic!("Task panicked!");   // => Task panics (doesn't crash program!)
+                                     // => Panic is caught by spawn, stored in JoinHandle
+    });
+
+    match handle.await {             // => .await returns Result<T, JoinError>
+        Ok(_) => println!("Task succeeded"),
+        Err(e) => {                  // => e is JoinError (contains panic info)
+            println!("Task panicked: {:?}", e);
+                                     // => Output: Task panicked: JoinError::Panic(...)
+            if e.is_panic() {        // => Check if error is due to panic
+                println!("Task panic detected!");
+                                     // => Panic in spawned task doesn't crash runtime
+            }                        // => Other tasks continue running (isolation)
+        }
+    }
+}
+
+// Spawning tasks with 'static lifetime requirement
+async fn spawn_static_lifetime() {
+    let local_data = String::from("local");
+                                     // => local_data is not 'static (lives in this function)
+
+    // This FAILS - spawned tasks require 'static lifetime
+    // let handle = tokio::spawn(async {
+    //     println!("{}", local_data); // => ERROR: local_data not 'static
+    // });                           // => Spawned task could outlive local_data
+
+    // Solution 1: Move owned data into task
+    let owned_data = local_data.clone();
+                                     // => Clone data for ownership transfer
+    let handle1 = tokio::spawn(async move {
+                                     // => async move captures owned_data by value
+        println!("{}", owned_data);  // => OK: owned_data is moved into 'static future
+    });                              // => Task owns the data (lives as long as needed)
     handle1.await.unwrap();
+
+    // Solution 2: Use Arc for shared ownership
+    use std::sync::Arc;
+    let shared_data = Arc::new(String::from("shared"));
+                                     // => Arc has 'static lifetime (reference counting)
+    let handle2 = tokio::spawn(async move {
+        println!("{}", shared_data); // => OK: Arc is 'static, can be moved
+    });                              // => Task holds Arc clone (reference counted)
     handle2.await.unwrap();
-    println!("All tasks completed");
+}
+
+// Spawning CPU-bound tasks with spawn_blocking
+async fn cpu_bound_tasks() {
+    use tokio::task;
+
+    // CPU-intensive work blocks async runtime
+    let handle = task::spawn_blocking(|| {
+                                     // => spawn_blocking: runs on dedicated thread pool
+                                     // => For blocking/CPU-intensive work
+        let mut sum = 0;
+        for i in 0..1_000_000 {      // => CPU-bound loop (1 million iterations)
+            sum += i;                // => Heavy computation
+        }                            // => Would block async runtime if run normally
+        sum                          // => Returns sum (wrapped in JoinHandle<i32>)
+    });                              // => Runs on blocking thread pool (doesn't block async tasks)
+
+    let result = handle.await.unwrap();
+                                     // => .await on blocking task (returns when computation done)
+                                     // => unwrap() extracts sum or panics
+    println!("CPU result: {}", result);
+                                     // => Output: CPU result: 499999500000
 }
 ```
 
@@ -438,27 +1415,231 @@ async fn main() {
 
 `tokio::select!` waits on multiple async operations simultaneously, completing when any branch is ready.
 
+```mermaid
+%% Select racing multiple futures
+graph TD
+    A[tokio::select! starts] -->|Poll both branches| B[Branch 1: operation1 - 100ms]
+    A -->|Poll both branches| C[Branch 2: operation2 - 50ms]
+    B -->|Still pending at 50ms| D[Cancelled & Dropped]
+    C -->|Completes first at 50ms| E[Return Operation 2]
+    E --> F[Other branches cancelled]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#CA9161,color:#000
+    style C fill:#029E73,color:#fff
+    style D fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#000
+```
+
 ```rust
-use tokio::time::{sleep, Duration};
+use tokio::time::{sleep, Duration};  // => Tokio's async sleep for non-blocking delays
 
 async fn operation1() -> &'static str {
+                                     // => First operation: returns string after delay
     sleep(Duration::from_millis(100)).await;
-    "Operation 1"
+                                     // => Sleeps 100ms (slower operation)
+    "Operation 1"                    // => Returns after 100ms
 }
 
 async fn operation2() -> &'static str {
+                                     // => Second operation: faster version
     sleep(Duration::from_millis(50)).await;
-    "Operation 2"
+                                     // => Sleeps 50ms (finishes first!)
+    "Operation 2"                    // => Returns after 50ms (winner in race)
 }
 
-#[tokio::main]
+#[tokio::main]                       // => Creates Tokio runtime for async execution
 async fn main() {
-    let result = tokio::select! {
-        res1 = operation1() => res1,
-        res2 = operation2() => res2,
-    };
+    let result = tokio::select! {    // => select! races multiple futures
+                                     // => Returns when FIRST branch completes
+                                     // => Other branches are CANCELLED (dropped)
+        res1 = operation1() => res1, // => Branch 1: wait for operation1
+                                     // => Pattern: future => result_expr
+                                     // => If this completes first, return res1
+        res2 = operation2() => res2, // => Branch 2: wait for operation2
+                                     // => Polls both branches concurrently
+                                     // => Returns res2 if this completes first
+    };                               // => operation2() finishes after 50ms (first!)
+                                     // => operation1() is DROPPED (cancelled at 50ms mark)
+                                     // => result is "Operation 2" (from faster branch)
     println!("First completed: {}", result);
                                      // => Output: First completed: Operation 2
+                                     // => Only winner's result is used
+}
+
+// Demonstrating timeout with select!
+async fn with_timeout() {
+    use tokio::time::timeout;
+
+    let result = tokio::select! {
+        value = slow_operation() => {
+                                     // => Main operation branch
+            println!("Operation completed: {}", value);
+            Ok(value)                // => Wrap in Ok if successful
+        }
+        _ = sleep(Duration::from_millis(200)) => {
+                                     // => Timeout branch (200ms limit)
+            println!("Operation timed out!");
+            Err("Timeout")           // => Return Err if timeout wins
+        }
+    };                               // => Whichever completes first determines result
+                                     // => If slow_operation takes >200ms, timeout wins
+
+    match result {
+        Ok(v) => println!("Got value: {}", v),
+        Err(e) => println!("Error: {}", e),
+    }
+}
+
+async fn slow_operation() -> i32 {
+    sleep(Duration::from_millis(150)).await;
+                                     // => Takes 150ms (under 200ms timeout)
+    42                               // => Returns value if not cancelled
+}
+
+// Multiple operations with select! and pattern matching
+async fn multi_select() {
+    let mut interval = tokio::time::interval(Duration::from_millis(100));
+                                     // => Interval timer: ticks every 100ms
+    let mut counter = 0;
+
+    loop {
+        tokio::select! {
+            _ = interval.tick() => {
+                                     // => Branch 1: timer tick (every 100ms)
+                counter += 1;
+                println!("Tick {}", counter);
+                                     // => Output: Tick 1, Tick 2, Tick 3...
+                if counter >= 5 {
+                    break;           // => Stop after 5 ticks (500ms total)
+                }
+            }
+            _ = sleep(Duration::from_millis(350)) => {
+                                     // => Branch 2: long sleep (350ms)
+                println!("Long sleep completed");
+                                     // => Only executes if loop runs 350ms
+                                     // => Competes with interval ticks
+                break;               // => Exit loop on long sleep
+            }
+        }                            // => First completed branch executes
+    }                                // => Loop continues until break
+}
+
+// biased option - deterministic ordering
+async fn biased_select() {
+    let mut count = 0;
+
+    loop {
+        tokio::select! {
+            biased;                  // => biased flag: check branches in order (top to bottom)
+                                     // => Without biased: pseudo-random fair polling
+                                     // => With biased: deterministic priority (first ready wins)
+
+            _ = sleep(Duration::from_millis(0)) => {
+                                     // => Branch 1: immediately ready (0ms sleep)
+                println!("First branch");
+                                     // => With biased, this branch ALWAYS wins if ready
+                count += 1;
+                if count >= 3 {
+                    break;           // => Stop after 3 iterations
+                }
+            }
+            _ = sleep(Duration::from_millis(0)) => {
+                                     // => Branch 2: also immediately ready
+                println!("Second branch");
+                                     // => Without biased, this could run sometimes
+                                     // => With biased, this NEVER runs (first branch wins)
+            }
+        }                            // => Biased ensures predictable branch selection
+    }                                // => Output: "First branch" 3 times, never "Second branch"
+}
+
+// Cancellation safety with select!
+async fn cancellation_safety() {
+    let mut data = vec![1, 2, 3];    // => Mutable vector
+
+    tokio::select! {
+        _ = async {
+            data.push(4);            // => Modify data in branch 1
+            sleep(Duration::from_millis(100)).await;
+            data.push(5);            // => Second modification (might not happen!)
+        } => {
+            println!("Long branch: {:?}", data);
+                                     // => If this completes: data is [1,2,3,4,5]
+        }
+        _ = sleep(Duration::from_millis(50)) => {
+            println!("Short branch: {:?}", data);
+                                     // => If timeout wins: data is [1,2,3,4] (incomplete!)
+                                     // => Second push(5) was CANCELLED mid-execution
+                                     // => DANGER: partial state modification!
+        }
+    };                               // => Cancellation can leave data in intermediate state
+                                     // => Be careful with mutable state across await points in select!
+}
+
+// Pattern matching with select! results
+async fn pattern_select() {
+    enum Message {
+        Text(String),
+        Number(i32),
+    }
+
+    async fn get_text() -> Message {
+        sleep(Duration::from_millis(50)).await;
+        Message::Text(String::from("Hello"))
+    }
+
+    async fn get_number() -> Message {
+        sleep(Duration::from_millis(100)).await;
+        Message::Number(42)
+    }
+
+    tokio::select! {
+        msg = get_text() => {
+            match msg {              // => Pattern match on result
+                Message::Text(s) => println!("Got text: {}", s),
+                                     // => Output: Got text: Hello (wins race)
+                Message::Number(n) => println!("Got number: {}", n),
+            }
+        }
+        msg = get_number() => {
+            match msg {
+                Message::Text(s) => println!("Got text: {}", s),
+                Message::Number(n) => println!("Got number: {}", n),
+            }
+        }
+    }                                // => get_text() completes first (50ms < 100ms)
+}
+
+// Combining select! with channels
+async fn select_with_channels() {
+    use tokio::sync::mpsc;
+
+    let (tx, mut rx) = mpsc::channel(32);
+                                     // => Create channel for communication
+
+    tokio::spawn(async move {
+        for i in 0..3 {
+            tx.send(i).await.unwrap();
+            sleep(Duration::from_millis(50)).await;
+        }                            // => Send 0, 1, 2 with delays
+    });
+
+    loop {
+        tokio::select! {
+            Some(value) = rx.recv() => {
+                                     // => Branch 1: receive from channel
+                println!("Received: {}", value);
+                                     // => Output: Received: 0, 1, 2
+            }
+            _ = sleep(Duration::from_millis(200)) => {
+                                     // => Branch 2: timeout after 200ms
+                println!("Timeout, exiting");
+                break;               // => Exit when no messages for 200ms
+            }
+        }
+    }
 }
 ```
 
@@ -470,25 +1651,241 @@ async fn main() {
 
 Tokio provides async channels for message passing between async tasks with backpressure support.
 
-```rust
-use tokio::sync::mpsc;
+```mermaid
+%% Async channel communication with backpressure
+sequenceDiagram
+    participant Producer
+    participant Channel
+    participant Consumer
 
-#[tokio::main]
+    Producer->>Channel: send(msg1).await
+    Note over Channel: Buffer: 1/3
+    Producer->>Channel: send(msg2).await
+    Note over Channel: Buffer: 2/3
+    Consumer->>Channel: recv().await
+    Channel-->>Consumer: msg1
+    Note over Channel: Buffer: 1/3
+    Producer->>Channel: send(msg3).await
+    Note over Channel: Buffer: 2/3
+    Producer->>Channel: send(msg4).await
+    Note over Channel: Buffer: 3/3 (FULL)
+    Producer->>Channel: send(msg5).await (BLOCKED)
+    Note over Producer: Backpressure: waiting
+    Consumer->>Channel: recv().await
+    Channel-->>Consumer: msg2
+    Note over Channel: Buffer: 2/3 (space available)
+    Channel-->>Producer: send(msg5) completes
+    Note over Channel: Buffer: 3/3
+```
+
+```rust
+use tokio::sync::mpsc;               // => mpsc: multi-producer, single-consumer channel
+
+#[tokio::main]                       // => Create Tokio runtime
 async fn main() {
     let (tx, mut rx) = mpsc::channel(32);
-                                     // => Bounded channel with capacity 32
+                                     // => Create bounded channel with capacity 32
+                                     // => tx: Sender<i32> (clonable for multiple producers)
+                                     // => rx: Receiver<i32> (NOT clonable - single consumer)
+                                     // => Capacity 32: at most 32 messages buffered
+                                     // => When full, send() awaits until space available (backpressure)
+
+    tokio::spawn(async move {        // => Spawn producer task (owns tx via move)
+        for i in 0..5 {              // => Send 5 messages (0, 1, 2, 3, 4)
+            tx.send(i).await.unwrap();
+                                     // => send() is async: returns Future<Result<(), SendError>>
+                                     // => .await suspends if channel full (backpressure)
+                                     // => unwrap() panics if receiver dropped (Err(SendError))
+                                     // => Channel not full (5 < 32), no blocking
+            println!("Sent: {}", i); // => Output: Sent: 0, Sent: 1, ..., Sent: 4
+                                     // => Prints after successful send
+        }                            // => Loop ends, tx dropped (closes channel)
+    });                              // => Producer task runs independently
+
+    while let Some(value) = rx.recv().await {
+                                     // => recv() is async: returns Future<Option<T>>
+                                     // => .await suspends until message available
+                                     // => Returns Some(value) when message received
+                                     // => Returns None when all senders dropped (channel closed)
+        println!("Received: {}", value);
+                                     // => Output: Received: 0, Received: 1, ..., Received: 4
+                                     // => Processes each message sequentially
+    }                                // => Loop exits when producer drops tx (None received)
+                                     // => All messages consumed, channel closed
+}
+
+// Demonstrating backpressure with small buffer
+async fn backpressure_demo() {
+    let (tx, mut rx) = mpsc::channel(2);
+                                     // => Small buffer: only 2 messages
+                                     // => Forces backpressure when sender fast, receiver slow
 
     tokio::spawn(async move {
         for i in 0..5 {
+            println!("Attempting to send {}", i);
+                                     // => Prints before send attempt
             tx.send(i).await.unwrap();
-                                     // => Send async (blocks if full)
-            println!("Sent: {}", i);
+                                     // => Blocks after buffer full (i=2)
+                                     // => i=0,1 sent immediately (buffer has space)
+                                     // => i=2 awaits until receiver consumes one
+            println!("Sent {}", i);  // => Confirms successful send
         }
     });
 
+    tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+                                     // => Main sleeps 100ms (simulates slow consumer)
+                                     // => Producer blocked waiting for space
+
     while let Some(value) = rx.recv().await {
-                                     // => Receive async
         println!("Received: {}", value);
+        tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
+                                     // => Slow consumer (50ms per message)
+                                     // => Each recv() unblocks one waiting send()
+    }
+}
+
+// Multiple producers, single consumer
+async fn multiple_producers() {
+    let (tx, mut rx) = mpsc::channel(32);
+
+    for producer_id in 0..3 {        // => Spawn 3 producer tasks
+        let tx_clone = tx.clone();   // => Clone sender (mpsc supports multiple senders)
+                                     // => Each producer gets own Sender<i32>
+        tokio::spawn(async move {
+            for i in 0..3 {          // => Each producer sends 3 messages
+                let msg = producer_id * 10 + i;
+                                     // => Unique message: producer 0 sends 0,1,2
+                                     // =>                producer 1 sends 10,11,12
+                                     // =>                producer 2 sends 20,21,22
+                tx_clone.send(msg).await.unwrap();
+                println!("Producer {} sent {}", producer_id, msg);
+                tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
+            }                        // => Producer exits, drops tx_clone
+        });
+    }
+
+    drop(tx);                        // => Drop original sender
+                                     // => Important! Prevents deadlock
+                                     // => Without this, rx.recv() never returns None
+                                     // => Channel only closes when ALL senders dropped
+
+    while let Some(value) = rx.recv().await {
+        println!("Received: {}", value);
+                                     // => Output order is non-deterministic
+                                     // => Messages from different producers interleaved
+    }                                // => Exits when all 3 producers finish and drop senders
+}
+
+// Using unbounded channels (no backpressure)
+async fn unbounded_channel_demo() {
+    use tokio::sync::mpsc;
+
+    let (tx, mut rx) = mpsc::unbounded_channel();
+                                     // => Unbounded: unlimited buffer size
+                                     // => send() is NOT async (never blocks!)
+                                     // => Returns Result immediately
+                                     // => Risk: memory exhaustion if producer faster than consumer
+
+    tokio::spawn(async move {
+        for i in 0..1000 {           // => Send 1000 messages instantly
+            tx.send(i).unwrap();     // => send() is synchronous (no .await)
+                                     // => All 1000 messages buffered in memory
+            // No await here - all sends happen immediately!
+        }                            // => Producer finishes instantly (no backpressure)
+    });
+
+    let mut count = 0;
+    while let Some(value) = rx.recv().await {
+                                     // => Consumer processes messages
+        count += 1;
+        if count % 100 == 0 {
+            println!("Processed {} messages", count);
+        }
+    }                                // => Eventually processes all 1000 messages
+}
+
+// oneshot channel for single-value communication
+async fn oneshot_demo() {
+    use tokio::sync::oneshot;
+
+    let (tx, rx) = oneshot::channel();
+                                     // => oneshot: send exactly ONE value
+                                     // => Sender and Receiver both NOT clonable
+                                     // => Lightweight for single-value responses
+
+    tokio::spawn(async move {
+        tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+        tx.send(42).unwrap();        // => Send single value (consumes tx)
+                                     // => send() is NOT async (buffered immediately)
+                                     // => Cannot send again (tx moved)
+    });
+
+    let result = rx.await.unwrap();  // => .await directly on rx (not rx.recv())
+                                     // => Returns T (not Option<T>)
+                                     // => unwrap() panics if sender dropped without sending
+    println!("Got result: {}", result);
+                                     // => Output: Got result: 42
+}
+
+// broadcast channel for multiple consumers
+async fn broadcast_demo() {
+    use tokio::sync::broadcast;
+
+    let (tx, mut rx1) = broadcast::channel(16);
+                                     // => broadcast: all receivers get all messages
+                                     // => Capacity 16 (circular buffer)
+    let mut rx2 = tx.subscribe();    // => Create second receiver
+                                     // => Each receiver gets copy of every message
+
+    tokio::spawn(async move {
+        for i in 0..3 {
+            tx.send(i).unwrap();     // => Broadcast to all receivers
+            println!("Broadcast: {}", i);
+        }
+    });
+
+    tokio::spawn(async move {
+        while let Ok(value) = rx1.recv().await {
+                                     // => First receiver
+            println!("RX1 received: {}", value);
+        }                            // => Gets all messages: 0, 1, 2
+    });
+
+    tokio::spawn(async move {
+        while let Ok(value) = rx2.recv().await {
+                                     // => Second receiver (independent)
+            println!("RX2 received: {}", value);
+        }                            // => Also gets: 0, 1, 2
+    });                              // => Both receivers get same messages
+
+    tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
+}
+
+// watch channel for state broadcasting
+async fn watch_demo() {
+    use tokio::sync::watch;
+
+    let (tx, mut rx) = watch::channel("initial");
+                                     // => watch: latest value always available
+                                     // => Receivers only see most recent value
+                                     // => Good for configuration/state updates
+
+    tokio::spawn(async move {
+        tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
+        tx.send("update 1").unwrap();// => Update state
+        tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
+        tx.send("update 2").unwrap();// => Update again
+        tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
+        tx.send("final").unwrap();   // => Final update
+    });
+
+    while rx.changed().await.is_ok() {
+                                     // => changed() waits for next update
+                                     // => Returns Err when sender dropped
+        let value = rx.borrow();     // => Borrow latest value (cheap)
+        println!("Current value: {}", *value);
+                                     // => Might skip intermediate values if slow consumer!
+                                     // => Only shows latest at time of borrow
     }
 }
 ```
@@ -501,27 +1898,199 @@ async fn main() {
 
 `Pin` prevents moving values in memory, required for self-referential futures and async functions that borrow across await points.
 
+```mermaid
+%% Pin preventing memory moves for self-referential structs
+graph TD
+    A[Self-Referential Struct] -->|Has internal pointer| B[Field points to self.data]
+    B -->|Without Pin| C[Move invalidates pointer]
+    C --> D[Undefined Behavior]
+
+    A -->|With Pin| E[Pin prevents move]
+    E --> F[Pointer remains valid]
+    F --> G[Memory Safety Guaranteed]
+
+    H[Unpin Types: i32, Vec, String] -->|Can move safely| I[Pin::new allowed]
+    J[!Unpin Types: async futures] -->|Cannot move| K[Pin::new_unchecked unsafe]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#000
+    style J fill:#CA9161,color:#000
+```
+
 ```rust
-use std::pin::Pin;
+use std::pin::Pin;                   // => Pin<P>: pointer wrapper preventing moves
+                                     // => P is pointer type (Box, &mut, etc.)
 
 fn print_pinned(pin: Pin<&mut i32>) {
+                                     // => Takes Pin<&mut i32> instead of &mut i32
+                                     // => Guarantees value won't move in memory
     println!("Pinned value: {}", pin);
+                                     // => Can still read value (immutable access)
+                                     // => Output: Pinned value: 42
 }
 
 fn main() {
-    let mut value = 42;
+    let mut value = 42;              // => Mutable i32 on stack
+                                     // => i32 is Unpin (safe to move even when pinned)
     let pinned = Pin::new(&mut value);
-    print_pinned(pinned);            // => Output: Pinned value: 42
+                                     // => Pin::new() wraps &mut i32
+                                     // => Only works for Unpin types (i32 is Unpin)
+                                     // => For !Unpin types, use unsafe Pin::new_unchecked()
+    print_pinned(pinned);            // => Pass pinned reference
+                                     // => Function guarantees no moves via Pin wrapper
 }
 
-// Self-referential struct (requires Pin)
+// Self-referential struct (requires Pin) - unsafe example
 struct SelfReferential {
-    data: String,
-    pointer: *const String,          // => Points to data field
+    data: String,                    // => Owned data
+    pointer: *const String,          // => Raw pointer to self.data (self-reference!)
+}                                    // => DANGER: if struct moves, pointer becomes invalid
+
+impl SelfReferential {
+    fn new(data: String) -> Pin<Box<Self>> {
+                                     // => Returns Pin<Box<Self>> to prevent moves
+                                     // => Box puts struct on heap (stable address)
+        let mut boxed = Box::new(Self {
+            data,
+            pointer: std::ptr::null(),
+                                     // => Initialize pointer to null (temporary)
+        });
+
+        let ptr = &boxed.data as *const String;
+                                     // => Get address of data field
+        boxed.pointer = ptr;         // => Set self-reference
+                                     // => CRITICAL: must pin before returning!
+
+        unsafe { Pin::new_unchecked(boxed) }
+                                     // => Pin the Box (prevents moves)
+                                     // => unsafe: we guarantee no moves after this
+                                     // => Struct must be !Unpin to enforce pin guarantee
+    }
+
+    fn get_data(self: Pin<&Self>) -> &str {
+                                     // => Method takes Pin<&Self> (pinned borrow)
+        unsafe {
+            &*self.pointer           // => Dereference self-referential pointer
+                                     // => Safe because Pin prevents moves
+                                     // => Without Pin, move could invalidate pointer
+        }
+    }
 }
 
-// Most types are Unpin (can be moved even when pinned)
-// Types with self-references must be !Unpin
+// Demonstrating Unpin vs !Unpin
+fn unpin_demo() {
+    // i32 is Unpin - can move even when pinned
+    let mut x = 10;
+    let mut pinned = Pin::new(&mut x);
+                                     // => Pin::new() requires T: Unpin
+                                     // => Works because i32 implements Unpin
+    *pinned = 20;                    // => Can mutate through DerefMut
+    println!("x = {}", x);           // => Output: x = 20
+
+    // Most types are Unpin by default
+    let mut vec = vec![1, 2, 3];
+    let pinned_vec = Pin::new(&mut vec);
+                                     // => Vec<T> is Unpin (can move safely)
+    pinned_vec.push(4);              // => Can still modify (DerefMut)
+    println!("{:?}", vec);           // => Output: [1, 2, 3, 4]
+
+    // Future is !Unpin if it borrows across await
+    // async fn borrow_across_await() {
+    //     let data = vec![1, 2, 3];
+    //     let reference = &data[0];  // => Borrow data
+    //     some_async_fn().await;     // => Await point with borrow active
+    //     println!("{}", reference); // => Use borrow after await
+    // }                              // => Future is !Unpin (self-referential)
+}
+
+// Pin projection: accessing fields of pinned struct
+use std::marker::PhantomPinned;      // => Marker for !Unpin types
+
+struct NotUnpin {
+    data: i32,
+    _pin: PhantomPinned,             // => Makes struct !Unpin
+}                                    // => Cannot use Pin::new() on this type
+
+impl NotUnpin {
+    fn new(data: i32) -> Pin<Box<Self>> {
+        let boxed = Box::new(Self {
+            data,
+            _pin: PhantomPinned,
+        });
+        unsafe { Pin::new_unchecked(boxed) }
+                                     // => Must use unsafe Pin::new_unchecked for !Unpin
+    }
+
+    // Safe projection to Unpin field
+    fn get_data(self: Pin<&mut Self>) -> &mut i32 {
+                                     // => Pin<&mut Self> parameter (self is pinned)
+        unsafe {
+            &mut self.get_unchecked_mut().data
+                                     // => get_unchecked_mut() bypasses Pin (unsafe)
+                                     // => Safe because data is Unpin (no self-refs)
+                                     // => Returns &mut i32 (unpinned mutable reference)
+        }
+    }
+}
+
+// Why Pin matters for async/await
+async fn pin_in_async() {
+    let local = String::from("data");
+                                     // => Local variable in async function
+    let reference = &local;          // => Borrow local
+                                     // => Future stores both local and reference
+
+    tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
+                                     // => Await point: future yields
+                                     // => Future becomes self-referential:
+                                     // =>   - Contains String ("data")
+                                     // =>   - Contains &String (pointing into same future)
+                                     // => If future moves, reference becomes dangling!
+                                     // => Pin prevents move, keeping reference valid
+
+    println!("{}", reference);       // => Safe to use reference after await
+                                     // => Pin guarantees future didn't move
+}
+
+// Pinning on stack vs heap
+fn stack_vs_heap_pin() {
+    use std::pin::pin;               // => pin! macro for stack pinning (Rust 1.68+)
+
+    // Stack pinning with pin! macro
+    let value = pin!(42);            // => Pin value on stack
+                                     // => Type: Pin<&mut i32>
+                                     // => Prevents moving after pin! macro
+    println!("Stack pinned: {}", value);
+
+    // Heap pinning with Box::pin
+    let boxed = Box::pin(String::from("heap"));
+                                     // => Pin<Box<String>>: pinned on heap
+                                     // => Box allocates, Pin prevents moves
+                                     // => Stable memory address (heap address)
+    println!("Heap pinned: {}", boxed);
+}
+
+// Practical example: pinning futures
+async fn practical_pin_usage() {
+    use tokio::pin;
+
+    let fut = async {                // => Create future (not pinned yet)
+        tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
+        42
+    };
+
+    pin!(fut);                       // => Pin future on stack (Tokio's pin! macro)
+                                     // => Required for polling manually or using select!
+
+    // Now can poll or select on fut
+    let result = fut.await;          // => Await pinned future
+    println!("Result: {}", result);  // => Output: Result: 42
+}
 ```
 
 **Key Takeaway**: `Pin<P>` prevents moving pinned values, enabling self-referential types like futures that borrow across await points, with most types being `Unpin` (movable even when pinned).
@@ -534,30 +2103,191 @@ Associated types define placeholder types in traits that implementors specify, i
 
 ```rust
 trait Container {
-    type Item;                       // => Associated type
+    type Item;                       // => Associated type: placeholder for concrete type
+                                     // => Each implementation specifies one Item type
+                                     // => Cannot have multiple Item types per implementation
 
-    fn get(&self) -> &Self::Item;
+    fn get(&self) -> &Self::Item;    // => Method returns reference to Item
+                                     // => Self::Item refers to associated type
 }
 
 struct IntContainer {
-    value: i32,
+    value: i32,                      // => Container holding i32
 }
 
 impl Container for IntContainer {
-    type Item = i32;                 // => Specify associated type
+    type Item = i32;                 // => Specify associated type: Item is i32
+                                     // => Only one Item type allowed per impl
+                                     // => Bound to implementation, not use site
 
-    fn get(&self) -> &Self::Item {
+    fn get(&self) -> &Self::Item {   // => Return &i32 (Self::Item = i32)
+        &self.value                  // => Return reference to stored value
+    }
+}
+
+struct StringContainer {
+    value: String,                   // => Container holding String
+}
+
+impl Container for StringContainer {
+    type Item = String;              // => Different Item type: String
+                                     // => Each type chooses its own Item
+
+    fn get(&self) -> &Self::Item {   // => Return &String
         &self.value
     }
 }
 
-fn print_container<C: Container>(container: &C) {
+fn print_container<C: Container>(container: &C)
+where
+    C::Item: std::fmt::Debug,        // => Bound on associated type: Item must be Debug
+                                     // => C::Item syntax accesses associated type
+{
     println!("{:?}", container.get());
+                                     // => Print the Item (whatever type it is)
 }
 
 fn main() {
-    let container = IntContainer { value: 42 };
-    print_container(&container);     // => Output: 42
+    let int_c = IntContainer { value: 42 };
+                                     // => int_c.get() returns &i32
+    print_container(&int_c);         // => Compiler infers C=IntContainer, C::Item=i32
+                                     // => Output: 42
+
+    let str_c = StringContainer {
+        value: String::from("hello"),
+    };                               // => str_c.get() returns &String
+    print_container(&str_c);         // => Compiler infers C=StringContainer, C::Item=String
+                                     // => Output: "hello"
+}
+
+// Comparing associated types vs generic parameters
+// Generic parameter version (more verbose at use sites)
+trait GenericContainer<T> {          // => T is generic parameter
+    fn get_generic(&self) -> &T;
+}
+
+impl GenericContainer<i32> for IntContainer {
+                                     // => Must specify T at impl time
+    fn get_generic(&self) -> &i32 {
+        &self.value
+    }
+}
+
+impl GenericContainer<String> for IntContainer {
+                                     // => CAN have multiple impls with different T!
+                                     // => IntContainer can be GenericContainer<i32> AND GenericContainer<String>
+    fn get_generic(&self) -> &String {
+        todo!("Not really possible for IntContainer")
+    }
+}
+
+fn use_generic<T, C: GenericContainer<T>>(container: &C) -> &T {
+                                     // => Must specify T as separate generic parameter
+                                     // => More verbose: need both T and C
+    container.get_generic()
+}
+
+fn use_associated<C: Container>(container: &C) -> &C::Item {
+                                     // => Only need C, Item comes from impl
+                                     // => Less verbose: one type parameter
+                                     // => Cannot have multiple Item types per C
+    container.get()
+}
+
+// When to use associated types: natural 1-to-1 relationship
+trait Iterator {
+    type Item;                       // => Each iterator type produces ONE item type
+                                     // => Vec<i32>::IntoIter always produces i32
+
+    fn next(&mut self) -> Option<Self::Item>;
+}
+
+struct Counter {
+    count: u32,
+}
+
+impl Iterator for Counter {
+    type Item = u32;                 // => Counter iterator produces u32
+                                     // => Makes sense: counter only counts integers
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.count += 1;
+        if self.count < 6 {
+            Some(self.count)         // => Returns u32
+        } else {
+            None
+        }
+    }
+}
+
+// Associated types with bounds
+trait Graph {
+    type Node;                       // => Node type (e.g., String, u32)
+    type Edge;                       // => Edge type (e.g., (Node, Node))
+
+    fn nodes(&self) -> Vec<&Self::Node>;
+    fn edges(&self) -> Vec<&Self::Edge>;
+}
+
+struct SimpleGraph {
+    nodes: Vec<String>,
+    edges: Vec<(usize, usize)>,      // => Edges as index pairs
+}
+
+impl Graph for SimpleGraph {
+    type Node = String;              // => Nodes are Strings
+    type Edge = (usize, usize);      // => Edges are index tuples
+
+    fn nodes(&self) -> Vec<&Self::Node> {
+        self.nodes.iter().collect()  // => Return references to all nodes
+    }
+
+    fn edges(&self) -> Vec<&Self::Edge> {
+        self.edges.iter().collect()  // => Return references to all edges
+    }
+}
+
+// Using where clauses with associated types
+fn process_graph<G>(graph: &G)
+where
+    G: Graph,                        // => G must implement Graph
+    G::Node: std::fmt::Display,      // => Associated Node must be Display
+    G::Edge: std::fmt::Debug,        // => Associated Edge must be Debug
+{
+    for node in graph.nodes() {
+        println!("Node: {}", node);  // => Display each node
+    }
+    for edge in graph.edges() {
+        println!("Edge: {:?}", edge);// => Debug each edge
+    }
+}
+
+// Default associated types
+trait ProduceAnimal {
+    type Animal = String;            // => Default associated type
+                                     // => Implementations can override or use default
+
+    fn produce(&self) -> Self::Animal;
+}
+
+struct Farm;
+
+impl ProduceAnimal for Farm {
+                                     // => Use default: type Animal = String
+    fn produce(&self) -> Self::Animal {
+        String::from("Cow")          // => Returns String (default)
+    }
+}
+
+struct Zoo;
+
+impl ProduceAnimal for Zoo {
+    type Animal = &'static str;      // => Override default with different type
+                                     // => Now Animal is &'static str, not String
+
+    fn produce(&self) -> Self::Animal {
+        "Lion"                       // => Returns &'static str
+    }
 }
 ```
 
@@ -571,39 +2301,156 @@ GATs enable associated types with generic parameters, enabling more flexible tra
 
 ```rust
 trait LendingIterator {
-    type Item<'a> where Self: 'a;    // => GAT with lifetime parameter
+    type Item<'a> where Self: 'a;    // => GAT: associated type with lifetime parameter
+                                     // => Generic over lifetime 'a (not just one type)
+                                     // => where Self: 'a ensures Item doesn't outlive iterator
+                                     // => Regular associated types CAN'T do this (no generics)
 
     fn next<'a>(&'a mut self) -> Option<Self::Item<'a>>;
+                                     // => Item<'a> tied to borrow lifetime 'a
+                                     // => Return value borrows from &'a mut self
+                                     // => Enables "lending" items tied to iterator lifetime
 }
 
 struct WindowsIterator<T> {
-    data: Vec<T>,
-    pos: usize,
+    data: Vec<T>,                    // => Owned vector data
+    pos: usize,                      // => Current window position
 }
 
 impl<T> LendingIterator for WindowsIterator<T> {
     type Item<'a> = &'a [T] where T: 'a;
+                                     // => Item<'a> is slice borrowing from self
+                                     // => Slice lifetime 'a tied to next() call
+                                     // => where T: 'a: T must outlive 'a (T contains no refs shorter than 'a)
+                                     // => Each next() call returns slice valid for that borrow
 
     fn next<'a>(&'a mut self) -> Option<Self::Item<'a>> {
+                                     // => Lifetime 'a is borrow of self
+                                     // => Returned slice borrows from self.data for 'a
         if self.pos + 2 <= self.data.len() {
+                                     // => Check bounds: need at least 2 elements from pos
+                                     // => pos + 2 <= len ensures window [pos..pos+2] valid
             let window = &self.data[self.pos..self.pos + 2];
-            self.pos += 1;
-            Some(window)
+                                     // => Slice of 2 elements: [pos, pos+1]
+                                     // => Borrows from self.data with lifetime 'a
+                                     // => Type: &'a [T] (matches Item<'a>)
+            self.pos += 1;           // => Advance window for next call
+                                     // => Next call returns [pos+1, pos+2]
+            Some(window)             // => Return borrowed slice (lends data)
+                                     // => Caller cannot call next() again until dropping window
         } else {
-            None
+            None                     // => No more windows available
+                                     // => Iterator exhausted
         }
     }
 }
 
 fn main() {
     let mut iter = WindowsIterator {
-        data: vec![1, 2, 3, 4],
-        pos: 0,
+        data: vec![1, 2, 3, 4],      // => Data: [1, 2, 3, 4]
+        pos: 0,                      // => Start at position 0
     };
 
     while let Some(window) = iter.next() {
-        println!("{:?}", window);    // => Output: [1, 2], [2, 3], [3, 4]
+                                     // => First call: window = &[1, 2], pos becomes 1
+                                     // => Second call: window = &[2, 3], pos becomes 2
+                                     // => Third call: window = &[3, 4], pos becomes 3
+                                     // => Fourth call: None (pos+2 > 4)
+        println!("{:?}", window);    // => Output: [1, 2]
+                                     // => Output: [2, 3]
+                                     // => Output: [3, 4]
+                                     // => Cannot call next() while holding window (borrow conflict)
+    }                                // => window dropped at end of each iteration
+}
+
+// Why GATs needed: compare with regular Iterator
+trait RegularIterator {
+    type Item;                       // => NO lifetime parameter (regular associated type)
+                                     // => Item must be same type regardless of borrow
+                                     // => Cannot return borrowed slices tied to each next() call
+
+    fn next(&mut self) -> Option<Self::Item>;
+                                     // => Cannot tie returned Item to &mut self lifetime
+                                     // => Item must be owned or have 'static lifetime
+}
+
+// Regular Iterator can't lend (must own or clone)
+impl<T: Clone> RegularIterator for WindowsIterator<T> {
+    type Item = Vec<T>;              // => Must return OWNED Vec (cannot borrow)
+                                     // => Expensive: allocates and clones on every next()
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos + 2 <= self.data.len() {
+            let window = self.data[self.pos..self.pos + 2].to_vec();
+                                     // => to_vec() allocates and clones (expensive!)
+                                     // => GAT version just borrows (zero-cost)
+            self.pos += 1;
+            Some(window)             // => Returns owned vector
+        } else {
+            None
+        }
     }
+}
+
+// GATs with multiple type parameters
+trait StreamingIterator {
+    type Item<'a, T> where Self: 'a, T: 'a;
+                                     // => GAT with TWO parameters: lifetime 'a and type T
+                                     // => Even more flexible than single-lifetime GATs
+
+    fn next<'a, T>(&'a mut self, arg: &'a T) -> Option<Self::Item<'a, T>>;
+}
+
+// GATs enable async traits (before async fn in traits)
+trait AsyncIterator {
+    type Item;
+    type NextFuture<'a>: std::future::Future<Output = Option<Self::Item>>
+    where
+        Self: 'a;                    // => GAT: associated type is a Future
+                                     // => Lifetime 'a ties future to &'a mut self
+                                     // => Enables async iterator trait (async fn in trait needs this)
+
+    fn next<'a>(&'a mut self) -> Self::NextFuture<'a>;
+                                     // => Returns future tied to borrow lifetime
+}
+
+// Practical GAT example: Database connection
+trait Database {
+    type Row<'a> where Self: 'a;     // => Borrowed row from query result
+                                     // => Lifetime 'a: row cannot outlive connection
+
+    fn query<'a>(&'a mut self, sql: &str) -> Vec<Self::Row<'a>>;
+                                     // => Returns rows borrowing from connection
+                                     // => Rows become invalid when connection dropped
+}
+
+struct PostgresDb {
+    buffer: String,                  // => Internal buffer for query results
+}
+
+impl Database for PostgresDb {
+    type Row<'a> = &'a str where Self: 'a;
+                                     // => Row is string slice borrowing buffer
+
+    fn query<'a>(&'a mut self, sql: &str) -> Vec<Self::Row<'a>> {
+        self.buffer = format!("Result: {}", sql);
+                                     // => Store result in buffer
+        vec![&self.buffer]           // => Return slice borrowing buffer
+                                     // => Lifetime 'a ensures buffer not dropped while rows used
+    }
+}
+
+fn use_database() {
+    let mut db = PostgresDb {
+        buffer: String::new(),
+    };
+
+    let rows = db.query("SELECT * FROM users");
+                                     // => rows borrows from db
+    for row in rows {
+        println!("Row: {}", row);    // => Output: Row: Result: SELECT * FROM users
+    }                                // => rows dropped here
+                                     // => db can be used again (borrow ended)
 }
 ```
 
@@ -614,6 +2461,29 @@ fn main() {
 ### Example 74: Trait Objects and Dynamic Dispatch
 
 Trait objects enable runtime polymorphism through dynamic dispatch, trading compile-time monomorphization for flexibility.
+
+```mermaid
+%% Static vs dynamic dispatch comparison
+graph TD
+    A[Static Dispatch: impl Trait] -->|Compile time| B[Monomorphization]
+    B --> C[Specialized code per type]
+    C --> D[Fast: no runtime overhead]
+    C --> E[Large binary: code duplication]
+
+    F[Dynamic Dispatch: dyn Trait] -->|Runtime| G[Fat Pointer: data + vtable]
+    G --> H[Virtual method lookup]
+    H --> I[Slower: indirect call]
+    H --> J[Small binary: one implementation]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#DE8F05,color:#000
+    style F fill:#0173B2,color:#fff
+    style G fill:#CC78BC,color:#000
+    style I fill:#DE8F05,color:#000
+    style J fill:#029E73,color:#fff
+```
 
 ```mermaid
 graph TD
@@ -633,38 +2503,197 @@ graph TD
 
 ```rust
 trait Draw {
-    fn draw(&self);
+    fn draw(&self);                  // => Trait method (object-safe)
+                                     // => Takes &self (not Self), returns nothing
 }
 
 struct Circle {
-    radius: f64,
+    radius: f64,                     // => Circle-specific data
 }
 
 impl Draw for Circle {
     fn draw(&self) {
         println!("Drawing circle with radius {}", self.radius);
+                                     // => Circle's implementation of draw()
     }
 }
 
 struct Square {
-    side: f64,
+    side: f64,                       // => Square-specific data (different layout than Circle)
 }
 
 impl Draw for Square {
     fn draw(&self) {
         println!("Drawing square with side {}", self.side);
+                                     // => Square's implementation of draw()
     }
 }
 
 fn main() {
     let shapes: Vec<Box<dyn Draw>> = vec![
+                                     // => Heterogeneous collection: different concrete types
+                                     // => Box<dyn Draw>: trait object (fat pointer)
+                                     // =>   - Data pointer (8 bytes): points to heap Circle/Square
+                                     // =>   - vtable pointer (8 bytes): points to impl's method table
+                                     // => Total size: 16 bytes per element (regardless of T)
         Box::new(Circle { radius: 5.0 }),
+                                     // => Box allocates Circle on heap
+                                     // => Creates trait object: (Circle*, Circle_Draw_vtable*)
         Box::new(Square { side: 3.0 }),
-    ];                               // => Heterogeneous collection of trait objects
+                                     // => Box allocates Square on heap
+                                     // => Creates trait object: (Square*, Square_Draw_vtable*)
+    ];                               // => Vec stores trait objects (all same size: 16 bytes)
+                                     // => Cannot store Circle and Square directly (different sizes)
 
-    for shape in shapes.iter() {
-        shape.draw();                // => Dynamic dispatch
-    }                                // => Output: Drawing circle..., Drawing square...
+    for shape in shapes.iter() {     // => shape is &Box<dyn Draw> = &&dyn Draw
+        shape.draw();                // => Dynamic dispatch: runtime vtable lookup
+                                     // => 1. Dereference shape to get data pointer
+                                     // => 2. Load vtable pointer
+                                     // => 3. Index into vtable to find draw() function pointer
+                                     // => 4. Call function pointer with data pointer as &self
+                                     // => Output: Drawing circle with radius 5
+                                     // => Output: Drawing square with side 3
+    }                                // => Each call goes through vtable (slight overhead)
+                                     // => Trade-off: flexibility vs. performance
+}
+
+// Comparing static vs dynamic dispatch
+fn static_dispatch<T: Draw>(shape: &T) {
+                                     // => Generic function: monomorphized at compile time
+                                     // => Compiler generates separate code for each T
+                                     // => static_dispatch::<Circle> and static_dispatch::<Square>
+    shape.draw();                    // => Direct function call (no vtable)
+                                     // => Faster: no indirection, can inline
+                                     // => Larger binary: duplicate code per type
+}
+
+fn dynamic_dispatch(shape: &dyn Draw) {
+                                     // => Trait object parameter (NOT generic)
+                                     // => Single function in binary (no monomorphization)
+    shape.draw();                    // => Vtable lookup (runtime indirection)
+                                     // => Slower: cannot inline (compiler doesn't know concrete type)
+                                     // => Smaller binary: one copy of function
+}
+
+fn compare_dispatch() {
+    let circle = Circle { radius: 3.0 };
+    let square = Square { side: 2.0 };
+
+    // Static dispatch - fast, larger binary
+    static_dispatch(&circle);        // => Calls Circle::draw directly
+    static_dispatch(&square);        // => Calls Square::draw directly
+                                     // => Two monomorphized versions of static_dispatch
+
+    // Dynamic dispatch - flexible, smaller binary
+    dynamic_dispatch(&circle);       // => Vtable lookup to find Circle::draw
+    dynamic_dispatch(&square);       // => Vtable lookup to find Square::draw
+                                     // => One copy of dynamic_dispatch in binary
+}
+
+// Trait object with &dyn (no Box)
+fn use_ref_trait_object() {
+    let circle = Circle { radius: 4.0 };
+    let square = Square { side: 5.0 };
+
+    let shapes: Vec<&dyn Draw> = vec![&circle, &square];
+                                     // => &dyn Draw: borrowed trait object (2 pointers)
+                                     // => No heap allocation (compared to Box<dyn Draw>)
+                                     // => circle and square remain on stack
+                                     // => Lifetime: shapes cannot outlive circle/square
+
+    for shape in shapes {
+        shape.draw();                // => Still dynamic dispatch via vtable
+    }
+}
+
+// Trait object sizes and layout
+fn trait_object_size_demo() {
+    use std::mem::size_of;
+
+    // Concrete types have different sizes
+    println!("Circle size: {}", size_of::<Circle>());
+                                     // => Output: Circle size: 8 (one f64)
+    println!("Square size: {}", size_of::<Square>());
+                                     // => Output: Square size: 8 (one f64)
+
+    // Trait objects always same size (fat pointer)
+    println!("&dyn Draw size: {}", size_of::<&dyn Draw>());
+                                     // => Output: &dyn Draw size: 16 (data ptr + vtable ptr)
+    println!("Box<dyn Draw> size: {}", size_of::<Box<dyn Draw>>());
+                                     // => Output: Box<dyn Draw> size: 16 (same: two pointers)
+
+    // Regular references are thin (single pointer)
+    println!("&Circle size: {}", size_of::<&Circle>());
+                                     // => Output: &Circle size: 8 (just data pointer)
+}
+
+// Multiple trait objects (trait object for multiple traits)
+trait Drawable {
+    fn draw(&self);
+}
+
+trait Clickable {
+    fn click(&self);
+}
+
+struct Button {
+    label: String,
+}
+
+impl Drawable for Button {
+    fn draw(&self) {
+        println!("Drawing button: {}", self.label);
+    }
+}
+
+impl Clickable for Button {
+    fn click(&self) {
+        println!("Button clicked: {}", self.label);
+    }
+}
+
+fn use_multiple_traits() {
+    let button = Button {
+        label: String::from("Submit"),
+    };
+
+    // Can use as different trait objects
+    let drawable: &dyn Drawable = &button;
+    drawable.draw();                 // => Output: Drawing button: Submit
+
+    let clickable: &dyn Clickable = &button;
+    clickable.click();               // => Output: Button clicked: Submit
+
+    // Cannot combine into single trait object without trait bounds
+    // let both: &dyn (Drawable + Clickable) = &button; // => Syntax error
+    // Use trait composition instead (Drawable + Clickable bound)
+}
+
+// Performance implications
+fn performance_comparison() {
+    let shapes: Vec<Box<dyn Draw>> = vec![
+        Box::new(Circle { radius: 1.0 }),
+        Box::new(Square { side: 2.0 }),
+    ];
+
+    // Dynamic dispatch loop
+    for shape in &shapes {
+        shape.draw();                // => Vtable lookup each iteration
+                                     // => Cannot inline draw() implementation
+                                     // => Branch prediction harder (different types)
+    }
+
+    // Static dispatch alternative (when types known)
+    let circles: Vec<Circle> = vec![
+        Circle { radius: 1.0 },
+        Circle { radius: 2.0 },
+    ];
+
+    for circle in &circles {
+        circle.draw();               // => Direct call to Circle::draw
+                                     // => Compiler can inline (faster)
+                                     // => But all must be same type
+    }
 }
 ```
 
@@ -678,29 +2707,69 @@ Traits must be object-safe to be used as trait objects, requiring no generic met
 
 ```rust
 trait NotObjectSafe {
-    fn generic<T>(&self, x: T);      // => Generic method (not object-safe)
-    fn returns_self(&self) -> Self;  // => Returns Self (not object-safe)
+    fn generic<T>(&self, x: T);      // => Generic method: T unknown at runtime
+                                     // => NOT object-safe: vtable can't store all possible T
+                                     // => Would need infinite vtable entries!
+    fn returns_self(&self) -> Self;  // => Returns Self: size unknown for trait object
+                                     // => NOT object-safe: what size to return?
 }
 
 trait ObjectSafe {
-    fn method(&self) -> i32;         // => No generics, no Self return
+    fn method(&self) -> i32;         // => Method with &self: object-safe
+                                     // => No generics, known return size (i32)
+                                     // => Can store in vtable: fn(&Self) -> i32
 }
 
 struct MyType;
 
 impl ObjectSafe for MyType {
     fn method(&self) -> i32 {
-        42
+        42                           // => Simple implementation
     }
 }
 
 fn main() {
     let obj: Box<dyn ObjectSafe> = Box::new(MyType);
-                                     // => Valid trait object
-    println!("{}", obj.method());    // => Output: 42
+                                     // => Valid: ObjectSafe is object-safe
+                                     // => Boxed trait object: (data_ptr, vtable_ptr)
+    println!("{}", obj.method());    // => Dynamic dispatch via vtable
+                                     // => Output: 42
 
     // let bad: Box<dyn NotObjectSafe> = Box::new(MyType);
-                                     // => ERROR: trait not object-safe
+                                     // => ERROR: NotObjectSafe cannot be made into an object
+                                     // => Compiler prevents at compile time
+}
+
+// Using where Self: Sized to hide methods from trait object
+trait MixedSafety {
+    fn object_safe_method(&self);    // => In vtable (object-safe)
+
+    fn non_object_safe<T>(&self, x: T)
+    where
+        Self: Sized,                 // => Excluded from vtable!
+                                     // => Trait is still object-safe (method hidden)
+    {
+        // Implementation
+    }
+}
+
+struct Concrete;
+
+impl MixedSafety for Concrete {
+    fn object_safe_method(&self) {
+        println!("Object-safe");
+    }
+}
+
+fn use_mixed() {
+    let concrete = Concrete;
+    concrete.object_safe_method();   // => Works: Concrete is Sized
+    concrete.non_object_safe(42);    // => Works: Concrete is Sized
+
+    let obj: &dyn MixedSafety = &concrete;
+                                     // => OK: MixedSafety is object-safe
+    obj.object_safe_method();        // => Works: in vtable
+    // obj.non_object_safe(42);      // => ERROR: method not available on dyn
 }
 ```
 
@@ -717,20 +2786,70 @@ Specialization allows providing more specific implementations for generic traits
 trait Summarize {
     fn summarize(&self) -> String {
         String::from("(Default summary)")
+                                     // => Default implementation for all types
     }
 }
 
-// Default implementation for all types
-impl<T> Summarize for T {}
+// Default (generic) implementation
+impl<T> Summarize for T {}           // => Applies to ALL types T
+                                     // => Blanket impl: every type gets Summarize
 
-// Specialized implementation for String
-impl Summarize for String {
+// Specialized implementation (more specific)
+impl Summarize for String {          // => More specific than impl<T>
+                                     // => Specialization: overrides blanket impl for String
     fn summarize(&self) -> String {
-        format!("String: {}", self)
+        format!("String: {}", self)  // => Custom implementation for String
+                                     // => Takes precedence over default
     }
 }
 
-// Note: This feature is unstable and may change
+// Even more specialized (if i32 also had custom impl)
+// impl Summarize for i32 {
+//     fn summarize(&self) -> String {
+//         format!("Number: {}", self)
+//     }
+// }
+
+// Using specialization
+fn use_summarize() {
+    let s = String::from("hello");
+    println!("{}", s.summarize());   // => Calls String's specialized impl
+                                     // => Output: String: hello
+
+    let num = 42i32;
+    println!("{}", num.summarize()); // => Calls default impl (no i32 specialization)
+                                     // => Output: (Default summary)
+
+    let vec = vec![1, 2, 3];
+    println!("{}", vec.summarize()); // => Calls default impl (no Vec specialization)
+                                     // => Output: (Default summary)
+}
+
+// Why specialization is useful: avoiding code duplication
+trait Process {
+    fn process(&self);
+}
+
+// Default slow implementation
+impl<T> Process for T {
+    default fn process(&self) {      // => default keyword: can be specialized
+        println!("Slow processing"); // => Generic slow path
+    }
+}
+
+// Fast path for specific types
+impl Process for Vec<u8> {
+    fn process(&self) {
+        println!("Fast processing for Vec<u8>");
+                                     // => Optimized implementation for Vec<u8>
+                                     // => Uses SIMD, specialized algorithms, etc.
+    }
+}
+
+// Note: This feature is unstable (as of Rust 1.83)
+// - Soundness issues being worked on
+// - API may change before stabilization
+// - Use only with #![feature(specialization)] on nightly
 ```
 
 **Key Takeaway**: Specialization enables providing more specific trait implementations for particular types, reducing code duplication, but remains unstable and requires nightly Rust.
@@ -741,32 +2860,147 @@ impl Summarize for String {
 
 Const generics allow generic parameters over constant values like array sizes, enabling generic code over arrays without trait objects.
 
+```mermaid
+%% Const generics monomorphization at compile time
+graph TD
+    A[Generic Function: fn foo<T, const N: usize>] -->|Call with [i32; 3]| B[Monomorphize: foo::<i32, 3>]
+    A -->|Call with [i32; 5]| C[Monomorphize: foo::<i32, 5>]
+    A -->|Call with [String; 2]| D[Monomorphize: foo::<String, 2>]
+
+    B --> E[Specialized code for [i32; 3]]
+    C --> F[Specialized code for [i32; 5]]
+    D --> G[Specialized code for [String; 2]]
+
+    H[Compile-time constant N] -->|No runtime overhead| I[Zero-cost abstraction]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#000
+    style I fill:#029E73,color:#fff
+```
+
 ```rust
 fn print_array<T: std::fmt::Debug, const N: usize>(arr: [T; N]) {
-                                     // => Const generic parameter N
-    for item in arr.iter() {
-        println!("{:?}", item);
+                                     // => const N: generic over array SIZE
+                                     // => N is compile-time constant (not runtime value)
+                                     // => Function works for ANY array size
+    for item in arr.iter() {         // => Iterate over array elements
+        println!("{:?}", item);      // => Print each element (T must be Debug)
     }
 }
 
 fn main() {
-    let arr1 = [1, 2, 3];
-    let arr2 = [1, 2, 3, 4, 5];
+    let arr1 = [1, 2, 3];            // => [i32; 3] - array of 3 integers
+    let arr2 = [1, 2, 3, 4, 5];      // => [i32; 5] - array of 5 integers
 
-    print_array(arr1);               // => N = 3
-    print_array(arr2);               // => N = 5
+    print_array(arr1);               // => Compiler infers: T=i32, N=3
+                                     // => Monomorphizes to print_array::<i32, 3>
+    print_array(arr2);               // => Compiler infers: T=i32, N=5
+                                     // => Different monomorphization: print_array::<i32, 5>
+                                     // => Two separate functions in binary
 }
 
 // Generic struct with const parameter
 struct ArrayWrapper<T, const N: usize> {
-    data: [T; N],
+    data: [T; N],                    // => Array field with const generic size
+                                     // => Size known at compile time
 }
 
 impl<T, const N: usize> ArrayWrapper<T, N> {
+                                     // => Impl block also generic over N
     fn len(&self) -> usize {
-        N
+        N                            // => Return const N (compile-time constant)
+                                     // => No need to store length separately!
+    }
+
+    fn first(&self) -> Option<&T>
+    where
+        T: std::fmt::Debug,          // => Trait bound on T
+    {
+        if N > 0 {                   // => Const N can be used in conditionals
+            Some(&self.data[0])      // => Return first element if array non-empty
+        } else {
+            None                     // => Empty array (N=0)
+        }
     }
 }
+
+// Before const generics: needed trait-based abstraction
+// trait Array {
+//     type Item;
+//     fn len(&self) -> usize;
+// }
+//
+// impl<T> Array for [T; 3] { ... }  // => Separate impl for each size!
+// impl<T> Array for [T; 4] { ... }  // => Lots of boilerplate
+// impl<T> Array for [T; 5] { ... }
+
+// With const generics: single implementation for all sizes
+fn sum_array<const N: usize>(arr: [i32; N]) -> i32 {
+                                     // => Generic over array size N
+    let mut sum = 0;
+    for i in 0..N {                  // => Loop bounds known at compile time
+        sum += arr[i];               // => Compiler can optimize (unroll loop)
+    }
+    sum
+}
+
+fn test_sum() {
+    let small = [1, 2, 3];           // => N=3
+    let large = [1, 2, 3, 4, 5, 6, 7, 8];
+                                     // => N=8
+    println!("Sum small: {}", sum_array(small));
+                                     // => Output: Sum small: 6 (1+2+3)
+    println!("Sum large: {}", sum_array(large));
+                                     // => Output: Sum large: 36
+}
+
+// Const generic expressions (basic arithmetic)
+struct Matrix<T, const ROWS: usize, const COLS: usize> {
+    data: [[T; COLS]; ROWS],         // => 2D array: ROWS rows, COLS columns
+}
+
+impl<T, const ROWS: usize, const COLS: usize> Matrix<T, ROWS, COLS> {
+    fn dimensions(&self) -> (usize, usize) {
+        (ROWS, COLS)                 // => Return dimensions as tuple
+                                     // => Known at compile time
+    }
+}
+
+fn use_matrix() {
+    let mat: Matrix<i32, 3, 4> = Matrix {
+        data: [[0; 4]; 3],           // => 3x4 matrix (3 rows, 4 columns)
+    };
+    println!("Matrix dimensions: {:?}", mat.dimensions());
+                                     // => Output: Matrix dimensions: (3, 4)
+}
+
+// Const generics with default values
+struct Buffer<T, const SIZE: usize = 64> {
+                                     // => Default SIZE=64 if not specified
+    data: [T; SIZE],
+}
+
+fn use_default() {
+    let buf1: Buffer<u8> = Buffer {
+        data: [0; 64],               // => Uses default SIZE=64
+    };
+
+    let buf2: Buffer<u8, 128> = Buffer {
+        data: [0; 128],              // => Overrides default: SIZE=128
+    };
+}
+
+// Limitations: complex const expressions (experimental)
+// const fn double(n: usize) -> usize { n * 2 }
+// struct DoubleArray<T, const N: usize> {
+//     data: [T; double(N)],         // => Future feature: const fn in type position
+// }                                 // => Currently limited to const parameters and literals
 ```
 
 **Key Takeaway**: Const generics enable generic code over array sizes and other constant values, eliminating the need for trait-based abstractions over fixed-size arrays and enabling type-safe generic array operations.
@@ -778,27 +3012,56 @@ impl<T, const N: usize> ArrayWrapper<T, N> {
 Rust's abstractions compile to the same machine code as hand-written low-level code, with no runtime overhead for features like iterators and generics.
 
 ```rust
-// High-level iterator code
+// High-level iterator code using functional style
 fn sum_iterator(data: &[i32]) -> i32 {
-    data.iter().map(|x| x * 2).sum()
+    data.iter()                      // => Creates iterator over slice (no allocation)
+        .map(|x| x * 2)              // => Lazy transformation (not executed yet)
+        .sum()                       // => Consumes iterator, produces result
+                                     // => Entire chain optimized into single loop
 }
 
-// Equivalent low-level code
+// Equivalent low-level code with explicit loop
 fn sum_manual(data: &[i32]) -> i32 {
-    let mut sum = 0;
-    for i in 0..data.len() {
-        sum += data[i] * 2;
+    let mut sum = 0;                 // => Initialize accumulator at 0
+    for i in 0..data.len() {         // => Index-based iteration
+        sum += data[i] * 2;          // => Multiply by 2, accumulate
+                                     // => Step 1: sum=2, Step 2: sum=6, etc.
     }
-    sum
+    sum                              // => Return final sum
+}
+
+// Generic iterator example showing monomorphization
+fn process_iterator<I, F>(iter: I, f: F) -> i32
+where
+    I: Iterator<Item = i32>,         // => Trait bound on iterator type
+    F: Fn(i32) -> i32,               // => Function trait bound
+{
+    iter.map(f).sum()                // => Generic code specialized at compile-time
+                                     // => No dynamic dispatch overhead
 }
 
 fn main() {
-    let data = vec![1, 2, 3, 4, 5];
-    println!("{}", sum_iterator(&data));
-                                     // => Output: 30
-    println!("{}", sum_manual(&data));
-                                     // => Output: 30
-    // Both compile to nearly identical assembly code
+    let data = vec![1, 2, 3, 4, 5];  // => Heap-allocated vector: [1,2,3,4,5]
+
+    // Iterator version
+    let result1 = sum_iterator(&data);
+                                     // => Compiler optimizes to: 2+4+6+8+10 = 30
+    println!("Iterator: {}", result1);
+                                     // => Output: Iterator: 30
+
+    // Manual version
+    let result2 = sum_manual(&data); // => Explicit loop: same machine code
+    println!("Manual: {}", result2); // => Output: Manual: 30
+
+    // Generic version
+    let result3 = process_iterator(data.iter().copied(), |x| x * 2);
+                                     // => Monomorphized to concrete types
+                                     // => No runtime generics overhead
+    println!("Generic: {}", result3);// => Output: Generic: 30
+
+    // Assembly analysis shows all three compile to identical code
+    // => LLVM optimizer recognizes patterns, eliminates abstractions
+    // => Zero runtime cost for high-level code
 }
 ```
 
@@ -811,25 +3074,62 @@ fn main() {
 Inline hints guide the compiler's inlining decisions, important for hot paths where function call overhead matters.
 
 ```rust
+// Regular inline hint (compiler decides based on heuristics)
 #[inline]                            // => Hint to inline (not guaranteed)
-fn add(a: i32, b: i32) -> i32 {
-    a + b
+fn add(a: i32, b: i32) -> i32 {      // => Small function, good candidate
+    a + b                            // => Single operation: a + b
 }
 
+// Force inlining for hot paths
 #[inline(always)]                    // => Force inline in all cases
-fn multiply(a: i32, b: i32) -> i32 {
-    a * b
+fn multiply(a: i32, b: i32) -> i32 { // => Critical performance path
+    a * b                            // => Always expanded at call site
+                                     // => No function call overhead
 }
 
+// Prevent inlining for large functions
 #[inline(never)]                     // => Prevent inlining
 fn complex_operation(a: i32, b: i32) -> i32 {
-    // Expensive operation
-    a * a + b * b
+                                     // => Keep as separate function call
+    let x = a * a;                   // => x = a²
+    let y = b * b;                   // => y = b²
+    let result = x + y;              // => result = a² + b²
+    println!("Computing: {} + {} = {}", x, y, result);
+                                     // => Debug output preserved
+    result                           // => Return sum of squares
+}
+
+// Cross-crate inlining hint
+#[inline]                            // => Enables inlining across crates
+pub fn public_helper(n: i32) -> i32 {// => Must be pub for cross-crate
+    n * 2 + 1                        // => Code available to caller crate
 }
 
 fn main() {
-    let result = add(5, 3);          // => Likely inlined
-    println!("{}", result);          // => Output: 8
+    // Test inline hint
+    let result1 = add(5, 3);         // => Likely inlined: result1 = 8
+    println!("Add result: {}", result1);
+                                     // => Output: Add result: 8
+
+    // Test inline(always)
+    let result2 = multiply(4, 7);    // => Always inlined: result2 = 28
+    println!("Multiply result: {}", result2);
+                                     // => Output: Multiply result: 28
+
+    // Test inline(never)
+    let result3 = complex_operation(3, 4);
+                                     // => Function call preserved
+                                     // => Output: Computing: 9 + 16 = 25
+    println!("Complex result: {}", result3);
+                                     // => Output: Complex result: 25
+
+    // Hot loop demonstrating inline impact
+    let mut sum = 0;                 // => Initialize accumulator
+    for i in 0..1000 {               // => 1000 iterations
+        sum += multiply(i, 2);       // => multiply() inlined into loop body
+                                     // => No function call overhead
+    }
+    println!("Loop sum: {}", sum);   // => Output: Loop sum: 999000
 }
 ```
 
@@ -842,22 +3142,67 @@ fn main() {
 SIMD (Single Instruction Multiple Data) enables data parallelism at the CPU instruction level for performance-critical code.
 
 ```rust
-// Using portable SIMD (unstable feature)
+// Using portable SIMD (unstable feature, requires nightly)
 // #![feature(portable_simd)]
-use std::simd::f32x4;
+use std::simd::f32x4;                // => SIMD vector of 4 f32 values
 
+// SIMD vectorized addition
 fn simd_add(a: &[f32], b: &[f32]) -> Vec<f32> {
-    let mut result = Vec::new();
+    let mut result = Vec::new();     // => Initialize result vector
     for i in (0..a.len()).step_by(4) {
+                                     // => Process 4 elements at once
         let va = f32x4::from_slice(&a[i..]);
+                                     // => Load 4 floats into SIMD register
+                                     // => va = [a[i], a[i+1], a[i+2], a[i+3]]
         let vb = f32x4::from_slice(&b[i..]);
-        let sum = va + vb;           // => SIMD addition (4 at once)
+                                     // => Load 4 floats from b
+                                     // => vb = [b[i], b[i+1], b[i+2], b[i+3]]
+        let sum = va + vb;           // => SIMD addition (4 operations in 1 instruction)
+                                     // => sum = [va[0]+vb[0], va[1]+vb[1], ...]
+                                     // => ~4x faster than scalar addition
         result.extend_from_slice(&sum.to_array());
+                                     // => Convert SIMD result back to slice
+    }
+    result                           // => Return vectorized results
+}
+
+// Scalar comparison (non-SIMD)
+fn scalar_add(a: &[f32], b: &[f32]) -> Vec<f32> {
+    let mut result = Vec::new();     // => Initialize result
+    for i in 0..a.len() {            // => One element at a time
+        result.push(a[i] + b[i]);    // => Sequential addition
+                                     // => 1 instruction per element
     }
     result
 }
 
-// For stable Rust, use external crates like packed_simd
+fn main() {
+    // Example data (must be multiple of 4 for SIMD)
+    let a = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0];
+                                     // => 8 f32 values
+    let b = vec![0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5];
+                                     // => 8 f32 values
+
+    // SIMD version (4 elements per instruction)
+    let simd_result = simd_add(&a, &b);
+                                     // => 2 SIMD iterations (8/4 = 2)
+                                     // => Result: [1.5, 3.5, 5.5, 7.5, 9.5, 11.5, 13.5, 15.5]
+
+    // Scalar version (1 element per instruction)
+    let scalar_result = scalar_add(&a, &b);
+                                     // => 8 scalar iterations
+                                     // => Same result, slower execution
+
+    println!("SIMD result: {:?}", simd_result);
+                                     // => Output: SIMD result: [1.5, 3.5, 5.5, 7.5, 9.5, 11.5, 13.5, 15.5]
+    println!("Scalar result: {:?}", scalar_result);
+                                     // => Output: Scalar result: [1.5, 3.5, 5.5, 7.5, 9.5, 11.5, 13.5, 15.5]
+
+    // For stable Rust, use external crates:
+    // - packed_simd: Low-level SIMD operations
+    // - simdeez: Platform-agnostic SIMD
+    // - wide: Safe SIMD wrapper
+}
 ```
 
 **Key Takeaway**: SIMD operations process multiple data elements with single instructions for vectorized computation, with portable_simd providing safe abstractions over CPU-specific SIMD instructions (requires nightly).
@@ -868,32 +3213,107 @@ fn simd_add(a: &[f32], b: &[f32]) -> Vec<f32> {
 
 `#[repr]` attributes control memory layout for FFI compatibility, performance, or specific size requirements.
 
+```mermaid
+%% Memory layout comparison for different repr attributes
+graph TD
+    A[Rust Struct Fields: u8, u32, u16] -->|repr Rust default| B[Optimized Layout: 8 bytes]
+    A -->|repr C| C[C Layout: 12 bytes with padding]
+    A -->|repr packed| D[Packed Layout: 7 bytes no padding]
+    A -->|repr align 16| E[Aligned Layout: 16 bytes]
+
+    B --> F[u32 4B, u16 2B, u8 1B, pad 1B]
+    C --> G[u8 1B, pad 3B, u32 4B, u16 2B, pad 2B]
+    D --> H[u8 1B, u32 4B misaligned, u16 2B]
+    E --> I[Fields + padding to 16B boundary]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style C fill:#DE8F05,color:#000
+    style D fill:#CA9161,color:#000
+    style E fill:#CC78BC,color:#000
+    style F fill:#029E73,color:#fff
+    style G fill:#DE8F05,color:#000
+    style H fill:#CA9161,color:#000
+```
+
 ```rust
+use std::mem::{size_of, align_of};
+
+// Default Rust layout (compiler-optimized field ordering)
+struct DefaultStruct {
+    a: u8,                           // => 1 byte
+    b: u32,                          // => 4 bytes
+    c: u16,                          // => 2 bytes
+}                                    // => Compiler may reorder for optimal packing
+
+// C-compatible layout (fields in declaration order)
 #[repr(C)]                           // => C-compatible layout
 struct CStruct {
-    a: u8,
-    b: u32,
-    c: u16,
-}
+    a: u8,                           // => Offset 0: 1 byte
+                                     // => Padding: 3 bytes (align u32 to 4-byte boundary)
+    b: u32,                          // => Offset 4: 4 bytes (aligned to 4)
+    c: u16,                          // => Offset 8: 2 bytes
+                                     // => Padding: 2 bytes (struct aligned to 4)
+}                                    // => Total: 12 bytes (includes padding)
 
-#[repr(packed)]                      // => Remove padding (unsafe to borrow)
+// Packed layout (no padding, minimum size)
+#[repr(packed)]                      // => Remove all padding
 struct Packed {
-    a: u8,
-    b: u32,
-}
+    a: u8,                           // => Offset 0: 1 byte
+    b: u32,                          // => Offset 1: 4 bytes (misaligned!)
+}                                    // => Total: 5 bytes (no padding)
+                                     // => WARNING: Borrowing fields is unsafe
 
+// Force specific alignment (cache line optimization)
 #[repr(align(16))]                   // => Force 16-byte alignment
 struct Aligned {
-    data: [u8; 12],
-}
+    data: [u8; 12],                  // => 12 bytes of data
+}                                    // => Padded to 16 bytes for alignment
+
+// Combined repr attributes
+#[repr(C, align(32))]                // => C layout + 32-byte alignment
+struct CAligned {
+    value: u64,                      // => 8 bytes
+}                                    // => Padded to 32 bytes
 
 fn main() {
-    println!("CStruct size: {}", std::mem::size_of::<CStruct>());
-                                     // => Includes padding
-    println!("Packed size: {}", std::mem::size_of::<Packed>());
-                                     // => No padding (5 bytes)
-    println!("Aligned size: {}", std::mem::size_of::<Aligned>());
-                                     // => 16 bytes (padded to alignment)
+    // Default struct
+    println!("DefaultStruct - size: {}, align: {}",
+             size_of::<DefaultStruct>(), align_of::<DefaultStruct>());
+                                     // => Output: DefaultStruct - size: 8, align: 4
+                                     // => Compiler optimized field order
+
+    // C-compatible struct
+    println!("CStruct - size: {}, align: {}",
+             size_of::<CStruct>(), align_of::<CStruct>());
+                                     // => Output: CStruct - size: 12, align: 4
+                                     // => Includes 5 bytes of padding
+
+    // Packed struct
+    println!("Packed - size: {}, align: {}",
+             size_of::<Packed>(), align_of::<Packed>());
+                                     // => Output: Packed - size: 5, align: 1
+                                     // => No padding, minimal size
+
+    // Aligned struct
+    println!("Aligned - size: {}, align: {}",
+             size_of::<Aligned>(), align_of::<Aligned>());
+                                     // => Output: Aligned - size: 16, align: 16
+                                     // => Padded to meet alignment requirement
+
+    // C + aligned struct
+    println!("CAligned - size: {}, align: {}",
+             size_of::<CAligned>(), align_of::<CAligned>());
+                                     // => Output: CAligned - size: 32, align: 32
+                                     // => C layout with cache line alignment
+
+    // Demonstrate packed layout danger
+    let packed = Packed { a: 1, b: 42 };
+    // let b_ref = &packed.b;        // => ERROR: unaligned reference
+                                     // => Borrowing misaligned fields forbidden
+    let b_copy = packed.b;           // => OK: Copy value, not reference
+    println!("Packed value: {}", b_copy);
+                                     // => Output: Packed value: 42
 }
 ```
 
@@ -905,34 +3325,127 @@ fn main() {
 
 Rust automatically calls destructors (`Drop` trait) in reverse order of declaration, enabling RAII patterns for resource management.
 
+```mermaid
+%% Drop order and RAII resource cleanup
+sequenceDiagram
+    participant Scope
+    participant Resource_A
+    participant Resource_B
+    participant Resource_C
+
+    Scope->>Resource_A: Create first (let a = ...)
+    Scope->>Resource_B: Create second (let b = ...)
+    Scope->>Resource_C: Create third (let c = ...)
+
+    Note over Scope: Scope ends (block exit)
+
+    Scope->>Resource_C: Drop C first (reverse order)
+    Resource_C-->>Scope: Cleanup complete
+    Scope->>Resource_B: Drop B second
+    Resource_B-->>Scope: Cleanup complete
+    Scope->>Resource_A: Drop A last
+    Resource_A-->>Scope: Cleanup complete
+
+    Note over Scope,Resource_A: RAII: Resources freed automatically
+```
+
 ```rust
+use std::fs::File;
+use std::io::Write;
+
+// Custom resource with Drop implementation
 struct Resource {
     name: String,
+    id: u32,
+}
+
+impl Resource {
+    fn new(name: &str, id: u32) -> Self {
+        println!("Creating resource: {} (ID: {})", name, id);
+                                     // => Track resource creation
+        Resource {
+            name: name.to_string(), // => name stored as String
+            id,                      // => id stored as u32
+        }
+    }
 }
 
 impl Drop for Resource {
     fn drop(&mut self) {
-        println!("Dropping resource: {}", self.name);
+        println!("Dropping resource: {} (ID: {})", self.name, self.id);
+                                     // => Called automatically when out of scope
+                                     // => Reverse order of creation
+    }
+}
+
+// Nested struct demonstrating nested drop order
+struct Container {
+    resource: Resource,              // => Inner resource dropped first
+    name: String,
+}
+
+impl Drop for Container {
+    fn drop(&mut self) {
+        println!("Dropping container: {}", self.name);
+                                     // => Called before inner fields dropped
     }
 }
 
 fn main() {
-    let _r1 = Resource {
-        name: String::from("First"),
-    };
-    let _r2 = Resource {
-        name: String::from("Second"),
-    };
-    let _r3 = Resource {
-        name: String::from("Third"),
-    };
-    println!("End of scope");
+    println!("=== Simple Drop Order ===");
+    {
+        let _r1 = Resource::new("First", 1);
+                                     // => Output: Creating resource: First (ID: 1)
+        let _r2 = Resource::new("Second", 2);
+                                     // => Output: Creating resource: Second (ID: 2)
+        let _r3 = Resource::new("Third", 3);
+                                     // => Output: Creating resource: Third (ID: 3)
+        println!("All resources created");
+                                     // => Output: All resources created
+    }                                // => Scope ends here
+                                     // => Output: Dropping resource: Third (ID: 3)
+                                     // => Output: Dropping resource: Second (ID: 2)
+                                     // => Output: Dropping resource: First (ID: 1)
+
+    println!("\n=== Nested Drop Order ===");
+    {
+        let _container = Container {
+            resource: Resource::new("Inner", 10),
+                                     // => Output: Creating resource: Inner (ID: 10)
+            name: String::from("Outer"),
+        };
+        println!("Container created");
+                                     // => Output: Container created
+    }                                // => Scope ends
+                                     // => Output: Dropping container: Outer
+                                     // => Output: Dropping resource: Inner (ID: 10)
+                                     // => Container drops before its fields
+
+    println!("\n=== Manual Drop ===");
+    {
+        let r = Resource::new("Manual", 20);
+                                     // => Output: Creating resource: Manual (ID: 20)
+        println!("Before manual drop");
+                                     // => Output: Before manual drop
+        drop(r);                     // => Explicit drop call
+                                     // => Output: Dropping resource: Manual (ID: 20)
+        println!("After manual drop");
+                                     // => Output: After manual drop
+        // r is no longer accessible here
+    }
+
+    println!("\n=== RAII File Handling ===");
+    {
+        let mut file = File::create("/tmp/test.txt").unwrap();
+                                     // => File opened (resource acquired)
+        file.write_all(b"Hello").unwrap();
+                                     // => Write data to file
+        println!("File written");    // => Output: File written
+    }                                // => File automatically closed (Drop impl)
+                                     // => No explicit close() needed
+
+    println!("\nEnd of main");       // => Output: End of main
 }
-// => Output:
-// End of scope
-// Dropping resource: Third
-// Dropping resource: Second
-// Dropping resource: First
 ```
 
 **Key Takeaway**: Rust automatically calls destructors in reverse declaration order when values go out of scope, enabling RAII patterns for automatic resource cleanup without explicit cleanup code.
@@ -946,29 +3459,122 @@ fn main() {
 ```rust
 use std::marker::PhantomData;
 
-struct Wrapper<'a, T> {
-    data: *const T,                  // => Raw pointer (no ownership)
-    _marker: PhantomData<&'a T>,     // => Act as if we borrow T with lifetime 'a
+// Type-state pattern using PhantomData
+struct Locked;                       // => Zero-sized marker type
+struct Unlocked;                     // => Zero-sized marker type
+
+struct Door<State> {
+    id: u32,                         // => Actual data stored
+    _state: PhantomData<State>,      // => Zero-sized marker (no runtime cost)
+}                                    // => State only exists at compile-time
+
+impl Door<Locked> {
+    fn unlock(self) -> Door<Unlocked> {
+                                     // => Transition from Locked to Unlocked
+        println!("Unlocking door {}", self.id);
+                                     // => Output: Unlocking door N
+        Door {
+            id: self.id,             // => Transfer data
+            _state: PhantomData,     // => New state marker
+        }
+    }
 }
+
+impl Door<Unlocked> {
+    fn open(&self) {
+        println!("Opening door {}", self.id);
+                                     // => Only unlocked doors can open
+    }
+
+    fn lock(self) -> Door<Locked> {
+                                     // => Transition from Unlocked to Locked
+        println!("Locking door {}", self.id);
+        Door {
+            id: self.id,
+            _state: PhantomData,
+        }
+    }
+}
+
+// Lifetime variance with PhantomData
+struct Wrapper<'a, T> {
+    data: *const T,                  // => Raw pointer (no lifetime)
+    _marker: PhantomData<&'a T>,     // => Act as if we borrow T with lifetime 'a
+}                                    // => Compiler treats this as borrowing &'a T
 
 impl<'a, T> Wrapper<'a, T> {
     fn new(data: &'a T) -> Self {
         Wrapper {
-            data: data as *const T,
-            _marker: PhantomData,
-        }
+            data: data as *const T,  // => Convert reference to raw pointer
+            _marker: PhantomData,    // => Zero-sized, no storage cost
+        }                            // => Lifetime 'a tied to wrapper
     }
 
     fn get(&self) -> &'a T {
         unsafe { &*self.data }       // => Dereference raw pointer
+                                     // => Returns reference with original lifetime 'a
+    }
+}
+
+// Ownership variance with PhantomData
+struct OwningWrapper<T> {
+    data: *mut T,                    // => Raw pointer to heap
+    _marker: PhantomData<T>,         // => Act as if we own T
+}                                    // => Enables proper Drop behavior
+
+impl<T> OwningWrapper<T> {
+    fn new(value: T) -> Self {
+        let boxed = Box::new(value); // => Allocate on heap
+        let ptr = Box::into_raw(boxed);
+                                     // => Convert Box to raw pointer
+        OwningWrapper {
+            data: ptr,               // => Store raw pointer
+            _marker: PhantomData,    // => Claim ownership
+        }
+    }
+
+    fn get(&self) -> &T {
+        unsafe { &*self.data }       // => Safe: we own the data
+    }
+}
+
+impl<T> Drop for OwningWrapper<T> {
+    fn drop(&mut self) {
+        unsafe {
+            let _ = Box::from_raw(self.data);
+                                     // => Reconstruct Box to free memory
+                                     // => PhantomData ensures this is called
+        }
     }
 }
 
 fn main() {
-    let value = 42;
+    // Type-state pattern (compile-time state machine)
+    let door = Door::<Locked> {
+        id: 1,
+        _state: PhantomData,
+    };
+    // door.open();                  // => ERROR: Locked doors can't open
+    let door = door.unlock();        // => Transition to Unlocked state
+                                     // => Output: Unlocking door 1
+    door.open();                     // => OK: Door is unlocked
+                                     // => Output: Opening door 1
+
+    // Lifetime variance
+    let value = 42;                  // => value lives in this scope
     let wrapper = Wrapper::new(&value);
-    println!("{}", wrapper.get());   // => Output: 42
-}
+                                     // => wrapper borrows value with lifetime 'a
+    println!("Wrapped: {}", wrapper.get());
+                                     // => Output: Wrapped: 42
+    // wrapper.get() returns &'a i32, tied to value's lifetime
+
+    // Ownership variance
+    let owner = OwningWrapper::new(String::from("Hello"));
+                                     // => Heap-allocate String
+                                     // => PhantomData marks ownership
+    println!("Owned: {}", owner.get());
+                                     // => Output: Owned: Hello
+}                                    // => Drop called: memory freed safely
 ```
 
 **Key Takeaway**: `PhantomData` acts as if a type owns or uses type parameters without storing them, enabling correct lifetime variance and Send/Sync trait bounds for types using raw pointers or other unsafe constructs.
@@ -981,39 +3587,133 @@ Cargo features enable optional dependencies and conditional code compilation for
 
 ```toml
 # Cargo.toml
+[package]
+name = "mylib"
+version = "0.1.0"
+
 [features]
-default = ["feature1"]
-feature1 = []
-feature2 = ["dep:serde"]
-full = ["feature1", "feature2"]
+default = ["basic"]              # => Features enabled by default
+basic = []                       # => Feature with no dependencies
+advanced = ["dep:serde"]         # => Feature requires serde dependency
+logging = ["dep:log"]            # => Feature requires log dependency
+full = ["basic", "advanced", "logging"]
+                                 # => Composite feature (all features)
 
 [dependencies]
 serde = { version = "1.0", optional = true }
+                                 # => Only included if 'advanced' feature enabled
+log = { version = "0.4", optional = true }
+                                 # => Only included if 'logging' feature enabled
 ```
 
 ```rust
-#[cfg(feature = "feature1")]
-pub fn feature1_function() {
-    println!("Feature 1 enabled");
+// Conditional compilation based on features
+
+#[cfg(feature = "basic")]        // => Compiled only if basic feature enabled
+pub fn basic_function() {
+    println!("Basic feature enabled");
+                                 // => Output: Basic feature enabled
 }
 
-#[cfg(feature = "feature2")]
-pub fn feature2_function() {
-    println!("Feature 2 enabled");
+#[cfg(feature = "advanced")]     // => Compiled only if advanced feature enabled
+pub fn advanced_function() {
+    use serde::{Serialize, Deserialize};
+                                 // => serde available due to feature dependency
+    #[derive(Serialize, Deserialize)]
+    struct Data {
+        value: i32,
+    }
+    println!("Advanced feature with serde");
+                                 // => Output: Advanced feature with serde
 }
 
-#[cfg(all(feature = "feature1", feature = "feature2"))]
+#[cfg(feature = "logging")]      // => Compiled only if logging feature enabled
+pub fn log_function() {
+    log::info!("Logging is enabled");
+                                 // => log crate available
+}
+
+// Combine multiple feature conditions
+#[cfg(all(feature = "basic", feature = "advanced"))]
+                                 // => Requires both features
 pub fn combined_function() {
-    println!("Both features enabled");
+    println!("Both basic and advanced enabled");
+}
+
+#[cfg(any(feature = "logging", feature = "advanced"))]
+                                 // => Requires at least one feature
+pub fn either_function() {
+    println!("Logging or advanced enabled");
+}
+
+#[cfg(not(feature = "advanced"))]// => Compiled only if advanced NOT enabled
+pub fn fallback_function() {
+    println!("Advanced feature disabled");
+}
+
+// Platform-specific compilation
+#[cfg(target_os = "linux")]      // => Linux-specific code
+pub fn linux_only() {
+    println!("Running on Linux");
+}
+
+#[cfg(target_os = "windows")]    // => Windows-specific code
+pub fn windows_only() {
+    println!("Running on Windows");
+}
+
+#[cfg(debug_assertions)]         // => Debug build only
+pub fn debug_only() {
+    println!("Debug build");     // => Not in release builds
+}
+
+#[cfg(not(debug_assertions))]    // => Release build only
+pub fn release_only() {
+    println!("Release build");   // => Optimized code
 }
 
 fn main() {
-    #[cfg(feature = "feature1")]
-    feature1_function();
+    // Features enabled at compile-time determine which code is included
+    #[cfg(feature = "basic")]
+    basic_function();            // => Runs if basic feature enabled
+                                 // => Output: Basic feature enabled
 
-    #[cfg(feature = "feature2")]
-    feature2_function();
+    #[cfg(feature = "advanced")]
+    advanced_function();         // => Runs if advanced feature enabled
+
+    #[cfg(feature = "logging")]
+    log_function();              // => Runs if logging feature enabled
+
+    #[cfg(all(feature = "basic", feature = "advanced"))]
+    combined_function();         // => Runs if both features enabled
+
+    #[cfg(not(feature = "advanced"))]
+    fallback_function();         // => Runs if advanced disabled
+
+    // Platform detection
+    #[cfg(target_os = "linux")]
+    linux_only();                // => Linux-specific execution
+
+    #[cfg(target_os = "windows")]
+    windows_only();              // => Windows-specific execution
+
+    // Build type detection
+    #[cfg(debug_assertions)]
+    debug_only();                // => Debug build code
+
+    #[cfg(not(debug_assertions))]
+    release_only();              // => Release build code
 }
+
+// Usage examples:
+// cargo build                   => Uses default features (basic)
+// cargo build --features advanced
+//                               => Enables basic + advanced (includes serde)
+// cargo build --features full   => Enables all features
+// cargo build --no-default-features
+//                               => Disables all default features
+// cargo build --no-default-features --features advanced
+//                               => Only advanced feature
 ```
 
 **Key Takeaway**: Cargo features enable compile-time conditional compilation and optional dependencies, allowing libraries to provide flexible configurations and reduce binary size by excluding unused functionality.
@@ -1025,29 +3725,117 @@ fn main() {
 Profiling identifies performance bottlenecks, while benchmarking measures code performance with tools like Criterion.
 
 ```rust
-// Using Criterion for benchmarks (in benches/ directory)
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-
-fn fibonacci(n: u64) -> u64 {
+// Main code to benchmark (in src/lib.rs)
+pub fn fibonacci_recursive(n: u64) -> u64 {
     match n {
-        0 => 0,
-        1 => 1,
-        n => fibonacci(n - 1) + fibonacci(n - 2),
+        0 => 0,                      // => Base case: fib(0) = 0
+        1 => 1,                      // => Base case: fib(1) = 1
+        n => fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2),
+                                     // => Recursive: fib(n) = fib(n-1) + fib(n-2)
+                                     // => Exponential time complexity O(2^n)
     }
 }
 
-fn criterion_benchmark(c: &mut Criterion) {
-    c.bench_function("fib 20", |b| b.iter(|| fibonacci(black_box(20))));
+pub fn fibonacci_iterative(n: u64) -> u64 {
+    if n <= 1 {
+        return n;                    // => Early return for base cases
+    }
+    let mut a = 0;                   // => Previous value (fib(n-2))
+    let mut b = 1;                   // => Current value (fib(n-1))
+    for _ in 1..n {                  // => Iterate n-1 times
+        let temp = a + b;            // => Next fibonacci number
+        a = b;                       // => Shift: previous becomes current
+        b = temp;                    // => Shift: current becomes next
+    }
+    b                                // => Return final result
+                                     // => Linear time complexity O(n)
 }
 
-criterion_group!(benches, criterion_benchmark);
-criterion_main!(benches);
+pub fn sum_vector(data: &[i32]) -> i32 {
+    data.iter().sum()                // => Iterator-based sum
+                                     // => Zero-cost abstraction
+}
 
-// Run with: cargo bench
+// Criterion benchmark file (in benches/benchmark.rs)
+use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
 
-// For profiling:
-// cargo install flamegraph
-// cargo flamegraph --bin myapp
+// Import functions to benchmark
+use mylib::{fibonacci_recursive, fibonacci_iterative, sum_vector};
+
+fn fibonacci_benchmarks(c: &mut Criterion) {
+    let mut group = c.benchmark_group("fibonacci");
+                                     // => Create benchmark group
+
+    // Benchmark recursive implementation
+    group.bench_function("recursive", |b| {
+        b.iter(|| fibonacci_recursive(black_box(20)));
+                                     // => black_box prevents optimization
+                                     // => Measures actual execution
+    });
+
+    // Benchmark iterative implementation
+    group.bench_function("iterative", |b| {
+        b.iter(|| fibonacci_iterative(black_box(20)));
+                                     // => Compare against recursive
+                                     // => Should be much faster
+    });
+
+    group.finish();                  // => Complete benchmark group
+}
+
+fn sum_benchmarks(c: &mut Criterion) {
+    let data: Vec<i32> = (0..1000).collect();
+                                     // => Generate test data: [0,1,2,...,999]
+
+    // Parameterized benchmark (different input sizes)
+    for size in [100, 500, 1000].iter() {
+        c.bench_with_input(
+            BenchmarkId::new("sum_vector", size),
+                                     // => Benchmark ID with parameter
+            size,
+            |b, &size| {
+                let data: Vec<i32> = (0..size).collect();
+                                     // => Create data of specified size
+                b.iter(|| sum_vector(black_box(&data)));
+                                     // => Measure sum operation
+            },
+        );
+    }
+}
+
+criterion_group!(benches, fibonacci_benchmarks, sum_benchmarks);
+                                     // => Group benchmarks together
+criterion_main!(benches);            // => Generate main function
+
+// Run benchmarks with:
+// cargo bench                       => Runs all benchmarks
+                                     // => Output includes statistics:
+                                     // => - Mean execution time
+                                     // => - Standard deviation
+                                     // => - Throughput
+                                     // => - Comparison with previous runs
+
+// Profiling with flamegraph:
+// cargo install flamegraph          => Install profiling tool
+// cargo flamegraph --bin myapp      => Generate flame graph
+                                     // => Creates flamegraph.svg
+                                     // => Shows where time is spent
+
+// Profiling with perf (Linux):
+// cargo build --release             => Build optimized binary
+// perf record --call-graph dwarf ./target/release/myapp
+                                     // => Record performance data
+// perf report                       => View profiling results
+
+// Example benchmark output:
+// fibonacci/recursive    time:   [26.891 ms 26.934 ms 26.981 ms]
+                                     // => Mean: 26.934 ms
+// fibonacci/iterative    time:   [41.234 ns 41.389 ns 41.562 ns]
+                                     // => Mean: 41.389 ns (650x faster!)
+// sum_vector/100         time:   [142.31 ns 142.89 ns 143.51 ns]
+// sum_vector/500         time:   [714.52 ns 716.84 ns 719.43 ns]
+// sum_vector/1000        time:   [1.4289 µs 1.4334 µs 1.4385 µs]
+                                     // => Linear scaling with input size
 ```
 
 **Key Takeaway**: Use Criterion for statistically rigorous benchmarks with warmup and measurement phases, and flamegraph or perf for profiling to identify performance bottlenecks, always profiling release builds (`--release`).
