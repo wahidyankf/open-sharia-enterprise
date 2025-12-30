@@ -115,6 +115,8 @@ docker run --rm my-app:multi-stage whoami
 
 **Key Takeaway**: Multi-stage builds dramatically reduce image size by excluding build tools and source code from final images. Use `COPY --from=<stage>` to transfer only necessary artifacts between stages. Always run production containers as non-root users.
 
+**Why It Matters**: Multi-stage builds solve the critical trade-off between developer convenience (full toolchains for building) and production efficiency (minimal runtime footprints). A single Dockerfile can reduce image sizes from 450MB to 120MB (73% reduction), directly cutting storage costs, deployment times, and attack surface. Running as non-root prevents privilege escalation attacks that could compromise the entire host system if a container is breached.
+
 ---
 
 ### Example 29: Multi-Stage with Build Arguments
@@ -229,6 +231,8 @@ docker run --rm my-go-app:1.2.3 ldd /app/server
 ```
 
 **Key Takeaway**: Multi-stage builds excel with compiled languages (Go, Rust, C++). Build in a large image with compilers, copy the binary to a minimal runtime image. Embed version metadata using build arguments for traceability in production.
+
+**Why It Matters**: Compiled language images benefit most dramatically from multi-stage builds, shrinking from 350MB (with compiler toolchain) to 15MB (static binary only), achieving 96% size reduction. Version metadata embedded during build provides critical traceability for debugging production incidents, enabling teams to correlate deployed containers with specific source code commits. This pattern is fundamental for immutable infrastructure where artifact versioning ensures reproducible deployments.
 
 ---
 
@@ -393,6 +397,8 @@ docker run --rm fullstack-app which python
 
 **Key Takeaway**: Multi-stage builds can combine multiple languages/runtimes for complex build pipelines. Each stage uses the optimal base image for its task, then only artifacts are copied to the final stage. This approach keeps production images small and secure.
 
+**Why It Matters**: Modern applications often require multiple build toolchains (Node.js for frontend, Go for backend, Python for documentation), and multi-stage builds eliminate the need to cram all tools into a single bloated image. This pattern enables polyglot applications to build efficiently while maintaining small production images. The resulting images contain zero build tools, reducing security vulnerabilities from unused dependencies lurking in container filesystems.
+
 ---
 
 ### Example 31: Build-Time Secrets
@@ -496,6 +502,8 @@ docker history insecure-app --no-trunc | grep -i "npmrc"
 ```
 
 **Key Takeaway**: Always use `--mount=type=secret` with BuildKit for build-time secrets. Never COPY secrets directly or use ENV for sensitive values. Secrets mounted with `--mount=type=secret` are NOT persisted in image layers, preventing accidental leakage.
+
+**Why It Matters**: Secret leakage through image layers is a critical security vulnerability that has exposed countless API keys, database passwords, and credentials in public registries. BuildKit's secret mounts provide the ONLY secure way to use credentials during builds without leaving forensic traces in image history. Even deleted secrets remain in previous layers, recoverable by anyone with image access—a breach that could expose production infrastructure to attackers.
 
 ---
 
@@ -606,6 +614,8 @@ EOF
 ```
 
 **Key Takeaway**: Enable BuildKit and use `cache_from` to leverage remote image layers as cache. Build services in parallel with `--parallel` flag. Always use `.dockerignore` to exclude unnecessary files from build context. For maximum speed, use BuildKit cache mounts for package managers.
+
+**Why It Matters**: Build performance directly impacts developer productivity and deployment velocity—slow builds create bottlenecks that delay feature releases and bug fixes. BuildKit's advanced caching reduces typical CI/CD build times from 5-10 minutes to under 30 seconds by reusing previously built layers from registries. Parallel builds on multi-core systems multiply throughput, while cache mounts for npm/pip/cargo persist package downloads across builds, eliminating redundant network transfers that waste time and bandwidth.
 
 ---
 
@@ -788,6 +798,8 @@ docker compose ps
 
 **Key Takeaway**: Health checks enable true readiness-based startup orchestration. Use `depends_on` with `condition: service_healthy` to ensure dependencies are fully ready before starting dependent services. Implement comprehensive health endpoints that check all critical dependencies.
 
+**Why It Matters**: Health checks transform naive startup ordering (start database, then immediately start app) into intelligent orchestration that prevents cascading failures. Applications attempting database connections before databases finish initialization cause deployment failures that require manual intervention, creating operational toil. Comprehensive health checks that verify all dependencies enable automated zero-downtime deployments where traffic routes only to fully-ready containers, a requirement for modern continuous deployment pipelines.
+
 ---
 
 ### Example 34: Service Dependencies with Restart
@@ -937,6 +949,8 @@ docker compose ps
 
 **Key Takeaway**: Combine `restart` policies with `depends_on` health checks for automatic failure recovery. Use `restart: always` for critical infrastructure, `unless-stopped` for application services, and `on-failure:N` for batch jobs. Services automatically reconnect to dependencies after they recover.
 
+**Why It Matters**: Resilient systems must recover automatically from transient failures like network partitions, process crashes, or resource exhaustion without requiring manual intervention. The combination of health checks and restart policies creates self-healing infrastructure where database crashes don't cascade to permanent application failures. This pattern reduces mean-time-to-recovery (MTTR) from hours (manual intervention) to seconds (automatic restart), critical for maintaining high availability SLAs.
+
 ---
 
 ### Example 35: Resource Limits - CPU
@@ -1050,6 +1064,8 @@ docker rm -f encoder encoder-unlimited high-priority low-priority
 ```
 
 **Key Takeaway**: Use `--cpus` to set hard CPU limits preventing resource monopolization. Use `--cpu-shares` for relative CPU priority when containers compete. Reservations guarantee minimum CPU allocation in Swarm mode. Monitor with `docker stats` to verify limits are effective.
+
+**Why It Matters**: Without CPU limits, a single misbehaving container can monopolize all CPU cores, creating "noisy neighbor" problems that starve other containers and degrade entire-system performance. CPU limits enable predictable multi-tenant deployments where dozens of services share hardware without interference. Shares-based priority ensures critical services get proportionally more CPU during contention, implementing quality-of-service guarantees essential for SLA compliance.
 
 ---
 
@@ -1180,6 +1196,8 @@ docker rm -f mem-limited no-swap with-swap soft-limit
 ```
 
 **Key Takeaway**: Always set memory limits in production to prevent OOM kills affecting host stability. Set application-level limits (Node.js heap, Redis maxmemory) slightly below Docker limits for graceful handling. Use `--memory-swap` to control swap usage - disable it for performance-critical containers.
+
+**Why It Matters**: Unlimited memory containers risk triggering Linux OOM killer, which can randomly terminate critical system processes including Docker itself, causing catastrophic outages. Application-level limits enable graceful degradation (cache eviction, request rejection) instead of abrupt container termination that loses in-flight work. Memory limits also prevent runaway memory leaks from consuming all host RAM, protecting co-located services from cascading failures.
 
 ---
 
@@ -1320,6 +1338,8 @@ docker service inspect myapp_api --format='{{json .Spec.TaskTemplate.Resources}}
 ```
 
 **Key Takeaway**: Always set both CPU and memory limits in production for predictable performance. Configure application-level limits (database shared buffers, Node heap) to match Docker resource limits. Use reservations to guarantee baseline resources for critical services.
+
+**Why It Matters**: Combined resource limits create enforceable service boundaries that enable dense multi-tenant deployments where dozens of microservices run on commodity hardware with predictable performance. Misaligned limits (Docker says 2GB but app allocates 4GB) cause OOM kills and instability—alignment ensures graceful behavior. Resource reservations provide guaranteed capacity that orchestrators like Kubernetes use for intelligent scheduling, preventing oversubscription that degrades performance.
 
 ---
 
@@ -1507,6 +1527,8 @@ sudo systemctl restart docker
 
 **Key Takeaway**: Use `json-file` driver with rotation for local development. Use centralized logging drivers (syslog, fluentd, gelf, splunk, awslogs) in production for aggregation and analysis. Always configure log rotation to prevent disk space exhaustion. Remember that non-local drivers don't support `docker logs` command.
 
+**Why It Matters**: Without log rotation, containers writing verbose logs can fill host disks within hours, causing Docker daemon crashes and system-wide outages. Centralized logging drivers enable correlation of logs across dozens of microservices for debugging distributed transactions, impossible with local logs scattered across hosts. Log aggregation is foundational for observability in production where manual SSH-based log inspection doesn't scale beyond trivial deployments.
+
 ---
 
 ### Example 39: Structured Logging
@@ -1680,6 +1702,8 @@ docker logs api --since 24h > api-logs-$(date +%Y%m%d).json
 ```
 
 **Key Takeaway**: Always use structured (JSON) logging in production for powerful querying and analysis. Include contextual metadata (request_id, user_id, service name) in every log entry. Use log levels appropriately (error for failures, info for significant events, debug for troubleshooting).
+
+**Why It Matters**: Structured logging transforms logs from opaque text streams into queryable data, enabling analysis like "find all 500 errors for user X in service Y" in seconds instead of hours of grep. Contextual metadata like request IDs enables tracing requests across microservices, critical for debugging distributed systems where failures cascade through multiple services. Proper leveling prevents log flood from debug messages in production, which can fill disks and obscure critical errors.
 
 ---
 
@@ -1887,6 +1911,8 @@ docker exec elasticsearch curl -X PUT "localhost:9200/_snapshot/backup/snapshot_
 ```
 
 **Key Takeaway**: EFK stack provides production-grade log aggregation with powerful search and visualization. Fluentd collects logs from all containers, Elasticsearch stores and indexes them, Kibana provides real-time dashboards. Use index patterns and retention policies to manage log storage costs.
+
+**Why It Matters**: The EFK stack is the industry standard for centralized logging at scale, used by organizations managing thousands of containers across distributed infrastructure. Full-text search in Elasticsearch enables finding needles in haystacks—locating specific error patterns across billions of log lines in milliseconds. Real-time Kibana dashboards provide operational visibility into application health, error rates, and performance trends that would be impossible to extract from raw log files.
 
 ---
 

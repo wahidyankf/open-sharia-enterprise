@@ -10,7 +10,7 @@ tags:
   - education
   - code-first
 date: 2025-12-25T00:00:00+07:00
-lastmod: 2025-12-26T00:00:00+07:00
+lastmod: 2025-12-30T00:00:00+07:00
 draft: false
 weight: 2300
 ---
@@ -80,7 +80,7 @@ Examples prioritize:
 
 ## Example Structure
 
-Every example follows a **mandatory four-part format**:
+Every example follows a **mandatory five-part format**:
 
 ### Part 1: Brief Explanation (2-3 sentences)
 
@@ -167,6 +167,29 @@ fmt.Println(result)              // => Output: 20-transformed
 
 ```markdown
 **Key Takeaway**: Use `context.WithTimeout` for operations that must complete within a deadline, and always pass context as the first parameter to functions that perform I/O or long-running operations to enable cancellation.
+```
+
+### Part 5: Why It Matters (2-3 sentences, 50-100 words)
+
+**Purpose**: Connect the concept to production relevance and real-world impact
+
+**Must explain**:
+
+- Why professionals care about this in real systems (sentence 1: production relevance)
+- How it compares to alternatives or what problems it solves (sentence 2: comparative insight)
+- Consequences for quality/performance/safety/scalability (sentence 3: practical impact)
+
+**Quality guidelines**:
+
+- **Active voice**: Use concrete, active language
+- **Length**: 50-100 words (2-3 sentences)
+- **Contextual**: Specific to the concept, NOT generic statements
+- **Production-focused**: Reference real usage, companies, or measurable impacts
+
+**Example**:
+
+```markdown
+**Why It Matters**: Goroutines enable servers to handle 10,000+ concurrent connections on a single machine with minimal memory overhead (2KB stack per goroutine vs 1MB+ per thread in Java), making Go the language of choice for high-throughput network services like Kubernetes, Docker, and Prometheus. The channel-based communication model prevents race conditions that plague shared-memory concurrency, while select statements enable sophisticated timeout and cancellation patterns essential for production resilience.
 ```
 
 ## Self-Containment Rules
@@ -596,7 +619,7 @@ Before publishing by-example content, verify:
 
 ### Structure
 
-- [ ] Four-part format followed consistently
+- [ ] Five-part format followed consistently
 - [ ] Examples numbered sequentially
 - [ ] File naming convention followed
 - [ ] Frontmatter complete and accurate
@@ -685,6 +708,9 @@ This convention implements and respects:
 ### What This Convention Does NOT Cover
 
 - **General tutorial standards** - Covered in [Tutorials Convention](./ex-co__tutorials.md)
+- [ ] Why It Matters section present (2-3 sentences)
+- [ ] Why It Matters is production-focused (not generic)
+- [ ] Why It Matters is 50-100 words
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
 - **Hugo implementation** - Hextra specifics in [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md)
 - **Code quality** - Source code standards in development conventions

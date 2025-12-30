@@ -31,7 +31,7 @@ Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-
 - **Self-containment**: Copy-paste-runnable within chapter scope
 - **Annotations**: `// =>` or `# =>` notation for outputs and states
 - **Diagrams**: 30-50% of examples include Mermaid diagrams
-- **Four-part format**: Explanation, diagram (optional), code, key takeaway
+- **Five-part format**: Explanation, diagram (optional), code, key takeaway, why it matters
 
 ## Validation Process
 
@@ -71,7 +71,7 @@ TZ='Asia/Bangkok' date '+%Y-%m-%d--%H-%M'
 - Self-containment: Copy-paste-runnable within chapter
 - Annotations: // => notation present
 - Diagrams: 30-50% frequency
-- Four-part format: Complete
+- Five-part format: Complete
 
 ## Findings
 
@@ -316,16 +316,19 @@ grep -n "fill:green" *.md
 ### Step 7: Validate Four-Part Format
 
 **For sample examples**, verify structure:
+**For sample examples**, verify structure:
 
 1. **Brief explanation** (2-3 sentences)
 2. **Mermaid diagram** (optional, when appropriate)
 3. **Heavily annotated code**
 4. **Key takeaway** (1-2 sentences)
+5. **Why It Matters** (2-3 sentences, 50-100 words)
 
 **Pattern check**:
 
 ```bash
 # Check for "Key Takeaway" sections
+grep -c "^**Why It Matters**" beginner.md
 grep -c "^\*\*Key Takeaway\*\*" beginner.md
 ```
 
@@ -338,11 +341,14 @@ grep -c "^\*\*Key Takeaway\*\*" beginner.md
 
 **Format completeness**:
 
+- Why It Matters present: {count}/15
+
 - Brief explanation present: {count}/15
 - Code blocks present: {count}/15
 - Key takeaway present: {count}/15
 
-**Issues**:
+- Example {P}: Missing Why It Matters section
+  **Issues**:
 
 - Example {N}: Missing key takeaway
 - Example {M}: Explanation exceeds 3 sentences
@@ -516,7 +522,7 @@ Use three-tier confidence system:
 - ≥90% examples are self-contained
 - ≥80% significant lines have annotations
 - Diagram frequency within ±10% of targets
-- ≥90% examples follow four-part format
+- ≥90% examples follow five-part format
 
 **User review needed when**:
 

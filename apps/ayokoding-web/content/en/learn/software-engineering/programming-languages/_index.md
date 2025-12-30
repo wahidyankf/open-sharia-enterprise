@@ -45,3 +45,5 @@ draft: false
 - [Clojure](/en/learn/software-engineering/programming-languages/clojure)
   - [Overview](/en/learn/software-engineering/programming-languages/clojure/overview)
   - [Tutorials](/en/learn/software-engineering/programming-languages/clojure/tutorials)
+  - [Explanation](/en/learn/software-engineering/programming-languages/clojure/explanation)
+  - [Reference](/en/learn/software-engineering/programming-languages/clojure/reference)
