@@ -73,6 +73,6 @@ You've successfully installed Phoenix and created your first web application.
 
 ## 📚 What's Next?
 
-**Quick learner**: [Elixir Phoenix Quick Start](/en/learn/software-engineering/platforms/web/elixir-phoenix/quick-start)
+**Quick learner**: [Elixir Phoenix Quick Start](/en/learn/software-engineering/platforms/web/elixir-phoenix/tutorials/quick-start)
 
-**Code-first learner**: [Elixir Phoenix By Example](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example)
+**Code-first learner**: [Elixir Phoenix By Example](/en/learn/software-engineering/platforms/web/elixir-phoenix/tutorials/by-example)

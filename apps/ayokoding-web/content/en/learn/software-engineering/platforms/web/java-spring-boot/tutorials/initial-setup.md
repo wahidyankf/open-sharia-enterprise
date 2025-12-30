@@ -101,6 +101,6 @@ You've successfully created your first Spring Boot web application.
 
 ## 📚 What's Next?
 
-**Quick learner**: [Java Spring Boot Quick Start](/en/learn/software-engineering/platforms/web/java-spring-boot/quick-start)
+**Quick learner**: [Java Spring Boot Quick Start](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials/quick-start)
 
-**Code-first learner**: [Java Spring Boot By Example](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example)
+**Code-first learner**: [Java Spring Boot By Example](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials/by-example)

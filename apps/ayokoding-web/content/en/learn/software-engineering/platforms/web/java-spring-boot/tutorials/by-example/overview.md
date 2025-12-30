@@ -177,8 +177,8 @@ Mermaid diagrams appear when **visual representation clarifies request flows, be
 
 Jump into the beginner examples to start learning Spring Boot through code:
 
-- [Beginner Examples (1-25)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/beginner) - Dependency injection, REST controllers, Spring Data JPA, configuration, file handling, CORS
-- [Intermediate Examples (26-55)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/intermediate) - Security, testing, caching, async processing, WebSocket, API versioning, advanced patterns
-- [Advanced Examples (56-85)](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example/advanced) - Microservices, Kubernetes, event sourcing, CQRS, API Gateway, performance tuning, observability
+- [Beginner Examples (1-25)](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials/by-example/beginner) - Dependency injection, REST controllers, Spring Data JPA, configuration, file handling, CORS
+- [Intermediate Examples (26-55)](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials/by-example/intermediate) - Security, testing, caching, async processing, WebSocket, API versioning, advanced patterns
+- [Advanced Examples (56-85)](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials/by-example/advanced) - Microservices, Kubernetes, event sourcing, CQRS, API Gateway, performance tuning, observability
 
 Each example is self-contained and runnable as a Spring Boot application or test class. Start with Example 1, or jump to topics that interest you most.

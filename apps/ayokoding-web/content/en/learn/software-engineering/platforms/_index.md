@@ -6,6 +6,9 @@ draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/platforms/overview)
+- [Linux](/en/learn/software-engineering/platforms/linux)
+  - [Overview](/en/learn/software-engineering/platforms/linux/overview)
+  - [Shell](/en/learn/software-engineering/platforms/linux/shell)
 - [Web](/en/learn/software-engineering/platforms/web)
   - [Overview](/en/learn/software-engineering/platforms/web/overview)
   - [Elixir Phoenix](/en/learn/software-engineering/platforms/web/elixir-phoenix)
