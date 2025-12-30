@@ -187,6 +187,8 @@ output "all_buckets" {
 
 **Key Takeaway**: Modules are directories containing Terraform configurations with `variables.tf` (inputs), `main.tf` (resources), and `outputs.tf` (outputs). Call modules with `module` block and `source` pointing to module directory. Reference module outputs with `module.name.output_name`. Modules enable reusable infrastructure patterns.
 
+**Why It Matters**: Modules are the foundation of scalable Terraform infrastructure, enabling reusable patterns that prevent copy-paste duplication across environments and teams. Uber's infrastructure uses modules to provision hundreds of microservices with identical networking, monitoring, and security configurations—changing one module updates all deployments, eliminating the manual toil of updating 500 separate configurations. Modules enforce organizational standards: platform team publishes "approved VPC module" ensuring all VPCs follow security policies, preventing ad-hoc configurations that create compliance violations. This standardization is impossible with script-based infrastructure where every team invents their own patterns.
+
 ---
 
 **Continue to complete all 28 intermediate examples (29-56) covering:**

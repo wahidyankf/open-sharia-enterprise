@@ -5,7 +5,7 @@ tools: [Read, Edit, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
 created: 2025-12-15
-updated: 2025-12-27
+updated: 2025-12-30
 ---
 
 # ayokoding-web-by-example-fixer
@@ -247,6 +247,31 @@ y := x * 2                   // => y is 20 (x still 10)
 - Does diagram clarify or clutter?
 - Is this appropriate use of diagram budget (30-50%)?
 
+**5. Add missing "Why It Matters" sections** (verify production relevance):
+
+```markdown
+# BEFORE (no Why It Matters)
+
+**Key Takeaway**: Use buffered channels to prevent goroutine blocking when sender and receiver are not synchronized.
+
+### Example 13: Packages
+
+# AFTER (add Why It Matters based on code analysis)
+
+**Key Takeaway**: Use buffered channels to prevent goroutine blocking when sender and receiver are not synchronized.
+
+**Why It Matters**: Buffered channels enable asynchronous communication patterns essential for high-performance systems, allowing producers to continue work without waiting for consumers (up to buffer capacity). This pattern powers production systems like message queues and event processors, where blocking on every send would create cascading delays. The buffer size becomes a critical tuning parameter balancing memory usage against throughput.
+
+### Example 13: Packages
+```
+
+**Re-validation required**:
+
+- Is production relevance clear and specific?
+- Does it reference real-world usage or measurable impacts?
+- Is it 50-100 words (2-3 sentences)?
+- Is it contextual (not generic)?
+
 **4. Condense verbose explanations** (preserve meaning):
 
 ```markdown
@@ -462,7 +487,7 @@ fmt.Println(y)
 
 **Add annotations**:
 
-```markdown
+````markdown
 Edit:
 file*path: beginner.md
 old_string: |
@@ -473,7 +498,27 @@ new*string: |
 x := 10 // => x is 10 (type: int)
 y := x * 2 // => y is 20 (x still 10)
 fmt.Println(y) // => Output: 20
+
+**Add Why It Matters sections**:
+
+```markdown
+Edit:
+file_path: beginner.md
+old_string: |
+**Key Takeaway**: Always propagate errors with context using `fmt.Errorf` and the `%w` verb to enable error unwrapping and debugging.
+
+    ### Example 13: Packages
+
+new_string: |
+**Key Takeaway**: Always propagate errors with context using `fmt.Errorf` and the `%w` verb to enable error unwrapping and debugging.
+
+    **Why It Matters**: Error wrapping with `%w` enables error inspection using `errors.Is()` and `errors.As()`, which is critical for production error handling where you need to distinguish between retryable failures (network timeouts) and permanent failures (invalid input). This pattern is used throughout the Go standard library and enables sophisticated error handling strategies in distributed systems where errors propagate across service boundaries.
+
+    ### Example 13: Packages
 ```
+````
+
+````
 
 **Add key takeaways**:
 
@@ -495,7 +540,7 @@ new_string: |
     **Key Takeaway**: Always propagate errors with context using `fmt.Errorf` and the `%w` verb to enable error unwrapping and debugging.
 
     ### Example 13: Packages
-```
+````
 
 ### Step 7: Report FALSE POSITIVE Risks
 
@@ -555,6 +600,8 @@ new_string: |
 **UUID Chain Generation**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for complete UUID chain generation logic.
 
 **Backward Compatibility**: Fixer also handles 3-part old format (`agent__timestamp__type.md`) for legacy reports.
+
+- Example 45 (advanced.md): Context importance Why It Matters
 
 ```markdown
 # By-Example Tutorial Fixes Applied

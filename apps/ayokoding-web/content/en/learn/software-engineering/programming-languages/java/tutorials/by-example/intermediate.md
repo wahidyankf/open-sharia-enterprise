@@ -144,6 +144,8 @@ double f = temp.fahrenheit(); // => 212.0
 
 **Key Takeaway**: Encapsulation uses private fields with public getters/setters. Builder pattern enables fluent construction of complex objects. Records (Java 14+) automatically generate constructors, getters, `equals()`, `hashCode()`, and `toString()` for immutable data classes.
 
+**Why It Matters**: Encapsulation protects object invariants, preventing invalid states that cause bugs. Private fields with public accessors enable validation, logging, and computed properties without exposing internal representation. The JavaBean convention (getters/setters) integrates with frameworks like Spring and Hibernate that use reflection to access properties. Records (Java 14+) provide immutable data carriers with auto-generated accessors, eliminating boilerplate while maintaining encapsulation. Proper encapsulation enables refactoring internals without breaking clients, reduces coupling, and enforces business rules through controlled access.
+
 ---
 
 ### Example 17: HTTP Filter Chain Pattern
@@ -342,6 +344,8 @@ Response resp2 = chain.next(req2);
 
 **Key Takeaway**: Filter chains demonstrate composition and the Chain of Responsibility pattern. Each filter decides whether to continue the chain or return early. This pattern enables modular, testable middleware—add/remove filters without changing core logic. Production systems use this for authentication, rate limiting, logging, compression, and error handling. Filters compose through delegation, avoiding inheritance coupling.
 
+**Why It Matters**: The Filter Chain pattern enables composable middleware for request processing—authentication, logging, rate limiting, CORS handling. It's fundamental to servlet containers (Tomcat), web frameworks (Spring), and HTTP libraries. Filters decouple cross-cutting concerns from business logic, making code modular and reusable. Understanding the chain-of-responsibility pattern enables implementing custom filters for API gateways, reverse proxies, and web services. Filter chains enable consistent request handling across endpoints, improving security, observability, and maintainability in production web applications.
+
 ---
 
 ### Example 18: Generics Deep Dive
@@ -499,6 +503,8 @@ System.out.println(strList.getClass() == intList2.getClass()); // => true
 
 **Key Takeaway**: Generics provide compile-time type safety. Bounded types (`<T extends Type>`) constrain parameters. Wildcards enable flexible APIs: `<?>` (any type), `<? extends T>` (T or subtypes), `<? super T>` (T or supertypes). PECS: Producer Extends, Consumer Super. Type erasure removes generics at runtime.
 
+**Why It Matters**: Generics enable type-safe, reusable code without casting or runtime type checks. Understanding wildcards (? extends T for producers, ? super T for consumers) enables flexible APIs following the PECS principle. Bounded type parameters (T extends Comparable<T>) enable constrained generics for sorting and comparisons. Type erasure causes runtime type information loss—understanding this prevents confusion with reflection, overloading, and arrays. Proper generic design prevents ClassCastException, improves code maintainability, and enables powerful abstractions used throughout the Java ecosystem (Collections, Streams, Optional).
+
 ---
 
 ## Group 2: Collections Framework Advanced
@@ -630,6 +636,8 @@ Comparator<Person> complex = Comparator
 
 **Key Takeaway**: `Comparable<T>` defines natural ordering via `compareTo()`. `Comparator<T>` enables custom ordering via `compare()`. Use `Comparator.comparing()` with method references for concise comparators. Chain comparators with `thenComparing()`. `reversed()`, `nullsFirst()`, `nullsLast()` modify comparison behavior.
 
+**Why It Matters**: Comparators enable custom sorting logic—sort by name, by age, by multiple criteria. They're essential for ordered collections (TreeSet, TreeMap) and sorting APIs (Collections.sort, Arrays.sort, Stream.sorted). Understanding natural ordering (Comparable) vs external ordering (Comparator) determines where to place comparison logic. Comparator.comparing and method references reduce boilerplate while improving readability. Proper comparison logic handles nulls, prevents integer overflow, and maintains transitivity. Sorting is fundamental to data processing, reporting, and UI presentation in production systems.
+
 ---
 
 ### Example 20: Queue and Deque
@@ -738,6 +746,8 @@ int peek = stack.peek(); // => 2
 ```
 
 **Key Takeaway**: Queue provides FIFO with `offer()`, `poll()`, `peek()`. PriorityQueue orders elements automatically. Deque supports both ends: `addFirst()`, `addLast()`, `removeFirst()`, `removeLast()`. Use `ArrayDeque` as Stack instead of legacy `Stack` class. `LinkedList` implements both List and Deque.
+
+**Why It Matters**: Queues enable FIFO ordering for task queues, message buffers, breadth-first search. Deques provide double-ended operations—used as stacks (LIFO) or queues (FIFO). BlockingQueue implementations (ArrayBlockingQueue, LinkedBlockingQueue) enable producer-consumer patterns with built-in thread coordination. Understanding when to use which queue (LinkedList vs ArrayDeque vs PriorityQueue) impacts performance. Queues are foundational to asynchronous processing, work distribution, and event handling in concurrent systems. They enable decoupling producers from consumers, improving scalability and resilience.
 
 ---
 
@@ -887,6 +897,8 @@ Map<String, Integer> citySumAge = people.stream()
 
 **Key Takeaway**: `flatMap()` flattens nested structures into single stream. `Collectors.groupingBy()` groups by classifier. `Collectors.partitioningBy()` splits into true/false groups. `Collectors.joining()` concatenates strings. Primitive streams (`IntStream`, `LongStream`, `DoubleStream`) optimize numeric operations. `parallel()` enables multi-core processing. `peek()` debugs intermediate operations.
 
+**Why It Matters**: Advanced stream operations (flatMap, reduce, collect) enable complex data transformations declaratively. flatMap handles nested structures (lists of lists), reduce aggregates (sum, product, concatenation), and collectors build results (grouping, partitioning, joining). Understanding stateful operations (sorted, distinct) and their performance implications prevents bottlenecks. Stream pipelines eliminate boilerplate loops, reduce bugs, and improve readability. They're essential for data processing, reporting, and ETL pipelines. Mastering streams enables elegant solutions to otherwise complex data manipulation problems.
+
 ---
 
 ## Group 3: Functional Programming
@@ -1006,6 +1018,8 @@ System.out.println(between5And10.test(12)); // => false
 ```
 
 **Key Takeaway**: Lambdas `(params) -> expression` provide concise syntax for functional interfaces. Built-in interfaces: `Predicate<T>`, `Function<T,R>`, `Consumer<T>`, `Supplier<T>`, `BiFunction<T,U,R>`. Method references (`::`) simplify lambdas. Closures capture effectively final variables. Lambdas are more concise than anonymous inner classes.
+
+**Why It Matters**: Lambda expressions enable functional programming in Java—concise syntax for single-method implementations. They eliminate verbose anonymous classes, improving code readability. Understanding functional interfaces (Predicate, Function, Consumer, Supplier) enables effective library usage. Lambdas integrate with Streams, CompletableFuture, and event handling, making asynchronous and concurrent code more manageable. However, complex lambdas should use method references or named methods for clarity. Lambdas are foundational to modern Java development, enabling declarative programming patterns that reduce boilerplate and improve maintainability.
 
 ---
 
@@ -1165,6 +1179,8 @@ List<String> values = list.stream()
 
 **Key Takeaway**: `Optional<T>` explicitly handles potential absence. Create with `of()`, `ofNullable()`, `empty()`. Check with `isPresent()`, `isEmpty()`. Extract with `get()` (after checking), `orElse()`, `orElseGet()`, `orElseThrow()`. Transform with `map()`, `flatMap()`, `filter()`. Use for return types, NOT fields or parameters. Chaining avoids nested null checks.
 
+**Why It Matters**: Optional eliminates NullPointerException by forcing explicit absence handling. It provides a clear API (map, flatMap, orElse, orElseThrow) for null-safe transformations. Optional.ofNullable safely wraps possibly-null values from legacy APIs. However, Optional has overhead—use for method return types, not fields or parameters. Chaining Optional methods enables building null-safe pipelines without nested null checks. Optional improves code clarity by making absence explicit in type signatures, documenting intent, and preventing null-related production crashes that cost millions in losses annually.
+
 ---
 
 ### Example 24: Method References and Functional Composition
@@ -1297,6 +1313,8 @@ int result3 = addThenTimes2.apply(3, 4); // => (3 + 4) * 2 = 14
 
 **Key Takeaway**: Method references (`::`) simplify lambdas: static (`ClassName::method`), instance (`object::method`), arbitrary (`ClassName::method`), constructor (`ClassName::new`). Function composition: `andThen()` executes f then g, `compose()` executes g then f. Predicate composition: `and()`, `or()`, `negate()`. Consumer composition: `andThen()`. Build complex operations by chaining simple functions.
 
+**Why It Matters**: Method references provide syntactic sugar when lambdas just delegate to existing methods. They improve readability (String::toUpperCase vs s -> s.toUpperCase()) and integrate seamlessly with Streams and functional interfaces. Understanding the four types (static, instance, constructor, arbitrary object) enables appropriate usage. Method references shine in simple delegation but can obscure type information—balance conciseness with clarity. They're pervasive in modern Java codebases (Collections processing, Stream operations, event handlers), so recognizing and using them effectively is essential for idiomatic Java code.
+
 ---
 
 ## Group 4: I/O and File Handling
@@ -1425,6 +1443,8 @@ try (Stream<String> lines = Files.lines(path)) {
 
 **Key Takeaway**: NIO.2 provides modern file I/O. `Path` represents paths; `Paths.get()` creates them. `Files` offers static methods: `readString()`, `readAllLines()`, `writeString()`, `write()` for content. `exists()`, `isDirectory()`, `size()` for properties. `copy()`, `move()`, `delete()` for operations. `walk()` traverses directories. `try-with-resources` auto-closes resources.
 
+**Why It Matters**: NIO.2 (java.nio.file) provides modern file I/O APIs replacing legacy java.io.File with cleaner behavior and better error handling. Files class offers convenient methods for reading/writing entire files, walking directory trees, and watching for changes. Path objects handle filesystem paths correctly across platforms (Windows vs Unix). Understanding buffered vs direct I/O impacts performance—buffering reduces system calls. File operations integrated with Streams enable processing large files line-by-line without loading entire contents into memory, essential for logs and datasets exceeding available RAM.
+
 ---
 
 (Continue with remaining examples 26-35 to reach target length...)
@@ -1487,6 +1507,8 @@ try (InputStream is = new FileInputStream("data.txt");
 ```
 
 **Key Takeaway**: Byte streams (`InputStream`/`OutputStream`) for binary data. Character streams (`Reader`/`Writer`) for text. `BufferedReader`/`BufferedWriter` improve performance. `InputStreamReader`/`OutputStreamWriter` bridge byte and character streams. Always use `try-with-resources` for automatic closure.
+
+**Why It Matters**: Lambda expressions enable functional programming patterns, reducing boilerplate in event handlers, callbacks, and collection processing. They power modern Java APIs like Streams, CompletableFuture, and reactive frameworks. Understanding lambda syntax and effectively final requirements prevents compilation errors. Method references provide concise alternatives when lambdas just delegate to methods. Functional interfaces enable strategy pattern without verbose anonymous classes. Lambdas make concurrent and asynchronous code more readable, improving maintainability in complex systems.
 
 ---
 
@@ -1585,6 +1607,8 @@ System.out.println(t.getState()); // => RUNNABLE or TERMINATED (depends on timin
 
 **Key Takeaway**: Threads enable concurrency. `Runnable` defines tasks. `start()` creates new thread; `run()` executes in current thread. `Thread.sleep()` pauses execution. `join()` waits for completion. Daemon threads run in background. Thread states: NEW, RUNNABLE, BLOCKED, WAITING, TERMINATED.
 
+**Why It Matters**: Parallel streams exploit multi-core CPUs, scaling throughput for CPU-bound operations on large datasets. They automatically partition data, process chunks concurrently, and merge results—no manual thread management. However, parallel streams have overhead—only beneficial for substantial workloads (thousands of elements, heavy computation). Stateful operations (sorted, distinct) and shared mutable state cause correctness issues. Understanding when parallelization helps (CPU-bound) vs hurts (I/O-bound, small datasets) prevents performance regressions. Measure before parallelizing—premature parallelization causes bugs.
+
 ---
 
 ## Group 5: Date/Time and Testing
@@ -1632,6 +1656,8 @@ try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("person.s
 ```
 
 **Key Takeaway**: `Serializable` enables object persistence. `serialVersionUID` maintains version compatibility. `transient` excludes sensitive fields. JSON (via Gson/Jackson) is preferred for human-readable interchange.
+
+**Why It Matters**: Streams provide declarative data processing, separating what (filter, map, reduce) from how (parallelization, optimization). They eliminate boilerplate loops, reducing bugs from manual iteration logic. Lazy evaluation optimizes performance—intermediate operations don't execute until terminal operation triggers. Understanding stream lifecycle (create, intermediate, terminal) prevents accidental reuse. Parallel streams leverage multi-core CPUs transparently, scaling throughput. Streams integrate with Optional, enabling null-safe pipelines. Stream-based code is more concise, readable, and testable than imperative loops.
 
 ---
 
@@ -1683,6 +1709,8 @@ boolean after = birthday.isAfter(today); // => false
 
 **Key Takeaway**: `java.time` provides immutable, thread-safe classes. `LocalDate`/`LocalTime`/`LocalDateTime` for human-readable time. `Instant` for machine timestamps. `Period` for date-based duration. `Duration` for time-based duration. `DateTimeFormatter` for formatting.
 
+**Why It Matters**: Optional eliminates NullPointerException—the billion-dollar mistake. It forces explicit handling of absence, preventing silent null propagation that causes cryptic errors later. Optional.ofNullable safely wraps possibly-null values from legacy APIs. Chaining (map, flatMap) enables null-safe transformations without nested null checks. However, Optional has overhead—don't use for fields or method parameters (use null checks). It's designed for method return types signaling possible absence. Proper Optional usage improves code clarity and prevents null-related production crashes.
+
 ---
 
 ### Example 29: Regular Expressions
@@ -1730,6 +1758,8 @@ System.out.println(m.find()); // => true
 ```
 
 **Key Takeaway**: `Pattern` and `Matcher` enable regex matching. `find()` finds next match. `matches()` checks entire string. `group()` extracts matched text. String methods (`matches()`, `split()`, `replaceAll()`) provide convenience for simple patterns.
+
+**Why It Matters**: Method references provide syntactic sugar when lambdas just delegate to methods, improving readability. They integrate seamlessly with Stream operations (map, filter, forEach). Understanding the four types (static, instance, constructor, arbitrary object) enables appropriate usage. Method references reduce verbosity but can obscure type information—balance conciseness with clarity. They're pervasive in modern Java codebases, so recognizing them is essential. However, complex lambdas should remain explicit for clarity. Method references shine in simple delegation scenarios.
 
 ---
 
@@ -1809,6 +1839,8 @@ class CalculatorTest {
 
 **Key Takeaway**: `@Test` marks test methods. Assertions (`assertEquals`, `assertTrue`, `assertNotNull`, `assertThrows`) verify behavior. `@BeforeEach`/`@AfterEach` for per-test setup. `@BeforeAll`/`@AfterAll` for class-level setup. Test isolation ensures reliability.
 
+**Why It Matters**: Functional interfaces enable treating behavior as data—passing functions as arguments, returning functions. They power callback patterns, event handling, and strategy pattern implementations. SAM (Single Abstract Method) interfaces from pre-Java 8 code automatically work with lambdas. Understanding common functional interfaces (Predicate, Function, Consumer) enables effective library usage. Custom functional interfaces should use @FunctionalInterface annotation for compile-time validation. Functional programming patterns reduce coupling and improve testability through dependency injection of behavior.
+
 ---
 
 ### Example 31: Mockito for Testing
@@ -1869,6 +1901,8 @@ class UserServiceTest {
 ```
 
 **Key Takeaway**: Mockito creates mock dependencies. `@Mock` creates mocks. `@InjectMocks` injects mocks into tested class. `when().thenReturn()` stubs method behavior. `verify()` checks method was called with expected arguments.
+
+**Why It Matters**: Collectors transform Streams into concrete collections, aggregations, or custom data structures. They enable concise data processing—grouping, partitioning, aggregating—without manual loops. Downstream collectors compose operations (group then count, group then average). Understanding Collectors.toMap handle duplicates prevents runtime exceptions. Custom collectors enable domain-specific aggregations. Collectors are the bridge between declarative Stream processing and concrete results, making complex data transformations simple and readable.
 
 ---
 
@@ -2029,6 +2063,8 @@ Session s3 = sessionManager.getSession("alice"); // => null (invalidated)
 
 **Key Takeaway**: `ConcurrentHashMap` provides thread-safe operations without explicit locking. `computeIfAbsent()` atomically creates sessions (get-or-create pattern). `computeIfPresent()` atomically updates existing entries. This pattern scales better than `synchronized` for read-heavy workloads because `ConcurrentHashMap` uses lock striping. Use scheduled tasks for periodic cleanup of expired sessions. Production systems use this pattern for user sessions, caches, and connection pools.
 
+**Why It Matters**: Grouping and partitioning enable data aggregation—histogram generation, pivot tables, category-based analysis. They replace verbose imperative loops with declarative operations. Downstream collectors enable multi-level aggregation (group then average, partition then count). Partitioning is optimized for two-way splits (true/false predicates). These operations are essential for reporting, analytics, and data transformation pipelines. Understanding complex collectors enables elegant solutions to otherwise tedious data processing problems.
+
 ---
 
 ### Example 34: ExecutorService and Thread Pools
@@ -2073,6 +2109,8 @@ try {
 ```
 
 **Key Takeaway**: `ExecutorService` manages thread pools. `newFixedThreadPool()` creates fixed-size pool. `submit()` submits tasks, returns `Future`. `Callable` returns values. Always `shutdown()` and `awaitTermination()`.
+
+**Why It Matters**: Threads enable concurrency—handling multiple requests simultaneously, performing background tasks, improving responsiveness. However, threads are expensive (1MB stack space each), and manual thread management is error-prone (deadlocks, races, resource leaks). Extending Thread is inflexible (single inheritance)—prefer Runnable/Callable. Understanding thread lifecycle (new, runnable, blocked, terminated) prevents resource leaks. Modern Java prefers higher-level abstractions (ExecutorService, CompletableFuture) over raw threads. Threads are foundational to understanding Java's concurrency model.
 
 ---
 
@@ -2131,6 +2169,8 @@ all.join(); // Waits for both to complete
 ```
 
 **Key Takeaway**: `CompletableFuture` enables async programming. `supplyAsync()` starts async computation. `thenApply()` transforms, `thenAccept()` consumes. `exceptionally()` handles errors. `thenCombine()` combines futures. `allOf()`/`anyOf()` wait for multiple futures.
+
+**Why It Matters**: ExecutorService abstracts thread management, providing thread pools that reuse threads, reducing overhead. Fixed thread pools limit concurrency preventing resource exhaustion. Cached thread pools scale dynamically for I/O-bound tasks. Understanding executor shutdown (shutdown vs shutdownNow) prevents zombie threads. Executors enable decoupling task submission from execution policy—change from single-threaded to multi-threaded without modifying task code. Proper thread pool sizing (CPU-bound: cores, I/O-bound: cores \* blocking factor) optimizes throughput. Production systems use executors for all concurrent work.
 
 ---
 
@@ -2304,6 +2344,8 @@ Map<Integer, List<Integer>> lengthToChars = names.stream()
 
 **Key Takeaway**: Built-in collectors handle common aggregations: `toList()`, `toSet()`, `toMap()`, `joining()`, `groupingBy()`, `partitioningBy()`. Collectors compose with downstream collectors. Custom collectors use `Collector.of()` with supplier, accumulator, combiner, and finisher. Use `collectingAndThen()` to transform final result. `teeing()` applies two collectors simultaneously.
 
+**Why It Matters**: CompletableFuture enables non-blocking asynchronous programming with composable operations—chaining, combining, error handling. It prevents blocking threads while waiting for I/O (network, disk, external APIs), improving scalability. Understanding completion stages (thenApply, thenCompose, thenCombine) enables building async pipelines. Exception handling (exceptionally, handle) prevents silent failures. CompletableFuture powers modern reactive frameworks (Spring WebFlux) and async HTTP clients. It's essential for building responsive, scalable applications that efficiently utilize system resources.
+
 ---
 
 ### Example 37: Method References Deep Dive
@@ -2473,6 +2515,8 @@ names.forEach(printer); // => Prints each name
 
 **Key Takeaway**: Four method reference types: static (`ClassName::staticMethod`), instance on object (`object::method`), instance on arbitrary (`ClassName::method`), constructor (`ClassName::new`). Method references are shorthand for lambdas that only call one method. Use when lambda body is a single method call with matching parameters. Cannot use when lambda has additional logic or parameter transformation. Array constructors use `Type[]::new`.
 
+**Why It Matters**: Concurrent collections provide thread-safe operations without manual synchronization, preventing races and deadlocks. ConcurrentHashMap enables lock-free reads and fine-grained locking for writes, outperforming synchronized maps. CopyOnWriteArrayList optimizes for read-heavy workloads (cache, event listeners). Understanding when to use which collection (ConcurrentHashMap vs Collections.synchronizedMap) prevents performance bottlenecks. BlockingQueue enables producer-consumer patterns with built-in coordination. These collections are foundational to concurrent systems—caches, work queues, shared state.
+
 ---
 
 ### Example 38: Date and Time API (java.time)
@@ -2635,6 +2679,8 @@ System.out.println("Days until event: " + timeUntil.toDays()); // => Days remain
 ```
 
 **Key Takeaway**: Modern Date-Time API is immutable and thread-safe. `LocalDate` for dates, `LocalTime` for times, `LocalDateTime` for both (no timezone). `ZonedDateTime` includes timezone. `Instant` for Unix timestamps. `Period` for date-based durations (years/months/days), `Duration` for time-based (hours/minutes/seconds). All operations return new instances. Use `DateTimeFormatter` for formatting/parsing. `TemporalAdjusters` for complex date math. `ChronoUnit` for calculating differences.
+
+**Why It Matters**: Synchronization prevents race conditions—ensuring only one thread modifies shared state at a time. However, locks cause contention reducing throughput, and incorrect locking causes deadlocks. Understanding intrinsic locks (synchronized) vs explicit locks (ReentrantLock) enables appropriate locking strategies. Minimize critical sections to reduce contention. Prefer concurrent collections and atomic variables over manual synchronization—they're less error-prone. Synchronization is essential but tricky—modern Java provides higher-level constructs reducing the need for manual locking.
 
 ---
 
@@ -2822,6 +2868,8 @@ Pattern literalPattern = Pattern.compile(escaped); // => Matches literal string 
 ```
 
 **Key Takeaway**: `Pattern.compile()` compiles regex patterns. `Matcher` finds matches with `find()`, `matches()`, `replaceAll()`. Capturing groups `()` extract substrings (access with `group(n)` or named `group("name")`). Common quantifiers: `*` (0+), `+` (1+), `?` (0-1), `{n,m}` (n to m). Character classes: `\\d` (digit), `\\w` (word), `\\s` (space). Use `?` for reluctant matching. Lookahead `(?=)` and lookbehind `(?<=)` match positions. `Pattern.quote()` escapes special characters for literal matching.
+
+**Why It Matters**: Deadlocks occur when threads circularly wait for locks held by each other, halting progress. They're insidious—causing hangs in production without crashes. Prevention strategies (lock ordering, timeouts) are essential for concurrent systems. Understanding deadlock conditions (mutual exclusion, hold and wait, no preemption, circular wait) enables designing deadlock-free systems. Breaking any condition prevents deadlocks. Liveness issues (starvation, livelock) also cause subtle failures. Concurrent programming requires understanding these failure modes to build reliable systems.
 
 ---
 
@@ -3070,6 +3118,8 @@ void deleteDirectory(Path directory) throws IOException {
 ```
 
 **Key Takeaway**: NIO.2 uses `Path` (not `File`) for paths. `Files` class provides static methods for all operations. `Files.exists()`, `isDirectory()`, `isRegularFile()` check status. Reading: `readAllBytes()`, `readAllLines()`, `lines()` (stream), `readString()`. Writing: `write()`, `writeString()`. `copy()`, `move()`, `delete()` with options. `createDirectories()` creates all parents. `Files.walk()` traverses recursively. `Files.list()` lists directory. Attributes via `readAttributes()`. `WatchService` monitors changes. Always use try-with-resources for streams.
+
+**Why It Matters**: Files is the modern API for file operations, replacing legacy File class with cleaner, more correct behavior. It handles edge cases (symbolic links, permissions) correctly. Integration with Streams enables processing large files efficiently without loading entire contents into memory—essential for logs, datasets. Understanding IOException handling prevents resource leaks. Atomic file operations (move, delete) prevent partial writes during failures. Modern file handling is critical for reliable data processing in production systems.
 
 ---
 
@@ -3363,6 +3413,8 @@ service.useDatabase(); // => "Database connected"
 
 **Key Takeaway**: Built-in annotations: `@Override` (verify override), `@Deprecated` (mark obsolete), `@SuppressWarnings` (suppress warnings), `@FunctionalInterface` (enforce single abstract method). Custom annotations use `@interface`. `@Retention` controls lifecycle (SOURCE/CLASS/RUNTIME). `@Target` specifies where annotation applies. Access via reflection with `isAnnotationPresent()`, `getAnnotation()`. `@Repeatable` allows multiple instances. Type annotations (`@Target(TYPE_USE)`) annotate any type use. Annotations enable framework magic (testing, DI, validation).
 
+**Why It Matters**: Serialization converts objects to byte streams for storage or network transmission—essential for caching (Redis), messaging (Kafka), RPC. However, default serialization is fragile (breaks with class changes), slow, and has security risks (deserialization attacks). JSON serialization (Jackson, Gson) is more maintainable, human-readable, and cross-language compatible. Understanding serialVersionUID prevents deserialization failures. Avoid default serialization—prefer explicit serialization formats (JSON, Protocol Buffers) that version gracefully and integrate with non-Java systems.
+
 ---
 
 ### Example 42: Optional Deep Dive
@@ -3591,6 +3643,8 @@ Optional.ofNullable(getValue())
 ```
 
 **Key Takeaway**: Create with `of()` (non-null), `ofNullable()` (nullable), `empty()`. Get values: `orElse()` (default), `orElseGet()` (lazy supplier), `orElseThrow()` (exception). Transform: `map()` (unwrapped), `flatMap()` (nested Optionals). Filter: `filter()` (predicate). Conditionals: `ifPresent()`, `ifPresentOrElse()`. Combine: `or()` (alternative). Convert: `stream()`. Avoid: `get()` without check, `isPresent()`+`get()` pattern, Optional fields. Use in return types to make nullability explicit. Chain operations functionally instead of imperative null checks.
+
+**Why It Matters**: Network programming enables distributed systems—microservices, HTTP APIs, database connections, message queues. Understanding sockets, clients, servers is foundational to backend development. HTTP clients (HttpClient) abstract common patterns, but understanding underlying sockets prevents misuse. Blocking I/O limits scalability—NIO and async libraries (Netty) enable handling thousands of connections. Network failures are inevitable—timeout configuration, retry logic, and error handling are critical for resilience. Network programming is essential for building modern distributed applications.
 
 ---
 
@@ -3850,6 +3904,8 @@ String jsonStr = toJsonString(json); // => {"name":"Alice","age":30.0,"active":t
 ```
 
 **Key Takeaway**: Sealed classes/interfaces use `sealed` with `permits` clause to restrict subclasses. Permitted types must be `final` (no further extension), `sealed` (controlled extension), or `non-sealed` (open extension). Pattern matching switch with sealed types enables exhaustiveness checking (no `default` needed). Guards (`when` clauses) add conditions to patterns. Ideal for finite type hierarchies (shapes, results, ASTs). Compiler ensures all cases covered—adding new type causes compile errors in all switches. Must be in same package/module as sealed parent.
+
+**Why It Matters**: Annotations enable declarative programming—express intent without boilerplate. They power frameworks (Spring's @Autowired, JPA's @Entity, JUnit's @Test) enabling configuration as code. Understanding retention (source, class, runtime) determines annotation availability. Reflection enables processing annotations at runtime—driving dependency injection, validation, persistence. However, annotations can obscure behavior—balance conciseness with explicitness. Custom annotations enable domain-specific configurations. Annotations are fundamental to modern Java development—nearly all frameworks rely on them.
 
 ---
 
@@ -4113,6 +4169,8 @@ list2.add("Z"); // => Doesn't affect record (good)
 
 **Key Takeaway**: Records are immutable data classes with automatic constructor, accessors, `equals`, `hashCode`, `toString`. Compact constructor validates/normalizes without parameter list. Additional constructors must delegate to canonical. Override accessors for computed values. Use defensive copying for mutable components. Pattern matching deconstructs records. Combine with sealed types for exhaustive checking. Cannot extend classes or add instance fields. Ideal for DTOs, value objects, and domain models. Enforce immutability by using `List.copyOf()` for collections.
 
+**Why It Matters**: Reflection enables runtime introspection and manipulation—frameworks use it for dependency injection, ORM, serialization, testing. It breaks encapsulation intentionally—accessing private fields, invoking private methods. However, reflection is slow, fragile (breaks with refactoring), and bypasses compile-time safety. Use it sparingly—prefer interfaces and composition. Understanding reflection is essential for framework developers and debugging, but application code should avoid it. Most reflection use cases (DI, serialization) are better served by annotation processing or code generation.
+
 ---
 
 ### Example 45: Stream Performance and Parallelization
@@ -4373,3 +4431,5 @@ System.out.println("Average: " + stats.getAverage()); // => 500000.5
 ```
 
 **Key Takeaway**: Parallel streams use `parallelStream()` or `.parallel()`. Best for large datasets (10k+ elements) with CPU-intensive operations. Overhead makes parallel slower for small data or cheap operations. Use `Collectors` for thread-safe accumulation. Avoid shared mutable state in parallel lambdas. `forEachOrdered()` maintains order (slower than `forEach()`). Primitive streams (`IntStream`, `LongStream`, `DoubleStream`) avoid boxing overhead. Custom `ForkJoinPool` controls thread count. Always benchmark sequential vs parallel. Stream reuse not allowed. Prefer stateless operations (`map`, `filter`) over stateful (`sorted`, `distinct`) for parallelism.
+
+**Why It Matters**: Generics enable type-safe, reusable code—collections, algorithms, frameworks. Understanding wildcards (? extends, ? super) enables flexible APIs (PECS: Producer Extends, Consumer Super). Bounded type parameters enable constrained generics (T extends Comparable). Type erasure causes runtime type information loss—understanding this prevents confusion with reflection and overloading. Raw types break type safety—always use generics. Proper generics usage prevents ClassCastException, improves code readability, and enables powerful abstractions like Stream processing.
