@@ -1,0 +1,23 @@
+---
+title: "Tutorials"
+date: 2025-12-18T00:00:00+07:00
+draft: false
+weight: 100002
+description: Step-by-step learning path from installation to expert Kotlin mastery
+type: docs
+layout: list
+---
+
+- [Overview](/en/learn/software-engineering/programming-languages/kotlin/tutorials/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-languages/kotlin/tutorials/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-languages/kotlin/tutorials/quick-start)
+- [By Example](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example)
+  - [Overview](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/advanced)
+- [By Concept](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-concept)
+  - [Advanced](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-concept/advanced)
+  - [Beginner](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-concept/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-concept/intermediate)
+  - [Overview](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-concept/overview)
