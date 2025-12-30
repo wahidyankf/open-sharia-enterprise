@@ -4,6 +4,7 @@ weight: 10000003
 date: 2025-12-30T01:00:00+07:00
 draft: false
 description: "Examples 55-80: Metaclasses, asyncio, protocols, optimization, testing patterns (75-95% coverage)"
+tags: ["python", "tutorial", "by-example", "advanced", "expert"]
 ---
 
 This section covers advanced Python techniques from examples 55-80, achieving 75-95% topic coverage.

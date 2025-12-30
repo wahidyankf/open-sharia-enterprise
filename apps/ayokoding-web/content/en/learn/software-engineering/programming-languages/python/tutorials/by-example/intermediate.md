@@ -4,6 +4,7 @@ weight: 10000002
 date: 2025-12-30T01:00:00+07:00
 draft: false
 description: "Examples 28-54: Decorators, generators, context managers, testing (40-75% coverage)"
+tags: ["python", "tutorial", "by-example", "intermediate", "production"]
 ---
 
 This section covers production Python patterns from examples 28-54, achieving 40-75% topic coverage.
