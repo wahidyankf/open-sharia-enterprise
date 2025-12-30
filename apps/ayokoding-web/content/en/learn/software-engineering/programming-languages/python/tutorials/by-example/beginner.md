@@ -111,6 +111,31 @@ print(abs(z))                     # => Output: 5.0 (magnitude: √(3²+4²))
 
 Strings in Python are immutable sequences of Unicode characters with rich methods for manipulation, formatting, and searching.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Original String<br/>text = '  Python  '"] --> B["text.strip()"]
+    A --> C["text.upper()"]
+    A --> D["text.replace('P', 'J')"]
+
+    B --> E["Returns NEW String<br/>'Python'"]
+    C --> F["Returns NEW String<br/>'  PYTHON  '"]
+    D --> G["Returns NEW String<br/>'  Jython  '"]
+
+    E -.-> H["Original UNCHANGED<br/>text still '  Python  '"]
+    F -.-> H
+    G -.-> H
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+```
+
 ```python
 # String creation (single or double quotes)
 name = "Alice"                    # => name is "Alice" (type: str)
@@ -236,6 +261,32 @@ print(bool("text"))               # => Output: True (non-empty strings truthy)
 ### Example 6: Conditional Statements (if/elif/else)
 
 Python uses indentation-based blocks for conditionals with `if`, `elif` (else-if), and `else` keywords. No parentheses required around conditions.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Start: temperature = 15"] --> B{"if temperature > 30?"}
+    B -->|False| C{"elif temperature > 20?"}
+    B -->|True| D["status = 'Hot'"]
+    C -->|False| E{"elif temperature > 10?"}
+    C -->|True| F["status = 'Warm'"]
+    E -->|True| G["status = 'Cool'"]
+    E -->|False| H["status = 'Cold'"]
+    D --> I["Output: status"]
+    F --> I
+    G --> I
+    H --> I
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style E fill:#DE8F05,color:#000
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CA9161,color:#fff
+    style I fill:#CC78BC,color:#fff
+```
 
 ```python
 # Basic if statement
@@ -426,6 +477,43 @@ for i in range(3):                # => Outer loop: 0, 1, 2
 ### Example 9: Lists - Creation and Access
 
 Lists are mutable, ordered sequences that can contain mixed types, support indexing (including negative indices), and slicing.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    subgraph "List: [1, 2, 3, 4, 5]"
+        N0["Index: 0<br/>Value: 1"]
+        N1["Index: 1<br/>Value: 2"]
+        N2["Index: 2<br/>Value: 3"]
+        N3["Index: 3<br/>Value: 4"]
+        N4["Index: 4<br/>Value: 5"]
+    end
+
+    subgraph "Negative Indexing"
+        M5["Index: -5<br/>Value: 1"]
+        M4["Index: -4<br/>Value: 2"]
+        M3["Index: -3<br/>Value: 3"]
+        M2["Index: -2<br/>Value: 4"]
+        M1["Index: -1<br/>Value: 5"]
+    end
+
+    N0 -.Same.-> M5
+    N1 -.Same.-> M4
+    N2 -.Same.-> M3
+    N3 -.Same.-> M2
+    N4 -.Same.-> M1
+
+    style N0 fill:#0173B2,color:#fff
+    style N1 fill:#0173B2,color:#fff
+    style N2 fill:#0173B2,color:#fff
+    style N3 fill:#0173B2,color:#fff
+    style N4 fill:#0173B2,color:#fff
+    style M5 fill:#DE8F05,color:#000
+    style M4 fill:#DE8F05,color:#000
+    style M3 fill:#DE8F05,color:#000
+    style M2 fill:#DE8F05,color:#000
+    style M1 fill:#DE8F05,color:#000
+```
 
 ```python
 # List creation

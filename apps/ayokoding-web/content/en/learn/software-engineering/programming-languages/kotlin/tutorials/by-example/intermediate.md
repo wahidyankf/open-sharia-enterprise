@@ -1,167 +1,208 @@
 ---
 title: "Intermediate"
 weight: 10000002
-date: 2025-12-30T02:00:00+07:00
+date: 2025-12-30T19:17:27+07:00
 draft: false
-description: "Examples 28-54: Coroutines, collections, delegates, DSL (40-75% coverage)"
+description: "Examples 28-54: Coroutines, collection operations, delegates, extension functions, inline functions, operator overloading, DSL building, sealed classes, data classes advanced features, destructuring (40-75% coverage)"
+tags: ["kotlin", "tutorial", "by-example", "intermediate", "coroutines", "collections", "delegates", "dsl"]
 ---
 
 This section covers production Kotlin patterns from examples 28-54, achieving 40-75% topic coverage.
 
-## Example 28: Basic Coroutines
+## Example 28: Basic Coroutines - Launch and RunBlocking
 
-Coroutines enable asynchronous programming with sequential-looking code.
+Coroutines enable asynchronous programming without blocking threads. `runBlocking` creates a coroutine scope that blocks the current thread until all child coroutines complete. `launch` starts a fire-and-forget coroutine that runs concurrently.
 
 ```mermaid
 %% Coroutine execution flow showing suspension without blocking
 sequenceDiagram
     participant Main as Main Thread
-    participant Coroutine as Coroutine
+    participant Scope as runBlocking Scope
+    participant Coroutine as launch Coroutine
     participant Delay as Delay Scheduler
 
-    Main->>Coroutine: runBlocking { }
+    Main->>Scope: runBlocking { }
+    activate Scope
+    Scope->>Coroutine: launch { }
     activate Coroutine
-    Coroutine->>Coroutine: println("Fetching...")
+    Coroutine->>Coroutine: println("Starting...")
     Coroutine->>Delay: delay(1000)
-    Note over Coroutine: Suspended (thread free)
+    Note over Coroutine: Suspended<br/>(thread free for other work)
     Delay-->>Coroutine: Resume after 1s
-    Coroutine->>Coroutine: Return user data
-    Coroutine->>Main: Complete
+    Coroutine->>Coroutine: println("Done")
     deactivate Coroutine
+    Scope->>Main: All coroutines complete
+    deactivate Scope
 
     style Main fill:#0173B2,color:#fff
-    style Coroutine fill:#DE8F05,color:#000
-    style Delay fill:#029E73,color:#fff
+    style Scope fill:#DE8F05,color:#000
+    style Coroutine fill:#029E73,color:#fff
+    style Delay fill:#CC78BC,color:#000
 ```
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {                   // => Creates coroutine scope, blocks main thread
+    println("Main starts")                   // => Output: Main starts
+
+    // Launch fire-and-forget coroutine
+    launch {                                 // => Returns Job, runs concurrently
+        println("Coroutine starts")          // => Output: Coroutine starts
+        delay(1000)                          // => Suspends coroutine for 1s (doesn't block thread)
+        println("Coroutine ends")            // => Output: Coroutine ends (after 1s)
+    }                                        // => Coroutine is now running concurrently
+
+    println("Main continues")                // => Output: Main continues (immediately)
+    delay(1500)                              // => Wait for coroutine to complete
+    println("Main ends")                     // => Output: Main ends (after 1.5s total)
+}
+// => Total execution time: ~1.5 seconds
+// => Order: Main starts, Coroutine starts, Main continues, Coroutine ends, Main ends
+```
+
+**Key Takeaway**: Use `runBlocking` for bridging blocking and coroutine code, `launch` for fire-and-forget concurrent tasks, and `delay` for non-blocking suspension.
+
+---
+
+## Example 29: Async and Await for Returning Results
+
+`async` creates a coroutine that returns a `Deferred<T>` result. `await()` suspends until the result is ready. Use `async` for parallel computations that return values.
 
 ```kotlin
 import kotlinx.coroutines.*
 
 suspend fun fetchUserData(userId: Int): String {
-    delay(1000)                              // => Suspends without blocking thread
+    delay(1000)                              // => Simulate network delay
     return "User data for $userId"           // => Return after delay
 }
 
-fun main() = runBlocking {                   // => Creates coroutine scope
-    println("Fetching data...")
-    val data = fetchUserData(1)              // => Suspends here
-    println(data)                            // => User data for 1
+suspend fun fetchUserPosts(userId: Int): List<String> {
+    delay(800)                               // => Simulate network delay
+    return listOf("Post 1", "Post 2")        // => Return posts
 }
-// => Total time: ~1 second (not 0 + 1 seconds)
-```
-
-**Key Takeaway**: Coroutines use suspend functions for non-blocking asynchronous operations with linear code flow.
-
-## Example 29: Launch and Async
-
-Launch starts fire-and-forget coroutines; async returns Deferred for result retrieval.
-
-```kotlin
-import kotlinx.coroutines.*
 
 fun main() = runBlocking {
-    // launch (fire-and-forget)
-    val job = launch {                       // => Returns Job
-        delay(1000)
-        println("Task completed")
-    }
-    job.join()                               // => Wait for completion
+    // Sequential execution (slow)
+    val startSeq = System.currentTimeMillis()
+    val userData = fetchUserData(1)          // => Waits 1000ms
+    val userPosts = fetchUserPosts(1)        // => Then waits 800ms
+    val timeSeq = System.currentTimeMillis() - startSeq
+    println("Sequential: $timeSeq ms")       // => Output: Sequential: ~1800 ms
 
-    // async (returns result)
-    val deferred = async {                   // => Returns Deferred<T>
-        delay(500)
-        "Result value"                       // => Compute result
-    }
-    val result = deferred.await()            // => Wait and get result
-    println(result)                          // => Result value
+    // Concurrent execution with async (fast)
+    val startAsync = System.currentTimeMillis()
+    val userDataDeferred = async { fetchUserData(2) }
+                                             // => Starts immediately, returns Deferred
+    val userPostsDeferred = async { fetchUserPosts(2) }
+                                             // => Starts concurrently, returns Deferred
+
+    val data = userDataDeferred.await()      // => Suspends until result ready (~1000ms)
+    val posts = userPostsDeferred.await()    // => Already complete (~800ms), returns immediately
+    val timeAsync = System.currentTimeMillis() - startAsync
+    println("Async: $timeAsync ms")          // => Output: Async: ~1000 ms (concurrent)
+
+    println("Data: $data")                   // => Output: Data: User data for 2
+    println("Posts: $posts")                 // => Output: Posts: [Post 1, Post 2]
 }
+// => Sequential takes ~1800ms, async takes ~1000ms (max of both operations)
 ```
 
-**Key Takeaway**: Use launch for side effects, async for computations that return results.
+**Key Takeaway**: Use `async` for concurrent computations that return results; `await()` retrieves the result while suspending the coroutine.
 
-## Example 30: Concurrent Coroutines
+---
 
-Multiple coroutines run concurrently, not sequentially.
+## Example 30: Structured Concurrency with CoroutineScope
+
+Structured concurrency ensures child coroutines are cancelled when the parent scope is cancelled, preventing coroutine leaks. `coroutineScope` creates a child scope that waits for all children to complete.
 
 ```mermaid
-%% Concurrent execution timeline showing parallel task execution
+%% Structured concurrency hierarchy and cancellation propagation
 graph TD
-    Start[Start Execution] --> A[async Task A]
-    Start --> B[async Task B]
-    Start --> C[async Task C]
+    Parent[Parent CoroutineScope] --> Child1[async Task 1]
+    Parent --> Child2[async Task 2]
+    Parent --> Child3[launch Task 3]
 
-    A --> A_Delay[delay 1000ms]
-    B --> B_Delay[delay 1000ms]
-    C --> C_Delay[delay 1000ms]
+    Child1 --> Complete1[Complete after 1s]
+    Child2 --> Complete2[Complete after 500ms]
+    Child3 --> Complete3[Complete after 800ms]
 
-    A_Delay --> A_Done[Complete A]
-    B_Delay --> B_Done[Complete B]
-    C_Delay --> C_Done[Complete C]
+    Cancel[scope.cancel] -.->|Propagates| CancelParent[Cancel Parent]
+    CancelParent -.->|Auto-cancels| CancelChild1[Cancel Task 1]
+    CancelParent -.->|Auto-cancels| CancelChild2[Cancel Task 2]
+    CancelParent -.->|Auto-cancels| CancelChild3[Cancel Task 3]
 
-    A_Done --> Wait[await All]
-    B_Done --> Wait
-    C_Done --> Wait
-
-    Wait --> Result[Total: ~1000ms]
-
-    style Start fill:#0173B2,color:#fff
-    style A fill:#DE8F05,color:#000
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style Result fill:#029E73,color:#fff
+    style Parent fill:#0173B2,color:#fff
+    style Child1 fill:#DE8F05,color:#000
+    style Child2 fill:#DE8F05,color:#000
+    style Child3 fill:#DE8F05,color:#000
+    style Cancel fill:#CC78BC,color:#000
+    style CancelParent fill:#CA9161,color:#000
 ```
 
 ```kotlin
 import kotlinx.coroutines.*
-import kotlin.system.measureTimeMillis
 
-suspend fun task(name: String, delay: Long): String {
-    delay(delay)
-    return "Task $name completed"
-}
+suspend fun processData(): String = coroutineScope {
+                                             // => Creates child scope, suspends until all children complete
+    val result1 = async {                    // => Child coroutine 1
+        delay(1000)                          // => Simulate work
+        "Data 1"                             // => Return value
+    }
+
+    val result2 = async {                    // => Child coroutine 2
+        delay(500)                           // => Completes faster
+        "Data 2"                             // => Return value
+    }
+
+    "${result1.await()} + ${result2.await()}"
+                                             // => Waits for both, returns combined
+}                                            // => coroutineScope waits for all children before returning
 
 fun main() = runBlocking {
-    val time = measureTimeMillis {
-        val result1 = async { task("A", 1000) }  // => Start concurrently
-        val result2 = async { task("B", 1000) }  // => Start concurrently
-        val result3 = async { task("C", 1000) }  // => Start concurrently
-
-        println(result1.await())             // => Wait for results
-        println(result2.await())
-        println(result3.await())
+    try {
+        val result = withTimeout(2000) {     // => Set timeout for entire operation
+            processData()                    // => Runs all child coroutines
+        }                                    // => withTimeout cancels scope if time exceeds 2000ms
+        println("Result: $result")           // => Output: Result: Data 1 + Data 2
+    } catch (e: TimeoutCancellationException) {
+        println("Timeout!")                  // => Output if timeout exceeds 2000ms
     }
-    println("Total time: $time ms")          // => ~1000ms (not 3000ms)
+
+    // Demonstrate cancellation propagation
+    val job = launch {
+        coroutineScope {                     // => Structured scope
+            launch {
+                repeat(5) { i ->
+                    println("Child 1: $i")   // => Prints: Child 1: 0, 1, 2...
+                    delay(300)               // => Suspend between iterations
+                }
+            }
+
+            launch {
+                repeat(5) { i ->
+                    println("Child 2: $i")   // => Prints: Child 2: 0, 1, 2...
+                    delay(400)               // => Suspend between iterations
+                }
+            }
+        }
+    }
+
+    delay(1000)                              // => Wait 1 second
+    job.cancel()                             // => Cancel parent job
+                                             // => All child coroutines auto-cancelled
+    println("Job cancelled")                 // => Output: Job cancelled
 }
+// => Children stop after cancellation, no orphaned coroutines
 ```
 
-**Key Takeaway**: Concurrent coroutines enable parallel execution reducing total execution time.
+**Key Takeaway**: Use `coroutineScope` for structured concurrency that automatically cancels children when parent is cancelled; use `withTimeout` to enforce time limits.
+
+---
 
 ## Example 31: Coroutine Context and Dispatchers
 
-Dispatchers control which thread pool executes coroutines.
-
-```mermaid
-%% Dispatcher thread pool assignment
-graph TD
-    Coroutine[Launch Coroutine] --> Dispatcher{Choose Dispatcher}
-
-    Dispatcher -->|Default| CPU[CPU-Intensive Thread Pool]
-    Dispatcher -->|IO| IOPool[I/O Optimized Pool]
-    Dispatcher -->|Main| UIThread[UI/Main Thread]
-    Dispatcher -->|Unconfined| Caller[Caller Thread]
-
-    CPU --> CPU_Work[Computation Work]
-    IOPool --> IO_Work[Network/File I/O]
-    UIThread --> UI_Work[UI Updates]
-    Caller --> Caller_Work[Flexible Execution]
-
-    style Coroutine fill:#0173B2,color:#fff
-    style Dispatcher fill:#DE8F05,color:#000
-    style CPU fill:#029E73,color:#fff
-    style IOPool fill:#029E73,color:#fff
-    style UIThread fill:#CC78BC,color:#000
-    style Caller fill:#CA9161,color:#000
-```
+Dispatchers control which thread pool executes coroutines. `Dispatchers.Default` for CPU work, `Dispatchers.IO` for I/O operations, `Dispatchers.Main` for UI updates.
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -169,261 +210,520 @@ import kotlinx.coroutines.*
 fun main() = runBlocking {
     // Default dispatcher (optimized for CPU-intensive work)
     launch(Dispatchers.Default) {
-        println("Default: ${Thread.currentThread().name}")  // => DefaultDispatcher-worker-1
+        val threadName = Thread.currentThread().name
+        println("Default: $threadName")      // => Output: Default: DefaultDispatcher-worker-1
+        repeat(3) { i ->
+            println("CPU work $i")           // => Simulates computation
+            delay(100)
+        }
     }
 
-    // IO dispatcher (optimized for I/O operations)
+    // IO dispatcher (optimized for I/O operations, larger thread pool)
     launch(Dispatchers.IO) {
-        println("IO: ${Thread.currentThread().name}")       // => DefaultDispatcher-worker-2
+        val threadName = Thread.currentThread().name
+        println("IO: $threadName")           // => Output: IO: DefaultDispatcher-worker-2
+        // Simulate file I/O or network call
+        delay(500)
+        println("IO complete")               // => Output: IO complete
     }
 
-    // Main dispatcher (UI thread in Android/Desktop)
-    // launch(Dispatchers.Main) { }
-
-    // Unconfined (runs on caller thread initially)
+    // Unconfined dispatcher (runs on caller thread initially, then resumes on different threads)
     launch(Dispatchers.Unconfined) {
-        println("Unconfined: ${Thread.currentThread().name}")  // => main
+        println("Unconfined initial: ${Thread.currentThread().name}")
+                                             // => Output: Unconfined initial: main
+        delay(100)                           // => Suspends and may resume on different thread
+        println("Unconfined resumed: ${Thread.currentThread().name}")
+                                             // => Output: Unconfined resumed: kotlinx.coroutines.DefaultExecutor
     }
 
-    delay(100)  // => Wait for all launches
+    // Custom dispatcher with single thread
+    val customDispatcher = newSingleThreadContext("CustomThread")
+    launch(customDispatcher) {
+        println("Custom: ${Thread.currentThread().name}")
+                                             // => Output: Custom: CustomThread
+    }
+    customDispatcher.close()                 // => Close dispatcher when done
+
+    delay(1000)                              // => Wait for all coroutines to complete
 }
 ```
 
-**Key Takeaway**: Dispatchers optimize coroutine execution for CPU work, I/O operations, or UI updates.
+**Key Takeaway**: Choose `Dispatchers.Default` for CPU work, `Dispatchers.IO` for blocking I/O, and create custom dispatchers for specific threading needs.
 
-## Example 32: Structured Concurrency
+---
 
-Parent coroutine scopes manage child lifecycle for automatic cleanup.
+## Example 32: Channels for Communication Between Coroutines
+
+Channels enable safe communication between coroutines. `send()` suspends when buffer is full, `receive()` suspends when channel is empty. Channels are hot streams.
 
 ```mermaid
-%% Structured concurrency hierarchy and cancellation propagation
-graph TD
-    Parent[Parent Coroutine] --> Child1[Child Coroutine 1]
-    Parent --> Child2[Child Coroutine 2]
+%% Channel communication pattern showing producer and consumer
+sequenceDiagram
+    participant Producer as Producer Coroutine
+    participant Channel as Channel<Int>
+    participant Consumer as Consumer Coroutine
 
-    Child1 --> Delay1[delay 1000ms]
-    Child2 --> Delay2[delay 500ms]
+    Producer->>Channel: send(1)
+    Note over Channel: Buffer stores 1
+    Producer->>Channel: send(2)
+    Note over Channel: Buffer stores 2
 
-    Cancel[parent.cancel] --> CancelParent[Cancel Parent]
-    CancelParent -.->|Propagates| CancelChild1[Cancel Child 1]
-    CancelParent -.->|Propagates| CancelChild2[Cancel Child 2]
+    Consumer->>Channel: receive()
+    Channel-->>Consumer: Returns 1
+    Note over Channel: Buffer now has 2
 
-    style Parent fill:#0173B2,color:#fff
-    style Child1 fill:#DE8F05,color:#000
-    style Child2 fill:#DE8F05,color:#000
-    style Cancel fill:#CC78BC,color:#000
-    style CancelParent fill:#CC78BC,color:#000
-    style CancelChild1 fill:#CA9161,color:#000
-    style CancelChild2 fill:#CA9161,color:#000
+    Producer->>Channel: send(3)
+    Note over Channel: Buffer stores 3
+
+    Consumer->>Channel: receive()
+    Channel-->>Consumer: Returns 2
+    Consumer->>Channel: receive()
+    Channel-->>Consumer: Returns 3
+
+    Producer->>Channel: close()
+    Note over Channel: No more sends allowed
+
+    style Producer fill:#0173B2,color:#fff
+    style Channel fill:#DE8F05,color:#000
+    style Consumer fill:#029E73,color:#fff
 ```
 
 ```kotlin
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
 
 fun main() = runBlocking {
-    val job = launch {
-        // Child coroutine 1
-        launch {
-            delay(1000)
-            println("Child 1 done")
+    // Unbuffered channel (rendezvous)
+    val unbufferedChannel = Channel<Int>()   // => Capacity 0, send waits for receive
+    launch {
+        repeat(3) { i ->
+            println("Sending $i")            // => Output: Sending 0, 1, 2
+            unbufferedChannel.send(i)        // => Suspends until receiver ready
+            println("Sent $i")               // => Output after receiver consumes
         }
-
-        // Child coroutine 2
-        launch {
-            delay(500)
-            println("Child 2 done")
-        }
-
-        println("Parent waiting...")
+        unbufferedChannel.close()            // => Close channel (no more sends)
     }
 
-    delay(200)
-    job.cancel()                             // => Cancels parent and all children
-    println("All cancelled")
+    launch {
+        for (value in unbufferedChannel) {   // => Iterate until channel closed
+            println("Received $value")       // => Output: Received 0, 1, 2
+            delay(100)                       // => Simulate processing
+        }
+    }
+
+    delay(1000)                              // => Wait for completion
+
+    // Buffered channel (capacity 2)
+    val bufferedChannel = Channel<Int>(2)    // => Can buffer 2 items before blocking
+    launch {
+        bufferedChannel.send(1)              // => Doesn't block (buffer has space)
+        println("Sent 1 (buffered)")         // => Output: Sent 1 (buffered)
+        bufferedChannel.send(2)              // => Doesn't block (buffer now full)
+        println("Sent 2 (buffered)")         // => Output: Sent 2 (buffered)
+        bufferedChannel.send(3)              // => Blocks until receiver consumes
+        println("Sent 3 (buffered)")         // => Output after receiver consumes 1
+        bufferedChannel.close()
+    }
+
+    delay(500)                               // => Let sender fill buffer
+    println("Receiving from buffer")         // => Output: Receiving from buffer
+    println(bufferedChannel.receive())       // => Output: 1 (unblocks send(3))
+    println(bufferedChannel.receive())       // => Output: 2
+    println(bufferedChannel.receive())       // => Output: 3
 }
-// => Parent waiting... (children cancelled before completion)
 ```
 
-**Key Takeaway**: Structured concurrency ensures child coroutines are cancelled when parent is cancelled.
+**Key Takeaway**: Use unbuffered channels for rendezvous (synchronization), buffered channels for decoupling producer/consumer rates; always close channels when done sending.
 
-## Example 33: Flow for Async Streams
+---
 
-Flow emits multiple values asynchronously, like sequences but cold and suspendable.
+## Example 33: Flow for Cold Asynchronous Streams
 
-```mermaid
-%% Flow pipeline showing emission, transformation, and collection
-graph LR
-    Source[flow emit] --> Emit1[emit 1]
-    Emit1 --> Emit2[emit 2]
-    Emit2 --> Emit3[emit 3]
-
-    Emit1 --> Map1[map *2 = 2]
-    Emit2 --> Map2[map *2 = 4]
-    Emit3 --> Map3[map *2 = 6]
-
-    Map1 --> Filter1[filter > 2: skip]
-    Map2 --> Filter2[filter > 2: pass]
-    Map3 --> Filter3[filter > 2: pass]
-
-    Filter2 --> Collect1[collect 4]
-    Filter3 --> Collect2[collect 6]
-
-    style Source fill:#0173B2,color:#fff
-    style Map1 fill:#DE8F05,color:#000
-    style Map2 fill:#DE8F05,color:#000
-    style Map3 fill:#DE8F05,color:#000
-    style Filter2 fill:#029E73,color:#fff
-    style Filter3 fill:#029E73,color:#fff
-```
+Flow is a cold asynchronous stream that emits values on demand. Unlike channels (hot), flows don't produce values until collected. Flows support backpressure and transformation operators.
 
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 fun numbersFlow(): Flow<Int> = flow {
-    for (i in 1..3) {
-        delay(100)                           // => Suspendable
-        emit(i)                              // => Emit value
+    println("Flow started")                  // => Only printed when collected
+    for (i in 1..5) {
+        delay(100)                           // => Suspendable operation
+        emit(i)                              // => Emit value downstream
+        println("Emitted $i")                // => Output: Emitted 1, 2, 3, 4, 5
     }
-}
+}                                            // => Flow builder creates cold flow
 
 fun main() = runBlocking {
-    numbersFlow()
-        .map { it * 2 }                      // => Transform: 2, 4, 6
-        .filter { it > 2 }                   // => Filter: 4, 6
-        .collect { value ->                  // => Terminal operation
-            println(value)                   // => 4, 6
+    println("Creating flow")                 // => Output: Creating flow
+    val flow = numbersFlow()                 // => Flow created but NOT executing yet
+    println("Flow created")                  // => Output: Flow created (no "Flow started")
+
+    println("\nCollecting flow:")
+    flow
+        .map { it * 2 }                      // => Transform: multiply by 2
+        .filter { it > 4 }                   // => Filter: keep values > 4
+        .collect { value ->                  // => Terminal operator, triggers flow execution
+            println("Collected $value")      // => Output: Collected 6, 8, 10
         }
+
+    println("\nCollecting again:")
+    flow.collect { value ->                  // => Flow executes again (cold)
+        println("Second collect: $value")    // => Output: Second collect: 1, 2, 3, 4, 5
+    }                                        // => "Flow started" printed twice (once per collection)
+}
+// => Flows are cold: execution starts on each collection
+```
+
+**Key Takeaway**: Flows are cold streams that execute lazily on collection; use transformation operators like `map`, `filter` before terminal operators like `collect`.
+
+---
+
+## Example 34: Flow Operators - Transform, Buffer, Conflate
+
+Flow operators enable complex asynchronous data processing. `transform` emits multiple values per input, `buffer` decouples producer/consumer, `conflate` drops intermediate values.
+
+```mermaid
+%% Flow operators pipeline showing transformation stages
+graph LR
+    Source[flow emit 1,2,3] --> Transform[transform: emit value,<br/>emit value*10]
+    Transform --> Buffer[buffer:<br/>producer runs ahead]
+    Buffer --> Conflate[conflate:<br/>drop intermediate values]
+    Conflate --> Collect[collect]
+
+    Source2[Emit 1] --> Trans1[emit 1, emit 10]
+    Source3[Emit 2] --> Trans2[emit 2, emit 20]
+    Source4[Emit 3] --> Trans3[emit 3, emit 30]
+
+    style Source fill:#0173B2,color:#fff
+    style Transform fill:#DE8F05,color:#000
+    style Buffer fill:#029E73,color:#fff
+    style Conflate fill:#CC78BC,color:#000
+    style Collect fill:#CA9161,color:#000
+```
+
+```kotlin
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import kotlin.system.measureTimeMillis
+
+fun main() = runBlocking {
+    // transform: emit multiple values per input
+    flow { emit(1); emit(2); emit(3) }
+        .transform { value ->
+            emit(value)                      // => Emit original value
+            emit(value * 10)                 // => Emit transformed value
+        }
+        .collect { println("Transform: $it") }
+                                             // => Output: Transform: 1, 10, 2, 20, 3, 30
+
+    // buffer: producer doesn't wait for consumer
+    val timeNoBuffer = measureTimeMillis {
+        flow {
+            repeat(3) { i ->
+                delay(100)                   // => Emit delay: 100ms
+                emit(i)
+            }
+        }
+        .collect { value ->
+            delay(300)                       // => Collect delay: 300ms
+            println("No buffer: $value")     // => Total: 100 + 300 = 400ms per item
+        }
+    }
+    println("No buffer time: $timeNoBuffer ms")
+                                             // => Output: ~1200ms (3 * 400ms)
+
+    val timeWithBuffer = measureTimeMillis {
+        flow {
+            repeat(3) { i ->
+                delay(100)                   // => Emit delay: 100ms
+                emit(i)
+            }
+        }
+        .buffer()                            // => Producer runs independently
+        .collect { value ->
+            delay(300)                       // => Collect delay: 300ms
+            println("With buffer: $value")
+        }
+    }
+    println("With buffer time: $timeWithBuffer ms")
+                                             // => Output: ~900ms (first 100 + 3*300, overlapped)
+
+    // conflate: drop intermediate values if consumer is slow
+    flow {
+        repeat(5) { i ->
+            delay(100)                       // => Emit every 100ms
+            emit(i)
+            println("Emitted $i")            // => Output: Emitted 0, 1, 2, 3, 4
+        }
+    }
+    .conflate()                              // => Drop values if consumer busy
+    .collect { value ->
+        println("Conflate collected: $value")// => Output: Conflate collected: 0, 4 (skipped 1,2,3)
+        delay(500)                           // => Slow consumer
+    }
 }
 ```
 
-**Key Takeaway**: Flow provides cold asynchronous streams with backpressure support and transformation operators.
+**Key Takeaway**: Use `transform` for one-to-many emissions, `buffer` to improve throughput with slow consumers, `conflate` to drop intermediate values when only latest matters.
 
-## Example 34: StateFlow and SharedFlow
+---
 
-StateFlow holds state with initial value; SharedFlow broadcasts events without state.
+## Example 35: StateFlow and SharedFlow for Hot Streams
+
+`StateFlow` holds a single state value with initial state; subscribers get current state immediately. `SharedFlow` broadcasts events to all collectors without state retention.
 
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-class ViewModel {
-    private val _counter = MutableStateFlow(0)  // => Mutable state
-    val counter: StateFlow<Int> = _counter      // => Expose as read-only
+class Counter {
+    private val _stateFlow = MutableStateFlow(0)
+                                             // => Hot flow with initial state 0
+    val stateFlow: StateFlow<Int> = _stateFlow
+                                             // => Expose as read-only
+
+    private val _sharedFlow = MutableSharedFlow<String>()
+                                             // => Hot flow without state
+    val sharedFlow: SharedFlow<String> = _sharedFlow
 
     fun increment() {
-        _counter.value++                     // => Update state
+        _stateFlow.value++                   // => Update state (all collectors notified)
+        println("State updated: ${_stateFlow.value}")
+    }
+
+    suspend fun emitEvent(event: String) {
+        _sharedFlow.emit(event)              // => Broadcast event to all collectors
+        println("Event emitted: $event")
     }
 }
 
 fun main() = runBlocking {
-    val vm = ViewModel()
+    val counter = Counter()
 
-    // Collect state updates
+    // StateFlow collector 1 (gets initial value immediately)
     launch {
-        vm.counter.collect { value ->
-            println("Counter: $value")       // => 0, 1, 2, 3
+        counter.stateFlow.collect { value ->
+            println("Collector 1 state: $value")
+                                             // => Output: Collector 1 state: 0 (initial)
+        }
+    }
+
+    delay(100)                               // => Let collector 1 start
+
+    // StateFlow collector 2 (gets current state immediately)
+    launch {
+        counter.stateFlow.collect { value ->
+            println("Collector 2 state: $value")
+                                             // => Output: Collector 2 state: 0 (current state)
         }
     }
 
     delay(100)
-    vm.increment()  // => 1
-    vm.increment()  // => 2
-    vm.increment()  // => 3
+    counter.increment()                      // => State updated: 1
+                                             // => Both collectors receive 1
     delay(100)
+    counter.increment()                      // => State updated: 2
+                                             // => Both collectors receive 2
+
+    // SharedFlow collectors
+    launch {
+        counter.sharedFlow.collect { event ->
+            println("SharedFlow collector 1: $event")
+        }
+    }
+
+    launch {
+        counter.sharedFlow.collect { event ->
+            println("SharedFlow collector 2: $event")
+        }
+    }
+
+    delay(100)
+    counter.emitEvent("Event A")             // => Both SharedFlow collectors receive
+    delay(100)
+    counter.emitEvent("Event B")             // => Both SharedFlow collectors receive
+
+    delay(500)                               // => Wait for all output
 }
+// => StateFlow: conflates rapid updates, always has current value
+// => SharedFlow: broadcasts events, no state retention
 ```
 
-**Key Takeaway**: StateFlow manages observable state with initial value and conflation of rapid updates.
+**Key Takeaway**: Use `StateFlow` for observable state with initial value and conflation; use `SharedFlow` for event broadcasting without state.
 
-## Example 35: Collection Operations
+---
 
-Kotlin collections provide rich functional operations.
+## Example 36: Collection Operations - Map, Filter, Reduce
+
+Kotlin provides rich functional operations on collections. These operations don't modify original collections but return new ones.
 
 ```kotlin
 fun main() {
-    val numbers = listOf(1, 2, 3, 4, 5, 6)
+    val numbers = listOf(1, 2, 3, 4, 5, 6)   // => Immutable list
 
-    // Transformation
+    // map: transform each element
     val doubled = numbers.map { it * 2 }     // => [2, 4, 6, 8, 10, 12]
+    val strings = numbers.map { "N$it" }     // => ["N1", "N2", "N3", "N4", "N5", "N6"]
+    println("Doubled: $doubled")             // => Output: Doubled: [2, 4, 6, 8, 10, 12]
+    println("Strings: $strings")             // => Output: Strings: [N1, N2, N3, N4, N5, N6]
 
-    // Filtering
-    val evens = numbers.filter { it % 2 == 0 }  // => [2, 4, 6]
+    // filter: keep elements matching predicate
+    val evens = numbers.filter { it % 2 == 0 }
+                                             // => [2, 4, 6]
+    val greaterThan3 = numbers.filter { it > 3 }
+                                             // => [4, 5, 6]
+    println("Evens: $evens")                 // => Output: Evens: [2, 4, 6]
+    println("Greater than 3: $greaterThan3") // => Output: Greater than 3: [4, 5, 6]
 
-    // Reduction
-    val sum = numbers.reduce { acc, n -> acc + n }  // => 21
-    val product = numbers.fold(1) { acc, n -> acc * n }  // => 720
+    // reduce: accumulate values (requires non-empty collection)
+    val sum = numbers.reduce { acc, value -> acc + value }
+                                             // => Accumulator: 1+2=3, 3+3=6, 6+4=10, 10+5=15, 15+6=21
+    val product = numbers.reduce { acc, value -> acc * value }
+                                             // => Accumulator: 1*2=2, 2*3=6, 6*4=24, 24*5=120, 120*6=720
+    println("Sum: $sum")                     // => Output: Sum: 21
+    println("Product: $product")             // => Output: Product: 720
 
-    // Grouping
-    val grouped = numbers.groupBy { it % 2 }  // => {1=[1,3,5], 0=[2,4,6]}
+    // fold: reduce with initial value (works on empty collections)
+    val sumWithInitial = numbers.fold(100) { acc, value -> acc + value }
+                                             // => Starts with 100, then 100+1+2+3+4+5+6 = 121
+    val emptyList = emptyList<Int>()
+    val safeSum = emptyList.fold(0) { acc, value -> acc + value }
+                                             // => Returns 0 (initial value, no elements)
+    println("Sum with initial: $sumWithInitial")
+                                             // => Output: Sum with initial: 121
+    println("Safe sum: $safeSum")            // => Output: Safe sum: 0
 
-    // Partitioning
-    val (even, odd) = numbers.partition { it % 2 == 0 }  // => [2,4,6], [1,3,5]
-
-    // Flattening
-    val nested = listOf(listOf(1, 2), listOf(3, 4))
-    val flat = nested.flatten()              // => [1, 2, 3, 4]
-
-    println(doubled)
-    println(evens)
-    println(sum)
+    // flatMap: map and flatten
+    val nestedLists = listOf(listOf(1, 2), listOf(3, 4), listOf(5))
+    val flattened = nestedLists.flatMap { it }
+                                             // => [1, 2, 3, 4, 5]
+    val doubledFlat = nestedLists.flatMap { list -> list.map { it * 2 } }
+                                             // => [2, 4, 6, 8, 10]
+    println("Flattened: $flattened")         // => Output: Flattened: [1, 2, 3, 4, 5]
+    println("Doubled flat: $doubledFlat")    // => Output: Doubled flat: [2, 4, 6, 8, 10]
 }
 ```
 
-**Key Takeaway**: Collection operations enable functional data transformations with concise readable syntax.
+**Key Takeaway**: Collection operations create new collections without mutating originals; use `map` for transformation, `filter` for selection, `reduce`/`fold` for aggregation, `flatMap` for nested structures.
 
-## Example 36: Sequences for Lazy Evaluation
+---
 
-Sequences compute elements lazily avoiding intermediate collection creation.
+## Example 37: Collection Operations - GroupBy, Partition, Associate
+
+Advanced collection operations enable complex data transformations and grouping.
+
+```kotlin
+data class Person(val name: String, val age: Int, val city: String)
+
+fun main() {
+    val people = listOf(
+        Person("Alice", 30, "NYC"),
+        Person("Bob", 25, "LA"),
+        Person("Charlie", 30, "NYC"),
+        Person("Diana", 25, "LA"),
+        Person("Eve", 35, "NYC")
+    )
+
+    // groupBy: group elements by key
+    val byAge = people.groupBy { it.age }    // => Map<Int, List<Person>>
+    println("Grouped by age:")
+    byAge.forEach { (age, persons) ->
+        println("  Age $age: ${persons.map { it.name }}")
+    }                                        // => Output: Age 25: [Bob, Diana], Age 30: [Alice, Charlie], Age 35: [Eve]
+
+    val byCity = people.groupBy { it.city }  // => Map<String, List<Person>>
+    println("Grouped by city:")
+    byCity.forEach { (city, persons) ->
+        println("  $city: ${persons.map { it.name }}")
+    }                                        // => Output: NYC: [Alice, Charlie, Eve], LA: [Bob, Diana]
+
+    // partition: split into two lists based on predicate
+    val (under30, over30) = people.partition { it.age < 30 }
+    println("\nUnder 30: ${under30.map { it.name }}")
+                                             // => Output: Under 30: [Bob, Diana]
+    println("30 and over: ${over30.map { it.name }}")
+                                             // => Output: 30 and over: [Alice, Charlie, Eve]
+
+    // associate: create map from collection
+    val nameToAge = people.associate { it.name to it.age }
+                                             // => Map<String, Int>: {Alice=30, Bob=25, ...}
+    println("\nName to age: $nameToAge")     // => Output: Name to age: {Alice=30, Bob=25, Charlie=30, Diana=25, Eve=35}
+
+    // associateBy: use key selector
+    val peopleByName = people.associateBy { it.name }
+                                             // => Map<String, Person>
+    println("Person by name: ${peopleByName["Alice"]}")
+                                             // => Output: Person by name: Person(name=Alice, age=30, city=NYC)
+
+    // associateWith: use value generator
+    val numbers = listOf(1, 2, 3, 4)
+    val squares = numbers.associateWith { it * it }
+                                             // => Map<Int, Int>: {1=1, 2=4, 3=9, 4=16}
+    println("Squares: $squares")             // => Output: Squares: {1=1, 2=4, 3=9, 4=16}
+}
+```
+
+**Key Takeaway**: Use `groupBy` for creating maps of grouped elements, `partition` for binary splits, `associate` family for transforming collections into maps.
+
+---
+
+## Example 38: Sequences for Lazy Evaluation
+
+Sequences compute elements lazily, avoiding intermediate collection creation. Use sequences for multi-step transformations on large collections.
 
 ```kotlin
 fun main() {
-    // List (eager evaluation - creates intermediate lists)
+    // Eager evaluation with list (creates intermediate lists)
     val listResult = (1..1_000_000)
         .map { it * 2 }                      // => Creates list of 1M elements
         .filter { it > 1000 }                // => Creates another list
-        .take(5)                             // => Takes first 5
+        .take(5)                             // => Creates final list of 5 elements
+    println("List result: $listResult")      // => Output: List result: [1002, 1004, 1006, 1008, 1010]
 
-    // Sequence (lazy evaluation - no intermediate collections)
+    // Lazy evaluation with sequence (no intermediate collections)
     val seqResult = (1..1_000_000).asSequence()
-        .map { it * 2 }                      // => No computation yet
-        .filter { it > 1000 }                // => No computation yet
-        .take(5)                             // => Only computes 5 elements
-        .toList()                            // => Terminal operation
+        .map { it * 2 }                      // => Lazy, no computation yet
+        .filter { it > 1000 }                // => Lazy, no computation yet
+        .take(5)                             // => Lazy, defines operation
+        .toList()                            // => Terminal operation, computes only 5 elements
+    println("Sequence result: $seqResult")   // => Output: Sequence result: [1002, 1004, 1006, 1008, 1010]
 
-    println(seqResult)                       // => [1002, 1004, 1006, 1008, 1010]
+    // Demonstrate lazy evaluation with side effects
+    println("\nList operations (eager):")
+    (1..5).map {
+        println("  Map: $it")                // => Prints for all elements
+        it * 2
+    }.filter {
+        println("  Filter: $it")             // => Prints for all mapped elements
+        it > 4
+    }.take(2)                                // => Output shows all map, then all filter operations
+
+    println("\nSequence operations (lazy):")
+    (1..5).asSequence().map {
+        println("  Map: $it")                // => Prints per element as needed
+        it * 2
+    }.filter {
+        println("  Filter: $it")             // => Prints per element as needed
+        it > 4
+    }.take(2).toList()                       // => Output shows interleaved map/filter, stops after 2 results
+
+    // generateSequence for infinite sequences
+    val fibonacci = generateSequence(Pair(0, 1)) { (a, b) -> Pair(b, a + b) }
+        .map { it.first }                    // => Extract first value from pair
+        .take(10)                            // => Take first 10 Fibonacci numbers
+        .toList()                            // => [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+    println("\nFibonacci: $fibonacci")       // => Output: Fibonacci: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 }
 ```
 
-**Key Takeaway**: Sequences optimize multi-step transformations by evaluating lazily element-by-element.
+**Key Takeaway**: Sequences optimize multi-step transformations by evaluating lazily element-by-element; use `asSequence()` for large collections or infinite streams.
 
-## Example 37: Property Delegation
+---
 
-Delegate property implementations to reusable delegate objects.
+## Example 39: Property Delegation - Lazy and Observable
 
-```mermaid
-%% Property delegation pattern showing delegate types
-graph TD
-    Property[Property Access] --> Delegate{Delegate Type}
-
-    Delegate -->|lazy| Lazy[Lazy Delegate]
-    Delegate -->|observable| Observable[Observable Delegate]
-    Delegate -->|vetoable| Vetoable[Vetoable Delegate]
-
-    Lazy --> LazyCompute[Compute once on first access]
-    Observable --> ObsCallback[Trigger callback on change]
-    Vetoable --> VetoValidate[Validate before allowing change]
-
-    LazyCompute --> Return[Return value]
-    ObsCallback --> Return
-    VetoValidate --> Return
-
-    style Property fill:#0173B2,color:#fff
-    style Delegate fill:#DE8F05,color:#000
-    style Lazy fill:#029E73,color:#fff
-    style Observable fill:#CC78BC,color:#000
-    style Vetoable fill:#CA9161,color:#000
-```
+Delegate property implementations to reusable delegate objects. `lazy` computes value on first access, `observable` triggers callbacks on changes.
 
 ```kotlin
 import kotlin.properties.Delegates
@@ -431,301 +731,396 @@ import kotlin.properties.Delegates
 class User {
     // Lazy initialization (computed once on first access)
     val expensiveData: String by lazy {
-        println("Computing...")
-        "Expensive data"                     // => Computed only once
-    }
+        println("Computing expensive data...")
+        Thread.sleep(1000)                   // => Simulate expensive computation
+        "Computed data"                      // => Value computed only once
+    }                                        // => Thread-safe by default
 
     // Observable property (callback on change)
-    var name: String by Delegates.observable("Initial") { prop, old, new ->
-        println("$old -> $new")              // => Callback on change
+    var name: String by Delegates.observable("Initial") { property, oldValue, newValue ->
+        println("${property.name} changed: $oldValue -> $newValue")
+                                             // => Callback receives property, old, new values
     }
 
     // Vetoable property (validate before change)
-    var age: Int by Delegates.vetoable(0) { prop, old, new ->
-        new >= 0                             // => Only allow non-negative
+    var age: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
+        val valid = newValue >= 0            // => Only allow non-negative ages
+        if (!valid) println("Rejected age: $newValue")
+        valid                                // => Return true to allow, false to veto
     }
 }
 
 fun main() {
     val user = User()
-    println(user.expensiveData)              // => Computing..., Expensive data
-    println(user.expensiveData)              // => Expensive data (no recomputation)
 
-    user.name = "Alice"                      // => Initial -> Alice
-    user.age = 25                            // => OK
-    user.age = -5                            // => Vetoed (stays 25)
-    println(user.age)                        // => 25
+    // Lazy property
+    println("Before accessing expensiveData")
+    println(user.expensiveData)              // => Output: Computing expensive data..., Computed data
+    println(user.expensiveData)              // => Output: Computed data (no recomputation)
+
+    // Observable property
+    user.name = "Alice"                      // => Output: name changed: Initial -> Alice
+    user.name = "Bob"                        // => Output: name changed: Alice -> Bob
+
+    // Vetoable property
+    user.age = 25                            // => Allowed, age is 25
+    println("Age: ${user.age}")              // => Output: Age: 25
+    user.age = -5                            // => Output: Rejected age: -5, age stays 25
+    println("Age after veto: ${user.age}")   // => Output: Age after veto: 25
 }
 ```
 
-**Key Takeaway**: Property delegates extract common property patterns into reusable components.
+**Key Takeaway**: Use `lazy` for expensive computations that should execute once, `observable` for change notifications, `vetoable` for validated property changes.
 
-## Example 38: Custom Delegate
+---
 
-Create custom delegates implementing getValue and setValue operators.
+## Example 40: Custom Property Delegates
+
+Create custom delegates by implementing `getValue` and `setValue` operators. Delegates encapsulate property access logic.
+
+```mermaid
+%% Custom delegate getValue/setValue flow
+sequenceDiagram
+    participant Client as Property Access
+    participant Delegate as Custom Delegate
+    participant Storage as Backing Storage
+
+    Client->>Delegate: Read property
+    Delegate->>Delegate: getValue()
+    Delegate->>Storage: Read from storage
+    Storage-->>Delegate: Return value
+    Delegate-->>Client: Return value
+
+    Client->>Delegate: Write property
+    Delegate->>Delegate: setValue(newValue)
+    Delegate->>Delegate: Validate/Transform
+    Delegate->>Storage: Write to storage
+    Storage-->>Delegate: Confirm
+    Delegate-->>Client: Complete
+
+    style Client fill:#0173B2,color:#fff
+    style Delegate fill:#DE8F05,color:#000
+    style Storage fill:#029E73,color:#fff
+```
 
 ```kotlin
 import kotlin.reflect.KProperty
 
 class LoggingDelegate<T>(private var value: T) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        println("Getting ${property.name}: $value")
-        return value
+        println("[GET] ${property.name} = $value")
+                                             // => Log property access
+        return value                         // => Return stored value
     }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, newValue: T) {
-        println("Setting ${property.name}: $value -> $newValue")
-        value = newValue
+        println("[SET] ${property.name}: $value -> $newValue")
+                                             // => Log property change
+        value = newValue                     // => Update stored value
+    }
+}
+
+class UppercaseDelegate {
+    private var value: String = ""
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
+        return value.uppercase()             // => Always return uppercase
+    }
+
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, newValue: String) {
+        value = newValue.lowercase()         // => Store as lowercase
     }
 }
 
 class Config {
-    var theme: String by LoggingDelegate("light")  // => Custom delegate
+    var theme: String by LoggingDelegate("light")
+                                             // => Delegates to LoggingDelegate
+    var username: String by UppercaseDelegate()
+                                             // => Delegates to UppercaseDelegate
 }
 
 fun main() {
     val config = Config()
-    println(config.theme)                    // => Getting theme: light, light
-    config.theme = "dark"                    // => Setting theme: light -> dark
-    println(config.theme)                    // => Getting theme: dark, dark
+
+    println(config.theme)                    // => Output: [GET] theme = light, light
+    config.theme = "dark"                    // => Output: [SET] theme: light -> dark
+    println(config.theme)                    // => Output: [GET] theme = dark, dark
+
+    config.username = "Alice"                // => Stored as "alice"
+    println(config.username)                 // => Output: ALICE (retrieved as uppercase)
+    config.username = "BOB"                  // => Stored as "bob"
+    println(config.username)                 // => Output: BOB (retrieved as uppercase)
 }
 ```
 
-**Key Takeaway**: Custom delegates encapsulate property access logic with getValue/setValue operators.
+**Key Takeaway**: Implement `getValue`/`setValue` operators to create custom property delegates that encapsulate access logic like logging, validation, or transformation.
 
-## Example 39: Inline Functions
+---
 
-Inline functions eliminate lambda allocation overhead by inlining bytecode.
+## Example 41: Extension Functions and Properties
+
+Add methods and properties to existing classes without modifying source code. Extensions are resolved statically based on declared type.
+
+```kotlin
+// Extension function on String
+fun String.isPalindrome(): Boolean {
+    val cleaned = this.lowercase().replace(" ", "")
+                                             // => Remove spaces and lowercase
+    return cleaned == cleaned.reversed()     // => Compare with reversed
+}
+
+// Extension function with parameters
+fun Int.times(action: (Int) -> Unit) {
+    for (i in 1..this) {
+        action(i)                            // => Execute action for each iteration
+    }
+}
+
+// Extension property
+val String.wordCount: Int
+    get() = this.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
+                                             // => Count words by splitting on whitespace
+
+// Extension on nullable receiver
+fun String?.orDefault(default: String = "N/A"): String {
+    return this ?: default                   // => Return default if null
+}
+
+// Extension on List
+fun <T> List<T>.secondOrNull(): T? {
+    return if (size >= 2) this[1] else null  // => Safe access to second element
+}
+
+fun main() {
+    // String extension
+    println("radar".isPalindrome())          // => Output: true
+    println("kotlin".isPalindrome())         // => Output: false
+    println("A man a plan a canal Panama".isPalindrome())
+                                             // => Output: true
+
+    // Int extension with lambda
+    print("Countdown: ")
+    5.times { i -> print("$i ") }            // => Output: Countdown: 1 2 3 4 5
+    println()
+
+    // String property extension
+    val text = "Hello Kotlin World"
+    println("Word count: ${text.wordCount}") // => Output: Word count: 3
+
+    // Nullable extension
+    val str1: String? = null
+    val str2: String? = "Hello"
+    println(str1.orDefault())                // => Output: N/A
+    println(str2.orDefault())                // => Output: Hello
+    println(str1.orDefault("Empty"))         // => Output: Empty
+
+    // List extension
+    val numbers = listOf(10, 20, 30)
+    println(numbers.secondOrNull())          // => Output: 20
+    println(emptyList<Int>().secondOrNull()) // => Output: null
+}
+```
+
+**Key Takeaway**: Extension functions add methods to existing types without inheritance; they're resolved statically and ideal for utility functions on library classes.
+
+---
+
+## Example 42: Inline Functions and Reified Type Parameters
+
+Inline functions eliminate lambda allocation overhead by inlining bytecode. Reified type parameters preserve generic type information at runtime.
 
 ```kotlin
 // Regular higher-order function (creates lambda object)
-fun regularRepeat(times: Int, action: () -> Unit) {
-    for (i in 1..times) action()
+fun <T> regularFilter(list: List<T>, predicate: (T) -> Boolean): List<T> {
+    val result = mutableListOf<T>()
+    for (item in list) {
+        if (predicate(item)) result.add(item)
+    }
+    return result                            // => Creates lambda object on each call
 }
 
 // Inline function (no lambda allocation)
-inline fun inlineRepeat(times: Int, action: () -> Unit) {
-    for (i in 1..times) action()            // => Bytecode inlined at call site
-}
-
-fun main() {
-    // With inline, this compiles to:
-    // for (i in 1..3) println("Hello")
-    inlineRepeat(3) {
-        println("Hello")                     // => No lambda object created
+inline fun <T> inlineFilter(list: List<T>, predicate: (T) -> Boolean): List<T> {
+    val result = mutableListOf<T>()
+    for (item in list) {
+        if (predicate(item)) result.add(item)
     }
-}
-```
-
-**Key Takeaway**: Inline functions optimize higher-order functions by eliminating lambda allocation overhead.
-
-## Example 40: Reified Type Parameters
-
-Reified type parameters preserve generic type information at runtime.
-
-```kotlin
-// Without reified (type erased)
-fun <T> genericFunction(value: Any): T? {
-    // return value as? T  // => Error: Cannot check for erased type
-    return null
+    return result                            // => Lambda bytecode inlined at call site
 }
 
-// With reified (type available at runtime)
-inline fun <reified T> reifiedFunction(value: Any): T? {
-    return value as? T                       // => Type check possible
+// Inline with reified type parameter (type available at runtime)
+inline fun <reified T> filterIsInstance(list: List<Any>): List<T> {
+    val result = mutableListOf<T>()
+    for (item in list) {
+        if (item is T) result.add(item)      // => Type check possible with reified
+    }
+    return result
 }
 
-inline fun <reified T> isInstance(value: Any): Boolean {
-    return value is T                        // => Type check at runtime
-}
-
-fun main() {
-    println(reifiedFunction<String>("Hello"))  // => Hello
-    println(reifiedFunction<String>(123))      // => null
-
-    println(isInstance<String>("text"))     // => true
-    println(isInstance<Int>("text"))        // => false
-}
-```
-
-**Key Takeaway**: Reified type parameters enable runtime type checks in generic inline functions.
-
-## Example 41: Extension Functions on Collections
-
-Create domain-specific collection operations with extension functions.
-
-```kotlin
-// Extension function
-fun List<Int>.second(): Int? = if (size >= 2) this[1] else null
-
-fun <T> List<T>.split(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
-    val matching = mutableListOf<T>()
-    val notMatching = mutableListOf<T>()
-    forEach { if (predicate(it)) matching.add(it) else notMatching.add(it) }
-    return matching to notMatching
+// Reified for generic casting
+inline fun <reified T> safeCast(value: Any): T? {
+    return value as? T                       // => Safe cast with type check
 }
 
 fun main() {
     val numbers = listOf(1, 2, 3, 4, 5)
-    println(numbers.second())                // => 2
 
-    val (evens, odds) = numbers.split { it % 2 == 0 }
-    println(evens)                           // => [2, 4]
-    println(odds)                            // => [1, 3, 5]
+    // Inline function usage (no lambda allocation)
+    val evens = inlineFilter(numbers) { it % 2 == 0 }
+    println("Evens: $evens")                 // => Output: Evens: [2, 4]
+
+    // Reified type parameter
+    val mixed: List<Any> = listOf(1, "two", 3.0, "four", 5)
+    val strings = filterIsInstance<String>(mixed)
+    println("Strings: $strings")             // => Output: Strings: [two, four]
+
+    val ints = filterIsInstance<Int>(mixed)
+    println("Ints: $ints")                   // => Output: Ints: [1]
+
+    // Reified casting
+    val value: Any = "Hello"
+    val str = safeCast<String>(value)        // => str is "Hello"
+    val num = safeCast<Int>(value)           // => num is null (wrong type)
+    println("String cast: $str")             // => Output: String cast: Hello
+    println("Int cast: $num")                // => Output: Int cast: null
+
+    // Type check at runtime
+    fun <T> isType(value: Any): Boolean {
+        // return value is T                 // => Error: Cannot check for erased type
+        return false
+    }
+
+    inline fun <reified T> isTypeReified(value: Any): Boolean {
+        return value is T                    // => OK with reified
+    }
+
+    println(isTypeReified<String>("test"))   // => Output: true
+    println(isTypeReified<Int>("test"))      // => Output: false
 }
 ```
 
-**Key Takeaway**: Extension functions on collections enable domain-specific operations without subclassing.
+**Key Takeaway**: Inline functions optimize higher-order functions by eliminating lambda allocation; reified type parameters enable runtime type checks and casts in generic functions.
 
-## Example 42: Scope Functions - let, run, with
+---
 
-Scope functions provide context for object operations with different receivers.
+## Example 43: Operator Overloading
 
-```mermaid
-%% Scope function characteristics comparison
-graph TD
-    Start[Scope Functions] --> LetCheck{let}
-    Start --> RunCheck{run}
-    Start --> WithCheck{with}
-
-    LetCheck -->|it parameter| LetReturn[Returns lambda result]
-    RunCheck -->|this receiver| RunReturn[Returns lambda result]
-    WithCheck -->|this receiver| WithReturn[Returns lambda result]
-
-    LetReturn --> LetUse[Use: null checks, transformations]
-    RunReturn --> RunUse[Use: object configuration + compute]
-    WithReturn --> WithUse[Use: grouped operations]
-
-    style Start fill:#0173B2,color:#fff
-    style LetCheck fill:#DE8F05,color:#000
-    style RunCheck fill:#029E73,color:#fff
-    style WithCheck fill:#CC78BC,color:#000
-    style LetUse fill:#CA9161,color:#000
-    style RunUse fill:#CA9161,color:#000
-    style WithUse fill:#CA9161,color:#000
-```
+Override operators like `+`, `-`, `*`, `[]`, `in` to create domain-specific syntax. Operators are implemented as member or extension functions with specific names.
 
 ```kotlin
-data class Person(var name: String, var age: Int)
+data class Point(val x: Int, val y: Int) {
+    // Unary operators
+    operator fun unaryMinus() = Point(-x, -y)
+                                             // => Defines -point
+
+    // Binary operators
+    operator fun plus(other: Point) = Point(x + other.x, y + other.y)
+                                             // => Defines point1 + point2
+
+    operator fun times(scalar: Int) = Point(x * scalar, y * scalar)
+                                             // => Defines point * scalar
+
+    // Augmented assignment
+    operator fun plusAssign(other: Point) {
+        // For data class, this would require var properties
+        println("Adding $other to $this")    // => Defines point += other
+    }
+
+    // Comparison
+    operator fun compareTo(other: Point): Int {
+        val thisMagnitude = x * x + y * y
+        val otherMagnitude = other.x * other.x + other.y * other.y
+        return thisMagnitude.compareTo(otherMagnitude)
+                                             // => Defines point1 < point2, etc.
+    }
+}
+
+data class Matrix(val rows: List<List<Int>>) {
+    // Index access operator
+    operator fun get(row: Int, col: Int): Int {
+        return rows[row][col]                // => Defines matrix[row, col]
+    }
+
+    // Contains operator
+    operator fun contains(value: Int): Boolean {
+        return rows.flatten().contains(value)
+                                             // => Defines value in matrix
+    }
+
+    // Invoke operator
+    operator fun invoke(row: Int): List<Int> {
+        return rows[row]                     // => Defines matrix(row)
+    }
+}
 
 fun main() {
-    val person = Person("Alice", 30)
+    val p1 = Point(1, 2)
+    val p2 = Point(3, 4)
 
-    // let (it parameter, returns lambda result)
-    val nameLength = person.let {
-        println("Processing ${it.name}")     // => it reference
-        it.name.length                       // => Returns length
-    }
-    println(nameLength)                      // => 5
+    // Unary operator
+    val negated = -p1                        // => Point(x=-1, y=-2)
+    println("Negated: $negated")             // => Output: Negated: Point(x=-1, y=-2)
 
-    // run (this receiver, returns lambda result)
-    val description = person.run {
-        age += 1                             // => this.age
-        "Name: $name, Age: $age"             // => Returns string
-    }
-    println(description)                     // => Name: Alice, Age: 31
+    // Binary operators
+    val sum = p1 + p2                        // => Point(x=4, y=6)
+    val scaled = p1 * 3                      // => Point(x=3, y=6)
+    println("Sum: $sum")                     // => Output: Sum: Point(x=4, y=6)
+    println("Scaled: $scaled")               // => Output: Scaled: Point(x=3, y=6)
 
-    // with (this receiver, non-extension)
-    with(person) {
-        name = "Bob"                         // => this.name
-        age = 25
-    }
-    println(person)                          // => Person(name=Bob, age=25)
+    // Comparison operators
+    println("p1 < p2: ${p1 < p2}")           // => Output: p1 < p2: true (1+4 < 9+16)
+    println("p1 > p2: ${p1 > p2}")           // => Output: p1 > p2: false
+
+    // Matrix operators
+    val matrix = Matrix(listOf(
+        listOf(1, 2, 3),
+        listOf(4, 5, 6),
+        listOf(7, 8, 9)
+    ))
+
+    println("matrix[1, 1]: ${matrix[1, 1]}") // => Output: matrix[1, 1]: 5
+    println("5 in matrix: ${5 in matrix}")   // => Output: 5 in matrix: true
+    println("matrix(2): ${matrix(2)}")       // => Output: matrix(2): [7, 8, 9]
 }
 ```
 
-**Key Takeaway**: let uses it parameter, run/with use this receiver for different coding styles.
+**Key Takeaway**: Operator overloading enables natural syntax for custom types; implement operators as functions with conventional names like `plus`, `get`, `contains`.
 
-## Example 43: Scope Functions - apply, also
+---
 
-Apply and also configure objects returning the receiver itself.
+## Example 44: DSL Building with Lambda with Receiver
 
-```kotlin
-data class Config(var host: String = "", var port: Int = 0)
-
-fun main() {
-    // apply (this receiver, returns receiver)
-    val config = Config().apply {
-        host = "localhost"                   // => this.host
-        port = 8080                          // => this.port
-    }
-    println(config)                          // => Config(host=localhost, port=8080)
-
-    // also (it parameter, returns receiver)
-    val numbers = mutableListOf(1, 2, 3).also {
-        println("Initial: $it")              // => Initial: [1, 2, 3]
-        it.add(4)
-    }
-    println(numbers)                         // => [1, 2, 3, 4]
-
-    // Chaining
-    val result = mutableListOf<Int>()
-        .also { println("Created list") }
-        .apply {
-            add(1)
-            add(2)
-        }
-        .also { println("Added elements: $it") }
-
-    println(result)                          // => [1, 2]
-}
-```
-
-**Key Takeaway**: apply/also return receiver enabling fluent configuration and chaining.
-
-## Example 44: Type-Safe Builders (DSL)
-
-Create type-safe DSLs using lambda with receiver.
-
-```mermaid
-%% DSL builder structure and lambda with receiver flow
-graph TD
-    DSL[html DSL Block] --> Head[head block]
-    DSL --> Body[body block]
-
-    Head --> HeadReceiver[Head.() -> Unit]
-    HeadReceiver --> Title[Set title property]
-
-    Body --> BodyReceiver[Body.() -> Unit]
-    BodyReceiver --> H1[h1 function call]
-    BodyReceiver --> P[p function call]
-
-    Title --> Build[Build HTML string]
-    H1 --> Build
-    P --> Build
-
-    style DSL fill:#0173B2,color:#fff
-    style Head fill:#DE8F05,color:#000
-    style Body fill:#DE8F05,color:#000
-    style HeadReceiver fill:#029E73,color:#fff
-    style BodyReceiver fill:#029E73,color:#fff
-    style Build fill:#CC78BC,color:#000
-```
+Create type-safe DSLs using lambda with receiver. The receiver provides implicit `this` context within the lambda.
 
 ```kotlin
 class HTML {
     private val elements = mutableListOf<String>()
 
-    fun head(init: Head.() -> Unit) {
-        elements.add(Head().apply(init).toString())
+    fun head(init: Head.() -> Unit) {        // => Lambda with Head receiver
+        val head = Head()
+        head.init()                          // => Execute lambda with head as receiver
+        elements.add(head.toString())
     }
 
-    fun body(init: Body.() -> Unit) {
-        elements.add(Body().apply(init).toString())
+    fun body(init: Body.() -> Unit) {        // => Lambda with Body receiver
+        val body = Body()
+        body.init()                          // => Execute lambda with body as receiver
+        elements.add(body.toString())
     }
 
     override fun toString() = "<html>${elements.joinToString("")}</html>"
 }
 
 class Head {
-    var title = ""
+    var title = ""                           // => Property accessible in lambda
+
     override fun toString() = "<head><title>$title</title></head>"
 }
 
 class Body {
     private val content = mutableListOf<String>()
 
-    fun h1(text: String) {
+    fun h1(text: String) {                   // => Function accessible in lambda
         content.add("<h1>$text</h1>")
     }
 
@@ -733,401 +1128,875 @@ class Body {
         content.add("<p>$text</p>")
     }
 
+    fun ul(init: UL.() -> Unit) {            // => Nested DSL
+        val ul = UL()
+        ul.init()
+        content.add(ul.toString())
+    }
+
     override fun toString() = "<body>${content.joinToString("")}</body>"
 }
 
-fun html(init: HTML.() -> Unit): HTML = HTML().apply(init)
+class UL {
+    private val items = mutableListOf<String>()
+
+    fun li(text: String) {
+        items.add("<li>$text</li>")
+    }
+
+    override fun toString() = "<ul>${items.joinToString("")}</ul>"
+}
+
+fun html(init: HTML.() -> Unit): HTML {      // => DSL builder function
+    val html = HTML()
+    html.init()                              // => Execute lambda with html as receiver
+    return html
+}
 
 fun main() {
-    val page = html {                        // => DSL block
-        head {
-            title = "My Page"
+    val page = html {                        // => DSL block, 'this' is HTML instance
+        head {                               // => 'this' is Head instance
+            title = "My Page"                // => Set property on Head
         }
-        body {
-            h1("Welcome")
+        body {                               // => 'this' is Body instance
+            h1("Welcome")                    // => Call method on Body
             p("This is a paragraph")
+            ul {                             // => Nested DSL, 'this' is UL instance
+                li("Item 1")                 // => Call method on UL
+                li("Item 2")
+                li("Item 3")
+            }
         }
     }
-    println(page)  // => <html><head><title>My Page</title></head><body><h1>Welcome</h1><p>This is a paragraph</p></body></html>
+
+    println(page)
+    // => Output: <html><head><title>My Page</title></head><body><h1>Welcome</h1><p>This is a paragraph</p><ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul></body></html>
 }
 ```
 
-**Key Takeaway**: Lambda with receiver enables type-safe DSLs with nested structure and compile-time checking.
+**Key Takeaway**: Lambda with receiver (`Type.() -> Unit`) enables type-safe DSLs by providing implicit context; ideal for builders and configuration APIs.
 
-## Example 45: Sealed Classes for State
+---
 
-Sealed classes restrict inheritance for exhaustive when expressions.
+## Example 45: Sealed Classes and When Expressions
 
-```mermaid
-%% Sealed class hierarchy showing exhaustive state handling
-stateDiagram-v2
-    [*] --> Result
-
-    Result --> Success: is Success
-    Result --> Error: is Error
-    Result --> Loading: is Loading
-
-    Success --> HandleSuccess: Print value
-    Error --> HandleError: Print message
-    Loading --> HandleLoading: Print loading
-
-    HandleSuccess --> [*]
-    HandleError --> [*]
-    HandleLoading --> [*]
-
-    note right of Result: Sealed class ensures\nexhaustive when
-```
+Sealed classes restrict inheritance to known subclasses, enabling exhaustive `when` expressions without `else` branches. Perfect for representing state machines.
 
 ```kotlin
-sealed class Result<out T> {
-    data class Success<T>(val value: T) : Result<T>()
-    data class Error(val message: String) : Result<Nothing>()
-    object Loading : Result<Nothing>()
+sealed class NetworkResult<out T> {
+    data class Success<T>(val data: T) : NetworkResult<T>()
+    data class Error(val exception: Exception) : NetworkResult<Nothing>()
+    object Loading : NetworkResult<Nothing>()
 }
 
-fun handleResult(result: Result<String>) {
-    when (result) {                          // => Exhaustive (compiler checks all cases)
-        is Result.Success -> println("Success: ${result.value}")
-        is Result.Error -> println("Error: ${result.message}")
-        Result.Loading -> println("Loading...")
-    }
-    // No else needed - compiler knows all subclasses
+sealed class UIState {
+    object Idle : UIState()
+    object Loading : UIState()
+    data class Success(val message: String) : UIState()
+    data class Error(val error: String) : UIState()
 }
+
+fun handleNetworkResult(result: NetworkResult<String>) {
+    when (result) {                          // => Exhaustive, compiler checks all cases
+        is NetworkResult.Success -> {
+            println("Success: ${result.data}")
+                                             // => Smart cast to Success, access data
+        }
+        is NetworkResult.Error -> {
+            println("Error: ${result.exception.message}")
+                                             // => Smart cast to Error, access exception
+        }
+        NetworkResult.Loading -> {
+            println("Loading...")            // => Object case (singleton)
+        }
+        // No else needed - compiler knows all subclasses
+    }
+}
+
+fun updateUI(state: UIState): String = when (state) {
+    UIState.Idle -> "Ready"                  // => Return value for each case
+    UIState.Loading -> "Please wait..."
+    is UIState.Success -> "✓ ${state.message}"
+    is UIState.Error -> "✗ ${state.error}"
+}                                            // => when as expression returns String
 
 fun main() {
-    handleResult(Result.Success("Data loaded"))  // => Success: Data loaded
-    handleResult(Result.Error("Network error"))  // => Error: Network error
-    handleResult(Result.Loading)             // => Loading...
+    // Network result handling
+    handleNetworkResult(NetworkResult.Success("Data loaded"))
+                                             // => Output: Success: Data loaded
+    handleNetworkResult(NetworkResult.Error(Exception("Network timeout")))
+                                             // => Output: Error: Network timeout
+    handleNetworkResult(NetworkResult.Loading)
+                                             // => Output: Loading...
+
+    // UI state handling
+    println(updateUI(UIState.Idle))          // => Output: Ready
+    println(updateUI(UIState.Loading))       // => Output: Please wait...
+    println(updateUI(UIState.Success("Saved")))
+                                             // => Output: ✓ Saved
+    println(updateUI(UIState.Error("Connection failed")))
+                                             // => Output: ✗ Connection failed
+
+    // Sealed class hierarchy is known at compile time
+    val states: List<UIState> = listOf(
+        UIState.Idle,
+        UIState.Loading,
+        UIState.Success("OK"),
+        UIState.Error("Fail")
+    )
+
+    states.forEach { state ->
+        println(updateUI(state))             // => Processes all state types
+    }
 }
 ```
 
-**Key Takeaway**: Sealed classes enable exhaustive type hierarchies with compile-time completeness checking.
+**Key Takeaway**: Sealed classes enable exhaustive type hierarchies with compile-time completeness checking; perfect for state machines and result types.
 
-## Example 46: Inline Classes (Value Classes)
+---
 
-Inline classes provide zero-overhead type-safe wrappers.
+## Example 46: Data Class Advanced Features - Copy and Destructuring
+
+Data classes provide automatic `copy()`, `equals()`, `hashCode()`, and `toString()`. Destructuring enables unpacking into variables.
+
+```kotlin
+data class User(
+    val id: Int,
+    val name: String,
+    val email: String,
+    val role: String = "user"                // => Default parameter
+)
+
+data class Point3D(val x: Double, val y: Double, val z: Double)
+
+fun main() {
+    val user1 = User(1, "Alice", "alice@example.com")
+                                             // => User(id=1, name=Alice, email=alice@example.com, role=user)
+
+    // Automatic toString()
+    println(user1)                           // => Output: User(id=1, name=Alice, email=alice@example.com, role=user)
+
+    // Automatic equals() (structural equality)
+    val user2 = User(1, "Alice", "alice@example.com")
+    println("user1 == user2: ${user1 == user2}")
+                                             // => Output: user1 == user2: true (same values)
+    println("user1 === user2: ${user1 === user2}")
+                                             // => Output: user1 === user2: false (different objects)
+
+    // copy() with modifications
+    val user3 = user1.copy(email = "newalice@example.com")
+                                             // => User(id=1, name=Alice, email=newalice@example.com, role=user)
+    println("Modified user: $user3")         // => user1 unchanged, user3 has new email
+
+    val admin = user1.copy(role = "admin")   // => Only change role
+    println("Admin user: $admin")            // => Output: Admin user: User(id=1, name=Alice, email=alice@example.com, role=admin)
+
+    // Destructuring declaration
+    val (id, name, email, role) = user1      // => Unpack into variables
+    println("Destructured: ID=$id, Name=$name, Email=$email, Role=$role")
+                                             // => Output: Destructured: ID=1, Name=Alice, Email=alice@example.com, Role=user
+
+    // Partial destructuring (ignore components)
+    val (userId, userName) = user1           // => Take only first two components
+    println("Partial: ID=$userId, Name=$userName")
+                                             // => Output: Partial: ID=1, Name=Alice
+
+    // Destructuring in loops
+    val users = listOf(
+        User(1, "Alice", "alice@example.com"),
+        User(2, "Bob", "bob@example.com"),
+        User(3, "Charlie", "charlie@example.com")
+    )
+
+    for ((id, name) in users) {              // => Destructure each user
+        println("User $id: $name")
+    }                                        // => Output: User 1: Alice, User 2: Bob, User 3: Charlie
+
+    // componentN functions (auto-generated)
+    val point = Point3D(1.0, 2.0, 3.0)
+    val x = point.component1()               // => x is 1.0 (same as point.x)
+    val y = point.component2()               // => y is 2.0 (same as point.y)
+    val z = point.component3()               // => z is 3.0 (same as point.z)
+    println("Point components: x=$x, y=$y, z=$z")
+                                             // => Output: Point components: x=1.0, y=2.0, z=3.0
+}
+```
+
+**Key Takeaway**: Data classes auto-generate `copy()` for immutable updates, `componentN()` for destructuring, and value-based `equals()`/`hashCode()`/`toString()`.
+
+---
+
+## Example 47: Destructuring in Lambdas and Map Operations
+
+Destructure data class parameters in lambda expressions and work with map entries.
+
+```kotlin
+data class Product(val id: Int, val name: String, val price: Double)
+
+fun main() {
+    val products = listOf(
+        Product(1, "Laptop", 999.99),
+        Product(2, "Mouse", 29.99),
+        Product(3, "Keyboard", 79.99)
+    )
+
+    // Destructuring in lambda parameter
+    products.forEach { (id, name, price) ->  // => Destructure Product into components
+        println("Product $id: $name - $${price}")
+    }                                        // => Output: Product 1: Laptop - $999.99, etc.
+
+    // Partial destructuring with underscore
+    products.forEach { (id, name, _) ->      // => Ignore price
+        println("ID $id: $name")
+    }                                        // => Output: ID 1: Laptop, etc.
+
+    // Map operations with destructuring
+    val productMap = mapOf(
+        "Laptop" to 999.99,
+        "Mouse" to 29.99,
+        "Keyboard" to 79.99
+    )
+
+    productMap.forEach { (name, price) ->    // => Destructure Map.Entry<String, Double>
+        println("$name costs $${price}")
+    }                                        // => Output: Laptop costs $999.99, etc.
+
+    // Filter with destructuring
+    val expensive = productMap.filter { (_, price) -> price > 50.0 }
+                                             // => Filter by price, ignore name
+    println("Expensive products: $expensive")
+                                             // => Output: Expensive products: {Laptop=999.99, Keyboard=79.99}
+
+    // Map entries to different structure
+    val priceList = productMap.map { (name, price) ->
+        "$name: $${String.format("%.2f", price)}"
+    }                                        // => Transform to formatted strings
+    println("Price list: $priceList")        // => Output: Price list: [Laptop: $999.99, Mouse: $29.99, Keyboard: $79.99]
+
+    // Grouping with destructuring
+    val inventory = listOf(
+        Triple("Electronics", "Laptop", 5),
+        Triple("Electronics", "Mouse", 20),
+        Triple("Furniture", "Desk", 3),
+        Triple("Furniture", "Chair", 8)
+    )
+
+    val grouped = inventory.groupBy { (category, _, _) -> category }
+                                             // => Group by category, ignore product and quantity
+    grouped.forEach { (category, items) ->
+        println("$category:")
+        items.forEach { (_, product, quantity) ->
+            println("  $product: $quantity")
+        }
+    }
+    // => Output:
+    // Electronics:
+    //   Laptop: 5
+    //   Mouse: 20
+    // Furniture:
+    //   Desk: 3
+    //   Chair: 8
+}
+```
+
+**Key Takeaway**: Destructuring in lambdas enables concise parameter extraction from data classes, pairs, triples, and map entries.
+
+---
+
+## Example 48: Inline Classes (Value Classes) for Type Safety
+
+Inline classes provide zero-overhead type-safe wrappers. They're inlined to underlying type at runtime, avoiding object allocation.
 
 ```kotlin
 @JvmInline
-value class UserId(val value: Int)          // => No runtime object overhead
+value class UserId(val value: Int)          // => Inlined to Int at runtime, no object created
 
 @JvmInline
 value class Email(val value: String) {
     init {
-        require(value.contains("@")) { "Invalid email" }
+        require(value.contains("@")) { "Invalid email: $value" }
+                                             // => Validation at construction
     }
+
+    fun domain(): String = value.substringAfter("@")
+                                             // => Value class can have methods
 }
 
-fun sendEmail(to: Email, from: Email) {
-    println("Sending from ${from.value} to ${to.value}")
+@JvmInline
+value class Password(private val value: String) {
+    fun isStrong(): Boolean = value.length >= 8 && value.any { it.isDigit() }
+                                             // => Private value for encapsulation
+
+    override fun toString() = "*".repeat(value.length)
+                                             // => Hide actual password
+}
+
+// Type-safe function signatures
+fun sendEmail(from: Email, to: Email, subject: String) {
+    println("Sending '$subject' from ${from.value} to ${to.value}")
+}
+
+fun authenticateUser(userId: UserId, password: Password) {
+    println("Authenticating user ${userId.value}")
+    println("Password strength: ${if (password.isStrong()) "strong" else "weak"}")
 }
 
 fun main() {
-    val id1 = UserId(123)                    // => No allocation (inlined to Int)
-    val id2 = UserId(456)
+    val userId = UserId(123)                 // => No heap allocation (inlined to Int)
+    val email = Email("user@example.com")    // => Validated at construction
+    val password = Password("secret123")     // => Private value
 
-    val email1 = Email("user@example.com")   // => Validated at construction
-    val email2 = Email("admin@example.com")
+    // Type safety - cannot pass wrong types
+    // sendEmail(userId, email, "Test")      // => Compile error: UserId is not Email
 
-    sendEmail(email1, email2)                // => Type-safe (can't pass String)
-    // sendEmail("string", email2)           // => Compile error
+    sendEmail(
+        from = Email("sender@example.com"),
+        to = email,
+        subject = "Hello"
+    )                                        // => Output: Sending 'Hello' from sender@example.com to user@example.com
+
+    authenticateUser(userId, password)       // => Output: Authenticating user 123, Password strength: strong
+
+    // Value class properties and methods
+    println("Email domain: ${email.domain()}")
+                                             // => Output: Email domain: example.com
+    println("Password: $password")           // => Output: Password: ********* (toString override)
+
+    // Invalid email validation
+    try {
+        val invalid = Email("notanemail")    // => Throws exception
+    } catch (e: IllegalArgumentException) {
+        println("Caught: ${e.message}")      // => Output: Caught: Invalid email: notanemail
+    }
+
+    // Collections of value classes (no boxing overhead)
+    val userIds = listOf(UserId(1), UserId(2), UserId(3))
+                                             // => Stored as List<Int> at runtime
+    println("User IDs: $userIds")            // => Output: User IDs: [UserId(value=1), UserId(value=2), UserId(value=3)]
 }
 ```
 
-**Key Takeaway**: Value classes provide type safety without runtime overhead through compile-time inlining.
+**Key Takeaway**: Value classes provide compile-time type safety without runtime overhead; they're inlined to underlying type, preventing type confusion with zero allocation cost.
 
-## Example 47: Contracts for Smart Casts
+---
 
-Contracts inform compiler about function behavior enabling smart casts.
+## Example 49: Contracts for Smart Casts
+
+Contracts inform the compiler about function behavior, enabling smart casts and improved type inference.
 
 ```kotlin
 import kotlin.contracts.*
 
+@OptIn(ExperimentalContracts::class)
 fun String?.isNotNullOrEmpty(): Boolean {
     contract {
-        returns(true) implies (this@isNotNullOrEmpty != null)  // => Contract declaration
+        returns(true) implies (this@isNotNullOrEmpty != null)
+                                             // => Contract: if returns true, this is not null
     }
     return this != null && this.isNotEmpty()
+}
+
+@OptIn(ExperimentalContracts::class)
+fun <T> T?.requireNotNull(message: String = "Value is null"): T {
+    contract {
+        returns() implies (this@requireNotNull != null)
+                                             // => Contract: if returns, this is not null
+    }
+    return this ?: throw IllegalArgumentException(message)
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun <R> runOnce(block: () -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+                                             // => Contract: block called exactly once
+    }
+    return block()
 }
 
 fun processText(text: String?) {
     if (text.isNotNullOrEmpty()) {
         // Compiler knows text is non-null here due to contract
         println(text.uppercase())            // => No null check needed
+        println("Length: ${text.length}")    // => Smart cast to String
+    } else {
+        println("Text is null or empty")
     }
 }
 
 fun main() {
-    processText("hello")                     // => HELLO
-    processText(null)                        // => (nothing)
-    processText("")                          // => (nothing)
+    // isNotNullOrEmpty contract
+    processText("hello")                     // => Output: HELLO, Length: 5
+    processText(null)                        // => Output: Text is null or empty
+    processText("")                          // => Output: Text is null or empty
+
+    // requireNotNull contract
+    val nullableValue: String? = "Kotlin"
+    val nonNull = nullableValue.requireNotNull()
+                                             // => Compiler knows nonNull is String (not String?)
+    println(nonNull.length)                  // => Output: 6 (no null check needed)
+
+    try {
+        val invalid: String? = null
+        invalid.requireNotNull("Value cannot be null")
+    } catch (e: IllegalArgumentException) {
+        println("Caught: ${e.message}")      // => Output: Caught: Value cannot be null
+    }
+
+    // callsInPlace contract
+    var initialized = false
+    runOnce {
+        initialized = true                   // => Compiler knows this executes exactly once
+    }
+    println("Initialized: $initialized")     // => Output: Initialized: true (no warning)
+
+    // Without contract, compiler might warn about variable initialization
 }
 ```
 
-**Key Takeaway**: Contracts enable custom validation functions to influence compiler's smart cast analysis.
+**Key Takeaway**: Contracts enable custom functions to influence compiler's smart cast and nullability analysis; use for validation functions and control flow utilities.
 
-## Example 48: Context Receivers (Experimental)
+---
 
-Context receivers provide implicit context parameters for clean DSLs.
+## Example 50: Type Aliases for Readability
+
+Type aliases create alternative names for existing types, improving code readability without runtime overhead.
 
 ```kotlin
-// Requires compiler flag: -Xcontext-receivers
+// Simplify complex types
+typealias UserMap = Map<Int, String>
+typealias Predicate<T> = (T) -> Boolean
+typealias Handler<T> = (T) -> Unit
+typealias ValidationResult = Pair<Boolean, String>
+
+// Domain-specific aliases
+typealias UserId = Int
+typealias Timestamp = Long
+typealias JsonString = String
+
+class UserRepository {
+    private val users: UserMap = mapOf(      // => More readable than Map<Int, String>
+        1 to "Alice",
+        2 to "Bob",
+        3 to "Charlie"
+    )
+
+    fun findUser(predicate: Predicate<String>): List<String> {
+        return users.values.filter(predicate)
+    }                                        // => Predicate<String> clearer than (String) -> Boolean
+
+    fun processUser(id: UserId, handler: Handler<String>) {
+        users[id]?.let(handler)              // => Handler<String> clearer than (String) -> Unit
+    }
+
+    fun validateUserId(id: UserId): ValidationResult {
+        val exists = id in users
+        val message = if (exists) "Valid user" else "User not found"
+        return exists to message             // => Returns Pair<Boolean, String>
+    }
+}
+
+// Generic type alias
+typealias StringTransformer = (String) -> String
+
+fun applyTransformations(input: String, vararg transformers: StringTransformer): String {
+    var result = input
+    for (transformer in transformers) {
+        result = transformer(result)
+    }
+    return result
+}
+
+fun main() {
+    val repo = UserRepository()
+
+    // Using type aliases
+    val filtered = repo.findUser { it.startsWith("A") }
+    println("Filtered users: $filtered")     // => Output: Filtered users: [Alice]
+
+    repo.processUser(1) { name ->
+        println("Processing: $name")         // => Output: Processing: Alice
+    }
+
+    val (valid, message) = repo.validateUserId(1)
+    println("Validation: $message (valid=$valid)")
+                                             // => Output: Validation: Valid user (valid=true)
+
+    // Type alias for function types
+    val uppercase: StringTransformer = { it.uppercase() }
+    val addExclamation: StringTransformer = { "$it!" }
+    val addPrefix: StringTransformer = { ">>> $it" }
+
+    val result = applyTransformations(
+        "hello",
+        uppercase,
+        addExclamation,
+        addPrefix
+    )
+    println("Transformed: $result")          // => Output: Transformed: >>> HELLO!
+
+    // Type aliases don't create new types (just alternative names)
+    val userId: UserId = 123                 // => UserId is just Int
+    val regularInt: Int = userId             // => Can assign freely (same type)
+    println("User ID: $userId, Int: $regularInt")
+                                             // => Output: User ID: 123, Int: 123
+}
+```
+
+**Key Takeaway**: Type aliases improve code readability for complex or frequently used types without creating new types or runtime overhead.
+
+---
+
+## Example 51: Nothing Type for Exhaustiveness
+
+`Nothing` type represents computation that never returns normally. Used for functions that always throw exceptions or enter infinite loops.
+
+```kotlin
+// Function that always throws (returns Nothing)
+fun fail(message: String): Nothing {
+    throw IllegalStateException(message)     // => Never returns normally
+}
+
+// Function that exits process (returns Nothing)
+fun exitProgram(): Nothing {
+    println("Exiting...")
+    kotlin.system.exitProcess(1)             // => Never returns
+}
+
+sealed class Result<out T> {
+    data class Success<T>(val value: T) : Result<T>()
+    data class Error(val message: String) : Result<Nothing>()
+}
+
+fun processValue(value: Int?): Int {
+    val nonNull = value ?: fail("Value cannot be null")
+                                             // => Smart cast: if fail returns, value is non-null
+                                             // => But fail never returns, so nonNull is always Int
+    return nonNull + 10                      // => Compiler knows nonNull is Int (not Int?)
+}
+
+fun calculate(result: Result<Int>): Int = when (result) {
+    is Result.Success -> result.value        // => Returns Int
+    is Result.Error -> fail(result.message)  // => fail returns Nothing, compatible with Int
+}                                            // => No else needed, when is exhaustive
+
+fun main() {
+    // Nothing in smart cast
+    try {
+        processValue(5)                      // => Returns 15
+        println("Result: ${processValue(5)}")// => Output: Result: 15
+    } catch (e: IllegalStateException) {
+        println("Caught: ${e.message}")
+    }
+
+    try {
+        processValue(null)                   // => Throws exception
+    } catch (e: IllegalStateException) {
+        println("Caught: ${e.message}")      // => Output: Caught: Value cannot be null
+    }
+
+    // Nothing in sealed class
+    val success = Result.Success(42)
+    println("Calculate success: ${calculate(success)}")
+                                             // => Output: Calculate success: 42
+
+    val error = Result.Error("Computation failed")
+    try {
+        calculate(error)                     // => Throws exception
+    } catch (e: IllegalStateException) {
+        println("Caught: ${e.message}")      // => Output: Caught: Computation failed
+    }
+
+    // Nothing type hierarchy
+    // Nothing is subtype of all types
+    val list1: List<String> = emptyList()    // => emptyList() returns List<Nothing>
+    val list2: List<Int> = emptyList()       // => Nothing is compatible with any type
+    println("Empty lists: $list1, $list2")   // => Output: Empty lists: [], []
+
+    // TODO() function returns Nothing
+    fun notImplemented(): Int {
+        TODO("Implement this function")      // => TODO returns Nothing, compatible with Int
+    }
+
+    try {
+        notImplemented()
+    } catch (e: NotImplementedError) {
+        println("Caught: ${e.message}")      // => Output: Caught: An operation is not implemented: Implement this function
+    }
+}
+```
+
+**Key Takeaway**: `Nothing` type enables smart casts by telling the compiler that code paths never complete normally; useful for exception-throwing functions and exhaustive when expressions.
+
+---
+
+## Example 52: Companion Object Extensions
+
+Extend companion objects with additional factory methods or utilities without modifying original class.
+
+```kotlin
+class User(val id: Int, val name: String, val role: String) {
+    companion object {
+        fun create(name: String): User {
+            return User(generateId(), name, "user")
+                                             // => Default factory method
+        }
+
+        private var nextId = 1
+        private fun generateId() = nextId++  // => Private helper
+    }
+
+    override fun toString() = "User(id=$id, name=$name, role=$role)"
+}
+
+// Extension on companion object
+fun User.Companion.admin(name: String): User {
+    return User(1000, name, "admin")         // => Admin factory (fixed ID range)
+}
+
+fun User.Companion.guest(): User {
+    return User(9999, "Guest", "guest")      // => Guest factory (special ID)
+}
+
+fun User.Companion.fromPair(pair: Pair<Int, String>): User {
+    val (id, name) = pair
+    return User(id, name, "imported")        // => Factory from pair
+}
+
+fun main() {
+    // Original companion object methods
+    val user1 = User.create("Alice")         // => User(id=1, name=Alice, role=user)
+    val user2 = User.create("Bob")           // => User(id=2, name=Bob, role=user)
+    println("Created users: $user1, $user2")
+
+    // Extension methods on companion object
+    val admin = User.admin("Charlie")        // => User(id=1000, name=Charlie, role=admin)
+    println("Admin user: $admin")            // => Output: Admin user: User(id=1000, name=Charlie, role=admin)
+
+    val guest = User.guest()                 // => User(id=9999, name=Guest, role=guest)
+    println("Guest user: $guest")            // => Output: Guest user: User(id=9999, name=Guest, role=guest)
+
+    val imported = User.fromPair(500 to "David")
+    println("Imported user: $imported")      // => Output: Imported user: User(id=500, name=David, role=imported)
+
+    // All factory methods available through User companion
+    val users = listOf(
+        User.create("Eve"),
+        User.admin("Frank"),
+        User.guest()
+    )
+    users.forEach { println(it) }
+}
+```
+
+**Key Takeaway**: Companion object extensions add factory methods without modifying original class; ideal for providing alternative constructors in libraries.
+
+---
+
+## Example 53: Delegation Pattern with by Keyword
+
+Implement interfaces by delegating to contained objects using `by` keyword, eliminating boilerplate forwarding methods.
+
+```kotlin
+interface Repository {
+    fun save(data: String)
+    fun load(): String
+    fun delete()
+}
+
+class DatabaseRepository : Repository {
+    private var storage: String? = null
+
+    override fun save(data: String) {
+        println("Saving to database: $data")
+        storage = data
+    }
+
+    override fun load(): String {
+        println("Loading from database")
+        return storage ?: "No data"
+    }
+
+    override fun delete() {
+        println("Deleting from database")
+        storage = null
+    }
+}
+
+// Delegate all Repository methods to repo, override specific ones
+class CachedRepository(
+    private val repo: Repository             // => Delegate
+) : Repository by repo {                     // => All methods delegated to repo
+    private var cache: String? = null
+
+    override fun load(): String {            // => Override specific method
+        return cache ?: run {
+            val data = repo.load()           // => Delegate to underlying repo
+            cache = data                     // => Cache result
+            println("Cached data")
+            data
+        }
+    }
+
+    override fun delete() {
+        cache = null                         // => Clear cache
+        repo.delete()                        // => Delegate to underlying repo
+    }
+
+    // save() is fully delegated (no override)
+}
 
 interface Logger {
     fun log(message: String)
 }
 
 class ConsoleLogger : Logger {
-    override fun log(message: String) = println("[LOG] $message")
-}
-
-context(Logger)                              // => Requires Logger in context
-fun performTask(name: String) {
-    log("Starting task: $name")              // => Uses context Logger
-    // ... task logic ...
-    log("Completed task: $name")
-}
-
-fun main() {
-    val logger = ConsoleLogger()
-    with(logger) {                           // => Provides Logger context
-        performTask("Data processing")       // => [LOG] Starting/Completed
-    }
-}
-```
-
-**Key Takeaway**: Context receivers enable dependency injection-like patterns with cleaner syntax.
-
-## Example 49: Multiplatform Expect/Actual
-
-Expect declarations define platform-specific API; actual provides implementations.
-
-```kotlin
-// Common module (expect)
-expect fun platform(): String
-
-expect class UUID {
-    fun toString(): String
-}
-
-fun greetings(): String {
-    return "Hello from ${platform()}"        // => Uses platform-specific impl
-}
-
-// JVM module (actual)
-actual fun platform(): String = "JVM"
-
-actual class UUID {
-    actual fun toString(): String = java.util.UUID.randomUUID().toString()
-}
-
-// JS module (actual)
-// actual fun platform(): String = "JavaScript"
-// actual class UUID { ... }
-
-// iOS module (actual)
-// actual fun platform(): String = "iOS"
-// actual class UUID { ... }
-```
-
-**Key Takeaway**: Expect/actual mechanism enables shared code with platform-specific implementations.
-
-## Example 50: Companion Object Extensions
-
-Extend companion objects with additional factory methods.
-
-```kotlin
-class User(val name: String, val role: String) {
-    companion object {
-        fun create(name: String): User {
-            return User(name, "user")        // => Default factory
-        }
+    override fun log(message: String) {
+        println("[LOG] $message")
     }
 }
 
-// Extension on companion object
-fun User.Companion.admin(name: String): User {
-    return User(name, "admin")               // => Additional factory
-}
-
-fun main() {
-    val user = User.create("Alice")          // => User(name=Alice, role=user)
-    val admin = User.admin("Bob")            // => User(name=Bob, role=admin)
-
-    println("${user.name}: ${user.role}")    // => Alice: user
-    println("${admin.name}: ${admin.role}")  // => Bob: admin
-}
-```
-
-**Key Takeaway**: Companion object extensions add factory methods without modifying original class.
-
-## Example 51: Delegation Pattern
-
-Implement interfaces by delegating to contained objects using by keyword.
-
-```mermaid
-%% Class delegation showing method forwarding
-graph LR
-    Client[Client Code] --> Cached[CachedRepository]
-
-    Cached -->|save| Delegate[Delegate to repo]
-    Cached -->|load override| CheckCache{Cache exists?}
-
-    Delegate --> DB[DatabaseRepository]
-    CheckCache -->|Yes| ReturnCache[Return cached]
-    CheckCache -->|No| LoadDB[repo.load]
-
-    DB --> SaveDB[Save to database]
-    LoadDB --> StoreCache[Store in cache]
-    StoreCache --> ReturnCache
-
-    style Client fill:#0173B2,color:#fff
-    style Cached fill:#DE8F05,color:#000
-    style DB fill:#029E73,color:#fff
-    style CheckCache fill:#CC78BC,color:#000
-    style ReturnCache fill:#CA9161,color:#000
-```
-
-```kotlin
-interface Repository {
-    fun save(data: String)
-    fun load(): String
-}
-
-class DatabaseRepository : Repository {
-    override fun save(data: String) = println("Saving to DB: $data")
-    override fun load() = "DB data"
-}
-
-class CachedRepository(
-    private val repo: Repository             // => Delegate
-) : Repository by repo {                     // => Delegate all methods to repo
-    private var cache: String? = null
-
-    override fun load(): String {            // => Override specific method
-        return cache ?: repo.load().also { cache = it }
-    }
+// Delegate Logger to logger, Repository to repo
+class LoggingRepository(
+    private val repo: Repository,
+    private val logger: Logger
+) : Repository by repo, Logger by logger {   // => Multiple delegation
+    // All Repository methods delegated to repo
+    // All Logger methods delegated to logger
 }
 
 fun main() {
     val db = DatabaseRepository()
     val cached = CachedRepository(db)
 
-    cached.save("test")                      // => Delegated: Saving to DB: test
-    println(cached.load())                   // => Loads from DB, caches
-    println(cached.load())                   // => Returns cached value
+    // First load (from database)
+    println("First load: ${cached.load()}")  // => Output: Loading from database, No data, Cached data, First load: No data
+
+    cached.save("Important data")            // => Delegated to db: Saving to database: Important data
+
+    // Second load (from cache)
+    println("Second load: ${cached.load()}")  // => Output: Second load: Important data (no database access)
+
+    cached.delete()                          // => Output: Deleting from database
+    println("After delete: ${cached.load()}") // => Output: Loading from database, No data, Cached data, After delete: No data
+
+    println("\n--- Logging Repository ---")
+    val logger = ConsoleLogger()
+    val loggingRepo = LoggingRepository(DatabaseRepository(), logger)
+
+    loggingRepo.log("Starting operation")    // => Output: [LOG] Starting operation
+    loggingRepo.save("Data")                 // => Output: Saving to database: Data
+    loggingRepo.log("Operation complete")    // => Output: [LOG] Operation complete
 }
 ```
 
-**Key Takeaway**: Class delegation with by eliminates boilerplate forwarding methods.
+**Key Takeaway**: Class delegation with `by` eliminates boilerplate forwarding methods; ideal for decorator pattern and cross-cutting concerns like caching or logging.
 
-## Example 52: Type Aliases
+---
 
-Type aliases create alternative names for existing types improving readability.
+## Example 54: Destructuring Declarations Advanced
+
+Destructuring works with any class providing `componentN()` functions. Customize destructuring for domain objects.
 
 ```kotlin
-// Simplify complex types
-typealias UserMap = Map<Int, String>
-typealias Predicate<T> = (T) -> Boolean
-typealias Handler = (String) -> Unit
+class Credentials(val username: String, val password: String, val token: String) {
+    // Custom componentN() for destructuring
+    operator fun component1() = username     // => First component
+    operator fun component2() = password     // => Second component
+    operator fun component3() = token        // => Third component
+}
 
-class UserService {
-    private val users: UserMap = mapOf(      // => More readable than Map<Int, String>
-        1 to "Alice",
-        2 to "Bob"
+data class Range(val start: Int, val end: Int) {
+    // Data class auto-generates component1() and component2()
+
+    // Custom iteration support
+    operator fun iterator() = (start..end).iterator()
+}
+
+class Response(val statusCode: Int, val headers: Map<String, String>, val body: String) {
+    // Destructure into specific components
+    operator fun component1() = statusCode
+    operator fun component2() = headers["Content-Type"] ?: "unknown"
+    operator fun component3() = body
+}
+
+fun main() {
+    // Destructuring custom class
+    val creds = Credentials("user123", "pass456", "token789")
+    val (username, password, token) = creds  // => Calls component1(), component2(), component3()
+    println("User: $username, Pass: $password, Token: $token")
+                                             // => Output: User: user123, Pass: pass456, Token: token789
+
+    // Partial destructuring
+    val (user, pass) = creds                 // => Only first two components
+    println("Login: $user/$pass")            // => Output: Login: user123/pass456
+
+    // Destructuring in function parameters
+    fun authenticate(credentials: Credentials): String {
+        val (u, p, _) = credentials          // => Destructure, ignore token
+        return "Authenticated: $u"
+    }
+    println(authenticate(creds))             // => Output: Authenticated: user123
+
+    // Data class destructuring
+    val range = Range(1, 5)
+    val (start, end) = range                 // => Auto-generated component1(), component2()
+    println("Range: $start to $end")         // => Output: Range: 1 to 5
+
+    // Destructuring in for loop with custom iterator
+    for (value in range) {
+        print("$value ")                     // => Output: 1 2 3 4 5
+    }
+    println()
+
+    // Destructuring complex response
+    val response = Response(
+        200,
+        mapOf("Content-Type" to "application/json", "Server" to "Kotlin"),
+        "{\"status\": \"ok\"}"
+    )
+    val (status, contentType, body) = response
+    println("Status: $status, Type: $contentType, Body: $body")
+                                             // => Output: Status: 200, Type: application/json, Body: {"status": "ok"}
+
+    // List of destructurable objects
+    val responses = listOf(
+        Response(200, mapOf("Content-Type" to "text/html"), "<html>"),
+        Response(404, mapOf("Content-Type" to "text/plain"), "Not found"),
+        Response(500, mapOf("Content-Type" to "application/json"), "{\"error\":true}")
     )
 
-    fun filterUsers(predicate: Predicate<String>): List<String> {
-        return users.values.filter(predicate)
+    responses.forEach { (status, type, body) ->
+        println("$status ($type): ${body.take(20)}")
     }
-
-    fun processUser(id: Int, handler: Handler) {
-        users[id]?.let(handler)
-    }
-}
-
-fun main() {
-    val service = UserService()
-
-    val filtered = service.filterUsers { it.startsWith("A") }
-    println(filtered)                        // => [Alice]
-
-    service.processUser(1) { name ->
-        println("Processing: $name")         // => Processing: Alice
-    }
+    // => Output:
+    // 200 (text/html): <html>
+    // 404 (text/plain): Not found
+    // 500 (application/json): {"error":true}
 }
 ```
 
-**Key Takeaway**: Type aliases improve code readability for complex or frequently used type combinations.
+**Key Takeaway**: Implement `componentN()` operators to enable destructuring for custom classes; provides concise syntax for unpacking complex objects.
 
-## Example 53: Destructuring in Lambdas
-
-Destructure data class parameters in lambda expressions for concise code.
-
-```kotlin
-data class User(val id: Int, val name: String, val age: Int)
-
-fun main() {
-    val users = listOf(
-        User(1, "Alice", 30),
-        User(2, "Bob", 25),
-        User(3, "Charlie", 35)
-    )
-
-    // Destructuring in lambda
-    users.forEach { (id, name, age) ->       // => Destructure User
-        println("$id: $name ($age years)")
-    }
-
-    // Partial destructuring (ignore some components)
-    users.forEach { (id, name, _) ->         // => Ignore age
-        println("$id: $name")
-    }
-
-    // Map entries
-    val map = mapOf(1 to "one", 2 to "two")
-    map.forEach { (key, value) ->            // => Destructure Map.Entry
-        println("$key -> $value")
-    }
-}
-```
-
-**Key Takeaway**: Lambda destructuring enables concise parameter extraction from data classes and pairs.
-
-## Example 54: Nothing Type and Exhaustiveness
-
-Nothing type represents computation that never returns normally.
-
-```kotlin
-fun fail(message: String): Nothing {
-    throw IllegalStateException(message)     // => Never returns normally
-}
-
-sealed class Operation {
-    data class Add(val a: Int, val b: Int) : Operation()
-    data class Multiply(val a: Int, val b: Int) : Operation()
-}
-
-fun calculate(op: Operation): Int = when (op) {
-    is Operation.Add -> op.a + op.b
-    is Operation.Multiply -> op.a * op.b
-    // No else needed - sealed class is exhaustive
-}
-
-fun processValue(value: Int?) {
-    val nonNull = value ?: fail("Value is null")  // => Smart cast after fail
-    println(nonNull + 10)                    // => Compiler knows nonNull is Int
-}
-
-fun main() {
-    println(calculate(Operation.Add(2, 3)))  // => 5
-    processValue(5)                          // => 15
-    // processValue(null)                    // => throws exception
-}
-```
-
-**Key Takeaway**: Nothing type enables compiler to understand that code paths never complete normally.
+---
 
 ## Summary
 
-Intermediate Kotlin (examples 28-54) covers production patterns essential for real-world development: coroutines for concurrency, rich collection operations, property delegation, inline functions and reified types, type-safe builders, sealed classes for exhaustive state handling, and value classes for zero-overhead type safety. Master these patterns to write concurrent, type-safe, and expressive Kotlin code operating at 75% language coverage.
+Intermediate Kotlin (examples 28-54) covers production patterns essential for real-world development:
+
+1. **Coroutines** (28-35): Asynchronous programming with launch/async, structured concurrency, dispatchers, channels, flows (hot and cold streams)
+2. **Collection Operations** (36-38): Functional transformations (map/filter/reduce), grouping, sequences for lazy evaluation
+3. **Property Delegation** (39-40): Lazy initialization, observable properties, custom delegates
+4. **Extension Functions** (41): Adding methods to existing types without inheritance
+5. **Inline Functions** (42): Performance optimization and reified type parameters
+6. **Operator Overloading** (43): Custom syntax for domain-specific types
+7. **DSL Building** (44): Type-safe builders with lambda with receiver
+8. **Sealed Classes** (45): Exhaustive state machines and result types
+9. **Data Classes Advanced** (46-47): Copy, destructuring, lambda destructuring
+10. **Value Classes** (48): Zero-overhead type-safe wrappers
+11. **Contracts** (49): Smart cast improvements for custom functions
+12. **Type Aliases** (50): Readability improvements for complex types
+13. **Nothing Type** (51): Exhaustiveness and smart casts
+14. **Advanced Patterns** (52-54): Companion extensions, delegation pattern, custom destructuring
+
+Master these patterns to write concurrent, type-safe, and expressive Kotlin code operating at 75% language coverage.
