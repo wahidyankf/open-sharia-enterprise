@@ -50,6 +50,7 @@ Platforms provide the infrastructure foundation for deploying and running softwa
 ## Available Content
 
 - **[Web](/en/learn/software-engineering/platforms/web)** - Web application frameworks and platforms
+- **[Linux](/en/learn/software-engineering/platforms/linux)** - Linux as a platform for development and deployment
 
 ## Coming Soon
 

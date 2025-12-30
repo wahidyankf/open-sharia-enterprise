@@ -24,7 +24,7 @@ By the end of this tutorial, you'll understand:
 
 ## 📋 Prerequisites
 
-- Phoenix installed (see [Initial Setup](/en/learn/software-engineering/platforms/web/elixir-phoenix/initial-setup))
+- Phoenix installed (see [Initial Setup](/en/learn/software-engineering/platforms/web/elixir-phoenix/tutorials/initial-setup))
 
 ## 🛣️ Routing and Controllers
 
@@ -110,7 +110,7 @@ live "/counter", CountLive.Index, :index
 You now understand Phoenix essentials!
 
 1. **Try the examples**: Build routes, controllers, and LiveViews
-2. **Explore By Example**: [Elixir Phoenix By Example](/en/learn/software-engineering/platforms/web/elixir-phoenix/by-example)
+2. **Explore By Example**: [Elixir Phoenix By Example](/en/learn/software-engineering/platforms/web/elixir-phoenix/tutorials/by-example)
 
 ## 🎯 Self-Assessment
 

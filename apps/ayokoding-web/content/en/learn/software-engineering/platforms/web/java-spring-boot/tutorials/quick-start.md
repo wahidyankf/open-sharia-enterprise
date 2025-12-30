@@ -24,7 +24,7 @@ By the end of this tutorial, you'll understand:
 
 ## 📋 Prerequisites
 
-- Spring Boot installed (see [Initial Setup](/en/learn/software-engineering/platforms/web/java-spring-boot/initial-setup))
+- Spring Boot installed (see [Initial Setup](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials/initial-setup))
 
 ## 🛣️ REST Controllers
 
@@ -145,7 +145,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 You now understand Spring Boot essentials!
 
 1. **Try the examples**: Build REST APIs and services
-2. **Explore By Example**: [Java Spring Boot By Example](/en/learn/software-engineering/platforms/web/java-spring-boot/by-example)
+2. **Explore By Example**: [Java Spring Boot By Example](/en/learn/software-engineering/platforms/web/java-spring-boot/tutorials/by-example)
 
 ## 🎯 Self-Assessment
 

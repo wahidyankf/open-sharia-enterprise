@@ -31,6 +31,7 @@ weight: 102
   - [Overview](/en/learn/software-engineering/networking/overview)
 - [Platforms](/en/learn/software-engineering/platforms)
   - [Overview](/en/learn/software-engineering/platforms/overview)
+  - [Linux](/en/learn/software-engineering/platforms/linux)
   - [Web](/en/learn/software-engineering/platforms/web)
 - [System Design](/en/learn/software-engineering/system-design)
   - [Overview](/en/learn/software-engineering/system-design/overview)
