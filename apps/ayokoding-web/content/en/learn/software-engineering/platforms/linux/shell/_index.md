@@ -3,7 +3,8 @@ title: "Shell"
 weight: 100002
 date: 2025-12-30T14:30:00+07:00
 draft: false
-type: docs
+cascade:
+  type: docs
 layout: list
 ---
 
