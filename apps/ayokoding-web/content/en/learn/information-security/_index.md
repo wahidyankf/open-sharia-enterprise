@@ -5,10 +5,10 @@ draft: false
 weight: 103
 ---
 
-- [Concepts](/en/learn/information-security/concepts)
-  - [Explanation](/en/learn/information-security/concepts/explanation)
-  - [Overview](/en/learn/information-security/concepts/overview)
 - [Overview](/en/learn/information-security/overview)
+- [Concepts](/en/learn/information-security/concepts)
+  - [Overview](/en/learn/information-security/concepts/overview)
+  - [Explanation](/en/learn/information-security/concepts/explanation)
 - [Tools](/en/learn/information-security/tools)
-  - [Gobuster](/en/learn/information-security/tools/gobuster)
   - [Overview](/en/learn/information-security/tools/overview)
+  - [Gobuster](/en/learn/information-security/tools/gobuster)
