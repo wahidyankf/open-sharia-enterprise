@@ -12,6 +12,27 @@ This section covers production Clojure patterns from examples 28-54, achieving 4
 
 Multimethods enable polymorphism based on arbitrary dispatch functions.
 
+```mermaid
+%% Multimethod dispatch flow
+graph TD
+    A[area shape] --> B{Dispatch on :shape}
+    B -->|:circle| C[Circle Method]
+    B -->|:rectangle| D[Rectangle Method]
+    B -->|:triangle| E[:default Method]
+    C --> F[π × r²]
+    D --> G[width × height]
+    E --> H[Exception]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#000
+    style H fill:#CA9161,color:#000
+```
+
 ```clojure
 (defmulti area :shape)                       ;; => Dispatch on :shape key
 
@@ -33,6 +54,33 @@ Multimethods enable polymorphism based on arbitrary dispatch functions.
 ## Example 29: Protocols
 
 Protocols define interfaces for polymorphic functions with type-based dispatch.
+
+```mermaid
+%% Protocol implementation flow
+graph TD
+    A[IDrawable Protocol] --> B[draw method]
+    A --> C[resize method]
+    B --> D[Circle Implementation]
+    B --> E[Square Implementation]
+    C --> F[Circle resize]
+    C --> G[Square resize]
+    D --> H[String Output]
+    E --> I[String Output]
+    F --> J[New Circle Instance]
+    G --> K[New Square Instance]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#000
+    style I fill:#CC78BC,color:#000
+    style J fill:#CC78BC,color:#000
+    style K fill:#CC78BC,color:#000
+```
 
 ```clojure
 (defprotocol IDrawable
@@ -152,6 +200,24 @@ Avoid variable capture in macros using gensym or auto-gensym.
 
 Atoms provide thread-safe synchronous mutable references.
 
+```mermaid
+%% Atom state transitions
+stateDiagram-v2
+    [*] --> atom_0: Create atom 0
+    atom_0 --> atom_1: swap! inc
+    atom_1 --> atom_6: swap! + 5
+    atom_6 --> atom_0: reset! 0
+    atom_0 --> complex: Create {:users [] :count 0}
+    complex --> updated: swap! update :count inc
+    updated --> final: swap! update :users conj
+
+    note right of atom_0: Deref with @
+    note right of atom_1: Atomic increment
+    note right of atom_6: Atomic addition
+    note right of atom_0: Direct set
+    note right of final: Nested state updates
+```
+
 ```clojure
 (def counter (atom 0))                       ;; => Create atom
 
@@ -180,6 +246,32 @@ Atoms provide thread-safe synchronous mutable references.
 ## Example 34: Refs and Software Transactional Memory
 
 Refs enable coordinated synchronous updates across multiple references.
+
+```mermaid
+%% STM transaction flow
+sequenceDiagram
+    participant T as Transaction
+    participant A as account-a (ref)
+    participant B as account-b (ref)
+
+    Note over T,B: Initial: A=1000, B=500
+    T->>A: dosync start
+    T->>A: alter - 200
+    A-->>T: 800 (tentative)
+    T->>B: alter + 200
+    B-->>T: 700 (tentative)
+    T->>T: Commit transaction
+    T-->>A: Committed: 800
+    T-->>B: Committed: 700
+    Note over T,B: Final: A=800, B=700
+
+    Note over T,B: Transaction Failure
+    T->>A: dosync start
+    T->>A: alter - 100
+    T->>T: Exception thrown
+    T->>T: Rollback
+    Note over A,B: State unchanged
+```
 
 ```clojure
 (def account-a (ref 1000))                   ;; => Bank account A
@@ -212,6 +304,28 @@ Refs enable coordinated synchronous updates across multiple references.
 ## Example 35: Agents for Asynchronous State
 
 Agents handle asynchronous state changes with guaranteed sequential processing.
+
+```mermaid
+%% Agent asynchronous processing
+graph LR
+    A[send action 1] --> Q[Agent Queue]
+    B[send action 2] --> Q
+    C[send action 3] --> Q
+    Q --> T[Thread Pool]
+    T --> S1[Sequential Execution]
+    S1 --> S2[Action 1]
+    S2 --> S3[Action 2]
+    S3 --> S4[Action 3]
+    S4 --> R[Agent State Updated]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#0173B2,color:#fff
+    style C fill:#0173B2,color:#fff
+    style Q fill:#DE8F05,color:#000
+    style T fill:#029E73,color:#fff
+    style S1 fill:#CC78BC,color:#000
+    style R fill:#CA9161,color:#000
+```
 
 ```clojure
 (def logger (agent []))                      ;; => Create agent
@@ -248,6 +362,28 @@ Agents handle asynchronous state changes with guaranteed sequential processing.
 
 Channels enable CSP-style communication between async processes.
 
+```mermaid
+%% Channel communication pattern
+graph TD
+    P1[Producer go block] -->|>! put| C[Channel]
+    P2[Producer go block] -->|>! put| C
+    C -->|<! take| C1[Consumer go block 1]
+    C -->|<! take| C2[Consumer go block 2]
+    C1 --> O1[Process Value]
+    C2 --> O2[Process Value]
+
+    B[Buffered Channel] -->|Size 10| BUF[Buffer]
+    BUF -->|Full?| PARK[Park Producer]
+
+    style P1 fill:#0173B2,color:#fff
+    style P2 fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style C1 fill:#029E73,color:#fff
+    style C2 fill:#029E73,color:#fff
+    style B fill:#CC78BC,color:#000
+    style BUF fill:#CA9161,color:#000
+```
+
 ```clojure
 (require '[clojure.core.async :refer [chan go >! <! >!! <!! timeout close!]])
 
@@ -281,6 +417,31 @@ Channels enable CSP-style communication between async processes.
 ## Example 37: core.async go Blocks
 
 go blocks execute code asynchronously with automatic channel parking.
+
+```mermaid
+%% go block execution timeline
+sequenceDiagram
+    participant M as Main Thread
+    participant G1 as go block 1
+    participant G2 as go block 2
+    participant CH as Channel
+
+    M->>G1: Launch go block
+    M->>G2: Launch go block
+    Note over M: Main continues...
+
+    G1->>G1: println "Starting..."
+    G1->>G1: timeout 1000ms (park)
+    Note over G1: Thread released
+    G2->>G2: println "Waiting..."
+    G2->>CH: <! (park, waiting)
+    Note over G2: Thread released
+
+    Note over G1: 1000ms elapsed
+    G1->>CH: >! "Task complete"
+    CH->>G2: Value delivered
+    G2->>G2: println "Result"
+```
 
 ```clojure
 (require '[clojure.core.async :refer [go chan >! <! timeout]])
@@ -378,6 +539,31 @@ Define specs for function arguments and return values.
 
 Transducers compose transformations without creating intermediate collections.
 
+```mermaid
+%% Transducer vs regular sequence operations
+graph TD
+    subgraph Regular Sequences
+    R1[range 10] --> R2[map inc]
+    R2 --> R3[Lazy Seq 1]
+    R3 --> R4[filter even?]
+    R4 --> R5[Lazy Seq 2]
+    R5 --> R6[Final Result]
+    end
+
+    subgraph Transducers
+    T1[range 10] --> TX[Transducer comp]
+    TX --> T2[map inc + filter even?]
+    T2 --> T3[Single Pass]
+    T3 --> T4[Final Result]
+    end
+
+    style R3 fill:#CA9161,color:#000
+    style R5 fill:#CA9161,color:#000
+    style TX fill:#029E73,color:#fff
+    style T2 fill:#0173B2,color:#fff
+    style T3 fill:#DE8F05,color:#000
+```
+
 ```clojure
 ;; Regular sequence operations (create intermediates)
 (->> (range 1000000)
@@ -453,6 +639,32 @@ Handle errors with try/catch and ex-info for custom exceptions.
 ## Example 42: Lazy Sequences
 
 Lazy sequences compute elements on demand enabling infinite sequences.
+
+```mermaid
+%% Lazy sequence evaluation
+graph LR
+    A[Infinite Sequence] --> B[naturals iterate inc]
+    B --> C[Not Computed]
+    C --> D{take 5}
+    D -->|Demand| E[Compute 0]
+    E --> F[Compute 1]
+    F --> G[Compute 2]
+    G --> H[Compute 3]
+    H --> I[Compute 4]
+    I --> J[Return 0 1 2 3 4]
+    C -.->|Rest| K[Still Lazy]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#CA9161,color:#000
+    style D fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#029E73,color:#fff
+    style I fill:#029E73,color:#fff
+    style J fill:#CC78BC,color:#000
+    style K fill:#CA9161,color:#000
+```
 
 ```clojure
 ;; Infinite sequence
@@ -720,6 +932,37 @@ Reducers enable parallel fold operations on collections.
 ## Example 50: Futures and Promises
 
 Futures run async computations; promises coordinate async results.
+
+```mermaid
+%% Futures and Promises coordination
+sequenceDiagram
+    participant M as Main Thread
+    participant F as Future Thread
+    participant P as Promise
+
+    M->>F: Create future
+    Note over F: Computing...
+    M->>M: println "Computing..."
+    M->>F: Deref @ (blocks)
+    Note over M: Waiting...
+    F->>F: Thread/sleep 1000
+    F->>F: (+ 1 2)
+    F-->>M: Return 3
+    M->>M: println 3
+
+    M->>P: Create promise
+    M->>F: Launch future
+    M->>M: println "Waiting..."
+    M->>P: Deref @ (blocks)
+    F->>F: Thread/sleep 1000
+    F->>P: deliver "Async result"
+    P-->>M: Return value
+    M->>M: println result
+
+    style M fill:#0173B2,color:#fff
+    style F fill:#029E73,color:#fff
+    style P fill:#DE8F05,color:#000
+```
 
 ```clojure
 ;; Future (async computation)

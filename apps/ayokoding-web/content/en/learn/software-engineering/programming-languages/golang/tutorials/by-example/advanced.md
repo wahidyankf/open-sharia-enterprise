@@ -40,38 +40,70 @@ import "fmt"
 func main() {
     // Create pipeline: generate -> multiply by 2 -> print
     nums := generate(1, 5)         // => Stage 1: generate 1-5
+                                    // => nums is <-chan int (receive-only channel)
+                                    // => Goroutine starts running in background
+
     doubled := multiply(nums, 2)   // => Stage 2: multiply by 2
+                                    // => doubled is <-chan int (new channel)
+                                    // => Second goroutine starts processing nums
+
     square := multiply(doubled, 2) // => Stage 3: multiply by 2 again (square effect)
+                                    // => square is <-chan int (final channel)
+                                    // => Third goroutine processes doubled
+                                    // => Pipeline: generate(1-5) -> *2 -> *2 = values*4
 
     // Consume results
     for result := range square {   // => Stage 4: consume results
-        fmt.Println(result)
+                                    // => Blocks until value available from square
+                                    // => result is 4, then 8, then 12, then 16, then 20
+        fmt.Println(result)         // => Output: 4 (first iteration)
+                                    // => Output: 8 (second iteration)
+                                    // => Output: 12 (third iteration)
+                                    // => Output: 16 (fourth iteration)
+                                    // => Output: 20 (fifth iteration)
     }
-    // => Output: 4 8 12 16 20
+    // => Loop exits when square channel closes
+    // => All goroutines complete gracefully
 }
 
 // Generator stage - creates values
 func generate(start, end int) <-chan int { // => Returns receive-only channel
-    out := make(chan int)
-    go func() {
-        for i := start; i <= end; i++ {
-            out <- i               // => Send generated values
+                                            // => Caller can only receive, not send
+    out := make(chan int)                   // => out is bidirectional chan int
+                                            // => Unbuffered channel (blocks on send until receive)
+    go func() {                             // => Spawn goroutine to generate values
+                                            // => Goroutine continues after generate() returns
+        for i := start; i <= end; i++ {     // => i is 1, then 2, then 3, then 4, then 5
+            out <- i                        // => Send value to channel (blocks until multiply receives)
+                                            // => Sends: 1, then 2, then 3, then 4, then 5
         }
-        close(out)                 // => Signal completion
+        close(out)                          // => Signal completion, no more values
+                                            // => Range loops will exit when channel closed
     }()
-    return out
+    return out                              // => Return channel immediately (goroutine runs async)
+                                            // => Type converted from chan int to <-chan int
 }
 
 // Transform stage - multiplies values
-func multiply(in <-chan int, factor int) <-chan int { // => Receive input, send output
-    out := make(chan int)
-    go func() {
-        for value := range in {    // => Range until channel closes
-            out <- value * factor  // => Send transformed value
+func multiply(in <-chan int, factor int) <-chan int { // => in is receive-only (ensures we don't send)
+                                                       // => factor is 2 in all calls
+                                                       // => Returns receive-only channel
+    out := make(chan int)                              // => Create new output channel
+                                                        // => Unbuffered (synchronizes with consumer)
+    go func() {                                         // => Spawn goroutine to transform values
+                                                        // => Goroutine continues after multiply() returns
+        for value := range in {                         // => Range until channel closes
+                                                        // => Blocks waiting for input values
+                                                        // => value is each input (1,2,3,4,5 or 2,4,6,8,10)
+            out <- value * factor                       // => Send transformed value
+                                                        // => First multiply: sends 2,4,6,8,10
+                                                        // => Second multiply: sends 4,8,12,16,20
         }
-        close(out)
+        close(out)                                      // => Close output when input exhausted
+                                                        // => Signals downstream consumers
     }()
-    return out
+    return out                                          // => Return channel immediately
+                                                        // => Type converted from chan int to <-chan int
 }
 ```
 
@@ -80,6 +112,33 @@ func multiply(in <-chan int, factor int) <-chan int { // => Receive input, send 
 ### Example 37: Context-Aware Pipelines
 
 Pipeline stages should respect cancellation. When context is cancelled, all stages should exit gracefully. This enables cancelling long-running pipelines without leaking goroutines.
+
+```mermaid
+%% Context cancellation propagates through pipeline stages
+sequenceDiagram
+    participant Main
+    participant Ctx as Context
+    participant Gen as Generate Stage
+    participant Sq as Square Stage
+    participant Out as Output
+
+    Main->>Ctx: WithTimeout(100ms)
+    Main->>Gen: Start generation
+    Main->>Sq: Start squaring
+    Gen->>Sq: Send values (1,2,3...)
+    Sq->>Out: Send squared (1,4,9...)
+
+    Note over Ctx: 100ms elapsed
+    Ctx-->>Gen: ctx.Done() signal
+    Ctx-->>Sq: ctx.Done() signal
+    Gen->>Gen: Exit gracefully
+    Sq->>Sq: Exit gracefully
+    Gen->>Sq: Close channel
+    Sq->>Out: Close channel
+    Out->>Main: Loop exits
+
+    Note over Main,Out: All goroutines cleaned up
+```
 
 **Code**:
 
@@ -95,50 +154,96 @@ import (
 func main() {
     // Create cancellable context
     ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
-    defer cancel()
+                                                        // => ctx will cancel after 100ms
+                                                        // => cancel is function to cancel early
+                                                        // => Background() returns empty root context
+    defer cancel()                                      // => Ensure cancel called (releases resources)
+                                                        // => Even if context times out, call cancel()
 
     // Pipeline with context awareness
-    nums := generateWithContext(ctx, 1, 100)
-    squared := squareWithContext(ctx, nums)
+    nums := generateWithContext(ctx, 1, 100)            // => Generate 1-100 with cancellation
+                                                        // => nums is <-chan int
+                                                        // => Goroutine respects ctx.Done()
+
+    squared := squareWithContext(ctx, nums)             // => Square each value from nums
+                                                        // => squared is <-chan int
+                                                        // => Goroutine respects ctx.Done()
 
     // Consume until context cancelled
-    for result := range squared {
-        fmt.Println(result)
+    for result := range squared {                       // => Blocks waiting for squared values
+                                                        // => result is 1, then 4, then 9, then 16...
+        fmt.Println(result)                             // => Output: 1 (first value)
+                                                        // => Output: 4 (second value)
+                                                        // => Output: 9 (third value)
+                                                        // => Outputs continue until context timeout
     }
-    fmt.Println("Pipeline cancelled")
+                                                        // => Loop exits when squared channel closes
+                                                        // => Context timeout (100ms) cancels pipeline
+    fmt.Println("Pipeline cancelled")                   // => Output: Pipeline cancelled
+                                                        // => Printed after all goroutines exit
 }
 
 func generateWithContext(ctx context.Context, start, end int) <-chan int {
-    out := make(chan int)
-    go func() {
-        defer close(out)
-        for i := start; i <= end; i++ {
-            select {
-            case out <- i:           // => Send value
-            case <-ctx.Done():       // => Check for cancellation
-                fmt.Println("Generate cancelled")
-                return
+                                                        // => ctx enables cancellation signal
+                                                        // => start=1, end=100
+                                                        // => Returns receive-only channel
+    out := make(chan int)                               // => Create unbuffered channel
+                                                        // => Blocks on send until receiver ready
+    go func() {                                         // => Spawn goroutine for generation
+                                                        // => Runs concurrently with caller
+        defer close(out)                                // => Always close channel when done
+                                                        // => Deferred: runs even if return early
+        for i := start; i <= end; i++ {                 // => i is 1, then 2, then 3...
+                                                        // => Loop continues until i > end or cancelled
+            select {                                    // => Multiplexing: send or cancel
+            case out <- i:                              // => Send value (blocks until receiver ready)
+                                                        // => Sends: 1, 2, 3, 4... until timeout
+            case <-ctx.Done():                          // => Context cancelled (timeout or manual)
+                                                        // => Receives signal from closed Done() channel
+                fmt.Println("Generate cancelled")       // => Output: Generate cancelled
+                                                        // => Indicates graceful shutdown
+                return                                  // => Exit goroutine early
+                                                        // => Deferred close(out) runs
             }
-            time.Sleep(10 * time.Millisecond)
+            time.Sleep(10 * time.Millisecond)           // => Simulate work (10ms per value)
+                                                        // => 100ms timeout = ~10 values generated
         }
+                                                        // => If loop completes naturally, close(out) runs
     }()
-    return out
+    return out                                          // => Return channel immediately
+                                                        // => Goroutine continues in background
 }
 
 func squareWithContext(ctx context.Context, in <-chan int) <-chan int {
-    out := make(chan int)
-    go func() {
-        defer close(out)
-        for value := range in {
-            select {
-            case out <- value * value: // => Send result
-            case <-ctx.Done():         // => Check for cancellation
-                fmt.Println("Square cancelled")
-                return
+                                                        // => ctx enables cancellation signal
+                                                        // => in is input channel from generateWithContext
+                                                        // => Returns receive-only channel
+    out := make(chan int)                               // => Create unbuffered output channel
+                                                        // => Synchronizes with consumer
+    go func() {                                         // => Spawn goroutine for transformation
+                                                        // => Runs concurrently with generator
+        defer close(out)                                // => Always close when done
+                                                        // => Signals consumer no more values
+        for value := range in {                         // => Range over input channel
+                                                        // => Blocks waiting for values from in
+                                                        // => value is 1, then 2, then 3...
+                                                        // => Exits when in closes
+            select {                                    // => Multiplexing: send or cancel
+            case out <- value * value:                  // => Send squared value
+                                                        // => Sends: 1, 4, 9, 16, 25...
+                                                        // => Blocks until consumer receives
+            case <-ctx.Done():                          // => Context cancelled
+                                                        // => Receives signal from closed Done() channel
+                fmt.Println("Square cancelled")         // => Output: Square cancelled
+                                                        // => Indicates graceful shutdown
+                return                                  // => Exit goroutine early
+                                                        // => Deferred close(out) runs
             }
         }
+                                                        // => If input exhausted naturally, close(out) runs
     }()
-    return out
+    return out                                          // => Return channel immediately
+                                                        // => Goroutine continues in background
 }
 ```
 
@@ -160,24 +265,42 @@ import (
 
 func main() {
     // Create rate limiter - 2 operations per second
-    limiter := make(chan struct{}, 2) // => Channel with capacity 2 (tokens)
+    limiter := make(chan struct{}, 2)               // => Channel with capacity 2 (tokens)
+                                                    // => Buffered channel holds max 2 empty structs
+                                                    // => struct{} uses zero bytes (efficient token)
 
     // Replenish tokens
-    go func() {
-        ticker := time.NewTicker(500 * time.Millisecond) // => Add token every 500ms
-        for range ticker.C {
-            select {
-            case limiter <- struct{}{}: // => Add token if space available
-            default:
-                // Token buffer full, skip
+    go func() {                                     // => Spawn goroutine to add tokens
+                                                    // => Runs concurrently with main
+        ticker := time.NewTicker(500 * time.Millisecond)
+                                                    // => Add token every 500ms
+                                                    // => ticker.C is <-chan time.Time
+                                                    // => Sends current time every 500ms
+        for range ticker.C {                        // => Receive from ticker every 500ms
+                                                    // => Ignores time value (we just need timing)
+            select {                                // => Non-blocking send attempt
+            case limiter <- struct{}{}:             // => Add token if space available
+                                                    // => Sends empty struct to channel
+                                                    // => Succeeds if len(limiter) < 2
+            default:                                // => Token buffer full, skip
+                                                    // => Prevents blocking ticker goroutine
+                                                    // => No action needed (already at capacity)
             }
         }
     }()
 
     // Use limited operations
-    for i := 0; i < 5; i++ {
-        <-limiter                  // => Consume token (wait if none available)
+    for i := 0; i < 5; i++ {                        // => i is 0, then 1, then 2, then 3, then 4
+        <-limiter                                   // => Consume token (wait if none available)
+                                                    // => Blocks until token available
+                                                    // => First 2 operations immediate (initial capacity)
+                                                    // => Remaining wait for token replenishment
         fmt.Printf("Operation %d at %v\n", i, time.Now().Unix())
+                                                    // => Output: Operation 0 at 1234567890 (immediate)
+                                                    // => Output: Operation 1 at 1234567890 (immediate)
+                                                    // => Output: Operation 2 at 1234567890 (wait 500ms)
+                                                    // => Output: Operation 3 at 1234567891 (wait 500ms)
+                                                    // => Output: Operation 4 at 1234567891 (wait 500ms)
     }
 }
 
@@ -185,14 +308,28 @@ func main() {
 import "golang.org/x/time/rate"
 
 func limitedOperations() {
-    limiter := rate.NewLimiter(rate.Every(time.Second), 5) // => 1 op/sec, burst 5
+    limiter := rate.NewLimiter(rate.Every(time.Second), 5)
+                                                    // => 1 op/sec sustained rate
+                                                    // => burst capacity of 5 (initial tokens)
+                                                    // => rate.Every(time.Second) = 1 operation per second
+                                                    // => Allows bursts up to 5 operations
 
-    for i := 0; i < 10; i++ {
-        if !limiter.Allow() {     // => Check if operation allowed
-            fmt.Println("Rate limit exceeded")
-            continue
+    for i := 0; i < 10; i++ {                       // => i is 0,1,2...9 (10 operations total)
+        if !limiter.Allow() {                       // => Check if operation allowed (non-blocking)
+                                                    // => Returns true if token available
+                                                    // => Consumes token if available
+                                                    // => First 5 return true (burst capacity)
+                                                    // => Remaining 5 fail (no tokens yet)
+            fmt.Println("Rate limit exceeded")      // => Output: Rate limit exceeded (for ops 5-9)
+                                                    // => Indicates rejection, not wait
+            continue                                // => Skip this operation
         }
-        fmt.Printf("Operation %d\n", i)
+        fmt.Printf("Operation %d\n", i)             // => Output: Operation 0 (first 5 operations)
+                                                    // => Output: Operation 1
+                                                    // => Output: Operation 2
+                                                    // => Output: Operation 3
+                                                    // => Output: Operation 4
+                                                    // => Remaining operations rejected
     }
 }
 ```
@@ -215,49 +352,79 @@ import (
 
 func main() {
     // Semaphore - allow 3 concurrent operations
-    sem := make(chan struct{}, 3) // => Capacity 3 = 3 concurrent slots
-    var wg sync.WaitGroup
+    sem := make(chan struct{}, 3)               // => Capacity 3 = 3 concurrent slots
+                                                // => Buffered channel acts as counting semaphore
+                                                // => struct{} uses zero memory per token
+    var wg sync.WaitGroup                       // => WaitGroup to wait for all goroutines
+                                                // => Counter starts at 0
 
-    for i := 1; i <= 10; i++ {
-        wg.Add(1)
-        go func(id int) {
-            defer wg.Done()
+    for i := 1; i <= 10; i++ {                  // => Launch 10 goroutines total
+                                                // => i is 1,2,3...10
+        wg.Add(1)                               // => Increment counter before goroutine starts
+                                                // => Counter is now 1,2,3...10
+        go func(id int) {                       // => Spawn goroutine with operation id
+                                                // => id captured from i (avoids closure issue)
+            defer wg.Done()                     // => Decrement counter when goroutine completes
+                                                // => Always executes even if panic
 
-            sem <- struct{}{}      // => Acquire slot (blocks if all 3 slots full)
-            defer func() { <-sem }() // => Release slot when done
+            sem <- struct{}{}                   // => Acquire slot (blocks if all 3 slots full)
+                                                // => Blocks if len(sem) == 3
+                                                // => Only 3 goroutines can acquire simultaneously
+            defer func() { <-sem }()            // => Release slot when done
+                                                // => Deferred: runs after operation completes
+                                                // => Allows waiting goroutines to proceed
 
             fmt.Printf("Operation %d running\n", id)
+                                                // => Output: Operation 1 running (one of first 3)
+                                                // => Output: Operation 2 running (one of first 3)
+                                                // => Output: Operation 3 running (one of first 3)
+                                                // => Remaining wait for slot release
             // Simulate work
-        }(i)
+        }(i)                                    // => Pass i as argument (prevents closure capture)
     }
 
-    wg.Wait()
-    fmt.Println("All operations complete")
+    wg.Wait()                                   // => Block until counter reaches 0
+                                                // => Waits for all 10 goroutines to complete
+    fmt.Println("All operations complete")      // => Output: All operations complete
+                                                // => Printed after all goroutines exit
 }
 
 // Weighted semaphore - operations require different numbers of slots
 func weighSemaphore() {
-    sem := make(chan int, 10)  // => Capacity 10 "units"
+    sem := make(chan int, 10)                   // => Capacity 10 "units"
+                                                // => Can hold up to 10 int values
+                                                // => Not a counting semaphore (simplified example)
 
     // Operation requiring 3 units
-    go func() {
-        n := 3
-        sem <- n                // => Acquire 3 units
-        defer func() { <-sem }()
+    go func() {                                 // => Spawn goroutine for operation
+        n := 3                                  // => n is 3 (units required)
+        sem <- n                                // => Acquire 3 units (conceptual)
+                                                // => Actually sends int 3 to channel
+                                                // => Blocks if channel full (len(sem) == 10)
+        defer func() { <-sem }()                // => Release slot (receive from channel)
+                                                // => Deferred: runs when function exits
 
-        fmt.Println("Acquired 3 units")
+        fmt.Println("Acquired 3 units")         // => Output: Acquired 3 units
+                                                // => Printed after successfully acquiring
     }()
 
     // Operation requiring 7 units
-    go func() {
-        n := 7
-        sem <- n                // => Acquire 7 units
-        defer func() { <-sem }()
+    go func() {                                 // => Spawn goroutine for operation
+        n := 7                                  // => n is 7 (units required)
+        sem <- n                                // => Acquire 7 units (conceptual)
+                                                // => Sends int 7 to channel
+                                                // => Blocks if channel full
+        defer func() { <-sem }()                // => Release slot when done
+                                                // => Deferred execution
 
-        fmt.Println("Acquired 7 units")
+        fmt.Println("Acquired 7 units")         // => Output: Acquired 7 units
+                                                // => Printed after successfully acquiring
     }()
 
     // Total capacity: 10 units, both operations can run concurrently
+                                                // => Note: This is simplified example
+                                                // => True weighted semaphore needs golang.org/x/sync/semaphore
+                                                // => Real implementation tracks actual weight consumption
 }
 ```
 
@@ -266,6 +433,39 @@ func weighSemaphore() {
 ### Example 40: Atomic Operations
 
 Atomic operations ensure thread-safe modifications without mutexes. The `sync/atomic` package provides compare-and-swap (CAS) and atomic increments. Use when contention is low and operations are simple.
+
+```mermaid
+%% Compare-and-swap atomic operation flow
+graph TB
+    A["Start: value=5"]
+    B["Call CompareAndSwap<br/>expected=5, new=10"]
+    C{Current value<br/>equals expected?}
+    D["Yes: value==5"]
+    E["No: value!=5"]
+    F["Atomically swap<br/>value=10"]
+    G["Return true"]
+    H["No change<br/>value unchanged"]
+    I["Return false"]
+
+    A --> B
+    B --> C
+    C -->|value==5| D
+    C -->|value!=5| E
+    D --> F
+    E --> H
+    F --> G
+    H --> I
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#CC78BC,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#0173B2,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#fff
+    style I fill:#DE8F05,stroke:#000,color:#fff
+```
 
 **Code**:
 
@@ -280,37 +480,71 @@ import (
 
 func main() {
     // Atomic counter - multiple goroutines increment safely
-    var counter int64          // => Must be int64 or int32 for atomic
-    var wg sync.WaitGroup
+    var counter int64                               // => Must be int64 or int32 for atomic
+                                                    // => Initialized to 0
+                                                    // => Must be accessed via atomic package only
+    var wg sync.WaitGroup                           // => WaitGroup to synchronize goroutines
+                                                    // => Counter starts at 0
 
-    for i := 0; i < 10; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            for j := 0; j < 100; j++ {
-                atomic.AddInt64(&counter, 1) // => Atomic increment
+    for i := 0; i < 10; i++ {                       // => Launch 10 goroutines
+                                                    // => i is 0,1,2...9
+        wg.Add(1)                                   // => Increment WaitGroup counter
+                                                    // => Counter reaches 10
+        go func() {                                 // => Spawn goroutine
+                                                    // => Runs concurrently with others
+            defer wg.Done()                         // => Decrement WaitGroup when done
+                                                    // => Always executes via defer
+            for j := 0; j < 100; j++ {              // => Each goroutine increments 100 times
+                                                    // => j is 0,1,2...99
+                atomic.AddInt64(&counter, 1)        // => Atomic increment (thread-safe)
+                                                    // => Adds 1 to counter atomically
+                                                    // => No race condition (CPU-level atomic operation)
+                                                    // => counter increases: 1,2,3...1000
             }
         }()
     }
 
-    wg.Wait()
-    fmt.Println("Counter:", counter) // => 1000 (safe from race conditions)
+    wg.Wait()                                       // => Block until all goroutines complete
+                                                    // => Waits for counter to reach 0
+    fmt.Println("Counter:", counter)                // => Output: Counter: 1000
+                                                    // => Always 1000 (safe from race conditions)
+                                                    // => Without atomic: unpredictable (race condition)
 
     // Atomic swap
-    var value int64 = 10
-    old := atomic.SwapInt64(&value, 20) // => Set to 20, return old value (10)
-    fmt.Println("Old:", old, "New:", value)
+    var value int64 = 10                            // => value is 10 (type: int64)
+    old := atomic.SwapInt64(&value, 20)             // => Set value to 20, return old (10)
+                                                    // => Atomic operation (swap happens atomically)
+                                                    // => old is 10, value is now 20
+    fmt.Println("Old:", old, "New:", value)         // => Output: Old: 10 New: 20
+                                                    // => Demonstrates swap semantics
 
     // Compare-and-swap (CAS)
-    var cas int64 = 5
-    swapped := atomic.CompareAndSwapInt64(&cas, 5, 10) // => If cas==5, set to 10
-    fmt.Println("Swapped:", swapped, "Value:", cas)    // => true, 10
+    var cas int64 = 5                               // => cas is 5 (type: int64)
+    swapped := atomic.CompareAndSwapInt64(&cas, 5, 10)
+                                                    // => If cas==5, set to 10 and return true
+                                                    // => If cas!=5, no change and return false
+                                                    // => cas is 5, so swap succeeds
+                                                    // => swapped is true, cas is now 10
+    fmt.Println("Swapped:", swapped, "Value:", cas) // => Output: Swapped: true Value: 10
+                                                    // => CAS useful for lock-free algorithms
+
+    // Failed CAS example
+    swapped2 := atomic.CompareAndSwapInt64(&cas, 5, 15)
+                                                    // => cas is 10 (not 5), so swap fails
+                                                    // => swapped2 is false, cas unchanged (10)
+                                                    // => Demonstrates conditional update
 
     // Load and store for safe reads
-    var flag int32 = 0
-    atomic.StoreInt32(&flag, 1)        // => Atomic write
-    value32 := atomic.LoadInt32(&flag) // => Atomic read
-    fmt.Println("Flag:", value32)
+    var flag int32 = 0                              // => flag is 0 (type: int32)
+                                                    // => Must use int32 for atomic operations
+    atomic.StoreInt32(&flag, 1)                     // => Atomic write (sets flag to 1)
+                                                    // => Ensures visibility across goroutines
+                                                    // => Memory barrier guarantees ordering
+    value32 := atomic.LoadInt32(&flag)              // => Atomic read (reads flag value)
+                                                    // => value32 is 1
+                                                    // => Ensures we see latest value
+    fmt.Println("Flag:", value32)                   // => Output: Flag: 1
+                                                    // => Load/Store prevent compiler reordering
 }
 ```
 
@@ -358,48 +592,77 @@ import (
 
 func main() {
     // Inspect struct type
-    type Person struct {
-        Name string
-        Age  int
+    type Person struct {                        // => Define struct type
+        Name string                             // => First field: Name (type: string)
+        Age  int                                // => Second field: Age (type: int)
     }
 
-    p := Person{"Alice", 30}
-    v := reflect.ValueOf(p)    // => Get reflected value
-    t := v.Type()              // => Get type
+    p := Person{"Alice", 30}                    // => p is Person{Name:"Alice", Age:30}
+                                                // => Struct literal initialization
+    v := reflect.ValueOf(p)                     // => Get reflected value wrapping p
+                                                // => v is reflect.Value of Person
+                                                // => Enables runtime type inspection
+    t := v.Type()                               // => Get type information from value
+                                                // => t is reflect.Type for main.Person
+                                                // => Contains metadata about struct
 
-    fmt.Println("Type:", t)    // => main.Person
-    fmt.Println("Fields:")
+    fmt.Println("Type:", t)                     // => Output: Type: main.Person
+                                                // => Shows package and type name
+    fmt.Println("Fields:")                      // => Header for field iteration
 
     // Iterate struct fields
-    for i := 0; i < v.NumField(); i++ {
-        field := v.Field(i)    // => Get field value
-        fieldType := t.Field(i) // => Get field type
+    for i := 0; i < v.NumField(); i++ {         // => NumField() returns 2 (Name, Age)
+                                                // => i is 0, then 1
+        field := v.Field(i)                     // => Get field value by index
+                                                // => field is reflect.Value for field
+                                                // => i=0: field wraps "Alice", i=1: field wraps 30
+        fieldType := t.Field(i)                 // => Get field type metadata
+                                                // => fieldType is reflect.StructField
+                                                // => Contains Name, Type, Tag, Offset
         fmt.Printf("  %s: %v (type: %s)\n", fieldType.Name, field.Interface(), field.Type())
+                                                // => fieldType.Name is "Name" or "Age"
+                                                // => field.Interface() converts back to interface{}
+                                                // => field.Type() is "string" or "int"
     }
     // => Output:
-    // =>   Name: Alice (type: string)
-    // =>   Age: 30 (type: int)
+    // =>   Name: Alice (type: string)          // => First field
+    // =>   Age: 30 (type: int)                 // => Second field
 
     // Get value using field name
-    nameField := v.FieldByName("Name")
+    nameField := v.FieldByName("Name")          // => Lookup field by string name
+                                                // => nameField is reflect.Value wrapping "Alice"
+                                                // => Returns zero Value if field not found
     fmt.Println("Name field:", nameField.String())
+                                                // => Output: Name field: Alice
+                                                // => .String() converts Value to string
 
     // Check kind
-    if t.Kind() == reflect.Struct {
-        fmt.Println("Type is a struct")
+    if t.Kind() == reflect.Struct {             // => Kind() returns underlying type category
+                                                // => reflect.Struct is one of 26 kinds
+                                                // => Other kinds: Int, String, Slice, etc.
+        fmt.Println("Type is a struct")         // => Output: Type is a struct
+                                                // => Confirms t represents struct type
     }
 
     // Type assertion vs reflection
     // Reflection approach (dynamic):
-    val := reflect.ValueOf(p)
-    if val.Kind() == reflect.Struct {
+    val := reflect.ValueOf(p)                   // => Create new reflect.Value for p
+                                                // => val wraps Person struct
+    if val.Kind() == reflect.Struct {           // => Runtime check using reflection
+                                                // => Slower than static type check
         fmt.Println("It's a struct (reflection)")
+                                                // => Output: It's a struct (reflection)
+                                                // => Dynamic approach for unknown types
     }
 
     // Direct approach (static, faster):
-    switch p := p.(type) {
-    case Person:
-        fmt.Println("It's a Person (direct)")
+    switch p := p.(type) {                      // => Type switch (compile-time)
+                                                // => p shadows outer p variable
+    case Person:                                // => Match Person type
+                                                // => Compiler knows type at compile-time
+        fmt.Println("It's a Person (direct)")   // => Output: It's a Person (direct)
+                                                // => Faster than reflection (no runtime overhead)
+                                                // => Preferred when types known at compile-time
     }
 }
 ```
@@ -424,34 +687,67 @@ import (
 
 func main() {
     // Write binary data
-    buf := new(bytes.Buffer)
+    buf := new(bytes.Buffer)                        // => buf is *bytes.Buffer (in-memory buffer)
+                                                    // => Implements io.Writer and io.Reader
+                                                    // => Starts empty (len=0)
 
     // Write integer in big-endian format
-    binary.Write(buf, binary.BigEndian, int32(42)) // => 42 as 4 bytes, big-endian
-    binary.Write(buf, binary.BigEndian, float32(3.14)) // => Float
-    binary.Write(buf, binary.BigEndian, true)      // => Bool
+    binary.Write(buf, binary.BigEndian, int32(42))  // => 42 as 4 bytes, big-endian
+                                                    // => Writes [0x00 0x00 0x00 0x2A]
+                                                    // => Big-endian: most significant byte first
+                                                    // => buf now has 4 bytes
+    binary.Write(buf, binary.BigEndian, float32(3.14))
+                                                    // => Float as 4 bytes (IEEE 754 format)
+                                                    // => Writes [0x40 0x48 0xF5 0xC3] (approx)
+                                                    // => buf now has 8 bytes
+    binary.Write(buf, binary.BigEndian, true)       // => Bool as 1 byte
+                                                    // => true writes 0x01, false writes 0x00
+                                                    // => buf now has 9 bytes total
 
     // Read back
-    reader := bytes.NewReader(buf.Bytes())
-    var num int32
-    var f float32
-    var b bool
+    reader := bytes.NewReader(buf.Bytes())          // => Create reader from buffer bytes
+                                                    // => reader is *bytes.Reader at position 0
+                                                    // => buf.Bytes() returns []byte slice
+    var num int32                                   // => num is 0 (zero value for int32)
+    var f float32                                   // => f is 0.0 (zero value for float32)
+    var b bool                                      // => b is false (zero value for bool)
 
-    binary.Read(reader, binary.BigEndian, &num) // => Read int32
-    binary.Read(reader, binary.BigEndian, &f)   // => Read float32
-    binary.Read(reader, binary.BigEndian, &b)   // => Read bool
+    binary.Read(reader, binary.BigEndian, &num)     // => Read int32 from reader
+                                                    // => Reads 4 bytes, converts to int32
+                                                    // => num is now 42
+                                                    // => reader position advances to byte 4
+    binary.Read(reader, binary.BigEndian, &f)       // => Read float32 from reader
+                                                    // => Reads 4 bytes, converts to float32
+                                                    // => f is now 3.14 (approximately)
+                                                    // => reader position advances to byte 8
+    binary.Read(reader, binary.BigEndian, &b)       // => Read bool from reader
+                                                    // => Reads 1 byte, converts to bool
+                                                    // => b is now true
+                                                    // => reader position advances to byte 9 (EOF)
 
     fmt.Printf("Num: %d, Float: %f, Bool: %v\n", num, f, b)
-    // => Output: Num: 42, Float: 3.140000, Bool: true
+                                                    // => Output: Num: 42, Float: 3.140000, Bool: true
+                                                    // => Demonstrates round-trip encoding/decoding
 
     // Endianness matters
-    smallBuf := new(bytes.Buffer)
-    binary.Write(smallBuf, binary.LittleEndian, int16(256)) // => Little-endian
-    fmt.Printf("Little-endian bytes: %v\n", smallBuf.Bytes()) // => [0 1]
+    smallBuf := new(bytes.Buffer)                   // => New empty buffer
+    binary.Write(smallBuf, binary.LittleEndian, int16(256))
+                                                    // => 256 in decimal = 0x0100 in hex
+                                                    // => Little-endian: least significant byte first
+                                                    // => Writes [0x00 0x01] (low byte, high byte)
+    fmt.Printf("Little-endian bytes: %v\n", smallBuf.Bytes())
+                                                    // => Output: Little-endian bytes: [0 1]
+                                                    // => [0x00 0x01] as decimal
 
-    bigBuf := new(bytes.Buffer)
-    binary.Write(bigBuf, binary.BigEndian, int16(256))     // => Big-endian
-    fmt.Printf("Big-endian bytes: %v\n", bigBuf.Bytes())   // => [1 0]
+    bigBuf := new(bytes.Buffer)                     // => New empty buffer
+    binary.Write(bigBuf, binary.BigEndian, int16(256))
+                                                    // => 256 in decimal = 0x0100 in hex
+                                                    // => Big-endian: most significant byte first
+                                                    // => Writes [0x01 0x00] (high byte, low byte)
+    fmt.Printf("Big-endian bytes: %v\n", bigBuf.Bytes())
+                                                    // => Output: Big-endian bytes: [1 0]
+                                                    // => [0x01 0x00] as decimal
+                                                    // => Demonstrates endianness difference
 }
 ```
 
@@ -476,34 +772,64 @@ import (
 
 func main() {
     // SHA256 hash - integrity check
-    data := "Important message"
-    hash := sha256.Sum256([]byte(data))  // => Compute hash
-    fmt.Printf("SHA256: %s\n", hex.EncodeToString(hash[:])) // => Print as hex
-    // => Output: SHA256: a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+    data := "Important message"                 // => data is string to hash
+                                                // => Fixed input produces fixed hash
+    hash := sha256.Sum256([]byte(data))         // => Compute SHA-256 hash
+                                                // => []byte(data) converts string to bytes
+                                                // => hash is [32]byte array (256 bits)
+                                                // => Deterministic: same input = same hash
+    fmt.Printf("SHA256: %s\n", hex.EncodeToString(hash[:]))
+                                                // => hash[:] converts array to slice
+                                                // => hex.EncodeToString converts bytes to hex string
+                                                // => Output: SHA256: a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+                                                // => 64 hex characters (32 bytes * 2)
 
     // HMAC - authentication
-    key := []byte("secret-key")
-    h := hmac.New(sha256.New, key)       // => Create HMAC-SHA256
-    h.Write([]byte(data))                // => Add data to hash
+    key := []byte("secret-key")                 // => key is secret shared key ([]byte)
+                                                // => Same key needed for signing and verification
+    h := hmac.New(sha256.New, key)              // => Create HMAC-SHA256 hasher
+                                                // => sha256.New is hash function factory
+                                                // => h implements hash.Hash interface
+    h.Write([]byte(data))                       // => Add data to hash
+                                                // => Can call Write multiple times
+                                                // => []byte(data) converts string to bytes
     signature := hex.EncodeToString(h.Sum(nil)) // => Get signature as hex
-    fmt.Println("HMAC:", signature)
+                                                // => h.Sum(nil) returns []byte signature
+                                                // => nil means no prefix bytes
+                                                // => signature is 64-character hex string
+    fmt.Println("HMAC:", signature)             // => Output: HMAC: <64 hex chars>
+                                                // => Unique for this data+key combination
 
     // Verify HMAC
-    h2 := hmac.New(sha256.New, key)
-    h2.Write([]byte(data))
-    if hmac.Equal(h.Sum(nil), h2.Sum(nil)) { // => Compare HMAC values
-        fmt.Println("HMAC valid")
+    h2 := hmac.New(sha256.New, key)             // => Create new HMAC hasher
+                                                // => Same key and hash function
+    h2.Write([]byte(data))                      // => Hash same data
+                                                // => Should produce identical signature
+    if hmac.Equal(h.Sum(nil), h2.Sum(nil)) {    // => Compare HMAC values
+                                                // => hmac.Equal prevents timing attacks
+                                                // => Constant-time comparison
+                                                // => Returns true if signatures match
+        fmt.Println("HMAC valid")               // => Output: HMAC valid
+                                                // => Confirms data not tampered
     }
 
     // Random bytes - for tokens, nonces
-    token := make([]byte, 16)
-    _, err := rand.Read(token)            // => Read 16 random bytes
-    if err != nil {
+    token := make([]byte, 16)                   // => token is 16-byte slice (128 bits)
+                                                // => Initialized to zeros
+    _, err := rand.Read(token)                  // => Read 16 random bytes from crypto/rand
+                                                // => Cryptographically secure randomness
+                                                // => Fills token slice with random data
+                                                // => Returns (n int, err error)
+    if err != nil {                             // => Check for error (rare)
         fmt.Println("Error generating random:", err)
-        return
+                                                // => Output error if random generation fails
+        return                                  // => Exit function early
     }
     fmt.Printf("Random token: %s\n", hex.EncodeToString(token))
-    // => Output: Random token: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6 (example)
+                                                // => Convert random bytes to hex string
+                                                // => Output: Random token: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6 (example)
+                                                // => 32 hex characters (16 bytes * 2)
+                                                // => Different every time (unpredictable)
 }
 ```
 
@@ -552,17 +878,27 @@ import (
 func main() {
     // Simple template with variables
     tmpl, err := template.New("test").Parse("Hello, {{.Name}}! You are {{.Age}} years old.")
-    if err != nil {
-        fmt.Println("Parse error:", err)
-        return
+                                                    // => Create new template named "test"
+                                                    // => Parse template string with {{}} placeholders
+                                                    // => {{.Name}} accesses Name field in data
+                                                    // => {{.Age}} accesses Age field
+                                                    // => Returns (*Template, error)
+    if err != nil {                                 // => Check parse error
+                                                    // => Syntax errors caught here
+        fmt.Println("Parse error:", err)            // => Output: Parse error: <error>
+        return                                      // => Exit on error
     }
 
-    data := map[string]interface{}{
-        "Name": "Alice",
-        "Age":  30,
+    data := map[string]interface{}{                 // => Data to render template
+        "Name": "Alice",                            // => Name field is "Alice"
+        "Age":  30,                                 // => Age field is 30 (int)
     }
-    tmpl.Execute(os.Stdout, data) // => Execute template with data
+    tmpl.Execute(os.Stdout, data)                   // => Execute template with data
+                                                    // => Writes to os.Stdout (stdout)
+                                                    // => {{.Name}} replaced with "Alice"
+                                                    // => {{.Age}} replaced with 30
     // => Output: Hello, Alice! You are 30 years old.
+                                                    // => Template rendered to output
 
     // Conditional and loops
     tmpl2, _ := template.New("list").Parse(`
@@ -570,37 +906,52 @@ Users:
 {{range .Users}}
   - {{.Name}} ({{.Age}})
 {{end}}
-`)
+`)                                                  // => Multiline template string
+                                                    // => {{range .Users}} iterates slice
+                                                    // => Inside range, . is each element
+                                                    // => {{end}} closes range block
+                                                    // => _ ignores error (for brevity)
 
-    data2 := map[string]interface{}{
-        "Users": []map[string]interface{}{
-            {"Name": "Alice", "Age": 30},
-            {"Name": "Bob", "Age": 25},
+    data2 := map[string]interface{}{                // => Data with Users slice
+        "Users": []map[string]interface{}{          // => Slice of user maps
+            {"Name": "Alice", "Age": 30},           // => First user
+            {"Name": "Bob", "Age": 25},             // => Second user
         },
     }
-    tmpl2.Execute(os.Stdout, data2)
+    tmpl2.Execute(os.Stdout, data2)                 // => Execute template
+                                                    // => {{range}} iterates Users slice
+                                                    // => First iteration: . is {"Name": "Alice", "Age": 30}
+                                                    // => Second iteration: . is {"Name": "Bob", "Age": 25}
     // => Output:
     // => Users:
-    // =>   - Alice (30)
-    // =>   - Bob (25)
+    // =>   - Alice (30)                            // => First user rendered
+    // =>   - Bob (25)                              // => Second user rendered
 
     // Custom functions
-    funcMap := template.FuncMap{
-        "upper": strings.ToUpper,         // => Add function to template
+    funcMap := template.FuncMap{                    // => Map of custom template functions
+                                                    // => FuncMap is map[string]interface{}
+        "upper": strings.ToUpper,                   // => Add function to template
+                                                    // => upper calls strings.ToUpper
         "add":   func(a, b int) int { return a + b }, // => Custom function
+                                                    // => add accepts 2 ints, returns sum
     }
 
     tmpl3, _ := template.New("funcs").Funcs(funcMap).Parse(
         "{{upper .Name}} total is {{add .Age .Years}}",
-    )
+    )                                               // => Create template with custom functions
+                                                    // => Funcs() adds functions before Parse()
+                                                    // => {{upper .Name}} calls upper function
+                                                    // => {{add .Age .Years}} calls add function
 
-    data3 := map[string]interface{}{
-        "Name":  "alice",
-        "Age":   30,
-        "Years": 5,
+    data3 := map[string]interface{}{                // => Data for function template
+        "Name":  "alice",                           // => Name is lowercase "alice"
+        "Age":   30,                                // => Age is 30
+        "Years": 5,                                 // => Years is 5
     }
-    tmpl3.Execute(os.Stdout, data3)
-    // => Output: ALICE total is 35
+    tmpl3.Execute(os.Stdout, data3)                 // => Execute template
+                                                    // => {{upper .Name}} becomes "ALICE"
+                                                    // => {{add .Age .Years}} becomes 35 (30+5)
+    // => Output: ALICE total is 35                 // => Custom functions applied
 }
 ```
 
@@ -648,56 +999,82 @@ import "fmt"
 
 func main() {
     // Generic function works with different types
-    intSlice := []int{3, 1, 4, 1, 5}
-    fmt.Println("Max int:", max(intSlice))     // => 5
+    intSlice := []int{3, 1, 4, 1, 5}            // => intSlice is []int with 5 elements
+                                                // => Contains: [3, 1, 4, 1, 5]
+    fmt.Println("Max int:", max(intSlice))      // => Calls max with T=int
+                                                // => Output: Max int: 5
+                                                // => Compiler generates max_int version
 
     stringSlice := []string{"apple", "zebra", "banana"}
-    fmt.Println("Max string:", max(stringSlice)) // => zebra
+                                                // => stringSlice is []string with 3 elements
+                                                // => Contains: ["apple", "zebra", "banana"]
+    fmt.Println("Max string:", max(stringSlice))// => Calls max with T=string
+                                                // => Output: Max string: zebra
+                                                // => Compiler generates max_string version
 }
 
 // Generic function - [T any] is type parameter
 // T is constrained to "any" type
-func max[T any](slice []T) T { // => Type parameter T
+func max[T any](slice []T) T {                  // => Type parameter T can be any type
+                                                // => any is alias for interface{}
+                                                // => slice is []T (slice of type T)
     // Compiler error: can't compare T values (no constraint)
     // This won't work because we need to define T must be comparable
-    return slice[0]
+    return slice[0]                             // => Returns first element (placeholder)
+                                                // => Real implementation needs constraints
 }
 
 // Better: constrain T to be comparable
 import "fmt"
 
 // Comparable constraint - enables comparison operators
-func betterMax[T interface{ int | float64 | string }](slice []T) T { // => Constraint
-    if len(slice) == 0 {
-        var zero T
-        return zero
+func betterMax[T interface{ int | float64 | string }](slice []T) T {
+                                                // => T constrained to int OR float64 OR string
+                                                // => Union type constraint
+                                                // => Enables > operator for these types
+    if len(slice) == 0 {                        // => Check for empty slice
+                                                // => len(slice) returns 0 for empty
+        var zero T                              // => zero is zero value for type T
+                                                // => T=int: zero=0, T=string: zero=""
+        return zero                             // => Return zero value
     }
 
-    max := slice[0]
-    for _, val := range slice[1:] {
-        if val > max {          // => Works because T is constrained
-            max = val
+    max := slice[0]                             // => max starts with first element
+                                                // => max is type T
+    for _, val := range slice[1:] {             // => Iterate from index 1 onwards
+                                                // => slice[1:] creates subslice
+                                                // => val is each element (type T)
+        if val > max {                          // => Compare values (works with constraint)
+                                                // => > operator enabled by union constraint
+            max = val                           // => Update max if val is greater
         }
     }
-    return max
+    return max                                  // => Return maximum value (type T)
 }
 
 // Even better: use Ordered constraint (Go 1.21+)
 import "golang.org/x/exp/constraints"
 
-func bestMax[T constraints.Ordered](slice []T) T { // => Standard constraint
-    if len(slice) == 0 {
-        var zero T
-        return zero
+func bestMax[T constraints.Ordered](slice []T) T {
+                                                // => T constrained to Ordered types
+                                                // => Ordered includes: integers, floats, strings
+                                                // => Standard constraint from constraints package
+    if len(slice) == 0 {                        // => Handle empty slice
+        var zero T                              // => zero value for type T
+        return zero                             // => Return zero value
     }
 
-    max := slice[0]
-    for _, val := range slice[1:] {
-        if val > max {
-            max = val
+    max := slice[0]                             // => Initialize max with first element
+                                                // => max is type T
+    for _, val := range slice[1:] {             // => Iterate remaining elements
+                                                // => val is each element after first
+        if val > max {                          // => Compare using > operator
+                                                // => Ordered constraint enables comparisons
+            max = val                           // => Update max if needed
         }
     }
-    return max
+    return max                                  // => Return maximum value found
+                                                // => Type is T (preserves input type)
 }
 ```
 
@@ -741,51 +1118,88 @@ import "fmt"
 
 func main() {
     // Generic stack of integers
-    intStack := NewStack[int]()
-    intStack.Push(10)
-    intStack.Push(20)
-    fmt.Println("Pop:", intStack.Pop()) // => 20
+    intStack := NewStack[int]()                     // => Create Stack[int] instance
+                                                    // => T=int, instantiates Stack with int
+                                                    // => intStack is *Stack[int]
+    intStack.Push(10)                               // => Push 10 (type: int)
+                                                    // => items is now []int{10}
+    intStack.Push(20)                               // => Push 20 (type: int)
+                                                    // => items is now []int{10, 20}
+    fmt.Println("Pop:", intStack.Pop())             // => Pop returns 20 (last item)
+                                                    // => Output: Pop: 20
+                                                    // => items is now []int{10}
 
     // Generic stack of strings
-    stringStack := NewStack[string]()
-    stringStack.Push("hello")
-    stringStack.Push("world")
-    fmt.Println("Pop:", stringStack.Pop()) // => world
+    stringStack := NewStack[string]()               // => Create Stack[string] instance
+                                                    // => T=string, instantiates Stack with string
+                                                    // => stringStack is *Stack[string]
+    stringStack.Push("hello")                       // => Push "hello" (type: string)
+                                                    // => items is now []string{"hello"}
+    stringStack.Push("world")                       // => Push "world" (type: string)
+                                                    // => items is now []string{"hello", "world"}
+    fmt.Println("Pop:", stringStack.Pop())          // => Pop returns "world" (last item)
+                                                    // => Output: Pop: world
+                                                    // => items is now []string{"hello"}
 }
 
 // Generic stack type
-type Stack[T any] struct {    // => Type parameter T
-    items []T
+type Stack[T any] struct {                          // => Type parameter T (can be any type)
+                                                    // => Stack is generic over T
+                                                    // => Compiler generates type-specific versions
+    items []T                                       // => Slice of type T (not interface{})
+                                                    // => T=int: items is []int
+                                                    // => T=string: items is []string
 }
 
 // Generic methods
-func (s *Stack[T]) Push(item T) { // => Works with type T
-    s.items = append(s.items, item)
+func (s *Stack[T]) Push(item T) {                   // => Method on Stack[T]
+                                                    // => item must be type T
+                                                    // => Receiver is *Stack[T] (pointer)
+    s.items = append(s.items, item)                 // => Append item to slice
+                                                    // => Type-safe: item is T, items is []T
+                                                    // => Grows slice if needed
 }
 
-func (s *Stack[T]) Pop() T {
-    if len(s.items) == 0 {
-        var zero T
-        return zero
+func (s *Stack[T]) Pop() T {                        // => Method returns type T
+                                                    // => Return type matches Stack type parameter
+    if len(s.items) == 0 {                          // => Check for empty stack
+                                                    // => Prevents out-of-bounds access
+        var zero T                                  // => zero is zero value for type T
+                                                    // => T=int: zero=0, T=string: zero=""
+        return zero                                 // => Return zero value (safe default)
     }
-    lastIdx := len(s.items) - 1
-    item := s.items[lastIdx]
-    s.items = s.items[:lastIdx]
-    return item
+    lastIdx := len(s.items) - 1                     // => Index of last element
+                                                    // => len(s.items)-1 is last valid index
+    item := s.items[lastIdx]                        // => Get last item
+                                                    // => item is type T
+    s.items = s.items[:lastIdx]                     // => Remove last item (slice truncation)
+                                                    // => Creates new slice view
+                                                    // => Original item unreachable (GC'd)
+    return item                                     // => Return popped item (type T)
 }
 
 // Constructor
-func NewStack[T any]() *Stack[T] { // => Generic constructor
-    return &Stack[T]{
-        items: make([]T, 0),
+func NewStack[T any]() *Stack[T] {                  // => Generic constructor function
+                                                    // => T is type parameter
+                                                    // => Returns pointer to Stack[T]
+    return &Stack[T]{                               // => Create Stack instance
+                                                    // => Stack[T] instantiated with type T
+        items: make([]T, 0),                        // => Initialize empty slice of type T
+                                                    // => Capacity 0 (grows as needed)
     }
 }
 
 // Generic interface
-type Container[T any] interface { // => Generic interface
-    Add(T)
-    Remove() T
+type Container[T any] interface {                   // => Generic interface over type T
+                                                    // => Types implementing must specify T
+    Add(T)                                          // => Method accepting type T
+                                                    // => T must match interface instantiation
+    Remove() T                                      // => Method returning type T
+                                                    // => Type-safe: always same T
 }
+                                                    // => Stack[T] satisfies Container[T]
+                                                    // => Stack[int] implements Container[int]
+                                                    // => Stack[string] implements Container[string]
 ```
 
 **Key Takeaway**: Define generic types with `Type[T TypeParam]`. Methods on generic types use the type parameter. Construct with `NewGeneric[Type]()`. Generic types enable type-safe reusable containers.
@@ -1442,6 +1856,36 @@ func parseInt(s string) (int, error) {
 
 CGO enables calling C from Go. Use when you need external C libraries or performance-critical code. CGO adds complexity - prefer pure Go when possible.
 
+```mermaid
+%% Go-C interop boundary and type conversion
+graph LR
+    A["Go Code<br/>goString string"]
+    B["C.CString()<br/>Type Conversion"]
+    C["C Memory<br/>*char (malloc)"]
+    D["C Function<br/>strlen_c()"]
+    E["Return Value<br/>C.int"]
+    F["Type Conversion<br/>int()"]
+    G["Go Code<br/>length int"]
+    H["C.free()<br/>Cleanup"]
+
+    A -->|"Go string"| B
+    B -->|"*C.char"| C
+    C -->|"Pass pointer"| D
+    D -->|"C.int result"| E
+    E -->|"Convert"| F
+    F -->|"Go int"| G
+    C -.->|"Must free!"| H
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#CA9161,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#DE8F05,stroke:#000,color:#fff
+    style G fill:#029E73,stroke:#000,color:#fff
+    style H fill:#CC78BC,stroke:#000,color:#fff,stroke-width:3px,stroke-dasharray: 5 5
+```
+
 **Code**:
 
 ```go
@@ -1459,7 +1903,9 @@ int strlen_c(const char* s) {
     return strlen(s);
 }
 */
-import "C"
+import "C"                                      // => Pseudo-package for CGO
+                                                // => Must import immediately after comment block
+                                                // => Enables calling C code from Go
 
 import (
     "fmt"
@@ -1467,22 +1913,42 @@ import (
 
 func main() {
     // Call C function
-    result := C.add(10, 20)         // => Call C add function
-    fmt.Println("C.add(10, 20) =", result)
+    result := C.add(10, 20)                     // => Call C add function defined above
+                                                // => C.add is Go binding to C function
+                                                // => Arguments automatically converted (Go int to C int)
+                                                // => result is C.int type
+    fmt.Println("C.add(10, 20) =", result)      // => Output: C.add(10, 20) = 30
+                                                // => fmt handles C.int printing
 
     // String from Go to C
-    goString := "Hello"
-    cString := C.CString(goString)  // => Convert Go string to C string
-    defer C.free(cString)           // => Must free C string
+    goString := "Hello"                         // => goString is Go string type
+                                                // => Go strings are not null-terminated
+    cString := C.CString(goString)              // => Convert Go string to C string
+                                                // => Allocates memory with malloc
+                                                // => cString is *C.char (pointer to C string)
+                                                // => Null-terminated C-style string
+    defer C.free(cString)                       // => Must free C-allocated memory
+                                                // => C.free wraps stdlib free()
+                                                // => Deferred: executes when function exits
+                                                // => CRITICAL: forgetting this causes memory leak
 
-    length := C.strlen_c(cString)
-    fmt.Println("Length:", length)
+    length := C.strlen_c(cString)               // => Call C strlen_c function
+                                                // => cString passed as const char*
+                                                // => length is C.int type (value 5)
+    fmt.Println("Length:", length)              // => Output: Length: 5
+                                                // => Demonstrates string passing to C
 
     // Complex example - calculate from Go
-    a := 15
-    b := 25
-    sum := int(C.add(C.int(a), C.int(b))) // => Convert Go int to C int
-    fmt.Println("Sum:", sum)
+    a := 15                                     // => a is Go int
+    b := 25                                     // => b is Go int
+    sum := int(C.add(C.int(a), C.int(b)))       // => Multiple type conversions
+                                                // => C.int(a) converts Go int to C int
+                                                // => C.int(b) converts Go int to C int
+                                                // => C.add returns C.int
+                                                // => int(...) converts C.int back to Go int
+                                                // => sum is 40 (type: Go int)
+    fmt.Println("Sum:", sum)                    // => Output: Sum: 40
+                                                // => Demonstrates type conversion dance
 }
 ```
 
@@ -1655,88 +2121,144 @@ import (
 func main() {
     // Production patterns synthesis
     // 1. Error handling - explicit, not exceptions
-    if err := processData(); err != nil {
-        fmt.Printf("Error: %v\n", err) // => Always check errors
+    if err := processData(); err != nil {           // => Check error immediately
+                                                    // => Never ignore errors
+                                                    // => err is error interface or nil
+        fmt.Printf("Error: %v\n", err)              // => Always check errors
+                                                    // => Output: Error: <error message>
+                                                    // => %v formats error with Error() method
     }
 
     // 2. Concurrency - channels and goroutines
-    results := make(chan int, 10)
-    go func() {
-        results <- 42
-        close(results)
+    results := make(chan int, 10)                   // => Buffered channel (capacity 10)
+                                                    // => results is chan int
+                                                    // => Buffer prevents blocking on send
+    go func() {                                     // => Spawn goroutine
+                                                    // => Runs concurrently with main
+        results <- 42                               // => Send value to channel
+                                                    // => Does not block (buffer has space)
+        close(results)                              // => Close channel (no more values)
+                                                    // => Signals receiver
     }()
-    fmt.Println(<-results)
+    fmt.Println(<-results)                          // => Receive from channel
+                                                    // => Blocks until value available
+                                                    // => Output: 42
+                                                    // => Channel closed after receive
 
     // 3. Interfaces for composition
-    var w http.ResponseWriter // => Depend on interfaces
-    _ = w
+    var w http.ResponseWriter                       // => Depend on interfaces
+                                                    // => w is nil (no concrete implementation)
+                                                    // => Interface enables multiple implementations
+    _ = w                                           // => Blank identifier (suppress unused warning)
 
     // 4. Context for cancellation
     ctx, cancel := context.WithCancel(context.Background())
-    defer cancel()
+                                                    // => ctx is cancellable context
+                                                    // => cancel is function to cancel context
+                                                    // => Background() returns empty root context
+    defer cancel()                                  // => Ensure cancel called
+                                                    // => Releases resources
+                                                    // => Always defer cancel to prevent leaks
 
-    var wg sync.WaitGroup
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
-        <-ctx.Done()            // => Respect cancellation
+    var wg sync.WaitGroup                           // => WaitGroup to synchronize
+                                                    // => Counter starts at 0
+    wg.Add(1)                                       // => Increment counter
+                                                    // => Counter is now 1
+    go func() {                                     // => Spawn goroutine
+                                                    // => Runs concurrently
+        defer wg.Done()                             // => Decrement counter when done
+                                                    // => Always use defer for Done
+        <-ctx.Done()                                // => Respect cancellation
+                                                    // => Blocks until context cancelled
+                                                    // => ctx.Done() returns closed channel
     }()
 
-    wg.Wait()
+    wg.Wait()                                       // => Block until counter reaches 0
+                                                    // => Waits for goroutine to complete
 
     // 5. Testing - write table-driven tests
-    testCases := []struct {
-        input    int
-        expected int
+    testCases := []struct {                         // => Slice of anonymous structs
+        input    int                                // => Test input
+        expected int                                // => Expected output
     }{
-        {1, 2},
-        {5, 10},
+        {1, 2},                                     // => Test case 1: input=1, expected=2
+        {5, 10},                                    // => Test case 2: input=5, expected=10
     }
 
-    for _, tc := range testCases {
-        result := tc.input * 2
-        if result != tc.expected {
+    for _, tc := range testCases {                  // => Iterate test cases
+                                                    // => tc is each test case struct
+        result := tc.input * 2                      // => Compute result
+                                                    // => result is tc.input * 2
+        if result != tc.expected {                  // => Compare with expected
+                                                    // => Reports failure if mismatch
             fmt.Printf("Test failed: %d\n", tc.input)
+                                                    // => Output: Test failed: <input>
         }
     }
 
     // 6. Code organization - flat structure, small packages
+                                                    // => Keep packages focused and small
+                                                    // => Avoid deep nesting
     // 7. Documentation - export with doc comments
+                                                    // => Exported identifiers start with capital
+                                                    // => Add godoc comments before exports
 }
 
 // processData - process data with error handling
-func processData() error {
+func processData() error {                          // => Returns error (nil on success)
     // Production-ready pattern:
     // - Return errors explicitly
+                                                    // => Never use panic for normal errors
     // - Use interfaces for dependencies
+                                                    // => Enables testing with mocks
     // - Make functions testable
-    return nil
+                                                    // => Pure functions, dependency injection
+    return nil                                      // => nil indicates success
+                                                    // => Return specific error for failures
 }
 
 // Production-ready server pattern
 func serverPattern() {
-    server := &http.Server{
-        Addr:    ":8080",
-        Handler: http.HandlerFunc(handler),
+    server := &http.Server{                         // => Create HTTP server
+        Addr:    ":8080",                           // => Listen on port 8080
+                                                    // => ":8080" means all interfaces
+        Handler: http.HandlerFunc(handler),         // => Set request handler
+                                                    // => handler is function converted to Handler
     }
 
     // Graceful shutdown
-    go func() {
+    go func() {                                     // => Run server in goroutine
+                                                    // => Allows shutdown handling
         if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-            fmt.Printf("Server error: %v\n", err)
+                                                    // => Start server (blocking call)
+                                                    // => Returns error on failure
+                                                    // => http.ErrServerClosed is expected on shutdown
+            fmt.Printf("Server error: %v\n", err)   // => Log unexpected errors
+                                                    // => Output: Server error: <error>
         }
     }()
 
     // Shutdown handling (signal, timeout, cleanup)
+                                                    // => Listen for OS signals (SIGINT, SIGTERM)
+                                                    // => Call server.Shutdown(ctx) with timeout
+                                                    // => Perform cleanup (close DB, flush logs)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+                                                    // => HTTP request handler
+                                                    // => w writes response
+                                                    // => r contains request details
     // Handler pattern:
     // - Check request validity
+                                                    // => Validate headers, body, parameters
     // - Perform work
+                                                    // => Business logic here
     // - Return appropriate status
+                                                    // => Use w.WriteHeader() for status codes
     // - Log important events
-    fmt.Fprint(w, "OK")
+                                                    // => Log errors, slow requests, security events
+    fmt.Fprint(w, "OK")                             // => Write response body
+                                                    // => Default status is 200 OK
 }
 ```
 
