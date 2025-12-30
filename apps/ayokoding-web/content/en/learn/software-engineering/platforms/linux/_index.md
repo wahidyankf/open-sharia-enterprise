@@ -3,7 +3,8 @@ title: "Linux"
 weight: 10001
 date: 2025-12-30T07:30:21+07:00
 draft: false
-type: docs
+cascade:
+  type: docs
 layout: list
 ---
 
