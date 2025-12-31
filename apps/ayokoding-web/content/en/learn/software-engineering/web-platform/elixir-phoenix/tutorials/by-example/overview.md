@@ -41,7 +41,7 @@ Phoenix is a **web framework for Elixir** that prioritizes developer productivit
 ## Learning Path
 
 ```mermaid
-graph LR
+graph TD
   A["Beginner<br/>Core Phoenix Concepts<br/>Examples 1-25"] --> B["Intermediate<br/>Production Patterns<br/>Examples 26-50"]
   B --> C["Advanced<br/>Scale & Resilience<br/>Examples 51-80"]
   D["0%<br/>No Phoenix Knowledge"] -.-> A

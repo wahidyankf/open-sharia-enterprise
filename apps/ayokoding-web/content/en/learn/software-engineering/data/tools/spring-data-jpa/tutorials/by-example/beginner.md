@@ -18,7 +18,7 @@ JPA repositories provide database operations without writing SQL. Extend `JpaRep
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A[Application] --> B[UserRepository]
     B --> C[JpaRepository]
     C --> D[Database]
@@ -501,7 +501,7 @@ public class UserBatchService {
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A[save] --> B[Dirty Checking]
     B --> C[flush]
     C --> D[SQL Execution]
@@ -587,7 +587,7 @@ Query derivation creates SQL from method names. `findByPropertyName` generates `
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A[findByName] --> B[Parse Method]
     B --> C[Generate WHERE]
     C --> D[Execute Query]
@@ -1263,7 +1263,7 @@ public class UserNullService {
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A[findByNameIgnoreCase] --> B[Convert to SQL]
     B --> C[UPPER/LOWER Function]
     C --> D[Case-Insensitive Match]
@@ -1374,7 +1374,7 @@ public class UserCaseService {
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     D1[Department: Engineering] --> E1[Employee: Alice]
     D1 --> E2[Employee: Bob]
     D2[Department: Sales] --> E3[Employee: Charlie]
@@ -1925,7 +1925,7 @@ Bidirectional relationships require keeping both sides in sync. Helper methods e
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     D[Department] <-->|Bidirectional| E[Employee]
     D -->|employees list| E
     E -->|department ref| D
@@ -2300,7 +2300,7 @@ public class CollectionTypeService {
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A[Entity Field] --> B[@Column]
     B --> C[Column Name]
     B --> D[Constraints]

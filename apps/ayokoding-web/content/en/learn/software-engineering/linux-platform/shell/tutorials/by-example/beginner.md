@@ -79,7 +79,7 @@ Shell commands follow the pattern `command [options] [arguments]` where options 
 
 ```mermaid
 %% Command structure
-graph LR
+graph TD
     A[Command] --> B[Options]
     B --> C[Arguments]
     C --> D[Execution]
@@ -344,7 +344,7 @@ Linux file permissions control read, write, and execute access for owner, group,
 
 ```mermaid
 %% Permission structure
-graph LR
+graph TD
     A[Permission String] --> B[Type]
     A --> C[Owner rwx]
     A --> D[Group rwx]

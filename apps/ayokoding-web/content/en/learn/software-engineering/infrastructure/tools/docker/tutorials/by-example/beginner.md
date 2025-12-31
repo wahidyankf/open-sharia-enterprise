@@ -796,7 +796,7 @@ Port mapping exposes container services to the host network. Docker supports TCP
 
 ```mermaid
 %% Port mapping flow
-graph LR
+graph TD
     A["Host<br/>localhost:8080"] --> B["Docker Bridge<br/>172.17.0.1"]
     B --> C["Container<br/>172.17.0.2:80"]
 

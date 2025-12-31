@@ -16,7 +16,7 @@ Embedding allows structs to inherit fields and methods from other types without 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["struct Person<br/>Name, Age"]
     B["embedded"]
     C["struct Employee<br/>Person, Title<br/>Has all Person fields"]
@@ -339,7 +339,7 @@ Goroutines are lightweight threads managed by the Go runtime. Unlike OS threads,
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["func main"]
     B["go someFunc"]
     C["continue in main"]
@@ -447,7 +447,7 @@ Channels enable safe communication between goroutines. Send data on one end, rec
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Goroutine 1<br/>send on channel"]
     B["Channel<br/>message"]
     C["Goroutine 2<br/>receive from channel"]
@@ -1307,7 +1307,7 @@ The `context` package manages deadlines, cancellation, and request-scoped values
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["func main<br/>ctx, cancel := context.WithTimeout"]
     B["func doWork<br/>receives ctx"]
     C["func subTask<br/>respects ctx"]
@@ -2108,7 +2108,7 @@ Middleware chains are essential in production HTTP services. They compose cross-
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Request["HTTP Request"] --> M1["Middleware 1:<br/>Logging"]
     M1 --> M2["Middleware 2:<br/>Authentication"]
     M2 --> M3["Middleware 3:<br/>Rate Limiting"]
@@ -2342,7 +2342,7 @@ Context enables graceful cancellation of long-running operations. When a context
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Parent Context<br/>WithTimeout(2s)"]
     B["Child Goroutine 1<br/>Checks ctx.Done()"]
     C["Child Goroutine 2<br/>Checks ctx.Done()"]
@@ -2572,7 +2572,7 @@ Production HTTP clients need timeouts (prevent hanging), retries (handle transie
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["HTTP Request<br/>with timeout"]
     B["Connection Pool"]
     C["Request Succeeds"]
@@ -3091,7 +3091,7 @@ Worker pools distribute work across fixed number of goroutines. This pattern con
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Job Queue<br/>Buffered Channel"]
     B["Worker 1"]
     C["Worker 2"]

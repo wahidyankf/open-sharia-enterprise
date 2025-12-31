@@ -17,7 +17,7 @@ Java programs run on the JVM (Java Virtual Machine). Code is compiled to bytecod
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Source["Java Source Code<br/>(.java files)"] --> Compiler["Java Compiler<br/>(javac)"]
     Compiler --> Bytecode["Bytecode<br/>(.class files)"]
     Bytecode --> JVM["Java Virtual Machine<br/>(JVM)"]
@@ -583,7 +583,7 @@ Classes are blueprints that define state (fields) and behavior (methods). Object
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Class["Class (Blueprint)<br/>defines fields and methods"] --> Obj1["Object 1<br/>(Instance)"]
     Class --> Obj2["Object 2<br/>(Instance)"]
     Class --> Obj3["Object 3<br/>(Instance)"]
@@ -675,7 +675,7 @@ Inheritance creates IS-A relationships where subclasses inherit fields and metho
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Animal["Animal (Superclass)<br/>name, makeSound()"] --> Dog["Dog (Subclass)<br/>breed, bark()"]
     Animal --> Cat["Cat (Subclass)<br/>color, meow()"]
 
@@ -933,7 +933,7 @@ Arrays have fixed size and fast access. Lists (like `ArrayList`) are dynamic and
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Array["Array<br/>Fixed size, fast access<br/>[1,2,3,4,5]"]
     ArrayList["ArrayList<br/>Dynamic size, resizable<br/>[1,2,3] -> [1,2,3,4]"]
 
@@ -1338,7 +1338,7 @@ Java offers multiple loop types for different use cases. Enhanced for-each simpl
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     For["for loop<br/>Known iterations<br/>for(init; condition; update)"]
     While["while loop<br/>Condition-based<br/>while(condition)"]
     DoWhile["do-while loop<br/>Execute at least once<br/>do {...} while(condition)"]
@@ -1847,7 +1847,7 @@ Streams enable functional-style operations on collections. Intermediate operatio
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     Source["Data Source<br/>Collection/Array"] --> Intermediate["Intermediate Operations<br/>filter, map, sorted<br/>(lazy)"]
     Intermediate --> Terminal["Terminal Operation<br/>collect, forEach, count<br/>(triggers execution)"]
     Terminal --> Result["Result<br/>List/Value"]
@@ -1975,7 +1975,7 @@ Modern Java switch expressions (Java 12+) reduce boilerplate and support pattern
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Input["Input Value"] --> Switch{"Switch Expression"}
     Switch -->|case 1| Result1["Return value 1"]
     Switch -->|case 2| Result2["Return value 2"]
@@ -3716,12 +3716,13 @@ Java 8 introduced the `java.time` package (based on Joda-Time) which replaced th
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    Time["java.time Package"] --> LocalDate["LocalDate<br/>(date only)"]
-    Time --> LocalTime["LocalTime<br/>(time only)"]
-    Time --> LocalDateTime["LocalDateTime<br/>(date + time)"]
-    Time --> ZonedDateTime["ZonedDateTime<br/>(date + time + timezone)"]
-    Time --> Duration["Duration<br/>(time-based)"]
-    Time --> Period["Period<br/>(date-based)"]
+    Time["java.time Package"]
+    Time --> LocalDate["LocalDate<br/>(date only)"]
+    LocalDate --> LocalTime["LocalTime<br/>(time only)"]
+    LocalTime --> LocalDateTime["LocalDateTime<br/>(date + time)"]
+    LocalDateTime --> ZonedDateTime["ZonedDateTime<br/>(date + time + timezone)"]
+    ZonedDateTime --> Duration["Duration<br/>(time-based)"]
+    Duration --> Period["Period<br/>(date-based)"]
 
     style Time fill:#0173B2,color:#fff
     style LocalDate fill:#DE8F05,color:#fff

@@ -154,7 +154,7 @@ Production middleware systems use filter chains to process requests through mult
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Request["HTTP Request"] --> Auth["AuthFilter<br/>Check token"]
     Auth -->|Unauthorized| Resp1["401 Response"]
     Auth -->|Authorized| Rate["RateLimitFilter<br/>Check quota"]
@@ -646,7 +646,7 @@ Queue provides FIFO (First-In-First-Out) semantics. Deque (Double-Ended Queue) s
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     subgraph Queue["Queue (FIFO)"]
         Q1["offer()"] --> Q2["[1,2,3]"] --> Q3["poll()"]
     end
@@ -757,7 +757,7 @@ Streams support complex transformations through chaining. `flatMap` flattens nes
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     Source["Data Source<br/>[[1,2],[3,4]]"] --> FlatMap["flatMap<br/>Flatten to [1,2,3,4]"]
     FlatMap --> Filter["filter<br/>(even)"]
     Filter --> Collect["Collectors<br/>groupingBy/partitioningBy"]
@@ -1520,7 +1520,7 @@ Threads enable concurrency. `Runnable` separates task from thread. `start()` cre
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     New["NEW<br/>Thread created"] --> Runnable["RUNNABLE<br/>start() called"]
     Runnable --> Running["RUNNING<br/>Executing"]
     Running --> Waiting["WAITING<br/>wait()/join()"]
@@ -2120,7 +2120,7 @@ try {
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     Supply["supplyAsync()<br/>Start async"] --> Then["thenApply()<br/>Transform"]
     Then --> Accept["thenAccept()<br/>Consume"]
     Then --> Error["exceptionally()<br/>Handle error"]
@@ -3652,25 +3652,39 @@ Optional.ofNullable(getValue())
 
 Sealed classes (Java 17+) restrict inheritance to known subclasses. Combined with pattern matching in switch expressions, they enable exhaustive type checking. Essential for domain modeling with finite type hierarchies.
 
+**Sealed Class Hierarchy:**
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    Sealed["sealed interface Shape<br/>permits Circle, Rectangle, Triangle"] --> Circle["record Circle(double radius)<br/>implements Shape"]
-    Sealed --> Rectangle["record Rectangle(double width, double height)<br/>implements Shape"]
-    Sealed --> Triangle["record Triangle(double base, double height)<br/>implements Shape"]
-
-    Switch["switch(shape)"] --> CaseC["case Circle c -> ..."]
-    Switch --> CaseR["case Rectangle r -> ..."]
-    Switch --> CaseT["case Triangle t -> ..."]
-    CaseC --> Result["Exhaustive<br/>No default needed"]
-    CaseR --> Result
-    CaseT --> Result
+    Sealed["sealed interface Shape<br/>permits Circle, Rectangle, Triangle"]
+    Sealed --> Circle["record Circle<br/>double radius"]
+    Sealed --> Rectangle["record Rectangle<br/>double width, height"]
+    Sealed --> Triangle["record Triangle<br/>double base, height"]
 
     style Sealed fill:#0173B2,color:#fff
     style Circle fill:#029E73,color:#fff
     style Rectangle fill:#029E73,color:#fff
     style Triangle fill:#029E73,color:#fff
-    style Switch fill:#DE8F05,color:#fff
+```
+
+**Pattern Matching Switch (Exhaustive):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Switch["switch shape"]
+    Switch --> CaseC["case Circle c<br/>area = πr²"]
+    Switch --> CaseR["case Rectangle r<br/>area = w × h"]
+    Switch --> CaseT["case Triangle t<br/>area = ½bh"]
+    CaseC --> Result["Exhaustive<br/>No default needed"]
+    CaseR --> Result
+    CaseT --> Result
+
+    style Switch fill:#0173B2,color:#fff
+    style CaseC fill:#029E73,color:#fff
+    style CaseR fill:#029E73,color:#fff
+    style CaseT fill:#029E73,color:#fff
     style Result fill:#CC78BC,color:#fff
 ```
 

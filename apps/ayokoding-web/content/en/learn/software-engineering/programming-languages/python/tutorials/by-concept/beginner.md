@@ -48,7 +48,7 @@ This comprehensive tutorial covers Python fundamentals progressively from basic 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start[Start: Python Basics] --> Syntax[Basic Syntax<br/>Variables, Types, Operators]
     Syntax --> Flow[Control Flow<br/>If, Loops, Logic]
     Flow --> Collections[Collections<br/>Lists, Dicts, Sets, Tuples]

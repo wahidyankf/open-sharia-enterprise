@@ -862,7 +862,7 @@ Serialize data classes to JSON with compile-time safety and zero reflection over
 
 ```mermaid
 %% kotlinx.serialization compile-time processing
-graph LR
+graph TD
     A["@Serializable<br/>data class User"] --> B[Compiler Plugin]
     B --> C[Generated Serializer]
     C --> D[encodeToString]
@@ -1498,24 +1498,40 @@ fun main() {
 
 Use inline classes to eliminate allocation overhead for wrapper types.
 
+**Regular Wrapper Class (Heap Allocation):**
+
 ```mermaid
-%% Inline class vs regular wrapper allocation
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    subgraph Regular[Regular Wrapper Class]
-        R1[UserId wrapper] --> R2[Heap Object<br/>8 byte header]
-        R2 --> R3[Int field: 4 bytes]
-        R4[Total: 12+ bytes per instance]
-    end
+    Wrapper[UserId wrapper created]
+    Wrapper --> Header[Heap Object<br/>8 byte header]
+    Header --> Field[Int field<br/>4 bytes]
+    Field --> Total[Total per instance:<br/>12+ bytes]
+    Total --> GC[Garbage collection<br/>overhead]
 
-    subgraph Inline[Inline Value Class]
-        I1["@JvmInline<br/>value class UserId"] --> I2[Compiled to: Int]
-        I3[Total: 4 bytes<br/>zero allocation]
-    end
+    style Wrapper fill:#0173B2,color:#fff
+    style Header fill:#DE8F05,color:#fff
+    style Field fill:#029E73,color:#fff
+    style Total fill:#CC78BC,color:#fff
+    style GC fill:#CA9161,color:#fff
+```
 
-    style R1 fill:#DE8F05,color:#000
-    style R2 fill:#CA9161,color:#000
-    style I1 fill:#0173B2,color:#fff
-    style I2 fill:#029E73,color:#fff
+**Inline Value Class (Zero Allocation):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Source["@JvmInline<br/>value class UserId"]
+    Source --> Compile[Compiler inlines]
+    Compile --> Result[Compiled to:<br/>primitive Int]
+    Result --> Memory[Memory usage:<br/>4 bytes]
+    Memory --> Benefit[Zero allocation<br/>No GC overhead]
+
+    style Source fill:#0173B2,color:#fff
+    style Compile fill:#DE8F05,color:#fff
+    style Result fill:#029E73,color:#fff
+    style Memory fill:#CC78BC,color:#fff
+    style Benefit fill:#CA9161,color:#fff
 ```
 
 ```kotlin
@@ -2696,31 +2712,53 @@ fun main() {
 
 Master variance (in/out) and star projection for flexible generic types.
 
+**Covariance (out T - Producer):**
+
 ```mermaid
-%% Kotlin variance: covariance and contravariance
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    subgraph Covariance["Covariance (out T)"]
-        CO1["Producer&lt;out Animal&gt;"] --> CO2["Can return:<br/>Producer&lt;Dog&gt;"]
-        CO3[Produces T]
-        CO4["List&lt;out T&gt;"]
-    end
+    Source["Producer#60;out Animal#62;"]
+    Source --> SubType["Can assign:<br/>Producer#60;Dog#62;"]
+    SubType --> Behavior[Produces T<br/>Cannot consume T]
+    Behavior --> Example["List#60;out T#62;<br/>read-only"]
 
-    subgraph Contravariance["Contravariance (in T)"]
-        CN1["Consumer&lt;in Dog&gt;"] --> CN2["Can accept:<br/>Consumer&lt;Animal&gt;"]
-        CN3[Consumes T]
-        CN4["Comparable&lt;in T&gt;"]
-    end
+    style Source fill:#0173B2,color:#fff
+    style SubType fill:#029E73,color:#fff
+    style Behavior fill:#DE8F05,color:#fff
+    style Example fill:#CC78BC,color:#fff
+```
 
-    subgraph Star["Star Projection (*)"]
-        ST1["List&lt;*&gt;"] --> ST2["Read: Any?"]
-        ST1 --> ST3["Write: Nothing"]
-    end
+**Contravariance (in T - Consumer):**
 
-    style CO1 fill:#0173B2,color:#fff
-    style CO2 fill:#029E73,color:#fff
-    style CN1 fill:#DE8F05,color:#000
-    style CN2 fill:#CC78BC,color:#000
-    style ST1 fill:#CA9161,color:#000
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Source["Consumer#60;in Dog#62;"]
+    Source --> SuperType["Can assign:<br/>Consumer#60;Animal#62;"]
+    SuperType --> Behavior[Consumes T<br/>Cannot produce T]
+    Behavior --> Example["Comparable#60;in T#62;<br/>compare method"]
+
+    style Source fill:#0173B2,color:#fff
+    style SuperType fill:#029E73,color:#fff
+    style Behavior fill:#DE8F05,color:#fff
+    style Example fill:#CC78BC,color:#fff
+```
+
+**Star Projection (Unknown Type):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Star["List#60;*#62;"]
+    Star --> Read["Can read:<br/>Any?"]
+    Star --> Write["Cannot write:<br/>Nothing"]
+    Read --> Safety[Type-safe reading]
+    Write --> Safety
+
+    style Star fill:#0173B2,color:#fff
+    style Read fill:#029E73,color:#fff
+    style Write fill:#DE8F05,color:#fff
+    style Safety fill:#CC78BC,color:#fff
 ```
 
 ```kotlin

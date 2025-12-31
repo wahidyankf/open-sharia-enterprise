@@ -96,9 +96,10 @@ Use this agent when:
 
 1. **Mathematical Notation** - Use LaTeX (`$...$` for inline, `$$...$$` for display) in learning content
 2. **Color Accessibility** - Use verified accessible palette in Mermaid diagrams
-3. **Diagrams** - Prefer Mermaid, use vertical orientation, accessible colors
-   - CRITICAL: Escape special characters in node text: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`
+3. **Diagrams** - Prefer Mermaid, default TD layout, use vertical orientation, accessible colors
+   - CRITICAL: Escape special characters in node text AND edge labels: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`, `<` → `#60;`, `>` → `#62;` Edge labels use `-->|text|` syntax and require same escaping. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`).
    - CRITICAL: Avoid nested escaping - do NOT combine entity codes with escaped quotes in same node (e.g., `["#123;\"name\"#125;"]` fails; use `["#123;name:Alice#125;"]`)
+   - CRITICAL: Sequence diagram participant syntax - Use simple identifiers WITHOUT `as` keyword. Do NOT use `participant X as "Display Name"` with quotes (Hugo/Hextra rendering failures). Use `participant Main`, `participant EventLoop` instead
    - CRITICAL: No `style` commands in `sequenceDiagram` (use `box` syntax or switch to flowchart)
 4. **Emoji Usage** - Semantic emojis for section markers, status, categories
 5. **Timestamp Format** - ISO 8601 with UTC+7 (`YYYY-MM-DDTHH:MM:SS+07:00`)
@@ -1121,3 +1122,24 @@ This code:
 - Explicit creator control within standard framework
 
 See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrangement Standard](../../docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md#tutorial-folder-arrangement-standard) for complete details.
+
+### Diagram Splitting for Mobile Readability
+
+**CRITICAL**: Split complex diagrams into multiple focused diagrams for mobile readability.
+
+**When to split**:
+
+- Multiple distinct concepts in one diagram
+- More than 3-4 branches from a single node
+- Using `subgraph` syntax (replace with separate diagrams)
+- Comparing alternatives (A vs B → separate A and B diagrams)
+
+**Splitting guidelines**:
+
+1. **One concept per diagram** - Each diagram explains one idea
+2. **Limit branching** - Maximum 3-4 nodes per level
+3. **No subgraphs** - Use separate diagrams with headers
+4. **Descriptive headers** - Add `**Concept Name:**` above Mermaid blocks
+5. **Mobile-first** - Readable on narrow screens (TD layout)
+
+See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting) for complete guidelines.

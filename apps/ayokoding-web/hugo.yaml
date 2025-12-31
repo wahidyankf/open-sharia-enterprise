@@ -1,6 +1,7 @@
 # Hugo configuration file
 baseURL: "https://ayokoding.com/"
 title: AyoKoding
+environment: development
 
 # Language configuration
 defaultContentLanguage: en

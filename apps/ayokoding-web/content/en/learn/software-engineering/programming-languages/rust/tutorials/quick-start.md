@@ -42,7 +42,7 @@ This tutorial introduces ownership and borrowing gently. For comprehensive cover
 ## Learning Path
 
 ```mermaid
-graph TB
+graph TD
     A[Variables & Mutability] --> B[Data Types]
     B --> C[Functions]
     C --> D[Control Flow]
@@ -459,7 +459,7 @@ fn main() {
 **What happened**:
 
 ```mermaid
-graph LR
+graph TD
     A["s1 owns 'hello'"] -->|move| B["s2 owns 'hello'"]
     B --> C["s1 is invalid"]
 
@@ -549,7 +549,7 @@ fn calculate_length(s: &String) -> usize {
 **`&s1` creates a reference** to `s1` without taking ownership.
 
 ```mermaid
-graph LR
+graph TD
     A["s1 owns 'hello'"] --> B["&s1 borrows 'hello'"]
     B --> C["s1 still owns 'hello'"]
 

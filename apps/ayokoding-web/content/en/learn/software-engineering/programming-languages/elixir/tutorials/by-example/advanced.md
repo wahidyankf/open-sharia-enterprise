@@ -17,7 +17,7 @@ GenServer (Generic Server) is OTP's abstraction for stateful processes with sync
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start["GenServer.start_link/2"] --> Init["init/1<br/>Initialize state"]
     Init --> Running["Running State"]
 
@@ -153,7 +153,7 @@ GenServer state is immutable. Updates return new state, and the GenServer mainta
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Init["init/1<br/>Initial State"] --> State1["State: balance=1000"]
 
     State1 --> Deposit["handle_call {:deposit, 500}"]
@@ -657,7 +657,7 @@ Supervisors monitor child processes and restart them on failure. They're the fou
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Supervisor["Supervisor"] --> Worker1["Worker 1"]
     Supervisor --> Worker2["Worker 2"]
     Supervisor --> Worker3["Worker 3"]
@@ -760,36 +760,46 @@ child_spec = %{
 
 Supervisors support different restart strategies based on child process dependencies. Choose the strategy that matches your process relationships.
 
+**one_for_one Strategy**:
+
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
-    subgraph OneForOne["one_for_one"]
-        S1["Supervisor"] --> W1["Worker 1"]
-        S1 --> W2["Worker 2 💥"]
-        S1 --> W3["Worker 3"]
-        W2 --> R1["Restart Worker 2 only"]
-    end
-
-    subgraph OneForAll["one_for_all"]
-        S2["Supervisor"] --> W4["Worker 1 "]
-        S2 --> W5["Worker 2 💥"]
-        S2 --> W6["Worker 3 "]
-        W5 --> R2["Restart ALL workers"]
-    end
-
-    subgraph RestForOne["rest_for_one"]
-        S3["Supervisor"] --> W7["Worker 1"]
-        S3 --> W8["Worker 2 💥"]
-        S3 --> W9["Worker 3"]
-        W8 --> R3["Restart Worker 2 & 3"]
-    end
+graph TD
+    S1["Supervisor"] --> W1["Worker 1"]
+    S1 --> W2["Worker 2 💥"]
+    S1 --> W3["Worker 3"]
+    W2 --> R1["Restart Worker 2 only"]
 
     style S1 fill:#0173B2,color:#fff
-    style S2 fill:#0173B2,color:#fff
-    style S3 fill:#0173B2,color:#fff
     style W2 fill:#CC78BC,color:#fff
+    style R1 fill:#029E73,color:#fff
+```
+
+**one_for_all Strategy**:
+
+```mermaid
+graph TD
+    S2["Supervisor"] --> W4["Worker 1"]
+    S2 --> W5["Worker 2 💥"]
+    S2 --> W6["Worker 3"]
+    W5 --> R2["Restart ALL workers"]
+
+    style S2 fill:#0173B2,color:#fff
     style W5 fill:#CC78BC,color:#fff
+    style R2 fill:#029E73,color:#fff
+```
+
+**rest_for_one Strategy**:
+
+```mermaid
+graph TD
+    S3["Supervisor"] --> W7["Worker 1"]
+    S3 --> W8["Worker 2 💥"]
+    S3 --> W9["Worker 3"]
+    W8 --> R3["Restart Worker 2 & 3"]
+
+    style S3 fill:#0173B2,color:#fff
     style W8 fill:#CC78BC,color:#fff
+    style R3 fill:#029E73,color:#fff
 ```
 
 **Code**:
@@ -883,23 +893,18 @@ end
 
 DynamicSupervisors start children on demand rather than at supervisor init. Use them for variable numbers of workers (connection pools, user sessions, task queues).
 
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
-    Supervisor["DynamicSupervisor<br/>Started with 0 children"]
+**Starting Children Dynamically**:
 
-    Request1["start_child(worker1)"] --> Worker1["Worker 1"]
-    Request2["start_child(worker2)"] --> Worker2["Worker 2"]
-    Request3["start_child(worker3)"] --> Worker3["Worker 3"]
+```mermaid
+graph TD
+    Supervisor["DynamicSupervisor<br/>Started with 0 children"]
+    Request1["start_child#40;worker1#41;"] --> Worker1["Worker 1"]
+    Request2["start_child#40;worker2#41;"] --> Worker2["Worker 2"]
+    Request3["start_child#40;worker3#41;"] --> Worker3["Worker 3"]
 
     Supervisor --> Worker1
     Supervisor --> Worker2
     Supervisor --> Worker3
-
-    Terminate["terminate_child(worker2)"] --> Remove["Worker 2 stopped"]
-
-    Pool["Use Case:<br/>Connection Pool"] --> Dynamic["Add connections<br/>on demand"]
-    Pool --> Scale["Remove idle<br/>connections"]
 
     style Supervisor fill:#0173B2,color:#fff
     style Worker1 fill:#029E73,color:#fff
@@ -908,8 +913,28 @@ graph TB
     style Request1 fill:#DE8F05,color:#fff
     style Request2 fill:#DE8F05,color:#fff
     style Request3 fill:#DE8F05,color:#fff
+```
+
+**Terminating Children**:
+
+```mermaid
+graph TD
+    Terminate["terminate_child#40;worker2#41;"] --> Remove["Worker 2 stopped"]
+
     style Terminate fill:#CC78BC,color:#fff
-    style Pool fill:#CA9161,color:#fff
+    style Remove fill:#DE8F05,color:#fff
+```
+
+**Use Case - Connection Pool**:
+
+```mermaid
+graph TD
+    Pool["Connection Pool"] --> Dynamic["Add connections<br/>on demand"]
+    Pool --> Scale["Remove idle<br/>connections"]
+
+    style Pool fill:#0173B2,color:#fff
+    style Dynamic fill:#029E73,color:#fff
+    style Scale fill:#CC78BC,color:#fff
 ```
 
 **Code**:
@@ -1037,7 +1062,7 @@ Applications are OTP's top-level component. They bundle code, define dependencie
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start["Application.start"] --> Init["MyApp.Application.start/2"]
     Init --> SupTree["Start Supervision Tree"]
     SupTree --> Workers["Start Workers under Supervisor"]
@@ -1126,7 +1151,7 @@ Application configuration uses `config/*.exs` files to manage environment-specif
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     ConfigBase["config/config.exs<br/>(Compile time)"] --> Dev["config/dev.exs"]
     ConfigBase --> Test["config/test.exs"]
     ConfigBase --> Prod["config/prod.exs"]
@@ -1294,7 +1319,7 @@ end
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Code["1 + 2"] --> Quote["quote do 1 + 2 end"]
     Quote --> AST["{:+, [], [1, 2]}"]
 
@@ -1802,7 +1827,7 @@ Agent wraps GenServer for simple state storage with functional API. Use for cach
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Agent["Agent (wraps GenServer)"] --> Get["Agent.get<br/>Read State"]
     Agent --> Update["Agent.update<br/>Modify State"]
     Agent --> GetAndUpdate["Agent.get_and_update<br/>Read & Modify"]
@@ -1955,22 +1980,33 @@ Registry.count_match(MyRegistry, :user, %{role: :admin})  # => 1
 
 ETS (Erlang Term Storage) provides fast in-memory key-value storage. Tables are owned by processes and survive process crashes (if heir is set). Use for caches, lookup tables, and shared state.
 
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
-    Set[":set<br/>Unique keys"] --> One["Key → One Value"]
-    Bag[":bag<br/>Allow duplicates"] --> Many["Key → Multiple Values"]
-    DupBag[":duplicate_bag<br/>Exact duplicates"] --> Exact["Key → Exact Duplicate Values"]
+**Table Types**:
 
-    Access["Access Types"] --> Public[":public<br/>All processes"]
-    Access --> Protected[":protected<br/>Owner writes, all read"]
-    Access --> Private[":private<br/>Owner only"]
+```mermaid
+graph TD
+    Set[":set<br/>Unique keys"] --> One["Key to One Value"]
+    Bag[":bag<br/>Allow duplicates"] --> Many["Key to Multiple Values"]
+    DupBag[":duplicate_bag<br/>Exact duplicates"] --> Exact["Key to Exact Duplicate Values"]
 
     style Set fill:#0173B2,color:#fff
     style Bag fill:#DE8F05,color:#fff
     style DupBag fill:#029E73,color:#fff
-    style Public fill:#CC78BC,color:#fff
-    style Protected fill:#CC78BC,color:#fff
+    style One fill:#CC78BC,color:#fff
+    style Many fill:#CC78BC,color:#fff
+    style Exact fill:#CC78BC,color:#fff
+```
+
+**Access Types**:
+
+```mermaid
+graph TD
+    Access["Access Types"] --> Public[":public<br/>All processes"]
+    Access --> Protected[":protected<br/>Owner writes, all read"]
+    Access --> Private[":private<br/>Owner only"]
+
+    style Access fill:#0173B2,color:#fff
+    style Public fill:#029E73,color:#fff
+    style Protected fill:#DE8F05,color:#fff
     style Private fill:#CC78BC,color:#fff
 ```
 
@@ -2097,7 +2133,7 @@ Behaviours define contracts for modules. They specify required callbacks, enabli
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Behaviour["@behaviour definition<br/>with @callback"] --> Impl1["Implementation 1<br/>@impl true"]
     Behaviour --> Impl2["Implementation 2<br/>@impl true"]
     Behaviour --> Impl3["Implementation 3<br/>@impl true"]
@@ -2206,21 +2242,15 @@ end
 
 Comprehensions generate collections from enumerables with filtering and transformations. They support lists, maps, and binaries with optional filters.
 
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
-    Input["Input: [1, 2, 3, 4, 5, 6]"] --> Generator["Generator: x <- list"]
-    Generator --> Filter1["Filter 1: rem(x, 2) == 0"]
-    Filter1 --> Filter2["Filter 2: x > 2"]
-    Filter2 --> Transform["Transform: x * 2"]
-    Transform --> Output["Output: [8, 12]"]
+**Pipeline Flow**:
 
-    Details["Process Flow"] --> G1["1 → fails filter 1"]
-    Details --> G2["2 → fails filter 2"]
-    Details --> G3["3 → fails filter 1"]
-    Details --> G4["4 → passes both → 4*2 = 8"]
-    Details --> G5["5 → fails filter 1"]
-    Details --> G6["6 → passes both → 6*2 = 12"]
+```mermaid
+graph TD
+    Input["Input: #91;1, 2, 3, 4, 5, 6#93;"] --> Generator["Generator: x from list"]
+    Generator --> Filter1["Filter 1: rem#40;x, 2#41; == 0"]
+    Filter1 --> Filter2["Filter 2: x greater than 2"]
+    Filter2 --> Transform["Transform: x * 2"]
+    Transform --> Output["Output: #91;8, 12#93;"]
 
     style Input fill:#0173B2,color:#fff
     style Generator fill:#DE8F05,color:#fff
@@ -2228,6 +2258,24 @@ graph TB
     style Filter2 fill:#CC78BC,color:#fff
     style Transform fill:#029E73,color:#fff
     style Output fill:#029E73,color:#fff
+```
+
+**Process Flow - Element by Element**:
+
+```mermaid
+graph TD
+    G1["Element 1: fails filter 1"] --> G2["Element 2: fails filter 2"]
+    G2 --> G3["Element 3: fails filter 1"]
+    G3 --> G4["Element 4: passes both, 4*2 = 8"]
+    G4 --> G5["Element 5: fails filter 1"]
+    G5 --> G6["Element 6: passes both, 6*2 = 12"]
+
+    style G1 fill:#CC78BC,color:#fff
+    style G2 fill:#CC78BC,color:#fff
+    style G3 fill:#CC78BC,color:#fff
+    style G4 fill:#029E73,color:#fff
+    style G5 fill:#CC78BC,color:#fff
+    style G6 fill:#029E73,color:#fff
 ```
 
 **Code**:
@@ -2292,23 +2340,36 @@ for x <- [1, 2, 2, 3, 3, 3], uniq: true, do: x
 
 Bitstrings enable binary pattern matching with precise control over bit sizes and types. Use for parsing binary protocols, image manipulation, and low-level data processing.
 
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
-    Binary["<<1, 2, 3, 4>>"] --> Match["Pattern Match"]
-    Match --> Parts["<<a::8, b::8, rest::binary>>"]
-    Parts --> Values["a=1, b=2, rest=<<3,4>>"]
+**Pattern Matching Example**:
 
-    Format["Type Specifiers"] --> Int["integer (default)"]
+```mermaid
+graph TD
+    Binary["Binary: #60;#60;1, 2, 3, 4#62;#62;"] --> Match["Pattern Match"]
+    Match --> Parts["Pattern: #60;#60;a::8, b::8, rest::binary#62;#62;"]
+    Parts --> Values["Result: a=1, b=2, rest=#60;#60;3,4#62;#62;"]
+
+    style Binary fill:#0173B2,color:#fff
+    style Match fill:#DE8F05,color:#fff
+    style Parts fill:#029E73,color:#fff
+    style Values fill:#CC78BC,color:#fff
+```
+
+**Type Specifiers**:
+
+```mermaid
+graph TD
+    Format["Type Specifiers"] --> Int["integer #40;default#41;"]
     Format --> Float["float"]
     Format --> Bin["binary"]
     Format --> Bits["bits"]
     Format --> UTF["utf8/utf16/utf32"]
 
-    style Binary fill:#0173B2,color:#fff
-    style Match fill:#DE8F05,color:#fff
-    style Parts fill:#029E73,color:#fff
-    style Values fill:#029E73,color:#fff
+    style Format fill:#0173B2,color:#fff
+    style Int fill:#029E73,color:#fff
+    style Float fill:#029E73,color:#fff
+    style Bin fill:#029E73,color:#fff
+    style Bits fill:#029E73,color:#fff
+    style UTF fill:#029E73,color:#fff
 ```
 
 **Code**:

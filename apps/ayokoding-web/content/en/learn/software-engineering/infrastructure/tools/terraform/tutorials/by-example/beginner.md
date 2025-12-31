@@ -18,7 +18,7 @@ Terraform configurations are HCL files describing infrastructure resources. Ever
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["main.tf<br/>Configuration"] --> B["terraform init<br/>Download Providers"]
     B --> C["terraform plan<br/>Preview Changes"]
     C --> D["terraform apply<br/>Create Resources"]

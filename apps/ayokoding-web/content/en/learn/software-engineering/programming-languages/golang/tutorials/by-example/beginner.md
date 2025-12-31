@@ -15,7 +15,7 @@ Go is a compiled language - you write source code, compile it into a binary exec
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Source Code<br/>main.go"]
     B["Go Compiler"]
     C["Binary Executable<br/>main"]
@@ -137,7 +137,7 @@ Constants are immutable values determined at compile-time. The `iota` enumerator
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["const StatusPending = iota"] -->|0| B["StatusPending = 0"]
     A -->|1| C["StatusApproved = 1"]
     A -->|2| D["StatusRejected = 2"]
@@ -225,7 +225,7 @@ Arrays have fixed size declared upfront. Slices are dynamic collections backed b
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Slice s := []int{1, 2, 3}"]
     B["Backing Array [3]int{1, 2, 3}"]
     C["Slice Header<br/>ptr=&arr[0]<br/>len=3<br/>cap=3"]
@@ -428,7 +428,7 @@ Structs group related data into named fields. Methods can operate on structs by 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Function Call"]
     B["Pass by Value<br/>struct Person"]
     C["Pass by Pointer<br/>*Person"]
@@ -775,7 +775,7 @@ func main() {
 Pointers hold memory addresses. The `&` operator takes an address, `*` dereferences it. Understanding pointers is essential for understanding Go's pass-by-value semantics and when values are copied versus when they're shared.
 
 ```mermaid
-graph TB
+graph TD
     A["Variable x = 10<br/>Memory Address: 0x1234"]
     B["Pointer p = &x<br/>Holds Address: 0x1234"]
     C["*p dereferencing<br/>Access value at address<br/>Result: 10"]
@@ -891,7 +891,7 @@ Methods are functions attached to a type via a receiver. Go distinguishes value 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Original Person<br/>Name: Alice, Age: 30"]
     B["Value Receiver<br/>func p Person PrintInfo"]
     C["Pointer Receiver<br/>func p *Person HaveBirthday"]
@@ -1025,7 +1025,7 @@ func (p *Person) UpdateNamePointer(newName string) { // => p is pointer
 Interfaces define method contracts. A type satisfies an interface implicitly - no explicit declaration needed. This duck typing is powerful but requires understanding: if a type has all methods an interface requires, it automatically satisfies that interface.
 
 ```mermaid
-graph TB
+graph TD
     A["Interface Writer<br/>Write method"]
     B["Type File<br/>Has Write method"]
     C["Type Buffer<br/>Has Write method"]
@@ -1587,7 +1587,7 @@ Go supports bitwise operations on integers and compound assignment operators tha
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["a = 12<br/>Binary: 1100"]
     B["b = 10<br/>Binary: 1010"]
     C["AND: a & b<br/>1100 & 1010 = 1000<br/>Result: 8"]
@@ -1843,7 +1843,7 @@ Anonymous functions (functions without names) can be assigned to variables or ex
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Outer Function<br/>counter := 0"]
     B["Closure Function<br/>accesses counter"]
     C["Each call increments<br/>shared counter"]
@@ -1995,7 +1995,7 @@ func makeCounter() func() int {    // => Returns function type: func() int
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Function starts"]
     B["defer cleanup"]
     C["Normal execution"]
@@ -2722,7 +2722,7 @@ Arrays and slices have critical differences in behavior, especially when passing
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Array [3]int<br/>Fixed size<br/>Passed by value"]
     B["Slice []int<br/>Dynamic size<br/>Passed by reference"]
     C["Backing Array<br/>Actual data storage"]

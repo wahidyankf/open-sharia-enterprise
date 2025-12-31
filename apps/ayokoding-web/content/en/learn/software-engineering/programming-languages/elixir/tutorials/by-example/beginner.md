@@ -18,7 +18,7 @@ Elixir programs run on the BEAM virtual machine (Erlang's runtime). Code can be 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Source["Elixir Source Code<br/>(.ex files)"] --> Compiler["Elixir Compiler"]
     Compiler --> Bytecode["BEAM Bytecode<br/>(.beam files)"]
     Bytecode --> VM["BEAM Virtual Machine"]
@@ -168,7 +168,7 @@ The `=` operator is the **match operator**, not assignment. The left side (patte
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Pattern["Left: Pattern<br/>with variables"] --> MatchOp["Match Operator ="]
     Value["Right: Value"] --> MatchOp
     MatchOp --> Check{Shapes Match?}
@@ -319,7 +319,7 @@ Lists are linked lists (efficient for prepending, linear access). Tuples are con
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     List["List: [1, 2, 3]"] --> Node1["1 | *"]
     Node1 --> Node2["2 | *"]
     Node2 --> Node3["3 | nil"]
@@ -475,7 +475,7 @@ Functions are first-class values in Elixir—you can assign them to variables, p
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Define["Define: fn x -> x * 2 end"] --> Variable["Bind to Variable:<br/>double = fn..."]
     Variable --> Pass["Pass to Enum.map/2"]
     Pass --> Execute["Execute on each element"]
@@ -850,7 +850,7 @@ The `Enum` module provides functions for working with enumerable collections (li
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     List["[1, 2, 3, 4, 5]"] --> Reduce["Enum.reduce(list, 0, fn x, acc ->"]
     Reduce --> Step1["Step 1: 0 + 1 = 1"]
     Step1 --> Step2["Step 2: 1 + 2 = 3"]
@@ -1083,7 +1083,7 @@ Lists support special operators for prepending and pattern matching. The head/ta
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     List["[1, 2, 3, 4]"] --> HeadTail["[head | tail]"]
     HeadTail --> Head["head = 1"]
     HeadTail --> Tail["tail = [2, 3, 4]"]

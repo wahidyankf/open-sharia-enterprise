@@ -39,7 +39,7 @@ By completing this tutorial, you will understand:
 Let's start with the big picture. A PDF chat system has two main phases: **Ingestion** (preparing the document) and **Query** (answering questions).
 
 ```mermaid
-graph TB
+graph TD
 	subgraph "Phase 1: Document Ingestion (One-time)"
 		A[📄 PDF Upload] --> B[Text Extraction]
 		B --> C[Document Chunking]
@@ -110,7 +110,7 @@ User uploads "Company_Report_2024.pdf"
 **Extraction Process**:
 
 ```mermaid
-graph TB
+graph TD
 	A[PDF File] --> B{Is it<br/>searchable?}
 	B -->|Yes| C[Direct Text<br/>Extraction]
 	B -->|No| D[OCR Required]
@@ -390,7 +390,7 @@ Chunk C: [-0.5, 0.2, 0.8] → Similarity: 0.23   Not similar
 **Search Process**:
 
 ```mermaid
-graph TB
+graph TD
 	A[Query Embedding] --> B[Calculate Similarity<br/>to All Chunks]
 	B --> C[Rank by Similarity]
 	C --> D[Return Top K<br/>default K=5]

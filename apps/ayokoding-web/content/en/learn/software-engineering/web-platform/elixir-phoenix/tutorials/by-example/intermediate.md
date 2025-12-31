@@ -159,7 +159,7 @@ Upload files to external services like Amazon S3 instead of storing locally.
 
 ```mermaid
 %% File upload flow
-graph LR
+graph TD
     A[Client selects file] --> B[LiveView validates]
     B --> C[Client uploads to temp]
     C --> D[User submits form]
@@ -662,7 +662,7 @@ Store user info in encrypted session after login. Session persists across reques
 
 ```mermaid
 %% Session-based auth flow
-graph LR
+graph TD
     A[Login Form] --> B[Authenticate]
     B --> C{Valid?}
     C -->|Yes| D[put_session user_id]
@@ -1305,7 +1305,7 @@ Version your API to support multiple client versions. Use URL versioning or head
 
 ```mermaid
 %% API versioning strategies
-graph LR
+graph TD
     A[Client Request] --> B{Version Strategy}
     B -->|URL| C[/api/v1/posts]
     B -->|Header| D[Accept: application/vnd.api.v1+json]

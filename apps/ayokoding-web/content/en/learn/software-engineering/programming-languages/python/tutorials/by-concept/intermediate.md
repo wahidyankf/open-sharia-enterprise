@@ -36,7 +36,7 @@ After this tutorial, you'll be able to:
 Professional Python development involves multiple layers working together:
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Production System"
         A[API Layer<br/>FastAPI/Flask Endpoints]
         B[Business Logic<br/>Service Layer]

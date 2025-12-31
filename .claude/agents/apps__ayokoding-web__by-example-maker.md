@@ -166,7 +166,7 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 - Use appropriate diagram type (graph TD, sequenceDiagram, stateDiagram)
 - Vertical orientation (mobile-first)
 - Comment syntax: `%%` (NOT `%%{ }%%` which causes syntax errors)
-- Character escaping: Use HTML entities for special characters in node text: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`
+- Character escaping: Use HTML entities for special characters in node text AND edge labels: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`)
 
 ### Part 3: Heavily Annotated Code
 
@@ -429,7 +429,9 @@ fmt.Println(value)               // => Output: 42
 
 **Comment syntax**: Use `%%` for comments (NOT `%%{ }%%` which causes syntax errors)
 
-**Character escaping**: Escape special characters in node text using HTML entities: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`. Example: `A[O#40;1#41; lookup]` for "O(1) lookup". Prevents "syntax error in text"
+Character escaping: Escape special characters in node text using HTML entities: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `<` → `#60;`, `>` → `#62;`. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`). Example: `A[O#40;1#41; lookup]` for "O(1) lookup". Prevents "syntax error in text". Edge labels use `-->|text|` syntax and require same escaping (e.g., `A -->|iter#40;#41;| B` for "iter()")
+
+**Sequence diagram participant syntax**: Use simple participant identifiers WITHOUT `as` keyword in sequenceDiagram. Do NOT use `participant X as "Display Name"` syntax with quotes (causes rendering failures in Hugo/Hextra). Use CamelCase or simple names: `participant Main`, `participant EventLoop`. Applies ONLY to sequenceDiagram, not graph/flowchart
 
 **Avoid nested escaping**: Do NOT combine HTML entity codes with escaped quotes in same node text (e.g., `A["JSON #123;\"name\"#125;"]` fails). Use simplified text instead: `A["JSON #123;name:Alice#125;"]`. Nested escaping breaks Mermaid parser
 
@@ -643,6 +645,7 @@ tags: ["language-tag", "tutorial", "by-example", "level-tag", "topic-tags"]
    - Target 30-50% diagram frequency
    - Use color-blind friendly palette
    - Vertical orientation (mobile-first)
+   - **Default Layout**: Use `graph TD` (top-down) by default - ONLY use LR/RL/BT when explicitly requested by user
    - Clear labels and focused scope
 
 3. **Add key takeaways**
@@ -879,3 +882,46 @@ func main() {
 
 **Remember**: You create code-first learning materials for experienced developers. Every example must be self-contained, heavily annotated, and runnable. Focus on 95% coverage through 75-90 carefully crafted examples that demonstrate production patterns, not toy examples.
 ```
+
+### Diagram Splitting for Mobile Readability
+
+**CRITICAL**: Split complex diagrams into multiple focused diagrams for mobile readability.
+
+**When to split**:
+
+- Multiple distinct concepts in one diagram
+- More than 3-4 branches from a single node
+- Using `subgraph` syntax (replace with separate diagrams)
+- Comparing alternatives (A vs B → separate A and B diagrams)
+
+**Splitting guidelines**:
+
+1. **One concept per diagram** - Each diagram explains one idea, pattern, or workflow
+2. **Limit branching** - Maximum 3-4 nodes per level (prevents wide, small rendering)
+3. **No subgraphs** - Use separate diagrams with descriptive headers instead
+4. **Descriptive headers** - Add `**Concept Name:**` above each Mermaid code block
+5. **Mobile-first** - Ensure readability on narrow mobile screens (TD layout helps)
+
+**Example** (sealed classes):
+
+Instead of one diagram combining hierarchy + pattern matching:
+
+**Split into two**:
+
+**Sealed Class Hierarchy:**
+
+```mermaid
+graph TD
+    Shape[Shape sealed interface] --> Circle
+    Shape --> Rectangle
+```
+
+**Pattern Matching Switch:**
+
+```mermaid
+graph TD
+    A[switch#40;shape#41;] --> B{Type?}
+    B -->|Circle| C[area = π × r²]
+```
+
+See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting) for complete splitting guidelines and real-world examples.

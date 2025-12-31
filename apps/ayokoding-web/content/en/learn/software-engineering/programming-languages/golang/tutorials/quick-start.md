@@ -20,7 +20,7 @@ For comprehensive coverage and hands-on practice, see the [Complete Beginner's G
 This Quick Start gives you exposure to Go's core concepts in order of importance:
 
 ```mermaid
-graph TB
+graph TD
     A[Variables & Types] --> B[Control Flow]
     B --> C[Functions]
     C --> D[Structs]

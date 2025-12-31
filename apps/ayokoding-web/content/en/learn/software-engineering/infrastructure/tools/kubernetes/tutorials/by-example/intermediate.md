@@ -1504,7 +1504,7 @@ Readiness probes determine when Pods are ready to receive traffic. Failed readin
 
 ```mermaid
 %% Readiness probe traffic control
-graph LR
+graph TD
     A[Service: web-service] --> B{Readiness Probe}
     B -->|Pass| C[Pod: web-1<br/>Receives Traffic]
     B -->|Fail| D[Pod: web-2<br/>No Traffic]

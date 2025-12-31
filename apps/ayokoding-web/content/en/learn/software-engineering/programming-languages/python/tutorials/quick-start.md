@@ -21,7 +21,7 @@ This Quick Start gives you exposure to Python's core concepts in order of import
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph TB
+graph TD
     A[Variables & Types] --> B[Control Flow]
     B --> C[Functions]
     C --> D[Lists & Dictionaries]

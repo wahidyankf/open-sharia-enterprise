@@ -102,9 +102,9 @@ graph TD
     B --> C[let x = x + 1]
     C --> D[Drop old x at Address A]
     C --> E[x: i32 = 6 at Address B]
-    E --> F[let x = "hello"]
+    E --> F[let x = hello]
     F --> G[Drop old x at Address B]
-    F --> H[x: &str = "hello" at Address C]
+    F --> H[x: &str = hello at Address C]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#000

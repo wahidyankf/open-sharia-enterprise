@@ -674,7 +674,7 @@ Handlers execute once at the end of a play, triggered by task changes. Prevent r
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Task 1<br/>Change Config"] -->|notify| B["Handler Queue"]
     C["Task 2<br/>Change Template"] -->|notify| B
     D["Task 3<br/>No Change"] -.->|skip| B

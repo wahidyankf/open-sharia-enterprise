@@ -116,7 +116,7 @@ Descriptors customize attribute access using **get**, **set**, and **delete** me
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["acc.balance = 100"] --> B["Positive.__set__<br/>called"]
     B --> C{"value < 0?"}
     C -->|Yes| D["Raise ValueError"]
@@ -213,29 +213,27 @@ Asyncio enables concurrent I/O operations using async/await syntax.
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
-    participant Main as "main()"
-    participant Loop as Event Loop
-    participant F1 as "fetch_data(api1)"
-    participant F2 as "fetch_data(api2)"
-    participant F3 as "fetch_data(api3)"
+    participant Main
+    participant EventLoop
+    participant API1
+    participant API2
+    participant API3
 
-    Main->>Loop: asyncio.gather(...)
-    Loop->>F1: Start fetching
-    Loop->>F2: Start fetching
-    Loop->>F3: Start fetching
+    Main->>EventLoop: asyncio.gather
+    EventLoop->>API1: fetch_data
+    EventLoop->>API2: fetch_data
+    EventLoop->>API3: fetch_data
 
-    F1->>Loop: await sleep (yield)
-    F2->>Loop: await sleep (yield)
-    F3->>Loop: await sleep (yield)
+    API1->>EventLoop: await sleep
+    API2->>EventLoop: await sleep
+    API3->>EventLoop: await sleep
 
-    Note over Loop: All run concurrently<br/>during I/O wait
+    Note over EventLoop: All run concurrently<br/>during I/O wait
 
-    F1->>Loop: Complete
-    F2->>Loop: Complete
-    F3->>Loop: Complete
-    Loop->>Main: Return results list
-
-    %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2'}}}%%
+    API1->>EventLoop: Complete
+    API2->>EventLoop: Complete
+    API3->>EventLoop: Complete
+    EventLoop->>Main: Return results
 ```
 
 ```python

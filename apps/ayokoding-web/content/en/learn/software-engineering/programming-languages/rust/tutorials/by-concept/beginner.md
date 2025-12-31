@@ -676,7 +676,7 @@ fn main() {
 **What happened?**
 
 ```mermaid
-graph LR
+graph TD
     A["s1<br/>ptr → heap"] -->|move| B["s2<br/>ptr → heap"]
     B --> C["s1 invalid<br/>no longer usable"]
 
@@ -808,7 +808,7 @@ fn takes_and_gives_back(a_string: String) -> String {
 **Ownership transfer pattern**:
 
 ```mermaid
-graph LR
+graph TD
     A[Function creates value] -->|return| B[Caller owns value]
     C[Caller owns value] -->|pass to function| D[Function owns value]
     D -->|return| E[Caller owns value again]
@@ -847,7 +847,7 @@ fn calculate_length(s: &String) -> usize {  // s is a reference to String
 **Reference visualization**:
 
 ```mermaid
-graph LR
+graph TD
     A["s1<br/>owns String"] --> B["String on heap"]
     C["&s1<br/>reference"] -.->|points to| B
 

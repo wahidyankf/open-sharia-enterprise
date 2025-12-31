@@ -28,7 +28,7 @@ The SQL by-example tutorial guides you through 85 examples organized into three 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Beginner (Examples 1-30)<br/>0-40% Coverage<br/>Fundamentals"]
     B["Intermediate (Examples 31-60)<br/>40-75% Coverage<br/>Production Ready"]
     C["Advanced (Examples 61-85)<br/>75-95% Coverage<br/>Expert Mastery"]

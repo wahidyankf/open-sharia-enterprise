@@ -872,7 +872,7 @@ func main() {
 Go has pointers but no pointer arithmetic. Here's how they work in memory:
 
 ```mermaid
-graph LR
+graph TD
     subgraph "Memory"
         A["Address: 0x1000<br/>Value: 42"]
         B["Address: 0x2000<br/>Value: 0x1000"]

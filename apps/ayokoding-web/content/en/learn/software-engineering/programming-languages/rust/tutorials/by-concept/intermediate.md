@@ -492,7 +492,7 @@ String literals have `'static` lifetime (stored in program binary).
 ### Lifetime Visualization
 
 ```mermaid
-graph LR
+graph TD
     A["'a: longest lifetime"] --> B["x: &'a str"]
     A --> C["y: &'a str"]
     A --> D["return: &'a str"]

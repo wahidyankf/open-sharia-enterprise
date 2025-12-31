@@ -14,7 +14,7 @@ tags: ["golang", "go", "tutorial", "by-example", "advanced", "generics", "concur
 Pipelines process data through stages, each stage running concurrently. Each stage is a function that receives input from one channel and sends output to another. This composition enables elegant data processing.
 
 ```mermaid
-graph LR
+graph TD
     A["Source<br/>generates values"]
     B["Stage 1<br/>transforms"]
     C["Stage 2<br/>filters"]
@@ -444,7 +444,7 @@ Atomic operations ensure thread-safe modifications without mutexes. The `sync/at
 
 ```mermaid
 %% Compare-and-swap atomic operation flow
-graph TB
+graph TD
     A["Start: value=5"]
     B["Call CompareAndSwap<br/>expected=5, new=10"]
     C{Current value<br/>equals expected?}
@@ -568,7 +568,7 @@ Reflection inspects types and values at runtime. The `reflect` package enables d
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Value<br/>Person{Name, Age}"]
     B["reflect.ValueOf(p)"]
     C["reflect.Type<br/>main.Person"]
@@ -857,7 +857,7 @@ Templates generate text (HTML, email, config files). The `text/template` package
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Template String<br/>Hello {{.Name}}"]
     B["template.Parse()"]
     C["Compiled Template"]
@@ -983,7 +983,7 @@ Generics enable functions to work with different types while maintaining type sa
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Generic Function<br/>max[T Ordered]"]
     B["Called with []int"]
     C["Called with []string"]
@@ -1106,7 +1106,7 @@ Generic struct types work similarly to generic functions. Define type parameters
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["Generic Type<br/>Stack[T any]"]
     B["Stack[int]<br/>items []int"]
     C["Stack[string]<br/>items []string"]
@@ -1297,12 +1297,12 @@ The options pattern provides flexible configuration through functional options. 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
-    A["NewServer()"]
+graph TD
+    A["NewServer#40;#41;"]
     B["Default Config<br/>Host: 0.0.0.0<br/>Port: 80"]
-    C["WithHost(\"localhost\")"]
-    D["WithPort(8080)"]
-    E["WithTimeout(30)"]
+    C["WithHost#40;localhost#41;"]
+    D["WithPort#40;8080#41;"]
+    E["WithTimeout#40;30#41;"]
     F["Final Config<br/>Host: localhost<br/>Port: 8080<br/>Timeout: 30"]
 
     A --> B
@@ -1574,7 +1574,7 @@ Dependency injection passes dependencies to functions/types instead of creating 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     A["UserService<br/>depends on Database"]
     B["Production:<br/>Inject RealDB"]
     C["Testing:<br/>Inject MockDB"]
@@ -1898,7 +1898,7 @@ CGO enables calling C from Go. Use when you need external C libraries or perform
 
 ```mermaid
 %% Go-C interop boundary and type conversion
-graph LR
+graph TD
     A["Go Code<br/>goString string"]
     B["C.CString()<br/>Type Conversion"]
     C["C Memory<br/>*char (malloc)"]

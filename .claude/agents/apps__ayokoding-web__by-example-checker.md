@@ -20,7 +20,8 @@ Your role:
 2. **Check self-containment**: Ensure examples are copy-paste-runnable within chapter scope
 3. **Verify annotations**: Validate `// =>` comment patterns and educational value
 4. **Assess diagrams**: Check 30-50% diagram frequency and quality
-5. **Generate audit**: Create progressive audit report in generated-reports/
+5. **Validate diagram splitting**: Check diagrams are mobile-friendly (focused, not too complex)
+6. **Generate audit**: Create progressive audit report in generated-reports/
 
 ## Convention Authority
 
@@ -31,6 +32,7 @@ Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-
 - **Self-containment**: Copy-paste-runnable within chapter scope
 - **Annotations**: `// =>` or `# =>` notation for outputs and states
 - **Diagrams**: 30-50% of examples include Mermaid diagrams
+- **Diagram Splitting**: Diagrams are focused (one concept per diagram, 3-4 branches max, no subgraphs)
 - **Five-part format**: Explanation, diagram (optional), code, key takeaway, why it matters
 
 ## Validation Process
@@ -71,6 +73,7 @@ TZ='Asia/Bangkok' date '+%Y-%m-%d--%H-%M'
 - Self-containment: Copy-paste-runnable within chapter
 - Annotations: // => notation present
 - Diagrams: 30-50% frequency
+- Diagram splitting: Focused (one concept, 3-4 branches max)
 - Five-part format: Complete
 
 ## Findings
@@ -313,6 +316,84 @@ grep -n "fill:green" *.md
 **Recommendation**: Add {N} diagrams to reach target frequency, fix color violations
 ```
 
+### Step 6.5: Validate Diagram Splitting (Mobile-Friendliness)
+
+**NEW VALIDATION**: Check diagrams for mobile-friendliness per [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting).
+
+**Detection patterns**:
+
+````bash
+# Find diagrams with excessive branching (>4-5 child nodes from one parent)
+grep -A 20 "^```mermaid" beginner.md | grep -c " --> "
+
+# Find diagrams using subgraphs (should use separate diagrams instead)
+grep -n "subgraph" beginner.md intermediate.md advanced.md
+
+# Find multiple consecutive Mermaid blocks without descriptive headers
+# (Look for pattern: ``` mermaid ... ``` immediately followed by ``` mermaid)
+````
+
+**Validation checks**:
+
+For each Mermaid diagram:
+
+1. **Check branching complexity**: Count how many arrows originate from a single node
+   - ⚠️ MEDIUM if >5 branches from one node (suggest splitting)
+2. **Check for subgraphs**: Search for `subgraph` keyword
+   - 🔴 CRITICAL if found (subgraphs render too small on mobile - must split)
+3. **Check diagram title/description**: Look for multiple concepts
+   - ⚠️ LOW if title suggests "A + B", "X vs Y", "hierarchy and usage"
+4. **Check for descriptive headers**: Multiple consecutive diagrams should have `**Concept:**` headers
+   - ⚠️ LOW if missing headers between multiple diagrams
+
+**Write finding progressively**:
+
+```markdown
+### Finding 5.5: Diagram Splitting (Mobile-Friendliness)
+
+**Diagrams checked**: {total_diagrams}
+
+**Splitting issues found**: {count}
+
+**Issues**:
+
+- **Example {N}, line {L}**: Diagram uses subgraphs (renders too small on mobile)
+  - **Current**: Uses `subgraph Eager` and `subgraph Lazy`
+  - **Fix**: Split into two separate diagrams with headers:
+    - `**Eager Evaluation:**` (first diagram)
+    - `**Lazy Evaluation:**` (second diagram)
+  - **Severity**: HIGH (subgraphs cause mobile readability issues)
+
+- **Example {M}, line {L}**: Excessive branching from single node
+  - **Current**: One node branches to 7 child nodes
+  - **Fix**: Split into 2-3 diagrams, each with 3-4 branches max
+  - **Severity**: MEDIUM (renders wide and small on mobile)
+
+- **Example {P}, line {L}**: Combines multiple concepts (hierarchy + cancellation)
+  - **Current**: Single diagram shows "Class Hierarchy + Cancellation Flow"
+  - **Fix**: Split into:
+    - `**Class Hierarchy:**` (structure diagram)
+    - `**Cancellation Propagation:**` (flow diagram)
+  - **Severity**: MEDIUM (better clarity with focused diagrams)
+
+- **Example {Q}, line {L}**: Multiple consecutive diagrams lack descriptive headers
+  - **Current**: Three Mermaid blocks without context
+  - **Fix**: Add bold headers before each diagram:
+    - `**Concept A:**`
+    - `**Concept B:**`
+    - `**Concept C:**`
+  - **Severity**: LOW (improves scannability)
+
+**Status**: ✅ PASS (no issues) | ⚠️ MEDIUM (some splitting needed) | ❌ FAIL (critical subgraph usage)
+**Confidence**: HIGH
+
+**Recommendation**:
+
+- Replace all subgraphs with separate focused diagrams
+- Split diagrams with >5 branches
+- Add descriptive headers between multiple diagrams
+```
+
 ### Step 7: Validate Four-Part Format
 
 **For sample examples**, verify structure:
@@ -419,7 +500,8 @@ After all validations complete, update executive summary in audit report:
 3. Self-containment: {status} ({issues} found)
 4. Annotations: {status} (// => notation {present/sparse})
 5. Diagrams: {status} ({percentage}% frequency vs targets)
-6. Format: {status} (four-part structure {compliant/issues})
+6. Diagram splitting: {status} ({issues} subgraphs/excessive branching)
+7. Format: {status} (four-part structure {compliant/issues})
 
 **Priority Recommendations**:
 
@@ -465,10 +547,11 @@ After all validations complete, update executive summary in audit report:
 4. Validate self-containment → Write Finding 3
 5. Validate annotations → Write Finding 4
 6. Validate diagrams → Write Finding 5
-7. Validate format → Write Finding 6
-8. Validate frontmatter → Write Finding 7
-9. Generate summary → Update Executive Summary
-10. Finalize → Add metadata section
+7. Validate diagram splitting → Write Finding 5.5
+8. Validate format → Write Finding 6
+9. Validate frontmatter → Write Finding 7
+10. Generate summary → Update Executive Summary
+11. Finalize → Add metadata section
 ```
 
 **Never buffer all findings and write once at end** - write progressively to survive context compaction.
@@ -484,6 +567,8 @@ Use three-tier confidence system:
 - Diagram count (countable)
 - Frontmatter fields (parseable)
 - Color violations (pattern match)
+- Subgraph usage (keyword search)
+- Branching complexity (countable arrows)
 
 **MEDIUM confidence** (requires judgment):
 
@@ -491,12 +576,14 @@ Use three-tier confidence system:
 - Annotation quality (semantic evaluation)
 - Diagram appropriateness (context-dependent)
 - Educational value (subjective)
+- Diagram splitting necessity (depends on complexity judgment)
 
 **FALSE POSITIVE risk** (needs user verification):
 
 - Self-containment (may have valid reasons for references)
 - Diagram necessity (simple concepts may not need diagrams)
 - Format variations (acceptable deviations)
+- Branching complexity (some concepts naturally require more branches)
 
 ## Output Format
 
@@ -522,6 +609,8 @@ Use three-tier confidence system:
 - ≥90% examples are self-contained
 - ≥80% significant lines have annotations
 - Diagram frequency within ±10% of targets
+- No subgraphs in diagrams (mobile-friendly splitting)
+- Diagrams have ≤5 branches per node
 - ≥90% examples follow five-part format
 
 **User review needed when**:
@@ -529,6 +618,7 @@ Use three-tier confidence system:
 - Critical issues found (missing coverage areas, broken self-containment)
 - Judgment calls on educational quality
 - Diagram frequency significantly below targets
+- Multiple diagrams using subgraphs (critical mobile issue)
 
 **Ready for by-example-fixer when**:
 
@@ -557,6 +647,7 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 ## Related Documentation
 
 - **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-co__by-example-tutorial.md)**: Primary validation authority
+- **[Diagrams Convention](../../docs/explanation/conventions/ex-co__diagrams.md)**: Diagram splitting and mobile-friendliness rules
 - **[Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md)**: Workflow context
 - **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)**: Confidence assessment guide
 - **[Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md)**: Report file requirements
@@ -578,3 +669,4 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 5. ✅ **MUST** include confidence levels for all findings
 6. ✅ **MUST** provide specific line numbers for issues
 7. ✅ **MUST** validate against By-Example Tutorial Convention exactly
+8. ✅ **MUST** validate diagram splitting for mobile-friendliness

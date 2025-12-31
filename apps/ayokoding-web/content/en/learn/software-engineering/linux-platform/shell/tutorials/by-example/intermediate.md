@@ -497,7 +497,7 @@ Linux file permissions control read, write, and execute access for owner, group,
 
 ```mermaid
 %% Permission structure
-graph LR
+graph TD
     A[Permission String] --> B[Type]
     A --> C[Owner rwx]
     A --> D[Group rwx]

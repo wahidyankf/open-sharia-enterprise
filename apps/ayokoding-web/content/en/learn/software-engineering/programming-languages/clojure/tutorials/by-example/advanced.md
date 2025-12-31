@@ -75,7 +75,7 @@ Debug macros by expanding to see generated code.
 
 ```mermaid
 %% Macro expansion process
-graph LR
+graph TD
     A[Macro Form] --> B[macroexpand-1]
     B --> C[First Level Expansion]
     C --> D{More Macros?}

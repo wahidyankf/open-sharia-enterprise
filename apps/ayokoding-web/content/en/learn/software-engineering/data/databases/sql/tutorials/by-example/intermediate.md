@@ -15,7 +15,7 @@ Common Table Expressions (CTEs) create temporary named result sets that exist on
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["WITH clause<br/>Define CTE"]
     B["CTE Result Set<br/>Temporary table"]
     C["Main Query<br/>Reference CTE"]
@@ -399,7 +399,7 @@ LAG accesses previous row values, LEAD accesses next row values. Useful for comp
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Row 1"]
     B["Row 2<br/>Current"]
     C["Row 3"]
@@ -870,7 +870,7 @@ UNION combines results from multiple queries, removing duplicates. UNION ALL kee
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Query 1<br/>Result Set"]
     B["Query 2<br/>Result Set"]
     C["UNION<br/>Remove Duplicates"]
@@ -1272,7 +1272,7 @@ SQLite's JSON1 extension provides JSON creation, extraction, and manipulation fu
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Relational Data<br/>Tables & Columns"]
     B["JSON Functions<br/>json_object, json_array"]
     C["JSON Text<br/>Stored in TEXT column"]

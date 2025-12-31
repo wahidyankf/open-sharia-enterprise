@@ -125,7 +125,7 @@ Pods can run multiple containers that share the same network namespace and stora
 
 ```mermaid
 %% Multi-container Pod architecture
-graph LR
+graph TD
     A[Pod: multi-app] --> B[Container: nginx]
     A --> C[Container: busybox]
     B --> D[Shared Network<br/>localhost]
@@ -660,7 +660,7 @@ ClusterIP is the default Service type that exposes Pods on an internal cluster I
 
 ```mermaid
 %% ClusterIP Service architecture
-graph LR
+graph TD
     A[ClusterIP Service<br/>10.96.0.10:80] --> B[Pod: web-1<br/>10.244.0.5:8080]
     A --> C[Pod: web-2<br/>10.244.1.6:8080]
     A --> D[Pod: web-3<br/>10.244.2.7:8080]
@@ -962,7 +962,7 @@ ConfigMaps mounted as volumes create files where each key becomes a filename and
 
 ```mermaid
 %% ConfigMap volume mount
-graph LR
+graph TD
     A[ConfigMap: nginx-config] --> B[Volume Mount<br/>/etc/nginx/conf.d]
     B --> C[File: default.conf<br/>Contains nginx config]
     C --> D[nginx Container<br/>Reads config from file]

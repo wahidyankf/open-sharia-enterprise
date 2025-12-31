@@ -391,7 +391,7 @@ NetworkPolicies control pod-to-pod traffic using label selectors and rules. By d
 
 ```mermaid
 %% NetworkPolicy traffic control
-graph LR
+graph TD
     A[Pod: frontend<br/>app=frontend] -->|Allowed| B[Pod: backend<br/>app=backend]
     C[Pod: external<br/>app=external] -->|Denied| B
     D[Pod: database<br/>app=database] -->|Allowed| B
