@@ -10,7 +10,7 @@ tags:
   - education
   - code-first
 date: 2025-12-25T00:00:00+07:00
-lastmod: 2025-12-30T00:00:00+07:00
+lastmod: 2025-12-31T00:00:00+07:00
 draft: false
 weight: 2300
 ---
@@ -128,6 +128,21 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 
 **Core requirement**: Every significant line must have an inline comment
 
+**CRITICAL REQUIREMENT: Annotation Density Target**
+
+- **Minimum**: 40+ annotations per example
+- **Intermediate/Advanced optimal**: 75+ annotations per example
+- **Measurement**: Count `// =>` or `# =>` instances in code blocks
+- **Reference implementation**: Elixir intermediate Examples 31-37 (~56 annotations/example average)
+
+**Annotation Quality Over Quantity**:
+
+While annotation count is a measurable target, quality matters more:
+
+- Every significant line should explain state changes, return values, or execution flow
+- Annotations should teach WHY code behaves this way, not just WHAT it does
+- Focus on completeness: intermediate states, types, side effects, timing (compile vs runtime)
+
 **Comment annotations use `// =>` or `# =>` notation**:
 
 ```go
@@ -139,11 +154,17 @@ fmt.Println(result)              // => Output: 20-transformed
 
 **Required annotations**:
 
+- **Annotation density**: Target 40+ annotations per example (75+ for intermediate/advanced)
+- **Pattern matching**: Document which branch matched and why
+- **Execution flow**: Show control flow decisions (which if/case branch taken)
+
 - **Variable states**: Show value and type after assignment
 - **Intermediate values**: Document values at each transformation step
 - **Function outputs**: Show return values inline
 - **Side effects**: Document mutations, I/O operations, state changes
 - **Expected outputs**: Show stdout/stderr content with `=> Output:` prefix
+- **Timing (compile vs runtime)**: Distinguish compile-time checks from runtime execution
+- **Best practices**: Use ✅ GOOD vs ❌ BAD indicators for pattern comparisons
 - **Error cases**: Document when errors occur and how they're handled
 
 **Code organization**:
@@ -598,6 +619,11 @@ Before publishing by-example content, verify:
 ### Code Quality
 
 - [ ] Every significant line has inline comment
+- [ ] Annotation density meets target (40+ per example, 75+ for intermediate/advanced)
+- [ ] Annotations explain WHY (not just WHAT)
+- [ ] Pattern matching branches documented (which matched, why)
+- [ ] Execution flow decisions shown (if/case branches, timing)
+- [ ] Best practices indicated (✅ GOOD vs ❌ BAD where relevant)
 - [ ] `// =>` or `# =>` notation shows outputs and states
 - [ ] Variable states documented at each step
 - [ ] Code is formatted with standard tools
@@ -633,7 +659,8 @@ The **ayokoding-web-by-example-checker** agent validates:
 - Coverage percentage against target (95%)
 - Example count within range (75-90)
 - Self-containment (imports present, runnable)
-- Comment annotation quality (`// =>` notation)
+- Comment annotation density (40+ per example, 75+ optimal)
+- Comment annotation quality (`// =>` notation, explains WHY)
 - Diagram presence frequency (30-50%)
 - Color-blind palette compliance
 - Frontmatter completeness

@@ -134,7 +134,7 @@ graph TB
 
 **Objective**: Identify gaps and issues against by-example standards
 
-**Agent**: **apps__ayokoding-web__by-example-checker**
+**Agent**: **apps**ayokoding-web**by-example-checker**
 
 **Execution**:
 
@@ -147,11 +147,12 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 **Validation areas**:
 
 1. **Coverage and count**: 95% coverage, 75-90 examples
-2. **Self-containment**: Copy-paste-runnable within chapter scope
-3. **Annotations**: `// =>` notation for outputs and states
-4. **Diagrams**: 30-50% frequency, color-blind palette
-5. **Format**: Four-part structure (explanation, diagram, code, takeaway)
-6. **Frontmatter**: Complete and correct
+2. **Annotation density**: 40+ annotations per example (75+ for intermediate/advanced)
+3. **Self-containment**: Copy-paste-runnable within chapter scope
+4. **Annotations**: `// =>` notation for outputs and states
+5. **Diagrams**: 30-50% frequency, color-blind palette
+6. **Format**: Four-part structure (explanation, diagram, code, takeaway)
+7. **Frontmatter**: Complete and correct
 
 **Outputs**:
 
@@ -244,7 +245,7 @@ graph TD
 
 **Objective**: Automatically apply safe, validated improvements
 
-**Agent**: **apps__ayokoding-web__by-example-fixer**
+**Agent**: **apps**ayokoding-web**by-example-fixer**
 
 **Execution**:
 
@@ -770,6 +771,6 @@ This workflow is part of the **Tutorial Quality Family**:
 - **[By-Example Tutorial Convention](../conventions/ex-co__by-example-tutorial.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md)**: Confidence assessment
-- **[apps__ayokoding-web__by-example-checker agent](../../.claude/agents/apps__ayokoding-web__by-example-checker.md)**: Validation agent
-- **[apps__ayokoding-web__by-example-fixer agent](../../.claude/agents/apps__ayokoding-web__by-example-fixer.md)**: Fixing agent
-- **[apps__ayokoding-web__by-example-maker agent](../../.claude/agents/apps__ayokoding-web__by-example-maker.md)**: Content creation agent
+- **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps**ayokoding-web**by-example-checker.md)**: Validation agent
+- **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps**ayokoding-web**by-example-fixer.md)**: Fixing agent
+- **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps**ayokoding-web**by-example-maker.md)**: Content creation agent

@@ -18,7 +18,7 @@ Your role:
 
 1. **Validate coverage**: Verify 95% coverage target and 75-90 example count
 2. **Check self-containment**: Ensure examples are copy-paste-runnable within chapter scope
-3. **Verify annotations**: Validate `// =>` comment patterns and educational value
+3. **Verify annotations**: Validate annotation density (40+ per example, 75+ optimal) and `// =>` notation
 4. **Assess diagrams**: Check 30-50% diagram frequency and quality
 5. **Validate diagram splitting**: Check diagrams are mobile-friendly (focused, not too complex)
 6. **Generate audit**: Create progressive audit report in generated-reports/
@@ -211,12 +211,20 @@ grep -n "defined earlier" beginner.md
 
 Repeat for intermediate and advanced levels.
 
-### Step 5: Validate Educational Annotations
+### Step 5: Validate Annotation Density and Quality
 
 **Check for `// =>` or `# =>` notation**:
 
 ```bash
 # Count annotation markers
+annotation_count=$(grep -c "# =>" {file_path})
+if [ "$annotation_count" -lt 40 ]; then
+    density_status="BELOW TARGET (found: $annotation_count, target: 40+)"
+elif [ "$annotation_count" -ge 75 ]; then
+    density_status="OPTIMAL ($annotation_count annotations)"
+else
+    density_status="ADEQUATE ($annotation_count annotations)"
+fi
 grep -c "// =>" beginner.md
 grep -c "# =>" beginner.md
 ```
@@ -233,7 +241,7 @@ Read sample examples and verify annotations show:
 **Write finding progressively**:
 
 ```markdown
-### Finding 4: Educational Annotation Quality
+### Finding 4: Annotation Density and Quality
 
 **Annotation markers found**: {count}
 **Examples reviewed**: 10 samples across levels
@@ -253,7 +261,7 @@ Read sample examples and verify annotations show:
 **Status**: ✅ PASS | ⚠️ MEDIUM | ❌ FAIL
 **Confidence**: MEDIUM
 
-**Recommendation**: Add // => annotations for all significant lines
+**Recommendation**: Target 40+ annotations per example (75+ for intermediate/advanced). Add // => annotations for all significant lines
 ```
 
 ### Step 6: Validate Diagram Presence and Quality
@@ -498,7 +506,7 @@ After all validations complete, update executive summary in audit report:
 1. Example count: {status} ({actual} vs target 75-90)
 2. Coverage: {status} ({topics} of 8 major areas)
 3. Self-containment: {status} ({issues} found)
-4. Annotations: {status} (// => notation {present/sparse})
+4. Annotations: {status} (density: {count}/example, target: 40+, notation: {present/sparse})
 5. Diagrams: {status} ({percentage}% frequency vs targets)
 6. Diagram splitting: {status} ({issues} subgraphs/excessive branching)
 7. Format: {status} (four-part structure {compliant/issues})
@@ -607,7 +615,7 @@ Use three-tier confidence system:
 - Example count within 75-90 range
 - Coverage includes ≥7/8 major topic areas
 - ≥90% examples are self-contained
-- ≥80% significant lines have annotations
+- ≥40 annotations per example (75+ for intermediate/advanced), ≥80% significant lines annotated
 - Diagram frequency within ±10% of targets
 - No subgraphs in diagrams (mobile-friendly splitting)
 - Diagrams have ≤5 branches per node
