@@ -475,52 +475,102 @@ fun main() {                        // => Program entry point
 Kotlin's `when` replaces Java's switch statement with a more powerful expression that returns values. It supports ranges, type checks, arbitrary expressions, and doesn't require explicit `break` statements.
 
 ```kotlin
-fun main() {
-    val x = 3                        // => x is 3
+fun main() {                        // => Program entry point
+    val x = 3                        // => x is 3 (type: Int)
 
     // when as expression (returns value)
-    val result = when (x) {
-        1 -> "One"                   // => Not matched
-        2 -> "Two"                   // => Not matched
-        3 -> "Three"                 // => Matched, result is "Three"
-        else -> "Other"              // => Not evaluated
-    }                                // => result is "Three"
+    val result = when (x) {          // => when expression (not statement)
+                                    // => Evaluates x (value is 3)
+                                    // => Matches against branches sequentially
+                                    // => Expression returns String type
+        1 -> "One"                   // => Branch 1: tests x == 1
+                                    // => 3 == 1 is false
+                                    // => Not matched, skip to next
+        2 -> "Two"                   // => Branch 2: tests x == 2
+                                    // => 3 == 2 is false
+                                    // => Not matched, skip to next
+        3 -> "Three"                 // => Branch 3: tests x == 3
+                                    // => 3 == 3 is true
+                                    // => Matched, evaluates "Three"
+                                    // => when returns "Three"
+                                    // => Remaining branches skipped (no fallthrough)
+        else -> "Other"              // => else branch: default case
+                                    // => Not evaluated (match already found)
+                                    // => Required when when is expression
+    }                                // => when expression complete
+                                    // => result is "Three" (type: String)
 
     // when with ranges
-    val score = 85                   // => score is 85
-    val grade = when (score) {
-        in 90..100 -> "A"            // => Not matched (85 not in 90..100)
-        in 80..89 -> "B"             // => Matched, grade is "B"
-        in 70..79 -> "C"             // => Not evaluated
+    val score = 85                   // => score is 85 (type: Int)
+    val grade = when (score) {       // => when expression evaluates score
+                                    // => Matches against range conditions
+        in 90..100 -> "A"            // => in operator: tests membership
+                                    // => 90..100: inclusive range
+                                    // => 85 in 90..100 is false
+                                    // => Not matched (85 not in 90..100)
+        in 80..89 -> "B"             // => 80..89: range check
+                                    // => 85 in 80..89 is true
+                                    // => Matched, returns "B"
+                                    // => grade is "B"
+        in 70..79 -> "C"             // => Not evaluated (match found)
         else -> "F"                  // => Not evaluated
     }                                // => grade is "B"
 
     // when with type checking
-    val obj: Any = "Kotlin"          // => obj is "Kotlin" (type: Any)
-    val description = when (obj) {
+    val obj: Any = "Kotlin"          // => obj is "Kotlin"
+                                    // => Type: Any (supertype of all types)
+                                    // => Runtime type: String
+    val description = when (obj) {   // => when with type checks
         is String -> "String of length ${obj.length}"
+                                     // => is operator: type check
+                                     // => Tests obj is String
+                                     // => true (obj is String at runtime)
                                      // => Matched, smart cast to String
-                                     // => obj.length is 6
+                                     // => obj now treated as String in this branch
+                                     // => obj.length: safe access (smart cast)
+                                     // => "Kotlin".length is 6
+                                     // => Template: "String of length 6"
                                      // => description is "String of length 6"
-        is Int -> "Integer: $obj"    // => Not evaluated
-        else -> "Unknown type"       // => Not evaluated
-    }
+        is Int -> "Integer: $obj"    // => Type check for Int
+                                    // => Not evaluated (match found)
+        else -> "Unknown type"       // => Default case
+                                    // => Not evaluated
+    }                                // => Smart cast only in matched branch
 
     // when without argument (replaces if-else chain)
-    val temp = 28                    // => temp is 28
-    val weather = when {
-        temp < 0 -> "Freezing"       // => Not matched
-        temp < 15 -> "Cold"          // => Not matched
-        temp < 25 -> "Moderate"      // => Not matched
-        temp < 35 -> "Warm"          // => Matched, weather is "Warm"
-        else -> "Hot"                // => Not evaluated
-    }
+    val temp = 28                    // => temp is 28 (type: Int)
+    val weather = when {             // => when without argument
+                                    // => No subject expression
+                                    // => Evaluates boolean conditions
+                                    // => Each branch is bool expression
+        temp < 0 -> "Freezing"       // => Condition: temp < 0
+                                    // => 28 < 0 is false
+                                    // => Not matched
+        temp < 15 -> "Cold"          // => Condition: temp < 15
+                                    // => 28 < 15 is false
+                                    // => Not matched
+        temp < 25 -> "Moderate"      // => Condition: temp < 25
+                                    // => 28 < 25 is false
+                                    // => Not matched
+        temp < 35 -> "Warm"          // => Condition: temp < 35
+                                    // => 28 < 35 is true
+                                    // => Matched, returns "Warm"
+                                    // => weather is "Warm"
+        else -> "Hot"                // => Default case
+                                    // => Not evaluated
+    }                                // => Replaces if-else-if chains
 
-    println(result)                  // => Output: Three
-    println(grade)                   // => Output: B
-    println(description)             // => Output: String of length 6
-    println(weather)                 // => Output: Warm
-}
+    println(result)                  // => Outputs: "Three"
+                                    // => Output: Three
+    println(grade)                   // => Outputs: "B"
+                                    // => Output: B
+    println(description)             // => Outputs: "String of length 6"
+                                    // => Output: String of length 6
+    println(weather)                 // => Outputs: "Warm"
+                                    // => Output: Warm
+}                                   // => main returns
+                                    // => All when expressions returned values
+                                    // => No breaks needed (no fallthrough)
 ```
 
 **Key Takeaway**: Use `when` as an expression to return values directly, leverage ranges and type checks for concise branching, and omit the argument for complex boolean conditions.
