@@ -1366,60 +1366,120 @@ graph TD
 **Code**:
 
 ```elixir
+# config/config.exs - Base configuration (COMPILE TIME)
+import Config  # => imports Config module for config/2 macro
+
+# Application-level configuration
+config :my_app,  # => :my_app is the application name (atom)
+  api_url: "https://api.example.com",  # => default API URL
+  timeout: 5000,  # => 5000ms timeout
+  max_retries: 3  # => retry failed requests 3 times
+# => These values are READ AT COMPILE TIME and baked into release
+
+# Module-specific configuration (nested under application)
+config :my_app, MyApp.Repo,  # => config for MyApp.Repo module
+  database: "my_app_dev",  # => database name
+  username: "postgres",  # => ❌ BAD: hardcoded credentials (OK for dev, NOT for prod)
+  password: "postgres",  # => ❌ SECURITY RISK: never commit production passwords
+  hostname: "localhost"  # => database host
+# => This config is for DEVELOPMENT only (overridden in prod.exs)
+
+# Import environment-specific config
+import_config "#{config_env()}.exs"  # => loads dev.exs, test.exs, or prod.exs based on MIX_ENV
+# => config_env() returns :dev, :test, or :prod
+# => Files loaded in order: config.exs → {env}.exs (env-specific overrides base)
+
+# config/dev.exs - Development environment (COMPILE TIME)
 import Config
 
 config :my_app,
-  api_url: "https://api.example.com",
-  timeout: 5000,
-  max_retries: 3
+  debug: true,  # => enable debug logging in dev
+  api_url: "http://localhost:4000"  # => override to use local API
+# => These values OVERRIDE config.exs settings
+# => Evaluated at compile time when MIX_ENV=dev
 
-config :my_app, MyApp.Repo,
-  database: "my_app_dev",
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost"
-
-import_config "#{config_env()}.exs"
-
+# config/prod.exs - Production environment (COMPILE TIME)
 import Config
 
 config :my_app,
-  debug: true,
-  api_url: "http://localhost:4000"
+  debug: false,  # => disable debug in production
+  api_url: System.get_env("API_URL") || raise "API_URL not set"  # => ❌ PROBLEM: System.get_env at COMPILE time
+# => This evaluates when building release (not at runtime!)
+# => If API_URL not set during build, release fails to compile
+# => ✅ SOLUTION: Use runtime.exs instead
 
+# config/runtime.exs - Runtime configuration (APPLICATION STARTUP)
 import Config
 
-config :my_app,
-  debug: false,
-  api_url: System.get_env("API_URL") || raise "API_URL not set"
-
-import Config
-
-if config_env() == :prod do
+if config_env() == :prod do  # => only in production
   config :my_app,
-    api_key: System.get_env("API_KEY") || raise "API_KEY not set",
-    database_url: System.get_env("DATABASE_URL") || raise "DATABASE_URL not set"
+    api_key: System.get_env("API_KEY") || raise "API_KEY not set",  # => ✅ GOOD: reads ENV at runtime
+    # => Application CRASHES on startup if API_KEY missing (fail fast)
+    database_url: System.get_env("DATABASE_URL") || raise "DATABASE_URL not set"  # => reads DATABASE_URL at startup
+  # => runtime.exs evaluates when APPLICATION STARTS (not when building release)
+  # => Perfect for secrets: API keys, DB URLs, etc.
 end
+# => Runtime config enables SAME release binary for different environments
+# => Just change environment variables, no recompilation needed
 
+# Accessing configuration in code
 defmodule MyApp.API do
-  def url, do: Application.get_env(:my_app, :api_url)
-  def timeout, do: Application.get_env(:my_app, :timeout, 3000)  # Default 3000
-  def debug?, do: Application.get_env(:my_app, :debug, false)
+  def url, do: Application.get_env(:my_app, :api_url)  # => retrieves :api_url from :my_app config
+  # => Returns "https://api.example.com" (or overridden value)
+
+  def timeout, do: Application.get_env(:my_app, :timeout, 3000)  # => returns :timeout or default 3000ms
+  # => Third argument is fallback if key not found
+
+  def debug?, do: Application.get_env(:my_app, :debug, false)  # => returns boolean, defaults to false
+  # => Useful for conditional logging
 
   def call_api do
-    if debug?() do
-      IO.puts("Calling #{url()} with timeout #{timeout()}")
+    if debug?() do  # => check debug mode
+      IO.puts("Calling #{url()} with timeout #{timeout()}")  # => log API call in debug mode
+      # => Prints: "Calling https://api.example.com with timeout 5000"
     end
     # Make API call...
   end
 end
 
-repo_config = Application.get_env(:my_app, MyApp.Repo)
-database = Keyword.get(repo_config, :database)
+# Accessing nested configuration
+repo_config = Application.get_env(:my_app, MyApp.Repo)  # => retrieves MyApp.Repo config
+# => repo_config = [database: "my_app_dev", username: "postgres", ...]
+database = Keyword.get(repo_config, :database)  # => extracts :database from keyword list
+# => database = "my_app_dev"
 
-Application.put_env(:my_app, :debug, true)
+# Modifying configuration at runtime (rare, usually for testing)
+Application.put_env(:my_app, :debug, true)  # => sets :debug to true at runtime
+# => ⚠️ Changes are NOT persisted (lost on restart)
+# => Useful in tests to override config
 
-Application.get_all_env(:my_app)
+# Getting all application config
+Application.get_all_env(:my_app)  # => returns all config for :my_app
+# => [api_url: "...", timeout: 5000, max_retries: 3, debug: true, ...]
+
+# Configuration timeline:
+# 1. Build time (mix compile):
+#    - config.exs loaded → base settings
+#    - dev.exs/test.exs/prod.exs loaded → environment overrides
+#    - Values baked into compiled beam files
+#
+# 2. Application startup (mix run, release start):
+#    - runtime.exs loaded → runtime overrides from ENV vars
+#    - Application.get_env/2,3 retrieves values
+#
+# 3. Runtime (application running):
+#    - Application.put_env/3 can modify (not persisted)
+#    - Application.get_env/2,3 retrieves current values
+
+# Best practices:
+# ✅ config.exs: defaults, development settings
+# ✅ dev.exs: development overrides (local URLs, debug mode)
+# ✅ test.exs: test-specific settings (test database)
+# ✅ prod.exs: production settings (no secrets!)
+# ✅ runtime.exs: secrets from ENV vars (API keys, DB URLs)
+# ❌ NEVER commit secrets to any .exs file
+# ❌ AVOID System.get_env in config.exs/prod.exs (compile time)
+# ✅ USE System.get_env in runtime.exs only (runtime)
 ```
 
 **Key Takeaway**: Use `config/*.exs` for environment-specific configuration. `config.exs` for all envs, `dev/test/prod.exs` for specific envs, `runtime.exs` for production secrets. Access with `Application.get_env/3`.
