@@ -6397,98 +6397,211 @@ Telemetry provides instrumentation for measuring application behavior. Emit even
 
 ```elixir
 # Attach telemetry handler
+# => Telemetry: event-based instrumentation library
+# => Decouples code instrumentation from metrics/logging
 :telemetry.attach(
-  "my-handler-id",  # => Unique handler ID
-  [:my_app, :request, :stop],  # => Event name
+  # => :telemetry.attach/4: attaches handler to event
+  # => First arg: handler id (unique identifier)
+  "my-handler-id",
+  # => Unique handler ID (string)
+  # => Used to detach handler later
+  # => Must be unique across all handlers
+  [:my_app, :request, :stop],
+  # => Event name (list of atoms)
+  # => Convention: [app, module, action, lifecycle]
+  # => [:my_app, :request, :stop] fired when request completes
+  # => Pattern: namespace with atoms to avoid conflicts
   fn event_name, measurements, metadata, _config ->
+    # => Callback function: executed when event fires
+    # => event_name: the event that triggered ([:my_app, :request, :stop])
+    # => measurements: numeric values (duration, count, size)
+    # => metadata: contextual data (request path, user id)
+    # => _config: config passed to attach (nil here)
     # => Callback receives event data
     IO.puts("Event: #{inspect(event_name)}")
+    # => Print event name
     IO.puts("Duration: #{measurements.duration}ms")
+    # => Access measurements map (:duration key)
     IO.puts("Metadata: #{inspect(metadata)}")
+    # => Print metadata map
   end,
-  nil  # => Config (passed to callback)
+  # => Callback function complete
+  nil
+  # => Config (passed to callback)
+  # => Optional configuration for handler
+  # => Available as fourth argument in callback
 )
+# => Handler attached: ready to receive events
 
 # Emit telemetry event
 defmodule MyApp.API do
+  # => API module emitting telemetry events
   def handle_request(path) do
+    # => handle_request/1: processes request with telemetry
     start_time = System.monotonic_time()
+    # => System.monotonic_time/0: monotonic timestamp (nanoseconds)
+    # => Monotonic: always increasing (not affected by clock adjustments)
+    # => Used for duration measurement (not wall clock)
 
     # Perform work
     result = process_request(path)
+    # => Execute actual request processing
+    # => process_request/1: simulated work
 
     duration = System.monotonic_time() - start_time
+    # => Calculate duration in nanoseconds
+    # => current_time - start_time = elapsed nanoseconds
 
     # Emit telemetry event
     :telemetry.execute(
-      [:my_app, :request, :stop],  # => Event name
-      %{duration: duration},  # => Measurements (numeric)
-      %{path: path, result: result}  # => Metadata (any term)
+      # => :telemetry.execute/3: emits event to all attached handlers
+      [:my_app, :request, :stop],
+      # => Event name (must match handler event name)
+      # => All handlers attached to this event will fire
+      %{duration: duration},
+      # => Measurements (numeric data)
+      # => Map with measurement values
+      # => Convention: numeric metrics (duration, count, bytes)
+      %{path: path, result: result}
+      # => Metadata (any term)
+      # => Contextual information about event
+      # => Can be any data (request details, user info, etc.)
     )
+    # => execute/3 complete: handlers fired synchronously
 
     result
+    # => Return result to caller
   end
 
   defp process_request(path) do
+    # => Simulated request processing
     :timer.sleep(100)
+    # => Sleep 100ms (simulate work)
     {:ok, "Response for #{path}"}
+    # => Return simulated response
   end
 end
+# => MyApp.API complete
 
 MyApp.API.handle_request("/users")
+# => Call handle_request with "/users" path
+# => Emits [:my_app, :request, :stop] event
+# => Handler callback fires and prints:
 # Prints:
 # Event: [:my_app, :request, :stop]
 # Duration: 100000000ms
+# => Duration in nanoseconds (100ms = 100,000,000ns)
 # Metadata: %{path: "/users", result: {:ok, "Response for /users"}}
 
 # Span measurement pattern
+# => Span: measures duration automatically (start → stop events)
+# => Simplifies manual start_time/duration tracking
 defmodule MyApp.Database do
+  # => Database module with span telemetry
   def query(sql) do
+    # => query/1: executes query with automatic timing
     :telemetry.span(
-      [:my_app, :db, :query],  # => Event prefix
-      %{sql: sql},  # => Metadata
+      # => :telemetry.span/3: emits start and stop events automatically
+      # => Fires: [:my_app, :db, :query, :start] before function
+      # => Fires: [:my_app, :db, :query, :stop] after function
+      [:my_app, :db, :query],
+      # => Event prefix (adds :start and :stop suffixes)
+      # => [:my_app, :db, :query] → [:my_app, :db, :query, :start/stop]
+      %{sql: sql},
+      # => Initial metadata (available in both start and stop events)
+      # => Metadata for query SQL
       fn ->
+        # => Function to execute (work to measure)
+        # => span measures duration of this function
         # Perform work
         result = execute_query(sql)
+        # => Execute actual query
 
         # Return {result, extra_metadata}
         {result, %{rows: length(result)}}
+        # => Return tuple: {result, extra_metadata}
+        # => result: returned to caller
+        # => extra_metadata: merged into stop event metadata
+        # => Pattern: add runtime-computed metadata (:rows count)
       end
     )
+    # => span/3 returns result from function
+    # => Emits :start event before function
+    # => Emits :stop event after function (with duration measurement)
   end
 
   defp execute_query(_sql) do
+    # => Simulated query execution
     :timer.sleep(50)
+    # => Sleep 50ms (simulate database query)
     [{:id, 1, :name, "Alice"}, {:id, 2, :name, "Bob"}]
+    # => Return mock query results (list of tuples)
   end
 end
+# => MyApp.Database complete
 
 # Attach handler for database queries
 :telemetry.attach(
+  # => Attach handler for database span stop event
   "db-handler",
+  # => Handler ID
   [:my_app, :db, :query, :stop],
+  # => Event name: span stop event
+  # => Note: :stop suffix added by span/3
   fn _event, measurements, metadata, _config ->
+    # => Handler callback
+    # => _event: [:my_app, :db, :query, :stop]
+    # => measurements: %{duration: nanoseconds}
+    # => metadata: %{sql: "...", rows: count}
     IO.puts("Query took #{measurements.duration}ns")
+    # => Print query duration (nanoseconds)
+    # => measurements.duration: auto-computed by span/3
     IO.puts("Returned #{metadata.rows} rows")
+    # => Print row count
+    # => metadata.rows: from extra_metadata tuple
   end,
   nil
+  # => No config
 )
+# => Handler attached for database queries
 
 MyApp.Database.query("SELECT * FROM users")
+# => Execute query with telemetry
+# => Emits: [:my_app, :db, :query, :start]
+# => Executes query (50ms)
+# => Emits: [:my_app, :db, :query, :stop] with duration
+# => Handler prints query timing and row count
 
 # Multiple handlers for same event
+# => attach_many/4: attaches handler to multiple events
+# => Alternative to multiple attach/4 calls
 :telemetry.attach_many(
+  # => :telemetry.attach_many/4: one handler for multiple events
   "multi-handler",
+  # => Handler ID (unique)
   [
+    # => List of events to handle
     [:my_app, :request, :start],
+    # => Request start event
     [:my_app, :request, :stop],
+    # => Request stop event
     [:my_app, :request, :exception]
+    # => Request exception event
   ],
+  # => Same handler fires for all three events
   fn event, measurements, metadata, _config ->
+    # => Handler callback for any of the three events
+    # => event: which event fired (varies)
     Logger.info("Event: #{inspect(event)}", measurements: measurements, metadata: metadata)
+    # => Log event with measurements and metadata
+    # => Logger.info/2: logs at info level
+    # => Keyword list: [measurements: ..., metadata: ...]
   end,
   nil
+  # => No config
 )
+# => Handler attached to 3 events
+# => Pattern: single handler for related events (request lifecycle)
 ```
 
 **Key Takeaway**: Telemetry decouples instrumentation from reporting. Emit events with `:telemetry.execute/3` for measurements and `:telemetry.span/3` for start/stop events. Attach handlers to process events for metrics, logging, or monitoring.
