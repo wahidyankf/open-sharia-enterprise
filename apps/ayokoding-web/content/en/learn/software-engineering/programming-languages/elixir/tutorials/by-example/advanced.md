@@ -3130,53 +3130,95 @@ graph TD
 **Code**:
 
 ```elixir
+# Simple comprehension - map over list
 for x <- [1, 2, 3], do: x * 2  # => [2, 4, 6]
+# => for x <- list iterates each element
+# => do: x * 2 transforms each element
 
+# Multiple generators (Cartesian product)
 for x <- [1, 2], y <- [3, 4], do: {x, y}
+# => [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
+# => Nested iteration: for each x, iterate all y values
 
+# Comprehension with filter
 for x <- 1..10, rem(x, 2) == 0, do: x  # => [2, 4, 6, 8, 10]
+# => rem(x, 2) == 0 is FILTER (not generator)
+# => Only includes elements where filter returns true
 
+# Multiple filters (AND logic)
 for x <- 1..10,
-    rem(x, 2) == 0,
-    rem(x, 3) == 0,
-    do: x
+    rem(x, 2) == 0,  # => filter: must be even
+    rem(x, 3) == 0,  # => filter: must be divisible by 3
+    do: x  # => [6] (only 6 satisfies both)
 
+# Pattern matching in generator
 users = [
   {:user, "Alice", 30},
   {:user, "Bob", 25},
-  {:admin, "Charlie", 35}
+  {:admin, "Charlie", 35}  # => won't match pattern
 ]
 
 for {:user, name, age} <- users, do: {name, age}
+# => [{"Alice", 30}, {"Bob", 25}]
+# => Pattern {:user, name, age} filters list
 
+# Comprehension with custom output (into:)
 for x <- [1, 2, 3], into: %{}, do: {x, x * 2}
+# => %{1 => 2, 2 => 4, 3 => 6}
+# => into: %{} specifies output type (map)
 
+# Transform map using comprehension
 for {k, v} <- %{a: 1, b: 2}, into: %{}, do: {k, v * 10}
+# => %{a: 10, b: 20}
+# => Iterate map entries as {key, value} tuples
 
+# Map transformation with filter
 for {key, val} <- %{a: 1, b: 2, c: 3},
-    val > 1,
+    val > 1,  # => filter: only values > 1
     into: %{},
     do: {key, val * 2}
+# => %{b: 4, c: 6} (a: 1 excluded)
 
+# Binary comprehension (iterate bytes)
 for <<c <- "hello">>, do: c
+# => [104, 101, 108, 108, 111] (ASCII codes)
+# => <<c <- binary>> extracts bytes
 
+# Binary comprehension with transformation
 for <<c <- "hello">>, into: "", do: <<c + 1>>
+# => "ifmmp" (each character shifted by 1)
+# => into: "" collects into binary string
 
+# Nested iteration (flatten matrix)
 matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 for row <- matrix, x <- row, do: x * 2
+# => [2, 4, 6, 8, 10, 12, 14, 16, 18]
+# => Flattens and transforms in one pass
 
+# Binary pattern matching (parse pixels)
 pixels = <<213, 45, 132, 64, 76, 32, 76, 0, 0, 234>>
 for <<r::8, g::8, b::8 <- pixels>>, do: {r, g, b}
+# => [{213, 45, 132}, {64, 76, 32}]
+# => Matches 3 bytes at a time as RGB
 
+# Comprehension with reduce
 for x <- 1..10, reduce: 0 do
-  acc -> acc + x
+  acc -> acc + x  # => accumulate sum
 end
+# => 55 (sum of 1 to 10)
+# => reduce: 0 sets initial accumulator
 
+# Multiple generators with reduce
 for x <- 1..5, y <- 1..5, reduce: [] do
-  acc -> [{x, y} | acc]
+  acc -> [{x, y} | acc]  # => cons to list
 end
+# => [{5,5}, {5,4}, ..., {1,1}] (25 tuples)
+# => Cartesian product with reduce
 
+# Unique elements
 for x <- [1, 2, 2, 3, 3, 3], uniq: true, do: x
+# => [1, 2, 3]
+# => uniq: true removes duplicates
 ```
 
 **Key Takeaway**: Comprehensions generate collections with generators, filters, and transformations. Use `into:` for custom collection types, `reduce:` for accumulation, pattern matching for filtering. Support lists, maps, and binaries.
