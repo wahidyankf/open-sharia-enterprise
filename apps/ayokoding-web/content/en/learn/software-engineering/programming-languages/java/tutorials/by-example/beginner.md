@@ -3,11 +3,11 @@ title: "Beginner"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000001
-description: "Learn Java basics through 25 annotated examples: variables, OOP fundamentals, collections, control flow, and streams - perfect first examples for Java"
-tags: ["java", "tutorial", "by-example", "beginner", "basics", "oop", "collections"]
+description: "Learn Java basics through 30 annotated examples: variables, I/O, OOP fundamentals, collections, control flow, streams, and more - perfect first examples for Java"
+tags: ["java", "tutorial", "by-example", "beginner", "basics", "oop", "collections", "io", "strings"]
 ---
 
-Learn Java fundamentals through 25 annotated code examples. Each example is self-contained, runnable in JShell or as standalone classes, and heavily commented to show what each line does, expected outputs, and intermediate values.
+Learn Java fundamentals through 30 annotated code examples. Each example is self-contained, runnable in JShell or as standalone classes, and heavily commented to show what each line does, expected outputs, and intermediate values.
 
 ## Group 1: First Steps
 
@@ -115,7 +115,283 @@ String nullStr = null; // => null (OK for reference types)
 
 ---
 
-### Example 3: Basic Data Types and Operations
+### Example 3: Basic Input/Output with Scanner
+
+Java's `Scanner` class reads formatted input from various sources (console, files, strings). It's the standard way to handle user input in console applications and parse structured text data.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Input["User Input<br/>(System.in)"] --> Scanner["Scanner Object"]
+    Scanner --> Parse["Parse Methods<br/>(nextInt, nextLine, etc.)"]
+    Parse --> Variable["Java Variable"]
+
+    style Input fill:#0173B2,color:#fff
+    style Scanner fill:#DE8F05,color:#fff
+    style Parse fill:#029E73,color:#fff
+    style Variable fill:#CC78BC,color:#fff
+```
+
+**Code**:
+
+```java
+import java.util.Scanner;
+
+// Reading from console (System.in)
+Scanner scanner = new Scanner(System.in); // => Create scanner for standard input
+
+// Reading different types
+System.out.print("Enter your name: ");
+String name = scanner.nextLine(); // => Reads entire line until newline
+// Example input: "Alice" => name is "Alice"
+
+System.out.print("Enter your age: ");
+int age = scanner.nextInt(); // => Reads next integer token
+// Example input: 25 => age is 25
+scanner.nextLine(); // => Consume leftover newline after nextInt()
+
+System.out.print("Enter your GPA: ");
+double gpa = scanner.nextDouble(); // => Reads next double token
+// Example input: 3.85 => gpa is 3.85
+scanner.nextLine(); // => Consume leftover newline
+
+System.out.print("Are you a student? (true/false): ");
+boolean isStudent = scanner.nextBoolean(); // => Reads next boolean token
+// Example input: true => isStudent is true
+
+// Checking if input is available
+System.out.print("Enter a number (or text to skip): ");
+if (scanner.hasNextInt()) { // => Check if next token is an integer
+    int number = scanner.nextInt(); // => Safe to read int
+    System.out.println("You entered: " + number);
+} else {
+    String text = scanner.next(); // => Read as string instead
+    System.out.println("Not a number: " + text);
+}
+
+// Reading from a string (parsing structured data)
+String data = "John 30 Engineer";
+Scanner stringScanner = new Scanner(data); // => Create scanner from string
+String personName = stringScanner.next(); // => "John" (reads until whitespace)
+int personAge = stringScanner.nextInt(); // => 30
+String occupation = stringScanner.next(); // => "Engineer"
+stringScanner.close(); // => Close scanner to free resources
+
+// Using delimiter (default is whitespace)
+String csvData = "apple,banana,cherry";
+Scanner csvScanner = new Scanner(csvData);
+csvScanner.useDelimiter(","); // => Set comma as delimiter
+String fruit1 = csvScanner.next(); // => "apple"
+String fruit2 = csvScanner.next(); // => "banana"
+String fruit3 = csvScanner.next(); // => "cherry"
+csvScanner.close(); // => Always close scanners
+
+// Common pattern: try-with-resources (auto-closes scanner)
+try (Scanner autoScanner = new Scanner(System.in)) {
+    System.out.print("Enter text: ");
+    String input = autoScanner.nextLine(); // => Reads input
+    System.out.println("You entered: " + input);
+    // => autoScanner automatically closed when try block exits
+}
+
+// Validation pattern
+Scanner validScanner = new Scanner(System.in);
+int validNumber = 0;
+boolean valid = false;
+
+while (!valid) {
+    System.out.print("Enter a positive number: ");
+    if (validScanner.hasNextInt()) {
+        int num = validScanner.nextInt();
+        if (num > 0) {
+            validNumber = num; // => Valid input
+            valid = true; // => Exit loop
+        } else {
+            System.out.println("Number must be positive!");
+        }
+    } else {
+        System.out.println("Invalid input! Enter a number.");
+        validScanner.next(); // => Consume invalid input
+    }
+}
+validScanner.close();
+
+// Important Scanner behaviors:
+// next() reads until whitespace (doesn't consume newline)
+// nextLine() reads entire line (consumes newline)
+// nextInt(), nextDouble(), etc. read token but DON'T consume newline
+// Always call nextLine() after nextInt()/nextDouble() to consume leftover newline
+
+// Example of the newline issue:
+Scanner issueDemo = new Scanner(System.in);
+System.out.print("Enter a number: ");
+int num = issueDemo.nextInt(); // => Reads "42" but leaves "\n" in buffer
+// Scanner buffer: "\n" (newline still there)
+
+System.out.print("Enter your name: ");
+String userName = issueDemo.nextLine(); // => Reads the leftover "\n" immediately!
+// userName is "" (empty string) - BUG!
+
+// FIX: Consume leftover newline
+Scanner fixDemo = new Scanner(System.in);
+System.out.print("Enter a number: ");
+int fixNum = fixDemo.nextInt(); // => Reads "42"
+fixDemo.nextLine(); // => Consume leftover "\n"
+System.out.print("Enter your name: ");
+String fixName = fixDemo.nextLine(); // => Now correctly reads name
+fixDemo.close();
+```
+
+**Key Takeaway**: Use `Scanner` for reading formatted input from console, files, or strings. Call `nextLine()` after `nextInt()`/`nextDouble()` to consume leftover newlines. Use `hasNextX()` methods to validate input before reading. Always close scanners with `close()` or use try-with-resources for automatic cleanup.
+
+**Why It Matters**: Scanner is the standard way to build interactive Java console applications—command-line tools, simple games, educational programs. The newline consumption bug (`nextInt()` leaving `\n` in buffer) is one of the most common beginner mistakes, causing empty `nextLine()` reads that appear to skip user input. Production systems use `Scanner` for parsing structured text (CSV files, config files, log parsing) with custom delimiters. While GUI applications use Swing/JavaFX for input and web services use HTTP requests, understanding `Scanner` is essential for debugging, scripting, and backend data processing where text parsing is ubiquitous.
+
+---
+
+### Example 4: String Comparison and Equality
+
+In Java, strings are objects, not primitives. The `==` operator compares references (memory addresses), not content. Always use `.equals()` to compare string values properly.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Comp["String Comparison"] --> EqOp["== operator<br/>(reference equality)"]
+    Comp --> EqMethod[".equals()<br/>(content equality)"]
+    EqOp --> RefTrue["Same object<br/>(true)"]
+    EqOp --> RefFalse["Different objects<br/>(false)"]
+    EqMethod --> ValTrue["Same content<br/>(true)"]
+    EqMethod --> ValFalse["Different content<br/>(false)"]
+
+    style Comp fill:#0173B2,color:#fff
+    style EqOp fill:#DE8F05,color:#fff
+    style EqMethod fill:#029E73,color:#fff
+    style RefTrue fill:#CC78BC,color:#fff
+    style RefFalse fill:#CA9161,color:#fff
+    style ValTrue fill:#CC78BC,color:#fff
+    style ValFalse fill:#CA9161,color:#fff
+```
+
+**Code**:
+
+```java
+// String literals vs new String()
+String s1 = "hello"; // => String literal (stored in string pool)
+String s2 = "hello"; // => Same literal (reuses s1's object in pool)
+String s3 = new String("hello"); // => New object in heap (NOT in pool)
+
+// == compares references (memory addresses)
+System.out.println(s1 == s2); // => true (both point to same object in pool)
+System.out.println(s1 == s3); // => false (different objects: pool vs heap)
+
+// .equals() compares content (actual characters)
+System.out.println(s1.equals(s2)); // => true (same content)
+System.out.println(s1.equals(s3)); // => true (same content)
+System.out.println(s1.equals("hello")); // => true (same content)
+
+// Case-sensitive vs case-insensitive comparison
+String lower = "java";
+String upper = "JAVA";
+System.out.println(lower.equals(upper)); // => false (case-sensitive)
+System.out.println(lower.equalsIgnoreCase(upper)); // => true (case-insensitive)
+
+// null handling
+String nullStr = null;
+String nonNull = "text";
+
+// SAFE: .equals() on string literal (null-safe)
+System.out.println("text".equals(nonNull)); // => true
+System.out.println("text".equals(nullStr)); // => false (no exception!)
+
+// UNSAFE: .equals() on nullable variable
+// System.out.println(nullStr.equals("text")); // => NullPointerException!
+
+// compareTo() for lexicographical ordering
+String a = "apple";
+String b = "banana";
+String c = "apple";
+
+int result1 = a.compareTo(b); // => negative (a < b alphabetically)
+int result2 = b.compareTo(a); // => positive (b > a alphabetically)
+int result3 = a.compareTo(c); // => 0 (equal strings)
+
+// compareTo() returns:
+//   negative if this < other
+//   0 if this == other
+//   positive if this > other
+
+// Sorting with compareTo()
+java.util.List<String> names = java.util.Arrays.asList("Charlie", "Alice", "Bob");
+names.sort(String::compareTo); // => ["Alice", "Bob", "Charlie"]
+
+// compareToIgnoreCase() for case-insensitive ordering
+String x = "Apple";
+String y = "banana";
+System.out.println(x.compareTo(y)); // => negative (uppercase < lowercase in ASCII)
+System.out.println(x.compareToIgnoreCase(y)); // => negative (alphabetical order)
+
+// contentEquals() for CharSequence comparison
+String str = "hello";
+StringBuilder sb = new StringBuilder("hello");
+System.out.println(str.equals(sb)); // => false (different types!)
+System.out.println(str.contentEquals(sb)); // => true (same content)
+
+// String interning (manual pool management)
+String s4 = new String("hello"); // => New heap object
+String s5 = s4.intern(); // => Returns pooled "hello" (same as s1)
+System.out.println(s1 == s5); // => true (both from pool)
+System.out.println(s1 == s4); // => false (s4 is heap object)
+
+// Common mistake: using == for string comparison
+String input = new Scanner(System.in).nextLine(); // User enters "yes"
+if (input == "yes") { // => BUG: compares references, usually false!
+    // This block rarely executes!
+}
+
+// CORRECT: use .equals()
+if (input.equals("yes")) { // => Correct: compares content
+    // This block executes when user enters "yes"
+}
+
+// BETTER: null-safe comparison
+if ("yes".equals(input)) { // => Null-safe: no exception if input is null
+    // Safe even if input is null
+}
+
+// startsWith() and endsWith() for prefix/suffix checks
+String filename = "document.pdf";
+System.out.println(filename.endsWith(".pdf")); // => true
+System.out.println(filename.startsWith("doc")); // => true
+
+// contains() for substring check
+String text = "The quick brown fox";
+System.out.println(text.contains("quick")); // => true
+System.out.println(text.contains("slow")); // => false
+
+// regionMatches() for partial comparison
+String str1 = "Hello World";
+String str2 = "world";
+// Check if str1[6..10] matches str2[0..4] (ignore case)
+boolean matches = str1.regionMatches(true, 6, str2, 0, 5); // => true
+
+// Performance note: string pool reduces memory usage
+String pooled1 = "test"; // => Pool reference
+String pooled2 = "test"; // => Same pool reference (memory efficient)
+String heap1 = new String("test"); // => Heap object
+String heap2 = new String("test"); // => Another heap object (wasteful!)
+
+// Use == only for:
+//   - Null checks: if (str == null)
+//   - Identity checks: if (str == CONSTANT_REFERENCE)
+// Use .equals() for value comparison (always!)
+```
+
+**Key Takeaway**: Always use `.equals()` to compare string content, never `==` (which compares references). Use `"literal".equals(variable)` pattern for null safety. Use `.equalsIgnoreCase()` for case-insensitive comparison and `.compareTo()` for sorting. String literals are automatically interned (pooled), but `new String()` creates separate heap objects.
+
+**Why It Matters**: The `==` vs `.equals()` distinction is the most common source of string comparison bugs in Java. String literals are interned by default, so `"hello" == "hello"` works accidentally, leading developers to use `==` everywhere—then fail when comparing strings from user input, file I/O, or `new String()` constructors. Production code receives strings from external sources (databases, HTTP requests, file parsers) that are never interned, making reference equality unreliable. The null-safe pattern `"constant".equals(variable)` is ubiquitous in enterprise code to avoid `NullPointerException`. Modern IDEs warn about `==` on strings, and static analysis tools flag it as a code smell, but understanding the reference vs value distinction is essential for debugging legacy code and avoiding subtle bugs in string-heavy applications.
+
+---
+
+### Example 5: Basic Data Types and Operations
 
 Java provides rich operators for primitives. Strings are immutable reference types. Autoboxing converts primitives to wrapper classes automatically.
 
@@ -175,9 +451,135 @@ int unwrapped = wrapped.intValue(); // => 100 (explicit unboxing)
 
 ---
 
+### Example 6: Math Operations and the Math Class
+
+Java's `Math` class provides essential mathematical functions for scientific calculations, rounding, random numbers, and more. All methods are static—no object creation needed.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Input["Numeric Input"] --> Math["Math Class<br/>(static methods)"]
+    Math --> Trig["Trigonometry<br/>(sin, cos, tan)"]
+    Math --> Round["Rounding<br/>(round, ceil, floor)"]
+    Math --> Power["Power & Root<br/>(pow, sqrt)"]
+    Math --> MinMax["Min/Max/Abs"]
+    Math --> Random["Random Numbers"]
+
+    style Input fill:#0173B2,color:#fff
+    style Math fill:#DE8F05,color:#fff
+    style Trig fill:#029E73,color:#fff
+    style Round fill:#CC78BC,color:#fff
+    style Power fill:#CA9161,color:#fff
+    style MinMax fill:#0173B2,color:#fff
+    style Random fill:#029E73,color:#fff
+```
+
+**Code**:
+
+```java
+// Constants
+double pi = Math.PI; // => 3.141592653589793 (π constant)
+double e = Math.E; // => 2.718281828459045 (Euler's number)
+
+// Basic operations
+int absValue = Math.abs(-42); // => 42 (absolute value)
+int max = Math.max(10, 20); // => 20 (larger of two values)
+int min = Math.min(10, 20); // => 10 (smaller of two values)
+
+// Power and roots
+double squared = Math.pow(5, 2); // => 25.0 (5²)
+double cubed = Math.pow(2, 3); // => 8.0 (2³)
+double sqrt = Math.sqrt(16); // => 4.0 (square root)
+double cbrt = Math.cbrt(27); // => 3.0 (cube root)
+
+// Rounding methods
+double num = 7.8;
+long rounded = Math.round(num); // => 8 (rounds to nearest integer)
+double ceil = Math.ceil(num); // => 8.0 (rounds UP to nearest integer)
+double floor = Math.floor(num); // => 7.0 (rounds DOWN to nearest integer)
+
+// Negative rounding
+double negNum = -7.8;
+long negRounded = Math.round(negNum); // => -8 (rounds to nearest)
+double negCeil = Math.ceil(negNum); // => -7.0 (rounds UP toward 0)
+double negFloor = Math.floor(negNum); // => -8.0 (rounds DOWN away from 0)
+
+// Rounding to decimal places
+double value = 3.14159;
+double twoDecimals = Math.round(value * 100.0) / 100.0; // => 3.14 (2 decimal places)
+// Multiply by 10^n, round, then divide by 10^n
+
+// Trigonometric functions (use radians, NOT degrees)
+double angle = Math.toRadians(90); // => 1.5707... (convert degrees to radians)
+double sine = Math.sin(angle); // => 1.0 (sin(90°) = 1)
+double cosine = Math.cos(angle); // => ~0.0 (cos(90°) = 0, floating-point imprecision)
+double tangent = Math.tan(Math.toRadians(45)); // => ~1.0 (tan(45°) = 1)
+
+// Inverse trigonometric functions (return radians)
+double arcsin = Math.asin(1.0); // => 1.5707... (π/2 radians = 90°)
+double degrees = Math.toDegrees(arcsin); // => 90.0 (convert radians to degrees)
+
+// Exponential and logarithmic functions
+double exp = Math.exp(1); // => 2.718... (e¹)
+double log = Math.log(Math.E); // => 1.0 (natural log, ln(e) = 1)
+double log10 = Math.log10(100); // => 2.0 (log base 10, log₁₀(100) = 2)
+
+// Sign function
+double sign = Math.signum(-5.3); // => -1.0 (returns -1.0, 0.0, or 1.0)
+double zeroSign = Math.signum(0); // => 0.0
+double posSign = Math.signum(42.7); // => 1.0
+
+// Random numbers (0.0 ≤ random < 1.0)
+double random = Math.random(); // => Random double in [0.0, 1.0)
+// Example: 0.7234512...
+
+// Generate random int in range [min, max]
+int randomInt = (int) (Math.random() * (max - min + 1)) + min;
+// For [1, 100]: (int) (Math.random() * 100) + 1
+
+// Random int from 1 to 6 (dice roll)
+int dice = (int) (Math.random() * 6) + 1; // => Random int in [1, 6]
+
+// Hypotenuse calculation (Pythagorean theorem)
+double a = 3.0, b = 4.0;
+double hypotenuse = Math.hypot(a, b); // => 5.0 (√(a² + b²))
+
+// Copy sign
+double copySign = Math.copySign(5.0, -1.0); // => -5.0 (magnitude of first, sign of second)
+
+// Next floating-point value
+double nextUp = Math.nextUp(1.0); // => 1.0000000000000002 (next representable double)
+double nextDown = Math.nextDown(1.0); // => 0.9999999999999999 (previous representable double)
+
+// Exact arithmetic (throws ArithmeticException on overflow)
+try {
+    int exact = Math.addExact(Integer.MAX_VALUE, 1); // => Throws ArithmeticException
+} catch (ArithmeticException ex) {
+    System.out.println("Overflow detected!"); // => Overflow detected!
+}
+
+int safeAdd = Math.addExact(100, 200); // => 300 (no overflow)
+int safeMult = Math.multiplyExact(10, 20); // => 200 (no overflow)
+
+// Common use cases
+double distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)); // Euclidean distance
+double area = Math.PI * Math.pow(radius, 2); // Circle area
+double volume = (4.0 / 3.0) * Math.PI * Math.pow(radius, 3); // Sphere volume
+
+// Precision note: floating-point arithmetic has rounding errors
+double result = 0.1 + 0.2; // => 0.30000000000000004 (NOT exactly 0.3!)
+// Use BigDecimal for exact decimal arithmetic in financial calculations
+```
+
+**Key Takeaway**: Use `Math` class for mathematical operations (power, roots, rounding, trigonometry). All methods are static—call `Math.methodName()`. Use `Math.round()` for nearest integer, `Math.ceil()` to round up, `Math.floor()` to round down. Trigonometric functions use radians—convert degrees with `toRadians()`/`toDegrees()`. Use exact arithmetic methods (`addExact`, `multiplyExact`) to detect integer overflow.
+
+**Why It Matters**: Math operations are fundamental to scientific computing, game development, financial calculations, and data analysis. The `Math` class provides optimized native implementations of complex algorithms (trigonometry, logarithms) that would be error-prone to implement manually. Rounding methods (`ceil`, `floor`, `round`) are critical for display formatting, pagination logic (e.g., calculating total pages from item count), and allocation algorithms. However, floating-point arithmetic has precision limits—`0.1 + 0.2` is not exactly `0.3` due to binary representation. For financial applications requiring exact decimal arithmetic, use `BigDecimal` instead. Production systems use `Math.random()` for non-cryptographic randomness (simulations, sampling) but require `SecureRandom` for security-sensitive contexts (tokens, passwords).
+
+---
+
 ## Group 2: Object-Oriented Foundation
 
-### Example 4: Classes and Objects
+### Example 7: Classes and Objects
 
 Classes are blueprints that define state (fields) and behavior (methods). Objects are instances created from classes. Constructors initialize object state.
 
@@ -269,7 +671,7 @@ bob.celebrate("birthday"); // => prints "Bob is celebrating birthday!"
 
 ---
 
-### Example 5: Inheritance and Polymorphism
+### Example 8: Inheritance and Polymorphism
 
 Inheritance creates IS-A relationships where subclasses inherit fields and methods from superclasses. Polymorphism allows treating subclass objects as superclass references.
 
@@ -392,7 +794,7 @@ public class Base {
 
 ---
 
-### Example 6: Interfaces and Abstraction
+### Example 9: Interfaces and Abstraction
 
 Interfaces define contracts (what methods a class must implement) without implementation. Classes can implement multiple interfaces, enabling flexible type hierarchies.
 
@@ -529,7 +931,7 @@ int sum = add.calculate(5, 3); // => 8
 
 ## Group 3: Core Collections
 
-### Example 7: Arrays and Lists
+### Example 10: Arrays and Lists
 
 Arrays have fixed size and fast access. Lists (like `ArrayList`) are dynamic and provide rich operations. Generics ensure type safety for collections.
 
@@ -631,7 +1033,7 @@ raw.add("mixed"); // => OK but dangerous
 
 ---
 
-### Example 8: Maps and HashMap
+### Example 11: Maps and HashMap
 
 Maps store key-value pairs. `HashMap` provides O(1) average lookup time using hash-based indexing. Different implementations offer different ordering guarantees.
 
@@ -725,7 +1127,7 @@ ages.merge("Alice", 1, (old, val) -> old + val); // => Alice: 32 (31 + 1)
 
 ---
 
-### Example 9: Sets for Uniqueness
+### Example 12: Sets for Uniqueness
 
 Sets ensure element uniqueness automatically. `HashSet` provides O(1) operations. Proper `equals()` and `hashCode()` implementation is essential for correct behavior.
 
@@ -839,7 +1241,7 @@ System.out.println(people.size()); // => 1 (uniqueness enforced)
 
 ## Group 4: Control Flow and Methods
 
-### Example 10: Conditional Statements
+### Example 13: Conditional Statements
 
 Java provides multiple conditional structures. Modern switch expressions (Java 12+) reduce boilerplate. Pattern matching (Java 17+) enables type checking and casting in one step.
 
@@ -934,7 +1336,7 @@ String size = (num < 10) ? "small" : (num < 100) ? "medium" : "large"; // => "me
 
 ---
 
-### Example 11: Loops and Iteration
+### Example 14: Loops and Iteration
 
 Java offers multiple loop types for different use cases. Enhanced for-each simplifies collection iteration. `break` exits loops; `continue` skips to next iteration.
 
@@ -1058,7 +1460,7 @@ for (int val : iterable) {
 
 ---
 
-### Example 12: Methods and Return Types
+### Example 15: Methods and Return Types
 
 Methods define behavior with typed parameters and return values. Method overloading allows same name with different parameters. Static methods belong to the class; instance methods to objects.
 
@@ -1194,7 +1596,7 @@ class Dog extends Animal {
 
 ## Group 5: Exception Handling and Basics
 
-### Example 13: Exception Handling
+### Example 16: Exception Handling
 
 Java distinguishes checked exceptions (compile-time enforced) from unchecked exceptions (runtime). `try-catch-finally` handles exceptions. `try-with-resources` manages resources automatically.
 
@@ -1332,7 +1734,7 @@ public static void withdraw(double amount, double balance) throws InsufficientFu
 
 ---
 
-### Example 14: Common Utility Classes
+### Example 17: Common Utility Classes
 
 Java provides rich utility classes for common operations. `Math`, `String`, `Arrays`, `Collections`, and `Objects` offer static methods that simplify tasks.
 
@@ -1443,7 +1845,7 @@ int hash = Objects.hash("Alice", 30, "Engineer"); // => combined hash code
 
 ---
 
-### Example 15: Introduction to Streams
+### Example 18: Introduction to Streams
 
 Streams enable functional-style operations on collections. Intermediate operations (lazy) return streams. Terminal operations (eager) trigger execution and produce results.
 
@@ -1571,7 +1973,7 @@ List<Integer> eager = lazy.collect(Collectors.toList());
 
 ## Group 6: Additional Core Features
 
-### Example 16: Switch Expressions and Pattern Matching
+### Example 19: Switch Expressions and Pattern Matching
 
 Modern Java switch expressions (Java 12+) reduce boilerplate and support pattern matching. They return values directly and eliminate fall-through bugs with arrow syntax.
 
@@ -1690,7 +2092,7 @@ double area = switch (shape) { // => Compiler checks all Shape types covered
 
 ---
 
-### Example 17: Text Blocks and String Manipulation
+### Example 20: Text Blocks and String Manipulation
 
 Text blocks (Java 15+) provide multiline strings with proper formatting. String methods offer rich manipulation capabilities for real-world text processing.
 
@@ -1809,7 +2211,7 @@ int notFound = "Hello".indexOf("z"); // => -1 (not found)
 
 ---
 
-### Example 18: Varargs and Overloading
+### Example 21: Varargs and Overloading
 
 Varargs (`...`) accept variable number of arguments as array. Method overloading allows same name with different signatures. Compiler selects most specific match at compile-time.
 
@@ -1954,7 +2356,7 @@ String f3 = format("A", "B", "C"); // => "[A, B, C]" (calls varargs)
 
 ---
 
-### Example 19: Wrapper Classes and Autoboxing
+### Example 22: Wrapper Classes and Autoboxing
 
 Wrapper classes (Integer, Double, Boolean, etc.) box primitives into objects for collections and generics. Autoboxing converts automatically. Understand performance implications and caching behavior.
 
@@ -2068,7 +2470,172 @@ num = 20; // => num now refers to NEW Integer(20), old object unchanged
 
 ---
 
-### Example 20: Static Members and Blocks
+### Example 23: Type Conversion and Parsing
+
+Java requires explicit type conversions between different data types. Parsing strings to numbers is common when reading user input or configuration files. Always handle parsing exceptions to avoid crashes.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    String["String<br/>\"42\""] --> Parse["Parsing Methods<br/>(parseInt, parseDouble)"]
+    Parse --> Success["Numeric Value<br/>(42)"]
+    Parse --> Fail["NumberFormatException"]
+
+    Num["Numeric Type"] --> Convert["Conversion Methods<br/>(cast, valueOf)"]
+    Convert --> Target["Target Type"]
+
+    style String fill:#0173B2,color:#fff
+    style Parse fill:#DE8F05,color:#fff
+    style Success fill:#029E73,color:#fff
+    style Fail fill:#CA9161,color:#fff
+    style Num fill:#0173B2,color:#fff
+    style Convert fill:#CC78BC,color:#fff
+    style Target fill:#029E73,color:#fff
+```
+
+**Code**:
+
+```java
+// String to primitive (parsing)
+String numStr = "42";
+int parsedInt = Integer.parseInt(numStr); // => 42 (String -> int)
+double parsedDouble = Double.parseDouble("3.14"); // => 3.14 (String -> double)
+boolean parsedBool = Boolean.parseBoolean("true"); // => true (String -> boolean)
+long parsedLong = Long.parseLong("1000000"); // => 1000000 (String -> long)
+
+// Parsing with different radix (base)
+int binary = Integer.parseInt("1010", 2); // => 10 (binary to decimal)
+int hex = Integer.parseInt("FF", 16); // => 255 (hexadecimal to decimal)
+int octal = Integer.parseInt("77", 8); // => 63 (octal to decimal)
+
+// String to wrapper (returns wrapper object)
+Integer boxedInt = Integer.valueOf("42"); // => Integer(42) (String -> Integer)
+Double boxedDouble = Double.valueOf("3.14"); // => Double(3.14) (String -> Double)
+
+// Parsing errors throw NumberFormatException
+try {
+    int invalid = Integer.parseInt("abc"); // => Throws NumberFormatException!
+} catch (NumberFormatException e) {
+    System.out.println("Invalid number format"); // => Output: Invalid number format
+}
+
+// Safe parsing with try-catch
+String input = "123abc";
+int safeValue = 0; // Default value
+try {
+    safeValue = Integer.parseInt(input);
+} catch (NumberFormatException e) {
+    safeValue = -1; // Use default when parsing fails
+}
+System.out.println(safeValue); // => -1
+
+// Primitive to String (conversion)
+int number = 42;
+String str1 = String.valueOf(number); // => "42" (int -> String)
+String str2 = Integer.toString(number); // => "42" (int -> String)
+String str3 = "" + number; // => "42" (concatenation trick, less clear)
+String str4 = number + ""; // => "42" (same as above)
+
+// Formatting numbers to strings
+double price = 12.5;
+String formatted = String.format("$%.2f", price); // => "$12.50" (2 decimal places)
+String padded = String.format("%05d", 42); // => "00042" (zero-padded to 5 digits)
+
+// Primitive type conversions (widening)
+int intVal = 100;
+long longVal = intVal; // => 100L (automatic widening: int -> long)
+double doubleVal = intVal; // => 100.0 (automatic widening: int -> double)
+float floatVal = intVal; // => 100.0f (automatic widening: int -> float)
+
+// Narrowing conversions (requires explicit cast)
+double doubleNum = 9.99;
+int truncated = (int) doubleNum; // => 9 (loses decimal part)
+long longNum = 1000000000000L;
+int narrowed = (int) longNum; // => Possible data loss if value > Integer.MAX_VALUE
+
+// Overflow in narrowing conversion
+int maxInt = Integer.MAX_VALUE; // => 2147483647
+short overflow = (short) maxInt; // => -1 (overflow wraps around!)
+
+// Wrapper to primitive (unboxing)
+Integer wrappedInt = 42;
+int primitiveInt = wrappedInt; // => 42 (automatic unboxing)
+int explicit = wrappedInt.intValue(); // => 42 (explicit unboxing)
+
+// NullPointerException when unboxing null
+Integer nullWrapper = null;
+try {
+    int value = nullWrapper; // => NullPointerException! (cannot unbox null)
+} catch (NullPointerException e) {
+    System.out.println("Cannot unbox null"); // => Output: Cannot unbox null
+}
+
+// Converting between wrapper types
+Integer intWrapper = 42;
+Double doubleWrapper = intWrapper.doubleValue(); // => 42.0 (Integer -> Double)
+String stringWrapper = intWrapper.toString(); // => "42" (Integer -> String)
+
+// Parsing with validation
+String userInput = "  123  "; // User input often has whitespace
+userInput = userInput.trim(); // => "123" (remove leading/trailing whitespace)
+if (userInput.matches("-?\\d+")) { // => Regex: optional minus, followed by digits
+    int validNum = Integer.parseInt(userInput); // => Safe to parse
+    System.out.println("Valid: " + validNum); // => Output: Valid: 123
+} else {
+    System.out.println("Invalid input");
+}
+
+// Character to int (ASCII/Unicode value)
+char letter = 'A';
+int ascii = (int) letter; // => 65 (ASCII value of 'A')
+char digit = '7';
+int digitValue = Character.getNumericValue(digit); // => 7 (numeric value of character)
+int digitAscii = (int) digit; // => 55 (ASCII value, NOT 7!)
+
+// Boolean parsing (case-insensitive)
+boolean b1 = Boolean.parseBoolean("TRUE"); // => true
+boolean b2 = Boolean.parseBoolean("Yes"); // => false (only "true" returns true!)
+boolean b3 = Boolean.parseBoolean("1"); // => false (not recognized as true)
+
+// Radix string representation
+int num = 255;
+String bin = Integer.toBinaryString(num); // => "11111111" (binary representation)
+String oct = Integer.toOctalString(num); // => "377" (octal representation)
+String hexStr = Integer.toHexString(num); // => "ff" (hexadecimal representation)
+
+// Converting arrays
+String[] stringArray = {"1", "2", "3"};
+int[] intArray = new int[stringArray.length];
+for (int i = 0; i < stringArray.length; i++) {
+    intArray[i] = Integer.parseInt(stringArray[i]); // => [1, 2, 3]
+}
+
+// Using streams for array conversion (Java 8+)
+int[] streamArray = java.util.Arrays.stream(stringArray)
+    .mapToInt(Integer::parseInt) // => Parse each string to int
+    .toArray(); // => [1, 2, 3]
+
+// Handling optional values (Java 8+)
+String nullableStr = null;
+Integer optionalInt = nullableStr != null ? Integer.parseInt(nullableStr) : null;
+// Better with Optional (advanced)
+java.util.Optional<Integer> opt = java.util.Optional.ofNullable(nullableStr)
+    .map(Integer::parseInt);
+
+// Common conversion utilities
+double decimal = 12.56789;
+long rounded = Math.round(decimal); // => 13 (rounds to nearest long)
+int floor = (int) Math.floor(decimal); // => 12 (rounds down)
+int ceil = (int) Math.ceil(decimal); // => 13 (rounds up)
+```
+
+**Key Takeaway**: Use `Integer.parseInt()`, `Double.parseDouble()`, etc. to parse strings to primitives. Use `String.valueOf()` or wrapper `.toString()` to convert primitives/objects to strings. Parsing can throw `NumberFormatException`—always validate input or use try-catch. Widening conversions (int → long → double) are automatic; narrowing conversions require explicit casts and may lose precision or overflow.
+
+**Why It Matters**: Type conversion and parsing are fundamental to real-world Java applications. Web services receive data as JSON/XML strings that must be parsed to numbers for calculations. Configuration files (properties, YAML) store settings as strings requiring type conversion. User input from forms, command-line arguments, or REST APIs always arrives as strings, making robust parsing essential to prevent crashes from invalid data. The `NumberFormatException` is one of the most common runtime exceptions in production code—proper validation and error handling separate robust applications from fragile ones. Understanding widening vs narrowing conversions prevents subtle overflow bugs (e.g., casting long to int can silently corrupt data). Type safety and explicit conversions make Java verbose but catch errors at compile-time that would be runtime bugs in dynamically-typed languages.
+
+---
+
+### Example 24: Static Members and Blocks
 
 Static members belong to the class, not instances. Static methods can't access instance members. Static blocks initialize class-level state. Understanding static helps with utility classes and singletons.
 
@@ -2224,7 +2791,7 @@ double pi = Constants.PI; // => 3.14159
 
 ---
 
-### Example 21: Packages and Access Modifiers
+### Example 25: Packages and Access Modifiers
 
 Packages organize classes into namespaces. Access modifiers (`public`, `private`, `protected`, package-private) control visibility. Understanding access control is essential for encapsulation and API design.
 
@@ -2402,7 +2969,7 @@ public class PublicApi {
 
 ---
 
-### Example 22: The `var` Keyword
+### Example 26: The `var` Keyword
 
 The `var` keyword (Java 10+) provides local variable type inference. Compiler infers type from initializer. Improves readability for complex types while maintaining compile-time type safety.
 
@@ -2533,7 +3100,7 @@ List<Integer> values = entry2.getValue(); // => [1, 2, 3]
 
 ---
 
-### Example 23: Nested and Inner Classes
+### Example 27: Nested and Inner Classes
 
 Java supports four types of nested classes: static nested, non-static inner, local (inside methods), and anonymous. Each serves different purposes for organization, encapsulation, and callback patterns.
 
@@ -2731,7 +3298,7 @@ class EffectivelyFinalExample {
 
 ---
 
-### Example 24: Final Keyword
+### Example 28: Final Keyword
 
 The `final` keyword prevents modification: final variables can't be reassigned, final methods can't be overridden, final classes can't be extended. Essential for immutability and security.
 
@@ -2915,7 +3482,7 @@ class CompileTimeConstants {
 
 ---
 
-### Example 25: This and Super Keywords
+### Example 29: This and Super Keywords
 
 The `this` keyword references the current instance. The `super` keyword references the parent class. Both are essential for constructors, method calls, and resolving name conflicts.
 
@@ -3144,4 +3711,158 @@ class BothError {
 
 **Key Takeaway**: `this` references current instance. Use `this.field` to distinguish fields from parameters. `this()` calls another constructor in same class (must be first statement). `return this` enables method chaining. `super` references parent class. Use `super()` to call parent constructor (must be first statement). `super.method()` calls parent method version. Cannot use both `this()` and `super()` in same constructor—choose one delegation path. Implicit `super()` added by compiler if no explicit `super()` or `this()` call.
 
-**Why It Matters**: Recursion elegantly solves naturally recursive problems—tree traversal, graph search, divide-and-conquer algorithms. It reduces code complexity compared to iterative equivalents with explicit stacks. However, recursion consumes stack space—deep recursion causes StackOverflowError. Tail recursion optimization doesn't exist in Java (use loops). Understanding base cases prevents infinite recursion. Recursion is common in parsing (JSON, XML), backtracking algorithms, and functional-style data processing. Choosing recursion vs iteration impacts code clarity, performance, and stack usage—iteration is safer for unknown depth.
+## **Why It Matters**: Recursion elegantly solves naturally recursive problems—tree traversal, graph search, divide-and-conquer algorithms. It reduces code complexity compared to iterative equivalents with explicit stacks. However, recursion consumes stack space—deep recursion causes StackOverflowError. Tail recursion optimization doesn't exist in Java (use loops). Understanding base cases prevents infinite recursion. Recursion is common in parsing (JSON, XML), backtracking algorithms, and functional-style data processing. Choosing recursion vs iteration impacts code clarity, performance, and stack usage—iteration is safer for unknown depth.
+
+### Example 30: Basic Date and Time
+
+Java 8 introduced the `java.time` package (based on Joda-Time) which replaced the legacy `Date` and `Calendar` classes. Modern date/time APIs are immutable, thread-safe, and provide clear semantics for dates, times, and durations.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Time["java.time Package"] --> LocalDate["LocalDate<br/>(date only)"]
+    Time --> LocalTime["LocalTime<br/>(time only)"]
+    Time --> LocalDateTime["LocalDateTime<br/>(date + time)"]
+    Time --> ZonedDateTime["ZonedDateTime<br/>(date + time + timezone)"]
+    Time --> Duration["Duration<br/>(time-based)"]
+    Time --> Period["Period<br/>(date-based)"]
+
+    style Time fill:#0173B2,color:#fff
+    style LocalDate fill:#DE8F05,color:#fff
+    style LocalTime fill:#029E73,color:#fff
+    style LocalDateTime fill:#CC78BC,color:#fff
+    style ZonedDateTime fill:#CA9161,color:#fff
+    style Duration fill:#0173B2,color:#fff
+    style Period fill:#029E73,color:#fff
+```
+
+**Code**:
+
+```java
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
+// LocalDate - date without time or timezone
+LocalDate today = LocalDate.now(); // => Current date (e.g., 2025-01-15)
+LocalDate specificDate = LocalDate.of(2025, 12, 31); // => 2025-12-31
+LocalDate parsed = LocalDate.parse("2025-06-15"); // => 2025-06-15 (ISO format)
+
+// Extracting date components
+int year = today.getYear(); // => 2025
+int month = today.getMonthValue(); // => 1 (January)
+int day = today.getDayOfMonth(); // => 15
+DayOfWeek dayOfWeek = today.getDayOfWeek(); // => WEDNESDAY
+
+// Date arithmetic
+LocalDate tomorrow = today.plusDays(1); // => 2025-01-16
+LocalDate nextWeek = today.plusWeeks(1); // => 2025-01-22
+LocalDate nextMonth = today.plusMonths(1); // => 2025-02-15
+LocalDate nextYear = today.plusYears(1); // => 2026-01-15
+LocalDate yesterday = today.minusDays(1); // => 2025-01-14
+
+// LocalTime - time without date or timezone
+LocalTime now = LocalTime.now(); // => Current time (e.g., 14:30:00.123)
+LocalTime specificTime = LocalTime.of(14, 30); // => 14:30
+LocalTime withSeconds = LocalTime.of(14, 30, 45); // => 14:30:45
+LocalTime withNanos = LocalTime.of(14, 30, 45, 123000000); // => 14:30:45.123
+
+// Extracting time components
+int hour = now.getHour(); // => 14 (24-hour format)
+int minute = now.getMinute(); // => 30
+int second = now.getSecond(); // => 0
+
+// Time arithmetic
+LocalTime later = now.plusHours(2); // => 16:30:00.123
+LocalTime earlier = now.minusMinutes(15); // => 14:15:00.123
+
+// LocalDateTime - date and time without timezone
+LocalDateTime dateTime = LocalDateTime.now(); // => 2025-01-15T14:30:00.123
+LocalDateTime specific = LocalDateTime.of(2025, 12, 31, 23, 59, 59); // => 2025-12-31T23:59:59
+LocalDateTime combined = LocalDateTime.of(today, now); // => Combine date and time
+
+// Parsing and formatting
+String formatted = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME); // => "2025-01-15T14:30:00.123"
+DateTimeFormatter customFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+String custom = dateTime.format(customFormat); // => "2025-01-15 14:30:00"
+LocalDateTime parsedDateTime = LocalDateTime.parse("2025-12-31T23:59:59"); // => Parse ISO format
+
+// ZonedDateTime - date, time, and timezone
+ZonedDateTime zonedNow = ZonedDateTime.now(); // => Current date/time with system timezone
+ZoneId newYork = ZoneId.of("America/New_York");
+ZonedDateTime nyTime = ZonedDateTime.now(newYork); // => Current time in New York
+ZonedDateTime utc = ZonedDateTime.now(ZoneId.of("UTC")); // => Current UTC time
+
+// Converting between timezones
+ZonedDateTime tokyoTime = zonedNow.withZoneSameInstant(ZoneId.of("Asia/Tokyo")); // => Convert to Tokyo time
+
+// Instant - point in time (Unix timestamp)
+Instant instant = Instant.now(); // => Current instant (UTC)
+long epochSeconds = instant.getEpochSecond(); // => Seconds since 1970-01-01T00:00:00Z
+long epochMillis = instant.toEpochMilli(); // => Milliseconds since epoch
+
+// Converting between types
+LocalDate dateFromDateTime = dateTime.toLocalDate(); // => Extract date
+LocalTime timeFromDateTime = dateTime.toLocalTime(); // => Extract time
+Instant instantFromZoned = zonedNow.toInstant(); // => Convert to Instant
+
+// Duration - time-based amount (hours, minutes, seconds)
+Duration duration = Duration.ofHours(2); // => 2 hours
+Duration minutes = Duration.ofMinutes(30); // => 30 minutes
+Duration between = Duration.between(now, later); // => Duration between two times
+
+long durationSeconds = duration.getSeconds(); // => 7200 seconds
+long durationMinutes = duration.toMinutes(); // => 120 minutes
+
+// Period - date-based amount (years, months, days)
+Period period = Period.ofDays(7); // => 7 days
+Period weeks = Period.ofWeeks(2); // => 14 days
+Period months = Period.ofMonths(3); // => 3 months
+Period dateBetween = Period.between(today, nextYear); // => Period between two dates
+
+int years = dateBetween.getYears(); // => 1 year
+int days = dateBetween.getDays(); // => 0 days (same day of month)
+
+// Temporal adjusters
+LocalDate firstDayOfMonth = today.withDayOfMonth(1); // => 2025-01-01
+LocalDate lastDayOfMonth = today.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth()); // => 2025-01-31
+LocalDate nextMonday = today.with(java.time.temporal.TemporalAdjusters.next(DayOfWeek.MONDAY)); // => Next Monday
+
+// Comparisons
+boolean isBefore = today.isBefore(tomorrow); // => true
+boolean isAfter = today.isAfter(yesterday); // => true
+boolean isEqual = today.isEqual(today); // => true
+
+// Checking leap year
+boolean isLeapYear = today.isLeapYear(); // => false (2025 is not a leap year)
+
+// Date calculations
+long daysBetween = ChronoUnit.DAYS.between(today, nextYear); // => 365 days
+long monthsBetween = ChronoUnit.MONTHS.between(today, nextYear); // => 12 months
+
+// Common patterns
+// Calculate age
+LocalDate birthDate = LocalDate.of(1990, 5, 15);
+int age = Period.between(birthDate, today).getYears(); // => 34 years old
+
+// Check if date is in range
+LocalDate start = LocalDate.of(2025, 1, 1);
+LocalDate end = LocalDate.of(2025, 12, 31);
+boolean inRange = !today.isBefore(start) && !today.isAfter(end); // => true
+
+// Format for display
+String displayDate = today.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")); // => "January 15, 2025"
+String displayTime = now.format(DateTimeFormatter.ofPattern("hh:mm a")); // => "02:30 PM"
+
+// Parsing with custom format
+DateTimeFormatter parser = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+LocalDate usDate = LocalDate.parse("31/12/2025", parser); // => 2025-12-31
+
+// Legacy Date interoperability (avoid using Date/Calendar directly)
+java.util.Date legacyDate = java.util.Date.from(instant); // => Convert Instant to Date
+Instant fromLegacy = legacyDate.toInstant(); // => Convert Date to Instant
+```
+
+**Key Takeaway**: Use `LocalDate` for dates without time, `LocalTime` for times without dates, `LocalDateTime` for combined date/time without timezone, and `ZonedDateTime` when timezone is needed. All `java.time` classes are immutable—operations return new instances. Use `Duration` for time-based amounts (hours/minutes) and `Period` for date-based amounts (years/months/days). Format with `DateTimeFormatter` and parse with `parse()`. Avoid legacy `Date` and `Calendar` classes.
+
+**Why It Matters**: Date and time handling is critical in production systems—scheduling tasks, logging events, calculating business days, tracking user activity, managing subscriptions, and handling international users across timezones. The legacy `Date` and `Calendar` APIs were notoriously buggy (mutable, thread-unsafe, confusing month indexing starting at 0) causing countless production issues. The modern `java.time` API (JSR-310) provides type safety (separate LocalDate/LocalTime/LocalDateTime), immutability (thread-safe by default), and clear semantics (no ambiguous timezone behavior). Timezone handling is essential for global applications—storing timestamps as UTC `Instant` and converting to local timezone for display prevents data corruption from daylight saving time changes and regional differences. Understanding `Period` vs `Duration` prevents bugs when adding "1 month" (date-based, variable length) vs "30 days" (time-based, fixed length). Production systems use `java.time` extensively in REST APIs (ISO-8601 serialization), databases (TIMESTAMP columns), and scheduling frameworks (Quartz, Spring Scheduler).
