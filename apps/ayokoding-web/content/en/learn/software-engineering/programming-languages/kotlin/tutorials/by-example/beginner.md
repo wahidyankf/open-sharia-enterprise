@@ -1317,60 +1317,111 @@ graph TD
 ```kotlin
 // Class with primary constructor
 class Person(val name: String, var age: Int) {
+                                     // => class: declares new class type
+                                     // => Person: class name
+                                     // => (val name: String, var age: Int): primary constructor
+                                     // => Parameters in constructor become properties
+                                     // => val name: immutable property (generates getter only)
                                      // => name is val (immutable property)
+                                     // => var age: mutable property (generates getter + setter)
                                      // => age is var (mutable property)
 
     // init block runs during construction
-    init {
+    init {                           // => init: initialization block
+                                     // => Runs immediately after primary constructor
+                                     // => Can access constructor parameters
         println("Person created: $name, age $age")
+                                     // => Side effect: prints to stdout
                                      // => Executes when object is created
-    }
+    }                                // => init completes before object ready
 
     // Method
-    fun greet() {
-        println("Hello, I'm $name")  // => Accesses name property
-    }
+    fun greet() {                    // => Instance method (requires object)
+                                     // => No parameters, returns Unit
+        println("Hello, I'm $name")  // => Accesses name property via this (implicit)
+                                     // => Accesses name property
+    }                                // => Method definition complete
 
     // Method with logic
-    fun haveBirthday() {
+    fun haveBirthday() {             // => Mutates object state
         age++                        // => Increments age property
+                                     // => age = age + 1
+                                     // => Increments age property
         println("Happy birthday! Now $age years old")
-    }
-}
+                                     // => Outputs updated age
+    }                                // => Method mutates object
+}                                   // => Person class definition complete
 
 // Class with secondary constructor
-class Product(val name: String) {
-    var price: Double = 0.0          // => Default value
+class Product(val name: String) {   // => Primary constructor with single parameter
+                                     // => name: required property
+    var price: Double = 0.0          // => Property with default value
+                                     // => Initialized after primary constructor
+                                     // => Default value: 0.0
 
     // Secondary constructor
     constructor(name: String, price: Double) : this(name) {
+                                     // => constructor: secondary constructor keyword
+                                     // => (name: String, price: Double): parameters
+                                     // => : this(name): delegates to primary constructor
+                                     // => Must call primary constructor first
                                      // => Calls primary constructor with name
-        this.price = price           // => Sets price property
-    }
-}
+        this.price = price           // => this.price: refers to property
+                                     // => price: constructor parameter
+                                     // => Sets price property
+    }                                // => Secondary constructor complete
+}                                   // => Product class complete
 
-fun main() {
+fun main() {                        // => Program entry point
     // Object creation
-    val person = Person("Alice", 25) // => Output: Person created: Alice, age 25
+    val person = Person("Alice", 25) // => Person(): calls primary constructor
+                                     // => "Alice": name parameter
+                                     // => 25: age parameter
+                                     // => Primary constructor executes
+                                     // => Properties initialized: name="Alice", age=25
+                                     // => init block executes
+                                     // => Output: Person created: Alice, age 25
+                                     // => person reference points to new Person object
                                      // => person.name is "Alice" (immutable)
                                      // => person.age is 25 (mutable)
 
-    person.greet()                   // => Output: Hello, I'm Alice
-    person.haveBirthday()            // => Output: Happy birthday! Now 26 years old
+    person.greet()                   // => Calls greet method on person object
+                                     // => Method accesses person.name
+                                     // => Output: Hello, I'm Alice
+    person.haveBirthday()            // => Calls haveBirthday method
+                                     // => Increments person.age: 25 -> 26
+                                     // => Output: Happy birthday! Now 26 years old
                                      // => person.age is now 26
 
-    // person.name = "Bob"           // => Compile error: val cannot be reassigned
-    person.age = 30                  // => person.age is 30 (var allows reassignment)
+    // person.name = "Bob"           // => Would cause compile error
+                                     // => val properties are immutable
+                                     // => Compile error: val cannot be reassigned
+    person.age = 30                  // => Reassigns age property
+                                     // => var properties are mutable
+                                     // => age changes: 26 -> 30
+                                     // => person.age is 30 (var allows reassignment)
 
-    val product1 = Product("Laptop") // => product1.name is "Laptop", price is 0.0
+    val product1 = Product("Laptop") // => Product(): primary constructor
+                                     // => Only name provided
+                                     // => price uses default 0.0
+                                     // => product1.name is "Laptop", price is 0.0
     val product2 = Product("Phone", 599.99)
+                                     // => Product(): secondary constructor
+                                     // => Both name and price provided
+                                     // => Secondary constructor delegates to primary
+                                     // => Then sets price to 599.99
                                      // => product2.name is "Phone", price is 599.99
 
     println("${product1.name}: ${product1.price}")
+                                     // => String template with properties
+                                     // => product1.name getter called
+                                     // => product1.price getter called
                                      // => Output: Laptop: 0.0
     println("${product2.name}: ${product2.price}")
+                                     // => Accesses product2 properties
                                      // => Output: Phone: 599.99
-}
+}                                   // => main returns
+                                    // => Objects eligible for GC when references lost
 ```
 
 **Key Takeaway**: Use primary constructor parameters with `val`/`var` for automatic property creation, leverage `init` blocks for initialization logic, and prefer primary constructors over secondary when possible.
