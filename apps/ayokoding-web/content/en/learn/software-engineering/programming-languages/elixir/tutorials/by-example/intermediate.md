@@ -6618,77 +6618,225 @@ Type specs document function signatures and enable static analysis with Dialyzer
 
 ```elixir
 defmodule Calculator do
+  # => Calculator module with type specifications
+  # => Type specs enable static analysis (Dialyzer)
   @spec add(integer(), integer()) :: integer()
+  # => @spec: type specification attribute
+  # => add/2: function name and arity
+  # => (integer(), integer()): parameter types (both integers)
+  # => :: : separates params from return type
+  # => integer(): return type (integer)
+  # => Dialyzer warns if implementation doesn't match spec
   def add(a, b), do: a + b
+  # => add/2: implementation
+  # => a + b: returns integer (matches spec)
+  # => Pattern: spec documents contract, Dialyzer verifies
 
   @spec divide(number(), number()) :: {:ok, float()} | {:error, atom()}
+  # => divide/2 spec: multiple return types (union type)
+  # => (number(), number()): params (integer or float)
+  # => :: {:ok, float()} | {:error, atom()}: union return type
+  # => | : union operator (either this OR that)
+  # => {:ok, float()}: success case (float result)
+  # => {:error, atom()}: error case (atom reason)
+  # => Pattern: result tuple for error handling
   def divide(_a, 0), do: {:error, :division_by_zero}
+  # => First clause: handles division by zero
+  # => Returns {:error, :division_by_zero} (matches spec)
+  # => :division_by_zero is atom() type
   def divide(a, b), do: {:ok, a / b}
+  # => Second clause: normal division
+  # => a / b: returns float
+  # => {:ok, float()}: matches spec success case
 
   @spec sum(list(number())) :: number()
+  # => sum/1 spec: list of numbers → number
+  # => list(number()): parameterized type (list containing numbers)
+  # => number(): integer or float
+  # => Returns: number() (could be integer or float)
   def sum(numbers), do: Enum.sum(numbers)
+  # => sum/1: implementation using Enum.sum
+  # => Enum.sum([1, 2, 3]) → 6 (integer)
+  # => Enum.sum([1.5, 2.5]) → 4.0 (float)
 
   # Multiple clauses with same spec
+  # => Single @spec covers all function clauses
+  # => Place @spec before first clause
   @spec abs(integer()) :: integer()
+  # => abs/1: absolute value function
+  # => integer() → integer()
   def abs(n) when n < 0, do: -n
+  # => First clause: negative numbers
+  # => n < 0: guard condition
+  # => -n: makes negative positive
   def abs(n), do: n
+  # => Second clause: positive numbers
+  # => Returns n unchanged
+  # => Both clauses match single @spec
 end
+# => Calculator module complete
 
 defmodule User do
+  # => User module with custom type and struct
   @type t :: %__MODULE__{
+    # => @type: defines custom type
+    # => t: type name (convention: t for module's main type)
+    # => :: : type definition
+    # => %__MODULE__{...}: struct type for this module
     id: integer(),
+    # => id field: integer type
     name: String.t(),
+    # => name field: String type
+    # => String.t(): Elixir string (not charlist)
     email: String.t(),
+    # => email field: String type
     age: integer() | nil
+    # => age field: integer OR nil (union type)
+    # => | nil: allows nil value (optional field)
   }
+  # => Type t defined: User struct with specified field types
 
   defstruct [:id, :name, :email, :age]
+  # => defstruct: defines struct fields
+  # => Fields must match @type definition
+  # => Default values: nil for all fields
 
   @spec new(integer(), String.t(), String.t()) :: t()
+  # => new/3 spec: creates User struct
+  # => Parameters: id (integer), name (String), email (String)
+  # => Returns: t() (User.t custom type)
+  # => t(): refers to User module's @type t
   def new(id, name, email) do
+    # => new/3: constructor function
     %__MODULE__{id: id, name: name, email: email}
+    # => Creates User struct
+    # => __MODULE__: resolves to User
+    # => age: nil (not provided, defaults to nil)
+    # => Returns: %User{id: id, name: name, email: email, age: nil}
   end
+  # => new/3 complete
 
   @spec update_age(t(), integer()) :: t()
+  # => update_age/2 spec: updates user's age
+  # => First param: t() (User struct)
+  # => Second param: integer() (new age)
+  # => Returns: t() (updated User struct)
   def update_age(user, age) do
+    # => update_age/2: updates age field
     %{user | age: age}
+    # => Map update syntax: %{struct | field: value}
+    # => Returns: new User struct with updated age
+    # => Immutability: original user unchanged
   end
 
   @spec display(t()) :: String.t()
+  # => display/1 spec: formats user as string
+  # => Parameter: t() (User struct)
+  # => Returns: String.t() (formatted string)
   def display(%__MODULE__{name: name, email: email}) do
+    # => display/1: pattern matches User struct
+    # => Extracts name and email fields
+    # => age and id: ignored (not needed)
     "#{name} (#{email})"
+    # => String interpolation: "Alice (alice@example.com)"
+    # => Returns: String
   end
+  # => display/1 complete
 end
+# => User module complete
 
 defmodule StringHelper do
+  # => StringHelper module with string manipulation functions
   @spec reverse(String.t()) :: String.t()
+  # => reverse/1 spec: String → String
+  # => String.t(): Elixir string type (UTF-8 binary)
   def reverse(string), do: String.reverse(string)
+  # => reverse/1: reverses string
+  # => String.reverse/1: built-in function
+  # => "hello" → "olleh"
 
   @spec split(String.t(), String.t()) :: list(String.t())
+  # => split/2 spec: String, separator → list of Strings
+  # => list(String.t()): list containing strings
+  # => Parameterized type: list contains specific type
   def split(string, separator), do: String.split(string, separator)
+  # => split/2: splits string by separator
+  # => "a,b,c" split by "," → ["a", "b", "c"]
 
   @spec join(list(String.t()), String.t()) :: String.t()
+  # => join/2 spec: list of Strings, separator → String
+  # => First param: list(String.t())
+  # => Second param: String.t() (separator)
+  # => Returns: joined String
   def join(parts, separator), do: Enum.join(parts, separator)
+  # => join/2: joins list with separator
+  # => ["a", "b", "c"] joined by "," → "a,b,c"
 end
+# => StringHelper module complete
 
 # Common type specs
-@spec func(integer()) :: String.t()  # Integer to string
-@spec func(list(atom())) :: map()  # List of atoms to map
-@spec func(pid()) :: :ok | {:error, term()}  # Process-related
-@spec func(keyword()) :: any()  # Keyword list input
-@spec func(tuple()) :: boolean()  # Any tuple
+# => Reference: common built-in types
+@spec func(integer()) :: String.t()
+# => Integer to string
+# => integer(): whole numbers (-2, -1, 0, 1, 2, ...)
+# => String.t(): binary strings
+@spec func(list(atom())) :: map()
+# => List of atoms to map
+# => list(atom()): [:a, :b, :c]
+# => map(): any map
+@spec func(pid()) :: :ok | {:error, term()}
+# => Process-related function
+# => pid(): process identifier
+# => :ok | {:error, term()}: union type (success or error)
+# => term(): any term (wildcard type)
+@spec func(keyword()) :: any()
+# => Keyword list input
+# => keyword(): [key: value, ...] (atom keys)
+# => any(): returns anything
+@spec func(tuple()) :: boolean()
+# => Any tuple
+# => tuple(): any size tuple
+# => boolean(): true or false
 
 # Complex types
+# => @type: defines reusable type aliases
 @type result :: {:ok, String.t()} | {:error, atom()}
+# => result type: success or error tuple
+# => {:ok, String.t()}: success case with string
+# => {:error, atom()}: error case with atom reason
+# => Union type: | separates alternatives
 @type user_id :: integer()
+# => user_id type: alias for integer
+# => Semantic naming: documents intent
+# => More readable than raw integer() in specs
 @type user_map :: %{id: user_id(), name: String.t()}
+# => user_map type: map with specific keys
+# => %{key: type, ...}: map type with required keys
+# => id: user_id() (integer alias)
+# => name: String.t()
 
 @spec find_user(user_id()) :: result()
+# => find_user/1 spec: uses custom types
+# => Parameter: user_id() (integer alias)
+# => Returns: result() (success/error union)
+# => Custom types make specs more readable
 def find_user(id) when id > 0, do: {:ok, "User #{id}"}
+# => First clause: valid id (> 0)
+# => Returns: {:ok, string} (matches result type)
 def find_user(_id), do: {:error, :invalid_id}
+# => Second clause: invalid id
+# => Returns: {:error, atom} (matches result type)
 
 # Run Dialyzer (in terminal)
+# => Dialyzer: static analysis tool for type checking
+# => Reads @spec annotations and analyzes code
+# => Finds type errors, unreachable code, pattern match issues
 # mix dialyzer
+# => Command: mix dialyzer
+# => First run: builds PLT (persistent lookup table) - slow
+# => Subsequent runs: fast incremental checks
+# => Reports: type mismatches, spec violations, impossible patterns
+# => Example output: "Function returns {:ok, integer()} but spec says String.t()"
 ```
 
 **Key Takeaway**: Use `@spec` to document function types. Define custom types with `@type`. Type specs enable Dialyzer to catch type errors and improve documentation. Common types: `integer()`, `String.t()`, `list(type)`, `map()`, `{:ok, type} | {:error, reason}`.
