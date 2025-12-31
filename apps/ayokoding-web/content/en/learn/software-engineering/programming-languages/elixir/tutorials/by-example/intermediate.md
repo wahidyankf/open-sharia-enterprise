@@ -3226,105 +3226,265 @@ graph TD
 
 ```elixir
 defmodule MathTest do
+  # => Test module definition
+  # => Module name convention: <ModuleName>Test
   use ExUnit.Case  # Makes this a test module
+  # => use ExUnit.Case: imports test macros and assertions
+  # => Macros: test, assert, refute, assert_raise, setup, etc.
+  # => Module automatically discovered by `mix test`
 
   # Simple test
   test "addition works" do
+    # => test/2 macro: defines a test case
+    # => First arg: test description (string)
+    # => Second arg: do...end block with test code
     assert 1 + 1 == 2
+    # => assert/1: verifies expression is truthy
+    # => 1 + 1 == 2 evaluates to true
+    # => Test passes (no output)
+    # => If false: test fails with detailed error message
   end
+  # => Test completes successfully
+  # => ExUnit tracks: 1 test, 0 failures
 
   # Test with description
   test "subtraction works" do
+    # => Second test case (independent from first)
+    # => Tests run in random order by default
     assert 5 - 3 == 2
+    # => assert: verifies 5 - 3 == 2 is true
+    # => True: test passes
   end
 
   # Multiple assertions in one test
   test "multiplication and division" do
+    # => Single test with multiple assertions
+    # => If any assertion fails, test stops (remaining assertions skipped)
     assert 2 * 3 == 6
+    # => Assertion 1: 2 * 3 == 6 is true
+    # => Passes, continue to next assertion
     assert 10 / 2 == 5.0
+    # => Assertion 2: 10 / 2 == 5.0 is true
+    # => Note: division returns float (5.0)
+    # => Passes, continue to next assertion
     assert rem(10, 3) == 1
+    # => Assertion 3: rem(10, 3) == 1 is true
+    # => rem/2: remainder function (10 mod 3 = 1)
+    # => All 3 assertions pass: test succeeds
   end
+  # => Best practice: one logical concept per test
+  # => Multiple assertions OK if testing same behavior
 
   # assert and refute
   test "boolean assertions" do
+    # => Demonstrates assert (expect truthy) and refute (expect falsy)
     assert true
+    # => assert true: always passes
+    # => Verifies value is truthy (not nil or false)
     refute false
+    # => refute false: always passes
+    # => Verifies value is falsy (nil or false)
+    # => refute: inverse of assert
     assert 1 < 2
+    # => assert: 1 < 2 is true
+    # => Comparison operators work in assertions
     refute 1 > 2
+    # => refute: 1 > 2 is false
+    # => Same as: assert !(1 > 2)
+    # => All 4 assertions pass
   end
 
   # Pattern matching in assertions
   test "pattern matching" do
+    # => Assertions support pattern matching
+    # => Useful for testing function return shapes
     assert {:ok, value} = {:ok, 42}
+    # => Pattern: {:ok, value} matches {:ok, 42}
+    # => value bound to 42
+    # => Pattern match succeeds: assertion passes
+    # => If pattern fails: MatchError raised, test fails
     assert value == 42
+    # => Verify value was correctly extracted
+    # => value is 42 (from previous pattern match)
+    # => Assertion passes
   end
+  # => Pattern: test both shape (tuple) and content (value)
 
   # assert_raise for exceptions
   test "raises exception" do
+    # => assert_raise/2: verifies code raises specific exception
+    # => Essential for testing error cases
     assert_raise ArithmeticError, fn ->
+      # => Expects ArithmeticError exception
+      # => fn: anonymous function containing code to test
       1 / 0
+      # => Division by zero in Elixir
+      # => Raises ArithmeticError exception
+      # => Exception type matches expectation: assertion passes
     end
+    # => If wrong exception or no exception: test fails
+    # => If correct exception: test passes
   end
 
   # assert_raise with message matching
   test "raises with message" do
+    # => assert_raise/3: verifies exception AND message
+    # => More precise than assert_raise/2
     assert_raise ArgumentError, "Invalid", fn ->
+      # => Expects ArgumentError with message "Invalid"
+      # => Message: exact string match (not substring)
       raise ArgumentError, "Invalid"
+      # => Raises ArgumentError exception
+      # => Message: "Invalid"
+      # => Both exception type and message match: test passes
     end
+    # => If message differs: test fails
+    # => Example: "Invalid input" != "Invalid" (fails)
   end
 
   # setup - runs before each test
   setup do
+    # => setup/1: callback runs before EACH test in module
+    # => Use for: creating test data, initializing state
+    # => Runs before: "addition works", "subtraction works", etc.
+    # => Fresh setup per test (tests isolated)
     # Setup code here
     {:ok, user: %{name: "Alice", age: 30}}
+    # => Returns: {:ok, <keyword_list>}
+    # => Keyword list becomes test context (map)
+    # => user: %{name: "Alice", age: 30} available to tests
+    # => Context injected into tests that accept it
   end
+  # => setup runs N times for N tests
+  # => Each test gets fresh user map
 
   test "uses setup data", %{user: user} do
+    # => Second arg: pattern matches context from setup
+    # => %{user: user}: extracts user from context map
+    # => user: bound to %{name: "Alice", age: 30}
     assert user.name == "Alice"
+    # => Verify user.name is "Alice" (from setup)
+    # => Assertion passes
     assert user.age == 30
+    # => Verify user.age is 30 (from setup)
+    # => Assertion passes
   end
+  # => Demonstrates: setup provides test data to tests
+  # => Tests can be parameterized via context
 
   # setup_all - runs once before all tests
+  # => setup_all: runs ONCE before all tests
+  # => Use for: expensive setup (database connection, file loading)
+  # => Shared across all tests (not isolated)
   # on_exit - cleanup after test
+  # => on_exit: registers cleanup callback
+  # => Runs after test completes (success or failure)
+  # => Use for: closing connections, deleting temp files
 end
+# => Module complete: all tests defined
+# => Run with: mix test test/math_test.exs
 
+# Calculator module - code under test
 defmodule Calculator do
+  # => Module with functions to test
+  # => Demonstrates testing a real module
   def add(a, b), do: a + b
+  # => add/2: simple addition function
+  # => Returns: sum of a and b
   def subtract(a, b), do: a - b
+  # => subtract/2: simple subtraction function
   def multiply(a, b), do: a * b
+  # => multiply/2: simple multiplication function
   def divide(_a, 0), do: {:error, :division_by_zero}
+  # => divide/2: first clause handles division by zero
+  # => Pattern: matches when b is 0
+  # => _a: ignore numerator (not needed)
+  # => Returns: {:error, :division_by_zero} (error tuple)
+  # => Prevents ArithmeticError, returns graceful error
   def divide(a, b), do: {:ok, a / b}
+  # => divide/2: second clause handles valid division
+  # => Pattern: matches when b is not 0 (first clause didn't match)
+  # => Returns: {:ok, quotient} (success tuple)
+  # => Result is float (Elixir / always returns float)
 end
+# => Calculator module complete
+# => Demonstrates: multi-clause functions with error handling
 
+# Calculator tests
 defmodule CalculatorTest do
+  # => Test module for Calculator
   use ExUnit.Case
+  # => Import testing macros
 
   test "add/2 adds two numbers" do
+    # => Test add/2 function
     assert Calculator.add(2, 3) == 5
+    # => Verify 2 + 3 == 5
+    # => Assertion passes
     assert Calculator.add(-1, 1) == 0
+    # => Verify -1 + 1 == 0 (edge case: negative + positive)
+    # => Assertion passes
   end
+  # => Both assertions pass: test succeeds
+  # => Tests positive and negative inputs
 
   test "divide/2 returns ok tuple" do
+    # => Test successful division
     assert Calculator.divide(10, 2) == {:ok, 5.0}
+    # => Verify divide(10, 2) returns {:ok, 5.0}
+    # => Pattern: {:ok, float_result}
+    # => 10 / 2 = 5.0 (float, not integer)
+    # => Assertion passes
   end
+  # => Tests happy path (valid division)
 
   test "divide/2 handles division by zero" do
+    # => Test error case (division by zero)
     assert Calculator.divide(10, 0) == {:error, :division_by_zero}
+    # => Verify divide(10, 0) returns error tuple
+    # => First clause matches (b == 0)
+    # => Returns: {:error, :division_by_zero}
+    # => Assertion passes
   end
+  # => Tests error path (graceful error handling)
+  # => No exception raised (handled with error tuple)
 
   # Test tags
   @tag :slow
+  # => @tag: module attribute that tags the following test
+  # => :slow: tag name (atom)
+  # => Use for: categorizing tests (slow, integration, external)
+  # => Run only slow tests: mix test --only slow
+  # => Exclude slow tests: mix test --exclude slow
   test "slow test" do
+    # => Test tagged with :slow
     :timer.sleep(2000)
+    # => Simulates slow operation (2 seconds)
+    # => Sleeps 2000ms
     assert true
+    # => Trivial assertion (always passes)
+    # => Real slow tests would test actual slow operations
   end
+  # => Tag allows selective test execution
+  # => Useful for CI: skip slow tests in fast pipeline
 
   # Skip test
   @tag :skip
+  # => @tag :skip: special tag that skips test execution
+  # => Test not run by default
+  # => Run skipped tests: mix test --include skip
+  # => Use for: WIP tests, temporarily broken tests
   test "skipped test" do
+    # => Test will not run (skipped)
     assert false
+    # => Would fail if run
+    # => But never executed due to :skip tag
   end
+  # => Skipped tests show in output: "X tests, Y failures, Z skipped"
+  # => Better than commenting out (documents intent)
 end
+# => CalculatorTest complete: 5 tests defined
+# => 3 normal, 1 slow, 1 skipped
 
 
 ```
