@@ -1106,77 +1106,203 @@ MyModule.colors()
 
 ```elixir
 defmodule ImportAliasRequire do
+  # => Module compiled at compile time with all directives processed
+
   # alias - shortens module names
-  alias MyApp.Accounts.User        # Now use User instead of MyApp.Accounts.User
-  alias MyApp.Accounts.Admin, as: A # Custom name: A instead of Admin
+  alias MyApp.Accounts.User
+  # => Creates local binding: User = MyApp.Accounts.User
+  # => Available throughout this module
+  # => Now use User instead of MyApp.Accounts.User
+
+  alias MyApp.Accounts.Admin, as: A
+  # => Creates custom local binding: A = MyApp.Accounts.Admin
+  # => Custom name: A instead of Admin
+  # => Useful to avoid naming conflicts
 
   def create_user(name) do
-    %User{name: name}  # Instead of %MyApp.Accounts.User{...}
+    # => Function defined with parameter name
+    %User{name: name}
+    # => Creates %MyApp.Accounts.User{name: name} (alias expands at compile time)
+    # => Returns User struct
+    # => Without alias, would need full path: %MyApp.Accounts.User{name: name}
   end
 
   def create_admin(name) do
-    %A{name: name}  # Custom alias
+    # => Function defined with parameter name
+    %A{name: name}
+    # => Creates %MyApp.Accounts.Admin{name: name} using custom alias
+    # => Returns Admin struct with default role: :admin
+    # => Custom alias A makes code more concise
   end
 
   # import - brings functions into scope (no module prefix needed)
-  import Enum, only: [map: 2, filter: 2]  # Only import specific functions
+  import Enum, only: [map: 2, filter: 2]
+  # => Only imports Enum.map/2 and Enum.filter/2
+  # => Now callable as map(...) and filter(...) without Enum prefix
+  # => Selective import prevents namespace pollution
+  # => Other Enum functions still require Enum.function_name()
 
   def process_numbers(list) do
+    # => Function accepts list parameter
     list
-    |> map(fn x -> x * 2 end)     # Instead of Enum.map
-    |> filter(fn x -> x > 10 end)  # Instead of Enum.filter
+    # => Initial list value
+    |> map(fn x -> x * 2 end)
+    # => Calls imported Enum.map/2 without prefix
+    # => Doubles each element
+    # => Returns new list (immutable transformation)
+    |> filter(fn x -> x > 10 end)
+    # => Calls imported Enum.filter/2 without prefix
+    # => Keeps only elements greater than 10
+    # => Returns filtered list
+    # => Final result: list with doubled values > 10
   end
 
   # import with except
-  import String, except: [split: 1]  # Import all String functions except split/1
+  import String, except: [split: 1]
+  # => Imports all String functions EXCEPT String.split/1
+  # => String.split/1 still accessible as String.split/1
+  # => All other String functions callable without prefix
+  # => Useful when one function conflicts with existing code
 
   def upcase_string(str) do
-    upcase(str)  # Instead of String.upcase(str)
+    # => Function accepts string parameter
+    upcase(str)
+    # => Calls imported String.upcase/1 without prefix
+    # => Returns uppercased string
+    # => Without import, would need String.upcase(str)
   end
 
   # require - needed for macros
   require Logger
+  # => Makes Logger macros available
+  # => Logger functions are macros, not regular functions
+  # => Macros must be required before use
+  # => Regular functions don't need require
 
   def log_something do
-    Logger.info("This is a log message")  # Logger.info is a macro, not a function
+    # => Function with no parameters
+    Logger.info("This is a log message")
+    # => Calls Logger.info/1 macro (requires 'require Logger')
+    # => Logs at :info level
+    # => Returns :ok
+    # => Macros expand at compile time, enabling compile-time optimizations
   end
 
   # Multiple aliases at once (Elixir 1.2+)
   alias MyApp.{Accounts, Billing, Reports}
+  # => Creates three aliases at once:
+  # => Accounts = MyApp.Accounts
+  # => Billing = MyApp.Billing
+  # => Reports = MyApp.Reports
+  # => Shorthand for three separate alias declarations
+  # => All modules must exist under MyApp parent module
 
   def get_account_report do
+    # => Function with no parameters
     account = Accounts.get()
+    # => Calls MyApp.Accounts.get/0 using alias
+    # => Binds result to account variable
+    # => Returns account data structure
+
     billing = Billing.get()
+    # => Calls MyApp.Billing.get/0 using alias
+    # => Binds result to billing variable
+    # => Returns billing data structure
+
     Reports.generate(account, billing)
+    # => Calls MyApp.Reports.generate/2 using alias
+    # => Passes account and billing data
+    # => Returns generated report
+    # => Final return value of function
   end
 end
+# => End of ImportAliasRequire module
 
 defmodule MyApp.Accounts.User do
+  # => Module defining User struct
   defstruct name: nil, email: nil
+  # => Struct with two fields, both default to nil
+  # => Creates %MyApp.Accounts.User{name: nil, email: nil}
 end
 
 defmodule MyApp.Accounts.Admin do
+  # => Module defining Admin struct
   defstruct name: nil, role: :admin
+  # => Struct with name (default nil) and role (default :admin)
+  # => Creates %MyApp.Accounts.Admin{name: nil, role: :admin}
 end
 
 defmodule ScopingExample do
+  # => Module demonstrating import scoping rules
+
   def func1 do
-    import Enum  # Only available in func1
+    # => Function demonstrating function-level import
+    import Enum
+    # => Import only available within func1 scope
+    # => All Enum functions callable without prefix in func1
+    # => Does NOT affect other functions in module
+
     map([1, 2, 3], fn x -> x * 2 end)
+    # => Calls imported Enum.map/2 without prefix
+    # => Doubles each element: [1, 2, 3] -> [2, 4, 6]
+    # => Returns [2, 4, 6]
   end
 
   def func2 do
-    # map([1, 2, 3], fn x -> x * 2 end)  # Error! import not in scope
-    Enum.map([1, 2, 3], fn x -> x * 2 end)  # Must use full name
+    # => Function where func1's import is NOT available
+    # map([1, 2, 3], fn x -> x * 2 end)
+    # => Would raise CompileError: undefined function map/2
+    # => func1's import doesn't leak into func2
+
+    Enum.map([1, 2, 3], fn x -> x * 2 end)
+    # => Must use full module name Enum.map/2
+    # => Doubles each element: [1, 2, 3] -> [2, 4, 6]
+    # => Returns [2, 4, 6]
   end
 
   # Module-level import (available in all functions)
   import String
+  # => Import at module level (outside function definitions)
+  # => All String functions available in func3, func4, and any other function
+  # => Module-level scope affects entire module
 
   def func3, do: upcase("hello")
-  def func4, do: downcase("WORLD")
-end
+  # => Uses imported String.upcase/1 without prefix
+  # => Converts "hello" to "HELLO"
+  # => Returns "HELLO"
+  # => Works because import String is at module level
 
+  def func4, do: downcase("WORLD")
+  # => Uses imported String.downcase/1 without prefix
+  # => Converts "WORLD" to "world"
+  # => Returns "world"
+  # => Works because import String is at module level
+end
+# => End of ScopingExample module
+
+# Example usage:
+# ImportAliasRequire.create_user("Alice")
+# => Returns %MyApp.Accounts.User{name: "Alice", email: nil}
+
+# ImportAliasRequire.create_admin("Bob")
+# => Returns %MyApp.Accounts.Admin{name: "Bob", role: :admin}
+
+# ImportAliasRequire.process_numbers([1, 2, 3, 4, 5, 6, 7, 8])
+# => Doubles: [2, 4, 6, 8, 10, 12, 14, 16]
+# => Filters > 10: [12, 14, 16]
+# => Returns [12, 14, 16]
+
+# ScopingExample.func1()
+# => Returns [2, 4, 6]
+
+# ScopingExample.func2()
+# => Returns [2, 4, 6]
+
+# ScopingExample.func3()
+# => Returns "HELLO"
+
+# ScopingExample.func4()
+# => Returns "world"
 ```
 
 **Key Takeaway**: Use `alias` to shorten module names, `import` to bring functions into scope (sparingly!), and `require` for macros. These directives manage namespaces and reduce verbosity.
