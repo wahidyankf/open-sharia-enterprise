@@ -331,8 +331,6 @@ type APIResponse struct {
 
 ## Group 2: Concurrency Basics
 
-**Why It Matters**: JSON handling is ubiquitous in production Go for REST APIs, configuration files, and message queues. Struct tags control marshaling behavior (field names, omitempty for optional fields, custom types), eliminating manual serialization code. Understanding `json.Marshal()` vs `json.Encoder` (streaming for HTTP responses) and custom MarshalJSON() for complex types is essential for building APIs that consume/produce JSON correctly and efficiently.
-
 ### Example 19: Goroutines
 
 Goroutines are lightweight threads managed by the Go runtime. Unlike OS threads, thousands of goroutines can run concurrently without overwhelming system resources. The `go` keyword starts a goroutine that runs concurrently with code that follows.
@@ -791,8 +789,6 @@ func main() {
 
 ## Group 3: I/O and File Handling
 
-**Why It Matters**: WaitGroups and Mutexes are the synchronization primitives for managing goroutine lifetimes and shared state. WaitGroup.Wait() ensures all spawned goroutines complete before proceeding (critical for graceful shutdown), while Mutex protects shared data from concurrent access (preventing data races). RWMutex optimizes read-heavy workloads (multiple readers, single writer). Misuse causes deadlocks or data corruption, making these fundamentals for concurrent Go.
-
 ### Example 23: File I/O
 
 File operations are fundamental. Go provides multiple layers: low-level (`os` package), buffered (`bufio`), and convenience functions. The `defer file.Close()` pattern ensures files close even if errors occur.
@@ -1094,8 +1090,6 @@ func (h *DataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 **Key Takeaway**: Register handlers with `HandleFunc` (for functions) or `Handle` (for types). Handler functions receive `ResponseWriter` and `*Request`. Use `w.Write()` or `w.WriteString()` to send responses. Set headers and status codes before writing the body.
 
 ## Group 4: Standard Library Deep Dive
-
-**Why It Matters**: HTTP servers are Go's most common production use case (microservices, APIs, web applications), where `http.HandleFunc()` registers route handlers and `http.ListenAndServe()` starts the server. Understanding `http.ResponseWriter` and `http.Request` is mandatory for building RESTful APIs. The stdlib server is production-ready (used by Google, Uber, Cloudflare) with built-in HTTP/2, TLS, and timeouts, requiring no external dependencies for most use cases.
 
 ### Example 26: Time and Duration
 
@@ -1511,8 +1505,6 @@ func main() {
 
 ## Group 5: Production Patterns
 
-**Why It Matters**: Flag parsing with the stdlib `flag` package builds CLI tools that follow Unix conventions (--help, -v for verbose), making Go programs feel native. Defining flags for configuration (host, port, debug mode) enables 12-factor app configuration without hardcoded values. This powers production deployment where service config comes from flags, environment variables, or config files, enabling different settings per environment (dev/staging/prod) without code changes.
-
 ### Example 30: HTTP Middleware Pattern
 
 Middleware intercepts requests and responses, enabling cross-cutting concerns like logging, authentication, and error handling. Middleware wraps handlers with decorator pattern - each middleware can inspect requests and responses.
@@ -1800,8 +1792,6 @@ func worker(id int, jobs <-chan int, wg *sync.WaitGroup) {
 **Key Takeaway**: Create a channel for jobs. Start fixed number of workers that receive from the channel. Send jobs to the channel. Workers process jobs concurrently, bounded by number of workers.
 
 ## Group 6: Advanced Testing
-
-**Why It Matters**: Worker pools limit concurrent operations to prevent resource exhaustion, where processing 10,000 tasks doesn't spawn 10,000 goroutines (overwhelming CPU/memory). Instead, N worker goroutines (e.g., 10) pull tasks from a channel, providing bounded parallelism. This pattern is essential for production systems that process background jobs (image resizing, email sending, data imports) without overwhelming downstream services or exhausting database connection pools.
 
 ### Example 33: Benchmarking
 
