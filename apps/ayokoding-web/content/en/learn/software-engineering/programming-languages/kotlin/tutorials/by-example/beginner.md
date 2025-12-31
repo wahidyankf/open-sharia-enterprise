@@ -584,39 +584,92 @@ fun main() {                        // => Program entry point
 Kotlin ranges represent sequences of values with start and end points. They support iteration, membership checks, and progression (step values). Ranges are memory-efficient as they don't materialize all values.
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Inclusive range (1 to 10 including both)
-    val range1 = 1..10               // => range1 is 1, 2, 3, ..., 10
-    println(5 in range1)             // => Output: true (5 is in range)
-    println(15 in range1)            // => Output: false (15 is outside range)
+    val range1 = 1..10               // => .. operator: creates inclusive range
+                                    // => IntRange type (start..end)
+                                    // => Start: 1, End: 10 (both inclusive)
+                                    // => Represents: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+                                    // => Memory efficient: doesn't materialize values
+                                    // => range1 is 1, 2, 3, ..., 10
+    println(5 in range1)             // => in operator: tests membership
+                                    // => 5 in 1..10 is true
+                                    // => Output: true (5 is in range)
+    println(15 in range1)            // => 15 in 1..10 is false
+                                    // => 15 > 10 (outside upper bound)
+                                    // => Output: false (15 is outside range)
 
     // Exclusive range (1 to 9, excludes 10)
-    val range2 = 1 until 10          // => range2 is 1, 2, 3, ..., 9
-    println(10 in range2)            // => Output: false (until excludes end)
+    val range2 = 1 until 10          // => until infix function: exclusive end
+                                    // => Creates range [1, 10)
+                                    // => Start: 1 (inclusive), End: 10 (exclusive)
+                                    // => Represents: 1, 2, 3, 4, 5, 6, 7, 8, 9
+                                    // => range2 is 1, 2, 3, ..., 9
+    println(10 in range2)            // => 10 not in range (excluded)
+                                    // => Output: false (until excludes end)
 
     // Downward range
-    val range3 = 10 downTo 1         // => range3 is 10, 9, 8, ..., 1
-    for (i in range3) {
-        print("$i ")                 // => Prints: 10 9 8 7 6 5 4 3 2 1
+    val range3 = 10 downTo 1         // => downTo infix function: descending
+                                    // => Creates IntProgression (10 down to 1)
+                                    // => Step: -1 (implicit)
+                                    // => Represents: 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+                                    // => range3 is 10, 9, 8, ..., 1
+    for (i in range3) {              // => Iterates range in descending order
+                                    // => i takes values: 10, 9, 8, ..., 1
+        print("$i ")                 // => Prints each value with space
+                                    // => Iteration 1: "10 "
+                                    // => Iteration 2: "9 "
+                                    // => ... until 1
+                                    // => Prints: 10 9 8 7 6 5 4 3 2 1
     }
-    println()                        // => Newline
+    println()                        // => Outputs newline character
+                                    // => Moves cursor to next line
 
     // Range with step
-    val range4 = 1..10 step 2        // => range4 is 1, 3, 5, 7, 9
-    for (i in range4) {
-        print("$i ")                 // => Prints: 1 3 5 7 9
+    val range4 = 1..10 step 2        // => step infix function: custom increment
+                                    // => Creates IntProgression with step 2
+                                    // => Start: 1, End: 10, Step: 2
+                                    // => Values: 1, 3, 5, 7, 9
+                                    // => Skips even numbers
+                                    // => range4 is 1, 3, 5, 7, 9
+    for (i in range4) {              // => Iterates with step 2
+                                    // => i: 1, then 3, then 5, 7, 9
+        print("$i ")                 // => Prints each odd number
+                                    // => Iteration 1: "1 "
+                                    // => Iteration 2: "3 "
+                                    // => Iteration 3: "5 "
+                                    // => Iteration 4: "7 "
+                                    // => Iteration 5: "9 "
+                                    // => Prints: 1 3 5 7 9
     }
     println()                        // => Newline
+                                    // => Cursor to next line
 
     // Character range
-    val charRange = 'a'..'z'         // => charRange is a, b, c, ..., z
-    println('k' in charRange)        // => Output: true
+    val charRange = 'a'..'z'         // => CharRange: range of characters
+                                    // => Start: 'a', End: 'z'
+                                    // => Represents all lowercase letters
+                                    // => a, b, c, ..., z (26 letters)
+                                    // => charRange is a, b, c, ..., z
+    println('k' in charRange)        // => Tests if 'k' in range
+                                    // => 'k' between 'a' and 'z': true
+                                    // => Output: true
 
     // Range functions
-    println((1..10).count())         // => Output: 10 (number of elements)
-    println((1..10).sum())           // => Output: 55 (sum of all elements)
-    println((1..10).average())       // => Output: 5.5 (average value)
-}
+    println((1..10).count())         // => count(): number of elements
+                                    // => Range 1..10 has 10 elements
+                                    // => Returns 10
+                                    // => Output: 10 (number of elements)
+    println((1..10).sum())           // => sum(): adds all elements
+                                    // => 1+2+3+4+5+6+7+8+9+10 = 55
+                                    // => Returns 55
+                                    // => Output: 55 (sum of all elements)
+    println((1..10).average())       // => average(): mean value
+                                    // => sum / count = 55 / 10
+                                    // => Returns 5.5 (Double)
+                                    // => Output: 5.5 (average value)
+}                                   // => main returns
+                                    // => Ranges are value types (no GC needed)
 ```
 
 **Key Takeaway**: Use `..` for inclusive ranges, `until` for exclusive ranges, `downTo` for descending sequences, and `step` to skip values in progression.
@@ -630,51 +683,96 @@ fun main() {
 Kotlin's for loops iterate over anything that provides an iterator, including ranges, collections, and arrays. The loop variable is automatically declared and scoped to the loop body.
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Iterate over range
-    print("Range: ")
-    for (i in 1..5) {
-        print("$i ")                 // => Prints: 1 2 3 4 5
-    }
-    println()                        // => Newline
+    print("Range: ")                 // => Outputs "Range: " without newline
+    for (i in 1..5) {                // => for loop: iterates over range 1..5
+                                    // => i: loop variable (automatically declared)
+                                    // => Scope: limited to loop body
+                                    // => Iteration 1: i=1, Iteration 2: i=2, ... Iteration 5: i=5
+        print("$i ")                 // => Prints current value of i with space
+                                    // => Prints: 1 2 3 4 5
+    }                                // => Loop completes after i=5
+    println()                        // => Outputs newline
+                                    // => Cursor to next line
 
     // Iterate over collection
     val fruits = listOf("Apple", "Banana", "Cherry")
+                                     // => listOf: creates immutable List
+                                     // => 3 elements: "Apple", "Banana", "Cherry"
+                                     // => Type: List<String> (inferred)
                                      // => fruits is ["Apple", "Banana", "Cherry"]
-    print("Fruits: ")
-    for (fruit in fruits) {
-        print("$fruit ")             // => Prints: Apple Banana Cherry
-    }
+    print("Fruits: ")                // => Outputs prefix
+    for (fruit in fruits) {          // => Iterates over List elements
+                                    // => fruit: loop variable (String type)
+                                    // => Iteration 1: fruit="Apple"
+                                    // => Iteration 2: fruit="Banana"
+                                    // => Iteration 3: fruit="Cherry"
+        print("$fruit ")             // => Prints each fruit with space
+                                    // => Prints: Apple Banana Cherry
+    }                                // => Loop completes after all elements
     println()                        // => Newline
 
     // Iterate with index
-    print("Indexed: ")
+    print("Indexed: ")               // => Outputs prefix
     for ((index, fruit) in fruits.withIndex()) {
-        print("$index:$fruit ")      // => Prints: 0:Apple 1:Banana 2:Cherry
-    }
+                                     // => withIndex(): returns IndexedValue pairs
+                                     // => Type: Iterable<IndexedValue<String>>
+                                     // => (index, fruit): destructuring declaration
+                                     // => index: Int (0, 1, 2)
+                                     // => fruit: String element
+                                     // => Iteration 1: index=0, fruit="Apple"
+                                     // => Iteration 2: index=1, fruit="Banana"
+                                     // => Iteration 3: index=2, fruit="Cherry"
+        print("$index:$fruit ")      // => Prints index:fruit pairs
+                                     // => "0:Apple ", "1:Banana ", "2:Cherry "
+                                     // => Prints: 0:Apple 1:Banana 2:Cherry
+    }                                // => Loop completes
     println()                        // => Newline
 
     // Iterate over map
     val scores = mapOf("Alice" to 95, "Bob" to 87, "Charlie" to 92)
+                                     // => mapOf: creates immutable Map
+                                     // => "Alice" to 95: Pair("Alice", 95)
+                                     // => to: infix function creates Pair
+                                     // => 3 entries in map
                                      // => scores is {Alice=95, Bob=87, Charlie=92}
-    for ((name, score) in scores) {
-        println("$name: $score")     // => Output: Alice: 95, Bob: 87, Charlie: 92
-    }
+    for ((name, score) in scores) {  // => Iterates over Map entries
+                                     // => (name, score): destructures Map.Entry
+                                     // => name: String (key)
+                                     // => score: Int (value)
+                                     // => Iteration 1: name="Alice", score=95
+                                     // => Iteration 2: name="Bob", score=87
+                                     // => Iteration 3: name="Charlie", score=92
+        println("$name: $score")     // => Prints each entry
+                                     // => Output: Alice: 95
+                                     // => Output: Bob: 87
+                                     // => Output: Charlie: 92
+    }                                // => Map iteration complete
 
     // Iterate with step and range
-    print("Step 2: ")
-    for (i in 0..10 step 2) {
-        print("$i ")                 // => Prints: 0 2 4 6 8 10
-    }
+    print("Step 2: ")                // => Outputs prefix
+    for (i in 0..10 step 2) {        // => Range 0..10 with step 2
+                                     // => i takes values: 0, 2, 4, 6, 8, 10
+                                     // => Skips odd numbers
+        print("$i ")                 // => Prints each even number
+                                     // => "0 ", "2 ", "4 ", "6 ", "8 ", "10 "
+                                     // => Prints: 0 2 4 6 8 10
+    }                                // => Loop completes at 10
     println()                        // => Newline
 
     // Iterate in reverse
-    print("Reverse: ")
-    for (i in 5 downTo 1) {
-        print("$i ")                 // => Prints: 5 4 3 2 1
-    }
+    print("Reverse: ")               // => Outputs prefix
+    for (i in 5 downTo 1) {          // => Descending range 5 to 1
+                                     // => i takes values: 5, 4, 3, 2, 1
+                                     // => Step: -1 (implicit)
+        print("$i ")                 // => Prints each value descending
+                                     // => "5 ", "4 ", "3 ", "2 ", "1 "
+                                     // => Prints: 5 4 3 2 1
+    }                                // => Loop completes at 1
     println()                        // => Newline
-}
+}                                   // => main returns
+                                    // => All loop variables out of scope
 ```
 
 **Key Takeaway**: Use destructuring with `withIndex()` for indexed iteration, destructure map entries directly in the loop, and combine ranges with `step` and `downTo` for custom iteration patterns.
@@ -688,42 +786,84 @@ fun main() {
 Kotlin supports traditional while and do-while loops for conditional iteration. The do-while variant guarantees at least one execution before checking the condition.
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // while loop (condition checked before execution)
-    var count = 0                    // => count is 0
-    while (count < 3) {
-        println("Count: $count")     // => Output: Count: 0, Count: 1, Count: 2
-        count++                      // => count becomes 1, then 2, then 3
-    }                                // => count is 3 (loop exits)
+    var count = 0                    // => count is 0 (var: mutable)
+                                    // => Type: Int (inferred)
+    while (count < 3) {              // => while loop: tests condition first
+                                    // => Iteration 1: count < 3 (0 < 3) is true
+                                    // => Iteration 2: count < 3 (1 < 3) is true
+                                    // => Iteration 3: count < 3 (2 < 3) is true
+                                    // => After iteration 3: count < 3 (3 < 3) is false, exit
+        println("Count: $count")     // => Prints current count value
+                                    // => Output: Count: 0
+                                    // => Output: Count: 1
+                                    // => Output: Count: 2
+        count++                      // => Increment operator: count = count + 1
+                                    // => After iteration 1: count becomes 1
+                                    // => After iteration 2: count becomes 2
+                                    // => After iteration 3: count becomes 3
+    }                                // => Loop exits when count >= 3
+                                    // => count is 3 (loop exits)
 
     // do-while loop (condition checked after execution)
-    var x = 0                        // => x is 0
-    do {
-        println("x: $x")             // => Output: x: 0
-        x++                          // => x becomes 1
-    } while (x < 0)                  // => Condition false, but body executed once
-                                     // => x is 1 after loop
+    var x = 0                        // => x is 0 (var: mutable)
+    do {                             // => do-while: executes body first
+                                    // => Body runs at least once
+        println("x: $x")             // => Prints x value
+                                    // => Output: x: 0
+        x++                          // => x increments to 1
+                                    // => x becomes 1
+    } while (x < 0)                  // => Condition checked after body
+                                    // => 1 < 0 is false
+                                    // => Loop exits (only one iteration)
+                                    // => Condition false, but body executed once
+                                    // => x is 1 after loop
 
     // Infinite loop with break
-    var sum = 0                      // => sum is 0
-    while (true) {
-        sum += 1                     // => sum becomes 1, 2, 3, 4, 5
-        if (sum >= 5) {
-            break                    // => Exit loop when sum >= 5
-        }
-    }                                // => sum is 5
+    var sum = 0                      // => sum is 0 (var: mutable)
+    while (true) {                   // => Infinite loop: condition always true
+                                    // => Requires break to exit
+        sum += 1                     // => sum += 1 equivalent to sum = sum + 1
+                                    // => Iteration 1: sum becomes 1
+                                    // => Iteration 2: sum becomes 2
+                                    // => Iteration 3: sum becomes 3
+                                    // => Iteration 4: sum becomes 4
+                                    // => Iteration 5: sum becomes 5
+        if (sum >= 5) {              // => Tests exit condition
+                                    // => sum >= 5: true when sum is 5
+            break                    // => break: exit loop immediately
+                                    // => Exit loop when sum >= 5
+        }                            // => If not breaking, continue next iteration
+    }                                // => Loop exits via break
+                                    // => sum is 5
 
     // Loop with continue
-    var i = 0                        // => i is 0
-    while (i < 5) {
-        i++                          // => i becomes 1, 2, 3, 4, 5
-        if (i % 2 == 0) {
-            continue                 // => Skip even numbers (2, 4)
-        }
-        print("$i ")                 // => Prints: 1 3 5
-    }
+    var i = 0                        // => i is 0 (var: mutable)
+    while (i < 5) {                  // => while loop: condition before body
+        i++                          // => Increment first
+                                    // => Iteration 1: i becomes 1
+                                    // => Iteration 2: i becomes 2
+                                    // => Iteration 3: i becomes 3
+                                    // => Iteration 4: i becomes 4
+                                    // => Iteration 5: i becomes 5
+        if (i % 2 == 0) {            // => Checks if i is even
+                                    // => % modulo operator (remainder)
+                                    // => When i=2: 2 % 2 = 0, true (skip)
+                                    // => When i=4: 4 % 2 = 0, true (skip)
+            continue                 // => continue: skip to next iteration
+                                    // => Skips println for even numbers
+                                    // => Skip even numbers (2, 4)
+        }                            // => If not even, continue to print
+        print("$i ")                 // => Prints odd numbers only
+                                    // => When i=1: prints "1 "
+                                    // => When i=3: prints "3 "
+                                    // => When i=5: prints "5 "
+                                    // => Prints: 1 3 5
+    }                                // => Loop exits when i >= 5
     println()                        // => Newline
-}
+}                                   // => main returns
+                                    // => All mutable variables out of scope
 ```
 
 **Key Takeaway**: Use `while` for conditional loops, `do-while` when you need at least one execution, and combine with `break`/`continue` for flow control within loops.
@@ -758,42 +898,95 @@ graph TD
 ```
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Non-nullable type (cannot be null)
-    val name: String = "Kotlin"      // => name is "Kotlin" (cannot be null)
-    // val invalid: String = null    // => Compile error: null cannot be assigned
+    val name: String = "Kotlin"      // => name is "Kotlin"
+                                    // => Type: String (non-nullable)
+                                    // => Cannot hold null value
+                                    // => name is "Kotlin" (cannot be null)
+    // val invalid: String = null    // => Would cause compile error
+                                    // => Type: String doesn't accept null
+                                    // => Compile error: null cannot be assigned
+                                    // => Null safety enforced at compile time
 
     // Nullable type (can be null)
-    val nullableName: String? = null // => nullableName is null (type: String?)
-    val validName: String? = "Alice" // => validName is "Alice" (type: String?)
+    val nullableName: String? = null // => Type: String? (nullable, note ?)
+                                    // => ? marks type as nullable
+                                    // => Can hold String or null
+                                    // => nullableName is null (type: String?)
+    val validName: String? = "Alice" // => Type: String? (nullable)
+                                    // => Currently holds "Alice" (not null)
+                                    // => validName is "Alice" (type: String?)
 
     // Safe call operator (?.) - returns null if receiver is null
     val length1 = nullableName?.length
+                                     // => ?. safe call operator
+                                     // => nullableName is null
+                                     // => Safe call returns null (doesn't call .length)
+                                     // => No NullPointerException
+                                     // => length1 is null (type: Int?)
                                      // => nullableName is null, so length1 is null
-    val length2 = validName?.length  // => validName is "Alice", so length2 is 5
+    val length2 = validName?.length  // => validName is "Alice" (not null)
+                                     // => Safe call proceeds to .length
+                                     // => "Alice".length is 5
+                                     // => length2 is 5 (type: Int?)
+                                     // => validName is "Alice", so length2 is 5
 
     // Elvis operator (?:) - provides default value if left side is null
     val len1 = nullableName?.length ?: 0
+                                     // => ?: Elvis operator (default value)
+                                     // => nullableName?.length is null
+                                     // => Left side null, use right side
+                                     // => Returns 0 (default)
+                                     // => len1 is 0 (type: Int, non-nullable)
                                      // => nullableName is null, so len1 is 0
     val len2 = validName?.length ?: 0
+                                     // => validName?.length is 5 (not null)
+                                     // => Left side not null, use it
+                                     // => Returns 5
+                                     // => len2 is 5 (type: Int, non-nullable)
                                      // => validName is "Alice", so len2 is 5
 
     // Not-null assertion (!!) - throws NPE if null (use sparingly)
     // val unsafe = nullableName!!.length
+                                     // => !! not-null assertion operator
+                                     // => Asserts value is not null
+                                     // => nullableName is null
                                      // => Would throw NullPointerException
+                                     // => Crashes program if null
+                                     // => Use sparingly (defeats null safety)
 
     // Safe cast with as?
-    val value: Any? = "Hello"        // => value is "Hello" (type: Any?)
-    val str = value as? String       // => str is "Hello" (safe cast succeeds)
-    val num = value as? Int          // => num is null (safe cast fails, returns null)
+    val value: Any? = "Hello"        // => value is "Hello"
+                                     // => Type: Any? (nullable supertype)
+                                     // => Runtime type: String
+    val str = value as? String       // => as? safe cast operator
+                                     // => Attempts cast to String
+                                     // => value is String: cast succeeds
+                                     // => Returns "Hello"
+                                     // => str is "Hello" (type: String?)
+                                     // => str is "Hello" (safe cast succeeds)
+    val num = value as? Int          // => Attempts cast to Int
+                                     // => value is String, not Int
+                                     // => Cast fails, returns null
+                                     // => No exception thrown
+                                     // => num is null (type: Int?)
+                                     // => num is null (safe cast fails, returns null)
 
-    println(length1)                 // => Output: null
-    println(length2)                 // => Output: 5
-    println(len1)                    // => Output: 0
-    println(len2)                    // => Output: 5
-    println(str)                     // => Output: Hello
-    println(num)                     // => Output: null
-}
+    println(length1)                 // => Prints null
+                                     // => Output: null
+    println(length2)                 // => Prints 5
+                                     // => Output: 5
+    println(len1)                    // => Prints 0
+                                     // => Output: 0
+    println(len2)                    // => Prints 5
+                                     // => Output: 5
+    println(str)                     // => Prints "Hello"
+                                     // => Output: Hello
+    println(num)                     // => Prints null
+                                     // => Output: null
+}                                   // => main returns
+                                    // => Null safety prevents most NPEs
 ```
 
 **Key Takeaway**: Use `Type?` for nullable types, `?.` for safe calls that propagate null, `?:` for default values, and avoid `!!` unless you're absolutely certain a value is non-null.
