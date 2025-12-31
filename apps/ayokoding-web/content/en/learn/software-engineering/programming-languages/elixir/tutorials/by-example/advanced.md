@@ -2677,57 +2677,134 @@ graph TD
 **Code**:
 
 ```elixir
+# Create ETS table with :set type and :public access
 table = :ets.new(:my_table, [:set, :public])
+# => #Reference<0.1234567890.123456789.123456>
+# => Returns table reference (NOT atom, even though first arg is atom)
+# => :set - unique keys only (like Map)
+# => :public - all processes can read AND write
 
-:ets.insert(table, {:key1, "value1"})
-:ets.insert(table, {:key2, "value2"})
-:ets.insert(table, [{:key3, "value3"}, {:key4, "value4"}])  # Bulk insert
+# Insert single key-value pair (tuple format)
+:ets.insert(table, {:key1, "value1"})  # => true
+# => Stores {:key1, "value1"} in table
+# => Returns true on success
+# => Format: {key, value} where key and value can be any term
+:ets.insert(table, {:key2, "value2"})  # => true
 
+# Bulk insert multiple entries (list of tuples)
+:ets.insert(table, [{:key3, "value3"}, {:key4, "value4"}])  # => true
+# => Inserts multiple tuples in single operation (more efficient than loop)
+# => All insertions succeed or entire operation fails (atomic)
+
+# Lookup value by key
 :ets.lookup(table, :key1)  # => [{:key1, "value1"}]
+# => Returns LIST of matching tuples (always a list, even for :set)
+# => For :set tables: list has max 1 element
+# => Extract value: [{_key, value}] = :ets.lookup(...); value
 :ets.lookup(table, :missing)  # => []
+# => Empty list for non-existent keys (NOT nil or error)
 
-:ets.insert(table, {:key1, "updated"})
+# Update existing key (for :set, insert overwrites)
+:ets.insert(table, {:key1, "updated"})  # => true
+# => In :set table: replaces old {:key1, "value1"} with {:key1, "updated"}
 :ets.lookup(table, :key1)  # => [{:key1, "updated"}]
+# => Value changed from "value1" to "updated"
 
-:ets.delete(table, :key1)
+# Delete entry by key
+:ets.delete(table, :key1)  # => true
+# => Removes {:key1, "updated"} from table
+# => Returns true even if key doesn't exist (idempotent)
 :ets.lookup(table, :key1)  # => []
+# => Verify deletion - key gone
 
-set_table = :ets.new(:set, [:set])  # Unique keys
-:ets.insert(set_table, {:a, 1})
-:ets.insert(set_table, {:a, 2})  # Overwrites
+# :set table - unique keys (overwrite on duplicate)
+set_table = :ets.new(:set, [:set])  # => #Reference<...>
+# => [:set] is table type (default, but explicit is clearer)
+# => No access specifier = :protected (owner writes, all read)
+:ets.insert(set_table, {:a, 1})  # => true
+# => Inserts {:a, 1}
+:ets.insert(set_table, {:a, 2})  # => true (overwrites!)
+# => Replaces {:a, 1} with {:a, 2} (unique key constraint)
 :ets.lookup(set_table, :a)  # => [{:a, 2}]
+# => Only latest value stored (previous value discarded)
 
-bag_table = :ets.new(:bag, [:bag])  # Multiple values per key
-:ets.insert(bag_table, {:a, 1})
-:ets.insert(bag_table, {:a, 2})
+# :bag table - allows multiple values per key (NO exact duplicates)
+bag_table = :ets.new(:bag, [:bag])  # => #Reference<...>
+# => [:bag] allows same key with DIFFERENT values
+:ets.insert(bag_table, {:a, 1})  # => true
+# => Inserts {:a, 1}
+:ets.insert(bag_table, {:a, 2})  # => true
+# => Inserts {:a, 2} (doesn't overwrite, adds to list)
 :ets.lookup(bag_table, :a)  # => [{:a, 1}, {:a, 2}]
+# => Returns ALL tuples with key :a
+# => Order not guaranteed (ETS doesn't maintain insertion order for :bag)
 
-public = :ets.new(:public, [:public])  # All processes can read/write
-protected = :ets.new(:protected, [:protected])  # Owner writes, all read (default)
-private = :ets.new(:private, [:private])  # Only owner can access
+# Access control types
+public = :ets.new(:public, [:public])  # => #Reference<...>
+# => :public - ANY process can read AND write
+# => Use for shared caches accessible by all processes
+protected = :ets.new(:protected, [:protected])  # => #Reference<...>
+# => :protected - owner writes, ANY process reads (DEFAULT if not specified)
+# => Use for read-mostly data (config, lookups)
+private = :ets.new(:private, [:private])  # => #Reference<...>
+# => :private - ONLY owner process can access (read + write)
+# => Use for process-local caching
 
-:ets.new(:named_table, [:named_table, :set, :public])
-:ets.insert(:named_table, {:key, "value"})
+# Named tables (reference by atom instead of reference)
+:ets.new(:named_table, [:named_table, :set, :public])  # => :named_table (atom!)
+# => :named_table option makes table globally accessible by name
+# => Returns atom :named_table instead of #Reference<...>
+# => Only ONE table can have name :named_table at a time
+:ets.insert(:named_table, {:key, "value"})  # => true
+# => Use atom :named_table instead of reference
 :ets.lookup(:named_table, :key)  # => [{:key, "value"}]
+# => Lookup by atom name (convenient for global tables)
 
+# Iterate over table entries
 :ets.insert(table, {:a, 1})
 :ets.insert(table, {:b, 2})
 :ets.insert(table, {:c, 3})
 
 :ets.tab2list(table)  # => [{:a, 1}, {:b, 2}, {:c, 3}]
+# => Converts entire table to list (ORDER NOT GUARANTEED)
+# => ⚠️ SLOW for large tables (copies all entries to list)
+# => Use only for debugging or small tables
 :ets.foldl(fn {k, v}, acc -> acc + v end, 0, table)  # => 6
+# => Fold left over table entries: sum values 1 + 2 + 3 = 6
+# => More memory-efficient than tab2list (no intermediate list)
+# => Function receives {key, value} and accumulator
 
+# Pattern matching queries
 :ets.match(table, {:a, :'$1'})  # => [[1]]
+# => Pattern: {:a, :'$1'} matches tuples with key :a, captures value as $1
+# => Returns list of lists: [[captured_value]]
+# => :'$1' is special ETS pattern variable (captures value)
 :ets.match_object(table, {:a, :_})  # => [{:a, 1}]
+# => Returns full matching tuples (not just captured values)
+# => :_ is wildcard (matches anything, doesn't capture)
+# => Difference: match returns captures, match_object returns objects
 
-large_table = :ets.new(:large, [:set, :public])
+# Performance: ETS is FAST even for large tables
+large_table = :ets.new(:large, [:set, :public])  # => #Reference<...>
 Enum.each(1..1_000_000, fn i -> :ets.insert(large_table, {i, i * 2}) end)
+# => Inserts 1 million entries: {1, 2}, {2, 4}, ..., {1000000, 2000000}
 :ets.lookup(large_table, 500_000)  # => [{500000, 1000000}] (instant!)
+# => O(1) lookup even with 1M entries (hash table)
+# => Microsecond latency regardless of table size
 
-:ets.info(table)  # => [...] (metadata)
+# Table introspection
+:ets.info(table)  # => [...metadata list...]
+# => Returns keyword list of table metadata (type, size, owner, etc.)
+# => Includes: :id, :name, :size, :type, :owner, :protection
 :ets.info(table, :size)  # => 3
+# => Get specific metadata field
+# => :size returns number of entries in table
 
-:ets.delete(table)
+# Delete entire table (not just entry)
+:ets.delete(table)  # => true
+# => Destroys table completely (frees memory)
+# => All entries removed, table reference invalid
+# => Future operations on table reference will error
 ```
 
 **Key Takeaway**: ETS provides O(1) in-memory storage with different table types (`:set`, `:bag`, `:duplicate_bag`) and access controls. Use for caches, shared state, or lookup tables. Tables are process-owned but can outlive processes with heir.
@@ -2743,44 +2820,108 @@ Elixir runs on the BEAM and can call Erlang modules directly. Use `:module_name`
 **Code**:
 
 ```elixir
-:timer.sleep(1000)  # Sleep for 1 second
+# Sleep using Erlang :timer module
+:timer.sleep(1000)  # => :ok (after 1 second)
+# => Blocks current process for 1000 milliseconds
+# => :timer is Erlang module (all Erlang modules prefixed with :)
+# => Elixir alternative: Process.sleep(1000)
 
+# Cryptographic hashing with Erlang :crypto
 :crypto.hash(:sha256, "Hello, World!")
+# => <<127, 131, 177, ...>> (32-byte binary)
+# => Returns raw binary hash (SHA256 produces 256 bits = 32 bytes)
+# => First arg: algorithm (:md5, :sha, :sha256, :sha512, etc.)
+# => Second arg: data to hash (binary)
 
+# Hash and encode as hex string
 :crypto.hash(:sha256, "Hello, World!")
 |> Base.encode16(case: :lower)
+# => "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f"
+# => Base.encode16 is Elixir function (converts binary to hex)
+# => case: :lower produces lowercase hex (default :upper)
 
+# Date/time functions from Erlang :calendar
 :calendar.local_time()  # => {{2024, 12, 23}, {15, 30, 45}}
+# => Returns {{year, month, day}, {hour, minute, second}} tuple
+# => Local timezone (depends on system timezone)
+# => Elixir alternative: NaiveDateTime.local_now()
 
+# Operating system information
 :os.type()  # => {:unix, :darwin} or {:win32, :nt}
-:os.getenv()  # => ['PATH=/usr/bin:...', ...]
+# => Returns {OS_family, OS_name} tuple
+# => {:unix, :darwin} = macOS, {:unix, :linux} = Linux, {:win32, :nt} = Windows
+:os.getenv()  # => ['PATH=/usr/bin:...', 'HOME=/Users/username', ...]
+# => Returns ALL environment variables as CHARLISTS (Erlang strings)
+# => Erlang strings use single quotes: 'hello' (charlist, not binary)
+# => Elixir strings use double quotes: "hello" (binary)
 :os.getenv('HOME')  # => '/Users/username'
+# => Get specific environment variable (charlist argument!)
+# => Must use single quotes for Erlang charlist
+# => Elixir alternative: System.get_env("HOME") (binary argument)
 
+# List functions from Erlang :lists
 :lists.seq(1, 10)  # => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# => Generate sequence from 1 to 10 (inclusive)
+# => Elixir alternative: Enum.to_list(1..10)
 :lists.sum([1, 2, 3, 4, 5])  # => 15
+# => Sum all elements in list
+# => Elixir alternative: Enum.sum([1, 2, 3, 4, 5])
 
-
+# Random number generation with Erlang :rand
 :rand.uniform()  # => 0.1234567 (random float 0.0-1.0)
+# => Returns random float in range [0.0, 1.0)
+# => Uses process-specific random state (not global)
 :rand.uniform(100)  # => 42 (random int 1-100)
+# => Returns random integer in range 1..100 (inclusive)
+# => Argument N produces range 1..N
 
-user = {:user, "Alice", 30}
-{:user, name, age} = user
+# Erlang tuples (same syntax as Elixir)
+user = {:user, "Alice", 30}  # => {:user, "Alice", 30}
+# => Tuples work identically in Erlang and Elixir
+# => Tagged tuple pattern (record-like structure)
+{:user, name, age} = user  # => pattern match extracts fields
 name  # => "Alice"
+# => Destructures tuple, binds name = "Alice", age = 30
 
+# Erlang string functions (work on CHARLISTS not binaries)
 :string.uppercase('hello')  # => 'HELLO'
+# => Converts charlist to uppercase
+# => MUST use single quotes (charlist), not double quotes (binary)
+# => For Elixir strings: String.upcase("hello") => "HELLO"
+# => Mixing Erlang charlists and Elixir binaries is common source of bugs
 
-q = :queue.new()
-q = :queue.in(1, q)
-q = :queue.in(2, q)
-q = :queue.in(3, q)
-{{:value, item}, q} = :queue.out(q)
+# Queue data structure from Erlang :queue
+q = :queue.new()  # => {[], []}
+# => Creates empty queue (efficient FIFO data structure)
+# => Implemented as two lists for O(1) amortized enqueue/dequeue
+q = :queue.in(1, q)  # => {[1], []}
+# => Enqueue 1 (add to back)
+q = :queue.in(2, q)  # => {[2, 1], []}
+# => Enqueue 2
+q = :queue.in(3, q)  # => {[3, 2, 1], []}
+# => Enqueue 3
+# => Internal: maintains two lists for efficiency (front list, back list)
+{{:value, item}, q} = :queue.out(q)  # => {{:value, 1}, {[2], [3]}}
+# => Dequeue from front (FIFO order)
+# => Returns {{:value, dequeued_item}, new_queue}
+# => For empty queue: {:empty, queue}
 item  # => 1
+# => First item dequeued (FIFO: 1 came in first, out first)
 
-tree = :gb_trees.empty()
-tree = :gb_trees.insert(:a, 1, tree)
-tree = :gb_trees.insert(:b, 2, tree)
+# General balanced trees from Erlang :gb_trees
+tree = :gb_trees.empty()  # => {0, nil}
+# => Creates empty balanced binary tree (sorted by keys)
+# => O(log N) insert, lookup, delete
+tree = :gb_trees.insert(:a, 1, tree)  # => {1, {:a, 1, nil, nil}}
+# => Insert key :a with value 1
+# => Returns new tree (immutable data structure)
+tree = :gb_trees.insert(:b, 2, tree)  # => {2, ...}
+# => Insert key :b with value 2
+# => Tree automatically balances for O(log N) operations
 :gb_trees.lookup(:a, tree)  # => {:value, 1}
-
+# => Lookup returns {:value, found_value}
+# => For missing key: :none
+# => Elixir alternative for simple cases: Map (hash table, not tree)
 ```
 
 **Key Takeaway**: Call Erlang modules with `:module_name` syntax. Elixir has full Erlang interop—leverage powerful Erlang libraries for crypto, timing, system monitoring, and more. Erlang uses charlists (single quotes) for strings.
