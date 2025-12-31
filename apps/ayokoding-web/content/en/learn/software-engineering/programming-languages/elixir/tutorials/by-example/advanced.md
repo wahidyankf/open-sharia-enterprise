@@ -566,117 +566,151 @@ Well-designed GenServers separate client API from server implementation, keep ca
 **Code**:
 
 ```elixir
+# Best Practice 1: Separate client API from server callbacks
 defmodule BestPractices do
-  use GenServer
+  use GenServer  # => imports GenServer behavior
 
-  # 1. Separate client API from server callbacks
-  # Client API - public functions users call
+  # ✅ CLIENT API - Public interface (synchronous functions)
+  # Users call these functions (they DON'T call handle_call directly)
   def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)  # => {:ok, #PID<...>}
   end
 
   def create_user(name, email) do
-    GenServer.call(__MODULE__, {:create_user, name, email})
+    GenServer.call(__MODULE__, {:create_user, name, email})  # => {:ok, user} or {:error, reason}
+    # => Blocks until server replies
   end
 
   def get_user(id) do
-    GenServer.call(__MODULE__, {:get_user, id})
+    GenServer.call(__MODULE__, {:get_user, id})  # => user map or nil
   end
+  # => Client API is CLEAN - no process details, just business operations
 
-  # 2. Use @impl for callback clarity
-  @impl true
+  # ✅ SERVER CALLBACKS - Private implementation (handle_* functions)
+  # These run inside GenServer process, users never call them directly
+
+  # Best Practice 2: Use @impl for callback clarity
+  @impl true  # => ✅ declares this is GenServer.init/1 callback (compiler verifies signature)
   def init(_opts) do
     # Initialize state
-    state = %{users: %{}, next_id: 1}
-    {:ok, state}
+    state = %{users: %{}, next_id: 1}  # => initial state structure
+    {:ok, state}  # => {:ok, %{users: %{}, next_id: 1}}
   end
+  # => @impl ensures callback signature matches behavior (compile-time check)
 
   @impl true
   def handle_call({:create_user, name, email}, _from, state) do
-    # Keep callbacks simple - delegate to private helpers
-    {reply, new_state} = do_create_user(name, email, state)
-    {:reply, reply, new_state}
+    # ✅ Best Practice 3: Keep callbacks simple - delegate to private helpers
+    {reply, new_state} = do_create_user(name, email, state)  # => delegates business logic
+    {:reply, reply, new_state}  # => {:reply, {:ok, user}, new_state}
   end
+  # => Callback is THIN - just message routing, no business logic
 
   @impl true
   def handle_call({:get_user, id}, _from, state) do
-    user = Map.get(state.users, id)
-    {:reply, user, state}
+    user = Map.get(state.users, id)  # => retrieves user or nil
+    {:reply, user, state}  # => {:reply, %{id: 1, name: "Alice", ...}, state}
   end
 
-  # 3. Extract complex logic to private functions
+  # ✅ Best Practice 4: Extract complex logic to private functions
   defp do_create_user(name, email, state) do
-    if valid_email?(email) do
-      user = %{id: state.next_id, name: name, email: email}
-      new_users = Map.put(state.users, state.next_id, user)
-      new_state = %{state | users: new_users, next_id: state.next_id + 1}
-      {{:ok, user}, new_state}
+    if valid_email?(email) do  # => validation check
+      user = %{id: state.next_id, name: name, email: email}  # => creates user map
+      new_users = Map.put(state.users, state.next_id, user)  # => adds to users map
+      new_state = %{state | users: new_users, next_id: state.next_id + 1}  # => updates state immutably
+      {{:ok, user}, new_state}  # => returns success tuple + new state
     else
-      {{:error, :invalid_email}, state}
+      {{:error, :invalid_email}, state}  # => returns error tuple + unchanged state
     end
   end
+  # => Private helper is TESTABLE - pure function (no side effects)
 
-  defp valid_email?(email), do: String.contains?(email, "@")
+  defp valid_email?(email), do: String.contains?(email, "@")  # => simple validation
 
-  # 4. Use typespec for documentation
+  # ✅ Best Practice 5: Use typespec for documentation
   @spec create_user(String.t(), String.t()) :: {:ok, map()} | {:error, atom()}
+  # => Documents function signature and return types (Dialyzer can verify)
 end
 
+# Testing GenServer with callbacks
 defmodule BestPracticesTest do
-  use ExUnit.Case
+  use ExUnit.Case  # => imports ExUnit test DSL
 
-  setup do
-    {:ok, _pid} = BestPractices.start_link()
-    :ok
+  setup do  # => runs before each test
+    {:ok, _pid} = BestPractices.start_link()  # => starts GenServer for test
+    :ok  # => return :ok (no context needed)
   end
+  # => Each test gets fresh GenServer instance
 
   test "creates user with valid email" do
-    assert {:ok, user} = BestPractices.create_user("Alice", "alice@example.com")
-    assert user.name == "Alice"
+    assert {:ok, user} = BestPractices.create_user("Alice", "alice@example.com")  # => calls client API
+    # => GenServer.call → handle_call → do_create_user → validation → success
+    assert user.name == "Alice"  # => verifies user data
   end
 
   test "rejects invalid email" do
-    assert {:error, :invalid_email} = BestPractices.create_user("Bob", "invalid")
+    assert {:error, :invalid_email} = BestPractices.create_user("Bob", "invalid")  # => validation fails
+    # => GenServer.call → handle_call → do_create_user → validation fails → error
   end
 
   test "retrieves created user" do
-    {:ok, user} = BestPractices.create_user("Charlie", "charlie@example.com")
-    assert BestPractices.get_user(user.id) == user
+    {:ok, user} = BestPractices.create_user("Charlie", "charlie@example.com")  # => creates user
+    assert BestPractices.get_user(user.id) == user  # => retrieves created user
+    # => State persists between calls (same GenServer process)
   end
 end
 
+# ✅ Best Practice 6: Extract business logic to pure modules (advanced pattern)
 defmodule UserLogic do
-  # Pure functions - easy to test
+  # Pure functions - NO side effects (no GenServer, no state, no I/O)
+  # Easy to test without processes
+
   def create_user(users, next_id, name, email) do
+    # => Takes explicit arguments (not hidden state)
     if valid_email?(email) do
-      user = %{id: next_id, name: name, email: email}
-      new_users = Map.put(users, next_id, user)
-      {{:ok, user}, new_users, next_id + 1}
+      user = %{id: next_id, name: name, email: email}  # => creates user
+      new_users = Map.put(users, next_id, user)  # => updates users map
+      {{:ok, user}, new_users, next_id + 1}  # => returns result, new users, new ID
     else
-      {{:error, :invalid_email}, users, next_id}
+      {{:error, :invalid_email}, users, next_id}  # => error with unchanged state
     end
   end
+  # => PURE function: same inputs always produce same outputs
+  # => Can test with simple assertions (no process spawning)
 
   defp valid_email?(email), do: String.contains?(email, "@")
 end
 
+# GenServer as thin wrapper around pure business logic
 defmodule UserServer do
   use GenServer
 
-  def start_link(_), do: GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
-  def create_user(name, email), do: GenServer.call(__MODULE__, {:create, name, email})
+  # Client API
+  def start_link(_), do: GenServer.start_link(__MODULE__, %{}, name: __MODULE__)  # => {:ok, #PID<...>}
+  def create_user(name, email), do: GenServer.call(__MODULE__, {:create, name, email})  # => calls server
 
+  # Server callbacks
   @impl true
-  def init(_), do: {:ok, %{users: %{}, next_id: 1}}
+  def init(_), do: {:ok, %{users: %{}, next_id: 1}}  # => initial state
 
   @impl true
   def handle_call({:create, name, email}, _from, state) do
-    # Delegate to pure business logic
+    # ✅ Delegate to pure business logic (UserLogic module)
     {reply, new_users, new_next_id} = UserLogic.create_user(state.users, state.next_id, name, email)
-    new_state = %{state | users: new_users, next_id: new_next_id}
-    {:reply, reply, new_state}
+    # => UserLogic is PURE - takes values, returns values (no process magic)
+    new_state = %{state | users: new_users, next_id: new_next_id}  # => reconstructs state from pure results
+    {:reply, reply, new_state}  # => returns to caller
   end
+  # => GenServer handles ONLY concurrency and state management
+  # => UserLogic handles ONLY business rules and validation
+  # => Clear separation of concerns!
 end
+
+# Benefits of this pattern:
+# ✅ Test UserLogic without spawning processes (fast, simple unit tests)
+# ✅ Test UserServer for concurrency bugs (slow, complex integration tests)
+# ✅ Reuse UserLogic in other contexts (web controller, CLI, background job)
+# ✅ Clear separation: GenServer = concurrency, Pure modules = business logic
 ```
 
 **Key Takeaway**: Separate client API from callbacks, use `@impl` for clarity, extract complex logic to private functions, and delegate business logic to pure modules for easier testing. Keep GenServer focused on state management and concurrency.
