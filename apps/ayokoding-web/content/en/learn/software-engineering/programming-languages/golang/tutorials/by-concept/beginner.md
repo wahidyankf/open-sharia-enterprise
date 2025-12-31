@@ -1174,13 +1174,13 @@ sequenceDiagram
     participant Ch as Channel
     participant G2 as Goroutine 2
 
-    Note over G1,G2: Unbuffered Channel (Synchronous)
+    Note over G1,G2: Unbuffered Channel #40;Synchronous#41;
     G1->>Ch: ch <- 42 (blocks until receive)
     Note over G1: Sender waits...
     Ch->>G2: val := <-ch (receives value)
     Note over G1,G2: Both synchronized
 
-    Note over G1,G2: Buffered Channel (Asynchronous)
+    Note over G1,G2: Buffered Channel #40;Asynchronous#41;
     G1->>Ch: ch <- 10 (non-blocking if buffer not full)
     G1->>Ch: ch <- 20 (non-blocking if buffer not full)
     Note over Ch: Buffer: [10, 20]

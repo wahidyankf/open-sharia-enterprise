@@ -727,10 +727,10 @@ Dictionaries store key-value pairs with fast lookup by key. Keys must be immutab
 %% Dictionary operations
 graph TD
     A[Dictionary] --> B{Operation?}
-    B -->|Get Key| C[O(1) Lookup]
-    B -->|Set Key| D[O(1) Insert/Update]
-    B -->|Delete Key| E[O(1) Delete]
-    B -->|Check Key| F[O(1) Membership]
+    B -->|Get Key| C[O#40;1#41; Lookup]
+    B -->|Set Key| D[O#40;1#41; Insert/Update]
+    B -->|Delete Key| E[O#40;1#41; Delete]
+    B -->|Check Key| F[O#40;1#41; Membership]
     C --> G[Return Value or KeyError]
     D --> H[Update Existing or Add New]
     E --> I[Remove Key-Value Pair]

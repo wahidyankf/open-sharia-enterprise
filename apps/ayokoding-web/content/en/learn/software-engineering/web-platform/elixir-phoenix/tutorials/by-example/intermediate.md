@@ -400,8 +400,6 @@ sequenceDiagram
     B->>C: receive("message")
     B->>C: receive("message")
 
-    style S fill:#0173B2
-    style B fill:#029E73
 ```
 
 ```elixir
@@ -946,7 +944,7 @@ Allow users to sign in with Google, GitHub, etc. using Ueberauth library.
 sequenceDiagram
     participant U as User
     participant A as App
-    participant P as Provider (Google)
+    participant P as "Provider (Google)"
 
     U->>A: Click "Login with Google"
     A->>P: Redirect to OAuth consent
@@ -960,8 +958,6 @@ sequenceDiagram
     A->>A: Create/find user
     A->>U: Login complete, redirect
 
-    style A fill:#0173B2
-    style P fill:#029E73
 ```
 
 ```elixir
@@ -1528,8 +1524,6 @@ sequenceDiagram
     Note over C,S: Success
     S->>C: Connection restored
 
-    style S fill:#0173B2
-    style C fill:#029E73
 ```
 
 ```elixir

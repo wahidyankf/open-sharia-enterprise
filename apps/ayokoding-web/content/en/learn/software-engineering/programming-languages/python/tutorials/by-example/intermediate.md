@@ -189,26 +189,23 @@ Context managers handle setup/cleanup automatically using **enter** and **exit**
 ```mermaid
 %% Context manager lifecycle
 sequenceDiagram
-    participant Code as with FileManager as f
-    participant CM as Context Manager
-    participant File as File Resource
+    participant Code as "with FileManager as f"
+    participant CM as "Context Manager"
+    participant File as "File Resource"
 
     Code->>CM: Enter with block
-    CM->>CM: __enter__() called
-    CM->>File: open('data.txt', 'w')
+    CM->>CM: __enter__#40;#41; called
+    CM->>File: open#40;'data.txt', 'w'#41;
     File-->>CM: File object
     CM-->>Code: Return file object to 'f'
 
     Note over Code,File: Code block executes
-    Code->>File: f.write('Hello')
+    Code->>File: f.write#40;'Hello'#41;
 
     Code->>CM: Exit with block
-    CM->>CM: __exit__() called
-    CM->>File: f.close()
+    CM->>CM: __exit__#40;#41; called
+    CM->>File: f.close#40;#41;
     Note over CM,File: Guaranteed cleanup<br/>even on exception
-
-    style CM fill:#0173B2,color:#fff
-    style File fill:#029E73,color:#fff
 ```
 
 ```python
@@ -555,14 +552,14 @@ deque (double-ended queue) provides O(1) append/pop from both ends.
 ```mermaid
 %% Deque double-ended operations
 graph LR
-    A["appendleft(0)<br/>O(1)"] --> B["[0, 1, 2, 3]<br/>deque"]
-    B --> C["append(4)<br/>O(1)"]
+    A["appendleft#40;0#41;<br/>O#40;1#41;"] --> B["#91;0, 1, 2, 3#93;<br/>deque"]
+    B --> C["append#40;4#41;<br/>O#40;1#41;"]
 
-    D["popleft()<br/>O(1)<br/>returns 0"] --> B
-    B --> E["pop()<br/>O(1)<br/>returns 4"]
+    D["popleft#40;#41;<br/>O#40;1#41;<br/>returns 0"] --> B
+    B --> E["pop#40;#41;<br/>O#40;1#41;<br/>returns 4"]
 
-    F["rotate(1)"] --> G["[3, 1, 2]<br/>shift right"]
-    G --> H["rotate(-1)"] --> I["[1, 2, 3]<br/>shift left"]
+    F["rotate#40;1#41;"] --> G["#91;3, 1, 2#93;<br/>shift right"]
+    G --> H["rotate#40;-1#41;"] --> I["#91;1, 2, 3#93;<br/>shift left"]
 
     style A fill:#0173B2,color:#fff
     style C fill:#0173B2,color:#fff

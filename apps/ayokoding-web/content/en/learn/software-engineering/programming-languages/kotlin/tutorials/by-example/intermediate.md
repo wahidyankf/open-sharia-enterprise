@@ -27,17 +27,13 @@ sequenceDiagram
     activate Coroutine
     Coroutine->>Coroutine: println("Starting...")
     Coroutine->>Delay: delay(1000)
-    Note over Coroutine: Suspended<br/>(thread free for other work)
+    Note over Coroutine: Suspended<br/>#40;thread free for other work#41;
     Delay-->>Coroutine: Resume after 1s
     Coroutine->>Coroutine: println("Done")
     deactivate Coroutine
     Scope->>Main: All coroutines complete
     deactivate Scope
 
-    style Main fill:#0173B2,color:#fff
-    style Scope fill:#DE8F05,color:#000
-    style Coroutine fill:#029E73,color:#fff
-    style Delay fill:#CC78BC,color:#000
 ```
 
 ```kotlin
@@ -291,9 +287,6 @@ sequenceDiagram
     Producer->>Channel: close()
     Note over Channel: No more sends allowed
 
-    style Producer fill:#0173B2,color:#fff
-    style Channel fill:#DE8F05,color:#000
-    style Consumer fill:#029E73,color:#fff
 ```
 
 ```kotlin
@@ -359,7 +352,7 @@ sequenceDiagram
     participant Collect as collect { }
 
     Code->>Flow: numbersFlow()
-    Note over Flow: Flow created<br/>(nothing executes yet)
+    Note over Flow: Flow created<br/>#40;nothing executes yet#41;
     Flow-->>Code: Flow<Int> reference
 
     Code->>Collect: flow.collect { }
@@ -374,9 +367,6 @@ sequenceDiagram
     deactivate Flow
     deactivate Collect
 
-    style Code fill:#0173B2,color:#fff
-    style Flow fill:#DE8F05,color:#000
-    style Collect fill:#029E73,color:#fff
 ```
 
 ```kotlin
@@ -931,9 +921,6 @@ sequenceDiagram
     Storage-->>Delegate: Confirm
     Delegate-->>Client: Complete
 
-    style Client fill:#0173B2,color:#fff
-    style Delegate fill:#DE8F05,color:#000
-    style Storage fill:#029E73,color:#fff
 ```
 
 ```kotlin

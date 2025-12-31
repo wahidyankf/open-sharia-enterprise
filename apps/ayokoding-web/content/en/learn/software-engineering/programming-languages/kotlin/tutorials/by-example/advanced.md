@@ -1822,13 +1822,10 @@ sequenceDiagram
     C->>C: Execute
 
     T->>V: currentTime
-    Note over V: Returns 1000 (virtual)
+    Note over V: Returns 1000 #40;virtual#41;
 
     T->>T: assert results
 
-    style T fill:#0173B2,color:#fff
-    style V fill:#029E73,color:#fff
-    style C fill:#DE8F05,color:#000
 ```
 
 ```kotlin

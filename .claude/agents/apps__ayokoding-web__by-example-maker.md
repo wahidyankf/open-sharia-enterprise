@@ -428,6 +428,10 @@ fmt.Println(value)               // => Output: 42
 
 **Comment syntax**: Use `%%` for comments (NOT `%%{ }%%` which causes syntax errors)
 
+**Character escaping**: Escape special characters in node text using HTML entities: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`. Example: `A[O#40;1#41; lookup]` for "O(1) lookup". Prevents "syntax error in text"
+
+**Sequence diagram styling**: Do NOT use `style` commands in `sequenceDiagram` (causes errors). Use `box` syntax for grouping/coloring or switch to `flowchart` for styled diagrams. `style` only works in graph/flowchart types
+
 **Example**:
 
 ```mermaid

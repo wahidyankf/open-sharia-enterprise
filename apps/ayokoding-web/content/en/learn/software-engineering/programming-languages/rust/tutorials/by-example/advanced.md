@@ -1692,12 +1692,12 @@ sequenceDiagram
     Producer->>Channel: send(msg3).await
     Note over Channel: Buffer: 2/3
     Producer->>Channel: send(msg4).await
-    Note over Channel: Buffer: 3/3 (FULL)
+    Note over Channel: Buffer: 3/3 #40;FULL#41;
     Producer->>Channel: send(msg5).await (BLOCKED)
     Note over Producer: Backpressure: waiting
     Consumer->>Channel: recv().await
     Channel-->>Consumer: msg2
-    Note over Channel: Buffer: 2/3 (space available)
+    Note over Channel: Buffer: 2/3 #40;space available#41;
     Channel-->>Producer: send(msg5) completes
     Note over Channel: Buffer: 3/3
 ```
@@ -3385,7 +3385,7 @@ sequenceDiagram
     Scope->>Resource_B: Create second (let b = ...)
     Scope->>Resource_C: Create third (let c = ...)
 
-    Note over Scope: Scope ends (block exit)
+    Note over Scope: Scope ends #40;block exit#41;
 
     Scope->>Resource_C: Drop C first (reverse order)
     Resource_C-->>Scope: Cleanup complete
