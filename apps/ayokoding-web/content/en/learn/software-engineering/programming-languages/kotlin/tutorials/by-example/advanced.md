@@ -860,6 +860,24 @@ tasks.register("printTargets") {
 
 Serialize data classes to JSON with compile-time safety and zero reflection overhead.
 
+```mermaid
+%% kotlinx.serialization compile-time processing
+graph LR
+    A["@Serializable<br/>data class User"] --> B[Compiler Plugin]
+    B --> C[Generated Serializer]
+    C --> D[encodeToString]
+    D --> E["JSON String"]
+    E --> F[decodeFromString]
+    F --> G[User Object]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#000
+    style G fill:#0173B2,color:#fff
+```
+
 ```kotlin
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
@@ -1479,6 +1497,26 @@ fun main() {
 ## Example 70: Performance - Inline Classes (Value Classes)
 
 Use inline classes to eliminate allocation overhead for wrapper types.
+
+```mermaid
+%% Inline class vs regular wrapper allocation
+graph TD
+    subgraph Regular[Regular Wrapper Class]
+        R1[UserId wrapper] --> R2[Heap Object<br/>8 byte header]
+        R2 --> R3[Int field: 4 bytes]
+        R4[Total: 12+ bytes per instance]
+    end
+
+    subgraph Inline[Inline Value Class]
+        I1["@JvmInline<br/>value class UserId"] --> I2[Compiled to: Int]
+        I3[Total: 4 bytes<br/>zero allocation]
+    end
+
+    style R1 fill:#DE8F05,color:#000
+    style R2 fill:#CA9161,color:#000
+    style I1 fill:#0173B2,color:#fff
+    style I2 fill:#029E73,color:#fff
+```
 
 ```kotlin
 @JvmInline
@@ -2660,6 +2698,33 @@ fun main() {
 ## Example 80: Advanced Generics - Variance and Star Projection
 
 Master variance (in/out) and star projection for flexible generic types.
+
+```mermaid
+%% Kotlin variance: covariance and contravariance
+graph TD
+    subgraph Covariance["Covariance (out T)"]
+        CO1["Producer&lt;out Animal&gt;"] --> CO2["Can return:<br/>Producer&lt;Dog&gt;"]
+        CO3[Produces T]
+        CO4["List&lt;out T&gt;"]
+    end
+
+    subgraph Contravariance["Contravariance (in T)"]
+        CN1["Consumer&lt;in Dog&gt;"] --> CN2["Can accept:<br/>Consumer&lt;Animal&gt;"]
+        CN3[Consumes T]
+        CN4["Comparable&lt;in T&gt;"]
+    end
+
+    subgraph Star["Star Projection (*)"]
+        ST1["List&lt;*&gt;"] --> ST2["Read: Any?"]
+        ST1 --> ST3["Write: Nothing"]
+    end
+
+    style CO1 fill:#0173B2,color:#fff
+    style CO2 fill:#029E73,color:#fff
+    style CN1 fill:#DE8F05,color:#000
+    style CN2 fill:#CC78BC,color:#000
+    style ST1 fill:#CA9161,color:#000
+```
 
 ```kotlin
 // Covariance (out) - producer

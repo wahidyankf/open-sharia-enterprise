@@ -143,6 +143,49 @@ The **brief explanation** provides context. The **code** is heavily annotated wi
 
 Mermaid diagrams appear when **visual representation clarifies concept relationships** - showing data flow, object hierarchies, or abstract structures. Not every example needs a diagram; they're used strategically to enhance understanding.
 
+## Learning Strategies
+
+### For Python/JavaScript Developers
+
+You're used to dynamic typing and flexible syntax. Java will feel more structured and verbose:
+
+- **Static typing**: Every variable has a declared type, caught at compile time
+- **Explicit OOP**: Everything lives in classes, no standalone functions
+- **Checked exceptions**: Must handle or declare exceptions explicitly
+
+Focus on Examples 1-10 (types and classes) and Examples 15-20 (exception handling) to build static typing intuition.
+
+### For C/C++ Developers
+
+You understand static typing and compilation. Java simplifies memory management:
+
+- **Garbage collection**: No manual memory management, no pointers
+- **No header files**: Single compilation unit per class
+- **Platform independence**: Write once, run anywhere via JVM
+
+Focus on Examples 51-60 (JVM internals) and Examples 40-45 (concurrency) to leverage your systems knowledge.
+
+### For Kotlin/Scala Developers
+
+You know JVM semantics already. Java shows the foundation:
+
+- **Verbose but explicit**: No type inference, everything declared
+- **No null safety**: Must check nulls manually (or use Optional)
+- **Traditional OOP**: No data classes, extension functions, or coroutines
+
+Focus on Examples 65-75 (modern Java features like records, sealed classes, pattern matching) to see Java catching up.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example compiles and runs in JShell or as standalone classes
+- **Learn by doing**: Understanding comes from running and modifying code
+- **Pattern recognition**: See the same patterns in different contexts across 75 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+
 ## Ready to Start?
 
 Jump into the beginner examples to start learning Java through code:

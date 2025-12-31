@@ -351,6 +351,34 @@ fun main() = runBlocking {
 
 Flow is a cold asynchronous stream that emits values on demand. Unlike channels (hot), flows don't produce values until collected. Flows support backpressure and transformation operators.
 
+```mermaid
+%% Cold Flow execution model showing lazy collection
+sequenceDiagram
+    participant Code as Main Code
+    participant Flow as Flow Builder
+    participant Collect as collect { }
+
+    Code->>Flow: numbersFlow()
+    Note over Flow: Flow created<br/>(nothing executes yet)
+    Flow-->>Code: Flow<Int> reference
+
+    Code->>Collect: flow.collect { }
+    activate Collect
+    Collect->>Flow: Start execution
+    activate Flow
+    Flow->>Flow: emit(1)
+    Flow->>Collect: value 1
+    Collect->>Collect: process value
+    Flow->>Flow: emit(2)
+    Flow->>Collect: value 2
+    deactivate Flow
+    deactivate Collect
+
+    style Code fill:#0173B2,color:#fff
+    style Flow fill:#DE8F05,color:#000
+    style Collect fill:#029E73,color:#fff
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -486,6 +514,31 @@ fun main() = runBlocking {
 ## Example 35: StateFlow and SharedFlow for Hot Streams
 
 `StateFlow` holds a single state value with initial state; subscribers get current state immediately. `SharedFlow` broadcasts events to all collectors without state retention.
+
+```mermaid
+%% StateFlow vs SharedFlow comparison showing hot stream behavior
+graph TD
+    subgraph StateFlow
+        SF1[MutableStateFlow<br/>initial value: 0] --> SFC1[Collector 1]
+        SF1 --> SFC2[Collector 2]
+        SFU[update value] --> SF1
+        Note1[New collectors get<br/>current state immediately]
+    end
+
+    subgraph SharedFlow
+        SHF1[MutableSharedFlow] --> SHFC1[Collector 1]
+        SHF1 --> SHFC2[Collector 2]
+        SHE[emit event] --> SHF1
+        Note2[No state retention<br/>events broadcasted]
+    end
+
+    style SF1 fill:#0173B2,color:#fff
+    style SFC1 fill:#029E73,color:#fff
+    style SFC2 fill:#029E73,color:#fff
+    style SHF1 fill:#DE8F05,color:#000
+    style SHFC1 fill:#CC78BC,color:#000
+    style SHFC2 fill:#CC78BC,color:#000
+```
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -691,6 +744,31 @@ fun main() {
 ## Example 38: Sequences for Lazy Evaluation
 
 Sequences compute elements lazily, avoiding intermediate collection creation. Use sequences for multi-step transformations on large collections.
+
+```mermaid
+%% Eager vs Lazy evaluation comparison
+graph LR
+    subgraph Eager[Eager - List Operations]
+        E1[1M elements] --> EM[map: 1M list created]
+        EM --> EF[filter: 1M list created]
+        EF --> ET[take 5: final list]
+    end
+
+    subgraph Lazy[Lazy - Sequence Operations]
+        L1[element 1] --> LM1[map]
+        LM1 --> LF1[filter]
+        LF1 --> LT1[take if matches]
+        LT1 --> LR1[result]
+    end
+
+    style E1 fill:#DE8F05,color:#000
+    style EM fill:#CA9161,color:#000
+    style EF fill:#CA9161,color:#000
+    style L1 fill:#0173B2,color:#fff
+    style LM1 fill:#029E73,color:#fff
+    style LF1 fill:#029E73,color:#fff
+    style LR1 fill:#029E73,color:#fff
+```
 
 ```kotlin
 fun main() {
@@ -1123,6 +1201,27 @@ fun main() {
 ## Example 44: DSL Building with Lambda with Receiver
 
 Create type-safe DSLs using lambda with receiver. The receiver provides implicit `this` context within the lambda.
+
+```mermaid
+%% DSL builder pattern with lambda receivers
+graph TD
+    A[html { }] --> B[HTML instance created]
+    B --> C[head { }]
+    C --> D[Head instance as receiver]
+    D --> E[title = set property]
+    B --> F[body { }]
+    F --> G[Body instance as receiver]
+    G --> H[h1 call method]
+    G --> I[p call method]
+    G --> J[ul { } nested DSL]
+    J --> K[UL instance as receiver]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+    style K fill:#CC78BC,color:#000
+```
 
 ```kotlin
 class HTML {

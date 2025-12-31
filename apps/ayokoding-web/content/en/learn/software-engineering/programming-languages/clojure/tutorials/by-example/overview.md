@@ -20,45 +20,58 @@ This tutorial teaches Clojure through **80 heavily annotated, runnable code exam
 - **Self-contained examples**: Copy-paste-run without cross-referencing
 - **Production patterns**: Real-world usage, not toy examples
 
-## What You'll Learn
+## Learning Path
 
-### Beginner (Examples 1-27, 0-40% coverage)
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["Beginner<br/>Examples 1-27<br/>Clojure Fundamentals"] --> B["Intermediate<br/>Examples 28-54<br/>Production Patterns"]
+    B --> C["Advanced<br/>Examples 55-80<br/>Expert Mastery"]
 
-Clojure fundamentals and core syntax:
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+```
 
-- Immutable data structures (lists, vectors, maps, sets)
-- Functions and higher-order functions
-- Let bindings and destructuring
-- Sequence operations (map, filter, reduce)
-- Namespaces and require
-- Basic Java interop
-- REPL workflow
+Progress from Lisp fundamentals through production patterns to expert mastery. Each level builds on the previous, with immutability and functional thinking as the critical foundation.
 
-### Intermediate (Examples 28-54, 40-75% coverage)
+## Coverage Philosophy
 
-Production patterns and ecosystem:
+This tutorial provides **95% coverage of Clojure** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
-- Multimethods and protocols
-- Macros basics
-- State management (atoms, refs, agents)
-- Software Transactional Memory (STM)
-- core.async channels
-- clojure.spec validation
-- Testing with clojure.test
-- Project structure (deps.edn, Leiningen)
+### What's Covered
 
-### Advanced (Examples 55-80, 75-95% coverage)
+- **Core syntax** - S-expressions, special forms, data literals
+- **Immutable data structures** - Lists, vectors, maps, sets, keywords, symbols
+- **Functions** - defn, fn, higher-order functions, closures
+- **Sequence abstraction** - map, filter, reduce, lazy sequences
+- **State management** - Atoms, refs, agents, Software Transactional Memory
+- **Concurrency** - core.async channels, futures, promises
+- **Macros** - quote/unquote, macro definitions, code generation
+- **Protocols and multimethods** - Polymorphism without classes
+- **clojure.spec** - Runtime validation and generative testing
+- **Java interop** - Calling Java, implementing interfaces
+- **Testing** - clojure.test, property-based testing
 
-Expert mastery and optimization:
+### What's NOT Covered
 
-- Advanced macros and code generation
-- Transducers and performance
-- Reducers for parallelism
-- Metadata and type hints
-- Java interop patterns
-- Performance profiling
-- Testing strategies
-- Production deployment
+This guide focuses on **learning-oriented examples**, not problem-solving recipes or production deployment. For additional topics:
+
+- **ClojureScript specifics** - Browser/Node.js runtime (separate tutorial)
+- **Compiler internals** - Reader, analyzer, bytecode generation
+- **Rare macros and special forms** - Obscure language corners
+- **Platform-specific edge cases** - JVM version quirks
+- **Specialized libraries** - Datascript, Datomic internals
+
+The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
+
+## Tutorial Structure
+
+**80 examples across three levels**:
+
+- **Beginner** (Examples 1-27, 0-40% coverage): Clojure fundamentals - immutable data, functions, sequences, REPL workflow
+- **Intermediate** (Examples 28-54, 40-75% coverage): Production patterns - multimethods, protocols, macros, state management, core.async
+- **Advanced** (Examples 55-80, 75-95% coverage): Expert mastery - advanced macros, transducers, reducers, performance, Java interop patterns
 
 ## How to Use This Tutorial
 
@@ -196,6 +209,59 @@ Every significant line has an inline comment with `;; =>` notation showing value
 
 Core insight distilled: When to use this pattern, common pitfalls to avoid.
 
+## Learning Strategies
+
+### For Java Developers
+
+You're used to OOP and static typing. Clojure runs on JVM but thinks differently:
+
+- **Data over objects**: Maps, vectors, and sets replace classes and objects
+- **Functions over methods**: Pure functions transform data, no hidden state
+- **REPL-driven development**: Interactive coding replaces compile-run-debug cycles
+
+Focus on Examples 1-15 (data structures) and Examples 28-35 (Java interop) to bridge your JVM knowledge.
+
+### For JavaScript Developers
+
+You understand dynamic typing and functional patterns. Clojure deepens functional programming:
+
+- **True immutability**: Data structures never change, persistent data structures share structure
+- **Lisp syntax**: Prefix notation `(+ 1 2)` instead of infix `1 + 2`
+- **Macros**: Code that writes code, extending the language itself
+
+Focus on Examples 5-15 (core functions) and Examples 55-65 (macros) to leverage your JS functional knowledge.
+
+### For Python Developers
+
+You know dynamic typing and readable syntax. Clojure trades readability for power:
+
+- **Parentheses everywhere**: Lisp syntax feels strange at first, becomes natural
+- **No statements**: Everything is an expression that returns a value
+- **Concurrency primitives**: Atoms, refs, and agents for managing shared state
+
+Focus on Examples 1-10 (syntax basics) and Examples 40-50 (state management) to adjust your mental model.
+
+### For Haskell/Scala Developers
+
+You know functional programming. Clojure is practical FP on the JVM:
+
+- **Dynamic typing**: No type system, but clojure.spec for runtime validation
+- **Pragmatic purity**: Side effects allowed, but immutability enforced by default
+- **Lisp heritage**: Homoiconicity enables powerful metaprogramming
+
+Focus on Examples 45-55 (protocols and multimethods) and Examples 60-70 (advanced macros) to see Clojure's unique features.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example runs in the REPL or as scripts
+- **Learn by doing**: Understanding comes from running and modifying code
+- **Pattern recognition**: See the same patterns in different contexts across 80 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+
 ## Example Format
 
 Here's what every example looks like:
@@ -258,4 +324,4 @@ graph LR
 
 Start with [Beginner](/en/learn/software-engineering/programming-languages/clojure/tutorials/by-example/beginner) if you're new to Clojure, or jump to [Intermediate](/en/learn/software-engineering/programming-languages/clojure/tutorials/by-example/intermediate) if you know the basics.
 
-Happy learning! 🚀
+Happy learning!

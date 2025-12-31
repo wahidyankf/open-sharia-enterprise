@@ -61,17 +61,17 @@ This by-example guide provides **95% coverage of Go** through practical, annotat
 - **Modern Go features** - Generics (Go 1.18+), embed directive (Go 1.16+), fuzzing (Go 1.18+), workspaces (Go 1.18+)
 - **Advanced tools** - Reflection, CGO, build tags, custom sorting, dependency injection, memory profiling, race detector
 
-## What This Tutorial Does NOT Cover
+### What's NOT Covered
 
-**Framework-Specific Content**: Gin, Echo, Chi, or other web frameworks - this covers the standard library foundation you need to understand any framework
+This guide focuses on **learning-oriented examples**, not problem-solving recipes or production deployment. For additional topics:
 
-**Database Drivers**: SQL, MongoDB, or other database packages - driver APIs vary; learn the standard library patterns instead
+- **Framework-specific content** - Gin, Echo, Chi (standard library foundation taught here applies to all frameworks)
+- **Database drivers** - SQL, MongoDB packages (driver APIs vary, learn standard library patterns instead)
+- **Deployment and DevOps** - Docker, Kubernetes, cloud deployment (infrastructure beyond the language)
+- **Go internals** - Scheduler algorithms, garbage collector internals, memory layout
+- **Ecosystem tools** - Profiling tools beyond `pprof`, code generation tools, specialized libraries
 
-**Deployment and DevOps**: Docker, Kubernetes, cloud deployment - these are infrastructure concerns beyond the language
-
-**Go Internals**: Scheduler algorithms, garbage collector internals, memory layout - these are advanced runtime topics
-
-**Ecosystem Tools**: Profiling tools beyond `pprof`, code generation tools, or specialized libraries - focus on language fundamentals
+The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
 
 ## How to Use This Guide
 
@@ -120,11 +120,64 @@ The 95% coverage represents depth and breadth of topics you'll encounter in prod
 
 You don't need to understand Go's internals, philosophy, or ecosystem yet - this tutorial teaches those through examples. You just need comfort reading and running code.
 
+## Learning Strategies
+
+### For Python/JavaScript Developers
+
+You're used to dynamic typing and flexible syntax. Go will feel more structured but simpler than Java:
+
+- **Static typing with inference**: Types are checked at compile time, but `var` and `:=` reduce verbosity
+- **No classes**: Use structs and methods instead of OOP inheritance
+- **Explicit error handling**: No exceptions, check returned `error` values
+
+Focus on Examples 5-12 (types and structs) and Examples 20-25 (error handling) to build Go intuition.
+
+### For Java/C# Developers
+
+You understand static typing and OOP. Go simplifies and changes the paradigm:
+
+- **Composition over inheritance**: Embed structs instead of extending classes
+- **Interfaces are implicit**: No `implements` keyword, just satisfy the method set
+- **No generics complexity**: Generics added in Go 1.18, simpler than Java's
+
+Focus on Examples 15-20 (interfaces) and Examples 31-40 (goroutines and channels) to leverage your OOP knowledge.
+
+### For C/C++ Developers
+
+You understand pointers and systems programming. Go modernizes the experience:
+
+- **Garbage collection**: No manual memory management, but pointers exist
+- **Goroutines vs threads**: Lightweight concurrency without thread management
+- **Built-in tooling**: `go fmt`, `go test`, `go build` standardize workflow
+
+Focus on Examples 55-65 (unsafe code, CGO) and Examples 70-80 (performance profiling) to apply systems knowledge.
+
+### For Rust Developers
+
+You know ownership and systems programming. Go trades safety for simplicity:
+
+- **GC instead of ownership**: No borrow checker, runtime handles memory
+- **Simpler concurrency**: Goroutines and channels vs async/await
+- **Faster compilation**: Near-instant builds for rapid iteration
+
+Focus on Examples 31-50 (concurrency patterns) to see Go's approach to safe concurrent programming.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example compiles and runs with `go run`
+- **Learn by doing**: Understanding comes from running and modifying code
+- **Pattern recognition**: See the same patterns in different contexts across 85 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+
 ## Comparison with By-Example for Other Languages
 
 Other languages at ayokoding.com have similar by-example tutorials:
 
-- **Java By-Example**: 75-90 examples covering OOP, streams, concurrency, JVM patterns
-- **Elixir By-Example**: 75-90 examples covering functional programming, pattern matching, concurrency, OTP
+- **Java By-Example**: 75 examples covering OOP, streams, concurrency, JVM patterns
+- **Elixir By-Example**: 90 examples covering functional programming, pattern matching, concurrency, OTP
 
 The Go version follows the same philosophy and structure but emphasizes Go-specific strengths: simplicity, concurrency, static compilation, and the extensive standard library.
