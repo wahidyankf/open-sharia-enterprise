@@ -94,7 +94,7 @@ Systematically verify internal consistency, cross-document alignment, factual co
 **CRITICAL - Five Core Validation Rules**:
 
 1. **Vision Existence and Structure**: Validate that vision documents exist in `docs/explanation/vision/` with proper structure (WHY we exist, WHAT change we seek, WHO we serve, success vision)
-2. **Vision Support in Principles**: Validate ALL principle documents have mandatory "Vision Supported" section using flexible pattern ("## Vision Supported" OR "## 🌟 Vision Supported" OR any "## .*Vision Supported" variant) explaining HOW the principle serves the vision
+2. **Vision Support in Principles**: Validate ALL principle documents have mandatory "Vision Supported" section using flexible pattern ("## Vision Supported" OR "## 🌟 Vision Supported" OR any "## .\*Vision Supported" variant) explaining HOW the principle serves the vision
 3. **Unlimited Token Budget**: Validate that AI Agents Convention and Workflow Pattern Convention document unlimited token budget mindset (quality over efficiency)
 4. **Principles Traceability in Conventions**: Validate ALL convention documents have mandatory "Principles Implemented/Respected" section
 5. **Principles and Conventions Traceability in Development**: Validate ALL development documents have BOTH "Principles Respected" and "Conventions Implemented/Respected" sections
@@ -171,6 +171,8 @@ Validate that `docs/explanation/ex__repository-governance-architecture.md` is ac
 - [ ] All principle files have proper frontmatter (title, description, category, subcategory, tags, created, updated)
 - [ ] Subcategory field is `principles` (not `principle`)
 - [ ] **CRITICAL**: ALL principle documents have "Vision Supported" section using flexible pattern matching ("## Vision Supported", "## 🌟 Vision Supported", or any H2 heading containing "Vision Supported") explaining HOW the principle serves the vision
+  - Validate using: `find docs/explanation/principles -name "ex-pr-*.md" -exec grep -l "Vision Supported" {} + | wc -l` (should return 10)
+  - Alternative check: `grep -l "Vision Supported" docs/explanation/principles/{general,content,software-engineering}/*.md | wc -l`
 - [ ] Vision Supported section includes link to vision document
 - [ ] Vision Supported section explains concrete ways the principle enables the vision
 - [ ] Vision Supported section positioned BEFORE the main "What" section
