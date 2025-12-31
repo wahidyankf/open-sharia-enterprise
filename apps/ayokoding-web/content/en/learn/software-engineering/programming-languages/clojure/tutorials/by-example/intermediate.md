@@ -217,7 +217,7 @@ stateDiagram-v2
     atom_0 --> atom_1: swap! inc
     atom_1 --> atom_6: swap! + 5
     atom_6 --> atom_0: reset! 0
-    atom_0 --> complex: Create #123;:users #91;#93; :count 0#125;
+    atom_0 --> complex: Create {:users [] :count 0}
     complex --> updated: swap! update :count inc
     updated --> final: swap! update :users conj
 
