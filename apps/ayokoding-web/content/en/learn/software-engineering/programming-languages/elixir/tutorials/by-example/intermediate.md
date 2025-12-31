@@ -5449,55 +5449,193 @@ Runtime configuration loads settings when the application starts (not compile ti
 
 ```elixir
 # config/runtime.exs - runs at application startup
+# => File location: config/runtime.exs (Mix convention)
+# => Executed: at application startup (runtime, not compile time)
+# => Purpose: load secrets, environment variables, production config
+# => Difference from config.exs: config.exs runs at compile time
+# => WARNING: config.exs baked into release (don't put secrets there!)
 import Config
+# => import Config: imports config/2 macro
+# => Enables: config/2, config/3 functions
+# => Required at top of all config files
 
 config :my_app,
+  # => config/2: configures application :my_app
+  # => Sets key-value pairs in application environment
+  # => Reads at runtime: Application.get_env/2
   secret_key: System.get_env("SECRET_KEY") || raise("SECRET_KEY not set"),
+  # => secret_key: reads SECRET_KEY environment variable
+  # => System.get_env/1: returns env var value or nil
+  # => Environment variable: set in shell (export SECRET_KEY=abc123)
+  # => || raise: if nil, raises error (required config)
+  # => raise/1: raises RuntimeError with message
+  # => Application won't start without SECRET_KEY
+  # => Pattern: fail fast on missing required config
   database_url: System.get_env("DATABASE_URL") || raise("DATABASE_URL not set"),
+  # => database_url: database connection string
+  # => Example: postgres://user:pass@localhost/myapp_prod
+  # => Required in production (raises if not set)
   port: String.to_integer(System.get_env("PORT") || "4000")
+  # => port: HTTP port number
+  # => System.get_env("PORT"): reads PORT env var (string or nil)
+  # => || "4000": default to "4000" if PORT not set
+  # => String.to_integer/1: converts "4000" → 4000 (integer)
+  # => Type conversion required (env vars always strings)
+# => config/2 complete: all values stored in application environment
 
 if config_env() == :prod do
+  # => config_env/0: returns current environment (:dev, :test, :prod)
+  # => Set by: MIX_ENV=prod (shell variable)
+  # => Guards: conditional config for specific environments
+  # => Production-only config (not in dev/test)
   config :my_app, MyApp.Repo,
+    # => config/3: configures specific key (:my_app app, MyApp.Repo key)
+    # => Pattern: app-level config (config/2) vs module-level (config/3)
+    # => Ecto repos use module-level config
     url: System.get_env("DATABASE_URL"),
+    # => url: database URL for Ecto
+    # => Overrides database_url from config/2 above
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+    # => pool_size: database connection pool size
+    # => Default: 10 connections
+    # => Production: scale based on server capacity
+    # => POOL_SIZE=20 for high-traffic servers
 end
+# => Production config complete (only runs in prod environment)
 
 # Application reads runtime config
 defmodule MyApp.Application do
+  # => Application module reading runtime config
   use Application
 
   def start(_type, _args) do
-    port = Application.get_env(:my_app, :port)  # => From runtime.exs
+    # => start/2: application callback
+    # => Reads config set in runtime.exs above
+    port = Application.get_env(:my_app, :port)
+    # => Application.get_env/2: reads config value
+    # => :my_app - application name
+    # => :port - config key
+    # => Returns: value set in runtime.exs (4000 or PORT env var)
+    # => From runtime.exs
+    # => nil if key doesn't exist (use get_env/3 with default)
     secret = Application.get_env(:my_app, :secret_key)
+    # => Reads secret_key from runtime config
+    # => Value: SECRET_KEY environment variable
+    # => Set at application startup (not compile time)
 
     IO.puts("Starting on port #{port}")
+    # => Debug message with runtime config value
+    # => Example: "Starting on port 4000"
 
     children = [
+      # => Child specs with runtime config
       {MyApp.Server, port: port, secret: secret}
+      # => Passes runtime config to child process
+      # => port: dynamic value from environment
+      # => secret: loaded at runtime (not baked into release)
+      # => Pattern: runtime config → application → children
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one)
+    # => Starts supervision tree with configured children
   end
+  # => start/2 complete
 end
+# => Application reads runtime config successfully
 
 # Helper module for config access
 defmodule MyApp.Config do
+  # => Config accessor module: centralizes config access
+  # => Pattern: single source of truth for config keys
+  # => Benefits: type safety, defaults, error handling
   def port, do: Application.get_env(:my_app, :port, 4000)
-  def secret_key, do: Application.fetch_env!(:my_app, :secret_key)  # => Raises if missing
+  # => port/0: returns port with default
+  # => Application.get_env/3: third arg is default (4000)
+  # => Returns: configured port or 4000 if not set
+  # => Pattern: always provide defaults for optional config
+  def secret_key, do: Application.fetch_env!(:my_app, :secret_key)
+  # => secret_key/0: returns secret_key or raises
+  # => Application.fetch_env!/2: raises if key missing
+  # => ! : bang version (raises on error)
+  # => Raises if missing
+  # => Pattern: required config uses fetch_env! (fail fast)
   def database_url, do: Application.fetch_env!(:my_app, :database_url)
+  # => database_url/0: required config (raises if missing)
+  # => Production: DATABASE_URL must be set or app won't start
 
   def timeout, do: Application.get_env(:my_app, :timeout, 5000)
+  # => timeout/0: optional config with default
+  # => Default: 5000ms (5 seconds)
+  # => Can be overridden in config files
 end
+# => MyApp.Config complete
+# => Usage: MyApp.Config.port() instead of Application.get_env(...)
 
 # Compile-time vs Runtime config
 # config/config.exs (compile time - DON'T use for secrets)
+# => File: config/config.exs
+# => Execution: compile time (when running mix compile)
+# => Problem: values baked into compiled release
+# => Security risk: secrets in source code → release file
+# => Use for: defaults, non-secret values
 config :my_app,
-  default_locale: "en",  # => OK - not secret
+  # => Compile-time config (SAFE for non-secrets)
+  default_locale: "en",
+  # => OK - not secret
+  # => Hardcoded value (same for all environments)
+  # => No security risk (public information)
   api_version: "v1"
+  # => Version number (public information)
+  # => Safe to commit to version control
 
 # config/runtime.exs (runtime - USE for secrets)
+# => File: config/runtime.exs
+# => Execution: runtime (when application starts)
+# => Benefit: reads environment variables at startup
+# => Security: secrets not in source code or release
+# => Pattern: 12-factor app (config in environment)
 config :my_app,
-  api_key: System.get_env("API_KEY")  # => OK - loaded at runtime
+  # => Runtime config (SAFE for secrets)
+  api_key: System.get_env("API_KEY")
+  # => OK - loaded at runtime
+  # => System.get_env/1: reads environment variable
+  # => API_KEY: set on production server (not in source code)
+  # => Value changes without recompiling
+  # => Pattern: production server sets API_KEY=xyz123
+# => Runtime config complete
+
+# Config precedence
+# 1. runtime.exs (highest priority, runtime)
+# => Overrides all other config files
+# => Last to execute (startup time)
+# 2. prod.exs/dev.exs/test.exs (environment-specific, compile time)
+# => Overrides config.exs
+# => Selected by MIX_ENV
+# 3. config.exs (lowest priority, compile time)
+# => Base configuration
+# => First to execute (compile time)
+# => Pattern: config.exs (defaults) → env.exs (overrides) → runtime.exs (final overrides)
+
+# Reading config in different ways
+Application.get_env(:my_app, :port)
+# => Returns: value or nil (if key doesn't exist)
+# => Safe for optional config
+
+Application.get_env(:my_app, :port, 4000)
+# => Returns: value or default (4000)
+# => Pattern: always provide defaults for optional config
+
+Application.fetch_env!(:my_app, :secret_key)
+# => Returns: value or raises ArgumentError
+# => Pattern: required config (fail fast if missing)
+
+Application.fetch_env(:my_app, :secret_key)
+# => Returns: {:ok, value} or :error
+# => Pattern: match on result for error handling
+# => case Application.fetch_env(...) do
+# =>   {:ok, value} -> use value
+# =>   :error -> handle missing config
+# => end
 ```
 
 **Key Takeaway**: Use `config/runtime.exs` for environment-dependent configuration and secrets. Runtime config loads when app starts, not at compile time. Never commit secrets to `config.exs`—use environment variables in `runtime.exs`.
