@@ -3266,74 +3266,139 @@ graph TD
 **Code**:
 
 ```elixir
+# Basic binary pattern matching (default 8-bit bytes)
 <<a, b, c>> = <<1, 2, 3>>
+# => Pattern matches 3 bytes from binary
+# => Default size: 8 bits per segment (1 byte)
 a  # => 1
 b  # => 2
 c  # => 3
 
+# Explicit size specification (equivalent to above)
 <<a::8, b::8, c::8>> = <<1, 2, 3>>
+# => ::8 explicitly specifies 8-bit size
+# => a::8 means "bind a to an 8-bit integer"
 a  # => 1
+# => Same result as default (8 bits)
 
+# Multi-byte integers (16-bit segments)
 <<x::16, y::16>> = <<0, 1, 0, 2>>
+# => x::16 reads 2 bytes as single 16-bit integer
+# => Bytes: [0, 1] → integer 1 (big-endian by default)
+# => Bytes: [0, 2] → integer 2
 x  # => 1 (00000001 in 16 bits)
 y  # => 2
+# => Big-endian: most significant byte first
 
+# Rest pattern (capture remaining bytes)
 <<first, second, rest::binary>> = <<1, 2, 3, 4, 5>>
+# => first, second: 8-bit integers (default)
+# => rest::binary: remaining bytes as binary
 first  # => 1
 second  # => 2
 rest  # => <<3, 4, 5>>
+# => ::binary type captures rest as binary (not integer list)
 
+# Parse IP address (4 bytes to dotted decimal)
 ip = <<192, 168, 1, 1>>
 <<a::8, b::8, c::8, d::8>> = ip
+# => Destructures 4 bytes into 4 integers
 "#{a}.#{b}.#{c}.#{d}"  # => "192.168.1.1"
+# => String interpolation converts to readable format
 
+# Parse RGB color (3-byte pattern)
 color = <<213, 45, 132>>
 <<r::8, g::8, b::8>> = color
+# => r = red (213), g = green (45), b = blue (132)
 {r, g, b}  # => {213, 45, 132}
+# => Tuple of RGB components
 
+# Type specifiers (integer, float, binary)
 <<i::integer, f::float, b::binary>> = <<42, 3.14::float, "hello">>
+# => i::integer - default 8-bit integer (42)
+# => f::float - 64-bit float (default float size)
+# => b::binary - remaining bytes as binary string
+# => Must construct with matching types
 
+# Signedness (signed vs unsigned integers)
 <<signed::signed, unsigned::unsigned>> = <<-1, 255>>
+# => ::signed interprets byte as two's complement (-128 to 127)
+# => ::unsigned interprets byte as 0-255
 signed  # => -1
+# => Byte 255 (0xFF) as signed = -1 (two's complement)
 unsigned  # => 255
+# => Byte 255 (0xFF) as unsigned = 255
 
+# Endianness (byte order)
 <<big::16-big, little::16-little>> = <<1, 2, 3, 4>>
+# => ::big (big-endian): most significant byte first
+# => ::little (little-endian): least significant byte first
 big  # => 258 (big-endian)
+# => Bytes [1, 2] → (1 * 256) + 2 = 258
 little  # => 1027 (little-endian)
+# => Bytes [3, 4] → (4 * 256) + 3 = 1027
 
+
+
+# Protocol packet parsing (custom binary format)
 defmodule Packet do
   def parse(<<
-    version::4,
-    header_length::4,
-    type::8,
-    length::16,
-    rest::binary
+    version::4,        # => 4 bits for version field
+    header_length::4,  # => 4 bits for header length
+    type::8,           # => 8 bits (1 byte) for packet type
+    length::16,        # => 16 bits (2 bytes) for payload length
+    rest::binary       # => Remaining bytes as payload
   >>) do
+    # => Function head: pattern matches binary structure
+    # => Total header: 4 + 4 + 8 + 16 = 32 bits (4 bytes)
     %{
-      version: version,
-      header_length: header_length,
-      type: type,
-      length: length,
-      payload: rest
+      version: version,           # => Extract version nibble (0-15)
+      header_length: header_length,  # => Extract header length nibble
+      type: type,                 # => Extract type byte
+      length: length,             # => Extract length word
+      payload: rest               # => Remaining data
     }
   end
+  # => Enables parsing custom binary protocols (network packets, file headers)
 end
 
+# Construct and parse packet
 packet = <<4::4, 5::4, 6::8, 100::16, "payload">>
+# => Construct binary: 4 (4 bits), 5 (4 bits), 6 (8 bits), 100 (16 bits), string
+# => Total: 1 byte header + 2 bytes length + 7 bytes payload = 10 bytes
 Packet.parse(packet)
+# => %{version: 4, header_length: 5, type: 6, length: 100, payload: "payload"}
+# => Parses structured binary into map
 
+# UTF-8 codepoint extraction
 <<codepoint::utf8, rest::binary>> = "Hello"
+# => ::utf8 reads variable-length UTF-8 character (1-4 bytes)
+# => "H" is 1 byte in UTF-8: 72 (ASCII)
 codepoint  # => 72 (H)
+# => Unicode codepoint (not byte value - coincidentally same for ASCII)
 <<codepoint::utf8>>  # => "H"
+# => Reconstruct UTF-8 character from codepoint
 
+# Binary construction (size specifiers)
 <<1, 2, 3>>  # => <<1, 2, 3>>
+# => Default 8 bits per value: 3 bytes total
 <<1::16, 2::16>>  # => <<0, 1, 0, 2>>
+# => 16 bits per value: 4 bytes total
+# => 1 as 16-bit big-endian: [0, 1]
+# => 2 as 16-bit big-endian: [0, 2]
 <<255::8, 128::8>>  # => <<255, 128>>
+# => Explicit 8-bit size (same as default)
 
+# Bit-level pattern matching (sub-byte precision)
 <<a::1, b::1, c::6>> = <<128>>
+# => Byte 128 = binary 10000000
+# => a::1 = first bit = 1
+# => b::1 = second bit = 0
+# => c::6 = remaining 6 bits = 000000 = 0
 a  # => 1 (first bit)
 b  # => 0 (second bit)
 c  # => 0 (remaining 6 bits)
+# => Enables parsing bit flags, packed data structures
 ```
 
 **Key Takeaway**: Bitstrings enable precise binary pattern matching with size (`::8`), type (`::integer`, `::float`, `::binary`), signedness, and endianness control. Use for parsing binary protocols, file formats, and low-level data.

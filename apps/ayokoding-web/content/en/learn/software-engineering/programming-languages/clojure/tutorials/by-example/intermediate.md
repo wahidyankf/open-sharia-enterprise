@@ -570,26 +570,29 @@ Define specs for function arguments and return values.
 
 Transducers compose transformations without creating intermediate collections.
 
+**Regular Sequences (Creates Intermediates):**
+
 ```mermaid
-%% Transducer vs regular sequence operations
 graph TD
-    subgraph Regular Sequences
     R1[range 10] --> R2[map inc]
     R2 --> R3[Lazy Seq 1]
     R3 --> R4[filter even?]
     R4 --> R5[Lazy Seq 2]
     R5 --> R6[Final Result]
-    end
 
-    subgraph Transducers
+    style R3 fill:#CA9161,color:#000
+    style R5 fill:#CA9161,color:#000
+```
+
+**Transducers (Single Pass, No Intermediates):**
+
+```mermaid
+graph TD
     T1[range 10] --> TX[Transducer comp]
     TX --> T2[map inc + filter even?]
     T2 --> T3[Single Pass]
     T3 --> T4[Final Result]
-    end
 
-    style R3 fill:#CA9161,color:#000
-    style R5 fill:#CA9161,color:#000
     style TX fill:#029E73,color:#fff
     style T2 fill:#0173B2,color:#fff
     style T3 fill:#DE8F05,color:#000
