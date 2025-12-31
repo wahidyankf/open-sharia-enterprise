@@ -109,9 +109,7 @@ String nullStr = null; // => null (OK for reference types)
 
 **Key Takeaway**: Java distinguishes primitives (value stored directly) from reference types (value stored on heap). `var` reduces boilerplate while maintaining compile-time type safety. Primitives have default values; references default to `null`.
 
-**Why It Matters**: Understanding this concept is essential for production Java development, where variables and type system impacts code quality, maintainability, and performance. This pattern is commonly used in enterprise systems, frameworks, and libraries throughout the Java ecosystem. Mastering it enables writing more robust, efficient, and maintainable code that scales in production environments.
-
-**Why This Matters**: The stack vs heap distinction directly impacts performance and memory management. Primitives on the stack are allocated and freed instantly when methods return (~nanoseconds), making them ideal for high-performance computations. Heap-allocated objects require garbage collection cycles, adding overhead but enabling flexible object lifecycles and sharing across scopes. Stack space is limited (~1MB per thread by default), so large data structures must use the heap. This design enables Java to balance raw performance (primitives) with object-oriented flexibility (references), allowing you to choose the right tool for each scenario.
+**Why It Matters**: The stack vs heap distinction directly impacts performance and memory management. Primitives on the stack are allocated and freed instantly when methods return (~nanoseconds), making them ideal for high-performance computations. Heap-allocated objects require garbage collection cycles, adding overhead but enabling flexible object lifecycles and sharing across scopes. Stack space is limited (~1MB per thread by default), so large data structures must use the heap. This design enables Java to balance raw performance (primitives) with object-oriented flexibility (references), allowing you to choose the right tool for each scenario.
 
 ---
 
@@ -447,7 +445,7 @@ int unwrapped = wrapped.intValue(); // => 100 (explicit unboxing)
 
 **Key Takeaway**: Java provides comprehensive operators for primitives. Strings are immutable—operations create new strings. Use `StringBuilder` for efficient repeated modifications. Autoboxing converts primitives to objects automatically for collections and generics.
 
-**Why This Matters**: String immutability enables **thread safety** and **string interning**. Multiple threads can safely share string references without synchronization because strings cannot change—eliminating data races. The JVM interns identical string literals (stores one copy in memory), reducing memory footprint. However, immutability means string concatenation in loops creates many temporary objects, causing garbage collection pressure. Use `StringBuilder` when building strings iteratively (e.g., in loops) to avoid this overhead. The `+` operator is fine for simple concatenation, but repeated operations should use `StringBuilder` for O(n) instead of O(n²) performance.
+**Why It Matters**: String immutability enables **thread safety** and **string interning**. Multiple threads can safely share string references without synchronization because strings cannot change—eliminating data races. The JVM interns identical string literals (stores one copy in memory), reducing memory footprint. However, immutability means string concatenation in loops creates many temporary objects, causing garbage collection pressure. Use `StringBuilder` when building strings iteratively (e.g., in loops) to avoid this overhead. The `+` operator is fine for simple concatenation, but repeated operations should use `StringBuilder` for O(n) instead of O(n²) performance.
 
 ---
 
@@ -788,9 +786,7 @@ public class Base {
 
 **Key Takeaway**: Inheritance (`extends`) creates IS-A relationships and enables code reuse. `super` accesses superclass members. Polymorphism allows subclass objects through superclass references. Override `toString()`, `equals()`, and `hashCode()` for proper object behavior. Use `final` to prevent inheritance or overriding.
 
-**Why It Matters**: Understanding this concept is essential for production Java development, where inheritance and polymorphism impacts code quality, maintainability, and performance. This pattern is commonly used in enterprise systems, frameworks, and libraries throughout the Java ecosystem. Mastering it enables writing more robust, efficient, and maintainable code that scales in production environments.
-
-**Why This Matters**: Use inheritance **only for true IS-A relationships** where subclasses should inherit ALL behaviors—a Dog IS-A Animal makes sense. However, inheritance creates **tight coupling**: changes to the superclass affect all subclasses, making code fragile. Prefer **composition** (HAS-A) when you need specific capabilities without the full parent behavior—a Car HAS-AN Engine, not IS-AN Engine. Composition enables runtime flexibility (swap engines) and avoids forcing subclasses to inherit unwanted behaviors. The rule of thumb: inheritance for shared identity and behavior, composition for shared functionality. When in doubt, choose composition—it's easier to refactor composition to inheritance than vice versa.
+**Why It Matters**: Use inheritance **only for true IS-A relationships** where subclasses should inherit ALL behaviors—a Dog IS-A Animal makes sense. However, inheritance creates **tight coupling**: changes to the superclass affect all subclasses, making code fragile. Prefer **composition** (HAS-A) when you need specific capabilities without the full parent behavior—a Car HAS-AN Engine, not IS-AN Engine. Composition enables runtime flexibility (swap engines) and avoids forcing subclasses to inherit unwanted behaviors. The rule of thumb: inheritance for shared identity and behavior, composition for shared functionality. When in doubt, choose composition—it's easier to refactor composition to inheritance than vice versa.
 
 ---
 
@@ -925,7 +921,7 @@ int sum = add.calculate(5, 3); // => 8
 
 **Key Takeaway**: Interfaces define contracts without implementation. Classes can `implements` multiple interfaces for flexible type systems. Abstract classes can have state and constructors; interfaces cannot (before Java 8). Default methods allow adding behavior to interfaces. Functional interfaces enable lambda expressions.
 
-**Why This Matters**: Interfaces enable **loose coupling** and **dependency inversion**—clients depend on abstractions (interfaces), not concrete implementations. This makes code **testable** (inject mock implementations), **flexible** (swap implementations at runtime), and **maintainable** (change internals without affecting clients). For example, `List<T>` is an interface—you can switch from `ArrayList` to `LinkedList` without changing client code. Multiple interface implementation provides the benefits of multiple inheritance without the diamond problem. Interfaces define "what" an object can do; classes define "how" it's done. Design principle: program to interfaces, not implementations, to create loosely coupled, easily testable systems.
+**Why It Matters**: Interfaces enable **loose coupling** and **dependency inversion**—clients depend on abstractions (interfaces), not concrete implementations. This makes code **testable** (inject mock implementations), **flexible** (swap implementations at runtime), and **maintainable** (change internals without affecting clients). For example, `List<T>` is an interface—you can switch from `ArrayList` to `LinkedList` without changing client code. Multiple interface implementation provides the benefits of multiple inheritance without the diamond problem. Interfaces define "what" an object can do; classes define "how" it's done. Design principle: program to interfaces, not implementations, to create loosely coupled, easily testable systems.
 
 ---
 
