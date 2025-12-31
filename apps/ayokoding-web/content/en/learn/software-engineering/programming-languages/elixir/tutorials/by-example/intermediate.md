@@ -2455,91 +2455,248 @@ graph TD
 **Code**:
 
 ```elixir
+# Basic bidirectional message passing
 receiver = spawn(fn ->
+  # => Spawns receiver process
+  # => Process waits for incoming messages
   receive do
+    # => receive block: pattern matches messages from mailbox
+    # => Blocks until matching message arrives
+    # => Messages queued in FIFO order
     {:hello, sender} -> send(sender, {:hi, self()})
+    # => Pattern 1: matches {:hello, <sender_pid>}
+    # => sender: extracted from tuple (caller's PID)
+    # => send/2: sends message to sender
+    # => self(): receiver's own PID
+    # => Reply: {:hi, <receiver_pid>}
+    # => Non-blocking send (returns immediately)
+
     {:goodbye, sender} -> send(sender, {:bye, self()})
+    # => Pattern 2: matches {:goodbye, <sender_pid>}
+    # => Different message type, different response
+    # => Reply: {:bye, <receiver_pid>}
   end
+  # => After processing one message, process exits
+  # => No loop: single-message receiver
 end)
 
-send(receiver, {:hello, self()})  # Send message to receiver
+send(receiver, {:hello, self()})
+# => send/2: sends message to receiver process
+# => Message: {:hello, <parent_pid>}
+# => Goes into receiver's mailbox
+# => Async: sender doesn't wait for processing
+# => Returns: {:hello, <parent_pid>} (the message sent)
 
 receive do
+  # => Parent waits for reply from receiver
   {:hi, pid} -> IO.puts("Received hi from #{inspect(pid)}")
+  # => Matches {:hi, <receiver_pid>}
+  # => pid: bound to receiver's PID
+  # => Prints: "Received hi from #PID<0.X.Y>"
+  # => Process continues after receiving reply
 end
 
+# Receive with timeout (prevents infinite blocking)
 spawn(fn ->
+  # => Spawns process that waits for message with timeout
   receive do
     :message -> IO.puts("Got message")
+    # => Matches :message atom
+    # => Would print if message received within timeout
   after
+    # => after clause: timeout handler
+    # => Executes if no matching message arrives in time
     1000 -> IO.puts("No message received after 1 second")
+    # => 1000ms timeout (1 second)
+    # => Prints timeout message
+    # => Process exits after timeout
   end
 end)
+# => Process waits 1 second, times out, prints, exits
+# => No message sent, so timeout always triggers
 
+# Multiple message patterns
 receiver = spawn(fn ->
+  # => New receiver with multiple pattern handlers
   receive do
     {:add, a, b} -> IO.puts("Sum: #{a + b}")
+    # => Pattern: {:add, number, number}
+    # => Extracts a and b from tuple
+    # => Prints sum result
+
     {:multiply, a, b} -> IO.puts("Product: #{a * b}")
+    # => Pattern: {:multiply, number, number}
+    # => Different operation, same structure
+    # => Prints product result
+
     unknown -> IO.puts("Unknown message: #{inspect(unknown)}")
+    # => Catch-all pattern: matches any message
+    # => unknown: binds to entire message
+    # => inspect/1: converts term to readable string
+    # => Handles unexpected message formats
   end
 end)
 
-send(receiver, {:add, 5, 3})  # Prints: Sum: 8
+send(receiver, {:add, 5, 3})
+# => Sends {:add, 5, 3} to receiver
+# => Matches first pattern
+# => Prints: Sum: 8
+# => Process exits after handling message
 
+# Echo server (recursive receive loop)
 defmodule Echo do
+  # => Module implementing echo server pattern
   def loop do
+    # => Recursive function: processes messages indefinitely
     receive do
       {:echo, msg, sender} ->
+        # => Pattern: {:echo, message, sender_pid}
+        # => Receives message and sender PID
         send(sender, {:reply, msg})
-        loop()  # Recursive call to continue receiving
-      :stop -> :ok  # Stop receiving
+        # => Echoes message back to sender
+        # => Reply: {:reply, <original_msg>}
+        loop()
+        # => Recursive call: continue receiving
+        # => Tail-recursive: no stack growth
+        # => Process remains alive for next message
+
+      :stop -> :ok
+      # => Stop signal: breaks recursion
+      # => Returns :ok (function exits)
+      # => Process terminates after receiving :stop
     end
   end
 end
 
 echo_pid = spawn(&Echo.loop/0)
+# => spawn(&Fun/Arity): spawns with function reference
+# => &Echo.loop/0: captures Echo.loop function
+# => Echo server starts, waiting for messages
+# => Returns: PID of echo server
+
 send(echo_pid, {:echo, "Hello", self()})
+# => Sends echo request with message "Hello"
+# => Includes parent PID for reply
+# => Message: {:echo, "Hello", <parent_pid>}
 
 receive do
   {:reply, msg} -> IO.puts("Echo replied: #{msg}")
+  # => Waits for echo reply
+  # => Matches {:reply, "Hello"}
+  # => Prints: "Echo replied: Hello"
 end
 
 send(echo_pid, {:echo, "World", self()})
+# => Second echo request
+# => Echo server still running (due to loop())
+# => Message: {:echo, "World", <parent_pid>}
+
 receive do
   {:reply, msg} -> IO.puts("Echo replied: #{msg}")
+  # => Waits for second reply
+  # => Matches {:reply, "World"}
+  # => Prints: "Echo replied: World"
 end
 
-send(echo_pid, :stop)  # Stop the echo process
+send(echo_pid, :stop)
+# => Sends stop signal to echo server
+# => Matches :stop pattern
+# => Echo server exits (no more loop())
+# => Process terminates cleanly
 
+# FIFO message ordering
 pid = self()
+# => Get current process PID
 send(pid, :first)
+# => Send message 1 to self
+# => Mailbox: [:first]
 send(pid, :second)
+# => Send message 2 to self
+# => Mailbox: [:first, :second] (FIFO order)
 send(pid, :third)
+# => Send message 3 to self
+# => Mailbox: [:first, :second, :third]
 
-receive do: (:first -> IO.puts("1"))  # Prints: 1
-receive do: (:second -> IO.puts("2"))  # Prints: 2
-receive do: (:third -> IO.puts("3"))  # Prints: 3
+receive do: (:first -> IO.puts("1"))
+# => Compact syntax: single-clause receive
+# => Matches and removes :first from mailbox
+# => Prints: 1
+# => Mailbox after: [:second, :third]
 
+receive do: (:second -> IO.puts("2"))
+# => Matches and removes :second (now at head)
+# => Prints: 2
+# => Mailbox after: [:third]
+
+receive do: (:third -> IO.puts("3"))
+# => Matches and removes :third
+# => Prints: 3
+# => Mailbox after: [] (empty)
+# => Demonstrates FIFO: messages processed in send order
+
+# flush() - clear mailbox
 send(self(), :msg1)
+# => Send message to self
+# => Mailbox: [:msg1]
 send(self(), :msg2)
-flush()  # Prints all messages and removes them from mailbox
+# => Mailbox: [:msg1, :msg2]
 
+flush()
+# => flush/0: prints all messages in mailbox
+# => Removes all messages from mailbox
+# => Prints: :msg1, :msg2
+# => Mailbox after: [] (empty)
+# => Useful for debugging and cleanup
+
+# Asynchronous message sending (non-blocking)
 pid = spawn(fn ->
-  :timer.sleep(2000)  # Simulate slow processing
+  :timer.sleep(2000)
+  # => Process sleeps for 2 seconds before receiving
+  # => Simulates slow message processing
   receive do
     msg -> IO.puts("Received: #{inspect(msg)}")
+    # => Pattern matches any message
+    # => Will print after 2-second sleep
   end
 end)
 
-send(pid, :hello)  # Returns immediately, doesn't wait for processing
-IO.puts("Sent message, continuing...")
+send(pid, :hello)
+# => Sends message while process is sleeping
+# => Message queued in mailbox immediately
+# => send/2 returns instantly (doesn't wait for receive)
+# => Returns: :hello (the message)
 
+IO.puts("Sent message, continuing...")
+# => Prints immediately after send (proves non-blocking)
+# => Parent continues while child sleeps
+# => Message will be processed in 2 seconds
+
+# Messages can be any Elixir term
 send(self(), {:tuple, 1, 2})
+# => Tuple message
+# => Mailbox: [{:tuple, 1, 2}]
 send(self(), [1, 2, 3])
+# => List message
+# => Mailbox: [{:tuple, 1, 2}, [1, 2, 3]]
 send(self(), %{key: "value"})
+# => Map message
+# => Mailbox: [..., %{key: "value"}]
 send(self(), "string")
+# => String message
+# => Mailbox: [..., "string"]
 send(self(), 42)
-flush()  # Prints all messages
+# => Integer message
+# => Mailbox: [..., 42]
+
+flush()
+# => Prints all 5 messages
+# => {:tuple, 1, 2}
+# => [1, 2, 3]
+# => %{key: "value"}
+# => "string"
+# => 42
+# => Demonstrates: messages can be any Elixir term
+# => Mailbox cleared after flush
 ```
 
 **Key Takeaway**: Processes communicate via asynchronous message passing. `send/2` puts messages in the mailbox, `receive` pattern matches and processes them. Messages are queued in FIFO order.
