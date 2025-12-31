@@ -4978,79 +4978,243 @@ Applications are OTP's top-level abstraction. Implement `start/2` and `stop/1` c
 
 ```elixir
 defmodule MyApp.Application do
-  use Application  # => Application behavior
+  # => Application module: OTP application behavior
+  # => Top-level abstraction for starting/stopping supervision trees
+  # => One application per OTP app
+  use Application
+  # => use Application: imports Application behavior
+  # => Requires: start/2 callback (mandatory)
+  # => Optional: stop/1, prep_stop/1 callbacks
+  # => Application lifecycle: start → running → prep_stop → stop
 
   @impl true
   def start(_type, _args) do
-    # => Called when application starts
+    # => start/2: callback invoked when application starts
+    # => Called by OTP application controller
+    # => Must return {:ok, pid} or {:ok, pid, state}
     # _type = :normal | {:takeover, node} | {:failover, node}
+    # => :normal - standard startup (99% of cases)
+    # => {:takeover, node} - distributed: taking over from another node
+    # => {:failover, node} - distributed: node crashed, failover to this node
     # _args from mix.exs application/0
+    # => _args: arguments passed from mix.exs mod: {MyApp.Application, args}
+    # => Usually empty list [] (no args needed for most apps)
 
     IO.puts("Starting MyApp...")
+    # => Startup message for debugging/logging
+    # => Printed to console when app starts
+    # => Production: use Logger instead of IO.puts
 
     children = [
+      # => List of child specifications for supervision tree
+      # => Supervisor starts children in order (top to bottom)
       # List of child processes to supervise
       {Registry, keys: :unique, name: MyApp.Registry},
+      # => Registry: distributed process registry (built-in OTP)
+      # => keys: :unique - each key registered once (no duplicates)
+      # => name: MyApp.Registry - global name for registry
+      # => Tuple form: {module, opts} → calls Registry.child_spec(opts)
+      # => Registry started first (other children may depend on it)
       MyApp.Cache,
+      # => Cache: custom GenServer (module form)
+      # => Calls MyApp.Cache.child_spec([])
+      # => Started after Registry (may use Registry for lookups)
       MyApp.Workers.Supervisor
+      # => Workers supervisor: nested supervisor managing worker processes
+      # => Started last (workers depend on Cache and Registry)
+      # => Supervision tree: Application → Workers.Supervisor → Worker1, Worker2, ...
     ]
+    # => children: 3 child specs (Registry, Cache, Workers supervisor)
+    # => Start order critical for dependencies
 
     opts = [strategy: :one_for_one, name: MyApp.Supervisor]
-    Supervisor.start_link(children, opts)  # => Returns {:ok, pid}
+    # => Supervisor options
+    # => strategy: :one_for_one (restart only crashed child)
+    # => name: MyApp.Supervisor (global name for supervisor)
+    # => Other strategies: :one_for_all (restart all), :rest_for_one (restart crashed + subsequent)
+    Supervisor.start_link(children, opts)
+    # => Supervisor.start_link/2: starts root supervisor
+    # => children: list of child specs
+    # => opts: supervisor configuration
+    # => Returns: {:ok, pid} on success
+    # => pid: supervisor process ID (root of supervision tree)
+    # => OTP stores this pid as application root
+    # => Application crash if supervisor crashes
   end
+  # => start/2 complete
+  # => Application now running with supervision tree
 
   @impl true
   def stop(_state) do
-    # => Called before application stops
+    # => stop/1: callback invoked before application stops
+    # => Called when: Application.stop/1, system shutdown, or release upgrade
+    # => _state: state returned from start/2 (if {:ok, pid, state})
+    # => Usually not used (most apps return {:ok, pid} without state)
+    # => Supervisor already stopped children (in reverse order)
     # Perform cleanup here
     IO.puts("Stopping MyApp...")
+    # => Cleanup message for debugging
+    # => Cleanup tasks: close external connections, flush buffers, save state
+    # => Supervisor already stopped/killed all children
+    # => This is for application-level cleanup only
     :ok
+    # => Must return :ok
+    # => Any other return value ignored
+    # => Errors here don't prevent shutdown (logged but ignored)
   end
+  # => stop/1 complete
+  # => Application shutdown complete after this returns
 end
+# => MyApp.Application module complete
 
 # mix.exs configuration
 defmodule MyApp.MixProject do
+  # => Mix project configuration
+  # => Defines project metadata and dependencies
   use Mix.Project
+  # => use Mix.Project: Mix project behavior
+  # => Required for all Mix projects
 
   def application do
+    # => application/0: OTP application specification
+    # => Called by Mix when building releases
+    # => Returns keyword list of application settings
     [
-      mod: {MyApp.Application, []},  # => Application module and args
+      # => Application configuration list
+      mod: {MyApp.Application, []},
+      # => mod: {module, args} - application callback module
+      # => module: MyApp.Application (implements start/2)
+      # => args: [] - passed to start/2 as second argument
+      # => OTP calls MyApp.Application.start(:normal, []) on app start
+      # => Without mod, application has no callback (library apps)
       extra_applications: [:logger, :runtime_tools]
+      # => extra_applications: OTP apps to start before this app
+      # => :logger - Elixir's logging system (always needed)
+      # => :runtime_tools - debugging/profiling tools
+      # => Common: [:crypto, :ssl, :inets, :sasl]
+      # => OTP starts these before MyApp
+      # => Dependency order: logger → runtime_tools → my_app
     ]
+    # => Returns: application specification
+    # => Used by: mix compile, mix release, Application.start/1
   end
+  # => application/0 complete
 end
+# => MyApp.MixProject complete
 
 # Application environment config
 def start(_type, _args) do
-  port = Application.get_env(:my_app, :port, 4000)  # => Get config with default
+  # => Alternative start/2 implementation with environment config
+  # => Pattern: read config values at startup (runtime configuration)
+  port = Application.get_env(:my_app, :port, 4000)
+  # => Application.get_env/3: reads application environment
+  # => :my_app - application name (atom)
+  # => :port - config key (atom)
+  # => 4000 - default value if key not found
+  # => Config set in: config/config.exs, config/runtime.exs, or Application.put_env/3
+  # => Returns: configured value or 4000
+  # => Type: any() (usually integer, string, atom, or complex term)
   env = Application.get_env(:my_app, :env, :dev)
+  # => Read environment: :dev, :test, or :prod
+  # => Default: :dev (development)
+  # => Config usually set in config/runtime.exs from MIX_ENV
 
   IO.puts("Starting on port #{port} in #{env} environment")
+  # => Startup message with config values
+  # => Example output: "Starting on port 4000 in dev environment"
+  # => Interpolation: #{port} and #{env} embed values in string
 
   children = [
+    # => Child specs with runtime config
     {MyApp.Server, port: port}
+    # => MyApp.Server: custom GenServer
+    # => port: port - passes runtime config to child
+    # => Calls MyApp.Server.child_spec([port: port])
+    # => Server receives port in init/1 callback
+    # => Pattern: runtime config → supervisor → child
   ]
+  # => children: 1 child spec with dynamic port
 
   Supervisor.start_link(children, strategy: :one_for_one)
+  # => Start supervisor with configured children
+  # => Returns: {:ok, pid}
 end
+# => start/2 with environment config complete
 
 # Conditional children based on environment
 def start(_type, _args) do
+  # => Alternative start/2 with conditional children
+  # => Pattern: different supervision tree based on config
   children = base_children()
+  # => base_children/0: returns core children (always started)
+  # => Returns: [MyApp.Cache, MyApp.Database]
+  # => Core services needed in all environments
 
   children =
+    # => Conditional child addition based on feature flag
     if Application.get_env(:my_app, :enable_metrics, false) do
+      # => Check :enable_metrics config (default: false)
+      # => true in production, false in dev/test (reduce overhead)
+      # => Guard: condition → true branch
       children ++ [MyApp.MetricsReporter]
+      # => ++ : list concatenation
+      # => Adds MetricsReporter to children list
+      # => Result: [MyApp.Cache, MyApp.Database, MyApp.MetricsReporter]
+      # => MetricsReporter started last (depends on Cache/Database)
     else
+      # => Guard: condition → false branch (metrics disabled)
       children
+      # => Return base children unchanged
+      # => Result: [MyApp.Cache, MyApp.Database]
+      # => No metrics overhead in dev/test
     end
+  # => children: base children + conditional metrics reporter
+  # => Pattern: environment-specific supervision tree
 
   Supervisor.start_link(children, strategy: :one_for_one)
+  # => Start supervisor with conditional children
+  # => Returns: {:ok, pid}
+  # => Supervision tree varies by environment
 end
+# => start/2 with conditional children complete
 
 defp base_children do
+  # => base_children/0: returns core child specs
+  # => defp: private function (internal helper)
+  # => Called by start/2 to get base supervision tree
   [MyApp.Cache, MyApp.Database]
+  # => Core children: Cache and Database
+  # => Always started regardless of environment
+  # => Order: Cache first, Database second
+  # => Returns: list of 2 child specs
 end
+# => base_children/0 complete
+
+# Application lifecycle example
+Application.start(:my_app)
+# => Starts application programmatically
+# => OTP calls MyApp.Application.start(:normal, [])
+# => Supervisor starts all children
+# => Returns: :ok or {:error, reason}
+# => Usually automatic (Mix starts all deps)
+
+Application.stop(:my_app)
+# => Stops application programmatically
+# => Supervisor stops all children (reverse order)
+# => OTP calls MyApp.Application.stop(state)
+# => Returns: :ok or {:error, reason}
+
+Application.started_applications()
+# => Lists all started applications
+# => Returns: [{app, description, version}, ...]
+# => Example: [{:my_app, 'my_app', '0.1.0'}, {:logger, 'logger', '1.15.0'}, ...]
+# => Type: [{atom(), charlist(), charlist()}]
+
+Application.spec(:my_app, :vsn)
+# => Queries application specification
+# => :vsn - version number
+# => Other keys: :description, :modules, :registered, :applications
+# => Returns: '0.1.0' (charlist) or nil
 ```
 
 **Key Takeaway**: Applications start supervision trees via `start/2` callback and clean up in `stop/1`. Configure children based on environment. The return value of `start/2` becomes the supervision tree root.
