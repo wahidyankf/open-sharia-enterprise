@@ -19,77 +19,160 @@ Guards are boolean expressions that add additional constraints to pattern matche
 
 ```elixir
 defmodule Guards do
-  # Type guards
+  # Type guards (dispatch based on runtime type)
   def type_check(value) when is_integer(value), do: "integer: #{value}"
+  # => when is_integer(value): guard checks type at runtime
+  # => Guard fails: tries next clause
+  # => Guard succeeds: executes this clause
   def type_check(value) when is_float(value), do: "float: #{value}"
+  # => Multiple clauses tried top-to-bottom
   def type_check(value) when is_binary(value), do: "string: #{value}"
+  # => is_binary checks for bitstring (includes strings)
   def type_check(value) when is_atom(value), do: "atom: #{inspect(value)}"
+  # => inspect/1 converts atom to readable string
   def type_check(_value), do: "unknown type"
+  # => Catch-all clause (no guard = always matches)
+  # => _ prefix signals "intentionally unused"
 
-  # Value guards
+  # Value guards (dispatch based on value ranges)
   def category(age) when age < 13, do: "child"
+  # => Numeric comparison in guard
   def category(age) when age >= 13 and age < 20, do: "teen"
+  # => Compound guard: and combines conditions
+  # => Both conditions must be true
   def category(age) when age >= 20 and age < 65, do: "adult"
+  # => Guards are evaluated at dispatch time (before function body)
   def category(age) when age >= 65, do: "senior"
+  # => Last specific clause before catch-all
 
   # Multiple guards with `or`
   def weekday(day) when day == :saturday or day == :sunday, do: "weekend"
+  # => or: either condition matches
+  # => == checks value equality
   def weekday(_day), do: "weekday"
+  # => Catch-all for all other days
 
-  # Guard functions (limited set allowed)
+  # Guard functions (limited set allowed for purity)
   def valid_user(name, age) when is_binary(name) and byte_size(name) > 0 and age >= 18 do
+    # => byte_size/1: allowed guard function (measures binary bytes)
+    # => Three conditions ANDed: type check, non-empty, age check
     {:ok, %{name: name, age: age}}
+    # => Returns tagged tuple on success
   end
   def valid_user(_name, _age), do: {:error, "invalid user"}
+  # => Catch-all for validation failures
 
-  # Pattern matching with guards
+  # Pattern matching with guards (combine both techniques)
   def process_response({:ok, status, body}) when status >= 200 and status < 300 do
+    # => Pattern: {:ok, status, body} destructures tuple
+    # => Guard: checks status is 2xx (success range)
     {:success, body}
+    # => Returns normalized :success tuple
   end
   def process_response({:ok, status, _body}) when status >= 400 do
+    # => Pattern matches :ok tuple but guards on 4xx+ status
+    # => _ prefix: body ignored (not used in function)
     {:error, "client error: #{status}"}
+    # => Returns error with status code
   end
   def process_response({:error, reason}) do
+    # => Pattern matches :error tuple (no guard needed)
     {:error, "request failed: #{reason}"}
+    # => Wraps reason in descriptive message
   end
 
-  # Allowed guard functions:
+  # Allowed guard functions (restricted for performance & safety):
   # Type checks: is_atom, is_binary, is_boolean, is_float, is_integer, is_list, is_map, is_tuple
   # Comparisons: ==, !=, ===, !==, <, >, <=, >=
   # Boolean: and, or, not
   # Arithmetic: +, -, *, /
   # Others: abs, div, rem, length, byte_size, tuple_size, elem, hd, tl
+  # => Restriction: guards must be pure (no side effects, no IO, no exceptions)
+  # => Reason: guards execute during pattern matching (before stack allocation)
 
-  # Custom guard-safe functions (rare, using macros)
+  # Custom guard-safe functions (using defguard macro)
   defguard is_adult(age) when is_integer(age) and age >= 18
+  # => defguard: defines reusable guard expression
+  # => Expands inline at compile time (zero runtime overhead)
+  # => Must only use other guard-safe operations
 
   def can_vote(age) when is_adult(age), do: true
+  # => Uses custom guard like built-in
+  # => Expands to: when is_integer(age) and age >= 18
   def can_vote(_age), do: false
+  # => Catch-all for non-adults
 end
 
-Guards.type_check(42) # => "integer: 42"
-Guards.type_check(3.14) # => "float: 3.14"
-Guards.type_check("hello") # => "string: hello"
-Guards.type_check(:atom) # => "atom: :atom"
+# Type dispatching
+Guards.type_check(42)
+# => Tries clause 1: is_integer(42) → true → "integer: 42"
+Guards.type_check(3.14)
+# => Tries clause 1: is_integer(3.14) → false
+# => Tries clause 2: is_float(3.14) → true → "float: 3.14"
+Guards.type_check("hello")
+# => Tries clauses 1-2: both fail
+# => Tries clause 3: is_binary("hello") → true → "string: hello"
+Guards.type_check(:atom)
+# => Tries clauses 1-3: all fail
+# => Tries clause 4: is_atom(:atom) → true → "atom: :atom"
 
-Guards.category(10) # => "child"
-Guards.category(15) # => "teen"
-Guards.category(30) # => "adult"
-Guards.category(70) # => "senior"
+# Value range dispatching
+Guards.category(10)
+# => Guard: 10 < 13 → true → "child"
+Guards.category(15)
+# => Guard: 15 < 13 → false
+# => Guard: 15 >= 13 and 15 < 20 → true → "teen"
+Guards.category(30)
+# => Guards: tries clauses 1-2, both fail
+# => Guard: 30 >= 20 and 30 < 65 → true → "adult"
+Guards.category(70)
+# => Guards: tries clauses 1-3, all fail
+# => Guard: 70 >= 65 → true → "senior"
 
-Guards.weekday(:saturday) # => "weekend"
-Guards.weekday(:monday) # => "weekday"
+# OR guards
+Guards.weekday(:saturday)
+# => Guard: :saturday == :saturday or ... → true (short-circuits) → "weekend"
+Guards.weekday(:monday)
+# => Guard: :monday == :saturday → false
+# => Guard: :monday == :sunday → false → or fails
+# => Tries clause 2: always matches → "weekday"
 
-Guards.valid_user("Alice", 25) # => {:ok, %{age: 25, name: "Alice"}}
-Guards.valid_user("", 25) # => {:error, "invalid user"}
-Guards.valid_user("Bob", 15) # => {:error, "invalid user"}
+# Complex validation
+Guards.valid_user("Alice", 25)
+# => Guard: is_binary("Alice") → true
+# => Guard: byte_size("Alice") > 0 → 5 > 0 → true
+# => Guard: 25 >= 18 → true
+# => All conditions true → {:ok, %{age: 25, name: "Alice"}}
+Guards.valid_user("", 25)
+# => Guard: is_binary("") → true
+# => Guard: byte_size("") > 0 → 0 > 0 → false → guard fails
+# => Tries clause 2 → {:error, "invalid user"}
+Guards.valid_user("Bob", 15)
+# => Guards: is_binary("Bob") → true, byte_size("Bob") > 0 → true
+# => Guard: 15 >= 18 → false → guard fails
+# => Tries clause 2 → {:error, "invalid user"}
 
-Guards.process_response({:ok, 200, "Success"}) # => {:success, "Success"}
-Guards.process_response({:ok, 404, "Not Found"}) # => {:error, "client error: 404"}
-Guards.process_response({:error, :timeout}) # => {:error, "request failed: timeout"}
+# HTTP response handling
+Guards.process_response({:ok, 200, "Success"})
+# => Pattern: {:ok, 200, "Success"} matches {:ok, status, body}
+# => Guard: 200 >= 200 and 200 < 300 → true
+# => {:success, "Success"}
+Guards.process_response({:ok, 404, "Not Found"})
+# => Pattern: {:ok, 404, "Not Found"} matches clause 1
+# => Guard: 404 >= 200 and 404 < 300 → false → clause 1 fails
+# => Tries clause 2: {:ok, 404, "Not Found"} matches {:ok, status, _body}
+# => Guard: 404 >= 400 → true → {:error, "client error: 404"}
+Guards.process_response({:error, :timeout})
+# => Pattern: {:error, :timeout} doesn't match clause 1 or 2
+# => Tries clause 3: matches {:error, reason} → {:error, "request failed: timeout"}
 
-Guards.can_vote(25) # => true
-Guards.can_vote(16) # => false
+# Custom guard usage
+Guards.can_vote(25)
+# => Guard: is_adult(25) expands to is_integer(25) and 25 >= 18
+# => Both true → true
+Guards.can_vote(16)
+# => Guard: is_integer(16) and 16 >= 18 → true and false → false
+# => Tries clause 2 → false
 ```
 
 **Key Takeaway**: Guards add type and value constraints to pattern matching. Only a limited set of functions is allowed in guards to ensure they remain side-effect free and fast.
@@ -123,78 +206,162 @@ graph TD
 defmodule FunctionMatching do
   # Order matters! Specific cases before general cases
   def handle_result({:ok, value}), do: "Success: #{value}"
+  # => Pattern: {:ok, value} matches 2-element tuple with :ok atom
+  # => value extracts second element
   def handle_result({:error, reason}), do: "Error: #{reason}"
+  # => Different pattern: {:error, _} would match any error
   def handle_result(_), do: "Unknown result"
+  # => Catch-all: matches anything not matched above
+  # => WARNING: Must be last clause (matches everything)
 
-  # Pattern matching with destructuring
+  # Pattern matching with destructuring (tagged tuples)
   def greet({:user, name}), do: "Hello, #{name}!"
+  # => Matches {:user, "Alice"} → extracts "Alice" into name
   def greet({:admin, name}), do: "Welcome back, Admin #{name}!"
+  # => Different first element → different clause
   def greet({:guest}), do: "Welcome, guest!"
+  # => Single-element tuple pattern (guest has no name)
 
-  # List pattern matching
+  # List pattern matching (recursive)
   def sum([]), do: 0
+  # => Base case: empty list returns 0
+  # => Recursion terminates here
   def sum([head | tail]), do: head + sum(tail)
+  # => Pattern: [head | tail] splits list into first element + rest
+  # => Recursive case: add head to sum of tail
+  # => Example: [1,2,3] → 1 + sum([2,3]) → 1 + 2 + sum([3]) → 1 + 2 + 3 + sum([]) → 6
 
-  # Map pattern matching
+  # Map pattern matching (structural matching)
   def user_summary(%{name: name, age: age}) when age >= 18 do
+    # => Pattern: %{name: name, age: age} extracts specific keys
+    # => Map can have other keys (ignored)
+    # => Guard: age >= 18 adds constraint after pattern match
     "#{name} is an adult (#{age} years old)"
   end
   def user_summary(%{name: name, age: age}) do
+    # => Same pattern, different guard
+    # => Clause order matters: guard checked first-to-last
     "#{name} is a minor (#{age} years old)"
   end
 
-  # Multiple pattern matches with guards
+  # Multiple pattern matches with guards (value classification)
   def classify_number(n) when n < 0, do: :negative
+  # => Guard only (no pattern destructuring needed)
   def classify_number(0), do: :zero
+  # => Exact value pattern (no guard needed)
   def classify_number(n) when n > 0 and n < 100, do: :small_positive
+  # => Compound guard: both conditions must be true
   def classify_number(n) when n >= 100, do: :large_positive
+  # => Last specific clause (implicitly covers n >= 100)
 
-  # Complex nested patterns
+  # Complex nested patterns (multi-level destructuring)
   def process_response({:ok, %{status: 200, body: body}}) do
+    # => Nested pattern: tuple contains map
+    # => Matches: {:ok, %{status: 200, body: "anything"}}
+    # => Extracts: body value
     {:success, body}
   end
   def process_response({:ok, %{status: status, body: _}}) when status >= 400 do
+    # => Pattern: tuple + map destructuring
+    # => _ ignores body (not used)
+    # => Guard: status >= 400 further constrains
     {:client_error, status}
   end
   def process_response({:error, %{reason: reason}}) do
+    # => Different tuple tag: :error instead of :ok
+    # => Still uses map pattern for nested data
     {:failed, reason}
   end
 
-  # Default arguments with pattern matching
+  # Default arguments with pattern matching (multi-clause + defaults)
   def send_message(user, message, opts \\ [])
+  # => Function head: declares default value opts = []
+  # => Actual implementations below (pattern match on opts)
   def send_message(%{email: email}, message, priority: :high) do
+    # => Pattern: opts must be [priority: :high] (keyword list)
+    # => user must be map with :email key
     "Urgent email to #{email}: #{message}"
   end
   def send_message(%{email: email}, message, _opts) do
+    # => Catch-all for opts (any value including [])
+    # => Matches when first clause doesn't
     "Email to #{email}: #{message}"
   end
 end
 
-FunctionMatching.handle_result({:ok, 42}) # => "Success: 42"
-FunctionMatching.handle_result({:error, "not found"}) # => "Error: not found"
-FunctionMatching.handle_result(:unknown) # => "Unknown result"
+# Result tuple handling
+FunctionMatching.handle_result({:ok, 42})
+# => Tries clause 1: {:ok, 42} matches {:ok, value} → "Success: 42"
+FunctionMatching.handle_result({:error, "not found"})
+# => Clause 1 fails (not :ok)
+# => Clause 2: {:error, "not found"} matches {:error, reason} → "Error: not found"
+FunctionMatching.handle_result(:unknown)
+# => Clauses 1-2 fail (not tuple)
+# => Clause 3: _ matches anything → "Unknown result"
 
-FunctionMatching.greet({:user, "Alice"}) # => "Hello, Alice!"
-FunctionMatching.greet({:admin, "Bob"}) # => "Welcome back, Admin Bob!"
-FunctionMatching.greet({:guest}) # => "Welcome, guest!"
+# Tagged tuple dispatching
+FunctionMatching.greet({:user, "Alice"})
+# => Clause 1: {:user, "Alice"} matches {:user, name} → "Hello, Alice!"
+FunctionMatching.greet({:admin, "Bob"})
+# => Clause 1 fails (:admin ≠ :user)
+# => Clause 2: {:admin, "Bob"} matches {:admin, name} → "Welcome back, Admin Bob!"
+FunctionMatching.greet({:guest})
+# => Clauses 1-2 fail (wrong pattern)
+# => Clause 3: {:guest} matches → "Welcome, guest!"
 
-FunctionMatching.sum([1, 2, 3, 4]) # => 10
-FunctionMatching.sum([]) # => 0
+# Recursive list processing
+FunctionMatching.sum([1, 2, 3, 4])
+# => [1 | [2,3,4]] → 1 + sum([2,3,4])
+# => [2 | [3,4]] → 2 + sum([3,4])
+# => [3 | [4]] → 3 + sum([4])
+# => [4 | []] → 4 + sum([])
+# => [] → 0
+# => Stack unwinds: 4 + 0 = 4, 3 + 4 = 7, 2 + 7 = 9, 1 + 9 = 10
+FunctionMatching.sum([])
+# => Clause 1: [] matches → 0 (base case)
 
-FunctionMatching.user_summary(%{name: "Alice", age: 25}) # => "Alice is an adult (25 years old)"
-FunctionMatching.user_summary(%{name: "Bob", age: 16}) # => "Bob is a minor (16 years old)"
+# Map pattern matching with guards
+FunctionMatching.user_summary(%{name: "Alice", age: 25})
+# => Pattern: %{name: "Alice", age: 25} matches %{name: name, age: age}
+# => Extracts: name = "Alice", age = 25
+# => Guard: 25 >= 18 → true → "Alice is an adult (25 years old)"
+FunctionMatching.user_summary(%{name: "Bob", age: 16})
+# => Pattern matches clause 1
+# => Guard: 16 >= 18 → false → clause 1 fails
+# => Clause 2: same pattern, no guard → matches → "Bob is a minor (16 years old)"
 
-FunctionMatching.classify_number(-5) # => :negative
-FunctionMatching.classify_number(0) # => :zero
-FunctionMatching.classify_number(50) # => :small_positive
-FunctionMatching.classify_number(200) # => :large_positive
+# Value classification with guards
+FunctionMatching.classify_number(-5)
+# => Guard: -5 < 0 → true → :negative
+FunctionMatching.classify_number(0)
+# => Clause 1 guard fails
+# => Pattern: 0 matches exactly → :zero
+FunctionMatching.classify_number(50)
+# => Clauses 1-2 fail
+# => Guard: 50 > 0 and 50 < 100 → true → :small_positive
+FunctionMatching.classify_number(200)
+# => Clauses 1-3 fail
+# => Guard: 200 >= 100 → true → :large_positive
 
-FunctionMatching.process_response({:ok, %{status: 200, body: "OK"}}) # => {:success, "OK"}
-FunctionMatching.process_response({:ok, %{status: 404, body: "Not Found"}}) # => {:client_error, 404}
-FunctionMatching.process_response({:error, %{reason: :timeout}}) # => {:failed, :timeout}
+# Nested pattern matching
+FunctionMatching.process_response({:ok, %{status: 200, body: "OK"}})
+# => Pattern: {:ok, %{status: 200, body: body}} matches exactly
+# => Extracts: body = "OK" → {:success, "OK"}
+FunctionMatching.process_response({:ok, %{status: 404, body: "Not Found"}})
+# => Clause 1: status 404 ≠ 200 → fails
+# => Clause 2: pattern matches, guard 404 >= 400 → true → {:client_error, 404}
+FunctionMatching.process_response({:error, %{reason: :timeout}})
+# => Clauses 1-2: {:error, ...} doesn't match {:ok, ...}
+# => Clause 3: {:error, %{reason: :timeout}} matches → {:failed, :timeout}
 
+# Default arguments with pattern matching
 FunctionMatching.send_message(%{email: "a@example.com"}, "Hello", priority: :high)
+# => opts = [priority: :high] (provided)
+# => Clause 1: pattern [priority: :high] matches → "Urgent email..."
 FunctionMatching.send_message(%{email: "b@example.com"}, "Hi", [])
+# => opts = [] (provided empty list)
+# => Clause 1: [] doesn't match [priority: :high]
+# => Clause 2: _opts matches [] → "Email..."
 ```
 
 **Key Takeaway**: Pattern matching in function heads enables elegant multi-clause logic. Place specific patterns before general ones, and combine with guards for precise control flow.
