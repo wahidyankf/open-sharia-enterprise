@@ -1339,78 +1339,208 @@ graph TD
 
 ```elixir
 defprotocol Printable do
+  # => Protocol definition: defines polymorphic interface
+  # => Protocols dispatch based on data type at runtime
+  # => Similar to interfaces in OOP languages
   @doc "Converts data to a printable string"
+  # => Documentation for protocol function
   def print(data)
+  # => Function signature: takes any data, returns string
+  # => Implementation provided by defimpl for each type
 end
 
 defimpl Printable, for: Integer do
+  # => Implementation of Printable protocol for Integer type
+  # => defimpl: define protocol implementation
+  # => for: Integer: specifies target type
   def print(int), do: "Number: #{int}"
+  # => Pattern matches integer parameter
+  # => Returns formatted string with integer value
+  # => String interpolation: #{int}
 end
 
 defimpl Printable, for: List do
+  # => Implementation for List type
   def print(list), do: "List with #{length(list)} items: #{inspect(list)}"
+  # => length(list): counts list elements
+  # => inspect(list): converts list to readable string
+  # => Returns formatted string with count and contents
 end
 
 defimpl Printable, for: Map do
+  # => Implementation for Map type
   def print(map), do: "Map with #{map_size(map)} keys"
+  # => map_size(map): counts keys in map (O(1) operation)
+  # => Returns formatted string with key count
 end
 
-Printable.print(42) # => "Number: 42"
-Printable.print([1, 2, 3]) # => "List with 3 items: [1, 2, 3]"
-Printable.print(%{a: 1, b: 2}) # => "Map with 2 keys"
+Printable.print(42)
+# => Calls protocol function with integer
+# => Runtime dispatch: finds Integer implementation
+# => Executes Printable.Integer.print/1
+# => Returns "Number: 42"
+
+Printable.print([1, 2, 3])
+# => Runtime dispatch: finds List implementation
+# => Calls Printable.List.print/1
+# => Returns "List with 3 items: [1, 2, 3]"
+
+Printable.print(%{a: 1, b: 2})
+# => Runtime dispatch: finds Map implementation
+# => Calls Printable.Map.print/1
+# => Returns "Map with 2 keys"
 
 defmodule User do
+  # => Custom struct definition
   defstruct name: nil, age: nil
+  # => Struct with two fields: name and age
+  # => Both default to nil
 end
 
 defimpl Printable, for: User do
+  # => Protocol implementation for custom User struct
+  # => Protocols work with any data type, including custom structs
   def print(user), do: "User: #{user.name}, age #{user.age}"
+  # => Accesses struct fields: user.name, user.age
+  # => Returns formatted string with user data
 end
 
 user = %User{name: "Alice", age: 30}
-Printable.print(user) # => "User: Alice, age 30"
+# => Creates User struct instance
+# => Binds to user variable
+# => %User{name: "Alice", age: 30}
+
+Printable.print(user)
+# => Runtime dispatch: finds User implementation
+# => Calls Printable.User.print/1
+# => Returns "User: Alice, age 30"
 
 defimpl String.Chars, for: User do
+  # => Implements built-in String.Chars protocol
+  # => String.Chars: enables to_string/1 and string interpolation
+  # => Implementing this protocol integrates User with Elixir's string system
   def to_string(user), do: user.name
+  # => Returns user's name as string representation
+  # => Used by to_string/1 and #{} interpolation
 end
 
-to_string(user) # => "Alice"
-"Hello, #{user}" # => "Hello, Alice" (uses String.Chars protocol)
+to_string(user)
+# => Calls String.Chars.to_string/1
+# => Dispatch finds User implementation
+# => Returns "Alice"
+
+"Hello, #{user}"
+# => String interpolation calls to_string/1 implicitly
+# => Uses String.Chars.User.to_string/1
+# => Converts user to "Alice"
+# => Returns "Hello, Alice"
+# => Without String.Chars impl, would raise Protocol.UndefinedError
 
 defmodule Range do
+  # => Custom Range struct
   defstruct first: nil, last: nil
+  # => Stores range bounds: first and last
 end
 
 defimpl Enumerable, for: Range do
+  # => Implements built-in Enumerable protocol
+  # => Enumerable: enables Enum.* functions (map, filter, reduce, count, etc.)
+  # => Must implement: count/1, member?/2, reduce/3, slice/1
+
   def count(range), do: {:ok, range.last - range.first + 1}
+  # => Returns total element count
+  # => Formula: last - first + 1 (inclusive range)
+  # => Example: first=1, last=5 => 5-1+1 = 5 elements
+  # => Returns {:ok, count} tuple
+
   def member?(range, value), do: {:ok, value >= range.first and value <= range.last}
+  # => Checks if value is in range
+  # => Returns {:ok, boolean}
+  # => Example: member?(1..5, 3) => {:ok, true}
+
   def reduce(range, acc, fun) do
+    # => Core enumeration function
+    # => Converts custom Range to built-in range (range.first..range.last)
+    # => Delegates to Enum.reduce/3
     Enum.reduce(range.first..range.last, acc, fun)
+    # => Applies fun to each element with accumulator
+    # => This enables all Enum.* functions to work with Range
   end
+
   def slice(_range), do: {:error, __MODULE__}
+  # => Slice operation not supported for this Range
+  # => Returns {:error, module_name}
+  # => __MODULE__: expands to current module name (Enumerable.Range)
+  # => Some Enum functions (take, drop) use slice for optimization
+  # => Error return means fallback to reduce-based implementation
 end
 
 my_range = %Range{first: 1, last: 5}
-Enum.count(my_range) # => 5
-Enum.member?(my_range, 3) # => true
-Enum.map(my_range, fn x -> x * 2 end) # => [2, 4, 6, 8, 10]
+# => Creates Range struct with bounds 1..5
+# => Represents values: [1, 2, 3, 4, 5]
+
+Enum.count(my_range)
+# => Calls Enumerable.Range.count/1
+# => Returns {:ok, 5}
+# => Enum.count extracts value from {:ok, count} tuple
+# => Returns 5
+
+Enum.member?(my_range, 3)
+# => Calls Enumerable.Range.member?/2
+# => Checks if 3 is in range 1..5
+# => Returns {:ok, true}
+# => Enum.member? extracts boolean from tuple
+# => Returns true
+
+Enum.map(my_range, fn x -> x * 2 end)
+# => Uses Enumerable.Range.reduce/3 under the hood
+# => Iterates: 1, 2, 3, 4, 5
+# => Applies fn: 1*2=2, 2*2=4, 3*2=6, 4*2=8, 5*2=10
+# => Returns [2, 4, 6, 8, 10]
+# => This works because we implemented Enumerable protocol!
 
 defprotocol Describable do
+  # => Protocol with fallback to Any
   @fallback_to_any true
+  # => @fallback_to_any: enables default implementation
+  # => If no specific implementation found, uses Any implementation
+  # => Without this, missing implementation raises Protocol.UndefinedError
   def describe(data)
+  # => Function signature for polymorphic describe/1
 end
 
 defimpl Describable, for: Any do
+  # => Fallback implementation for all types
+  # => Only used if @fallback_to_any true
+  # => Catches all types without specific implementation
   def describe(_data), do: "No description available"
+  # => _data: unused parameter (underscore prefix)
+  # => Returns generic fallback message
 end
 
 defimpl Describable, for: Integer do
+  # => Specific implementation for Integer
+  # => Takes precedence over Any implementation
   def describe(int), do: "The number #{int}"
+  # => Returns specific description for integers
 end
 
-Describable.describe(42) # => "The number 42"
-Describable.describe("hello") # => "No description available" (fallback)
-Describable.describe([1, 2, 3]) # => "No description available" (fallback)
+Describable.describe(42)
+# => Runtime dispatch: finds Integer implementation
+# => Uses specific Describable.Integer.describe/1 (not Any)
+# => Returns "The number 42"
+
+Describable.describe("hello")
+# => Runtime dispatch: no String implementation found
+# => Fallback to Any implementation (because @fallback_to_any true)
+# => Calls Describable.Any.describe/1
+# => Returns "No description available"
+
+Describable.describe([1, 2, 3])
+# => No List implementation found
+# => Fallback to Any
+# => Returns "No description available"
+# => Without @fallback_to_any, would raise Protocol.UndefinedError
 ```
 
 **Key Takeaway**: Protocols enable polymorphic functions that dispatch based on data type. Implement protocols for your custom types to integrate with Elixir's built-in functions (`to_string`, `Enum.*`, etc.).
@@ -1429,78 +1559,214 @@ Elixir idiomatically uses tagged tuples `{:ok, value}` or `{:error, reason}` to 
 
 ```elixir
 defmodule ResultTuples do
+  # => Module demonstrating idiomatic Elixir error handling
+  # => Uses tagged tuples instead of exceptions for expected errors
+
   # Function that can succeed or fail
   def divide(a, b) when b != 0, do: {:ok, a / b}
+  # => Clause 1: Guard checks b != 0
+  # => Success case: returns {:ok, result} tuple
+  # => Tagged tuple: :ok atom indicates success, second element is value
+  # => Example: divide(10, 2) => {:ok, 5.0}
+
   def divide(_a, 0), do: {:error, :division_by_zero}
+  # => Clause 2: Pattern matches b = 0 (exact value)
+  # => Failure case: returns {:error, reason} tuple
+  # => :division_by_zero is an atom describing the error
+  # => _a: unused parameter (underscore prefix)
 
   # Parse integer from string
   def parse_int(string) do
+    # => Wraps Integer.parse/1 with result tuple convention
     case Integer.parse(string) do
+      # => Integer.parse/1 returns {int, rest} or :error
       {int, ""} -> {:ok, int}
+      # => Pattern: {int, ""} means full string parsed (no remainder)
+      # => Returns {:ok, int} indicating successful complete parse
+      # => Example: parse("42") => {42, ""} => {:ok, 42}
+
       {_int, _rest} -> {:error, :partial_parse}
+      # => Pattern: {int, rest} means partial parse (extra chars remain)
+      # => Returns error indicating incomplete parse
+      # => Example: parse("42abc") => {42, "abc"} => {:error, :partial_parse}
+
       :error -> {:error, :invalid_integer}
+      # => Pattern: :error means string contains no valid integer
+      # => Returns error indicating invalid input
+      # => Example: parse("abc") => :error => {:error, :invalid_integer}
     end
   end
 
   # Fetch user from database (simulated)
   def fetch_user(id) when id > 0 and id < 100 do
+    # => Clause 1: Guard validates id range [1, 99]
+    # => Simulates successful database lookup
     {:ok, %{id: id, name: "User #{id}"}}
+    # => Returns {:ok, map} with user data
   end
+
   def fetch_user(_id), do: {:error, :user_not_found}
+  # => Clause 2: Catches all other ids (id <= 0 or id >= 100)
+  # => Returns error tuple for invalid ids
 
   # Chain operations with pattern matching
   def get_user_name(id) do
+    # => Demonstrates manual error propagation
     case fetch_user(id) do
+      # => Call fetch_user, pattern match on result
       {:ok, user} -> {:ok, user.name}
+      # => Success case: extract user.name, re-wrap in {:ok, ...}
+      # => Propagates success with transformed value
+
       {:error, reason} -> {:error, reason}
+      # => Failure case: propagate error unchanged
+      # => Pattern matches any error reason, passes it through
     end
   end
 
   # Chain with `with`
   def calculate(a_str, b_str) do
+    # => Demonstrates with expression for cleaner error chaining
     with {:ok, a} <- parse_int(a_str),
+         # => Step 1: Parse first string to integer
+         # => If {:ok, a} pattern matches: bind a, continue to step 2
+         # => If {:error, _} or other: jump to else block
+
          {:ok, b} <- parse_int(b_str),
+         # => Step 2: Parse second string to integer
+         # => If {:ok, b} pattern matches: bind b, continue to step 3
+         # => If error: jump to else block
+
          {:ok, result} <- divide(a, b) do
+         # => Step 3: Divide a by b
+         # => If {:ok, result} pattern matches: bind result, execute do block
+         # => If error: jump to else block
+
       {:ok, result}
+      # => All steps succeeded: return final result
+      # => Returns {:ok, result} maintaining tuple convention
     else
       {:error, reason} -> {:error, reason}
+      # => Any step failed: propagate error
+      # => Pattern matches any error tuple from any step
+      # => Early return: stops at first error
     end
   end
 end
 
-ResultTuples.divide(10, 2) # => {:ok, 5.0}
-ResultTuples.parse_int("42") # => {:ok, 42}
-ResultTuples.fetch_user(1) # => {:ok, %{id: 1, name: "User 1"}}
+ResultTuples.divide(10, 2)
+# => Calls divide/2 with valid divisor
+# => Guard b != 0 succeeds (2 != 0 is true)
+# => Returns {:ok, 5.0}
 
-ResultTuples.divide(10, 0) # => {:error, :division_by_zero}
-ResultTuples.parse_int("abc") # => {:error, :invalid_integer}
-ResultTuples.fetch_user(999) # => {:error, :user_not_found}
+ResultTuples.parse_int("42")
+# => Calls Integer.parse("42") => {42, ""}
+# => Pattern matches {int, ""} (complete parse)
+# => Returns {:ok, 42}
 
-ResultTuples.get_user_name(1) # => {:ok, "User 1"}
-ResultTuples.get_user_name(999) # => {:error, :user_not_found}
+ResultTuples.fetch_user(1)
+# => id = 1: guard id > 0 and id < 100 succeeds
+# => Returns {:ok, %{id: 1, name: "User 1"}}
 
-ResultTuples.calculate("10", "2") # => {:ok, 5.0}
-ResultTuples.calculate("10", "0") # => {:error, :division_by_zero}
-ResultTuples.calculate("abc", "2") # => {:error, :invalid_integer}
+ResultTuples.divide(10, 0)
+# => Calls divide/2 with zero divisor
+# => Guard b != 0 fails (0 != 0 is false)
+# => Falls through to clause 2: divide(_a, 0)
+# => Returns {:error, :division_by_zero}
+
+ResultTuples.parse_int("abc")
+# => Calls Integer.parse("abc") => :error (no digits)
+# => Pattern matches :error clause
+# => Returns {:error, :invalid_integer}
+
+ResultTuples.fetch_user(999)
+# => id = 999: guard id > 0 and id < 100 fails (999 < 100 is false)
+# => Falls through to clause 2: fetch_user(_id)
+# => Returns {:error, :user_not_found}
+
+ResultTuples.get_user_name(1)
+# => Calls fetch_user(1) => {:ok, %{id: 1, name: "User 1"}}
+# => Pattern matches {:ok, user}
+# => Extracts user.name => "User 1"
+# => Returns {:ok, "User 1"}
+
+ResultTuples.get_user_name(999)
+# => Calls fetch_user(999) => {:error, :user_not_found}
+# => Pattern matches {:error, reason}
+# => Returns {:error, :user_not_found} (propagated)
+
+ResultTuples.calculate("10", "2")
+# => with step 1: parse_int("10") => {:ok, 10} ✓ bind a=10
+# => with step 2: parse_int("2") => {:ok, 2} ✓ bind b=2
+# => with step 3: divide(10, 2) => {:ok, 5.0} ✓ bind result=5.0
+# => All steps succeeded, execute do block
+# => Returns {:ok, 5.0}
+
+ResultTuples.calculate("10", "0")
+# => with step 1: parse_int("10") => {:ok, 10} ✓ bind a=10
+# => with step 2: parse_int("0") => {:ok, 0} ✓ bind b=0
+# => with step 3: divide(10, 0) => {:error, :division_by_zero} ✗ mismatch!
+# => Pattern {:ok, result} doesn't match {:error, ...}
+# => Jump to else block
+# => Returns {:error, :division_by_zero}
+
+ResultTuples.calculate("abc", "2")
+# => with step 1: parse_int("abc") => {:error, :invalid_integer} ✗ mismatch!
+# => Pattern {:ok, a} doesn't match {:error, ...}
+# => Jump to else block immediately (step 2 and 3 never execute)
+# => Returns {:error, :invalid_integer}
 
 case ResultTuples.divide(10, 2) do
+  # => Pattern matching on result tuple
+  # => Call divide(10, 2) => {:ok, 5.0}
   {:ok, result} -> IO.puts("Result: #{result}")
+  # => Pattern matches {:ok, 5.0}, bind result=5.0
+  # => Prints "Result: 5.0"
+  # => Returns :ok (IO.puts return value)
+
   {:error, :division_by_zero} -> IO.puts("Cannot divide by zero")
+  # => Would match if result was {:error, :division_by_zero}
+  # => Not executed in this example
 end
 
 {:ok, value} = ResultTuples.divide(10, 2)
-value # => 5.0
+# => Pattern matching assignment
+# => Right side: ResultTuples.divide(10, 2) => {:ok, 5.0}
+# => Left side: {:ok, value} pattern
+# => Pattern matches, binds value = 5.0
+# => If pattern didn't match (e.g., returned {:error, ...}), raises MatchError
+
+value
+# => Returns 5.0 (extracted from tuple)
+# => This unwraps the result, losing error information!
+# => Use only when you're certain of success
 
 defmodule Bang do
+  # => Module demonstrating bang (!) function convention
+  # => Bang functions unwrap results or raise exceptions
+
   def divide!(a, b) do
+    # => Function name ends with !: indicates may raise exception
+    # => Convention: ! functions unwrap {:ok, value} or raise on {:error, reason}
     case ResultTuples.divide(a, b) do
+      # => Calls safe divide/2 that returns tuple
       {:ok, result} -> result
+      # => Success: unwrap tuple, return bare value
+      # => Converts {:ok, 5.0} to 5.0
+
       {:error, reason} -> raise "Division failed: #{reason}"
+      # => Failure: raise RuntimeError with reason
+      # => Converts {:error, :division_by_zero} to exception
+      # => Caller must handle with try/rescue or let process crash
     end
   end
 end
 
-Bang.divide!(10, 2) # => 5.0
+Bang.divide!(10, 2)
+# => Calls ResultTuples.divide(10, 2) => {:ok, 5.0}
+# => Pattern matches {:ok, result}, binds result=5.0
+# => Returns 5.0 (unwrapped value)
+# => No exception raised
 ```
 
 **Key Takeaway**: Use tagged tuples `{:ok, value}` and `{:error, reason}` for expected error cases. Functions ending with `!` unwrap results or raise exceptions. Pattern match to handle both success and failure cases.
