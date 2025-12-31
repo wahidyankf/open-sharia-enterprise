@@ -1783,92 +1783,209 @@ Bang.divide!(10, 2)
 
 ```elixir
 defmodule TryRescue do
+  # => Module demonstrating exception handling with try/rescue/after
+  # => Use for exceptions from external libraries or cleanup scenarios
+
   # Basic try/rescue
   def safe_divide(a, b) do
+    # => Wraps risky division operation in try/rescue
     try do
+      # => try block: code that might raise exception
       a / b
+      # => Division by zero raises ArithmeticError in Elixir
+      # => If successful, returns result (5.0 for 10/2)
     rescue
+      # => rescue block: catches and handles exceptions
       ArithmeticError -> {:error, :division_by_zero}
+      # => Pattern matches specific exception type
+      # => Converts exception to {:error, reason} tuple
+      # => No error information, just atom tag
     end
+    # => try/rescue returns value from matched block
   end
 
   # Multiple rescue clauses
   def parse_and_double(str) do
+    # => Demonstrates multiple rescue patterns
     try do
       str
       |> String.to_integer()
+      # => String.to_integer/1 raises ArgumentError for invalid strings
+      # => Example: "abc" raises ArgumentError
       |> Kernel.*(2)
+      # => Kernel.*/2: multiplication operator as function
+      # => Doubles the integer
     rescue
+      # => Multiple rescue clauses: matched top-to-bottom
       ArgumentError -> {:error, :invalid_integer}
+      # => Clause 1: Simple pattern, catches ArgumentError
+      # => Returns error tuple without exception details
+
       err in RuntimeError -> {:error, {:runtime_error, err.message}}
+      # => Clause 2: Named pattern with "in"
+      # => err: binds exception struct
+      # => RuntimeError: exception type to match
+      # => err.message: accesses exception message field
+      # => Returns error tuple with message
     end
   end
 
   # try/after for cleanup
   def read_file(path) do
+    # => Demonstrates after block for guaranteed cleanup
     {:ok, file} = File.open(path, [:read])
+    # => Opens file, pattern matches {:ok, file}
+    # => If file doesn't exist, raises MatchError (no try/rescue here!)
+    # => file: file handle/PID
+
     try do
+      # => try block: risky file reading
       IO.read(file, :all)
+      # => Reads entire file contents
+      # => Returns string with file data
+      # => Could raise if file handle invalid
     after
-      File.close(file)  # Always runs, even if error occurs
+      # => after block: ALWAYS executes (success or exception)
+      # => Similar to finally in other languages
+      File.close(file)
+      # => Closes file handle to free resource
+      # => Runs even if IO.read raises exception
+      # => Ensures no file handle leak
+      # => after block return value is IGNORED
     end
+    # => Returns IO.read result (string) if successful
+    # => If exception raised, propagates after cleanup
   end
 
   # try/rescue/after all together
   def complex_operation do
+    # => Demonstrates combining rescue and after
     try do
-      # Risky operation
+      # => try block: intentionally dangerous operation
       result = 10 / 0
+      # => Division by zero raises ArithmeticError
+      # => This line never executes
       {:ok, result}
+      # => Would return {:ok, Infinity} if division succeeded (it won't)
     rescue
+      # => rescue block: handles exceptions
       ArithmeticError -> {:error, :arithmetic_error}
+      # => Catches ArithmeticError specifically
+      # => Matches division by zero case
+      # => Returns error tuple
+
       _ -> {:error, :unknown_error}
+      # => Catch-all pattern: matches any exception
+      # => _ discards exception value (not bound to variable)
+      # => Fallback for unexpected exceptions
     after
-      IO.puts("Cleanup happens here")  # Always runs
+      # => after block: runs regardless of success/failure
+      IO.puts("Cleanup happens here")
+      # => Prints to stdout
+      # => Executes BEFORE return (after rescue clause)
+      # => Return value ignored (function returns rescue result)
     end
+    # => Execution order: try → rescue → after → return rescue value
   end
 
   # Catch specific exception type
   def handle_specific_error do
+    # => Demonstrates accessing exception struct
     try do
       raise ArgumentError, message: "Invalid argument"
+      # => raise: throws exception
+      # => ArgumentError: exception module
+      # => message: "...": sets exception message field
     rescue
       e in ArgumentError -> "Caught: #{e.message}"
+      # => e in ArgumentError: binds exception to e variable
+      # => e: exception struct %ArgumentError{message: "Invalid argument"}
+      # => e.message: accesses message field
+      # => Returns string with message (no {:error, ...} tuple)
     end
   end
 
   # Re-raise exception
   def logged_operation do
+    # => Demonstrates logging + re-raising
     try do
       raise "Something went wrong"
+      # => raise "string": creates RuntimeError with message
+      # => Shorthand for: raise RuntimeError, message: "..."
     rescue
       e ->
+        # => e: catches any exception (no "in" type restriction)
+        # => Binds exception struct to e variable
         Logger.error("Error occurred: #{inspect(e)}")
-        reraise e, __STACKTRACE__  # Re-raise the exception
+        # => Log error before re-raising
+        # => inspect(e): converts exception struct to string
+        # => Side effect: logs to logger backend
+
+        reraise e, __STACKTRACE__
+        # => reraise: re-throws exception with original stacktrace
+        # => e: exception struct to re-throw
+        # => __STACKTRACE__: special variable with current stacktrace
+        # => Preserves original error location for debugging
+        # => Function does NOT return (exception propagates)
     end
   end
 end
 
-TryRescue.safe_divide(10, 2) # => 5.0
-TryRescue.safe_divide(10, 0) # => {:error, :division_by_zero}
+TryRescue.safe_divide(10, 2)
+# => try block: 10 / 2 = 5.0 (success, no exception)
+# => rescue block: NOT executed
+# => Returns 5.0 (not wrapped in tuple)
 
-TryRescue.parse_and_double("5") # => 10
-TryRescue.parse_and_double("abc") # => {:error, :invalid_integer}
+TryRescue.safe_divide(10, 0)
+# => try block: 10 / 0 raises ArithmeticError
+# => rescue block: catches ArithmeticError
+# => Returns {:error, :division_by_zero}
 
-TryRescue.complex_operation()  # Prints "Cleanup happens here", returns {:error, :arithmetic_error}
+TryRescue.parse_and_double("5")
+# => try: String.to_integer("5") => 5 (success)
+# => try: 5 * 2 = 10
+# => rescue: NOT executed
+# => Returns 10
 
-TryRescue.handle_specific_error() # => "Caught: Invalid argument"
+TryRescue.parse_and_double("abc")
+# => try: String.to_integer("abc") raises ArgumentError
+# => rescue: catches ArgumentError (first clause matches)
+# => Returns {:error, :invalid_integer}
+
+TryRescue.complex_operation()
+# => try: 10 / 0 raises ArithmeticError
+# => rescue: catches ArithmeticError => {:error, :arithmetic_error}
+# => after: IO.puts("Cleanup happens here") executes
+# => Prints "Cleanup happens here" to stdout
+# => Returns {:error, :arithmetic_error}
+
+TryRescue.handle_specific_error()
+# => try: raise ArgumentError => raises with message
+# => rescue: catches ArgumentError, binds to e
+# => e.message => "Invalid argument"
+# => Returns "Caught: Invalid argument"
 
 
 
 defmodule HTTPClient do
+  # => Example HTTP client with exception handling
   def get(url) do
+    # => Simulates HTTP request with error handling
     try do
-      # Imagine this is a library call that raises on failure
+      # => try block: risky HTTP call
       {:ok, "Response from #{url}"}
+      # => In real code, this would be: HTTPoison.get!(url)
+      # => Returns success tuple with response
     rescue
+      # => rescue with multiple exception types
       HTTPError -> {:error, :http_error}
+      # => Hypothetical HTTPError exception
+      # => Catches HTTP-specific errors (404, 500, etc.)
+
       TimeoutError -> {:error, :timeout}
+      # => Hypothetical TimeoutError exception
+      # => Catches connection timeout errors
+      # => Different error handling based on exception type
     end
   end
 end
