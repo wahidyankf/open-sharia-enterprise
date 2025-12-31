@@ -2964,77 +2964,231 @@ The `Task` module provides a simple abstraction for spawning processes and await
 **Code**:
 
 ```elixir
+# Basic async/await pattern
 task = Task.async(fn ->
+  # => Task.async/1: spawns process to execute function
+  # => Returns Task struct (not just PID)
+  # => Task struct: %Task{pid: <pid>, ref: <ref>, owner: <owner>}
+  # => Process runs concurrently with caller
   :timer.sleep(1000)
+  # => Simulates async computation (1 second)
+  # => Task process sleeps, caller continues
   42
+  # => Function return value
+  # => Will be returned by Task.await/1
 end)
+# => task: %Task{pid: #PID<0.150.0>, ref: #Reference<...>, owner: #PID<0.140.0>}
+# => owner: current process (caller)
+# => Task process running in background
 
 IO.puts("Task started, doing other work...")
+# => Prints immediately (non-blocking)
+# => Main process continues while task sleeps
+# => Demonstrates concurrent execution
 
 result = Task.await(task)  # => 42
+# => Task.await/1: blocks until task completes
+# => Default timeout: 5000ms (5 seconds)
+# => Waits ~1 second for task to finish sleeping
+# => Returns: task function's return value (42)
+# => Task process terminated after returning value
+# => result is 42 (integer)
 IO.puts("Task result: #{result}")
+# => Prints: "Task result: 42"
+# => Demonstrates async/await pattern
 
+# Multiple parallel tasks
 tasks = Enum.map(1..5, fn i ->
+  # => Creates 5 tasks with staggered durations
   Task.async(fn ->
+    # => Each task spawns separate process
+    # => All 5 processes run concurrently
     :timer.sleep(i * 200)
+    # => Task 1: 200ms, Task 2: 400ms, ..., Task 5: 1000ms
+    # => Parallel execution: all sleep simultaneously
     i * i
+    # => Compute square: 1*1=1, 2*2=4, 3*3=9, 4*4=16, 5*5=25
+    # => Return value for each task
   end)
+  # => Returns Task struct
 end)
+# => tasks: list of 5 Task structs
+# => All 5 processes running concurrently
+# => tasks is [%Task{...}, %Task{...}, ...]
 
 results = Enum.map(tasks, &Task.await/1)  # => [1, 4, 9, 16, 25]
+# => Await all tasks sequentially
+# => &Task.await/1: function capture syntax
+# => Equivalent to: fn task -> Task.await(task) end
+# => Wait for Task 1 (200ms), then Task 2 (already done), ...
+# => Task 2-5 complete while waiting for Task 1
+# => Total wait: ~1000ms (not 3000ms, tasks run concurrently)
+# => Returns: [1, 4, 9, 16, 25]
+# => All task processes terminated
 IO.inspect(results)
+# => Prints: [1, 4, 9, 16, 25]
+# => Demonstrates parallel task execution
 
+# Task timeout with exception
 task = Task.async(fn ->
+  # => Spawns slow task (10 seconds)
   :timer.sleep(10_000)
+  # => Sleeps for 10 seconds
+  # => Will be interrupted by timeout
   :done
+  # => Never reached (timeout occurs first)
 end)
+# => Task running in background
 
 try do
+  # => try/rescue: exception handling block
+  # => Catches Task.TimeoutError
   Task.await(task, 1000)  # Timeout after 1 second
+  # => Task.await/2: second arg is timeout in milliseconds
+  # => Timeout: 1000ms (1 second)
+  # => 1000ms < 10000ms: task won't complete in time
+  # => Raises Task.TimeoutError after 1 second
+  # => Task process keeps running after timeout (not killed)
 rescue
+  # => Catches exceptions from try block
   e in Task.TimeoutError ->
+    # => Pattern: match Task.TimeoutError exception
+    # => e: bound to exception struct
+    # => %Task.TimeoutError{task: <task>, timeout: 1000}
     IO.puts("Task timed out: #{inspect(e)}")
+    # => Prints timeout error details
+    # => Example: "Task timed out: %Task.TimeoutError{task: %Task{...}, timeout: 1000}"
+    # => Task process still running in background (orphaned)
 end
+# => Exception handled, program continues
+# => WARNING: Task process not cleaned up (potential resource leak)
 
+# Task.yield - non-blocking check
 task = Task.async(fn ->
+  # => Spawns task that takes 2 seconds
   :timer.sleep(2000)
+  # => Sleeps for 2 seconds
   :result
+  # => Returns :result atom
 end)
+# => Task running in background
 
 case Task.yield(task, 500) do
+  # => Task.yield/2: checks if task completed within timeout
+  # => Timeout: 500ms
+  # => Non-blocking: returns immediately after timeout
+  # => Does NOT raise exception on timeout
   {:ok, result} -> IO.puts("Got result: #{result}")
+  # => Pattern 1: task completed within 500ms
+  # => result: task return value
+  # => Won't match: task needs 2000ms
   nil -> IO.puts("Task still running after 500ms")
+  # => Pattern 2: task not completed within timeout
+  # => Returns nil (not error tuple)
+  # => Task still running in background
+  # => Prints: "Task still running after 500ms"
 end
+# => Task process still alive (continues running)
+# => Total elapsed: ~500ms
 
 case Task.yield(task, 2000) do
+  # => Second yield: wait up to 2000ms more
+  # => Task has ~1500ms remaining (2000ms - 500ms)
+  # => Sufficient time for task to complete
   {:ok, result} -> IO.puts("Got result: #{result}")
+  # => Pattern 1: task completed within 2000ms
+  # => result is :result
+  # => Prints: "Got result: result"
+  # => Task process terminated
   nil -> IO.puts("Still running")
+  # => Pattern 2: task not completed (won't match)
+  # => Task completes in ~1500ms, well within 2000ms timeout
 end
+# => Total elapsed: ~2000ms (500ms + 1500ms)
+# => Demonstrates: yield allows polling without exceptions
 
+# Task.start - fire and forget
 Task.start(fn ->
+  # => Task.start/1: spawns unlinked task
+  # => Returns {:ok, pid} (not Task struct)
+  # => No await needed (fire-and-forget pattern)
+  # => Task not linked to caller (crash won't affect caller)
   :timer.sleep(1000)
+  # => Background work: sleeps 1 second
   IO.puts("Background task completed")
+  # => Prints after 1 second
+  # => Side effect: output happens asynchronously
 end)
+# => Returns: {:ok, #PID<0.160.0>}
+# => No Task struct (can't await)
 IO.puts("Main process continues immediately")
+# => Prints immediately (doesn't wait for task)
+# => Demonstrates: fire-and-forget pattern
+# => Background task completes ~1 second later
 
+# Task.async_stream - parallel collection processing
 results = 1..10
           |> Task.async_stream(fn i ->
+            # => Task.async_stream/3: processes collection in parallel
+            # => Creates tasks for each element
+            # => max_concurrency: limits concurrent tasks
+            # => Processes elements in order (preserves ordering)
             :timer.sleep(100)
+            # => Each task sleeps 100ms
+            # => Simulates work per element
             i * i
+            # => Compute square for each element
+            # => Returns: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100
           end, max_concurrency: 4)
+          # => max_concurrency: 4: at most 4 tasks run simultaneously
+          # => First 4 tasks: process 1-4 concurrently
+          # => As tasks complete, new tasks start (5-10)
+          # => Returns stream of {:ok, result} tuples
+          # => Stream is lazy (not yet executed)
           |> Enum.to_list()
+          # => Force stream evaluation
+          # => Blocks until all 10 tasks complete
+          # => Total time: ~300ms (10 elements / 4 concurrency * 100ms)
+          # => Not 1000ms (sequential) or 100ms (fully parallel)
+# => results: [{:ok, 1}, {:ok, 4}, {:ok, 9}, ..., {:ok, 100}]
+# => Each result wrapped in {:ok, value} tuple
+# => Ordering preserved (1, 4, 9, not random order)
 
+# Error handling in tasks
 task = Task.async(fn ->
+  # => Spawns task that will crash
   raise "Task error!"
+  # => Raises RuntimeError exception
+  # => Task process crashes
 end)
+# => Task running (will crash immediately)
 
 try do
+  # => Exception handling for task errors
   Task.await(task)
+  # => Waits for task to complete
+  # => Task crashes, exception propagated to caller
+  # => Raises same exception in caller's context
 rescue
+  # => Catches exception from crashed task
   e -> IO.puts("Caught error: #{inspect(e)}")
+  # => Pattern: match any exception
+  # => e: %RuntimeError{message: "Task error!"}
+  # => Prints: "Caught error: %RuntimeError{message: \"Task error!\"}"
+  # => Exception handled, program continues
 end
+# => Task process terminated (crashed)
+# => Demonstrates: Task.await/1 re-raises task exceptions
 
+# Task.Supervisor - supervised tasks
 {:ok, result} = Task.Supervisor.start_link()
+# => Task.Supervisor.start_link/0: starts task supervisor
+# => Supervisor manages task processes
+# => Provides isolation: task crashes don't affect caller
+# => Returns: {:ok, #PID<supervisor_pid>}
+# => result: supervisor PID
+# => Supervisor running and ready to spawn tasks
+# => Use with Task.Supervisor.async/2 for supervised tasks
 ```
 
 **Key Takeaway**: `Task` provides async/await abstraction over processes. Use `Task.async/1` and `Task.await/1` for parallel work with results. Use `Task.async_stream/3` for processing collections in parallel.
