@@ -1197,52 +1197,94 @@ fun main() {                        // => Program entry point
 Maps store key-value pairs with unique keys. Kotlin provides immutable `Map` and mutable `MutableMap`. Use the `to` infix function or `Pair` to create entries, and access values safely with null-aware operators.
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Immutable map
-    val capitals = mapOf(
-        "Indonesia" to "Jakarta",
-        "Malaysia" to "Kuala Lumpur",
-        "Singapore" to "Singapore"
-    )                                // => capitals is {Indonesia=Jakarta, ...}
+    val capitals = mapOf(            // => mapOf: creates immutable Map
+        "Indonesia" to "Jakarta",    // => to: infix function creates Pair
+                                    // => "Indonesia" to "Jakarta" = Pair("Indonesia", "Jakarta")
+        "Malaysia" to "Kuala Lumpur",// => Creates Pair("Malaysia", "Kuala Lumpur")
+        "Singapore" to "Singapore"   // => Creates Pair("Singapore", "Singapore")
+    )                                // => Type: Map<String, String>
+                                    // => 3 key-value entries
+                                    // => capitals is {Indonesia=Jakarta, ...}
 
-    println(capitals["Indonesia"])   // => Output: Jakarta
-    println(capitals["Thailand"])    // => Output: null (key not found)
+    println(capitals["Indonesia"])   // => [] operator: map access by key
+                                    // => Key "Indonesia" exists
+                                    // => Returns "Jakarta"
+                                    // => Output: Jakarta
+    println(capitals["Thailand"])    // => Key "Thailand" not in map
+                                    // => Returns null (not exception)
+                                    // => Output: null (key not found)
 
     // Mutable map
-    val scores = mutableMapOf(
-        "Alice" to 95,
-        "Bob" to 87
-    )                                // => scores is {Alice=95, Bob=87}
-    scores["Charlie"] = 92           // => scores is {Alice=95, Bob=87, Charlie=92}
-    scores["Alice"] = 98             // => scores is {Alice=98, Bob=87, Charlie=92}
-    scores.remove("Bob")             // => scores is {Alice=98, Charlie=92}
+    val scores = mutableMapOf(       // => mutableMapOf: creates MutableMap
+        "Alice" to 95,               // => Entry: "Alice" -> 95
+        "Bob" to 87                  // => Entry: "Bob" -> 87
+    )                                // => Type: MutableMap<String, Int>
+                                    // => scores is {Alice=95, Bob=87}
+    scores["Charlie"] = 92           // => [] operator: add/update entry
+                                    // => Key "Charlie" doesn't exist, add it
+                                    // => scores is {Alice=95, Bob=87, Charlie=92}
+    scores["Alice"] = 98             // => Key "Alice" exists, update value
+                                    // => 95 -> 98 (value updated)
+                                    // => scores is {Alice=98, Bob=87, Charlie=92}
+    scores.remove("Bob")             // => remove: deletes entry by key
+                                    // => "Bob" entry removed
+                                    // => scores is {Alice=98, Charlie=92}
 
     // Safe access with default value
     val aliceScore = scores.getOrDefault("Alice", 0)
+                                     // => getOrDefault: safe access with fallback
+                                     // => Key "Alice" exists
+                                     // => Returns 98 (value found)
                                      // => aliceScore is 98
     val bobScore = scores.getOrDefault("Bob", 0)
+                                     // => Key "Bob" doesn't exist (removed)
+                                     // => Returns default 0
                                      // => bobScore is 0 (Bob removed)
 
     // getOrElse with lambda
     val davidScore = scores.getOrElse("David") { 50 }
+                                     // => getOrElse: lazy default (lambda)
+                                     // => Key "David" not found
+                                     // => Lambda executed: { 50 }
+                                     // => Returns 50
                                      // => davidScore is 50 (lambda executed)
 
     // Iteration
     for ((country, capital) in capitals) {
-        println("$country: $capital")
+                                     // => Iterates map entries
+                                     // => (country, capital): destructures entry
+                                     // => country: key, capital: value
+        println("$country: $capital")// => Prints each entry
+                                     // => "Indonesia: Jakarta"
+                                     // => "Malaysia: Kuala Lumpur"
+                                     // => "Singapore: Singapore"
                                      // => Output: Indonesia: Jakarta, etc.
     }
 
     // Map operations
-    println(capitals.keys)           // => Output: [Indonesia, Malaysia, Singapore]
-    println(capitals.values)         // => Output: [Jakarta, Kuala Lumpur, Singapore]
+    println(capitals.keys)           // => keys: collection of all keys
+                                     // => Returns Set<String>
+                                     // => Output: [Indonesia, Malaysia, Singapore]
+    println(capitals.values)         // => values: collection of all values
+                                     // => Returns Collection<String>
+                                     // => Output: [Jakarta, Kuala Lumpur, Singapore]
     println(capitals.containsKey("Malaysia"))
+                                     // => containsKey: tests if key exists
+                                     // => "Malaysia" is a key
+                                     // => Returns true
                                      // => Output: true
     println(capitals.containsValue("Bangkok"))
+                                     // => containsValue: tests if value exists
+                                     // => "Bangkok" not in values
+                                     // => Returns false
                                      // => Output: false
 
-    println(scores)                  // => Output: {Alice=98, Charlie=92}
-}
+    println(scores)                  // => Outputs scores map
+                                     // => Output: {Alice=98, Charlie=92}
+}                                   // => main returns
+                                    // => Maps provide O(1) key lookup
 ```
 
 **Key Takeaway**: Use `to` infix function for readable map creation, access values with `[]` operator (returns null if missing), and use `getOrDefault` or `getOrElse` for safe fallback values.
