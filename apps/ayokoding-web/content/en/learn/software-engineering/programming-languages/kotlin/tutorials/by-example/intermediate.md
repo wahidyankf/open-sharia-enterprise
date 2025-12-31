@@ -825,6 +825,37 @@ fun main() {
 
 Delegate property implementations to reusable delegate objects. `lazy` computes value on first access, `observable` triggers callbacks on changes.
 
+```mermaid
+%% Property delegation flow showing lazy initialization and observable pattern
+graph TD
+    A[Property Access] --> B{Delegation Type?}
+    B -->|lazy| C[First Access?]
+    B -->|observable| H[Set New Value]
+    B -->|vetoable| L[Set New Value]
+
+    C -->|Yes| D[Execute Initializer]
+    C -->|No| E[Return Cached Value]
+    D --> F[Cache Result]
+    F --> G[Return Value]
+
+    H --> I[Invoke Callback]
+    I --> J[property, oldValue, newValue]
+    J --> K[Property Updated]
+
+    L --> M[Invoke Validator]
+    M --> N{Valid?}
+    N -->|true| O[Property Updated]
+    N -->|false| P[Property Unchanged]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style I fill:#CC78BC,color:#000
+    style M fill:#CC78BC,color:#000
+    style F fill:#CA9161,color:#000
+```
+
 ```kotlin
 import kotlin.properties.Delegates
 
@@ -1114,6 +1145,50 @@ fun main() {
 ## Example 43: Operator Overloading
 
 Override operators like `+`, `-`, `*`, `[]`, `in` to create domain-specific syntax. Operators are implemented as member or extension functions with specific names.
+
+```mermaid
+%% Operator-to-function mapping showing how Kotlin translates operators
+graph TD
+    A[Operator Syntax] --> B{Operator Category}
+
+    B -->|Unary| C["-point"]
+    B -->|Binary| D["point1 + point2"]
+    B -->|Augmented| E["point += other"]
+    B -->|Comparison| F["point1 < point2"]
+    B -->|Index Access| G["matrix[i, j]"]
+    B -->|Contains| H["value in matrix"]
+    B -->|Invoke| I["matrix(row)"]
+
+    C --> C1["fun unaryMinus()"]
+    D --> D1["fun plus(other)"]
+    E --> E1["fun plusAssign(other)"]
+    F --> F1["fun compareTo(other)"]
+    G --> G1["fun get(i, j)"]
+    H --> H1["fun contains(value)"]
+    I --> I1["fun invoke(row)"]
+
+    C1 --> J[Compiler Translation]
+    D1 --> J
+    E1 --> J
+    F1 --> J
+    G1 --> J
+    H1 --> J
+    I1 --> J
+
+    J --> K[Executes operator function]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C1 fill:#029E73,color:#fff
+    style D1 fill:#029E73,color:#fff
+    style E1 fill:#029E73,color:#fff
+    style F1 fill:#029E73,color:#fff
+    style G1 fill:#029E73,color:#fff
+    style H1 fill:#029E73,color:#fff
+    style I1 fill:#029E73,color:#fff
+    style J fill:#CC78BC,color:#000
+    style K fill:#CA9161,color:#000
+```
 
 ```kotlin
 data class Point(val x: Int, val y: Int) {
