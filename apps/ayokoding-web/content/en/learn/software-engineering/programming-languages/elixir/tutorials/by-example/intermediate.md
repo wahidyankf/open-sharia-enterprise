@@ -3936,80 +3936,291 @@ Elixir strings are UTF-8 binaries. The `String` module provides extensive manipu
 **Code**:
 
 ```elixir
+# Strings are UTF-8 binaries
 string = "Hello, 世界!"  # => "Hello, 世界!"
+# => String literal: double quotes
+# => UTF-8 encoded binary (Unicode support)
+# => Contains English and Chinese characters
 is_binary(string)  # => true
+# => is_binary/1: checks if value is binary type
+# => Strings are binaries in Elixir (not character lists)
+# => Returns: true
 
+# String length vs byte size (Unicode aware)
 String.length("Hello")  # => 5
+# => String.length/1: counts graphemes (visual characters)
+# => "Hello": 5 graphemes (H, e, l, l, o)
+# => Returns: 5
 String.length("世界")  # => 2
+# => "世界": 2 graphemes (世, 界)
+# => String.length counts characters, not bytes
+# => Returns: 2 (not 6!)
 byte_size("世界")  # => 6 (3 bytes per character)
+# => byte_size/1: counts bytes in binary
+# => Each Chinese character: 3 bytes in UTF-8
+# => 世 (3 bytes) + 界 (3 bytes) = 6 bytes total
+# => Returns: 6
+# => Key: String.length != byte_size for multibyte characters
 
+# Charlists vs Strings
 charlist = 'hello'  # => 'hello'
+# => Charlist literal: single quotes
+# => List of integer code points
+# => Different from string (binary)
 is_list(charlist)  # => true
+# => Charlists are lists, not binaries
+# => Returns: true
 charlist === [104, 101, 108, 108, 111]  # => true
+# => Charlist is list of ASCII codes
+# => 104='h', 101='e', 108='l', 108='l', 111='o'
+# => === strict equality (type and value)
+# => Returns: true
 
+# Converting between strings and charlists
 String.to_charlist("hello")  # => 'hello'
+# => String.to_charlist/1: binary → charlist
+# => "hello" (binary) → 'hello' (list of integers)
+# => Returns: [104, 101, 108, 108, 111]
+# => Use when interfacing with Erlang (expects charlists)
 List.to_string('hello')  # => "hello"
+# => List.to_string/1: charlist → binary
+# => 'hello' (list) → "hello" (binary)
+# => Returns: "hello"
 
+# String slicing
 String.slice("Hello", 0, 3)  # => "Hel"
+# => String.slice/3: extracts substring
+# => Args: string, start_index (0-based), length
+# => Start at index 0 ('H'), take 3 characters
+# => Returns: "Hel"
 String.slice("Hello", 1..-1)  # => "ello"
+# => Range syntax: 1..-1 (index 1 to end)
+# => Start at 'e', take to last character
+# => Returns: "ello"
 String.slice("Hello", -3, 3)  # => "llo"
+# => Negative index: counts from end
+# => -3: third from end ('l')
+# => Take 3 characters from there
+# => Returns: "llo"
 
+# String character access
 String.at("Hello", 1)  # => "e"
+# => String.at/2: gets character at index
+# => Index 1: second character (0-based)
+# => Returns: "e" (string, not character)
 String.at("Hello", -1)  # => "o"
+# => Negative index: last character
+# => -1: final character
+# => Returns: "o"
 
+# String searching
 String.contains?("Hello World", "World")  # => true
+# => String.contains?/2: checks substring presence
+# => "Hello World" contains "World"
+# => Case-sensitive
+# => Returns: true
 String.contains?("Hello World", ["Hi", "Hello"])  # => true
+# => Second arg: list of substrings (OR logic)
+# => Checks if any substring present
+# => "Hello" found in "Hello World"
+# => Returns: true
 String.starts_with?("Hello", "He")  # => true
+# => String.starts_with?/2: checks prefix
+# => "Hello" starts with "He"
+# => Returns: true
 String.ends_with?("Hello", "lo")  # => true
+# => String.ends_with?/2: checks suffix
+# => "Hello" ends with "lo"
+# => Returns: true
 
+# Case conversion
 String.upcase("hello")  # => "HELLO"
+# => String.upcase/1: converts to uppercase
+# => "hello" → "HELLO"
+# => Returns: "HELLO"
 String.downcase("HELLO")  # => "hello"
+# => String.downcase/1: converts to lowercase
+# => "HELLO" → "hello"
+# => Returns: "hello"
 String.capitalize("hello world")  # => "Hello world"
+# => String.capitalize/1: uppercase first char, lowercase rest
+# => "hello world" → "Hello world"
+# => Only first character affected (not each word)
+# => Returns: "Hello world"
 
+# Whitespace trimming
 String.trim("  hello  ")  # => "hello"
+# => String.trim/1: removes leading and trailing whitespace
+# => "  hello  " → "hello"
+# => Returns: "hello"
 String.trim_leading("  hello  ")  # => "hello  "
+# => String.trim_leading/1: removes only leading whitespace
+# => "  hello  " → "hello  " (trailing preserved)
+# => Returns: "hello  "
 String.trim_trailing("  hello  ")  # => "  hello"
+# => String.trim_trailing/1: removes only trailing whitespace
+# => "  hello  " → "  hello" (leading preserved)
+# => Returns: "  hello"
 
+# String splitting and joining
 String.split("one,two,three", ",")  # => ["one", "two", "three"]
+# => String.split/2: splits string by delimiter
+# => Delimiter: ","
+# => Returns: list of substrings
+# => ["one", "two", "three"]
 String.split("hello world")  # => ["hello", "world"] (splits on whitespace)
+# => String.split/1: splits on whitespace (default)
+# => Any whitespace character: space, tab, newline
+# => Returns: ["hello", "world"]
 Enum.join(["a", "b", "c"], "-")  # => "a-b-c"
+# => Enum.join/2: joins list into string
+# => Separator: "-"
+# => ["a", "b", "c"] → "a-b-c"
+# => Returns: "a-b-c"
 
+# String replacement
 String.replace("hello world", "world", "Elixir")  # => "hello Elixir"
+# => String.replace/3: replaces substring
+# => Finds "world", replaces with "Elixir"
+# => Default: replaces all occurrences
+# => Returns: "hello Elixir"
 String.replace("aaa", "a", "b")  # => "bbb" (replaces all)
+# => Replaces all 3 "a" with "b"
+# => "aaa" → "bbb"
+# => Returns: "bbb"
 String.replace("aaa", "a", "b", global: false)  # => "baa" (first only)
+# => global: false option: replace only first occurrence
+# => First "a" → "b", rest unchanged
+# => "aaa" → "baa"
+# => Returns: "baa"
 
+# String padding
 String.pad_leading("42", 5, "0")  # => "00042"
+# => String.pad_leading/3: adds padding to left
+# => Pad "42" to width 5 with "0"
+# => "42" → "00042" (3 zeros added)
+# => Returns: "00042"
 String.pad_trailing("42", 5, "0")  # => "42000"
+# => String.pad_trailing/3: adds padding to right
+# => Pad "42" to width 5 with "0"
+# => "42" → "42000" (3 zeros added)
+# => Returns: "42000"
 
+# Regular expressions - matching
 Regex.match?(~r/hello/, "hello world")  # => true
+# => Regex.match?/2: checks if regex matches string
+# => ~r/hello/: regex sigil (literal regex)
+# => "hello world" contains "hello"
+# => Returns: true
 Regex.match?(~r/\d+/, "abc123")  # => true
+# => \d+: one or more digits
+# => "abc123" contains digits "123"
+# => Returns: true
 
+# Regular expressions - scanning
 Regex.scan(~r/\d+/, "abc 123 def 456")  # => [["123"], ["456"]]
+# => Regex.scan/2: finds all matches
+# => \d+: one or more digits
+# => Returns: list of captures (nested lists)
+# => [["123"], ["456"]]
+# => Each match is list (supports capture groups)
 
+# Regular expressions - replacing
 Regex.replace(~r/\d/, "Room 123", "X")  # => "Room XXX"
+# => Regex.replace/3: replaces regex matches
+# => \d: single digit
+# => Replaces all occurrences: 1→X, 2→X, 3→X
+# => Returns: "Room XXX"
 
+# Regular expressions - named captures
 ~r/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/
+# => Named capture groups: (?<name>pattern)
+# => year: 4 digits, month: 2 digits, day: 2 digits
+# => Pattern: YYYY-MM-DD
 |> Regex.named_captures("Date: 2024-12-23")
+# => Regex.named_captures/2: extract named groups
+# => Returns: %{"year" => "2024", "month" => "12", "day" => "23"}
+# => Map with group names as keys
 
+# String to number conversion
 String.to_integer("42")  # => 42
-String.to_integer("2A", 16)  # => 42 (hexadecimal)
+# => String.to_integer/1: parses decimal integer
+# => "42" → 42
+# => Raises ArgumentError if invalid
+# => Returns: 42
+String.to_integer("2A", 16)  # => 42
+# => String.to_integer/2: parses with base
+# => Second arg: base (2-36)
+# => "2A" in base 16 (hex) = 2*16 + 10 = 42
+# => Returns: 42
 String.to_float("3.14")  # => 3.14
+# => String.to_float/1: parses float
+# => "3.14" → 3.14
+# => Requires decimal point (not "3")
+# => Returns: 3.14
 Integer.parse("42 units")  # => {42, " units"}
+# => Integer.parse/1: parses integer with remainder
+# => Stops at first non-digit
+# => Returns: {parsed_value, remaining_string}
+# => {42, " units"}
 Float.parse("3.14 pi")  # => {3.14, " pi"}
+# => Float.parse/1: parses float with remainder
+# => Stops at first non-float character
+# => Returns: {3.14, " pi"}
 
+# Graphemes vs Codepoints (Unicode)
 String.graphemes("Hello")  # => ["H", "e", "l", "l", "o"]
+# => String.graphemes/1: splits into visual characters
+# => Basic ASCII: 1 grapheme = 1 codepoint
+# => Returns: ["H", "e", "l", "l", "o"]
 String.graphemes("👨‍👩‍👧‍👦")  # => ["👨‍👩‍👧‍👦"] (family emoji as single grapheme!)
+# => Family emoji: single visual character
+# => Composed of multiple codepoints with zero-width joiners
+# => graphemes respects visual boundaries
+# => Returns: ["👨‍👩‍👧‍👦"] (one element!)
 
 String.codepoints("Hello")  # => ["H", "e", "l", "l", "o"]
+# => String.codepoints/1: splits into Unicode codepoints
+# => Basic ASCII: same as graphemes
+# => Returns: ["H", "e", "l", "l", "o"]
 String.codepoints("👨‍👩‍👧‍👦")  # => ["👨", "‍", "👩", "‍", "👧", "‍", "👦"] (multiple codepoints)
+# => Family emoji: 7 codepoints
+# => 👨 (man), ‍ (joiner), 👩 (woman), ‍, 👧 (girl), ‍, 👦 (boy)
+# => codepoints shows internal structure
+# => Returns: 7 elements
+# => Key: graphemes for user-visible chars, codepoints for Unicode internals
 
+# String interpolation
 name = "Alice"
+# => Variable assignment
 "Hello, #{name}!"  # => "Hello, Alice!"
+# => #{...}: interpolation syntax
+# => Evaluates expression, converts to string, embeds result
+# => name → "Alice"
+# => Returns: "Hello, Alice!"
+# => Interpolation works in double-quoted strings only
 
+# String sigils
 ~s(String with "quotes")  # => "String with \"quotes\""
+# => ~s sigil: lowercase (allows interpolation)
+# => ( ) delimiters (can use any matching pair: {}, [], etc.)
+# => Avoids escaping quotes inside
+# => Returns: "String with \"quotes\""
 ~S(No interpolation #{name})  # => "No interpolation \#{name}"
+# => ~S sigil: uppercase (no interpolation)
+# => #{name} treated as literal text (not evaluated)
+# => Returns: "No interpolation \#{name}"
+# => Use when you need literal #{...} in string
 ~r/regex/  # Regex sigil
+# => ~r sigil: creates regex
+# => Equivalent to Regex.compile!/1
+# => Pattern: /regex/
 ~w(one two three)  # => ["one", "two", "three"] (word list)
+# => ~w sigil: word list
+# => Splits on whitespace, creates list of strings
+# => Equivalent to String.split/1
+# => Returns: ["one", "two", "three"]
+# => Modifiers: ~w(...)a for atoms, ~w(...)c for charlists
 ```
 
 **Key Takeaway**: Strings are UTF-8 binaries with grapheme-aware functions. Use the `String` module for manipulation, regex for pattern matching, and understand the difference between graphemes (visual characters) and codepoints (Unicode units).
