@@ -2712,82 +2712,243 @@ Process monitoring allows you to detect when other processes crash or exit. Use 
 **Code**:
 
 ```elixir
+# Basic process monitoring (crash detection)
 pid = spawn(fn ->
+  # => Spawns process that will crash
   :timer.sleep(1000)
+  # => Waits 1 second before crashing
+  # => Simulates delayed failure
   raise "Process crashed!"
+  # => Raises RuntimeError exception
+  # => Process exits abnormally with reason {:EXIT, {%RuntimeError{...}, stacktrace}}
 end)
+# => Returns: PID of spawned process
+# => Process running in background
 
 ref = Process.monitor(pid)
+# => Process.monitor/1: starts monitoring the process
+# => ref: unique reference (type: reference)
+# => Monitor is unidirectional: this process watches pid
+# => If pid crashes, this process receives :DOWN message
+# => Unlike spawn_link: monitor doesn't crash the monitoring process
+# => Returns: reference e.g. #Reference<0.1234.5678>
 
 receive do
+  # => Waits for :DOWN message from monitor
+  # => Pattern matches monitor exit notification
   {:DOWN, ^ref, :process, ^pid, reason} ->
+    # => Pattern: {:DOWN, ref, :process, pid, exit_reason}
+    # => ^ref: pin operator ensures matches our monitor reference
+    # => ^pid: pin operator ensures matches our monitored process
+    # => reason: bound to exit reason (why process died)
+    # => Exit reason structure: {%RuntimeError{message: "Process crashed!"}, stacktrace}
     IO.puts("Process #{inspect(pid)} exited with reason: #{inspect(reason)}")
+    # => Prints PID and crash reason
+    # => inspect/1: converts complex term to readable string
+    # => Example: "Process #PID<0.150.0> exited with reason: {%RuntimeError{...}, [...]}"
 after
+  # => Timeout clause: executes if no :DOWN received
   2000 -> IO.puts("No exit message received")
+  # => 2000ms timeout (2 seconds)
+  # => Should not trigger: process crashes in 1 second
+  # => Safety net for unexpected delays
 end
+# => receive block completes after handling :DOWN message
+# => Monitor automatically removed after :DOWN received
 
+# Monitoring normal exit
 pid = spawn(fn ->
+  # => Spawns process that exits normally
   :timer.sleep(500)
+  # => Waits 0.5 seconds
   :ok  # Normal exit
+  # => Returns :ok (no exception)
+  # => Process exits with reason :normal
 end)
+# => Returns: PID of new process
 
 ref = Process.monitor(pid)
+# => Creates new monitor for this process
+# => New reference (different from previous)
+# => Monitors normal and abnormal exits
 
 receive do
   {:DOWN, ^ref, :process, ^pid, reason} ->
+    # => Pattern: same :DOWN structure as crash case
+    # => reason: will be :normal (not error tuple)
+    # => Normal exit reason: atom :normal
+    # => Abnormal exit reason: error tuple or atom like :killed
     IO.puts("Process exited normally with reason: #{inspect(reason)}")
+    # => Prints: "Process exited normally with reason: :normal"
+    # => Demonstrates monitors catch ALL exits (normal and abnormal)
 after
   1000 -> IO.puts("No exit")
+  # => 1000ms timeout
+  # => Should not trigger: process exits in 500ms
 end
 
+# Demonitor - stop monitoring
 pid = spawn(fn -> :timer.sleep(10_000) end)
+# => Spawns long-running process (10 seconds)
+# => Will be killed before natural exit
 ref = Process.monitor(pid)
+# => Start monitoring the process
+# => ref: monitor reference
 Process.demonitor(ref)  # Stop monitoring
+# => Process.demonitor/1: removes the monitor
+# => No :DOWN message will be received when pid exits
+# => Monitor reference becomes invalid
+# => Process still running, just not monitored
 Process.exit(pid, :kill)  # Kill the process
+# => Process.exit/2: forcefully terminates the process
+# => :kill: brutal kill (cannot be trapped)
+# => Process dies immediately
+# => No :DOWN message (already demonitored)
+# => Demonstrates: demonitor prevents :DOWN notifications
 
+# Monitor multiple processes (parallel work tracker)
 pids = Enum.map(1..5, fn i ->
+  # => Creates 5 processes with staggered completion times
   spawn(fn ->
+    # => Each process has unique sleep duration
     :timer.sleep(i * 100)
+    # => Process 1: 100ms, Process 2: 200ms, ..., Process 5: 500ms
+    # => Simulates parallel work with different durations
     IO.puts("Process #{i} done")
+    # => Prints completion message
+    # => Output order: 1, 2, 3, 4, 5 (deterministic timing)
   end)
+  # => Returns PID
 end)
+# => pids: list of 5 PIDs
+# => All processes running concurrently
+# => pids is [#PID<0.150.0>, #PID<0.151.0>, ...]
 
 refs = Enum.map(pids, &Process.monitor/1)
+# => Monitor all processes
+# => &Process.monitor/1: capture syntax for function reference
+# => Equivalent to: fn pid -> Process.monitor(pid) end
+# => refs: list of 5 monitor references
+# => Each ref corresponds to a PID (same order)
+# => refs is [#Reference<...>, #Reference<...>, ...]
 
 Enum.each(refs, fn ref ->
+  # => Iterate through monitor references
+  # => Wait for each process to complete
+  # => Sequential waiting (not parallel)
   receive do
     {:DOWN, ^ref, :process, _pid, :normal} -> :ok
+    # => Pattern: match specific ref (pin operator ^ref)
+    # => _pid: ignore PID (don't need it)
+    # => :normal: expect normal exit (all processes should succeed)
+    # => Returns :ok for each completed process
   end
+  # => No timeout: waits indefinitely for each process
+  # => Longest wait: 500ms (Process 5)
 end)
+# => Blocks until all 5 processes finish
+# => Total wait time: ~500ms (not 1500ms, processes run concurrently)
+# => Ensures all parallel work completes before continuing
 IO.puts("All processes finished")
+# => Prints after all :DOWN messages received
+# => Coordination pattern: wait for multiple concurrent tasks
 
 
+# TimeoutHelper - production pattern for process timeout
 defmodule TimeoutHelper do
+  # => Module implementing timeout pattern with monitoring
+  # => Common pattern: execute function with deadline
+  # => Returns result or timeout error
   def call_with_timeout(fun, timeout) do
+    # => call_with_timeout/2: executes fun with timeout limit
+    # => fun: function to execute (type: function)
+    # => timeout: maximum wait time in milliseconds (type: integer)
     parent = self()
+    # => Capture parent PID (needed for child to send result)
+    # => Child process needs parent's PID to send message
     pid = spawn(fn ->
+      # => Spawn child to execute function
+      # => Child isolated: crash won't affect parent
       result = fun.()
+      # => Execute the provided function
+      # => result: function return value (any type)
+      # => If fun crashes, child dies (parent gets :DOWN)
       send(parent, {:result, self(), result})
+      # => Send result back to parent
+      # => Message: {:result, <child_pid>, <result_value>}
+      # => self(): child's own PID (for verification)
+      # => Parent can match on child PID to ensure correct source
     end)
+    # => pid: child PID
+    # => Child running concurrently with parent
     ref = Process.monitor(pid)
+    # => Monitor child process
+    # => Detects if child crashes before sending result
+    # => Monitor + timeout: comprehensive failure handling
 
     receive do
+      # => Wait for result or crash or timeout
+      # => Three possible outcomes
       {:result, ^pid, result} ->
+        # => Pattern 1: success case
+        # => ^pid: ensure result from correct child (pin operator)
+        # => result: bound to function return value
         Process.demonitor(ref, [:flush])
+        # => Cleanup: remove monitor
+        # => [:flush]: also remove any pending :DOWN messages
+        # => Important: child may exit right after send (race condition)
+        # => flush prevents stale :DOWN in mailbox
         {:ok, result}
+        # => Returns: {:ok, <result_value>}
+        # => Success tuple for pattern matching
+
       {:DOWN, ^ref, :process, ^pid, reason} ->
+        # => Pattern 2: child crashed
+        # => ^ref, ^pid: ensure matching our child (pin operators)
+        # => reason: crash reason (exception, :killed, etc.)
         {:error, {:process_died, reason}}
+        # => Returns: {:error, {:process_died, <crash_reason>}}
+        # => Nested tuple: distinguishes crash from timeout
+        # => Caller can handle crash vs timeout differently
     after
+      # => Pattern 3: timeout
       timeout ->
+        # => Executes if no result and no crash in timeout milliseconds
+        # => Child still running but too slow
         Process.exit(pid, :kill)
+        # => Kill the child process
+        # => :kill: brutal termination (cannot be trapped)
+        # => Prevents zombie processes (child stops consuming resources)
         Process.demonitor(ref, [:flush])
+        # => Cleanup: remove monitor and flush :DOWN
+        # => :DOWN will arrive after kill (but flushed)
         {:error, :timeout}
+        # => Returns: {:error, :timeout}
+        # => Timeout error for caller to handle
     end
+    # => Returns one of: {:ok, result}, {:error, {:process_died, reason}}, {:error, :timeout}
   end
 end
 
+# Success case - function completes within timeout
 TimeoutHelper.call_with_timeout(fn -> :timer.sleep(500); 42 end, 1000)  # => {:ok, 42}
+# => fn: sleeps 500ms then returns 42
+# => timeout: 1000ms (1 second)
+# => 500ms < 1000ms: completes successfully
+# => Result received before timeout
+# => Returns: {:ok, 42}
+# => Monitor cleaned up with [:flush]
+
+# Timeout case - function exceeds timeout
 TimeoutHelper.call_with_timeout(fn -> :timer.sleep(2000); 42 end, 1000)  # => {:error, :timeout}
+# => fn: sleeps 2000ms (2 seconds) then would return 42
+# => timeout: 1000ms (1 second)
+# => 2000ms > 1000ms: exceeds timeout
+# => after clause triggers at 1000ms
+# => Child process killed with Process.exit(pid, :kill)
+# => Child never reaches return 42
+# => Returns: {:error, :timeout}
+# => Monitor cleaned up, child terminated
 ```
 
 **Key Takeaway**: Use `Process.monitor/1` to watch processes and receive `:DOWN` messages when they exit. Monitoring is unidirectional (unlike linking) and ideal for detecting process failures without crashing.
