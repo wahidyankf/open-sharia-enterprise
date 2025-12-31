@@ -5652,68 +5652,219 @@ Linked processes crash together—when one exits abnormally, linked processes re
 
 ```elixir
 # spawn_link creates linked process
+# => Links: bidirectional connections between processes
+# => Crash propagation: one crashes → linked processes crash too
+# => Use case: tightly-coupled processes (fail together)
 parent = self()
+# => self/0: returns current process PID
+# => Stores parent PID for reference
+# => Type: pid()
 
 child = spawn_link(fn ->
+  # => spawn_link/1: spawns process AND links it to caller
+  # => Difference from spawn/1: creates bidirectional link
+  # => Link: if either crashes, both receive exit signal
+  # => Pattern: fail-together processes (worker + manager)
   :timer.sleep(1000)
-  raise "Child crashed!"  # => Parent will crash too!
+  # => Sleep for 1 second (1000ms)
+  # => Child process waits before crashing
+  raise "Child crashed!"
+  # => raise/1: raises RuntimeError
+  # => Child process exits abnormally
+  # => Exit reason: {%RuntimeError{message: "Child crashed!"}, stacktrace}
+  # => Parent will crash too!
+  # => Crash propagates via link to parent process
 end)
+# => Returns: child PID
+# => Child and parent now linked bidirectionally
 
-Process.alive?(child)  # => true
+Process.alive?(child)
+# => Process.alive?/1: checks if process still running
+# => Returns: true (child still sleeping)
+# => true
+# => Child hasn't crashed yet (sleeping for 1 second)
 :timer.sleep(1500)
-Process.alive?(child)  # => false
+# => Parent sleeps 1.5 seconds
+# => Gives child time to crash (after 1 second)
+# => Parent will crash when child raises (after ~1 second)
+Process.alive?(child)
+# => Check child again after parent sleep
+# => Returns: false (child crashed after 1 second)
+# => false
+# => Child process exited abnormally
 # Parent process also crashed!
+# => Parent crashed due to link (child crashed → parent crashes)
+# => Both processes dead
+# => Pattern: linked processes fail together
 
 # Manual linking
+# => Process.link/1: manually create link between processes
+# => Alternative to spawn_link (link after spawn)
 pid1 = spawn(fn -> :timer.sleep(10_000) end)
+# => Spawn process (NOT linked yet)
+# => Process sleeps for 10 seconds
+# => Independent process (no link)
 pid2 = spawn(fn -> :timer.sleep(10_000) end)
+# => Second independent process
+# => Also sleeps for 10 seconds
 
-Process.link(pid1)  # => Link current process to pid1
-Process.link(pid2)  # => Link to pid2
+Process.link(pid1)
+# => Process.link/1: links current process to pid1
+# => Link current process to pid1
+# => Bidirectional link created
+# => Current crashes → pid1 receives exit signal
+# => pid1 crashes → current receives exit signal
+Process.link(pid2)
+# => Link to pid2
+# => Current process now linked to both pid1 and pid2
+# => Triangle: current ↔ pid1, current ↔ pid2 (no direct pid1 ↔ pid2)
 
-Process.exit(pid1, :kill)  # => Kills pid1, current process also receives exit signal
+Process.exit(pid1, :kill)
+# => Process.exit/2: sends exit signal to process
+# => First arg: target PID (pid1)
+# => Second arg: exit reason (:kill)
+# => :kill - forceful termination (cannot be trapped)
+# => Kills pid1, current process also receives exit signal
+# => pid1 dies immediately
+# => Exit signal propagated to current process via link
+# => Current process also crashes (unless trapping exits)
 
 # Trap exits to handle linked process crashes
-Process.flag(:trap_exit, true)  # => Convert exit signals to messages
+# => :trap_exit flag: converts exit signals into messages
+# => Prevents crash propagation (handle exits gracefully)
+Process.flag(:trap_exit, true)
+# => Process.flag/2: sets process flag
+# => :trap_exit flag: changes exit signal behavior
+# => true: exit signals → {:EXIT, pid, reason} messages
+# => false (default): exit signals → process crashes
+# => Convert exit signals to messages
+# => Process won't crash when linked process exits
+# => Pattern: supervisor-like behavior (handle child crashes)
 
 linked_pid = spawn_link(fn ->
+  # => Spawn and link child
+  # => Child will crash after 500ms
   :timer.sleep(500)
+  # => Sleep 0.5 seconds
   raise "Linked process error!"
+  # => Child crashes with RuntimeError
+  # => Normally parent would crash
+  # => BUT: parent has :trap_exit → message instead
 end)
+# => Returns: child PID
+# => Child linked to parent (trap_exit enabled)
 
 receive do
+  # => receive block: waits for messages
+  # => Exit signal converted to message (due to :trap_exit)
   {:EXIT, ^linked_pid, reason} ->
+    # => Pattern match: {:EXIT, pid, reason} message
+    # => ^linked_pid: pin operator (match exact PID)
+    # => reason: exit reason from crashed process
+    # => Tuple: {%RuntimeError{...}, stacktrace}
     IO.puts("Linked process exited with reason: #{inspect(reason)}")
+    # => Print exit reason
+    # => inspect/1: converts any term to readable string
+    # => Example: "Linked process exited with reason: {%RuntimeError{message: \"Linked process error!\"}, [...]}"
     # => Current process continues running!
+    # => Parent survives child crash (handled gracefully)
+    # => Pattern: supervisor behavior (monitor children, handle crashes)
 end
+# => receive complete
+# => Parent process still alive (didn't crash)
 
 # Supervisor uses links internally
+# => OTP supervisors use spawn_link + trap_exit
+# => Supervisor traps exits → handles child crashes → restarts children
 defmodule Worker do
+  # => Worker GenServer for supervisor example
   use GenServer
+  # => GenServer behavior
 
   def start_link(id) do
+    # => start_link/1: starts worker (linked to caller)
+    # => Supervisor calls this with spawn_link semantics
     GenServer.start_link(__MODULE__, id)
+    # => Starts GenServer, links to caller (supervisor)
+    # => Returns: {:ok, pid}
   end
 
   @impl true
   def init(id) do
+    # => init/1: GenServer initialization
+    # => id: worker identifier
     IO.puts("Worker #{id} started")
+    # => Startup message
+    # => Example: "Worker 1 started"
     {:ok, id}
+    # => Returns: {:ok, state}
+    # => state: stores id
   end
 
   @impl true
   def handle_cast(:crash, _state) do
-    raise "Worker crashed!"  # => Supervisor will restart this worker
+    # => handle_cast/2: handles asynchronous messages
+    # => :crash message: intentional crash for testing
+    # => _state: ignored (worker about to crash)
+    raise "Worker crashed!"
+    # => Worker crashes with RuntimeError
+    # => Supervisor will restart this worker
+    # => Supervisor receives {:EXIT, worker_pid, reason} message
+    # => Supervisor applies restart strategy (:permanent → restart immediately)
   end
+  # => handle_cast complete
 end
+# => Worker module complete
+# => Usage: Supervisor starts Worker with start_link → linked → supervisor restarts on crash
 
 # Exit reasons
+# => Exit reason determines crash propagation behavior
 # :normal - graceful exit (doesn't crash linked processes)
+# => :normal - process completed successfully
+# => Linked processes: NO crash (normal termination expected)
+# => Example: Task completes work → exit(:normal)
+# => Pattern: expected completion (not an error)
 # :kill - forceful kill (cannot be trapped)
+# => :kill - immediate termination (cannot be trapped)
+# => Process.flag(:trap_exit, true) IGNORED for :kill
+# => Linked processes: crash immediately (no message)
+# => Use: emergency shutdown (process stuck, not responding)
+# => WARNING: destructive (process cannot cleanup)
 # any other - abnormal exit (crashes linked processes)
+# => Any other reason: abnormal exit
+# => Examples: :shutdown, {:shutdown, term}, error tuples
+# => Linked processes: crash (unless trapping exits)
+# => Trapping: {:EXIT, pid, reason} message (can handle gracefully)
 
-spawn_link(fn -> exit(:normal) end)  # => Won't crash parent
-spawn_link(fn -> exit(:abnormal) end)  # => Will crash parent
+spawn_link(fn -> exit(:normal) end)
+# => Spawn linked process that exits normally
+# => exit(:normal): explicit normal exit
+# => Won't crash parent
+# => Parent receives {:EXIT, pid, :normal} if trapping (otherwise ignored)
+# => Pattern: worker completes successfully
+
+spawn_link(fn -> exit(:abnormal) end)
+# => Spawn linked process that exits abnormally
+# => exit(:abnormal): explicit abnormal exit
+# => Will crash parent
+# => Parent crashes unless trapping exits
+# => If trapping: {:EXIT, pid, :abnormal} message
+# => Pattern: worker fails (parent should handle or crash)
+
+# Unlinking processes
+Process.unlink(pid1)
+# => Process.unlink/1: removes link to process
+# => pid1: process to unlink from
+# => Bidirectional link removed
+# => Crashes no longer propagate
+# => Returns: true
+# => Pattern: temporary coupling (link → work → unlink)
+
+# Monitoring vs Linking
+# => Linking: bidirectional crash propagation (fail together)
+# => Monitoring: unidirectional crash detection (observer pattern)
+# => Linking use case: supervisor pattern (parent restarts child)
+# => Monitoring use case: notification pattern (watcher notified, doesn't crash)
 ```
 
 **Key Takeaway**: Linked processes crash together. Use `spawn_link/1` for coupled processes. Trap exits with `Process.flag(:trap_exit, true)` to handle crashes gracefully. Supervisors use links to detect worker crashes.
