@@ -1495,61 +1495,108 @@ Umbrella projects bundle multiple applications that share code and dependencies.
 **Code**:
 
 ```bash
+# Create umbrella project structure
+mix new my_app --umbrella  # => creates apps/ directory for child applications
+# => Structure:
+# => my_app/
+# =>   apps/         (child applications go here)
+# =>   config/       (shared configuration)
+# =>   mix.exs       (umbrella project definition)
 
+# Create child apps inside umbrella
+cd my_app/apps
+mix new my_app_core  # => creates my_app_core app (business logic)
+mix new my_app_web --sup  # => creates my_app_web app (web interface) with supervision tree
+```
 
-
+```elixir
+# apps/my_app_core/mix.exs - Core business logic app
 defmodule MyAppCore.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :my_app_core,
-      version: "0.1.0",
-      build_path: "../../_build",
-      config_path: "../../config/config.exs",
-      deps_path: "../../deps",
-      lockfile: "../../mix.lock"
+      app: :my_app_core,  # => application name (atom)
+      version: "0.1.0",  # => version
+      build_path: "../../_build",  # => ✅ shared build directory (umbrella root)
+      config_path: "../../config/config.exs",  # => ✅ shared config
+      deps_path: "../../deps",  # => ✅ shared dependencies (all apps use same versions)
+      lockfile: "../../mix.lock"  # => ✅ shared lock file (dependency versions locked)
     ]
   end
+  # => All umbrella apps share build artifacts and dependencies
+  # => This enables: 1) consistent versions, 2) shared compilation, 3) faster builds
 end
 
+# apps/my_app_web/mix.exs - Web interface app
 defmodule MyAppWeb.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :my_app_web,
-      deps: deps()
+      app: :my_app_web,  # => application name
+      deps: deps()  # => dependencies for web app
     ]
   end
 
   defp deps do
     [
-      {:my_app_core, in_umbrella: true},  # Depend on sibling app
-      {:phoenix, "~> 1.7"}
+      {:my_app_core, in_umbrella: true},  # => ✅ depend on sibling app (in same umbrella)
+      # => in_umbrella: true tells Mix to find :my_app_core in apps/ directory
+      # => NOT from Hex (external package)
+      {:phoenix, "~> 1.7"}  # => external dependency from Hex
     ]
   end
+  # => Dependency order: Phoenix → my_app_core → my_app_web
+  # => OTP starts apps in dependency order automatically
 end
 
+# apps/my_app_core/lib/my_app_core/users.ex - Business logic (core app)
 defmodule MyAppCore.Users do
   def list_users do
-    # Business logic
-    [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]
+    # Business logic (no web dependencies, pure Elixir)
+    [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]  # => returns user list
   end
+  # => Core app is INDEPENDENT - no Phoenix, no web concepts
+  # => Can be used by: web app, CLI app, background workers, etc.
 end
 
+# apps/my_app_web/lib/my_app_web/controllers/user_controller.ex - Web layer
 defmodule MyAppWeb.UserController do
-  use MyAppWeb, :controller
+  use MyAppWeb, :controller  # => imports Phoenix controller functionality
 
   def index(conn, _params) do
-    users = MyAppCore.Users.list_users()  # Call core app
-    render(conn, "index.html", users: users)
+    users = MyAppCore.Users.list_users()  # => calls core app function
+    # => Web app DEPENDS on core app (declared in deps)
+    # => Core app is OBLIVIOUS to web app (no reverse dependency)
+    render(conn, "index.html", users: users)  # => renders view with data from core
   end
 end
+# => Clear separation: Core = business logic, Web = presentation layer
 
+# Running umbrella commands
+# From umbrella root (my_app/):
+# mix test                           # => runs tests in ALL apps
+# mix test --only apps/my_app_core   # => tests specific app only
+# mix compile                        # => compiles ALL apps
+# mix deps.get                       # => fetches deps for ALL apps (shared deps/)
+# mix run --no-halt                  # => runs ALL applications
 
+# Benefits of umbrella architecture:
+# ✅ Shared dependencies (single deps/ directory, consistent versions)
+# ✅ Clear domain boundaries (core vs web vs workers)
+# ✅ Independent testing (test core without Phoenix)
+# ✅ Flexible deployment (deploy web separately from workers)
+# ✅ Code reuse (CLI, web, workers all use same core)
+# ❌ Complexity overhead (more mix.exs files, dependency management)
+# ❌ Tight coupling risk (easy to create circular dependencies)
 
-
+# Use umbrella when:
+# ✅ Large system with distinct domains (auth, billing, notifications)
+# ✅ Multiple deployment targets (web, workers, CLI)
+# ✅ Shared business logic across apps
+# ❌ Small projects (unnecessary complexity)
+# ❌ Single deployment target (regular app is simpler)
 ```
 
 **Key Takeaway**: Umbrella projects bundle multiple apps sharing dependencies. Use for large systems with distinct domains. Apps can depend on each other using `in_umbrella: true`. Commands run across all apps or specific apps.
@@ -1583,53 +1630,102 @@ graph TD
 **Code**:
 
 ```elixir
+# quote - captures code as AST (tuple representation)
 quoted = quote do
-  1 + 2
+  1 + 2  # => this code is NOT executed, it's captured as data structure
 end
+# => quoted = {:+, [context: Elixir, imports: [{1, Kernel}, {2, Kernel}]], [1, 2]}
+# => AST format: {function_name, metadata, arguments}
+# => {:+, metadata, [1, 2]} represents the + function called with args [1, 2]
 
-{:+, _metadata, [1, 2]} = quoted
+{:+, _metadata, [1, 2]} = quoted  # => pattern matches AST tuple
+# => Confirms structure: + operator with arguments 1 and 2
 
+# Complex expressions also become AST
 quoted = quote do
   if true, do: :yes, else: :no
 end
+# => {:if, [], [true, [do: :yes, else: :no]]}
+# => if macro with condition true and keyword list of branches
 
-x = 5
+# unquote - injects VALUES into quoted expressions
+x = 5  # => x is a regular variable (not AST)
 quoted = quote do
-  1 + unquote(x)
+  1 + unquote(x)  # => unquote(x) evaluates x and injects value 5 into AST
 end
+# => {:+, [], [1, 5]}
+# => Note: 5 is injected, NOT variable x
+# => At quote time: x evaluated → 5 injected → AST contains literal 5
 
+# WITHOUT unquote - variable name becomes AST variable reference
 quoted = quote do
-  1 + x
+  1 + x  # => x is kept as variable reference (not evaluated)
 end
+# => {:+, [], [1, {:x, [], Elixir}]}
+# => x becomes AST variable node, NOT value 5
+# => If you eval_quoted this, it looks for variable x at eval time
 
+# Evaluating quoted expressions
 Code.eval_quoted(quote do: 1 + 2)  # => {3, []}
+# => Returns {result, bindings}
+# => result = 3 (evaluated expression)
+# => bindings = [] (no variables bound)
 
-a = 10
-b = 20
+# unquote with multiple values
+a = 10  # => variable a
+b = 20  # => variable b
 quoted = quote do
-  unquote(a) + unquote(b)
+  unquote(a) + unquote(b)  # => injects 10 and 20 into AST
 end
+# => {:+, [], [10, 20]}
+# => Both values injected at quote time
 Code.eval_quoted(quoted)  # => {30, []}
+# => Evaluates 10 + 20 = 30
 
-args = [1, 2, 3]
+# unquote_splicing - injects list elements as separate arguments
+args = [1, 2, 3]  # => list of arguments
 quoted = quote do
-  sum(unquote_splicing(args))
+  sum(unquote_splicing(args))  # => unquote_splicing expands [1, 2, 3] to separate args
 end
+# => {:sum, [], [1, 2, 3]}
+# => Equivalent to: sum(1, 2, 3)
+# => WITHOUT splicing: sum([1, 2, 3]) - would pass list as single arg
 
+# Building function calls dynamically
 defmodule Builder do
   def build_call(function, args) do
     quote do
-      unquote(function)(unquote_splicing(args))
+      unquote(function)(unquote_splicing(args))  # => injects function name and spreads args
     end
   end
+  # => function is injected as function reference
+  # => args are spliced as separate arguments
 end
 
-quoted = Builder.build_call(:IO.puts, ["Hello"])
-Code.eval_quoted(quoted)  # Prints: Hello
+quoted = Builder.build_call(:IO.puts, ["Hello"])  # => builds IO.puts("Hello")
+# => Returns AST: {{:., [], [:IO, :puts]}, [], ["Hello"]}
+Code.eval_quoted(quoted)  # => Prints: Hello
+# => {nil, []} (IO.puts returns nil)
 
+# Converting AST back to string
 quote(do: 1 + 2) |> Macro.to_string()  # => "1 + 2"
+# => AST → string representation (pretty print)
+# => Useful for debugging macros (see generated code)
 
-Macro.expand(quote(do: unless true, do: :no), __ENV__)
+# Macro expansion - see how macros are transformed
+Macro.expand(quote(do: unless true, do: :no), __ENV__)  # => expands unless macro
+# => unless is a macro that rewrites to if with negated condition
+# => Returns: {:if, [], [false, [do: :no, else: nil]]}
+# => Shows underlying if implementation
+
+# Key AST concepts:
+# 1. Everything is a tuple: {function, metadata, arguments}
+# 2. Literals (1, "hello", :atom) are kept as-is
+# 3. Variables become {:var_name, metadata, context}
+# 4. Function calls become {func, metadata, args}
+# 5. quote captures code as AST (doesn't execute)
+# 6. unquote injects values into AST at quote time
+# 7. unquote_splicing expands lists as separate arguments
 ```
 
 **Key Takeaway**: `quote` converts code to AST (tuple representation), `unquote` injects values into quoted expressions. AST is the foundation of macros—understanding it enables powerful metaprogramming.
