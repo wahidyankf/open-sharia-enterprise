@@ -3414,53 +3414,121 @@ Profiling identifies bottlenecks. Use `:timer.tc/1` for timing, `:observer.start
 **Code**:
 
 ```elixir
+# Basic timing with :timer.tc/1
 {time, result} = :timer.tc(fn ->
+  # => :timer.tc/1 measures execution time in microseconds
   Enum.reduce(1..1_000_000, 0, &+/2)
+  # => Sums 1 million integers
 end)
+# => Returns {microseconds, function_result} tuple
+# => time = execution time (μs), result = function return value
 
-IO.puts("Took #{time}μs")  # Prints: Took 123456μs
+IO.puts("Took #{time}μs")
+# => Prints: Took 123456μs (actual time varies)
+# => μs = microseconds (1 second = 1,000,000 μs)
 
+# Comprehensive benchmarking with Benchee
 Benchee.run(%{
+  # => Map of benchmark scenarios
   "Enum.map" => fn -> Enum.map(1..10_000, &(&1 * 2)) end,
+  # => Eager evaluation: builds entire list immediately
   "for comprehension" => fn -> for x <- 1..10_000, do: x * 2 end,
+  # => Syntactic sugar for Enum.map
   "Stream.map" => fn -> 1..10_000 |> Stream.map(&(&1 * 2)) |> Enum.to_list() end
+  # => Lazy evaluation: builds list only when Enum.to_list() called
 })
+# => Benchee outputs: iterations/second, average time, memory usage
+# => Shows statistical analysis with standard deviation
 
-
+# Memory profiling
 memory_before = :erlang.memory()
+# => Snapshot of BEAM memory state before operation
+# => Returns keyword list: [total: N, processes: M, binary: X, ...]
+# PERFORM MEMORY-INTENSIVE OPERATION HERE
 memory_after = :erlang.memory()
+# => Snapshot after operation
 used = memory_after[:total] - memory_before[:total]
+# => Calculate memory delta (may be negative if GC runs)
 IO.puts("Used #{used} bytes")
+# => Note: includes GC effects, not perfectly accurate
 
-Process.info(self(), :memory)  # => {:memory, 12345}
-Process.info(self(), :message_queue_len)  # => {:message_queue_len, 0}
+# Process-specific metrics
+Process.info(self(), :memory)
+# => {:memory, 12345} (bytes used by current process heap)
+# => Per-process memory, NOT total BEAM memory
+Process.info(self(), :message_queue_len)
+# => {:message_queue_len, 0} (messages waiting in mailbox)
+# => Growing queue indicates backpressure/slow consumer
 
-
+# ❌ BAD: List concatenation (O(n) per append, O(n²) total)
 Enum.reduce(1..10_000, [], fn x, acc -> acc ++ [x] end)
+# => Each ++ copies entire accumulator (expensive!)
+# => 10,000 items: ~50 million operations
+# => Quadratic time complexity
 
+# ✅ GOOD: Cons + reverse (O(1) per cons, O(n) reverse, O(n) total)
 Enum.reduce(1..10_000, [], fn x, acc -> [x | acc] end) |> Enum.reverse()
+# => [x | acc] prepends in constant time (no copying)
+# => Single reverse pass at end
+# => Linear time complexity: ~10x-100x faster
 
+# ❌ BAD: String concatenation (copies entire string each time)
 Enum.reduce(1..1000, "", fn x, acc -> acc <> to_string(x) end)
+# => Each <> allocates new binary (expensive!)
+# => 1,000 items: millions of bytes copied
+# => Quadratic time complexity
 
+# ✅ GOOD: IO lists (deferred concatenation)
 iolist = Enum.map(1..1000, &to_string/1)
+# => Returns list of binaries (not yet concatenated)
+# => No copying yet!
 IO.iodata_to_binary(iolist)
+# => Single-pass concatenation with known size
+# => Allocates final binary once: ~100x faster
 
+# ❌ BAD: Repeated expensive function calls
 Enum.map(list, fn x -> expensive_function(x) end)
+# => Calls expensive_function for each element
+# => No caching (recalculates duplicates)
 
+# ✅ GOOD: Memoization (cache results)
 cache = Enum.map(list, &expensive_function/1) |> Map.new()
+# => Pre-computes all unique values
+# => Subsequent lookups: O(log n) instead of O(expensive)
+# => Note: only worthwhile for repeated lookups
 
+# ❌ BAD: Multiple Enum pipeline passes
 list |> Enum.map(&transform/1) |> Enum.filter(&predicate/1) |> Enum.map(&final/1)
+# => Pass 1: Enum.map builds intermediate list
+# => Pass 2: Enum.filter builds filtered list
+# => Pass 3: Enum.map builds final list
+# => Three iterations, two intermediate allocations
 
+# ✅ GOOD: Fused single reduce pass
 list
 |> Enum.reduce([], fn x, acc ->
+  # => Single pass through list
   transformed = transform(x)
+  # => Transform once
   if predicate(transformed), do: [final(transformed) | acc], else: acc
+  # => Filter + final map inline
 end)
 |> Enum.reverse()
+# => One iteration, zero intermediate allocations
+# => Note: only optimize hot paths (profile first!)
 
+# ❌ BAD: Eager evaluation of large data
 1..10_000_000 |> Enum.map(&(&1 * 2)) |> Enum.take(10)
+# => Enum.map builds 10 million item list
+# => Then Enum.take discards 9,999,990 items
+# => Wastes memory and CPU
 
+# ✅ GOOD: Lazy evaluation with Stream
 1..10_000_000 |> Stream.map(&(&1 * 2)) |> Enum.take(10)
+# => Stream.map is lazy (no computation yet)
+# => Enum.take(10) pulls only 10 items
+# => Computes 10 values, not 10 million
+# => ~1 million times less work!
 ```
 
 **Key Takeaway**: Profile before optimizing. Use `:timer.tc/1` for timing, Benchee for benchmarking, `:observer` for system monitoring. Common optimizations: avoid list concatenation, use IO lists for strings, reduce enumerations, use streams for large data.
@@ -3476,78 +3544,137 @@ Elixir provides tools for debugging: `IEx.pry` for breakpoints, `IO.inspect` wit
 **Code**:
 
 ```elixir
+# IO.inspect with labels (pipeline debugging)
 defmodule Debug do
   def process(data) do
     data
     |> transform()
-    |> IO.inspect(label: "After transform")  # Logs with label
+    |> IO.inspect(label: "After transform")
+    # => Prints: After transform: 10
+    # => Returns value unchanged (passes through pipeline)
     |> validate()
     |> IO.inspect(label: "After validate")
+    # => Prints: After validate: 10
+    # => Non-invasive: doesn't break pipeline flow
     |> finalize()
   end
 
   defp transform(x), do: x * 2
+  # => Doubles input
   defp validate(x), do: if x > 0, do: x, else: raise("Invalid")
+  # => Ensures positive value
   defp finalize(x), do: x + 1
+  # => Increments by 1
 end
 
 Debug.process(5)
+# => Prints debug output, returns 11
+# => Flow: 5 → transform(10) → validate(10) → finalize(11)
 
+# dbg/1 for pipeline debugging (Elixir 1.14+)
 result = [1, 2, 3]
          |> Enum.map(&(&1 * 2))
-         |> dbg()  # Shows: [2, 4, 6]
+         # => [2, 4, 6]
+         |> dbg()
+         # => Prints: [2, 4, 6] (with code context)
+         # => Shows: pipe |> Enum.map(...) #=> [2, 4, 6]
          |> Enum.sum()
-         |> dbg()  # Shows: 12
+         # => 12
+         |> dbg()
+         # => Prints: 12 (with code context)
+         # => dbg is more informative than IO.inspect
 
+# IEx.pry for breakpoints (interactive debugging)
 defmodule User do
   def create(name, age) do
     require IEx
-    IEx.pry()  # Execution stops here in IEx
+    # => Compile-time requirement for pry
+    IEx.pry()
+    # => STOPS EXECUTION HERE when running in IEx
+    # => Opens interactive prompt with access to local variables
+    # => Type 'respawn' to continue, 'continue' to skip breakpoints
 
     %{name: name, age: age}
+    # => Returns user map
   end
 end
 
-# # Stops at pry, can inspect variables:
+# When stopped at pry, you can inspect variables:
+binding()
+# => Returns keyword list of all variables in scope
+# => Example: [name: "Alice", age: 25]
+# => Useful for inspecting function arguments and locals
 
-binding()  # Returns keyword list of all variables in scope
-
-
-
+# tap/2 for non-invasive inspection
 def complex_calculation(x) do
   x
   |> step1()
-  |> tap(&IO.inspect(&1, label: "After step1"))  # tap doesn't change value
+  # => Performs step1 transformation
+  |> tap(&IO.inspect(&1, label: "After step1"))
+  # => tap/2 calls function with value, returns original value
+  # => Prints value WITHOUT changing pipeline flow
+  # => Like IO.inspect but more explicit
   |> step2()
   |> tap(&IO.inspect(&1, label: "After step2"))
+  # => Multiple taps don't affect result
   |> step3()
 end
+# => tap/2 is pure (no side effects on return value)
+# => Perfect for inserting debug prints without refactoring
 
+# Conditional debugging with application config
 def process(data) do
   if Application.get_env(:my_app, :debug) do
+    # => Only executes in debug mode
     IO.inspect(data, label: "DEBUG")
+    # => Conditional debugging without code changes
   end
   # ... rest of processing
 end
+# => Enable with: Application.put_env(:my_app, :debug, true)
+# => Disable in production: config :my_app, debug: false
 
+# Structured logging for production
 require Logger
+# => Compile-time requirement for Logger macros
 
 def risky_operation do
   Logger.debug("Starting risky operation")
+  # => Log level: debug (most verbose)
+  # => Only appears when log level ≤ :debug
   # ... code
   Logger.info("Completed successfully")
+  # => Log level: info (normal operations)
 rescue
   e -> Logger.error("Failed: #{inspect(e)}")
+  # => Log level: error (failures)
+  # => inspect/1 converts exception to readable string
 end
+# => Logger levels: debug < info < warn < error
+# => Production typically sets level to :info or :warn
 
+# Pretty printing complex structures
 big_struct = %{/* complex nested data */}
 IO.inspect(big_struct, pretty: true, width: 80)
+# => pretty: true formats with indentation
+# => width: 80 wraps at 80 characters
+# => Makes deeply nested structures readable
+# => Alternative: IO.puts(inspect(big_struct, pretty: true))
 
+# Stack trace formatting
 try do
   raise "Error!"
+  # => Raises exception
 rescue
   e -> IO.puts(Exception.format(:error, e, __STACKTRACE__))
+  # => Exception.format/3 creates human-readable trace
+  # => :error = exception kind
+  # => e = exception struct
+  # => __STACKTRACE__ = special variable with call stack
+  # => Output shows file:line for each frame
 end
+# => Use for debugging unexpected exceptions
+# => Production: Logger.error(Exception.format(...)) instead of IO.puts
 ```
 
 **Key Takeaway**: Use `IO.inspect/2` with labels for quick debugging, `dbg/1` for pipeline inspection, `IEx.pry` for breakpoints, and Logger for production. Leverage `tap/2` for non-invasive inspection and `:debugger` for GUI debugging.
