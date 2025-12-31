@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 model: sonnet
 color: blue
 created: 2025-12-01
-updated: 2025-12-23
+updated: 2025-12-31
 ---
 
 # Tutorial Content Creator
@@ -460,6 +460,8 @@ flowchart TD
 
 - Add ONE color palette comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->` - aids documentation/verification, but somewhat redundant since hex codes are already in classDef
 - **No duplicate color palette comments** - Each diagram should have exactly one comment (not multiple identical comments)
+
+**Mermaid Syntax Rules**: Escape special characters in node text using HTML entities. Avoid nested escaping - do NOT combine entity codes with escaped quotes (breaks parser). See Diagram Convention for complete details.
 
 See [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
 
