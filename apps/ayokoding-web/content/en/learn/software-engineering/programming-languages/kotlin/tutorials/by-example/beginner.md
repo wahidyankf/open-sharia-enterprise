@@ -1000,49 +1000,106 @@ fun main() {                        // => Program entry point
 Kotlin provides both mutable and immutable collections. Immutable lists (created with `listOf`) cannot be modified after creation, promoting safer concurrent code. Mutable lists (created with `mutableListOf`) support adding, removing, and updating elements.
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Immutable list (read-only)
     val fruits = listOf("Apple", "Banana", "Cherry")
+                                     // => listOf: creates immutable List<String>
+                                     // => Type: List<String> (read-only interface)
+                                     // => Cannot add/remove elements
+                                     // => Thread-safe (immutable)
                                      // => fruits is ["Apple", "Banana", "Cherry"]
-    println(fruits[0])               // => Output: Apple (index access)
-    println(fruits.size)             // => Output: 3
-    // fruits.add("Mango")           // => Compile error: no add method on List
+    println(fruits[0])               // => [] operator: indexed access
+                                     // => Index 0: first element
+                                     // => Returns "Apple"
+                                     // => Output: Apple (index access)
+    println(fruits.size)             // => size property: number of elements
+                                     // => Returns 3
+                                     // => Output: 3
+    // fruits.add("Mango")           // => Would be compile error
+                                     // => List interface has no add method
+                                     // => Immutability enforced at compile time
+                                     // => Compile error: no add method on List
 
     // Mutable list
     val numbers = mutableListOf(1, 2, 3)
+                                     // => mutableListOf: creates MutableList<Int>
+                                     // => Type: MutableList<Int> (read-write)
+                                     // => Can add/remove/update elements
                                      // => numbers is [1, 2, 3]
-    numbers.add(4)                   // => numbers is [1, 2, 3, 4]
-    numbers.removeAt(0)              // => numbers is [2, 3, 4] (removed index 0)
-    numbers[0] = 10                  // => numbers is [10, 3, 4] (updated index 0)
+    numbers.add(4)                   // => add: appends element to end
+                                     // => Adds 4 to list
+                                     // => List grows: [1, 2, 3] -> [1, 2, 3, 4]
+                                     // => numbers is [1, 2, 3, 4]
+    numbers.removeAt(0)              // => removeAt: removes element at index
+                                     // => Index 0: element 1
+                                     // => List shrinks: [1, 2, 3, 4] -> [2, 3, 4]
+                                     // => Indices shift: what was at 1 is now at 0
+                                     // => numbers is [2, 3, 4] (removed index 0)
+    numbers[0] = 10                  // => [] operator: indexed assignment
+                                     // => Index 0 (element 2) becomes 10
+                                     // => Replaces element: [2, 3, 4] -> [10, 3, 4]
+                                     // => numbers is [10, 3, 4] (updated index 0)
 
     // List operations
     val combined = fruits + listOf("Mango", "Orange")
+                                     // => + operator: concatenates lists
+                                     // => Creates new list (doesn't modify fruits)
+                                     // => fruits + ["Mango", "Orange"]
+                                     // => Returns new list with all elements
                                      // => combined is ["Apple", "Banana", "Cherry", "Mango", "Orange"]
                                      // => fruits remains unchanged
     val sliced = combined.slice(1..3)
+                                     // => slice: extracts sublist by range
+                                     // => Range 1..3: indices 1, 2, 3
+                                     // => Elements: "Banana", "Cherry", "Mango"
+                                     // => Returns new list
                                      // => sliced is ["Banana", "Cherry", "Mango"]
 
     // Checking membership
-    println("Apple" in fruits)       // => Output: true
-    println("Grape" in fruits)       // => Output: false
+    println("Apple" in fruits)       // => in operator: tests membership
+                                     // => "Apple" in fruits is true
+                                     // => Output: true
+    println("Grape" in fruits)       // => "Grape" not in list
+                                     // => Returns false
+                                     // => Output: false
 
     // Iteration
-    for (fruit in fruits) {
-        print("$fruit ")             // => Prints: Apple Banana Cherry
+    for (fruit in fruits) {          // => Iterates list elements
+                                     // => fruit: "Apple", "Banana", "Cherry"
+        print("$fruit ")             // => Prints each element
+                                     // => Prints: Apple Banana Cherry
     }
     println()                        // => Newline
 
     // List transformation
     val lengths = fruits.map { it.length }
+                                     // => map: transforms each element
+                                     // => Lambda: { it.length }
+                                     // => it: implicit lambda parameter
+                                     // => "Apple".length = 5
+                                     // => "Banana".length = 6
+                                     // => "Cherry".length = 6
+                                     // => Returns [5, 6, 6]
                                      // => lengths is [5, 6, 6]
     val filtered = fruits.filter { it.startsWith("C") }
+                                     // => filter: selects elements matching predicate
+                                     // => Lambda: { it.startsWith("C") }
+                                     // => "Apple".startsWith("C") = false
+                                     // => "Banana".startsWith("C") = false
+                                     // => "Cherry".startsWith("C") = true
+                                     // => Returns ["Cherry"]
                                      // => filtered is ["Cherry"]
 
-    println(numbers)                 // => Output: [10, 3, 4]
-    println(combined)                // => Output: [Apple, Banana, Cherry, Mango, Orange]
-    println(lengths)                 // => Output: [5, 6, 6]
-    println(filtered)                // => Output: [Cherry]
-}
+    println(numbers)                 // => Outputs [10, 3, 4]
+                                     // => Output: [10, 3, 4]
+    println(combined)                // => Outputs combined list
+                                     // => Output: [Apple, Banana, Cherry, Mango, Orange]
+    println(lengths)                 // => Outputs lengths list
+                                     // => Output: [5, 6, 6]
+    println(filtered)                // => Outputs filtered list
+                                     // => Output: [Cherry]
+}                                   // => main returns
+                                    // => Immutable lists are thread-safe
 ```
 
 **Key Takeaway**: Use `listOf` for immutable lists that prevent accidental modification, `mutableListOf` when you need to add/remove elements, and leverage functional operations like `map` and `filter` for transformations.
@@ -1056,39 +1113,77 @@ fun main() {
 Sets are unordered collections of unique elements. Kotlin provides immutable `Set` and mutable `MutableSet`. Sets automatically eliminate duplicates and provide efficient membership testing.
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Immutable set (duplicates automatically removed)
     val numbers = setOf(1, 2, 3, 2, 1)
+                                     // => setOf: creates immutable Set<Int>
+                                     // => Input: 1, 2, 3, 2, 1 (5 elements with duplicates)
+                                     // => Set automatically removes duplicates
+                                     // => Result: {1, 2, 3} (3 unique elements)
+                                     // => Type: Set<Int> (unordered collection)
                                      // => numbers is {1, 2, 3} (duplicates removed)
-    println(numbers)                 // => Output: [1, 2, 3]
-    println(numbers.size)            // => Output: 3
+    println(numbers)                 // => Outputs set (order may vary)
+                                     // => Output: [1, 2, 3]
+    println(numbers.size)            // => size: number of unique elements
+                                     // => Returns 3
+                                     // => Output: 3
 
     // Mutable set
     val colors = mutableSetOf("Red", "Green", "Blue")
+                                     // => mutableSetOf: creates MutableSet<String>
+                                     // => Type: MutableSet<String>
+                                     // => Can add/remove elements
                                      // => colors is {"Red", "Green", "Blue"}
-    colors.add("Yellow")             // => colors is {"Red", "Green", "Blue", "Yellow"}
-    colors.add("Red")                // => No change (Red already exists)
+    colors.add("Yellow")             // => add: inserts element if not present
+                                     // => "Yellow" not in set, added
                                      // => colors is {"Red", "Green", "Blue", "Yellow"}
-    colors.remove("Green")           // => colors is {"Red", "Blue", "Yellow"}
+    colors.add("Red")                // => "Red" already in set
+                                     // => Duplicate not added
+                                     // => No change (Red already exists)
+                                     // => colors is {"Red", "Green", "Blue", "Yellow"}
+    colors.remove("Green")           // => remove: deletes element if present
+                                     // => "Green" removed from set
+                                     // => colors is {"Red", "Blue", "Yellow"}
 
     // Set operations
-    val set1 = setOf(1, 2, 3, 4)     // => set1 is {1, 2, 3, 4}
-    val set2 = setOf(3, 4, 5, 6)     // => set2 is {3, 4, 5, 6}
+    val set1 = setOf(1, 2, 3, 4)     // => set1: {1, 2, 3, 4}
+                                     // => set1 is {1, 2, 3, 4}
+    val set2 = setOf(3, 4, 5, 6)     // => set2: {3, 4, 5, 6}
+                                     // => set2 is {3, 4, 5, 6}
 
-    val union = set1 union set2      // => union is {1, 2, 3, 4, 5, 6}
+    val union = set1 union set2      // => union: combines all unique elements
+                                     // => set1 ∪ set2
+                                     // => Elements from both sets: {1,2,3,4,5,6}
+                                     // => union is {1, 2, 3, 4, 5, 6}
     val intersect = set1 intersect set2
+                                     // => intersect: common elements only
+                                     // => set1 ∩ set2
+                                     // => Elements in both: {3, 4}
                                      // => intersect is {3, 4}
-    val diff = set1 subtract set2    // => diff is {1, 2} (in set1 but not set2)
+    val diff = set1 subtract set2    // => subtract: elements in set1 not in set2
+                                     // => set1 - set2
+                                     // => Elements only in set1: {1, 2}
+                                     // => diff is {1, 2} (in set1 but not set2)
 
     // Membership testing (very efficient)
-    println(2 in set1)               // => Output: true
-    println(5 in set1)               // => Output: false
+    println(2 in set1)               // => in operator: O(1) lookup
+                                     // => 2 in {1, 2, 3, 4} is true
+                                     // => Hash-based lookup (constant time)
+                                     // => Output: true
+    println(5 in set1)               // => 5 not in {1, 2, 3, 4}
+                                     // => Returns false
+                                     // => Output: false
 
-    println(colors)                  // => Output: [Red, Blue, Yellow]
-    println(union)                   // => Output: [1, 2, 3, 4, 5, 6]
-    println(intersect)               // => Output: [3, 4]
-    println(diff)                    // => Output: [1, 2]
-}
+    println(colors)                  // => Outputs colors set
+                                     // => Output: [Red, Blue, Yellow]
+    println(union)                   // => Outputs union
+                                     // => Output: [1, 2, 3, 4, 5, 6]
+    println(intersect)               // => Outputs intersection
+                                     // => Output: [3, 4]
+    println(diff)                    // => Outputs difference
+                                     // => Output: [1, 2]
+}                                   // => main returns
+                                    // => Sets provide O(1) membership testing
 ```
 
 **Key Takeaway**: Use sets when you need unique elements and efficient membership testing; leverage set operations (union, intersect, subtract) for mathematical set manipulations.
