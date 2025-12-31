@@ -2007,68 +2007,207 @@ Use `raise` to throw exceptions. Define custom exception modules for domain-spec
 
 
 defmodule MyApp.ValidationError do
+  # => defexception: defines custom exception module
+  # => Exceptions are structs with __exception__: true field
+  # => Fields: message (default "Validation failed"), field (default nil)
   defexception message: "Validation failed", field: nil
+  # => Default values: used when not explicitly set during raise
+  # => message: string, field: atom or nil
+  # => Struct: %MyApp.ValidationError{message: "...", field: nil, __exception__: true}
 
   @impl true
+  # => @impl: indicates implementing Exception protocol callback
+  # => Required when custom message/1 function overrides default
   def message(exception) do
+    # => message/1: Exception protocol callback
+    # => Input: exception struct %MyApp.ValidationError{...}
+    # => Returns: formatted error message string
     "Validation failed for field: #{exception.field}"
+    # => Interpolates field name into message
+    # => Example: field=:age => "Validation failed for field: age"
+    # => Used by error reporting, logs, and exception displays
   end
 end
 
 defmodule MyApp.NotFoundError do
+  # => defexception with list: defines fields without defaults
+  # => All fields default to nil
   defexception [:resource, :id]
+  # => Fields: resource (atom/string), id (any type)
+  # => No default message field (Exception protocol provides default)
+  # => Struct: %MyApp.NotFoundError{resource: nil, id: nil, __exception__: true}
 
   @impl true
+  # => Overrides default Exception.message/1 implementation
   def message(exception) do
+    # => Custom message format for NotFoundError
+    # => exception.resource: type of resource (e.g., "User", "Post")
+    # => exception.id: identifier (e.g., 123, "abc-def")
     "#{exception.resource} with id #{exception.id} not found"
+    # => Example: resource="User", id=999 => "User with id 999 not found"
+    # => Human-readable error for 404-style failures
   end
 end
 
 
 
 defmodule UserValidator do
+  # => Module demonstrating validation with custom exceptions
+  # => Bang functions (!): raise exceptions on invalid input
+  # => Follows convention: ! suffix means may raise
+
   def validate_age!(age) when is_integer(age) and age >= 0 and age < 150, do: :ok
+  # => Clause 1: happy path guard
+  # => Guard: is_integer(age) checks type
+  # => Guard: age >= 0 ensures non-negative
+  # => Guard: age < 150 ensures reasonable upper bound
+  # => Returns: :ok (success atom)
+  # => If all guards pass, validation succeeds
+
   def validate_age!(age) when is_integer(age) do
+    # => Clause 2: integer but out of range
+    # => Guard: is_integer(age) true BUT previous guards failed
+    # => Means: age < 0 or age >= 150
     raise MyApp.ValidationError, field: :age, message: "Age must be between 0 and 150, got: #{age}"
+    # => raise: throws MyApp.ValidationError exception
+    # => field: :age identifies which field failed
+    # => message: overrides default, includes actual value
+    # => Process crashes unless caught with try/rescue
   end
+
   def validate_age!(_age) do
+    # => Clause 3: not an integer (catch-all)
+    # => _age: pattern matches anything (previous clauses didn't)
+    # => Means: age is not integer (e.g., "30", 30.5, nil)
     raise MyApp.ValidationError, field: :age, message: "Age must be an integer"
+    # => Raises with type error message
+    # => No value interpolation (could be any type)
   end
 
   def validate_email!(email) when is_binary(email) do
+    # => Email validation with bang convention
+    # => Guard: is_binary(email) ensures email is string
+    # => Binary = string in Elixir (UTF-8 encoded)
     if String.contains?(email, "@") do
+      # => Check: email contains @ symbol (basic validation)
+      # => String.contains?/2 returns boolean
       :ok
+      # => Success: email has @ character
+      # => Returns :ok atom
     else
+      # => Failure: no @ in email
       raise MyApp.ValidationError, field: :email, message: "Email must contain @"
+      # => Raises exception for invalid format
+      # => Basic validation (production would use regex)
     end
   end
+
   def validate_email!(_email) do
+    # => Catch-all: email is not a string
+    # => _email: not binary (e.g., 123, :atom, nil)
     raise MyApp.ValidationError, field: :email, message: "Email must be a string"
+    # => Type error: email must be string
   end
 end
 
-UserValidator.validate_age!(30) # => :ok
+UserValidator.validate_age!(30)
+# => Calls validate_age! with 30
+# => Clause 1: is_integer(30) → true, 30 >= 0 → true, 30 < 150 → true
+# => All guards pass → returns :ok
+# => No exception raised
 
-UserValidator.validate_email!("alice@example.com") # => :ok
+UserValidator.validate_email!("alice@example.com")
+# => Calls validate_email! with string
+# => Guard: is_binary("alice@example.com") → true
+# => if: String.contains?("alice@example.com", "@") → true
+# => Returns :ok
+# => Valid email format
+
+# Example: age validation failure (out of range)
+# UserValidator.validate_age!(200)
+# => Clause 1: 200 < 150 → false, guard fails
+# => Clause 2: is_integer(200) → true, matches!
+# => Raises MyApp.ValidationError with message: "Age must be between 0 and 150, got: 200"
+# => Process crashes with exception
+
+# Example: age validation failure (wrong type)
+# UserValidator.validate_age!("30")
+# => Clause 1: is_integer("30") → false, guard fails
+# => Clause 2: is_integer("30") → false, guard fails
+# => Clause 3: _age pattern matches "30"
+# => Raises MyApp.ValidationError with message: "Age must be an integer"
+# => Process crashes with exception
 
 defmodule UserRepo do
+  # => Repository module demonstrating safe/unsafe function pairs
+  # => Safe function: fetch/1 returns {:ok, user} | {:error, reason}
+  # => Unsafe function: fetch!/1 unwraps or raises exception
+
   def fetch(id) when id > 0 and id < 100 do
+    # => Safe fetch: returns result tuple
+    # => Guard: id must be positive and less than 100
+    # => Simulates valid ID range (1-99)
     {:ok, %{id: id, name: "User #{id}"}}
+    # => Success case: returns {:ok, user_map}
+    # => user_map: %{id: <id>, name: "User <id>"}
+    # => Type: {:ok, map()}
   end
+
   def fetch(_id), do: {:error, :not_found}
+  # => Catch-all: invalid ID
+  # => Matches when guard fails (id <= 0 or id >= 100)
+  # => Returns {:error, :not_found} tuple
+  # => Caller can pattern match and handle gracefully
 
   def fetch!(id) do
+    # => Bang version: unwraps result or raises exception
+    # => Follows Elixir convention: ! suffix indicates may raise
     case fetch(id) do
+      # => Delegates to safe fetch/1
       {:ok, user} -> user
-      {:error, :not_found} -> raise MyApp.NotFoundError, resource: "User", id: id
+      # => Success: unwrap tuple, return bare user map
+      # => Converts {:ok, %{...}} to %{...}
+      # => Type: map()
+
+      {:error, :not_found} ->
+        # => Failure: raise custom exception
+        raise MyApp.NotFoundError, resource: "User", id: id
+        # => raise with keyword list: sets struct fields
+        # => resource: "User" (type of resource)
+        # => id: <id> (identifier that wasn't found)
+        # => Exception message: "User with id <id> not found"
     end
   end
 end
 
-UserRepo.fetch(1) # => {:ok, %{id: 1, name: "User 1"}}
-UserRepo.fetch(999) # => {:error, :not_found}
+UserRepo.fetch(1)
+# => Calls fetch with id=1
+# => Guard: 1 > 0 → true, 1 < 100 → true
+# => Returns {:ok, %{id: 1, name: "User 1"}}
+# => Type: {:ok, map()}
 
-UserRepo.fetch!(1) # => %{id: 1, name: "User 1"}
+UserRepo.fetch(999)
+# => Calls fetch with id=999
+# => Guard: 999 < 100 → false, guard fails
+# => Catch-all clause matches
+# => Returns {:error, :not_found}
+# => Type: {:error, atom()}
+
+UserRepo.fetch!(1)
+# => Calls fetch!(1) → delegates to fetch(1)
+# => fetch(1) → {:ok, %{id: 1, name: "User 1"}}
+# => Pattern matches {:ok, user}
+# => Returns unwrapped user map: %{id: 1, name: "User 1"}
+# => Type: map() (not tuple)
+
+# Example: bang function raising exception
+# UserRepo.fetch!(999)
+# => Calls fetch!(999) → delegates to fetch(999)
+# => fetch(999) → {:error, :not_found}
+# => Pattern matches {:error, :not_found}
+# => Raises MyApp.NotFoundError with resource="User", id=999
+# => Exception message: "User with id 999 not found"
+# => Process crashes unless caught
 
 
 ```
