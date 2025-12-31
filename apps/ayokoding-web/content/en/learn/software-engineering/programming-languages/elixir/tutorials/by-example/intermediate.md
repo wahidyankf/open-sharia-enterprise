@@ -398,12 +398,14 @@ graph TD
 
 ```elixir
 defmodule WithExamples do
-  # Simulate API functions
+  # Simulate API functions (return tagged tuples)
   def fetch_user(id) do
     case id do
       1 -> {:ok, %{id: 1, name: "Alice", account_id: 101}}
+      # => Success: returns {:ok, user_map}
       2 -> {:ok, %{id: 2, name: "Bob", account_id: 102}}
       _ -> {:error, :user_not_found}
+      # => Failure: returns {:error, atom}
     end
   end
 
@@ -418,81 +420,143 @@ defmodule WithExamples do
   def fetch_transactions(account_id) do
     case account_id do
       101 -> {:ok, [%{amount: 100}, %{amount: -50}]}
+      # => Returns list of transaction maps
       102 -> {:ok, [%{amount: 200}]}
       _ -> {:error, :transactions_not_found}
     end
   end
 
-  # Without `with` - nested case statements (messy)
+  # ❌ WITHOUT `with` - nested case statements (pyramid of doom)
   def get_user_summary_nested(user_id) do
     case fetch_user(user_id) do
+      # => Level 1 nesting
       {:ok, user} ->
         case fetch_account(user.account_id) do
+          # => Level 2 nesting
           {:ok, account} ->
             case fetch_transactions(account.id) do
+              # => Level 3 nesting (hard to read!)
               {:ok, transactions} ->
                 {:ok, %{user: user, account: account, transactions: transactions}}
               {:error, reason} ->
                 {:error, reason}
+                # => Must repeat error handling at each level
             end
           {:error, reason} ->
             {:error, reason}
+            # => Duplicated error handling
         end
       {:error, reason} ->
         {:error, reason}
+        # => Error handling repeated 3 times!
     end
   end
 
-  # With `with` - clean happy path (readable)
+  # ✅ WITH `with` - clean happy path (linear, readable)
   def get_user_summary(user_id) do
-    with {:ok, user} <- fetch_user(user_id),             # Step 1
-         {:ok, account} <- fetch_account(user.account_id), # Step 2
-         {:ok, transactions} <- fetch_transactions(account.id) do # Step 3
+    with {:ok, user} <- fetch_user(user_id),
+         # => Step 1: pattern match {:ok, user}
+         # => If matches: continue to step 2
+         # => If doesn't match: jump to else block
+         {:ok, account} <- fetch_account(user.account_id),
+         # => Step 2: uses user from step 1
+         # => Chain continues only if pattern matches
+         {:ok, transactions} <- fetch_transactions(account.id) do
+         # => Step 3: uses account from step 2
+         # => All patterns matched: execute do block
       # Happy path - all matches succeeded
       {:ok, %{
         user: user.name,
+        # => user binding from step 1
         balance: account.balance,
+        # => account binding from step 2
         transaction_count: length(transactions)
+        # => transactions binding from step 3
       }}
     else
-      # First mismatch goes here
+      # First mismatch jumps here (short-circuit)
       {:error, :user_not_found} -> {:error, "User not found"}
+      # => Pattern match error from step 1
       {:error, :account_not_found} -> {:error, "Account not found"}
+      # => Pattern match error from step 2
       {:error, :transactions_not_found} -> {:error, "Transactions not found"}
+      # => Pattern match error from step 3
+      # => Consolidated error handling in one place!
     end
   end
 
-  # `with` can also match non-error values
+  # `with` can match any pattern (not just :ok/:error)
   def complex_calculation(x) do
-    with {:ok, doubled} <- {:ok, x * 2},        # => {:ok, 10} when x = 5
-         {:ok, incremented} <- {:ok, doubled + 1}, # => {:ok, 11}
-         {:ok, squared} <- {:ok, incremented * incremented} do # => {:ok, 121}
+    with {:ok, doubled} <- {:ok, x * 2},
+         # => x = 5 → {:ok, 10}
+         # => Matches pattern, doubled = 10
+         {:ok, incremented} <- {:ok, doubled + 1},
+         # => {:ok, 11}, incremented = 11
+         {:ok, squared} <- {:ok, incremented * incremented} do
+         # => {:ok, 121}, squared = 121
       {:ok, squared}
+      # => Returns {:ok, 121}
     else
       _ -> {:error, "calculation failed"}
+      # => Catch-all for any non-matching pattern
     end
   end
 
-  # Guards in `with` (Elixir 1.3+)
+  # Boolean guards in `with` (Elixir 1.3+)
   def process_number(x) when is_integer(x) do
     with true <- x > 0,
+         # => Matches true or jumps to else
+         # => Pattern: true <- boolean_expression
          true <- x < 100 do
+         # => Second validation: x must be < 100
       {:ok, "Valid number: #{x}"}
+      # => Both guards passed
     else
       false -> {:error, "Number out of range"}
+      # => Either guard failed (returned false)
+      # => Both failures use same pattern
     end
   end
 end
 
-WithExamples.get_user_summary(1) # => {:ok, %{balance: 1000, transaction_count: 2, user: "Alice"}}
-WithExamples.get_user_summary(2) # => {:ok, %{balance: 500, transaction_count: 1, user: "Bob"}}
-WithExamples.get_user_summary(999) # => {:error, "User not found"}
+# Happy path - all steps succeed
+WithExamples.get_user_summary(1)
+# => Step 1: fetch_user(1) → {:ok, %{id: 1, name: "Alice", account_id: 101}}
+# => Step 2: fetch_account(101) → {:ok, %{id: 101, balance: 1000}}
+# => Step 3: fetch_transactions(101) → {:ok, [...]}
+# => do block executes → {:ok, %{balance: 1000, transaction_count: 2, user: "Alice"}}
 
-WithExamples.complex_calculation(5) # => {:ok, 121}
+WithExamples.get_user_summary(2)
+# => User Bob, account 102, balance 500, 1 transaction
+# => {:ok, %{balance: 500, transaction_count: 1, user: "Bob"}}
 
-WithExamples.process_number(50) # => {:ok, "Valid number: 50"}
-WithExamples.process_number(150) # => {:error, "Number out of range"}
-WithExamples.process_number(-10) # => {:error, "Number out of range"}
+# Failure path - short-circuit at step 1
+WithExamples.get_user_summary(999)
+# => Step 1: fetch_user(999) → {:error, :user_not_found}
+# => Pattern {:ok, user} doesn't match → jumps to else
+# => else block: {:error, :user_not_found} matches → {:error, "User not found"}
+
+# Calculation chain
+WithExamples.complex_calculation(5)
+# => Step 1: {:ok, 5 * 2} = {:ok, 10}
+# => Step 2: {:ok, 10 + 1} = {:ok, 11}
+# => Step 3: {:ok, 11 * 11} = {:ok, 121}
+# => {:ok, 121}
+
+# Boolean guard validation
+WithExamples.process_number(50)
+# => Guard 1: 50 > 0 → true (matches)
+# => Guard 2: 50 < 100 → true (matches)
+# => {:ok, "Valid number: 50"}
+
+WithExamples.process_number(150)
+# => Guard 1: 150 > 0 → true
+# => Guard 2: 150 < 100 → false (doesn't match true)
+# => else: false matched → {:error, "Number out of range"}
+
+WithExamples.process_number(-10)
+# => Guard 1: -10 > 0 → false (short-circuits)
+# => else: false matched → {:error, "Number out of range"}
 ```
 
 **Key Takeaway**: `with` chains pattern matches and short-circuits on the first mismatch. Use it for happy path coding where you expect success, with error handling consolidated in the `else` block.
@@ -528,43 +592,95 @@ graph TD
 defmodule User do
   # Define struct with default values
   defstruct name: nil, age: nil, email: nil, active: true
+  # => All fields optional with defaults
+  # => name, age, email default to nil
+  # => active defaults to true
+  # => Creates %User{} constructor
 
-  # Struct with enforced keys (must be provided)
-  # defstruct [:name, :age, email: nil, active: true]
+  # Alternative: enforced keys (compile-time check)
   # @enforce_keys [:name, :age]
+  # => Compile error if these keys not provided at creation
+  # defstruct [:name, :age, email: nil, active: true]
+  # => Shorthand: atom list for required keys + keyword for defaults
 end
 
 defmodule Account do
   @enforce_keys [:id, :balance]
+  # => MUST provide :id and :balance when creating struct
+  # => Raises ArgumentError at runtime if missing
   defstruct [:id, :balance, status: :active, transactions: []]
+  # => :id, :balance required (no defaults)
+  # => status defaults to :active
+  # => transactions defaults to []
 end
 
+# Create struct with all fields
 user = %User{name: "Alice", age: 30, email: "alice@example.com"}
+# => Syntax: %ModuleName{key: value, ...}
+# => active field uses default (true)
+# => %User{name: "Alice", age: 30, email: "alice@example.com", active: true}
 
+# Create struct with partial fields (use defaults for rest)
 user_partial = %User{name: "Bob", age: 25}
+# => email defaults to nil, active defaults to true
+# => %User{name: "Bob", age: 25, email: nil, active: true}
 
-user.name # => "Alice"
-user.age # => 30
-user.active # => true
+# Access struct fields (dot notation)
+user.name
+# => "Alice" (field access)
+user.age
+# => 30
+user.active
+# => true (default value)
 
+# Update struct (immutable, creates new struct)
 updated_user = %{user | age: 31, email: "alice.new@example.com"}
-user.age # => 30 (unchanged!)
+# => Syntax: %{struct | field: new_value, ...}
+# => Returns NEW struct (original unchanged)
+# => %User{name: "Alice", age: 31, email: "alice.new@example.com", active: true}
+user.age
+# => 30 (original unchanged - immutability!)
+# => updated_user is separate copy
 
+# Struct is a tagged map (special __struct__ field)
+user.__struct__
+# => User (module name)
+# => Hidden field added by defstruct
+is_map(user)
+# => true (structs ARE maps)
+# => Can use map functions on structs
+Map.keys(user)
+# => [:__struct__, :active, :age, :email, :name]
+# => __struct__ is first key (implementation detail)
 
-user.__struct__ # => User
-is_map(user) # => true
-Map.keys(user) # => [:__struct__, :active, :age, :email, :name]
-
+# Pattern matching on structs
 %User{name: name, age: age} = user
-name # => "Alice"
-age # => 30
+# => Destructures struct fields
+# => Pattern matches User struct (not other structs or plain maps)
+name
+# => "Alice"
+age
+# => 30
 
+# Pattern matching in function heads (type safety)
 def greet_user(%User{name: name}), do: "Hello, #{name}!"
-greet_user(user) # => "Hello, Alice!"
+# => Only accepts User structs (not Account or plain maps)
+# => Extracts name field
+# => Type-safe dispatch!
+greet_user(user)
+# => "Hello, Alice!"
+# greet_user(%{name: "Bob"}) would raise FunctionClauseError
+# => Plain map doesn't match %User{} pattern
 
+# Enforced keys example
 account = %Account{id: 1, balance: 1000}
+# => MUST provide :id and :balance (@enforce_keys)
+# => status and transactions use defaults
+# => %Account{id: 1, balance: 1000, status: :active, transactions: []}
 
-
+# account_invalid = %Account{id: 1}
+# => ** (ArgumentError) missing required keys: [:balance]
+# => Compile-time/runtime check prevents invalid structs
 ```
 
 **Key Takeaway**: Structs are tagged maps with enforced keys and default values. They provide compile-time guarantees and clearer domain modeling compared to plain maps.
@@ -605,52 +721,114 @@ graph TD
 ```elixir
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+# Eager evaluation (Enum) - immediate execution
 eager_result = numbers
-               |> Enum.map(fn x -> x * 2 end)       # => [2, 4, 6, ..., 20] (processes all)
-               |> Enum.filter(fn x -> rem(x, 4) == 0 end) # => [4, 8, 12, 16, 20] (processes all)
-               |> Enum.take(2)                      # => [4, 8] (already computed all)
+               |> Enum.map(fn x -> x * 2 end)
+               # => Pass 1: builds [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+               # => Processes all 10 elements immediately
+               |> Enum.filter(fn x -> rem(x, 4) == 0 end)
+               # => Pass 2: builds [4, 8, 12, 16, 20]
+               # => Processes all 5 remaining elements
+               |> Enum.take(2)
+               # => Pass 3: takes first 2 → [4, 8]
+               # => Already processed all 10 elements (wasteful!)
 
+# Lazy evaluation (Stream) - deferred execution
 lazy_result = numbers
-              |> Stream.map(fn x -> x * 2 end)       # => #Stream<...> (no execution)
-              |> Stream.filter(fn x -> rem(x, 4) == 0 end) # => #Stream<...> (no execution)
-              |> Enum.take(2)                        # => [4, 8] (executes pipeline once)
+              |> Stream.map(fn x -> x * 2 end)
+              # => Returns #Stream<...> (NOT a list)
+              # => No execution yet, just builds recipe
+              |> Stream.filter(fn x -> rem(x, 4) == 0 end)
+              # => Returns #Stream<...> (still no execution)
+              # => Composes filter into recipe
+              |> Enum.take(2)
+              # => TRIGGERS execution: processes elements one-by-one
+              # => Stops after finding 2 matches
+              # => Only processes: 1→2 (no), 2→4 (YES), 3→6 (no), 4→8 (YES), STOP
+              # => [4, 8] (processed 4 elements, not 10!)
 
-infinite_numbers = Stream.iterate(1, fn x -> x + 1 end) # => 1, 2, 3, 4, ...
+# Infinite streams (impossible with eager evaluation)
+infinite_numbers = Stream.iterate(1, fn x -> x + 1 end)
+# => Infinite sequence: 1, 2, 3, 4, 5, ...
+# => Returns #Stream<...> (no execution yet)
+# => Would never terminate if eager!
 
 first_evens = infinite_numbers
               |> Stream.filter(fn x -> rem(x, 2) == 0 end)
+              # => Lazy filter (no execution)
               |> Enum.take(10)
+              # => Takes first 10 even numbers
+              # => [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+              # => Stops after 10 matches (doesn't process infinite stream!)
 
-Stream.cycle([1, 2, 3]) |> Enum.take(7) # => [1, 2, 3, 1, 2, 3, 1]
+# Stream.cycle - repeats list infinitely
+Stream.cycle([1, 2, 3]) |> Enum.take(7)
+# => Cycles through [1,2,3] infinitely
+# => Takes first 7: [1, 2, 3, 1, 2, 3, 1]
 
+# Stream.unfold - generates values from state
 fibonacci = Stream.unfold({0, 1}, fn {a, b} -> {a, {b, a + b}} end)
-Enum.take(fibonacci, 10) # => [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+# => unfold(initial_state, next_fn)
+# => next_fn returns {value, new_state}
+# => {0, 1} → emit 0, next state {1, 1}
+# => {1, 1} → emit 1, next state {1, 2}
+# => {1, 2} → emit 1, next state {2, 3}
+# => {2, 3} → emit 2, next state {3, 5}
+# => Infinite Fibonacci sequence
+Enum.take(fibonacci, 10)
+# => [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 
-
+# Performance comparison
 defmodule Performance do
   def eager_pipeline(n) do
     1..n
     |> Enum.map(fn x -> x * 2 end)
+    # => Builds entire intermediate list (n elements)
     |> Enum.filter(fn x -> rem(x, 3) == 0 end)
+    # => Builds another intermediate list (~n/3 elements)
     |> Enum.take(100)
+    # => Takes 100, discards rest
+    # => Wastes memory and CPU for large n
   end
 
   def lazy_pipeline(n) do
     1..n
     |> Stream.map(fn x -> x * 2 end)
+    # => No intermediate list (lazy)
     |> Stream.filter(fn x -> rem(x, 3) == 0 end)
+    # => Still lazy (just composing)
     |> Enum.take(100)
+    # => Processes ONLY until 100 matches found
+    # => For n=1_000_000: processes ~300 elements, not 1 million!
   end
 end
 
+# Performance.eager_pipeline(1_000_000)
+# => Processes 1 million elements, builds 2 intermediate lists
+# Performance.lazy_pipeline(1_000_000)
+# => Processes ~300 elements, 0 intermediate lists
 
-
+# Stream.resource - manage external resources (files, sockets, etc.)
 stream_resource = Stream.resource(
-  fn -> {:ok, "initial state"} end,        # Start function
-  fn state -> {[state], "next state"} end, # Next function
-  fn _state -> :ok end                     # After function (cleanup)
+  fn -> {:ok, "initial state"} end,
+  # => Start function: called once to initialize
+  # => Returns initial accumulator state
+  fn state -> {[state], "next state"} end,
+  # => Next function: called repeatedly
+  # => Returns {values_to_emit, new_state}
+  # => Can return {:halt, state} to stop
+  fn _state -> :ok end
+  # => After function: cleanup (called when stream ends)
+  # => Close files, release resources, etc.
 )
-Enum.take(stream_resource, 3) # => ["initial state", "next state", "next state"]
+Enum.take(stream_resource, 3)
+# => Calls start → {:ok, "initial state"}
+# => Calls next("initial state") → {["initial state"], "next state"}
+# => Emits "initial state"
+# => Calls next("next state") → {["next state"], "next state"}
+# => Emits "next state" (2 times)
+# => Calls after("next state") → :ok (cleanup)
+# => ["initial state", "next state", "next state"]
 ```
 
 **Key Takeaway**: Streams enable lazy evaluation—building a recipe without executing it. Use streams for large datasets, infinite sequences, or when you want to compose transformations efficiently.
@@ -666,52 +844,120 @@ MapSets are unordered collections of unique values. They provide efficient membe
 **Code**:
 
 ```elixir
-set1 = MapSet.new([1, 2, 3, 3, 4, 4, 5]) # => #MapSet<[1, 2, 3, 4, 5]> (duplicates removed)
+# Create MapSet from list (automatic deduplication)
+set1 = MapSet.new([1, 2, 3, 3, 4, 4, 5])
+# => MapSet.new/1 removes duplicates automatically
+# => #MapSet<[1, 2, 3, 4, 5]>
+# => Unordered: order not guaranteed
 
-set_range = MapSet.new(1..10) # => #MapSet<[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>
+# Create MapSet from range
+set_range = MapSet.new(1..10)
+# => Converts range to set
+# => #MapSet<[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>
 
-set2 = MapSet.put(set1, 6) # => #MapSet<[1, 2, 3, 4, 5, 6]>
-set1 # => #MapSet<[1, 2, 3, 4, 5]> (unchanged!)
+# Add element (immutable, returns new set)
+set2 = MapSet.put(set1, 6)
+# => Adds 6 to set (new set returned)
+# => #MapSet<[1, 2, 3, 4, 5, 6]>
+set1
+# => #MapSet<[1, 2, 3, 4, 5]> (original unchanged!)
+# => Immutability: set2 is separate copy
 
-set3 = MapSet.put(set1, 3) # => #MapSet<[1, 2, 3, 4, 5]> (3 already exists)
+# Add duplicate (no effect)
+set3 = MapSet.put(set1, 3)
+# => 3 already exists in set
+# => Returns set unchanged
+# => #MapSet<[1, 2, 3, 4, 5]> (same as set1)
 
-set4 = MapSet.delete(set1, 3) # => #MapSet<[1, 2, 4, 5]>
+# Remove element
+set4 = MapSet.delete(set1, 3)
+# => Removes 3 from set
+# => #MapSet<[1, 2, 4, 5]>
 
-MapSet.member?(set1, 3) # => true
-MapSet.member?(set1, 10) # => false
+# Membership testing (O(log n))
+MapSet.member?(set1, 3)
+# => Checks if 3 is in set
+# => true (efficient lookup)
+MapSet.member?(set1, 10)
+# => Checks if 10 is in set
+# => false (not present)
 
-MapSet.size(set1) # => 5
+# Set size
+MapSet.size(set1)
+# => Counts unique elements
+# => 5
 
+# Set operations
 setA = MapSet.new([1, 2, 3])
+# => Set A: {1, 2, 3}
 setB = MapSet.new([3, 4, 5])
-MapSet.union(setA, setB) # => #MapSet<[1, 2, 3, 4, 5]>
+# => Set B: {3, 4, 5}
 
-MapSet.intersection(setA, setB) # => #MapSet<[3]>
+# Union (all unique elements from both sets)
+MapSet.union(setA, setB)
+# => A ∪ B: elements in A OR B
+# => #MapSet<[1, 2, 3, 4, 5]>
 
-MapSet.difference(setA, setB) # => #MapSet<[1, 2]>
-MapSet.difference(setB, setA) # => #MapSet<[4, 5]>
+# Intersection (common elements)
+MapSet.intersection(setA, setB)
+# => A ∩ B: elements in A AND B
+# => #MapSet<[3]> (only 3 is common)
 
+# Difference (elements in A but not in B)
+MapSet.difference(setA, setB)
+# => A \ B: elements in A but NOT in B
+# => #MapSet<[1, 2]> (3 is removed)
+MapSet.difference(setB, setA)
+# => B \ A: elements in B but NOT in A
+# => #MapSet<[4, 5]> (3 is removed)
+# => Difference is NOT commutative!
+
+# Subset and superset
 setX = MapSet.new([1, 2])
+# => Set X: {1, 2}
 setY = MapSet.new([1, 2, 3, 4])
-MapSet.subset?(setX, setY) # => true (X is subset of Y)
-MapSet.subset?(setY, setX) # => false
-MapSet.disjoint?(setA, MapSet.new([6, 7])) # => true (no common elements)
+# => Set Y: {1, 2, 3, 4}
+MapSet.subset?(setX, setY)
+# => Is X ⊆ Y? (all elements of X in Y?)
+# => true (1 and 2 are in Y)
+MapSet.subset?(setY, setX)
+# => Is Y ⊆ X?
+# => false (3 and 4 not in X)
 
-MapSet.to_list(set1) # => [1, 2, 3, 4, 5] (order not guaranteed)
+# Disjoint sets (no common elements)
+MapSet.disjoint?(setA, MapSet.new([6, 7]))
+# => Do A and {6, 7} have any common elements?
+# => true (no overlap)
+# => Disjoint: A ∩ {6,7} = ∅
 
+# Convert to list (order not guaranteed)
+MapSet.to_list(set1)
+# => Converts set to list
+# => [1, 2, 3, 4, 5] (order may vary)
+# => Sets are unordered!
+
+# Practical example: unique tags from posts
 posts = [
   %{id: 1, tags: ["elixir", "functional", "programming"]},
   %{id: 2, tags: ["elixir", "otp", "concurrency"]},
   %{id: 3, tags: ["functional", "fp", "programming"]}
 ]
 
+# Extract all unique tags
 all_tags = posts
            |> Enum.flat_map(fn post -> post.tags end)
+           # => Flattens: ["elixir", "functional", "programming", "elixir", "otp", ...]
+           # => With duplicates
            |> MapSet.new()
+           # => Deduplicates: #MapSet<["elixir", "functional", "programming", "otp", "concurrency", "fp"]>
+# => Automatic uniqueness!
 
+# Find common tags between posts
 post1_tags = MapSet.new(["elixir", "functional"])
 post2_tags = MapSet.new(["elixir", "otp"])
-MapSet.intersection(post1_tags, post2_tags) # => #MapSet<["elixir"]>
+MapSet.intersection(post1_tags, post2_tags)
+# => Common tags: #MapSet<["elixir"]>
+# => Useful for finding related content
 ```
 
 **Key Takeaway**: MapSets provide O(log n) membership testing and automatic deduplication. Use them for unique collections where order doesn't matter and set operations (union, intersection, difference) are needed.
