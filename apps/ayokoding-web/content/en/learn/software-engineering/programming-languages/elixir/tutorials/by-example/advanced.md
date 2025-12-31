@@ -2955,86 +2955,130 @@ graph TD
 **Code**:
 
 ```elixir
+# Define behaviour (contract) with callbacks
 defmodule Parser do
+  # @callback defines required function signature
   @callback parse(String.t()) :: {:ok, any()} | {:error, String.t()}
+  # => parse/1 must accept String, return {:ok, data} or {:error, message}
+  # => String.t() is type spec for binary string
+  # => any() means return value can be any type
   @callback format(any()) :: String.t()
+  # => format/1 must accept any type, return String
+  # => Both callbacks REQUIRED - implementing modules must define both
 end
+# => Parser behaviour defines contract for parse/format operations
+# => Modules implementing Parser can be used polymorphically
 
+# Implement Parser behaviour with JSON
 defmodule JSONParser do
-  @behaviour Parser
+  @behaviour Parser  # => declares module implements Parser contract
+  # => Compiler will verify parse/1 and format/1 are defined
+  # => Missing callbacks trigger compile error
 
-  @impl true
+  @impl true  # => marks this function as behaviour implementation
+  # => @impl true enables compiler to verify signature matches @callback
   def parse(string) do
-    case Jason.decode(string) do
-      {:ok, data} -> {:ok, data}
-      {:error, _} -> {:error, "Invalid JSON"}
+    case Jason.decode(string) do  # => parse JSON using Jason library
+      {:ok, data} -> {:ok, data}  # => success: return parsed data
+      {:error, _} -> {:error, "Invalid JSON"}  # => failure: return error message
     end
   end
+  # => {:ok, %{"name" => "Alice"}} for valid JSON
+  # => {:error, "Invalid JSON"} for malformed JSON
 
   @impl true
   def format(data) do
-    Jason.encode!(data)
+    Jason.encode!(data)  # => convert Elixir data to JSON string
+    # => Jason.encode! raises on error (bang version)
   end
+  # => %{"name" => "Alice"} → "{\"name\":\"Alice\"}"
 end
 
+# Implement Parser behaviour with CSV
 defmodule CSVParser do
   @behaviour Parser
 
   @impl true
   def parse(string) do
-    rows = String.split(string, "\n")
-    {:ok, rows}
+    rows = String.split(string, "\n")  # => split by newline
+    # => "Name,Age\nAlice,30" → ["Name,Age", "Alice,30"]
+    {:ok, rows}  # => return as list of strings
   end
+  # => Simplified CSV (no proper parsing, just split)
 
   @impl true
   def format(rows) do
-    Enum.join(rows, "\n")
+    Enum.join(rows, "\n")  # => join rows with newline
+    # => ["Name,Age", "Alice,30"] → "Name,Age\nAlice,30"
   end
 end
+# => Both JSONParser and CSVParser implement Parser contract
+# => Can be used interchangeably wherever Parser expected
 
 
+# Polymorphic function using behaviour
 defmodule FileProcessor do
   def process(content, parser_module) do
-    with {:ok, parsed} <- parser_module.parse(content) do
+    # => parser_module can be ANY module implementing Parser behaviour
+    # => JSONParser, CSVParser, or future implementations
+    with {:ok, parsed} <- parser_module.parse(content) do  # => call parse/1
+      # => parsed is whatever parse/1 returns (JSON map, CSV rows, etc.)
       # Process parsed data
-      formatted = parser_module.format(parsed)
-      {:ok, formatted}
+      formatted = parser_module.format(parsed)  # => call format/1
+      {:ok, formatted}  # => return formatted string
     end
   end
+  # => Same code works for JSON, CSV, XML, YAML - any Parser implementation
 end
 
-json = ~s({"name": "Alice"})
+# Use JSONParser
+json = ~s({"name": "Alice"})  # => ~s(...) is sigil for string (no escaping needed)
 FileProcessor.process(json, JSONParser)
+# => {:ok, "{\"name\":\"Alice\"}"}
+# => Calls JSONParser.parse → JSONParser.format
 
+# Use CSVParser
 csv = "Name,Age\nAlice,30"
 FileProcessor.process(csv, CSVParser)
+# => {:ok, "Name,Age\nAlice,30"}
+# => Calls CSVParser.parse → CSVParser.format
+# => Same function, different behaviour implementation
 
+# Optional callbacks
 defmodule Storage do
-  @callback save(any()) :: :ok | {:error, String.t()}
-  @callback load() :: {:ok, any()} | {:error, String.t()}
-  @callback delete() :: :ok
-  @macrocallback config() :: Macro.t()  # Macro callback
+  @callback save(any()) :: :ok | {:error, String.t()}  # => REQUIRED callback
+  @callback load() :: {:ok, any()} | {:error, String.t()}  # => REQUIRED callback
+  @callback delete() :: :ok  # => OPTIONAL callback (marked below)
+  @macrocallback config() :: Macro.t()  # => Macro callback (for compile-time macros)
+  # => @macrocallback like @callback but for macros (rare)
 
-  @optional_callbacks delete: 0, config: 0
+  @optional_callbacks delete: 0, config: 0  # => marks delete/0 and config/0 as optional
+  # => Implementations can omit these without compiler warning
+  # => save/1 and load/0 still REQUIRED
 end
 
+# Implement Storage with optional callbacks omitted
 defmodule FileStorage do
-  @behaviour Storage
+  @behaviour Storage  # => implements Storage behaviour
 
   @impl true
   def save(data), do: File.write("data.txt", inspect(data))
+  # => Saves data to file (inspect converts Elixir term to string)
+  # => Returns :ok or {:error, reason}
 
   @impl true
   def load do
     case File.read("data.txt") do
-      {:ok, content} -> {:ok, content}
-      {:error, _} -> {:error, "File not found"}
+      {:ok, content} -> {:ok, content}  # => file exists: return content
+      {:error, _} -> {:error, "File not found"}  # => file missing: error
     end
   end
 
   # delete/0 is optional - can omit without warning
+  # => If delete/0 not in @optional_callbacks, compiler would error here
 end
-
+# => FileStorage only implements save/1 and load/0 (delete/0 omitted)
+# => Compiles successfully because delete/0 is optional
 ```
 
 **Key Takeaway**: Behaviours define contracts with `@callback`, implementations use `@behaviour` and `@impl`. Compile-time verification ensures all required callbacks are implemented. Use for polymorphism and plugin systems.
