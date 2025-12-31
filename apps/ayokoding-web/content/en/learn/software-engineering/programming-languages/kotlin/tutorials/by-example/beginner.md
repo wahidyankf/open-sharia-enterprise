@@ -243,43 +243,88 @@ fun main() {                        // => Program entry point
 Kotlin's string templates embed expressions directly in strings using `$` for simple variables and `${}` for complex expressions. This eliminates cumbersome string concatenation and improves readability for formatted output.
 
 ```kotlin
-fun main() {
-    val name = "Kotlin"              // => name is "Kotlin"
-    val version = 1.9                // => version is 1.9
+fun main() {                        // => Program entry point
+    val name = "Kotlin"              // => name is "Kotlin" (type: String inferred)
+                                    // => Immutable reference
+    val version = 1.9                // => version is 1.9 (type: Double inferred)
+                                    // => Double literal (64-bit floating-point)
 
     // Simple template (variable only)
-    val simple = "Language: $name"   // => simple is "Language: Kotlin"
+    val simple = "Language: $name"   // => String template with variable interpolation
+                                    // => $name: template expression (simple variable)
+                                    // => $ triggers string interpolation
+                                    // => name value ("Kotlin") replaces $name
+                                    // => Result: "Language: Kotlin"
+                                    // => simple is "Language: Kotlin"
+                                    // => No toString() needed (String type)
+                                    // => Type: String (inferred)
 
     // Expression template (requires braces)
     val expr = "Version: ${version * 10}"
+                                     // => ${...}: template expression with braces
+                                     // => Braces required for expressions
+                                     // => version * 10: arithmetic expression
+                                     // => 1.9 * 10 = 19.0
+                                     // => Result evaluated to 19.0
+                                     // => 19.0.toString() = "19.0"
+                                     // => Interpolated: "Version: 19.0"
                                      // => expr is "Version: 19.0"
 
     // Complex expression with function call
     val upper = "Upper: ${name.uppercase()}"
+                                     // => ${name.uppercase()}: function call in template
+                                     // => name.uppercase(): method invocation
+                                     // => "Kotlin".uppercase() called
+                                     // => Returns "KOTLIN" (new String)
+                                     // => Result: "Upper: KOTLIN"
                                      // => upper is "Upper: KOTLIN"
+                                     // => Original name unchanged ("Kotlin")
 
     // Escaped dollar sign
     val price = "Price: \$${100 + 50}"
+                                     // => \$: escaped dollar sign (literal $)
+                                     // => First $: literal character (escaped)
+                                     // => ${100 + 50}: template expression
+                                     // => 100 + 50 = 150
+                                     // => 150.toString() = "150"
+                                     // => Result: "Price: $150"
                                      // => price is "Price: $150"
+                                     // => Use \$ when $ is not a template
 
     // Multi-line strings (preserves formatting)
     val multiline = """
         |Language: $name
         |Version: $version
         |Status: Active
-    """.trimMargin()                 // => Removes leading | and whitespace
-                                     // => Output: (three lines without leading pipes)
+    """.trimMargin()                 // => """: triple-quoted string (raw string)
+                                     // => Raw strings: no escape sequences needed
+                                     // => Preserves formatting (newlines, whitespace)
+                                     // => | : margin prefix character (default)
+                                     // => $name: interpolation works in raw strings
+                                     // => $version: interpolated as 1.9
+                                     // => .trimMargin(): removes leading | and indent
+                                     // => Removes margin prefix and whitespace before |
+                                     // => Result: three lines without leading pipes
+                                     // => Line 1: "Language: Kotlin"
+                                     // => Line 2: "Version: 1.9"
+                                     // => Line 3: "Status: Active"
+                                     // => multiline contains formatted multi-line text
 
-    println(simple)                  // => Output: Language: Kotlin
-    println(expr)                    // => Output: Version: 19.0
-    println(upper)                   // => Output: Upper: KOTLIN
-    println(price)                   // => Output: Price: $150
-    println(multiline)
+    println(simple)                  // => Outputs: "Language: Kotlin"
+                                     // => Output: Language: Kotlin
+    println(expr)                    // => Outputs: "Version: 19.0"
+                                     // => Output: Version: 19.0
+    println(upper)                   // => Outputs: "Upper: KOTLIN"
+                                     // => Output: Upper: KOTLIN
+    println(price)                   // => Outputs: "Price: $150"
+                                     // => Output: Price: $150
+    println(multiline)               // => Outputs three-line string
     // => Output:
     // Language: Kotlin
     // Version: 1.9
     // Status: Active
-}
+}                                   // => main function returns
+                                    // => All String objects eligible for GC
 ```
 
 **Key Takeaway**: Use `$variable` for simple interpolation and `${expression}` for complex expressions; triple-quoted strings preserve formatting and support multi-line text.
@@ -314,39 +359,109 @@ graph TD
 
 ```kotlin
 // Block body with explicit return type
-fun add(a: Int, b: Int): Int {
-    return a + b                     // => Returns sum of a and b
-}
+fun add(a: Int, b: Int): Int {      // => fun keyword: function declaration
+                                    // => add: function name
+                                    // => (a: Int, b: Int): parameter list
+                                    // => a: first parameter, type Int
+                                    // => b: second parameter, type Int
+                                    // => : Int: explicit return type annotation
+                                    // => {}: block body (multiple statements allowed)
+    return a + b                     // => return keyword: explicit return
+                                    // => a + b: addition expression
+                                    // => a is 10, b is 20 (when called from main)
+                                    // => 10 + 20 = 30
+                                    // => Returns 30 (type: Int)
+}                                   // => Function definition complete
 
 // Single-expression function (return type inferred)
-fun multiply(a: Int, b: Int) = a * b // => Returns product of a and b (Int inferred)
+fun multiply(a: Int, b: Int) = a * b // => Single-expression syntax (= instead of {})
+                                    // => No braces needed for single expression
+                                    // => Return type inferred from expression
+                                    // => a * b: multiplication expression
+                                    // => Returns Int (inferred from a and b types)
+                                    // => No return keyword needed
+                                    // => When called: 5 * 6 = 30
+                                    // => Returns product of a and b (Int inferred)
+                                    // => More concise than block body
 
 // Function with default parameter
 fun greet(name: String, greeting: String = "Hello") = "$greeting, $name!"
+                                     // => name: required parameter (no default)
+                                     // => greeting: optional parameter
+                                     // => = "Hello": default value
+                                     // => Default used when caller omits argument
+                                     // => String template creates result
+                                     // => Return type String (inferred)
                                      // => greeting defaults to "Hello" if not provided
+                                     // => Eliminates need for overloaded functions
 
 // Function with no return value (Unit type, like void)
-fun printSum(a: Int, b: Int) {
-    println("$a + $b = ${a + b}")    // => Outputs sum, returns Unit implicitly
-}
+fun printSum(a: Int, b: Int) {      // => No return type specified
+                                    // => Implicitly returns Unit
+                                    // => Unit: like void in Java
+                                    // => Unit indicates no meaningful return value
+    println("$a + $b = ${a + b}")    // => Side effect: prints to stdout
+                                    // => String template: "$a + $b = ${a + b}"
+                                    // => When called: "15 + 25 = 40"
+                                    // => Outputs sum, returns Unit implicitly
+                                    // => No explicit return needed
+}                                   // => Function returns Unit (implicit)
 
-fun main() {
-    val sum = add(10, 20)            // => sum is 30
-    val product = multiply(5, 6)     // => product is 30
+fun main() {                        // => Program entry point
+    val sum = add(10, 20)            // => Function call: add(10, 20)
+                                    // => Arguments: a=10, b=10
+                                    // => add function executes
+                                    // => Computes 10 + 20
+                                    // => Returns 30
+                                    // => sum is 30 (type: Int inferred)
+    val product = multiply(5, 6)     // => Function call: multiply(5, 6)
+                                    // => Arguments: a=5, b=6
+                                    // => multiply function executes
+                                    // => Computes 5 * 6
+                                    // => Returns 30
+                                    // => product is 30 (type: Int inferred)
 
-    val greet1 = greet("Alice")      // => greet1 is "Hello, Alice!"
-    val greet2 = greet("Bob", "Hi")  // => greet2 is "Hi, Bob!"
+    val greet1 = greet("Alice")      // => Function call with 1 argument
+                                    // => name = "Alice" (positional)
+                                    // => greeting uses default "Hello"
+                                    // => Template: "Hello, Alice!"
+                                    // => greet1 is "Hello, Alice!"
+                                    // => Default parameter reduces overloading
+    val greet2 = greet("Bob", "Hi")  // => Function call with 2 arguments
+                                    // => name = "Bob" (positional)
+                                    // => greeting = "Hi" (overrides default)
+                                    // => Template: "Hi, Bob!"
+                                    // => greet2 is "Hi, Bob!"
+                                    // => Positional arguments (order matters)
     val greet3 = greet(name = "Charlie", greeting = "Hey")
+                                     // => Named arguments (parameter names specified)
+                                     // => name = "Charlie" (named)
+                                     // => greeting = "Hey" (named)
+                                     // => Order doesn't matter with named args
+                                     // => Template: "Hey, Charlie!"
                                      // => greet3 is "Hey, Charlie!" (named arguments)
+                                     // => Named args improve readability
 
-    printSum(15, 25)                 // => Output: 15 + 25 = 40
+    printSum(15, 25)                 // => Function call: printSum(15, 25)
+                                     // => Arguments: a=15, b=25
+                                     // => Side effect: prints to stdout
+                                     // => Computes: "15 + 25 = 40"
+                                     // => Output: 15 + 25 = 40
+                                     // => Returns Unit (no value stored)
 
-    println(sum)                     // => Output: 30
-    println(product)                 // => Output: 30
-    println(greet1)                  // => Output: Hello, Alice!
-    println(greet2)                  // => Output: Hi, Bob!
-    println(greet3)                  // => Output: Hey, Charlie!
-}
+    println(sum)                     // => Outputs sum value
+                                     // => Output: 30
+    println(product)                 // => Outputs product value
+                                     // => Output: 30
+    println(greet1)                  // => Outputs greeting 1
+                                     // => Output: Hello, Alice!
+    println(greet2)                  // => Outputs greeting 2
+                                     // => Output: Hi, Bob!
+    println(greet3)                  // => Outputs greeting 3
+                                     // => Output: Hey, Charlie!
+}                                   // => main function returns
+                                    // => All functions defined at top level
+                                    // => No class wrapper required
 ```
 
 **Key Takeaway**: Use single-expression syntax (`=`) for concise functions, leverage default parameters to reduce overloading, and use named arguments for clarity with multiple parameters.
