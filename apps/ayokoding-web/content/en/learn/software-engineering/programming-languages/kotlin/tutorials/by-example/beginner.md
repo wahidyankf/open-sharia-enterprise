@@ -12,9 +12,26 @@ tags: ["kotlin", "tutorial", "by-example", "beginner", "fundamentals"]
 Every Kotlin program starts with a main function. Unlike Java, Kotlin doesn't require a class wrapper for the main function, and semicolons are optional. The `println` function outputs to standard output with an automatic newline.
 
 ```kotlin
-fun main() {
-    println("Hello, Kotlin!")       // => Output: Hello, Kotlin!
-}
+fun main() {                        // => Program entry point
+                                    // => main function: no parameters, returns Unit
+                                    // => Unit type: equivalent to void in Java
+                                    // => No class wrapper required (top-level function)
+                                    // => Function can be defined outside classes
+                                    // => Execution starts here when program runs
+    println("Hello, Kotlin!")       // => println: standard library function
+                                    // => Accepts String parameter
+                                    // => String literal: "Hello, Kotlin!"
+                                    // => Type: String (inferred)
+                                    // => Function call: println invoked with 1 argument
+                                    // => Side effect: writes to stdout
+                                    // => Automatically appends newline after output
+                                    // => No semicolon required (optional in Kotlin)
+                                    // => Output: Hello, Kotlin!
+                                    // => println returns Unit (no meaningful value)
+}                                   // => main function returns
+                                    // => Return type: Unit (implicit, not declared)
+                                    // => Program execution completes
+                                    // => Exit code: 0 (success)
 ```
 
 **Key Takeaway**: Kotlin's `main` function can exist at the top level without a class, and semicolons are optional, making code more concise than Java.
@@ -46,22 +63,71 @@ graph TD
 ```
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Immutable variable with type inference
-    val name = "Alice"               // => name is "Alice" (type: String)
+    val name = "Alice"               // => val keyword: declares immutable variable
+                                    // => name: variable identifier
+                                    // => = : assignment operator
+                                    // => "Alice": String literal
+                                    // => Type inference: compiler infers String from literal
+                                    // => name type is String (not explicitly declared)
+                                    // => name value is "Alice"
+                                    // => Immutable: cannot be reassigned after initialization
+                                    // => Thread-safe: immutability prevents race conditions
     // name = "Bob"                  // => Compile error: val cannot be reassigned
+                                    // => Attempting to assign "Bob" to immutable val
+                                    // => Compiler prevents this at compile time
+                                    // => Error: "Val cannot be reassigned"
 
     // Mutable variable with type inference
-    var age = 25                     // => age is 25 (type: Int)
-    age = 26                         // => age is now 26 (reassignment allowed)
+    var age = 25                     // => var keyword: declares mutable variable
+                                    // => age: variable identifier
+                                    // => 25: Int literal (32-bit signed integer)
+                                    // => Type inference: compiler infers Int from literal
+                                    // => age type is Int (not explicitly declared)
+                                    // => age value is 25
+                                    // => Mutable: can be reassigned
+    age = 26                         // => Reassignment: updates age value
+                                    // => age value changes from 25 to 26
+                                    // => Same type required (Int)
+                                    // => age is now 26 (reassignment allowed)
+                                    // => Type remains Int (cannot change type)
 
     // Explicit type annotation
-    val city: String = "Jakarta"     // => city is "Jakarta" (explicit String type)
-    var temperature: Double = 28.5   // => temperature is 28.5 (explicit Double type)
+    val city: String = "Jakarta"     // => val: immutable variable
+                                    // => city: variable identifier
+                                    // => : String: explicit type annotation
+                                    // => Type declared explicitly (not inferred)
+                                    // => = "Jakarta": initialization with String literal
+                                    // => city type is String (explicit)
+                                    // => city value is "Jakarta"
+                                    // => Type annotation optional (could be inferred)
+                                    // => Explicit type improves documentation
+    var temperature: Double = 28.5   // => var: mutable variable
+                                    // => temperature: variable identifier
+                                    // => : Double: explicit type annotation
+                                    // => 28.5: Double literal (64-bit floating-point)
+                                    // => temperature type is Double (explicit)
+                                    // => temperature value is 28.5
+                                    // => Mutable: can be reassigned
+                                    // => Explicit type required when not obvious
 
-    println("$name is $age years old") // => Output: Alice is 26 years old
-    println("$city: ${temperature}°C") // => Output: Jakarta: 28.5°C
-}
+    println("$name is $age years old") // => String template with interpolation
+                                    // => $name: interpolates "Alice"
+                                    // => $age: interpolates 26 (toString() called)
+                                    // => Result: "Alice is 26 years old"
+                                    // => println outputs to stdout
+                                    // => Output: Alice is 26 years old
+    println("$city: ${temperature}°C") // => String template with expression
+                                    // => $city: interpolates "Jakarta"
+                                    // => ${temperature}: expression in braces
+                                    // => Interpolates 28.5
+                                    // => °C: literal character in string
+                                    // => Result: "Jakarta: 28.5°C"
+                                    // => Output: Jakarta: 28.5°C
+}                                   // => main function returns
+                                    // => All local variables go out of scope
+                                    // => Memory eligible for garbage collection
 ```
 
 **Key Takeaway**: Use `val` by default for immutability and thread safety; only use `var` when you genuinely need to reassign values.
@@ -75,29 +141,95 @@ fun main() {
 Kotlin has a rich type system with proper primitives that are represented as objects. Type inference eliminates redundant type declarations while maintaining type safety. All number types have explicit sizes (Byte, Short, Int, Long, Float, Double).
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Integer types
-    val byteValue: Byte = 127        // => byteValue is 127 (8-bit signed: -128 to 127)
-    val shortValue: Short = 32767    // => shortValue is 32767 (16-bit signed)
-    val intValue = 42                // => intValue is 42 (Int inferred, 32-bit signed)
-    val longValue = 3_000_000_000L   // => longValue is 3000000000 (L suffix = Long)
+    val byteValue: Byte = 127        // => val: immutable variable
+                                    // => byteValue: variable identifier
+                                    // => : Byte: explicit type annotation
+                                    // => Byte: 8-bit signed integer type
+                                    // => Range: -128 to 127
+                                    // => 127: maximum Byte value
+                                    // => byteValue is 127 (8-bit signed: -128 to 127)
+                                    // => Memory: occupies 1 byte
+    val shortValue: Short = 32767    // => : Short: explicit type annotation
+                                    // => Short: 16-bit signed integer type
+                                    // => Range: -32768 to 32767
+                                    // => 32767: maximum Short value
+                                    // => shortValue is 32767 (16-bit signed)
+                                    // => Memory: occupies 2 bytes
+    val intValue = 42                // => Type inference: compiler infers Int
+                                    // => Int: 32-bit signed integer type (default)
+                                    // => Range: -2^31 to 2^31-1
+                                    // => 42: Int literal
+                                    // => intValue is 42 (Int inferred, 32-bit signed)
+                                    // => Memory: occupies 4 bytes
+                                    // => Default integer type when no suffix
+    val longValue = 3_000_000_000L   // => L suffix: Long type indicator
+                                    // => Long: 64-bit signed integer type
+                                    // => Range: -2^63 to 2^63-1
+                                    // => 3_000_000_000: numeric literal with underscores
+                                    // => Underscores: improve readability (ignored by compiler)
+                                    // => longValue is 3000000000
+                                    // => L suffix required for values > Int.MAX_VALUE
+                                    // => Memory: occupies 8 bytes
 
     // Floating-point types
-    val floatValue = 3.14f           // => floatValue is 3.14 (f suffix = Float, 32-bit)
-    val doubleValue = 2.718281828    // => doubleValue is 2.718281828 (Double inferred, 64-bit)
+    val floatValue = 3.14f           // => f suffix: Float type indicator
+                                    // => Float: 32-bit IEEE 754 floating-point
+                                    // => 3.14: decimal literal
+                                    // => floatValue is 3.14 (f suffix = Float, 32-bit)
+                                    // => Precision: ~6-7 decimal digits
+                                    // => Memory: occupies 4 bytes
+                                    // => f suffix required (default is Double)
+    val doubleValue = 2.718281828    // => Type inference: compiler infers Double
+                                    // => Double: 64-bit IEEE 754 floating-point
+                                    // => 2.718281828: decimal literal
+                                    // => doubleValue is 2.718281828 (Double inferred, 64-bit)
+                                    // => Precision: ~15-16 decimal digits
+                                    // => Memory: occupies 8 bytes
+                                    // => Default floating-point type
 
     // Character and Boolean
-    val char = 'K'                   // => char is 'K' (Char type)
-    val isKotlin = true              // => isKotlin is true (Boolean type)
+    val char = 'K'                   // => Type inference: compiler infers Char
+                                    // => Char: 16-bit Unicode character
+                                    // => 'K': character literal (single quotes)
+                                    // => char is 'K' (Char type)
+                                    // => Unicode code point: U+004B
+                                    // => Memory: occupies 2 bytes
+    val isKotlin = true              // => Type inference: compiler infers Boolean
+                                    // => Boolean: logical type (true or false)
+                                    // => true: Boolean literal
+                                    // => isKotlin is true (Boolean type)
+                                    // => Memory: typically 1 byte
+                                    // => Only two possible values: true, false
 
     // String with template expressions
     val message = "Integer: $intValue, Double: $doubleValue"
-                                     // => message is "Integer: 42, Double: 2.718281828"
+                                    // => Type inference: compiler infers String
+                                    // => String template with interpolation
+                                    // => $intValue: interpolates 42
+                                    // => intValue.toString() called implicitly
+                                    // => $doubleValue: interpolates 2.718281828
+                                    // => doubleValue.toString() called implicitly
+                                    // => Result: "Integer: 42, Double: 2.718281828"
+                                    // => message is "Integer: 42, Double: 2.718281828"
+                                    // => String: immutable sequence of characters
+                                    // => Memory: heap-allocated object
 
     // Type checking
-    println(intValue::class.simpleName)     // => Output: Int
-    println(doubleValue::class.simpleName)  // => Output: Double
-}
+    println(intValue::class.simpleName)     // => :: : class reference operator
+                                    // => ::class: obtains KClass instance
+                                    // => .simpleName: property access
+                                    // => Returns simple class name
+                                    // => Result: "Int"
+                                    // => Output: Int
+    println(doubleValue::class.simpleName)  // => doubleValue::class: KClass<Double>
+                                    // => .simpleName: returns "Double"
+                                    // => Output: Double
+}                                   // => main function returns
+                                    // => All local variables out of scope
+                                    // => Primitive types on stack (value types)
+                                    // => String objects eligible for GC
 ```
 
 **Key Takeaway**: Kotlin's type inference reduces boilerplate while maintaining type safety, and underscores in numeric literals improve readability for large numbers.
