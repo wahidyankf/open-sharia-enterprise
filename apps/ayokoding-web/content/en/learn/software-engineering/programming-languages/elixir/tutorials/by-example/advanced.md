@@ -677,76 +677,89 @@ graph TD
 
 ```elixir
 defmodule Worker do
-  use GenServer
+  use GenServer  # => imports GenServer behavior
 
+  # Client API
   def start_link(id) do
-    GenServer.start_link(__MODULE__, id, name: via_tuple(id))
+    GenServer.start_link(__MODULE__, id, name: via_tuple(id))  # => {:ok, #PID<...>} (registers worker with Registry)
   end
 
   def crash(id) do
-    GenServer.cast(via_tuple(id), :crash)
+    GenServer.cast(via_tuple(id), :crash)  # => :ok (async crash request)
   end
 
   def ping(id) do
-    GenServer.call(via_tuple(id), :ping)
+    GenServer.call(via_tuple(id), :ping)  # => {:pong, 1} (synchronous ping)
   end
 
-  defp via_tuple(id), do: {:via, Registry, {WorkerRegistry, id}}
+  defp via_tuple(id), do: {:via, Registry, {WorkerRegistry, id}}  # => {:via, Registry, {WorkerRegistry, 1}} (name registration via Registry)
 
+  # Server Callbacks
   @impl true
   def init(id) do
-    IO.puts("Worker #{id} starting...")
-    {:ok, id}
+    IO.puts("Worker #{id} starting...")  # => prints "Worker 1 starting..." to console
+    {:ok, id}  # => {:ok, 1} (returns worker ID as initial state)
   end
 
   @impl true
   def handle_call(:ping, _from, id) do
-    {:reply, {:pong, id}, id}
+    {:reply, {:pong, id}, id}  # => {:reply, {:pong, 1}, 1} (replies with worker ID, state unchanged)
   end
 
   @impl true
   def handle_cast(:crash, _state) do
-    raise "Worker crashed!"
+    raise "Worker crashed!"  # => raises RuntimeError, GenServer terminates (supervisor will restart)
   end
 end
 
 defmodule MySupervisor do
-  use Supervisor
+  use Supervisor  # => imports Supervisor behavior
 
   def start_link(_opts) do
-    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<...>} (starts supervisor with name MySupervisor)
   end
 
   @impl true
   def init(:ok) do
     # Start Registry for worker names
     children = [
-      {Registry, keys: :unique, name: WorkerRegistry},
+      {Registry, keys: :unique, name: WorkerRegistry},  # => Registry child spec (started first)
       # Worker children
-      {Worker, 1},
-      {Worker, 2},
-      {Worker, 3}
+      {Worker, 1},  # => starts Worker with id=1
+      {Worker, 2},  # => starts Worker with id=2
+      {Worker, 3}   # => starts Worker with id=3
     ]
 
     # :one_for_one strategy - restart only crashed child
-    Supervisor.init(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :one_for_one)  # => {:ok, {supervisor_flags, children}} (configures restart strategy)
+    # => :one_for_one means if Worker 2 crashes, only Worker 2 restarts (Workers 1 and 3 unaffected)
   end
 end
 
-{:ok, _pid} = MySupervisor.start_link([])
+# Start supervision tree
+{:ok, _pid} = MySupervisor.start_link([])  # => {:ok, #PID<...>} (supervisor starts all children)
+# => Prints:
+# => Worker 1 starting...
+# => Worker 2 starting...
+# => Worker 3 starting...
 
-Worker.ping(1)  # => {:pong, 1}
-Worker.crash(2)  # Crashes worker 2
-:timer.sleep(100)
-Worker.ping(2)  # => {:pong, 2} (works again!)
+Worker.ping(1)  # => {:pong, 1} (Worker 1 is alive)
+Worker.crash(2)  # => :ok (Worker 2 crashes and supervisor restarts it)
+# => Supervisor detects crash, restarts Worker 2
+# => Prints: Worker 2 starting... (restart message)
+:timer.sleep(100)  # => wait for restart to complete
+Worker.ping(2)  # => {:pong, 2} (Worker 2 alive again with clean state!)
+# => Demonstrates fault tolerance: crashed worker automatically recovers
 
+# Child specification structure
 child_spec = %{
-  id: Worker,
-  start: {Worker, :start_link, [1]},
-  restart: :permanent,  # Always restart
-  shutdown: 5000,       # Wait 5s for graceful shutdown
-  type: :worker         # :worker or :supervisor
+  id: Worker,  # => unique identifier for child (used to identify which child crashed)
+  start: {Worker, :start_link, [1]},  # => {Module, function, args} tuple for starting child
+  restart: :permanent,  # => :permanent (always restart), :temporary (never restart), :transient (restart only on abnormal exit)
+  shutdown: 5000,       # => 5000ms wait for graceful shutdown before force kill
+  type: :worker         # => :worker or :supervisor (for supervision tree organization)
 }
+# => This spec defines HOW supervisor manages this child (restart policy, shutdown timeout, etc.)
 
 ```
 
@@ -805,82 +818,119 @@ graph TD
 **Code**:
 
 ```elixir
+# :one_for_one - Independent workers, restart crashed child only
 defmodule OneForOneSupervisor do
-  use Supervisor
+  use Supervisor  # => imports Supervisor behavior
 
   def start_link(_opts) do
-    Supervisor.start_link(__MODULE__, :ok)
+    Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
   end
 
   @impl true
   def init(:ok) do
     children = [
-      {Worker, 1},
-      {Worker, 2},
-      {Worker, 3}
+      {Worker, 1},  # => Worker 1 (independent)
+      {Worker, 2},  # => Worker 2 (independent)
+      {Worker, 3}   # => Worker 3 (independent)
     ]
+    # => Workers are INDEPENDENT - Worker 2 crash doesn't affect Workers 1 or 3
 
-    Supervisor.init(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :one_for_one)  # => {:ok, {supervisor_flags, children}}
+    # => :one_for_one means: if Worker 2 crashes, ONLY Worker 2 restarts
+    # => Workers 1 and 3 keep running with their current state
+    # => Use case: stateless workers, connection pool workers, task processors
   end
 end
 
+# :one_for_all - Tightly coupled workers, restart ALL on any crash
 defmodule OneForAllSupervisor do
   use Supervisor
 
   def start_link(_opts) do
-    Supervisor.start_link(__MODULE__, :ok)
+    Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
   end
 
   @impl true
   def init(:ok) do
     children = [
-      {DatabaseConnection, []},  # Must be up
-      {Cache, []},               # Depends on database
-      {APIServer, []}            # Depends on cache
+      {DatabaseConnection, []},  # => Must be up for Cache and APIServer
+      {Cache, []},               # => Depends on database (caches DB queries)
+      {APIServer, []}            # => Depends on cache (serves cached data)
     ]
+    # => Workers are TIGHTLY COUPLED - if any crashes, ALL must restart for consistency
 
-    Supervisor.init(children, strategy: :one_for_all)
+    Supervisor.init(children, strategy: :one_for_all)  # => {:ok, {supervisor_flags, children}}
+    # => :one_for_all means: if DatabaseConnection crashes, ALL THREE restart in order
+    # => Why? Cache has stale DB state, APIServer has stale cache state
+    # => Restart order: DatabaseConnection → Cache → APIServer (clean slate for all)
+    # => Use case: workers with shared mutable state, game sessions, synchronized protocols
   end
 end
 
+# :rest_for_one - Startup-order dependencies, restart crashed child + later siblings
 defmodule RestForOneSupervisor do
   use Supervisor
 
   def start_link(_opts) do
-    Supervisor.start_link(__MODULE__, :ok)
+    Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
   end
 
   @impl true
   def init(:ok) do
     children = [
-      {DatabaseConnection, []},  # Started first
-      {Cache, []},               # Depends on database
-      {APIServer, []}            # Depends on cache
+      {DatabaseConnection, []},  # => Position 1: Started first
+      {Cache, []},               # => Position 2: Depends on DatabaseConnection
+      {APIServer, []}            # => Position 3: Depends on Cache
     ]
+    # => STARTUP ORDER MATTERS - later children depend on earlier children
 
-    Supervisor.init(children, strategy: :rest_for_one)
+    Supervisor.init(children, strategy: :rest_for_one)  # => {:ok, {supervisor_flags, children}}
+    # => :rest_for_one means: restart crashed child + all LATER siblings
+    # => If DatabaseConnection (pos 1) crashes: restart DatabaseConnection, Cache, APIServer
+    # => If Cache (pos 2) crashes: restart Cache, APIServer (DatabaseConnection unaffected)
+    # => If APIServer (pos 3) crashes: restart APIServer only (nothing depends on it)
+    # => Use case: initialization pipelines, dependent services, layered architectures
   end
 end
 
+# Supervisor with restart limits (prevent crash loops)
 defmodule ConfiguredSupervisor do
   use Supervisor
 
   def start_link(_opts) do
-    Supervisor.start_link(__MODULE__, :ok)
+    Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
   end
 
   @impl true
   def init(:ok) do
-    children = [{Worker, 1}]
+    children = [{Worker, 1}]  # => single worker child
 
     Supervisor.init(children,
-      strategy: :one_for_one,
-      max_restarts: 3,      # Max 3 restarts...
-      max_seconds: 5        # ...within 5 seconds
+      strategy: :one_for_one,  # => restart only crashed child
+      max_restarts: 3,         # => allow MAX 3 restarts...
+      max_seconds: 5           # => ...within 5 second window
     )
-    # If limit exceeded, supervisor itself crashes (escalates to parent)
+    # => Restart budget: 3 restarts per 5 seconds
+    # => Example timeline:
+    # => t=0s: Worker crashes (1st restart) ✓
+    # => t=2s: Worker crashes (2nd restart) ✓
+    # => t=4s: Worker crashes (3rd restart) ✓
+    # => t=5s: Worker crashes (4th restart in 5s) ✗ SUPERVISOR CRASHES
+    # => Supervisor crashes → escalates to parent supervisor (up supervision tree)
+    # => Prevents infinite crash loops from depleting system resources
+    # => If limit exceeded, supervisor itself crashes (escalates to parent)
   end
 end
+
+# Example usage comparison
+{:ok, one_for_one} = OneForOneSupervisor.start_link([])  # => starts 3 independent workers
+# => Worker 2 crashes → only Worker 2 restarts
+
+{:ok, one_for_all} = OneForAllSupervisor.start_link([])  # => starts 3 dependent workers
+# => DatabaseConnection crashes → ALL 3 restart (DatabaseConnection → Cache → APIServer)
+
+{:ok, rest_for_one} = RestForOneSupervisor.start_link([])  # => starts 3 workers with startup dependencies
+# => Cache crashes → Cache and APIServer restart (DatabaseConnection keeps running)
 ```
 
 **Key Takeaway**: Choose restart strategy based on dependencies: `:one_for_one` for independent workers, `:one_for_all` for interdependent workers, `:rest_for_one` for startup-order dependencies. Configure `max_restarts` and `max_seconds` to prevent crash loops.
@@ -941,111 +991,136 @@ graph TD
 
 ```elixir
 defmodule DynamicWorker do
-  use GenServer
+  use GenServer  # => imports GenServer behavior
 
   def start_link(id) do
-    GenServer.start_link(__MODULE__, id)
+    GenServer.start_link(__MODULE__, id)  # => {:ok, #PID<...>} (starts worker with id as state)
   end
 
   def get_id(pid) do
-    GenServer.call(pid, :get_id)
+    GenServer.call(pid, :get_id)  # => synchronous call to retrieve worker ID
   end
 
   @impl true
   def init(id) do
-    IO.puts("DynamicWorker #{id} started")
-    {:ok, id}
+    IO.puts("DynamicWorker #{id} started")  # => prints "DynamicWorker 1 started"
+    {:ok, id}  # => {:ok, 1} (stores id as state)
   end
 
   @impl true
   def handle_call(:get_id, _from, id) do
-    {:reply, id, id}
+    {:reply, id, id}  # => {:reply, 1, 1} (returns id, state unchanged)
   end
 end
 
 defmodule MyDynamicSupervisor do
-  use DynamicSupervisor
+  use DynamicSupervisor  # => imports DynamicSupervisor behavior
 
   def start_link(_opts) do
-    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<...>} (starts supervisor with NO children initially)
   end
+  # => Unlike static Supervisor, DynamicSupervisor starts with ZERO children
 
   def start_worker(id) do
-    child_spec = {DynamicWorker, id}
-    DynamicSupervisor.start_child(__MODULE__, child_spec)
+    child_spec = {DynamicWorker, id}  # => child spec: {module, arg}
+    DynamicSupervisor.start_child(__MODULE__, child_spec)  # => {:ok, #PID<...>} (starts child on demand)
   end
+  # => Spawns NEW worker process at runtime (not compile time)
 
   def stop_worker(pid) do
-    DynamicSupervisor.terminate_child(__MODULE__, pid)
+    DynamicSupervisor.terminate_child(__MODULE__, pid)  # => :ok (stops specific child by PID)
   end
+  # => Gracefully stops worker, supervisor removes it from child list
 
   def count_workers do
-    DynamicSupervisor.count_children(__MODULE__)
+    DynamicSupervisor.count_children(__MODULE__)  # => %{active: 3, specs: 3, supervisors: 0, workers: 3}
   end
+  # => Returns count of currently supervised children
 
   @impl true
   def init(:ok) do
-    DynamicSupervisor.init(strategy: :one_for_one)
+    DynamicSupervisor.init(strategy: :one_for_one)  # => {:ok, supervisor_flags}
   end
+  # => Configured but starts with ZERO children (children added via start_child)
 end
 
-{:ok, _sup} = MyDynamicSupervisor.start_link([])
+# Start supervisor (zero children initially)
+{:ok, _sup} = MyDynamicSupervisor.start_link([])  # => {:ok, #PID<...>} (supervisor running, no children)
 
-{:ok, worker1} = MyDynamicSupervisor.start_worker(1)
-{:ok, worker2} = MyDynamicSupervisor.start_worker(2)
-{:ok, worker3} = MyDynamicSupervisor.start_worker(3)
+# Add workers dynamically at runtime
+{:ok, worker1} = MyDynamicSupervisor.start_worker(1)  # => {:ok, #PID<0.123.0>} (worker 1 started)
+# => Prints: DynamicWorker 1 started
+{:ok, worker2} = MyDynamicSupervisor.start_worker(2)  # => {:ok, #PID<0.124.0>} (worker 2 started)
+# => Prints: DynamicWorker 2 started
+{:ok, worker3} = MyDynamicSupervisor.start_worker(3)  # => {:ok, #PID<0.125.0>} (worker 3 started)
+# => Prints: DynamicWorker 3 started
+# => Now supervisor has 3 children (added at runtime, not init time)
 
-DynamicWorker.get_id(worker1)  # => 1
-DynamicWorker.get_id(worker2)  # => 2
+DynamicWorker.get_id(worker1)  # => 1 (retrieves worker 1's ID)
+DynamicWorker.get_id(worker2)  # => 2 (retrieves worker 2's ID)
 
-MyDynamicSupervisor.count_workers()
+MyDynamicSupervisor.count_workers()  # => %{active: 3, specs: 3, supervisors: 0, workers: 3}
+# => 3 workers currently supervised
 
-MyDynamicSupervisor.stop_worker(worker2)
-MyDynamicSupervisor.count_workers()
+MyDynamicSupervisor.stop_worker(worker2)  # => :ok (terminates worker 2)
+# => Worker 2 process stopped and removed from supervisor
+MyDynamicSupervisor.count_workers()  # => %{active: 2, specs: 2, supervisors: 0, workers: 2}
+# => Now only 2 workers (worker1 and worker3)
 
+# Connection Pool Example - Practical Use Case
 defmodule Connection do
   use GenServer
 
   def start_link(url) do
-    GenServer.start_link(__MODULE__, url)
+    GenServer.start_link(__MODULE__, url)  # => {:ok, #PID<...>}
   end
 
   @impl true
   def init(url) do
-    # Simulate connection
-    {:ok, %{url: url, connected: true}}
+    # Simulate connection establishment
+    {:ok, %{url: url, connected: true}}  # => {:ok, %{url: "db://localhost", connected: true}}
   end
+  # => In real pool: connect to database, open socket, authenticate
 end
 
 defmodule ConnectionPool do
   use DynamicSupervisor
 
   def start_link(_opts) do
-    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<...>} (pool starts with zero connections)
   end
 
   def add_connection(url) do
-    DynamicSupervisor.start_child(__MODULE__, {Connection, url})
+    DynamicSupervisor.start_child(__MODULE__, {Connection, url})  # => {:ok, #PID<...>} (adds connection to pool)
   end
+  # => Spawns new connection process on demand (e.g., high load)
 
   def remove_connection(pid) do
-    DynamicSupervisor.terminate_child(__MODULE__, pid)
+    DynamicSupervisor.terminate_child(__MODULE__, pid)  # => :ok (removes idle connection)
   end
+  # => Reduces pool size when load decreases
 
   @impl true
   def init(:ok) do
     DynamicSupervisor.init(
-      strategy: :one_for_one,
-      max_restarts: 5,
-      max_seconds: 10
+      strategy: :one_for_one,  # => restart crashed connection only (others unaffected)
+      max_restarts: 5,         # => allow 5 connection failures...
+      max_seconds: 10          # => ...within 10 seconds before pool crashes
     )
+    # => Prevents cascading failures: if DB unreachable, pool crashes (supervisor restarts pool with fresh state)
   end
 end
 
-{:ok, _} = ConnectionPool.start_link([])
-{:ok, conn1} = ConnectionPool.add_connection("db://localhost")
-{:ok, conn2} = ConnectionPool.add_connection("db://remote")
-ConnectionPool.remove_connection(conn1)
+# Usage: Dynamic connection pool
+{:ok, _} = ConnectionPool.start_link([])  # => {:ok, #PID<...>} (pool starts with zero connections)
+{:ok, conn1} = ConnectionPool.add_connection("db://localhost")  # => {:ok, #PID<...>} (connection 1 added)
+# => Connection to local DB established
+{:ok, conn2} = ConnectionPool.add_connection("db://remote")  # => {:ok, #PID<...>} (connection 2 added)
+# => Connection to remote DB established
+# => Pool now has 2 active connections
+ConnectionPool.remove_connection(conn1)  # => :ok (closes local connection)
+# => Pool now has 1 active connection (remote only)
+# => Use case: scale pool up/down based on traffic, remove idle connections to save resources
 ```
 
 **Key Takeaway**: Use DynamicSupervisor for variable numbers of children started at runtime. Start children with `start_child/2`, stop with `terminate_child/2`. Ideal for pools, sessions, and dynamic workloads.
@@ -1080,63 +1155,105 @@ graph TD
 **Code**:
 
 ```elixir
+# Mix Project - Defines application metadata
 defmodule MyApp.MixProject do
-  use Mix.Project
+  use Mix.Project  # => imports Mix.Project behavior
 
   def project do
     [
-      app: :my_app,
-      version: "0.1.0"
+      app: :my_app,  # => application name (atom, must match module name)
+      version: "0.1.0"  # => semantic version
     ]
   end
+  # => Defines build metadata for mix (dependencies, compilers, paths)
 
-  # Application callback
+  # Application callback - defines OTP application
   def application do
     [
-      extra_applications: [:logger],
-      mod: {MyApp.Application, []}  # Application module and args
+      extra_applications: [:logger],  # => include Logger app (built-in Elixir app)
+      mod: {MyApp.Application, []}    # => {Module, args} - application starts by calling Module.start/2 with args
     ]
   end
+  # => When you run "mix run", OTP starts MyApp.Application.start(:normal, [])
+  # => extra_applications ensures Logger starts BEFORE MyApp
 end
 
+# Application Module - OTP application behavior
 defmodule MyApp.Application do
-  use Application
+  use Application  # => imports Application behavior (requires start/2 and stop/1 callbacks)
 
   @impl true
   def start(_type, _args) do
-    children = [
-      {Registry, keys: :unique, name: MyApp.Registry},
-      MyApp.Cache,
-      {MyApp.Worker, 1},
-      {MyApp.Worker, 2}
-    ]
+    # => _type is :normal (regular start), :takeover (distributed failover), or :failover (node takeover)
+    # => _args is [] (from mod: {MyApp.Application, []})
 
-    opts = [strategy: :one_for_one, name: MyApp.Supervisor]
-    Supervisor.start_link(children, opts)
+    # Define supervision tree children
+    children = [
+      {Registry, keys: :unique, name: MyApp.Registry},  # => Registry child spec (process registry)
+      MyApp.Cache,  # => shorthand for {MyApp.Cache, []} (assumes start_link/1 function exists)
+      {MyApp.Worker, 1},  # => Worker with arg=1
+      {MyApp.Worker, 2}   # => Worker with arg=2
+    ]
+    # => Children start in ORDER: Registry → Cache → Worker 1 → Worker 2
+
+    opts = [strategy: :one_for_one, name: MyApp.Supervisor]  # => supervisor options
+    Supervisor.start_link(children, opts)  # => {:ok, #PID<...>} (starts root supervisor)
+    # => This PID is the APPLICATION's root supervisor (if it crashes, application crashes)
   end
+  # => start/2 MUST return {:ok, pid} or {:error, reason}
+  # => The pid is the supervision tree root (OTP monitors it for application health)
 
   @impl true
   def stop(_state) do
-    # Cleanup logic
-    :ok
+    # => Called when application stops (before supervision tree shutdown)
+    # => _state is the PID returned from start/2
+    # Cleanup logic (close file handles, flush logs, graceful degradation)
+    IO.puts("Application stopping...")  # => cleanup example
+    :ok  # => must return :ok
   end
+  # => After stop/1, OTP terminates supervision tree (children stop in reverse order)
+  # => Shutdown order: Worker 2 → Worker 1 → Cache → Registry
 end
 
-
-
+# Application Configuration Access
 defmodule MyApp.Config do
-  def api_key, do: Application.get_env(:my_app, :api_key)
-  def timeout, do: Application.get_env(:my_app, :timeout, 3000)
+  def api_key, do: Application.get_env(:my_app, :api_key)  # => retrieves :api_key from :my_app config
+  # => Returns nil if not configured (use pattern matching to handle)
+
+  def timeout, do: Application.get_env(:my_app, :timeout, 3000)  # => returns :timeout or default 3000ms
+  # => Third argument is DEFAULT value (returned if :timeout not configured)
 end
+# => Access config set in config/config.exs:
+# => config :my_app, api_key: "secret", timeout: 5000
 
-
+# Application Dependencies (in mix.exs)
 def application do
   [
-    mod: {MyApp.Application, []},
-    extra_applications: [:logger, :crypto],  # Erlang/Elixir apps
-    applications: [:httpoison]               # Dependencies
+    mod: {MyApp.Application, []},  # => application module and start args
+    extra_applications: [:logger, :crypto],  # => built-in Erlang/Elixir apps to start BEFORE MyApp
+    # => :logger (Elixir), :crypto (Erlang) start first
+    applications: [:httpoison]  # => third-party dependencies to start BEFORE MyApp
+    # => :httpoison must start before MyApp (declared dependency)
   ]
+  # => Start order: :logger → :crypto → :httpoison → :my_app
+  # => OTP ensures dependency order automatically
 end
+# => If :httpoison fails to start, MyApp NEVER starts (dependency failure)
+
+# Example usage of application lifecycle
+# 1. Developer runs: mix run
+#    => OTP reads mix.exs application/0
+#    => Starts dependencies: Logger → Crypto → HTTPoison
+#    => Calls MyApp.Application.start(:normal, [])
+#    => Supervision tree starts (Registry → Cache → Workers)
+#    => Application running ✓
+
+# 2. Application stops (Ctrl+C or System.stop())
+#    => OTP calls MyApp.Application.stop(pid)
+#    => Cleanup logic runs (stop/1 callback)
+#    => Supervision tree terminates (children shutdown in reverse)
+#    => Dependencies stop in reverse: MyApp → HTTPoison → Crypto → Logger
+#    => Application stopped ✓
 ```
 
 **Key Takeaway**: Applications define the supervision tree and lifecycle. Implement `start/2` to initialize the supervision tree, `stop/1` for cleanup. Mix projects are applications that start automatically.
@@ -1401,68 +1518,90 @@ Macros receive code as AST and return transformed AST. They run at compile time,
 defmodule MyMacros do
   # Simple macro - no arguments
   defmacro say_hello do
-    quote do
-      IO.puts("Hello from macro!")
+    quote do  # => returns AST: {{:., [], [{:__aliases__, [alias: false], [:IO]}, :puts]}, [], ["Hello from macro!"]}
+      IO.puts("Hello from macro!")  # => this code runs in CALLER's context at runtime
     end
   end
+  # => defmacro receives NO arguments, returns AST that will be inserted at call site
 
   # Macro with arguments
   defmacro double(value) do
+    # => value is AST of argument (e.g., for double(5), value = {:5, [], Elixir})
     quote do
-      unquote(value) * 2
+      unquote(value) * 2  # => unquote injects value AST into multiplication expression
     end
+    # => returns AST: {:*, [], [unquote(value), 2]}
+    # => At compile time: double(5) becomes: 5 * 2
   end
 
   # Macro that generates function
   defmacro create_getter(name, value) do
+    # => name is atom AST (e.g., :name), value is AST (e.g., "Alice")
     quote do
-      def unquote(name)(), do: unquote(value)
+      def unquote(name)(), do: unquote(value)  # => generates function definition at compile time
     end
+    # => creates: def name(), do: "Alice"
+    # => unquote(name) injects atom as function name
+    # => unquote(value) injects value as function body
   end
 
   # Macro for logging
   defmacro log(message) do
     quote do
-      IO.puts("[LOG #{DateTime.utc_now()}] #{unquote(message)}")
+      IO.puts("[LOG #{DateTime.utc_now()}] #{unquote(message)}")  # => DateTime.utc_now() evaluated at RUNTIME in caller context
     end
+    # => unquote(message) injects message AST
+    # => Timestamp generated when log executes, NOT when macro expands
   end
 
   # Macro with block (do...end)
   defmacro benchmark(name, do: block) do
+    # => name is string AST, block is AST of entire do...end content
     quote do
-      {time, result} = :timer.tc(fn -> unquote(block) end)
-      IO.puts("#{unquote(name)} took #{time}μs")
-      result
+      {time, result} = :timer.tc(fn -> unquote(block) end)  # => unquote(block) injects benchmarked code into anonymous function
+      # => :timer.tc returns {microseconds, result} tuple
+      IO.puts("#{unquote(name)} took #{time}μs")  # => prints benchmark name and duration
+      result  # => returns result of benchmarked code
     end
+    # => entire benchmark logic inserted at call site and executed at runtime
   end
 end
 
 defmodule Example do
-  require MyMacros  # Required to use macros
+  require MyMacros  # => makes macros available at compile time (REQUIRED for macro use)
 
-  MyMacros.say_hello()  # Prints: Hello from macro!
+  MyMacros.say_hello()  # => macro expands to: IO.puts("Hello from macro!")
+  # => Prints: Hello from macro! (at runtime)
 
-  x = MyMacros.double(5)  # => 10
+  x = MyMacros.double(5)  # => macro expands to: x = 5 * 2
+  # => x = 10 (at runtime)
 
-  MyMacros.create_getter(:name, "Alice")
-  # Generates: def name(), do: "Alice"
+  MyMacros.create_getter(:name, "Alice")  # => generates function def at compile time
+  # => Expands to: def name(), do: "Alice"
+  # => Now name() function exists in Example module
 
   def demo do
-    MyMacros.log("Starting demo")  # Prints with timestamp
+    MyMacros.log("Starting demo")  # => expands to: IO.puts("[LOG #{DateTime.utc_now()}] Starting demo")
+    # => Prints: [LOG 2024-01-15 10:30:45.123456Z] Starting demo (timestamp at runtime)
 
-    MyMacros.benchmark "computation" do
-      :timer.sleep(100)
-      42
+    result = MyMacros.benchmark "computation" do
+      :timer.sleep(100)  # => sleep 100ms
+      42  # => return value
     end
-    # Prints: computation took ~100000μs
-    # Returns: 42
+    # => Expands to:
+    # => {time, result} = :timer.tc(fn -> :timer.sleep(100); 42 end)
+    # => IO.puts("computation took #{time}μs")
+    # => result
+    # => Prints: computation took ~100000μs (100ms = 100,000 microseconds)
+    # => Returns: 42
   end
 end
 
+# Macro Hygiene - variables don't leak by default
 defmodule HygieneDemo do
   defmacro create_var do
     quote do
-      x = 42
+      x = 42  # => creates x in MACRO's context (hygienic), NOT caller's context
     end
   end
 end
@@ -1471,15 +1610,18 @@ defmodule User do
   require HygieneDemo
 
   def test do
-    HygieneDemo.create_var()
+    HygieneDemo.create_var()  # => macro creates x in isolated scope
     x  # => ** (CompileError) undefined function x/0
+    # => ERROR! Variable x from macro doesn't exist in test/0 scope
+    # => This is HYGIENE - prevents accidental variable capture
   end
 end
 
+# Explicitly breaking hygiene with var!
 defmodule UnhygieneDemo do
   defmacro create_var do
     quote do
-      var!(x) = 42  # Explicitly create variable in caller's context
+      var!(x) = 42  # => var! explicitly creates variable in CALLER's context (unhygienic)
     end
   end
 end
@@ -1488,25 +1630,35 @@ defmodule User2 do
   require UnhygieneDemo
 
   def test do
-    UnhygieneDemo.create_var()
-    x  # => 42 (works! variable leaked intentionally)
+    UnhygieneDemo.create_var()  # => creates x in test/0 scope (intentional leak)
+    x  # => 42 (works! variable explicitly leaked using var!)
+    # => var! breaks hygiene when you WANT variable sharing between macro and caller
   end
 end
 
+# Pattern matching on AST
 defmodule MiniTest do
-  defmacro assert({:==, _, [left, right]}) do
+  defmacro assert({:==, _, [left, right]}) do  # => pattern matches AST of == expression
+    # => {:==, _, [left, right]} destructures: operator, metadata, [left_arg, right_arg]
+    # => For assert(1 + 1 == 2), left = {:+, [], [1, 1]}, right = 2
     quote do
-      left_val = unquote(left)
-      right_val = unquote(right)
+      left_val = unquote(left)  # => evaluates left expression at runtime
+      # => left_val = 1 + 1 = 2
+      right_val = unquote(right)  # => evaluates right expression at runtime
+      # => right_val = 2
       if left_val != right_val do
-        raise "Assertion failed: #{inspect(left_val)} != #{inspect(right_val)}"
+        raise "Assertion failed: #{inspect(left_val)} != #{inspect(right_val)}"  # => raises on mismatch
       end
+      # => If assertion passes, returns nil (no raise)
     end
+    # => This shows how macros can inspect AST structure (pattern match on operator)
   end
 end
 
-require MiniTest
-MiniTest.assert(1 + 1 == 2)  # Passes
+require MiniTest  # => loads MiniTest macros
+MiniTest.assert(1 + 1 == 2)  # => macro expands, evaluates 1+1, compares to 2, passes (no raise)
+# => At compile time: pattern matches AST, generates assertion code
+# => At runtime: evaluates expressions, performs comparison
 ```
 
 **Key Takeaway**: Macros transform AST at compile time. Use `defmacro` to define, `quote/unquote` to build AST, and `require` to use. Macros enable DSLs and code generation but should be used sparingly—prefer functions when possible.
@@ -1522,96 +1674,134 @@ The `use` macro is Elixir's mechanism for injecting code into modules. When you 
 **Code**:
 
 ```elixir
+# Basic use macro - inject code with configuration
 defmodule Loggable do
-  defmacro __using__(opts) do
-    level = Keyword.get(opts, :level, :info)
+  defmacro __using__(opts) do  # => __using__ is special macro called by "use Loggable"
+    # => opts is keyword list from use call (e.g., [level: :debug])
+    level = Keyword.get(opts, :level, :info)  # => extract :level option, default :info
+    # => This runs at COMPILE TIME (when MyApp is compiled)
 
-    quote do
+    quote do  # => generates AST to inject into caller module
       def log(message) do
         IO.puts("[#{unquote(level) |> to_string() |> String.upcase()}] #{message}")
+        # => unquote(level) injects compile-time value (:debug) into runtime code
+        # => Expands to: IO.puts("[DEBUG] #{message}")
       end
     end
+    # => This function definition is INJECTED into MyApp module at compile time
   end
 end
 
 defmodule MyApp do
-  use Loggable, level: :debug
+  use Loggable, level: :debug  # => calls Loggable.__using__([level: :debug])
+  # => At compile time, injects log/1 function into MyApp
+  # => Equivalent to:
+  # => def log(message), do: IO.puts("[DEBUG] #{message}")
 
   def start do
-    log("Application starting...")  # Prints: [DEBUG] Application starting...
+    log("Application starting...")  # => calls injected log/1 function
+    # => Prints: [DEBUG] Application starting...
   end
 end
 
-MyApp.start()
+MyApp.start()  # => prints "[DEBUG] Application starting..."
 
+# Advanced use macro - default implementations with override
 defmodule GenServerSimplified do
   defmacro __using__(_opts) do
     quote do
-      @behaviour :gen_server
+      @behaviour :gen_server  # => declares module implements :gen_server behavior (Erlang)
 
-      def init(args), do: {:ok, args}
-      def handle_call(_msg, _from, state), do: {:reply, :ok, state}
-      def handle_cast(_msg, state), do: {:noreply, state}
+      # Default callback implementations
+      def init(args), do: {:ok, args}  # => default init: pass args as state
+      def handle_call(_msg, _from, state), do: {:reply, :ok, state}  # => default call: always reply :ok
+      def handle_cast(_msg, state), do: {:noreply, state}  # => default cast: ignore messages
 
-      defoverridable init: 1, handle_call: 3, handle_cast: 2
+      defoverridable init: 1, handle_call: 3, handle_cast: 2  # => allows caller to override these functions
+      # => User can define their own init/1, handle_call/3, handle_cast/2
+      # => Without defoverridable, redefining would cause compile error
     end
   end
+  # => Provides sensible defaults while allowing customization
 end
 
+# Use macro for test setup and imports
 defmodule MyTestCase do
   defmacro __using__(_opts) do
     quote do
-      import ExUnit.Assertions
-      import MyTestCase.Helpers
+      import ExUnit.Assertions  # => makes assert/1, refute/1, etc. available
+      import MyTestCase.Helpers  # => makes custom assert_json/2 available
 
-      setup do
-        # Setup code
-        {:ok, %{user: %{name: "Test User"}}}
+      setup do  # => ExUnit callback (runs before each test)
+        # Setup code (runs at test time, NOT compile time)
+        {:ok, %{user: %{name: "Test User"}}}  # => returns context passed to tests
+        # => Context merged into test arguments
       end
     end
   end
+  # => Injects test helpers and setup into every test module that uses this
 
   defmodule Helpers do
     def assert_json(response, expected) do
-      assert Jason.decode!(response) == expected
+      assert Jason.decode!(response) == expected  # => custom assertion for JSON
     end
   end
 end
 
 defmodule MyTest do
-  use ExUnit.Case
-  use MyTestCase
+  use ExUnit.Case  # => injects ExUnit test DSL (test macro, setup, etc.)
+  use MyTestCase   # => injects MyTestCase setup and Helpers
+  # => Both __using__ macros run at compile time, injecting code
 
-  test "example with helpers", %{user: user} do
-    assert user.name == "Test User"
-    # Can use assert_json from Helpers
+  test "example with helpers", %{user: user} do  # => %{user: user} is context from setup
+    assert user.name == "Test User"  # => user from setup context
+    # Can use assert_json from Helpers (imported via use MyTestCase)
+    # => assert_json(~s({"name": "Test"}), %{"name" => "Test"})
   end
 end
 
+# Phoenix pattern - conditional code injection
 defmodule MyAppWeb do
+  # Helper function returns AST (NOT a macro)
   def controller do
-    quote do
-      use Phoenix.Controller, namespace: MyAppWeb
+    quote do  # => returns quoted AST
+      use Phoenix.Controller, namespace: MyAppWeb  # => nested use (injects Phoenix controller code)
 
-      import Plug.Conn
-      import MyAppWeb.Gettext
-      alias MyAppWeb.Router.Helpers, as: Routes
+      import Plug.Conn  # => makes conn functions available (send_resp, put_status, etc.)
+      import MyAppWeb.Gettext  # => makes gettext functions available (localization)
+      alias MyAppWeb.Router.Helpers, as: Routes  # => alias for router helpers
     end
+    # => This AST will be injected into caller when they use MyAppWeb, :controller
   end
 
-  defmacro __using__(which) when is_atom(which) do
-    apply(__MODULE__, which, [])
+  # __using__ dispatches to helper functions based on argument
+  defmacro __using__(which) when is_atom(which) do  # => which is :controller, :view, :channel, etc.
+    apply(__MODULE__, which, [])  # => calls MyAppWeb.controller(), MyAppWeb.view(), etc.
+    # => Returns AST from helper function
+    # => Pattern: different behaviors for different use cases
   end
 end
 
 defmodule MyAppWeb.UserController do
-  use MyAppWeb, :controller  # Injects controller code
+  use MyAppWeb, :controller  # => calls MyAppWeb.__using__(:controller)
+  # => Which calls MyAppWeb.controller()
+  # => Which returns quote do ... end AST
+  # => Result: Phoenix.Controller, Plug.Conn, Gettext, Routes all injected
 
   def index(conn, _params) do
-    # Now has access to Phoenix.Controller functions
-    render(conn, "index.html")
+    # Now has access to Phoenix.Controller functions (from use Phoenix.Controller)
+    render(conn, "index.html")  # => render/2 from Phoenix.Controller
+    # Also has: conn functions (Plug.Conn), Routes.*, gettext functions
   end
 end
+
+# Usage flow for MyAppWeb.UserController:
+# 1. Compiler sees: use MyAppWeb, :controller
+# 2. Calls: MyAppWeb.__using__(:controller)
+# 3. Which calls: MyAppWeb.controller()
+# 4. Returns AST: quote do use Phoenix.Controller, ...; import Plug.Conn; ... end
+# 5. AST expanded and injected into UserController
+# 6. Now UserController has all Phoenix controller functionality
 ```
 
 **Key Takeaway**: `use SomeModule` calls `SomeModule.__using__/1` to inject code. Common pattern for DSLs (GenServer, Phoenix controllers, test cases). The `use` macro enables framework behavior injection.
