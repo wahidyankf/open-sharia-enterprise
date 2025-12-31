@@ -3,88 +3,198 @@ title: "Overview"
 date: 2025-12-30T01:11:31+07:00
 draft: false
 weight: 10000000
-description: "Learn Kotlin through 80 annotated code examples covering 95% of the language - ideal for experienced developers"
-tags: ["kotlin", "tutorial", "by-example", "examples", "code-first"]
+description: "Learn Kotlin through 80 annotated code examples covering 95% of the language - ideal for experienced developers switching to Kotlin"
+tags: ["kotlin", "tutorial", "by-example", "examples", "code-first", "jvm", "android"]
 ---
 
-## What is By-Example Learning?
+**Want to quickly master Kotlin through working examples?** This by-example guide teaches 95% of Kotlin through 80 annotated code examples organized by complexity level.
 
-By-example tutorials teach programming through **working code first, understanding second**. Instead of reading explanations and then seeing code, you read code with heavy annotations that show exactly what happens at each step.
+## What Is By-Example Learning?
 
-This approach works best for **experienced developers switching to Kotlin** from Java, Scala, Python, or other languages. You already know programming concepts - you just need to see how Kotlin implements them.
+By-example learning is an **example-first approach** where you learn through annotated, runnable code rather than narrative explanations. Each example is self-contained, immediately executable with `kotlinc` or in IntelliJ IDEA, and heavily commented to show:
 
-## Tutorial Philosophy
+- **What each line does** - Inline comments explain the purpose and mechanism
+- **Expected outputs** - Using `// =>` notation to show results
+- **Intermediate values** - Variable states and control flow made visible
+- **Key takeaways** - 1-2 sentence summaries of core concepts
 
-### Code-First Approach
+This approach is **ideal for experienced developers** (seasonal programmers or software engineers) who are familiar with at least one programming language and want to quickly understand Kotlin's syntax, idioms, and unique features through working code.
 
-Every example follows this pattern:
+Unlike narrative tutorials that build understanding through explanation and storytelling, by-example learning lets you **see the code first, run it second, and understand it through direct interaction**. You learn by doing, not by reading about doing.
 
-1. **Brief explanation** (2-3 sentences): What is this concept and why does it matter?
-2. **Diagram** (when appropriate): Visual representation of data flow, state changes, or architecture
-3. **Heavily annotated code**: Every significant line has inline comments using `// =>` notation
-4. **Key takeaway** (1-2 sentences): The core insight distilled to its essence
+## Learning Path
 
-### 95% Coverage Target
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["Beginner<br/>Examples 1-27<br/>Kotlin Fundamentals"] --> B["Intermediate<br/>Examples 28-54<br/>Production Patterns"]
+    B --> C["Advanced<br/>Examples 55-80<br/>Expert Mastery"]
 
-These 80 examples cover **95% of Kotlin features** you'll need for production work:
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+```
 
-**Included in 95%**:
+Progress from fundamentals through production patterns to advanced features. Each level builds on the previous, increasing in sophistication and introducing more Kotlin-specific concepts.
 
-- Core syntax and semantics (variables, functions, classes, control flow)
-- Type system (nullable types, generics, type inference)
-- Object-oriented features (inheritance, interfaces, data classes, sealed classes)
-- Functional programming (lambdas, higher-order functions, scope functions)
-- Coroutines (async/await, channels, flows)
-- Standard library essentials (collections, sequences, I/O)
-- Modern Kotlin features (extension functions, delegates, DSLs)
-- Testing and debugging patterns
-- Multiplatform basics
+## Coverage Philosophy
 
-**Excluded from 95% (the remaining 5%)**:
+This by-example guide provides **95% coverage of Kotlin** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
-- Rare edge cases and obscure features
-- Compiler internals and implementation details
-- Specialized libraries outside standard use
-- Platform-specific advanced features (Android internals, native interop details)
-- Deprecated features
+### What's Covered
 
-### Self-Contained Examples
+- **Core syntax** - Variables, types, operators, control flow, null safety
+- **Functions** - Named functions, lambdas, higher-order functions, inline functions
+- **Object-oriented programming** - Classes, objects, inheritance, interfaces, data classes, sealed classes
+- **Type system** - Nullable types, generics, type inference, smart casts, type projections
+- **Functional programming** - Lambdas, scope functions (let, run, with, apply, also), sequences
+- **Coroutines** - async/await patterns, channels, flows, structured concurrency
+- **Collections** - List, Set, Map operations, collection transformations, sequences vs collections
+- **Extensions** - Extension functions, extension properties, DSL builders
+- **Delegation** - Property delegates, class delegation, standard delegates (lazy, observable)
+- **Testing** - Unit testing, assertions, mocking patterns
+- **Java interop** - Calling Java from Kotlin, calling Kotlin from Java, annotations
 
-Every example is **copy-paste-runnable** within its chapter scope:
+### What's NOT Covered
 
-- **Beginner examples**: Completely standalone, include all imports and helper functions
-- **Intermediate examples**: Assume beginner knowledge but include all necessary code
-- **Advanced examples**: Assume beginner + intermediate knowledge but remain fully runnable
+This guide focuses on **learning-oriented examples**, not problem-solving recipes or production deployment. For additional topics:
 
-You can delete all other examples and each one will still compile and run.
+- **Production deployment patterns** - See [Intermediate Tutorial](/en/learn/software-engineering/programming-languages/kotlin/tutorials/intermediate) and [Advanced Tutorial](/en/learn/software-engineering/programming-languages/kotlin/tutorials/advanced)
+- **Deep framework knowledge** - Ktor, Spring Boot covered at introductory level only
+- **Real-world project architecture** - See [Explanation: Best Practices](/en/learn/software-engineering/programming-languages/kotlin/explanation/best-practices)
 
-## How to Use These Tutorials
+The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
 
-### For Linear Learning
+## How to Use This Guide
 
-If you're new to Kotlin, work through examples sequentially:
+1. **Sequential or selective** - Read examples in order for progressive learning, or jump to specific topics when switching from another language
+2. **Run everything** - Copy and paste examples into IntelliJ IDEA or use `kotlin` command to see outputs yourself. Experimentation solidifies understanding.
+3. **Modify and explore** - Change values, add print statements, break things intentionally. Learn through experimentation.
+4. **Use as reference** - Bookmark examples for quick lookups when you forget syntax or patterns
+5. **Complement with narrative tutorials** - By-example learning is code-first; pair with comprehensive tutorials for deeper explanations
 
-1. Start with **Beginner** (examples 1-27) to master fundamentals
-2. Progress to **Intermediate** (examples 28-54) for production patterns
-3. Complete **Advanced** (examples 55-80) for expert mastery
+**Best workflow**: Open IntelliJ IDEA in one window, this guide in another. Run each example as you read it. When you encounter something unfamiliar, run the example, modify it, see what changes.
 
-### For Reference Lookup
+## Relationship to Other Tutorials
 
-If you're familiar with Kotlin and need quick reference:
+Understanding where by-example fits in the tutorial ecosystem helps you choose the right learning path:
 
-1. Use the example titles to find specific topics
-2. Read the brief explanation and key takeaway for context
-3. Study the annotated code to see implementation details
-4. Run the example to verify behavior
+| Tutorial Type    | Coverage                 | Approach                       | Target Audience          | When to Use                                          |
+| ---------------- | ------------------------ | ------------------------------ | ------------------------ | ---------------------------------------------------- |
+| **By Example**   | 95% through 80 examples  | Code-first, annotated examples | Experienced developers   | Quick language pickup, reference, language switching |
+| **Quick Start**  | 5-30% touchpoints        | Hands-on project               | Newcomers to Kotlin      | First taste, decide if worth learning                |
+| **Beginner**     | 0-60% comprehensive      | Narrative, explanatory         | Complete beginners       | Deep understanding, first programming language       |
+| **Intermediate** | 60-85%                   | Practical applications         | Past basics              | Production patterns, frameworks                      |
+| **Advanced**     | 85-95%                   | Complex systems                | Experienced Kotlin devs  | Coroutines internals, multiplatform                  |
+| **Cookbook**     | Problem-oriented         | Recipe, solution-focused       | All levels               | Specific problems, common tasks                      |
 
-### For Pattern Learning
+**By Example vs. Quick Start**: By Example provides 95% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
 
-If you're looking for production-ready patterns:
+**By Example vs. Beginner Tutorial**: By Example is code-first for experienced developers; Beginner Tutorial is narrative-first for complete beginners. By Example shows patterns; Beginner Tutorial explains concepts.
 
-1. Focus on intermediate and advanced examples
-2. Pay attention to diagrams showing architecture and flow
-3. Study error handling and edge case annotations
-4. Adapt patterns to your specific use cases
+**By Example vs. Cookbook**: By Example is learning-oriented with progressive examples building language knowledge. Cookbook is problem-solving oriented with standalone recipes for specific tasks. By Example teaches concepts; Cookbook solves problems.
+
+## Prerequisites
+
+**Required**:
+
+- Kotlin installed and working (JDK 17 or later required, see [Initial Setup](/en/learn/software-engineering/programming-languages/kotlin/tutorials/initial-setup))
+- Experience with at least one programming language
+- Ability to run Kotlin programs (IntelliJ IDEA, Android Studio, or command line)
+
+**Recommended (helpful but not required)**:
+
+- Familiarity with Java (Kotlin runs on JVM and interoperates seamlessly)
+- Object-oriented programming experience (classes, inheritance)
+- Basic functional programming concepts (lambdas, higher-order functions)
+
+**No prior Kotlin experience required** - This guide assumes you're new to Kotlin but experienced with programming in general. You should be comfortable reading code, understanding basic programming concepts (variables, functions, loops), and learning through hands-on experimentation.
+
+## Structure of Each Example
+
+Every example follows this consistent format:
+
+````markdown
+### Example N: Concept Name
+
+Brief explanation of the concept in 2-3 sentences. Explains **what** the concept is and **why** it matters.
+
+[OPTIONAL: Mermaid diagram when concept relationships need visualization]
+
+**Code**:
+
+```kotlin
+// Comment explaining what this section does
+fun main() {
+    // Inline comment for each significant line
+    val result = operation()     // => expected_output_value
+    // Intermediate values shown in comments
+    val transformed = transform(result) // => intermediate_value
+    println(transformed)         // => Output: final_output
+}
+```
+
+**Key Takeaway**: 1-2 sentence summary highlighting the most important insight or pattern from this example.
+
+**Why It Matters**: 1-2 sentence explanation of practical relevance—when you'd use this in real code.
+````
+
+The **brief explanation** provides context. The **code** is heavily annotated with inline comments and `// =>` output notation. The **key takeaway** distills the concept to its essence. The **why it matters** connects to real-world application.
+
+Mermaid diagrams appear when **visual representation clarifies concept relationships** - showing data flow, coroutine execution, or abstract structures. Not every example needs a diagram; they're used strategically to enhance understanding.
+
+## Learning Strategies
+
+### For Java Developers
+
+You're the primary audience - Kotlin is designed as a better Java. The transition is smooth:
+
+- **Null safety built-in**: `String?` vs `String` catches NPEs at compile time
+- **Data classes**: One line replaces boilerplate getters, setters, equals, hashCode
+- **Extension functions**: Add methods to existing classes without inheritance
+
+Focus on Examples 1-15 (Kotlin basics) and Examples 20-27 (null safety) to see immediate productivity gains.
+
+### For Swift/iOS Developers
+
+You know a modern language with optionals and type inference. Kotlin feels very similar:
+
+- **Almost identical syntax**: Optionals, type inference, closures work similarly
+- **JVM instead of iOS**: Same concepts, different runtime and ecosystem
+- **Coroutines vs async/await**: Structured concurrency with similar patterns
+
+Focus on Examples 45-55 (coroutines) and Examples 35-42 (scope functions) to leverage your Swift knowledge.
+
+### For Python/JavaScript Developers
+
+You're used to dynamic typing and concise syntax. Kotlin offers type safety without Java's verbosity:
+
+- **Type inference**: Types are checked but often inferred, less annotation needed
+- **First-class functions**: Lambdas and higher-order functions work naturally
+- **Null safety**: Compiler prevents null pointer exceptions
+
+Focus on Examples 5-15 (type system) and Examples 25-35 (functional patterns) to build static typing intuition.
+
+### For Scala Developers
+
+You know JVM functional programming. Kotlin is simpler and more pragmatic:
+
+- **Less powerful, more practical**: No implicits, simpler type system
+- **Better Java interop**: Kotlin is designed for seamless Java integration
+- **Coroutines vs Futures**: Different concurrency model, simpler mental model
+
+Focus on Examples 55-70 (advanced features) and Examples 70-80 (DSLs) to see Kotlin's design choices.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example compiles and runs with kotlinc or in IntelliJ IDEA
+- **Learn by doing**: Understanding comes from running and modifying code
+- **Pattern recognition**: See the same patterns in different contexts across 80 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
 
 ## Reading Code Annotations
 
@@ -128,7 +238,7 @@ Approximately 30-50% of examples include Mermaid diagrams using a **color-blind 
 - **Purple** (#CC78BC): Alternative paths, options
 - **Brown** (#CA9161): Neutral elements, helpers
 
-Diagrams appear when they clarify non-obvious concepts like data flow, concurrency patterns, or state transitions.
+Diagrams appear when they clarify non-obvious concepts like data flow, coroutine execution, or state transitions.
 
 ## Running Examples
 
@@ -160,6 +270,12 @@ kotlinc-jvm
 2. Copy the example code
 3. Right-click and select "Run"
 
-## Next Steps
+## Ready to Start?
 
-Start with [Beginner examples](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/beginner) to learn Kotlin fundamentals through working code, or jump to [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/intermediate) or [Advanced](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/advanced) if you're already familiar with basics.
+Jump into the beginner examples to start learning Kotlin through code:
+
+- [Beginner Examples (1-27)](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/beginner) - Basic syntax, null safety, functions, OOP fundamentals
+- [Intermediate Examples (28-54)](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/intermediate) - Generics, scope functions, delegation, coroutines basics
+- [Advanced Examples (55-80)](/en/learn/software-engineering/programming-languages/kotlin/tutorials/by-example/advanced) - Advanced coroutines, DSLs, multiplatform, performance
+
+Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.

@@ -145,6 +145,59 @@ The **brief explanation** provides context. The **code** is heavily annotated wi
 
 Mermaid diagrams appear when **visual representation clarifies concept relationships** - showing data flow, process hierarchies, or abstract structures. Not every example needs a diagram; they're used strategically to enhance understanding.
 
+## Learning Strategies
+
+### For Python/Ruby Developers
+
+You're used to dynamic typing and OOP. Elixir will feel familiar yet fundamentally different:
+
+- **Immutable data**: No variable mutation, create new values instead
+- **Pattern matching**: Destructure data directly in function heads and case statements
+- **No classes**: Use modules, functions, and data instead of objects
+
+Focus on Examples 1-15 (immutability and pattern matching) and Examples 20-30 (functions and modules) to build functional intuition.
+
+### For JavaScript/Node.js Developers
+
+You understand async programming and callbacks. Elixir takes a different approach:
+
+- **Processes instead of callbacks**: Lightweight processes replace event loops
+- **Message passing**: Processes communicate via send/receive, not shared state
+- **Supervision trees**: Let processes crash and restart instead of catching errors
+
+Focus on Examples 45-55 (processes and message passing) and Examples 65-75 (GenServer and Supervisor) to understand the actor model.
+
+### For Java/C# Developers
+
+You're used to OOP and threads. Elixir replaces both:
+
+- **Functional over OOP**: Data and functions separate, no methods on objects
+- **Lightweight processes**: Spawn millions of processes, not limited by OS threads
+- **Fault tolerance**: Let it crash philosophy, supervisors handle recovery
+
+Focus on Examples 60-70 (OTP patterns) and Examples 75-85 (fault tolerance) to leverage your concurrency knowledge.
+
+### For Haskell/ML Developers
+
+You know functional programming. Elixir is practical FP with less type rigor:
+
+- **Dynamic typing**: No type system, but pattern matching catches errors at runtime
+- **Pragmatic purity**: Side effects allowed, but immutability enforced
+- **BEAM runtime**: Actor model and hot code reloading for production systems
+
+Focus on Examples 70-80 (metaprogramming and macros) and Examples 80-90 (advanced patterns) to see Elixir's unique features.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example runs in IEx or as scripts
+- **Learn by doing**: Understanding comes from running and modifying code
+- **Pattern recognition**: See the same patterns in different contexts across 90 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+
 ## Ready to Start?
 
 Jump into the beginner examples to start learning Elixir through code:

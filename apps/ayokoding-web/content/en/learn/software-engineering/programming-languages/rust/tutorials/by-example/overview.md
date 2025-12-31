@@ -21,11 +21,26 @@ Every example in this tutorial follows a simple principle: **the code speaks for
 
 This tutorial assumes you're familiar with programming concepts (variables, functions, control flow) but new to Rust's unique ownership model and systems programming approach.
 
-## What Does 95% Coverage Mean?
+## Learning Path
 
-This tutorial covers **95% of Rust features** you'll need for production work:
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["Beginner<br/>Examples 1-28<br/>Ownership Fundamentals"] --> B["Intermediate<br/>Examples 29-57<br/>Production Patterns"]
+    B --> C["Advanced<br/>Examples 58-85<br/>Expert Mastery"]
 
-**Included in 95% coverage**:
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+```
+
+Progress from ownership fundamentals through production patterns to expert mastery. Each level builds on the previous, with ownership understanding being the critical foundation.
+
+## Coverage Philosophy
+
+This tutorial provides **95% coverage of Rust** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+
+### What's Covered
 
 - Core syntax: variables, functions, control flow, pattern matching
 - Ownership system: borrowing, lifetimes, moves
@@ -38,14 +53,18 @@ This tutorial covers **95% of Rust features** you'll need for production work:
 - Performance patterns and optimization
 - Common ecosystem patterns (Serde, Tokio basics)
 
-**Excluded from 95% (the remaining 5%)**:
+### What's NOT Covered
 
-- Compiler internals and MIR
-- Nightly-only features
-- Embedded systems specifics (no_std advanced patterns)
-- Low-level assembly integration
-- Custom allocators and panic handlers
-- Advanced macro_rules edge cases
+This guide focuses on **learning-oriented examples**, not problem-solving recipes or production deployment. For additional topics:
+
+- **Compiler internals and MIR** - Implementation details beyond the language
+- **Nightly-only features** - Unstable features not ready for production
+- **Embedded systems specifics** - no_std advanced patterns for bare metal
+- **Low-level assembly integration** - inline assembly and architecture specifics
+- **Custom allocators and panic handlers** - Advanced runtime customization
+- **Advanced macro_rules edge cases** - Obscure macro patterns
+
+The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
 
 ## Tutorial Structure: 85 Examples Across 3 Levels
 
@@ -72,6 +91,22 @@ Master lifetimes, traits, generics, iterators, closures, smart pointers, and con
 Explore unsafe code, procedural macros, async/await, advanced trait patterns, FFI, zero-cost abstractions, and performance tuning. Learn when to break Rust's safety guarantees responsibly.
 
 **Key topics**: Unsafe code, raw pointers, FFI, procedural macros, async/await, Pin, advanced traits (associated types, GATs), performance optimization, profiling, advanced patterns.
+
+## Prerequisites
+
+**Required**:
+
+- Rust installed and working (see [Initial Setup](/en/learn/software-engineering/programming-languages/rust/tutorials/initial-setup))
+- Experience with at least one programming language
+- Ability to run Rust programs (`rustc` or `cargo`)
+
+**Recommended (helpful but not required)**:
+
+- Familiarity with systems programming concepts (memory, pointers)
+- Experience with statically typed languages (C, C++, Java, Go)
+- Understanding of compilation and linking basics
+
+**No prior Rust experience required** - This guide assumes you're new to Rust but experienced with programming in general. You should be comfortable reading code, understanding basic programming concepts (variables, functions, loops), and learning through hands-on experimentation.
 
 ## How to Use This Tutorial
 

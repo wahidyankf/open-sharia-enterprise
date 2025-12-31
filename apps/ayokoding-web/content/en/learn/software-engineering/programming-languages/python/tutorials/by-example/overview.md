@@ -22,9 +22,26 @@ Traditional tutorials explain concepts with prose, then show code. By-example **
 
 This approach works best for developers who **prefer learning through working code** rather than reading documentation.
 
-## What Does 95% Coverage Mean?
+## Learning Path
 
-This tutorial achieves **95% coverage** of Python features needed for production work:
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    A["Beginner<br/>Examples 1-27<br/>Python Fundamentals"] --> B["Intermediate<br/>Examples 28-54<br/>Production Patterns"]
+    B --> C["Advanced<br/>Examples 55-80<br/>Expert Mastery"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+```
+
+Progress from fundamentals through production patterns to expert mastery. Each level builds on the previous, increasing in sophistication and introducing more Pythonic idioms.
+
+## Coverage Philosophy
+
+This tutorial provides **95% coverage of Python** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+
+### What's Covered
 
 **Included (95%)**:
 
@@ -44,13 +61,17 @@ This tutorial achieves **95% coverage** of Python features needed for production
 - Standard library essentials (pathlib, collections, datetime, json)
 - Virtual environments and packaging
 
-**Excluded (5%)**:
+### What's NOT Covered
 
-- CPython internals and C extensions
-- Rare standard library modules (aifc, sunau, uu)
-- Platform-specific advanced features (ctypes internals, Windows registry)
-- Deprecated features (imp module, old-style classes)
-- Framework-specific internals (Django ORM source, Flask internals)
+This guide focuses on **learning-oriented examples**, not problem-solving recipes or production deployment. For additional topics:
+
+- **CPython internals and C extensions** - Implementation details beyond the language
+- **Rare standard library modules** - aifc, sunau, uu, and other niche modules
+- **Platform-specific features** - ctypes internals, Windows registry
+- **Deprecated features** - imp module, old-style classes
+- **Framework internals** - Django ORM source, Flask internals (covered at introductory level only)
+
+The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
 
 ## Tutorial Structure
 
@@ -217,6 +238,59 @@ pip install jupyter
 jupyter notebook
 # Create new notebook, paste examples in cells
 ```
+
+## Learning Strategies
+
+### For Java/C# Developers
+
+You're used to static typing and verbose OOP. Python will feel liberating but initially unfamiliar:
+
+- **Dynamic typing**: No type declarations required (though type hints are available)
+- **Duck typing**: If it walks like a duck and quacks like a duck, it's a duck
+- **No braces**: Indentation defines code blocks, whitespace matters
+
+Focus on Examples 1-10 (Python basics) and Examples 40-45 (type hints) to bridge your static typing background.
+
+### For JavaScript/TypeScript Developers
+
+You understand dynamic typing and async patterns. Python has similar flexibility:
+
+- **Similar feel**: Dynamic typing, first-class functions, flexible syntax
+- **Different async model**: `async/await` works similarly but with different event loop semantics
+- **No `this` confusion**: Methods receive `self` explicitly
+
+Focus on Examples 55-65 (asyncio) and Examples 28-35 (decorators) to leverage your JS knowledge.
+
+### For C/C++ Developers
+
+You understand systems programming and pointers. Python abstracts all of that:
+
+- **No manual memory**: Garbage collection handles everything
+- **No pointers**: References are implicit, everything is an object
+- **Slower but productive**: Rapid development, slower execution
+
+Focus on Examples 70-80 (performance optimization, C extensions) to understand when Python's abstractions matter.
+
+### For Ruby Developers
+
+You know dynamic, expressive languages. Python is similar but more explicit:
+
+- **Explicit is better**: No implicit returns, blocks, or magic methods (mostly)
+- **One way to do it**: Python prefers single obvious solutions
+- **Significant whitespace**: Indentation instead of `end` keywords
+
+Focus on Examples 35-45 (comprehensions, generators) to see Python's expressive patterns.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example runs in Python REPL or as scripts
+- **Learn by doing**: Understanding comes from running and modifying code
+- **Pattern recognition**: See the same patterns in different contexts across 80 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
 
 ## What You'll Learn
 
