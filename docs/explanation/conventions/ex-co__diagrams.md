@@ -1147,6 +1147,56 @@ flowchart LR
 
 - Python intermediate Example 33 (context manager): Removed `style` commands from sequence diagram
 
+### Error 3: Colons in State Diagram Edge Labels
+
+**CRITICAL**: In `stateDiagram-v2`, edge labels cannot contain colon characters (`:`).
+
+**Syntax**: State diagram edge labels use the format `state1 --> state2: label text here`, where the colon after `state2` separates the transition from the label text.
+
+**Problem**: If the label text itself contains colons (like Clojure keywords `:count` or `:users`, or other code snippets with colons), Mermaid's parser fails because the colon is a reserved separator character.
+
+**Problem Example (❌ BROKEN)**:
+
+```mermaid
+stateDiagram-v2
+    complex --> updated: swap! update :count inc
+    updated --> final: swap! update :users conj
+```
+
+**Why it fails**: The parser sees `:count` and `:users` as additional syntax elements, not part of the label text. The first colon in the label text (`:` in `:count`) is interpreted as a new separator, breaking the parsing.
+
+**Solution (✅ WORKING)**:
+
+Remove colons from edge label text. Use plain text descriptions instead of literal code syntax when colons are present:
+
+```mermaid
+stateDiagram-v2
+    complex --> updated: swap! update count inc
+    updated --> final: swap! update users conj
+```
+
+**Alternative - Descriptive Text**:
+
+If the code syntax is critical to show, use descriptive text that avoids colons:
+
+```mermaid
+stateDiagram-v2
+    complex --> updated: update count with increment
+    updated --> final: add user to collection
+```
+
+**Rule**: Avoid colons in state diagram edge labels. Remove colons from code snippets in labels (e.g., use `count` instead of `:count` for Clojure keywords, use `key value` instead of `key: value` for object notation).
+
+**Affected syntax**: `stateDiagram-v2` only. This does NOT affect:
+
+- Flowchart edge labels (`graph TD` / `flowchart TD`) - colons work fine in flowchart edge labels
+- Sequence diagram messages - different syntax, no issue with colons
+- Node text in any diagram type - only affects state diagram edge labels
+
+**Rationale**: In state diagrams, the colon is a structural syntax element that separates the transition from its label. Any additional colons in the label text create parsing ambiguity.
+
+**Real-World Context**: This error was discovered when documenting Clojure state transitions using keywords like `:count` and `:users` in edge labels.
+
 ### Quick Reference: Character Escaping
 
 **Characters requiring HTML entity codes in Mermaid node text:**
@@ -1177,7 +1227,7 @@ graph TD
 
 Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
-### Error 5: Square Brackets and Angle Brackets in Node Text
+### Error 4: Square Brackets and Angle Brackets in Node Text
 
 **CRITICAL**: Square brackets and angle brackets in Mermaid node text cause parsing errors.
 
@@ -1231,7 +1281,7 @@ graph TD
 - TypeScript generics: `Array<T>` → `Array#60;T#62;`
 - Java generics: `HashMap<K, V>` → `HashMap#60;K, V#62;`
 
-### Error 4: Literal Quotes Inside Node Text
+### Error 5: Literal Quotes Inside Node Text
 
 **CRITICAL**: Literal quote characters inside Mermaid node text cause parsing errors.
 
@@ -1262,7 +1312,7 @@ graph TD
 
 **Real-World Context**: This error was discovered when trying to show code syntax like `let x = "hello"` in Mermaid nodes. The working solution is to either omit the quotes (`let x = hello`) or use descriptive text (`let x = string value`).
 
-### Error 3: Nested Escaping in Node Text
+### Error 6: Nested Escaping in Node Text
 
 **CRITICAL**: Combining HTML entity codes with escaped quotes in the same node text causes parsing failures.
 
@@ -1313,7 +1363,7 @@ graph TD
 
 **Last Updated**: 2025-12-31
 
-### Error 6: Sequence Diagram Participant Syntax with "as" Keyword
+### Error 7: Sequence Diagram Participant Syntax with "as" Keyword
 
 **CRITICAL**: Using `participant X as "Display Name"` syntax with quotes in sequence diagrams causes rendering failures in Hugo/Hextra environments.
 

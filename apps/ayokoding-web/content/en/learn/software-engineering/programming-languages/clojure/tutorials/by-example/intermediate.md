@@ -217,9 +217,9 @@ stateDiagram-v2
     atom_0 --> atom_1: swap! inc
     atom_1 --> atom_6: swap! + 5
     atom_6 --> atom_0: reset! 0
-    atom_0 --> complex: Create {:users [] :count 0}
-    complex --> updated: swap! update :count inc
-    updated --> final: swap! update :users conj
+    atom_0 --> complex: Create map with users and count
+    complex --> updated: swap! update count inc
+    updated --> final: swap! update users conj
 
     note right of atom_0: Deref with @
     note right of atom_1: Atomic increment
