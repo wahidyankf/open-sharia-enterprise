@@ -3501,70 +3501,188 @@ Mix is Elixir's build tool. It manages dependencies, compiles code, runs tests, 
 
 **Code**:
 
-```bash
-
+```elixir
+# mix.exs file - project configuration
 defmodule MyApp.MixProject do
+  # => Mix project module (always in mix.exs file)
+  # => Module name convention: <AppName>.MixProject
+  # => File location: project root (mix.exs)
   use Mix.Project
+  # => use Mix.Project: imports Mix project macros
+  # => Required for Mix to recognize this as project configuration
+  # => Provides: project/0, application/0, deps/0 functions
 
   def project do
+    # => project/0: returns project configuration keyword list
+    # => Called by Mix during compilation and build
+    # => Required function for all Mix projects
     [
+      # => Keyword list with project settings
+      # => Order doesn't matter (keyword list)
       app: :my_app,
+      # => app: application name (atom)
+      # => Used for: releases, application tree, dependencies
+      # => Convention: snake_case atoms
       version: "0.1.0",
+      # => version: semantic versioning string
+      # => Format: "MAJOR.MINOR.PATCH"
+      # => Used for: releases, dependency resolution
       elixir: "~> 1.15",
+      # => elixir: minimum Elixir version requirement
+      # => ~> 1.15: allows 1.15.x (not 1.16 or 2.0)
+      # => Pessimistic version constraint (semantic versioning)
       start_permanent: Mix.env() == :prod,
+      # => start_permanent: restart strategy for application
+      # => Mix.env(): current environment (:dev, :test, :prod)
+      # => true in :prod: application restarts on crash
+      # => false in :dev/:test: application doesn't restart (easier debugging)
       deps: deps()
+      # => deps: calls deps/0 function below
+      # => Returns list of dependencies
+      # => Mix fetches and compiles these
     ]
+    # => Returns keyword list to Mix
   end
 
   def application do
+    # => application/0: OTP application configuration
+    # => Optional function (can omit if no special config)
+    # => Defines application behavior and dependencies
     [
+      # => Keyword list with application settings
       extra_applications: [:logger]
+      # => extra_applications: OTP apps to start before this app
+      # => :logger: Elixir's logging application (built-in)
+      # => Automatically starts Logger when app starts
+      # => Other common: [:crypto, :ssl, :runtime_tools]
     ]
+    # => Returns keyword list to Mix
   end
 
   defp deps do
+    # => deps/0: private function returning dependencies
+    # => defp: private (only callable within this module)
+    # => Convention: separate function for better organization
     [
+      # => List of dependency tuples
+      # => Format: {name, version} or {name, version, options}
       {:httpoison, "~> 2.0"},     # HTTP client
+      # => Dependency: HTTPoison HTTP client library
+      # => "~> 2.0": allows 2.x versions (not 3.0)
+      # => Mix fetches from Hex.pm (default package registry)
+      # => Compiled and available in project
       {:jason, "~> 1.4"},         # JSON parser
+      # => Dependency: Jason JSON parser
+      # => "~> 1.4": allows 1.4.x versions
+      # => Fast JSON encoder/decoder
       {:ex_doc, "~> 0.30", only: :dev}  # Documentation generator
+      # => Dependency: ExDoc documentation generator
+      # => only: :dev: only in development environment
+      # => Not included in production releases
+      # => Generates HTML docs from @moduledoc/@doc
     ]
+    # => Returns list of dependencies
+    # => Mix resolves, fetches, and compiles them
   end
+  # => deps/0 defines all project dependencies
 end
+# => mix.exs complete: defines project structure
 
 
+# lib/my_app.ex - main application module
 defmodule MyApp do
+  # => Main application module
+  # => File location: lib/my_app.ex
+  # => Entry point for application logic
   @moduledoc """
   Documentation for `MyApp`.
   """
+  # => @moduledoc: module-level documentation
+  # => Appears in generated docs (ExDoc)
+  # => Markdown format supported
+  # => Accessed via: h MyApp (in IEx)
 
   @doc """
   Hello world function.
   """
+  # => @doc: function-level documentation
+  # => Documents the function below
+  # => Appears in generated docs and IEx
+  # => Can include examples (doctests)
   def hello do
+    # => Public function (def, not defp)
+    # => Simple example function
     :world
+    # => Returns :world atom
   end
+  # => hello/0 complete
 end
+# => MyApp module complete
 
+# test/my_app_test.exs - test file
 defmodule MyAppTest do
+  # => Test module for MyApp
+  # => File location: test/my_app_test.exs
+  # => Convention: <ModuleName>Test
   use ExUnit.Case
+  # => Import ExUnit testing macros
+  # => Enables: test, assert, doctest, etc.
   doctest MyApp  # Runs doctests from @doc
+  # => doctest/1: extracts and runs examples from @doc comments
+  # => Scans MyApp module for ## Examples sections
+  # => Verifies examples produce expected output
+  # => Keeps documentation accurate (tested)
 
   test "greets the world" do
+    # => Regular unit test
+    # => Tests MyApp.hello/0 function
     assert MyApp.hello() == :world
+    # => Verify hello/0 returns :world
+    # => Assertion passes
   end
+  # => Test complete
 end
+# => Test module complete
 
 
+# config/config.exs - application configuration
 import Config
+# => import Config: imports configuration macros
+# => Enables: config/3 macro
+# => Required at top of config files
 
 config :my_app,
+# => config/2: configures application :my_app
+# => First arg: application name (atom)
+# => Second arg: keyword list of settings
   api_key: "development_key",
+  # => api_key: configuration value
+  # => Available via Application.get_env/2
+  # => Default value for development
   timeout: 5000
+  # => timeout: 5000ms timeout setting
+  # => Configuration values are atoms/strings/numbers/lists/maps
+# => Configuration stored in application environment
 
 import_config "#{Mix.env()}.exs"  # Environment-specific config
+# => import_config/1: imports environment-specific config
+# => Mix.env(): current environment (:dev, :test, :prod)
+# => Loads: config/dev.exs, config/test.exs, or config/prod.exs
+# => Environment-specific values override defaults above
+# => Pattern: config.exs (defaults) + env.exs (overrides)
 
+# Accessing configuration at runtime
 api_key = Application.get_env(:my_app, :api_key)
+# => Application.get_env/2: retrieves config value
+# => First arg: application name (:my_app)
+# => Second arg: config key (:api_key)
+# => Returns: "development_key" (or value from env.exs)
+# => Returns: nil if key not found
 timeout = Application.get_env(:my_app, :timeout, 3000)  # Default 3000
+# => Application.get_env/3: retrieves config with default
+# => Third arg: default value if key not found
+# => Returns: 5000 (from config) or 3000 (if not configured)
+# => Pattern: always provide defaults for robustness
 ```
 
 **Key Takeaway**: Mix provides project scaffolding, dependency management, and build tools. Standard structure: `lib/` for code, `test/` for tests, `mix.exs` for configuration. Use `mix` commands to compile, test, and manage projects.
