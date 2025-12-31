@@ -4674,95 +4674,294 @@ Supervisors define child processes using child specifications that control resta
 ```elixir
 # Basic child specification
 child_spec = %{
-  id: MyWorker,  # => Unique identifier for child
-  start: {MyWorker, :start_link, [[name: :worker_1]]},  # => {module, function, args}
-  restart: :permanent,  # => Always restart (:permanent | :temporary | :transient)
-  shutdown: 5000,  # => Wait 5s for graceful shutdown before kill
-  type: :worker  # => :worker or :supervisor
+  # => Child spec: map defining how supervisor manages child process
+  # => Supervisor uses this to start, restart, and shutdown child
+  id: MyWorker,
+  # => id: unique identifier for child in supervisor
+  # => Must be unique within supervisor (no two children same id)
+  # => Type: atom, module name, or any term
+  # => Used to identify child in Supervisor.which_children/1
+  start: {MyWorker, :start_link, [[name: :worker_1]]},
+  # => start: MFA tuple (module, function, arguments)
+  # => Supervisor calls MyWorker.start_link([name: :worker_1])
+  # => Must return {:ok, pid} or {:ok, pid, info}
+  # => Type: {module(), atom(), [term()]}
+  restart: :permanent,
+  # => restart: defines restart strategy when child exits
+  # => :permanent - always restart (critical processes)
+  # => :temporary - never restart (one-time tasks, stateless workers)
+  # => :transient - restart only on abnormal exit (exit code != :normal)
+  # => Default: :permanent (use GenServer)
+  shutdown: 5000,
+  # => shutdown: milliseconds to wait for graceful shutdown
+  # => Supervisor sends :shutdown exit signal to child
+  # => If child doesn't exit within timeout, supervisor sends :kill
+  # => Type: non_neg_integer() | :infinity | :brutal_kill
+  # => :brutal_kill - immediately sends :kill (no graceful period)
+  # => :infinity - wait forever (use for supervisors, risky for workers)
+  type: :worker
+  # => type: :worker or :supervisor
+  # => :worker - leaf process (GenServer, Task, Agent)
+  # => :supervisor - another supervisor (nested supervision tree)
+  # => Affects shutdown order (supervisors shutdown last)
 }
+# => Returns: child spec map
+# => Used by Supervisor.start_link/2 or Supervisor.init/2
 
 # Worker module implementing child_spec/1
 defmodule MyWorker do
+  # => Worker module with GenServer behavior
+  # => Demonstrates child_spec/1 callback for custom configuration
   use GenServer
+  # => use GenServer: imports default child_spec/1 implementation
+  # => Default restart: :permanent, shutdown: 5000, type: :worker
+  # => Can override child_spec/1 below
 
   def start_link(opts) do
+    # => start_link/1: starts GenServer process (linked to caller)
+    # => opts: keyword list with configuration
+    # => Pattern: accept opts for flexibility
     name = Keyword.get(opts, :name, __MODULE__)
+    # => Extract :name from opts, default to module name
+    # => Keyword.get/3: gets value or default
+    # => __MODULE__: current module name (MyWorker)
+    # => name: atom for process registration
     GenServer.start_link(__MODULE__, opts, name: name)
+    # => Start GenServer with init callback receiving opts
+    # => name: name option registers process with atom
+    # => Returns: {:ok, pid} on success
   end
+  # => start_link/1 complete
 
   # Override default child spec
   def child_spec(opts) do
+    # => child_spec/1: callback for custom child specification
+    # => Overrides default from use GenServer
+    # => opts: arguments passed to child (from supervisor)
+    # => Called when supervisor starts child
     %{
+      # => Returns custom child spec map
+      # => Supervisor uses this instead of default
       id: Keyword.get(opts, :name, __MODULE__),
+      # => id: extracted from opts :name key
+      # => Enables multiple workers with different ids
+      # => Default: __MODULE__ (MyWorker) if :name not in opts
+      # => Pattern: dynamic id from opts for multiple instances
       start: {__MODULE__, :start_link, [opts]},
-      restart: :permanent,  # => Custom restart strategy
-      shutdown: 10_000  # => Custom shutdown timeout
+      # => start: calls MyWorker.start_link(opts)
+      # => opts: passed through from supervisor to start_link
+      # => __MODULE__: resolves to MyWorker
+      restart: :permanent,
+      # => Custom restart: :permanent (always restart on exit)
+      # => Overrides default :permanent (same in this case)
+      # => Could be :temporary or :transient for different workers
+      shutdown: 10_000
+      # => Custom shutdown: 10 seconds (10000ms)
+      # => Longer than default 5000ms
+      # => Reason: worker may need time for cleanup (flush queues, close connections)
+      # => After 10s, supervisor sends :kill signal
     }
+    # => Returns: child spec map with custom values
+    # => Supervisor uses this to manage worker lifecycle
   end
+  # => child_spec/1 complete
 
   @impl true
   def init(opts), do: {:ok, opts}
+  # => init/1: GenServer callback, stores opts as state
+  # => Returns: {:ok, opts} (opts becomes GenServer state)
+  # => Minimal implementation for example
 end
+# => MyWorker module complete
 
 # Restart strategies
 # :permanent - Always restart (default for critical workers)
+# => Always restart: child crashes → supervisor restarts immediately
+# => Use for: database connections, core services, state machines
+# => Exit reason ignored (normal or abnormal, always restart)
 # :temporary - Never restart (one-time tasks)
+# => Never restart: child exits → supervisor removes from tree
+# => Use for: one-off tasks, disposable workers, fire-and-forget operations
+# => Exit reason ignored (normal or crash, never restart)
 # :transient - Restart only on abnormal exit (expected failures are OK)
+# => Restart on crash: abnormal exit → restart, normal exit → remove
+# => Use for: workers that complete successfully (Task), retryable operations
+# => Normal exit: :normal, :shutdown, {:shutdown, term} → NO restart
+# => Abnormal exit: any other reason → restart
+# => Pattern: processes that should finish cleanly without restart
 
 defmodule Database do
+  # => Database module: critical worker with permanent restart
+  # => Demonstrates :permanent restart for essential services
   use GenServer
+  # => use GenServer: GenServer behavior with default child_spec
 
   def child_spec(_opts) do
+    # => child_spec/1: custom spec for database worker
+    # => _opts: ignored (database has no configuration in this example)
     %{
       id: __MODULE__,
+      # => id: Database (module name)
+      # => Single instance (not multiple like MyWorker)
       start: {__MODULE__, :start_link, []},
-      restart: :permanent,  # => Critical - must always run
-      shutdown: 30_000  # => Long shutdown for cleanup
+      # => start: calls Database.start_link() with no args
+      # => Empty list: no configuration needed
+      restart: :permanent,
+      # => Critical: database must always run
+      # => If database crashes, app cannot function → restart immediately
+      # => Supervisor restarts on any exit (normal or abnormal)
+      shutdown: 30_000
+      # => Long shutdown: 30 seconds
+      # => Reason: database needs time for:
+      # =>   - Flushing pending writes to disk
+      # =>   - Closing connections gracefully
+      # =>   - Releasing locks
+      # =>   - Completing transactions
+      # => After 30s, supervisor sends :kill (may lose data)
     }
+    # => Returns: child spec with critical worker settings
   end
+  # => child_spec/1 complete
 
   def start_link, do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  # => start_link/0: starts database GenServer
+  # => Registers with name Database (module name)
+  # => Returns: {:ok, pid}
   @impl true
   def init(_), do: {:ok, %{}}
+  # => init/1: initializes empty state map
+  # => Real database would connect here
+  # => Returns: {:ok, %{}} (empty map as state)
 end
+# => Database module complete
 
 defmodule Cache do
+  # => Cache module: transient worker (restart on crash, not normal exit)
+  # => Demonstrates :transient restart for optional services
   use GenServer
+  # => use GenServer: GenServer behavior
 
   def child_spec(_opts) do
+    # => child_spec/1: custom spec for cache worker
+    # => _opts: ignored (no configuration)
     %{
       id: __MODULE__,
+      # => id: Cache (module name)
+      # => Single instance
       start: {__MODULE__, :start_link, []},
-      restart: :transient,  # => Restart on crash, not on normal exit
+      # => start: calls Cache.start_link()
+      # => No args: cache self-contained
+      restart: :transient,
+      # => Transient: restart on crash, not on normal exit
+      # => Normal exit (cache clears itself): no restart
+      # => Crash (bug, memory): restart
+      # => Pattern: processes that can complete successfully
+      # => Example: cache might exit :normal after TTL expiry
       shutdown: 5_000
+      # => Standard shutdown: 5 seconds
+      # => Cache can flush quickly (in-memory data)
+      # => No persistent state to save
     }
+    # => Returns: child spec with transient restart
   end
+  # => child_spec/1 complete
 
   def start_link, do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  # => start_link/0: starts cache GenServer
+  # => Registered as Cache
+  # => Returns: {:ok, pid}
   @impl true
   def init(_), do: {:ok, %{}}
+  # => init/1: initializes empty cache state
+  # => Real cache would load data here
+  # => Returns: {:ok, %{}}
 end
+# => Cache module complete
 
 # Supervisor with child specs
 defmodule MyApp.Supervisor do
+  # => Application supervisor managing multiple children
+  # => Demonstrates supervisor with mixed child specs
   use Supervisor
+  # => use Supervisor: Supervisor behavior
+  # => Enables Supervisor.init/2, start_link/3
 
   def start_link(opts) do
+    # => start_link/1: starts supervisor process
+    # => opts: configuration for supervisor
     Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
+    # => Calls init/1 callback with opts
+    # => name: MyApp.Supervisor: registers supervisor
+    # => Returns: {:ok, pid} on success
   end
+  # => start_link/1 complete
 
   @impl true
   def init(_opts) do
+    # => init/1: supervisor callback defining children
+    # => _opts: ignored (no configuration needed)
+    # => Called when supervisor starts
     children = [
-      Database,  # => Uses Database.child_spec/1
-      Cache,  # => Uses Cache.child_spec/1
-      {MyWorker, name: :worker_1},  # => Tuple form passes args
+      # => List of child specifications
+      # => Supervisor starts children in order (top to bottom)
+      Database,
+      # => Module form: calls Database.child_spec([])
+      # => Passes empty list to child_spec/1
+      # => Database.child_spec([]) → returns child spec map
+      # => Supervisor extracts :start field and calls start_link
+      # => Result: Database started with :permanent restart
+      Cache,
+      # => Module form: calls Cache.child_spec([])
+      # => Cache started with :transient restart
+      # => Started after Database (dependency order)
+      {MyWorker, name: :worker_1},
+      # => Tuple form: {module, args}
+      # => Calls MyWorker.child_spec([name: :worker_1])
+      # => args: passed to child_spec/1
+      # => id: :worker_1 (from opts)
+      # => Enables multiple MyWorker instances with different ids
       {MyWorker, name: :worker_2}
+      # => Second MyWorker instance with id :worker_2
+      # => Different id enables two workers (no conflict)
+      # => Both use MyWorker.child_spec but different ids
     ]
+    # => children: list of 4 child specs
+    # => Order: Database → Cache → worker_1 → worker_2
+    # => Start order matters (database before workers using database)
 
     Supervisor.init(children, strategy: :one_for_one)
+    # => Supervisor.init/2: initializes supervisor with children and strategy
+    # => children: list of child specs (modules or tuples)
+    # => strategy: :one_for_one (restart only failed child)
+    # => Other strategies: :one_for_all, :rest_for_one
+    # => Returns: {:ok, {supervisor_flags, children}}
+    # => Supervisor then starts all children in order
   end
+  # => init/1 complete
 end
+# => MyApp.Supervisor module complete
+
+# Starting the supervisor
+{:ok, sup_pid} = MyApp.Supervisor.start_link([])
+# => Starts supervisor with empty opts
+# => Supervisor calls init/1 → starts all 4 children
+# => Database started first, then Cache, then workers
+# => Returns: {:ok, pid} where pid is supervisor process
+# => Type: {:ok, pid()}
+
+Supervisor.which_children(sup_pid)
+# => Lists all children managed by supervisor
+# => Returns: [{id, pid, type, modules}, ...]
+# => Example: [{Database, #PID<0.200.0>, :worker, [Database]}, ...]
+# => Shows: id, child pid, type (:worker/:supervisor), modules
+
+Supervisor.count_children(sup_pid)
+# => Counts children by type
+# => Returns: %{active: 4, specs: 4, supervisors: 0, workers: 4}
+# => active: running children
+# => specs: total child specs
+# => supervisors: children that are supervisors (0 here)
+# => workers: children that are workers (4 here)
 ```
 
 **Key Takeaway**: Child specs control how supervisors manage children. Use `:permanent` for critical processes, `:transient` for expected failures, `:temporary` for one-time tasks. Implement `child_spec/1` to customize restart and shutdown behavior.
