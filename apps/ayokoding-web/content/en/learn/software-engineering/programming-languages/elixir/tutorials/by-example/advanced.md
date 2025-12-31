@@ -44,41 +44,41 @@ defmodule Counter do
 
   # Client API (public interface)
   def start_link(initial_value \\ 0) do
-    GenServer.start_link(__MODULE__, initial_value, name: __MODULE__)
+    GenServer.start_link(__MODULE__, initial_value, name: __MODULE__)  # => {:ok, #PID<...>} (starts GenServer process)
   end
 
   def increment do
-    GenServer.cast(__MODULE__, :increment)  # Asynchronous, no reply
+    GenServer.cast(__MODULE__, :increment)  # => :ok (asynchronous, returns immediately)
   end
 
   def get do
-    GenServer.call(__MODULE__, :get)  # Synchronous, waits for reply
+    GenServer.call(__MODULE__, :get)  # => waits for reply from server
   end
 
   def add(value) do
-    GenServer.call(__MODULE__, {:add, value})
+    GenServer.call(__MODULE__, {:add, value})  # => returns new value after addition
   end
 
   # Server Callbacks (private implementation)
   @impl true
   def init(initial_value) do
-    {:ok, initial_value}  # Return {:ok, state}
+    {:ok, initial_value}  # => {:ok, 0} (returns initial state to GenServer)
   end
 
   @impl true
   def handle_cast(:increment, state) do
-    {:noreply, state + 1}  # Return {:noreply, new_state}
+    {:noreply, state + 1}  # => {:noreply, 1} (updates state asynchronously, no reply to caller)
   end
 
   @impl true
   def handle_call(:get, _from, state) do
-    {:reply, state, state}  # Return {:reply, reply_value, new_state}
+    {:reply, state, state}  # => {:reply, 2, 2} (returns current state, state unchanged)
   end
 
   @impl true
   def handle_call({:add, value}, _from, state) do
-    new_state = state + value
-    {:reply, new_state, new_state}
+    new_state = state + value  # => new_state is 7 (2 + 5)
+    {:reply, new_state, new_state}  # => {:reply, 7, 7} (returns new value and updates state)
   end
 end
 
@@ -112,24 +112,24 @@ defmodule UserRegistry do
   # Server callbacks
   @impl true
   def init(_initial_state) do
-    {:ok, %{}}  # Empty map as state
+    {:ok, %{}}  # => {:ok, %{}} (empty map as initial state)
   end
 
   @impl true
   def handle_call({:register, name, data}, _from, state) do
-    new_state = Map.put(state, name, data)
-    {:reply, :ok, new_state}
+    new_state = Map.put(state, name, data)  # => %{"alice" => %{age: 30, ...}}
+    {:reply, :ok, new_state}  # => {:reply, :ok, new_state} (confirms registration)
   end
 
   @impl true
   def handle_call({:lookup, name}, _from, state) do
-    result = Map.get(state, name, :not_found)
-    {:reply, result, state}  # State unchanged
+    result = Map.get(state, name, :not_found)  # => %{age: 30, ...} or :not_found
+    {:reply, result, state}  # => {:reply, result, state} (state unchanged)
   end
 
   @impl true
   def handle_call(:list_all, _from, state) do
-    {:reply, state, state}
+    {:reply, state, state}  # => {:reply, %{"alice" => ..., "bob" => ...}, state}
   end
 end
 
@@ -186,7 +186,7 @@ defmodule Account do
 
   # Client API
   def start_link(initial_balance) do
-    GenServer.start_link(__MODULE__, initial_balance)
+    GenServer.start_link(__MODULE__, initial_balance)  # => {:ok, #PID<...>}
   end
 
   def deposit(pid, amount) when amount > 0 do
@@ -208,38 +208,38 @@ defmodule Account do
   # Server callbacks
   @impl true
   def init(initial_balance) do
-    state = %__MODULE__{balance: initial_balance}
-    {:ok, state}
+    state = %__MODULE__{balance: initial_balance}  # => %Account{balance: 1000, transactions: []}
+    {:ok, state}  # => {:ok, %Account{...}}
   end
 
   @impl true
   def handle_call({:deposit, amount}, _from, state) do
-    new_balance = state.balance + amount
-    transaction = {:deposit, amount, DateTime.utc_now()}
-    new_state = %{state | balance: new_balance, transactions: [transaction | state.transactions]}
-    {:reply, {:ok, new_balance}, new_state}
+    new_balance = state.balance + amount  # => 1500 (1000 + 500)
+    transaction = {:deposit, amount, DateTime.utc_now()}  # => {:deposit, 500, ~U[...]}
+    new_state = %{state | balance: new_balance, transactions: [transaction | state.transactions]}  # => %Account{balance: 1500, transactions: [{:deposit, 500, ...}]}
+    {:reply, {:ok, new_balance}, new_state}  # => {:reply, {:ok, 1500}, new_state}
   end
 
   @impl true
   def handle_call({:withdraw, amount}, _from, state) do
     if state.balance >= amount do
-      new_balance = state.balance - amount
-      transaction = {:withdrawal, amount, DateTime.utc_now()}
-      new_state = %{state | balance: new_balance, transactions: [transaction | state.transactions]}
-      {:reply, {:ok, new_balance}, new_state}
+      new_balance = state.balance - amount  # => 1300 (1500 - 200)
+      transaction = {:withdrawal, amount, DateTime.utc_now()}  # => {:withdrawal, 200, ~U[...]}
+      new_state = %{state | balance: new_balance, transactions: [transaction | state.transactions]}  # => %Account{balance: 1300, transactions: [{:withdrawal, 200, ...}, ...]}
+      {:reply, {:ok, new_balance}, new_state}  # => {:reply, {:ok, 1300}, new_state}
     else
-      {:reply, {:error, :insufficient_funds}, state}  # State unchanged
+      {:reply, {:error, :insufficient_funds}, state}  # => {:reply, {:error, :insufficient_funds}, state} (state unchanged)
     end
   end
 
   @impl true
   def handle_call(:balance, _from, state) do
-    {:reply, state.balance, state}
+    {:reply, state.balance, state}  # => {:reply, 1300, state} (state unchanged)
   end
 
   @impl true
   def handle_call(:transactions, _from, state) do
-    {:reply, Enum.reverse(state.transactions), state}
+    {:reply, Enum.reverse(state.transactions), state}  # => {:reply, [{:deposit, 500, ...}, {:withdrawal, 200, ...}], state}
   end
 end
 
@@ -323,57 +323,57 @@ defmodule ResilientServer do
   use GenServer
 
   def start_link do
-    GenServer.start_link(__MODULE__, [])
+    GenServer.start_link(__MODULE__, [])  # => {:ok, #PID<...>}
   end
 
   def do_work(pid) do
-    GenServer.call(pid, :work, 10_000)  # 10 second timeout
+    GenServer.call(pid, :work, 10_000)  # => 10 second timeout, returns :done
   end
 
   def slow_work(pid) do
-    GenServer.call(pid, :slow_work, 1_000)  # 1 second timeout
+    GenServer.call(pid, :slow_work, 1_000)  # => 1 second timeout (will raise timeout error)
   end
 
   def crash_me(pid) do
-    GenServer.cast(pid, :crash)
+    GenServer.cast(pid, :crash)  # => :ok (async, server will crash)
   end
 
   @impl true
   def init(_) do
-    {:ok, %{}}
+    {:ok, %{}}  # => {:ok, %{}} (empty map as state)
   end
 
   @impl true
   def handle_call(:work, _from, state) do
     # Simulate work
-    :timer.sleep(500)
-    {:reply, :done, state}
+    :timer.sleep(500)  # => sleep 500ms
+    {:reply, :done, state}  # => {:reply, :done, state} (completes within timeout)
   end
 
   @impl true
   def handle_call(:slow_work, _from, state) do
     # Too slow, will timeout
-    :timer.sleep(2_000)
-    {:reply, :done, state}
+    :timer.sleep(2_000)  # => sleep 2s (exceeds 1s timeout)
+    {:reply, :done, state}  # => never reached (timeout occurs first)
   end
 
   @impl true
   def handle_cast(:crash, _state) do
-    raise "Server crashed!"
+    raise "Server crashed!"  # => raises error, server terminates
   end
 
   # Handle unexpected messages
   @impl true
   def handle_info(msg, state) do
-    Logger.warn("Unexpected message: #{inspect(msg)}")
-    {:noreply, state}
+    Logger.warn("Unexpected message: #{inspect(msg)}")  # => logs warning
+    {:noreply, state}  # => {:noreply, state} (ignores message, continues)
   end
 
   # Stop callback
   @impl true
   def terminate(reason, _state) do
-    Logger.info("Server terminating: #{inspect(reason)}")
-    :ok
+    Logger.info("Server terminating: #{inspect(reason)}")  # => logs termination reason
+    :ok  # => :ok (cleanup complete)
   end
 end
 
@@ -390,39 +390,39 @@ defmodule SafeServer do
   use GenServer
 
   def start_link do
-    GenServer.start_link(__MODULE__, [])
+    GenServer.start_link(__MODULE__, [])  # => {:ok, #PID<...>}
   end
 
   def divide(pid, a, b) do
-    GenServer.call(pid, {:divide, a, b})
+    GenServer.call(pid, {:divide, a, b})  # => calls division handler
   end
 
   @impl true
   def init(_) do
-    {:ok, %{}}
+    {:ok, %{}}  # => {:ok, %{}}
   end
 
   @impl true
   def handle_call({:divide, a, b}, _from, state) do
     try do
-      result = a / b
-      {:reply, {:ok, result}, state}
+      result = a / b  # => 5.0 or raises ArithmeticError
+      {:reply, {:ok, result}, state}  # => {:reply, {:ok, 5.0}, state}
     rescue
-      ArithmeticError ->
-        {:reply, {:error, :division_by_zero}, state}
+      ArithmeticError ->  # => catches division by zero
+        {:reply, {:error, :division_by_zero}, state}  # => {:reply, {:error, :division_by_zero}, state}
     end
   end
 
   # Alternative: return error tuple without exceptions
   def handle_call_safe({:divide, _a, 0}, _from, state) do
-    {:reply, {:error, :division_by_zero}, state}
+    {:reply, {:error, :division_by_zero}, state}  # => pattern matches zero divisor
   end
   def handle_call_safe({:divide, a, b}, _from, state) do
-    {:reply, {:ok, a / b}, state}
+    {:reply, {:ok, a / b}, state}  # => {:reply, {:ok, result}, state}
   end
 end
 
-{:ok, pid} = SafeServer.start_link()
+{:ok, pid} = SafeServer.start_link()  # => {:ok, #PID<...>}
 SafeServer.divide(pid, 10, 2)  # => {:ok, 5.0}
 SafeServer.divide(pid, 10, 0)  # => {:error, :division_by_zero}
 ```

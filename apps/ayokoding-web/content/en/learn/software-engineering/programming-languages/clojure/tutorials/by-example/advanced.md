@@ -468,12 +468,12 @@ graph TD
 
 (defrecord Database [host port connection]
   component/Lifecycle
-  (start [this]
+  (start [this]                              ;; => Start: establish connection
     (println "Starting database connection")
-    (assoc this :connection {:host host :port port}))
-  (stop [this]
+    (assoc this :connection {:host host :port port})) ;; => :connection now contains db handle
+  (stop [this]                               ;; => Stop: tear down connection
     (println "Stopping database connection")
-    (assoc this :connection nil)))
+    (assoc this :connection nil)))           ;; => :connection set to nil (disconnected))
 
 (defrecord WebServer [port database handler]
   component/Lifecycle
@@ -695,9 +695,11 @@ Access relational databases using next.jdbc.
 
 ;; Update
 (sql/update! db :users {:email "newemail@example.com"} ["id = ?" 1])
+;; => {:next.jdbc/update-count 1} (1 row updated)
 
 ;; Delete
 (sql/delete! db :users ["id = ?" 2])
+;; => {:next.jdbc/update-count 1} (1 row deleted)
 
 ;; Transaction
 (jdbc/with-transaction [tx db]
@@ -784,13 +786,15 @@ Write generative property-based tests.
     (= v (reverse (reverse v)))))
 
 (tc/quick-check 100 reverse-property)        ;; => Run 100 random tests
+;; => {:result true :num-tests 100 :seed 1234567890} (all tests passed)
 
 ;; Property: sort is idempotent
 (def sort-property
   (prop/for-all [v (gen/vector gen/int)]
     (= (sort v) (sort (sort v)))))
 
-(tc/quick-check 100 sort-property)
+(tc/quick-check 100 sort-property)           ;; => Run 100 random tests
+;; => {:result true :num-tests 100} (sort idempotence verified)
 
 ;; Custom generators
 (def email-gen
