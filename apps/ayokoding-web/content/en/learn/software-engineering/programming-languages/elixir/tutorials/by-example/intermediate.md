@@ -3699,9 +3699,14 @@ Doctests embed tests in documentation using `@doc` comments. They verify that co
 
 ```elixir
 defmodule StringHelper do
+  # => Module with string manipulation functions
+  # => Demonstrates doctests in @doc comments
   @moduledoc """
   Helper functions for string manipulation.
   """
+  # => @moduledoc: module-level documentation
+  # => Brief description of module purpose
+  # => Appears in generated docs and IEx (h StringHelper)
 
   @doc """
   Reverses a string.
@@ -3717,9 +3722,22 @@ defmodule StringHelper do
       iex> StringHelper.reverse("")
       ""
   """
+  # => @doc: function-level documentation
+  # => ## Examples section: contains doctests
+  # => iex>: IEx prompt (indicates doctest line)
+  # => Next line: expected output
+  # => doctest/1 in test file extracts and runs these
+  # => 3 examples test: normal case, different input, edge case (empty string)
   def reverse(string) do
+    # => reverse/1: reverses string character by character
+    # => Parameter: string (binary)
     String.reverse(string)
+    # => String.reverse/1: built-in function
+    # => Returns: reversed string
+    # => "hello" → "olleh"
   end
+  # => Function implementation matches doctest expectations
+  # => Doctests verify function works as documented
 
   @doc """
   Counts words in a string.
@@ -3735,11 +3753,23 @@ defmodule StringHelper do
       iex> StringHelper.word_count("")
       0
   """
+  # => ## Examples: 3 doctests
+  # => Test cases: multiple words, single word, empty string
+  # => Expected outputs: 2, 1, 0
   def word_count(string) do
+    # => word_count/1: counts words separated by whitespace
     string
     |> String.split()
+    # => String.split/1: splits on whitespace (default)
+    # => "hello world" → ["hello", "world"]
+    # => "" → []
     |> length()
+    # => length/1: counts list elements
+    # => ["hello", "world"] → 2
+    # => [] → 0
   end
+  # => Returns: word count (integer)
+  # => Doctests verify: 2 words, 1 word, 0 words
 
   @doc """
   Capitalizes each word.
@@ -3752,12 +3782,25 @@ defmodule StringHelper do
       iex> StringHelper.capitalize_words("ELIXIR programming")
       "Elixir Programming"
   """
+  # => ## Examples: 2 doctests
+  # => Test cases: lowercase, mixed case
+  # => Both should capitalize first letter of each word
   def capitalize_words(string) do
+    # => capitalize_words/1: capitalizes first letter of each word
     string
     |> String.split()
+    # => Split into words: "hello world" → ["hello", "world"]
+    # => "ELIXIR programming" → ["ELIXIR", "programming"]
     |> Enum.map(&String.capitalize/1)
+    # => Capitalize each word: ["hello", "world"] → ["Hello", "World"]
+    # => String.capitalize/1: lowercase rest, uppercase first letter
+    # => "ELIXIR" → "Elixir" (not "ELIXIR")
     |> Enum.join(" ")
+    # => Join with space: ["Hello", "World"] → "Hello World"
+    # => Enum.join/2: concatenates list with separator
   end
+  # => Returns: capitalized string
+  # => Doctests verify: lowercase input, mixed case input
 
   @doc """
   Checks if string is palindrome.
@@ -3773,23 +3816,51 @@ defmodule StringHelper do
       iex> StringHelper.palindrome?("A man a plan a canal Panama" |> String.downcase() |> String.replace(" ", ""))
       true
   """
+  # => ## Examples: 3 doctests
+  # => Test cases: palindrome, non-palindrome, complex palindrome with pipe
+  # => Third example: pipeline in doctest (valid syntax)
   def palindrome?(string) do
+    # => palindrome?/1: checks if string reads same forwards/backwards
+    # => Convention: ? suffix for boolean functions
     string == String.reverse(string)
+    # => Compare string with its reverse
+    # => "racecar" == "racecar" → true
+    # => "hello" == "olleh" → false
+    # => Returns: boolean
   end
+  # => Doctests verify: true case, false case, preprocessed input
 end
+# => StringHelper complete: all functions have doctests
 
 defmodule StringHelperTest do
+  # => Test module for StringHelper
   use ExUnit.Case
+  # => Import ExUnit testing macros
   doctest StringHelper  # Runs all doctests from @doc comments
+  # => doctest/1: extracts examples from StringHelper @doc comments
+  # => Scans for ## Examples sections
+  # => Converts iex> lines to test assertions
+  # => Total: 8 doctests (3 + 3 + 2 + 3 from all functions)
+  # => Each doctest becomes separate test case
+  # => Doctests run alongside regular tests
 
   # Additional regular tests
   test "reverse handles unicode" do
+    # => Regular ExUnit test (not doctest)
+    # => Tests edge case not in doctests (unicode)
     assert StringHelper.reverse("Hello 世界") == "界世 olleH"
+    # => Verify unicode handling: Chinese characters reversed
+    # => "Hello 世界" → "界世 olleH" (character-level reversal)
+    # => Doctests + regular tests = comprehensive coverage
   end
+  # => Best practice: doctests for basic cases, regular tests for edge cases
 end
+# => StringHelperTest complete: doctests + unicode test
 
 
+# Calculator with multi-clause doctests
 defmodule Calculator do
+  # => Module demonstrating multi-clause functions with doctests
   @doc """
   Performs calculation based on operator.
 
@@ -3811,12 +3882,42 @@ defmodule Calculator do
       iex> Calculator.calculate(10, :divide, 0)
       {:error, :division_by_zero}
   """
+  # => @doc: single documentation block for all clauses
+  # => ## Examples: 5 doctests covering all operations
+  # => Fourth example: multi-line doctest (assign then check)
+  # => Fifth example: error case (division by zero)
+  # => Doctests verify all function clauses work correctly
   def calculate(a, :add, b), do: a + b
+  # => First clause: addition operator
+  # => Pattern: second arg is :add atom
+  # => Returns: sum (integer or float)
+  # => Doctest: 5 + 3 = 8 ✓
   def calculate(a, :subtract, b), do: a - b
+  # => Second clause: subtraction operator
+  # => Pattern: second arg is :subtract atom
+  # => Returns: difference
+  # => Doctest: 10 - 4 = 6 ✓
   def calculate(a, :multiply, b), do: a * b
+  # => Third clause: multiplication operator
+  # => Pattern: second arg is :multiply atom
+  # => Returns: product
+  # => Doctest: 3 * 4 = 12 ✓
   def calculate(_a, :divide, 0), do: {:error, :division_by_zero}
+  # => Fourth clause: division by zero (error case)
+  # => Pattern: third arg is 0
+  # => Matches before general divide clause (clause order matters)
+  # => _a: ignore numerator (not needed)
+  # => Returns: error tuple (not exception)
+  # => Doctest: 10 / 0 = {:error, :division_by_zero} ✓
   def calculate(a, :divide, b), do: a / b
+  # => Fifth clause: general division
+  # => Pattern: third arg is not 0 (previous clause didn't match)
+  # => Returns: quotient (always float in Elixir)
+  # => Doctest: 10 / 2 = 5.0 (float, not 5) ✓
 end
+# => Calculator complete: multi-clause function with comprehensive doctests
+# => All 5 clauses tested via doctests
+# => Demonstrates: doctests work with pattern matching and multi-clause functions
 
 
 
