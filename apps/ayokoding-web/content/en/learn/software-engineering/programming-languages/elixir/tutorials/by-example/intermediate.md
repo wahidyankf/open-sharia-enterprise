@@ -976,78 +976,119 @@ Module attributes are compile-time constants defined with `@`. They're commonly 
 
 ```elixir
 defmodule MyModule do
-  # Module documentation
+  # Module documentation (special reserved attribute)
   @moduledoc """
   This module demonstrates module attributes.
   Module attributes are compile-time constants.
   """
+  # => @moduledoc appears in generated documentation
+  # => Accessible via Code.fetch_docs/1
 
-  # Compile-time constant
+  # Compile-time constants
   @default_timeout 5000
+  # => Computed once during compilation
+  # => Inlined wherever used (zero runtime cost)
   @version "1.0.0"
+  # => String constant
   @max_retries 3
+  # => Integer constant
 
-  # Function documentation
+  # Function documentation (special reserved attribute)
   @doc """
   Waits for a specified timeout or default.
   Returns :ok after waiting.
   """
+  # => @doc appears in function documentation (h/1 in IEx)
   def wait(timeout \\ @default_timeout) do
+    # => Default argument uses module attribute
+    # => @default_timeout inlined to 5000 at compile time
     :timer.sleep(timeout)
+    # => Sleeps for timeout milliseconds
     :ok
+    # => Returns :ok atom
   end
 
   @doc """
   Gets the module version.
   """
   def version, do: @version
+  # => Returns compile-time constant (inlined to "1.0.0")
 
-  # Computed at compile time
+  # Computed at compile time (not runtime!)
   @languages ["Elixir", "Erlang", "LFE"]
-  @language_count length(@languages) # Computed once during compilation
+  # => List created once during compilation
+  @language_count length(@languages)
+  # => length/1 executed at compile time!
+  # => Result: 3 (computed once, inlined everywhere)
 
   def supported_languages, do: @languages
+  # => Returns ["Elixir", "Erlang", "LFE"] (compile-time constant)
   def language_count, do: @language_count
+  # => Returns 3 (compile-time computed)
 
-  # Module registration (common in OTP)
-  @behaviour :gen_server  # Implements gen_server behaviour (covered in advanced)
+  # Module registration (declares implemented behaviour)
+  @behaviour :gen_server
+  # => Compiler checks we implement all required callbacks
+  # => Common in OTP applications
 
-  # Accumulating values
+  # Accumulating values (each @ reassignment creates new value)
   @colors [:red, :blue]
-  @colors [:green | @colors]  # Prepend to list
+  # => Initial value: [:red, :blue]
+  @colors [:green | @colors]
+  # => Reads previous @colors, prepends :green → [:green, :red, :blue]
   @colors [:yellow | @colors]
+  # => Reads previous @colors, prepends :yellow → [:yellow, :green, :red, :blue]
 
-  def colors, do: @colors # => [:yellow, :green, :red, :blue]
+  def colors, do: @colors
+  # => [:yellow, :green, :red, :blue] (final accumulated value)
 
-  # Attributes reset per function
+  # Attributes are scoped to next function definition
   @important true
-  def func1, do: @important # => true
+  # => Attribute active for next function
+  def func1, do: @important
+  # => Returns true (attribute value when func1 defined)
 
   @important false
-  def func2, do: @important # => false
+  # => Redefines @important for next function
+  def func2, do: @important
+  # => Returns false (NEW value, doesn't affect func1!)
 
   # Custom attributes for metadata
   @deprecated_message "Use new_function/1 instead"
+  # => Custom attribute (not reserved, any compile-time value)
 
   @doc @deprecated_message
+  # => Uses custom attribute in @doc (dynamic documentation)
   def old_function, do: :deprecated
 
-  # Reserved attributes (special meaning):
+  # Reserved attributes (special compiler meaning):
   # @moduledoc - module documentation
   # @doc - function documentation
-  # @behaviour - implements behaviour
-  # @impl - marks function as callback implementation
-  # @deprecated - marks function as deprecated
-  # @spec - type specification
-  # @type - defines type
+  # @behaviour - declares implemented behaviour
+  # @impl - marks callback implementation
+  # @deprecated - marks deprecated (compiler warns)
+  # @spec - type specification (dialyzer)
+  # @type - defines custom type
   # @opaque - defines opaque type
+  # => Custom attributes allowed: @author, @since, etc.
 end
 
-MyModule.wait(1000) # Waits 1 second, returns :ok
-MyModule.version() # => "1.0.0"
-MyModule.supported_languages() # => ["Elixir", "Erlang", "LFE"]
-MyModule.language_count() # => 3
-MyModule.colors() # => [:yellow, :green, :red, :blue]
+# Module attribute usage examples
+MyModule.wait(1000)
+# => Sleeps 1000ms, returns :ok
+
+MyModule.version()
+# => "1.0.0" (compile-time constant inlined)
+
+MyModule.supported_languages()
+# => ["Elixir", "Erlang", "LFE"] (compile-time constant)
+
+MyModule.language_count()
+# => 3 (computed once at compile time, not runtime!)
+
+MyModule.colors()
+# => [:yellow, :green, :red, :blue]
+# => Final accumulated value from compile-time build
 
 ```
 
