@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
 created: 2025-12-15
-updated: 2025-12-30
+updated: 2025-12-31
 ---
 
 # ayokoding-web-general-maker Agent
@@ -98,6 +98,7 @@ Use this agent when:
 2. **Color Accessibility** - Use verified accessible palette in Mermaid diagrams
 3. **Diagrams** - Prefer Mermaid, use vertical orientation, accessible colors
    - CRITICAL: Escape special characters in node text: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`
+   - CRITICAL: Avoid nested escaping - do NOT combine entity codes with escaped quotes in same node (e.g., `["#123;\"name\"#125;"]` fails; use `["#123;name:Alice#125;"]`)
    - CRITICAL: No `style` commands in `sequenceDiagram` (use `box` syntax or switch to flowchart)
 4. **Emoji Usage** - Semantic emojis for section markers, status, categories
 5. **Timestamp Format** - ISO 8601 with UTC+7 (`YYYY-MM-DDTHH:MM:SS+07:00`)

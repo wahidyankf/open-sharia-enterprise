@@ -214,12 +214,12 @@ JSON is ubiquitous in Go APIs. The `encoding/json` package marshals (structs to 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
-    A["Go Struct<br/>User{Name, Age}"]
+graph TD
+    A["Go Struct<br/>User#123;Name, Age#125;"]
     B["json.Marshal"]
-    C["JSON String<br/>{\"name\":\"Alice\"}"]
+    C["JSON String<br/>#123;name:Alice#125;"]
     D["json.Unmarshal"]
-    E["Go Struct<br/>Person{Name, Age}"]
+    E["Go Struct<br/>Person#123;Name, Age#125;"]
 
     A -->|Marshal| B
     B --> C

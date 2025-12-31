@@ -1265,24 +1265,28 @@ fun main() {
 Create type-safe DSLs using lambda with receiver. The receiver provides implicit `this` context within the lambda.
 
 ```mermaid
-%% DSL builder pattern with lambda receivers
-graph TD
-    A[html #123; #125;] --> B[HTML instance created]
-    B --> C[head #123; #125;]
-    C --> D[Head instance as receiver]
-    D --> E[title = set property]
-    B --> F[body #123; #125;]
-    F --> G[Body instance as receiver]
-    G --> H[h1 call method]
-    G --> I[p call method]
-    G --> J[ul #123; #125; nested DSL]
-    J --> K[UL instance as receiver]
+sequenceDiagram
+    participant Client
+    participant HTML
+    participant Head
+    participant Body
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style D fill:#029E73,color:#fff
-    style G fill:#029E73,color:#fff
-    style K fill:#CC78BC,color:#000
+    Client->>HTML: html lambda invoked
+    activate HTML
+    HTML->>HTML: Create HTML instance
+    HTML->>Head: head lambda called
+    activate Head
+    Head->>Head: Set title property
+    Head-->>HTML: Return head content
+    deactivate Head
+    HTML->>Body: body lambda called
+    activate Body
+    Body->>Body: h1 method invoked
+    Body->>Body: p method invoked
+    Body-->>HTML: Return body content
+    deactivate Body
+    HTML-->>Client: Return complete HTML
+    deactivate HTML
 ```
 
 ```kotlin

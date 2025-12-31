@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
 created: 2025-11-29
-updated: 2025-12-28
+updated: 2025-12-31
 ---
 
 # Documentation Writer Agent
@@ -157,6 +157,7 @@ See [Linking Convention](../docs/explanation/conventions/ex-co__linking-conventi
 - **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for the complete verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, testing methodology with color blindness simulators, and implementation guidance. Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone). Always test diagrams with color blindness simulators before publishing
 - **Mermaid Comment Syntax (CRITICAL)**: Use `%%` for comments, NOT `%%{ }%%` (causes syntax errors). Example: `%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73`. Exception: `%%{init:...}%%` is valid for Mermaid initialization directives only
 - **Character Escaping (CRITICAL)**: Escape special characters in Mermaid node text using HTML entities: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`. Example: `A[O#40;1#41; lookup]` for "O(1) lookup". Prevents "syntax error in text"
+- **Avoid Nested Escaping (CRITICAL)**: Do NOT combine HTML entity codes with escaped quotes in same node text (e.g., `A["JSON #123;\"name\"#125;"]` fails). Use simplified text: `A["JSON #123;name:Alice#125;"]`. Nested escaping breaks Mermaid parser
 - **Sequence Diagram Styling (CRITICAL)**: Do NOT use `style` commands in `sequenceDiagram` (causes errors). Use `box` syntax for grouping/coloring or switch to `flowchart` for styled diagrams. `style` only works in graph/flowchart types
 - See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete diagram standards including comment syntax, color palette guidance, and initialization directives
 
@@ -242,7 +243,7 @@ tags:
   - primary-topic # IMPORTANT: 2 spaces before dash, NOT tab
   - secondary-topic # IMPORTANT: 2 spaces before dash, NOT tab
 created: YYYY-MM-DD
-updated: YYYY-MM-DD
+updated: 2025-12-31
 ---
 ```
 

@@ -1146,6 +1146,38 @@ graph TD
 
 Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
+### Error 3: Nested Escaping in Node Text
+
+**CRITICAL**: Combining HTML entity codes with escaped quotes in the same node text causes parsing failures.
+
+**Problem Example (❌ BROKEN):**
+
+```mermaid
+graph TD
+    A["JSON #123;\"name\":\"Alice\"#125;"]    %% ERROR: Nested escaping fails
+```
+
+**Why it fails**: The combination of `#123;#125;` (entity codes for curly braces) with `\"` (escaped quotes) creates nested escaping that the Mermaid parser cannot handle.
+
+**Solution (✅ WORKING):**
+
+Simplify the text - remove quotes or use plain text instead of trying to escape multiple special characters:
+
+```mermaid
+graph TD
+    A["JSON #123;name:Alice#125;"]                %% CORRECT: No quotes, just entity codes
+    B["JSON object with name field"]              %% CORRECT: Plain text description
+```
+
+**Rule**: Avoid nested escaping patterns. If you need both entity codes AND special punctuation in the same node:
+
+- Option 1: Remove the punctuation (often quotes can be omitted)
+- Option 2: Simplify to plain text description
+- Option 3: Split into multiple nodes
+- Do NOT combine entity codes with escaped quotes (`#123;` + `\"`) in the same node
+
+**Real-World Context**: This error was discovered when trying to show JSON syntax like `{"name":"value"}` in Mermaid nodes. The working solution is to use entity codes for braces but omit the quotes: `#123;name:value#125;`.
+
 ## 🔗 Related Documentation
 
 - [Color Accessibility Convention](./ex-co__color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)

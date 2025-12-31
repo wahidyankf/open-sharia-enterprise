@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 model: sonnet
 color: blue
 created: 2025-12-25
-updated: 2025-12-30
+updated: 2025-12-31
 ---
 
 # ayokoding-web-by-example-maker Agent
@@ -430,6 +430,8 @@ fmt.Println(value)               // => Output: 42
 **Comment syntax**: Use `%%` for comments (NOT `%%{ }%%` which causes syntax errors)
 
 **Character escaping**: Escape special characters in node text using HTML entities: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`. Example: `A[O#40;1#41; lookup]` for "O(1) lookup". Prevents "syntax error in text"
+
+**Avoid nested escaping**: Do NOT combine HTML entity codes with escaped quotes in same node text (e.g., `A["JSON #123;\"name\"#125;"]` fails). Use simplified text instead: `A["JSON #123;name:Alice#125;"]`. Nested escaping breaks Mermaid parser
 
 **Sequence diagram styling**: Do NOT use `style` commands in `sequenceDiagram` (causes errors). Use `box` syntax for grouping/coloring or switch to `flowchart` for styled diagrams. `style` only works in graph/flowchart types
 
