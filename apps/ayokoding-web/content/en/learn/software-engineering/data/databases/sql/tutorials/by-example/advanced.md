@@ -15,7 +15,7 @@ Percentiles divide data into 100 equal parts, quartiles into 4 parts. Use NTILE 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Dataset"]
     B["Sort Values"]
     C["NTILE(4)<br/>Divide into Quartiles"]
@@ -648,7 +648,7 @@ Many-to-many relationships require junction tables (also called bridge or associ
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Students Table"]
     B["Junction Table<br/>enrollments"]
     C["Courses Table"]

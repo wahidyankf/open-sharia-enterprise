@@ -18,7 +18,7 @@ Custom providers extend Terraform to manage resources not covered by official pr
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Terraform Core"] --> B["Provider Plugin"]
     B --> C["Resource Schema"]
     B --> D["CRUD Operations"]

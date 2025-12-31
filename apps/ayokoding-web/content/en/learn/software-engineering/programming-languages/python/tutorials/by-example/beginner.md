@@ -496,7 +496,7 @@ Lists are mutable, ordered sequences that can contain mixed types, support index
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     subgraph "List: [1, 2, 3, 4, 5]"
         N0["Index: 0<br/>Value: 1"]
         N1["Index: 1<br/>Value: 2"]
@@ -2518,8 +2518,8 @@ Python's iterator protocol enables lazy evaluation and memory-efficient iteratio
 ```mermaid
 %% Iterator protocol flow
 graph TD
-    A[Iterable Object] -->|iter()| B[Iterator Object]
-    B -->|next()| C{Has Next Item?}
+    A[Iterable Object] -->|iter#40;#41;| B[Iterator Object]
+    B -->|next#40;#41;| C{Has Next Item?}
     C -->|Yes| D[Return Item]
     C -->|No| E[Raise StopIteration]
     D --> B

@@ -24,7 +24,7 @@ The join macro performs SQL joins between tables, allowing you to query across a
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Join Query Flow
-graph LR
+graph TD
     A[User Query] -->|join :posts| B[Join Posts Table]
     B -->|where: post.published| C[Filter Results]
     C --> D[Return Users]
@@ -166,7 +166,7 @@ The group_by clause groups records by field values, enabling aggregate functions
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Group By with Aggregates
-graph LR
+graph TD
     A[All Posts] --> B[group_by :user_id]
     B --> C[Group 1: User 1 Posts]
     B --> D[Group 2: User 2 Posts]
@@ -400,7 +400,7 @@ Ecto.Multi builds composable transaction pipelines, allowing you to name each op
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Ecto.Multi Pipeline
-graph LR
+graph TD
     A[Multi.new] --> B[insert :user]
     B --> C[insert :post]
     C --> D[update :stats]
@@ -592,7 +592,7 @@ The alter table macro modifies existing tables by adding, removing, or changing 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Migration Evolution
-graph LR
+graph TD
     A[Current Schema] --> B[alter table]
     B --> C[add :column]
     C --> D[New Schema Version]
@@ -955,7 +955,7 @@ many_to_many creates a bidirectional association through a join table, allowing 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  many_to_many Association
-graph LR
+graph TD
     A[User] <-->|user_skills| B[Skill]
     A -->|user_id| C[Join Table]
     B -->|skill_id| C

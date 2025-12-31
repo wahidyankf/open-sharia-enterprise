@@ -26,7 +26,7 @@ This approach works best for developers who **prefer learning through working co
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Beginner<br/>Examples 1-27<br/>Python Fundamentals"] --> B["Intermediate<br/>Examples 28-54<br/>Production Patterns"]
     B --> C["Advanced<br/>Examples 55-80<br/>Expert Mastery"]
 

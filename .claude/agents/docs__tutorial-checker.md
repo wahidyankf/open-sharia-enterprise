@@ -245,7 +245,17 @@ This progressive approach ensures findings persist even if context is compacted 
    - Has comment documenting color scheme
    - Uses shape differentiation (not color alone)
 
-4. **Note missing diagrams**
+4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting))
+   - No subgraphs (renders too small on mobile)
+   - Limited branching (≤4-5 branches from single node)
+   - One concept per diagram
+   - Descriptive headers between multiple diagrams
+   - Flag subgraph usage as HIGH priority (mobile readability)
+   - Flag excessive branching as MEDIUM priority
+   - Flag multiple concepts as MEDIUM priority
+   - Flag missing headers as LOW priority
+
+5. **Note missing diagrams**
    - Specific types needed
    - Placement suggestions
 

@@ -296,7 +296,7 @@ Map destructuring extracts values by key using `:keys`, `:strs`, or `:syms`. It 
 
 ```mermaid
 %% Map destructuring keys
-graph LR
+graph TD
     A["Map: {:name 'Alice' :age 30}"] --> B[":keys [name age]"]
     B --> C["name → 'Alice'"]
     B --> D["age → 30"]
@@ -586,7 +586,7 @@ Higher-order functions `map`, `filter`, and `reduce` are fundamental to function
 
 ```mermaid
 %% Map filter reduce pipeline
-graph LR
+graph TD
     A["[1 2 3 4 5]"] --> B[map: x * 2]
     B --> C["[2 4 6 8 10]"]
     C --> D[filter: even?]
@@ -1208,10 +1208,10 @@ Clojure provides two syntaxes for anonymous functions: `fn` (full syntax) and `#
 
 ```mermaid
 %% Function composition flow
-graph LR
+graph TD
     A[Input: 5] --> B[inc: 6]
     B --> C[* 2: 12]
-    C --> D[str: \"12\"]
+    C --> D[str: 12]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#000

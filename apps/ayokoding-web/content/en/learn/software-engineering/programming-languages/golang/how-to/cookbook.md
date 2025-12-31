@@ -2565,7 +2565,7 @@ func main() {
 **How Type Constraints Work:**
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Type Constraint Definition"
         TC[Number interface<br/>int | int8 | ... | float64]
     end
@@ -2623,7 +2623,7 @@ Go's concurrency primitives enable powerful patterns. Here are production-ready 
 Before diving into recipes, let's visualize how worker pools coordinate multiple goroutines:
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Main Goroutine"
         M[Main] --> JC[Jobs Channel<br/>buffered]
         M --> RC[Results Channel<br/>buffered]
@@ -2850,7 +2850,7 @@ func main() {
 **How Pipeline Works:**
 
 ```mermaid
-graph TB
+graph TD
     Input[Input: 1,2,3,4,5,6,7,8,9,10] --> Gen[Stage 1: Generate<br/>goroutine]
     Gen --> Ch1[Channel<br/>1,2,3,4,5,6,7,8,9,10]
     Ch1 --> Sq[Stage 2: Square<br/>goroutine]

@@ -40,7 +40,7 @@ Unlike narrative tutorials that build understanding through explanation and stor
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Beginner<br/>Examples 1-28<br/>HCL & Resources"] --> B["Intermediate<br/>Examples 29-56<br/>Modules & State"]
     B --> C["Advanced<br/>Examples 57-82<br/>Testing & CI/CD"]
 

@@ -33,7 +33,7 @@ After this tutorial, you'll be able to:
 Professional Go development involves multiple layers working together:
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Production System"
         A[API Layer<br/>HTTP Handlers & Middleware]
         B[Business Logic<br/>Domain Services]
@@ -192,7 +192,7 @@ func main() {
 **Worker Pool Architecture**:
 
 ```mermaid
-graph LR
+graph TD
     subgraph "Job Producers"
         P1[Producer 1]
         P2[Producer 2]

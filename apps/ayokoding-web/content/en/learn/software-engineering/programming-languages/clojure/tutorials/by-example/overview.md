@@ -24,7 +24,7 @@ This tutorial teaches Clojure through **80 heavily annotated, runnable code exam
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Beginner<br/>Examples 1-27<br/>Clojure Fundamentals"] --> B["Intermediate<br/>Examples 28-54<br/>Production Patterns"]
     B --> C["Advanced<br/>Examples 55-80<br/>Expert Mastery"]
 
@@ -272,7 +272,7 @@ Clojure's destructuring syntax allows you to extract values from maps and sequen
 
 ```mermaid
 %% Map destructuring flow
-graph LR
+graph TD
     A["Map: {:name \"Alice\" :age 30}"] --> B[Destructure]
     B --> C["name → \"Alice\""]
     B --> D["age → 30"]

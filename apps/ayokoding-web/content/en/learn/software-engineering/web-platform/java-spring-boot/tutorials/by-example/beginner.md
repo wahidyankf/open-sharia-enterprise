@@ -18,7 +18,7 @@ Spring Boot applications start with a single annotation that combines three esse
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start["Application Start"] --> Context["Initialize Spring Context"]
     Context --> Scan["Component Scan"]
     Scan --> AutoConfig["Auto-Configuration"]
@@ -105,7 +105,7 @@ Beans are objects managed by Spring's IoC container. Understanding lifecycle hoo
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Instantiate["Bean Instantiated"] --> Populate["Dependencies Injected"]
     Populate --> Init["@PostConstruct Called"]
     Init --> Ready["Bean Ready for Use"]
@@ -221,7 +221,7 @@ class UserController {
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     Request["HTTP Request"] --> DispatcherServlet["DispatcherServlet"]
     DispatcherServlet --> HandlerMapping["HandlerMapping"]
     HandlerMapping --> Controller["@RestController"]
@@ -501,7 +501,7 @@ Spring Data JPA eliminates boilerplate CRUD code. Define an interface extending 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Repository["Repository"] --> CrudRepository["CrudRepository"]
     CrudRepository --> PagingAndSortingRepository["PagingAndSortingRepository"]
     PagingAndSortingRepository --> JpaRepository["JpaRepository"]
@@ -605,7 +605,7 @@ JPA supports four relationship types: `@OneToOne`, `@OneToMany`, `@ManyToOne`, `
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     User["User (1)"] -->|"@OneToMany"| Order["Order (*)"]
     Order -->|"@ManyToOne"| User
 
@@ -935,7 +935,7 @@ Centralize error handling with `@ControllerAdvice` instead of scattered try-catc
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Exception["Exception Thrown"] --> ControllerAdvice["@ControllerAdvice"]
     ControllerAdvice --> ExceptionHandler["@ExceptionHandler"]
     ExceptionHandler --> ErrorResponse["Error Response JSON"]

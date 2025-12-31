@@ -321,7 +321,7 @@ Agents handle asynchronous state changes with guaranteed sequential processing.
 
 ```mermaid
 %% Agent asynchronous processing
-graph LR
+graph TD
     A[send action 1] --> Q[Agent Queue]
     B[send action 2] --> Q
     C[send action 3] --> Q
@@ -670,7 +670,7 @@ Lazy sequences compute elements on demand enabling infinite sequences.
 
 ```mermaid
 %% Lazy sequence evaluation
-graph LR
+graph TD
     A[Infinite Sequence] --> B[naturals iterate inc]
     B --> C[Not Computed]
     C --> D{take 5}

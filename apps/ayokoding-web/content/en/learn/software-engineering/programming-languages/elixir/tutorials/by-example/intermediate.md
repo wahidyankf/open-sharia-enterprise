@@ -104,7 +104,7 @@ Multi-clause functions use pattern matching in function heads to elegantly handl
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Input["Function Call:<br/>handle({:ok, data})"] --> Clause1{" Clause 1:<br/>{:error, _}?"}
     Clause1 -->|No| Clause2{"Clause 2:<br/>{:ok, data}?"}
     Clause2 -->|Yes| Execute["Execute:<br/>Process data"]
@@ -209,7 +209,7 @@ The `with` expression chains pattern matches, short-circuiting on the first mism
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start["with"] --> Match1["Step 1:<br/>{:ok, user} <- get_user()"]
     Match1 -->|Match| Match2["Step 2:<br/>{:ok, account} <- get_account()"]
     Match2 -->|Match| Match3["Step 3:<br/>{:ok, balance} <- get_balance()"]
@@ -342,7 +342,7 @@ Structs are extensions of maps with compile-time guarantees and default values. 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Map["Regular Map<br/>%{any: keys, ...}"] --> Struct["Struct<br/>%User{name: ..., age: ...}"]
     Struct --> Tag["Special __struct__: User key"]
     Struct --> Keys["Enforced keys:<br/>name, age"]
@@ -412,7 +412,7 @@ Streams are lazy enumerables that build a recipe for computation without executi
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Eager["Enum (Eager)<br/>[1,2,3,4,5]"] --> Map1["map: [2,4,6,8,10]<br/>EXECUTES"]
     Map1 --> Filter1["filter: [2,4,6,8,10]<br/>EXECUTES"]
     Filter1 --> Take1["take 2: [2,4]<br/>EXECUTES"]
@@ -737,7 +737,7 @@ Protocols enable polymorphism—defining a function that works differently for d
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Protocol["Protocol: Printable<br/>defines print/1"] --> ImplList["Implementation for List"]
     Protocol --> ImplMap["Implementation for Map"]
     Protocol --> ImplStruct["Implementation for User struct"]
@@ -1124,7 +1124,7 @@ Processes are Elixir's lightweight concurrency primitive. Each process has its o
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Main["Main Process"] --> Spawn["spawn(fn -> ... end)"]
     Spawn --> P1["Process 1<br/>Isolated Memory"]
     Spawn --> P2["Process 2<br/>Isolated Memory"]
@@ -1216,7 +1216,7 @@ Processes communicate by sending and receiving messages. Messages go into a proc
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Sender["Sender Process"] --> Send["send(pid, {:msg, data})"]
     Send --> Mailbox["Receiver Mailbox<br/>[{:msg, data}]"]
     Mailbox --> Receive["receive do<br/>{:msg, data} -> ..."]
@@ -1510,7 +1510,7 @@ ExUnit is Elixir's built-in testing framework. Tests are organized into test mod
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Setup["setup do<br/>..."] --> Test1["test 'description' do<br/>..."]
     Test1 --> Assert1["assert value == expected"]
     Assert1 --> Teardown["(automatic cleanup)"]
@@ -1950,7 +1950,7 @@ GenServer is OTP's generic server behavior - a process that maintains state and 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Client1["Client 1"] --> Put["put(key, value)"]
     Client2["Client 2"] --> Get["get(key)"]
     Client3["Client 3"] --> Delete["delete(key)"]

@@ -333,6 +333,93 @@ flowchart TD
 
 ``````
 
+
+### Diagram Splitting Validation (Mobile-Friendliness)
+
+**CRITICAL for Mobile-First Design**: Check diagrams are split properly for mobile readability.
+
+Validate diagrams per [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting):
+
+- [ ] **No subgraphs** - Check for `subgraph` keyword (subgraphs render too small on mobile)
+- [ ] **Limited branching** - Single nodes should have ≤4-5 child branches
+- [ ] **One concept per diagram** - Diagram titles shouldn't suggest multiple concepts ("A + B", "X vs Y")
+- [ ] **Descriptive headers** - Multiple consecutive Mermaid blocks have `**Concept:**` headers
+
+**Validation checks:**
+
+1. **Subgraph usage** (HIGH priority):
+   - Search for `subgraph` keyword in Mermaid diagrams
+   - Flag as error - subgraphs render too small on mobile
+   - Fix: Split into separate diagrams with descriptive headers
+
+2. **Excessive branching** (MEDIUM priority):
+   - Count arrows from single nodes
+   - Flag if >4-5 branches from one node
+   - Fix: Split into 2-3 focused diagrams
+
+3. **Multiple concepts** (MEDIUM priority):
+   - Check diagram context for "and", "vs", "+", "comparison"
+   - Flag if combining distinct concepts
+   - Fix: Split into separate diagrams
+
+4. **Missing headers** (LOW priority):
+   - Check for multiple consecutive Mermaid blocks
+   - Flag if lacking descriptive headers like `**Concept Name:**`
+   - Fix: Add bold headers above each diagram
+
+**Error reporting:**
+
+```markdown
+### Diagram Splitting Issues
+
+**File**: path/to/file.md
+
+**Issue**: Diagram uses subgraphs (renders too small on mobile)
+**Line**: 123
+**Current**: Uses `subgraph Eager` and `subgraph Lazy`
+**Fix**: Split into two separate diagrams:
+  - `**Eager Evaluation:**` (first diagram)
+  - `**Lazy Evaluation:**` (second diagram)
+**Severity**: HIGH
+
+**Issue**: Excessive branching from single node
+**Line**: 456
+**Current**: One node branches to 7 child nodes
+**Fix**: Split into 2-3 diagrams, each with 3-4 branches max
+**Severity**: MEDIUM
+
+**Issue**: Combines multiple concepts
+**Line**: 789
+**Current**: Title suggests "Hierarchy + Cancellation Flow"
+**Fix**: Split into:
+  - `**Class Hierarchy:**` (structure)
+  - `**Cancellation Propagation:**` (flow)
+**Severity**: MEDIUM
+
+**Issue**: Missing descriptive headers
+**Line**: 234
+**Current**: Three Mermaid blocks without context
+**Fix**: Add `**Concept A:**`, `**Concept B:**`, `**Concept C:**` headers
+**Severity**: LOW
+```
+
+**Detection patterns:**
+
+```bash
+# Find subgraphs (CRITICAL issue)
+grep -n "subgraph" file.md
+
+# Find excessive branching (count arrows)
+grep " --> " file.md | wc -l
+
+# Find multiple concepts in titles/headers
+grep -B 2 "```mermaid" file.md | grep -i "and\|vs\|comparison"
+
+# Find consecutive Mermaid blocks without headers
+grep -B 1 "^```mermaid" file.md
+```
+
+
 ### Code Block Validation
 
 **Required**:

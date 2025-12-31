@@ -15,7 +15,7 @@ SQLite runs in a Docker container for isolated, reproducible environments across
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Docker Host"]
     B["SQLite Container<br/>nouchka/sqlite3"]
     C["sqlite3 Client<br/>Connected"]
@@ -840,7 +840,7 @@ Aggregate functions compute single values from multiple rows. COUNT counts rows,
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Multiple Rows"]
     B["Aggregate Function<br/>COUNT/SUM/AVG/MIN/MAX"]
     C["Single Result"]
@@ -1047,7 +1047,7 @@ INNER JOIN combines rows from two tables where the join condition matches. Only 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Table A<br/>Orders"]
     B["Table B<br/>Customers"]
     C["INNER JOIN<br/>ON condition"]
@@ -1134,7 +1134,7 @@ LEFT JOIN returns all rows from the left table, with matched rows from the right
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["LEFT Table<br/>Departments<br/>(All rows)"]
     B["RIGHT Table<br/>Employees<br/>(Matching rows)"]
     C["LEFT JOIN<br/>ON condition"]

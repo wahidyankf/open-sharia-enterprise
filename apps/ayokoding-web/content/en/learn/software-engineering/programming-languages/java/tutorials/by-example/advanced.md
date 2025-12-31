@@ -27,23 +27,34 @@ Master advanced Java concepts through 25 annotated code examples. Build on inter
 
 Concurrent collections provide thread safety with better performance than synchronized wrappers. `ConcurrentHashMap` offers lock striping. `BlockingQueue` supports producer-consumer patterns.
 
+**BlockingQueue (Producer-Consumer):**
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    Producer["Producer Thread<br/>put() elements"] --> Queue["BlockingQueue<br/>(bounded capacity)"]
-    Queue --> Consumer["Consumer Thread<br/>take() elements"]
-
-    CHM["ConcurrentHashMap<br/>(lock striping)"] --> Segment1["Segment 1<br/>locks independently"]
-    CHM --> Segment2["Segment 2<br/>locks independently"]
-    CHM --> Segment3["Segment N<br/>locks independently"]
+    Producer["Producer Thread<br/>put elements"]
+    Producer --> Queue["BlockingQueue<br/>bounded capacity"]
+    Queue --> Consumer["Consumer Thread<br/>take elements"]
 
     style Producer fill:#0173B2,color:#fff
     style Queue fill:#DE8F05,color:#fff
     style Consumer fill:#029E73,color:#fff
-    style CHM fill:#CC78BC,color:#fff
-    style Segment1 fill:#CA9161,color:#fff
-    style Segment2 fill:#CA9161,color:#fff
-    style Segment3 fill:#CA9161,color:#fff
+```
+
+**ConcurrentHashMap (Lock Striping):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    CHM["ConcurrentHashMap<br/>parallel access"]
+    CHM --> Segment1["Segment 1<br/>independent lock"]
+    CHM --> Segment2["Segment 2<br/>independent lock"]
+    CHM --> Segment3["Segment N<br/>independent lock"]
+
+    style CHM fill:#0173B2,color:#fff
+    style Segment1 fill:#029E73,color:#fff
+    style Segment2 fill:#029E73,color:#fff
+    style Segment3 fill:#029E73,color:#fff
 ```
 
 **Code**:
@@ -2587,7 +2598,7 @@ Bytecode manipulation enables runtime code generation, proxying, and instrumenta
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     Java["Java Source<br/>.java"] --> Compiler["javac<br/>Compiler"]
     Compiler --> Bytecode["Bytecode<br/>.class"]
     Bytecode --> JVM["JVM<br/>Execution"]
@@ -3136,7 +3147,7 @@ Reactive Streams enable asynchronous data processing with backpressure. Publishe
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A[Publisher] -->|subscribe| B[Subscriber]
     B -->|request n| C[Subscription]
     C -->|onNext x n| B

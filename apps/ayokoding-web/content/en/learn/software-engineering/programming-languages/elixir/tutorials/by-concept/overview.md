@@ -107,7 +107,7 @@ Expert-level optimization and distributed systems.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start[Start Here] --> Setup[Initial Setup<br/>0-5%]
     Setup --> Quick[Quick Start<br/>5-30%]
     Quick --> Beginner[Beginner<br/>0-60%]

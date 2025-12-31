@@ -42,7 +42,7 @@ By the end of this tutorial, you will:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start[Start: Elixir Installed] --> Pattern[Pattern Matching]
     Pattern --> Immutable[Immutability]
     Immutable --> Functions[Functions]

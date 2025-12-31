@@ -15,7 +15,7 @@ Decorators wrap functions to modify behavior without changing function code.
 
 ```mermaid
 %% Decorator wrapping pattern
-graph LR
+graph TD
     A["Original Function<br/>add(a, b)"] --> B["Decorator<br/>@trace"]
     B --> C["Wrapper Function<br/>logs calls + result"]
     C --> D["Returns<br/>wrapped function"]
@@ -551,7 +551,7 @@ deque (double-ended queue) provides O(1) append/pop from both ends.
 
 ```mermaid
 %% Deque double-ended operations
-graph LR
+graph TD
     A["appendleft#40;0#41;<br/>O#40;1#41;"] --> B["#91;0, 1, 2, 3#93;<br/>deque"]
     B --> C["append#40;4#41;<br/>O#40;1#41;"]
 

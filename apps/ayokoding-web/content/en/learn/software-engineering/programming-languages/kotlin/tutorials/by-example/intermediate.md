@@ -116,28 +116,48 @@ fun main() = runBlocking {
 
 Structured concurrency ensures child coroutines are cancelled when the parent scope is cancelled, preventing coroutine leaks. `coroutineScope` creates a child scope that waits for all children to complete.
 
+**Coroutine Hierarchy:**
+
 ```mermaid
-%% Structured concurrency hierarchy and cancellation propagation
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    Parent[Parent CoroutineScope] --> Child1[async Task 1]
-    Parent --> Child2[async Task 2]
-    Parent --> Child3[launch Task 3]
+    Parent[Parent CoroutineScope]
+    Parent --> Child1[async Task 1<br/>1000ms]
+    Parent --> Child2[async Task 2<br/>500ms]
+    Parent --> Child3[launch Task 3<br/>800ms]
 
-    Child1 --> Complete1[Complete after 1s]
-    Child2 --> Complete2[Complete after 500ms]
-    Child3 --> Complete3[Complete after 800ms]
-
-    Cancel[scope.cancel] -.->|Propagates| CancelParent[Cancel Parent]
-    CancelParent -.->|Auto-cancels| CancelChild1[Cancel Task 1]
-    CancelParent -.->|Auto-cancels| CancelChild2[Cancel Task 2]
-    CancelParent -.->|Auto-cancels| CancelChild3[Cancel Task 3]
+    Child1 --> Complete[All tasks complete<br/>Parent returns]
+    Child2 --> Complete
+    Child3 --> Complete
 
     style Parent fill:#0173B2,color:#fff
-    style Child1 fill:#DE8F05,color:#000
-    style Child2 fill:#DE8F05,color:#000
-    style Child3 fill:#DE8F05,color:#000
-    style Cancel fill:#CC78BC,color:#000
-    style CancelParent fill:#CA9161,color:#000
+    style Child1 fill:#029E73,color:#fff
+    style Child2 fill:#029E73,color:#fff
+    style Child3 fill:#029E73,color:#fff
+    style Complete fill:#DE8F05,color:#fff
+```
+
+**Cancellation Propagation:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Cancel[scope.cancel called]
+    Cancel --> Parent[Cancel Parent]
+    Parent --> Child1[Cancel Task 1]
+    Parent --> Child2[Cancel Task 2]
+    Parent --> Child3[Cancel Task 3]
+
+    Child1 --> Result[All children cancelled<br/>No leaks]
+    Child2 --> Result
+    Child3 --> Result
+
+    style Cancel fill:#0173B2,color:#fff
+    style Parent fill:#DE8F05,color:#fff
+    style Child1 fill:#029E73,color:#fff
+    style Child2 fill:#029E73,color:#fff
+    style Child3 fill:#029E73,color:#fff
+    style Result fill:#CC78BC,color:#fff
 ```
 
 ```kotlin
@@ -413,23 +433,67 @@ fun main() = runBlocking {
 
 Flow operators enable complex asynchronous data processing. `transform` emits multiple values per input, `buffer` decouples producer/consumer, `conflate` drops intermediate values.
 
+**Transform Operator (Multiple Emissions):**
+
 ```mermaid
-%% Flow operators pipeline showing transformation stages
-graph LR
-    Source[flow emit 1,2,3] --> Transform[transform: emit value,<br/>emit value*10]
-    Transform --> Buffer[buffer:<br/>producer runs ahead]
-    Buffer --> Conflate[conflate:<br/>drop intermediate values]
-    Conflate --> Collect[collect]
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Flow[flow 1, 2, 3]
+    Flow --> T1[transform 1]
+    Flow --> T2[transform 2]
+    Flow --> T3[transform 3]
 
-    Source2[Emit 1] --> Trans1[emit 1, emit 10]
-    Source3[Emit 2] --> Trans2[emit 2, emit 20]
-    Source4[Emit 3] --> Trans3[emit 3, emit 30]
+    T1 --> E1[emit 1<br/>emit 10]
+    T2 --> E2[emit 2<br/>emit 20]
+    T3 --> E3[emit 3<br/>emit 30]
 
-    style Source fill:#0173B2,color:#fff
-    style Transform fill:#DE8F05,color:#000
+    E1 --> Result[Output:<br/>1, 10, 2, 20, 3, 30]
+    E2 --> Result
+    E3 --> Result
+
+    style Flow fill:#0173B2,color:#fff
+    style T1 fill:#029E73,color:#fff
+    style T2 fill:#029E73,color:#fff
+    style T3 fill:#029E73,color:#fff
+    style Result fill:#DE8F05,color:#fff
+```
+
+**Buffer Operator (Parallel Processing):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Producer[Producer<br/>emit every 100ms]
+    Producer --> Buffer[buffer]
+    Buffer --> Consumer[Consumer<br/>process every 300ms]
+
+    NoBuffer[No buffer:<br/>1200ms total]
+    WithBuffer[With buffer:<br/>900ms total<br/>overlapped]
+
+    style Producer fill:#0173B2,color:#fff
     style Buffer fill:#029E73,color:#fff
-    style Conflate fill:#CC78BC,color:#000
-    style Collect fill:#CA9161,color:#000
+    style Consumer fill:#DE8F05,color:#fff
+    style NoBuffer fill:#CC78BC,color:#fff
+    style WithBuffer fill:#CA9161,color:#fff
+```
+
+**Conflate Operator (Drop Intermediate):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Emit[Emit 0, 1, 2, 3, 4<br/>every 100ms]
+    Emit --> Conflate[conflate]
+    Conflate --> Slow[Slow consumer<br/>300ms per item]
+
+    Conflate --> Drop[Drop intermediate<br/>values 1, 2, 3]
+    Drop --> Collect[Collect:<br/>0, 4 only]
+
+    style Emit fill:#0173B2,color:#fff
+    style Conflate fill:#029E73,color:#fff
+    style Slow fill:#DE8F05,color:#fff
+    style Drop fill:#CC78BC,color:#fff
+    style Collect fill:#CA9161,color:#fff
 ```
 
 ```kotlin
@@ -735,29 +799,52 @@ fun main() {
 
 Sequences compute elements lazily, avoiding intermediate collection creation. Use sequences for multi-step transformations on large collections.
 
+**Eager Evaluation (List):**
+
 ```mermaid
-%% Eager vs Lazy evaluation comparison
-graph LR
-    subgraph Eager[Eager - List Operations]
-        E1[1M elements] --> EM[map: 1M list created]
-        EM --> EF[filter: 1M list created]
-        EF --> ET[take 5: final list]
-    end
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Input[1 million elements]
+    Input --> Map[map: multiply by 2]
+    Map --> MapList[Creates 1M element list]
+    MapList --> Filter[filter: greater than 1000]
+    Filter --> FilterList[Creates another 1M element list]
+    FilterList --> Take[take 5]
+    Take --> Result[Final: 5 elements<br/>Memory: 3 large lists]
 
-    subgraph Lazy[Lazy - Sequence Operations]
-        L1[element 1] --> LM1[map]
-        LM1 --> LF1[filter]
-        LF1 --> LT1[take if matches]
-        LT1 --> LR1[result]
-    end
+    style Input fill:#0173B2,color:#fff
+    style Map fill:#DE8F05,color:#fff
+    style MapList fill:#CC78BC,color:#fff
+    style Filter fill:#DE8F05,color:#fff
+    style FilterList fill:#CC78BC,color:#fff
+    style Take fill:#DE8F05,color:#fff
+    style Result fill:#029E73,color:#fff
+```
 
-    style E1 fill:#DE8F05,color:#000
-    style EM fill:#CA9161,color:#000
-    style EF fill:#CA9161,color:#000
-    style L1 fill:#0173B2,color:#fff
-    style LM1 fill:#029E73,color:#fff
-    style LF1 fill:#029E73,color:#fff
-    style LR1 fill:#029E73,color:#fff
+**Lazy Evaluation (Sequence):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start[Process element 1]
+    Start --> Map1[map: 1 × 2 = 2]
+    Map1 --> Filter1[filter: 2 > 1000?]
+    Filter1 --> Skip1[No: skip]
+
+    Skip1 --> Next[Process element 501]
+    Next --> Map2[map: 501 × 2 = 1002]
+    Map2 --> Filter2[filter: 1002 > 1000?]
+    Filter2 --> Take[Yes: collect 1]
+
+    Take --> Continue[Continue until 5 found]
+    Continue --> Result[Final: 5 elements<br/>Memory: No intermediate lists]
+
+    style Start fill:#0173B2,color:#fff
+    style Map1 fill:#029E73,color:#fff
+    style Map2 fill:#029E73,color:#fff
+    style Filter1 fill:#DE8F05,color:#fff
+    style Filter2 fill:#DE8F05,color:#fff
+    style Result fill:#CC78BC,color:#fff
 ```
 
 ```kotlin
@@ -1133,48 +1220,60 @@ fun main() {
 
 Override operators like `+`, `-`, `*`, `[]`, `in` to create domain-specific syntax. Operators are implemented as member or extension functions with specific names.
 
+**Arithmetic and Comparison Operators:**
+
 ```mermaid
-%% Operator-to-function mapping showing how Kotlin translates operators
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A[Operator Syntax] --> B{Operator Category}
+    Unary["-point"]
+    Unary --> UnaryFn["operator fun unaryMinus"]
+    UnaryFn --> U[Returns Point-x, -y]
 
-    B -->|Unary| C["-point"]
-    B -->|Binary| D["point1 + point2"]
-    B -->|Augmented| E["point += other"]
-    B -->|Comparison| F["point1 < point2"]
-    B -->|Index Access| G["matrix[i, j]"]
-    B -->|Contains| H["value in matrix"]
-    B -->|Invoke| I["matrix(row)"]
+    Binary["point1 + point2"]
+    Binary --> BinaryFn["operator fun plus"]
+    BinaryFn --> B[Returns new Point]
 
-    C --> C1["fun unaryMinus()"]
-    D --> D1["fun plus(other)"]
-    E --> E1["fun plusAssign(other)"]
-    F --> F1["fun compareTo(other)"]
-    G --> G1["fun get(i, j)"]
-    H --> H1["fun contains(value)"]
-    I --> I1["fun invoke(row)"]
+    Compare["point1 < point2"]
+    Compare --> CompareFn["operator fun compareTo"]
+    CompareFn --> C[Returns Int: -1, 0, 1]
 
-    C1 --> J[Compiler Translation]
-    D1 --> J
-    E1 --> J
-    F1 --> J
-    G1 --> J
-    H1 --> J
-    I1 --> J
+    style Unary fill:#0173B2,color:#fff
+    style UnaryFn fill:#029E73,color:#fff
+    style Binary fill:#0173B2,color:#fff
+    style BinaryFn fill:#029E73,color:#fff
+    style Compare fill:#0173B2,color:#fff
+    style CompareFn fill:#029E73,color:#fff
+```
 
-    J --> K[Executes operator function]
+**Access and Special Operators:**
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C1 fill:#029E73,color:#fff
-    style D1 fill:#029E73,color:#fff
-    style E1 fill:#029E73,color:#fff
-    style F1 fill:#029E73,color:#fff
-    style G1 fill:#029E73,color:#fff
-    style H1 fill:#029E73,color:#fff
-    style I1 fill:#029E73,color:#fff
-    style J fill:#CC78BC,color:#000
-    style K fill:#CA9161,color:#000
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Index["matrix#91;i, j#93;"]
+    Index --> IndexFn["operator fun get"]
+    IndexFn --> I[Returns element]
+
+    Contains["value in matrix"]
+    Contains --> ContainsFn["operator fun contains"]
+    ContainsFn --> Co[Returns Boolean]
+
+    Invoke["matrix#40;row#41;"]
+    Invoke --> InvokeFn["operator fun invoke"]
+    InvokeFn --> Inv[Returns result]
+
+    Augmented["point += other"]
+    Augmented --> AugFn["operator fun plusAssign"]
+    AugFn --> A[Modifies in place]
+
+    style Index fill:#0173B2,color:#fff
+    style IndexFn fill:#029E73,color:#fff
+    style Contains fill:#0173B2,color:#fff
+    style ContainsFn fill:#029E73,color:#fff
+    style Invoke fill:#0173B2,color:#fff
+    style InvokeFn fill:#029E73,color:#fff
+    style Augmented fill:#0173B2,color:#fff
+    style AugFn fill:#029E73,color:#fff
 ```
 
 ```kotlin

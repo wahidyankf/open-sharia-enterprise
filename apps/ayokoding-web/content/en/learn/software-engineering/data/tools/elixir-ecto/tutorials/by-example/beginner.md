@@ -24,7 +24,7 @@ Ecto schemas map Elixir structs to database tables, providing type safety and va
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Schema to Table Mapping
-graph LR
+graph TD
     A[Ecto Schema] -->|maps to| B[Database Table]
     A -->|field :name| C[Column: name]
     A -->|field :age| D[Column: age]
@@ -642,7 +642,7 @@ The from/2 macro builds queries using Ecto's query DSL, providing a composable a
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Query Composition Flow
-graph LR
+graph TD
     A[User Schema] --> B[from/2]
     B --> C[Add where Clause]
     C --> D[Add select Clause]
@@ -941,7 +941,7 @@ belongs_to creates a foreign key relationship where this schema references anoth
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  belongs_to Relationship
-graph LR
+graph TD
     A[Post Table] -->|user_id FK| B[User Table]
     A -->|belongs_to :user| B
 
@@ -993,7 +993,7 @@ has_many creates a one-to-many relationship where this schema is referenced by m
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  has_many Relationship
-graph LR
+graph TD
     A[User Table] -->|has_many :posts| B[Posts Table]
     B -->|user_id FK points back| A
 

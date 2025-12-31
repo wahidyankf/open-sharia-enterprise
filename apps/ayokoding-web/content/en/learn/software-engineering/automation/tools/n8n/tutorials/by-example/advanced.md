@@ -2155,7 +2155,7 @@ Build event-driven systems where workflows react to external events via webhook 
 
 ```mermaid
 %%{init: {'theme':'base'}}%%
-graph LR
+graph TD
     A[External Event] -->|Webhook| B[n8n Workflow]
     B --> C[Process Event]
     C --> D[Emit Events]

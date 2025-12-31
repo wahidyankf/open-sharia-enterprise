@@ -15,7 +15,7 @@ PostgreSQL runs in a Docker container for isolated, reproducible environments ac
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Docker Host"]
     B["PostgreSQL Container<br/>postgres:16"]
     C["psql Client<br/>Connected"]
@@ -677,7 +677,7 @@ LIMIT restricts the number of rows returned. OFFSET skips rows before returning 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["All Rows<br/>(100 total)"]
     B["OFFSET 20<br/>(Skip 20)"]
     C["LIMIT 10<br/>(Take 10)"]
@@ -1046,7 +1046,7 @@ Foreign keys enforce relationships between tables - they ensure referenced rows 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["orders table<br/>id | customer_id"]
     B["customers table<br/>id | name"]
     C["Foreign Key<br/>customer_id REFERENCES customers(id)"]
@@ -1260,7 +1260,7 @@ INNER JOIN returns rows where the join condition matches in both tables. Non-mat
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["customers table<br/>Alice, Bob, Charlie"]
     B["orders table<br/>Order 1 (Alice)<br/>Order 2 (Bob)<br/>Order 3 (Alice)"]
     C["INNER JOIN<br/>customer_id = id"]

@@ -13,7 +13,7 @@ A manual trigger workflow executes when you click "Execute Workflow" in the n8n 
 
 ```mermaid
 %% Manual trigger workflow flow
-graph LR
+graph TD
     A[Manual Trigger] --> B[Set Node]
     B --> C[Output]
 
@@ -400,7 +400,7 @@ Webhook triggers receive HTTP requests from external systems. This example creat
 
 ```mermaid
 %% Webhook trigger receives and responds to HTTP requests
-graph LR
+graph TD
     A[External System] -->|POST request| B[Webhook Trigger]
     B --> C[Process Data]
     C --> D[Respond to Webhook]
@@ -484,7 +484,7 @@ Schedule triggers execute workflows at specific times. This example runs every d
 
 ```mermaid
 %% Scheduled workflow execution
-graph LR
+graph TD
     A[Cron: 0 9 * * *] --> B[Execute Task]
     B --> C[Complete]
 
@@ -1788,7 +1788,7 @@ Wait nodes pause workflow execution for a duration or until a specific time. Thi
 
 ```mermaid
 %% Wait node pauses execution
-graph LR
+graph TD
     A[Manual Trigger] --> B[Start Task]
     B --> C[Wait 5 seconds]
     C --> D[Complete Task]

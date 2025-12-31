@@ -2494,43 +2494,62 @@ fn use_database() {
 
 Trait objects enable runtime polymorphism through dynamic dispatch, trading compile-time monomorphization for flexibility.
 
+**Static Dispatch (impl Trait):**
+
 ```mermaid
-%% Static vs dynamic dispatch comparison
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A[Static Dispatch: impl Trait] -->|Compile time| B[Monomorphization]
-    B --> C[Specialized code per type]
-    C --> D[Fast: no runtime overhead]
-    C --> E[Large binary: code duplication]
+    Start["impl Trait<br/>compile-time"]
+    Start --> Mono[Monomorphization]
+    Mono --> Code[Generate specialized<br/>code per type]
+    Code --> Fast[Fast execution<br/>no runtime overhead]
+    Code --> Size[Large binary<br/>code duplication]
 
-    F[Dynamic Dispatch: dyn Trait] -->|Runtime| G[Fat Pointer: data + vtable]
-    G --> H[Virtual method lookup]
-    H --> I[Slower: indirect call]
-    H --> J[Small binary: one implementation]
-
-    style A fill:#0173B2,color:#fff
-    style B fill:#029E73,color:#fff
-    style D fill:#029E73,color:#fff
-    style E fill:#DE8F05,color:#000
-    style F fill:#0173B2,color:#fff
-    style G fill:#CC78BC,color:#000
-    style I fill:#DE8F05,color:#000
-    style J fill:#029E73,color:#fff
+    style Start fill:#0173B2,color:#fff
+    style Mono fill:#029E73,color:#fff
+    style Code fill:#DE8F05,color:#fff
+    style Fast fill:#029E73,color:#fff
+    style Size fill:#CC78BC,color:#fff
 ```
 
-```mermaid
-graph TD
-    A[Trait Object] --> B[vtable Pointer]
-    B --> C[Method Pointers]
-    A --> D[Data Pointer]
-    D --> E[Concrete Type]
-    C --> F[Runtime Dispatch]
+**Dynamic Dispatch (dyn Trait):**
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style E fill:#CA9161,color:#000
-    style F fill:#029E73,color:#fff
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["dyn Trait<br/>runtime"]
+    Start --> Pointer[Fat pointer created<br/>data + vtable]
+    Pointer --> Lookup[Virtual method lookup]
+    Lookup --> Slow[Slower execution<br/>indirect call]
+    Lookup --> Size[Small binary<br/>one implementation]
+
+    style Start fill:#0173B2,color:#fff
+    style Pointer fill:#DE8F05,color:#fff
+    style Lookup fill:#029E73,color:#fff
+    style Slow fill:#CC78BC,color:#fff
+    style Size fill:#029E73,color:#fff
+```
+
+**Trait Object Structure (Fat Pointer):**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    TraitObj[Trait Object<br/>16 bytes total]
+    TraitObj --> VTable[vtable pointer<br/>8 bytes]
+    TraitObj --> Data[data pointer<br/>8 bytes]
+
+    VTable --> Methods[Method pointers<br/>draw, clone, etc]
+    Data --> Concrete[Concrete type<br/>Circle or Square]
+
+    Methods --> Dispatch[Runtime dispatch<br/>vtable lookup]
+
+    style TraitObj fill:#0173B2,color:#fff
+    style VTable fill:#DE8F05,color:#fff
+    style Data fill:#029E73,color:#fff
+    style Methods fill:#CC78BC,color:#fff
+    style Concrete fill:#CA9161,color:#fff
+    style Dispatch fill:#029E73,color:#fff
 ```
 
 ```rust
@@ -2898,28 +2917,43 @@ impl Process for Vec<u8> {
 
 Const generics allow generic parameters over constant values like array sizes, enabling generic code over arrays without trait objects.
 
+**Const Generic Monomorphization:**
+
 ```mermaid
-%% Const generics monomorphization at compile time
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A[Generic Function: fn foo<T, const N: usize>] -->|Call with [i32; 3]| B[Monomorphize: foo::<i32, 3>]
-    A -->|Call with [i32; 5]| C[Monomorphize: foo::<i32, 5>]
-    A -->|Call with [String; 2]| D[Monomorphize: foo::<String, 2>]
+    Generic["fn foo#60;T, const N: usize#62;<br/>One generic function"]
+    Generic --> Call1["Call with #91;i32; 3#93;"]
+    Call1 --> Mono1["Monomorphize:<br/>foo::#60;i32, 3#62;"]
+    Mono1 --> Code1[Specialized code<br/>for i32 array size 3]
 
-    B --> E[Specialized code for [i32; 3]]
-    C --> F[Specialized code for [i32; 5]]
-    D --> G[Specialized code for [String; 2]]
+    Generic --> Call2["Call with #91;i32; 5#93;"]
+    Call2 --> Mono2["Monomorphize:<br/>foo::#60;i32, 5#62;"]
+    Mono2 --> Code2[Specialized code<br/>for i32 array size 5]
 
-    H[Compile-time constant N] -->|No runtime overhead| I[Zero-cost abstraction]
+    style Generic fill:#0173B2,color:#fff
+    style Call1 fill:#029E73,color:#fff
+    style Call2 fill:#029E73,color:#fff
+    style Mono1 fill:#DE8F05,color:#fff
+    style Mono2 fill:#DE8F05,color:#fff
+    style Code1 fill:#CC78BC,color:#fff
+    style Code2 fill:#CC78BC,color:#fff
+```
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
-    style E fill:#029E73,color:#fff
-    style F fill:#029E73,color:#fff
-    style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
-    style I fill:#029E73,color:#fff
+**Zero-Cost Abstraction:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Source[const N: usize parameter]
+    Source --> Compile[Compile-time constant<br/>known at build]
+    Compile --> NoRuntime[No runtime overhead<br/>size in type]
+    NoRuntime --> Benefit[Zero-cost abstraction<br/>same as handwritten code]
+
+    style Source fill:#0173B2,color:#fff
+    style Compile fill:#029E73,color:#fff
+    style NoRuntime fill:#DE8F05,color:#fff
+    style Benefit fill:#CC78BC,color:#fff
 ```
 
 ```rust

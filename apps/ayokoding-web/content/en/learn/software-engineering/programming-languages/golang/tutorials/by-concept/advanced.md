@@ -35,7 +35,7 @@ After this tutorial, you'll understand:
 This tutorial explores three layers of Go mastery:
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Layer 1: Runtime Internals"
         A1[Goroutine Scheduler<br/>M:N Threading Model]
         A2[Memory Allocator<br/>Stack & Heap Management]
@@ -99,7 +99,7 @@ Understanding how Go executes code is crucial for optimization:
 Go uses an M:N scheduler where M goroutines are multiplexed onto N OS threads:
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Application Layer"
         G1[G: Goroutine 1<br/>~2KB stack]
         G2[G: Goroutine 2<br/>~2KB stack]

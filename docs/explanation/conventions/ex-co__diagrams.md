@@ -338,6 +338,22 @@ gitGraph
 
 ### Diagram Orientation
 
+**Default Layout: Top-Down (TD)**
+
+**CRITICAL RULE**: Mermaid diagrams MUST use `graph TD` (top-down vertical layout) by default.
+
+**Rationale**:
+
+- Better readability on mobile devices (vertical screens)
+- More natural for sequential processes
+- Consistent user experience across all educational content
+
+**Alternative layouts** (`graph LR`, `graph RL`, `graph BT`):
+
+- ONLY use when explicitly requested by the user
+- ONLY use when vertical layout would significantly harm clarity
+- Default assumption is always TD unless stated otherwise
+
 **Mobile-First Orientation**: Diagrams should be styled vertically (top to bottom or bottom to top) for optimal mobile viewing:
 
 - **Preferred**: `graph TD` (top-down) or `graph BT` (bottom-top)
@@ -1002,7 +1018,9 @@ Before committing documentation with diagrams:
 - [ ] Color scheme documented in comment above diagram
 - [ ] **Each diagram has exactly ONE color palette comment** (no duplicates)
 - [ ] **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (correct comment syntax)
+  - [ ] **Square brackets and angle brackets escaped** (use `#91;` `#93;` `#60;` `#62;` - prevents nested delimiter conflicts)
 - [ ] **Parentheses and brackets escaped in node text** (use HTML entities: `#40;` `#41;` `#91;` `#93;`)
+- [ ] **No literal quotes inside node text** (remove quotes or use descriptive text like "string value")
 - [ ] **No style commands in sequence diagrams** (use `box` syntax or switch to flowchart)
 - [ ] Mermaid diagrams tested in GitHub preview or Obsidian
 - [ ] ASCII art (if used) verified in monospace font
@@ -1016,9 +1034,9 @@ Before committing documentation with diagrams:
 
 This section documents critical Mermaid syntax rules discovered through debugging production diagrams. These errors cause "syntax error in text" or rendering failures.
 
-### Error 1: Parentheses in Node Text
+### Error 1: Parentheses in Node Text and Edge Labels
 
-**CRITICAL**: Parentheses inside square bracket node definitions cause syntax errors.
+**CRITICAL**: Parentheses inside square bracket node definitions AND edge labels cause syntax errors.
 
 **Problem Examples (❌ BROKEN):**
 
@@ -1027,6 +1045,7 @@ graph TD
     A[O(1) lookup]                  %% ERROR: Parentheses cause syntax error
     B[function(args)]               %% ERROR: Parentheses cause syntax error
     C[Fast Lookup<br/>O(log n)]     %% ERROR: Parentheses cause syntax error
+    D -->|iter()| E[Iterator]       %% ERROR: Parentheses in edge label cause syntax error
 ```
 
 **Solution (✅ WORKING):**
@@ -1036,11 +1055,23 @@ Escape parentheses using HTML entity codes:
 - `(` → `#40;`
 - `)` → `#41;`
 
+**In node text:**
+
 ```mermaid
 graph TD
     A[O#40;1#41; lookup]                     %% CORRECT: Escaped parentheses
     B[function#40;args#41;]                  %% CORRECT: Escaped parentheses
     C[Fast Lookup<br/>O#40;log n#41;]        %% CORRECT: Escaped parentheses
+```
+
+**In edge labels:**
+
+Edge labels use `-->|text|` syntax and require the same escaping:
+
+```mermaid
+graph TD
+    A -->|iter#40;#41;| B[Iterator]          %% CORRECT: Escaped parentheses in edge label
+    B -->|next#40;#41;| C{Has Item?}         %% CORRECT: Escaped parentheses in edge label
 ```
 
 **Also applies to square brackets in text:**
@@ -1053,7 +1084,7 @@ graph TD
     A[Array: #91;0, 1, 2, 3#93;]             %% CORRECT: Escaped square brackets
 ```
 
-**Rationale**: Mermaid's parser interprets unescaped parentheses and square brackets as syntax elements, not literal characters.
+**Rationale**: Mermaid's parser interprets unescaped parentheses and square brackets as syntax elements in BOTH node text and edge labels, not literal characters.
 
 **Real-World Examples Fixed:**
 
@@ -1128,8 +1159,8 @@ flowchart LR
 | `]`             | `#93;`      | `#91;0, 1#93;` for "[0, 1]"             |
 | `{`             | `#123;`     | `#123;key: value#125;` for "{key: ...}" |
 | `}`             | `#125;`     | `#123;key: value#125;` for "{key: ...}" |
-| `<` (less than) | `&lt;`      | `List&lt;T&gt;` for "List<T>"           |
-| `>` (more than) | `&gt;`      | `List&lt;T&gt;` for "List<T>"           |
+| `<` (less than) | `#60;`      | `Array#60;T#62;` for "Array<T>"         |
+| `>` (more than) | `#62;`      | `Array#60;T#62;` for "Array<T>"         |
 
 **When to escape:**
 
@@ -1141,10 +1172,95 @@ flowchart LR
 
 ```mermaid
 graph TD
-    A[HashMap&lt;K, V&gt;<br/>O#40;1#41; lookup<br/>Values: #91;1, 2, 3#93;<br/>Dict: #123;a: 1#125;]
+    A[HashMap#60;K, V#62;<br/>O#40;1#41; lookup<br/>Values: #91;1, 2, 3#93;<br/>Dict: #123;a: 1#125;]
 ```
 
 Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
+
+### Error 5: Square Brackets and Angle Brackets in Node Text
+
+**CRITICAL**: Square brackets and angle brackets in Mermaid node text cause parsing errors.
+
+**Problem 1 - Nested Square Brackets:**
+
+When using `A[text]` node syntax, having literal square brackets inside creates nested delimiters that confuse the parser.
+
+**Example that FAILS (❌ BROKEN)**:
+
+```mermaid
+graph TD
+    E[Specialized code for [i32; 3]]    %% ERROR: Inner brackets conflict with outer brackets
+    F[Array type: [T; N]]               %% ERROR: Parser sees ] as end of node label
+```
+
+**Why it fails**: The outer `[...]` syntax defines the node boundaries. When literal `[` or `]` characters appear inside, the Mermaid parser interprets them as structural syntax (node delimiters), not literal characters, causing parsing conflicts.
+
+**Problem 2 - Angle Brackets:**
+
+Angle brackets `<>` in node text (common in generics syntax) can cause parsing issues.
+
+**Example that FAILS (❌ BROKEN)**:
+
+```mermaid
+graph TD
+    A[fn foo<T, const N: usize>]        %% ERROR: Angle brackets cause syntax errors
+    B[Generic type: HashMap<K, V>]      %% ERROR: Parser confused by < and >
+```
+
+**Solution (✅ WORKING)**:
+
+Escape square brackets and angle brackets using HTML entity codes:
+
+- Square brackets: `[` → `#91;`, `]` → `#93;`
+- Angle brackets: `<` → `#60;`, `>` → `#62;`
+
+```mermaid
+graph TD
+    E[Specialized code for #91;i32; 3#93;]           %% CORRECT: Escaped square brackets
+    F[Array type: #91;T; N#93;]                      %% CORRECT: Escaped square brackets
+    A[fn foo#60;T, const N: usize#62;]               %% CORRECT: Escaped angle brackets
+    B[Generic type: HashMap#60;K, V#62;]             %% CORRECT: Escaped angle brackets
+```
+
+**Rule**: Escape square brackets and angle brackets in Mermaid node text to avoid parser conflicts with structural syntax.
+
+**Real-World Examples Fixed:**
+
+- Rust generics: `fn foo<T>` → `fn foo#60;T#62;`
+- Rust array types: `[i32; 3]` → `#91;i32; 3#93;`
+- TypeScript generics: `Array<T>` → `Array#60;T#62;`
+- Java generics: `HashMap<K, V>` → `HashMap#60;K, V#62;`
+
+### Error 4: Literal Quotes Inside Node Text
+
+**CRITICAL**: Literal quote characters inside Mermaid node text cause parsing errors.
+
+**Problem**: When using the `A["text"]` node syntax, having literal quote characters inside the text confuses the parser.
+
+**Example that FAILS (❌ BROKEN)**:
+
+```mermaid
+graph TD
+    F[let x = "hello"]        %% ERROR: Inner quotes conflict with outer brackets
+    G[const name = "Alice"]   %% ERROR: Parser sees "hello" as end of node label
+```
+
+**Why it fails**: The outer `[...]` syntax already uses quotes for the node label definition. When literal `"` characters appear inside, the Mermaid parser interprets them as structural syntax, not literal text, causing parsing conflicts.
+
+**Solution (✅ WORKING)**:
+
+Remove the inner quotes or use descriptive text:
+
+```mermaid
+graph TD
+    F[let x = hello]              %% CORRECT: No inner quotes
+    G[const name = Alice]         %% CORRECT: No inner quotes
+    H[let x = string value]       %% CORRECT: Descriptive text
+```
+
+**Rule**: Avoid literal quote characters inside Mermaid node text. If you need to show a string value, omit the quotes or use descriptive text.
+
+**Real-World Context**: This error was discovered when trying to show code syntax like `let x = "hello"` in Mermaid nodes. The working solution is to either omit the quotes (`let x = hello`) or use descriptive text (`let x = string value`).
 
 ### Error 3: Nested Escaping in Node Text
 
@@ -1196,3 +1312,270 @@ graph TD
 ---
 
 **Last Updated**: 2025-12-31
+
+### Error 6: Sequence Diagram Participant Syntax with "as" Keyword
+
+**CRITICAL**: Using `participant X as "Display Name"` syntax with quotes in sequence diagrams causes rendering failures in Hugo/Hextra environments.
+
+**Problem Example (❌ BROKEN)**:
+
+```mermaid
+sequenceDiagram
+    participant Main as "main()"
+    participant Loop as "Event Loop"
+    participant F1 as "fetch_data(api1)"
+
+    Main->>Loop: Start execution
+    Loop->>F1: Call async function
+    F1-->>Loop: Return result
+```
+
+**Why it fails**: The Hextra theme's Mermaid renderer struggles with complex display names containing spaces, parentheses, or special characters when combined with the `as` keyword and quotes. This syntax pattern causes parsing errors in Hugo/Hextra contexts.
+
+**Solution (✅ WORKING)**:
+
+Use simple participant identifiers without the `as` keyword:
+
+```mermaid
+sequenceDiagram
+    participant Main
+    participant EventLoop
+    participant API1
+
+    Main->>EventLoop: Start execution
+    EventLoop->>API1: Call async function
+    API1-->>EventLoop: Return result
+```
+
+**Alternative - Descriptive names without quotes**:
+
+If you need descriptive names, use CamelCase or underscores without the `as` keyword:
+
+```mermaid
+sequenceDiagram
+    participant MainFunction
+    participant EventLoop
+    participant FetchData
+
+    MainFunction->>EventLoop: Initialize
+    EventLoop->>FetchData: Retrieve data
+    FetchData-->>EventLoop: Data received
+```
+
+**Rule**: In sequence diagrams, use simple participant identifiers. Avoid the `as` keyword with quoted display names. Use CamelCase or simple names instead of quoted strings with spaces or special characters.
+
+**Rationale**:
+
+- The Hextra theme documentation shows working examples using simple participant syntax
+- Complex display names with `as` keyword and quotes cause parsing errors
+- Simple identifiers are more reliable across different Mermaid versions and rendering contexts
+- Hugo/Hextra environments have different parser constraints than standalone Mermaid
+
+**Affected diagram types**: `sequenceDiagram` only (not `graph`/`flowchart`)
+
+**Real-World Examples Fixed:**
+
+- Python intermediate Example 33 (async/await): Changed `participant Main as "main()"` to `participant Main`
+- Elixir advanced Example 62 (GenServer): Changed `participant Client as "Client Process"` to `participant Client`
+
+## Diagram Size and Splitting
+
+**CRITICAL RULE**: Split complex diagrams into multiple focused diagrams for mobile readability.
+
+### Why This Matters
+
+Large diagrams with multiple concepts, many branches, or subgraphs render too small on mobile devices (narrow screens) and become difficult to read. Mobile-first design requires each diagram to be simple enough to display clearly on small screens.
+
+### Problem: Diagrams That Become Too Small
+
+**Symptoms**:
+
+- Diagram contains multiple distinct concepts in one visualization
+- More than 4-5 branches from a single node (renders wide and small)
+- Using `subgraph` syntax for comparisons (e.g., "Eager vs Lazy")
+- Combining different aspects of a feature (hierarchy + usage pattern)
+
+**Real-world examples of diagrams that were too small**:
+
+1. **Java Example 43 (Sealed Classes)**: Combined sealed class hierarchy + pattern matching switch in one diagram
+2. **Java Example 36 (Concurrent Collections)**: Combined BlockingQueue + ConcurrentHashMap in one diagram
+3. **Kotlin Example 30 (Structured Concurrency)**: Combined hierarchy + cancellation propagation in one diagram
+4. **Kotlin Example 34 (Flow Operators)**: Combined transform + buffer + conflate in one diagram
+5. **Kotlin Example 38 (Sequences)**: Used subgraphs for Eager vs Lazy comparison
+6. **Kotlin Example 43 (Operator Overloading)**: 7 operator types branching from one central node
+
+### Solution: Split Into Focused Diagrams
+
+**One Concept Per Diagram**: Each diagram should explain one idea, pattern, or workflow.
+
+### When to Split
+
+**SPLIT when you have**:
+
+- Multiple distinct concepts in one diagram
+- More than 4-5 branches from a single node
+- `subgraph` syntax (replace with separate diagrams)
+- A vs B comparisons (split into A diagram and B diagram)
+- Workflow with multiple stages (split into stage-specific diagrams)
+
+**KEEP as one diagram when**:
+
+- Simple linear flow (3-4 steps)
+- Single concept with minimal branching
+- Diagram is already focused and readable on mobile
+
+### Splitting Guidelines
+
+**1. One Concept Per Diagram**
+
+❌ **Bad** (multiple concepts):
+
+- "Sealed classes + Pattern matching + Exhaustiveness checking"
+
+✅ **Good** (focused):
+
+- Diagram 1: "Sealed Class Hierarchy"
+- Diagram 2: "Pattern Matching with Switch"
+
+**2. Limit Branching (3-4 nodes per level)**
+
+❌ **Bad** (excessive branching):
+
+- One node branching to 7+ child nodes (renders wide and small)
+
+✅ **Good** (controlled):
+
+- Split into 2-3 diagrams, each with 3-4 branches maximum
+
+**3. Avoid Subgraphs (use separate diagrams)**
+
+❌ **Bad** (subgraphs):
+
+```mermaid
+graph TD
+    subgraph Eager
+        A[Load All] --> B[Process]
+    end
+
+    subgraph Lazy
+        C[Load On Demand] --> D[Process]
+    end
+```
+
+✅ **Good** (separate diagrams with headers):
+
+**Eager Evaluation:**
+
+```mermaid
+graph TD
+    A[Load All Data] --> B[Process Immediately]
+```
+
+**Lazy Evaluation:**
+
+```mermaid
+graph TD
+    A[Load On Demand] --> B[Process When Needed]
+```
+
+**4. Use Descriptive Headers**
+
+When splitting diagrams, add bold headers above each diagram:
+
+- Format: `**Concept Name:**` followed by the Mermaid code block
+- Example: `**BlockingQueue (Producer-Consumer):**`
+
+This provides clear context for each focused diagram.
+
+**5. Mobile-First Design**
+
+All diagrams should be readable on narrow mobile screens:
+
+- TD (top-down) layout already helps with vertical orientation
+- Splitting ensures each diagram has enough vertical space
+- Reduced horizontal width prevents text truncation
+
+### Real-World Fixes
+
+**Example 1: Sealed Classes (Before)**
+
+Combined hierarchy + pattern matching:
+
+```mermaid
+graph TD
+    Shape --> Circle
+    Shape --> Rectangle
+    Shape --> Triangle
+
+    Switch[Pattern Match] --> |Circle| C[Handle Circle]
+    Switch --> |Rectangle| R[Handle Rectangle]
+    Switch --> |Triangle| T[Handle Triangle]
+```
+
+**Example 1: Sealed Classes (After)**
+
+**Sealed Class Hierarchy:**
+
+```mermaid
+graph TD
+    Shape[Shape<br/>sealed interface] --> Circle
+    Shape --> Rectangle
+    Shape --> Triangle
+```
+
+**Pattern Matching Switch:**
+
+```mermaid
+graph TD
+    A[switch#40;shape#41;] --> B{Type?}
+    B -->|Circle| C[area = π × r²]
+    B -->|Rectangle| D[area = w × h]
+    B -->|Triangle| E[area = ½ × b × h]
+```
+
+**Example 2: Concurrent Collections (Before)**
+
+Combined BlockingQueue + ConcurrentHashMap:
+
+```mermaid
+graph TD
+    BQ[BlockingQueue] --> Put[put#40;#41;]
+    BQ --> Take[take#40;#41;]
+
+    CHM[ConcurrentHashMap] --> PutIfAbsent
+    CHM --> Compute
+    CHM --> Merge
+```
+
+**Example 2: Concurrent Collections (After)**
+
+**BlockingQueue (Producer-Consumer):**
+
+```mermaid
+graph TD
+    Producer --> |put#40;item#41;| Queue[BlockingQueue]
+    Queue --> |take#40;#41;| Consumer
+    Queue --> |Blocks if full| Producer
+    Consumer --> |Blocks if empty| Queue
+```
+
+**ConcurrentHashMap (Atomic Operations):**
+
+```mermaid
+graph TD
+    A[putIfAbsent#40;k,v#41;] --> B{Key exists?}
+    B -->|No| C[Insert value]
+    B -->|Yes| D[Return existing]
+```
+
+### Summary
+
+**Golden Rules**:
+
+1. **One concept per diagram** - Each diagram explains one idea
+2. **Limit branching** - Maximum 3-4 branches per level
+3. **No subgraphs** - Use separate diagrams with headers instead
+4. **Descriptive headers** - Add `**Concept Name:**` above each diagram
+5. **Mobile-first** - Ensure readability on narrow screens
+
+This prevents "too small" diagram issues and improves mobile user experience.

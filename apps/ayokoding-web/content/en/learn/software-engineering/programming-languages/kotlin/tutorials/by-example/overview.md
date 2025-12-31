@@ -26,7 +26,7 @@ Unlike narrative tutorials that build understanding through explanation and stor
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Beginner<br/>Examples 1-27<br/>Kotlin Fundamentals"] --> B["Intermediate<br/>Examples 28-54<br/>Production Patterns"]
     B --> C["Advanced<br/>Examples 55-80<br/>Expert Mastery"]
 
@@ -79,14 +79,14 @@ The 95% coverage goal maintains humility—no tutorial can cover everything. Thi
 
 Understanding where by-example fits in the tutorial ecosystem helps you choose the right learning path:
 
-| Tutorial Type    | Coverage                 | Approach                       | Target Audience          | When to Use                                          |
-| ---------------- | ------------------------ | ------------------------------ | ------------------------ | ---------------------------------------------------- |
-| **By Example**   | 95% through 80 examples  | Code-first, annotated examples | Experienced developers   | Quick language pickup, reference, language switching |
-| **Quick Start**  | 5-30% touchpoints        | Hands-on project               | Newcomers to Kotlin      | First taste, decide if worth learning                |
-| **Beginner**     | 0-60% comprehensive      | Narrative, explanatory         | Complete beginners       | Deep understanding, first programming language       |
-| **Intermediate** | 60-85%                   | Practical applications         | Past basics              | Production patterns, frameworks                      |
-| **Advanced**     | 85-95%                   | Complex systems                | Experienced Kotlin devs  | Coroutines internals, multiplatform                  |
-| **Cookbook**     | Problem-oriented         | Recipe, solution-focused       | All levels               | Specific problems, common tasks                      |
+| Tutorial Type    | Coverage                | Approach                       | Target Audience         | When to Use                                          |
+| ---------------- | ----------------------- | ------------------------------ | ----------------------- | ---------------------------------------------------- |
+| **By Example**   | 95% through 80 examples | Code-first, annotated examples | Experienced developers  | Quick language pickup, reference, language switching |
+| **Quick Start**  | 5-30% touchpoints       | Hands-on project               | Newcomers to Kotlin     | First taste, decide if worth learning                |
+| **Beginner**     | 0-60% comprehensive     | Narrative, explanatory         | Complete beginners      | Deep understanding, first programming language       |
+| **Intermediate** | 60-85%                  | Practical applications         | Past basics             | Production patterns, frameworks                      |
+| **Advanced**     | 85-95%                  | Complex systems                | Experienced Kotlin devs | Coroutines internals, multiplatform                  |
+| **Cookbook**     | Problem-oriented        | Recipe, solution-focused       | All levels              | Specific problems, common tasks                      |
 
 **By Example vs. Quick Start**: By Example provides 95% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
 

@@ -60,7 +60,7 @@ This tutorial provides **comprehensive coverage** of Elixir fundamentals:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TB
+graph TD
     Start[Start: Quick Start Done] --> Pattern[Advanced Pattern Matching]
     Pattern --> Data[Data Structures Mastery]
     Data --> Functions[Functions & Modules Deep Dive]

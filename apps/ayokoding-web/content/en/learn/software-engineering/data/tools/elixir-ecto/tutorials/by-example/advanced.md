@@ -200,7 +200,7 @@ Custom types allow you to define how Elixir values are converted to/from databas
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Ecto.Type Conversion Cycle
-graph LR
+graph TD
     A[Elixir Value] --> B[cast/1<br/>User Input]
     B --> C[dump/1<br/>To Database]
     C --> D[Database Storage]
@@ -701,7 +701,7 @@ Repo.prepare_query/2 compiles queries once and reuses the prepared statement, im
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%  Query Preparation Pattern
-graph LR
+graph TD
     A[Query Definition] --> B[prepare_query/2]
     B --> C[Compile + Cache]
     C --> D[Execute Prepared × N]

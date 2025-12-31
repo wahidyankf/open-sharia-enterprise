@@ -39,7 +39,7 @@ After this tutorial, you'll understand:
 This tutorial explores three layers of Python mastery:
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Layer 1: Runtime Internals"
         A1[Python Execution Model<br/>Bytecode & VM]
         A2[Memory Management<br/>Reference Counting & GC]
@@ -101,7 +101,7 @@ Each layer builds on the previous, taking you from understanding Python's intern
 Python source code goes through several stages before execution:
 
 ```mermaid
-graph LR
+graph TD
     A[Python Source Code<br/>.py file] --> B[Parser<br/>AST Generation]
     B --> C[Compiler<br/>Bytecode Generation]
     C --> D[Python VM<br/>.pyc files]
@@ -134,7 +134,7 @@ dis.dis(code)
 The GIL is a mutex that protects access to Python objects, preventing multiple threads from executing Python bytecode simultaneously:
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Multi-threaded Python"
         T1[Thread 1<br/>Python Code]
         T2[Thread 2<br/>Python Code]

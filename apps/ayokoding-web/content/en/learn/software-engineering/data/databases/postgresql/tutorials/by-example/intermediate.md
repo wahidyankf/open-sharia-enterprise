@@ -1170,7 +1170,7 @@ JSONB supports operators for containment, existence checks, and set operations. 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["JSONB Data<br/>{location: 'NYC', attendees: 500}"]
     B["Containment @><br/>Does data contain value?"]
     C["Existence ?<br/>Does key exist?"]
@@ -1388,7 +1388,7 @@ Transactions group multiple statements into atomic units - either all succeed (C
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["BEGIN"]
     B["Statement 1<br/>(UPDATE)"]
     C["Statement 2<br/>(INSERT)"]
@@ -1930,7 +1930,7 @@ Materialized views store query results physically - faster than regular views bu
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Base Tables<br/>(orders, products)"]
     B["CREATE MATERIALIZED VIEW<br/>(Snapshot at creation)"]
     C["Materialized View<br/>(Cached Results)"]
@@ -2227,7 +2227,7 @@ Triggers automatically execute functions before or after INSERT, UPDATE, or DELE
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Data Modification<br/>(INSERT/UPDATE/DELETE)"]
     B["BEFORE Trigger"]
     C["Actual Operation"]

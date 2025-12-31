@@ -99,7 +99,7 @@ Handle database constraint violations (unique, foreign key, etc.) gracefully in 
 
 ```mermaid
 %% Constraint violation handling
-graph LR
+graph TD
     A[Insert user] --> B[Database]
     B --> C{Constraint violated?}
     C -->|UNIQUE email| D[unique_constraint catches]
@@ -442,7 +442,7 @@ Execute long-running tasks asynchronously. Schedule recurring jobs.
 
 ```mermaid
 %% Oban job processing flow
-graph LR
+graph TD
     A[User Registration] --> B[Insert Oban Job]
     B --> C[oban_jobs table]
     C --> D[Oban Worker Pool]

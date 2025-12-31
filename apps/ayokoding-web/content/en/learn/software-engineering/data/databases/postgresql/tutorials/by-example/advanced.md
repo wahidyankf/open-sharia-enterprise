@@ -194,7 +194,7 @@ Expression indexes index computed values (functions, operators) instead of raw c
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Raw Data<br/>(email: 'Alice@Example.com')"]
     B["Expression<br/>LOWER(email)"]
     C["Index Stores<br/>('alice@example.com' → row ID)"]
@@ -1501,7 +1501,7 @@ Logical replication replicates data changes (INSERT/UPDATE/DELETE) to subscriber
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Publisher Database<br/>(Source)"]
     B["Publication<br/>(products_pub)"]
     C["WAL Stream<br/>(Change Events)"]
@@ -1718,7 +1718,7 @@ Row-Level Security restricts which rows users can see or modify - enables multi-
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["User Query<br/>(SELECT * FROM orders)"]
     B["RLS Policy<br/>(WHERE user_id = current_user)"]
     C["All Rows in Table<br/>(1000 orders)"]
@@ -2363,7 +2363,7 @@ WAL ensures durability - all changes logged before applied to data files. Essent
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Transaction<br/>(UPDATE orders)"]
     B["Write to WAL<br/>(Append-only log)"]
     C["WAL Persisted<br/>(Durable storage)"]

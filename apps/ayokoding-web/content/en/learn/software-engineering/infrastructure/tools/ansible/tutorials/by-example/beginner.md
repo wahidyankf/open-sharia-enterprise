@@ -18,7 +18,7 @@ Ansible playbooks are YAML files describing desired system state. Every playbook
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Playbook<br/>hello.yml"] --> B["Ansible Parser<br/>YAML → Tasks"]
     B --> C["Execute on<br/>localhost"]
     C --> D["Output:<br/>Hello, Ansible!"]
@@ -512,7 +512,7 @@ Dynamic inventory pulls host information from external sources (cloud APIs, CMDB
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Ansible Playbook"] --> B["Inventory Script<br/>inventory.py"]
     B --> C["Cloud API<br/>(AWS/GCP/Azure)"]
     C --> D["JSON Response<br/>Hosts & Groups"]

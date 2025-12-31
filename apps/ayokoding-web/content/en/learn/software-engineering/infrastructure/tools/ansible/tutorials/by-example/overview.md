@@ -40,7 +40,7 @@ Unlike narrative tutorials that build understanding through explanation and stor
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Beginner<br/>Examples 1-27<br/>Playbooks & Core Modules"] --> B["Intermediate<br/>Examples 28-54<br/>Roles & Templates"]
     B --> C["Advanced<br/>Examples 55-80<br/>Collections & Testing"]
 

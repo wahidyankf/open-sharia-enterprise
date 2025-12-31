@@ -555,7 +555,7 @@ Error workflows handle failures from other workflows. This example creates a reu
 
 ```mermaid
 %% Error workflow triggered on failure
-graph LR
+graph TD
     A[Main Workflow Error] --> B[Error Workflow Trigger]
     B --> C[Log Error]
     C --> D[Send Notification]
@@ -1221,7 +1221,7 @@ Parameterized queries prevent SQL injection. This example safely inserts data.
 
 ```mermaid
 %% Database insert flow
-graph LR
+graph TD
     A[Input Data] --> B[Prepare Query]
     B --> C[PostgreSQL Insert]
     C --> D[Return ID]

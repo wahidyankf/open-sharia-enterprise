@@ -26,7 +26,7 @@ Unlike narrative tutorials that build understanding through explanation and stor
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Beginner<br/>Examples 1-30<br/>Basics"] --> B["Intermediate<br/>Examples 31-60<br/>Practical Patterns"]
     B --> C["Advanced<br/>Examples 61-90<br/>Complex Features"]
 

@@ -422,6 +422,7 @@ flowchart TD
 - **Avoid**: `graph LR` (left-right) or `graph RL` (right-left)
 - **Rationale**: Mobile devices have vertical screens; horizontal scrolling is poor UX
 - **Exception**: Use horizontal only when vertical layout would significantly harm diagram clarity
+- **Default Layout (CRITICAL)**: Use `graph TD` (top-down) by default - ONLY use alternative layouts (LR, RL, BT) when explicitly requested by user
 
 **This applies to ALL diagram types**: architecture diagrams, flowcharts, component diagrams, sequence diagrams, etc.
 
@@ -461,9 +462,12 @@ flowchart TD
 - Add ONE color palette comment above diagram: `<!-- Uses accessible colors: blue (#0173B2), orange (#DE8F05) -->` - aids documentation/verification, but somewhat redundant since hex codes are already in classDef
 - **No duplicate color palette comments** - Each diagram should have exactly one comment (not multiple identical comments)
 
-**Mermaid Syntax Rules**: Escape special characters in node text using HTML entities. Avoid nested escaping - do NOT combine entity codes with escaped quotes (breaks parser). See Diagram Convention for complete details.
+**Mermaid Syntax Rules**: Escape special characters in node text AND edge labels using HTML entities. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`). Avoid nested escaping - do NOT combine entity codes with escaped quotes (breaks parser). See Diagram Convention for complete details.
 
-See [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
+- **Sequence Diagram Participant Syntax (CRITICAL)**: Use simple participant identifiers WITHOUT `as` keyword in sequenceDiagram. Do NOT use `participant X as "Display Name"` syntax with quotes (causes rendering failures in Hugo/Hextra). Use CamelCase or simple names: `participant Main`, `participant EventLoop`. Applies ONLY to sequenceDiagram, not graph/flowchart
+  See [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for diagram-specific implementation details.
+
+**Diagram Splitting for Mobile**: Split complex diagrams into focused visualizations. One concept per diagram (max 3-4 branches), no subgraphs (use separate diagrams with headers like **Concept Name:**), mobile-first readability. See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting) for complete guidelines.
 
 ---
 

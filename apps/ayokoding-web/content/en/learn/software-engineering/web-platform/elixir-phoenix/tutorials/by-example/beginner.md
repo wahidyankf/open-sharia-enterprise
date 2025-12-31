@@ -107,7 +107,7 @@ The router defines URL patterns and maps them to controller actions. Phoenix 1.7
 
 ```mermaid
 %% Request pipeline flow through router
-graph LR
+graph TD
     A[HTTP Request] --> B[Router]
     B --> C[Pipeline :browser]
     C --> D[accepts html]
@@ -212,7 +212,7 @@ Plugs are middleware that transform the connection. They're composable building 
 
 ```mermaid
 %% Plug transformation chain
-graph LR
+graph TD
     A[conn] --> B[SetCurrentUser]
     B --> C[conn with :current_user]
     C --> D[require_login]
