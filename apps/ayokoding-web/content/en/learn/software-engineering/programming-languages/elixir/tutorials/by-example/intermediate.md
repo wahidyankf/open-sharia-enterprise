@@ -5231,68 +5231,208 @@ Mix tasks automate project operations. Create custom tasks for deployment, seedi
 
 ```elixir
 defmodule Mix.Tasks.MyApp.Hello do
+  # => Custom Mix task module
+  # => Naming: Mix.Tasks.<namespace>.<task_name>
+  # => Invoked: mix my_app.hello (lowercase, dots become underscores)
+  # => Convention: Mix.Tasks.MyApp.Hello → mix my_app.hello
   @moduledoc "Prints hello message"
+  # => @moduledoc: task description for help system
+  # => Appears in: mix help (task documentation)
+  # => Should explain what task does and usage
   @shortdoc "Say hello"
+  # => @shortdoc: brief summary (one line)
+  # => Appears in: mix help (task listing)
+  # => Keep under 80 characters
 
-  use Mix.Task  # => Mix.Task behavior
+  use Mix.Task
+  # => use Mix.Task: imports Mix.Task behavior
+  # => Requires: run/1 callback
+  # => Enables: Mix.Task.run/1, Mix.Task.reenable/1
+  # => Task becomes available to Mix CLI
 
   @impl Mix.Task
   def run(args) do
-    # => Called when running: mix my_app.hello
+    # => run/1: task entry point (required callback)
+    # => Called when: mix my_app.hello [args]
+    # => args: list of command-line arguments (strings)
     # args = command line arguments as list
+    # => Example: mix my_app.hello --name Alice → ["--name", "Alice"]
+    # => Type: [String.t()]
 
     {opts, args, _invalid} = OptionParser.parse(args,
+      # => OptionParser.parse/2: parses command-line arguments
+      # => First arg: args list (from run/1)
+      # => Second arg: options (switches, aliases, strict mode)
+      # => Returns: {parsed_opts, remaining_args, invalid_opts}
       switches: [name: :string, upcase: :boolean],
+      # => switches: defines option types
+      # => name: :string - expects string value (--name Alice)
+      # => upcase: :boolean - flag (--upcase, no value needed)
+      # => Other types: :integer, :float, :count
+      # => Count: --verbose --verbose → {verbose: 2}
       aliases: [n: :name, u: :upcase]
+      # => aliases: short forms for options
+      # => n: :name - maps -n to --name
+      # => u: :upcase - maps -u to --upcase
+      # => Example: -n Alice -u → {name: "Alice", upcase: true}
     )
+    # => Returns: {opts, args, invalid}
+    # => opts: keyword list [{:name, "Alice"}, {:upcase, true}]
+    # => args: non-option arguments (positional args)
+    # => _invalid: invalid options (ignored with _)
 
     name = opts[:name] || "World"
+    # => Extract :name from opts, default "World"
+    # => opts[:name]: nil if not provided
+    # => || : logical OR (returns "World" if nil)
+    # => Type: String.t()
     message = "Hello, #{name}!"
+    # => Build message with name interpolation
+    # => #{name}: embeds name variable in string
+    # => "Hello, Alice!" if name = "Alice"
 
     message = if opts[:upcase], do: String.upcase(message), else: message
+    # => Conditional uppercasing based on :upcase flag
+    # => opts[:upcase]: true if --upcase flag present, nil otherwise
+    # => if nil: falsy in Elixir → else branch (message unchanged)
+    # => if true: truthy → do branch (String.upcase applied)
+    # => String.upcase("Hello, Alice!") → "HELLO, ALICE!"
 
     IO.puts(message)
+    # => Output message to console
+    # => IO.puts/1: prints string with newline
+    # => Returns: :ok
   end
+  # => run/1 complete
+  # => Task exits after run/1 returns
 end
+# => Mix.Tasks.MyApp.Hello complete
 
 # Run: mix my_app.hello --name Alice --upcase
-# Output: HELLO, ALICE!
+# => Command: mix invokes Mix.Tasks.MyApp.Hello.run/1
+# => Arguments: ["--name", "Alice", "--upcase"]
+# => Parsed: opts = [name: "Alice", upcase: true], args = []
+# => Output: HELLO, ALICE!
+# => Alternative: mix my_app.hello -n Alice -u (using aliases)
 
 defmodule Mix.Tasks.MyApp.Db.Seed do
+  # => Database seeding task
+  # => Invoked: mix my_app.db.seed
+  # => Naming: Mix.Tasks.MyApp.Db.Seed → mix my_app.db.seed
+  # => Convention: namespaces with Db for database operations
   @moduledoc "Seeds database with sample data"
+  # => Task documentation
+  # => Explains: inserts sample users into database
   use Mix.Task
+  # => Mix.Task behavior
 
-  @requirements ["app.start"]  # => Ensure app started before task
+  @requirements ["app.start"]
+  # => @requirements: list of tasks to run before this task
+  # => "app.start" - starts application and dependencies
+  # => Mix automatically runs: mix app.start → MyApp.Application.start/2
+  # => Ensures: database connection available (from supervision tree)
+  # => Common: ["app.start", "ecto.create", "ecto.migrate"]
+  # => Order: app.start runs → then run/1 executes
 
   @impl Mix.Task
   def run(_args) do
+    # => run/1: seed execution
+    # => _args: ignored (seed task takes no arguments)
+    # => App already started (due to @requirements)
     # App and its dependencies are started
+    # => MyApp.Application supervision tree running
+    # => MyApp.Repo process available for database operations
     MyApp.Repo.insert!(%User{name: "Alice", email: "alice@example.com"})
+    # => Repo.insert!/1: inserts struct, raises on error
+    # => %User{...}: creates User struct with fields
+    # => Database: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+    # => Returns: inserted struct with id
+    # => ! : bang version (raises on constraint violation, validation error)
     MyApp.Repo.insert!(%User{name: "Bob", email: "bob@example.com"})
+    # => Insert second user
+    # => Both inserts in separate transactions (no explicit transaction)
 
     IO.puts("Database seeded successfully")
+    # => Success message
+    # => Printed after both inserts complete
   end
+  # => run/1 complete
+  # => Task exits, app keeps running (started by @requirements)
 end
+# => Mix.Tasks.MyApp.Db.Seed complete
 
 defmodule Mix.Tasks.MyApp.Stats do
+  # => Application statistics task
+  # => Invoked: mix my_app.stats
+  # => Purpose: query application state and display metrics
   @moduledoc "Show application statistics"
+  # => Task documentation
   use Mix.Task
+  # => Mix.Task behavior
 
   @impl Mix.Task
   def run(_args) do
-    Mix.Task.run("app.start")  # => Manually start app
+    # => run/1: stats gathering
+    # => _args: ignored (no arguments)
+    # => NO @requirements (starts app manually below)
+    Mix.Task.run("app.start")
+    # => Mix.Task.run/1: invokes another Mix task programmatically
+    # => "app.start" - starts application and dependencies
+    # => Idempotent: if already started, does nothing
+    # => Alternative: @requirements ["app.start"] (declarative)
+    # => Pattern: manual start for control (vs @requirements)
+    # => Returns: task return value (usually :ok)
 
     # Gather stats
+    # => Application running, can query modules
     user_count = MyApp.Users.count()
+    # => Calls MyApp.Users.count/0 function
+    # => Queries database for user count
+    # => Example: SELECT COUNT(*) FROM users
+    # => Returns: integer (e.g., 150)
     active_sessions = MyApp.SessionManager.count()
+    # => Calls SessionManager GenServer
+    # => Queries GenServer state for active session count
+    # => Pattern: GenServer.call(SessionManager, :count)
+    # => Returns: integer (e.g., 23)
 
     IO.puts("""
     Application Statistics:
     - Users: #{user_count}
     - Active Sessions: #{active_sessions}
     """)
+    # => IO.puts/1 with heredoc (triple-quoted string)
+    # => Heredoc: preserves formatting (newlines, indentation)
+    # => #{user_count}: interpolates user count
+    # => #{active_sessions}: interpolates session count
+    # => Example output:
+    # =>   Application Statistics:
+    # =>   - Users: 150
+    # =>   - Active Sessions: 23
   end
+  # => run/1 complete
 end
+# => Mix.Tasks.MyApp.Stats complete
+
+# Task discovery and invocation
+Mix.Task.run("my_app.hello", ["--name", "Charlie"])
+# => Programmatic task invocation
+# => First arg: task name (string)
+# => Second arg: arguments list
+# => Equivalent to: mix my_app.hello --name Charlie
+# => Returns: task return value
+
+Mix.Task.reenable("my_app.stats")
+# => Reenable task to run again in same session
+# => Tasks run once per Mix session by default
+# => reenable/1: allows task to run again
+# => Use case: running task multiple times in scripts
+
+Mix.Task.all_modules()
+# => Lists all available Mix tasks (modules)
+# => Returns: [Mix.Tasks.Compile, Mix.Tasks.MyApp.Hello, ...]
+# => Type: [module()]
+# => Includes: built-in tasks (compile, test) and custom tasks
 ```
 
 **Key Takeaway**: Custom Mix tasks extend build tool functionality. Use `@requirements` to ensure app dependencies are met. Parse arguments with `OptionParser` for flexible CLI interfaces.
