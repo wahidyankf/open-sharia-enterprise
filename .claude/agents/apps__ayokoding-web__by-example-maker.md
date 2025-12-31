@@ -166,6 +166,7 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 - Use appropriate diagram type (graph TD, sequenceDiagram, stateDiagram)
 - Vertical orientation (mobile-first)
 - Comment syntax: `%%` (NOT `%%{ }%%` which causes syntax errors)
+- Character escaping: Use HTML entities for special characters in node text: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`
 
 ### Part 3: Heavily Annotated Code
 
