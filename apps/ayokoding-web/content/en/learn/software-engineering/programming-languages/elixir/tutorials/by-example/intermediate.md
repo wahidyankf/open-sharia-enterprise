@@ -4265,184 +4265,396 @@ graph TD
 
 ```elixir
 defmodule SessionManager do
+  # => GenServer-based session manager module
+  # => Demonstrates production pattern for stateful services
   @moduledoc """
   GenServer-based session manager with TTL-based cleanup.
   Provides thread-safe concurrent access to session data.
   """
+  # => @moduledoc: documentation for module
+  # => Explains purpose: session storage with TTL
 
   use GenServer  # => Use GenServer behavior (implements init, handle_call, handle_cast, etc.)
+  # => use GenServer: imports GenServer behavior macros
+  # => Requires implementation of: init/1, handle_call/3, handle_cast/2, handle_info/2
+  # => Provides: start_link/1, call/2, cast/2, etc.
 
   # Client API - public interface
+  # => Client API: functions callers use (abstracts GenServer protocol)
+  # => Best practice: separate client API from server callbacks
 
   @doc "Starts the session manager with optional TTL (default: 300 seconds)"
   def start_link(opts \\ []) do
+    # => start_link/1: starts GenServer process
+    # => opts: keyword list of options
+    # => Default: [] (empty)
     ttl = Keyword.get(opts, :ttl, 300)  # => Default 5 minutes
+    # => Keyword.get/3: extract :ttl from opts, default 300
+    # => ttl: time-to-live in seconds
     GenServer.start_link(__MODULE__, ttl, name: __MODULE__)
+    # => GenServer.start_link/3: spawns GenServer process
+    # => First arg: module name (__MODULE__ = SessionManager)
+    # => Second arg: init arg (ttl passed to init/1)
+    # => Third arg: options (name: registers process globally)
+    # => name: __MODULE__: allows calling SessionManager.put/2 without PID
+    # => Returns: {:ok, pid}
     # => __MODULE__ = SessionManager, name registers process globally
   end
 
   @doc "Stores a session with given key and value"
   def put(key, value) do
+    # => put/2: client function to store session
+    # => key: session identifier (string or atom)
+    # => value: session data (any Elixir term)
     GenServer.call(__MODULE__, {:put, key, value})  # => Synchronous call
+    # => GenServer.call/2: sends synchronous request
+    # => __MODULE__: named process (SessionManager)
+    # => Message: {:put, key, value}
+    # => Blocks until handle_call returns reply
+    # => Returns: :ok (from handle_call reply)
     # => Blocks until server responds
+    # => Thread-safe: only one caller modifies state at a time
   end
 
   @doc "Retrieves session by key, returns {:ok, value} or {:error, :not_found}"
   def get(key) do
+    # => get/1: client function to retrieve session
+    # => key: session identifier
     GenServer.call(__MODULE__, {:get, key})  # => Synchronous call
+    # => Message: {:get, key}
+    # => Blocks until handle_call returns
+    # => Returns: {:ok, value} or {:error, :not_found} or {:error, :expired}
   end
 
   @doc "Deletes session by key"
   def delete(key) do
+    # => delete/1: client function to remove session
+    # => key: session identifier
     GenServer.cast(__MODULE__, {:delete, key})  # => Asynchronous cast
+    # => GenServer.cast/2: sends asynchronous request (fire-and-forget)
+    # => Message: {:delete, key}
+    # => Returns immediately :ok (doesn't wait for processing)
+    # => handle_cast processes message asynchronously
     # => Returns immediately without waiting for completion
+    # => Use cast when reply not needed (performance optimization)
   end
 
   @doc "Returns all active sessions (for debugging)"
   def list_all do
+    # => list_all/0: retrieves all active sessions
+    # => Debugging function (not for production use at scale)
     GenServer.call(__MODULE__, :list_all)  # => Synchronous call
+    # => Message: :list_all (atom, not tuple)
+    # => Returns: map of %{key => value} (without timestamps)
   end
 
   @doc "Returns session count"
   def count do
+    # => count/0: returns number of active sessions
     GenServer.call(__MODULE__, :count)  # => Synchronous call
+    # => Message: :count
+    # => Returns: integer count
   end
 
   # Server Callbacks - GenServer implementation
+  # => Server callbacks: handle requests and manage state
+  # => Private to module (not called directly by clients)
 
   @impl true
+  # => @impl true: marks function as behavior callback implementation
+  # => Compiler verifies function matches GenServer behavior contract
   def init(ttl) do
-    # => Called when GenServer starts
+    # => init/1: GenServer callback for initialization
+    # => Called when GenServer.start_link/3 executes
+    # => Arg: ttl (from start_link second argument)
+    # Called when GenServer starts
     # Initialize state with empty sessions map and TTL
     state = %{
+      # => State: map with sessions and ttl
+      # => Immutable: each callback returns new state
       sessions: %{},  # => key -> {value, inserted_at}
+      # => sessions: map of session_key => {session_value, timestamp}
+      # => Empty on initialization
       ttl: ttl        # => Time-to-live in seconds
+      # => ttl: expiration duration (e.g., 300 seconds)
     }
+    # => state is %{sessions: %{}, ttl: 300}
 
     # Schedule periodic cleanup every 60 seconds
     schedule_cleanup()  # => Sends message to self after delay
+    # => schedule_cleanup/0: schedules first :cleanup_expired message
+    # => Process.send_after/3 sends message in 60 seconds
+    # => Recursive pattern: cleanup schedules next cleanup
 
     {:ok, state}  # => Return {:ok, initial_state}
+    # => init/1 contract: returns {:ok, state}
+    # => GenServer.start_link/3 returns {:ok, pid}
+    # => Process now running with state
   end
 
   @impl true
   def handle_call({:put, key, value}, _from, state) do
+    # => handle_call/3: callback for synchronous requests
+    # => First arg: request message {:put, key, value}
+    # => Second arg: _from = {caller_pid, unique_ref} (unused here)
+    # => Third arg: current state
     # => Synchronous request handler
     # _from = {pid, ref} of caller (unused here)
 
     # Store session with current timestamp
     session_data = {value, System.system_time(:second)}
+    # => session_data: tuple {session_value, unix_timestamp}
+    # => System.system_time(:second): current time in seconds
+    # => Example: {"Alice", 1734567890}
     updated_sessions = Map.put(state.sessions, key, session_data)
+    # => Map.put/3: add/update key-value in map
+    # => state.sessions: old sessions map
+    # => key: session key (e.g., "user_123")
+    # => session_data: {value, timestamp}
+    # => Returns: new sessions map with added entry
 
     new_state = %{state | sessions: updated_sessions}  # => Update state
+    # => Map update syntax: %{old_map | key: new_value}
+    # => Replaces sessions field, keeps ttl unchanged
+    # => new_state is %{sessions: updated_sessions, ttl: state.ttl}
 
     {:reply, :ok, new_state}  # => Reply to caller with :ok, update state
+    # => handle_call contract: {:reply, reply_value, new_state}
+    # => reply_value: :ok (sent to caller)
+    # => new_state: becomes current state
+    # => GenServer.call returns :ok to caller
   end
 
   @impl true
   def handle_call({:get, key}, _from, state) do
-    # => Synchronous request handler for get
+    # => handle_call/3: callback for get request
+    # => Message: {:get, key}
+    # Synchronous request handler for get
 
     case Map.get(state.sessions, key) do
+      # => Map.get/2: retrieves value by key (returns nil if not found)
+      # => state.sessions: current sessions map
+      # => Pattern matching on result
       nil ->
+        # => Pattern 1: key not found in map
         {:reply, {:error, :not_found}, state}  # => Session doesn't exist
+        # => Reply: {:error, :not_found}
+        # => State unchanged (read operation)
+        # => Caller gets {:error, :not_found}
 
       {value, inserted_at} ->
+        # => Pattern 2: found {value, timestamp} tuple
+        # => value: session data
+        # => inserted_at: timestamp when stored
         # Check if session expired
         current_time = System.system_time(:second)
+        # => Current time in seconds
         age = current_time - inserted_at
+        # => age: seconds since session created
+        # => Example: 1734567900 - 1734567890 = 10 seconds old
 
         if age > state.ttl do
+          # => Check if session older than TTL
+          # => Example: 10 > 300 (false), 400 > 300 (true)
           # Session expired - remove it
           updated_sessions = Map.delete(state.sessions, key)
+          # => Map.delete/2: removes key from map
+          # => Cleanup expired session on read
           new_state = %{state | sessions: updated_sessions}
+          # => Update state without expired session
           {:reply, {:error, :expired}, new_state}
+          # => Reply: {:error, :expired}
+          # => State updated (session removed)
+          # => Lazy cleanup: remove on read instead of waiting for periodic cleanup
         else
           # Session valid - return value
           {:reply, {:ok, value}, state}  # => State unchanged
+          # => Reply: {:ok, session_value}
+          # => State unchanged (session still valid)
+          # => Caller gets {:ok, value}
         end
     end
   end
 
   @impl true
   def handle_call(:list_all, _from, state) do
-    # => Return all sessions (for debugging)
+    # => handle_call/3: callback for list_all request
+    # => Message: :list_all (atom)
+    # Return all sessions (for debugging)
     sessions = state.sessions
                |> Enum.map(fn {key, {value, _ts}} -> {key, value} end)
+               # => Transform each {key, {value, timestamp}} to {key, value}
+               # => Removes timestamps from output
+               # => Example: {"user_123", {"Alice", 1734567890}} → {"user_123", "Alice"}
                |> Enum.into(%{})
+               # => Convert list of tuples back to map
+               # => Returns: %{key1 => value1, key2 => value2}
 
     {:reply, sessions, state}  # => Return map without timestamps
+    # => Reply: map of sessions (no timestamps)
+    # => State unchanged
   end
 
   @impl true
   def handle_call(:count, _from, state) do
-    # => Return session count
+    # => handle_call/3: callback for count request
+    # Return session count
     count = map_size(state.sessions)
+    # => map_size/1: returns number of keys in map
+    # => Example: %{"user_123" => ..., "user_456" => ...} → 2
     {:reply, count, state}
+    # => Reply: integer count
+    # => State unchanged
   end
 
   @impl true
   def handle_cast({:delete, key}, state) do
-    # => Asynchronous request handler (no reply sent)
+    # => handle_cast/2: callback for asynchronous requests
+    # => First arg: request message {:delete, key}
+    # => Second arg: current state
+    # => No _from (async, no reply)
+    # Asynchronous request handler (no reply sent)
     updated_sessions = Map.delete(state.sessions, key)
+    # => Remove key from sessions map
     new_state = %{state | sessions: updated_sessions}
+    # => Update state with session removed
 
     {:noreply, new_state}  # => No reply for cast, just update state
+    # => handle_cast contract: {:noreply, new_state}
+    # => No reply sent to caller
+    # => State updated
+    # => Caller already received :ok from GenServer.cast
   end
 
   @impl true
   def handle_info(:cleanup_expired, state) do
-    # => Handle messages sent to process (not call/cast)
+    # => handle_info/2: callback for arbitrary messages (not call/cast)
+    # => First arg: message (:cleanup_expired atom)
+    # => Second arg: current state
+    # => Handles messages from Process.send_after, timers, monitors, etc.
+    # Handle messages sent to process (not call/cast)
     # Cleanup expired sessions
 
     current_time = System.system_time(:second)
+    # => Current time for age calculation
 
     # Filter out expired sessions
     active_sessions = state.sessions
                       |> Enum.filter(fn {_key, {_value, inserted_at}} ->
+                        # => Filter predicate: returns true to keep, false to remove
+                        # => Pattern: {key, {value, timestamp}}
+                        # => _key, _value: ignored (not needed for age check)
                         age = current_time - inserted_at
+                        # => Calculate session age
                         age <= state.ttl  # => Keep only non-expired
+                        # => true if age <= ttl (keep), false if age > ttl (remove)
+                        # => Example: 295 <= 300 (true, keep), 305 <= 300 (false, remove)
                       end)
                       |> Enum.into(%{})
+                      # => Convert filtered list back to map
+                      # => active_sessions: map of non-expired sessions
 
     removed_count = map_size(state.sessions) - map_size(active_sessions)
+    # => Calculate how many sessions expired
+    # => Before size - after size = removed count
     if removed_count > 0 do
+      # => Only log if sessions were removed
       IO.puts("Cleaned up #{removed_count} expired sessions")
+      # => Log cleanup activity
+      # => Production: use Logger.info instead
     end
 
     new_state = %{state | sessions: active_sessions}
+    # => Update state with only active sessions
 
     # Schedule next cleanup
     schedule_cleanup()
+    # => Recursive scheduling: cleanup schedules next cleanup
+    # => Ensures periodic cleanup continues
+    # => Pattern: self-scheduling timer
 
     {:noreply, new_state}  # => Update state, no reply
+    # => handle_info contract: {:noreply, new_state}
+    # => No caller to reply to (message from timer)
+    # => State updated with cleaned sessions
   end
 
   # Private helpers
+  # => Private functions: not part of public API
 
   defp schedule_cleanup do
+    # => schedule_cleanup/0: schedules next cleanup message
+    # => defp: private function
     # Send :cleanup_expired message to self after 60 seconds
     Process.send_after(self(), :cleanup_expired, 60_000)  # => 60 seconds
+    # => Process.send_after/3: sends message after delay
+    # => self(): current GenServer process PID
+    # => Message: :cleanup_expired atom
+    # => Delay: 60_000ms = 60 seconds
+    # => Returns: timer reference (unused here)
+    # => Message handled by handle_info(:cleanup_expired, state)
   end
 end
+# => SessionManager module complete
 
+# Usage examples
 {:ok, _pid} = SessionManager.start_link(ttl: 10)  # => 10 second TTL for demo
+# => Start GenServer with 10 second TTL (for quick demo)
+# => Returns: {:ok, pid}
+# => _pid: ignore PID (process registered by name)
+# => GenServer now running with state %{sessions: %{}, ttl: 10}
 
 SessionManager.put("user_123", %{name: "Alice", role: :admin})
+# => Store session for user_123
+# => Value: map with name and role
+# => Synchronous call, waits for :ok reply
+# => State now: %{sessions: %{"user_123" => {%{name: "Alice", role: :admin}, timestamp}}, ttl: 10}
 SessionManager.put("user_456", %{name: "Bob", role: :user})
+# => Store session for user_456
+# => State: 2 sessions stored
 SessionManager.put("user_789", %{name: "Charlie", role: :guest})
+# => Store session for user_789
+# => State: 3 sessions stored
 
 SessionManager.get("user_123")  # => {:ok, %{name: "Alice", role: :admin}}
+# => Retrieve existing session
+# => Synchronous call
+# => Returns: {:ok, session_value}
+# => Session still valid (recently created)
 SessionManager.get("user_999")  # => {:error, :not_found}
+# => Try to retrieve non-existent session
+# => Returns: {:error, :not_found}
+# => Key doesn't exist in sessions map
 
 SessionManager.delete("user_456")
+# => Delete user_456 session
+# => Asynchronous cast (fire-and-forget)
+# => Returns immediately: :ok
+# => Session removed from state
 SessionManager.get("user_456")  # => {:error, :not_found}
+# => Try to retrieve deleted session
+# => Returns: {:error, :not_found}
+# => Session no longer exists
 
 SessionManager.list_all()  # => %{"user_123" => %{...}, "user_789" => %{...}}
+# => Retrieve all active sessions
+# => Returns: map of {key => value} (no timestamps)
+# => user_456 not present (was deleted)
+# => user_123 and user_789 present
 SessionManager.count()  # => 2
+# => Count active sessions
+# => Returns: 2 (user_123 and user_789)
 
 :timer.sleep(11_000)  # => 11 seconds
+# => Sleep for 11 seconds
+# => Simulates time passing
+# => Sessions now 11 seconds old (older than 10 second TTL)
 SessionManager.get("user_123")  # => {:error, :expired}
+# => Try to retrieve expired session
+# => age = 11 seconds, ttl = 10 seconds
+# => 11 > 10: session expired
+# => handle_call removes expired session and returns {:error, :expired}
+# => Demonstrates TTL expiration
 
 
 ```
