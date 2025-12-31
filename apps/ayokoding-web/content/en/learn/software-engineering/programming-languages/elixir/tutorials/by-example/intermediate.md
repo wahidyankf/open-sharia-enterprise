@@ -5881,84 +5881,247 @@ Process mailboxes queue incoming messages. Understanding mailbox behavior preven
 
 ```elixir
 # Messages accumulate in mailbox
+# => Mailbox: FIFO queue for incoming messages
+# => Every process has one mailbox
+# => Messages stay queued until received
 pid = self()
+# => Current process PID
+# => Sending messages to ourselves for demonstration
 send(pid, :msg1)
+# => send/2: sends message to process
+# => First arg: recipient PID
+# => Second arg: message (any term)
+# => :msg1 added to mailbox (position 1)
+# => Returns: :msg1 (the message sent)
 send(pid, :msg2)
+# => :msg2 added to mailbox (position 2)
+# => Mailbox now: [:msg1, :msg2]
 send(pid, :msg3)
+# => :msg3 added to mailbox (position 3)
+# => Mailbox now: [:msg1, :msg2, :msg3]
 
-Process.info(pid, :message_queue_len)  # => {:message_queue_len, 3}
+Process.info(pid, :message_queue_len)
+# => Process.info/2: queries process information
+# => Second arg: :message_queue_len (number of queued messages)
+# => Returns: {:message_queue_len, 3}
+# => {:message_queue_len, 3}
+# => 3 messages waiting in mailbox
+# => Type: {atom(), non_neg_integer()}
 
 # receive processes messages in FIFO order
+# => FIFO: First In, First Out (queue order)
+# => Messages processed in arrival order (unless selective receive)
 receive do
-  msg -> IO.inspect(msg, label: "Received")  # => :msg1
+  # => receive block: waits for message
+  # => Blocks until message arrives (unless timeout)
+  msg -> IO.inspect(msg, label: "Received")
+  # => Pattern: msg (matches any message)
+  # => Processes first message in mailbox
+  # => :msg1 (first in queue)
+  # => IO.inspect/2: prints value with label
+  # => Output: "Received: :msg1"
+  # => :msg1
+  # => Message removed from mailbox after processing
 end
+# => receive complete
+# => Mailbox now: [:msg2, :msg3]
 
-Process.info(pid, :message_queue_len)  # => {:message_queue_len, 2}
+Process.info(pid, :message_queue_len)
+# => Check mailbox again
+# => Returns: {:message_queue_len, 2}
+# => {:message_queue_len, 2}
+# => One message removed (:msg1 processed)
+# => Remaining: :msg2, :msg3
 
 # Selective receive with pattern matching
+# => Selective receive: pattern matching in mailbox
+# => Scans mailbox for first match (may skip messages)
 send(self(), {:priority, "urgent"})
+# => Tuple message: {:priority, "urgent"}
+# => Added to mailbox position 1 (after :msg2, :msg3)
 send(self(), {:normal, "task1"})
+# => {:normal, "task1"} added to position 2
 send(self(), {:normal, "task2"})
+# => {:normal, "task2"} added to position 3
+# => Mailbox: [:msg2, :msg3, {:priority, "urgent"}, {:normal, "task1"}, {:normal, "task2"}]
 
 receive do
-  {:priority, msg} -> IO.puts("Priority: #{msg}")  # => Matches first
+  # => Pattern match: {:priority, msg}
+  # => Scans mailbox from start looking for matching pattern
+  {:priority, msg} -> IO.puts("Priority: #{msg}")
+  # => Matches {:priority, "urgent"} (position 3 in mailbox)
+  # => SKIPS :msg2 and :msg3 (don't match pattern)
+  # => msg bound to "urgent"
+  # => Prints: "Priority: urgent"
+  # => Matches first
+  # => {:priority, "urgent"} removed from mailbox
+  # => Mailbox: [:msg2, :msg3, {:normal, "task1"}, {:normal, "task2"}]
 end
+# => receive complete
+# => Non-matching messages (:msg2, :msg3) remain in mailbox
 
 # flush/0 clears entire mailbox
+# => flush/0: IEx helper (prints and removes all messages)
+# => Not available in compiled code (IEx only)
 send(self(), :a)
+# => Add :a to mailbox
 send(self(), :b)
+# => Add :b to mailbox
 send(self(), :c)
-flush()  # => Prints all and clears mailbox
+# => Add :c to mailbox
+# => Mailbox: [...previous messages..., :a, :b, :c]
+flush()
+# => flush/0: prints all messages and empties mailbox
+# => Prints all and clears mailbox
+# => Output: :a\n:b\n:c
+# => Mailbox now empty
+# => Returns: :ok
+# => Pattern: debugging (see queued messages)
 
 # Timeout prevents infinite blocking
+# => Timeout clause: "after N milliseconds"
+# => Prevents process from blocking forever
 receive do
+  # => Wait for :expected_message
   :expected_message -> IO.puts("Got it")
+  # => Pattern: :expected_message atom
+  # => Never arrives (no one sends it)
 after
+  # => after clause: timeout fallback
+  # => Executes if no message received within timeout
   1000 -> IO.puts("Timeout after 1 second")
+  # => 1000ms = 1 second timeout
+  # => After 1 second with no message: print timeout message
+  # => Prints: "Timeout after 1 second"
+  # => receive exits (doesn't block forever)
 end
+# => receive complete after timeout
+# => Pattern: prevent deadlock (always have timeout for external messages)
 
 # Mailbox scanning (inefficient for large mailboxes)
+# => Recursive receive pattern for draining mailbox
+# => WARNING: performance degrades with large mailboxes
 defmodule Mailbox do
+  # => Helper module for mailbox operations
   def drain do
+    # => drain/0: recursively processes all messages
     receive do
+      # => Wait for any message
       msg ->
+        # => Pattern: msg (matches anything)
         IO.inspect(msg)
-        drain()  # => Recursive drain
+        # => Print message
+        drain()
+        # => Recursive call: process next message
+        # => Recursive drain
+        # => Keeps calling until mailbox empty
     after
-      0 -> :ok  # => Immediate timeout = no more messages
+      # => Timeout: 0ms (immediate)
+      0 -> :ok
+      # => 0ms timeout: returns immediately if no messages
+      # => Immediate timeout = no more messages
+      # => Base case: mailbox empty → return :ok
     end
+    # => receive complete
   end
+  # => drain/0 complete
 end
+# => Mailbox module complete
 
 send(self(), 1)
+# => Send integer 1 to mailbox
 send(self(), 2)
+# => Send integer 2
 send(self(), 3)
-Mailbox.drain()  # => Prints: 1, 2, 3
+# => Send integer 3
+# => Mailbox: [1, 2, 3]
+Mailbox.drain()
+# => Call drain/0: processes all messages
+# => Prints: 1, 2, 3
+# => Recursively processes: 1 → drain → 2 → drain → 3 → drain → timeout :ok
+# => Mailbox now empty
+# => Returns: :ok
 
 # Handle unexpected messages
+# => GenServer pattern: handle_info/2 for unhandled messages
+# => All messages not matching handle_call/cast go to handle_info
 defmodule Worker do
+  # => Worker GenServer demonstrating handle_info
   use GenServer
+  # => GenServer behavior
 
   @impl true
   def handle_info(msg, state) do
+    # => handle_info/2: callback for unexpected messages
+    # => msg: any message sent via send/2 (not call/cast)
+    # => state: current GenServer state
     # => Catches all unexpected messages
+    # => Pattern: catch-all for messages that don't match other handlers
     IO.warn("Unexpected message: #{inspect(msg)}")
-    {:noreply, state}  # => Ignore and continue
+    # => IO.warn/1: prints warning with [warn] prefix
+    # => inspect(msg): converts message to string
+    # => Example: "[warn] Unexpected message: {:unknown, data}"
+    {:noreply, state}
+    # => Returns: {:noreply, state}
+    # => Ignore and continue
+    # => GenServer continues with same state
+    # => Message processed (removed from mailbox)
   end
+  # => handle_info/2 complete
+  # => Pattern: prevent mailbox overflow from unexpected messages
 end
+# => Worker module complete
 
 # Mailbox memory leaks (avoid!)
+# => WARNING: processes that never receive cause memory leaks
+# => Mailbox grows unbounded → memory exhaustion
 defmodule BadWorker do
+  # => Anti-pattern: process that ignores mailbox
   def loop do
+    # => loop/0: infinite loop without receive
     # => Never processes messages - mailbox grows forever!
+    # => Sleeps without checking mailbox
     :timer.sleep(1000)
+    # => Sleep 1 second
+    # => Mailbox keeps accumulating during sleep
     loop()
+    # => Recursive call: infinite loop
+    # => Never returns
   end
+  # => loop/0 complete (never exits)
 end
+# => BadWorker module complete
+# => ANTI-PATTERN: don't use in production
 
 pid = spawn(&BadWorker.loop/0)
+# => Spawn process running BadWorker.loop/0
+# => &Module.function/arity syntax (function capture)
+# => Process running infinite loop (no receive)
 Enum.each(1..10_000, fn i -> send(pid, {:task, i}) end)
-Process.info(pid, :message_queue_len)  # => {:message_queue_len, 10000} - LEAK!
+# => Send 10,000 messages to pid
+# => Enum.each/2: iterates range 1..10_000
+# => Each iteration: send(pid, {:task, i})
+# => {:task, 1}, {:task, 2}, ..., {:task, 10000} all queued
+# => BadWorker never receives → all messages accumulate
+Process.info(pid, :message_queue_len)
+# => Query mailbox length
+# => Returns: {:message_queue_len, 10000}
+# => {:message_queue_len, 10000} - LEAK!
+# => All 10,000 messages queued (none processed)
+# => Memory leak: mailbox consuming memory
+# => Solution: always process messages in loops
+
+# Mailbox best practices
+# 1. Always use receive in process loops
+# => Every loop iteration should check mailbox
+# 2. Use timeouts to prevent deadlocks
+# => receive ... after N -> timeout_handler end
+# 3. Implement handle_info/2 in GenServers
+# => Catch unexpected messages (prevent accumulation)
+# 4. Monitor mailbox size for debugging
+# => Process.info(pid, :message_queue_len) to detect leaks
+# 5. Selective receive for priority messages
+# => Pattern match high-priority messages first
 ```
 
 **Key Takeaway**: Messages queue in mailbox until processed. Use `receive` with timeouts to prevent blocking. Implement `handle_info/2` in GenServer to handle unexpected messages. Avoid mailbox leaks by processing all messages.
