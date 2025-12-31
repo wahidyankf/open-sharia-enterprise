@@ -1267,15 +1267,15 @@ Create type-safe DSLs using lambda with receiver. The receiver provides implicit
 ```mermaid
 %% DSL builder pattern with lambda receivers
 graph TD
-    A[html { }] --> B[HTML instance created]
-    B --> C[head { }]
+    A[html #123; #125;] --> B[HTML instance created]
+    B --> C[head #123; #125;]
     C --> D[Head instance as receiver]
     D --> E[title = set property]
-    B --> F[body { }]
+    B --> F[body #123; #125;]
     F --> G[Body instance as receiver]
     G --> H[h1 call method]
     G --> I[p call method]
-    G --> J[ul { } nested DSL]
+    G --> J[ul #123; #125; nested DSL]
     J --> K[UL instance as receiver]
 
     style A fill:#0173B2,color:#fff

@@ -1141,10 +1141,10 @@ flowchart LR
 
 ```mermaid
 graph TD
-    A[HashMap&lt;K, V&gt;<br/>O#40;1#41; lookup<br/>Values: #91;1, 2, 3#93;]
+    A[HashMap&lt;K, V&gt;<br/>O#40;1#41; lookup<br/>Values: #91;1, 2, 3#93;<br/>Dict: #123;a: 1#125;]
 ```
 
-Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3]"
+Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
 ## 🔗 Related Documentation
 
