@@ -6138,56 +6138,134 @@ GenServers can run anonymously (PID-based) or with local/global names. Anonymous
 
 ```elixir
 defmodule Counter do
+  # => Anonymous GenServer: identified by PID only
+  # => No name registration (no atom name)
+  # => Enables multiple instances without name conflicts
   use GenServer
+  # => GenServer behavior
 
   # Start anonymous GenServer (no name)
+  # => Anonymous: no name option passed to GenServer.start_link
+  # => Callers must track PID to communicate
   def start_link(initial) do
-    GenServer.start_link(__MODULE__, initial)  # => No name: option
+    # => start_link/1: starts anonymous GenServer
+    # => initial: initial counter value
+    GenServer.start_link(__MODULE__, initial)
+    # => No name: option passed
+    # => GenServer not registered with any name
+    # => __MODULE__: resolves to Counter
+    # => initial: passed to init/1
     # => Returns {:ok, pid}
+    # => Caller must store pid to use counter
   end
 
   def increment(pid) do
-    GenServer.call(pid, :increment)  # => Must pass PID explicitly
+    # => increment/1: increments counter
+    # => pid: GenServer PID (must be passed explicitly)
+    GenServer.call(pid, :increment)
+    # => GenServer.call/2: synchronous request
+    # => Must pass PID explicitly
+    # => First arg: pid (not atom name)
+    # => Second arg: :increment message
+    # => Returns: new counter value
   end
 
   def get(pid) do
+    # => get/1: gets current counter value
+    # => pid: required (anonymous GenServer)
     GenServer.call(pid, :get)
+    # => Synchronous call with PID
+    # => Returns: current state (counter value)
   end
 
   @impl true
   def init(initial), do: {:ok, initial}
+  # => init/1: initializes counter with initial value
+  # => Returns: {:ok, state} where state = initial
 
   @impl true
   def handle_call(:increment, _from, state) do
+    # => handle_call/3: handles :increment message
+    # => :increment: message from GenServer.call
+    # => _from: caller info (ignored)
+    # => state: current counter value
     {:reply, state + 1, state + 1}
+    # => Increments counter
+    # => Reply: state + 1 (new value sent to caller)
+    # => New state: state + 1 (updated counter)
+    # => Type: {:reply, reply, new_state}
   end
 
   @impl true
   def handle_call(:get, _from, state) do
+    # => handle_call/3: handles :get message
+    # => Returns current state without modification
     {:reply, state, state}
+    # => Reply: state (current value)
+    # => New state: state (unchanged)
   end
 end
+# => Counter module complete
 
 # Multiple anonymous instances
+# => Advantage: multiple counters with different states
+# => Each has unique PID (no name conflicts)
 {:ok, counter1} = Counter.start_link(0)
+# => Start first counter with initial value 0
+# => counter1: PID of first GenServer
+# => Type: {:ok, #PID<0.150.0>}
 {:ok, counter2} = Counter.start_link(100)
+# => Start second counter with initial value 100
+# => counter2: PID of second GenServer
+# => Both counters independent (different PIDs, states)
 
-Counter.increment(counter1)  # => 1
-Counter.increment(counter2)  # => 101
+Counter.increment(counter1)
+# => Increment counter1 (0 → 1)
+# => Returns: 1
+# => 1
+Counter.increment(counter2)
+# => Increment counter2 (100 → 101)
+# => Returns: 101
+# => 101
+# => Two separate states maintained
 
-Counter.get(counter1)  # => 1
-Counter.get(counter2)  # => 101
+Counter.get(counter1)
+# => Get counter1 value
+# => Returns: 1
+# => 1
+Counter.get(counter2)
+# => Get counter2 value
+# => Returns: 101
+# => 101
+# => Pattern: PID-based identification for multiple instances
 
 # Named GenServer (local to node)
+# => Named: registered with atom name
+# => Limitation: atoms are limited (not good for dynamic names)
+# => Local: only on current node (not distributed)
 defmodule NamedCounter do
+  # => NamedCounter: GenServer with atom-based naming
   use GenServer
 
   def start_link(name, initial) do
+    # => start_link/2: starts named GenServer
+    # => name: atom to register GenServer
+    # => initial: initial counter value
     GenServer.start_link(__MODULE__, initial, name: name)
+    # => name: name option registers GenServer with atom
+    # => name: must be atom (not string or tuple)
+    # => Registered globally on local node
+    # => Process.whereis(name) → returns PID
+    # => Second start_link with same name → {:error, {:already_started, pid}}
   end
 
   def increment(name), do: GenServer.call(name, :increment)
+  # => increment/1: increments named counter
+  # => name: atom (not PID)
+  # => GenServer.call resolves atom to PID internally
   def get(name), do: GenServer.call(name, :get)
+  # => get/1: gets value of named counter
+  # => name: atom registered with GenServer
 
   @impl true
   def init(initial), do: {:ok, initial}
@@ -6197,29 +6275,72 @@ defmodule NamedCounter do
   @impl true
   def handle_call(:get, _from, state), do: {:reply, state, state}
 end
+# => NamedCounter module complete
 
 {:ok, _} = NamedCounter.start_link(:counter_a, 0)
+# => Start named counter with atom :counter_a
+# => Initial value: 0
+# => Registered as :counter_a on local node
+# => PID discarded (can use name instead)
 {:ok, _} = NamedCounter.start_link(:counter_b, 50)
+# => Start second named counter with atom :counter_b
+# => Initial value: 50
+# => Both registered with different atoms
 
-NamedCounter.increment(:counter_a)  # => 1
-NamedCounter.get(:counter_b)  # => 50
+NamedCounter.increment(:counter_a)
+# => Increment :counter_a by name (no PID needed)
+# => Returns: 1
+# => 1
+# => Atom resolved to PID internally
+NamedCounter.get(:counter_b)
+# => Get :counter_b value by name
+# => Returns: 50
+# => 50
+# => Pattern: atom-based lookup (easier than PID tracking)
 
 # Using Registry for dynamic names
+# => Registry: OTP process registry (built-in)
+# => Enables unlimited dynamic process names
+# => Alternative to atoms (atoms are limited resource)
 {:ok, _} = Registry.start_link(keys: :unique, name: MyRegistry)
+# => Start Registry process
+# => keys: :unique - each key registered once (no duplicates)
+# => name: MyRegistry - global name for registry
+# => :duplicate option allows multiple processes per key
+# => Registry must be started before use (usually in supervision tree)
 
 defmodule RegistryCounter do
+  # => RegistryCounter: GenServer with Registry-based naming
+  # => Enables dynamic names (strings, tuples, not just atoms)
   use GenServer
 
   def start_link(id, initial) do
+    # => start_link/2: starts counter with Registry name
+    # => id: dynamic identifier (can be string, tuple, anything)
     GenServer.start_link(__MODULE__, initial, name: via_tuple(id))
+    # => name: via_tuple(id) - Registry-based name
+    # => via-tuple enables Registry lookup
   end
 
   defp via_tuple(id) do
+    # => via_tuple/1: creates Registry lookup tuple
+    # => id: unique identifier for process
     {:via, Registry, {MyRegistry, {:counter, id}}}
+    # => {:via, Registry, {registry_name, key}}
+    # => :via - tells GenServer to use Registry
+    # => Registry - module handling lookup
+    # => MyRegistry - registry instance name
+    # => {:counter, id} - key in registry (tuple with id)
+    # => GenServer uses this to register/lookup process
   end
 
   def increment(id), do: GenServer.call(via_tuple(id), :increment)
+  # => increment/1: increments counter by id
+  # => via_tuple(id): resolves to PID via Registry
+  # => GenServer.call looks up process in Registry
   def get(id), do: GenServer.call(via_tuple(id), :get)
+  # => get/1: gets counter value by id
+  # => Registry lookup: {:counter, id} → PID
 
   @impl true
   def init(initial), do: {:ok, initial}
@@ -6229,12 +6350,37 @@ defmodule RegistryCounter do
   @impl true
   def handle_call(:get, _from, state), do: {:reply, state, state}
 end
+# => RegistryCounter module complete
 
 RegistryCounter.start_link("user_123", 0)
+# => Start counter with string id "user_123"
+# => Registered as {:counter, "user_123"} in MyRegistry
+# => Initial value: 0
+# => Dynamic name (not limited by atom table)
 RegistryCounter.start_link("user_456", 10)
+# => Start counter with string id "user_456"
+# => Registered as {:counter, "user_456"} in MyRegistry
+# => Initial value: 10
+# => Can have thousands/millions of dynamic names
 
-RegistryCounter.increment("user_123")  # => 1
-RegistryCounter.get("user_456")  # => 10
+RegistryCounter.increment("user_123")
+# => Increment counter for "user_123"
+# => Registry lookup: {:counter, "user_123"} → PID
+# => Returns: 1
+# => 1
+RegistryCounter.get("user_456")
+# => Get counter value for "user_456"
+# => Returns: 10
+# => 10
+# => Pattern: unlimited dynamic process names via Registry
+
+# Comparison
+# 1. Anonymous (PID): Multiple instances, caller tracks PIDs
+# => Use: temporary processes, testing, no global access needed
+# 2. Named (atoms): Global access, limited names (~1M atoms)
+# => Use: singleton services, well-known processes
+# 3. Registry (via-tuple): Unlimited dynamic names, global access
+# => Use: user sessions, dynamic workers, scalable services
 ```
 
 **Key Takeaway**: Anonymous GenServers use PIDs for identification, enabling multiple instances. Named GenServers use atoms (limited) or Registry (unlimited dynamic names). Use Registry via-tuples for scalable process registration.
