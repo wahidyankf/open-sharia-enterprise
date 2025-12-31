@@ -213,11 +213,11 @@ Asyncio enables concurrent I/O operations using async/await syntax.
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
-    participant Main as main()
+    participant Main as "main()"
     participant Loop as Event Loop
-    participant F1 as fetch_data(api1)
-    participant F2 as fetch_data(api2)
-    participant F3 as fetch_data(api3)
+    participant F1 as "fetch_data(api1)"
+    participant F2 as "fetch_data(api2)"
+    participant F3 as "fetch_data(api3)"
 
     Main->>Loop: asyncio.gather(...)
     Loop->>F1: Start fetching
@@ -1182,24 +1182,20 @@ Implement observer pattern for event-driven architectures.
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
-    participant S as Observable (Subject)
+    participant S as "Observable (Subject)"
     participant E as EmailNotifier
     participant L as LogNotifier
 
-    Note over S: attach(EmailNotifier)
+    Note over S: attach#40;EmailNotifier#41;
     S->>E: Register observer
-    Note over S: attach(LogNotifier)
+    Note over S: attach#40;LogNotifier#41;
     S->>L: Register observer
 
-    Note over S: notify("User registered")
-    S->>E: update("User registered")
+    Note over S: notify#40;"User registered"#41;
+    S->>E: update#40;"User registered"#41;
     E-->>S: Email sent
-    S->>L: update("User registered")
+    S->>L: update#40;"User registered"#41;
     L-->>S: Log written
-
-    style S fill:#0173B2,color:#fff
-    style E fill:#029E73,color:#fff
-    style L fill:#029E73,color:#fff
 ```
 
 ```python

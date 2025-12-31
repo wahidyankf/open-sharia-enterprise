@@ -263,8 +263,8 @@ Refs enable coordinated synchronous updates across multiple references.
 %% STM transaction flow
 sequenceDiagram
     participant T as Transaction
-    participant A as account-a (ref)
-    participant B as account-b (ref)
+    participant A as "account-a (ref)"
+    participant B as "account-b (ref)"
 
     Note over T,B: Initial: A=1000, B=500
     T->>A: dosync start
@@ -1003,9 +1003,6 @@ sequenceDiagram
     P-->>M: Return value
     M->>M: println result
 
-    style M fill:#0173B2,color:#fff
-    style F fill:#029E73,color:#fff
-    style P fill:#DE8F05,color:#000
 ```
 
 ```clojure

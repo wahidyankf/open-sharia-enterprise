@@ -135,9 +135,6 @@ sequenceDiagram
     end
     deactivate S
 
-    style C fill:#0173B2,stroke:#000,color:#fff
-    style S fill:#029E73,stroke:#000,color:#fff
-    style DB fill:#DE8F05,stroke:#000,color:#000
 ```
 
 ---
@@ -664,7 +661,7 @@ sequenceDiagram
     A->>A: Generate JWT token
     A-->>C: Return JWT
 
-    Note over C: Store JWT (localStorage/cookie)
+    Note over C: Store JWT #40;localStorage/cookie#41;
 
     C->>F: GET /api/data<br/>Header: Authorization: Bearer {JWT}
     F->>F: Extract & validate JWT
@@ -673,10 +670,6 @@ sequenceDiagram
     F->>S: Forward request (authenticated)
     S-->>C: Return data
 
-    style C fill:#0173B2,stroke:#000,color:#fff
-    style A fill:#029E73,stroke:#000,color:#fff
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style S fill:#CC78BC,stroke:#000,color:#000
 ```
 
 ---
@@ -1663,9 +1656,6 @@ sequenceDiagram
 
     Note over C1,C2: Both clients receive message in real-time
 
-    style C1 fill:#0173B2,color:#fff
-    style S fill:#029E73,color:#fff
-    style C2 fill:#DE8F05,color:#000
 ```
 
 **Key Takeaway**: WebSocket enables real-time bidirectional communication—use `@MessageMapping` for client messages, `@SendTo` for broadcast to all subscribers, and `@SendToUser` for user-specific messages.

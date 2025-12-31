@@ -12,7 +12,7 @@ tags:
   - accessibility
   - color-blindness
 created: 2025-11-24
-updated: 2025-12-22
+updated: 2025-12-31
 ---
 
 # Diagram and Schema Convention
@@ -1002,6 +1002,8 @@ Before committing documentation with diagrams:
 - [ ] Color scheme documented in comment above diagram
 - [ ] **Each diagram has exactly ONE color palette comment** (no duplicates)
 - [ ] **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (correct comment syntax)
+- [ ] **Parentheses and brackets escaped in node text** (use HTML entities: `#40;` `#41;` `#91;` `#93;`)
+- [ ] **No style commands in sequence diagrams** (use `box` syntax or switch to flowchart)
 - [ ] Mermaid diagrams tested in GitHub preview or Obsidian
 - [ ] ASCII art (if used) verified in monospace font
 - [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)
@@ -1009,6 +1011,140 @@ Before committing documentation with diagrams:
 - [ ] Complex diagrams simplified where possible
 - [ ] Diagram serves the documentation purpose
 - [ ] Vertical orientation preferred (horizontal only if clarity requires it)
+
+## Common Mermaid Syntax Errors
+
+This section documents critical Mermaid syntax rules discovered through debugging production diagrams. These errors cause "syntax error in text" or rendering failures.
+
+### Error 1: Parentheses in Node Text
+
+**CRITICAL**: Parentheses inside square bracket node definitions cause syntax errors.
+
+**Problem Examples (❌ BROKEN):**
+
+```mermaid
+graph TD
+    A[O(1) lookup]                  %% ERROR: Parentheses cause syntax error
+    B[function(args)]               %% ERROR: Parentheses cause syntax error
+    C[Fast Lookup<br/>O(log n)]     %% ERROR: Parentheses cause syntax error
+```
+
+**Solution (✅ WORKING):**
+
+Escape parentheses using HTML entity codes:
+
+- `(` → `#40;`
+- `)` → `#41;`
+
+```mermaid
+graph TD
+    A[O#40;1#41; lookup]                     %% CORRECT: Escaped parentheses
+    B[function#40;args#41;]                  %% CORRECT: Escaped parentheses
+    C[Fast Lookup<br/>O#40;log n#41;]        %% CORRECT: Escaped parentheses
+```
+
+**Also applies to square brackets in text:**
+
+- `[` → `#91;`
+- `]` → `#93;`
+
+```mermaid
+graph TD
+    A[Array: #91;0, 1, 2, 3#93;]             %% CORRECT: Escaped square brackets
+```
+
+**Rationale**: Mermaid's parser interprets unescaped parentheses and square brackets as syntax elements, not literal characters.
+
+**Real-World Examples Fixed:**
+
+- Python beginner Example 12 (dictionaries): `O(1) lookup` → `O#40;1#41; lookup`
+- Python intermediate Example 43 (deque): `O(1) operations` → `O#40;1#41; operations`
+- SQL beginner (index lookup): `O(log n)` → `O#40;log n#41;`
+- PostgreSQL intermediate (B-tree): `O(log n) search` → `O#40;log n#41; search`
+
+### Error 2: Style Commands in Sequence Diagrams
+
+**CRITICAL**: The `style` command only works in `graph`/`flowchart` diagrams, NOT in `sequenceDiagram`.
+
+**Problem Example (❌ BROKEN):**
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant System
+
+    User->>System: Request
+    System-->>User: Response
+
+    style User fill:#0173B2           %% ERROR: style not supported in sequence diagrams
+    style System fill:#DE8F05         %% ERROR: style not supported in sequence diagrams
+```
+
+**Solution (✅ WORKING):**
+
+For sequence diagrams, use `box` syntax for grouping and coloring instead:
+
+```mermaid
+sequenceDiagram
+    box Blue User Side
+        participant User
+    end
+    box Orange System Side
+        participant System
+    end
+
+    User->>System: Request
+    System-->>User: Response
+```
+
+**Alternative: Use graph/flowchart for styled diagrams:**
+
+```mermaid
+flowchart LR
+    User[User]:::blue
+    System[System]:::orange
+
+    User --> System
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF
+```
+
+**Rationale**: Mermaid diagram types have different syntax capabilities. `style` commands are only valid in graph-based diagrams (graph, flowchart), not in interaction diagrams (sequenceDiagram, classDiagram, stateDiagram).
+
+**Real-World Example Fixed:**
+
+- Python intermediate Example 33 (context manager): Removed `style` commands from sequence diagram
+
+### Quick Reference: Character Escaping
+
+**Characters requiring HTML entity codes in Mermaid node text:**
+
+| Character       | HTML Entity | Example Usage                           |
+| --------------- | ----------- | --------------------------------------- |
+| `(`             | `#40;`      | `O#40;1#41;` for "O(1)"                 |
+| `)`             | `#41;`      | `O#40;1#41;` for "O(1)"                 |
+| `[`             | `#91;`      | `#91;0, 1#93;` for "[0, 1]"             |
+| `]`             | `#93;`      | `#91;0, 1#93;` for "[0, 1]"             |
+| `{`             | `#123;`     | `#123;key: value#125;` for "{key: ...}" |
+| `}`             | `#125;`     | `#123;key: value#125;` for "{key: ...}" |
+| `<` (less than) | `&lt;`      | `List&lt;T&gt;` for "List<T>"           |
+| `>` (more than) | `&gt;`      | `List&lt;T&gt;` for "List<T>"           |
+
+**When to escape:**
+
+- Only when these characters appear **inside square bracket node definitions** `[text here]`
+- NOT needed in edge labels, regular text, or comments
+- NOT needed in code blocks or quoted strings
+
+**Example: Complex node text with multiple escapes:**
+
+```mermaid
+graph TD
+    A[HashMap&lt;K, V&gt;<br/>O#40;1#41; lookup<br/>Values: #91;1, 2, 3#93;]
+```
+
+Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3]"
 
 ## 🔗 Related Documentation
 
@@ -1027,4 +1163,4 @@ Before committing documentation with diagrams:
 
 ---
 
-**Last Updated**: 2025-12-04
+**Last Updated**: 2025-12-31

@@ -1511,7 +1511,7 @@ Indexes speed up queries by creating sorted lookup structures. B-tree indexes (d
 graph TD
     A["Table Scan<br/>Check every row"]
     B["Index Scan<br/>Use sorted structure"]
-    C["Fast Lookup<br/>O(log n) time"]
+    C["Fast Lookup<br/>O#40;log n#41; time"]
 
     A -->|Without index| D["Slow for large tables"]
     B -->|With index| C

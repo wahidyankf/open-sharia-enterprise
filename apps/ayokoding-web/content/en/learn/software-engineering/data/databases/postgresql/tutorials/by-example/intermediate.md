@@ -491,13 +491,13 @@ B-tree indexes (default) speed up lookups, range queries, and sorting. Create in
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["B-tree Index Root<br/>(Balanced Tree)"]
-    B["Branch Node<br/>(category = 'A-M')"]
-    C["Branch Node<br/>(category = 'N-Z')"]
-    D["Leaf: Electronics<br/>(3,333 rows)"]
-    E["Leaf: Furniture<br/>(3,333 rows)"]
-    F["Leaf: Kitchen<br/>(3,334 rows)"]
-    G["Fast Lookup<br/>O(log n)"]
+    A["B-tree Index Root<br/>#40;Balanced Tree#41;"]
+    B["Branch Node<br/>#40;category = 'A-M'#41;"]
+    C["Branch Node<br/>#40;category = 'N-Z'#41;"]
+    D["Leaf: Electronics<br/>#40;3,333 rows#41;"]
+    E["Leaf: Furniture<br/>#40;3,333 rows#41;"]
+    F["Leaf: Kitchen<br/>#40;3,334 rows#41;"]
+    G["Fast Lookup<br/>O#40;log n#41;"]
 
     A --> B
     A --> C

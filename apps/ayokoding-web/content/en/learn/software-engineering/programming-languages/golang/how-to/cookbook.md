@@ -2662,16 +2662,16 @@ sequenceDiagram
     participant UB as Unbuffered Channel
     participant R1 as Receiver Goroutine
     participant S2 as Sender Goroutine
-    participant BC as Buffered Channel (size=2)
+    participant BC as "Buffered Channel (size=2)"
     participant R2 as Receiver Goroutine
 
-    Note over S1,R1: Unbuffered (Synchronous)
+    Note over S1,R1: Unbuffered #40;Synchronous#41;
     S1->>UB: ch <- 42 (blocks)
     Note over S1: Sender waits...
     R1->>UB: val := <-ch
     Note over S1,R1: Both synchronized
 
-    Note over S2,R2: Buffered (Asynchronous)
+    Note over S2,R2: Buffered #40;Asynchronous#41;
     S2->>BC: ch <- 10 (no block)
     S2->>BC: ch <- 20 (no block)
     Note over BC: Buffer: [10, 20]
