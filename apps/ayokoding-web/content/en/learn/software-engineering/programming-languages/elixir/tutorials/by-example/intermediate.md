@@ -2248,62 +2248,183 @@ graph TD
 **Code**:
 
 ```elixir
+# Basic process spawning
 pid = spawn(fn -> IO.puts("Hello from spawned process!") end)
+# => spawn/1: creates new BEAM process
+# => fn: anonymous function that defines process behavior
+# => Process executes concurrently with parent
+# => Returns: PID (process identifier) e.g. #PID<0.150.0>
+# => Process runs independently, exits when function completes
+# => IO.puts runs immediately in spawned process
+# => Parent process doesn't wait (non-blocking)
 
-Process.alive?(pid) # => false (usually, it runs so fast)
+Process.alive?(pid)
+# => Checks if process with given PID is still running
+# => Usually returns false (process already finished)
+# => IO.puts executes in microseconds, process exits immediately
+# => Returns: false (boolean)
 
+# Long-running process example
 long_process = spawn(fn ->
+  # => Spawns process that sleeps before completing
   :timer.sleep(1000)
+  # => :timer.sleep/1: blocks process for 1000 milliseconds (1 second)
+  # => Only affects spawned process (parent continues immediately)
+  # => Erlang :timer module function
   IO.puts("Finished after 1 second")
+  # => Prints after sleep completes
+  # => Then process exits
 end)
-Process.alive?(long_process) # => true (for about 1 second)
+# => Returns: PID of long-running process
+# => Process is running concurrently
+
+Process.alive?(long_process)
+# => Checks if long-running process is still alive
+# => Returns: true (process still sleeping for ~1 second)
+# => Type: boolean
+
 :timer.sleep(1500)
-Process.alive?(long_process) # => false
+# => Parent process sleeps for 1.5 seconds
+# => Ensures child process has time to finish (after 1 second)
+# => Blocking call in parent process
 
-self() # => #PID<0.100.0> (varies)
+Process.alive?(long_process)
+# => Checks again after parent sleep
+# => Returns: false (child finished after 1 second, parent slept 1.5 seconds)
+# => Child process exited ~0.5 seconds ago
 
+# Getting current process PID
+self()
+# => Returns PID of current (calling) process
+# => Example: #PID<0.100.0> (actual PID varies by runtime)
+# => self/0: built-in function
+# => Useful for sending messages to self or debugging
+
+# Spawning multiple processes
 pids = Enum.map(1..5, fn i ->
+  # => Iterates over range 1 to 5
+  # => Creates 5 concurrent processes
   spawn(fn -> IO.puts("Process #{i}") end)
+  # => Each process prints its number
+  # => Processes run concurrently (order not guaranteed)
+  # => i: captured from parent scope (closure)
 end)
+# => Returns: list of 5 PIDs
+# => Type: [#PID<0.151.0>, #PID<0.152.0>, ...]
+# => All 5 processes execute concurrently
 
+# Using module function with spawn
 defmodule Worker do
+  # => Module defining worker functions
   def work(n) do
+    # => Worker function that simulates task processing
     IO.puts("Working on task #{n}")
+    # => Prints start message
     :timer.sleep(100)
+    # => Simulates work (100ms delay)
     IO.puts("Task #{n} done!")
+    # => Prints completion message
   end
 end
 
-spawn(Worker, :work, [1])  # Same as spawn(fn -> Worker.work(1) end)
+spawn(Worker, :work, [1])
+# => spawn/3: spawns process calling module function
+# => Worker: module name
+# => :work: function atom (function to call)
+# => [1]: arguments list (passed to Worker.work/1)
+# => Equivalent to: spawn(fn -> Worker.work(1) end)
+# => Returns: PID
+# => More efficient than closure for module functions
 
+# Linked processes (crash propagation)
 parent_pid = self()
+# => Stores parent PID for reference
+# => Parent is the process calling this code
 child = spawn_link(fn ->
+  # => spawn_link/1: spawns process LINKED to parent
+  # => Link: bidirectional connection (if either crashes, both crash)
+  # => Different from spawn/1 (isolated processes)
   :timer.sleep(500)
+  # => Child sleeps for 0.5 seconds
   raise "Child process crashed!"
+  # => Raises exception after sleep
+  # => Child process crashes
+  # => Crash propagates to parent via link
+  # => Parent also crashes (unless trapping exits)
 end)
+# => Returns: PID of linked child
+# => WARNING: Parent will crash in ~500ms when child raises
+# => Use Process.flag(:trap_exit, true) to handle child crashes
 
+# Process introspection
 pid = spawn(fn -> :timer.sleep(5000) end)
-Process.info(pid) # => [{:registered_name, []}, {:current_function, ...}, ...]
-Process.info(pid, :status) # => {:status, :waiting}
+# => Spawns process that sleeps for 5 seconds
+# => Long-lived process for inspection
 
+Process.info(pid)
+# => Returns: keyword list with process information
+# => [{:registered_name, []}, {:current_function, {:timer, :sleep, 1}}, ...]
+# => Includes: status, heap_size, message_queue_len, etc.
+# => Returns nil if process not alive
+# => Type: [{atom(), term()}] | nil
+
+Process.info(pid, :status)
+# => Queries specific process info field
+# => :status field shows current process state
+# => Returns: {:status, :waiting} (process waiting in sleep)
+# => Other states: :running, :runnable, :suspended, :garbage_collecting
+# => Type: {atom(), term()} | nil
+
+# Mass process creation (demonstrates lightweight processes)
 Enum.each(1..10_000, fn _ ->
+  # => Creates 10,000 processes
+  # => Demonstrates BEAM's ability to handle massive concurrency
   spawn(fn -> :timer.sleep(10_000) end)
+  # => Each process sleeps for 10 seconds
+  # => 10,000 concurrent sleeping processes
+  # => Memory per process: ~2KB (very lightweight)
+  # => Total memory: ~20MB for 10,000 processes
 end)
+# => All 10,000 processes run concurrently
+# => BEAM scheduler distributes across CPU cores
+# => No blocking (parent continues immediately)
 
+# Memory isolation demonstration
 defmodule Isolation do
+  # => Module demonstrating process memory isolation
   def demonstrate do
+    # => Function showing data is copied, not shared
     list = [1, 2, 3]
+    # => Parent process has list [1, 2, 3]
     spawn(fn ->
+      # => Child process receives COPY of list
+      # => No shared memory between processes
       # Each process has its own copy
       modified_list = [0 | list]
+      # => Child prepends 0 to its copy
+      # => modified_list is [0, 1, 2, 3]
+      # => Parent's list unchanged ([1, 2, 3])
+      # => Head syntax: [0 | list] creates new list
       IO.inspect(modified_list, label: "Child process")
+      # => Prints: Child process: [0, 1, 2, 3]
+      # => Child sees modified version
     end)
     :timer.sleep(100)
+    # => Wait for child to print (ensure ordering)
     IO.inspect(list, label: "Parent process")
+    # => Prints: Parent process: [1, 2, 3]
+    # => Parent's list unchanged (not affected by child)
+    # => Proves: processes have isolated memory
   end
 end
 
 Isolation.demonstrate()
+# => Calls demonstration function
+# => Output:
+# =>   Child process: [0, 1, 2, 3]
+# =>   Parent process: [1, 2, 3]
+# => Shows: parent and child have different lists
+# => Memory isolation: no shared state between processes
 ```
 
 **Key Takeaway**: Processes are lightweight, isolated, and communicate via messages. Use `spawn/1` for independent processes, `spawn_link/1` for linked processes. Elixir can run millions of processes concurrently.
