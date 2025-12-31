@@ -1034,9 +1034,9 @@ Before committing documentation with diagrams:
 
 This section documents critical Mermaid syntax rules discovered through debugging production diagrams. These errors cause "syntax error in text" or rendering failures.
 
-### Error 1: Parentheses in Node Text and Edge Labels
+### Error 1: Special Characters in Node Text and Edge Labels
 
-**CRITICAL**: Parentheses inside square bracket node definitions AND edge labels cause syntax errors.
+**CRITICAL**: Parentheses, square brackets, and curly braces inside node definitions AND edge labels cause syntax errors.
 
 **Problem Examples (❌ BROKEN):**
 
@@ -1044,16 +1044,21 @@ This section documents critical Mermaid syntax rules discovered through debuggin
 graph TD
     A[O(1) lookup]                  %% ERROR: Parentheses cause syntax error
     B[function(args)]               %% ERROR: Parentheses cause syntax error
-    C[Fast Lookup<br/>O(log n)]     %% ERROR: Parentheses cause syntax error
-    D -->|iter()| E[Iterator]       %% ERROR: Parentheses in edge label cause syntax error
+    C[Array: [0, 1, 2]]             %% ERROR: Square brackets cause syntax error
+    D[Dict: {key: value}]           %% ERROR: Curly braces cause syntax error
+    E -->|iter()| F[Iterator]       %% ERROR: Parentheses in edge label cause syntax error
 ```
 
 **Solution (✅ WORKING):**
 
-Escape parentheses using HTML entity codes:
+Escape special characters using HTML entity codes:
 
-- `(` → `#40;`
-- `)` → `#41;`
+**Entity Codes**:
+
+- Parentheses: `(` → `#40;`, `)` → `#41;`
+- Square brackets: `[` → `#91;`, `]` → `#93;`
+- Curly braces: `{` → `#123;`, `}` → `#125;`
+- Angle brackets: `<` → `#60;`, `>` → `#62;`
 
 **In node text:**
 
@@ -1061,7 +1066,9 @@ Escape parentheses using HTML entity codes:
 graph TD
     A[O#40;1#41; lookup]                     %% CORRECT: Escaped parentheses
     B[function#40;args#41;]                  %% CORRECT: Escaped parentheses
-    C[Fast Lookup<br/>O#40;log n#41;]        %% CORRECT: Escaped parentheses
+    C[Array: #91;0, 1, 2#93;]                %% CORRECT: Escaped square brackets
+    D[Dict: #123;key: value#125;]            %% CORRECT: Escaped curly braces
+    E[Generic#60;T#62;]                      %% CORRECT: Escaped angle brackets
 ```
 
 **In edge labels:**
@@ -1072,28 +1079,81 @@ Edge labels use `-->|text|` syntax and require the same escaping:
 graph TD
     A -->|iter#40;#41;| B[Iterator]          %% CORRECT: Escaped parentheses in edge label
     B -->|next#40;#41;| C{Has Item?}         %% CORRECT: Escaped parentheses in edge label
+    D -->|get#91;key#93;| E[Value]           %% CORRECT: Escaped brackets in edge label
 ```
 
-**Also applies to square brackets in text:**
-
-- `[` → `#91;`
-- `]` → `#93;`
-
-```mermaid
-graph TD
-    A[Array: #91;0, 1, 2, 3#93;]             %% CORRECT: Escaped square brackets
-```
-
-**Rationale**: Mermaid's parser interprets unescaped parentheses and square brackets as syntax elements in BOTH node text and edge labels, not literal characters.
+**Rationale**: Mermaid's parser interprets unescaped special characters as syntax elements in BOTH node text and edge labels, not literal characters.
 
 **Real-World Examples Fixed:**
 
 - Python beginner Example 12 (dictionaries): `O(1) lookup` → `O#40;1#41; lookup`
 - Python intermediate Example 43 (deque): `O(1) operations` → `O#40;1#41; operations`
 - SQL beginner (index lookup): `O(log n)` → `O#40;log n#41;`
-- PostgreSQL intermediate (B-tree): `O(log n) search` → `O#40;log n#41; search`
+- Rust advanced (generics): `Array<T>` → `Array#60;T#62;`
+- Rust advanced (arrays): `[i32; 3]` → `#91;i32; 3#93;`
 
-### Error 2: Style Commands in Sequence Diagrams
+### Error 2: Literal Quotes Inside Node Text
+
+**CRITICAL**: Literal quote characters inside Mermaid node text cause parsing errors.
+
+**Problem Example (❌ BROKEN)**:
+
+```mermaid
+graph TD
+    F[let x = "hello"]        %% ERROR: Inner quotes conflict with node syntax
+    G[const name = "Alice"]   %% ERROR: Parser sees "hello" as end of node label
+```
+
+**Why it fails**: The outer `[...]` syntax uses quotes for node label definition. When literal `"` characters appear inside, the Mermaid parser interprets them as structural syntax, not literal text.
+
+**Solution (✅ WORKING)**:
+
+Remove the inner quotes or use descriptive text:
+
+```mermaid
+graph TD
+    F[let x = hello]              %% CORRECT: No inner quotes
+    G[const name = Alice]         %% CORRECT: No inner quotes
+    H[let x = string value]       %% CORRECT: Descriptive text
+```
+
+**Rule**: Avoid literal quote characters inside Mermaid node text. If you need to show a string value, omit the quotes or use descriptive text.
+
+**Real-World Context**: This error was discovered when trying to show code syntax like `let x = "hello"` in Mermaid nodes.
+
+### Error 3: Nested Escaping in Node Text
+
+**CRITICAL**: Combining HTML entity codes with escaped quotes in the same node text causes parsing failures.
+
+**Problem Example (❌ BROKEN):**
+
+```mermaid
+graph TD
+    A["JSON #123;\"name\":\"Alice\"#125;"]    %% ERROR: Nested escaping fails
+```
+
+**Why it fails**: The combination of `#123;#125;` (entity codes for curly braces) with `\"` (escaped quotes) creates nested escaping that the Mermaid parser cannot handle.
+
+**Solution (✅ WORKING):**
+
+Simplify the text - remove quotes or use plain text instead of trying to escape multiple special characters:
+
+```mermaid
+graph TD
+    A["JSON #123;name:Alice#125;"]                %% CORRECT: No quotes, just entity codes
+    B["JSON object with name field"]              %% CORRECT: Plain text description
+```
+
+**Rule**: Avoid nested escaping patterns. If you need both entity codes AND special punctuation in the same node:
+
+- Option 1: Remove the punctuation (often quotes can be omitted)
+- Option 2: Simplify to plain text description
+- Option 3: Split into multiple nodes
+- Do NOT combine entity codes with escaped quotes (`#123;` + `\"`) in the same node
+
+**Real-World Context**: This error was discovered when trying to show JSON syntax like `{"name":"value"}` in Mermaid nodes. The working solution is to use entity codes for braces but omit the quotes: `#123;name:value#125;`.
+
+### Error 4: Style Commands in Sequence Diagrams
 
 **CRITICAL**: The `style` command only works in `graph`/`flowchart` diagrams, NOT in `sequenceDiagram`.
 
@@ -1147,7 +1207,72 @@ flowchart LR
 
 - Python intermediate Example 33 (context manager): Removed `style` commands from sequence diagram
 
-### Error 3: Colons in State Diagram Edge Labels
+### Error 5: Sequence Diagram Participant Syntax with "as" Keyword
+
+**CRITICAL**: Using `participant X as "Display Name"` syntax with quotes in sequence diagrams causes rendering failures in Hugo/Hextra environments.
+
+**Problem Example (❌ BROKEN)**:
+
+```mermaid
+sequenceDiagram
+    participant Main as "main()"
+    participant Loop as "Event Loop"
+    participant F1 as "fetch_data(api1)"
+
+    Main->>Loop: Start execution
+    Loop->>F1: Call async function
+    F1-->>Loop: Return result
+```
+
+**Why it fails**: The Hextra theme's Mermaid renderer struggles with complex display names containing spaces, parentheses, or special characters when combined with the `as` keyword and quotes. This syntax pattern causes parsing errors in Hugo/Hextra contexts.
+
+**Solution (✅ WORKING)**:
+
+Use simple participant identifiers without the `as` keyword:
+
+```mermaid
+sequenceDiagram
+    participant Main
+    participant EventLoop
+    participant API1
+
+    Main->>EventLoop: Start execution
+    EventLoop->>API1: Call async function
+    API1-->>EventLoop: Return result
+```
+
+**Alternative - Descriptive names without quotes**:
+
+If you need descriptive names, use CamelCase or underscores without the `as` keyword:
+
+```mermaid
+sequenceDiagram
+    participant MainFunction
+    participant EventLoop
+    participant FetchData
+
+    MainFunction->>EventLoop: Initialize
+    EventLoop->>FetchData: Retrieve data
+    FetchData-->>EventLoop: Data received
+```
+
+**Rule**: In sequence diagrams, use simple participant identifiers. Avoid the `as` keyword with quoted display names. Use CamelCase or simple names instead of quoted strings with spaces or special characters.
+
+**Rationale**:
+
+- The Hextra theme documentation shows working examples using simple participant syntax
+- Complex display names with `as` keyword and quotes cause parsing errors
+- Simple identifiers are more reliable across different Mermaid versions and rendering contexts
+- Hugo/Hextra environments have different parser constraints than standalone Mermaid
+
+**Affected diagram types**: `sequenceDiagram` only (not `graph`/`flowchart`)
+
+**Real-World Examples Fixed:**
+
+- Python intermediate Example 33 (async/await): Changed `participant Main as "main()"` to `participant Main`
+- Elixir advanced Example 62 (GenServer): Changed `participant Client as "Client Process"` to `participant Client`
+
+### Error 6: Colons in State Diagram Edge Labels
 
 **CRITICAL**: In `stateDiagram-v2`, edge labels cannot contain colon characters (`:`).
 
@@ -1215,8 +1340,8 @@ stateDiagram-v2
 **When to escape:**
 
 - Only when these characters appear **inside square bracket node definitions** `[text here]`
-- NOT needed in edge labels, regular text, or comments
-- NOT needed in code blocks or quoted strings
+- Also required in **edge labels** (`-->|text|` syntax)
+- NOT needed in regular text, comments, or code blocks
 
 **Example: Complex node text with multiple escapes:**
 
@@ -1226,123 +1351,6 @@ graph TD
 ```
 
 Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
-
-### Error 4: Square Brackets and Angle Brackets in Node Text
-
-**CRITICAL**: Square brackets and angle brackets in Mermaid node text cause parsing errors.
-
-**Problem 1 - Nested Square Brackets:**
-
-When using `A[text]` node syntax, having literal square brackets inside creates nested delimiters that confuse the parser.
-
-**Example that FAILS (❌ BROKEN)**:
-
-```mermaid
-graph TD
-    E[Specialized code for [i32; 3]]    %% ERROR: Inner brackets conflict with outer brackets
-    F[Array type: [T; N]]               %% ERROR: Parser sees ] as end of node label
-```
-
-**Why it fails**: The outer `[...]` syntax defines the node boundaries. When literal `[` or `]` characters appear inside, the Mermaid parser interprets them as structural syntax (node delimiters), not literal characters, causing parsing conflicts.
-
-**Problem 2 - Angle Brackets:**
-
-Angle brackets `<>` in node text (common in generics syntax) can cause parsing issues.
-
-**Example that FAILS (❌ BROKEN)**:
-
-```mermaid
-graph TD
-    A[fn foo<T, const N: usize>]        %% ERROR: Angle brackets cause syntax errors
-    B[Generic type: HashMap<K, V>]      %% ERROR: Parser confused by < and >
-```
-
-**Solution (✅ WORKING)**:
-
-Escape square brackets and angle brackets using HTML entity codes:
-
-- Square brackets: `[` → `#91;`, `]` → `#93;`
-- Angle brackets: `<` → `#60;`, `>` → `#62;`
-
-```mermaid
-graph TD
-    E[Specialized code for #91;i32; 3#93;]           %% CORRECT: Escaped square brackets
-    F[Array type: #91;T; N#93;]                      %% CORRECT: Escaped square brackets
-    A[fn foo#60;T, const N: usize#62;]               %% CORRECT: Escaped angle brackets
-    B[Generic type: HashMap#60;K, V#62;]             %% CORRECT: Escaped angle brackets
-```
-
-**Rule**: Escape square brackets and angle brackets in Mermaid node text to avoid parser conflicts with structural syntax.
-
-**Real-World Examples Fixed:**
-
-- Rust generics: `fn foo<T>` → `fn foo#60;T#62;`
-- Rust array types: `[i32; 3]` → `#91;i32; 3#93;`
-- TypeScript generics: `Array<T>` → `Array#60;T#62;`
-- Java generics: `HashMap<K, V>` → `HashMap#60;K, V#62;`
-
-### Error 5: Literal Quotes Inside Node Text
-
-**CRITICAL**: Literal quote characters inside Mermaid node text cause parsing errors.
-
-**Problem**: When using the `A["text"]` node syntax, having literal quote characters inside the text confuses the parser.
-
-**Example that FAILS (❌ BROKEN)**:
-
-```mermaid
-graph TD
-    F[let x = "hello"]        %% ERROR: Inner quotes conflict with outer brackets
-    G[const name = "Alice"]   %% ERROR: Parser sees "hello" as end of node label
-```
-
-**Why it fails**: The outer `[...]` syntax already uses quotes for the node label definition. When literal `"` characters appear inside, the Mermaid parser interprets them as structural syntax, not literal text, causing parsing conflicts.
-
-**Solution (✅ WORKING)**:
-
-Remove the inner quotes or use descriptive text:
-
-```mermaid
-graph TD
-    F[let x = hello]              %% CORRECT: No inner quotes
-    G[const name = Alice]         %% CORRECT: No inner quotes
-    H[let x = string value]       %% CORRECT: Descriptive text
-```
-
-**Rule**: Avoid literal quote characters inside Mermaid node text. If you need to show a string value, omit the quotes or use descriptive text.
-
-**Real-World Context**: This error was discovered when trying to show code syntax like `let x = "hello"` in Mermaid nodes. The working solution is to either omit the quotes (`let x = hello`) or use descriptive text (`let x = string value`).
-
-### Error 6: Nested Escaping in Node Text
-
-**CRITICAL**: Combining HTML entity codes with escaped quotes in the same node text causes parsing failures.
-
-**Problem Example (❌ BROKEN):**
-
-```mermaid
-graph TD
-    A["JSON #123;\"name\":\"Alice\"#125;"]    %% ERROR: Nested escaping fails
-```
-
-**Why it fails**: The combination of `#123;#125;` (entity codes for curly braces) with `\"` (escaped quotes) creates nested escaping that the Mermaid parser cannot handle.
-
-**Solution (✅ WORKING):**
-
-Simplify the text - remove quotes or use plain text instead of trying to escape multiple special characters:
-
-```mermaid
-graph TD
-    A["JSON #123;name:Alice#125;"]                %% CORRECT: No quotes, just entity codes
-    B["JSON object with name field"]              %% CORRECT: Plain text description
-```
-
-**Rule**: Avoid nested escaping patterns. If you need both entity codes AND special punctuation in the same node:
-
-- Option 1: Remove the punctuation (often quotes can be omitted)
-- Option 2: Simplify to plain text description
-- Option 3: Split into multiple nodes
-- Do NOT combine entity codes with escaped quotes (`#123;` + `\"`) in the same node
-
-**Real-World Context**: This error was discovered when trying to show JSON syntax like `{"name":"value"}` in Mermaid nodes. The working solution is to use entity codes for braces but omit the quotes: `#123;name:value#125;`.
 
 ## 🔗 Related Documentation
 
