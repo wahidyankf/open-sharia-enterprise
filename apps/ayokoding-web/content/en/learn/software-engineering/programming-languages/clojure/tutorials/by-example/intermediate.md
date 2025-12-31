@@ -229,24 +229,31 @@ stateDiagram-v2
 ```
 
 ```clojure
-(def counter (atom 0))                       ;; => Create atom
+(def counter (atom 0))                       ;; => Create atom with initial value 0
 
-(println @counter)                           ;; => 0 (dereference)
+(println @counter)                           ;; => 0 (dereference with @)
+                                              ;; => @ reads current value atomically
 
-(swap! counter inc)                          ;; => Atomically increment
-(println @counter)                           ;; => 1
+(swap! counter inc)                          ;; => 1 (atomically increment)
+                                              ;; => Retries if CAS fails due to contention
+(println @counter)                           ;; => 1 (counter now 1)
 
-(swap! counter + 5)                          ;; => Apply function with args
-(println @counter)                           ;; => 6
+(swap! counter + 5)                          ;; => 6 (apply + with args)
+                                              ;; => swap! calls (+ counter 5)
+(println @counter)                           ;; => 6 (counter now 6)
 
-(reset! counter 0)                           ;; => Set to value directly
-(println @counter)                           ;; => 0
+(reset! counter 0)                           ;; => 0 (set to value directly)
+                                              ;; => No function application, just assignment
+(println @counter)                           ;; => 0 (counter reset to 0)
 
 ;; Atoms with complex state
-(def app-state (atom {:users [] :count 0}))
+(def app-state (atom {:users [] :count 0})) ;; => Atom with map state
 
-(swap! app-state update :count inc)
+(swap! app-state update :count inc)          ;; => {:users [], :count 1}
+                                              ;; => update applies inc to :count value
 (swap! app-state update :users conj {:name "Alice"})
+                                              ;; => {:users [{:name "Alice"}], :count 1}
+                                              ;; => conj adds user to vector
 
 (println @app-state)                         ;; => {:users [{:name "Alice"}], :count 1}
 ```
