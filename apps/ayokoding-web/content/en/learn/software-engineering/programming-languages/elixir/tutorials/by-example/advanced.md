@@ -2221,67 +2221,135 @@ Elixir provides functions to introspect modules at runtime. Use `__info__/1`, `M
 **Code**:
 
 ```elixir
+# Define module with metadata for introspection
 defmodule Introspection do
-  @moduledoc "Example module for introspection"
+  @moduledoc "Example module for introspection"  # => module documentation (accessible at runtime)
 
-  @my_attr "custom attribute"
+  @my_attr "custom attribute"  # => custom module attribute (stored in module metadata)
 
-  def public_function, do: :public
-  defp private_function, do: :private
+  def public_function, do: :public  # => public function (exported, callable from outside)
+  defp private_function, do: :private  # => private function (NOT exported, only internal use)
 
-  def add(a, b), do: a + b
-  def subtract(a, b), do: a - b
+  def add(a, b), do: a + b  # => public function with arity 2
+  def subtract(a, b), do: a - b  # => another public function with arity 2
 end
+# => Module compiled with metadata: functions list, attributes, moduledoc
 
+# Get list of public functions (name, arity pairs)
 Introspection.__info__(:functions)
+# => [{:public_function, 0}, {:add, 2}, {:subtract, 2}]
+# => Returns keyword list of {function_name, arity} for ALL public functions
+# => private_function NOT included (private functions not exported)
 
+# Get list of macros defined in module
 Introspection.__info__(:macros)
+# => []
+# => No macros defined in Introspection module
+# => For module with macros: [{:macro_name, arity}, ...]
 
+# Get module attributes
 Introspection.__info__(:attributes)
+# => [my_attr: "custom attribute", vsn: [...]]
+# => Returns keyword list of module attributes
+# => Includes custom (@my_attr) and compiler-generated (@vsn) attributes
+# => @moduledoc stored as @doc attribute, accessible via Code.fetch_docs/1
 
+# Get module name
 Introspection.__info__(:module)
+# => Introspection
+# => Returns module atom itself
+# => Useful for generic introspection functions
 
+# Check if function exists and is exported
 function_exported?(Introspection, :add, 2)  # => true
+# => Checks: module Introspection has public function add/2
+# => Runtime check (works for compiled and loaded modules)
 function_exported?(Introspection, :missing, 0)  # => false
+# => Returns false - function doesn't exist
+function_exported?(Introspection, :private_function, 0)  # => false
+# => Returns false - private functions are NOT exported (even if they exist)
 
+# Dynamic function call using apply
 apply(Introspection, :add, [5, 3])  # => 8
+# => apply(Module, :function, [args]) calls Module.function(args...)
+# => Equivalent to: Introspection.add(5, 3)
+# => Useful when function name determined at runtime (dynamic dispatch)
 
-:code.all_loaded()
+# Get all loaded modules in the BEAM VM
+:code.all_loaded()  # => [{Module1, path}, {Module2, path}, ...]
+# => Erlang function :code.all_loaded/0 returns ALL loaded modules
+# => Includes Elixir modules (Elixir.MyModule) and Erlang modules (:gen_server)
 |> Enum.filter(fn {mod, _path} -> mod |> to_string() |> String.starts_with?("Elixir.") end)
-|> length()
+# => Filter only Elixir modules (names start with "Elixir.")
+# => Erlang modules like :gen_server, :ets excluded
+|> length()  # => e.g., 523 (number of loaded Elixir modules)
+# => Returns count of Elixir modules currently in memory
 
+# Check if module is loaded into BEAM VM
 Code.ensure_loaded?(Introspection)  # => true
+# => Module already compiled and loaded in memory
+# => Returns true without trying to load (module exists)
 Code.ensure_loaded?(:non_existent)  # => false
+# => Module doesn't exist (returns false)
+# => Use Code.ensure_loaded/1 to load if not loaded: {:module, Mod} or {:error, reason}
 
+# Check if function defined during compilation (compile-time check)
 Module.defines?(Introspection, {:add, 2})  # => true (during compilation)
+# => Module.defines?/2 works ONLY during module compilation (not at runtime)
+# => Inside module definition: checks if function clause exists
+# => After compilation: use function_exported?/3 instead
 
+# Introspecting behaviors
 defmodule MyGenServer do
-  @behaviour GenServer
+  @behaviour GenServer  # => declares module implements GenServer behavior (callback contract)
 
-  def init(args), do: {:ok, args}
-  def handle_call(_req, _from, state), do: {:reply, :ok, state}
-  def handle_cast(_req, state), do: {:noreply, state}
+  def init(args), do: {:ok, args}  # => required GenServer callback
+  def handle_call(_req, _from, state), do: {:reply, :ok, state}  # => required callback
+  def handle_cast(_req, state), do: {:noreply, state}  # => required callback
 end
+# => @behaviour attribute stored in module metadata
 
-MyGenServer.__info__(:attributes)
-|> Keyword.get_values(:behaviour)
+MyGenServer.__info__(:attributes)  # => [behaviour: [GenServer], vsn: [...]]
+|> Keyword.get_values(:behaviour)  # => [GenServer]
+# => Extract all behaviors module implements
+# => For multiple behaviors: [GenServer, :gen_event, MyBehaviour]
+# => Use to verify module implements expected callbacks
 
+# Introspecting struct fields
 defmodule User do
-  defstruct name: nil, age: nil, email: nil
+  defstruct name: nil, age: nil, email: nil  # => defines struct with 3 fields
 end
+# => defstruct generates __struct__/0 and __struct__/1 functions
 
-User.__struct__()
-|> Map.keys()
-|> Enum.reject(&(&1 == :__struct__))
+User.__struct__()  # => %User{name: nil, age: nil, email: nil}
+# => Returns default struct instance
+# => Includes :__struct__ key pointing to module name
+|> Map.keys()  # => [:__struct__, :name, :age, :email]
+# => Get all keys including metadata :__struct__ key
+|> Enum.reject(&(&1 == :__struct__))  # => [:name, :age, :email]
+# => Remove metadata key to get only user-defined fields
+# => Useful for dynamic struct manipulation or validation
 
+# Dynamic dispatch based on environment
 defmodule Dynamic do
-  def call_logger(:dev), do: apply(IO, :puts, ["Dev mode log"])
-  def call_logger(:prod), do: apply(Logger, :info, ["Prod mode log"])
+  def call_logger(:dev), do: apply(IO, :puts, ["Dev mode log"])  # => development: print to stdout
+  # => apply(IO, :puts, ["Dev mode log"]) calls IO.puts("Dev mode log")
+  def call_logger(:prod), do: apply(Logger, :info, ["Prod mode log"])  # => production: use Logger
+  # => apply(Logger, :info, ["Prod mode log"]) calls Logger.info("Prod mode log")
 end
+# => Pattern matches on environment atom, dispatches to appropriate module
 
-Dynamic.call_logger(:dev)  # Prints: Dev mode log
+Dynamic.call_logger(:dev)  # => Prints: Dev mode log
+# => Calls IO.puts dynamically through apply/3
+# => No compilation dependency on Logger in :dev (logger might not be configured)
 
+# Check if protocol has been consolidated (compile-time optimization)
 implementations = Protocol.consolidated?(Enumerable)
+# => true (in releases/production), false (in development)
+# => Protocol consolidation pre-compiles all implementations for performance
+# => Consolidated protocols faster (direct dispatch vs dynamic lookup)
+# => mix release consolidates protocols automatically
+# => Development: protocols not consolidated (allows dynamic reloading)
 ```
 
 **Key Takeaway**: Use `__info__/1` for module metadata, `function_exported?/3` to check function existence, `apply/3` for dynamic calls. Introspection enables reflection, debugging tools, and dynamic dispatch.
@@ -2316,54 +2384,112 @@ graph TD
 **Code**:
 
 ```elixir
+# Start an Agent with empty map as initial state
 {:ok, agent} = Agent.start_link(fn -> %{} end)
+# => {:ok, #PID<0.123.0>}
+# => Agent.start_link/1 spawns new process, runs initialization function
+# => fn -> %{} end executed in Agent process, returns initial state (empty map)
+# => Returns {:ok, pid} where pid is Agent process identifier
 
+# Read state from Agent (doesn't modify state)
 Agent.get(agent, fn state -> state end)  # => %{}
+# => Agent.get/2 sends synchronous message to Agent process
+# => Function executed INSIDE Agent process, receives current state
+# => Returns function result to caller (state itself = %{})
+# => State unchanged after get (read-only operation)
 
+# Update state (write operation)
 Agent.update(agent, fn state -> Map.put(state, :count, 0) end)
+# => :ok
+# => Agent.update/2 modifies state in Agent process
+# => Function receives current state (%{}), returns new state (%{count: 0})
+# => Agent process replaces old state with new state
+# => Returns :ok (fire-and-forget, doesn't return new state to caller)
 Agent.get(agent, fn state -> state end)  # => %{count: 0}
+# => Verify state changed - now contains :count key
 
+# Atomic read-and-update (get value AND modify state in single operation)
 result = Agent.get_and_update(agent, fn state ->
-  new_state = Map.update(state, :count, 1, &(&1 + 1))
+  new_state = Map.update(state, :count, 1, &(&1 + 1))  # => increment :count (0 → 1)
+  # => Map.update/4: if :count exists, apply &(&1 + 1), else set to 1 (default)
   {new_state.count, new_state}  # {return_value, new_state}
+  # => Returns tuple: {value_to_return, new_state_to_store}
+  # => {1, %{count: 1}} - return 1 to caller, store %{count: 1} as new state
 end)
 result  # => 1
+# => result is first element of returned tuple (new_state.count)
+# => State updated atomically (no race condition between read and write)
 Agent.get(agent, fn state -> state end)  # => %{count: 1}
+# => State persisted in Agent process
 
+# Named Agent (register with atom for global access)
 {:ok, _pid} = Agent.start_link(fn -> 0 end, name: Counter)
+# => {:ok, #PID<0.456.0>}
+# => Starts Agent with initial state 0 (integer)
+# => name: Counter registers process globally (no need to pass PID)
+# => Can reference Agent by atom :Counter instead of PID
+# => Only ONE process can have name Counter at a time
 
-Agent.update(Counter, &(&1 + 1))
-Agent.update(Counter, &(&1 + 1))
+# Update named Agent using atom reference
+Agent.update(Counter, &(&1 + 1))  # => :ok
+# => &(&1 + 1) is anonymous function: fn x -> x + 1 end
+# => State: 0 → 1 (increment)
+Agent.update(Counter, &(&1 + 1))  # => :ok
+# => State: 1 → 2 (increment again)
 Agent.get(Counter, &(&1))  # => 2
+# => &(&1) is identity function: fn x -> x end (returns state as-is)
+# => Returns current state: 2
 
+# Build a proper Cache module using Agent
 defmodule Cache do
-  use Agent
+  use Agent  # => injects Agent behavior and helper functions
 
+  # Start Cache Agent with empty map
   def start_link(_opts) do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
+    # => __MODULE__ expands to Cache atom (module name as process name)
+    # => Only one Cache Agent can run at a time (globally registered)
   end
 
+  # Put key-value pair in cache
   def put(key, value) do
     Agent.update(__MODULE__, &Map.put(&1, key, value))
+    # => Updates state: current_map → Map.put(current_map, key, value)
+    # => __MODULE__ references globally registered Cache process
   end
 
+  # Get value by key from cache
   def get(key) do
     Agent.get(__MODULE__, &Map.get(&1, key))
+    # => Reads state, extracts value for key
+    # => Returns nil if key doesn't exist
   end
 
+  # Delete key from cache
   def delete(key) do
     Agent.update(__MODULE__, &Map.delete(&1, key))
+    # => Removes key from state map
   end
 
+  # Clear entire cache
   def clear do
     Agent.update(__MODULE__, fn _ -> %{} end)
+    # => Replaces current state (ignores it via _) with empty map
+    # => Nuclear option: wipes all cached data
   end
 end
 
-{:ok, _} = Cache.start_link([])
-Cache.put(:user_1, %{name: "Alice"})
+# Use the Cache module
+{:ok, _} = Cache.start_link([])  # => {:ok, #PID<0.789.0>}
+# => Starts Cache Agent process, registers as :Cache
+Cache.put(:user_1, %{name: "Alice"})  # => :ok
+# => Stores %{name: "Alice"} under key :user_1
+# => State now: %{user_1: %{name: "Alice"}}
 Cache.get(:user_1)  # => %{name: "Alice"}
-Cache.delete(:user_1)
+# => Retrieves value for :user_1 key
+Cache.delete(:user_1)  # => :ok
+# => Removes :user_1 from cache
+# => State now: %{} (empty)
 Cache.get(:user_1)  # => nil
 
 
@@ -2383,62 +2509,129 @@ Registry maps keys to processes, enabling process lookup and pub/sub patterns. U
 **Code**:
 
 ```elixir
+# Start a Registry with unique keys (one process per key)
 {:ok, _} = Registry.start_link(keys: :unique, name: MyRegistry)
+# => {:ok, #PID<0.200.0>}
+# => keys: :unique means each key can map to at most ONE process
+# => name: MyRegistry registers Registry globally for lookup
+# => Registry process supervises key-to-PID mappings
 
-{:ok, pid} = Agent.start_link(fn -> 0 end)
-Registry.register(MyRegistry, :counter, nil)
+# Register current process in Registry
+{:ok, pid} = Agent.start_link(fn -> 0 end)  # => {:ok, #PID<0.201.0>}
+# => Start Agent process
+Registry.register(MyRegistry, :counter, nil)  # => {:ok, #PID<0.201.0>}
+# => Associates key :counter with self() (current process = Agent)
+# => Third argument (nil) is metadata (optional value attached to registration)
+# => Returns {:ok, owner_pid} on success
+# => For unique Registry: duplicate key registration fails {:error, {:already_registered, pid}}
 
-Registry.lookup(MyRegistry, :counter)
+# Lookup process by key
+Registry.lookup(MyRegistry, :counter)  # => [{#PID<0.201.0>, nil}]
+# => Returns list of {pid, metadata} tuples for key :counter
+# => For :unique Registry: list has max 1 element
+# => For non-existent key: returns []
+# => Metadata is nil (we registered with nil above)
 
+# Using Registry with via tuples for named processes
 defmodule Worker do
   use GenServer
 
+  # Start Worker registered in Registry
   def start_link(id) do
     GenServer.start_link(__MODULE__, id, name: via_tuple(id))
+    # => name: via_tuple(id) uses Registry for process naming
+    # => Instead of global name: Worker_1, uses Registry key: {WorkerRegistry, 1}
+    # => Avoids global naming conflicts
   end
 
+  # Get state using Registry lookup
   def get(id) do
     GenServer.call(via_tuple(id), :get)
+    # => via_tuple(id) resolves to PID through Registry
+    # => GenServer.call sends synchronous message to resolved process
   end
 
+  # via tuple for Registry-based naming
   defp via_tuple(id) do
     {:via, Registry, {WorkerRegistry, id}}
+    # => {:via, Module, {registry_name, key}} is standard pattern
+    # => GenServer uses this to register/lookup through Registry
+    # => Module: Registry (the lookup mechanism)
+    # => {WorkerRegistry, id}: Registry name + key
   end
 
   @impl true
-  def init(id), do: {:ok, id}
+  def init(id), do: {:ok, id}  # => Initial state = id
 
   @impl true
   def handle_call(:get, _from, id), do: {:reply, id, id}
+  # => Returns id (state) to caller
 end
 
+# Create Workers registered in Registry
 {:ok, _} = Registry.start_link(keys: :unique, name: WorkerRegistry)
-{:ok, _} = Worker.start_link(1)
-{:ok, _} = Worker.start_link(2)
+# => Registry for Worker processes
+{:ok, _} = Worker.start_link(1)  # => {:ok, #PID<0.300.0>}
+# => Starts Worker, registers as {WorkerRegistry, 1} → #PID<0.300.0>
+{:ok, _} = Worker.start_link(2)  # => {:ok, #PID<0.301.0>}
+# => Starts Worker, registers as {WorkerRegistry, 2} → #PID<0.301.0>
 
+# Call Workers by ID (Registry resolves ID to PID)
 Worker.get(1)  # => 1
+# => via_tuple(1) → Registry lookup → finds #PID<0.300.0> → GenServer.call
 Worker.get(2)  # => 2
+# => via_tuple(2) → Registry lookup → finds #PID<0.301.0> → GenServer.call
 
+# Registry with duplicate keys (for pub/sub)
 {:ok, _} = Registry.start_link(keys: :duplicate, name: PubSub)
+# => {:ok, #PID<0.400.0>}
+# => keys: :duplicate allows MULTIPLE processes per key
+# => Perfect for pub/sub: one topic key, many subscriber processes
 
-{:ok, subscriber1} = Agent.start_link(fn -> [] end)
-{:ok, subscriber2} = Agent.start_link(fn -> [] end)
+# Create subscriber processes
+{:ok, subscriber1} = Agent.start_link(fn -> [] end)  # => {:ok, #PID<0.401.0>}
+{:ok, subscriber2} = Agent.start_link(fn -> [] end)  # => {:ok, #PID<0.402.0>}
 
-Registry.register(PubSub, :topic_1, nil)
+# Register both subscribers to same topic (duplicate key allowed)
+# Assuming subscriber1 and subscriber2 both call:
+Registry.register(PubSub, :topic_1, nil)  # => {:ok, #PID<0.401.0>}
+# => First subscriber registers for :topic_1
+# Registry.register(PubSub, :topic_1, nil)  # => {:ok, #PID<0.402.0>}
+# => Second subscriber ALSO registers for :topic_1 (duplicate key OK)
+# => Now :topic_1 → [#PID<0.401.0>, #PID<0.402.0>]
 
+# Broadcast message to all subscribers of a topic
 Registry.dispatch(PubSub, :topic_1, fn entries ->
+  # => entries = [{#PID<0.401.0>, nil}, {#PID<0.402.0>, nil}]
+  # => List of all processes registered for :topic_1
   for {pid, _} <- entries do
     send(pid, {:message, "Hello subscribers!"})
+    # => Sends message to each subscriber process
   end
 end)
+# => Executes function with all matching processes
+# => Both subscriber1 and subscriber2 receive {:message, "Hello subscribers!"}
 
-Registry.unregister(PubSub, :topic_1)
+# Unregister from topic
+Registry.unregister(PubSub, :topic_1)  # => :ok
+# => Removes current process from :topic_1 subscriptions
+# => Other subscribers still registered
 
-Registry.register(MyRegistry, :user, %{role: :admin})
-Registry.match(MyRegistry, :user, %{role: :admin})
+# Register with metadata for pattern matching
+Registry.register(MyRegistry, :user, %{role: :admin})  # => {:ok, #PID<...>}
+# => Register with metadata: %{role: :admin}
+# => Third argument is custom metadata attached to registration
+Registry.match(MyRegistry, :user, %{role: :admin})  # => [{#PID<...>, %{role: :admin}}]
+# => Returns registrations matching key AND metadata pattern
+# => Only returns entries where metadata matches %{role: :admin}
+# => For metadata %{role: :user}, would NOT match
 
+# Count registrations
 Registry.count(MyRegistry)  # => 1
+# => Total number of registrations in entire Registry
 Registry.count_match(MyRegistry, :user, %{role: :admin})  # => 1
+# => Count registrations matching key :user AND metadata pattern
+# => Efficient for "how many admins registered?" queries
 ```
 
 **Key Takeaway**: Registry maps keys to PIDs for process discovery. Use `keys: :unique` for single process per key, `keys: :duplicate` for pub/sub. Replaces global names with dynamic process registration.
