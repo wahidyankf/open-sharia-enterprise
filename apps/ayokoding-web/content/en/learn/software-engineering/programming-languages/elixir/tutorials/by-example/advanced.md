@@ -440,81 +440,117 @@ Named GenServers can be referenced by atom name instead of PID. This enables eas
 **Code**:
 
 ```elixir
+# Named GenServer - Singleton pattern (one instance per application)
 defmodule Cache do
-  use GenServer
+  use GenServer  # => imports GenServer behavior
 
   # Start with name registration
   def start_link(_opts) do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)  # => {:ok, #PID<...>} with name: Cache
+    # => name: __MODULE__ registers process globally as Cache atom
+    # => Now can reference as Cache instead of PID
   end
 
   # Client API uses module name, not PID
   def put(key, value) do
-    GenServer.cast(__MODULE__, {:put, key, value})
+    GenServer.cast(__MODULE__, {:put, key, value})  # => :ok (sends async message to Cache process)
+    # => __MODULE__ resolves to Cache atom (finds PID via process registry)
+    # => No need to pass PID around!
   end
 
   def get(key) do
-    GenServer.call(__MODULE__, {:get, key})
+    GenServer.call(__MODULE__, {:get, key})  # => returns value or nil
+    # => Synchronous call to Cache process (found by name)
   end
 
   def delete(key) do
-    GenServer.cast(__MODULE__, {:delete, key})
+    GenServer.cast(__MODULE__, {:delete, key})  # => :ok (async delete)
   end
 
+  # Server Callbacks
   @impl true
   def init(_) do
-    {:ok, %{}}
+    {:ok, %{}}  # => {:ok, %{}} (starts with empty map)
+    # => State is in-memory cache (key-value pairs)
   end
 
   @impl true
   def handle_cast({:put, key, value}, state) do
-    {:noreply, Map.put(state, key, value)}
+    {:noreply, Map.put(state, key, value)}  # => {:noreply, %{user_1: %{name: "Alice"}}}
+    # => Updates state with new key-value pair
   end
 
   @impl true
   def handle_cast({:delete, key}, state) do
-    {:noreply, Map.delete(state, key)}
+    {:noreply, Map.delete(state, key)}  # => {:noreply, %{}} (removes key)
+    # => State updated, key removed
   end
 
   @impl true
   def handle_call({:get, key}, _from, state) do
-    {:reply, Map.get(state, key), state}
+    {:reply, Map.get(state, key), state}  # => {:reply, %{name: "Alice"}, state}
+    # => Returns value from cache, state unchanged
   end
 end
 
-{:ok, _pid} = Cache.start_link([])
-Cache.put(:user_1, %{name: "Alice"})
-Cache.get(:user_1)  # => %{name: "Alice"}
-Cache.delete(:user_1)
-Cache.get(:user_1)  # => nil
+# Usage: Singleton cache (one instance for whole application)
+{:ok, _pid} = Cache.start_link([])  # => {:ok, #PID<...>} (Cache registered globally)
+Cache.put(:user_1, %{name: "Alice"})  # => :ok (stores in cache)
+# => State now: %{user_1: %{name: "Alice"}}
+Cache.get(:user_1)  # => %{name: "Alice"} (retrieves from cache)
+Cache.delete(:user_1)  # => :ok (removes from cache)
+# => State now: %{}
+Cache.get(:user_1)  # => nil (key not found)
 
+# Named GenServer - Multiple instances with different names
 defmodule Worker do
   use GenServer
 
   def start_link(name) do
-    GenServer.start_link(__MODULE__, [], name: name)
+    GenServer.start_link(__MODULE__, [], name: name)  # => {:ok, #PID<...>} with name: :worker_1, :worker_2, etc.
+    # => Each instance has unique name (passed as argument)
+    # => Can start multiple Workers with different names
   end
 
   def ping(name) do
-    GenServer.call(name, :ping)
+    GenServer.call(name, :ping)  # => :pong (calls specific worker by name)
+    # => name is :worker_1 or :worker_2 (looks up PID by name)
   end
 
   @impl true
   def init(_) do
-    {:ok, []}
+    {:ok, []}  # => {:ok, []} (empty list as state)
   end
 
   @impl true
   def handle_call(:ping, _from, state) do
-    {:reply, :pong, state}
+    {:reply, :pong, state}  # => {:reply, :pong, []} (simple ping response)
   end
 end
 
-{:ok, _} = Worker.start_link(:worker_1)
-{:ok, _} = Worker.start_link(:worker_2)
-Worker.ping(:worker_1)  # => :pong
-Worker.ping(:worker_2)  # => :pong
+# Usage: Multiple named workers (each with unique name)
+{:ok, _} = Worker.start_link(:worker_1)  # => {:ok, #PID<...>} (worker_1 registered)
+{:ok, _} = Worker.start_link(:worker_2)  # => {:ok, #PID<...>} (worker_2 registered)
+# => Two separate Worker processes, each with unique name
+Worker.ping(:worker_1)  # => :pong (pings worker_1 by name)
+Worker.ping(:worker_2)  # => :pong (pings worker_2 by name)
+# => Each worker responds independently
 
+# Naming comparison:
+# PID-based (without names):
+#   {:ok, pid} = GenServer.start_link(Worker, [])  # => must store/pass pid everywhere
+#   GenServer.call(pid, :ping)  # => pass pid to every call
+#
+# Name-based (with names):
+#   GenServer.start_link(Worker, [], name: :worker_1)  # => register with name once
+#   GenServer.call(:worker_1, :ping)  # => reference by name anywhere
+#
+# Benefits of naming:
+# ✅ No need to pass PIDs around (cleaner API)
+# ✅ Process discovery (find by name)
+# ✅ Singleton pattern (one instance per name)
+# ⚠️ Names are global atoms (limited to ~1 million atoms)
+# ⚠️ Name conflicts cause crashes (can't register same name twice)
 ```
 
 **Key Takeaway**: Register GenServers with `name:` option to reference by atom instead of PID. Use `__MODULE__` for singleton services. Named processes enable cleaner APIs and easier process discovery.
@@ -1817,114 +1853,169 @@ Macros are powerful but overuse leads to complex, hard-to-debug code. Follow bes
 **Code**:
 
 ```elixir
+# Anti-pattern: Macro for simple computation (BAD)
 defmodule Bad do
-  defmacro add(a, b) do
+  defmacro add(a, b) do  # => ❌ macro is overkill for simple addition
     quote do: unquote(a) + unquote(b)
   end
+  # => Problem: adds compile-time overhead for NO benefit
+  # => No DSL, no code generation, just regular computation
 end
 
+# Best practice: Use function for computations (GOOD)
 defmodule Good do
-  def add(a, b), do: a + b
+  def add(a, b), do: a + b  # => ✅ function is sufficient (faster, simpler, debuggable)
+  # => Functions handle runtime values perfectly
+  # => Rule: If it can be a function, make it a function
 end
 
+# Valid use case 1: DSL for code generation
 defmodule SchemaGenerator do
-  defmacro schema(fields) do
+  defmacro schema(fields) do  # => ✅ macro justified - generates struct + functions at compile time
+    # => fields is [:name, :age, :email]
     quote do
-      defstruct unquote(fields)
+      defstruct unquote(fields)  # => generates: defstruct [:name, :age, :email]
+      # => Creates struct definition at compile time
 
-      def fields, do: unquote(fields)
+      def fields, do: unquote(fields)  # => generates function returning field list
+      # => def fields, do: [:name, :age, :email]
     end
+    # => User writes: schema [:name, :age]
+    # => Compiler generates: defstruct + fields/0 function
+    # => Justification: Can't generate defstruct with a function (compile-time only)
   end
 end
 
+# Valid use case 2: DSL for route definitions
 defmodule Router do
-  defmacro get(path, handler) do
+  defmacro get(path, handler) do  # => ✅ macro justified - generates route functions
     quote do
-      def route("GET", unquote(path)), do: unquote(handler)
+      def route("GET", unquote(path)), do: unquote(handler)  # => def route("GET", "/users"), do: UserController.index()
     end
+    # => Generates route function clauses at compile time
+    # => User writes: get "/users", UserController.index()
+    # => Compiler generates pattern-matching function clause
+    # => Justification: Pattern-matched function clauses can't be generated dynamically
   end
 end
 
+# Valid use case 3: Compile-time optimization
 defmodule Optimized do
-  defmacro compute_at_compile_time(expr) do
-    result = Code.eval_quoted(expr) |> elem(0)
-    quote do: unquote(result)
+  defmacro compute_at_compile_time(expr) do  # => ✅ macro justified - pre-computes expensive calculations
+    result = Code.eval_quoted(expr) |> elem(0)  # => evaluates expression at COMPILE time
+    # => For compute_at_compile_time(1000 * 1000), result = 1000000 (computed during compilation)
+    quote do: unquote(result)  # => injects pre-computed result (1000000) into code
+    # => Runtime code contains: 1000000 (no multiplication executed at runtime)
+    # => Justification: Moves computation from runtime to compile time (performance optimization)
   end
 end
 
+# Best practice: Document your macros
 defmodule Documented do
   @doc """
-  Generates a getter function.
+  Generates a getter function.  # => ✅ documents what code is generated
 
-  ## Examples
+  ## Examples  # => provides usage examples
 
       defmodule User do
-        getter :name, "Default Name"
+        getter :name, "Default Name"  # => shows how to use macro
       end
 
-      User.name()  # => "Default Name"
+      User.name()  # => "Default Name"  # => shows generated behavior
   """
   defmacro getter(name, default) do
     quote do
-      def unquote(name)(), do: unquote(default)
+      def unquote(name)(), do: unquote(default)  # => generates: def name(), do: "Default Name"
     end
   end
+  # => Rule: Always document macros - users need to understand generated code
 end
 
+# Best practice: Validate macro arguments at compile time
 defmodule Validated do
   defmacro safe_divide(a, b) do
-    if b == 0 do
-      raise ArgumentError, "Division by zero at compile time!"
+    if b == 0 do  # => compile-time check (runs when code compiles)
+      raise ArgumentError, "Division by zero at compile time!"  # => ✅ fail fast at compile time
     end
+    # => For safe_divide(10, 0), compilation FAILS (error caught early)
 
     quote do: unquote(a) / unquote(b)
   end
+  # => Justification: Catch errors during development, not production
+  # => Rule: Validate macro inputs when possible (static values only)
 end
 
+# Critical pattern: Use bind_quoted to avoid duplicate evaluation
 defmodule BindQuoted do
-  # Bad - evaluates expensive_call() twice
+  # Anti-pattern: Double evaluation (BAD)
   defmacro bad_log(expr) do
     quote do
-      result = unquote(expr)
-      IO.puts("Result: #{inspect(unquote(expr))}")
+      result = unquote(expr)  # => evaluates expr FIRST time
+      IO.puts("Result: #{inspect(unquote(expr))}")  # => evaluates expr SECOND time (❌ DUPLICATE)
       result
     end
   end
+  # => Problem: For bad_log(expensive_calculation()), expensive_calculation() runs TWICE
+  # => If expr has side effects (database call, file write), they happen TWICE
 
-  # Good - evaluates once
+  # Best practice: bind_quoted evaluates once (GOOD)
   defmacro good_log(expr) do
-    quote bind_quoted: [expr: expr] do
-      result = expr
-      IO.puts("Result: #{inspect(expr)}")
-      result
+    quote bind_quoted: [expr: expr] do  # => bind_quoted: evaluates expr ONCE, binds to variable
+      # => expr variable contains PRE-EVALUATED result
+      result = expr  # => uses pre-evaluated value (no re-execution)
+      IO.puts("Result: #{inspect(expr)}")  # => uses same pre-evaluated value
+      result  # => returns pre-evaluated value
     end
   end
+  # => For good_log(expensive_calculation()), expensive_calculation() runs ONCE
+  # => Rule: Always use bind_quoted unless you need AST manipulation
 end
 
+# Anti-pattern: Complex macro (BAD)
 defmodule TooComplex do
   defmacro do_everything(name, type, opts) do
-    # 50 lines of complex quote/unquote...
+    # 50 lines of complex quote/unquote...  # => ❌ hard to debug, maintain, understand
+    # => Generates multiple functions, validations, conversions
+    # => Problem: When it breaks, stack traces point to macro expansion site (useless for debugging)
   end
+  # => Rule: If macro > 20 lines, extract logic to helper functions
 end
 
+# Best practice: Keep macros simple (GOOD)
 defmodule Simple do
-  defmacro define_field(name, type) do
+  defmacro define_field(name, type) do  # => ✅ single, clear purpose (generate field getter)
     quote do
-      def unquote(name)(), do: unquote(type)
+      def unquote(name)(), do: unquote(type)  # => one-liner, easy to understand
     end
   end
+  # => Rule: Macro should do ONE thing (Single Responsibility Principle)
 end
 
+# Best practice: Extract logic to functions
 defmodule Flexible do
   defmacro build(expr) do
-    build_quoted(expr)
+    build_quoted(expr)  # => delegates to FUNCTION for logic
+    # => Macro is thin wrapper, function contains business logic
   end
 
-  def build_quoted(expr) do
-    quote do: unquote(expr) * 2
+  def build_quoted(expr) do  # => ✅ function is testable, debuggable, composable
+    quote do: unquote(expr) * 2  # => returns AST
   end
+  # => Benefits:
+  # => 1. Can test build_quoted/1 with ExUnit (macros hard to test)
+  # => 2. Can reuse build_quoted/1 in other macros
+  # => 3. Easier to debug (regular function, not AST manipulation)
+  # => Rule: Macros for glue, functions for logic
 end
 
+# Summary of when to use macros:
+# ✅ DSLs (routing, testing, schema definition)
+# ✅ Code generation (can't do with functions)
+# ✅ Compile-time optimization (move work from runtime to compile time)
+# ✅ Syntax sugar for common patterns
+# ❌ Simple computations (use functions)
+# ❌ Runtime values (macros receive AST, not values)
+# ❌ Complex logic (hard to debug, maintain)
 ```
 
 **Key Takeaway**: Prefer functions over macros. Use macros only for DSLs, code generation, or compile-time optimization. Keep macros simple, document them, validate arguments, use `bind_quoted`, and provide function alternatives when possible.
