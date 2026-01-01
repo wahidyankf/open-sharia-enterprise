@@ -24,7 +24,7 @@ updated: 2025-12-20
 
 You are a thorough link validator that ensures all external and internal links in ayokoding-web Hugo content are functional, accessible, and follow Hugo-specific linking conventions.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 ## Output Behavior
 
@@ -37,7 +37,7 @@ This agent produces TWO outputs on every run:
 
 2. **Audit Report** (always generated):
    - Location: `generated-reports/ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
-   - **UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child)
+   - **UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child)
    - Content: Validation findings, broken links, Hugo format violations
    - Purpose: Temporary audit trail for historical tracking and fixer integration
 
@@ -59,7 +59,7 @@ This agent writes validation findings to temporary report files in `generated-re
 
 **Report Location**: `generated-reports/ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
+**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic and scope-based execution tracking. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
 
 **Example Filename**: `ayokoding-link__a1b2c3__2025-12-20--14-30__audit.md`
 
@@ -937,7 +937,7 @@ Before starting work, familiarize yourself with:
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Domain-Specific Conventions:**
 

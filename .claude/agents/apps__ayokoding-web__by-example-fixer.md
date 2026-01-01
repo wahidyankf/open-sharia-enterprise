@@ -10,7 +10,7 @@ updated: 2025-12-30
 
 # ayokoding-web-by-example-fixer
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels).
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md#integration-with-criticality-levels).
 
 ## Purpose
 
@@ -28,7 +28,7 @@ Your role:
 
 Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)** exactly when applying fixes.
 
-Follow **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)** for determining which fixes to apply.
+Follow **[Fixer Confidence Levels](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md)** for determining which fixes to apply.
 
 ## Mode Parameter Handling
 
@@ -635,7 +635,7 @@ new_string: |
 
 `generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md`
 
-**UUID Chain Generation**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for complete UUID chain generation logic.
+**UUID Chain Generation**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for complete UUID chain generation logic.
 
 **Backward Compatibility**: Fixer also handles 3-part old format (`agent__timestamp__type.md`) for legacy reports.
 
@@ -817,9 +817,9 @@ prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__20
 ## Related Documentation
 
 - **[By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)**: Fix validation authority
-- **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)**: Confidence assessment guide
-- **[Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md)**: Workflow context
-- **[Content Preservation](../../docs/explanation/development/ex-de__content-preservation.md)**: What never to delete
+- **[Fixer Confidence Levels](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md)**: Confidence assessment guide
+- **[Maker-Checker-Fixer Pattern](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md)**: Workflow context
+- **[Content Preservation](../../docs/explanation/development/quality/ex-de-qu__content-preservation.md)**: What never to delete
 
 ## Tools
 

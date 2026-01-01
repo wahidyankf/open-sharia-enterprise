@@ -49,7 +49,7 @@ This convention defines content creation standards specific to the ayokoding-web
 - **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-co-hu__shared.md)
 - **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorial/ex-co-tu__programming-language-content.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorial/ex-co-tu__naming.md)
-- **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/ex-de-hu__development.md)
 - **Deployment** - Covered by ayokoding-web-deployer agent
 
 ## Prerequisites

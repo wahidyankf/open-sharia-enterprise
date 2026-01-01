@@ -498,10 +498,10 @@ grep -F "^$field:" frontmatter.txt
 
 ## 📚 Related Conventions
 
-- [AI Agents Convention](./ex-de__ai-agents.md) - Agents that use these validation methods
+- [AI Agents Convention](../agents/ex-de-ag__ai-agents.md) - Agents that use these validation methods
 - [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md) - What we validate (naming patterns)
 - [Linking Convention](../conventions/formatting/ex-co-fo__linking.md) - What we validate (link formats)
-- [Temporary Files Convention](./ex-de__temporary-files.md) - Where validation reports are stored
+- [Temporary Files Convention](../infra/ex-de-in__temporary-files.md) - Where validation reports are stored
 
 ## 🔄 Maintenance Notes
 

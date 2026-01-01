@@ -1327,7 +1327,7 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
   - Nx project configuration
   - Go module setup with Cobra
 
-- `docs/explanation/development/ex-de__policy-as-code.md` (NEW)
+- `docs/explanation/development/infra/ex-de-in__policy-as-code.md` (NEW)
   - Policy schema documentation
   - Authoring guidelines
   - Agent consumption patterns

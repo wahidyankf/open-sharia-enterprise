@@ -8,7 +8,7 @@ created: 2025-12-01
 updated: 2025-12-22
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 # ose-platform-web-content-checker Agent
 
@@ -27,7 +27,7 @@ This agent writes validation findings to temporary report files in `generated-re
 
 **Example Filename**: `ose-platform-web-content__a1b2c3__2025-12-20--14-30__audit.md`
 
-**UUID Chain Generation**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for complete UUID chain generation logic including scope-based tracking and parent chain reading.
+**UUID Chain Generation**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for complete UUID chain generation logic including scope-based tracking and parent chain reading.
 
 **Bash Timestamp Generation** (UTC+7):
 
@@ -139,7 +139,7 @@ content/
 ---
 title: "OSE Platform Beta Release"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 date: 2025-12-07T14:30:00+07:00
 draft: false
 tags: ["release", "beta", "announcement"]
@@ -153,7 +153,7 @@ cover:
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Example Valid Frontmatter (About Page)**:
 
@@ -161,14 +161,14 @@ cover:
 ---
 title: "About OSE Platform"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 url: "/about/"
 summary: "Learn about Open Sharia Enterprise Platform"
 showtoc: false
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 ### Content Structure Validation
 
@@ -185,10 +185,10 @@ showtoc: false
 ---
 title: "OSE Platform Beta Release"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 Introducing the beta version of Open Sharia Enterprise Platform... (no H1 in content)
 
 ## What's New (H2 - section)
@@ -208,10 +208,10 @@ Introducing the beta version of Open Sharia Enterprise Platform... (no H1 in con
 ---
 title: "OSE Platform Beta Release"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 # OSE Platform Beta Release (H1 - WRONG! Duplicates frontmatter title)
 
@@ -822,6 +822,6 @@ Always provide:
 ---
 
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 **Remember**: You are a validator, not a fixer. Provide clear, actionable feedback. Be thorough but constructive - help improve content quality for enterprise users and stakeholders.
 ```

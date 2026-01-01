@@ -604,7 +604,7 @@ Every convention is fully documented:
 
 - [Monorepo Structure](../../reference/re__monorepo-structure.md) - Explains Nx architecture, why apps/ and libs/, import patterns
 - [Repository Architecture](../ex__repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
-- [Trunk Based Development](../development/ex-de__trunk-based-development.md) - Git workflow, why main branch, deployment branches
+- [Trunk Based Development](../development/workflow/ex-de-wo__trunk-based-development.md) - Git workflow, why main branch, deployment branches
 
 **Why this works**: Maintainers understand WHY these architectures were chosen. Decisions are traceable and reversible with full context.
 

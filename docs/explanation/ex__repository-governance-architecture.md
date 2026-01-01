@@ -282,7 +282,7 @@ Maker-Checker-Fixer Workflow:
 - Rule: Use only verified color-blind friendly palette (Blue, Orange, Teal, Purple, Brown)
 - WCAG AA compliance required
 
-**Layer 3 - Development**: [AI Agents Convention](./development/ex-de__ai-agents.md)
+**Layer 3 - Development**: [AI Agents Convention](./development/agents/ex-de-ag__ai-agents.md)
 
 - Respects: Color Accessibility Convention
 - Practice: Agent color categorization uses accessible palette
@@ -313,7 +313,7 @@ Maker-Checker-Fixer Workflow:
 - Implements: Explicit Over Implicit principle
 - Rule: Prefix encodes directory path explicitly (`ex-co__` = explanation/conventions/)
 
-**Layer 3 - Development**: [AI Agents Convention](./development/ex-de__ai-agents.md)
+**Layer 3 - Development**: [AI Agents Convention](./development/agents/ex-de-ag__ai-agents.md)
 
 - Respects: File Naming Convention
 - Practice: Agent files use kebab-case, explicit tool permissions in frontmatter
@@ -344,7 +344,7 @@ Maker-Checker-Fixer Workflow:
 - Implements: Automation Over Manual principle
 - Rule: Automated validation of active voice, heading hierarchy, alt text
 
-**Layer 3 - Development**: [Code Quality Convention](./development/ex-de__code-quality.md)
+**Layer 3 - Development**: [Code Quality Convention](./development/quality/ex-de-qu__code.md)
 
 - Respects: Content Quality Principles
 - Practice: Git hooks automate formatting and validation
@@ -517,7 +517,7 @@ Periodically verify:
 
 - [Diátaxis Framework](./conventions/meta/ex-co-me__diataxis-framework.md) - Four documentation types
 - [Convention Writing Convention](./conventions/content/ex-co-co__convention-writing.md) - How to write conventions
-- [AI Agents Convention](./development/ex-de__ai-agents.md) - How to create agents
+- [AI Agents Convention](./development/agents/ex-de-ag__ai-agents.md) - How to create agents
 
 ## Principles Implemented/Respected
 

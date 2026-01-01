@@ -627,9 +627,9 @@ async function saveMudharabahDistribution(profit: number, investorRatio: number)
 
 ## 📚 Related Conventions
 
-- [Functional Programming Practices](../../development/ex-de__functional-programming.md) - Implementation patterns for pure functions
-- [Code Quality Convention](../../development/ex-de__code-quality.md) - Automated testing
-- [Implementation Workflow](../../development/ex-de__implementation-workflow.md) - When to introduce pure functions
+- [Functional Programming Practices](../../development/pattern/ex-de-pa__functional-programming.md) - Implementation patterns for pure functions
+- [Code Quality Convention](../../development/quality/ex-de-qu__code.md) - Automated testing
+- [Implementation Workflow](../../development/workflow/ex-de-wo__implementation.md) - When to introduce pure functions
 
 ## 📖 References
 

@@ -30,7 +30,7 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[AI Agents Convention](./ex-de__ai-agents.md)**: All checker agents MUST have Write and Bash tools for report generation. Report-generating agents follow mandatory progressive writing requirement to survive context compaction.
+- **[AI Agents Convention](../agents/ex-de-ag__ai-agents.md)**: All checker agents MUST have Write and Bash tools for report generation. Report-generating agents follow mandatory progressive writing requirement to survive context compaction.
 
 - **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
@@ -569,7 +569,7 @@ All fixer reports include these sections:
    - Complete list of files changed during fix application
    - Total count for summary
 
-**Confidence Levels**: All fixers use universal three-level system (HIGH/MEDIUM/FALSE_POSITIVE). See [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md) for complete criteria.
+**Confidence Levels**: All fixers use universal three-level system (HIGH/MEDIUM/FALSE_POSITIVE). See [Fixer Confidence Levels Convention](../quality/ex-de-qu__fixer-confidence-levels.md) for complete criteria.
 
 **Workflow**:
 
@@ -750,7 +750,7 @@ The rule includes "unless specified otherwise by other rules/conventions":
 ## 📚 Related Conventions
 
 - [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md) - For permanent documentation files
-- [AI Agents Convention](./ex-de__ai-agents.md) - For agent design and tool access
+- [AI Agents Convention](../agents/ex-de-ag__ai-agents.md) - For agent design and tool access
 - [Diátaxis Framework](../conventions/meta/ex-co-me__diataxis-framework.md) - For documentation organization
 
 ## 🎯 Benefits

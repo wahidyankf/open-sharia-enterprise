@@ -690,7 +690,7 @@ if len(affected_files) > MAX_CASCADE_FILES:
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Hugo Content Conventions:**
 
@@ -707,7 +707,7 @@ if len(affected_files) > MAX_CASCADE_FILES:
 
 **Related Conventions:**
 
-- `docs/explanation/development/ex-de__maker-checker-fixer-pattern.md` - Three-stage quality workflow
+- `docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md` - Three-stage quality workflow
 
 ---
 

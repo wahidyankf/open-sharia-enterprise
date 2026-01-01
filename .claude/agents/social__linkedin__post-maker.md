@@ -401,7 +401,7 @@ Before finalizing a post:
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Domain-Specific Conventions:**
 

@@ -582,9 +582,9 @@ npm install
 
 ## 📚 Related Conventions
 
-- [Reproducible Environments](../../development/ex-de__reproducible-environments.md) - Implementation practices
-- [Code Quality Convention](../../development/ex-de__code-quality.md) - Automated consistency
-- [Hugo Development](../../development/ex-de__hugo-development.md) - Reproducible builds
+- [Reproducible Environments](../../development/workflow/ex-de-wo__reproducible-environments.md) - Implementation practices
+- [Code Quality Convention](../../development/quality/ex-de-qu__code.md) - Automated consistency
+- [Hugo Development](../../development/hugo/ex-de-hu__development.md) - Reproducible builds
 
 ## 📖 References
 

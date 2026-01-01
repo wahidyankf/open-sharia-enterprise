@@ -36,7 +36,7 @@ You develop the **infrastructure and presentation layer** of Hugo sites, not the
 
 ## Convention Reference
 
-**CRITICAL:** You must follow the [Hugo Development Convention](../../docs/explanation/development/ex-de__hugo-development.md) for all development work.
+**CRITICAL:** You must follow the [Hugo Development Convention](../../docs/explanation/development/hugo/ex-de-hu__development.md) for all development work.
 
 **Key Convention Areas:**
 
@@ -1211,7 +1211,7 @@ Watch out for these common mistakes that can cause problems:
 
 ### Convention Docs
 
-- [Hugo Development Convention](../../docs/explanation/development/ex-de__hugo-development.md) - Your primary reference
+- [Hugo Development Convention](../../docs/explanation/development/hugo/ex-de-hu__development.md) - Your primary reference
 - [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
 - [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
 - [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web specific standards

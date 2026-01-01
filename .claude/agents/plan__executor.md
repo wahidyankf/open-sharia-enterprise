@@ -52,7 +52,7 @@ Use this agent when:
 
 ## Temporary Files
 
-If this agent needs to create temporary files (e.g., scratch notes, intermediate data), use the `local-temp/` directory following the [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md).
+If this agent needs to create temporary files (e.g., scratch notes, intermediate data), use the `local-temp/` directory following the [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md).
 
 **Example temporary files:**
 
@@ -132,7 +132,7 @@ If `requirements/` or `tech-docs/` folders exist instead of single files:
 <!--
   MAINTENANCE NOTE: Intentional duplication for agent context
   When updating TBD workflow, synchronize these files:
-  1. docs/explanation/development/ex-de__trunk-based-development.md (master reference)
+  1. docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md (master reference)
   2. CLAUDE.md (summary)
   3. .claude/agents/plan__maker.md (Git Workflow section)
   4. .claude/agents/plan__executor.md (this section)
@@ -151,7 +151,7 @@ If `requirements/` or `tech-docs/` folders exist instead of single files:
 git branch --show-current  # Should be 'main' for most plans
 ```
 
-See [Trunk Based Development Convention](../docs/explanation/development/ex-de__trunk-based-development.md) for complete TBD guidance.
+See [Trunk Based Development Convention](../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for complete TBD guidance.
 
 #### Step 1.5: Parse Delivery Checklist
 
@@ -695,12 +695,12 @@ For **Multi-PR plans**: delivery.md will specify which phase corresponds to whic
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Development Conventions:**
 
-- `docs/explanation/development/ex-de__trunk-based-development.md` - Trunk Based Development (TBD) git workflow
-- `docs/explanation/development/ex-de__commit-messages.md` - Commit message standards
+- `docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md` - Trunk Based Development (TBD) git workflow
+- `docs/explanation/development/workflow/ex-de-wo__commit-messages.md` - Commit message standards
 - `docs/explanation/development/README.md` - Development conventions index
 
 **Documentation Conventions:**

@@ -70,7 +70,7 @@ Understanding the update hierarchy is critical. Always update in this order:
    ├─ docs/explanation/conventions/formatting/ex-co-fo__linking.md
    ├─ docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
    ├─ docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md
-   ├─ docs/explanation/development/ex-de__ai-agents.md
+   ├─ docs/explanation/development/agents/ex-de-ag__ai-agents.md
    └─ docs/explanation/workflows/ex-wf__*.md
 
    ↓ Update vision/principles/conventions/development/workflows FIRST - they define the rules
@@ -108,7 +108,7 @@ Understanding the update hierarchy is critical. Always update in this order:
 
 ## File Editing Strategy
 
-**CRITICAL - .claude Folder Rule**: When creating or modifying files in `.claude/` folders (especially `.claude/agents/`), ALWAYS use Bash tools (heredoc, sed, awk). NEVER use Write/Edit tools. This enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/development/ex-de__ai-agents.md#writing-to-claude-folders).
+**CRITICAL - .claude Folder Rule**: When creating or modifying files in `.claude/` folders (especially `.claude/agents/`), ALWAYS use Bash tools (heredoc, sed, awk). NEVER use Write/Edit tools. This enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
 
 **For creating new files:**
 
@@ -255,7 +255,7 @@ When the user requests a rule change, follow this process:
 
 **Affected Files**:
 
-- `docs/explanation/development/ex-de__ai-agents.md` (add rule with examples)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` (add rule with examples)
 - `CLAUDE.md` (update AI agents section summary)
 - `.claude/agents/wow__rules-checker.md` (add validation check)
 - `.claude/agents/docs__maker.md` (add model: inherit justification if needed)
@@ -752,7 +752,7 @@ Would you like me to suggest specific condensation changes?
 
 ## Content Offload Strategy
 
-**FUNDAMENTAL PRINCIPLE:** When condensing any file, content must be **MOVED to convention/development docs, NOT DELETED**. Follow the complete principles and workflow defined in [Content Preservation Convention](./docs/explanation/development/ex-de__content-preservation.md).
+**FUNDAMENTAL PRINCIPLE:** When condensing any file, content must be **MOVED to convention/development docs, NOT DELETED**. Follow the complete principles and workflow defined in [Content Preservation Convention](./docs/explanation/development/quality/ex-de-qu__content-preservation.md).
 
 **Quick reference:**
 
@@ -760,7 +760,7 @@ Would you like me to suggest specific condensation changes?
 - **Four options**: Create new doc (A), Merge into existing (B), Extract common pattern (C), Add to development (D)
 - **Verification**: Zero content loss, correct links, proper indexing
 
-See [Content Preservation Convention](./docs/explanation/development/ex-de__content-preservation.md) for decision tree, offload workflow, examples, and complete verification checklist.
+See [Content Preservation Convention](./docs/explanation/development/quality/ex-de-qu__content-preservation.md) for decision tree, offload workflow, examples, and complete verification checklist.
 
 ## Edge Cases and Special Considerations
 
@@ -826,11 +826,11 @@ If adding a completely new category of conventions:
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Content Preservation:**
 
-- `docs/explanation/development/ex-de__content-preservation.md` - Principles for preserving knowledge when condensing files (MOVE not DELETE)
+- `docs/explanation/development/quality/ex-de-qu__content-preservation.md` - Principles for preserving knowledge when condensing files (MOVE not DELETE)
 
 **Workflow Pattern:**
 

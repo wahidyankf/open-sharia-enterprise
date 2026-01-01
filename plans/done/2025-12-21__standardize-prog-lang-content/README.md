@@ -141,7 +141,7 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Type**: Trunk Based Development (Direct to Main)
 
-All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
+All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for complete details.
 
 **Delivery Strategy**:
 

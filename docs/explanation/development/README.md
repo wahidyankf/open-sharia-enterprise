@@ -16,7 +16,7 @@ updated: 2025-12-28
 
 Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
-**Governance**: All development practices in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0), implement the [Core Principles](../principles/README.md) (Layer 1), and implement/enforce [Documentation Conventions](../conventions/README.md) (Layer 2) as part of the six-layer architecture. Each practice MUST include TWO mandatory sections: "Principles Respected" and "Conventions Implemented/Respected". See [Repository Governance Architecture](../ex__repository-governance-architecture.md) for complete governance model and [AI Agents Convention](./ex-de__ai-agents.md) for structure requirements.
+**Governance**: All development practices in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0), implement the [Core Principles](../principles/README.md) (Layer 1), and implement/enforce [Documentation Conventions](../conventions/README.md) (Layer 2) as part of the six-layer architecture. Each practice MUST include TWO mandatory sections: "Principles Respected" and "Conventions Implemented/Respected". See [Repository Governance Architecture](../ex__repository-governance-architecture.md) for complete governance model and [AI Agents Convention](./agents/ex-de-ag__ai-agents.md) for structure requirements.
 
 ## 🎯 Scope
 
@@ -98,20 +98,38 @@ Development practices in this directory fall into several categories:
 
 ## 📋 Contents
 
-- [Acceptance Criteria Convention](./ex-de__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation. Covers Gherkin syntax (Scenario, Given, When, Then), best practices, common patterns (CRUD, auth, errors), and integration with BDD test frameworks
-- [AI Agents Convention](./ex-de__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory. Covers agent naming (general vs scoped with `apps__`, `libs__`, `apps-labs__` prefixes), file structure, frontmatter requirements, tool access patterns, model selection, color categorization, and size limits
-- [Code Quality Convention](./ex-de__code-quality.md) - Automated code quality tools and git hooks (Prettier, Husky, lint-staged) for consistent formatting and commit validation
-- [Commit Message Convention](./ex-de__commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
-- [Content Preservation Convention](./ex-de__content-preservation.md) - Principles and processes for preserving knowledge when condensing files and extracting duplications. Covers the fundamental MOVE NOT DELETE principle, offload decision tree, four offload options (create new, merge existing, extract common, add to development), verification checklist, and when NOT to offload
-- [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md) - Universal confidence level system for fixer agents to assess and apply validated fixes. Covers three confidence levels (HIGH/MEDIUM/FALSE_POSITIVE), when to apply fixes automatically, re-validation requirements, domain-specific vs universal criteria, and false positive feedback loop for improving checker accuracy
-- [Hugo Development Convention](./ex-de__hugo-development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web. Covers theme development, layout organization, asset pipeline (Hugo Pipes, CSS/JS processing, image optimization), configuration management, i18n/l10n, performance optimization, SEO best practices, accessibility (WCAG compliance), shortcode development, and build/deployment processes
-- [Implementation Workflow Convention](./ex-de__implementation-workflow.md) - Three-stage development workflow: make it work (functionality first), make it right (refactor for quality), make it fast (optimize only if needed). Implements Simplicity Over Complexity, YAGNI, and Progressive Disclosure principles. Covers each stage's goals, what to do/avoid, anti-patterns (premature optimization, skipping refactoring), best practices (profile before optimizing, document decisions), and when to apply vs exceptions
-- [Maker-Checker-Fixer Pattern Convention](./ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow for content creation and validation. Covers agent roles (Maker creates/updates, Checker validates/audits, Fixer applies validated fixes), workflow stages with user review gates, confidence level integration, report pairing (audit-fix), benefits (safety, transparency, quality improvement loop), and when to use each agent type
-- [Repository Validation Methodology Convention](./ex-de__repository-validation.md) - Standard validation methods and patterns for repository consistency checking. Covers frontmatter extraction (AWK pattern), validation checks (comments, fields, links, naming), best practices, and common pitfalls to avoid false positives
-- [Temporary Files Convention](./ex-de__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
-- [Trunk Based Development Convention](./ex-de__trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
-- [Functional Programming Practices](./ex-de__functional-programming.md) - Guidelines for applying functional programming principles in TypeScript/JavaScript. Covers immutability patterns (const, spread operators, Immer), pure function patterns (deterministic functions, Functional Core/Imperative Shell), function composition (pipe, compose, higher-order functions), and when to use classes vs functions. Includes Islamic finance examples
-- [Reproducible Environments Convention](./ex-de__reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments. Covers runtime version management (Volta), dependency locking (package-lock.json, npm ci), environment configuration (.env.example), containerization (Docker, docker-compose), documentation, automated setup scripts, and troubleshooting common reproducibility issues
+### Workflow Documentation
+
+- [Implementation Workflow Convention](./workflow/ex-de-wo__implementation.md) - Three-stage development workflow: make it work (functionality first), make it right (refactor for quality), make it fast (optimize only if needed). Implements Simplicity Over Complexity, YAGNI, and Progressive Disclosure principles
+- [Trunk Based Development Convention](./workflow/ex-de-wo__trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
+- [Commit Message Convention](./workflow/ex-de-wo__commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
+- [Reproducible Environments Convention](./workflow/ex-de-wo__reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments. Covers runtime version management (Volta), dependency locking, environment configuration, and containerization
+
+### Quality Standards Documentation
+
+- [Code Quality Convention](./quality/ex-de-qu__code.md) - Automated code quality tools and git hooks (Prettier, Husky, lint-staged) for consistent formatting and commit validation
+- [Content Preservation Convention](./quality/ex-de-qu__content-preservation.md) - Principles and processes for preserving knowledge when condensing files and extracting duplications. Covers the MOVE NOT DELETE principle and offload decision tree
+- [Repository Validation Methodology Convention](./quality/ex-de-qu__repository-validation.md) - Standard validation methods and patterns for repository consistency checking. Covers frontmatter extraction, validation checks, and best practices
+- [Criticality Levels Convention](./quality/ex-de-qu__criticality-levels.md) - Universal criticality level system for categorizing validation findings by importance and urgency (CRITICAL/HIGH/MEDIUM/LOW)
+- [Fixer Confidence Levels Convention](./quality/ex-de-qu__fixer-confidence-levels.md) - Universal confidence level system for fixer agents to assess and apply validated fixes (HIGH/MEDIUM/FALSE_POSITIVE)
+
+### Pattern Documentation
+
+- [Maker-Checker-Fixer Pattern Convention](./pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage quality workflow for content creation and validation. Covers agent roles, workflow stages with user review gates, and confidence level integration
+- [Functional Programming Practices](./pattern/ex-de-pa__functional-programming.md) - Guidelines for applying functional programming principles in TypeScript/JavaScript. Covers immutability patterns, pure functions, and function composition
+
+### Agent Standards Documentation
+
+- [AI Agents Convention](./agents/ex-de-ag__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory. Covers agent naming, file structure, frontmatter requirements, tool access patterns, model selection, and size limits
+
+### Infrastructure Documentation
+
+- [Temporary Files Convention](./infra/ex-de-in__temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
+- [Acceptance Criteria Convention](./infra/ex-de-in__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation. Covers Gherkin syntax and common patterns
+
+### Hugo Development Documentation
+
+- [Hugo Development Convention](./hugo/ex-de-hu__development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web. Covers theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
 
 ## 🔗 Related Documentation
 

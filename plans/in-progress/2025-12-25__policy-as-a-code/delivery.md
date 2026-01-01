@@ -38,7 +38,7 @@ Design policy schema and establish governance model
    - Naming: Semantic IDs (e.g., `file-naming-v1`, `frontmatter-v1`)
 
 2. **Schema Structure Documentation**
-   - File: `docs/explanation/development/ex-de__policy-as-code.md`
+   - File: `docs/explanation/development/infra/ex-de-in__policy-as-code.md`
    - Content: Complete policy schema specification
    - Sections:
      - Policy format and structure
@@ -94,7 +94,7 @@ Design policy schema and establish governance model
   - YAML parsing patterns (internal/markdown/frontmatter.go)
   - Testing approach (table-driven tests)
   - Nx integration patterns (project.json reference)
-- [ ] Create `docs/explanation/development/ex-de__policy-as-code.md`
+- [ ] Create `docs/explanation/development/infra/ex-de-in__policy-as-code.md`
 - [ ] Create `apps/governance-cli/internal/policy/policy-schema.json` (JSON Schema for policy validation)
   - Define schema for policy YAML structure
   - Include required fields validation
@@ -1031,7 +1031,7 @@ Phase 5 (consolidation)
 ### Phase 0
 
 - `apps/governance-cli/` (NEW - entire app with Nx + Cobra)
-- `docs/explanation/development/ex-de__policy-as-code.md` (NEW)
+- `docs/explanation/development/infra/ex-de-in__policy-as-code.md` (NEW)
 - `apps/governance-cli/internal/policy/types.go` (NEW)
 - `apps/governance-cli/internal/policy/engine.go` (NEW)
 - `apps/governance-cli/internal/policy/engine_test.go` (NEW)

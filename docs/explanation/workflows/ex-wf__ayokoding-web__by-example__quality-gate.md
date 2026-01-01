@@ -162,7 +162,7 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 - Specific line numbers for issues
 - Actionable recommendations
 
-**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../development/ex-de__temporary-files.md#uuid-chain-generation) for details.
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for details.
 
 **Depends on**: Step 1 completion
 
@@ -741,7 +741,7 @@ Track across executions:
 
 This workflow is part of the **Tutorial Quality Family**:
 
-- **[Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md)**: General pattern
+- **[Maker-Checker-Fixer Pattern](../development/pattern/ex-de-pa__maker-checker-fixer.md)**: General pattern
 - **docs-tutorial workflow**: General tutorial validation
 - **ayokoding-web-by-example-quality-gate** (this workflow): Specialized for by-example tutorials
 - **ayokoding-web workflow**: Hugo content validation
@@ -769,8 +769,8 @@ This workflow is part of the **Tutorial Quality Family**:
 ## Related Documentation
 
 - **[By-Example Tutorial Convention](../conventions/tutorial/ex-co-tu__by-example.md)**: Quality standards
-- **[Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md)**: Workflow pattern
-- **[Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md)**: Confidence assessment
+- **[Maker-Checker-Fixer Pattern](../development/pattern/ex-de-pa__maker-checker-fixer.md)**: Workflow pattern
+- **[Fixer Confidence Levels](../development/quality/ex-de-qu__fixer-confidence-levels.md)**: Confidence assessment
 - **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps**ayokoding-web**by-example-checker.md)**: Validation agent
 - **[apps**ayokoding-web**by-example-fixer agent](../../.claude/agents/apps**ayokoding-web**by-example-fixer.md)**: Fixing agent
 - **[apps**ayokoding-web**by-example-maker agent](../../.claude/agents/apps**ayokoding-web**by-example-maker.md)**: Content creation agent

@@ -192,7 +192,7 @@ Is this content unique and valuable?
 
 - **Before:** Gherkin acceptance criteria details in `plan__maker.md` (500 lines)
 - **After:**
-  - New file: `docs/explanation/development/ex-de__acceptance-criteria.md` (comprehensive)
+  - New file: `docs/explanation/development/infra/ex-de-in__acceptance-criteria.md` (comprehensive)
   - `plan__maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
   - Savings: 497 lines
 
@@ -213,7 +213,7 @@ Is this content unique and valuable?
 
 - **Before:** TBD workflow details duplicated in `plan__maker.md` and `plan__executor.md`
 - **After:**
-  - Updated: `docs/explanation/development/ex-de__trunk-based-development.md` (comprehensive)
+  - Updated: `docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md` (comprehensive)
   - `plan__maker.md`: "Follow TBD workflow. See [TBD Convention](link)" (2 lines)
   - `plan__executor.md`: "Default to main branch per TBD. See [TBD Convention](link)" (2 lines)
   - Savings: Duplication eliminated
@@ -245,7 +245,7 @@ Is this content unique and valuable?
 
 - **Before:** Testing strategy duplicated across multiple agents
 - **After:**
-  - New file: `docs/explanation/development/ex-de__testing-strategy.md` (comprehensive)
+  - New file: `docs/explanation/development/quality/ex-de-qu__testing-strategy.md` (comprehensive)
   - All agents: "See [Testing Strategy](link) for comprehensive testing guidelines" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Development Folder:** Testing is a development process, not content format
@@ -286,7 +286,7 @@ Is this content unique and valuable?
 
 - **Before:** Commit granularity examples in `plan__executor.md`
 - **After:**
-  - Updated: `docs/explanation/development/ex-de__commit-messages.md` (comprehensive)
+  - Updated: `docs/explanation/development/workflow/ex-de-wo__commit-messages.md` (comprehensive)
   - `plan__executor.md`: "Split commits logically. See [Commit Messages Convention](link)" (2 lines)
   - Savings: 100+ lines
 
@@ -547,8 +547,8 @@ Problem: Convention polluted with implementation details
 ## References
 
 - [Convention Writing Convention](../conventions/content/ex-co-co__convention-writing.md) - How to write convention documents (target for offloaded content)
-- [AI Agents Convention](./ex-de__ai-agents.md) - Agent standards (agents apply content preservation principles)
-- [Trunk Based Development Convention](./ex-de__trunk-based-development.md) - Git workflow example of development convention
+- [AI Agents Convention](../agents/ex-de-ag__ai-agents.md) - Agent standards (agents apply content preservation principles)
+- [Trunk Based Development Convention](../workflow/ex-de-wo__trunk-based-development.md) - Git workflow example of development convention
 - [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md) - Example of content convention
 
 ## Agent Usage
@@ -585,5 +585,5 @@ When creating new convention or development documents during offload, `docs__mak
 ## Related Conventions
 
 - [CLAUDE.md Maintenance](../../CLAUDE.md#claudemd-maintenance) - Size limits and condensation triggers
-- [AI Agents Convention](./ex-de__ai-agents.md) - Agent file size tiers and condensation
+- [AI Agents Convention](../agents/ex-de-ag__ai-agents.md) - Agent file size tiers and condensation
 - [Convention Writing Convention](../conventions/content/ex-co-co__convention-writing.md) - How to structure convention documents

@@ -6,7 +6,7 @@ This directory contains specialized AI agents for repository maintenance and doc
 
 **Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Vision → Principle → Convention/Practice → Agent.
 
-**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../docs/explanation/development/ex-de__ai-agents.md#token-budget-philosophy) for complete details.
+**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../docs/explanation/development/agents/ex-de-ag__ai-agents.md#token-budget-philosophy) for complete details.
 
 ## Available Agents
 
@@ -211,7 +211,7 @@ Applies validated fixes from ayokoding-web-facts-checker audit reports. Re-valid
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
 - **Works with:** `ayokoding-web-general-maker` for content creation, `ayokoding-web-general-checker` for content quality
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
-- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/ex-de__ai-agents.md#hybrid-agents-exception) for complete rationale
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/agents/ex-de-ag__ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟩 `ayokoding-web-navigation-maker.md`
 
@@ -522,7 +522,7 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations, updates lastFullScan)
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
-- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/ex-de__ai-agents.md#hybrid-agents-exception) for complete rationale
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/agents/ex-de-ag__ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟩 `docs__tutorial-checker.md`
 
@@ -853,7 +853,7 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 **Principle**: [Explicit Over Implicit](../docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md)
 
-**Practice**: [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md)
+**Practice**: [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag__ai-agents.md)
 
 **Enforcing Agents**:
 
@@ -867,7 +867,7 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 **Principle**: [Automation Over Manual](../docs/explanation/principles/software-engineering/ex-pr-se__automation-over-manual.md)
 
-**Practice**: [Code Quality Convention](../docs/explanation/development/ex-de__code-quality.md), [Maker-Checker-Fixer Pattern](../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md)
+**Practice**: [Code Quality Convention](../docs/explanation/development/quality/ex-de-qu__code.md), [Maker-Checker-Fixer Pattern](../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md)
 
 **Enforcing Agents** (Checker family):
 
@@ -931,7 +931,7 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **Audit Trail:** Both audit and fix reports saved in `generated-reports/` for transparency
 - **Quality Improvement Loop:** False positive reports improve checker accuracy over time
 
-**See Also:** [Fixer Confidence Levels Convention](../docs/explanation/development/ex-de__fixer-confidence-levels.md) for universal confidence assessment criteria.
+**See Also:** [Fixer Confidence Levels Convention](../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) for universal confidence assessment criteria.
 
 ### 📋 Project Planning and Implementation Workflow
 
@@ -1058,7 +1058,7 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
 - **After adding new conventions:** Use `wow__rules-maker` → `wow__rules-checker` → `wow__rules-fixer` (if issues found)
 - **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `wow__rules-maker` to check size when adding rules
-- **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for complete size guidelines
+- **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag__ai-agents.md) for complete size guidelines
 - **Before major releases:** Run `wow__rules-checker` for full audit and `docs-link-general-checker` to verify all links
 - **When creating tutorials:** Use `docs__tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs__maker` for how-to guides, reference, or explanations
@@ -1080,7 +1080,7 @@ The repository uses a three-stage workflow for content creation and quality assu
 
 ## 📚 Resources
 
-- [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) - Complete agent specification and standards
+- [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Complete agent specification and standards
 - [CLAUDE.md](../CLAUDE.md) - Project guidance for all agents
 - [Documentation Conventions](../docs/explanation/conventions/README.md) - File naming, linking, and Diátaxis framework
 - [Plans Organization](../plans/README.md) - Planning document structure and conventions
@@ -1124,7 +1124,7 @@ Agents follow a structured lifecycle from creation to deprecation:
 When creating new agents:
 
 1. Use `agent__maker` to automate creation with proper structure, size verification, and README updates
-2. Follow the [AI Agents Convention](../docs/explanation/development/ex-de__ai-agents.md) for all standards
+2. Follow the [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag__ai-agents.md) for all standards
 3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
 4. Use `wow__rules-maker` to propagate references to CLAUDE.md and other files
 5. Use `wow__rules-checker` to validate the new agent follows all conventions

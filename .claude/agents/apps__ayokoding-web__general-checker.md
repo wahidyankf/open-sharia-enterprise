@@ -8,7 +8,7 @@ created: 2025-12-01
 updated: 2025-12-25
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 # ayokoding-web-general-checker Agent
 
@@ -139,7 +139,7 @@ Coverage: 60-85% of domain knowledge (intermediate depth)
 ---
 title: "Getting Started with Node.js"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 date: 2025-12-07T09:00:00+07:00
 draft: false
 description: "Complete beginner's guide to Node.js development environment setup and first application"
@@ -150,7 +150,7 @@ categories: ["learn"]
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 ### Content Structure Validation
 
@@ -167,10 +167,10 @@ categories: ["learn"]
 ---
 title: "Getting Started with Node.js"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 Introduction to Node.js fundamentals... (no H1 in content)
 
 ## What You'll Learn (H2 - section)
@@ -190,10 +190,10 @@ Introduction to Node.js fundamentals... (no H1 in content)
 ---
 title: "Getting Started with Node.js"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 # Getting Started with Node.js (H1 - WRONG! ALL H1s prohibited in ayokoding-web)
 
@@ -538,35 +538,35 @@ Content for step 2.
 ---
 title: Programming Languages # Descriptive, readable, properly capitalized
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/en/learn/ai/_index.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: AI Engineering # Proper acronym capitalization, adds context
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/en/learn/human/tools/cliftonstrengths/_index.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: CliftonStrengths # Proper product name capitalization
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/en/learn/business/_index.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: Business and Finance # Descriptive with context
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Invalid Index File Titles**:
 
@@ -575,27 +575,27 @@ title: Business and Finance # Descriptive with context
 ---
 title: Prog-lang # WRONG! Unreadable, mimics folder name
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/en/learn/ai/_index.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: Ai # WRONG! Incorrect acronym capitalization (should be AI)
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/en/learn/business/_index.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: business # WRONG! No capitalization, too generic
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 ### Index File Navigation Depth Validation
 
@@ -713,19 +713,19 @@ For `/en/rants/` and `/id/celoteh/` directories, `_index.md` files MAY include i
 ---
 title: "Overview" # Correct - simple and generic
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/id/belajar/swe/prog-lang/ikhtisar.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Ikhtisar" # Correct - simple and generic
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Invalid Title Examples**:
 
@@ -734,19 +734,19 @@ title: "Ikhtisar" # Correct - simple and generic
 ---
 title: "Programming Languages Overview" # WRONG! Too descriptive
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/id/belajar/swe/prog-lang/ikhtisar.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 ### Navigation Ordering Validation
 
@@ -809,30 +809,30 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 ---
 title: "Software Engineering"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 weight: 10 #  WRONG! Should be weight: 100 (level 3 base)
 ---
 # /en/learn/swe/overview.md (level 3)
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Overview"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 weight: 1 #  WRONG! Should be weight: 101 (level 3 base + 1)
 ---
 # /en/learn/swe/prog-lang/ (level 3)
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Programming Languages"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 #  WRONG! Missing weight field (should be weight: 102)
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Correct Structure** (Level 3 folder):
 
@@ -841,39 +841,39 @@ title: "Programming Languages"
 ---
 title: "Software Engineering"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 weight: 100 #  Level 3 base
 ---
 # /en/learn/swe/overview.md (level 3)
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Overview"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 weight: 101 #  Level 3 base + 1 (immediately after index)
 ---
 # /en/learn/swe/prog-lang/ (level 3)
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Programming Languages"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 weight: 102 #  Level 3 base + 2 (first content item)
 ---
 # /en/learn/swe/infosec/ (level 3)
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Information Security"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 weight: 103 #  Level 3 base + 3 (second content item)
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Valid `_index.md` Structure** (navigation only with overview link first):
 
@@ -881,10 +881,10 @@ weight: 103 #  Level 3 base + 3 (second content item)
 ---
 title: Golang
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 - [Overview](/learn/swe/prog-lang/golang/overview) # MUST be first when overview.md exists
 - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
@@ -898,10 +898,10 @@ title: Golang
 ---
 title: Golang
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 Welcome to our comprehensive Golang learning path! Go is a statically typed...
 
 <!-- WRONG! Introduction content should be in overview.md (English) or ikhtisar.md (Indonesian) -->
@@ -914,10 +914,10 @@ Welcome to our comprehensive Golang learning path! Go is a statically typed...
 ---
 title: Golang
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 - [Initial Setup](/learn/swe/prog-lang/golang/initial-setup) # WRONG! Missing overview link as first item
 - [Overview](/learn/swe/prog-lang/golang/overview) # WRONG! Overview should be first, not second
@@ -930,7 +930,7 @@ title: Golang
 ---
 title: "Overview"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Introduction to our comprehensive Golang learning resources"
@@ -939,7 +939,7 @@ tags: ["golang", "programming", "overview"]
 categories: ["learn"]
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 Welcome to our Golang learning path! This comprehensive curriculum takes you from...
 ```
 
@@ -949,7 +949,7 @@ Welcome to our Golang learning path! This comprehensive curriculum takes you fro
 ---
 title: "Ikhtisar"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 date: 2025-12-09T10:00:00+07:00
 draft: false
 description: "Pengenalan ke sumber pembelajaran Golang komprehensif kami"
@@ -958,7 +958,7 @@ tags: ["golang", "programming", "ikhtisar"]
 categories: ["learn"]
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini membawa Anda dari...
 ```
 
@@ -1040,10 +1040,10 @@ content/en/learn/swe/prog-lang/golang/ikhtisar.md # Should be overview.md
 ---
 frontmatter...
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 **Similar article:** [Kenapa Saya Pindah ke Neovim](/id/celoteh/2023/07/kenapa-neovim)
 
 After 5 years of using Vim, I finally made the switch to Neovim...
@@ -1055,10 +1055,10 @@ After 5 years of using Vim, I finally made the switch to Neovim...
 ---
 frontmatter...
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 > _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [Why I Switched to Neovim](/en/rants/2023/07/why-neovim)_
 
@@ -1073,10 +1073,10 @@ Setelah 5 tahun menggunakan Vim, saya akhirnya pindah ke Neovim...
 ---
 frontmatter...
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 After 5 years of using Vim...
 
 <!-- WRONG! Missing cross-reference to Indonesian version -->
@@ -1185,13 +1185,13 @@ But cross-reference link is missing.
 ---
 title: "Node.js Tutorial"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 categories: ["learn"]
 author: "Wahidyan Kresna Fridayoka" # WRONG! Should not exist
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Correct (learning content without author)**:
 
@@ -1199,13 +1199,13 @@ author: "Wahidyan Kresna Fridayoka" # WRONG! Should not exist
 ---
 title: "Node.js Tutorial"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 categories: ["learn"]
 # Note: No author field - uses site-level config
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Wrong (\_index.md with unreadable/poorly capitalized title)**:
 
@@ -1214,19 +1214,19 @@ categories: ["learn"]
 ---
 title: "Prog-lang" # WRONG! Unreadable, mimics folder name
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/en/learn/ai/_index.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "Ai" # WRONG! Incorrect acronym capitalization (should be "AI")
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Correct (\_index.md with descriptive, readable title)**:
 
@@ -1235,19 +1235,19 @@ title: "Ai" # WRONG! Incorrect acronym capitalization (should be "AI")
 ---
 title: "Programming Languages" # Correct - descriptive and readable
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 # File: content/en/learn/ai/_index.md
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 title: "AI Engineering" # Correct - proper acronym capitalization with context
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Wrong (video content missing videoUrl)**:
 
@@ -1255,13 +1255,13 @@ title: "AI Engineering" # Correct - proper acronym capitalization with context
 ---
 title: "Tutorial Video"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 categories: ["video"]
 # WRONG! Missing videoUrl field
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Correct (video content with videoUrl)**:
 
@@ -1269,13 +1269,13 @@ categories: ["video"]
 ---
 title: "Tutorial Video"
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 categories: ["video"]
 videoUrl: "https://youtube.com/watch?v=..."
 ---
 ```
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 **Archetype Detection Logic**:
 
@@ -1403,7 +1403,7 @@ This agent writes validation findings to temporary report files in `generated-re
 
 **Report Location**: `generated-reports/ayokoding-web__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
+**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic and scope-based execution tracking. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
 
 **Example Filename**: `ayokoding-web__a1b2c3__2025-12-20--14-30__audit.md`
 
@@ -1427,7 +1427,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 
 Report file: `generated-reports/ayokoding-web__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**UUID Chain Generation**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
+**UUID Chain Generation**: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
 
 This progressive approach ensures findings persist even if context is compacted during large content validations (100+ files).
 
@@ -1878,6 +1878,6 @@ Categorize issues:
 ---
 
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 **Remember**: You are a validator, not a fixer. Provide clear, actionable feedback so content creators know exactly what to correct. Be thorough but constructive - help improve content quality without being overly critical.
 ```

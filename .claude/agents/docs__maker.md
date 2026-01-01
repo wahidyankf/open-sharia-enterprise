@@ -444,12 +444,12 @@ You have access to the project's documentation and source code. When creating ne
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Development Conventions:**
 
-- `docs/explanation/development/ex-de__trunk-based-development.md` - Trunk Based Development (TBD) git workflow
-- `docs/explanation/development/ex-de__commit-messages.md` - Commit message standards
+- `docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md` - Trunk Based Development (TBD) git workflow
+- `docs/explanation/development/workflow/ex-de-wo__commit-messages.md` - Commit message standards
 - `docs/explanation/development/README.md` - Development conventions index
 
 **Documentation Conventions (Required Reading):**

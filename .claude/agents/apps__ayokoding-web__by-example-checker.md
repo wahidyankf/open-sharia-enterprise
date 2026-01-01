@@ -6,7 +6,7 @@ model: sonnet
 color: yellow
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 # ayokoding-web-by-example-checker
 
@@ -51,7 +51,7 @@ TZ='Asia/Bangkok' date '+%Y-%m-%d--%H-%M'
 
 **Report path**: `generated-reports/ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md`
 
-**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
+**UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6.g7h8i9` (grandchild).
 
 **Initial report structure**:
 
@@ -660,9 +660,9 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 - **[By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)**: Primary validation authority
 - **[Diagrams Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md)**: Diagram splitting and mobile-friendliness rules
-- **[Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md)**: Workflow context
-- **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)**: Confidence assessment guide
-- **[Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md)**: Report file requirements
+- **[Maker-Checker-Fixer Pattern](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md)**: Workflow context
+- **[Fixer Confidence Levels](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md)**: Confidence assessment guide
+- **[Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md)**: Report file requirements
 
 ## Tools
 

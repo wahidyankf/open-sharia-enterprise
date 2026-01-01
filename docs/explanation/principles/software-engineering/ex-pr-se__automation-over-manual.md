@@ -464,10 +464,10 @@ The project enforces code quality through automated git hooks:
 
 ## 📚 Related Conventions
 
-- [Code Quality Convention](../../development/ex-de__code-quality.md) - Git hooks and Prettier
-- [AI Agents Convention](../../development/ex-de__ai-agents.md) - Validation agents
-- [Commit Message Convention](../../development/ex-de__commit-messages.md) - Automated validation
-- [Repository Validation](../../development/ex-de__repository-validation.md) - Standard validation patterns
+- [Code Quality Convention](../../development/quality/ex-de-qu__code.md) - Git hooks and Prettier
+- [AI Agents Convention](../../development/agents/ex-de-ag__ai-agents.md) - Validation agents
+- [Commit Message Convention](../../development/workflow/ex-de-wo__commit-messages.md) - Automated validation
+- [Repository Validation](../../development/quality/ex-de-qu__repository-validation.md) - Standard validation patterns
 
 ## 📖 References
 

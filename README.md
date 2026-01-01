@@ -258,7 +258,7 @@ This project uses automated tools to maintain code quality:
     - Auto-stages changes
 - **Commit-msg**: Validates commit message format
 
-For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md) and [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md). For ayokoding-web automation details, see [Pre-commit Automation](./apps/ayokoding-cli/README.md#pre-commit-automation).
+For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/development/quality/ex-de-qu__code.md) and [Commit Message Convention](./docs/explanation/development/workflow/ex-de-wo__commit-messages.md). For ayokoding-web automation details, see [Pre-commit Automation](./apps/ayokoding-cli/README.md#pre-commit-automation).
 
 ## 📚 Documentation
 

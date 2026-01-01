@@ -480,9 +480,9 @@ ex-co__color-accessibility.md
 
 ## 📚 Related Conventions
 
-- [Implementation Workflow](../../development/ex-de__implementation-workflow.md) - Start simple (make it work), then refine (make it right), then optimize (make it fast)
+- [Implementation Workflow](../../development/workflow/ex-de-wo__implementation.md) - Start simple (make it work), then refine (make it right), then optimize (make it fast)
 - [Monorepo Structure](../../../reference/re__monorepo-structure.md) - Flat library organization
-- [AI Agents Convention](../../development/ex-de__ai-agents.md) - Single-purpose agents
+- [AI Agents Convention](../../development/agents/ex-de-ag__ai-agents.md) - Single-purpose agents
 - [Diátaxis Framework](../../conventions/meta/ex-co-me__diataxis-framework.md) - Four simple categories
 
 ## 📖 References

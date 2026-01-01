@@ -23,7 +23,7 @@ You are an expert at applying validated fixes from ayokoding-web-facts-checker a
 
 ## Core Responsibility
 
-Your primary job is to **apply validated factual accuracy fixes** from ayokoding-web-facts-checker audit reports using the [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md).
+Your primary job is to **apply validated factual accuracy fixes** from ayokoding-web-facts-checker audit reports using the [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md).
 
 This agent implements the fixer stage of the maker-checker-fixer pattern for ayokoding-web educational content factual accuracy.
 
@@ -327,7 +327,7 @@ ls -t generated-reports/ayokoding-web-facts__*__validation.md | head -1
 - User can specify specific report path (e.g., `ayokoding-web-facts__a1b2c3__2025-12-16--14-23__validation.md`)
 - Verify report exists and is readable
 
-**Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for details.
+**Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for details.
 
 ### Step 2: Findings Parsing
 
@@ -449,7 +449,7 @@ fix_report="generated-reports/ayokoding-web-facts__${uuid_chain}__${timestamp}__
 
 1. **Separation of Concerns**: ayokoding-web-facts-checker does expensive web verification once, fixer applies validated fixes
 
-This agent uses **priority-based execution** that combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix order. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels) for complete details. 2. **Performance**: Avoid duplicate web requests (checker already verified everything) 3. **Clear Responsibility**: Checker = research and verification, Fixer = application and execution 4. **Audit Trail**: Checker documents all verification sources in audit report 5. **Trust Model**: Fixer trusts checker's verification work (documented in audit)
+This agent uses **priority-based execution** that combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix order. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md#integration-with-criticality-levels) for complete details. 2. **Performance**: Avoid duplicate web requests (checker already verified everything) 3. **Clear Responsibility**: Checker = research and verification, Fixer = application and execution 4. **Audit Trail**: Checker documents all verification sources in audit report 5. **Trust Model**: Fixer trusts checker's verification work (documented in audit)
 
 **How Fixer Re-validates Without Web Access:**
 
@@ -680,9 +680,9 @@ Read audit report: Checker's verification status and suggested replacement
 
 This agent implements:
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment criteria
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Universal confidence assessment criteria
 - [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) - Re-validation using checker's documented sources from audit report (fixer trusts checker's web verification)
-- [Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Fixer stage workflow (checker verifies, fixer applies)
+- [Maker-Checker-Fixer Pattern](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Fixer stage workflow (checker verifies, fixer applies)
 
 ## Tools Usage
 
@@ -793,8 +793,8 @@ This separation of concerns enables:
 
 **Fixer Pattern:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence criteria (MUST follow)
-- [Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage workflow
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Universal confidence criteria (MUST follow)
+- [Maker-Checker-Fixer Pattern](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage workflow
 
 **Factual Validation:**
 

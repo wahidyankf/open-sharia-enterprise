@@ -223,8 +223,8 @@ All CONTRIBUTING.md files must include:
 
 4. **Code Conventions**
    - Coding style (link to style guide if detailed)
-   - Commit message format (link to [Commit Message Convention](../development/ex-de__commit-messages.md))
-   - Branch naming (link to [Trunk Based Development](../development/ex-de__trunk-based-development.md))
+   - Commit message format (link to [Commit Message Convention](../development/workflow/ex-de-wo__commit-messages.md))
+   - Branch naming (link to [Trunk Based Development](../development/workflow/ex-de-wo__trunk-based-development.md))
    - Testing requirements
 
 5. **Contribution Process**
@@ -326,7 +326,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ## Making Changes
 
-1. Create a branch (or work on main for small changes - see [Trunk Based Development](./docs/explanation/development/ex-de__trunk-based-development.md))
+1. Create a branch (or work on main for small changes - see [Trunk Based Development](./docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md))
 2. Make your changes
 3. Add tests for new functionality
 4. Ensure all tests pass: `npm test`
@@ -345,7 +345,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ## Code Conventions
 
-- **Commit Messages:** Follow [Conventional Commits](./docs/explanation/development/ex-de__commit-messages.md)
+- **Commit Messages:** Follow [Conventional Commits](./docs/explanation/development/workflow/ex-de-wo__commit-messages.md)
 - **Code Style:** Enforced by Prettier (runs on commit)
 - **TypeScript:** Use strict mode, no `any` types without justification
 - **Tests:** Required for all new features and bug fixes
@@ -892,8 +892,8 @@ When setting up a new repository:
 - [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Organization of internal documentation
 - [File Naming Convention](../meta/ex-co-me__file-naming.md) - Naming files within `docs/`
 - [Linking Convention](../formatting/ex-co-fo__linking.md) - How to link between documentation
-- [Commit Message Convention](../development/ex-de__commit-messages.md) - Git commit standards
-- [Trunk Based Development](../development/ex-de__trunk-based-development.md) - Git workflow
+- [Commit Message Convention](../development/workflow/ex-de-wo__commit-messages.md) - Git commit standards
+- [Trunk Based Development](../development/workflow/ex-de-wo__trunk-based-development.md) - Git workflow
 
 ## 📖 Further Reading
 

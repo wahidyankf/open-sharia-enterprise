@@ -824,9 +824,9 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 
 **Development Practices:**
 
-- [Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
-- [Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md) - Fix confidence assessment
-- [Repository Validation Methodology](../development/ex-de__repository-validation.md) - Standard validation patterns
+- [Maker-Checker-Fixer Pattern](../development/pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage quality workflow
+- [Fixer Confidence Levels](../development/quality/ex-de-qu__fixer-confidence-levels.md) - Fix confidence assessment
+- [Repository Validation Methodology](../development/quality/ex-de-qu__repository-validation.md) - Standard validation patterns
 
 ---
 

@@ -67,11 +67,11 @@ Does this define HOW TO WRITE OR FORMAT DOCUMENTATION?
 | Topic                                             | Location                                                                                                          | Reasoning                            |
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | How to write Hugo content (frontmatter, markdown) | `conventions/hugo/ex-co-hu__shared.md`, `ex-co__hugo-content-ayokoding.md`, `ex-co__hugo-content-ose-platform.md` | About **writing** content            |
-| How to develop Hugo themes (layouts, templates)   | `development/ex-de__hugo-development.md`                                                                          | About **building** infrastructure    |
+| How to develop Hugo themes (layouts, templates)   | `development/hugo/ex-de-hu__development.md`                                                                       | About **building** infrastructure    |
 | How to format tutorials                           | `conventions/tutorial/ex-co-tu__general.md`                                                                       | About **writing** tutorials          |
-| How to write acceptance criteria                  | `development/ex-de__acceptance-criteria.md`                                                                       | About **software quality** process   |
+| How to write acceptance criteria                  | `development/infra/ex-de-in__acceptance-criteria.md`                                                              | About **software quality** process   |
 | How to name files                                 | `conventions/meta/ex-co-me__file-naming.md`                                                                       | About **documentation** organization |
-| How to write commit messages                      | `development/ex-de__commit-messages.md`                                                                           | About **git workflow**               |
+| How to write commit messages                      | `development/workflow/ex-de-wo__commit-messages.md`                                                               | About **git workflow**               |
 
 ## Convention Document Structure
 
@@ -579,7 +579,7 @@ When creating a convention:
 
 **Development Practices:**
 
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - How to create AI agents (parallel meta-doc for development/)
+- [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md) - How to create AI agents (parallel meta-doc for development/)
 
 **Repository Guidance:**
 

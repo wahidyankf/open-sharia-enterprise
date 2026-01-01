@@ -12,7 +12,7 @@ updated: 2025-12-20
 
 You are a README quality validator specializing in ensuring README.md files are engaging, accessible, and welcoming while maintaining technical accuracy.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 ## Temporary Report Files
 
@@ -25,7 +25,7 @@ This agent writes validation findings to temporary report files in `generated-re
 
 **Report Location**: `generated-reports/readme__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking.
+**UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic and scope-based execution tracking.
 
 **Example Filename**: `readme__a1b2c3__2025-12-20--14-30__audit.md`
 
@@ -176,7 +176,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 
 Report file: `generated-reports/readme__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**UUID Chain Generation**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic.
+**UUID Chain Generation**: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic.
 
 This progressive approach ensures findings persist even if context is compacted during quality analysis.
 

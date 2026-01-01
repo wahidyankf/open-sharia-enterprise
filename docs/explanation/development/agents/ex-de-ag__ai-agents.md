@@ -407,7 +407,7 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 3. **Update continuously** - Progress indicator and running totals updated throughout execution
 4. **Finalize on completion** - Update status to "Complete" with final summary statistics
 
-See [Temporary Files Convention - Progressive Writing Requirement](./ex-de__temporary-files.md#progressive-writing-requirement-for-checker-agents) for complete details, patterns, and examples.
+See [Temporary Files Convention - Progressive Writing Requirement](../infra/ex-de-in__temporary-files.md#progressive-writing-requirement-for-checker-agents) for complete details, patterns, and examples.
 
 **Example frontmatter**:
 
@@ -423,7 +423,7 @@ color: green
 
 **Verification**: When creating or updating report-generating agents, verify both Write and Bash are present in the tools list.
 
-See [Temporary Files Convention](./ex-de__temporary-files.md) for complete details on report naming patterns, mandatory checker requirements, and timestamp generation.
+See [Temporary Files Convention](../infra/ex-de-in__temporary-files.md) for complete details on report naming patterns, mandatory checker requirements, and timestamp generation.
 
 ### Writing to .claude Folders
 
@@ -870,13 +870,13 @@ Use GitHub-compatible markdown with relative paths:
 ```markdown
 ✅ Good:
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention
 
 ❌ Bad:
 
 - [[ex-de__ai-agents]] - Obsidian wiki link (not GitHub compatible)
-- `/docs/explanation/development/ex-de__ai-agents.md` - Absolute path
-- `docs/explanation/development/ex-de__ai-agents` - Missing .md extension
+- `/docs/explanation/development/agents/ex-de-ag__ai-agents.md` - Absolute path
+- `docs/explanation/development/agents/ex-de-ag__ai-agents` - Missing .md extension
 ```
 
 See [Linking Convention](../conventions/formatting/ex-co-fo__linking.md) for details.
@@ -1298,7 +1298,7 @@ Your primary job is to [clear, specific purpose statement].
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **[Domain-Specific Conventions]:**
 
