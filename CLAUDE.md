@@ -186,7 +186,7 @@ When documenting markdown structure, use **4 backticks for outer fence, 3 for in
 
 ### Tutorial Standards
 
-Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (95% coverage through 75-90 annotated examples, 40+ annotations/example (75+ optimal), five-part format for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details.
+Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (95% coverage through 75-90 annotated examples, 1-2 lines of comment for every line of code (density-based), five-part format for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details.
 
 ### Content Quality Principles
 

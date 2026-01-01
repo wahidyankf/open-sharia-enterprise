@@ -9,7 +9,7 @@ tags:
   - naming
   - learning-paths
 created: 2025-12-03
-updated: 2025-12-25
+updated: 2026-01-01
 ---
 
 # Tutorial Naming Convention
@@ -339,7 +339,7 @@ Example-driven learning path for experienced developers (seasonal programmers/so
   1. Brief explanation (2-3 sentences) of concept and why it matters
   2. Mermaid diagram (when visualization clarifies concept relationships)
   3. Heavily annotated code with `// =>` or `# =>` notation showing:
-     - What each line does
+     - What each line does (1-2 comment lines per code line)
      - Expected outputs
      - Variable states and intermediate values
      - Side effects and state changes

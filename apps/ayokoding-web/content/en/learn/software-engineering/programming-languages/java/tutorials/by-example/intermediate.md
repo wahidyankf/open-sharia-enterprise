@@ -29,117 +29,238 @@ Encapsulation hides internal state behind controlled accessors. JavaBeans follow
 **Code**:
 
 ```java
-// Traditional JavaBeans pattern
+// Traditional JavaBeans pattern - encapsulation through private fields
 public class Person {
-    // Private fields - encapsulated state
-    private String name;
-    private int age;
+    // Private fields - encapsulated state hidden from external access
+    private String name;                 // => Inaccessible directly from outside class
+    private int age;                     // => Must use getters/setters for access
 
-    // Getter methods (accessors)
-    public String getName() {
-        return name; // => returns name field
+    // Default constructor (no parameters) - required for JavaBeans
+    public Person() {                    // => Creates Person with null name, 0 age
+        // Fields initialized to default values (null for objects, 0 for primitives)
     }
 
-    public int getAge() {
-        return age; // => returns age field
+    // Parameterized constructor for convenience
+    public Person(String name, int age) {  // => Creates fully initialized Person
+        this.name = name;                  // => 'this' refers to instance field
+        this.age = age;                    // => Distinguishes field from parameter
     }
 
-    // Setter methods (mutators)
-    public void setName(String name) {
-        this.name = name; // 'this' distinguishes field from parameter
-    }
+    // Getter methods (accessors) - provide read access to private fields
+    public String getName() {              // => JavaBean naming: get + PropertyName
+        return name;                       // => Returns current name value
+    }                                      // => Return type matches field type (String)
 
-    public void setAge(int age) {
-        if (age >= 0) { // Validation in setter
-            this.age = age;
-        } else {
+    public int getAge() {                  // => JavaBean naming: get + PropertyName
+        return age;                        // => Returns current age value
+    }                                      // => Return type matches field type (int)
+
+    // Setter methods (mutators) - provide controlled write access to private fields
+    public void setName(String name) {     // => JavaBean naming: set + PropertyName
+        this.name = name;                  // => 'this.name' = field, 'name' = parameter
+    }                                      // => Void return (standard JavaBean pattern)
+
+    public void setAge(int age) {          // => Setter with validation logic
+        if (age >= 0) {                    // => Business rule: age cannot be negative
+            this.age = age;                // => Update field only if validation passes
+        } else {                           // => Reject invalid input
             throw new IllegalArgumentException("Age cannot be negative");
-        }
-    }
+        }                                  // => Exception prevents invalid state
+    }                                      // => Encapsulation enforces invariants
+
+    // toString() for debugging and logging
+    @Override
+    public String toString() {             // => Overrides Object.toString()
+        return "Person{name='" + name + "', age=" + age + "}";
+    }                                      // => Returns human-readable representation
 }
 
-// Builder pattern for complex object construction
+// Using JavaBeans pattern
+Person person = new Person();              // => person: name=null, age=0 (default values)
+person.setName("Alice");                   // => person: name="Alice", age=0
+person.setAge(30);                         // => person: name="Alice", age=30
+
+String name = person.getName();            // => name is "Alice" (read via getter)
+int age = person.getAge();                 // => age is 30 (read via getter)
+
+// Attempting invalid state triggers exception
+try {
+    person.setAge(-5);                     // => Validation fails (age < 0)
+} catch (IllegalArgumentException e) {     // => Exception caught
+    System.out.println(e.getMessage());    // => Output: "Age cannot be negative"
+}                                          // => person.age remains 30 (unchanged)
+
+// Builder pattern for complex object construction with many optional fields
 public class User {
-    private final String username; // Immutable (final)
-    private final String email;
-    private final int age;
-    private final String address;
+    // Final fields - immutable once constructed (cannot be reassigned)
+    private final String username;         // => Required field (set in constructor)
+    private final String email;            // => Required field (set in constructor)
+    private final int age;                 // => Optional field (has default in Builder)
+    private final String address;          // => Optional field (has default in Builder)
 
-    // Private constructor - only builder can create instances
-    private User(Builder builder) {
-        this.username = builder.username;
-        this.email = builder.email;
-        this.age = builder.age;
-        this.address = builder.address;
+    // Private constructor - only Builder can create User instances
+    private User(Builder builder) {        // => Accepts Builder as single parameter
+        this.username = builder.username;  // => Copy username from builder
+        this.email = builder.email;        // => Copy email from builder
+        this.age = builder.age;            // => Copy age from builder (may be default)
+        this.address = builder.address;    // => Copy address from builder (may be default)
+    }                                      // => All fields final (immutable after construction)
+
+    // Public getters - no setters (immutable object)
+    public String getUsername() {          // => Returns username (cannot be changed)
+        return username;
     }
 
-    // Static nested Builder class
-    public static class Builder {
-        private String username; // Required
-        private String email; // Required
-        private int age = 0; // Optional with default
-        private String address = ""; // Optional
+    public String getEmail() {             // => Returns email (cannot be changed)
+        return email;
+    }
 
-        public Builder(String username, String email) {
-            this.username = username;
-            this.email = email;
-        }
+    public int getAge() {                  // => Returns age (cannot be changed)
+        return age;
+    }
 
-        public Builder age(int age) {
-            this.age = age;
-            return this; // Return builder for chaining
-        }
+    public String getAddress() {           // => Returns address (cannot be changed)
+        return address;
+    }
 
-        public Builder address(String address) {
-            this.address = address;
-            return this;
-        }
+    // Static nested Builder class - constructs User instances fluently
+    public static class Builder {          // => Nested class for building User objects
+        // Mutable fields in builder (not final, will be copied to User)
+        private String username;           // => Required field (set in constructor)
+        private String email;              // => Required field (set in constructor)
+        private int age = 0;               // => Optional with default value 0
+        private String address = "";       // => Optional with default empty string
 
-        public User build() {
-            return new User(this); // Construct User with builder
-        }
+        // Builder constructor requires mandatory fields
+        public Builder(String username, String email) {  // => Forces required fields
+            this.username = username;      // => Set required username field
+            this.email = email;            // => Set required email field
+        }                                  // => Optional fields use defaults unless set
+
+        // Fluent setter for optional age field
+        public Builder age(int age) {      // => Method name matches field (no 'set' prefix)
+            this.age = age;                // => Update age field in builder
+            return this;                   // => Return 'this' for method chaining
+        }                                  // => Enables fluent: .age(30).address("...")
+
+        // Fluent setter for optional address field
+        public Builder address(String address) {  // => Method name matches field
+            this.address = address;        // => Update address field in builder
+            return this;                   // => Return 'this' for method chaining
+        }                                  // => Enables fluent syntax
+
+        // Build method constructs final User instance
+        public User build() {              // => Final step in builder chain
+            return new User(this);         // => Pass builder to private User constructor
+        }                                  // => Returns immutable User with all fields set
+    }
+
+    @Override
+    public String toString() {             // => Human-readable representation
+        return "User{username='" + username + "', email='" + email +
+               "', age=" + age + ", address='" + address + "'}";
     }
 }
 
-// Using builder pattern - fluent API
-User user = new User.Builder("alice", "alice@example.com")
-    .age(30)
-    .address("123 Main St")
-    .build(); // => User instance
+// Using builder pattern - fluent API with method chaining
+User user1 = new User.Builder("alice", "alice@example.com")  // => Create builder with required fields
+    .age(30)                               // => Set optional age (returns builder)
+    .address("123 Main St")                // => Set optional address (returns builder)
+    .build();                              // => Construct final User instance
+                                           // => user1: username="alice", email="alice@example.com", age=30, address="123 Main St"
+
+// Builder with only required fields (optional fields use defaults)
+User user2 = new User.Builder("bob", "bob@example.com")  // => Create builder
+    .build();                              // => age=0 (default), address="" (default)
+                                           // => user2: username="bob", email="bob@example.com", age=0, address=""
 
 // Record classes (Java 14+) - concise immutable data carriers
-public record Point(int x, int y) {
-    // Automatically generates:
-    // - Constructor: Point(int x, int y)
-    // - Getters: x(), y() (no get prefix)
-    // - equals(), hashCode(), toString()
-    // - Fields are final (immutable)
-}
+public record Point(int x, int y) {       // => Declares record with two components (x, y)
+    // Compiler automatically generates:
+    // 1. Private final fields: private final int x; private final int y;
+    // 2. Canonical constructor: public Point(int x, int y) { this.x = x; this.y = y; }
+    // 3. Accessor methods: public int x() { return x; } public int y() { return y; }
+    // 4. equals() method: compares all fields for equality
+    // 5. hashCode() method: computes hash from all fields
+    // 6. toString() method: returns "Point[x=10, y=20]"
+}                                          // => All components final (record is immutable)
 
-Point p1 = new Point(10, 20); // => Point[x=10, y=20]
-int x = p1.x(); // => 10 (getter without 'get' prefix)
-int y = p1.y(); // => 20
+// Using record - construction and accessors
+Point p1 = new Point(10, 20);              // => p1: x=10, y=20 (canonical constructor)
+int x = p1.x();                            // => 10 (accessor without 'get' prefix)
+int y = p1.y();                            // => 20 (accessor returns component value)
 
-// Records are immutable - no setters
-// p1.x = 30; // ERROR: x is final
+// Records provide automatic toString()
+System.out.println(p1);                    // => Output: "Point[x=10, y=20]"
 
-// Custom validation in record
-public record Temperature(double celsius) {
-    // Compact constructor - validates input
-    public Temperature {
-        if (celsius < -273.15) {
+// Records provide automatic equals() and hashCode()
+Point p2 = new Point(10, 20);              // => p2: x=10, y=20 (same values as p1)
+boolean equal = p1.equals(p2);             // => true (structural equality on fields)
+int hash1 = p1.hashCode();                 // => Hash based on x and y values
+int hash2 = p2.hashCode();                 // => hash1 == hash2 (same values, same hash)
+
+// Records are immutable - no setters, fields are final
+// p1.x = 30;                              // ERROR: Cannot assign to final field x
+// p1.setX(30);                            // ERROR: No setter methods in records
+
+// Custom validation in record using compact constructor
+public record Temperature(double celsius) {  // => Record with single component
+    // Compact constructor - validates input before fields assigned
+    public Temperature {                   // => No parameter list (compact syntax)
+        if (celsius < -273.15) {           // => Validation: absolute zero check
             throw new IllegalArgumentException("Below absolute zero");
-        }
-    }
+        }                                  // => Exception prevents invalid Temperature
+    }                                      // => After validation, field assignment happens automatically
+                                           // => Equivalent to: this.celsius = celsius;
 
-    // Custom methods allowed
-    public double fahrenheit() {
-        return celsius * 9.0 / 5.0 + 32; // => converts to Fahrenheit
+    // Custom methods allowed in records (beyond auto-generated ones)
+    public double fahrenheit() {           // => Computed property (not a field)
+        return celsius * 9.0 / 5.0 + 32;   // => Converts Celsius to Fahrenheit
+    }                                      // => celsius field accessible (private final)
+
+    public double kelvin() {               // => Another computed property
+        return celsius + 273.15;           // => Converts Celsius to Kelvin
     }
 }
 
-Temperature temp = new Temperature(100.0); // => Temperature[celsius=100.0]
-double f = temp.fahrenheit(); // => 212.0
+// Using record with validation and custom methods
+Temperature temp = new Temperature(100.0); // => temp: celsius=100.0 (validation passes)
+double c = temp.celsius();                 // => 100.0 (accessor)
+double f = temp.fahrenheit();              // => 212.0 (custom method)
+double k = temp.kelvin();                  // => 373.15 (custom method)
+
+// Invalid temperature throws exception
+try {
+    Temperature invalid = new Temperature(-300.0);  // => Validation fails (< -273.15)
+} catch (IllegalArgumentException e) {     // => Exception caught
+    System.out.println(e.getMessage());    // => Output: "Below absolute zero"
+}                                          // => invalid not created (exception thrown)
+
+// Record with multiple components and custom constructor
+public record Rectangle(double width, double height) {
+    // Compact constructor with multiple validations
+    public Rectangle {                     // => Validates both width and height
+        if (width <= 0) {                  // => Width must be positive
+            throw new IllegalArgumentException("Width must be positive");
+        }
+        if (height <= 0) {                 // => Height must be positive
+            throw new IllegalArgumentException("Height must be positive");
+        }
+    }                                      // => After validation, fields assigned automatically
+
+    // Custom method for computed property
+    public double area() {                 // => Compute area from width and height
+        return width * height;             // => Returns area in square units
+    }
+
+    public double perimeter() {            // => Compute perimeter
+        return 2 * (width + height);       // => Returns perimeter
+    }
+}
+
+Rectangle rect = new Rectangle(5.0, 3.0);  // => rect: width=5.0, height=3.0
+double area = rect.area();                 // => 15.0 (5.0 * 3.0)
+double perimeter = rect.perimeter();       // => 16.0 (2 * (5.0 + 3.0))
 ```
 
 **Key Takeaway**: Encapsulation uses private fields with public getters/setters. Builder pattern enables fluent construction of complex objects. Records (Java 14+) automatically generate constructors, getters, `equals()`, `hashCode()`, and `toString()` for immutable data classes.
@@ -176,170 +297,518 @@ graph TD
 **Code**:
 
 ```java
-// Request and Response models
-class Request {
-    private String path;
-    private String method;
-    private Map<String, String> headers;
-    private String clientId;
+import java.util.*;                            // => Import utility classes (List, ArrayList, HashMap, etc.)
+                                               // => Provides collections framework for headers and filter list
 
-    public Request(String path, String method) {
-        this.path = path;
-        this.method = method;
-        this.headers = new HashMap<>();
-    }
+// Request model - represents HTTP request with headers and metadata
+class Request {                                // => Encapsulates all request data (path, method, headers, client)
+                                               // => Passed through filter chain, modified by filters
+    // Private fields - encapsulated request state
+    private String path;                       // => Request path (e.g., "/api/users", "/api/data")
+                                               // => Identifies requested resource/endpoint
+    private String method;                     // => HTTP method (GET, POST, PUT, DELETE, etc.)
+                                               // => Defines operation type (read, write, update, delete)
+    private Map<String, String> headers;       // => HTTP headers (Authorization, Content-Type, User-Agent, etc.)
+                                               // => Key-value pairs for request metadata
+                                               // => Case-sensitive keys in this implementation
+    private String clientId;                   // => Client identifier (set by auth filter after authentication)
+                                               // => null before authentication, set to user/app ID after
+                                               // => Used by rate limiter to track per-client quotas
 
-    public String getHeader(String name) {
-        return headers.get(name);
-    }
+    // Constructor initializes request with path and method
+    public Request(String path, String method) {  // => Create request for given endpoint and HTTP verb
+                                               // => Called by client code before entering filter chain
+        this.path = path;                      // => Store request path (immutable after construction)
+                                               // => e.g., "/api/users" identifies users endpoint
+        this.method = method;                  // => Store HTTP method (immutable after construction)
+                                               // => e.g., "GET" for read operation
+        this.headers = new HashMap<>();        // => Initialize empty headers map (mutable, grows as headers added)
+                                               // => HashMap provides O(1) header lookup and insertion
+    }                                          // => Request ready for header additions via setHeader()
+                                               // => clientId remains null until set by authentication filter
 
-    public void setHeader(String name, String value) {
-        headers.put(name, value);
-    }
+    // Get header value by name (case-sensitive)
+    public String getHeader(String name) {     // => Lookup header in map by exact name
+                                               // => Used by filters to read headers (e.g., Authorization)
+        return headers.get(name);              // => Returns header value or null if not found
+                                               // => Null return indicates header not present
+                                               // => Case-sensitive: "Authorization" != "authorization"
+    }                                          // => Filters should check for null before using value
 
-    public String getClientId() { return clientId; }
-    public void setClientId(String id) { this.clientId = id; }
-    public String getPath() { return path; }
-}
+    // Set header value (used to add Authorization, Content-Type, etc.)
+    public void setHeader(String name, String value) {  // => Add/update header in request
+                                               // => Called by client code before entering chain
+                                               // => Could be called by filters to modify request
+        headers.put(name, value);              // => Store in headers map (overwrites if exists)
+                                               // => put() returns previous value (ignored here)
+                                               // => Allows header updates during request processing
+    }                                          // => Headers map updated in-place (mutable operation)
 
-class Response {
-    private int statusCode;
-    private String body;
+    // Client ID getter - set by authentication filter
+    public String getClientId() {              // => Returns client identifier (user/app ID)
+                                               // => Used by rate limiter and logging to identify client
+        return clientId;                       // => null if not authenticated yet (before auth filter runs)
+                                               // => Non-null after successful authentication
+                                               // => Downstream filters assume auth filter sets this
+    }                                          // => Filter ordering matters: auth before rate limit
 
-    public Response(int statusCode, String body) {
-        this.statusCode = statusCode;
-        this.body = body;
-    }
+    // Client ID setter - authentication filter sets this
+    public void setClientId(String id) {       // => Set authenticated client identifier after token validation
+                                               // => Called by AuthenticationFilter after successful auth
+        this.clientId = id;                    // => Store client ID (extracted from token or database)
+                                               // => Used by downstream filters (rate limiting uses this)
+                                               // => Enriches request with authenticated identity
+    }                                          // => Enables per-client quota tracking and logging
 
-    public static Response ok(String body) {
-        return new Response(200, body); // => 200 OK
-    }
+    // Path getter - request endpoint
+    public String getPath() {                  // => Returns request path (endpoint URL)
+                                               // => Used by logging and request routing
+        return path;                           // => e.g., "/api/users" identifies users endpoint
+                                               // => Immutable after construction (no setter)
+    }                                          // => Identifies requested resource in logs and metrics
 
-    public static Response unauthorized() {
-        return new Response(401, "Unauthorized"); // => 401 Unauthorized
-    }
+    // Method getter - HTTP verb
+    public String getMethod() {                // => Returns HTTP method (operation type)
+                                               // => Used by logging and authorization checks
+        return method;                         // => e.g., "GET" (read), "POST" (create), "PUT" (update), "DELETE" (remove)
+                                               // => Immutable after construction (no setter)
+    }                                          // => Identifies operation type in logs and metrics
+}                                              // => Request carries all data through filter chain
+                                               // => Filters read/modify request state as it passes through
 
-    public static Response tooManyRequests() {
-        return new Response(429, "Too Many Requests"); // => 429 Rate Limited
-    }
+// Response model - represents HTTP response with status code and body
+class Response {                               // => Encapsulates HTTP response data (status, body)
+                                               // => Returned by filters and final handler to client
+    // Private fields - encapsulated response state
+    private int statusCode;                    // => HTTP status code (200 OK, 401 Unauthorized, 429 Too Many Requests, etc.)
+                                               // => Standard codes from HTTP specification (RFC 7231)
+                                               // => 2xx success, 4xx client error, 5xx server error
+    private String body;                       // => Response body content (text, JSON, HTML, etc.)
+                                               // => Simplified as String (production: byte array or stream)
+                                               // => Contains actual data returned to client
 
-    public int getStatusCode() { return statusCode; }
-    public String getBody() { return body; }
-}
+    // Constructor creates response with status and body
+    public Response(int statusCode, String body) {  // => Initialize response with given status and content
+                                               // => Private constructor pattern often used (here public for simplicity)
+                                               // => Factory methods preferred for common cases
+        this.statusCode = statusCode;          // => Set HTTP status code (200, 401, 429, 500, etc.)
+                                               // => No validation (assumes caller provides valid code)
+        this.body = body;                      // => Set response body (text content)
+                                               // => Immutable after construction (no setters)
+    }                                          // => Response ready to return to client
+                                               // => Both fields final in production (immutable response)
 
-// Filter interface - chain of responsibility pattern
-interface RequestFilter {
+    // Factory method for successful response (200 OK)
+    public static Response ok(String body) {   // => Create success response with custom body
+                                               // => Static factory pattern for common response type
+                                               // => Clearer than new Response(200, ...) at call site
+        return new Response(200, body);        // => Status 200 (OK) with given body
+                                               // => 200 indicates successful request completion
+    }                                          // => Used when request completes successfully (all filters passed)
+                                               // => Returns data to client (user list, resource, etc.)
+
+    // Factory method for unauthorized response (401)
+    public static Response unauthorized() {    // => Create auth failure response (standard message)
+                                               // => No parameters needed (standard error response)
+                                               // => Factory method encapsulates status code + message
+        return new Response(401, "Unauthorized");  // => Status 401 (Unauthorized) with standard message
+                                               // => 401 indicates missing or invalid authentication
+                                               // => Client should retry with valid credentials
+    }                                          // => Used when authentication fails (invalid token)
+                                               // => Chain short-circuits, response returned immediately
+
+    // Factory method for rate limit exceeded response (429)
+    public static Response tooManyRequests() { // => Create rate limit response (quota exceeded)
+                                               // => Standard response for rate limiting scenarios
+                                               // => 429 is HTTP standard for rate limiting (RFC 6585)
+        return new Response(429, "Too Many Requests");  // => Status 429 with standard message
+                                               // => 429 indicates client exceeded quota/rate limit
+                                               // => Client should wait before retrying (backoff)
+    }                                          // => Used when client exceeds quota (too many requests)
+                                               // => Production: include Retry-After header
+
+    // Status code getter
+    public int getStatusCode() {               // => Returns HTTP status code (200, 401, 429, etc.)
+                                               // => Used by logging filter to record response status
+                                               // => Used by tests to verify correct response type
+        return statusCode;                     // => e.g., 200 (success), 401 (auth), 429 (rate limit)
+                                               // => Immutable (no setter, final in production)
+    }                                          // => Status determines client behavior (retry, error, success)
+
+    // Body getter
+    public String getBody() {                  // => Returns response body content
+                                               // => Used by client to read response data
+                                               // => Used by tests to verify response content
+        return body;                           // => Response content as string
+                                               // => Could be JSON, HTML, plain text, etc.
+                                               // => Immutable (no setter, final in production)
+    }                                          // => Body contains actual data for client
+
+    @Override
+    public String toString() {                 // => Human-readable representation for debugging/logging
+                                               // => Overrides Object.toString() for better output
+                                               // => Used in print statements and debugger
+        return "Response{status=" + statusCode + ", body='" + body + "'}";
+                                               // => Format: "Response{status=200, body='...'}"
+                                               // => Shows both status code and body content
+    }                                          // => Useful for debugging and test assertions
+}                                              // => Response is simple data carrier (no business logic)
+                                               // => Factory methods provide convenient construction
+
+// Filter interface - defines contract for request filters (Chain of Responsibility)
+interface RequestFilter {                     // => Contract for all request processing filters
+                                               // => Each filter implements this to participate in chain
+                                               // => Functional interface pattern (single abstract method)
+    // Filter method processes request, decides to continue chain or return early
     Response filter(Request request, FilterChain chain);
-}
+                                               // => Takes request (current state) and chain (continuation)
+                                               // => Returns Response (either short-circuit or from chain.next())
+                                               // => Filter can inspect/modify request before calling chain.next()
+                                               // => Filter can return early (short-circuit) without calling chain.next()
+                                               // => Chain of Responsibility pattern: each filter decides propagation
+}                                              // => Enables composable middleware (add/remove filters easily)
+                                               // => Filters testable in isolation (mock chain)
 
-// Filter chain manages execution flow
-class FilterChain {
-    private List<RequestFilter> filters;
-    private int position = 0;
+// Filter chain manages execution flow through filters (Chain of Responsibility pattern)
+class FilterChain {                            // => Orchestrates filter execution in sequential order
+                                               // => Maintains position state to track progress through chain
+                                               // => Delegates to next filter or final handler
+    // Private fields - chain state
+    private List<RequestFilter> filters;       // => Ordered list of filters to execute sequentially
+                                               // => Immutable list (defensive copy in constructor)
+                                               // => Order matters: auth before rate limit before logging
+    private int position = 0;                  // => Current position in filter list (mutable state)
+                                               // => Starts at 0, incremented by next() after each filter
+                                               // => Tracks how far through chain we've progressed
 
-    public FilterChain(List<RequestFilter> filters) {
-        this.filters = new ArrayList<>(filters);
-    }
+    // Constructor accepts list of filters to execute in order
+    public FilterChain(List<RequestFilter> filters) {  // => Initialize chain with ordered filters
+                                               // => Called by client code before processing requests
+                                               // => Accepts List (could be Arrays.asList, ArrayList, etc.)
+        this.filters = new ArrayList<>(filters);  // => Defensive copy prevents external modification
+                                               // => Creates new ArrayList from passed collection
+                                               // => Protects against caller modifying filter list after construction
+    }                                          // => Filters execute in insertion order (preserve ordering)
+                                               // => position starts at 0 (ready to execute first filter)
 
-    public Response next(Request request) {
-        if (position >= filters.size()) {
+    // Execute next filter in chain or final handler if all filters passed
+    public Response next(Request request) {    // => Advance chain to next filter or final handler
+                                               // => Called by filters to continue chain (chain.next())
+                                               // => Returns Response from filter or final handler
+        if (position >= filters.size()) {      // => Check if all filters completed successfully
+                                               // => position == filters.size() means all filters executed
+                                               // => No more filters to run, ready for final handler
             // All filters passed - handle the request
-            return handleRequest(request); // => Final handler
-        }
-        RequestFilter filter = filters.get(position++);
-        return filter.filter(request, this); // => Delegate to next filter
-    }
+            return handleRequest(request);     // => Execute final request handler (business logic)
+                                               // => Only reached if all filters called chain.next()
+                                               // => Returns success response (200 OK)
+        }                                      // => No more filters, processing complete
+                                               // => Request successfully passed all middleware
+        RequestFilter filter = filters.get(position++);  // => Get current filter at position, then increment
+                                               // => position++ uses post-increment (get first, increment after)
+                                               // => Next call to next() will process filter at position+1
+                                               // => Advances position for next filter in chain
+        return filter.filter(request, this);   // => Delegate to filter's filter() method
+                                               // => Pass request (current state) and this chain (for continuation)
+                                               // => Filter decides: return early or call chain.next()
+    }                                          // => Filter decides whether to call chain.next() or short-circuit
+                                               // => Returns response from filter or downstream chain
 
-    private Response handleRequest(Request request) {
-        // Actual request processing logic
+    // Final request handler - executed after all filters pass
+    private Response handleRequest(Request request) {  // => Actual business logic (core request processing)
+                                               // => Private method (only called by next() after filters)
+                                               // => Only executes if all filters called chain.next()
+        // Simulate request processing logic (in production, routes to handlers)
         return Response.ok("Processed: " + request.getPath());
-    }
-}
+                                               // => Returns 200 OK with path (simulates success)
+                                               // => Production: route to controller, fetch data, etc.
+                                               // => Could return different responses based on path/method
+    }                                          // => Returns success response with path in body
+                                               // => Final step in request processing (all filters passed)
+}                                              // => Chain manages sequential filter execution
+                                               // => position state enables tracking progress
+                                               // => Filters compose through delegation (not inheritance)
 
-// Authentication filter - validates tokens
+// Authentication filter - validates authorization tokens (first filter in chain)
 class AuthenticationFilter implements RequestFilter {
+                                               // => Implements RequestFilter contract (filter method)
+                                               // => First filter in chain (must run before rate limiter)
+                                               // => Validates client credentials before allowing access
+    // In-memory token store (production: database lookup, JWT validation, OAuth)
     private Set<String> validTokens = Set.of("token123", "token456");
+                                               // => Immutable set of valid tokens (Set.of() creates unmodifiable set)
+                                               // => Hardcoded for demonstration (production: external store)
+                                               // => Production: check database, verify JWT signature, OAuth token introspection
+                                               // => Production: tokens expire, require refresh, stored securely
+                                               // => Set provides O(1) containment check (efficient validation)
 
     @Override
     public Response filter(Request request, FilterChain chain) {
+                                               // => Implements RequestFilter.filter() (required by interface)
+                                               // => First filter executed (position 0 in chain)
+                                               // => Receives request from client, chain for continuation
+        // Extract Authorization header (standard HTTP auth header)
         String token = request.getHeader("Authorization");
+                                               // => Returns token or null if missing (getHeader returns null for absent)
+                                               // => Standard: "Bearer <token>" format (e.g., "Bearer token123")
+                                               // => Simplified: expects plain token, not Bearer prefix
+                                               // => Production: parse "Bearer" prefix, extract token
+                                               // => Case-sensitive header name ("Authorization" not "authorization")
 
+        // Validate token presence and correctness
         if (token == null || !validTokens.contains(token)) {
+                                               // => Two failure cases: missing token (null) or invalid token (not in set)
+                                               // => token == null: Authorization header not present (client didn't authenticate)
+                                               // => !validTokens.contains(token): token present but invalid (wrong credentials)
+                                               // => Short-circuit evaluation: if null, doesn't check contains (avoids NullPointerException)
             System.out.println("Auth failed: Invalid token");
-            return Response.unauthorized(); // => 401, chain stops here
-        }
+                                               // => Log authentication failure (production: structured logging, metrics)
+                                               // => Security: don't reveal whether token missing vs invalid (same message)
+                                               // => Helps audit failed login attempts (detect attacks)
+            return Response.unauthorized();    // => Return 401 Unauthorized (standard auth failure code)
+                                               // => Short-circuit chain: return immediately without calling chain.next()
+                                               // => Downstream filters not executed (rate limiter, logging skipped)
+        }                                      // => Chain stops here for invalid auth (efficiency + security)
+                                               // => Response returned directly to client without further processing
 
-        // Extract client ID from token for downstream filters
+        // Authentication successful - set client ID for downstream filters
         request.setClientId("user_" + token.hashCode());
+                                               // => Extract client ID from token (simplified: hash code)
+                                               // => Production: decode JWT claims (sub claim), database lookup by token
+                                               // => hashCode() provides unique ID per token (collision possible but unlikely here)
+                                               // => Enriches request with authenticated identity for downstream use
+                                               // => Rate limiter uses clientId for per-user quota tracking
         System.out.println("Auth passed: " + request.getClientId());
-        return chain.next(request); // => Continue to next filter
-    }
-}
+                                               // => Log successful authentication with client ID
+                                               // => Production: structured logging (user ID, timestamp, IP, endpoint)
+                                               // => Audit trail for compliance and security monitoring
+        return chain.next(request);            // => Continue to next filter (rate limiter at position 1)
+                                               // => Pass modified request (with clientId set)
+                                               // => Delegates to chain, returns response from downstream
+    }                                          // => Returns response from chain (could be from rate limiter, logging, or handler)
+                                               // => Filter enriches request (sets clientId) before delegation
+}                                              // => First filter: validates auth, enriches request, or short-circuits
+                                               // => Critical for security: blocks unauthenticated requests early
 
-// Rate limiting filter - prevents abuse
+// Rate limiting filter - prevents API abuse by limiting requests per client (second filter)
 class RateLimitFilter implements RequestFilter {
+                                               // => Implements RequestFilter contract (filter method)
+                                               // => Second filter in chain (after authentication)
+                                               // => Enforces per-client request quotas to prevent abuse
+    // In-memory request counter (production: Redis, distributed cache)
     private Map<String, Integer> requestCounts = new HashMap<>();
-    private int maxRequests = 100;
+                                               // => Maps clientId -> request count (tracks usage per client)
+                                               // => HashMap provides O(1) get/put operations (efficient)
+                                               // => Mutable state (updated on each request)
+                                               // => Production: use Redis with TTL (time-to-live for reset)
+                                               // => Production: distributed cache for multi-server deployments
+                                               // => Current implementation: counts never reset (grows indefinitely)
+    private int maxRequests = 100;             // => Maximum requests per client (quota limit)
+                                               // => Hardcoded for demonstration (production: configurable)
+                                               // => Production: different limits per client tier (free, pro, enterprise)
+                                               // => Production: time-windowed limits (100 req/hour, 1000 req/day)
 
     @Override
     public Response filter(Request request, FilterChain chain) {
+                                               // => Implements RequestFilter.filter() (required by interface)
+                                               // => Second filter executed (position 1 in chain, after auth)
+                                               // => Receives authenticated request (clientId already set)
+        // Get client ID set by authentication filter
         String clientId = request.getClientId();
+                                               // => Returns client ID set by AuthenticationFilter
+                                               // => Assumes AuthenticationFilter ran first (set clientId)
+                                               // => Filter ordering matters: auth before rate limit (dependency)
+                                               // => null if auth filter skipped (shouldn't happen if chain ordered correctly)
+                                               // => Production: validate clientId not null (defensive programming)
+
+        // Get current request count for client (0 if not found)
         int count = requestCounts.getOrDefault(clientId, 0);
+                                               // => Lookup current count in map (clientId is key)
+                                               // => Returns 0 for first request from client (default value)
+                                               // => Subsequent requests return incremented count from previous requests
+                                               // => getOrDefault() avoids NullPointerException (returns default if absent)
+                                               // => count represents requests processed so far (not including current)
 
-        if (count >= maxRequests) {
+        // Check if client exceeded quota
+        if (count >= maxRequests) {            // => Quota exceeded check (count at or above limit)
+                                               // => >= ensures limit is inclusive (100th request allowed, 101st blocked)
+                                               // => Evaluated before incrementing count (current request counts toward limit)
             System.out.println("Rate limit exceeded for: " + clientId);
-            return Response.tooManyRequests(); // => 429, chain stops
-        }
+                                               // => Log rate limit violation with client ID
+                                               // => Production: metrics (increment rate_limit_exceeded counter)
+                                               // => Production: alert on sustained violations (DDoS detection)
+            return Response.tooManyRequests(); // => Return 429 Too Many Requests (HTTP standard for rate limiting)
+                                               // => Short-circuit chain: return immediately without calling chain.next()
+                                               // => Downstream filters not executed (logging filter skipped)
+        }                                      // => Chain stops here for quota exceeded (efficiency)
+                                               // => Request blocked before reaching business logic (protects backend)
 
-        requestCounts.put(clientId, count + 1); // => Increment counter
+        // Increment request count for client
+        requestCounts.put(clientId, count + 1);
+                                               // => Update counter (count + 1, current request counted)
+                                               // => put() overwrites previous value (replaces old count)
+                                               // => Production: atomic increment in Redis (INCR command)
+                                               // => Production: set TTL on counter (reset after time window)
+                                               // => Thread-unsafe in current form (HashMap not thread-safe)
+                                               // => Production: use ConcurrentHashMap or distributed cache
         System.out.println("Rate limit check passed: " + count + "/" + maxRequests);
-        return chain.next(request); // => Continue to next filter
-    }
-}
+                                               // => Log current quota usage (count before increment / max)
+                                               // => Shows "0/100" for first request, "99/100" for 100th request
+                                               // => Production: expose metrics (quota usage percentage)
+                                               // => Helps monitor client usage patterns
+        return chain.next(request);            // => Continue to next filter (logging filter at position 2)
+                                               // => Request within quota, proceed with processing
+                                               // => Delegates to chain, returns response from downstream
+    }                                          // => Returns response from chain (could be from logging or handler)
+                                               // => Filter tracks quota before delegation
+}                                              // => Second filter: enforces quotas, tracks usage, or short-circuits
+                                               // => Critical for stability: prevents abuse and overload
 
-// Logging filter - records requests
+// Logging filter - records request metrics (observability) (third filter)
 class LoggingFilter implements RequestFilter {
+                                               // => Implements RequestFilter contract (filter method)
+                                               // => Third filter in chain (after auth and rate limit)
+                                               // => Records request metrics for observability (monitoring, debugging)
     @Override
     public Response filter(Request request, FilterChain chain) {
+                                               // => Implements RequestFilter.filter() (required by interface)
+                                               // => Third filter executed (position 2 in chain, last before handler)
+                                               // => Receives authenticated, quota-approved request
+        // Record start time for latency measurement
         long startTime = System.currentTimeMillis();
+                                               // => Timestamp before processing (milliseconds since Unix epoch)
+                                               // => Used to calculate request duration (end - start)
+                                               // => currentTimeMillis() returns wall-clock time (not monotonic)
+                                               // => Production: use System.nanoTime() for precise duration (monotonic)
+                                               // => Captures time before chain.next() call (includes downstream processing)
         System.out.println("Request started: " + request.getPath());
+                                               // => Log request initiation with endpoint path
+                                               // => Production: structured logging (JSON with timestamp, clientId, method)
+                                               // => Helps correlate request start/end in logs
+                                               // => Useful for debugging slow requests
 
-        Response response = chain.next(request); // => Continue chain
+        // Continue chain to final handler (all previous filters passed)
+        Response response = chain.next(request);
+                                               // => Execute final handler (position 3, last in chain)
+                                               // => This is the last filter before handler (all validation passed)
+                                               // => Delegates to chain, waits for response from handler
+                                               // => Response contains actual business logic result
+                                               // => Could be 200 OK (success) from handler
+                                               // => Captures response to log status code and measure duration
 
+        // Calculate request duration
         long duration = System.currentTimeMillis() - startTime;
+                                               // => Time elapsed in milliseconds (end - start)
+                                               // => Includes time for all downstream processing (handler execution)
+                                               // => Production: send to metrics system (Prometheus, DataDog, CloudWatch)
+                                               // => Production: create histogram/percentiles (p50, p95, p99 latency)
+                                               // => Helps identify slow endpoints and performance issues
         System.out.println("Request completed: " + response.getStatusCode() +
                          " in " + duration + "ms");
-        return response; // => Return response unchanged
-    }
-}
+                                               // => Log completion with status code and latency
+                                               // => Format: "Request completed: 200 in 15ms"
+                                               // => Production: structured logging with more metadata
+                                               // => Status code shows success/failure (200, 401, 429, 500)
+                                               // => Duration helps track performance (SLA monitoring)
+        return response;                       // => Return response unchanged (pass-through)
+                                               // => Logging filter observes but doesn't modify response
+                                               // => Response propagates back through chain to client
+    }                                          // => Logging doesn't modify response (read-only filter)
+                                               // => Observability filter: measures and records, doesn't alter behavior
+}                                              // => Third filter: records metrics, measures latency, always continues
+                                               // => Critical for observability: enables monitoring and debugging
 
-// Building and using the filter chain
-List<RequestFilter> filters = List.of(
-    new AuthenticationFilter(),
-    new RateLimitFilter(),
-    new LoggingFilter()
-);
+// Building and using the filter chain - composable middleware (client code)
+List<RequestFilter> filters = List.of(        // => Create ordered list of filters (immutable list)
+                                               // => List.of() creates unmodifiable list (cannot add/remove after creation)
+                                               // => Filter execution order: same as insertion order
+    new AuthenticationFilter(),                // => 1st filter: Authenticate (validates token, sets clientId)
+                                               // => Must run first (other filters depend on clientId)
+    new RateLimitFilter(),                     // => 2nd filter: Check quota (uses clientId from auth)
+                                               // => Depends on auth filter setting clientId
+    new LoggingFilter()                        // => 3rd filter: Log metrics (observability, no side effects)
+                                               // => Last filter before handler (measures total latency)
+);                                             // => Order matters: auth before rate limit (dependency)
+                                               // => Changing order breaks functionality (rate limiter needs clientId)
+                                               // => filters list has 3 elements (indices 0, 1, 2)
 
-FilterChain chain = new FilterChain(filters);
+FilterChain chain = new FilterChain(filters);  // => Create chain with ordered filters
+                                               // => Defensive copy made in constructor (protects against external modification)
+                                               // => Chain position starts at 0 (ready to execute first filter)
+                                               // => Single chain instance can process multiple requests
+                                               // => NOTE: RateLimitFilter has mutable state (requestCounts)
+                                               // => Production: create new chain per request or use thread-safe filters
 
-// Successful request
-Request req1 = new Request("/api/users", "GET");
-req1.setHeader("Authorization", "token123");
-Response resp1 = chain.next(req1);
+// Successful request - all filters pass (happy path)
+Request req1 = new Request("/api/users", "GET");  // => Create GET request for users endpoint
+                                               // => path="/api/users", method="GET", headers=empty, clientId=null
+req1.setHeader("Authorization", "token123");   // => Set valid auth token (present in validTokens set)
+                                               // => headers map now: {"Authorization" -> "token123"}
+                                               // => Token will pass authentication check
+Response resp1 = chain.next(req1);             // => Execute filter chain from position 0
+                                               // => Triggers auth filter → rate limit filter → logging filter → handler
+                                               // => All filters call chain.next() (no short-circuits)
+// Output sequence (filters execute in order):
+// Auth passed: user_XXXXXX                   // => AuthenticationFilter logs success (XXXXXX is hashCode)
+                                               // => clientId set to "user_<hashCode>" in request
+// Rate limit check passed: 0/100             // => RateLimitFilter logs quota usage (first request from this client)
+                                               // => count=0 before increment, maxRequests=100
+// Request started: /api/users                // => LoggingFilter logs start (startTime captured)
+// Request completed: 200 in 1ms              // => LoggingFilter logs completion (200 OK, ~1ms latency)
+                                               // => Handler returned Response.ok("Processed: /api/users")
+// => resp1: Response{status=200, body='Processed: /api/users'}
+                                               // => Success response returned through all filters back to client
+                                               // => All filters executed, request completed successfully
+
+// Failed authentication - chain short-circuits at first filter (auth failure path)
+Request req2 = new Request("/api/data", "GET");  // => Create GET request for data endpoint
+                                               // => path="/api/data", method="GET", headers=empty, clientId=null
+req2.setHeader("Authorization", "invalid");    // => Set invalid token (NOT in validTokens set)
+                                               // => headers map now: {"Authorization" -> "invalid"}
+                                               // => Token will fail authentication check
+Response resp2 = chain.next(req2);             // => Execute filter chain from position 0
+                                               // => Triggers auth filter, which returns 401 immediately
+                                               // => Auth filter does NOT call chain.next() (short-circuit)
 // Output:
-// Auth passed: user_XXXXXX
-// Rate limit check passed: 0/100
-// Request started: /api/users
-// Request completed: 200 in 1ms
-// => Response: 200 "Processed: /api/users"
+// Auth failed: Invalid token                 // => AuthenticationFilter logs failure
+                                               // => validTokens.contains("invalid") is false
+                                               // => Returns Response.unauthorized() without calling chain.next()
+// => resp2: Response{status=401, body='Unauthorized'}
+                                               // => 401 Unauthorized response returned to client
+// => RateLimitFilter and LoggingFilter NOT executed (chain stopped)
+                                               // => position never advanced beyond 0 (auth filter short-circuited)
+                                               // => Efficient: invalid requests blocked early (no rate limit check, no logging)
+                                               // => Security: unauthorized requests don't consume quota
 
-// Failed authentication
-Request req2 = new Request("/api/data", "GET");
-req2.setHeader("Authorization", "invalid");
-Response resp2 = chain.next(req2);
+// Rate limit exceeded - chain short-circuits at second filter (quota exhausted path)
+Request req3 = new Request("/api/data", "GET");  // => Create GET request for data endpoint
+                                               // => path="/api/data", method="GET", headers=empty, clientId=null
+req3.setHeader("Authorization", "token123");   // => Set valid token (will pass auth)
+                                               // => headers map now: {"Authorization" -> "token123"}
+// Simulate 100 previous requests (exhaust quota)
+RateLimitFilter rateLimiter = new RateLimitFilter();  // => Create separate rate limiter (simulates state)
+                                               // => Note: This is NOT the same instance as in chain
+                                               // => Demonstration issue: should manipulate chain's rate limiter state
+                                               // => For demo, assume chain's rate limiter already has 100 requests for this client
+for (int i = 0; i < 100; i++) {                // => Simulate exhausting quota (loop 100 times)
+                                               // => Production: distributed counter (Redis) would track actual requests
+    // Simulate 100 requests (production: distributed counter)
+                                               // => Each request increments requestCounts for this clientId
+                                               // => After 100 requests: requestCounts.get(clientId) == 100
+}                                              // => Client quota now exhausted (count >= maxRequests)
+Response resp3 = chain.next(req3);             // => Execute filter chain from position 0
+                                               // => Triggers auth filter (passes) → rate limit filter (blocks)
+                                               // => Rate limit filter does NOT call chain.next() (short-circuit)
 // Output:
-// Auth failed: Invalid token
-// => Response: 401 "Unauthorized" (chain stops at first filter)
+// Auth passed: user_XXXXXX                   // => AuthenticationFilter passes (valid token)
+                                               // => clientId set, position advances to 1
+// Rate limit exceeded for: user_XXXXXX       // => RateLimitFilter blocks (count=100 >= maxRequests=100)
+                                               // => Returns Response.tooManyRequests() without calling chain.next()
+// => resp3: Response{status=429, body='Too Many Requests'}
+                                               // => 429 Too Many Requests response returned to client
+// => LoggingFilter NOT executed (chain stopped at rate limiter)
+                                               // => position never advanced beyond 1 (rate filter short-circuited)
+                                               // => Efficient: quota-exceeded requests blocked before handler (protects backend)
 ```
 
 **Key Takeaway**: Filter chains demonstrate composition and the Chain of Responsibility pattern. Each filter decides whether to continue the chain or return early. This pattern enables modular, testable middleware—add/remove filters without changing core logic. Production systems use this for authentication, rate limiting, logging, compression, and error handling. Filters compose through delegation, avoiding inheritance coupling.
@@ -355,150 +824,325 @@ Generics provide compile-time type safety for classes and methods. Bounded type 
 **Code**:
 
 ```java
-import java.util.*;
+import java.util.*;                            // => Import collections framework (List, ArrayList, Arrays)
+                                               // => Used for generic collections examples later
 
-// Generic class with type parameter <T>
-class Box<T> {
-    private T content;
+// Generic class with type parameter <T> (unbounded type parameter)
+class Box<T> {                                 // => T is placeholder for any type (type parameter)
+                                               // => T replaced with actual type at instantiation (String, Integer, etc.)
+                                               // => Unbounded: no constraints on T (can be any reference type)
+                                               // => Generic types provide type-safe containers without casting
+    private T content;                         // => Field of type T (determined at instantiation)
+                                               // => Type unknown at compile time (replaced with actual type)
+                                               // => content is null initially (reference type default)
 
-    public void set(T content) {
-        this.content = content;
-    }
+    // Setter accepts type T (whatever T is bound to at instantiation)
+    public void set(T content) {               // => Parameter must match type T
+                                               // => Compile-time check: only T-typed values accepted
+                                               // => this.content refers to field, content refers to parameter
+        this.content = content;                // => Store content of type T (assign parameter to field)
+                                               // => No casting needed (type-safe assignment)
+    }                                          // => Setter enables modifying box content after creation
 
-    public T get() {
-        return content; // => returns T
-    }
-}
+    // Getter returns type T (no casting needed by caller)
+    public T get() {                           // => Return type is T (actual type known at call site)
+                                               // => Caller knows exact type (no Object cast needed)
+        return content;                        // => Returns T (compile-time type safety)
+                                               // => null if content never set (reference type default)
+    }                                          // => Caller gets exact type, no cast needed
+                                               // => Pre-generics: would return Object, require (T) cast
+}                                              // => Generic class eliminates casting and enables type safety
+                                               // => Compiler erases T to Object at runtime (type erasure)
 
-Box<String> stringBox = new Box<>();
-stringBox.set("Hello"); // => OK
-String str = stringBox.get(); // => "Hello" (no cast needed)
+// Using generic class with String type parameter
+Box<String> stringBox = new Box<>();          // => T bound to String (type argument in angle brackets)
+                                               // => Diamond operator <> infers type from left side (Java 7+)
+                                               // => Equivalent to: new Box<String>() (explicit type)
+                                               // => stringBox can only hold String values (compile-time enforced)
+stringBox.set("Hello");                        // => OK: "Hello" is String (matches T=String)
+                                               // => Compiler checks: String literal assignable to T (T=String)
+                                               // => content field now holds "Hello" (String reference)
+String str = stringBox.get();                  // => "Hello" (no cast needed, returns String)
+                                               // => get() return type is String (T bound to String)
+                                               // => Pre-generics: would need (String) stringBox.get() cast
+                                               // => str is "Hello" (type-safe retrieval without ClassCastException risk)
 
-Box<Integer> intBox = new Box<>();
-intBox.set(42); // => OK
-// intBox.set("text"); // ERROR: compile-time type check
+// Using generic class with Integer type parameter
+Box<Integer> intBox = new Box<>();            // => T bound to Integer (different type from stringBox)
+                                               // => Separate type instantiation (independent from Box<String>)
+                                               // => Diamond operator <> infers Integer from left side
+                                               // => intBox can only hold Integer values (compile-time enforced)
+intBox.set(42);                                // => OK: 42 is Integer (autoboxing from int primitive)
+                                               // => Primitive int auto-converted to Integer object
+                                               // => content field now holds Integer(42) (wrapper object)
+// intBox.set("text");                         // ERROR: "text" is String, not Integer (compile-time error)
+                                               // => Compiler prevents type mismatch (String incompatible with T=Integer)
+                                               // => Prevents ClassCastException at runtime (caught at compile time)
+                                               // => Generics enable early error detection (compile vs runtime)
 
-// Generic method with type parameter
-public static <T> void printArray(T[] array) {
-    for (T element : array) {
-        System.out.println(element);
-    }
-}
+// Generic method with type parameter <T> (method-level generics)
+public static <T> void printArray(T[] array) {  // => <T> before return type declares type parameter
+                                               // => T scoped to this method only (not class-level)
+                                               // => Method can be generic even if class is not generic
+                                               // => Type parameter <T> is separate from any class <T>
+    for (T element : array) {                  // => Each element is type T (enhanced for loop)
+                                               // => element type matches array component type
+                                               // => T could be String, Integer, or any reference type
+        System.out.println(element);           // => Print element (calls toString() on element)
+                                               // => Works for any type that has toString() (all Objects)
+    }                                          // => Works for arrays of any reference type (not primitives)
+}                                              // => Generic method enables type-safe array printing
+                                               // => No casting needed, works for all reference types
 
-String[] strings = {"A", "B", "C"};
-Integer[] ints = {1, 2, 3};
-printArray(strings); // => T inferred as String
-printArray(ints); // => T inferred as Integer
+// Calling generic method (type inference from arguments)
+String[] strings = {"A", "B", "C"};            // => Array of String (3 elements)
+                                               // => Array literal syntax (implicitly String[])
+Integer[] ints = {1, 2, 3};                    // => Array of Integer (3 elements, autoboxed from int)
+                                               // => Integer[] not int[] (generics don't work with primitives)
+printArray(strings);                           // => T inferred as String from argument type (String[])
+                                               // => Compiler determines T=String without explicit type argument
+                                               // => Type inference based on actual argument (method call)
+                                               // => Output: A \n B \n C (each element on new line)
+printArray(ints);                              // => T inferred as Integer from argument type (Integer[])
+                                               // => Compiler determines T=Integer from Integer[] argument
+                                               // => Separate invocation (different T than previous call)
+                                               // => Output: 1 \n 2 \n 3 (toString() on Integer objects)
 
-// Bounded type parameters - <T extends Type>
-class NumberBox<T extends Number> {
-    private T number;
+// Bounded type parameters - <T extends Type> constrains allowable types
+class NumberBox<T extends Number> {            // => T must be Number or subclass (Integer, Double, Long, etc.)
+                                               // => Upper bound: T constrained to Number hierarchy only
+                                               // => Rejects non-numeric types at compile time (String, List, etc.)
+                                               // => extends keyword used for both classes and interfaces
+    private T number;                          // => Field of type T (constrained to Number subclasses)
+                                               // => Stronger guarantee than unbounded T (can call Number methods)
+                                               // => number is null initially (reference type default)
 
-    public void set(T number) {
-        this.number = number;
-    }
+    // Setter accepts only Number subclasses
+    public void set(T number) {                // => Parameter must extend Number (compile-time enforced)
+                                               // => Can only pass Number or subclasses (Integer, Double, etc.)
+        this.number = number;                  // => Store number of type T (type-safe assignment)
+                                               // => No casting needed (T constrained to Number)
+    }                                          // => Setter ensures only numeric types stored
 
-    public double doubleValue() {
-        return number.doubleValue(); // Number methods available
-    }
-}
+    // Can call Number methods on T (because T extends Number)
+    public double doubleValue() {              // => Returns double primitive (Number.doubleValue())
+                                               // => Converts T to double regardless of actual type
+        return number.doubleValue();           // => Number method available (T extends Number guarantee)
+                                               // => Works for Integer, Double, Long, etc. (all have doubleValue())
+    }                                          // => Bounded type enables calling superclass methods on T
+                                               // => Unbounded T can only call Object methods
+}                                              // => Bounded generics trade flexibility for type safety
 
-NumberBox<Integer> intNumBox = new NumberBox<>(); // => OK (Integer extends Number)
-NumberBox<Double> doubleBox = new NumberBox<>(); // => OK (Double extends Number)
-// NumberBox<String> strBox = new NumberBox<>(); // ERROR: String doesn't extend Number
+// Using bounded generic class
+NumberBox<Integer> intNumBox = new NumberBox<>();  // => OK: Integer extends Number (satisfied bound)
+                                               // => T bound to Integer (valid subclass of Number)
+                                               // => Diamond operator <> infers Integer
+intNumBox.set(42);                             // => OK: 42 is Integer (extends Number, matches T)
+                                               // => Autoboxing from int to Integer
+                                               // => number field now holds Integer(42)
+double d1 = intNumBox.doubleValue();           // => 42.0 (Integer.doubleValue() called)
+                                               // => Integer.doubleValue() returns 42.0 (double)
+                                               // => d1 is 42.0 (primitive double)
+
+NumberBox<Double> doubleBox = new NumberBox<>();  // => OK: Double extends Number (satisfied bound)
+                                               // => T bound to Double (different type from Integer)
+                                               // => Separate instantiation (independent from NumberBox<Integer>)
+doubleBox.set(3.14);                           // => OK: 3.14 is Double (extends Number, matches T)
+                                               // => Double literal (not float, which would be 3.14f)
+                                               // => number field now holds Double(3.14)
+double d2 = doubleBox.doubleValue();           // => 3.14 (Double.doubleValue() called)
+                                               // => Double.doubleValue() returns 3.14 (unchanged)
+                                               // => d2 is 3.14 (primitive double)
+
+// NumberBox<String> strBox = new NumberBox<>();  // ERROR: String doesn't extend Number
+                                               // => Compile-time error: String violates bound
+                                               // => String not in Number hierarchy (fails T extends Number)
+                                               // => Compiler prevents type mismatch early (not runtime)
 
 // Multiple bounds - <T extends Class & Interface1 & Interface2>
 class MultiBox<T extends Number & Comparable<T>> {
-    public T max(T a, T b) {
-        return a.compareTo(b) > 0 ? a : b; // => uses Comparable
+                                               // => T must extend Number AND implement Comparable<T>
+                                               // => Multiple constraints using & separator
+                                               // => Class bound first, then interface bounds (syntax requirement)
+                                               // => Ensures T supports both arithmetic and comparison
+    // Method uses both Number and Comparable methods
+    public T max(T a, T b) {                   // => Returns larger of two values (generic max)
+                                               // => Parameters type T (must satisfy both bounds)
+        return a.compareTo(b) > 0 ? a : b;     // => Uses Comparable.compareTo() (guaranteed by bound)
+                                               // => compareTo() returns >0 if a > b, <0 if a < b, 0 if equal
+                                               // => Ternary operator returns a if a > b, else b
+    }                                          // => Multiple bounds enable using multiple APIs on T
+                                               // => Could also call Number.doubleValue() (both bounds available)
+}                                              // => Multiple bounds enable rich constraints on type parameters
+
+MultiBox<Integer> multiBox = new MultiBox<>();  // => OK: Integer extends Number AND implements Comparable<Integer>
+                                               // => Integer satisfies both bounds (Number + Comparable)
+                                               // => T bound to Integer (type parameter instantiation)
+Integer max = multiBox.max(10, 20);            // => 20 (compareTo() returns negative for 10 < 20)
+                                               // => 10.compareTo(20) returns negative (10 < 20)
+                                               // => Ternary returns b (20) when a.compareTo(b) <= 0
+                                               // => max is 20 (Integer object)
+// MultiBox<String> strMulti = new MultiBox<>();  // ERROR: String doesn't extend Number
+                                               // => String implements Comparable<String> but not Number
+                                               // => Violates first bound (T extends Number)
+                                               // => Both bounds must be satisfied (AND logic, not OR)
+
+// Wildcards for flexible method parameters - unknown type (?)
+public static void printList(List<?> list) {   // => Accepts List of any type (?, unknown wildcard)
+                                               // => Can't assume element type, read as Object
+    for (Object obj : list) {                  // => Elements read as Object (safest common type)
+        System.out.println(obj);               // => Print each element (Object.toString())
     }
-}
+    // list.add(42);                           // ERROR: can't add to List<?> (type unknown)
+                                               // => ? could be List<String>, can't add Integer
+}                                              // => Read-only wildcard (producer, not consumer)
 
-// Wildcards for flexible method parameters
-public static void printList(List<?> list) {
-    for (Object obj : list) { // ? can be any type, read as Object
-        System.out.println(obj);
-    }
-    // list.add(42); // ERROR: can't add to List<?> (unknown type)
-}
+// Calling printList with different types
+List<String> strings2 = Arrays.asList("A", "B");  // => List<String>
+List<Integer> ints2 = Arrays.asList(1, 2);     // => List<Integer>
+printList(strings2);                           // => OK: List<String> is List<?>
+                                               // => Output: A \n B
+printList(ints2);                              // => OK: List<Integer> is List<?>
+                                               // => Output: 1 \n 2
 
-List<String> strings2 = Arrays.asList("A", "B");
-List<Integer> ints2 = Arrays.asList(1, 2);
-printList(strings2); // => OK
-printList(ints2); // => OK
-
-// Upper bounded wildcard - <? extends Type>
+// Upper bounded wildcard - <? extends Type> (covariant, read-only)
 public static double sumNumbers(List<? extends Number> list) {
-    double sum = 0;
-    for (Number num : list) { // Can read as Number
-        sum += num.doubleValue();
-    }
-    return sum; // => sum of all numbers
-    // list.add(Integer.valueOf(5)); // ERROR: can't add (could be List<Double>)
-}
+                                               // => Accepts List of Number or any subclass
+                                               // => List<Integer>, List<Double>, etc. all accepted
+    double sum = 0;                            // => Accumulator for sum
+    for (Number num : list) {                  // => Elements read as Number (safe upcast)
+        sum += num.doubleValue();              // => Call Number.doubleValue() (guaranteed)
+    }                                          // => Accumulate sum
+    return sum;                                // => Returns sum of all numbers
+    // list.add(Integer.valueOf(5));          // ERROR: can't add to List<? extends Number>
+                                               // => Could be List<Double>, can't add Integer
+}                                              // => Producer (reads values), not consumer
 
-List<Integer> intList = Arrays.asList(1, 2, 3);
-List<Double> doubleList = Arrays.asList(1.5, 2.5);
-double sum1 = sumNumbers(intList); // => 6.0
-double sum2 = sumNumbers(doubleList); // => 4.0
+// Calling sumNumbers with different numeric types
+List<Integer> intList = Arrays.asList(1, 2, 3);  // => List<Integer> (Integer extends Number)
+List<Double> doubleList = Arrays.asList(1.5, 2.5);  // => List<Double> (Double extends Number)
+double sum1 = sumNumbers(intList);             // => 6.0 (1 + 2 + 3, converted to double)
+double sum2 = sumNumbers(doubleList);          // => 4.0 (1.5 + 2.5)
 
-// Lower bounded wildcard - <? super Type>
+// Lower bounded wildcard - <? super Type> (contravariant, write-only)
 public static void addIntegers(List<? super Integer> list) {
-    list.add(1); // => OK: can add Integer
-    list.add(2);
-    // Integer x = list.get(0); // ERROR: can't read as Integer (could be Object)
-    Object obj = list.get(0); // => OK: read as Object
-}
+                                               // => Accepts List of Integer or any superclass
+                                               // => List<Number>, List<Object> accepted
+    list.add(1);                               // => OK: can add Integer (safe downcast)
+    list.add(2);                               // => OK: Integer fits in List<? super Integer>
+    // Integer x = list.get(0);                // ERROR: can't read as Integer (could be Object)
+                                               // => List<Object>.get() returns Object, not Integer
+    Object obj = list.get(0);                  // => OK: read as Object (safe upcast)
+}                                              // => Consumer (writes values), not producer
 
-List<Number> numList = new ArrayList<>();
-List<Object> objList = new ArrayList<>();
-addIntegers(numList); // => OK (Number super Integer)
-addIntegers(objList); // => OK (Object super Integer)
+// Calling addIntegers with different supertypes
+List<Number> numList = new ArrayList<>();      // => List<Number> (Number super Integer)
+List<Object> objList = new ArrayList<>();      // => List<Object> (Object super Integer)
+addIntegers(numList);                          // => OK: Number super Integer
+                                               // => numList now [1, 2] (Integer values)
+addIntegers(objList);                          // => OK: Object super Integer
+                                               // => objList now [1, 2] (Integer values as Object)
 
 // PECS principle: Producer Extends, Consumer Super
-// Use <? extends T> when reading (producing) values
-// Use <? super T> when writing (consuming) values
+// Use <? extends T> when reading (producing) values from structure
+//   - Covariant: List<Derived> is subtype of List<? extends Base>
+//   - Safe to read T (or upcast to base), unsafe to write
+// Use <? super T> when writing (consuming) values into structure
+//   - Contravariant: List<Base> is subtype of List<? super Derived>
+//   - Safe to write T (or downcast from derived), unsafe to read as T
 
-// Generic constructors
-class Holder {
-    private Object value;
+// Example demonstrating PECS
+public static <T> void copy(List<? extends T> source, List<? super T> dest) {
+                                               // => source produces T (read from), dest consumes T (write to)
+    for (T item : source) {                    // => Read from source (? extends T)
+        dest.add(item);                        // => Write to dest (? super T)
+    }                                          // => Type-safe copy using PECS
+}
 
-    public <T> Holder(T value) { // Generic constructor
-        this.value = value;
+List<Integer> source = Arrays.asList(1, 2, 3);  // => Source list of Integer
+List<Number> dest = new ArrayList<>();         // => Destination list of Number
+copy(source, dest);                            // => T inferred as Integer
+                                               // => source: List<Integer> (Integer extends Integer ✓)
+                                               // => dest: List<Number> (Number super Integer ✓)
+                                               // => dest now [1, 2, 3] (Integer values as Number)
+
+// Generic constructors (constructor-level type parameters)
+class Holder {                                 // => Non-generic class
+    private Object value;                      // => Stores any object (uses Object)
+
+    // Generic constructor (type parameter scoped to constructor)
+    public <T> Holder(T value) {               // => <T> declares constructor type parameter
+                                               // => T inferred from argument type
+        this.value = value;                    // => Store as Object (upcast from T)
+    }                                          // => Enables type-safe construction
+}
+
+Holder h1 = new Holder("text");                // => T inferred as String (from "text")
+Holder h2 = new Holder(123);                   // => T inferred as Integer (from 123, autoboxed)
+                                               // => Constructor generic, class not generic
+
+// Multiple type parameters (multi-parameter generics)
+class Pair<K, V> {                             // => Two type parameters: K (key), V (value)
+    private K key;                             // => Field of type K
+    private V value;                           // => Field of type V
+
+    // Constructor accepts K and V
+    public Pair(K key, V value) {              // => Initialize with key and value
+        this.key = key;                        // => Store key of type K
+        this.value = value;                    // => Store value of type V
+    }
+
+    // Getter for key (returns K)
+    public K getKey() {                        // => Returns type K
+        return key;                            // => No cast needed
+    }
+
+    // Getter for value (returns V)
+    public V getValue() {                      // => Returns type V
+        return value;                          // => No cast needed
     }
 }
 
-Holder h1 = new Holder("text"); // => T inferred as String
-Holder h2 = new Holder(123); // => T inferred as Integer
-
-// Multiple type parameters
-class Pair<K, V> {
-    private K key;
-    private V value;
-
-    public Pair(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    public K getKey() {
-        return key;
-    }
-
-    public V getValue() {
-        return value;
-    }
-}
-
+// Using Pair with different type combinations
 Pair<String, Integer> pair = new Pair<>("Age", 30);
-String key = pair.getKey(); // => "Age"
-Integer value = pair.getValue(); // => 30
+                                               // => K=String, V=Integer (independent types)
+String key = pair.getKey();                    // => "Age" (type-safe, no cast)
+Integer value = pair.getValue();               // => 30 (type-safe, no cast)
 
-// Type erasure - generics removed at runtime
-List<String> strList = new ArrayList<>();
-List<Integer> intList2 = new ArrayList<>();
-System.out.println(strList.getClass() == intList2.getClass()); // => true
-// Both are ArrayList at runtime (type parameters erased)
+Pair<Integer, String> reversePair = new Pair<>(1, "One");
+                                               // => K=Integer, V=String (different order)
+Integer numKey = reversePair.getKey();         // => 1
+String strValue = reversePair.getValue();      // => "One"
+
+// Type erasure - generics removed at runtime (implementation detail)
+List<String> strList = new ArrayList<>();      // => Generic type at compile time
+List<Integer> intList2 = new ArrayList<>();    // => Different generic type at compile time
+System.out.println(strList.getClass() == intList2.getClass());
+                                               // => true (both are ArrayList.class at runtime)
+                                               // => Type parameters erased (replaced with Object or bounds)
+
+// Type erasure implications
+// 1. Can't create generic array: new T[10] (T erased to Object)
+// 2. Can't instanceof with generics: obj instanceof List<String> (erased to List)
+// 3. Can't overload with different type parameters: foo(List<String>) vs foo(List<Integer>) (same erasure)
+// 4. Static context can't use type parameters: static T field (T doesn't exist at runtime)
+
+// Type erasure example - what compiler sees
+class Box<T> {                                 // => Compile time
+    private T content;                         // => T is type parameter
+}
+// After erasure (runtime):
+// class Box {
+//     private Object content;                // => T erased to Object (unbounded)
+// }
+
+class NumberBox<T extends Number> {            // => Compile time with bound
+    private T number;                          // => T bounded to Number
+}
+// After erasure (runtime):
+// class NumberBox {
+//     private Number number;                 // => T erased to bound (Number)
+// }
 ```
 
 **Key Takeaway**: Generics provide compile-time type safety. Bounded types (`<T extends Type>`) constrain parameters. Wildcards enable flexible APIs: `<?>` (any type), `<? extends T>` (T or subtypes), `<? super T>` (T or supertypes). PECS: Producer Extends, Consumer Super. Type erasure removes generics at runtime.
@@ -516,122 +1160,218 @@ System.out.println(strList.getClass() == intList2.getClass()); // => true
 **Code**:
 
 ```java
-import java.util.*;
+import java.util.*;                                 // => Import Collections API (List, Arrays, Comparator)
+                                                    // => Arrays provides asList(), Collections provides sort()
+                                                    // => Comparator interface in java.util package
 
-// Comparable interface - natural ordering
-class Person implements Comparable<Person> {
-    String name;
-    int age;
+// Comparable interface - natural ordering (intrinsic comparison)
+class Person implements Comparable<Person> {        // => Person class defines its own natural ordering
+                                                    // => Comparable<Person> means compare Person objects
+                                                    // => Generic type parameter ensures type-safe comparison
+                                                    // => Natural ordering embedded in class (intrinsic)
+    String name;                                    // => Name field (String, lexicographic comparison available)
+    int age;                                        // => Age field (int, numeric comparison)
+                                                    // => Package-private fields (no access modifier)
 
-    public Person(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
+    public Person(String name, int age) {           // => Constructor accepts name and age
+        this.name = name;                           // => Assign name parameter to name field
+        this.age = age;                             // => Assign age parameter to age field
+    }                                               // => No validation (simplified example)
 
     // compareTo() defines natural ordering (by age)
-    @Override
-    public int compareTo(Person other) {
+    @Override                                       // => Override Comparable.compareTo(T) method
+                                                    // => Compiler checks signature matches interface
+    public int compareTo(Person other) {            // => Parameter is Person (matches generic type)
+                                                    // => Return <0 if this < other, 0 if equal, >0 if this > other
+                                                    // => Contract: consistent with equals() for proper behavior
         return Integer.compare(this.age, other.age);
-        // Return: <0 if this < other, 0 if equal, >0 if this > other
-    }
+                                                    // => Compare by age (numeric comparison)
+                                                    // => Integer.compare(a, b) returns a - b safely (no overflow)
+                                                    // => Don't use this.age - other.age (risk of overflow)
+                                                    // => Returns negative if this younger, 0 if same age, positive if older
+                                                    // => Natural ordering: younger Person < older Person
+    }                                               // => compareTo() defines single canonical ordering
+                                                    // => TreeSet, TreeMap use natural ordering by default
 
-    @Override
-    public String toString() {
-        return name + "(" + age + ")";
-    }
-}
+    @Override                                       // => Override Object.toString() for readable output
+    public String toString() {                      // => Returns string representation of Person
+        return name + "(" + age + ")";              // => Format: "Alice(30)" (name followed by age)
+    }                                               // => Used by System.out.println() and collections
+}                                                   // => Comparable enables sorting without external comparator
 
-List<Person> people = Arrays.asList(
-    new Person("Alice", 30),
-    new Person("Bob", 25),
-    new Person("Charlie", 35)
-);
+// Create list of Person objects (unsorted)
+List<Person> people = Arrays.asList(                // => Arrays.asList() creates fixed-size list from varargs
+                                                    // => List is mutable (can sort) but not resizable (no add/remove)
+    new Person("Alice", 30),                        // => Alice is 30 years old (middle age)
+    new Person("Bob", 25),                          // => Bob is 25 years old (youngest)
+    new Person("Charlie", 35)                       // => Charlie is 35 years old (oldest)
+);                                                  // => Initial order: [Alice(30), Bob(25), Charlie(35)]
+                                                    // => Not sorted by age or name (insertion order)
 
-Collections.sort(people); // Uses compareTo() - natural ordering
-System.out.println(people); // => [Bob(25), Alice(30), Charlie(35)]
+Collections.sort(people);                           // => Uses natural ordering (compareTo() from Comparable)
+                                                    // => Sorts in-place (mutates list)
+                                                    // => No comparator argument (uses Person.compareTo())
+                                                    // => Sorting algorithm: Timsort (stable, O(n log n))
+System.out.println(people);                         // => [Bob(25), Alice(30), Charlie(35)]
+                                                    // => Sorted by age (natural ordering defined in Person)
+                                                    // => Bob youngest (25), Alice middle (30), Charlie oldest (35)
+                                                    // => Stable sort: equal elements maintain relative order
 
-// Comparator interface - custom ordering
+// Comparator interface - custom ordering (external comparison)
 Comparator<Person> byName = new Comparator<Person>() {
-    @Override
-    public int compare(Person p1, Person p2) {
-        return p1.name.compareTo(p2.name); // Compare by name
-    }
-};
+                                                    // => Anonymous inner class implementing Comparator<Person>
+                                                    // => Custom ordering separate from natural ordering
+                                                    // => Comparator<Person> means compare two Person objects
+                                                    // => External comparison logic (not embedded in Person)
+    @Override                                       // => Override Comparator.compare(T, T) method
+                                                    // => Different signature from Comparable.compareTo(T)
+    public int compare(Person p1, Person p2) {      // => Two parameters (compare two objects externally)
+                                                    // => Return <0 if p1 < p2, 0 if equal, >0 if p1 > p2
+        return p1.name.compareTo(p2.name);          // => Compare by name (lexicographic order)
+                                                    // => String.compareTo() compares alphabetically
+                                                    // => "Alice" < "Bob" < "Charlie" (alphabetical order)
+    }                                               // => Custom comparator overrides natural ordering
+};                                                  // => byName comparator sorts Person by name, not age
 
-Collections.sort(people, byName);
-System.out.println(people); // => [Alice(30), Bob(25), Charlie(35)]
+Collections.sort(people, byName);                   // => Sort with explicit comparator (overrides natural ordering)
+                                                    // => Uses byName.compare() instead of Person.compareTo()
+                                                    // => Sorts in-place (mutates list)
+System.out.println(people);                         // => [Alice(30), Bob(25), Charlie(35)]
+                                                    // => Sorted by name alphabetically (custom ordering)
+                                                    // => Alice < Bob < Charlie (lexicographic order)
 
-// Lambda comparators - concise syntax
+// Lambda comparators - concise syntax (functional interface)
 Comparator<Person> byAgeLambda = (p1, p2) -> Integer.compare(p1.age, p2.age);
-people.sort(byAgeLambda); // List.sort() method
-System.out.println(people); // => [Bob(25), Alice(30), Charlie(35)]
+                                                    // => Lambda expression implementing Comparator.compare()
+                                                    // => (p1, p2) -> ... replaces anonymous inner class
+                                                    // => Type inference: compiler knows p1, p2 are Person
+                                                    // => Functional interface: single abstract method (compare)
+                                                    // => Equivalent to natural ordering but external
+people.sort(byAgeLambda);                           // => List.sort() method (Java 8+, instance method)
+                                                    // => Equivalent to Collections.sort(people, byAgeLambda)
+                                                    // => More idiomatic (object-oriented style)
+System.out.println(people);                         // => [Bob(25), Alice(30), Charlie(35)]
+                                                    // => Sorted by age again (same as natural ordering)
 
 // Comparator.comparing() with method references
-Comparator<Person> byName2 = Comparator.comparing(Person::getName);
-people.sort(byName2);
-
-// Method references - ClassName::methodName
-class Person {
-    public String getName() { return name; }
-    public int getAge() { return age; }
-}
-
 Comparator<Person> byAge = Comparator.comparing(Person::getAge);
+                                                    // => Factory method creates comparator from key extractor
+                                                    // => Person::getAge is method reference (equivalent to p -> p.getAge())
+                                                    // => Extracts age, then compares using natural ordering
+                                                    // => Most concise syntax for simple comparisons
+                                                    // => Requires getter method (getAge() here)
 Comparator<Person> byNameRef = Comparator.comparing(Person::getName);
+                                                    // => Method reference to getName() (extracts String)
+                                                    // => Compares names using String.compareTo()
+                                                    // => Lexicographic ordering (alphabetical)
 
-// Chaining comparators - thenComparing()
+// Note: Person class needs getter methods for method references
+class Person {                                      // => Extended Person class with getter methods
+    // ... previous fields and methods ...
+    public String getName() { return name; }        // => Getter for name field (JavaBean convention)
+                                                    // => Enables method reference Person::getName
+    public int getAge() { return age; }             // => Getter for age field (JavaBean convention)
+                                                    // => Enables method reference Person::getAge
+}                                                   // => Getters enable Comparator.comparing() factory
+
+// Chaining comparators - thenComparing() for multi-level sorting
 Comparator<Person> byAgeThenName = Comparator
-    .comparing(Person::getAge)           // Primary: age
-    .thenComparing(Person::getName);     // Secondary: name
+    .comparing(Person::getAge)                      // => Primary sort key: age (first comparison)
+                                                    // => Extracts age, compares numerically
+    .thenComparing(Person::getName);                // => Secondary sort key: name (tie-breaker)
+                                                    // => Only used when ages are equal
+                                                    // => Breaks ties alphabetically by name
+                                                    // => Chain continues stable sort (maintains order for equal elements)
 
-List<Person> people2 = Arrays.asList(
-    new Person("Alice", 30),
-    new Person("Bob", 30),    // Same age as Alice
-    new Person("Charlie", 25)
-);
+List<Person> people2 = Arrays.asList(               // => New list with duplicate ages (test tie-breaking)
+    new Person("Alice", 30),                        // => Alice, age 30 (same as Bob)
+    new Person("Bob", 30),                          // => Bob, age 30 (same as Alice, tie-breaker needed)
+    new Person("Charlie", 25)                       // => Charlie, age 25 (younger, sorted first)
+);                                                  // => Initial order: [Alice(30), Bob(30), Charlie(25)]
 
-people2.sort(byAgeThenName);
-System.out.println(people2);
-// => [Charlie(25), Alice(30), Bob(30)]
-// First sorted by age, then by name for same age
+people2.sort(byAgeThenName);                        // => Sort by age first, then name for ties
+                                                    // => Charlie (25) comes first (youngest)
+                                                    // => Alice and Bob both 30, sorted alphabetically
+System.out.println(people2);                        // => [Charlie(25), Alice(30), Bob(30)]
+                                                    // => First sorted by age (25 < 30)
+                                                    // => Then by name for same age (Alice < Bob alphabetically)
+                                                    // => Multi-level sorting (composite comparator)
 
-// Reversed comparator
+// Reversed comparator - reverse natural or custom ordering
 Comparator<Person> byAgeReversed = Comparator
-    .comparing(Person::getAge)
-    .reversed(); // Reverses the order
+    .comparing(Person::getAge)                      // => Start with age comparison (ascending)
+    .reversed();                                    // => Reverse the order (descending)
+                                                    // => Negates comparison result (flips sign)
+                                                    // => Oldest first, youngest last
 
-people.sort(byAgeReversed);
-System.out.println(people); // => [Charlie(35), Alice(30), Bob(25)]
+people.sort(byAgeReversed);                         // => Sort by age in reverse (descending)
+                                                    // => Oldest Person appears first
+System.out.println(people);                         // => [Charlie(35), Alice(30), Bob(25)]
+                                                    // => Descending age order (35 > 30 > 25)
+                                                    // => reversed() flips comparison without rewriting logic
 
-// Natural order comparators
+// Natural order comparators - for types implementing Comparable
 Comparator<Integer> naturalOrder = Comparator.naturalOrder();
-List<Integer> nums = Arrays.asList(5, 2, 8, 1, 9);
-nums.sort(naturalOrder); // => [1, 2, 5, 8, 9]
+                                                    // => Uses Integer.compareTo() (natural ordering)
+                                                    // => Generic method works for any Comparable type
+                                                    // => Equivalent to (a, b) -> a.compareTo(b)
+List<Integer> nums = Arrays.asList(5, 2, 8, 1, 9); // => Unsorted integers
+nums.sort(naturalOrder);                            // => Sort ascending (1 < 2 < 5 < 8 < 9)
+                                                    // => [1, 2, 5, 8, 9]
+                                                    // => Natural order for Integer is ascending
 
 Comparator<Integer> reverseOrder = Comparator.reverseOrder();
-nums.sort(reverseOrder); // => [9, 8, 5, 2, 1]
+                                                    // => Reverses natural order (descending)
+                                                    // => Equivalent to Comparator.naturalOrder().reversed()
+nums.sort(reverseOrder);                            // => Sort descending (9 > 8 > 5 > 2 > 1)
+                                                    // => [9, 8, 5, 2, 1]
+                                                    // => Convenient factory for reverse sorting
 
-// Null handling comparators
+// Null handling comparators - safe comparison with null values
 Comparator<String> nullsFirst = Comparator.nullsFirst(Comparator.naturalOrder());
+                                                    // => Treats null as smaller than any non-null value
+                                                    // => Wraps natural order comparator with null handling
+                                                    // => Prevents NullPointerException during comparison
 List<String> withNulls = Arrays.asList("C", null, "A", "B", null);
-withNulls.sort(nullsFirst);
-System.out.println(withNulls); // => [null, null, A, B, C]
+                                                    // => List contains null values (5 elements)
+                                                    // => Unsorted: [C, null, A, B, null]
+withNulls.sort(nullsFirst);                         // => Nulls sorted to beginning, then natural order
+                                                    // => Null comparisons handled safely (no NPE)
+System.out.println(withNulls);                      // => [null, null, A, B, C]
+                                                    // => Nulls first (beginning of list)
+                                                    // => Then alphabetical order (A, B, C)
 
 Comparator<String> nullsLast = Comparator.nullsLast(Comparator.naturalOrder());
-withNulls.sort(nullsLast);
-System.out.println(withNulls); // => [A, B, C, null, null]
+                                                    // => Treats null as larger than any non-null value
+                                                    // => Nulls sorted to end of list
+withNulls.sort(nullsLast);                          // => Sort non-nulls first, then nulls
+                                                    // => Null-safe comparison (no NPE)
+System.out.println(withNulls);                      // => [A, B, C, null, null]
+                                                    // => Alphabetical first (A, B, C)
+                                                    // => Nulls last (end of list)
 
-// Comparing with custom logic
+// Comparing with custom logic - extract different property types
 Comparator<String> byLength = Comparator.comparingInt(String::length);
+                                                    // => Specialized factory for int extraction (no boxing)
+                                                    // => Extracts String length as int primitive
+                                                    // => Compares integers directly (efficient)
+                                                    // => comparingInt() avoids Integer wrapper overhead
 List<String> words = Arrays.asList("Java", "is", "awesome");
-words.sort(byLength);
-System.out.println(words); // => [is, Java, awesome]
+                                                    // => Lengths: "Java" (4), "is" (2), "awesome" (7)
+words.sort(byLength);                               // => Sort by string length (shortest first)
+                                                    // => 2 < 4 < 7
+System.out.println(words);                          // => [is, Java, awesome]
+                                                    // => Sorted by length: "is" (2), "Java" (4), "awesome" (7)
+                                                    // => Stable sort: equal lengths maintain insertion order
 
-// Complex chaining
+// Complex chaining - combine reversed and multi-level sorting
 Comparator<Person> complex = Comparator
-    .comparing(Person::getAge)
-    .reversed()
-    .thenComparing(Person::getName);
+    .comparing(Person::getAge)                      // => Primary: age (ascending)
+    .reversed()                                     // => Reverse age order (descending, oldest first)
+    .thenComparing(Person::getName);                // => Secondary: name (ascending, alphabetical)
+                                                    // => reversed() applies only to age, not name
+                                                    // => Oldest first, then alphabetical for same age
+                                                    // => Complex multi-criteria sorting in one expression
 ```
 
 **Key Takeaway**: `Comparable<T>` defines natural ordering via `compareTo()`. `Comparator<T>` enables custom ordering via `compare()`. Use `Comparator.comparing()` with method references for concise comparators. Chain comparators with `thenComparing()`. `reversed()`, `nullsFirst()`, `nullsLast()` modify comparison behavior.
@@ -647,14 +1387,14 @@ Queue provides FIFO (First-In-First-Out) semantics. Deque (Double-Ended Queue) s
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    subgraph Queue["Queue (FIFO)"]
-        Q1["offer()"] --> Q2["[1,2,3]"] --> Q3["poll()"]
+    subgraph Queue["Queue #40;FIFO#41;"]
+        Q1["offer#40;#41;"] --> Q2["#91;1,2,3#93;"] --> Q3["poll#40;#41;"]
     end
 
-    subgraph Deque["Deque (Both ends)"]
-        D1["addFirst()"] --> D2["[1,2,3]"] --> D3["addLast()"]
-        D2 --> D4["removeFirst()"]
-        D2 --> D5["removeLast()"]
+    subgraph Deque["Deque #40;Both ends#41;"]
+        D1["addFirst#40;#41;"] --> D2["#91;1,2,3#93;"] --> D3["addLast#40;#41;"]
+        D2 --> D4["removeFirst#40;#41;"]
+        D2 --> D5["removeLast#40;#41;"]
     end
 
     style Q1 fill:#0173B2,color:#fff
@@ -666,83 +1406,175 @@ graph TD
 **Code**:
 
 ```java
-import java.util.*;
+import java.util.*;                                 // => Import Collections API (Queue, Deque, LinkedList, ArrayDeque)
+                                                    // => Queue, Deque are interfaces (multiple implementations)
+                                                    // => PriorityQueue implements Queue (priority-based ordering)
 
-// Queue interface - FIFO operations
-Queue<String> queue = new LinkedList<>();
+// Queue interface - FIFO operations (First-In-First-Out)
+Queue<String> queue = new LinkedList<>();           // => Queue is interface, LinkedList is implementation
+                                                    // => LinkedList implements both List and Queue
+                                                    // => Generic type <String> means queue holds String elements
+                                                    // => FIFO: elements retrieved in insertion order
+                                                    // => Empty queue initially (no elements)
 
-// offer() - adds element to end (returns boolean)
-queue.offer("First"); // => true, queue: ["First"]
-queue.offer("Second"); // => true, queue: ["First", "Second"]
-queue.offer("Third"); // => true, queue: ["First", "Second", "Third"]
+// offer() - adds element to end (returns boolean, capacity-safe)
+queue.offer("First");                               // => true (insertion succeeded)
+                                                    // => queue: ["First"] (single element at head)
+                                                    // => offer() returns false if capacity constraint violated
+                                                    // => LinkedList unbounded (always succeeds)
+queue.offer("Second");                              // => true, queue: ["First", "Second"]
+                                                    // => "Second" added to tail (after "First")
+                                                    // => Queue maintains insertion order
+queue.offer("Third");                               // => true, queue: ["First", "Second", "Third"]
+                                                    // => "Third" added to tail (last element)
+                                                    // => Head is "First", tail is "Third"
 
-// peek() - retrieves but doesn't remove head
-String head = queue.peek(); // => "First" (queue unchanged)
+// peek() - retrieves but doesn't remove head (non-destructive)
+String head = queue.peek();                         // => "First" (head element)
+                                                    // => Queue unchanged: ["First", "Second", "Third"]
+                                                    // => peek() returns null if queue empty (safe)
+                                                    // => element() throws NoSuchElementException if empty (unsafe)
 
-// poll() - retrieves and removes head
-String removed = queue.poll(); // => "First", queue: ["Second", "Third"]
-String next = queue.poll(); // => "Second", queue: ["Third"]
+// poll() - retrieves and removes head (destructive, safe)
+String removed = queue.poll();                      // => "First" (removed from queue)
+                                                    // => queue: ["Second", "Third"] (head removed)
+                                                    // => poll() returns null if queue empty (safe)
+                                                    // => remove() throws NoSuchElementException if empty (unsafe)
+String next = queue.poll();                         // => "Second" (new head after "First" removed)
+                                                    // => queue: ["Third"] (only one element remaining)
+                                                    // => FIFO: elements removed in insertion order
 
-// poll() on empty queue returns null
-queue.clear();
-String empty = queue.poll(); // => null (safe, no exception)
+// poll() on empty queue returns null (safe operation)
+queue.clear();                                      // => Remove all elements (queue now empty)
+                                                    // => queue.size() is 0
+String empty = queue.poll();                        // => null (safe, no exception thrown)
+                                                    // => poll() on empty queue returns null (not exception)
+                                                    // => Always check for null when using poll()
 
 // Priority Queue - elements ordered by natural order or comparator
-PriorityQueue<Integer> pq = new PriorityQueue<>();
-pq.offer(5);
-pq.offer(2);
-pq.offer(8);
-pq.offer(1); // => Heap structure, not sorted array
+PriorityQueue<Integer> pq = new PriorityQueue<>();  // => Min-heap by default (smallest element at head)
+                                                    // => Uses natural ordering (Comparable<Integer>)
+                                                    // => NOT sorted array (heap structure internally)
+                                                    // => O(log n) insertion, O(log n) removal, O(1) peek
+pq.offer(5);                                        // => Add 5 to heap (heap property maintained)
+                                                    // => Internal heap structure (not [5])
+pq.offer(2);                                        // => Add 2 (becomes new minimum)
+                                                    // => Heap property: parent ≤ children (min-heap)
+pq.offer(8);                                        // => Add 8 (larger than minimum, deeper in heap)
+pq.offer(1);                                        // => Add 1 (becomes new minimum, bubbles to top)
+                                                    // => Heap structure, not sorted array
+                                                    // => Internal: could be [1, 2, 8, 5] or similar (heap order)
 
-System.out.println(pq.poll()); // => 1 (smallest)
-System.out.println(pq.poll()); // => 2
-System.out.println(pq.poll()); // => 5
-System.out.println(pq.poll()); // => 8
+System.out.println(pq.poll());                      // => 1 (smallest element, removed from heap)
+                                                    // => Output: 1
+                                                    // => Heap rebalances after removal
+System.out.println(pq.poll());                      // => 2 (next smallest)
+                                                    // => Output: 2
+System.out.println(pq.poll());                      // => 5 (next smallest)
+                                                    // => Output: 5
+System.out.println(pq.poll());                      // => 8 (largest, last element)
+                                                    // => Output: 8
+                                                    // => Elements removed in ascending order (min-heap)
 
 // PriorityQueue with custom comparator (max heap)
 PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
-maxHeap.offer(5);
-maxHeap.offer(2);
-maxHeap.offer(8);
-System.out.println(maxHeap.poll()); // => 8 (largest first)
+                                                    // => Max-heap: largest element at head
+                                                    // => Comparator.reverseOrder() reverses natural ordering
+                                                    // => Constructor accepts initial capacity and/or comparator
+maxHeap.offer(5);                                   // => Add 5 to max-heap
+maxHeap.offer(2);                                   // => Add 2 (smaller, deeper in heap)
+maxHeap.offer(8);                                   // => Add 8 (becomes new maximum, bubbles to top)
+                                                    // => Heap property: parent ≥ children (max-heap)
+System.out.println(maxHeap.poll());                 // => 8 (largest first)
+                                                    // => Output: 8
+                                                    // => Max-heap returns elements in descending order
 
-// Deque interface - double-ended queue
-Deque<String> deque = new ArrayDeque<>();
+// Deque interface - double-ended queue (operations on both ends)
+Deque<String> deque = new ArrayDeque<>();           // => Deque is interface, ArrayDeque is implementation
+                                                    // => ArrayDeque faster than LinkedList (cache-friendly)
+                                                    // => Resizable array (dynamic capacity)
+                                                    // => No null elements allowed (NullPointerException if tried)
+                                                    // => Empty deque initially
 
-// Add to front
-deque.addFirst("A"); // => ["A"]
-deque.addFirst("B"); // => ["B", "A"]
+// Add to front (head) - LIFO-style operation
+deque.addFirst("A");                                // => ["A"] (single element, both head and tail)
+                                                    // => addFirst() adds to front of deque
+                                                    // => Throws exception if capacity constraint violated
+deque.addFirst("B");                                // => ["B", "A"] (B is new head, A pushed right)
+                                                    // => B is now at front (index 0 conceptually)
+                                                    // => A moved to second position
 
-// Add to back
-deque.addLast("C"); // => ["B", "A", "C"]
-deque.addLast("D"); // => ["B", "A", "C", "D"]
+// Add to back (tail) - FIFO-style operation
+deque.addLast("C");                                 // => ["B", "A", "C"] (C added to end)
+                                                    // => addLast() appends to tail
+                                                    // => Equivalent to offer() for queue operations
+deque.addLast("D");                                 // => ["B", "A", "C", "D"] (D is new tail)
+                                                    // => D at end, B at front
+                                                    // => Deque now has 4 elements
 
-// Remove from front
-String first = deque.removeFirst(); // => "B", deque: ["A", "C", "D"]
+// Remove from front (head) - LIFO-style removal
+String first = deque.removeFirst();                 // => "B" (head removed)
+                                                    // => deque: ["A", "C", "D"] (B removed, A becomes new head)
+                                                    // => removeFirst() throws NoSuchElementException if empty
+                                                    // => pollFirst() is null-safe alternative (returns null if empty)
 
-// Remove from back
-String last = deque.removeLast(); // => "D", deque: ["A", "C"]
+// Remove from back (tail) - stack pop-style removal
+String last = deque.removeLast();                   // => "D" (tail removed)
+                                                    // => deque: ["A", "C"] (D removed, C becomes new tail)
+                                                    // => removeLast() throws NoSuchElementException if empty
+                                                    // => pollLast() is null-safe alternative (returns null if empty)
 
-// Peek at both ends
-String peekFirst = deque.peekFirst(); // => "A"
-String peekLast = deque.peekLast(); // => "C"
+// Peek at both ends (non-destructive queries)
+String peekFirst = deque.peekFirst();               // => "A" (head element, deque unchanged)
+                                                    // => Returns null if deque empty (safe)
+                                                    // => getFirst() throws exception if empty (unsafe)
+String peekLast = deque.peekLast();                 // => "C" (tail element, deque unchanged)
+                                                    // => Returns null if deque empty (safe)
+                                                    // => getLast() throws exception if empty (unsafe)
 
-// Using Deque as Stack (LIFO)
-Deque<Integer> stack = new ArrayDeque<>();
-stack.push(1); // => [1]
-stack.push(2); // => [2, 1]
-stack.push(3); // => [3, 2, 1]
+// Using Deque as Stack (LIFO - Last-In-First-Out)
+Deque<Integer> stack = new ArrayDeque<>();          // => Stack-style usage (LIFO semantics)
+                                                    // => ArrayDeque faster than legacy Stack class
+                                                    // => Stack is synchronized (slower), extends Vector (legacy)
+                                                    // => Deque provides push/pop/peek methods for stack operations
+stack.push(1);                                      // => [1] (push to front, LIFO)
+                                                    // => push() equivalent to addFirst()
+                                                    // => 1 is top of stack
+stack.push(2);                                      // => [2, 1] (2 pushed on top)
+                                                    // => 2 is new top, 1 underneath
+stack.push(3);                                      // => [3, 2, 1] (3 pushed on top)
+                                                    // => 3 is top of stack (most recently pushed)
+                                                    // => Stack grows to the left conceptually
 
-int top = stack.pop(); // => 3, stack: [2, 1]
-int peek = stack.peek(); // => 2
+int top = stack.pop();                              // => 3 (pop from front, LIFO)
+                                                    // => stack: [2, 1] (3 removed, 2 becomes new top)
+                                                    // => pop() equivalent to removeFirst()
+                                                    // => pop() throws NoSuchElementException if empty
+int peek = stack.peek();                            // => 2 (top element, stack unchanged)
+                                                    // => peek() equivalent to peekFirst()
+                                                    // => Returns null if stack empty
 
-// ArrayDeque vs LinkedList for Deque
-// ArrayDeque: faster, less memory, no null elements
+// ArrayDeque vs LinkedList for Deque implementation
+// ArrayDeque: faster (cache-friendly), less memory overhead, no null elements
+// => Resizable circular array (better locality of reference)
+// => No node overhead (LinkedList has Node objects per element)
+// => Prohibits null elements (throws NullPointerException)
+// => Better for stack/queue operations (better performance)
 // LinkedList: allows nulls, implements both List and Deque
+// => Doubly-linked list (node overhead per element)
+// => Allows null elements (no restriction)
+// => Implements List interface (index-based access)
+// => Use only if you need List operations or null elements
 
 // Legacy Stack class (avoid - use Deque instead)
-// Stack<Integer> oldStack = new Stack<>(); // Don't use
-// Use Deque<Integer> stack = new ArrayDeque<>(); // Better
+// Stack<Integer> oldStack = new Stack<>();         // Don't use (synchronized, Vector-based)
+                                                    // => Stack extends Vector (legacy, synchronized)
+                                                    // => Synchronization overhead (slower)
+                                                    // => Vector is legacy collection (pre-Collections Framework)
+// Use Deque<Integer> stack = new ArrayDeque<>();   // Better (faster, modern)
+                                                    // => ArrayDeque is modern, non-synchronized, faster
+                                                    // => Provides same stack operations (push/pop/peek)
+                                                    // => Better performance (no synchronization overhead)
 ```
 
 **Key Takeaway**: Queue provides FIFO with `offer()`, `poll()`, `peek()`. PriorityQueue orders elements automatically. Deque supports both ends: `addFirst()`, `addLast()`, `removeFirst()`, `removeLast()`. Use `ArrayDeque` as Stack instead of legacy `Stack` class. `LinkedList` implements both List and Deque.
@@ -758,10 +1590,10 @@ Streams support complex transformations through chaining. `flatMap` flattens nes
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    Source["Data Source<br/>[[1,2],[3,4]]"] --> FlatMap["flatMap<br/>Flatten to [1,2,3,4]"]
-    FlatMap --> Filter["filter<br/>(even)"]
+    Source["Data Source<br/>#91;#91;1,2#93;,#91;3,4#93;#93;"] --> FlatMap["flatMap<br/>Flatten to #91;1,2,3,4#93;"]
+    FlatMap --> Filter["filter<br/>#40;even#41;"]
     Filter --> Collect["Collectors<br/>groupingBy/partitioningBy"]
-    Collect --> Result["Result<br/>{true:[2,4]}"]
+    Collect --> Result["Result<br/>#123;true:#91;2,4#93;#125;"]
 
     style Source fill:#0173B2,color:#fff
     style FlatMap fill:#DE8F05,color:#fff
@@ -773,126 +1605,219 @@ graph TD
 **Code**:
 
 ```java
-import java.util.*;
-import java.util.stream.*;
+import java.util.*;                                 // => Import Collections API (List, Arrays, Map, Optional)
+import java.util.stream.*;                          // => Import Streams API (Stream, Collectors, IntStream)
+                                                    // => Collectors utility class for terminal operations
 
-// flatMap() - flattens nested structures
-List<List<Integer>> nested = Arrays.asList(
-    Arrays.asList(1, 2),
-    Arrays.asList(3, 4),
-    Arrays.asList(5, 6)
-);
+// flatMap() - flattens nested structures (one-to-many transformation)
+List<List<Integer>> nested = Arrays.asList(         // => List of lists (nested structure, 2 levels deep)
+    Arrays.asList(1, 2),                            // => First inner list: [1, 2]
+    Arrays.asList(3, 4),                            // => Second inner list: [3, 4]
+    Arrays.asList(5, 6)                             // => Third inner list: [5, 6]
+);                                                  // => Nested structure: [[1,2], [3,4], [5,6]]
+                                                    // => Cannot directly stream integers (need flatten)
 
-List<Integer> flattened = nested.stream()
-    .flatMap(list -> list.stream()) // Flattens [[1,2],[3,4],[5,6]] to [1,2,3,4,5,6]
-    .collect(Collectors.toList()); // => [1, 2, 3, 4, 5, 6]
+List<Integer> flattened = nested.stream()          // => Stream<List<Integer>> (stream of lists)
+    .flatMap(list -> list.stream())                // => Flattens [[1,2],[3,4],[5,6]] to Stream<Integer>
+                                                    // => Each List<Integer> mapped to Stream<Integer>
+                                                    // => flatMap merges all streams into single stream
+                                                    // => Result: Stream of integers 1, 2, 3, 4, 5, 6
+                                                    // => map() would give Stream<Stream<Integer>> (nested, wrong)
+    .collect(Collectors.toList());                  // => [1, 2, 3, 4, 5, 6] (single flat list)
+                                                    // => toList() creates new ArrayList from stream elements
+                                                    // => Collects all integers into single list (flattened)
 
-// flatMap with Strings
+// flatMap with Strings - split and flatten
 List<String> words = Arrays.asList("Hello", "World");
-List<String> letters = words.stream()
-    .flatMap(word -> Arrays.stream(word.split(""))) // Split each word into letters
-    .distinct()
-    .collect(Collectors.toList()); // => [H, e, l, o, W, r, d]
+                                                    // => Two strings: "Hello" (5 chars), "World" (5 chars)
+List<String> letters = words.stream()              // => Stream<String> with 2 elements
+    .flatMap(word -> Arrays.stream(word.split("")))
+                                                    // => split("") splits each word into character array
+                                                    // => "Hello" -> ["H","e","l","l","o"]
+                                                    // => Arrays.stream() converts String[] to Stream<String>
+                                                    // => flatMap flattens all character streams into one
+                                                    // => Stream: "H","e","l","l","o","W","o","r","l","d"
+    .distinct()                                     // => Remove duplicates (stateful operation)
+                                                    // => "l" and "o" appear multiple times, kept once
+                                                    // => Stream becomes: "H","e","l","o","W","r","d"
+    .collect(Collectors.toList());                  // => [H, e, l, o, W, r, d] (unique letters)
+                                                    // => Order of first occurrence preserved
+                                                    // => Note: "l" appears once despite two "l" in "Hello"
 
-// Collectors.groupingBy() - group elements by classifier
-class Person {
-    String name;
-    String city;
-    int age;
+// Collectors.groupingBy() - group elements by classifier function
+class Person {                                      // => Simple Person class for demonstration
+    String name;                                    // => Name field (String)
+    String city;                                    // => City field (grouping key)
+    int age;                                        // => Age field (for partitioning)
 
-    Person(String name, String city, int age) {
-        this.name = name;
-        this.city = city;
-        this.age = age;
-    }
+    Person(String name, String city, int age) {     // => Constructor
+        this.name = name;                           // => Assign name
+        this.city = city;                           // => Assign city
+        this.age = age;                             // => Assign age
+    }                                               // => Package-private fields (simplified)
 }
 
-List<Person> people = Arrays.asList(
-    new Person("Alice", "NYC", 30),
-    new Person("Bob", "LA", 25),
-    new Person("Charlie", "NYC", 35),
-    new Person("David", "LA", 28)
-);
+List<Person> people = Arrays.asList(                // => List of 4 people (2 from NYC, 2 from LA)
+    new Person("Alice", "NYC", 30),                 // => Alice in NYC, age 30
+    new Person("Bob", "LA", 25),                    // => Bob in LA, age 25
+    new Person("Charlie", "NYC", 35),               // => Charlie in NYC, age 35
+    new Person("David", "LA", 28)                   // => David in LA, age 28
+);                                                  // => People distributed across two cities
 
-Map<String, List<Person>> byCity = people.stream()
-    .collect(Collectors.groupingBy(p -> p.city));
-// => {NYC=[Alice, Charlie], LA=[Bob, David]}
+Map<String, List<Person>> byCity = people.stream() // => Stream<Person> with 4 elements
+    .collect(Collectors.groupingBy(p -> p.city));   // => Group by city (classifier function)
+                                                    // => groupingBy() creates Map<String, List<Person>>
+                                                    // => Key: city name (String from p.city)
+                                                    // => Value: List<Person> with that city
+                                                    // => {NYC=[Alice, Charlie], LA=[Bob, David]}
+                                                    // => Two groups: NYC has 2 people, LA has 2 people
 
-// Collectors.partitioningBy() - split into two groups (true/false)
-Map<Boolean, List<Person>> byAge = people.stream()
+// Collectors.partitioningBy() - split into two groups (true/false, binary split)
+Map<Boolean, List<Person>> byAge = people.stream() // => Stream<Person> with 4 elements
     .collect(Collectors.partitioningBy(p -> p.age >= 30));
-// => {false=[Bob, David], true=[Alice, Charlie]}
+                                                    // => Predicate: age >= 30 (boolean result)
+                                                    // => partitioningBy() creates Map<Boolean, List<Person>>
+                                                    // => Key: true (age >= 30) or false (age < 30)
+                                                    // => Value: List<Person> matching predicate
+                                                    // => {false=[Bob, David], true=[Alice, Charlie]}
+                                                    // => Bob (25) and David (28) in false group
+                                                    // => Alice (30) and Charlie (35) in true group
+                                                    // => Always has both keys (true and false) even if one empty
 
-// Collectors.joining() - concatenate strings
-String names = people.stream()
-    .map(p -> p.name)
-    .collect(Collectors.joining(", ")); // => "Alice, Bob, Charlie, David"
+// Collectors.joining() - concatenate strings with delimiter
+String names = people.stream()                      // => Stream<Person> with 4 elements
+    .map(p -> p.name)                               // => Extract name from each Person (map to String)
+                                                    // => Stream<String> with names: "Alice", "Bob", "Charlie", "David"
+    .collect(Collectors.joining(", "));             // => "Alice, Bob, Charlie, David"
+                                                    // => joining(", ") concatenates with comma-space delimiter
+                                                    // => Result is single String (not list)
 
-String namesWithPrefix = people.stream()
-    .map(p -> p.name)
+String namesWithPrefix = people.stream()            // => Stream<Person> with 4 elements
+    .map(p -> p.name)                               // => Extract names to Stream<String>
     .collect(Collectors.joining(", ", "Names: ", "."));
-// => "Names: Alice, Bob, Charlie, David."
+                                                    // => "Names: Alice, Bob, Charlie, David."
+                                                    // => joining(delimiter, prefix, suffix)
+                                                    // => "Names: " is prefix, "." is suffix
+                                                    // => Elements joined with ", " delimiter in between
 
-// Stream.of() - create stream from elements
-Stream<String> stream = Stream.of("A", "B", "C");
+// Stream.of() - create stream from elements (varargs)
+Stream<String> stream = Stream.of("A", "B", "C");  // => Stream<String> with 3 elements
+                                                    // => Factory method (varargs parameter)
+                                                    // => Equivalent to Arrays.asList(...).stream()
+                                                    // => Stream.of() is more concise for ad-hoc streams
 
-// Primitive streams - IntStream, LongStream, DoubleStream
-IntStream ints = IntStream.range(1, 5); // => 1, 2, 3, 4 (5 excluded)
-IntStream intsInclusive = IntStream.rangeClosed(1, 5); // => 1, 2, 3, 4, 5
+// Primitive streams - IntStream, LongStream, DoubleStream (avoid boxing)
+IntStream ints = IntStream.range(1, 5);             // => 1, 2, 3, 4 (5 excluded, half-open range)
+                                                    // => IntStream avoids Integer wrapper overhead
+                                                    // => Specialized stream for int primitives
+                                                    // => range(start, end) excludes end (half-open [1,5))
+IntStream intsInclusive = IntStream.rangeClosed(1, 5);
+                                                    // => 1, 2, 3, 4, 5 (5 included, closed range)
+                                                    // => rangeClosed(start, end) includes end ([1,5])
+                                                    // => Use rangeClosed for inclusive ranges
 
-int sum = IntStream.range(1, 101).sum(); // => 5050 (sum of 1 to 100)
-double average = IntStream.range(1, 6).average().getAsDouble(); // => 3.0
+int sum = IntStream.range(1, 101).sum();            // => 5050 (sum of 1 to 100)
+                                                    // => range(1, 101) generates 1 to 100 (101 excluded)
+                                                    // => sum() is terminal operation (IntStream method)
+                                                    // => Returns int primitive (no Optional)
+                                                    // => Formula: n*(n+1)/2 = 100*101/2 = 5050
+double average = IntStream.range(1, 6).average().getAsDouble();
+                                                    // => 3.0 (average of 1, 2, 3, 4, 5)
+                                                    // => average() returns OptionalDouble (stream might be empty)
+                                                    // => getAsDouble() extracts double value (throws if empty)
+                                                    // => (1+2+3+4+5)/5 = 15/5 = 3.0
 
-// Parallel streams - leverage multiple cores
-long count = IntStream.range(1, 1000000)
-    .parallel() // Enables parallel processing
-    .filter(n -> n % 2 == 0)
-    .count(); // => 499999
+// Parallel streams - leverage multiple cores (fork-join framework)
+long count = IntStream.range(1, 1000000)            // => 999999 integers (1 to 999999)
+    .parallel()                                     // => Enable parallel processing (fork-join pool)
+                                                    // => Splits stream into chunks, processes concurrently
+                                                    // => Uses common ForkJoinPool (CPU cores)
+    .filter(n -> n % 2 == 0)                        // => Keep only even numbers
+                                                    // => Parallel filtering across multiple threads
+    .count();                                       // => 499999 (count of even numbers)
+                                                    // => Terminal operation combines partial results
+                                                    // => Half of 999999 integers are even (499999)
 
-// reduce() with accumulator - more control
+// reduce() with accumulator - more control over aggregation
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+                                                    // => List of 5 integers
 
-// reduce(identity, accumulator)
-int sumReduced = numbers.stream()
-    .reduce(0, (a, b) -> a + b); // => 15
+// reduce(identity, accumulator) - sequential reduction
+int sumReduced = numbers.stream()                  // => Stream<Integer> with 5 elements
+    .reduce(0, (a, b) -> a + b);                    // => 15 (sum of 1+2+3+4+5)
+                                                    // => 0 is identity value (neutral element for +)
+                                                    // => (a, b) -> a + b is accumulator (BinaryOperator)
+                                                    // => Execution: ((((0+1)+2)+3)+4)+5 = 15
+                                                    // => Returns int (not Optional) due to identity
 
-// reduce(identity, accumulator, combiner) for parallel
-int sumParallel = numbers.parallelStream()
+// reduce(identity, accumulator, combiner) for parallel streams
+int sumParallel = numbers.parallelStream()          // => Parallel stream (fork-join processing)
     .reduce(
-        0,                    // Identity value
-        (a, b) -> a + b,      // Accumulator (sequential)
-        (a, b) -> a + b       // Combiner (parallel combine)
-    ); // => 15
+        0,                                          // => Identity value (neutral for +)
+        (a, b) -> a + b,                            // => Accumulator (sequential combine within chunk)
+                                                    // => Combines elements within each parallel partition
+        (a, b) -> a + b                             // => Combiner (parallel combine across chunks)
+                                                    // => Combines partial results from different threads
+    );                                              // => 15 (same result as sequential)
+                                                    // => Combiner used only in parallel execution
+                                                    // => Identity + accumulator + combiner ensure correctness
 
-// Optional from stream operations
-Optional<Integer> max = numbers.stream()
-    .max(Comparator.naturalOrder()); // => Optional[5]
+// Optional from stream operations - handling absence safely
+Optional<Integer> max = numbers.stream()           // => Stream<Integer> with 5 elements
+    .max(Comparator.naturalOrder());                // => Optional[5] (maximum element)
+                                                    // => max() returns Optional<Integer> (stream might be empty)
+                                                    // => naturalOrder() uses Integer.compareTo()
+                                                    // => 5 is largest element
+                                                    // => Optional.isPresent() is true
 
-Optional<Integer> any = numbers.stream()
-    .filter(n -> n > 10)
-    .findAny(); // => Optional.empty (no element > 10)
+Optional<Integer> any = numbers.stream()           // => Stream<Integer> with 5 elements
+    .filter(n -> n > 10)                            // => Filter: keep only n > 10
+                                                    // => No elements satisfy predicate (all ≤ 5)
+                                                    // => Stream becomes empty after filter
+    .findAny();                                     // => Optional.empty (no element > 10)
+                                                    // => findAny() returns Optional<Integer>
+                                                    // => Optional.isPresent() is false (no value)
 
-// peek() - debug intermediate steps
-List<Integer> result = numbers.stream()
+// peek() - debug intermediate steps (side effects for debugging)
+List<Integer> result = numbers.stream()             // => Stream<Integer> with 5 elements
     .peek(n -> System.out.println("Original: " + n))
-    .filter(n -> n % 2 == 0)
+                                                    // => Prints: "Original: 1", "Original: 2", etc.
+                                                    // => peek() performs action without transforming stream
+                                                    // => Executes for each element (side effect)
+    .filter(n -> n % 2 == 0)                        // => Keep only even numbers (2, 4)
+                                                    // => Stream becomes 2 elements
     .peek(n -> System.out.println("Filtered: " + n))
-    .map(n -> n * n)
+                                                    // => Prints: "Filtered: 2", "Filtered: 4"
+                                                    // => peek() after filter sees only filtered elements
+    .map(n -> n * n)                                // => Square each element (2*2=4, 4*4=16)
+                                                    // => Stream becomes 4, 16
     .peek(n -> System.out.println("Mapped: " + n))
-    .collect(Collectors.toList());
+                                                    // => Prints: "Mapped: 4", "Mapped: 16"
+                                                    // => peek() after map sees squared values
+    .collect(Collectors.toList());                  // => [4, 16] (collected result)
+                                                    // => Terminal operation triggers all intermediate ops
+                                                    // => peek() useful for debugging stream pipeline
 
-// Collectors with downstream collectors
-Map<String, Long> cityCount = people.stream()
+// Collectors with downstream collectors - multi-level aggregation
+Map<String, Long> cityCount = people.stream()      // => Stream<Person> with 4 elements
     .collect(Collectors.groupingBy(
-        p -> p.city,
-        Collectors.counting() // Downstream collector
-    )); // => {NYC=2, LA=2}
+        p -> p.city,                                // => Classifier: group by city (NYC, LA)
+        Collectors.counting()                       // => Downstream collector: count per group
+                                                    // => counting() returns Long (count of elements)
+    ));                                             // => {NYC=2, LA=2}
+                                                    // => NYC has 2 people (Alice, Charlie)
+                                                    // => LA has 2 people (Bob, David)
+                                                    // => Downstream collector applied to each group
 
-Map<String, Integer> citySumAge = people.stream()
+Map<String, Integer> citySumAge = people.stream()  // => Stream<Person> with 4 elements
     .collect(Collectors.groupingBy(
-        p -> p.city,
-        Collectors.summingInt(p -> p.age)
-    )); // => {NYC=65, LA=53}
+        p -> p.city,                                // => Classifier: group by city
+        Collectors.summingInt(p -> p.age)           // => Downstream: sum ages per group
+                                                    // => summingInt() extracts int, sums values
+    ));                                             // => {NYC=65, LA=53}
+                                                    // => NYC: Alice(30) + Charlie(35) = 65
+                                                    // => LA: Bob(25) + David(28) = 53
+                                                    // => Downstream collector aggregates per group
 ```
 
 **Key Takeaway**: `flatMap()` flattens nested structures into single stream. `Collectors.groupingBy()` groups by classifier. `Collectors.partitioningBy()` splits into true/false groups. `Collectors.joining()` concatenates strings. Primitive streams (`IntStream`, `LongStream`, `DoubleStream`) optimize numeric operations. `parallel()` enables multi-core processing. `peek()` debugs intermediate operations.
@@ -910,111 +1835,217 @@ Lambdas provide concise syntax for functional interfaces (interfaces with one ab
 **Code**:
 
 ```java
-import java.util.*;
-import java.util.function.*;
+import java.util.*;                            // => Import collections (List, Arrays) for lambda examples
+                                               // => Used for collection processing with lambdas later
+import java.util.function.*;                   // => Import functional interfaces package
+                                               // => Contains Predicate, Function, Consumer, Supplier, BiFunction
 
 // Lambda syntax: (parameters) -> expression
-Runnable r1 = () -> System.out.println("Hello"); // No parameters
-Consumer<String> c1 = s -> System.out.println(s); // One parameter (parentheses optional)
-BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b; // Multiple parameters
-Function<String, Integer> length = s -> s.length(); // Single expression
+// Basic lambda forms demonstrating parameter variations
+Runnable r1 = () -> System.out.println("Hello");  // => No parameters: () required
+                                               // => Lambda implements Runnable.run() (no params, void return)
+                                               // => Functional interface: exactly one abstract method
+                                               // => Concise alternative to anonymous class
+Consumer<String> c1 = s -> System.out.println(s);  // => One parameter: parentheses optional
+                                               // => s is parameter (type inferred as String from Consumer<String>)
+                                               // => Lambda implements Consumer.accept(String) method
+                                               // => Type inference eliminates need for (String s) declaration
+BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;  // => Multiple parameters: parentheses required
+                                               // => a, b inferred as Integer from BiFunction<Integer, Integer, Integer>
+                                               // => Lambda body is expression (no return keyword needed)
+                                               // => Returns a + b (Integer result, autoboxing applies)
+Function<String, Integer> length = s -> s.length();  // => Single expression lambda (implicit return)
+                                               // => s.length() is expression, return implied
+                                               // => Function<String, Integer>: takes String, returns Integer
+                                               // => Replaces: s -> { return s.length(); } (equivalent)
 
-// Lambda with block body
-Consumer<String> printer = s -> {
-    String upper = s.toUpperCase();
-    System.out.println(upper);
-}; // => requires { } and explicit return for non-void
+// Lambda with block body (requires braces and explicit return for non-void)
+Consumer<String> printer = s -> {             // => Block body: multiple statements inside { }
+                                               // => s is parameter (String inferred from Consumer<String>)
+    String upper = s.toUpperCase();            // => Local variable inside lambda (intermediate value)
+                                               // => upper is "HELLO" if s is "hello"
+    System.out.println(upper);                 // => Print transformed value (uppercase)
+};                                             // => No return needed (Consumer returns void)
+                                               // => Block body requires { } for multiple statements
+                                               // => Non-void block would need explicit return statement
 
-// Functional interfaces (one abstract method)
-@FunctionalInterface
-interface Calculator {
-    int calculate(int a, int b);
-}
+// Functional interfaces (exactly one abstract method)
+// Custom functional interface for demonstration
+@FunctionalInterface                           // => Optional annotation (enforces single abstract method)
+                                               // => Compile error if multiple abstract methods added
+                                               // => Documents intent: interface designed for lambdas
+interface Calculator {                         // => Custom functional interface (single abstract method)
+                                               // => Can have default/static methods (not counted)
+    int calculate(int a, int b);               // => Single abstract method (functional method)
+                                               // => Signature: two ints, returns int
+}                                              // => Functional interface enables lambda implementation
 
-Calculator multiply = (a, b) -> a * b;
-int result = multiply.calculate(5, 3); // => 15
+Calculator multiply = (a, b) -> a * b;         // => Lambda implements Calculator.calculate()
+                                               // => (a, b) parameters match calculate(int, int)
+                                               // => a * b expression returns int (matches return type)
+                                               // => multiply is functional interface reference
+int result = multiply.calculate(5, 3);         // => Invoke lambda through calculate() method
+                                               // => 5 * 3 = 15 (lambda body executed)
+                                               // => result is 15 (int primitive)
 
 // Built-in functional interfaces (java.util.function package)
+// Java provides common functional interfaces to avoid custom ones
 
-// Predicate<T> - takes T, returns boolean
-Predicate<Integer> isEven = n -> n % 2 == 0;
-System.out.println(isEven.test(4)); // => true
-System.out.println(isEven.test(5)); // => false
+// Predicate<T> - takes T, returns boolean (for filtering/testing)
+Predicate<Integer> isEven = n -> n % 2 == 0;  // => Lambda implements Predicate.test(Integer)
+                                               // => n % 2 == 0 returns boolean (true if even)
+                                               // => Predicate<Integer>: takes Integer, returns boolean
+System.out.println(isEven.test(4));            // => true (4 % 2 == 0, even number)
+                                               // => test() method invokes lambda body
+System.out.println(isEven.test(5));            // => false (5 % 2 == 1, odd number)
+                                               // => Predicate commonly used in Stream.filter()
 
-// Function<T, R> - takes T, returns R
-Function<String, Integer> strLength = s -> s.length();
-System.out.println(strLength.apply("Hello")); // => 5
+// Function<T, R> - takes T, returns R (for transformation/mapping)
+Function<String, Integer> strLength = s -> s.length();  // => Lambda implements Function.apply(String)
+                                               // => Takes String, returns Integer (length)
+                                               // => Transformation function (String -> Integer)
+System.out.println(strLength.apply("Hello"));  // => 5 ("Hello".length() = 5)
+                                               // => apply() method invokes lambda body
+                                               // => Function commonly used in Stream.map()
 
-// Consumer<T> - takes T, returns void
-Consumer<String> print = s -> System.out.println(s);
-print.accept("Message"); // => prints "Message"
+// Consumer<T> - takes T, returns void (for side effects)
+Consumer<String> print = s -> System.out.println(s);  // => Lambda implements Consumer.accept(String)
+                                               // => Takes String, performs action (println), no return
+                                               // => Represents side effect (I/O operation)
+print.accept("Message");                       // => Output: Message (prints to stdout)
+                                               // => accept() method invokes lambda body
+                                               // => Consumer commonly used in forEach()
 
-// Supplier<T> - takes nothing, returns T
-Supplier<Double> random = () -> Math.random();
-System.out.println(random.get()); // => random double
+// Supplier<T> - takes nothing, returns T (for lazy generation)
+Supplier<Double> random = () -> Math.random(); // => Lambda implements Supplier.get()
+                                               // => No parameters (empty ())
+                                               // => Returns Double (random number 0.0-1.0)
+System.out.println(random.get());              // => random double (e.g., 0.7234567890123456)
+                                               // => get() method invokes lambda body
+                                               // => Supplier enables lazy evaluation
 
-// BiFunction<T, U, R> - takes T and U, returns R
-BiFunction<Integer, Integer, Integer> sum = (a, b) -> a + b;
-System.out.println(sum.apply(10, 20)); // => 30
+// BiFunction<T, U, R> - takes two parameters T and U, returns R
+BiFunction<Integer, Integer, Integer> sum = (a, b) -> a + b;  // => Lambda implements BiFunction.apply(Integer, Integer)
+                                               // => Takes two Integers, returns Integer
+                                               // => Binary operation (two inputs)
+System.out.println(sum.apply(10, 20));         // => 30 (10 + 20 = 30)
+                                               // => apply() method invokes lambda body
+                                               // => BiFunction for operations needing two arguments
 
-// Method references - ClassName::methodName
-// 1. Static method reference
-Function<String, Integer> parse = Integer::parseInt;
-int num = parse.apply("123"); // => 123
+// Method references - ClassName::methodName (concise lambda alternatives)
+// 1. Static method reference: ClassName::staticMethod
+Function<String, Integer> parse = Integer::parseInt;  // => Equivalent to: s -> Integer.parseInt(s)
+                                               // => parseInt is static method on Integer class
+                                               // => Method reference syntax: Class::method
+                                               // => Function<String, Integer>: String input, Integer output
+int num = parse.apply("123");                  // => 123 (parses String "123" to Integer 123)
+                                               // => apply() calls Integer.parseInt("123")
+                                               // => num is 123 (int primitive, unboxed from Integer)
 
-// 2. Instance method reference of specific object
-String prefix = "Hello, ";
-Function<String, String> greeter = prefix::concat;
-System.out.println(greeter.apply("World")); // => "Hello, World"
+// 2. Instance method reference of specific object: object::instanceMethod
+String prefix = "Hello, ";                     // => String instance (specific object)
+                                               // => concat() is instance method on String
+Function<String, String> greeter = prefix::concat;  // => Equivalent to: s -> prefix.concat(s)
+                                               // => Method reference on specific object (prefix)
+                                               // => Captures prefix variable (closure over prefix)
+System.out.println(greeter.apply("World"));    // => "Hello, World" (prefix.concat("World"))
+                                               // => apply() calls prefix.concat("World")
+                                               // => Concatenates "Hello, " + "World"
 
-// 3. Instance method of arbitrary object of particular type
-Function<String, String> toUpper = String::toUpperCase;
-System.out.println(toUpper.apply("java")); // => "JAVA"
+// 3. Instance method of arbitrary object of particular type: ClassName::instanceMethod
+Function<String, String> toUpper = String::toUpperCase;  // => Equivalent to: s -> s.toUpperCase()
+                                               // => toUpperCase() is instance method (not static)
+                                               // => Applies to any String instance (arbitrary object)
+                                               // => First parameter becomes the object (s.toUpperCase())
+System.out.println(toUpper.apply("java"));     // => "JAVA" ("java".toUpperCase())
+                                               // => apply() calls "java".toUpperCase()
+                                               // => Returns uppercase version
 
-// 4. Constructor reference
-Supplier<ArrayList<String>> listSupplier = ArrayList::new;
-ArrayList<String> list = listSupplier.get(); // => new ArrayList<>()
+// 4. Constructor reference: ClassName::new
+Supplier<ArrayList<String>> listSupplier = ArrayList::new;  // => Equivalent to: () -> new ArrayList<>()
+                                               // => Constructor reference (no-arg constructor)
+                                               // => Supplier<ArrayList<String>>: no params, returns ArrayList
+ArrayList<String> list = listSupplier.get();   // => new ArrayList<>() (empty list)
+                                               // => get() invokes ArrayList no-arg constructor
+                                               // => list is empty ArrayList (size=0, capacity=10)
 
-Function<Integer, int[]> arrayMaker = int[]::new;
-int[] array = arrayMaker.apply(5); // => new int[5]
+Function<Integer, int[]> arrayMaker = int[]::new;  // => Equivalent to: size -> new int[size]
+                                               // => Array constructor reference (primitive array)
+                                               // => Parameter is array size (Integer)
+int[] array = arrayMaker.apply(5);             // => new int[5] (array of 5 ints, all 0)
+                                               // => apply(5) creates int array with length 5
+                                               // => array is [0, 0, 0, 0, 0] (default int values)
 
-// Effectively final in closures
-int multiplier = 10; // Effectively final (not modified after initialization)
-Function<Integer, Integer> multiplyBy10 = n -> n * multiplier;
-System.out.println(multiplyBy10.apply(5)); // => 50
+// Effectively final in closures (lambdas capture variables from enclosing scope)
+int multiplier = 10;                           // => Local variable (effectively final after initialization)
+                                               // => Effectively final: not modified after first assignment
+                                               // => Lambdas can capture effectively final variables
+Function<Integer, Integer> multiplyBy10 = n -> n * multiplier;  // => Lambda captures multiplier variable
+                                               // => Closure: lambda references variable from outer scope
+                                               // => multiplier value (10) captured at lambda creation
+                                               // => n is parameter, multiplier is captured variable
+System.out.println(multiplyBy10.apply(5));     // => 50 (5 * 10 = 50)
+                                               // => apply(5) executes n * multiplier with multiplier=10
+                                               // => Closure maintains reference to multiplier
 
-// multiplier = 20; // ERROR: would make it not effectively final
+// multiplier = 20;                            // ERROR: would make multiplier not effectively final
+                                               // => Compile error: local variables referenced from lambda must be final or effectively final
+                                               // => Once captured, variable can't be reassigned
+                                               // => Prevents inconsistent state in lambda execution
 
-// Lambda vs anonymous inner class
-// Anonymous inner class
-Runnable r2 = new Runnable() {
-    @Override
-    public void run() {
-        System.out.println("Anonymous");
-    }
-};
+// Lambda vs anonymous inner class (conciseness comparison)
+// Anonymous inner class (verbose syntax)
+Runnable r2 = new Runnable() {                 // => Anonymous class implements Runnable interface
+                                               // => Requires full class definition with braces
+    @Override                                  // => Override annotation (optional but recommended)
+    public void run() {                        // => Implement abstract run() method
+        System.out.println("Anonymous");       // => Method body (what to execute)
+    }                                          // => Verbose: multiple lines for simple task
+};                                             // => Semicolon ends statement (not class definition)
 
 // Lambda (much more concise for same result)
-Runnable r3 = () -> System.out.println("Lambda");
+Runnable r3 = () -> System.out.println("Lambda");  // => Same functionality, one line
+                                               // => Lambda replaces anonymous class boilerplate
+                                               // => () -> expression is entire implementation
+                                               // => Much more readable and maintainable
 
-// Lambdas in collections
-List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
-names.forEach(name -> System.out.println(name)); // Consumer lambda
-names.forEach(System.out::println); // Method reference (same as above)
+// Lambdas in collections (forEach() example)
+List<String> names = Arrays.asList("Alice", "Bob", "Charlie");  // => List of 3 strings (immutable list)
+                                               // => Arrays.asList() creates fixed-size list
+names.forEach(name -> System.out.println(name));  // => Consumer lambda prints each element
+                                               // => forEach() accepts Consumer<String>
+                                               // => Output: Alice \n Bob \n Charlie (one per line)
+names.forEach(System.out::println);            // => Method reference (same as above)
+                                               // => Equivalent to: name -> System.out.println(name)
+                                               // => More concise when lambda just delegates to method
 
-// Lambdas with streams
-List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
-List<Integer> doubled = numbers.stream()
-    .map(n -> n * 2) // Lambda
-    .collect(Collectors.toList()); // => [2, 4, 6, 8, 10]
+// Lambdas with streams (map() transformation example)
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);  // => List of 5 integers
+                                               // => Source data for stream processing
+List<Integer> doubled = numbers.stream()       // => Create stream from list (stream source)
+                                               // => Stream enables functional-style operations
+    .map(n -> n * 2)                           // => Transform each element: multiply by 2
+                                               // => map() accepts Function<Integer, Integer>
+                                               // => Intermediate operation (returns Stream)
+                                               // => Transforms: [1,2,3,4,5] -> [2,4,6,8,10]
+    .collect(Collectors.toList());             // => Terminal operation: collect to List
+                                               // => Triggers stream execution (lazy evaluation)
+                                               // => doubled is [2, 4, 6, 8, 10] (new list)
 
-// Composing functional interfaces
-Predicate<Integer> greaterThan5 = n -> n > 5;
-Predicate<Integer> lessThan10 = n -> n < 10;
-Predicate<Integer> between5And10 = greaterThan5.and(lessThan10);
+// Composing functional interfaces (combining predicates)
+Predicate<Integer> greaterThan5 = n -> n > 5;  // => Predicate: true if n > 5
+                                               // => First condition for composition
+Predicate<Integer> lessThan10 = n -> n < 10;  // => Predicate: true if n < 10
+                                               // => Second condition for composition
+Predicate<Integer> between5And10 = greaterThan5.and(lessThan10);  // => Composed predicate: both must be true
+                                               // => and() combines predicates with logical AND
+                                               // => Equivalent to: n -> (n > 5) && (n < 10)
+                                               // => Range check: 5 < n < 10
 
-System.out.println(between5And10.test(7)); // => true
-System.out.println(between5And10.test(12)); // => false
+System.out.println(between5And10.test(7));     // => true (7 > 5 AND 7 < 10, both conditions met)
+                                               // => test() evaluates composed predicate
+System.out.println(between5And10.test(12));    // => false (12 > 5 BUT 12 >= 10, second condition fails)
+                                               // => AND requires both conditions true
 ```
 
 **Key Takeaway**: Lambdas `(params) -> expression` provide concise syntax for functional interfaces. Built-in interfaces: `Predicate<T>`, `Function<T,R>`, `Consumer<T>`, `Supplier<T>`, `BiFunction<T,U,R>`. Method references (`::`) simplify lambdas. Closures capture effectively final variables. Lambdas are more concise than anonymous inner classes.
@@ -1030,151 +2061,237 @@ System.out.println(between5And10.test(12)); // => false
 **Code**:
 
 ```java
-import java.util.Optional;
-import java.util.List;
+import java.util.Optional;                     // => Import Optional class for null-safe value handling
+                                               // => Optional<T> is container for value that may be absent
+import java.util.List;                         // => Import List for stream example later
+                                               // => Used with Optional.stream() in Java 9+
+import java.util.stream.Collectors;            // => Import Collectors for collecting stream results
+                                               // => Used in flatMap example
 
-// Creating Optional instances
-Optional<String> present = Optional.of("value"); // => Optional["value"]
-// Optional<String> nullValue = Optional.of(null); // ERROR: NullPointerException
+// Creating Optional instances (three factory methods)
+Optional<String> present = Optional.of("value");  // => Optional["value"] (contains "value")
+                                               // => of() requires non-null argument (throws NPE if null)
+                                               // => Use when you're certain value is non-null
+                                               // => present.isPresent() is true
+// Optional<String> nullValue = Optional.of(null);  // ERROR: NullPointerException at creation
+                                               // => of(null) throws NPE immediately (fail-fast)
+                                               // => Use ofNullable() when value might be null
 
-Optional<String> maybe = Optional.ofNullable("value"); // => Optional["value"]
-Optional<String> empty = Optional.ofNullable(null); // => Optional.empty
+Optional<String> maybe = Optional.ofNullable("value");  // => Optional["value"] (contains "value")
+                                               // => ofNullable() accepts null argument safely
+                                               // => If argument non-null, returns Optional.of(value)
+                                               // => If argument null, returns Optional.empty()
+Optional<String> empty = Optional.ofNullable(null);  // => Optional.empty (no value)
+                                               // => Null argument produces empty Optional
+                                               // => empty.isPresent() is false
+                                               // => Safe alternative to Optional.of() for nullable values
 
-Optional<String> emptyDirect = Optional.empty(); // => Optional.empty
+Optional<String> emptyDirect = Optional.empty();  // => Optional.empty (explicit empty creation)
+                                               // => Factory method for empty Optional
+                                               // => Equivalent to Optional.ofNullable(null)
+                                               // => Use when you know there's no value
 
-// Checking presence
-if (present.isPresent()) {
-    String value = present.get(); // => "value" (safe because we checked)
-}
+// Checking presence (before extracting value)
+if (present.isPresent()) {                     // => true (present contains "value")
+                                               // => isPresent() checks if value exists
+    String value = present.get();              // => "value" (safe because we checked isPresent())
+                                               // => get() extracts value (throws if empty)
+}                                              // => Always check isPresent() before calling get()
+                                               // => Better: use orElse/orElseGet instead of get()
 
-if (empty.isEmpty()) {  // Java 11+
-    System.out.println("Empty!"); // => prints "Empty!"
-}
+if (empty.isEmpty()) {                         // => true (empty has no value)
+                                               // => isEmpty() is opposite of isPresent() (Java 11+)
+    System.out.println("Empty!");              // => Output: Empty! (prints because empty)
+}                                              // => isEmpty() more readable than !isPresent()
 
-// ifPresent() - execute if value present
-present.ifPresent(value -> System.out.println(value)); // => prints "value"
-empty.ifPresent(value -> System.out.println(value)); // => nothing (empty)
+// ifPresent() - execute Consumer if value present (functional approach)
+present.ifPresent(value -> System.out.println(value));  // => Output: value (lambda executed)
+                                               // => ifPresent() accepts Consumer<T>
+                                               // => Lambda receives contained value as argument
+                                               // => Executed only if Optional contains value
+empty.ifPresent(value -> System.out.println(value));  // => nothing (lambda not executed, empty)
+                                               // => Empty Optional: Consumer not called
+                                               // => Avoids explicit if (isPresent()) check
 
-// orElse() - provide default value
-String value1 = present.orElse("default"); // => "value"
-String value2 = empty.orElse("default"); // => "default"
+// orElse() - provide default value (eager evaluation)
+String value1 = present.orElse("default");     // => "value" (present has value, default not used)
+                                               // => orElse() returns contained value if present
+                                               // => Returns default if empty
+String value2 = empty.orElse("default");       // => "default" (empty, so default returned)
+                                               // => Default argument evaluated even if not needed
+                                               // => Use orElseGet() for expensive defaults
 
 // orElseGet() - lazy default (Supplier called only if empty)
-String value3 = empty.orElseGet(() -> "computed default"); // => "computed default"
-String value4 = present.orElseGet(() -> "expensive computation"); // => "value" (supplier not called)
+String value3 = empty.orElseGet(() -> "computed default");  // => "computed default" (Supplier executed)
+                                               // => Supplier lambda called only if Optional empty
+                                               // => Efficient for expensive computations
+String value4 = present.orElseGet(() -> "expensive computation");  // => "value" (Supplier not called)
+                                               // => present has value, Supplier never executed
+                                               // => Lazy evaluation: computation avoided
+                                               // => Prefer orElseGet() for expensive defaults
 
-// orElseThrow() - throw exception if empty
+// orElseThrow() - throw exception if empty (fail-fast)
 try {
-    String value5 = empty.orElseThrow(); // => throws NoSuchElementException
-} catch (Exception e) {
-    System.out.println("Exception: " + e.getMessage());
-}
+    String value5 = empty.orElseThrow();       // => throws NoSuchElementException (empty Optional)
+                                               // => orElseThrow() with no argument (Java 10+)
+                                               // => Throws NoSuchElementException if empty
+} catch (Exception e) {                        // => Catch block executes (exception thrown)
+    System.out.println("Exception: " + e.getMessage());  // => Output: No value present
+}                                              // => Use when absence is exceptional condition
 
 String value6 = empty.orElseThrow(() -> new IllegalStateException("Missing!"));
-// => throws IllegalStateException
+                                               // => throws IllegalStateException("Missing!")
+                                               // => Custom exception via Supplier lambda
+                                               // => Supplier called only if empty (lazy)
+                                               // => Use for domain-specific exceptions
 
-// map() - transform value if present
-Optional<String> name = Optional.of("alice");
-Optional<String> upper = name.map(String::toUpperCase); // => Optional["ALICE"]
+// map() - transform value if present (functor operation)
+Optional<String> name = Optional.of("alice");  // => Optional["alice"] (lowercase name)
+Optional<String> upper = name.map(String::toUpperCase);  // => Optional["ALICE"] (transformed)
+                                               // => map() applies function to contained value
+                                               // => Returns new Optional with transformed value
+                                               // => String::toUpperCase method reference
 
-Optional<String> emptyUpper = Optional.<String>empty()
-    .map(String::toUpperCase); // => Optional.empty (map not applied)
+Optional<String> emptyUpper = Optional.<String>empty()  // => Optional.empty (no value)
+                                               // => Explicit type parameter <String> (type inference)
+    .map(String::toUpperCase);                 // => Optional.empty (map not applied, empty in = empty out)
+                                               // => map() on empty Optional returns empty
+                                               // => Transformation function never called
+                                               // => Safe chaining: no null checks needed
 
-// flatMap() - flatten nested Optionals
-class Person {
-    Optional<String> getEmail() {
-        return Optional.of("person@example.com");
-    }
-}
+// flatMap() - flatten nested Optionals (monad operation)
+class Person {                                 // => Inner class for demonstration
+    Optional<String> getEmail() {              // => Returns Optional (email may be absent)
+        return Optional.of("person@example.com");  // => Returns present Optional with email
+    }                                          // => Method return type is Optional<String>
+}                                              // => Class demonstrates nested Optional problem
 
-Optional<Person> person = Optional.of(new Person());
+Optional<Person> person = Optional.of(new Person());  // => Optional[Person] (contains Person instance)
 
-// map returns Optional<Optional<String>> - nested!
+// map returns Optional<Optional<String>> - nested! (wrong)
 Optional<Optional<String>> nestedEmail = person.map(Person::getEmail);
+                                               // => Optional[Optional["person@example.com"]] (nested)
+                                               // => map() wraps return value in Optional
+                                               // => getEmail() already returns Optional
+                                               // => Result: Optional<Optional<String>> (nested containers)
+                                               // => Hard to extract: need nestedEmail.get().get()
 
-// flatMap flattens to Optional<String>
-Optional<String> email = person.flatMap(Person::getEmail); // => Optional["person@example.com"]
+// flatMap flattens to Optional<String> (correct)
+Optional<String> email = person.flatMap(Person::getEmail);  // => Optional["person@example.com"] (flattened)
+                                               // => flatMap() unwraps Optional returned by function
+                                               // => Avoids nesting: Optional<String> not Optional<Optional<String>>
+                                               // => Use flatMap when function returns Optional
+                                               // => Use map when function returns plain value
 
-// filter() - keep value if matches predicate
-Optional<Integer> number = Optional.of(42);
-Optional<Integer> filtered = number.filter(n -> n > 50); // => Optional.empty
-Optional<Integer> kept = number.filter(n -> n > 40); // => Optional[42]
+// filter() - keep value if matches predicate (conditional retention)
+Optional<Integer> number = Optional.of(42);    // => Optional[42] (contains 42)
+Optional<Integer> filtered = number.filter(n -> n > 50);  // => Optional.empty (42 not > 50, filtered out)
+                                               // => filter() tests value with Predicate
+                                               // => Returns empty if predicate false
+                                               // => Returns same Optional if predicate true
+Optional<Integer> kept = number.filter(n -> n > 40);  // => Optional[42] (42 > 40, kept)
+                                               // => Predicate true: value retained
+                                               // => Original Optional returned unchanged
 
-// Chaining operations
-Optional<String> result = Optional.of("  HELLO  ")
-    .map(String::trim)           // => Optional["HELLO"]
-    .map(String::toLowerCase)    // => Optional["hello"]
-    .filter(s -> s.length() > 3) // => Optional["hello"]
-    .map(s -> s + "!"); // => Optional["hello!"]
+// Chaining operations (pipeline of transformations)
+Optional<String> result = Optional.of("  HELLO  ")  // => Optional["  HELLO  "] (whitespace padding)
+    .map(String::trim)                         // => Optional["HELLO"] (whitespace removed)
+                                               // => trim() removes leading/trailing whitespace
+    .map(String::toLowerCase)                  // => Optional["hello"] (converted to lowercase)
+                                               // => toLowerCase() transforms to lowercase
+    .filter(s -> s.length() > 3)               // => Optional["hello"] (length 5 > 3, kept)
+                                               // => filter() checks length condition
+    .map(s -> s + "!");                        // => Optional["hello!"] (exclamation appended)
+                                               // => Final transformation adds suffix
+                                               // => Chaining avoids intermediate variables
 
-String finalResult = result.orElse("default"); // => "hello!"
+String finalResult = result.orElse("default"); // => "hello!" (extract with default fallback)
+                                               // => orElse() unwraps Optional to String
+                                               // => If any step returned empty, default used
 
-// Example: replacing null checks
-// Traditional null checking (verbose)
-String getNullable() {
-    return Math.random() > 0.5 ? "value" : null;
-}
+// Example: replacing null checks (verbose vs Optional)
+// Traditional null checking (verbose, error-prone)
+String getNullable() {                         // => Method that may return null
+    return Math.random() > 0.5 ? "value" : null;  // => 50% chance of null return
+}                                              // => No type-level indication of possible null
 
-String traditional = getNullable();
-String processed;
-if (traditional != null) {
-    String upper = traditional.toUpperCase();
-    if (upper.length() > 3) {
-        processed = upper;
-    } else {
-        processed = "default";
-    }
-} else {
-    processed = "default";
-}
+String traditional = getNullable();            // => May be "value" or null (uncertain)
+String processed;                              // => Declare result variable (uninitialized)
+if (traditional != null) {                     // => Null check (must remember to check)
+    String upper = traditional.toUpperCase();  // => Safe: traditional not null
+    if (upper.length() > 3) {                  // => Nested condition (increasing complexity)
+        processed = upper;                     // => Assign transformed value
+    } else {                                   // => Length <= 3 case
+        processed = "default";                 // => Assign default
+    }                                          // => Two levels of nesting
+} else {                                       // => Null case (must handle)
+    processed = "default";                     // => Assign default (code duplication)
+}                                              // => Verbose: 12 lines for simple transformation
 
-// Optional approach (cleaner)
-Optional<String> getOptional() {
-    return Math.random() > 0.5 ? Optional.of("value") : Optional.empty();
-}
+// Optional approach (cleaner, type-safe)
+Optional<String> getOptional() {               // => Method signature indicates possible absence
+    return Math.random() > 0.5 ? Optional.of("value") : Optional.empty();  // => Returns Optional
+}                                              // => Type system documents nullability
 
-String processedOptional = getOptional()
-    .map(String::toUpperCase)
-    .filter(s -> s.length() > 3)
-    .orElse("default");
+String processedOptional = getOptional()       // => Start with Optional<String>
+    .map(String::toUpperCase)                  // => Transform to uppercase if present
+    .filter(s -> s.length() > 3)               // => Keep only if length > 3
+    .orElse("default");                        // => Provide default if empty
+                                               // => 4 lines (vs 12), no nested ifs
+                                               // => Functional pipeline: declarative
 
-// When NOT to use Optional
-class BadPractice {
+// When NOT to use Optional (anti-patterns)
+class BadPractice {                            // => Class demonstrating misuse patterns
     // DON'T use Optional for fields
-    // private Optional<String> name; // BAD
+    // private Optional<String> name;          // BAD: serialization issues, memory overhead
+                                               // => Fields should be nullable or @NonNull
+                                               // => Optional adds object wrapper overhead
+                                               // => Breaks serialization frameworks
 
     // DON'T use Optional for method parameters
-    // public void setName(Optional<String> name) {} // BAD
+    // public void setName(Optional<String> name) {}  // BAD: forces callers to wrap
+                                               // => Callers must create Optional: setName(Optional.of(value))
+                                               // => Use nullable parameter or overloading instead
+                                               // => Optional parameters add complexity
 
     // DON'T call get() without checking
-    // String value = optional.get(); // BAD: may throw NoSuchElementException
-}
+    // String value = optional.get();          // BAD: may throw NoSuchElementException
+                                               // => get() unsafe: throws if empty
+                                               // => Use orElse/orElseGet/orElseThrow instead
+}                                              // => Optional designed for return types only
 
-// DO use Optional for return types
-class GoodPractice {
-    private String name;
+// DO use Optional for return types (best practice)
+class GoodPractice {                           // => Class demonstrating correct usage
+    private String name;                       // => Field is nullable (not Optional)
 
-    public Optional<String> getName() {
-        return Optional.ofNullable(name); // GOOD
-    }
+    public Optional<String> getName() {        // => Return type Optional<String> (documents possibility of absence)
+        return Optional.ofNullable(name);      // => GOOD: wraps nullable field at boundary
+    }                                          // => ofNullable() safely handles null name
+                                               // => Caller knows to handle absence
 
-    public void processName(String name) { // GOOD: plain parameter
-        this.name = name;
-    }
-}
+    public void processName(String name) {     // => GOOD: plain parameter (nullable)
+                                               // => Caller passes null or value directly
+        this.name = name;                      // => Store nullable value
+    }                                          // => No Optional wrapper needed
+}                                              // => Use Optional only for return types
 
-// Stream of Optionals (Java 9+)
-List<Optional<String>> list = List.of(
-    Optional.of("A"),
-    Optional.empty(),
-    Optional.of("B"),
-    Optional.empty(),
-    Optional.of("C")
-);
+// Stream of Optionals (Java 9+) - filtering empty values
+List<Optional<String>> list = List.of(         // => List of Optional<String> (mixed present/empty)
+    Optional.of("A"),                          // => First element: present
+    Optional.empty(),                          // => Second element: empty
+    Optional.of("B"),                          // => Third element: present
+    Optional.empty(),                          // => Fourth element: empty
+    Optional.of("C")                           // => Fifth element: present
+);                                             // => Immutable list (Java 9+ List.of())
 
-List<String> values = list.stream()
-    .flatMap(Optional::stream) // Flatten Optional to Stream
-    .collect(Collectors.toList()); // => ["A", "B", "C"]
+List<String> values = list.stream()            // => Create stream of Optional<String>
+    .flatMap(Optional::stream)                 // => Flatten: Optional.stream() returns Stream of 0 or 1 element
+                                               // => Present Optional -> Stream with 1 element
+                                               // => Empty Optional -> empty Stream
+                                               // => flatMap flattens all streams into one
+    .collect(Collectors.toList());             // => ["A", "B", "C"] (empty Optionals filtered out)
+                                               // => Result: List<String> with only present values
+                                               // => Alternative to manual filtering with isPresent()
 ```
 
 **Key Takeaway**: `Optional<T>` explicitly handles potential absence. Create with `of()`, `ofNullable()`, `empty()`. Check with `isPresent()`, `isEmpty()`. Extract with `get()` (after checking), `orElse()`, `orElseGet()`, `orElseThrow()`. Transform with `map()`, `flatMap()`, `filter()`. Use for return types, NOT fields or parameters. Chaining avoids nested null checks.

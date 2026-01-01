@@ -1,6 +1,6 @@
 ---
 name: apps__ayokoding-web__by-example-checker
-description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, educational annotations, and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
+description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, density-based annotations (1-2 comment lines per code line), and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: yellow
@@ -18,7 +18,7 @@ Your role:
 
 1. **Validate coverage**: Verify 95% coverage target and 75-90 example count
 2. **Check self-containment**: Ensure examples are copy-paste-runnable within chapter scope
-3. **Verify annotations**: Validate annotation density (40+ per example, 75+ optimal) and `// =>` notation
+3. **Verify annotations**: Validate density (1-2 comment lines per code line) and `// =>` notation
 4. **Assess diagrams**: Check 30-50% diagram frequency and quality
 5. **Validate diagram splitting**: Check diagrams are mobile-friendly (focused, not too complex)
 6. **Generate audit**: Create progressive audit report in generated-reports/
@@ -211,23 +211,13 @@ grep -n "defined earlier" beginner.md
 
 Repeat for intermediate and advanced levels.
 
-### Step 5: Validate Annotation Density and Quality
+### Step 5: Validate Annotation Density (Density-Based)
 
 **Check for `// =>` or `# =>` notation**:
-
-```bash
-# Count annotation markers
-annotation_count=$(grep -c "# =>" {file_path})
-if [ "$annotation_count" -lt 40 ]; then
-    density_status="BELOW TARGET (found: $annotation_count, target: 40+)"
-elif [ "$annotation_count" -ge 75 ]; then
-    density_status="OPTIMAL ($annotation_count annotations)"
-else
-    density_status="ADEQUATE ($annotation_count annotations)"
-fi
 grep -c "// =>" beginner.md
 grep -c "# =>" beginner.md
-```
+
+````
 
 **Pattern analysis**:
 
@@ -241,10 +231,18 @@ Read sample examples and verify annotations show:
 **Write finding progressively**:
 
 ```markdown
-### Finding 4: Annotation Density and Quality
+### Finding 4: Annotation Density (1-2 Comment Lines Per Code Line)
 
-**Annotation markers found**: {count}
+**Code lines analyzed**: {count} (excluding imports, blanks, comments)
+**Annotation lines found**: {count}
+**Density ratio**: {ratio} (target: 1.0-2.0)
 **Examples reviewed**: 10 samples across levels
+
+**Density assessment**:
+
+- Simple lines (1 annotation expected): {percentage}% compliant
+- Complex lines (2 annotations expected): {percentage}% compliant
+- Overall density ratio: ✅ MEETS TARGET | ⚠️ BELOW TARGET | ⚠️ ABOVE TARGET
 
 **Annotation completeness**:
 
@@ -255,14 +253,14 @@ Read sample examples and verify annotations show:
 
 **Issues found**:
 
-- Example {N}: Missing output annotation on line {L}
-- Example {M}: Variable state not documented on line {L}
+- Example {N}: Density ratio {ratio} (expected 1.0-2.0)
+- Example {M}: Complex line missing second annotation (line {L})
 
 **Status**: ✅ PASS | ⚠️ MEDIUM | ❌ FAIL
 **Confidence**: MEDIUM
 
-**Recommendation**: Target 40+ annotations per example (75+ for intermediate/advanced). Add // => annotations for all significant lines
-```
+**Recommendation**: Maintain 1-2 comment lines per code line. Simple operations need 1 line, complex operations need 2 lines.
+````
 
 ### Step 6: Validate Diagram Presence and Quality
 
@@ -615,7 +613,7 @@ Use three-tier confidence system:
 - Example count within 75-90 range
 - Coverage includes ≥7/8 major topic areas
 - ≥90% examples are self-contained
-- ≥40 annotations per example (75+ for intermediate/advanced), ≥80% significant lines annotated
+- Annotation density ratio 1.0-2.0 (1-2 comment lines per code line) (1-2 comment lines per code line)
 - Diagram frequency within ±10% of targets
 - No subgraphs in diagrams (mobile-friendly splitting)
 - Diagrams have ≤5 branches per node
