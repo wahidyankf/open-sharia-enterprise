@@ -111,7 +111,7 @@ Focus on running and understanding examples rather than memorizing syntax. Terra
 
 ## Example Structure
 
-Each example follows a four-part format:
+Each example follows a five-part format:
 
 1. **Explanation** (2-4 sentences) - What the example demonstrates and why it matters
 2. **Diagram** (when helpful) - Mermaid diagram visualizing infrastructure or execution flow

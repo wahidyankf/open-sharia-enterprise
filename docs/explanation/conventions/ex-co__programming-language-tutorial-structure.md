@@ -147,7 +147,7 @@ See [Programming Language Content Standard](./ex-co__programming-language-conten
 - **Self-contained examples** runnable without dependencies
 - **Educational comments** showing outputs, states, intermediate values
 - **Mermaid diagrams** when appropriate for concept relationships
-- **Four-part structure** per example: brief explanation, optional diagram, heavily commented code, key takeaway
+- **Five-part structure** per example: brief explanation, optional diagram, heavily commented code, key takeaway
 
 **Target Audience:**
 
@@ -172,7 +172,7 @@ by-example/
 
 See [By Example Tutorial Convention](./ex-co__by-example-tutorial.md) for complete by-example standards including:
 
-- Four-part example structure
+- Five-part example structure
 - Self-containment rules
 - Educational comment standards (`// =>` notation)
 - Coverage progression (0-40%, 40-75%, 75-95%)
@@ -516,7 +516,7 @@ weight: 100002
 
 - ✅ By-example directory structure (when exists)
 - ✅ 75-90 examples across three files
-- ✅ Four-part example structure
+- ✅ Five-part example structure
 - ✅ Self-containment rules
 - ✅ Educational comment standards
 - ✅ Coverage progression
@@ -543,7 +543,7 @@ Before publishing new language tutorials:
 - [ ] No categories field in frontmatter
 - [ ] Tags use JSON array format
 - [ ] If by-example exists: 75-90 examples across three files
-- [ ] If by-example exists: Four-part structure per example
+- [ ] If by-example exists: Five-part structure per example
 - [ ] Cross-references to Programming Language Content Standard
 
 ## Common Mistakes
@@ -713,7 +713,7 @@ Run `ayokoding-web-by-example-checker` to verify structure and content quality.
 ## Related Conventions
 
 - **[Programming Language Content Standard](./ex-co__programming-language-content.md)** - Universal content architecture for programming languages (5 tutorial levels, coverage philosophy, quality metrics, pedagogical patterns)
-- **[By Example Tutorial Convention](./ex-co__by-example-tutorial.md)** - Complete standards for creating code-first by-example tutorials (four-part structure, self-containment, educational comments, coverage progression)
+- **[By Example Tutorial Convention](./ex-co__by-example-tutorial.md)** - Complete standards for creating code-first by-example tutorials (five-part structure, self-containment, educational comments, coverage progression)
 - **[Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md)** - Hextra theme specifics (level-based weights, absolute paths, navigation depth, frontmatter requirements)
 - **[Tutorial Naming Convention](./ex-co__tutorial-naming.md)** - Tutorial type definitions (Initial Setup, Quick Start, Beginner, Intermediate, Advanced coverage percentages)
 - **[Content Quality Principles](./ex-co__content-quality.md)** - Universal markdown quality standards (active voice, heading hierarchy, accessibility)

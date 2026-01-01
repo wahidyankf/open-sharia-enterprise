@@ -85,7 +85,7 @@ Coverage percentages indicate **depth and breadth** of Python knowledge, not tim
 
 ## Example Format
 
-Every example follows a **four-part format**:
+Every example follows a **five-part format**:
 
 ### 1. Brief Explanation (2-3 sentences)
 

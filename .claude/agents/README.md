@@ -26,10 +26,10 @@ Expert at creating new AI agents following all repository conventions.
 
 ### 🟦 `ayokoding-web-by-example-maker.md`
 
-Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses four-part format (explanation, diagram, annotated code, takeaway) with self-contained examples.
+Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses five-part format (explanation, diagram, annotated code, takeaway) with self-contained examples.
 
 - **Primary Use:** Creating by-example tutorial content for experienced developers switching languages or frameworks
-- **Specialization:** Code-first learning materials, 75-90 annotated examples per language/framework, 95% coverage target, four-part format (explanation → diagram → annotated code → takeaway), self-contained runnable examples, educational comment standards (`// =>` notation), color-blind friendly diagrams (30-50% frequency)
+- **Specialization:** Code-first learning materials, 75-90 annotated examples per language/framework, 95% coverage target, five-part format (explanation → diagram → annotated code → takeaway), self-contained runnable examples, educational comment standards (`// =>` notation), color-blind friendly diagrams (30-50% frequency)
 - **Tools:** Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 - **Model:** sonnet (advanced educational content design, pattern recognition for coverage, multi-step workflow orchestration)
 - **When to Use:**
@@ -112,7 +112,7 @@ Applies validated fixes from ayokoding-web-general-checker audit reports. Re-val
 Expert at creating by-example tutorials with 75-90 annotated examples achieving 95% coverage for ayokoding-web.
 
 - **Primary Use:** Creating code-first learning resources with comprehensive annotated examples
-- **Specialization:** Four-part format (explanation, diagram, annotated code with `// =>` notation, key takeaway), self-contained examples, color-blind friendly diagrams, bilingual support
+- **Specialization:** Five-part format (explanation, diagram, annotated code with `// =>` notation, key takeaway), self-contained examples, color-blind friendly diagrams, bilingual support
 - **Tools:** Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 - **When to Use:**
   - Creating new by-example tutorials for programming languages/frameworks

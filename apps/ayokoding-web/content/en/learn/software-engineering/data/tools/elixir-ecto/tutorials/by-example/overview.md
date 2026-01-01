@@ -73,7 +73,7 @@ Traditional tutorials explain concepts then show code. By-example tutorials reve
 
 ## Four-Part Example Format
 
-Every example follows a **mandatory four-part structure**:
+Every example follows a **mandatory five-part structure**:
 
 ### Part 1: Brief Explanation (2-3 sentences)
 

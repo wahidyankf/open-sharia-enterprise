@@ -11,7 +11,7 @@ tags:
   - documentation
   - teaching
 created: 2025-12-03
-updated: 2025-12-03
+updated: 2026-01-01
 ---
 
 # Tutorial Convention
@@ -31,6 +31,8 @@ This convention implements the following core principles:
 ## Purpose
 
 This convention establishes comprehensive standards for tutorial content across all tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). It ensures tutorials are learning-oriented, progressively structured, and free of time estimates, providing effective educational experiences.
+
+**Note**: The By Example tutorial type has specialized standards defined in [By-Example Tutorial Convention](./ex-co__by-example-tutorial.md) that extend the general requirements in this document for code-first learning.
 
 ## Scope
 
@@ -111,7 +113,7 @@ tags:
   - [domain]
   - quick-start (if applicable)
 created: YYYY-MM-DD
-updated: YYYY-MM-DD
+updated: 2026-01-01
 ---
 
 # [Subject] Quick Start
@@ -1519,7 +1521,7 @@ tags:
   - [domain]
   - quick-start
 created: YYYY-MM-DD
-updated: YYYY-MM-DD
+updated: 2026-01-01
 ---
 
 # [Subject] Quick Start

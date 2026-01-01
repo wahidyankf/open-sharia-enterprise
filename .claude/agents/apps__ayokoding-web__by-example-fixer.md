@@ -239,7 +239,45 @@ y := x * 2                   // => y is 20 (x still 10)
 
 **Re-validation required**: Ensure takeaway accurately reflects the example's core insight.
 
-**3. Add diagrams where beneficial** (verify necessity first):
+**2.5. Adjust annotation density** (verify educational value preserved):
+
+**Under-annotated examples** (density < 1.0):
+
+```go
+// BEFORE (under-annotated, density ~0.5)
+x := calculate(input)
+result := transform(x)
+output(result)
+
+// AFTER (add annotations to reach 1.0-2.25 density)
+x := calculate(input)           // => x is computed value (type: int)
+result := transform(x)           // => result is "transformed-X" (string)
+output(result)                   // => Output: transformed-X
+```
+
+**Over-annotated examples** (density > 2.5):
+
+```go
+// BEFORE (over-annotated, density ~3.0)
+// This variable stores the user input
+// It comes from the command line arguments
+// The type is string
+x := os.Args[1]
+
+// AFTER (condense to 1.0-2.25 density)
+x := os.Args[1]                  // => x is first CLI argument (type: string)
+```
+
+**Re-validation required**:
+
+- For under-annotated: Verify which lines need annotations (not all lines are significant)
+- For over-annotated: Ensure condensing preserves educational value (don't lose critical insights)
+- Target range: 1.0-2.25 comment lines per code line
+- Upper bound: Never exceed 2.5 (condense if over limit)
+
+**Confidence**: MEDIUM (requires judgment on educational value vs verbosity tradeoff)
+
+**4. Add diagrams where beneficial** (verify necessity first):
 
 **Re-validation required**:
 
@@ -247,7 +285,7 @@ y := x * 2                   // => y is 20 (x still 10)
 - Does diagram clarify or clutter?
 - Is this appropriate use of diagram budget (30-50%)?
 
-**5. Add missing "Why It Matters" sections** (verify production relevance):
+**3. Add missing "Why It Matters" sections** (verify production relevance):
 
 ```markdown
 # BEFORE (no Why It Matters)
@@ -272,7 +310,7 @@ y := x * 2                   // => y is 20 (x still 10)
 - Is it 50-100 words (2-3 sentences)?
 - Is it contextual (not generic)?
 
-**4. Condense verbose explanations** (preserve meaning):
+**5. Condense verbose explanations** (preserve meaning):
 
 ```markdown
 # BEFORE (5 sentences)

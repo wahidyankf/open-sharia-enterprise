@@ -1,6 +1,6 @@
 ---
 name: apps__ayokoding-web__by-example-checker
-description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, density-based annotations (1-2 comment lines per code line), and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
+description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, density-based annotations (1-2.25 comment lines per code line), and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: yellow
@@ -217,7 +217,7 @@ Repeat for intermediate and advanced levels.
 grep -c "// =>" beginner.md
 grep -c "# =>" beginner.md
 
-````
+`````
 
 **Pattern analysis**:
 
@@ -230,19 +230,19 @@ Read sample examples and verify annotations show:
 
 **Write finding progressively**:
 
-```markdown
-### Finding 4: Annotation Density (1-2 Comment Lines Per Code Line)
+### Finding 4: Annotation Density (1-2.25 Comment Lines Per Code Line)
 
 **Code lines analyzed**: {count} (excluding imports, blanks, comments)
 **Annotation lines found**: {count}
-**Density ratio**: {ratio} (target: 1.0-2.0)
+**Density ratio**: {ratio} (target: 1.0-2.25, upper bound: 2.5)
 **Examples reviewed**: 10 samples across levels
 
 **Density assessment**:
 
-- Simple lines (1 annotation expected): {percentage}% compliant
-- Complex lines (2 annotations expected): {percentage}% compliant
-- Overall density ratio: ✅ MEETS TARGET | ⚠️ BELOW TARGET | ⚠️ ABOVE TARGET
+- Simple lines (1 annotation): {percentage}% compliant
+- Complex lines (2 annotations): {percentage}% compliant
+- Very complex lines (up to 2.25 annotations): {percentage}% compliant
+- Overall density ratio: ✅ MEETS TARGET (1.0-2.25) | ⚠️ BELOW TARGET (<1.0) | ⚠️ ABOVE UPPER BOUND (>2.5)
 
 **Annotation completeness**:
 
@@ -253,14 +253,20 @@ Read sample examples and verify annotations show:
 
 **Issues found**:
 
-- Example {N}: Density ratio {ratio} (expected 1.0-2.0)
+- Example {N}: Density ratio {ratio} (under-annotated if <1.0, over-annotated if >2.5)
 - Example {M}: Complex line missing second annotation (line {L})
+
+**Criticality levels**:
+
+- **MEDIUM**: Density < 1.0 (under-annotated)
+- **MEDIUM**: Density > 2.5 (over-annotated, requires condensing)
+- **LOW**: Density 2.26-2.5 (acceptable but high, consider condensing)
+- **Target**: 1.0-2.25 (optimal range)
 
 **Status**: ✅ PASS | ⚠️ MEDIUM | ❌ FAIL
 **Confidence**: MEDIUM
 
-**Recommendation**: Maintain 1-2 comment lines per code line. Simple operations need 1 line, complex operations need 2 lines.
-````
+**Recommendation**: Maintain 1-2.25 comment lines per code line. Simple operations: 1 line, complex operations: 2 lines, very complex: up to 2.25 lines. If density exceeds 2.5, condense annotations to bring within target range.
 
 ### Step 6: Validate Diagram Presence and Quality
 
@@ -271,7 +277,7 @@ Read sample examples and verify annotations show:
 grep -c "^```mermaid" beginner.md
 grep -c "^```mermaid" intermediate.md
 grep -c "^```mermaid" advanced.md
-````
+`````
 
 **Calculate diagram frequency**:
 
@@ -400,7 +406,7 @@ For each Mermaid diagram:
 - Add descriptive headers between multiple diagrams
 ```
 
-### Step 7: Validate Four-Part Format
+### Step 7: Validate Five-Part Format
 
 **For sample examples**, verify structure:
 **For sample examples**, verify structure:
@@ -422,7 +428,7 @@ grep -c "^\*\*Key Takeaway\*\*" beginner.md
 **Write finding progressively**:
 
 ```markdown
-### Finding 6: Four-Part Format Compliance
+### Finding 6: Five-Part Format Compliance
 
 **Examples checked**: 15 samples
 
@@ -507,7 +513,7 @@ After all validations complete, update executive summary in audit report:
 4. Annotations: {status} (density: {count}/example, target: 40+, notation: {present/sparse})
 5. Diagrams: {status} ({percentage}% frequency vs targets)
 6. Diagram splitting: {status} ({issues} subgraphs/excessive branching)
-7. Format: {status} (four-part structure {compliant/issues})
+7. Format: {status} (five-part structure {compliant/issues})
 
 **Priority Recommendations**:
 
@@ -613,7 +619,7 @@ Use three-tier confidence system:
 - Example count within 75-90 range
 - Coverage includes ≥7/8 major topic areas
 - ≥90% examples are self-contained
-- Annotation density ratio 1.0-2.0 (1-2 comment lines per code line) (1-2 comment lines per code line)
+- Annotation density ratio 1.0-2.25 (1-2.25 comment lines per code line, upper bound: 2.5)
 - Diagram frequency within ±10% of targets
 - No subgraphs in diagrams (mobile-friendly splitting)
 - Diagrams have ≤5 branches per node

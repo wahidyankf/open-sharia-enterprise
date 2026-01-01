@@ -103,7 +103,7 @@ kubectl delete -f manifest.yaml
 
 ## Example Format
 
-Every example follows a **mandatory four-part format**:
+Every example follows a **mandatory five-part format**:
 
 ### Part 1: Brief Explanation (2-3 sentences)
 
@@ -467,7 +467,7 @@ Before completing by-example content, verify:
 
 **Structure**:
 
-- [ ] Four-part format followed consistently
+- [ ] five-part format followed consistently
 - [ ] Examples numbered sequentially (1-85)
 - [ ] File naming convention followed
 - [ ] Frontmatter complete and accurate

@@ -61,7 +61,7 @@ docker run -it --rm \
 
 ### Example Format
 
-Every example follows a **four-part format**:
+Every example follows a **five-part format**:
 
 1. **Brief explanation** (2-3 sentences) - What, why, when
 2. **Mermaid diagram** (30-50% of examples) - Visual workflow representation
