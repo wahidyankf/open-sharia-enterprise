@@ -1436,45 +1436,122 @@ Data classes automatically generate `equals()`, `hashCode()`, `toString()`, and 
 
 ```kotlin
 // Data class for holding user data
-data class User(
-    val id: Int,
-    val name: String,
-    val email: String
-)                                    // => Compiler generates equals, hashCode, toString, copy
+data class User(                     // => data: modifier for data-holding classes
+                                     // => class: declares new class type
+                                     // => User: class name
+                                     // => Compiler generates equals, hashCode, toString, copy automatically
+                                     // => Only primary constructor properties included in generated methods
+    val id: Int,                     // => id: first property (immutable)
+                                     // => Int: property type
+                                     // => Used in equals/hashCode/toString/destructuring
+                                     // => Position 1 in destructuring (componentN functions)
+    val name: String,                // => name: second property (immutable)
+                                     // => String: property type
+                                     // => Position 2 in destructuring
+    val email: String                // => email: third property (immutable)
+                                     // => Position 3 in destructuring
+)                                    // => Data class declaration complete
+                                     // => Generated methods:
+                                     // => equals(other: Any?): compares all properties
+                                     // => hashCode(): combines all properties' hash codes
+                                     // => toString(): formats as "User(id=1, name=Alice, email=...)"
+                                     // => copy(...): creates modified copy
+                                     // => component1(), component2(), component3(): for destructuring
 
-fun main() {
+fun main() {                         // => Program entry point
+    // Object creation
     val user1 = User(1, "Alice", "alice@example.com")
-                                     // => user1 has id=1, name="Alice", email="alice@example.com"
+                                     // => User(): calls primary constructor
+                                     // => 1: id parameter
+                                     // => "Alice": name parameter
+                                     // => "alice@example.com": email parameter
+                                     // => user1.id is 1
+                                     // => user1.name is "Alice"
+                                     // => user1.email is "alice@example.com"
+                                     // => All properties immutable (val)
 
     // Automatic toString()
-    println(user1)                   // => Output: User(id=1, name=Alice, email=alice@example.com)
+    println(user1)                   // => Calls user1.toString() implicitly
+                                     // => Generated toString formats all properties
+                                     // => Includes property names and values
+                                     // => Output: User(id=1, name=Alice, email=alice@example.com)
 
     // Automatic equals() (structural equality)
     val user2 = User(1, "Alice", "alice@example.com")
-    println(user1 == user2)          // => Output: true (same values)
-    println(user1 === user2)         // => Output: false (different objects)
+                                     // => user2: separate object with same values
+                                     // => user2.id is 1 (same as user1)
+                                     // => user2.name is "Alice" (same as user1)
+                                     // => user2.email is "alice@example.com" (same as user1)
+    println(user1 == user2)          // => ==: calls equals() method
+                                     // => Compares all properties structurally
+                                     // => id: 1 == 1 (true)
+                                     // => name: "Alice" == "Alice" (true)
+                                     // => email: "alice@example.com" == "alice@example.com" (true)
+                                     // => All properties match
+                                     // => Output: true (same values)
+    println(user1 === user2)         // => ===: referential equality (same object?)
+                                     // => user1 and user2 are different objects in memory
+                                     // => Different memory addresses
+                                     // => Output: false (different objects)
 
     // copy() with modification
     val user3 = user1.copy(email = "newemail@example.com")
-                                     // => user3 has id=1, name="Alice", email="newemail@example.com"
+                                     // => copy(): generated method creates modified copy
+                                     // => email = "newemail@example.com": named parameter
+                                     // => Copies id and name from user1
+                                     // => Replaces email with new value
+                                     // => user3.id is 1 (copied from user1)
+                                     // => user3.name is "Alice" (copied from user1)
+                                     // => user3.email is "newemail@example.com" (new value)
                                      // => user1 remains unchanged
+                                     // => user1.email still "alice@example.com"
+                                     // => Creates new User object (immutability preserved)
 
     // Destructuring declaration
-    val (id, name, email) = user1    // => id is 1, name is "Alice", email is "alice@example.com"
-    println("ID: $id, Name: $name")  // => Output: ID: 1, Name: Alice
+    val (id, name, email) = user1    // => Destructuring: extracts properties to variables
+                                     // => Calls component1(), component2(), component3()
+                                     // => id: first component (user1.id via component1())
+                                     // => name: second component (user1.name via component2())
+                                     // => email: third component (user1.email via component3())
+                                     // => id is 1
+                                     // => name is "Alice"
+                                     // => email is "alice@example.com"
+                                     // => Local variables created from object properties
+    println("ID: $id, Name: $name")  // => String template with destructured variables
+                                     // => $id: inserts id value (1)
+                                     // => $name: inserts name value ("Alice")
+                                     // => Output: ID: 1, Name: Alice
 
     // Data classes in collections
-    val users = listOf(
+    val users = listOf(              // => listOf(): creates immutable list
         User(1, "Alice", "alice@example.com"),
+                                     // => First user: id=1, name="Alice"
         User(2, "Bob", "bob@example.com"),
+                                     // => Second user: id=2, name="Bob"
         User(1, "Alice", "alice@example.com")
-    )                                // => List of 3 users
+                                     // => Third user: same values as first
+                                     // => Duplicate by equals() comparison
+    )                                // => users: List<User> with 3 elements
+                                     // => users.size is 3
+                                     // => First and third are equal (not same object)
 
-    val uniqueUsers = users.toSet()  // => Set removes duplicate (first and third are equal)
-    println(uniqueUsers.size)        // => Output: 2 (duplicate removed)
+    val uniqueUsers = users.toSet()  // => toSet(): converts list to set
+                                     // => Set uses equals() and hashCode() for uniqueness
+                                     // => Compares user1 and user3 with equals()
+                                     // => user1 == user3 is true (same values)
+                                     // => Set removes duplicate
+                                     // => uniqueUsers contains 2 elements
+                                     // => Element 1: User(1, "Alice", "alice@example.com")
+                                     // => Element 2: User(2, "Bob", "bob@example.com")
+    println(uniqueUsers.size)        // => uniqueUsers.size is 2
+                                     // => Duplicate removed by structural equality
+                                     // => Output: 2 (duplicate removed)
 
-    println(user3)                   // => Output: User(id=1, name=Alice, email=newemail@example.com)
-}
+    println(user3)                   // => Calls user3.toString()
+                                     // => Generated toString formats properties
+                                     // => Output: User(id=1, name=Alice, email=newemail@example.com)
+}                                    // => main returns
+                                     // => Objects eligible for GC when references lost
 ```
 
 **Key Takeaway**: Use data classes when you need value-based equality, automatic `toString()`, and immutable copies via `copy()`; they eliminate boilerplate for data containers.
@@ -1505,60 +1582,147 @@ graph TD
 ```kotlin
 // Base class (must be open to allow inheritance)
 open class Animal(val name: String) {
+                                     // => open: allows inheritance (not final)
+                                     // => class: declares new type
+                                     // => Animal: base class name
+                                     // => (val name: String): primary constructor parameter
+                                     // => name becomes immutable property in all instances
+                                     // => Without 'open', would cause compile error for Dog/Cat
     // Open method (can be overridden)
-    open fun sound() {
+    open fun sound() {               // => open: allows subclasses to override
+                                     // => fun: method declaration
+                                     // => sound(): method name with no parameters
+                                     // => Returns Unit (implicit)
+                                     // => Provides default implementation
         println("$name makes a sound")
-    }
+                                     // => String template with name property
+                                     // => Default behavior for generic animals
+    }                                // => Method marked for potential override
 
     // Final method (cannot be overridden)
-    fun sleep() {
-        println("$name is sleeping")
-    }
-}
+    fun sleep() {                    // => fun without 'open': final method
+                                     // => Cannot be overridden in subclasses
+                                     // => Shared behavior across all animals
+        println("$name is sleeping") // => Accesses name property
+                                     // => Same implementation for all subclasses
+    }                                // => Final method (no override allowed)
+}                                   // => Animal class definition complete
 
 // Subclass inheriting from Animal
 class Dog(name: String) : Animal(name) {
-                                     // => Calls Animal constructor with name
+                                     // => class: declares new type (final by default)
+                                     // => Dog: subclass name
+                                     // => (name: String): Dog's constructor parameter
+                                     // => Note: 'name' is NOT a property (no val/var)
+                                     // => : Animal(name): inheritance syntax
+                                     // => : specifies parent class
+                                     // => Animal(name): calls Animal's primary constructor
+                                     // => Passes name to Animal constructor
+                                     // => Animal's name property set to received value
+                                     // => Dog inherits name property from Animal
+                                     // => Dog is-a Animal (subtype relationship)
 
     // Override method
-    override fun sound() {
+    override fun sound() {           // => override: keyword required for overriding
+                                     // => Compiler enforces override keyword
+                                     // => fun sound(): matches Animal's signature
+                                     // => Replaces Animal's implementation
+                                     // => Without override keyword: compile error
         println("$name barks: Woof!")
-    }                                // => Replaces Animal's sound() implementation
+                                     // => Accesses inherited name property
+                                     // => Dog-specific behavior
+                                     // => Polymorphic dispatch at runtime
+    }                                // => Override complete (replaces base method)
 
     // New method specific to Dog
-    fun fetch() {
+    fun fetch() {                    // => New method (not in Animal)
+                                     // => Dog-specific functionality
+                                     // => Not available on Animal reference
         println("$name fetches the ball")
-    }
-}
+                                     // => Uses inherited name property
+    }                                // => Dog-exclusive method
+}                                   // => Dog class complete (Animal subclass)
 
 class Cat(name: String) : Animal(name) {
-    override fun sound() {
+                                     // => Cat: another Animal subclass
+                                     // => (name: String): Cat's constructor parameter
+                                     // => : Animal(name): inherits from Animal
+                                     // => Calls Animal constructor
+                                     // => Cat is-a Animal (parallel to Dog)
+    override fun sound() {           // => Overrides Animal's sound method
+                                     // => Different implementation than Dog
+                                     // => Polymorphism: same signature, different behavior
         println("$name meows: Meow!")
-    }
-}
+                                     // => Cat-specific sound
+                                     // => Uses inherited name property
+    }                                // => Cat's override complete
+}                                   // => Cat class complete
 
-fun main() {
-    val animal = Animal("Generic")   // => animal.name is "Generic"
-    animal.sound()                   // => Output: Generic makes a sound
-    animal.sleep()                   // => Output: Generic is sleeping
+fun main() {                        // => Program entry point
+    // Base class instantiation
+    val animal = Animal("Generic")   // => Animal(): calls base class constructor
+                                     // => "Generic": passed to name parameter
+                                     // => animal.name is "Generic" (immutable)
+                                     // => Type: Animal (base class)
+    animal.sound()                   // => Calls Animal's sound method
+                                     // => No overriding (direct base class instance)
+                                     // => Output: Generic makes a sound
+    animal.sleep()                   // => Calls final sleep method
+                                     // => Same implementation for all types
+                                     // => Output: Generic is sleeping
 
-    val dog = Dog("Buddy")           // => dog.name is "Buddy"
-    dog.sound()                      // => Output: Buddy barks: Woof! (overridden)
-    dog.sleep()                      // => Output: Buddy is sleeping (inherited)
-    dog.fetch()                      // => Output: Buddy fetches the ball
+    // Dog instantiation
+    val dog = Dog("Buddy")           // => Dog(): calls Dog constructor
+                                     // => "Buddy": passed to name parameter
+                                     // => Dog constructor calls Animal("Buddy")
+                                     // => dog.name is "Buddy" (inherited property)
+                                     // => Type: Dog (subclass of Animal)
+    dog.sound()                      // => Calls Dog's overridden sound method
+                                     // => Polymorphic dispatch (Dog's version)
+                                     // => Output: Buddy barks: Woof!
+    dog.sleep()                      // => Calls inherited sleep method
+                                     // => Final method from Animal (not overridden)
+                                     // => Output: Buddy is sleeping
+    dog.fetch()                      // => Calls Dog-specific method
+                                     // => Not available on Animal reference
+                                     // => Output: Buddy fetches the ball
 
-    val cat = Cat("Whiskers")        // => cat.name is "Whiskers"
-    cat.sound()                      // => Output: Whiskers meows: Meow!
+    // Cat instantiation
+    val cat = Cat("Whiskers")        // => Cat(): calls Cat constructor
+                                     // => "Whiskers": name parameter
+                                     // => Cat constructor calls Animal("Whiskers")
+                                     // => cat.name is "Whiskers" (inherited)
+                                     // => Type: Cat (subclass of Animal)
+    cat.sound()                      // => Calls Cat's overridden sound method
+                                     // => Different from Dog's implementation
+                                     // => Output: Whiskers meows: Meow!
 
-    // Polymorphism
+    // Polymorphism demonstration
     val animals: List<Animal> = listOf(dog, cat, animal)
-                                     // => List of Animal references to different types
-    for (a in animals) {
-        a.sound()                    // => Calls overridden versions dynamically
-    }                                // => Output: Buddy barks: Woof!
+                                     // => List<Animal>: list of Animal type
+                                     // => listOf(): creates immutable list
+                                     // => dog: Dog instance (upcast to Animal)
+                                     // => cat: Cat instance (upcast to Animal)
+                                     // => animal: Animal instance (no cast needed)
+                                     // => All treated as Animal references
+                                     // => Actual types: Dog, Cat, Animal
+                                     // => Polymorphism: same reference type, different behaviors
+    for (a in animals) {             // => for: iterates over list
+                                     // => a: Animal reference (base class type)
+                                     // => First iteration: a references dog (Dog instance)
+                                     // => Second iteration: a references cat (Cat instance)
+                                     // => Third iteration: a references animal (Animal instance)
+        a.sound()                    // => Calls sound() on Animal reference
+                                     // => Polymorphic dispatch at runtime
+                                     // => First: calls Dog.sound() -> "Buddy barks: Woof!"
+                                     // => Second: calls Cat.sound() -> "Whiskers meows: Meow!"
+                                     // => Third: calls Animal.sound() -> "Generic makes a sound"
+                                     // => Output: Buddy barks: Woof!
                                      //            Whiskers meows: Meow!
                                      //            Generic makes a sound
-}
+    }                                // => Loop complete (all animals processed)
+}                                   // => main returns
+                                    // => Objects eligible for GC when references lost
 ```
 
 **Key Takeaway**: Mark classes with `open` to allow inheritance (final by default), use `override` keyword explicitly for method overriding, and leverage polymorphism through base class references.
@@ -1573,70 +1737,188 @@ Interfaces define contracts that classes must implement. Unlike Java, Kotlin int
 
 ```kotlin
 // Interface with abstract and default methods
-interface Drawable {
+interface Drawable {                 // => Drawable: interface definition
+                                     // => Keyword: interface (NOT class)
+                                     // => Purpose: define contract for drawable objects
+                                     // => Can contain: abstract/concrete properties/methods
     // Abstract property (must be overridden)
-    val color: String
+    val color: String                // => Abstract property: no initializer
+                                     // => Type: String
+                                     // => Contract: implementing classes MUST override
+                                     // => No backing field in interface
+                                     // => Accessed via getter in implementations
 
     // Abstract method (must be implemented)
-    fun draw()
+    fun draw()                       // => Abstract method: no body
+                                     // => Return type: Unit (implicit)
+                                     // => Contract: implementing classes MUST provide body
+                                     // => Cannot be called on interface directly
 
     // Default method implementation
-    fun describe() {
+    fun describe() {                 // => Concrete method: has implementation
+                                     // => Default implementation: can be inherited as-is
+                                     // => Can be overridden by implementing classes
+                                     // => Accesses abstract property 'color'
         println("Drawing with color: $color")
-    }                                // => Can be overridden or used as-is
-}
+                                     // => Uses 'color' from implementing class
+                                     // => String interpolation: $color
+                                     // => Output depends on implementation
+    }                                // => End of default method
+                                     // => Can be overridden or used as-is
+}                                    // => End of Drawable interface
+                                     // => Interface compiled to JVM interface
 
-interface Clickable {
-    fun click() {
-        println("Clicked")           // => Default implementation
-    }
+interface Clickable {                // => Clickable: second interface definition
+                                     // => Independent contract: no relation to Drawable
+                                     // => Classes can implement both (multiple interfaces)
+    fun click() {                    // => Concrete method: default implementation
+                                     // => Return type: Unit (implicit)
+        println("Clicked")           // => Default behavior: print "Clicked"
+                                     // => Implementing classes inherit this
+                                     // => Can be overridden if needed
+    }                                // => Default implementation complete
 
-    fun showInfo()                   // => Abstract method
-}
+    fun showInfo()                   // => Abstract method: no body
+                                     // => Contract: implementing classes MUST implement
+                                     // => Return type: Unit (implicit)
+}                                    // => End of Clickable interface
 
 // Class implementing multiple interfaces
 class Button(override val color: String) : Drawable, Clickable {
-    override fun draw() {
+                                     // => Button: class implementing TWO interfaces
+                                     // => Primary constructor parameter: color
+                                     // => override keyword: satisfies Drawable.color contract
+                                     // => color is property (val): backing field created
+                                     // => : Drawable, Clickable: multiple interface implementation
+                                     // => Comma-separated: inherits contracts from both
+                                     // => MUST implement all abstract members from both
+    override fun draw() {            // => Implements Drawable.draw() contract
+                                     // => override keyword: required for interface methods
+                                     // => Provides concrete implementation
         println("Drawing button with color: $color")
-    }
+                                     // => Uses 'color' property from constructor
+                                     // => String interpolation: $color
+                                     // => Output example: "Drawing button with color: Blue"
+    }                                // => draw() implementation complete
 
-    override fun showInfo() {
+    override fun showInfo() {        // => Implements Clickable.showInfo() contract
+                                     // => override keyword: required
+                                     // => Provides concrete implementation
         println("Button information")
-    }
+                                     // => Fixed output: "Button information"
+    }                                // => showInfo() implementation complete
 
     // Uses default click() from Clickable
-}
+                                     // => No override for click()
+                                     // => Inherits default implementation from Clickable
+                                     // => Calls Clickable.click() when invoked
+                                     // => Output will be: "Clicked"
+}                                    // => End of Button class
+                                     // => All interface contracts satisfied
+                                     // => Inherits describe() from Drawable (default)
+                                     // => Inherits click() from Clickable (default)
 
 // Class implementing interface with custom override
 class Circle(override val color: String) : Drawable {
-    override fun draw() {
+                                     // => Circle: implements ONLY Drawable interface
+                                     // => Primary constructor parameter: color
+                                     // => override keyword: satisfies Drawable.color
+                                     // => color stored as property (val)
+                                     // => Single interface implementation
+                                     // => MUST implement abstract members of Drawable
+    override fun draw() {            // => Implements Drawable.draw() contract
+                                     // => override keyword: required
+                                     // => Different implementation than Button
         println("Drawing circle with color: $color")
-    }
+                                     // => Uses 'color' from constructor
+                                     // => String interpolation: $color
+                                     // => Output example: "Drawing circle with color: Red"
+    }                                // => draw() implementation complete
 
     // Overrides default implementation
-    override fun describe() {
+    override fun describe() {        // => Overrides Drawable.describe() default
+                                     // => override keyword: required
+                                     // => Replaces default implementation
+                                     // => Provides custom behavior
         println("This is a $color circle")
-    }
-}
+                                     // => Custom message format
+                                     // => Uses 'color' property
+                                     // => Different from default "Drawing with color: ..."
+                                     // => Output example: "This is a Red circle"
+    }                                // => describe() override complete
+}                                    // => End of Circle class
+                                     // => All Drawable contracts satisfied
+                                     // => Custom describe() replaces default
 
-fun main() {
-    val button = Button("Blue")      // => button.color is "Blue"
-    button.draw()                    // => Output: Drawing button with color: Blue
-    button.describe()                // => Output: Drawing with color: Blue (default impl)
-    button.click()                   // => Output: Clicked (default impl)
-    button.showInfo()                // => Output: Button information
+fun main() {                         // => Program entry point
+    val button = Button("Blue")      // => Creates Button instance
+                                     // => Constructor argument: "Blue"
+                                     // => button.color is "Blue" (String)
+                                     // => Type: Button (inferred)
+                                     // => Implements: Drawable, Clickable
+                                     // => All interface contracts satisfied
+    button.draw()                    // => Calls Button.draw() override
+                                     // => Polymorphic call: resolved at compile time
+                                     // => Prints: "Drawing button with color: Blue"
+                                     // => Output: Drawing button with color: Blue
+    button.describe()                // => Calls Drawable.describe() default
+                                     // => Button didn't override this method
+                                     // => Uses inherited default implementation
+                                     // => Accesses button.color ("Blue")
+                                     // => Prints: "Drawing with color: Blue"
+                                     // => Output: Drawing with color: Blue (default impl)
+    button.click()                   // => Calls Clickable.click() default
+                                     // => Button didn't override this method
+                                     // => Uses inherited default from Clickable
+                                     // => Prints: "Clicked"
+                                     // => Output: Clicked (default impl)
+    button.showInfo()                // => Calls Button.showInfo() override
+                                     // => Required implementation (abstract in Clickable)
+                                     // => Prints: "Button information"
+                                     // => Output: Button information
 
-    val circle = Circle("Red")       // => circle.color is "Red"
-    circle.draw()                    // => Output: Drawing circle with color: Red
-    circle.describe()                // => Output: This is a Red circle (overridden)
+    val circle = Circle("Red")       // => Creates Circle instance
+                                     // => Constructor argument: "Red"
+                                     // => circle.color is "Red" (String)
+                                     // => Type: Circle (inferred)
+                                     // => Implements: Drawable only
+                                     // => All Drawable contracts satisfied
+    circle.draw()                    // => Calls Circle.draw() override
+                                     // => Different implementation than Button.draw()
+                                     // => Prints: "Drawing circle with color: Red"
+                                     // => Output: Drawing circle with color: Red
+    circle.describe()                // => Calls Circle.describe() override
+                                     // => Circle overrode default implementation
+                                     // => Custom behavior replaces default
+                                     // => Prints: "This is a Red circle"
+                                     // => Output: This is a Red circle (overridden)
 
     // Polymorphism with interfaces
     val drawables: List<Drawable> = listOf(button, circle)
-    for (d in drawables) {
-        d.draw()                     // => Calls respective implementations
-    }                                // => Output: Drawing button with color: Blue
+                                     // => Creates List of Drawable interface type
+                                     // => Type: List<Drawable> (explicit)
+                                     // => listOf: creates immutable list
+                                     // => Elements: button (Button), circle (Circle)
+                                     // => Both implement Drawable: type-safe
+                                     // => Polymorphic list: different concrete types
+                                     // => Size: 2 elements
+                                     // => drawables is [button, circle]
+    for (d in drawables) {           // => Iterates over Drawable list
+                                     // => d: loop variable (type: Drawable)
+                                     // => Iteration 1: d = button (as Drawable)
+                                     // => Iteration 2: d = circle (as Drawable)
+                                     // => Polymorphic iteration
+        d.draw()                     // => Calls draw() on Drawable reference
+                                     // => Resolved dynamically at runtime
+                                     // => Iteration 1: calls Button.draw()
+                                     // => Iteration 2: calls Circle.draw()
+                                     // => Different implementations executed
+    }                                // => Loop completes after 2 iterations
+                                     // => Output: Drawing button with color: Blue
                                      //            Drawing circle with color: Red
-}
+}                                    // => main returns
+                                     // => Interfaces enable polymorphism
+                                     // => Multiple implementations, single interface
 ```
 
 **Key Takeaway**: Use interfaces to define contracts with optional default implementations, implement multiple interfaces for composition, and leverage interface polymorphism for flexible design.
@@ -1651,60 +1933,178 @@ Abstract classes cannot be instantiated and may contain abstract members that su
 
 ```kotlin
 // Abstract class with abstract and concrete members
-abstract class Shape {
-    abstract val area: Double        // => Abstract property (must be overridden)
+abstract class Shape {               // => abstract: class cannot be instantiated
+                                     // => Abstract classes can have:
+                                     // =>   1. Abstract members (no implementation)
+                                     // =>   2. Concrete members (with implementation)
+                                     // =>   3. Constructor parameters
+                                     // =>   4. State (properties)
+                                     // => Subclasses must override abstract members
+                                     // => Subclasses can use concrete members as-is
+    abstract val area: Double        // => Abstract property: no initializer
+                                     // => No backing field generated
+                                     // => Must be overridden in subclasses
+                                     // => Can be implemented as:
+                                     // =>   1. Custom getter
+                                     // =>   2. Property with initializer
+                                     // => Type: Double (must match in overrides)
 
-    // Concrete method
-    fun printArea() {
-        println("Area: $area")       // => Uses abstract property
+    // Concrete method (complete implementation)
+    fun printArea() {                // => Concrete method: has body
+                                     // => Available to all subclasses
+                                     // => No override needed (but allowed)
+                                     // => Can use abstract members
+        println("Area: $area")       // => Uses abstract property area
+                                     // => area value provided by subclass
+                                     // => Calls subclass's area getter
+                                     // => Template method pattern:
+                                     // =>   Abstract class defines algorithm
+                                     // =>   Subclass provides specific values
     }
 
-    // Abstract method
-    abstract fun perimeter(): Double
+    // Abstract method (no implementation)
+    abstract fun perimeter(): Double // => Abstract method: no body
+                                     // => Must be implemented in subclasses
+                                     // => Return type: Double
+                                     // => No parameters
+                                     // => Enforces contract across subclasses
 }
 
 class Rectangle(val width: Double, val height: Double) : Shape() {
-    override val area: Double
-        get() = width * height       // => Computes area on access
+                                     // => Extends Shape abstract class
+                                     // => : Shape() calls Shape's constructor
+                                     // => Must override all abstract members
+                                     // => Constructor parameters: width, height
+                                     // => val: properties auto-created
+                                     // => Properties accessible: rect.width, rect.height
+    override val area: Double        // => override: implements abstract property
+                                     // => Type matches: Double
+                                     // => Must provide value or getter
+        get() = width * height       // => Custom getter: computes on access
+                                     // => No backing field (computed property)
+                                     // => Formula: width × height
+                                     // => Example: 5.0 × 3.0 = 15.0
+                                     // => Recalculates on each access
+                                     // => If width changes, area reflects it
 
     override fun perimeter(): Double {
-        return 2 * (width + height)  // => Implements abstract method
+                                     // => override: implements abstract method
+                                     // => Return type: Double (matches abstract)
+                                     // => Rectangle perimeter formula: 2(w + h)
+        return 2 * (width + height)  // => Parentheses: addition before multiplication
+                                     // => Example: 2 × (5.0 + 3.0) = 16.0
+                                     // => Returns Double value
     }
 }
 
 class Circle(val radius: Double) : Shape() {
-    override val area: Double
+                                     // => Extends Shape abstract class
+                                     // => Constructor parameter: radius
+                                     // => val: property auto-created
+                                     // => Property accessible: circle.radius
+                                     // => Must override area and perimeter
+    override val area: Double        // => Implements abstract area property
+                                     // => Custom getter for circle area
         get() = Math.PI * radius * radius
-                                     // => area is π * r²
+                                     // => Circle area formula: π × r²
+                                     // => Math.PI: constant from Java Math class
+                                     // => Math.PI ≈ 3.141592653589793
+                                     // => radius * radius: r² (squared)
+                                     // => Example: π × 4.0² = π × 16 ≈ 50.265
+                                     // => Returns Double value
 
     override fun perimeter(): Double {
-        return 2 * Math.PI * radius  // => Circumference
+                                     // => Implements abstract perimeter method
+                                     // => Circle perimeter is circumference
+        return 2 * Math.PI * radius  // => Circumference formula: 2πr
+                                     // => Example: 2 × π × 4.0 ≈ 25.133
+                                     // => Returns Double value
     }
 }
 
-fun main() {
-    // val shape = Shape()           // => Compile error: cannot instantiate abstract class
+fun main() {                         // => Program entry point
+    // val shape = Shape()           // => Would be compile error
+                                     // => Cannot instantiate abstract class
+                                     // => Abstract classes are incomplete
+                                     // => Error: "Cannot create instance of abstract class"
+                                     // => Must instantiate concrete subclasses
 
-    val rect = Rectangle(5.0, 3.0)   // => rect.width is 5.0, height is 3.0
+    // Rectangle instance
+    val rect = Rectangle(5.0, 3.0)   // => Creates Rectangle instance
+                                     // => Constructor args: width=5.0, height=3.0
+                                     // => rect.width is 5.0
+                                     // => rect.height is 3.0
+                                     // => rect.area will compute 15.0
+                                     // => Type: Rectangle (subtype of Shape)
+                                     // => rect is Rectangle(width=5.0, height=3.0)
     println("Rectangle area: ${rect.area}")
+                                     // => Accesses area property
+                                     // => Calls get() = width * height
+                                     // => Computes: 5.0 × 3.0 = 15.0
+                                     // => String interpolation: ${rect.area}
                                      // => Output: Rectangle area: 15.0
     println("Rectangle perimeter: ${rect.perimeter()}")
+                                     // => Calls perimeter() method
+                                     // => Computes: 2 × (5.0 + 3.0) = 16.0
+                                     // => String interpolation: ${rect.perimeter()}
                                      // => Output: Rectangle perimeter: 16.0
-    rect.printArea()                 // => Output: Area: 15.0
+    rect.printArea()                 // => Calls inherited printArea() method
+                                     // => Concrete method from Shape
+                                     // => Inside printArea: accesses rect.area
+                                     // => area is 15.0 (computed by Rectangle)
+                                     // => Output: Area: 15.0
 
-    val circle = Circle(4.0)         // => circle.radius is 4.0
+    // Circle instance
+    val circle = Circle(4.0)         // => Creates Circle instance
+                                     // => Constructor arg: radius=4.0
+                                     // => circle.radius is 4.0
+                                     // => circle.area will compute π × 16
+                                     // => Type: Circle (subtype of Shape)
+                                     // => circle is Circle(radius=4.0)
     println("Circle area: ${circle.area}")
+                                     // => Accesses area property
+                                     // => Calls get() = π × r²
+                                     // => Computes: 3.14159... × 4.0²
+                                     // => = 3.14159... × 16
+                                     // => ≈ 50.26548245743669
                                      // => Output: Circle area: 50.26548245743669
     println("Circle perimeter: ${circle.perimeter()}")
+                                     // => Calls perimeter() method
+                                     // => Computes: 2 × π × 4.0
+                                     // => ≈ 25.132741228718345
                                      // => Output: Circle perimeter: 25.132741228718345
-    circle.printArea()               // => Output: Area: 50.26548245743669
+    circle.printArea()               // => Calls inherited printArea() method
+                                     // => Concrete method from Shape
+                                     // => Inside printArea: accesses circle.area
+                                     // => area is 50.265... (computed by Circle)
+                                     // => Output: Area: 50.26548245743669
 
-    // Polymorphism
+    // Polymorphism with abstract class
     val shapes: List<Shape> = listOf(rect, circle)
-    for (shape in shapes) {
-        shape.printArea()            // => Uses concrete method from abstract class
-    }                                // => Output: Area: 15.0
-                                     //            Area: 50.26548245743669
+                                     // => Creates list of Shape
+                                     // => Type: List<Shape> (polymorphic collection)
+                                     // => rect: Rectangle (is-a Shape)
+                                     // => circle: Circle (is-a Shape)
+                                     // => Both upcast to Shape
+                                     // => shapes is [Rectangle@..., Circle@...]
+                                     // => List contains 2 elements
+    for (shape in shapes) {          // => Iterates shape instances
+                                     // => Iteration 1: shape is rect (Rectangle)
+                                     // => Iteration 2: shape is circle (Circle)
+                                     // => shape type: Shape (compile-time)
+                                     // => Actual type: Rectangle or Circle (runtime)
+        shape.printArea()            // => Calls printArea() on Shape reference
+                                     // => printArea: concrete method from Shape
+                                     // => Inside printArea: accesses shape.area
+                                     // => area: abstract property
+                                     // => Runtime: calls Rectangle.area or Circle.area
+                                     // => Dynamic dispatch on property access
+                                     // => Iteration 1 output: Area: 15.0
+                                     // => Iteration 2 output: Area: 50.26548245743669
+    }                                // => End of loop
+                                     // => Total output:
+                                     // =>   Area: 15.0
+                                     // =>   Area: 50.26548245743669
 }
 ```
 
@@ -1719,61 +2119,187 @@ fun main() {
 Companion objects provide class-level functionality without static keywords. They enable factory methods, constants, and singleton behavior. Companion objects can implement interfaces and be accessed through the class name.
 
 ```kotlin
+// Class with private constructor - forces factory pattern usage
 class User private constructor(val id: Int, val name: String) {
-                                     // => Private constructor prevents direct instantiation
+                                     // => private constructor keyword
+                                     // => Prevents direct instantiation: User(1, "Alice") won't compile
+                                     // => Constructor parameters are properties (val)
+                                     // => id: Int property (immutable, read-only)
+                                     // => name: String property (immutable, read-only)
+                                     // => Only companion object create() can call this constructor
 
-    companion object Factory {       // => Name "Factory" is optional
-        private var nextId = 1       // => Shared state across all instances
+    companion object Factory {       // => companion object keyword declares class-level object
+                                     // => "Factory" is optional name for this companion object
+                                     // => Can access private constructor (same class scope)
+                                     // => Acts like Java static block but is an object instance
+                                     // => Only one companion object allowed per class
+                                     // => Initialized lazily on first access (thread-safe)
+        private var nextId = 1       // => private var property in companion object
+                                     // => Shared state across all User instances (class-level)
+                                     // => nextId starts at 1 (initial value)
+                                     // => Mutable (var) - incremented on each create() call
+                                     // => private visibility - only accessible within companion
+                                     // => Acts like static field in Java but scoped to companion
 
-        // Factory method
+        // Factory method - creates User instances with auto-incremented IDs
         fun create(name: String): User {
+                                     // => Public factory method (no visibility = public)
+                                     // => Takes name: String parameter (client-provided)
+                                     // => Returns User type (explicit return type)
+                                     // => Accessed via User.create("Alice") syntax
+                                     // => Pattern: Factory Method design pattern
             return User(nextId++, name)
-                                     // => Creates User with auto-incremented ID
+                                     // => Calls private constructor with two arguments
+                                     // => nextId++ uses current value then increments
+                                     // => First call: nextId is 1, then becomes 2
+                                     // => Second call: nextId is 2, then becomes 3
+                                     // => name parameter passed directly to constructor
+                                     // => Creates new User instance (object allocation)
+                                     // => Returns the created User instance
+                                     // => Thread-unsafe: concurrent calls may skip IDs
         }
 
-        // Constant
+        // Compile-time constant - must be known at compile time
         const val MAX_NAME_LENGTH = 50
-                                     // => Compile-time constant
+                                     // => const val keyword - compile-time constant
+                                     // => Inlined at call site (no runtime lookup)
+                                     // => MAX_NAME_LENGTH is all caps (constant naming convention)
+                                     // => Value 50 is primitive literal (Int)
+                                     // => Public visibility (accessible outside class)
+                                     // => Accessible via User.MAX_NAME_LENGTH
+                                     // => Equivalent to Java: public static final int MAX_NAME_LENGTH = 50
+                                     // => Only primitives and String allowed for const val
+                                     // => Cannot use runtime expressions (e.g., Math.random())
 
-        // Regular property
-        val version = "1.0"          // => Accessible via User.version
+        // Regular runtime property - can use runtime initialization
+        val version = "1.0"          // => val property (immutable reference)
+                                     // => Initialized at runtime (not compile-time)
+                                     // => Accessible via User.version
+                                     // => Can use runtime expressions (not just literals)
+                                     // => Generates getter method internally
+                                     // => Equivalent to Java: public static final String getVersion() { return "1.0"; }
+                                     // => String literal "1.0" (immutable)
     }
+    // => End of companion object Factory
 
-    fun describe() {
-        println("User #$id: $name")
+    // Instance method - operates on individual User objects
+    fun describe() {                 // => Instance method (not in companion object)
+                                     // => Public visibility (default)
+                                     // => Unit return type (implicit, like void)
+                                     // => Can access instance properties: id, name
+                                     // => Called on instance: user1.describe()
+        println("User #$id: $name")  // => println is stdlib function (prints with newline)
+                                     // => "User #$id: $name" is string template
+                                     // => $id interpolates this.id property value
+                                     // => $name interpolates this.name property value
+                                     // => Example output: "User #1: Alice"
+                                     // => Prints to standard output (console)
     }
 }
+// => End of User class
 
-class MathHelper {
-    companion object {               // => Unnamed companion object
-        fun square(x: Int) = x * x   // => Class-level utility method
+// Class with unnamed companion object - common for simple utilities
+class MathHelper {                   // => Regular class declaration
+                                     // => No constructor parameters
+                                     // => Public visibility (default)
+    companion object {               // => Unnamed companion object (no name after "object")
+                                     // => Accessed via MathHelper.square(), MathHelper.PI
+                                     // => Cannot reference by name (unlike User.Factory)
+                                     // => Common pattern for utility classes
+        fun square(x: Int) = x * x   // => Single-expression function (no braces)
+                                     // => Takes x: Int parameter
+                                     // => Returns x * x (Int)
+                                     // => Return type inferred (Int * Int = Int)
+                                     // => Equivalent to: fun square(x: Int): Int { return x * x }
+                                     // => Accessed via MathHelper.square(5)
 
-        const val PI = 3.14159       // => Constant
+        const val PI = 3.14159       // => Compile-time constant (const val)
+                                     // => Double literal value (not precise pi)
+                                     // => Accessible via MathHelper.PI
+                                     // => Inlined at call sites
     }
 }
+// => End of MathHelper class
 
-fun main() {
+fun main() {                         // => Entry point function
+                                     // => Unit return type (implicit)
     // Cannot use constructor directly (private)
-    // val user = User(1, "Alice")   // => Compile error: constructor is private
+    // val user = User(1, "Alice")   // => Compile error: "Cannot access '<init>': it is private in 'User'"
+                                     // => Constructor is private - only companion object can call
+                                     // => This line is commented out (would not compile)
 
-    // Use factory method instead
-    val user1 = User.create("Alice") // => user1.id is 1, name is "Alice"
-    val user2 = User.create("Bob")   // => user2.id is 2, name is "Bob"
+    // Use factory method instead - creates users with auto-incremented IDs
+    val user1 = User.create("Alice") // => Calls companion object factory method
+                                     // => User.create is shorthand for User.Factory.create
+                                     // => Passes "Alice" as name parameter
+                                     // => create() calls private constructor with (1, "Alice")
+                                     // => nextId is 1 before call, 2 after (post-increment)
+                                     // => user1.id is 1 (immutable property)
+                                     // => user1.name is "Alice" (immutable property)
+                                     // => user1 reference is immutable (val)
+    val user2 = User.create("Bob")   // => Second factory call
+                                     // => Passes "Bob" as name parameter
+                                     // => create() calls private constructor with (2, "Bob")
+                                     // => nextId is 2 before call, 3 after (post-increment)
+                                     // => user2.id is 2 (auto-incremented from previous call)
+                                     // => user2.name is "Bob" (immutable property)
     val user3 = User.create("Charlie")
-                                     // => user3.id is 3, name is "Charlie"
+                                     // => Third factory call
+                                     // => Passes "Charlie" as name parameter
+                                     // => create() calls private constructor with (3, "Charlie")
+                                     // => nextId is 3 before call, 4 after (post-increment)
+                                     // => user3.id is 3 (auto-incremented sequentially)
+                                     // => user3.name is "Charlie" (immutable property)
+                                     // => user1, user2, user3 are distinct instances (different objects)
 
-    user1.describe()                 // => Output: User #1: Alice
-    user2.describe()                 // => Output: User #2: Bob
-    user3.describe()                 // => Output: User #3: Charlie
+    user1.describe()                 // => Calls instance method on user1 object
+                                     // => describe() accesses user1.id (1) and user1.name ("Alice")
+                                     // => Output: User #1: Alice
+                                     // => Prints to standard output with newline
+    user2.describe()                 // => Calls instance method on user2 object
+                                     // => describe() accesses user2.id (2) and user2.name ("Bob")
+                                     // => Output: User #2: Bob
+                                     // => Separate instance with different property values
+    user3.describe()                 // => Calls instance method on user3 object
+                                     // => describe() accesses user3.id (3) and user3.name ("Charlie")
+                                     // => Output: User #3: Charlie
+                                     // => Third distinct instance
 
-    // Access companion object members
-    println(User.MAX_NAME_LENGTH)    // => Output: 50
-    println(User.version)            // => Output: 1.0
+    // Access companion object members - constants and properties
+    println(User.MAX_NAME_LENGTH)    // => Accesses compile-time constant from companion
+                                     // => User.MAX_NAME_LENGTH resolves to 50 at compile time
+                                     // => Inlined value (no runtime lookup)
+                                     // => Output: 50
+                                     // => Prints Int value to console
+    println(User.version)            // => Accesses runtime property from companion
+                                     // => User.version calls generated getter method
+                                     // => Returns "1.0" (String)
+                                     // => Output: 1.0
+                                     // => Prints String value to console
 
-    // Unnamed companion object
-    println(MathHelper.square(5))    // => Output: 25
-    println(MathHelper.PI)           // => Output: 3.14159
+    // Unnamed companion object - accessed directly through class name
+    println(MathHelper.square(5))    // => Calls companion object function
+                                     // => MathHelper.square(5) invokes square function with argument 5
+                                     // => square(5) computes 5 * 5 = 25
+                                     // => Returns 25 (Int)
+                                     // => Output: 25
+                                     // => No need to reference companion by name (unnamed)
+    println(MathHelper.PI)           // => Accesses companion object constant
+                                     // => MathHelper.PI resolves to 3.14159 at compile time
+                                     // => Inlined value (const val optimization)
+                                     // => Output: 3.14159
+                                     // => Prints Double value to console
 }
+// => End of main function
+// => Program execution completes
+// => Total output:
+// =>   User #1: Alice
+// =>   User #2: Bob
+// =>   User #3: Charlie
+// =>   50
+// =>   1.0
+// =>   25
+// =>   3.14159
 ```
 
 **Key Takeaway**: Use companion objects for factory methods and class-level utilities instead of static methods; they provide type-safe access to shared functionality and enable interface implementation.
@@ -1787,51 +2313,168 @@ fun main() {
 Object declarations create singletons that are thread-safe and lazily initialized. Unlike classes, objects are instantiated once and accessed by name. They're ideal for stateless utilities and configuration holders.
 
 ```kotlin
-// Singleton object
+// Singleton object with state and behavior
 object Database {
-    private var connectionCount = 0  // => Shared state
+    // => Database is a singleton (only one instance exists in entire application)
+    // => Initialized lazily on first access (not at app startup)
+    // => Thread-safe initialization guaranteed by JVM (no synchronized needed)
+    // => Accessed via Database.propertyName or Database.methodName()
+
+    private var connectionCount = 0
+    // => connectionCount is private to Database object (encapsulation)
+    // => Shared state across all usages (mutable singleton state)
+    // => Initial value: 0 (type: Int)
+    // => Only accessible via getConnectionCount() method
 
     fun connect() {
+        // => Public method of Database singleton
+        // => Can be called via Database.connect()
+        // => Modifies singleton state (increments counter)
         connectionCount++
+        // => connectionCount is now incremented by 1
+        // => State persists across all calls (singleton behavior)
+        // => First call: 0 -> 1, second call: 1 -> 2, etc.
         println("Connected to database (connection #$connectionCount)")
+        // => String interpolation with current count
+        // => Outputs to console showing connection number
     }
 
     fun getConnectionCount() = connectionCount
+    // => Expression body function (implicit return)
+    // => Returns current value of connectionCount
+    // => Type: () -> Int (function with no parameters returning Int)
+    // => Public accessor for private state
 }
+// => Database object declaration ends here
+// => Comparable to Java's public static final Database INSTANCE = new Database()
+// => But with thread-safe lazy initialization built-in
 
-// Singleton with properties and methods
+// Singleton with configuration and constants
 object AppConfig {
-    const val APP_NAME = "MyApp"     // => Compile-time constant
-    var debugMode = false            // => Mutable configuration
+    // => AppConfig is another singleton (independent from Database)
+    // => Each object declaration creates separate singleton instance
+    // => Used for application-wide configuration management
+
+    const val APP_NAME = "MyApp"
+    // => Compile-time constant (value known at compile time)
+    // => const val requires primitive type or String
+    // => Inlined at call sites (no function call overhead)
+    // => Immutable (cannot be changed after compilation)
+    // => Type: String (inferred from "MyApp")
+    // => Accessible via AppConfig.APP_NAME
+
+    var debugMode = false
+    // => Mutable property (can be changed at runtime)
+    // => Initial value: false (type: Boolean)
+    // => Shared state across application (singleton property)
+    // => Can be modified via AppConfig.debugMode = true
+    // => Changes persist across all usages
 
     fun loadConfig() {
+        // => Configuration loading method
+        // => Simulates reading configuration from file/environment
         println("Loading configuration for $APP_NAME")
-        debugMode = true             // => Modifies singleton state
+        // => String interpolation with compile-time constant
+        // => Output: "Loading configuration for MyApp"
+        debugMode = true
+        // => Modifies singleton state (was false, now true)
+        // => Change visible to all code accessing AppConfig.debugMode
+        // => Demonstrates mutable singleton configuration
     }
 }
+// => AppConfig object ends
+// => Common pattern for application settings, feature flags, API keys
 
 fun main() {
-    // Access singleton directly (no instantiation needed)
-    Database.connect()               // => Output: Connected to database (connection #1)
-    Database.connect()               // => Output: Connected to database (connection #2)
+    // => Program entry point
+    // => Demonstrates object usage patterns
+
+    // First access to Database singleton
+    Database.connect()
+    // => First call to Database.connect()
+    // => Triggers lazy initialization of Database object
+    // => Database instance created here (not at app startup)
+    // => connectionCount: 0 -> 1
+    // => Output: Connected to database (connection #1)
+    // => Singleton now exists in memory for rest of program
+
+    Database.connect()
+    // => Second call to same Database singleton instance
+    // => Uses existing instance (not creating new object)
+    // => connectionCount: 1 -> 2
+    // => Output: Connected to database (connection #2)
+    // => Demonstrates shared state persistence
+
     println("Total connections: ${Database.getConnectionCount()}")
-                                     // => Output: Total connections: 2
+    // => Calls getter method on Database singleton
+    // => Database.getConnectionCount() returns 2 (current count)
+    // => String interpolation: "Total connections: 2"
+    // => Output: Total connections: 2
+    // => Demonstrates state query from singleton
 
-    // Access configuration
-    println(AppConfig.APP_NAME)      // => Output: MyApp
+    // First access to AppConfig singleton
+    println(AppConfig.APP_NAME)
+    // => Accesses compile-time constant from AppConfig
+    // => May trigger lazy initialization of AppConfig (if not used before)
+    // => APP_NAME value inlined at compile time ("MyApp")
+    // => Output: MyApp
+    // => Constants accessible without initialization cost
+
     println("Debug mode: ${AppConfig.debugMode}")
-                                     // => Output: Debug mode: false
+    // => Reads debugMode property from AppConfig singleton
+    // => Current value: false (initial value)
+    // => String interpolation: "Debug mode: false"
+    // => Output: Debug mode: false
+    // => Demonstrates property access from singleton
 
-    AppConfig.loadConfig()           // => Output: Loading configuration for MyApp
-                                     // => Sets debugMode to true
+    AppConfig.loadConfig()
+    // => Calls loadConfig() method on AppConfig singleton
+    // => Executes println inside loadConfig()
+    // => Output: Loading configuration for MyApp
+    // => Modifies debugMode: false -> true
+    // => State change persists in singleton
+
     println("Debug mode: ${AppConfig.debugMode}")
-                                     // => Output: Debug mode: true
+    // => Reads debugMode again after loadConfig() call
+    // => Value changed by loadConfig(): now true (was false)
+    // => String interpolation: "Debug mode: true"
+    // => Output: Debug mode: true
+    // => Demonstrates mutable singleton state modification
 
-    // Same instance across all uses
-    Database.connect()               // => Output: Connected to database (connection #3)
+    // Continued use of Database singleton
+    Database.connect()
+    // => Third call to Database.connect()
+    // => Same singleton instance as before (not recreated)
+    // => connectionCount: 2 -> 3
+    // => Output: Connected to database (connection #3)
+    // => State accumulated across all calls
+
     println("Total connections: ${Database.getConnectionCount()}")
-                                     // => Output: Total connections: 3
+    // => Final state query
+    // => Database.getConnectionCount() returns 3 (accumulated count)
+    // => String interpolation: "Total connections: 3"
+    // => Output: Total connections: 3
+    // => Demonstrates persistent shared state in singleton
+
+    // Key singleton characteristics demonstrated:
+    // 1. Single instance: Database and AppConfig exist once per application
+    // 2. Lazy initialization: Created on first access, not at startup
+    // 3. Thread-safe: JVM guarantees safe initialization (no race conditions)
+    // 4. Shared state: connectionCount and debugMode persist across calls
+    // 5. Named access: Database.method(), not new Database().method()
+    // 6. Global access point: Available anywhere via object name
 }
+// => main() ends
+// => Total output:
+// => Connected to database (connection #1)
+// => Connected to database (connection #2)
+// => Total connections: 2
+// => MyApp
+// => Debug mode: false
+// => Loading configuration for MyApp
+// => Debug mode: true
+// => Connected to database (connection #3)
+// => Total connections: 3
 ```
 
 **Key Takeaway**: Use `object` declarations for singletons that need shared state or stateless utilities; they're thread-safe, lazily initialized, and accessed by name without instantiation.
@@ -1844,81 +2487,178 @@ fun main() {
 
 Sealed classes represent restricted class hierarchies where all subclasses are known at compile time. They enable exhaustive `when` expressions without `else` branches and provide type-safe state modeling.
 
+**Sealed Class Hierarchy:**
+
 ```mermaid
 %% Sealed class hierarchy
 graph TD
     A[sealed class Result] --> B[data class Success]
     A --> C[data class Error]
     A --> D[object Loading]
-    B --> E[when expression]
-    C --> E
-    D --> E
-    E --> F[No else needed]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#000
     style C fill:#DE8F05,color:#000
     style D fill:#DE8F05,color:#000
-    style E fill:#CA9161,color:#000
-    style F fill:#029E73,color:#fff
 ```
 
-```kotlin
+**Exhaustive When Expression:**
+
+```mermaid
+%% When expression flow
+graph TD
+    E[when#40;result#41;] --> F{Type check}
+    F -->|is Success| G[Access data property]
+    F -->|is Error| H[Access message and code]
+    F -->|is Loading| I[No properties]
+    G --> J[No else needed]
+    H --> J
+    I --> J
+
+    style E fill:#0173B2,color:#fff
+    style F fill:#CA9161,color:#000
+    style G fill:#DE8F05,color:#000
+    style H fill:#DE8F05,color:#000
+    style I fill:#DE8F05,color:#000
+    style J fill:#029E73,color:#fff
+```
+
+````kotlin
 // Sealed class representing operation result
-sealed class Result {
+sealed class Result {               // => sealed: restricts subclasses to this file
+                                     // => Result: base class for operation outcomes
+                                     // => All subclasses must be in same file
+                                     // => Compiler knows ALL possible subclasses
     data class Success(val data: String) : Result()
+                                     // => Success: represents successful operation
+                                     // => data class: auto-generates equals/hashCode/toString
+                                     // => val data: String: holds success payload
+                                     // => : Result(): inherits from sealed Result
+                                     // => Can hold arbitrary success data
     data class Error(val message: String, val code: Int) : Result()
-    object Loading : Result()        // => Singleton state (no data needed)
-}
+                                     // => Error: represents failed operation
+                                     // => val message: String: error description
+                                     // => val code: Int: HTTP status or error code
+                                     // => : Result(): inherits from sealed Result
+                                     // => Can hold multiple error properties
+    object Loading : Result()        // => Loading: singleton state object
+                                     // => object: only ONE instance exists
+                                     // => No data needed (stateless state)
+                                     // => : Result(): inherits from sealed Result
+                                     // => Represents in-progress operation
+}                                    // => All subclasses defined, hierarchy closed
 
 // Function returning different result types
 fun fetchData(shouldSucceed: Boolean): Result {
-    return if (shouldSucceed) {
+                                     // => fetchData: simulates async operation
+                                     // => shouldSucceed: Boolean: controls outcome
+                                     // => : Result: returns sealed class type
+                                     // => Caller receives one of 3 subtypes
+    return if (shouldSucceed) {      // => if expression returns value
+                                     // => Branches return different Result subtypes
         Result.Success("Data loaded successfully")
-    } else {
+                                     // => Result.Success: constructs Success instance
+                                     // => "Data...": String argument to data property
+                                     // => Returns Success type (is-a Result)
+    } else {                         // => else: failure path
         Result.Error("Network error", 404)
-    }
-}
+                                     // => Result.Error: constructs Error instance
+                                     // => "Network error": message property
+                                     // => 404: code property (HTTP Not Found)
+                                     // => Returns Error type (is-a Result)
+    }                                // => if expression evaluates to Result
+}                                    // => Function returns Result subtype
 
-fun main() {
-    val result1 = fetchData(true)    // => result1 is Result.Success
-    val result2 = fetchData(false)   // => result2 is Result.Error
-    val result3 = Result.Loading     // => result3 is Result.Loading
+fun main() {                        // => Program entry point
+    val result1 = fetchData(true)    // => result1: calls with shouldSucceed=true
+                                     // => Type: Result (compile-time type)
+                                     // => Runtime type: Result.Success
+                                     // => data="Data loaded successfully"
+    val result2 = fetchData(false)   // => result2: calls with shouldSucceed=false
+                                     // => Type: Result (compile-time type)
+                                     // => Runtime type: Result.Error
+                                     // => message="Network error", code=404
+    val result3 = Result.Loading     // => result3: accesses singleton object
+                                     // => Type: Result.Loading (object reference)
+                                     // => Only ONE Loading instance exists
+                                     // => No constructor call (object already exists)
 
     // Exhaustive when (no else needed, compiler enforces all cases)
     fun handleResult(result: Result) = when (result) {
-        is Result.Success -> {
+                                     // => handleResult: local function in main
+                                     // => result: Result: parameter to check
+                                     // => when: pattern matching expression
+                                     // => Compiler knows all possible Result subtypes
+                                     // => No else needed (exhaustive checking)
+        is Result.Success -> {       // => is: type check operator
+                                     // => Result.Success: checks runtime type
+                                     // => Smart cast: result becomes Success inside block
             println("Success: ${result.data}")
-                                     // => Smart cast to Success, access data
-        }
-        is Result.Error -> {
+                                     // => result.data: accesses Success property
+                                     // => Smart cast enables property access
+                                     // => ${result.data}: string interpolation
+                                     // => Prints: "Success: Data loaded successfully"
+                                     // => Output: Success: Data loaded successfully
+        }                            // => Success branch complete
+        is Result.Error -> {         // => is Result.Error: checks for Error type
+                                     // => Smart cast: result becomes Error inside block
             println("Error ${result.code}: ${result.message}")
-                                     // => Smart cast to Error, access message and code
-        }
-        is Result.Loading -> {
-            println("Loading...")    // => No properties to access (object)
-        }
+                                     // => result.code: accesses Error code property
+                                     // => result.message: accesses Error message property
+                                     // => Smart cast enables both property accesses
+                                     // => Prints: "Error 404: Network error"
+                                     // => Output: Error 404: Network error
+        }                            // => Error branch complete
+        is Result.Loading -> {       // => is Result.Loading: checks for Loading object
+                                     // => Smart cast: result becomes Loading
+            println("Loading...")    // => Loading has no properties to access
+                                     // => Object is stateless (no data)
+                                     // => Prints: "Loading..."
+                                     // => Output: Loading...
+        }                            // => Loading branch complete
         // No else branch needed - compiler knows all cases covered
-    }
+                                     // => sealed class: compiler knows all 3 subtypes
+                                     // => All cases handled (Success, Error, Loading)
+                                     // => Adding else would be redundant
+                                     // => Missing case = compile error (exhaustiveness)
+    }                                // => when expression complete (Unit return)
 
-    handleResult(result1)            // => Output: Success: Data loaded successfully
-    handleResult(result2)            // => Output: Error 404: Network error
-    handleResult(result3)            // => Output: Loading...
+    handleResult(result1)            // => Calls with result1 (Success type)
+                                     // => Matches is Result.Success branch
+                                     // => Output: Success: Data loaded successfully
+    handleResult(result2)            // => Calls with result2 (Error type)
+                                     // => Matches is Result.Error branch
+                                     // => Output: Error 404: Network error
+    handleResult(result3)            // => Calls with result3 (Loading type)
+                                     // => Matches is Result.Loading branch
+                                     // => Output: Loading...
 
     // Pattern matching with when expression
-    val message = when (result1) {
+    val message = when (result1) {   // => when: returns String based on type
+                                     // => result1: Success type at runtime
+                                     // => All branches return String
+                                     // => Type inference: message is String
         is Result.Success -> "Got: ${result1.data}"
+                                     // => Matches Success type
+                                     // => result1.data: "Data loaded successfully"
+                                     // => Smart cast enables data access
+                                     // => Returns: "Got: Data loaded successfully"
         is Result.Error -> "Failed: ${result1.message}"
+                                     // => Would match Error type
+                                     // => Not executed (result1 is Success)
+                                     // => result1.message: would access Error property
         is Result.Loading -> "Please wait"
-    }                                // => message is "Got: Data loaded successfully"
+                                     // => Would match Loading type
+                                     // => Not executed (result1 is Success)
+                                     // => Returns constant string (no properties)
+    }                                // => when evaluates to String
+                                     // => message is "Got: Data loaded successfully"
+                                     // => Type: String (inferred from branches)
 
-    println(message)                 // => Output: Got: Data loaded successfully
-}
-```
-
-**Key Takeaway**: Use sealed classes for representing restricted type hierarchies like state machines or result types; they enable exhaustive `when` expressions and type-safe pattern matching.
-
-**Why It Matters**: State management in production systems requires type-safe representation of success/error/loading states that Java's enums can't express (no associated data) and class hierarchies don't enforce exhaustively (missing else branches cause crashes). Sealed classes provide compiler-verified exhaustiveness checking that prevents missing state handling bugs in UI layers and API clients, while enabling pattern matching that's impossible in Java until version 17+ preview features, giving Kotlin a decade head start on type-safe state machines.
+    println(message)                 // => Prints message value
+                                     // => Output: Got: Data loaded successfully
+}                                   // => main returns
+                                    // => All Result instances eligible for GC
 
 ---
 
@@ -1928,57 +2668,143 @@ Extension functions add methods to existing classes without modifying their sour
 
 ```kotlin
 // Extension function on String
+// => Syntax: fun ReceiverType.functionName(params): ReturnType { ... }
+// => 'this' inside function refers to the receiver object
 fun String.isPalindrome(): Boolean {
+                                     // => Receiver type is String
+                                     // => Can be called on any String instance
+                                     // => this = the String object calling this function
     val cleaned = this.lowercase().replace(" ", "")
-                                     // => Remove spaces and lowercase
+                                     // => this.lowercase() converts "Radar" -> "radar"
+                                     // => replace(" ", "") removes all spaces
+                                     // => "A man a plan a canal Panama" -> "amanaplanacanalpanama"
+                                     // => cleaned is the sanitized string
     return cleaned == cleaned.reversed()
-                                     // => Compare with reversed version
+                                     // => cleaned.reversed() reverses character order
+                                     // => "radar".reversed() is "radar" (same)
+                                     // => "kotlin".reversed() is "niltok" (different)
+                                     // => Returns true if palindrome, false otherwise
 }
 
 // Extension function with parameter
+// => Extends Int type to enable custom iteration behavior
+// => Similar to repeat { } but passes iteration number to lambda
 fun Int.times(action: (Int) -> Unit) {
+                                     // => Receiver type is Int (the number of iterations)
+                                     // => action is lambda accepting Int, returning Unit
+                                     // => Example: 5.times { i -> print(i) } runs 5 times
     for (i in 1..this) {
-        action(i)                    // => Execute action for each iteration
+                                     // => this is the Int receiver (e.g., 5)
+                                     // => 1..this creates range from 1 to receiver value
+                                     // => If receiver is 5, range is 1..5
+                                     // => i iterates through 1, 2, 3, 4, 5
+        action(i)                    // => Calls lambda with current iteration number
+                                     // => action(1), then action(2), ... action(5)
+                                     // => Lambda can print, accumulate, or perform side effects
     }
 }
 
 // Extension property
+// => Properties can also be extensions (computed, no backing field)
+// => Cannot store state (no field initializers allowed)
 val String.wordCount: Int
+                                     // => Extends String with read-only property
+                                     // => Accessed like: "hello world".wordCount
     get() = this.split("\\s+".toRegex()).size
-                                     // => Count words by splitting on whitespace
+                                     // => Custom getter (properties need getter/setter)
+                                     // => this is the String receiver
+                                     // => "\\s+" regex matches one or more whitespace chars
+                                     // => split() divides string at whitespace boundaries
+                                     // => "Hello  Kotlin   World" -> ["Hello", "Kotlin", "World"]
+                                     // => size returns number of elements in resulting list
+                                     // => Returns 3 for "Hello Kotlin World"
 
 // Extension function on nullable receiver
+// => Receiver type is String? (nullable)
+// => Can be called on null: null.orDefault() is valid
 fun String?.orDefault(default: String = "N/A"): String {
-    return this ?: default           // => Return default if receiver is null
+                                     // => this can be null or non-null String
+                                     // => default parameter provides fallback value
+                                     // => If default not specified, uses "N/A"
+    return this ?: default           // => Elvis operator: returns this if non-null
+                                     // => If this is null, returns default
+                                     // => null.orDefault() -> "N/A"
+                                     // => "Hello".orDefault() -> "Hello"
+                                     // => null.orDefault("Empty") -> "Empty"
 }
 
 fun main() {
     // Using extension function
-    val word1 = "radar"              // => word1 is "radar"
-    val word2 = "kotlin"             // => word2 is "kotlin"
+    // => Extensions called with same syntax as member functions
+    // => Compiler resolves extension functions statically (compile-time)
+    val word1 = "radar"              // => word1 is "radar" (String)
+                                     // => Palindrome: reads same forwards and backwards
+    val word2 = "kotlin"             // => word2 is "kotlin" (String)
+                                     // => Not a palindrome
 
-    println(word1.isPalindrome())    // => Output: true (radar reversed is radar)
-    println(word2.isPalindrome())    // => Output: false
+    println(word1.isPalindrome())    // => Calls String.isPalindrome() on word1
+                                     // => word1.lowercase() is "radar"
+                                     // => "radar".reversed() is "radar"
+                                     // => "radar" == "radar" is true
+                                     // => Output: true
+    println(word2.isPalindrome())    // => Calls String.isPalindrome() on word2
+                                     // => word2.lowercase() is "kotlin"
+                                     // => "kotlin".reversed() is "niltok"
+                                     // => "kotlin" == "niltok" is false
+                                     // => Output: false
 
     // Extension with parameter
+    // => Demonstrates higher-order extension function
+    // => Accepts lambda as parameter
     5.times { i ->
-        print("$i ")                 // => Prints: 1 2 3 4 5
+                                     // => 5.times calls Int.times() on receiver 5
+                                     // => Lambda receives iteration number as 'i'
+                                     // => Executes for i = 1, 2, 3, 4, 5
+        print("$i ")                 // => Prints each iteration number with space
+                                     // => First iteration: print("1 ")
+                                     // => Second iteration: print("2 ")
+                                     // => ... continues until print("5 ")
+                                     // => Output: 1 2 3 4 5 (with trailing space)
     }
-    println()                        // => Newline
+    println()                        // => Prints newline character
+                                     // => Moves cursor to next line
+                                     // => Separates output from next section
 
     // Extension property
-    val text = "Hello Kotlin World"  // => text has 3 words
-    println(text.wordCount)          // => Output: 3
+    // => Properties accessed without parentheses
+    // => Computed on each access (no caching)
+    val text = "Hello Kotlin World"  // => text is "Hello Kotlin World" (String)
+                                     // => Contains 3 words separated by spaces
+    println(text.wordCount)          // => Accesses String.wordCount property
+                                     // => text.split("\\s+".toRegex()) is ["Hello", "Kotlin", "World"]
+                                     // => List size is 3
+                                     // => Output: 3
 
     // Extension on nullable receiver
-    val str1: String? = null         // => str1 is null
-    val str2: String? = "Hello"      // => str2 is "Hello"
+    // => Demonstrates safe extension for nullable types
+    // => No null check needed before calling
+    val str1: String? = null         // => str1 is null (String?)
+                                     // => Nullable String type
+    val str2: String? = "Hello"      // => str2 is "Hello" (String?)
+                                     // => Non-null String wrapped in nullable type
 
-    println(str1.orDefault())        // => Output: N/A (null receiver)
-    println(str2.orDefault())        // => Output: Hello (non-null receiver)
-    println(str1.orDefault("Empty")) // => Output: Empty (custom default)
+    println(str1.orDefault())        // => Calls String?.orDefault() on null receiver
+                                     // => this is null inside orDefault()
+                                     // => null ?: "N/A" returns "N/A"
+                                     // => Uses default parameter value
+                                     // => Output: N/A
+    println(str2.orDefault())        // => Calls String?.orDefault() on non-null receiver
+                                     // => this is "Hello" inside orDefault()
+                                     // => "Hello" ?: "N/A" returns "Hello"
+                                     // => Elvis operator short-circuits
+                                     // => Output: Hello
+    println(str1.orDefault("Empty")) // => Calls String?.orDefault("Empty") on null
+                                     // => this is null inside orDefault()
+                                     // => null ?: "Empty" returns "Empty"
+                                     // => Custom default overrides parameter default
+                                     // => Output: Empty
 }
-```
+````
 
 **Key Takeaway**: Use extension functions to add methods to existing classes without inheritance; they improve API ergonomics and enable domain-specific utilities on third-party types.
 
@@ -2006,52 +2832,163 @@ graph TD
 ```
 
 ```kotlin
-fun main() {
+fun main() {                         // => Program entry point
     // Lambda syntax: { parameters -> body }
     val sum = { a: Int, b: Int -> a + b }
-                                     // => sum is a function (Int, Int) -> Int
-    println(sum(5, 3))               // => Output: 8
+                                     // => sum: function value (first-class citizen)
+                                     // => Type: (Int, Int) -> Int (function type)
+                                     // => Curly braces: lambda literal syntax
+                                     // => a: Int, b: Int: parameter declarations
+                                     // => ->: separates parameters from body
+                                     // => a + b: lambda body (single expression)
+                                     // => Return type: Int (inferred from a + b)
+                                     // => Lambda stored in variable (assignable)
+                                     // => Can be passed as argument or returned
+    println(sum(5, 3))               // => Calls sum function with arguments 5, 3
+                                     // => sum(5, 3) invokes lambda: a=5, b=5+3=8
+                                     // => Lambda executed: 5 + 3 = 8
+                                     // => println receives: 8
+                                     // => Output: 8
 
     // Lambda with type inference
     val numbers = listOf(1, 2, 3, 4, 5)
+                                     // => numbers: immutable list of integers
+                                     // => Type: List<Int> (inferred)
+                                     // => listOf: creates read-only list
+                                     // => Size: 5 elements
+                                     // => numbers is [1, 2, 3, 4, 5]
     val doubled = numbers.map { it * 2 }
-                                     // => doubled is [2, 4, 6, 8, 10]
-                                     // => 'it' is implicit single parameter
+                                     // => map: higher-order function on collections
+                                     // => Takes lambda: (Int) -> Int as parameter
+                                     // => Trailing lambda syntax: { } outside parentheses
+                                     // => it: implicit single parameter name
+                                     // => it refers to each element during iteration
+                                     // => Iteration 1: it=1, transforms to 1*2=2
+                                     // => Iteration 2: it=2, transforms to 2*2=4
+                                     // => Iteration 3: it=3, transforms to 3*2=6
+                                     // => Iteration 4: it=4, transforms to 4*2=8
+                                     // => Iteration 5: it=5, transforms to 5*2=10
+                                     // => doubled is [2, 4, 6, 8, 10] (new list)
+                                     // => Original numbers unchanged (immutable)
+                                     // => 'it' only valid for single-parameter lambdas
 
     // Lambda with explicit parameter
     val evens = numbers.filter { num -> num % 2 == 0 }
-                                     // => evens is [2, 4]
+                                     // => filter: higher-order function on collections
+                                     // => Takes predicate lambda: (Int) -> Boolean
+                                     // => num: explicit parameter name (more readable)
+                                     // => Replaces implicit 'it' for clarity
+                                     // => num % 2: modulo operation (remainder)
+                                     // => == 0: checks if even (remainder is 0)
+                                     // => Iteration 1: num=1, 1%2=1, 1==0 false, skip
+                                     // => Iteration 2: num=2, 2%2=0, 0==0 true, keep
+                                     // => Iteration 3: num=3, 3%2=1, 1==0 false, skip
+                                     // => Iteration 4: num=4, 4%2=0, 0==0 true, keep
+                                     // => Iteration 5: num=5, 5%2=1, 1==0 false, skip
+                                     // => evens is [2, 4] (filtered result)
+                                     // => Original numbers unchanged
 
     // Multi-line lambda
     val squared = numbers.map { num ->
-        val result = num * num       // => Intermediate computation
-        result                       // => Last expression is return value
-    }                                // => squared is [1, 4, 9, 16, 25]
+                                     // => Multi-line lambda: multiple statements
+                                     // => num: explicit parameter name
+                                     // => Last expression is return value
+                                     // => Intermediate calculations allowed
+        val result = num * num       // => Calculates square of current number
+                                     // => result: local variable in lambda scope
+                                     // => Iteration 1: num=1, result=1*1=1
+                                     // => Iteration 2: num=2, result=2*2=4
+                                     // => Iteration 3: num=3, result=3*3=9
+                                     // => Iteration 4: num=4, result=4*4=16
+                                     // => Iteration 5: num=5, result=5*5=25
+        result                       // => Last expression: return value
+                                     // => No 'return' keyword needed
+                                     // => Value of result becomes element in new list
+    }                                // => End of lambda body
+                                     // => squared is [1, 4, 9, 16, 25] (new list)
+                                     // => Original numbers unchanged
 
     // Higher-order function (takes function as parameter)
     fun operate(a: Int, b: Int, operation: (Int, Int) -> Int): Int {
-        return operation(a, b)       // => Calls passed function
-    }
+                                     // => operate: higher-order function declaration
+                                     // => a, b: regular Int parameters
+                                     // => operation: function parameter
+                                     // => operation type: (Int, Int) -> Int
+                                     // => Takes 2 Ints, returns Int
+                                     // => Return type: Int (from operation result)
+                                     // => Enables strategy pattern through function passing
+        return operation(a, b)       // => Invokes passed function with a, b
+                                     // => operation is lambda provided by caller
+                                     // => Delegates computation to passed function
+                                     // => Returns result of operation(a, b)
+    }                                // => End of operate function
+                                     // => Reusable with any (Int, Int) -> Int function
 
     val addResult = operate(10, 5) { x, y -> x + y }
+                                     // => Calls operate with arguments: a=10, b=5
+                                     // => Third parameter: trailing lambda
+                                     // => Lambda: { x, y -> x + y }
+                                     // => x, y: lambda parameters (map to 10, 5)
+                                     // => x + y: lambda body (addition)
+                                     // => operate calls: operation(10, 5)
+                                     // => Lambda executes: 10 + 5 = 15
                                      // => addResult is 15
     val mulResult = operate(10, 5) { x, y -> x * y }
+                                     // => Calls operate with same a=10, b=5
+                                     // => Different lambda: { x, y -> x * y }
+                                     // => Lambda body: multiplication
+                                     // => operate calls: operation(10, 5)
+                                     // => Lambda executes: 10 * 5 = 50
                                      // => mulResult is 50
+                                     // => Same function, different behavior
 
     // Function returning function
     fun makeMultiplier(factor: Int): (Int) -> Int {
+                                     // => makeMultiplier: function factory
+                                     // => factor: parameter (captured in closure)
+                                     // => Return type: (Int) -> Int (function)
+                                     // => Returns a function, not a value
+                                     // => Enables function composition patterns
         return { num -> num * factor }
-                                     // => Returns lambda that captures factor
-    }
+                                     // => Returns lambda that captures 'factor'
+                                     // => Closure: lambda remembers 'factor' value
+                                     // => num: parameter of returned lambda
+                                     // => num * factor: uses captured 'factor'
+                                     // => Each call creates new closure
+                                     // => factor value frozen at creation time
+    }                                // => End of makeMultiplier
+                                     // => Creates specialized multiplier functions
 
-    val triple = makeMultiplier(3)   // => triple is (Int) -> Int with factor=3
-    println(triple(5))               // => Output: 15 (5 * 3)
-    println(triple(10))              // => Output: 30 (10 * 3)
+    val triple = makeMultiplier(3)   // => Calls makeMultiplier with factor=3
+                                     // => Returns lambda: { num -> num * 3 }
+                                     // => triple: closure capturing factor=3
+                                     // => Type: (Int) -> Int (inferred)
+                                     // => triple is reusable function
+    println(triple(5))               // => Calls triple with num=5
+                                     // => Lambda executes: 5 * 3 = 15
+                                     // => Closure accesses captured factor=3
+                                     // => println receives: 15
+                                     // => Output: 15
+    println(triple(10))              // => Calls triple with num=10
+                                     // => Same closure, different argument
+                                     // => Lambda executes: 10 * 3 = 30
+                                     // => factor still 3 (captured at creation)
+                                     // => println receives: 30
+                                     // => Output: 30
 
-    println(doubled)                 // => Output: [2, 4, 6, 8, 10]
-    println(evens)                   // => Output: [2, 4]
-    println(squared)                 // => Output: [1, 4, 9, 16, 25]
-}
+    println(doubled)                 // => Prints doubled list
+                                     // => doubled is [2, 4, 6, 8, 10]
+                                     // => Output: [2, 4, 6, 8, 10]
+    println(evens)                   // => Prints evens list
+                                     // => evens is [2, 4]
+                                     // => Output: [2, 4]
+    println(squared)                 // => Prints squared list
+                                     // => squared is [1, 4, 9, 16, 25]
+                                     // => Output: [1, 4, 9, 16, 25]
+}                                    // => main returns
+                                     // => Lambdas enable functional programming
+                                     // => Higher-order functions enable code reuse
+                                     // => Closures capture and preserve state
 ```
 
 **Key Takeaway**: Use lambdas with `it` for single parameters, explicit names for clarity with multiple parameters, and leverage higher-order functions for functional composition and reusable logic.
@@ -2067,48 +3004,205 @@ Scope functions execute a block of code in the context of an object. They differ
 ```kotlin
 fun main() {
     // let: context is 'it', returns lambda result
-    val name: String? = "Kotlin"     // => name is "Kotlin" (nullable)
-    val length = name?.let {
-        println("Processing: $it")   // => Output: Processing: Kotlin
-        it.length                    // => Returns length (6)
-    }                                // => length is 6 (Int?)
+    val name: String? = "Kotlin"     // => name is "Kotlin" (nullable String?)
+                                     // => Nullable type: can be String or null
+                                     // => Currently assigned "Kotlin" (non-null value)
+                                     // => Type inference: String? from nullable assignment
+                                     // => name stored in stack memory
+    val length = name?.let {         // => Safe call operator: ?.
+                                     // => Calls let only if name is non-null
+                                     // => If name is null, entire expression is null
+                                     // => let: extension function on String
+                                     // => Lambda parameter: 'it' (implicit)
+                                     // => 'it' is the context object (name)
+                                     // => Inside lambda: it is "Kotlin" (String, non-null)
+                                     // => let returns lambda result (last expression)
+                                     // => Scope function: executes block in object context
+        println("Processing: $it")   // => String interpolation: $it
+                                     // => it is "Kotlin" (context object)
+                                     // => Constructs string: "Processing: Kotlin"
+                                     // => println outputs to stdout
+                                     // => Output: Processing: Kotlin
+                                     // => println returns Unit (not used)
+        it.length                    // => Last expression: return value of let
+                                     // => it is "Kotlin" (String)
+                                     // => .length: String property (Int)
+                                     // => "Kotlin".length is 6
+                                     // => Returns 6 from lambda
+                                     // => This becomes result of let call
+    }                                // => let call completes
+                                     // => Lambda executed: it was "Kotlin"
+                                     // => Lambda returned: 6 (Int)
+                                     // => length is 6 (Int?)
+                                     // => Type: Int? (nullable because safe call)
+                                     // => If name was null, length would be null
+                                     // => Safe call propagates nullability
 
     // run: context is 'this', returns lambda result
-    val message = "Hello".run {
-        println("Length: $length")   // => this = "Hello", length from outer scope
-        this.uppercase()             // => Returns "HELLO"
-    }                                // => message is "HELLO"
+    val message = "Hello".run {      // => "Hello": receiver object (String literal)
+                                     // => run: extension function on String
+                                     // => Lambda parameter: 'this' (implicit)
+                                     // => Inside lambda: this refers to "Hello"
+                                     // => this can be omitted (implicit receiver)
+                                     // => run returns lambda result (last expression)
+                                     // => Difference from let: this vs it
+        println("Length: $length")   // => String interpolation: $length
+                                     // => length: outer scope variable (6)
+                                     // => NOT this.length (which is 5)
+                                     // => Constructs string: "Length: 6"
+                                     // => this is "Hello" but not used here
+                                     // => Output: Length: 6
+                                     // => Demonstrates outer scope access
+        this.uppercase()             // => Last expression: return value of run
+                                     // => this is "Hello" (String)
+                                     // => .uppercase(): String method
+                                     // => Creates new string "HELLO" (immutable)
+                                     // => Original "Hello" unchanged
+                                     // => Returns "HELLO" from lambda
+                                     // => This becomes result of run call
+    }                                // => run call completes
+                                     // => Lambda returned: "HELLO" (String)
+                                     // => message is "HELLO" (String)
+                                     // => run transformed receiver object
 
     // with: context is 'this', returns lambda result (not extension)
     val numbers = mutableListOf(1, 2, 3)
-    val sum = with(numbers) {
-        add(4)                       // => this.add(4), modifies numbers
-        add(5)                       // => numbers is [1, 2, 3, 4, 5]
-        sum()                        // => Returns sum (15)
-    }                                // => sum is 15
+                                     // => mutableListOf: standard library function
+                                     // => Creates MutableList<Int>
+                                     // => Initial elements: 1, 2, 3
+                                     // => numbers is [1, 2, 3] (mutable, heap-allocated)
+                                     // => Type: MutableList<Int> (inferred)
+                                     // => Can add/remove elements (mutable)
+    val sum = with(numbers) {        // => with: standard library function (not extension)
+                                     // => Syntax: with(receiver) { body }
+                                     // => First parameter: numbers (receiver)
+                                     // => Second parameter: lambda (trailing syntax)
+                                     // => Inside lambda: this is numbers
+                                     // => this can be omitted (implicit receiver)
+                                     // => with returns lambda result (last expression)
+                                     // => Difference from run: with is not extension
+        add(4)                       // => Implicit this.add(4)
+                                     // => this is numbers (MutableList<Int>)
+                                     // => add: MutableList method
+                                     // => Adds 4 to end of list
+                                     // => numbers is [1, 2, 3, 4] (mutated)
+                                     // => add returns true (success)
+                                     // => Return value not used (side effect)
+        add(5)                       // => Implicit this.add(5)
+                                     // => Adds 5 to end of list
+                                     // => numbers is [1, 2, 3, 4, 5] (mutated)
+                                     // => add returns true (success)
+                                     // => Return value not used (side effect)
+        sum()                        // => Last expression: return value of with
+                                     // => Implicit this.sum()
+                                     // => this is numbers: [1, 2, 3, 4, 5]
+                                     // => sum(): Iterable extension function
+                                     // => Computes: 1 + 2 + 3 + 4 + 5 = 15
+                                     // => Returns 15 (Int)
+                                     // => This becomes result of with call
+    }                                // => with call completes
+                                     // => Lambda returned: 15 (Int)
+                                     // => sum is 15 (Int)
+                                     // => numbers remains [1, 2, 3, 4, 5] (mutated)
+                                     // => with performed operations and returned result
 
     // apply: context is 'this', returns context object
     val person = Person("Alice", 25).apply {
-        println("Configuring $name") // => Output: Configuring Alice
-        age = 26                     // => Modifies age property
-    }                                // => Returns Person object
-                                     // => person.age is 26
+                                     // => Person("Alice", 25): constructor call
+                                     // => Creates Person instance
+                                     // => name property: "Alice" (val, immutable)
+                                     // => age property: 25 (var, mutable)
+                                     // => apply: extension function on Person
+                                     // => Inside lambda: this is Person instance
+                                     // => this can be omitted (implicit receiver)
+                                     // => apply returns context object (this)
+                                     // => KEY: apply returns receiver, not lambda result
+        println("Configuring $name") // => String interpolation: $name
+                                     // => Implicit this.name
+                                     // => this is Person instance
+                                     // => this.name is "Alice" (val property)
+                                     // => Constructs string: "Configuring Alice"
+                                     // => Output: Configuring Alice
+                                     // => println returns Unit (not used)
+                                     // => Side effect: logging during configuration
+        age = 26                     // => Implicit this.age = 26
+                                     // => this is Person instance
+                                     // => age: var property (mutable)
+                                     // => Reassigns age from 25 to 26
+                                     // => Mutates Person instance
+                                     // => No return value (Unit)
+                                     // => Last expression but NOT return value
+    }                                // => apply call completes
+                                     // => Lambda executed, age modified
+                                     // => apply returns this (Person instance)
+                                     // => person is Person(name="Alice", age=26)
+                                     // => person.age is 26 (mutated)
+                                     // => Use case: object configuration/initialization
 
     // also: context is 'it', returns context object
     val numbers2 = mutableListOf(1, 2, 3).also {
-        println("Initial list: $it") // => Output: Initial list: [1, 2, 3]
-        it.add(4)                    // => Modifies list
-    }                                // => Returns modified list
-                                     // => numbers2 is [1, 2, 3, 4]
+                                     // => mutableListOf(1, 2, 3): creates MutableList<Int>
+                                     // => Initial elements: 1, 2, 3
+                                     // => also: extension function on MutableList
+                                     // => Lambda parameter: 'it' (implicit)
+                                     // => Inside lambda: it is the context object
+                                     // => it is MutableList<Int>: [1, 2, 3]
+                                     // => also returns context object (it)
+                                     // => KEY: also returns receiver, not lambda result
+                                     // => Difference from apply: it vs this
+        println("Initial list: $it") // => String interpolation: $it
+                                     // => it is [1, 2, 3] (MutableList<Int>)
+                                     // => List toString(): "[1, 2, 3]"
+                                     // => Constructs string: "Initial list: [1, 2, 3]"
+                                     // => Output: Initial list: [1, 2, 3]
+                                     // => Side effect: logging before modification
+                                     // => println returns Unit (not used)
+        it.add(4)                    // => it is [1, 2, 3] (MutableList<Int>)
+                                     // => .add(4): MutableList method
+                                     // => Adds 4 to end of list
+                                     // => it becomes [1, 2, 3, 4] (mutated)
+                                     // => add returns true (success)
+                                     // => Return value not used (side effect)
+                                     // => Last expression but NOT return value
+    }                                // => also call completes
+                                     // => Lambda executed, list modified
+                                     // => also returns it (MutableList instance)
+                                     // => numbers2 is [1, 2, 3, 4] (MutableList<Int>)
+                                     // => Use case: side effects with chaining
 
-    println(length)                  // => Output: 6
-    println(message)                 // => Output: HELLO
-    println(sum)                     // => Output: 15
-    println(person.age)              // => Output: 26
-    println(numbers2)                // => Output: [1, 2, 3, 4]
-}
+    println(length)                  // => length is 6 (Int?, but non-null here)
+                                     // => Converts to String: "6"
+                                     // => Output: 6
+    println(message)                 // => message is "HELLO" (String)
+                                     // => Output: HELLO
+    println(sum)                     // => sum is 15 (Int)
+                                     // => Converts to String: "15"
+                                     // => Output: 15
+    println(person.age)              // => person is Person(name="Alice", age=26)
+                                     // => .age accesses age property
+                                     // => person.age is 26 (Int, mutated by apply)
+                                     // => Converts to String: "26"
+                                     // => Output: 26
+    println(numbers2)                // => numbers2 is [1, 2, 3, 4] (MutableList<Int>)
+                                     // => List toString(): "[1, 2, 3, 4]"
+                                     // => Output: [1, 2, 3, 4]
+}                                    // => main returns
+                                     // => Scope functions demonstrated:
+                                     // =>   let: it, returns result (null-safe transform)
+                                     // =>   run: this, returns result (scoped compute)
+                                     // =>   with: this, returns result (non-extension)
+                                     // =>   apply: this, returns object (configuration)
+                                     // =>   also: it, returns object (side effects)
 
 data class Person(val name: String, var age: Int)
+                                     // => data class: auto-generates methods
+                                     // => Primary constructor parameters are properties
+                                     // => name: val (immutable, read-only)
+                                     // => age: var (mutable, read-write)
+                                     // => Generated: equals(), hashCode(), toString()
+                                     // => Generated: copy(), componentN()
+                                     // => Person("Alice", 25) creates instance
+                                     // => toString() format: "Person(name=Alice, age=25)"
 ```
 
 **Key Takeaway**: Use `let` for null-safe transformations, `apply` for object configuration, `also` for side effects while chaining, `run` for scoped computations, and `with` for non-extension context operations.
@@ -2125,65 +3219,192 @@ Kotlin's exception handling uses try-catch-finally blocks similar to Java, but `
 fun main() {
     // try as expression (returns value)
     val result1 = try {
-        val num = "42".toInt()       // => Successful parsing, num is 42
-        num * 2                      // => Returns 84
+        // => try block START
+        // => Attempting to parse "42" as integer
+        val num = "42".toInt()       // => toInt() called on String "42"
+                                     // => Parsing successful
+                                     // => num is 42 (type: Int)
+                                     // => No exception thrown
+        num * 2                      // => Multiply 42 by 2
+                                     // => Result is 84
+                                     // => This becomes the try block's return value
     } catch (e: NumberFormatException) {
-        println("Invalid number")    // => Not executed
-        0                            // => Would return 0 on error
-    }                                // => result1 is 84
+        // => catch block NOT executed (no exception thrown)
+        // => This catch handles NumberFormatException only
+        // => Would execute if toInt() fails
+        println("Invalid number")    // => NOT executed (no exception occurred)
+                                     // => Would print error message if executed
+        0                            // => Would return 0 as fallback value
+                                     // => NOT reached in this case
+    }                                // => try expression completed successfully
+                                     // => Returned value from try block is 84
+                                     // => result1 is 84 (type: Int)
 
+    // try expression with exception thrown
     val result2 = try {
-        "abc".toInt()                // => Throws NumberFormatException
+        // => try block START
+        // => Attempting to parse "abc" as integer
+        "abc".toInt()                // => toInt() called on String "abc"
+                                     // => "abc" is NOT a valid integer
+                                     // => Throws NumberFormatException immediately
+                                     // => Execution jumps to catch block
+                                     // => try block does NOT complete normally
     } catch (e: NumberFormatException) {
+        // => catch block executed (exception caught)
+        // => e is NumberFormatException instance
+        // => e.message is "For input string: \"abc\""
         println("Error: ${e.message}")
                                      // => Output: Error: For input string: "abc"
-        -1                           // => Returns -1 on error
-    }                                // => result2 is -1
+                                     // => String interpolation used for message
+        -1                           // => Return -1 as error indicator
+                                     // => This becomes the catch block's return value
+                                     // => Becomes the entire try expression's value
+    }                                // => try expression completed via catch block
+                                     // => Returned value from catch is -1
+                                     // => result2 is -1 (type: Int)
 
-    // Multiple catch blocks
+    // Multiple catch blocks (order matters)
     fun divide(a: Int, b: Int): Int = try {
-        a / b                        // => Can throw ArithmeticException
+        // => Function declared with expression body
+        // => try expression is the function body
+        // => Parameters: a (Int), b (Int)
+        // => Return type: Int
+        a / b                        // => Integer division operation
+                                     // => If b is 0, throws ArithmeticException
+                                     // => If b is non-zero, returns quotient
+                                     // => Becomes return value if no exception
     } catch (e: ArithmeticException) {
-        println("Division by zero")  // => Handles specific exception
-        0
+        // => First catch block
+        // => Catches ArithmeticException ONLY (more specific)
+        // => Handles division by zero case
+        // => e is ArithmeticException instance
+        println("Division by zero")  // => Output when division by zero occurs
+                                     // => Side effect before returning value
+        0                            // => Return 0 as safe default for division by zero
+                                     // => Becomes function return value
     } catch (e: Exception) {
+        // => Second catch block
+        // => Catches ANY other Exception (more general)
+        // => Executes ONLY if first catch doesn't match
+        // => Catch order matters: specific before general
+        // => e is Exception instance
         println("Other error: ${e.message}")
-                                     // => Catches any other exception
-        -1
+                                     // => Output for any other exception type
+                                     // => e.message contains exception details
+        -1                           // => Return -1 for other errors
+                                     // => Different from division by zero return
+                                     // => Becomes function return value
     }
 
-    println(divide(10, 2))           // => Output: 5 (normal execution)
-    println(divide(10, 0))           // => Output: Division by zero, then 0
+    // Call divide with normal values
+    println(divide(10, 2))           // => divide(10, 2) called
+                                     // => a is 10, b is 2
+                                     // => Computes 10 / 2 = 5
+                                     // => No exception thrown
+                                     // => try block returns 5
+                                     // => catch blocks NOT executed
+                                     // => Function returns 5
+                                     // => Output: 5
 
-    // finally block (always executes)
+    // Call divide with zero divisor
+    println(divide(10, 0))           // => divide(10, 0) called
+                                     // => a is 10, b is 0
+                                     // => Attempts 10 / 0
+                                     // => Throws ArithmeticException
+                                     // => First catch block matches
+                                     // => Output: Division by zero
+                                     // => Function returns 0
+                                     // => println prints 0
+                                     // => Output: 0
+
+    // finally block (always executes, regardless of exception)
     fun readFile(name: String): String {
+        // => Function declared with block body
+        // => Parameter: name (String)
+        // => Return type: String
         return try {
+            // => try block START
+            // => return keyword used to return try result
             println("Opening file: $name")
+                                     // => Output: Opening file: [name value]
+                                     // => Simulates file opening operation
+                                     // => Side effect before validation
             if (name.isEmpty()) throw IllegalArgumentException("Empty name")
-            "File content"           // => Returns content
+                                     // => Check if name is empty string
+                                     // => If empty, throw IllegalArgumentException
+                                     // => Exception message is "Empty name"
+                                     // => Execution jumps to catch if thrown
+            "File content"           // => If name is NOT empty, return this
+                                     // => Simulates file content reading
+                                     // => Becomes try block's return value
+                                     // => Then finally executes before returning
         } catch (e: IllegalArgumentException) {
+            // => catch block for IllegalArgumentException
+            // => Executes when name.isEmpty() is true
+            // => e is IllegalArgumentException instance
+            // => e.message is "Empty name"
             println("Error: ${e.message}")
-            ""                       // => Returns empty string
+                                     // => Output: Error: Empty name
+                                     // => Reports validation error
+            ""                       // => Return empty string as error fallback
+                                     // => Becomes catch block's return value
+                                     // => Then finally executes before returning
         } finally {
-            println("Closing file")  // => Always executes
-        }
+            // => finally block ALWAYS executes
+            // => Runs after try OR after catch
+            // => Runs even if return statement executed
+            // => Runs even if uncaught exception occurs
+            // => Used for cleanup (closing resources, etc.)
+            println("Closing file")  // => Output: Closing file
+                                     // => Simulates file cleanup operation
+                                     // => Executes regardless of success/failure
+                                     // => Does NOT affect return value
+        }                            // => finally block completes
+                                     // => Function returns value from try or catch
     }
 
-    println(readFile("data.txt"))    // => Output: Opening file: data.txt
-                                     //            Closing file
-                                     //            File content
+    // Call readFile with valid name
+    println(readFile("data.txt"))    // => readFile("data.txt") called
+                                     // => name is "data.txt"
+                                     // => Output: Opening file: data.txt
+                                     // => name.isEmpty() is false
+                                     // => No exception thrown
+                                     // => try returns "File content"
+                                     // => Output: Closing file (finally executes)
+                                     // => Function returns "File content"
+                                     // => Output: File content
+                                     // => Total output:
+                                     // => Opening file: data.txt
+                                     // => Closing file
+                                     // => File content
 
-    println(readFile(""))            // => Output: Opening file:
-                                     //            Error: Empty name
-                                     //            Closing file
-                                     //            (empty string)
+    // Call readFile with empty name
+    println(readFile(""))            // => readFile("") called
+                                     // => name is "" (empty string)
+                                     // => Output: Opening file:
+                                     // => name.isEmpty() is true
+                                     // => IllegalArgumentException thrown
+                                     // => catch block executes
+                                     // => Output: Error: Empty name
+                                     // => catch returns ""
+                                     // => Output: Closing file (finally executes)
+                                     // => Function returns ""
+                                     // => println prints empty line
+                                     // => Total output:
+                                     // => Opening file:
+                                     // => Error: Empty name
+                                     // => Closing file
+                                     // => (empty line)
 
-    println(result1)                 // => Output: 84
-    println(result2)                 // => Output: -1
+    // Print previously calculated results
+    println(result1)                 // => result1 is 84 (from successful parsing)
+                                     // => Output: 84
+    println(result2)                 // => result2 is -1 (from failed parsing)
+                                     // => Output: -1
 }
 ```
 
-**Key Takeaway**: Use `try` as an expression to return values from error handling, leverage multiple catch blocks for specific exception types, and ensure cleanup with `finally` blocks.
+**Key Takeaway**: Use `try` as an expression to return values from error handling, leverage multiple catch blocks for specific exception types (order from specific to general), and ensure cleanup with `finally` blocks that always execute regardless of success or failure.
 
 **Why It Matters**: Java's checked exceptions force try-catch boilerplate throughout codebases, cluttering business logic with exception declarations that developers routinely ignore or wrap uselessly. Kotlin's unchecked-only exceptions eliminate this ceremony while try-as-expression enables functional error handling patterns like Result types without external libraries. This design gives developers choice in error handling strategy (exceptions vs Result types) rather than forcing checked exceptions that empirical studies show provide minimal benefit while harming code readability.
 
@@ -2211,58 +3432,136 @@ graph TD
 ```
 
 ```kotlin
-fun main() {
+fun main() {                        // => Program entry point
     // Type check with is
-    val obj: Any = "Kotlin"          // => obj is "Kotlin" (type: Any)
+    val obj: Any = "Kotlin"          // => obj: variable of type Any (top type)
+                                     // => Any: supertype of all types in Kotlin
+                                     // => "Kotlin": String literal value
+                                     // => obj is "Kotlin" (runtime type: String)
+                                     // => Compile-time type: Any (allows any value)
+                                     // => Runtime type: String (actual object type)
 
-    if (obj is String) {
+    if (obj is String) {             // => is: type check operator (runtime check)
+                                     // => obj is String: checks if obj is String at runtime
+                                     // => Condition evaluates to true (obj is String)
+                                     // => Enters if block
         println("String length: ${obj.length}")
-                                     // => obj smart casted to String
+                                     // => obj: automatically smart casted to String
+                                     // => Smart cast: compiler knows obj is String in this scope
+                                     // => .length: String property (only accessible after smart cast)
+                                     // => "Kotlin".length is 6 (character count)
+                                     // => No explicit cast needed
                                      // => Output: String length: 6
-    }
+    }                                // => if block complete
 
     // Negated type check
-    val num: Any = 42                // => num is 42 (type: Any)
-    if (num !is String) {
+    val num: Any = 42                // => num: variable of type Any
+                                     // => 42: Int literal
+                                     // => num is 42 (runtime type: Int)
+                                     // => Compile-time type: Any
+                                     // => Runtime type: Int
+    if (num !is String) {            // => !is: negated type check
+                                     // => num !is String: checks if num is NOT String
+                                     // => Condition evaluates to true (num is Int, not String)
+                                     // => Enters if block
         println("Not a string")      // => Output: Not a string
-    }
+    }                                // => if block complete
 
     // Smart cast in when expression
-    fun describe(x: Any) = when (x) {
+    fun describe(x: Any) = when (x) { // => describe: local function (nested in main)
+                                     // => x: Any: parameter accepts any type
+                                     // => when (x): exhaustive type matching
+                                     // => Returns String based on x's runtime type
         is String -> "String of length ${x.length}"
-                                     // => x smart casted to String
+                                     // => is String: first type check
+                                     // => x smart casted to String in this branch
+                                     // => x.length: String property accessible
+                                     // => Returns formatted string with length
         is Int -> "Integer with value $x doubled = ${x * 2}"
-                                     // => x smart casted to Int
+                                     // => is Int: second type check
+                                     // => x smart casted to Int in this branch
+                                     // => x * 2: arithmetic operation (Int-specific)
+                                     // => Returns formatted string with doubled value
         is List<*> -> "List of size ${x.size}"
-                                     // => x smart casted to List
-        else -> "Unknown type"
-    }
+                                     // => is List<*>: checks for List of any element type
+                                     // => <*>: star projection (accepts List of any type)
+                                     // => x smart casted to List in this branch
+                                     // => x.size: List property accessible
+                                     // => Returns formatted string with size
+        else -> "Unknown type"       // => else: fallback branch
+                                     // => Matches any type not covered above
+                                     // => Returns literal string
+    }                                // => describe function definition complete
 
-    println(describe("Hello"))       // => Output: String of length 5
-    println(describe(42))            // => Output: Integer with value 42 doubled = 84
+    println(describe("Hello"))       // => describe("Hello"): calls describe with String
+                                     // => "Hello" is String (matches first branch)
+                                     // => "Hello".length is 5
+                                     // => Returns "String of length 5"
+                                     // => Output: String of length 5
+    println(describe(42))            // => describe(42): calls describe with Int
+                                     // => 42 is Int (matches second branch)
+                                     // => 42 * 2 is 84
+                                     // => Returns "Integer with value 42 doubled = 84"
+                                     // => Output: Integer with value 42 doubled = 84
     println(describe(listOf(1, 2, 3)))
+                                     // => listOf(1, 2, 3): creates List<Int> with 3 elements
+                                     // => List matches third branch (is List<*>)
+                                     // => size is 3 (element count)
+                                     // => Returns "List of size 3"
                                      // => Output: List of size 3
-    println(describe(3.14))          // => Output: Unknown type
+    println(describe(3.14))          // => 3.14: Double literal
+                                     // => Double doesn't match any branch
+                                     // => Falls through to else branch
+                                     // => Returns "Unknown type"
+                                     // => Output: Unknown type
 
     // Unsafe cast (throws exception if wrong type)
-    val str1 = obj as String         // => str1 is "Kotlin" (succeeds)
-    // val str2 = num as String      // => Would throw ClassCastException
+    val str1 = obj as String         // => as: unsafe cast operator
+                                     // => obj as String: casts obj to String
+                                     // => obj is "Kotlin" (actually is String)
+                                     // => Cast succeeds (no exception)
+                                     // => str1 is "Kotlin" (type: String)
+    // val str2 = num as String      // => num as String: unsafe cast attempt
+                                     // => num is 42 (Int, not String)
+                                     // => Would throw ClassCastException at runtime
+                                     // => Compile warning: cast will always fail
+                                     // => Commented out to prevent crash
 
     // Safe cast (returns null if wrong type)
-    val str2 = num as? String        // => str2 is null (Int cannot be cast to String)
-    val int1 = num as? Int           // => int1 is 42 (succeeds)
+    val str2 = num as? String        // => as?: safe cast operator
+                                     // => num as? String: attempts cast to String
+                                     // => num is 42 (Int, not String)
+                                     // => Cast fails (Int cannot be String)
+                                     // => Returns null instead of throwing exception
+                                     // => str2 is null (type: String?)
+    val int1 = num as? Int           // => num as? Int: attempts cast to Int
+                                     // => num is 42 (actually is Int)
+                                     // => Cast succeeds
+                                     // => int1 is 42 (type: Int?)
 
-    println(str1)                    // => Output: Kotlin
-    println(str2)                    // => Output: null
-    println(int1)                    // => Output: 42
+    println(str1)                    // => str1 is "Kotlin" (from successful unsafe cast)
+                                     // => Output: Kotlin
+    println(str2)                    // => str2 is null (from failed safe cast)
+                                     // => Output: null
+    println(int1)                    // => int1 is 42 (from successful safe cast)
+                                     // => Output: 42
 
     // Smart cast with null check
-    val nullable: String? = "Test"   // => nullable is "Test"
-    if (nullable != null) {
-        println(nullable.length)     // => Smart casted to non-null String
+    val nullable: String? = "Test"   // => nullable: String?: nullable String type
+                                     // => "Test": non-null String value
+                                     // => nullable is "Test" (actual value not null)
+                                     // => Type allows null but value happens to be non-null
+    if (nullable != null) {          // => != null: null check
+                                     // => Condition evaluates to true ("Test" is not null)
+                                     // => Enters if block
+        println(nullable.length)     // => nullable smart casted to String (non-null)
+                                     // => Smart cast: compiler knows nullable is non-null here
+                                     // => .length: String property accessible without ?.
+                                     // => "Test".length is 4
                                      // => Output: 4
-    }
-}
+    }                                // => if block complete
+}                                   // => main returns
+                                    // => Program terminates
 ```
 
 **Key Takeaway**: Use `is` for type checks that enable automatic smart casts, prefer safe casts (`as?`) over unsafe casts (`as`) to avoid exceptions, and leverage smart casting in `when` expressions for clean type handling.
