@@ -763,7 +763,7 @@ These practices compound their benefits over time, creating codebases that remai
 **Explanations:**
 
 - [Common Clojure Anti-Patterns](/en/learn/software-engineering/programming-languages/clojure/explanation/anti-patterns) - Avoid common mistakes
-- [Programming Language Content Standard](/en/docs/explanation/conventions/ex-co__programming-language-content) - Content guidelines
+- [Programming Language Content Standard](/en/docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content) - Content guidelines
 
 **Tutorials:**
 

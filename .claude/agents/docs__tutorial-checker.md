@@ -43,8 +43,8 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 
 This agent validates tutorials against standards defined in:
 
-- [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md) - Complete tutorial standards and validation criteria
-- [Tutorial Naming Convention](../../docs/explanation/conventions/ex-co__tutorial-naming.md) - Standardized tutorial types and depth levels
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - Complete tutorial standards and validation criteria
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Standardized tutorial types and depth levels
 
 The Tutorial Convention defines what to validate:
 
@@ -89,7 +89,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 
 ## Validation Criteria
 
-This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/ex-co__tutorials.md#-validation-criteria).
+This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md#-validation-criteria).
 
 **Validation Categories:**
 
@@ -104,7 +104,7 @@ See convention for complete checklist and pass/fail criteria.
 
 ### Quick Reference - Key Checks
 
-All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/ex-co__tutorials.md#-validation-criteria).
+All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md#-validation-criteria).
 
 **Six Validation Categories:**
 
@@ -237,7 +237,7 @@ This progressive approach ensures findings persist even if context is compacted 
    - Do colors work in both light and dark mode?
    - Is shape differentiation used (not color alone)?
 
-3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md))
+3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md))
    - Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
    - Avoids inaccessible colors: red, green, yellow
    - Includes black borders (#000000) for definition
@@ -245,7 +245,7 @@ This progressive approach ensures findings persist even if context is compacted 
    - Has comment documenting color scheme
    - Uses shape differentiation (not color alone)
 
-4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting))
+4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md#diagram-size-and-splitting))
    - No subgraphs (renders too small on mobile)
    - Limited branching (≤4-5 branches from single node)
    - One concept per diagram
@@ -447,7 +447,7 @@ Create a comprehensive report with:
 
 - [Assessment of existing diagrams]
 
-**Color Accessibility Check** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md)):
+**Color Accessibility Check** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)):
 
 - ✓/✗ Uses accessible color palette (no red/green/yellow)
 - ✓/✗ Includes shape differentiation (not color alone)
@@ -591,7 +591,7 @@ Create a comprehensive report with:
 
 ## Anti-Patterns to Check For
 
-Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../docs/explanation/conventions/ex-co__tutorials.md#-anti-patterns).
+Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md#-anti-patterns).
 
 **Key anti-patterns include:**
 

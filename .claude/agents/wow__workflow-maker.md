@@ -557,7 +557,7 @@ Deploy only if validation passes:
 
 **Domain-Specific Conventions:**
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming rules (prefix pattern)
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - File naming rules (prefix pattern)
 - `docs/explanation/development/ex-de__maker-checker-fixer-pattern.md` - Three-stage workflow pattern
 - `docs/explanation/development/ex-de__fixer-confidence-levels.md` - Confidence assessment for fixers
 

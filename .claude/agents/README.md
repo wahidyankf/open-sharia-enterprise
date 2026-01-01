@@ -838,7 +838,7 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 **Principle**: [Accessibility First](../docs/explanation/principles/content/ex-pr-co__accessibility-first.md)
 
-**Convention**: [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md)
+**Convention**: [Color Accessibility Convention](../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)
 
 **Enforcing Agents**:
 
@@ -1133,4 +1133,4 @@ When creating new agents:
 
 ---
 
-**Note:** This README follows the naming exception for README.md files documented in the [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md).
+**Note:** This README follows the naming exception for README.md files documented in the [File Naming Convention](../docs/explanation/conventions/meta/ex-co-me__file-naming.md).

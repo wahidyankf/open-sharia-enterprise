@@ -705,11 +705,11 @@ For **Multi-PR plans**: delivery.md will specify which phase corresponds to whic
 
 **Documentation Conventions:**
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming standards
-- `docs/explanation/conventions/ex-co__linking-convention.md` - Linking standards
-- `docs/explanation/conventions/ex-co__diagrams.md` - Diagram standards (ASCII art in plans/)
-- `docs/explanation/conventions/ex-co__diataxis-framework.md` - Documentation organization
-- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - File naming standards
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - Linking standards
+- `docs/explanation/conventions/formatting/ex-co-fo__diagrams.md` - Diagram standards (ASCII art in plans/)
+- `docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md` - Documentation organization
+- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md` - When and where to use emojis
 
 **Related Agents:**
 

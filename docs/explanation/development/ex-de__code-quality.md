@@ -32,9 +32,9 @@ This practice implements/respects the following conventions:
 
 - **[Commit Message Convention](./ex-de__commit-messages.md)**: Git hooks enforce Conventional Commits format through Commitlint, validating commit message structure before commits are created.
 
-- **[Indentation Convention](../conventions/ex-co__indentation.md)**: Prettier enforces consistent indentation (2 spaces for YAML frontmatter) across all formatted file types.
+- **[Indentation Convention](../conventions/formatting/ex-co-fo__indentation.md)**: Prettier enforces consistent indentation (2 spaces for YAML frontmatter) across all formatted file types.
 
-- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Pre-commit hook formats all files matching the repository's file naming patterns without altering the naming structure.
+- **[File Naming Convention](../conventions/meta/ex-co-me__file-naming.md)**: Pre-commit hook formats all files matching the repository's file naming patterns without altering the naming structure.
 
 ## Overview
 

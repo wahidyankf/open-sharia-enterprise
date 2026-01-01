@@ -239,7 +239,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 
 ❌ **Anti-pattern**: "We just follow this convention, everyone knows it"
 
-**Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/ex-co__file-naming-convention.md) explaining:
+**Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/meta/ex-co-me__file-naming.md) explaining:
 
 - The pattern: `[prefix]__[content-identifier].[extension]`
 - The why: Hierarchical organization, searchability, automation
@@ -502,7 +502,7 @@ Organize documentation into four categories:
 - **Reference**: Information-oriented (technical specifications, API details)
 - **Explanation**: Understanding-oriented (concepts, architecture, decisions)
 
-See [Diátaxis Framework](../../conventions/ex-co__diataxis-framework.md) for complete details.
+See [Diátaxis Framework](../../conventions/meta/ex-co-me__diataxis-framework.md) for complete details.
 
 **Why this works**: Different audiences need different documentation types. Organizing by purpose makes information findable.
 
@@ -577,10 +577,10 @@ Every piece of documentation should include examples:
 
 Every convention is fully documented:
 
-- [File Naming Convention](../../conventions/ex-co__file-naming-convention.md) - Explains pattern, rationale, examples
-- [Linking Convention](../../conventions/ex-co__linking-convention.md) - GitHub-compatible links, two-tier formatting
-- [Diátaxis Framework](../../conventions/ex-co__diataxis-framework.md) - How to organize documentation
-- [Color Accessibility Convention](../../conventions/ex-co__color-accessibility.md) - Accessible color palette, WCAG compliance
+- [File Naming Convention](../../conventions/meta/ex-co-me__file-naming.md) - Explains pattern, rationale, examples
+- [Linking Convention](../../conventions/formatting/ex-co-fo__linking.md) - GitHub-compatible links, two-tier formatting
+- [Diátaxis Framework](../../conventions/meta/ex-co-me__diataxis-framework.md) - How to organize documentation
+- [Color Accessibility Convention](../../conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible color palette, WCAG compliance
 
 **Why this works**: Contributors understand conventions deeply. Checker agents can validate against documented standards.
 
@@ -665,10 +665,10 @@ function validateMurabahahContract(contract: MurabahahContract): ValidationResul
 
 ## 📚 Related Conventions
 
-- [Diátaxis Framework](../../conventions/ex-co__diataxis-framework.md) - How to organize documentation into four categories
-- [Content Quality Principles](../../conventions/ex-co__content-quality.md) - Quality standards for all markdown content
-- [README Quality Convention](../../conventions/ex-co__readme-quality.md) - Standards for README files
-- [Convention Writing Convention](../../conventions/ex-co__convention-writing.md) - How to write convention documents
+- [Diátaxis Framework](../../conventions/meta/ex-co-me__diataxis-framework.md) - How to organize documentation into four categories
+- [Content Quality Principles](../../conventions/content/ex-co-co__quality.md) - Quality standards for all markdown content
+- [README Quality Convention](../../conventions/content/ex-co-co__readme-quality.md) - Standards for README files
+- [Convention Writing Convention](../../conventions/content/ex-co-co__convention-writing.md) - How to write convention documents
 
 ## 📖 References
 

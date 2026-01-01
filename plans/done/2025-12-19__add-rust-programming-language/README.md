@@ -10,7 +10,7 @@
 
 ## Overview
 
-This plan outlines the comprehensive implementation of Rust programming language content on ayokoding-web to meet the highest standards defined in the [Programming Language Content Standard](../../../docs/explanation/conventions/ex-co__programming-language-content.md). The project delivers production-ready Rust content with complete tutorials (5 levels), cookbook (30-35 recipes), how-to guides (18), reference documentation, and philosophy sections.
+This plan outlines the comprehensive implementation of Rust programming language content on ayokoding-web to meet the highest standards defined in the [Programming Language Content Standard](../../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md). The project delivers production-ready Rust content with complete tutorials (5 levels), cookbook (30-35 recipes), how-to guides (18), reference documentation, and philosophy sections.
 
 ### Goals
 

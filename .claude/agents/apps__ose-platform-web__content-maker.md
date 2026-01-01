@@ -81,7 +81,7 @@ content/
 
 ## Hugo Content Convention Compliance
 
-**Reference**: [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) and [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md)
+**Reference**: [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) and [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md)
 
 ### Inherited Conventions (Apply to ose-platform-web)
 
@@ -91,7 +91,7 @@ content/
 4. **Emoji Usage** - Semantic emojis for section markers, status indicators
 5. **Timestamp Format** - ISO 8601 with UTC+7 (`YYYY-MM-DDTHH:MM:SS+07:00`)
    - **Command to get current timestamp**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-   - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
 
 **Note**: Tutorial conventions do NOT apply (ose-platform-web has no tutorial content)
 
@@ -150,7 +150,7 @@ content/
 
 ## Content Quality Principles Compliance
 
-**Reference**: [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md)
+**Reference**: [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md)
 
 ### Writing Style
 
@@ -810,16 +810,16 @@ npm run dev
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web specific standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content quality standards
 
 **Related Conventions**:
-- [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md) - LaTeX usage
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible color palette
-- [Diagrams Convention](../../docs/explanation/conventions/ex-co__diagrams.md) - Diagram standards
-- [Emoji Usage Convention](../../docs/explanation/conventions/ex-co__emoji-usage.md) - Semantic emoji use
-- [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) - Date/time format
+- [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) - LaTeX usage
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible color palette
+- [Diagrams Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) - Diagram standards
+- [Emoji Usage Convention](../../docs/explanation/conventions/formatting/ex-co-fo__emoji.md) - Semantic emoji use
+- [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - Date/time format
 
 **Related Agents**:
 - [ose-platform-web-content-checker](./ose-platform-web-content-checker.md) - Validates ose-platform-web content (complementary agent)

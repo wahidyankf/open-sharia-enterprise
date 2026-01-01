@@ -31,15 +31,15 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md)**: Theme development supports content conventions (frontmatter processing, multilingual support, navigation rendering) defined for Hugo sites.
+- **[Hugo Content Convention - Shared](../conventions/hugo/ex-co-hu__shared.md)**: Theme development supports content conventions (frontmatter processing, multilingual support, navigation rendering) defined for Hugo sites.
 
-- **[Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md)**: ayokoding-web theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
+- **[Hugo Content Convention - ayokoding](../conventions/hugo/ex-co-hu__ayokoding.md)**: ayokoding-web theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
 
-- **[Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md)**: ose-platform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
+- **[Hugo Content Convention - OSE Platform](../conventions/hugo/ex-co-hu__ose-platform.md)**: ose-platform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
 
-- **[Color Accessibility Convention](../conventions/ex-co__color-accessibility.md)**: Theme CSS and components use verified accessible color palette (#0173B2, #DE8F05, #029E73, #CC78BC) meeting WCAG AA standards.
+- **[Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md)**: Theme CSS and components use verified accessible color palette (#0173B2, #DE8F05, #029E73, #CC78BC) meeting WCAG AA standards.
 
-- **[Diagrams Convention](../conventions/ex-co__diagrams.md)**: Documentation diagrams in this convention use Mermaid with accessible colors and proper comment syntax.
+- **[Diagrams Convention](../conventions/formatting/ex-co-fo__diagrams.md)**: Documentation diagrams in this convention use Mermaid with accessible colors and proper comment syntax.
 
 ## 📋 Purpose
 
@@ -84,12 +84,12 @@ This convention defines standards for:
 
 This convention builds upon and references:
 
-- [Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md) - Shared content standards (complementary)
-- [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web content standards
-- [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web content standards
-- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Accessible color palette for themes
-- [Diagram Convention](../conventions/ex-co__diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
-- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal markdown standards
+- [Hugo Content Convention - Shared](../conventions/hugo/ex-co-hu__shared.md) - Shared content standards (complementary)
+- [Hugo Content Convention - ayokoding](../conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web content standards
+- [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible color palette for themes
+- [Diagram Convention](../conventions/formatting/ex-co-fo__diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
+- [Content Quality Principles](../conventions/content/ex-co-co__quality.md) - Universal markdown standards
 
 ## 🏗️ Theme Development
 
@@ -910,7 +910,7 @@ Sitemap: {{ .Site.BaseURL }}sitemap.xml
 
 **Use Accessible Color Palette:**
 
-Refer to [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) for the verified accessible palette:
+Refer to [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) for the verified accessible palette:
 
 - Blue: `#0173B2`
 - Orange: `#DE8F05`
@@ -1464,7 +1464,7 @@ graph TD
 
 **Why:** The `%%{ }%%` syntax is invalid in Mermaid and causes rendering errors. Always use plain `%%` comments.
 
-**Reference:** See [Diagram Convention - Mermaid Comment Syntax](../conventions/ex-co__diagrams.md#mermaid-comment-syntax) for complete details.
+**Reference:** See [Diagram Convention - Mermaid Comment Syntax](../conventions/formatting/ex-co-fo__diagrams.md#mermaid-comment-syntax) for complete details.
 
 ## ⚠️ Antipatterns to Avoid
 
@@ -2188,11 +2188,11 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 
 ### Related Conventions
 
-- [Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md) - Shared content standards
-- [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web content standards
-- [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web content standards
-- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Accessible colors
-- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal standards
+- [Hugo Content Convention - Shared](../conventions/hugo/ex-co-hu__shared.md) - Shared content standards
+- [Hugo Content Convention - ayokoding](../conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web content standards
+- [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible colors
+- [Content Quality Principles](../conventions/content/ex-co-co__quality.md) - Universal standards
 
 ---
 

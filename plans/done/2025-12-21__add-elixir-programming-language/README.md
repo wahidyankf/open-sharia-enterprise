@@ -1,6 +1,6 @@
 # Add Elixir Programming Language to ayokoding-web
 
-> **HISTORICAL NOTE**: This plan was completed on 2025-12-21 using the **3-layer navigation standard** that was in effect at the time. As of 2025-12-22, the ayokoding-web navigation standard has been updated to **2-layer navigation depth**. All references to "3-layer navigation" in this document reflect the historical requirements when this work was done, not current standards. See [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) for current 2-layer navigation requirements.
+> **HISTORICAL NOTE**: This plan was completed on 2025-12-21 using the **3-layer navigation standard** that was in effect at the time. As of 2025-12-22, the ayokoding-web navigation standard has been updated to **2-layer navigation depth**. All references to "3-layer navigation" in this document reflect the historical requirements when this work was done, not current standards. See [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) for current 2-layer navigation requirements.
 
 **Status:** Complete ✅ (English-only delivery)
 

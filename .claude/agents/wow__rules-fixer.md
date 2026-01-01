@@ -596,8 +596,8 @@ Always provide:
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
 - [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks)
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
-- [File Naming Convention](../../docs/explanation/conventions/ex-co__file-naming-convention.md) - Validation target
-- [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) - Validation target
+- [File Naming Convention](../../docs/explanation/conventions/meta/ex-co-me__file-naming.md) - Validation target
+- [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - Validation target
 
 ---
 

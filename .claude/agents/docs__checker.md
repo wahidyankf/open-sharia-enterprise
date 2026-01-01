@@ -24,7 +24,7 @@ You are an expert at validating the factual correctness and content consistency 
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md) for project documentation in `docs/` directory.
+Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) for project documentation in `docs/` directory.
 
 **Key Activities:**
 
@@ -127,7 +127,7 @@ $$
 - Check if file has H1 heading at start
 - Flag any files missing H1 heading
 
-See [Indentation Convention](../../docs/explanation/conventions/ex-co__indentation.md) for complete details.
+See [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__indentation.md) for complete details.
 
 #### Bullet Indentation Validation
 
@@ -184,7 +184,7 @@ CORRECT - Spaces before dash:
 
 1. **First mention lacks link** → CRITICAL issue
    - Example: "This implements Linking Convention" (plain text)
-   - Should be: "This implements [Linking Convention](./ex-co__linking-convention.md)"
+   - Should be: "This implements [Linking Convention](./formatting/ex-co-fo__linking.md)"
    - Impact: Breaks navigation, users cannot discover the rule document
 
 2. **Subsequent mention lacks inline code** → HIGH issue
@@ -203,10 +203,10 @@ WRONG - All plain text:
 This follows the Linking Convention. The Linking Convention requires .md extensions.
 
 CORRECT - Two-tier formatting:
-This follows the [Linking Convention](./ex-co__linking-convention.md). The `Linking Convention` requires .md extensions.
+This follows the [Linking Convention](./formatting/ex-co-fo__linking.md). The `Linking Convention` requires .md extensions.
 
 WRONG - All links (redundant):
-This follows the [Linking Convention](./ex-co__linking-convention.md). The [Linking Convention](./ex-co__linking-convention.md) requires .md extensions.
+This follows the [Linking Convention](./formatting/ex-co-fo__linking.md). The [Linking Convention](./formatting/ex-co-fo__linking.md) requires .md extensions.
 
 WRONG - All inline code (first mention not linked):
 This follows the `Linking Convention`. The `Linking Convention` requires .md extensions.
@@ -216,7 +216,7 @@ This follows the `Linking Convention`. The `Linking Convention` requires .md ext
 
 - Code blocks (already formatted)
 - Quoted text (preserve original)
-- File path specifications (literal paths like `docs/explanation/conventions/ex-co__linking-convention.md`)
+- File path specifications (literal paths like `docs/explanation/conventions/formatting/ex-co-fo__linking.md`)
 - Meta-discussion about naming (discussing names as strings)
 
 **Audit report format:**
@@ -230,7 +230,7 @@ File: `docs/how-to/hoto__example.md`
 Line: 45
 Current: "This implements Linking Convention by using..."
 Issue: First mention of rule name lacks navigable link
-Fix: "This implements [Linking Convention](../explanation/conventions/ex-co__linking-convention.md) by using..."
+Fix: "This implements [Linking Convention](../explanation/conventions/formatting/ex-co-fo__linking.md) by using..."
 
 **HIGH: Subsequent mention without inline code**
 
@@ -249,7 +249,7 @@ Issue: Complete non-compliance with rule reference formatting convention
 Fix: First mention → markdown link, subsequent mentions → inline code
 ```
 
-See [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) for complete two-tier formatting rules.
+See [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) for complete two-tier formatting rules.
 
 #### Code Block Indentation Validation
 
@@ -332,7 +332,7 @@ code here
 
 **Fix**: Remove orphaned closing fences. Every opening fence must have exactly one matching closing fence.
 
-See [Nested Code Fence Convention](../../docs/explanation/conventions/ex-co__nested-code-fences.md) for complete nesting rules.
+See [Nested Code Fence Convention](../../docs/explanation/conventions/formatting/ex-co-fo__nested-code-fences.md) for complete nesting rules.
 
 ### 2. Code Example Validation
 
@@ -1301,9 +1301,9 @@ Some sites block automated tools (Wikipedia, GitHub, etc.):
 
 **Documentation Conventions:**
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming standards
-- `docs/explanation/conventions/ex-co__linking-convention.md` - Linking standards
-- `docs/explanation/conventions/ex-co__diataxis-framework.md` - Documentation organization
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - File naming standards
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - Linking standards
+- `docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md` - Documentation organization
 
 **Related Agents:**
 

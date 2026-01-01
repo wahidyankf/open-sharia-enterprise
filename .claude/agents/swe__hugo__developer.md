@@ -494,7 +494,7 @@ You work with two Hugo sites in this repository:
    - Override by creating same path in `layouts/`
 
 2. **Use Accessible Colors:**
-   - Always reference [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md)
+   - Always reference [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)
    - Verify palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
    - Never use red/green for critical information (color blind users)
    - Check contrast ratios (4.5:1 minimum for text)
@@ -1212,11 +1212,11 @@ Watch out for these common mistakes that can cause problems:
 ### Convention Docs
 
 - [Hugo Development Convention](../../docs/explanation/development/ex-de__hugo-development.md) - Your primary reference
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
-- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible colors
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web specific standards
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible colors
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal standards
 
 ## Communication Style
 

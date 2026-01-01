@@ -288,7 +288,7 @@ For each workflow in `docs/explanation/workflows/`:
 
 ### Color Accessibility Compliance
 
-Validate against [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage:
+Validate against [Color Accessibility Convention](../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - the master reference for all color usage:
 
 - [ ] All Mermaid diagrams use accessible hex codes in `classDef` from verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Black #000000, White #FFFFFF, Gray #808080)
 - [ ] No use of inaccessible colors (red, green, yellow, light pink, bright magenta)
@@ -664,7 +664,7 @@ Check that content was offloaded to the appropriate folder:
 
 ### Convention Writing Convention Compliance
 
-Validate that ALL files matching `ex-co__*.md` pattern in `docs/explanation/conventions/` comply with the [Convention Writing Convention](../../docs/explanation/conventions/ex-co__convention-writing.md):
+Validate that ALL files matching `ex-co__*.md` pattern in `docs/explanation/conventions/` comply with the [Convention Writing Convention](../../docs/explanation/conventions/content/ex-co-co__convention-writing.md):
 
 **Frontmatter Compliance:**
 
@@ -1077,7 +1077,7 @@ Include workflow agent reference findings in the "Workflow Structure Validation"
    - **Example output**: `2025-12-14--16-23` for filename (actual time), `2025-12-14T16:23:00+07:00` for header
    - ** WRONG**: `repo-rules__abc123__2025-12-14--00-00__audit.md` (placeholder time)
    - ** CORRECT**: `repo-rules__a1b2c3__2025-12-14--16-43__audit.md` (actual UUID and time from executed commands)
-   - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) for complete details
 4. **Create filename**: `repo-rules__{uuid-chain}__{timestamp}__audit.md`
 5. **Initialize file** at audit start with header and progress tracker
 6. **Update progressively** as each checklist section completes
@@ -1236,19 +1236,19 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 ### Convention Documents
 
 - `docs/explanation/conventions/README.md`
-- `docs/explanation/conventions/ex-co__convention-writing.md`
-- `docs/explanation/conventions/ex-co__file-naming-convention.md`
-- `docs/explanation/conventions/ex-co__linking-convention.md`
-- `docs/explanation/conventions/ex-co__diagrams.md`
-- `docs/explanation/conventions/ex-co__diataxis-framework.md`
-- `docs/explanation/conventions/ex-co__emoji-usage.md`
-- `docs/explanation/conventions/ex-co__hugo-content-shared.md`
-- `docs/explanation/conventions/ex-co__hugo-content-ayokoding.md`
-- `docs/explanation/conventions/ex-co__hugo-content-ose-platform.md`
-- `docs/explanation/conventions/ex-co__timestamp-format.md`
-- `docs/explanation/conventions/ex-co__tutorials.md`
-- `docs/explanation/conventions/ex-co__tutorial-naming.md`
-- `docs/explanation/conventions/ex-co__color-accessibility.md`
+- `docs/explanation/conventions/content/ex-co-co__convention-writing.md`
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md`
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md`
+- `docs/explanation/conventions/formatting/ex-co-fo__diagrams.md`
+- `docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md`
+- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md`
+- `docs/explanation/conventions/hugo/ex-co-hu__shared.md`
+- `docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md`
+- `docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md`
+- `docs/explanation/conventions/formatting/ex-co-fo__timestamp.md`
+- `docs/explanation/conventions/tutorial/ex-co-tu__general.md`
+- `docs/explanation/conventions/tutorial/ex-co-tu__naming.md`
+- `docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md`
 
 ### Development Conventions
 
@@ -1328,14 +1328,14 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 **Documentation Conventions:**
 
 - `docs/explanation/conventions/README.md` - Index of all conventions
-- `docs/explanation/conventions/ex-co__convention-writing.md` - How to write convention documents (meta-convention) - THIS AGENT VALIDATES COMPLIANCE
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files
-- `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files
-- `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
-- `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation
-- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
-- `docs/explanation/conventions/ex-co__tutorials.md` - Standards for creating learning-oriented tutorials
-- `docs/explanation/conventions/ex-co__tutorial-naming.md` - Standardized tutorial types and depth levels
+- `docs/explanation/conventions/content/ex-co-co__convention-writing.md` - How to write convention documents (meta-convention) - THIS AGENT VALIDATES COMPLIANCE
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - How to name files
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - How to link between files
+- `docs/explanation/conventions/formatting/ex-co-fo__diagrams.md` - When to use Mermaid diagrams vs ASCII art
+- `docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md` - How to organize documentation
+- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md` - When and where to use emojis
+- `docs/explanation/conventions/tutorial/ex-co-tu__general.md` - Standards for creating learning-oriented tutorials
+- `docs/explanation/conventions/tutorial/ex-co-tu__naming.md` - Standardized tutorial types and depth levels
 
 **Related Agents:**
 

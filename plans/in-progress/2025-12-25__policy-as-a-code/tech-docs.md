@@ -67,7 +67,7 @@ Layer 5: Workflows (WHEN)
 
 ### Storage Format Example
 
-**File**: `docs/explanation/conventions/ex-co__file-naming-convention.md`
+**File**: `docs/explanation/conventions/meta/ex-co-me__file-naming.md`
 
 ````markdown
 ---
@@ -104,7 +104,7 @@ policy:
         reason: "Explicit prefixes make file locations transparent without opening files"
     conventions:
       - id: ex-co__file-naming-convention
-        path: docs/explanation/conventions/ex-co__file-naming-convention.md
+        path: docs/explanation/conventions/meta/ex-co-me__file-naming.md
         section: "Prefix Pattern Rules"
 
   scope:
@@ -131,7 +131,7 @@ policy:
 
       examples:
         valid:
-          - "docs/explanation/conventions/ex-co__example.md"
+          - "docs/explanation/conventions/formatting/ex-co-fo__indentation.md"
           - "docs/tutorials/tu__getting-started.md"
         invalid:
           - "docs/explanation/conventions/wrong-prefix__example.md"
@@ -452,7 +452,7 @@ traceability:
 
   conventions:
     - id: ex-co__content-quality
-      path: docs/explanation/conventions/ex-co__content-quality.md
+      path: docs/explanation/conventions/content/ex-co-co__quality.md
       section: "Writing Style and Tone > Active Voice"
       line_range: "77-106" # Optional: specific line references
 ```
@@ -1037,10 +1037,10 @@ echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(
 # Example: "Add new rule for emoji usage in agent files"
 
 # 2. repo-rules-maker updates convention prose
-# (Uses Edit tool to update docs/explanation/conventions/ex-co__emoji-usage.md)
+# (Uses Edit tool to update docs/explanation/conventions/formatting/ex-co-fo__emoji.md)
 
 # 3. repo-rules-maker generates policy YAML
-cat >> docs/explanation/conventions/ex-co__emoji-usage.md << 'EOF'
+cat >> docs/explanation/conventions/formatting/ex-co-fo__emoji.md << 'EOF'
 
 ## Policy Definition
 
@@ -1062,7 +1062,7 @@ policy:
         reason: "Semantic emojis improve scannability for readers"
     conventions:
       - id: ex-co__emoji-usage
-        path: docs/explanation/conventions/ex-co__emoji-usage.md
+        path: docs/explanation/conventions/formatting/ex-co-fo__emoji.md
         section: "Usage Rules"
 
   scope:
@@ -1175,7 +1175,7 @@ cat >> "generated-reports/repo-rules__2025-12-24--10-35__fix.md" << EOF
 **Confidence**: HIGH (objective structural rule)
 **File**: $FILE
 **Change**: Renamed file from wrong__example.md to ex-co__example.md
-**Policy Source**: docs/explanation/conventions/ex-co__file-naming-convention.md#policy-fn001
+**Policy Source**: docs/explanation/conventions/meta/ex-co-me__file-naming.md#policy-fn001
 **Rationale**: Policy specifies files in docs/explanation/conventions/ must use ex-co__ prefix
 EOF
 ````
@@ -1360,7 +1360,7 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
 
 **Phase 1 (Pilot - repo-rules Family):**
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` (MODIFY)
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` (MODIFY)
   - Add ## Policy Definition section with YAML
 
 - `.claude/agents/wow__rules-checker.md` (MODIFY: 953→400 lines)

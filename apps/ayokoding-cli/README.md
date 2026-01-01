@@ -64,7 +64,7 @@ ayokoding-cli nav regen --verbose
 - **Generates absolute paths with language prefix** for all navigation links (e.g., `/en/learn/swe/prog-lang/python`)
 - Writes updated navigation back to files
 
-**CRITICAL - Absolute Path Requirement**: All generated navigation links use **absolute paths with language prefix**. This is required for Hugo sites because relative paths break when content is rendered in different page contexts (sidebar, hamburger menu, content pages). See [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md#internal-link-requirements) for complete details.
+**CRITICAL - Absolute Path Requirement**: All generated navigation links use **absolute paths with language prefix**. This is required for Hugo sites because relative paths break when content is rendered in different page contexts (sidebar, hamburger menu, content pages). See [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md#internal-link-requirements) for complete details.
 
 **Flags:**
 
@@ -368,5 +368,5 @@ Navigation regeneration performance comparison:
 ## References
 
 - [ayokoding-web-navigation-maker Agent](../../.claude/agents/ayokoding-web-navigation-maker.md)
-- [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md)
+- [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
 - [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md)

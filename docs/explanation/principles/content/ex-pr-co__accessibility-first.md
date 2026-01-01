@@ -104,7 +104,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 #FFFF00  /* Yellow - invisible to tritanopia */
 ```
 
-**See**: [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - The master reference for all color usage
+**See**: [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) - The master reference for all color usage
 
 ### Image Alt Text
 
@@ -422,9 +422,9 @@ tags:
 
 ## 📚 Related Conventions
 
-- [Color Accessibility Convention](../../conventions/ex-co__color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
-- [Content Quality Principles](../../conventions/ex-co__content-quality.md) - Accessibility standards in content
-- [Diagrams Convention](../../conventions/ex-co__diagrams.md) - Accessible diagram standards
+- [Color Accessibility Convention](../../conventions/formatting/ex-co-fo__color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
+- [Content Quality Principles](../../conventions/content/ex-co-co__quality.md) - Accessibility standards in content
+- [Diagrams Convention](../../conventions/formatting/ex-co-fo__diagrams.md) - Accessible diagram standards
 
 ## 📖 References
 

@@ -246,14 +246,14 @@ Before committing files in `docs/`:
 
 **Universal Application**:
 
-- [Content Quality Principles](./ex-co__content-quality.md) - Quality standards for all markdown
+- [Content Quality Principles](../content/ex-co-co__quality.md) - Quality standards for all markdown
 
 **Context-Specific**:
 
-- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Adapted for Hugo (frontmatter spaces, content standard markdown)
-- [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - ayokoding-web indentation specifics
-- [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - ose-platform-web indentation specifics
-- [File Naming Convention](./ex-co__file-naming-convention.md) - File naming standards
+- [Hugo Content Convention - Shared](../hugo/ex-co-hu__shared.md) - Adapted for Hugo (frontmatter spaces, content standard markdown)
+- [Hugo Content Convention - ayokoding](../hugo/ex-co-hu__ayokoding.md) - ayokoding-web indentation specifics
+- [Hugo Content Convention - OSE Platform](../hugo/ex-co-hu__ose-platform.md) - ose-platform-web indentation specifics
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - File naming standards
 
 ## 🌐 External Resources
 

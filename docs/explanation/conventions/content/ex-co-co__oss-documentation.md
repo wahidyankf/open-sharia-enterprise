@@ -889,9 +889,9 @@ When setting up a new repository:
 
 ## 🔗 Related Documentation
 
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Organization of internal documentation
-- [File Naming Convention](./ex-co__file-naming-convention.md) - Naming files within `docs/`
-- [Linking Convention](./ex-co__linking-convention.md) - How to link between documentation
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Organization of internal documentation
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - Naming files within `docs/`
+- [Linking Convention](../formatting/ex-co-fo__linking.md) - How to link between documentation
 - [Commit Message Convention](../development/ex-de__commit-messages.md) - Git commit standards
 - [Trunk Based Development](../development/ex-de__trunk-based-development.md) - Git workflow
 

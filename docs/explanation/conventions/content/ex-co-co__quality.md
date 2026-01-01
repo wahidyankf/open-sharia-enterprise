@@ -424,7 +424,7 @@ More content continues here...
 
 **Ensure sufficient color contrast** in diagrams and custom styling.
 
-**Reference**: [Color Accessibility Convention](./ex-co__color-accessibility.md)
+**Reference**: [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md)
 
 **Requirements**:
 
@@ -885,20 +885,20 @@ Before committing markdown content, verify:
 
 **Universal Conventions (apply to all markdown)**:
 
-- [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - LaTeX in markdown
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Accessible color palette for diagrams
-- [Diagrams and Schema Convention](./ex-co__diagrams.md) - Mermaid diagram standards (includes comment syntax requirements)
-- [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji use
+- [Mathematical Notation Convention](../formatting/ex-co-fo__mathematical-notation.md) - LaTeX in markdown
+- [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md) - Accessible color palette for diagrams
+- [Diagrams and Schema Convention](../formatting/ex-co-fo__diagrams.md) - Mermaid diagram standards (includes comment syntax requirements)
+- [Emoji Usage Convention](../formatting/ex-co-fo__emoji.md) - Semantic emoji use
 
 **Context-Specific Conventions**:
 
-- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
-- [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
-- [File Naming Convention](./ex-co__file-naming-convention.md) - File naming standards
-- [Linking Convention](./ex-co__linking-convention.md) - Internal and external linking
-- [Tutorial Convention](./ex-co__tutorials.md) - Tutorial structure and pedagogy
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Documentation organization
+- [Hugo Content Convention - Shared](../hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../hugo/ex-co-hu__ose-platform.md) - ose-platform-web specific standards
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - File naming standards
+- [Linking Convention](../formatting/ex-co-fo__linking.md) - Internal and external linking
+- [Tutorial Convention](../tutorial/ex-co-tu__general.md) - Tutorial structure and pedagogy
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Documentation organization
 
 ## References
 

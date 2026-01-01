@@ -239,7 +239,7 @@ git commit -m "feat: add agent, update docs, fix dates"  # Too many changes in o
 
 - **Apps**: `[domain]-[type]` (e.g., `api-gateway`, `admin-dashboard`)
 - **Libs**: `ts-[name]` (e.g., `ts-utils`, `ts-components`)
-- **Documentation**: Follow [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md)
+- **Documentation**: Follow [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md)
 
 ## Testing
 

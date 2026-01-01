@@ -60,7 +60,7 @@ All documentation files (except index files) follow this pattern:
 [hierarchical-prefix]__[content-identifier].[extension]
 ```
 
-**Example**: `ex-co__file-naming-convention.md`
+**Example**: `meta/ex-co-me__file-naming.md`
 
 Breaking this down:
 
@@ -116,7 +116,7 @@ Use a systematic encoding rule based on directory characteristics:
 
 **Key Rule**: For hyphenated directory names, take first 2 letters of EACH word and concatenate them WITHOUT inserting a dash. The dash in the directory name does NOT appear in the abbreviation.
 
-Examples: `tu__getting-started.md` (tutorials), `hoto__deploy-app.md` (how-to), `re__monorepo-structure.md` (reference), `ex-co__file-naming-convention.md` (explanation/conventions), `ex-de__ai-agents.md` (explanation/development)
+Examples: `tu__getting-started.md` (tutorials), `hoto__deploy-app.md` (how-to), `re__monorepo-structure.md` (reference), `meta/ex-co-me__file-naming.md` (explanation/conventions), `ex-de__ai-agents.md` (explanation/development)
 
 ## The `__` Separator
 
@@ -253,8 +253,8 @@ docs/metadata/search-index.json              # Generated search index
 Images follow the same prefix pattern as their related documentation:
 
 ```
-docs/explanation/conventions/ex-co__diagrams.md
-docs/explanation/conventions/ex-co__diagrams-example.png
+docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
+docs/explanation/conventions/formatting/ex-co-fo__diagrams-example.png
 ```
 
 ## 🔄 Maintenance and Scalability
@@ -347,7 +347,7 @@ ex-pr-se__explicit-over-implicit.md
 
 | Directory Path                              | Prefix       | Example                                             |
 | ------------------------------------------- | ------------ | --------------------------------------------------- |
-| explanation/conventions                     | `ex-co__`    | `ex-co__file-naming-convention.md`                  |
+| explanation/conventions                     | `ex-co__`    | `meta/ex-co-me__file-naming.md`                     |
 | explanation/development                     | `ex-de__`    | `ex-de__ai-agents.md`                               |
 | explanation/workflows                       | `ex-wf__`    | `ex-wf__meta__workflow-pattern.md`                  |
 | explanation/principles                      | `ex-pr__`    | `ex-pr-ge__simplicity-over-complexity.md` (general) |
@@ -357,8 +357,8 @@ ex-pr-se__explicit-over-implicit.md
 
 ## 🔗 Related Documentation
 
-- [Linking Convention](./ex-co__linking-convention.md) - How to link between documentation files
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the documentation organization framework
+- [Linking Convention](../formatting/ex-co-fo__linking.md) - How to link between documentation files
+- [Diátaxis Framework](./ex-co-me__diataxis-framework.md) - Understanding the documentation organization framework
 - [Conventions Index](./README.md) - Index of all documentation conventions
 
 ---

@@ -435,7 +435,7 @@ The `%%{init:...}%%` syntax is VALID when used for Mermaid initialization direct
 
 **CRITICAL REQUIREMENT**: All Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes.
 
-**Master Reference**: See [Color Accessibility Convention](./ex-co__color-accessibility.md) for the complete authoritative guide to color usage, including verified accessible palette, WCAG standards, testing methodology, and implementation details. This section provides a summary for diagram-specific context.
+**Master Reference**: See [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) for the complete authoritative guide to color usage, including verified accessible palette, WCAG standards, testing methodology, and implementation details. This section provides a summary for diagram-specific context.
 
 #### Why This Matters
 
@@ -1354,10 +1354,10 @@ Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
 ## 🔗 Related Documentation
 
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)
-- [File Naming Convention](./ex-co__file-naming-convention.md) - How to name documentation files
-- [Linking Convention](./ex-co__linking-convention.md) - How to link between files
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Documentation organization principles
+- [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - How to name documentation files
+- [Linking Convention](./ex-co-fo__linking.md) - How to link between files
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Documentation organization principles
 - [Conventions Index](./README.md) - Overview of all conventions
 
 ## 🌐 External Resources

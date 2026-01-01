@@ -305,7 +305,7 @@ Even for cached links that weren't rechecked:
 - Write `apps/ayokoding-web/ayokoding-links-status.yaml`
 - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
   - Use command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-  - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+  - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
 - Include full usedIn data for all links (needed for maintenance)
 - Sort links by URL for consistent git diffs
 - This step is REQUIRED on every run
@@ -496,7 +496,7 @@ Follow this systematic approach:
    - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
      - **Command to get current UTC+7 time**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
      - Example output: `2025-12-14T16:23:00+07:00`
-     - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
+     - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) for complete details
    - Include schema version
    - Include usedIn data (file paths only) for all links (needed for maintenance)
    - Sort links by URL for consistent git diffs
@@ -941,10 +941,10 @@ Before starting work, familiarize yourself with:
 
 **Domain-Specific Conventions:**
 
-- `docs/explanation/conventions/ex-co__hugo-content-shared.md` - Shared Hugo content standards
-- `docs/explanation/conventions/ex-co__hugo-content-ayokoding.md` - ayokoding-web specific Hugo standards
-- `docs/explanation/conventions/ex-co__linking-convention.md` - Linking standards (adapted for Hugo)
-- `docs/explanation/conventions/ex-co__timestamp-format.md` - Timestamp format (UTC+7)
+- `docs/explanation/conventions/hugo/ex-co-hu__shared.md` - Shared Hugo content standards
+- `docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md` - ayokoding-web specific Hugo standards
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - Linking standards (adapted for Hugo)
+- `docs/explanation/conventions/formatting/ex-co-fo__timestamp.md` - Timestamp format (UTC+7)
 
 **Related Agents:**
 

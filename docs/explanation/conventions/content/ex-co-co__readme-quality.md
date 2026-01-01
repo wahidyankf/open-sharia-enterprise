@@ -57,10 +57,10 @@ This convention establishes quality standards for README.md files to make them e
 
 ### What This Convention Does NOT Cover
 
-- **Technical accuracy** - Factual validation covered in [Factual Validation Convention](./ex-co__factual-validation.md)
+- **Technical accuracy** - Factual validation covered in [Factual Validation Convention](./ex-co-co__factual-validation.md)
 - **Code examples in README** - Code quality covered in development conventions
 - **Hugo site READMEs** - Hugo-specific patterns in Hugo content conventions
-- **OSS compliance** - License, contribution guidelines covered in [OSS Documentation Convention](./ex-co__oss-documentation.md)
+- **OSS compliance** - License, contribution guidelines covered in [OSS Documentation Convention](./ex-co-co__oss-documentation.md)
 
 ## Motivation
 
@@ -577,9 +577,9 @@ This project uses Nx to manage applications and libraries:
 
 ## Related Documentation
 
-- [Content Quality Principles](./ex-co__content-quality.md) - General content quality standards
-- [Emoji Usage Convention](./ex-co__emoji-usage.md) - Emoji usage guidelines
-- [Linking Convention](./ex-co__linking-convention.md) - How to format links
+- [Content Quality Principles](./ex-co-co__quality.md) - General content quality standards
+- [Emoji Usage Convention](../formatting/ex-co-fo__emoji.md) - Emoji usage guidelines
+- [Linking Convention](../formatting/ex-co-fo__linking.md) - How to format links
 
 ## External Resources
 

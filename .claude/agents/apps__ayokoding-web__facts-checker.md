@@ -24,7 +24,7 @@ You are an expert at validating the factual correctness of educational content f
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy** of ayokoding-web educational content by implementing the [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md).
+Your primary job is to **validate factual accuracy** of ayokoding-web educational content by implementing the [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md).
 
 This agent implements the universal factual validation methodology for ayokoding-web (Hextra theme, bilingual educational platform).
 
@@ -139,7 +139,7 @@ Verification:
 
 **For Technical/Mathematical Content:**
 
-Verify LaTeX notation compliance per [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md):
+Verify LaTeX notation compliance per [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md):
 
 - Inline math uses `$...$` delimiters
 - Display math uses `$$...$$` delimiters
@@ -152,7 +152,7 @@ Verify LaTeX notation compliance per [Mathematical Notation Convention](../../do
 
 **For Visual Content:**
 
-Verify color accessibility per [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md):
+Verify color accessibility per [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md):
 
 - Mermaid diagrams use accessible hex codes in `classDef` from verified palette
 - No red, green, or yellow colors
@@ -626,19 +626,19 @@ Incorrect:
 
 **Factual Validation:**
 
-- [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md) - Universal validation methodology (this agent implements it)
+- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) - Universal validation methodology (this agent implements it)
 
 **Hugo Content Standards:**
 
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common Hugo standards
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specifics
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Common Hugo standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specifics
 
 **Quality Standards:**
 
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content standards
-- [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md) - LaTeX notation
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible palette
-- [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md) - Tutorial quality standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content standards
+- [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) - LaTeX notation
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible palette
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - Tutorial quality standards
 
 **Development Practices:**
 

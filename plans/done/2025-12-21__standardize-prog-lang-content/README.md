@@ -7,7 +7,7 @@
 
 ## Overview
 
-Bring all 5 programming languages in ayokoding-web (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/docs/explanation/conventions/ex-co__programming-language-content.md).
+Bring all 5 programming languages in ayokoding-web (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md).
 
 **Current State**: Significant quality gaps exist across languages.
 
@@ -63,7 +63,7 @@ Detailed documentation in separate files:
 
 ## Context
 
-This plan implements the [Programming Language Content Standard](../../docs/explanation/conventions/ex-co__programming-language-content.md) which establishes:
+This plan implements the [Programming Language Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) which establishes:
 
 - Universal directory structure for all programming languages
 - Coverage philosophy (0-95% proficiency scale)
@@ -109,11 +109,11 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Must Follow**:
 
-- [Programming Language Content Standard](../../docs/explanation/conventions/ex-co__programming-language-content.md)
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md)
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md)
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md)
-- [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md)
+- [Programming Language Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md)
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md)
+- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md)
 
 **Resource Constraints**:
 

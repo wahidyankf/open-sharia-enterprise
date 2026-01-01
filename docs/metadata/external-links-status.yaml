@@ -1,50 +1,46 @@
 version: 1.0.0
-lastFullScan: 2025-12-28T16:51:53+07:00
-description: Cache of verified external links. Each link rechecked 6 months after lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache stability). All timestamps in UTC+7 (Indonesian time).
-
+lastFullScan: "2026-01-01T17:07:13+07:00"
+description: Cache of verified external links. Each link rechecked 6 months after
+  lastChecked timestamp. usedIn tracks file paths only (line numbers omitted for cache
+  stability). All timestamps in UTC+7 (Indonesian time).
 links:
   - url: https://adr.github.io/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://adr.github.io/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://aws.amazon.com/textract/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://aws.amazon.com/textract/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://blog.omnistrate.com/posts/30
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://blog.omnistrate.com/posts/30
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/README.md
-
   - url: https://bytebytego.com/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://bytebytego.com/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 301
     finalUrl: https://www.vanderbilt.edu/advanced-institute/
     redirectChain:
@@ -52,19 +48,18 @@ links:
         to: https://www.vanderbilt.edu/advanced-institute/
         status: 301
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-    note: Redirects to parent organization page. Consider updating link to Vanderbilt's new location.
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
+    note: Redirects to parent organization page. Consider updating link to Vanderbilt's
+      new location.
   - url: https://cheatsheetseries.owasp.org/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://cheatsheetseries.owasp.org/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__owasp.md
-
   - url: https://cloud.google.com/vision/docs/ocr
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 301
     finalUrl: https://docs.cloud.google.com/vision/docs/ocr
     redirectChain:
@@ -73,268 +68,237 @@ links:
         status: 301
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://cloudsecurityalliance.org/
-    lastChecked: 2025-11-30T22:45:00+07:00
+    lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://cloudsecurityalliance.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-inse__infosec.md
       - docs/explanation/information-security/ex-inse__defensive-security.md
-
+      - docs/explanation/information-security/ex-inse__infosec.md
   - url: https://colorbrewer2.org/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://colorbrewer2.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__color-accessibility.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md
   - url: https://commitlint.js.org/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://commitlint.js.org/
     redirectChain: null
     usedIn:
       - docs/explanation/development/ex-de__commit-messages.md
-
   - url: https://contributing.md/how-to-build-contributing-md/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://contributing.md/how-to-build-contributing-md/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://cwe.mitre.org/top25/
-    lastChecked: 2025-11-30T22:45:00+07:00
+    lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://cwe.mitre.org/top25/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__infosec.md
-
   - url: https://dataintensive.net/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://dataintensive.net/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://detexify.kirelabs.org/classify.html
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://detexify.kirelabs.org/classify.html
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__mathematical-notation.md
+      - docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md
     note: Canvas drawing interface may require modern browser (Chrome/Firefox)
-
   - url: https://developers.google.com/style
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://developers.google.com/style
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
   - url: https://diataxis.fr/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://diataxis.fr/
     redirectChain: null
     usedIn:
       - docs/README.md
-      - docs/explanation/conventions/ex-co__diataxis-framework.md
-      - docs/explanation/conventions/ex-co__linking-convention.md
+      - docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
+      - docs/explanation/conventions/formatting/ex-co-fo__diataxis-framework.md
+      - docs/explanation/conventions/formatting/ex-co-fo__emoji-usage.md
+      - docs/explanation/conventions/formatting/ex-co-fo__linking-convention.md
       - docs/how-to/hoto__organize-work.md
-      - docs/explanation/conventions/ex-co__diagrams.md
-      - docs/explanation/conventions/ex-co__emoji-usage.md
-
   - url: https://diataxis.fr/tutorials/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://diataxis.fr/tutorials/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
   - url: https://docs.logseq.com/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://docs.logseq.com/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__journals-format.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__journals-format.md
   - url: https://docs.oracle.com/en/java/javase/21/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://docs.oracle.com/en/java/javase/21/
     redirectChain: null
     usedIn: []
-
   - url: https://docs.oracle.com/javase/specs/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://docs.oracle.com/javase/specs/
     redirectChain: null
     usedIn: []
-
   - url: https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 403
     finalUrl: https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__offensive-security.md
-    note: Wikipedia blocks automated tools (403 Forbidden). Use WebSearch to verify article exists.
-
+    note: Wikipedia blocks automated tools (403 Forbidden). Use WebSearch to verify
+      article exists.
   - url: https://en.wikibooks.org/wiki/LaTeX/Mathematics
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 403
     finalUrl: https://en.wikibooks.org/wiki/LaTeX/Mathematics
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__mathematical-notation.md
+      - docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md
     note: Site returns 403 Forbidden. May require specific headers or authentication.
-
   - url: https://gdpr.eu/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://gdpr.eu/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type
     redirectChain: null
     usedIn:
       - docs/explanation/development/ex-de__commit-messages.md
-
   - url: https://github.com/conventional-changelog/commitlint
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://github.com/conventional-changelog/commitlint
     redirectChain: null
     usedIn:
       - docs/explanation/development/ex-de__commit-messages.md
-
   - url: https://github.com/donnemartin/system-design-primer
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.com/donnemartin/system-design-primer
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://github.com/golang/go
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://github.com/golang/go
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__advanced.md
-
   - url: https://github.com/jehna/readme-best-practices
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.com/jehna/readme-best-practices
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://github.com/RichardLitt/standard-readme
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.com/RichardLitt/standard-readme
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://github.com/stumpsyn/policies/blob/master/citizen_code_of_conduct.md
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.com/stumpsyn/policies/blob/master/citizen_code_of_conduct.md
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://github.com/tesseract-ocr/tesseract
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.com/tesseract-ocr/tesseract
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://github.com/vslinko/obsidian-outliner
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://github.com/vslinko/obsidian-outliner
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__journals-format.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__journals-format.md
   - url: https://github.com/wahidyankf/open-sharia-enterprise
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://github.com/wahidyankf/open-sharia-enterprise
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__linking-convention.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__linking-convention.md
   - url: https://gist.github.com/PurpleBooth/b24679402957c63ec426
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://gist.github.com/PurpleBooth/b24679402957c63ec426
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://go.dev/blog
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/blog
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
-
   - url: https://go.dev/dl
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/dl
     redirectChain: null
     usedIn:
+      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
-
   - url: https://go.dev/doc
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/doc
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md
-
   - url: https://go.dev/doc/effective_go
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/doc/effective_go
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
-
   - url: https://go.dev/help
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 301
     finalUrl: https://go.dev/help
     redirectChain:
@@ -343,514 +307,452 @@ links:
         status: 301
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
-
   - url: https://go.dev/tour/
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/tour/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
-
   - url: https://go.dev/wiki/
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/wiki/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
-
   - url: https://gobyexample.com
-    lastChecked: 2025-12-03T12:00:00+07:00
+    lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://gobyexample.com
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
       - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
-
   - url: https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__diagrams.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
   - url: https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Math
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Math
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__mathematical-notation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md
   - url: https://jfly.uni-koeln.de/color/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://jfly.uni-koeln.de/color/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__color-accessibility.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md
   - url: https://keepachangelog.com/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://keepachangelog.com/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://keepachangelog.com/en/1.0.0/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://keepachangelog.com/en/1.0.0/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://learn.microsoft.com/en-us/style-guide/welcome/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://learn.microsoft.com/en-us/style-guide/welcome/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
   - url: https://mermaid.js.org/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://mermaid.js.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__diagrams.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
   - url: https://mermaid.live/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://mermaid.live/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__diagrams.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
   - url: https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://www.asciiart.eu/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://www.asciiart.eu/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__diagrams.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
   - url: https://www.cisecurity.org/controls
-    lastChecked: 2025-11-30T22:45:00+07:00
+    lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://www.cisecurity.org/controls
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__defensive-security.md
-
   - url: https://www.color-blindness.com/coblis-color-blindness-simulator/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.color-blindness.com/coblis-color-blindness-simulator/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__color-accessibility.md
-      - docs/explanation/conventions/ex-co__diagrams.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md
+      - docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
   - url: https://www.contributor-covenant.org/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.contributor-covenant.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://www.contribution-guide.org/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.contribution-guide.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://www.conventionalcommits.org/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://www.conventionalcommits.org/
     redirectChain: null
     usedIn:
       - docs/explanation/development/ex-de__commit-messages.md
-
   - url: https://www.finos.org/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.finos.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://www.instructionaldesign.org/theories/cognitive-load/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.instructionaldesign.org/theories/cognitive-load/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
   - url: https://www.linkedin.com/in/briangoetz/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.linkedin.com/in/briangoetz/
     redirectChain: null
     usedIn: []
-
   - url: https://www.linuxfoundation.org/research/the-2023-state-of-open-source-in-financial-services
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.linuxfoundation.org/research/the-2023-state-of-open-source-in-financial-services
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://www.makeareadme.com/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.makeareadme.com/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://www.mathjax.org/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.mathjax.org/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__mathematical-notation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md
   - url: https://www.moderntreasury.com/learn
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.moderntreasury.com/learn
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://www.nist.gov/cyberframework
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://www.nist.gov/cyberframework
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__dast.md
       - docs/explanation/information-security/ex-inse__defensive-security.md
-      - docs/explanation/information-security/ex-inse__sast.md
       - docs/explanation/information-security/ex-inse__infosec.md
-
+      - docs/explanation/information-security/ex-inse__sast.md
   - url: https://www.pcisecuritystandards.org/document_library/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.pcisecuritystandards.org/document_library/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://www.readmecodegen.com/blog/beginner-friendly-readme-guide-open-source-projects
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.readmecodegen.com/blog/beginner-friendly-readme-guide-open-source-projects
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://www.retrievalpractice.org/make-it-stick
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.retrievalpractice.org/make-it-stick
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
   - url: https://www.sans.org/training/
-    lastChecked: 2025-11-30T22:45:00+07:00
+    lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://www.sans.org/training/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__defensive-security.md
-
   - url: https://www.sans.org/white-papers/
-    lastChecked: 2025-11-30T22:45:00+07:00
+    lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://www.sans.org/white-papers/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__offensive-security.md
-
   - url: https://www.simplypsychology.org/Zone-of-Proximal-Development.html
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.simplypsychology.org/Zone-of-Proximal-Development.html
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
   - url: https://www.w3.org/WAI/WCAG22/quickref/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.w3.org/WAI/WCAG22/quickref/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__color-accessibility.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md
   - url: https://www.wiley.com/en-us/How+Learning+Works%3A+Seven+Research+Based+Principles+for+Smart+Teaching-p-9780470484104
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 403
     finalUrl: https://www.wiley.com/en-us/How+Learning+Works%3A+Seven+Research+Based+Principles+for+Smart+Teaching-p-9780470484104
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__tutorials.md
-    note: Wiley site returns 403 Forbidden to automated tools. Book is legitimate - consider replacing with book page or using ISBN reference.
-
+      - docs/explanation/conventions/formatting/ex-co-fo__tutorials.md
+    note: Wiley site returns 403 Forbidden to automated tools. Book is legitimate -
+      consider replacing with book page or using ISBN reference.
   - url: https://www.zaproxy.org/docs/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://www.zaproxy.org/docs/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__dast.md
-
   - url: https://arxiv.org/search/?query=financial+pattern+recognition
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://arxiv.org/search/?query=financial+pattern+recognition
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/best-practices.html
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/best-practices.html
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://docs.github.com/en/code-security/security-advisories
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://docs.github.com/en/code-security/security-advisories
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://github.blog/2022-05-19-math-support-in-markdown/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.blog/2022-05-19-math-support-in-markdown/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__mathematical-notation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md
   - url: https://nx.dev/blog/new-nx-experience-for-typescript-monorepos
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://nx.dev/blog/new-nx-experience-for-typescript-monorepos
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://nx.dev/blog/managing-ts-packages-in-monorepos
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://nx.dev/blog/managing-ts-packages-in-monorepos
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://openjdk.org/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://openjdk.org/
     redirectChain: null
     usedIn: []
-
   - url: https://openjdk.org/jeps/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://openjdk.org/jeps/
     redirectChain: null
     usedIn: []
-
   - url: https://plaid.com/blog/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://plaid.com/blog/
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://owasp.org/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__owasp.md
-
   - url: https://owasp.org/Top10/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/Top10/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__owasp.md
-
   - url: https://owasp.org/chapters/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/chapters/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__owasp.md
-
   - url: https://owasp.org/projects/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/projects/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__owasp.md
-
   - url: https://owasp.org/www-community/Source_Code_Analysis_Tools
-    lastChecked: 2025-11-30T22:45:00+07:00
+    lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-community/Source_Code_Analysis_Tools
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__sast.md
-
   - url: https://owasp.org/www-community/Vulnerability_Scanning_Tools
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-community/Vulnerability_Scanning_Tools
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__dast.md
-
   - url: https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__defensive-security.md
-
   - url: https://owasp.org/www-project-top-ten/
-    lastChecked: 2025-11-30T22:45:00+07:00
+    lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-project-top-ten/
     redirectChain: null
     usedIn:
       - docs/explanation/information-security/ex-inse__infosec.md
-
   - url: https://owasp.org/www-project-web-security-testing-guide/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-project-web-security-testing-guide/
     redirectChain: null
     usedIn:
-      - docs/explanation/information-security/ex-inse__owasp.md
       - docs/explanation/information-security/ex-inse__offensive-security.md
-
+      - docs/explanation/information-security/ex-inse__owasp.md
   - url: https://oauth.net/2/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://oauth.net/2/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__journals-format.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__journals-format.md
   - url: https://obsidian.md/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://obsidian.md/
     redirectChain: null
     usedIn:
       - docs/README.md
-      - docs/explanation/conventions/ex-co__linking-convention.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__linking-convention.md
   - url: https://semver.org/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://semver.org/
     redirectChain: null
     usedIn:
       - docs/explanation/development/ex-de__commit-messages.md
-
   - url: https://semver.org/spec/v2.0.0.html
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://semver.org/spec/v2.0.0.html
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__oss-documentation.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__oss-documentation.md
   - url: https://spec.commonmark.org/0.30/#list-items
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://spec.commonmark.org/0.30/#list-items
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__journals-format.md
-
+      - docs/explanation/conventions/formatting/ex-co-fo__journals-format.md
   - url: https://stripe.com/blog/engineering
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://stripe.com/blog/engineering
     redirectChain: null
     usedIn:
       - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
-
   - url: https://trunkbaseddevelopment.com/
-    lastChecked: 2025-11-30T07:00:00+07:00
+    lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://trunkbaseddevelopment.com/
     redirectChain: null
     usedIn:
       - docs/explanation/development/ex-de__trunk-based-development.md
-
   - url: https://trunkbaseddevelopment.com/branch-for-release/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://trunkbaseddevelopment.com/branch-for-release/
     redirectChain: null
     usedIn:
       - docs/explanation/development/ex-de__trunk-based-development.md
-
   - url: https://webaim.org/resources/contrastchecker/
-    lastChecked: 2025-12-05T10:30:00+07:00
+    lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://webaim.org/resources/contrastchecker/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__color-accessibility.md
-      - docs/explanation/conventions/ex-co__diagrams.md
+      - docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md
+      - docs/explanation/conventions/formatting/ex-co-fo__diagrams.md

@@ -412,7 +412,7 @@ full_timestamp=$(TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00")
 # Example output: 2025-12-23T14:30:45+07:00
 ```
 
-See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details.
+See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) for complete details.
 
 ## Special Validation Methods
 

@@ -31,11 +31,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Convention Writing Convention](../conventions/ex-co__convention-writing.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
+- **[Convention Writing Convention](../conventions/content/ex-co-co__convention-writing.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
 
-- **[Linking Convention](../conventions/ex-co__linking-convention.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
+- **[Linking Convention](../conventions/formatting/ex-co-fo__linking.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
 
-- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: New convention and development documents created during offload follow the ex-co** and ex-de** prefix patterns.
+- **[File Naming Convention](../conventions/meta/ex-co-me__file-naming.md)**: New convention and development documents created during offload follow the ex-co** and ex-de** prefix patterns.
 
 ## 🎯 Purpose
 
@@ -87,7 +87,7 @@ After (CLAUDE.md - 3 lines):
 
 ## File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md) for complete details.
 
 Result: Content preserved in ex-co\_\_file-naming-convention.md (comprehensive)
 ```
@@ -236,7 +236,7 @@ Is this content unique and valuable?
 
 - **Before:** Diagram standards duplicated in `docs__maker.md`, `plan__maker.md`
 - **After:**
-  - New file: `docs/explanation/conventions/ex-co__diagrams.md` (comprehensive)
+  - New file: `docs/explanation/conventions/formatting/ex-co-fo__diagrams.md` (comprehensive)
   - All agents: "Use Mermaid diagrams. See [Diagram Convention](link)" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Conventions Folder:** Diagrams are a content format standard, not development process
@@ -368,7 +368,7 @@ Before completing a content offload, verify:
 - [ ] Convention doc is comprehensive
 - [ ] Frontmatter complete and accurate
 - [ ] Updated date reflects changes
-- [ ] Structure follows convention patterns (see [Convention Writing Convention](../conventions/ex-co__convention-writing.md))
+- [ ] Structure follows convention patterns (see [Convention Writing Convention](../conventions/content/ex-co-co__convention-writing.md))
 - [ ] Examples include ✅ good and ❌ bad
 
 ### Original File Updates
@@ -546,10 +546,10 @@ Problem: Convention polluted with implementation details
 
 ## References
 
-- [Convention Writing Convention](../conventions/ex-co__convention-writing.md) - How to write convention documents (target for offloaded content)
+- [Convention Writing Convention](../conventions/content/ex-co-co__convention-writing.md) - How to write convention documents (target for offloaded content)
 - [AI Agents Convention](./ex-de__ai-agents.md) - Agent standards (agents apply content preservation principles)
 - [Trunk Based Development Convention](./ex-de__trunk-based-development.md) - Git workflow example of development convention
-- [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - Example of content convention
+- [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md) - Example of content convention
 
 ## Agent Usage
 
@@ -586,4 +586,4 @@ When creating new convention or development documents during offload, `docs__mak
 
 - [CLAUDE.md Maintenance](../../CLAUDE.md#claudemd-maintenance) - Size limits and condensation triggers
 - [AI Agents Convention](./ex-de__ai-agents.md) - Agent file size tiers and condensation
-- [Convention Writing Convention](../conventions/ex-co__convention-writing.md) - How to structure convention documents
+- [Convention Writing Convention](../conventions/content/ex-co-co__convention-writing.md) - How to structure convention documents

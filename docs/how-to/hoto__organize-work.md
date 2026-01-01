@@ -51,7 +51,7 @@ flowchart TD
 
 ### docs/ - Permanent Documentation
 
-**Purpose:** Long-term, structured documentation using the [Diátaxis framework](../explanation/conventions/ex-co__diataxis-framework.md)
+**Purpose:** Long-term, structured documentation using the [Diátaxis framework](../explanation/conventions/meta/ex-co-me__diataxis-framework.md)
 
 **Key Characteristics:**
 
@@ -276,12 +276,12 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 1. **Create formal doc in docs/explanation/**
 
    ```
-   docs/explanation/conventions/ex-co__new-convention.md
+   docs/explanation/conventions/formatting/ex-co-fo__new-convention.md
    ```
 
    - Write comprehensive explanation
    - Include examples and rationale
-   - Follow [Diátaxis framework](../explanation/conventions/ex-co__diataxis-framework.md)
+   - Follow [Diátaxis framework](../explanation/conventions/meta/ex-co-me__diataxis-framework.md)
 
 2. **Update CLAUDE.md** (If it affects project workflow)
    - Add reference to new convention
@@ -309,7 +309,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
    - System architecture → `docs/explanation/`
    - Setup instructions → `docs/how-to/`
    - API specifications → `docs/reference/`
-2. Create appropriate docs following [Diátaxis framework](../explanation/conventions/ex-co__diataxis-framework.md)
+2. Create appropriate docs following [Diátaxis framework](../explanation/conventions/meta/ex-co-me__diataxis-framework.md)
 3. Link from plan README to the permanent docs
 4. Move plan to `plans/done/` for archival
 
@@ -339,7 +339,7 @@ This project is complete. See the following documentation:
 | Creating a how-to guide                    | `docs/how-to/`       | `hoto__add-new-app.md`                          |
 | Documenting reference material             | `docs/reference/`    | `re__monorepo-structure.md`                     |
 | Explaining a concept                       | `docs/explanation/`  | `ex-de__ai-agents.md`                           |
-| Recording project conventions              | `docs/explanation/`  | `ex-co__file-naming-convention.md`              |
+| Recording project conventions              | `docs/explanation/`  | `meta/ex-co-me__file-naming.md`                 |
 | Research documentation                     | `docs/explanation/`  | Final decision and rationale                    |
 | Sprint planning                            | `plans/backlog/`     | One plan per sprint goal                        |
 | Technical specifications                   | `plans/` or `docs/`  | Plans if temporary, docs/ if permanent standard |
@@ -403,9 +403,9 @@ This project is complete. See the following documentation:
 
 ## Related Documentation
 
-- [Diátaxis Framework](../explanation/conventions/ex-co__diataxis-framework.md) - Understanding the four documentation types
-- [File Naming Convention](../explanation/conventions/ex-co__file-naming-convention.md) - How to name files in `docs/`
-- [Diagram and Schema Convention](../explanation/conventions/ex-co__diagrams.md) - When to use Mermaid vs ASCII art
+- [Diátaxis Framework](../explanation/conventions/meta/ex-co-me__diataxis-framework.md) - Understanding the four documentation types
+- [File Naming Convention](../explanation/conventions/meta/ex-co-me__file-naming.md) - How to name files in `docs/`
+- [Diagram and Schema Convention](../explanation/conventions/formatting/ex-co-fo__diagrams.md) - When to use Mermaid vs ASCII art
 - [CLAUDE.md - Plans Organization](../../CLAUDE.md#plans-organization) - Detailed guide to the plans/ folder
 - [CLAUDE.md - Documentation Organization](../../CLAUDE.md#documentation-organization) - Overview of docs/ structure
 

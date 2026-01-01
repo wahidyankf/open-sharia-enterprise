@@ -56,7 +56,7 @@ Use this agent when:
 
 ## Plans Folder Structure
 
-All plans follow the [Plans Organization Convention](../../docs/explanation/conventions/ex-co__plans-organization.md).
+All plans follow the [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md).
 
 **Folder locations**: `backlog/` (planned) → `in-progress/` (active) → `done/` (completed)
 
@@ -240,7 +240,7 @@ Use **Mermaid diagrams** as primary format. ASCII art is optional for simple dir
 
 **CRITICAL - Color Accessibility**: ALL Mermaid diagrams MUST use accessible hex codes in `classDef` from verified palette: Blue (#0173B2), Orange (#DE8F05), Teal (#029E73), Purple (#CC78BC), Brown (#CA9161). DO NOT USE red, green, or yellow. REQUIRED: Shape differentiation (not color alone), black borders (#000000), WCAG AA contrast (4.5:1 for text, 3:1 for UI). RECOMMENDED: Color palette comment per diagram (aids documentation, somewhat redundant with classDef hex codes).
 
-See [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) (master reference) and [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) for complete details and examples.
+See [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) (master reference) and [Diagram and Schema Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) for complete details and examples.
 
 ### 3. Acceptance Criteria
 
@@ -354,11 +354,11 @@ If documentation needs to outlive the project, it belongs in `docs/`, not `plans
 This agent follows repository conventions defined in:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and plans organization
-- [Plans Organization Convention](../../docs/explanation/conventions/ex-co__plans-organization.md) - Complete plans structure and standards
+- [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Complete plans structure and standards
 - [Acceptance Criteria Convention](../../docs/explanation/development/ex-de__acceptance-criteria.md) - Gherkin format for testable requirements
 - [Trunk Based Development Convention](../../docs/explanation/development/ex-de__trunk-based-development.md) - Git workflow details
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible color palette (master reference)
-- [Diagram and Schema Convention](../../docs/explanation/conventions/ex-co__diagrams.md) - Mermaid diagram examples and guidance
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible color palette (master reference)
+- [Diagram and Schema Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) - Mermaid diagram examples and guidance
 - [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md) - Agent structure and standards
 
 ## Example: Complete Plan

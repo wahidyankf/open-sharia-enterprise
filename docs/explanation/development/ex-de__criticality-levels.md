@@ -587,7 +587,7 @@ https://docs.npmjs.com/cli/v9/commands/npm-install
 ```markdown
 ### 1. [BROKEN] - Reference Link Returns 404
 
-**File**: `docs/explanation/conventions/ex-co__linking-convention.md:89`
+**File**: `docs/explanation/conventions/formatting/ex-co-fo__linking.md:89`
 **Status**: [BROKEN] - HTTP 404 Not Found
 **Criticality**: CRITICAL - Breaks documentation reference chain
 **Category**: Broken External Link
@@ -1131,13 +1131,13 @@ subcategory: development
 
 ### 1. Ambiguous Link Target
 
-**File**: `docs/explanation/conventions/ex-co__linking-convention.md:89`
+**File**: `docs/explanation/conventions/formatting/ex-co-fo__linking.md:89`
 **Original Issue**: CRITICAL - Broken link to convention doc
 **Validation**: MEDIUM confidence - Multiple possible target files found
 **Reason for Flag**: Cannot determine correct link target automatically
 **Action Required**: Manually select correct target from:
 
-- `docs/explanation/conventions/ex-co__file-naming.md`
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md`
 - `docs/explanation/development/ex-de__file-organization.md`
 
 ---
@@ -1152,7 +1152,7 @@ subcategory: development
 
 **Total**: 15 findings
 
-1. **File**: `docs/explanation/conventions/ex-co__diagrams.md`
+1. **File**: `docs/explanation/conventions/formatting/ex-co-fo__diagrams.md`
    **Suggestion**: Consider adding example of complex multi-layer diagram
    **Priority**: P4 (LOW + MEDIUM)
 
@@ -1305,7 +1305,7 @@ This convention builds upon and references:
 - Filename pattern: `{agent-family}__{uuid-chain}__{timestamp}__audit.md`
 - Progressive writing requirement ensures reports survive context compaction
 
-### [Content Quality Principles Convention](../conventions/ex-co__content-quality.md)
+### [Content Quality Principles Convention](../conventions/content/ex-co-co__quality.md)
 
 **Relationship**: Content quality violations are categorized by criticality.
 
@@ -1314,7 +1314,7 @@ This convention builds upon and references:
 - Heading hierarchy errors: HIGH
 - Style inconsistencies: MEDIUM
 
-### [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md)
+### [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md)
 
 **Relationship**: Criticality emoji indicators use standard emoji colors WITH text labels.
 
@@ -1327,7 +1327,7 @@ This convention builds upon and references:
 
 **Key Distinction**: Emoji indicators NEVER rely on color alone - text labels provide primary identification. This differs from Mermaid diagrams, which must use the verified accessible palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161) to ensure color-blind users can distinguish elements visually.
 
-See [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) for complete details on when standard emoji colors are acceptable (always with text) versus when accessible palette is required (Mermaid diagrams).
+See [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) for complete details on when standard emoji colors are acceptable (always with text) versus when accessible palette is required (Mermaid diagrams).
 
 ### [AI Agents Convention](./ex-de__ai-agents.md)
 

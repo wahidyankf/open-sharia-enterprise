@@ -685,7 +685,7 @@ These practices compound their benefits over the lifetime of your codebase. Immu
 **Explanations:**
 
 - [Common Java Anti-Patterns](/en/learn/software-engineering/programming-languages/java/explanation/anti-patterns) - Avoid common mistakes
-- [Programming Language Content Standard](/en/docs/explanation/conventions/ex-co__programming-language-content) - Content guidelines
+- [Programming Language Content Standard](/en/docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content) - Content guidelines
 
 **How-To Guides:**
 

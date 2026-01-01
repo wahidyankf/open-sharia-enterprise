@@ -405,24 +405,24 @@ Before committing markdown with nested fences:
 
 This convention works with:
 
-- **[Content Quality Principles](./ex-co__content-quality.md)**: Proper code block formatting is part of content quality
-- **[Indentation Convention](./ex-co__indentation.md)**: Code blocks use language-specific indentation
-- **[Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md)**: Hugo sites need nested fences for markdown examples
-- **[Tutorial Convention](./ex-co__tutorials.md)**: Tutorials often demonstrate markdown syntax
+- **[Content Quality Principles](../content/ex-co-co__quality.md)**: Proper code block formatting is part of content quality
+- **[Indentation Convention](./ex-co-fo__indentation.md)**: Code blocks use language-specific indentation
+- **[Hugo Content Convention - Shared](../hugo/ex-co-hu__shared.md)**: Hugo sites need nested fences for markdown examples
+- **[Tutorial Convention](../tutorial/ex-co-tu__general.md)**: Tutorials often demonstrate markdown syntax
 
 ## Related Conventions
 
 **Formatting Standards**:
 
-- [Content Quality Principles](./ex-co__content-quality.md) - Code block formatting standards
-- [Indentation Convention](./ex-co__indentation.md) - Code block indentation rules
-- [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - LaTeX in markdown (no nesting needed)
+- [Content Quality Principles](../content/ex-co-co__quality.md) - Code block formatting standards
+- [Indentation Convention](./ex-co-fo__indentation.md) - Code block indentation rules
+- [Mathematical Notation Convention](./ex-co-fo__mathematical-notation.md) - LaTeX in markdown (no nesting needed)
 
 **Context-Specific**:
 
-- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Hugo markdown specifics
-- [Tutorial Convention](./ex-co__tutorials.md) - Teaching markdown syntax in tutorials
-- [README Quality Convention](./ex-co__readme-quality.md) - Code examples in README files
+- [Hugo Content Convention - Shared](../hugo/ex-co-hu__shared.md) - Hugo markdown specifics
+- [Tutorial Convention](../tutorial/ex-co-tu__general.md) - Teaching markdown syntax in tutorials
+- [README Quality Convention](../content/ex-co-co__readme-quality.md) - Code examples in README files
 
 ## Examples in Documentation Types
 
@@ -501,7 +501,7 @@ calculate(value: number): number
 
 **Related Standards**:
 
-- [Content Quality Principles](./ex-co__content-quality.md) - Universal content standards
+- [Content Quality Principles](../content/ex-co-co__quality.md) - Universal content standards
 - [Conventions Index](./README.md) - All documentation conventions
 
 ---

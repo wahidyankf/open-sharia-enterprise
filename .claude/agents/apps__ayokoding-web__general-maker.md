@@ -90,7 +90,7 @@ Use this agent when:
 
 ## Hugo Content Convention Compliance
 
-**Reference**: [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) and [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md)
+**Reference**: [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) and [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
 
 ### Inherited Conventions (Apply to ayokoding-web)
 
@@ -104,7 +104,7 @@ Use this agent when:
 4. **Emoji Usage** - Semantic emojis for section markers, status, categories
 5. **Timestamp Format** - ISO 8601 with UTC+7 (`YYYY-MM-DDTHH:MM:SS+07:00`)
    - **Command to get current timestamp**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-   - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
 6. **Tutorial Convention** - Progressive scaffolding, hands-on elements, visual aids (applies to learning content)
 7. **Tutorial Naming** - Use standardized types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
 8. **No Time Estimates** - **CRITICAL**: Do NOT include time estimates ("X hours", "X minutes", "Duration:", etc.) in educational content. Focus on learning outcomes, not duration. Coverage percentages (0-5%, 60-85%) are allowed as they indicate depth, not time.
@@ -260,7 +260,7 @@ Use this agent when:
      ├── overview.md
      └── ai-personal-finance-advisor.md
      ```
-   - **Important**: This is OPTIONAL - you choose based on topic complexity and content volume. See [Hugo Content Convention - ayokoding - Optional Topic-Level Diátaxis](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md#7-optional-topic-level-di%C3%A1taxis-structure-ayokoding-web-only) for complete details.
+   - **Important**: This is OPTIONAL - you choose based on topic complexity and content volume. See [Hugo Content Convention - ayokoding - Optional Topic-Level Diátaxis](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md#7-optional-topic-level-di%C3%A1taxis-structure-ayokoding-web-only) for complete details.
 
 9. **Blogging Content Structure** (rants/celoteh only):
    - **Scope**: ONLY applies to `/en/rants/` and `/id/celoteh/` directories
@@ -289,11 +289,11 @@ Use this agent when:
      │       ├── why-neovim.md        # Article (weight: 402, cross-ref to ID)
      │       └── trunk-based-dev.md   # Article (weight: 403, cross-ref to ID)
      ```
-   - **Important**: Blogging content has DIFFERENT validation rules than learning content. See [Hugo Content Convention - ayokoding - Blogging Content Structure](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md#blogging-content-structure-rantsceloteh) for complete details.
+   - **Important**: Blogging content has DIFFERENT validation rules than learning content. See [Hugo Content Convention - ayokoding - Blogging Content Structure](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md#blogging-content-structure-rantsceloteh) for complete details.
 
 ## Content Quality Principles Compliance
 
-**Reference**: [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md)
+**Reference**: [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md)
 
 ### Writing Style
 
@@ -1070,17 +1070,17 @@ This code:
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content quality standards
 
 **Related Conventions**:
-- [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md) - Tutorial pedagogy and structure
-- [Tutorial Naming Convention](../../docs/explanation/conventions/ex-co__tutorial-naming.md) - Tutorial type standards
-- [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md) - LaTeX usage
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible color palette
-- [Diagrams Convention](../../docs/explanation/conventions/ex-co__diagrams.md) - Diagram standards
-- [Emoji Usage Convention](../../docs/explanation/conventions/ex-co__emoji-usage.md) - Semantic emoji use
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - Tutorial pedagogy and structure
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Tutorial type standards
+- [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) - LaTeX usage
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible color palette
+- [Diagrams Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) - Diagram standards
+- [Emoji Usage Convention](../../docs/explanation/conventions/formatting/ex-co-fo__emoji.md) - Semantic emoji use
 
 **Related Agents**:
 - [ayokoding-web-general-checker](./ayokoding-web-general-checker.md) - Validates ayokoding-web content (complementary agent)
@@ -1121,7 +1121,7 @@ This code:
 - Predictable navigation across diverse content types
 - Explicit creator control within standard framework
 
-See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrangement Standard](../../docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md#tutorial-folder-arrangement-standard) for complete details.
+See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrangement Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for complete details.
 
 ### Diagram Splitting for Mobile Readability
 
@@ -1142,4 +1142,4 @@ See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrang
 4. **Descriptive headers** - Add `**Concept Name:**` above Mermaid blocks
 5. **Mobile-first** - Readable on narrow screens (TD layout)
 
-See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting) for complete guidelines.
+See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md#diagram-size-and-splitting) for complete guidelines.

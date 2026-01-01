@@ -211,10 +211,10 @@ When invoked, follow these steps:
 
 ## References
 
-- [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md)
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md)
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md)
-- [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+- [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md)
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md)
+- [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
 - [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md)
 - [ayokoding-web-structure-checker Agent](./ayokoding-web-structure-checker.md)
 - [ayokoding-web-structure-fixer Agent](./ayokoding-web-structure-fixer.md)

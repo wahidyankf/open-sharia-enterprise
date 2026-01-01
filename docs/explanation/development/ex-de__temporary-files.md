@@ -32,9 +32,9 @@ This practice implements/respects the following conventions:
 
 - **[AI Agents Convention](./ex-de__ai-agents.md)**: All checker agents MUST have Write and Bash tools for report generation. Report-generating agents follow mandatory progressive writing requirement to survive context compaction.
 
-- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
-- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
+- **[File Naming Convention](../conventions/meta/ex-co-me__file-naming.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
 
 ## 📋 Overview
 
@@ -480,7 +480,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 # Example: repo-rules__a1b2c3__2025-12-14--16-43__audit.md (actual values!)
 ```
 
-**Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../conventions/ex-co__timestamp-format.md) for complete details.
+**Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md) for complete details.
 
 #### Repository Audit Reports
 
@@ -749,9 +749,9 @@ The rule includes "unless specified otherwise by other rules/conventions":
 
 ## 📚 Related Conventions
 
-- [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - For permanent documentation files
+- [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md) - For permanent documentation files
 - [AI Agents Convention](./ex-de__ai-agents.md) - For agent design and tool access
-- [Diátaxis Framework](../conventions/ex-co__diataxis-framework.md) - For documentation organization
+- [Diátaxis Framework](../conventions/meta/ex-co-me__diataxis-framework.md) - For documentation organization
 
 ## 🎯 Benefits
 

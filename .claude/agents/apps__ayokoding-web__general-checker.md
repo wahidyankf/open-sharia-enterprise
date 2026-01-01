@@ -338,7 +338,7 @@ flowchart TD
 
 **CRITICAL for Mobile-First Design**: Check diagrams are split properly for mobile readability.
 
-Validate diagrams per [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting):
+Validate diagrams per [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md#diagram-size-and-splitting):
 
 - [ ] **No subgraphs** - Check for `subgraph` keyword (subgraphs render too small on mobile)
 - [ ] **Limited branching** - Single nodes should have ≤4-5 child branches
@@ -459,7 +459,7 @@ code here
 
 **Fix**: Remove orphaned closing fences.
 
-See [Nested Code Fence Convention](../../docs/explanation/conventions/ex-co__nested-code-fences.md) for complete nesting rules.
+See [Nested Code Fence Convention](../../docs/explanation/conventions/formatting/ex-co-fo__nested-code-fences.md) for complete nesting rules.
 
 **Valid Code Block**:
 
@@ -1855,16 +1855,16 @@ Categorize issues:
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content quality standards
 
 **Related Conventions**:
-- [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md) - Tutorial pedagogy
-- [Tutorial Naming Convention](../../docs/explanation/conventions/ex-co__tutorial-naming.md) - Tutorial types
-- [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md) - LaTeX usage
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible colors
-- [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) - Date/time format
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - Tutorial pedagogy
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Tutorial types
+- [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) - LaTeX usage
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible colors
+- [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - Date/time format
 
 **Related Agents**:
 - [ayokoding-web-general-maker](./ayokoding-web-general-maker.md) - Creates ayokoding-web content (complementary agent)

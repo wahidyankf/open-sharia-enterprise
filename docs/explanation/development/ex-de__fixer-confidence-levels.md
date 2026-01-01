@@ -37,7 +37,7 @@ This practice implements/respects the following conventions:
 
 - **[Temporary Files Convention](./ex-de__temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
 
-- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
 ## 📋 Overview
 
@@ -727,7 +727,7 @@ Fix reports should now group fixes by priority to show criticality context:
 
 ### 1. Ambiguous Link Target
 
-**File**: `docs/explanation/conventions/ex-co__linking-convention.md:89`
+**File**: `docs/explanation/conventions/formatting/ex-co-fo__linking.md:89`
 **Criticality**: CRITICAL - Broken link to convention doc
 **Confidence**: MEDIUM - Multiple possible target files found
 **Reason for Flag**: Cannot determine correct link target automatically
@@ -899,12 +899,12 @@ wow__rules-fixer re-validates:
 - [AI Agents Convention](./ex-de__ai-agents.md) - Standards for all AI agents including fixers
 
 **Content Standards:**
-- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Tutorial-specific validation criteria (used by docs__tutorial-fixer)
-- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal content quality standards
-- [README Quality Convention](../conventions/ex-co__readme-quality.md) - README-specific standards (used by readme__fixer)
-- [Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
-- [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
+- [Tutorial Convention](../conventions/tutorial/ex-co-tu__general.md) - Tutorial-specific validation criteria (used by docs__tutorial-fixer)
+- [Content Quality Principles](../conventions/content/ex-co-co__quality.md) - Universal content quality standards
+- [README Quality Convention](../conventions/content/ex-co-co__readme-quality.md) - README-specific standards (used by readme__fixer)
+- [Hugo Content Convention - Shared](../conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web specific standards
 
 **Infrastructure:**
 - [Temporary Files Convention](./ex-de__temporary-files.md) - Where to store fix reports (`generated-reports/`)

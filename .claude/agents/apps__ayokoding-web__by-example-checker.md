@@ -25,7 +25,7 @@ Your role:
 
 ## Convention Authority
 
-Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-co__by-example-tutorial.md)** exactly:
+Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)** exactly:
 
 - **Coverage**: 95% target through 75-90 examples
 - **Distribution**: 25-30 examples per level (beginner, intermediate, advanced)
@@ -330,7 +330,7 @@ grep -n "fill:green" *.md
 
 ### Step 6.5: Validate Diagram Splitting (Mobile-Friendliness)
 
-**NEW VALIDATION**: Check diagrams for mobile-friendliness per [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting).
+**NEW VALIDATION**: Check diagrams for mobile-friendliness per [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md#diagram-size-and-splitting).
 
 **Detection patterns**:
 
@@ -658,8 +658,8 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 ## Related Documentation
 
-- **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-co__by-example-tutorial.md)**: Primary validation authority
-- **[Diagrams Convention](../../docs/explanation/conventions/ex-co__diagrams.md)**: Diagram splitting and mobile-friendliness rules
+- **[By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)**: Primary validation authority
+- **[Diagrams Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md)**: Diagram splitting and mobile-friendliness rules
 - **[Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md)**: Workflow context
 - **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)**: Confidence assessment guide
 - **[Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md)**: Report file requirements

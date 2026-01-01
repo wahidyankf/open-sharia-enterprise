@@ -337,7 +337,7 @@ code examples. Learning thoroughly now saves time debugging later.
 
 ### Tutorial Naming Convention
 
-**Location**: `docs/explanation/conventions/ex-co__tutorial-naming.md`
+**Location**: `docs/explanation/conventions/tutorial/ex-co-tu__naming.md`
 
 **Outcome-focused language**:
 
@@ -355,7 +355,7 @@ try examples, and solve simple problems on their own.
 
 ### Content Quality Principles
 
-**Location**: `docs/explanation/conventions/ex-co__content-quality.md`
+**Location**: `docs/explanation/conventions/content/ex-co-co__quality.md`
 
 **Explicit "No Time Estimates" section**:
 
@@ -432,9 +432,9 @@ Focus on WHAT needs to be done or learned, not HOW LONG it takes.
 
 ## 📚 Related Conventions
 
-- [Tutorial Naming Convention](../../conventions/ex-co__tutorial-naming.md) - Coverage percentages, not time estimates
-- [Tutorial Convention](../../conventions/ex-co__tutorials.md) - Outcome-focused tutorial structure
-- [Content Quality Principles](../../conventions/ex-co__content-quality.md) - Explicit no-time-estimates rule
+- [Tutorial Naming Convention](../../conventions/tutorial/ex-co-tu__naming.md) - Coverage percentages, not time estimates
+- [Tutorial Convention](../../conventions/tutorial/ex-co-tu__general.md) - Outcome-focused tutorial structure
+- [Content Quality Principles](../../conventions/content/ex-co-co__quality.md) - Explicit no-time-estimates rule
 
 ## 📖 References
 

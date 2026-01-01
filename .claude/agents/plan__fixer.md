@@ -555,9 +555,9 @@ Create comprehensive report in `generated-reports/`:
 
 **plans/backlog/2025-12-01\_\_feature-x/tech-docs.md**
 
-- **Issue:** Link to `../../docs/explanation/conventions/ex-co__missing-file.md` broken
+- **Issue:** Link to `../../docs/explanation/conventions/formatting/ex-co-fo__indentation.md` broken
 - **Validation:** Confirmed file doesn't exist at target path
-- **Fix:** Updated link to correct path `../../docs/explanation/conventions/ex-co__correct-file.md`
+- **Fix:** Updated link to correct path `../../docs/explanation/conventions/formatting/ex-co-fo__linking.md`
 - **Confidence:** HIGH (objective link error)
 
 ### Format Violations (5 files)
@@ -752,7 +752,7 @@ Always provide:
 - [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
 - [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns
-- [Plans Organization Convention](../../docs/explanation/conventions/ex-co__plans-organization.md) - Plan structure and organization standards
+- [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Plan structure and organization standards
 - [Acceptance Criteria Convention](../../docs/explanation/development/ex-de__acceptance-criteria.md) - Gherkin format requirements for user stories
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
 

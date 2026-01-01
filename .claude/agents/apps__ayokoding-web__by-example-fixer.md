@@ -26,7 +26,7 @@ Your role:
 
 ## Convention Authority
 
-Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-co__by-example-tutorial.md)** exactly when applying fixes.
+Follow **[By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)** exactly when applying fixes.
 
 Follow **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)** for determining which fixes to apply.
 
@@ -816,7 +816,7 @@ prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__20
 
 ## Related Documentation
 
-- **[By-Example Tutorial Convention](../../docs/explanation/conventions/ex-co__by-example-tutorial.md)**: Fix validation authority
+- **[By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)**: Fix validation authority
 - **[Fixer Confidence Levels](../../docs/explanation/development/ex-de__fixer-confidence-levels.md)**: Confidence assessment guide
 - **[Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md)**: Workflow context
 - **[Content Preservation](../../docs/explanation/development/ex-de__content-preservation.md)**: What never to delete

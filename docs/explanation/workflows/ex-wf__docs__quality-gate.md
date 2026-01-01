@@ -342,7 +342,7 @@ workflow run docs__quality-gate --mode=ocd
 workflow run docs__quality-gate --scope=docs/tutorials/
 
 # Validate specific file
-workflow run docs__quality-gate --scope=docs/explanation/conventions/ex-co__file-naming-convention.md
+workflow run docs__quality-gate --scope=docs/explanation/conventions/meta/ex-co-me__file-naming.md
 ```
 
 ### With Iteration Bounds

@@ -162,7 +162,7 @@ Your primary job is to verify that all links in documentation files are working 
 - [ ] Wikipedia links use correct article names (check for redirects)
 - [ ] Official documentation links point to current versions (not outdated)
 - [ ] GitHub links point to existing repositories/files
-- [ ] Internal links follow the [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md)
+- [ ] Internal links follow the [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md)
 
 ## Cache Management
 
@@ -202,7 +202,7 @@ links:
     finalUrl: https://diataxis.fr/
     redirectChain: null
     usedIn:
-      - docs/explanation/conventions/ex-co__diataxis-framework.md
+      - docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md
 
   - url: https://example.com/old
     lastChecked: 2025-11-29T17:30:00+07:00
@@ -275,7 +275,7 @@ Even for cached links that weren't rechecked:
 - Write `docs/metadata/external-links-status.yaml`
 - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
   - Use command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-  - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+  - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
 - Include full usedIn data for all links (needed for maintenance)
 - Sort links by URL for consistent git diffs
 - This step is REQUIRED on every run
@@ -412,12 +412,12 @@ Follow this systematic approach:
 **For Internal Links:**
 
 1. **Extract the file path** from the link
-   - Example: `[Text](./conventions/ex-co__file.md)` → `./conventions/ex-co__file.md`
+   - Example: `[Text](./conventions/formatting/ex-co-fo__indentation.md)` → `./conventions/formatting/ex-co-fo__indentation.md`
 
 2. **Resolve the relative path** based on the source file location
    - If source is `docs/explanation/README.md`
-   - And link is `./conventions/ex-co__file.md`
-   - Then target should be at `docs/explanation/conventions/ex-co__file.md`
+   - And link is `./conventions/formatting/ex-co-fo__indentation.md`
+   - Then target should be at `docs/explanation/conventions/formatting/ex-co-fo__indentation.md`
 
 3. **Use Glob or Read** to verify the file exists
    - If file doesn't exist, report as broken
@@ -432,7 +432,7 @@ Follow this systematic approach:
    - **CRITICAL**: Update `lastFullScan` timestamp to current time (UTC+7 format: YYYY-MM-DDTHH:MM:SS+07:00)
      - **Command to get current UTC+7 time**: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
      - Example output: `2025-12-14T16:23:00+07:00`
-     - See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
+     - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) for complete details
    - Include schema version
    - Include usedIn data (file paths only) for all links (needed for maintenance)
    - Sort links by URL for consistent git diffs
@@ -587,7 +587,7 @@ Common path errors:
 
 #### Missing .md Extension
 
-All internal links must include the `.md` extension per the [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md).
+All internal links must include the `.md` extension per the [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md).
 
 **Example of incorrect link:** `[Text](./file)` [INCORRECT]
 **Example of correct link:** `[Text](./file.md)` [CORRECT]
@@ -773,7 +773,7 @@ Before starting work, familiarize yourself with:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and documentation standards
 - [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md) - Agent design standards
-- [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) - How links should be formatted
+- [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - How links should be formatted
 
 ## Example Workflow
 

@@ -681,7 +681,7 @@ Read audit report: Checker's verification status and suggested replacement
 This agent implements:
 
 - [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment criteria
-- [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md) - Re-validation using checker's documented sources from audit report (fixer trusts checker's web verification)
+- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) - Re-validation using checker's documented sources from audit report (fixer trusts checker's web verification)
 - [Maker-Checker-Fixer Pattern](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Fixer stage workflow (checker verifies, fixer applies)
 
 ## Tools Usage
@@ -798,12 +798,12 @@ This separation of concerns enables:
 
 **Factual Validation:**
 
-- [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md) - Universal methodology
+- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) - Universal methodology
 
 **Hugo Content:**
 
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md)
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md)
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md)
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
 
 **Related Agents:**
 
