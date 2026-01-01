@@ -34,9 +34,9 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](./ex-de__code-quality.md)**: Reproducible environments enable consistent automated quality checks. Same Node.js/npm versions mean same Prettier, ESLint, and test results across machines.
+- **[Code Quality Convention](../quality/ex-de-qu__code.md)**: Reproducible environments enable consistent automated quality checks. Same Node.js/npm versions mean same Prettier, ESLint, and test results across machines.
 
-- **[Trunk Based Development](./ex-de__trunk-based-development.md)**: Reproducible CI/CD environments ensure consistent validation of commits to main branch. No environment-specific failures.
+- **[Trunk Based Development](./ex-de-wo__trunk-based-development.md)**: Reproducible CI/CD environments ensure consistent validation of commits to main branch. No environment-specific failures.
 
 ## Overview
 
@@ -775,9 +775,9 @@ verify();
 ## Related Documentation
 
 - [Reproducibility First](../principles/software-engineering/ex-pr-se__reproducibility.md) - WHY reproducibility matters
-- [Code Quality Convention](./ex-de__code-quality.md) - Automated quality in reproducible environments
-- [Trunk Based Development](./ex-de__trunk-based-development.md) - Reproducible CI/CD for main branch
-- [Hugo Development](./ex-de__hugo-development.md) - Reproducible builds for Hugo sites
+- [Code Quality Convention](../quality/ex-de-qu__code.md) - Automated quality in reproducible environments
+- [Trunk Based Development](./ex-de-wo__trunk-based-development.md) - Reproducible CI/CD for main branch
+- [Hugo Development](../hugo/ex-de-hu__development.md) - Reproducible builds for Hugo sites
 
 ## References
 

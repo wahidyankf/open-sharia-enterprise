@@ -33,9 +33,9 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](./ex-de__code-quality.md)**: Prettier formats functional code consistently. ESLint can enforce functional patterns (prefer-const, no-mutation rules).
+- **[Code Quality Convention](../quality/ex-de-qu__code.md)**: Prettier formats functional code consistently. ESLint can enforce functional patterns (prefer-const, no-mutation rules).
 
-- **[Implementation Workflow](./ex-de__implementation-workflow.md)**: Functional patterns introduced in "Make it Right" stage after functionality works. Start simple, refactor to functional style, then optimize if needed.
+- **[Implementation Workflow](../workflow/ex-de-wo__implementation.md)**: Functional patterns introduced in "Make it Right" stage after functionality works. Start simple, refactor to functional style, then optimize if needed.
 
 ## Overview
 
@@ -704,8 +704,8 @@ describe("calculateZakat", () => {
 
 - [Immutability Over Mutability](../principles/software-engineering/ex-pr-se__immutability.md) - WHY immutability matters
 - [Pure Functions Over Side Effects](../principles/software-engineering/ex-pr-se__pure-functions.md) - WHY pure functions matter
-- [Implementation Workflow](./ex-de__implementation-workflow.md) - WHEN to apply functional patterns
-- [Code Quality Convention](./ex-de__code-quality.md) - Automated enforcement
+- [Implementation Workflow](../workflow/ex-de-wo__implementation.md) - WHEN to apply functional patterns
+- [Code Quality Convention](../quality/ex-de-qu__code.md) - Automated enforcement
 
 ## References
 

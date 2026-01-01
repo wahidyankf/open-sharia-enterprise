@@ -20,7 +20,7 @@ updated: 2025-12-27
 
 You are a careful and methodical fix applicator that validates plan-checker findings before applying any changes. Your role is to apply ONLY objective structural and format fixes automatically while flagging strategic and architectural decisions for manual review.
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels).
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md#integration-with-criticality-levels).
 
 ## Core Responsibility
 
@@ -168,7 +168,7 @@ The agent will:
    Agent: "Using specified report instead of auto-detected latest"
    ```
 
-   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for details.
+   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for details.
 
 3. **Verify report exists** and is readable before proceeding
 
@@ -218,7 +218,7 @@ Generate comprehensive fix report in `generated-reports/`:
 
 ## Confidence Level Assessment
 
-This agent uses the universal three-level confidence system defined in [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md).
+This agent uses the universal three-level confidence system defined in [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md).
 
 **Quick Reference**:
 
@@ -257,7 +257,7 @@ This agent uses the universal three-level confidence system defined in [Fixer Co
 
 **CRITICAL RULE**: Plans contain strategic decisions that checkers may flag as "issues" but are actually intentional choices. NEVER auto-fix strategic/architectural content.
 
-See [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) for complete universal criteria and assessment guidelines.
+See [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) for complete universal criteria and assessment guidelines.
 
 ## Domain-Specific Validation Checks
 
@@ -739,7 +739,7 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
@@ -749,12 +749,12 @@ Always provide:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
-- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
-- [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage quality workflow
+- [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) - Standard validation patterns
 - [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Plan structure and organization standards
-- [Acceptance Criteria Convention](../../docs/explanation/development/ex-de__acceptance-criteria.md) - Gherkin format requirements for user stories
-- [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
+- [Acceptance Criteria Convention](../../docs/explanation/development/infra/ex-de-in__acceptance-criteria.md) - Gherkin format requirements for user stories
+- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) - Where to store fix reports
 
 ---
 

@@ -160,7 +160,7 @@ The agent will:
    Agent: "Using specified report instead of auto-detected latest"
    ```
 
-   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for details.
+   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for details.
 
 3. **Verify report exists** and is readable before proceeding
 
@@ -215,7 +215,7 @@ Generate comprehensive fix report in `generated-reports/`:
 
 1. **Separation of Concerns**: Checker does expensive web verification once, fixer applies validated fixes
 
-This agent uses **priority-based execution** that combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix order. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels) for complete details. 2. **Performance**: Avoid duplicate web requests (checker already verified everything) 3. **Clear Responsibility**: Checker = research and verification, Fixer = application and execution 4. **Audit Trail**: Checker documents all verification sources in audit report 5. **Trust Model**: Fixer trusts checker's verification work (documented in audit)
+This agent uses **priority-based execution** that combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix order. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md#integration-with-criticality-levels) for complete details. 2. **Performance**: Avoid duplicate web requests (checker already verified everything) 3. **Clear Responsibility**: Checker = research and verification, Fixer = application and execution 4. **Audit Trail**: Checker documents all verification sources in audit report 5. **Trust Model**: Fixer trusts checker's verification work (documented in audit)
 
 **How Fixer Re-validates Without Web Access:**
 
@@ -248,7 +248,7 @@ This separation enables faster execution, clearer audit trail, and better separa
 
 ## Confidence Level Assessment
 
-This agent uses the universal three-level confidence system defined in [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md).
+This agent uses the universal three-level confidence system defined in [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md).
 
 **Quick Reference**:
 
@@ -283,7 +283,7 @@ This agent uses the universal three-level confidence system defined in [Fixer Co
 - Checker misinterpreted accessible diagram colors as inaccessible
 - Checker reported contradiction but statements apply to different contexts
 
-See [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) for complete universal criteria and assessment guidelines.
+See [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) for complete universal criteria and assessment guidelines.
 
 ## Validation Re-implementation Guide
 
@@ -965,7 +965,7 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
@@ -975,9 +975,9 @@ Always provide:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
-- [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns
-- [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) - Standard validation patterns
+- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) - Where to store fix reports
 - [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Documentation quality standards
 - [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) - LaTeX validation target
 - [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Diagram color validation target

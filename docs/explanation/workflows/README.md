@@ -212,14 +212,14 @@ All workflows must respect core principles:
 ### Core Documentation
 
 - [Workflow Pattern Convention](./ex-wf__meta__workflow-pattern.md) - How workflows are structured
-- [Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md) - Core workflow pattern
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - How agents work
+- [Maker-Checker-Fixer Pattern](../development/pattern/ex-de-pa__maker-checker-fixer.md) - Core workflow pattern
+- [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md) - How agents work
 
 ### Supporting Documentation
 
-- [Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md) - How fixers assess changes
-- [Content Preservation](../development/ex-de__content-preservation.md) - Preserving meaning during fixes
-- [Temporary Files](../development/ex-de__temporary-files.md) - Where workflow outputs go
+- [Fixer Confidence Levels](../development/quality/ex-de-qu__fixer-confidence-levels.md) - How fixers assess changes
+- [Content Preservation](../development/quality/ex-de-qu__content-preservation.md) - Preserving meaning during fixes
+- [Temporary Files](../development/infra/ex-de-in__temporary-files.md) - Where workflow outputs go
 - [Plans Organization](../conventions/project/ex-co-pr__plans-organization.md) - How plans relate to workflows
 
 ### Layer Documentation

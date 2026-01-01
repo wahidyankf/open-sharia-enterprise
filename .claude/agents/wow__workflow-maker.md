@@ -549,7 +549,7 @@ Deploy only if validation passes:
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Workflow Conventions:**
 
@@ -558,8 +558,8 @@ Deploy only if validation passes:
 **Domain-Specific Conventions:**
 
 - `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - File naming rules (prefix pattern)
-- `docs/explanation/development/ex-de__maker-checker-fixer-pattern.md` - Three-stage workflow pattern
-- `docs/explanation/development/ex-de__fixer-confidence-levels.md` - Confidence assessment for fixers
+- `docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md` - Three-stage workflow pattern
+- `docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md` - Confidence assessment for fixers
 
 **Related Agents:**
 

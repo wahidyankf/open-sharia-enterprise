@@ -227,7 +227,7 @@ Plans can use either **single-file** or **multi-file** structure depending on si
 - **tech-docs.md**: Architecture diagrams, API design, data models, technical decisions
 - **delivery.md**: Milestones, deliverables, success metrics, validation checklist
 
-**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../development/ex-de__acceptance-criteria.md) for complete details.
+**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../development/infra/ex-de-in__acceptance-criteria.md) for complete details.
 
 ### Important Note on File Naming
 
@@ -313,14 +313,14 @@ For complete diagram standards, see [Diagram and Schema Convention](../formattin
 
 **Related Conventions**:
 
-- [Acceptance Criteria Convention](../development/ex-de__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
+- [Acceptance Criteria Convention](../development/infra/ex-de-in__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
 - [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Organization of `docs/` directory
 - [File Naming Convention](../meta/ex-co-me__file-naming.md) - Naming files within `docs/` (not applicable to plans/)
 - [Diagram and Schema Convention](../formatting/ex-co-fo__diagrams.md) - Standards for Mermaid diagrams
 
 **Development Guides**:
 
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - Standards for AI agents (including plan**maker and plan**executor)
+- [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md) - Standards for AI agents (including plan**maker and plan**executor)
 
 ## 💡 Best Practices
 

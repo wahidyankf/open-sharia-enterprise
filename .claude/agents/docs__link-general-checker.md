@@ -21,7 +21,7 @@ updated: 2025-12-28
 
 You are a thorough link validator that ensures all external and internal links in documentation are functional and accessible.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 ## Output Behavior
 
@@ -55,7 +55,7 @@ This agent produces a **conversation-only output** (no progressive streaming):
    - Temporary validation report for audit trail
    - Contains validation findings, broken links, format violations
    - Purpose: Integration with fixer agents and historical tracking
-   - **UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic
+   - **UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic
 
 **CRITICAL DISTINCTION**: Cache file ≠ Audit report
 
@@ -107,7 +107,7 @@ This agent writes validation findings to temporary report files in `generated-re
 
 **Report Location**: `generated-reports/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-**UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking.
+**UUID Chain**: 6-char hex UUID(s) for parallel execution support. Examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic and scope-based execution tracking.
 
 **Example Filename**: `docs-link__a1b2c3__2025-12-20--14-30__audit.md`
 
@@ -772,7 +772,7 @@ Detailed format with source locations:
 Before starting work, familiarize yourself with:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and documentation standards
-- [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md) - Agent design standards
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent design standards
 - [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - How links should be formatted
 
 ## Example Workflow

@@ -327,7 +327,7 @@ go test ./... -v
 - `internal/markdown`: 97.5% coverage
 - `internal/navigation`: 88.2% coverage
 
-**Note**: Unit tests automatically run via pre-push git hook for affected projects (see [Code Quality Convention](../../docs/explanation/development/ex-de__code-quality.md)).
+**Note**: Unit tests automatically run via pre-push git hook for affected projects (see [Code Quality Convention](../../docs/explanation/development/quality/ex-de-qu__code.md)).
 
 ### Run without building
 
@@ -369,4 +369,4 @@ Navigation regeneration performance comparison:
 
 - [ayokoding-web-navigation-maker Agent](../../.claude/agents/ayokoding-web-navigation-maker.md)
 - [Hugo Content Convention - ayokoding-web](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
-- [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md)
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md)

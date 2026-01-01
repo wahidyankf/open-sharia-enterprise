@@ -25,7 +25,7 @@ You are a meticulous consistency validator that ensures all project documentatio
 
 **To apply fixes**, use the [repo-rules-fixer](./wow__rules-fixer.md) agent after reviewing this agent's audit report.
 
-**Criticality Levels**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md). Criticality indicates importance/urgency, helping users prioritize fixes.
+**Criticality Levels**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW) defined in [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md). Criticality indicates importance/urgency, helping users prioritize fixes.
 
 This agent produces TWO outputs:
 
@@ -49,7 +49,7 @@ This agent produces TWO outputs:
 **File Naming Convention**: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 - Example: `repo-rules__a1b2c3__2025-12-14--20-45__audit.md` (audit started December 14, 2025 at 8:45 PM UTC+7)
-- UUID Chain: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic and scope-based execution tracking
+- UUID Chain: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic and scope-based execution tracking
 
 ## Core Responsibility
 
@@ -730,7 +730,7 @@ When the user requests a consistency check:
 1. **Read all relevant files** using the Read and Glob tools
 2. **Systematically verify** each item in the checklist above
 3. **Document findings** in a clear report format
-4. **Categorize issues** by criticality using standardized levels (see [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md)):
+4. **Categorize issues** by criticality using standardized levels (see [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md)):
    - 🔴 **CRITICAL**: Breaks functionality, blocks users, violates mandatory requirements
    - 🟠 **HIGH**: Significant quality degradation, violates documented conventions
    - 🟡 **MEDIUM**: Minor quality issues, style inconsistencies
@@ -790,7 +790,7 @@ Use this decision tree to categorize each finding:
 
 ### Special Detection Methods
 
-**CRITICAL**: This agent uses standardized validation patterns defined in the [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md). Always extract frontmatter FIRST before searching to prevent false positives.
+**CRITICAL**: This agent uses standardized validation patterns defined in the [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md). Always extract frontmatter FIRST before searching to prevent false positives.
 
 **Key validation methods:**
 
@@ -800,7 +800,7 @@ Use this decision tree to categorize each finding:
 - **Broken Link Detection** - Resolve relative paths from file's directory
 - **File Naming Validation** - Compute expected prefix from directory path
 
-See [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for complete patterns, examples, and common pitfalls.
+See [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) for complete patterns, examples, and common pitfalls.
 
 #### Workflow Agent Reference Validation
 
@@ -1153,7 +1153,7 @@ The file is readable at ALL times during the audit. Structure:
 
 ## Condensation Validation Process
 
-**CRITICAL RESPONSIBILITY:** When validating condensed files, ensure content was MOVED to conventions, NOT DELETED. Follow the principles defined in [Content Preservation Convention](../../docs/explanation/development/ex-de__content-preservation.md).
+**CRITICAL RESPONSIBILITY:** When validating condensed files, ensure content was MOVED to conventions, NOT DELETED. Follow the principles defined in [Content Preservation Convention](../../docs/explanation/development/quality/ex-de-qu__content-preservation.md).
 
 **Key validation questions:**
 
@@ -1162,11 +1162,11 @@ The file is readable at ALL times during the audit. Structure:
 - Is convention doc indexed? (Listed in appropriate README.md?)
 - Zero content loss? (All unique information preserved?)
 
-See [Content Preservation Convention](../../docs/explanation/development/ex-de__content-preservation.md) for complete validation workflow, offload options, verification checklist, and integration with repo-rules-maker.
+See [Content Preservation Convention](../../docs/explanation/development/quality/ex-de-qu__content-preservation.md) for complete validation workflow, offload options, verification checklist, and integration with repo-rules-maker.
 
 ## Temporary Report Files
 
-All consistency audit reports generated by this agent must be saved to the `generated-reports/` directory following the [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md).
+All consistency audit reports generated by this agent must be saved to the `generated-reports/` directory following the [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md).
 
 **CRITICAL File Behavior:**
 
@@ -1253,12 +1253,12 @@ Structure reports with: Summary (files checked, issues found, duplications, toke
 ### Development Conventions
 
 - `docs/explanation/development/README.md`
-- `docs/explanation/development/ex-de__ai-agents.md`
-- `docs/explanation/development/ex-de__commit-messages.md`
-- `docs/explanation/development/ex-de__trunk-based-development.md`
-- `docs/explanation/development/ex-de__acceptance-criteria.md`
-- `docs/explanation/development/ex-de__hugo-development.md`
-- `docs/explanation/development/ex-de__temporary-files.md`
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md`
+- `docs/explanation/development/workflow/ex-de-wo__commit-messages.md`
+- `docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md`
+- `docs/explanation/development/infra/ex-de-in__acceptance-criteria.md`
+- `docs/explanation/development/hugo/ex-de-hu__development.md`
+- `docs/explanation/development/infra/ex-de-in__temporary-files.md`
 
 ### Category READMEs
 
@@ -1318,12 +1318,12 @@ You are the guardian of consistency in this repository. Be meticulous, thorough,
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Validation Methodology:**
 
-- `docs/explanation/development/ex-de__repository-validation.md` - Standard validation patterns (frontmatter extraction, field checks, link validation)
-- `docs/explanation/development/ex-de__content-preservation.md` - Content offload principles and verification (MOVE not DELETE)
+- `docs/explanation/development/quality/ex-de-qu__repository-validation.md` - Standard validation patterns (frontmatter extraction, field checks, link validation)
+- `docs/explanation/development/quality/ex-de-qu__content-preservation.md` - Content offload principles and verification (MOVE not DELETE)
 
 **Documentation Conventions:**
 

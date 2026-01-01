@@ -228,7 +228,7 @@ Your primary job is to [clear purpose statement based on user description and ro
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **[Domain-Specific Conventions]:**
 
@@ -439,7 +439,7 @@ Note: These are domain-specific applications of standard tools. For general tool
 
 **CRITICAL**: This agent uses Bash tools (NOT Write/Edit tools) for creating/updating agent files in `.claude/agents/`. This is mandatory for autonomous operation without user approval prompts.
 
-**Rationale**: Write/Edit tools trigger user approval, breaking autonomous workflows. Bash tools (heredoc, sed, awk) allow direct file creation/modification. See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/development/ex-de__ai-agents.md#writing-to-claude-folders) for complete details.
+**Rationale**: Write/Edit tools trigger user approval, breaking autonomous workflows. Bash tools (heredoc, sed, awk) allow direct file creation/modification. See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders) for complete details.
 
 **For creating new agent files:**
 
@@ -515,7 +515,7 @@ An agent is successfully created when:
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Domain-Specific Conventions:**
 

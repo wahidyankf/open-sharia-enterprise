@@ -552,9 +552,9 @@ console.log("With payment:", withPayment); // Full history
 
 ## 📚 Related Conventions
 
-- [Functional Programming Practices](../../development/ex-de__functional-programming.md) - Implementation patterns for immutability
-- [Code Quality Convention](../../development/ex-de__code-quality.md) - Automated enforcement
-- [Implementation Workflow](../../development/ex-de__implementation-workflow.md) - When to introduce immutability
+- [Functional Programming Practices](../../development/pattern/ex-de-pa__functional-programming.md) - Implementation patterns for immutability
+- [Code Quality Convention](../../development/quality/ex-de-qu__code.md) - Automated enforcement
+- [Implementation Workflow](../../development/workflow/ex-de-wo__implementation.md) - When to introduce immutability
 
 ## 📖 References
 

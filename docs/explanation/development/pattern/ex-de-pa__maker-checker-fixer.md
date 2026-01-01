@@ -34,11 +34,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Criticality Levels Convention](./ex-de__criticality-levels.md)**: Checker agents categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) to indicate importance/urgency. Fixer agents combine criticality with confidence to determine fix priority (P0-P4).
+- **[Criticality Levels Convention](../quality/ex-de-qu__criticality-levels.md)**: Checker agents categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) to indicate importance/urgency. Fixer agents combine criticality with confidence to determine fix priority (P0-P4).
 
-- **[Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md)**: Fixer agents assess confidence (HIGH/MEDIUM/FALSE_POSITIVE) for each finding. Only HIGH confidence fixes applied automatically. Criticality and confidence work orthogonally to determine priority.
+- **[Fixer Confidence Levels Convention](../quality/ex-de-qu__fixer-confidence-levels.md)**: Fixer agents assess confidence (HIGH/MEDIUM/FALSE_POSITIVE) for each finding. Only HIGH confidence fixes applied automatically. Criticality and confidence work orthogonally to determine priority.
 
-- **[Temporary Files Convention](./ex-de__temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
+- **[Temporary Files Convention](../infra/ex-de-in__temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
 
 - **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
 
@@ -180,7 +180,7 @@ Maker Agent (ayokoding-web-general-maker):
 - ✅ Provide actionable recommendations
 - ✅ Do NOT modify files being checked
 
-**Criticality Categorization** (see [Criticality Levels Convention](./ex-de__criticality-levels.md)):
+**Criticality Categorization** (see [Criticality Levels Convention](../quality/ex-de-qu__criticality-levels.md)):
 
 Checkers categorize findings by **importance/urgency**:
 
@@ -250,7 +250,7 @@ Checker Agent (ayokoding-web-general-checker):
 - ✅ Report FALSE_POSITIVE findings for checker improvement
 - ✅ Generate comprehensive fix reports
 
-**Priority-Based Execution** (see [Fixer Confidence Levels Convention - Integration](./ex-de__fixer-confidence-levels.md#integration-with-criticality-levels)):
+**Priority-Based Execution** (see [Fixer Confidence Levels Convention - Integration](../quality/ex-de-qu__fixer-confidence-levels.md#integration-with-criticality-levels)):
 
 Fixers combine **criticality** (importance) with **confidence** (certainty) to determine priority:
 
@@ -371,7 +371,7 @@ The maker-checker-fixer pattern aligns with the agent color categorization syste
 
 **Note**: Purple (🟪 Implementors) agents execute plans and use all tools, falling outside the maker-checker-fixer pattern.
 
-See [AI Agents Convention - Agent Color Categorization](./ex-de__ai-agents.md#agent-color-categorization) for complete details.
+See [AI Agents Convention - Agent Color Categorization](../agents/ex-de-ag__ai-agents.md#agent-color-categorization) for complete details.
 
 ## 📊 The Five Agent Families
 
@@ -668,17 +668,17 @@ Pattern scales across **multiple domains** without reinventing the workflow:
 
 The maker-checker-fixer pattern integrates with repository conventions:
 
-| Convention                                                                      | How Pattern Uses It                                             |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [AI Agents Convention](./ex-de__ai-agents.md)                                   | Defines agent structure, tool permissions, color coding         |
-| [Criticality Levels Convention](./ex-de__criticality-levels.md)                 | Checkers categorize by criticality, fixers use for priority     |
-| [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md)       | Fixers assess confidence, combine with criticality for priority |
-| [Repository Validation Methodology](./ex-de__repository-validation.md)          | Standard validation patterns used by checker/fixer              |
-| [Content Quality Principles](../conventions/content/ex-co-co__quality.md)       | What checkers validate (quality standards)                      |
-| [Hugo Content Convention](../conventions/hugo/ex-co-hu__shared.md)              | What ayokoding/ose-platform makers/checkers enforce             |
-| [Tutorial Convention](../conventions/tutorial/ex-co-tu__general.md)             | What docs\_\_tutorial-maker/checker enforce                     |
-| [README Quality Convention](../conventions/content/ex-co-co__readme-quality.md) | What readme\_\_maker/checker enforce                            |
-| [Temporary Files Convention](./ex-de__temporary-files.md)                       | Where checker/fixer reports are stored                          |
+| Convention                                                                            | How Pattern Uses It                                             |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [AI Agents Convention](../agents/ex-de-ag__ai-agents.md)                              | Defines agent structure, tool permissions, color coding         |
+| [Criticality Levels Convention](../quality/ex-de-qu__criticality-levels.md)           | Checkers categorize by criticality, fixers use for priority     |
+| [Fixer Confidence Levels Convention](../quality/ex-de-qu__fixer-confidence-levels.md) | Fixers assess confidence, combine with criticality for priority |
+| [Repository Validation Methodology](../quality/ex-de-qu__repository-validation.md)    | Standard validation patterns used by checker/fixer              |
+| [Content Quality Principles](../conventions/content/ex-co-co__quality.md)             | What checkers validate (quality standards)                      |
+| [Hugo Content Convention](../conventions/hugo/ex-co-hu__shared.md)                    | What ayokoding/ose-platform makers/checkers enforce             |
+| [Tutorial Convention](../conventions/tutorial/ex-co-tu__general.md)                   | What docs\_\_tutorial-maker/checker enforce                     |
+| [README Quality Convention](../conventions/content/ex-co-co__readme-quality.md)       | What readme\_\_maker/checker enforce                            |
+| [Temporary Files Convention](../infra/ex-de-in__temporary-files.md)                   | Where checker/fixer reports are stored                          |
 
 **Key Point**: The pattern is a **workflow framework**. The conventions define **what** to validate/enforce.
 
@@ -686,9 +686,9 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Pattern Implementation**:
 
-- [AI Agents Convention](./ex-de__ai-agents.md) - Agent structure and tool permissions
-- [Repository Validation Methodology](./ex-de__repository-validation.md) - Validation patterns and techniques
-- [Temporary Files Convention](./ex-de__temporary-files.md) - Report storage and naming
+- [AI Agents Convention](../agents/ex-de-ag__ai-agents.md) - Agent structure and tool permissions
+- [Repository Validation Methodology](../quality/ex-de-qu__repository-validation.md) - Validation patterns and techniques
+- [Temporary Files Convention](../infra/ex-de-in__temporary-files.md) - Report storage and naming
 
 **Workflow Orchestration**:
 

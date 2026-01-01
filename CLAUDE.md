@@ -48,23 +48,23 @@ Automated git hooks enforce quality through **Husky** and **lint-staged**:
 - **Commit-msg**: Commitlint validates Conventional Commits format `<type>(<scope>): <description>`
 - **Pre-push**: Runs `test:quick` for affected projects (Nx detects changes)
 
-Split work into multiple logical commits by type and domain. See [Commit Message Convention](./docs/explanation/development/ex-de__commit-messages.md) for rules and [Code Quality Convention](./docs/explanation/development/ex-de__code-quality.md) for complete details.
+Split work into multiple logical commits by type and domain. See [Commit Message Convention](./docs/explanation/development/workflow/ex-de-wo__commit-messages.md) for rules and [Code Quality Convention](./docs/explanation/development/quality/ex-de-qu__code.md) for complete details.
 
 ## Git Workflow
 
-This repository uses **Trunk Based Development (TBD)**. All development happens on `main` branch with small, frequent commits. **AI agents assume `main` branch by default** unless explicitly told otherwise. Environment branches (`prod-ayokoding-web`, `prod-ose-platform-web`) exist for deployment only - never commit directly to them. See [Trunk Based Development Convention](./docs/explanation/development/ex-de__trunk-based-development.md) for complete details.
+This repository uses **Trunk Based Development (TBD)**. All development happens on `main` branch with small, frequent commits. **AI agents assume `main` branch by default** unless explicitly told otherwise. Environment branches (`prod-ayokoding-web`, `prod-ose-platform-web`) exist for deployment only - never commit directly to them. See [Trunk Based Development Convention](./docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for complete details.
 
 ## Implementation Workflow
 
-When developing features or fixing bugs, follow the **three-stage workflow**: make it work, make it right, make it fast. Start with the simplest solution that works, refactor for quality and maintainability, then optimize only if performance measurements prove it necessary. This implements Simplicity Over Complexity and YAGNI principles. See [Implementation Workflow Convention](./docs/explanation/development/ex-de__implementation-workflow.md) for complete workflow details.
+When developing features or fixing bugs, follow the **three-stage workflow**: make it work, make it right, make it fast. Start with the simplest solution that works, refactor for quality and maintainability, then optimize only if performance measurements prove it necessary. This implements Simplicity Over Complexity and YAGNI principles. See [Implementation Workflow Convention](./docs/explanation/development/workflow/ex-de-wo__implementation.md) for complete workflow details.
 
 ## Functional Programming Principles
 
-The codebase follows functional programming principles for safer, more predictable code. **Prefer immutability** (const, spread operators, immutable methods) and **pure functions** (deterministic, no side effects). Functional Core, Imperative Shell pattern isolates side effects at boundaries. See [Functional Programming Practices](./docs/explanation/development/ex-de__functional-programming.md) for complete implementation patterns.
+The codebase follows functional programming principles for safer, more predictable code. **Prefer immutability** (const, spread operators, immutable methods) and **pure functions** (deterministic, no side effects). Functional Core, Imperative Shell pattern isolates side effects at boundaries. See [Functional Programming Practices](./docs/explanation/development/pattern/ex-de-pa__functional-programming.md) for complete implementation patterns.
 
 ## Reproducible Environments
 
-Development environments are reproducible through **Volta** (Node.js/npm version pinning), **package-lock.json** (deterministic dependencies), and **.env.example** (environment configuration). All contributors get identical setups. See [Reproducible Environments](./docs/explanation/development/ex-de__reproducible-environments.md) for setup details.
+Development environments are reproducible through **Volta** (Node.js/npm version pinning), **package-lock.json** (deterministic dependencies), and **.env.example** (environment configuration). All contributors get identical setups. See [Reproducible Environments](./docs/explanation/development/workflow/ex-de-wo__reproducible-environments.md) for setup details.
 
 ## Common Development Commands
 
@@ -222,7 +222,7 @@ For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-
 
 All AI agents in `.claude/agents/` must follow the convention defined in `docs/explanation/development/`:
 
-- **AI Agents Convention:** [`docs/explanation/development/ex-de__ai-agents.md`](./docs/explanation/development/ex-de__ai-agents.md)
+- **AI Agents Convention:** [`docs/explanation/development/agents/ex-de-ag__ai-agents.md`](./docs/explanation/development/agents/ex-de-ag__ai-agents.md)
 - Defines agent file structure, naming (including scope prefixes), tool access patterns, and model selection
 - **Agent naming**: General agents use `agent-name.md`, app-scoped agents use `apps__[app-name]__agent-name.md`
 - Required reading for all agent creators and maintainers
@@ -233,15 +233,15 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 
 **Name-Filename Matching**: Agent `name` field MUST exactly match the filename (without .md extension). Example: `agent__maker.md` → `name: agent__maker`.
 
-**Bash Tools for .claude Writes**: Agents creating/updating files in `.claude/` folders must use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](./docs/explanation/development/ex-de__ai-agents.md#writing-to-claude-folders).
+**Bash Tools for .claude Writes**: Agents creating/updating files in `.claude/` folders must use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](./docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
 
 **Agent File Sizes**: Three tiers based on complexity - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Agents approaching limits should link to convention docs instead of duplicating content.
 
-**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction. Focus on execution quality over token efficiency. See [AI Agents Convention - Token Budget Philosophy](./docs/explanation/development/ex-de__ai-agents.md#token-budget-philosophy) for details.
+**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction. Focus on execution quality over token efficiency. See [AI Agents Convention - Token Budget Philosophy](./docs/explanation/development/agents/ex-de-ag__ai-agents.md#token-budget-philosophy) for details.
 
-**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. Ensures traceability from practices back to foundational values. See [Convention Writing Convention](./docs/explanation/conventions/content/ex-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for requirements.
+**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. Ensures traceability from practices back to foundational values. See [Convention Writing Convention](./docs/explanation/conventions/content/ex-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md) for requirements.
 
-See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
+See [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md) for complete details.
 
 ### Temporary Files for AI Agents
 
@@ -254,11 +254,11 @@ AI agents creating temporary uncommitted files must use designated directories t
 
 **PROGRESSIVE WRITING REQUIREMENT**: All \*-checker agents MUST initialize report files at execution start and write findings progressively throughout execution (not buffer and write once at the end). This ensures audit history survives context compaction during long validation runs.
 
-These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/ex-de__temporary-files.md) for complete details on naming patterns, tool requirements, progressive writing patterns, and when to use each directory.
+These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/infra/ex-de-in__temporary-files.md) for complete details on naming patterns, tool requirements, progressive writing patterns, and when to use each directory.
 
 ### Maker-Checker-Fixer Pattern
 
-Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme, docs, plan. Checkers categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency. Fixers combine criticality with confidence (HIGH/MEDIUM/FALSE_POSITIVE) to determine priority (P0-P4) and execution order. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) for complete workflow, [Criticality Levels](./docs/explanation/development/ex-de__criticality-levels.md) for severity classification, and [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md) for assessment criteria.
+Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme, docs, plan. Checkers categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency. Fixers combine criticality with confidence (HIGH/MEDIUM/FALSE_POSITIVE) to determine priority (P0-P4) and execution order. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) for complete workflow, [Criticality Levels](./docs/explanation/development/quality/ex-de-qu__criticality-levels.md) for severity classification, and [Fixer Confidence Levels](./docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) for assessment criteria.
 
 ### Available Agents
 
@@ -292,7 +292,7 @@ Workflows orchestrate multiple agents in sequence, parallel, or conditionally. A
 
 ### Resources
 
-See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md), [Maker-Checker-Fixer Pattern](./docs/explanation/development/ex-de__maker-checker-fixer-pattern.md), [Fixer Confidence Levels](./docs/explanation/development/ex-de__fixer-confidence-levels.md), [Repository Validation](./docs/explanation/development/ex-de__repository-validation.md), [Content Preservation](./docs/explanation/development/ex-de__content-preservation.md), [Development Index](./docs/explanation/development/README.md), and [Agents Index](./.claude/agents/README.md).
+See [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md), [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md), [Fixer Confidence Levels](./docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md), [Repository Validation](./docs/explanation/development/quality/ex-de-qu__repository-validation.md), [Content Preservation](./docs/explanation/development/quality/ex-de-qu__content-preservation.md), [Development Index](./docs/explanation/development/README.md), and [Agents Index](./.claude/agents/README.md).
 
 ## CLAUDE.md Maintenance
 

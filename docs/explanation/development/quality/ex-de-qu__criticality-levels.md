@@ -33,7 +33,7 @@ This convention establishes a universal **four-level criticality system** (CRITI
 - **Criticality** (CRITICAL/HIGH/MEDIUM/LOW) → **Importance/Urgency** - "How critical is this issue?"
 - **Confidence** (HIGH/MEDIUM/FALSE_POSITIVE) → **Certainty/Fixability** - "How certain are we it needs fixing?"
 
-See [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md) for complete confidence system details.
+See [Fixer Confidence Levels Convention](../quality/ex-de-qu__fixer-confidence-levels.md) for complete confidence system details.
 
 **Example showing both dimensions**:
 
@@ -1092,7 +1092,7 @@ def determine_priority(criticality, confidence):
 
 ### 1. Missing Required Subcategory Field
 
-**File**: `docs/explanation/development/ex-de__ai-agents.md`
+**File**: `docs/explanation/development/agents/ex-de-ag__ai-agents.md`
 **Original Issue**: CRITICAL - Missing `subcategory: development` field
 **Validation**: Confirmed field missing in frontmatter (HIGH confidence)
 **Fix Applied**: Added `subcategory: development` at line 5
@@ -1138,7 +1138,7 @@ subcategory: development
 **Action Required**: Manually select correct target from:
 
 - `docs/explanation/conventions/meta/ex-co-me__file-naming.md`
-- `docs/explanation/development/ex-de__file-organization.md`
+- `docs/explanation/development/infra/ex-de-in__file-organization.md`
 
 ---
 
@@ -1273,7 +1273,7 @@ Ensures findings are accessible to all users regardless of visual ability or con
 
 This convention builds upon and references:
 
-### [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md)
+### [Fixer Confidence Levels Convention](../quality/ex-de-qu__fixer-confidence-levels.md)
 
 **Relationship**: Criticality works orthogonally with confidence levels.
 
@@ -1281,7 +1281,7 @@ This convention builds upon and references:
 - Confidence (HIGH/MEDIUM/FALSE_POSITIVE) measures certainty/fixability
 - Combined in decision matrix to determine priority (P0-P4)
 
-### [Maker-Checker-Fixer Pattern Convention](./ex-de__maker-checker-fixer-pattern.md)
+### [Maker-Checker-Fixer Pattern Convention](../pattern/ex-de-pa__maker-checker-fixer.md)
 
 **Relationship**: Criticality enhances Stage 2 (Checker) and Stage 3 (Fixer).
 
@@ -1289,7 +1289,7 @@ This convention builds upon and references:
 - Stage 3: Fixers use criticality + confidence to determine priority
 - Priority-based execution aligns with pattern's quality gates
 
-### [Repository Validation Methodology Convention](./ex-de__repository-validation.md)
+### [Repository Validation Methodology Convention](../quality/ex-de-qu__repository-validation.md)
 
 **Relationship**: Validation checks produce findings that need criticality assessment.
 
@@ -1297,7 +1297,7 @@ This convention builds upon and references:
 - Criticality system categorizes detected issues
 - Standardized report format presents categorized findings
 
-### [Temporary Files Convention](./ex-de__temporary-files.md)
+### [Temporary Files Convention](../infra/ex-de-in__temporary-files.md)
 
 **Relationship**: Checker reports using criticality system are temporary files.
 
@@ -1329,7 +1329,7 @@ This convention builds upon and references:
 
 See [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) for complete details on when standard emoji colors are acceptable (always with text) versus when accessible palette is required (Mermaid diagrams).
 
-### [AI Agents Convention](./ex-de__ai-agents.md)
+### [AI Agents Convention](../agents/ex-de-ag__ai-agents.md)
 
 **Relationship**: All checker and fixer agents must follow this convention.
 
@@ -1346,8 +1346,8 @@ Existing agents using different terminology should migrate to this convention.
 ### Phase 1: Documentation (Week 1)
 
 1. Create this convention document ✅
-2. Update [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md) with criticality integration
-3. Update [Maker-Checker-Fixer Pattern Convention](./ex-de__maker-checker-fixer-pattern.md) with criticality flow
+2. Update [Fixer Confidence Levels Convention](../quality/ex-de-qu__fixer-confidence-levels.md) with criticality integration
+3. Update [Maker-Checker-Fixer Pattern Convention](../pattern/ex-de-pa__maker-checker-fixer.md) with criticality flow
 4. Update CLAUDE.md with brief summary and link
 
 ### Phase 2: Pilot Agent (Week 2)

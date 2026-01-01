@@ -863,7 +863,7 @@ $1,000 $1,259
 
 **When to Include Screenshots**: - Tool/software tutorials - UI/UX walkthroughs - Configuration steps - Expected results visualization
 
-**Requirements**: - High resolution (readable) - Annotated with arrows/callouts - Crop to relevant area - Follow [Temporary Files Convention](../development/ex-de__temporary-files.md) for storage - Alt text for accessibility
+**Requirements**: - High resolution (readable) - Annotated with arrows/callouts - Crop to relevant area - Follow [Temporary Files Convention](../development/infra/ex-de-in__temporary-files.md) for storage - Alt text for accessibility
 
 ## 🎮 Hands-On Elements Requirements
 

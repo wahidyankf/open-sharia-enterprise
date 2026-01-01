@@ -145,8 +145,8 @@ Big-bang implementation with logical phases completed sequentially on main branc
 
 **Development Practices:**
 
-- [Maker-Checker-Fixer Pattern](../../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Seven agent families
-- [AI Agents Convention](../../../docs/explanation/development/ex-de__ai-agents.md) - Agent standards
+- [Maker-Checker-Fixer Pattern](../../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Seven agent families
+- [AI Agents Convention](../../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent standards
 
 ## Next Steps
 

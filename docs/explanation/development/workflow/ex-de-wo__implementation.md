@@ -43,7 +43,7 @@ This workflow respects three core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](./ex-de__code-quality.md)**: The "make it right" stage applies code quality standards (Prettier formatting, linting) before the "make it fast" stage to ensure clean code before optimization.
+- **[Code Quality Convention](../quality/ex-de-qu__code.md)**: The "make it right" stage applies code quality standards (Prettier formatting, linting) before the "make it fast" stage to ensure clean code before optimization.
 
 - **[Content Quality Principles](../conventions/content/ex-co-co__quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
 
@@ -468,9 +468,9 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 ## 🔗 Related Documentation
 
 - [Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md) - Start simple principle
-- [Code Quality Convention](./ex-de__code-quality.md) - Automated quality checks
-- [Trunk Based Development](./ex-de__trunk-based-development.md) - Git workflow
-- [Acceptance Criteria Convention](./ex-de__acceptance-criteria.md) - Defining "works" in Stage 1
+- [Code Quality Convention](../quality/ex-de-qu__code.md) - Automated quality checks
+- [Trunk Based Development](./ex-de-wo__trunk-based-development.md) - Git workflow
+- [Acceptance Criteria Convention](../infra/ex-de-in__acceptance-criteria.md) - Defining "works" in Stage 1
 
 ---
 

@@ -944,9 +944,9 @@ interface Issue {
 
 ### Development Practices
 
-- [Trunk Based Development](../../../docs/explanation/development/ex-de__trunk-based-development.md) - Git workflow
-- [Commit Messages](../../../docs/explanation/development/ex-de__commit-messages.md) - Commit format
-- [Code Quality](../../../docs/explanation/development/ex-de__code-quality.md) - Automated checks
+- [Trunk Based Development](../../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) - Git workflow
+- [Commit Messages](../../../docs/explanation/development/workflow/ex-de-wo__commit-messages.md) - Commit format
+- [Code Quality](../../../docs/explanation/development/quality/ex-de-qu__code.md) - Automated checks
 
 ### AI Agents
 

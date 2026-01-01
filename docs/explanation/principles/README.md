@@ -244,7 +244,7 @@ When documenting a new convention or practice, ALWAYS reference which principles
 - WCAG AA compliance required
 - Color-blind testing mandatory
 
-**Development**: [AI Agents Convention](../development/ex-de__ai-agents.md)
+**Development**: [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md)
 
 - Agent color categorization uses accessible palette
 - Colored square emojis (🟦 🟩 🟨 🟪)
@@ -260,7 +260,7 @@ When documenting a new convention or practice, ALWAYS reference which principles
 
 **Principle**: Explicit Over Implicit (software engineering)
 
-**Practice**: [AI Agents Convention](../development/ex-de__ai-agents.md)
+**Practice**: [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md)
 
 - Explicit `tools` field listing allowed tools
 - No default tool access
@@ -284,7 +284,7 @@ tools: Read, Glob, Grep
 
 **Principle**: Automation Over Manual (software engineering)
 
-**Practice**: [Code Quality Convention](../development/ex-de__code-quality.md)
+**Practice**: [Code Quality Convention](../development/quality/ex-de-qu__code.md)
 
 - Automated formatting via Prettier
 - Automated validation via git hooks

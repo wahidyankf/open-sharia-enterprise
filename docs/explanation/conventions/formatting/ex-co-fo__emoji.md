@@ -144,7 +144,7 @@ Use for AI agent categorization in `.claude/agents/README.md`:
 | 🟨    | **Updater/Modifier Agents (Yellow)** | Agents that update or modify existing content           |
 | 🟪    | **Implementor Agents (Purple)**      | Agents that execute or implement plans                  |
 
-**Note:** These colored square emojis are ONLY used in `.claude/agents/README.md` to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../development/ex-de__ai-agents.md) for complete details on agent color categorization.
+**Note:** These colored square emojis are ONLY used in `.claude/agents/README.md` to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md) for complete details on agent color categorization.
 
 **Color Accessibility:** All four colors (blue, green, yellow, purple) are from the verified accessible palette and work for all types of color blindness (protanopia, deuteranopia, tritanopia). These emojis are SUPPLEMENTARY to text labels - agents are primarily identified by their name, role suffix, and description, not by color alone. See [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) for complete details.
 
@@ -697,7 +697,7 @@ When reviewing emoji usage, verify:
 - [File Naming Convention](../meta/ex-co-me__file-naming.md)
 - [Linking Convention](./ex-co-fo__linking.md)
 - [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md)
-- [AI Agents Convention](../development/ex-de__ai-agents.md) - For agent color categorization using colored square emojis
+- [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md) - For agent color categorization using colored square emojis
 - [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) - For accessible color palette and WCAG standards
 
 ## 📝 Notes

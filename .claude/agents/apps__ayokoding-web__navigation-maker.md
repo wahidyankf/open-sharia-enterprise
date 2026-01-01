@@ -215,7 +215,7 @@ When invoked, follow these steps:
 - [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md)
 - [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md)
 - [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
-- [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md)
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md)
 - [ayokoding-web-structure-checker Agent](./ayokoding-web-structure-checker.md)
 - [ayokoding-web-structure-fixer Agent](./ayokoding-web-structure-fixer.md)
 - [ayokoding-web-general-maker Agent](./ayokoding-web-general-maker.md)

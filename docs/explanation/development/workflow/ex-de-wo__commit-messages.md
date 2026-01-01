@@ -17,7 +17,7 @@ updated: 2025-11-29
 <!--
   MAINTENANCE NOTE: Master reference for commit message format
   This is duplicated (intentionally) in multiple files for different audiences:
-  1. docs/explanation/development/ex-de__commit-messages.md (this file - comprehensive reference)
+  1. docs/explanation/development/workflow/ex-de-wo__commit-messages.md (this file - comprehensive reference)
   2. CLAUDE.md (quick reference for AI agents)
   When updating, synchronize both locations.
 -->
@@ -38,7 +38,7 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](./ex-de__code-quality.md)**: Commit message validation is enforced through git hooks (Husky + Commitlint) as part of the automated code quality workflow.
+- **[Code Quality Convention](../quality/ex-de-qu__code.md)**: Commit message validation is enforced through git hooks (Husky + Commitlint) as part of the automated code quality workflow.
 
 - **[Content Quality Principles](../conventions/content/ex-co-co__quality.md)**: Commit messages use active voice (imperative mood) and clear, concise descriptions - aligning with content quality standards for communication.
 
@@ -820,9 +820,9 @@ Closes #123
 
 ## Related Documentation
 
-- [AI Agents Convention](./ex-de__ai-agents.md) - Standards for AI agents
-- [Code Quality Convention](./ex-de__code-quality.md) - Automated tools and git hooks for code formatting and commit validation
-- [Development Index](./README.md) - Overview of development conventions
+- [AI Agents Convention](../agents/ex-de-ag__ai-agents.md) - Standards for AI agents
+- [Code Quality Convention](../quality/ex-de-qu__code.md) - Automated tools and git hooks for code formatting and commit validation
+- [Development Index](../README.md) - Overview of development conventions
 - [Conventions Index](../conventions/README.md) - Documentation conventions
 
 ## External Resources

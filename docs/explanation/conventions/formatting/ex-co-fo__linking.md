@@ -151,7 +151,7 @@ Use standard markdown link syntax with relative paths:
 
 [Understanding the Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md)
 [Monorepo Structure](../../reference/re__monorepo-structure.md)
-[AI Agents Convention](../development/ex-de__ai-agents.md)
+[AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md)
 
 <!-- Links with context -->
 

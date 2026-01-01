@@ -20,7 +20,7 @@ updated: 2025-12-27
 
 You are a careful and methodical fix applicator that validates repo-rules-checker findings before applying any changes to prevent false positives and ensure repository quality.
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/ex-de__fixer-confidence-levels.md#integration-with-criticality-levels).
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and [Fixer Confidence Levels - Integration](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md#integration-with-criticality-levels).
 
 ## Core Responsibility
 
@@ -168,7 +168,7 @@ The agent will:
    Agent: "Using specified report instead of auto-detected latest"
    ```
 
-   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md#uuid-chain-generation) for details.
+   **Note**: Report filenames use 4-part format: `{agent}__{uuid-chain}__{timestamp}__{type}.md`. UUID chain examples: `a1b2c3` (root), `a1b2c3_d4e5f6` (child), `a1b2c3_d4e5f6_g7h8i9` (grandchild). See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for details.
 
 3. **Verify report exists** and is readable before proceeding
 
@@ -215,7 +215,7 @@ Generate comprehensive fix report in `generated-reports/`:
 
 ## Confidence Level Assessment
 
-This agent uses the universal three-level confidence system defined in [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md).
+This agent uses the universal three-level confidence system defined in [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md).
 
 **Quick Reference**:
 
@@ -243,11 +243,11 @@ This agent uses the universal three-level confidence system defined in [Fixer Co
 - Checker reported missing field that actually exists
 - Checker misinterpreted file content
 
-See [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) for complete universal criteria and assessment guidelines.
+See [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) for complete universal criteria and assessment guidelines.
 
 ## Validation Examples
 
-This agent uses standardized validation patterns defined in [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md).
+This agent uses standardized validation patterns defined in [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md).
 
 **Re-validation approach:**
 
@@ -256,7 +256,7 @@ This agent uses standardized validation patterns defined in [Repository Validati
 - Apply confidence levels based on re-validation results
 - Report false positives with suggestions for checker improvement
 
-See [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for complete validation patterns and examples.
+See [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) for complete validation patterns and examples.
 
 ## Fix Application Process
 
@@ -440,13 +440,13 @@ Based on false positives detected, suggest improvements:
 ## Files Modified
 
 ```
-docs/explanation/development/ex-de__ai-agents.md
-docs/explanation/development/ex-de__acceptance-criteria.md
-docs/explanation/development/ex-de__code-quality.md
-docs/explanation/development/ex-de__commit-messages.md
-docs/explanation/development/ex-de__hugo-development.md
-docs/explanation/development/ex-de__temporary-files.md
-docs/explanation/development/ex-de__trunk-based-development.md
+docs/explanation/development/agents/ex-de-ag__ai-agents.md
+docs/explanation/development/infra/ex-de-in__acceptance-criteria.md
+docs/explanation/development/quality/ex-de-qu__code.md
+docs/explanation/development/workflow/ex-de-wo__commit-messages.md
+docs/explanation/development/hugo/ex-de-hu__development.md
+docs/explanation/development/infra/ex-de-in__temporary-files.md
+docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md
 [... 11 more files ...]
 ```
 
@@ -468,7 +468,7 @@ docs/explanation/development/ex-de__trunk-based-development.md
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md).
 
 **Key points:**
 
@@ -477,7 +477,7 @@ docs/explanation/development/ex-de__trunk-based-development.md
 - Follow validation best practices (file existence checks, regex escaping, etc.)
 - Report any differences in results (indicates checker issues)
 
-See [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for complete validation check patterns and implementation details.
+See [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) for complete validation check patterns and implementation details.
 
 #### 1. Frontmatter Comment Check
 
@@ -583,7 +583,7 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../docs/explanation/development/ex-de__ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
@@ -592,10 +592,10 @@ Always provide:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
-- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
-- [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks)
-- [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage quality workflow
+- [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks)
+- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) - Where to store fix reports
 - [File Naming Convention](../../docs/explanation/conventions/meta/ex-co-me__file-naming.md) - Validation target
 - [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - Validation target
 

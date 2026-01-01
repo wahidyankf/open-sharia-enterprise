@@ -31,11 +31,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Criticality Levels Convention](./ex-de__criticality-levels.md)**: Confidence levels work orthogonally with criticality levels to determine fix priority. Criticality measures importance/urgency, confidence measures certainty/fixability.
+- **[Criticality Levels Convention](../quality/ex-de-qu__criticality-levels.md)**: Confidence levels work orthogonally with criticality levels to determine fix priority. Criticality measures importance/urgency, confidence measures certainty/fixability.
 
-- **[Repository Validation Methodology Convention](./ex-de__repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
+- **[Repository Validation Methodology Convention](../quality/ex-de-qu__repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
 
-- **[Temporary Files Convention](./ex-de__temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
+- **[Temporary Files Convention](../infra/ex-de-in__temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
 
 - **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
@@ -360,7 +360,7 @@ Checker Report → Read Finding → Re-execute Validation → Assess Confidence 
 - Verify patterns match (date format, naming convention)
 - Analyze context (content type, directory, file purpose)
 
-**See:** [Repository Validation Methodology Convention](./ex-de__repository-validation.md) for standard re-validation patterns.
+**See:** [Repository Validation Methodology Convention](../quality/ex-de-qu__repository-validation.md) for standard re-validation patterns.
 
 ## 📏 Confidence Assessment Process
 
@@ -586,7 +586,7 @@ All fixer agents MUST:
 - Is re-validation clear and unambiguous?
 - Is the issue objective and verifiable?
 
-**Criticality** measures **IMPORTANCE** (see [Criticality Levels Convention](./ex-de__criticality-levels.md)):
+**Criticality** measures **IMPORTANCE** (see [Criticality Levels Convention](../quality/ex-de-qu__criticality-levels.md)):
 
 - How urgent is fixing this issue?
 - What breaks if we don't fix it?
@@ -708,7 +708,7 @@ Fix reports should now group fixes by priority to show criticality context:
 
 ### 1. Missing Required Subcategory Field
 
-**File**: `docs/explanation/development/ex-de__ai-agents.md`
+**File**: `docs/explanation/development/agents/ex-de-ag__ai-agents.md`
 **Criticality**: CRITICAL - Breaks organization and validation
 **Confidence**: HIGH - Confirmed field missing in frontmatter
 **Fix Applied**: Added `subcategory: development` at line 5
@@ -893,10 +893,10 @@ wow__rules-fixer re-validates:
 ### Related Conventions
 
 **Validation Methodology:**
-- [Repository Validation Methodology Convention](./ex-de__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks, link validation)
+- [Repository Validation Methodology Convention](../quality/ex-de-qu__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks, link validation)
 
 **AI Agents:**
-- [AI Agents Convention](./ex-de__ai-agents.md) - Standards for all AI agents including fixers
+- [AI Agents Convention](../agents/ex-de-ag__ai-agents.md) - Standards for all AI agents including fixers
 
 **Content Standards:**
 - [Tutorial Convention](../conventions/tutorial/ex-co-tu__general.md) - Tutorial-specific validation criteria (used by docs__tutorial-fixer)
@@ -907,7 +907,7 @@ wow__rules-fixer re-validates:
 - [Hugo Content Convention - OSE Platform](../conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web specific standards
 
 **Infrastructure:**
-- [Temporary Files Convention](./ex-de__temporary-files.md) - Where to store fix reports (`generated-reports/`)
+- [Temporary Files Convention](../infra/ex-de-in__temporary-files.md) - Where to store fix reports (`generated-reports/`)
 
 ## 🔄 Maintenance
 

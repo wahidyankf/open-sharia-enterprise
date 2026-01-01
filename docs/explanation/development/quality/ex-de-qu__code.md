@@ -30,7 +30,7 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Commit Message Convention](./ex-de__commit-messages.md)**: Git hooks enforce Conventional Commits format through Commitlint, validating commit message structure before commits are created.
+- **[Commit Message Convention](../workflow/ex-de-wo__commit-messages.md)**: Git hooks enforce Conventional Commits format through Commitlint, validating commit message structure before commits are created.
 
 - **[Indentation Convention](../conventions/formatting/ex-co-fo__indentation.md)**: Prettier enforces consistent indentation (2 spaces for YAML frontmatter) across all formatted file types.
 
@@ -43,7 +43,7 @@ This project enforces code quality through automated tools that run during the d
 - **Prettier** - Automatic code formatting
 - **Husky** - Git hooks management
 - **Lint-staged** - Run tools on staged files only
-- **Commitlint** - Commit message validation (see [Commit Message Convention](./ex-de__commit-messages.md))
+- **Commitlint** - Commit message validation (see [Commit Message Convention](../workflow/ex-de-wo__commit-messages.md))
 
 These tools work together to ensure code consistency and quality without manual intervention.
 
@@ -161,7 +161,7 @@ $ git commit -m "feat: add new feature"
 **What It Validates**:
 
 - Commit message follows [Conventional Commits](https://www.conventionalcommits.org/)
-- See [Commit Message Convention](./ex-de__commit-messages.md) for complete rules
+- See [Commit Message Convention](../workflow/ex-de-wo__commit-messages.md) for complete rules
 
 **What Happens on Failure**:
 
@@ -261,7 +261,7 @@ Bypassing hooks regularly defeats the purpose of automated quality checks.
 1. Verify message follows exact format: `<type>(<scope>): <description>`
 2. Check type is lowercase and from valid list
 3. Ensure description is in imperative mood
-4. See [Commit Message Convention](./ex-de__commit-messages.md) for complete rules
+4. See [Commit Message Convention](../workflow/ex-de-wo__commit-messages.md) for complete rules
 
 ### Hooks Not Running
 
@@ -354,8 +354,8 @@ git commit -m "fix: correct validation logic"
 
 ## Related Documentation
 
-- [Commit Message Convention](./ex-de__commit-messages.md) - Detailed commit message rules
-- [Trunk Based Development](./ex-de__trunk-based-development.md) - Git workflow and branching strategy
+- [Commit Message Convention](../workflow/ex-de-wo__commit-messages.md) - Detailed commit message rules
+- [Trunk Based Development](../workflow/ex-de-wo__trunk-based-development.md) - Git workflow and branching strategy
 
 ## References
 

@@ -1,7 +1,7 @@
 ---
 name: wow__workflow-checker
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 description: Validates workflow definition files in docs/explanation/workflows/ against Workflow Pattern Convention and quality standards. Generates audit reports in generated-reports/.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -10,7 +10,7 @@ created: 2025-12-23
 updated: 2025-12-29
 ---
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/ex-de__criticality-levels.md).
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
 # Workflow Checker Agent
 
@@ -53,7 +53,7 @@ This agent produces TWO outputs:
 **File Naming Convention**: `workflow__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 - Example: `workflow__a1b2c3__2025-12-23--14-30__audit.md` (audit started December 23, 2025 at 2:30 PM UTC+7)
-- **UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) for UUID generation logic
+- **UUID Chain**: See [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) for UUID generation logic
 
 **PROGRESSIVE WRITING REQUIREMENT**:
 
@@ -416,7 +416,7 @@ See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/
 
 ## Special Validation Methods
 
-Use standardized validation patterns from [Repository Validation Methodology](../../docs/explanation/development/ex-de__repository-validation.md):
+Use standardized validation patterns from [Repository Validation Methodology](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md):
 
 **Frontmatter Extraction**:
 
@@ -460,7 +460,7 @@ fi
 
 **Agent Conventions:**
 
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
 
 **Workflow Standards:**
 
@@ -468,9 +468,9 @@ fi
 
 **Validation Methodology:**
 
-- `docs/explanation/development/ex-de__repository-validation.md` - Standard validation patterns (frontmatter extraction, field checks, link validation)
-- `docs/explanation/development/ex-de__temporary-files.md` - Report file location and naming (mandatory for all checker agents)
-- `docs/explanation/development/ex-de__fixer-confidence-levels.md` - Confidence assessment framework (for future workflow-fixer agent)
+- `docs/explanation/development/quality/ex-de-qu__repository-validation.md` - Standard validation patterns (frontmatter extraction, field checks, link validation)
+- `docs/explanation/development/infra/ex-de-in__temporary-files.md` - Report file location and naming (mandatory for all checker agents)
+- `docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md` - Confidence assessment framework (for future workflow-fixer agent)
 
 **Related Principles:**
 

@@ -48,7 +48,7 @@ This convention establishes shared standards that apply to **all Hugo sites** in
 ### What This Convention Does NOT Cover
 
 - **Site-specific conventions** - See [ayokoding-web convention](./ex-co-hu__ayokoding.md) and [ose-platform-web convention](./ex-co-hu__ose-platform.md)
-- **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/ex-de-hu__development.md)
 - **Content strategy** - What content to create (covered in domain conventions)
 - **Deployment** - Covered by site-specific deployer agents
 
