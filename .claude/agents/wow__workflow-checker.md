@@ -286,7 +286,7 @@ When the user requests workflow validation:
 2. **Determine UUID chain**: Check for parent chain in `generated-reports/.execution-chain-workflow` (if exists and <30 seconds old, append to chain; otherwise start new chain)
 3. **Generate timestamp** using Bash: `TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"`
 4. **Initialize report file** in `generated-reports/workflow__{uuid-chain}__{timestamp}__audit.md`
-5. **Read all workflow files** using Glob: `docs/explanation/workflows/ex-wf__*.md`
+5. **Read all workflow files** using Glob: `docs/explanation/workflows/*/ex-wf-*__*.md and workflows/meta/ex-wf-me__*.md`
 6. **For each workflow file**:
    - Extract and validate frontmatter
    - Validate markdown structure
@@ -447,7 +447,7 @@ fi
 ## Tool Usage
 
 - **Read**: Read workflow files, agent files, convention documents
-- **Glob**: Find all workflow files matching `docs/explanation/workflows/ex-wf__*.md`
+- **Glob**: Find all workflow files matching `docs/explanation/workflows/*/ex-wf-*__*.md and workflows/meta/ex-wf-me__*.md`
 - **Grep**: Search for patterns in workflow content (after frontmatter extraction)
 - **Write**: Create and update audit report file in `generated-reports/`
 - **Bash**: Generate UTC+7 timestamps, verify agent file existence, extract frontmatter
@@ -464,7 +464,7 @@ fi
 
 **Workflow Standards:**
 
-- `docs/explanation/workflows/ex-wf__meta__workflow-pattern.md` - Workflow Pattern Convention (THE canonical reference for workflow structure with examples)
+- `docs/explanation/workflows/meta/ex-wf-me__workflow-pattern.md` - Workflow Pattern Convention (THE canonical reference for workflow structure with examples)
 
 **Validation Methodology:**
 

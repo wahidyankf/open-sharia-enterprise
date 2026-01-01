@@ -238,10 +238,10 @@ Run all checkers one final time to confirm zero issues remain.
 
 **Agents**: All four checkers in parallel
 
-- apps__ayokoding-web__general-checker
-- apps__ayokoding-web__facts-checker
-- apps__ayokoding-web__structure-checker
-- apps__ayokoding-web__link-checker
+- apps**ayokoding-web**general-checker
+- apps**ayokoding-web**facts-checker
+- apps**ayokoding-web**structure-checker
+- apps**ayokoding-web**link-checker
 
 **Args**: `scope: {input.scope}, expect: zero-issues`
 
@@ -375,28 +375,28 @@ Result: SUCCESS (2 iterations)
 
 ## Validation Dimensions
 
-### Content Validation (apps__ayokoding-web__general-checker)
+### Content Validation (apps**ayokoding-web**general-checker)
 
 - Hugo conventions (frontmatter, theme-specific)
 - Bilingual consistency
 - Navigation structure
 - Content quality principles
 
-### Facts Validation (apps__ayokoding-web__facts-checker)
+### Facts Validation (apps**ayokoding-web**facts-checker)
 
 - Technical accuracy using web verification
 - Code examples correctness
 - Tutorial sequences validity
 - Bilingual factual consistency
 
-### Structure Validation (apps__ayokoding-web__structure-checker)
+### Structure Validation (apps**ayokoding-web**structure-checker)
 
 - Weight conventions and ordering
 - Navigation structure completeness
 - Coverage gaps
 - Pedagogical progression
 
-### Links Validation (apps__ayokoding-web__link-checker)
+### Links Validation (apps**ayokoding-web**link-checker)
 
 - Internal link validity
 - External link accessibility

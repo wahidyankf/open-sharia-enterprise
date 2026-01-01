@@ -62,7 +62,7 @@ Run repository-wide consistency check to identify all issues.
 - **Args**: `scope: all, EXECUTION_SCOPE: repo-rules`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (4-part format: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
 
-**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for details.
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../../development/infra/ex-de-in__temporary-files.md#uuid-chain-generation) for details.
 
 **Success criteria**: Checker completes and generates audit report.
 
