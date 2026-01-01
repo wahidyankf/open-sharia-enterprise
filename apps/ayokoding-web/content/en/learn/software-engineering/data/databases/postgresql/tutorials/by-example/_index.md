@@ -2,10 +2,10 @@
 title: By Example
 weight: 100003
 draft: false
-date: 2025-12-29T08:08:50+07:00
+date: 2026-01-01T22:32:13+07:00
 ---
 
-- [Advanced](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/overview)
 - [Beginner](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/beginner)
 - [Intermediate](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/intermediate)
-- [Overview](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/overview)
+- [Advanced](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/advanced)

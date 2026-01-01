@@ -9,7 +9,7 @@ type: docs
 layout: list
 ---
 
-- [Advanced](/en/learn/software-engineering/web-platform/java-spring-boot/tutorials/by-example/advanced)
+- [Overview](/en/learn/software-engineering/web-platform/java-spring-boot/tutorials/by-example/overview)
 - [Beginner](/en/learn/software-engineering/web-platform/java-spring-boot/tutorials/by-example/beginner)
 - [Intermediate](/en/learn/software-engineering/web-platform/java-spring-boot/tutorials/by-example/intermediate)
-- [Overview](/en/learn/software-engineering/web-platform/java-spring-boot/tutorials/by-example/overview)
+- [Advanced](/en/learn/software-engineering/web-platform/java-spring-boot/tutorials/by-example/advanced)

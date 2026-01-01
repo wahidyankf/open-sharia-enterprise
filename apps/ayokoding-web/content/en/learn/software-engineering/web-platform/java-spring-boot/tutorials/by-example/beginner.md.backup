@@ -457,8 +457,6 @@ public class ProductController {
 
 **Key Takeaway**: Follow REST conventions: POST (201 Created), GET (200 OK / 404 Not Found), PUT (200 OK), DELETE (204 No Content). Include Location header on resource creation.
 
-**Why It Matters**: Semantic HTTP methods enable infrastructure-level optimizations—GET requests can be cached by browsers and CDNs (reducing server load by 60-80%), while POST/PUT/DELETE are automatically excluded from caching. Idempotent methods (GET, PUT, DELETE) can be safely retried on network failures, whereas non-idempotent methods (POST) require careful handling to prevent duplicate operations in distributed systems.
-
 ---
 
 ### Example 9: Content Negotiation
@@ -506,8 +504,6 @@ public class BookController {
 ```
 
 **Key Takeaway**: Content negotiation allows clients to request different formats via `Accept` header. Use `produces` to specify supported media types.
-
-**Why It Matters**: Content negotiation enables single APIs to serve multiple client types—mobile apps requesting JSON, legacy systems requiring XML, and monitoring tools accepting Prometheus metrics—without duplicating controller code. Production APIs at Amazon and Google use content negotiation to version responses (application/vnd.api.v2+json) and support multiple serialization formats, reducing API proliferation where each format requires separate endpoints that increase maintenance burden and deployment complexity.
 
 ---
 
@@ -573,8 +569,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 **Key Takeaway**: `JpaRepository` provides CRUD methods out-of-the-box. No implementation code needed—Spring generates it at runtime.
 
-**Why It Matters**: JPA abstracts database differences across PostgreSQL, MySQL, Oracle, and H2, enabling database portability where the same code runs on development H2 and production PostgreSQL without SQL dialect changes. JpaRepository eliminates 80% of boilerplate data access code (JDBC connection handling, ResultSet mapping, transaction management) that traditionally required 50+ lines per DAO method, reducing data layer bugs from manual resource management and enabling rapid prototyping where adding a database entity requires only 5 lines of code.
-
 ---
 
 ### Example 11: Custom Queries
@@ -616,8 +610,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 ```
 
 **Key Takeaway**: Use derived query methods for simple queries. Use `@Query` with JPQL for portability or native SQL for database-specific optimizations.
-
-**Why It Matters**: Custom queries enable optimized database access beyond auto-generated CRUD—production applications use native SQL for performance-critical queries with database-specific features (PostgreSQL JSONB operators, MySQL full-text search) while JPQL provides database-independent queries for 90% of use cases. Derived query methods (findByNameAndAge) reduce query code by 70% for simple cases, while @Query handles complex joins, aggregations, and projections that would otherwise require verbose QueryDSL or Criteria API code.
 
 ---
 
@@ -682,8 +674,6 @@ public class Order {
 
 **Key Takeaway**: Use `@OneToMany` and `@ManyToOne` for relationships. Default to LAZY fetching to prevent N+1 queries. Use `mappedBy` on the non-owning side of bidirectional relationships.
 
-**Why It Matters**: Relationship mapping eliminates manual foreign key management and join queries—JPA automatically loads related entities and maintains referential integrity through cascade operations. However, N+1 query problems occur when lazy relationships load in loops (1 query for authors + N queries for books), making fetch joins and entity graphs essential for production performance where unoptimized queries can execute 1000+ database roundtrips for 10 parent records, turning 50ms queries into 5-second page loads.
-
 ---
 
 ### Example 13: Pagination & Sorting
@@ -745,8 +735,6 @@ public class UserPageController {
 
 **Key Takeaway**: Always paginate large datasets using `Pageable`. `Page<T>` includes metadata (total count, total pages, current page) for client-side pagination controls.
 
-**Why It Matters**: Pagination prevents out-of-memory errors and slow queries when datasets exceed thousands of records—loading 100,000 users into memory causes heap exhaustion, while pagination loads 20 records per request with constant memory usage. Production REST APIs use pagination with sort capabilities to enable infinite scroll (mobile apps), Excel export batch processing (100 records per iteration), and search results display, with Spring automatically executing count queries to provide total page counts that power "Page 1 of 50" UI displays.
-
 ---
 
 ### Example 14: Database Initialization
@@ -795,8 +783,6 @@ spring.flyway.enabled=true
 
 **Key Takeaway**: Use `schema.sql`/`data.sql` for development. Use Flyway (versioned migrations like `V1__Description.sql`) for production to track schema changes across environments.
 
-**Why It Matters**: Database initialization scripts enable reproducible dev environments where every developer gets identical schema and test data with 'git clone && mvn spring-boot:run', eliminating database state discrepancies that cause 'works on my machine' failures. Production applications use Flyway/Liquibase for versioned migrations instead of `ddl-auto` (which drops data), tracking schema history in production databases and enabling zero-downtime deployments with backwards-compatible migrations that support concurrent old/new application versions during rolling updates.
-
 ---
 
 ## Group 4: Configuration & Properties
@@ -842,8 +828,6 @@ public class AppProperties {
 ```
 
 **Key Takeaway**: Externalize configuration to `application.properties`. Use `@Value("${property:default}")` for injection with defaults. Never hardcode environment-specific values.
-
-**Why It Matters**: Centralized configuration in application.properties follows convention-over-configuration philosophy, reducing cognitive load where developers find all settings in one file instead of scattered across 20 XML files and Java classes. Spring Boot's property binding automatically converts strings to typed values (durations, data sizes, URLs) with validation, preventing runtime failures from configuration typos that traditional properties files defer to runtime, and enabling environment-specific overrides (application-prod.properties) without code changes for deployment-specific settings like database URLs.
 
 ---
 
@@ -895,8 +879,6 @@ class ApiClient {
 ```
 
 **Key Takeaway**: Use `@Configuration` classes to centralize bean definitions. `@Bean` methods create Spring-managed objects for third-party libraries.
-
-**Why It Matters**: Manual bean configuration enables integration with third-party libraries that lack Spring Boot autoconfiguration—custom DataSource beans configure connection pools (HikariCP settings), custom RestTemplate beans add interceptors and error handlers, and custom Jackson ObjectMapper beans configure serialization behavior. Production applications use @Primary to override autoconfigured beans without disabling autoconfiguration entirely, enabling gradual customization where 90% of defaults work but 10% need fine-tuning for production requirements like connection pool sizing or timeout configurations.
 
 ---
 
@@ -956,8 +938,6 @@ java -jar app.jar --spring.profiles.active=prod
 ```
 
 **Key Takeaway**: Profiles enable environment-specific configurations. Use `application-{profile}.properties` and `@Profile` annotation. Activate with `spring.profiles.active`.
-
-**Why It Matters**: Profile-based configuration enables single codebase deployment across dev/staging/production without recompilation—dev profile uses H2 in-memory database for fast tests, while prod profile uses managed PostgreSQL with connection pooling. Production teams activate multiple profiles (@Profile("!test")) to disable beans during testing, or use profile groups (spring.profiles.group.prod=aws,monitoring) to activate related configurations together, preventing configuration drift where production servers accidentally run with dev database settings.
 
 ---
 
@@ -1048,8 +1028,6 @@ public class GlobalExceptionHandler {
 
 **Key Takeaway**: Use `@ControllerAdvice` for global exception handling. Define `@ExceptionHandler` methods for specific exceptions. Return consistent error response DTOs with proper HTTP status codes.
 
-**Why It Matters**: Global exception handlers eliminate repetitive try-catch blocks in every controller method while providing consistent error responses across all APIs—clients receive structured JSON errors (status, message, timestamp) instead of stack traces or HTML error pages. Production APIs use exception handlers to distinguish business errors (404 Not Found, 400 Bad Request) from system errors (500 Internal Server Error), logging stack traces for 500s while hiding implementation details from clients, preventing security vulnerabilities where stack traces leak database schemas or internal paths.
-
 ---
 
 ### Example 19: Bean Validation
@@ -1138,8 +1116,6 @@ public class UserValidationController {
 
 **Key Takeaway**: Use `@Valid` with JSR-380 annotations for declarative validation. Spring automatically returns 400 Bad Request with validation error details.
 
-**Why It Matters**: Declarative validation moves error handling from scattered if-statements to compile-time verifiable annotations, reducing validation code by 60% while providing standardized error messages that internationalize easily. Validation at the API boundary prevents malformed data from corrupting databases—production teams report 40% fewer data integrity bugs after adopting JSR-380, and validation annotations serve as executable documentation that new developers can understand without reading implementation code.
-
 ---
 
 ### Example 20: Custom Validators
@@ -1211,8 +1187,6 @@ record ChangePasswordRequest(
 ```
 
 **Key Takeaway**: Create custom `@interface` annotations with `@Constraint` and implement `ConstraintValidator<AnnotationType, FieldType>` for reusable complex validation logic.
-
-**Why It Matters**: Custom validators encapsulate complex business rules into reusable, testable components that work across controllers, services, and batch jobs without code duplication. Production applications use custom validators for domain-specific constraints like credit card Luhn checks, VAT number validation, and business-hour scheduling rules, reducing validation bugs by centralizing logic that would otherwise scatter across 10+ service methods, each with subtly different implementations causing inconsistent behavior.
 
 ---
 
@@ -1333,8 +1307,6 @@ public class DomainExceptionHandler {
 
 **Key Takeaway**: Organize exceptions into a domain-specific hierarchy with error codes—use abstract base exceptions to enforce consistent structure and handle different exception types appropriately in `@ControllerAdvice`.
 
-**Why It Matters**: Exception hierarchies enable granular catch blocks and consistent error handling—catching `BusinessException` handles all business rule violations without catching technical errors like database connection failures that require different handling. Production services use exception hierarchies to implement retry logic (retry `TransientException`, fail fast on `PermanentException`) and structured logging where exception types map to alert severity levels, reducing mean time to recovery by helping on-call engineers quickly distinguish transient failures from critical bugs.
-
 ---
 
 ### Example 22: File Upload & Download
@@ -1448,8 +1420,6 @@ spring.servlet.multipart.max-request-size=10MB
 ```
 
 **Key Takeaway**: Use `MultipartFile` for uploads and `Resource` with `UrlResource` for downloads—configure max file size limits and always validate/sanitize filenames to prevent directory traversal attacks.
-
-**Why It Matters**: Streaming file uploads and downloads prevents out-of-memory errors when users upload multi-gigabyte files—buffering entire files in memory causes heap exhaustion under concurrent uploads. Production file services at Dropbox and AWS S3 use streaming APIs to handle petabytes of data with constant memory usage, while proper content-type headers and content-disposition enable in-browser preview versus download behavior, improving user experience without custom client-side code.
 
 ---
 
@@ -1583,8 +1553,6 @@ logging:
 ```
 
 **Key Takeaway**: Use SLF4J with Logback for flexible logging—configure different levels per package, use parameterized logging for performance, and set up rolling file appenders to prevent disk space exhaustion in production.
-
-**Why It Matters**: Structured logging with MDC (Mapped Diagnostic Context) enables distributed tracing across microservices by propagating correlation IDs through log statements, making it possible to trace a single user request across 10+ services in production. Log level configuration prevents disk space exhaustion from DEBUG logs in production (which can log 100MB/minute under load) while enabling runtime log level changes via actuator endpoints to troubleshoot production issues without redeployment, reducing incident resolution time from hours to minutes.
 
 ---
 
@@ -1746,8 +1714,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 **Key Takeaway**: Interceptors implement cross-cutting concerns across multiple controllers—use `preHandle` for authentication/authorization, `postHandle` for response modification, and `afterCompletion` for cleanup and metrics regardless of success or failure.
 
-**Why It Matters**: Interceptors implement cross-cutting concerns like authentication, rate limiting, and audit logging without polluting business logic with repetitive code that appears in every controller method. Production API gateways use interceptors to enforce authentication tokens, track API usage metrics, and log all requests for compliance (GDPR, SOC2), reducing security vulnerabilities by centralizing authentication logic that would otherwise have 100+ scattered @PreAuthorize checks with inconsistent implementations.
-
 ---
 
 ### Example 25: CORS Configuration
@@ -1874,7 +1840,5 @@ spring:
 ```
 
 **Key Takeaway**: Configure CORS at the appropriate level—global filter for application-wide settings, `WebMvcConfigurer` for path-specific rules, or `@CrossOrigin` for fine-grained controller/method control. Never use `allowedOrigins("*")` with `allowCredentials(true)` in production.
-
-**Why It Matters**: Properly configured CORS enables frontend SPAs hosted on different domains to consume APIs securely without disabling browser security via "allow all origins" configurations that expose APIs to CSRF attacks. Production applications use CORS to enable mobile apps (\*.example.com), partner integrations (partner-domain.com), and development environments (localhost:3000) to access APIs while blocking malicious websites, following principle of least privilege where only trusted origins can make authenticated requests.
 
 ---

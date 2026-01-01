@@ -1,8 +1,8 @@
 ---
 title: "Overview"
-date: 2025-12-29T15:10:18+07:00
+date: 2026-01-01T22:52:24+07:00
 draft: false
-weight: 100000000
+weight: 10000000
 description: "Learn Spring Data JPA through 85+ annotated code examples covering 95% of the framework - ideal for experienced developers building production data access layers"
 tags: ["spring-data-jpa", "tutorial", "by-example", "examples", "code-first", "jpa", "hibernate", "orm"]
 ---
@@ -69,7 +69,7 @@ Traditional tutorials explain concepts then show code. By-example tutorials reve
 
 **Rationale**: 85 examples provide granular progression from CRUD operations to expert mastery without overwhelming maintenance burden.
 
-## Four-Part Example Format
+## Five-Part Example Format
 
 Every example follows a **mandatory five-part structure**:
 
@@ -150,6 +150,20 @@ Optional<User> found = userRepository.findById(1L);
 **Example**:
 
 > **Key Takeaway**: Use `CascadeType.ALL` only when child entities have no meaning outside the parent relationship (true composition). For looser associations, use specific cascade types (PERSIST, MERGE) to avoid accidental deletions in production.
+
+### Part 5: Why It Matters (2-3 sentences, 50-100 words)
+
+**Purpose**: Connect the concept to production relevance and real-world impact
+
+**Must explain**:
+
+- Why professionals care about this in real systems (sentence 1: production relevance)
+- How it compares to alternatives or what problems it solves (sentence 2: comparative insight)
+- Consequences for quality/performance/safety/scalability (sentence 3: practical impact)
+
+**Example**:
+
+> **Why It Matters**: Cascade operations prevent orphaned database records in production systems, automatically maintaining referential integrity when parent entities are deleted. Unlike manual cleanup with DELETE queries, cascades ensure atomic operations within a transaction, preventing partial failures that corrupt data. Proper cascade configuration reduces boilerplate code by 40-60% compared to manually managing entity lifecycles, while preventing memory leaks from forgotten cleanup operations.
 
 ## Self-Containment Rules
 

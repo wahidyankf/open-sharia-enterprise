@@ -1,8 +1,8 @@
 ---
 title: "Overview"
-date: 2025-12-29T08:08:50+07:00
+date: 2026-01-01T22:32:13+07:00
 draft: false
-weight: 100000000
+weight: 10000000
 description: "Learn PostgreSQL through 85 annotated SQL examples covering 95% of the database - ideal for experienced developers switching to PostgreSQL"
 tags: ["postgresql", "database", "tutorial", "by-example", "sql", "code-first"]
 ---

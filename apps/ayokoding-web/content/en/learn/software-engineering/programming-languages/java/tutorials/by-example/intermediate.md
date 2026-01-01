@@ -1384,23 +1384,33 @@ Comparator<Person> complex = Comparator
 
 Queue provides FIFO (First-In-First-Out) semantics. Deque (Double-Ended Queue) supports both FIFO and LIFO operations. `ArrayDeque` is preferred over legacy `Stack`.
 
+**Queue (FIFO)**:
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TD
-    subgraph Queue["Queue #40;FIFO#41;"]
-        Q1["offer#40;#41;"] --> Q2["#91;1,2,3#93;"] --> Q3["poll#40;#41;"]
-    end
-
-    subgraph Deque["Deque #40;Both ends#41;"]
-        D1["addFirst#40;#41;"] --> D2["#91;1,2,3#93;"] --> D3["addLast#40;#41;"]
-        D2 --> D4["removeFirst#40;#41;"]
-        D2 --> D5["removeLast#40;#41;"]
-    end
+graph LR
+    Q1["offer#40;#41;"] --> Q2["#91;1,2,3#93;"] --> Q3["poll#40;#41;"]
 
     style Q1 fill:#0173B2,color:#fff
     style Q2 fill:#DE8F05,color:#fff
     style Q3 fill:#029E73,color:#fff
+```
+
+**Deque (Both ends)**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    D1["addFirst#40;#41;"] --> D2["#91;1,2,3#93;"]
+    D2 --> D3["addLast#40;#41;"]
+    D2 --> D4["removeFirst#40;#41;"]
+    D2 --> D5["removeLast#40;#41;"]
+
+    style D1 fill:#0173B2,color:#fff
     style D2 fill:#CC78BC,color:#fff
+    style D3 fill:#029E73,color:#fff
+    style D4 fill:#DE8F05,color:#fff
+    style D5 fill:#CA9161,color:#fff
 ```
 
 **Code**:

@@ -1,13 +1,13 @@
 ---
 title: "Overview"
-date: 2025-12-23T00:00:00+07:00
+date: 2026-01-01T21:53:25+07:00
 draft: false
 weight: 10000000
-description: "Learn Java through 75+ annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
+description: "Learn Java through 85 annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
 tags: ["java", "tutorial", "by-example", "examples", "code-first", "jvm", "oop"]
 ---
 
-**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 75+ annotated code examples organized by complexity level.
+**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 85 annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -27,8 +27,8 @@ Unlike narrative tutorials that build understanding through explanation and stor
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Beginner<br/>Examples 1-25<br/>OOP Basics"] --> B["Intermediate<br/>Examples 26-50<br/>Practical Patterns"]
-    B --> C["Advanced<br/>Examples 51-75<br/>Complex Features"]
+    A["Beginner<br/>Examples 1-30<br/>OOP Basics"] --> B["Intermediate<br/>Examples 31-60<br/>Practical Patterns"]
+    B --> C["Advanced<br/>Examples 61-85<br/>Complex Features"]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#fff
@@ -163,7 +163,7 @@ You understand static typing and compilation. Java simplifies memory management:
 - **No header files**: Single compilation unit per class
 - **Platform independence**: Write once, run anywhere via JVM
 
-Focus on Examples 51-60 (JVM internals) and Examples 40-45 (concurrency) to leverage your systems knowledge.
+Focus on Examples 61-75 (JVM internals) and Examples 45-55 (concurrency) to leverage your systems knowledge.
 
 ### For Kotlin/Scala Developers
 
@@ -173,7 +173,7 @@ You know JVM semantics already. Java shows the foundation:
 - **No null safety**: Must check nulls manually (or use Optional)
 - **Traditional OOP**: No data classes, extension functions, or coroutines
 
-Focus on Examples 65-75 (modern Java features like records, sealed classes, pattern matching) to see Java catching up.
+Focus on Examples 75-85 (modern Java features like records, sealed classes, pattern matching) to see Java catching up.
 
 ## Code-First Philosophy
 
@@ -190,8 +190,8 @@ If you prefer narrative explanations, consider the **by-concept tutorial** (avai
 
 Jump into the beginner examples to start learning Java through code:
 
-- [Beginner Examples (1-25)](/en/learn/software-engineering/programming-languages/java/tutorials/by-example/beginner) - Basic syntax, OOP fundamentals, collections, control flow
-- [Intermediate Examples (26-50)](/en/learn/software-engineering/programming-languages/java/tutorials/by-example/intermediate) - Advanced OOP, generics, functional programming, concurrency
-- [Advanced Examples (51-75)](/en/learn/software-engineering/programming-languages/java/tutorials/by-example/advanced) - JVM internals, design patterns, modern Java features
+- [Beginner Examples (1-30)](/en/learn/software-engineering/programming-languages/java/tutorials/by-example/beginner) - Basic syntax, OOP fundamentals, collections, control flow
+- [Intermediate Examples (31-60)](/en/learn/software-engineering/programming-languages/java/tutorials/by-example/intermediate) - Advanced OOP, generics, functional programming, concurrency
+- [Advanced Examples (61-85)](/en/learn/software-engineering/programming-languages/java/tutorials/by-example/advanced) - JVM internals, design patterns, modern Java features
 
 Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.
