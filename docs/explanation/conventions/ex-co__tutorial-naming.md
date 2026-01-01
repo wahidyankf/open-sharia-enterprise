@@ -335,11 +335,11 @@ Example-driven learning path for experienced developers (seasonal programmers/so
 
 **Content includes**:
 
-- **Four-part format** for every example:
+- **Five-part format** for every example:
   1. Brief explanation (2-3 sentences) of concept and why it matters
   2. Mermaid diagram (when visualization clarifies concept relationships)
   3. Heavily annotated code with `// =>` or `# =>` notation showing:
-     - What each line does (1-2 comment lines per code line)
+     - What each line does (1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5))
      - Expected outputs
      - Variable states and intermediate values
      - Side effects and state changes

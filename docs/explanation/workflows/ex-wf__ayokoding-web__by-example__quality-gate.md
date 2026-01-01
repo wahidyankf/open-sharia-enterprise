@@ -147,11 +147,11 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 **Validation areas**:
 
 1. **Coverage and count**: 95% coverage, 75-90 examples
-2. **Annotation density**: 1-2 comment lines per code line (density-based)
+2. **Annotation density**: 1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5)
 3. **Self-containment**: Copy-paste-runnable within chapter scope
 4. **Annotations**: `// =>` notation for outputs and states
 5. **Diagrams**: 30-50% frequency, color-blind palette
-6. **Format**: Four-part structure (explanation, diagram, code, takeaway)
+6. **Format**: Five-part structure (explanation, diagram, code, takeaway, why it matters)
 7. **Frontmatter**: Complete and correct
 
 **Outputs**:
@@ -426,7 +426,7 @@ apps__ayokoding-web__by-example-fixer applies fixes from audit
 **Fixes applied**:
 
 - Added 5 missing imports (HIGH)
-- Added annotations to meet 1-2 comment lines per code line density (MEDIUM, re-validated)
+- Added annotations to meet 1-2.25 comment lines per code line density (target: 1-2.25, upper bound: 2.5) (MEDIUM, re-validated)
 - Fixed 3 color violations (HIGH)
 - Added 2 missing key takeaways (MEDIUM)
 

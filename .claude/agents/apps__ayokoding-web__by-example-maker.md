@@ -1,6 +1,6 @@
 ---
 name: apps__ayokoding-web__by-example-maker
-description: Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses five-part format (explanation, diagram, annotated code, takeaway, why it matters) with self-contained examples and density-based annotations (1-2 comment lines per code line).
+description: Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses five-part format (explanation, diagram, annotated code, takeaway, why it matters) with self-contained examples and density-based annotations (1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5)).
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 model: sonnet
 color: blue
@@ -30,7 +30,7 @@ Your primary job is to **create by-example tutorial content** for experienced de
 3. **Self-contained examples** that are copy-paste-runnable within chapter scope
 4. **Five-part format** for each example: brief explanation, diagram (when appropriate), heavily annotated code, key takeaway, why it matters
 5. **Color-blind friendly diagrams** using verified accessible palette
-6. **Density-based annotations** - 1-2 comment lines per code line (scales naturally with complexity)
+6. **Density-based annotations** - 1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5 - scales naturally with complexity)
 7. **Hugo-compliant structure** with proper frontmatter and navigation
 
 ## Convention Authority
@@ -120,7 +120,7 @@ Examples prioritize:
 - Equal distribution ensures balanced depth at each level
 - Beyond 90 becomes maintenance burden without proportional value gain
 
-## Four-Part Example Format
+## Five-Part Example Format
 
 Every example follows a **mandatory five-part format**:
 
@@ -173,10 +173,12 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 
 **Core requirement**: Every significant line must have an inline comment
 
-**Annotation Density**: Target 1-2 lines of comment for every line of code:
+**Annotation Density**: Target 1-2.25 lines of comment for every line of code:
 
 - Simple lines (variable declarations, simple operations): 1 line of annotation
 - Complex lines (method calls with multiple effects, state changes): 2 lines of annotation
+- Very complex lines (exceptional cases): Up to 2.25 lines of annotation
+- Maximum: Never exceed 2.5 lines per code line (condense if over limit)
 - Focus on concise explanations that scale naturally with code complexity
 
 **Comment annotations use `// =>` or `# =>` notation**:
@@ -742,7 +744,7 @@ Before completing by-example content, verify:
 
 ### Code Quality
 
-- [ ] Every significant line has inline comment (1-2 lines per code line)
+- [ ] Every significant line has inline comment (1-2.25 lines per code line, upper bound: 2.5)
 - [ ] `// =>` or `# =>` notation shows outputs and states
 - [ ] Variable states documented at each step
 - [ ] Code is formatted with standard tools

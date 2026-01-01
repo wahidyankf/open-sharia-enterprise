@@ -191,7 +191,7 @@ Examples use `;; =>` notation to show return values and side effects:
 
 ## Tutorial Structure
 
-Each example follows a four-part format:
+Each example follows a five-part format:
 
 ### 1. Brief Explanation (2-3 sentences)
 

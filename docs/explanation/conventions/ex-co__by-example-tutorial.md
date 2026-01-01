@@ -10,16 +10,75 @@ tags:
   - education
   - code-first
 date: 2025-12-25T00:00:00+07:00
-lastmod: 2025-12-31T00:00:00+07:00
+lastmod: 2026-01-01T15:58:31+07:00
 draft: false
 weight: 2300
 ---
 
 ## Purpose
 
-This convention defines standards for creating **by-example tutorials** - code-first learning materials that teach programming languages and frameworks through 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage.
+This convention **extends the [Tutorials Convention](./ex-co__tutorials.md) for the By Example tutorial type**, defining specialized standards for code-first learning through 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage.
 
-By-example tutorials target experienced developers switching languages or frameworks who prefer learning through working code rather than narrative explanations.
+**Base requirements**: By-example tutorials inherit general tutorial standards (learning-oriented approach, visual completeness, hands-on elements from [Tutorials Convention](./ex-co__tutorials.md)) and add code-specific specializations defined below.
+
+**Target audience**: Experienced developers (seasonal programmers, software engineers) switching languages or frameworks who prefer learning through working code rather than narrative explanations.
+
+## Structure Integration with General Tutorial Standards
+
+By-example tutorials adapt the general [Tutorial Convention](./ex-co__tutorials.md) structure for code-first learning:
+
+### Adaptation of General Structure
+
+**Traditional Tutorial Structure** (from [Tutorials Convention](./ex-co__tutorials.md)):
+
+- Introduction → Prerequisites → Objectives → Content Sections → Challenges → Summary → Next Steps
+
+**By-Example Structure Adaptation**:
+
+1. **overview.md** (serves as introduction):
+   - Hook and motivation (why this language/framework matters)
+   - Prerequisites (required programming experience level)
+   - Learning approach explanation (code-first via 75-90 examples)
+   - Comparison to by-concept path (narrative-driven alternative)
+   - Links to by-concept tutorials for those preferring comprehensive explanations
+
+2. **beginner.md / intermediate.md / advanced.md** (replace traditional content sections):
+   - Contains 75-90 annotated examples across three complexity levels
+   - Each example is self-contained and runnable (not sequential sections)
+   - Examples progress from fundamental syntax (beginner) to expert mastery (advanced)
+   - Coverage: beginner (0-40%), intermediate (40-75%), advanced (75-95%)
+
+3. **Hands-on elements integrated into examples**:
+   - No separate "Challenges" section - each example IS a hands-on exercise
+   - Self-contained code means learners can copy, run, and modify immediately
+   - Educational annotations guide experimentation
+
+4. **Summary and next steps** (included in overview.md or advanced.md):
+   - Links to by-concept path for deeper narrative explanations
+   - Links to related frameworks/tools
+   - Production application guidance
+
+### Inherited Requirements from General Tutorial Convention
+
+By-example tutorials MUST follow these general tutorial standards:
+
+- ✅ **Learning-oriented approach** (Diátaxis framework): Teach through experience, not just reference
+- ✅ **Progressive Disclosure**: Complexity increases gradually (beginner → intermediate → advanced)
+- ✅ **Visual completeness**: Diagrams when appropriate (30-50% of examples)
+- ✅ **Hands-on elements**: Every example is runnable code (inherently hands-on)
+- ✅ **No time estimates**: Use coverage percentages (0-40%, 40-75%, 75-95%), not time
+- ✅ **Accessibility**: Color-blind friendly diagrams, clear structure
+- ✅ **Real-world relevance**: "Why It Matters" sections connect to production use
+
+### Specialized Requirements for By-Example
+
+Beyond general tutorial standards, by-example adds:
+
+- ✅ **Annotation density**: 1-2.25 comment lines per code line (reduce if > 2.5)
+- ✅ **Self-containment**: Examples runnable within chapter scope
+- ✅ **Five-part structure**: Explanation → Diagram → Annotated Code → Takeaway → Why It Matters
+- ✅ **Coverage target**: 95% through 75-90 examples (higher than other tutorial types)
+- ✅ **Code-first approach**: Show code first, explain through annotations
 
 ## Core Characteristics
 
@@ -617,7 +676,7 @@ Before publishing by-example content, verify:
 ### Code Quality
 
 - [ ] Every significant line has inline comment
-- [ ] Annotation density meets target (1-2 comment lines per code line)
+- [ ] Annotation density meets target (1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5))
 - [ ] Annotations explain WHY (not just WHAT)
 - [ ] Pattern matching branches documented (which matched, why)
 - [ ] Execution flow decisions shown (if/case branches, timing)
@@ -657,7 +716,7 @@ The **ayokoding-web-by-example-checker** agent validates:
 - Coverage percentage against target (95%)
 - Example count within range (75-90)
 - Self-containment (imports present, runnable)
-- Comment annotation density (1-2 comment lines per code line)
+- Comment annotation density (1-2.25 comment lines per code line)
 - Comment annotation quality (`// =>` notation, explains WHY)
 - Diagram presence frequency (30-50%)
 - Color-blind palette compliance
@@ -697,7 +756,7 @@ When creating by-example tutorials for multiple languages:
 - Overall structure (overview + 3 levels)
 - Example count range (75-90)
 - Coverage target (95%)
-- Four-part example format
+- Five-part example format
 - Self-containment rules
 - Comment annotation patterns
 
@@ -733,12 +792,10 @@ This convention implements and respects:
 ### What This Convention Does NOT Cover
 
 - **General tutorial standards** - Covered in [Tutorials Convention](./ex-co__tutorials.md)
-- [ ] Why It Matters section present (2-3 sentences)
-- [ ] Why It Matters is production-focused (not generic)
-- [ ] Why It Matters is 50-100 words
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
 - **Hugo implementation** - Hextra specifics in [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md)
 - **Code quality** - Source code standards in development conventions
+- **Tutorial validation** - Covered by apps**ayokoding-web**by-example-checker agent
 
 ## Related Documentation
 

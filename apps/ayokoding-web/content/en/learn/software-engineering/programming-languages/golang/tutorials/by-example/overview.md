@@ -87,7 +87,7 @@ The 95% coverage goal maintains humility—no tutorial can cover everything. Thi
 
 ## Structure of Each Example
 
-Every example follows a consistent four-part format:
+Every example follows a consistent five-part format:
 
 1. **Brief Explanation** (2-3 sentences): What the example demonstrates and why it matters
 2. **Mermaid Diagram** (optional): Visual clarification when concept relationships benefit from visualization
