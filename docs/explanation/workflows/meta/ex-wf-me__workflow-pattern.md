@@ -666,7 +666,7 @@ workflow run content-validation \
 
 ### Example Implementation
 
-See [Repository Rules Quality Gate Workflow](./ex-wf__wow__rules__quality-gate.md) for canonical implementation.
+See [Repository Rules Quality Gate Workflow](../wow/ex-wf-wo__rules-quality-gate.md) for canonical implementation.
 
 ### Key Differences from Basic Validation Workflow
 
@@ -786,8 +786,8 @@ This convention respects:
 
 ## Related Documentation
 
-- [AI Agents Convention](../development/agents/ex-de-ag__ai-agents.md) - How agents work
-- [Maker-Checker-Fixer Pattern](../development/pattern/ex-de-pa__maker-checker-fixer.md) - Core workflow pattern
-- [Plans Organization](../conventions/project/ex-co-pr__plans-organization.md) - How plans relate to workflows
-- [Implementation Workflow](../development/workflow/ex-de-wo__implementation.md) - Development process workflow
-- [Workflows Index](./README.md) - All available workflows
+- [AI Agents Convention](../../development/agents/ex-de-ag__ai-agents.md) - How agents work
+- [Maker-Checker-Fixer Pattern](../../development/pattern/ex-de-pa__maker-checker-fixer.md) - Core workflow pattern
+- [Plans Organization](../../conventions/project/ex-co-pr__plans-organization.md) - How plans relate to workflows
+- [Implementation Workflow](../../development/workflow/ex-de-wo__implementation.md) - Development process workflow
+- [Workflows Index](../README.md) - All available workflows

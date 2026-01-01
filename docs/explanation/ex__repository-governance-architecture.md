@@ -294,7 +294,7 @@ Maker-Checker-Fixer Workflow:
 - **docs\_\_fixer**: Applies color corrections to non-compliant diagrams
 - **agent\_\_maker**: Validates new agents use accessible colors in frontmatter
 
-**Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/ex-wf__maker-checker-fixer.md)
+**Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/meta/ex-wf-me__workflow-pattern.md)
 
 - Orchestrates: docs**maker → docs**checker → docs\_\_fixer
 - Ensures: All diagrams use accessible colors through automated validation and fixing
@@ -325,7 +325,7 @@ Maker-Checker-Fixer Workflow:
 - **wow\_\_rules-checker**: Audits agents for missing tool declarations
 - **docs\_\_file-manager**: Enforces naming convention when renaming files
 
-**Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/ex-wf__repo-rules-check-fix.md)
+**Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/wow/ex-wf-wo__rules-quality-gate.md)
 
 - Orchestrates: wow**rules-checker → wow**rules-fixer
 - Ensures: All agents maintain explicit tool permissions
@@ -357,7 +357,7 @@ Maker-Checker-Fixer Workflow:
 - **ayokoding-web-by-example-checker**: Automated by-example tutorial validation
 - **plan\_\_checker**: Automated plan completeness validation
 
-**Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ex-wf__ayokoding-check-fix.md)
+**Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ayokoding-web/ex-wf-aywe__general-quality-gate.md)
 
 - Orchestrates: ayokoding-web-general-checker → ayokoding-web-general-fixer
 - Ensures: All Hugo content meets quality standards through automated iteration
@@ -511,7 +511,7 @@ Periodically verify:
 **Layer 5**:
 
 - [Workflows Index](./workflows/README.md)
-- [Workflow Pattern Convention](./workflows/ex-wf__meta__workflow-pattern.md)
+- [Workflow Pattern Convention](./workflows/meta/ex-wf-me__workflow-pattern.md)
 
 **Meta-Documentation**:
 

@@ -180,7 +180,7 @@ outputs:
 
 **Why this matters**: Unquoted colons break Obsidian's YAML parser, causing it to display raw frontmatter instead of the Properties panel.
 
-See [Workflow Pattern Convention - YAML Syntax Requirements](../../docs/explanation/workflows/ex-wf__meta__workflow-pattern.md#yaml-syntax-requirements) for complete details.
+See [Workflow Pattern Convention - YAML Syntax Requirements](../../docs/explanation/workflows/meta/ex-wf-me__workflow-pattern.md#yaml-syntax-requirements) for complete details.
 
 All workflow files follow the pattern:
 
@@ -461,7 +461,7 @@ The canonical pattern for content creation:
    → Agent: {family}-checker (re-run)
 ```
 
-See `ex-wf__meta__workflow-pattern.md` for complete structural examples.
+See `meta/ex-wf-me__workflow-pattern.md` for complete structural examples.
 
 ### Parallel Validation
 
@@ -510,7 +510,7 @@ Deploy only if validation passes:
 
 ### Glob Tool
 
-- Find all existing workflows (`docs/explanation/workflows/ex-wf__*.md`)
+- Find all existing workflows (`docs/explanation/workflows/*/ex-wf-*__*.md and workflows/meta/ex-wf-me__*.md`)
 - Verify agent references exist (`.claude/agents/{agent-name}.md`)
 
 ### Grep Tool
@@ -553,7 +553,7 @@ Deploy only if validation passes:
 
 **Workflow Conventions:**
 
-- `docs/explanation/workflows/ex-wf__meta__workflow-pattern.md` - Workflow Pattern Convention (master reference for workflow structure and examples)
+- `docs/explanation/workflows/meta/ex-wf-me__workflow-pattern.md` - Workflow Pattern Convention (master reference for workflow structure and examples)
 
 **Domain-Specific Conventions:**
 

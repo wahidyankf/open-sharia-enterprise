@@ -349,7 +349,7 @@ ex-pr-se__explicit-over-implicit.md
 | ------------------------------------------- | ------------ | --------------------------------------------------- |
 | explanation/conventions                     | `ex-co__`    | `meta/ex-co-me__file-naming.md`                     |
 | explanation/development                     | `ex-de__`    | `ex-de__ai-agents.md`                               |
-| explanation/workflows                       | `ex-wf__`    | `ex-wf__meta__workflow-pattern.md`                  |
+| explanation/workflows/meta                  | `ex-wf-me__` | `ex-wf-me__workflow-pattern.md`                     |
 | explanation/principles                      | `ex-pr__`    | `ex-pr-ge__simplicity-over-complexity.md` (general) |
 | explanation/principles/content              | `ex-pr-co__` | `ex-pr-co__accessibility-first.md`                  |
 | explanation/principles/software-engineering | `ex-pr-se__` | `ex-pr-se__explicit-over-implicit.md`               |
