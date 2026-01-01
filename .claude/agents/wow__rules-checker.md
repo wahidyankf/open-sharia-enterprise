@@ -301,7 +301,7 @@ For each workflow in `docs/explanation/workflows/`:
 
 - [ ] All files in `docs/` follow the prefix pattern (except README.md)
 - [ ] All `README.md` files are properly documented as exceptions
-- [ ] Prefixes match the directory structure (e.g., `ex-co__` for `explanation/conventions/`, `ex-wf__` for `explanation/workflows/`, `ex-pr-ge__` for `explanation/principles/general/`, `ex-pr-co__` for `explanation/principles/content/`, `ex-pr-se__` for `explanation/principles/software-engineering/`, `ex-inse__` for `explanation/information-security/`, `ex-inse-to__` for `explanation/information-security/toolings/`, `tu-aien__` for `tutorials/ai-engineering/`, `tu-bufi__` for `tutorials/business-and-finance/`, `tu-soen-syde__` for `tutorials/software-engineering/system-design/`, `hoto__` for `how-to/`)
+- [ ] Prefixes match the directory structure (e.g., `ex-co-fo__` for `explanation/conventions/formatting/`, `ex-de-wo__` for `explanation/development/workflow/`, `ex-wf-wo__` for `explanation/workflows/wow/`, `ex-pr-ge__` for `explanation/principles/general/`, `ex-pr-co__` for `explanation/principles/content/`, `ex-pr-se__` for `explanation/principles/software-engineering/`)
 - [ ] Files inside `plans/` folders do NOT use prefixes (folder structure provides context)
 - [ ] Plan folders follow the naming pattern `YYYY-MM-DD__[project-identifier]/`
 - [ ] When directories are renamed, all files within have updated prefixes

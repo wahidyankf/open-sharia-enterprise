@@ -72,7 +72,7 @@ Understanding the update hierarchy is critical. Always update in this order:
    ├─ docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
    ├─ docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md
    ├─ docs/explanation/development/agents/ex-de-ag__ai-agents.md
-   └─ docs/explanation/workflows/ex-wf__*.md
+   └─ docs/explanation/workflows/[subdirectory]/ex-wf-[subdirectory]__*.md
 
    ↓ Update vision/principles/conventions/development/workflows FIRST - they define the rules
 
