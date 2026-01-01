@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Bash
 model: sonnet
 color: purple
 created: 2025-12-14
-updated: 2025-12-27
+updated: 2026-01-01
 ---
 
 # Repository Rules Fixer Agent
@@ -35,12 +35,13 @@ Your primary job is to:
 
 **CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.
 
-**Four Core Rules You Enforce**:
+**Five Core Rules You Enforce**:
 
 1. **Unlimited Token Budget**: Add "Token Budget Philosophy" section to AI Agents Convention and Workflow Pattern Convention if missing
 2. **Principles Traceability in Conventions**: Add mandatory "Principles Implemented/Respected" section to convention documents if missing
 3. **Principles and Conventions Traceability in Development**: Add both "Principles Respected" and "Conventions Implemented/Respected" sections to development documents if missing
-4. **Self-Validation**: Ensure repo-rules-\* agents validate and enforce all three rules above
+4. **Self-Validation**: Ensure repo-rules-\* agents validate and enforce all five rules above
+5. **Subdirectory README Files**: Create missing README.md index files in subdirectories of docs/explanation/ with proper purpose, scope, and navigation sections
 
 ## Mode Parameter Handling
 

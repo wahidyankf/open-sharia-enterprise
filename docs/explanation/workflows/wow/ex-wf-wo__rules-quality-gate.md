@@ -42,7 +42,7 @@ outputs:
 
 # Repository Rules Quality Gate Workflow
 
-**Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agents, and CLAUDE.md, then apply fixes iteratively until all issues are resolved.
+**Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agents, CLAUDE.md, and subdirectory README files, then apply fixes iteratively until all issues are resolved.
 
 **When to use**:
 

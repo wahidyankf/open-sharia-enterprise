@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 created: 2025-11-26
-updated: 2025-12-31
+updated: 2026-01-01
 ---
 
 # Repository Rule Checker Agent
@@ -91,14 +91,15 @@ You must also identify duplicate or significantly overlapping content that:
 
 Systematically verify internal consistency, cross-document alignment, factual correctness, completeness, principle adherence, and identify both extractable (cross-file) and condensable (within-file) duplications. Use the detailed verification checklist below to ensure thorough coverage.
 
-**CRITICAL - Five Core Validation Rules**:
+**CRITICAL - Six Core Validation Rules**:
 
 1. **Vision Existence and Structure**: Validate that vision documents exist in `docs/explanation/vision/` with proper structure (WHY we exist, WHAT change we seek, WHO we serve, success vision)
 2. **Vision Support in Principles**: Validate ALL principle documents have mandatory "Vision Supported" section using flexible pattern ("## Vision Supported" OR "## 🌟 Vision Supported" OR any "## .\*Vision Supported" variant) explaining HOW the principle serves the vision
 3. **Unlimited Token Budget**: Validate that AI Agents Convention and Workflow Pattern Convention document unlimited token budget mindset (quality over efficiency)
 4. **Principles Traceability in Conventions**: Validate ALL convention documents have mandatory "Principles Implemented/Respected" section
 5. **Principles and Conventions Traceability in Development**: Validate ALL development documents have BOTH "Principles Respected" and "Conventions Implemented/Respected" sections
-6. **repo-rules-\* Self-Validation**: Ensure repo-rules-checker (this agent), repo-rules-fixer, and repo-rules-maker enforce all five rules above
+6. **Subdirectory README Files**: Validate that all subdirectories in docs/explanation/principles/, docs/explanation/workflows/, docs/explanation/development/, and docs/explanation/conventions/ have their own README.md index files with proper purpose, scope, and navigation sections
+7. **repo-rules-\* Self-Validation**: Ensure repo-rules-checker (this agent), repo-rules-fixer, and repo-rules-maker enforce all six rules above
 
 ## Verification Checklist
 
@@ -178,6 +179,52 @@ Validate that `docs/explanation/ex__repository-governance-architecture.md` is ac
 - [ ] Vision Supported section positioned BEFORE the main "What" section
 
 ### Principles Alignment
+
+### Subdirectory README Files
+
+Validate that all subdirectories in explanation/ have index README.md files:
+
+**Principles Subdirectories:**
+
+- [ ] `docs/explanation/principles/content/README.md` exists
+- [ ] `docs/explanation/principles/general/README.md` exists
+- [ ] `docs/explanation/principles/software-engineering/README.md` exists
+
+**Conventions Subdirectories:**
+
+- [ ] `docs/explanation/conventions/content/README.md` exists
+- [ ] `docs/explanation/conventions/formatting/README.md` exists
+- [ ] `docs/explanation/conventions/hugo/README.md` exists
+- [ ] `docs/explanation/conventions/meta/README.md` exists
+- [ ] `docs/explanation/conventions/project/README.md` exists
+- [ ] `docs/explanation/conventions/tutorial/README.md` exists
+
+**Development Subdirectories:**
+
+- [ ] `docs/explanation/development/agents/README.md` exists
+- [ ] `docs/explanation/development/hugo/README.md` exists
+- [ ] `docs/explanation/development/infra/README.md` exists
+- [ ] `docs/explanation/development/pattern/README.md` exists
+- [ ] `docs/explanation/development/quality/README.md` exists
+- [ ] `docs/explanation/development/workflow/README.md` exists
+
+**Workflows Subdirectories:**
+
+- [ ] `docs/explanation/workflows/ayokoding-web/README.md` exists
+- [ ] `docs/explanation/workflows/docs/README.md` exists
+- [ ] `docs/explanation/workflows/meta/README.md` exists
+- [ ] `docs/explanation/workflows/plan/README.md` exists
+- [ ] `docs/explanation/workflows/wow/README.md` exists
+
+**README Content Validation:**
+For each subdirectory README.md:
+
+- [ ] Has proper frontmatter or markdown title
+- [ ] Contains "Purpose" or similar introductory section
+- [ ] Contains "Scope" section explaining what belongs/doesn't belong
+- [ ] Lists all documents in the subdirectory with brief descriptions
+- [ ] Contains "Related Documentation" links section
+- [ ] Follows consistent structure with parent README.md
 
 **CRITICAL**: Validate the complete chain from principles through workflows:
 

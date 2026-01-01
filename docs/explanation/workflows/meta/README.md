@@ -1,0 +1,38 @@
+# Workflow Meta Documentation
+
+Foundational workflow patterns and conventions defining how workflows are structured.
+
+## Purpose
+
+This documentation defines **HOW workflows should be designed and documented**, covering the workflow pattern convention that all workflows must follow including structure, frontmatter requirements, and composition patterns.
+
+## Scope
+
+**✅ Belongs Here:**
+
+- Workflow pattern definitions
+- Workflow structure conventions
+- Workflow frontmatter schema
+- Workflow composition rules
+- Meta-workflow documentation
+
+**❌ Does NOT Belong:**
+
+- Specific workflow implementations (those are in domain folders)
+- Agent development standards (that's development/agents/)
+- General development patterns (that's development/pattern/)
+
+## Documents
+
+- [Workflow Pattern Convention](./ex-wf-me__workflow-pattern.md) - Complete workflow structure convention including frontmatter schema, step definition patterns, and composition rules
+
+## Related Documentation
+
+- [Workflows Index](../README.md) - All orchestrated workflows
+- [Maker-Checker-Fixer Pattern](../../development/pattern/ex-de-pa__maker-checker-fixer.md) - Core quality workflow pattern
+- [AI Agents Convention](../../development/agents/ex-de-ag__ai-agents.md) - Agent standards workflows orchestrate
+- [Repository Architecture](../../ex__repository-governance-architecture.md) - Six-layer governance model (Layer 5: Workflows)
+
+---
+
+**Last Updated**: 2026-01-01
