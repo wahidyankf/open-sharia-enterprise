@@ -9,7 +9,7 @@ tags:
   - organization
   - documentation
 created: 2025-11-19
-updated: 2025-12-01
+updated: 2026-01-01
 ---
 
 # Documentation File Naming Convention
@@ -28,9 +28,9 @@ The naming convention serves three critical purposes:
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: File names explicitly encode their location in the directory structure (`[prefix]__[name]`), making the organizational hierarchy visible without requiring users to navigate folders. No hidden conventions or magic - the full path is transparent in the filename itself.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: File names explicitly encode their location in the directory structure (`[prefix]__[name]`), making the organizational hierarchy visible without requiring users to navigate folders. No hidden conventions or magic - the full path is transparent in the filename itself.
 
-- **[Simplicity Over Complexity](../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Uses straightforward abbreviation rules (2 or 4 characters) and a single separator pattern (`__`). Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
+- **[Simplicity Over Complexity](../../principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Uses straightforward abbreviation rules (2 or 4 characters) and a single separator pattern (`__`). Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
 
 ## Purpose
 
@@ -60,13 +60,13 @@ All documentation files (except index files) follow this pattern:
 [hierarchical-prefix]__[content-identifier].[extension]
 ```
 
-**Example**: `meta/ex-co-me__file-naming.md`
+**Example**: `ex-co-me__file-naming.md`
 
 Breaking this down:
 
-- `ex-co` = hierarchical prefix (explanation → conventions)
+- `ex-co-me` = hierarchical prefix (explanation → conventions → meta)
 - `__` = double underscore separator
-- `file-naming-convention` = content identifier (the actual name)
+- `file-naming` = content identifier (the actual name)
 - `.md` = file extension
 
 **Why this pattern?**
@@ -85,7 +85,7 @@ The four main Diátaxis categories use consistent 4-character prefixes:
 
 - `tu` - Tutorials (`docs/tutorials/`) - Common/short root: 2 chars
 - `hoto` - How-To (`docs/how-to/`) - Compound root: 4 chars (2 from each word)
-- `refe` - Reference (`docs/reference/`) - Single word root: 4 chars
+- `re` - Reference (`docs/reference/`) - Common/short root: 2 chars
 - `ex` - Explanation (`docs/explanation/`) - Common/short root: 2 chars
 
 **Note on Directory Naming:**
@@ -99,24 +99,85 @@ The directory names follow semantic conventions from the Diátaxis framework:
 
 This apparent inconsistency is intentional and follows standard documentation conventions. Only `tutorials/` is plural because tutorials are naturally countable discrete units, while the other categories represent types of content that are better expressed as mass nouns.
 
+### Subdirectory Encoding
+
+**CRITICAL**: The 3-phase reorganization (completed 2026-01-01) introduced **subdirectory-based prefixes** for better organization. Files now encode their subdirectory in the prefix.
+
+**Pattern**: `[root]-[subdirectory]__[content-name].md`
+
+**Subdirectory codes** use 2-4 letter abbreviations based on directory characteristics:
+
+**For Subdirectories:**
+
+1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ayokoding-web` → `aywe`, `software-engineering` → `se`)
+2. **Single words** - First 2 characters (`formatting` → `fo`, `content` → `co`, `meta` → `me`)
+
+**Current Subdirectory Structure:**
+
+### Conventions Subdirectories (`docs/explanation/conventions/`)
+
+| Subdirectory  | Code | Prefix       | Example File                      |
+| ------------- | ---- | ------------ | --------------------------------- |
+| `formatting/` | `fo` | `ex-co-fo__` | `ex-co-fo__indentation.md`        |
+| `content/`    | `co` | `ex-co-co__` | `ex-co-co__quality.md`            |
+| `meta/`       | `me` | `ex-co-me__` | `ex-co-me__file-naming.md`        |
+| `tutorial/`   | `tu` | `ex-co-tu__` | `ex-co-tu__naming.md`             |
+| `hugo/`       | `hu` | `ex-co-hu__` | `ex-co-hu__shared.md`             |
+| `project/`    | `pr` | `ex-co-pr__` | `ex-co-pr__plans-organization.md` |
+
+### Development Subdirectories (`docs/explanation/development/`)
+
+| Subdirectory | Code | Prefix       | Example File                          |
+| ------------ | ---- | ------------ | ------------------------------------- |
+| `workflow/`  | `wo` | `ex-de-wo__` | `ex-de-wo__commit-messages.md`        |
+| `agents/`    | `ag` | `ex-de-ag__` | `ex-de-ag__ai-agents.md`              |
+| `quality/`   | `qu` | `ex-de-qu__` | `ex-de-qu__code.md`                   |
+| `pattern/`   | `pa` | `ex-de-pa__` | `ex-de-pa__functional-programming.md` |
+| `hugo/`      | `hu` | `ex-de-hu__` | `ex-de-hu__development.md`            |
+| `infra/`     | `in` | `ex-de-in__` | `ex-de-in__temporary-files.md`        |
+
+### Workflows Subdirectories (`docs/explanation/workflows/`)
+
+| Subdirectory     | Code   | Prefix         | Example File                          |
+| ---------------- | ------ | -------------- | ------------------------------------- |
+| `ayokoding-web/` | `aywe` | `ex-wf-aywe__` | `ex-wf-aywe__general-quality-gate.md` |
+| `docs/`          | `do`   | `ex-wf-do__`   | `ex-wf-do__quality-gate.md`           |
+| `meta/`          | `me`   | `ex-wf-me__`   | `ex-wf-me__workflow-pattern.md`       |
+| `plan/`          | `pl`   | `ex-wf-pl__`   | `ex-wf-pl__execution.md`              |
+| `wow/`           | `wo`   | `ex-wf-wo__`   | `ex-wf-wo__rules-quality-gate.md`     |
+
+### Principles Subdirectories (`docs/explanation/principles/`)
+
+| Subdirectory            | Code | Prefix       | Example File                              |
+| ----------------------- | ---- | ------------ | ----------------------------------------- |
+| `general/`              | `ge` | `ex-pr-ge__` | `ex-pr-ge__simplicity-over-complexity.md` |
+| `content/`              | `co` | `ex-pr-co__` | `ex-pr-co__accessibility-first.md`        |
+| `software-engineering/` | `se` | `ex-pr-se__` | `ex-pr-se__explicit-over-implicit.md`     |
+
 ### Abbreviation Strategy
 
 Use a systematic encoding rule based on directory characteristics:
 
 **For Root Directories:**
 
-1. **Common/short roots** - 2 characters (`tutorials` → `tu`, `explanation` → `ex`)
+1. **Common/short roots** - 2 characters (`tutorials` → `tu`, `explanation` → `ex`, `reference` → `re`)
 2. **Compound roots** - 4 characters, 2 from each word (`how-to` → `hoto`)
-3. **Single word roots** - 4 characters (`reference` → `refe`)
 
 **For Subdirectories:**
 
-1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ai-engineering` → `aien`, `business-and-finance` → `bufi`, `system-design` → `syde`, `information-security` → `inse`, `how-to` → `hoto`)
-2. **Single words** - First 2 or 4 characters based on length (`conventions` → `co`, `development` → `de`, `toolings` → `to`)
+1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ayokoding-web` → `aywe`, `software-engineering` → `se`)
+2. **Single words** - First 2 characters (`formatting` → `fo`, `content` → `co`, `meta` → `me`, `workflow` → `wo`, `agents` → `ag`, `quality` → `qu`, `pattern` → `pa`, `hugo` → `hu`, `infra` → `in`, `docs` → `do`, `plan` → `pl`, `wow` → `wo`, `general` → `ge`, `tutorial` → `tu`, `project` → `pr`)
 
 **Key Rule**: For hyphenated directory names, take first 2 letters of EACH word and concatenate them WITHOUT inserting a dash. The dash in the directory name does NOT appear in the abbreviation.
 
-Examples: `tu__getting-started.md` (tutorials), `hoto__deploy-app.md` (how-to), `re__monorepo-structure.md` (reference), `meta/ex-co-me__file-naming.md` (explanation/conventions), `ex-de__ai-agents.md` (explanation/development)
+**Real Examples:**
+
+```
+ex-co-fo__indentation.md          (explanation/conventions/formatting)
+ex-de-ag__ai-agents.md            (explanation/development/agents)
+ex-wf-aywe__general-quality-gate.md  (explanation/workflows/ayokoding-web)
+ex-pr-se__explicit-over-implicit.md  (explanation/principles/software-engineering)
+```
 
 ## The `__` Separator
 
@@ -141,9 +202,9 @@ All filenames use lowercase with hyphens as separators (no spaces, mixed case, o
 ✅ Good:
 
 - tu\_\_getting-started-with-authentication.md
-- hoto-deve\_\_configure-rate-limiting.md
-- refe-appe\_\_transaction-endpoints.md
-- ex-conv\_\_file-naming-convention.md
+- hoto\_\_configure-rate-limiting.md
+- re\_\_transaction-endpoints.md
+- ex-co-me\_\_file-naming.md
 
 ❌ Bad:
 
@@ -183,7 +244,7 @@ tu-qu__10-advanced-concepts.md
 **Examples:**
 
 ```
-hoto-de__release-process-2025-11.md
+hoto__release-process-2025-11.md
 ```
 
 **Frontmatter dates:** Frontmatter fields (`created`, `updated`) also use ISO 8601 format:
@@ -191,7 +252,7 @@ hoto-de__release-process-2025-11.md
 ```yaml
 ---
 created: 2025-11-19
-updated: 2025-11-22
+updated: 2026-01-01
 ---
 ```
 
@@ -211,6 +272,7 @@ docs/explanation/README.md                       # Main category index
 docs/explanation/conventions/README.md           # Subcategory index (conventions)
 docs/explanation/development/README.md           # Subcategory index (development)
 docs/explanation/principles/README.md            # Subcategory index (principles)
+docs/explanation/workflows/README.md             # Subcategory index (workflows)
 ```
 
 **Key Points:**
@@ -267,11 +329,12 @@ When creating a new subdirectory:
 2. Add this abbreviation to the prefix of all files in that directory
 3. Update any related index files
 
-**Example**: Creating a hypothetical `docs/how-to/[new-category]/`:
+**Example**: Creating a hypothetical `docs/explanation/conventions/[new-category]/`:
 
-- Directory pattern: `docs/how-to/[new-category]/`
-- Prefix pattern: `hoto-[xx]__` (hoto = how-to, [xx] = first 2 letters of category)
-- Files pattern: `hoto-[xx]__[content-name].md`
+- Directory pattern: `docs/explanation/conventions/[new-category]/`
+- Subdirectory code: First 2 letters (e.g., `ne` for `new-category`)
+- Prefix pattern: `ex-co-ne__` (ex = explanation, co = conventions, ne = new-category)
+- Files pattern: `ex-co-ne__[content-name].md`
 
 ### Renaming Directories
 
@@ -286,35 +349,34 @@ When renaming a directory in `docs/`, you **must rename all files within that di
 3. Update any markdown links that reference those files
 4. Update related index files (`README.md`)
 
-**Example**: Renaming `docs/explanation/[old-name]/` to `docs/explanation/[new-name]/`:
+**Example**: Renaming `docs/explanation/conventions/meta/` to `docs/explanation/conventions/standards/`:
 
 **Before**:
 
 ```
-docs/explanation/[old-name]/
+docs/explanation/conventions/meta/
 ├── README.md
-├── ex-[ol]__document-one.md
-└── ex-[ol]__document-two.md
+├── ex-co-me__file-naming.md
+└── ex-co-me__diataxis-framework.md
 ```
 
 **After**:
 
 ```
-docs/explanation/[new-name]/
+docs/explanation/conventions/standards/
 ├── README.md
-├── ex-[ne]__document-one.md
-└── ex-[ne]__document-two.md
+├── ex-co-st__file-naming.md
+└── ex-co-st__diataxis-framework.md
 ```
 
 **Changes required**:
 
-- Directory: `[old-name]/` → `[new-name]/`
-- Prefix: `ex-[ol]__` → `ex-[ne]__` ([ol] = first 2 letters of old-name, [ne] = first 2 letters of new-name)
-- All files: `ex-[ol]__*.md` → `ex-[ne]__*.md`
-- Links: Update all references from `./[old-name]/ex-[ol]__*.md` to `./[new-name]/ex-[ne]__*.md`
-- Index: Update `docs/explanation/README.md` to reflect new directory name
-
-**Real Example**: Renaming `conventions/` to `standards/` would change prefix from `ex-co__` to `ex-st__`
+- Directory: `meta/` → `standards/`
+- Subdirectory code: `me` → `st` (first 2 letters)
+- Prefix: `ex-co-me__` → `ex-co-st__`
+- All files: `ex-co-me__*.md` → `ex-co-st__*.md`
+- Links: Update all references from `./meta/ex-co-me__*.md` to `./standards/ex-co-st__*.md`
+- Index: Update `docs/explanation/conventions/README.md` to reflect new directory name
 
 ### Reorganizing Directories
 
@@ -332,35 +394,88 @@ This system scales to any nesting depth:
 ex-pr-se__explicit-over-implicit.md
 └─ explanation → principles → software-engineering
    (ex+pr+se)
+
+ex-wf-aywe__general-quality-gate.md
+└─ explanation → workflows → ayokoding-web
+   (ex+wf+aywe)
 ```
 
 ## 📖 Quick Reference
+
+### Root Categories
 
 | Category    | Prefix   | Example                  |
 | ----------- | -------- | ------------------------ |
 | Tutorials   | `tu__`   | `tu__getting-started.md` |
 | How-To      | `hoto__` | `hoto__deploy-docker.md` |
 | Reference   | `re__`   | `re__api-reference.md`   |
-| Explanation | `ex__`   | `ex__architecture.md`    |
+| Explanation | `ex__`   | _(see subdirectories)_   |
 
-**Common Subdirectory Prefixes:**
+### Explanation Subdirectories (Complete Reference)
 
-| Directory Path                              | Prefix       | Example                                             |
-| ------------------------------------------- | ------------ | --------------------------------------------------- |
-| explanation/conventions                     | `ex-co__`    | `meta/ex-co-me__file-naming.md`                     |
-| explanation/development                     | `ex-de__`    | `ex-de__ai-agents.md`                               |
-| explanation/workflows/meta                  | `ex-wf-me__` | `ex-wf-me__workflow-pattern.md`                     |
-| explanation/principles                      | `ex-pr__`    | `ex-pr-ge__simplicity-over-complexity.md` (general) |
-| explanation/principles/content              | `ex-pr-co__` | `ex-pr-co__accessibility-first.md`                  |
-| explanation/principles/software-engineering | `ex-pr-se__` | `ex-pr-se__explicit-over-implicit.md`               |
-| reference/eval-app-specs                    | `re-eas__`   | `re-eas__iam-overview.md`                           |
+| Directory Path                              | Prefix         | Example                                   |
+| ------------------------------------------- | -------------- | ----------------------------------------- |
+| explanation/conventions/formatting          | `ex-co-fo__`   | `ex-co-fo__indentation.md`                |
+| explanation/conventions/content             | `ex-co-co__`   | `ex-co-co__quality.md`                    |
+| explanation/conventions/meta                | `ex-co-me__`   | `ex-co-me__file-naming.md`                |
+| explanation/conventions/tutorial            | `ex-co-tu__`   | `ex-co-tu__naming.md`                     |
+| explanation/conventions/hugo                | `ex-co-hu__`   | `ex-co-hu__shared.md`                     |
+| explanation/conventions/project             | `ex-co-pr__`   | `ex-co-pr__plans-organization.md`         |
+| explanation/development/workflow            | `ex-de-wo__`   | `ex-de-wo__commit-messages.md`            |
+| explanation/development/agents              | `ex-de-ag__`   | `ex-de-ag__ai-agents.md`                  |
+| explanation/development/quality             | `ex-de-qu__`   | `ex-de-qu__code.md`                       |
+| explanation/development/pattern             | `ex-de-pa__`   | `ex-de-pa__functional-programming.md`     |
+| explanation/development/hugo                | `ex-de-hu__`   | `ex-de-hu__development.md`                |
+| explanation/development/infra               | `ex-de-in__`   | `ex-de-in__temporary-files.md`            |
+| explanation/workflows/ayokoding-web         | `ex-wf-aywe__` | `ex-wf-aywe__general-quality-gate.md`     |
+| explanation/workflows/docs                  | `ex-wf-do__`   | `ex-wf-do__quality-gate.md`               |
+| explanation/workflows/meta                  | `ex-wf-me__`   | `ex-wf-me__workflow-pattern.md`           |
+| explanation/workflows/plan                  | `ex-wf-pl__`   | `ex-wf-pl__execution.md`                  |
+| explanation/workflows/wow                   | `ex-wf-wo__`   | `ex-wf-wo__rules-quality-gate.md`         |
+| explanation/principles/general              | `ex-pr-ge__`   | `ex-pr-ge__simplicity-over-complexity.md` |
+| explanation/principles/content              | `ex-pr-co__`   | `ex-pr-co__accessibility-first.md`        |
+| explanation/principles/software-engineering | `ex-pr-se__`   | `ex-pr-se__explicit-over-implicit.md`     |
+| explanation/vision                          | `ex-vi__`      | `ex-vi__open-sharia-enterprise.md`        |
+
+## 🔄 Migration History
+
+### 3-Phase Reorganization (2026-01-01)
+
+The repository underwent a comprehensive 3-phase reorganization to introduce subdirectory-based naming:
+
+**Phase 1: Conventions Reorganization**
+
+- Created 6 subdirectories in `docs/explanation/conventions/`
+- Migrated 24 convention files to new subdirectory structure
+- Updated all prefixes from `ex-co__` to `ex-co-[subdirectory]__`
+
+**Phase 2: Development Reorganization**
+
+- Created 6 subdirectories in `docs/explanation/development/`
+- Migrated 15 development files to new subdirectory structure
+- Updated all prefixes from `ex-de__` to `ex-de-[subdirectory]__`
+
+**Phase 3: Workflows Reorganization**
+
+- Created 5 subdirectories in `docs/explanation/workflows/`
+- Migrated 7 workflow files to new subdirectory structure
+- Updated all prefixes from `ex-wf__` to `ex-wf-[subdirectory]__`
+
+**Total Impact**: 46 files reorganized, 111+ links updated, zero broken links
+
+**Benefits**:
+
+- Better organization with clearer categorization
+- Improved discoverability through logical grouping
+- Maintained global uniqueness through subdirectory encoding
+- All traceability sections preserved
 
 ## 🔗 Related Documentation
 
 - [Linking Convention](../formatting/ex-co-fo__linking.md) - How to link between documentation files
 - [Diátaxis Framework](./ex-co-me__diataxis-framework.md) - Understanding the documentation organization framework
-- [Conventions Index](./README.md) - Index of all documentation conventions
+- [Conventions Index](../README.md) - Index of all documentation conventions
 
 ---
 
-**Last Updated**: 2025-12-01
+**Last Updated**: 2026-01-01
