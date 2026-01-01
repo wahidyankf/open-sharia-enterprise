@@ -405,5 +405,5 @@ Before finalizing a post:
 
 **Domain-Specific Conventions:**
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming rules (kebab-case)
-- `docs/explanation/conventions/ex-co__content-quality.md` - Content quality principles
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - File naming rules (kebab-case)
+- `docs/explanation/conventions/content/ex-co-co__quality.md` - Content quality principles

@@ -177,7 +177,7 @@ updated: 2025-12-27
 - **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
 - Example output: `2025-12-14`
 - Use same date for both `created` and `updated` when creating new agents
-- See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+- See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
 
 **Color Assignment**: Auto-assigned based on agent role and tools:
 
@@ -456,7 +456,7 @@ Note: These are domain-specific applications of standard tools. For general tool
 **For timestamp generation:**
 
 - Use `TZ='Asia/Jakarta' date +"%Y-%m-%d"` for UTC+7 timestamps in frontmatter
-- See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md)
+- See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
 
 **Example patterns:**
 
@@ -519,9 +519,9 @@ An agent is successfully created when:
 
 **Domain-Specific Conventions:**
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming rules (kebab-case)
-- `docs/explanation/conventions/ex-co__linking-convention.md` - Link format requirements
-- `docs/explanation/conventions/ex-co__emoji-usage.md` - Emoji usage in documentation
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - File naming rules (kebab-case)
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - Link format requirements
+- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md` - Emoji usage in documentation
 
 **Related Agents:**
 

@@ -698,12 +698,12 @@ Always provide:
 
 - [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo conventions
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo conventions
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content quality standards
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
-- [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) - Validation target
-- [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) - UTC+7 timestamp format
+- [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - Validation target
+- [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - UTC+7 timestamp format
 
 ---
 

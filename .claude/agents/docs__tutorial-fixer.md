@@ -689,7 +689,7 @@ docs/tutorials/tu-software__git-quickstart.md
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) and [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) and [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md).
 
 **Key points:**
 
@@ -698,7 +698,7 @@ docs/tutorials/tu-software__git-quickstart.md
 - Flag subjective findings (narrative quality, diagram placement) for manual review
 - Report any differences in results (indicates checker issues)
 
-See [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md) for complete validation criteria and [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for implementation patterns.
+See [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) for complete validation criteria and [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) for implementation patterns.
 
 ### Objective Checks (HIGH Confidence)
 
@@ -829,11 +829,11 @@ Always provide:
 
 - [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
-- [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md) - Complete tutorial standards and validation criteria (primary reference)
-- [Tutorial Naming Convention](../../docs/explanation/conventions/ex-co__tutorial-naming.md) - Tutorial types and naming patterns
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - Complete tutorial standards and validation criteria (primary reference)
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Tutorial types and naming patterns
 - [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Content standards (no time estimates rule)
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Content standards (no time estimates rule)
 
 ---
 

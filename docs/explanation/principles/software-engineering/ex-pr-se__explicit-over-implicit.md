@@ -428,8 +428,8 @@ npx lint-staged
 ## 📚 Related Conventions
 
 - [AI Agents Convention](../../development/ex-de__ai-agents.md) - Explicit tool permissions
-- [File Naming Convention](../../conventions/ex-co__file-naming-convention.md) - Explicit prefixes
-- [Color Accessibility Convention](../../conventions/ex-co__color-accessibility.md) - Explicit hex codes
+- [File Naming Convention](../../conventions/meta/ex-co-me__file-naming.md) - Explicit prefixes
+- [Color Accessibility Convention](../../conventions/formatting/ex-co-fo__color-accessibility.md) - Explicit hex codes
 - [Code Quality Convention](../../development/ex-de__code-quality.md) - Explicit git hooks
 
 ## 📖 References

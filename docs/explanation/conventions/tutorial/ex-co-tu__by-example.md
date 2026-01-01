@@ -17,19 +17,19 @@ weight: 2300
 
 ## Purpose
 
-This convention **extends the [Tutorials Convention](./ex-co__tutorials.md) for the By Example tutorial type**, defining specialized standards for code-first learning through 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage.
+This convention **extends the [Tutorials Convention](./ex-co-tu__general.md) for the By Example tutorial type**, defining specialized standards for code-first learning through 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage.
 
-**Base requirements**: By-example tutorials inherit general tutorial standards (learning-oriented approach, visual completeness, hands-on elements from [Tutorials Convention](./ex-co__tutorials.md)) and add code-specific specializations defined below.
+**Base requirements**: By-example tutorials inherit general tutorial standards (learning-oriented approach, visual completeness, hands-on elements from [Tutorials Convention](./ex-co-tu__general.md)) and add code-specific specializations defined below.
 
 **Target audience**: Experienced developers (seasonal programmers, software engineers) switching languages or frameworks who prefer learning through working code rather than narrative explanations.
 
 ## Structure Integration with General Tutorial Standards
 
-By-example tutorials adapt the general [Tutorial Convention](./ex-co__tutorials.md) structure for code-first learning:
+By-example tutorials adapt the general [Tutorial Convention](./ex-co-tu__general.md) structure for code-first learning:
 
 ### Adaptation of General Structure
 
-**Traditional Tutorial Structure** (from [Tutorials Convention](./ex-co__tutorials.md)):
+**Traditional Tutorial Structure** (from [Tutorials Convention](./ex-co-tu__general.md)):
 
 - Introduction → Prerequisites → Objectives → Content Sections → Challenges → Summary → Next Steps
 
@@ -791,16 +791,16 @@ This convention implements and respects:
 
 ### What This Convention Does NOT Cover
 
-- **General tutorial standards** - Covered in [Tutorials Convention](./ex-co__tutorials.md)
-- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
-- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md)
+- **General tutorial standards** - Covered in [Tutorials Convention](./ex-co-tu__general.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co-tu__naming.md)
+- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ex-co-hu__ayokoding.md)
 - **Code quality** - Source code standards in development conventions
 - **Tutorial validation** - Covered by apps**ayokoding-web**by-example-checker agent
 
 ## Related Documentation
 
-- [Tutorial Naming Convention](./ex-co__tutorial-naming.md): Tutorial type definitions and naming standards
-- [Content Quality Principles](./ex-co__content-quality.md): General content quality standards
-- [Diagrams Convention](./ex-co__diagrams.md): Mermaid diagram standards
-- [Color Accessibility Convention](./ex-co__color-accessibility.md): Color-blind friendly palette
-- [Diátaxis Framework](./ex-co__diataxis-framework.md): Tutorial categorization framework
+- [Tutorial Naming Convention](./ex-co-tu__naming.md): Tutorial type definitions and naming standards
+- [Content Quality Principles](../content/ex-co-co__quality.md): General content quality standards
+- [Diagrams Convention](../formatting/ex-co-fo__diagrams.md): Mermaid diagram standards
+- [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md): Color-blind friendly palette
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md): Tutorial categorization framework

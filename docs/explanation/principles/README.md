@@ -238,7 +238,7 @@ When documenting a new convention or practice, ALWAYS reference which principles
 
 **Core Principle**: Accessibility First
 
-**Convention**: [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md)
+**Convention**: [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md)
 
 - Verified accessible palette (Blue, Orange, Teal, Purple, Brown)
 - WCAG AA compliance required

@@ -39,8 +39,8 @@ This convention implements the following core principles:
 
 ### What This Convention Does NOT Cover
 
-- **Tutorial content structure** - Covered in [Tutorials Convention](./ex-co__tutorials.md)
-- **General file naming** - Non-tutorial files covered in [File Naming Convention](./ex-co__file-naming-convention.md)
+- **Tutorial content structure** - Covered in [Tutorials Convention](./ex-co-tu__general.md)
+- **General file naming** - Non-tutorial files covered in [File Naming Convention](../meta/ex-co-me__file-naming.md)
 - **Hugo navigation** - Weight and ordering in Hugo sites
 - **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
 
@@ -503,10 +503,10 @@ graph TB
 
 ## 🔗 Related Documentation
 
-- [Tutorial Convention](./ex-co__tutorials.md) - Standards for tutorial structure and content
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the tutorial category in documentation
+- [Tutorial Convention](./ex-co-tu__general.md) - Standards for tutorial structure and content
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Understanding the tutorial category in documentation
 - [Tutorials Index](../../tutorials/README.md) - All available tutorials organized by type
-- [File Naming Convention](./ex-co__file-naming-convention.md) - How to name tutorial files
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - How to name tutorial files
 
 ---
 

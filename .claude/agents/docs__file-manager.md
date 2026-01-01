@@ -52,7 +52,7 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../docs/explanation/conventions/ex-co__file-naming-convention.md):
+Before any operation, understand the [File Naming Convention](../../docs/explanation/conventions/meta/ex-co-me__file-naming.md):
 
 ### Pattern
 
@@ -318,7 +318,7 @@ Before deleting any file or directory:
 
 ### Scenario 2: Moving a File Between Directories
 
-**Example**: Move `docs/explanation/ex__topic.md` → `docs/explanation/conventions/ex-co__topic.md`
+**Example**: Move `docs/explanation/ex__topic.md` → `docs/explanation/conventions/formatting/ex-co-fo__indentation.md`
 
 **Impact**:
 
@@ -343,7 +343,7 @@ Before deleting any file or directory:
 3. **Rename and move**:
 
    ```bash
-   git mv docs/explanation/ex__topic.md docs/explanation/conventions/ex-co__topic.md
+   git mv docs/explanation/ex__topic.md docs/explanation/conventions/formatting/ex-co-fo__indentation.md
    ```
 
 4. **Update links**:
@@ -471,17 +471,17 @@ When updating links, calculate the new relative path based on:
 **Example**:
 
 Source: `docs/explanation/README.md` (1 level deep)
-Old target: `./conventions/ex-co__linking.md`
-New target: `./conventions/ex-co__linking-convention.md`
+Old target: `./conventions/formatting/ex-co-fo__linking.md`
+New target: `./conventions/formatting/ex-co-fo__linking.md`
 
 ```markdown
 # Before
 
-[Linking](./conventions/ex-co__linking.md)
+[Linking](./conventions/formatting/ex-co-fo__linking.md)
 
 # After
 
-[Linking Convention](./conventions/ex-co__linking-convention.md)
+[Linking Convention](./conventions/formatting/ex-co-fo__linking.md)
 ```
 
 ### Removing Links to Deleted Files
@@ -523,7 +523,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md):
+All links must follow [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension
@@ -696,8 +696,8 @@ For operations affecting many files:
 
 ```
 I found 8 files in docs/explanation/conventions/ that will be renamed:
-- ex-co__linking.md → ex-co__linking-convention.md
-- ex-co__diagrams.md → ex-co__diagram-standards.md
+- ex-co__linking.md → formatting/ex-co-fo__linking.md
+- formatting/ex-co-fo__diagrams.md → ex-co__diagram-standards.md
 - ... (6 more)
 
 I also found 23 links across 12 files that reference these files.
@@ -898,9 +898,9 @@ Proceed anyway? (Please confirm)
 **Documentation Conventions:**
 
 - `docs/explanation/conventions/README.md` - Index of all conventions
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files with hierarchical prefixes (required reading)
-- `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files with GitHub-compatible markdown (required reading)
-- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - How to name files with hierarchical prefixes (required reading)
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - How to link between files with GitHub-compatible markdown (required reading)
+- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md` - When and where to use emojis
 
 **Related Agents:**
 

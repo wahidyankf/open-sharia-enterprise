@@ -294,7 +294,7 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 - **Primary Format**: Mermaid diagrams for all flowcharts, architecture diagrams, sequences
 - **ASCII Art**: Optional, only for simple directory trees or rare edge cases
 - **Orientation**: Prefer vertical (top-down or bottom-top) for mobile-friendly viewing
-- **Colors**: Use color-blind friendly palette from [Color Accessibility Convention](./ex-co__color-accessibility.md)
+- **Colors**: Use color-blind friendly palette from [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md)
 
 **Why Mermaid**:
 
@@ -303,7 +303,7 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 - Easy to update and maintain
 - Supports multiple diagram types (flowchart, sequence, class, ER, etc.)
 
-For complete diagram standards, see [Diagram and Schema Convention](./ex-co__diagrams.md).
+For complete diagram standards, see [Diagram and Schema Convention](../formatting/ex-co-fo__diagrams.md).
 
 ## 📚 Related Documentation
 
@@ -314,9 +314,9 @@ For complete diagram standards, see [Diagram and Schema Convention](./ex-co__dia
 **Related Conventions**:
 
 - [Acceptance Criteria Convention](../development/ex-de__acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Organization of `docs/` directory
-- [File Naming Convention](./ex-co__file-naming-convention.md) - Naming files within `docs/` (not applicable to plans/)
-- [Diagram and Schema Convention](./ex-co__diagrams.md) - Standards for Mermaid diagrams
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Organization of `docs/` directory
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - Naming files within `docs/` (not applicable to plans/)
+- [Diagram and Schema Convention](../formatting/ex-co-fo__diagrams.md) - Standards for Mermaid diagrams
 
 **Development Guides**:
 

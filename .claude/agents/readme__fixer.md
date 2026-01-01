@@ -666,7 +666,7 @@ README.md
 - Flag all subjective improvements as MEDIUM (needs manual review)
 - Report any differences in results (indicates checker issues)
 
-See [README Quality Convention](../../docs/explanation/conventions/ex-co__readme-quality.md) for complete quality standards.
+See [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co__readme-quality.md) for complete quality standards.
 
 ### 1. Paragraph Length Check (OBJECTIVE)
 
@@ -832,8 +832,8 @@ Always provide:
 
 - [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/ex-de__maker-checker-fixer-pattern.md) - Three-stage quality workflow
-- [README Quality Convention](../../docs/explanation/conventions/ex-co__readme-quality.md) - Master reference for README standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - General content quality standards
+- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co__readme-quality.md) - Master reference for README standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - General content quality standards
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
 
 ---

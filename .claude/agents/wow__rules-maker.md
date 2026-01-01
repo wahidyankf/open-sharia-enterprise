@@ -66,10 +66,10 @@ Understanding the update hierarchy is critical. Always update in this order:
 1. Vision/Principles/Convention/Development/Workflow Documents (Source of Truth)
    ├─ docs/explanation/vision/ex-vi__open-sharia-enterprise.md
    ├─ docs/explanation/principles/[category]/ex-pr-[category]__*.md
-   ├─ docs/explanation/conventions/ex-co__file-naming-convention.md
-   ├─ docs/explanation/conventions/ex-co__linking-convention.md
-   ├─ docs/explanation/conventions/ex-co__diagrams.md
-   ├─ docs/explanation/conventions/ex-co__diataxis-framework.md
+   ├─ docs/explanation/conventions/meta/ex-co-me__file-naming.md
+   ├─ docs/explanation/conventions/formatting/ex-co-fo__linking.md
+   ├─ docs/explanation/conventions/formatting/ex-co-fo__diagrams.md
+   ├─ docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md
    ├─ docs/explanation/development/ex-de__ai-agents.md
    └─ docs/explanation/workflows/ex-wf__*.md
 
@@ -274,7 +274,7 @@ When the user requests a rule change, follow this process:
 
 **Affected Files**:
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` (update prefix definition)
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` (update prefix definition)
 - `CLAUDE.md` (update prefix list)
 - `.claude/agents/docs__maker.md` (update file naming examples)
 - `.claude/agents/wow__rules-checker.md` (update validation rules)
@@ -293,7 +293,7 @@ When the user requests a rule change, follow this process:
 
 **Affected Files**:
 
-- `docs/explanation/conventions/ex-co__linking-convention.md` (add examples)
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` (add examples)
 - Possibly `CLAUDE.md` (if examples clarify an ambiguity)
 
 **Update Strategy**:
@@ -393,9 +393,9 @@ Bad:
 
 All documentation follows three core conventions:
 
-- **File Naming**: `[prefix]__[content-identifier].md` - See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md)
-- **Linking**: GitHub-compatible `[Text](./path/file.md)` - See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md)
-- **Organization**: Diátaxis framework - See [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md)
+- **File Naming**: `[prefix]__[content-identifier].md` - See [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md)
+- **Linking**: GitHub-compatible `[Text](./path/file.md)` - See [Linking Convention](./docs/explanation/conventions/formatting/ex-co-fo__linking.md)
+- **Organization**: Diátaxis framework - See [Diátaxis Framework](./docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md)
 ```
 
 ### Agent Files (Compliance & Implementation)
@@ -412,7 +412,7 @@ All documentation follows three core conventions:
 ```markdown
 ### File Naming Convention
 
-You MUST follow the [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md):
+You MUST follow the [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md):
 
 - **Pattern**: `[prefix]__[content-identifier].[extension]`
 - **Examples**: `tu__getting-started.md`, `ex-co__file-naming-convention.md`
@@ -435,9 +435,9 @@ You MUST follow the [File Naming Convention](./docs/explanation/conventions/ex-c
 
 Documentation conventions that all files must follow:
 
-- [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) - Hierarchical file naming with prefixes
-- [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) - GitHub-compatible markdown links
-- [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) - Documentation organization system
+- [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md) - Hierarchical file naming with prefixes
+- [Linking Convention](./docs/explanation/conventions/formatting/ex-co-fo__linking.md) - GitHub-compatible markdown links
+- [Diátaxis Framework](./docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md) - Documentation organization system
 ```
 
 ## Safety Guidelines
@@ -725,7 +725,7 @@ Examples:
 ```markdown
 ## File Naming Convention
 
-Files follow `[prefix]__[content-identifier].md` pattern with hierarchical prefixes. See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
+Files follow `[prefix]__[content-identifier].md` pattern with hierarchical prefixes. See [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md) for complete details.
 ```
 
 **Savings:** 100 characters (67% reduction)
@@ -840,13 +840,13 @@ If adding a completely new category of conventions:
 **Documentation Conventions:**
 
 - `docs/explanation/conventions/README.md` - Index of all conventions
-- `docs/explanation/conventions/ex-co__convention-writing.md` - How to write convention documents (meta-convention)
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files with hierarchical prefixes
-- `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files with GitHub-compatible markdown
-- `docs/explanation/conventions/ex-co__diagrams.md` - When to use Mermaid diagrams vs ASCII art
-- `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation into four categories
-- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
-- `docs/explanation/conventions/ex-co__timestamp-format.md` - UTC+7 timestamp standards for cache and metadata
+- `docs/explanation/conventions/content/ex-co-co__convention-writing.md` - How to write convention documents (meta-convention)
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - How to name files with hierarchical prefixes
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - How to link between files with GitHub-compatible markdown
+- `docs/explanation/conventions/formatting/ex-co-fo__diagrams.md` - When to use Mermaid diagrams vs ASCII art
+- `docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md` - How to organize documentation into four categories
+- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md` - When and where to use emojis
+- `docs/explanation/conventions/formatting/ex-co-fo__timestamp.md` - UTC+7 timestamp standards for cache and metadata
 
 **Related Agents:**
 

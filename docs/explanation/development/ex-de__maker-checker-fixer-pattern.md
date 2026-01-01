@@ -40,9 +40,9 @@ This practice implements/respects the following conventions:
 
 - **[Temporary Files Convention](./ex-de__temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
 
-- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
 
-- **[Content Quality Principles](../conventions/ex-co__content-quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
+- **[Content Quality Principles](../conventions/content/ex-co-co__quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
 
 ## 📋 Overview
 
@@ -668,17 +668,17 @@ Pattern scales across **multiple domains** without reinventing the workflow:
 
 The maker-checker-fixer pattern integrates with repository conventions:
 
-| Convention                                                                | How Pattern Uses It                                             |
-| ------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [AI Agents Convention](./ex-de__ai-agents.md)                             | Defines agent structure, tool permissions, color coding         |
-| [Criticality Levels Convention](./ex-de__criticality-levels.md)           | Checkers categorize by criticality, fixers use for priority     |
-| [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md) | Fixers assess confidence, combine with criticality for priority |
-| [Repository Validation Methodology](./ex-de__repository-validation.md)    | Standard validation patterns used by checker/fixer              |
-| [Content Quality Principles](../conventions/ex-co__content-quality.md)    | What checkers validate (quality standards)                      |
-| [Hugo Content Convention](../conventions/ex-co__hugo-content-shared.md)   | What ayokoding/ose-platform makers/checkers enforce             |
-| [Tutorial Convention](../conventions/ex-co__tutorials.md)                 | What docs\_\_tutorial-maker/checker enforce                     |
-| [README Quality Convention](../conventions/ex-co__readme-quality.md)      | What readme\_\_maker/checker enforce                            |
-| [Temporary Files Convention](./ex-de__temporary-files.md)                 | Where checker/fixer reports are stored                          |
+| Convention                                                                      | How Pattern Uses It                                             |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [AI Agents Convention](./ex-de__ai-agents.md)                                   | Defines agent structure, tool permissions, color coding         |
+| [Criticality Levels Convention](./ex-de__criticality-levels.md)                 | Checkers categorize by criticality, fixers use for priority     |
+| [Fixer Confidence Levels Convention](./ex-de__fixer-confidence-levels.md)       | Fixers assess confidence, combine with criticality for priority |
+| [Repository Validation Methodology](./ex-de__repository-validation.md)          | Standard validation patterns used by checker/fixer              |
+| [Content Quality Principles](../conventions/content/ex-co-co__quality.md)       | What checkers validate (quality standards)                      |
+| [Hugo Content Convention](../conventions/hugo/ex-co-hu__shared.md)              | What ayokoding/ose-platform makers/checkers enforce             |
+| [Tutorial Convention](../conventions/tutorial/ex-co-tu__general.md)             | What docs\_\_tutorial-maker/checker enforce                     |
+| [README Quality Convention](../conventions/content/ex-co-co__readme-quality.md) | What readme\_\_maker/checker enforce                            |
+| [Temporary Files Convention](./ex-de__temporary-files.md)                       | Where checker/fixer reports are stored                          |
 
 **Key Point**: The pattern is a **workflow framework**. The conventions define **what** to validate/enforce.
 
@@ -696,12 +696,12 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Domain-Specific Standards**:
 
-- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Universal content standards
-- [Hugo Content Convention - Shared](../conventions/ex-co__hugo-content-shared.md) - Hugo content standards
-- [Hugo Content Convention - ayokoding](../conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specifics
-- [Hugo Content Convention - OSE Platform](../conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specifics
-- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Tutorial quality standards
-- [README Quality Convention](../conventions/ex-co__readme-quality.md) - README standards
+- [Content Quality Principles](../conventions/content/ex-co-co__quality.md) - Universal content standards
+- [Hugo Content Convention - Shared](../conventions/hugo/ex-co-hu__shared.md) - Hugo content standards
+- [Hugo Content Convention - ayokoding](../conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specifics
+- [Hugo Content Convention - OSE Platform](../conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web specifics
+- [Tutorial Convention](../conventions/tutorial/ex-co-tu__general.md) - Tutorial quality standards
+- [README Quality Convention](../conventions/content/ex-co-co__readme-quality.md) - README standards
 
 **Agent Examples**:
 

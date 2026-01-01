@@ -90,7 +90,7 @@ See [Monorepo Structure](./docs/reference/re__monorepo-structure.md), [Add New A
 
 ## Documentation Organization
 
-Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detailed explanation](./docs/explanation/conventions/ex-co__diataxis-framework.md):
+Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detailed explanation](./docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md):
 
 - **Tutorials** (`docs/tutorials/`) - Learning-oriented
 - **How-to Guides** (`docs/how-to/`) - Problem-solving
@@ -103,7 +103,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 ## Plans Organization
 
-Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `backlog/` (future), `in-progress/` (active), `done/` (archived). Folder naming: `YYYY-MM-DD__[project-identifier]/`. See [Plans Organization Convention](./docs/explanation/conventions/ex-co__plans-organization.md) for details.
+Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `backlog/` (future), `in-progress/` (active), `done/` (archived). Folder naming: `YYYY-MM-DD__[project-identifier]/`. See [Plans Organization Convention](./docs/explanation/conventions/project/ex-co-pr__plans-organization.md) for details.
 
 ## Repository Architecture: Six-Layer Hierarchy
 
@@ -147,72 +147,72 @@ All documentation must follow core conventions defined in `docs/explanation/conv
 
 ### Indentation Convention
 
-All markdown files use **space indentation for nested bullets** (2 spaces per indentation level). YAML frontmatter MUST use 2 spaces. See [Indentation Convention](./docs/explanation/conventions/ex-co__indentation.md) for complete details.
+All markdown files use **space indentation for nested bullets** (2 spaces per indentation level). YAML frontmatter MUST use 2 spaces. See [Indentation Convention](./docs/explanation/conventions/formatting/ex-co-fo__indentation.md) for complete details.
 
 ### File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (exception: `docs/metadata/` stores operational files without prefixes). See [File Naming Convention](./docs/explanation/conventions/ex-co__file-naming-convention.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (exception: `docs/metadata/` stores operational files without prefixes). See [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md) for complete details.
 
 ### Linking Convention
 
-Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. **Rule references use two-tier formatting**: first mention = markdown link, subsequent mentions = inline code. **Hugo sites use absolute paths without .md**. See [Linking Convention](./docs/explanation/conventions/ex-co__linking-convention.md) for complete details.
+Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. **Rule references use two-tier formatting**: first mention = markdown link, subsequent mentions = inline code. **Hugo sites use absolute paths without .md**. See [Linking Convention](./docs/explanation/conventions/formatting/ex-co-fo__linking.md) for complete details.
 
 ### Diagram Convention
 
-Use Mermaid diagrams (default TD layout, vertical orientation for mobile). **CRITICAL: Mermaid diagrams MUST use color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow in diagrams. **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (causes syntax errors). **Escape special characters in node text AND edge labels**: parentheses (`#40;` `#41;`), square brackets (`#91;` `#93;`), curly braces (`#123;` `#125;`), angle brackets (`#60;` `#62;`). Edge labels use `-->|text|` syntax and require same escaping. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`). **Avoid nested escaping** - do not combine entity codes with escaped quotes in same node (e.g., `#123;\"name\"#125;` fails; use `#123;name:value#125;` instead). **No `style` commands in sequence diagrams** (use `box` syntax or flowchart). Note: Emoji indicators (🔴🟠🟡🟢) can use standard colors when ALWAYS paired with text labels. **Split complex diagrams** - one concept per diagram (max 3-4 branches per level), no subgraphs, descriptive headers, mobile-first design. See [Color Accessibility Convention](./docs/explanation/conventions/ex-co__color-accessibility.md) for complete palette and context-specific rules, and [Diagrams Convention](./docs/explanation/conventions/ex-co__diagrams.md) for implementation, comment syntax, and diagram splitting guidelines.
+Use Mermaid diagrams (default TD layout, vertical orientation for mobile). **CRITICAL: Mermaid diagrams MUST use color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow in diagrams. **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (causes syntax errors). **Escape special characters in node text AND edge labels**: parentheses (`#40;` `#41;`), square brackets (`#91;` `#93;`), curly braces (`#123;` `#125;`), angle brackets (`#60;` `#62;`). Edge labels use `-->|text|` syntax and require same escaping. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`). **Avoid nested escaping** - do not combine entity codes with escaped quotes in same node (e.g., `#123;\"name\"#125;` fails; use `#123;name:value#125;` instead). **No `style` commands in sequence diagrams** (use `box` syntax or flowchart). Note: Emoji indicators (🔴🟠🟡🟢) can use standard colors when ALWAYS paired with text labels. **Split complex diagrams** - one concept per diagram (max 3-4 branches per level), no subgraphs, descriptive headers, mobile-first design. See [Color Accessibility Convention](./docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) for complete palette and context-specific rules, and [Diagrams Convention](./docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) for implementation, comment syntax, and diagram splitting guidelines.
 
 - **Sequence diagram participant syntax (CRITICAL)**: Use simple participant identifiers WITHOUT `as` keyword. Do NOT use `participant X as "Display Name"` syntax with quotes (causes rendering failures in Hugo/Hextra). Use CamelCase or simple names instead: `participant Main`, `participant EventLoop`. Applies to sequenceDiagram only, not graph/flowchart
 - **State diagram edge labels (CRITICAL)**: Do NOT use colons in edge label text for `stateDiagram-v2` (colon is reserved separator). Syntax: `state1 --> state2: label text` - remove colons from label text (use `count` not `:count`). Affects stateDiagram-v2 only
 
 ### Emoji Usage Convention
 
-Semantic emojis allowed in `docs/`, README files, `plans/`, and `.claude/agents/README.md`. **FORBIDDEN** in CLAUDE.md, agent prompt files, config files, and source code. See [Emoji Usage Convention](./docs/explanation/conventions/ex-co__emoji-usage.md) for complete details.
+Semantic emojis allowed in `docs/`, README files, `plans/`, and `.claude/agents/README.md`. **FORBIDDEN** in CLAUDE.md, agent prompt files, config files, and source code. See [Emoji Usage Convention](./docs/explanation/conventions/formatting/ex-co-fo__emoji.md) for complete details.
 
 ### Diátaxis Framework
 
-All documentation organized into four categories (Tutorials, How-To, Reference, Explanation). See [Diátaxis Framework](./docs/explanation/conventions/ex-co__diataxis-framework.md) for complete details.
+All documentation organized into four categories (Tutorials, How-To, Reference, Explanation). See [Diátaxis Framework](./docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md) for complete details.
 
 ### Timestamp Format Convention
 
-All timestamps use **UTC+7** with ISO 8601 format: `YYYY-MM-DDTHH:MM:SS+07:00` (cache files, metadata, logs, frontmatter). See [Timestamp Format Convention](./docs/explanation/conventions/ex-co__timestamp-format.md) for exceptions.
+All timestamps use **UTC+7** with ISO 8601 format: `YYYY-MM-DDTHH:MM:SS+07:00` (cache files, metadata, logs, frontmatter). See [Timestamp Format Convention](./docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) for exceptions.
 
 ### Mathematical Notation Convention
 
-Use **LaTeX notation** for equations: `$...$` (inline), `$$...$$` (display). NOT in code blocks/Mermaid/ASCII art. See [Mathematical Notation Convention](./docs/explanation/conventions/ex-co__mathematical-notation.md) for details.
+Use **LaTeX notation** for equations: `$...$` (inline), `$$...$$` (display). NOT in code blocks/Mermaid/ASCII art. See [Mathematical Notation Convention](./docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) for details.
 
 ### Nested Code Fence Convention
 
-When documenting markdown structure, use **4 backticks for outer fence, 3 for inner**. Prevents orphaned fences that break rendering. See [Nested Code Fence Convention](./docs/explanation/conventions/ex-co__nested-code-fences.md) for complete nesting rules.
+When documenting markdown structure, use **4 backticks for outer fence, 3 for inner**. Prevents orphaned fences that break rendering. See [Nested Code Fence Convention](./docs/explanation/conventions/formatting/ex-co-fo__nested-code-fences.md) for complete nesting rules.
 
 ### Tutorial Standards
 
-Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (95% coverage through 75-90 annotated examples, 1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5 - reduce if exceeded), five-part format for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/ex-co__tutorial-naming.md) for complete details.
+Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (95% coverage through 75-90 annotated examples, 1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5 - reduce if exceeded), five-part format for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
 
 ### Content Quality Principles
 
-All markdown content must follow quality standards: active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast, semantic formatting. Applies to docs/, Hugo sites, plans/, root files. See [Content Quality Principles](./docs/explanation/conventions/ex-co__content-quality.md) for complete checklist.
+All markdown content must follow quality standards: active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast, semantic formatting. Applies to docs/, Hugo sites, plans/, root files. See [Content Quality Principles](./docs/explanation/conventions/content/ex-co-co__quality.md) for complete checklist.
 
 ### Factual Validation Convention
 
-Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification ([Verified], [Unverified], [Error], [Outdated]). See [Factual Validation Convention](./docs/explanation/conventions/ex-co__factual-validation.md) for complete methodology.
+Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification ([Verified], [Unverified], [Error], [Outdated]). See [Factual Validation Convention](./docs/explanation/conventions/content/ex-co-co__factual-validation.md) for complete methodology.
 
 ### Hugo Content Convention
 
 Three specialized documents:
 
-- [Shared](./docs/explanation/conventions/ex-co__hugo-content-shared.md) - Common conventions for all Hugo sites
-- [ayokoding-web](./docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme, bilingual (default English, no automatic mirroring), level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**
-- [ose-platform-web](./docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - PaperMod theme, English-only landing page
+- [Shared](./docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Common conventions for all Hugo sites
+- [ayokoding-web](./docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme, bilingual (default English, no automatic mirroring), level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**
+- [ose-platform-web](./docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - PaperMod theme, English-only landing page
 
-Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/ex-co__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).
+Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).
 
-**Tutorial Structure**: All languages use [dual-path organization](./docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md) - by-concept (narrative-driven) and optional by-example (code-first, 75-90 annotated examples for experienced developers). Foundational tutorials (Initial Setup, Quick Start) at root level.
+**Tutorial Structure**: All languages use [dual-path organization](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md) - by-concept (narrative-driven) and optional by-example (code-first, 75-90 annotated examples for experienced developers). Foundational tutorials (Initial Setup, Quick Start) at root level.
 
-**Tutorial Folder Arrangement**: All topics with by-example tutorials follow standard 5-item arrangement: overview (100000), initial-setup (100001), quick-start (100002), by-example (100003), by-concept (100004, optional). Arrangement is MANUAL by content creators, NOT automatic by agents. See [Programming Language Tutorial Structure Convention](./docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md#tutorial-folder-arrangement-standard) for complete standard.
+**Tutorial Folder Arrangement**: All topics with by-example tutorials follow standard 5-item arrangement: overview (100000), initial-setup (100001), quick-start (100002), by-example (100003), by-concept (100004, optional). Arrangement is MANUAL by content creators, NOT automatic by agents. See [Programming Language Tutorial Structure Convention](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for complete standard.
 
 ### README Quality Convention
 
-All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language (no jargon), acronym context, paragraph limits (≤5 lines), benefits-focused language. See [README Quality Convention](./docs/explanation/conventions/ex-co__readme-quality.md) for complete standards.
+All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language (no jargon), acronym context, paragraph limits (≤5 lines), benefits-focused language. See [README Quality Convention](./docs/explanation/conventions/content/ex-co-co__readme-quality.md) for complete standards.
 
 ### Convention References
 
@@ -239,7 +239,7 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 
 **Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction. Focus on execution quality over token efficiency. See [AI Agents Convention - Token Budget Philosophy](./docs/explanation/development/ex-de__ai-agents.md#token-budget-philosophy) for details.
 
-**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. Ensures traceability from practices back to foundational values. See [Convention Writing Convention](./docs/explanation/conventions/ex-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for requirements.
+**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. Ensures traceability from practices back to foundational values. See [Convention Writing Convention](./docs/explanation/conventions/content/ex-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for requirements.
 
 See [AI Agents Convention](./docs/explanation/development/ex-de__ai-agents.md) for complete details.
 
@@ -330,7 +330,7 @@ When adding new conventions, rules, or standards:
 
 ## Planning Without Timelines
 
-When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines like "this will take 2-3 weeks" or "complete this in 30 minutes." Focus on WHAT needs to be done or learned, not HOW LONG it takes. This applies to project planning (plans/) and educational content (tutorials, learning materials). Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./docs/explanation/conventions/ex-co__content-quality.md#no-time-estimates) for educational content specifics.
+When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines like "this will take 2-3 weeks" or "complete this in 30 minutes." Focus on WHAT needs to be done or learned, not HOW LONG it takes. This applies to project planning (plans/) and educational content (tutorials, learning materials). Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./docs/explanation/conventions/content/ex-co-co__quality.md#no-time-estimates) for educational content specifics.
 
 ## Important Notes
 

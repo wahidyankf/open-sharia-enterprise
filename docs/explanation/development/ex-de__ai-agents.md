@@ -102,15 +102,15 @@ When working with agents:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
+- **[File Naming Convention](../conventions/meta/ex-co-me__file-naming.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
 
-- **[Linking Convention](../conventions/ex-co__linking-convention.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
+- **[Linking Convention](../conventions/formatting/ex-co-fo__linking.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
 
-- **[Emoji Usage Convention](../conventions/ex-co__emoji-usage.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). Only `.claude/agents/README.md` uses colored square emojis for categorization.
+- **[Emoji Usage Convention](../conventions/formatting/ex-co-fo__emoji.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). Only `.claude/agents/README.md` uses colored square emojis for categorization.
 
-- **[Color Accessibility Convention](../conventions/ex-co__color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
+- **[Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
 
-- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Report-generating agents use UTC+7 timestamps in 4-part filename pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
+- **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Report-generating agents use UTC+7 timestamps in 4-part filename pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 ## Agent File Structure
 
@@ -185,7 +185,7 @@ In addition to the five required fields, agents may include optional metadata fi
 
 - Use both `created` and `updated` fields together for complete tracking
 - Update the `updated` field whenever making substantial changes to the agent
-- Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../conventions/ex-co__timestamp-format.md) (date-only format)
+- Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md) (date-only format)
 - Place these fields after the five required fields in frontmatter
 - These fields align with documentation frontmatter best practices from Hugo, Jekyll, and Front Matter CMS
 
@@ -540,7 +540,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 - **\*Yellow with Write**: wow\_\_rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
 - **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
-**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
+**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
 ### Why This Categorization System
 
@@ -641,7 +641,7 @@ Start: What is the agent's primary capability?
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
-**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards per the [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md). Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users. See the Color Accessibility Convention for complete details on palette verification, testing methodology, and WCAG compliance.
+**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards per the [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md). Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users. See the Color Accessibility Convention for complete details on palette verification, testing methodology, and WCAG compliance.
 
 ### Color Accessibility for Agent Identification
 
@@ -685,7 +685,7 @@ All agent colors are from the verified accessible palette:
 - Text label "Updater"
 - Role suffix "-updater"
 
-**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
+**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
 
 #### Why These Colors Were Chosen
 
@@ -736,7 +736,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
 
 **Consistency with Emoji Convention:**
 
-Colored square emojis follow the [Emoji Usage Convention](../conventions/ex-co__emoji-usage.md):
+Colored square emojis follow the [Emoji Usage Convention](../conventions/formatting/ex-co-fo__emoji.md):
 
 - Use at the start of headings for visual categorization
 - Maintain semantic consistency (same color = same role across all docs)
@@ -879,7 +879,7 @@ Use GitHub-compatible markdown with relative paths:
 - `docs/explanation/development/ex-de__ai-agents` - Missing .md extension
 ```
 
-See [Linking Convention](../conventions/ex-co__linking-convention.md) for details.
+See [Linking Convention](../conventions/formatting/ex-co-fo__linking.md) for details.
 
 ## Agent File Size Standards
 
@@ -1408,7 +1408,7 @@ The `.claude/agents/README.md` file:
 - Lists all available agents with descriptions
 - Explains agent workflow and best practices
 - Provides guidance on when to use each agent
-- Follows the naming exception for README.md files (documented in [File Naming Convention](../conventions/ex-co__file-naming-convention.md))
+- Follows the naming exception for README.md files (documented in [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md))
 
 ### Agent Versioning
 
@@ -1470,10 +1470,10 @@ Before committing a new agent:
 
 - [Development Index](./README.md) - Overview of development conventions
 - [Conventions Index](../conventions/README.md) - Documentation conventions
-- [Color Accessibility Convention](../conventions/ex-co__color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
-- [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - How to name files
-- [Linking Convention](../conventions/ex-co__linking-convention.md) - How to link between files
-- [Diátaxis Framework](../conventions/ex-co__diataxis-framework.md) - Documentation organization
+- [Color Accessibility Convention](../conventions/formatting/ex-co-fo__color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
+- [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md) - How to name files
+- [Linking Convention](../conventions/formatting/ex-co-fo__linking.md) - How to link between files
+- [Diátaxis Framework](../conventions/meta/ex-co-me__diataxis-framework.md) - Documentation organization
 
 ---
 

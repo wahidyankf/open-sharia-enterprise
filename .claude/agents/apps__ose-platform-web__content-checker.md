@@ -401,7 +401,7 @@ code here
 
 **Fix**: Remove orphaned closing fences.
 
-See [Nested Code Fence Convention](../../docs/explanation/conventions/ex-co__nested-code-fences.md) for details.
+See [Nested Code Fence Convention](../../docs/explanation/conventions/formatting/ex-co-fo__nested-code-fences.md) for details.
 
 **Valid Code Block**:
 
@@ -802,13 +802,13 @@ Always provide:
 ## Reference Documentation
 
 **Required Reading**:
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/ex-co__hugo-content-ose-platform.md) - ose-platform-web specific standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - OSE Platform](../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - ose-platform-web specific standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content quality standards
 
 **Related Conventions**:
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible colors
-- [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) - Date/time format
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible colors
+- [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - Date/time format
 
 **Related Agents**:
 - [ose-platform-web-content-maker](./ose-platform-web-content-maker.md) - Creates ose-platform-web content (complementary agent)

@@ -111,7 +111,7 @@ graph TB
 
 **Option A: Manual creation** (human author)
 
-- Write examples following [By-Example Tutorial Convention](../conventions/ex-co__by-example-tutorial.md)
+- Write examples following [By-Example Tutorial Convention](../conventions/tutorial/ex-co-tu__by-example.md)
 - Focus on educational value and code quality
 - Don't worry about perfect compliance (checker will catch issues)
 
@@ -768,7 +768,7 @@ This workflow is part of the **Tutorial Quality Family**:
 
 ## Related Documentation
 
-- **[By-Example Tutorial Convention](../conventions/ex-co__by-example-tutorial.md)**: Quality standards
+- **[By-Example Tutorial Convention](../conventions/tutorial/ex-co-tu__by-example.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../development/ex-de__maker-checker-fixer-pattern.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../development/ex-de__fixer-confidence-levels.md)**: Confidence assessment
 - **[apps**ayokoding-web**by-example-checker agent](../../.claude/agents/apps**ayokoding-web**by-example-checker.md)**: Validation agent

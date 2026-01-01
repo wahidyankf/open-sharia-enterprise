@@ -816,11 +816,11 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 
 **Quality Standards:**
 
-- [Content Quality Principles](./ex-co__content-quality.md) - Universal markdown quality standards
-- [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - LaTeX notation standards
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Accessible color palette
-- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Hugo content standards
-- [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - ayokoding-web specifics
+- [Content Quality Principles](./ex-co-co__quality.md) - Universal markdown quality standards
+- [Mathematical Notation Convention](../formatting/ex-co-fo__mathematical-notation.md) - LaTeX notation standards
+- [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md) - Accessible color palette
+- [Hugo Content Convention - Shared](../hugo/ex-co-hu__shared.md) - Hugo content standards
+- [Hugo Content Convention - ayokoding](../hugo/ex-co-hu__ayokoding.md) - ayokoding-web specifics
 
 **Development Practices:**
 

@@ -41,7 +41,7 @@ This convention establishes the standard linking format for all markdown files i
 ### What This Convention Does NOT Cover
 
 - **Link validation** - Covered by docs\_\_link-general-checker and ayokoding-web-link-checker agents
-- **Link text quality** - Descriptive link text is covered in [Content Quality Principles](./ex-co__content-quality.md)
+- **Link text quality** - Descriptive link text is covered in [Content Quality Principles](../content/ex-co-co__quality.md)
 - **Hugo site URLs** - Hugo-specific linking covered in Hugo content conventions
 - **Anchor links** - Deep linking to specific sections (implementation detail)
 
@@ -78,8 +78,8 @@ Use standard markdown link syntax with relative paths:
    - **Important**: The number of `../` depends on your file's nesting depth (see [Nested Directory Linking](#nested-directory-linking))
 
 3. **Use descriptive link text instead of filename identifiers**
-   - ✅ `[File Naming Convention](./conventions/ex-co__file-naming-convention.md)`
-   - ❌ `[ex-co__file-naming-convention](./conventions/ex-co__file-naming-convention.md)`
+   - ✅ `[File Naming Convention](./conventions/meta/ex-co-me__file-naming.md)`
+   - ❌ `[ex-co__file-naming-convention](./conventions/meta/ex-co-me__file-naming.md)`
 
 4. **Avoid Obsidian-only wiki link syntax**
    - ❌ `[[filename]]`
@@ -99,7 +99,7 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to nested files -->
 
-[File Naming Convention](./explanation/conventions/ex-co__file-naming-convention.md)
+[File Naming Convention](./explanation/conventions/meta/ex-co-me__file-naming.md)
 [Conventions Index](./explanation/conventions/README.md)
 ```
 
@@ -126,8 +126,8 @@ Use standard markdown link syntax with relative paths:
 ```markdown
 <!-- Link to sibling files in same directory -->
 
-[File Naming Convention](./ex-co__file-naming-convention.md)
-[Linking Convention](./ex-co__linking-convention.md)
+[File Naming Convention](../meta/ex-co-me__file-naming.md)
+[Linking Convention](./ex-co-fo__linking.md)
 
 <!-- Link to parent directory -->
 
@@ -149,13 +149,13 @@ Use standard markdown link syntax with relative paths:
 ```markdown
 <!-- Descriptive text with relative path and .md extension -->
 
-[Understanding the Diátaxis Framework](./ex-co__diataxis-framework.md)
+[Understanding the Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md)
 [Monorepo Structure](../../reference/re__monorepo-structure.md)
 [AI Agents Convention](../development/ex-de__ai-agents.md)
 
 <!-- Links with context -->
 
-See the [file naming convention](./ex-co__file-naming-convention.md) for details.
+See the [file naming convention](../meta/ex-co-me__file-naming.md) for details.
 For more information, refer to our [automation principle](../principles/software-engineering/ex-pr-se__automation-over-manual.md).
 ```
 
@@ -177,10 +177,10 @@ For more information, refer to our [automation principle](../principles/software
 
 <!-- Using filename as link text -->
 
-[ex-co\_\_file-naming-convention.md](./ex-co__file-naming-convention.md)
+[ex-co\_\_file-naming-convention.md](../meta/ex-co-me__file-naming.md)
 
 <!-- Wrong number of ../ for nesting depth -->
-<!-- From docs/explanation/conventions/ex-co__linking-convention.md (2 levels deep) -->
+<!-- From docs/explanation/conventions/formatting/ex-co-fo__linking.md (2 levels deep) -->
 
 [Documentation Home](./README.md) <!-- Should be ../../README.md -->
 [Tutorials](../tutorials/README.md) <!-- Only 1 ../ instead of 2 -->
@@ -218,7 +218,8 @@ Understanding relative paths is crucial when linking from files at different nes
 | ----------------------------------------------------------------- | ------------------ | --------------------- |
 | `docs/README.md`                                                  | 0 (at root)        | `.` (current dir)     |
 | `docs/tutorials/README.md`                                        | 1 level deep       | `../`                 |
-| `docs/explanation/conventions/ex-co__linking.md`                  | 2 levels deep      | `../../`              |
+| `docs/explanation/conventions/README.md`                          | 2 levels deep      | `../../`              |
+| `docs/explanation/conventions/formatting/ex-co-fo__linking.md`    | 3 levels deep      | `../../../`           |
 | `docs/explanation/principles/software-engineering/ex-pr-se__*.md` | 3 levels deep      | `../../../`           |
 
 ### Common Linking Patterns
@@ -241,7 +242,7 @@ Understanding relative paths is crucial when linking from files at different nes
 [How-To](../how-to/README.md)
 ```
 
-#### From 2-Level Deep Files (`docs/explanation/conventions/ex-co__linking-convention.md`)
+#### From 2-Level Deep Files (`docs/explanation/conventions/formatting/ex-co-fo__linking.md`)
 
 ```markdown
 <!-- To docs/ root (up 2 levels) -->
@@ -255,7 +256,7 @@ Understanding relative paths is crucial when linking from files at different nes
 
 <!-- To sibling files (same directory) -->
 
-[File Naming Convention](./ex-co__file-naming-convention.md)
+[File Naming Convention](../meta/ex-co-me__file-naming.md)
 ```
 
 #### From 3-Level Deep Files (`docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md`)
@@ -286,16 +287,16 @@ To verify your relative path is correct:
 3. **Count each `/dirname/` as going down one level**
 4. **Verify you end at the target file**
 
-Example from `docs/explanation/conventions/ex-co__file-naming-convention.md` to `docs/tutorials/README.md`:
+Example from `docs/explanation/conventions/meta/ex-co-me__file-naming.md` to `docs/tutorials/README.md`:
 
 ```
-Start:  docs/explanation/conventions/ex-co__file-naming-convention.md
+Start:  docs/explanation/conventions/meta/ex-co-me__file-naming.md
   ../   docs/explanation/conventions/       (up 1)
   ../   docs/explanation/                   (up 2)
   ../   docs/                               (up 3 - wait, only need 2!)
 
 Actually:
-Start:  docs/explanation/conventions/ex-co__file-naming-convention.md
+Start:  docs/explanation/conventions/meta/ex-co-me__file-naming.md
   ../   docs/explanation/                   (up 1)
   ../   docs/                               (up 2)
   tutorials/  docs/tutorials/               (down 1)
@@ -312,7 +313,7 @@ Final path: ../../tutorials/README.md
 - **Hugo links omit** the `.md` extension
 - **Why different**: Hugo renders the same navigation content in different page contexts (sidebar, mobile menu, homepage), so relative paths would resolve incorrectly
 
-See [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) for complete Hugo linking standards applicable to all sites, and [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) or [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) for site-specific linking patterns.
+See [Hugo Content Convention - Shared](../hugo/ex-co-hu__shared.md) for complete Hugo linking standards applicable to all sites, and [Hugo Content Convention - ayokoding](../hugo/ex-co-hu__ayokoding.md) or [Hugo Content Convention - OSE Platform](../hugo/ex-co-hu__ose-platform.md) for site-specific linking patterns.
 
 ## Anchor Links (Same Page)
 
@@ -360,7 +361,7 @@ When creating documentation, verify links by:
 
 ## 🔗 Related Documentation
 
-- [File Naming Convention](./ex-co__file-naming-convention.md) - How to name documentation files
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - How to name documentation files
 - [Conventions Index](./README.md) - Overview of all documentation conventions
 
 ---
@@ -402,12 +403,12 @@ The **first mention** of a rule in any document section MUST use a markdown link
 ```markdown
 ## Implementation Details
 
-This feature implements the [Linking Convention](./ex-co__linking-convention.md) by using relative paths. The `Linking Convention` requires `.md` extensions, which helps maintain compatibility across viewers. When applying `Linking Convention` rules, verify all paths are relative.
+This feature implements the [Linking Convention](./ex-co-fo__linking.md) by using relative paths. The `Linking Convention` requires `.md` extensions, which helps maintain compatibility across viewers. When applying `Linking Convention` rules, verify all paths are relative.
 ```
 
 **Analysis:**
 
-- First mention: `[Linking Convention](./ex-co__linking-convention.md)` ✅ (markdown link)
+- First mention: `[Linking Convention](./ex-co-fo__linking.md)` ✅ (markdown link)
 - Second mention: `` `Linking Convention` `` ✅ (inline code)
 - Third mention: `` `Linking Convention` `` ✅ (inline code)
 
@@ -416,7 +417,7 @@ This feature implements the [Linking Convention](./ex-co__linking-convention.md)
 ```markdown
 ## Standards Compliance
 
-All documentation follows the [File Naming Convention](./ex-co__file-naming-convention.md) and [Linking Convention](./ex-co__linking-convention.md). The `File Naming Convention` defines prefix patterns, while the `Linking Convention` specifies link syntax. Both `File Naming Convention` and `Linking Convention` are validated by docs-checker.
+All documentation follows the [File Naming Convention](../meta/ex-co-me__file-naming.md) and [Linking Convention](./ex-co-fo__linking.md). The `File Naming Convention` defines prefix patterns, while the `Linking Convention` specifies link syntax. Both `File Naming Convention` and `Linking Convention` are validated by docs-checker.
 ```
 
 **Analysis:**
@@ -439,7 +440,7 @@ All documentation follows the Linking Convention. The Linking Convention require
 ```markdown
 ## Standards Compliance
 
-All documentation follows the [Linking Convention](./ex-co__linking-convention.md). The [Linking Convention](./ex-co__linking-convention.md) requires .md extensions. When applying [Linking Convention](./ex-co__linking-convention.md) rules, verify paths.
+All documentation follows the [Linking Convention](./ex-co-fo__linking.md). The [Linking Convention](./ex-co-fo__linking.md) requires .md extensions. When applying [Linking Convention](./ex-co-fo__linking.md) rules, verify paths.
 ```
 
 **Issue:** Redundant links create visual clutter and maintenance burden.
@@ -480,7 +481,7 @@ validate_links
 
 <!-- File path - literal path -->
 
-The rule is defined in `docs/explanation/conventions/ex-co__linking-convention.md`
+The rule is defined in `docs/explanation/conventions/formatting/ex-co-fo__linking.md`
 
 <!-- Meta-discussion - discussing the name itself -->
 

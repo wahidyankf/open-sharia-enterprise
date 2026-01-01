@@ -944,9 +944,9 @@ Always provide:
 
 **Hugo Content Conventions:**
 
-- `docs/explanation/conventions/ex-co__hugo-content-shared.md` - Shared Hugo content standards
-- `docs/explanation/conventions/ex-co__hugo-content-ayokoding.md` - ayokoding-web specific standards (CRITICAL for weight system)
-- `docs/explanation/conventions/ex-co__programming-language-content.md` - Programming language structure standards
+- `docs/explanation/conventions/hugo/ex-co-hu__shared.md` - Shared Hugo content standards
+- `docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md` - ayokoding-web specific standards (CRITICAL for weight system)
+- `docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md` - Programming language structure standards
 
 **Development Practices:**
 
@@ -992,4 +992,4 @@ Always provide:
 - Consistent cross-topic experience (programming languages, infrastructure, data tools, platforms)
 - Explicit creator control over structure
 
-See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrangement Standard](../../docs/explanation/conventions/ex-co__programming-language-tutorial-structure.md#tutorial-folder-arrangement-standard) for complete details.
+See [Programming Language Tutorial Structure Convention - Tutorial Folder Arrangement Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for complete details.

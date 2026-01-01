@@ -276,7 +276,7 @@ Maker-Checker-Fixer Workflow:
 - Vision supported: Accessible tools enable global participation in Islamic finance
 - Key value: Design for universal access from the start
 
-**Layer 2 - Convention**: [Color Accessibility Convention](./conventions/ex-co__color-accessibility.md)
+**Layer 2 - Convention**: [Color Accessibility Convention](./conventions/formatting/ex-co-fo__color-accessibility.md)
 
 - Implements: Accessibility First principle
 - Rule: Use only verified color-blind friendly palette (Blue, Orange, Teal, Purple, Brown)
@@ -308,7 +308,7 @@ Maker-Checker-Fixer Workflow:
 - Vision supported: Transparency enables verification of Shariah compliance
 - Key value: Code should be transparent and understandable
 
-**Layer 2 - Convention**: [File Naming Convention](./conventions/ex-co__file-naming-convention.md)
+**Layer 2 - Convention**: [File Naming Convention](./conventions/meta/ex-co-me__file-naming.md)
 
 - Implements: Explicit Over Implicit principle
 - Rule: Prefix encodes directory path explicitly (`ex-co__` = explanation/conventions/)
@@ -339,7 +339,7 @@ Maker-Checker-Fixer Workflow:
 - Vision supported: Automation ensures consistent Shariah compliance validation
 - Key value: Machines handle repetitive tasks, humans focus on creative work
 
-**Layer 2 - Convention**: [Content Quality Principles](./conventions/ex-co__content-quality.md)
+**Layer 2 - Convention**: [Content Quality Principles](./conventions/content/ex-co-co__quality.md)
 
 - Implements: Automation Over Manual principle
 - Rule: Automated validation of active voice, heading hierarchy, alt text
@@ -515,8 +515,8 @@ Periodically verify:
 
 **Meta-Documentation**:
 
-- [Diátaxis Framework](./conventions/ex-co__diataxis-framework.md) - Four documentation types
-- [Convention Writing Convention](./conventions/ex-co__convention-writing.md) - How to write conventions
+- [Diátaxis Framework](./conventions/meta/ex-co-me__diataxis-framework.md) - Four documentation types
+- [Convention Writing Convention](./conventions/content/ex-co-co__convention-writing.md) - How to write conventions
 - [AI Agents Convention](./development/ex-de__ai-agents.md) - How to create agents
 
 ## Principles Implemented/Respected

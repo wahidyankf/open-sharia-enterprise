@@ -45,7 +45,7 @@ This practice implements/respects the following conventions:
 
 - **[Code Quality Convention](./ex-de__code-quality.md)**: The "make it right" stage applies code quality standards (Prettier formatting, linting) before the "make it fast" stage to ensure clean code before optimization.
 
-- **[Content Quality Principles](../conventions/ex-co__content-quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
+- **[Content Quality Principles](../conventions/content/ex-co-co__quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
 
 ### Benefits of This Workflow
 

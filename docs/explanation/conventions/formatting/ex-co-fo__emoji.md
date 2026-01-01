@@ -146,11 +146,11 @@ Use for AI agent categorization in `.claude/agents/README.md`:
 
 **Note:** These colored square emojis are ONLY used in `.claude/agents/README.md` to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../development/ex-de__ai-agents.md) for complete details on agent color categorization.
 
-**Color Accessibility:** All four colors (blue, green, yellow, purple) are from the verified accessible palette and work for all types of color blindness (protanopia, deuteranopia, tritanopia). These emojis are SUPPLEMENTARY to text labels - agents are primarily identified by their name, role suffix, and description, not by color alone. See [Color Accessibility Convention](./ex-co__color-accessibility.md) for complete details.
+**Color Accessibility:** All four colors (blue, green, yellow, purple) are from the verified accessible palette and work for all types of color blindness (protanopia, deuteranopia, tritanopia). These emojis are SUPPLEMENTARY to text labels - agents are primarily identified by their name, role suffix, and description, not by color alone. See [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) for complete details.
 
 ## 🎨 Color Accessibility for Colored Emojis
 
-**Master Reference**: All colored emoji usage MUST follow the [Color Accessibility Convention](./ex-co__color-accessibility.md) - the authoritative source for accessible color palette, WCAG standards, and testing methodology. This section provides emoji-specific guidance.
+**Master Reference**: All colored emoji usage MUST follow the [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) - the authoritative source for accessible color palette, WCAG standards, and testing methodology. This section provides emoji-specific guidance.
 
 **Where colored emojis (like 🟦🟩🟨🟪) are used for visual categorization, ensure:**
 
@@ -160,7 +160,7 @@ Use for AI agent categorization in `.claude/agents/README.md`:
 
 2. **All colors used are from the verified accessible palette**
    - Blue (#0173B2), Orange (#DE8F05), Teal (#029E73), Purple (#CC78BC), Brown (#CA9161)
-   - See [Color Accessibility Convention](./ex-co__color-accessibility.md) for complete palette details, WCAG compliance verification, and testing tools
+   - See [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) for complete palette details, WCAG compliance verification, and testing tools
 
 3. **Users with color blindness can still identify items by shape/text alone**
    - Square emoji shape (🟦) is distinct from other emoji shapes
@@ -203,7 +203,7 @@ Agent for documentation
 - Relies solely on color and shape
 - No semantic context provided
 
-For complete color accessibility guidelines including WCAG standards, testing tools, and research sources, see [Color Accessibility Convention](./ex-co__color-accessibility.md).
+For complete color accessibility guidelines including WCAG standards, testing tools, and research sources, see [Color Accessibility Convention](./ex-co-fo__color-accessibility.md).
 
 ## ✅ Usage Rules
 
@@ -694,11 +694,11 @@ When reviewing emoji usage, verify:
 
 ## 🔗 Related Conventions
 
-- [File Naming Convention](./ex-co__file-naming-convention.md)
-- [Linking Convention](./ex-co__linking-convention.md)
-- [Diátaxis Framework](./ex-co__diataxis-framework.md)
+- [File Naming Convention](../meta/ex-co-me__file-naming.md)
+- [Linking Convention](./ex-co-fo__linking.md)
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md)
 - [AI Agents Convention](../development/ex-de__ai-agents.md) - For agent color categorization using colored square emojis
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - For accessible color palette and WCAG standards
+- [Color Accessibility Convention](./ex-co-fo__color-accessibility.md) - For accessible color palette and WCAG standards
 
 ## 📝 Notes
 

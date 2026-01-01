@@ -978,9 +978,9 @@ LaTeX math has good accessibility:
 
 ## 🔗 Related Conventions
 
-- [Diagram and Schema Convention](./ex-co__diagrams.md) - When to use Mermaid diagrams vs ASCII art (plain text for diagrams, LaTeX for math)
-- [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage in documentation
-- [File Naming Convention](./ex-co__file-naming-convention.md) - How to name documentation files
+- [Diagram and Schema Convention](./ex-co-fo__diagrams.md) - When to use Mermaid diagrams vs ASCII art (plain text for diagrams, LaTeX for math)
+- [Emoji Usage Convention](./ex-co-fo__emoji.md) - Semantic emoji usage in documentation
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - How to name documentation files
 - [Conventions Index](./README.md) - Overview of all conventions
 
 ## 🌐 External Resources

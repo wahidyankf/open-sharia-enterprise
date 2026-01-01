@@ -741,9 +741,9 @@ Return report to user/plan-maker for fixes.
 
 **Documentation Conventions:**
 
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` - File naming standards
-- `docs/explanation/conventions/ex-co__linking-convention.md` - Linking standards
-- `docs/explanation/conventions/ex-co__emoji-usage.md` - When and where to use emojis
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - File naming standards
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - Linking standards
+- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md` - When and where to use emojis
 
 **Related Agents:**
 

@@ -30,11 +30,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Plans Organization Convention](../conventions/ex-co__plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
+- **[Plans Organization Convention](../conventions/project/ex-co-pr__plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
 
-- **[Content Quality Principles](../conventions/ex-co__content-quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
+- **[Content Quality Principles](../conventions/content/ex-co-co__quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
 
-- **[Diagrams Convention](../conventions/ex-co__diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
+- **[Diagrams Convention](../conventions/formatting/ex-co-fo__diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
 
 ## Purpose
 
@@ -341,7 +341,7 @@ Then something happens
 
 - **Requirements files** (`plans/*/requirements.md`): Define acceptance criteria for each user story
 - **Delivery checklists**: Validate implementation against Gherkin scenarios
-- See [Plans Organization Convention](../conventions/ex-co__plans-organization.md)
+- See [Plans Organization Convention](../conventions/project/ex-co-pr__plans-organization.md)
 
 ### ✅ Feature Specifications
 
@@ -476,9 +476,9 @@ graph TD
 
 ## Related Conventions
 
-- [Plans Organization Convention](../conventions/ex-co__plans-organization.md) - Where to use acceptance criteria in plans
-- [Tutorial Convention](../conventions/ex-co__tutorials.md) - Acceptance criteria for tutorial quality
-- [Content Quality Principles](../conventions/ex-co__content-quality.md) - Writing clear, testable content
+- [Plans Organization Convention](../conventions/project/ex-co-pr__plans-organization.md) - Where to use acceptance criteria in plans
+- [Tutorial Convention](../conventions/tutorial/ex-co-tu__general.md) - Acceptance criteria for tutorial quality
+- [Content Quality Principles](../conventions/content/ex-co-co__quality.md) - Writing clear, testable content
 
 ## Summary
 

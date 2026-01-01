@@ -136,7 +136,7 @@ The level-based weight system uses a two-part rule:
 
 The rule connects them: folder at directory depth N uses weight range N, content inside uses weight range N+1.
 
-For complete details on the level-based weight system, see [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md).
+For complete details on the level-based weight system, see [Hugo Content Convention - ayokoding](../hugo/ex-co-hu__ayokoding.md).
 
 **Notes:**
 
@@ -788,14 +788,14 @@ Even Elixir, the highest standard, has gaps:
 
 ## Related Conventions
 
-- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Base Hugo content rules
-- [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - Hextra theme specifics
-- [Tutorial Naming Convention](./ex-co__tutorial-naming.md) - Tutorial level definitions
-- [Content Quality Principles](./ex-co__content-quality.md) - Quality standards
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Documentation categorization
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - Approved color palette
-- [Diagrams Convention](./ex-co__diagrams.md) - Mermaid diagram standards
-- [Factual Validation Convention](./ex-co__factual-validation.md) - Fact-checking methodology
+- [Hugo Content Convention - Shared](../hugo/ex-co-hu__shared.md) - Base Hugo content rules
+- [Hugo Content Convention - ayokoding](../hugo/ex-co-hu__ayokoding.md) - Hextra theme specifics
+- [Tutorial Naming Convention](./ex-co-tu__naming.md) - Tutorial level definitions
+- [Content Quality Principles](../content/ex-co-co__quality.md) - Quality standards
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Documentation categorization
+- [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md) - Approved color palette
+- [Diagrams Convention](../formatting/ex-co-fo__diagrams.md) - Mermaid diagram standards
+- [Factual Validation Convention](../content/ex-co-co__factual-validation.md) - Fact-checking methodology
 
 ## Related How-To Guides
 

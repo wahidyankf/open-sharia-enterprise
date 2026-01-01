@@ -978,10 +978,10 @@ Always provide:
 - [Fixer Confidence Levels Convention](../../docs/explanation/development/ex-de__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Repository Validation Methodology Convention](../../docs/explanation/development/ex-de__repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../docs/explanation/development/ex-de__temporary-files.md) - Where to store fix reports
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Documentation quality standards
-- [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md) - LaTeX validation target
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Diagram color validation target
-- [Linking Convention](../../docs/explanation/conventions/ex-co__linking-convention.md) - Link format validation target
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Documentation quality standards
+- [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) - LaTeX validation target
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Diagram color validation target
+- [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - Link format validation target
 
 ---
 

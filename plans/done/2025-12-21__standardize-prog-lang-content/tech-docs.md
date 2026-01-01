@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-This plan follows a **standardized content architecture** pattern established by the [Programming Language Content Standard](../../docs/explanation/conventions/ex-co__programming-language-content.md).
+This plan follows a **standardized content architecture** pattern established by the [Programming Language Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md).
 
 ### Content Structure Pattern
 
@@ -558,11 +558,11 @@ graph TD
 
 ## Related Documentation
 
-- [Programming Language Content Standard](../../docs/explanation/conventions/ex-co__programming-language-content.md) - Universal content architecture
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme specifics
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Color palette requirements
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Quality standards
-- [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md) - Fact-checking methodology
+- [Programming Language Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) - Universal content architecture
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme specifics
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Color palette requirements
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Quality standards
+- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) - Fact-checking methodology
 
 ---
 

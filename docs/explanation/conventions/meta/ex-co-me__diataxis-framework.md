@@ -40,10 +40,10 @@ This convention establishes the Diátaxis framework as the organizational struct
 
 ### What This Convention Does NOT Cover
 
-- **How to write content within categories** - Covered in category-specific conventions (e.g., [Tutorial Naming Convention](./ex-co__tutorial-naming.md), [README Quality Convention](./ex-co__readme-quality.md))
-- **File naming within categories** - Covered in [File Naming Convention](./ex-co__file-naming-convention.md)
+- **How to write content within categories** - Covered in category-specific conventions (e.g., [Tutorial Naming Convention](../tutorial/ex-co-tu__naming.md), [README Quality Convention](../content/ex-co-co__readme-quality.md))
+- **File naming within categories** - Covered in [File Naming Convention](./ex-co-me__file-naming.md)
 - **Hugo site structure** - Covered in Hugo content conventions
-- **Content quality standards** - Covered in [Content Quality Principles](./ex-co__content-quality.md)
+- **Content quality standards** - Covered in [Content Quality Principles](../content/ex-co-co__quality.md)
 
 ## 📋 What is Diátaxis?
 
@@ -227,7 +227,7 @@ The directory names follow semantic conventions:
 - `reference/` is a **mass noun** (like "reference library") representing reference material as a whole
 - `explanation/` is a **mass noun** representing explanatory content as a collective
 
-This is intentional and follows standard documentation naming conventions. See the [File Naming Convention](./ex-co__file-naming-convention.md) for more details.
+This is intentional and follows standard documentation naming conventions. See the [File Naming Convention](./ex-co-me__file-naming.md) for more details.
 
 ### File Naming Integration
 
@@ -242,7 +242,7 @@ For nested directories, add 2-letter abbreviations:
 
 - `ex-co__` = explanation/conventions
 
-See [File Naming Convention](./ex-co__file-naming-convention.md) for details.
+See [File Naming Convention](./ex-co-me__file-naming.md) for details.
 
 ### Frontmatter Standard
 
@@ -370,7 +370,7 @@ Start here
 
 ### Explanation Example: This Document
 
-**Location**: `docs/explanation/conventions/ex-co__diataxis-framework.md`
+**Location**: `docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md`
 
 **Structure**:
 
@@ -384,9 +384,9 @@ Start here
 ## 🔗 Related Documentation
 
 - [Conventions Index](./README.md) - Overview of all documentation conventions
-- [File Naming Convention](./ex-co__file-naming-convention.md) - How to name files with category prefixes
-- [Linking Convention](./ex-co__linking-convention.md) - How to link between documents
-- [OSS Documentation Convention](./ex-co__oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
+- [File Naming Convention](./ex-co-me__file-naming.md) - How to name files with category prefixes
+- [Linking Convention](../formatting/ex-co-fo__linking.md) - How to link between documents
+- [OSS Documentation Convention](../content/ex-co-co__oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
 
 ## 🌐 External Resources
 

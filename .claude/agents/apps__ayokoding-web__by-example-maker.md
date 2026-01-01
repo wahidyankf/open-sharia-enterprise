@@ -35,7 +35,7 @@ Your primary job is to **create by-example tutorial content** for experienced de
 
 ## Convention Authority
 
-**Master Reference**: [By-Example Tutorial Convention](../../docs/explanation/conventions/ex-co__by-example-tutorial.md)
+**Master Reference**: [By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)
 
 This convention defines:
 
@@ -855,25 +855,25 @@ func main() {
 
 **Convention Authority:**
 
-- [By-Example Tutorial Convention](../../docs/explanation/conventions/ex-co__by-example-tutorial.md) - Complete by-example standards (THE master reference)
+- [By-Example Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md) - Complete by-example standards (THE master reference)
 
 **Hugo Content Conventions:**
 
-- [Hugo Content Convention - Shared](../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - Shared](../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - ayokoding-web specific standards
 
 **Content Quality Standards:**
 
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - Universal content quality standards
-- [Tutorial Convention](../../docs/explanation/conventions/ex-co__tutorials.md) - General tutorial pedagogy
-- [Tutorial Naming Convention](../../docs/explanation/conventions/ex-co__tutorial-naming.md) - Tutorial type standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content quality standards
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - General tutorial pedagogy
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Tutorial type standards
 
 **Technical Standards:**
 
-- [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md) - LaTeX usage
-- [Color Accessibility Convention](../../docs/explanation/conventions/ex-co__color-accessibility.md) - Accessible color palette
-- [Diagrams Convention](../../docs/explanation/conventions/ex-co__diagrams.md) - Mermaid diagram standards
-- [Factual Validation Convention](../../docs/explanation/conventions/ex-co__factual-validation.md) - Verification methodology
+- [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) - LaTeX usage
+- [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible color palette
+- [Diagrams Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) - Mermaid diagram standards
+- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) - Verification methodology
 
 **Related Agents:**
 
@@ -933,4 +933,4 @@ graph TD
     B -->|Circle| C[area = π × r²]
 ```
 
-See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/ex-co__diagrams.md#diagram-size-and-splitting) for complete splitting guidelines and real-world examples.
+See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md#diagram-size-and-splitting) for complete splitting guidelines and real-world examples.

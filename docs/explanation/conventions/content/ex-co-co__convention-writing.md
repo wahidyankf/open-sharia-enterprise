@@ -64,14 +64,14 @@ Does this define HOW TO WRITE OR FORMAT DOCUMENTATION?
 
 ### Examples of Scope Boundaries
 
-| Topic                                             | Location                                                                                                               | Reasoning                            |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| How to write Hugo content (frontmatter, markdown) | `conventions/ex-co__hugo-content-shared.md`, `ex-co__hugo-content-ayokoding.md`, `ex-co__hugo-content-ose-platform.md` | About **writing** content            |
-| How to develop Hugo themes (layouts, templates)   | `development/ex-de__hugo-development.md`                                                                               | About **building** infrastructure    |
-| How to format tutorials                           | `conventions/ex-co__tutorials.md`                                                                                      | About **writing** tutorials          |
-| How to write acceptance criteria                  | `development/ex-de__acceptance-criteria.md`                                                                            | About **software quality** process   |
-| How to name files                                 | `conventions/ex-co__file-naming-convention.md`                                                                         | About **documentation** organization |
-| How to write commit messages                      | `development/ex-de__commit-messages.md`                                                                                | About **git workflow**               |
+| Topic                                             | Location                                                                                                          | Reasoning                            |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| How to write Hugo content (frontmatter, markdown) | `conventions/hugo/ex-co-hu__shared.md`, `ex-co__hugo-content-ayokoding.md`, `ex-co__hugo-content-ose-platform.md` | About **writing** content            |
+| How to develop Hugo themes (layouts, templates)   | `development/ex-de__hugo-development.md`                                                                          | About **building** infrastructure    |
+| How to format tutorials                           | `conventions/tutorial/ex-co-tu__general.md`                                                                       | About **writing** tutorials          |
+| How to write acceptance criteria                  | `development/ex-de__acceptance-criteria.md`                                                                       | About **software quality** process   |
+| How to name files                                 | `conventions/meta/ex-co-me__file-naming.md`                                                                       | About **documentation** organization |
+| How to write commit messages                      | `development/ex-de__commit-messages.md`                                                                           | About **git workflow**               |
 
 ## Convention Document Structure
 
@@ -285,9 +285,9 @@ Before publishing a convention document, verify:
 
 ### Convention Compliance
 
-- [ ] Follows [File Naming Convention](./ex-co__file-naming-convention.md) - `ex-co__*.md` pattern
-- [ ] Follows [Linking Convention](./ex-co__linking-convention.md) - Relative paths with `.md`
-- [ ] Follows [Content Quality Principles](./ex-co__content-quality.md) - Active voice, single H1, etc.
+- [ ] Follows [File Naming Convention](../meta/ex-co-me__file-naming.md) - `ex-co__*.md` pattern
+- [ ] Follows [Linking Convention](../formatting/ex-co-fo__linking.md) - Relative paths with `.md`
+- [ ] Follows [Content Quality Principles](./ex-co-co__quality.md) - Active voice, single H1, etc.
 - [ ] Uses TAB indentation for bullet items (Obsidian compatibility)
 - [ ] YAML frontmatter uses 2 spaces for indentation
 
@@ -300,7 +300,7 @@ Before publishing a convention document, verify:
 
 ### Accessibility
 
-- [ ] Diagrams use color-blind friendly palette ([Color Accessibility Convention](./ex-co__color-accessibility.md))
+- [ ] Diagrams use color-blind friendly palette ([Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md))
 - [ ] Images have alt text
 - [ ] Acronyms defined on first use
 - [ ] Clear hierarchy (proper heading nesting)
@@ -380,7 +380,7 @@ Convention documents vary in length based on complexity:
 
 ## Naming Convention
 
-Convention files follow the [File Naming Convention](./ex-co__file-naming-convention.md):
+Convention files follow the [File Naming Convention](../meta/ex-co-me__file-naming.md):
 
 **Pattern:** `ex-co__[content-identifier].md`
 
@@ -432,9 +432,9 @@ If a convention becomes obsolete:
 
 Looking for inspiration? These conventions exemplify different structural approaches:
 
-- **[Color Accessibility Convention](./ex-co__color-accessibility.md)** - Comprehensive reference convention with detailed palette specifications, contrast ratios, and tool-specific guidance
-- **[Tutorial Naming Convention](./ex-co__tutorial-naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
-- **[Indentation Convention](./ex-co__indentation.md)** - Simple, focused convention addressing a single technical standard with clear examples
+- **[Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md)** - Comprehensive reference convention with detailed palette specifications, contrast ratios, and tool-specific guidance
+- **[Tutorial Naming Convention](../tutorial/ex-co-tu__naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
+- **[Indentation Convention](../formatting/ex-co-fo__indentation.md)** - Simple, focused convention addressing a single technical standard with clear examples
 
 ## Examples
 
@@ -569,13 +569,13 @@ When creating a convention:
 
 **Related Meta-Documentation:**
 
-- [Content Quality Principles](./ex-co__content-quality.md) - Universal quality standards for all markdown content
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Four-category documentation organization framework
+- [Content Quality Principles](./ex-co-co__quality.md) - Universal quality standards for all markdown content
+- [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md) - Four-category documentation organization framework
 
 **File Conventions:**
 
-- [File Naming Convention](./ex-co__file-naming-convention.md) - How to name files with hierarchical prefixes
-- [Linking Convention](./ex-co__linking-convention.md) - How to link between documentation files
+- [File Naming Convention](../meta/ex-co-me__file-naming.md) - How to name files with hierarchical prefixes
+- [Linking Convention](../formatting/ex-co-fo__linking.md) - How to link between documentation files
 
 **Development Practices:**
 

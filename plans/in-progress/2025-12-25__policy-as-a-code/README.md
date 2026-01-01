@@ -141,7 +141,7 @@ Big-bang implementation with logical phases completed sequentially on main branc
 
 **Conventions:**
 
-- [Plans Organization Convention](../../../docs/explanation/conventions/ex-co__plans-organization.md) - Plan structure standards
+- [Plans Organization Convention](../../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Plan structure standards
 
 **Development Practices:**
 

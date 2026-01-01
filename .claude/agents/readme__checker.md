@@ -45,9 +45,9 @@ Validate README.md content against quality standards defined in the README Quali
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../docs/explanation/conventions/ex-co__readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/conventions/ex-co__emoji-usage.md) - Emoji guidelines
+- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co__readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - General content quality standards
+- [Emoji Usage Convention](../../docs/explanation/conventions/formatting/ex-co-fo__emoji.md) - Emoji guidelines
 
 ## Validation Scope
 
@@ -278,7 +278,7 @@ Compare README with related docs:
 ```bash
 # Check for duplicate content
 Read CLAUDE.md
-Read docs/explanation/conventions/ex-co__diataxis-framework.md
+Read docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md
 Read docs/reference/re__monorepo-structure.md
 ```
 
@@ -527,7 +527,7 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 **Why**: Breaking this into problem-solution format creates a clear narrative hook. Short paragraphs are easier to scan. Readers immediately understand the context and relevance.
 
-**Reference**: [README Quality Convention - Scannability](../../docs/explanation/conventions/ex-co__readme-quality.md#2-make-it-scannable)
+**Reference**: [README Quality Convention - Scannability](../../docs/explanation/conventions/content/ex-co-co__readme-quality.md#2-make-it-scannable)
 
 **Priority**: High (opening paragraph critical for engagement)
 ```

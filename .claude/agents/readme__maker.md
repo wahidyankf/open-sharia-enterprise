@@ -30,9 +30,9 @@ Create and update README.md content following quality standards defined in the R
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../docs/explanation/conventions/ex-co__readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/conventions/ex-co__content-quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/conventions/ex-co__emoji-usage.md) - Emoji guidelines
+- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co__readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - General content quality standards
+- [Emoji Usage Convention](../../docs/explanation/conventions/formatting/ex-co-fo__emoji.md) - Emoji guidelines
 
 ## Core Principles
 

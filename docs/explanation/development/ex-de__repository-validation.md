@@ -32,13 +32,13 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../conventions/ex-co__file-naming-convention.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
+- **[File Naming Convention](../conventions/meta/ex-co-me__file-naming.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
 
-- **[Linking Convention](../conventions/ex-co__linking-convention.md)**: Link validation checks verify relative paths with .md extension exist and target files are accessible.
+- **[Linking Convention](../conventions/formatting/ex-co-fo__linking.md)**: Link validation checks verify relative paths with .md extension exist and target files are accessible.
 
-- **[Timestamp Format Convention](../conventions/ex-co__timestamp-format.md)**: Validation patterns verify UTC+7 timestamps in YAML frontmatter match ISO 8601 format with timezone offset.
+- **[Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md)**: Validation patterns verify UTC+7 timestamps in YAML frontmatter match ISO 8601 format with timezone offset.
 
-- **[Indentation Convention](../conventions/ex-co__indentation.md)**: Frontmatter extraction assumes 2-space YAML indentation when parsing nested structures.
+- **[Indentation Convention](../conventions/formatting/ex-co-fo__indentation.md)**: Frontmatter extraction assumes 2-space YAML indentation when parsing nested structures.
 
 ## 📋 Overview
 
@@ -272,13 +272,13 @@ fi
 **Example:**
 
 ```bash
-# Validate link from docs/explanation/conventions/ex-co__linking.md
-file="docs/explanation/conventions/ex-co__linking.md"
-link="[File Naming](./ex-co__file-naming.md)"
+# Validate link from docs/explanation/conventions/formatting/ex-co-fo__linking.md
+file="docs/explanation/conventions/formatting/ex-co-fo__linking.md"
+link="[Indentation](./ex-co-fo__indentation.md)"
 
 # Extract target
 link_target=$(echo "$link" | sed 's/.*(\(.*\))/\1/')
-# Result: ./ex-co__file-naming.md
+# Result: ./ex-co-fo__indentation.md
 
 # Resolve path
 resolved_path=$(dirname "$file")/"$link_target"
@@ -314,7 +314,7 @@ fi
 
 **Key details:**
 
-- Compute expected prefix from directory path (see [File Naming Convention](../conventions/ex-co__file-naming-convention.md))
+- Compute expected prefix from directory path (see [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md))
 - Extract actual prefix using `cut -d_ -f1-2` (two underscores in `prefix__`)
 - Handle special cases: `README.md`, `docs/metadata/`
 - Account for subdirectories (hyphenated names → concatenated prefixes)
@@ -499,8 +499,8 @@ grep -F "^$field:" frontmatter.txt
 ## 📚 Related Conventions
 
 - [AI Agents Convention](./ex-de__ai-agents.md) - Agents that use these validation methods
-- [File Naming Convention](../conventions/ex-co__file-naming-convention.md) - What we validate (naming patterns)
-- [Linking Convention](../conventions/ex-co__linking-convention.md) - What we validate (link formats)
+- [File Naming Convention](../conventions/meta/ex-co-me__file-naming.md) - What we validate (naming patterns)
+- [Linking Convention](../conventions/formatting/ex-co-fo__linking.md) - What we validate (link formats)
 - [Temporary Files Convention](./ex-de__temporary-files.md) - Where validation reports are stored
 
 ## 🔄 Maintenance Notes

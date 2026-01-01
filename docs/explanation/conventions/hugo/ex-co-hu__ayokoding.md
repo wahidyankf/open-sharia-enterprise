@@ -46,15 +46,15 @@ This convention defines content creation standards specific to the ayokoding-web
 
 ### What This Convention Does NOT Cover
 
-- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-co__hugo-content-shared.md)
-- **Programming language content structure** - Covered in [Programming Language Content Standard](./ex-co__programming-language-content.md)
-- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
+- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-co-hu__shared.md)
+- **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorial/ex-co-tu__programming-language-content.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorial/ex-co-tu__naming.md)
 - **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
 - **Deployment** - Covered by ayokoding-web-deployer agent
 
 ## Prerequisites
 
-**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md).
+**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co-hu__shared.md).
 
 Read the shared conventions first, as they cover:
 
@@ -151,7 +151,7 @@ params:
 - `{{< steps >}}` - Numbered step sequence
 - `{{< tabs >}}` - Tabbed content
 
-**CRITICAL: Hextra shortcodes require `{{% %}}` delimiters** (see [Shortcode Delimiter Rules](./ex-co__hugo-content-shared.md#2-shortcodes) in shared conventions).
+**CRITICAL: Hextra shortcodes require `{{% %}}` delimiters** (see [Shortcode Delimiter Rules](./ex-co-hu__shared.md#2-shortcodes) in shared conventions).
 
 **Example Usage**:
 
@@ -1178,7 +1178,7 @@ weight: 1000000  # Level 7 base
 weight: 999999   # WRONG! Would appear before overview
 ```
 
-**Note**: This complements the [Programming Language Content Standard](./ex-co__programming-language-content.md) which mandates cookbook at position 3 in how-to directories (overview at position 1, cookbook at position 3 = weight 1000001).
+**Note**: This complements the [Programming Language Content Standard](../tutorial/ex-co-tu__programming-language-content.md) which mandates cookbook at position 3 in how-to directories (overview at position 1, cookbook at position 3 = weight 1000001).
 
 #### Title Format for Overview/Ikhtisar Files
 
@@ -1355,7 +1355,7 @@ content/en/learn/swe/prog-lang/golang/
 
 **Note**: This pattern is OPTIONAL. Each topic decides independently based on content volume and diversity.
 
-**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), this Diátaxis structure is MANDATORY and follows the [Programming Language Content Standard](./ex-co__programming-language-content.md). See that convention for complete requirements including:
+**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), this Diátaxis structure is MANDATORY and follows the [Programming Language Content Standard](../tutorial/ex-co-tu__programming-language-content.md). See that convention for complete requirements including:
 
 - Universal directory structure (5 tutorial levels, cookbook, how-to guides, best practices, anti-patterns)
 - Coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%, cookbook)
@@ -2045,7 +2045,7 @@ static/
 
 **Required Reading**:
 
-- [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md) - Read this first!
+- [Shared Hugo Content Conventions](./ex-co-hu__shared.md) - Read this first!
 
 **Theme Documentation**:
 

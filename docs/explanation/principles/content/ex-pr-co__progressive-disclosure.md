@@ -375,7 +375,7 @@ Internals and customization.
 
 ### Tutorial Naming Convention
 
-**Location**: `docs/explanation/conventions/ex-co__tutorial-naming.md`
+**Location**: `docs/explanation/conventions/tutorial/ex-co-tu__naming.md`
 
 **Six progressive levels**:
 
@@ -471,10 +471,10 @@ ex-inse__security-basics.md    (7 letters - ex-inse)
 
 ## 📚 Related Conventions
 
-- [Tutorial Naming Convention](../../conventions/ex-co__tutorial-naming.md) - Six progressive tutorial levels
-- [Diátaxis Framework](../../conventions/ex-co__diataxis-framework.md) - Four documentation types
-- [File Naming Convention](../../conventions/ex-co__file-naming-convention.md) - Progressive prefix complexity
-- [Tutorial Convention](../../conventions/ex-co__tutorials.md) - Progressive tutorial structure
+- [Tutorial Naming Convention](../../conventions/tutorial/ex-co-tu__naming.md) - Six progressive tutorial levels
+- [Diátaxis Framework](../../conventions/meta/ex-co-me__diataxis-framework.md) - Four documentation types
+- [File Naming Convention](../../conventions/meta/ex-co-me__file-naming.md) - Progressive prefix complexity
+- [Tutorial Convention](../../conventions/tutorial/ex-co-tu__general.md) - Progressive tutorial structure
 
 ## 📖 References
 

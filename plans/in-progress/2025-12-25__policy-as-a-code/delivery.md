@@ -1038,9 +1038,9 @@ Phase 5 (consolidation)
 - `apps/governance-cli/cmd/root.go` (NEW)
 - `apps/governance-cli/cmd/policy.go` (NEW)
 - `.claude/agents/policy-validator.md` (NEW)
-- `docs/explanation/conventions/ex-co__file-naming-convention.md` (MODIFY)
-- `docs/explanation/conventions/ex-co__convention-writing.md` (MODIFY)
-- `docs/explanation/conventions/ex-co__content-quality.md` (MODIFY)
+- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` (MODIFY)
+- `docs/explanation/conventions/content/ex-co-co__convention-writing.md` (MODIFY)
+- `docs/explanation/conventions/content/ex-co-co__quality.md` (MODIFY)
 
 ### Phase 1
 

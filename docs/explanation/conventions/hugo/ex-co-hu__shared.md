@@ -18,8 +18,8 @@ updated: 2025-12-22
 
 This document defines **common Hugo conventions** that apply to ALL Hugo sites in this repository:
 
-- **ayokoding-web** - Educational platform using Hextra theme ([site-specific conventions](./ex-co__hugo-content-ayokoding.md))
-- **ose-platform-web** - Project landing page using PaperMod theme ([site-specific conventions](./ex-co__hugo-content-ose-platform.md))
+- **ayokoding-web** - Educational platform using Hextra theme ([site-specific conventions](./ex-co-hu__ayokoding.md))
+- **ose-platform-web** - Project landing page using PaperMod theme ([site-specific conventions](./ex-co-hu__ose-platform.md))
 
 ## Principles Implemented/Respected
 
@@ -47,7 +47,7 @@ This convention establishes shared standards that apply to **all Hugo sites** in
 
 ### What This Convention Does NOT Cover
 
-- **Site-specific conventions** - See [ayokoding-web convention](./ex-co__hugo-content-ayokoding.md) and [ose-platform-web convention](./ex-co__hugo-content-ose-platform.md)
+- **Site-specific conventions** - See [ayokoding-web convention](./ex-co-hu__ayokoding.md) and [ose-platform-web convention](./ex-co-hu__ose-platform.md)
 - **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
 - **Content strategy** - What content to create (covered in domain conventions)
 - **Deployment** - Covered by site-specific deployer agents
@@ -62,8 +62,8 @@ This shared document contains conventions that apply to **both sites**:
 
 **Site-specific patterns** (themes, configurations, workflows) are documented in separate files:
 
-- [ayokoding-web specific conventions](./ex-co__hugo-content-ayokoding.md)
-- [ose-platform-web specific conventions](./ex-co__hugo-content-ose-platform.md)
+- [ayokoding-web specific conventions](./ex-co-hu__ayokoding.md)
+- [ose-platform-web specific conventions](./ex-co-hu__ose-platform.md)
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -96,7 +96,7 @@ These conventions from `docs/` directory apply to Hugo content without modificat
 
 ### 1. Mathematical Notation Convention
 
-**Reference**: [Mathematical Notation Convention](./ex-co__mathematical-notation.md)
+**Reference**: [Mathematical Notation Convention](../formatting/ex-co-fo__mathematical-notation.md)
 
 **Application to Hugo**: Use LaTeX notation for all mathematical equations and formulas in Hugo content.
 
@@ -120,7 +120,7 @@ where $\pi$ represents the expected inflation rate.
 
 ### 2. Color Accessibility Convention
 
-**Reference**: [Color Accessibility Convention](./ex-co__color-accessibility.md)
+**Reference**: [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md)
 
 **Application to Hugo**: All Mermaid diagrams in Hugo content MUST use the verified accessible color palette.
 
@@ -154,7 +154,7 @@ graph LR
 
 ### 3. Diagrams Convention
 
-**Reference**: [Diagrams and Schema Convention](./ex-co__diagrams.md)
+**Reference**: [Diagrams and Schema Convention](../formatting/ex-co-fo__diagrams.md)
 
 **Application to Hugo**: Use Mermaid diagrams as primary format. Prefer vertical orientation (top-down) for mobile-friendly viewing.
 
@@ -221,7 +221,7 @@ flowchart LR
 
 ### 4. Emoji Usage Convention
 
-**Reference**: [Emoji Usage Convention](./ex-co__emoji-usage.md)
+**Reference**: [Emoji Usage Convention](../formatting/ex-co-fo__emoji.md)
 
 **Application to Hugo**: Selective use of semantic emojis to enhance document scannability.
 
@@ -252,7 +252,7 @@ flowchart LR
 
 ### 5. Timestamp Format Convention
 
-**Reference**: [Timestamp Format Convention](./ex-co__timestamp-format.md)
+**Reference**: [Timestamp Format Convention](../formatting/ex-co-fo__timestamp.md)
 
 **Application to Hugo**: All timestamps MUST use ISO 8601 format with UTC+7 timezone.
 
@@ -274,7 +274,7 @@ lastmod: 2025-12-07T15:45:00+07:00
 
 ### 6. Tutorial Convention
 
-**Reference**: [Tutorial Convention](./ex-co__tutorials.md)
+**Reference**: [Tutorial Convention](../tutorial/ex-co-tu__general.md)
 
 **Application to Hugo**: Applies to learning content in **ayokoding-web only**.
 
@@ -324,7 +324,7 @@ Let's start by creating a new project...
 
 ### 7. Tutorial Naming Convention
 
-**Reference**: [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
+**Reference**: [Tutorial Naming Convention](../tutorial/ex-co-tu__naming.md)
 
 **Application to Hugo**: Use standardized tutorial types in **ayokoding-web learning content only**.
 
@@ -354,7 +354,7 @@ content/id/belajar/nodejs/
 
 ### 8. No Time Estimates in Educational Content
 
-**Reference**: [Content Quality Principles - No Time Estimates](./ex-co__content-quality.md#no-time-estimates)
+**Reference**: [Content Quality Principles - No Time Estimates](../content/ex-co-co__quality.md#no-time-estimates)
 
 **Application to Hugo**: Do NOT include time estimates in educational/tutorial content.
 
@@ -399,7 +399,7 @@ These conventions from `docs/` are modified for Hugo's specific requirements.
 
 ### 1. Indentation Convention
 
-**Reference**: [Indentation Convention](./ex-co__indentation.md)
+**Reference**: [Indentation Convention](../formatting/ex-co-fo__indentation.md)
 
 **Adaptation for Hugo**:
 
@@ -443,7 +443,7 @@ tags:
 
 ### 2. Linking Convention
 
-**Reference**: [Linking Convention](./ex-co__linking-convention.md)
+**Reference**: [Linking Convention](../formatting/ex-co-fo__linking.md)
 
 **Adaptation for Hugo**:
 
@@ -540,7 +540,7 @@ The approach depends on your Hugo configuration:
 
 ### 3. File Naming Convention
 
-**Reference**: [File Naming Convention](./ex-co__file-naming-convention.md)
+**Reference**: [File Naming Convention](../meta/ex-co-me__file-naming.md)
 
 **Adaptation for Hugo**:
 
@@ -633,7 +633,7 @@ categories: ["learn"]
 
 ### 5. Date Format Convention
 
-**Reference**: [Timestamp Format Convention](./ex-co__timestamp-format.md)
+**Reference**: [Timestamp Format Convention](../formatting/ex-co-fo__timestamp.md)
 
 **Adaptation for Hugo**: Same as inherited convention, but emphasized here due to critical importance.
 
@@ -746,8 +746,8 @@ This section covers common patterns...
 
 **Site-Specific Archetypes**: Each site defines its own archetypes - see site-specific convention documents:
 
-- [ayokoding-web archetypes](./ex-co__hugo-content-ayokoding.md#archetypes)
-- [ose-platform-web archetypes](./ex-co__hugo-content-ose-platform.md#archetypes)
+- [ayokoding-web archetypes](./ex-co-hu__ayokoding.md#archetypes)
+- [ose-platform-web archetypes](./ex-co-hu__ose-platform.md#archetypes)
 
 ### 3. Shortcodes
 
@@ -764,8 +764,8 @@ This section covers common patterns...
 
 **Theme-Specific Shortcodes**: Each theme provides additional shortcodes - see site-specific convention documents:
 
-- [Hextra shortcodes (ayokoding-web)](./ex-co__hugo-content-ayokoding.md#hextra-shortcodes)
-- [PaperMod shortcodes (ose-platform-web)](./ex-co__hugo-content-ose-platform.md#papermod-shortcodes)
+- [Hextra shortcodes (ayokoding-web)](./ex-co-hu__ayokoding.md#hextra-shortcodes)
+- [PaperMod shortcodes (ose-platform-web)](./ex-co-hu__ose-platform.md#papermod-shortcodes)
 
 **Example (using Hugo built-in shortcodes)**:
 
@@ -838,8 +838,8 @@ Run `npm install`
 
 **Site-Specific Taxonomy**: Each site defines specific category values - see site-specific convention documents:
 
-- [ayokoding-web taxonomy](./ex-co__hugo-content-ayokoding.md#taxonomy)
-- [ose-platform-web taxonomy](./ex-co__hugo-content-ose-platform.md#taxonomy)
+- [ayokoding-web taxonomy](./ex-co-hu__ayokoding.md#taxonomy)
+- [ose-platform-web taxonomy](./ex-co-hu__ose-platform.md#taxonomy)
 
 **Example (generic usage)**:
 
@@ -998,25 +998,25 @@ Before publishing Hugo content, verify:
 
 **Inherited Conventions**:
 
-- [Mathematical Notation Convention](./ex-co__mathematical-notation.md)
-- [Color Accessibility Convention](./ex-co__color-accessibility.md)
-- [Diagrams and Schema Convention](./ex-co__diagrams.md)
-- [Emoji Usage Convention](./ex-co__emoji-usage.md)
-- [Timestamp Format Convention](./ex-co__timestamp-format.md)
-- [Tutorial Convention](./ex-co__tutorials.md)
-- [Tutorial Naming Convention](./ex-co__tutorial-naming.md)
-- [Content Quality Principles](./ex-co__content-quality.md)
+- [Mathematical Notation Convention](../formatting/ex-co-fo__mathematical-notation.md)
+- [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md)
+- [Diagrams and Schema Convention](../formatting/ex-co-fo__diagrams.md)
+- [Emoji Usage Convention](../formatting/ex-co-fo__emoji.md)
+- [Timestamp Format Convention](../formatting/ex-co-fo__timestamp.md)
+- [Tutorial Convention](../tutorial/ex-co-tu__general.md)
+- [Tutorial Naming Convention](../tutorial/ex-co-tu__naming.md)
+- [Content Quality Principles](../content/ex-co-co__quality.md)
 
 **Related Conventions**:
 
-- [File Naming Convention](./ex-co__file-naming-convention.md)
-- [Linking Convention](./ex-co__linking-convention.md)
-- [Indentation Convention](./ex-co__indentation.md)
+- [File Naming Convention](../meta/ex-co-me__file-naming.md)
+- [Linking Convention](../formatting/ex-co-fo__linking.md)
+- [Indentation Convention](../formatting/ex-co-fo__indentation.md)
 
 **Site-Specific Conventions**:
 
-- [ayokoding-web Hugo Content Convention](./ex-co__hugo-content-ayokoding.md)
-- [ose-platform-web Hugo Content Convention](./ex-co__hugo-content-ose-platform.md)
+- [ayokoding-web Hugo Content Convention](./ex-co-hu__ayokoding.md)
+- [ose-platform-web Hugo Content Convention](./ex-co-hu__ose-platform.md)
 
 **External Resources**:
 

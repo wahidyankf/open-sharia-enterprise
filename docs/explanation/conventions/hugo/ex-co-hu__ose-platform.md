@@ -41,14 +41,14 @@ This convention defines content creation standards specific to the ose-platform-
 
 ### What This Convention Does NOT Cover
 
-- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-co__hugo-content-shared.md)
+- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-co-hu__shared.md)
 - **Bilingual content** - This site is English-only, see ayokoding-web for bilingual patterns
 - **Hugo theme development** - Covered in [Hugo Development Convention](../development/ex-de__hugo-development.md)
 - **Deployment** - Covered by ose-platform-web-deployer agent
 
 ## Prerequisites
 
-**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md).
+**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-co-hu__shared.md).
 
 Read the shared conventions first, as they cover:
 
@@ -456,7 +456,7 @@ static/
 
 **Required Reading**:
 
-- [Shared Hugo Content Conventions](./ex-co__hugo-content-shared.md) - Read this first!
+- [Shared Hugo Content Conventions](./ex-co-hu__shared.md) - Read this first!
 
 **Theme Documentation**:
 

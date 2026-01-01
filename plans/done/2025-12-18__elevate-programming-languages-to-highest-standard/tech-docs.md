@@ -934,13 +934,13 @@ interface Issue {
 
 ### Conventions
 
-- [Programming Language Content Standard](../../../docs/explanation/conventions/ex-co__programming-language-content.md) - Master reference
-- [Hugo Content Convention - ayokoding](../../../docs/explanation/conventions/ex-co__hugo-content-ayokoding.md) - Hextra theme specifics
-- [Hugo Content Convention - Shared](../../../docs/explanation/conventions/ex-co__hugo-content-shared.md) - Base Hugo rules
-- [Content Quality Principles](../../../docs/explanation/conventions/ex-co__content-quality.md) - Quality standards
-- [Tutorial Naming Convention](../../../docs/explanation/conventions/ex-co__tutorial-naming.md) - Tutorial level definitions
-- [Color Accessibility Convention](../../../docs/explanation/conventions/ex-co__color-accessibility.md) - Approved color palette
-- [Diagrams Convention](../../../docs/explanation/conventions/ex-co__diagrams.md) - Mermaid standards
+- [Programming Language Content Standard](../../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) - Master reference
+- [Hugo Content Convention - ayokoding](../../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme specifics
+- [Hugo Content Convention - Shared](../../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Base Hugo rules
+- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Quality standards
+- [Tutorial Naming Convention](../../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Tutorial level definitions
+- [Color Accessibility Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Approved color palette
+- [Diagrams Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) - Mermaid standards
 
 ### Development Practices
 

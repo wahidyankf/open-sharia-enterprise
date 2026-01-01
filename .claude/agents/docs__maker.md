@@ -24,7 +24,7 @@ You are an expert technical documentation writer specializing in creating high-q
 - **Metadata Management**: YAML frontmatter, tags, and searchability
 - **Accuracy & Correctness**: Rigorous verification and fact-checking to ensure documentation is always accurate and reliable
 
-**CRITICAL FORMAT RULE**: All documentation you create MUST use **traditional markdown structure** (WITH H1 heading, sections, paragraphs). See [Indentation Convention](../docs/explanation/conventions/ex-co__indentation.md) for formatting details.
+**CRITICAL FORMAT RULE**: All documentation you create MUST use **traditional markdown structure** (WITH H1 heading, sections, paragraphs). See [Indentation Convention](../docs/explanation/conventions/formatting/ex-co-fo__indentation.md) for formatting details.
 
 ## Foundational Principle: Documentation First
 
@@ -78,7 +78,7 @@ Before considering documentation complete:
 
 ### File Naming Convention
 
-You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md):
+You MUST follow the [File Naming Convention](../docs/explanation/conventions/meta/ex-co-me__file-naming.md):
 
 - **Pattern**: `[prefix]__[content-identifier].[extension]`
 - **Examples**: `tu__getting-started.md`, `ex-co__file-naming-convention.md`, `hoto__deploy-app.md`, `re__api-reference.md`
@@ -93,7 +93,7 @@ You MUST follow the [File Naming Convention](../docs/explanation/conventions/ex-
 - **Always include** the `.md` extension
 - **Use relative paths** from the current file's location
 - Use descriptive link text instead of filename identifiers
-- Example: `[File Naming Convention](./conventions/ex-co__file-naming-convention.md)`
+- Example: `[File Naming Convention](./conventions/meta/ex-co-me__file-naming.md)`
 - This syntax works across GitHub web, Obsidian, and other markdown viewers
 - **Do NOT use** Obsidian-only wiki links like `[[filename]]`
 
@@ -126,7 +126,7 @@ When referencing repository rules (visions, principles, conventions, development
 ✅ **Correct - Two-tier formatting**:
 
 ```markdown
-This implements the [Linking Convention](./ex-co__linking-convention.md) by using relative paths. The `Linking Convention` requires .md extensions.
+This implements the [Linking Convention](./formatting/ex-co-fo__linking.md) by using relative paths. The `Linking Convention` requires .md extensions.
 ```
 
 ❌ **Incorrect - All plain text**:
@@ -138,7 +138,7 @@ This implements the Linking Convention by using relative paths. The Linking Conv
 ❌ **Incorrect - All links** (redundant):
 
 ```markdown
-This implements the [Linking Convention](./ex-co__linking-convention.md) by using relative paths. The [Linking Convention](./ex-co__linking-convention.md) requires .md extensions.
+This implements the [Linking Convention](./formatting/ex-co-fo__linking.md) by using relative paths. The [Linking Convention](./formatting/ex-co-fo__linking.md) requires .md extensions.
 ```
 
 ❌ **Incorrect - All inline code** (first mention not linked):
@@ -147,7 +147,7 @@ This implements the [Linking Convention](./ex-co__linking-convention.md) by usin
 This implements the `Linking Convention` by using relative paths. The `Linking Convention` requires .md extensions.
 ```
 
-See [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) for complete two-tier formatting rules.
+See [Linking Convention](../docs/explanation/conventions/formatting/ex-co-fo__linking.md) for complete two-tier formatting rules.
 
 ### Diagram Convention
 
@@ -155,18 +155,18 @@ See [Linking Convention](../docs/explanation/conventions/ex-co__linking-conventi
 - **ASCII art**: Optional fallback for rare edge cases (simple directory trees, terminal-only environments)
 - **Diagram Orientation (CRITICAL)**: ALL Mermaid diagrams MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
 - **Default Layout (CRITICAL)**: Use `graph TD` (top-down) by default - ONLY use alternative layouts (LR, RL, BT) when explicitly requested by user or when vertical TD would significantly harm clarity
-- **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - the master reference for all color usage - for the complete verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, testing methodology with color blindness simulators, and implementation guidance. Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone). Always test diagrams with color blindness simulators before publishing
+- **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - the master reference for all color usage - for the complete verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, testing methodology with color blindness simulators, and implementation guidance. Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone). Always test diagrams with color blindness simulators before publishing
 - **Mermaid Comment Syntax (CRITICAL)**: Use `%%` for comments, NOT `%%{ }%%` (causes syntax errors). Example: `%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73`. Exception: `%%{init:...}%%` is valid for Mermaid initialization directives only
 - Character Escaping (CRITICAL): Escape special characters in Mermaid node text AND edge labels using HTML entities: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`, `<` → `#60;`, `>` → `#62;`. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`). Example: `A[O#40;1#41; lookup]` for "O(1) lookup". Prevents "syntax error in text". Edge labels use `-->|text|` syntax (e.g., `A -->|iter#40;#41;| B` for "iter()")
 - **Avoid Nested Escaping (CRITICAL)**: Do NOT combine HTML entity codes with escaped quotes in same node text (e.g., `A["JSON #123;\"name\"#125;"]` fails). Use simplified text: `A["JSON #123;name:Alice#125;"]`. Nested escaping breaks Mermaid parser
 - **Sequence Diagram Participant Syntax (CRITICAL)**: Use simple participant identifiers WITHOUT `as` keyword in sequenceDiagram. Do NOT use `participant X as "Display Name"` syntax with quotes (causes rendering failures in Hugo/Hextra). Use CamelCase or simple names: `participant Main`, `participant EventLoop`. Applies ONLY to sequenceDiagram, not graph/flowchart
 - **Sequence Diagram Styling (CRITICAL)**: Do NOT use `style` commands in `sequenceDiagram` (causes errors). Use `box` syntax for grouping/coloring or switch to `flowchart` for styled diagrams. `style` only works in graph/flowchart types
 - **Diagram Splitting (CRITICAL)**: Split complex diagrams for mobile readability. One concept per diagram (max 3-4 branches per level), no subgraphs (use separate diagrams with headers), descriptive headers (**Concept Name:**), mobile-first design. Prevents "too small" rendering on mobile devices
-- See [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) for complete diagram standards including comment syntax, color palette guidance, and initialization directives
+- See [Diagram and Schema Convention](../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) for complete diagram standards including comment syntax, color palette guidance, and initialization directives
 
 ### Emoji Usage Convention
 
-You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/ex-co__emoji-usage.md):
+You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/formatting/ex-co-fo__emoji.md):
 
 - **Semantic Consistency**: Use emojis from the defined vocabulary, same emoji = same meaning
 - **Restraint**: 1-2 emojis per section maximum, enhance scannability without visual noise
@@ -177,7 +177,7 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/ex-
 
 ### Indentation Convention
 
-**Reference**: See [Indentation Convention](../docs/explanation/conventions/ex-co__indentation.md) for complete standards.
+**Reference**: See [Indentation Convention](../docs/explanation/conventions/formatting/ex-co-fo__indentation.md) for complete standards.
 
 **Key Points**:
 
@@ -210,7 +210,7 @@ When writing code examples in documentation, you MUST use **language-specific id
 - Display math: `$$...$$` for standalone equations
 - Include variable definitions after formulas
 - Never use LaTeX inside code blocks or Mermaid diagrams
-- See [Mathematical Notation Convention](../../docs/explanation/conventions/ex-co__mathematical-notation.md)
+- See [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md)
 
 **CRITICAL LaTeX Delimiter Rules:**
 
@@ -257,7 +257,7 @@ updated: 2025-12-31
 - **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
 - Example output: `2025-12-14`
 - Use for both `created` and `updated` fields when creating new docs
-- See [Timestamp Format Convention](../../docs/explanation/conventions/ex-co__timestamp-format.md) for complete details
+- See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) for complete details
 
 ### Tags
 
@@ -455,12 +455,12 @@ You have access to the project's documentation and source code. When creating ne
 **Documentation Conventions (Required Reading):**
 
 - [Conventions Index](../docs/explanation/conventions/README.md) - Index of all conventions
-- [Convention Writing Convention](../docs/explanation/conventions/ex-co__convention-writing.md) - How to write convention documents (meta-convention)
-- [Color Accessibility Convention](../docs/explanation/conventions/ex-co__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
-- [File Naming Convention](../docs/explanation/conventions/ex-co__file-naming-convention.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
-- [Linking Convention](../docs/explanation/conventions/ex-co__linking-convention.md) - How to link between files with GitHub-compatible markdown
-- [Diagram and Schema Convention](../docs/explanation/conventions/ex-co__diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
-- [Diátaxis Framework](../docs/explanation/conventions/ex-co__diataxis-framework.md) - How to organize documentation into four categories
+- [Convention Writing Convention](../docs/explanation/conventions/content/ex-co-co__convention-writing.md) - How to write convention documents (meta-convention)
+- [Color Accessibility Convention](../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
+- [File Naming Convention](../docs/explanation/conventions/meta/ex-co-me__file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
+- [Linking Convention](../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - How to link between files with GitHub-compatible markdown
+- [Diagram and Schema Convention](../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
+- [Diátaxis Framework](../docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**
 

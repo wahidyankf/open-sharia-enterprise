@@ -14,7 +14,7 @@ updated: 2025-12-28
 
 Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 24 conventions covering all aspects of documentation writing and formatting.
 
-**Governance**: All conventions in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../ex__repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./ex-co__convention-writing.md) for structure requirements.
+**Governance**: All conventions in this directory serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../ex__repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./content/ex-co-co__convention-writing.md) for structure requirements.
 
 ## 🎯 Scope
 
@@ -65,32 +65,72 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - "Hugo themes use Tailwind CSS" → ❌ Development (software practice)
 - "Why we avoid time estimates in tutorials" → ❌ Principle (foundational value)
 
-## 📋 Contents
+## 📋 Directory Structure
 
-- [By Example Tutorial Convention](./ex-co__by-example-tutorial.md) - Standards for creating code-first by-example tutorials with 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage. Defines four-part example structure (brief explanation, Mermaid diagram when appropriate, heavily annotated code with `// =>` notation, key takeaway), self-containment rules across beginner/intermediate/advanced levels, educational comment standards for outputs/states/collections/concurrency, and coverage progression (0-40%, 40-75%, 75-95%). Validated by ayokoding-web-by-example-checker agent
-- [Color Accessibility Convention](./ex-co__color-accessibility.md) - MASTER REFERENCE for all color-related decisions in the repository. Defines verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), supports all color blindness types (protanopia, deuteranopia, tritanopia), meets WCAG AA standards, provides complete implementation guidance for Mermaid diagrams and AI agent categorization, and includes testing methodology with color blindness simulators and contrast checkers. All color usage must reference this convention as the authoritative source
-- [Content Quality Principles](./ex-co__content-quality.md) - Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style and tone (active voice, professional, concise), heading hierarchy (single H1, proper nesting), accessibility (alt text, semantic HTML, color contrast, screen readers), and formatting (code blocks, text formatting, lists, blockquotes, tables, line length, paragraphs)
-- [Convention Writing Convention](./ex-co__convention-writing.md) - **Meta-convention** defining how to write and organize convention documents. Covers document structure, scope boundaries, quality checklist, when to create new vs update existing, length guidelines, and integration with agents. Essential reading for creating or updating conventions
-- [Diagram and Schema Convention](./ex-co__diagrams.md) - Standards for using Mermaid diagrams (primary) and ASCII art (optional) with color-blind friendly colors for accessibility
-- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the four-category documentation organization framework we use
-- [Documentation File Naming Convention](./ex-co__file-naming-convention.md) - Systematic approach to naming files with hierarchical prefixes
-- [Documentation Linking Convention](./ex-co__linking-convention.md) - Standards for linking between documentation files using GitHub-compatible markdown. Defines two-tier formatting for rule references: first mention = markdown link, subsequent mentions = inline code
-- [Emoji Usage Convention](./ex-co__emoji-usage.md) - Semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
-- [Factual Validation Convention](./ex-co__factual-validation.md) - Universal methodology for validating factual correctness across all repository content using web verification (WebSearch + WebFetch). Defines core validation methodology (command syntax, features, versions, code examples, external refs, mathematical notation, diagram colors), web verification workflow, confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated), and integration guidance for different content types (docs/, Hugo sites, plans/, README)
-- [Hugo Content Convention - Shared](./ex-co__hugo-content-shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository. Covers inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial standards), adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), and Hugo-specific basics (Archetypes, Shortcodes, Taxonomy, Asset Organization). Foundation for all Hugo content work
-- [Hugo Content Convention - ayokoding](./ex-co__hugo-content-ayokoding.md) - Site-specific conventions for ayokoding-web (Hextra theme). Covers Hextra shortcodes, bilingual requirements, navigation patterns, weight field ordering, overview/ikhtisar file requirements, index file content separation, and optional Diátaxis structure. Use with shared convention
-- [Hugo Content Convention - OSE Platform](./ex-co__hugo-content-ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme). Covers PaperMod features, English-only requirements, simple update patterns, cover image standards, and flat content structure. Use with shared convention
-- [Indentation Convention](./ex-co__indentation.md) - Standard markdown indentation for all files using 2 spaces per indentation level. YAML frontmatter uses 2 spaces. Code blocks use language-specific conventions
-- [Mathematical Notation Convention](./ex-co__mathematical-notation.md) - Standards for using LaTeX notation for mathematical equations and formulas in GitHub-compatible markdown. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), and Obsidian/GitHub dual compatibility
-- [Nested Code Fence Convention](./ex-co__nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure within markdown content. Defines fence depth rules (outer = 4 backticks, inner = 3 backticks), orphaned fence detection, and validation checklist. Prevents rendering bugs where bold/italic markdown displays as literal text
-- [OSS Documentation Convention](./ex-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
-- [Plans Organization Convention](./ex-co__plans-organization.md) - Standards for organizing project planning documents in plans/ folder including structure, naming, and workflow
-- [Programming Language Content Standard](./ex-co__programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web. Defines mandatory structure (5 tutorial levels, cookbook at position 3 in how-to/ for optimal engagement, how-to guides), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), quality metrics (line counts, pedagogical patterns), and completeness criteria. Benchmarked from Golang, Python, Java implementations. Includes replication formula for adding new languages (Kotlin, TypeScript, Rust, Clojure). **See also**: [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md)
-- [Programming Language Tutorial Structure Convention](./ex-co__programming-language-tutorial-structure.md) - Dual-path tutorial organization for programming languages with by-concept (narrative-driven, comprehensive, 0-95% coverage through beginner/intermediate/advanced) and by-example (code-first, 75-90 annotated examples, 95% coverage for experienced developers). Defines directory structure, navigation pattern (learning paths first), foundational tutorials at root (Initial Setup, Quick Start), weight values, and optional by-example path. **Status**: Java/Elixir/Golang dual-path, Kotlin/Python/Rust single-path
-- [README Quality Convention](./ex-co__readme-quality.md) - Quality standards for README.md files ensuring engagement, accessibility, and scannability. Defines problem-solution hooks, jargon elimination (plain language over corporate speak), acronym context requirements, benefits-focused language, navigation structure (summary + links), and paragraph length limits (≤5 lines). Includes transformation examples and quality checklist. **Agents**: readme**maker, readme**checker
-- [Timestamp Format Convention](./ex-co__timestamp-format.md) ⏰ - Standard timestamp format using UTC+7 (Indonesian WIB Time)
-- [Tutorial Convention](./ex-co__tutorials.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
-- [Tutorial Naming Convention](./ex-co__tutorial-naming.md) - Standardized tutorial types and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) with "Full Set" concept for sequential learning
+Conventions are organized into 6 semantic categories:
+
+- **[formatting/](#-formatting-8-conventions)** - Markdown formatting, syntax, visual elements (8 conventions)
+- **[content/](#-content-5-conventions)** - Content quality, validation, writing standards (5 conventions)
+- **[tutorial/](#-tutorial-5-conventions)** - Tutorial creation, structure, naming (5 conventions)
+- **[hugo/](#-hugo-3-conventions)** - Hugo site content conventions (3 conventions)
+- **[meta/](#-meta-2-conventions)** - Documentation organization and frameworks (2 conventions)
+- **[project/](#-project-1-convention)** - Project-level documentation organization (1 convention)
+
+---
+
+## 📐 Formatting (8 conventions)
+
+Standards for markdown formatting, syntax, and visual elements.
+
+- [Color Accessibility](./formatting/ex-co-fo__color-accessibility.md) - MASTER REFERENCE for all color decisions. Verified accessible color palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161) supporting all color blindness types, WCAG AA standards, with complete implementation guidance for Mermaid diagrams and AI agent categorization
+- [Diagrams and Schemas](./formatting/ex-co-fo__diagrams.md) - Standards for Mermaid diagrams (primary) and ASCII art (optional) with color-blind friendly colors for accessibility
+- [Emoji Usage](./formatting/ex-co-fo__emoji.md) - Semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
+- [Indentation](./formatting/ex-co-fo__indentation.md) - Standard markdown indentation using 2 spaces per indentation level. YAML frontmatter uses 2 spaces. Code blocks use language-specific conventions
+- [Linking Convention](./formatting/ex-co-fo__linking.md) - Standards for linking between documentation files using GitHub-compatible markdown. Defines two-tier formatting for rule references (first mention = markdown link, subsequent mentions = inline code)
+- [Mathematical Notation](./formatting/ex-co-fo__mathematical-notation.md) - Standards for LaTeX notation for mathematical equations and formulas. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), Obsidian/GitHub dual compatibility
+- [Nested Code Fences](./formatting/ex-co-fo__nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure within markdown content. Defines fence depth rules (outer = 4 backticks, inner = 3 backticks), orphaned fence detection, and validation checklist
+- [Timestamp Format](./formatting/ex-co-fo__timestamp.md) - Standard timestamp format using UTC+7 (Indonesian WIB Time)
+
+## ✍️ Content (5 conventions)
+
+Content quality standards, validation methodology, and writing guidelines.
+
+- [Content Quality Principles](./content/ex-co-co__quality.md) - Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style and tone (active voice, professional, concise), heading hierarchy (single H1, proper nesting), accessibility (alt text, semantic HTML, color contrast, screen readers), and formatting
+- [Convention Writing](./content/ex-co-co__convention-writing.md) - **Meta-convention** defining how to write and organize convention documents. Covers document structure, scope boundaries, quality checklist, when to create new vs update existing, length guidelines, and integration with agents. Essential reading for creating or updating conventions
+- [Factual Validation](./content/ex-co-co__factual-validation.md) - Universal methodology for validating factual correctness across all repository content using web verification (WebSearch + WebFetch). Defines core validation methodology (command syntax, features, versions, code examples, external refs, mathematical notation, diagram colors), web verification workflow, confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated)
+- [OSS Documentation](./content/ex-co-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
+- [README Quality](./content/ex-co-co__readme-quality.md) - Quality standards for README.md files ensuring engagement, accessibility, and scannability. Defines problem-solution hooks, jargon elimination (plain language over corporate speak), acronym context requirements, benefits-focused language, navigation structure, and paragraph length limits (≤5 lines). **Agents**: readme**maker, readme**checker
+
+## 🎓 Tutorial (5 conventions)
+
+Tutorial creation, structure, naming, and content standards.
+
+- [By Example Tutorial](./tutorial/ex-co-tu__by-example.md) - Standards for code-first by-example tutorials with 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage. Defines four-part example structure (brief explanation, Mermaid diagram when appropriate, heavily annotated code with `// =>` notation, key takeaway), self-containment rules across beginner/intermediate/advanced levels, educational comment standards, and coverage progression (0-40%, 40-75%, 75-95%). Validated by ayokoding-web-by-example-checker agent
+- [Programming Language Content Standard](./tutorial/ex-co-tu__programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web. Defines mandatory structure (5 tutorial levels, cookbook at position 3 in how-to/ for optimal engagement, how-to guides), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), quality metrics, and completeness criteria. Benchmarked from Golang, Python, Java implementations. **See also**: [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md)
+- [Programming Language Tutorial Structure](./tutorial/ex-co-tu__programming-language-structure.md) - Dual-path tutorial organization for programming languages with by-concept (narrative-driven, comprehensive, 0-95% coverage through beginner/intermediate/advanced) and by-example (code-first, 75-90 annotated examples, 95% coverage for experienced developers). Defines directory structure, navigation pattern (learning paths first), foundational tutorials at root (Initial Setup, Quick Start), weight values, and optional by-example path. **Status**: Java/Elixir/Golang dual-path, Kotlin/Python/Rust single-path
+- [Tutorial Convention](./tutorial/ex-co-tu__general.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
+- [Tutorial Naming](./tutorial/ex-co-tu__naming.md) - Standardized tutorial types and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) with "Full Set" concept for sequential learning
+
+## 🌐 Hugo (3 conventions)
+
+Hugo site-specific content conventions.
+
+- [Hugo Content - ayokoding](./hugo/ex-co-hu__ayokoding.md) - Site-specific conventions for ayokoding-web (Hextra theme). Covers Hextra shortcodes, bilingual requirements, navigation patterns, weight field ordering, overview/ikhtisar file requirements, index file content separation, and optional Diátaxis structure. Use with shared convention
+- [Hugo Content - OSE Platform](./hugo/ex-co-hu__ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme). Covers PaperMod features, English-only requirements, simple update patterns, cover image standards, and flat content structure. Use with shared convention
+- [Hugo Content - Shared](./hugo/ex-co-hu__shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository. Covers inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial standards), adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), and Hugo-specific basics (Archetypes, Shortcodes, Taxonomy, Asset Organization). Foundation for all Hugo content work
+
+## 🗂️ Meta (2 conventions)
+
+Documentation organization frameworks and foundational concepts.
+
+- [Diátaxis Framework](./meta/ex-co-me__diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation)
+- [File Naming Convention](./meta/ex-co-me__file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure
+
+## 📦 Project (1 convention)
+
+Project-level documentation and planning organization.
+
+- [Plans Organization](./project/ex-co-pr__plans-organization.md) - Standards for organizing project planning documents in plans/ folder including structure, naming, and workflow
 
 ## 📚 Related Documentation
 
@@ -100,4 +140,4 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ---
 
-**Last Updated**: 2025-12-24
+**Last Updated**: 2026-01-01
