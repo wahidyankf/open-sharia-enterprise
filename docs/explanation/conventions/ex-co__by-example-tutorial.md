@@ -128,20 +128,18 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 
 **Core requirement**: Every significant line must have an inline comment
 
-**CRITICAL REQUIREMENT: Annotation Density Target**
+**CRITICAL REQUIREMENT: Annotation Density Standard**
 
-- **Minimum**: 40+ annotations per example
-- **Intermediate/Advanced optimal**: 75+ annotations per example
-- **Measurement**: Count `// =>` or `# =>` instances in code blocks
-- **Reference implementation**: Elixir intermediate Examples 31-37 (~56 annotations/example average)
+- **Density target**: 1-2 lines of comment for every line of code
+- **Simple lines**: 1 line of annotation (variable declarations, simple operations)
+- **Complex lines**: 2 lines of annotation (method calls with multiple effects, state changes)
+- **Focus**: Concise explanations that scale naturally with code complexity
 
 **Annotation Quality Over Quantity**:
 
-While annotation count is a measurable target, quality matters more:
-
-- Every significant line should explain state changes, return values, or execution flow
-- Annotations should teach WHY code behaves this way, not just WHAT it does
-- Focus on completeness: intermediate states, types, side effects, timing (compile vs runtime)
+- Each line of code gets 1-2 lines explaining what it does and why
+- Simple lines get brief explanations, complex lines get detailed breakdowns
+- Annotations remain focused without repetitive patterns across similar code
 
 **Comment annotations use `// =>` or `# =>` notation**:
 
@@ -154,7 +152,7 @@ fmt.Println(result)              // => Output: 20-transformed
 
 **Required annotations**:
 
-- **Annotation density**: Target 40+ annotations per example (75+ for intermediate/advanced)
+- **Annotation density**: 1-2 lines of comment per line of code
 - **Pattern matching**: Document which branch matched and why
 - **Execution flow**: Show control flow decisions (which if/case branch taken)
 
@@ -619,7 +617,7 @@ Before publishing by-example content, verify:
 ### Code Quality
 
 - [ ] Every significant line has inline comment
-- [ ] Annotation density meets target (40+ per example, 75+ for intermediate/advanced)
+- [ ] Annotation density meets target (1-2 comment lines per code line)
 - [ ] Annotations explain WHY (not just WHAT)
 - [ ] Pattern matching branches documented (which matched, why)
 - [ ] Execution flow decisions shown (if/case branches, timing)
@@ -659,7 +657,7 @@ The **ayokoding-web-by-example-checker** agent validates:
 - Coverage percentage against target (95%)
 - Example count within range (75-90)
 - Self-containment (imports present, runnable)
-- Comment annotation density (40+ per example, 75+ optimal)
+- Comment annotation density (1-2 comment lines per code line)
 - Comment annotation quality (`// =>` notation, explains WHY)
 - Diagram presence frequency (30-50%)
 - Color-blind palette compliance
