@@ -11,7 +11,7 @@
    - Success criteria: CLAUDE.md character count remains ≤30,000 after Skills implementation
 
 2. **Create High-Value Skills**
-   - Identify 8-12 critical knowledge areas requiring detailed guidance
+   - Identify 8-10 critical knowledge areas requiring detailed guidance
    - Encode as Skills with clear auto-loading triggers
    - Cover conventions, development practices, and specialized workflows
    - Success criteria: All critical repository knowledge accessible via Skills
@@ -48,13 +48,7 @@
    - Create clear guidance on when to use each delivery mechanism
    - Success criteria: Contributors understand Skills role in knowledge delivery
 
-3. **Enable Community Knowledge Sharing**
-   - Create at least 2 Shariah-compliance Skills for public sharing
-   - Document how to publish Skills to agentskills.io
-   - Align with Vision: democratize Islamic enterprise knowledge
-   - Success criteria: Skills demonstrate path to community knowledge contribution
-
-4. **Demonstrate Progressive Disclosure**
+3. **Demonstrate Progressive Disclosure**
    - Skills showcase principle in action (load only when needed)
    - Document how Skills implement progressive disclosure pattern
    - Create examples showing depth-on-demand knowledge access
@@ -130,24 +124,7 @@ And Skills relationship to conventions/development docs should be clear
 And examples should demonstrate Skills usage by agents
 ```
 
-### Story 5: Community Shariah-Compliance Knowledge Sharing
-
-**As a** community member building Islamic enterprise solutions
-**I want** reusable Shariah-compliance Skills published publicly
-**So that** I can leverage verified Islamic business knowledge in my projects
-
-**Acceptance Criteria:**
-
-```gherkin
-Given Shariah-compliance knowledge encoded as Skills
-When Skills are published to agentskills.io
-Then at least 2 Skills should be available (e.g., "halal-transaction-validation", "zakat-calculation")
-And Skills should follow open standard format
-And Skills should be usable across Claude.ai, Claude Code, and API
-And documentation should explain how to use public Skills
-```
-
-### Story 6: Skills Creation Pattern
+### Story 5: Skills Creation Pattern
 
 **As a** future Skills creator
 **I want** clear templates and patterns for creating new Skills
@@ -217,9 +194,9 @@ model: sonnet
 
 ### FR3: High-Value Skills Identification
 
-**Requirement**: Create 8-12 Skills covering critical repository knowledge
+**Requirement**: Create 8-10 Skills covering critical repository knowledge
 
-**Minimum Viable Set (8 Skills - Phase 1 & 2 Core):**
+**Core Skills (8 Skills - Phase 1 & 2):**
 
 1. **maker-checker-fixer-pattern** - Three-stage quality workflow
 2. **color-accessibility-diagrams** - WCAG-compliant Mermaid with verified palette
@@ -235,18 +212,12 @@ model: sonnet
 9. **hugo-ose-development** - PaperMod theme conventions (English-only)
 10. **criticality-confidence-system** - Checker criticality + Fixer confidence levels
 
-**Community Demonstration (12 Skills - Phase 3 templates):**
-
-11. **halal-transaction-validation** - Islamic finance transaction rules (demonstration template)
-12. **zakat-calculation-guidance** - Zakat computation for enterprise (demonstration template)
-
 **Implementation Priority:**
 
 - **Phase 1**: Skills 1-3 (foundation)
-- **Phase 2**: Skills 4-8 (minimum viable set completion), optionally Skills 9-10 (extended set)
-- **Phase 3**: Skills 11-12 (community demonstration templates)
+- **Phase 2**: Skills 4-8 (core completion), optionally Skills 9-10 (extended set)
 
-**Rationale**: Focuses on knowledge currently duplicated across multiple agents or requiring deep expertise. Minimum viable set (8) provides core value; extended set (10) adds specialization; community skills (12) demonstrate public sharing potential.
+**Rationale**: Focuses on knowledge currently duplicated across multiple agents or requiring deep expertise. Core set (8) provides essential value; extended set (10) adds specialization.
 
 ### FR4: CLAUDE.md Optimization Strategy
 
@@ -455,7 +426,6 @@ skills:
 4. **Multi-file Skills supported** - Reference files, examples, scripts work as documented
 5. **Open standard adoption continues** - agentskills.io remains active and supported
 6. **Repository growth continues** - Skills architecture needed to support future scaling
-7. **Community interest exists** - Shariah-compliance Skills have audience beyond this repository
 
 ## Out of Scope
 
@@ -469,6 +439,8 @@ skills:
 6. **Skills dependency management** - Not implementing dependency resolution between Skills
 7. **Skills testing framework** - Not creating automated testing for Skills content
 8. **Skills marketplace** - Not building Skills discovery or sharing platform
+9. **Community Shariah Skills** - Domain-specific Skills (halal-transaction, zakat-calculation) deferred (repository is already OSS)
+10. **agentskills.io publishing** - Publishing Skills to external platform deferred
 
 ### Future Enhancements (Post-Implementation)
 

@@ -3,7 +3,7 @@ title: "Skills Infrastructure - Progressive Knowledge Delivery"
 status: Backlog
 created: 2026-01-02
 git-workflow: Trunk Based Development (main branch)
-delivery-type: Multi-Phase Plan (3 sequential phases with direct commits)
+delivery-type: Multi-Phase Plan (2 sequential phases with direct commits)
 ---
 
 # Skills Infrastructure - Progressive Knowledge Delivery
@@ -76,7 +76,7 @@ With Skills Infrastructure:
 **Primary Objectives:**
 
 1. **Implement progressive disclosure** via Skills to prevent future CLAUDE.md growth
-2. **Create 8-12 high-value Skills** encoding critical repository knowledge
+2. **Create 8-10 high-value Skills** encoding critical repository knowledge
 3. **Document Skills as infrastructure** in repository documentation
 4. **Enable agent knowledge references** via optional Skills frontmatter
 5. **Maintain backward compatibility** - existing agents work without modification
@@ -84,8 +84,7 @@ With Skills Infrastructure:
 **Secondary Objectives:**
 
 1. **Establish Skills creation patterns** for future knowledge packaging
-2. **Enable community knowledge sharing** (Vision alignment: democratize Islamic enterprise)
-3. **Demonstrate progressive disclosure** as principle implementation
+2. **Demonstrate progressive disclosure** as principle implementation
 
 ### Context
 
@@ -107,20 +106,19 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
 
 ## Delivery Type
 
-**Multi-Phase Plan (3 Sequential Phases)**
+**Multi-Phase Plan (2 Sequential Phases)**
 
-This plan implements Skills infrastructure through 3 sequential phases with direct commits to `main` branch:
+This plan implements Skills infrastructure through 2 sequential phases with direct commits to `main` branch:
 
 1. **Phase 1: Foundation** - Skills directory structure, first 3 core Skills, infrastructure documentation
-2. **Phase 2: Knowledge Migration** - 5-9 additional Skills, CLAUDE.md optimization, agent updates
-3. **Phase 3: Community & Polish** - Shariah-compliance Skills, examples, final validation
+2. **Phase 2: Knowledge Migration & Polish** - 5-7 additional Skills, CLAUDE.md optimization, agent updates, templates, final validation
 
-**Dependencies**: Each phase builds on the previous one; validation checkpoint required before starting next phase.
+**Dependencies**: Phase 2 builds on Phase 1; validation checkpoint required before starting Phase 2.
 
 **Rationale for Multi-Phase**:
 
-- Moderate scope (8-12 Skills, infrastructure docs, agent updates)
-- Natural breakpoints for validation and feedback
+- Moderate scope (8-10 Skills, infrastructure docs, agent updates)
+- Natural breakpoint for validation and feedback
 - Phased rollout reduces risk
 - Small, frequent commits to `main` with validation gates between phases
 
@@ -136,7 +134,6 @@ This plan implements Skills infrastructure through 3 sequential phases with dire
 2. **Agent File Size**: Average agent size reduced by 15-25% through Skills references
 3. **Knowledge Accessibility**: Critical conventions accessible via Skills
 4. **Backward Compatibility**: Zero breaking changes to existing agent workflows
-5. **Community Value**: At least 2 Shariah-compliance Skills published for community use
 
 ## Context Documents
 
@@ -157,4 +154,4 @@ This plan implements Skills infrastructure through 3 sequential phases with dire
 
 **Created**: 2026-01-02
 **Status**: Backlog
-**Delivery**: Multi-Phase (3 sequential phases with direct commits to main)
+**Delivery**: Multi-Phase (2 sequential phases with direct commits to main)
