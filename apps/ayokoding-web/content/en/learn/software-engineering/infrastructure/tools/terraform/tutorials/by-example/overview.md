@@ -3,12 +3,12 @@ title: "Overview"
 date: 2025-12-29T23:43:13+07:00
 draft: false
 weight: 10000000
-description: "Learn Terraform through 82 annotated code examples covering infrastructure as code, HCL syntax, providers, state management, and cloud provisioning patterns"
+description: "Learn Terraform through 84 annotated code examples covering infrastructure as code, HCL syntax, providers, state management, and cloud provisioning patterns"
 categories: ["learn"]
 tags: ["terraform", "iac", "infrastructure", "tutorial", "by-example", "devops", "cloud", "hcl"]
 ---
 
-**Want to master Terraform through working examples?** This by-example guide teaches 95% of Terraform through 82 annotated code examples organized by complexity level.
+**Want to master Terraform through working examples?** This by-example guide teaches Terraform fundamentals through 84 annotated code examples organized by complexity level (in active development toward 95% coverage).
 
 ## What Is By-Example Learning?
 
@@ -41,8 +41,8 @@ Unlike narrative tutorials that build understanding through explanation and stor
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Beginner<br/>Examples 1-28<br/>HCL & Resources"] --> B["Intermediate<br/>Examples 29-56<br/>Modules & State"]
-    B --> C["Advanced<br/>Examples 57-82<br/>Testing & CI/CD"]
+    A["Beginner<br/>Examples 1-28<br/>HCL & Resources"] --> B["Intermediate<br/>Examples 29+<br/>Modules & State<br/>#40;in development#41;"]
+    B --> C["Advanced<br/>Examples 57+<br/>Testing & CI/CD<br/>#40;in development#41;"]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#fff
@@ -53,7 +53,7 @@ Progress from Terraform fundamentals (HCL syntax, providers, resources, variable
 
 ## Coverage Philosophy
 
-This by-example guide provides **95% coverage of Terraform** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This by-example guide provides **comprehensive coverage of Terraform fundamentals** through practical, annotated examples, with intermediate and advanced topics in active development. Coverage represents depth and breadth of concepts, not time estimates—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -103,8 +103,8 @@ No prior Terraform experience required—this guide starts from first principles
 
 1. **Read beginner examples** (1-28) - Establish HCL fundamentals and resource management
 2. **Run each example** - Execute terraform init, plan, apply against test environments
-3. **Read intermediate examples** (29-56) - Learn modules, remote state, and orchestration
-4. **Read advanced examples** (57-82) - Master testing, security, and CI/CD integration
+3. **Read intermediate examples** (29+) - Learn modules, remote state, and orchestration (in development)
+4. **Read advanced examples** (57+) - Master testing, security, and CI/CD integration (in development)
 5. **Experiment** - Modify examples, combine patterns, build your own infrastructure
 
 Focus on running and understanding examples rather than memorizing syntax. Terraform is learned through doing—each example should be executed and experimented with.

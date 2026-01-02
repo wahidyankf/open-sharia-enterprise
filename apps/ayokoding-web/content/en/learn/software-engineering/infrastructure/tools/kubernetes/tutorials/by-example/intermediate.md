@@ -424,6 +424,23 @@ spec:
 
 DaemonSets can target specific nodes using nodeSelector or node affinity, enabling specialized Pods on GPU nodes, SSD-equipped nodes, or region-specific nodes.
 
+```mermaid
+%% DaemonSet with node selector
+graph TD
+    A[DaemonSet: gpu-monitor] --> B{Node Selector}
+    B -->|Match| C[Node 1<br/>accelerator=nvidia-gpu]
+    B -->|Match| D[Node 2<br/>accelerator=nvidia-gpu]
+    B -->|No Match| E[Node 3<br/>No label]
+    C --> F[Pod created]
+    D --> G[Pod created]
+    E --> H[No Pod]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#CC78BC,color:#000
+```
+
 ```yaml
 apiVersion: apps/v1
 kind: DaemonSet
@@ -523,6 +540,26 @@ spec:
 
 Parallel Jobs run multiple Pods simultaneously to process distributed workloads like batch rendering, data processing, or parallel computations. Configure completions and parallelism to control total work items and concurrency.
 
+```mermaid
+%% Parallel job execution
+graph TD
+    A[Job: completions=10<br/>parallelism=3] --> B[Wave 1: Pods 1-3]
+    B --> C{3 complete?}
+    C -->|Yes| D[Wave 2: Pods 4-6]
+    D --> E{6 complete?}
+    E -->|Yes| F[Wave 3: Pods 7-9]
+    F --> G{9 complete?}
+    G -->|Yes| H[Wave 4: Pod 10]
+    H --> I[Job Complete]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#000
+    style H fill:#DE8F05,color:#000
+    style I fill:#029E73,color:#fff
+```
+
 ```yaml
 apiVersion: batch/v1
 kind: Job
@@ -568,6 +605,25 @@ spec:
 ### Example 38: CronJob for Scheduled Tasks
 
 CronJobs create Jobs on a schedule using cron syntax, suitable for periodic backups, reports, or cleanup tasks. CronJobs maintain job history and support concurrency policies for overlapping executions.
+
+```mermaid
+%% CronJob scheduling
+graph TD
+    A[CronJob: 0 2 * * *] --> B[2:00 AM: Create Job]
+    B --> C[Job creates Pod]
+    C --> D{Pod success?}
+    D -->|Yes| E[Keep in success history<br/>limit: 3]
+    D -->|No| F[Keep in failure history<br/>limit: 1]
+    E --> G[Wait for next schedule]
+    F --> G
+    G --> A
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#000
+    style C fill:#CA9161,color:#000
+    style E fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#000
+```
 
 ```yaml
 apiVersion: batch/v1
@@ -1048,6 +1104,23 @@ spec:
 
 PersistentVolumeClaims support volume expansion when StorageClass allows it. Expand PVCs by updating the storage size; filesystem resize may require Pod restart depending on volume type.
 
+```mermaid
+%% Volume expansion workflow
+graph TD
+    A[PVC: 10Gi] --> B[Edit PVC → 20Gi]
+    B --> C[Volume controller<br/>resizes PV]
+    C --> D[Status: FileSystemResizePending]
+    D --> E[Restart Pod]
+    E --> F[kubelet resizes filesystem]
+    F --> G[PVC: 20Gi available]
+
+    style A fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#000
+    style C fill:#0173B2,color:#fff
+    style E fill:#CA9161,color:#000
+    style G fill:#029E73,color:#fff
+```
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -1232,6 +1305,23 @@ spec:
 
 Kubernetes assigns Quality of Service (QoS) classes based on resource requests and limits, affecting eviction priority during resource pressure. Guaranteed (highest priority), Burstable (medium), BestEffort (lowest).
 
+```mermaid
+%% QoS eviction priority
+graph TD
+    A[Node memory pressure] --> B{Eviction order}
+    B --> C[1. BestEffort Pods<br/>No requests/limits]
+    B --> D[2. Burstable Pods<br/>requests < limits]
+    B --> E[3. Guaranteed Pods<br/>requests = limits]
+    C --> F[Evicted first]
+    D --> G[Evicted second]
+    E --> H[Evicted last]
+
+    style A fill:#CC78BC,color:#000
+    style C fill:#DE8F05,color:#000
+    style D fill:#CA9161,color:#000
+    style E fill:#029E73,color:#fff
+```
+
 ```yaml
 # Guaranteed QoS (highest priority, last to be evicted)
 apiVersion: v1
@@ -1350,6 +1440,23 @@ spec:
 ### Example 51: Horizontal Pod Autoscaler
 
 HorizontalPodAutoscaler (HPA) automatically scales Deployment/ReplicaSet replicas based on CPU utilization or custom metrics. Requires metrics-server for CPU/memory metrics.
+
+```mermaid
+%% HPA scaling decision
+graph TD
+    A[HPA checks metrics<br/>every 15s] --> B{CPU > 70%?}
+    B -->|Yes: 85%| C[Calculate replicas<br/>ceil#40;2 × 85/70#41; = 3]
+    B -->|No: 50%| D[Calculate replicas<br/>ceil#40;3 × 50/70#41; = 3]
+    C --> E[Scale up: 2 → 3]
+    D --> F[No change]
+    E --> G[Wait for stabilization]
+    F --> A
+
+    style A fill:#DE8F05,color:#000
+    style B fill:#0173B2,color:#fff
+    style C fill:#CA9161,color:#000
+    style E fill:#029E73,color:#fff
+```
 
 ```yaml
 # Install metrics-server first:
@@ -1555,6 +1662,27 @@ spec:
 ### Example 55: Startup Probe
 
 Startup probes give slow-starting containers extra time to initialize before liveness probes begin. This prevents premature restart of applications with long initialization (legacy apps, large datasets).
+
+```mermaid
+%% Probe execution sequence
+graph TD
+    A[Container starts] --> B[Startup probe begins]
+    B --> C{Startup success?}
+    C -->|Fail × 30| D[Restart container]
+    C -->|Success| E[Liveness probe begins]
+    E --> F{Liveness success?}
+    F -->|Fail × 3| D
+    F -->|Success| G[Readiness probe runs]
+    G --> H{Ready?}
+    H -->|Yes| I[Receive traffic]
+    H -->|No| J[No traffic]
+
+    style A fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#000
+    style E fill:#0173B2,color:#fff
+    style G fill:#CA9161,color:#000
+    style I fill:#029E73,color:#fff
+```
 
 ```yaml
 apiVersion: v1

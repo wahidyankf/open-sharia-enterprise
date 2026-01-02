@@ -146,6 +146,25 @@ curl http://localhost:3000
 
 Proper dependency installation leverages Docker's layer caching mechanism. By copying package files separately before source code, you avoid reinstalling dependencies when only source code changes.
 
+**Layer Caching Strategy:**
+
+```mermaid
+graph TD
+    A["FROM node:18-alpine"] --> B["WORKDIR /app"]
+    B --> C["COPY package*.json ./"]
+    C --> D["RUN npm ci"]
+    D --> E["COPY . ."]
+    E --> F["CMD node app.js"]
+
+    C -.->|Cached if package.json unchanged| D
+    D -.->|Reuses cached layer| E
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#000
+    style F fill:#029E73,color:#fff
+```
+
 ```dockerfile
 # File: Dockerfile
 
@@ -301,6 +320,23 @@ docker run --rm my-app:prod printenv NODE_ENV
 ### Example 6: ENV for Runtime Variables
 
 ENV instructions set environment variables that persist in the container at runtime. These variables configure application behavior and are visible in running containers.
+
+**Environment Variable Lifecycle:**
+
+```mermaid
+graph TD
+    A["Dockerfile ENV"] --> B["Build Time"]
+    B --> C["Image Layer"]
+    C --> D["Container Runtime"]
+    D --> E["Application Reads ENV"]
+
+    B -.->|Available during RUN| F["npm ci uses NODE_ENV"]
+    D -.->|Available in container| G["process.env.PORT"]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#000
+    style E fill:#029E73,color:#fff
+```
 
 ```dockerfile
 # File: Dockerfile
@@ -983,6 +1019,19 @@ docker volume rm shared
 ### Example 14: Bind Mounts for Development
 
 Bind mounts map host directories into containers, enabling live code reloading during development. Changes on the host immediately reflect in the container.
+
+**Bind Mount Mapping:**
+
+```mermaid
+graph TD
+    A["Host Directory<br/>~/myapp"] <--> B["Container Path<br/>/app"]
+    A --> C["server.js<br/>message.txt<br/>package.json"]
+    B --> D["Live Updates<br/>File changes sync instantly"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style D fill:#DE8F05,color:#000
+```
 
 ```bash
 # Prepare application files on host

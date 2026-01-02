@@ -283,6 +283,30 @@ graph TD
 
 Variables can be defined in multiple locations: playbook vars, command-line, inventory. Understanding variable precedence prevents unexpected values in production.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Variable Sources"] --> B["Role Defaults<br/>#40;Precedence: 2#41;"]
+    A --> C["Inventory Vars<br/>#40;Precedence: 12#41;"]
+    A --> D["Playbook Vars<br/>#40;Precedence: 15#41;"]
+    A --> E["Task Vars<br/>#40;Precedence: 21#41;"]
+    A --> F["Extra Vars<br/>#40;Precedence: 22#41;"]
+
+    B --> G["Final Value"]
+    C --> G
+    D --> G
+    E --> G
+    F --> G
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#CA9161,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#0173B2,color:#fff
+```
+
 **Code**:
 
 ```yaml
@@ -808,6 +832,23 @@ The `file` module manages files, directories, symlinks, and permissions without 
 
 The `template` module processes Jinja2 templates on the control node and copies the rendered result to managed hosts. Essential for generating configuration files from variables.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Template File<br/>nginx.conf.j2"] --> B["Jinja2 Engine<br/>#40;Control Node#41;"]
+    C["Variables<br/>port, name, root"] --> B
+    B --> D["Rendered Config<br/>nginx.conf"]
+    D --> E["Copy to Target<br/>/etc/nginx/nginx.conf"]
+    E --> F["Target Host"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
+    style F fill:#0173B2,color:#fff
+```
+
 **Code**:
 
 Create template file `nginx.conf.j2`:
@@ -1314,6 +1355,25 @@ Facts are system information automatically collected from managed hosts. Facts i
 
 Custom facts extend Ansible's built-in facts with application-specific information. Place executable scripts or JSON files in `/etc/ansible/facts.d/` on managed hosts. Custom facts appear under `ansible_local` namespace.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Ansible Facts"] --> B["Built-in Facts<br/>ansible_hostname"]
+    A --> C["Custom Facts<br/>ansible_local"]
+    C --> D["Static Facts<br/>/etc/ansible/facts.d/*.fact"]
+    C --> E["Dynamic Facts<br/>Executable Scripts"]
+    D --> F["JSON File"]
+    E --> G["Script Output<br/>#40;JSON#41;"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CA9161,color:#fff
+    style G fill:#CA9161,color:#fff
+```
+
 **Code**:
 
 ```yaml
@@ -1625,6 +1685,23 @@ is_primary: true
 ### Example 23: When Conditionals
 
 The `when` keyword enables conditional task execution based on variables, facts, or previous task results. Supports Jinja2 expressions and logical operators.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Task"] --> B{When Condition?}
+    B -->|True| C["Execute Task"]
+    B -->|False| D["Skip Task"]
+    C --> E["Report: ok/changed"]
+    D --> F["Report: skipped"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#CA9161,color:#fff
+```
 
 **Code**:
 
