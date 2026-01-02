@@ -1,6 +1,7 @@
 ---
-name: by-example-tutorial-creation
+name: creating-by-example-tutorials
 description: Comprehensive guide for creating by-example tutorials - code-first learning path with 75-90 heavily annotated examples achieving 95% language coverage. Covers five-part example structure, annotation density standards (1-2.25 comments per code line PER EXAMPLE), self-containment rules, and multiple code blocks for comparisons. Essential for creating by-example tutorials for programming languages on educational platforms
+allowed-tools: [Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash]
 tags:
   - by-example-tutorials
   - code-annotation
@@ -265,7 +266,7 @@ By-example tutorials are split into three difficulty levels:
 
 **CRITICAL**: All Mermaid diagrams MUST use accessible color palette
 
-Use the **color-accessibility-diagrams** Skill for complete color guidance.
+Use the **creating-accessible-diagrams** Skill for complete color guidance.
 
 **Verified Accessible Palette**:
 
@@ -478,7 +479,7 @@ int x = 10;  // This line declares a variable named x and assigns it the integer
 
 **Right**: Concise annotations scaling with code complexity.
 
-## Reference Documentation
+## References
 
 **Primary Convention**: [By Example Tutorial Convention](../../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md)
 
@@ -490,8 +491,8 @@ int x = 10;  // This line declares a variable named x and assigns it the integer
 
 **Related Skills**:
 
-- `hugo-ayokoding-development` - ayokoding-web specific patterns for hosting tutorials
-- `color-accessibility-diagrams` - Accessible diagram creation for complex examples
+- `developing-ayokoding-content` - ayokoding-web specific patterns for hosting tutorials
+- `creating-accessible-diagrams` - Accessible diagram creation for complex examples
 
 ---
 

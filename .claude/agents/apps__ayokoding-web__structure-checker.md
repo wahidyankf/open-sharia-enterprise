@@ -5,7 +5,7 @@ description: Expert at validating ALL ayokoding-web content files including navi
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
-skills: []
+skills: [developing-ayokoding-content, assessing-criticality-confidence]
 created: 2025-12-20
 updated: 2025-12-30
 ---

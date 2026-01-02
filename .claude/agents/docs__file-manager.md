@@ -4,7 +4,7 @@ description: Expert at managing files and directories in docs/ directory. Use fo
 tools: Read, Edit, Glob, Grep, Bash
 model: sonnet
 color: yellow
-skills: []
+skills: [applying-diataxis-framework]
 created: 2025-11-30
 updated: 2025-12-07
 ---

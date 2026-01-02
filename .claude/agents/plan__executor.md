@@ -4,7 +4,7 @@ description: Expert at systematically implementing project plans by following de
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: purple
-skills: []
+skills: [creating-project-plans, practicing-trunk-based-development]
 created: 2025-11-29
 updated: 2025-12-03
 ---

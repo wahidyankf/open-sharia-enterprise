@@ -1,6 +1,7 @@
 ---
-name: hugo-ayokoding-development
+name: developing-ayokoding-content
 description: Comprehensive guide for creating content on ayokoding-web Hugo site using Hextra theme. Covers bilingual content strategy (default English), level-based weight ordering system, by-example tutorial annotation standards (1-2.25 comments per code line), absolute path linking requirements, and ayokoding-web specific frontmatter patterns. Essential for content creation tasks on ayokoding-web
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 tags:
   - hugo
   - ayokoding-web
@@ -365,7 +366,7 @@ title: "Software Engineering"
    - Content inside folder uses next level deeper (base + position)
    - Weights reset for different parents
 
-## Reference Documentation
+## References
 
 **Primary Convention**: [Hugo Content Convention - ayokoding-web](../../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
 
@@ -378,8 +379,8 @@ title: "Software Engineering"
 
 **Related Skills**:
 
-- `by-example-tutorial-creation` - Detailed by-example tutorial guidance
-- `color-accessibility-diagrams` - Accessible diagram creation for tutorials
+- `creating-by-example-tutorials` - Detailed by-example tutorial guidance
+- `creating-accessible-diagrams` - Accessible diagram creation for tutorials
 
 ---
 

@@ -4,7 +4,7 @@ description: Applies validated fixes from repo-rules-checker audit reports. Re-v
 tools: Read, Glob, Grep, Bash
 model: sonnet
 color: purple
-skills: []
+skills: [understanding-repository-architecture, assessing-criticality-confidence]
 created: 2025-12-14
 updated: 2026-01-02
 ---

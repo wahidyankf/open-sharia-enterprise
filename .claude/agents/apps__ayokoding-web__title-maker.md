@@ -4,7 +4,7 @@ description: Automatically update title fields in ayokoding-web markdown files b
 tools: Bash
 model: haiku
 color: purple
-skills: []
+skills: [developing-ayokoding-content]
 created: 2025-12-23
 updated: 2025-12-23
 ---

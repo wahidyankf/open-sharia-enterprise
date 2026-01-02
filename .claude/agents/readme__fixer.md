@@ -4,7 +4,7 @@ description: Applies validated fixes from readme-checker audit reports. Re-valid
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
-skills: []
+skills: [writing-readme-files, assessing-criticality-confidence]
 created: 2025-12-14
 updated: 2025-12-27
 ---

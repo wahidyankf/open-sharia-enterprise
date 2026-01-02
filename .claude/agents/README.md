@@ -213,6 +213,23 @@ Applies validated fixes from ayokoding-web-facts-checker audit reports. Re-valid
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
 - **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/agents/ex-de-ag__ai-agents.md#hybrid-agents-exception) for complete rationale
 
+### 🟡 `apps__ayokoding-web__link-fixer.md`
+
+Fixes broken links and link format violations in ayokoding-web Hugo site content based on validation audit findings from apps**ayokoding-web**link-checker.
+
+- **Primary Use:** Applying validated link fixes from link-checker audit reports after user review
+- **Specialization:** Broken internal link fixes (update paths), Hugo format violations (add language prefix, remove .md), external link updates (with user confirmation), confidence-based prioritization (P0-P4)
+- **Tools:** Read, Write, Edit, Grep, Glob, Bash
+- **When to Use:**
+  - After reviewing link-checker audit findings
+  - Fixing broken internal links with clear correct paths
+  - Correcting Hugo link format violations (missing /en/ or /id/, .md extensions)
+  - Updating/removing broken external links (requires user confirmation)
+  - Applying P0-P4 prioritized fixes based on criticality + confidence
+- **Workflow:** apps**ayokoding-web**link-checker (detect) → User review → apps**ayokoding-web**link-fixer (apply validated fixes)
+- **Safety:** Re-validates findings, uses confidence levels (HIGH/MEDIUM/FALSE_POSITIVE), asks for confirmation on external link changes
+- **References:** Linking Convention, Hugo Content Convention, Fixer Confidence Levels, Maker-Checker-Fixer Pattern
+
 ### 🟩 `ayokoding-web-navigation-maker.md`
 
 Automatically regenerate 2-layer navigation listings in ayokoding-web \_index.md files from file structure. **⚠️ Now automated via pre-commit hook** - runs automatically when committing ayokoding-web content changes (see [Pre-commit Automation](../apps/ayokoding-cli/README.md#pre-commit-automation)).

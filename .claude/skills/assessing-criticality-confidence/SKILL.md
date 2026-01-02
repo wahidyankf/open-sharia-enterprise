@@ -1,6 +1,7 @@
 ---
-name: criticality-confidence-system
+name: assessing-criticality-confidence
 description: Universal classification system for checker and fixer agents using orthogonal criticality (CRITICAL/HIGH/MEDIUM/LOW importance) and confidence (HIGH/MEDIUM/FALSE_POSITIVE certainty) dimensions. Covers priority matrix (P0-P4), execution order, dual-label pattern for verification status, standardized report format, and domain-specific examples. Essential for implementing checker/fixer agents and processing audit reports
+allowed-tools: [Read, Glob, Grep, Write, Bash]
 tags:
   - criticality-levels
   - confidence-levels
@@ -583,7 +584,7 @@ apply_fix(finding)
 
 **Right**: Fix P0 first, then P1, then P2, then P3-P4
 
-## Reference Documentation
+## References
 
 **Primary Conventions**:
 
@@ -597,8 +598,8 @@ apply_fix(finding)
 
 **Related Skills**:
 
-- `maker-checker-fixer-pattern` - Understanding three-stage workflow
-- `factual-validation-methodology` - Verification label system
+- `applying-maker-checker-fixer` - Understanding three-stage workflow
+- `validating-factual-accuracy` - Verification label system
 
 **Related Agents**:
 

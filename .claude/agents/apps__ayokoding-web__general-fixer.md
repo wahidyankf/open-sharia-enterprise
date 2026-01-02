@@ -4,7 +4,7 @@ description: Applies validated fixes from ayokoding-web-general-checker audit re
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
-skills: []
+skills: [developing-ayokoding-content, assessing-criticality-confidence]
 created: 2025-12-14
 updated: 2026-01-02
 ---

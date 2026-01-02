@@ -4,7 +4,7 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
-skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]
+skills: [creating-accessible-diagrams, applying-maker-checker-fixer]
 created: 2025-11-29
 updated: 2025-12-31
 ---

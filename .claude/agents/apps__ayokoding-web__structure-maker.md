@@ -4,7 +4,7 @@ description: Expert at proactively modifying ayokoding-web content structure by 
 tools: Read, Edit, Glob, Bash
 model: haiku
 color: yellow
-skills: []
+skills: [developing-ayokoding-content]
 created: 2025-12-20
 updated: 2025-12-30
 ---
