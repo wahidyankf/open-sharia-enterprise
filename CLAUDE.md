@@ -161,7 +161,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 Use Mermaid diagrams with color-blind friendly palette and proper accessibility practices. **CRITICAL rules**: Use verified accessible colors (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), escape special characters in node text, avoid `style` commands in sequence diagrams. See [Diagrams Convention](./docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) and [Color Accessibility Convention](./docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) for complete details.
 
-**Note**: Skill `color-accessibility-diagrams` auto-loads when creating diagrams, providing accessible palette, Mermaid best practices, escaping rules, and working examples.
+**Note**: Skill `creating-accessible-diagrams` auto-loads when creating diagrams, providing accessible palette, Mermaid best practices, escaping rules, and working examples.
 
 ### Emoji Usage Convention
 
@@ -187,7 +187,7 @@ When documenting markdown structure, use **4 backticks for outer fence, 3 for in
 
 Seven tutorial types with progressive coverage levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). By Example tutorials use 75-90 annotated code examples with 1-2.25 comment lines per code line PER EXAMPLE and five-part structure for experienced developers. Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
 
-**Note**: Skill `by-example-tutorial-creation` auto-loads when creating programming tutorials, providing annotation standards, example structure patterns, and quality guidelines.
+**Note**: Skill `creating-by-example-tutorials` auto-loads when creating programming tutorials, providing annotation standards, example structure patterns, and quality guidelines.
 
 ### Content Quality Principles
 
@@ -197,7 +197,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification ([Verified], [Unverified], [Error], [Outdated]). See [Factual Validation Convention](./docs/explanation/conventions/content/ex-co-co__factual-validation.md) for complete methodology.
 
-**Note**: Skill `factual-validation-methodology` auto-loads when validating documentation accuracy, providing validation workflow, source prioritization, confidence classifications, and integration patterns.
+**Note**: Skill `validating-factual-accuracy` auto-loads when validating documentation accuracy, providing validation workflow, source prioritization, confidence classifications, and integration patterns.
 
 ### Hugo Content Convention
 
@@ -209,7 +209,7 @@ Three specialized documents for Hugo sites:
 
 Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) with dual-path organization ([by-concept and by-example](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md)). See [Tutorial Folder Arrangement Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for 5-item arrangement details.
 
-**Note**: Skill `hugo-ayokoding-development` auto-loads for ayokoding-web tasks (bilingual strategy, weight system, annotation standards). Skill `hugo-ose-development` auto-loads for ose-platform-web tasks (PaperMod patterns, date-based structure).
+**Note**: Skill `developing-ayokoding-content` auto-loads for ayokoding-web tasks (bilingual strategy, weight system, annotation standards). Skill `developing-ose-content` auto-loads for ose-platform-web tasks (PaperMod patterns, date-based structure).
 
 ### README Quality Convention
 
@@ -246,11 +246,17 @@ See [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-ag
 
 ### Skills Infrastructure
 
-**Claude Code Skills** provide progressive knowledge delivery to agents through auto-loading markdown packages. Skills are **delivery infrastructure** (like CLAUDE.md), not a governance layer. They enable on-demand depth without upfront loading of all details.
+**Claude Code Skills** provide progressive knowledge delivery to agents. Skills are **delivery infrastructure**, not a governance layer. They enable on-demand depth without upfront loading of all details.
+
+**Delivery Model:**
+
+- **CLAUDE.md**: Loaded into Orchestrator at startup (main conversation context)
+- **Agents**: Spawned by Orchestrator with isolated contexts (do NOT inherit CLAUDE.md)
+- **Skills**: Deliver to agents ONLY via explicit `skills:` field in agent frontmatter
 
 **Key Characteristics:**
 
-- Auto-load based on task description matching
+- Auto-load based on task description matching (when listed in agent's `skills:` field)
 - Enable progressive disclosure (name/description at startup, full content on-demand)
 - Reduce agent file sizes through shared knowledge packages
 - Support knowledge composition (multiple Skills work together)
@@ -283,7 +289,7 @@ Seven agent families follow a three-stage workflow for content quality: Maker (c
 
 **Validation**: docs**checker, docs**tutorial-checker, docs**link-general-checker, readme**checker, apps**ayokoding-web**general-checker, apps**ayokoding-web**by-example-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**structure-checker, apps**ose-platform-web**content-checker, wow\_\_rules-checker
 
-**Fixing**: wow**rules-fixer, apps**ayokoding-web**general-fixer, apps**ayokoding-web**by-example-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**structure-fixer, docs**tutorial-fixer, apps**ose-platform-web**content-fixer, readme**fixer, docs**fixer, plan\_\_fixer
+**Fixing**: wow**rules-fixer, apps**ayokoding-web**general-fixer, apps**ayokoding-web**by-example-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**link-fixer, apps**ayokoding-web**structure-fixer, docs**tutorial-fixer, apps**ose-platform-web**content-fixer, readme**fixer, docs**fixer, plan\_\_fixer
 
 **Planning**: plan**maker, plan**checker, plan**executor, plan**execution-checker
 

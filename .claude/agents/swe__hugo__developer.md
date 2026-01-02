@@ -4,7 +4,7 @@ description: Expert at developing Hugo sites (layouts, themes, assets, configura
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
-skills: []
+skills: [developing-ayokoding-content, developing-ose-content]
 created: 2025-12-15
 updated: 2025-12-15
 ---

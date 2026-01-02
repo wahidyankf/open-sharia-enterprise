@@ -1,6 +1,7 @@
 ---
-name: factual-validation-methodology
+name: validating-factual-accuracy
 description: Universal methodology for verifying factual correctness in documentation using WebSearch and WebFetch tools. Covers command syntax verification, version checking, code example validation, API correctness, confidence classification system ([Verified], [Error], [Outdated], [Unverified]), source prioritization, and update frequency rules. Essential for maintaining factual accuracy in technical documentation and educational content
+allowed-tools: [Read, Glob, Grep, WebFetch, WebSearch, Write, Bash]
 tags:
   - factual-validation
   - verification
@@ -509,3 +510,17 @@ Step 3: Compare and classify
 ---
 
 This Skill packages critical factual validation methodology for maintaining accuracy in technical documentation. For comprehensive details, consult the primary convention document.
+
+## References
+
+**Primary Convention**: [Factual Validation Convention](../../../docs/explanation/conventions/content/ex-co-co__factual-validation.md)
+
+**Related Conventions**:
+
+- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content standards
+- [Criticality Levels](../../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) - Severity classification
+- [Timestamp Format](../../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - Validation metadata timestamps
+
+**Related Skills**:
+
+- `assessing-criticality-confidence` - Understanding dual-label system and priority matrix

@@ -1,7 +1,7 @@
 ---
-name: skill-name
+name: multi-file-template
 description: Clear, action-oriented description for auto-loading. CRITICAL - must be specific enough to trigger when relevant tasks are described, unique across all Skills.
-allowed-tools: [Read, Grep] # Optional - specify allowed tools for security
+allowed-tools: [Read, Write, Edit, Glob, Grep] - specify allowed tools for security
 model: sonnet # Optional - specify required model (sonnet, opus, haiku)
 ---
 

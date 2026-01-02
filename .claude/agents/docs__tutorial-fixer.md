@@ -4,7 +4,7 @@ description: Applies validated fixes from docs-tutorial-checker audit reports. R
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
-skills: []
+skills: [applying-diataxis-framework, assessing-criticality-confidence]
 created: 2025-12-14
 updated: 2025-12-27
 ---

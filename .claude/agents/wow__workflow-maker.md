@@ -4,7 +4,7 @@ description: Expert at creating and updating workflow definition files in docs/e
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
-skills: []
+skills: [defining-workflows, writing-gherkin-criteria]
 created: 2025-12-23
 updated: 2025-12-29
 ---

@@ -4,7 +4,7 @@ description: Validates both external and internal links in documentation files t
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: haiku
 color: purple
-skills: []
+skills: [validating-links, assessing-criticality-confidence]
 created: 2025-11-29
 updated: 2025-12-28
 ---

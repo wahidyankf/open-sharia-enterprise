@@ -4,7 +4,7 @@ description: Expert at creating Hugo content for ose-platform-web (PaperMod them
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
-skills: []
+skills: [developing-ose-content, applying-content-quality]
 created: 2025-12-15
 updated: 2025-12-15
 ---

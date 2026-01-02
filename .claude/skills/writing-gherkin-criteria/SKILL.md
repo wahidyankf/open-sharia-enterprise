@@ -1,6 +1,7 @@
 ---
-name: gherkin-acceptance-criteria
+name: writing-gherkin-criteria
 description: Guide for writing Gherkin acceptance criteria using Given-When-Then syntax for testable requirements. Covers scenario structure, background blocks, scenario outlines with examples tables, common patterns for authentication/CRUD/validation/error handling, and best practices for clear testable specifications. Essential for writing user stories and plan acceptance criteria
+allowed-tools: [Read, Write, Edit, Glob, Grep]
 tags:
   - gherkin
   - acceptance-criteria
@@ -570,3 +571,17 @@ Scenario: Preview shows latest changes
 ---
 
 This Skill packages essential Gherkin acceptance criteria knowledge for writing clear, testable specifications. For additional patterns and examples, consult external Gherkin resources.
+
+## References
+
+**Primary Convention**: [Acceptance Criteria Convention](../../../docs/explanation/development/infra/ex-de-in__acceptance-criteria.md)
+
+**Related Conventions**:
+
+- [Plans Organization](../../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Using Gherkin in plans
+- [Maker-Checker-Fixer Pattern](../../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Validation workflow
+
+**Related Skills**:
+
+- `practicing-trunk-based-development` - Git workflow for implementing features
+- `applying-maker-checker-fixer` - Validation workflow that uses acceptance criteria

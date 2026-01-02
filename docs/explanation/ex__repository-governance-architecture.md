@@ -59,8 +59,9 @@ graph TD
     L2 -->|encoded in| SK
     L3 -->|summarized in| CM
     L3 -->|encoded in| SK
-    CM -->|delivers to| L4
-    SK -->|auto-delivers to| L4
+    CM -->|loaded at startup| O[Orchestrator]
+    O -->|spawns| L4
+    SK -->|delivers via skills: field| L4
     DR -->|explicitly delivers to| L4
 
     style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
@@ -69,6 +70,7 @@ graph TD
     style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style O fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style SK fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -308,18 +310,15 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 **Key Document**: [Skills Directory](../.claude/skills/README.md)
 
-**10 Skills Available**:
+**17 Skills Available**: See [Skills Directory](../.claude/skills/README.md) for complete catalog.
 
-1. **maker-checker-fixer-pattern** - Three-stage quality workflow
-2. **color-accessibility-diagrams** - WCAG-compliant Mermaid diagrams
-3. **repository-architecture** - Six-layer hierarchy understanding
-4. **hugo-ayokoding-development** - Hextra theme, bilingual, weight system
-5. **by-example-tutorial-creation** - 75-90 annotated code examples
-6. **factual-validation-methodology** - WebSearch/WebFetch verification
-7. **trunk-based-development** - Main branch workflow
-8. **gherkin-acceptance-criteria** - Given-When-Then format
-9. **hugo-ose-development** - PaperMod theme conventions
-10. **criticality-confidence-system** - Checker/Fixer classification
+**Skills Categories**:
+
+- **Content Creation**: applying-content-quality, creating-by-example-tutorials, developing-ayokoding-content, developing-ose-content, writing-readme-files
+- **Quality Assurance**: applying-maker-checker-fixer, assessing-criticality-confidence, validating-factual-accuracy, validating-links
+- **Standards Application**: applying-diataxis-framework, creating-accessible-diagrams, writing-gherkin-criteria
+- **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development
+- **Technical Knowledge**: developing-agents, understanding-repository-architecture
 
 ### Why Infrastructure, Not a Layer?
 
@@ -354,9 +353,9 @@ Governance (enforces rules):
   Development ──governs──> Agents (agents MUST follow)
 
 Delivery (serves knowledge):
-  Conventions ──encoded in──> Skills ──delivers to──> Agents
-  Conventions ──summarized in──> CLAUDE.md ──delivers to──> Agents
-  Conventions ──linked via──> Direct References ──delivers to──> Agents
+  CLAUDE.md ──loaded at startup──> Orchestrator ──spawns──> Agents (isolated contexts)
+  Skills ──delivers via skills: field──> Agents
+  Direct References ──explicit links──> Agents
 ```
 
 ## 🔗 Complete Traceability Examples
@@ -609,7 +608,7 @@ Periodically verify:
 
 **Delivery Infrastructure**:
 
-- [Skills Directory](../.claude/skills/README.md) - 10 knowledge packages
+- [Skills Directory](../.claude/skills/README.md) - 17 knowledge packages
 - [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
 - CLAUDE.md - Root navigation document
 

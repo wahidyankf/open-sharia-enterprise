@@ -1512,21 +1512,28 @@ Your primary job is to [clear, specific purpose statement].
    - Each CLAUDE.md section should answer "what, where, why" but link to "how"
    - Comprehensive details belong in convention docs, not CLAUDE.md
 
-### Inheritance Pattern
+### Agent Isolation and Delivery Pattern
 
 ```
-CLAUDE.md (Project-wide guidance)
-    ↓ (inherited by all agents)
-Individual Agents (Specialized capabilities)
-    ↓ (follow standards from)
-ex-de__ai-agents.md (Agent structure standards)
+Startup: CLAUDE.md ──loaded──> Orchestrator (main conversation)
+Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
+         Skills ──delivers via skills: field──> Agents
+         Conventions ──explicit references──> Agents
 ```
+
+**Critical Understanding:**
+
+1. **Agents have isolated contexts** - They do NOT inherit CLAUDE.md
+2. **Skills deliver explicitly** - Only Skills listed in agent's `skills:` field are available
+3. **References are explicit** - Agents link to specific conventions they need
+4. **Orchestrator has CLAUDE.md** - Main conversation loads CLAUDE.md, not agents
 
 **Rules:**
 
-1. **Don't duplicate** - Agents should reference CLAUDE.md, not repeat its content
-2. **Do specialize** - Agents add domain expertise on top of project guidance
+1. **Don't duplicate** - Agents should reference conventions, not repeat content
+2. **Do specialize** - Agents add domain expertise through Skills and explicit knowledge
 3. **Follow conventions** - All agents must comply with this convention
+4. **Declare skills explicitly** - Every agent must have non-empty `skills:` field
 
 ### What Belongs Where
 

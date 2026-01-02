@@ -4,7 +4,7 @@ description: Expert at creating by-example tutorials with 75-90 annotated code e
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 model: sonnet
 color: blue
-skills: [by-example-tutorial-creation, hugo-ayokoding-development]
+skills: [creating-by-example-tutorials, developing-ayokoding-content]
 created: 2025-12-25
 updated: 2026-01-02
 ---

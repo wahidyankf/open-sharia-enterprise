@@ -18,12 +18,10 @@ Skills are model-invoked markdown-based knowledge packages that:
 
 ```
 Knowledge Flow:
-L2: Conventions ──┬── CLAUDE.md (navigation) ──> L4: Agents
-                  ├── Skills (progressive) ────> L4: Agents
-                  └── Direct refs (specific) ──> L4: Agents
-L3: Development ──┬── CLAUDE.md (navigation) ──> L4: Agents
-                  ├── Skills (progressive) ────> L4: Agents
-                  └── Direct refs (specific) ──> L4: Agents
+  Startup: CLAUDE.md ──loaded──> Orchestrator (main conversation)
+  Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
+           Skills ──delivers via skills: field──> Agents
+           Direct refs ──explicit links──> Agents
 ```
 
 Skills don't **govern** agents (like Conventions do). Skills **deliver** knowledge to agents. They're infrastructure, not architecture.
@@ -33,19 +31,21 @@ Skills don't **govern** agents (like Conventions do). Skills **deliver** knowled
 ### Single-File Skill
 
 ```
-.claude/skills/skill-name/
-└── SKILL.md          # Frontmatter + content
+Knowledge Flow:
+  Startup: CLAUDE.md ──loaded──> Orchestrator (main conversation)
+  Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
+           Skills ──delivers via skills: field──> Agents
+           Direct refs ──explicit links──> Agents
 ```
 
 ### Multi-File Skill
 
 ```
-.claude/skills/skill-name/
-├── SKILL.md          # Frontmatter + overview
-├── reference.md      # Detailed reference documentation
-├── examples.md       # Code examples and usage patterns
-└── scripts/          # Optional utility scripts
-    └── helper.sh
+Knowledge Flow:
+  Startup: CLAUDE.md ──loaded──> Orchestrator (main conversation)
+  Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
+           Skills ──delivers via skills: field──> Agents
+           Direct refs ──explicit links──> Agents
 ```
 
 ## SKILL.md Format
@@ -64,121 +64,70 @@ model: sonnet # Optional - specific model requirement
 Markdown instructions, examples, best practices...
 ```
 
-**Frontmatter Fields:**
+Knowledge Flow:
+Startup: CLAUDE.md ──loaded──> Orchestrator (main conversation)
+Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
+Skills ──delivers via skills: field──> Agents
+Direct refs ──explicit links──> Agents
 
-- **`name:`** (required) - Skill identifier matching folder name
-- **`description:`** (required) - Clear description triggering auto-loading (CRITICAL)
-- **`allowed-tools:`** (optional) - Tool access restrictions
-- **`model:`** (optional) - Specific model requirement
-
-## When to Create a Skill
-
-Create a Skill when:
-
-- ✅ Knowledge is duplicated across multiple agents
-- ✅ Convention/practice requires detailed guidance (>500 characters)
-- ✅ Topic has clear trigger context (diagrams, specific framework, pattern)
-- ✅ Knowledge needs to be accessible on-demand (progressive disclosure)
-
-Do NOT create a Skill when:
-
-- ❌ Information fits in CLAUDE.md summary (≤2-5 lines)
-- ❌ Topic lacks clear auto-load trigger
-- ❌ Knowledge is agent-specific (belongs in agent file)
-- ❌ Convention document is already concise (<500 characters)
-
-## Skill vs Convention Document
-
-| Aspect           | Convention Document              | Skill                        |
-| ---------------- | -------------------------------- | ---------------------------- |
-| **Purpose**      | Define rules                     | Deliver knowledge            |
-| **Location**     | `docs/explanation/conventions/`  | `.claude/skills/`            |
-| **Audience**     | Humans (canonical documentation) | Models (on-demand guidance)  |
-| **Structure**    | Diátaxis framework               | Action-oriented instructions |
-| **Relationship** | Authoritative source             | References conventions       |
-
-**Key principle**: Skills **reference** conventions, **not replace** them. Conventions remain the single source of truth.
-
-## Available Skills
-
-### Phase 1 Skills (Foundation)
-
-1. **maker-checker-fixer-pattern** - Three-stage quality workflow
-2. **color-accessibility-diagrams** - WCAG-compliant Mermaid with verified palette
-3. **repository-architecture** - Six-layer hierarchy understanding
-
-### Phase 2 Skills (Knowledge Migration)
-
-4. **hugo-ayokoding-development** - Hextra theme, bilingual, weight system
-5. **by-example-tutorial-creation** - 75-90 examples, annotation density
-6. **factual-validation-methodology** - WebSearch/WebFetch verification
-7. **trunk-based-development** - Main branch workflow
-8. **gherkin-acceptance-criteria** - Writing testable acceptance criteria
-
-### Extended Skills (Optional)
-
-9. **hugo-ose-development** - PaperMod theme conventions
-10. **criticality-confidence-system** - Checker/Fixer levels
-
-## Using Skills in Agents
-
-Agents can reference Skills in their frontmatter:
-
-```yaml
----
-name: docs__maker
-description: Expert documentation writer
-tools: [Read, Write, Edit, Grep, Glob]
-model: sonnet
-color: blue
-skills:
-  - color-accessibility-diagrams
-  - maker-checker-fixer-pattern
----
-```
+````
 
 **For agents not using Skills:**
 
 ```yaml
 skills: []
-```
 
-The `skills:` field is now mandatory for all agents to enable composability and explicit skill declarations.
+## Available Skills (17)
 
-## Creating New Skills
+This repository provides 17 Claude Code Skills organized into five categories. Each Skill is a model-invoked knowledge package that auto-loads when agents need specific domain expertise.
 
-Use the provided templates:
+### Content Creation (5 Skills)
 
-- **Single-File**: `.claude/skills/TEMPLATE.md`
-- **Multi-File**: `.claude/skills/MULTI-FILE-TEMPLATE/` (available in Phase 2)
+**applying-content-quality** - Universal markdown content quality standards for active voice, heading hierarchy, accessibility compliance (alt text, WCAG AA contrast, screen reader support), and professional formatting. Essential for all markdown content creation across docs/, Hugo sites, plans/, and repository files.
 
-See `docs/how-to/hoto__create-new-skill.md` for complete guidance (available in Phase 2).
+**creating-by-example-tutorials** - Comprehensive guide for creating by-example tutorials - code-first learning path with 75-90 heavily annotated examples achieving 95% language coverage. Covers five-part example structure, annotation density standards (1-2.25 comments per code line PER EXAMPLE), self-containment rules, and multiple code blocks for comparisons.
 
-## Principles Alignment
+**developing-ayokoding-content** - Hugo Hextra theme patterns for ayokoding-web including bilingual content strategy (Indonesian/English), level-based weight system, 2-layer navigation depth, absolute path linking, and code annotation standards for programming tutorials.
 
-Skills implementation aligns with:
+**developing-ose-content** - Hugo PaperMod theme patterns for ose-platform-web including English-only landing page structure, date-based content organization, and deployment-specific conventions.
 
-- **Progressive Disclosure** - Layer complexity gradually, load depth on-demand
-- **Automation Over Manual** - Claude auto-loads Skills based on context
-- **Documentation First** - Skills encode knowledge systematically
-- **Explicit Over Implicit** - Clear Skills descriptions enable precise auto-loading
+**writing-readme-files** - Engaging, accessible README creation standards including problem-solution hooks, plain language requirements, acronym context, paragraph limits (≤5 lines), benefits-focused language, and scannable structure for quick comprehension.
 
-See [Core Principles Index](../../docs/explanation/principles/README.md) for complete principles.
+### Quality Assurance (4 Skills)
 
-## Related Documentation
+**applying-maker-checker-fixer** - Three-stage workflow pattern for content quality: Maker creates/updates, Checker validates and generates audit report, User reviews findings, Fixer applies validated fixes with confidence levels. Implements automated quality gates with human oversight.
 
-**Architecture:**
+**assessing-criticality-confidence** - Dual-dimension assessment system combining criticality levels (CRITICAL/HIGH/MEDIUM/LOW for importance/urgency) with confidence levels (HIGH/MEDIUM/FALSE_POSITIVE for fix certainty). Enables priority-based fix execution (P0-P4) and systematic false positive detection.
 
-- [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) - Six-layer hierarchy (Skills as infrastructure)
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent structure, Skills references
+**validating-factual-accuracy** - Universal methodology for verifying factual correctness in documentation using WebSearch and WebFetch tools. Covers command syntax verification, version checking, code example validation, API correctness, confidence classification system ([Verified], [Error], [Outdated], [Unverified]), source prioritization, and update frequency rules.
 
-**Delivery Mechanisms:**
+**validating-links** - Comprehensive link validation methodology for both internal (relative paths, .md extensions) and external links (HTTP status checking, caching with 6-month expiry). Includes broken link detection, link format verification, and metadata cache management.
 
-- `CLAUDE.md` - Always-loaded navigation and summaries
-- `.claude/skills/` - Auto-loaded progressive knowledge (this directory)
-- Direct references - Explicit convention/practice links in agent prompts
+### Standards Application (3 Skills)
+
+**applying-diataxis-framework** - Diátaxis documentation framework organizing content into four types: Tutorials (learning-oriented), How-To (problem-solving), Reference (technical information), Explanation (conceptual understanding). Ensures documentation serves all user needs systematically.
+
+**creating-accessible-diagrams** - Color-blind friendly Mermaid diagram creation using verified accessible palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Covers WCAG AA compliance, special character escaping, and accessibility best practices for technical diagrams.
+
+**writing-gherkin-criteria** - Acceptance criteria authoring using Gherkin syntax (Given-When-Then) for behavior-driven development. Covers scenario structure, step patterns, test data management, and integration with project planning documents.
+
+### Process Execution (3 Skills)
+
+**creating-project-plans** - Project planning structure and organization following the plans/ directory convention: ideas.md for quick captures, backlog/ for future work, in-progress/ for active projects, done/ for archives. Covers folder naming (YYYY-MM-DD__project-identifier), required documents (README.md, requirements.md, tech-docs.md, delivery.md), and plan lifecycle management.
+
+**defining-workflows** - Multi-step workflow definition using standardized YAML frontmatter and markdown structure. Covers workflow types (sequential, parallel, conditional), input/output specifications, termination criteria, and integration with AI agents for automated orchestration.
+
+**practicing-trunk-based-development** - Trunk-based development workflow patterns: single main branch, small frequent commits, feature toggles over feature branches, environment branches for deployment only. Implements continuous integration with minimal merge conflicts.
+
+### Technical Knowledge (2 Skills)
+
+**developing-agents** - AI agent development standards including frontmatter structure (name, description, tools, model, color, skills), naming conventions (kebab-case, scope prefixes), tool access patterns, model selection criteria, and Bash-only file operations for .claude/ folders.
+
+**understanding-repository-architecture** - Six-layer governance hierarchy: Vision (WHY we exist) → Principles (WHY we value) → Conventions (WHAT docs rules) → Development (HOW we develop) → AI Agents (WHO enforces) → Workflows (WHEN orchestration). Covers traceability requirements, delivery infrastructure (CLAUDE.md, Skills, Direct References), and change propagation patterns.
 
 ---
 
-**Created**: 2026-01-02
-**Last Updated**: 2026-01-02
+**Skills Creation**: See [How to Create a Skill](../../docs/how-to/hoto__create-new-skill.md) for step-by-step guide to creating new Skills.
+
+**Multi-File Template**: Use `.claude/skills/multi-file-template/` as starting point for complex Skills requiring multiple files (SKILL.md, examples.md, reference.md, README.md).
+````

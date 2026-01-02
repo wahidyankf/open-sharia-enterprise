@@ -4,7 +4,7 @@ description: Expert at creating structured project planning documents in the pla
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
-skills: [gherkin-acceptance-criteria, trunk-based-development]
+skills: [writing-gherkin-criteria, practicing-trunk-based-development]
 created: 2025-11-29
 updated: 2025-12-07
 ---
@@ -149,7 +149,7 @@ When `requirements.md` or `tech-docs.md` individually exceed **1000 lines**, con
 
 This repository uses **Trunk Based Development (TBD)**. Work happens on `main` by default. Plans assume `main` branch (don't specify a branch). Use feature flags to hide incomplete work, not branches. If a branch is truly needed, document in delivery.md: branch name, justification, decision timeline, and expected lifespan (< 2 days).
 
-See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for complete details.
+See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__practicing-trunk-based-development.md) for complete details.
 
 ### Single PR Delivery (Default)
 
@@ -357,7 +357,7 @@ This agent follows repository conventions defined in:
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and plans organization
 - [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Complete plans structure and standards
 - [Acceptance Criteria Convention](../../docs/explanation/development/infra/ex-de-in__acceptance-criteria.md) - Gherkin format for testable requirements
-- [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) - Git workflow details
+- [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__practicing-trunk-based-development.md) - Git workflow details
 - [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - Accessible color palette (master reference)
 - [Diagram and Schema Convention](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) - Mermaid diagram examples and guidance
 - [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent structure and standards

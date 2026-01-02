@@ -4,7 +4,7 @@ description: Validates consistency between principles, conventions, development 
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
-skills: []
+skills: [understanding-repository-architecture, assessing-criticality-confidence]
 created: 2025-11-26
 updated: 2026-01-02
 ---
@@ -196,7 +196,7 @@ All agents MUST have non-empty `skills:` field (agents need skills like employee
 
 for agent_file in .claude/agents/\*.md; do
 skills_line=\$(awk 'BEGIN{p=0} /^---\$/{if(p==0){p=1;next}else{exit}} p==1 && /^skills:/' "\$agent_file")
-if [["\$skills_line" == "skills: []" || -z "\$skills_line"]]; then
+if [["\$skills_line" == "skills: [understanding-repository-architecture, assessing-criticality-confidence]" || -z "\$skills_line"]]; then
 echo "CRITICAL: Agent has empty or missing skills field: \$agent_file"
 fi
 done

@@ -4,7 +4,7 @@ description: Applies validated fixes from ose-platform-web-content-checker audit
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
-skills: []
+skills: [developing-ose-content, assessing-criticality-confidence]
 created: 2025-12-14
 updated: 2025-12-27
 ---

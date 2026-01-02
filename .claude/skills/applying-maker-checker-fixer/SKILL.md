@@ -1,6 +1,7 @@
 ---
-name: maker-checker-fixer-pattern
+name: applying-maker-checker-fixer
 description: Three-stage content quality workflow pattern (Maker creates, Checker validates, Fixer remediates). Use when working with content quality workflows, validation processes, audit reports, or implementing maker/checker/fixer agent roles.
+allowed-tools: [Read, Glob, Grep, Write, Edit, Bash]
 allowed-tools: [Read, Grep]
 model: sonnet
 ---

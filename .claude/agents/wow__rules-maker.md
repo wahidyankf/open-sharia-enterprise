@@ -4,7 +4,7 @@ description: Creates new conventions/agents and makes rule changes effective acr
 tools: Read, Glob, Grep, Bash
 model: sonnet
 color: yellow
-skills: []
+skills: [understanding-repository-architecture, applying-maker-checker-fixer]
 created: 2025-11-30
 updated: 2026-01-02
 ---

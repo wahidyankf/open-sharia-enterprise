@@ -1,6 +1,7 @@
 ---
-name: trunk-based-development
+name: practicing-trunk-based-development
 description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (assume main). Essential for understanding repository git workflow and preventing unnecessary branch proliferation
+allowed-tools: [Bash]
 tags:
   - git-workflow
   - trunk-based-development
@@ -534,7 +535,7 @@ Before pushing to `main`:
 
 **Default to `main` unless you have a compelling reason to branch.**
 
-## Reference Documentation
+## References
 
 **Primary Convention**: [Trunk Based Development Convention](../../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md)
 
@@ -546,8 +547,8 @@ Before pushing to `main`:
 
 **Related Skills**:
 
-- `gherkin-acceptance-criteria` - Writing testable acceptance criteria for TBD workflow
-- `repository-architecture` - Understanding repository structure and principles
+- `writing-gherkin-criteria` - Writing testable acceptance criteria for TBD workflow
+- `understanding-repository-architecture` - Understanding repository structure and principles
 
 ---
 

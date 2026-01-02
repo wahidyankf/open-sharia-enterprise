@@ -4,7 +4,7 @@ description: Expert at deploying ose-platform-web to production. Synchronizes pr
 tools: Bash
 model: haiku
 color: purple
-skills: []
+skills: [practicing-trunk-based-development]
 created: 2025-12-15
 updated: 2025-12-15
 ---

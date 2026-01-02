@@ -4,7 +4,7 @@ description: Creates and updates README.md content while maintaining engagement,
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
-skills: []
+skills: [writing-readme-files, applying-content-quality]
 created: 2025-12-15
 updated: 2025-12-15
 ---

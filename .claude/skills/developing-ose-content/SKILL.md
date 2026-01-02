@@ -1,6 +1,7 @@
 ---
-name: hugo-ose-development
+name: developing-ose-content
 description: Guide for creating content on ose-platform-web Hugo site using PaperMod theme. Covers English-only landing page structure, update posts with date-prefixed filenames, PaperMod frontmatter (cover images, table of contents, author field), simple flat organization, and ose-platform-web specific conventions. Essential for ose-platform-web content creation tasks
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 tags:
   - hugo
   - ose-platform-web
@@ -476,3 +477,17 @@ cover:
 ---
 
 This Skill packages essential ose-platform-web development knowledge for creating simple, effective landing page content. For comprehensive details, consult the primary convention document.
+
+## References
+
+**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md)
+
+**Related Conventions**:
+
+- [Hugo Content Shared](../../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal quality standards
+
+**Related Skills**:
+
+- `developing-ayokoding-content` - Comparison with ayokoding-web patterns
+- `creating-accessible-diagrams` - Accessible diagrams for technical content
