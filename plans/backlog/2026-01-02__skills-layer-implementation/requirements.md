@@ -23,10 +23,10 @@
    - Success criteria: Skills clearly documented as delivery infrastructure
 
 4. **Enable Agent Knowledge References**
-   - Update AI Agents Convention with optional `skills:` frontmatter syntax
+   - Update AI Agents Convention with required `skills:` frontmatter (can be empty `[]`)
    - Demonstrate Skills references in 5-10 example agents
    - Document best practices for when agents should reference vs. inline knowledge
-   - Success criteria: Agents can optionally reference Skills, reducing duplication
+   - Success criteria: All agents have required `skills:` field, reducing duplication
 
 5. **Maintain Backward Compatibility**
    - Zero breaking changes to existing agent workflows
@@ -76,8 +76,8 @@ And no information loss during implementation
 ### Story 2: Agent Knowledge Duplication Reduction
 
 **As an** AI agent maintainer
-**I want** agents to optionally reference Skills instead of duplicating knowledge
-**So that** agent files are smaller and knowledge updates propagate automatically
+**I want** agents to reference Skills instead of duplicating knowledge
+**So that** agent files are smaller, knowledge updates propagate automatically, and components are composable
 
 **Acceptance Criteria:**
 
@@ -85,9 +85,10 @@ And no information loss during implementation
 Given an agent file currently duplicating convention knowledge
 When the agent is updated to reference a Skill
 Then the agent file size should decrease by 15-25%
-And the agent should have optional `skills:` frontmatter listing referenced Skills
+And the agent should have required `skills:` frontmatter listing referenced Skills
 And the agent should still access the same knowledge depth
 And knowledge updates to the Skill should automatically benefit the agent
+And agents not using Skills should have `skills: []` for consistency
 ```
 
 ### Story 3: Progressive Knowledge Loading
@@ -252,11 +253,11 @@ Use Mermaid diagrams with WCAG-compliant accessible colors. See [Diagram Convent
 
 ### FR5: Agent Skills References
 
-**Requirement**: Enable agents to optionally reference Skills via frontmatter
+**Requirement**: All agents must have `skills:` frontmatter field for composability
 
 **Implementation:**
 
-**Add optional `skills:` field to agent frontmatter:**
+**Add required `skills:` field to agent frontmatter (can be empty `[]`):**
 
 ```yaml
 ---
@@ -271,19 +272,40 @@ skills:
 ---
 ```
 
+**For agents not using Skills:**
+
+```yaml
+---
+name: simple__helper
+description: Simple helper agent
+tools: [Read]
+model: haiku
+color: green
+skills: []
+---
+```
+
 **Update AI Agents Convention:**
 
-- Document `skills:` field as optional frontmatter
-- Explain when to use Skills references vs. inline knowledge
+- Document `skills:` field as required frontmatter
+- Explain empty array `[]` for agents not using Skills
+- Explain when to reference Skills vs. inline knowledge
 - Provide examples of Skills composition
 
-**Demonstrate in 5-10 agents:**
+**Update all agents:**
 
-- `docs__maker` → references `color-accessibility-diagrams`, `maker-checker-fixer-pattern`
-- `ayokoding-web-general-maker` → references `hugo-ayokoding-development`
-- `plan__maker` → references `gherkin-acceptance-criteria`, `trunk-based-development`
+- Add `skills: []` to all existing agents (batch update ~45 agents)
+- Add actual Skills references to 5-10 demonstration agents:
+  - `docs__maker` → `[color-accessibility-diagrams, maker-checker-fixer-pattern]`
+  - `ayokoding-web-general-maker` → `[hugo-ayokoding-development]`
+  - `plan__maker` → `[gherkin-acceptance-criteria, trunk-based-development]`
 
-**Rationale**: Optional Skills references reduce agent file size and enable automatic knowledge composition
+**Rationale**: Required `skills:` field enables:
+
+- Better composability through explicit declarations
+- Consistent agent structure (no special cases)
+- Easy discoverability of Skills usage
+- Simple validation (field must exist)
 
 ### FR6: Documentation Updates
 
@@ -297,7 +319,7 @@ skills:
    - Brief explanation of auto-loading
 
 2. **AI Agents Convention** (`docs/explanation/development/agents/ex-de-ag__ai-agents.md`)
-   - Add optional `skills:` frontmatter documentation
+   - Add required `skills:` frontmatter documentation (can be empty `[]`)
    - Explain Skills references pattern
    - Provide examples
 
