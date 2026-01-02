@@ -4,9 +4,9 @@
 
 ### Delivery Type
 
-**Multi-Phase Plan (3 Sequential Phases)**
+**Multi-Phase Plan (2 Sequential Phases)**
 
-This implementation consists of 3 phases delivered through direct commits to `main` branch following Trunk Based Development principles.
+This implementation consists of 2 phases delivered through direct commits to `main` branch following Trunk Based Development principles.
 
 ### Git Workflow
 
@@ -16,15 +16,14 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
 
 ### Delivery Summary
 
-**Total scope**: 8-12 Skills, infrastructure documentation, agent updates, CLAUDE.md optimization
+**Total scope**: 8-10 Skills, infrastructure documentation, agent updates, CLAUDE.md optimization
 
 **Sequential Phases:**
 
 1. **Phase 1: Foundation** - Skills infrastructure, first 3 core Skills (~8-12 commits)
-2. **Phase 2: Knowledge Migration** - 5-9 additional Skills, CLAUDE.md optimization, agent updates, documentation (~20-25 commits)
-3. **Phase 3: Community & Polish** - Shariah Skills, templates, final validation (~8-10 commits)
+2. **Phase 2: Knowledge Migration & Polish** - 5-7 additional Skills, CLAUDE.md optimization, agent updates, templates, final validation (~25-30 commits)
 
-**Dependencies**: Each phase builds on previous one; validation checkpoint required before starting next phase.
+**Dependencies**: Phase 2 builds on Phase 1; validation checkpoint required before starting Phase 2.
 
 ## Implementation Phases
 
@@ -116,13 +115,13 @@ And existing agents should continue working without modification
 
 ---
 
-### Phase 2: Knowledge Migration (Skills Expansion + Documentation)
+### Phase 2: Knowledge Migration & Polish (Skills Expansion + Final Validation)
 
-**Goal**: Create 5-9 additional Skills, optimize CLAUDE.md, update agents, and document Skills infrastructure.
+**Goal**: Create 5-7 additional Skills, optimize CLAUDE.md, update agents, enhance templates, and complete final validation.
 
 **Status**: Not Started
 **Prerequisites**: Phase 1 complete (validation checkpoint passed)
-**Commit Strategy**: Small, atomic commits to `main` (~20-25 commits total for this phase)
+**Commit Strategy**: Small, atomic commits to `main` (~25-30 commits total for this phase)
 
 #### Implementation Steps
 
@@ -232,95 +231,36 @@ And existing agents should continue working without modification
   - Confirm agent behavior unchanged (backward compatible)
   - Test Skills composition (multiple Skills loading together)
 
-- [ ] **Step 2.13: Phase 2 Validation Checkpoint**
+- [ ] **Step 2.13: Phase 2 Mid-Checkpoint**
   - Verify all commits pushed to `main`
-  - Run final validation checklist (see below)
+  - Run mid-phase validation checklist
   - Measure CLAUDE.md character count (must be ≤30,000)
   - Test all new Skills auto-load correctly
   - Verify agents with Skills references work properly
-  - Review phase completion before starting Phase 3
 
-#### Validation Checklist
-
-- [ ] 5-9 additional Skills created with valid structure
-- [ ] CLAUDE.md character count ≤30,000 (use `wc -m CLAUDE.md`)
-- [ ] CLAUDE.md includes Skills Infrastructure section
-- [ ] All Skills accessible (no information loss)
-- [ ] 5 agents updated with optional `skills:` frontmatter field
-- [ ] All Skills auto-load when relevant tasks described
-- [ ] Skills composition works (multiple Skills load together)
-- [ ] Backward compatibility maintained (agents without Skills still work)
-- [ ] No regression in agent behavior or output quality
-
-#### Acceptance Criteria
-
-```gherkin
-Given Phase 1 complete with Skills foundation
-When Phase 2 adds 5-9 Skills and documentation
-Then total 8-12 Skills should exist in .claude/skills/
-And CLAUDE.md character count should remain ≤30,000
-And CLAUDE.md should include Skills Infrastructure section
-And 5 agents should have optional skills: frontmatter
-And all Skills should auto-load when relevant tasks described
-And existing agents without Skills should continue working
-```
-
----
-
-### Phase 3: Community & Polish (Shariah Skills + Final Validation)
-
-**Goal**: Create community-shareable Shariah-compliance Skills, templates, and perform final validation.
-
-**Status**: Not Started
-**Prerequisites**: Phase 2 complete (validation checkpoint passed)
-**Commit Strategy**: Small, atomic commits to `main` (~8-10 commits total for this phase)
-
-#### Implementation Steps
-
-- [ ] **Step 3.1: Create Shariah-Compliance Skill 1 (demonstration)**
-  - Create `.claude/skills/halal-transaction-validation/` folder
-  - Create `SKILL.md` demonstrating pattern
-  - Note: "Requires Islamic finance expert for content validation"
-  - Content: Structure template for encoding Shariah-compliance knowledge
-  - Test: Verify Skill structure and auto-loading mechanism
-  - Git commit: `feat(skills): add halal-transaction-validation Skill template`
-
-- [ ] **Step 3.2: Create Shariah-Compliance Skill 2 (demonstration)**
-  - Create `.claude/skills/zakat-calculation-guidance/` folder
-  - Create `SKILL.md` demonstrating pattern
-  - Note: "Requires Islamic finance expert for content validation"
-  - Content: Structure template for Zakat calculation knowledge
-  - Test: Verify Skill structure and auto-loading mechanism
-  - Git commit: `feat(skills): add zakat-calculation-guidance Skill template`
-
-- [ ] **Step 3.3: Create agentskills.io publishing guide**
-  - Create `docs/how-to/hoto__publish-skills-to-agentskills.md`
-  - Content: What is agentskills.io, how to prepare Skills, compatibility verification
-  - Git commit: `docs(how-to): add guide for publishing Skills to agentskills.io`
-
-- [ ] **Step 3.4: Enhance Skill creation templates**
+- [ ] **Step 2.14: Enhance Skill creation templates**
   - Update `.claude/skills/TEMPLATE.md` with complete frontmatter
   - Create `.claude/skills/MULTI-FILE-TEMPLATE/` with reference.md, examples.md templates
   - Git commit: `feat(skills): enhance Skill creation templates`
 
-- [ ] **Step 3.5: Create Skills usage guide**
+- [ ] **Step 2.15: Create Skills usage guide**
   - Create `docs/how-to/hoto__create-new-skill.md`
   - Content: Single-file, multi-file examples, best practices, decision criteria
   - Git commit: `docs(how-to): add guide for creating new Skills`
 
-- [ ] **Step 3.6: Final validation - Run `wow__rules-checker`**
+- [ ] **Step 2.16: Final validation - Run `wow__rules-checker`**
   - Validate all Skills structure and content
   - Check Skills descriptions are clear and unique
   - Verify Skills frontmatter correct
   - Confirm Skills reference valid conventions
 
-- [ ] **Step 3.7: Final validation - CLAUDE.md**
+- [ ] **Step 2.17: Final validation - CLAUDE.md**
   - Count characters: Verify ≤30,000
   - Test all navigation links work
   - Verify all content accessible
   - Confirm Skills references point to existing Skills
 
-- [ ] **Step 3.8: Final validation - Agents**
+- [ ] **Step 2.18: Final validation - Agents**
   - **Test agents without Skills** (backward compatibility):
     - Pick 3-5 agents without `skills:` field
     - Invoke each agent with test tasks
@@ -330,25 +270,25 @@ And existing agents without Skills should continue working
     - Verify Skills auto-load when agent invoked
     - Test Skills composition (multiple Skills loading)
 
-- [ ] **Step 3.9: Final validation - Skills auto-loading**
-  - **Step 3.9.1**: Test each Skill individually
-  - **Step 3.9.2**: Verify Skill auto-loads for matching tasks
-  - **Step 3.9.3**: Confirm Skill doesn't load for unrelated tasks
-  - **Step 3.9.4**: Test Skills composition (multiple Skills loading)
-  - **Step 3.9.5**: Test multi-Skill integration workflow
+- [ ] **Step 2.19: Final validation - Skills auto-loading**
+  - **Step 2.19.1**: Test each Skill individually
+  - **Step 2.19.2**: Verify Skill auto-loads for matching tasks
+  - **Step 2.19.3**: Confirm Skill doesn't load for unrelated tasks
+  - **Step 2.19.4**: Test Skills composition (multiple Skills loading)
+  - **Step 2.19.5**: Test multi-Skill integration workflow
     - Test realistic scenario requiring 3+ Skills together
     - Example: "Create Hugo by-example tutorial with accessible diagrams"
     - Should auto-load: `hugo-ayokoding-development`, `by-example-tutorial-creation`, `color-accessibility-diagrams`
     - Verify all Skills load correctly and work together
     - Confirm knowledge composition produces correct output
 
-- [ ] **Step 3.10: Final cleanup**
+- [ ] **Step 2.20: Final cleanup**
   - Ensure consistent formatting across all Skills
   - Validate all Skills follow Content Quality Principles
   - Fix any broken links or formatting issues
   - Run `wow__rules-checker` one final time
 
-- [ ] **Step 3.11: Phase 3 Final Validation Checkpoint**
+- [ ] **Step 2.21: Phase 2 Final Validation Checkpoint**
   - Verify all commits pushed to `main`
   - Run comprehensive final validation checklist
   - Verify all success metrics met
@@ -358,32 +298,36 @@ And existing agents without Skills should continue working
 
 #### Validation Checklist
 
-- [ ] 2 Shariah-compliance Skills created (demonstration templates)
-- [ ] Skills verified to work in Claude Code
-- [ ] agentskills.io publishing guide complete
+- [ ] 5-7 additional Skills created with valid structure
+- [ ] CLAUDE.md character count ≤30,000 (use `wc -m CLAUDE.md`)
+- [ ] CLAUDE.md includes Skills Infrastructure section
+- [ ] All Skills accessible (no information loss)
+- [ ] 5 agents updated with optional `skills:` frontmatter field
+- [ ] All Skills auto-load when relevant tasks described
+- [ ] Skills composition works (multiple Skills load together)
+- [ ] Backward compatibility maintained (agents without Skills still work)
+- [ ] No regression in agent behavior or output quality
 - [ ] Skill creation templates available (single-file and multi-file)
 - [ ] Skills usage guide documented
 - [ ] `wow__rules-checker` passes all Skills validation
-- [ ] CLAUDE.md character count ≤30,000
-- [ ] All agents tested (with and without Skills)
 - [ ] Skills auto-loading verified for all Skills
-- [ ] Skills composition tested
-- [ ] Backward compatibility confirmed (zero breaking changes)
+- [ ] Zero breaking changes confirmed
 - [ ] All documentation final
 
 #### Acceptance Criteria
 
 ```gherkin
-Given Phase 2 complete with all core Skills implemented
-When Phase 3 adds community Skills and completes validation
-Then 2 Shariah-compliance Skills should exist (demonstration templates)
-And agentskills.io publishing guide should be complete
+Given Phase 1 complete with Skills foundation
+When Phase 2 adds 5-7 Skills, templates, and final validation
+Then total 8-10 Skills should exist in .claude/skills/
+And CLAUDE.md character count should remain ≤30,000
+And CLAUDE.md should include Skills Infrastructure section
+And 5 agents should have optional skills: frontmatter
 And Skill creation templates should be available
 And Skills usage guide should provide comprehensive guidance
 And wow__rules-checker should pass all validation
-And CLAUDE.md should remain ≤30,000 characters
-And all agents should work correctly (with and without Skills)
-And all Skills should auto-load reliably
+And all Skills should auto-load when relevant tasks described
+And existing agents without Skills should continue working
 And zero breaking changes should be confirmed
 ```
 
@@ -396,7 +340,6 @@ And zero breaking changes should be confirmed
 **Phase-level dependencies:**
 
 - Phase 2 depends on Phase 1 complete (needs Skills infrastructure)
-- Phase 3 depends on Phase 2 complete (needs all Skills for final validation)
 
 **File-level dependencies:**
 
@@ -411,11 +354,6 @@ And zero breaking changes should be confirmed
 - Skills auto-loading feature available (launched Dec 2025)
 - Frontmatter parsing works correctly
 - Progressive disclosure mechanism functional
-
-**Open standard:**
-
-- agentskills.io specification stable
-- Skills format remains compatible
 
 **Repository standards:**
 
@@ -465,19 +403,6 @@ And zero breaking changes should be confirmed
 - Test agents without Skills field after each change
 - Keep Skills additive (don't remove existing knowledge abruptly)
 
-### Risk 4: Shariah-Compliance Skills Inaccurate
-
-**Risk**: Islamic finance Skills contain incorrect guidance
-
-**Likelihood**: Medium (if creating actual content without expert review)
-**Impact**: High (Misinformation about religious compliance)
-
-**Mitigation:**
-
-- Create demonstration templates instead of actual content
-- Clearly mark as "requires expert validation"
-- Defer actual content to community experts
-
 ## Final Validation Checklist
 
 ### Pre-Checkpoint Validation (All Phases)
@@ -499,21 +424,16 @@ Before completing any phase, verify:
 - [ ] AI Agents Convention documents `skills:` field
 - [ ] No breaking changes to existing agents
 
-### Post-Phase 2 Validation
+### Post-Phase 2 Validation (Final)
 
-- [ ] 8-12 total Skills exist in `.claude/skills/`
+- [ ] 8-10 total Skills exist in `.claude/skills/`
 - [ ] CLAUDE.md character count ≤30,000
 - [ ] CLAUDE.md includes Skills Infrastructure section
 - [ ] 5 agents updated with Skills references
 - [ ] Skills composition tested
 - [ ] Backward compatibility maintained
-
-### Post-Phase 3 Validation (Final)
-
-- [ ] 2 Shariah-compliance Skills created (templates)
 - [ ] All documentation complete (guides, templates)
 - [ ] `wow__rules-checker` passes all validation
-- [ ] CLAUDE.md remains ≤30,000 characters
 - [ ] All agents work (with and without Skills)
 - [ ] All Skills auto-load reliably
 - [ ] Zero breaking changes confirmed
@@ -525,18 +445,16 @@ Before completing any phase, verify:
 | Metric                 | Target               | Status      |
 | ---------------------- | -------------------- | ----------- |
 | CLAUDE.md Size         | ≤30,000 chars        | Not Started |
-| Total Skills           | 8-12                 | Not Started |
+| Total Skills           | 8-10                 | Not Started |
 | Agent Size Reduction   | 15-25% average       | Not Started |
 | Backward Compatibility | 100% (zero breakage) | Not Started |
-| Community Skills       | 2 Shariah templates  | Not Started |
 
 ### Phase Status
 
-| Phase                        | Status      | Completion |
-| ---------------------------- | ----------- | ---------- |
-| Phase 1: Foundation          | Not Started | 0%         |
-| Phase 2: Knowledge Migration | Not Started | 0%         |
-| Phase 3: Community & Polish  | Not Started | 0%         |
+| Phase                                 | Status      | Completion |
+| ------------------------------------- | ----------- | ---------- |
+| Phase 1: Foundation                   | Not Started | 0%         |
+| Phase 2: Knowledge Migration & Polish | Not Started | 0%         |
 
 ---
 

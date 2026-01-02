@@ -345,20 +345,19 @@ Should Skills replace convention documents or reference them?
 
 **Context:**
 
-Skills implementation is moderate scope (8-12 Skills, infrastructure docs, agent updates). The repository uses Trunk Based Development.
+Skills implementation is moderate scope (8-10 Skills, infrastructure docs, agent updates). The repository uses Trunk Based Development.
 
 **Decision:** **Multi-phase sequential delivery with direct commits to `main`**
 
 **Phase Breakdown:**
 
 1. **Phase 1: Foundation** (~3 Skills, infrastructure, ~8-12 commits)
-2. **Phase 2: Knowledge Migration** (~5-9 Skills, agent updates, ~15-20 commits)
-3. **Phase 3: Community & Polish** (Shariah Skills, final validation, ~8-10 commits)
+2. **Phase 2: Knowledge Migration & Polish** (~5-7 Skills, agent updates, templates, final validation, ~25-30 commits)
 
 **Rationale:**
 
 - Aligns with Trunk Based Development convention
-- Natural breakpoints for validation
+- Natural breakpoint for validation
 - Small, frequent commits with validation gates
 
 ### Decision 5: Agent Skills Frontmatter (Optional Field)
@@ -431,9 +430,9 @@ skills:
 - [ ] AI Agents Convention documents `skills:` field
 - [ ] CLAUDE.md updated with Skills section
 
-### Phase 2: Knowledge Migration
+### Phase 2: Knowledge Migration & Polish
 
-**Goal**: Create remaining 5-9 Skills and optimize CLAUDE.md
+**Goal**: Create remaining 5-7 Skills, optimize CLAUDE.md, and finalize implementation
 
 **Tasks:**
 
@@ -459,43 +458,24 @@ skills:
 
    Add optional `skills:` frontmatter to demonstrate pattern
 
-**Success Criteria:**
+4. **Templates and Best Practices**
+   - Enhance Skill creation templates
+   - Create Skills usage guide
+   - Document best practices
 
-- [ ] 5-9 Skills created with valid structure
-- [ ] CLAUDE.md character count ≤30,000
-- [ ] 5-10 agents updated with optional Skills references
-- [ ] All Skills auto-load when relevant
-
-### Phase 3: Community & Polish
-
-**Goal**: Create community-shareable Skills and finalize implementation
-
-**Tasks:**
-
-1. **Create Shariah-Compliance Skills** (for community sharing)
-   - `halal-transaction-validation` (demonstration)
-   - `zakat-calculation-guidance` (demonstration)
-
-2. **agentskills.io Publishing Preparation**
-   - Create publishing guide
-   - Test cross-platform compatibility
-
-3. **Final Validation**
+5. **Final Validation**
    - Run `wow__rules-checker` on all Skills
    - Validate CLAUDE.md size
    - Test agent Skills references
    - Confirm backward compatibility
 
-4. **Create Templates and Best Practices**
-   - Skill creation template
-   - Usage examples
-   - Best practices guide
-
 **Success Criteria:**
 
-- [ ] 2 Shariah-compliance Skills created (or pattern demonstrated)
-- [ ] Skills verified to work across Claude ecosystem
-- [ ] Templates and examples available
+- [ ] 5-7 Skills created with valid structure
+- [ ] CLAUDE.md character count ≤30,000
+- [ ] 5-10 agents updated with optional Skills references
+- [ ] All Skills auto-load when relevant
+- [ ] Templates and guides available
 - [ ] All validation passed
 - [ ] Zero breaking changes
 
@@ -569,16 +549,13 @@ All work happens on `main` branch with small, frequent commits.
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph TD
     Phase1[Phase 1: Foundation<br/>3 Skills, Infrastructure]
-    Phase2[Phase 2: Knowledge Migration<br/>5-9 Skills, CLAUDE.md optimization]
-    Phase3[Phase 3: Community & Polish<br/>Shariah Skills, Final validation]
+    Phase2[Phase 2: Knowledge Migration & Polish<br/>5-7 Skills, CLAUDE.md, Templates, Validation]
 
     Phase1 -->|Validation checkpoint| Phase2
-    Phase2 -->|Validation checkpoint| Phase3
-    Phase3 -->|Validation checkpoint| Complete[Skills Implementation Complete]
+    Phase2 -->|Final validation| Complete[Skills Implementation Complete]
 
     style Phase1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Phase2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style Phase3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Complete fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:3px
 ```
 
@@ -637,13 +614,12 @@ This section lists all documentation that must be updated as part of Skills impl
 
 ### New Files to Create
 
-| File                                                 | Description                                                                | Phase   |
-| ---------------------------------------------------- | -------------------------------------------------------------------------- | ------- |
-| `.claude/skills/README.md`                           | Skills directory documentation, explains Skills as delivery infrastructure | Phase 1 |
-| `.claude/skills/TEMPLATE.md`                         | Single-file Skill creation template                                        | Phase 1 |
-| `.claude/skills/MULTI-FILE-TEMPLATE/`                | Multi-file Skill creation template directory                               | Phase 3 |
-| `docs/how-to/hoto__create-new-skill.md`              | How-to guide for creating new Skills                                       | Phase 3 |
-| `docs/how-to/hoto__publish-skills-to-agentskills.md` | How-to guide for publishing to agentskills.io                              | Phase 3 |
+| File                                    | Description                                                                | Phase   |
+| --------------------------------------- | -------------------------------------------------------------------------- | ------- |
+| `.claude/skills/README.md`              | Skills directory documentation, explains Skills as delivery infrastructure | Phase 1 |
+| `.claude/skills/TEMPLATE.md`            | Single-file Skill creation template                                        | Phase 1 |
+| `.claude/skills/MULTI-FILE-TEMPLATE/`   | Multi-file Skill creation template directory                               | Phase 2 |
+| `docs/how-to/hoto__create-new-skill.md` | How-to guide for creating new Skills                                       | Phase 2 |
 
 ### Files to Update
 
