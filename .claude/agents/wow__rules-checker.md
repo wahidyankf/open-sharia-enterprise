@@ -1,11 +1,12 @@
 ---
 name: wow__rules-checker
-description: Validates consistency between principles, conventions, development practices, agents, and CLAUDE.md. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
+description: Validates consistency between principles, conventions, development practices, agents, Skills, and CLAUDE.md. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-11-26
-updated: 2026-01-01
+updated: 2026-01-02
 ---
 
 # Repository Rule Checker Agent
@@ -100,6 +101,31 @@ Systematically verify internal consistency, cross-document alignment, factual co
 5. **Principles and Conventions Traceability in Development**: Validate ALL development documents have BOTH "Principles Respected" and "Conventions Implemented/Respected" sections
 6. **Subdirectory README Files**: Validate that all subdirectories in docs/explanation/principles/, docs/explanation/workflows/, docs/explanation/development/, and docs/explanation/conventions/ have their own README.md index files with proper purpose, scope, and navigation sections
 7. **repo-rules-\* Self-Validation**: Ensure repo-rules-checker (this agent), repo-rules-fixer, and repo-rules-maker enforce all six rules above
+
+## Skills Validation
+
+**CRITICAL**: This agent validates the Skills infrastructure in `.claude/skills/` and ensures all Skills comply with structural and content requirements.
+
+**Skills validation scope:**
+
+1. **Skills Directory Structure**: Verify `.claude/skills/` exists with README.md and TEMPLATE.md
+2. **Skills Frontmatter**: Validate all SKILL.md files have required fields (name, description, created, updated)
+3. **Skills Content Quality**: Verify Skills follow Content Quality Principles (clear descriptions, proper structure)
+4. **Skills References**: Verify Skills reference valid convention/development documents with correct paths
+5. **Skills Uniqueness**: Ensure Skill names are unique and descriptions are distinct (no overlaps)
+6. **Skills Auto-loading**: Verify Skill descriptions are clear, action-oriented, and enable appropriate auto-loading
+7. **Agent Skills Field**: Validate all agents in `.claude/agents/` have `skills:` frontmatter field (can be empty `[]`)
+8. **Agent Skills References**: Verify agent Skills references point to existing Skills in `.claude/skills/`
+9. **Skills Index**: Verify `.claude/skills/README.md` lists all Skills with correct descriptions
+
+**Criticality Levels for Skills Findings:**
+
+- **CRITICAL**: Missing `skills:` field in agent frontmatter, broken Skills references in agents, missing SKILL.md for referenced Skill, invalid SKILL.md frontmatter
+- **HIGH**: Invalid Skills frontmatter fields, unclear/ambiguous Skill descriptions preventing auto-load, duplicate Skill names, Skills not listed in index
+- **MEDIUM**: Suboptimal Skills structure, missing optional frontmatter fields, weak Skills descriptions
+- **LOW**: Suggestions for Skills description improvements, optional Skills enhancements
+
+**Integration**: Skills validation findings are included in the comprehensive audit report under dedicated "Skills Validation" section with appropriate criticality levels.
 
 ## Verification Checklist
 

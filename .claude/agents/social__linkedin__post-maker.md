@@ -4,6 +4,7 @@ description: Expert content creator specializing in weekly LinkedIn update posts
 tools: Read, Write, Bash, Glob, Grep
 model: haiku
 color: blue
+skills: []
 created: 2025-12-21
 updated: 2025-12-28T20:30:00+07:00
 ---

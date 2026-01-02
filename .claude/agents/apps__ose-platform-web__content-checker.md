@@ -4,6 +4,7 @@ description: Expert at validating Hugo content for ose-platform-web (PaperMod th
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-12-01
 updated: 2025-12-22
 ---

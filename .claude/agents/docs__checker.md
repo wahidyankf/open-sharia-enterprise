@@ -4,6 +4,7 @@ description: Expert at validating factual correctness and content consistency of
 tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 model: sonnet
 color: green
+skills: [maker-checker-fixer-pattern, criticality-confidence-system]
 created: 2025-12-01
 updated: 2025-12-28
 ---

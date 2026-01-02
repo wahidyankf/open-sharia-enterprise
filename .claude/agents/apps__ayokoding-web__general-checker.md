@@ -4,6 +4,7 @@ description: Expert at validating general Hugo content for ayokoding-web (Hextra
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-12-01
 updated: 2026-01-02
 ---

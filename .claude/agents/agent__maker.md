@@ -4,6 +4,7 @@ description: Expert at creating new AI agents following all repository conventio
 tools: Read, Glob, Grep, Bash
 model: sonnet
 color: blue
+skills: []
 created: 2025-11-29
 updated: 2025-12-27
 ---

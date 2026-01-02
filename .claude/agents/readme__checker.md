@@ -4,6 +4,7 @@ description: Validates README.md for engagement, accessibility, and quality stan
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-12-01
 updated: 2025-12-20
 ---

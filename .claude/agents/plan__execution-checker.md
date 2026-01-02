@@ -6,6 +6,7 @@ description: Expert at validating plan implementations against requirements, per
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-11-29
 updated: 2025-12-15
 ---
