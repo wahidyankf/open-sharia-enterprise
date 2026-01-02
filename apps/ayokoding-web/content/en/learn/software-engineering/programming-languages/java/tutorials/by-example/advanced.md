@@ -492,90 +492,167 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 
 // Custom annotation definition
-@Retention(RetentionPolicy.RUNTIME) // Available at runtime
-@Target(ElementType.METHOD) // Can be applied to methods
+@Retention(RetentionPolicy.RUNTIME) // => Annotation accessible at runtime via reflection
+// => Without RUNTIME, annotation discarded after compilation (SOURCE/CLASS retention)
+@Target(ElementType.METHOD) // => Restricts annotation to methods only
+// => Other targets: TYPE (classes), FIELD, PARAMETER, CONSTRUCTOR, etc.
 @interface Test {
-    String description() default ""; // Annotation parameter
+    String description() default ""; // => Annotation parameter with default value
+    // => Usage: @Test(description = "test name") or @Test() (uses default "")
     int timeout() default 0;
+    // => Multiple parameters allowed in annotation
+    // => Defaults make parameters optional
 }
 
 // Another annotation for classes
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+// => Class annotation also needs RUNTIME retention for reflection
+@Target(ElementType.TYPE) // => Can only be applied to classes/interfaces
+// => ElementType.TYPE includes classes, interfaces, enums, records
 @interface Component {
     String value();
+    // => No default = required parameter
+    // => Must specify: @Component("ServiceName")
 }
 
 // Using custom annotations
-@Component("UserService")
+@Component("UserService") // => Class-level annotation with value parameter
+// => Accessible via clazz.getAnnotation(Component.class)
 class UserService {
     @Test(description = "Verify user creation", timeout = 5000)
+    // => Method-level annotation with both parameters specified
+    // => timeout = 5000 milliseconds (5 seconds)
     public void testCreateUser() {
         System.out.println("Testing user creation");
+        // => Prints: "Testing user creation" when invoked via reflection
     }
 
     @Test(description = "Verify user deletion")
+    // => timeout parameter uses default value (0)
+    // => Only description specified explicitly
     public void testDeleteUser() {
         System.out.println("Testing user deletion");
+        // => Prints: "Testing user deletion" when invoked
     }
 
     public void helperMethod() {
         // No annotation
+        // => Not detected by reflection scan for @Test
+        // => Won't be invoked by test runner
     }
 }
 
 // Reflection - inspecting annotations at runtime
 Class<?> clazz = UserService.class;
+// => Gets Class object for UserService
+// => Class<?> wildcard allows any class type
 
 // Check if class has annotation
 if (clazz.isAnnotationPresent(Component.class)) {
+    // => Returns true if @Component annotation present on UserService class
+    // => Returns false if annotation missing or not RUNTIME retention
     Component component = clazz.getAnnotation(Component.class);
+    // => Retrieves @Component annotation instance
+    // => Returns proxy object implementing Component interface
     System.out.println("Component name: " + component.value()); // => "UserService"
+    // => Calls value() method on annotation proxy
+    // => Prints: "Component name: UserService"
 }
 
 // Find all methods with @Test annotation
 Method[] methods = clazz.getDeclaredMethods();
+// => Gets ALL methods (public, private, protected, package-private)
+// => Returns array of Method objects (reflection API)
+// => getDeclaredMethods() excludes inherited methods
 for (Method method : methods) {
+    // => Iterates through all 3 methods: testCreateUser, testDeleteUser, helperMethod
     if (method.isAnnotationPresent(Test.class)) {
+        // => Returns true for testCreateUser and testDeleteUser
+        // => Returns false for helperMethod (no @Test annotation)
         Test test = method.getAnnotation(Test.class);
+        // => Retrieves @Test annotation from method
+        // => Returns proxy object with description() and timeout() methods
         System.out.println("Test: " + method.getName());
+        // => Prints method name: "testCreateUser" or "testDeleteUser"
         System.out.println("  Description: " + test.description());
+        // => Prints annotation parameter value
+        // => "Verify user creation" or "Verify user deletion"
         System.out.println("  Timeout: " + test.timeout());
+        // => Prints timeout value: 5000 or 0 (default)
 
         // Invoke method using reflection
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
+            // => Creates new UserService instance via no-arg constructor
+            // => getDeclaredConstructor() finds constructor with matching params (none)
+            // => newInstance() invokes constructor, returns new object
             method.invoke(instance); // Calls the test method
+            // => Dynamically invokes method on instance
+            // => Equivalent to: instance.testCreateUser() or instance.testDeleteUser()
+            // => Prints: "Testing user creation" or "Testing user deletion"
         } catch (Exception e) {
+            // => Catches: IllegalAccessException, InvocationTargetException, etc.
+            // => Reflection throws checked exceptions
             e.printStackTrace();
+            // => Prints stack trace if method invocation fails
         }
     }
 }
 
 // Reflection - inspecting class structure
 Field[] fields = clazz.getDeclaredFields();
+// => Gets all fields declared in UserService (none in this example)
+// => Returns empty array for UserService (no fields)
 for (Field field : fields) {
+    // => Loop doesn't execute (UserService has no fields)
     System.out.println("Field: " + field.getName() + " (" + field.getType() + ")");
+    // => Would print field name and type if fields existed
+    // => Example output: "Field: counter (int)"
 }
 
 // Accessing private fields (be careful!)
 class Person {
     private String name = "Alice";
+    // => Private field normally inaccessible outside class
+    // => Reflection can bypass access modifiers
 }
 
 Person person = new Person();
+// => Creates Person instance with name = "Alice"
 Field nameField = Person.class.getDeclaredField("name");
+// => Gets Field object for "name" field
+// => getDeclaredField("name") finds field by exact name
+// => Throws NoSuchFieldException if field doesn't exist
 nameField.setAccessible(true); // Bypass private access
+// => Disables Java access control for this field
+// => Allows reading/writing private field from outside class
+// => Required to access private members via reflection
 String name = (String) nameField.get(person); // => "Alice"
+// => Reads field value from person instance
+// => Returns Object, requires cast to String
+// => Result: "Alice" (original value)
 nameField.set(person, "Bob"); // Modify private field
+// => Writes new value to field
+// => Changes person.name from "Alice" to "Bob"
+// => Bypasses immutability and encapsulation
 
 // Built-in annotations
 @Override // Compile-time check for method overriding
+// => Compiler verifies method actually overrides superclass method
+// => Compile error if method doesn't override anything
 @Deprecated(since = "2.0") // Mark as deprecated
+// => Warns users this class is deprecated
+// => Compiler generates warnings when used
+// => "since" parameter documents deprecation version
 @SuppressWarnings("unchecked") // Suppress compiler warnings
+// => Disables specific compiler warnings for this class
+// => "unchecked" suppresses generic type safety warnings
 class Example {
     @Override
     public String toString() { return "Example"; }
+    // => Overrides Object.toString()
+    // => @Override ensures this actually overrides (compile-time check)
+    // => Returns: "Example"
 }
 ```
 
@@ -1049,61 +1126,123 @@ if (value != null) {
 
 // Weak reference - collected at next GC
 WeakReference<String> weakRef = new WeakReference<>(new String("Collected soon"));
+// => Creates WeakReference wrapping new String object
 // => Object will be collected at next GC, regardless of memory pressure
+// => Useful for caches where entries can be discarded freely
 String weakValue = weakRef.get(); // => May return null after GC runs
+// => get() returns wrapped object if still alive, null if collected
+// => Check for null before using to avoid NullPointerException
 System.out.println(weakValue); // => Prints string or throws NPE if collected
+// => If GC ran: null reference causes NPE
+// => If object alive: prints "Collected soon"
 
 // Phantom reference - for cleanup hooks
 ReferenceQueue<String> queue = new ReferenceQueue<>(); // => Queue for GC notifications
+// => ReferenceQueue receives references after object finalized
+// => Allows post-finalization cleanup actions
 PhantomReference<String> phantomRef = new PhantomReference<>(
     new String("For cleanup"), queue // => Object for cleanup tracking
+    // => PhantomReference never prevents collection
+    // => Added to queue after object finalized, before memory reclaimed
 );
 // => get() always returns null, used with ReferenceQueue for post-finalization cleanup
-// => Useful for resource cleanup (file handles, native memory, etc.)
+// => Unlike finalize(), cleanup happens AFTER object finalized
+// => Useful for resource cleanup (file handles, native memory, off-heap resources)
+// => More reliable than finalize() for deterministic cleanup
 
 // System.gc() suggests GC (doesn't guarantee it)
 System.gc(); // => Hint to JVM to run GC, not a command (JVM may ignore)
+// => Triggers full GC (both young and old generations) if honored
 // => Never rely on System.gc() for deterministic cleanup
+// => JVM may disable via -XX:+DisableExplicitGC flag
+// => Expensive operation: pauses application threads
 
 // Monitoring GC (via JVM flags)
 // -XX:+PrintGCDetails - Print GC logs
+// => Logs GC events: collections, timings, heap sizes
+// => Example output: [GC (Allocation Failure) [PSYoungGen: 512K->128K(1024K)] 512K->256K(4096K), 0.001s]
 // -XX:+PrintGCDateStamps - Add timestamps
+// => Adds absolute timestamps to GC logs
+// => Example: 2024-01-15T10:30:45.123+0000: [GC (Allocation Failure)...]
 // -Xms512m -Xmx2g - Set min/max heap size
+// => -Xms512m: Initial heap size (512 megabytes)
+// => -Xmx2g: Maximum heap size (2 gigabytes)
+// => Heap grows from Xms to Xmx as needed
+// => Setting Xms = Xmx prevents heap resizing overhead
 
 // GC types (algorithmic overview)
 // Serial GC: Single-threaded, simple
+// => -XX:+UseSerialGC flag
+// => Stops application during collection (stop-the-world)
+// => Best for: small heaps (<100MB), single-CPU systems, batch jobs
 // Parallel GC: Multi-threaded, throughput-focused
+// => -XX:+UseParallelGC flag (default in Java 8)
+// => Multiple threads for young/old generation collection
+// => Best for: throughput-critical apps, multi-CPU servers
 // G1 GC: Region-based, balanced (default in Java 9+)
+// => -XX:+UseG1GC flag (default in Java 9+)
+// => Divides heap into regions, collects incrementally
+// => Targets pause time goals (-XX:MaxGCPauseMillis)
+// => Best for: large heaps (>4GB), balanced latency/throughput
 // ZGC: Ultra-low latency, large heaps (Java 15+)
+// => -XX:+UseZGC flag
+// => Concurrent GC: <10ms pauses even for terabyte heaps
+// => Best for: latency-critical apps, very large heaps (100GB+)
 // Shenandoah: Low-latency, concurrent (Java 12+)
+// => -XX:+UseShenandoahGC flag
+// => Similar to ZGC: concurrent, low-latency
+// => Best for: low-latency apps, large heaps
 
 // Finalizers (deprecated, avoid!)
 @Deprecated
+// => finalize() deprecated in Java 9, removed in future versions
 class BadExample {
     @Override
     protected void finalize() throws Throwable {
         // Unpredictable timing, performance impact
+        // => finalize() called by GC thread before object reclaimed
+        // => Timing unpredictable: may run seconds/minutes/never after object unreachable
+        // => Slows GC: objects with finalizers require extra GC cycles
+        // => Exceptions in finalize() silently ignored
         // Use try-with-resources or Cleaner instead
+        // => Cleaner provides deterministic cleanup
+        // => try-with-resources ensures cleanup via AutoCloseable.close()
     }
 }
 
 // Modern cleanup with Cleaner (Java 9+)
 import java.lang.ref.Cleaner;
+// => Replacement for finalize(), provides cleanup hooks
 
 class Resource {
     private static final Cleaner cleaner = Cleaner.create();
+    // => Shared Cleaner instance for all Resource objects
+    // => Cleaner manages cleanup thread pool
+    // => Create once per class, reuse for all instances
 
     private final Cleaner.Cleanable cleanable;
+    // => Registration handle for this resource's cleanup action
+    // => Allows manual cleanup via cleanable.clean()
 
     Resource() {
         this.cleanable = cleaner.register(this, new CleanupAction());
+        // => Registers cleanup action for this Resource instance
+        // => CleanupAction.run() invoked after Resource becomes unreachable
+        // => Cleaner tracks Resource via phantom reference
+        // => More reliable than finalize(): guaranteed cleanup order
     }
 
     private static class CleanupAction implements Runnable {
+        // => MUST be static: cannot hold reference to Resource
+        // => Non-static would prevent GC (circular reference)
         @Override
         public void run() {
             // Cleanup code here
+            // => Invoked after Resource unreachable and finalized
+            // => Runs on Cleaner thread, not GC thread
+            // => Can release native resources, close file handles, etc.
             System.out.println("Resource cleaned up");
+            // => Prints when cleanup triggered (automatic or manual)
         }
     }
 }
@@ -1833,156 +1972,307 @@ graph TD
 // Strategy pattern - encapsulate algorithms
 
 interface PaymentStrategy {
+    // => Defines contract for payment algorithms
+    // => Different implementations = different payment methods
     void pay(int amount);
+    // => All strategies implement same interface method
+    // => Enables runtime strategy swapping
 }
 
 class CreditCardStrategy implements PaymentStrategy {
+    // => Concrete strategy: credit card payment
+    // => Encapsulates credit card payment logic
     private String cardNumber;
+    // => Strategy-specific data (card number)
+    // => Each strategy can have different fields
 
     public CreditCardStrategy(String cardNumber) {
         this.cardNumber = cardNumber;
+        // => Constructor receives strategy-specific configuration
+        // => Enables parameterized strategy instances
     }
 
     @Override
     public void pay(int amount) {
         System.out.println("Paid " + amount + " using Credit Card " + cardNumber);
+        // => Strategy-specific implementation
+        // => In real app: calls payment gateway API
+        // => Prints: "Paid 100 using Credit Card 1234-5678"
     }
 }
 
 class PayPalStrategy implements PaymentStrategy {
+    // => Alternative concrete strategy: PayPal payment
+    // => Same interface, different implementation
     private String email;
+    // => PayPal-specific data (email instead of card number)
+    // => Strategies can have different internal structures
 
     public PayPalStrategy(String email) {
         this.email = email;
+        // => PayPal requires email, not card number
+        // => Each strategy configured independently
     }
 
     @Override
     public void pay(int amount) {
         System.out.println("Paid " + amount + " using PayPal " + email);
+        // => PayPal-specific implementation
+        // => Different logic, same interface contract
+        // => Prints: "Paid 50 using PayPal user@example.com"
     }
 }
 
 class ShoppingCart {
+    // => Context: uses strategy without knowing concrete type
+    // => Delegates payment to strategy object
     private PaymentStrategy paymentStrategy;
+    // => Holds reference to strategy interface, not concrete class
+    // => Enables runtime strategy switching
 
     public void setPaymentStrategy(PaymentStrategy strategy) {
+        // => Runtime strategy selection
+        // => Can change payment method on-the-fly
         this.paymentStrategy = strategy;
+        // => Stores new strategy, replaces previous one
+        // => No code changes needed to add new payment methods
     }
 
     public void checkout(int amount) {
         paymentStrategy.pay(amount);
+        // => Delegates to strategy's pay() method
+        // => ShoppingCart doesn't know which strategy (credit card, PayPal, etc.)
+        // => Open/closed principle: open for extension, closed for modification
     }
 }
 
 ShoppingCart cart = new ShoppingCart();
+// => Creates context (shopping cart) without strategy
+// => Strategy set later via setPaymentStrategy()
 cart.setPaymentStrategy(new CreditCardStrategy("1234-5678"));
+// => Runtime strategy selection: credit card
+// => Passes card number to strategy constructor
 cart.checkout(100); // => "Paid 100 using Credit Card 1234-5678"
+// => Executes credit card payment strategy
+// => ShoppingCart delegates to CreditCardStrategy.pay()
 
 cart.setPaymentStrategy(new PayPalStrategy("user@example.com"));
+// => Changes strategy at runtime without modifying ShoppingCart code
+// => New strategy with different configuration (email instead of card)
 cart.checkout(50); // => "Paid 50 using PayPal user@example.com"
+// => Executes PayPal payment strategy
+// => Same checkout() method, different behavior
 
 // Strategy with lambdas (simpler for simple algorithms)
 interface Comparator<T> {
+    // => Functional interface: single abstract method
+    // => Can be implemented with lambda expressions
     int compare(T o1, T o2);
+    // => Returns: negative (o1 < o2), zero (equal), positive (o1 > o2)
+    // => Enables custom sorting logic
 }
 
 List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+// => Initial list: ["Alice", "Bob", "Charlie"]
+// => Arrays.asList() creates fixed-size list
 names.sort((a, b) -> a.length() - b.length()); // Lambda as strategy
+// => Lambda implements Comparator interface
+// => Sorts by string length: "Bob" (3), "Alice" (5), "Charlie" (7)
+// => Result: ["Bob", "Alice", "Charlie"]
+// => Strategy pattern simplified: no explicit classes needed for simple algorithms
 
 // Observer pattern - one-to-many dependency
 
 interface Observer {
+    // => Defines contract for observers (subscribers)
+    // => Observers notified when subject state changes
     void update(String message);
+    // => Callback method invoked by subject
+    // => Receives notification with message payload
 }
 
 class Subject {
+    // => Observable object (publisher)
+    // => Maintains list of observers, notifies them on state change
     private List<Observer> observers = new ArrayList<>();
+    // => Stores all registered observers
+    // => One-to-many relationship: one subject, multiple observers
 
     public void attach(Observer observer) {
+        // => Registers new observer (subscribe)
+        // => Observer added to notification list
         observers.add(observer);
+        // => Now observer will receive all future notifications
+        // => No limit on number of observers
     }
 
     public void detach(Observer observer) {
+        // => Unregisters observer (unsubscribe)
+        // => Observer removed from notification list
         observers.remove(observer);
+        // => Observer no longer receives notifications
+        // => Prevents memory leaks from abandoned observers
     }
 
     public void notifyObservers(String message) {
+        // => Broadcasts message to all registered observers
+        // => Called when subject state changes
         for (Observer observer : observers) {
+            // => Iterates through all registered observers
+            // => Order dependent on registration sequence
             observer.update(message);
+            // => Invokes each observer's update() callback
+            // => Push model: subject pushes data to observers
         }
     }
 }
 
 class EmailObserver implements Observer {
+    // => Concrete observer: sends email notifications
+    // => Implements update() to define notification behavior
     @Override
     public void update(String message) {
         System.out.println("Email sent: " + message);
+        // => Observer-specific action: send email
+        // => In real app: calls email service API
+        // => Prints: "Email sent: New update available"
     }
 }
 
 class SMSObserver implements Observer {
+    // => Alternative concrete observer: sends SMS notifications
+    // => Same interface, different notification channel
     @Override
     public void update(String message) {
         System.out.println("SMS sent: " + message);
+        // => Observer-specific action: send SMS
+        // => Different behavior, same interface contract
+        // => Prints: "SMS sent: New update available"
     }
 }
 
 Subject subject = new Subject();
+// => Creates observable object (publisher)
+// => No observers yet (empty list)
 subject.attach(new EmailObserver());
+// => Registers first observer: email notifications
+// => Subject now notifies email observer on state change
 subject.attach(new SMSObserver());
+// => Registers second observer: SMS notifications
+// => Subject now notifies both observers
+// => Easy to add new notification channels without modifying Subject
 subject.notifyObservers("New update available");
+// => Triggers notification to all observers
+// => Both observers receive same message
+// => Email observer prints: "Email sent: New update available"
+// => SMS observer prints: "SMS sent: New update available"
+// => Output:
 // => Email sent: New update available
 // => SMS sent: New update available
 
 // Decorator pattern - add behavior dynamically
 
 interface Coffee {
+    // => Component interface: base coffee contract
+    // => Both base coffee and decorators implement this interface
     double cost();
+    // => Returns total cost (base + decorations)
+    // => Decorators add their cost to wrapped object's cost
     String description();
+    // => Returns full description (base + decorations)
+    // => Decorators append their description to wrapped object's description
 }
 
 class SimpleCoffee implements Coffee {
+    // => Concrete component: base coffee without decorations
+    // => Starting point for decoration chain
     @Override
     public double cost() { return 2.0; }
+    // => Base cost: $2.00
+    // => Decorators add to this cost
 
     @Override
     public String description() { return "Simple coffee"; }
+    // => Base description: "Simple coffee"
+    // => Decorators append to this description
 }
 
 // Decorator base class
 abstract class CoffeeDecorator implements Coffee {
+    // => Abstract decorator: wraps Coffee object
+    // => All concrete decorators extend this class
     protected Coffee coffee;
+    // => Wrapped coffee object (base or another decorator)
+    // => Enables decorator chaining (decorator wraps decorator)
 
     public CoffeeDecorator(Coffee coffee) {
+        // => Constructor receives coffee to wrap
+        // => Delegation pattern: decorator delegates to wrapped object
         this.coffee = coffee;
+        // => Stores wrapped coffee for delegation
+        // => Forms decorator chain: SimpleCoffee -> MilkDecorator -> SugarDecorator
     }
 }
 
 class MilkDecorator extends CoffeeDecorator {
+    // => Concrete decorator: adds milk to coffee
+    // => Wraps Coffee object, adds milk cost/description
     public MilkDecorator(Coffee coffee) { super(coffee); }
+    // => Passes wrapped coffee to parent constructor
+    // => Can wrap SimpleCoffee or another decorator
 
     @Override
     public double cost() { return coffee.cost() + 0.5; }
+    // => Adds milk cost ($0.50) to wrapped coffee's cost
+    // => Delegates to wrapped coffee.cost(), then adds decoration cost
+    // => SimpleCoffee: 2.0 + 0.5 = 2.5
 
     @Override
     public String description() { return coffee.description() + ", milk"; }
+    // => Appends ", milk" to wrapped coffee's description
+    // => Delegates to wrapped coffee.description(), then adds decoration
+    // => SimpleCoffee: "Simple coffee" + ", milk" = "Simple coffee, milk"
 }
 
 class SugarDecorator extends CoffeeDecorator {
+    // => Concrete decorator: adds sugar to coffee
+    // => Can wrap SimpleCoffee, MilkDecorator, or any Coffee
     public SugarDecorator(Coffee coffee) { super(coffee); }
+    // => Receives coffee to wrap (base or decorated)
+    // => Enables multiple decorations on same object
 
     @Override
     public double cost() { return coffee.cost() + 0.2; }
+    // => Adds sugar cost ($0.20) to wrapped coffee's cost
+    // => MilkDecorator(SimpleCoffee): 2.5 + 0.2 = 2.7
 
     @Override
     public String description() { return coffee.description() + ", sugar"; }
+    // => Appends ", sugar" to wrapped coffee's description
+    // => MilkDecorator(SimpleCoffee): "Simple coffee, milk" + ", sugar" = "Simple coffee, milk, sugar"
 }
 
 Coffee coffee = new SimpleCoffee();
+// => Creates base coffee: cost = 2.0, description = "Simple coffee"
+// => Starting point for decoration
 coffee = new MilkDecorator(coffee);
+// => Wraps SimpleCoffee with MilkDecorator
+// => coffee now: cost = 2.5, description = "Simple coffee, milk"
+// => Decoration chain: SimpleCoffee -> MilkDecorator
 coffee = new SugarDecorator(coffee);
+// => Wraps MilkDecorator with SugarDecorator
+// => coffee now: cost = 2.7, description = "Simple coffee, milk, sugar"
+// => Decoration chain: SimpleCoffee -> MilkDecorator -> SugarDecorator
 System.out.println(coffee.description()); // => "Simple coffee, milk, sugar"
+// => Calls SugarDecorator.description()
+// => SugarDecorator delegates to MilkDecorator.description()
+// => MilkDecorator delegates to SimpleCoffee.description()
+// => Chain: SimpleCoffee ("Simple coffee") -> MilkDecorator (+ ", milk") -> SugarDecorator (+ ", sugar")
 System.out.println(coffee.cost()); // => 2.7
+// => Calls SugarDecorator.cost()
+// => SugarDecorator delegates to MilkDecorator.cost() + 0.2
+// => MilkDecorator delegates to SimpleCoffee.cost() + 0.5
+// => Chain: SimpleCoffee (2.0) -> MilkDecorator (2.0 + 0.5 = 2.5) -> SugarDecorator (2.5 + 0.2 = 2.7)
 ```
 
 **Key Takeaway**: Strategy encapsulates algorithms, enabling runtime selection. Lambdas simplify strategy for simple cases. Observer enables one-to-many notifications, decoupling subjects from observers. Decorator adds behavior dynamically through composition, avoiding subclass explosion.
@@ -2646,106 +2936,79 @@ graph TD
     style Agent fill:#0173B2,color:#fff
 ```
 
-**Code**:
+**Bytecode Basics**:
+
+Java source code compiles to `.class` files containing bytecode instructions. The JVM executes this bytecode. Class files have a fixed structure: magic number (0xCAFEBABE), version, constant pool, fields, methods, and attributes.
+
+**Approach 1: ASM Library (Low-Level)**
+
+ASM provides direct bytecode manipulation with fine-grained control. Requires manually constructing bytecode instructions. Used when you need precise control over generated bytecode.
 
 ```java
-// Bytecode basics (conceptual)
-// Java source -> javac -> .class file (bytecode) -> JVM
-
-// Class file structure:
-// Magic number (0xCAFEBABE)
-// Version information
-// Constant pool
-// Access flags
-// This class, super class
-// Interfaces
-// Fields
-// Methods (bytecode instructions)
-// Attributes
-
-// ASM - low-level bytecode manipulation (external library)
-/*
 import org.objectweb.asm.*;
 
 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+// => Creates bytecode writer
 cw.visit(Opcodes.V17, Opcodes.ACC_PUBLIC, "GeneratedClass", null, "java/lang/Object", null);
+// => Defines class structure: Java 17, public, extends Object
 
-// Add method: public String hello() { return "Hello"; }
-MethodVisitor mv = cw.visitMethod(
-    Opcodes.ACC_PUBLIC,
-    "hello",
-    "()Ljava/lang/String;",
-    null,
-    null
-);
+MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "hello", "()Ljava/lang/String;", null, null);
+// => Creates public String hello() method
 mv.visitCode();
 mv.visitLdcInsn("Hello");
+// => Load constant "Hello" onto stack
 mv.visitInsn(Opcodes.ARETURN);
+// => Return string from stack
 mv.visitMaxs(1, 1);
 mv.visitEnd();
 
-cw.visitEnd();
-
 byte[] bytecode = cw.toByteArray();
+// => Generates .class file bytes
 
-// Load generated class
 CustomClassLoader loader = new CustomClassLoader();
 Class<?> clazz = loader.defineClass("GeneratedClass", bytecode);
+// => Loads generated class into JVM
 Object instance = clazz.getDeclaredConstructor().newInstance();
 Method method = clazz.getMethod("hello");
-String result = (String) method.invoke(instance); // => "Hello"
-*/
+String result = (String) method.invoke(instance);
+// => Result: "Hello"
+```
 
-// ByteBuddy - high-level bytecode generation (external library)
-/*
+**ASM Trade-offs**: Powerful and fast, but verbose (requires understanding JVM opcodes). Manual stack management. No type safety. Used by frameworks needing maximum performance and control.
+
+**Approach 2: ByteBuddy (High-Level)**
+
+ByteBuddy offers fluent API for common bytecode tasks. Abstracts away low-level details. Preferred for most use cases.
+
+```java
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
 
-// Create class that extends Object
 Class<?> dynamicType = new ByteBuddy()
     .subclass(Object.class)
+    // => Extends Object
     .method(ElementMatchers.named("toString"))
+    // => Find toString() method
     .intercept(FixedValue.value("Hello from ByteBuddy"))
+    // => Override to return fixed value
     .make()
     .load(getClass().getClassLoader())
     .getLoaded();
+    // => Generates and loads class (5 lines vs ASM's 15)
 
 Object instance = dynamicType.getDeclaredConstructor().newInstance();
-System.out.println(instance.toString()); // => "Hello from ByteBuddy"
+System.out.println(instance.toString());
+// => Output: "Hello from ByteBuddy"
+```
 
-// Method interception (proxying)
-class Service {
-    public String getData() {
-        return "Original data";
-    }
-}
+**ByteBuddy Trade-offs**: Easy to use, type-safe, readable. Slightly slower than ASM. Generates more bytecode overhead. Used by Mockito, Hibernate, Spring.
 
-Class<?> proxied = new ByteBuddy()
-    .subclass(Service.class)
-    .method(ElementMatchers.named("getData"))
-    .intercept(MethodDelegation.to(new Interceptor()))
-    .make()
-    .load(Service.class.getClassLoader())
-    .getLoaded();
+**Approach 3: Java's Built-In Proxy**
 
-class Interceptor {
-    public String intercept(@SuperCall Callable<String> zuper) throws Exception {
-        String original = zuper.call();
-        return "Intercepted: " + original;
-    }
-}
-*/
+Java provides `java.lang.reflect.Proxy` for interface proxying without external libraries. Limited to interfaces only.
 
-// Use cases for bytecode manipulation
-// 1. AOP (Aspect-Oriented Programming) - Spring AOP, AspectJ
-// 2. Mocking frameworks - Mockito, EasyMock
-// 3. ORM frameworks - Hibernate lazy loading
-// 4. Profilers and monitoring - JProfiler, YourKit
-// 5. Code generation - MapStruct, Lombok (compile-time)
-// 6. Dynamic proxies - Java's Proxy class
-
-// Java's built-in dynamic proxy
+```java
 interface HelloService {
     String sayHello(String name);
 }
@@ -2753,37 +3016,30 @@ interface HelloService {
 HelloService proxy = (HelloService) java.lang.reflect.Proxy.newProxyInstance(
     HelloService.class.getClassLoader(),
     new Class<?>[] { HelloService.class },
-    (proxy1, method, args) -> {
+    (proxyObj, method, args) -> {
+        // => InvocationHandler: intercepts all method calls
         System.out.println("Before method: " + method.getName());
+        // => Output: "Before method: sayHello"
         String result = "Hello, " + args[0];
         System.out.println("After method");
+        // => Output: "After method"
         return result;
     }
 );
 
 proxy.sayHello("Alice");
-// => Before method: sayHello
-// => After method
-// Returns: "Hello, Alice"
-
-// Limitations of Java Proxy: only works with interfaces
-// ByteBuddy/CGLib can proxy classes
-
-// Agent instrumentation (java.lang.instrument)
-// Modify bytecode at load time via Java agent
-// -javaagent:agent.jar
-/*
-public class Agent {
-    public static void premain(String args, Instrumentation inst) {
-        inst.addTransformer(new ClassFileTransformer() {
-            public byte[] transform(...) {
-                // Modify bytecode of classes as they load
-            }
-        });
-    }
-}
-*/
+// => Returns: "Hello, Alice"
 ```
+
+**Java Proxy Trade-offs**: No external dependencies. Simple API. **Limitation**: Only works with interfaces. Cannot proxy classes. For class proxying, use ByteBuddy or CGLib.
+
+**Common Use Cases**:
+
+- **AOP**: Spring AOP (method interception, transactions)
+- **Mocking**: Mockito (test doubles)
+- **ORM**: Hibernate (lazy loading proxies)
+- **Profiling**: JProfiler, YourKit (method timing)
+- **Code Generation**: Lombok (compile-time), MapStruct
 
 **Key Takeaway**: Bytecode manipulation enables runtime code generation and instrumentation. ASM provides low-level control, ByteBuddy offers high-level API. Used in AOP, mocking, ORM, profiling. Java's `Proxy` for interfaces, ByteBuddy for classes. Agents instrument classes at load time.
 

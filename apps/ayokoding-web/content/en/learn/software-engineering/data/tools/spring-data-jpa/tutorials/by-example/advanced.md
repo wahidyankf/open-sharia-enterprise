@@ -22,8 +22,10 @@ import jakarta.persistence.criteria.Root;
 
 // => Entity
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class Product {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private String name;
     private BigDecimal price;
@@ -61,6 +63,8 @@ public class ProductService {
         // => Returns only products where active = true
     }
 }
+
+
 ```
 
 **Key Takeaway**: Specifications encapsulate reusable query logic using the Criteria API. Extend `JpaSpecificationExecutor` to enable specification-based queries.
@@ -129,6 +133,9 @@ public class ProductService {
             // => AND category = :category
 
         return productRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
         // => Final query: WHERE active = true AND price >= :minPrice AND category = :category
     }
 
@@ -143,8 +150,13 @@ public class ProductService {
                 //    AND (category = :cat1 OR category = :cat2)
 
         return productRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `Specification.where().and().or()` to combine specifications. Each method returns a new specification, enabling fluent chaining for complex queries.
@@ -194,6 +206,9 @@ public class ProductService {
 
         // => Execute composed specification
         return productRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
         // => Query adapts to provided parameters
         // => Example: If only name and minPrice provided:
         //    WHERE name LIKE :name AND price >= :minPrice
@@ -212,6 +227,8 @@ public class ProductService {
             // => WHERE price <= :maxPrice
     }
 }
+
+
 ```
 
 **Key Takeaway**: Start with `Specification.where(null)` and conditionally add filters. This pattern creates flexible search methods that adapt to provided parameters.
@@ -225,42 +242,55 @@ Navigate entity relationships in specifications using joins.
 ```java
 // => Entities with relationship
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class Order {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private LocalDateTime orderDate;
     private String status;
 
     @ManyToOne
+    // => Defines entity relationship for foreign key mapping
     @JoinColumn(name = "customer_id")
+    // => Foreign key column: customer_id
     private Customer customer;
     // => Order belongs to Customer
 
     @OneToMany(mappedBy = "order")
+    // => Defines entity relationship for foreign key mapping
     private List<OrderItem> items = new ArrayList<>();
     // => Order has many OrderItems
 }
 
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class Customer {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private String email;
     private String tier; // GOLD, SILVER, BRONZE
 }
 
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class OrderItem {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private Integer quantity;
 
     @ManyToOne
+    // => Defines entity relationship for foreign key mapping
     @JoinColumn(name = "order_id")
+    // => Foreign key column: order_id
     private Order order;
 
     @ManyToOne
+    // => Defines entity relationship for foreign key mapping
     @JoinColumn(name = "product_id")
+    // => Foreign key column: product_id
     private Product product;
 }
 
@@ -313,6 +343,9 @@ public class OrderService {
     public List<Order> findGoldCustomerOrders() {
         // => Find all orders from GOLD tier customers
         return orderRepository.findAll(
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
             OrderSpecifications.hasCustomerTier("GOLD")
         );
         // => Automatically generates proper join SQL
@@ -327,8 +360,13 @@ public class OrderService {
             // => Multiple joins in single query
 
         return orderRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `root.join("relationshipName")` to navigate entity relationships in specifications. Joins can be chained for multi-level navigation.
@@ -433,6 +471,9 @@ public class ProductService {
             // => WHERE active = true AND NOT (category = :category)
 
         return productRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
     }
 
     public List<Product> findWithOrCondition(String cat1, String cat2, BigDecimal minPrice) {
@@ -451,8 +492,13 @@ public class ProductService {
         };
 
         return productRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `cb.not()` for negation and `cb.and()/cb.or()` to combine predicates. Build complex logical expressions using multiple predicates with proper grouping.
@@ -503,6 +549,9 @@ public class ProductService {
 
         // => Execute with specification and pagination
         return productRepository.findAll(spec, pageable);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
         // => Returns Page<Product> with:
         //    - content: List of products for current page
         //    - totalElements: total matching products
@@ -523,6 +572,9 @@ public class ProductService {
             ProductSpecifications.hasCategory(category);
 
         return productRepository.findAll(spec, sort);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
         // => Returns sorted list without pagination
     }
 
@@ -535,6 +587,7 @@ public class ProductService {
     ) {
         // => Build dynamic sort from lists
         List<Sort.Order> orders = new ArrayList<>();
+        // => Creates transient entity (not yet persisted, id=null)
 
         for (int i = 0; i < sortFields.size(); i++) {
             String field = sortFields.get(i);
@@ -552,6 +605,9 @@ public class ProductService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         return productRepository.findAll(spec, pageable);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
     }
 }
 
@@ -587,6 +643,8 @@ public class ProductController {
         // }
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `findAll(Specification, Pageable)` to combine dynamic filtering with pagination and sorting. Create `Pageable` with `PageRequest.of(page, size, sort)`.
@@ -657,6 +715,9 @@ public class OrderService {
             OrderSpecifications.withDistinctCustomers(status);
 
         return orderRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
         // => DISTINCT prevents duplicate orders from joins
     }
 }
@@ -715,6 +776,8 @@ public class CustomOrderRepository {
         return entityManager.createQuery(query).getResultList();
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `query.distinct(true)` in specifications to eliminate duplicates. For aggregations with GROUP BY, use Criteria API directly with `EntityManager`.
@@ -806,6 +869,9 @@ public class ProductService {
         };
 
         return productRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
     }
 
     public List<Product> findProductsWithDescription() {
@@ -819,8 +885,13 @@ public class ProductService {
         };
 
         return productRepository.findAll(spec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `cb.lower()` for case-insensitive comparisons, `cb.isNull()/isNotNull()` for null checks, and `cb.coalesce()` for null-safe defaults.
@@ -924,6 +995,8 @@ public class ProductCriteriaRepository {
         return entityManager.createQuery(query).getResultList();
     }
 }
+
+
 ```
 
 **Key Takeaway**: Criteria API provides programmatic query building: EntityManager → CriteriaBuilder → CriteriaQuery → Root → Predicates → TypedQuery → Results.
@@ -1015,6 +1088,8 @@ public class OrderCriteriaRepository {
         return entityManager.createQuery(query).getResultList();
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `root.join("relationship")` for INNER JOIN, `root.join("relationship", JoinType.LEFT)` for LEFT JOIN. Chain joins to navigate multi-level relationships.
@@ -1107,6 +1182,8 @@ public class ProductCriteriaRepository {
         // => Returns orders with more than 1 item
     }
 }
+
+
 ```
 
 **Key Takeaway**: Create subqueries with `query.subquery(ReturnType.class)`. Correlated subqueries reference the main query's root using `cb.equal(subRoot.get("relation"), mainRoot)`.
@@ -1221,6 +1298,7 @@ public class ProductService {
     public List<Product> flexibleSearch(Map<String, Object> filters) {
         // => Build criteria from request parameters
         ProductSearchCriteria criteria = new ProductSearchCriteria();
+        // => Creates transient entity (not yet persisted, id=null)
 
         if (filters.containsKey("name")) {
             criteria.setName((String) filters.get("name"));
@@ -1236,6 +1314,8 @@ public class ProductService {
         // => Query adapts to provided filters
     }
 }
+
+
 ```
 
 **Key Takeaway**: Build predicates list conditionally, convert to array with `toArray(new Predicate[0])`, and apply with `cb.and()`. Use `TypedQuery.setFirstResult()/setMaxResults()` for pagination.
@@ -1400,6 +1480,8 @@ public class ProductCriteriaRepository {
         return entityManager.createQuery(query).getResultList();
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `query.select()` for single columns, `query.multiselect()` for multiple columns, `CriteriaQuery<Tuple>` for named results, and `cb.construct()` for direct DTO instantiation.
@@ -1435,6 +1517,8 @@ graph TD
 // Step 1: Define custom interface
 public interface ProductRepositoryCustom {
     List<Product> findByComplexCriteria(String keyword, BigDecimal minPrice);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     void bulkUpdatePrices(String category, BigDecimal multiplier);
     // => Custom methods not supported by Spring Data
 }
@@ -1451,6 +1535,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     @Override
     public List<Product> findByComplexCriteria(String keyword, BigDecimal minPrice) {
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => Complex query using Criteria API or JPQL
         String jpql = "SELECT p FROM Product p WHERE " +
                      "(LOWER(p.name) LIKE LOWER(:keyword) OR " +
@@ -1489,6 +1575,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
     // => Plus custom methods from ProductRepositoryCustom
 
     List<Product> findByCategory(String category);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => Derived query methods still work
 }
 
@@ -1502,6 +1590,8 @@ public class ProductService {
     public List<Product> searchProducts(String keyword, BigDecimal minPrice) {
         // => Call custom method seamlessly
         return productRepository.findByComplexCriteria(keyword, minPrice);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => No need to inject separate custom repository
     }
 
@@ -1514,8 +1604,12 @@ public class ProductService {
     public List<Product> getElectronics() {
         // => Standard Spring Data method
         return productRepository.findByCategory("Electronics");
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     }
 }
+
+
 ```
 
 **Key Takeaway**: Create custom interface + implementation class with `Impl` suffix. Main repository extends both standard JpaRepository and custom interface for seamless method access.
@@ -1551,6 +1645,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             if (i > 0 && i % batchSize == 0) {
                 // => Flush every batchSize entities
                 entityManager.flush();
+// => Forces immediate synchronization of persistence context to database
+// => Executes pending INSERT/UPDATE/DELETE statements
+// => Useful for triggering constraint violations early
                 // => Execute INSERT statements
                 entityManager.clear();
                 // => Clear persistence context to free memory
@@ -1560,6 +1657,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
         // => Flush remaining entities
         entityManager.flush();
+// => Forces immediate synchronization of persistence context to database
+// => Executes pending INSERT/UPDATE/DELETE statements
+// => Useful for triggering constraint violations early
         entityManager.clear();
     }
 
@@ -1577,11 +1677,17 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
             if (i > 0 && i % batchSize == 0) {
                 entityManager.flush();
+// => Forces immediate synchronization of persistence context to database
+// => Executes pending INSERT/UPDATE/DELETE statements
+// => Useful for triggering constraint violations early
                 entityManager.clear();
             }
         }
 
         entityManager.flush();
+// => Forces immediate synchronization of persistence context to database
+// => Executes pending INSERT/UPDATE/DELETE statements
+// => Useful for triggering constraint violations early
         entityManager.clear();
     }
 
@@ -1621,6 +1727,8 @@ public class ProductService {
         productRepository.batchUpdate(products);
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `flush()` and `clear()` periodically during batch operations to control memory usage. Execute bulk operations with JPQL for maximum efficiency.
@@ -1728,6 +1836,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         // => Database-specific features available
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `createNativeQuery(sql, EntityClass.class)` for entity results or `createNativeQuery(sql)` for raw results. Native queries provide database-specific feature access.
@@ -1761,6 +1871,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         // => Q-class generated from Product entity
 
         JPAQuery<Product> query = new JPAQuery<>(entityManager);
+        // => Creates transient entity (not yet persisted, id=null)
         // => JPAQuery wraps EntityManager
 
         BooleanBuilder predicate = new BooleanBuilder();
@@ -1808,6 +1919,7 @@ public class OrderRepositoryCustomImpl {
         QProduct product = QProduct.product;
 
         JPAQuery<Order> query = new JPAQuery<>(entityManager);
+        // => Creates transient entity (not yet persisted, id=null)
 
         return query.selectDistinct(order)
             .from(order)
@@ -1823,6 +1935,8 @@ public class OrderRepositoryCustomImpl {
         // => No string-based field names
     }
 }
+
+
 ```
 
 **Key Takeaway**: QueryDSL provides type-safe query building with generated Q-classes. Use `BooleanBuilder` for dynamic predicates and `JPAQuery` for execution.
@@ -1889,10 +2003,16 @@ public class ProductBatchFragmentImpl implements ProductBatchFragment {
             entityManager.persist(products.get(i));
             if (i > 0 && i % batchSize == 0) {
                 entityManager.flush();
+// => Forces immediate synchronization of persistence context to database
+// => Executes pending INSERT/UPDATE/DELETE statements
+// => Useful for triggering constraint violations early
                 entityManager.clear();
             }
         }
         entityManager.flush();
+// => Forces immediate synchronization of persistence context to database
+// => Executes pending INSERT/UPDATE/DELETE statements
+// => Useful for triggering constraint violations early
         entityManager.clear();
     }
 
@@ -1942,6 +2062,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
     // => Single repository interface with modular functionality
 
     List<Product> findByCategory(String category);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => Standard derived queries still work
 }
 
@@ -1966,6 +2088,8 @@ public class ProductService {
         // => From ProductStatisticsFragment
     }
 }
+
+
 ```
 
 **Key Takeaway**: Split custom functionality into multiple fragment interfaces with separate implementations. Main repository extends all fragments for modular, maintainable custom queries.
@@ -2011,18 +2135,21 @@ public class JpaConfig {
 // Step 2: Create auditable base class
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+// => Marks class as JPA entity (database table mapping)
 public abstract class Auditable {
     // => @MappedSuperclass: not a table, fields inherited by subclasses
     // => @EntityListeners: registers AuditingEntityListener for callbacks
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
+    // => NOT NULL constraint enforced at database level
     private LocalDateTime createdAt;
     // => @CreatedDate: auto-set on first persist
     // => updatable = false: prevents modification after creation
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
+    // => NOT NULL constraint enforced at database level
     private LocalDateTime updatedAt;
     // => @LastModifiedDate: auto-update on every save/update
 
@@ -2035,8 +2162,10 @@ public abstract class Auditable {
 
 // Step 3: Entities extend Auditable
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class Product extends Auditable {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private String name;
     private BigDecimal price;
@@ -2050,11 +2179,19 @@ public class ProductService {
 
     public Product createProduct(String name, BigDecimal price) {
         Product product = new Product();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         product.setName(name);
         product.setPrice(price);
         // => No need to set createdAt or updatedAt manually
 
         Product saved = productRepository.save(product);
+// => Persists entity to database (INSERT if id=null, UPDATE if id exists)
+// => Entity transitions from TRANSIENT to MANAGED state
+// => Returns entity with database-assigned ID
+        // => Persists entity to database (INSERT or UPDATE)
+        // => Entity transitions to MANAGED state with assigned ID
         // => createdAt and updatedAt automatically populated
         // => version set to 0
 
@@ -2068,9 +2205,19 @@ public class ProductService {
 
     public Product updateProduct(Long id, BigDecimal newPrice) {
         Product product = productRepository.findById(id).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         product.setPrice(newPrice);
 
         Product updated = productRepository.save(product);
+// => Persists entity to database (INSERT if id=null, UPDATE if id exists)
+// => Entity transitions from TRANSIENT to MANAGED state
+// => Returns entity with database-assigned ID
+        // => Persists entity to database (INSERT or UPDATE)
+        // => Entity transitions to MANAGED state with assigned ID
         // => updatedAt automatically updated to current timestamp
         // => version incremented to 1, 2, 3, etc.
 
@@ -2082,6 +2229,8 @@ public class ProductService {
         return updated;
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `@EnableJpaAuditing` and `@EntityListeners(AuditingEntityListener.class)` with `@CreatedDate/@LastModifiedDate` for automatic timestamp tracking. Extend `Auditable` base class for consistent auditing.
@@ -2158,22 +2307,27 @@ public class JpaConfig {
 // Step 3: Auditable base class with user tracking
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+// => Marks class as JPA entity (database table mapping)
 public abstract class Auditable {
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
+    // => NOT NULL constraint enforced at database level
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
+    // => NOT NULL constraint enforced at database level
     private LocalDateTime updatedAt;
 
     @CreatedBy
     @Column(name = "created_by", nullable = false, updatable = false)
+    // => NOT NULL constraint enforced at database level
     private String createdBy;
     // => @CreatedBy: auto-set to current user on first persist
 
     @LastModifiedBy
     @Column(name = "updated_by", nullable = false)
+    // => NOT NULL constraint enforced at database level
     private String updatedBy;
     // => @LastModifiedBy: auto-update to current user on every save
 
@@ -2184,8 +2338,10 @@ public abstract class Auditable {
 }
 
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class Product extends Auditable {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private String name;
     private BigDecimal price;
@@ -2201,10 +2357,18 @@ public class ProductService {
         // Assume current user is "john.doe" from security context
 
         Product product = new Product();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         product.setName(name);
         product.setPrice(price);
 
         Product saved = productRepository.save(product);
+// => Persists entity to database (INSERT if id=null, UPDATE if id exists)
+// => Entity transitions from TRANSIENT to MANAGED state
+// => Returns entity with database-assigned ID
+        // => Persists entity to database (INSERT or UPDATE)
+        // => Entity transitions to MANAGED state with assigned ID
         // => createdBy automatically set to "john.doe"
         // => updatedBy automatically set to "john.doe"
 
@@ -2220,9 +2384,19 @@ public class ProductService {
         // Assume current user is "jane.smith" from security context
 
         Product product = productRepository.findById(id).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         product.setPrice(newPrice);
 
         Product updated = productRepository.save(product);
+// => Persists entity to database (INSERT if id=null, UPDATE if id exists)
+// => Entity transitions from TRANSIENT to MANAGED state
+// => Returns entity with database-assigned ID
+        // => Persists entity to database (INSERT or UPDATE)
+        // => Entity transitions to MANAGED state with assigned ID
         // => createdBy remains "john.doe" (updatable = false)
         // => updatedBy automatically updated to "jane.smith"
 
@@ -2234,6 +2408,8 @@ public class ProductService {
         return updated;
     }
 }
+
+
 ```
 
 **Key Takeaway**: Implement `AuditorAware<T>` to provide current user identifier. Use `@CreatedBy/@LastModifiedBy` with `@EnableJpaAuditing(auditorAwareRef)` for automatic user tracking.
@@ -2364,11 +2540,14 @@ public class ProductEntityListener {
 
 // Entity with listener
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @EntityListeners(ProductEntityListener.class)
+// => Marks class as JPA entity (database table mapping)
 public class Product {
     // => @EntityListeners: registers custom listener
 
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private String name;
     private String sku;
@@ -2392,6 +2571,9 @@ public class ProductService {
 
     public Product createProduct(String name, BigDecimal price) {
         Product product = new Product();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         product.setName(name);
         product.setPrice(price);
 
@@ -2405,6 +2587,11 @@ public class ProductService {
 
     public Product updateProduct(Long id, BigDecimal newPrice) {
         Product product = productRepository.findById(id).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         // => @PostLoad: displayPrice calculated
 
         product.setPrice(newPrice);
@@ -2419,6 +2606,11 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
 
         // Lifecycle events:
         // 1. @PreRemove: active set to false
@@ -2426,8 +2618,12 @@ public class ProductService {
         // 3. @PostRemove: logged
 
         productRepository.delete(product);
+// => Single DELETE operation (more efficient than deleteById)
+// => Uses entity ID directly, no SELECT needed
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `@EntityListeners` with lifecycle annotations (`@PrePersist, @PostPersist, @PreUpdate, @PostUpdate, @PreRemove, @PostRemove, @PostLoad`) for custom logic during entity lifecycle events.
@@ -2442,6 +2638,7 @@ Merge Spring Data JPA auditing with custom entity listeners for comprehensive tr
 // Combined auditable base class
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class, AuditableEntityListener.class})
+// => Marks class as JPA entity (database table mapping)
 public abstract class Auditable {
     // => Multiple listeners: Spring auditing + custom logic
 
@@ -2504,8 +2701,10 @@ public class AuditableEntityListener {
 }
 
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class Product extends Auditable {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
     private String name;
     private BigDecimal price;
@@ -2516,9 +2715,19 @@ public class Product extends Auditable {
 public class ProductService {
     public Product updateProductWithAudit(Long id, BigDecimal newPrice) {
         Product product = productRepository.findById(id).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         product.setPrice(newPrice);
 
         Product updated = productRepository.save(product);
+// => Persists entity to database (INSERT if id=null, UPDATE if id exists)
+// => Entity transitions from TRANSIENT to MANAGED state
+// => Returns entity with database-assigned ID
+        // => Persists entity to database (INSERT or UPDATE)
+        // => Entity transitions to MANAGED state with assigned ID
         // => Execution order:
         // 1. AuditableEntityListener @PreUpdate: changeLog set
         // 2. AuditingEntityListener: updatedAt, updatedBy set
@@ -2534,6 +2743,8 @@ public class ProductService {
         return updated;
     }
 }
+
+
 ```
 
 **Key Takeaway**: Combine `AuditingEntityListener` with custom listeners in `@EntityListeners` array for comprehensive auditing. Spring auditing handles timestamps/users, custom listeners add business logic.
@@ -2583,6 +2794,8 @@ public interface OrderSummary {
 public interface ProductRepository extends JpaRepository<Product, Long> {
     // => Return projection instead of entity
     List<ProductSummary> findByCategory(String category);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => SELECT name, price, category FROM products WHERE category = :category
     // => Much more efficient than loading full Product entities
 
@@ -2602,6 +2815,8 @@ public class ProductService {
         // => Returns lightweight projections
         List<ProductSummary> summaries =
             productRepository.findByCategory(category);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
 
         for (ProductSummary summary : summaries) {
             System.out.println(summary.getName() + ": $" + summary.getPrice());
@@ -2615,6 +2830,11 @@ public class ProductService {
     public void compareSizes() {
         // Full entity load
         List<Product> products = productRepository.findAll();
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => Loads all fields: id, name, price, category, description,
         //    active, createdAt, updatedAt, etc.
         // => Large memory footprint for large datasets
@@ -2625,6 +2845,8 @@ public class ProductService {
         // => 50-70% memory reduction typical
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use interface projections to fetch only required fields. Closed projections (getters only) are most efficient. Open projections with `@Value` require full entity load.
@@ -2733,6 +2955,8 @@ public class ProductService {
         // => Aggregated data as DTOs for reporting/analytics
     }
 }
+
+
 ```
 
 **Key Takeaway**: Use `new com.example.DTO(...)` in JPQL for constructor-based projections. DTOs are immutable, layer-safe, and avoid persistence context overhead. Ideal for read-only data transfer.
@@ -2798,12 +3022,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 // Entity with batch fetching configuration
 @Entity
+// => Marks class as JPA entity (database table mapping)
 public class Order {
     @Id @GeneratedValue
+    // => Primary key field
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    // => Defines entity relationship for foreign key mapping
     @JoinColumn(name = "customer_id")
+    // => Foreign key column: customer_id
     @BatchSize(size = 10)
     private Customer customer;
     // => @BatchSize: batch-fetch customers in groups of 10
@@ -2811,6 +3039,7 @@ public class Order {
     // => Reduces N+1 to 1 + (N/10) queries
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    // => Defines entity relationship for foreign key mapping
     @BatchSize(size = 10)
     private List<OrderItem> items;
     // => Batch-fetch items in groups of 10
@@ -2824,6 +3053,11 @@ public class OrderService {
     public void demonstrateN1Problem() {
         // N+1 problem example
         List<Order> orders = orderRepository.findAll();
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => 1 query: SELECT * FROM orders
 
         for (Order order : orders) {
@@ -2836,6 +3070,11 @@ public class OrderService {
     public void demonstrateBatchFetching() {
         // With @BatchSize(10)
         List<Order> orders = orderRepository.findAll();
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => 1 query: SELECT * FROM orders
 
         for (Order order : orders) {
@@ -2877,6 +3116,8 @@ public class OrderService {
 // spring.jpa.properties.hibernate.order_inserts=true
 // spring.jpa.properties.hibernate.order_updates=true
 // => Group INSERT/UPDATE by entity type for better batching
+
+
 ```
 
 **Key Takeaway**: Use `JOIN FETCH` for eager loading related entities in single query. Apply `@BatchSize` to reduce N+1 queries for lazy associations. Use `@QueryHints` with `readOnly=true` for read-only queries to skip dirty checking.

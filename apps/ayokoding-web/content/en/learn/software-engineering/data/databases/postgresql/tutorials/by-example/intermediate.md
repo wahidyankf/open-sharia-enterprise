@@ -33,17 +33,17 @@ graph TD
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_31;
 \c example_31;
-
+-- => Statement execution completes
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     customer VARCHAR(100),
     total DECIMAL(10, 2),
     order_date DATE
 );
-
+-- => Statement execution completes
 INSERT INTO orders (customer, total, order_date)
 VALUES
     ('Alice', 1500.00, '2025-12-20'),
@@ -51,16 +51,20 @@ VALUES
     ('Alice', 800.00, '2025-12-22'),
     ('Charlie', 3000.00, '2025-12-23'),
     ('Bob', 150.00, '2025-12-24');
-
+    -- => Statement execution completes
 -- Basic CTE
 WITH high_value_orders AS (
     SELECT customer, total, order_date
     FROM orders
+    -- => Specifies source table for query
     WHERE total >= 500  -- => Only orders $500 or more
 )
 SELECT customer, SUM(total) AS total_high_value
+-- => Creates alias for column/table
 FROM high_value_orders
+-- => Specifies source table for query
 GROUP BY customer;
+-- => Aggregates rows by specified columns
 -- => WITH clause defines CTE named 'high_value_orders' (temporary result set)
 -- => CTE query filters orders: total >= 500
 -- =>   Alice: 1500.00 and 800.00 (both >= 500)
@@ -72,20 +76,24 @@ GROUP BY customer;
 -- => Charlie total: 3000.00
 -- => Returns 2 rows: Alice (2300.00), Charlie (3000.00)
 -- => Bob excluded (no high-value orders)
-
 -- Multiple CTEs
 WITH
     order_stats AS (
         SELECT
             customer,
             COUNT(*) AS num_orders,
+            -- => Creates alias for column/table
             SUM(total) AS total_spent
+            -- => Creates alias for column/table
         FROM orders
+        -- => Specifies source table for query
         GROUP BY customer
+        -- => Aggregates rows by specified columns
     ),
     high_spenders AS (
         SELECT customer, total_spent
         FROM order_stats
+        -- => Specifies source table for query
         WHERE total_spent > 1000  -- => Customers who spent over $1000
     )
 SELECT
@@ -96,7 +104,9 @@ SELECT
         WHEN hs.customer IS NOT NULL THEN 'VIP'
         ELSE 'Regular'
     END AS customer_tier
+    -- => Creates alias for column/table
 FROM order_stats os
+-- => Specifies source table for query
 LEFT JOIN high_spenders hs ON os.customer = hs.customer;
 -- => First CTE 'order_stats': aggregates all orders per customer
 -- =>   Alice: COUNT=2, SUM=2300.00
@@ -111,21 +121,27 @@ LEFT JOIN high_spenders hs ON os.customer = hs.customer;
 -- =>   Bob doesn't join (NULL in hs) → Regular tier
 -- =>   Charlie joins with high_spenders → VIP tier
 -- => Returns 3 rows with customer_tier classification
-
 -- CTE with aggregation and filtering
 WITH monthly_revenue AS (
     SELECT
         DATE_TRUNC('month', order_date) AS month,  -- => First day of month
         SUM(total) AS revenue
+        -- => Creates alias for column/table
     FROM orders
+    -- => Specifies source table for query
     GROUP BY DATE_TRUNC('month', order_date)
+    -- => Aggregates rows by specified columns
 )
 SELECT
     TO_CHAR(month, 'YYYY-MM') AS month,
+    -- => Creates alias for column/table
     revenue,
     LAG(revenue) OVER (ORDER BY month) AS prev_month_revenue,
+    -- => Sorts query results
     revenue - LAG(revenue) OVER (ORDER BY month) AS revenue_change
+    -- => Sorts query results
 FROM monthly_revenue;
+-- => Specifies source table for query
 -- => CTE 'monthly_revenue': groups orders by month
 -- => DATE_TRUNC('month', '2025-12-20') = '2025-12-01' (truncates to first of month)
 -- => Assuming orders in Dec 2025: SUM(total) for all December orders
@@ -134,8 +150,7 @@ FROM monthly_revenue;
 -- => First month: LAG returns NULL (no previous month)
 -- => Subsequent months: LAG returns previous month's revenue
 -- => revenue_change = current_month - previous_month
--- => Shows month-over-month growth/decline
-```
+-- => Shows month-over-month growth/decline```
 
 **Key Takeaway**: CTEs improve readability by naming complex subqueries - use them to break down complex queries into logical steps. Multiple CTEs can reference earlier CTEs, creating a pipeline of transformations.
 
@@ -170,21 +185,21 @@ graph TD
     style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_32;
 \c example_32;
-
+-- => Statement execution completes
 CREATE TABLE sales (
     id SERIAL PRIMARY KEY,
     salesperson VARCHAR(100),
     region VARCHAR(50),
     amount DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO sales (salesperson, region, amount)
 VALUES
     ('Alice', 'North', 5000),
@@ -192,48 +207,52 @@ VALUES
     ('Charlie', 'South', 6000),
     ('Diana', 'South', 6000),  -- => Tied with Charlie
     ('Eve', 'North', 8000);
-
+    -- => Statement execution completes
 -- ROW_NUMBER: sequential numbering (no ties)
 SELECT
     salesperson,
     region,
     amount,
     ROW_NUMBER() OVER (ORDER BY amount DESC) AS row_num
+    -- => Sorts query results
 FROM sales;
+-- => Specifies source table for query
 -- => Eve (1), Bob (2), Charlie (3), Diana (4), Alice (5)
 -- => Diana gets 4 even though tied with Charlie
-
 -- RANK: skips numbers after ties
 SELECT
     salesperson,
     region,
     amount,
     RANK() OVER (ORDER BY amount DESC) AS rank
+    -- => Sorts query results
 FROM sales;
+-- => Specifies source table for query
 -- => Eve (1), Bob (2), Charlie (3), Diana (3), Alice (5)
 -- => Both Charlie and Diana get 3, next is 5 (skips 4)
-
 -- DENSE_RANK: doesn't skip numbers after ties
 SELECT
     salesperson,
     region,
     amount,
     DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank
+    -- => Sorts query results
 FROM sales;
+-- => Specifies source table for query
 -- => Eve (1), Bob (2), Charlie (3), Diana (3), Alice (4)
 -- => After tie at 3, next is 4 (no skip)
-
 -- Window function with PARTITION BY
 SELECT
     salesperson,
     region,
     amount,
     ROW_NUMBER() OVER (PARTITION BY region ORDER BY amount DESC) AS region_rank
+    -- => Sorts query results
 FROM sales;
+-- => Specifies source table for query
 -- => Separate ranking per region
 -- => North: Eve (1), Bob (2), Alice (3)
 -- => South: Charlie (1), Diana (2)
-
 -- Find top salesperson per region
 WITH ranked_sales AS (
     SELECT
@@ -241,13 +260,16 @@ WITH ranked_sales AS (
         region,
         amount,
         ROW_NUMBER() OVER (PARTITION BY region ORDER BY amount DESC) AS rank
+        -- => Sorts query results
     FROM sales
+    -- => Specifies source table for query
 )
 SELECT salesperson, region, amount
 FROM ranked_sales
+-- => Specifies source table for query
 WHERE rank = 1;
--- => Eve (North, 8000), Charlie (South, 6000)
-```
+-- => Applies filter to rows
+-- => Eve (North, 8000), Charlie (South, 6000)```
 
 **Key Takeaway**: Window functions compute across row sets without collapsing - ROW_NUMBER for sequential numbering, RANK for competitive ranking (ties skip), DENSE_RANK for no skipping. PARTITION BY creates independent windows per group.
 
@@ -280,14 +302,14 @@ graph TD
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#CC78BC,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_33;
 \c example_33;
-
+-- => Statement execution completes
 CREATE TABLE transactions (
     id SERIAL PRIMARY KEY,
     account VARCHAR(50),
@@ -295,7 +317,7 @@ CREATE TABLE transactions (
     amount DECIMAL(10, 2),
     transaction_date DATE
 );
-
+-- => Statement execution completes
 INSERT INTO transactions (account, category, amount, transaction_date)
 VALUES
     ('A', 'Food', 50.00, '2025-12-20'),
@@ -304,7 +326,7 @@ VALUES
     ('B', 'Food', 60.00, '2025-12-20'),
     ('B', 'Transport', 45.00, '2025-12-21'),
     ('B', 'Food', 80.00, '2025-12-22');
-
+    -- => Statement execution completes
 -- Running total per account
 SELECT
     account,
@@ -312,14 +334,18 @@ SELECT
     amount,
     transaction_date,
     SUM(amount) OVER (
+    -- => Aggregate function computes summary value
         PARTITION BY account
         ORDER BY transaction_date
+        -- => Sorts query results
     ) AS running_total
+    -- => Creates alias for column/table
 FROM transactions
+-- => Specifies source table for query
 ORDER BY account, transaction_date;
+-- => Sorts query results
 -- => Account A: 50, 125, 155 (cumulative)
 -- => Account B: 60, 105, 185 (independent cumulative)
-
 -- Running total per account AND category
 SELECT
     account,
@@ -327,23 +353,29 @@ SELECT
     amount,
     transaction_date,
     SUM(amount) OVER (
+    -- => Aggregate function computes summary value
         PARTITION BY account, category
         ORDER BY transaction_date
+        -- => Sorts query results
     ) AS category_running_total
+    -- => Creates alias for column/table
 FROM transactions
+-- => Specifies source table for query
 ORDER BY account, category, transaction_date;
+-- => Sorts query results
 -- => Separate running totals for A-Food, A-Transport, B-Food, B-Transport
-
 -- Average per partition
 SELECT
     account,
     category,
     amount,
     AVG(amount) OVER (PARTITION BY account) AS account_avg,
+    -- => Creates alias for column/table
     AVG(amount) OVER (PARTITION BY category) AS category_avg
+    -- => Creates alias for column/table
 FROM transactions;
+-- => Specifies source table for query
 -- => Shows average spending per account and per category
-
 -- First and last values in partition
 SELECT
     account,
@@ -352,16 +384,21 @@ SELECT
     FIRST_VALUE(amount) OVER (
         PARTITION BY account
         ORDER BY transaction_date
+        -- => Sorts query results
     ) AS first_amount,
+    -- => Creates alias for column/table
     LAST_VALUE(amount) OVER (
         PARTITION BY account
         ORDER BY transaction_date
+        -- => Sorts query results
         ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
     ) AS last_amount
+    -- => Creates alias for column/table
 FROM transactions
+-- => Specifies source table for query
 ORDER BY account, transaction_date;
--- => Shows first and last transaction amount per account
-```
+-- => Sorts query results
+-- => Shows first and last transaction amount per account```
 
 **Key Takeaway**: PARTITION BY creates independent calculation windows - use it for running totals per group, rankings within categories, or comparative analytics. Combine with ROWS/RANGE clauses to control window frame boundaries.
 
@@ -375,33 +412,42 @@ Recursive CTEs call themselves - essential for hierarchical data (org charts, ca
 
 ```sql
 CREATE DATABASE example_34;
+-- => Creates database 'example_34'
 \c example_34;
-
+-- => Statement execution completes
+-- => Switches connection to example_34 database
 CREATE TABLE employees (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     manager_id INTEGER
 );
-
+-- => Statement execution completes
 INSERT INTO employees (id, name, manager_id)
+-- => INSERT into employees table begins
 VALUES
+-- => Row data values follow
     (1, 'CEO Alice', NULL),
+    -- => Row data inserted
     (2, 'VP Bob', 1),
+    -- => Row data inserted
     (3, 'VP Charlie', 1),
+    -- => Row data inserted
     (4, 'Manager Diana', 2),
+    -- => Row data inserted
     (5, 'Manager Eve', 2),
+    -- => Row data inserted
     (6, 'Employee Frank', 4),
+    -- => Row data inserted
     (7, 'Employee Grace', 5);
-
+    -- => Statement execution completes
 -- Find all reports under CEO (all employees)
 WITH RECURSIVE org_chart AS (
     -- Base case: start with CEO
     SELECT id, name, manager_id, 1 AS level, name AS path
+    -- => Creates alias for column/table
     FROM employees
+    -- => Specifies source table for query
     WHERE manager_id IS NULL  -- => CEO has no manager
-
     UNION ALL
-
     -- Recursive case: find employees managed by previous results
     SELECT
         e.id,
@@ -410,7 +456,9 @@ WITH RECURSIVE org_chart AS (
         oc.level + 1,
         oc.path || ' > ' || e.name
     FROM employees e
+    -- => Specifies source table for query
     INNER JOIN org_chart oc ON e.manager_id = oc.id
+    -- => Combines rows from multiple tables
 )
 SELECT
     id,
@@ -418,37 +466,43 @@ SELECT
     level,
     path
 FROM org_chart
+-- => Specifies source table for query
 ORDER BY level, name;
+-- => Sorts query results
+-- => Sorts result set
 -- => Shows org hierarchy with level and path from CEO
-
 -- Generate series (numbers 1 to 10)
 WITH RECURSIVE series AS (
     SELECT 1 AS n  -- => Base case
     UNION ALL
     SELECT n + 1
     FROM series
+    -- => Specifies source table for query
     WHERE n < 10   -- => Termination condition
 )
 SELECT n FROM series;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => 1, 2, 3, ..., 10
-
 -- Find all ancestors of an employee
 WITH RECURSIVE ancestors AS (
     -- Base case: start with specific employee
     SELECT id, name, manager_id
     FROM employees
+    -- => Specifies source table for query
     WHERE id = 6  -- => Frank
-
     UNION ALL
-
     -- Recursive case: find manager of previous results
     SELECT e.id, e.name, e.manager_id
     FROM employees e
+    -- => Specifies source table for query
     INNER JOIN ancestors a ON a.manager_id = e.id
+    -- => Combines rows from multiple tables
 )
 SELECT name FROM ancestors;
--- => Frank, Manager Diana, VP Bob, CEO Alice (upward traversal)
-```
+-- => Specifies source table for query
+-- => Query executes and returns result set
+-- => Frank, Manager Diana, VP Bob, CEO Alice (upward traversal)```
 
 **Key Takeaway**: Recursive CTEs solve hierarchical problems - base case provides starting rows, recursive case references the CTE to traverse relationships. Always include termination conditions to prevent infinite loops.
 
@@ -463,60 +517,67 @@ Set operations combine results from multiple queries - UNION merges results (rem
 ```sql
 CREATE DATABASE example_35;
 \c example_35;
-
+-- => Statement execution completes
 CREATE TABLE customers_2024 (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100)
 );
-
+-- => Statement execution completes
 CREATE TABLE customers_2025 (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100)
 );
-
+-- => Statement execution completes
 INSERT INTO customers_2024 (email)
 VALUES ('alice@example.com'), ('bob@example.com'), ('charlie@example.com');
-
+-- => Statement execution completes
 INSERT INTO customers_2025 (email)
 VALUES ('bob@example.com'), ('charlie@example.com'), ('diana@example.com');
-
+-- => Statement execution completes
 -- UNION: combine results, remove duplicates
 SELECT email FROM customers_2024
+-- => Specifies source table for query
 UNION
 SELECT email FROM customers_2025;
+-- => Specifies source table for query
 -- => alice@example.com, bob@example.com, charlie@example.com, diana@example.com
 -- => Duplicates removed (bob, charlie appear in both)
-
 -- UNION ALL: combine results, keep duplicates
 SELECT email FROM customers_2024
+-- => Specifies source table for query
 UNION ALL
 SELECT email FROM customers_2025;
+-- => Specifies source table for query
 -- => 6 rows (bob and charlie appear twice)
-
 -- INTERSECT: rows in both queries
 SELECT email FROM customers_2024
+-- => Specifies source table for query
 INTERSECT
 SELECT email FROM customers_2025;
+-- => Specifies source table for query
 -- => bob@example.com, charlie@example.com (customers in both years)
-
 -- EXCEPT: rows in first query but not second
 SELECT email FROM customers_2024
+-- => Specifies source table for query
 EXCEPT
 SELECT email FROM customers_2025;
+-- => Specifies source table for query
 -- => alice@example.com (2024 customer who didn't return in 2025)
-
 SELECT email FROM customers_2025
+-- => Specifies source table for query
 EXCEPT
 SELECT email FROM customers_2024;
+-- => Specifies source table for query
 -- => diana@example.com (new customer in 2025)
-
 -- Complex example with ORDER BY
 (SELECT email, '2024' AS year FROM customers_2024)
+-- => Specifies source table for query
 UNION
 (SELECT email, '2025' AS year FROM customers_2025)
+-- => Specifies source table for query
 ORDER BY email, year;
--- => Combined results sorted by email then year
-```
+-- => Sorts query results
+-- => Combined results sorted by email then year```
 
 **Key Takeaway**: UNION combines queries (removes duplicates), UNION ALL keeps duplicates, INTERSECT finds common rows, EXCEPT finds differences. Queries must have same number of columns with compatible types. Use ORDER BY after set operations to sort final results.
 
@@ -555,14 +616,14 @@ graph TD
     style E fill:#029E73,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#CC78BC,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_36;
 \c example_36;
-
+-- => Statement execution completes
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,        -- => Automatically creates B-tree index on id
     name VARCHAR(200),
@@ -570,7 +631,7 @@ CREATE TABLE products (
     price DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT NOW()
 );
-
+-- => Statement execution completes
 -- Insert test data
 INSERT INTO products (name, category, price)
 SELECT
@@ -582,51 +643,55 @@ SELECT
     END,
     (random() * 1000)::DECIMAL(10, 2)
 FROM generate_series(1, 10000);
-
+-- => Specifies source table for query
 -- Query without index (slow on large tables)
 EXPLAIN ANALYZE
 SELECT * FROM products
+-- => Specifies source table for query
 WHERE category = 'Electronics';
+-- => Applies filter to rows
 -- => Seq Scan (sequential scan through entire table)
-
 -- Create B-tree index
 CREATE INDEX idx_products_category ON products(category);
 -- => Creates index on category column
-
 -- Same query with index (fast)
 EXPLAIN ANALYZE
 SELECT * FROM products
+-- => Specifies source table for query
 WHERE category = 'Electronics';
+-- => Applies filter to rows
 -- => Index Scan using idx_products_category (much faster)
-
 -- Index helps with sorting
 EXPLAIN ANALYZE
 SELECT name, price
 FROM products
+-- => Specifies source table for query
 ORDER BY price DESC
+-- => Sorts query results
 LIMIT 10;
+-- => Restricts number of rows returned
 -- => May use sequential scan without index on price
-
 CREATE INDEX idx_products_price ON products(price DESC);
 -- => Creates index optimized for descending sort
-
 EXPLAIN ANALYZE
 SELECT name, price
 FROM products
+-- => Specifies source table for query
 ORDER BY price DESC
+-- => Sorts query results
 LIMIT 10;
+-- => Restricts number of rows returned
 -- => Index Scan using idx_products_price (avoids full table sort)
-
 -- List all indexes on table
 SELECT indexname, indexdef
 FROM pg_indexes
+-- => Specifies source table for query
 WHERE tablename = 'products';
+-- => Applies filter to rows
 -- => Shows all indexes including primary key
-
 -- Drop index
 DROP INDEX idx_products_category;
--- => Removes index (queries slower but writes faster)
-```
+-- => Removes index (queries slower but writes faster)```
 
 **Key Takeaway**: B-tree indexes accelerate lookups and range queries - create them on columns frequently used in WHERE, JOIN, and ORDER BY. Primary keys automatically get indexes. Too many indexes slow down writes (INSERT/UPDATE/DELETE).
 
@@ -640,66 +705,77 @@ Unique indexes enforce uniqueness like UNIQUE constraints but can be partial or 
 
 ```sql
 CREATE DATABASE example_37;
+-- => Creates database 'example_37'
 \c example_37;
-
+-- => Statement execution completes
+-- => Switches connection to example_37 database
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
     username VARCHAR(50),
     email VARCHAR(100),
     deleted_at TIMESTAMP
 );
-
+-- => Statement execution completes
 -- Create unique index on username
 CREATE UNIQUE INDEX idx_users_username ON users(username);
 -- => Enforces username uniqueness
-
 INSERT INTO users (username, email)
+-- => INSERT into users table begins
 VALUES ('alice', 'alice@example.com');
+-- => Statement execution completes
+-- => Row data values follow
 -- => Success
-
 INSERT INTO users (username, email)
+-- => INSERT into users table begins
 VALUES ('alice', 'alice2@example.com');
+-- => Statement execution completes
+-- => Row data values follow
 -- => ERROR: duplicate key violates unique constraint "idx_users_username"
-
 -- Partial unique index (conditional uniqueness)
 DROP INDEX idx_users_username;
-
 CREATE UNIQUE INDEX idx_users_username_active
 ON users(username)
 WHERE deleted_at IS NULL;
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Enforces uniqueness only for non-deleted users
-
 INSERT INTO users (username, email, deleted_at)
+-- => INSERT into users table begins
 VALUES ('alice', 'alice@example.com', '2025-01-01');  -- => Deleted user
 -- => Success (deleted_at IS NOT NULL, index doesn't apply)
-
 INSERT INTO users (username, email)
+-- => INSERT into users table begins
 VALUES ('alice', 'alice2@example.com');
+-- => Statement execution completes
+-- => Row data values follow
 -- => Success (previous alice is deleted)
-
 INSERT INTO users (username, email)
+-- => INSERT into users table begins
 VALUES ('alice', 'alice3@example.com');
+-- => Statement execution completes
+-- => Row data values follow
 -- => ERROR: duplicate active username
-
 -- Composite unique index
 CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(200),
     version VARCHAR(20)
 );
-
+-- => Statement execution completes
 CREATE UNIQUE INDEX idx_products_name_version
 ON products(name, version);
+-- => Statement execution completes
 -- => Combination of name+version must be unique
-
 INSERT INTO products (name, version)
+-- => INSERT into products table begins
 VALUES ('PostgreSQL', '16'), ('PostgreSQL', '15');
+-- => Statement execution completes
+-- => Row data values follow
 -- => Success (different versions)
-
 INSERT INTO products (name, version)
+-- => INSERT into products table begins
 VALUES ('PostgreSQL', '16');
--- => ERROR: duplicate combination
-```
+-- => Statement execution completes
+-- => Row data values follow
+-- => ERROR: duplicate combination```
 
 **Key Takeaway**: Unique indexes enforce uniqueness constraints - use them for business keys (usernames, emails, codes). Partial unique indexes with WHERE clauses enable conditional uniqueness (active records only). Composite unique indexes enforce uniqueness on column combinations.
 
@@ -734,21 +810,21 @@ graph TD
     style E fill:#029E73,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_38;
 \c example_38;
-
+-- => Statement execution completes
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     customer_id INTEGER,
     status VARCHAR(20),
     created_at TIMESTAMP DEFAULT NOW()
 );
-
+-- => Statement execution completes
 -- Insert test data
 INSERT INTO orders (customer_id, status, created_at)
 SELECT
@@ -760,55 +836,61 @@ SELECT
     END,
     NOW() - (random() * 365 || ' days')::INTERVAL
 FROM generate_series(1, 10000);
-
+-- => Specifies source table for query
 -- Common query pattern
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
 WHERE customer_id = 42 AND status = 'pending';
+-- => Applies filter to rows
 -- => Sequential Scan (no index yet)
-
 -- Create multi-column index
 CREATE INDEX idx_orders_customer_status
 ON orders(customer_id, status);
+-- => Statement execution completes
 -- => Index on (customer_id, status) in that order
-
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
 WHERE customer_id = 42 AND status = 'pending';
+-- => Applies filter to rows
 -- => Index Scan using idx_orders_customer_status (fast)
-
 -- Query using only first column (uses index)
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
 WHERE customer_id = 42;
+-- => Applies filter to rows
 -- => Index Scan (uses index, even without status filter)
-
 -- Query using only second column (doesn't use index efficiently)
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
 WHERE status = 'pending';
+-- => Applies filter to rows
 -- => Seq Scan (cannot use index starting from middle)
-
 -- Create separate index for status-only queries
 CREATE INDEX idx_orders_status ON orders(status);
-
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
 WHERE status = 'pending';
+-- => Applies filter to rows
 -- => Index Scan using idx_orders_status
-
 -- Three-column index
 CREATE INDEX idx_orders_customer_status_date
 ON orders(customer_id, status, created_at);
-
+-- => Statement execution completes
 -- Queries benefiting from three-column index
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
 WHERE customer_id = 42
+-- => Applies filter to rows
   AND status = 'pending'
   AND created_at > NOW() - INTERVAL '30 days';
--- => Uses idx_orders_customer_status_date efficiently
-```
+  -- => Statement execution completes
+-- => Uses idx_orders_customer_status_date efficiently```
 
 **Key Takeaway**: Multi-column indexes speed up queries filtering on multiple columns - order matters (leftmost columns required). Query `WHERE customer_id = X AND status = Y` uses index on (customer_id, status), but `WHERE status = Y` alone doesn't. Create separate indexes for different query patterns.
 
@@ -822,17 +904,19 @@ Partial indexes include only rows matching a WHERE condition - smaller, faster, 
 
 ```sql
 CREATE DATABASE example_39;
+-- => Creates database 'example_39'
 \c example_39;
-
+-- => Statement execution completes
+-- => Switches connection to example_39 database
 CREATE TABLE orders (
-    id SERIAL PRIMARY KEY,
     customer_id INTEGER,
     status VARCHAR(20),
     total DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT NOW()
 );
-
+-- => Statement execution completes
 INSERT INTO orders (customer_id, status, total, created_at)
+-- => INSERT into orders table begins
 SELECT
     (random() * 100)::INTEGER + 1,
     CASE (random() * 4)::INTEGER
@@ -842,54 +926,78 @@ SELECT
         ELSE 'refunded'
     END,
     (random() * 1000)::DECIMAL(10, 2),
+    -- => Row data inserted
     NOW() - (random() * 365 || ' days')::INTERVAL
 FROM generate_series(1, 10000);
-
+-- => Specifies source table for query
 -- Partial index for active orders only
 CREATE INDEX idx_orders_pending
+-- => Creates index idx_orders_pending for faster queries
 ON orders(customer_id)
 WHERE status = 'pending';
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Indexes only pending orders (smaller, faster)
-
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
+-- => Query executes and returns result set
 WHERE customer_id = 42 AND status = 'pending';
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Uses idx_orders_pending
-
 -- Partial index for high-value orders
 CREATE INDEX idx_orders_high_value
+-- => Creates index idx_orders_high_value for faster queries
 ON orders(created_at DESC)
 WHERE total >= 500;
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Indexes only orders $500 or more
-
 EXPLAIN ANALYZE
 SELECT * FROM orders
+-- => Specifies source table for query
+-- => Query executes and returns result set
 WHERE total >= 500
+-- => Applies filter to rows
+-- => Filter condition for query
 ORDER BY created_at DESC
+-- => Sorts query results
+-- => Sorts result set
 LIMIT 10;
+-- => Restricts number of rows returned
 -- => Uses idx_orders_high_value
-
 -- Partial index for recent orders
 CREATE INDEX idx_orders_recent
+-- => Creates index idx_orders_recent for faster queries
 ON orders(customer_id, total)
 WHERE created_at >= '2025-01-01';
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Indexes only orders from 2025 onward
-
 EXPLAIN ANALYZE
 SELECT customer_id, SUM(total) AS total_spent
+-- => Creates alias for column/table
 FROM orders
+-- => Specifies source table for query
 WHERE created_at >= '2025-01-01'
+-- => Applies filter to rows
+-- => Filter condition for query
 GROUP BY customer_id;
+-- => Aggregates rows by specified columns
+-- => Groups rows for aggregation
 -- => May use idx_orders_recent
-
 -- Compare index sizes
 SELECT
     indexname,
     pg_size_pretty(pg_relation_size(indexname::regclass)) AS index_size
+    -- => Creates alias for column/table
 FROM pg_indexes
+-- => Specifies source table for query
 WHERE tablename = 'orders';
--- => Partial indexes smaller than full indexes
-```
+-- => Applies filter to rows
+-- => Filter condition for query
+-- => Partial indexes smaller than full indexes```
 
 **Key Takeaway**: Partial indexes with WHERE clauses index subsets of rows - use them for queries frequently filtering on specific values (pending orders, active users, recent records). Smaller indexes mean faster searches and less storage.
 
@@ -918,21 +1026,21 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_40;
 \c example_40;
-
+-- => Statement execution completes
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(200),
     category VARCHAR(50),
     price DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO products (name, category, price)
 SELECT
     'Product ' || generate_series,
@@ -943,71 +1051,79 @@ SELECT
     END,
     (random() * 1000)::DECIMAL(10, 2)
 FROM generate_series(1, 10000);
-
+-- => Specifies source table for query
 -- EXPLAIN shows execution plan without running query
 EXPLAIN
 SELECT * FROM products
+-- => Specifies source table for query
 WHERE category = 'Electronics' AND price > 500;
+-- => Applies filter to rows
 -- => Shows: Seq Scan on products
 -- => Filter: ((category = 'Electronics') AND (price > 500))
 -- => Cost estimate (not actual timing)
-
 -- EXPLAIN ANALYZE executes and shows actual timings
 EXPLAIN ANALYZE
 SELECT * FROM products
+-- => Specifies source table for query
 WHERE category = 'Electronics' AND price > 500;
+-- => Applies filter to rows
 -- => Shows: Seq Scan, actual time, rows returned
 -- => Planning Time: X ms, Execution Time: Y ms
-
 -- Create index and compare
 CREATE INDEX idx_products_category_price
 ON products(category, price);
-
+-- => Statement execution completes
 EXPLAIN ANALYZE
 SELECT * FROM products
+-- => Specifies source table for query
 WHERE category = 'Electronics' AND price > 500;
+-- => Applies filter to rows
 -- => Shows: Index Scan using idx_products_category_price
 -- => Much faster execution time
-
 -- Analyze aggregation query
 EXPLAIN ANALYZE
 SELECT category, COUNT(*), AVG(price)
+-- => Aggregate function computes summary value
 FROM products
+-- => Specifies source table for query
 GROUP BY category;
+-- => Aggregates rows by specified columns
 -- => Shows: HashAggregate or GroupAggregate
 -- => Seq Scan on products
-
 -- Analyze join query
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     product_id INTEGER,
     quantity INTEGER
 );
-
+-- => Statement execution completes
 INSERT INTO orders (product_id, quantity)
 SELECT
     (random() * 10000)::INTEGER + 1,
     (random() * 10)::INTEGER + 1
 FROM generate_series(1, 5000);
-
+-- => Specifies source table for query
 EXPLAIN ANALYZE
 SELECT p.name, SUM(o.quantity) AS total_sold
+-- => Creates alias for column/table
 FROM products p
+-- => Specifies source table for query
 INNER JOIN orders o ON p.id = o.product_id
 GROUP BY p.id, p.name;
+-- => Aggregates rows by specified columns
 -- => Shows: Hash Join or Nested Loop
 -- => Execution time for join strategy
-
 -- Check query planner statistics
 ANALYZE products;
+-- => Statement execution completes
 ANALYZE orders;
+-- => Statement execution completes
 -- => Updates table statistics for better query plans
-
 -- View BUFFERS to see cache usage
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM products WHERE price > 900;
--- => Shows shared hit (cache) vs read (disk) buffers
-```
+-- => Specifies source table for query
+-- => Shows shared hit (cache) vs read (disk) buffers```
 
 **Key Takeaway**: Use EXPLAIN to see execution plans, EXPLAIN ANALYZE to measure actual performance. Look for Seq Scan on large tables (add indexes), high cost estimates, and slow actual times. Run ANALYZE periodically to update statistics for optimal query planning.
 
@@ -1023,29 +1139,37 @@ PostgreSQL supports array columns - store multiple values in single column. Usef
 
 ```sql
 CREATE DATABASE example_41;
+-- => Creates database 'example_41'
 \c example_41;
-
+-- => Statement execution completes
+-- => Switches connection to example_41 database
 CREATE TABLE articles (
-    id SERIAL PRIMARY KEY,
     title VARCHAR(200),
     tags TEXT[],              -- => Array of text values
     ratings INTEGER[]         -- => Array of integers
 );
-
+-- => Statement execution completes
 -- Insert arrays
 INSERT INTO articles (title, tags, ratings)
+-- => INSERT into articles table begins
 VALUES
+-- => Row data values follow
     ('PostgreSQL Guide', ARRAY['database', 'sql', 'tutorial'], ARRAY[5, 4, 5, 4]),
+    -- => Row data inserted
     ('Docker Basics', ARRAY['docker', 'containers'], ARRAY[5, 5, 3]),
+    -- => Row data inserted
     ('Kubernetes', ARRAY['k8s', 'orchestration', 'docker'], ARRAY[4, 3, 4, 5, 5]);
-
+    -- => Statement execution completes
 -- Alternative array syntax
 INSERT INTO articles (title, tags, ratings)
+-- => INSERT into articles table begins
 VALUES
+-- => Row data values follow
     ('Advanced SQL', '{"sql", "advanced", "postgresql"}', '{5, 5, 4, 5}');
-
+    -- => Statement execution completes
 SELECT * FROM articles;
-
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- Access array elements (1-indexed!)
 SELECT
     title,
@@ -1053,48 +1177,56 @@ SELECT
     tags[2] AS second_tag,        -- => Second element
     array_length(tags, 1) AS num_tags  -- => Number of elements
 FROM articles;
-
+-- => Specifies source table for query
 -- Check if array contains value
 SELECT title
 FROM articles
+-- => Specifies source table for query
 WHERE 'docker' = ANY(tags);
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Returns articles with 'docker' in tags
 -- => Docker Basics, Kubernetes
-
 -- Array overlap operator
 SELECT title
 FROM articles
+-- => Specifies source table for query
 WHERE tags && ARRAY['sql', 'database'];  -- => Overlap: shares at least one element
 -- => PostgreSQL Guide, Advanced SQL
-
 -- Array containment
 SELECT title
 FROM articles
+-- => Specifies source table for query
 WHERE tags @> ARRAY['sql'];  -- => Contains all elements in array
 -- => PostgreSQL Guide, Advanced SQL
-
 -- Unnest array to rows
 SELECT
     title,
     unnest(tags) AS tag
+    -- => Creates alias for column/table
 FROM articles;
+-- => Specifies source table for query
 -- => Returns one row per tag (expands array to multiple rows)
-
 -- Aggregate into array
 SELECT
     ARRAY_AGG(title ORDER BY id) AS all_titles
+    -- => Sorts query results
 FROM articles;
+-- => Specifies source table for query
 -- => Collects all titles into single array
-
 -- Array functions
 SELECT
     title,
     array_length(ratings, 1) AS num_ratings,
+    -- => Creates alias for column/table
     ROUND(AVG(r), 2) AS avg_rating
+    -- => Creates alias for column/table
 FROM articles, unnest(ratings) AS r
+-- => Specifies source table for query
 GROUP BY id, title;
--- => Calculates average rating per article
-```
+-- => Aggregates rows by specified columns
+-- => Groups rows for aggregation
+-- => Calculates average rating per article```
 
 **Key Takeaway**: Arrays store multiple values in one column - use them for tags, categories, or small ordered lists. Access elements with `[index]` (1-indexed), check membership with `ANY()`, and unnest to rows with `unnest()`. Avoid arrays for frequently queried relationships (use junction tables instead).
 
@@ -1108,41 +1240,55 @@ JSON stores text-based JSON, JSONB stores binary JSON (faster, supports indexing
 
 ```sql
 CREATE DATABASE example_42;
+-- => Creates database 'example_42'
 \c example_42;
-
+-- => Statement execution completes
+-- => Switches connection to example_42 database
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     metadata JSON,          -- => Text-based JSON
     preferences JSONB       -- => Binary JSON (faster, indexable)
 );
-
+-- => Statement execution completes
 -- Insert JSON data
 INSERT INTO users (name, metadata, preferences)
+-- => INSERT into users table begins
 VALUES
+-- => Row data values follow
     ('Alice', '{"age": 30, "city": "New York"}', '{"theme": "dark", "notifications": true}'),
+    -- => Row data inserted
     ('Bob', '{"age": 25, "city": "Boston"}', '{"theme": "light", "notifications": false}'),
+    -- => Row data inserted
     ('Charlie', '{"age": 35, "city": "Chicago", "verified": true}', '{"theme": "dark", "notifications": true, "language": "en"}');
-
+    -- => Statement execution completes
 SELECT * FROM users;
-
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- JSON vs JSONB differences
 SELECT
     pg_column_size(metadata) AS json_size,
+    -- => Creates alias for column/table
     pg_column_size(preferences) AS jsonb_size
+    -- => Creates alias for column/table
 FROM users
+-- => Specifies source table for query
 WHERE name = 'Alice';
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => JSONB often larger in storage but faster to query
-
 -- JSON preserves formatting, JSONB normalizes
 INSERT INTO users (name, metadata, preferences)
+-- => INSERT into users table begins
 VALUES ('Diana', '{"age":  28,  "city":  "Denver"}', '{"theme":  "auto"}');
-
+-- => Statement execution completes
+-- => Row data values follow
 SELECT metadata, preferences
 FROM users
+-- => Specifies source table for query
 WHERE name = 'Diana';
--- => JSON keeps extra spaces, JSONB normalizes
-```
+-- => Applies filter to rows
+-- => Filter condition for query
+-- => JSON keeps extra spaces, JSONB normalizes```
 
 **Key Takeaway**: Use JSONB for production (faster queries, supports indexing), JSON only when you need exact formatting preservation. JSONB enables efficient queries, indexing, and updates of nested data without separate columns.
 
@@ -1156,27 +1302,32 @@ PostgreSQL provides operators to extract JSON values - `->` returns JSON, `->>` 
 
 ```sql
 CREATE DATABASE example_43;
+-- => Creates database 'example_43'
 \c example_43;
-
+-- => Statement execution completes
+-- => Switches connection to example_43 database
 CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(200),
     details JSONB
 );
-
+-- => Statement execution completes
 INSERT INTO products (name, details)
+-- => INSERT into products table begins
 VALUES
+-- => Row data values follow
     ('Laptop', '{"brand": "Dell", "specs": {"cpu": "i7", "ram": 16, "storage": 512}, "price": 999.99}'),
+    -- => Row data inserted
     ('Phone', '{"brand": "Apple", "specs": {"cpu": "A15", "ram": 6, "storage": 128}, "price": 899.99}'),
+    -- => Row data inserted
     ('Tablet', '{"brand": "Samsung", "specs": {"cpu": "Snapdragon", "ram": 8, "storage": 256}, "price": 599.99}');
-
+    -- => Statement execution completes
 -- Extract JSON field (returns JSON)
 SELECT
     name,
     details -> 'brand' AS brand_json,     -- => Returns JSON: "Dell"
     details ->> 'brand' AS brand_text     -- => Returns text: Dell
 FROM products;
-
+-- => Specifies source table for query
 -- Extract nested fields
 SELECT
     name,
@@ -1184,37 +1335,45 @@ SELECT
     details -> 'specs' ->> 'cpu' AS cpu_text,     -- => Returns text: i7
     (details -> 'specs' ->> 'ram')::INTEGER AS ram_gb  -- => Cast to integer
 FROM products;
-
+-- => Specifies source table for query
 -- Filter by JSON field
 SELECT name, details ->> 'brand' AS brand
+-- => Creates alias for column/table
 FROM products
+-- => Specifies source table for query
 WHERE details ->> 'brand' = 'Apple';
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Phone
-
 -- Filter by nested field
 SELECT name, details -> 'specs' ->> 'ram' AS ram
+-- => Creates alias for column/table
 FROM products
+-- => Specifies source table for query
 WHERE (details -> 'specs' ->> 'ram')::INTEGER >= 8;
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Laptop (16 GB), Tablet (8 GB)
-
 -- Extract numeric JSON field for calculation
 SELECT
     name,
     (details ->> 'price')::DECIMAL AS price,
+    -- => Creates alias for column/table
     (details ->> 'price')::DECIMAL * 0.9 AS discounted_price
+    -- => Creates alias for column/table
 FROM products;
-
+-- => Specifies source table for query
 -- Check JSON field existence
 SELECT name
 FROM products
+-- => Specifies source table for query
 WHERE details ? 'price';  -- => Has 'price' key
 -- => All products
-
 SELECT name
 FROM products
+-- => Specifies source table for query
 WHERE details -> 'specs' ? 'gpu';  -- => Has 'gpu' key in specs
--- => None (no products have GPU info)
-```
+-- => None (no products have GPU info)```
 
 **Key Takeaway**: Use `->` to extract JSON (for chaining), `->>` to extract text (for filtering, display). Chain operators for nested access: `column -> 'outer' ->> 'inner'`. Cast `->>` results to appropriate types for calculations and comparisons.
 
@@ -1246,99 +1405,107 @@ graph TD
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#DE8F05,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_44;
 \c example_44;
-
+-- => Statement execution completes
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     name VARCHAR(200),
     data JSONB
 );
-
+-- => Statement execution completes
 INSERT INTO events (name, data)
 VALUES
     ('Conference', '{"location": "NYC", "attendees": 500, "topics": ["AI", "Cloud"]}'),
     ('Webinar', '{"location": "Online", "attendees": 1000, "topics": ["DevOps", "Cloud"]}'),
     ('Workshop', '{"location": "Boston", "attendees": 50, "topics": ["SQL", "PostgreSQL"]}');
-
+    -- => Statement execution completes
 -- Containment operator @>
 SELECT name
 FROM events
+-- => Specifies source table for query
 WHERE data @> '{"location": "NYC"}';
+-- => Applies filter to rows
 -- => Conference (data contains {"location": "NYC"})
-
 -- Contained by operator <@
 SELECT name
 FROM events
+-- => Specifies source table for query
 WHERE '{"attendees": 500}' <@ data;
+-- => Applies filter to rows
 -- => Conference ({"attendees": 500} is contained in data)
-
 -- Key existence ?
 SELECT name
 FROM events
+-- => Specifies source table for query
 WHERE data ? 'location';
+-- => Applies filter to rows
 -- => All events (all have location key)
-
 -- Any key existence ?|
 SELECT name
 FROM events
+-- => Specifies source table for query
 WHERE data ?| ARRAY['speakers', 'sponsors'];
+-- => Applies filter to rows
 -- => None (no events have speakers OR sponsors)
-
 -- All keys existence ?&
 SELECT name
 FROM events
+-- => Specifies source table for query
 WHERE data ?& ARRAY['location', 'attendees'];
+-- => Applies filter to rows
 -- => All events (all have both keys)
-
 -- Array contains element @>
 SELECT name
 FROM events
+-- => Specifies source table for query
 WHERE data -> 'topics' @> '"Cloud"';
+-- => Applies filter to rows
 -- => Conference, Webinar (topics array contains "Cloud")
-
 -- Update JSONB field
 UPDATE events
 SET data = data || '{"capacity": 1000}'
 WHERE name = 'Conference';
+-- => Applies filter to rows
 -- => Merges new field into existing JSON
-
 SELECT data FROM events WHERE name = 'Conference';
+-- => Specifies source table for query
 -- => Now includes "capacity": 1000
-
 -- Replace JSONB field
 UPDATE events
 SET data = jsonb_set(data, '{attendees}', '750')
 WHERE name = 'Webinar';
+-- => Applies filter to rows
 -- => Sets attendees to 750
-
 SELECT data FROM events WHERE name = 'Webinar';
+-- => Specifies source table for query
 -- => attendees is now 750
-
 -- Remove JSONB key
 UPDATE events
 SET data = data - 'capacity'
 WHERE name = 'Conference';
+-- => Applies filter to rows
 -- => Removes capacity field
-
 -- JSONB functions
 SELECT
     name,
     jsonb_object_keys(data) AS keys
+    -- => Creates alias for column/table
 FROM events;
+-- => Specifies source table for query
 -- => Returns one row per key
-
 SELECT
     name,
     jsonb_pretty(data) AS formatted_json
+    -- => Creates alias for column/table
 FROM events;
--- => Pretty-prints JSON for readability
-```
+-- => Specifies source table for query
+-- => Pretty-prints JSON for readability```
 
 **Key Takeaway**: JSONB operators enable powerful queries - `@>` for containment, `?` for key existence, `||` for merging. Use `jsonb_set()` to update nested values, `-` to remove keys, and GIN indexes on JSONB columns for fast queries.
 
@@ -1353,27 +1520,27 @@ Range types store ranges of values (dates, numbers) with inclusive/exclusive bou
 ```sql
 CREATE DATABASE example_45;
 \c example_45;
-
+-- => Statement execution completes
 CREATE TABLE reservations (
     id SERIAL PRIMARY KEY,
     room VARCHAR(50),
     guest VARCHAR(100),
     stay DATERANGE           -- => Date range with start and end
 );
-
+-- => Statement execution completes
 CREATE TABLE price_tiers (
     id SERIAL PRIMARY KEY,
     tier_name VARCHAR(50),
     order_count INT4RANGE    -- => Integer range
 );
-
+-- => Statement execution completes
 -- Insert date ranges
 INSERT INTO reservations (room, guest, stay)
 VALUES
     ('101', 'Alice', '[2025-12-20, 2025-12-25)'),  -- => Inclusive start, exclusive end
     ('102', 'Bob', '[2025-12-22, 2025-12-27)'),
     ('101', 'Charlie', '[2025-12-26, 2025-12-30)');
-
+    -- => Statement execution completes
 -- Insert integer ranges
 INSERT INTO price_tiers (tier_name, order_count)
 VALUES
@@ -1381,27 +1548,31 @@ VALUES
     ('Silver', '[10, 50)'),     -- => 10 to 49
     ('Gold', '[50, 100)'),      -- => 50 to 99
     ('Platinum', '[100,)');     -- => 100 and above (unbounded)
-
 -- Check if range contains value
 SELECT room, guest
 FROM reservations
+-- => Specifies source table for query
 WHERE stay @> '2025-12-24'::DATE;
+-- => Applies filter to rows
 -- => Alice, Bob (ranges containing Dec 24)
-
 -- Check if ranges overlap
 SELECT r1.guest AS guest1, r2.guest AS guest2
+-- => Creates alias for column/table
 FROM reservations r1, reservations r2
+-- => Specifies source table for query
 WHERE r1.id < r2.id
+-- => Applies filter to rows
   AND r1.room = r2.room
   AND r1.stay && r2.stay;
+  -- => Statement execution completes
 -- => Alice and Bob (overlapping stays in room 101)
-
 -- Find tier for order count
 SELECT tier_name
 FROM price_tiers
+-- => Specifies source table for query
 WHERE order_count @> 25;
+-- => Applies filter to rows
 -- => Silver (25 is in range [10, 50))
-
 -- Range functions
 SELECT
     room,
@@ -1409,32 +1580,38 @@ SELECT
     lower(stay) AS check_in,     -- => Start date
     upper(stay) AS check_out,    -- => End date
     upper(stay) - lower(stay) AS nights
+    -- => Creates alias for column/table
 FROM reservations;
+-- => Specifies source table for query
 -- => Calculates number of nights
-
 -- Check range boundaries
 SELECT
     tier_name,
     lower_inc(order_count) AS inclusive_start,  -- => true/false
     upper_inc(order_count) AS inclusive_end     -- => true/false
 FROM price_tiers;
+-- => Specifies source table for query
 -- => Shows which boundaries are inclusive
-
 -- Merge overlapping ranges
 SELECT room, range_agg(stay) AS all_bookings
+-- => Creates alias for column/table
 FROM reservations
+-- => Specifies source table for query
 GROUP BY room;
+-- => Aggregates rows by specified columns
 -- => ERROR: range_agg doesn't exist (need extension or custom aggregate)
-
 -- Check for gaps in reservations
 SELECT
     room,
     lag(upper(stay)) OVER (PARTITION BY room ORDER BY lower(stay)) AS prev_checkout,
+    -- => Sorts query results
     lower(stay) AS current_checkin
+    -- => Creates alias for column/table
 FROM reservations
+-- => Specifies source table for query
 ORDER BY room, lower(stay);
--- => Shows gaps between reservations
-```
+-- => Sorts query results
+-- => Shows gaps between reservations```
 
 **Key Takeaway**: Range types store intervals with precise boundary semantics - use `@>` to check containment, `&&` for overlap detection. DATERANGE perfect for reservations and scheduling, INT4RANGE for tiered pricing and quotas. Boundaries can be inclusive `[` or exclusive `)`.
 
@@ -1468,79 +1645,80 @@ graph TD
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#CC78BC,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_46;
 \c example_46;
-
+-- => Statement execution completes
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     balance DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO accounts (name, balance)
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
-
+-- => Statement execution completes
 -- Successful transaction
 BEGIN;
-
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
+-- => Applies filter to rows
 -- => Alice: 900.00
-
 UPDATE accounts SET balance = balance + 100 WHERE name = 'Bob';
+-- => Applies filter to rows
 -- => Bob: 600.00
-
 COMMIT;
+-- => Statement execution completes
 -- => Changes saved permanently
-
 SELECT name, balance FROM accounts;
+-- => Specifies source table for query
 -- => Alice: 900.00, Bob: 600.00
-
 -- Failed transaction with ROLLBACK
 BEGIN;
-
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 200 WHERE name = 'Alice';
+-- => Applies filter to rows
 -- => Alice: 700.00 (in transaction)
-
 -- Simulate error condition
 UPDATE accounts SET balance = balance + 200 WHERE name = 'NonExistent';
+-- => Applies filter to rows
 -- => ERROR: 0 rows updated
-
 ROLLBACK;
+-- => Statement execution completes
 -- => Undoes ALL changes in transaction
-
 SELECT name, balance FROM accounts;
+-- => Specifies source table for query
 -- => Alice: 900.00, Bob: 600.00 (unchanged - transaction rolled back)
-
 -- Automatic rollback on error
 BEGIN;
-
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
-
+-- => Applies filter to rows
 -- This will cause error (negative balance)
 UPDATE accounts SET balance = -9999 WHERE name = 'Bob';
+-- => Applies filter to rows
 -- => Violates business logic (if CHECK constraint exists)
-
 -- If error occurs, ROLLBACK manually or connection closes
 ROLLBACK;
-
+-- => Statement execution completes
 -- Transaction with multiple operations
 BEGIN;
-
+-- => Statement execution completes
 INSERT INTO accounts (name, balance) VALUES ('Charlie', 300.00);
 UPDATE accounts SET balance = balance - 50 WHERE name = 'Alice';
+-- => Applies filter to rows
 UPDATE accounts SET balance = balance + 50 WHERE name = 'Charlie';
-
+-- => Applies filter to rows
 COMMIT;
+-- => Statement execution completes
 -- => All three operations saved atomically
-
 SELECT name, balance FROM accounts;
--- => Alice: 850.00, Bob: 600.00, Charlie: 350.00
-```
+-- => Specifies source table for query
+-- => Alice: 850.00, Bob: 600.00, Charlie: 350.00```
 
 **Key Takeaway**: Wrap related operations in BEGIN/COMMIT for atomicity - either all succeed or all fail. Use ROLLBACK to undo changes when errors occur. Transactions prevent partial updates that leave data inconsistent.
 
@@ -1575,86 +1753,97 @@ graph TD
     style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_47;
 \c example_47;
-
+-- => Statement execution completes
 CREATE TABLE inventory (
     id SERIAL PRIMARY KEY,
     product VARCHAR(100),
     quantity INTEGER
 );
-
+-- => Statement execution completes
 INSERT INTO inventory (product, quantity)
 VALUES ('Laptop', 10);
-
+-- => Statement execution completes
 -- Demonstration requires two concurrent sessions
 -- Session 1 and Session 2 shown sequentially
-
 -- READ COMMITTED (default isolation level)
 -- Session 1:
 BEGIN;
+-- => Statement execution completes
 SELECT quantity FROM inventory WHERE product = 'Laptop';
+-- => Specifies source table for query
 -- => 10
-
 -- Session 2 (concurrent):
 BEGIN;
+-- => Statement execution completes
 UPDATE inventory SET quantity = 8 WHERE product = 'Laptop';
+-- => Applies filter to rows
 COMMIT;
+-- => Statement execution completes
 -- => Changes committed
-
 -- Session 1 (continued):
 SELECT quantity FROM inventory WHERE product = 'Laptop';
+-- => Specifies source table for query
 -- => 8 (sees committed changes from Session 2)
 COMMIT;
-
+-- => Statement execution completes
 -- REPEATABLE READ (snapshot isolation)
 -- Session 1:
 BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+-- => Statement execution completes
 SELECT quantity FROM inventory WHERE product = 'Laptop';
+-- => Specifies source table for query
 -- => 8
-
 -- Session 2:
 BEGIN;
+-- => Statement execution completes
 UPDATE inventory SET quantity = 6 WHERE product = 'Laptop';
+-- => Applies filter to rows
 COMMIT;
-
+-- => Statement execution completes
 -- Session 1 (continued):
 SELECT quantity FROM inventory WHERE product = 'Laptop';
+-- => Specifies source table for query
 -- => 8 (still sees old value - snapshot at transaction start)
 COMMIT;
-
+-- => Statement execution completes
 -- Now see updated value
 SELECT quantity FROM inventory WHERE product = 'Laptop';
+-- => Specifies source table for query
 -- => 6
-
 -- SERIALIZABLE (strictest isolation)
 -- Session 1:
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- => Statement execution completes
 SELECT quantity FROM inventory WHERE product = 'Laptop';
+-- => Specifies source table for query
 -- => 6
-
 -- Session 2:
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- => Statement execution completes
 UPDATE inventory SET quantity = quantity - 2 WHERE product = 'Laptop';
+-- => Applies filter to rows
 COMMIT;
-
+-- => Statement execution completes
 -- Session 1 (continued):
 UPDATE inventory SET quantity = quantity - 1 WHERE product = 'Laptop';
+-- => Applies filter to rows
 -- => ERROR: could not serialize access (serialization failure)
 ROLLBACK;
-
+-- => Statement execution completes
 -- Default isolation level check
 SHOW default_transaction_isolation;
+-- => Statement execution completes
 -- => read committed
-
 -- Set session default
 SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-```
+-- => Creates alias for column/table```
 
 **Key Takeaway**: READ COMMITTED sees latest committed data (may change within transaction), REPEATABLE READ sees snapshot at transaction start (no phantom reads), SERIALIZABLE prevents all anomalies (may cause serialization errors). Choose based on consistency needs vs. concurrency requirements.
 
@@ -1668,60 +1857,70 @@ ACID ensures reliable transactions - Atomicity (all-or-nothing), Consistency (va
 
 ```sql
 CREATE DATABASE example_48;
+-- => Creates database 'example_48'
 \c example_48;
-
+-- => Statement execution completes
+-- => Switches connection to example_48 database
 CREATE TABLE accounts (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     balance DECIMAL(10, 2) CHECK (balance >= 0)  -- => Consistency: no negative balance
 );
-
+-- => Statement execution completes
 INSERT INTO accounts (name, balance)
+-- => INSERT into accounts table begins
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
-
+-- => Statement execution completes
+-- => Row data values follow
 -- Atomicity: all-or-nothing
 BEGIN;
-
+-- => Statement execution completes
 -- Transfer $200 from Alice to Bob
 UPDATE accounts SET balance = balance - 200 WHERE name = 'Alice';
+-- => Applies filter to rows
+-- => Updates rows matching condition
 UPDATE accounts SET balance = balance + 200 WHERE name = 'Bob';
-
+-- => Applies filter to rows
+-- => Updates rows matching condition
 -- If either fails, both rollback (atomicity)
 COMMIT;
+-- => Statement execution completes
 -- => Both updates succeed or both fail
-
 SELECT SUM(balance) FROM accounts;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => 1500.00 (total unchanged - money not created or lost)
-
 -- Consistency: constraints enforced
 BEGIN;
-
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 1500 WHERE name = 'Alice';
+-- => Applies filter to rows
+-- => Updates rows matching condition
 -- => Would violate CHECK (balance >= 0)
-
 COMMIT;
+-- => Statement execution completes
 -- => ERROR: new row violates check constraint
 -- => Transaction rolled back, balance unchanged
-
 SELECT balance FROM accounts WHERE name = 'Alice';
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => 800.00 (unchanged due to constraint violation)
-
 -- Isolation: concurrent transactions don't interfere
 -- PostgreSQL supports READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE isolation levels
-
 -- Durability: committed data survives crashes
 BEGIN;
-
+-- => Statement execution completes
 UPDATE accounts SET balance = balance + 100 WHERE name = 'Bob';
-
+-- => Applies filter to rows
+-- => Updates rows matching condition
 COMMIT;
+-- => Statement execution completes
 -- => Changes written to disk (write-ahead log)
 -- => Survives database restart
-
 -- Verify durability (simulate restart by reconnecting)
 SELECT name, balance FROM accounts;
--- => Bob: 800.00 (changes persisted)
-```
+-- => Specifies source table for query
+-- => Query executes and returns result set
+-- => Bob: 800.00 (changes persisted)```
 
 **Key Takeaway**: ACID properties ensure reliable data - Atomicity prevents partial updates, Consistency enforces constraints, Isolation protects concurrent transactions, Durability guarantees persistence. PostgreSQL's transaction system implements all four automatically.
 
@@ -1735,83 +1934,87 @@ Savepoints create checkpoints within transactions - you can rollback to specific
 
 ```sql
 CREATE DATABASE example_49;
+-- => Creates database 'example_49'
 \c example_49;
-
+-- => Statement execution completes
+-- => Switches connection to example_49 database
 CREATE TABLE logs (
-    id SERIAL PRIMARY KEY,
     message TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
-
+-- => Statement execution completes
 BEGIN;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Transaction started');
-
+-- => INSERT into logs table begins
 -- Create savepoint after first insert
 SAVEPOINT after_first_insert;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Second operation');
+-- => INSERT into logs table begins
 INSERT INTO logs (message) VALUES ('Third operation');
-
+-- => INSERT into logs table begins
 -- Create another savepoint
 SAVEPOINT after_third_insert;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Fourth operation');
-
+-- => INSERT into logs table begins
 -- Rollback to second savepoint (undo fourth insert)
 ROLLBACK TO SAVEPOINT after_third_insert;
-
+-- => Statement execution completes
 SELECT COUNT(*) FROM logs;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => 3 (fourth insert rolled back)
-
 INSERT INTO logs (message) VALUES ('Alternative fourth operation');
-
+-- => INSERT into logs table begins
 COMMIT;
+-- => Statement execution completes
 -- => Saves first, second, third, and alternative fourth
-
 SELECT message FROM logs ORDER BY id;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Shows 4 messages (fourth is alternative version)
-
 -- Savepoint with error recovery
 TRUNCATE logs;
-
+-- => Statement execution completes
 BEGIN;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Operation 1');
-
+-- => INSERT into logs table begins
 SAVEPOINT after_op1;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Operation 2');
-
+-- => INSERT into logs table begins
 SAVEPOINT after_op2;
-
+-- => Statement execution completes
 -- Simulate error
 INSERT INTO logs (id, message) VALUES (1, 'Duplicate ID');
+-- => INSERT into logs table begins
 -- => ERROR: duplicate key (if id=1 already exists)
-
 -- Rollback just the failed operation
 ROLLBACK TO SAVEPOINT after_op2;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Operation 3 (recovery)');
-
+-- => INSERT into logs table begins
 COMMIT;
-
+-- => Statement execution completes
 SELECT message FROM logs ORDER BY id;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Operation 1, Operation 2, Operation 3 (error recovered)
-
 -- Release savepoint (no longer needed)
 BEGIN;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Step 1');
-
+-- => INSERT into logs table begins
 SAVEPOINT step1;
-
+-- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Step 2');
-
+-- => INSERT into logs table begins
 RELEASE SAVEPOINT step1;  -- => Cannot rollback to step1 anymore
-
 COMMIT;
-```
+-- => Statement execution completes```
 
 **Key Takeaway**: Savepoints enable partial rollback within transactions - create checkpoints with SAVEPOINT, rollback to them with ROLLBACK TO SAVEPOINT. Useful for error recovery without aborting entire transaction.
 
@@ -1826,76 +2029,80 @@ Deadlocks occur when transactions wait for each other's locks. PostgreSQL detect
 ```sql
 CREATE DATABASE example_50;
 \c example_50;
-
+-- => Statement execution completes
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     balance DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO accounts (name, balance)
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
-
+-- => Statement execution completes
 -- Deadlock scenario requires two concurrent sessions
 -- Session 1 and Session 2 shown sequentially
-
 -- Session 1:
 BEGIN;
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
+-- => Applies filter to rows
 -- => Acquires lock on Alice's row
-
 -- Session 2 (concurrent):
 BEGIN;
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 50 WHERE name = 'Bob';
+-- => Applies filter to rows
 -- => Acquires lock on Bob's row
-
 -- Session 1 (continued):
 UPDATE accounts SET balance = balance + 100 WHERE name = 'Bob';
+-- => Applies filter to rows
 -- => Waits for Bob's lock (held by Session 2)
-
 -- Session 2 (continued):
 UPDATE accounts SET balance = balance + 50 WHERE name = 'Alice';
+-- => Applies filter to rows
 -- => ERROR: deadlock detected
 -- => One transaction aborted (deadlock victim)
-
 -- Session 2 must ROLLBACK
 ROLLBACK;
-
+-- => Statement execution completes
 -- Session 1 can now proceed
 COMMIT;
-
+-- => Statement execution completes
 -- Avoiding deadlocks: consistent lock order
 -- Always update accounts in ID order
-
 -- Session 1:
 BEGIN;
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 100 WHERE id = 1;  -- => Alice
 UPDATE accounts SET balance = balance + 100 WHERE id = 2;  -- => Bob
 COMMIT;
-
+-- => Statement execution completes
 -- Session 2:
 BEGIN;
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 50 WHERE id = 1;  -- => Alice (waits)
 -- => No deadlock: both sessions acquire locks in same order
-
 -- View locks
 SELECT
     pid,
     relation::regclass AS table_name,
+    -- => Creates alias for column/table
     mode,
     granted
 FROM pg_locks
+-- => Specifies source table for query
 WHERE relation = 'accounts'::regclass;
+-- => Applies filter to rows
 -- => Shows active locks on accounts table
-
 -- Timeout to prevent long waits
 SET lock_timeout = '5s';  -- => Abort if lock not acquired in 5 seconds
-
 BEGIN;
+-- => Statement execution completes
 UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
+-- => Applies filter to rows
 -- => If lock held by another session for >5s, ERROR: lock timeout
 ROLLBACK;
-```
+-- => Statement execution completes```
 
 **Key Takeaway**: PostgreSQL detects deadlocks and aborts one transaction (victim). Prevent deadlocks by acquiring locks in consistent order (e.g., by ID). Use lock_timeout to prevent indefinite waiting. Retry aborted transactions in application code.
 
@@ -1911,86 +2118,113 @@ Views are saved queries that act like tables - use them to simplify complex quer
 
 ```sql
 CREATE DATABASE example_51;
+-- => Creates database 'example_51'
 \c example_51;
-
+-- => Statement execution completes
+-- => Switches connection to example_51 database
 CREATE TABLE employees (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     department VARCHAR(50),
     salary DECIMAL(10, 2),
     hire_date DATE
 );
-
+-- => Statement execution completes
 INSERT INTO employees (name, department, salary, hire_date)
+-- => INSERT into employees table begins
 VALUES
+-- => Row data values follow
     ('Alice', 'Engineering', 95000, '2020-03-15'),
+    -- => Row data inserted
     ('Bob', 'Sales', 75000, '2019-06-01'),
+    -- => Row data inserted
     ('Charlie', 'Engineering', 105000, '2021-01-10'),
+    -- => Row data inserted
     ('Diana', 'Sales', 80000, '2018-11-20');
-
+    -- => Statement execution completes
 -- Create simple view
 CREATE VIEW engineering_employees AS
 SELECT id, name, salary, hire_date
 FROM employees
+-- => Specifies source table for query
 WHERE department = 'Engineering';
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => View shows only engineering employees
-
 -- Query view like a table
 SELECT * FROM engineering_employees;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Alice, Charlie
-
 -- Create view with calculations
 CREATE VIEW employee_stats AS
 SELECT
     department,
     COUNT(*) AS num_employees,
+    -- => Creates alias for column/table
     AVG(salary) AS avg_salary,
+    -- => Creates alias for column/table
     MIN(hire_date) AS first_hire,
+    -- => Creates alias for column/table
     MAX(hire_date) AS last_hire
+    -- => Creates alias for column/table
 FROM employees
+-- => Specifies source table for query
 GROUP BY department;
-
+-- => Aggregates rows by specified columns
+-- => Groups rows for aggregation
 SELECT * FROM employee_stats;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Engineering: 2 employees, 100000 avg
 -- => Sales: 2 employees, 77500 avg
-
 -- Create view with joins
 CREATE TABLE projects (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     employee_id INTEGER
 );
-
+-- => Statement execution completes
 INSERT INTO projects (name, employee_id)
+-- => INSERT into projects table begins
 VALUES
+-- => Row data values follow
     ('Project A', 1),
+    -- => Row data inserted
     ('Project B', 1),
+    -- => Row data inserted
     ('Project C', 3);
-
+    -- => Statement execution completes
 CREATE VIEW employee_projects AS
 SELECT
     e.name AS employee_name,
+    -- => Creates alias for column/table
     e.department,
     p.name AS project_name
+    -- => Creates alias for column/table
 FROM employees e
+-- => Specifies source table for query
 INNER JOIN projects p ON e.id = p.employee_id;
-
+-- => Combines rows from multiple tables
 SELECT * FROM employee_projects;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Alice (Engineering, Project A), Alice (Engineering, Project B), Charlie (Engineering, Project C)
-
 -- Modify view (CREATE OR REPLACE)
 CREATE OR REPLACE VIEW engineering_employees AS
 SELECT id, name, salary, hire_date, EXTRACT(YEAR FROM AGE(hire_date)) AS years_employed
+-- => Specifies source table for query
+-- => Query executes and returns result set
 FROM employees
+-- => Specifies source table for query
 WHERE department = 'Engineering';
-
+-- => Applies filter to rows
+-- => Filter condition for query
 SELECT * FROM engineering_employees;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Now includes years_employed column
-
 -- Drop view
 DROP VIEW employee_projects;
--- => Removes view definition
-```
+-- => Removes view definition```
 
 **Key Takeaway**: Views are saved queries that act like tables - use them to simplify complex queries, hide columns for security, or provide stable interfaces. CREATE OR REPLACE updates views without dropping. Views don't store data (computed on each query).
 
@@ -2023,21 +2257,21 @@ graph TD
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_52;
 \c example_52;
-
+-- => Statement execution completes
 CREATE TABLE sales (
     id SERIAL PRIMARY KEY,
     product VARCHAR(100),
     amount DECIMAL(10, 2),
     sale_date DATE
 );
-
+-- => Statement execution completes
 -- Insert test data
 INSERT INTO sales (product, amount, sale_date)
 SELECT
@@ -2049,51 +2283,55 @@ SELECT
     (random() * 1000)::DECIMAL(10, 2),
     NOW() - (random() * 365 || ' days')::INTERVAL
 FROM generate_series(1, 10000);
-
+-- => Specifies source table for query
 -- Create materialized view
 CREATE MATERIALIZED VIEW monthly_sales AS
 SELECT
     DATE_TRUNC('month', sale_date) AS month,
+    -- => Creates alias for column/table
     product,
     COUNT(*) AS num_sales,
+    -- => Creates alias for column/table
     SUM(amount) AS total_revenue
+    -- => Creates alias for column/table
 FROM sales
+-- => Specifies source table for query
 GROUP BY DATE_TRUNC('month', sale_date), product
+-- => Aggregates rows by specified columns
 ORDER BY month DESC, product;
+-- => Sorts query results
 -- => Computes and stores results
-
 -- Query materialized view (fast - reads stored data)
 SELECT * FROM monthly_sales LIMIT 10;
-
+-- => Specifies source table for query
 -- Insert more sales
 INSERT INTO sales (product, amount, sale_date)
 VALUES ('Laptop', 1200.00, CURRENT_DATE);
-
+-- => Statement execution completes
 -- Materialized view still shows old data
 SELECT * FROM monthly_sales WHERE month = DATE_TRUNC('month', CURRENT_DATE);
+-- => Specifies source table for query
 -- => Doesn't include new sale yet
-
 -- Refresh materialized view
 REFRESH MATERIALIZED VIEW monthly_sales;
+-- => Statement execution completes
 -- => Recomputes and updates stored results
-
 SELECT * FROM monthly_sales WHERE month = DATE_TRUNC('month', CURRENT_DATE);
+-- => Specifies source table for query
 -- => Now includes new sale
-
 -- Concurrent refresh (doesn't block reads)
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_sales;
+-- => Statement execution completes
 -- => Requires unique index on materialized view
-
 -- Create index on materialized view
 CREATE UNIQUE INDEX idx_monthly_sales_month_product
 ON monthly_sales(month, product);
-
+-- => Statement execution completes
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_sales;
+-- => Statement execution completes
 -- => Readers can query while refreshing
-
 -- Drop materialized view
-DROP MATERIALIZED VIEW monthly_sales;
-```
+DROP MATERIALIZED VIEW monthly_sales;```
 
 **Key Takeaway**: Materialized views store query results physically - much faster than regular views for expensive queries, but require REFRESH to update. Use for aggregations, reports, or dashboards on slowly-changing data. CONCURRENTLY allows reads during refresh.
 
@@ -2107,89 +2345,111 @@ Functions encapsulate reusable logic - use PL/pgSQL (PostgreSQL's procedural lan
 
 ```sql
 CREATE DATABASE example_53;
+-- => Creates database 'example_53'
 \c example_53;
-
+-- => Statement execution completes
+-- => Switches connection to example_53 database
 -- Simple function with no parameters
 CREATE FUNCTION get_current_time()
 RETURNS TEXT AS $$
 BEGIN
     RETURN 'Current time: ' || NOW()::TEXT;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT get_current_time();
 -- => 'Current time: 2025-12-29 ...'
-
 -- Function with parameters
 CREATE FUNCTION calculate_tax(amount DECIMAL, tax_rate DECIMAL)
 RETURNS DECIMAL AS $$
 BEGIN
     RETURN amount * tax_rate;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT calculate_tax(100.00, 0.08);
 -- => 8.00
-
 -- Function with conditional logic
 CREATE FUNCTION categorize_price(price DECIMAL)
 RETURNS TEXT AS $$
 BEGIN
     IF price < 100 THEN
         RETURN 'Budget';
+        -- => Statement execution completes
     ELSIF price < 500 THEN
         RETURN 'Mid-Range';
+        -- => Statement execution completes
     ELSE
         RETURN 'Premium';
+        -- => Statement execution completes
     END IF;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT categorize_price(50.00);   -- => 'Budget'
 SELECT categorize_price(250.00);  -- => 'Mid-Range'
 SELECT categorize_price(1000.00); -- => 'Premium'
-
 -- Function with table queries
 CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     price DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO products (name, price)
+-- => INSERT into products table begins
 VALUES ('Laptop', 999.99), ('Mouse', 29.99), ('Keyboard', 79.99);
-
+-- => Statement execution completes
+-- => Row data values follow
 CREATE FUNCTION get_expensive_products(min_price DECIMAL)
 RETURNS TABLE(product_name TEXT, product_price DECIMAL) AS $$
 BEGIN
     RETURN QUERY
     SELECT name::TEXT, price
     FROM products
+    -- => Specifies source table for query
     WHERE price >= min_price
+    -- => Applies filter to rows
+    -- => Filter condition for query
     ORDER BY price DESC;
+    -- => Sorts query results
+    -- => Sorts result set
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT * FROM get_expensive_products(50.00);
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Laptop (999.99), Keyboard (79.99)
-
 -- Function with variables
 CREATE FUNCTION calculate_discount(original_price DECIMAL, discount_percent INTEGER)
+-- => Aggregate function computes summary value
 RETURNS TABLE(original DECIMAL, discount DECIMAL, final DECIMAL) AS $$
 DECLARE
     discount_amount DECIMAL;
+    -- => Statement execution completes
     final_price DECIMAL;
+    -- => Statement execution completes
 BEGIN
     discount_amount := original_price * (discount_percent / 100.0);
+    -- => Statement execution completes
     final_price := original_price - discount_amount;
-
+    -- => Statement execution completes
     RETURN QUERY SELECT original_price, discount_amount, final_price;
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT * FROM calculate_discount(100.00, 20);
--- => original: 100.00, discount: 20.00, final: 80.00
-```
+-- => Specifies source table for query
+-- => Query executes and returns result set
+-- => original: 100.00, discount: 20.00, final: 80.00```
 
 **Key Takeaway**: Functions encapsulate logic for reuse - use RETURNS for return type, `$$` for function body delimiter. PL/pgSQL supports variables, conditionals, loops, and queries. RETURNS TABLE for returning multiple rows.
 
@@ -2203,19 +2463,22 @@ Functions support multiple parameter modes (IN, OUT, INOUT) and various return t
 
 ```sql
 CREATE DATABASE example_54;
+-- => Creates database 'example_54'
 \c example_54;
-
+-- => Statement execution completes
+-- => Switches connection to example_54 database
 -- Function returning single value (scalar)
 CREATE FUNCTION add_numbers(a INTEGER, b INTEGER)
 RETURNS INTEGER AS $$
 BEGIN
     RETURN a + b;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT add_numbers(10, 20);
 -- => 30
-
 -- Function with OUT parameters
 CREATE FUNCTION divide_with_remainder(
     dividend INTEGER,
@@ -2225,75 +2488,90 @@ CREATE FUNCTION divide_with_remainder(
 ) AS $$
 BEGIN
     quotient := dividend / divisor;
+    -- => Statement execution completes
     remainder := dividend % divisor;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT * FROM divide_with_remainder(17, 5);
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => quotient: 3, remainder: 2
-
 -- Function returning composite type
 CREATE TYPE employee_summary AS (
     total_employees INTEGER,
     avg_salary DECIMAL
 );
-
+-- => Statement execution completes
 CREATE TABLE employees (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     salary DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO employees (name, salary)
+-- => INSERT into employees table begins
 VALUES ('Alice', 95000), ('Bob', 75000), ('Charlie', 105000);
-
+-- => Statement execution completes
+-- => Row data values follow
 CREATE FUNCTION get_employee_summary()
 RETURNS employee_summary AS $$
 DECLARE
     result employee_summary;
+    -- => Statement execution completes
 BEGIN
     SELECT COUNT(*), AVG(salary)
+    -- => Aggregate function computes summary value
     INTO result.total_employees, result.avg_salary
     FROM employees;
-
+    -- => Specifies source table for query
     RETURN result;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT * FROM get_employee_summary();
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => total_employees: 3, avg_salary: 91666.67
-
 -- Function with default parameters
 CREATE FUNCTION greet(name TEXT, greeting TEXT DEFAULT 'Hello')
 RETURNS TEXT AS $$
 BEGIN
     RETURN greeting || ', ' || name || '!';
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT greet('Alice');              -- => 'Hello, Alice!'
 SELECT greet('Bob', 'Hi');          -- => 'Hi, Bob!'
-
 -- Function with variadic parameters (variable arguments)
 CREATE FUNCTION sum_all(VARIADIC numbers INTEGER[])
 RETURNS INTEGER AS $$
 DECLARE
     total INTEGER := 0;
+    -- => Statement execution completes
     num INTEGER;
+    -- => Statement execution completes
 BEGIN
     FOREACH num IN ARRAY numbers LOOP
         total := total + num;
+        -- => Statement execution completes
     END LOOP;
+    -- => Statement execution completes
     RETURN total;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT sum_all(1, 2, 3, 4, 5);
 -- => 15
-
 SELECT sum_all(10, 20);
--- => 30
-```
+-- => 30```
 
 **Key Takeaway**: Functions support flexible parameters - OUT for returning multiple values, DEFAULT for optional parameters, VARIADIC for variable arguments. Return types include scalars, composite types, or TABLE for multiple rows.
 
@@ -2322,21 +2600,21 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#CA9161,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_55;
 \c example_55;
-
+-- => Statement execution completes
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     price DECIMAL(10, 2),
     updated_at TIMESTAMP
 );
-
+-- => Statement execution completes
 CREATE TABLE audit_log (
     id SERIAL PRIMARY KEY,
     table_name TEXT,
@@ -2345,30 +2623,33 @@ CREATE TABLE audit_log (
     old_data JSONB,
     new_data JSONB
 );
-
+-- => Statement execution completes
 -- Trigger function to update updated_at
 CREATE FUNCTION update_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
+    -- => Statement execution completes
     RETURN NEW;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 -- Create BEFORE UPDATE trigger
 CREATE TRIGGER set_updated_at
 BEFORE UPDATE ON products
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
-
+-- => Statement execution completes
 INSERT INTO products (name, price, updated_at)
 VALUES ('Laptop', 999.99, NOW());
-
+-- => Statement execution completes
 UPDATE products SET price = 899.99 WHERE name = 'Laptop';
+-- => Applies filter to rows
 -- => updated_at automatically set to current time
-
 SELECT name, price, updated_at FROM products;
-
+-- => Specifies source table for query
 -- Audit trail trigger
 CREATE FUNCTION audit_changes()
 RETURNS TRIGGER AS $$
@@ -2376,49 +2657,56 @@ BEGIN
     IF TG_OP = 'INSERT' THEN
         INSERT INTO audit_log (table_name, operation, new_data)
         VALUES (TG_TABLE_NAME, TG_OP, row_to_json(NEW));
+        -- => Statement execution completes
         RETURN NEW;
+        -- => Statement execution completes
     ELSIF TG_OP = 'UPDATE' THEN
         INSERT INTO audit_log (table_name, operation, old_data, new_data)
         VALUES (TG_TABLE_NAME, TG_OP, row_to_json(OLD), row_to_json(NEW));
+        -- => Statement execution completes
         RETURN NEW;
+        -- => Statement execution completes
     ELSIF TG_OP = 'DELETE' THEN
         INSERT INTO audit_log (table_name, operation, old_data)
         VALUES (TG_TABLE_NAME, TG_OP, row_to_json(OLD));
+        -- => Statement execution completes
         RETURN OLD;
+        -- => Statement execution completes
     END IF;
+    -- => Statement execution completes
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 -- Create AFTER triggers for INSERT, UPDATE, DELETE
 CREATE TRIGGER audit_products_insert
 AFTER INSERT ON products
 FOR EACH ROW
 EXECUTE FUNCTION audit_changes();
-
+-- => Statement execution completes
 CREATE TRIGGER audit_products_update
 AFTER UPDATE ON products
 FOR EACH ROW
 EXECUTE FUNCTION audit_changes();
-
+-- => Statement execution completes
 CREATE TRIGGER audit_products_delete
 AFTER DELETE ON products
 FOR EACH ROW
 EXECUTE FUNCTION audit_changes();
-
+-- => Statement execution completes
 -- Test audit trail
 INSERT INTO products (name, price, updated_at)
 VALUES ('Mouse', 29.99, NOW());
-
+-- => Statement execution completes
 UPDATE products SET price = 24.99 WHERE name = 'Mouse';
-
+-- => Applies filter to rows
 DELETE FROM products WHERE name = 'Mouse';
-
+-- => Specifies source table for query
 SELECT * FROM audit_log ORDER BY changed_at;
+-- => Specifies source table for query
 -- => Shows INSERT, UPDATE, DELETE operations with old/new data
-
 -- Drop trigger
-DROP TRIGGER audit_products_insert ON products;
-```
+DROP TRIGGER audit_products_insert ON products;```
 
 **Key Takeaway**: Triggers execute functions automatically on data changes - use BEFORE for validation/modification, AFTER for auditing/notifications. Access OLD (previous row) and NEW (updated row) in trigger functions. TG_OP shows operation type (INSERT/UPDATE/DELETE).
 
@@ -2434,66 +2722,84 @@ ON CONFLICT handles insert conflicts by updating existing rows or ignoring dupli
 
 ```sql
 CREATE DATABASE example_56;
+-- => Creates database 'example_56'
 \c example_56;
-
+-- => Statement execution completes
+-- => Switches connection to example_56 database
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
     email VARCHAR(100) UNIQUE,
     name VARCHAR(100),
     login_count INTEGER DEFAULT 0,
     last_login TIMESTAMP
 );
-
+-- => Statement execution completes
 -- Insert initial user
 INSERT INTO users (email, name, login_count, last_login)
+-- => INSERT into users table begins
 VALUES ('alice@example.com', 'Alice', 1, NOW());
-
+-- => Statement execution completes
+-- => Row data values follow
 -- Upsert: update if exists, insert if doesn't
 INSERT INTO users (email, name, login_count, last_login)
+-- => INSERT into users table begins
 VALUES ('alice@example.com', 'Alice Updated', 2, NOW())
+-- => Row data values follow
 ON CONFLICT (email)
 DO UPDATE SET
     login_count = users.login_count + 1,  -- => Increment existing count
     last_login = EXCLUDED.last_login;     -- => EXCLUDED refers to proposed insert values
-
 SELECT * FROM users WHERE email = 'alice@example.com';
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => login_count: 2 (incremented), last_login updated
-
 -- Upsert with nothing (ignore conflicts)
 INSERT INTO users (email, name)
+-- => INSERT into users table begins
 VALUES ('alice@example.com', 'Should be ignored')
+-- => Row data values follow
 ON CONFLICT (email) DO NOTHING;
-
+-- => Statement execution completes
 SELECT * FROM users WHERE email = 'alice@example.com';
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => No changes (conflict ignored)
-
 -- Bulk upsert
 INSERT INTO users (email, name, login_count, last_login)
+-- => INSERT into users table begins
 VALUES
+-- => Row data values follow
     ('bob@example.com', 'Bob', 1, NOW()),
+    -- => Row data inserted
     ('charlie@example.com', 'Charlie', 1, NOW()),
+    -- => Row data inserted
     ('alice@example.com', 'Alice', 1, NOW())
+    -- => Row data inserted
 ON CONFLICT (email)
 DO UPDATE SET
     login_count = users.login_count + 1,
     last_login = EXCLUDED.last_login;
-
+    -- => Statement execution completes
 SELECT email, login_count FROM users ORDER BY email;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Alice: 3 (updated), Bob: 1 (inserted), Charlie: 1 (inserted)
-
 -- Upsert with WHERE clause
 INSERT INTO users (email, name, login_count, last_login)
+-- => INSERT into users table begins
 VALUES ('alice@example.com', 'Alice', 10, NOW())
+-- => Row data values follow
 ON CONFLICT (email)
 DO UPDATE SET
     login_count = EXCLUDED.login_count,
     last_login = EXCLUDED.last_login
 WHERE users.login_count < EXCLUDED.login_count;
+-- => Applies filter to rows
+-- => Filter condition for query
 -- => Only updates if new login_count is higher
-
 SELECT login_count FROM users WHERE email = 'alice@example.com';
--- => 10 (updated because 10 > 3)
-```
+-- => Specifies source table for query
+-- => Query executes and returns result set
+-- => 10 (updated because 10 > 3)```
 
 **Key Takeaway**: ON CONFLICT enables upserts (insert or update) - specify conflict target (email), then DO UPDATE or DO NOTHING. EXCLUDED refers to values from failed insert. Use WHERE to conditionally update.
 
@@ -2541,73 +2847,73 @@ graph TD
     style H fill:#DE8F05,stroke:#000,color:#fff
     style I fill:#CA9161,stroke:#000,color:#fff
     style J fill:#029E73,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
-```sql
+````sql
 CREATE DATABASE example_57;
 \c example_57;
-
+-- => Statement execution completes
 CREATE TABLE products (
     id INTEGER,
     name VARCHAR(100),
     category VARCHAR(50),
     price DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 -- COPY from stdin (manual data entry)
 COPY products (id, name, category, price) FROM stdin WITH (FORMAT csv);
+-- => Specifies source table for query
 1,Laptop,Electronics,999.99
 2,Mouse,Electronics,29.99
 3,Desk,Furniture,299.99
 \.
 -- => \. terminates input
-
 SELECT * FROM products;
+-- => Specifies source table for query
 -- => 3 rows inserted
-
 -- COPY from file (requires server filesystem access)
 -- Note: This requires a CSV file on the PostgreSQL server filesystem
 -- Example CSV content (products.csv):
 -- 4,Keyboard,Electronics,79.99
 -- 5,Chair,Furniture,199.99
-
 -- COPY products FROM '/path/to/products.csv' WITH (FORMAT csv);
 -- => Loads from file
-
 -- COPY with header row
 -- COPY products FROM '/path/to/products_with_header.csv' WITH (FORMAT csv, HEADER true);
 -- => Skips first row
-
 -- COPY to file (export)
 COPY products TO stdout WITH (FORMAT csv, HEADER true);
+-- => Statement execution completes
 -- => Outputs CSV to stdout with headers
-
 -- COPY with specific delimiter
 COPY products TO stdout WITH (FORMAT text, DELIMITER '|');
+-- => Restricts number of rows returned
 -- => Pipe-delimited output
-
 -- Generate test data with COPY
 TRUNCATE products;
-
+-- => Statement execution completes
 INSERT INTO products (id, name, category, price)
 SELECT
     generate_series AS id,
+    -- => Creates alias for column/table
     'Product ' || generate_series AS name,
+    -- => Creates alias for column/table
     CASE (generate_series % 3)
         WHEN 0 THEN 'Electronics'
         WHEN 1 THEN 'Furniture'
         ELSE 'Kitchen'
     END AS category,
+    -- => Creates alias for column/table
     (random() * 1000)::DECIMAL(10, 2) AS price
+    -- => Creates alias for column/table
 FROM generate_series(1, 10000);
+-- => Specifies source table for query
 -- => 10000 rows inserted quickly
-
 -- Alternative: COPY for PostgreSQL client tools
 -- \copy products FROM 'products.csv' WITH (FORMAT csv);
--- => \copy works in psql, reads from client filesystem
-```
+-- => \copy works in psql, reads from client filesystem```
 
 **Key Takeaway**: COPY is fastest for bulk imports - much faster than individual INSERTs. Use WITH (FORMAT csv, HEADER true) for CSV files with headers. COPY FROM loads data, COPY TO exports. `\copy` in psql reads from client filesystem.
 
@@ -2621,87 +2927,105 @@ GENERATE_SERIES creates sequences of values - combine with random functions to g
 
 ```sql
 CREATE DATABASE example_58;
+-- => Creates database 'example_58'
 \c example_58;
-
+-- => Statement execution completes
+-- => Switches connection to example_58 database
 -- Generate integer series
 SELECT * FROM generate_series(1, 10);
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Returns 1, 2, 3, ..., 10
-
 -- Generate series with step
 SELECT * FROM generate_series(0, 100, 10);
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => Returns 0, 10, 20, ..., 100
-
 -- Generate date series
 SELECT * FROM generate_series(
+-- => Specifies source table for query
+-- => Query executes and returns result set
     '2025-12-01'::DATE,
     '2025-12-31'::DATE,
     '1 day'::INTERVAL
 );
+-- => Statement execution completes
 -- => Returns all dates in December 2025
-
 -- Create test table
 CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,
     customer_id INTEGER,
     amount DECIMAL(10, 2),
     order_date DATE
 );
-
+-- => Statement execution completes
 -- Generate 10,000 test orders
 INSERT INTO orders (id, customer_id, amount, order_date)
+-- => INSERT into orders table begins
 SELECT
     generate_series AS id,
+    -- => Creates alias for column/table
     (random() * 100)::INTEGER + 1 AS customer_id,
+    -- => Creates alias for column/table
     (random() * 1000)::DECIMAL(10, 2) AS amount,
+    -- => Creates alias for column/table
     '2025-01-01'::DATE + (random() * 365)::INTEGER AS order_date
+    -- => Creates alias for column/table
 FROM generate_series(1, 10000);
-
+-- => Specifies source table for query
 SELECT COUNT(*) FROM orders;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => 10,000 rows
-
 -- Generate realistic email addresses
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
     email VARCHAR(100),
     created_at TIMESTAMP
 );
-
+-- => Statement execution completes
 INSERT INTO users (id, email, created_at)
+-- => INSERT into users table begins
 SELECT
     generate_series AS id,
+    -- => Creates alias for column/table
     'user' || generate_series || '@example.com' AS email,
+    -- => Creates alias for column/table
     NOW() - (random() * 365 || ' days')::INTERVAL AS created_at
+    -- => Creates alias for column/table
 FROM generate_series(1, 1000);
-
+-- => Specifies source table for query
 SELECT * FROM users LIMIT 5;
-
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- Generate time series data
 CREATE TABLE metrics (
-    timestamp TIMESTAMP,
     value DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO metrics (timestamp, value)
+-- => INSERT into metrics table begins
 SELECT
     ts,
     (50 + random() * 50)::DECIMAL(10, 2) AS value
+    -- => Creates alias for column/table
 FROM generate_series(
+-- => Specifies source table for query
     '2025-12-29 00:00:00'::TIMESTAMP,
     '2025-12-29 23:59:00'::TIMESTAMP,
     '1 minute'::INTERVAL
 ) AS ts;
-
+-- => Creates alias for column/table
 SELECT COUNT(*) FROM metrics;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => 1,440 rows (one per minute for 24 hours)
-
 -- Generate hierarchical test data
 CREATE TABLE categories (
-    id INTEGER PRIMARY KEY,
     parent_id INTEGER,
     name VARCHAR(100)
 );
-
+-- => Statement execution completes
 INSERT INTO categories (id, parent_id, name)
+-- => INSERT into categories table begins
 SELECT
     generate_series,
     CASE
@@ -2710,10 +3034,11 @@ SELECT
     END,
     'Category ' || generate_series
 FROM generate_series(1, 100);
-
+-- => Specifies source table for query
 SELECT id, parent_id, name FROM categories WHERE parent_id IS NULL;
--- => 10 top-level categories
-```
+-- => Specifies source table for query
+-- => Query executes and returns result set
+-- => 10 top-level categories```
 
 **Key Takeaway**: GENERATE_SERIES creates numeric, date, or timestamp sequences - combine with random() for realistic test data. Use for populating development databases, performance testing, or creating time series data.
 
@@ -2727,85 +3052,123 @@ LATERAL allows subqueries to reference columns from preceding tables in FROM cla
 
 ```sql
 CREATE DATABASE example_59;
+-- => Creates database 'example_59'
 \c example_59;
-
+-- => Statement execution completes
+-- => Switches connection to example_59 database
 CREATE TABLE categories (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100)
 );
-
+-- => Statement execution completes
 CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
     category_id INTEGER,
     name VARCHAR(100),
     price DECIMAL(10, 2)
 );
-
+-- => Statement execution completes
 INSERT INTO categories (name)
+-- => INSERT into categories table begins
 VALUES ('Electronics'), ('Furniture'), ('Kitchen');
-
+-- => Statement execution completes
+-- => Row data values follow
 INSERT INTO products (category_id, name, price)
+-- => INSERT into products table begins
 VALUES
+-- => Row data values follow
     (1, 'Laptop', 999.99),
+    -- => Row data inserted
     (1, 'Mouse', 29.99),
+    -- => Row data inserted
     (1, 'Keyboard', 79.99),
+    -- => Row data inserted
     (2, 'Desk', 299.99),
+    -- => Row data inserted
     (2, 'Chair', 199.99),
+    -- => Row data inserted
     (3, 'Blender', 89.99),
+    -- => Row data inserted
     (3, 'Toaster', 39.99);
-
+    -- => Statement execution completes
 -- Get top 2 most expensive products per category
 SELECT
     c.name AS category,
+    -- => Creates alias for column/table
     p.name AS product,
+    -- => Creates alias for column/table
     p.price
 FROM categories c,
+-- => Specifies source table for query
 LATERAL (
     SELECT name, price
     FROM products
+    -- => Specifies source table for query
     WHERE category_id = c.id  -- => References c from outer query
     ORDER BY price DESC
+    -- => Sorts query results
+    -- => Sorts result set
     LIMIT 2
+    -- => Restricts number of rows returned
 ) p
 ORDER BY c.name, p.price DESC;
+-- => Sorts query results
+-- => Sorts result set
 -- => Electronics: Laptop (999.99), Keyboard (79.99)
 -- => Furniture: Desk (299.99), Chair (199.99)
 -- => Kitchen: Blender (89.99), Toaster (39.99)
-
 -- Alternative with LEFT JOIN LATERAL (includes categories with no products)
 SELECT
     c.name AS category,
+    -- => Creates alias for column/table
     p.name AS product,
+    -- => Creates alias for column/table
     p.price
 FROM categories c
+-- => Specifies source table for query
 LEFT JOIN LATERAL (
+-- => Combines rows from multiple tables
     SELECT name, price
     FROM products
+    -- => Specifies source table for query
     WHERE category_id = c.id
+    -- => Applies filter to rows
+    -- => Filter condition for query
     ORDER BY price DESC
+    -- => Sorts query results
+    -- => Sorts result set
     LIMIT 1
+    -- => Restricts number of rows returned
 ) p ON true
 ORDER BY c.name;
+-- => Sorts query results
+-- => Sorts result set
 -- => Shows top product per category (NULL if no products)
-
 -- LATERAL with aggregation
 SELECT
     c.name AS category,
+    -- => Creates alias for column/table
     stats.*
 FROM categories c,
+-- => Specifies source table for query
 LATERAL (
     SELECT
         COUNT(*) AS num_products,
+        -- => Creates alias for column/table
         AVG(price) AS avg_price,
+        -- => Creates alias for column/table
         MAX(price) AS max_price
+        -- => Creates alias for column/table
     FROM products
+    -- => Specifies source table for query
     WHERE category_id = c.id
+    -- => Applies filter to rows
+    -- => Filter condition for query
 ) stats
 ORDER BY c.name;
+-- => Sorts query results
+-- => Sorts result set
 -- => Electronics: 3 products, avg 369.99, max 999.99
 -- => Furniture: 2 products, avg 249.99, max 299.99
 -- => Kitchen: 2 products, avg 64.99, max 89.99
-
 -- LATERAL for row numbers per group
 SELECT
     category_id,
@@ -2813,14 +3176,20 @@ SELECT
     price,
     row_num
 FROM products p,
+-- => Specifies source table for query
 LATERAL (
     SELECT ROW_NUMBER() OVER (ORDER BY price DESC) AS row_num
+    -- => Sorts query results
     FROM products p2
+    -- => Specifies source table for query
     WHERE p2.category_id = p.category_id AND p2.id <= p.id
+    -- => Applies filter to rows
+    -- => Filter condition for query
 ) rn
 WHERE row_num = 1;
--- => Alternative to window functions for ranking
-```
+-- => Applies filter to rows
+-- => Filter condition for query
+-- => Alternative to window functions for ranking```
 
 **Key Takeaway**: LATERAL enables subqueries to reference preceding FROM items - use for "top N per group", correlated aggregations, or complex per-row computations. More flexible than window functions for some use cases.
 
@@ -2834,8 +3203,10 @@ Composite types define custom structured types combining multiple fields - use f
 
 ```sql
 CREATE DATABASE example_60;
+-- => Creates database 'example_60'
 \c example_60;
-
+-- => Statement execution completes
+-- => Switches connection to example_60 database
 -- Create composite type
 CREATE TYPE address AS (
     street VARCHAR(200),
@@ -2843,23 +3214,24 @@ CREATE TYPE address AS (
     state VARCHAR(50),
     zip VARCHAR(20)
 );
-
+-- => Statement execution completes
 CREATE TYPE contact_info AS (
     email VARCHAR(100),
     phone VARCHAR(20),
     home_address address  -- => Nested composite type
 );
-
+-- => Statement execution completes
 -- Use composite type in table
 CREATE TABLE customers (
-    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     contact contact_info
 );
-
+-- => Statement execution completes
 -- Insert with composite type
 INSERT INTO customers (name, contact)
+-- => INSERT into customers table begins
 VALUES (
+-- => Row data values follow
     'Alice',
     ROW(
         'alice@example.com',
@@ -2867,25 +3239,33 @@ VALUES (
         ROW('123 Main St', 'New York', 'NY', '10001')
     )::contact_info
 );
-
+-- => Statement execution completes
 -- Access composite type fields
 SELECT
     name,
     (contact).email AS email,
+    -- => Creates alias for column/table
     (contact).phone AS phone,
+    -- => Creates alias for column/table
     ((contact).home_address).city AS city,
+    -- => Creates alias for column/table
     ((contact).home_address).state AS state
+    -- => Creates alias for column/table
 FROM customers;
+-- => Specifies source table for query
 -- => Alice, alice@example.com, 555-1234, New York, NY
-
 -- Update composite type field
 UPDATE customers
+-- => Updates rows matching condition
 SET contact.email = 'alice.new@example.com'
+-- => Specifies new values for columns
 WHERE name = 'Alice';
-
+-- => Applies filter to rows
+-- => Filter condition for query
 SELECT name, (contact).email FROM customers;
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- => alice.new@example.com
-
 -- Function returning composite type
 CREATE FUNCTION get_customer_summary(customer_id INTEGER)
 RETURNS TABLE(
@@ -2900,39 +3280,47 @@ BEGIN
         (contact).email,
         ((contact).home_address).city
     FROM customers
+    -- => Specifies source table for query
     WHERE id = customer_id;
+    -- => Applies filter to rows
+    -- => Filter condition for query
 END;
+-- => Statement execution completes
 $$ LANGUAGE plpgsql;
-
+-- => Statement execution completes
 SELECT * FROM get_customer_summary(1);
-
+-- => Specifies source table for query
+-- => Query executes and returns result set
 -- Array of composite types
 CREATE TABLE orders (
-    id SERIAL PRIMARY KEY,
     customer_id INTEGER,
     shipping_addresses address[]  -- => Array of composite types
 );
-
+-- => Statement execution completes
 INSERT INTO orders (customer_id, shipping_addresses)
+-- => INSERT into orders table begins
 VALUES (
+-- => Row data values follow
     1,
     ARRAY[
         ROW('456 Oak Ave', 'Boston', 'MA', '02101')::address,
         ROW('789 Pine Rd', 'Chicago', 'IL', '60601')::address
     ]
 );
-
+-- => Statement execution completes
 SELECT
     id,
     shipping_addresses[1] AS first_address,
+    -- => Creates alias for column/table
     (shipping_addresses[1]).city AS first_city
+    -- => Creates alias for column/table
 FROM orders;
-
+-- => Specifies source table for query
 -- Drop composite type
 DROP TYPE IF EXISTS contact_info CASCADE;
--- => CASCADE drops dependent objects (tables using this type)
-```
+-- => CASCADE drops dependent objects (tables using this type)```
 
 **Key Takeaway**: Composite types combine multiple fields into structured types - use for addresses, coordinates, or domain concepts. Access nested fields with parentheses: `(column).field`. Composite types can be nested and stored in arrays.
 
 **Why It Matters**: Composite types enable domain modeling directly in the database schema (address type with street/city/zip fields) that enforces consistency across tables without duplicating column definitions, making schema evolution safer when address format changes affect 20+ tables. The ability to store composite types in arrays enables efficient representation of one-to-many relationships (product with array of price tiers) without junction tables when the nested data is always accessed together. However, composite types trade query flexibility for schema organization - filtering on nested fields requires verbose (column).field syntax and may prevent index usage, making them suitable for display-oriented data rather than heavily-queried attributes.
+````

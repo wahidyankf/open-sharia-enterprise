@@ -3,7 +3,7 @@ name: wow__workflow-fixer
 description: Applies validated fixes from workflow-checker audit reports. Re-validates workflow definition findings before applying changes. Use after reviewing workflow-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
-color: yellow
+color: purple
 created: 2025-12-23
 updated: 2025-12-27
 ---
