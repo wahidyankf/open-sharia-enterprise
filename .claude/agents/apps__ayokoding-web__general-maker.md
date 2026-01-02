@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
 created: 2025-12-15
-updated: 2025-12-31
+updated: 2026-01-02
 ---
 
 # ayokoding-web-general-maker Agent
@@ -126,6 +126,14 @@ Use this agent when:
 3. **File Naming**:
    - Simple slugs: `getting-started.md`, `advanced-patterns.md`
    - No prefix encoding (different from docs/)
+
+**Code Annotation Standards**:
+
+- ALL code examples must achieve 1.0-2.25 comment lines per code line PER EXAMPLE
+- Measure per example, not per file
+- Use `// =>` or `# =>` notation for outputs and states
+- Simple lines: 1 annotation, complex lines: 2 annotations
+- See [ayokoding-web code annotation standards](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md#code-annotation-standards)
 
 4. **Frontmatter**:
    - Format: YAML (2-space indentation)
