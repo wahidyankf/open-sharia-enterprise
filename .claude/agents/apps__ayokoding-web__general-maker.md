@@ -4,6 +4,7 @@ description: Expert at creating general Hugo content for ayokoding-web (Hextra t
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
+skills: [hugo-ayokoding-development, color-accessibility-diagrams]
 created: 2025-12-15
 updated: 2026-01-02
 ---

@@ -4,6 +4,7 @@ description: Expert at validating factual correctness of ayokoding-web education
 tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 model: sonnet
 color: green
+skills: []
 created: 2025-12-16
 updated: 2025-12-16
 ---

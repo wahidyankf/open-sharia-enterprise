@@ -4,6 +4,7 @@ description: Applies validated fixes from workflow-checker audit reports. Re-val
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
+skills: []
 created: 2025-12-23
 updated: 2025-12-27
 ---

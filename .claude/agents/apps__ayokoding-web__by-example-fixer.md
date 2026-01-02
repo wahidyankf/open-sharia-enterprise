@@ -4,6 +4,7 @@ description: Applies validated fixes from ayokoding-web-by-example-checker audit
 tools: [Read, Edit, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
+skills: []
 created: 2025-12-15
 updated: 2025-12-30
 ---

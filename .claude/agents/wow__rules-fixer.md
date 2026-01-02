@@ -4,8 +4,9 @@ description: Applies validated fixes from repo-rules-checker audit reports. Re-v
 tools: Read, Glob, Grep, Bash
 model: sonnet
 color: purple
+skills: []
 created: 2025-12-14
-updated: 2026-01-01
+updated: 2026-01-02
 ---
 
 # Repository Rules Fixer Agent
@@ -35,7 +36,22 @@ Your primary job is to:
 
 **CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.
 
-**Five Core Rules You Enforce**:
+**Six Core Rules You Enforce**:
+
+1. **Unlimited Token Budget**: Add "Token Budget Philosophy" section to AI Agents Convention and Workflow Pattern Convention if missing
+2. **Principles Traceability in Conventions**: Add mandatory "Principles Implemented/Respected" section to convention documents if missing
+3. **Principles and Conventions Traceability in Development**: Add both "Principles Respected" and "Conventions Implemented/Respected" sections to development documents if missing
+4. **Skills Infrastructure**: Ensure `.claude/skills/` exists, all Skills have valid frontmatter, all agents have `skills:` field
+5. **Self-Validation**: Ensure repo-rules-\* agents validate and enforce all six rules above
+6. **Subdirectory README Files**: Create missing README.md index files in subdirectories of docs/explanation/ with proper purpose, scope, and navigation sections
+
+**Skills-Specific Fix Capabilities**:
+
+- **Add missing `skills:` field**: Add `skills: []` to agent frontmatter after `color:` field
+- **Fix broken Skills references**: Update agent `skills:` array to reference existing Skills
+- **Sync Skills frontmatter**: Ensure SKILL.md has required fields (name, description, created, updated)
+- **Fix Skills references**: Update Skills to reference valid convention/development documents
+- **Update Skills index**: Sync `.claude/skills/README.md` with actual Skills
 
 1. **Unlimited Token Budget**: Add "Token Budget Philosophy" section to AI Agents Convention and Workflow Pattern Convention if missing
 2. **Principles Traceability in Conventions**: Add mandatory "Principles Implemented/Respected" section to convention documents if missing

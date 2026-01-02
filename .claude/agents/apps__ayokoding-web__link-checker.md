@@ -4,6 +4,7 @@ description: Validates internal and external links in ayokoding-web Hugo content
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: sonnet
 color: purple
+skills: []
 created: 2025-12-09
 updated: 2025-12-20
 ---

@@ -4,6 +4,7 @@ description: Automatically regenerate 2-layer navigation listings in ayokoding-w
 tools: Bash
 model: haiku
 color: blue
+skills: []
 created: 2025-12-20
 updated: 2025-12-21
 ---

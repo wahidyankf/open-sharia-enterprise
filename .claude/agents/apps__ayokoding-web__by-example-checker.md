@@ -4,6 +4,7 @@ description: Validates by-example tutorial quality focusing on 95% coverage, sel
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
+skills: []
 created: 2025-12-25
 updated: 2026-01-03
 ---

@@ -159,10 +159,9 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram Convention
 
-Use Mermaid diagrams (default TD layout, vertical orientation for mobile). **CRITICAL: Mermaid diagrams MUST use color-blind friendly palette** (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161). Never red/green/yellow in diagrams. **Mermaid comments use `%%` syntax, NOT `%%{ }%%`** (causes syntax errors). **Escape special characters in node text AND edge labels**: parentheses (`#40;` `#41;`), square brackets (`#91;` `#93;`), curly braces (`#123;` `#125;`), angle brackets (`#60;` `#62;`). Edge labels use `-->|text|` syntax and require same escaping. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`). **Avoid nested escaping** - do not combine entity codes with escaped quotes in same node (e.g., `#123;\"name\"#125;` fails; use `#123;name:value#125;` instead). **No `style` commands in sequence diagrams** (use `box` syntax or flowchart). Note: Emoji indicators (🔴🟠🟡🟢) can use standard colors when ALWAYS paired with text labels. **Split complex diagrams** - one concept per diagram (max 3-4 branches per level), no subgraphs, descriptive headers, mobile-first design. See [Color Accessibility Convention](./docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) for complete palette and context-specific rules, and [Diagrams Convention](./docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) for implementation, comment syntax, and diagram splitting guidelines.
+Use Mermaid diagrams with color-blind friendly palette and proper accessibility practices. **CRITICAL rules**: Use verified accessible colors (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), escape special characters in node text, avoid `style` commands in sequence diagrams. See [Diagrams Convention](./docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) and [Color Accessibility Convention](./docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) for complete details.
 
-- **Sequence diagram participant syntax (CRITICAL)**: Use simple participant identifiers WITHOUT `as` keyword. Do NOT use `participant X as "Display Name"` syntax with quotes (causes rendering failures in Hugo/Hextra). Use CamelCase or simple names instead: `participant Main`, `participant EventLoop`. Applies to sequenceDiagram only, not graph/flowchart
-- **State diagram edge labels (CRITICAL)**: Do NOT use colons in edge label text for `stateDiagram-v2` (colon is reserved separator). Syntax: `state1 --> state2: label text` - remove colons from label text (use `count` not `:count`). Affects stateDiagram-v2 only
+**Note**: Skill `color-accessibility-diagrams` auto-loads when creating diagrams, providing accessible palette, Mermaid best practices, escaping rules, and working examples.
 
 ### Emoji Usage Convention
 
@@ -186,7 +185,9 @@ When documenting markdown structure, use **4 backticks for outer fence, 3 for in
 
 ### Tutorial Standards
 
-Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (95% coverage through 75-90 annotated examples, 1-2.25 comment lines per code line PER EXAMPLE, **multiple code blocks for comparisons** with text between blocks, five-part format for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
+Seven tutorial types with progressive coverage levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). By Example tutorials use 75-90 annotated code examples with 1-2.25 comment lines per code line PER EXAMPLE and five-part structure for experienced developers. Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
+
+**Note**: Skill `by-example-tutorial-creation` auto-loads when creating programming tutorials, providing annotation standards, example structure patterns, and quality guidelines.
 
 ### Content Quality Principles
 
@@ -196,19 +197,19 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification ([Verified], [Unverified], [Error], [Outdated]). See [Factual Validation Convention](./docs/explanation/conventions/content/ex-co-co__factual-validation.md) for complete methodology.
 
+**Note**: Skill `factual-validation-methodology` auto-loads when validating documentation accuracy, providing validation workflow, source prioritization, confidence classifications, and integration patterns.
+
 ### Hugo Content Convention
 
-Three specialized documents:
+Three specialized documents for Hugo sites:
 
 - [Shared](./docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Common conventions for all Hugo sites
-- [ayokoding-web](./docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme, bilingual (default English, no automatic mirroring), level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**, **code annotation density standard (1-2.25 comment lines per code line PER EXAMPLE)**
+- [ayokoding-web](./docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme, bilingual content, level-based weight system, 2-layer navigation depth, absolute path linking
 - [ose-platform-web](./docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - PaperMod theme, English-only landing page
 
-Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).
+Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) with dual-path organization ([by-concept and by-example](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md)). See [Tutorial Folder Arrangement Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for 5-item arrangement details.
 
-**Tutorial Structure**: All languages use [dual-path organization](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md) - by-concept (narrative-driven) and optional by-example (code-first, 75-90 annotated examples for experienced developers). Foundational tutorials (Initial Setup, Quick Start) at root level.
-
-**Tutorial Folder Arrangement**: All topics with by-example tutorials follow standard 5-item arrangement: overview (100000), initial-setup (100001), quick-start (100002), by-example (100003), by-concept (100004, optional). Arrangement is MANUAL by content creators, NOT automatic by agents. See [Programming Language Tutorial Structure Convention](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for complete standard.
+**Note**: Skill `hugo-ayokoding-development` auto-loads for ayokoding-web tasks (bilingual strategy, weight system, annotation standards). Skill `hugo-ose-development` auto-loads for ose-platform-web tasks (PaperMod patterns, date-based structure).
 
 ### README Quality Convention
 
@@ -242,6 +243,20 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 **Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. Ensures traceability from practices back to foundational values. See [Convention Writing Convention](./docs/explanation/conventions/content/ex-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md) for requirements.
 
 See [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md) for complete details.
+
+### Skills Infrastructure
+
+**Claude Code Skills** provide progressive knowledge delivery to agents through auto-loading markdown packages. Skills are **delivery infrastructure** (like CLAUDE.md), not a governance layer. They enable on-demand depth without upfront loading of all details.
+
+**Key Characteristics:**
+
+- Auto-load based on task description matching
+- Enable progressive disclosure (name/description at startup, full content on-demand)
+- Reduce agent file sizes through shared knowledge packages
+- Support knowledge composition (multiple Skills work together)
+- Portable across platforms (open standard at agentskills.io)
+
+**Available Skills:** See [Skills Directory](./.claude/skills/README.md) for complete catalog, creation patterns, and usage guidance. All agents must include `skills:` frontmatter field (can be empty `[]` for backward compatibility).
 
 ### Temporary Files for AI Agents
 

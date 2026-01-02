@@ -6,6 +6,7 @@ description: Validates tutorial quality focusing on pedagogical structure, narra
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-12-01
 updated: 2025-12-23
 ---

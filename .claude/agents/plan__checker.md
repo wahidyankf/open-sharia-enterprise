@@ -5,6 +5,7 @@ description: Expert at validating plans are ready for implementation by verifyin
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-11-29
 updated: 2025-12-15
 ---

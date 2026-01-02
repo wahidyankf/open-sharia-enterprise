@@ -116,7 +116,7 @@ This practice implements/respects the following conventions:
 
 ### Required Frontmatter
 
-Every agent file MUST begin with YAML frontmatter containing five required fields:
+Every agent file MUST begin with YAML frontmatter containing six required fields:
 
 ```yaml
 ---
@@ -125,10 +125,11 @@ description: Expert in X specializing in Y. Use when Z.
 tools: Read, Glob, Grep
 model: inherit
 color: blue
+skills: []
 ---
 ```
 
-**Field Order**: Fields MUST appear in this exact order (name, description, tools, model, color) for consistency and grep-ability across all agents.
+**Field Order**: Fields MUST appear in this exact order (name, description, tools, model, color, skills) for consistency and grep-ability across all agents.
 
 **NO Comments in Frontmatter**: Agent frontmatter MUST NOT contain inline comments (# symbols in YAML). Research shows Claude Code has frontmatter parsing issues (GitHub issue #6377), and best practice for configuration files is to keep YAML clean without inline comments. Put explanations in the document body below the frontmatter code block, not as inline comments.
 
@@ -164,17 +165,25 @@ color: blue
    - Helps users quickly identify agent type
    - See "Agent Color Categorization" below for assignment guidelines
 
+6. **`skills`** (required)
+   - List of Skill names the agent references (from `.claude/skills/`)
+   - Can be empty array `[]` if agent doesn't use Skills
+   - Skills auto-load when agent is invoked (if task matches Skill description)
+   - Enables composability and explicit knowledge dependencies
+   - Example: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
+   - See "Agent Skills References" section below for complete details
+
 ### Optional Frontmatter Fields
 
-In addition to the five required fields, agents may include optional metadata fields for tracking:
+In addition to the six required fields, agents may include optional metadata fields for tracking:
 
-6. **`created`** (optional)
+7. **`created`** (optional)
    - Date when the agent was first created
    - Format: `YYYY-MM-DD` (ISO 8601 date only)
    - Example: `created: 2025-11-23`
    - Helps track agent age and history
 
-7. **`updated`** (optional)
+8. **`updated`** (optional)
    - Date when the agent was last modified
    - Format: `YYYY-MM-DD` (ISO 8601 date only)
    - Example: `updated: 2025-12-03`
@@ -186,7 +195,7 @@ In addition to the five required fields, agents may include optional metadata fi
 - Use both `created` and `updated` fields together for complete tracking
 - Update the `updated` field whenever making substantial changes to the agent
 - Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../conventions/formatting/ex-co-fo__timestamp.md) (date-only format)
-- Place these fields after the five required fields in frontmatter
+- Place these fields after the six required fields in frontmatter
 - These fields align with documentation frontmatter best practices from Hugo, Jekyll, and Front Matter CMS
 
 **Example with optional fields:**
@@ -198,10 +207,147 @@ description: Expert in X specializing in Y. Use when Z.
 tools: Read, Glob, Grep
 model: inherit
 color: blue
+skills: []
 created: 2025-11-23
 updated: 2025-12-03
 ---
 ```
+
+### Agent Skills References
+
+**REQUIRED FIELD**: All agents MUST include a `skills:` frontmatter field for composability and consistency.
+
+**Purpose:** The `skills:` field declares which Skills (knowledge packages in `.claude/skills/`) the agent leverages. This enables:
+
+- **Composability**: Explicit declarations of knowledge dependencies
+- **Consistency**: All agents follow same structure (no special cases)
+- **Discoverability**: Easy to see which agents use which Skills
+- **Validation**: Checkers can enforce field presence and validate references
+
+#### Skills Field Format
+
+The `skills` field (already defined as field 6 in Required Frontmatter above) has the following detailed characteristics:
+
+- **Format**: YAML array of strings
+- **Required**: Yes (can be empty `[]`)
+- **Values**: Skill names matching folder names in `.claude/skills/`
+- **Auto-loading**: Skills load when agent invoked AND task matches Skill description
+- **Validation**: Referenced Skills must exist in `.claude/skills/` directory
+- **Example**: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
+
+#### When to Reference Skills vs. Inline Knowledge
+
+**Use Skills references when:**
+
+- ✅ Knowledge is specialized and deep (e.g., accessible color palettes, Gherkin syntax)
+- ✅ Knowledge is shared across multiple agents (e.g., Maker-Checker-Fixer pattern)
+- ✅ Knowledge requires progressive disclosure (overview at startup, details on-demand)
+- ✅ Knowledge is frequently updated (Skills centralize updates)
+- ✅ Knowledge has multiple aspects (Skill can have reference.md, examples.md)
+
+**Use inline knowledge when:**
+
+- ✅ Knowledge is agent-specific and not shared
+- ✅ Knowledge is simple and fits in a few paragraphs
+- ✅ Knowledge is critical for agent's core operation (always needed)
+- ✅ Knowledge is stable and rarely changes
+
+#### Skills Field Examples
+
+**Agent using Skills:**
+
+```yaml
+---
+name: docs__maker
+description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
+tools: Read, Write, Edit, Glob, Grep
+model: inherit
+color: blue
+skills:
+  - color-accessibility-diagrams
+  - maker-checker-fixer-pattern
+---
+```
+
+**Agent not using Skills:**
+
+```yaml
+---
+name: simple__helper
+description: Simple helper agent for basic tasks.
+tools: Read
+model: haiku
+color: green
+skills: []
+---
+```
+
+#### Skills Composition Pattern
+
+Agents can reference multiple Skills that work together:
+
+```yaml
+---
+name: apps__ayokoding-web__general-maker
+description: Expert at creating general Hugo content for ayokoding-web (Hextra theme).
+tools: Read, Write, Edit, Glob, Grep
+model: sonnet
+color: blue
+skills:
+  - hugo-ayokoding-development
+  - color-accessibility-diagrams
+  - factual-validation-methodology
+---
+```
+
+When this agent is invoked, all three Skills auto-load if the task description matches their triggers. Skills compose seamlessly to provide comprehensive knowledge.
+
+#### Best Practices for Skills References
+
+1. **Minimal set**: Reference only Skills the agent actually uses
+2. **Relevant Skills**: Skills should align with agent's domain
+3. **Order by importance**: List most critical Skills first
+4. **Keep updated**: Add/remove Skills as agent evolves
+5. **Validate references**: Ensure referenced Skills exist in `.claude/skills/`
+
+#### Skills vs. Direct Convention References
+
+Agents can use both Skills AND direct links to convention documents:
+
+- **Skills**: For progressive disclosure and shared knowledge (auto-loaded)
+- **Direct links**: For specific, targeted guidance (always in Reference Documentation section)
+
+**Example combining both:**
+
+```yaml
+---
+name: docs__checker
+description: Validates documentation quality and factual correctness.
+tools: Read, Glob, Grep, Write, Bash
+model: sonnet
+color: green
+skills:
+  - maker-checker-fixer-pattern
+  - criticality-confidence-system
+---
+```
+
+**Reference Documentation section:**
+
+```markdown
+## Reference Documentation
+
+**Skills**: This agent uses `maker-checker-fixer-pattern` and `criticality-confidence-system` Skills for validation workflows.
+
+**Conventions:**
+
+- `docs/explanation/conventions/content/ex-co-co__quality.md` - Content Quality Principles
+- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - Linking Convention
+```
+
+This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
+
+See [Skills README](../../../.claude/skills/README.md) for complete details on Skills creation, structure, and usage patterns.
 
 ### Document Structure
 
@@ -1208,6 +1354,7 @@ Before submitting a new agent, verify:
 - [ ] `tools` explicitly lists required tools only (least privilege)
 - [ ] `model` set to `inherit` (or justified if specific)
 - [ ] `color` assigned based on agent role (blue/green/yellow/purple) - required
+- [ ] `skills` field present (can be empty `[]` or list actual Skills) - required
 
 #### Document Structure
 
@@ -1262,6 +1409,7 @@ description: Expert in [domain] specializing in [specific area]. Use when [speci
 tools: Read, Glob, Grep
 model: inherit
 color: blue
+skills: []
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---

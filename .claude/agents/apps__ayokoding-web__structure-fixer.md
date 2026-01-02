@@ -4,6 +4,7 @@ description: Applies validated fixes from ayokoding-web-structure-checker audit 
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: haiku
 color: purple
+skills: []
 created: 2025-12-20
 updated: 2025-12-27
 ---

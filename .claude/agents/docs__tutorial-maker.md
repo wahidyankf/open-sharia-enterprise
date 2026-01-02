@@ -4,6 +4,7 @@ description: Expert tutorial writer specializing in learning-oriented content wi
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 model: sonnet
 color: blue
+skills: []
 created: 2025-12-01
 updated: 2025-12-31
 ---

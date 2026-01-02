@@ -4,6 +4,7 @@ description: Applies validated fixes from ayokoding-web-facts-checker audit repo
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
+skills: []
 created: 2025-12-16
 updated: 2025-12-27
 ---

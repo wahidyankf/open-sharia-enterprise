@@ -6,6 +6,7 @@ description: Validates workflow definition files in docs/explanation/workflows/ 
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
+skills: []
 created: 2025-12-23
 updated: 2025-12-29
 ---
