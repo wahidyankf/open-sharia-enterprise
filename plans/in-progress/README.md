@@ -4,9 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-_No active plans at the moment._
-
-All recent projects have been completed and moved to `done/`. See `../ideas.md` for potential future projects.
+- [2026-01-02: Skills Infrastructure Implementation](./2026-01-02__skills-layer-implementation/) - Introduce Claude Code Skills as delivery infrastructure (alongside CLAUDE.md) for progressive knowledge disclosure. Creates 8-10 model-invoked knowledge packages, maintains CLAUDE.md ≤30k characters, updates all ~45 agents with required `skills:` field, and updates rules components. Six-layer architecture unchanged.
 
 ## Instructions
 
