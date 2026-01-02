@@ -47,11 +47,38 @@ Your primary job is to:
 
 **Skills-Specific Fix Capabilities**:
 
-- **Add missing `skills:` field**: Add `skills: []` to agent frontmatter after `color:` field
+- **Rename Skills to gerund form**: Rename Skill directories to use verb + -ing pattern (e.g., `by-example-tutorial-creation` → `creating-by-example-tutorials`)
+- **Fix uppercase Skill names**: Rename Skill directories to lowercase only
+- **Add `allowed-tools` frontmatter**: Add appropriate `allowed-tools` field to SKILL.md based on Skill purpose
+- **Add "References" section**: Add References section to Skills linking to authoritative convention/development documents
+- **Add non-empty `skills:` field**: Update agent frontmatter to include appropriate skills (NOT empty `[]`)
 - **Fix broken Skills references**: Update agent `skills:` array to reference existing Skills
 - **Sync Skills frontmatter**: Ensure SKILL.md has required fields (name, description, created, updated)
-- **Fix Skills references**: Update Skills to reference valid convention/development documents
 - **Update Skills index**: Sync `.claude/skills/README.md` with actual Skills
+
+**Skills Fix Validation Methods**:
+
+\`\`\`bash
+
+# Rename Skill to gerund form (example)
+
+old_name="by-example-tutorial-creation"
+new_name="creating-by-example-tutorials"
+mv .claude/skills/\$old_name .claude/skills/\$new_name
+sed -i "s/\$old_name/\$new_name/g" .claude/skills/\$new_name/SKILL.md
+
+# Add allowed-tools to Skill frontmatter (using sed)
+
+sed -i '/^description:/a allowed-tools: Read, Write, Edit, Glob, Grep' .claude/skills/skill-name/SKILL.md
+
+# Add References section to Skill (using cat with append)
+
+echo -e "\\n## References\\n\\n- [Convention Name](../../docs/explanation/conventions/path.md)" >> .claude/skills/skill-name/SKILL.md
+
+# Update agent skills field (using sed)
+
+sed -i 's/^skills: \[\]/skills: [skill-name-1, skill-name-2]/' .claude/agents/agent-name.md
+\`\`\`
 
 1. **Unlimited Token Budget**: Add "Token Budget Philosophy" section to AI Agents Convention and Workflow Pattern Convention if missing
 2. **Principles Traceability in Conventions**: Add mandatory "Principles Implemented/Respected" section to convention documents if missing

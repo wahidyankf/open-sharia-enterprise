@@ -110,18 +110,102 @@ Systematically verify internal consistency, cross-document alignment, factual co
 
 1. **Skills Directory Structure**: Verify `.claude/skills/` exists with README.md and TEMPLATE.md
 2. **Skills Frontmatter**: Validate all SKILL.md files have required fields (name, description, created, updated)
-3. **Skills Content Quality**: Verify Skills follow Content Quality Principles (clear descriptions, proper structure)
-4. **Skills References**: Verify Skills reference valid convention/development documents with correct paths
-5. **Skills Uniqueness**: Ensure Skill names are unique and descriptions are distinct (no overlaps)
-6. **Skills Auto-loading**: Verify Skill descriptions are clear, action-oriented, and enable appropriate auto-loading
-7. **Agent Skills Field**: Validate all agents in `.claude/agents/` have `skills:` frontmatter field (can be empty `[]`)
-8. **Agent Skills References**: Verify agent Skills references point to existing Skills in `.claude/skills/`
-9. **Skills Index**: Verify `.claude/skills/README.md` lists all Skills with correct descriptions
+3. **Skills allowed-tools**: Verify all SKILL.md files have `allowed-tools` frontmatter field
+4. **Skills Content Quality**: Verify Skills follow Content Quality Principles (clear descriptions, proper structure)
+5. **Skills References Section**: Verify all Skills have "References" section linking to authoritative convention/development documents
+6. **Skills Uniqueness**: Ensure Skill names are unique and descriptions are distinct (no overlaps)
+7. **Skills Auto-loading**: Verify Skill descriptions are clear, action-oriented, and enable appropriate auto-loading
+8. **Skills Naming Convention**: Verify all Skills use gerund form (verb + -ing) and lowercase only
+9. **Agent Non-Empty Skills Field**: Validate all agents in `.claude/agents/` have non-empty `skills:` field
+10. **Agent Skills References**: Verify agent Skills references point to existing Skills in `.claude/skills/`
+11. **Skills Index**: Verify `.claude/skills/README.md` lists all Skills with correct descriptions
+
+### Skills Naming Convention Validation
+
+All Skills MUST follow official best practices:
+
+- **Lowercase only**: No uppercase letters (max 64 characters)
+- **Gerund form preferred**: Use verb + -ing pattern (e.g., `creating-by-example-tutorials`, `validating-factual-accuracy`)
+
+**Validation method:**
+
+\`\`\`bash
+
+# Check for uppercase letters in Skill directory names
+
+for skill_dir in .claude/skills/\*/; do
+skill_name=\$(basename "\$skill_dir")
+if [["\$skill_name" =~ [A-Z]]]; then
+echo "CRITICAL: Skill name contains uppercase: \$skill_name"
+fi
+done
+
+# Check for gerund form (verb + -ing)
+
+for skill_dir in .claude/skills/\*/; do
+skill_name=\$(basename "\$skill_dir")
+if ! [["\$skill_name" =~ -ing(-|\$)]]; then
+echo "HIGH: Skill name may not use gerund form: \$skill_name"
+fi
+done
+\`\`\`
+
+### Skills allowed-tools Validation
+
+All Skills MUST have `allowed-tools` frontmatter to restrict tool access when active.
+
+**Validation method:**
+
+\`\`\`bash
+
+# Check for allowed-tools field in Skill frontmatter
+
+for skill_file in .claude/skills/\*/SKILL.md; do
+if ! grep -q "^allowed-tools:" "\$skill_file"; then
+echo "HIGH: Skill missing allowed-tools field: \$skill_file"
+fi
+done
+\`\`\`
+
+### Skills References Section Validation
+
+All Skills MUST have "References" section linking to authoritative convention/development documents.
+
+**Validation method:**
+
+\`\`\`bash
+
+# Check for References section in Skill content
+
+for skill_file in .claude/skills/\*/SKILL.md; do
+if ! grep -q "^## References" "\$skill_file"; then
+echo "HIGH: Skill missing References section: \$skill_file"
+fi
+done
+\`\`\`
+
+### Agent Non-Empty Skills Validation
+
+All agents MUST have non-empty `skills:` field (agents need skills like employees need skills).
+
+**Validation method:**
+
+\`\`\`bash
+
+# Check for empty skills field in agent frontmatter
+
+for agent_file in .claude/agents/\*.md; do
+skills_line=\$(awk 'BEGIN{p=0} /^---\$/{if(p==0){p=1;next}else{exit}} p==1 && /^skills:/' "\$agent_file")
+if [["\$skills_line" == "skills: []" || -z "\$skills_line"]]; then
+echo "CRITICAL: Agent has empty or missing skills field: \$agent_file"
+fi
+done
+\`\`\`
 
 **Criticality Levels for Skills Findings:**
 
-- **CRITICAL**: Missing `skills:` field in agent frontmatter, broken Skills references in agents, missing SKILL.md for referenced Skill, invalid SKILL.md frontmatter
-- **HIGH**: Invalid Skills frontmatter fields, unclear/ambiguous Skill descriptions preventing auto-load, duplicate Skill names, Skills not listed in index
+- **CRITICAL**: Empty `skills:` field in agent frontmatter (MUST be non-empty), broken Skills references in agents, missing SKILL.md for referenced Skill, invalid SKILL.md frontmatter, uppercase in Skill name
+- **HIGH**: Missing `allowed-tools` frontmatter, missing "References" section, non-gerund Skill name, invalid Skills frontmatter fields, unclear/ambiguous Skill descriptions preventing auto-load, duplicate Skill names, Skills not listed in index
 - **MEDIUM**: Suboptimal Skills structure, missing optional frontmatter fields, weak Skills descriptions
 - **LOW**: Suggestions for Skills description improvements, optional Skills enhancements
 
