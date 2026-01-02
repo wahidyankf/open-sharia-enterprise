@@ -1,12 +1,12 @@
 ---
-title: "Skills Layer Implementation - Progressive Knowledge System"
+title: "Skills Infrastructure - Progressive Knowledge Delivery"
 status: Backlog
 created: 2026-01-02
 git-workflow: Trunk Based Development (main branch)
-delivery-type: Multi-Phase Plan (4 sequential phases with direct commits)
+delivery-type: Multi-Phase Plan (3 sequential phases with direct commits)
 ---
 
-# Skills Layer Implementation - Progressive Knowledge System
+# Skills Infrastructure - Progressive Knowledge Delivery
 
 ## Overview
 
@@ -20,43 +20,72 @@ The repository faces important knowledge management opportunities:
 4. **No Progressive Disclosure** - All knowledge loaded upfront, no on-demand depth
 5. **Manual Knowledge Loading** - Cannot provide simple overview with optional deep-dive
 
-### Proposed Solution: Skills as Layer 4
+### Proposed Solution: Skills as Delivery Infrastructure
 
-Introduce **Claude Code Skills** as a new architectural layer between Development Practices (Layer 3) and AI Agents (Layer 5):
+Introduce **Claude Code Skills** as a **delivery mechanism** for convention and development knowledge to agents. Skills are infrastructure (like CLAUDE.md), not a governance layer.
 
 ```
-Layer 3: Development (HOW - Software Practices)
-    ↓ governs
-Layer 4: Skills (WHAT+HOW - Specialized Knowledge Packages)
-    ↓ provides knowledge to
-Layer 5: AI Agents (WHO - Atomic Executors)
+Current Knowledge Delivery:
+┌─────────────────────────────────────────────────────────────┐
+│ L2: Conventions ──┬── CLAUDE.md (summaries) ───> L4: Agents │
+│                   └── Direct refs (links) ─────> L4: Agents │
+│ L3: Development ──┬── CLAUDE.md (summaries) ───> L4: Agents │
+│                   └── Direct refs (links) ─────> L4: Agents │
+└─────────────────────────────────────────────────────────────┘
+
+With Skills Infrastructure:
+┌─────────────────────────────────────────────────────────────┐
+│ L2: Conventions ──┬── CLAUDE.md (navigation) ──> L4: Agents │
+│                   ├── Skills (progressive) ────> L4: Agents │
+│                   └── Direct refs (specific) ──> L4: Agents │
+│ L3: Development ──┬── CLAUDE.md (navigation) ──> L4: Agents │
+│                   ├── Skills (progressive) ────> L4: Agents │
+│                   └── Direct refs (specific) ──> L4: Agents │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+**Key insight**: Skills don't GOVERN agents (like Conventions do). Skills DELIVER knowledge to agents. They're infrastructure, not architecture.
 
 **Skills** are model-invoked markdown-based knowledge packages that:
 
-- **Auto-load based on description matching** - Claude decides when to use them (unlike user/workflow-invoked agents)
-- **Enable progressive disclosure** - Load name/description at startup, full content only when needed
-- **Reduce CLAUDE.md size** - Move detailed knowledge to Skills, keep high-level navigation
-- **Eliminate agent duplication** - Agents reference Skills instead of duplicating knowledge
+- **Auto-load based on description matching** - Claude decides when to use them
+- **Enable progressive disclosure** - Name/description at startup, full content on-demand
+- **Reduce CLAUDE.md size** - Move detailed knowledge to Skills, keep navigation
+- **Reduce agent duplication** - Shared knowledge packaged once, referenced by many
 - **Support knowledge composition** - Multiple Skills work together seamlessly
 - **Portable across platforms** - Open standard (agentskills.io) works beyond Claude
+
+### Why Infrastructure, Not a Layer?
+
+**Governance layers** enforce rules on the layer below:
+
+- Conventions GOVERN how documentation is written
+- Development practices GOVERN how code is written
+- These create obligations and constraints
+
+**Delivery infrastructure** transports knowledge without governance:
+
+- CLAUDE.md delivers summaries (doesn't govern agents)
+- Agent files deliver prompts (doesn't govern workflows)
+- Skills deliver packaged knowledge (doesn't govern agents)
+
+**Skills don't enforce rules on agents. Skills serve agents with knowledge.**
 
 ### Goals
 
 **Primary Objectives:**
 
-1. **Implement progressive disclosure** via Skills to prevent future CLAUDE.md growth (currently ~29k, maintain below 30k target)
+1. **Implement progressive disclosure** via Skills to prevent future CLAUDE.md growth
 2. **Create 8-12 high-value Skills** encoding critical repository knowledge
-3. **Update architecture documentation** to include Layer 4
-4. **Enable agent knowledge references** via Skills frontmatter
-5. **Maintain backward compatibility** during migration
+3. **Document Skills as infrastructure** in repository documentation
+4. **Enable agent knowledge references** via optional Skills frontmatter
+5. **Maintain backward compatibility** - existing agents work without modification
 
 **Secondary Objectives:**
 
 1. **Establish Skills creation patterns** for future knowledge packaging
-2. **Document Skills governance model** within seven-layer architecture
-3. **Enable community knowledge sharing** (Vision alignment: democratize Islamic enterprise)
-4. **Demonstrate progressive disclosure** as principle implementation
+2. **Enable community knowledge sharing** (Vision alignment: democratize Islamic enterprise)
+3. **Demonstrate progressive disclosure** as principle implementation
 
 ### Context
 
@@ -64,36 +93,36 @@ Layer 5: AI Agents (WHO - Atomic Executors)
 
 **Standard**: Open standard at agentskills.io enables portability beyond Claude ecosystem
 
-**Repository State**: 45+ agents, 24 conventions, 15 development practices, approaching CLAUDE.md size limits
+**Repository State**: 45+ agents, 24 conventions, 15 development practices
+
+**Architecture**: Six-layer governance (unchanged) with Skills as delivery infrastructure
 
 **Alignment**: Implements Progressive Disclosure, Automation Over Manual, Documentation First principles
 
 ## Git Workflow
 
-**Trunk Based Development**: All work happens on `main` branch with small, frequent commits. No feature branches unless absolutely necessary. Use feature flags to hide incomplete work if needed.
+**Trunk Based Development**: All work happens on `main` branch with small, frequent commits. No feature branches unless absolutely necessary.
 
 See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for complete details.
 
 ## Delivery Type
 
-**Multi-Phase Plan (4 Sequential Phases)**
+**Multi-Phase Plan (3 Sequential Phases)**
 
-This plan implements Skills Layer through 4 sequential phases with direct commits to `main` branch:
+This plan implements Skills infrastructure through 3 sequential phases with direct commits to `main` branch:
 
-1. **Phase 1: Foundation** - Skills directory structure, first 3 core Skills, basic documentation
-2. **Phase 2: Knowledge Migration** - 5-9 additional Skills, CLAUDE.md reduction, agent updates
-3. **Phase 3: Architecture Integration** - Layer 4 documentation, governance model, conventions
-4. **Phase 4: Community & Polish** - Shariah-compliance Skills, examples, final validation
+1. **Phase 1: Foundation** - Skills directory structure, first 3 core Skills, infrastructure documentation
+2. **Phase 2: Knowledge Migration** - 5-9 additional Skills, CLAUDE.md optimization, agent updates
+3. **Phase 3: Community & Polish** - Shariah-compliance Skills, examples, final validation
 
 **Dependencies**: Each phase builds on the previous one; validation checkpoint required before starting next phase.
 
 **Rationale for Multi-Phase**:
 
-- Large scope (8-12 Skills, architecture changes, 45+ agent updates)
+- Moderate scope (8-12 Skills, infrastructure docs, agent updates)
 - Natural breakpoints for validation and feedback
-- Phased rollout reduces risk of breaking existing workflows
+- Phased rollout reduces risk
 - Small, frequent commits to `main` with validation gates between phases
-- Enables iterative improvement based on early Skills usage
 
 ## Quick Links
 
@@ -103,9 +132,9 @@ This plan implements Skills Layer through 4 sequential phases with direct commit
 
 ## Success Metrics
 
-1. **CLAUDE.md Size**: Maintained at ≤30k characters (currently ~29k, progressive disclosure prevents future growth)
+1. **CLAUDE.md Size**: Maintained at ≤30k characters (progressive disclosure prevents growth)
 2. **Agent File Size**: Average agent size reduced by 15-25% through Skills references
-3. **Knowledge Accessibility**: All critical conventions accessible via Skills (100% coverage)
+3. **Knowledge Accessibility**: Critical conventions accessible via Skills
 4. **Backward Compatibility**: Zero breaking changes to existing agent workflows
 5. **Community Value**: At least 2 Shariah-compliance Skills published for community use
 
@@ -122,10 +151,10 @@ This plan implements Skills Layer through 4 sequential phases with direct commit
 
 - [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Multi-file structure for complex plans
 - [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent structure, frontmatter, Skills references
-- [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) - Seven-layer hierarchy context
+- [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) - Six-layer hierarchy (unchanged)
 
 ---
 
 **Created**: 2026-01-02
 **Status**: Backlog
-**Delivery**: Multi-Phase (4 sequential phases with direct commits to main)
+**Delivery**: Multi-Phase (3 sequential phases with direct commits to main)
