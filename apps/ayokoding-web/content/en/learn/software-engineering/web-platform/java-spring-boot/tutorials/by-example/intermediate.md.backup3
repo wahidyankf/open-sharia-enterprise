@@ -58,17 +58,13 @@ public interface TransferLogRepository extends JpaRepository<TransferLog, Long> 
 @Service
 public class TransferService {
   @Autowired private AccountRepository accountRepo;
-  // => Injected repository for BankAccount CRUD operations
   @Autowired private TransferLogRepository logRepo;
-  // => Injected repository for TransferLog audit trail
 
   @Transactional // Default: REQUIRED propagation, rollback on RuntimeException
   public void transfer(Long fromId, Long toId, BigDecimal amount) {
     BankAccount from = accountRepo.findById(fromId)
-      // => Retrieves source account, throws IllegalArgumentException if not found
       .orElseThrow(() -> new IllegalArgumentException("Source not found"));
     BankAccount to = accountRepo.findById(toId)
-      // => Retrieves destination account for credit operation
       .orElseThrow(() -> new IllegalArgumentException("Destination not found"));
 
     if (from.getBalance().compareTo(amount) < 0) {
@@ -76,13 +72,9 @@ public class TransferService {
     }
 
     from.setBalance(from.getBalance().subtract(amount));
-    // => Debits source account (new balance = old balance - amount)
     to.setBalance(to.getBalance().add(amount));
-    // => Credits destination account (new balance = old balance + amount)
     accountRepo.save(from);
-    // => Persists updated source account to database
     accountRepo.save(to);
-    // => Persists updated destination account to database
 
     // Log the transfer
     TransferLog log = new TransferLog();
@@ -90,9 +82,7 @@ public class TransferService {
     log.setToAccount(toId);
     log.setAmount(amount);
     log.setTimestamp(LocalDateTime.now());
-    // => Records exact time of transfer for audit trail
     logRepo.save(log);
-    // => Persists transfer log entry (all-or-nothing with account updates)
 
     // If exception occurs here, ALL changes (both accounts + log) rollback
   }
@@ -164,7 +154,6 @@ public class InventoryService {
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public int getStock(Long productId) {
     Product p = productRepo.findById(productId).orElseThrow();
-    // => Fetches product from database within transaction boundary
     return p.getStock(); // => Sees only committed data from other transactions
   }
 
@@ -172,9 +161,7 @@ public class InventoryService {
   @Transactional(isolation = Isolation.REPEATABLE_READ)
   public void processOrder(Long productId, int quantity) {
     Product p = productRepo.findById(productId).orElseThrow();
-    // => Fetches product from database within transaction boundary
     int initialStock = p.getStock(); // => 100
-    // => Captures initial stock value (locks this value for entire transaction)
 
     // Simulate delay
     Thread.sleep(1000);
@@ -199,30 +186,6 @@ public class InventoryService {
 **Key Takeaway**: Higher isolation levels prevent concurrency issues but reduce throughput—choose based on consistency requirements.
 
 **Why It Matters**: Isolation levels balance consistency against concurrency—SERIALIZABLE prevents all concurrency anomalies but reduces throughput to single-threaded performance, while READ_COMMITTED allows higher concurrency but risks non-repeatable reads. Production databases use READ_COMMITTED by default (PostgreSQL, Oracle) to achieve 80% of SERIALIZABLE safety at 300% higher throughput, reserving REPEATABLE_READ for financial transactions where accuracy outweighs performance.
-
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TD
-    A[Transaction Start] --> B{Isolation Level}
-
-    B -->|READ_COMMITTED| C[Prevent Dirty Reads]
-    B -->|REPEATABLE_READ| D[Prevent Dirty + Non-Repeatable Reads]
-    B -->|SERIALIZABLE| E[Prevent All Anomalies]
-
-    C --> F[High Concurrency<br/>Lower Consistency]
-    D --> G[Medium Concurrency<br/>Medium Consistency]
-    E --> H[Low Concurrency<br/>Full Consistency]
-
-    F --> I[Production Default]
-    G --> J[Financial Systems]
-    H --> K[Critical Operations]
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#CC78BC,stroke:#000,color:#000
-    style I fill:#029E73,stroke:#000,color:#fff
-```
 
 ---
 
@@ -402,42 +365,42 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http // => Configure HTTP security chain
-      .authorizeHttpRequests(auth -> auth // => Define authorization rules
-        .requestMatchers("/public/**").permitAll() // => Public endpoints (no auth required)
-        .requestMatchers("/admin/**").hasRole("ADMIN") // => Admin endpoints (requires ADMIN role)
-        .anyRequest().authenticated() // => All other endpoints require authentication
+    http
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/public/**").permitAll() // Public endpoints
+        .requestMatchers("/admin/**").hasRole("ADMIN") // Admin only
+        .anyRequest().authenticated() // All others require login
       )
-      .formLogin(form -> form // => Configure form-based login
-        .loginPage("/login") // => Custom login page URL
+      .formLogin(form -> form
+        .loginPage("/login") // Custom login page
         .permitAll()
       )
-      .logout(logout -> logout.permitAll()); // => Enable logout endpoint
+      .logout(logout -> logout.permitAll());
 
-    return http.build(); // => Build SecurityFilterChain bean
+    return http.build();
   }
 
   @Bean
   public UserDetailsService userDetailsService() {
-    // => In-memory users (for demo—use database/LDAP in production)
-    UserDetails user = User.builder() // => Create user with builder pattern
-      .username("user") // => Username for authentication
-      .password(passwordEncoder().encode("password123")) // => BCrypt-hashed password
-      .roles("USER") // => Granted authority: ROLE_USER
-      .build(); // => Immutable UserDetails object
+    // In-memory users (for demo—use database in production)
+    UserDetails user = User.builder()
+      .username("user")
+      .password(passwordEncoder().encode("password123"))
+      .roles("USER")
+      .build();
 
-    UserDetails admin = User.builder() // => Create admin user
-      .username("admin") // => Admin username
-      .password(passwordEncoder().encode("admin123")) // => BCrypt-hashed admin password
-      .roles("ADMIN", "USER") // => Multiple roles: ROLE_ADMIN + ROLE_USER
-      .build(); // => Admin has both USER and ADMIN privileges
+    UserDetails admin = User.builder()
+      .username("admin")
+      .password(passwordEncoder().encode("admin123"))
+      .roles("ADMIN", "USER")
+      .build();
 
-    return new InMemoryUserDetailsManager(user, admin); // => Store users in memory (non-persistent)
+    return new InMemoryUserDetailsManager(user, admin);
   }
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(); // => BCrypt with automatic salt generation (industry standard)
+    return new BCryptPasswordEncoder(); // Secure password hashing
   }
 }
 
@@ -508,31 +471,31 @@ public class MethodSecurityConfig {}
 public class OrderService {
   @Autowired private OrderRepository orderRepo;
 
-  @PreAuthorize("hasRole('USER')") // => Check role BEFORE method execution
-  public List<Order> getMyOrders(String username) { // => username parameter from authenticated user
-    return orderRepo.findByUsername(username); // => Query orders filtered by username
+  @PreAuthorize("hasRole('USER')") // Requires USER role
+  public List<Order> getMyOrders(String username) {
+    return orderRepo.findByUsername(username);
   }
 
-  @PreAuthorize("hasRole('ADMIN')") // => ADMIN role required (throws AccessDeniedException if missing)
-  public List<Order> getAllOrders() { // => Admin-only endpoint
-    return orderRepo.findAll(); // => Returns ALL orders (no filtering)
+  @PreAuthorize("hasRole('ADMIN')") // Requires ADMIN role
+  public List<Order> getAllOrders() {
+    return orderRepo.findAll();
   }
 
-  @PreAuthorize("#username == authentication.name") // => SpEL expression: method param matches authenticated username
+  @PreAuthorize("#username == authentication.name") // Users can only access their own data
   public Order getOrder(String username, Long orderId) {
-    return orderRepo.findByIdAndUsername(orderId, username) // => Query with composite key
-      .orElseThrow(() -> new AccessDeniedException("Not authorized")); // => Explicit access denial
+    return orderRepo.findByIdAndUsername(orderId, username)
+      .orElseThrow(() -> new AccessDeniedException("Not authorized"));
   }
 
-  @PreAuthorize("hasRole('ADMIN') or #order.username == authentication.name") // => Admin OR resource owner can update
+  @PreAuthorize("hasRole('ADMIN') or #order.username == authentication.name")
   public Order updateOrder(Order order) {
-    return orderRepo.save(order); // => Persist updated order (authorization already checked)
+    return orderRepo.save(order); // => Admins can update any order, users only their own
   }
 
-  @PostAuthorize("returnObject.username == authentication.name") // => Check AFTER execution (compare returned order's owner)
+  @PostAuthorize("returnObject.username == authentication.name") // Check after method execution
   public Order loadOrder(Long orderId) {
-    return orderRepo.findById(orderId).orElseThrow(); // => Fetch order first
-    // => THEN Spring verifies returnObject.username matches authentication.name
+    return orderRepo.findById(orderId).orElseThrow();
+    // => Method executes, then Spring checks if returned order belongs to current user
   }
 }
 
@@ -542,14 +505,14 @@ public class OrderService {
 public class OrderController {
   @Autowired private OrderService orderService;
 
-  @GetMapping("/my-orders") // => Endpoint: GET /api/orders/my-orders
-  public List<Order> getMyOrders(@AuthenticationPrincipal UserDetails user) { // => Inject authenticated user
-    return orderService.getMyOrders(user.getUsername()); // => Pass authenticated username to service layer
+  @GetMapping("/my-orders")
+  public List<Order> getMyOrders(@AuthenticationPrincipal UserDetails user) {
+    return orderService.getMyOrders(user.getUsername());
   }
 
   @GetMapping("/all")
   public List<Order> getAllOrders() {
-    return orderService.getAllOrders(); // => Service method checks @PreAuthorize("hasRole('ADMIN')")
+    return orderService.getAllOrders(); // => Throws AccessDeniedException if not ADMIN
   }
 }
 ```
@@ -583,71 +546,71 @@ public class JwtUtil {
   private String secret = "mySecretKey1234567890123456789012"; // 256-bit key
   private long expiration = 86400000; // 24 hours
 
-  public String generateToken(String username) { // => Create JWT token for authenticated user
-    return Jwts.builder() // => Start JWT builder
-      .subject(username) // => Set "sub" claim (token owner)
-      .issuedAt(new Date()) // => Set "iat" claim (issued at timestamp)
-      .expiration(new Date(System.currentTimeMillis() + expiration)) // => Set "exp" claim (24h from now)
-      .signWith(Keys.hmacShaKeyFor(secret.getBytes())) // => Sign with HS256 algorithm
-      .compact(); // => Serialize to Base64-encoded string
-    // => Result format: header.payload.signature (JWT standard)
+  public String generateToken(String username) {
+    return Jwts.builder()
+      .subject(username)
+      .issuedAt(new Date())
+      .expiration(new Date(System.currentTimeMillis() + expiration))
+      .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+      .compact();
+    // => eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTYzMjQ...
   }
 
-  public String extractUsername(String token) { // => Parse JWT and extract username
-    return Jwts.parser() // => Create JWT parser
-      .verifyWith(Keys.hmacShaKeyFor(secret.getBytes())) // => Verify signature with same secret key
-      .build() // => Build parser instance
-      .parseSignedClaims(token) // => Parse and validate JWT (throws if invalid/expired)
-      .getPayload() // => Extract claims (payload section)
-      .getSubject(); // => Get "sub" claim (username)
+  public String extractUsername(String token) {
+    return Jwts.parser()
+      .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+      .build()
+      .parseSignedClaims(token)
+      .getPayload()
+      .getSubject();
   }
 
-  public boolean isTokenValid(String token, String username) { // => Comprehensive token validation
+  public boolean isTokenValid(String token, String username) {
     try {
-      String extractedUser = extractUsername(token); // => Parse token (throws if tampered/invalid)
-      return extractedUser.equals(username) && !isTokenExpired(token); // => Check username match + expiration
-    } catch (Exception e) { // => Catch signature verification failures, malformed tokens
-      return false; // => Invalid token
+      String extractedUser = extractUsername(token);
+      return extractedUser.equals(username) && !isTokenExpired(token);
+    } catch (Exception e) {
+      return false;
     }
   }
 
-  private boolean isTokenExpired(String token) { // => Check if token has expired
-    Date expiration = Jwts.parser() // => Create parser
-      .verifyWith(Keys.hmacShaKeyFor(secret.getBytes())) // => Verify signature
-      .build() // => Build parser
-      .parseSignedClaims(token) // => Parse JWT
-      .getPayload() // => Extract claims
-      .getExpiration(); // => Get "exp" claim (expiration timestamp)
-    return expiration.before(new Date()); // => Compare exp with current time
+  private boolean isTokenExpired(String token) {
+    Date expiration = Jwts.parser()
+      .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+      .build()
+      .parseSignedClaims(token)
+      .getPayload()
+      .getExpiration();
+    return expiration.before(new Date());
   }
 }
 
 // JWT authentication filter
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-  @Autowired private JwtUtil jwtUtil; // => Inject JWT utility for token operations
-  @Autowired private UserDetailsService userDetailsService; // => Inject user details service
+  @Autowired private JwtUtil jwtUtil;
+  @Autowired private UserDetailsService userDetailsService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
     throws ServletException, IOException {
 
-    String header = request.getHeader("Authorization"); // => Extract Authorization header
-    if (header != null && header.startsWith("Bearer ")) { // => Check for Bearer token format
-      String token = header.substring(7); // => Remove "Bearer " prefix (7 chars)
-      String username = jwtUtil.extractUsername(token); // => Parse JWT to extract username
+    String header = request.getHeader("Authorization");
+    if (header != null && header.startsWith("Bearer ")) {
+      String token = header.substring(7); // Remove "Bearer " prefix
+      String username = jwtUtil.extractUsername(token);
 
-      if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) { // => Valid username + not already authenticated
-        UserDetails user = userDetailsService.loadUserByUsername(username); // => Load user from database/cache
-        if (jwtUtil.isTokenValid(token, username)) { // => Verify signature + expiration + username match
-          UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken( // => Create Spring Security auth token
-            user, null, user.getAuthorities() // => principal, credentials (null for JWT), authorities
+      if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        UserDetails user = userDetailsService.loadUserByUsername(username);
+        if (jwtUtil.isTokenValid(token, username)) {
+          UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+            user, null, user.getAuthorities()
           );
-          SecurityContextHolder.getContext().setAuthentication(auth); // => Set authentication in security context
+          SecurityContextHolder.getContext().setAuthentication(auth);
         }
       }
     }
-    chain.doFilter(request, response); // => Continue filter chain (with or without authentication)
+    chain.doFilter(request, response);
   }
 }
 
@@ -660,17 +623,17 @@ public class JwtSecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-      .csrf(csrf -> csrf.disable()) // => Disable CSRF (not needed for stateless JWT APIs)
-      .authorizeHttpRequests(auth -> auth // => Configure authorization
-        .requestMatchers("/auth/**").permitAll() // => Public auth endpoints (login, register)
-        .anyRequest().authenticated() // => All other endpoints require JWT
+      .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/auth/**").permitAll()
+        .anyRequest().authenticated()
       )
-      .sessionManagement(session -> session // => Configure session management
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // => No HTTP sessions (JWT is stateless)
+      .sessionManagement(session -> session
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions
       )
-      .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // => Insert JWT filter before default auth filter
+      .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build(); // => Build SecurityFilterChain bean
+    return http.build();
   }
 }
 
@@ -678,15 +641,15 @@ public class JwtSecurityConfig {
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-  @Autowired private AuthenticationManager authManager; // => Spring Security authentication manager
-  @Autowired private JwtUtil jwtUtil; // => Inject JWT utility
+  @Autowired private AuthenticationManager authManager;
+  @Autowired private JwtUtil jwtUtil;
 
-  @PostMapping("/login") // => Endpoint: POST /auth/login
-  public ResponseEntity<String> login(@RequestBody LoginRequest request) { // => Accept JSON login request
-    authManager.authenticate( // => Validate username + password (throws if invalid)
-      new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()) // => Create auth token
-    ); // => If authentication fails, throws BadCredentialsException
-    String token = jwtUtil.generateToken(request.getUsername()); // => Generate JWT for authenticated user
+  @PostMapping("/login")
+  public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    authManager.authenticate(
+      new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+    );
+    String token = jwtUtil.generateToken(request.getUsername());
     return ResponseEntity.ok(token); // => Return JWT to client
   }
 }
@@ -764,33 +727,33 @@ public class OAuth2Config {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-      .authorizeHttpRequests(auth -> auth // => Configure URL authorization
-        .requestMatchers("/", "/login", "/error").permitAll() // => Public pages
-        .anyRequest().authenticated() // => All others require OAuth2 login
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/", "/login", "/error").permitAll()
+        .anyRequest().authenticated()
       )
-      .oauth2Login(oauth2 -> oauth2 // => Configure OAuth2 login
-        .loginPage("/login") // => Custom login page (links to Google/GitHub)
-        .defaultSuccessUrl("/dashboard") // => Redirect after successful OAuth2 authentication
+      .oauth2Login(oauth2 -> oauth2
+        .loginPage("/login")
+        .defaultSuccessUrl("/dashboard")
       );
 
-    return http.build(); // => Build SecurityFilterChain bean
+    return http.build();
   }
 }
 
 // Controller
 @RestController
 public class ProfileController {
-  @GetMapping("/dashboard") // => Protected endpoint
-  public String dashboard(@AuthenticationPrincipal OAuth2User principal) { // => Inject OAuth2 authenticated user
-    String name = principal.getAttribute("name"); // => Extract "name" claim from provider
-    String email = principal.getAttribute("email"); // => Extract "email" claim
+  @GetMapping("/dashboard")
+  public String dashboard(@AuthenticationPrincipal OAuth2User principal) {
+    String name = principal.getAttribute("name");
+    String email = principal.getAttribute("email");
     return "Welcome, " + name + " (" + email + ")";
     // => Extracts user info from OAuth2 provider
   }
 
   @GetMapping("/user-info")
   public Map<String, Object> userInfo(@AuthenticationPrincipal OAuth2User principal) {
-    return principal.getAttributes(); // => Complete OAuth2 profile (name, email, picture, etc.)
+    return principal.getAttributes(); // => All user attributes from provider
   }
 }
 
@@ -1341,32 +1304,6 @@ public class CachePitfallsService {
 **Key Takeaway**: Choose caching strategies based on consistency needs—cache-aside for reads, write-through for updates, sync for stampede prevention.
 
 **Why It Matters**: Cache-aside pattern with sync=true prevents cache stampedes where 1000 concurrent requests for an expired cache entry trigger 1000 identical database queries, causing database CPU spikes that cascade into timeouts. Production caching strategies use short TTLs (minutes) for frequently changing data versus long TTLs (hours/days) for static data, with cache warming during deployment preventing cold cache performance degradation where the first user request experiences 5-second latency while loading cache.
-
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TD
-    A[1000 Concurrent Requests] --> B{Cache Entry Expired?}
-
-    B -->|Without sync=true| C[1000 Threads Query DB]
-    C --> D[Database Overload]
-    D --> E[Timeouts & Errors]
-
-    B -->|With sync=true| F[First Thread Locks]
-    F --> G[Thread 1: Query DB]
-    F --> H[Threads 2-1000: Wait]
-    G --> I[Load Result]
-    I --> J[Store in Cache]
-    J --> K[Release Lock]
-    K --> L[All Threads Get Cached Value]
-    L --> M[No Database Overload]
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style C fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style J fill:#029E73,stroke:#000,color:#fff
-    style M fill:#029E73,stroke:#000,color:#fff
-```
 
 ---
 
@@ -2024,7 +1961,7 @@ public class RequestResponseLoggingFilter implements Filter {
         System.out.println("FILTER: Before request - " + req.getRequestURI());
         // => Executes before DispatcherServlet
 
-        chain.doFilter(request, response); // => Continue filter chain (with or without authentication)
+        chain.doFilter(request, response);
 
         System.out.println("FILTER: After response");
         // => Executes after response sent

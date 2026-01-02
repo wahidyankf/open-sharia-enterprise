@@ -1,6 +1,6 @@
 ---
 title: "Advanced"
-date: 2026-01-01T22:32:13+07:00
+date: 2026-01-02T07:21:44+07:00
 draft: false
 weight: 10000003
 description: "Examples 61-85: PostgreSQL expert mastery covering advanced indexing, query optimization, full-text search, partitioning, and administration (75-95% coverage)"
@@ -1462,7 +1462,7 @@ CREATE FOREIGN TABLE remote_users (
     age INTEGER
 ) SERVER remote_server
 OPTIONS (schema_name 'public', table_name 'users');
--- => Accesses users table from example_3 database
+-- => Accesses users table from remote database on the FDW server
 
 -- Query foreign table (appears like local table)
 SELECT * FROM remote_users;
