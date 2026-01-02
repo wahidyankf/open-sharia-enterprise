@@ -11,7 +11,7 @@ tags:
   - bilingual
   - educational
 created: 2025-12-13
-updated: 2025-12-27
+updated: 2026-01-02
 ---
 
 # Hugo Content Convention - ayokoding-web
@@ -101,7 +101,59 @@ apps/ayokoding-web/content/
     └── video-content/                     # Video content (English)
 ```
 
----
+## Code Annotation Standards
+
+**CRITICAL: All code examples in ayokoding-web content must meet annotation density standards**
+
+### Annotation Density Requirement
+
+**Target**: 1.0-2.25 comment lines per code line **PER EXAMPLE**
+
+- **Minimum**: 1.0 (examples below need enhancement)
+- **Optimal**: 1-2.25 (target range for educational value)
+- **Upper bound**: 2.5 (examples exceeding need reduction)
+
+### Application Scope
+
+This standard applies to ALL code examples across:
+
+- ✅ All tutorial types (by-example, beginner, intermediate, advanced, quick start, cookbook, initial setup)
+- ✅ All learning content (learn/, belajar/)
+- ✅ All programming languages (Java, TypeScript, Python, Go, etc.)
+- ✅ Both languages (English en/ and Indonesian id/)
+- ✅ No exceptions - even simple examples should meet this standard
+
+### Measurement Method
+
+- **Per example**: Each code block is measured independently
+- **Not per file**: File averages are informative but not the validation target
+- **Consistency**: Similar annotation depth across all examples aids learning
+
+### Annotation Pattern
+
+Use `// =>` or `# =>` notation to document:
+
+- **Simple lines** (1 annotation): Variable declarations, simple operations
+- **Complex lines** (2 annotations): Method calls with multiple effects, state changes
+- **Required**: Values, states, outputs, side effects, intermediate steps
+
+**Example**:
+
+```java
+int x = 10;                      // => x is 10 (type: int)
+String result = transform(x);    // => Calls transform with 10
+                                 // => result is "10-transformed" (type: String)
+System.out.println(result);      // => Output: 10-transformed
+```
+
+### Quality Over Quantity
+
+- Focus on concise explanations that scale with code complexity
+- Simple operations get brief annotations
+- Complex operations get detailed breakdowns
+- Avoid repetitive patterns across similar code
+
+## **Detailed guidance**: See [By-Example Tutorial Convention](../tutorial/ex-co-tu__by-example.md#educational-comment-standards) for comprehensive annotation patterns and examples.
 
 ## Hextra Theme
 

@@ -1,6 +1,6 @@
 ---
 name: apps__ayokoding-web__by-example-maker
-description: Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses five-part format (explanation, diagram, annotated code, takeaway, why it matters) with self-contained examples and density-based annotations (1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5)).
+description: Expert at creating by-example tutorials with 75-90 annotated code examples achieving 95% coverage for ayokoding-web. Uses five-part format (explanation, diagram, annotated code, takeaway, why it matters) with self-contained examples and density-based annotations (1-2.25 comment lines per code line PER EXAMPLE).
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 model: sonnet
 color: blue
@@ -30,7 +30,7 @@ Your primary job is to **create by-example tutorial content** for experienced de
 3. **Self-contained examples** that are copy-paste-runnable within chapter scope
 4. **Five-part format** for each example: brief explanation, diagram (when appropriate), heavily annotated code, key takeaway, why it matters
 5. **Color-blind friendly diagrams** using verified accessible palette
-6. **Density-based annotations** - 1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5 - scales naturally with complexity)
+6. **Density-based annotations** - 1.0-2.25 comment lines per code line PER EXAMPLE (upper bound: 2.5)
 7. **Hugo-compliant structure** with proper frontmatter and navigation
 
 ## Convention Authority
@@ -44,7 +44,7 @@ This convention defines:
 - Example count range (75-90 total, 25-30 per level)
 - Five-part example format (explanation → diagram → annotated code → takeaway → why it matters)
 - Self-containment rules (examples must be copy-paste-runnable)
-- Educational comment standards (`// =>` notation, 1-2 comment lines per code line)
+- Educational comment standards (`// =>` notation, 1.0-2.25 per example)
 - Diagram frequency target (30-50% of examples)
 - Color-blind friendly palette (mandatory)
 
@@ -173,7 +173,7 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 
 **Core requirement**: Every significant line must have an inline comment
 
-**Annotation Density**: Target 1-2.25 lines of comment for every line of code:
+**Annotation Density PER EXAMPLE**: Target 1.0-2.25 lines of comment for every line of code:
 
 - Simple lines (variable declarations, simple operations): 1 line of annotation
 - Complex lines (method calls with multiple effects, state changes): 2 lines of annotation
@@ -744,7 +744,7 @@ Before completing by-example content, verify:
 
 ### Code Quality
 
-- [ ] Every significant line has inline comment (1-2.25 lines per code line, upper bound: 2.5)
+- [ ] Every significant line has inline comment (1.0-2.25 per code line PER EXAMPLE, upper bound: 2.5)
 - [ ] `// =>` or `# =>` notation shows outputs and states
 - [ ] Variable states documented at each step
 - [ ] Code is formatted with standard tools

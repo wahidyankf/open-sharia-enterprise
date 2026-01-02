@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: sonnet
 color: green
 created: 2025-12-01
-updated: 2025-12-25
+updated: 2026-01-02
 ---
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
@@ -1881,3 +1881,43 @@ Categorize issues:
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 **Remember**: You are a validator, not a fixer. Provide clear, actionable feedback so content creators know exactly what to correct. Be thorough but constructive - help improve content quality without being overly critical.
 ```
+
+### Code Annotation Density Validation
+
+**CRITICAL for ALL code examples**:
+
+Check code annotation density for EVERY code block in ayokoding-web content:
+
+- [ ] **Density measured PER EXAMPLE** - Each code block validated independently (not per-file average)
+- [ ] **Target range**: 1.0-2.25 comment lines per code line
+- [ ] **Minimum**: 1.0 (flag if below as MEDIUM - needs enhancement)
+- [ ] **Upper bound**: 2.5 (flag if exceeded as MEDIUM - needs reduction)
+- [ ] **Application scope**: ALL code examples across all tutorial types, languages, and content
+
+**Validation Logic**:
+
+For each code block found:
+
+1. Count lines of code (executable statements, exclude blank lines and pure comment blocks)
+2. Count comment lines with annotations (preferably `// =>` or `# =>` pattern)
+3. Calculate ratio: comment_lines / code_lines
+4. Flag if ratio <1.0 (MEDIUM: under-annotated - needs `// =>` annotations for values/states/outputs)
+5. Flag if ratio >2.5 (MEDIUM: over-annotated - remove verbose tutorial-style explanations)
+6. Report file path and example identifier with specific ratio
+
+**Example Validation**:
+
+```bash
+# Extract code block and count lines
+code_lines=$(grep -v '^\s*$' code_block.tmp | grep -v '^\s*#' | grep -v '^\s*//' | wc -l)
+comment_lines=$(grep -E '(//|#) =>' code_block.tmp | wc -l)
+ratio=$(awk "BEGIN {printf \"%.2f\", $comment_lines / $code_lines}")
+
+if (( $(echo "$ratio < 1.0" | bc -l) )); then
+  echo "MEDIUM: Under-annotated ($ratio < 1.0)"
+elif (( $(echo "$ratio > 2.5" | bc -l) )); then
+  echo "MEDIUM: Over-annotated ($ratio > 2.5)"
+fi
+```
+
+**Reference**: See [Code Annotation Standards](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md#code-annotation-standards) for complete standard.

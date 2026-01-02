@@ -10,7 +10,7 @@ tags:
   - education
   - code-first
 date: 2025-12-25T00:00:00+07:00
-lastmod: 2026-01-01T15:58:31+07:00
+lastmod: 2026-01-02
 draft: false
 weight: 2300
 ---
@@ -189,7 +189,7 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 
 **CRITICAL REQUIREMENT: Annotation Density Standard**
 
-- **Density target**: 1-2 lines of comment for every line of code
+- **Density target**: 1-2.25 lines of comment for every line of code
 - **Simple lines**: 1 line of annotation (variable declarations, simple operations)
 - **Complex lines**: 2 lines of annotation (method calls with multiple effects, state changes)
 - **Focus**: Concise explanations that scale naturally with code complexity
@@ -211,7 +211,7 @@ fmt.Println(result)              // => Output: 20-transformed
 
 **Required annotations**:
 
-- **Annotation density**: 1-2 lines of comment per line of code
+- **Annotation density**: 1-2.25 lines of comment per line of code
 - **Pattern matching**: Document which branch matched and why
 - **Execution flow**: Show control flow decisions (which if/case branch taken)
 
@@ -357,6 +357,24 @@ Use the `handleRequest` function from Example 12 (code not shown).
 **Golden rule**: If you delete all other examples, this example should still compile and run.
 
 ## Educational Comment Standards
+
+### Annotation Density Measurement
+
+**CRITICAL: Density is measured PER EXAMPLE, not per file average**
+
+- Each individual example must achieve 1.0-2.25 comment lines per code line
+- Examples exceeding 2.5 density must be reduced to ≤2.5
+  - Remove verbose tutorial-style explanations
+  - Keep only essential `// =>` state tracking
+- Examples below 1.0 density must be enhanced to ≥1.0
+  - Add `// =>` annotations showing values, states, outputs
+  - Document intermediate steps and state changes
+- File-level density averages are informative but not the validation target
+- Each example should be self-contained with consistent annotation depth
+
+**Why per-example**: Users learn from individual examples. Consistent annotation depth across all examples aids learning and ensures educational value at every level.
+
+**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../hugo/ex-co-hu__ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
 
 ### Output Annotation Pattern
 
@@ -676,7 +694,7 @@ Before publishing by-example content, verify:
 ### Code Quality
 
 - [ ] Every significant line has inline comment
-- [ ] Annotation density meets target (1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5))
+- [ ] Annotation density meets target PER EXAMPLE (1.0-2.25 comment lines per code line, reduce if >2.5, enhance if <1.0)
 - [ ] Annotations explain WHY (not just WHAT)
 - [ ] Pattern matching branches documented (which matched, why)
 - [ ] Execution flow decisions shown (if/case branches, timing)

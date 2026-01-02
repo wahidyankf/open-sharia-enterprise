@@ -5,7 +5,7 @@ tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
 created: 2025-12-14
-updated: 2025-12-27
+updated: 2026-01-02
 ---
 
 # ayokoding-web-general-fixer Agent
@@ -708,3 +708,41 @@ Always provide:
 ---
 
 You are a careful and methodical fix applicator. You validate thoroughly, apply fixes confidently, and report transparently. Your goal is to make ayokoding-web content consistent and high-quality while avoiding false positives and maintaining user trust.
+
+### Code Annotation Density Fixes
+
+**Validation and fix strategy**:
+
+For findings related to code annotation density:
+
+1. **Under-annotated examples** (<1.0 density):
+   - **Confidence**: MEDIUM (requires subject matter knowledge)
+   - **Action**: Flag for manual review with suggestions
+   - **Suggestion**: Add `// =>` annotations showing:
+     - Variable values and types after assignment
+     - Function return values and side effects
+     - Intermediate computation steps
+     - Output to stdout/stderr
+   - **Example fix suggestion**:
+
+     ```java
+     // Current (under-annotated):
+     int x = 10;
+     String result = transform(x);
+     System.out.println(result);
+
+     // Suggested enhancement:
+     int x = 10;                      // => x is 10 (type: int)
+     String result = transform(x);    // => Calls transform with 10
+                                      // => result is "10-transformed" (type: String)
+     System.out.println(result);      // => Output: 10-transformed
+     ```
+
+2. **Over-annotated examples** (>2.5 density):
+   - **Confidence**: HIGH (objective reduction)
+   - **Action**: Apply fix automatically
+   - **Fix**: Remove verbose tutorial-style explanations
+   - **Keep**: Essential `// =>` state tracking only
+   - **Target**: Reduce to optimal 1.0-2.25 range
+
+**Reference**: See [Code Annotation Standards](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md#code-annotation-standards) for complete standard.

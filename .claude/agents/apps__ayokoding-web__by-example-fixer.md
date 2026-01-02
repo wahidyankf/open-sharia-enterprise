@@ -239,9 +239,9 @@ y := x * 2                   // => y is 20 (x still 10)
 
 **Re-validation required**: Ensure takeaway accurately reflects the example's core insight.
 
-**2.5. Adjust annotation density** (verify educational value preserved):
+**2.5. Adjust annotation density PER EXAMPLE** (verify educational value preserved):
 
-**Under-annotated examples** (density < 1.0):
+**Under-annotated examples** (density < 1.0 per example):
 
 ```go
 // BEFORE (under-annotated, density ~0.5)
@@ -255,7 +255,7 @@ result := transform(x)           // => result is "transformed-X" (string)
 output(result)                   // => Output: transformed-X
 ```
 
-**Over-annotated examples** (density > 2.5):
+**Over-annotated examples** (density > 2.5 per example):
 
 ```go
 // BEFORE (over-annotated, density ~3.0)
@@ -270,9 +270,9 @@ x := os.Args[1]                  // => x is first CLI argument (type: string)
 
 **Re-validation required**:
 
-- For under-annotated: Verify which lines need annotations (not all lines are significant)
-- For over-annotated: Ensure condensing preserves educational value (don't lose critical insights)
-- Target range: 1.0-2.25 comment lines per code line
+- For under-annotated: Verify which lines need annotations (per example) (not all lines are significant)
+- For over-annotated: Ensure condensing preserves value (per example) (don't lose critical insights)
+- Target range: 1.0-2.25 comment lines per code line PER EXAMPLE
 - Upper bound: Never exceed 2.5 (condense if over limit)
 
 **Confidence**: MEDIUM (requires judgment on educational value vs verbosity tradeoff)

@@ -186,7 +186,7 @@ When documenting markdown structure, use **4 backticks for outer fence, 3 for in
 
 ### Tutorial Standards
 
-Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (95% coverage through 75-90 annotated examples, 1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5 - reduce if exceeded), five-part format for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
+Seven tutorial types: Initial Setup (0-5%), Quick Start (5-30%), Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%), Cookbook (practical recipes), By Example (95% coverage through 75-90 annotated examples, 1-2.25 comment lines per code line PER EXAMPLE (target: 1-2.25, upper bound: 2.5), five-part format for experienced developers). Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
 
 ### Content Quality Principles
 
@@ -201,7 +201,7 @@ Universal methodology for verifying factual correctness using WebSearch/WebFetch
 Three specialized documents:
 
 - [Shared](./docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Common conventions for all Hugo sites
-- [ayokoding-web](./docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme, bilingual (default English, no automatic mirroring), level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**
+- [ayokoding-web](./docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme, bilingual (default English, no automatic mirroring), level-based weight system (powers of 10), 2-layer navigation depth with complete coverage, overview/ikhtisar links required, **absolute paths with language prefix for all internal links**, **code annotation density standard (1-2.25 comment lines per code line PER EXAMPLE)**
 - [ose-platform-web](./docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - PaperMod theme, English-only landing page
 
 Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) (5 tutorial levels, cookbook at position 3, best practices).

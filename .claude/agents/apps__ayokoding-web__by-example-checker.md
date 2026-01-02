@@ -1,6 +1,6 @@
 ---
 name: apps__ayokoding-web__by-example-checker
-description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, density-based annotations (1-2.25 comment lines per code line), and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
+description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, density-based annotations (1-2.25 comment lines per code line PER EXAMPLE), and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: yellow
@@ -253,7 +253,7 @@ Read sample examples and verify annotations show:
 
 **Issues found**:
 
-- Example {N}: Density ratio {ratio} (under-annotated if <1.0, over-annotated if >2.5)
+- Example {N}: Density ratio {ratio} PER EXAMPLE (under-annotated if <1.0, over-annotated if >2.5)
 - Example {M}: Complex line missing second annotation (line {L})
 
 **Criticality levels**:
@@ -266,7 +266,7 @@ Read sample examples and verify annotations show:
 **Status**: ✅ PASS | ⚠️ MEDIUM | ❌ FAIL
 **Confidence**: MEDIUM
 
-**Recommendation**: Maintain 1-2.25 comment lines per code line. Simple operations: 1 line, complex operations: 2 lines, very complex: up to 2.25 lines. If density exceeds 2.5, condense annotations to bring within target range.
+**Recommendation**: Maintain 1.0-2.25 comment lines per code line PER EXAMPLE. Simple operations: 1 line, complex operations: 2 lines, very complex: up to 2.25 lines. If density exceeds 2.5, condense annotations to bring within target range.
 
 ### Step 6: Validate Diagram Presence and Quality
 
@@ -619,7 +619,7 @@ Use three-tier confidence system:
 - Example count within 75-90 range
 - Coverage includes ≥7/8 major topic areas
 - ≥90% examples are self-contained
-- Annotation density ratio 1.0-2.25 (1-2.25 comment lines per code line, upper bound: 2.5)
+- Annotation density 1.0-2.25 PER EXAMPLE (upper bound: 2.5)
 - Diagram frequency within ±10% of targets
 - No subgraphs in diagrams (mobile-friendly splitting)
 - Diagrams have ≤5 branches per node
