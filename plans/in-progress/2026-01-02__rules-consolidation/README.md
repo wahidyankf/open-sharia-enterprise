@@ -4,11 +4,11 @@
 
 This plan consolidates rules by fixing Skills naming convention, adding missing Skills references, creating new Skills for complete agent coverage, assigning skills to all agents, and fixing factual inaccuracies in delivery infrastructure documentation.
 
-**Status**: Backlog
+**Status**: In Progress
 **Created**: 2026-01-02
 **Last Updated**: 2026-01-02
 **Project Type**: Governance Enhancement
-**Estimated Complexity**: Medium (~50 files across 7 phases)
+**Estimated Complexity**: Medium (~50 files across 8 phases)
 
 ## Pre-Plan Audit Results
 
@@ -24,6 +24,7 @@ A comprehensive audit was conducted before plan creation. Key findings:
 | Missing Agents                    | ❌ 1 missing                    | `apps__ayokoding-web__link-fixer` needed for MCF pattern   |
 | New Skills Needed                 | ❌ 7 needed                     | 7 new Skills to cover all agent domains                    |
 | Factual Accuracy                  | ❌ 6 errors                     | 6 documents have incorrect delivery model                  |
+| Tutorial Docs Consolidation       | ⚠️ 2 files overlap              | `ex-co-tu__programming-language-*` can be merged           |
 | CLAUDE.md Size                    | ✅ Under Limit                  | 28,473 characters (target: 30k)                            |
 
 ## Skills Naming Best Practices
@@ -103,6 +104,16 @@ Add non-empty skills validation to wow\_\_rules-checker.
 
 Create `apps__ayokoding-web__link-fixer` to complete the Maker-Checker-Fixer pattern for ayokoding-web link validation.
 
+### Phase 7: Consolidate Tutorial Documentation
+
+Merge overlapping tutorial convention documents:
+
+- `ex-co-tu__programming-language-content.md` + `ex-co-tu__programming-language-structure.md` → single consolidated doc
+
+## Implementation Constraint: Bash Tools for .claude/
+
+**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous agent operation without user approval prompts. See [AI Agents Convention](../../../docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
+
 ## Correct Delivery Model
 
 ```mermaid
@@ -163,6 +174,7 @@ This plan uses **multi-file structure**:
 | Factual Errors              | 6                  | 0              |
 | Total Skills                | 10                 | 17             |
 | Total Agents                | 44                 | 45             |
+| Tutorial Convention Docs    | 2 overlapping      | 1 consolidated |
 
 ## Related Documentation
 

@@ -362,6 +362,74 @@ The `apps__ayokoding-web__link-checker` agent exists but has no corresponding fi
 
 ---
 
+## Phase 7: Consolidate Tutorial Documentation
+
+### Goal
+
+Merge related tutorial convention documents to reduce duplication and improve maintainability.
+
+### Implementation Steps
+
+- [ ] **7.1 Analyze current content**
+  - [ ] Read `ex-co-tu__programming-language-content.md` for content requirements
+  - [ ] Read `ex-co-tu__programming-language-structure.md` for structural organization
+  - [ ] Identify overlapping vs unique content
+
+- [ ] **7.2 Merge content into structure document**
+  - [ ] Add content requirements section to `ex-co-tu__programming-language-structure.md`
+  - [ ] Ensure no content is lost
+  - [ ] Update frontmatter (title, description, updated date)
+
+- [ ] **7.3 Delete original content file**
+  - [ ] Remove `ex-co-tu__programming-language-content.md`
+
+- [ ] **7.4 Update all references**
+  - [ ] Search for references: `grep -r "programming-language-content" docs/`
+  - [ ] Update CLAUDE.md if referenced
+  - [ ] Update conventions README
+
+### Validation Checklist
+
+- [ ] Consolidated document contains all original content
+- [ ] No broken links to deleted file
+- [ ] Conventions README updated
+
+---
+
+## Implementation Constraints
+
+### CRITICAL: Bash Tools for .claude/ Folder
+
+**All file operations in `.claude/` folders MUST use Bash tools:**
+
+```bash
+# Creating new files (use heredoc)
+cat <<'EOF' > .claude/skills/new-skill/SKILL.md
+---
+name: new-skill
+description: Description here
+---
+Content here
+EOF
+
+# Editing files (use sed)
+sed -i 's/old-value/new-value/g' .claude/agents/agent.md
+
+# Complex edits (use awk)
+awk '...' .claude/agents/agent.md > temp && mv temp .claude/agents/agent.md
+```
+
+**WHY**: Enables autonomous agent operation without user approval prompts.
+
+**APPLIES TO**:
+
+- Phase 0: Renaming Skills in `.claude/skills/`
+- Phase 2: Creating new Skills in `.claude/skills/`
+- Phase 3: Updating agent `skills:` field in `.claude/agents/`
+- Phase 6: Creating new agent in `.claude/agents/`
+
+---
+
 ## Dependencies
 
 | Phase   | Depends On | Reason                                                  |
@@ -370,6 +438,7 @@ The `apps__ayokoding-web__link-checker` agent exists but has no corresponding fi
 | Phase 3 | Phase 2    | Agents need new Skills to exist before assignment       |
 | Phase 5 | Phase 3    | Validation needs all agents to have skills assigned     |
 | Phase 6 | Phase 2    | New agent needs `validating-links` skill to exist       |
+| Phase 7 | None       | Independent - can run anytime after Phase 0             |
 
 ---
 
@@ -403,6 +472,8 @@ The `apps__ayokoding-web__link-checker` agent exists but has no corresponding fi
 - [ ] All 6 factual inaccuracies fixed
 - [ ] wow\_\_rules-checker validates Skills coverage
 - [ ] apps**ayokoding-web**link-fixer agent created
+- [ ] Tutorial documentation consolidated (2 files → 1)
+- [ ] All `.claude/` modifications used Bash tools (not Write/Edit)
 
 ### Testing
 
@@ -410,21 +481,24 @@ The `apps__ayokoding-web__link-checker` agent exists but has no corresponding fi
 - [ ] Verify all Skills reference links resolve
 - [ ] Verify all agent skills references resolve
 - [ ] Verify link-fixer completes MCF pattern for ayokoding-web links
+- [ ] Verify no broken links to consolidated tutorial doc
 
 ---
 
 ## Completion Status
 
-| Phase                                      | Status      | Notes                    |
-| ------------------------------------------ | ----------- | ------------------------ |
-| Phase 0: Fix Skills Naming Convention      | Not Started | 1 violation + 10 renames |
-| Phase 1: Add References to Existing Skills | Not Started | 7 Skills                 |
-| Phase 2: Create New Skills                 | Not Started | 7 new Skills             |
-| Phase 3: Assign Skills to All Agents       | Not Started | 39 agents + 5 updates    |
-| Phase 4: Fix Factual Inaccuracies          | Not Started | 6 documents              |
-| Phase 5: Enhance Validation                | Not Started | wow\_\_rules-checker     |
-| Phase 6: Create Missing Link Fixer Agent   | Not Started | 1 new agent              |
+| Phase                                       | Status      | Notes                    |
+| ------------------------------------------- | ----------- | ------------------------ |
+| Phase 0: Fix Skills Naming Convention       | Not Started | 1 violation + 10 renames |
+| Phase 1: Add References to Existing Skills  | Not Started | 7 Skills                 |
+| Phase 2: Create New Skills                  | Not Started | 7 new Skills             |
+| Phase 3: Assign Skills to All Agents        | Not Started | 39 agents + 5 updates    |
+| Phase 4: Fix Factual Inaccuracies           | Not Started | 6 documents              |
+| Phase 5: Enhance Validation                 | Not Started | wow\_\_rules-checker     |
+| Phase 6: Create Missing Link Fixer Agent    | Not Started | 1 new agent              |
+| Phase 7: Consolidate Tutorial Documentation | Not Started | 2 files → 1              |
 
 **Overall Status**: Not Started
 **Ready for Production**: No
 **Total Agents After**: 45 (44 + 1 new)
+**Convention Docs After**: 23 (24 - 1 consolidated)

@@ -84,6 +84,19 @@ Create missing `apps__ayokoding-web__link-fixer` agent to complete the Maker-Che
 - Update/remove broken external links (with user confirmation)
 - Re-validate before applying fixes (confidence levels)
 
+### FR-7: Consolidate Tutorial Documentation
+
+Merge related tutorial convention documents to reduce duplication and improve maintainability.
+
+**Current State**: Two separate documents with overlapping content:
+
+- `ex-co-tu__programming-language-content.md` - Content requirements for language tutorials
+- `ex-co-tu__programming-language-structure.md` - Structural organization
+
+**Target State**: Single consolidated document with both content and structure guidance.
+
+**Rationale**: These documents are tightly coupled and often referenced together. Consolidation reduces maintenance burden and improves discoverability.
+
 ## Non-Functional Requirements
 
 ### NFR-1: No Breaking Changes
@@ -132,6 +145,26 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 - Validation Skills: `Read, Glob, Grep, Write, Bash`
 - Link validation Skills: `Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash`
 - Git workflow Skills: `Bash`
+
+### C-5: Bash Tools for .claude/ Folder Edits
+
+**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools.
+
+**Rationale**: This enables autonomous agent operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../../docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
+
+**Applies to**:
+
+- Creating new Skills in `.claude/skills/`
+- Creating new agents in `.claude/agents/`
+- Updating Skills/agents frontmatter
+- Any file modification within `.claude/` directory
+
+**Implementation guidance**:
+
+- Use `cat <<'EOF' > file` for creating new files
+- Use `sed -i` for inline edits
+- Use `awk` for complex transformations
+- NEVER use Write or Edit tools for `.claude/` files
 
 ## Success Criteria
 
@@ -184,6 +217,14 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 - [ ] Agent has correct frontmatter (name, description, tools, model, color, skills)
 - [ ] Agent registered in `.claude/agents/README.md`
 - [ ] CLAUDE.md agent list updated
+
+### Phase 7: Consolidate Tutorial Documentation
+
+- [ ] `ex-co-tu__programming-language-content.md` merged into `ex-co-tu__programming-language-structure.md`
+- [ ] Original content file deleted or redirected
+- [ ] All references updated across codebase
+- [ ] Conventions README updated
+- [ ] CLAUDE.md updated if referenced
 
 ## Acceptance Criteria
 
@@ -251,4 +292,24 @@ Then it has valid frontmatter with name, description, tools, model, color, skill
 And skills field contains validating-links and assessing-criticality-confidence
 And it is registered in .claude/agents/README.md
 And CLAUDE.md agent list includes it
+```
+
+### Tutorial Documentation Consolidated
+
+```gherkin
+Given tutorial convention documents have been consolidated
+When I check docs/explanation/conventions/tutorial/
+Then ex-co-tu__programming-language-structure.md contains both content and structure guidance
+And ex-co-tu__programming-language-content.md no longer exists
+And all references to the old file point to the consolidated file
+```
+
+### Bash Tools for .claude/ Verified
+
+```gherkin
+Given all .claude/ file modifications in this plan
+When I review the implementation
+Then all file creations use heredoc syntax (cat <<'EOF')
+And all file edits use sed or awk
+And NO Write or Edit tools are used for .claude/ files
 ```
