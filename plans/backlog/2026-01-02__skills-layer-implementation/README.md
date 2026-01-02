@@ -78,8 +78,9 @@ With Skills Infrastructure:
 1. **Implement progressive disclosure** via Skills to prevent future CLAUDE.md growth
 2. **Create 8-10 high-value Skills** encoding critical repository knowledge
 3. **Document Skills as infrastructure** in repository documentation
-4. **Enable agent knowledge references** via optional Skills frontmatter
-5. **Maintain backward compatibility** - existing agents work without modification
+4. **Add required `skills:` frontmatter to all agents** for composability (can be empty `[]`)
+5. **Update rules components** (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer) for Skills support
+6. **Maintain backward compatibility** - agents with empty `skills: []` work correctly
 
 **Secondary Objectives:**
 
@@ -111,13 +112,13 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
 This plan implements Skills infrastructure through 2 sequential phases with direct commits to `main` branch:
 
 1. **Phase 1: Foundation** - Skills directory structure, first 3 core Skills, infrastructure documentation
-2. **Phase 2: Knowledge Migration & Polish** - 5-7 additional Skills, CLAUDE.md optimization, agent updates, templates, final validation
+2. **Phase 2: Knowledge Migration & Polish** - 5-7 additional Skills, CLAUDE.md optimization, all agent updates (required `skills:` field), rules components updates, templates, final validation
 
 **Dependencies**: Phase 2 builds on Phase 1; validation checkpoint required before starting Phase 2.
 
 **Rationale for Multi-Phase**:
 
-- Moderate scope (8-10 Skills, infrastructure docs, agent updates)
+- Significant scope (8-10 Skills, infrastructure docs, all ~45 agents, rules components)
 - Natural breakpoint for validation and feedback
 - Phased rollout reduces risk
 - Small, frequent commits to `main` with validation gates between phases
@@ -132,8 +133,10 @@ This plan implements Skills infrastructure through 2 sequential phases with dire
 
 1. **CLAUDE.md Size**: Maintained at ≤30k characters (progressive disclosure prevents growth)
 2. **Agent File Size**: Average agent size reduced by 15-25% through Skills references
-3. **Knowledge Accessibility**: Critical conventions accessible via Skills
-4. **Backward Compatibility**: Zero breaking changes to existing agent workflows
+3. **Agent Composability**: All ~45 agents have required `skills:` frontmatter field
+4. **Rules Components**: All three rules agents (maker, checker, fixer) support Skills
+5. **Knowledge Accessibility**: Critical conventions accessible via Skills
+6. **Backward Compatibility**: Zero breaking changes (agents with `skills: []` work correctly)
 
 ## Context Documents
 

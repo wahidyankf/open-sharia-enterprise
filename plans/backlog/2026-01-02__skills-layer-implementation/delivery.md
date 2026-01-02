@@ -16,12 +16,12 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
 
 ### Delivery Summary
 
-**Total scope**: 8-10 Skills, infrastructure documentation, agent updates, CLAUDE.md optimization
+**Total scope**: 8-10 Skills, infrastructure documentation, agent updates (all ~45 agents), rules components updates, CLAUDE.md optimization
 
 **Sequential Phases:**
 
 1. **Phase 1: Foundation** - Skills infrastructure, first 3 core Skills (~8-12 commits)
-2. **Phase 2: Knowledge Migration & Polish** - 5-7 additional Skills, CLAUDE.md optimization, agent updates, templates, final validation (~25-30 commits)
+2. **Phase 2: Knowledge Migration & Polish** - 5-7 additional Skills, CLAUDE.md optimization, all agent updates (required `skills:` field), rules component updates (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer), templates, final validation (~30-40 commits)
 
 **Dependencies**: Phase 2 builds on Phase 1; validation checkpoint required before starting Phase 2.
 
@@ -72,7 +72,7 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
 - [ ] **Step 1.5: Update AI Agents Convention**
   - Open `docs/explanation/development/agents/ex-de-ag__ai-agents.md`
   - Add section: "Agent Skills References"
-  - Document `skills:` frontmatter field (optional)
+  - Document `skills:` frontmatter field (required, can be empty `[]`)
   - Explain when to reference Skills vs. inline knowledge
   - Provide examples of Skills composition
   - Git commit: `docs(agents): add Skills references documentation to AI Agents Convention`
@@ -198,97 +198,126 @@ And existing agents should continue working without modification
   - Content: Brief explanation, link to `.claude/skills/README.md`
   - Git commit: `docs(claude.md): add Skills Infrastructure section`
 
-- [ ] **Step 2.10: Update example agents with Skills references**
+- [ ] **Step 2.10: Update rules component agents for Skills support**
+  - **Step 2.10.1: Update `wow__rules-maker`**
+    - Add Skills creation/validation capabilities to agent prompt
+    - Add `skills: []` frontmatter field (required)
+    - Include Skills structure validation in maker workflow
+    - Document Skills-related rule creation patterns
+    - Git commit: `feat(agents): add Skills support to wow__rules-maker`
+
+  - **Step 2.10.2: Update `wow__rules-checker`**
+    - Add Skills validation checks (structure, frontmatter, refs, uniqueness)
+    - Add `skills: []` frontmatter field (required)
+    - Include Skills in validation scope with criticality levels
+    - Add Skills-related findings to audit report format
+    - Git commit: `feat(agents): add Skills validation to wow__rules-checker`
+
+  - **Step 2.10.3: Update `wow__rules-fixer`**
+    - Add Skills fix capabilities (frontmatter, refs, sync)
+    - Add `skills: []` frontmatter field (required)
+    - Include Skills-related fixes with confidence levels
+    - Git commit: `feat(agents): add Skills fix capabilities to wow__rules-fixer`
+
+- [ ] **Step 2.11: Batch update all agents with required `skills:` field**
+  - List all agents in `.claude/agents/` (~45 agents)
+  - Add `skills: []` to each agent's frontmatter
+  - Verify frontmatter schema valid after updates
+  - Git commit: `feat(agents): add required skills field to all agents`
+
+- [ ] **Step 2.12: Update demonstration agents with actual Skills references**
   - **Agent 1: `docs__maker`**
-    - Add optional `skills:` field: `[color-accessibility-diagrams, maker-checker-fixer-pattern]`
+    - Update `skills:` field: `[color-accessibility-diagrams, maker-checker-fixer-pattern]`
     - Git commit: `feat(agents): add Skills references to docs__maker`
 
   - **Agent 2: `docs__checker`**
-    - Add optional `skills:` field: `[maker-checker-fixer-pattern, criticality-confidence-system]`
+    - Update `skills:` field: `[maker-checker-fixer-pattern, criticality-confidence-system]`
     - Git commit: `feat(agents): add Skills references to docs__checker`
 
   - **Agent 3: apps\_\_ayokoding-web\_\_general-maker**
-    - Add optional `skills:` field: `[hugo-ayokoding-development, color-accessibility-diagrams]`
+    - Update `skills:` field: `[hugo-ayokoding-development, color-accessibility-diagrams]`
     - Git commit: `feat(agents): add Skills references to ayokoding-web-general-maker`
 
   - **Agent 4: apps\_\_ayokoding-web\_\_by-example-maker**
-    - Add optional `skills:` field: `[by-example-tutorial-creation, hugo-ayokoding-development]`
+    - Update `skills:` field: `[by-example-tutorial-creation, hugo-ayokoding-development]`
     - Git commit: `feat(agents): add Skills references to ayokoding-web-by-example-maker`
 
   - **Agent 5: `plan__maker`**
-    - Add optional `skills:` field: `[gherkin-acceptance-criteria, trunk-based-development]`
+    - Update `skills:` field: `[gherkin-acceptance-criteria, trunk-based-development]`
     - Git commit: `feat(agents): add Skills references to plan__maker`
 
-- [ ] **Step 2.11: Validate CLAUDE.md size**
+- [ ] **Step 2.13: Validate CLAUDE.md size**
   - Count CLAUDE.md characters (use `wc -m CLAUDE.md`)
   - Verify remains ≤30,000 characters
   - Test all migrated content accessible via Skills
   - Verify navigation links still work
 
-- [ ] **Step 2.12: Test Skills with updated agents**
+- [ ] **Step 2.14: Test Skills with updated agents**
   - Test each updated agent invocation
   - Verify Skills auto-load when agent invoked
   - Confirm agent behavior unchanged (backward compatible)
   - Test Skills composition (multiple Skills loading together)
 
-- [ ] **Step 2.13: Phase 2 Mid-Checkpoint**
+- [ ] **Step 2.15: Phase 2 Mid-Checkpoint**
   - Verify all commits pushed to `main`
   - Run mid-phase validation checklist
   - Measure CLAUDE.md character count (must be ≤30,000)
   - Test all new Skills auto-load correctly
   - Verify agents with Skills references work properly
+  - Verify all agents have required `skills:` field
 
-- [ ] **Step 2.14: Enhance Skill creation templates**
+- [ ] **Step 2.16: Enhance Skill creation templates**
   - Update `.claude/skills/TEMPLATE.md` with complete frontmatter
   - Create `.claude/skills/MULTI-FILE-TEMPLATE/` with reference.md, examples.md templates
   - Git commit: `feat(skills): enhance Skill creation templates`
 
-- [ ] **Step 2.15: Create Skills usage guide**
+- [ ] **Step 2.17: Create Skills usage guide**
   - Create `docs/how-to/hoto__create-new-skill.md`
   - Content: Single-file, multi-file examples, best practices, decision criteria
   - Git commit: `docs(how-to): add guide for creating new Skills`
 
-- [ ] **Step 2.16: Final validation - Run `wow__rules-checker`**
+- [ ] **Step 2.18: Final validation - Run `wow__rules-checker`**
   - Validate all Skills structure and content
   - Check Skills descriptions are clear and unique
   - Verify Skills frontmatter correct
   - Confirm Skills reference valid conventions
+  - Verify all agents have required `skills:` field
 
-- [ ] **Step 2.17: Final validation - CLAUDE.md**
+- [ ] **Step 2.19: Final validation - CLAUDE.md**
   - Count characters: Verify ≤30,000
   - Test all navigation links work
   - Verify all content accessible
   - Confirm Skills references point to existing Skills
 
-- [ ] **Step 2.18: Final validation - Agents**
-  - **Test agents without Skills** (backward compatibility):
-    - Pick 3-5 agents without `skills:` field
+- [ ] **Step 2.20: Final validation - Agents**
+  - **Test agents with empty Skills** (`skills: []`):
+    - Pick 3-5 agents with empty `skills:` field
     - Invoke each agent with test tasks
     - Verify agents execute correctly
-  - **Test agents with Skills** (Skills integration):
-    - Pick 5 agents with `skills:` field
+  - **Test agents with Skills references** (Skills integration):
+    - Pick 5 agents with actual Skills references
     - Verify Skills auto-load when agent invoked
     - Test Skills composition (multiple Skills loading)
 
-- [ ] **Step 2.19: Final validation - Skills auto-loading**
-  - **Step 2.19.1**: Test each Skill individually
-  - **Step 2.19.2**: Verify Skill auto-loads for matching tasks
-  - **Step 2.19.3**: Confirm Skill doesn't load for unrelated tasks
-  - **Step 2.19.4**: Test Skills composition (multiple Skills loading)
-  - **Step 2.19.5**: Test multi-Skill integration workflow
+- [ ] **Step 2.21: Final validation - Skills auto-loading**
+  - **Step 2.21.1**: Test each Skill individually
+  - **Step 2.21.2**: Verify Skill auto-loads for matching tasks
+  - **Step 2.21.3**: Confirm Skill doesn't load for unrelated tasks
+  - **Step 2.21.4**: Test Skills composition (multiple Skills loading)
+  - **Step 2.21.5**: Test multi-Skill integration workflow
     - Test realistic scenario requiring 3+ Skills together
     - Example: "Create Hugo by-example tutorial with accessible diagrams"
     - Should auto-load: `hugo-ayokoding-development`, `by-example-tutorial-creation`, `color-accessibility-diagrams`
     - Verify all Skills load correctly and work together
     - Confirm knowledge composition produces correct output
 
-- [ ] **Step 2.20: Final cleanup**
+- [ ] **Step 2.22: Final cleanup**
   - Ensure consistent formatting across all Skills
   - Validate all Skills follow Content Quality Principles
   - Fix any broken links or formatting issues
   - Run `wow__rules-checker` one final time
 
-- [ ] **Step 2.21: Phase 2 Final Validation Checkpoint**
+- [ ] **Step 2.23: Phase 2 Final Validation Checkpoint**
   - Verify all commits pushed to `main`
   - Run comprehensive final validation checklist
   - Verify all success metrics met
@@ -302,10 +331,12 @@ And existing agents should continue working without modification
 - [ ] CLAUDE.md character count ≤30,000 (use `wc -m CLAUDE.md`)
 - [ ] CLAUDE.md includes Skills Infrastructure section
 - [ ] All Skills accessible (no information loss)
-- [ ] 5 agents updated with optional `skills:` frontmatter field
+- [ ] All agents have required `skills:` frontmatter field (can be empty `[]`)
+- [ ] 5 demonstration agents have actual Skills references
+- [ ] Rules components updated (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer)
 - [ ] All Skills auto-load when relevant tasks described
 - [ ] Skills composition works (multiple Skills load together)
-- [ ] Backward compatibility maintained (agents without Skills still work)
+- [ ] Backward compatibility maintained (agents with empty `skills: []` work)
 - [ ] No regression in agent behavior or output quality
 - [ ] Skill creation templates available (single-file and multi-file)
 - [ ] Skills usage guide documented
@@ -322,12 +353,14 @@ When Phase 2 adds 5-7 Skills, templates, and final validation
 Then total 8-10 Skills should exist in .claude/skills/
 And CLAUDE.md character count should remain ≤30,000
 And CLAUDE.md should include Skills Infrastructure section
-And 5 agents should have optional skills: frontmatter
+And all agents should have required skills: frontmatter field
+And 5 demonstration agents should have actual Skills references
+And rules components should be updated for Skills support
 And Skill creation templates should be available
 And Skills usage guide should provide comprehensive guidance
-And wow__rules-checker should pass all validation
+And wow__rules-checker should pass all Skills validation
 And all Skills should auto-load when relevant tasks described
-And existing agents without Skills should continue working
+And agents with empty skills: [] should continue working
 And zero breaking changes should be confirmed
 ```
 
@@ -399,7 +432,7 @@ And zero breaking changes should be confirmed
 
 **Mitigation:**
 
-- Make `skills:` frontmatter field optional
+- Make `skills:` field required but allow empty `[]` for backward compatibility
 - Test agents without Skills field after each change
 - Keep Skills additive (don't remove existing knowledge abruptly)
 
@@ -429,12 +462,13 @@ Before completing any phase, verify:
 - [ ] 8-10 total Skills exist in `.claude/skills/`
 - [ ] CLAUDE.md character count ≤30,000
 - [ ] CLAUDE.md includes Skills Infrastructure section
-- [ ] 5 agents updated with Skills references
+- [ ] All agents have required `skills:` frontmatter field
+- [ ] 5 demonstration agents have actual Skills references
+- [ ] Rules components updated (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer)
 - [ ] Skills composition tested
-- [ ] Backward compatibility maintained
+- [ ] Backward compatibility maintained (agents with `skills: []` work)
 - [ ] All documentation complete (guides, templates)
-- [ ] `wow__rules-checker` passes all validation
-- [ ] All agents work (with and without Skills)
+- [ ] `wow__rules-checker` passes all validation (including Skills checks)
 - [ ] All Skills auto-load reliably
 - [ ] Zero breaking changes confirmed
 
@@ -442,12 +476,14 @@ Before completing any phase, verify:
 
 ### Success Metrics
 
-| Metric                 | Target               | Status      |
-| ---------------------- | -------------------- | ----------- |
-| CLAUDE.md Size         | ≤30,000 chars        | Not Started |
-| Total Skills           | 8-10                 | Not Started |
-| Agent Size Reduction   | 15-25% average       | Not Started |
-| Backward Compatibility | 100% (zero breakage) | Not Started |
+| Metric                   | Target                  | Status      |
+| ------------------------ | ----------------------- | ----------- |
+| CLAUDE.md Size           | ≤30,000 chars           | Not Started |
+| Total Skills             | 8-10                    | Not Started |
+| Agents with skills field | 100% (~45 agents)       | Not Started |
+| Rules components updated | 3 (maker/checker/fixer) | Not Started |
+| Agent Size Reduction     | 15-25% average          | Not Started |
+| Backward Compatibility   | 100% (zero breakage)    | Not Started |
 
 ### Phase Status
 
