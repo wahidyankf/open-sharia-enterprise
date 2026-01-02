@@ -3,13 +3,13 @@ title: "Advanced"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 36-60: Advanced concurrency, generics, reflection, advanced patterns, testing strategies, and modern Go features (70-90% coverage)"
+description: "Examples 61-85: Advanced concurrency, generics, reflection, advanced patterns, testing strategies, and modern Go features (75-95% coverage)"
 tags: ["golang", "go", "tutorial", "by-example", "advanced", "generics", "concurrency", "profiling"]
 ---
 
 ## Group 1: Advanced Concurrency Patterns
 
-### Example 36: Pipeline Pattern
+### Example 61: Pipeline Pattern
 
 Pipelines process data through stages, each stage running concurrently. Each stage is a function that receives input from one channel and sends output to another. This composition enables elegant data processing.
 
@@ -111,7 +111,7 @@ func multiply(in <-chan int, factor int) <-chan int { // => in is receive-only (
 
 **Why It Matters**: Pipelines power production stream processing in services like Kubernetes event processing, where data flows through validation → transformation → persistence stages with automatic backpressure handling through unbuffered channels. This pattern enables building scalable ETL systems that process millions of records while maintaining bounded memory usage, unlike batch processing that requires loading entire datasets into RAM.
 
-### Example 37: Context-Aware Pipelines
+### Example 62: Context-Aware Pipelines
 
 Pipeline stages should respect cancellation. When context is cancelled, all stages should exit gracefully. This enables cancelling long-running pipelines without leaking goroutines.
 
@@ -253,7 +253,7 @@ func squareWithContext(ctx context.Context, in <-chan int) <-chan int {
 
 **Why It Matters**: Context-aware cancellation prevents goroutine leaks that plague long-running services, where a cancelled HTTP request must terminate all downstream processing to avoid wasting CPU and memory on orphaned work. Production systems like Prometheus use this pattern to abort expensive metric aggregation queries when clients disconnect, maintaining system stability under load spikes by immediately freeing resources.
 
-### Example 38: Rate Limiting
+### Example 63: Rate Limiting
 
 Rate limiting restricts how fast operations occur. Token bucket pattern uses a channel - tokens arrive at a rate, operations consume tokens. When no tokens available, operations wait.
 
@@ -342,7 +342,7 @@ func limitedOperations() {
 
 **Why It Matters**: Rate limiting protects production APIs from overload, preventing cascading failures where unlimited client requests exhaust database connections or downstream API quotas. The token bucket pattern enables graceful degradation by allowing controlled bursts (handling traffic spikes) while enforcing sustained rate limits, the approach used by GitHub API (5,000 requests/hour) and Twitter API (15 requests/15-minute window) to maintain service quality for all users.
 
-### Example 39: Semaphore Pattern
+### Example 64: Semaphore Pattern
 
 Semaphores limit concurrent access to resources. While `sync.Mutex` allows one goroutine at a time, semaphores allow N. Implement with buffered channel of capacity N.
 
@@ -438,7 +438,7 @@ func weighSemaphore() {
 
 **Why It Matters**: Semaphores limit concurrent access to bounded resources like database connection pools (100 max connections) or external APIs with rate limits, preventing resource exhaustion that causes production outages. Unlike mutexes (N=1), semaphores enable controlled parallelism (N>1), allowing 10 concurrent S3 uploads while blocking the 11th until a slot frees, maximizing throughput without overwhelming external services.
 
-### Example 40: Atomic Operations
+### Example 65: Atomic Operations
 
 Atomic operations ensure thread-safe modifications without mutexes. The `sync/atomic` package provides compare-and-swap (CAS) and atomic increments. Use when contention is low and operations are simple.
 
@@ -562,7 +562,7 @@ func main() {
 
 ## Group 2: Advanced Standard Library
 
-### Example 41: Reflection
+### Example 66: Reflection
 
 Reflection inspects types and values at runtime. The `reflect` package enables dynamic code - examine struct fields, call methods, or build values whose type isn't known until runtime. Use sparingly - reflection is powerful but slow and hard to understand.
 
@@ -681,7 +681,7 @@ func main() {
 
 **Why It Matters**: Reflection powers critical infrastructure like JSON marshaling (encoding/json), database ORMs (GORM, sqlx), and dependency injection frameworks that need to work with types unknown at compile-time. While slow (10-100x overhead) and fragile (bypasses compile-time type safety), reflection is essential for building generic libraries that inspect struct tags for validation rules or automatically map database columns to struct fields, reducing boilerplate in application code.
 
-### Example 42: Binary Encoding
+### Example 67: Binary Encoding
 
 Binary protocols and data formats require reading/writing binary data. The `encoding/binary` package handles byte order (endianness) and converts between binary and Go types.
 
@@ -767,7 +767,7 @@ func main() {
 
 **Why It Matters**: Binary encoding enables interoperability with network protocols (TCP packet headers, DNS messages) and file formats (PNG, MP4) that require precise byte-level control and endianness awareness. Big-endian (network byte order) dominates internet protocols for historical compatibility, while little-endian matches modern CPU architectures (x86, ARM), making encoding/binary essential for implementing custom protocols or parsing binary file formats in production systems.
 
-### Example 43: Cryptography Basics
+### Example 68: Cryptography Basics
 
 Cryptography is essential for security. Go provides standard cryptographic functions in `crypto/*` packages. Hash for integrity, random for security, HMAC for authentication, encryption for confidentiality.
 
@@ -851,7 +851,7 @@ func main() {
 
 **Why It Matters**: Cryptographic primitives are non-negotiable for production security: SHA-256 hashes verify file integrity (git commits, Docker image layers), HMAC-SHA256 authenticates webhook payloads (GitHub webhooks, Stripe signatures) preventing tampering, and crypto/rand generates session tokens that withstand cryptanalysis unlike math/rand's predictable sequences. Using crypto/rand instead of math/rand for security tokens is the difference between safe authentication and immediate compromise.
 
-### Example 44: Templates
+### Example 69: Templates
 
 Templates generate text (HTML, email, config files). The `text/template` package provides template syntax with variables, functions, and control flow. Use `html/template` for HTML to prevent injection attacks.
 
@@ -977,7 +977,7 @@ Users:
 
 ## Group 3: Generics (Go 1.18+)
 
-### Example 45: Generic Functions
+### Example 70: Generic Functions
 
 Generics enable functions to work with different types while maintaining type safety. Type parameters in square brackets define constraints. Go 1.18+ introduces this powerful feature.
 
@@ -1100,7 +1100,7 @@ func bestMax[T constraints.Ordered](slice []T) T {
 
 **Why It Matters**: Generics (Go 1.18+) eliminate code duplication for data structures and algorithms, replacing brittle interface{}+reflection patterns with compile-time type safety. Generic max() functions work across int/float/string without type assertions, generic min-heaps work with any comparable type, and generic Result<T,E> types enable Rust-style error handling, all providing zero runtime overhead through monomorphization (compiler generates specialized versions per type).
 
-### Example 46: Generic Types
+### Example 71: Generic Types
 
 Generic struct types work similarly to generic functions. Define type parameters, and the compiler instantiates them for each type used. Useful for containers, queues, trees, and data structures.
 
@@ -1226,7 +1226,7 @@ type Container[T any] interface {                   // => Generic interface over
 
 **Why It Matters**: Generic containers like Stack[T], Queue[T], and Cache[K,V] provide type-safe reusable data structures without runtime type assertions or interface{} boxing overhead. Where pre-generics Go required separate IntStack/StringStack implementations or unsafe interface{} casts, generic types enable writing containers once and using everywhere with full compile-time type checking, eliminating entire classes of runtime type errors.
 
-### Example 47: Constraints and Comparable
+### Example 72: Constraints and Comparable
 
 Go provides standard constraints in `constraints` package. The `comparable` constraint enables `==` and `!=` operators. Custom constraints combine types and interfaces.
 
@@ -1291,7 +1291,7 @@ func getValue[K MapKey, V any](m map[K]V, key K) V { // => Two type parameters
 
 ## Group 4: Advanced Patterns
 
-### Example 48: Options Pattern
+### Example 73: Options Pattern
 
 The options pattern provides flexible configuration through functional options. Each option function modifies configuration without requiring many constructors or mutating shared state.
 
@@ -1400,7 +1400,7 @@ func (s Server) String() string {
 
 **Why It Matters**: Functional options enable building flexible APIs with backward compatibility, where adding new server configuration options (timeouts, TLS settings, middleware) doesn't break existing code or require dozens of constructor variants. Used extensively in production libraries (gRPC, Kubernetes client-go), this pattern provides clean defaults, discoverability through named functions (WithTimeout()), and nil-safety compared to struct literals where missing fields silently use zero values.
 
-### Example 49: Embed Directive (Go 1.16+)
+### Example 74: Embed Directive (Go 1.16+)
 
 The `//go:embed` directive embeds files into the binary at compile-time. Useful for static assets, templates, or configuration files that should be part of the executable.
 
@@ -1450,7 +1450,7 @@ import "embed"
 
 **Why It Matters**: Embedding files into binaries eliminates deployment dependencies and version skew, enabling single-binary deployment where static assets (HTML templates, SQL migrations, configuration defaults) ship inside the executable. This powers Hugo's single-binary distribution with 300+ embedded templates, eliminates "template file not found" runtime errors, and enables hermetic builds where embedded files cannot be tampered with post-compilation, critical for security-sensitive applications.
 
-### Example 50: Build Tags
+### Example 75: Build Tags
 
 Build tags enable conditional compilation. Platform-specific code, feature flags, or test-only code can be controlled with build tags. Tag expressions determine which files compile.
 
@@ -1505,7 +1505,7 @@ func shouldDebug() bool {
 
 **Why It Matters**: Build tags enable platform-specific implementations without runtime checks, where Unix syscalls compile only on Linux/Mac and Windows equivalents compile only on Windows, producing optimized binaries without dead code. Production use cases include feature flags (build with/without premium features), integration tests that require external services (skip in CI with `//go:build !integration`), and specialized builds (embed debug symbols only in development builds).
 
-### Example 51: Custom Sorting
+### Example 76: Custom Sorting
 
 Sorting requires implementing the `sort.Interface` or using `sort.Slice()`. Custom sorting enables ordering by different fields or complex criteria.
 
@@ -1568,7 +1568,7 @@ func (b ByScoreDesc) Less(i, j int) bool { return b[i].Score > b[j].Score }
 
 **Why It Matters**: Custom sorting enables domain-specific ordering beyond simple field comparisons, where sorting users by age-then-score or products by price-then-rating requires multi-field comparison logic. While sort.Interface provides maximum flexibility, sort.Slice() reduces boilerplate for ad-hoc sorts, making production code that sorts API responses or database query results by complex criteria both maintainable and performant (O(n log n) quicksort).
 
-### Example 52: Dependency Injection
+### Example 77: Dependency Injection
 
 Dependency injection passes dependencies to functions/types instead of creating them internally. Enables testing with mock dependencies and decouples implementations.
 
@@ -1659,7 +1659,7 @@ func (s *UserService) GetUser(id int) string {
 
 ## Group 5: Testing and Tooling
 
-### Example 53: Subtests
+### Example 78: Subtests
 
 Subtests organize tests hierarchically with `t.Run()`. Each subtest can have setup/teardown and reports individually. Subtests can run in parallel with `t.Parallel()`.
 
@@ -1739,7 +1739,7 @@ func createUser(u User) User {
 
 **Why It Matters**: Subtests organize complex test suites hierarchically with independent reporting, where TestUserService/GetUser/ExistingUser and TestUserService/GetUser/NonExistent run as separate test cases with isolated setup/teardown. Combined with t.Parallel(), subtests enable safe concurrent test execution, reducing CI time from minutes to seconds for large test suites while maintaining clarity through structured test names and granular failure reporting.
 
-### Example 54: Mocking with Interfaces
+### Example 79: Mocking with Interfaces
 
 Testing requires isolating code under test from external dependencies. Mock implementations of interfaces enable testing without real services like databases or APIs.
 
@@ -1830,7 +1830,7 @@ func (r *UserRepository) Get(id int) (User, error) {
 
 **Why It Matters**: Mock implementations through interfaces enable fast, deterministic tests without external dependencies, where testing HTTP handlers doesn't require running real servers and testing database queries doesn't require PostgreSQL. Production codebases achieve sub-second test suites (vs multi-minute integration tests) by mocking Storage, HTTPClient, and MessageQueue interfaces with in-memory implementations that simulate success/failure scenarios without network latency or flaky external services.
 
-### Example 55: Fuzzing (Go 1.18+)
+### Example 80: Fuzzing (Go 1.18+)
 
 Fuzzing automatically generates random inputs to find edge cases and crashes. Go's built-in fuzzing runs test function with generated and seed values.
 
@@ -1892,7 +1892,7 @@ func parseInt(s string) (int, error) {
 
 **Why It Matters**: Fuzzing automatically discovers edge cases (empty inputs, Unicode boundary conditions, integer overflows) that manual testing misses, where fuzz testing parsers or validators finds crashes and security vulnerabilities from malformed input. Used extensively in security-critical code (parsers, decoders, validators), fuzzing has found vulnerabilities in stdlib packages and production services by generating millions of test inputs, achieving coverage that would take years of manual test writing.
 
-### Example 56: CGO Basics
+### Example 81: CGO Basics
 
 CGO enables calling C from Go. Use when you need external C libraries or performance-critical code. CGO adds complexity - prefer pure Go when possible.
 
@@ -1998,7 +1998,7 @@ func main() {
 
 ## Group 6: Modern Go and Best Practices
 
-### Example 57: Workspaces (Go 1.18+)
+### Example 82: Workspaces (Go 1.18+)
 
 Workspaces enable multi-module development. Develop multiple modules together without publishing intermediate versions. Useful for monorepos or coordinating multiple packages.
 
@@ -2040,7 +2040,7 @@ use (
 
 **Why It Matters**: Workspaces enable monorepo development where multiple interdependent modules evolve together without publishing intermediate versions, solving the problem of testing changes across libs/common and cmd/api before committing. Production teams use workspaces to develop coordinated updates across packages, test breaking changes before release, and maintain local overrides for dependencies, all while preserving independent module versioning for public releases.
 
-### Example 58: Memory Profiling
+### Example 83: Memory Profiling
 
 Memory profiling identifies allocations and memory leaks. The `runtime/pprof` package enables capturing profiles. Analyze with `go tool pprof`.
 
@@ -2094,7 +2094,7 @@ func expensiveComputation() {
 
 **Why It Matters**: Memory profiling identifies allocation hotspots and memory leaks that degrade production performance, where analyzing heap profiles reveals that JSON marshaling allocates 80% of memory or goroutines leak due to unclosed channels. Production debugging uses pprof to find why memory usage grows from 100MB to 10GB over days, pinpointing the specific code paths causing allocations, enabling targeted optimization that reduces memory by 10x without guessing.
 
-### Example 59: Race Detector
+### Example 84: Race Detector
 
 Go's race detector identifies concurrent access to shared memory without synchronization. Run with `-race` flag during development and testing.
 
@@ -2150,7 +2150,7 @@ func main() {
 
 **Why It Matters**: The race detector finds data races that cause non-deterministic bugs in production, where concurrent map access crashes intermittently or counter increments produce wrong values under load. While adding 5-10x overhead (use in development/CI, not production), the race detector catches subtle concurrency bugs that are impossible to find through code review, preventing production incidents where race conditions manifest only under specific timing conditions.
 
-### Example 60: Go Best Practices Synthesis
+### Example 85: Go Best Practices Synthesis
 
 Go development succeeds by following core principles: explicit error handling, simple concurrency with channels, composition with interfaces, and extensive testing. This final example summarizes key practices for production-ready code.
 

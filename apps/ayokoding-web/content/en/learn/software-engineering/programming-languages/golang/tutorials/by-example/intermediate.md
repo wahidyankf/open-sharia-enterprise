@@ -10,7 +10,7 @@ tags:
 
 ## Group 1: Advanced Interfaces and Types
 
-### Example 16: Type Embedding and Composition
+### Example 31: Type Embedding and Composition
 
 Embedding allows structs to inherit fields and methods from other types without inheritance chains. This composition-over-inheritance pattern is Go's philosophy - simpler and more flexible than traditional OOP inheritance.
 
@@ -94,7 +94,7 @@ type Employee struct {
 
 **Why It Matters**: Type embedding powers composition over inheritance in production Go, where embedding interface types (io.Reader, io.Writer) makes structs automatically satisfy those interfaces. This enables building complex types from simple components without brittle inheritance hierarchies, the pattern used throughout the stdlib (bufio.ReadWriter embeds bufio.Reader and bufio.Writer). Composition makes code flexible and testable by enabling interface-based dependency injection.
 
-### Example 17: Custom Error Types
+### Example 32: Custom Error Types
 
 While `error` interface only needs an `Error()` method, custom error types let you attach extra information. Implementing the `error` interface and using error wrapping enables sophisticated error handling patterns.
 
@@ -208,7 +208,7 @@ func topLevelOperation() error {
 
 **Why It Matters**: Custom error types enable rich context for debugging production failures, where standard errors (`errors.New()`) provide only messages while custom types attach stack traces, request IDs, error codes, and structured fields. Error wrapping with `fmt.Errorf("%w", err)` creates error chains that `errors.Is()` and `errors.As()` navigate, enabling error classification (temporary vs permanent, retryable vs fatal) essential for robust retry logic and observability.
 
-### Example 18: JSON Handling
+### Example 33: JSON Handling
 
 JSON is ubiquitous in Go APIs. The `encoding/json` package marshals (structs to JSON) and unmarshals (JSON to structs). Struct tags control JSON field mapping - critical for API compatibility when Go field names don't match JSON field names.
 
@@ -331,7 +331,7 @@ type APIResponse struct {
 
 ## Group 2: Concurrency Basics
 
-### Example 19: Goroutines
+### Example 34: Goroutines
 
 Goroutines are lightweight threads managed by the Go runtime. Unlike OS threads, thousands of goroutines can run concurrently without overwhelming system resources. The `go` keyword starts a goroutine that runs concurrently with code that follows.
 
@@ -376,7 +376,7 @@ func main() {
     // Wait for goroutine to finish (crude synchronization)
     time.Sleep(1 * time.Second) // => Sleeps main goroutine for 1 second
     // => Gives printNumbers goroutine time to complete
-    // => In production, use WaitGroups or channels (see Example 22)
+    // => In production, use WaitGroups or channels (see Example 37)
     fmt.Println("Main done")
 
     // => Typical output (order may vary due to concurrency):
@@ -412,7 +412,7 @@ func main() {
     }
     time.Sleep(100 * time.Millisecond)
 
-    // Goroutine with return value (requires channel - see Example 20)
+    // Goroutine with return value (requires channel - see Example 35)
     resultChan := make(chan int)       // => Channel to receive result
     go func() {
         sum := 0
@@ -439,7 +439,7 @@ func printNumbers() {
 
 **Why It Matters**: Goroutines enable lightweight concurrency, where launching 10,000 goroutines uses ~20MB memory (2KB stack each) vs 10GB for equivalent threads (1MB stack). The `go` keyword makes concurrent programming simple - no thread pools, no executor services, just spawn and go. This powers Go's killer feature: writing concurrent code that looks sequential, enabling high-throughput network services (HTTP servers, proxies, load balancers) without callback hell.
 
-### Example 20: Channels
+### Example 35: Channels
 
 Channels enable safe communication between goroutines. Send data on one end, receive on the other. Unbuffered channels synchronize goroutines - a send blocks until a receive happens. Buffered channels decouple send and receive.
 
@@ -546,7 +546,7 @@ func main() {
 
 **Why It Matters**: Channels provide type-safe communication between goroutines, eliminating the race conditions and deadlocks that plague shared-memory concurrency. Unbuffered channels synchronize goroutines (sender blocks until receiver ready), while buffered channels decouple producers/consumers. The `range` over channels and `close()` signal completion, enabling pipeline patterns that compose concurrent stages cleanly, the foundation of Go's concurrency model.
 
-### Example 21: Channel Select
+### Example 36: Channel Select
 
 The `select` statement lets a goroutine wait on multiple channel operations. It's like a `switch` for channels - whichever channel is ready executes first. This pattern enables timeouts and handling multiple concurrent operations.
 
@@ -680,7 +680,7 @@ func main() {
 
 **Why It Matters**: Select enables multiplexing multiple channel operations, powering timeouts, cancellation, and fan-in patterns essential for production services. The `select` with `time.After()` implements timeouts (critical for network operations), `select` with `ctx.Done()` enables graceful shutdown, and `select` with multiple channels merges concurrent results. Understanding select is mandatory for writing robust concurrent Go code that handles timeouts and cancellation correctly.
 
-### Example 22: WaitGroups and Sync
+### Example 37: WaitGroups and Sync
 
 Coordinating multiple goroutines requires synchronization. `sync.WaitGroup` is the standard pattern - increment a counter for each goroutine, decrement when done, and wait for all to finish. Mutexes protect shared data from race conditions.
 
@@ -787,9 +787,11 @@ func main() {
 
 **Key Takeaway**: Use `sync.WaitGroup` to wait for multiple goroutines. Call `Add(1)` before spawning, `Done()` when complete, and `Wait()` to block until all finish. Use `sync.Mutex` to protect shared data - `Lock()` before accessing, `Unlock()` after. Use `sync.RWMutex` when you have many readers and few writers.
 
+**Why It Matters**: Goroutines enable lightweight concurrency that scales to millions of concurrent operations. This is the foundation for building high-performance web servers and data processing pipelines in Go.
+
 ## Group 3: I/O and File Handling
 
-### Example 23: File I/O
+### Example 38: File I/O
 
 File operations are fundamental. Go provides multiple layers: low-level (`os` package), buffered (`bufio`), and convenience functions. The `defer file.Close()` pattern ensures files close even if errors occur.
 
@@ -895,7 +897,7 @@ func main() {
 
 **Why It Matters**: File I/O with proper error handling and resource cleanup is essential for production reliability, where defer file.Close() prevents file descriptor leaks that exhaust system limits (typically 1024 open files). Understanding `os.Open()` vs `os.Create()` vs `os.OpenFile()` for different file modes, and using `bufio.Scanner` for line-by-line reading, enables processing configuration files, logs, and data without loading entire files into memory.
 
-### Example 24: HTTP Client
+### Example 39: HTTP Client
 
 Making HTTP requests is essential for API integration. The `net/http` package provides client functionality. Customize requests with headers, timeouts, and query parameters. Always check response status codes.
 
@@ -989,7 +991,7 @@ func main() {
 
 **Why It Matters**: HTTP clients with timeouts prevent requests from hanging indefinitely, where setting `Client.Timeout` or using `context.WithTimeout()` protects services from slow/unresponsive dependencies. Production Go services always configure timeouts (connection timeout, request timeout, idle connection timeout) to maintain responsiveness under failure. Understanding connection pooling (`http.Transport.MaxIdleConns`) optimizes throughput for high-volume HTTP clients calling external APIs.
 
-### Example 25: HTTP Server
+### Example 40: HTTP Server
 
 Go's standard library includes HTTP server capabilities. Handler functions or types can handle requests. Multiplexing routes maps URL paths to handlers. Understanding request/response flow is essential for building APIs.
 
@@ -1089,9 +1091,11 @@ func (h *DataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 **Key Takeaway**: Register handlers with `HandleFunc` (for functions) or `Handle` (for types). Handler functions receive `ResponseWriter` and `*Request`. Use `w.Write()` or `w.WriteString()` to send responses. Set headers and status codes before writing the body.
 
+**Why It Matters**: Testing in Go is first-class and built into the toolchain. Understanding Go testing patterns enables confident refactoring and reliable deployments.
+
 ## Group 4: Standard Library Deep Dive
 
-### Example 26: Time and Duration
+### Example 41: Time and Duration
 
 Time handling is complex across programming languages. Go's `time` package makes it straightforward with `time.Time` values, `time.Duration` for intervals, and format strings for parsing/formatting.
 
@@ -1187,7 +1191,7 @@ func main() {
 
 **Why It Matters**: Time and Duration types prevent common date/time bugs through strong typing, where `time.Parse()` handles timezone conversions and `time.Since()` calculates elapsed time correctly. Duration arithmetic (time.Now().Add(5\*time.Minute)) is type-safe and readable. This is critical for production features like rate limiting (tokens per duration), caching (TTL expiration), and SLO monitoring (request latencies, timeout thresholds) where incorrect time handling causes subtle bugs.
 
-### Example 27: Regular Expressions
+### Example 42: Regular Expressions
 
 Regular expressions enable pattern matching. Go's `regexp` package compiles patterns and provides matching/replacing functions. Precompile expensive patterns to avoid recompilation.
 
@@ -1295,7 +1299,7 @@ func main() {
 
 **Why It Matters**: Regular expressions power input validation (email, phone, URLs), log parsing, and text transformation in production systems. Compiling regexes once with `regexp.MustCompile()` at package init avoids repeated compilation overhead. Named capture groups extract structured data from unstructured text (parsing log lines into fields), while `ReplaceAllString()` enables text transformation. Go's regex engine prevents ReDoS attacks through linear time guarantees, unlike PCRE.
 
-### Example 28: Context Package
+### Example 43: Context Package
 
 The `context` package manages deadlines, cancellation, and request-scoped values. It's essential for building responsive systems that can be cancelled and respect timeouts. Context flows through function calls to coordinate cancellation.
 
@@ -1412,7 +1416,7 @@ func doWork(ctx context.Context) string {
 
 **Why It Matters**: Context propagates cancellation signals and request-scoped values across function boundaries, enabling graceful shutdown when HTTP requests are cancelled or exceed deadlines. Every production Go HTTP handler should accept context and pass it to downstream operations (database queries, HTTP calls, goroutines), ensuring resource cleanup when clients disconnect. Context prevents goroutine leaks and orphaned work, critical for service stability under load.
 
-### Example 29: Flag Parsing
+### Example 44: Flag Parsing
 
 Command-line flags enable configurable programs. Go's `flag` package parses flags automatically, extracting values into variables. Useful for scripts and tools that need configuration from command-line arguments.
 
@@ -1503,9 +1507,11 @@ func main() {
 
 **Key Takeaway**: Define flags with `flag.String()`, `flag.Int()`, `flag.Bool()`. Call `flag.Parse()` to extract values. Flag values are pointers - dereference with `*`. Use `flag.Args()` to get remaining non-flag arguments.
 
+**Why It Matters**: Pointers enable efficient data sharing and modification. Understanding pointer semantics is key to writing performant Go code.
+
 ## Group 5: Production Patterns
 
-### Example 30: HTTP Middleware Pattern
+### Example 45: HTTP Middleware Pattern
 
 Middleware intercepts requests and responses, enabling cross-cutting concerns like logging, authentication, and error handling. Middleware wraps handlers with decorator pattern - each middleware can inspect requests and responses.
 
@@ -1614,7 +1620,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 **Why It Matters**: Middleware patterns enable separation of concerns in HTTP servers, where logging, authentication, rate limiting, and CORS are middleware layers wrapping business logic. This architecture is ubiquitous in production Go services (Gorilla, Chi, Gin frameworks all use it), making code modular and testable. Understanding the wrapping pattern (each middleware returns a handler) and execution order (outermost middleware runs first) is essential for building scalable, maintainable HTTP services.
 
-### Example 31: Graceful Shutdown
+### Example 46: Graceful Shutdown
 
 Production servers need graceful shutdown - stop accepting new requests, finish in-flight requests, clean up resources. Signal handling with `os/signal` enables responding to termination signals like SIGTERM.
 
@@ -1700,7 +1706,7 @@ func main() {
 
 **Why It Matters**: Graceful shutdown prevents data loss and connection failures when deploying new service versions, where listening for OS signals (SIGTERM, SIGINT) triggers cleanup: stop accepting new requests, finish processing in-flight requests, close database connections, flush logs. Production Kubernetes sends SIGTERM before forcefully killing pods, giving services time to shut down cleanly. Proper shutdown prevents HTTP 502 errors, lost transactions, and corrupted state during rolling deployments.
 
-### Example 32: Worker Pool Pattern
+### Example 47: Worker Pool Pattern
 
 Worker pools limit concurrent work and improve resource efficiency. Fixed number of workers process jobs from a queue. Useful for API calls, database operations, or any bounded-resource work.
 
@@ -1791,9 +1797,11 @@ func worker(id int, jobs <-chan int, wg *sync.WaitGroup) {
 
 **Key Takeaway**: Create a channel for jobs. Start fixed number of workers that receive from the channel. Send jobs to the channel. Workers process jobs concurrently, bounded by number of workers.
 
+**Why It Matters**: Channels provide safe communication between goroutines without shared memory. This pattern prevents race conditions and deadlocks that plague concurrent programs in other languages.
+
 ## Group 6: Advanced Testing
 
-### Example 33: Benchmarking
+### Example 48: Benchmarking
 
 Benchmarking measures performance. Go's `testing.B` type runs test functions multiple times to measure speed. Use benchmarks to catch performance regressions and optimize bottlenecks.
 
@@ -1905,7 +1913,7 @@ func BenchmarkStringConcat(b *testing.B) {
 
 **Why It Matters**: Benchmarking with `go test -bench` provides objective performance data, where `b.N` runs the operation enough times to get stable measurements and `b.ReportAllocs()` tracks memory allocations. Production Go teams benchmark critical paths (JSON marshaling, database queries, cryptography) to detect performance regressions in CI. Understanding how to interpret ns/op (nanoseconds per operation) and allocs/op guides optimization decisions based on data, not guessing.
 
-### Example 34: Examples as Tests
+### Example 49: Examples as Tests
 
 Example functions test code while also serving as documentation. When you run `go test`, examples execute. Output should match comments starting with `// Output:`. Go generates docs from examples.
 
@@ -2007,7 +2015,7 @@ func greet(name string) string {
 
 **Why It Matters**: Example tests serve as executable documentation that's always up-to-date, where `func ExampleFunc()` demonstrates API usage with verified output comments. These show up in godoc, making them perfect for teaching API consumers how to use your package. Unlike documentation that rots, example tests run in CI and fail if output doesn't match, ensuring examples stay correct as code evolves. Production libraries extensively use example tests for clear, testable documentation.
 
-### Example 35: Test Coverage
+### Example 50: Test Coverage
 
 Test coverage measures what percentage of code is executed by tests. While 100% coverage doesn't guarantee correctness, measuring coverage reveals untested code. Use `go test -cover` to see coverage percentage.
 
@@ -2092,7 +2100,7 @@ func processValueUncovered(x int) int {
 
 **Why It Matters**: Test coverage analysis with `go test -cover` identifies untested code paths, guiding test writing toward critical functions. While 100% coverage doesn't guarantee bug-free code, uncovered error paths and edge cases are bugs waiting to happen. Production teams track coverage trends (aiming for 70-80% on critical packages) and enforce coverage minimums in CI to maintain code quality. Coverage reports visualize which lines execute during tests, revealing dead code and missing test cases.
 
-### Example 36: HTTP Middleware Chain (Production Pattern)
+### Example 51: HTTP Middleware Chain (Production Pattern)
 
 Middleware chains are essential in production HTTP services. They compose cross-cutting concerns (logging, authentication, rate limiting) by wrapping handlers. Each middleware can inspect/modify requests and responses, short-circuit the chain, or pass control to the next handler.
 
@@ -2326,7 +2334,7 @@ func chain(handler http.Handler, middlewares ...Middleware) http.Handler {
 
 **Why It Matters**: In production Go services, middleware chains are ubiquitous. They separate business logic from infrastructure concerns, making code modular and testable. Understanding the wrapping pattern (each middleware returns a handler that calls `next.ServeHTTP`) is essential for building scalable HTTP services. Popular frameworks (Gorilla, Chi, Echo) all use this pattern.
 
-### Example 37: Context Cancellation Patterns
+### Example 52: Context Cancellation Patterns
 
 Context enables graceful cancellation of long-running operations. When a context is cancelled (due to timeout, deadline, or manual cancellation), all goroutines respecting that context should clean up and exit promptly.
 
@@ -2452,7 +2460,7 @@ func longOperation(ctx context.Context, result chan<- string) {
 
 **Why It Matters**: Context cancellation patterns prevent resource leaks and wasted work, where operations that outlive their usefulness (cancelled requests, exceeded deadlines) must clean up promptly. Using `select` with `ctx.Done()` in goroutines enables responsive cancellation. Production services pass context through all operations (database queries, HTTP calls, goroutines) to enable cascading cancellation when requests are cancelled, maintaining system health under load spikes by immediately freeing resources.
 
-### Example 38: JSON Streaming with Encoder/Decoder
+### Example 53: JSON Streaming with Encoder/Decoder
 
 For large JSON datasets, streaming with `json.Encoder` and `json.Decoder` is more memory-efficient than loading entire payloads. This pattern enables processing massive JSON arrays or streams without loading everything into memory.
 
@@ -2556,7 +2564,7 @@ type User struct {
 
 **Why It Matters**: JSON streaming with Encoder/Decoder processes large datasets without loading entire payloads into memory, where `json.NewDecoder(reader)` parses JSON incrementally and `json.NewEncoder(writer)` writes directly to output streams. This powers APIs that stream arrays of objects (paginated results, log exports) efficiently. Understanding when to use streaming (large/unknown size) vs `json.Marshal()` (small payloads) is critical for building memory-efficient services.
 
-### Example 39: HTTP Client with Timeouts and Retries
+### Example 54: HTTP Client with Timeouts and Retries
 
 Production HTTP clients need timeouts (prevent hanging), retries (handle transient failures), and connection pooling (reuse connections). Understanding these patterns prevents service outages and cascading failures.
 
@@ -2750,7 +2758,7 @@ func makeRequestWithRetry(client *http.Client, url string) (*http.Response, erro
 
 **Why It Matters**: HTTP clients with timeouts and retries handle transient failures gracefully, where retry logic with exponential backoff recovers from temporary network glitches, rate limits, and service restarts. Production Go services always implement retries for idempotent operations (GET, PUT with idempotency keys) to improve reliability. Understanding when to retry (5xx errors, timeouts) vs fail fast (4xx errors) prevents retry storms that amplify outages.
 
-### Example 40: Table-Driven Test Patterns
+### Example 55: Table-Driven Test Patterns
 
 Table-driven tests parameterize test cases, enabling comprehensive coverage with minimal code duplication. This pattern is idiomatic in Go and scales better than individual test functions for each scenario.
 
@@ -2922,7 +2930,7 @@ func divide(a, b int) (int, error) {
 
 **Why It Matters**: Table-driven tests enable comprehensive coverage with minimal code duplication, where a slice of test cases (input + expected output) runs through the same test logic. This pattern is idiomatic in Go testing, making it easy to add new test cases (just append to the slice). Production codebases extensively use table-driven tests to cover edge cases, different inputs, and error conditions with maintainable, readable test code that scales to hundreds of test cases.
 
-### Example 41: Buffered I/O for Performance
+### Example 56: Buffered I/O for Performance
 
 Buffered readers and writers reduce system calls by batching data. For file I/O or network streams, buffering dramatically improves performance. Understanding when to use buffering prevents performance bottlenecks.
 
@@ -3075,7 +3083,7 @@ func main() {
 
 **Why It Matters**: Buffered I/O dramatically improves performance for file/network operations, where `bufio.Writer` batches writes (reducing syscalls by 10-100x) and `bufio.Scanner` reads line-by-line efficiently. Writing 1 million small writes unbuffered takes seconds; buffered takes milliseconds. Production code that processes logs, CSV files, or streams large datasets always uses buffered I/O to avoid syscall overhead that kills throughput.
 
-### Example 42: Worker Pool with Graceful Shutdown
+### Example 57: Worker Pool with Graceful Shutdown
 
 Worker pools distribute work across fixed number of goroutines. This pattern controls concurrency, prevents overwhelming resources, and enables graceful shutdown when work is done or context is cancelled.
 
@@ -3269,7 +3277,7 @@ func worker(ctx context.Context, id int, jobs <-chan int, results chan<- int, wg
 
 **Why It Matters**: Worker pools with graceful shutdown ensure all in-flight work completes before service termination, preventing lost transactions and data corruption. Using WaitGroup to track active workers and closing the work channel signals completion. Production systems combine worker pools with signal handling (SIGTERM) to gracefully drain queues during rolling deploys, maintaining zero data loss during deployments and ensuring background jobs complete before pods terminate.
 
-### Example 43: Custom Error Types with Stack Context
+### Example 58: Custom Error Types with Stack Context
 
 Production error handling needs context (what operation failed, why, when). Custom error types with fields enable structured logging and debugging. This pattern makes error diagnosis faster in production.
 
@@ -3455,7 +3463,7 @@ func checkBalance() error {
 
 **Why It Matters**: Custom error types with context enable rich error information for production debugging, where wrapping errors with request IDs, user IDs, and stack traces helps trace failures through distributed systems. Sentinel errors (exported package-level errors) enable error classification with `errors.Is()`, supporting different handling for different error types (retry temporary errors, fail fast on permanent errors). This powers robust error handling in microservices.
 
-### Example 44: Rate Limiting with Token Bucket
+### Example 59: Rate Limiting with Token Bucket
 
 Rate limiting prevents abuse and controls resource consumption. Token bucket algorithm: tokens replenish at fixed rate, operations consume tokens. When no tokens available, operations wait or fail.
 
@@ -3685,7 +3693,7 @@ func (tb *TokenBucket) refill() {
 
 **Why It Matters**: Rate limiting with token buckets prevents API abuse and overload, where allowing bursts (initial token capacity) while enforcing sustained rate limits protects services from traffic spikes. Production APIs rate-limit by IP, user, or API key to ensure fair resource allocation and prevent denial of service. Understanding when to use rate limiting (public APIs, expensive operations) vs circuit breakers (protecting dependencies) is essential for building resilient services.
 
-### Example 45: Benchmarking and Optimization
+### Example 60: Benchmarking and Optimization
 
 Benchmarks measure performance and guide optimization. Understanding `b.N`, `b.ResetTimer()`, and `b.Run()` enables precise performance measurement. Never optimize without benchmarks - measure before and after.
 
