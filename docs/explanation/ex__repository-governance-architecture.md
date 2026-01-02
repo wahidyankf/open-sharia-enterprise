@@ -11,7 +11,7 @@ tags:
   - workflows
   - governance
 created: 2025-12-24
-updated: 2025-12-29
+updated: 2026-01-02
 ---
 
 # Repository Architecture: Six-Layer Hierarchy
@@ -30,14 +30,22 @@ The six-layer architecture provides:
 ## 📊 The Six Layers
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 graph TD
-    L0[Layer 0: Vision<br/>WHY WE EXIST]
-    L1[Layer 1: Principles<br/>WHY - Values]
-    L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
-    L3[Layer 3: Development<br/>HOW - Software Practices]
-    L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
-    L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
+    subgraph Governance["Six-Layer Governance Architecture"]
+        L0[Layer 0: Vision<br/>WHY WE EXIST]
+        L1[Layer 1: Principles<br/>WHY - Values]
+        L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
+        L3[Layer 3: Development<br/>HOW - Software Practices]
+        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
+        L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
+    end
+
+    subgraph Delivery["Delivery Infrastructure"]
+        CM[CLAUDE.md<br/>Startup context]
+        SK[Skills<br/>On-demand knowledge]
+        DR[Direct References<br/>Explicit links]
+    end
 
     L0 -->|inspires| L1
     L1 -->|governs| L2
@@ -47,12 +55,23 @@ graph TD
     L3 -->|governs| L4
     L4 -->|orchestrated by| L5
 
+    L2 -->|summarized in| CM
+    L2 -->|encoded in| SK
+    L3 -->|summarized in| CM
+    L3 -->|encoded in| SK
+    CM -->|delivers to| L4
+    SK -->|auto-delivers to| L4
+    DR -->|explicitly delivers to| L4
+
     style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style SK fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Layer 0: Vision (WHY WE EXIST)
@@ -263,6 +282,81 @@ Maker-Checker-Fixer Workflow:
 3. User reviews audit → decision: approve/reject
 4. Fixer applies validated fixes → output: corrected files
 5. Terminate when: all HIGH/MEDIUM findings resolved
+```
+
+## 🔧 Delivery Infrastructure
+
+In addition to the six governance layers, the repository uses **delivery infrastructure** to transport knowledge from Layers 2-3 to Layer 4 (Agents). These are NOT governance layers - they don't enforce rules, they deliver knowledge.
+
+### Three Delivery Mechanisms
+
+| Mechanism             | Location          | Purpose                        | When Loaded                               |
+| --------------------- | ----------------- | ------------------------------ | ----------------------------------------- |
+| **CLAUDE.md**         | Root              | Context summaries, navigation  | Always at startup                         |
+| **Skills**            | `.claude/skills/` | Progressive knowledge packages | Auto-loaded when task matches description |
+| **Direct References** | In agent prompts  | Links to convention docs       | When agent explicitly references          |
+
+### Skills as Infrastructure
+
+**Skills** are model-invoked markdown knowledge packages that:
+
+- **Auto-load based on description matching** - Claude decides when to load them
+- **Enable progressive disclosure** - Name/description at startup, full content on-demand
+- **Encode convention/development knowledge** - Packaged for efficient agent consumption
+- **Support knowledge composition** - Multiple Skills work together seamlessly
+- **Follow open standard** - agentskills.io format for portability
+
+**Key Document**: [Skills Directory](../.claude/skills/README.md)
+
+**10 Skills Available**:
+
+1. **maker-checker-fixer-pattern** - Three-stage quality workflow
+2. **color-accessibility-diagrams** - WCAG-compliant Mermaid diagrams
+3. **repository-architecture** - Six-layer hierarchy understanding
+4. **hugo-ayokoding-development** - Hextra theme, bilingual, weight system
+5. **by-example-tutorial-creation** - 75-90 annotated code examples
+6. **factual-validation-methodology** - WebSearch/WebFetch verification
+7. **trunk-based-development** - Main branch workflow
+8. **gherkin-acceptance-criteria** - Given-When-Then format
+9. **hugo-ose-development** - PaperMod theme conventions
+10. **criticality-confidence-system** - Checker/Fixer classification
+
+### Why Infrastructure, Not a Layer?
+
+**Governance layers** have defining characteristics:
+
+- Enforce rules on the layer below
+- Create obligations and constraints
+- Answer "what must be done" at their level
+
+**Testing the governance relationship**:
+
+| Source                    | Target | Governance?                             | Evidence |
+| ------------------------- | ------ | --------------------------------------- | -------- |
+| Conventions → Development | Yes    | Conventions define HOW docs are written |
+| Conventions → Agents      | Yes    | Agents MUST follow doc standards        |
+| Development → Agents      | Yes    | Agents MUST follow coding patterns      |
+| Skills → Agents           | **No** | Skills SERVE agents with knowledge      |
+
+**Skills don't govern agents. Skills serve agents.**
+
+**Delivery infrastructure** has different characteristics:
+
+- Transports or delivers something
+- No governance relationship with consumers
+- Multiple alternatives can coexist (CLAUDE.md, Skills, Direct References)
+
+### Delivery vs Governance
+
+```
+Governance (enforces rules):
+  Conventions ──governs──> Agents (agents MUST follow)
+  Development ──governs──> Agents (agents MUST follow)
+
+Delivery (serves knowledge):
+  Conventions ──encoded in──> Skills ──delivers to──> Agents
+  Conventions ──summarized in──> CLAUDE.md ──delivers to──> Agents
+  Conventions ──linked via──> Direct References ──delivers to──> Agents
 ```
 
 ## 🔗 Complete Traceability Examples
@@ -513,6 +607,12 @@ Periodically verify:
 - [Workflows Index](./workflows/README.md)
 - [Workflow Pattern Convention](./workflows/meta/ex-wf-me__workflow-pattern.md)
 
+**Delivery Infrastructure**:
+
+- [Skills Directory](../.claude/skills/README.md) - 10 knowledge packages
+- [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
+- CLAUDE.md - Root navigation document
+
 **Meta-Documentation**:
 
 - [Diátaxis Framework](./conventions/meta/ex-co-me__diataxis-framework.md) - Four documentation types
@@ -533,4 +633,4 @@ This architecture document implements/respects the following principles:
 
 ---
 
-**Last Updated**: 2025-12-29
+**Last Updated**: 2026-01-02
