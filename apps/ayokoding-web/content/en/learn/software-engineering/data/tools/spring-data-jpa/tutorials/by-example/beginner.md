@@ -126,7 +126,7 @@ public class UserService {
 
 **Key Takeaway**: Extending `JpaRepository` provides 15+ CRUD methods instantly. No SQL needed for basic operations.
 
-## **Why It Matters**: JpaRepository eliminates 90% of boilerplate DAO code found in traditional JDBC applications, reducing development time and preventing SQL injection vulnerabilities through parameterized queries. Spring's repository abstraction has become the industry standard for Java data access, used in 70%+ of enterprise Spring applications, making this knowledge essential for professional Java developers. The zero-implementation approach means compile-time verification of method signatures, catching errors before runtime that would crash legacy DAO implementations.
+**Why It Matters**: JpaRepository eliminates 90% of boilerplate DAO code found in traditional JDBC applications, reducing development time and preventing SQL injection vulnerabilities through parameterized queries. Spring's repository abstraction has become the industry standard for Java data access, used in 70%+ of enterprise Spring applications, making this knowledge essential for professional Java developers. The zero-implementation approach means compile-time verification of method signatures, catching errors before runtime that would crash legacy DAO implementations.
 
 ### Example 2: Save and Persist Entities
 
@@ -181,7 +181,7 @@ public class UserPersistenceService {
 
 **Key Takeaway**: `save()` is smart - it inserts entities with null IDs and updates entities with existing IDs. Single method for both operations.
 
-## **Why It Matters**: The smart save() method prevents duplicate code for insert vs update logic, reducing database round-trips by 50% in typical CRUD operations compared to separate insert/update methods. This pattern handles optimistic locking conflicts automatically through version checking, preventing lost updates in concurrent environments. Production applications using save() report 40-60% less data corruption incidents compared to manual SQL execution, as JPA manages the persistence context lifecycle and ensures referential integrity.
+**Why It Matters**: The smart save() method prevents duplicate code for insert vs update logic, reducing database round-trips by 50% in typical CRUD operations compared to separate insert/update methods. This pattern handles optimistic locking conflicts automatically through version checking, preventing lost updates in concurrent environments. Production applications using save() report 40-60% less data corruption incidents compared to manual SQL execution, as JPA manages the persistence context lifecycle and ensures referential integrity.
 
 ### Example 3: Find by ID
 
@@ -254,7 +254,7 @@ public class UserLookupService {
 
 **Key Takeaway**: `Optional<T>` prevents `NullPointerException`. Always use `orElse()`, `orElseThrow()`, or `ifPresent()` instead of `get()`.
 
-## **Why It Matters**: Optional eliminates NullPointerException crashes that cause 15-20% of production incidents in legacy Java applications, forcing developers to handle missing data explicitly at compile time. Unlike returning null which requires manual null checks everywhere, Optional's functional API (map, flatMap, filter) enables chainable operations that fail fast with clear error messages. Major tech companies (Google, Twitter, LinkedIn) mandate Optional for data access layer returns, as it reduces production exceptions by 80% compared to null-based code.
+**Why It Matters**: Optional eliminates NullPointerException crashes that cause 15-20% of production incidents in legacy Java applications, forcing developers to handle missing data explicitly at compile time. Unlike returning null which requires manual null checks everywhere, Optional's functional API (map, flatMap, filter) enables chainable operations that fail fast with clear error messages. Major tech companies (Google, Twitter, LinkedIn) mandate Optional for data access layer returns, as it reduces production exceptions by 80% compared to null-based code.
 
 ### Example 4: Find All Entities
 
@@ -322,7 +322,7 @@ public class UserListService {
 
 **Key Takeaway**: `findAll()` returns `List<Entity>`, never null. Safe to call `.size()` and `.forEach()` without null checks.
 
-## **Why It Matters**: Guaranteed non-null List returns eliminate defensive null checks throughout the codebase, reducing cyclomatic complexity by 20-30% in service layers. This contract consistency means developers can safely call stream(), forEach(), and size() without guard clauses, preventing NullPointerException runtime crashes that plague legacy JDBC code. The empty list semantics align with functional programming patterns, enabling clean composition with Java Streams API used in modern reactive applications.
+**Why It Matters**: Guaranteed non-null List returns eliminate defensive null checks throughout the codebase, reducing cyclomatic complexity by 20-30% in service layers. This contract consistency means developers can safely call stream(), forEach(), and size() without guard clauses, preventing NullPointerException runtime crashes that plague legacy JDBC code. The empty list semantics align with functional programming patterns, enabling clean composition with Java Streams API used in modern reactive applications.
 
 ### Example 5: Delete Operations
 
@@ -392,7 +392,7 @@ public class UserDeletionService {
 
 **Key Takeaway**: `delete(entity)` is most efficient (single DELETE). `deleteById()` requires SELECT first. `deleteAll()` is inefficient for large tables - use custom query instead.
 
-## **Why It Matters**: Choosing the right delete method prevents unnecessary database round-trips - deleteById() requires 2 queries (SELECT + DELETE) while delete(entity) needs just 1, improving bulk deletion performance by 50% in production workloads. The deleteAll() trap causes performance disasters with large tables (1000+ records), as it loads every entity into memory before deletion, consuming gigabytes of heap and triggering OutOfMemoryError. Enterprise applications handle this correctly with custom @Query("DELETE FROM ...") statements that execute in milliseconds versus minutes for deleteAll().
+**Why It Matters**: Choosing the right delete method prevents unnecessary database round-trips - deleteById() requires 2 queries (SELECT + DELETE) while delete(entity) needs just 1, improving bulk deletion performance by 50% in production workloads. The deleteAll() trap causes performance disasters with large tables (1000+ records), as it loads every entity into memory before deletion, consuming gigabytes of heap and triggering OutOfMemoryError. Enterprise applications handle this correctly with custom @Query("DELETE FROM ...") statements that execute in milliseconds versus minutes for deleteAll().
 
 ### Example 6: Count and Exists
 
@@ -452,7 +452,7 @@ public class UserCountService {
 
 **Key Takeaway**: Use `existsById()` to check existence - it's more efficient than `findById().isPresent()` because it doesn't fetch the entire entity.
 
-## **Why It Matters**: The existsById() optimization reduces network overhead by 70-90% compared to findById(), as it executes "SELECT 1 ... LIMIT 1" instead of fetching all columns, crucial for high-throughput microservices handling 10,000+ requests/second. This pattern prevents memory bloat in existence checks within loops, where findById() would load megabytes of entity data unnecessarily. Database administrators report 40% query time reduction after switching existence checks from findById().isPresent() to existsById() in production systems.
+**Why It Matters**: The existsById() optimization reduces network overhead by 70-90% compared to findById(), as it executes "SELECT 1 ... LIMIT 1" instead of fetching all columns, crucial for high-throughput microservices handling 10,000+ requests/second. This pattern prevents memory bloat in existence checks within loops, where findById() would load megabytes of entity data unnecessarily. Database administrators report 40% query time reduction after switching existence checks from findById().isPresent() to existsById() in production systems.
 
 ### Example 7: Save All Batch Operations
 
@@ -537,7 +537,7 @@ public class UserBatchService {
 
 **Key Takeaway**: Use `saveAll()` for batch operations. Configure `spring.jpa.properties.hibernate.jdbc.batch_size` to enable true batching for better performance.
 
-## **Why It Matters**: Batch operations with saveAll() enable JDBC batching when properly configured (hibernate.jdbc.batch_size), reducing database round-trips from N to N/batch_size, improving bulk insert performance by 10-50x for large datasets. Without batching, inserting 10,000 entities takes 45 seconds; with batching, it completes in 2-3 seconds, critical for data migration and bulk import scenarios. Enterprise applications using saveAll() correctly report 80% reduction in database connection pool exhaustion incidents during high-load periods.
+**Why It Matters**: Batch operations with saveAll() enable JDBC batching when properly configured (hibernate.jdbc.batch_size), reducing database round-trips from N to N/batch_size, improving bulk insert performance by 10-50x for large datasets. Without batching, inserting 10,000 entities takes 45 seconds; with batching, it completes in 2-3 seconds, critical for data migration and bulk import scenarios. Enterprise applications using saveAll() correctly report 80% reduction in database connection pool exhaustion incidents during high-load periods.
 
 ### Example 8: Flush and Transaction Management
 
@@ -638,7 +638,7 @@ public class UserTransactionService {
 
 **Key Takeaway**: JPA batches database writes until transaction commit. Use `flush()` or `saveAndFlush()` when you need the ID immediately or want to trigger constraint violations early.
 
-## **Why It Matters**: Understanding flush timing prevents subtle data inconsistency bugs where database constraints aren't validated until transaction commit, causing cryptic rollback errors in production. The flush() method forces immediate constraint validation, enabling fail-fast behavior that catches data integrity violations before complex business logic executes. Applications using strategic flush() calls reduce transaction rollback rates by 30-40%, as constraint violations surface immediately rather than at unpredictable commit time.
+**Why It Matters**: Understanding flush timing prevents subtle data inconsistency bugs where database constraints aren't validated until transaction commit, causing cryptic rollback errors in production. The flush() method forces immediate constraint validation, enabling fail-fast behavior that catches data integrity violations before complex business logic executes. Applications using strategic flush() calls reduce transaction rollback rates by 30-40%, as constraint violations surface immediately rather than at unpredictable commit time.
 
 ## Group 2: Simple Query Derivation
 
@@ -745,7 +745,7 @@ public class UserQueryService {
 
 **Key Takeaway**: Return `Optional<T>` for single results, `List<T>` for multiple. Method names map directly to SQL WHERE clauses.
 
-## **Why It Matters**: Consistent return types prevent runtime ClassCastException errors when query results exceed expectations - returning Optional for non-unique queries causes production crashes when multiple rows match. The method name contract (findByX returns Optional, findAllByX returns List) enables IDE autocomplete accuracy and compile-time safety, reducing debugging time by 50% compared to inconsistent return types. Teams enforcing this convention report 70% fewer data access layer bugs in code reviews.
+**Why It Matters**: Consistent return types prevent runtime ClassCastException errors when query results exceed expectations - returning Optional for non-unique queries causes production crashes when multiple rows match. The method name contract (findByX returns Optional, findAllByX returns List) enables IDE autocomplete accuracy and compile-time safety, reducing debugging time by 50% compared to inconsistent return types. Teams enforcing this convention report 70% fewer data access layer bugs in code reviews.
 
 ### Example 10: Find By Multiple Properties
 
@@ -829,7 +829,7 @@ public class UserMultiQueryService {
 
 **Key Takeaway**: `And` and `Or` keywords create multi-condition WHERE clauses. Parameters must match the order of properties in the method name.
 
-## **Why It Matters**: Query derivation with logical operators eliminates 90% of custom @Query annotations for simple filters, reducing code maintenance burden and SQL injection risk through automatic parameterization. The method name approach provides self-documenting code where findByNameAndAgeGreaterThan instantly reveals query logic, unlike @Query where SQL must be read. However, complex queries (5+ conditions) suffer readability issues - switch to Specifications or @Query for business logic clarity.
+**Why It Matters**: Query derivation with logical operators eliminates 90% of custom @Query annotations for simple filters, reducing code maintenance burden and SQL injection risk through automatic parameterization. The method name approach provides self-documenting code where findByNameAndAgeGreaterThan instantly reveals query logic, unlike @Query where SQL must be read. However, complex queries (5+ conditions) suffer readability issues - switch to Specifications or @Query for business logic clarity.
 
 ### Example 11: Comparison Operators
 
@@ -975,7 +975,7 @@ public class ProductQueryService {
 
 **Key Takeaway**: Comparison keywords (`LessThan`, `GreaterThan`, `Between`) map to SQL operators. `Between` is inclusive on both ends.
 
-## **Why It Matters**: Comparison operators in method names generate indexed WHERE clauses that execute 100-1000x faster than full table scans, critical for filtering millions of records in production databases. The Between keyword translates to SQL BETWEEN which databases optimize with range scans, outperforming separate GreaterThanEqual + LessThanEqual conditions by 20-30% through query plan optimization. E-commerce platforms using price range queries (findByPriceBetween) report sub-100ms response times on catalogs with 10M+ products, versus 5-10 second queries without proper indexing.
+**Why It Matters**: Comparison operators in method names generate indexed WHERE clauses that execute 100-1000x faster than full table scans, critical for filtering millions of records in production databases. The Between keyword translates to SQL BETWEEN which databases optimize with range scans, outperforming separate GreaterThanEqual + LessThanEqual conditions by 20-30% through query plan optimization. E-commerce platforms using price range queries (findByPriceBetween) report sub-100ms response times on catalogs with 10M+ products, versus 5-10 second queries without proper indexing.
 
 ---
 
@@ -1121,7 +1121,7 @@ public class UserPatternService {
 
 **Why It Matters**: Pattern matching queries reduce ad-hoc SQL by 50% in typical CRUD applications, eliminating typo-prone string concatenation and improving code searchability through method names. The StartingWith/EndingWith pattern enables prefix/suffix searches critical for autocomplete features serving millions of users, though full-text search (Elasticsearch, PostgreSQL pg_trgm) outperforms LIKE queries by 100-1000x on large datasets. Teams using pattern matching consistently report 40% fewer SQL injection vulnerabilities compared to dynamic query construction.
 
-## **Why It Matters**: Automatic wildcard handling prevents common LIKE query mistakes where developers forget % symbols or place them incorrectly, causing zero-result bugs that frustrate end users. The StartingWith/EndingWith/Containing keywords generate index-friendly queries when combined with database function-based indexes, improving search performance by 100-1000x on large tables. However, Containing (%value%) cannot use indexes efficiently - use full-text search (PostgreSQL pg_trgm, Elasticsearch) for production text search on million-row tables.
+**Why It Matters**: Automatic wildcard handling prevents common LIKE query mistakes where developers forget % symbols or place them incorrectly, causing zero-result bugs that frustrate end users. The StartingWith/EndingWith/Containing keywords generate index-friendly queries when combined with database function-based indexes, improving search performance by 100-1000x on large tables. However, Containing (%value%) cannot use indexes efficiently - use full-text search (PostgreSQL pg_trgm, Elasticsearch) for production text search on million-row tables.
 
 ### Example 13: Ordering Results
 
@@ -1216,7 +1216,7 @@ public class ProductSortService {
 
 **Key Takeaway**: `OrderBy` adds SQL `ORDER BY` clause. Combine multiple properties for multi-level sorting. Default is ascending if no suffix specified.
 
-## **Why It Matters**: Declarative sorting through OrderBy prevents SQL injection in dynamic ORDER BY clauses while providing compile-time validation of sort column names, eliminating runtime errors. Multi-field sorting handles 80% of real-world sort requirements (sort by category, then price, then name) without complex Criteria API code. However, user-driven sortable tables benefit from Pageable Sort objects which support runtime column selection, reducing code duplication by 60% compared to creating separate OrderBy methods for each sort combination.
+**Why It Matters**: Declarative sorting through OrderBy prevents SQL injection in dynamic ORDER BY clauses while providing compile-time validation of sort column names, eliminating runtime errors. Multi-field sorting handles 80% of real-world sort requirements (sort by category, then price, then name) without complex Criteria API code. However, user-driven sortable tables benefit from Pageable Sort objects which support runtime column selection, reducing code duplication by 60% compared to creating separate OrderBy methods for each sort combination.
 
 ### Example 14: Limiting Results
 
@@ -1327,7 +1327,7 @@ public class ProductLimitService {
 
 **Key Takeaway**: `First` and `Top` are synonyms - both add `LIMIT` clause. Always combine with `OrderBy` for deterministic results.
 
-## **Why It Matters**: Limiting result sets with First/Top prevents memory exhaustion when queries accidentally return millions of rows, providing circuit-breaker protection for production APIs. The pattern generates database-agnostic LIMIT clauses (works across PostgreSQL, MySQL, Oracle), eliminating vendor-specific SQL. However, First/Top without OrderBy returns non-deterministic results - databases don't guarantee row order without explicit sorting, causing flaky integration tests and production inconsistencies that cost hours of debugging.
+**Why It Matters**: Limiting result sets with First/Top prevents memory exhaustion when queries accidentally return millions of rows, providing circuit-breaker protection for production APIs. The pattern generates database-agnostic LIMIT clauses (works across PostgreSQL, MySQL, Oracle), eliminating vendor-specific SQL. However, First/Top without OrderBy returns non-deterministic results - databases don't guarantee row order without explicit sorting, causing flaky integration tests and production inconsistencies that cost hours of debugging.
 
 ### Example 15: Null Handling
 
@@ -1469,7 +1469,7 @@ public class UserNullService {
 
 **Key Takeaway**: Use `IsNull` and `IsNotNull` for null checks. Never use `= null` or `!= null` in custom queries - SQL requires `IS NULL` / `IS NOT NULL`.
 
-## **Why It Matters**: Null-aware queries prevent NullPointerException crashes and incorrect WHERE clauses (column = NULL always returns no results in SQL), handling missing data correctly through IS NULL operators. The IsNull/IsNotNull keywords generate database-portable SQL across PostgreSQL, MySQL, and Oracle, eliminating vendor-specific NULL handling syntax. Production applications using null-safe queries report 30% fewer data quality bugs, as explicit null handling surfaces missing data scenarios during code review rather than silent failures in production.
+**Why It Matters**: Null-aware queries prevent NullPointerException crashes and incorrect WHERE clauses (column = NULL always returns no results in SQL), handling missing data correctly through IS NULL operators. The IsNull/IsNotNull keywords generate database-portable SQL across PostgreSQL, MySQL, and Oracle, eliminating vendor-specific NULL handling syntax. Production applications using null-safe queries report 30% fewer data quality bugs, as explicit null handling surfaces missing data scenarios during code review rather than silent failures in production.
 
 ### Example 16: Case-Insensitive Queries
 
@@ -1606,7 +1606,7 @@ public class UserCaseService {
 
 **Key Takeaway**: `IgnoreCase` works with all string matching keywords (`Containing`, `StartingWith`, `EndingWith`). Database handles case conversion automatically.
 
-## **Why It Matters**: Correct column annotations ensure Java naming conventions (camelCase) map cleanly to database standards (snake_case), preventing cryptic column not found errors during deployments. Explicit nullable constraints provide fail-fast validation before database insertion, reducing debugging time by 40% compared to waiting for database constraint violations. Applications with proper column definitions enable zero-downtime migrations, as columns can be renamed in database while @Column name attribute maintains compatibility during gradual refactoring.
+**Why It Matters**: Correct column annotations ensure Java naming conventions (camelCase) map cleanly to database standards (snake_case), preventing cryptic column not found errors during deployments. Explicit nullable constraints provide fail-fast validation before database insertion, reducing debugging time by 40% compared to waiting for database constraint violations. Applications with proper column definitions enable zero-downtime migrations, as columns can be renamed in database while @Column name attribute maintains compatibility during gradual refactoring.
 
 ## Group 3: Basic Relationships
 
@@ -1777,7 +1777,7 @@ public class DepartmentService {
 
 **Key Takeaway**: `@OneToMany` on parent, `@ManyToOne` on child. Always use `mappedBy` to indicate which side owns the relationship. Helper methods maintain bidirectional consistency.
 
-## **Why It Matters**: Proper temporal type mapping prevents timezone-related bugs that cause 20-30% of date/time incidents in distributed systems, ensuring LocalDate stores dates without time components and Instant stores UTC timestamps correctly. The @Temporal annotation (JPA 2.x) and Java 8+ types (LocalDate, LocalDateTime) prevent data loss where storing dates in VARCHAR columns causes unparseable date formats and query performance degradation. Financial applications using correct temporal types report 90% reduction in regulatory compliance issues related to transaction timestamp accuracy.
+**Why It Matters**: Proper temporal type mapping prevents timezone-related bugs that cause 20-30% of date/time incidents in distributed systems, ensuring LocalDate stores dates without time components and Instant stores UTC timestamps correctly. The @Temporal annotation (JPA 2.x) and Java 8+ types (LocalDate, LocalDateTime) prevent data loss where storing dates in VARCHAR columns causes unparseable date formats and query performance degradation. Financial applications using correct temporal types report 90% reduction in regulatory compliance issues related to transaction timestamp accuracy.
 
 ### Example 18: Querying Through Relationships
 
@@ -1872,7 +1872,7 @@ public class EmployeeQueryService {
 
 **Key Takeaway**: Use property paths (dot notation conceptually) in method names to navigate relationships. Spring Data generates JOIN queries automatically.
 
-## **Why It Matters**: Auto-generated primary keys eliminate race conditions in high-concurrency scenarios where application-generated IDs cause duplicate key violations, critical for REST APIs handling 1000+ concurrent POST requests. SEQUENCE strategy enables batch ID allocation (allocationSize=50), improving bulk insert performance by 30-50% compared to IDENTITY which requires database round-trip per row. UUID generation provides globally unique identifiers essential for distributed databases and event sourcing, though 16-byte UUIDs increase index size 4x compared to 8-byte BIGINT sequences, impacting query performance on billion-row tables.
+**Why It Matters**: Auto-generated primary keys eliminate race conditions in high-concurrency scenarios where application-generated IDs cause duplicate key violations, critical for REST APIs handling 1000+ concurrent POST requests. SEQUENCE strategy enables batch ID allocation (allocationSize=50), improving bulk insert performance by 30-50% compared to IDENTITY which requires database round-trip per row. UUID generation provides globally unique identifiers essential for distributed databases and event sourcing, though 16-byte UUIDs increase index size 4x compared to 8-byte BIGINT sequences, impacting query performance on billion-row tables.
 
 ### Example 19: Many-to-One Relationship
 
@@ -1973,7 +1973,7 @@ public class EmployeeRelationService {
 
 **Key Takeaway**: `@ManyToOne` is the owning side of the relationship - it holds the foreign key. Always save the "one" side before the "many" side to avoid constraint violations.
 
-## **Why It Matters**: Proper @OneToOne configuration with mappedBy prevents duplicate foreign key columns that waste 4-12 bytes per row and cause data synchronization nightmares when updating relationships. The optional=false parameter enforces referential integrity at JPA level, catching orphaned records before database constraint triggers, reducing data corruption incidents by 50%. However, @OneToOne lazy loading triggers proxy creation overhead even when never accessed - consider unidirectional associations or @MapsId for read-heavy APIs where bidirectional navigation isn't needed.
+**Why It Matters**: Proper @OneToOne configuration with mappedBy prevents duplicate foreign key columns that waste 4-12 bytes per row and cause data synchronization nightmares when updating relationships. The optional=false parameter enforces referential integrity at JPA level, catching orphaned records before database constraint triggers, reducing data corruption incidents by 50%. However, @OneToOne lazy loading triggers proxy creation overhead even when never accessed - consider unidirectional associations or @MapsId for read-heavy APIs where bidirectional navigation isn't needed.
 
 ### Example 20: Cascade Types
 
@@ -2114,7 +2114,7 @@ public class CascadeService {
 
 **Key Takeaway**: `CascadeType.ALL` simplifies relationship management but can cause unintended deletes. Use specific cascade types for fine-grained control. `orphanRemoval=true` deletes entities removed from collections.
 
-## **Why It Matters**: Bidirectional @OneToMany/@ManyToOne relationships enable navigation from both sides without additional queries, eliminating 40% of repository methods in typical domain models. The pattern models real-world parent-child relationships (Order→OrderItems) with single foreign key column, avoiding join table overhead of @ManyToMany and improving query performance by 30-40%. Production applications with proper bidirectional mapping report 60% reduction in N+1 query incidents, as developers can navigate object graphs naturally without triggering lazy loading exceptions.
+**Why It Matters**: Bidirectional @OneToMany/@ManyToOne relationships enable navigation from both sides without additional queries, eliminating 40% of repository methods in typical domain models. The pattern models real-world parent-child relationships (Order→OrderItems) with single foreign key column, avoiding join table overhead of @ManyToMany and improving query performance by 30-40%. Production applications with proper bidirectional mapping report 60% reduction in N+1 query incidents, as developers can navigate object graphs naturally without triggering lazy loading exceptions.
 
 ### Example 21: Lazy vs Eager Loading
 
@@ -2245,7 +2245,7 @@ public class FetchStrategyService {
 
 **Key Takeaway**: `LAZY` (default for collections) saves memory and improves performance. Use within `@Transactional` methods to avoid `LazyInitializationException`. `EAGER` causes N+1 query problems - avoid except for small, always-needed relationships.
 
-## **Why It Matters**: The mappedBy attribute designates relationship ownership, preventing JPA from creating redundant foreign key columns that cause database constraint violations and storage waste (8-12 bytes per row). Incorrect ownership causes cascade operations to execute against wrong tables, silently failing to delete child records and creating orphaned data requiring manual cleanup. Enterprise applications enforcing mappedBy conventions report 70% fewer relationship-related bugs in production, as bidirectional associations behave predictably during persist/merge/remove operations.
+**Why It Matters**: The mappedBy attribute designates relationship ownership, preventing JPA from creating redundant foreign key columns that cause database constraint violations and storage waste (8-12 bytes per row). Incorrect ownership causes cascade operations to execute against wrong tables, silently failing to delete child records and creating orphaned data requiring manual cleanup. Enterprise applications enforcing mappedBy conventions report 70% fewer relationship-related bugs in production, as bidirectional associations behave predictably during persist/merge/remove operations.
 
 ### Example 22: Bidirectional Relationship Synchronization
 
@@ -2422,7 +2422,7 @@ public class BidirectionalSyncService {
 
 **Key Takeaway**: Always use helper methods to maintain bidirectional relationships. Direct list manipulation breaks synchronization and causes NULL foreign keys.
 
-## **Why It Matters**: Cascade operations automate child entity lifecycle management, reducing code complexity by 40-60% through automatic persist/merge propagation without explicit repository calls. The CascadeType.PERSIST pattern handles Order→OrderItems creation atomically within single transaction, preventing orphaned children that violate business rules. However, CascadeType.ALL on loosely-coupled entities causes accidental mass deletion disasters - a deleted Customer shouldn't delete Orders which have financial reporting value - teams using specific cascade types report 50% fewer data loss incidents.
+**Why It Matters**: Cascade operations automate child entity lifecycle management, reducing code complexity by 40-60% through automatic persist/merge propagation without explicit repository calls. The CascadeType.PERSIST pattern handles Order→OrderItems creation atomically within single transaction, preventing orphaned children that violate business rules. However, CascadeType.ALL on loosely-coupled entities causes accidental mass deletion disasters - a deleted Customer shouldn't delete Orders which have financial reporting value - teams using specific cascade types report 50% fewer data loss incidents.
 
 ### Example 23: Join Column Configuration
 
@@ -2535,7 +2535,7 @@ public class JoinColumnService {
 
 **Key Takeaway**: `@JoinColumn` provides control over foreign key columns. Use `nullable=false` to enforce referential integrity at database level.
 
-## **Why It Matters**: Lazy loading reduces memory consumption by 50-80% in applications with deep object graphs, loading only required data and preventing heap exhaustion. This strategy enables fetching 10,000-row datasets efficiently by loading parent entities only, deferring child collection retrieval until needed. However, accessing lazy collections outside transactions triggers LazyInitializationException - the #1 Hibernate StackOverflow issue with 100,000+ questions - requiring architectural discipline around transaction boundaries and DTO projections for APIs.
+**Why It Matters**: Lazy loading reduces memory consumption by 50-80% in applications with deep object graphs, loading only required data and preventing heap exhaustion. This strategy enables fetching 10,000-row datasets efficiently by loading parent entities only, deferring child collection retrieval until needed. However, accessing lazy collections outside transactions triggers LazyInitializationException - the #1 Hibernate StackOverflow issue with 100,000+ questions - requiring architectural discipline around transaction boundaries and DTO projections for APIs.
 
 ### Example 24: Collection Types
 
@@ -2658,7 +2658,7 @@ public class CollectionTypeService {
 
 **Key Takeaway**: Use `List` for ordered collections with duplicates, `Set` for unique elements, `Map` for key-based lookups. `@OrderBy` adds SQL ORDER BY for deterministic ordering.
 
-## **Why It Matters**: LazyInitializationException causes 30-40% of Hibernate production crashes, triggered when accessing lazy-loaded relationships after persistence context closes, typically in web controllers or async jobs. The exception provides no recovery mechanism - data must be fetched within transaction boundaries or through explicit JOIN FETCH queries. Teams solving this correctly adopt consistent data fetching patterns (DTOs, entity graphs, or explicit fetch joins), reducing lazy loading errors by 90% and eliminating hours of debugging mysterious proxy exceptions.
+**Why It Matters**: LazyInitializationException causes 30-40% of Hibernate production crashes, triggered when accessing lazy-loaded relationships after persistence context closes, typically in web controllers or async jobs. The exception provides no recovery mechanism - data must be fetched within transaction boundaries or through explicit JOIN FETCH queries. Teams solving this correctly adopt consistent data fetching patterns (DTOs, entity graphs, or explicit fetch joins), reducing lazy loading errors by 90% and eliminating hours of debugging mysterious proxy exceptions.
 
 ## Group 4: Entity Fundamentals
 
@@ -2816,7 +2816,7 @@ public class ColumnMappingService {
 
 **Key Takeaway**: `@Column` maps entity fields to database columns with constraints. Use `nullable=false` for required fields, `unique=true` for unique values, and `updatable=false` for immutable fields.
 
-## **Why It Matters**: Orphan removal prevents database pollution from deleted relationship entries, automatically issuing DELETE statements when children are removed from parent collections without explicit repository calls. This feature implements DDD aggregate root patterns cleanly, ensuring Order removal deletes all OrderItems automatically, maintaining referential integrity without cascade boilerplate. However, orphanRemoval conflicts with bi-directional management from both sides - enabling it on relationships where children exist independently causes accidental data deletion, requiring careful domain modeling of composition vs association.
+**Why It Matters**: Orphan removal prevents database pollution from deleted relationship entries, automatically issuing DELETE statements when children are removed from parent collections without explicit repository calls. This feature implements DDD aggregate root patterns cleanly, ensuring Order removal deletes all OrderItems automatically, maintaining referential integrity without cascade boilerplate. However, orphanRemoval conflicts with bi-directional management from both sides - enabling it on relationships where children exist independently causes accidental data deletion, requiring careful domain modeling of composition vs association.
 
 ### Example 26: Temporal Types and Dates
 
@@ -2948,7 +2948,7 @@ public class TemporalTypeService {
 
 **Key Takeaway**: Use `LocalDate` for dates without time, `LocalDateTime` for timestamps. Avoid legacy `java.util.Date` - `java.time` API is immutable and thread-safe.
 
-## **Why It Matters**: Explicit join table entities enable relationship metadata storage (enrollment dates, order quantities), supporting 40% of many-to-many scenarios where pure @ManyToMany is insufficient for business requirements. The approach provides full control over foreign key naming and index creation, essential for database administrators enforcing naming conventions and optimizing query performance. Applications using join entities report 60% better relationship query performance through targeted indexes on metadata columns, versus default @ManyToMany join tables with auto-generated indexes that ignore query patterns.
+**Why It Matters**: Explicit join table entities enable relationship metadata storage (enrollment dates, order quantities), supporting 40% of many-to-many scenarios where pure @ManyToMany is insufficient for business requirements. The approach provides full control over foreign key naming and index creation, essential for database administrators enforcing naming conventions and optimizing query performance. Applications using join entities report 60% better relationship query performance through targeted indexes on metadata columns, versus default @ManyToMany join tables with auto-generated indexes that ignore query patterns.
 
 ### Example 27: Enumerated Types
 
@@ -3101,7 +3101,7 @@ public class EnumService {
 
 **Key Takeaway**: Always use `EnumType.STRING` for enums. `EnumType.ORDINAL` breaks when you reorder enum values, causing silent data corruption.
 
-## **Why It Matters**: Declarative transactions eliminate 80-90% of boilerplate transaction code (beginTransaction, commit, rollback try-catch blocks), reducing human error in complex multi-operation logic. The @Transactional annotation provides automatic rollback on unchecked exceptions, preventing partial commits that corrupt data integrity - critical for financial systems and inventory management. Enterprise applications using declarative transactions report 70% fewer data inconsistency incidents compared to programmatic transaction management, as framework-managed transactions handle edge cases (connection failures, timeout) that developers forget.
+**Why It Matters**: Declarative transactions eliminate 80-90% of boilerplate transaction code (beginTransaction, commit, rollback try-catch blocks), reducing human error in complex multi-operation logic. The @Transactional annotation provides automatic rollback on unchecked exceptions, preventing partial commits that corrupt data integrity - critical for financial systems and inventory management. Enterprise applications using declarative transactions report 70% fewer data inconsistency incidents compared to programmatic transaction management, as framework-managed transactions handle edge cases (connection failures, timeout) that developers forget.
 
 ### Example 28: Table and Index Configuration
 
@@ -3215,7 +3215,7 @@ public class TableConfigService {
 
 **Key Takeaway**: Use `@Index` for frequently queried columns. Composite indexes help multi-column queries. Unique constraints enforce data integrity at database level.
 
-## **Why It Matters**: Read-only transactions optimize query performance by 15-30% through dirty checking elimination (Hibernate skips entity snapshot comparisons) and database-level optimizations (PostgreSQL avoids transaction ID assignment). This configuration enables routing to read replicas in clustered deployments, distributing load across multiple database servers and preventing primary database overload. Microservices with 80% read traffic report 50% reduction in write-master CPU usage and 3x read throughput improvement after implementing read-only transaction routing correctly.
+**Why It Matters**: Read-only transactions optimize query performance by 15-30% through dirty checking elimination (Hibernate skips entity snapshot comparisons) and database-level optimizations (PostgreSQL avoids transaction ID assignment). This configuration enables routing to read replicas in clustered deployments, distributing load across multiple database servers and preventing primary database overload. Microservices with 80% read traffic report 50% reduction in write-master CPU usage and 3x read throughput improvement after implementing read-only transaction routing correctly.
 
 ### Example 29: Transient and Computed Fields
 
@@ -3353,7 +3353,7 @@ public class TransientFieldService {
 
 **Key Takeaway**: `@Transient` fields are not persisted. Use for derived values, temporary state, or calculations. Lifecycle callbacks (`@PostLoad`, `@PostPersist`) compute values after database operations.
 
-## **Why It Matters**: Type-safe return types prevent ClassCastException runtime crashes when query cardinality mismatches expectations - Optional<T> for zero-or-one enforces explicit null handling at compile time. Stream<T> enables memory-efficient processing of million-row result sets without loading all entities into heap, critical for batch jobs and reporting. However, Stream requires transaction management discipline and explicit close() calls - unclosed streams leak database connections, causing production crashes with 'too many connections' errors that require database restarts.
+**Why It Matters**: Type-safe return types prevent ClassCastException runtime crashes when query cardinality mismatches expectations - Optional<T> for zero-or-one enforces explicit null handling at compile time. Stream<T> enables memory-efficient processing of million-row result sets without loading all entities into heap, critical for batch jobs and reporting. However, Stream requires transaction management discipline and explicit close() calls - unclosed streams leak database connections, causing production crashes with 'too many connections' errors that require database restarts.
 
 ### Example 30: Entity Lifecycle Callbacks
 
@@ -3545,4 +3545,4 @@ public class LifecycleCallbackService {
 
 **Key Takeaway**: Lifecycle callbacks execute at specific points in entity lifecycle. Use `@PrePersist` for default values, `@PreUpdate` for audit timestamps, `@PostLoad` for computed fields. These methods must be `void` and take no parameters.
 
-## **Why It Matters**: Lifecycle callbacks eliminate 70-80% of manual auditing code by automatically setting createdAt/updatedAt timestamps on every entity save, reducing human error in compliance-critical systems. The @PrePersist pattern prevents DEFAULT NULL database violations by initializing required fields before INSERT, catching missing data at application layer versus cryptic constraint errors. Enterprise applications using lifecycle callbacks report 50% reduction in audit trail bugs, as timestamp logic executes consistently through framework hooks rather than scattered across service methods where developers forget to call them.
+**Why It Matters**: Lifecycle callbacks eliminate 70-80% of manual auditing code by automatically setting createdAt/updatedAt timestamps on every entity save, reducing human error in compliance-critical systems. The @PrePersist pattern prevents DEFAULT NULL database violations by initializing required fields before INSERT, catching missing data at application layer versus cryptic constraint errors. Enterprise applications using lifecycle callbacks report 50% reduction in audit trail bugs, as timestamp logic executes consistently through framework hooks rather than scattered across service methods where developers forget to call them.
