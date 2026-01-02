@@ -37,25 +37,30 @@ graph TD
 # main.tf
 terraform {
   required_version = ">= 1.0"              # => Minimum Terraform version required
+  # => Blocks older versions from running this configuration
 }
 
 # Local provider for testing (no cloud credentials needed)
 provider "local" {
   # => Provider block initializes the local provider for file operations
+  # => Local provider enables testing without cloud accounts
 }
 
 # Create a local file resource
 resource "local_file" "hello" {
   filename = "${path.module}/hello.txt"    # => path.module is current directory
+  # => path.module resolves to directory containing this .tf file
   content  = "Hello, Terraform!"           # => File content to write
   # => terraform plan shows: +local_file.hello (will be created)
   # => terraform apply creates hello.txt in current directory
+  # => State tracks filename, content, and file permissions
 }
 
 # Output the file path
 output "file_path" {
   value = local_file.hello.filename        # => Reference resource attribute
   # => Output: file_path = "./hello.txt"
+  # => Outputs appear after terraform apply completes
 }
 ```
 
@@ -362,6 +367,29 @@ output "file_info" {
 
 Terraform provides 100+ built-in functions for string manipulation, collection operations, numeric calculations, encoding, filesystem operations, and more. Functions cannot be user-defined.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Input String:<br/>  Hello, Terraform!  "] --> B["trimspace#40;#41;<br/>Remove whitespace"]
+    B --> C["Trimmed:<br/>Hello, Terraform!"]
+    C --> D1["lower#40;#41;<br/>To lowercase"]
+    C --> D2["upper#40;#41;<br/>To uppercase"]
+    C --> D3["replace#40;#41;<br/>Substitute text"]
+    D1 --> E1["hello, terraform!"]
+    D2 --> E2["HELLO, TERRAFORM!"]
+    D3 --> E3["Hello, HCL!"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D1 fill:#CC78BC,color:#fff
+    style D2 fill:#CC78BC,color:#fff
+    style D3 fill:#CC78BC,color:#fff
+    style E1 fill:#CA9161,color:#fff
+    style E2 fill:#CA9161,color:#fff
+    style E3 fill:#CA9161,color:#fff
+```
+
 **Code**:
 
 ```hcl
@@ -375,45 +403,60 @@ provider "local" {}
 locals {
   # String functions
   original        = "  Hello, Terraform!  "
+  # => original stores raw string with leading/trailing whitespace
   trimmed         = trimspace(local.original)           # => "Hello, Terraform!" (remove whitespace)
   lowercased      = lower(local.trimmed)                # => "hello, terraform!"
+  # => lower converts all characters to lowercase
   uppercased      = upper(local.trimmed)                # => "HELLO, TERRAFORM!"
   replaced        = replace(local.trimmed, "Terraform", "HCL")  # => "Hello, HCL!"
+  # => replace finds first match and substitutes
   split_result    = split(", ", local.trimmed)          # => ["Hello", "Terraform!"]
   joined          = join("-", split(", ", local.trimmed))  # => "Hello-Terraform!"
+  # => join concatenates list elements with separator
 
   # Numeric functions
   numbers         = [10, 5, 20, 15]
   max_num         = max(local.numbers...)               # => 20 (variadic expansion)
+  # => ... operator expands list into separate arguments
   min_num         = min(local.numbers...)               # => 5
   sum_num         = sum(local.numbers)                  # => 50
+  # => sum adds all elements (10 + 5 + 20 + 15 = 50)
 
   # Collection functions
   list            = ["a", "b", "c", "d"]
   list_length     = length(local.list)                  # => 4
   contains_b      = contains(local.list, "b")           # => true
+  # => contains checks if element exists in list
   first_elem      = element(local.list, 0)              # => "a"
+  # => element accesses list by index (0-based)
   last_elem       = element(local.list, length(local.list) - 1)  # => "d"
   reversed        = reverse(local.list)                 # => ["d", "c", "b", "a"]
   sorted          = sort(local.list)                    # => ["a", "b", "c", "d"]
   distinct        = distinct(["a", "b", "a", "c"])      # => ["a", "b", "c"]
+  # => distinct removes duplicate values
 
   # Map functions
   map_data        = { env = "prod", region = "us-east-1", team = "platform" }
   map_keys        = keys(local.map_data)                # => ["env", "region", "team"]
+  # => keys extracts all map keys as list
   map_values      = values(local.map_data)              # => ["prod", "us-east-1", "platform"]
   merged_map      = merge(local.map_data, { tier = "web" })  # => Adds tier key
+  # => merge combines maps (right map overwrites left on key collision)
 
   # Type conversion
   string_to_num   = tonumber("42")                      # => 42 (number type)
+  # => tonumber converts string to number (fails if non-numeric)
   num_to_string   = tostring(42)                        # => "42" (string type)
   to_set          = toset(["a", "b", "a"])              # => Set with unique values
+  # => toset creates set (unique, unordered collection)
 
   # Encoding functions
   json_string     = jsonencode({ key = "value" })       # => '{"key":"value"}'
   yaml_string     = yamlencode({ key = "value" })       # => 'key: value\n'
   base64_encoded  = base64encode("hello")               # => "aGVsbG8="
+  # => base64encode encodes string to Base64 format
   base64_decoded  = base64decode("aGVsbG8=")            # => "hello"
+  # => base64decode decodes Base64 string to original
 
   # Date/Time functions
   timestamp       = timestamp()                         # => "2024-01-15T10:30:00Z" (UTC)
@@ -723,37 +766,46 @@ provider "local" {
 resource "local_file" "zero_downtime" {
   filename = "zero_downtime.txt"
   content  = "Version 2"                   # => Change this to trigger replacement
+  # => Modifying content forces resource recreation
 
   lifecycle {
     create_before_destroy = true           # => Create new, then destroy old
+    # => Ensures resource always exists during replacement
   }
   # => Useful for resources that must always exist (e.g., DNS records)
   # => Prevents downtime during updates requiring replacement
+  # => Order: Create new file → Verify creation → Delete old file
 }
 
 # prevent_destroy: Prevent accidental deletion
 resource "local_file" "critical" {
   filename = "critical.txt"
   content  = "Critical production data"
+  # => Content represents critical state (database, secrets, etc.)
 
   lifecycle {
     prevent_destroy = true                 # => terraform destroy will fail
+    # => Error: "Cannot destroy resource with prevent_destroy = true"
   }
   # => Use for databases, state stores, and other critical resources
   # => Must set to false before destroying
+  # => Protects against accidental deletion in production
 }
 
 # ignore_changes: Ignore changes to specific attributes
 resource "local_file" "ignore_demo" {
   filename = "ignore.txt"
   content  = "Original content"            # => Can be changed externally
+  # => External processes can modify this file
 
   lifecycle {
     ignore_changes = [content]             # => Ignore content changes
     # ignore_changes = all                 # => Ignore all attribute changes
+    # => Terraform won't revert external modifications
   }
   # => Terraform won't detect content changes
   # => Useful when external systems modify resources
+  # => State drift tolerated for specified attributes
 }
 
 # replace_triggered_by: Force replacement when related resource changes
@@ -799,6 +851,27 @@ resource "local_file" "combined" {
 
 Input variables make Terraform configurations reusable and environment-agnostic. Variables support types, defaults, descriptions, and validation rules.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Variable Input<br/>#40;CLI/File/Env#41;"] --> B["Type Check"]
+    B --> C{"Type Valid?"}
+    C -->|No| D["Error:<br/>Type mismatch"]
+    C -->|Yes| E["Validation Rules"]
+    E --> F{"Validation<br/>Passes?"}
+    F -->|No| G["Error:<br/>Custom message"]
+    F -->|Yes| H["Variable Available<br/>in Configuration"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#DE8F05,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#CC78BC,color:#fff
+    style H fill:#CA9161,color:#fff
+```
+
 **Code**:
 
 ```hcl
@@ -812,44 +885,58 @@ provider "local" {}
 # Simple string variable with default
 variable "environment" {
   description = "Environment name"
+  # => Description appears in terraform console and docs
   type        = string
+  # => type = string enforces string type (rejected: numbers, bools, lists)
   default     = "development"              # => Used if not provided
+  # => Optional: Allows terraform apply without -var flag
 }
 
 # Variable without default (required)
 variable "project_name" {
   description = "Project name for resource naming"
   type        = string
+  # => No default = required variable
   # => Must be provided via CLI, file, or environment variable
+  # => terraform apply fails if not provided
 }
 
 # Number variable
 variable "instance_count" {
   description = "Number of instances to create"
   type        = number
+  # => type = number enforces numeric type (rejected: strings, bools)
   default     = 1
+  # => Default prevents need for explicit value in most cases
 }
 
 # Boolean variable
 variable "enable_monitoring" {
   description = "Enable monitoring features"
   type        = bool
+  # => type = bool enforces true/false (rejected: strings, numbers)
   default     = false
+  # => Monitoring disabled by default (opt-in pattern)
 }
 
 # List variable
 variable "allowed_cidrs" {
   description = "List of allowed CIDR blocks"
   type        = list(string)
+  # => type = list(string) enforces list of strings
+  # => Rejected: non-string list elements, single string values
   default     = ["10.0.0.0/8"]
+  # => Single private network CIDR in default configuration
 }
 
 # Map variable
 variable "tags" {
   description = "Resource tags"
   type        = map(string)
+  # => type = map(string) enforces string-keyed, string-valued map
   default = {
     ManagedBy = "Terraform"
+    # => All infrastructure tagged with IaC tool for auditing
   }
 }
 
@@ -858,13 +945,20 @@ variable "server_config" {
   description = "Server configuration"
   type = object({
     instance_type = string
+    # => Server size (t3.micro, t3.small, etc.)
     disk_size     = number
+    # => Disk size in GB
     enable_backup = bool
+    # => Backup enabled/disabled flag
   })
+  # => object type enforces exact schema - all fields required
   default = {
     instance_type = "t3.micro"
+    # => Free tier eligible instance type
     disk_size     = 20
+    # => Minimum disk for typical workloads
     enable_backup = false
+    # => Backups disabled by default (cost optimization)
   }
 }
 
@@ -876,8 +970,12 @@ variable "region" {
 
   validation {
     condition     = can(regex("^us-", var.region))  # => Must start with "us-"
+    # => can() prevents error if regex fails, returns false instead
     error_message = "Region must be a US region."
+    # => Custom error shown when validation fails
   }
+  # => Validation runs before plan/apply
+  # => Prevents invalid region values (e.g., "eu-west-1")
 }
 
 # Sensitive variable (masked in output)
@@ -885,12 +983,16 @@ variable "api_key" {
   description = "API key for external service"
   type        = string
   sensitive   = true                       # => Value hidden in plan/apply output
+  # => Shows (sensitive value) instead of actual string
   default     = ""
+  # => Empty default (should be overridden in production)
 }
 
 # Use variables in resources
 resource "local_file" "config" {
   filename = "${var.environment}-config.txt"
+  # => var.environment references variable value
+  # => Produces: "development-config.txt" with default
   content  = <<-EOT
     Project: ${var.project_name}
     Environment: ${var.environment}
@@ -898,8 +1000,11 @@ resource "local_file" "config" {
     Monitoring: ${var.enable_monitoring}
     Region: ${var.region}
     Tags: ${jsonencode(var.tags)}
+    # => jsonencode converts map to JSON string
     Server: ${var.server_config.instance_type}
+    # => Access object fields with dot notation
   EOT
+  # => Heredoc syntax for multi-line strings
 }
 ```
 
@@ -1052,6 +1157,28 @@ output "module_export" {
 
 Local values (locals) are named expressions computed once and reused throughout configuration. Locals reduce duplication and improve readability.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A["Variables<br/>project, environment"] --> B["Computed Local:<br/>prefix"]
+    A --> C["Computed Local:<br/>is_production"]
+    C --> D["Computed Local:<br/>backup_enabled"]
+    B --> E["Computed Local:<br/>common_tags"]
+    C --> F["Computed Local:<br/>config"]
+    B --> G["Computed Local:<br/>resource_names"]
+    F --> G
+    G --> H["Resources<br/>#40;for_each#41;"]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#CC78BC,color:#fff
+    style H fill:#CA9161,color:#fff
+```
+
 **Code**:
 
 ```hcl
@@ -1168,45 +1295,58 @@ provider "local" {}
 resource "local_file" "source" {
   filename = "source.txt"
   content  = "Original content"
+  # => This resource must exist before data source can read it
 }
 
 # Data source reads existing resource
 data "local_file" "existing" {
   filename = "source.txt"                  # => Read existing file
+  # => Data source queries file at apply time
   depends_on = [local_file.source]        # => Ensure file exists first
+  # => depends_on creates explicit ordering (source created before read)
   # => Data sources read-only, never create/modify/destroy
+  # => Query happens during terraform plan and apply
 }
 
 # Use data source attributes
 resource "local_file" "copy" {
   filename = "copy.txt"
   content  = data.local_file.existing.content  # => Reference data source
-  # => Content copied from source.txt
+  # => Content copied from source.txt (dynamic reference)
+  # => If source.txt changes, copy.txt updates on next apply
 }
 
 output "data_source_info" {
   value = {
     id          = data.local_file.existing.id
+    # => Unique identifier for the file
     filename    = data.local_file.existing.filename
+    # => File path (source.txt)
     content     = data.local_file.existing.content
+    # => File content as string
     content_b64 = data.local_file.existing.content_base64
+    # => Base64-encoded content
   }
   # => Shows all attributes from data source
+  # => Data sources expose provider-specific attributes
 }
 
 # Multiple data sources
 data "local_file" "file1" {
   filename = "source.txt"
+  # => First data source (reads source.txt)
 }
 
 data "local_file" "file2" {
   filename = "copy.txt"
   depends_on = [local_file.copy]
+  # => Second data source (reads copy.txt after it's created)
 }
 
 output "combined_content" {
   value = "${data.local_file.file1.content} + ${data.local_file.file2.content}"
   # => Combines content from multiple data sources
+  # => String interpolation with data source attributes
 }
 ```
 
