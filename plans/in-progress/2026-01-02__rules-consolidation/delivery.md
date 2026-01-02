@@ -28,6 +28,8 @@
 
 Rename Skills to follow official best practices: lowercase only, gerund form (verb + -ing) preferred. Add `allowed-tools` frontmatter to all existing Skills.
 
+**IMPORTANT**: The allowed-tools field must be added to ALL 10 existing Skills, regardless of whether they are renamed or not. This ensures consistent tool restriction behavior across all Skills.
+
 ### Implementation Steps
 
 - [ ] **0.1 Fix required naming violation**
@@ -185,8 +187,10 @@ Ensure all 44 agents have non-empty `skills:` field. Use new gerund-form skill n
 
 - [ ] `apps__ayokoding-web__by-example-checker`: `[creating-by-example-tutorials, assessing-criticality-confidence]`
 - [ ] `apps__ayokoding-web__by-example-fixer`: `[creating-by-example-tutorials, assessing-criticality-confidence]`
+- [ ] `apps__ayokoding-web__by-example-maker`: `[creating-by-example-tutorials, developing-ayokoding-content]`
 - [ ] `apps__ayokoding-web__general-checker`: `[developing-ayokoding-content, assessing-criticality-confidence]`
 - [ ] `apps__ayokoding-web__general-fixer`: `[developing-ayokoding-content, assessing-criticality-confidence]`
+- [ ] `apps__ayokoding-web__general-maker`: `[developing-ayokoding-content, creating-accessible-diagrams]`
 - [ ] `apps__ayokoding-web__facts-checker`: `[validating-factual-accuracy, assessing-criticality-confidence]`
 - [ ] `apps__ayokoding-web__facts-fixer`: `[validating-factual-accuracy, assessing-criticality-confidence]`
 - [ ] `apps__ayokoding-web__link-checker`: `[validating-links, assessing-criticality-confidence]`
@@ -206,7 +210,9 @@ Ensure all 44 agents have non-empty `skills:` field. Use new gerund-form skill n
 
 #### 3.3 Docs Agents (8 agents)
 
+- [ ] `docs__checker`: `[applying-maker-checker-fixer, assessing-criticality-confidence]`
 - [ ] `docs__fixer`: `[applying-maker-checker-fixer, assessing-criticality-confidence]`
+- [ ] `docs__maker`: `[creating-accessible-diagrams, applying-maker-checker-fixer]`
 - [ ] `docs__tutorial-maker`: `[applying-diataxis-framework, applying-content-quality]`
 - [ ] `docs__tutorial-checker`: `[applying-diataxis-framework, assessing-criticality-confidence]`
 - [ ] `docs__tutorial-fixer`: `[applying-diataxis-framework, assessing-criticality-confidence]`
@@ -219,6 +225,7 @@ Ensure all 44 agents have non-empty `skills:` field. Use new gerund-form skill n
 - [ ] `plan__executor`: `[creating-project-plans, practicing-trunk-based-development]`
 - [ ] `plan__execution-checker`: `[creating-project-plans, assessing-criticality-confidence]`
 - [ ] `plan__fixer`: `[creating-project-plans, assessing-criticality-confidence]`
+- [ ] `plan__maker`: `[writing-gherkin-criteria, practicing-trunk-based-development]`
 
 #### 3.5 Readme Agents (3 agents)
 
@@ -468,7 +475,7 @@ awk '...' .claude/agents/agent.md > temp && mv temp .claude/agents/agent.md
 - [ ] All 10 existing Skills have "References" section
 - [ ] All 17 Skills have `allowed-tools` frontmatter
 - [ ] All 7 new Skills created with "References" section
-- [ ] All 45 agents have non-empty `skills:` field
+- [ ] All 44 agents have non-empty `skills:` field
 - [ ] All 6 factual inaccuracies fixed
 - [ ] wow\_\_rules-checker validates Skills coverage
 - [ ] apps**ayokoding-web**link-fixer agent created
@@ -492,7 +499,7 @@ awk '...' .claude/agents/agent.md > temp && mv temp .claude/agents/agent.md
 | Phase 0: Fix Skills Naming Convention       | Not Started | 1 violation + 10 renames |
 | Phase 1: Add References to Existing Skills  | Not Started | 7 Skills                 |
 | Phase 2: Create New Skills                  | Not Started | 7 new Skills             |
-| Phase 3: Assign Skills to All Agents        | Not Started | 39 agents + 5 updates    |
+| Phase 3: Assign Skills to All Agents        | Not Started | 40 agents + 5 updates    |
 | Phase 4: Fix Factual Inaccuracies           | Not Started | 6 documents              |
 | Phase 5: Enhance Validation                 | Not Started | wow\_\_rules-checker     |
 | Phase 6: Create Missing Link Fixer Agent    | Not Started | 1 new agent              |

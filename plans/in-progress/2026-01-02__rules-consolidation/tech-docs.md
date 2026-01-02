@@ -148,14 +148,14 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 
 6 documents incorrectly describe the delivery infrastructure:
 
-| Document                                                | Issue                                           | Fix Required                                 |
-| ------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------- | --- | ----------------- | -------------------------- | ------------- |
-| `ex__repository-governance-architecture.md` (line 62)   | Diagram: `CM -->                                | delivers to                                  | L4` | Change to `CM --> | loaded at startup          | Orchestrator` |
-| `ex__repository-governance-architecture.md` (line 63)   | Diagram: `SK -->                                | auto-delivers to                             | L4` | Change to `SK --> | delivers via skills: field | L4`           |
-| `ex__repository-governance-architecture.md` (line ~358) | ASCII: `CLAUDE.md ──delivers to──> Agents`      | Update to show Orchestrator                  |
-| `CLAUDE.md` (line 249)                                  | "delivery to agents through auto-loading"       | Clarify Skills only load via `skills:` field |
-| `.claude/skills/README.md` (lines 21-26)                | ASCII shows all mechanisms → Agents             | Add Orchestrator to flow                     |
-| `ex-de-ag__ai-agents.md` (lines 1518-1519)              | "Inheritance Pattern" shows CLAUDE.md inherited | Remove/fix inheritance claim                 |
+| Document                                                | Issue                                           | Fix Required                                  |
+| ------------------------------------------------------- | ----------------------------------------------- | --------------------------------------------- |
+| `ex__repository-governance-architecture.md` (line 62)   | Diagram: `CM --> delivers to L4`                | Change to `CM --> loaded at startup`          |
+| `ex__repository-governance-architecture.md` (line 63)   | Diagram: `SK --> auto-delivers to L4`           | Change to `SK --> delivers via skills: field` |
+| `ex__repository-governance-architecture.md` (line ~358) | ASCII: `CLAUDE.md ──delivers to──> Agents`      | Update to show Orchestrator                   |
+| `CLAUDE.md` (line 249)                                  | "delivery to agents through auto-loading"       | Clarify Skills only load via `skills:` field  |
+| `.claude/skills/README.md` (lines 21-26)                | ASCII shows all mechanisms → Agents             | Add Orchestrator to flow                      |
+| `ex-de-ag__ai-agents.md` (lines 1518-1519)              | "Inheritance Pattern" shows CLAUDE.md inherited | Remove/fix inheritance claim                  |
 
 ### Missing Agent Found
 

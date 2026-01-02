@@ -169,7 +169,7 @@ This plan uses **multi-file structure**:
 | Skills with lowercase names | 9 of 10            | 17 of 17 (all) |
 | Skills with gerund form     | 0 of 10            | 17 of 17 (all) |
 | Skills with References      | 3 of 10            | 17 of 17 (all) |
-| Agents with Skills          | 5 of 44            | 45 of 45 (all) |
+| Agents with Skills          | 5 of 44            | 44 of 44 (all) |
 | Complete MCF Patterns       | Missing link-fixer | All complete   |
 | Factual Errors              | 6                  | 0              |
 | Total Skills                | 10                 | 17             |
@@ -191,8 +191,8 @@ This plan uses **multi-file structure**:
 ## Documents Requiring Factual Corrections
 
 | Document                                    | Issue                                           |
-| ------------------------------------------- | ----------------------------------------------- | ----------- | --- |
-| `ex__repository-governance-architecture.md` | Diagram shows `CM -->                           | delivers to | L4` |
+| ------------------------------------------- | ----------------------------------------------- |
+| `ex__repository-governance-architecture.md` | Diagram shows `CM --> delivers to --> L4`       |
 | `ex__repository-governance-architecture.md` | ASCII shows `CLAUDE.md ──delivers to──> Agents` |
 | `CLAUDE.md`                                 | "delivery to agents through auto-loading"       |
 | `.claude/skills/README.md`                  | ASCII shows all mechanisms → Agents             |
