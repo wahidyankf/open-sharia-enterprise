@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-### Current Architecture (Six Layers)
+### Current Architecture (Six Layers - Unchanged)
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -30,73 +30,164 @@ graph TD
     style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-### Proposed Architecture (Seven Layers with Layer 4 Skills)
+**The six-layer governance hierarchy remains unchanged.** Skills are infrastructure that supports knowledge delivery, not a governance layer.
+
+### Skills as Delivery Infrastructure
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 graph TD
-    L0[Layer 0: Vision<br/>WHY WE EXIST]
-    L1[Layer 1: Principles<br/>WHY - Values]
-    L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
-    L3[Layer 3: Development<br/>HOW - Software Practices]
-    L4[Layer 4: Skills<br/>WHAT+HOW - Knowledge Packages]
-    L5[Layer 5: AI Agents<br/>WHO - Atomic Executors]
-    L6[Layer 6: Workflows<br/>WHEN - Multi-Step Processes]
+    subgraph Governance[Governance Layers]
+        L2[L2: Conventions]
+        L3[L3: Development]
+        L4[L4: Agents]
+    end
+
+    subgraph Delivery[Delivery Infrastructure]
+        CM[CLAUDE.md]
+        SK[Skills]
+        DR[Direct Refs]
+    end
+
+    L2 --> CM
+    L2 --> SK
+    L2 --> DR
+    L3 --> CM
+    L3 --> SK
+    L3 --> DR
+    CM --> L4
+    SK --> L4
+    DR --> L4
+
+    style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style SK fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Key insight**: Skills sit alongside CLAUDE.md and direct references as delivery mechanisms. All three transport knowledge from Conventions/Development to Agents. None of them are governance layers.
+
+### Complete Architecture with Skills Infrastructure
+
+This diagram shows the full six-layer governance architecture with Skills as delivery infrastructure. This is the diagram that will be added to `docs/explanation/ex__repository-governance-architecture.md`:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+graph TD
+    subgraph Governance[Six-Layer Governance Architecture]
+        L0[Layer 0: Vision<br/>WHY WE EXIST]
+        L1[Layer 1: Principles<br/>WHY - Values]
+        L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
+        L3[Layer 3: Development<br/>HOW - Software Practices]
+        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
+        L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
+    end
+
+    subgraph Delivery[Delivery Infrastructure]
+        CM[CLAUDE.md<br/>Context Summaries]
+        SK[Skills<br/>Progressive Knowledge]
+        DR[Direct References<br/>Convention Links]
+    end
 
     L0 -->|inspires| L1
     L1 -->|governs| L2
     L1 -->|governs| L3
     L2 -->|governs| L3
-    L2 -->|governs| L4
-    L3 -->|governs| L4
-    L4 -->|provides knowledge to| L5
-    L5 -->|orchestrated by| L6
+
+    L2 -->|packaged via| CM
+    L2 -->|packaged via| SK
+    L2 -->|linked via| DR
+    L3 -->|packaged via| CM
+    L3 -->|packaged via| SK
+    L3 -->|linked via| DR
+
+    CM -->|delivers to| L4
+    SK -->|delivers to| L4
+    DR -->|delivers to| L4
+
+    L4 -->|orchestrated by| L5
 
     style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style L4 fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:3px
-    style L5 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style L6 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style SK fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-### Layer 4: Skills Characteristics
+**Key points for this diagram:**
+
+1. **Governance layers unchanged** - Six layers (L0-L5) remain exactly as they are
+2. **Delivery infrastructure added** - New box showing three delivery mechanisms
+3. **No governance arrows from Skills** - Skills don't govern anything
+4. **Skills parallel to CLAUDE.md** - Both are delivery mechanisms, neither is a layer
+5. **Gray color for infrastructure** - Distinguishes from governance layers
+
+### Why Infrastructure, Not a Layer?
+
+**Governance layers** have defining characteristics:
+
+1. **Enforce rules** on the layer below
+2. **Create obligations** and constraints
+3. **Answer "what must be done"** at their level
+
+**Testing the governance relationship:**
+
+| Source                    | Target | Governance?                             | Evidence |
+| ------------------------- | ------ | --------------------------------------- | -------- |
+| Conventions → Development | Yes    | Conventions define HOW docs are written |
+| Conventions → Agents      | Yes    | Agents MUST follow doc standards        |
+| Development → Agents      | Yes    | Agents MUST follow coding patterns      |
+| Skills → Agents           | **No** | Skills SERVE agents with knowledge      |
+
+**Skills don't govern agents. Skills serve agents.**
+
+**Infrastructure** has different characteristics:
+
+1. **Transport or deliver** something
+2. **No governance relationship** with consumers
+3. **Multiple alternatives** can coexist
+
+**Examples of infrastructure:**
+
+- CLAUDE.md (delivers context summaries)
+- Agent files (deliver prompts)
+- Git hooks (deliver automation)
+- Skills (deliver packaged knowledge)
+
+### Skills Characteristics
 
 **What Skills Are:**
 
-- **Model-invoked knowledge packages** - Claude automatically loads based on description matching
+- **Model-invoked knowledge packages** - Claude auto-loads based on description matching
 - **Progressive disclosure implementation** - Name/description at startup, full content on-demand
 - **Specialized knowledge encoding** - Conventions and practices packaged for efficient access
 - **Composable building blocks** - Multiple Skills work together seamlessly
 - **Portable standard** - agentskills.io format works across Claude ecosystem
+- **Delivery infrastructure** - Transport mechanism like CLAUDE.md, not governance layer
 
 **What Skills Are NOT:**
 
-- **NOT Agents** - Skills provide knowledge; Agents execute tasks (Layer 5)
-- **NOT Conventions** - Conventions govern documentation; Skills encode for model consumption (Layer 2 governs Skills)
-- **NOT Development Practices** - Practices define how to develop; Skills package that knowledge (Layer 3 governs Skills)
-- **NOT Workflows** - Workflows orchestrate agents; Skills provide knowledge to agents (Layer 6 uses agents, not Skills)
+- **NOT a governance layer** - Skills don't enforce rules on agents
+- **NOT replacing CLAUDE.md** - Skills complement existing delivery mechanisms
+- **NOT mandatory** - Agents can use Skills, CLAUDE.md, or direct references
+- **NOT conventions** - Conventions define rules; Skills deliver knowledge
+- **NOT agents** - Agents execute tasks; Skills provide knowledge
 
-**Governance Model:**
+**Distinction from Agents:**
 
-- **Governed by Layer 2 (Conventions)** - Skills must follow documentation standards
-- **Governed by Layer 3 (Development)** - Skills encode development practices
-- **Governs nothing** - Skills are consumed by Layer 5 (Agents), not governance layer
-- **Traceability required** - Each Skill must reference Conventions/Practices it implements
-
-**Distinction from Layer 5 (Agents):**
-
-| Aspect              | Layer 4: Skills                    | Layer 5: Agents                      |
-| ------------------- | ---------------------------------- | ------------------------------------ |
-| **Invocation**      | Model-invoked (auto-load)          | User/Workflow-invoked (explicit)     |
-| **Purpose**         | Provide knowledge                  | Execute tasks                        |
-| **Output**          | Knowledge for Claude               | Changed files, reports               |
-| **Tool Access**     | Optional restrictions              | Explicit tool permissions            |
-| **Composition**     | Multiple Skills load automatically | Workflows orchestrate agents         |
-| **File Structure**  | `.claude/skills/skill-name/`       | `.claude/agents/agent-name.md`       |
-| **User Visibility** | Transparent (auto-loads)           | Visible (user invokes)               |
-| **Lifecycle**       | Created, referenced, rarely update | Created, frequently updated/executed |
+| Aspect           | Skills               | Agents                 |
+| ---------------- | -------------------- | ---------------------- |
+| **Purpose**      | Deliver knowledge    | Execute tasks          |
+| **Invocation**   | Model-invoked (auto) | User/Workflow-invoked  |
+| **Output**       | Knowledge for Claude | Changed files, reports |
+| **Relationship** | Serves agents        | Uses knowledge         |
+| **Location**     | `.claude/skills/`    | `.claude/agents/`      |
 
 ## Technology Stack
 
@@ -116,12 +207,6 @@ graph TD
 - **Git**: Version control with Trunk Based Development
 - **Markdown**: Documentation format
 - **YAML**: Frontmatter and configuration
-
-**Documentation Tools (existing):**
-
-- **Mermaid**: Diagrams in markdown
-- **Diátaxis**: Documentation framework
-- **WCAG 2.2**: Accessibility compliance
 
 ### Skills File Structure
 
@@ -159,79 +244,56 @@ Markdown instructions, examples, best practices...
 
 ## Design Decisions
 
-### Decision 1: Skills as Layer 4 (Primary Approach)
+### Decision 1: Skills as Infrastructure (Not a Layer)
 
 **Context:**
 
-The repository needs a way to package specialized knowledge for model consumption without creating more agents. Three architectural approaches were considered:
+The repository needs a way to package specialized knowledge for model consumption. Three architectural approaches were considered:
 
-1. **Layer 4** - Skills as distinct layer between Development and Agents (renumbering existing layers)
-2. **Layer 5 subdivision** - Split Agents into 5a (Skills) and 5b (Agents)
-3. **Infrastructure** - Skills as tools supporting layers 2-5 (not a layer)
+1. **Infrastructure** - Skills as delivery mechanism supporting existing layers (chosen)
+2. **New Layer** - Insert Skills as Layer 4 between Development and Agents
+3. **Layer subdivision** - Split Agents layer into Skills + Agents
 
-**Decision:** Implement Skills as **Layer 4** (renumbering Agents to Layer 5, Workflows to Layer 6)
-
-**Rationale:**
-
-**Why Layer 4 works:**
-
-- **Clear governance**: Skills are governed by Conventions (Layer 2) and Development (Layer 3)
-- **Distinct purpose**: Skills provide knowledge (not governance like L2/L3, not execution like L5)
-- **Natural position**: Between "how to develop" (L3) and "who executes" (L5)
-- **Clean separation**: Skills = knowledge packages, Agents = task executors
-- **Traceability**: Skills reference Conventions/Practices, Agents reference Skills
-- **Professional numbering**: Whole numbers align with industry standards (OSI model, TCP/IP layers)
-
-**Why not Layer 5 subdivision:**
-
-- Skills and Agents have fundamentally different invocation models (model-invoked vs. user-invoked)
-- Mixing them in same layer would blur governance boundaries
-- Skills don't execute tasks; Agents do - different responsibilities
-
-**Why not Infrastructure:**
-
-- Skills encode governance (Conventions + Practices) - too important to be mere infrastructure
-- Skills have governance relationship (governed by L2+L3, provide to L5) - infrastructure doesn't
-- Skills create new traceability paths - more than just tooling
-
-#### Why Layer 4 (Not Layer 3.5)?
-
-**Decision:** Use whole-number Layer 4 instead of fractional Layer 3.5.
+**Decision:** Implement Skills as **delivery infrastructure**
 
 **Rationale:**
 
-1. **Professional Standards** - Industry architectural models (OSI, TCP/IP) use whole numbers, not fractions
-2. **Clearer Mental Model** - "Layer 4 Skills" is simpler and more intuitive than "Layer 3.5 Skills"
-3. **Future-Proof** - Avoids fractional progression (3.5, 3.75, 4.25, etc.) if further layers needed
-4. **Explicit Over Implicit** - Proper whole-number numbering aligns with repository's Explicit Over Implicit principle
-5. **Long-Term Clarity** - 10 years from now, "Layer 4" remains immediately understandable
+**Why Infrastructure works:**
 
-**Alternative Considered:** Layer 3.5 to avoid renumbering existing Agents (Layer 4→5) and Workflows (Layer 5→6).
+- **No governance relationship** - Skills serve agents, don't enforce rules
+- **Parallel with existing patterns** - Like CLAUDE.md, agent files, git hooks
+- **Simpler mental model** - Six layers unchanged, Skills are delivery mechanism
+- **No layer renumbering** - Avoids renumbering L4→L5, L5→L6
+- **Clear purpose** - Skills deliver knowledge from L2/L3 to L4
+- **Coexistence** - Multiple delivery mechanisms (CLAUDE.md, Skills, direct refs) work together
 
-**Trade-off:** Requires renumbering Layer 4→5 and Layer 5→6, but provides superior long-term clarity and professionalism. The one-time renumbering cost is far outweighed by decades of cleaner communication.
+**Why NOT a new Layer:**
+
+- Skills don't GOVERN agents (governance layers enforce rules)
+- Skills SERVE agents with knowledge (infrastructure relationship)
+- Adding Layer 4 would imply Skills control agents (they don't)
+- Layer renumbering adds complexity without governance benefit
+
+**Why NOT Layer subdivision:**
+
+- Skills and Agents have fundamentally different purposes
+- Mixing them in same layer would be confusing
+- Infrastructure is cleaner separation
 
 **Consequences:**
 
-- **Positive**: Clear architectural position, clean governance, natural traceability
-- **Positive**: Professional whole-number layer system
-- **Positive**: Future-proof for Skills expansion and evolution
-- **Positive**: Easy to explain Skills role to new contributors
-- **Positive**: Aligns with Explicit Over Implicit principle
-- **Negative**: Requires renumbering existing layers 4→5, 5→6
-- **Mitigation**: One-time systematic update across all documentation provides long-term benefits
-
-**Alternatives Considered:**
-
-See [Alternative Approaches](#alternative-approaches) section for complete analysis.
+- **Positive**: Six-layer architecture preserved (no renumbering)
+- **Positive**: Simpler mental model (Skills = delivery like CLAUDE.md)
+- **Positive**: Clear that Skills serve agents, not govern them
+- **Positive**: Multiple delivery mechanisms naturally coexist
+- **Negative**: Skills don't appear in architecture diagrams
+- **Mitigation**: Document Skills in infrastructure section of architecture docs
 
 ### Decision 2: Description-Based Auto-Loading
 
 **Context:**
 
-Skills need a mechanism to automatically load when relevant to user tasks. Two approaches:
-
-1. **Description matching** - Claude matches task to Skill description
-2. **Explicit tags** - Skills have tags, tasks specify tags needed
+Skills need a mechanism to automatically load when relevant to user tasks.
 
 **Decision:** Use **description-based matching** (agentskills.io standard)
 
@@ -257,13 +319,6 @@ Skill descriptions must be:
 description: WCAG-compliant Mermaid diagrams using verified accessible color palette. Use when creating diagrams, flowcharts, or any color-dependent visualizations requiring accessibility compliance.
 ```
 
-**Consequences:**
-
-- **Positive**: Natural user experience, no manual Skill invocation
-- **Positive**: Claude handles complexity of matching task to Skill
-- **Negative**: Description quality critical - poor descriptions = missed auto-loads
-- **Mitigation**: Provide description writing guidelines and examples
-
 ### Decision 3: Skills Reference Conventions (Not Replace)
 
 **Context:**
@@ -278,7 +333,6 @@ Should Skills replace convention documents or reference them?
 - **Single source of truth**: Convention docs remain authoritative
 - **Skills as encoding layer**: Skills package conventions for model consumption
 - **Human-readable docs preserved**: Contributors read conventions, Claude reads Skills
-- **Version control benefits**: Convention updates automatically benefit Skills
 
 **Implementation:**
 
@@ -287,125 +341,39 @@ Should Skills replace convention documents or reference them?
 - Skills add model-specific guidance (e.g., Mermaid code examples)
 - Conventions remain in `docs/`, Skills in `.claude/skills/`
 
-**Example:**
-
-**Convention document** (`docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md`):
-
-- Complete WCAG requirements
-- Color palette with hex codes
-- Contrast ratios and testing methodology
-- Research sources and citations
-
-**Skill** (`.claude/skills/color-accessibility-diagrams/SKILL.md`):
-
-- Quick reference of color palette
-- Mermaid-specific implementation examples
-- Common mistakes and fixes
-- Link to full convention document
-
-**Consequences:**
-
-- **Positive**: Single source of truth maintained
-- **Positive**: Skills can be updated independently without convention changes
-- **Positive**: Human-readable documentation preserved for contributors
-- **Negative**: Skills and conventions must stay synchronized
-- **Mitigation**: `wow__rules-checker` validates Skills reference current conventions
-
-### Decision 4: Multi-Phase Sequential Delivery (Direct Commits to Main)
+### Decision 4: Multi-Phase Sequential Delivery
 
 **Context:**
 
-Skills implementation is large scope (8-12 Skills, architecture updates, 45+ agent changes). The repository uses Trunk Based Development where all work happens on `main` branch with small, frequent commits.
+Skills implementation is moderate scope (8-12 Skills, infrastructure docs, agent updates). The repository uses Trunk Based Development.
 
 **Decision:** **Multi-phase sequential delivery with direct commits to `main`**
 
-**Rationale:**
-
-- **Aligns with Trunk Based Development**: Repository convention mandates work on `main` branch
-- **Risk management**: Phased rollout with validation checkpoints between phases
-- **Natural breakpoints**: Foundation → Migration → Architecture → Community
-- **Small, frequent commits**: Each logical change committed independently to `main`
-- **Backward compatibility**: Each commit maintains compatibility, enabling easy revert
-- **Continuous validation**: Run validators after each significant commit
-- **No overhead**: Eliminates PR creation, review delays, merge conflicts
-
 **Phase Breakdown:**
 
-1. **Phase 1: Foundation** (~3 Skills, basic structure, ~8-12 commits)
-2. **Phase 2: Knowledge Migration** (~5-9 Skills, CLAUDE.md reduction, ~15-20 commits)
-3. **Phase 3: Architecture Integration** (documentation, governance, ~10-15 commits)
-4. **Phase 4: Community & Polish** (Shariah Skills, final validation, ~8-10 commits)
+1. **Phase 1: Foundation** (~3 Skills, infrastructure, ~8-12 commits)
+2. **Phase 2: Knowledge Migration** (~5-9 Skills, agent updates, ~15-20 commits)
+3. **Phase 3: Community & Polish** (Shariah Skills, final validation, ~8-10 commits)
 
-**Validation Checkpoints:**
+**Rationale:**
 
-Between phases, validate completion before proceeding:
-
-- Phase 1 → Phase 2: Skills infrastructure functional, 3 Skills auto-load
-- Phase 2 → Phase 3: CLAUDE.md ≤30k, all Skills working, agents updated
-- Phase 3 → Phase 4: Architecture docs complete, governance model established
-- Phase 4 → Complete: Community Skills published, all metrics met
-
-**Commit Pattern Example (Phase 1):**
-
-```bash
-# Small, atomic commits directly to main
-git commit -m "feat(skills): create .claude/skills directory structure"
-git push origin main
-
-git commit -m "feat(skills): add maker-checker-fixer-pattern Skill"
-git push origin main
-
-git commit -m "test(skills): validate maker-checker-fixer auto-loads"
-git push origin main
-
-git commit -m "feat(skills): add color-accessibility-diagrams Skill"
-git push origin main
-
-# [Validation checkpoint before Phase 2]
-```
-
-**Why not Pull Requests:**
-
-- Repository uses Trunk Based Development (main branch only)
-- Small commits to `main` enable faster iteration
-- Continuous integration runs on every commit (same validation)
-- No PR approval delays or merge conflicts
-
-**Why not single large commit:**
-
-- Too large to review or revert effectively
-- All-or-nothing risk (can't validate incrementally)
-- Violates Trunk Based Development principle of small commits
-
-**Consequences:**
-
-- **Positive**: Aligns with repository Trunk Based Development convention
-- **Positive**: Faster implementation (no approval delays)
-- **Positive**: Small commits easy to understand and revert
-- **Positive**: Continuous validation throughout implementation
-- **Negative**: Requires discipline to commit only tested, working code
-- **Negative**: Validation checkpoints require manual review before next phase
-- **Mitigation**: Run validators after each significant commit, formal checkpoint review between phases
+- Aligns with Trunk Based Development convention
+- Natural breakpoints for validation
+- Small, frequent commits with validation gates
 
 ### Decision 5: Agent Skills Frontmatter (Optional Field)
 
 **Context:**
 
-How should agents reference Skills? Options:
-
-1. **Frontmatter `skills:` field** (chosen)
-2. **Inline documentation in agent body**
-3. **Separate configuration file**
+How should agents reference Skills?
 
 **Decision:** **Optional `skills:` frontmatter field**
 
 **Rationale:**
 
-- **Consistency**: Frontmatter already used for `name`, `description`, `tools`, `model`, `color`
-- **Declarative**: Skills references declared upfront, easy to parse
-- **Optional**: Agents not using Skills don't need the field (backward compatible)
-- **Composable**: List multiple Skills per agent
-- **Parseable**: Tooling can analyze agent-skill relationships
+- Consistent with existing frontmatter pattern
+- Declarative and parseable
+- Backward compatible (optional field)
 
 **Implementation:**
 
@@ -419,23 +387,8 @@ color: blue
 skills:
   - color-accessibility-diagrams
   - maker-checker-fixer-pattern
-  - repository-architecture
 ---
 ```
-
-**Validation:**
-
-- `wow__rules-checker` validates `skills:` field references valid Skills
-- Skills listed must exist in `.claude/skills/`
-- Skills field is YAML list (array)
-
-**Consequences:**
-
-- **Positive**: Clear, declarative Skills references
-- **Positive**: Easy to analyze agent knowledge dependencies
-- **Positive**: Backward compatible (optional field)
-- **Negative**: Frontmatter becomes longer for agents referencing many Skills
-- **Mitigation**: Limit agent Skills references to 3-5 most critical
 
 ## Implementation Approach
 
@@ -446,45 +399,29 @@ skills:
 **Tasks:**
 
 1. **Create `.claude/skills/` directory structure**
-   - Location: `.claude/skills/` at repository root
-   - README.md explaining Skills purpose and organization
+   - README.md explaining Skills purpose
    - Template files for future Skill creation
 
 2. **Create first 3 Skills:**
 
    **Skill 1: `maker-checker-fixer-pattern`**
-   - Name: `maker-checker-fixer-pattern`
-   - Description: Three-stage content quality workflow (Maker creates, Checker validates, Fixer remediates). Use when creating content, validating quality, or applying fixes in docs, Hugo content, READMEs, or plans.
-   - Content: Workflow overview, stage responsibilities, tool patterns, when to use each stage
-   - Reference: Link to [Maker-Checker-Fixer Pattern Convention](../../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md)
+   - Three-stage content quality workflow
+   - Reference: Link to Maker-Checker-Fixer Pattern Convention
 
    **Skill 2: `color-accessibility-diagrams`**
-   - Name: `color-accessibility-diagrams`
-   - Description: WCAG-compliant Mermaid diagrams using verified accessible color palette. Use when creating diagrams, flowcharts, or any color-dependent visualizations requiring accessibility compliance.
-   - Content: Accessible color palette (hex codes), Mermaid implementation examples, common mistakes
-   - Reference: Link to [Color Accessibility Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)
+   - WCAG-compliant Mermaid diagrams
+   - Reference: Link to Color Accessibility Convention
 
    **Skill 3: `repository-architecture`**
-   - Name: `repository-architecture`
-   - Description: Seven-layer repository governance hierarchy from Vision (Layer 0) to Workflows (Layer 6). Use when understanding repository structure, making architectural decisions, or explaining traceability between layers.
-   - Content: Layer overview, governance relationships, traceability examples
-   - Reference: Link to [Repository Architecture](../../../docs/explanation/ex__repository-governance-architecture.md)
+   - Six-layer governance hierarchy
+   - Reference: Link to Repository Architecture
 
 3. **Update AI Agents Convention**
-   - Add `skills:` frontmatter field documentation
-   - Explain when to reference Skills vs. inline knowledge
-   - Provide examples of Skills references
+   - Add optional `skills:` frontmatter field documentation
 
-4. **Validation:**
-   - Test Skills auto-load in Claude Code
-   - Verify Skills descriptions trigger correctly
-   - Confirm Skills content accessible on-demand
-
-**Deliverables:**
-
-- `.claude/skills/` directory with 3 Skills
-- Updated AI Agents Convention
-- Foundation README documenting Skills approach
+4. **Add Skills section to CLAUDE.md**
+   - Brief description of Skills as delivery infrastructure
+   - Link to Skills directory README
 
 **Success Criteria:**
 
@@ -492,352 +429,75 @@ skills:
 - [ ] 3 Skills created with valid SKILL.md frontmatter and content
 - [ ] Skills auto-load when relevant tasks mentioned
 - [ ] AI Agents Convention documents `skills:` field
-- [ ] Foundation README explains Skills purpose and usage
+- [ ] CLAUDE.md updated with Skills section
 
 ### Phase 2: Knowledge Migration
 
-**Goal**: Create remaining 5-9 Skills and reduce CLAUDE.md size to ≤30k characters
+**Goal**: Create remaining 5-9 Skills and optimize CLAUDE.md
 
 **Tasks:**
 
 1. **Create additional Skills:**
+   - `hugo-ayokoding-development` - Hextra theme, bilingual, weight system
+   - `by-example-tutorial-creation` - 75-90 annotated examples, annotation density
+   - `factual-validation-methodology` - WebSearch/WebFetch verification
+   - `trunk-based-development` - Main branch workflow
+   - `gherkin-acceptance-criteria` - Given-When-Then format
+   - (Optional) `hugo-ose-development` - PaperMod theme
+   - (Optional) `criticality-confidence-system` - Checker/Fixer levels
 
-   **Skill 4: `hugo-ayokoding-development`**
-   - Hextra theme, bilingual (English/Indonesian), weight system, by-example tutorials
-   - Content: Frontmatter structure, navigation conventions, bilingual mirroring, absolute paths
-   - Multi-file: SKILL.md (overview) + reference.md (detailed conventions) + examples.md (frontmatter examples)
+2. **CLAUDE.md Optimization**
 
-   **Skill 5: `by-example-tutorial-creation`**
-   - 75-90 annotated examples, 1-2.25 comment lines per code line PER EXAMPLE, five-part format
-   - Content: Annotation density calculation, code block structure, multiple blocks for comparisons
-   - Multi-file: SKILL.md + examples.md (annotated code examples)
-
-   **Skill 6: `factual-validation-methodology`**
-   - WebSearch/WebFetch verification with confidence classification
-   - Content: Validation workflow, confidence levels, source prioritization
-   - Reference: Link to [Factual Validation Convention](../../../docs/explanation/conventions/content/ex-co-co__factual-validation.md)
-
-   **Skill 7: `trunk-based-development`**
-   - Main branch workflow, no long-lived branches, feature flags
-   - Content: Commit patterns, when to use branches, environment branches explanation
-   - Reference: Link to [Trunk Based Development Convention](../../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md)
-
-   **Skill 8: `gherkin-acceptance-criteria`**
-   - Writing testable acceptance criteria using Gherkin format
-   - Content: Given-When-Then syntax, examples, best practices
-   - Reference: Link to [Acceptance Criteria Convention](../../../docs/explanation/development/infra/ex-de-in__acceptance-criteria.md)
-
-   **Skill 9 (optional): `hugo-ose-development`**
-   - PaperMod theme, English-only, landing page conventions
-   - Content: Frontmatter, cover images, platform content structure
-
-   **Skill 10 (optional): `criticality-confidence-system`**
-   - Checker criticality levels + Fixer confidence assessment
-   - Content: CRITICAL/HIGH/MEDIUM/LOW categorization, confidence levels, priority matrix
-   - Reference: Links to [Criticality Levels](../../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and [Fixer Confidence Levels](../../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md)
-
-2. **CLAUDE.md Migration**
-
-   **Identify migration candidates** (sections >500 characters duplicating convention docs):
-   - Diagram Convention section
-   - Hugo Content Convention sections
-   - Maker-Checker-Fixer Pattern section
-   - Tutorial Standards section
-   - Acceptance Criteria section
-
-   **Migration pattern:**
+   **Pattern:**
    - Replace detailed content with 2-5 line summary
-   - Add link to full convention document
-   - Add note: "Skill available: `skill-name` auto-loads when [context]"
+   - Add link to convention document
+   - Add note: "Skill: `skill-name` auto-loads when [context]"
 
-   **Example:**
-
-   Before:
-
-   ```markdown
-   ## Maker-Checker-Fixer Pattern
-
-   Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme, docs, plan. Checkers categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency. Fixers combine criticality with confidence (HIGH/MEDIUM/FALSE_POSITIVE) to determine priority (P0-P4) and execution order. [500+ more characters...]
-   ```
-
-   After:
-
-   ```markdown
-   ## Maker-Checker-Fixer Pattern
-
-   Three-stage content quality workflow: Maker creates/updates, Checker validates with criticality levels, Fixer applies validated fixes based on confidence. Used across 7 agent families. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) for complete workflow. Skill: `maker-checker-fixer-pattern` auto-loads for content quality tasks.
-   ```
-
-   **Target**: Maintain ≤30k characters (currently ~29k, progressive disclosure prevents future growth)
+   **Target**: Maintain ≤30k characters
 
 3. **Update 5-10 Example Agents**
 
-   Add `skills:` frontmatter to demonstrate Skills references:
-   - `docs__maker` → `color-accessibility-diagrams`, `maker-checker-fixer-pattern`
-   - `docs__checker` → `maker-checker-fixer-pattern`, `criticality-confidence-system`
-   - `ayokoding-web-general-maker` → `hugo-ayokoding-development`, `color-accessibility-diagrams`
-   - `ayokoding-web-by-example-maker` → `by-example-tutorial-creation`, `hugo-ayokoding-development`
-   - `plan__maker` → `gherkin-acceptance-criteria`, `trunk-based-development`
-
-4. **Validation:**
-   - Verify CLAUDE.md character count ≤30,000
-   - Test all Skills auto-load correctly
-   - Confirm agent Skills references work
-   - Validate no information loss in migration
-
-**Deliverables:**
-
-- 5-9 additional Skills (total 8-12 Skills)
-- CLAUDE.md reduced to ≤30k characters
-- 5-10 agents updated with Skills references
-- Migration validation report
+   Add optional `skills:` frontmatter to demonstrate pattern
 
 **Success Criteria:**
 
 - [ ] 5-9 Skills created with valid structure
-- [ ] CLAUDE.md character count remains ≤30,000 (baseline ~29k)
-- [ ] All migrated knowledge accessible via Skills
-- [ ] 5-10 agents successfully reference Skills
-- [ ] No backward compatibility breakage
+- [ ] CLAUDE.md character count ≤30,000
+- [ ] 5-10 agents updated with optional Skills references
 - [ ] All Skills auto-load when relevant
 
-### Phase 3: Architecture Integration
+### Phase 3: Community & Polish
 
-**Goal**: Document Layer 4 in architecture and establish governance model
-
-**Tasks:**
-
-1. **Update Repository Architecture Document**
-
-   File: `docs/explanation/ex__repository-governance-architecture.md`
-
-   **Add Layer 4 section:**
-   - Define Skills layer between Layer 3 and Layer 5
-   - Explain model-invoked vs. user-invoked distinction
-   - Document governance: Skills governed by L2+L3, provide knowledge to L5
-   - Provide traceability examples
-
-   **Update diagram:**
-   - Add Layer 4 (Skills) node
-   - Renumber Layer 4→5 (Agents), Layer 5→6 (Workflows)
-   - Show governance arrows: L2→L4, L3→L4, L4→L5
-   - Use gray color for Skills layer (distinct from other layers)
-
-   **Add traceability example:**
-
-   ```
-   Principle: Accessibility First (L1)
-       ↓ governs
-   Convention: Color Accessibility Convention (L2)
-       ↓ governs
-   Skill: color-accessibility-diagrams (L4)
-       ↓ provides knowledge to
-   Agent: docs__maker (L5)
-   ```
-
-2. **Create Skills Convention Document**
-
-   File: `docs/explanation/development/skills/ex-de-sk__skills.md`
-
-   **Content:**
-   - What Skills are and when to create them
-   - SKILL.md format and frontmatter requirements
-   - Multi-file Skills structure (reference.md, examples.md, scripts/)
-   - Skills vs. convention documents decision criteria
-   - Governance and traceability requirements
-   - Skills naming and organization conventions
-   - Examples and templates
-
-   **Principles Implemented:**
-   - Progressive Disclosure
-   - Automation Over Manual
-   - Documentation First
-   - Explicit Over Implicit
-
-   **Conventions Implemented:**
-   - Content Quality Principles
-   - Linking Convention
-   - File Naming Convention (no prefixes in Skills folders)
-
-3. **Update CLAUDE.md**
-
-   **Add Layer 4 to architecture summary:**
-
-   ```markdown
-   ## Repository Architecture: Seven-Layer Hierarchy
-
-   The repository follows a seven-layer architecture where each layer builds on the foundation of the layer above. Each layer governs the layer below, creating complete traceability from foundational purpose (Layer 0: Vision) through values (Layer 1: Principles) to concrete standards (Layers 2-3), specialized knowledge (Layer 4: Skills), automated enforcement (Layer 5: Agents), and orchestrated processes (Layer 6: Workflows).
-
-   **Layer 4: Skills** - WHAT+HOW specialized knowledge packages (governs nothing, governed by L2+L3, provides knowledge to L5)
-   ```
-
-   **Add Skills section:**
-
-   ```markdown
-   ## Claude Code Skills
-
-   Skills are model-invoked knowledge packages that auto-load when relevant to user tasks. Skills encode conventions and development practices for efficient model consumption. Located in `.claude/skills/` directory. See [Skills Convention](./docs/explanation/development/skills/ex-de-sk__skills.md) for complete details.
-   ```
-
-4. **Update AI Agents Convention**
-
-   File: `docs/explanation/development/agents/ex-de-ag__ai-agents.md`
-
-   **Add Skills references section:**
-   - Document `skills:` frontmatter field
-   - Explain when agents should reference Skills vs. inline knowledge
-   - Provide examples of Skills composition
-   - Document validation rules for Skills references
-
-5. **Update Conventions Index**
-
-   File: `docs/explanation/conventions/README.md`
-
-   **Add Skills Convention:**
-
-   ```markdown
-   ## Development Infrastructure
-
-   - [Skills Convention](../development/skills/ex-de-sk__skills.md) - Creating and organizing Claude Code Skills for progressive knowledge disclosure
-   ```
-
-6. **Validation:**
-   - Verify architecture documentation complete and accurate
-   - Test Skills Convention examples
-   - Confirm CLAUDE.md updated correctly
-   - Validate traceability examples
-
-**Deliverables:**
-
-- Updated Repository Architecture document with Layer 4
-- New Skills Convention document
-- Updated CLAUDE.md with Skills section
-- Updated AI Agents Convention with Skills references
-- Updated Conventions Index
-
-**Success Criteria:**
-
-- [ ] Repository Architecture clearly explains Layer 4 role
-- [ ] Governance relationships documented (L2+L3→L4→L5)
-- [ ] Skills Convention provides complete creation guidance
-- [ ] CLAUDE.md includes Skills in architecture summary
-- [ ] AI Agents Convention documents Skills frontmatter
-- [ ] Traceability examples demonstrate Skills integration
-
-### Phase 4: Community & Polish
-
-**Goal**: Create community-shareable Shariah-compliance Skills and finalize implementation
+**Goal**: Create community-shareable Skills and finalize implementation
 
 **Tasks:**
 
 1. **Create Shariah-Compliance Skills** (for community sharing)
-
-   **Skill 11: `halal-transaction-validation`** (future/example)
-   - Islamic finance transaction rules
-   - Content: Riba prohibition, Gharar avoidance, asset-backed requirements
-   - Multi-file: SKILL.md + reference.md (detailed rulings) + examples.md (transaction patterns)
-   - Note: Requires Islamic finance expertise - create as demonstration or defer to subject matter experts
-
-   **Skill 12: `zakat-calculation-guidance`** (future/example)
-   - Zakat computation for enterprise assets
-   - Content: Nisab thresholds, asset categories, calculation methodology
-   - Multi-file: SKILL.md + reference.md (detailed fiqh) + examples.md (calculation examples)
-   - Note: Requires Islamic finance expertise - create as demonstration or defer to subject matter experts
+   - `halal-transaction-validation` (demonstration)
+   - `zakat-calculation-guidance` (demonstration)
 
 2. **agentskills.io Publishing Preparation**
-
-   **Documentation:**
-   - Create guide: "Publishing Skills to agentskills.io"
-   - Document Skill export process
-   - Explain platform compatibility verification
-   - Provide community contribution guidelines
-
-   **Validation:**
-   - Test Shariah-compliance Skills in Claude.ai (web)
-   - Test Skills in Claude Code
-   - Test Skills via API (if accessible)
-   - Verify cross-platform compatibility
-
-   **Licensing:**
-   - Confirm MIT license applies to Skills
-   - Add LICENSE file to `.claude/skills/` directory
-   - Document attribution requirements for community use
+   - Create publishing guide
+   - Test cross-platform compatibility
 
 3. **Final Validation**
+   - Run `wow__rules-checker` on all Skills
+   - Validate CLAUDE.md size
+   - Test agent Skills references
+   - Confirm backward compatibility
 
-   **Run `wow__rules-checker`:**
-   - Validate all Skills reference valid conventions
-   - Check Skills descriptions are clear and unique
-   - Verify Skills frontmatter structure
-   - Confirm no duplication between Skills and conventions
-
-   **CLAUDE.md validation:**
-   - Verify character count ≤30,000
-   - Confirm all migrated content accessible via Skills
-   - Test navigation links
-   - Validate architecture summary accuracy
-
-   **Agent validation:**
-   - Test agents with Skills references work correctly
-   - Confirm backward compatibility (agents without Skills still work)
-   - Validate Skills auto-load when agents invoked
-   - Test Skills composition (multiple Skills loaded together)
-
-   **Documentation validation:**
-   - Review Skills Convention for completeness
-   - Verify Repository Architecture accuracy
-   - Check all traceability examples
-   - Confirm cross-references valid
-
-4. **Create Examples and Templates**
-
-   **Skill creation template:**
-   - SKILL.md template with frontmatter
-   - Multi-file Skill template (reference.md, examples.md)
-   - README template for Skills folders
-
-   **Usage examples:**
-   - Example 1: Agent referencing single Skill
-   - Example 2: Agent referencing multiple Skills (composition)
-   - Example 3: Skill referencing another Skill
-   - Example 4: Multi-file Skill with scripts
-
-   **Best practices guide:**
-   - When to create Skill vs. convention document
-   - How to write effective Skill descriptions
-   - Skills naming conventions
-   - Skills organization patterns
-
-5. **Final Polish**
-
-   **Code cleanup:**
-   - Remove any temporary files or test Skills
-   - Ensure consistent formatting across all Skills
-   - Validate all Skills follow Content Quality Principles
-
-   **Documentation cleanup:**
-   - Fix any broken links
-   - Ensure all cross-references accurate
-   - Validate diagrams render correctly
-   - Check for typos or formatting issues
-
-**Deliverables:**
-
-- 2 Shariah-compliance Skills (or examples demonstrating pattern)
-- agentskills.io publishing guide
-- Skill creation templates and examples
-- Final validation report
-- Best practices guide
+4. **Create Templates and Best Practices**
+   - Skill creation template
+   - Usage examples
+   - Best practices guide
 
 **Success Criteria:**
 
 - [ ] 2 Shariah-compliance Skills created (or pattern demonstrated)
 - [ ] Skills verified to work across Claude ecosystem
-- [ ] agentskills.io publishing process documented
-- [ ] Templates and examples available for future Skill creation
-- [ ] All validation passed (wow\_\_rules-checker, CLAUDE.md, agents, docs)
-- [ ] Zero breaking changes to existing functionality
-- [ ] Best practices guide published
+- [ ] Templates and examples available
+- [ ] All validation passed
+- [ ] Zero breaking changes
 
 ## Data Models
 
@@ -850,37 +510,7 @@ allowed-tools: array<string> # Optional - Tool access restrictions
 model: string # Optional - Model requirement (sonnet, opus)
 ```
 
-**Validation rules:**
-
-- `name` must match folder name in kebab-case
-- `description` must be clear, specific, action-oriented, comprehensive, unique
-- `allowed-tools` must reference valid Claude Code tools
-- `model` must be valid Claude model identifier
-
-**Example:**
-
-```yaml
----
-name: color-accessibility-diagrams
-description: WCAG-compliant Mermaid diagrams using verified accessible color palette. Use when creating diagrams, flowcharts, or any color-dependent visualizations requiring accessibility compliance.
-allowed-tools: [Read, Grep]
-model: sonnet
----
-```
-
 ### Agent Skills Reference Schema
-
-**Existing agent frontmatter:**
-
-```yaml
-name: string
-description: string
-tools: array<string>
-model: string
-color: string
-```
-
-**Extended with Skills:**
 
 ```yaml
 name: string
@@ -891,429 +521,190 @@ color: string
 skills: array<string> # NEW - Optional Skills references
 ```
 
-**Validation rules:**
-
-- `skills` is optional (backward compatible)
-- Each skill in array must exist in `.claude/skills/`
-- Skills array should be limited to 3-5 most critical Skills
-- Skills must be valid skill names (kebab-case)
-
-**Example:**
-
-```yaml
----
-name: docs__maker
-description: Expert documentation writer
-tools: [Read, Write, Edit, Grep, Glob]
-model: sonnet
-color: blue
-skills:
-  - color-accessibility-diagrams
-  - maker-checker-fixer-pattern
-  - repository-architecture
----
-```
-
 ## Security Considerations
 
 ### Skills Tool Access Control
 
-**Risk**: Skills could potentially specify unrestricted tool access
-
-**Mitigation:**
-
 - Skills `allowed-tools` field restricts tool access (opt-in security)
 - Skills with no `allowed-tools` get default read-only access
-- Critical Skills (e.g., those modifying files) should explicitly whitelist tools
-- Document tool access principles in Skills Convention
-
-**Example safe Skill:**
-
-```yaml
-allowed-tools: [Read, Grep] # Read-only access
-```
-
-**Example privileged Skill:**
-
-```yaml
-allowed-tools: [Read, Write, Edit, Grep, Glob, Bash] # Full access - document why needed
-```
 
 ### Skills Content Validation
 
-**Risk**: Malicious or incorrect Skills could provide harmful guidance
-
-**Mitigation:**
-
 - `wow__rules-checker` validates Skills content against conventions
 - Skills must reference authoritative convention documents
-- Skills undergo code review like all repository changes
-- Community-contributed Skills require verification before acceptance
-
-### CLAUDE.md Dependency Risk
-
-**Risk**: Over-migration to Skills could make CLAUDE.md unusable without Skills
-
-**Mitigation:**
-
-- CLAUDE.md retains high-level navigation (not just Skills references)
-- Critical guidance remains in CLAUDE.md (e.g., git workflow, basic structure)
-- Skills are enhancement, not replacement for CLAUDE.md
-- Test CLAUDE.md effectiveness with and without Skills
 
 ### Backward Compatibility
-
-**Risk**: Skills introduction could break existing agent workflows
-
-**Mitigation:**
 
 - Skills are additive (existing agents work without modification)
 - `skills:` frontmatter field is optional
 - Agent behavior unchanged if `skills:` field absent
-- Comprehensive testing before each PR merge
 
 ## Testing Strategy
 
-### Unit Testing (Per Skill)
+### Per-Skill Validation
 
-**For each Skill:**
+1. Frontmatter validation (name, description, tools)
+2. Content validation (markdown quality, links)
+3. Auto-load testing (verify triggers correctly)
 
-1. **Frontmatter validation**
-   - Name matches folder name
-   - Description is clear and triggers correctly
-   - Allowed-tools (if specified) are valid
-   - Model (if specified) is valid
+### Integration Testing
 
-2. **Content validation**
-   - Markdown follows Content Quality Principles
-   - Links are valid (relative paths, .md extension)
-   - Diagrams use accessible color palette
-   - References to conventions are accurate
+1. Skills reference validation
+2. Composition testing (multiple Skills together)
+3. Backward compatibility (agents without Skills work)
 
-3. **Auto-load testing**
-   - Describe task matching Skill description
-   - Verify Skill auto-loads in Claude Code
-   - Confirm full content accessible
-   - Test Skill doesn't load for unrelated tasks
+### System Testing
 
-### Integration Testing (Skills + Agents)
-
-**For agents with Skills references:**
-
-1. **Skills reference validation**
-   - Agent `skills:` field lists valid Skills
-   - Referenced Skills exist in `.claude/skills/`
-   - Agent can access Skills knowledge
-
-2. **Composition testing**
-   - Multiple Skills load together correctly
-   - No conflicts between Skills
-   - Knowledge combines coherently
-
-3. **Backward compatibility**
-   - Agents without `skills:` field still work
-   - Existing workflows unaffected
-   - No performance degradation
-
-### System Testing (End-to-End)
-
-**Complete workflows:**
-
-1. **CLAUDE.md size verification**
-   - Character count ≤30,000
-   - All sections still accessible
-   - Navigation links work
-   - No information loss
-
-2. **Agent execution**
-   - Test 5-10 agents with Skills references
-   - Verify agents execute tasks correctly
-   - Confirm Skills knowledge applied
-   - Validate output quality
-
-3. **Architecture validation**
-   - Traceability examples work
-   - Layer 4 governance clear
-   - Documentation complete and accurate
-
-4. **Cross-platform validation**
-   - Test Skills in Claude Code (primary)
-   - Test Skills in Claude.ai (web)
-   - Test Skills via API (if accessible)
-   - Verify consistent behavior
-
-### Validation Checklist (Checkpoint for Each Phase)
-
-**Phase 1 (Foundation):**
-
-- [ ] `.claude/skills/` directory created
-- [ ] 3 Skills created with valid structure
-- [ ] Skills auto-load tested
-- [ ] AI Agents Convention updated
-- [ ] No backward compatibility breakage
-
-**Phase 2 (Knowledge Migration):**
-
-- [ ] 5-9 Skills created with valid structure
-- [ ] CLAUDE.md character count ≤30,000
-- [ ] 5-10 agents updated with Skills references
-- [ ] All migrated knowledge accessible
-- [ ] Skills auto-load for relevant tasks
-- [ ] No information loss validated
-
-**Phase 3 (Architecture Integration):**
-
-- [ ] Repository Architecture updated with Layer 4
-- [ ] Skills Convention document created
-- [ ] CLAUDE.md includes Skills section
-- [ ] AI Agents Convention documents Skills frontmatter
-- [ ] Traceability examples accurate
-- [ ] All cross-references valid
-
-**Phase 4 (Community & Polish):**
-
-- [ ] 2 Shariah-compliance Skills created (or pattern demonstrated)
-- [ ] agentskills.io publishing guide complete
-- [ ] Templates and examples available
-- [ ] `wow__rules-checker` passes all Skills
-- [ ] Final validation complete
-- [ ] Best practices guide published
-- [ ] No breaking changes
+1. CLAUDE.md size verification (≤30k)
+2. Agent execution with Skills
+3. Cross-platform validation
 
 ## Deployment Strategy
 
-### Deployment Model: Trunk Based Development
+### Trunk Based Development
 
-**All work happens on `main` branch** with small, frequent commits directly to main. No feature branches or Pull Requests.
-
-**Multi-Phase Sequential Implementation:**
+All work happens on `main` branch with small, frequent commits.
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph TD
-    Phase1[Phase 1: Foundation<br/>3 Skills, Infrastructure<br/>8-12 commits]
-    Phase2[Phase 2: Knowledge Migration<br/>5-9 Skills, CLAUDE.md reduction<br/>15-20 commits]
-    Phase3[Phase 3: Architecture Integration<br/>Documentation, Governance<br/>10-15 commits]
-    Phase4[Phase 4: Community & Polish<br/>Shariah Skills, Final validation<br/>8-10 commits]
+    Phase1[Phase 1: Foundation<br/>3 Skills, Infrastructure]
+    Phase2[Phase 2: Knowledge Migration<br/>5-9 Skills, CLAUDE.md optimization]
+    Phase3[Phase 3: Community & Polish<br/>Shariah Skills, Final validation]
 
     Phase1 -->|Validation checkpoint| Phase2
     Phase2 -->|Validation checkpoint| Phase3
-    Phase3 -->|Validation checkpoint| Phase4
-    Phase4 -->|Validation checkpoint| Complete[Skills Implementation Complete]
+    Phase3 -->|Validation checkpoint| Complete[Skills Implementation Complete]
 
     style Phase1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Phase2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Phase3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style Phase4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Complete fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:3px
 ```
 
-**Phase Dependencies:**
-
-- Phase 2 requires Phase 1 complete (needs Skills infrastructure)
-- Phase 3 requires Phase 2 complete (needs all Skills for documentation)
-- Phase 4 requires Phase 3 complete (needs governance model for community Skills)
-
-**Commit Strategy:**
-
-- Small, atomic commits directly to `main` (one logical change per commit)
-- Descriptive commit messages following Conventional Commits format
-- Run validators after each significant commit (continuous validation)
-- Formal checkpoint review between phases (validate checklist before proceeding)
-- Feature flags if needed to hide incomplete work (unlikely for infrastructure changes)
-
 ### Rollback Strategy
 
-**If issues discovered after commit:**
+- **Forward Fix** (preferred): New commit fixing issue
+- **Revert Commit**: If breaking changes discovered
+- **Hotfix**: For critical blocking issues
 
-**Option 1: Forward Fix (Preferred)**
+## Alternative Approaches (Not Chosen)
 
-- Create new commit fixing the issue
-- Keep history linear (no reverts)
-- Document fix in commit message
-- Fastest resolution for minor issues
+### Alternative A: Skills as Layer 4
 
-**Option 2: Revert Commit (If breaking)**
-
-- Revert specific commit(s) with `git revert`
-- Phase dependencies mean related commits may also need revert
-- Re-implement with fixes in new commits
-- Maintains complete history (reverts are visible)
-
-**Option 3: Hotfix (For critical issues)**
-
-- Create small hotfix commit on `main`
-- Apply fix immediately
-- Continue with planned implementation
-- Document in plans/ if larger changes needed
-
-**Rollback decision criteria:**
-
-- **Forward fix**: Minor issues, non-breaking, easy fix (most common)
-- **Revert commit**: Breaking changes, major architectural issues (rare for this plan)
-- **Hotfix**: Critical blocking issue preventing next phase (rare)
-
-### Monitoring & Observability
-
-**Skills adoption metrics:**
-
-- Number of Skills created (target: 8-12)
-- Number of agents referencing Skills (target: 5-10+)
-- CLAUDE.md character count (target: ≤30,000)
-- Skills auto-load success rate (qualitative observation)
-
-**Quality metrics:**
-
-- `wow__rules-checker` pass rate for Skills
-- Backward compatibility (zero agent breakage)
-- Information preservation (all migrated knowledge accessible)
-- Cross-platform compatibility (Claude Code, web, API)
-
-**Usage observation:**
-
-- Which Skills auto-load most frequently (qualitative)
-- Skills composition patterns (which Skills used together)
-- Agent file size reduction (15-25% expected)
-
-**Note**: Most metrics are qualitative or one-time validation (not continuous monitoring). This is repository infrastructure improvement, not production service.
-
-## Alternative Approaches
-
-This section documents alternative architectural approaches considered and reasons for selecting Layer 4 as primary.
-
-### Alternative A: Layer 5 Subdivision
-
-**Structure:**
-
-```
-Layer 5: AI Capabilities (WHO - Automated Execution)
-├── 5a: Skills (Model-invoked knowledge)
-└── 5b: Agents (User/Workflow-invoked executors)
-```
-
-**Rationale:**
-
-- Both Skills and Agents are AI-powered capabilities
-- Both exist in `.claude/` directory
-- Subdivision keeps them related but distinct
+**Structure:** Insert Skills as governance layer between Development and Agents
 
 **Why NOT Chosen:**
 
-- **Fundamentally different invocation models** - Model-invoked (Skills) vs. User-invoked (Agents)
-- **Different purposes** - Knowledge provision (Skills) vs. Task execution (Agents)
-- **Governance ambiguity** - Mixing knowledge and execution in same layer blurs boundaries
-- **Traceability confusion** - Agents reference Skills; subdivision makes this awkward
-- **No precedent** - Other layers don't have subdivisions
+- Skills don't GOVERN agents (governance test fails)
+- Skills SERVE agents with knowledge (infrastructure relationship)
+- Requires renumbering L4→L5, L5→L6 (unnecessary complexity)
+- Implies Skills control agents (they don't)
 
-**When this might be better:**
+### Alternative B: Layer Subdivision
 
-- If Skills and Agents had similar invocation models
-- If Skills executed tasks rather than providing knowledge
-- If governance relationships were less distinct
-
-### Alternative B: Skills as Infrastructure (Not a Layer)
-
-**Structure:**
-
-```
-Skills support Layers 2-4 but aren't a governance layer themselves
-Like git hooks, MCP servers, or build tools
-```
-
-**Rationale:**
-
-- Skills are tools for knowledge delivery, not governance
-- Infrastructure pattern keeps six-layer hierarchy unchanged (Layers 0-5)
-- Skills could be considered implementation detail
+**Structure:** Split Layer 4 into 4a (Skills) and 4b (Agents)
 
 **Why NOT Chosen:**
 
-- **Skills encode governance** - They package Conventions (L2) and Practices (L3)
-- **Governance relationship exists** - Skills governed by L2+L3, provide knowledge to L5
-- **Traceability is governance** - Skills create traceability paths (Conventions→Skills→Agents)
-- **Too important for infrastructure** - Skills fundamentally change how knowledge is accessed
-- **Sets precedent** - If Skills are infrastructure, so could Agents be
+- Skills and Agents have fundamentally different purposes
+- Infrastructure is cleaner separation
+- Subdivision adds confusion
 
-**When this might be better:**
+### Alternative C: Skills Replace Convention Docs
 
-- If Skills were purely technical tooling without governance role
-- If Skills didn't encode Conventions/Practices
-- If Skills had no traceability requirements
-
-### Alternative C: Skills Replace Layer 2/3 Documents
-
-**Structure:**
-
-```
-Migrate conventions/practices DIRECTLY into Skills
-Reduce docs/ directory size
-Skills become primary knowledge source
-```
-
-**Rationale:**
-
-- Single source of truth (Skills, not docs + Skills)
-- Eliminates synchronization between docs and Skills
-- Skills become canonical documentation
+**Structure:** Migrate conventions directly into Skills
 
 **Why NOT Chosen:**
 
-- **Documentation First principle violation** - Docs in `docs/` are for humans, Skills for models
-- **Loses human-readable documentation** - Skills optimized for model consumption
-- **Breaks existing references** - Many conventions linked from external sources
-- **Knowledge accessibility** - Contributors need docs/, not just Skills
-- **No version control benefits** - Can't track documentation evolution separately
-
-**When this might be better:**
-
-- If Skills format was equally readable for humans
-- If all knowledge consumption was via Claude
-- If Documentation First principle didn't exist
+- Violates Documentation First principle
+- Loses human-readable documentation
+- Skills format not ideal for all documentation
 
 ### Alternative D: No Skills, Expand CLAUDE.md
 
-**Structure:**
-
-```
-Increase CLAUDE.md size limit to 60k-80k characters
-Keep all knowledge in CLAUDE.md
-No Skills layer needed
-```
-
-**Rationale:**
-
-- Simpler architecture (no new layer)
-- Single knowledge source
-- No progressive disclosure complexity
+**Structure:** Increase CLAUDE.md size limit
 
 **Why NOT Chosen:**
 
-- **Performance degradation** - Large CLAUDE.md files slow Claude Code startup
-- **Hard 40k limit** - Cannot increase arbitrarily
-- **No progressive disclosure** - All knowledge loaded upfront
-- **Scalability problem** - Doesn't solve long-term growth
-- **Misses opportunity** - Skills enable new patterns (composition, portability)
+- Hard 40k character limit exists
+- Performance degradation with large files
+- No progressive disclosure
 
-**When this might be better:**
+## Documentation Updates Required
 
-- If CLAUDE.md size limits didn't exist
-- If performance wasn't a concern
-- If progressive disclosure wasn't valued
+This section lists all documentation that must be updated as part of Skills implementation.
 
-### Decision Summary
+### New Files to Create
 
-**Layer 4 chosen because:**
+| File                                                 | Description                                                                | Phase   |
+| ---------------------------------------------------- | -------------------------------------------------------------------------- | ------- |
+| `.claude/skills/README.md`                           | Skills directory documentation, explains Skills as delivery infrastructure | Phase 1 |
+| `.claude/skills/TEMPLATE.md`                         | Single-file Skill creation template                                        | Phase 1 |
+| `.claude/skills/MULTI-FILE-TEMPLATE/`                | Multi-file Skill creation template directory                               | Phase 3 |
+| `docs/how-to/hoto__create-new-skill.md`              | How-to guide for creating new Skills                                       | Phase 3 |
+| `docs/how-to/hoto__publish-skills-to-agentskills.md` | How-to guide for publishing to agentskills.io                              | Phase 3 |
 
-1. **Clean governance** - Skills governed by L2+L3, provide to L5 (clear relationships)
-2. **Distinct purpose** - Knowledge packages (not governance, not execution)
-3. **Natural fit** - Between "how to develop" (L3) and "who executes" (L5)
-4. **Professional numbering** - Whole numbers align with industry standards (OSI, TCP/IP)
-5. **Traceability** - Skills create new traceability paths enhancing architecture
-6. **Future-proof** - Enables Skills expansion without architectural changes
-7. **Principle alignment** - Implements Progressive Disclosure, Automation Over Manual
+### Files to Update
 
-**Other alternatives remain viable for specific use cases but don't solve the core problem as cleanly.**
+| File                                                         | Update Description                                                                                                      | Phase            |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `docs/explanation/ex__repository-governance-architecture.md` | Add "Delivery Infrastructure" section with Skills alongside CLAUDE.md, add complete architecture diagram showing Skills | Phase 2          |
+| `docs/explanation/development/agents/ex-de-ag__ai-agents.md` | Add optional `skills:` frontmatter field documentation, explain when to use Skills references                           | Phase 1, Phase 2 |
+| `CLAUDE.md`                                                  | Add Skills Infrastructure section, add Skills references to verbose sections                                            | Phase 2          |
+| `.claude/agents/README.md`                                   | Add mention of Skills as complementary to agents                                                                        | Phase 2          |
+
+### Proposed Changes to Repository Architecture Document
+
+**File**: `docs/explanation/ex__repository-governance-architecture.md`
+
+**Add new section** after "📊 The Six Layers" section:
+
+```markdown
+## 🔧 Delivery Infrastructure
+
+In addition to the six governance layers, the repository uses **delivery infrastructure** to transport knowledge from Layers 2-3 to Layer 4 (Agents). These are NOT governance layers - they don't enforce rules, they deliver knowledge.
+
+### Three Delivery Mechanisms
+
+| Mechanism             | Purpose                        | When to Use                               |
+| --------------------- | ------------------------------ | ----------------------------------------- |
+| **CLAUDE.md**         | Context summaries, navigation  | Always loaded at startup                  |
+| **Skills**            | Progressive knowledge packages | Auto-loaded when task matches description |
+| **Direct References** | Links to convention docs       | When agent needs specific convention      |
+
+### Skills as Infrastructure
+
+**Skills** are model-invoked markdown knowledge packages that:
+
+- Auto-load based on description matching
+- Enable progressive disclosure (name/description first, full content on-demand)
+- Complement CLAUDE.md and direct references
+- Are stored in `.claude/skills/` directory
+
+**Skills are NOT a layer** because they don't govern agents - they serve agents with knowledge. The governance relationship test:
+
+- Conventions → Agents: Yes (agents MUST follow conventions)
+- Development → Agents: Yes (agents MUST follow practices)
+- Skills → Agents: No (Skills SERVE agents with knowledge)
+
+See [Skills README](./.claude/skills/README.md) for creating and using Skills.
+```
+
+**Update the main diagram** to include Delivery Infrastructure box (as shown in "Complete Architecture with Skills Infrastructure" section above).
+
+### Agent Files to Update with Skills References
+
+These agents will be updated with optional `skills:` frontmatter in Phase 2:
+
+| Agent                                   | Skills References                                              |
+| --------------------------------------- | -------------------------------------------------------------- |
+| `docs__maker`                           | `color-accessibility-diagrams`, `maker-checker-fixer-pattern`  |
+| `docs__checker`                         | `maker-checker-fixer-pattern`, `criticality-confidence-system` |
+| `apps__ayokoding-web__general-maker`    | `hugo-ayokoding-development`, `color-accessibility-diagrams`   |
+| `apps__ayokoding-web__by-example-maker` | `by-example-tutorial-creation`, `hugo-ayokoding-development`   |
+| `plan__maker`                           | `gherkin-acceptance-criteria`, `trunk-based-development`       |
 
 ---
 
-**Note**: This technical documentation defines architecture, design decisions, and implementation approach for Skills Layer. See [requirements.md](./requirements.md) for objectives and user stories, and [delivery.md](./delivery.md) for implementation phases and validation.
+**Note**: This technical documentation defines architecture, design decisions, and implementation approach for Skills Infrastructure. See [requirements.md](./requirements.md) for objectives and [delivery.md](./delivery.md) for implementation phases.
