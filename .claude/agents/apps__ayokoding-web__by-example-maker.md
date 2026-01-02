@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Bash
 model: sonnet
 color: blue
 created: 2025-12-25
-updated: 2026-01-01
+updated: 2026-01-02
 ---
 
 # ayokoding-web-by-example-maker Agent
@@ -180,6 +180,13 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 - Very complex lines (exceptional cases): Up to 2.25 lines of annotation
 - Maximum: Never exceed 2.5 lines per code line (condense if over limit)
 - Focus on concise explanations that scale naturally with code complexity
+
+**CRITICAL - Where to Place Extensive Explanations**:
+
+- Code annotations (`// =>`) should show WHAT the code does (values, states, outputs)
+- Extensive WHY explanations go in "Brief Explanation" and "Why It Matters" sections (outside code blocks)
+- If annotations exceed 2.5 density, MOVE explanatory content to text sections
+- Keep code focused on state tracking, not tutorial prose
 
 **Comment annotations use `// =>` or `# =>` notation**:
 
@@ -934,3 +941,120 @@ graph TD
 ```
 
 See [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md#diagram-size-and-splitting) for complete splitting guidelines and real-world examples.
+
+## Multiple Code Blocks Pattern
+
+**CRITICAL NEW RULE**: When creating examples that compare multiple approaches, libraries, or implementations, use MULTIPLE CODE BLOCKS with markdown text between them.
+
+### When to Use Multiple Code Blocks
+
+Use separate code blocks when demonstrating:
+
+- **Library comparisons** - Library A vs Library B
+- **Alternative implementations** - Different ways to solve the same problem
+- **Evolution examples** - Before refactoring → After refactoring
+- **Language feature comparisons** - for loop vs stream API
+- **Pattern contrasts** - ✅ GOOD vs ❌ BAD examples
+
+### Pattern Structure
+
+1. **Brief explanation** (markdown text) - What we're comparing and why
+2. **Code Block 1**: Approach A with minimal annotations (1.0-2.25 density)
+3. **Explanation of Approach A** (markdown text) - WHY this approach, trade-offs
+4. **Code Block 2**: Approach B with minimal annotations (1.0-2.25 density)
+5. **Explanation of Approach B** (markdown text) - WHY this approach, trade-offs
+6. **Comparison/Summary** (markdown text) - When to use each
+
+### Anti-Pattern: Cramming Comparisons into Single Block
+
+**DON'T DO THIS**:
+
+```java
+// Library A approach - low-level API
+import lib.A;
+// => Uses library A
+// => Requires manual configuration
+ClassA a = new ClassA();
+// => Creates instance
+
+// Library B approach - high-level API
+import lib.B;
+// => Uses library B
+// => Automatic configuration
+ClassB b = ClassB.create();
+// => Creates instance via factory
+```
+
+**Problems**:
+
+- Exceeds 2.5 density with tutorial-style comments
+- Syntax highlighting broken (mixed imports)
+- Not runnable (incompatible approaches in one block)
+- Explanations buried in code instead of structured text
+
+### Correct Pattern Example
+
+**DO THIS INSTEAD**:
+
+**Brief explanation**: Compare two HTTP client libraries - Library A for control, Library B for convenience.
+
+**Approach A: Low-Level Control**
+
+```java
+import lib.A;
+
+ClassA client = new ClassA();
+// => Creates client instance
+
+client.configure(config);
+// => Applies configuration
+
+Response response = client.execute(request);
+// => Executes HTTP request
+```
+
+**Library A Trade-offs**: Provides fine-grained control over connection pooling and retry logic. Requires manual configuration but enables advanced use cases. Best for complex production systems.
+
+**Approach B: High-Level Convenience**
+
+```java
+import lib.B;
+
+ClassB client = ClassB.create();
+// => Creates auto-configured client
+
+Response response = client.get(url);
+// => Executes GET request
+```
+
+**Library B Trade-offs**: Automatic configuration with fluent API. Limited customization but handles 80% of use cases. Best for rapid prototyping.
+
+**Comparison Summary**: Use Library A when you need complete control. Use Library B for standard REST API consumption.
+
+### Benefits
+
+- **Syntax highlighting works** - Each block gets correct language highlighting
+- **Code is runnable** - Each block independently executable
+- **Clear WHAT vs WHY** - Code shows WHAT (state annotations), text explains WHY
+- **Maintains density target** - Each block stays within 1.0-2.25 range
+- **Better scannability** - Easy to compare approaches side-by-side
+
+### Density Measurement
+
+Measure density PER CODE BLOCK:
+
+- Code Block 1: Should have 1.0-2.25 density
+- Code Block 2: Should have 1.0-2.25 density
+- Text sections: NOT counted toward density
+
+### Integration with Five-Part Format
+
+Multiple code blocks fit within Part 3 (Heavily Annotated Code):
+
+1. Brief Explanation
+2. Diagram (optional)
+3. **Multiple Annotated Code Blocks** ← Use this pattern here
+4. Key Takeaway
+5. Why It Matters
+
+See [By-Example Tutorial Convention - Multiple Code Blocks Pattern](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md#multiple-code-blocks-pattern) for complete details and examples.

@@ -37,6 +37,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.email = :email")
     Optional<User> findByEmailCustom(@Param("email") String email);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => JPQL: SELECT u FROM User u WHERE u.email = :email
     // => SQL: SELECT * FROM users WHERE email = ?
     // => Parameter binding: :email → 'john@example.com'
@@ -59,6 +61,8 @@ public class UserService {
 
     public void demonstrateCustomQuery() {
         Optional<User> user = userRepository.findByEmailCustom("john@example.com");
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => Query execution:
         // =>   Hibernate: select user0_.id, user0_.name, user0_.email, user0_.age
         // =>             from users user0_ where user0_.email=?
@@ -72,6 +76,8 @@ public class UserService {
         // => Result: List of 5 users matching criteria
     }
 }
+
+
 ```
 
 **Key Takeaway**: @Query with JPQL enables custom queries while maintaining type safety and automatic parameter binding, essential for complex business logic beyond derived query methods.
@@ -131,6 +137,8 @@ public class ProductService {
         // => Example: [ [Product(id=1, name='Laptop'), 'Electronics'], ... ]
     }
 }
+
+
 ```
 
 **Key Takeaway**: Native SQL queries provide database-specific optimization and access to vendor-specific features, but sacrifice portability and JPA abstraction benefits.
@@ -209,6 +217,8 @@ public class UserService {
     // => EntityManager.clear() called after query execution
     // => All cached entities evicted from persistence context
 }
+
+
 ```
 
 **Key Takeaway**: @Modifying queries enable bulk UPDATE/DELETE operations but bypass entity lifecycle callbacks and require manual persistence context management to avoid stale cache data.
@@ -287,6 +297,8 @@ public class UserService {
         // => Changes to DTOs do NOT trigger database updates
     }
 }
+
+
 ```
 
 **Key Takeaway**: Constructor expressions (DTO projections) dramatically improve read performance by loading only required columns, essential for reporting and API responses where entity management overhead isn't needed.
@@ -406,7 +418,9 @@ Named queries define reusable JPQL queries on entity classes. Improves query org
 ```java
 // User.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "users")
+// => Maps to "users" table in database
 @NamedQuery(
     name = "User.findByStatus",
     query = "SELECT u FROM User u WHERE u.status = :status"
@@ -417,7 +431,9 @@ Named queries define reusable JPQL queries on entity classes. Improves query org
 )
 public class User {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
     private String name;
     private String email;
@@ -432,6 +448,8 @@ public class User {
 public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByStatus(@Param("status") String status);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => Spring Data JPA automatically detects named query "User.findByStatus"
     // => No @Query annotation needed
 
@@ -449,6 +467,8 @@ public class UserService {
 
     public void demonstrateNamedQueries() {
         List<User> activeUsers = userRepository.findByStatus("ACTIVE");
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => Named query execution: User.findByStatus
         // => JPQL: SELECT u FROM User u WHERE u.status = :status
         // => SQL: SELECT * FROM users WHERE status = ?
@@ -463,6 +483,8 @@ public class UserService {
         // => Result: 127
     }
 }
+
+
 ```
 
 **Key Takeaway**: Named queries provide query reusability and startup-time validation, catching JPQL syntax errors before runtime failures.
@@ -538,6 +560,11 @@ public class UserService {
         // Scenario 1: Single specification
         Specification<User> spec1 = UserSpecifications.hasStatus("ACTIVE");
         List<User> activeUsers = userRepository.findAll(spec1);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => SQL: SELECT * FROM users WHERE status = 'ACTIVE'
         // => Result: List of 42 users
 
@@ -547,6 +574,11 @@ public class UserService {
             .and(UserSpecifications.ageGreaterThan(25))
             .and(UserSpecifications.hasStatus("ACTIVE"));
         List<User> filtered = userRepository.findAll(spec2);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => Specification composition:
         // =>   WHERE name = 'John' AND age > 25 AND status = 'ACTIVE'
         // => SQL: SELECT * FROM users WHERE name = ? AND age > ? AND status = ?
@@ -564,12 +596,19 @@ public class UserService {
             .and(UserSpecifications.hasStatus(searchStatus)); // => status = 'ACTIVE'
 
         List<User> results = userRepository.findAll(dynamicSpec);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => Only non-null specifications applied
         // => SQL: SELECT * FROM users WHERE age > ? AND status = ?
         // => Parameters: [18, 'ACTIVE']
         // => Result: List of 67 users (name filter not applied)
     }
 }
+
+
 ```
 
 **Key Takeaway**: Specifications enable type-safe dynamic query composition, essential for search screens where filter combinations are determined at runtime.
@@ -677,6 +716,8 @@ public class ProductService {
         // Single field sorting (ascending)
         Pageable sortedPageable = PageRequest.of(0, 10, Sort.by("name"));
         Page<Product> sortedByName = productRepository.findAll(sortedPageable);
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => SQL: SELECT * FROM products ORDER BY name ASC LIMIT 10 OFFSET 0
         // => Result: Products sorted alphabetically by name
         // =>   [Product(name='Adapter'), Product(name='Battery'), ...]
@@ -684,6 +725,8 @@ public class ProductService {
         // Single field sorting (descending)
         Pageable descPageable = PageRequest.of(0, 10, Sort.by("price").descending());
         Page<Product> sortedByPriceDesc = productRepository.findAll(descPageable);
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => SQL: SELECT * FROM products ORDER BY price DESC LIMIT 10 OFFSET 0
         // => Result: Most expensive products first
         // =>   [Product(price=999.99), Product(price=849.00), ...]
@@ -693,6 +736,8 @@ public class ProductService {
                              .and(Sort.by("price").descending());
         Pageable multiPageable = PageRequest.of(0, 10, multiSort);
         Page<Product> multiSorted = productRepository.findAll(multiPageable);
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => SQL: SELECT * FROM products ORDER BY category ASC, price DESC LIMIT 10 OFFSET 0
         // => Result: Grouped by category, then by price (high to low) within category
         // =>   [Product(category='Books', price=49.99),
@@ -700,6 +745,7 @@ public class ProductService {
         // =>    Product(category='Electronics', price=899.00), ...]
     }
 }
+
 ```
 
 **Key Takeaway**: Sorting with Pageable enables multi-field, multi-direction sorting combined with pagination, essential for sortable table UIs.
@@ -793,6 +839,11 @@ public class ProductService {
         Sort sortWithNulls = Sort.by(priceOrder);
         Pageable pageable1 = PageRequest.of(0, 10, sortWithNulls);
         Page<Product> products1 = productRepository.findAll(pageable1);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => SQL (PostgreSQL): SELECT * FROM products ORDER BY price DESC NULLS LAST LIMIT 10
         // => Result: Products with prices sorted descending, NULL prices at end
         // =>   [Product(price=999.99), ..., Product(price=10.00), Product(price=null)]
@@ -803,18 +854,29 @@ public class ProductService {
         Sort caseInsensitiveSort = Sort.by(nameOrder);
         Pageable pageable2 = PageRequest.of(0, 10, caseInsensitiveSort);
         Page<Product> products2 = productRepository.findAll(pageable2);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => SQL: SELECT * FROM products ORDER BY LOWER(name) ASC LIMIT 10
         // => Result: 'apple', 'Banana', 'cherry' (case ignored)
         // => Without ignoreCase(): 'Banana', 'apple', 'cherry' (uppercase first)
 
         // Complex multi-field sorting
         List<Sort.Order> orders = new ArrayList<>();
+        // => Creates transient entity (not yet persisted, id=null)
         orders.add(Sort.Order.asc("category").nullsFirst());
         orders.add(Sort.Order.desc("price").nullsLast());
         orders.add(Sort.Order.asc("name").ignoreCase());
         Sort complexSort = Sort.by(orders);
         Pageable pageable3 = PageRequest.of(0, 10, complexSort);
         Page<Product> products3 = productRepository.findAll(pageable3);
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => SQL: SELECT * FROM products
         // =>      ORDER BY category ASC NULLS FIRST,
         // =>               price DESC NULLS LAST,
@@ -823,6 +885,8 @@ public class ProductService {
         // => Sort priority: category → price → name
     }
 }
+
+
 ```
 
 **Key Takeaway**: Custom sorting directions enable business-specific ordering like "active users first, then by registration date," essential for prioritized list displays.
@@ -915,6 +979,8 @@ graph TD
 // ProductRepository.java
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Slice<Product> findByCategory(String category, Pageable pageable);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => Returns Slice for infinite scroll
 }
 
@@ -928,6 +994,8 @@ public class ProductService {
     public Slice<Product> loadProducts(String category, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
         return productRepository.findByCategory(category, pageable);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     }
 }
 
@@ -980,6 +1048,8 @@ public class ProductController {
         // => Client loads more pages until hasNext = false
     }
 }
+
+
 ```
 
 **Key Takeaway**: Slice-based infinite scroll improves UX for large datasets by loading next page only, avoiding expensive COUNT(\*) queries on every request.
@@ -1006,10 +1076,14 @@ graph TD
 ```java
 // Student.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "students")
+// => Maps to "students" table in database
 public class Student {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
     private String name;
 
@@ -1027,10 +1101,14 @@ public class Student {
 
 // Course.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "courses")
+// => Maps to "courses" table in database
 public class Course {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
     private String name;
 
@@ -1084,7 +1162,14 @@ public class EnrollmentService {
 
         // Load student with courses
         Student loaded = studentRepository.findById(1L).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         loaded.getCourses().forEach(course -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             System.out.println(course.getName());
         });
         // => SELECT * FROM students WHERE id = 1
@@ -1095,6 +1180,8 @@ public class EnrollmentService {
         // => Output: Mathematics, Physics
     }
 }
+
+
 ```
 
 **Key Takeaway**: @ManyToMany relationships require careful management of both sides and intermediate join tables, with cascade settings determining automatic relationship updates.
@@ -1108,7 +1195,9 @@ public class EnrollmentService {
 ```java
 // Order.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "orders")
+// => Maps to "orders" table in database
 @NamedEntityGraph(
     name = "Order.withItems",
     attributeNodes = @NamedAttributeNode("items")
@@ -1122,14 +1211,19 @@ public class EnrollmentService {
 )
 public class Order {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    // => Defines entity relationship for foreign key mapping
     @JoinColumn(name = "customer_id")
+    // => Foreign key column: customer_id
     private Customer customer;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    // => Defines entity relationship for foreign key mapping
     private List<OrderItem> items = new ArrayList<>();
     // => Both relationships defined as LAZY by default
 }
@@ -1138,11 +1232,13 @@ public class Order {
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @EntityGraph(value = "Order.withItems", type = EntityGraph.EntityGraphType.FETCH)
+    // => Marks class as JPA entity (database table mapping)
     Optional<Order> findWithItemsById(Long id);
     // => Eagerly loads items in single query
     // => EntityGraphType.FETCH: Only attributeNodes are eager, rest remain lazy
 
     @EntityGraph(attributePaths = {"customer", "items"})
+    // => Marks class as JPA entity (database table mapping)
     List<Order> findAll();
     // => Ad-hoc entity graph using attributePaths
     // => Eagerly loads both customer and items
@@ -1158,8 +1254,15 @@ public class OrderService {
     public void demonstrateEntityGraph() {
         // Without EntityGraph (N+1 problem)
         Order order1 = orderRepository.findById(1L).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         // => Query 1: SELECT * FROM orders WHERE id = 1
         order1.getItems().forEach(item -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             System.out.println(item.getProduct());
         });
         // => Query 2: SELECT * FROM order_items WHERE order_id = 1 (lazy load)
@@ -1168,11 +1271,14 @@ public class OrderService {
 
         // With EntityGraph
         Order order2 = orderRepository.findWithItemsById(1L).orElseThrow();
+// => Returns value if present, otherwise throws exception
         // => Single query with LEFT JOIN:
         // =>   SELECT o.*, i.* FROM orders o
         // =>   LEFT OUTER JOIN order_items i ON o.id = i.order_id
         // =>   WHERE o.id = 1
         order2.getItems().forEach(item -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             System.out.println(item.getProduct());
         });
         // => Items already loaded (no additional query)
@@ -1180,6 +1286,11 @@ public class OrderService {
 
         // Load all with customer and items
         List<Order> allOrders = orderRepository.findAll();
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
+        // => Fetches all records from table
+        // => Returns List (never null, empty if no records)
         // => Single query:
         // =>   SELECT o.*, c.*, i.*
         // =>   FROM orders o
@@ -1188,6 +1299,8 @@ public class OrderService {
         // => All orders with customer and items loaded in one query
     }
 }
+
+
 ```
 
 **Key Takeaway**: @EntityGraph optimizes fetch strategies at query time, overriding default LAZY/EAGER settings to prevent both N+1 queries and unnecessary data loading.
@@ -1248,6 +1361,8 @@ public class OrderService {
         // => Result: 100 orders loaded
 
         orders.forEach(order -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             System.out.println("Order " + order.getId() + " has " +
                 order.getItems().size() + " items");
         });
@@ -1269,12 +1384,16 @@ public class OrderService {
         // => Performance: ~50ms for 100 orders (10x faster)
 
         ordersWithItems.forEach(order -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             System.out.println("Order " + order.getId() + " has " +
                 order.getItems().size() + " items");
         });
         // => No additional queries (items already loaded)
     }
 }
+
+
 ```
 
 **Key Takeaway**: N+1 query problem occurs when lazy-loaded collections trigger separate queries per parent entity, demonstrating why JOIN FETCH and @EntityGraph are critical for performance.
@@ -1300,10 +1419,14 @@ public class Address {
 
 // User.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "users")
+// => Maps to "users" table in database
 public class User {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
     private String name;
 
@@ -1335,6 +1458,9 @@ public class UserService {
     public void demonstrateEmbeddable() {
         // Create user with addresses
         User user = new User();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         user.setName("John Doe");
 
         Address home = new Address();
@@ -1366,6 +1492,11 @@ public class UserService {
 
         // Query
         User loaded = userRepository.findById(user.getId()).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         // => SELECT * FROM users WHERE id = ?
         // => Loads all embedded fields in single query
         // => homeAddress and billingAddress reconstructed from columns
@@ -1373,6 +1504,8 @@ public class UserService {
         System.out.println(loaded.getBillingAddress().getCity());  // => Chicago
     }
 }
+
+
 ```
 
 **Key Takeaway**: @Embeddable objects enable value object patterns for grouping related fields (e.g., Address, Money) without creating separate database tables, improving domain model clarity.
@@ -1407,13 +1540,18 @@ graph TD
 ```java
 // Order.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "orders")
+// => Maps to "orders" table in database
 public class Order {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    // => Defines entity relationship for foreign key mapping
     private List<OrderItem> items = new ArrayList<>();
     // => CascadeType.ALL: Propagates persist, merge, remove, refresh, detach
     // => orphanRemoval = true: Delete items when removed from collection
@@ -1421,14 +1559,20 @@ public class Order {
 
 // OrderItem.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "order_items")
+// => Maps to "order_items" table in database
 public class OrderItem {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
 
     @ManyToOne
+    // => Defines entity relationship for foreign key mapping
     @JoinColumn(name = "order_id")
+    // => Foreign key column: order_id
     private Order order;
 
     private Integer quantity;
@@ -1445,7 +1589,11 @@ public class OrderService {
     public void demonstrateCascade() {
         // CascadeType.PERSIST
         Order order = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         OrderItem item1 = new OrderItem();
+        // => Creates transient entity (not yet persisted, id=null)
         item1.setQuantity(5);
         item1.setOrder(order);
         order.getItems().add(item1);
@@ -1458,7 +1606,14 @@ public class OrderService {
 
         // CascadeType.REMOVE
         Order toDelete = orderRepository.findById(1L).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         orderRepository.delete(toDelete);
+// => Single DELETE operation (more efficient than deleteById)
+// => Uses entity ID directly, no SELECT needed
         // => CASCADE REMOVE triggered
         // => DELETE FROM order_items WHERE order_id = 1
         // => DELETE FROM orders WHERE id = 1
@@ -1466,6 +1621,11 @@ public class OrderService {
 
         // orphanRemoval demonstration
         Order order2 = orderRepository.findById(2L).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         OrderItem itemToRemove = order2.getItems().get(0);
         order2.getItems().remove(itemToRemove);
         orderRepository.save(order2);
@@ -1474,6 +1634,8 @@ public class OrderService {
         // => Item removed from collection triggers deletion
     }
 }
+
+
 ```
 
 **Key Takeaway**: Cascading operations automatically propagate persist/merge/remove operations to related entities, essential for aggregate root patterns but requiring careful configuration to avoid unintended deletions.
@@ -1487,13 +1649,18 @@ Bidirectional relationships require synchronization on both sides. Helper method
 ```java
 // Order.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "orders")
+// => Maps to "orders" table in database
 public class Order {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    // => Defines entity relationship for foreign key mapping
     private List<OrderItem> items = new ArrayList<>();
 
     // Helper method to maintain bidirectional relationship
@@ -1514,14 +1681,20 @@ public class Order {
 
 // OrderItem.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "order_items")
+// => Maps to "order_items" table in database
 public class OrderItem {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
 
     @ManyToOne
+    // => Defines entity relationship for foreign key mapping
     @JoinColumn(name = "order_id")
+    // => Foreign key column: order_id
     private Order order;
 
     private Integer quantity;
@@ -1538,7 +1711,11 @@ public class OrderService {
     public void demonstrateBidirectional() {
         // BAD: Manual relationship management (error-prone)
         Order order1 = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         OrderItem item1 = new OrderItem();
+        // => Creates transient entity (not yet persisted, id=null)
         item1.setQuantity(5);
         order1.getItems().add(item1);
         // => MISSING: item1.setOrder(order1)
@@ -1550,7 +1727,11 @@ public class OrderService {
 
         // GOOD: Using helper methods
         Order order2 = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         OrderItem item2 = new OrderItem();
+        // => Creates transient entity (not yet persisted, id=null)
         item2.setQuantity(10);
         order2.addItem(item2);
         // => Helper method sets both sides:
@@ -1572,6 +1753,8 @@ public class OrderService {
         // => Item correctly deleted
     }
 }
+
+
 ```
 
 **Key Takeaway**: Bidirectional relationships require explicit management of both sides to maintain referential integrity, with helper methods ensuring consistency before persistence.
@@ -1666,6 +1849,9 @@ public class BusinessService {
     @Transactional
     public void demonstratePropagation() {
         Order order1 = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
 
         // Scenario 1: REQUIRED propagation
         orderService.processOrderRequired(order1);
@@ -1677,6 +1863,9 @@ public class BusinessService {
         // =>   5. If any operation fails, entire TX1 rolls back
 
         Order order2 = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
 
         // Scenario 2: REQUIRES_NEW propagation
         orderService.processOrderRequiresNew(order2);
@@ -1692,6 +1881,9 @@ public class BusinessService {
         // Scenario 3: Independent audit logging
         try {
             Order order3 = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+            // => Creates transient entity (not yet persisted, id=null)
             orderRepository.save(order3);
             auditService.logActionIndependent("Order created");
             // => Audit log committed in separate transaction
@@ -1703,6 +1895,8 @@ public class BusinessService {
         }
     }
 }
+
+
 ```
 
 **Key Takeaway**: Transaction propagation controls how nested method calls participate in transactions, with REQUIRED (join existing) and REQUIRES_NEW (suspend and create new) covering most production scenarios.
@@ -1723,6 +1917,11 @@ public class AccountService {
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public BigDecimal getBalanceReadUncommitted(Long accountId) {
         Account account = accountRepository.findById(accountId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         return account.getBalance();
         // => READ_UNCOMMITTED: Can see uncommitted changes from other transactions
         // => Allows: Dirty reads, non-repeatable reads, phantom reads
@@ -1732,6 +1931,11 @@ public class AccountService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public BigDecimal getBalanceReadCommitted(Long accountId) {
         Account account = accountRepository.findById(accountId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         return account.getBalance();
         // => READ_COMMITTED: Only sees committed changes
         // => Prevents: Dirty reads
@@ -1742,12 +1946,22 @@ public class AccountService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public BigDecimal getBalanceRepeatable(Long accountId) {
         Account account = accountRepository.findById(accountId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         BigDecimal balance1 = account.getBalance();
 
         // Simulate delay
         try { Thread.sleep(1000); } catch (InterruptedException e) {}
 
         account = accountRepository.findById(accountId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         BigDecimal balance2 = account.getBalance();
         // => REPEATABLE_READ: balance1 == balance2 (same value read twice)
         // => Prevents: Dirty reads, non-repeatable reads
@@ -1759,7 +1973,17 @@ public class AccountService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void transferSerializable(Long fromId, Long toId, BigDecimal amount) {
         Account from = accountRepository.findById(fromId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         Account to = accountRepository.findById(toId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
 
         from.setBalance(from.getBalance().subtract(amount));
         to.setBalance(to.getBalance().add(amount));
@@ -1794,6 +2018,11 @@ public class ConcurrencyDemo {
         CompletableFuture.runAsync(() -> {
             // Update balance to $2000 (not yet committed)
             Account account = accountRepository.findById(1L).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+            // => Queries database by primary key
+            // => Returns Optional to handle missing records safely
             account.setBalance(new BigDecimal("2000"));
             accountRepository.save(account);
             // => TX-B: Updated balance to $2000 (uncommitted at time T2)
@@ -1810,6 +2039,8 @@ public class ConcurrencyDemo {
         // => SERIALIZABLE: Waits for TX-B to complete, then sees $2000
     }
 }
+
+
 ```
 
 **Key Takeaway**: Isolation levels balance consistency vs concurrency - READ_COMMITTED prevents dirty reads while allowing phantom reads, SERIALIZABLE guarantees full isolation but reduces throughput.
@@ -1920,6 +2151,8 @@ public class BusinessService {
         }
     }
 }
+
+
 ```
 
 **Key Takeaway**: Rollback rules control which exceptions trigger transaction rollback - checked exceptions require explicit configuration, while runtime exceptions rollback by default.
@@ -1940,6 +2173,8 @@ public class ReportService {
     @Transactional(readOnly = true)
     public List<Order> generateReport(LocalDate startDate, LocalDate endDate) {
         List<Order> orders = orderRepository.findByDateRange(startDate, endDate);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => readOnly = true
         // => Hibernate sets FlushMode.MANUAL (no dirty checking)
         // => Database may optimize query execution (no row locking)
@@ -1960,6 +2195,8 @@ public class ReportService {
         List<Order> orders = orderRepository.findAllById(orderIds);
 
         orders.forEach(order -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             order.setStatus("PROCESSED");
         });
         // => readOnly = false (default)
@@ -1998,6 +2235,8 @@ public class BusinessService {
         // => SQL: UPDATE orders SET status = ? WHERE id = 3
     }
 }
+
+
 ```
 
 **Key Takeaway**: Read-only transactions enable database optimizations like skipping dirty checking and allowing query routing to read replicas, improving performance for report generation.
@@ -2020,6 +2259,8 @@ public class BatchService {
 
     public void processBatchWithTemplate(List<Order> orders) {
         orders.forEach(order -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             transactionTemplate.execute(status -> {
                 try {
                     orderRepository.save(order);
@@ -2043,6 +2284,9 @@ public class BatchService {
             // Read-only configuration
             status.setRollbackOnly(); // Not needed for read-only
             return orderRepository.findAll();
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
             // => Executes within transaction boundary
         });
     }
@@ -2065,6 +2309,9 @@ public class AdvancedTransactionService {
 
         try {
             Order order = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+            // => Creates transient entity (not yet persisted, id=null)
             orderRepository.save(order);
             // => Operation within transaction
 
@@ -2089,12 +2336,17 @@ public class AdvancedTransactionService {
         try {
             // Execute operations with custom transaction settings
             orderRepository.findAll();
+// => Executes SELECT * FROM table
+// => Loads ALL records into memory (dangerous for large tables)
+// => Returns List<Entity> (never null, empty list if no records)
             transactionManager.commit(status);
         } catch (Exception e) {
             transactionManager.rollback(status);
         }
     }
 }
+
+
 ```
 
 **Key Takeaway**: Programmatic transaction management provides fine-grained control over transaction boundaries when declarative @Transactional is insufficient for complex workflows.
@@ -2163,6 +2415,8 @@ public class OrderProcessingService {
         // => Audit log saved in outer transaction
 
         orders.forEach(order -> {
+// => Iterates over collection elements
+// => May trigger lazy loading if accessing relationships
             try {
                 nestedService.processOptionalOperation(order);
                 // => Transaction flow:
@@ -2215,6 +2469,9 @@ public class PropagationComparison {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processOrderRequiresNew() {
         Order order = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         orderRepository.save(order);
         // => Commits immediately in separate transaction
         throw new RuntimeException("Error");
@@ -2224,6 +2481,9 @@ public class PropagationComparison {
     @Transactional(propagation = Propagation.NESTED)
     public void processOrderNested() {
         Order order = new Order();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         orderRepository.save(order);
         // => Savepoint created, not yet committed
         throw new RuntimeException("Error");
@@ -2231,6 +2491,8 @@ public class PropagationComparison {
         // => Order NOT persisted
     }
 }
+
+
 ```
 
 **Key Takeaway**: NESTED propagation creates savepoints for partial rollback scenarios, enabling "best-effort" operations where some failures are acceptable within a larger transaction.
@@ -2244,10 +2506,14 @@ public class PropagationComparison {
 ```java
 // Product.java
 @Entity
+// => Marks class as JPA entity (database table mapping)
 @Table(name = "products")
+// => Maps to "products" table in database
 public class Product {
     @Id
+    // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Auto-increment strategy (database assigns ID)
     private Long id;
 
     private String name;
@@ -2271,11 +2537,15 @@ public class ProductService {
     public void demonstrateOptimisticLocking() {
         // Thread 1: Load product
         Product product1 = productRepository.findById(1L).orElseThrow();
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         // => SELECT * FROM products WHERE id = 1
         // => Product loaded: id=1, name='Laptop', price=1000, version=1
 
         // Thread 2: Load same product (concurrent)
         Product product2 = productRepository.findById(1L).orElseThrow();
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         // => SELECT * FROM products WHERE id = 1
         // => Product loaded: id=1, name='Laptop', price=1000, version=1
 
@@ -2303,6 +2573,8 @@ public class ProductService {
             // => product2 changes NOT saved
             // => Resolution: Reload entity and retry
             Product reloaded = productRepository.findById(1L).orElseThrow();
+            // => Queries database by primary key
+            // => Returns Optional to handle missing records safely
             // => Reloaded: price=1100, version=2 (Thread 1's changes)
             reloaded.setPrice(new BigDecimal("1200"));
             productRepository.save(reloaded);
@@ -2310,6 +2582,7 @@ public class ProductService {
         }
     }
 }
+
 ```
 
 **Key Takeaway**: Optimistic locking with @Version prevents lost updates in concurrent environments by detecting version mismatches at commit time, essential for web applications with long-running transactions.
@@ -2348,6 +2621,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Query("SELECT a FROM Account a WHERE a.id = :id")
     Optional<Account> findByIdWithReadLock(@Param("id") Long id);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => Acquires shared lock (S lock)
     // => Other transactions can read (shared lock)
     // => Other transactions CANNOT write (blocked)
@@ -2364,6 +2639,8 @@ public class AccountService {
     public void demonstratePessimisticRead() {
         // Thread 1: Acquire read lock
         Account account1 = accountRepository.findByIdWithReadLock(1L).orElseThrow();
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => SQL (PostgreSQL): SELECT * FROM accounts WHERE id = 1 FOR SHARE
         // => SQL (MySQL): SELECT * FROM accounts WHERE id = 1 LOCK IN SHARE MODE
         // => Shared lock acquired on row
@@ -2371,12 +2648,19 @@ public class AccountService {
 
         // Thread 2: Read same account (concurrent)
         Account account2 = accountRepository.findByIdWithReadLock(1L).orElseThrow();
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => SQL: SELECT * FROM accounts WHERE id = 1 FOR SHARE
         // => Succeeds (shared lock compatible with other shared locks)
         // => Multiple readers allowed concurrently
 
         // Thread 3: Write to account (concurrent)
         Account account3 = accountRepository.findById(1L).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         account3.setBalance(new BigDecimal("2000"));
         accountRepository.save(account3);
         // => UPDATE blocks waiting for Thread 1's shared lock release
@@ -2388,6 +2672,8 @@ public class AccountService {
         // => Thread 3's UPDATE executes
     }
 }
+
+
 ```
 
 **Key Takeaway**: PESSIMISTIC_READ (shared lock) prevents dirty reads and non-repeatable reads by blocking concurrent writes while allowing multiple readers, suitable for financial reporting.
@@ -2405,6 +2691,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT a FROM Account a WHERE a.id = :id")
     Optional<Account> findByIdWithWriteLock(@Param("id") Long id);
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
     // => Acquires exclusive lock (X lock)
     // => Other transactions CANNOT read or write (blocked)
 }
@@ -2420,12 +2708,16 @@ public class TransferService {
     public void transferMoney(Long fromId, Long toId, BigDecimal amount) {
         // Acquire exclusive locks on both accounts
         Account fromAccount = accountRepository.findByIdWithWriteLock(fromId).orElseThrow();
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => SQL (PostgreSQL): SELECT * FROM accounts WHERE id = ? FOR UPDATE
         // => SQL (MySQL): SELECT * FROM accounts WHERE id = ? FOR UPDATE
         // => Exclusive lock acquired
         // => All other transactions blocked (reads and writes)
 
         Account toAccount = accountRepository.findByIdWithWriteLock(toId).orElseThrow();
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
         // => Exclusive lock on second account
         // => Both accounts locked for duration of transaction
 
@@ -2445,6 +2737,8 @@ public class TransferService {
     public void demonstrateLockTimeout() {
         try {
             Account account = accountRepository.findByIdWithWriteLock(1L).orElseThrow();
+// => Spring derives SQL WHERE clause from method name
+// => Returns List<Entity> or Optional<Entity> based on return type
             // => Another transaction holds lock on account 1
             // => This transaction waits for lock
             // => Database timeout (default ~50 seconds for PostgreSQL)
@@ -2455,6 +2749,8 @@ public class TransferService {
         }
     }
 }
+
+
 ```
 
 **Key Takeaway**: PESSIMISTIC_WRITE (exclusive lock) prevents all concurrent access during critical updates like inventory changes, guaranteeing consistency at the cost of reduced concurrency.
@@ -2481,6 +2777,11 @@ public class InventoryService {
         while (attempt < maxRetries) {
             try {
                 Product product = productRepository.findById(productId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+                // => Queries database by primary key
+                // => Returns Optional to handle missing records safely
                 product.setStock(product.getStock() + quantityChange);
                 productRepository.save(product);
                 // => Success: exit loop
@@ -2508,6 +2809,11 @@ public class InventoryService {
     public void updatePriceWithMerge(Long productId, BigDecimal newPrice) {
         try {
             Product product = productRepository.findById(productId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+            // => Queries database by primary key
+            // => Returns Optional to handle missing records safely
             // => Loaded: price=100, version=1
 
             product.setPrice(newPrice);
@@ -2517,6 +2823,11 @@ public class InventoryService {
             // => Conflict: Another transaction changed product
             // => Reload and apply change to latest version
             Product reloaded = productRepository.findById(productId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+            // => Queries database by primary key
+            // => Returns Optional to handle missing records safely
             // => Reloaded: price=120 (changed by other transaction), version=2
 
             // Merge logic: Apply price change to latest version
@@ -2531,6 +2842,11 @@ public class InventoryService {
     public void updateProductDescription(Long productId, String newDescription) {
         try {
             Product product = productRepository.findById(productId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+            // => Queries database by primary key
+            // => Returns Optional to handle missing records safely
             product.setDescription(newDescription);
             productRepository.save(product);
         } catch (OptimisticLockException e) {
@@ -2547,6 +2863,11 @@ public class InventoryService {
     @Transactional
     public void forceUpdate(Long productId, Product updates) {
         Product current = productRepository.findById(productId).orElseThrow();
+// => Executes SELECT by primary key
+// => Returns Optional<Entity> (empty if not found)
+// => Entity loaded into persistence context if found
+        // => Queries database by primary key
+        // => Returns Optional to handle missing records safely
         // => Load latest version (ignores optimistic lock)
 
         // Copy all fields from updates to current
@@ -2592,12 +2913,17 @@ public class ConflictResolutionDemo {
 
         // Scenario 4: Force update (use with caution)
         Product updates = new Product();
+// => Creates TRANSIENT entity (not yet in database)
+// => id field is null (will be assigned on save)
+        // => Creates transient entity (not yet persisted, id=null)
         updates.setName("Updated Name");
         inventoryService.forceUpdate(productId, updates);
         // => Overwrites all concurrent changes
         // => Risk: Silently discards other users' work
     }
 }
+
+
 ```
 
 **Key Takeaway**: OptimisticLockException handling requires conflict resolution strategies - retry for idempotent operations, merge for compatible changes, or abort for user intervention.

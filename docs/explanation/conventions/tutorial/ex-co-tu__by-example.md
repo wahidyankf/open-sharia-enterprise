@@ -10,7 +10,7 @@ tags:
   - education
   - code-first
 date: 2025-12-25T00:00:00+07:00
-lastmod: 2026-01-02
+lastmod: 2026-01-03
 draft: false
 weight: 2300
 ---
@@ -356,23 +356,77 @@ Use the `handleRequest` function from Example 12 (code not shown).
 
 **Golden rule**: If you delete all other examples, this example should still compile and run.
 
-## Educational Comment Standards
+### CRITICAL: Per-Example Annotation Density Measurement
 
-### Annotation Density Measurement
+**Density is measured PER INDIVIDUAL EXAMPLE, not as file average**
 
-**CRITICAL: Density is measured PER EXAMPLE, not per file average**
+This is a CRITICAL distinction that affects validation and content creation:
 
-- Each individual example must achieve 1.0-2.25 comment lines per code line
-- Examples exceeding 2.5 density must be reduced to ≤2.5
-  - Remove verbose tutorial-style explanations
-  - Keep only essential `// =>` state tracking
-- Examples below 1.0 density must be enhanced to ≥1.0
-  - Add `// =>` annotations showing values, states, outputs
-  - Document intermediate steps and state changes
-- File-level density averages are informative but not the validation target
-- Each example should be self-contained with consistent annotation depth
+- ✅ **CORRECT**: Each example (Example 1, Example 2, etc.) must individually achieve 1.0-2.25 comment lines per code line
+- ❌ **INCORRECT**: Averaging density across entire file (beginner.md, intermediate.md, advanced.md)
 
-**Why per-example**: Users learn from individual examples. Consistent annotation depth across all examples aids learning and ensures educational value at every level.
+**Why per-example measurement matters**:
+
+1. **Consistent learning experience**: Users learn from individual examples. Every example should have consistent annotation depth.
+2. **Quality enforcement**: File averages hide problems - a few over-annotated examples can mask many under-annotated ones.
+3. **Fixer precision**: Validation reports must identify which specific examples need more/fewer annotations, not just file totals.
+
+**Validation approach**:
+
+- Measure code lines and comment lines for EACH example separately
+- Flag examples below 1.0 density (under-annotated, needs enhancement)
+- Flag examples above 2.5 density (over-annotated, needs condensing)
+- Target range: 1.0-2.25 per example (optimal educational value)
+- File averages are informative but NOT the validation criteria
+
+**Content creation approach**:
+
+When creating examples, ensure EACH example meets density target:
+
+- Simple example (basic variable assignment): ~1.0 density
+- Complex example (concurrency with channels): ~2.0-2.25 density
+- Do NOT rely on file averages to "balance out" sparse examples
+
+### Where to Place Extensive Explanations
+
+**CRITICAL**: Code block annotations should focus on WHAT the code does and returns. Extensive WHY explanations go in designated markdown text sections.
+
+**Code block purpose** (inside ` ```language ` fence):
+
+- Show WHAT each line does: `x := 10 // => x is now 10 (type: int)`
+- Show return values: `result := fn() // => result is "output" (string)`
+- Show state changes: `counter++ // => counter is now 5`
+- Show outputs: `fmt.Println(x) // => Output: 10`
+
+**Text section purpose** (outside code blocks):
+
+- **Brief Explanation**: WHY this concept matters, WHEN to use it (2-3 sentences)
+- **Why It Matters**: Production relevance, comparisons, practical impact (50-100 words)
+- **Key Takeaway**: Core insight and common pitfalls (1-2 sentences)
+
+**Anti-pattern** (verbose tutorial-style comments in code):
+
+```go
+// Go's goroutines are lightweight threads managed by the Go runtime.
+// Unlike OS threads which consume 1MB+ of stack space, goroutines
+// start with only 2KB and grow dynamically. This allows Go servers
+// to handle 10,000+ concurrent connections on a single machine.
+go processRequest(req)  // => Goroutine spawned (runs concurrently)
+```
+
+**Correct pattern** (concise code annotations + text sections):
+
+```go
+go processRequest(req)  // => Goroutine spawned (runs concurrently with minimal overhead)
+```
+
+**Why It Matters**: Goroutines enable servers to handle 10,000+ concurrent connections on a single machine with minimal memory overhead (2KB stack per goroutine vs 1MB+ per thread in Java), making Go the language of choice for high-throughput network services like Kubernetes, Docker, and Prometheus.
+
+**Density control**:
+
+- If code annotations exceed 2.5 density, MOVE explanatory content to text sections
+- Keep code annotations focused on state tracking (`// =>` notation)
+- Reserve extensive explanations for "Brief Explanation" and "Why It Matters" sections
 
 **Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../hugo/ex-co-hu__ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
 
@@ -822,3 +876,214 @@ This convention implements and respects:
 - [Diagrams Convention](../formatting/ex-co-fo__diagrams.md): Mermaid diagram standards
 - [Color Accessibility Convention](../formatting/ex-co-fo__color-accessibility.md): Color-blind friendly palette
 - [Diátaxis Framework](../meta/ex-co-me__diataxis-framework.md): Tutorial categorization framework
+
+## Multiple Code Blocks Pattern
+
+**CRITICAL NEW RULE**: Examples comparing multiple approaches, libraries, or implementations should use MULTIPLE CODE BLOCKS with markdown text between them, NOT cramming all explanations into comments within a single code block.
+
+### Pattern Structure
+
+When demonstrating alternatives or comparisons:
+
+1. **Brief explanation** (markdown text) - What are we comparing and why
+2. **Code Block 1**: Approach A with minimal annotations (1.0-2.25 density)
+3. **Explanation of Approach A** (markdown text) - WHY this approach, trade-offs
+4. **Code Block 2**: Approach B with minimal annotations (1.0-2.25 density)
+5. **Explanation of Approach B** (markdown text) - WHY this approach, trade-offs
+6. **Comparison/Summary** (markdown text) - When to use each
+
+### Benefits
+
+- **Syntax highlighting works properly** - Each block gets correct language highlighting
+- **Code is copy-paste runnable** - No need to extract from comment-heavy blocks
+- **Clear separation of WHAT vs WHY** - Code shows WHAT (with state annotations), text explains WHY
+- **Each code block maintains density target** - 1.0-2.25 annotations per code line per block
+- **Better scannability** - Readers can quickly compare code side-by-side
+
+### Anti-Pattern: Single Block with Excessive Comments
+
+**BAD EXAMPLE** (violates density target and readability):
+
+```java
+// Library A approach - low-level API
+import lib.A;
+// => Uses library A
+// => Requires manual configuration
+// => Low-level API but powerful
+// => More complex but flexible
+ClassA a = new ClassA();
+// => Creates instance of ClassA
+// => Parameter 1: configuration object
+// => Parameter 2: callback handler
+// => This approach gives you full control
+
+// Library B approach - high-level API
+import lib.B;
+// => Uses library B
+// => Automatic configuration
+// => High-level API but limited
+// => Simpler but less flexible
+ClassB b = ClassB.create();
+// => Creates instance via factory method
+// => No parameters needed (auto-configured)
+// => This approach is easier but less powerful
+```
+
+**Problems**:
+
+- Single code block has excessive comments (density > 2.5)
+- Syntax highlighting broken (imports mixed with comments)
+- Code not runnable (two incompatible approaches in one block)
+- Hard to scan (comments overwhelm code)
+- Explanations buried in code instead of structured text
+
+### Correct Pattern: Multiple Blocks with Text
+
+**GOOD EXAMPLE** (maintains density, clear structure):
+
+**Brief explanation**: Compare two libraries for HTTP client implementation - Library A offers low-level control while Library B provides convenience.
+
+**Approach A: Library A (Low-Level Control)**
+
+```java
+import lib.A;
+
+ClassA client = new ClassA();
+// => Creates client instance
+// => Requires manual configuration
+
+client.configure(config);
+// => Applies configuration
+// => Sets timeout, headers, etc.
+
+Response response = client.execute(request);
+// => Executes HTTP request
+// => Returns response object
+```
+
+**Library A Trade-offs**: Provides fine-grained control over connection pooling, retry logic, and request lifecycle. Requires manual configuration but enables advanced use cases like custom authentication schemes and request interceptors. Best for complex production systems needing precise control.
+
+**Approach B: Library B (High-Level Convenience)**
+
+```java
+import lib.B;
+
+ClassB client = ClassB.create();
+// => Creates auto-configured client
+// => Sensible defaults applied
+
+Response response = client.get(url);
+// => Executes GET request
+// => Returns response object
+```
+
+**Library B Trade-offs**: Prioritizes developer experience with automatic configuration and fluent API. Limited customization options but handles 80% of use cases. Best for rapid prototyping and simple integrations.
+
+**Comparison Summary**: Use Library A when you need complete control over HTTP behavior (custom protocols, advanced retry logic, connection management). Use Library B for standard REST API consumption where defaults suffice. Library A has steeper learning curve but scales to complex requirements.
+
+**Benefits of this approach**:
+
+- **Each code block**: ~1.5 density (3 annotations for 2 code lines)
+- **Syntax highlighting**: Works correctly for each block
+- **Runnable code**: Each block is independently executable
+- **Structured explanations**: WHY and trade-offs in text sections
+- **Easy comparison**: Readers can see code side-by-side
+
+### When to Split Code Blocks to Avoid Excessive Comments
+
+**CRITICAL RULE**: When a single code block contains multiple distinct concepts, approaches, or language implementations, split into separate code blocks with markdown text between them. This prevents comment overload and maintains syntax highlighting.
+
+**Indicators for splitting**:
+
+1. **Commented-out code for alternative implementations** - `/* ... */` or `// ...` showing different approaches
+2. **Code in different languages** - Java + C, Java + SQL, Go + Assembly
+3. **Multiple library approaches** - ASM vs ByteBuddy, JNI vs Panama Foreign Function API
+4. **Excessive comments explaining alternatives/trade-offs** - >30% comment lines explaining options rather than showing state
+5. **Multiple distinct patterns in one example** - Strategy + Observer + Decorator combined
+
+**Why this matters**:
+
+- **Syntax highlighting breaks** when mixing languages or commented-out alternatives
+- **Density measurement becomes meaningless** when comments explain alternatives instead of annotating code
+- **Code isn't runnable** when showing multiple incompatible approaches in one block
+- **Scannability suffers** when readers must mentally parse which code is active
+
+**Solution**: Split into multiple code blocks with explanatory text between:
+
+````markdown
+**Approach A: Low-Level Library**
+
+```java
+import lib.A;
+ClassA client = new ClassA();  // => Creates client instance
+client.configure(config);      // => Applies configuration
+```
+
+**Trade-offs**: Provides fine-grained control but requires manual setup.
+
+**Approach B: High-Level Library**
+
+```java
+import lib.B;
+ClassB client = ClassB.create();  // => Auto-configured client
+Response res = client.get(url);   // => Executes GET request
+```
+
+**Trade-offs**: Automatic configuration but limited customization.
+````
+
+This maintains 1.0-2.25 density PER BLOCK while separating WHAT (code annotations) from WHY (explanatory text).
+
+### When to Use Multiple Code Blocks
+
+**Use multiple code blocks when**:
+
+- Comparing different libraries (Library A vs Library B)
+- Showing alternative implementations (approach 1 vs approach 2)
+- Demonstrating evolution (before refactoring → after refactoring)
+- Illustrating different language features (for loop vs stream API)
+- Contrasting patterns (✅ GOOD vs ❌ BAD examples)
+
+**Still use single code block when**:
+
+- Showing one approach with progressive state changes
+- Demonstrating linear execution flow
+- Building up a single concept step by step
+- Code doesn't involve comparisons or alternatives
+
+### Integration with Five-Part Format
+
+When using multiple code blocks within an example:
+
+1. **Brief Explanation** - Introduce the comparison
+2. **Diagram (optional)** - Show conceptual difference if helpful
+3. **Multiple Annotated Code Blocks** - Each approach as separate block with text between
+4. **Key Takeaway** - Summarize when to use each approach
+5. **Why It Matters** - Production implications of the choice
+
+### Annotation Density Measurement
+
+**IMPORTANT**: Density is measured PER CODE BLOCK when using multiple blocks:
+
+- Code Block 1 (Approach A): Should have 1.0-2.25 density
+- Code Block 2 (Approach B): Should have 1.0-2.25 density
+- Text sections between blocks: Do NOT count toward density
+
+**Example measurement**:
+
+```
+Code Block 1: 5 code lines, 6 annotation lines = 1.2 density ✅
+Text Section: 3 sentences of explanation (NOT counted)
+Code Block 2: 4 code lines, 8 annotation lines = 2.0 density ✅
+Overall: Both blocks meet 1.0-2.25 target
+```
+
+## Principles Implemented/Respected
+
+This convention implements and respects:
+
+- **[Automation Over Manual](../principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../principles/content/ex-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../principles/content/ex-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../principles/content/ex-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context

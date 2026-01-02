@@ -42,67 +42,114 @@ graph TD
 ```java
 // ABSTRACT CLASS - cannot be instantiated, may have abstract and concrete methods
 abstract class DataProcessor {
+    // => Cannot create: new DataProcessor() - compile error
+    // => Must extend to use
+
     // TEMPLATE METHOD - defines algorithm skeleton (final prevents override)
     public final void process() {
-        loadData();              // => Step 1: implemented by subclass
-        transform();             // => Step 2: implemented by subclass
-        validate();              // => Step 3: concrete implementation in base class
-        save();                  // => Step 4: implemented by subclass
+        // => Final keyword prevents subclass override
+        // => Ensures all subclasses execute same workflow
+        // => Enforces consistent 4-step pipeline
+        loadData();
+        // => Step 1: subclass-specific data loading
+        // => Abstract method: implementation varies by processor type
+        transform();
+        // => Step 2: subclass-specific transformation
+        // => Converts loaded data to internal format
+        validate();
+        // => Step 3: shared validation logic
+        // => Concrete implementation: same for all subclasses
+        save();
+        // => Step 4: subclass-specific persistence
+        // => Abstract method: storage destination varies
     }
 
     // ABSTRACT METHODS - subclasses must implement
     protected abstract void loadData();
+    // => No method body: subclass MUST provide implementation
+    // => Compile error if concrete subclass doesn't override
     protected abstract void transform();
+    // => Forces customization point for data transformation
+    // => Each processor defines its own parsing logic
     protected abstract void save();
+    // => Each subclass chooses storage mechanism
+    // => Database, cache, file system, etc.
 
     // CONCRETE METHOD - shared implementation
     protected void validate() {
+        // => All subclasses inherit this implementation
+        // => Can be overridden (not final) if needed
         System.out.println("Validating data");
+        // => Common validation logic
+        // => Output: "Validating data"
     }
 }
 
 // CONCRETE SUBCLASS
 class CSVProcessor extends DataProcessor {
+    // => Inherits template method process()
+    // => Must implement 3 abstract methods
+
     @Override
     protected void loadData() {
         System.out.println("Loading CSV file");
+        // => CSV-specific: reads .csv files
     }
 
     @Override
     protected void transform() {
         System.out.println("Parsing CSV to objects");
+        // => Converts comma-separated values to Java objects
     }
 
     @Override
     protected void save() {
         System.out.println("Saving to database");
+        // => Persists to SQL database
     }
 }
 
 class JSONProcessor extends DataProcessor {
+    // => Different implementations, same interface
+
     @Override
     protected void loadData() {
         System.out.println("Loading JSON file");
+        // => JSON-specific: reads .json files
     }
 
     @Override
     protected void transform() {
         System.out.println("Parsing JSON to objects");
+        // => Converts JSON strings to Java objects
     }
 
     @Override
     protected void save() {
         System.out.println("Saving to cache");
+        // => Stores in memory cache (different from CSV)
     }
 }
 
 // USAGE
 DataProcessor csv = new CSVProcessor();
-csv.process();                   // => Executes template method with CSV implementation
-// => Output: Loading CSV file, Parsing CSV to objects, Validating data, Saving to database
+// => Creates concrete instance (abstract class used as type)
+csv.process();
+// => Executes: loadData() → transform() → validate() → save()
+// => Uses CSVProcessor implementations for steps 1,2,4
+// => Output: Loading CSV file
+// =>         Parsing CSV to objects
+// =>         Validating data
+// =>         Saving to database
 
 DataProcessor json = new JSONProcessor();
-json.process();                  // => Executes template method with JSON implementation
+// => Different processor, same workflow structure
+json.process();
+// => Uses JSONProcessor implementations
+// => Output: Loading JSON file
+// =>         Parsing JSON to objects
+// =>         Validating data
+// =>         Saving to cache
 ```
 
 **Key Takeaway**: Abstract classes combine concrete methods (shared implementation) with abstract methods (enforced customization). The template method pattern uses a final concrete method defining the algorithm structure, delegating steps to abstract methods implemented by subclasses—ensuring consistent workflow while allowing customization.
@@ -119,70 +166,111 @@ Composition builds objects from reusable components rather than inheriting from 
 
 ```java
 // COMPOSITION - building objects from components
+// => HAS-A relationships instead of IS-A (inheritance)
 
 // Component interfaces
 interface Engine {
+    // => Contract: all engines must implement start()
+    // => Enables polymorphism: any Engine type works
     void start();
+    // => No method body: interface method (abstract by default)
 }
 
 interface Transmission {
+    // => Contract: all transmissions must implement shift()
+    // => Allows different shifting strategies
     void shift(int gear);
+    // => Parameter: target gear number
 }
 
 // Component implementations
 class ElectricEngine implements Engine {
+    // => Concrete implementation of Engine interface
+    // => Electric motor behavior
     public void start() {
         System.out.println("Electric motor starting silently");
+        // => Electric-specific: quiet startup
+        // => Output: "Electric motor starting silently"
     }
 }
 
 class GasEngine implements Engine {
+    // => Concrete implementation of Engine interface
+    // => Combustion engine behavior
     public void start() {
         System.out.println("Gas engine roaring to life");
+        // => Gas-specific: loud startup with ignition
+        // => Output: "Gas engine roaring to life"
     }
 }
 
 class ManualTransmission implements Transmission {
+    // => Concrete implementation of Transmission interface
+    // => Manual gear control strategy
     public void shift(int gear) {
         System.out.println("Manual shift to gear " + gear);
+        // => Driver controls each gear change
+        // => Output: "Manual shift to gear N"
     }
 }
 
 class AutomaticTransmission implements Transmission {
+    // => Concrete implementation of Transmission interface
+    // => Automatic gear control strategy
     public void shift(int gear) {
         System.out.println("Automatic shift to gear " + gear);
+        // => System determines shift timing
+        // => Output: "Automatic shift to gear N"
     }
 }
 
 // COMPOSED CLASS - has-a relationship instead of is-a
 class Car {
-    private final Engine engine;           // => Composition: Car HAS-A Engine
+    // => Car contains components (composition)
+    private final Engine engine;
+    // => HAS-A Engine (can be electric, gas, diesel, etc.)
     private final Transmission transmission;
+    // => HAS-A Transmission (can be manual, automatic, CVT, etc.)
 
     public Car(Engine engine, Transmission transmission) {
+        // => Dependency injection: flexibility at construction
         this.engine = engine;
+        // => Store engine reference
         this.transmission = transmission;
+        // => Store transmission reference
     }
 
     public void drive() {
-        engine.start();              // => Delegates to composed component
-        transmission.shift(1);       // => Flexible: can swap implementations
+        // => Coordinate components to drive
+        engine.start();
+        // => Delegate to composed engine
+        transmission.shift(1);
+        // => Shift to 1st gear
         transmission.shift(2);
+        // => Shift to 2nd gear
     }
 }
 
 // USAGE - flexible assembly of behaviors
 Car electricAuto = new Car(new ElectricEngine(), new AutomaticTransmission());
+// => Mix electric engine + automatic transmission
 electricAuto.drive();
-// => Output: Electric motor starting silently, Automatic shift to gear 1, Automatic shift to gear 2
+// => Output: Electric motor starting silently
+// =>         Automatic shift to gear 1
+// =>         Automatic shift to gear 2
 
 Car gasManual = new Car(new GasEngine(), new ManualTransmission());
+// => Mix gas engine + manual transmission
 gasManual.drive();
-// => Output: Gas engine roaring to life, Manual shift to gear 1, Manual shift to gear 2
+// => Output: Gas engine roaring to life
+// =>         Manual shift to gear 1
+// =>         Manual shift to gear 2
 
 // CONTRAST: Inheritance approach (rigid, explosive class hierarchy)
-// Would need: ElectricAutoCar, ElectricManualCar, GasAutoCar, GasManualCar
+// => Would need: ElectricAutoCar, ElectricManualCar, GasAutoCar, GasManualCar
 // => 2 engines × 2 transmissions = 4 classes (composition uses 2 components)
+// => Adding diesel: 2 more classes (composition: 1 component)
+// => Composition grows linearly, inheritance grows exponentially
 ```
 
 **Key Takeaway**: Composition assembles objects from independent components (has-a relationships), providing runtime flexibility to mix and match behaviors. Prefer composition over inheritance to avoid rigid class hierarchies and the "diamond problem" where multiple inheritance paths create ambiguity.
@@ -199,72 +287,119 @@ Java supports nested classes (static) and inner classes (non-static) that provid
 
 ```java
 public class OuterClass {
+    // => Outer class containing nested/inner classes
     private String outerField = "Outer field";
+    // => Instance field: accessible to inner classes
     private static String staticField = "Static field";
+    // => Static field: accessible to all nested classes
 
     // STATIC NESTED CLASS - independent of outer instance
     public static class StaticNested {
+        // => Static means no implicit reference to outer instance
+        // => Can be instantiated without OuterClass instance
         public void display() {
-            System.out.println(staticField);  // => Can access static outer members
-            // System.out.println(outerField); // => ERROR: cannot access instance members
+            System.out.println(staticField);
+            // => ✅ Can access static outer members
+            // => Output: "Static field"
+            // System.out.println(outerField);
+            // => ❌ ERROR: cannot access instance members
+            // => No outer instance reference available
         }
     }
 
     // INNER CLASS (non-static) - tied to outer instance
     public class Inner {
+        // => Non-static: holds implicit reference to outer instance
+        // => Cannot exist without OuterClass instance
         private String innerField = "Inner field";
+        // => Inner class can have its own fields
 
         public void display() {
-            System.out.println(outerField);   // => Can access outer instance members
-            System.out.println(staticField);  // => Can also access static members
+            System.out.println(outerField);
+            // => ✅ Accesses outer instance field
+            // => Implicit reference: OuterClass.this.outerField
+            System.out.println(staticField);
+            // => ✅ Also accesses static members
             System.out.println(innerField);
+            // => Accesses own field
         }
 
         public void accessOuter() {
             OuterClass.this.outerField = "Modified";
-                                         // => OuterClass.this refers to outer instance
+            // => Explicit outer reference syntax
+            // => OuterClass.this = the outer instance
+            // => Modifies outer field from inner class
         }
     }
 
     // METHOD LOCAL INNER CLASS - defined inside method
     public void methodWithLocalClass() {
+        // => Local class scope: only visible within this method
         final String localVar = "Local variable";
+        // => Must be final or effectively final (Java 8+)
 
         class LocalInner {
+            // => Class defined inside method body
+            // => Can access method's local variables
             public void display() {
-                System.out.println(localVar);  // => Can access final local variables
+                System.out.println(localVar);
+                // => Accesses enclosing method's final variable
+                // => Captured in closure
                 System.out.println(outerField);
+                // => Also accesses outer instance fields
             }
         }
 
         LocalInner local = new LocalInner();
+        // => Instantiate local class within method
         local.display();
+        // => Output: "Local variable", "Outer field"
     }
 
     // ANONYMOUS INNER CLASS - one-time implementation
     public Runnable createRunnable() {
-        return new Runnable() {          // => Anonymous class implementing interface
+        // => Returns interface instance without named class
+        return new Runnable() {
+            // => Anonymous class: no class name
+            // => Implements Runnable on the fly
             @Override
             public void run() {
                 System.out.println("Anonymous inner class: " + outerField);
+                // => Can access outer instance members
+                // => Output: "Anonymous inner class: Outer field"
             }
         };
+        // => Before Java 8 lambdas, this was common pattern
     }
 }
 
 // USAGE
 OuterClass.StaticNested nested = new OuterClass.StaticNested();
-nested.display();                    // => Output: Static field
+// => Create static nested class: no outer instance needed
+// => Syntax: OuterClass.NestedClass
+nested.display();
+// => Output: "Static field"
 
 OuterClass outer = new OuterClass();
+// => Create outer instance first
 OuterClass.Inner inner = outer.new Inner();
-                                     // => Inner class requires outer instance
-inner.display();                     // => Output: Outer field, Static field, Inner field
+// => Create inner class: requires outer instance
+// => Syntax: outerInstance.new InnerClass()
+// => Inner holds reference to 'outer'
+inner.display();
+// => Output: "Outer field"
+// =>         "Static field"
+// =>         "Inner field"
 
-outer.methodWithLocalClass();        // => Output: Local variable, Outer field
+outer.methodWithLocalClass();
+// => Executes method containing local inner class
+// => Output: "Local variable"
+// =>         "Outer field"
 
 Runnable r = outer.createRunnable();
-r.run();                             // => Output: Anonymous inner class: Outer field
+// => Returns anonymous Runnable instance
+r.run();
+// => Output: "Anonymous inner class: Outer field"
 ```
 
 **Key Takeaway**: Static nested classes are independent of outer instances and can only access outer static members. Inner classes (non-static) are tied to outer instances and can access all outer members. Use nested classes for logical grouping and inner classes when tight coupling with outer state is needed.
@@ -296,70 +431,103 @@ graph TD
 
 ```java
 import java.lang.reflect.*;
+// => Import reflection API classes
 
 class Person {
+    // => Simple class for reflection demonstration
     private String name;
+    // => Private field: not accessible without setAccessible()
     public int age;
+    // => Public field: directly accessible via reflection
 
     public Person() {}
+    // => Default constructor
 
     public Person(String name, int age) {
+        // => Parameterized constructor
         this.name = name;
         this.age = age;
     }
 
     private void secretMethod() {
+        // => Private method: needs setAccessible() to invoke
         System.out.println("Secret: " + name);
     }
 
     public String getName() {
+        // => Public getter method
         return name;
     }
 }
 
 // REFLECTION USAGE
-Class<?> clazz = Person.class;   // => Get Class object for Person
+Class<?> clazz = Person.class;
+// => Obtain Class metadata object for Person
+// => <?> wildcard: type-safe reflection
 
 // GET CLASS INFORMATION
 String className = clazz.getName();
-                                 // => className is "Person"
+// => Returns fully qualified name
+// => Result: "Person" (or "com.example.Person" if in package)
 String simpleName = clazz.getSimpleName();
-                                 // => simpleName is "Person"
+// => Returns class name without package
+// => Result: "Person"
 
 // INSTANTIATE via reflection
 Constructor<?> constructor = clazz.getConstructor(String.class, int.class);
-                                 // => Get public constructor with parameters
+// => Finds public constructor matching parameter types
+// => Throws NoSuchMethodException if not found
 Object instance = constructor.newInstance("Alice", 30);
-                                 // => Creates new Person("Alice", 30)
+// => Creates instance: new Person("Alice", 30)
+// => Returns Object (needs casting for type safety)
 
 // ACCESS FIELDS
 Field ageField = clazz.getField("age");
-                                 // => Get public field
+// => Gets PUBLIC field named "age"
+// => Throws NoSuchFieldException if not found or not public
 int ageValue = (int) ageField.get(instance);
-                                 // => ageValue is 30
-ageField.set(instance, 31);      // => Set age to 31
+// => Reads field value from instance
+// => Result: 30
+ageField.set(instance, 31);
+// => Modifies field value
+// => Now age = 31
 
 // ACCESS PRIVATE FIELDS
 Field nameField = clazz.getDeclaredField("name");
-                                 // => Get private field
-nameField.setAccessible(true);   // => Bypass access control (use carefully!)
+// => Gets any field (public or private) by name
+// => getDeclaredField() finds private members
+nameField.setAccessible(true);
+// => Disables Java access control checks
+// => ⚠️ Security risk: breaks encapsulation
 String nameValue = (String) nameField.get(instance);
-                                 // => nameValue is "Alice"
+// => Reads private field value
+// => Result: "Alice"
 
 // INVOKE METHODS
 Method getNameMethod = clazz.getMethod("getName");
+// => Finds public method by name and parameter types
 String name = (String) getNameMethod.invoke(instance);
-                                 // => name is "Alice"
+// => Invokes method on instance
+// => Equivalent to: instance.getName()
+// => Result: "Alice"
 
 // INVOKE PRIVATE METHODS
 Method secretMethod = clazz.getDeclaredMethod("secretMethod");
+// => Finds private method
 secretMethod.setAccessible(true);
-secretMethod.invoke(instance);   // => Output: Secret: Alice
+// => Bypasses private access modifier
+secretMethod.invoke(instance);
+// => Invokes private method
+// => Output: "Secret: Alice"
 
 // LIST ALL METHODS
 for (Method method : clazz.getDeclaredMethods()) {
+    // => Iterates all declared methods (public and private)
     System.out.println(method.getName());
-}                                // => Output: secretMethod, getName
+    // => Prints method names
+}
+// => Output: secretMethod
+// =>         getName
 ```
 
 **Key Takeaway**: Reflection provides runtime access to class metadata, allowing inspection of fields, methods, and constructors. Use `setAccessible(true)` to bypass access controls for private members. Reflection enables frameworks and libraries to work with arbitrary user classes without compile-time knowledge.

@@ -3,7 +3,9 @@ name: apps__ayokoding-web__by-example-checker
 description: Validates by-example tutorial quality focusing on 95% coverage, self-containment, density-based annotations (1-2.25 comment lines per code line PER EXAMPLE), and diagram presence. Generates progressive audit reports to generated-reports/. Use after creating/updating by-example tutorials.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
-color: yellow
+color: green
+created: 2025-12-25
+updated: 2026-01-03
 ---
 
 **Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
@@ -211,7 +213,17 @@ grep -n "defined earlier" beginner.md
 
 Repeat for intermediate and advanced levels.
 
-### Step 5: Validate Annotation Density (Density-Based)
+### Step 5: Validate Annotation Density Per Example
+
+**CRITICAL**: Validate density PER INDIVIDUAL EXAMPLE, not file averages. Each example (Example 1, Example 2, etc.) must individually meet 1.0-2.25 density target.
+
+**Measurement approach**:
+
+1. Extract each example as separate unit (from "### Example N" to next "### Example" or end)
+2. Count code lines (exclude imports, blank lines, comments)
+3. Count annotation lines (lines with `// =>` or `# =>`)
+4. Calculate density ratio per example
+5. Flag examples outside 1.0-2.25 range (with 2.5 as upper bound)
 
 **Check for `// =>` or `# =>` notation**:
 grep -c "// =>" beginner.md
@@ -255,6 +267,7 @@ Read sample examples and verify annotations show:
 
 - Example {N}: Density ratio {ratio} PER EXAMPLE (under-annotated if <1.0, over-annotated if >2.5)
 - Example {M}: Complex line missing second annotation (line {L})
+- Example {P}: Verbose tutorial-style comments in code (should be in "Why It Matters" section instead)
 
 **Criticality levels**:
 
@@ -682,3 +695,105 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 6. ✅ **MUST** provide specific line numbers for issues
 7. ✅ **MUST** validate against By-Example Tutorial Convention exactly
 8. ✅ **MUST** validate diagram splitting for mobile-friendliness
+
+## Multiple Code Blocks Pattern Validation
+
+**NEW VALIDATION**: Check for proper use of multiple code blocks when comparing approaches/libraries.
+
+### Detection Pattern
+
+Search for examples that compare multiple approaches within a single code block:
+
+````bash
+# Find code blocks with multiple import sections (potential comparison)
+grep -A 30 "^```" beginner.md | grep -B 5 "^import" | grep -c "^import"
+
+# Find excessive tutorial-style comments (> 2.5 density indicator)
+grep -A 20 "^```" beginner.md | grep "// =>" | wc -l
+````
+
+### Validation Checks
+
+For examples comparing approaches (identified by keywords like "vs", "alternative", "comparison"):
+
+1. **Check if single code block contains multiple approaches**
+   - Look for multiple import sections in one code block
+   - Look for comment patterns like "// Approach A" and "// Approach B"
+   - Flag as potential violation
+
+2. **Check annotation density per approach within block**
+   - If multiple approaches in one block, density likely exceeds 2.5
+   - Suggests need to split into multiple blocks
+
+3. **Check for explanatory comments that should be text**
+
+4. **Check for indicators requiring split** (NEW):
+   - Commented-out alternative implementations (`/* ... */` or `// ...`)
+   - Mixed languages in same block (Java + C, Java + SQL)
+   - Multiple library comparisons (ASM vs ByteBuddy)
+   - > 30% comment lines explaining alternatives/trade-offs (not state annotations)
+   - Multiple design patterns combined (Strategy + Observer + Decorator)
+   - Comments longer than 2 lines explaining "why" (should be in text sections)
+   - Tutorial-style comments (should be in Brief Explanation or Why It Matters)
+
+### Write Finding Progressively
+
+```markdown
+### Finding 8: Multiple Code Blocks Pattern Compliance
+
+**Examples checked**: {count} examples with comparisons/alternatives
+
+**Pattern violations found**: {count}
+
+**Issues**:
+
+- **Example {N}, line {L}**: Single code block compares Library A vs Library B
+  - **Current**: One code block with excessive comments (density {X} > 2.5)
+  - **Fix**: Split into two code blocks:
+    - Block 1: Library A approach (density 1.0-2.25)
+    - Markdown text: Library A trade-offs
+    - Block 2: Library B approach (density 1.0-2.25)
+    - Markdown text: Library B trade-offs
+    - Markdown text: Comparison summary
+  - **Severity**: MEDIUM (impacts readability and density compliance)
+
+- **Example {M}, line {L}**: Good vs Bad pattern in single block
+
+- **Example {P}, line {L}**: Single block contains multiple distinct approaches
+  - **Current**: Compares Library A vs Library B in one code block (density {X})
+  - **Indicators**: Commented-out alternatives, multiple imports, excessive trade-off comments
+  - **Fix**: Split into separate blocks with text between (maintains 1.0-2.25 per block)
+  - **Severity**: MEDIUM (impacts density compliance and syntax highlighting)
+  - **Current**: ✅ GOOD and ❌ BAD code mixed in one block
+  - **Fix**: Split into separate blocks with explanatory text between
+  - **Severity**: LOW (pattern is clear but splitting improves scannability)
+
+**Benefits of splitting**:
+
+- Syntax highlighting works correctly
+- Each code block is independently runnable
+- Maintains 1.0-2.25 density per block
+- Clear separation of WHAT (code) vs WHY (text)
+
+**Status**: ✅ PASS (no violations) | ⚠️ MEDIUM (some splitting needed) | ❌ FAIL (multiple violations)
+**Confidence**: MEDIUM (requires semantic analysis of example intent)
+
+**Recommendation**: Split comparison examples into multiple code blocks with explanatory text between blocks. Move WHY explanations from code comments to markdown text sections.
+```
+
+### Integration with Existing Validations
+
+This validation complements:
+
+- **Finding 4 (Annotation Density)**: Multiple blocks help maintain 1.0-2.25 density per block
+- **Finding 5.5 (Diagram Splitting)**: Same principle - split complex content for clarity
+- **Finding 6 (Five-Part Format)**: Multiple blocks fit within Part 3 (Heavily Annotated Code)
+
+### Success Criteria
+
+- Examples comparing approaches use multiple code blocks (not single cramped block)
+- Each code block maintains 1.0-2.25 density
+- Explanatory WHY content is in markdown text, not code comments
+- Code blocks are independently runnable
+
+See [By-Example Tutorial Convention - Multiple Code Blocks Pattern](../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md#multiple-code-blocks-pattern) for complete validation criteria.
