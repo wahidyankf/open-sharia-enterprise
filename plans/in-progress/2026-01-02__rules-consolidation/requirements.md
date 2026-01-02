@@ -14,15 +14,18 @@ Based on pre-plan audit findings:
 
 ## Functional Requirements
 
-### FR-0: Skills Naming Convention
+### FR-0: Skills Naming Convention + allowed-tools
 
 All Skills must follow official best practices:
 
 - Lowercase letters, numbers, and hyphens only (max 64 chars)
 - Gerund form (verb + -ing) preferred: `creating-by-example-tutorials`
+- `allowed-tools` frontmatter to restrict tool access when active
 
-**Current State**: 1 violation (`MULTI-FILE-TEMPLATE`), 10 not using gerund form
-**Target State**: All 17 Skills use lowercase gerund form
+**Current State**: 1 violation (`MULTI-FILE-TEMPLATE`), 10 not using gerund form, 0 with allowed-tools
+**Target State**: All 17 Skills use lowercase gerund form with allowed-tools
+
+**Note**: The allowed-tools field applies to ALL 10 existing Skills (not just renamed ones) plus all 7 new Skills created in Phase 2.
 
 ### FR-1: Skills References
 
