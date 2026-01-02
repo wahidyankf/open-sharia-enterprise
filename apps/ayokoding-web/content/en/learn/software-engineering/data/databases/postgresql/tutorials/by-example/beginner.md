@@ -1,6 +1,6 @@
 ---
 title: "Beginner"
-date: 2026-01-01T22:32:13+07:00
+date: 2026-01-02T07:21:44+07:00
 draft: false
 weight: 10000001
 description: "Examples 1-30: PostgreSQL fundamentals covering installation, data types, basic queries, schema design, joins, and data manipulation (0-40% coverage)"
@@ -52,15 +52,25 @@ docker exec -it postgres-tutorial psql -U postgres
 ```sql
 -- Simple query to verify connection
 SELECT version();
--- => Returns PostgreSQL version string (e.g., "PostgreSQL 16.x on x86_64-pc-linux-gnu...")
+-- => Calls built-in function version() (no parameters needed)
+-- => Returns single row with single column (text)
+-- => Example output: "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 12.2.0, 64-bit"
+-- => Confirms PostgreSQL server is running and accessible
 
 -- Check current date and time
 SELECT NOW();
--- => Returns current timestamp with timezone (e.g., "2025-12-29 08:08:50.123456+00")
+-- => Calls built-in function NOW() (returns current timestamp)
+-- => Returns single row: type TIMESTAMPTZ (timestamp with timezone)
+-- => Example output: "2025-12-29 08:08:50.123456+00"
+-- => Microsecond precision (6 decimal places)
+-- => Timezone offset shown as +00 (UTC)
 
 -- Simple arithmetic
 SELECT 2 + 2 AS result;
--- => Returns 4 in column named 'result'
+-- => Evaluates expression 2 + 2 (integer addition)
+-- => AS result creates column alias (displayed as column name)
+-- => Returns single row with single column named 'result'
+-- => Output: 4 (type INTEGER)
 ```
 
 **Key Takeaway**: PostgreSQL runs reliably in Docker containers, providing isolated environments for development and testing. The `SELECT` statement executes queries and returns results - even simple expressions work without FROM clauses.
@@ -76,25 +86,37 @@ Databases organize related tables and data. Each PostgreSQL server can host mult
 ```sql
 -- Create a new database
 CREATE DATABASE first_db;
+-- => Executes DDL (Data Definition Language) command
 -- => Creates database 'first_db' with default encoding UTF8
+-- => Default owner is current user (postgres)
+-- => Template database template1 used for initialization
 
 -- List all databases
 \l
--- => Shows all databases (postgres, template0, template1, first_db)
+-- => Executes PostgreSQL meta-command (backslash command)
+-- => Shows all databases: postgres (default), template0 (pristine template), template1 (user template), first_db (newly created)
+-- => Displays: database name, owner, encoding, collation, access privileges
 
 -- Connect to the new database
 \c first_db;
--- => Switches connection to 'first_db' (output: "You are now connected to database 'first_db'")
+-- => Closes current connection to postgres database
+-- => Opens new connection to 'first_db' database
+-- => Output: "You are now connected to database 'first_db' as user 'postgres'"
 
 -- Verify current database
 SELECT current_database();
--- => Returns 'first_db'
+-- => Queries system function (returns current database name)
+-- => Returns single row with single column: 'first_db'
+-- => Useful for verifying connection in scripts
 
 -- Drop database (must disconnect first)
 \c postgres;
--- => Switch back to postgres database
+-- => Switch back to postgres database (cannot drop database you're connected to)
+-- => Connection to first_db closed
 DROP DATABASE first_db;
--- => Deletes database 'first_db' and all its contents (WARNING: irreversible!)
+-- => Deletes database 'first_db' and all its contents (tables, data, schemas)
+-- => WARNING: Irreversible operation! No confirmation prompt!
+-- => Fails if any active connections exist to first_db
 ```
 
 **Key Takeaway**: Use `CREATE DATABASE` to create isolated environments for different applications or projects. Always connect to a specific database before creating tables - the default `postgres` database should remain clean for administrative tasks.
@@ -110,15 +132,21 @@ SELECT retrieves data from tables. Even without tables, you can query expression
 ```sql
 -- Create database for this example
 CREATE DATABASE example_3;
+-- => Creates new database named 'example_3'
+-- => Encoding defaults to UTF8 (supports international characters)
 \c example_3;
+-- => Switches current connection to example_3 database
+-- => All subsequent commands execute in this database
 
 -- Create a simple table
 CREATE TABLE users (
     id INTEGER,           -- => Integer column for user ID
     name VARCHAR(100),    -- => Variable-length string up to 100 characters
-    email VARCHAR(100),
-    age INTEGER
+    email VARCHAR(100),   -- => Variable-length string for email addresses
+    age INTEGER           -- => Integer column for age (no upper limit enforced yet)
 );
+-- => Creates table 'users' with 4 columns
+-- => Table initially empty (0 rows)
 
 -- Insert sample data
 INSERT INTO users (id, name, email, age)
@@ -126,20 +154,29 @@ VALUES
     (1, 'Alice', 'alice@example.com', 30),
     (2, 'Bob', 'bob@example.com', 25),
     (3, 'Charlie', 'charlie@example.com', 35);
--- => 3 rows inserted
+-- => Inserts 3 rows in single statement (more efficient than 3 separate INSERTs)
+-- => Row 1: id=1, name='Alice', email='alice@example.com', age=30
+-- => Row 2: id=2, name='Bob', email='bob@example.com', age=25
+-- => Row 3: id=3, name='Charlie', email='charlie@example.com', age=35
 
 -- Select all columns, all rows
 SELECT * FROM users;
+-- => Scans entire users table (3 rows)
 -- => Returns all 3 rows with columns: id | name | email | age
+-- => Output format: tabular display with column headers
 
 -- Select specific columns
 SELECT name, age FROM users;
--- => Returns only 'name' and 'age' columns for all rows
+-- => Scans all 3 rows but returns only 'name' and 'age' columns
+-- => Reduces data transfer (2 columns instead of 4)
+-- => Output: Alice 30, Bob 25, Charlie 35
 
 -- Select with expressions
 SELECT name, age, age + 10 AS age_in_10_years FROM users;
--- => Calculates new column showing each user's age in 10 years
--- => Alice: 40, Bob: 35, Charlie: 45
+-- => Computes age + 10 for each row (calculation happens per row)
+-- => Creates new column 'age_in_10_years' (not stored, computed on-the-fly)
+-- => Alice: 30 + 10 = 40, Bob: 25 + 10 = 35, Charlie: 35 + 10 = 45
+-- => Original age column unchanged in table
 ```
 
 **Key Takeaway**: SELECT retrieves data from tables - use `*` for all columns or name specific columns. You can include expressions and calculations in SELECT to derive new values without modifying stored data.
@@ -172,19 +209,25 @@ graph TD
 
 ```sql
 CREATE DATABASE example_4;
+-- => Creates database 'example_4'
 \c example_4;
+-- => Switches to example_4 database
 
 CREATE TABLE products (
     id INTEGER,
     name VARCHAR(100),
     price DECIMAL(10, 2),  -- => Decimal with 10 total digits, 2 after decimal point
-    in_stock BOOLEAN
+    in_stock BOOLEAN       -- => TRUE/FALSE/NULL allowed
 );
+-- => Creates table 'products' with 4 columns
+-- => No constraints yet (NULLs allowed, no uniqueness enforced)
 
 -- Insert single row with all columns
 INSERT INTO products (id, name, price, in_stock)
 VALUES (1, 'Laptop', 999.99, true);
--- => 1 row inserted
+-- => Inserts 1 row: id=1, name='Laptop', price=999.99, in_stock=TRUE
+-- => Output: "INSERT 0 1" (0 is OID, 1 is row count)
+-- => Table now contains 1 row
 
 -- Insert multiple rows at once (more efficient)
 INSERT INTO products (id, name, price, in_stock)
@@ -192,16 +235,26 @@ VALUES
     (2, 'Mouse', 29.99, true),
     (3, 'Keyboard', 79.99, false),
     (4, 'Monitor', 299.99, true);
--- => 3 rows inserted in single statement
+-- => Inserts 3 rows in single transaction (atomic operation)
+-- => Row 2: id=2, name='Mouse', price=29.99, in_stock=TRUE
+-- => Row 3: id=3, name='Keyboard', price=79.99, in_stock=FALSE
+-- => Row 4: id=4, name='Monitor', price=299.99, in_stock=TRUE
+-- => Output: "INSERT 0 3" (3 rows inserted)
+-- => More efficient than 3 separate INSERT statements (single network round-trip)
 
 -- Insert partial columns (others become NULL)
 INSERT INTO products (id, name)
 VALUES (5, 'Webcam');
--- => Inserts row with id=5, name='Webcam', price=NULL, in_stock=NULL
+-- => Only id and name specified (price and in_stock not provided)
+-- => Inserts row: id=5, name='Webcam', price=NULL, in_stock=NULL
+-- => NULL indicates missing/unknown value (not zero or false)
+-- => Table now contains 5 rows total
 
 -- Verify data
 SELECT * FROM products;
--- => Returns all 5 rows
+-- => Retrieves all 5 rows from products table
+-- => Shows all columns: id | name | price | in_stock
+-- => Rows 1-4 have complete data, row 5 has NULLs for price and in_stock
 ```
 
 **Key Takeaway**: INSERT adds rows to tables - specify columns and values explicitly for clarity. Multi-row inserts are more efficient than multiple single-row inserts. Columns not specified get NULL unless a default value is defined.
@@ -216,7 +269,9 @@ UPDATE modifies existing rows matching a WHERE condition. DELETE removes rows. B
 
 ```sql
 CREATE DATABASE example_5;
+-- => Creates database 'example_5'
 \c example_5;
+-- => Switches to example_5 database
 
 CREATE TABLE inventory (
     id INTEGER,
@@ -224,47 +279,78 @@ CREATE TABLE inventory (
     quantity INTEGER,
     price DECIMAL(10, 2)
 );
+-- => Creates table with 4 columns (no constraints)
 
 INSERT INTO inventory (id, item, quantity, price)
 VALUES
     (1, 'Apples', 100, 1.50),
     (2, 'Bananas', 150, 0.75),
     (3, 'Oranges', 80, 2.00);
+-- => Inserts 3 rows (initial inventory state)
+-- => Row 1: id=1, item='Apples', quantity=100, price=1.50
+-- => Row 2: id=2, item='Bananas', quantity=150, price=0.75
+-- => Row 3: id=3, item='Oranges', quantity=80, price=2.00
 
 -- Update single row
 UPDATE inventory
 SET quantity = 120
 WHERE id = 1;
--- => Updates Apples quantity to 120 (only row with id=1)
+-- => WHERE clause filters to row with id=1 (Apples row)
+-- => Sets quantity column to 120 (was 100)
+-- => Other columns unchanged (item, price remain same)
+-- => Affected rows: 1 (output: "UPDATE 1")
+-- => Apples row now: id=1, item='Apples', quantity=120, price=1.50
 
 -- Update multiple columns
 UPDATE inventory
 SET quantity = 200, price = 0.80
 WHERE item = 'Bananas';
--- => Updates both quantity and price for Bananas
+-- => WHERE filters by item name (string comparison)
+-- => Updates TWO columns: quantity and price
+-- => quantity: 150 -> 200, price: 0.75 -> 0.80
+-- => Affected rows: 1 (output: "UPDATE 1")
+-- => Bananas row now: id=2, item='Bananas', quantity=200, price=0.80
 
 -- Update with calculation
 UPDATE inventory
 SET price = price * 1.10
 WHERE price < 2.00;
--- => Increases price by 10% for items under $2.00
--- => Apples: 1.50 -> 1.65, Bananas: 0.80 -> 0.88
+-- => WHERE finds rows with price less than 2.00 (Apples and Bananas)
+-- => price * 1.10 calculates new price (10% increase)
+-- => Apples: 1.50 * 1.10 = 1.65
+-- => Bananas: 0.80 * 1.10 = 0.88
+-- => Affected rows: 2 (output: "UPDATE 2")
+-- => Oranges unchanged (price 2.00 not < 2.00)
 
 -- Verify updates
 SELECT * FROM inventory;
+-- => Shows current state after all updates
+-- => Apples: quantity=120, price=1.65
+-- => Bananas: quantity=200, price=0.88
+-- => Oranges: quantity=80, price=2.00 (unchanged)
 
 -- Delete specific row
 DELETE FROM inventory
 WHERE id = 3;
--- => Removes Oranges (id=3)
+-- => WHERE clause targets single row (id=3, Oranges)
+-- => Removes row from table permanently
+-- => Affected rows: 1 (output: "DELETE 1")
+-- => Table now contains 2 rows (Apples, Bananas)
 
 -- DANGEROUS: Update without WHERE affects ALL rows
 UPDATE inventory SET quantity = 0;
--- => Sets quantity to 0 for ALL remaining items (Apples, Bananas)
+-- => No WHERE clause! Affects ALL rows in table
+-- => Sets quantity to 0 for Apples AND Bananas
+-- => Affected rows: 2 (output: "UPDATE 2")
+-- => WARNING: Common mistake causing data loss!
 
 -- DANGEROUS: Delete without WHERE removes ALL rows
 DELETE FROM inventory;
--- => Removes all rows from table (table structure remains)
+-- => No WHERE clause! Deletes ALL rows in table
+-- => Affected rows: 2 (output: "DELETE 2")
+-- => Table structure remains (columns defined)
+-- => Table now empty (0 rows)
+-- => Use TRUNCATE TABLE for faster empty operation
 ```
 
 **Key Takeaway**: Always use WHERE clauses with UPDATE and DELETE to target specific rows - omitting WHERE modifies or removes ALL rows. Test your WHERE clause with SELECT before running UPDATE or DELETE.
@@ -298,11 +384,20 @@ INSERT INTO numeric_types
     (small_int, regular_int, big_int, exact_decimal, exact_numeric, float_num, double_num)
 VALUES
     (100, 50000, 9223372036854775807, 12345.67, 12345.678, 3.14159, 3.141592653589793);
--- => Inserts values demonstrating each type's precision
+-- => Inserts single row demonstrating each type's precision and range
+-- => small_int: 100 (within -32,768 to 32,767 range)
+-- => regular_int: 50000 (within -2 billion to +2 billion range)
+-- => big_int: 9223372036854775807 (maximum BIGINT value, 2^63 - 1)
+-- => exact_decimal: 12345.67 (10 total digits, 2 after decimal point - exact)
+-- => exact_numeric: 12345.678 (8 total digits, 3 after decimal - exact)
+-- => float_num: 3.14159 (approximate binary floating-point)
+-- => double_num: 3.141592653589793 (approximate, double precision)
 
 SELECT * FROM numeric_types;
--- => id=1 (auto-generated), all other values as inserted
--- => Notice: REAL and DOUBLE PRECISION may show slight approximations
+-- => Returns 1 row with all 8 columns
+-- => id=1 (SERIAL auto-generated from sequence)
+-- => All values stored as specified
+-- => REAL and DOUBLE PRECISION may display slight approximations in output
 
 -- Arithmetic with exact types
 SELECT
@@ -310,8 +405,11 @@ SELECT
     exact_numeric * 2 AS numeric_doubled,
     float_num * 2 AS float_doubled
 FROM numeric_types;
--- => DECIMAL/NUMERIC maintain exact precision
--- => REAL/DOUBLE PRECISION may show rounding errors in complex calculations
+-- => exact_decimal + 100.50: 12345.67 + 100.50 = 12446.17 (exact arithmetic)
+-- => exact_numeric * 2: 12345.678 * 2 = 24691.356 (exact multiplication)
+-- => float_num * 2: 3.14159 * 2 ≈ 6.28318 (may have tiny rounding error)
+-- => DECIMAL/NUMERIC use base-10 storage (exact for financial calculations)
+-- => REAL/DOUBLE use binary floating-point (faster but approximate)
 ```
 
 **Key Takeaway**: Use INTEGER for whole numbers, BIGINT for very large integers, and DECIMAL/NUMERIC for exact precision (money, percentages). Avoid REAL/DOUBLE PRECISION for financial data due to rounding errors.
@@ -518,24 +616,42 @@ VALUES
     ('Alice', 'alice@example.com', '555-1234'),
     ('Bob', NULL, '555-5678'),              -- => Email is NULL (unknown)
     ('Charlie', 'charlie@example.com', NULL); -- => Phone is NULL
+-- => Inserts 3 rows with different NULL patterns
+-- => Row 1: Alice has both email and phone
+-- => Row 2: Bob missing email (NULL), has phone
+-- => Row 3: Charlie has email, missing phone (NULL)
 
 -- Check for NULL values
 SELECT name, email
 FROM contacts
 WHERE email IS NULL;
--- => Returns Bob (IS NULL is the correct NULL check)
+-- => WHERE clause checks for NULL using IS NULL operator
+-- => Evaluates email column for each row
+-- => Alice: email='alice@example.com' (NOT NULL, excluded)
+-- => Bob: email=NULL (matches IS NULL, included)
+-- => Charlie: email='charlie@example.com' (NOT NULL, excluded)
+-- => Returns 1 row: Bob with email=NULL
 
 -- This DOES NOT work correctly
 SELECT name, email
 FROM contacts
 WHERE email = NULL;
--- => Returns nothing! (NULL = NULL evaluates to NULL, not true)
+-- => Uses equality operator = with NULL (WRONG approach!)
+-- => NULL = NULL evaluates to NULL (not TRUE or FALSE)
+-- => WHERE requires TRUE to include row
+-- => All 3 rows: email = NULL evaluates to NULL → excluded
+-- => Returns 0 rows (empty result set)
+-- => Common mistake causing "missing data" bugs!
 
 -- Check for NOT NULL
 SELECT name, phone
 FROM contacts
 WHERE phone IS NOT NULL;
--- => Returns Alice and Bob
+-- => IS NOT NULL checks for presence of value (opposite of IS NULL)
+-- => Alice: phone='555-1234' (NOT NULL, included)
+-- => Bob: phone='555-5678' (NOT NULL, included)
+-- => Charlie: phone=NULL (excluded)
+-- => Returns 2 rows: Alice and Bob
 
 -- COALESCE provides default for NULL values
 SELECT
@@ -543,15 +659,23 @@ SELECT
     COALESCE(email, 'no-email@example.com') AS email,
     COALESCE(phone, 'No phone') AS phone
 FROM contacts;
--- => Bob's email becomes 'no-email@example.com'
--- => Charlie's phone becomes 'No phone'
+-- => COALESCE(value, default) returns first non-NULL argument
+-- => Alice: email='alice@example.com' (not NULL, returns original), phone='555-1234'
+-- => Bob: email=NULL → COALESCE returns 'no-email@example.com', phone='555-5678'
+-- => Charlie: email='charlie@example.com', phone=NULL → COALESCE returns 'No phone'
+-- => All 3 rows returned with NULLs replaced by defaults
 
 -- NULLIF returns NULL if two values are equal
 SELECT
     name,
     NULLIF(email, '') AS email_or_null
 FROM contacts;
--- => Converts empty strings to NULL (useful for cleaning data)
+-- => NULLIF(value1, value2) returns NULL if value1 = value2, otherwise returns value1
+-- => Useful for converting empty strings to NULL
+-- => Alice: NULLIF('alice@example.com', '') → 'alice@example.com' (not equal to '')
+-- => Bob: NULLIF(NULL, '') → NULL (already NULL)
+-- => Charlie: NULLIF('charlie@example.com', '') → 'charlie@example.com'
+-- => If Bob had email='' instead of NULL: NULLIF('', '') → NULL (converts empty to NULL)
 ```
 
 **Key Takeaway**: Use `IS NULL` and `IS NOT NULL` to check for NULL values - equality operators don't work with NULL. COALESCE provides defaults for NULL values, while NULLIF converts specific values to NULL.
@@ -590,43 +714,69 @@ VALUES
 SELECT name, price
 FROM products
 WHERE category = 'Electronics';
--- => Returns Laptop, Mouse, Monitor
+-- => WHERE clause filters rows before returning results
+-- => Checks each row: category column equals 'Electronics' (string comparison)
+-- => Returns 3 rows: Laptop (999.99), Mouse (29.99), Monitor (299.99)
+-- => Excludes: Desk Chair (Furniture), Coffee Mug (Kitchen)
 
 -- Multiple conditions with AND
 SELECT name, price, stock
 FROM products
 WHERE category = 'Electronics' AND price < 500;
--- => Returns Mouse (29.99) and Monitor (299.99)
+-- => AND requires BOTH conditions true
+-- => First condition: category = 'Electronics' (3 rows match)
+-- => Second condition: price < 500 (filters the 3 rows)
+-- => Returns 2 rows: Mouse (29.99, stock 50), Monitor (299.99, stock 0)
+-- => Excludes Laptop (999.99 > 500)
 
 -- Multiple conditions with OR
 SELECT name, category
 FROM products
 WHERE category = 'Furniture' OR price > 500;
--- => Returns Laptop (999.99) and Desk Chair (199.99)
+-- => OR requires AT LEAST ONE condition true
+-- => First condition: category = 'Furniture' (1 row: Desk Chair)
+-- => Second condition: price > 500 (1 row: Laptop)
+-- => Returns 2 rows: Laptop (Electronics), Desk Chair (Furniture)
+-- => Both conditions evaluated for each row
 
 -- Comparison operators
 SELECT name, price
 FROM products
 WHERE price >= 100 AND price <= 300;
--- => Returns Desk Chair (199.99) and Monitor (299.99)
+-- => >= means greater than or equal to
+-- => <= means less than or equal to
+-- => Checks: 100 <= price <= 300 (inclusive range)
+-- => Returns 2 rows: Desk Chair (199.99), Monitor (299.99)
+-- => Excludes: Laptop (999.99 too high), Mouse (29.99 too low), Coffee Mug (12.99 too low)
 
 -- BETWEEN for ranges
 SELECT name, price
 FROM products
 WHERE price BETWEEN 100 AND 300;
--- => Same as above (BETWEEN is inclusive)
+-- => BETWEEN is shorthand for >= AND <=
+-- => Equivalent to: price >= 100 AND price <= 300
+-- => BETWEEN is INCLUSIVE (includes 100 and 300)
+-- => Returns same 2 rows as above: Desk Chair (199.99), Monitor (299.99)
 
 -- IN for multiple values
 SELECT name, category
 FROM products
 WHERE category IN ('Electronics', 'Kitchen');
--- => Returns Laptop, Mouse, Monitor, Coffee Mug
+-- => IN checks if value matches ANY in list
+-- => Equivalent to: category = 'Electronics' OR category = 'Kitchen'
+-- => More readable than multiple OR conditions
+-- => Returns 4 rows: Laptop, Mouse, Monitor (Electronics), Coffee Mug (Kitchen)
+-- => Excludes: Desk Chair (Furniture not in list)
 
 -- NOT to negate conditions
 SELECT name, stock
 FROM products
 WHERE NOT stock = 0;
--- => Returns all products except Monitor
+-- => NOT inverts boolean result (true becomes false, false becomes true)
+-- => Equivalent to: stock != 0 or stock <> 0
+-- => Returns rows where stock is NOT zero
+-- => Returns 4 rows: Laptop (15), Mouse (50), Desk Chair (8), Coffee Mug (100)
+-- => Excludes: Monitor (stock = 0)
 ```
 
 **Key Takeaway**: WHERE filters rows before returning results - use comparison operators (`=`, `<`, `>`, `<=`, `>=`, `<>`), BETWEEN for ranges, IN for multiple values, and AND/OR to combine conditions. Always use IS NULL for NULL checks, not `= NULL`.
@@ -663,32 +813,52 @@ VALUES
 SELECT name, salary
 FROM employees
 ORDER BY salary;
--- => Bob (75000), Diana (80000), Alice (95000), Eve (95000), Charlie (105000)
+-- => ORDER BY salary sorts rows by salary column (low to high)
+-- => ASC is default (ascending order, can be omitted)
+-- => Compares: 75000 < 80000 < 95000 < 95000 < 105000
+-- => Alice and Eve both have 95000 (tie - order between them undefined)
+-- => Returns 5 rows: Bob (75000), Diana (80000), Alice (95000), Eve (95000), Charlie (105000)
 
 -- Sort by salary descending
 SELECT name, salary
 FROM employees
 ORDER BY salary DESC;
--- => Charlie (105000), Alice (95000), Eve (95000), Diana (80000), Bob (75000)
+-- => DESC reverses sort order (high to low)
+-- => Compares: 105000 > 95000 > 95000 > 80000 > 75000
+-- => Alice and Eve still tied at 95000 (order between them undefined)
+-- => Returns: Charlie (105000), Alice (95000), Eve (95000), Diana (80000), Bob (75000)
 
 -- Sort by multiple columns (department, then salary)
 SELECT name, department, salary
 FROM employees
 ORDER BY department, salary DESC;
--- => Engineering: Charlie (105000), Alice (95000), Eve (95000)
--- => Sales: Diana (80000), Bob (75000)
+-- => First sorts by department (alphabetical ascending: Engineering, Sales)
+-- => Within each department, sorts by salary descending
+-- => Engineering group (3 rows): Charlie (105000), Alice (95000), Eve (95000)
+-- => Sales group (2 rows): Diana (80000), Bob (75000)
+-- => Returns 5 rows ordered by department first, salary second
 
 -- Sort by date
 SELECT name, hire_date
 FROM employees
 ORDER BY hire_date;
--- => Diana (2018), Bob (2019), Alice (2020), Charlie (2021), Eve (2022)
+-- => Sorts by hire_date column (oldest to newest)
+-- => Compares dates: 2018-11-20 < 2019-06-01 < 2020-03-15 < 2021-01-10 < 2022-02-28
+-- => Returns chronological order: Diana (2018), Bob (2019), Alice (2020), Charlie (2021), Eve (2022)
 
 -- Sort by expression
 SELECT name, salary, salary * 1.10 AS salary_with_raise
 FROM employees
 ORDER BY salary * 1.10 DESC;
--- => Sorts by calculated raise amount
+-- => ORDER BY can use expressions (computed on-the-fly)
+-- => Calculates salary * 1.10 for each row
+-- => Charlie: 105000 * 1.10 = 115500
+-- => Alice: 95000 * 1.10 = 104500
+-- => Eve: 95000 * 1.10 = 104500
+-- => Diana: 80000 * 1.10 = 88000
+-- => Bob: 75000 * 1.10 = 82500
+-- => Sorts by computed values descending
+-- => Returns: Charlie (115500), Alice (104500), Eve (104500), Diana (88000), Bob (82500)
 ```
 
 **Key Takeaway**: ORDER BY sorts results - use ASC (default) for ascending, DESC for descending. Multiple columns create hierarchical sorting, with later columns as tiebreakers. You can sort by column names, positions, or expressions.
@@ -746,34 +916,50 @@ SELECT title, views
 FROM articles
 ORDER BY views DESC
 LIMIT 3;
--- => Performance Tuning (3200), Security Best Practices (2900), Indexing Strategies (2700)
+-- => First sorts all 8 rows by views descending
+-- => ORDER BY views DESC: 3200, 2900, 2700, 2300, 1800, 1600, 1500, 1200
+-- => LIMIT 3 stops after first 3 rows (doesn't scan remaining 5 rows if index used)
+-- => Returns: Performance Tuning (3200), Security Best Practices (2900), Indexing Strategies (2700)
 
 -- Pagination: Page 1 (first 3 articles)
 SELECT title, published_date
 FROM articles
 ORDER BY published_date
 LIMIT 3 OFFSET 0;
--- => Introduction to SQL, Advanced Queries, Database Design
+-- => Sorts 8 rows by published_date ascending (oldest first)
+-- => OFFSET 0 skips 0 rows (start at beginning)
+-- => LIMIT 3 returns first 3 rows
+-- => Returns rows 1-3: Introduction to SQL (2025-01-01), Advanced Queries (2025-01-05), Database Design (2025-01-10)
 
 -- Pagination: Page 2 (next 3 articles)
 SELECT title, published_date
 FROM articles
 ORDER BY published_date
 LIMIT 3 OFFSET 3;
--- => Performance Tuning, Indexing Strategies, Backup and Recovery
+-- => Sorts same 8 rows by published_date
+-- => OFFSET 3 skips first 3 rows (Introduction, Advanced, Database Design)
+-- => LIMIT 3 returns next 3 rows
+-- => Returns rows 4-6: Performance Tuning (2025-01-15), Indexing Strategies (2025-01-20), Backup and Recovery (2025-01-25)
 
 -- Pagination: Page 3 (final 2 articles)
 SELECT title, published_date
 FROM articles
 ORDER BY published_date
 LIMIT 3 OFFSET 6;
--- => Security Best Practices, Replication Setup
+-- => OFFSET 6 skips first 6 rows
+-- => LIMIT 3 requests 3 rows but only 2 remain (rows 7-8)
+-- => Returns rows 7-8: Security Best Practices (2025-02-01), Replication Setup (2025-02-05)
+-- => Partial page (2 rows instead of 3)
 
 -- Get oldest 5 articles
 SELECT title, published_date
 FROM articles
 ORDER BY published_date ASC
 LIMIT 5;
+-- => ORDER BY published_date ASC sorts oldest to newest (explicit ASC, same as default)
+-- => LIMIT 5 returns first 5 rows
+-- => No OFFSET means start at row 1
+-- => Returns rows 1-5: Introduction (2025-01-01), Advanced (2025-01-05), Database Design (2025-01-10), Performance (2025-01-15), Indexing (2025-01-20)
 ```
 
 **Key Takeaway**: LIMIT restricts result count, OFFSET skips rows. Together they enable pagination: page N of size S uses `LIMIT S OFFSET (N-1)*S`. Always combine with ORDER BY for predictable pagination - unordered results may return different rows on each query.
@@ -809,34 +995,56 @@ VALUES
 -- Count total sales
 SELECT COUNT(*) AS total_sales
 FROM sales;
--- => 5 (all rows, including NULLs)
+-- => COUNT(*) counts all rows (includes NULLs)
+-- => Scans all 5 rows in sales table
+-- => Returns single row with single column: 5
+-- => Output: total_sales = 5
 
 -- Count non-NULL values in specific column
 SELECT COUNT(product) AS product_count
 FROM sales;
--- => 5 (no NULLs in product column)
+-- => COUNT(column) counts non-NULL values only
+-- => Checks product column in each row (all 5 are non-NULL)
+-- => Returns: product_count = 5
+-- => If any product value was NULL, count would be less than 5
 
 -- Sum total quantity sold
 SELECT SUM(quantity) AS total_quantity
 FROM sales;
--- => 51 (5 + 20 + 15 + 8 + 3)
+-- => SUM adds all values in quantity column
+-- => Calculation: 5 + 20 + 15 + 8 + 3
+-- => Returns single row: total_quantity = 51
+-- => SUM ignores NULL values (doesn't treat them as 0)
 
 -- Calculate average price
 SELECT AVG(price) AS avg_price
 FROM sales;
--- => 481.79 (average of all prices)
+-- => AVG computes arithmetic mean of price column
+-- => Calculation: (999.99 + 29.99 + 79.99 + 299.99 + 999.99) / 5
+-- => Returns: avg_price = 481.79
+-- => AVG ignores NULL values (doesn't count them in divisor)
 
 -- Find minimum and maximum prices
 SELECT
     MIN(price) AS lowest_price,
     MAX(price) AS highest_price
 FROM sales;
--- => 29.99 (Mouse), 999.99 (Laptop)
+-- => MIN finds smallest value in price column (29.99 for Mouse)
+-- => MAX finds largest value in price column (999.99 for Laptop)
+-- => Single scan through all 5 rows
+-- => Returns single row with two columns: lowest_price=29.99, highest_price=999.99
 
 -- Calculate total revenue
 SELECT SUM(quantity * price) AS total_revenue
 FROM sales;
--- => 9,598.60 (sum of quantity * price for each row)
+-- => Calculates quantity * price for EACH row first
+-- => Row 1: 5 * 999.99 = 4,999.95
+-- => Row 2: 20 * 29.99 = 599.80
+-- => Row 3: 15 * 79.99 = 1,199.85
+-- => Row 4: 8 * 299.99 = 2,399.92
+-- => Row 5: 3 * 999.99 = 2,999.97
+-- => Then SUM: 4,999.95 + 599.80 + 1,199.85 + 2,399.92 + 2,999.97 = 12,199.49
+-- => Returns: total_revenue = 12,199.49
 
 -- Multiple aggregates in one query
 SELECT
@@ -846,6 +1054,13 @@ SELECT
     MIN(sale_date) AS first_sale,
     MAX(sale_date) AS last_sale
 FROM sales;
+-- => Single table scan computes all 5 aggregates (efficient!)
+-- => COUNT(*): 5 (total rows)
+-- => SUM(quantity): 51 (total items sold)
+-- => AVG(price): 481.79 (average price)
+-- => MIN(sale_date): '2025-12-20' (earliest sale)
+-- => MAX(sale_date): '2025-12-24' (latest sale)
+-- => Returns single row with 5 columns
 ```
 
 **Key Takeaway**: Aggregate functions reduce multiple rows to single values - use COUNT for row counts, SUM for totals, AVG for averages, MIN/MAX for extremes. Aggregates ignore NULL except COUNT(\*) which counts all rows.
@@ -912,14 +1127,24 @@ VALUES
 SELECT customer, COUNT(*) AS num_orders
 FROM orders
 GROUP BY customer;
--- => Alice: 3, Bob: 2, Charlie: 1
+-- => GROUP BY splits table into groups by customer name
+-- => Alice group: 3 rows (orders 1, 3, 6)
+-- => Bob group: 2 rows (orders 2, 5)
+-- => Charlie group: 1 row (order 4)
+-- => COUNT(*) applied to each group separately
+-- => Returns 3 rows: Alice (3), Bob (2), Charlie (1)
 
 -- Total spending per customer
 SELECT customer, SUM(total_price) AS total_spent
 FROM orders
 GROUP BY customer
 ORDER BY total_spent DESC;
--- => Charlie: 1999.98, Alice: 1169.95, Bob: 359.97
+-- => GROUP BY customer creates 3 groups
+-- => SUM(total_price) for Alice: 999.99 + 79.99 + 89.97 = 1169.95
+-- => SUM(total_price) for Bob: 59.98 + 299.99 = 359.97
+-- => SUM(total_price) for Charlie: 1999.98
+-- => ORDER BY sorts results by total_spent descending
+-- => Returns: Charlie (1999.98), Alice (1169.95), Bob (359.97)
 
 -- Count and total per product
 SELECT
@@ -930,26 +1155,42 @@ SELECT
 FROM orders
 GROUP BY product
 ORDER BY total_revenue DESC;
--- => Laptop: 3 units, 2999.97 revenue
--- => Monitor: 1 unit, 299.99 revenue
--- => Mouse: 5 units, 149.95 revenue
--- => Keyboard: 1 unit, 79.99 revenue
+-- => GROUP BY product creates 4 groups (Laptop, Mouse, Keyboard, Monitor)
+-- => Laptop group: 2 rows (Alice, Charlie)
+-- => COUNT(*): 2 times, SUM(quantity): 1+2=3, SUM(total_price): 999.99+1999.98=2999.97
+-- => Monitor group: 1 row (Bob)
+-- => COUNT(*): 1 time, SUM(quantity): 1, SUM(total_price): 299.99
+-- => Mouse group: 2 rows (Bob, Alice)
+-- => COUNT(*): 2 times, SUM(quantity): 2+3=5, SUM(total_price): 59.98+89.97=149.95
+-- => Keyboard group: 1 row (Alice)
+-- => COUNT(*): 1 time, SUM(quantity): 1, SUM(total_price): 79.99
+-- => ORDER BY revenue descending: Laptop (2999.97), Monitor (299.99), Mouse (149.95), Keyboard (79.99)
 
 -- HAVING filters groups (not individual rows)
 SELECT customer, SUM(total_price) AS total_spent
 FROM orders
 GROUP BY customer
 HAVING SUM(total_price) > 500;
--- => Only customers who spent more than 500
--- => Alice: 1169.95, Charlie: 1999.98
+-- => First, GROUP BY creates 3 customer groups
+-- => Alice total: 1169.95 (> 500, included)
+-- => Bob total: 359.97 (< 500, excluded by HAVING)
+-- => Charlie total: 1999.98 (> 500, included)
+-- => HAVING clause filters groups AFTER aggregation
+-- => Returns 2 rows: Alice (1169.95), Charlie (1999.98)
+-- => Bob excluded because total < 500
 
 -- WHERE filters rows BEFORE grouping
 SELECT customer, COUNT(*) AS num_orders
 FROM orders
 WHERE product = 'Laptop'
 GROUP BY customer;
--- => Only counts Laptop orders
--- => Alice: 1, Charlie: 1
+-- => WHERE filters rows FIRST (before GROUP BY)
+-- => Filters to 2 rows: Alice's Laptop order, Charlie's Laptop order
+-- => Then GROUP BY customer creates 2 groups
+-- => Alice group: 1 Laptop order, COUNT(*) = 1
+-- => Charlie group: 1 Laptop order, COUNT(*) = 1
+-- => Returns 2 rows: Alice (1), Charlie (1)
+-- => Bob has no Laptop orders, so not in result
 ```
 
 **Key Takeaway**: GROUP BY organizes rows into groups, then aggregates each group independently. HAVING filters groups after aggregation, while WHERE filters individual rows before grouping. SELECT columns must be in GROUP BY or inside aggregate functions.
@@ -981,32 +1222,58 @@ CREATE TABLE employees (
 -- Valid insert
 INSERT INTO employees (email, age, salary, status)
 VALUES ('alice@example.com', 25, 75000, 'active');
--- => Success
+-- => PostgreSQL validates all constraints before inserting
+-- => email NOT NULL: 'alice@example.com' provided (✓ valid)
+-- => age CHECK (age >= 18): 25 >= 18 (✓ valid)
+-- => salary CHECK (salary > 0): 75000 > 0 (✓ valid)
+-- => status CHECK (status IN (...)): 'active' in allowed list (✓ valid)
+-- => hire_date defaults to CURRENT_DATE (e.g., '2026-01-02')
+-- => Row inserted successfully: id=1, email='alice@example.com', age=25, salary=75000, status='active', hire_date='2026-01-02'
 
 -- Invalid: NULL email (violates NOT NULL)
 INSERT INTO employees (age, salary, status)
 VALUES (30, 80000, 'active');
+-- => email column not specified in INSERT (defaults to NULL)
+-- => Constraint check: email NOT NULL violated
+-- => PostgreSQL rejects INSERT with error message
 -- => ERROR: null value in column "email" violates not-null constraint
+-- => No row inserted, table unchanged
 
 -- Invalid: age < 18 (violates CHECK)
 INSERT INTO employees (email, age, salary, status)
 VALUES ('bob@example.com', 16, 50000, 'active');
+-- => Constraint check: age CHECK (age >= 18)
+-- => Evaluates: 16 >= 18 → FALSE
+-- => PostgreSQL rejects INSERT
 -- => ERROR: new row violates check constraint "employees_age_check"
+-- => No row inserted
 
 -- Invalid: salary <= 0 (violates CHECK)
 INSERT INTO employees (email, age, salary, status)
 VALUES ('charlie@example.com', 28, -5000, 'active');
+-- => Constraint check: salary CHECK (salary > 0)
+-- => Evaluates: -5000 > 0 → FALSE
+-- => Negative salary not allowed
 -- => ERROR: new row violates check constraint "employees_salary_check"
+-- => No row inserted
 
 -- Invalid: status not in allowed values
 INSERT INTO employees (email, age, salary, status)
 VALUES ('diana@example.com', 32, 90000, 'retired');
+-- => Constraint check: status IN ('active', 'inactive', 'pending')
+-- => Evaluates: 'retired' IN ('active', 'inactive', 'pending') → FALSE
+-- => 'retired' not in allowed list
 -- => ERROR: new row violates check constraint "employees_status_check"
+-- => No row inserted
 
 -- Valid: use default hire_date
 INSERT INTO employees (email, age, salary, status)
 VALUES ('eve@example.com', 27, 70000, 'pending');
--- => Success, hire_date automatically set to CURRENT_DATE
+-- => hire_date column not specified (uses DEFAULT)
+-- => DEFAULT CURRENT_DATE evaluates to today's date
+-- => All constraints pass validation
+-- => Row inserted: id=2, email='eve@example.com', age=27, salary=70000, status='pending', hire_date=(today)
+-- => Success
 ```
 
 **Key Takeaway**: Constraints enforce data quality at the database level - NOT NULL prevents missing values, CHECK validates conditions, DEFAULT provides automatic values. Database constraints are more reliable than application-level validation because they're enforced regardless of which application writes data.
@@ -1350,8 +1617,14 @@ SELECT
     orders.total
 FROM customers
 INNER JOIN orders ON customers.id = orders.customer_id;
--- => Alice (150.00), Bob (200.00), Alice (300.00)
--- => Charlie excluded (no orders)
+-- => INNER JOIN combines rows from customers and orders tables
+-- => ON clause specifies join condition: customers.id = orders.customer_id
+-- => PostgreSQL matches each order to its customer
+-- => Order 1: customer_id=1 matches Alice (id=1), returns: Alice, 2025-12-20, 150.00
+-- => Order 2: customer_id=2 matches Bob (id=2), returns: Bob, 2025-12-21, 200.00
+-- => Order 3: customer_id=1 matches Alice (id=1), returns: Alice, 2025-12-22, 300.00
+-- => Charlie (id=3) excluded because no orders reference customer_id=3
+-- => Returns 3 rows (Alice appears twice because she has 2 orders)
 
 -- Table aliases for brevity
 SELECT
@@ -1360,7 +1633,12 @@ SELECT
     o.total
 FROM customers c
 INNER JOIN orders o ON c.id = o.customer_id;
--- => Same results, shorter syntax
+-- => 'c' is alias for customers table (shorter than full name)
+-- => 'o' is alias for orders table
+-- => c.name means customers.name, o.total means orders.total
+-- => Same join logic as above (customers.id = orders.customer_id)
+-- => Returns identical results: 3 rows with Alice (2 times), Bob (1 time)
+-- => Aliases improve readability for complex queries with multiple joins
 
 -- Join with WHERE for additional filtering
 SELECT
@@ -1369,8 +1647,13 @@ SELECT
 FROM customers c
 INNER JOIN orders o ON c.id = o.customer_id
 WHERE o.total > 150;
--- => Only orders over 150
--- => Bob (200.00), Alice (300.00)
+-- => First performs INNER JOIN (creates 3 matched rows)
+-- => Then WHERE filters joined results
+-- => Row 1 (Alice, 150.00): excluded (150.00 not > 150)
+-- => Row 2 (Bob, 200.00): included (200.00 > 150)
+-- => Row 3 (Alice, 300.00): included (300.00 > 150)
+-- => Returns 2 rows: Bob (200.00), Alice (300.00)
+-- => WHERE applies AFTER join completes
 
 -- Multiple joins
 CREATE TABLE products (
@@ -1399,7 +1682,17 @@ FROM customers c
 INNER JOIN orders o ON c.id = o.customer_id
 INNER JOIN order_items oi ON o.id = oi.order_id
 INNER JOIN products p ON oi.product_id = p.id;
--- => Shows customer, order, and product details
+-- => First join: customers c → orders o (matches customer to their orders)
+-- => Second join: orders o → order_items oi (matches orders to their items)
+-- => Third join: order_items oi → products p (matches items to product details)
+-- => Chain of 4 tables linked together
+-- => Row 1: Alice → order 1 → item (product_id=1, qty=1) → Laptop
+-- =>       Returns: customer='Alice', order_date='2025-12-20', product='Laptop', quantity=1
+-- => Row 2: Alice → order 1 → item (product_id=2, qty=2) → Mouse
+-- =>       Returns: customer='Alice', order_date='2025-12-20', product='Mouse', quantity=2
+-- => Row 3: Bob → order 2 → item (product_id=3, qty=1) → Keyboard
+-- =>       Returns: customer='Bob', order_date='2025-12-21', product='Keyboard', quantity=1
+-- => Total: 3 rows showing complete order details from all 4 tables
 ```
 
 **Key Takeaway**: INNER JOIN returns only matching rows from both tables - use ON clause to specify join condition. Table aliases (c, o, p) improve readability. Multiple joins chain together to navigate complex relationships.
@@ -1443,15 +1736,32 @@ SELECT
     o.total
 FROM customers c
 LEFT JOIN orders o ON c.id = o.customer_id;
--- => Alice (150.00), Alice (300.00), Bob (NULL), Charlie (NULL), Diana (NULL)
--- => All customers returned, NULLs where no orders
+-- => LEFT JOIN returns ALL rows from left table (customers)
+-- => Matches with orders WHERE possible, NULL where no match
+-- => Alice (id=1): has 2 orders (customer_id=1), returns 2 rows with order data
+-- =>   Row 1: Alice, 2025-12-20, 150.00
+-- =>   Row 2: Alice, 2025-12-22, 300.00
+-- => Bob (id=2): no orders, returns 1 row with NULLs
+-- =>   Row 3: Bob, NULL, NULL
+-- => Charlie (id=3): no orders, returns 1 row with NULLs
+-- =>   Row 4: Charlie, NULL, NULL
+-- => Diana (id=4): no orders, returns 1 row with NULLs
+-- =>   Row 5: Diana, NULL, NULL
+-- => Total: 5 rows (all 4 customers included, even those without orders)
 
 -- Find customers with NO orders
 SELECT c.name
 FROM customers c
 LEFT JOIN orders o ON c.id = o.customer_id
 WHERE o.id IS NULL;
--- => Bob, Charlie, Diana (customers without orders)
+-- => First performs LEFT JOIN (creates 5 rows as above)
+-- => WHERE filters for rows where o.id IS NULL (order doesn't exist)
+-- => Alice rows: o.id NOT NULL (has order IDs 1 and 3), excluded
+-- => Bob row: o.id IS NULL (no matching order), included
+-- => Charlie row: o.id IS NULL, included
+-- => Diana row: o.id IS NULL, included
+-- => Returns 3 rows: Bob, Charlie, Diana
+-- => Anti-join pattern (finds left rows without right matches)
 
 -- Count orders per customer (including zero)
 SELECT
@@ -1462,10 +1772,15 @@ FROM customers c
 LEFT JOIN orders o ON c.id = o.customer_id
 GROUP BY c.id, c.name
 ORDER BY total_spent DESC;
--- => Alice: 2 orders, 450.00
--- => Bob: 0 orders, 0.00
--- => Charlie: 0 orders, 0.00
--- => Diana: 0 orders, 0.00
+-- => LEFT JOIN creates 5 rows (2 for Alice, 1 each for Bob/Charlie/Diana)
+-- => GROUP BY c.id, c.name creates 4 groups (one per customer)
+-- => Alice group (2 rows): COUNT(o.id)=2, SUM(o.total)=450.00
+-- => Bob group (1 row with NULLs): COUNT(o.id)=0 (COUNT ignores NULLs), SUM(o.total)=NULL
+-- => Charlie group (1 row with NULLs): COUNT(o.id)=0, SUM(o.total)=NULL
+-- => Diana group (1 row with NULLs): COUNT(o.id)=0, SUM(o.total)=NULL
+-- => COALESCE(SUM(o.total), 0) converts NULL to 0 for customers without orders
+-- => ORDER BY total_spent DESC sorts by spending
+-- => Returns 4 rows: Alice (2, 450.00), Bob (0, 0.00), Charlie (0, 0.00), Diana (0, 0.00)
 ```
 
 **Key Takeaway**: LEFT JOIN includes all left table rows, with NULLs for non-matching right table columns. Use `WHERE right_table.id IS NULL` to find left rows without matches. COUNT(right_table.column) counts only non-NULL values.
@@ -1695,8 +2010,14 @@ SELECT
     first_name || ' ' || last_name AS full_name,
     CONCAT(first_name, ' ', last_name) AS full_name_alt
 FROM users;
--- => 'Alice Johnson', 'Bob Smith', 'Charlie Brown'
--- => CONCAT handles NULLs better than || operator
+-- => || operator concatenates strings (PostgreSQL standard)
+-- => first_name || ' ' || last_name: joins 3 strings with space between
+-- => Alice || ' ' || Johnson = 'Alice Johnson'
+-- => Bob || ' ' || Smith = 'Bob Smith'
+-- => Charlie || ' ' || Brown = 'Charlie Brown'
+-- => CONCAT() function: same result but handles NULL differently
+-- => || with NULL: NULL || 'text' = NULL (NULL propagates)
+-- => CONCAT with NULL: CONCAT(NULL, 'text') = 'text' (NULL treated as empty string)
 
 -- Extract substring
 SELECT
@@ -1704,7 +2025,13 @@ SELECT
     SUBSTRING(email FROM 1 FOR POSITION('@' IN email) - 1) AS username,
     SUBSTRING(email FROM POSITION('@' IN email) + 1) AS domain
 FROM users;
--- => alice@example.com: username='alice', domain='example.com'
+-- => POSITION('@' IN email) finds @ character position (1-indexed)
+-- => alice@example.com: @ is at position 6
+-- => SUBSTRING(email FROM 1 FOR 5): extracts chars 1-5 = 'alice'
+-- => SUBSTRING(email FROM 7): extracts from position 7 onward = 'example.com'
+-- => Returns: username='alice', domain='example.com'
+-- => BOB@EXAMPLE.COM: @ at position 4
+-- =>   username='BOB', domain='EXAMPLE.COM'
 
 -- String length
 SELECT
@@ -1712,8 +2039,12 @@ SELECT
     LENGTH(first_name) AS name_length,
     LENGTH(phone) AS phone_length
 FROM users;
--- => Alice: 5, Bob: 3, Charlie: 7
--- => phone_length NULL for Charlie
+-- => LENGTH() returns character count (not bytes)
+-- => Alice: LENGTH('Alice') = 5
+-- => Bob: LENGTH('Bob') = 3
+-- => Charlie: LENGTH('Charlie') = 7
+-- => LENGTH(NULL) = NULL (phone for Charlie)
+-- => Unicode characters count as 1 (LENGTH('café') = 4, not 5 bytes)
 
 -- Case conversion
 SELECT
@@ -1721,21 +2052,34 @@ SELECT
     LOWER(email) AS lowercase,
     UPPER(email) AS uppercase
 FROM users;
--- => Normalizes email casing for comparison
+-- => LOWER() converts all characters to lowercase
+-- => UPPER() converts all characters to uppercase
+-- => alice@example.com: LOWER unchanged, UPPER='ALICE@EXAMPLE.COM'
+-- => BOB@EXAMPLE.COM: LOWER='bob@example.com', UPPER unchanged
+-- => Useful for case-insensitive comparisons (WHERE LOWER(email) = 'alice@example.com')
 
 -- Trim whitespace
 SELECT
     TRIM('  hello  ') AS trimmed,
     LTRIM('  hello  ') AS left_trimmed,
     RTRIM('  hello  ') AS right_trimmed;
--- => 'hello', 'hello  ', '  hello'
+-- => TRIM() removes leading AND trailing whitespace
+-- => '  hello  ' → 'hello' (2 spaces removed from both sides)
+-- => LTRIM() removes only left (leading) whitespace
+-- => '  hello  ' → 'hello  ' (left spaces removed, right spaces remain)
+-- => RTRIM() removes only right (trailing) whitespace
+-- => '  hello  ' → '  hello' (right spaces removed, left spaces remain)
 
 -- Replace substring
 SELECT
     phone,
     REPLACE(phone, '-', '.') AS phone_dots
 FROM users;
--- => '555-1234' becomes '555.1234'
+-- => REPLACE(string, old, new) replaces ALL occurrences
+-- => '555-1234': REPLACE('-', '.') → '555.1234'
+-- => Replaces EVERY dash with period (not just first occurrence)
+-- => '555-5678': → '555.5678'
+-- => NULL phone (Charlie): REPLACE(NULL, '-', '.') = NULL
 ```
 
 **Key Takeaway**: Use `||` or CONCAT for concatenation, SUBSTRING for extraction, LENGTH for size, UPPER/LOWER for case normalization. CONCAT handles NULL values gracefully (treats as empty string), while `||` propagates NULL.
@@ -1770,7 +2114,11 @@ SELECT
     NOW() AS current_timestamp,
     CURRENT_DATE AS today,
     CURRENT_TIME AS current_time;
--- => Returns current timestamp, date, and time
+-- => NOW() returns current timestamp with timezone (e.g., '2026-01-02 15:30:45.123456+07:00')
+-- => CURRENT_DATE returns today's date only (e.g., '2026-01-02')
+-- => CURRENT_TIME returns current time only (e.g., '15:30:45.123456+07:00')
+-- => All values computed at query execution time
+-- => Returns single row with 3 columns
 
 -- Extract date parts
 SELECT
@@ -1781,6 +2129,13 @@ SELECT
     EXTRACT(DAY FROM event_date) AS day,
     DATE_PART('dow', event_date) AS day_of_week  -- => 0=Sunday, 6=Saturday
 FROM events;
+-- => EXTRACT pulls specific component from date
+-- => Conference '2025-12-29': YEAR=2025, MONTH=12, DAY=29
+-- => Webinar '2026-01-15': YEAR=2026, MONTH=1, DAY=15
+-- => Workshop '2024-11-20': YEAR=2024, MONTH=11, DAY=20
+-- => DATE_PART('dow', ...) returns day of week as number
+-- => 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
+-- => Returns 3 rows with extracted components
 
 -- Calculate age/difference
 SELECT
@@ -1789,7 +2144,13 @@ SELECT
     AGE(event_date, CURRENT_DATE) AS time_until_event,
     CURRENT_DATE - event_date AS days_difference
 FROM events;
--- => Positive for future events, negative for past
+-- => AGE(date1, date2) returns interval between two dates
+-- => AGE('2026-01-15', '2026-01-02') = '13 days' (Webinar in future)
+-- => AGE('2024-11-20', '2026-01-02') = '-1 year -1 month -13 days' (Workshop in past, negative)
+-- => CURRENT_DATE - event_date returns integer days difference
+-- => Webinar: '2026-01-15' - '2026-01-02' = 13 days
+-- => Workshop: '2024-11-20' - '2026-01-02' = -408 days (negative for past)
+-- => Positive values = future events, negative values = past events
 
 -- Date arithmetic with INTERVAL
 SELECT
@@ -1798,11 +2159,24 @@ SELECT
     event_date - INTERVAL '1 month' AS one_month_before,
     event_date + INTERVAL '2 years 3 months' AS complex_interval
 FROM events;
+-- => INTERVAL enables date/time arithmetic
+-- => Conference '2025-12-29' + 7 days = '2026-01-05'
+-- => Conference '2025-12-29' - 1 month = '2025-11-29'
+-- => Conference '2025-12-29' + 2 years 3 months = '2028-03-29'
+-- => Complex intervals support: years, months, weeks, days, hours, minutes, seconds
+-- => Returns 3 rows with calculated dates
 
 -- Find events in next 30 days
 SELECT title, event_date
 FROM events
 WHERE event_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days';
+-- => CURRENT_DATE = '2026-01-02' (execution time)
+-- => Upper bound: '2026-01-02' + 30 days = '2026-02-01'
+-- => BETWEEN checks: '2026-01-02' <= event_date <= '2026-02-01'
+-- => Conference '2025-12-29': < '2026-01-02' (past, excluded)
+-- => Webinar '2026-01-15': within range (included)
+-- => Workshop '2024-11-20': < '2026-01-02' (past, excluded)
+-- => Returns 1 row: Webinar
 
 -- Format dates
 SELECT
@@ -1811,7 +2185,13 @@ SELECT
     TO_CHAR(event_date, 'Month DD, YYYY') AS readable_format,
     TO_CHAR(event_date, 'Day, Mon DD') AS short_format
 FROM events;
--- => 'December 29, 2025', 'Mon, Dec 29'
+-- => TO_CHAR converts date to formatted string
+-- => Conference '2025-12-29':
+-- =>   ISO: '2025-12-29'
+-- =>   Readable: 'December  29, 2025' (Month padded with spaces)
+-- =>   Short: 'Monday   , Dec 29' (Day padded with spaces)
+-- => Format patterns: YYYY=year, MM=month number, DD=day, Month=month name, Day=day name, Mon=abbreviated month
+-- => Returns 3 rows with various formatted representations
 ```
 
 **Key Takeaway**: Use NOW() or CURRENT_DATE for current time, EXTRACT/DATE_PART to get components, AGE to calculate differences, and INTERVAL for date arithmetic. TO_CHAR formats dates for display.

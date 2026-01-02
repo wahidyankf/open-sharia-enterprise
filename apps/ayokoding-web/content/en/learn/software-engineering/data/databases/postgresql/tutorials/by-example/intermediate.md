@@ -1,6 +1,6 @@
 ---
 title: "Intermediate"
-date: 2026-01-01T22:32:13+07:00
+date: 2026-01-02T07:21:44+07:00
 draft: false
 weight: 10000002
 description: "Examples 31-60: PostgreSQL production patterns covering advanced queries, indexes, JSON, transactions, views, and advanced data manipulation (40-75% coverage)"
@@ -61,7 +61,17 @@ WITH high_value_orders AS (
 SELECT customer, SUM(total) AS total_high_value
 FROM high_value_orders
 GROUP BY customer;
--- => Alice: 2300.00, Charlie: 3000.00
+-- => WITH clause defines CTE named 'high_value_orders' (temporary result set)
+-- => CTE query filters orders: total >= 500
+-- =>   Alice: 1500.00 and 800.00 (both >= 500)
+-- =>   Bob: 200.00 and 150.00 (both < 500, excluded)
+-- =>   Charlie: 3000.00 (>= 500)
+-- => CTE materializes 3 rows (Alice 2 orders, Charlie 1 order)
+-- => Main query uses CTE like a table: GROUP BY customer, SUM(total)
+-- => Alice total: 1500.00 + 800.00 = 2300.00
+-- => Charlie total: 3000.00
+-- => Returns 2 rows: Alice (2300.00), Charlie (3000.00)
+-- => Bob excluded (no high-value orders)
 
 -- Multiple CTEs
 WITH
@@ -88,7 +98,19 @@ SELECT
     END AS customer_tier
 FROM order_stats os
 LEFT JOIN high_spenders hs ON os.customer = hs.customer;
--- => Shows all customers with VIP tier for high spenders
+-- => First CTE 'order_stats': aggregates all orders per customer
+-- =>   Alice: COUNT=2, SUM=2300.00
+-- =>   Bob: COUNT=2, SUM=350.00
+-- =>   Charlie: COUNT=1, SUM=3000.00
+-- => Second CTE 'high_spenders': references first CTE, filters total_spent > 1000
+-- =>   Alice: 2300.00 > 1000 (included)
+-- =>   Bob: 350.00 < 1000 (excluded)
+-- =>   Charlie: 3000.00 > 1000 (included)
+-- => Main query: LEFT JOIN order_stats with high_spenders
+-- =>   Alice joins with high_spenders → VIP tier
+-- =>   Bob doesn't join (NULL in hs) → Regular tier
+-- =>   Charlie joins with high_spenders → VIP tier
+-- => Returns 3 rows with customer_tier classification
 
 -- CTE with aggregation and filtering
 WITH monthly_revenue AS (
@@ -104,7 +126,15 @@ SELECT
     LAG(revenue) OVER (ORDER BY month) AS prev_month_revenue,
     revenue - LAG(revenue) OVER (ORDER BY month) AS revenue_change
 FROM monthly_revenue;
--- => Shows month-over-month revenue changes
+-- => CTE 'monthly_revenue': groups orders by month
+-- => DATE_TRUNC('month', '2025-12-20') = '2025-12-01' (truncates to first of month)
+-- => Assuming orders in Dec 2025: SUM(total) for all December orders
+-- => Main query uses window function LAG to access previous row
+-- => LAG(revenue) OVER (ORDER BY month): gets revenue from previous month
+-- => First month: LAG returns NULL (no previous month)
+-- => Subsequent months: LAG returns previous month's revenue
+-- => revenue_change = current_month - previous_month
+-- => Shows month-over-month growth/decline
 ```
 
 **Key Takeaway**: CTEs improve readability by naming complex subqueries - use them to break down complex queries into logical steps. Multiple CTEs can reference earlier CTEs, creating a pipeline of transformations.
@@ -1677,7 +1707,7 @@ SELECT balance FROM accounts WHERE name = 'Alice';
 -- => 800.00 (unchanged due to constraint violation)
 
 -- Isolation: concurrent transactions don't interfere
--- See Example 47 for isolation level demonstrations
+-- PostgreSQL supports READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE isolation levels
 
 -- Durability: committed data survives crashes
 BEGIN;

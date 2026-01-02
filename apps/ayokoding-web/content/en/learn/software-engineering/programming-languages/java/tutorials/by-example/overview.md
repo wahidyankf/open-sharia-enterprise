@@ -3,11 +3,11 @@ title: "Overview"
 date: 2026-01-01T21:53:25+07:00
 draft: false
 weight: 10000000
-description: "Learn Java through 85 annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
+description: "Learn Java through 75 annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
 tags: ["java", "tutorial", "by-example", "examples", "code-first", "jvm", "oop"]
 ---
 
-**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 85 annotated code examples organized by complexity level.
+**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 75 annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -27,8 +27,8 @@ Unlike narrative tutorials that build understanding through explanation and stor
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Beginner<br/>Examples 1-30<br/>OOP Basics"] --> B["Intermediate<br/>Examples 31-60<br/>Practical Patterns"]
-    B --> C["Advanced<br/>Examples 61-85<br/>Complex Features"]
+    A["Beginner<br/>Examples 1-30<br/>OOP Basics"] --> B["Intermediate<br/>Examples 31-50<br/>Practical Patterns"]
+    B --> C["Advanced<br/>Examples 51-75<br/>Complex Features"]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#fff

@@ -18,20 +18,20 @@ RestTemplate provides synchronous REST client capabilities with automatic JSON/X
 ```java
 @Configuration
 public class RestTemplateConfig {
-    @Bean // => Configure RestTemplate bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) { // => Inject autoconfigured builder
-        return builder // => Customize RestTemplate
-            .setConnectTimeout(Duration.ofSeconds(5))  // => Max time to establish TCP connection
-            .setReadTimeout(Duration.ofSeconds(10))    // => Max time to read response after connection
-            .defaultHeader("User-Agent", "SpringBootApp/1.0") // => Add User-Agent header to all requests
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder
+            .setConnectTimeout(Duration.ofSeconds(5))  // => Connection timeout
+            .setReadTimeout(Duration.ofSeconds(10))    // => Read timeout
+            .defaultHeader("User-Agent", "SpringBootApp/1.0")
             .errorHandler(new DefaultResponseErrorHandler() {
-                @Override // => Override default error handling
-                public void handleError(ClientHttpResponse response) throws IOException { // => Custom HTTP error handler
-                    // => Custom error handling (replace default behavior)
-                    if (response.getStatusCode().is5xxServerError()) { // => Check if status code is 500-599
-                        throw new ServiceUnavailableException("Backend service down"); // => Throw custom exception for 5xx errors
+                @Override
+                public void handleError(ClientHttpResponse response) throws IOException {
+                    // => Custom error handling
+                    if (response.getStatusCode().is5xxServerError()) {
+                        throw new ServiceUnavailableException("Backend service down");
                     }
-                    super.handleError(response); // => Delegate to default handler for non-5xx errors
+                    super.handleError(response);
                 }
             })
             .build();
@@ -44,25 +44,25 @@ public class UserApiClient {
     private final RestTemplate restTemplate;
     private static final String BASE_URL = "https://jsonplaceholder.typicode.com";
 
-    public User getUser(Long id) { // => Fetch user by ID
-        return restTemplate.getForObject(BASE_URL + "/users/{id}", User.class, id); // => GET request, deserialize JSON to User, blocks until response
+    public User getUser(Long id) {
+        return restTemplate.getForObject(BASE_URL + "/users/{id}", User.class, id);
     }
 
-    public User createUser(User user) { // => Create new user
-        return restTemplate.postForObject(BASE_URL + "/users", user, User.class); // => POST request with JSON body, return created user with ID
+    public User createUser(User user) {
+        return restTemplate.postForObject(BASE_URL + "/users", user, User.class);
     }
 
-    public void updateUser(Long id, User user) { // => Update existing user
-        restTemplate.put(BASE_URL + "/users/{id}", user, id); // => PUT request, void return (no response body expected)
+    public void updateUser(Long id, User user) {
+        restTemplate.put(BASE_URL + "/users/{id}", user, id);
     }
 
-    public void deleteUser(Long id) { // => Delete user
-        restTemplate.delete(BASE_URL + "/users/{id}", id); // => DELETE request, void return
+    public void deleteUser(Long id) {
+        restTemplate.delete(BASE_URL + "/users/{id}", id);
     }
 
-    public List<User> getAllUsers() { // => Fetch all users
-        User[] users = restTemplate.getForObject(BASE_URL + "/users", User[].class); // => GET request, deserialize JSON array to User[]
-        return users != null ? Arrays.asList(users) : Collections.emptyList(); // => Convert array to list, handle null response
+    public List<User> getAllUsers() {
+        User[] users = restTemplate.getForObject(BASE_URL + "/users", User[].class);
+        return users != null ? Arrays.asList(users) : Collections.emptyList();
     }
 }
 
@@ -80,12 +80,12 @@ WebClient provides reactive, non-blocking HTTP communication with backpressure s
 ```java
 @Configuration
 public class WebClientConfig {
-    @Bean // => Configure WebClient bean
-    public WebClient webClient(WebClient.Builder builder) { // => Inject autoconfigured builder
-        return builder // => Customize WebClient
-            .baseUrl("https://jsonplaceholder.typicode.com") // => Base URL for all requests
-            .defaultHeader(HttpHeaders.USER_AGENT, "SpringBoot-WebClient/1.0") // => Add User-Agent header
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE) // => Default Content-Type: application/json
+    @Bean
+    public WebClient webClient(WebClient.Builder builder) {
+        return builder
+            .baseUrl("https://jsonplaceholder.typicode.com")
+            .defaultHeader(HttpHeaders.USER_AGENT, "SpringBoot-WebClient/1.0")
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
     }
 }
@@ -95,31 +95,31 @@ public class WebClientConfig {
 public class ReactiveUserClient {
     private final WebClient webClient;
 
-    public Mono<User> getUser(Long id) { // => Fetch user by ID (reactive)
-        return webClient.get() // => Create GET request
-            .uri("/users/{id}", id) // => Build URI with path variable
-            .retrieve() // => Execute request
-            .bodyToMono(User.class) // => Deserialize response to Mono<User> (single value)
-            .timeout(Duration.ofSeconds(5));  // => Fail if response not received within 5 seconds
+    public Mono<User> getUser(Long id) {
+        return webClient.get()
+            .uri("/users/{id}", id)
+            .retrieve()
+            .bodyToMono(User.class)
+            .timeout(Duration.ofSeconds(5));  // => Request timeout
     }
 
-    public Flux<User> getAllUsers() { // => Fetch all users (reactive stream)
-        return webClient.get() // => Create GET request
-            .uri("/users") // => URI without parameters
-            .retrieve() // => Execute request
-            .bodyToFlux(User.class) // => Deserialize response to Flux<User> (stream of values)
-            .onErrorResume(e -> { // => Fallback on error (circuit breaker pattern)
-                // => Return empty flux on error instead of failing
-                return Flux.empty(); // => Empty stream (no users)
+    public Flux<User> getAllUsers() {
+        return webClient.get()
+            .uri("/users")
+            .retrieve()
+            .bodyToFlux(User.class)
+            .onErrorResume(e -> {
+                // => Fallback on error
+                return Flux.empty();
             });
     }
 
-    public Mono<User> createUser(User user) { // => Create user (reactive)
-        return webClient.post() // => Create POST request
-            .uri("/users") // => POST endpoint
-            .bodyValue(user) // => Serialize user to JSON body
-            .retrieve() // => Execute request
-            .bodyToMono(User.class); // => Deserialize created user from response
+    public Mono<User> createUser(User user) {
+        return webClient.post()
+            .uri("/users")
+            .bodyValue(user)
+            .retrieve()
+            .bodyToMono(User.class);
     }
 }
 ```
@@ -153,26 +153,26 @@ Feign provides declarative REST client interfaces with automatic request/respons
 // pom.xml: spring-cloud-starter-openfeign
 
 @SpringBootApplication
-@EnableFeignClients // => Enable component scanning for Feign clients
-public class Application { // => Main application class
+@EnableFeignClients
+public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }
 
-@FeignClient(name = "user-service", url = "https://jsonplaceholder.typicode.com") // => Declarative HTTP client (name for load balancing, url for direct connection)
-public interface UserFeignClient { // => Interface methods map to HTTP endpoints
-    @GetMapping("/users/{id}") // => GET /users/{id} endpoint
-    User getUser(@PathVariable Long id); // => Path variable injected into URL, returns deserialized User
+@FeignClient(name = "user-service", url = "https://jsonplaceholder.typicode.com")
+public interface UserFeignClient {
+    @GetMapping("/users/{id}")
+    User getUser(@PathVariable Long id);
 
-    @GetMapping("/users") // => GET /users endpoint
-    List<User> getAllUsers(); // => Returns list of users (JSON array deserialized)
+    @GetMapping("/users")
+    List<User> getAllUsers();
 
-    @PostMapping("/users") // => POST /users endpoint
-    User createUser(@RequestBody User user); // => Request body serialized to JSON, response deserialized to User
+    @PostMapping("/users")
+    User createUser(@RequestBody User user);
 
-    @DeleteMapping("/users/{id}") // => DELETE /users/{id} endpoint
-    void deleteUser(@PathVariable Long id); // => No response body expected
+    @DeleteMapping("/users/{id}")
+    void deleteUser(@PathVariable Long id);
 }
 
 @Service
@@ -180,8 +180,8 @@ public interface UserFeignClient { // => Interface methods map to HTTP endpoints
 public class UserService {
     private final UserFeignClient userClient;
 
-    public User fetchUser(Long id) { // => Fetch user via Feign client
-        return userClient.getUser(id);  // => Feign generates HTTP call implementation (blocks until response)
+    public User fetchUser(Long id) {
+        return userClient.getUser(id);  // => Declarative call
     }
 }
 
@@ -206,8 +206,8 @@ Service discovery allows microservices to find and communicate with each other w
 // pom.xml: spring-cloud-starter-netflix-eureka-client
 
 @SpringBootApplication
-@EnableDiscoveryClient // => Enable Eureka client registration
-public class Application { // => Main application class
+@EnableDiscoveryClient
+public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -219,23 +219,23 @@ public class OrderController {
     private final DiscoveryClient discoveryClient;
     private final RestTemplate restTemplate;
 
-    public OrderController(DiscoveryClient discoveryClient, // => Inject discovery client for querying service registry
-                          @LoadBalanced RestTemplate restTemplate) { // => Load-balanced RestTemplate (resolves service names to instances)
+    public OrderController(DiscoveryClient discoveryClient,
+                          @LoadBalanced RestTemplate restTemplate) {
         this.discoveryClient = discoveryClient;
         this.restTemplate = restTemplate;
     }
 
-    @GetMapping("/services") // => Endpoint: GET /api/services
-    public List<String> getServices() { // => Query Eureka registry
-        return discoveryClient.getServices();  // => Returns service names (e.g., ["order-service", "user-service", "payment-service"])
+    @GetMapping("/services")
+    public List<String> getServices() {
+        return discoveryClient.getServices();  // => List all registered services
     }
 
-    @GetMapping("/order/{id}") // => Endpoint: GET /api/order/{id}
-    public Order getOrder(@PathVariable Long id) { // => Fetch order with user data
-        // => Call user-service by service name (Eureka resolves to actual instance IP:port)
-        User user = restTemplate.getForObject( // => Load-balanced HTTP call
-            "http://user-service/api/users/{id}", User.class, id); // => "user-service" resolved by Eureka (round-robin load balancing)
-        return new Order(id, user); // => Compose order response with user data
+    @GetMapping("/order/{id}")
+    public Order getOrder(@PathVariable Long id) {
+        // => Call user-service by service name (no URL needed)
+        User user = restTemplate.getForObject(
+            "http://user-service/api/users/{id}", User.class, id);
+        return new Order(id, user);
     }
 }
 
@@ -281,22 +281,22 @@ Actuator provides production-ready endpoints for monitoring, health checks, and 
 
 @Component
 public class CustomHealthIndicator implements HealthIndicator {
-    @Override // => Implement HealthIndicator interface
-    public Health health() { // => Custom health check logic
-        boolean databaseUp = checkDatabaseConnection(); // => Check database connectivity
-        if (databaseUp) { // => Database healthy
-            return Health.up() // => Health status: UP
-                .withDetail("database", "PostgreSQL") // => Add metadata to health response
-                .withDetail("version", "15.0") // => Database version detail
-                .build(); // => Build Health object
+    @Override
+    public Health health() {
+        boolean databaseUp = checkDatabaseConnection();
+        if (databaseUp) {
+            return Health.up()
+                .withDetail("database", "PostgreSQL")
+                .withDetail("version", "15.0")
+                .build();
         }
-        return Health.down() // => Health status: DOWN
-            .withDetail("error", "Database connection failed") // => Error detail for debugging
-            .build(); // => Build Health object (triggers pod restart in Kubernetes)
+        return Health.down()
+            .withDetail("error", "Database connection failed")
+            .build();
     }
 
-    private boolean checkDatabaseConnection() { // => Verify database connectivity
-        return true;  // => Placeholder (production: execute SELECT 1 query)
+    private boolean checkDatabaseConnection() {
+        return true;  // => Actual DB health check
     }
 }
 
@@ -345,31 +345,31 @@ public class OrderMetricsService {
     private final Timer orderProcessingTimer;
     private final AtomicInteger activeOrderCount = new AtomicInteger(0);
 
-    public OrderMetricsService(MeterRegistry registry) { // => Inject Micrometer registry
-        this.orderCounter = Counter.builder("orders.created") // => Create counter metric
-            .description("Total orders created") // => Metric description for monitoring dashboards
-            .tag("type", "online") // => Tag for filtering/grouping (e.g., online vs in-store orders)
-            .register(registry); // => Register metric with Micrometer
+    public OrderMetricsService(MeterRegistry registry) {
+        this.orderCounter = Counter.builder("orders.created")
+            .description("Total orders created")
+            .tag("type", "online")
+            .register(registry);
 
-        this.activeOrders = Gauge.builder("orders.active", activeOrderCount, AtomicInteger::get) // => Create gauge metric (current value)
-            .description("Active orders count") // => Metric description
-            .register(registry); // => Register gauge (tracks activeOrderCount value)
+        this.activeOrders = Gauge.builder("orders.active", activeOrderCount, AtomicInteger::get)
+            .description("Active orders count")
+            .register(registry);
 
-        this.orderProcessingTimer = Timer.builder("orders.processing.time") // => Create timer metric (measures duration)
-            .description("Order processing duration") // => Metric description
-            .register(registry); // => Register timer (tracks min/max/mean/percentiles)
+        this.orderProcessingTimer = Timer.builder("orders.processing.time")
+            .description("Order processing duration")
+            .register(registry);
     }
 
-    public void createOrder(Order order) { // => Process order creation
-        orderCounter.increment();  // => Increment total orders counter (monotonic increase)
-        activeOrderCount.incrementAndGet(); // => Increment active orders gauge
+    public void createOrder(Order order) {
+        orderCounter.increment();  // => Increment counter
+        activeOrderCount.incrementAndGet();
 
-        orderProcessingTimer.record(() -> { // => Measure execution time
-            // => Timer tracks duration of lambda execution
-            processOrder(order); // => Business logic
+        orderProcessingTimer.record(() -> {
+            // => Timed execution
+            processOrder(order);
         });
 
-        activeOrderCount.decrementAndGet(); // => Decrement active orders after processing complete
+        activeOrderCount.decrementAndGet();
     }
 
     private void processOrder(Order order) {
@@ -421,7 +421,7 @@ public class OrderTracingController {
                 "http://user-service/api/users/{id}", User.class, id);
 
             span.event("user-fetched");
-            return new Order(id, user); // => Compose order response with user data
+            return new Order(id, user);
         } finally {
             span.end();
         }
@@ -598,9 +598,9 @@ public class PaymentServiceClient {
             "http://payment-service/payments", request, Payment.class);
     }
 
-    private Payment paymentFallback(PaymentRequest request, Exception e) { // => Fallback method signature must match original
-        // => Fallback invoked after max retries exhausted (3 attempts)
-        return new Payment(null, "FAILED", "Service unavailable"); // => Graceful degradation response
+    private Payment paymentFallback(PaymentRequest request, Exception e) {
+        // => Fallback after all retries exhausted
+        return new Payment(null, "FAILED", "Service unavailable");
     }
 }
 
@@ -634,14 +634,14 @@ Rate limiting controls the number of requests a client can make within a time wi
 ```java
 @Service
 public class ApiRateLimitService {
-    @RateLimiter(name = "api-limiter", fallbackMethod = "rateLimitFallback") // => Apply rate limiting (10 req/sec from config)
-    public ApiResponse callExternalApi(String endpoint) { // => Method protected by rate limiter
-        // => If rate limit exceeded, fallback method invoked
-        return new ApiResponse("success", "Data from " + endpoint); // => Normal response when within rate limit
+    @RateLimiter(name = "api-limiter", fallbackMethod = "rateLimitFallback")
+    public ApiResponse callExternalApi(String endpoint) {
+        // => Rate limited call
+        return new ApiResponse("success", "Data from " + endpoint);
     }
 
-    private ApiResponse rateLimitFallback(String endpoint, Exception e) { // => Fallback when rate limit exceeded
-        return new ApiResponse("error", "Rate limit exceeded. Try again later."); // => Return 429-equivalent response
+    private ApiResponse rateLimitFallback(String endpoint, Exception e) {
+        return new ApiResponse("error", "Rate limit exceeded. Try again later.");
     }
 }
 
@@ -650,9 +650,9 @@ public class ApiRateLimitService {
 public class ApiController {
     private final ApiRateLimitService apiService;
 
-    @GetMapping("/api/data") // => Endpoint: GET /api/data
-    public ApiResponse getData() { // => Delegate to rate-limited service
-        return apiService.callExternalApi("/external/endpoint"); // => Calls method protected by @RateLimiter
+    @GetMapping("/api/data")
+    public ApiResponse getData() {
+        return apiService.callExternalApi("/external/endpoint");
     }
 }
 
@@ -681,19 +681,19 @@ Bulkhead pattern isolates resources using separate thread pools to prevent one f
 ```java
 @Service
 public class ReportService {
-    @Bulkhead(name = "report-generation", type = Bulkhead.Type.THREADPOOL, // => Isolate with dedicated thread pool
-              fallbackMethod = "reportFallback") // => Fallback when bulkhead full
-    public CompletableFuture<Report> generateReport(Long userId) { // => Async method (returns CompletableFuture)
-        // => Executes in isolated 5-thread pool (from config)
-        return CompletableFuture.supplyAsync(() -> { // => Execute asynchronously
-            // => Heavy computation (CPU-intensive, long-running)
-            return new Report(userId, "Monthly Report", LocalDateTime.now()); // => Generate report
+    @Bulkhead(name = "report-generation", type = Bulkhead.Type.THREADPOOL,
+              fallbackMethod = "reportFallback")
+    public CompletableFuture<Report> generateReport(Long userId) {
+        // => Executes in isolated thread pool
+        return CompletableFuture.supplyAsync(() -> {
+            // Heavy computation
+            return new Report(userId, "Monthly Report", LocalDateTime.now());
         });
     }
 
-    private CompletableFuture<Report> reportFallback(Long userId, Exception e) { // => Fallback when bulkhead exhausted
-        return CompletableFuture.completedFuture( // => Return immediately completed future
-            new Report(userId, "Cached Report", LocalDateTime.now().minusDays(1))); // => Return cached/stale report
+    private CompletableFuture<Report> reportFallback(Long userId, Exception e) {
+        return CompletableFuture.completedFuture(
+            new Report(userId, "Cached Report", LocalDateTime.now().minusDays(1)));
     }
 }
 
@@ -786,36 +786,36 @@ Conditional beans allow selective bean creation based on classpath, properties, 
 ```java
 @Configuration
 public class ConditionalBeansConfig {
-    @Bean // => Define CacheService bean
-    @ConditionalOnClass(name = "com.redis.RedisClient") // => Only create if Redis client JAR present
-    public CacheService redisCacheService() { // => Redis-backed cache implementation
-        return new RedisCacheService();  // => Created only when Redis available on classpath
+    @Bean
+    @ConditionalOnClass(name = "com.redis.RedisClient")
+    public CacheService redisCacheService() {
+        return new RedisCacheService();  // => Only if Redis client on classpath
     }
 
-    @Bean // => Alternative CacheService bean
-    @ConditionalOnMissingClass("com.redis.RedisClient") // => Only create if Redis client NOT on classpath
-    public CacheService memoryCacheService() { // => In-memory fallback implementation
-        return new MemoryCacheService();  // => Created when Redis unavailable (dev/test environments)
+    @Bean
+    @ConditionalOnMissingClass("com.redis.RedisClient")
+    public CacheService memoryCacheService() {
+        return new MemoryCacheService();  // => Fallback if Redis not available
     }
 
-    @Bean // => Optional feature bean
-    @ConditionalOnProperty(name = "feature.advanced", havingValue = "true") // => Only create if property set to "true"
-    public AdvancedFeature advancedFeature() { // => Advanced feature implementation
-        return new AdvancedFeature();  // => Created based on application.yml configuration
+    @Bean
+    @ConditionalOnProperty(name = "feature.advanced", havingValue = "true")
+    public AdvancedFeature advancedFeature() {
+        return new AdvancedFeature();  // => Only if property enabled
     }
 
-    @Bean // => Default DataSource bean
-    @ConditionalOnMissingBean(DataSource.class) // => Only create if no other DataSource bean exists
-    public DataSource defaultDataSource() { // => Embedded H2 database
-        return new EmbeddedDatabaseBuilder() // => Build in-memory database
-            .setType(EmbeddedDatabaseType.H2) // => Use H2 database
-            .build();  // => Auto-configured only when custom DataSource not provided
+    @Bean
+    @ConditionalOnMissingBean(DataSource.class)
+    public DataSource defaultDataSource() {
+        return new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.H2)
+            .build();  // => Only if no DataSource already defined
     }
 
-    @Bean // => JPA transaction manager
-    @ConditionalOnBean(EntityManagerFactory.class) // => Only create if EntityManagerFactory bean exists
-    public JpaTransactionManager transactionManager(EntityManagerFactory emf) { // => Create transaction manager
-        return new JpaTransactionManager(emf);  // => Auto-configured when JPA/Hibernate present
+    @Bean
+    @ConditionalOnBean(EntityManagerFactory.class)
+    public JpaTransactionManager transactionManager(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);  // => Only if JPA configured
     }
 }
 
@@ -834,23 +834,23 @@ interface CacheService {
 Configuration properties provide type-safe, validated, and IDE-friendly application configuration.
 
 ```java
-@ConfigurationProperties(prefix = "app.mail") // => Bind properties starting with "app.mail"
-@Validated // => Enable JSR-303 validation
-public class MailProperties { // => Type-safe configuration class
-    @NotBlank // => Validation: host cannot be null/empty
-    private String host; // => SMTP server hostname
+@ConfigurationProperties(prefix = "app.mail")
+@Validated
+public class MailProperties {
+    @NotBlank
+    private String host;
 
-    @Min(1) // => Validation: port >= 1
-    @Max(65535) // => Validation: port <= 65535
-    private int port = 587; // => SMTP port (default 587 for TLS)
+    @Min(1)
+    @Max(65535)
+    private int port = 587;
 
-    @Email // => Validation: valid email format required
-    private String from; // => Sender email address
+    @Email
+    private String from;
 
-    @Valid // => Cascade validation to nested object
-    private Smtp smtp = new Smtp(); // => Nested SMTP auth configuration
+    @Valid
+    private Smtp smtp = new Smtp();
 
-    private Map<String, String> templates = new HashMap<>(); // => Email template mappings
+    private Map<String, String> templates = new HashMap<>();
 
     public static class Smtp {
         private boolean auth = true;
@@ -871,14 +871,14 @@ public class MailProperties { // => Type-safe configuration class
 @Configuration
 @EnableConfigurationProperties(MailProperties.class)
 public class MailConfig {
-    @Bean // => Configure mail sender bean
-    public JavaMailSender mailSender(MailProperties props) { // => Inject validated properties
-        JavaMailSenderImpl sender = new JavaMailSenderImpl(); // => Create mail sender
-        sender.setHost(props.getHost()); // => Configure SMTP host from properties
-        sender.setPort(props.getPort()); // => Configure port from properties
-        sender.setUsername(props.getSmtp().getUsername()); // => Configure SMTP auth username
-        sender.setPassword(props.getSmtp().getPassword()); // => Configure SMTP auth password
-        return sender; // => Fully configured mail sender bean
+    @Bean
+    public JavaMailSender mailSender(MailProperties props) {
+        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        sender.setHost(props.getHost());
+        sender.setPort(props.getPort());
+        sender.setUsername(props.getSmtp().getUsername());
+        sender.setPassword(props.getSmtp().getPassword());
+        return sender;
     }
 }
 
@@ -907,36 +907,37 @@ public class MailConfig {
 Custom actuator endpoints expose application-specific operational data through the management interface.
 
 ```java
-@Endpoint(id = "application-info") // => Custom actuator endpoint (id maps to /actuator/application-info)
-@Component // => Spring-managed bean
-public class ApplicationInfoEndpoint { // => Custom operational endpoint
+@Endpoint(id = "application-info")
+@Component
+public class ApplicationInfoEndpoint {
     private final ApplicationContext context;
     private final Environment environment;
 
-    public ApplicationInfoEndpoint(ApplicationContext context, Environment environment) { // => Constructor injection
-        this.context = context; // => Application context for bean metadata
-        this.environment = environment; // => Environment for active profiles/properties
+    public ApplicationInfoEndpoint(ApplicationContext context, Environment environment) {
+        this.context = context;
+        this.environment = environment;
     }
 
-    @ReadOperation // => Maps to GET /actuator/application-info
-    public ApplicationInfo info() { // => Return application metadata
-        return new ApplicationInfo( // => Build response object
-            context.getApplicationName(), // => Application name from context
-            environment.getActiveProfiles(), // => Active Spring profiles (e.g., ["prod"])
-            context.getBeanDefinitionCount(), // => Total registered beans
-            System.getProperty("java.version") // => JVM version
+    @ReadOperation
+    public ApplicationInfo info() {
+        return new ApplicationInfo(
+            context.getApplicationName(),
+            environment.getActiveProfiles(),
+            context.getBeanDefinitionCount(),
+            System.getProperty("java.version")
+        );
     }
 
-    @WriteOperation // => Maps to POST /actuator/application-info/{key}
-    public void updateSetting(@Selector String key, String value) { // => Path variable injection
-        // => Custom write operation (modify runtime config)
-        System.setProperty("app." + key, value); // => Update system property dynamically
+    @WriteOperation
+    public void updateSetting(@Selector String key, String value) {
+        // => Custom write operation
+        System.setProperty("app." + key, value);
     }
 
-    @DeleteOperation // => Maps to DELETE /actuator/application-info/{cacheName}
-    public void clearCache(@Selector String cacheName) { // => Path variable injection
-        // => Custom delete operation (clear application cache)
-        System.out.println("Clearing cache: " + cacheName); // => Placeholder (production: clear actual cache)
+    @DeleteOperation
+    public void clearCache(@Selector String cacheName) {
+        // => Custom delete operation
+        System.out.println("Clearing cache: " + cacheName);
     }
 }
 
@@ -1390,72 +1391,72 @@ public class GatewayConfig {
             .route("user-service", r -> r
                 .path("/api/users/**")
                 .filters(f -> f
-                    .stripPrefix(1) // => Remove /api prefix before forwarding // Remove /api prefix
+                    .stripPrefix(1) // Remove /api prefix
                     .addRequestHeader("X-Gateway", "spring-cloud-gateway")
                     .circuitBreaker(c -> c
                         .setName("userServiceCircuitBreaker")
                         .setFallbackUri("forward:/fallback/users")
                     )
                 )
-                .uri("lb://USER-SERVICE") // => Load-balanced URI (Eureka resolves to instance IPs)
+                .uri("lb://USER-SERVICE") // Load-balanced via Eureka
             )
-            // => Configure route for order service endpoints
+            // Order service routing
             .route("order-service", r -> r
-                .path("/api/orders/**") // => Match path pattern (/** matches all sub-paths)
+                .path("/api/orders/**")
                 .filters(f -> f
-                    .stripPrefix(1) // => Remove /api prefix before forwarding
-                    .rewritePath("/orders/(?<segment>.*)", "/${segment}") // => Rewrite /orders/123 to /123
-                    .retry(c -> c.setRetries(3)) // => Retry failed requests 3 times
+                    .stripPrefix(1)
+                    .rewritePath("/orders/(?<segment>.*)", "/${segment}")
+                    .retry(c -> c.setRetries(3))
                 )
-                .uri("lb://ORDER-SERVICE") // => Forward to order service instances
+                .uri("lb://ORDER-SERVICE")
             )
-            // => Configure rate-limited route
+            // Rate limiting
             .route("limited-route", r -> r
-                .path("/api/public/**") // => Public API endpoints
-                .filters(f -> f.requestRateLimiter(c -> c // => Apply rate limiting filter
-                    .setRateLimiter(redisRateLimiter()) // => Use Redis-based rate limiter
-                    .setKeyResolver(new PrincipalNameKeyResolver())) // => Rate limit per authenticated user
+                .path("/api/public/**")
+                .filters(f -> f.requestRateLimiter(c -> c
+                    .setRateLimiter(redisRateLimiter())
+                    .setKeyResolver(new PrincipalNameKeyResolver())
                 ))
-                .uri("lb://PUBLIC-SERVICE") // => Forward to public service
+                .uri("lb://PUBLIC-SERVICE")
             )
             .build();
     }
 
     @Bean
     public RedisRateLimiter redisRateLimiter() {
-        return new RedisRateLimiter(10, 20); // => 10 req/sec steady state, 20 req/sec burst capacity
+        return new RedisRateLimiter(10, 20); // 10 requests per second, burst 20
     }
 }
 
 // Global filters
 @Component
 public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
-    @Override // => Implement GlobalFilter interface
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) { // => Filter all requests
-        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization"); // => Extract Authorization header
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) { // => Missing or malformed auth header
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED); // => Return 401
-            return exchange.getResponse().setComplete(); // => Complete response (no forwarding)
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
         }
 
-        // => Extract JWT from "Bearer {token}" format
-        String token = authHeader.substring(7); // => Remove "Bearer " prefix (7 chars)
-        if (!isValidToken(token)) { // => Validate JWT signature + expiration
-            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN); // => Return 403 (invalid token)
-            return exchange.getResponse().setComplete(); // => Complete response
+        // Validate JWT token
+        String token = authHeader.substring(7);
+        if (!isValidToken(token)) {
+            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+            return exchange.getResponse().setComplete();
         }
 
-        return chain.filter(exchange); // => Continue filter chain (authenticated)
+        return chain.filter(exchange);
     }
 
-    @Override // => Specify filter execution order
-    public int getOrder() { // => Lower number = earlier execution
-        return -100; // => Execute before other filters (authentication first)
+    @Override
+    public int getOrder() {
+        return -100; // Execute early in filter chain
     }
 
-    private boolean isValidToken(String token) { // => JWT validation logic
-        return token != null && !token.isEmpty(); // => Placeholder (production: verify signature + claims)
+    private boolean isValidToken(String token) {
+        return token != null && !token.isEmpty();
     }
 }
 
@@ -1551,54 +1552,54 @@ public class Order {
     private OrderStatus status;
     private List<DomainEvent> uncommittedEvents = new ArrayList<>();
 
-    public void placeOrder(String customerId, List<OrderItem> items) { // => Place new order command
-        this.id = UUID.randomUUID().toString(); // => Generate unique order ID
-        this.customerId = customerId; // => Associate order with customer
-        this.items = items; // => Store order items
-        this.status = OrderStatus.PLACED; // => Set initial status
+    public void placeOrder(String customerId, List<OrderItem> items) {
+        this.id = UUID.randomUUID().toString();
+        this.customerId = customerId;
+        this.items = items;
+        this.status = OrderStatus.PLACED;
 
-        raiseEvent(new OrderPlacedEvent(id, customerId, items, LocalDateTime.now())); // => Create event representing state change
+        raiseEvent(new OrderPlacedEvent(id, customerId, items, LocalDateTime.now()));
     }
 
-    public void cancelOrder() { // => Cancel order command
-        if (status == OrderStatus.SHIPPED) { // => Business rule validation
-            throw new IllegalStateException("Cannot cancel shipped order"); // => Reject invalid state transition
+    public void cancelOrder() {
+        if (status == OrderStatus.SHIPPED) {
+            throw new IllegalStateException("Cannot cancel shipped order");
         }
 
-        this.status = OrderStatus.CANCELLED; // => Update current state
-        raiseEvent(new OrderCancelledEvent(id, LocalDateTime.now())); // => Record cancellation event
+        this.status = OrderStatus.CANCELLED;
+        raiseEvent(new OrderCancelledEvent(id, LocalDateTime.now()));
     }
 
-    private void raiseEvent(Object event) { // => Internal event creation
-        DomainEvent domainEvent = new DomainEvent(); // => Create event entity
-        domainEvent.setAggregateId(id); // => Link event to aggregate (order ID)
-        domainEvent.setEventType(event.getClass().getSimpleName()); // => Event type name
-        domainEvent.setPayload(toJson(event)); // => Serialize event data to JSON
-        domainEvent.setOccurredAt(LocalDateTime.now()); // => Event timestamp
-        domainEvent.setVersion(uncommittedEvents.size() + 1); // => Optimistic concurrency version
+    private void raiseEvent(Object event) {
+        DomainEvent domainEvent = new DomainEvent();
+        domainEvent.setAggregateId(id);
+        domainEvent.setEventType(event.getClass().getSimpleName());
+        domainEvent.setPayload(toJson(event));
+        domainEvent.setOccurredAt(LocalDateTime.now());
+        domainEvent.setVersion(uncommittedEvents.size() + 1);
 
-        uncommittedEvents.add(domainEvent); // => Add to in-memory uncommitted events list
+        uncommittedEvents.add(domainEvent);
     }
 
-    public static Order fromEvents(List<DomainEvent> events) { // => Rebuild aggregate from event history
-        Order order = new Order(); // => Create empty aggregate
-        for (DomainEvent event : events) { // => Replay all events in order
-            order.apply(event); // => Apply each event to rebuild state
+    public static Order fromEvents(List<DomainEvent> events) {
+        Order order = new Order();
+        for (DomainEvent event : events) {
+            order.apply(event);
         }
-        return order; // => Fully reconstructed aggregate
+        return order;
     }
 
-    private void apply(DomainEvent event) { // => Apply event to aggregate state
-        switch (event.getEventType()) { // => Dispatch based on event type
-            case "OrderPlacedEvent" -> { // => Handle order placed event
-                OrderPlacedEvent e = fromJson(event.getPayload(), OrderPlacedEvent.class); // => Deserialize event
-                this.id = e.orderId(); // => Restore order ID
-                this.customerId = e.customerId(); // => Restore customer ID
-                this.items = e.items(); // => Restore order items
-                this.status = OrderStatus.PLACED; // => Restore status
+    private void apply(DomainEvent event) {
+        switch (event.getEventType()) {
+            case "OrderPlacedEvent" -> {
+                OrderPlacedEvent e = fromJson(event.getPayload(), OrderPlacedEvent.class);
+                this.id = e.orderId();
+                this.customerId = e.customerId();
+                this.items = e.items();
+                this.status = OrderStatus.PLACED;
             }
-            case "OrderCancelledEvent" -> { // => Handle cancellation event
-                this.status = OrderStatus.CANCELLED; // => Update status to cancelled
+            case "OrderCancelledEvent" -> {
+                this.status = OrderStatus.CANCELLED;
             }
         }
     }
@@ -1614,24 +1615,24 @@ public class OrderService {
     @Autowired
     private EventStore eventStore;
 
-    public void placeOrder(String customerId, List<OrderItem> items) { // => Command handler
-        Order order = new Order(); // => Create new aggregate
-        order.placeOrder(customerId, items); // => Execute command (generates events)
+    public void placeOrder(String customerId, List<OrderItem> items) {
+        Order order = new Order();
+        order.placeOrder(customerId, items);
 
-        // => Persist events (not current state)
-        eventStore.saveAll(order.getUncommittedEvents()); // => Persist cancellation event // => Save all generated events to event store
+        // Save events
+        eventStore.saveAll(order.getUncommittedEvents());
     }
 
-    public Order getOrder(String orderId) { // => Query handler
-        List<DomainEvent> events = eventStore.findByAggregateIdOrderByVersionAsc(orderId); // => Load all events for order
-        return Order.fromEvents(events); // => Rebuild aggregate by replaying events (event sourcing pattern)
+    public Order getOrder(String orderId) {
+        List<DomainEvent> events = eventStore.findByAggregateIdOrderByVersionAsc(orderId);
+        return Order.fromEvents(events); // Rebuild from events
     }
 
-    public void cancelOrder(String orderId) { // => Cancellation command
-        Order order = getOrder(orderId); // => Rebuild current state from events
-        order.cancelOrder(); // => Execute cancellation (generates OrderCancelledEvent)
+    public void cancelOrder(String orderId) {
+        Order order = getOrder(orderId); // Rebuild from events
+        order.cancelOrder();
 
-        eventStore.saveAll(order.getUncommittedEvents()); // => Persist cancellation event
+        eventStore.saveAll(order.getUncommittedEvents());
     }
 }
 
