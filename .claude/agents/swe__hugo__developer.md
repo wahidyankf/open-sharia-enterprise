@@ -4,7 +4,7 @@ description: Develops Hugo sites (ayokoding-web, ose-platform-web) including the
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
 color: blue
-skills: [developing-ayokoding-content, developing-ose-content]
+skills: [apps__ayokoding-web__developing-content, apps__ose-platform-web__developing-content]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -17,7 +17,7 @@ Develop Hugo sites (ayokoding-web with Hextra, ose-platform-web with PaperMod).
 
 - [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
 - [ose-platform-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md)
-- Skills: `developing-ayokoding-content`, `developing-ose-content`
+- Skills: `apps__ayokoding-web__developing-content`, `apps__ose-platform-web__developing-content`
 
 ## Responsibilities
 

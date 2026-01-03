@@ -11,7 +11,7 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - applying-diataxis-framework
+  - docs__applying-diataxis-framework
 created: 2025-12-28
 updated: 2026-01-03
 ---
@@ -155,7 +155,7 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
 
 **Skills:**
 
-- `applying-diataxis-framework` - Documentation organization principles
+- `docs__applying-diataxis-framework` - Documentation organization principles
 
 ---
 

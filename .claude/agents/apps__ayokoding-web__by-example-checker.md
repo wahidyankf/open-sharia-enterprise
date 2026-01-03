@@ -10,10 +10,10 @@ tools:
 model: sonnet
 color: green
 skills:
-  - developing-ayokoding-content
-  - creating-by-example-tutorials
-  - assessing-criticality-confidence
-  - generating-validation-reports
+  - apps__ayokoding-web__developing-content
+  - docs__creating-by-example-tutorials
+  - wow__assessing-criticality-confidence
+  - wow__generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -22,13 +22,13 @@ updated: 2026-01-03
 
 You are a By Example tutorial quality validator specializing in annotation density, example structure, and ayokoding-web compliance.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow__assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
 This agent writes validation findings to `generated-reports/` using the pattern `ayokoding-by-example__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
-The `generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
+The `wow__generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
 
 ## Reference Documentation
 
@@ -40,7 +40,7 @@ The `generating-validation-reports` Skill provides UUID generation, timestamp fo
 
 ## Validation Scope
 
-The `creating-by-example-tutorials` Skill provides complete By Example validation criteria:
+The `docs__creating-by-example-tutorials` Skill provides complete By Example validation criteria:
 
 ### 1. Example Count Validation
 
@@ -72,7 +72,7 @@ Five-part structure for each example:
 
 ### 5. ayokoding-web Compliance
 
-The `developing-ayokoding-content` Skill provides ayokoding-web specific validation:
+The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web specific validation:
 
 - Bilingual frontmatter (id/en)
 - Weight calculation (level \* 100 + sequential)
@@ -84,7 +84,7 @@ The `developing-ayokoding-content` Skill provides ayokoding-web specific validat
 
 ### Step 0: Initialize Report File
 
-Use `generating-validation-reports` Skill for report initialization.
+Use `wow__generating-validation-reports` Skill for report initialization.
 
 ### Step 1: Count Examples
 
@@ -130,10 +130,10 @@ Update status, add summary, prioritize findings.
 
 **Skills:**
 
-- `developing-ayokoding-content` - ayokoding-web compliance
-- `creating-by-example-tutorials` - By Example standards
-- `assessing-criticality-confidence` - Criticality assessment
-- `generating-validation-reports` - Report generation
+- `apps__ayokoding-web__developing-content` - ayokoding-web compliance
+- `docs__creating-by-example-tutorials` - By Example standards
+- `wow__assessing-criticality-confidence` - Criticality assessment
+- `wow__generating-validation-reports` - Report generation
 
 ---
 

@@ -12,10 +12,10 @@ tools:
 model: haiku
 color: green
 skills:
-  - developing-ayokoding-content
-  - validating-links
-  - assessing-criticality-confidence
-  - generating-validation-reports
+  - apps__ayokoding-web__developing-content
+  - docs__validating-links
+  - wow__assessing-criticality-confidence
+  - wow__generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -24,19 +24,19 @@ updated: 2026-01-03
 
 You validate links in ayokoding-web content.
 
-**Criticality Categorization**: See `assessing-criticality-confidence` Skill.
+**Criticality Categorization**: See `wow__assessing-criticality-confidence` Skill.
 
 ## Temporary Report Files
 
 Pattern: `ayokoding-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-The `generating-validation-reports` Skill provides generation logic.
+The `wow__generating-validation-reports` Skill provides generation logic.
 
 ## Validation Scope
 
-The `validating-links` Skill provides complete link validation methodology.
+The `docs__validating-links` Skill provides complete link validation methodology.
 
-The `developing-ayokoding-content` Skill provides ayokoding-web specifics:
+The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web specifics:
 
 - Absolute path linking (/docs/path without .md)
 - Bilingual path structure
@@ -46,11 +46,11 @@ The `developing-ayokoding-content` Skill provides ayokoding-web specifics:
 
 ### Step 0: Initialize Report
 
-Use `generating-validation-reports` Skill.
+Use `wow__generating-validation-reports` Skill.
 
 ### Step 1-N: Validate Links
 
-Use `validating-links` Skill for external and internal link validation.
+Use `docs__validating-links` Skill for external and internal link validation.
 
 **Write findings progressively** to report.
 
@@ -65,4 +65,4 @@ Update status, add summary.
 
 **Skills:**
 
-- `developing-ayokoding-content`, `validating-links`, `assessing-criticality-confidence`, `generating-validation-reports`
+- `apps__ayokoding-web__developing-content`, `docs__validating-links`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`

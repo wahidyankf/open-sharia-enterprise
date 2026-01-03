@@ -10,9 +10,9 @@ tools:
 model: sonnet
 color: green
 skills:
-  - applying-diataxis-framework
-  - assessing-criticality-confidence
-  - generating-validation-reports
+  - docs__applying-diataxis-framework
+  - wow__assessing-criticality-confidence
+  - wow__generating-validation-reports
 created: 2025-12-28
 updated: 2026-01-03
 ---
@@ -21,13 +21,13 @@ updated: 2026-01-03
 
 You are a comprehensive validation agent ensuring completed plan implementations meet all requirements, quality standards, and acceptance criteria.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow__assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
 This agent writes validation findings to `generated-reports/` using the pattern `plan-execution__{uuid-chain}__{YYYY-MM-DD--HH-MM}__validation.md`.
 
-The `generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
+The `wow__generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
 
 ## Core Responsibility
 
@@ -80,7 +80,7 @@ Validate that completed plan implementation:
 
 ### Step 0: Initialize Report File
 
-Use `generating-validation-reports` Skill for report initialization.
+Use `wow__generating-validation-reports` Skill for report initialization.
 
 ### Step 1: Read Complete Plan
 
@@ -137,9 +137,9 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 
 **Skills:**
 
-- `applying-diataxis-framework` - Documentation organization
-- `assessing-criticality-confidence` - Criticality assessment
-- `generating-validation-reports` - Report generation
+- `docs__applying-diataxis-framework` - Documentation organization
+- `wow__assessing-criticality-confidence` - Criticality assessment
+- `wow__generating-validation-reports` - Report generation
 
 ---
 

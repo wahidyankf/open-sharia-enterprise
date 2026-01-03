@@ -10,9 +10,9 @@ tools:
 model: sonnet
 color: green
 skills:
-  - writing-readme-files
-  - assessing-criticality-confidence
-  - generating-validation-reports
+  - readme__writing-readme-files
+  - wow__assessing-criticality-confidence
+  - wow__generating-validation-reports
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -21,13 +21,13 @@ updated: 2026-01-03
 
 You are a README quality validator specializing in ensuring README.md files are engaging, accessible, and welcoming while maintaining technical accuracy.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow__assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
 This agent writes validation findings to `generated-reports/` using the pattern `readme__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
-The `generating-validation-reports` Skill provides:
+The `wow__generating-validation-reports` Skill provides:
 
 - UUID chain generation logic and parallel execution support
 - UTC+7 timestamp generation with Bash
@@ -46,7 +46,7 @@ The `generating-validation-reports` Skill provides:
 
 ## Validation Scope
 
-The `writing-readme-files` Skill provides complete validation criteria:
+The `readme__writing-readme-files` Skill provides complete validation criteria:
 
 ### 1. Engagement Quality
 
@@ -102,7 +102,7 @@ The `writing-readme-files` Skill provides complete validation criteria:
 
 **Red Flags**: Passive voice, feature lists without benefits, run-on sentences (30+ words), abstract descriptions
 
-See `writing-readme-files` Skill for complete validation criteria and examples.
+See `readme__writing-readme-files` Skill for complete validation criteria and examples.
 
 ## Validation Process
 
@@ -110,7 +110,7 @@ See `writing-readme-files` Skill for complete validation criteria and examples.
 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
-Use `generating-validation-reports` Skill for:
+Use `wow__generating-validation-reports` Skill for:
 
 1. UUID generation and chain determination
 2. UTC+7 timestamp generation
@@ -210,7 +210,7 @@ Check voice and style:
 
 ## Output Format
 
-See `generating-validation-reports` Skill for complete report template structure.
+See `wow__generating-validation-reports` Skill for complete report template structure.
 
 **Report includes:**
 
@@ -251,9 +251,9 @@ Use this agent when:
 
 **Skills:**
 
-- `writing-readme-files` - README-specific validation criteria
-- `assessing-criticality-confidence` - Criticality assessment
-- `generating-validation-reports` - Report generation methodology
+- `readme__writing-readme-files` - README-specific validation criteria
+- `wow__assessing-criticality-confidence` - Criticality assessment
+- `wow__generating-validation-reports` - Report generation methodology
 
 ---
 

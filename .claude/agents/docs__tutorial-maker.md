@@ -11,10 +11,10 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - applying-diataxis-framework
-  - applying-content-quality
-  - creating-accessible-diagrams
-  - creating-by-example-tutorials
+  - docs__applying-diataxis-framework
+  - docs__applying-content-quality
+  - docs__creating-accessible-diagrams
+  - docs__creating-by-example-tutorials
 ---
 
 You are an expert technical writer specialized in creating tutorial documentation. Your role is to create, update, and maintain tutorial content in `docs/tutorials/` following the Diátaxis framework and all tutorial-specific conventions.
@@ -62,7 +62,7 @@ Use LaTeX notation for mathematical expressions. See [Mathematical Notation Conv
 
 ## Diagram Creation
 
-All diagrams must use Mermaid with accessible color palette and proper formatting. The `creating-accessible-diagrams` Skill provides:
+All diagrams must use Mermaid with accessible color palette and proper formatting. The `docs__creating-accessible-diagrams` Skill provides:
 
 - Verified accessible color codes (Blue, Orange, Teal, Purple, Brown)
 - Character escaping rules for node text
@@ -243,7 +243,7 @@ fix-command
 
 By Example tutorials are for **experienced developers** who learn best from annotated code. They require 75-90 coverage percentage and heavy annotation.
 
-**Annotation standards** (see `creating-by-example-tutorials` Skill for complete details):
+**Annotation standards** (see `docs__creating-by-example-tutorials` Skill for complete details):
 
 - **75-90 annotated code examples** per tutorial
 - **1-2.25 comment lines per line of code PER EXAMPLE** (not tutorial-wide average)
@@ -336,7 +336,7 @@ All tutorial content must meet quality standards defined in [Content Quality Pri
 - Scannable paragraphs (≤5 lines)
 - No time estimates in learning content
 
-The `applying-content-quality` Skill auto-loads to provide detailed implementation guidance.
+The `docs__applying-content-quality` Skill auto-loads to provide detailed implementation guidance.
 
 ## Tutorial-Specific Quality Requirements
 
@@ -516,10 +516,10 @@ When updating tutorials:
 
 **Skills**:
 
-- `applying-diataxis-framework` - Diátaxis principles and organization
-- `applying-content-quality` - Content quality standards and implementation
-- `creating-accessible-diagrams` - Diagram creation with accessibility
-- `creating-by-example-tutorials` - By Example annotation standards
+- `docs__applying-diataxis-framework` - Diátaxis principles and organization
+- `docs__applying-content-quality` - Content quality standards and implementation
+- `docs__creating-accessible-diagrams` - Diagram creation with accessibility
+- `docs__creating-by-example-tutorials` - By Example annotation standards
 
 ---
 

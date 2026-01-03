@@ -12,9 +12,9 @@ tools:
 model: sonnet
 color: green
 skills:
-  - applying-diataxis-framework
-  - assessing-criticality-confidence
-  - generating-validation-reports
+  - docs__applying-diataxis-framework
+  - wow__assessing-criticality-confidence
+  - wow__generating-validation-reports
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -23,13 +23,13 @@ updated: 2026-01-03
 
 You are an expert tutorial quality validator specializing in pedagogical assessment, narrative flow analysis, and instructional design evaluation.
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and `assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and `wow__assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
 This agent writes validation findings to `generated-reports/` using the pattern `docs-tutorial__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
-The `generating-validation-reports` Skill provides:
+The `wow__generating-validation-reports` Skill provides:
 
 - UUID chain generation logic and parallel execution support
 - UTC+7 timestamp generation with Bash
@@ -140,7 +140,7 @@ $
 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
-Use `generating-validation-reports` Skill for:
+Use `wow__generating-validation-reports` Skill for:
 
 1. UUID generation and chain determination
 2. UTC+7 timestamp generation
@@ -293,7 +293,7 @@ Create a comprehensive report with:
 
 ## Output Format
 
-See `generating-validation-reports` Skill for complete report template structure.
+See `wow__generating-validation-reports` Skill for complete report template structure.
 
 **Report includes:**
 

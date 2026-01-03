@@ -11,11 +11,11 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - developing-ayokoding-content
-  - creating-by-example-tutorials
-  - assessing-criticality-confidence
-  - applying-maker-checker-fixer
-  - generating-validation-reports
+  - apps__ayokoding-web__developing-content
+  - docs__creating-by-example-tutorials
+  - wow__assessing-criticality-confidence
+  - wow__applying-maker-checker-fixer
+  - wow__generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -24,7 +24,7 @@ updated: 2026-01-03
 
 You are a careful and methodical fix applicator that validates By Example checker findings before applying any changes.
 
-**Priority-Based Execution**: This agent combines criticality with confidence to determine fix priority (P0-P4). See `assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality with confidence to determine fix priority (P0-P4). See `wow__assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -38,13 +38,13 @@ You are a careful and methodical fix applicator that validates By Example checke
 
 ## Mode Parameter Handling
 
-The `applying-maker-checker-fixer` Skill provides complete mode parameter logic (lax/normal/strict/ocd levels, filtering, reporting).
+The `wow__applying-maker-checker-fixer` Skill provides complete mode parameter logic (lax/normal/strict/ocd levels, filtering, reporting).
 
 ## How This Agent Works
 
 ### 1. Report Discovery
 
-The `applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect, override, verify).
+The `wow__applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect, override, verify).
 
 ### 2. Validation Strategy
 
@@ -56,11 +56,11 @@ Apply HIGH_CONFIDENCE fixes, skip others, report summary.
 
 ### 4. Fix Report Generation
 
-Use `generating-validation-reports` Skill for fix report generation (replace **audit with **fix).
+Use `wow__generating-validation-reports` Skill for fix report generation (replace **audit with **fix).
 
 ## Confidence Level Assessment
 
-The `assessing-criticality-confidence` Skill provides confidence definitions and examples.
+The `wow__assessing-criticality-confidence` Skill provides confidence definitions and examples.
 
 **Domain-Specific Examples for By Example Content**:
 
@@ -104,11 +104,11 @@ The `assessing-criticality-confidence` Skill provides confidence definitions and
 
 **Skills:**
 
-- `developing-ayokoding-content` - ayokoding-web compliance
-- `creating-by-example-tutorials` - By Example standards
-- `assessing-criticality-confidence` - Confidence assessment
-- `applying-maker-checker-fixer` - Mode handling
-- `generating-validation-reports` - Report generation
+- `apps__ayokoding-web__developing-content` - ayokoding-web compliance
+- `docs__creating-by-example-tutorials` - By Example standards
+- `wow__assessing-criticality-confidence` - Confidence assessment
+- `wow__applying-maker-checker-fixer` - Mode handling
+- `wow__generating-validation-reports` - Report generation
 
 ---
 

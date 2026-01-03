@@ -4,7 +4,7 @@ description: Updates prev/next navigation links in ayokoding-web content frontma
 tools: [Read, Edit, Glob, Grep]
 model: haiku
 color: blue
-skills: [developing-ayokoding-content]
+skills: [apps__ayokoding-web__developing-content]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -17,7 +17,7 @@ Update prev/next navigation in frontmatter.
 
 Calculate and update prev/next links based on weight ordering.
 
-`developing-ayokoding-content` Skill provides navigation logic.
+`apps__ayokoding-web__developing-content` Skill provides navigation logic.
 
 ## Reference
 

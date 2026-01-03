@@ -6,10 +6,10 @@ model: sonnet
 color: purple
 skills:
   [
-    developing-ose-content,
-    assessing-criticality-confidence,
-    applying-maker-checker-fixer,
-    generating-validation-reports,
+    apps__ose-platform-web__developing-content,
+    wow__assessing-criticality-confidence,
+    wow__applying-maker-checker-fixer,
+    wow__generating-validation-reports,
   ]
 created: 2025-12-20
 updated: 2026-01-03
@@ -21,9 +21,9 @@ Validate content-checker findings before applying fixes.
 
 ## Core
 
-`applying-maker-checker-fixer`: mode logic, report discovery
-`assessing-criticality-confidence`: confidence assessment
+`wow__applying-maker-checker-fixer`: mode logic, report discovery
+`wow__assessing-criticality-confidence`: confidence assessment
 
 ## Reference
 
-Skills: `developing-ose-content`, `assessing-criticality-confidence`, `applying-maker-checker-fixer`, `generating-validation-reports`
+Skills: `apps__ose-platform-web__developing-content`, `wow__assessing-criticality-confidence`, `wow__applying-maker-checker-fixer`, `wow__generating-validation-reports`

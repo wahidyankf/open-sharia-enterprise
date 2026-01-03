@@ -11,10 +11,10 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - applying-diataxis-framework
-  - assessing-criticality-confidence
-  - applying-maker-checker-fixer
-  - generating-validation-reports
+  - docs__applying-diataxis-framework
+  - wow__assessing-criticality-confidence
+  - wow__applying-maker-checker-fixer
+  - wow__generating-validation-reports
 created: 2025-12-14
 updated: 2026-01-03
 ---
@@ -31,7 +31,7 @@ updated: 2026-01-03
 
 You are a careful and methodical fix applicator that validates docs-tutorial-checker findings before applying any changes to prevent false positives and ensure tutorial quality.
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `wow__assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -50,7 +50,7 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-The `applying-maker-checker-fixer` Skill provides complete mode parameter logic:
+The `wow__applying-maker-checker-fixer` Skill provides complete mode parameter logic:
 
 - **Mode levels**: lax (CRITICAL only), normal (CRITICAL+HIGH), strict (CRITICAL+HIGH+MEDIUM), ocd (all)
 - **Filtering logic**: Filter findings before re-validation based on mode threshold
@@ -79,7 +79,7 @@ Use this agent when:
 
 ### 1. Report Discovery
 
-The `applying-maker-checker-fixer` Skill provides report discovery logic:
+The `wow__applying-maker-checker-fixer` Skill provides report discovery logic:
 
 - Auto-detect latest audit report in `generated-reports/`
 - Allow manual override if user specifies a report
@@ -117,7 +117,7 @@ FALSE_POSITIVE:
 
 ### 4. Fix Report Generation
 
-Generate comprehensive fix report using `generating-validation-reports` Skill:
+Generate comprehensive fix report using `wow__generating-validation-reports` Skill:
 
 **File naming pattern**: Replace `__audit` suffix with `__fix` (preserve UUID chain and timestamp)
 
@@ -130,7 +130,7 @@ See Skill for complete fix report template structure.
 
 ## Confidence Level Assessment
 
-This agent uses the universal three-level confidence system. The `assessing-criticality-confidence` Skill provides:
+This agent uses the universal three-level confidence system. The `wow__assessing-criticality-confidence` Skill provides:
 
 - Complete confidence level definitions (HIGH/MEDIUM/FALSE_POSITIVE)
 - Domain-specific examples for tutorial content

@@ -10,7 +10,7 @@ tools:
 model: sonnet
 color: yellow
 skills:
-  - applying-diataxis-framework
+  - docs__applying-diataxis-framework
 created: 2025-11-30
 updated: 2026-01-03
 ---

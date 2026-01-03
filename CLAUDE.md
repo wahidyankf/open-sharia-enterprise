@@ -161,7 +161,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 Use Mermaid diagrams with color-blind friendly palette and proper accessibility practices. **CRITICAL rules**: Use verified accessible colors (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), escape special characters in node text, avoid `style` commands in sequence diagrams. See [Diagrams Convention](./docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) and [Color Accessibility Convention](./docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) for complete details.
 
-**Note**: Skill `creating-accessible-diagrams` auto-loads when creating diagrams, providing accessible palette, Mermaid best practices, escaping rules, and working examples.
+**Note**: Skill `docs__creating-accessible-diagrams` auto-loads when creating diagrams, providing accessible palette, Mermaid best practices, escaping rules, and working examples.
 
 ### Emoji Usage Convention
 
@@ -187,7 +187,7 @@ When documenting markdown structure, use **4 backticks for outer fence, 3 for in
 
 Seven tutorial types with progressive coverage levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). By Example tutorials use 75-90 annotated code examples with 1-2.25 comment lines per code line PER EXAMPLE and five-part structure for experienced developers. Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
 
-**Note**: Skill `creating-by-example-tutorials` auto-loads when creating programming tutorials, providing annotation standards, example structure patterns, and quality guidelines.
+**Note**: Skill `docs__creating-by-example-tutorials` auto-loads when creating programming tutorials, providing annotation standards, example structure patterns, and quality guidelines.
 
 ### Content Quality Principles
 
@@ -197,7 +197,7 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification ([Verified], [Unverified], [Error], [Outdated]). See [Factual Validation Convention](./docs/explanation/conventions/content/ex-co-co__factual-validation.md) for complete methodology.
 
-**Note**: Skill `validating-factual-accuracy` auto-loads when validating documentation accuracy, providing validation workflow, source prioritization, confidence classifications, and integration patterns.
+**Note**: Skill `docs__validating-factual-accuracy` auto-loads when validating documentation accuracy, providing validation workflow, source prioritization, confidence classifications, and integration patterns.
 
 ### Hugo Content Convention
 
@@ -209,7 +209,7 @@ Three specialized documents for Hugo sites:
 
 Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) with dual-path organization ([by-concept and by-example](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md)). See [Tutorial Folder Arrangement Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for 5-item arrangement details.
 
-**Note**: Skill `developing-ayokoding-content` auto-loads for ayokoding-web tasks (bilingual strategy, weight system, annotation standards). Skill `developing-ose-content` auto-loads for ose-platform-web tasks (PaperMod patterns, date-based structure).
+**Note**: Skill `apps__ayokoding-web__developing-content` auto-loads for ayokoding-web tasks (bilingual strategy, weight system, annotation standards). Skill `apps__ose-platform-web__developing-content` auto-loads for ose-platform-web tasks (PaperMod patterns, date-based structure).
 
 ### README Quality Convention
 

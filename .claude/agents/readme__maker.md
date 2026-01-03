@@ -10,8 +10,8 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - writing-readme-files
-  - applying-content-quality
+  - readme__writing-readme-files
+  - docs__applying-content-quality
 created: 2025-12-15
 updated: 2026-01-03
 ---
@@ -40,7 +40,7 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 
 ## Core Principles
 
-The `writing-readme-files` Skill provides complete README writing guidance:
+The `readme__writing-readme-files` Skill provides complete README writing guidance:
 
 - Problem-solution hooks for immediate reader engagement
 - Scannability standards (paragraph limits, visual hierarchy, emoji usage)
@@ -49,7 +49,7 @@ The `writing-readme-files` Skill provides complete README writing guidance:
 - Benefits-focused language transformation (features → user benefits)
 - Navigation-focused structure (summary + links, not comprehensive)
 
-The `applying-content-quality` Skill provides general content standards:
+The `docs__applying-content-quality` Skill provides general content standards:
 
 - Active voice and clear language
 - Proper heading hierarchy
@@ -89,7 +89,7 @@ Understand:
 
 ### Step 3: Draft Content
 
-Apply quality principles from `writing-readme-files` Skill:
+Apply quality principles from `readme__writing-readme-files` Skill:
 
 1. **Hook**: Problem-solution for motivation sections
 2. **Scannable**: Short paragraphs (4-5 lines max)
@@ -101,7 +101,7 @@ Apply quality principles from `writing-readme-files` Skill:
 
 ### Step 4: Validate Against Checklist
 
-Before finalizing, check (see `writing-readme-files` Skill for complete checklist):
+Before finalizing, check (see `readme__writing-readme-files` Skill for complete checklist):
 
 - [ ] Paragraphs ≤5 lines?
 - [ ] No jargon (vendor lock-in, utilize, leverage)?
@@ -130,7 +130,7 @@ Ensure:
 
 ## Common Tasks
 
-The `writing-readme-files` Skill provides detailed examples for:
+The `readme__writing-readme-files` Skill provides detailed examples for:
 
 1. **Add New Section** - Structure and tone guidance
 2. **Rewrite Jargony Section** - Transformation patterns
@@ -235,8 +235,8 @@ Use this agent when:
 
 **Skills:**
 
-- `writing-readme-files` - README-specific writing guidance
-- `applying-content-quality` - General content quality standards
+- `readme__writing-readme-files` - README-specific writing guidance
+- `docs__applying-content-quality` - General content quality standards
 
 ---
 

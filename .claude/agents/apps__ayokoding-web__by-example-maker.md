@@ -11,10 +11,10 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - developing-ayokoding-content
-  - creating-by-example-tutorials
-  - creating-accessible-diagrams
-  - applying-content-quality
+  - apps__ayokoding-web__developing-content
+  - docs__creating-by-example-tutorials
+  - docs__creating-accessible-diagrams
+  - docs__applying-content-quality
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -51,7 +51,7 @@ Use this agent when:
 
 ## By Example Requirements
 
-The `creating-by-example-tutorials` Skill provides complete By Example standards:
+The `docs__creating-by-example-tutorials` Skill provides complete By Example standards:
 
 - **75-90 annotated code examples** per tutorial
 - **1-2.25 comment lines per line of code PER EXAMPLE** (not tutorial-wide)
@@ -61,7 +61,7 @@ The `creating-by-example-tutorials` Skill provides complete By Example standards
 
 ## ayokoding-web Integration
 
-The `developing-ayokoding-content` Skill provides ayokoding-web specific guidance:
+The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web specific guidance:
 
 - **Bilingual strategy**: id (primary), en (English)
 - **Weight system**: Level-based weight calculation (level \* 100 + sequential)
@@ -107,7 +107,7 @@ Group 75-90 examples thematically:
 
 ### Step 5: Write Each Example
 
-Follow five-part structure from `creating-by-example-tutorials` Skill:
+Follow five-part structure from `docs__creating-by-example-tutorials` Skill:
 
 ```markdown
 ## Example N: Title
@@ -137,11 +137,11 @@ Verify 1-2.25 comment lines per code line PER EXAMPLE (not averaged across tutor
 
 ### Step 7: Add Diagrams (if needed)
 
-Use `creating-accessible-diagrams` Skill for color-blind friendly Mermaid diagrams.
+Use `docs__creating-accessible-diagrams` Skill for color-blind friendly Mermaid diagrams.
 
 ## Quality Standards
 
-The `applying-content-quality` Skill provides general content quality standards (active voice, heading hierarchy, accessibility).
+The `docs__applying-content-quality` Skill provides general content quality standards (active voice, heading hierarchy, accessibility).
 
 **By Example specific**:
 
@@ -168,10 +168,10 @@ The `applying-content-quality` Skill provides general content quality standards 
 
 **Skills:**
 
-- `developing-ayokoding-content` - ayokoding-web specific guidance (bilingual, weights, navigation)
-- `creating-by-example-tutorials` - By Example annotation standards
-- `creating-accessible-diagrams` - Diagram creation with accessibility
-- `applying-content-quality` - General content quality
+- `apps__ayokoding-web__developing-content` - ayokoding-web specific guidance (bilingual, weights, navigation)
+- `docs__creating-by-example-tutorials` - By Example annotation standards
+- `docs__creating-accessible-diagrams` - Diagram creation with accessibility
+- `docs__applying-content-quality` - General content quality
 
 ---
 
