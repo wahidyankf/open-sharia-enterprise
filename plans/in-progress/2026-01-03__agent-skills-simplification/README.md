@@ -12,7 +12,7 @@ delivery-type: Trunk Based Development (direct commits to main)
 
 ### Problem Statement
 
-We have successfully implemented Skills infrastructure with 18 Skills and 48 agents. However, agents may contain duplicated content that already exists in Skills. This creates several issues:
+We have successfully implemented Skills infrastructure with 17 Skills and 45 agents. However, agents may contain duplicated content that already exists in Skills. This creates several issues:
 
 1. **Content Duplication** - Convention details, pattern explanations, and standards may be duplicated between agents and Skills
 2. **Maintenance Burden** - Updates to conventions require changes in multiple locations (Skills AND agents)
@@ -61,11 +61,11 @@ graph TD
 
 1. **Identify Skill Gaps** - Create new Skills if needed to cover agent knowledge
 2. **Improve Skill Coverage** - Enhance existing Skills to support agent simplification
-3. **Measure Impact** - Quantify size reduction and effectiveness across all 48 agents
+3. **Measure Impact** - Quantify size reduction and effectiveness across all 45 agents
 
 ### Context
 
-**Current State**: 48 agents, 18 Skills, Skills infrastructure implemented in Phase 2
+**Current State**: 45 agents, 17 Skills, Skills infrastructure implemented in Phase 2
 
 **Architecture**: Six-layer governance with Skills as delivery infrastructure (established)
 
@@ -110,7 +110,7 @@ This plan delivers agent simplification through direct commits to main branch:
 
 **Quantitative Metrics:**
 
-1. **Agent Size Reduction**: Average 20-40% reduction across all 48 agents
+1. **Agent Size Reduction**: Average 20-40% reduction across all 45 agents
 2. **Duplication Elimination**: Zero verbatim/paraphrased duplication between agents and Skills
 3. **Skill Coverage**: All agent knowledge either in Skills or clearly task-specific
 4. **Quality Gate Pass**: Zero CRITICAL/HIGH findings from wow**rules**quality-gate workflow

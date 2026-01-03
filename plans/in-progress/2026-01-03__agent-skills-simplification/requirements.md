@@ -16,7 +16,7 @@ Identify and remove all content duplicated between agents and Skills, establishi
 
 **OBJ-2: Reduce Agent File Sizes**
 
-Achieve measurable size reduction across all 48 agents by replacing embedded knowledge with Skill references.
+Achieve measurable size reduction across all 45 agents by replacing embedded knowledge with Skill references.
 
 **Success Criteria:**
 
@@ -82,7 +82,7 @@ Quantify the benefits of simplification through metrics on size, duplication, an
 
 **Success Criteria:**
 
-- Size reduction metrics for all 48 agents
+- Size reduction metrics for all 45 agents
 - Duplication metrics (before/after)
 - Effectiveness metrics (validation accuracy maintained)
 
@@ -277,7 +277,7 @@ The system shall provide comprehensive metrics on simplification impact.
 
 - FR-5.1: Measure agent file size before/after (lines, characters)
 - FR-5.2: Calculate size reduction percentage per agent
-- FR-5.3: Calculate average size reduction across all agents
+- FR-5.3: Calculate average size reduction across all 45 agents
 - FR-5.4: Count duplication instances before/after
 - FR-5.5: Report effectiveness metrics (validation accuracy)
 - FR-5.6: Generate final simplification impact report
@@ -322,7 +322,7 @@ The system shall provide comprehensive metrics on simplification impact.
 
 **TC-1: Agent File Size Limits** - Agents must remain within tier limits (Simple <800, Standard <1,200, Complex <1,800 lines)
 
-**TC-2: Skills Infrastructure** - Must use existing 18 Skills as foundation (can enhance/extend)
+**TC-2: Skills Infrastructure** - Must use existing 17 Skills as foundation (can enhance/extend)
 
 **TC-3: Quality Gates** - Must pass wow**rules**quality-gate workflow with OCD mode
 
@@ -344,13 +344,13 @@ The system shall provide comprehensive metrics on simplification impact.
 
 **RC-2: Token Budget** - Effectively unlimited (reliable compaction mechanism)
 
-**RC-3: Agent Count** - 48 agents to simplify (all agents in repository)
+**RC-3: Agent Count** - 45 agents to simplify (all agents in repository)
 
-**RC-4: Skill Count** - 18 existing Skills (can create more if gaps exist)
+**RC-4: Skill Count** - 17 existing Skills (can create more if gaps exist)
 
 ## Assumptions
 
-**A-1: Skills Coverage** - Current 18 Skills cover most agent knowledge (minimal gaps expected)
+**A-1: Skills Coverage** - Current 17 Skills cover most agent knowledge (minimal gaps expected)
 
 **A-2: Duplication Exists** - Some duplication between agents and Skills exists (to be quantified)
 

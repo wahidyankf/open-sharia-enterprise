@@ -182,7 +182,7 @@ graph TD
 
 ### Existing Infrastructure
 
-**Skills (18 total):**
+**Skills (17 total):**
 
 - Content Creation: applying-content-quality, creating-by-example-tutorials, developing-ayokoding-content, developing-ose-content, writing-readme-files
 - Quality Assurance: applying-maker-checker-fixer, assessing-criticality-confidence, validating-factual-accuracy, validating-links
@@ -190,7 +190,7 @@ graph TD
 - Process Execution: creating-project-plans, defining-workflows, practicing-trunk-based-development
 - Technical Knowledge: developing-agents, understanding-repository-architecture
 
-**Agents (48 total):**
+**Agents (45 total):**
 
 - Content: 9 makers
 - Validation: 13 checkers
@@ -254,7 +254,7 @@ graph TD
 
 ### Decision 2: Pilot-First Rollout Strategy
 
-**Context**: Need to validate simplification approach before applying to all 48 agents.
+**Context**: Need to validate simplification approach before applying to all 45 agents.
 
 **Decision**: Pilot simplification on one agent family (maker-checker-fixer trio), measure effectiveness, then rollout to remaining agents.
 
@@ -310,7 +310,7 @@ graph TD
 **Rationale**:
 
 - **Context Survival**: Progressive writing ensures audit survives compaction
-- **Long Runs**: Duplication detection across 48 agents may be lengthy
+- **Long Runs**: Duplication detection across 45 agents may be lengthy
 - **Best Practice**: Aligns with Temporary Files Convention requirement for checker agents
 - **Transparency**: Report available immediately, not waiting for completion
 
@@ -357,7 +357,7 @@ graph TD
 
 #### Agent-Skill Duplication Audit
 
-**Completed Analysis**: 45 agents × 18 Skills (810 comparisons)
+**Completed Analysis**: 45 agents × 17 Skills (765 comparisons)
 
 **Results**:
 
@@ -390,7 +390,7 @@ graph TD
 
 #### Skills Coverage Gap Analysis
 
-**Completed Analysis**: 46 agents (36,408 total lines) for patterns not covered by 18 Skills
+**Completed Analysis**: 45 agents (36,408 total lines) for patterns not covered by 17 Skills
 
 **Results**:
 
@@ -432,20 +432,20 @@ graph TD
 
 **Skills Infrastructure**:
 
-- **Before**: 18 Skills
-- **After**: 22-25 Skills (4-7 new Skills created based on gap analysis)
+- **Before**: 17 Skills
+- **After**: 21-24 Skills (4-7 new Skills created based on gap analysis)
 - **Changes**: Create generating-checker-reports, validating-frontmatter, validating-hugo-content, validating-nested-code-fences, validating-rule-references, validating-mathematical-notation; Extend assessing-criticality-confidence, creating-accessible-diagrams, creating-by-example-tutorials, applying-content-quality, developing-ayokoding-content
 
 **Agent Files**:
 
-- **Before**: 48 agents with embedded convention/pattern knowledge (avg ~800-1,200 lines)
-- **After**: 48 agents with Skill references (avg ~560-840 lines, 30-50% reduction)
+- **Before**: 45 agents with embedded convention/pattern knowledge (avg ~800-1,200 lines)
+- **After**: 45 agents with Skill references (avg ~560-840 lines, 30-50% reduction)
 - **Changes**: Remove duplicated content, add/update `skills:` frontmatter field
 
 **Documentation**:
 
-- **Before**: [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) references 17-18 Skills
-- **After**: Updated to reflect 22-25 Skills with new categories
+- **Before**: [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) references 17 Skills
+- **After**: Updated to reflect 21-24 Skills with new categories
 - **Changes**: Update Skills count, add new Skills to categories list
 
 #### Example Agent Transformation
@@ -582,7 +582,7 @@ for complete catalog.
 **After**:
 
 ```markdown
-**22-25 Skills Available**: See [Skills Directory](../.claude/skills/README.md)
+**21-24 Skills Available**: See [Skills Directory](../.claude/skills/README.md)
 for complete catalog.
 ```
 
@@ -646,7 +646,7 @@ for complete catalog.
 
 **Deliverable**: Pilot results report with metrics, lessons learned, go/no-go recommendation
 
-### Phase 4: Rollout (Remaining Agents)
+### Phase 2: Rollout (Remaining Agents)
 
 **Goal**: Apply pilot learnings to simplify remaining 40+ agents systematically.
 
@@ -678,9 +678,9 @@ for complete catalog.
    - Count duplication instances eliminated
    - Verify all agents within tier limits
 
-**Deliverable**: Simplified agents (all 48), metrics report showing impact
+**Deliverable**: Simplified agents (all 45), metrics report showing impact
 
-### Phase 5: Verification
+### Phase 3: Verification
 
 **Goal**: Comprehensive final validation ensuring quality and no regressions.
 
@@ -697,7 +697,7 @@ for complete catalog.
    - Confirm fix application accuracy maintained
 
 3. **Size Verification**
-   - Verify all 48 agents within tier limits
+   - Verify all 45 agents within tier limits
    - Calculate final average size reduction
    - Confirm 20-40% target met
 

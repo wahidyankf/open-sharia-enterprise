@@ -18,7 +18,7 @@ This plan delivers agent simplification through three sequential phases based on
 
 ### Agent-Skill Duplication Audit
 
-**Analysis Scope**: 45 agents × 18 Skills (810 comparisons)
+**Analysis Scope**: 45 agents × 17 Skills (765 comparisons)
 
 **Executive Summary**: Massive duplication detected - 50-80 instances with **6,000-8,000 lines reduction potential** (30-40% of duplicated content).
 
@@ -69,7 +69,7 @@ This plan delivers agent simplification through three sequential phases based on
 
 ### Skills Coverage Gap Analysis
 
-**Analysis Scope**: 46 agents (36,408 total lines) for patterns not in 18 existing Skills
+**Analysis Scope**: 45 agents (36,408 total lines) for patterns not in 17 existing Skills
 
 **Executive Summary**: 12 knowledge gaps identified - **~5,600 lines reduction potential** across 77+ pattern instances (15% of agent codebase).
 
@@ -201,7 +201,7 @@ Scenario: Pilot results documented
   And it includes go/no-go recommendation for rollout
 ```
 
-#### Phase 3 Completion Notes
+#### Phase 1 Completion Notes
 
 **Size Reduction**:
 
@@ -223,25 +223,31 @@ Scenario: Pilot results documented
 **Status**: Not Started
 **Dependencies**: Phase 1 must complete with go decision
 
-**Goal**: Apply pilot learnings to simplify remaining 45 agents systematically by family
+**Goal**: Apply pilot learnings to simplify remaining 42 agents systematically by family
 
 #### Implementation Steps
 
 - [ ] **4.1: Plan rollout order**
-  - Group remaining agents by family: ayokoding-web (9), ose-platform-web (3), readme (3), plan (3), workflow (3), swe (1), social (1), agent (1), docs-link (2), wow-rules (3)
+  - Group remaining agents by family: ayokoding-web (16), ose-platform-web (4), readme (3), plan (5), workflow (3), swe (1), social (1), agent (1), docs remaining (5 agents: tutorial-maker, tutorial-checker, tutorial-fixer, file-manager, link-general-checker), wow-rules (3)
+  - Note: docs pilot (maker, checker, fixer) completed in Phase 1
   - Prioritize families by duplication level (from Phase 1 audit)
   - Document rollout order
 
-- [ ] **4.2: Simplify ayokoding-web family (9 agents)**
-  - General: ayokoding-web-general-maker, ayokoding-web-general-checker, ayokoding-web-general-fixer
-  - By-Example: ayokoding-web-by-example-maker, ayokoding-web-by-example-checker, ayokoding-web-by-example-fixer
-  - Facts: ayokoding-web-facts-checker, ayokoding-web-facts-fixer
-  - Operations: ayokoding-web-deployer
+- [ ] **4.2: Simplify ayokoding-web family (16 agents)**
+  - General: general-maker, general-checker, general-fixer
+  - By-Example: by-example-maker, by-example-checker, by-example-fixer
+  - Facts: facts-checker, facts-fixer
+  - Link: link-checker, link-fixer
+  - Structure: structure-maker, structure-checker, structure-fixer
+  - Navigation: navigation-maker
+  - Title: title-maker
+  - Operations: deployer
   - For each: Remove duplication, update skills:, verify size, test if applicable
   - Commit after family complete
 
-- [ ] **4.3: Simplify ose-platform-web family (3 agents)**
-  - ose-platform-web-content-maker, ose-platform-web-content-checker, ose-platform-web-content-fixer
+- [ ] **4.3: Simplify ose-platform-web family (4 agents)**
+  - content-maker, content-checker, content-fixer
+  - deployer
   - For each: Remove duplication, update skills:, verify size
   - Commit after family complete
 
@@ -251,7 +257,7 @@ Scenario: Pilot results documented
   - Run readme workflow validation on test cases
   - Commit after family complete
 
-- [ ] **4.5: Simplify plan family (4 agents)**
+- [ ] **4.5: Simplify plan family (5 agents)**
   - plan**maker, plan**checker, plan**executor, plan**execution-checker, plan\_\_fixer
   - For each: Remove duplication, update skills:, verify size
   - Run plan workflow validation if feasible
@@ -262,13 +268,10 @@ Scenario: Pilot results documented
   - For each: Remove duplication, update skills:, verify size
   - Commit after family complete
 
-- [ ] **4.7: Simplify infrastructure agents (8 agents)**
+- [ ] **4.7: Simplify infrastructure agents (3 agents)**
   - swe**hugo**developer
   - social**linkedin**post-maker
   - agent\_\_maker
-  - docs\_\_link-general-checker
-  - ayokoding-web-link-checker, ayokoding-web-link-fixer
-  - ayokoding-web-navigation-maker, ayokoding-web-title-maker, ayokoding-web-structure-maker, ayokoding-web-structure-checker, ayokoding-web-structure-fixer
   - For each: Remove duplication, update skills:, verify size
   - Commit after batch complete
 
@@ -280,16 +283,16 @@ Scenario: Pilot results documented
 
 - [ ] **4.9: Track rollout metrics**
   - Measure size reduction per agent
-  - Calculate average size reduction across all 48 agents
+  - Calculate average size reduction across all 45 agents
   - Count duplication instances eliminated
   - Verify all agents within tier limits
 
 #### Validation Checklist
 
-- [ ] All 45 remaining agents simplified
+- [ ] All 42 remaining agents simplified
 - [ ] skills: frontmatter field updated for all agents
 - [ ] All agents within tier limits
-- [ ] Average size reduction 20-40% across all 48 agents
+- [ ] Average size reduction 20-40% across all 45 agents
 - [ ] Progressive commits after each family
 - [ ] Family workflows validated where applicable
 
@@ -297,12 +300,12 @@ Scenario: Pilot results documented
 
 ```gherkin
 Scenario: All agents simplified systematically
-  Given 45 remaining agents (after pilot)
+  Given 42 remaining agents (after pilot)
   When rollout completes
   Then all agents have duplication removed
   And all agents have skills: frontmatter updated
   And all agents are within tier limits
-  And average size reduction is 20-40% across all 48 agents
+  And average size reduction is 20-40% across all 45 agents
 
 Scenario: Family workflows validated
   Given simplified agent families with workflows
@@ -314,28 +317,28 @@ Scenario: Family workflows validated
 Scenario: Rollout metrics tracked
   Given rollout is complete
   When metrics are calculated
-  Then size reduction is measured for all 48 agents
+  Then size reduction is measured for all 45 agents
   And average reduction meets 20-40% target
   And duplication elimination count is documented
   And all agents verified within tier limits
 ```
 
-#### Phase 4 Completion Notes
+#### Phase 2 Completion Notes
 
 **Rollout Order**: [To be filled after 4.1]
 
 **Size Reduction by Family**:
 
-- ayokoding-web (9): [Average reduction: X%]
-- ose-platform-web (3): [Average reduction: X%]
+- ayokoding-web (16): [Average reduction: X%]
+- ose-platform-web (4): [Average reduction: X%]
 - readme (3): [Average reduction: X%]
-- plan (4): [Average reduction: X%]
+- plan (5): [Average reduction: X%]
 - workflow (3): [Average reduction: X%]
-- infrastructure (8): [Average reduction: X%]
+- infrastructure (3): [Average reduction: X%]
 - wow-rules (3): [Average reduction: X%]
-- docs (3, pilot): [Average reduction: X%]
+- docs (8, includes pilot): [Average reduction: X%]
 
-**Overall Average**: [X% across all 48 agents]
+**Overall Average**: [X% across all 45 agents]
 
 **Issues Encountered**: [To be filled after Phase 2 completion]
 
@@ -367,7 +370,7 @@ Scenario: Rollout metrics tracked
   - Document validation accuracy (should be 100% match)
 
 - [ ] **5.3: Verify size targets met**
-  - Confirm all 48 agents within tier limits
+  - Confirm all 45 agents within tier limits
   - Calculate final average size reduction
   - Verify 20-40% target achieved
   - Document any agents outside expected range
@@ -379,7 +382,7 @@ Scenario: Rollout metrics tracked
   - Document patterns: What belongs in Skills, what belongs in agents
   - Update Skills README if new Skills were created
   - Update docs/explanation/ex\_\_repository-governance-architecture.md:
-    - Change Skills count from "17-18 Skills" to "22-25 Skills" (line 313)
+    - Change Skills count from "17 Skills" to "21-24 Skills" (line 313)
     - Add "Validation Standards" category to Skills Categories (lines 316-321)
     - List new Skills: generating-checker-reports, validating-frontmatter, validating-hugo-content, validating-nested-code-fences, validating-rule-references, validating-mathematical-notation
 
@@ -430,7 +433,7 @@ Scenario: Rollout metrics tracked
 
 ```gherkin
 Scenario: Quality gate passes
-  Given all 48 agents simplified
+  Given all 45 agents simplified
   When wow__rules__quality-gate workflow runs in OCD mode
   Then zero CRITICAL findings exist
   And zero HIGH findings exist
@@ -445,7 +448,7 @@ Scenario: No regressions in effectiveness
   And zero regressions are detected
 
 Scenario: Size targets achieved
-  Given all 48 agents simplified
+  Given all 45 agents simplified
   When size metrics are calculated
   Then all agents are within tier limits
   And average size reduction is 20-40%
@@ -468,7 +471,7 @@ Scenario: Final report generated
   And it includes recommendations for future work
 ```
 
-#### Phase 5 Completion Notes
+#### Phase 3 Completion Notes
 
 **Quality Gate Results**: [To be filled after 5.1]
 
@@ -492,32 +495,31 @@ Scenario: Final report generated
 
 ### Internal Dependencies
 
-- **Phase 2 depends on Phase 1**: Gap analysis requires audit findings to know what knowledge exists in agents
-- **Phase 3 depends on Phase 2**: Pilot simplification may require new/enhanced Skills from gap analysis
-- **Phase 4 depends on Phase 3**: Rollout requires pilot validation (go decision) before proceeding
-- **Phase 5 depends on Phase 4**: Final verification requires all agents simplified
+- **Background Research Completed**: Audit and gap analysis completed 2026-01-03 (preparatory work)
+- **Phase 1 depends on Background Research**: Pilot simplification uses audit findings and gap analysis results
+- **Phase 2 depends on Phase 1**: Rollout requires pilot validation (go decision) before proceeding
+- **Phase 3 depends on Phase 2**: Final verification requires all agents simplified
 
 ### External Dependencies
 
-- **Existing Skills infrastructure**: 18 Skills must be in place and functional
+- **Existing Skills infrastructure**: 17 Skills must be in place and functional
 - **Quality gates**: wow**rules**quality-gate workflow must be operational
 - **Agent families**: Agent family groupings (maker-checker-fixer) must be defined
 
 ### Critical Path
 
 ```
-Phase 1 (Audit) → Phase 2 (Gap Analysis) → Phase 3 (Pilot) → Go/No-Go Decision
-                                                              ↓
-                                             Phase 4 (Rollout) → Phase 5 (Verification)
+Background Research → Phase 1 (Pilot) → Go/No-Go Decision
+                                        ↓
+                       Phase 2 (Rollout) → Phase 3 (Verification)
 ```
 
-**Critical Path**: All phases are on critical path (sequential dependencies)
+**Critical Path**: All execution phases are on critical path (sequential dependencies)
 
 **Validation Checkpoints**:
 
-- After Phase 2: Verify Skills cover all agent knowledge (no blocking gaps)
-- After Phase 3: Go/No-Go decision for rollout (pilot must demonstrate success)
-- After Phase 4: Verify all agents simplified (before final verification)
+- After Phase 1: Go/No-Go decision for rollout (pilot must demonstrate success)
+- After Phase 2: Verify all agents simplified (before final verification)
 
 ## Risks and Mitigation
 
@@ -527,7 +529,7 @@ Phase 1 (Audit) → Phase 2 (Gap Analysis) → Phase 3 (Pilot) → Go/No-Go Deci
 
 **Impact**: HIGH - Could delay plan significantly or reduce simplification benefits
 
-**Probability**: LOW - Current 18 Skills are comprehensive
+**Probability**: LOW - Current 17 Skills are comprehensive
 
 **Mitigation**:
 
@@ -613,7 +615,7 @@ This checklist must be completed before marking the plan as "Done":
 ### Code Quality
 
 - [ ] Quality gate passed (wow**rules**quality-gate OCD mode)
-- [ ] All 48 agents have skills: frontmatter field
+- [ ] All 45 agents have skills: frontmatter field
 - [ ] All Skills referenced by agents exist in .claude/skills/
 - [ ] Agent file syntax valid (no frontmatter errors)
 
@@ -654,18 +656,16 @@ All Gherkin scenarios from requirements.md pass:
 
 **Phase Completion**:
 
-- Phase 1 (Audit): Not Started
-- Phase 2 (Gap Analysis): Not Started
-- Phase 3 (Pilot): Not Started
-- Phase 4 (Rollout): Not Started
-- Phase 5 (Verification): Not Started
+- Phase 1 (Pilot): Not Started
+- Phase 2 (Rollout): Not Started
+- Phase 3 (Verification): Not Started
 
 **Blockers**: None
 
 **Next Steps**:
 
 1. Begin Phase 1: Configure wow\_\_rules-checker for duplication detection
-2. Run comprehensive audit against all 48 agents
+2. Run comprehensive audit against all 45 agents
 3. Analyze findings and generate metrics
 
 **Final Sign-Off**: [To be completed when all phases done]
