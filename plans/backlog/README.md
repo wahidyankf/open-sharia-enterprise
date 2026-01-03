@@ -4,9 +4,7 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-- [2026-01-02: Rules Consolidation](./2026-01-02__rules-consolidation/) - Consolidate all rules scattered across the repository (10 principles, 24 conventions, 15 practices, 10 Skills, 44+ agents, CLAUDE.md) into a harmonized system with single sources of truth, complete traceability, and automated validation to prevent future drift.
-- [2025-12-21: Programming Language Content Parity](./2025-12-21__prog-lang-parity/) - Bring all 6 programming languages (Python, Golang, Java, Kotlin, Rust, Elixir) to complete parity based on highest standards identified across all languages. Ensures consistent learner experience, complete coverage, and uniform quality across all programming language content on ayokoding-web.
-- [2025-12-21: Add Elixir Programming Language](./2025-12-21__add-elixir-programming-language/) - Add Elixir as the 6th programming language to ayokoding-web with comprehensive educational content (31,000+ lines, 88 files bilingual) matching or exceeding quality standards from existing 5 languages. Covers functional programming, OTP platform, Phoenix/LiveView, fault tolerance, and modern web development.
+- [2026-01-03: OpenCode Adoption](./2026-01-03__opencode-adoption/) - Establish dual-tool compatibility between Claude Code and OpenCode with GLM-4.7 model (8.6x-20x cheaper than Claude Sonnet). Includes opencode.json configuration, AGENTS.md instructions, MCP server setup (Playwright, Context7 in repository; 4 Z.AI servers locally), agent renaming (46 agents \_\_ to -), and security-first API key handling.
 
 ## Instructions
 
