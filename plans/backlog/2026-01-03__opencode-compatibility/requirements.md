@@ -213,9 +213,11 @@ Scenario: Claude Code still works
 1. **CRITICAL - Skill Naming Incompatibility**:
    - **Both Claude Code AND OpenCode require**: `[a-z0-9-]+` (lowercase alphanumeric with hyphens ONLY)
    - **Current skill names use underscores**: `docs__applying-content-quality`
-   - **This is INVALID** - underscores are NOT allowed in either tool's spec
+   - **Underscores (`_`) are NOT allowed** in either tool's spec
+   - **Consecutive hyphens (`--`) are NOT allowed** in either tool's spec
    - **ALL 19 skills MUST be renamed** before OpenCode compatibility
-   - Example fix: `docs__applying-content-quality` → `docs-applying-content-quality`
+   - **Correct fix**: Replace `__` with **SINGLE hyphen** `-`
+   - Example: `docs__applying-content-quality` → `docs-applying-content-quality` (NOT `docs--applying-content-quality`)
 
 2. **Agent Format**: OpenCode agents use different frontmatter schema
    - Cannot directly reuse Claude agent files
