@@ -22,71 +22,245 @@ This plan delivers agent simplification through five sequential phases: Audit (c
 
 **Goal**: Generate comprehensive audit report identifying all duplication between 48 agents and 18 Skills
 
+**Detailed Methodology**: See [phase1-detailed.md](./phase1-detailed.md) for complete audit procedures, examples, and templates.
+
+#### Duplication Detection Methods
+
+**Method 1: Verbatim Duplication (CRITICAL)**
+
+Exact text match (5+ consecutive words identical). Example:
+
+```
+Skill: "All markdown content must follow quality standards: active voice,
+        single H1, proper heading nesting, alt text for images"
+
+Agent: "All markdown content must follow quality standards: active voice,
+        single H1, proper heading nesting, alt text for images"
+
+→ VERBATIM DUPLICATION (100% match) - MUST REMOVE
+```
+
+**Method 2: Paraphrased Duplication (HIGH)**
+
+Same meaning, different words (semantic similarity >80%). Example:
+
+```
+Skill: "Use active voice instead of passive voice for clarity"
+
+Agent: "Prefer active voice over passive constructions to improve readability"
+
+→ PARAPHRASED DUPLICATION (same rule, different wording) - SHOULD REMOVE
+```
+
+**Method 3: Conceptual Overlap (MEDIUM)**
+
+Same convention mentioned, different level of detail. Example:
+
+```
+Skill: [Full section explaining active voice with 10 examples]
+
+Agent: "Apply active voice convention (see Skill for details)"
+
+→ CONCEPTUAL OVERLAP (references same concept) - EVALUATE CASE-BY-CASE
+```
+
 #### Implementation Steps
 
-- [ ] **1.1: Configure wow\_\_rules-checker for duplication detection**
-  - Add Agent-Skill duplication detection logic
-  - Support three categories: Verbatim, Paraphrased, Conceptual
-  - Assign severity: CRITICAL (verbatim), HIGH (paraphrased), MEDIUM (conceptual)
-  - Implement progressive report writing to generated-reports/
+- [ ] **1.1: Initialize progressive audit report**
+  - Create report file: `generated-reports/agent-skill-duplication__{uuid}__{timestamp}__audit.md`
+  - Write skeleton structure (Executive Summary, Findings sections)
+  - Initialize finding counter
 
-- [ ] **1.2: Run comprehensive duplication audit**
-  - Execute wow\_\_rules-checker against all 48 agents
-  - Check each agent against all 18 Skills
-  - Write findings progressively to `generated-reports/agent-skill-duplication__{uuid-chain}__{timestamp}__audit.md`
-  - Include: Agent file, Skill file, duplicated content, category, severity, locations
+- [ ] **1.2: Systematic agent scanning (all 48 agents)**
+  - For each agent:
+    - Extract agent content (skip frontmatter)
+    - Compare against all 18 Skills
+    - Detect verbatim matches (grep -F exact strings)
+    - Detect paraphrased content (manual semantic analysis)
+    - Detect conceptual overlaps (convention reference comparison)
+    - Record findings progressively (append to report immediately)
+  - Expected: ~150-250 duplication instances across all agents
 
-- [ ] **1.3: Analyze audit findings**
-  - Count duplication instances by category (Verbatim, Paraphrased, Conceptual)
-  - Identify agents with most duplication
-  - Identify most-duplicated Skills
-  - Estimate size reduction potential per agent
+- [ ] **1.3: Build agent-Skill reference matrix**
+  - Create table: Agents (rows) × Skills Duplicated (columns)
+  - For each agent, list:
+    - Which Skills are duplicated
+    - Duplication counts by category (V:X, P:Y, C:Z)
+    - Total lines of duplication
+  - Example row:
+    ```
+    docs__maker | applying-content-quality (V:2, P:5, C:3)
+                | creating-accessible-diagrams (P:2)
+                | Total: 12 instances, 45 lines
+    ```
 
-- [ ] **1.4: Generate summary metrics**
-  - Total duplication instances across all agents
-  - Breakdown by category and severity
+- [ ] **1.4: Calculate aggregate metrics**
+  - Total duplication instances (breakdown by category)
   - Top 10 agents with most duplication
   - Most-duplicated Skills (highest reference count)
+  - Estimated size reduction potential:
+    - Total lines identified: ~500-800 lines
+    - Average per agent: ~3-5 instances, ~10-15 lines
+    - Projected reduction: 20-35% average
 
-- [ ] **1.5: Document audit findings**
+- [ ] **1.5: Generate recommendations**
+  - Prioritize agents for simplification (most duplication first)
+  - Identify common duplication patterns:
+    - Quality standards (active voice, heading hierarchy)
+    - Convention references (file naming, linking, diagrams)
+    - Pattern explanations (Maker-Checker-Fixer, Diátaxis)
+  - Note Skills requiring enhancement (for Phase 2)
+
+- [ ] **1.6: Finalize and commit audit deliverables**
+  - Update executive summary with final metrics
   - Commit audit report to generated-reports/
-  - Commit summary metrics document
-  - Add findings to Phase 1 completion notes
+  - Commit agent-Skill matrix
+  - Document findings in Phase 1 completion notes below
+
+#### Expected Audit Report Structure
+
+```markdown
+# Agent-Skill Duplication Audit Report
+
+## Executive Summary
+
+- Total Findings: ~150-250
+- Verbatim: ~30-50 (CRITICAL)
+- Paraphrased: ~80-120 (HIGH)
+- Conceptual: ~40-80 (MEDIUM)
+- Estimated Reduction: ~500-800 lines (~25%)
+
+## Agent-Skill Matrix
+
+[48 rows showing duplication per agent]
+
+## Detailed Findings
+
+### Finding 001
+
+**Agent**: docs\_\_maker.md (lines 45-48)
+**Skill**: applying-content-quality/SKILL.md (lines 12-16)
+**Category**: Paraphrased
+**Severity**: HIGH
+
+**Agent Content**:
+```
+
+Ensure all documentation follows quality standards:
+
+- Active voice preferred
+- Single H1 per document
+
+```
+
+**Skill Content**:
+```
+
+Universal markdown content quality standards:
+
+- Use active voice instead of passive
+- One H1 heading per file
+
+```
+
+**Recommendation**: Remove detailed standards from agent.
+Reference Skill 'applying-content-quality' in frontmatter.
+
+**Estimated Reduction**: 4 lines (120 characters)
+
+---
+
+[Continue for all ~150-250 findings...]
+
+## Top Duplication Patterns
+[Analysis of common patterns]
+
+## Recommendations
+[Prioritized simplification order]
+```
 
 #### Validation Checklist
 
 - [ ] Audit report exists in generated-reports/
-- [ ] All 48 agents checked against all 18 Skills
-- [ ] Findings categorized and severity-assigned
-- [ ] Summary metrics calculated
-- [ ] Progressive writing ensured (report survives compaction)
+- [ ] All 48 agents scanned (100% coverage)
+- [ ] All 18 Skills used as reference (100% coverage)
+- [ ] Findings categorized (Verbatim/Paraphrased/Conceptual)
+- [ ] Severity assigned (CRITICAL/HIGH/MEDIUM)
+- [ ] Progressive writing implemented (report written incrementally, survives compaction)
+- [ ] Agent-Skill matrix generated
+- [ ] Metrics calculated (totals, top 10s, averages, reduction estimates)
+- [ ] Recommendations documented
 
 #### Acceptance Criteria
 
 ```gherkin
 Scenario: Comprehensive audit completed
-  Given wow__rules-checker configured for Agent-Skill duplication detection
-  When the checker runs against all 48 agents
+  Given all 48 agents and 18 Skills available
+  When the duplication audit runs
   Then audit report is written progressively to generated-reports/
   And all duplication instances are categorized (Verbatim/Paraphrased/Conceptual)
   And all duplication instances have severity (CRITICAL/HIGH/MEDIUM)
   And summary metrics are calculated
+  And agent-Skill matrix is generated
 
 Scenario: Audit findings are actionable
   Given the audit report is complete
   When a developer reviews the findings
-  Then each finding includes agent file, Skill file, duplicated content, and locations
-  And the developer can identify which content to remove from agents
-  And the developer can identify which Skills to reference
+  Then each finding includes:
+    - Agent file path and line numbers
+    - Skill file path and line numbers
+    - Duplicated content (both agent and Skill versions)
+    - Category and severity
+    - Recommendation (what to remove, what to reference)
+    - Estimated size reduction
+  And the developer can immediately simplify agents using findings
+
+Scenario: Metrics guide prioritization
+  Given the metrics summary is complete
+  When planning simplification work
+  Then top 10 agents with most duplication are identified
+  And most-duplicated Skills are identified
+  And estimated reduction potential is quantified (20-35%)
+  And work can be prioritized by impact
 ```
 
 #### Phase 1 Completion Notes
 
-**Findings**: [To be filled after Phase 1 completion]
+**Findings Summary**:
 
-**Metrics**: [To be filled after Phase 1 completion]
+- Total Duplication Instances: [X instances]
+  - Verbatim (CRITICAL): [Y instances]
+  - Paraphrased (HIGH): [Z instances]
+  - Conceptual (MEDIUM): [W instances]
 
-**Issues**: [To be filled after Phase 1 completion]
+**Top 10 Agents by Duplication**:
+
+1. [agent-name]: [N instances, M lines]
+2. [agent-name]: [N instances, M lines]
+3. ...
+
+**Most-Duplicated Skills**:
+
+1. [skill-name]: Referenced by [N agents, M instances]
+2. [skill-name]: Referenced by [N agents, M instances]
+3. ...
+
+**Metrics**:
+
+- Total lines identified for removal: [~500-800 lines]
+- Average duplication per agent: [~3-5 instances, ~10-15 lines]
+- Projected size reduction: [~20-35%]
+
+**Common Duplication Patterns**:
+
+- Quality standards (active voice, heading hierarchy, alt text): [N instances]
+- Hugo conventions (absolute paths, bilingual, weight system): [N instances]
+- Validation patterns (criticality, confidence, Maker-Checker-Fixer): [N instances]
+- Framework references (Diátaxis, Gherkin, TBD): [N instances]
+
+**Issues/Blockers**: [None expected]
+
+**Audit Report Location**: `generated-reports/agent-skill-duplication__{uuid}__{timestamp}__audit.md`
 
 ---
 
