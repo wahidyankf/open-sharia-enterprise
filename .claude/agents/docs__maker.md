@@ -134,25 +134,25 @@ When referencing repository rules (visions, principles, conventions, development
 
 **Examples:**
 
-✅ **Correct - Two-tier formatting**:
+**Correct - Two-tier formatting**:
 
 ```markdown
 This implements the [Linking Convention](./formatting/ex-co-fo__linking.md) by using relative paths. The `Linking Convention` requires .md extensions.
 ```
 
-❌ **Incorrect - All plain text**:
+**Incorrect - All plain text**:
 
 ```markdown
 This implements the Linking Convention by using relative paths. The Linking Convention requires .md extensions.
 ```
 
-❌ **Incorrect - All links** (redundant):
+**Incorrect - All links** (redundant):
 
 ```markdown
 This implements the [Linking Convention](./formatting/ex-co-fo__linking.md) by using relative paths. The [Linking Convention](./formatting/ex-co-fo__linking.md) requires .md extensions.
 ```
 
-❌ **Incorrect - All inline code** (first mention not linked):
+**Incorrect - All inline code** (first mention not linked):
 
 ```markdown
 This implements the `Linking Convention` by using relative paths. The `Linking Convention` requires .md extensions.
@@ -197,10 +197,10 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/for
 
 - **Semantic Consistency**: Use emojis from the defined vocabulary, same emoji = same meaning
 - **Restraint**: 1-2 emojis per section maximum, enhance scannability without visual noise
-- **Heading Placement**: Place emojis at start of H2/H3/H4 headings (e.g., `## 📋 Purpose`)
+- **Heading Placement**: Place emojis at start of H2/H3/H4 headings (e.g., `##  Purpose`)
 - **No Technical Content**: Never use emojis in code blocks, commands, file paths, or frontmatter
 - **Accessibility**: Emojis enhance but don't replace text meaning
-- **Common Emojis**: 📋 Overview, Purpose, 💡 Key Concepts, 📚 Resources, ✅ Correct, ❌ Incorrect, ⚠️ Warning, 🚀 Quick Start, 🔧 Configuration, 🔍 Deep Dive, 🔒 Security, 📝 Notes
+- **Common Emojis**: Overview, Purpose, Key Concepts, Resources, Correct, Incorrect, Warning, Quick Start, Configuration, Deep Dive, Security, Notes
 
 ### Indentation Convention
 
@@ -210,8 +210,8 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/for
 
 - **Scope**: All markdown files in the repository
 - **Markdown bullets**: Use SPACE indentation for nested bullets (2 spaces per level)
-  - Format: `- Text` (dash, space, text)
-  - Nested: `  - Text` (2 spaces before dash)
+- Format: `- Text` (dash, space, text)
+- Nested: `  - Text` (2 spaces before dash)
 - **YAML frontmatter**: MUST use 2 spaces per level (standard YAML)
 - **Code blocks**: Use language-appropriate indentation (2 spaces for JSON/TS/YAML, 4 for Python, tabs for Go)
 - **Not project-wide**: Files outside `docs/` use standard markdown (spaces OK)
@@ -379,9 +379,9 @@ When working with the user, you MUST:
    - What the convention is (1 sentence)
    - Where detailed docs are located (link)
    - Why it matters (1 sentence, if critical)
-   - ❌ Detailed examples (belongs in convention docs)
-   - ❌ Comprehensive explanations (belongs in convention docs)
-   - ❌ Complete rule lists (belongs in convention docs)
+   - Detailed examples (belongs in convention docs)
+   - Comprehensive explanations (belongs in convention docs)
+   - Complete rule lists (belongs in convention docs)
 
 5. **Size Awareness:**
    - CLAUDE.md has a hard limit of 40,000 characters

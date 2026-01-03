@@ -241,8 +241,8 @@ timestamp=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
 filename="docs__${uuid}__${timestamp}__audit.md"
 ```
 
-❌ **WRONG**: `docs__abc123__2025-12-15--00-00__audit.md` (placeholder - never use!)
-✅ **CORRECT**: `docs__a1b2c3__2025-12-15--10-23__audit.md` (actual values from bash)
+**WRONG**: `docs__abc123__2025-12-15--00-00__audit.md` (placeholder - never use!)
+**CORRECT**: `docs__a1b2c3__2025-12-15--10-23__audit.md` (actual values from bash)
 
 ## Validation Workflow
 
@@ -346,16 +346,16 @@ filename="docs__${uuid}__${timestamp}__audit.md"
 - **Factual Errors**: A (CRITICAL/HIGH/MEDIUM/LOW breakdown)
 - **Contradictions**: B
 - **Outdated Information**: C
-- **Overall Status**: ✅ Accurate / 🟡 Issues / 🔴 Critical
+- **Overall Status**: Accurate / Issues / Critical
 
-## ✅ Verified Facts (showing first 10, X total)
+## Verified Facts (showing first 10, X total)
 
 1. **Claim description** at `file.md:line`
    - Claim: [what was verified]
-   - Status: ✅ Verified
+   - Status: Verified
    - Source: URL (verified date)
 
-## 🔴 Factual Errors
+## Factual Errors
 
 ### CRITICAL: [Error title]
 
@@ -366,7 +366,7 @@ filename="docs__${uuid}__${timestamp}__audit.md"
 **Source**: [authoritative URL]
 **Criticality**: CRITICAL (why)
 
-## ⚠️ Contradictions
+## Contradictions
 
 **Files**: `file1.md:line` vs `file2.md:line`
 **Conflict**: [what conflicts]
@@ -383,9 +383,9 @@ filename="docs__${uuid}__${timestamp}__audit.md"
 
 ## Next Steps
 
-If ✅ Accurate: No changes needed.
-If 🟡 Issues: Address when convenient.
-If 🔴 Critical: Fix immediately - list of critical issues.
+If Accurate: No changes needed.
+If Issues: Address when convenient.
+If Critical: Fix immediately - list of critical issues.
 ```
 
 ## Common Validation Scenarios
@@ -442,7 +442,7 @@ If unable to verify:
 
 1. State limitation explicitly: "Unable to verify: [reason]"
 2. Provide verification steps for user
-3. Flag as ⚠️ Unverified in report
+3. Flag as Unverified in report
 4. Never present unverified as verified
 
 ### 403 Errors
