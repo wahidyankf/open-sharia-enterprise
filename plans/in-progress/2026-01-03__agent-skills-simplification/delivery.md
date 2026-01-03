@@ -14,53 +14,105 @@
 
 This plan delivers agent simplification through three sequential phases based on completed background research: Pilot (validate approach on one family), Rollout (apply to remaining agents), and Verification (final quality gates).
 
-## Background Research (Completed)
+## Background Research (Completed 2026-01-03)
 
-### Agent-Skill Duplication Audit (✅ COMPLETED - 2026-01-03)
+### Agent-Skill Duplication Audit
 
-**Comprehensive analysis**: 45 agents × 18 Skills (810 comparisons)
+**Analysis Scope**: 45 agents × 18 Skills (810 comparisons)
 
-**Key Findings**:
+**Executive Summary**: Massive duplication detected - 50-80 instances with **6,000-8,000 lines reduction potential** (30-40% of duplicated content).
 
-- **50-80 significant duplication instances** identified
-- **6,000-8,000 lines reduction potential** (30-40% of duplicated content)
-- Breakdown: Verbatim (20-25), Paraphrased (25-35), Conceptual (10-20)
-- Top duplicated Skills: `assessing-criticality-confidence` (25+ agents), `developing-ayokoding-content` (8-10 agents), `creating-by-example-tutorials` (3-4 agents)
+**Breakdown by Category**:
 
-**Complete Results**: See [audit-findings.md](./audit-findings.md) for:
+- Verbatim: 20-25 instances (30-40%)
+- Paraphrased: 25-35 instances (40-50%)
+- Conceptual: 10-20 instances (15-25%)
 
-- Detailed findings with line numbers and content quotes
-- Top 10 agents by duplication
-- Most-duplicated Skills analysis
-- Recommendations by priority (P0-P2)
+**Breakdown by Severity**:
+
+- CRITICAL: 15-20 instances (~25%)
+- HIGH: 25-30 instances (~40%)
+- MEDIUM: 15-25 instances (~30%)
+- LOW: 5-10 instances (~5%)
+
+**Top 5 Duplication Patterns**:
+
+1. **Criticality levels system** (CRITICAL) - 25+ agents, 2,800-4,200 lines total
+2. **Hugo ayokoding-web weight system** (CRITICAL) - 3-4 agents, ~400 lines
+3. **Annotation density standards** (CRITICAL) - 2 agents, ~150 lines
+4. **Maker-Checker-Fixer workflow** (HIGH) - Multiple agents, ~150 lines
+5. **Accessible color palette** (HIGH) - 8+ agents, ~80 lines
+
+**Top 5 Agents by Duplication**:
+
+1. apps**ayokoding-web**by-example-maker (~800 lines)
+2. apps**ayokoding-web**general-checker (~400 lines)
+3. docs\_\_checker (~300 lines)
+4. apps**ayokoding-web**structure-maker (~300 lines)
+5. apps**ayokoding-web**by-example-checker (~300 lines)
+
+**Most-Duplicated Skills**:
+
+1. assessing-criticality-confidence (25+ agents - all checkers/fixers)
+2. developing-ayokoding-content (8-10 ayokoding-web agents)
+3. creating-by-example-tutorials (3-4 by-example agents)
+4. applying-content-quality (10+ content-creating agents)
+5. creating-accessible-diagrams (8+ diagram-using agents)
+
+**Simplification Priority**:
+
+- **P0 (CRITICAL)**: Refactor checker/fixer agents (criticality systems), ayokoding-web agents (weight systems, annotation standards)
+- **P1 (HIGH)**: Refactor diagram references, plan agents, README agents
+- **P2 (MEDIUM)**: Update agent frontmatter `skills:` fields, create Skill references index
 
 ---
 
-### Skills Coverage Gap Analysis (✅ COMPLETED - 2026-01-03)
+### Skills Coverage Gap Analysis
 
-**Comprehensive analysis**: 46 agents (36,408 total lines) analyzed for patterns not covered by 18 existing Skills
+**Analysis Scope**: 46 agents (36,408 total lines) for patterns not in 18 existing Skills
 
-**Key Findings**:
+**Executive Summary**: 12 knowledge gaps identified - **~5,600 lines reduction potential** across 77+ pattern instances (15% of agent codebase).
 
-- **12 knowledge gaps** identified (patterns in 3+ agents not covered by Skills)
-- **~5,600 lines reduction potential** across 77+ pattern instances (15% of agent codebase)
-- Breakdown: CRITICAL (2 gaps, 1,600 lines), HIGH (5 gaps, 2,640 lines), MEDIUM (5 gaps, 1,365 lines)
-- Recommended: Create 4-7 new Skills, extend 4-5 existing Skills
+**Breakdown by Priority**:
 
-**Complete Results**: See [gap-analysis.md](./gap-analysis.md) for:
+- CRITICAL: 2 gaps, 27+ agents affected, ~1,600 lines
+- HIGH: 5 gaps, 22+ agents affected, ~2,640 lines
+- MEDIUM: 5 gaps, 28+ agents affected, ~1,365 lines
 
-- Detailed gap descriptions with affected agents
-- New Skills needed (generating-checker-reports, validating-frontmatter, etc.)
-- Skills requiring extensions (assessing-criticality-confidence, creating-accessible-diagrams, etc.)
-- Implementation priority recommendations
+**Critical Gaps** (10+ agents):
+
+1. **Temporary report file generation** - 12+ checker agents, ~1,000 lines
+   - Recommendation: Create Skill `generating-checker-reports`
+2. **Criticality level assessment/reporting** - 15+ agents, ~600 lines
+   - Recommendation: Extend Skill `assessing-criticality-confidence`
+
+**High-Priority Gaps** (5-9 agents): 3. **Frontmatter validation** - 6 agents, ~590 lines → Create `validating-frontmatter` 4. **Hugo content validation** - 3 agents, ~850 lines → Create `validating-hugo-content` or extend `developing-ayokoding-content` 5. **Diagram splitting/mobile-friendliness** - 5+ agents, ~400 lines → Extend `creating-accessible-diagrams` 6. **Code annotation density validation** - 5+ agents, ~400 lines → Extend `creating-by-example-tutorials` 7. **Nested code fence validation** - 3 agents, ~150 lines → Create `validating-nested-code-fences`
+
+**Medium-Priority Gaps** (3-4 agents):
+8-12. Rule reference formatting (~210 lines), mathematical notation (~160 lines), bullet indentation (~95 lines), UUID chain generation (covered by Gap 1), index/intro content (~750 lines)
+
+**New Skills Needed** (4-7 total):
+
+- **Must create**: generating-checker-reports, validating-frontmatter, validating-hugo-content, validating-nested-code-fences
+- **Should create**: validating-rule-references, validating-mathematical-notation
+
+**Skills Requiring Extension** (4-5 total):
+
+- assessing-criticality-confidence (emoji indicators, domain examples)
+- creating-accessible-diagrams (diagram splitting guidance)
+- creating-by-example-tutorials (density measurement methodology)
+- applying-content-quality (bullet indentation validation)
+- developing-ayokoding-content (Hugo validation or index/intro rules)
+
+**Combined Impact**: Background research identifies **11,600+ lines reduction potential** (6,000-8,000 from duplication elimination + 5,600 from gap remediation).
 
 ---
 
 ## Implementation Phases
 
-**Note**: Audit (Phase 1) and Gap Analysis (Phase 2) are COMPLETED background research documented above. Execution begins with Phase 3 (Pilot).
+**Note**: Background research (duplication audit and gap analysis) completed 2026-01-03. Three execution phases remain.
 
-### Phase 3: Pilot (One Agent Family)
+### Phase 1: Pilot (One Agent Family)
 
 **Status**: Not Started
 
@@ -158,18 +210,18 @@ Scenario: Pilot results documented
 - docs\_\_fixer: [Before: X lines, After: Y lines, Reduction: Z%]
 - Average: [Z%]
 
-**Effectiveness Validation**: [To be filled after Phase 3 completion]
+**Effectiveness Validation**: [To be filled after Phase 1 completion]
 
-**Lessons Learned**: [To be filled after Phase 3 completion]
+**Lessons Learned**: [To be filled after Phase 1 completion]
 
-**Go/No-Go Decision**: [To be filled after Phase 3 completion]
+**Go/No-Go Decision**: [To be filled after Phase 1 completion]
 
 ---
 
-### Phase 4: Rollout (Remaining Agents)
+### Phase 2: Rollout (Remaining Agents)
 
 **Status**: Not Started
-**Dependencies**: Phase 3 must complete with go decision
+**Dependencies**: Phase 1 must complete with go decision
 
 **Goal**: Apply pilot learnings to simplify remaining 45 agents systematically by family
 
@@ -285,14 +337,14 @@ Scenario: Rollout metrics tracked
 
 **Overall Average**: [X% across all 48 agents]
 
-**Issues Encountered**: [To be filled after Phase 4 completion]
+**Issues Encountered**: [To be filled after Phase 2 completion]
 
 ---
 
-### Phase 5: Verification
+### Phase 3: Verification
 
 **Status**: Not Started
-**Dependencies**: Phase 4 must complete
+**Dependencies**: Phase 2 must complete
 
 **Goal**: Comprehensive final validation ensuring quality and no regressions
 

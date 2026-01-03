@@ -87,11 +87,11 @@ This plan delivers agent simplification through direct commits to main branch:
 
 **Approach:**
 
-- ✅ **COMPLETED**: Agent-Skill duplication audit (See [audit-findings.md](./audit-findings.md))
-- ✅ **COMPLETED**: Skills coverage gap analysis (See [gap-analysis.md](./gap-analysis.md))
-- **NEXT**: Pilot simplification on one agent family (Phase 3)
-- **THEN**: Apply learnings to remaining agents systematically (Phase 4)
-- **FINALLY**: Final validation with quality gates (Phase 5)
+- ✅ **COMPLETED**: Agent-Skill duplication audit (6,000-8,000 lines reduction potential)
+- ✅ **COMPLETED**: Skills coverage gap analysis (~5,600 lines reduction potential)
+- **NEXT**: Pilot simplification on one agent family (Phase 1)
+- **THEN**: Apply learnings to remaining agents systematically (Phase 2)
+- **FINALLY**: Final validation with quality gates (Phase 3)
 
 **Rationale for Trunk Based Development**:
 
@@ -102,16 +102,9 @@ This plan delivers agent simplification through direct commits to main branch:
 
 ## Quick Links
 
-**Background Research (Completed)**:
-
-- [Audit Findings](./audit-findings.md) - ✅ Agent-Skill duplication analysis (50-80 instances, 6,000-8,000 lines reduction)
-- [Gap Analysis](./gap-analysis.md) - ✅ Skills coverage gaps (12 gaps, ~5,600 lines reduction)
-
-**Planning Documents**:
-
 - [Requirements](./requirements.md) - Detailed objectives, user stories, acceptance criteria
-- [Technical Documentation](./tech-docs.md) - Architecture, design decisions, implementation approach
-- [Delivery Plan](./delivery.md) - Implementation phases (3-5), validation checklist, completion status
+- [Technical Documentation](./tech-docs.md) - Architecture, design decisions, background research results, implementation approach
+- [Delivery Plan](./delivery.md) - Background research results (duplication audit + gap analysis), implementation phases (1-3), validation checklist, completion status
 
 ## Success Metrics
 
