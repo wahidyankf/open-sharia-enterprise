@@ -29,7 +29,7 @@ Scenario: First-time OpenCode user opens repository
   When they run `opencode` in the project root
   Then OpenCode starts with zai/glm-4.7 model (cost-optimized, 8.6x cheaper than Claude)
   And displays project instructions from AGENTS.md
-  And lists available MCP servers (playwright, context7)
+  And lists available MCP servers (playwright, context7, zai-mcp-server, web-search-prime, web-reader, zread)
   And can invoke skills by name
 
 Scenario: OpenCode user creates content
@@ -79,6 +79,30 @@ Scenario: Context7 documentation lookup
   When either tool queries library documentation
   Then Context7 returns identical results
   And resolve-library-id, query-docs work consistently
+
+Scenario: Z.AI Vision MCP works in both tools
+  Given Z.AI Vision MCP is configured for Claude Code
+  And equivalent configuration exists for OpenCode
+  When either tool invokes vision capabilities
+  Then ui_to_artifact, extract_text_from_screenshot, diagnose_error_screenshot work identically
+
+Scenario: Z.AI Web Search MCP works in both tools
+  Given Z.AI Web Search MCP is configured for Claude Code
+  And equivalent configuration exists for OpenCode
+  When either tool searches the web
+  Then webSearchPrime returns identical search results
+
+Scenario: Z.AI Web Reader MCP works in both tools
+  Given Z.AI Web Reader MCP is configured for Claude Code
+  And equivalent configuration exists for OpenCode
+  When either tool fetches web page content
+  Then webReader returns identical markdown content
+
+Scenario: Z.AI Zread MCP works in both tools
+  Given Z.AI Zread MCP is configured for Claude Code
+  And equivalent configuration exists for OpenCode
+  When either tool reads GitHub repository files
+  Then search_doc, get_repo_structure, read_file work identically
 ```
 
 ### US-04: Skills Compatibility
@@ -128,13 +152,14 @@ Scenario: Validate agent naming after rename
 
 ### FR-01: Configuration Files
 
-| Requirement | Description                                              | Priority |
-| ----------- | -------------------------------------------------------- | -------- |
-| FR-01.1     | Create `opencode.json` with GLM-4.7 model (zai provider) | Must     |
-| FR-01.2     | Configure GLM-4.5-air as small/fast model                | Should   |
-| FR-01.3     | Configure MCP servers in opencode.json format            | Must     |
-| FR-01.4     | Set tool permissions matching Claude Code defaults       | Should   |
-| FR-01.5     | Add schema reference for IDE autocomplete                | Should   |
+| Requirement | Description                                                                                         | Priority |
+| ----------- | --------------------------------------------------------------------------------------------------- | -------- |
+| FR-01.1     | Create `opencode.json` with GLM-4.7 model (zai provider)                                            | Must     |
+| FR-01.2     | Configure GLM-4.5-air as small/fast model                                                           | Should   |
+| FR-01.3     | Configure 6 MCP servers (zai-mcp-server, web-search-prime, web-reader, zread, playwright, context7) | Must     |
+| FR-01.4     | Set Z.AI API key for 4 Z.AI MCP servers                                                             | Must     |
+| FR-01.5     | Set tool permissions matching Claude Code defaults                                                  | Should   |
+| FR-01.6     | Add schema reference for IDE autocomplete                                                           | Should   |
 
 ### FR-02: Instructions File
 
@@ -228,7 +253,15 @@ Scenario: MCP servers connect
   When OpenCode starts
   Then Playwright MCP server connects
   And Context7 MCP server connects
+  And Z.AI Vision MCP server connects
+  And Z.AI Web Search MCP server connects
+  And Z.AI Web Reader MCP server connects
+  And Z.AI Zread MCP server connects
   And browser automation tools are available
+  And vision tools are available
+  And web search tools are available
+  And web reader tools are available
+  And GitHub read tools are available
 ```
 
 ### AC-04: Claude Code Unaffected
@@ -298,6 +331,8 @@ Scenario: Workflow references updated
 - OpenCode CLI installed (`npm i -g @opencode/cli` or via releases)
 - Node.js runtime for MCP servers
 - MCP server packages (Playwright, Context7)
+- Z.AI API key for 4 Z.AI MCP servers (from https://bigmodel.cn/)
+- Z.AI MCP server package (@z_ai/mcp-server)
 
 ### Internal Dependencies
 

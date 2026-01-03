@@ -14,9 +14,9 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 
 1. **Configuration Compatibility**: Create compatible configuration files for both tools
 2. **Cost Optimization**: Use GLM-4.7 model (8.6x-20x cheaper than Claude Sonnet, competitive performance)
-3. **Skills Portability**: Leverage existing Claude skills format (already OpenCode-compatible)
-4. **Instructions Alignment**: Support both CLAUDE.md and AGENTS.md standards
-5. **MCP Server Sharing**: Configure MCP servers for both tools
+3. **Enhanced MCP Capabilities**: Enable 4 Z.AI MCP servers (vision, search, reader, zread) in both tools
+4. **Skills Portability**: Leverage existing Claude skills format (already OpenCode-compatible)
+5. **Instructions Alignment**: Support both CLAUDE.md and AGENTS.md standards
 6. **Agent Translation**: Enable agent definitions to work across platforms where possible
 
 ## Key Findings
@@ -100,6 +100,111 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 - [Claude vs GLM Comparison](https://medium.com/ai-software-engineer/i-tested-claude-sonnet-4-5-vs-glm-4-6-for-coding-and-discovered-how-to-save-money-14de611c89e2)
 - [Z.AI Official Documentation](https://docs.z.ai/scenario-example/develop-tools/opencode)
 - [OpenCode Providers Documentation](https://opencode.ai/docs/providers/)
+
+### Enhanced MCP Capabilities: Z.AI MCP Servers
+
+**Recommended**: Enable all 4 Z.AI MCP servers for enhanced capabilities in both Claude Code and OpenCode.
+
+**Why Z.AI MCP Servers?**
+
+1. **Vision Understanding**: GLM-4.6V multimodal model for UI analysis, OCR, diagrams, data visualization
+2. **Web Search**: Real-time web search for current information
+3. **Web Reader**: Fetch and parse web page content (markdown format)
+4. **GitHub Integration**: Search repository docs, get structure, read files directly from GitHub
+
+**4 MCP Servers Overview**:
+
+| MCP Server | Package            | Type        | Tools                                                                                                                                                                                            | Use Case                                                                               |
+| ---------- | ------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| **Vision** | `@z_ai/mcp-server` | stdio/local | `ui_to_artifact`, `extract_text_from_screenshot`, `diagnose_error_screenshot`, `understand_technical_diagram`, `analyze_data_visualization`, `ui_diff_check`, `image_analysis`, `video_analysis` | UI screenshots to code, OCR, error diagnosis, diagram understanding, charts comparison |
+| **Search** | HTTP API           | remote      | `webSearchPrime`                                                                                                                                                                                 | Real-time web search with titles, URLs, summaries, site icons                          |
+| **Reader** | HTTP API           | remote      | `webReader`                                                                                                                                                                                      | Fetch webpage content (markdown), metadata, links list                                 |
+| **Zread**  | HTTP API           | remote      | `search_doc`, `get_repo_structure`, `read_file`                                                                                                                                                  | GitHub repo search, structure, file reading                                            |
+
+**Configuration Summary**:
+
+```bash
+# Z.AI API Key (required for all 4 MCP servers)
+# Get from: https://bigmodel.cn/
+
+# Claude Code (.mcp.json or .claude.json)
+{
+  "mcpServers": {
+    "zai-mcp-server": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@z_ai/mcp-server"],
+      "env": {
+        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_MODE": "ZAI"
+      }
+    },
+    "web-search-prime": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "web-reader": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "zread": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+
+# OpenCode (opencode.json)
+{
+  "mcp": {
+    "zai-mcp-server": {
+      "type": "local",
+      "command": ["npx", "-y", "@z_ai/mcp-server"],
+      "environment": {
+        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_MODE": "ZAI"
+      }
+    },
+    "web-search-prime": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "web-reader": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "zread": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+```
+
+**MCP Server Sources**:
+
+- [Vision MCP Server](https://docs.z.ai/devpack/mcp/vision-mcp-server) - GLM-4.6V vision capabilities
+- [Web Search MCP Server](https://docs.z.ai/devpack/mcp/search-mcp-server) - Real-time search
+- [Web Reader MCP Server](https://docs.z.ai/devpack/mcp/reader-mcp-server) - Web content fetching
+- [Zread MCP Server](https://docs.z.ai/devpack/mcp/zread-mcp-server) - GitHub integration
 
 ### Compatible After Renaming
 

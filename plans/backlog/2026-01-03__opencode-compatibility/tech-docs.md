@@ -83,6 +83,159 @@
 
 ### MCP Server Configuration
 
+**Prerequisite**: Z.AI API key required for all 4 MCP servers. Get from https://bigmodel.cn/
+
+#### Z.AI MCP Servers (Enhanced Capabilities)
+
+**1. Vision MCP Server** - `@z_ai/mcp-server` (GLM-4.6V multimodal)
+
+**Tools**: `ui_to_artifact`, `extract_text_from_screenshot`, `diagnose_error_screenshot`, `understand_technical_diagram`, `analyze_data_visualization`, `ui_diff_check`, `image_analysis`, `video_analysis`
+
+**Claude Code** (.mcp.json):
+
+```json
+{
+  "mcpServers": {
+    "zai-mcp-server": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@z_ai/mcp-server"],
+      "env": {
+        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_MODE": "ZAI"
+      }
+    }
+  }
+}
+```
+
+**OpenCode** (opencode.json):
+
+```json
+{
+  "mcp": {
+    "zai-mcp-server": {
+      "type": "local",
+      "command": ["npx", "-y", "@z_ai/mcp-server"],
+      "environment": {
+        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_MODE": "ZAI"
+      }
+    }
+  }
+}
+```
+
+**2. Web Search MCP Server** - Real-time web search
+
+**Tools**: `webSearchPrime`
+
+**Claude Code** (.mcp.json):
+
+```json
+{
+  "mcpServers": {
+    "web-search-prime": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+```
+
+**OpenCode** (opencode.json):
+
+```json
+{
+  "mcp": {
+    "web-search-prime": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+```
+
+**3. Web Reader MCP Server** - Fetch webpage content (markdown)
+
+**Tools**: `webReader`
+
+**Claude Code** (.mcp.json):
+
+```json
+{
+  "mcpServers": {
+    "web-reader": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+```
+
+**OpenCode** (opencode.json):
+
+```json
+{
+  "mcp": {
+    "web-reader": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+```
+
+**4. Zread MCP Server** - GitHub repository integration
+
+**Tools**: `search_doc`, `get_repo_structure`, `read_file`
+
+**Claude Code** (.mcp.json):
+
+```json
+{
+  "mcpServers": {
+    "zread": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+```
+
+**OpenCode** (opencode.json):
+
+```json
+{
+  "mcp": {
+    "zread": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}
+```
+
+#### Existing MCP Servers
+
 **Claude Code** (.mcp.json):
 
 ```json
@@ -107,6 +260,105 @@
 ```json
 {
   "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@context7/mcp-server"],
+      "enabled": true
+    }
+  }
+}
+```
+
+#### Complete MCP Configuration (All 6 Servers)
+
+**Claude Code** (.mcp.json) - Complete:
+
+```json
+{
+  "mcpServers": {
+    "zai-mcp-server": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@z_ai/mcp-server"],
+      "env": {
+        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_MODE": "ZAI"
+      }
+    },
+    "web-search-prime": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "web-reader": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "zread": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"]
+    }
+  }
+}
+```
+
+**OpenCode** (opencode.json) - Complete:
+
+```json
+{
+  "mcp": {
+    "zai-mcp-server": {
+      "type": "local",
+      "command": ["npx", "-y", "@z_ai/mcp-server"],
+      "environment": {
+        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_MODE": "ZAI"
+      }
+    },
+    "web-search-prime": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "web-reader": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "zread": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
     "playwright": {
       "type": "local",
       "command": ["npx", "@playwright/mcp@latest"],
@@ -613,6 +865,35 @@ development practices, agent definitions, and workflow patterns.
   },
 
   "mcp": {
+    "zai-mcp-server": {
+      "type": "local",
+      "command": ["npx", "-y", "@z_ai/mcp-server"],
+      "environment": {
+        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_MODE": "ZAI"
+      }
+    },
+    "web-search-prime": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "web-reader": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
+    "zread": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    },
     "playwright": {
       "type": "local",
       "command": ["npx", "@playwright/mcp@latest"],
@@ -663,7 +944,19 @@ development practices, agent definitions, and workflow patterns.
 - **GLM-4.7**: Primary model for complex tasks (8.6x-20x cheaper than Claude Sonnet)
 - **GLM-4.5-Air**: Fast model for quick operations (lightweight and responsive)
 - **Z.AI Provider**: Fully supported in OpenCode via `/connect` command
+- **Z.AI API Key**: Required for 4 Z.AI MCP servers (vision, search, reader, zread)
 - **Cost Savings**: Significant reduction in API costs compared to Claude models
+
+**MCP Servers Summary** (6 total):
+
+| MCP Server         | Type          | Purpose                                     |
+| ------------------ | ------------- | ------------------------------------------- |
+| `zai-mcp-server`   | local (stdio) | Vision understanding (GLM-4.6V multimodal)  |
+| `web-search-prime` | remote (HTTP) | Real-time web search                        |
+| `web-reader`       | remote (HTTP) | Web page content fetching (markdown)        |
+| `zread`            | remote (HTTP) | GitHub repo search, structure, file reading |
+| `playwright`       | local (stdio) | Browser automation                          |
+| `context7`         | local (stdio) | Documentation lookup                        |
 
 ## File Structure After Implementation
 

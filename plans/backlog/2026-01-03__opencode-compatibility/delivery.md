@@ -577,58 +577,269 @@ And Claude Code continues to work with CLAUDE.md
 
 ## Phase 4: MCP Integration
 
-**Goal**: Configure MCP servers for OpenCode
+**Goal**: Configure MCP servers for both Claude Code and OpenCode
 
-### Tasks
+### Prerequisites
 
-- [ ] **4.1 Add Playwright MCP**
+- [ ] **Phase 2 completed** (Z.AI account created, API key obtained)
+- [ ] Z.AI API key available from https://bigmodel.cn/
+
+### Z.AI MCP Servers (Enhanced Capabilities)
+
+- [ ] **4.1 Add Vision MCP Server** (GLM-4.6V multimodal)
+
+  **Purpose**: UI screenshots to code, OCR, error diagnosis, diagram understanding, charts comparison
+
+  **Claude Code** (.mcp.json):
 
   ```json
-  "mcp": {
-    "playwright": {
-      "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": true
+  {
+    "mcpServers": {
+      "zai-mcp-server": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@z_ai/mcp-server"],
+        "env": {
+          "Z_AI_API_KEY": "your_api_key",
+          "Z_AI_MODE": "ZAI"
+        }
+      }
     }
   }
   ```
 
-- [ ] **4.2 Add Context7 MCP**
+  **OpenCode** (opencode.json):
 
   ```json
-  "mcp": {
-    "context7": {
-      "type": "local",
-      "command": ["npx", "-y", "@context7/mcp-server"],
-      "enabled": true
+  {
+    "mcp": {
+      "zai-mcp-server": {
+        "type": "local",
+        "command": ["npx", "-y", "@z_ai/mcp-server"],
+        "environment": {
+          "Z_AI_API_KEY": "your_api_key",
+          "Z_AI_MODE": "ZAI"
+        }
+      }
     }
   }
   ```
 
-- [ ] **4.3 Test MCP connections**
+- [ ] **4.2 Add Web Search MCP Server** (Real-time search)
+
+  **Purpose**: Real-time web search with titles, URLs, summaries, site icons
+
+  **Claude Code** (.mcp.json):
+
+  ```json
+  {
+    "mcpServers": {
+      "web-search-prime": {
+        "type": "http",
+        "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+        "headers": {
+          "Authorization": "Bearer your_api_key"
+        }
+      }
+    }
+  }
+  ```
+
+  **OpenCode** (opencode.json):
+
+  ```json
+  {
+    "mcp": {
+      "web-search-prime": {
+        "type": "remote",
+        "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+        "headers": {
+          "Authorization": "Bearer your_api_key"
+        }
+      }
+    }
+  }
+  ```
+
+- [ ] **4.3 Add Web Reader MCP Server** (Web content fetching)
+
+  **Purpose**: Fetch webpage content (markdown format), metadata, links list
+
+  **Claude Code** (.mcp.json):
+
+  ```json
+  {
+    "mcpServers": {
+      "web-reader": {
+        "type": "http",
+        "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+        "headers": {
+          "Authorization": "Bearer your_api_key"
+        }
+      }
+    }
+  }
+  ```
+
+  **OpenCode** (opencode.json):
+
+  ```json
+  {
+    "mcp": {
+      "web-reader": {
+        "type": "remote",
+        "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+        "headers": {
+          "Authorization": "Bearer your_api_key"
+        }
+      }
+    }
+  }
+  ```
+
+- [ ] **4.4 Add Zread MCP Server** (GitHub integration)
+
+  **Purpose**: GitHub repo search, directory structure, file reading
+
+  **Claude Code** (.mcp.json):
+
+  ```json
+  {
+    "mcpServers": {
+      "zread": {
+        "type": "http",
+        "url": "https://api.z.ai/api/mcp/zread/mcp",
+        "headers": {
+          "Authorization": "Bearer your_api_key"
+        }
+      }
+    }
+  }
+  ```
+
+  **OpenCode** (opencode.json):
+
+  ```json
+  {
+    "mcp": {
+      "zread": {
+        "type": "remote",
+        "url": "https://api.z.ai/api/mcp/zread/mcp",
+        "headers": {
+          "Authorization": "Bearer your_api_key"
+        }
+      }
+    }
+  }
+  ```
+
+### Existing MCP Servers
+
+- [ ] **4.5 Add Playwright MCP** (Browser automation)
+
+  ```json
+  # Claude Code (.mcp.json)
+  {
+    "mcpServers": {
+      "playwright": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["@playwright/mcp@latest"]
+      }
+    }
+  }
+
+  # OpenCode (opencode.json)
+  {
+    "mcp": {
+      "playwright": {
+        "type": "local",
+        "command": ["npx", "@playwright/mcp@latest"],
+        "enabled": true
+      }
+    }
+  }
+  ```
+
+- [ ] **4.6 Add Context7 MCP** (Documentation lookup)
+
+  ```json
+  # Claude Code (.mcp.json)
+  {
+    "mcpServers": {
+      "context7": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@context7/mcp-server"]
+      }
+    }
+  }
+
+  # OpenCode (opencode.json)
+  {
+    "mcp": {
+      "context7": {
+        "type": "local",
+        "command": ["npx", "-y", "@context7/mcp-server"],
+        "enabled": true
+      }
+    }
+  }
+  ```
+
+### Testing and Validation
+
+- [ ] **4.7 Test Claude Code MCP connections**
+  - Start Claude Code
+  - Verify all 6 MCP servers are listed
+  - Test Vision MCP: Analyze a screenshot
+  - Test Web Search: Search for latest tech news
+  - Test Web Reader: Fetch a webpage
+  - Test Zread: Search a GitHub repo
+  - Test Playwright: Browser automation
+  - Test Context7: Documentation lookup
+
+- [ ] **4.8 Test OpenCode MCP connections**
   - Start OpenCode
-  - Verify MCP servers are listed
-  - Test browser automation tools
-  - Test documentation lookup
+  - Verify all 6 MCP servers are listed
+  - Test all tools listed in 4.7
+  - Verify tools work identically to Claude Code
 
-- [ ] **4.4 Handle port conflicts**
+- [ ] **4.9 Handle port conflicts**
   - If both tools run simultaneously, ensure no conflicts
-  - Consider different ports if needed
+  - Remote MCP servers (search, reader, zread) share connection
+  - Local MCP servers run independently
   - Document any workarounds
 
-- [ ] **4.5 Update .mcp.json if needed**
-  - Ensure Claude Code MCP config still works
-  - Verify no regressions
+- [ ] **4.10 Update .mcp.json for Claude Code**
+  - Create/update `.mcp.json` in repository root
+  - Include all 6 MCP servers
+  - Add to git (excluding API key)
+
+- [ ] **4.11 Update opencode.json for OpenCode**
+  - Create/update `opencode.json` in repository root
+  - Include all 6 MCP servers
+  - Add to git (excluding API key)
 
 ### Phase 4 Completion Criteria
 
 ```gherkin
-Given MCP servers are configured in opencode.json
+Given Z.AI API key is configured
+And all 6 MCP servers are configured in both tools
+When Claude Code starts
+Then all 6 MCP servers connect successfully
+And Vision MCP tools (ui_to_artifact, extract_text_from_screenshot) work
+And Web Search tool (webSearchPrime) works
+And Web Reader tool (webReader) works
+And Zread tools (search_doc, get_repo_structure, read_file) work
+And Playwright tools work
+And Context7 tools work
+
+Given all MCP servers are configured in opencode.json
 When OpenCode starts
-Then Playwright MCP server connects successfully
-And Context7 MCP server connects successfully
-And browser_navigate, browser_snapshot tools work
-And resolve-library-id, query-docs tools work
+Then all 6 MCP servers connect successfully
+And all tools work identically to Claude Code
+And cost savings from GLM-4.7 are realized
 ```
 
 ---
