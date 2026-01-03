@@ -1,4 +1,4 @@
-# Delivery Plan: OpenCode Compatibility
+# Delivery Plan: OpenCode Adoption
 
 ## Implementation Phases
 
@@ -988,7 +988,7 @@ If issues are discovered:
 ## Post-Implementation Tasks
 
 - [ ] Add to wow\_\_rules-checker: OpenCode configuration validation
-- [ ] Create agent: opencode-compatibility-checker (if needed)
+- [ ] Create agent: opencode-adoption-checker (if needed)
 - [ ] Update CLAUDE.md with dual-tool notes (brief, link to docs)
 - [ ] Create how-to guide: Using OpenCode with this repository
 - [ ] Periodic validation: Test compatibility quarterly

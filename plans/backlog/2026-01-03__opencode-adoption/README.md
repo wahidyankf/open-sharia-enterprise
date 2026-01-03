@@ -1,4 +1,4 @@
-# OpenCode Compatibility Plan
+# OpenCode Adoption Plan
 
 ## Status
 

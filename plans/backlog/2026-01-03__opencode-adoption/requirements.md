@@ -1,4 +1,4 @@
-# Requirements: OpenCode Compatibility
+# Requirements: OpenCode Adoption
 
 ## Objectives
 
