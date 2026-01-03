@@ -310,12 +310,12 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 **Key Document**: [Skills Directory](../.claude/skills/README.md)
 
-**17 Skills Available**: See [Skills Directory](../.claude/skills/README.md) for complete catalog.
+**18 Skills Available**: See [Skills Directory](../.claude/skills/README.md) for complete catalog.
 
 **Skills Categories**:
 
 - **Content Creation**: applying-content-quality, creating-by-example-tutorials, developing-ayokoding-content, developing-ose-content, writing-readme-files
-- **Quality Assurance**: applying-maker-checker-fixer, assessing-criticality-confidence, validating-factual-accuracy, validating-links
+- **Quality Assurance**: applying-maker-checker-fixer, assessing-criticality-confidence, validating-factual-accuracy, validating-links, generating-validation-reports
 - **Standards Application**: applying-diataxis-framework, creating-accessible-diagrams, writing-gherkin-criteria
 - **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development
 - **Technical Knowledge**: developing-agents, understanding-repository-architecture

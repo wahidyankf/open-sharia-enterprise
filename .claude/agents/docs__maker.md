@@ -4,9 +4,9 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
-skills: [creating-accessible-diagrams, applying-maker-checker-fixer]
+skills: [applying-content-quality, creating-accessible-diagrams, applying-maker-checker-fixer]
 created: 2025-11-29
-updated: 2025-12-31
+updated: 2026-01-03
 ---
 
 # Documentation Writer Agent
@@ -74,6 +74,16 @@ Before considering documentation complete:
 - [ ] Step-by-step instructions followed completely and verified
 - [ ] Edge cases and limitations documented
 - [ ] Accuracy checked against source code and actual behavior
+
+## Content Quality Standards
+
+**See `applying-content-quality` Skill for complete standards** on:
+
+- Active voice requirements
+- Heading hierarchy (single H1, proper nesting)
+- Accessibility compliance (alt text, WCAG AA contrast, screen reader support)
+- Professional formatting (code blocks with language, paragraph length, semantic formatting)
+- No time estimates policy
 
 ## Markdown Standards
 
@@ -150,20 +160,36 @@ This implements the `Linking Convention` by using relative paths. The `Linking C
 
 See [Linking Convention](../docs/explanation/conventions/formatting/ex-co-fo__linking.md) for complete two-tier formatting rules.
 
-### Diagram Convention
+### Diagram Standards
 
-- **All markdown files**: Use Mermaid diagrams as the primary format (inside and outside `docs/` directory)
-- **ASCII art**: Optional fallback for rare edge cases (simple directory trees, terminal-only environments)
-- **Diagram Orientation (CRITICAL)**: ALL Mermaid diagrams MUST use vertical orientation for mobile-friendly viewing. Use `graph TD` or `graph BT` instead of `graph LR` or `graph RL`. Exception: Use horizontal only when vertical layout would significantly harm clarity
-- **Default Layout (CRITICAL)**: Use `graph TD` (top-down) by default - ONLY use alternative layouts (LR, RL, BT) when explicitly requested by user or when vertical TD would significantly harm clarity
-- **Color Accessibility (CRITICAL)**: ALL Mermaid diagrams MUST use color-blind friendly colors from the verified accessible palette ONLY. See [Color Accessibility Convention](../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - the master reference for all color usage - for the complete verified palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), WCAG compliance requirements, testing methodology with color blindness simulators, and implementation guidance. Never use red, green, or yellow (invisible to various forms of color blindness). Always include shape differentiation (not color alone). Always test diagrams with color blindness simulators before publishing
-- **Mermaid Comment Syntax (CRITICAL)**: Use `%%` for comments, NOT `%%{ }%%` (causes syntax errors). Example: `%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73`. Exception: `%%{init:...}%%` is valid for Mermaid initialization directives only
-- Character Escaping (CRITICAL): Escape special characters in Mermaid node text AND edge labels using HTML entities: `(` → `#40;`, `)` → `#41;`, `[` → `#91;`, `]` → `#93;`, `{` → `#123;`, `}` → `#125;`, `<` → `#60;`, `>` → `#62;`. **Avoid literal quotes inside node text** - remove quotes or use descriptive text (e.g., `F[let x = hello]` instead of `F[let x = "hello"]`). Example: `A[O#40;1#41; lookup]` for "O(1) lookup". Prevents "syntax error in text". Edge labels use `-->|text|` syntax (e.g., `A -->|iter#40;#41;| B` for "iter()")
-- **Avoid Nested Escaping (CRITICAL)**: Do NOT combine HTML entity codes with escaped quotes in same node text (e.g., `A["JSON #123;\"name\"#125;"]` fails). Use simplified text: `A["JSON #123;name:Alice#125;"]`. Nested escaping breaks Mermaid parser
-- **Sequence Diagram Participant Syntax (CRITICAL)**: Use simple participant identifiers WITHOUT `as` keyword in sequenceDiagram. Do NOT use `participant X as "Display Name"` syntax with quotes (causes rendering failures in Hugo/Hextra). Use CamelCase or simple names: `participant Main`, `participant EventLoop`. Applies ONLY to sequenceDiagram, not graph/flowchart
-- **Sequence Diagram Styling (CRITICAL)**: Do NOT use `style` commands in `sequenceDiagram` (causes errors). Use `box` syntax for grouping/coloring or switch to `flowchart` for styled diagrams. `style` only works in graph/flowchart types
-- **Diagram Splitting (CRITICAL)**: Split complex diagrams for mobile readability. One concept per diagram (max 3-4 branches per level), no subgraphs (use separate diagrams with headers), descriptive headers (**Concept Name:**), mobile-first design. Prevents "too small" rendering on mobile devices
-- See [Diagram and Schema Convention](../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) for complete diagram standards including comment syntax, color palette guidance, and initialization directives
+**See `creating-accessible-diagrams` Skill for complete standards** on:
+
+- Verified accessible color palette (see Skill for complete palette)
+- Mermaid diagram orientation (prefer vertical `graph TD` for mobile)
+- Character escaping in node text (special characters → HTML entities)
+- Comment syntax (`%%` not `%%{ }%%`)
+- Sequence diagram syntax (no `as` keyword, no `style` commands)
+- Diagram splitting for mobile readability
+
+**Quick Reference**:
+
+- **All diagrams**: Use Mermaid as primary format
+- **Default layout**: `graph TD` (vertical, mobile-friendly)
+- **Color accessibility**: ONLY use verified palette from Skill
+- **Avoid**: Red, green, yellow (color blindness issues)
+
+See [Diagram and Schema Convention](../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) for complete standards.
+
+### Mathematical Notation
+
+Use LaTeX notation for mathematical equations:
+
+- Inline math: `$...$` for variables within text
+- Display math: `$$...$$` for standalone equations (separate lines)
+- Multi-line: `\begin{aligned}...\end{aligned}` with `$$` delimiters
+- **NEVER** use single `$` on its own line (breaks rendering)
+
+See [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md) for complete rules.
 
 ### Emoji Usage Convention
 
@@ -171,10 +197,10 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/conventions/for
 
 - **Semantic Consistency**: Use emojis from the defined vocabulary, same emoji = same meaning
 - **Restraint**: 1-2 emojis per section maximum, enhance scannability without visual noise
-- **Heading Placement**: Place emojis at start of H2/H3/H4 headings (e.g., `##  Purpose`)
+- **Heading Placement**: Place emojis at start of H2/H3/H4 headings (e.g., `## 📋 Purpose`)
 - **No Technical Content**: Never use emojis in code blocks, commands, file paths, or frontmatter
 - **Accessibility**: Emojis enhance but don't replace text meaning
-- **Common Emojis**: 📋 Overview, Purpose, 💡 Key Concepts, 📚 Resources, Correct, Incorrect, Warning, 🚀 Quick Start, 🔧 Configuration, Deep Dive, 🔒 Security, 📝 Notes
+- **Common Emojis**: 📋 Overview, Purpose, 💡 Key Concepts, 📚 Resources, ✅ Correct, ❌ Incorrect, ⚠️ Warning, 🚀 Quick Start, 🔧 Configuration, 🔍 Deep Dive, 🔒 Security, 📝 Notes
 
 ### Indentation Convention
 
@@ -204,38 +230,6 @@ When writing code examples in documentation, you MUST use **language-specific id
 
 **CRITICAL**: Using TAB characters in code blocks (except Go) creates code that cannot be copied and pasted correctly. Code blocks represent actual source code and must follow their language's idiomatic conventions, not markdown formatting rules. Always test code examples for correctness before publishing.
 
-#### Mathematical Notation
-
-- Use LaTeX notation for all mathematical equations and formulas
-- Inline math: `$...$` for variables and expressions within text
-- Display math: `$$...$$` for standalone equations
-- Include variable definitions after formulas
-- Never use LaTeX inside code blocks or Mermaid diagrams
-- See [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md)
-
-**CRITICAL LaTeX Delimiter Rules:**
-
-- Single `$` ONLY for inline math (on same line as text): `The value $x$ is...`
-- Double `$$` for display math (standalone, on separate lines)
-- Multi-line equations: Use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility
-- All `\begin{aligned}` blocks MUST use `$$` delimiters
-- NEVER use single `$` on its own line - this breaks rendering
-
-Common mistake to avoid:
-
-```markdown
-Single $ for display:
-$
-r_e = r_f + \beta \times (r_m - r_f)
-$
-
-Correct - use $$:
-
-$$
-r_e = r_f + \beta \times (r_m - r_f)
-$$
-```
-
 ### Frontmatter Template
 
 ```yaml
@@ -247,7 +241,7 @@ tags:
   - primary-topic # IMPORTANT: 2 spaces before dash, NOT tab
   - secondary-topic # IMPORTANT: 2 spaces before dash, NOT tab
 created: YYYY-MM-DD
-updated: 2025-12-31
+updated: 2026-01-03
 ---
 ```
 
@@ -256,7 +250,7 @@ updated: 2025-12-31
 **Date Fields**:
 
 - **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
-- Example output: `2025-12-14`
+- Example output: `2026-01-03`
 - Use for both `created` and `updated` fields when creating new docs
 - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) for complete details
 
@@ -385,9 +379,9 @@ When working with the user, you MUST:
    - What the convention is (1 sentence)
    - Where detailed docs are located (link)
    - Why it matters (1 sentence, if critical)
-   - Detailed examples (belongs in convention docs)
-   - Comprehensive explanations (belongs in convention docs)
-   - Complete rule lists (belongs in convention docs)
+   - ❌ Detailed examples (belongs in convention docs)
+   - ❌ Comprehensive explanations (belongs in convention docs)
+   - ❌ Complete rule lists (belongs in convention docs)
 
 5. **Size Awareness:**
    - CLAUDE.md has a hard limit of 40,000 characters

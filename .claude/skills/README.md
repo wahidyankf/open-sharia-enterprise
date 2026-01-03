@@ -77,9 +77,9 @@ Direct refs ──explicit links──> Agents
 ```yaml
 skills: []
 
-## Available Skills (17)
+## Available Skills (18)
 
-This repository provides 17 Claude Code Skills organized into five categories. Each Skill is a model-invoked knowledge package that auto-loads when agents need specific domain expertise.
+This repository provides 18 Claude Code Skills organized into five categories. Each Skill is a model-invoked knowledge package that auto-loads when agents need specific domain expertise.
 
 ### Content Creation (5 Skills)
 
@@ -93,11 +93,13 @@ This repository provides 17 Claude Code Skills organized into five categories. E
 
 **writing-readme-files** - Engaging, accessible README creation standards including problem-solution hooks, plain language requirements, acronym context, paragraph limits (≤5 lines), benefits-focused language, and scannable structure for quick comprehension.
 
-### Quality Assurance (4 Skills)
+### Quality Assurance (5 Skills)
 
 **applying-maker-checker-fixer** - Three-stage workflow pattern for content quality: Maker creates/updates, Checker validates and generates audit report, User reviews findings, Fixer applies validated fixes with confidence levels. Implements automated quality gates with human oversight.
 
 **assessing-criticality-confidence** - Dual-dimension assessment system combining criticality levels (CRITICAL/HIGH/MEDIUM/LOW for importance/urgency) with confidence levels (HIGH/MEDIUM/FALSE_POSITIVE for fix certainty). Enables priority-based fix execution (P0-P4) and systematic false positive detection.
+
+**generating-validation-reports** - Validation report generation standards including UUID chain logic for parallel execution tracking, UTC+7 timestamp generation, progressive writing methodology (write findings immediately, not buffered), 4-part filename pattern (agent-family__uuid-chain__timestamp__type.md), and scope-based execution hierarchy. Essential for all checker and fixer agents writing audit reports to generated-reports/.
 
 **validating-factual-accuracy** - Universal methodology for verifying factual correctness in documentation using WebSearch and WebFetch tools. Covers command syntax verification, version checking, code example validation, API correctness, confidence classification system ([Verified], [Error], [Outdated], [Unverified]), source prioritization, and update frequency rules.
 

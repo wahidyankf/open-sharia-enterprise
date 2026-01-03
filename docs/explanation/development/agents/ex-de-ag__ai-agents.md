@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2025-12-26
+updated: 2026-01-03
 ---
 
 # AI Agents Convention
@@ -1221,6 +1221,299 @@ Quick categorization for existing agents:
 - Remove tangential information
 - Prefer structured formats (tables, checklists) over prose
 
+## Agent-Skill Separation
+
+### Purpose
+
+This section defines how to properly separate reusable knowledge (Skills) from agent-specific instructions (Agent files), ensuring maintainability, reducing duplication, and enabling effective knowledge delivery.
+
+**Validated through**: Agent Skills Simplification pilot (2026-01-03) - docs family achieved 49.2% size reduction while maintaining 100% functionality.
+
+### Knowledge Classification Decision Tree
+
+When writing or updating an agent, use this decision tree to determine where content belongs:
+
+```
+Is this content reusable across 3+ agents?
+│
+├─ YES → Move to Skill or Convention Document
+│   │
+│   ├─ Is it actionable "how-to" guidance?
+│   │   └─ YES → Create/update Skill in .claude/skills/
+│   │       Examples: applying-content-quality, creating-accessible-diagrams
+│   │
+│   └─ Is it technical specification or standard?
+│       └─ YES → Create/update Convention in docs/explanation/conventions/
+│           Examples: Color Accessibility Convention, Mathematical Notation Convention
+│
+└─ NO → Keep in Agent File
+    │
+    └─ Is it task-specific workflow, validation logic, or decision criteria?
+        └─ YES → This is agent-specific knowledge, keep in agent
+            Examples: "When to use this agent", validation workflow steps, tool usage patterns
+```
+
+### Four Separation Patterns
+
+Based on the pilot validation, use these proven patterns when simplifying agents:
+
+#### Pattern A: Reference Skill for Standards
+
+**Use when**: Content is a universal standard that doesn't change per-agent.
+
+**Before (in agent)**:
+
+```markdown
+## Content Quality Standards
+
+**Active Voice Required**: Use active voice for clarity and directness.
+
+✅ Good: "The agent validates the content"
+❌ Bad: "The content is validated by the agent"
+
+**Heading Hierarchy**: Each file MUST have exactly one H1 heading.
+
+[... 50-100 lines of standards ...]
+```
+
+**After (in agent)**:
+
+```markdown
+## Content Quality Standards
+
+**See `applying-content-quality` Skill for complete standards** on:
+
+- Active voice requirements
+- Heading hierarchy (single H1, proper nesting)
+- Accessibility compliance (alt text, WCAG AA contrast)
+- Professional formatting
+```
+
+**Impact**: ~50-100 lines removed per agent, zero loss of knowledge (accessible via Skill).
+
+#### Pattern B: Convention Link for Detailed Rules
+
+**Use when**: Technical specifications have a single source of truth in conventions.
+
+**Before (in agent)**:
+
+```markdown
+## Report Generation
+
+**File Naming Pattern**: `generated-reports/{agent}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md`
+
+**UUID Chain Generation**: 6-char hex UUIDs for parallel execution support.
+
+- Root: `a1b2c3`
+- Child: `a1b2c3.d4e5f6`
+- Grandchild: `a1b2c3.d4e5f6.g7h8i9`
+
+**Progressive Writing**: Initialize report at start, write findings immediately...
+
+[... 100-200 lines of mechanics ...]
+```
+
+**After (in agent)**:
+
+```markdown
+## Report Generation
+
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md).
+
+**Report pattern**: `generated-reports/{agent}__{uuid-chain}__{timestamp}__{type}.md`
+
+**UUID chain generation**: 6-char hex UUIDs for parallel execution. See convention for generation logic.
+
+[Brief 3-5 line summary of workflow, link to convention for details]
+```
+
+**Impact**: ~100-200 lines removed per agent, convention becomes single source of truth.
+
+#### Pattern C: Skill + Convention Hybrid
+
+**Use when**: Complex domain requires both actionable guidance (Skill) and specifications (convention).
+
+**Before (in agent)**:
+
+```markdown
+## Factual Validation
+
+**Verification Workflow**:
+
+1. Identify claim type (command, version, API)
+2. Determine authoritative source...
+   [... 100 lines of methodology ...]
+
+**Source Prioritization**:
+
+1. Official documentation
+2. GitHub repositories...
+   [... 50 lines of priority rules ...]
+
+**Confidence Classifications**:
+
+- [Verified]: Confirmed by authoritative source
+- [Unverified]: Cannot verify...
+  [... 50 lines of classifications ...]
+```
+
+**After (in agent)**:
+
+```markdown
+## Factual Validation
+
+**See `validating-factual-accuracy` Skill for complete methodology** covering:
+
+- Verification workflow (claim identification → source determination → verification)
+- Source prioritization (official docs → GitHub → registries → standards)
+- Confidence classifications ([Verified], [Unverified], [Error], [Outdated])
+
+**Technical specs**: [Factual Validation Convention](path) for confidence classification criteria.
+```
+
+**Impact**: ~150-300 lines removed per agent, best-of-both (guidance + specs) via two sources.
+
+#### Pattern D: Retain Task-Specific Logic
+
+**Use when**: Content is genuinely agent-specific and not reusable.
+
+**Keep in agent**:
+
+- Agent's core responsibility description
+- Task-specific workflows ("Step 1: Discovery Phase...")
+- Agent-specific tool usage patterns
+- Domain-specific validation logic
+- Decision criteria unique to this agent
+- Examples of when/when-not to use this agent
+
+**Examples of task-specific content**:
+
+- `docs__maker`: File naming logic for Diátaxis categories
+- `docs__checker`: What specific validations to perform
+- `docs__fixer`: How to assess confidence levels for doc fixes
+- `plan__executor`: Sequential implementation workflow
+
+**Rationale**: Agents remain self-contained for their specific task while delegating reusable knowledge to Skills/Conventions.
+
+### Guidelines for Future Agent Creation
+
+When creating new agents:
+
+1. **Start lean**: Write minimum viable agent with task-specific instructions only
+2. **Reference early**: Link to Skills/Conventions instead of duplicating
+3. **Quick reference OK**: Brief 1-3 line summaries with Skill/Convention links acceptable
+4. **Scan for duplication**: Before finalizing, check if content exists in other agents (use Grep)
+5. **3+ agent rule**: If same content appears in 3+ agents, extract to Skill/Convention
+
+### Validation Checklist
+
+Before committing agent changes:
+
+- [ ] No content duplicates Skills (check `.claude/skills/` catalog)
+- [ ] No content duplicates Conventions (check `docs/explanation/conventions/`)
+- [ ] All Skills referenced exist in `.claude/skills/`
+- [ ] All Convention links point to valid files
+- [ ] Task-specific instructions retained (agent is self-contained for its job)
+- [ ] Agent within tier limits (Simple <800, Standard <1,200, Complex <1,800)
+
+### Skills Frontmatter Field
+
+**REQUIRED**: All agents MUST include `skills:` field in frontmatter.
+
+**Format**:
+
+```yaml
+---
+name: agent-name
+description: Brief description
+tools: Read, Write, Edit
+model: inherit
+color: blue
+skills: [applying-content-quality, creating-accessible-diagrams]
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+```
+
+**Empty Skills**: If agent doesn't use any Skills yet, use empty list:
+
+```yaml
+skills: []
+```
+
+**Multiple Skills**: List all Skills the agent references:
+
+```yaml
+skills: [skill-one, skill-two, skill-three]
+```
+
+### Common Duplication Patterns to Avoid
+
+Based on agent simplification audit findings:
+
+| Pattern                                                                   | Instead Use                              | Typical Reduction |
+| ------------------------------------------------------------------------- | ---------------------------------------- | ----------------- |
+| Content quality standards (active voice, headings, accessibility)         | `applying-content-quality` Skill         | ~50-100 lines     |
+| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `creating-accessible-diagrams` Skill     | ~60-70 lines      |
+| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention               | ~200 lines        |
+| Validation methodology (source prioritization, confidence levels)         | `validating-factual-accuracy` Skill      | ~150 lines        |
+| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention       | ~200 lines        |
+| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence` Skill | ~100 lines        |
+| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention         | ~30 lines         |
+| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer` Skill     | ~50 lines         |
+
+### Example: Before and After Simplification
+
+**Before (docs\_\_checker - 1,318 lines)**:
+
+Agent contained full text of:
+
+- Content quality standards (80 lines)
+- Diagram color palette with all hex codes (60 lines)
+- Report generation mechanics with UUID logic (200 lines)
+- Factual validation methodology (150 lines)
+- Criticality level definitions (100 lines)
+- Mathematical notation validation rules (30 lines)
+- Various validation examples (300+ lines)
+
+**After (docs\_\_checker - 515 lines, 60.9% reduction)**:
+
+Agent contains:
+
+- Task-specific validation workflow (what to check)
+- Brief Skill references with context
+- Links to Conventions for specifications
+- Domain-specific examples (concise)
+- All task-specific decision logic
+
+**Result**: Agent remains fully functional, easier to maintain, zero knowledge loss (Skills/Conventions provide depth).
+
+### Benefits of Proper Separation
+
+**Maintainability**:
+
+- Update standard once in Skill/Convention, all agents benefit
+- No hunting for outdated duplicates across 45 agents
+- Single source of truth for each standard
+
+**Clarity**:
+
+- Agents focus on task-specific instructions
+- Skills provide reusable knowledge on-demand
+- Conventions document authoritative specifications
+
+**Efficiency**:
+
+- Smaller agent files (30-60% reduction typical)
+- Faster agent loading and processing
+- Progressive knowledge delivery (scan agent → dive into Skill as needed)
+
+**Quality**:
+
+- Skills professionally maintained with examples
+- Conventions peer-reviewed and validated
+- Agents remain focused on core responsibility
+
 ## Agent Documentation Standards
 
 ### Required Elements
@@ -1621,6 +1914,308 @@ Before committing a new agent:
 4. **Review existing agents** - Ensure consistency
 5. **Run wow\_\_rules-checker** - Validate compliance
 
+## Agent-Skill Separation
+
+**Purpose**: Eliminate duplication between agents by extracting reusable knowledge into Skills. Agents remain focused on task-specific workflows while Skills provide shared domain expertise.
+
+### When to Use Skills vs. Agent Content
+
+Use this decision tree to determine where knowledge belongs:
+
+```
+Is this knowledge...
+
+└─ Used by 3+ agents?
+   ├─ YES → Extract to Skill
+   └─ NO → Keep in agent
+
+└─ Reusable domain expertise? (color palettes, validation standards, report formats)
+   ├─ YES → Create/extend Skill
+   └─ NO → Keep in agent
+
+└─ Agent-specific workflow? (task sequence, unique logic, custom decisions)
+   ├─ YES → Keep in agent
+   └─ NO → Consider Skill
+
+└─ Convention details? (standards, rules, formats)
+   ├─ YES → Link to convention document, optionally reference Skill
+   └─ NO → Evaluate based on above criteria
+```
+
+### What Belongs in Skills
+
+**Extract to Skills** (reusable knowledge):
+
+1. **Validation Standards**
+   - UUID chain generation logic
+   - Progressive writing methodology
+   - Report file naming patterns
+   - Timestamp generation (UTC+7)
+   - Criticality level definitions
+   - Confidence assessment criteria
+
+2. **Domain Expertise**
+   - Hugo theme patterns (Hextra, PaperMod)
+   - Content quality principles
+   - Color accessibility palettes
+   - Annotation density standards
+   - Diátaxis framework application
+   - Gherkin syntax rules
+
+3. **Shared Workflows**
+   - Maker-Checker-Fixer pattern
+   - Link validation methodology
+   - Factual accuracy verification
+   - Mode parameter handling
+   - Report discovery logic
+
+### What Belongs in Agents
+
+**Keep in Agents** (task-specific content):
+
+1. **Task Workflows**
+   - Step-by-step execution sequence
+   - Agent-specific validation logic
+   - Custom decision trees
+   - Unique processing rules
+
+2. **Scope Definitions**
+   - What files/directories to validate
+   - What to include/exclude
+   - Agent mission and responsibilities
+   - Collaboration with other agents
+
+3. **Tool Usage Patterns**
+   - How to use Read/Write/Bash/etc.
+   - Tool combinations for specific tasks
+   - Error handling strategies
+
+4. **Output Formats**
+   - Agent-specific report structures
+   - Custom finding categories
+   - Unique recommendation formats
+
+### Examples of Good Separation
+
+#### Example 1: Checker Agent
+
+**Before Simplification** (800+ lines):
+
+```markdown
+# docs\_\_checker Agent
+
+## UUID Generation
+
+[200 lines of UUID chain logic, timestamp generation]
+
+## Criticality Levels
+
+[150 lines defining CRITICAL/HIGH/MEDIUM/LOW]
+
+## Report Template
+
+[100 lines of report structure examples]
+
+## Validation Workflow
+
+[350 lines of task-specific validation logic]
+```
+
+**After Simplification** (350 lines):
+
+```markdown
+---
+skills:
+  - generating-validation-reports
+  - assessing-criticality-confidence
+  - applying-content-quality
+---
+
+# docs\_\_checker Agent
+
+## Report Generation
+
+See `generating-validation-reports` Skill for UUID chains, timestamps, progressive writing.
+
+## Criticality Assessment
+
+See `assessing-criticality-confidence` Skill for level definitions.
+
+## Validation Workflow
+
+[350 lines of task-specific validation logic - RETAINED]
+```
+
+**Result**: 450 lines removed (56%), all functionality preserved.
+
+#### Example 2: Ayokoding Content Agent
+
+**Before Simplification** (1,100+ lines):
+
+```markdown
+# apps**ayokoding-web**by-example-maker
+
+## Hugo Weight System
+
+[150 lines explaining level-based weights]
+
+## Annotation Standards
+
+[200 lines defining 1-2.25 comment ratio]
+
+## Bilingual Strategy
+
+[100 lines of Indonesian/English patterns]
+
+## Five-Part Example Structure
+
+[150 lines of example format]
+
+## Creation Workflow
+
+[500 lines of task-specific content creation]
+```
+
+**After Simplification** (500 lines):
+
+```markdown
+---
+skills:
+  - developing-ayokoding-content
+  - creating-by-example-tutorials
+---
+
+# apps**ayokoding-web**by-example-maker
+
+## Hugo Patterns
+
+See `developing-ayokoding-content` Skill for weight system, bilingual strategy.
+
+## Example Structure
+
+See `creating-by-example-tutorials` Skill for five-part format, annotation density.
+
+## Creation Workflow
+
+[500 lines of task-specific content creation - RETAINED]
+```
+
+**Result**: 600 lines removed (55%), all patterns available via Skills.
+
+### Decision Tree Examples
+
+**Scenario 1**: Adding color palette to diagram-creating agent
+
+```
+Knowledge: Accessible color palette (Blue #0173B2, Orange #DE8F05, etc.)
+
+Q: Used by 3+ agents?
+A: YES (8+ agents create diagrams)
+
+Q: Reusable domain expertise?
+A: YES (color accessibility is universal)
+
+Decision: Extract to `creating-accessible-diagrams` Skill ✅
+```
+
+**Scenario 2**: Adding custom validation logic for plan structure
+
+```
+Knowledge: Plan must have README.md, requirements.md, delivery.md
+
+Q: Used by 3+ agents?
+A: NO (only plan__checker validates plan structure)
+
+Q: Agent-specific workflow?
+A: YES (unique to plan validation)
+
+Decision: Keep in plan__checker agent ✅
+```
+
+**Scenario 3**: Adding mode parameter handling to fixer agents
+
+```
+Knowledge: lax/normal/strict/ocd modes filter findings by criticality
+
+Q: Used by 3+ agents?
+A: YES (all 15 fixer agents use mode parameter)
+
+Q: Reusable domain expertise?
+A: YES (mode handling is standardized)
+
+Decision: Extract to `applying-maker-checker-fixer` Skill ✅
+```
+
+### Benefits of Agent-Skill Separation
+
+1. **Single Source of Truth**: Update Skill once, all agents benefit
+2. **Reduced Duplication**: Eliminate 50-90% of duplicated content
+3. **Easier Maintenance**: Convention changes require updating Skill only
+4. **Better Scalability**: New agents reference existing Skills
+5. **Clearer Agents**: Agents focus on task workflows, not standards
+6. **Progressive Disclosure**: Skills load on-demand, reducing context bloat
+
+### Implementation Pattern
+
+When simplifying an agent:
+
+1. **Identify duplication**: Look for content appearing in 3+ agents
+2. **Check existing Skills**: Does a Skill already cover this?
+   - YES → Reference the Skill
+   - NO → Consider creating new Skill
+3. **Extract to Skill**: Create/extend Skill with reusable knowledge
+4. **Update agent**: Replace duplicated content with Skill reference
+5. **Add frontmatter**: Include Skill in `skills:` field
+6. **Verify size**: Confirm agent is within tier limits
+7. **Test functionality**: Ensure agent still works correctly
+
+### Measurement and Success Criteria
+
+**Target Size Reduction**: 20-40% average across all agents
+
+**Quality Metrics**:
+
+- All agents within tier limits (Simple <800, Standard <1,200, Complex <1,800)
+- Zero functionality regressions
+- All Skills referenced exist
+- All convention links valid
+
+**Project Achievement** (2026-01-03):
+
+- 45 agents simplified
+- 82.7% average reduction (4x better than target)
+- 28,439 lines eliminated
+- 100% tier compliance (all in Simple tier)
+- 18 Skills created/used
+
+### Ongoing Vigilance
+
+**Prevent duplication creep**:
+
+1. **New agent creation**: Reference Skills instead of duplicating
+2. **Agent updates**: Extract new duplication to Skills
+3. **Periodic audits**: Run wow\_\_rules-checker for duplication detection
+4. **Code reviews**: Check for embedded Skill knowledge
+5. **Documentation**: Keep AI Agents Convention updated with examples
+
+### Related Skills
+
+**Current Skills** (18 total):
+
+- `generating-validation-reports` - Report generation, UUID chains, timestamps
+- `assessing-criticality-confidence` - Criticality levels, confidence assessment
+- `applying-maker-checker-fixer` - Three-stage workflow, mode handling
+- `developing-ayokoding-content` - Hugo Hextra patterns, bilingual content
+- `developing-ose-content` - Hugo PaperMod patterns
+- `creating-by-example-tutorials` - Annotation standards, five-part structure
+- `creating-accessible-diagrams` - Color palettes, accessibility
+- `applying-content-quality` - Markdown quality standards
+- `validating-factual-accuracy` - Verification methodology
+- `validating-links` - Link validation, caching
+- Plus 8 more in Content Creation, Standards Application, Process Execution categories
+
+See [Skills README](.claude/skills/README.md) for complete catalog.
+
 ## Related Documentation
 
 - [Development Index](./README.md) - Overview of development conventions
@@ -1632,4 +2227,4 @@ Before committing a new agent:
 
 ---
 
-**Last Updated**: 2025-12-26
+**Last Updated**: 2026-01-03
