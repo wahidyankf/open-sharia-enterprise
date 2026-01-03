@@ -1,0 +1,24 @@
+---
+name: apps-ayokoding-web-navigation-maker
+description: Updates prev/next navigation links in ayokoding-web content frontmatter.
+tools: [Read, Edit, Glob, Grep]
+model: haiku
+color: blue
+skills: [apps__ayokoding-web__developing-content]
+created: 2025-12-20
+updated: 2026-01-03
+---
+
+# Navigation Maker for ayokoding-web
+
+Update prev/next navigation in frontmatter.
+
+## Responsibility
+
+Calculate and update prev/next links based on weight ordering.
+
+`apps__ayokoding-web__developing-content` Skill provides navigation logic.
+
+## Reference
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)

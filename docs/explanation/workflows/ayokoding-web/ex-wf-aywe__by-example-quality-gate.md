@@ -43,11 +43,11 @@ outputs:
   - name: checker-report
     type: file
     pattern: generated-reports/ayokoding-web-by-example__*__*__audit.md
-    description: Final validation report from apps__ayokoding-web__by-example-checker (4-part format with UUID chain)
+    description: Final validation report from apps-ayokoding-web-by-example-checker (4-part format with UUID chain)
   - name: fixer-report
     type: file
     pattern: generated-reports/ayokoding-web-by-example__*__*__fix.md
-    description: Final fixes report from apps__ayokoding-web__by-example-fixer (4-part format with UUID chain)
+    description: Final fixes report from apps-ayokoding-web-by-example-fixer (4-part format with UUID chain)
   - name: execution-scope
     type: string
     description: Scope identifier for UUID chain tracking (derived from tutorial-path, e.g., "golang" for golang tutorials)
@@ -86,10 +86,10 @@ graph TB
     E[Publication Ready]
     F[Iterate]
 
-    A -->|apps__ayokoding-web__by-example-maker or manual| B
-    B -->|apps__ayokoding-web__by-example-checker| C
+    A -->|apps-ayokoding-web-by-example-maker or manual| B
+    B -->|apps-ayokoding-web-by-example-checker| C
     C -->|Issues found| D
-    D -->|apps__ayokoding-web__by-example-fixer| B
+    D -->|apps-ayokoding-web-by-example-fixer| B
     C -->|Quality approved| E
     C -->|Major rework needed| F
     F --> A
@@ -134,13 +134,13 @@ graph TB
 
 **Objective**: Identify gaps and issues against by-example standards
 
-**Agent**: `apps__ayokoding-web__by-example-checker`
+**Agent**: `apps-ayokoding-web-by-example-checker`
 
 **Execution**:
 
 ```bash
 # Invoke via Task tool
-subagent_type: apps__ayokoding-web__by-example-checker
+subagent_type: apps-ayokoding-web-by-example-checker
 prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/programming-language/golang/tutorials/by-example/ for compliance with by-example standards"
 ```
 
@@ -245,13 +245,13 @@ graph TD
 
 **Objective**: Automatically apply safe, validated improvements
 
-**Agent**: `apps__ayokoding-web__by-example-fixer`
+**Agent**: `apps-ayokoding-web-by-example-fixer`
 
 **Execution**:
 
 ```bash
 # Invoke via Task tool with audit report and mode parameter
-subagent_type: apps__ayokoding-web__by-example-fixer
+subagent_type: apps-ayokoding-web-by-example-fixer
 prompt: "Apply fixes from generated-reports/ayokoding-web-by-example__a1b2c3__2025-12-25--14-30__audit.md with mode={input.mode}"
 ```
 
@@ -398,7 +398,7 @@ Report final status and summary.
 **Step 2: Checker** (validation)
 
 ```bash
-apps__ayokoding-web__by-example-checker validates golang by-example
+apps-ayokoding-web-by-example-checker validates golang by-example
 ```
 
 **Results**:
@@ -420,7 +420,7 @@ apps__ayokoding-web__by-example-checker validates golang by-example
 **Step 4: Fixer** (apply fixes)
 
 ```bash
-apps__ayokoding-web__by-example-fixer applies fixes from audit
+apps-ayokoding-web-by-example-fixer applies fixes from audit
 ```
 
 **Fixes applied**:
@@ -433,7 +433,7 @@ apps__ayokoding-web__by-example-fixer applies fixes from audit
 **Step 5: Re-validation**
 
 ```bash
-apps__ayokoding-web__by-example-checker re-validates
+apps-ayokoding-web-by-example-checker re-validates
 ```
 
 **Results**:
@@ -459,7 +459,7 @@ apps__ayokoding-web__by-example-checker re-validates
 **Step 2: Checker**
 
 ```bash
-apps__ayokoding-web__by-example-checker validates elixir by-example
+apps-ayokoding-web-by-example-checker validates elixir by-example
 ```
 
 **Results**:
@@ -477,7 +477,7 @@ apps__ayokoding-web__by-example-checker validates elixir by-example
 **Step 4: Fixer**
 
 ```bash
-apps__ayokoding-web__by-example-fixer applies fixes
+apps-ayokoding-web-by-example-fixer applies fixes
 ```
 
 **Fixes applied**:
@@ -489,7 +489,7 @@ apps__ayokoding-web__by-example-fixer applies fixes
 **Step 5: Re-validation**
 
 ```bash
-apps__ayokoding-web__by-example-checker re-validates
+apps-ayokoding-web-by-example-checker re-validates
 ```
 
 **Results**:
@@ -507,7 +507,7 @@ apps__ayokoding-web__by-example-checker re-validates
 **Step 1: Checker** (initial validation)
 
 ```bash
-apps__ayokoding-web__by-example-checker validates java by-example
+apps-ayokoding-web-by-example-checker validates java by-example
 ```
 
 **Results**:
@@ -534,7 +534,7 @@ apps__ayokoding-web__by-example-checker validates java by-example
 **Step 4: Checker** (re-validation after rework)
 
 ```bash
-apps__ayokoding-web__by-example-checker re-validates
+apps-ayokoding-web-by-example-checker re-validates
 ```
 
 **Results**:
@@ -666,18 +666,18 @@ workflow run ayokoding-web-by-example-quality-gate \
 # User writes examples
 
 # Phase 2: Validate
-subagent_type: apps__ayokoding-web__by-example-checker
+subagent_type: apps-ayokoding-web-by-example-checker
 prompt: "Validate golang by-example tutorial"
 
 # Phase 3: Review
 # User reads generated-reports/ayokoding-web-by-example__*.md
 
 # Phase 4: Fix
-subagent_type: apps__ayokoding-web__by-example-fixer
+subagent_type: apps-ayokoding-web-by-example-fixer
 prompt: "Apply fixes from [audit report path]"
 
 # Phase 5: Re-validate
-subagent_type: apps__ayokoding-web__by-example-checker
+subagent_type: apps-ayokoding-web-by-example-checker
 prompt: "Re-validate golang by-example"
 
 # Repeat Phases 4-5 until clean (or set max-iterations to limit)
@@ -771,6 +771,6 @@ This workflow is part of the **Tutorial Quality Family**:
 - **[By-Example Tutorial Convention](../../conventions/tutorial/ex-co-tu__by-example.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../../development/pattern/ex-de-pa__maker-checker-fixer.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../../development/quality/ex-de-qu__fixer-confidence-levels.md)**: Confidence assessment
-- **[`apps__ayokoding-web__by-example-checker` agent](../../.claude/agents/apps__ayokoding-web__by-example-checker.md)**: Validation agent
-- **[`apps__ayokoding-web__by-example-fixer` agent](../../.claude/agents/apps__ayokoding-web__by-example-fixer.md)**: Fixing agent
-- **[`apps__ayokoding-web__by-example-maker` agent](../../.claude/agents/apps__ayokoding-web__by-example-maker.md)**: Content creation agent
+- **[`apps-ayokoding-web-by-example-checker` agent](../../.claude/agents/apps-ayokoding-web-by-example-checker.md)**: Validation agent
+- **[`apps-ayokoding-web-by-example-fixer` agent](../../.claude/agents/apps-ayokoding-web-by-example-fixer.md)**: Fixing agent
+- **[`apps-ayokoding-web-by-example-maker` agent](../../.claude/agents/apps-ayokoding-web-by-example-maker.md)**: Content creation agent
