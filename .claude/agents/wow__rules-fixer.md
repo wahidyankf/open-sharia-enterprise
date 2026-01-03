@@ -6,7 +6,7 @@ model: sonnet
 color: purple
 skills: [understanding-repository-architecture, assessing-criticality-confidence]
 created: 2025-12-14
-updated: 2026-01-02
+updated: 2026-01-03
 ---
 
 # Repository Rules Fixer Agent
@@ -84,6 +84,350 @@ sed -i 's/^skills: \[\]/skills: [skill-name-1, skill-name-2]/' .claude/agents/ag
 2. **Principles Traceability in Conventions**: Add mandatory "Principles Implemented/Respected" section to convention documents if missing
 3. **Principles and Conventions Traceability in Development**: Add both "Principles Respected" and "Conventions Implemented/Respected" sections to development documents if missing
 4. **Self-Validation**: Ensure repo-rules-\* agents validate and enforce all five rules above
+
+## Agent Content Simplification Fixes
+
+**Purpose**: Apply validated fixes to reduce agent content duplication with Skills and conventions, replacing detailed content with concise references.
+
+**Fix Capabilities:**
+
+1. **Replace Skill Duplication**: Transform duplicated Skill content into brief summaries + Skill references
+2. **Replace Convention Duplication**: Transform duplicated convention content into summaries + convention links
+3. **Add Missing Skill References**: Add relevant Skills to agent `skills:` frontmatter array
+
+### Replace Skill Duplication
+
+**Fix Pattern:**
+
+When checker reports agent duplicates >30 lines from a Skill:
+
+**Before (Duplicated):**
+
+```markdown
+## Criticality Levels
+
+Classify findings by importance:
+
+**CRITICAL**: Breaks core functionality
+
+- Missing required frontmatter fields
+- Broken traceability chains
+- Agent name doesn't match filename
+  [... 40 more lines of detailed examples and criteria ...]
+```
+
+**After (Simplified with Reference):**
+
+```markdown
+## Criticality Classification
+
+Classify findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See Skill `assessing-criticality-confidence` for complete classification criteria, priority matrix (P0-P4), and domain-specific examples.
+
+**Quick Reference**: CRITICAL (breaks functionality), HIGH (violates conventions), MEDIUM (impacts quality), LOW (minor improvements).
+```
+
+**Confidence Assessment:**
+
+- **HIGH Confidence** (apply automatically):
+  - Similarity >90% (near-identical content)
+  - Duplicate block >30 consecutive lines
+  - Skill is listed in agent's `skills:` frontmatter
+  - No agent-specific context in duplicated section
+
+- **MEDIUM Confidence** (manual review):
+  - Similarity 60-90% (paraphrased but similar)
+  - Duplicate blocks scattered (not consecutive)
+  - Agent adds context/examples beyond Skill content
+  - Skill NOT listed in agent frontmatter (need to add it first)
+
+- **FALSE_POSITIVE** (skip):
+  - Re-validation shows content differs significantly
+  - Agent provides domain-specific interpretation
+  - "Duplication" is just common terminology
+
+**Fix Application Method:**
+
+```bash
+#!/bin/bash
+
+# Input from checker finding
+agent_file=".claude/agents/wow__rules-checker.md"
+skill_name="assessing-criticality-confidence"
+duplicate_start_line=890
+duplicate_end_line=935
+similarity=95
+
+# Re-validate finding
+agent_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' "$agent_file")
+skill_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' .claude/skills/$skill_name/SKILL.md)
+
+# Extract duplicate section
+duplicate_section=$(sed -n "${duplicate_start_line},${duplicate_end_line}p" "$agent_file")
+
+# Check if really duplicated
+if grep -qF "$duplicate_section" <<< "$skill_content"; then
+    confidence="HIGH"
+else
+    # Check fuzzy match
+    fuzzy_match=$(echo "$duplicate_section" | head -5)
+    if grep -qF "$fuzzy_match" <<< "$skill_content"; then
+        confidence="MEDIUM"
+    else
+        confidence="FALSE_POSITIVE"
+    fi
+fi
+
+# Apply fix if HIGH confidence
+if [ "$confidence" = "HIGH" ]; then
+    # Extract section heading
+    heading=$(sed -n "${duplicate_start_line}p" "$agent_file")
+
+    # Create replacement content
+    replacement="$heading
+
+Classify findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See Skill \`$skill_name\` for complete classification criteria, priority matrix (P0-P4), and domain-specific examples.
+
+**Quick Reference**: CRITICAL (breaks functionality), HIGH (violates conventions), MEDIUM (impacts quality), LOW (minor improvements)."
+
+    # Replace content (using sed)
+    sed -i "${duplicate_start_line},${duplicate_end_line}c\\
+$replacement" "$agent_file"
+
+    echo "FIXED: Replaced $((duplicate_end_line - duplicate_start_line + 1)) lines with 4-line reference"
+fi
+```
+
+### Replace Convention Duplication
+
+**Fix Pattern:**
+
+When checker reports agent duplicates >20 lines from a convention:
+
+**Before (Duplicated):**
+
+```markdown
+## Linking Format
+
+Use GitHub-compatible markdown links:
+
+- Format: `[Display Text](./path/to/file.md)`
+- Always include `.md` extension
+- Use relative paths (not absolute)
+- No Obsidian wiki links (`[[...]]`)
+
+**Examples:**
+
+Good: `[File Naming](./ex-co__file-naming.md)`
+Bad: `[[File Naming]]`
+Bad: `[File Naming](./ex-co__file-naming)`
+
+[... 20 more lines of linking rules and examples ...]
+```
+
+**After (Simplified with Reference):**
+
+```markdown
+## Linking Format
+
+Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. See [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) for complete linking standards including rule references, Hugo-specific patterns, and examples.
+
+**Quick Reference**: Include `.md`, use relative paths, no wiki links.
+```
+
+**Confidence Assessment:**
+
+- **HIGH Confidence** (apply automatically):
+  - Exact duplication (>90% match)
+  - Convention explicitly referenced in agent
+  - Duplicated section is standards/rules (not examples tailored to agent's domain)
+
+- **MEDIUM Confidence** (manual review):
+  - Paraphrased duplication (60-90% match)
+  - Convention not explicitly referenced
+  - Agent provides domain-specific examples beyond convention
+
+- **FALSE_POSITIVE** (skip):
+  - Content differs on re-validation
+  - Agent interprets convention for specific domain
+  - Common terminology, not actual duplication
+
+**Fix Application Method:**
+
+```bash
+#!/bin/bash
+
+# Input from checker finding
+agent_file=".claude/agents/docs__maker.md"
+convention_file="docs/explanation/conventions/formatting/ex-co-fo__linking.md"
+duplicate_start_line=245
+duplicate_end_line=273
+similarity=89
+
+# Re-validate finding
+agent_content=$(sed -n "${duplicate_start_line},${duplicate_end_line}p" "$agent_file")
+convention_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' "$convention_file")
+
+# Check if really duplicated
+if grep -qF "$agent_content" <<< "$convention_content"; then
+    confidence="HIGH"
+else
+    confidence="MEDIUM"
+fi
+
+# Apply fix if HIGH confidence
+if [ "$confidence" = "HIGH" ]; then
+    # Extract section heading
+    heading=$(sed -n "${duplicate_start_line}p" "$agent_file")
+
+    # Extract convention name from file path
+    conv_name=$(basename "$convention_file" .md | sed 's/ex-co-[a-z]*__//' | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+    conv_link="../../${convention_file}"
+
+    # Create replacement
+    replacement="$heading
+
+Use GitHub-compatible markdown links with format \`[Display Text](./path/to/file.md)\`. Always include \`.md\` extension and use relative paths. See [$conv_name]($conv_link) for complete linking standards including rule references, Hugo-specific patterns, and examples.
+
+**Quick Reference**: Include \`.md\`, use relative paths, no wiki links."
+
+    # Replace content
+    sed -i "${duplicate_start_line},${duplicate_end_line}c\\
+$replacement" "$agent_file"
+
+    echo "FIXED: Replaced $((duplicate_end_line - duplicate_start_line + 1)) lines with 4-line reference"
+fi
+```
+
+### Add Missing Skill References
+
+**Fix Pattern:**
+
+When checker reports agent contains patterns from Skill but doesn't list it in `skills:` frontmatter:
+
+**Before:**
+
+```yaml
+---
+name: docs__checker
+description: Validates documentation accuracy
+tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
+model: sonnet
+color: green
+skills: [applying-content-quality]
+---
+```
+
+**After:**
+
+```yaml
+---
+name: docs__checker
+description: Validates documentation accuracy
+tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
+model: sonnet
+color: green
+skills: [applying-content-quality, validating-factual-accuracy]
+---
+```
+
+**Confidence Assessment:**
+
+- **HIGH Confidence** (apply automatically):
+  - Agent content contains >5 occurrences of Skill-specific patterns
+  - Skill exists and is well-established
+  - Adding Skill doesn't create semantic conflict with existing Skills
+
+- **MEDIUM Confidence** (manual review):
+  - Agent contains 2-4 occurrences of patterns
+  - Skill is recently created or experimental
+  - Uncertain if pattern usage justifies Skill inclusion
+
+- **FALSE_POSITIVE** (skip):
+  - Pattern keywords are common terminology (false match)
+  - Agent uses term differently than Skill defines
+  - Skill not relevant to agent's domain
+
+**Fix Application Method:**
+
+```bash
+#!/bin/bash
+
+# Input from checker finding
+agent_file=".claude/agents/docs__checker.md"
+skill_to_add="validating-factual-accuracy"
+
+# Extract current skills frontmatter
+current_skills=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1 && /^skills:/ {print}' "$agent_file")
+
+# Check if skill already present
+if grep -q "$skill_to_add" <<< "$current_skills"; then
+    echo "FALSE_POSITIVE: Skill already listed"
+    exit 0
+fi
+
+# Re-validate: check if agent really uses skill patterns
+pattern="WebSearch|WebFetch|\[Verified\]|\[Unverified\]|factual validation"
+occurrences=$(grep -Eci "$pattern" "$agent_file")
+
+if [ "$occurrences" -gt 5 ]; then
+    confidence="HIGH"
+elif [ "$occurrences" -gt 2 ]; then
+    confidence="MEDIUM"
+else
+    confidence="FALSE_POSITIVE"
+fi
+
+# Apply fix if HIGH confidence
+if [ "$confidence" = "HIGH" ]; then
+    # Add skill to frontmatter skills array
+    sed -i "/^skills:/ s/\]/,  $skill_to_add]/" "$agent_file"
+
+    echo "FIXED: Added Skill $skill_to_add to agent frontmatter"
+fi
+```
+
+### Simplification Summary Generation
+
+After applying fixes, generate summary showing size reduction:
+
+```markdown
+## Simplification Summary
+
+**Agent**: wow\_\_rules-checker.md
+
+**Before:**
+
+- Total lines: 1501
+- Duplicate lines: 73 (45 from Skills + 28 from conventions)
+- Skills listed: 2
+
+**After:**
+
+- Total lines: 1438
+- Duplicate lines: 0
+- Skills listed: 2
+- Size reduction: 63 lines (4.2%)
+
+**Fixes Applied:**
+
+1. **Skill Duplication** - `assessing-criticality-confidence`
+   - Replaced: Lines 890-935 (45 lines)
+   - With: 4-line reference
+   - Reduction: 41 lines
+
+2. **Convention Duplication** - `ex-co-fo__linking.md`
+   - Replaced: Lines 1245-1273 (28 lines)
+   - With: 4-line reference
+   - Reduction: 24 lines
+
+**Impact:**
+
+- Agent remains fully functional
+- Content accessible via Skill auto-loading
+- Improved maintainability (single source of truth)
+- Reduced token usage in conversations
+```
+
 5. **Subdirectory README Files**: Create missing README.md index files in subdirectories of docs/explanation/ with proper purpose, scope, and navigation sections
 
 ## Mode Parameter Handling

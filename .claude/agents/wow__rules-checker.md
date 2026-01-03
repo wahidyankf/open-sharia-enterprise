@@ -6,7 +6,7 @@ model: sonnet
 color: green
 skills: [understanding-repository-architecture, assessing-criticality-confidence]
 created: 2025-11-26
-updated: 2026-01-02
+updated: 2026-01-03
 ---
 
 # Repository Rule Checker Agent
@@ -211,6 +211,284 @@ done
 
 **Integration**: Skills validation findings are included in the comprehensive audit report under dedicated "Skills Validation" section with appropriate criticality levels.
 
+## Agent Content Duplication Validation
+
+**CRITICAL**: This agent validates that agents don't duplicate content from Skills and conventions when simpler references would suffice.
+
+**Purpose**: Enable agent simplification by detecting when agents contain detailed patterns/standards that should be referenced from Skills or conventions instead of duplicated.
+
+**Duplication validation scope:**
+
+1. **Agent-Skill Content Duplication**: Detect when agents duplicate >30 lines from Skills listed in their `skills:` field
+2. **Agent-Convention Content Duplication**: Detect when agents duplicate >20 lines from convention documents
+3. **Simplification Opportunities**: Identify agents approaching size limits (>1000 lines) with significant duplication
+4. **Missing Skill References**: Detect when agents contain patterns that match existing Skills but don't list them
+
+**Criticality Levels for Duplication Findings:**
+
+- **CRITICAL**: Agent duplicates >100 lines from Skill/convention (massive duplication blocks simplification)
+- **HIGH**: Agent duplicates 30-100 lines from Skill/convention (significant duplication, should use references)
+- **MEDIUM**: Agent duplicates 15-30 lines from Skill/convention (moderate duplication, consider simplification)
+- **LOW**: Agent approaching size limits (>1000 lines) with duplication opportunities
+
+**Integration**: Duplication findings are included in the comprehensive audit report under dedicated "Agent Content Duplication" section with specific line ranges, similarity percentages, and simplification recommendations.
+
+### Agent-Skill Duplication Detection
+
+**Detection Method:**
+
+For each agent in `.claude/agents/*.md`:
+
+1. **Parse Skills frontmatter**: Extract `skills:` array from agent frontmatter
+2. **Read Skill content**: For each Skill listed, read `.claude/skills/{skill-name}/SKILL.md`
+3. **Compare content**: Use longest common subsequence (LCS) or diff-based similarity
+4. **Calculate duplicate lines**: Count consecutive matching lines (>5 line blocks)
+5. **Report if threshold exceeded**: Flag if >30 duplicate lines found
+
+**Validation Pattern:**
+
+```bash
+#!/bin/bash
+
+# For each agent
+for agent_file in .claude/agents/*.md; do
+    agent_name=$(basename "$agent_file" .md)
+
+    # Extract skills from frontmatter
+    skills=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1 && /^skills:/ {print}' "$agent_file" | \
+             sed 's/skills: \[//;s/\]//' | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+    # For each skill
+    while IFS= read -r skill; do
+        [ -z "$skill" ] && continue
+
+        skill_file=".claude/skills/${skill}/SKILL.md"
+        [ ! -f "$skill_file" ] && continue
+
+        # Extract content (skip frontmatter)
+        agent_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' "$agent_file")
+        skill_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' "$skill_file")
+
+        # Find duplicate blocks (using diff and grep)
+        duplicate_lines=$(diff <(echo "$agent_content") <(echo "$skill_content") 2>/dev/null | \
+                         grep -A50 "^[0-9]" | grep "^  " | wc -l)
+
+        if [ "$duplicate_lines" -gt 30 ]; then
+            echo "HIGH: Agent $agent_name duplicates $duplicate_lines lines from Skill $skill"
+        elif [ "$duplicate_lines" -gt 15 ]; then
+            echo "MEDIUM: Agent $agent_name duplicates $duplicate_lines lines from Skill $skill"
+        fi
+    done <<< "$skills"
+done
+```
+
+**Example Finding:**
+
+```markdown
+**HIGH** - `.claude/agents/wow__rules-checker.md` - Agent-Skill Duplication
+
+- **Issue**: Agent duplicates 45 lines from Skill `assessing-criticality-confidence`
+- **Location**: Lines 890-935 (criticality level definitions and examples)
+- **Skill Content**: Same content exists in `.claude/skills/assessing-criticality-confidence/SKILL.md` lines 120-165
+- **Similarity**: 95% (near-identical content)
+- **Recommendation**: Replace with: "See Skill `assessing-criticality-confidence` for complete criticality classification criteria and priority matrix. **Quick Reference**: CRITICAL (breaks functionality), HIGH (violates conventions), MEDIUM (impacts quality), LOW (minor improvements)."
+- **Estimated Reduction**: 43 lines (keep 2-line summary)
+```
+
+### Agent-Convention Duplication Detection
+
+**Detection Method:**
+
+For each agent in `.claude/agents/*.md`:
+
+1. **Extract convention references**: Find all references to convention docs (explicit links or inferred from context)
+2. **Read convention content**: For each referenced convention, read `docs/explanation/conventions/**/*.md`
+3. **Compare content**: Use exact text matching and fuzzy matching (paraphrasing)
+4. **Calculate duplicate lines**: Count matching content blocks
+5. **Report if threshold exceeded**: Flag if >20 duplicate lines found
+
+**Validation Pattern:**
+
+```bash
+#!/bin/bash
+
+# For each agent
+for agent_file in .claude/agents/*.md; do
+    agent_name=$(basename "$agent_file" .md)
+
+    # Extract convention references (markdown links)
+    conv_refs=$(grep -oP '\[.*?\]\(\.\./\.\./docs/explanation/conventions/.*?\.md\)' "$agent_file" | \
+                grep -oP 'conventions/.*?\.md' | sort -u)
+
+    # Also check common conventions (even if not explicitly linked)
+    common_convs=(
+        "docs/explanation/conventions/content/ex-co-co__convention-writing.md"
+        "docs/explanation/conventions/meta/ex-co-me__file-naming.md"
+        "docs/explanation/conventions/formatting/ex-co-fo__linking.md"
+    )
+
+    # Combine explicit and common conventions
+    all_convs=$(echo "$conv_refs"; printf '%s\n' "${common_convs[@]}")
+
+    # For each convention
+    while IFS= read -r conv_path; do
+        [ -z "$conv_path" ] && continue
+        [ ! -f "$conv_path" ] && continue
+
+        conv_file="$conv_path"
+
+        # Extract content from both files (skip frontmatter)
+        agent_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' "$agent_file")
+        conv_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' "$conv_file")
+
+        # Find exact duplicate paragraphs (3+ consecutive lines)
+        # Use a simple approach: extract paragraphs and compare
+        while IFS= read -r para; do
+            [ -z "$para" ] && continue
+            [ ${#para} -lt 50 ] && continue  # Skip short lines
+
+            if grep -qF "$para" <<< "$conv_content"; then
+                echo "Duplicate paragraph found in $agent_name from $(basename "$conv_file")"
+            fi
+        done <<< "$agent_content"
+
+    done <<< "$all_convs"
+done
+```
+
+**Example Finding:**
+
+```markdown
+**HIGH** - `.claude/agents/docs__maker.md` - Agent-Convention Duplication
+
+- **Issue**: Agent duplicates 28 lines from Convention `ex-co-fo__linking.md`
+- **Location**: Lines 245-273 (linking format rules and examples)
+- **Convention Content**: Same content exists in `docs/explanation/conventions/formatting/ex-co-fo__linking.md` lines 67-95
+- **Similarity**: 89% (minor paraphrasing)
+- **Recommendation**: Replace with: "Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. See [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) for complete linking standards including rule references and Hugo-specific patterns."
+- **Estimated Reduction**: 25 lines (keep 3-line summary)
+```
+
+### Simplification Opportunities Detection
+
+**Detection Method:**
+
+1. **Calculate agent file sizes**: Count lines for each agent
+2. **Identify large agents**: Flag agents with >1000 lines
+3. **Detect duplication**: For large agents, check both Skill and convention duplication
+4. **Estimate potential reduction**: Calculate total duplicate lines
+5. **Report simplification opportunity**: Show before/after size projection
+
+**Validation Pattern:**
+
+```bash
+#!/bin/bash
+
+# For each agent
+for agent_file in .claude/agents/*.md; do
+    agent_name=$(basename "$agent_file" .md)
+
+    # Count total lines
+    total_lines=$(wc -l < "$agent_file")
+
+    # Skip if not approaching limits
+    [ "$total_lines" -lt 1000 ] && continue
+
+    # Count duplicate lines (from Skills and conventions)
+    # (use detection methods above)
+    skill_duplicates=45  # Example: calculated from Agent-Skill detection
+    conv_duplicates=28   # Example: calculated from Agent-Convention detection
+
+    total_duplicates=$((skill_duplicates + conv_duplicates))
+    potential_size=$((total_lines - total_duplicates + 10))  # +10 for reference summaries
+
+    if [ "$total_duplicates" -gt 30 ]; then
+        echo "MEDIUM: Agent $agent_name ($total_lines lines) has $total_duplicates duplicate lines"
+        echo "  Potential size after simplification: $potential_size lines ($((total_duplicates * 100 / total_lines))% reduction)"
+    fi
+done
+```
+
+**Example Finding:**
+
+```markdown
+**MEDIUM** - `.claude/agents/wow__rules-checker.md` - Simplification Opportunity
+
+- **Current Size**: 1501 lines
+- **Duplicate Lines**: 73 (45 from Skills + 28 from conventions)
+- **Potential Size**: 1438 lines after simplification (4.2% reduction)
+- **Size Tier**: Standard (target: <1,200 lines)
+- **Status**: Approaching limit, simplification recommended
+- **Recommendation**: Apply reference pattern to duplicated content to reduce file size and improve maintainability
+```
+
+### Missing Skill References Detection
+
+**Detection Method:**
+
+1. **Identify pattern keywords**: Search agent content for patterns that match Skill scopes
+2. **Check Skills frontmatter**: Verify if matching Skills are listed
+3. **Report missing references**: Flag when agent contains pattern but doesn't list relevant Skill
+
+**Pattern Keywords Map:**
+
+- `criticality`, `confidence`, `priority matrix` → Skill: `assessing-criticality-confidence`
+- `repository architecture`, `six-layer`, `governance` → Skill: `understanding-repository-architecture`
+- `by-example`, `75-90 examples`, `annotation density` → Skill: `creating-by-example-tutorials`
+- `factual validation`, `WebSearch`, `[Verified]` → Skill: `validating-factual-accuracy`
+- `active voice`, `heading hierarchy`, `WCAG` → Skill: `applying-content-quality`
+
+**Validation Pattern:**
+
+```bash
+#!/bin/bash
+
+# Define pattern-skill mappings
+declare -A skill_patterns
+skill_patterns["assessing-criticality-confidence"]="criticality|confidence|priority matrix"
+skill_patterns["understanding-repository-architecture"]="repository architecture|six-layer|governance hierarchy"
+skill_patterns["creating-by-example-tutorials"]="by-example|75-90 examples|annotation density"
+skill_patterns["validating-factual-accuracy"]="factual validation|WebSearch.*Verified|confidence classification"
+skill_patterns["applying-content-quality"]="active voice|heading hierarchy|WCAG|accessibility compliance"
+
+# For each agent
+for agent_file in .claude/agents/*.md; do
+    agent_name=$(basename "$agent_file" .md")
+
+    # Extract skills frontmatter
+    current_skills=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1 && /^skills:/ {print}' "$agent_file" | \
+                    sed 's/skills: \[//;s/\]//')
+
+    # Extract agent content (skip frontmatter)
+    agent_content=$(awk 'BEGIN{p=0;count=0} /^---$/{count++;if(count==2){p=1;next}} p==1' "$agent_file")
+
+    # Check each skill pattern
+    for skill in "${!skill_patterns[@]}"; do
+        pattern="${skill_patterns[$skill]}"
+
+        # Check if agent content matches pattern
+        if grep -Eqi "$pattern" <<< "$agent_content"; then
+            # Check if skill is already listed
+            if ! grep -q "$skill" <<< "$current_skills"; then
+                echo "MEDIUM: Agent $agent_name contains patterns from Skill $skill but doesn't list it"
+            fi
+        fi
+    done
+done
+```
+
+**Example Finding:**
+
+```markdown
+**MEDIUM** - `.claude/agents/docs__checker.md` - Missing Skill Reference
+
+- **Issue**: Agent contains factual validation patterns but doesn't list Skill `validating-factual-accuracy`
+- **Evidence**: Agent content includes "WebSearch", "WebFetch", "[Verified]" patterns (lines 234, 267, 289)
+- **Current Skills**: `[applying-content-quality]`
+- **Recommendation**: Add `validating-factual-accuracy` to `skills:` frontmatter array
+- **Benefit**: Agent can leverage Skill's comprehensive validation methodology instead of defining its own
+```
+
 ## Verification Checklist
 
 When running a consistency check, systematically verify:
@@ -289,6 +567,49 @@ Validate that `docs/explanation/ex__repository-governance-architecture.md` is ac
 - [ ] Vision Supported section positioned BEFORE the main "What" section
 
 ### Principles Alignment
+
+### Agent Content Duplication Validation
+
+**Agent-Skill Duplication:**
+
+- [ ] For each agent, extract `skills:` array from frontmatter
+- [ ] For each listed Skill, read `.claude/skills/{skill-name}/SKILL.md` content
+- [ ] Compare agent content with Skill content (skip frontmatter in both)
+- [ ] Count duplicate line blocks (consecutive matching lines >5 lines)
+- [ ] Flag if >30 duplicate lines (HIGH), >15 duplicate lines (MEDIUM)
+- [ ] Report with line ranges, similarity percentage, and simplification recommendations
+
+**Agent-Convention Duplication:**
+
+- [ ] For each agent, extract convention references (explicit markdown links)
+- [ ] For each referenced convention, read content from `docs/explanation/conventions/**/*.md`
+- [ ] Compare agent content with convention content
+- [ ] Count duplicate paragraphs and line blocks
+- [ ] Flag if >20 duplicate lines (HIGH), >10 duplicate lines (MEDIUM)
+- [ ] Report with location, similarity, and reference pattern recommendations
+
+**Simplification Opportunities:**
+
+- [ ] Calculate file size for each agent (line count)
+- [ ] Flag agents with >1000 lines approaching size limits
+- [ ] For large agents, calculate total duplicate lines (Skills + conventions)
+- [ ] Estimate potential size reduction
+- [ ] Report simplification opportunities with projected new size
+
+**Missing Skill References:**
+
+- [ ] Define pattern-Skill keyword mappings
+- [ ] For each agent, search content for Skill-related patterns
+- [ ] Check if matching Skills are listed in `skills:` frontmatter
+- [ ] Flag when agent contains patterns but doesn't list relevant Skill
+- [ ] Report with evidence (line numbers) and recommendations
+
+**Criticality Levels:**
+
+- [ ] CRITICAL: Agent duplicates >100 lines from Skill/convention
+- [ ] HIGH: Agent duplicates 30-100 lines from Skill/convention
+- [ ] MEDIUM: Agent duplicates 15-30 lines from Skill/convention, or contains patterns from unlisted Skills
+- [ ] LOW: Agent >1000 lines with duplication opportunities
 
 ### Subdirectory README Files
 
