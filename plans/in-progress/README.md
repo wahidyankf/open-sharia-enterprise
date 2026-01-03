@@ -4,9 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [2026-01-02: Skills Infrastructure Implementation](./2026-01-02__skills-layer-implementation/) - Introduce Claude Code Skills as delivery infrastructure (alongside CLAUDE.md) for progressive knowledge disclosure. Creates 8-10 model-invoked knowledge packages, maintains CLAUDE.md ≤30k characters, updates all ~45 agents with required `skills:` field, and updates rules components. Six-layer architecture unchanged.
-
-- [2026-01-03: Agent Simplification via Skills Infrastructure](./2026-01-03__agent-skills-simplification/) - Systematically simplify all 48 agents by leveraging Skills as single source of truth for conventions, patterns, and standards. Eliminates agent-Skill duplication, achieves 20-40% average size reduction, validates effectiveness through comprehensive testing, and establishes clear agent-Skill separation guidelines. Five-phase approach: Audit, Gap Analysis, Pilot, Rollout, Verification.
+- [2025-12-25: Policy as Code](./2025-12-25__policy-as-a-code/) - Policy as code implementation (status to be verified)
 
 ## Instructions
 
