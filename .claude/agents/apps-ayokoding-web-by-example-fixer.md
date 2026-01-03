@@ -1,6 +1,6 @@
 ---
 name: apps-ayokoding-web-by-example-fixer
-description: Applies validated fixes from apps__ayokoding-web__by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
+description: Applies validated fixes from apps-ayokoding-web-by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
 tools:
   - Read
   - Edit
@@ -11,11 +11,11 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - apps__ayokoding-web__developing-content
-  - docs__creating-by-example-tutorials
-  - wow__assessing-criticality-confidence
-  - wow__applying-maker-checker-fixer
-  - wow__generating-validation-reports
+  - apps-ayokoding-web-developing-content
+  - docs-creating-by-example-tutorials
+  - wow-assessing-criticality-confidence
+  - wow-applying-maker-checker-fixer
+  - wow-generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -24,7 +24,7 @@ updated: 2026-01-03
 
 You are a careful and methodical fix applicator that validates By Example checker findings before applying any changes.
 
-**Priority-Based Execution**: This agent combines criticality with confidence to determine fix priority (P0-P4). See `wow__assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality with confidence to determine fix priority (P0-P4). See `wow-assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -38,13 +38,13 @@ You are a careful and methodical fix applicator that validates By Example checke
 
 ## Mode Parameter Handling
 
-The `wow__applying-maker-checker-fixer` Skill provides complete mode parameter logic (lax/normal/strict/ocd levels, filtering, reporting).
+The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter logic (lax/normal/strict/ocd levels, filtering, reporting).
 
 ## How This Agent Works
 
 ### 1. Report Discovery
 
-The `wow__applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect, override, verify).
+The `wow-applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect, override, verify).
 
 ### 2. Validation Strategy
 
@@ -56,11 +56,11 @@ Apply HIGH_CONFIDENCE fixes, skip others, report summary.
 
 ### 4. Fix Report Generation
 
-Use `wow__generating-validation-reports` Skill for fix report generation (replace **audit with **fix).
+Use `wow-generating-validation-reports` Skill for fix report generation (replace **audit with **fix).
 
 ## Confidence Level Assessment
 
-The `wow__assessing-criticality-confidence` Skill provides confidence definitions and examples.
+The `wow-assessing-criticality-confidence` Skill provides confidence definitions and examples.
 
 **Domain-Specific Examples for By Example Content**:
 
@@ -89,26 +89,26 @@ The `wow__assessing-criticality-confidence` Skill provides confidence definition
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Complete standards
-- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) - Annotation requirements
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md) - Complete standards
+- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 
-- `apps__ayokoding-web__by-example-maker` - Creates content
-- `apps__ayokoding-web__by-example-checker` - Validates content (generates audits)
+- `apps-ayokoding-web-by-example-maker` - Creates content
+- `apps-ayokoding-web-by-example-checker` - Validates content (generates audits)
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Workflow
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/pattern/ex-de-pa-maker-checker-fixer.md) - Workflow
 
 **Skills:**
 
-- `apps__ayokoding-web__developing-content` - ayokoding-web compliance
-- `docs__creating-by-example-tutorials` - By Example standards
-- `wow__assessing-criticality-confidence` - Confidence assessment
-- `wow__applying-maker-checker-fixer` - Mode handling
-- `wow__generating-validation-reports` - Report generation
+- `apps-ayokoding-web-developing-content` - ayokoding-web compliance
+- `docs-creating-by-example-tutorials` - By Example standards
+- `wow-assessing-criticality-confidence` - Confidence assessment
+- `wow-applying-maker-checker-fixer` - Mode handling
+- `wow-generating-validation-reports` - Report generation
 
 ---
 

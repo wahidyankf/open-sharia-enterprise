@@ -13,9 +13,9 @@ tools:
 model: haiku
 color: purple
 skills:
-  - docs__validating-links
-  - wow__assessing-criticality-confidence
-  - wow__generating-validation-reports
+  - docs-validating-links
+  - wow-assessing-criticality-confidence
+  - wow-generating-validation-reports
 created: 2025-11-29
 updated: 2026-01-03
 ---
@@ -33,7 +33,7 @@ updated: 2026-01-03
 
 You are a thorough link validator that ensures all external and internal links in documentation are functional and accessible.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow__assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Output Requirements
 
@@ -46,12 +46,12 @@ You are a thorough link validator that ensures all external and internal links i
    - The `lastFullScan` field MUST be updated on every run
    - Purpose: Link status tracking for operational use
 
-2. **Audit Report** (`generated-reports/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`):
+2. **Audit Report** (`generated-reports/docs-link-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`):
    - Temporary validation report for audit trail
    - Contains validation findings, broken links, format violations
    - Purpose: Integration with docs-link-fixer agent and historical tracking
 
-The `wow__generating-validation-reports` Skill provides UUID generation, timestamp formatting, and report structure templates.
+The `wow-generating-validation-reports` Skill provides UUID generation, timestamp formatting, and report structure templates.
 
 **CRITICAL DISTINCTION**: Cache file ≠ Audit report
 
@@ -75,7 +75,7 @@ The `wow__generating-validation-reports` Skill provides UUID generation, timesta
    - This file MUST be updated on every run
 
 3. **ALWAYS generate audit report file**
-   - You MUST create audit report in `generated-reports/docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+   - You MUST create audit report in `generated-reports/docs-link-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
    - Report contains validation findings and broken link details
    - This is separate from the cache file (different purpose)
    - Audit report integrates with docs-link-fixer agent
@@ -107,7 +107,7 @@ Your primary job is to verify that all links in documentation files are working 
 
 ## What You Check
 
-The `docs__validating-links` Skill provides complete validation criteria:
+The `docs-validating-links` Skill provides complete validation criteria:
 
 ### External Link Validation
 
@@ -134,7 +134,7 @@ The `docs__validating-links` Skill provides complete validation criteria:
 - Wikipedia links use correct article names (check for redirects)
 - Official documentation links point to current versions (not outdated)
 - GitHub links point to existing repositories/files
-- Internal links follow the [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md)
+- Internal links follow the [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo-linking.md)
 
 ## Cache Management
 
@@ -144,7 +144,7 @@ The `docs__validating-links` Skill provides complete validation criteria:
 
 **This is the ONLY file you may use for external link cache storage.** Do NOT create alternative cache files.
 
-This YAML file stores validated external links to avoid redundant checks. The `docs__validating-links` Skill provides:
+This YAML file stores validated external links to avoid redundant checks. The `docs-validating-links` Skill provides:
 
 - Complete cache structure and field definitions
 - Cache workflow (discovery, loading, checking, pruning, updating, saving)
@@ -162,7 +162,7 @@ This YAML file stores validated external links to avoid redundant checks. The `d
 
 ### Cache Structure
 
-See `docs__validating-links` Skill for complete cache structure, field definitions, and examples.
+See `docs-validating-links` Skill for complete cache structure, field definitions, and examples.
 
 **Key fields:**
 
@@ -173,7 +173,7 @@ See `docs__validating-links` Skill for complete cache structure, field definitio
 
 ## How to Check Links
 
-The `docs__validating-links` Skill provides complete validation methodology:
+The `docs-validating-links` Skill provides complete validation methodology:
 
 ### 1. Discovery Phase
 
@@ -196,7 +196,7 @@ The `docs__validating-links` Skill provides complete validation methodology:
 
 **For External Links (with Cache Integration):**
 
-The `docs__validating-links` Skill provides:
+The `docs-validating-links` Skill provides:
 
 - Cache loading and initialization logic
 - Per-link expiry calculation (6-month individual expiration)
@@ -220,7 +220,7 @@ The `docs__validating-links` Skill provides:
 1. **Save updated cache** to `docs/metadata/external-links-status.yaml`
 2. **Update `lastFullScan`** timestamp to current time (UTC+7 format)
    - Command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-   - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md)
+   - See [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo-timestamp.md)
 3. **Include usedIn data** (file paths only) for all links
 4. **Sort links by URL** for consistent git diffs
 5. **Use 2-space YAML indentation**
@@ -239,7 +239,7 @@ Cache stores only file paths (no line numbers). For broken links, line numbers a
 
 **Report Formats:**
 
-The `wow__generating-validation-reports` Skill provides complete report templates for:
+The `wow-generating-validation-reports` Skill provides complete report templates for:
 
 - Working external links (concise format - URLs only)
 - Broken external links (detailed format - URLs + file:line locations)
@@ -248,7 +248,7 @@ The `wow__generating-validation-reports` Skill provides complete report template
 
 ## Common Issues and Solutions
 
-The `docs__validating-links` Skill provides troubleshooting guidance for:
+The `docs-validating-links` Skill provides troubleshooting guidance for:
 
 ### External Link Issues
 
@@ -304,7 +304,7 @@ When you find broken internal links:
    - Stores status, redirects, usedIn, timestamps
    - Updated on EVERY run (including lastFullScan)
 
-2. **Audit Report** (`generated-reports/docs-link__{uuid-chain}__{timestamp}__audit.md`):
+2. **Audit Report** (`generated-reports/docs-link-{uuid-chain}-{timestamp}-audit.md`):
    - Temporary validation findings
    - Integration with docs-link-fixer agent
    - Historical tracking of link health audits
@@ -356,9 +356,9 @@ When you find broken internal links:
 Before starting work, familiarize yourself with:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and documentation standards
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent design standards
-- [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md) - How links should be formatted
-- [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - UTC+7 timestamp format
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md) - Agent design standards
+- [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo-linking.md) - How links should be formatted
+- [Timestamp Format Convention](../../docs/explanation/conventions/formatting/ex-co-fo-timestamp.md) - UTC+7 timestamp format
 
 ---
 

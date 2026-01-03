@@ -4,7 +4,7 @@ description: Creates repository rules and conventions in docs/explanation/ direc
 tools: [Read, Write, Edit, Glob, Grep]
 model: sonnet
 color: blue
-skills: [docs__applying-diataxis-framework, docs__applying-content-quality]
+skills: [docs-applying-diataxis-framework, docs-applying-content-quality]
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -15,8 +15,8 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../docs/explanation/conventions/content/ex-co-co__convention-writing.md)
-- Skills: `docs__applying-diataxis-framework`, `docs__applying-content-quality`
+- [Convention Writing Convention](../../docs/explanation/conventions/content/ex-co-co-convention-writing.md)
+- Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
 

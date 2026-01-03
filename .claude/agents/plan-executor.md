@@ -1,6 +1,6 @@
 ---
 name: plan-executor
-description: Executes project plans systematically by following delivery checklists, implementing steps sequentially, validating work, and updating progress. Stops at final validation for plan__execution-checker handoff.
+description: Executes project plans systematically by following delivery checklists, implementing steps sequentially, validating work, and updating progress. Stops at final validation for plan-execution-checker handoff.
 tools:
   - Read
   - Write
@@ -11,7 +11,7 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - docs__applying-diataxis-framework
+  - docs-applying-diataxis-framework
 created: 2025-12-28
 updated: 2026-01-03
 ---
@@ -50,7 +50,7 @@ Use this agent when:
 
 ### Phase 1: Plan Reading
 
-1. **Receive plan path** from user (e.g., `plans/in-progress/2025-12-01__project/`)
+1. **Receive plan path** from user (e.g., `plans/in-progress/2025-12-01-project/`)
 2. **Detect plan structure** (single-file or multi-file)
 3. **Read plan files** (README.md, requirements.md, tech-docs.md, delivery.md)
 4. **Verify git branch** (default: `main`, exception: feature branch)
@@ -109,19 +109,19 @@ After ALL implementation phases complete:
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Plan structure
-- [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) - Git workflow
+- [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr-plans-organization.md) - Plan structure
+- [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo-trunk-based-development.md) - Git workflow
 
 **Related Agents:**
 
-- `plan__maker` - Creates plans
-- `plan__checker` - Validates plans
-- `plan__execution-checker` - Validates completed work
-- `plan__fixer` - Fixes plan issues
+- `plan-maker` - Creates plans
+- `plan-checker` - Validates plans
+- `plan-execution-checker` - Validates completed work
+- `plan-fixer` - Fixes plan issues
 
 **Skills:**
 
-- `docs__applying-diataxis-framework` - Documentation organization
+- `docs-applying-diataxis-framework` - Documentation organization
 
 ---
 

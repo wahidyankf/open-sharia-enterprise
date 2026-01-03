@@ -10,9 +10,9 @@ tools:
 model: sonnet
 color: green
 skills:
-  - apps__ayokoding-web__developing-content
-  - wow__assessing-criticality-confidence
-  - wow__generating-validation-reports
+  - apps-ayokoding-web-developing-content
+  - wow-assessing-criticality-confidence
+  - wow-generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -21,17 +21,17 @@ updated: 2026-01-03
 
 You validate ayokoding-web content structure and organization.
 
-**Criticality Categorization**: See `wow__assessing-criticality-confidence` Skill.
+**Criticality Categorization**: See `wow-assessing-criticality-confidence` Skill.
 
 ## Temporary Report Files
 
-Pattern: `ayokoding-structure__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+Pattern: `ayokoding-structure-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
-The `wow__generating-validation-reports` Skill provides generation logic.
+The `wow-generating-validation-reports` Skill provides generation logic.
 
 ## Validation Scope
 
-The `apps__ayokoding-web__developing-content` Skill provides complete structure standards:
+The `apps-ayokoding-web-developing-content` Skill provides complete structure standards:
 
 - Folder organization (by-concept, by-example separation)
 - Level-based weight system (level \* 100 + sequential)
@@ -43,7 +43,7 @@ The `apps__ayokoding-web__developing-content` Skill provides complete structure 
 
 ### Step 0: Initialize Report
 
-Use `wow__generating-validation-reports` Skill.
+Use `wow-generating-validation-reports` Skill.
 
 ### Step 1-N: Validate Structure
 
@@ -58,8 +58,8 @@ Update status, add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
 
 **Skills:**
 
-- `apps__ayokoding-web__developing-content`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`
+- `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`

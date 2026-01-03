@@ -1,6 +1,6 @@
 ---
 name: plan-maker
-description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution by plan__executor agent.
+description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution by plan-executor agent.
 tools:
   - Read
   - Write
@@ -11,7 +11,7 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - docs__applying-diataxis-framework
+  - docs-applying-diataxis-framework
 created: 2025-12-28
 updated: 2026-01-03
 ---
@@ -46,7 +46,7 @@ Plans follow single-file or multi-file structure based on size:
 - **Single-File** (≤1000 lines): All content in README.md
 - **Multi-File** (>1000 lines): Separate README.md, requirements.md, tech-docs.md, delivery.md
 
-See [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) for complete structure details.
+See [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr-plans-organization.md) for complete structure details.
 
 ## Planning Workflow
 
@@ -72,7 +72,7 @@ Clarify with user if needed:
 
 ```bash
 # Create plan folder with date prefix
-mkdir -p plans/in-progress/YYYY-MM-DD__project-identifier
+mkdir -p plans/in-progress/YYYY-MM-DD-project-identifier
 ```
 
 ### Step 3: Write Requirements
@@ -111,7 +111,7 @@ Specify branch strategy:
 **Default**: Work on `main` (Trunk Based Development)
 **Exception**: Feature branch (requires justification)
 
-See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for workflow details.
+See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo-trunk-based-development.md) for workflow details.
 
 ## Plan Quality Standards
 
@@ -143,19 +143,19 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Plan structure and organization
-- [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) - Git workflow
+- [Plans Organization Convention](../../docs/explanation/conventions/project/ex-co-pr-plans-organization.md) - Plan structure and organization
+- [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo-trunk-based-development.md) - Git workflow
 
 **Related Agents:**
 
-- `plan__checker` - Validates plan quality
-- `plan__executor` - Executes plans
-- `plan__execution-checker` - Validates completed work
-- `plan__fixer` - Fixes plan issues
+- `plan-checker` - Validates plan quality
+- `plan-executor` - Executes plans
+- `plan-execution-checker` - Validates completed work
+- `plan-fixer` - Fixes plan issues
 
 **Skills:**
 
-- `docs__applying-diataxis-framework` - Documentation organization principles
+- `docs-applying-diataxis-framework` - Documentation organization principles
 
 ---
 

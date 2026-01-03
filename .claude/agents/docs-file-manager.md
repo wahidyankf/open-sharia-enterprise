@@ -10,7 +10,7 @@ tools:
 model: sonnet
 color: yellow
 skills:
-  - docs__applying-diataxis-framework
+  - docs-applying-diataxis-framework
 created: 2025-11-30
 updated: 2026-01-03
 ---
@@ -59,12 +59,12 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../docs/explanation/conventions/meta/ex-co-me__file-naming.md):
+Before any operation, understand the [File Naming Convention](../../docs/explanation/conventions/meta/ex-co-me-file-naming.md):
 
 ### Pattern
 
 ```
-[hierarchical-prefix]__[content-identifier].[extension]
+[hierarchical-prefix]-[content-identifier].[extension]
 ```
 
 ### Prefix Calculation
@@ -76,13 +76,13 @@ The prefix encodes the directory path using abbreviations:
 
 **Examples**:
 
-- `docs/tutorials/` → `tu__`
-- `docs/how-to/` → `hoto__`
-- `docs/explanation/conventions/` → `ex-co__`
-- `docs/explanation/information-security/` → `ex-inse__`
-- `docs/tutorials/ai-engineering/` → `tu-aien__`
-- `docs/tutorials/business-and-finance/` → `tu-bufi__`
-- `docs/tutorials/software-engineering/system-design/` → `tu-soen-syde__`
+- `docs/tutorials/` → `tu-`
+- `docs/how-to/` → `hoto-`
+- `docs/explanation/conventions/` → `ex-co-`
+- `docs/explanation/information-security/` → `ex-inse-`
+- `docs/tutorials/ai-engineering/` → `tu-aien-`
+- `docs/tutorials/business-and-finance/` → `tu-bufi-`
+- `docs/tutorials/software-engineering/system-design/` → `tu-soen-syde-`
 
 ### Abbreviation Rules
 
@@ -299,7 +299,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md):
+All links must follow [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo-linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension
@@ -476,7 +476,7 @@ Before telling user "done":
 
 README.md files are exempt from prefix requirement:
 
-- **Never rename** `README.md` to `ex-co__README.md`
+- **Never rename** `README.md` to `ex-co-README.md`
 - **Keep as** `README.md` for GitHub compatibility
 - **Update content** but not filename
 
@@ -609,17 +609,17 @@ Proceed anyway? (Please confirm)
 
 **Agent Conventions:**
 
-- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
+- `docs/explanation/development/agents/ex-de-ag-ai-agents.md` - AI agents convention (all agents must follow)
 
 **Documentation Conventions:**
 
 - `docs/explanation/conventions/README.md` - Index of all conventions
-- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` - How to name files with hierarchical prefixes (required reading)
-- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - How to link between files with GitHub-compatible markdown (required reading)
-- `docs/explanation/conventions/formatting/ex-co-fo__emoji.md` - When and where to use emojis
+- `docs/explanation/conventions/meta/ex-co-me-file-naming.md` - How to name files with hierarchical prefixes (required reading)
+- `docs/explanation/conventions/formatting/ex-co-fo-linking.md` - How to link between files with GitHub-compatible markdown (required reading)
+- `docs/explanation/conventions/formatting/ex-co-fo-emoji.md` - When and where to use emojis
 
 **Related Agents:**
 
-- `docs__maker.md` - Creates new documentation (use for new index files)
-- `docs__link-general-checker.md` - Validates links (use after file operations to verify)
-- `wow__rules-checker.md` - Validates consistency (use for large reorganizations)
+- `docs-maker.md` - Creates new documentation (use for new index files)
+- `docs-link-general-checker.md` - Validates links (use after file operations to verify)
+- `wow-rules-checker.md` - Validates consistency (use for large reorganizations)

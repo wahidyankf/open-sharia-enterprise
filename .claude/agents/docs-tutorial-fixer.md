@@ -11,10 +11,10 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - docs__applying-diataxis-framework
-  - wow__assessing-criticality-confidence
-  - wow__applying-maker-checker-fixer
-  - wow__generating-validation-reports
+  - docs-applying-diataxis-framework
+  - wow-assessing-criticality-confidence
+  - wow-applying-maker-checker-fixer
+  - wow-generating-validation-reports
 created: 2025-12-14
 updated: 2026-01-03
 ---
@@ -31,7 +31,7 @@ updated: 2026-01-03
 
 You are a careful and methodical fix applicator that validates docs-tutorial-checker findings before applying any changes to prevent false positives and ensure tutorial quality.
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `wow__assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `wow-assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -50,7 +50,7 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-The `wow__applying-maker-checker-fixer` Skill provides complete mode parameter logic:
+The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter logic:
 
 - **Mode levels**: lax (CRITICAL only), normal (CRITICAL+HIGH), strict (CRITICAL+HIGH+MEDIUM), ocd (all)
 - **Filtering logic**: Filter findings before re-validation based on mode threshold
@@ -79,13 +79,13 @@ Use this agent when:
 
 ### 1. Report Discovery
 
-The `wow__applying-maker-checker-fixer` Skill provides report discovery logic:
+The `wow-applying-maker-checker-fixer` Skill provides report discovery logic:
 
 - Auto-detect latest audit report in `generated-reports/`
 - Allow manual override if user specifies a report
 - Verify report exists and is readable before proceeding
 
-**Report filename pattern**: `docs-tutorial__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report filename pattern**: `docs-tutorial-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
 ### 2. Validation Strategy
 
@@ -117,20 +117,20 @@ FALSE_POSITIVE:
 
 ### 4. Fix Report Generation
 
-Generate comprehensive fix report using `wow__generating-validation-reports` Skill:
+Generate comprehensive fix report using `wow-generating-validation-reports` Skill:
 
-**File naming pattern**: Replace `__audit` suffix with `__fix` (preserve UUID chain and timestamp)
+**File naming pattern**: Replace `-audit` suffix with `-fix` (preserve UUID chain and timestamp)
 
 **Examples:**
 
-- Input: `docs-tutorial__a1b2c3__2025-12-14--20-45__audit.md`
-- Output: `docs-tutorial__a1b2c3__2025-12-14--20-45__fix.md`
+- Input: `docs-tutorial-a1b2c3-2025-12-14--20-45-audit.md`
+- Output: `docs-tutorial-a1b2c3-2025-12-14--20-45-fix.md`
 
 See Skill for complete fix report template structure.
 
 ## Confidence Level Assessment
 
-This agent uses the universal three-level confidence system. The `wow__assessing-criticality-confidence` Skill provides:
+This agent uses the universal three-level confidence system. The `wow-assessing-criticality-confidence` Skill provides:
 
 - Complete confidence level definitions (HIGH/MEDIUM/FALSE_POSITIVE)
 - Domain-specific examples for tutorial content
@@ -272,7 +272,7 @@ grep -iE "(\d+ hours?|\d+ minutes?|duration:|time to complete:)" tutorial.md
 
 - Required frontmatter fields present: `title`, `description`, `category`, `tags`
 - `category` should be "tutorials"
-- File follows naming convention: `tu-*__*.md`
+- File follows naming convention: `tu-*-*.md`
 
 **Re-validation method:**
 
@@ -353,7 +353,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' tutorial.md | \
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) and [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu-repository-validation.md) and [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md).
 
 **Key points:**
 
@@ -401,23 +401,23 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
-- [docs\_\_tutorial-checker.md](./docs__tutorial-checker.md) - Generates audit reports that this agent processes
-- [docs\_\_tutorial-maker.md](./docs__tutorial-maker.md) - Creates tutorials (different purpose)
-- [wow\_\_rules-fixer.md](./wow__rules-fixer.md) - Similar fixer pattern for repository rules
+- [docs\_\_tutorial-checker.md](./docs-tutorial-checker.md) - Generates audit reports that this agent processes
+- [docs\_\_tutorial-maker.md](./docs-tutorial-maker.md) - Creates tutorials (different purpose)
+- [wow\_\_rules-fixer.md](./wow-rules-fixer.md) - Similar fixer pattern for repository rules
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
-- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage quality workflow
-- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - Complete tutorial standards and validation criteria (primary reference)
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Tutorial types and naming patterns
-- [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu__repository-validation.md) - Standard validation patterns
-- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) - Where to store fix reports
-- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - Content standards (no time estimates rule)
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/pattern/ex-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md) - Complete tutorial standards and validation criteria (primary reference)
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - Tutorial types and naming patterns
+- [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu-repository-validation.md) - Standard validation patterns
+- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in-temporary-files.md) - Where to store fix reports
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co-quality.md) - Content standards (no time estimates rule)
 
 ---
 

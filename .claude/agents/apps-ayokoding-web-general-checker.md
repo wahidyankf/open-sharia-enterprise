@@ -4,8 +4,7 @@ description: Validates general ayokoding-web content quality including structure
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
-skills:
-  [apps__ayokoding-web__developing-content, wow__assessing-criticality-confidence, wow__generating-validation-reports]
+skills: [apps-ayokoding-web-developing-content, wow-assessing-criticality-confidence, wow-generating-validation-reports]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -16,22 +15,22 @@ Validate general ayokoding-web content quality.
 
 ## Temporary Reports
 
-Pattern: `ayokoding-general__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
-Skill: `wow__generating-validation-reports`
+Pattern: `ayokoding-general-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
+Skill: `wow-generating-validation-reports`
 
 ## Validation Scope
 
-`apps__ayokoding-web__developing-content` Skill provides complete standards:
+`apps-ayokoding-web-developing-content` Skill provides complete standards:
 
 - Bilingual completeness, weight system, navigation depth, frontmatter, linking
 
 ## Process
 
-0. Initialize report (`wow__generating-validation-reports`)
+0. Initialize report (`wow-generating-validation-reports`)
    1-N. Validate aspects (write progressively)
    Final. Update status, add summary
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
-- Skills: `apps__ayokoding-web__developing-content`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
+- Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`

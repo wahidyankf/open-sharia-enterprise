@@ -4,7 +4,7 @@ description: Creates LinkedIn posts from project updates and documentation. Opti
 tools: [Read, Grep]
 model: sonnet
 color: blue
-skills: [docs__applying-content-quality]
+skills: [docs-applying-content-quality]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -15,7 +15,7 @@ Create LinkedIn posts from project updates.
 
 ## Reference
 
-Skill: `docs__applying-content-quality` (active voice, clear language, benefits-focused)
+Skill: `docs-applying-content-quality` (active voice, clear language, benefits-focused)
 
 ## Workflow
 

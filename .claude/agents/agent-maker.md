@@ -4,7 +4,7 @@ description: Creates new AI agent files in .claude/agents/ following AI Agents C
 tools: [Read, Write, Glob, Grep, Bash]
 model: sonnet
 color: blue
-skills: [docs__applying-diataxis-framework]
+skills: [docs-applying-diataxis-framework]
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -15,8 +15,8 @@ Create new AI agent files following AI Agents Convention.
 
 ## Reference
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md)
-- Skill: `docs__applying-diataxis-framework`
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md)
+- Skill: `docs-applying-diataxis-framework`
 
 ## Workflow
 

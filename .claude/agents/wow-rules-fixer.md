@@ -4,7 +4,7 @@ description: Applies validated fixes from repository rules audit reports includi
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: purple
-skills: [wow__applying-maker-checker-fixer, wow__assessing-criticality-confidence, wow__generating-validation-reports]
+skills: [wow-applying-maker-checker-fixer, wow-assessing-criticality-confidence, wow-generating-validation-reports]
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -38,7 +38,7 @@ Fix repository-wide consistency issues including:
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
-See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
+See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md#writing-to-claude-folders).
 
 ## Agent-Skill Duplication Fixes
 
@@ -138,10 +138,10 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 ## Related Documentation
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent-Skill separation patterns
-- [Maker-Checker-Fixer Pattern](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage workflow
-- [Fixer Confidence Levels](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) - Assessment criteria
-- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) - Report standards
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md) - Agent-Skill separation patterns
+- [Maker-Checker-Fixer Pattern](../../docs/explanation/development/pattern/ex-de-pa-maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md) - Assessment criteria
+- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in-temporary-files.md) - Report standards
 
 ## Process Summary
 
