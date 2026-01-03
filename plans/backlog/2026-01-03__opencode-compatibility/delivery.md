@@ -15,22 +15,33 @@ This plan is divided into 6 phases, ordered by priority and dependency:
 
 ---
 
-## Phase 0: Skill Renaming (CRITICAL PREREQUISITE)
+## Phase 0: Skills and Agents Renaming (CRITICAL PREREQUISITE)
 
-**Goal**: Fix skill naming to comply with both Claude Code and OpenCode specs
+**Goal**: Fix skill AND agent naming to comply with both Claude Code and OpenCode specs
+
+**Scope**: 65 files total (19 skills + 46 agents)
 
 ### Why This Is Required
 
-**CONFIRMED**: Both Claude Code AND OpenCode require skill names matching `[a-z0-9-]+`:
+**CONFIRMED**: Both Claude Code AND OpenCode require skill AND agent names matching `[a-z0-9-]+`:
 
-- Underscores (`_`) are **NOT allowed**
-- Consecutive hyphens (`--`) are **NOT allowed**
-- Current names like `docs__applying-content-quality` are **INVALID**
-- **Correct format**: Replace `__` with **SINGLE hyphen** `-` (e.g., `docs-applying-content-quality`)
-- Skills will NOT load in OpenCode until renamed
-- Skills may already be working in Claude Code only due to legacy support
+- Underscores (`_`) are **NOT allowed** in skill or agent names
+- Consecutive hyphens (`--`) are **NOT allowed** in skill or agent names
+- Current names like `docs__applying-content-quality` (skills) and `docs__checker` (agents) are **INVALID**
+- **Correct format**: Replace `__` with **SINGLE hyphen** `-`
+- Skills and agents will NOT load in OpenCode until renamed
+- Agent renaming is **MORE CRITICAL** because workflows depend on agent names
+
+**Impact**:
+
+- 19 skill files need renaming
+- 46 agent files need renaming (2.4x more than skills)
+- All workflow agent references must be updated
+- Agent renaming affects core automation infrastructure
 
 ### Renaming Tasks
+
+#### Part A: Skills Renaming (19 files)
 
 - [ ] **0.1 Create and validate skill renaming script**
 
@@ -168,14 +179,212 @@ This plan is divided into 6 phases, ordered by priority and dependency:
   echo "Skills are ready for OpenCode compatibility!"
   ```
 
+#### Part B: Agents Renaming (46 files) ⚠️ **HIGHER PRIORITY**
+
+- [ ] **0.8 Create and validate agent renaming script**
+
+  ```bash
+  #!/bin/bash
+  # Rename all agent files from underscore to hyphen format
+  # CRITICAL: Replace __ with SINGLE hyphen -, NOT double hyphen --
+
+  echo "Renaming agents from __ to - format..."
+  for agent in .claude/agents/*__*.md; do
+    newname=$(echo "$agent" | sed 's/__/-/g')
+    echo "  $agent -> $newname"
+    git mv "$agent" "$newname"
+  done
+
+  echo ""
+  echo "Validating: checking for invalid patterns..."
+
+  # Validate no double hyphens
+  invalid=$(find .claude/agents -type f -name "*--*.md" | wc -l)
+  if [ "$invalid" -gt 0 ]; then
+    echo "ERROR: Found agents with double hyphens (--)"
+    find .claude/agents -type f -name "*--*.md"
+    exit 1
+  fi
+
+  # Validate no underscores
+  invalid=$(find .claude/agents -type f -name "*_*.md" | grep -v README.md | wc -l)
+  if [ "$invalid" -gt 0 ]; then
+    echo "ERROR: Found agents with underscores (_)"
+    find .claude/agents -type f -name "*_*.md" | grep -v README.md
+    exit 1
+  fi
+
+  echo "✓ All agent names are valid (no __ or --)"
+  echo "✓ Agent renaming complete!"
+  ```
+
+- [ ] **0.9 Rename all 46 agent files**
+
+  Sample of critical agent renames:
+
+  | Current Name                            | New Name                              |
+  | --------------------------------------- | ------------------------------------- |
+  | `docs__checker.md`                      | `docs-checker.md`                     |
+  | `docs__maker.md`                        | `docs-maker.md`                       |
+  | `docs__fixer.md`                        | `docs-fixer.md`                       |
+  | `plan__checker.md`                      | `plan-checker.md`                     |
+  | `plan__maker.md`                        | `plan-maker.md`                       |
+  | `plan__executor.md`                     | `plan-executor.md`                    |
+  | `apps__ayokoding-web__general-maker.md` | `apps-ayokoding-web-general-maker.md` |
+  | `wow__workflow-checker.md`              | `wow-workflow-checker.md`             |
+  | `wow__workflow-maker.md`                | `wow-workflow-maker.md`               |
+  | `wow__workflow-fixer.md`                | `wow-workflow-fixer.md`               |
+
+  **Note**: Full list of 46 agents in tech-docs.md Agent Renaming Strategy section.
+
+- [ ] **0.10 Update agent frontmatter `name:` fields**
+
+  ```bash
+  # Update name field in each agent file to match new filename
+  for agent in .claude/agents/*.md; do
+    # Extract new name from filename
+    newname=$(basename "$agent" .md)
+
+    # Update name field in frontmatter
+    sed -i "s/^name:.*/name: $newname/" "$agent"
+
+    echo "Updated name field in $agent"
+  done
+
+  # Validation
+  echo "Validating agent name fields..."
+  for agent in .claude/agents/*.md; do
+    filename=$(basename "$agent" .md)
+    namefield=$(grep "^name:" "$agent" | cut -d: -f2 | xargs)
+
+    if [ "$filename" != "$namefield" ]; then
+      echo "ERROR: Mismatch in $agent - filename=$filename, name field=$namefield"
+      exit 1
+    fi
+  done
+  echo "✓ All agent name fields match filenames"
+  ```
+
+- [ ] **0.11 Update all workflow agent references** ⚠️ **CRITICAL**
+
+  ```bash
+  # Find all workflow files and update agent references
+  for workflow in .claude/workflows/*.md; do
+    echo "Updating agent references in $workflow"
+
+    # Update subagent_type fields in workflow steps
+    sed -i 's/subagent_type: [a-z]*__/subagent_type: /g' "$workflow"
+    sed -i 's/subagent_type: \([a-z]*\)-__/subagent_type: \1-/g' "$workflow"
+
+    # Update agent references if present
+    sed -i 's/agent: [a-z]*__/agent: /g' "$workflow"
+    sed -i 's/agent: \([a-z]*\)-__/agent: \1-/g' "$workflow"
+  done
+
+  # Validation - no underscores should remain in agent references
+  echo "Validating workflow agent references..."
+  invalid_refs=$(grep -h "subagent_type:" .claude/workflows/*.md | grep "__" | wc -l)
+  if [ "$invalid_refs" -gt 0 ]; then
+    echo "ERROR: Found workflow agent references with underscores"
+    grep -h "subagent_type:" .claude/workflows/*.md | grep "__"
+    exit 1
+  fi
+  echo "✓ All workflow agent references updated"
+  ```
+
+- [ ] **0.12 Update documentation references**
+  - [ ] `.claude/agents/README.md` - update all agent listings
+  - [ ] `CLAUDE.md` - update agent descriptions
+  - [ ] `docs/explanation/development/agents/` - update agent references
+  - [ ] Any plan files mentioning agent names
+
+- [ ] **0.13 Test Claude Code agents still work**
+
+  ```bash
+  # Test agent invocation
+  claude "Run plan__checker agent"  # Should fail with new name
+  claude "Run plan-checker agent"   # Should work with new name
+
+  # Test workflow execution
+  claude "Execute plan-quality-gate workflow"  # Tests agent invocation
+  ```
+
+- [ ] **0.14 Final validation - agents**
+
+  Run comprehensive validation for agents:
+
+  ```bash
+  #!/bin/bash
+  # Final validation script for agent renaming
+
+  echo "=== Agent Renaming Validation ==="
+  echo ""
+
+  # 1. Check agent file names
+  echo "1. Validating agent file names..."
+  invalid_files=$(find .claude/agents -type f \( -name "*__*.md" -o -name "*--*.md" \) | grep -v README.md | wc -l)
+  if [ "$invalid_files" -gt 0 ]; then
+    echo "   ❌ FAILED: Found invalid agent file names"
+    find .claude/agents -type f \( -name "*__*.md" -o -name "*--*.md" \) | grep -v README.md
+    exit 1
+  fi
+  echo "   ✓ All agent file names valid (46 agents)"
+
+  # 2. Check agent frontmatter name fields
+  echo "2. Validating agent name fields..."
+  for agent in .claude/agents/*.md; do
+    filename=$(basename "$agent" .md)
+    namefield=$(grep "^name:" "$agent" | cut -d: -f2 | xargs)
+
+    if echo "$namefield" | grep -E '__|--' > /dev/null; then
+      echo "   ❌ FAILED: Invalid name in $agent: $namefield"
+      exit 1
+    fi
+
+    if [ "$filename" != "$namefield" ]; then
+      echo "   ❌ FAILED: Name mismatch in $agent (file=$filename, field=$namefield)"
+      exit 1
+    fi
+  done
+  echo "   ✓ All agent name fields valid and match filenames"
+
+  # 3. Verify agent count
+  echo "3. Validating agent count..."
+  agent_count=$(ls -1 .claude/agents/*.md 2>/dev/null | grep -v README.md | wc -l)
+  if [ "$agent_count" -ne 46 ]; then
+    echo "   ❌ FAILED: Expected 46 agents, found $agent_count"
+    exit 1
+  fi
+  echo "   ✓ Correct count (46 agents)"
+
+  # 4. Validate workflow agent references
+  echo "4. Validating workflow agent references..."
+  invalid_refs=$(grep -h "subagent_type:" .claude/workflows/*.md 2>/dev/null | grep "__" | wc -l)
+  if [ "$invalid_refs" -gt 0 ]; then
+    echo "   ❌ FAILED: Found workflow agent references with underscores"
+    grep -h "subagent_type:" .claude/workflows/*.md | grep "__"
+    exit 1
+  fi
+  echo "   ✓ All workflow agent references use hyphenated names"
+
+  echo ""
+  echo "=== ✓ ALL VALIDATIONS PASSED ==="
+  echo "Agents are ready for OpenCode compatibility!"
+  ```
+
 ### Phase 0 Completion Criteria
 
 ```gherkin
-Given all skills have been renamed with hyphens
-When Claude Code lists available skills
+Given all 19 skills have been renamed with hyphens
+And all 46 agents have been renamed with hyphens
+And all workflow agent references have been updated
+When Claude Code lists available skills and agents
 Then all 19 skills appear with new names
+And all 46 agents appear with new names
 And skill invocation works correctly
-And no underscore skill names remain
+And agent invocation works correctly
+And workflows execute successfully with new agent names
+And no underscore names remain in skills or agents
 ```
 
 ---
@@ -483,15 +692,15 @@ If issues are discovered:
 
 ## Completion Status
 
-| Phase | Status          | Completed Date | Notes                                       |
-| ----- | --------------- | -------------- | ------------------------------------------- |
-| **0** | **Not Started** | -              | **CRITICAL: Skill renaming required first** |
-| 1     | Not Started     | -              | Skills validation (after Phase 0)           |
-| 2     | Not Started     | -              | Core configuration                          |
-| 3     | Not Started     | -              | AGENTS.md                                   |
-| 4     | Not Started     | -              | MCP integration                             |
-| 5     | Not Started     | -              | Agent translation (optional)                |
+| Phase | Status          | Completed Date | Notes                                                 |
+| ----- | --------------- | -------------- | ----------------------------------------------------- |
+| **0** | **Not Started** | -              | **CRITICAL: Skills + Agents renaming required first** |
+| 1     | Not Started     | -              | Skills validation (after Phase 0)                     |
+| 2     | Not Started     | -              | Core configuration                                    |
+| 3     | Not Started     | -              | AGENTS.md                                             |
+| 4     | Not Started     | -              | MCP integration                                       |
+| 5     | Not Started     | -              | Agent translation (optional)                          |
 
 **Overall Status**: Backlog
 **Ready for Implementation**: Yes
-**Critical Prerequisite**: Phase 0 (skill renaming) MUST be completed first
+**Critical Prerequisite**: Phase 0 (19 skills + 46 agents renaming) MUST be completed first
