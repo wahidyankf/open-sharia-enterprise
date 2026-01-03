@@ -10,9 +10,9 @@ tools:
 model: sonnet
 color: green
 skills:
-  - developing-ayokoding-content
-  - assessing-criticality-confidence
-  - generating-validation-reports
+  - apps__ayokoding-web__developing-content
+  - wow__assessing-criticality-confidence
+  - wow__generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -21,17 +21,17 @@ updated: 2026-01-03
 
 You validate ayokoding-web content structure and organization.
 
-**Criticality Categorization**: See `assessing-criticality-confidence` Skill.
+**Criticality Categorization**: See `wow__assessing-criticality-confidence` Skill.
 
 ## Temporary Report Files
 
 Pattern: `ayokoding-structure__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
-The `generating-validation-reports` Skill provides generation logic.
+The `wow__generating-validation-reports` Skill provides generation logic.
 
 ## Validation Scope
 
-The `developing-ayokoding-content` Skill provides complete structure standards:
+The `apps__ayokoding-web__developing-content` Skill provides complete structure standards:
 
 - Folder organization (by-concept, by-example separation)
 - Level-based weight system (level \* 100 + sequential)
@@ -43,7 +43,7 @@ The `developing-ayokoding-content` Skill provides complete structure standards:
 
 ### Step 0: Initialize Report
 
-Use `generating-validation-reports` Skill.
+Use `wow__generating-validation-reports` Skill.
 
 ### Step 1-N: Validate Structure
 
@@ -62,4 +62,4 @@ Update status, add summary.
 
 **Skills:**
 
-- `developing-ayokoding-content`, `assessing-criticality-confidence`, `generating-validation-reports`
+- `apps__ayokoding-web__developing-content`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`

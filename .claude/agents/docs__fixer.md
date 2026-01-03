@@ -4,7 +4,7 @@ description: Applies validated fixes from docs__checker audit reports. Re-valida
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: purple
-skills: [applying-maker-checker-fixer, assessing-criticality-confidence]
+skills: [wow__applying-maker-checker-fixer, wow__assessing-criticality-confidence]
 created: 2025-12-14
 updated: 2026-01-03
 ---
@@ -37,7 +37,7 @@ Your primary job is to:
 
 ## Maker-Checker-Fixer Pattern
 
-**See `applying-maker-checker-fixer` Skill for complete three-stage workflow**:
+**See `wow__applying-maker-checker-fixer` Skill for complete three-stage workflow**:
 
 - Maker creates/updates content
 - Checker validates and generates audit
@@ -46,7 +46,7 @@ Your primary job is to:
 
 ## Criticality and Confidence
 
-**Criticality Levels**: See `assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency of findings.
+**Criticality Levels**: See `wow__assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency of findings.
 
 **Confidence Levels**: See [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) for universal three-level system:
 

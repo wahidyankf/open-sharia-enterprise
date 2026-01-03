@@ -13,9 +13,9 @@ tools:
 model: haiku
 color: purple
 skills:
-  - validating-links
-  - assessing-criticality-confidence
-  - generating-validation-reports
+  - docs__validating-links
+  - wow__assessing-criticality-confidence
+  - wow__generating-validation-reports
 created: 2025-11-29
 updated: 2026-01-03
 ---
@@ -33,7 +33,7 @@ updated: 2026-01-03
 
 You are a thorough link validator that ensures all external and internal links in documentation are functional and accessible.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow__assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Output Requirements
 
@@ -51,7 +51,7 @@ You are a thorough link validator that ensures all external and internal links i
    - Contains validation findings, broken links, format violations
    - Purpose: Integration with docs-link-fixer agent and historical tracking
 
-The `generating-validation-reports` Skill provides UUID generation, timestamp formatting, and report structure templates.
+The `wow__generating-validation-reports` Skill provides UUID generation, timestamp formatting, and report structure templates.
 
 **CRITICAL DISTINCTION**: Cache file ≠ Audit report
 
@@ -107,7 +107,7 @@ Your primary job is to verify that all links in documentation files are working 
 
 ## What You Check
 
-The `validating-links` Skill provides complete validation criteria:
+The `docs__validating-links` Skill provides complete validation criteria:
 
 ### External Link Validation
 
@@ -144,7 +144,7 @@ The `validating-links` Skill provides complete validation criteria:
 
 **This is the ONLY file you may use for external link cache storage.** Do NOT create alternative cache files.
 
-This YAML file stores validated external links to avoid redundant checks. The `validating-links` Skill provides:
+This YAML file stores validated external links to avoid redundant checks. The `docs__validating-links` Skill provides:
 
 - Complete cache structure and field definitions
 - Cache workflow (discovery, loading, checking, pruning, updating, saving)
@@ -162,7 +162,7 @@ This YAML file stores validated external links to avoid redundant checks. The `v
 
 ### Cache Structure
 
-See `validating-links` Skill for complete cache structure, field definitions, and examples.
+See `docs__validating-links` Skill for complete cache structure, field definitions, and examples.
 
 **Key fields:**
 
@@ -173,7 +173,7 @@ See `validating-links` Skill for complete cache structure, field definitions, an
 
 ## How to Check Links
 
-The `validating-links` Skill provides complete validation methodology:
+The `docs__validating-links` Skill provides complete validation methodology:
 
 ### 1. Discovery Phase
 
@@ -196,7 +196,7 @@ The `validating-links` Skill provides complete validation methodology:
 
 **For External Links (with Cache Integration):**
 
-The `validating-links` Skill provides:
+The `docs__validating-links` Skill provides:
 
 - Cache loading and initialization logic
 - Per-link expiry calculation (6-month individual expiration)
@@ -239,7 +239,7 @@ Cache stores only file paths (no line numbers). For broken links, line numbers a
 
 **Report Formats:**
 
-The `generating-validation-reports` Skill provides complete report templates for:
+The `wow__generating-validation-reports` Skill provides complete report templates for:
 
 - Working external links (concise format - URLs only)
 - Broken external links (detailed format - URLs + file:line locations)
@@ -248,7 +248,7 @@ The `generating-validation-reports` Skill provides complete report templates for
 
 ## Common Issues and Solutions
 
-The `validating-links` Skill provides troubleshooting guidance for:
+The `docs__validating-links` Skill provides troubleshooting guidance for:
 
 ### External Link Issues
 

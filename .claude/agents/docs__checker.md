@@ -6,10 +6,10 @@ model: sonnet
 color: green
 skills:
   [
-    applying-maker-checker-fixer,
-    assessing-criticality-confidence,
-    applying-content-quality,
-    validating-factual-accuracy,
+    wow__applying-maker-checker-fixer,
+    wow__assessing-criticality-confidence,
+    docs__applying-content-quality,
+    docs__validating-factual-accuracy,
   ]
 created: 2025-12-01
 updated: 2026-01-03
@@ -42,7 +42,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ## Criticality and Confidence
 
-**Criticality Assessment**: See `assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
+**Criticality Assessment**: See `wow__assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
 
 **Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
 
@@ -50,7 +50,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 1. Factual Accuracy Verification
 
-**See `validating-factual-accuracy` Skill for complete verification methodology** covering:
+**See `docs__validating-factual-accuracy` Skill for complete verification methodology** covering:
 
 - Command syntax and options validation
 - Feature existence verification
@@ -72,7 +72,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 2. Content Quality Validation
 
-**See `applying-content-quality` Skill for complete standards** on:
+**See `docs__applying-content-quality` Skill for complete standards** on:
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -111,7 +111,7 @@ $$
 
 ### 4. Diagram Accessibility Validation
 
-**See `creating-accessible-diagrams` Skill for complete standards** on:
+**See `docs__creating-accessible-diagrams` Skill for complete standards** on:
 
 - Verified accessible color palette (see Skill for complete palette)
 - Avoiding inaccessible colors (red, green, yellow)
@@ -283,7 +283,7 @@ filename="docs__${uuid}__${timestamp}__audit.md"
 
 **For each claim, verify against authoritative sources:**
 
-**See `validating-factual-accuracy` Skill for complete methodology**.
+**See `docs__validating-factual-accuracy` Skill for complete methodology**.
 
 **Quick workflow:**
 

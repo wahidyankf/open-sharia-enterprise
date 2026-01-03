@@ -4,7 +4,7 @@ description: Deploys ayokoding-web to production environment branch (prod-ayokod
 tools: [Read, Bash, Grep]
 model: haiku
 color: yellow
-skills: [developing-ayokoding-content]
+skills: [apps__ayokoding-web__developing-content]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -19,7 +19,7 @@ Deploy ayokoding-web to production.
 2. Build Hugo site
 3. Deploy to prod-ayokoding-web branch
 
-`developing-ayokoding-content` Skill provides deployment workflow.
+`apps__ayokoding-web__developing-content` Skill provides deployment workflow.
 
 ## Reference
 

@@ -4,7 +4,7 @@ description: Validates repository-wide consistency including file naming, linkin
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
-skills: [applying-diataxis-framework, assessing-criticality-confidence, generating-validation-reports]
+skills: [docs__applying-diataxis-framework, wow__assessing-criticality-confidence, wow__generating-validation-reports]
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -16,7 +16,7 @@ Validate repository-wide consistency across all repository layers.
 ## Temporary Reports
 
 Pattern: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
-Skill: `generating-validation-reports` (progressive streaming)
+Skill: `wow__generating-validation-reports` (progressive streaming)
 
 ## Validation Scope
 
@@ -48,13 +48,13 @@ Skill: `generating-validation-reports` (progressive streaming)
 
 **Common Duplication Patterns to Check**:
 
-- UUID generation logic (should reference `generating-validation-reports`)
-- Criticality level definitions (should reference `assessing-criticality-confidence`)
-- Mode parameter handling (should reference `applying-maker-checker-fixer`)
-- Hugo weight systems (should reference `developing-ayokoding-content`)
-- Color palettes (should reference `creating-accessible-diagrams`)
-- Report templates (should reference `generating-validation-reports`)
-- Annotation density (should reference `creating-by-example-tutorials`)
+- UUID generation logic (should reference `wow__generating-validation-reports`)
+- Criticality level definitions (should reference `wow__assessing-criticality-confidence`)
+- Mode parameter handling (should reference `wow__applying-maker-checker-fixer`)
+- Hugo weight systems (should reference `apps__ayokoding-web__developing-content`)
+- Color palettes (should reference `docs__creating-accessible-diagrams`)
+- Report templates (should reference `wow__generating-validation-reports`)
+- Annotation density (should reference `docs__creating-by-example-tutorials`)
 
 **Report Format for Duplication Findings**:
 
@@ -150,7 +150,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 **Development Practices**: All practices in `docs/explanation/development/`
 
-**Skills**: `applying-diataxis-framework`, `assessing-criticality-confidence`, `generating-validation-reports`
+**Skills**: `docs__applying-diataxis-framework`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`
 
 **Related Documentation**:
 
@@ -162,7 +162,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 ### Step 0: Initialize Report
 
-See `generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
+See `wow__generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
 
 ### Step 1: Core Repository Validation
 

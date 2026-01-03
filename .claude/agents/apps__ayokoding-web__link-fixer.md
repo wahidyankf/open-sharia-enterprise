@@ -13,11 +13,11 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - developing-ayokoding-content
-  - validating-links
-  - assessing-criticality-confidence
-  - applying-maker-checker-fixer
-  - generating-validation-reports
+  - apps__ayokoding-web__developing-content
+  - docs__validating-links
+  - wow__assessing-criticality-confidence
+  - wow__applying-maker-checker-fixer
+  - wow__generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -28,14 +28,14 @@ You validate link-checker findings before applying fixes.
 
 ## Mode Parameter Handling
 
-The `applying-maker-checker-fixer` Skill provides mode logic.
+The `wow__applying-maker-checker-fixer` Skill provides mode logic.
 
 ## How This Works
 
-1. Report Discovery: `applying-maker-checker-fixer` Skill
+1. Report Discovery: `wow__applying-maker-checker-fixer` Skill
 2. Validation: Re-check links
 3. Fix Application: HIGH confidence only
-4. Fix Report: `generating-validation-reports` Skill
+4. Fix Report: `wow__generating-validation-reports` Skill
 
 ## Confidence Assessment
 
@@ -50,4 +50,4 @@ The `applying-maker-checker-fixer` Skill provides mode logic.
 
 **Skills:**
 
-- `developing-ayokoding-content`, `validating-links`, `assessing-criticality-confidence`, `applying-maker-checker-fixer`, `generating-validation-reports`
+- `apps__ayokoding-web__developing-content`, `docs__validating-links`, `wow__assessing-criticality-confidence`, `wow__applying-maker-checker-fixer`, `wow__generating-validation-reports`

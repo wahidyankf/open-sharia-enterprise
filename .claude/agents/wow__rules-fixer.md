@@ -4,7 +4,7 @@ description: Applies validated fixes from repository rules audit reports includi
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: purple
-skills: [applying-maker-checker-fixer, assessing-criticality-confidence, generating-validation-reports]
+skills: [wow__applying-maker-checker-fixer, wow__assessing-criticality-confidence, wow__generating-validation-reports]
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -89,7 +89,7 @@ See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/d
 
 ## Mode Parameter Handling
 
-See applying-maker-checker-fixer Skill for mode-based filtering:
+See wow\_\_applying-maker-checker-fixer Skill for mode-based filtering:
 
 - **lax**: Fix CRITICAL only
 - **normal**: Fix CRITICAL + HIGH (default)
@@ -111,7 +111,7 @@ See applying-maker-checker-fixer Skill for mode-based filtering:
 
 ## Confidence Assessment
 
-See assessing-criticality-confidence Skill for confidence levels:
+See wow\_\_assessing-criticality-confidence Skill for confidence levels:
 
 - **HIGH**: Certain the fix is correct, safe to apply
 - **MEDIUM**: Likely correct but uncertain, skip for safety
@@ -119,7 +119,7 @@ See assessing-criticality-confidence Skill for confidence levels:
 
 ## Fix Report Generation
 
-See generating-validation-reports Skill for report structure.
+See wow\_\_generating-validation-reports Skill for report structure.
 
 **Report includes**:
 

@@ -4,7 +4,7 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
-skills: [applying-content-quality, creating-accessible-diagrams, applying-maker-checker-fixer]
+skills: [docs__applying-content-quality, docs__creating-accessible-diagrams, wow__applying-maker-checker-fixer]
 created: 2025-11-29
 updated: 2026-01-03
 ---
@@ -77,7 +77,7 @@ Before considering documentation complete:
 
 ## Content Quality Standards
 
-**See `applying-content-quality` Skill for complete standards** on:
+**See `docs__applying-content-quality` Skill for complete standards** on:
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -162,7 +162,7 @@ See [Linking Convention](../docs/explanation/conventions/formatting/ex-co-fo__li
 
 ### Diagram Standards
 
-**See `creating-accessible-diagrams` Skill for complete standards** on:
+**See `docs__creating-accessible-diagrams` Skill for complete standards** on:
 
 - Verified accessible color palette (see Skill for complete palette)
 - Mermaid diagram orientation (prefer vertical `graph TD` for mobile)

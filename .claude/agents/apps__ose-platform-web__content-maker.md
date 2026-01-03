@@ -4,7 +4,7 @@ description: Creates content for ose-platform-web landing page using PaperMod th
 tools: [Read, Write, Edit, Glob, Grep]
 model: sonnet
 color: blue
-skills: [developing-ose-content, creating-accessible-diagrams, applying-content-quality]
+skills: [apps__ose-platform-web__developing-content, docs__creating-accessible-diagrams, docs__applying-content-quality]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -16,8 +16,8 @@ Create landing page content for ose-platform-web (PaperMod theme, English-only).
 ## Reference
 
 - [ose-platform-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md)
-- Skills: `developing-ose-content` (PaperMod patterns, date structure), `creating-accessible-diagrams`, `applying-content-quality`
+- Skills: `apps__ose-platform-web__developing-content` (PaperMod patterns, date structure), `docs__creating-accessible-diagrams`, `docs__applying-content-quality`
 
 ## Workflow
 
-`developing-ose-content` Skill provides complete guidance.
+`apps__ose-platform-web__developing-content` Skill provides complete guidance.

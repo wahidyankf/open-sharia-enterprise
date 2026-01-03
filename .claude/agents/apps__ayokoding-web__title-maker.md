@@ -4,7 +4,7 @@ description: Generates appropriate titles for ayokoding-web content based on typ
 tools: [Read, Edit]
 model: haiku
 color: blue
-skills: [developing-ayokoding-content]
+skills: [apps__ayokoding-web__developing-content]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -17,7 +17,7 @@ Generate titles for ayokoding-web content.
 
 Create titles following conventions for tutorial types and levels.
 
-`developing-ayokoding-content` Skill provides title patterns.
+`apps__ayokoding-web__developing-content` Skill provides title patterns.
 
 ## Reference
 

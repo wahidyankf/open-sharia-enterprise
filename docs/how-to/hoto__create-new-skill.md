@@ -37,9 +37,9 @@ Use when:
 
 **Example Skills**:
 
-- `maker-checker-fixer-pattern` (workflow knowledge)
-- `trunk-based-development` (git workflow)
-- `gherkin-acceptance-criteria` (BDD syntax)
+- `wow__applying-maker-checker-fixer` (workflow knowledge)
+- `wow__practicing-trunk-based-development` (git workflow)
+- `plan__writing-gherkin-criteria` (BDD syntax)
 
 ### Multi-File Structure (MULTI-FILE-TEMPLATE/)
 
@@ -53,8 +53,8 @@ Use when:
 
 **Example Skills**:
 
-- `color-accessibility-diagrams` (SKILL.md + examples.md)
-- `repository-architecture` (SKILL.md + reference.md)
+- `docs__creating-accessible-diagrams` (SKILL.md + examples.md)
+- `wow__understanding-repository-architecture` (SKILL.md + reference.md)
 
 ## Step-by-Step: Create Single-File Skill
 
@@ -77,7 +77,7 @@ Update the frontmatter with accurate information:
 
 ```yaml
 ---
-name: your-skill-name
+name: domain__your-skill-name
 description: Clear, action-oriented description for auto-loading. CRITICAL - must be specific enough to trigger when relevant tasks are described, unique across all Skills. Example - "Provides comprehensive guide for creating maker-checker-fixer workflows. Auto-loads when task mentions content quality validation, audit reports, three-stage workflows, or implementing checker/fixer agents."
 allowed-tools: [Read, Grep] # Optional - specify if Skill needs specific tools
 model: sonnet # Optional - specify if Skill requires specific model
@@ -86,7 +86,7 @@ model: sonnet # Optional - specify if Skill requires specific model
 
 **Frontmatter Guidelines**:
 
-- **name**: Must be kebab-case, descriptive, unique
+- **name**: Must use domain prefix pattern `[domain]__[skill-name]` (e.g., `docs__`, `wow__`, `plan__`), descriptive, unique
 - **description**: Action-oriented, specific triggers, comprehensive (150-250 words recommended)
 - **allowed-tools**: Only if Skill examples require specific tools
 - **model**: Only if Skill requires advanced reasoning (sonnet for complex workflows, opus for specialized tasks)
@@ -137,7 +137,7 @@ Verify your description triggers auto-loading:
 ### Step 1: Copy Template Directory
 
 ```bash
-cp -r .claude/skills/MULTI-FILE-TEMPLATE .claude/skills/your-skill-name
+cp -r .claude/skills/wow__multi-file-template .claude/skills/domain__your-skill-name
 ```
 
 ### Step 2: Update SKILL.md
@@ -219,7 +219,7 @@ description: Agent description
 tools: [Read, Write]
 model: sonnet
 color: blue
-skills: [your-skill-name] # Add your Skill here
+skills: [domain__your-skill-name] # Add your Skill here
 ---
 ```
 
@@ -302,12 +302,12 @@ skills: [your-skill-name] # Add your Skill here
 
 ### Example 1: Simple Workflow Skill (Single-File)
 
-**Skill**: `trunk-based-development`
+**Skill**: `wow__practicing-trunk-based-development`
 
 **Structure**:
 
 ```
-trunk-based-development/
+wow__practicing-trunk-based-development/
 └── SKILL.md (640 lines)
 ```
 
@@ -322,12 +322,12 @@ trunk-based-development/
 
 ### Example 2: Complex Technical Skill (Multi-File)
 
-**Skill**: `color-accessibility-diagrams`
+**Skill**: `docs__creating-accessible-diagrams`
 
 **Structure**:
 
 ```
-color-accessibility-diagrams/
+docs__creating-accessible-diagrams/
 ├── SKILL.md (450 lines) - Core concepts, palette summary, best practices
 └── examples.md (800 lines) - Complete Mermaid examples, corrections, templates
 ```
@@ -341,12 +341,12 @@ color-accessibility-diagrams/
 
 ### Example 3: Comprehensive Architecture Skill (Multi-File)
 
-**Skill**: `repository-architecture`
+**Skill**: `wow__understanding-repository-architecture`
 
 **Structure**:
 
 ```
-repository-architecture/
+wow__understanding-repository-architecture/
 ├── SKILL.md (500 lines) - Overview, quick reference, layer descriptions
 └── reference.md (1,200 lines) - Detailed matrices, governance rules, traceability requirements
 ```

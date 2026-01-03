@@ -4,7 +4,7 @@ description: Deploys ose-platform-web to production environment branch (prod-ose
 tools: [Read, Bash, Grep]
 model: haiku
 color: yellow
-skills: [developing-ose-content]
+skills: [apps__ose-platform-web__developing-content]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -13,7 +13,7 @@ updated: 2026-01-03
 
 Deploy ose-platform-web to production.
 
-`developing-ose-content` Skill provides deployment workflow.
+`apps__ose-platform-web__developing-content` Skill provides deployment workflow.
 
 ## Reference
 

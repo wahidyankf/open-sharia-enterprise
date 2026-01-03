@@ -11,10 +11,10 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - developing-ayokoding-content
-  - assessing-criticality-confidence
-  - applying-maker-checker-fixer
-  - generating-validation-reports
+  - apps__ayokoding-web__developing-content
+  - wow__assessing-criticality-confidence
+  - wow__applying-maker-checker-fixer
+  - wow__generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -23,18 +23,18 @@ updated: 2026-01-03
 
 You validate structure-checker findings before applying fixes.
 
-**Priority-Based Execution**: See `assessing-criticality-confidence` Skill.
+**Priority-Based Execution**: See `wow__assessing-criticality-confidence` Skill.
 
 ## Mode Parameter Handling
 
-The `applying-maker-checker-fixer` Skill provides mode logic.
+The `wow__applying-maker-checker-fixer` Skill provides mode logic.
 
 ## How This Works
 
-1. Report Discovery: `applying-maker-checker-fixer` Skill
+1. Report Discovery: `wow__applying-maker-checker-fixer` Skill
 2. Validation: Re-check structure
 3. Fix Application: HIGH confidence only
-4. Fix Report: `generating-validation-reports` Skill
+4. Fix Report: `wow__generating-validation-reports` Skill
 
 ## Confidence Assessment
 
@@ -49,4 +49,4 @@ The `applying-maker-checker-fixer` Skill provides mode logic.
 
 **Skills:**
 
-- `developing-ayokoding-content`, `assessing-criticality-confidence`, `applying-maker-checker-fixer`, `generating-validation-reports`
+- `apps__ayokoding-web__developing-content`, `wow__assessing-criticality-confidence`, `wow__applying-maker-checker-fixer`, `wow__generating-validation-reports`

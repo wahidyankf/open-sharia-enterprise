@@ -11,7 +11,7 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - applying-diataxis-framework
+  - docs__applying-diataxis-framework
 created: 2025-12-28
 updated: 2026-01-03
 ---
@@ -121,7 +121,7 @@ After ALL implementation phases complete:
 
 **Skills:**
 
-- `applying-diataxis-framework` - Documentation organization
+- `docs__applying-diataxis-framework` - Documentation organization
 
 ---
 

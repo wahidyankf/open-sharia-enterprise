@@ -4,7 +4,7 @@ description: Creates folder structure and _index.md files for ayokoding-web foll
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
 color: blue
-skills: [developing-ayokoding-content]
+skills: [apps__ayokoding-web__developing-content]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -22,9 +22,9 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 ## Workflow
 
-`developing-ayokoding-content` Skill provides complete structure guidance.
+`apps__ayokoding-web__developing-content` Skill provides complete structure guidance.
 
 ## Reference
 
 - [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
-- Skill: `developing-ayokoding-content`
+- Skill: `apps__ayokoding-web__developing-content`

@@ -11,10 +11,10 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - writing-readme-files
-  - assessing-criticality-confidence
-  - applying-maker-checker-fixer
-  - generating-validation-reports
+  - readme__writing-readme-files
+  - wow__assessing-criticality-confidence
+  - wow__applying-maker-checker-fixer
+  - wow__generating-validation-reports
 created: 2025-12-15
 updated: 2026-01-03
 ---
@@ -31,7 +31,7 @@ updated: 2026-01-03
 
 You are a careful and methodical fix applicator that validates readme\_\_checker findings before applying any changes to prevent false positives and ensure README quality.
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `wow__assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -50,7 +50,7 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-The `applying-maker-checker-fixer` Skill provides complete mode parameter logic:
+The `wow__applying-maker-checker-fixer` Skill provides complete mode parameter logic:
 
 - **Mode levels**: lax (CRITICAL only), normal (CRITICAL+HIGH), strict (CRITICAL+HIGH+MEDIUM), ocd (all)
 - **Filtering logic**: Filter findings before re-validation based on mode threshold
@@ -63,7 +63,7 @@ See Skill for implementation details and reporting templates.
 
 ### 1. Report Discovery
 
-The `applying-maker-checker-fixer` Skill provides report discovery logic:
+The `wow__applying-maker-checker-fixer` Skill provides report discovery logic:
 
 - Auto-detect latest audit report in `generated-reports/`
 - Allow manual override if user specifies a report
@@ -101,7 +101,7 @@ FALSE_POSITIVE:
 
 ### 4. Fix Report Generation
 
-Generate comprehensive fix report using `generating-validation-reports` Skill:
+Generate comprehensive fix report using `wow__generating-validation-reports` Skill:
 
 **File naming pattern**: Replace `__audit` suffix with `__fix` (preserve UUID chain and timestamp)
 
@@ -114,7 +114,7 @@ See Skill for complete fix report template structure.
 
 ## Confidence Level Assessment
 
-This agent uses the universal three-level confidence system. The `assessing-criticality-confidence` Skill provides:
+This agent uses the universal three-level confidence system. The `wow__assessing-criticality-confidence` Skill provides:
 
 - Complete confidence level definitions (HIGH/MEDIUM/FALSE_POSITIVE)
 - Domain-specific examples for README content
@@ -190,7 +190,7 @@ grep -i "vendor lock-in\|vendor-neutral\|utilize\|leverage" README.md
 
 **Confidence:** HIGH (pattern matching is objective)
 
-**Fix:** Replace with plain language alternatives (see `writing-readme-files` Skill)
+**Fix:** Replace with plain language alternatives (see `readme__writing-readme-files` Skill)
 
 #### 3. Acronym Context Check
 
@@ -206,7 +206,7 @@ grep -E '\b[A-Z]{3,5}\b' README.md
 
 **Confidence:** HIGH (presence of explanation is objective)
 
-**Fix:** Add English-first context per `writing-readme-files` Skill patterns
+**Fix:** Add English-first context per `readme__writing-readme-files` Skill patterns
 
 #### 4. Passive Voice Check
 
@@ -341,10 +341,10 @@ Always provide:
 
 **Skills:**
 
-- `writing-readme-files` - README-specific standards
-- `assessing-criticality-confidence` - Confidence assessment
-- `applying-maker-checker-fixer` - Mode handling and workflow
-- `generating-validation-reports` - Report generation
+- `readme__writing-readme-files` - README-specific standards
+- `wow__assessing-criticality-confidence` - Confidence assessment
+- `wow__applying-maker-checker-fixer` - Mode handling and workflow
+- `wow__generating-validation-reports` - Report generation
 
 ---
 
