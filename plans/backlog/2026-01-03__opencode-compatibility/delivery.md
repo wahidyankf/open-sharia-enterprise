@@ -441,19 +441,26 @@ And skill behavior matches Claude Code
 
 ## Phase 2: Core Configuration
 
-**Goal**: Create opencode.json with essential settings
+**Goal**: Create opencode.json with GLM-4.7 model (cost-optimized)
 
 ### Tasks
 
-- [ ] **2.1 Create opencode.json**
+- [ ] **2.1 Create Z.AI account and get API key**
+  1. Visit https://bigmodel.cn/
+  2. Create account or sign in
+  3. Navigate to API console
+  4. Generate API key
+  5. Store securely (will be used in `/connect` command)
+
+- [ ] **2.2 Create opencode.json with GLM-4.7**
 
   ```json
   {
     "$schema": "https://opencode.ai/config.json",
-    "model": "anthropic/claude-sonnet-4-5",
-    "small_model": "anthropic/claude-haiku-4-5",
+    "model": "zai/glm-4.7",
+    "small_model": "zai/glm-4.5-air",
     "provider": {
-      "anthropic": {
+      "zai": {
         "options": {
           "timeout": 600000
         }
@@ -462,33 +469,62 @@ And skill behavior matches Claude Code
   }
   ```
 
-- [ ] **2.2 Configure tool permissions**
+  **Why GLM-4.7?**
+  - **Cost**: 8.6x-20x cheaper than Claude Sonnet 4.5
+  - **Performance**: 90.6% tool calling (vs Claude's 89.5%)
+  - **Speed**: 20-30% faster response times
+  - **Quality**: Outperforms on several benchmarks
+
+- [ ] **2.3 Configure Z.AI provider in OpenCode**
+
+  ```bash
+  # Run OpenCode
+  opencode
+
+  # In TUI, run:
+  /connect
+
+  # Select "Z.AI" from provider list
+  # Enter your API key from bigmodel.cn
+
+  # Verify connection
+  /models
+  # Should list GLM-4.7 and GLM-4.5-Air
+  ```
+
+- [ ] **2.4 Configure tool permissions**
   - Enable all development tools
   - Set permission levels matching Claude Code defaults
   - Allow bash, write, edit without prompts
 
-- [ ] **2.3 Configure TUI settings**
+- [ ] **2.5 Configure TUI settings**
   - Set scroll speed
   - Configure diff display style
   - Disable auto-share for privacy
 
-- [ ] **2.4 Test configuration**
-  - Run `opencode` and verify model loads
+- [ ] **2.6 Test configuration**
+  - Run `opencode` and verify GLM-4.7 loads
   - Verify tools are available
+  - Test model response speed and quality
   - Verify settings are applied
 
-- [ ] **2.5 Add to git**
+- [ ] **2.7 Add to git**
   - Commit opencode.json
   - Verify not gitignored
+  - Add setup instructions to README
 
 ### Phase 2 Completion Criteria
 
 ```gherkin
-Given opencode.json exists with valid configuration
+Given opencode.json exists with GLM-4.7 configuration
+And Z.AI API key is configured via /connect
 When OpenCode starts in the repository
-Then the model is set to anthropic/claude-sonnet-4-5
+Then the model is set to zai/glm-4.7 (cost-optimized)
+And the small model is set to zai/glm-4.5-air (fast operations)
 And all tools (bash, read, write, edit, grep, glob) are available
 And tool permissions allow development workflow
+And model response quality matches or exceeds Claude Sonnet
+And cost savings of 8.6x-20x are realized
 ```
 
 ---
@@ -647,10 +683,12 @@ And documentation explains translation process
 
 - [ ] OpenCode starts without errors
 - [ ] All 19 skills are discoverable
-- [ ] Model is set to anthropic/claude-sonnet-4-5
+- [ ] Model is set to zai/glm-4.7 (cost-optimized)
 - [ ] MCP servers connect successfully
 - [ ] AGENTS.md is loaded as instructions
 - [ ] Tools (bash, read, write, edit, grep, glob) work
+- [ ] Z.AI provider is connected and authenticated
+- [ ] Model response quality meets expectations
 
 ### Regression Checks
 

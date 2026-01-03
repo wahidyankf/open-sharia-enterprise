@@ -35,11 +35,12 @@
 
 ### Model Configuration
 
-| Setting          | Claude Code            | OpenCode                       |
-| ---------------- | ---------------------- | ------------------------------ |
-| Default model    | Configured in settings | `model` in opencode.json       |
-| Fast model       | -                      | `small_model` in opencode.json |
-| Provider timeout | -                      | `provider.*.options.timeout`   |
+| Setting          | Claude Code            | OpenCode                                     |
+| ---------------- | ---------------------- | -------------------------------------------- |
+| Default model    | Configured in settings | `model` in opencode.json (GLM-4.7)           |
+| Fast model       | -                      | `small_model` in opencode.json (GLM-4.5-Air) |
+| Provider         | Anthropic              | Z.AI (Zhipu AI)                              |
+| Provider timeout | -                      | `provider.*.options.timeout`                 |
 
 **Claude Code** (implicit from environment/settings):
 
@@ -48,15 +49,15 @@
 // Model selection via CLI or Anthropic account
 ```
 
-**OpenCode** (opencode.json):
+**OpenCode** (opencode.json) - **GLM-4.7 Configuration**:
 
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-sonnet-4-5",
-  "small_model": "anthropic/claude-haiku-4-5",
+  "model": "zai/glm-4.7",
+  "small_model": "zai/glm-4.5-air",
   "provider": {
-    "anthropic": {
+    "zai": {
       "options": {
         "timeout": 600000
       }
@@ -64,6 +65,21 @@
   }
 }
 ```
+
+**Why GLM-4.7?**
+
+1. **Cost Efficiency**: 8.6x-20x cheaper than Claude Sonnet 4.5
+2. **Performance**: 90.6% tool calling success (vs Claude's 89.5%)
+3. **Speed**: 20-30% faster response times
+4. **Math**: 95.7% accuracy on AIME 2025
+5. **Quality**: Outperforms GPT-5.1 and Claude 4.5 on several benchmarks
+
+**Z.AI Provider Setup**:
+
+1. Create account at https://bigmodel.cn/
+2. Generate API key from console
+3. Run `/connect` in OpenCode, select **Z.AI**
+4. Run `/models` to select GLM-4.7
 
 ### MCP Server Configuration
 
@@ -585,11 +601,11 @@ development practices, agent definitions, and workflow patterns.
 {
   "$schema": "https://opencode.ai/config.json",
 
-  "model": "anthropic/claude-sonnet-4-5",
-  "small_model": "anthropic/claude-haiku-4-5",
+  "model": "zai/glm-4.7",
+  "small_model": "zai/glm-4.5-air",
 
   "provider": {
-    "anthropic": {
+    "zai": {
       "options": {
         "timeout": 600000
       }
@@ -641,6 +657,13 @@ development practices, agent definitions, and workflow patterns.
   "share": "disabled"
 }
 ```
+
+**Configuration Notes**:
+
+- **GLM-4.7**: Primary model for complex tasks (8.6x-20x cheaper than Claude Sonnet)
+- **GLM-4.5-Air**: Fast model for quick operations (lightweight and responsive)
+- **Z.AI Provider**: Fully supported in OpenCode via `/connect` command
+- **Cost Savings**: Significant reduction in API costs compared to Claude models
 
 ## File Structure After Implementation
 

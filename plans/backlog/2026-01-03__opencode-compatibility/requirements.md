@@ -5,9 +5,10 @@
 ### Primary Objectives
 
 1. **Zero Breaking Changes**: Existing Claude Code functionality must remain intact
-2. **Seamless Switching**: Developers can use either tool interchangeably
-3. **Shared Configuration**: Maximize reuse of existing configurations where formats allow
-4. **Minimal Duplication**: Avoid maintaining parallel configurations when possible
+2. **Cost Optimization**: Use GLM-4.7 model (8.6x-20x cheaper than Claude Sonnet) in OpenCode
+3. **Seamless Switching**: Developers can use either tool interchangeably
+4. **Shared Configuration**: Maximize reuse of existing configurations where formats allow
+5. **Minimal Duplication**: Avoid maintaining parallel configurations when possible
 
 ### Secondary Objectives
 
@@ -24,9 +25,9 @@ Feature: OpenCode Project Initialization
 
 Scenario: First-time OpenCode user opens repository
   Given the developer has OpenCode installed
-  And the repository has opencode.json configured
+  And the repository has opencode.json configured with GLM-4.7
   When they run `opencode` in the project root
-  Then OpenCode starts with anthropic/claude-sonnet-4-5 model
+  Then OpenCode starts with zai/glm-4.7 model (cost-optimized, 8.6x cheaper than Claude)
   And displays project instructions from AGENTS.md
   And lists available MCP servers (playwright, context7)
   And can invoke skills by name
@@ -127,12 +128,13 @@ Scenario: Validate agent naming after rename
 
 ### FR-01: Configuration Files
 
-| Requirement | Description                                             | Priority |
-| ----------- | ------------------------------------------------------- | -------- |
-| FR-01.1     | Create `opencode.json` with model and provider settings | Must     |
-| FR-01.2     | Configure MCP servers in opencode.json format           | Must     |
-| FR-01.3     | Set tool permissions matching Claude Code defaults      | Should   |
-| FR-01.4     | Add schema reference for IDE autocomplete               | Should   |
+| Requirement | Description                                              | Priority |
+| ----------- | -------------------------------------------------------- | -------- |
+| FR-01.1     | Create `opencode.json` with GLM-4.7 model (zai provider) | Must     |
+| FR-01.2     | Configure GLM-4.5-air as small/fast model                | Should   |
+| FR-01.3     | Configure MCP servers in opencode.json format            | Must     |
+| FR-01.4     | Set tool permissions matching Claude Code defaults       | Should   |
+| FR-01.5     | Add schema reference for IDE autocomplete                | Should   |
 
 ### FR-02: Instructions File
 
@@ -191,11 +193,11 @@ Scenario: Validate agent naming after rename
 
 ```gherkin
 Scenario: OpenCode starts successfully
-  Given opencode.json exists with valid configuration
+  Given opencode.json exists with valid GLM-4.7 configuration
   And AGENTS.md exists with project instructions
   When the developer runs `opencode` command
   Then OpenCode initializes without errors
-  And model is set to anthropic/claude-sonnet-4-5
+  And model is set to zai/glm-4.7 (cost-optimized)
   And MCP servers are listed as available
 ```
 
