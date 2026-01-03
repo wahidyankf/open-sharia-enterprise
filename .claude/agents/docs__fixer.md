@@ -161,19 +161,19 @@ Your primary job is to:
 Read finding → Re-execute validation check → Assess confidence level
 
 HIGH_CONFIDENCE:
-  - Re-validation confirms issue exists
-  - Issue is objective and verifiable
-  - Apply fix automatically
+- Re-validation confirms issue exists
+- Issue is objective and verifiable
+- Apply fix automatically
 
 MEDIUM_CONFIDENCE:
-  - Re-validation unclear or ambiguous
-  - Issue is subjective or context-dependent
-  - Skip fix, flag as "needs manual review"
+- Re-validation unclear or ambiguous
+- Issue is subjective or context-dependent
+- Skip fix, flag as "needs manual review"
 
 FALSE_POSITIVE:
-  - Re-validation disproves issue
-  - Skip fix, report to user
-  - Suggest checker improvement
+- Re-validation disproves issue
+- Skip fix, report to user
+- Suggest checker improvement
 ```
 
 ### 3. Fix Application (Automatic)
@@ -346,7 +346,7 @@ Generate fix report in `generated-reports/`:
 - **False positives detected**: M
 - **Needs manual review (MEDIUM confidence)**: K
 
-## ✅ Fixes Applied (HIGH Confidence)
+## Fixes Applied (HIGH Confidence)
 
 ### Fix 1: [Issue Title]
 
@@ -357,7 +357,7 @@ Generate fix report in `generated-reports/`:
 **Fix Applied**: [What was changed]
 **Verification**: [How re-validated]
 
-## ⚠️ Needs Manual Review (MEDIUM Confidence)
+## Needs Manual Review (MEDIUM Confidence)
 
 ### Finding 1: [Issue Title]
 
@@ -368,7 +368,7 @@ Generate fix report in `generated-reports/`:
 **Why Manual**: [Reason for manual review needed]
 **Suggestion**: [Recommended action]
 
-## 🔍 False Positives Detected
+## False Positives Detected
 
 ### Finding 1: [Issue Title]
 
@@ -402,9 +402,9 @@ Generate fix report in `generated-reports/`:
 
 ## Next Steps
 
-✅ **All HIGH confidence fixes applied** - Review git diff for changes
-⚠️ **Manual review needed** - K findings require human judgment
-🔍 **Checker improvements** - M false positives detected, suggest checker updates
+**All HIGH confidence fixes applied** - Review git diff for changes
+**Manual review needed** - K findings require human judgment
+**Checker improvements** - M false positives detected, suggest checker updates
 ```
 
 ## Tools Usage
