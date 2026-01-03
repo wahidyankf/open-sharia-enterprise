@@ -6,9 +6,10 @@
 
 1. **Zero Breaking Changes**: Existing Claude Code functionality must remain intact
 2. **Cost Optimization**: Use GLM-4.7 model (8.6x-20x cheaper than Claude Sonnet) in OpenCode
-3. **Seamless Switching**: Developers can use either tool interchangeably
-4. **Shared Configuration**: Maximize reuse of existing configurations where formats allow
-5. **Minimal Duplication**: Avoid maintaining parallel configurations when possible
+3. **Security First**: API keys must never be committed to the repository
+4. **Seamless Switching**: Developers can use either tool interchangeably
+5. **Shared Configuration**: Maximize reuse of existing configurations where formats allow
+6. **Minimal Duplication**: Avoid maintaining parallel configurations when possible
 
 ### Secondary Objectives
 
@@ -29,7 +30,8 @@ Scenario: First-time OpenCode user opens repository
   When they run `opencode` in the project root
   Then OpenCode starts with zai/glm-4.7 model (cost-optimized, 8.6x cheaper than Claude)
   And displays project instructions from AGENTS.md
-  And lists available MCP servers (playwright, context7, zai-mcp-server, web-search-prime, web-reader, zread)
+  And lists repository MCP servers (playwright, context7)
+  And no API keys are present in opencode.json
   And can invoke skills by name
 
 Scenario: OpenCode user creates content
@@ -67,42 +69,21 @@ Scenario: Team uses mixed tools
 ```gherkin
 Feature: MCP Server Configuration
 
-Scenario: Playwright MCP works in both tools
-  Given Playwright MCP is configured for Claude Code
-  And equivalent configuration exists for OpenCode
-  When either tool invokes browser automation
-  Then the same Playwright server handles requests
+Scenario: Repository MCP servers work in both tools (no API keys)
+  Given Playwright MCP is configured in repository opencode.json
+  And Context7 MCP is configured in repository opencode.json
+  When either tool invokes these MCP servers
+  Then the servers work without requiring API keys
   And browser_navigate, browser_snapshot work identically
-
-Scenario: Context7 documentation lookup
-  Given Context7 MCP is configured for both tools
-  When either tool queries library documentation
-  Then Context7 returns identical results
   And resolve-library-id, query-docs work consistently
 
-Scenario: Z.AI Vision MCP works in both tools
-  Given Z.AI Vision MCP is configured for Claude Code
-  And equivalent configuration exists for OpenCode
-  When either tool invokes vision capabilities
-  Then ui_to_artifact, extract_text_from_screenshot, diagnose_error_screenshot work identically
-
-Scenario: Z.AI Web Search MCP works in both tools
-  Given Z.AI Web Search MCP is configured for Claude Code
-  And equivalent configuration exists for OpenCode
-  When either tool searches the web
-  Then webSearchPrime returns identical search results
-
-Scenario: Z.AI Web Reader MCP works in both tools
-  Given Z.AI Web Reader MCP is configured for Claude Code
-  And equivalent configuration exists for OpenCode
-  When either tool fetches web page content
-  Then webReader returns identical markdown content
-
-Scenario: Z.AI Zread MCP works in both tools
-  Given Z.AI Zread MCP is configured for Claude Code
-  And equivalent configuration exists for OpenCode
-  When either tool reads GitHub repository files
-  Then search_doc, get_repo_structure, read_file work identically
+Scenario: Z.AI MCP servers configured locally (security)
+  Given the repository does not contain Z.AI MCP server configuration
+  And a developer has configured Z.AI MCP servers in local config
+  When either tool invokes Z.AI MCP capabilities
+  Then the tools use local API keys for authentication
+  And ui_to_artifact, extract_text_from_screenshot, webSearchPrime work identically
+  And API keys are never committed to the repository
 ```
 
 ### US-04: Skills Compatibility
@@ -152,14 +133,15 @@ Scenario: Validate agent naming after rename
 
 ### FR-01: Configuration Files
 
-| Requirement | Description                                                                                         | Priority |
-| ----------- | --------------------------------------------------------------------------------------------------- | -------- |
-| FR-01.1     | Create `opencode.json` with GLM-4.7 model (zai provider)                                            | Must     |
-| FR-01.2     | Configure GLM-4.5-air as small/fast model                                                           | Should   |
-| FR-01.3     | Configure 6 MCP servers (zai-mcp-server, web-search-prime, web-reader, zread, playwright, context7) | Must     |
-| FR-01.4     | Set Z.AI API key for 4 Z.AI MCP servers                                                             | Must     |
-| FR-01.5     | Set tool permissions matching Claude Code defaults                                                  | Should   |
-| FR-01.6     | Add schema reference for IDE autocomplete                                                           | Should   |
+| Requirement | Description                                                              | Priority |
+| ----------- | ------------------------------------------------------------------------ | -------- |
+| FR-01.1     | Create `opencode.json` with GLM-4.7 model (zai provider)                 | Must     |
+| FR-01.2     | Configure GLM-4.5-air as small/fast model                                | Should   |
+| FR-01.3     | Configure repository MCP servers (playwright, context7) in opencode.json | Must     |
+| FR-01.4     | Z.AI MCP servers must be in local/global config only (not in repository) | Must     |
+| FR-01.5     | Set tool permissions matching Claude Code defaults                       | Should   |
+| FR-01.6     | Add schema reference for IDE autocomplete                                | Should   |
+| FR-01.7     | Document Z.AI MCP server local configuration instructions                | Must     |
 
 ### FR-02: Instructions File
 
@@ -248,20 +230,25 @@ Scenario: All agents are discoverable
 ### AC-03: MCP Server Connection
 
 ```gherkin
-Scenario: MCP servers connect
-  Given opencode.json has mcp configuration
+Scenario: Repository MCP servers connect (no API keys required)
+  Given opencode.json has mcp configuration for playwright and context7
   When OpenCode starts
   Then Playwright MCP server connects
   And Context7 MCP server connects
-  And Z.AI Vision MCP server connects
-  And Z.AI Web Search MCP server connects
-  And Z.AI Web Reader MCP server connects
-  And Z.AI Zread MCP server connects
   And browser automation tools are available
+  And documentation lookup tools are available
+  And no API keys are present in opencode.json
+
+Scenario: Z.AI MCP servers configured locally (security)
+  Given the repository does not contain Z.AI MCP server configuration
+  And a developer has configured Z.AI MCP servers in local config
+  When OpenCode starts
+  Then Z.AI MCP servers connect using local API keys
   And vision tools are available
   And web search tools are available
   And web reader tools are available
   And GitHub read tools are available
+  And API keys are never committed to the repository
 ```
 
 ### AC-04: Claude Code Unaffected
@@ -301,7 +288,14 @@ Scenario: Workflow references updated
 
 ### Technical Constraints
 
-1. **CRITICAL - Skill Naming Incompatibility**:
+1. **CRITICAL - API Key Security**:
+   - **API keys MUST NEVER be committed to the repository**
+   - Z.AI MCP servers require API keys and must be configured in local/global config only
+   - Repository `opencode.json` should only contain MCP servers that don't require API keys
+   - `.gitignore` must prevent accidental API key commits
+   - Security audit must verify no API keys in repository before commits
+
+2. **CRITICAL - Skill Naming Incompatibility**:
    - **Both Claude Code AND OpenCode require**: `[a-z0-9-]+` (lowercase alphanumeric with hyphens ONLY)
    - **Current skill names use underscores**: `docs__applying-content-quality`
    - **Underscores (`_`) are NOT allowed** in either tool's spec
@@ -310,11 +304,11 @@ Scenario: Workflow references updated
    - **Correct fix**: Replace `__` with **SINGLE hyphen** `-`
    - Example: `docs__applying-content-quality` → `docs-applying-content-quality` (NOT `docs--applying-content-quality`)
 
-2. **Agent Format**: OpenCode agents use different frontmatter schema
+3. **Agent Format**: OpenCode agents use different frontmatter schema
    - Cannot directly reuse Claude agent files
    - Must translate or create OpenCode-specific agents
 
-3. **MCP Format**: Different JSON structures
+4. **MCP Format**: Different JSON structures
    - Claude: `mcpServers.name.command` (string) + `args` (array)
    - OpenCode: `mcp.name.type` + `command` (array including args)
 
@@ -331,8 +325,8 @@ Scenario: Workflow references updated
 - OpenCode CLI installed (`npm i -g @opencode/cli` or via releases)
 - Node.js runtime for MCP servers
 - MCP server packages (Playwright, Context7)
-- Z.AI API key for 4 Z.AI MCP servers (from https://bigmodel.cn/)
-- Z.AI MCP server package (@z_ai/mcp-server)
+- Z.AI API key (optional, for enhanced capabilities - configured locally, not in repository)
+- Z.AI MCP server package (optional, for enhanced capabilities - configured locally)
 
 ### Internal Dependencies
 
@@ -341,6 +335,18 @@ Scenario: Workflow references updated
 - Existing skill definitions
 
 ## Risks
+
+### Risk-00: API Key Security - CRITICAL
+
+**Risk**: Accidentally committing API keys to the repository
+**Status**: Security vulnerability - must be prevented
+**Action Required**:
+
+- Never include Z.AI MCP servers in repository `opencode.json`
+- Document local configuration clearly in README
+- Verify .gitignore prevents API key commits
+- Audit commits to ensure no API keys are committed
+  **Impact**: Critical (security breach, unauthorized API usage, cost exposure)
 
 ### Risk-01: Skill Naming - CONFIRMED ISSUE
 

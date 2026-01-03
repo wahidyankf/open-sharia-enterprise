@@ -103,7 +103,19 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 
 ### Enhanced MCP Capabilities: Z.AI MCP Servers
 
-**Recommended**: Enable all 4 Z.AI MCP servers for enhanced capabilities in both Claude Code and OpenCode.
+**SECURITY REQUIREMENT**: All 4 Z.AI MCP servers require API keys and **MUST be configured in local/global config only**. NEVER commit API keys to the repository.
+
+**Repository MCP Servers** (safe to commit):
+
+- **Playwright MCP** - Browser automation (no API key required)
+- **Context7 MCP** - Documentation lookup (no API key required)
+
+**Local/Global MCP Servers** (require API keys, configure locally):
+
+- **Z.AI Vision MCP** - UI analysis, OCR, diagrams (requires Z.AI API key)
+- **Z.AI Web Search MCP** - Real-time web search (requires Z.AI API key)
+- **Z.AI Web Reader MCP** - Web content fetching (requires Z.AI API key)
+- **Z.AI Zread MCP** - GitHub repository integration (requires Z.AI API key)
 
 **Why Z.AI MCP Servers?**
 
@@ -112,7 +124,7 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 3. **Web Reader**: Fetch and parse web page content (markdown format)
 4. **GitHub Integration**: Search repository docs, get structure, read files directly from GitHub
 
-**4 MCP Servers Overview**:
+**4 Z.AI MCP Servers Overview**:
 
 | MCP Server | Package            | Type        | Tools                                                                                                                                                                                            | Use Case                                                                               |
 | ---------- | ------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
@@ -123,11 +135,35 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 
 **Configuration Summary**:
 
-```bash
-# Z.AI API Key (required for all 4 MCP servers)
-# Get from: https://bigmodel.cn/
+**Z.AI API Key Setup** (required for all 4 Z.AI MCP servers):
 
-# Claude Code (.mcp.json or .claude.json)
+1. Get API key from: https://bigmodel.cn/
+2. Configure in local/global config (NEVER commit to repository)
+
+**Repository Config** (safe to commit, no API keys):
+
+```bash
+# opencode.json (committed to repository)
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "zai/glm-4.7",
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"]
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@context7/mcp-server"]
+    }
+  }
+}
+```
+
+**Local Config** (configure Z.AI MCP servers here):
+
+```bash
+# Claude Code: ~/.config/claude-code/mcp.json (global) or .claude/settings.local.json (local, gitignored)
 {
   "mcpServers": {
     "zai-mcp-server": {
@@ -135,7 +171,7 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
       "command": "npx",
       "args": ["-y", "@z_ai/mcp-server"],
       "env": {
-        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_API_KEY": "your_actual_api_key",
         "Z_AI_MODE": "ZAI"
       }
     },
@@ -143,34 +179,35 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
       "type": "http",
       "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
       "headers": {
-        "Authorization": "Bearer your_api_key"
+        "Authorization": "Bearer your_actual_api_key"
       }
     },
     "web-reader": {
       "type": "http",
       "url": "https://api.z.ai/api/mcp/web_reader/mcp",
       "headers": {
-        "Authorization": "Bearer your_api_key"
+        "Authorization": "Bearer your_actual_api_key"
       }
     },
     "zread": {
       "type": "http",
       "url": "https://api.z.ai/api/mcp/zread/mcp",
       "headers": {
-        "Authorization": "Bearer your_api_key"
+        "Authorization": "Bearer your_actual_api_key"
       }
     }
   }
 }
 
-# OpenCode (opencode.json)
+# OpenCode: Global config (location varies by OS) or local config file (gitignored)
+# Add Z.AI MCP servers to your global/local opencode config:
 {
   "mcp": {
     "zai-mcp-server": {
       "type": "local",
       "command": ["npx", "-y", "@z_ai/mcp-server"],
       "environment": {
-        "Z_AI_API_KEY": "your_api_key",
+        "Z_AI_API_KEY": "your_actual_api_key",
         "Z_AI_MODE": "ZAI"
       }
     },
@@ -178,21 +215,21 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
       "type": "remote",
       "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
       "headers": {
-        "Authorization": "Bearer your_api_key"
+        "Authorization": "Bearer your_actual_api_key"
       }
     },
     "web-reader": {
       "type": "remote",
       "url": "https://api.z.ai/api/mcp/web_reader/mcp",
       "headers": {
-        "Authorization": "Bearer your_api_key"
+        "Authorization": "Bearer your_actual_api_key"
       }
     },
     "zread": {
       "type": "remote",
       "url": "https://api.z.ai/api/mcp/zread/mcp",
       "headers": {
-        "Authorization": "Bearer your_api_key"
+        "Authorization": "Bearer your_actual_api_key"
       }
     }
   }
@@ -216,8 +253,9 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 
 - **Instructions**: OpenCode uses `AGENTS.md`, Claude uses `CLAUDE.md` (no cross-support yet)
 - **MCP Servers**: Different JSON formats (`mcp` vs `mcpServers`)
+- **Z.AI MCP Servers**: Require API keys in local/global config (NEVER commit to repository)
 - **Agents**: Different locations and frontmatter schemas
-- **Config Files**: `opencode.json` vs `.claude/settings.json`
+- **Config Files**: `opencode.json` (repo) vs local config for API keys
 
 ### Symlink Decision
 
@@ -248,11 +286,19 @@ Given the repository has OpenCode configuration
 And skills have been renamed to hyphen format
 And agents have been renamed to hyphen format
 When a developer runs `opencode` in the project root
-Then OpenCode initializes with correct model settings
+Then OpenCode initializes with correct model settings (GLM-4.7)
 And loads all 19 skills from .claude/skills/
 And loads all 46 agents from .claude/agents/
 And recognizes project instructions from AGENTS.md
-And connects to configured MCP servers
+And connects to repository MCP servers (playwright, context7)
+And no API keys are committed to the repository
+
+# Local MCP server configuration (security)
+Given the repository does not contain Z.AI MCP server configuration
+When a developer configures Z.AI MCP servers locally
+Then Z.AI API keys are in local/global config only
+And API keys are never committed to the repository
+And .gitignore prevents accidental API key commits
 
 # No regression
 Given OpenCode configuration has been added
@@ -261,7 +307,7 @@ When a developer runs `claude` in the project root
 Then Claude Code works exactly as before
 And all agents function correctly with new names
 And all skills load properly with new names
-And MCP servers connect successfully
+And repository MCP servers connect successfully
 ```
 
 ## Documents
