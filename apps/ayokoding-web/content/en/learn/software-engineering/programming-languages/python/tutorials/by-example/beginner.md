@@ -494,42 +494,47 @@ for i in range(3):                # => Outer loop: 0, 1, 2
 
 Lists are mutable, ordered sequences that can contain mixed types, support indexing (including negative indices), and slicing.
 
+**Positive Indexing:**
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TD
-    subgraph "List: [1, 2, 3, 4, 5]"
-        N0["Index: 0<br/>Value: 1"]
-        N1["Index: 1<br/>Value: 2"]
-        N2["Index: 2<br/>Value: 3"]
-        N3["Index: 3<br/>Value: 4"]
-        N4["Index: 4<br/>Value: 5"]
-    end
+graph LR
+    N0["Index: 0<br/>Value: 1"]
+    N1["Index: 1<br/>Value: 2"]
+    N2["Index: 2<br/>Value: 3"]
+    N3["Index: 3<br/>Value: 4"]
+    N4["Index: 4<br/>Value: 5"]
 
-    subgraph "Negative Indexing"
-        M5["Index: -5<br/>Value: 1"]
-        M4["Index: -4<br/>Value: 2"]
-        M3["Index: -3<br/>Value: 3"]
-        M2["Index: -2<br/>Value: 4"]
-        M1["Index: -1<br/>Value: 5"]
-    end
-
-    N0 -.Same.-> M5
-    N1 -.Same.-> M4
-    N2 -.Same.-> M3
-    N3 -.Same.-> M2
-    N4 -.Same.-> M1
+    N0 --> N1 --> N2 --> N3 --> N4
 
     style N0 fill:#0173B2,color:#fff
     style N1 fill:#0173B2,color:#fff
     style N2 fill:#0173B2,color:#fff
     style N3 fill:#0173B2,color:#fff
     style N4 fill:#0173B2,color:#fff
+```
+
+**Negative Indexing:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    M5["Index: -5<br/>Value: 1"]
+    M4["Index: -4<br/>Value: 2"]
+    M3["Index: -3<br/>Value: 3"]
+    M2["Index: -2<br/>Value: 4"]
+    M1["Index: -1<br/>Value: 5"]
+
+    M5 --> M4 --> M3 --> M2 --> M1
+
     style M5 fill:#DE8F05,color:#000
     style M4 fill:#DE8F05,color:#000
     style M3 fill:#DE8F05,color:#000
     style M2 fill:#DE8F05,color:#000
     style M1 fill:#DE8F05,color:#000
 ```
+
+Python lists support both positive indexing (starting from 0) and negative indexing (counting from the end starting at -1). Both index systems refer to the same list elements.
 
 ```python
 # List creation

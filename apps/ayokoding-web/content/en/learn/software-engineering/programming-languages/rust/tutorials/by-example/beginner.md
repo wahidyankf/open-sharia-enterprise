@@ -15,29 +15,16 @@ Examples 1-28 cover Rust fundamentals and the ownership model (0-40% coverage). 
 
 ### Example 1: Hello World
 
-Every Rust program starts with a `main` function, which is the entry point. The `println!` macro prints text to stdout with automatic newline. Unlike C/C++, Rust requires no headers or includes for basic programs.
+Every Rust program starts with a `main` function, which is the entry point the Rust runtime calls first. The `println!` macro (note the `!` suffix) prints text to stdout with automatic newline and expands at compile-time. String literals like `"Hello, World!"` have type `&str`. Unlike C/C++, Rust requires no headers or includes for basic programs.
+
+**Syntax notes**: The `fn` keyword declares functions. The `main` function has implicit return type `()` (unit type, similar to void). Comments use `//` for single lines, `/* */` for multi-line blocks, and `///` for documentation (doc comments).
+
+**Build and run**: Compile with `rustc main.rs` (creates executable `main`), then run with `./main`. Rust compiles to native code without a VM like Java/C#.
 
 ```rust
-// Define the entry point function
-// fn: keyword to declare a function
-// main: special function name that the Rust runtime calls first
 fn main() {
-    // println! is a macro (note the ! suffix)
-    // Macros expand at compile-time, generating code before compilation
-    // "Hello, World!" is a string literal (type: &str)
-    println!("Hello, World!");      // => Output: Hello, World!
-    // main has implicit return type () (unit type, similar to void)
-    // No return statement needed for unit type
-}                                    // => main returns (), program exits with code 0
-
-// Single-line comments use //
-/* Multi-line comments
-   use /* and */ */
-/// Doc comments use /// for documentation (triple slash)
-
-// To compile: rustc main.rs (creates executable 'main')
-// To run: ./main (executes compiled binary)
-// Rust compiles to native code (no VM like Java/C#)
+    println!("Hello, World!");       // => Output: Hello, World!
+}                                     // => main returns (), program exits with code 0
 ```
 
 **Key Takeaway**: Rust programs require a `main()` function as the entry point, and macros (identified by `!`) provide compile-time code generation for common operations like formatted printing. Rust compiles directly to native code without runtime overhead.
@@ -50,39 +37,24 @@ fn main() {
 
 Rust variables are immutable by default, requiring explicit `mut` keyword for mutation. This prevents accidental state changes and makes mutation explicit in code. This design choice eliminates entire classes of bugs found in languages with mutable-by-default variables.
 
+**Syntax notes**: The `let` keyword declares variables (similar to `var` in other languages). Variable syntax is `let [mut] name = value`. The `mut` keyword must be explicit to allow mutation. Attempting to mutate an immutable variable causes a compile error.
+
+**Why immutability by default**: Prevents accidental mutations (compiler enforces intent), enables compiler optimizations (immutable values cacheable), makes data races impossible in concurrent code, and forces explicit reasoning about state changes.
+
 ```rust
 fn main() {
-    // let: keyword to declare a variable (similar to var in other languages)
-    // x: variable name
-    // = 5: initialization value
-    let x = 5;                       // => x is 5 (type: i32, inferred from literal)
-                                     // => x is immutable (default behavior)
-    // println! macro with {} placeholder for variable substitution
+    let x = 5;                       // => x is 5 (type: i32, inferred)
+                                     // => x is immutable (default)
     println!("x = {}", x);           // => Output: x = 5
-                                     // => x value is borrowed (read-only) by println!
 
-    // Attempting to mutate immutable variable causes compile error
     // x = 6;                        // => ERROR: cannot assign twice to immutable variable
-                                     // => Rust compiler rejects this at compile-time
 
-    // mut: keyword to make variable mutable (must be explicit)
-    let mut y = 10;                  // => y is 10 (type: i32, inferred)
-                                     // => y is mutable (explicit opt-in)
+    let mut y = 10;                  // => y is 10 (mutable)
     println!("y = {}", y);           // => Output: y = 10
 
-    // Mutation is allowed for mut variables
-    y = 15;                          // => y is now 15 (previous value 10 discarded)
-                                     // => No type change, still i32
+    y = 15;                          // => y is now 15 (previous value discarded)
     println!("y = {}", y);           // => Output: y = 15
-                                     // => y final value before scope ends
-
-    // Variables default to immutable because:
-    // 1. Prevents accidental mutations (compiler enforces intent)
-    // 2. Enables compiler optimizations (immutable values cacheable)
-    // 3. Makes data races impossible in concurrent code
-    // 4. Forces explicit reasoning about state changes
 }                                    // => x and y dropped (memory freed)
-                                     // => No garbage collection needed
 ```
 
 **Key Takeaway**: Immutability by default prevents bugs from unexpected state changes, while explicit `mut` keyword makes mutable state clearly visible in code. The compiler enforces this at compile-time with zero runtime cost.
@@ -94,6 +66,10 @@ fn main() {
 ### Example 3: Variable Shadowing
 
 Rust allows redeclaring variables with the same name, which creates a new binding while the old one goes out of scope. This differs from mutation and allows type changes. Shadowing is a unique Rust feature that enables transformation pipelines without mutability.
+
+**Shadowing vs Mutation**: Mutation (`let mut x = 5; x = 6;`) modifies the same variable and must keep the same type. Shadowing (`let x = 5; let x = 6;`) creates a new variable and can change types.
+
+**Shadowing use cases**: Type transformations (parse string to number), transformation pipelines (value → processed → final), keeping variable names meaningful without suffixes (_str, _num).
 
 ```mermaid
 %% Variable shadowing creates new bindings
@@ -118,41 +94,20 @@ graph TD
 
 ```rust
 fn main() {
-    // First binding: x bound to integer value 5
     let x = 5;                       // => x is 5 (type: i32)
-                                     // => x stored on stack at memory address A
+                                     // => x stored at memory address A
     println!("x = {}", x);           // => Output: x = 5
-                                     // => First x borrowed by println!
 
-    // Shadowing: new variable x shadows previous x
-    // This is NOT mutation - creates entirely new binding
-    let x = x + 1;                   // => Previous x (5) read and consumed
-                                     // => New x is 6 (type: i32, still)
-                                     // => Previous x at address A is dropped
-                                     // => New x stored at different address B
+    let x = x + 1;                   // => Previous x (5) consumed
+                                     // => New x is 6 (address A dropped)
+                                     // => New x stored at address B
     println!("x = {}", x);           // => Output: x = 6
-                                     // => Second x borrowed by println!
-                                     // => First x no longer accessible
 
-    // Shadowing with type change (impossible with mut)
-    // Previous x was i32, new x is &str (completely different type)
     let x = "hello";                 // => New x is "hello" (type: &str)
-                                     // => Previous x (i32 value 6) dropped
+                                     // => Previous x (i32) dropped (address B)
                                      // => New x stored at address C
-                                     // => Type system allows this because it's new binding
     println!("x = {}", x);           // => Output: hello
-                                     // => Third x borrowed by println!
-
-    // Shadowing vs Mutation:
-    // let mut x = 5; x = 6;  // Mutation: same variable, must keep type
-    // let x = 5; let x = 6;  // Shadowing: new variable, can change type
-
-    // Shadowing use cases:
-    // 1. Type transformations (parse string to number)
-    // 2. Transformation pipelines (value -> processed -> final)
-    // 3. Keeping variable names meaningful without suffixes (_str, _num)
 }                                    // => Final x ("hello") dropped
-                                     // => All previous x bindings already gone
 ```
 
 **Key Takeaway**: Shadowing creates a new variable with the same name, allowing type changes and transformation pipelines while maintaining immutability. Each shadowing creates a completely new binding, unlike mutation which modifies existing memory.
@@ -165,75 +120,41 @@ fn main() {
 
 Rust has scalar types (integers, floats, booleans, characters) and compound types (tuples, arrays). Type inference is powerful but explicit annotations are sometimes needed. All types have known sizes at compile-time, enabling zero-cost abstractions.
 
+**Type System Overview**:
+
+- **Scalar types** (stored directly): Integers (i8, i16, i32, i64, i128 signed; u8, u16, u32, u64, u128 unsigned), floats (f32, f64), booleans (bool), characters (char for Unicode scalar values)
+- **Compound types**: Tuples (fixed-length heterogeneous sequences), arrays (fixed-length homogeneous sequences)
+- **Type sizes** (compile-time known): i32 (4 bytes, range: -2,147,483,648 to 2,147,483,647), f64 (8 bytes IEEE 754), bool (1 byte), char (4 bytes Unicode). Tuples: sum of element sizes (aligned). Arrays: element_size × length
+- **Defaults**: i32 for integers, f64 for floats (better precision)
+
 ```rust
 fn main() {
-    // Scalar types - stored directly (not references)
+    let integer: i32 = 42;           // => 42 (type: i32)
+    let float: f64 = 3.14;           // => 3.14 (type: f64)
+    let boolean: bool = true;        // => true (type: bool)
+    let character: char = '🦀';      // => '🦀' (type: char)
 
-    // Integer types: i8, i16, i32, i64, i128 (signed)
-    //                u8, u16, u32, u64, u128 (unsigned)
-    let integer: i32 = 42;           // => 42 (type: i32, 32-bit signed)
-                                     // => Range: -2,147,483,648 to 2,147,483,647
-                                     // => Default integer type (when inferred)
-
-    // Floating-point types: f32, f64
-    let float: f64 = 3.14;           // => 3.14 (type: f64, 64-bit IEEE 754)
-                                     // => f64 is default float type (better precision)
-
-    // Boolean type: true or false only
-    let boolean: bool = true;        // => true (type: bool, 1 byte storage)
-                                     // => Only valid values: true, false
-
-    // Character type: Unicode scalar value
-    let character: char = '🦀';      // => '🦀' (type: char, 4 bytes)
-                                     // => Supports all Unicode characters
-                                     // => Single quotes for char, double for &str
-
-    // Print scalar types
     println!("Integer: {}", integer);     // => Output: Integer: 42
     println!("Float: {}", float);         // => Output: Float: 3.14
     println!("Boolean: {}", boolean);     // => Output: Boolean: true
     println!("Character: {}", character); // => Output: Character: 🦀
 
-    // Compound types - group multiple values
-
-    // Tuple: fixed-length sequence of heterogeneous types
     let tuple: (i32, f64, char) = (42, 3.14, '🦀');
                                      // => Tuple with 3 elements (different types)
-                                     // => Type: (i32, f64, char)
-                                     // => Stored contiguously on stack
-
-    // Destructuring: extract tuple elements into variables
     let (x, y, z) = tuple;           // => Pattern matching extracts values
-                                     // => x is 42 (i32)
-                                     // => y is 3.14 (f64)
-                                     // => z is '🦀' (char)
     println!("Tuple: ({}, {}, {})", x, y, z);
                                      // => Output: Tuple: (42, 3.14, 🦀)
 
-    // Tuple indexing (alternative to destructuring)
     let first = tuple.0;             // => 42 (access first element)
     let second = tuple.1;            // => 3.14 (access second element)
 
-    // Array: fixed-length sequence of homogeneous types
     let array: [i32; 3] = [1, 2, 3]; // => [1, 2, 3] (type: [i32; 3])
-                                     // => All elements must be same type (i32)
-                                     // => Length 3 is part of type (fixed at compile-time)
-                                     // => Stored contiguously on stack
     println!("Array: {:?}", array);  // => Output: Array: [1, 2, 3]
-                                     // => {:?} is debug formatting
 
-    // Array indexing
     let first_element = array[0];    // => 1 (arrays are zero-indexed)
     let second_element = array[1];   // => 2
 
-    // Array initialization with same value
-    let zeros = [0; 5];              // => [0, 0, 0, 0, 0] (type: [i32; 5])
-                                     // => Syntax: [value; length]
-
-    // Type sizes are known at compile-time:
-    // i32: 4 bytes, f64: 8 bytes, bool: 1 byte, char: 4 bytes
-    // Tuple: sum of element sizes (aligned)
-    // Array: element_size * length
+    let zeros = [0; 5];              // => [0, 0, 0, 0, 0] (syntax: [value; length])
 }
 ```
 
@@ -247,69 +168,42 @@ fn main() {
 
 Functions use `fn` keyword with explicit parameter types and optional return type. The last expression (without semicolon) is the return value. This expression-based syntax eliminates redundant return keywords while maintaining clarity.
 
+**Expression-Based Syntax**: Expressions evaluate to values (x + y, if conditions, blocks). Statements perform actions but don't return values (let x = 5;). Key difference: semicolons change expressions to statements. Without semicolon: returns value (expression). With semicolon: returns () (statement).
+
+**Function syntax**: `fn name(param: Type) -> ReturnType { body }`. Parameter types are REQUIRED. Return type annotation (-> Type) REQUIRED for non-unit returns. No -> annotation means returns () (unit type). Function names follow snake_case convention.
+
+**Return mechanisms**: Last expression without semicolon is returned (common). Explicit `return` keyword available (needed for early returns). Semicolon after final expression makes it a statement returning ().
+
 ```rust
 fn main() {
-    // Function call: add is defined below (order doesn't matter)
     let result = add(5, 7);          // => Call add(5, 7), returns 12
-                                     // => result is 12 (type: i32, inferred from add return)
     println!("5 + 7 = {}", result);  // => Output: 5 + 7 = 12
 
-    // Function call with string parameter
     let greeting = greet("Alice");   // => Call greet("Alice"), returns String
-                                     // => greeting is "Hello, Alice!" (type: String)
     println!("{}", greeting);        // => Output: Hello, Alice!
 
-    // Function with no return value (unit type)
     print_sum(10, 20);               // => Calls print_sum, returns ()
                                      // => Output: Sum is 30
 
-    // Function with explicit return
     let doubled = double_explicit(5);// => doubled is 10
     println!("Doubled: {}", doubled);// => Output: Doubled: 10
 }
 
-// fn: function keyword
-// add: function name (snake_case convention)
-// (x: i32, y: i32): parameters with explicit types (REQUIRED)
-// -> i32: return type annotation (REQUIRED for non-unit returns)
 fn add(x: i32, y: i32) -> i32 {
-    // Last expression without semicolon is returned
     x + y                            // => Returns x + y (expression)
-                                     // => Semicolon would make this a statement, return ()
 }
 
-// Function borrowing string slice, returning owned String
-// &str: borrowed string slice (parameter doesn't take ownership)
-// -> String: returns owned String (caller gets ownership)
 fn greet(name: &str) -> String {
-    // format! macro creates String (heap-allocated, owned)
-    format!("Hello, {}!", name)      // => Builds String from template
-                                     // => Returns owned String to caller
-                                     // => No semicolon = expression return
+    format!("Hello, {}!", name)      // => Returns String to caller
 }
 
-// Function with no return value (implicit unit type)
-// No -> annotation means returns ()
 fn print_sum(a: i32, b: i32) {
-    // Statements end with semicolon, don't return values
     println!("Sum is {}", a + b);    // => Output: Sum is 30
-                                     // => println! returns (), so function returns ()
 }
 
-// Function with explicit return statement
 fn double_explicit(x: i32) -> i32 {
-    // return keyword can be used (but usually not needed)
     return x * 2;                    // => Returns x * 2 explicitly
-                                     // => Semicolon after return is optional
-                                     // => Early returns require return keyword
 }
-
-// Expression vs Statement:
-// Expression: evaluates to a value (x + y, if condition, blocks)
-// Statement: performs action but doesn't return value (let x = 5;)
-// Key difference: semicolon changes expression to statement
-//   x + y   => returns value (expression)
-//   x + y;  => returns ()  (statement)
 ```
 
 **Key Takeaway**: Rust functions require explicit parameter and return types, and the final expression without semicolon serves as the return value, enabling concise function bodies. Expressions return values; statements (with semicolons) do not.
