@@ -8,15 +8,16 @@
 
 ## Overview
 
-This plan establishes **dual-tool compatibility** between Claude Code and OpenCode, enabling the repository to be used seamlessly with both AI coding assistants. The goal is to maintain the existing Claude Code infrastructure while adding OpenCode support without breaking changes.
+This plan establishes **dual-tool compatibility** between Claude Code and OpenCode, enabling the repository to be used seamlessly with both AI coding assistants. The goal is to maintain the existing Claude Code infrastructure while adding OpenCode support with **GLM-4.7** model for significant cost savings (8.6x-20x cheaper than Claude Sonnet) without breaking changes.
 
 ## Goals
 
 1. **Configuration Compatibility**: Create compatible configuration files for both tools
-2. **Skills Portability**: Leverage existing Claude skills format (already OpenCode-compatible)
-3. **Instructions Alignment**: Support both CLAUDE.md and AGENTS.md standards
-4. **MCP Server Sharing**: Configure MCP servers for both tools
-5. **Agent Translation**: Enable agent definitions to work across platforms where possible
+2. **Cost Optimization**: Use GLM-4.7 model (8.6x-20x cheaper than Claude Sonnet, competitive performance)
+3. **Skills Portability**: Leverage existing Claude skills format (already OpenCode-compatible)
+4. **Instructions Alignment**: Support both CLAUDE.md and AGENTS.md standards
+5. **MCP Server Sharing**: Configure MCP servers for both tools
+6. **Agent Translation**: Enable agent definitions to work across platforms where possible
 
 ## Key Findings
 
@@ -45,6 +46,60 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 - **Impact**: Agent renaming is MORE critical because agents are core automation infrastructure
 
 **Total renaming required**: 65 files (19 skills + 46 agents)
+
+### Model Selection: GLM-4.7 (Zhipu AI)
+
+**Recommended model**: **GLM-4.7** (December 2025)
+
+**Performance Comparison**:
+
+| Metric               | GLM-4.7       | Claude Sonnet 4.5       | Winner   |
+| -------------------- | ------------- | ----------------------- | -------- |
+| Tool Calling Success | 90.6%         | 89.5%                   | GLM ✓    |
+| HLE Score            | 42.8%         | ~35%                    | GLM ✓    |
+| AIME 2025 (Math)     | 95.7%         | ~90%                    | GLM ✓    |
+| Cost                 | 1x (baseline) | 8.6x-20x more expensive | GLM ✓    |
+| Speed                | 20-30% faster | baseline                | GLM ✓    |
+| Context Window       | 131K tokens   | 200K tokens             | Claude ✓ |
+
+**Why GLM-4.7?**
+
+1. **Cost Efficiency**: 8.6x-20x cheaper than Claude Sonnet (significant savings for enterprise use)
+2. **Competitive Performance**: Outperforms Claude Sonnet on tool calling (90.6% vs 89.5%)
+3. **Speed**: 20-30% faster response times
+4. **Math Excellence**: 95.7% accuracy on AIME 2025 (superior reasoning)
+5. **OpenCode Native**: Z.AI provider fully supported in OpenCode
+
+**Configuration**:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "zai/glm-4.7",
+  "small_model": "zai/glm-4.5-air",
+  "provider": {
+    "zai": {
+      "options": {
+        "timeout": 600000
+      }
+    }
+  }
+}
+```
+
+**Setup Steps**:
+
+1. Create Z.AI account: https://bigmodel.cn/
+2. Get API key from console
+3. Run `/connect` in OpenCode, select Z.AI
+4. Run `/models` to select GLM-4.7
+
+**Sources**:
+
+- [GLM-4.7 Launch Analysis](https://llm-stats.com/blog/research/glm-4.7-launch)
+- [Claude vs GLM Comparison](https://medium.com/ai-software-engineer/i-tested-claude-sonnet-4-5-vs-glm-4-6-for-coding-and-discovered-how-to-save-money-14de611c89e2)
+- [Z.AI Official Documentation](https://docs.z.ai/scenario-example/develop-tools/opencode)
+- [OpenCode Providers Documentation](https://opencode.ai/docs/providers/)
 
 ### Compatible After Renaming
 
