@@ -1281,7 +1281,7 @@ Based on the pilot validation, use these proven patterns when simplifying agents
 ```markdown
 ## Content Quality Standards
 
-**See `applying-content-quality` Skill for complete standards** on:
+**See `docs__applying-content-quality` Skill for complete standards** on:
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -1362,7 +1362,7 @@ Based on the pilot validation, use these proven patterns when simplifying agents
 ```markdown
 ## Factual Validation
 
-**See `validating-factual-accuracy` Skill for complete methodology** covering:
+**See `docs__validating-factual-accuracy` Skill for complete methodology** covering:
 
 - Verification workflow (claim identification → source determination → verification)
 - Source prioritization (official docs → GitHub → registries → standards)
@@ -1451,16 +1451,16 @@ skills: [skill-one, skill-two, skill-three]
 
 Based on agent simplification audit findings:
 
-| Pattern                                                                   | Instead Use                              | Typical Reduction |
-| ------------------------------------------------------------------------- | ---------------------------------------- | ----------------- |
-| Content quality standards (active voice, headings, accessibility)         | `applying-content-quality` Skill         | ~50-100 lines     |
-| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `creating-accessible-diagrams` Skill     | ~60-70 lines      |
-| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention               | ~200 lines        |
-| Validation methodology (source prioritization, confidence levels)         | `validating-factual-accuracy` Skill      | ~150 lines        |
-| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention       | ~200 lines        |
-| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence` Skill | ~100 lines        |
-| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention         | ~30 lines         |
-| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer` Skill     | ~50 lines         |
+| Pattern                                                                   | Instead Use                                | Typical Reduction |
+| ------------------------------------------------------------------------- | ------------------------------------------ | ----------------- |
+| Content quality standards (active voice, headings, accessibility)         | `docs__applying-content-quality` Skill     | ~50-100 lines     |
+| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `docs__creating-accessible-diagrams` Skill | ~60-70 lines      |
+| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention                 | ~200 lines        |
+| Validation methodology (source prioritization, confidence levels)         | `docs__validating-factual-accuracy` Skill  | ~150 lines        |
+| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention         | ~200 lines        |
+| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence` Skill   | ~100 lines        |
+| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention           | ~30 lines         |
+| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer` Skill       | ~50 lines         |
 
 ### Example: Before and After Simplification
 
@@ -2089,11 +2089,11 @@ skills:
 
 ## Hugo Patterns
 
-See `developing-ayokoding-content` Skill for weight system, bilingual strategy.
+See `apps__ayokoding-web__developing-content` Skill for weight system, bilingual strategy.
 
 ## Example Structure
 
-See `creating-by-example-tutorials` Skill for five-part format, annotation density.
+See `docs__creating-by-example-tutorials` Skill for five-part format, annotation density.
 
 ## Creation Workflow
 
@@ -2115,7 +2115,7 @@ A: YES (8+ agents create diagrams)
 Q: Reusable domain expertise?
 A: YES (color accessibility is universal)
 
-Decision: Extract to `creating-accessible-diagrams` Skill ✅
+Decision: Extract to `docs__creating-accessible-diagrams` Skill ✅
 ```
 
 **Scenario 2**: Adding custom validation logic for plan structure
@@ -2205,12 +2205,12 @@ When simplifying an agent:
 - `generating-validation-reports` - Report generation, UUID chains, timestamps
 - `assessing-criticality-confidence` - Criticality levels, confidence assessment
 - `applying-maker-checker-fixer` - Three-stage workflow, mode handling
-- `developing-ayokoding-content` - Hugo Hextra patterns, bilingual content
-- `developing-ose-content` - Hugo PaperMod patterns
-- `creating-by-example-tutorials` - Annotation standards, five-part structure
-- `creating-accessible-diagrams` - Color palettes, accessibility
-- `applying-content-quality` - Markdown quality standards
-- `validating-factual-accuracy` - Verification methodology
+- `apps__ayokoding-web__developing-content` - Hugo Hextra patterns, bilingual content
+- `apps__ose-platform-web__developing-content` - Hugo PaperMod patterns
+- `docs__creating-by-example-tutorials` - Annotation standards, five-part structure
+- `docs__creating-accessible-diagrams` - Color palettes, accessibility
+- `docs__applying-content-quality` - Markdown quality standards
+- `docs__validating-factual-accuracy` - Verification methodology
 - `validating-links` - Link validation, caching
 - Plus 8 more in Content Creation, Standards Application, Process Execution categories
 
