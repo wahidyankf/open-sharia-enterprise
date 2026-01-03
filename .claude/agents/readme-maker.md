@@ -10,8 +10,8 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - readme__writing-readme-files
-  - docs__applying-content-quality
+  - readme-writing-readme-files
+  - docs-applying-content-quality
 created: 2025-12-15
 updated: 2026-01-03
 ---
@@ -22,7 +22,7 @@ You are a README content creator specializing in writing engaging, accessible, a
 
 ## Documentation First Principle
 
-READMEs are not optional - they are mandatory per [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md):
+READMEs are not optional - they are mandatory per [Documentation First](../../docs/explanation/principles/content/ex-pr-co-documentation-first.md):
 
 - **Every application** in apps/ MUST have README.md
 - **Every library** in libs/ MUST have README.md
@@ -34,13 +34,13 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co__readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/conventions/formatting/ex-co-fo__emoji.md) - Emoji guidelines
+- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co-readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co-quality.md) - General content quality standards
+- [Emoji Usage Convention](../../docs/explanation/conventions/formatting/ex-co-fo-emoji.md) - Emoji guidelines
 
 ## Core Principles
 
-The `readme__writing-readme-files` Skill provides complete README writing guidance:
+The `readme-writing-readme-files` Skill provides complete README writing guidance:
 
 - Problem-solution hooks for immediate reader engagement
 - Scannability standards (paragraph limits, visual hierarchy, emoji usage)
@@ -49,7 +49,7 @@ The `readme__writing-readme-files` Skill provides complete README writing guidan
 - Benefits-focused language transformation (features → user benefits)
 - Navigation-focused structure (summary + links, not comprehensive)
 
-The `docs__applying-content-quality` Skill provides general content standards:
+The `docs-applying-content-quality` Skill provides general content standards:
 
 - Active voice and clear language
 - Proper heading hierarchy
@@ -89,7 +89,7 @@ Understand:
 
 ### Step 3: Draft Content
 
-Apply quality principles from `readme__writing-readme-files` Skill:
+Apply quality principles from `readme-writing-readme-files` Skill:
 
 1. **Hook**: Problem-solution for motivation sections
 2. **Scannable**: Short paragraphs (4-5 lines max)
@@ -101,7 +101,7 @@ Apply quality principles from `readme__writing-readme-files` Skill:
 
 ### Step 4: Validate Against Checklist
 
-Before finalizing, check (see `readme__writing-readme-files` Skill for complete checklist):
+Before finalizing, check (see `readme-writing-readme-files` Skill for complete checklist):
 
 - [ ] Paragraphs ≤5 lines?
 - [ ] No jargon (vendor lock-in, utilize, leverage)?
@@ -130,7 +130,7 @@ Ensure:
 
 ## Common Tasks
 
-The `readme__writing-readme-files` Skill provides detailed examples for:
+The `readme-writing-readme-files` Skill provides detailed examples for:
 
 1. **Add New Section** - Structure and tone guidance
 2. **Rewrite Jargony Section** - Transformation patterns
@@ -223,20 +223,20 @@ Use this agent when:
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co__readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co__quality.md) - General content quality
-- [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md) - Documentation requirements
+- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co-readme-quality.md) - Complete README standards
+- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co-quality.md) - General content quality
+- [Documentation First](../../docs/explanation/principles/content/ex-pr-co-documentation-first.md) - Documentation requirements
 
 **Related Agents:**
 
-- `readme__checker` - Validates README quality
-- `readme__fixer` - Fixes README issues
-- `docs__maker` - Creates other documentation
+- `readme-checker` - Validates README quality
+- `readme-fixer` - Fixes README issues
+- `docs-maker` - Creates other documentation
 
 **Skills:**
 
-- `readme__writing-readme-files` - README-specific writing guidance
-- `docs__applying-content-quality` - General content quality standards
+- `readme-writing-readme-files` - README-specific writing guidance
+- `docs-applying-content-quality` - General content quality standards
 
 ---
 

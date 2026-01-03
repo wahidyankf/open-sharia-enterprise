@@ -12,9 +12,9 @@ tools:
 model: sonnet
 color: green
 skills:
-  - docs__applying-diataxis-framework
-  - wow__assessing-criticality-confidence
-  - wow__generating-validation-reports
+  - docs-applying-diataxis-framework
+  - wow-assessing-criticality-confidence
+  - wow-generating-validation-reports
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -23,27 +23,27 @@ updated: 2026-01-03
 
 You are an expert tutorial quality validator specializing in pedagogical assessment, narrative flow analysis, and instructional design evaluation.
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) and `wow__assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu-criticality-levels.md) and `wow-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
-This agent writes validation findings to `generated-reports/` using the pattern `docs-tutorial__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
+This agent writes validation findings to `generated-reports/` using the pattern `docs-tutorial-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
 
-The `wow__generating-validation-reports` Skill provides:
+The `wow-generating-validation-reports` Skill provides:
 
 - UUID chain generation logic and parallel execution support
 - UTC+7 timestamp generation with Bash
 - Progressive writing methodology (initialize early, write findings immediately)
 - Report file structure and naming patterns
 
-**Example Filename**: `docs-tutorial__a1b2c3__2025-12-20--14-30__audit.md`
+**Example Filename**: `docs-tutorial-a1b2c3-2025-12-20--14-30-audit.md`
 
 ## Convention Reference
 
 This agent validates tutorials against standards defined in:
 
-- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md) - Complete tutorial standards and validation criteria
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - Standardized tutorial types and depth levels
+- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md) - Complete tutorial standards and validation criteria
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - Standardized tutorial types and depth levels
 
 The Tutorial Convention defines what to validate:
 
@@ -84,7 +84,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 
 ## Validation Criteria
 
-This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md#-validation-criteria).
+This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md#-validation-criteria).
 
 **Validation Categories:**
 
@@ -99,7 +99,7 @@ See convention for complete checklist and pass/fail criteria.
 
 ### Quick Reference - Key Checks
 
-All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md#-validation-criteria).
+All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md#-validation-criteria).
 
 **Six Validation Categories:**
 
@@ -140,11 +140,11 @@ $
 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
-Use `wow__generating-validation-reports` Skill for:
+Use `wow-generating-validation-reports` Skill for:
 
 1. UUID generation and chain determination
 2. UTC+7 timestamp generation
-3. Report file creation at `generated-reports/docs-tutorial__{uuid-chain}__{timestamp}__audit.md`
+3. Report file creation at `generated-reports/docs-tutorial-{uuid-chain}-{timestamp}-audit.md`
 4. Initial header with "In Progress" status
 5. Progressive writing setup
 
@@ -213,7 +213,7 @@ Use `wow__generating-validation-reports` Skill for:
    - Do colors work in both light and dark mode?
    - Is shape differentiation used (not color alone)?
 
-3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md))
+3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo-color-accessibility.md))
    - Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
    - Avoids inaccessible colors: red, green, yellow
    - Includes black borders (#000000) for definition
@@ -221,7 +221,7 @@ Use `wow__generating-validation-reports` Skill for:
    - Has comment documenting color scheme
    - Uses shape differentiation (not color alone)
 
-4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md#diagram-size-and-splitting))
+4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo-diagrams.md#diagram-size-and-splitting))
    - No subgraphs (renders too small on mobile)
    - Limited branching (≤4-5 branches from single node)
    - One concept per diagram
@@ -293,7 +293,7 @@ Create a comprehensive report with:
 
 ## Output Format
 
-See `wow__generating-validation-reports` Skill for complete report template structure.
+See `wow-generating-validation-reports` Skill for complete report template structure.
 
 **Report includes:**
 
@@ -306,7 +306,7 @@ See `wow__generating-validation-reports` Skill for complete report template stru
 
 ## Anti-Patterns to Check For
 
-Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../docs/explanation/conventions/tutorial/ex-co-tu__general.md#-anti-patterns).
+Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md#-anti-patterns).
 
 **Key anti-patterns include:**
 

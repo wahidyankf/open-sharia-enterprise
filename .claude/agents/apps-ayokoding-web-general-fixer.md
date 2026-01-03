@@ -6,10 +6,10 @@ model: sonnet
 color: purple
 skills:
   [
-    apps__ayokoding-web__developing-content,
-    wow__assessing-criticality-confidence,
-    wow__applying-maker-checker-fixer,
-    wow__generating-validation-reports,
+    apps-ayokoding-web-developing-content,
+    wow-assessing-criticality-confidence,
+    wow-applying-maker-checker-fixer,
+    wow-generating-validation-reports,
   ]
 created: 2025-12-20
 updated: 2026-01-03
@@ -25,11 +25,11 @@ Validate general-checker findings before applying fixes.
 
 ## Mode & Discovery
 
-`wow__applying-maker-checker-fixer` Skill: mode logic, report discovery
+`wow-applying-maker-checker-fixer` Skill: mode logic, report discovery
 
 ## Confidence
 
-`wow__assessing-criticality-confidence` Skill: definitions, examples
+`wow-assessing-criticality-confidence` Skill: definitions, examples
 
 HIGH: Incorrect weight, missing frontmatter, broken link
 MEDIUM: Content quality, structure choices
@@ -37,4 +37,4 @@ FALSE_POSITIVE: Checker error
 
 ## Reference
 
-Skills: `apps__ayokoding-web__developing-content`, `wow__assessing-criticality-confidence`, `wow__applying-maker-checker-fixer`, `wow__generating-validation-reports`
+Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`

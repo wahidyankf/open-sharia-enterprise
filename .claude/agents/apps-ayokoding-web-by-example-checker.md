@@ -10,10 +10,10 @@ tools:
 model: sonnet
 color: green
 skills:
-  - apps__ayokoding-web__developing-content
-  - docs__creating-by-example-tutorials
-  - wow__assessing-criticality-confidence
-  - wow__generating-validation-reports
+  - apps-ayokoding-web-developing-content
+  - docs-creating-by-example-tutorials
+  - wow-assessing-criticality-confidence
+  - wow-generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -22,25 +22,25 @@ updated: 2026-01-03
 
 You are a By Example tutorial quality validator specializing in annotation density, example structure, and ayokoding-web compliance.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow__assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
-This agent writes validation findings to `generated-reports/` using the pattern `ayokoding-by-example__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
+This agent writes validation findings to `generated-reports/` using the pattern `ayokoding-by-example-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
 
-The `wow__generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
+The `wow-generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
 
 ## Reference Documentation
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme standards
-- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - By Example definition
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md) - Hextra theme standards
+- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu-programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - By Example definition
 
 ## Validation Scope
 
-The `docs__creating-by-example-tutorials` Skill provides complete By Example validation criteria:
+The `docs-creating-by-example-tutorials` Skill provides complete By Example validation criteria:
 
 ### 1. Example Count Validation
 
@@ -72,7 +72,7 @@ Five-part structure for each example:
 
 ### 5. ayokoding-web Compliance
 
-The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web specific validation:
+The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specific validation:
 
 - Bilingual frontmatter (id/en)
 - Weight calculation (level \* 100 + sequential)
@@ -84,7 +84,7 @@ The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web speci
 
 ### Step 0: Initialize Report File
 
-Use `wow__generating-validation-reports` Skill for report initialization.
+Use `wow-generating-validation-reports` Skill for report initialization.
 
 ### Step 1: Count Examples
 
@@ -120,20 +120,20 @@ Update status, add summary, prioritize findings.
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Complete standards
-- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) - Annotation requirements
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md) - Complete standards
+- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 
-- `apps__ayokoding-web__by-example-maker` - Creates By Example content
-- `apps__ayokoding-web__by-example-fixer` - Fixes By Example issues
+- `apps-ayokoding-web-by-example-maker` - Creates By Example content
+- `apps-ayokoding-web-by-example-fixer` - Fixes By Example issues
 
 **Skills:**
 
-- `apps__ayokoding-web__developing-content` - ayokoding-web compliance
-- `docs__creating-by-example-tutorials` - By Example standards
-- `wow__assessing-criticality-confidence` - Criticality assessment
-- `wow__generating-validation-reports` - Report generation
+- `apps-ayokoding-web-developing-content` - ayokoding-web compliance
+- `docs-creating-by-example-tutorials` - By Example standards
+- `wow-assessing-criticality-confidence` - Criticality assessment
+- `wow-generating-validation-reports` - Report generation
 
 ---
 

@@ -13,11 +13,11 @@ tools:
 model: sonnet
 color: purple
 skills:
-  - apps__ayokoding-web__developing-content
-  - docs__validating-factual-accuracy
-  - wow__assessing-criticality-confidence
-  - wow__applying-maker-checker-fixer
-  - wow__generating-validation-reports
+  - apps-ayokoding-web-developing-content
+  - docs-validating-factual-accuracy
+  - wow-assessing-criticality-confidence
+  - wow-applying-maker-checker-fixer
+  - wow-generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -26,22 +26,22 @@ updated: 2026-01-03
 
 You validate facts-checker findings before applying fixes.
 
-**Priority-Based Execution**: See `wow__assessing-criticality-confidence` Skill.
+**Priority-Based Execution**: See `wow-assessing-criticality-confidence` Skill.
 
 ## Mode Parameter Handling
 
-The `wow__applying-maker-checker-fixer` Skill provides mode logic.
+The `wow-applying-maker-checker-fixer` Skill provides mode logic.
 
 ## How This Works
 
-1. Report Discovery: `wow__applying-maker-checker-fixer` Skill
+1. Report Discovery: `wow-applying-maker-checker-fixer` Skill
 2. Validation Strategy: Read → Re-validate → Assess → Apply/Skip
 3. Fix Application: HIGH confidence only
-4. Fix Report: `wow__generating-validation-reports` Skill
+4. Fix Report: `wow-generating-validation-reports` Skill
 
 ## Confidence Assessment
 
-The `wow__assessing-criticality-confidence` Skill provides definitions.
+The `wow-assessing-criticality-confidence` Skill provides definitions.
 
 **HIGH Confidence**: Verifiable factual errors (outdated version, incorrect syntax)
 **MEDIUM Confidence**: Ambiguous or context-dependent
@@ -50,8 +50,8 @@ The `wow__assessing-criticality-confidence` Skill provides definitions.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md)
+- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md)
 
 **Skills:**
 
-- `apps__ayokoding-web__developing-content`, `docs__validating-factual-accuracy`, `wow__assessing-criticality-confidence`, `wow__applying-maker-checker-fixer`, `wow__generating-validation-reports`
+- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`

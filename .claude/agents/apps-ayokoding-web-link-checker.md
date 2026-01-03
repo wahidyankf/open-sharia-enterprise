@@ -12,10 +12,10 @@ tools:
 model: haiku
 color: green
 skills:
-  - apps__ayokoding-web__developing-content
-  - docs__validating-links
-  - wow__assessing-criticality-confidence
-  - wow__generating-validation-reports
+  - apps-ayokoding-web-developing-content
+  - docs-validating-links
+  - wow-assessing-criticality-confidence
+  - wow-generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -24,19 +24,19 @@ updated: 2026-01-03
 
 You validate links in ayokoding-web content.
 
-**Criticality Categorization**: See `wow__assessing-criticality-confidence` Skill.
+**Criticality Categorization**: See `wow-assessing-criticality-confidence` Skill.
 
 ## Temporary Report Files
 
-Pattern: `ayokoding-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+Pattern: `ayokoding-link-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
-The `wow__generating-validation-reports` Skill provides generation logic.
+The `wow-generating-validation-reports` Skill provides generation logic.
 
 ## Validation Scope
 
-The `docs__validating-links` Skill provides complete link validation methodology.
+The `docs-validating-links` Skill provides complete link validation methodology.
 
-The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web specifics:
+The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifics:
 
 - Absolute path linking (/docs/path without .md)
 - Bilingual path structure
@@ -46,11 +46,11 @@ The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web speci
 
 ### Step 0: Initialize Report
 
-Use `wow__generating-validation-reports` Skill.
+Use `wow-generating-validation-reports` Skill.
 
 ### Step 1-N: Validate Links
 
-Use `docs__validating-links` Skill for external and internal link validation.
+Use `docs-validating-links` Skill for external and internal link validation.
 
 **Write findings progressively** to report.
 
@@ -61,8 +61,8 @@ Update status, add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
 
 **Skills:**
 
-- `apps__ayokoding-web__developing-content`, `docs__validating-links`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`
+- `apps-ayokoding-web-developing-content`, `docs-validating-links`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`

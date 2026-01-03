@@ -11,10 +11,10 @@ tools:
 model: sonnet
 color: blue
 skills:
-  - apps__ayokoding-web__developing-content
-  - docs__creating-by-example-tutorials
-  - docs__creating-accessible-diagrams
-  - docs__applying-content-quality
+  - apps-ayokoding-web-developing-content
+  - docs-creating-by-example-tutorials
+  - docs-creating-accessible-diagrams
+  - docs-applying-content-quality
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -31,9 +31,9 @@ Create By Example tutorial content in `apps/ayokoding-web/content/` following ay
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme, bilingual, weights, navigation
-- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - By Example type definition
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md) - Hextra theme, bilingual, weights, navigation
+- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu-programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - By Example type definition
 
 ## When to Use This Agent
 
@@ -51,7 +51,7 @@ Use this agent when:
 
 ## By Example Requirements
 
-The `docs__creating-by-example-tutorials` Skill provides complete By Example standards:
+The `docs-creating-by-example-tutorials` Skill provides complete By Example standards:
 
 - **75-90 annotated code examples** per tutorial
 - **1-2.25 comment lines per line of code PER EXAMPLE** (not tutorial-wide)
@@ -61,7 +61,7 @@ The `docs__creating-by-example-tutorials` Skill provides complete By Example sta
 
 ## ayokoding-web Integration
 
-The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web specific guidance:
+The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specific guidance:
 
 - **Bilingual strategy**: id (primary), en (English)
 - **Weight system**: Level-based weight calculation (level \* 100 + sequential)
@@ -107,7 +107,7 @@ Group 75-90 examples thematically:
 
 ### Step 5: Write Each Example
 
-Follow five-part structure from `docs__creating-by-example-tutorials` Skill:
+Follow five-part structure from `docs-creating-by-example-tutorials` Skill:
 
 ```markdown
 ## Example N: Title
@@ -137,11 +137,11 @@ Verify 1-2.25 comment lines per code line PER EXAMPLE (not averaged across tutor
 
 ### Step 7: Add Diagrams (if needed)
 
-Use `docs__creating-accessible-diagrams` Skill for color-blind friendly Mermaid diagrams.
+Use `docs-creating-accessible-diagrams` Skill for color-blind friendly Mermaid diagrams.
 
 ## Quality Standards
 
-The `docs__applying-content-quality` Skill provides general content quality standards (active voice, heading hierarchy, accessibility).
+The `docs-applying-content-quality` Skill provides general content quality standards (active voice, heading hierarchy, accessibility).
 
 **By Example specific**:
 
@@ -156,22 +156,22 @@ The `docs__applying-content-quality` Skill provides general content quality stan
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Complete ayokoding-web standards
-- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu__naming.md) - By Example definition
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md) - Complete ayokoding-web standards
+- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu-programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - By Example definition
 
 **Related Agents:**
 
-- `apps__ayokoding-web__by-example-checker` - Validates By Example quality
-- `apps__ayokoding-web__by-example-fixer` - Fixes By Example issues
-- `apps__ayokoding-web__general-maker` - Creates general ayokoding content
+- `apps-ayokoding-web-by-example-checker` - Validates By Example quality
+- `apps-ayokoding-web-by-example-fixer` - Fixes By Example issues
+- `apps-ayokoding-web-general-maker` - Creates general ayokoding content
 
 **Skills:**
 
-- `apps__ayokoding-web__developing-content` - ayokoding-web specific guidance (bilingual, weights, navigation)
-- `docs__creating-by-example-tutorials` - By Example annotation standards
-- `docs__creating-accessible-diagrams` - Diagram creation with accessibility
-- `docs__applying-content-quality` - General content quality
+- `apps-ayokoding-web-developing-content` - ayokoding-web specific guidance (bilingual, weights, navigation)
+- `docs-creating-by-example-tutorials` - By Example annotation standards
+- `docs-creating-accessible-diagrams` - Diagram creation with accessibility
+- `docs-applying-content-quality` - General content quality
 
 ---
 

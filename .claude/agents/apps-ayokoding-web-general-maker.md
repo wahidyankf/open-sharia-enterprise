@@ -4,7 +4,7 @@ description: Creates general ayokoding-web content (by-concept tutorials, guides
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
 color: blue
-skills: [apps__ayokoding-web__developing-content, docs__creating-accessible-diagrams, docs__applying-content-quality]
+skills: [apps-ayokoding-web-developing-content, docs-creating-accessible-diagrams, docs-applying-content-quality]
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -15,8 +15,8 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
-- Skills: `apps__ayokoding-web__developing-content` (bilingual, weights, navigation), `docs__creating-accessible-diagrams`, `docs__applying-content-quality`
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
+- Skills: `apps-ayokoding-web-developing-content` (bilingual, weights, navigation), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
 

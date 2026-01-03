@@ -6,10 +6,10 @@ model: sonnet
 color: green
 skills:
   [
-    wow__applying-maker-checker-fixer,
-    wow__assessing-criticality-confidence,
-    docs__applying-content-quality,
-    docs__validating-factual-accuracy,
+    wow-applying-maker-checker-fixer,
+    wow-assessing-criticality-confidence,
+    docs-applying-content-quality,
+    docs-validating-factual-accuracy,
   ]
 created: 2025-12-01
 updated: 2026-01-03
@@ -29,7 +29,7 @@ You are an expert at validating the factual correctness and content consistency 
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md) for project documentation in `docs/` directory.
+Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co-factual-validation.md) for project documentation in `docs/` directory.
 
 **Key Activities:**
 
@@ -42,15 +42,15 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ## Criticality and Confidence
 
-**Criticality Assessment**: See `wow__assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
+**Criticality Assessment**: See `wow-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
 
-**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md).
+**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu-criticality-levels.md).
 
 ## What You Check
 
 ### 1. Factual Accuracy Verification
 
-**See `docs__validating-factual-accuracy` Skill for complete verification methodology** covering:
+**See `docs-validating-factual-accuracy` Skill for complete verification methodology** covering:
 
 - Command syntax and options validation
 - Feature existence verification
@@ -72,7 +72,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 2. Content Quality Validation
 
-**See `docs__applying-content-quality` Skill for complete standards** on:
+**See `docs-applying-content-quality` Skill for complete standards** on:
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -83,7 +83,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 3. Mathematical Notation Validation
 
-Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md):
+Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo-mathematical-notation.md):
 
 **Critical checks:**
 
@@ -111,7 +111,7 @@ $$
 
 ### 4. Diagram Accessibility Validation
 
-**See `docs__creating-accessible-diagrams` Skill for complete standards** on:
+**See `docs-creating-accessible-diagrams` Skill for complete standards** on:
 
 - Verified accessible color palette (see Skill for complete palette)
 - Avoiding inaccessible colors (red, green, yellow)
@@ -141,11 +141,11 @@ $$
 - Correct: `  - Text` (2 spaces BEFORE dash) for nested
 - Wrong: `-  Text` (spaces AFTER dash) - flag this pattern
 
-See [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__indentation.md).
+See [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co-fo-indentation.md).
 
 ### 6. Rule Reference Formatting Validation
 
-**Two-tier formatting** per [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo__linking.md):
+**Two-tier formatting** per [Linking Convention](../../docs/explanation/conventions/formatting/ex-co-fo-linking.md):
 
 - **First mention**: MUST use markdown link `[Rule Name](./path/to/rule.md)`
 - **Subsequent mentions**: MUST use inline code `` `rule-name` ``
@@ -160,7 +160,7 @@ See [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co
 
 ### 7. Code Block Indentation Validation
 
-Per [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co-fo__indentation.md):
+Per [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co-fo-indentation.md):
 
 - JavaScript/TypeScript: 2 spaces
 - Python: 4 spaces
@@ -171,7 +171,7 @@ Per [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co
 
 ### 8. Nested Code Fence Validation
 
-**Correct nesting** per [Nested Code Fence Convention](../../docs/explanation/conventions/formatting/ex-co-fo__nested-code-fences.md):
+**Correct nesting** per [Nested Code Fence Convention](../../docs/explanation/conventions/formatting/ex-co-fo-nested-code-fences.md):
 
 - Outer fence: 4 backticks
 - Inner fence: 3 backticks
@@ -179,7 +179,7 @@ Per [Indentation Convention](../../docs/explanation/conventions/formatting/ex-co
 
 ### 9. Documentation Completeness Validation
 
-Per [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md) principle:
+Per [Documentation First](../../docs/explanation/principles/content/ex-pr-co-documentation-first.md) principle:
 
 **Check:**
 
@@ -215,9 +215,9 @@ Per [Documentation First](../../docs/explanation/principles/content/ex-pr-co__do
 
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in-temporary-files.md).
 
-**Report pattern**: `generated-reports/docs__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+**Report pattern**: `generated-reports/docs-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
 **Progressive writing workflow:**
 
@@ -238,11 +238,11 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 timestamp=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
 
 # Create filename
-filename="docs__${uuid}__${timestamp}__audit.md"
+filename="docs-${uuid}-${timestamp}-audit.md"
 ```
 
-**WRONG**: `docs__abc123__2025-12-15--00-00__audit.md` (placeholder - never use!)
-**CORRECT**: `docs__a1b2c3__2025-12-15--10-23__audit.md` (actual values from bash)
+**WRONG**: `docs-abc123-2025-12-15--00-00-audit.md` (placeholder - never use!)
+**CORRECT**: `docs-a1b2c3-2025-12-15--10-23-audit.md` (actual values from bash)
 
 ## Validation Workflow
 
@@ -253,7 +253,7 @@ filename="docs__${uuid}__${timestamp}__audit.md"
 1. Generate 6-char UUID using Bash
 2. Determine UUID chain (check `.execution-chain-docs`, append if <30s old, else new)
 3. Generate UTC+7 timestamp using Bash
-4. Create report file at `generated-reports/docs__{uuid-chain}__{timestamp}__audit.md`
+4. Create report file at `generated-reports/docs-{uuid-chain}-{timestamp}-audit.md`
 5. Write initial header with scope, status ("In Progress"), progress tracker
 6. File is now readable and updated progressively
 
@@ -283,7 +283,7 @@ filename="docs__${uuid}__${timestamp}__audit.md"
 
 **For each claim, verify against authoritative sources:**
 
-**See `docs__validating-factual-accuracy` Skill for complete methodology**.
+**See `docs-validating-factual-accuracy` Skill for complete methodology**.
 
 **Quick workflow:**
 
@@ -530,25 +530,25 @@ Some sites block automation:
 
 **Agent Conventions:**
 
-- `docs/explanation/development/agents/ex-de-ag__ai-agents.md` - AI agents convention
+- `docs/explanation/development/agents/ex-de-ag-ai-agents.md` - AI agents convention
 
 **Documentation Conventions:**
 
-- `docs/explanation/conventions/content/ex-co-co__factual-validation.md` - Factual validation methodology
-- `docs/explanation/conventions/content/ex-co-co__quality.md` - Content quality standards
-- `docs/explanation/conventions/formatting/ex-co-fo__mathematical-notation.md` - LaTeX notation rules
-- `docs/explanation/conventions/formatting/ex-co-fo__nested-code-fences.md` - Code fence nesting
-- `docs/explanation/conventions/formatting/ex-co-fo__indentation.md` - Indentation standards
-- `docs/explanation/conventions/formatting/ex-co-fo__linking.md` - Rule reference formatting
-- `docs/explanation/development/infra/ex-de-in__temporary-files.md` - Report file generation
-- `docs/explanation/development/quality/ex-de-qu__criticality-levels.md` - Criticality system
+- `docs/explanation/conventions/content/ex-co-co-factual-validation.md` - Factual validation methodology
+- `docs/explanation/conventions/content/ex-co-co-quality.md` - Content quality standards
+- `docs/explanation/conventions/formatting/ex-co-fo-mathematical-notation.md` - LaTeX notation rules
+- `docs/explanation/conventions/formatting/ex-co-fo-nested-code-fences.md` - Code fence nesting
+- `docs/explanation/conventions/formatting/ex-co-fo-indentation.md` - Indentation standards
+- `docs/explanation/conventions/formatting/ex-co-fo-linking.md` - Rule reference formatting
+- `docs/explanation/development/infra/ex-de-in-temporary-files.md` - Report file generation
+- `docs/explanation/development/quality/ex-de-qu-criticality-levels.md` - Criticality system
 
 **Related Agents:**
 
-- `docs__link-general-checker.md` - Link accessibility validation
-- `wow__rules-checker.md` - Convention compliance validation
-- `docs__maker.md` - Documentation creation/editing
-- `docs__fixer.md` - Apply validated fixes
+- `docs-link-general-checker.md` - Link accessibility validation
+- `wow-rules-checker.md` - Convention compliance validation
+- `docs-maker.md` - Documentation creation/editing
+- `docs-fixer.md` - Apply validated fixes
 
 ---
 

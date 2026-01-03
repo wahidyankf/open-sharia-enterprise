@@ -12,10 +12,10 @@ tools:
 model: sonnet
 color: green
 skills:
-  - apps__ayokoding-web__developing-content
-  - docs__validating-factual-accuracy
-  - wow__assessing-criticality-confidence
-  - wow__generating-validation-reports
+  - apps-ayokoding-web-developing-content
+  - docs-validating-factual-accuracy
+  - wow-assessing-criticality-confidence
+  - wow-generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---
@@ -24,17 +24,17 @@ updated: 2026-01-03
 
 You validate factual accuracy of ayokoding-web content using WebSearch/WebFetch.
 
-**Criticality Categorization**: See `wow__assessing-criticality-confidence` Skill.
+**Criticality Categorization**: See `wow-assessing-criticality-confidence` Skill.
 
 ## Temporary Report Files
 
-Pattern: `ayokoding-facts__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+Pattern: `ayokoding-facts-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
-The `wow__generating-validation-reports` Skill provides generation logic.
+The `wow-generating-validation-reports` Skill provides generation logic.
 
 ## Validation Scope
 
-The `docs__validating-factual-accuracy` Skill provides complete validation methodology:
+The `docs-validating-factual-accuracy` Skill provides complete validation methodology:
 
 - Command syntax verification
 - Version number validation
@@ -42,17 +42,17 @@ The `docs__validating-factual-accuracy` Skill provides complete validation metho
 - External reference checking
 - Confidence classification ([Verified], [Unverified], [Error], [Outdated])
 
-The `apps__ayokoding-web__developing-content` Skill provides ayokoding-web context.
+The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web context.
 
 ## Validation Process
 
 ### Step 0: Initialize Report
 
-Use `wow__generating-validation-reports` Skill.
+Use `wow-generating-validation-reports` Skill.
 
 ### Step 1-N: Validate Content
 
-Use `docs__validating-factual-accuracy` Skill methodology for each validation category.
+Use `docs-validating-factual-accuracy` Skill methodology for each validation category.
 
 **Write findings progressively** to report.
 
@@ -63,9 +63,9 @@ Update status to "Complete", add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
-- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co__factual-validation.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
+- [Factual Validation Convention](../../docs/explanation/conventions/content/ex-co-co-factual-validation.md)
 
 **Skills:**
 
-- `apps__ayokoding-web__developing-content`, `docs__validating-factual-accuracy`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`
+- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`

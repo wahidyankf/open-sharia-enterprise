@@ -4,7 +4,7 @@ description: Validates repository-wide consistency including file naming, linkin
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
-skills: [docs__applying-diataxis-framework, wow__assessing-criticality-confidence, wow__generating-validation-reports]
+skills: [docs-applying-diataxis-framework, wow-assessing-criticality-confidence, wow-generating-validation-reports]
 created: 2025-12-01
 updated: 2026-01-03
 ---
@@ -15,8 +15,8 @@ Validate repository-wide consistency across all repository layers.
 
 ## Temporary Reports
 
-Pattern: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
-Skill: `wow__generating-validation-reports` (progressive streaming)
+Pattern: `repo-rules-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
+Skill: `wow-generating-validation-reports` (progressive streaming)
 
 ## Validation Scope
 
@@ -48,13 +48,13 @@ Skill: `wow__generating-validation-reports` (progressive streaming)
 
 **Common Duplication Patterns to Check**:
 
-- UUID generation logic (should reference `wow__generating-validation-reports`)
-- Criticality level definitions (should reference `wow__assessing-criticality-confidence`)
-- Mode parameter handling (should reference `wow__applying-maker-checker-fixer`)
-- Hugo weight systems (should reference `apps__ayokoding-web__developing-content`)
-- Color palettes (should reference `docs__creating-accessible-diagrams`)
-- Report templates (should reference `wow__generating-validation-reports`)
-- Annotation density (should reference `docs__creating-by-example-tutorials`)
+- UUID generation logic (should reference `wow-generating-validation-reports`)
+- Criticality level definitions (should reference `wow-assessing-criticality-confidence`)
+- Mode parameter handling (should reference `wow-applying-maker-checker-fixer`)
+- Hugo weight systems (should reference `apps-ayokoding-web-developing-content`)
+- Color palettes (should reference `docs-creating-accessible-diagrams`)
+- Report templates (should reference `wow-generating-validation-reports`)
+- Annotation density (should reference `docs-creating-by-example-tutorials`)
 
 **Report Format for Duplication Findings**:
 
@@ -150,19 +150,19 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 **Development Practices**: All practices in `docs/explanation/development/`
 
-**Skills**: `docs__applying-diataxis-framework`, `wow__assessing-criticality-confidence`, `wow__generating-validation-reports`
+**Skills**: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
 
 **Related Documentation**:
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent-Skill separation patterns
-- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md) - Report generation standards
+- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md) - Agent-Skill separation patterns
+- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in-temporary-files.md) - Report generation standards
 - [Skills Directory](../.claude/skills/README.md) - Complete Skills catalog
 
 ## Validation Process
 
 ### Step 0: Initialize Report
 
-See `wow__generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
+See `wow-generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
 
 ### Step 1: Core Repository Validation
 
